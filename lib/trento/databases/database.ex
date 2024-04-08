@@ -121,7 +121,6 @@ defmodule Trento.Databases.Database do
       %DatabaseInstanceRegistered{
         database_id: database_id,
         sid: sid,
-        tenants: tenants,
         instance_number: instance_number,
         instance_hostname: instance_hostname,
         features: features,
@@ -157,7 +156,6 @@ defmodule Trento.Databases.Database do
         %RegisterDatabaseInstance{
           database_id: database_id,
           sid: sid,
-          tenants: tenants,
           host_id: host_id,
           instance_number: instance_number,
           instance_hostname: instance_hostname,
@@ -178,7 +176,6 @@ defmodule Trento.Databases.Database do
         %DatabaseInstanceRegistered{
           database_id: database_id,
           sid: sid,
-          tenants: tenants,
           instance_number: instance_number,
           instance_hostname: instance_hostname,
           features: features,
@@ -488,7 +485,6 @@ defmodule Trento.Databases.Database do
          %RegisterDatabaseInstance{
            database_id: database_id,
            sid: sid,
-           tenants: tenants,
            instance_number: instance_number,
            instance_hostname: instance_hostname,
            features: features,
@@ -504,7 +500,6 @@ defmodule Trento.Databases.Database do
     %DatabaseInstanceRegistered{
       database_id: database_id,
       sid: sid,
-      tenants: tenants,
       instance_number: instance_number,
       instance_hostname: instance_hostname,
       features: features,
@@ -522,14 +517,14 @@ defmodule Trento.Databases.Database do
 
   defp maybe_emit_database_tenants_updated_event(
          %Database{database_id: database_id, tenants: database_tenants},
-         %RegisterDatabaseInstance{tenants: tenants}
+         %RegisterDatabaseInstance{tenants: instance_tenants}
        ) do
-    sorted_tenants = Enum.sort_by(tenants, & &1.name)
-
-    if sorted_tenants != database_tenants do
+    sorted_database_tenants = Enum.sort_by(database_tenants, & &1.name)
+    sorted_instance_tenants = Enum.sort_by(instance_tenants, & &1.name)
+    if sorted_database_tenants != sorted_instance_tenants do
       %DatabaseTenantsUpdated{
         database_id: database_id,
-        tenants: sorted_tenants
+        tenants: instance_tenants
       }
     end
   end

@@ -82,7 +82,6 @@ defmodule Trento.Databases.DatabaseTest do
           %DatabaseInstanceRegistered{
             database_id: database_id,
             sid: sid,
-            tenants: tenants,
             instance_number: instance_number,
             instance_hostname: instance_hostname,
             features: features,
@@ -158,7 +157,6 @@ defmodule Trento.Databases.DatabaseTest do
           %DatabaseInstanceRegistered{
             database_id: database_id,
             sid: sid,
-            tenants: tenants,
             instance_number: instance_number,
             instance_hostname: instance_hostname,
             features: features,
@@ -213,7 +211,6 @@ defmodule Trento.Databases.DatabaseTest do
           :database_instance_registered_event,
           database_id: database_id,
           sid: sid,
-          tenants: tenants,
           instance_number: "10"
         )
       ]
@@ -235,7 +232,6 @@ defmodule Trento.Databases.DatabaseTest do
             :database_instance_registered_event,
             database_id: database_id,
             sid: sid,
-            tenants: tenants,
             instance_number: instance_number,
             features: features,
             host_id: host_id,
@@ -261,10 +257,11 @@ defmodule Trento.Databases.DatabaseTest do
     end
 
     test "should not add a database instance if the database instance was already registered" do
+      tenants = build_list(1, :tenant)
+
       %{database_id: database_id} = database_registered_event = build(:database_registered_event)
 
-      %{tenants: tenants} =
-        database_instance_registered_event =
+      database_instance_registered_event =
         build(
           :database_instance_registered_event,
           database_id: database_registered_event.database_id
@@ -285,7 +282,7 @@ defmodule Trento.Databases.DatabaseTest do
           :register_database_instance_command,
           database_id: database_registered_event.database_id,
           sid: database_instance_registered_event.sid,
-          tenants: database_instance_registered_event.tenants,
+          tenants: tenants,
           instance_number: database_instance_registered_event.instance_number,
           features: database_instance_registered_event.features,
           host_id: database_instance_registered_event.host_id,
@@ -306,8 +303,7 @@ defmodule Trento.Databases.DatabaseTest do
           :database_instance_registered_event,
           database_id: database_registered_event.database_id,
           system_replication: "Secondary",
-          system_replication_status: "",
-          tenants: tenants
+          system_replication_status: ""
         )
 
       tenants_updated_event =
@@ -328,7 +324,7 @@ defmodule Trento.Databases.DatabaseTest do
           :register_database_instance_command,
           database_id: database_registered_event.database_id,
           sid: database_instance_registered_event.sid,
-          tenants: database_instance_registered_event.tenants,
+          tenants: tenants,
           instance_number: database_instance_registered_event.instance_number,
           features: database_instance_registered_event.features,
           host_id: database_instance_registered_event.host_id,
@@ -382,7 +378,6 @@ defmodule Trento.Databases.DatabaseTest do
             :database_instance_registered_event,
             database_id: database_id,
             sid: sid,
-            tenants: tenants,
             instance_number: instance_number,
             features: features,
             host_id: host_id,
@@ -414,8 +409,9 @@ defmodule Trento.Databases.DatabaseTest do
       host_id = Faker.UUID.v4()
       instance_number = "00"
 
-      %{tenants: tenants} =
-        database_instance_registered_event =
+      tenants = build_list(1, :tenant)
+
+      database_instance_registered_event =
         build(
           :database_instance_registered_event,
           database_id: database_id,
@@ -438,7 +434,7 @@ defmodule Trento.Databases.DatabaseTest do
           :register_database_instance_command,
           database_id: database_id,
           sid: database_instance_registered_event.sid,
-          tenants: database_instance_registered_event.tenants,
+          tenants: tenants,
           instance_number: instance_number,
           features: database_instance_registered_event.features,
           host_id: host_id,
@@ -478,8 +474,9 @@ defmodule Trento.Databases.DatabaseTest do
       new_instance_features = Faker.Pokemon.name()
       new_instance_host_id = Faker.UUID.v4()
 
-      %{tenants: tenants} =
-        database_instance_registered_event =
+      tenants = build_list(1, :tenant)
+
+      database_instance_registered_event =
         build(
           :database_instance_registered_event,
           database_id: database_id,
@@ -502,7 +499,7 @@ defmodule Trento.Databases.DatabaseTest do
             :register_database_instance_command,
             database_id: database_id,
             sid: database_instance_registered_event.sid,
-            tenants: database_instance_registered_event.tenants,
+            tenants: tenants,
             instance_number: database_instance_registered_event.instance_number,
             features: database_instance_registered_event.features,
             host_id: database_instance_registered_event.host_id,
@@ -512,7 +509,7 @@ defmodule Trento.Databases.DatabaseTest do
             :register_database_instance_command,
             database_id: database_id,
             sid: database_instance_registered_event.sid,
-            tenants: database_instance_registered_event.tenants,
+            tenants: tenants,
             instance_number: new_instance_number,
             features: new_instance_features,
             host_id: new_instance_host_id,
@@ -524,7 +521,6 @@ defmodule Trento.Databases.DatabaseTest do
             :database_instance_registered_event,
             database_id: database_id,
             sid: database_instance_registered_event.sid,
-            tenants: database_instance_registered_event.tenants,
             instance_number: new_instance_number,
             features: new_instance_features,
             host_id: new_instance_host_id,
@@ -560,8 +556,9 @@ defmodule Trento.Databases.DatabaseTest do
       database_id = UUID.uuid4()
       sid = fake_sid()
 
-      %{tenants: tenants} =
-        database_instance_registered_event =
+      tenants = build_list(1, :tenant)
+
+      database_instance_registered_event =
         build(:database_instance_registered_event, database_id: database_id, sid: sid)
 
       initial_events = [
@@ -602,8 +599,7 @@ defmodule Trento.Databases.DatabaseTest do
       initial_events = [
         build(:database_instance_registered_event,
           database_id: database_id,
-          sid: sid,
-          tenants: tenants
+          sid: sid
         ),
         build(:database_registered_event, database_id: database_id, sid: sid),
         build(:database_tenants_updated_event,
@@ -640,8 +636,9 @@ defmodule Trento.Databases.DatabaseTest do
       database_registered_event =
         build(:database_registered_event, database_id: database_id)
 
-      %{tenants: tenants} =
-        database_instance_registered_event =
+      tenants = build_list(1, :tenant)
+
+      database_instance_registered_event =
         build(:database_instance_registered_event, database_id: database_id)
 
       initial_events = [
@@ -691,8 +688,6 @@ defmodule Trento.Databases.DatabaseTest do
 
       db_sid = fake_sid()
 
-      tenants = build_list(1, :tenant)
-
       initial_events = [
         build(
           :database_registered_event,
@@ -705,8 +700,7 @@ defmodule Trento.Databases.DatabaseTest do
           host_id: primary_database_host_id,
           sid: db_sid,
           instance_number: db_instance_number_1,
-          system_replication: "Primary",
-          tenants: tenants
+          system_replication: "Primary"
         ),
         build(
           :database_instance_registered_event,
@@ -714,8 +708,7 @@ defmodule Trento.Databases.DatabaseTest do
           host_id: secondary_database_host_id,
           instance_number: db_instance_number_2,
           system_replication: "Secondary",
-          sid: db_sid,
-          tenants: tenants
+          sid: db_sid
         )
       ]
 
@@ -805,7 +798,6 @@ defmodule Trento.Databases.DatabaseTest do
           %DatabaseInstanceRegistered{
             database_id: database_id,
             sid: sid,
-            tenants: tenants,
             instance_number: instance_number,
             instance_hostname: instance_hostname,
             features: features,
@@ -861,7 +853,6 @@ defmodule Trento.Databases.DatabaseTest do
           :database_instance_registered_event,
           database_id: database_id,
           sid: sid,
-          tenants: tenants,
           instance_number: "10"
         ),
         build(:database_tenants_updated_event, database_id: database_id, tenants: tenants)
@@ -886,7 +877,6 @@ defmodule Trento.Databases.DatabaseTest do
             :database_instance_registered_event,
             database_id: database_id,
             sid: sid,
-            tenants: new_tenants,
             instance_number: instance_number,
             features: features,
             host_id: host_id,
@@ -930,7 +920,6 @@ defmodule Trento.Databases.DatabaseTest do
           :database_instance_registered_event,
           database_id: database_id,
           sid: sid,
-          tenants: tenants,
           instance_number: "10"
         ),
         build(:database_tenants_updated_event, database_id: database_id, tenants: tenants)
@@ -953,7 +942,6 @@ defmodule Trento.Databases.DatabaseTest do
             :database_instance_registered_event,
             database_id: database_id,
             sid: sid,
-            tenants: tenants,
             instance_number: instance_number,
             features: features,
             host_id: host_id,
@@ -1004,7 +992,6 @@ defmodule Trento.Databases.DatabaseTest do
           database_id: database_id,
           host_id: primary_database_host_id,
           sid: db_sid,
-          tenants: tenants,
           instance_number: db_instance_number_1,
           system_replication: "Primary"
         ),
@@ -1015,7 +1002,6 @@ defmodule Trento.Databases.DatabaseTest do
           host_id: secondary_database_host_id,
           instance_number: db_instance_number_2,
           system_replication: "Secondary",
-          tenants: tenants,
           sid: db_sid
         ),
         build(:database_instance_deregistered_event,
@@ -1048,7 +1034,6 @@ defmodule Trento.Databases.DatabaseTest do
           %DatabaseInstanceRegistered{
             database_id: database_id,
             sid: db_sid,
-            tenants: command.tenants,
             instance_number: command.instance_number,
             instance_hostname: command.instance_hostname,
             features: command.features,
@@ -1066,7 +1051,7 @@ defmodule Trento.Databases.DatabaseTest do
           },
           %DatabaseTenantsUpdated{
             database_id: database_id,
-            tenants: Enum.sort_by(new_tenants, & &1.name)
+            tenants: new_tenants
           }
         ],
         fn state ->
@@ -1114,7 +1099,6 @@ defmodule Trento.Databases.DatabaseTest do
           database_id: database_id,
           host_id: primary_database_host_id,
           sid: db_sid,
-          tenants: tenants,
           instance_number: db_instance_number_1,
           system_replication: "Primary"
         ),
@@ -1125,7 +1109,6 @@ defmodule Trento.Databases.DatabaseTest do
           host_id: secondary_database_host_id,
           instance_number: db_instance_number_2,
           system_replication: "Secondary",
-          tenants: tenants,
           sid: db_sid
         ),
         build(:database_instance_deregistered_event,
@@ -1156,7 +1139,6 @@ defmodule Trento.Databases.DatabaseTest do
           %DatabaseInstanceRegistered{
             database_id: database_id,
             sid: db_sid,
-            tenants: command.tenants,
             instance_number: command.instance_number,
             instance_hostname: command.instance_hostname,
             features: command.features,
@@ -1281,7 +1263,6 @@ defmodule Trento.Databases.DatabaseTest do
           database_id: database_id,
           host_id: primary_database_host_id,
           sid: db_sid,
-          tenants: tenants,
           instance_number: db_instance_number_1,
           system_replication: "Primary"
         ),
@@ -1292,7 +1273,6 @@ defmodule Trento.Databases.DatabaseTest do
           host_id: secondary_database_host_id,
           instance_number: db_instance_number_2,
           system_replication: "Secondary",
-          tenants: tenants,
           sid: db_sid
         ),
         build(:database_instance_deregistered_event,
@@ -1323,7 +1303,6 @@ defmodule Trento.Databases.DatabaseTest do
           %DatabaseInstanceRegistered{
             database_id: database_id,
             sid: db_sid,
-            tenants: command.tenants,
             instance_number: command.instance_number,
             instance_hostname: command.instance_hostname,
             features: command.features,
@@ -1384,8 +1363,7 @@ defmodule Trento.Databases.DatabaseTest do
           host_id: primary_database_host_id,
           sid: db_sid,
           instance_number: db_instance_number_1,
-          system_replication: "Primary",
-          tenants: tenants
+          system_replication: "Primary"
         ),
         build(:database_tenants_updated_event, database_id: database_id, tenants: tenants),
         build(
@@ -1394,8 +1372,7 @@ defmodule Trento.Databases.DatabaseTest do
           host_id: secondary_database_host_id,
           instance_number: db_instance_number_2,
           system_replication: "Secondary",
-          sid: db_sid,
-          tenants: tenants
+          sid: db_sid
         ),
         build(:database_instance_deregistered_event,
           database_id: database_id,
@@ -1431,7 +1408,6 @@ defmodule Trento.Databases.DatabaseTest do
           %DatabaseInstanceRegistered{
             database_id: database_id,
             sid: db_sid,
-            tenants: command.tenants,
             instance_number: command.instance_number,
             instance_hostname: command.instance_hostname,
             features: command.features,
@@ -1494,7 +1470,6 @@ defmodule Trento.Databases.DatabaseTest do
           database_id: database_id,
           host_id: primary_database_host_id,
           sid: db_sid,
-          tenants: tenants,
           instance_number: db_instance_number_1,
           system_replication: "Primary"
         ),
@@ -1505,8 +1480,7 @@ defmodule Trento.Databases.DatabaseTest do
           host_id: secondary_database_host_id,
           instance_number: db_instance_number_2,
           system_replication: "Secondary",
-          sid: db_sid,
-          tenants: tenants
+          sid: db_sid
         ),
         build(:database_instance_deregistered_event,
           database_id: database_id,
@@ -1542,7 +1516,6 @@ defmodule Trento.Databases.DatabaseTest do
           %DatabaseInstanceRegistered{
             database_id: database_id,
             sid: db_sid,
-            tenants: command.tenants,
             instance_number: command.instance_number,
             instance_hostname: command.instance_hostname,
             features: command.features,
@@ -1606,8 +1579,7 @@ defmodule Trento.Databases.DatabaseTest do
           host_id: primary_database_host_id,
           sid: db_sid,
           instance_number: db_instance_number_1,
-          system_replication: "Primary",
-          tenants: tenants
+          system_replication: "Primary"
         ),
         build(:database_tenants_updated_event, database_id: database_id, tenants: tenants),
         build(
@@ -1616,8 +1588,7 @@ defmodule Trento.Databases.DatabaseTest do
           host_id: secondary_database_host_id,
           instance_number: db_instance_number_2,
           system_replication: "Secondary",
-          sid: db_sid,
-          tenants: tenants
+          sid: db_sid
         ),
         build(:database_instance_deregistered_event,
           database_id: database_id,
@@ -1647,7 +1618,6 @@ defmodule Trento.Databases.DatabaseTest do
           %DatabaseInstanceRegistered{
             database_id: database_id,
             sid: db_sid,
-            tenants: command.tenants,
             instance_number: command.instance_number,
             instance_hostname: command.instance_hostname,
             features: command.features,
