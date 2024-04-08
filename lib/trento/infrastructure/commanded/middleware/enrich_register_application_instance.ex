@@ -14,11 +14,6 @@ defimpl Trento.Infrastructure.Commanded.Middleware.Enrichable,
 
   @spec enrich(RegisterApplicationInstance.t(), map) :: {:ok, map} | {:error, any}
   def enrich(%RegisterApplicationInstance{db_host: db_host, tenant: tenant} = command, _) do
-    # from the instances we load the database associated with the instances, that is only one
-    # we check in the tenants of the loaded database if the tenant is present in the tenant list, if it's we will extract the database id
-    # and put as database id for the application instace, if not database is not registered
-    # because it does not exists a registered database with the instances with the tenant we want
-
     query =
       from d in DatabaseReadModel,
         join: di in DatabaseInstanceReadModel,
@@ -26,8 +21,9 @@ defimpl Trento.Infrastructure.Commanded.Middleware.Enrichable,
         join: h in HostReadModel,
         on: di.host_id == h.id,
         where:
-          ^db_host in h.ip_addresses and ^tenant == di.tenant and is_nil(h.deregistered_at) and
-            is_nil(d.deregistered_at)
+          ^db_host in h.ip_addresses and
+            fragment("? @\\? '$.name \\? (@ == ?)'", d.tenants, literal(^tenant)) and
+            is_nil(h.deregistered_at) and is_nil(d.deregistered_at)
 
     case Repo.one(query) do
       %DatabaseReadModel{id: database_id, health: database_health} ->
