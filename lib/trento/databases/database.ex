@@ -153,7 +153,7 @@ defmodule Trento.Databases.Database do
   # When a deregistered database is present, we add the new database instance
   # and restore the database, the conditions are the same as registration
   def execute(
-        %Database{deregistered_at: deregistered_at},
+        %Database{deregistered_at: deregistered_at} = database,
         %RegisterDatabaseInstance{
           database_id: database_id,
           sid: sid,
@@ -168,34 +168,37 @@ defmodule Trento.Databases.Database do
           system_replication: system_replication,
           system_replication_status: system_replication_status,
           health: health
-        }
+        } = command
       )
       when not is_nil(deregistered_at) do
-    [
-      %DatabaseInstanceRegistered{
-        database_id: database_id,
-        sid: sid,
-        tenants: tenants,
-        instance_number: instance_number,
-        instance_hostname: instance_hostname,
-        features: features,
-        http_port: http_port,
-        https_port: https_port,
-        start_priority: start_priority,
-        host_id: host_id,
-        system_replication: system_replication,
-        system_replication_status: system_replication_status,
-        health: health
-      },
-      %DatabaseRestored{
-        database_id: database_id,
-        health: health
-      },
-      %DatabaseTenantsUpdated{
-        database_id: database_id,
-        tenants: tenants
-      }
-    ]
+    database
+    |> Multi.new()
+    |> Multi.execute(fn _ ->
+      [
+        %DatabaseInstanceRegistered{
+          database_id: database_id,
+          sid: sid,
+          tenants: tenants,
+          instance_number: instance_number,
+          instance_hostname: instance_hostname,
+          features: features,
+          http_port: http_port,
+          https_port: https_port,
+          start_priority: start_priority,
+          host_id: host_id,
+          system_replication: system_replication,
+          system_replication_status: system_replication_status,
+          health: health
+        },
+        %DatabaseRestored{
+          database_id: database_id,
+          health: health
+        }
+      ]
+    end)
+    |> Multi.execute(fn database ->
+      maybe_emit_database_tenants_updated_event(database, command)
+    end)
   end
 
   # When a RegisterDatabaseInstance command is received by an existing database aggregate,
@@ -518,19 +521,17 @@ defmodule Trento.Databases.Database do
   defp maybe_emit_database_instance_registered_event(_, _), do: nil
 
   defp maybe_emit_database_tenants_updated_event(
-         %Database{tenants: tenants},
-         %RegisterDatabaseInstance{tenants: tenants}
-       ),
-       do: nil
-
-  defp maybe_emit_database_tenants_updated_event(
-         %Database{database_id: database_id},
+         %Database{database_id: database_id, tenants: database_tenants},
          %RegisterDatabaseInstance{tenants: tenants}
        ) do
-    %DatabaseTenantsUpdated{
-      database_id: database_id,
-      tenants: tenants
-    }
+    sorted_tenants = Enum.sort_by(tenants, & &1.name)
+
+    if sorted_tenants != database_tenants do
+      %DatabaseTenantsUpdated{
+        database_id: database_id,
+        tenants: sorted_tenants
+      }
+    end
   end
 
   defp maybe_emit_database_instance_marked_present_event(

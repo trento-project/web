@@ -49,8 +49,11 @@ defmodule Trento.Factory do
     DatabaseInstanceRegistered,
     DatabaseRegistered,
     DatabaseRestored,
+    DatabaseTenantsUpdated,
     DatabaseTombstoned
   }
+
+  alias Trento.Databases.ValueObjects.Tenant
 
   alias Trento.SapSystems.Events.{
     ApplicationInstanceDeregistered,
@@ -299,9 +302,10 @@ defmodule Trento.Factory do
 
   def database_instance_registered_event_factory do
     %DatabaseInstanceRegistered{
+      version: 2,
       database_id: Faker.UUID.v4(),
       sid: Faker.UUID.v4(),
-      # tenant: Faker.UUID.v4(),
+      tenants: build_list(1, :tenant),
       instance_number: "00",
       instance_hostname: "an-instance-name",
       features: Faker.Pokemon.name(),
@@ -347,6 +351,10 @@ defmodule Trento.Factory do
       host_id: Faker.UUID.v4(),
       instance_number: "00"
     })
+  end
+
+  def tenant_factory do
+    Tenant.new!(%{name: Faker.Beer.name()})
   end
 
   def database_deregistered_event_factory do
@@ -648,10 +656,12 @@ defmodule Trento.Factory do
   end
 
   def register_database_instance_command_factory do
-    RegisterDatabaseInstance.new!(%{
+    tenants = build_list(1, :tenant)
+
+    %RegisterDatabaseInstance{
       database_id: Faker.UUID.v4(),
       sid: Faker.StarWars.planet(),
-      tenant: Faker.Beer.hop(),
+      tenants: tenants,
       instance_number: "00",
       instance_hostname: "an-instance-name",
       features: Faker.Pokemon.name(),
@@ -662,7 +672,14 @@ defmodule Trento.Factory do
       system_replication: "Primary",
       system_replication_status: "ACTIVE",
       health: Health.passing()
-    })
+    }
+  end
+
+  def database_tenants_updated_event_factory do
+    %DatabaseTenantsUpdated{
+      database_id: Faker.UUID.v4(),
+      tenants: build_list(1, :tenant)
+    }
   end
 
   def cib_resource_factory do
