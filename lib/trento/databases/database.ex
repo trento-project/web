@@ -521,6 +521,7 @@ defmodule Trento.Databases.Database do
        ) do
     sorted_database_tenants = Enum.sort_by(database_tenants, & &1.name)
     sorted_instance_tenants = Enum.sort_by(instance_tenants, & &1.name)
+
     if sorted_database_tenants != sorted_instance_tenants do
       %DatabaseTenantsUpdated{
         database_id: database_id,
