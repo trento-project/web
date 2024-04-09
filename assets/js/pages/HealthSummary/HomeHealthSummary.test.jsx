@@ -16,7 +16,6 @@ const homeHealthSummaryData = [
     hosts_health: 'critical',
     sapsystem_health: 'passing',
     sid: 'NWD',
-    tenant: 'HDD',
     database_sid: 'HDD',
   }),
   healthSummaryFactory.build({

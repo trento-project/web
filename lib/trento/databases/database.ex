@@ -165,8 +165,9 @@ defmodule Trento.Databases.Database do
           start_priority: start_priority,
           system_replication: system_replication,
           system_replication_status: system_replication_status,
-          health: health
-        } = command
+          health: health,
+          tenants: tenants
+        }
       )
       when not is_nil(deregistered_at) do
     database
@@ -194,7 +195,7 @@ defmodule Trento.Databases.Database do
       ]
     end)
     |> Multi.execute(fn database ->
-      maybe_emit_database_tenants_updated_event(database, command)
+      maybe_emit_database_tenants_updated_event(database, tenants)
     end)
   end
 
@@ -203,7 +204,11 @@ defmodule Trento.Databases.Database do
   # and updates the health when needed.
   def execute(
         %Database{instances: instances} = database,
-        %RegisterDatabaseInstance{host_id: host_id, instance_number: instance_number} = command
+        %RegisterDatabaseInstance{
+          host_id: host_id,
+          instance_number: instance_number,
+          tenants: tenants
+        } = command
       ) do
     instance = get_instance(instances, host_id, instance_number)
 
@@ -223,7 +228,7 @@ defmodule Trento.Databases.Database do
     end)
     |> Multi.execute(&maybe_emit_database_health_changed_event/1)
     |> Multi.execute(fn database ->
-      maybe_emit_database_tenants_updated_event(database, command)
+      maybe_emit_database_tenants_updated_event(database, tenants)
     end)
   end
 
@@ -516,16 +521,16 @@ defmodule Trento.Databases.Database do
   defp maybe_emit_database_instance_registered_event(_, _), do: nil
 
   defp maybe_emit_database_tenants_updated_event(
-         %Database{database_id: database_id, tenants: database_tenants},
-         %RegisterDatabaseInstance{tenants: instance_tenants}
+         %Database{database_id: database_id, tenants: current_tenants},
+         new_tenants
        ) do
-    sorted_database_tenants = Enum.sort_by(database_tenants, & &1.name)
-    sorted_instance_tenants = Enum.sort_by(instance_tenants, & &1.name)
+    sorted_current_tenants = Enum.sort_by(current_tenants, & &1.name)
+    sorted_new_tenants = Enum.sort_by(new_tenants, & &1.name)
 
-    if sorted_database_tenants != sorted_instance_tenants do
+    if sorted_current_tenants != sorted_new_tenants do
       %DatabaseTenantsUpdated{
         database_id: database_id,
-        tenants: instance_tenants
+        tenants: new_tenants
       }
     end
   end

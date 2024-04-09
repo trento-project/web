@@ -257,8 +257,6 @@ defmodule Trento.Databases.DatabaseTest do
     end
 
     test "should not add a database instance if the database instance was already registered" do
-      tenants = build_list(1, :tenant)
-
       %{database_id: database_id} = database_registered_event = build(:database_registered_event)
 
       database_instance_registered_event =
@@ -267,8 +265,9 @@ defmodule Trento.Databases.DatabaseTest do
           database_id: database_registered_event.database_id
         )
 
-      tenants_updated_event =
-        build(:database_tenants_updated_event, database_id: database_id, tenants: tenants)
+      %{tenants: tenants} =
+        tenants_updated_event =
+        build(:database_tenants_updated_event, database_id: database_id)
 
       initial_events = [
         database_registered_event,
@@ -295,7 +294,6 @@ defmodule Trento.Databases.DatabaseTest do
     end
 
     test "should change the system replication of a database instance" do
-      tenants = build_list(1, :tenant)
       database_registered_event = build(:database_registered_event)
 
       database_instance_registered_event =
@@ -306,10 +304,10 @@ defmodule Trento.Databases.DatabaseTest do
           system_replication_status: ""
         )
 
-      tenants_updated_event =
+      %{tenants: tenants} =
+        tenants_updated_event =
         build(:database_tenants_updated_event,
-          database_id: database_registered_event.database_id,
-          tenants: tenants
+          database_id: database_registered_event.database_id
         )
 
       initial_events = [

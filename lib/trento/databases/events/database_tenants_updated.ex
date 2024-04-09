@@ -1,6 +1,6 @@
 defmodule Trento.Databases.Events.DatabaseTenantsUpdated do
   @moduledoc """
-    This event is emitted when the tenants of a database are updated
+  This event is emitted when the tenants of a database are updated
   """
 
   use Trento.Support.Event

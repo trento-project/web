@@ -27,7 +27,6 @@ defmodule Trento.SapSystems.Services.HealthSummaryService do
     |> where([s], is_nil(s.deregistered_at))
     |> order_by(asc: :sid)
     |> Repo.all()
-    |> Repo.preload(:database)
     |> Repo.preload(application_instances: :host)
     |> Repo.preload(database_instances: :host)
     |> Repo.preload(:database)

@@ -137,7 +137,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
         application_cluster_health: ResourceHealth,
         database_cluster_health: ResourceHealth,
         tenant: %Schema{type: :string, description: "Tenant database SID", deprecated: true},
-        database_sid: %Schema{type: :string, description: "SAP System database SID"}
+        database_sid: %Schema{type: :string, description: "Database SID"}
       }
     })
   end
