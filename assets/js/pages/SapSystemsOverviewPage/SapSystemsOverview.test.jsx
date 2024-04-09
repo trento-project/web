@@ -47,7 +47,9 @@ describe('SapSystemsOverviews component', () => {
         application_instances: applicationInstances,
         database_instances: databaseInstances,
         database_id: databaseID,
+        database_sid: attachedRdbms,
       } = sapSystem;
+
       renderWithRouter(
         <SapSystemsOverview
           sapSystems={[sapSystem]}
@@ -55,7 +57,6 @@ describe('SapSystemsOverviews component', () => {
           databaseInstances={databaseInstances}
         />
       );
-
       const rows = screen.getByRole('table').querySelectorAll('tbody > tr');
       const mainRow = rows[0];
 
@@ -65,7 +66,7 @@ describe('SapSystemsOverviews component', () => {
         `/sap_systems/${sapSystemID}`
       );
       expect(mainRow.querySelector('td:nth-child(3)')).toHaveTextContent(
-        tenant
+        attachedRdbms
       );
       expect(mainRow.querySelector('td:nth-child(3) > a')).toHaveAttribute(
         'href',

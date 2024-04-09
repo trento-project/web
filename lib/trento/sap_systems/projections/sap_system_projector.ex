@@ -272,10 +272,13 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
         _,
         %{sap_system: %SapSystemReadModel{} = sap_system}
       ) do
+    enriched_sap_system =
+      Repo.preload(sap_system, [:database])
+
     TrentoWeb.Endpoint.broadcast(
       @sap_systems_topic,
       "sap_system_registered",
-      SapSystemView.render("sap_system_registered.json", sap_system: sap_system)
+      SapSystemView.render("sap_system_registered.json", sap_system: enriched_sap_system)
     )
   end
 
@@ -388,7 +391,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
         %{sap_system: %SapSystemReadModel{} = sap_system}
       ) do
     enriched_sap_system =
-      Repo.preload(sap_system, [:tags, :database_instances, :application_instances])
+      Repo.preload(sap_system, [:tags, :database, :database_instances, :application_instances])
 
     TrentoWeb.Endpoint.broadcast(
       @sap_systems_topic,
