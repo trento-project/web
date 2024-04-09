@@ -1,4 +1,4 @@
-import { get, find, uniq, has, set } from 'lodash';
+import { get, find, uniq, has } from 'lodash';
 import { createSelector } from '@reduxjs/toolkit';
 
 import {
@@ -45,8 +45,7 @@ const getSystemsByClusterHosts = (instances, systems, clusterHostIDs) =>
   systems.filter((system) =>
     clusterHostIDs.some((hostID) =>
       instances
-        .map((instance) => set(instance, 'instanceID', getInstanceID(instance)))
-        .filter(({ instanceID }) => instanceID === system.id)
+        .filter((instance) => getInstanceID(instance) === system.id)
         .map(({ host_id }) => host_id)
         .includes(hostID)
     )
