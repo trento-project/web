@@ -44,7 +44,8 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
   end
 
   test "should project a new SAP System when a SapSystemRegistered event is received" do
-    event = build(:sap_system_registered_event)
+    %{id: database_id, sid: database_sid} = insert(:database)
+    event = build(:sap_system_registered_event, database_id: database_id)
 
     ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")
 
@@ -62,6 +63,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
     assert event.db_host == projection.db_host
     assert event.health == projection.health
     assert event.ensa_version == projection.ensa_version
+    assert event.database_id == projection.database_id
 
     assert_broadcast(
       "sap_system_registered",
@@ -71,7 +73,9 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
         id: ^id,
         sid: ^sid,
         tenant: ^tenant,
-        ensa_version: ^ensa_version
+        ensa_version: ^ensa_version,
+        database_id: ^database_id,
+        database_sid: ^database_sid
       },
       1000
     )
@@ -300,7 +304,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
   end
 
   test "should restore a SAP system when SapSystemRestored is received" do
-    %{id: database_id} = insert(:database)
+    %{id: database_id, sid: database_sid, health: database_health} = insert(:database)
 
     %{tenant: tenant, id: sap_system_id, sid: sid} =
       insert(:sap_system, deregistered_at: DateTime.utc_now(), database_id: database_id)
@@ -326,7 +330,8 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
       sap_system_id: sap_system_id,
       tenant: tenant,
       db_host: new_db_host,
-      health: new_health
+      health: new_health,
+      database_health: database_health
     }
 
     ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")
@@ -335,7 +340,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
       projection =
       SapSystemReadModel
       |> Repo.get(sap_system_id)
-      |> Repo.preload([:tags])
+      |> Repo.preload([:tags, :database])
 
     adapted_database_instance =
       Map.put(database_instance, :sap_system_id, database_id)
@@ -350,7 +355,9 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
         tenant: ^tenant,
         database_instances: [^adapted_database_instance],
         application_instances: [^application_instance],
-        tags: ^tags
+        tags: ^tags,
+        database_sid: ^database_sid,
+        database_id: ^database_id
       },
       1000
     )
