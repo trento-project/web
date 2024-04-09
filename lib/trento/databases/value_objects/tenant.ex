@@ -1,6 +1,6 @@
 defmodule Trento.Databases.ValueObjects.Tenant do
   @moduledoc """
-  Database tenant informations
+  Database tenant information
   """
   @required_fields :all
 
