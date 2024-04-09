@@ -10,8 +10,8 @@ defmodule Trento.Databases.Projections.DatabaseReadModel do
   require Trento.Enums.Health, as: Health
 
   alias Trento.Databases.Projections.DatabaseInstanceReadModel
-  alias Trento.SapSystems.Projections.SapSystemReadModel
   alias Trento.Databases.ValueObjects.Tenant
+  alias Trento.SapSystems.Projections.SapSystemReadModel
 
   alias Trento.Tags.Tag
 
