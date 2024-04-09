@@ -17,7 +17,7 @@ const homeHealthSummaryData = [
     sapsystem_health: 'passing',
     sid: 'NWD',
     tenant: 'HDD',
-    database_sid: 'HDD'
+    database_sid: 'HDD',
   }),
   healthSummaryFactory.build({
     application_cluster_health: 'passing',
