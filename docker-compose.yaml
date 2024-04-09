@@ -34,7 +34,7 @@ services:
     ports:
       - 9090:9090
   postgres:
-    image: postgres:latest
+    image: postgres:15
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
