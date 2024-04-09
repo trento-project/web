@@ -4,8 +4,9 @@ defmodule Trento.Databases.Events.DatabaseInstanceMarkedPresent do
   """
 
   use Trento.Support.Event
+  use Trento.Databases.Event.Upcaster.UpcastDatabaseId
 
-  defevent do
+  defevent version: 2 do
     field :instance_number, :string
     field :host_id, Ecto.UUID
     field :database_id, Ecto.UUID
