@@ -30,4 +30,22 @@ defmodule Trento.Support.IntermediateEventTest do
                %{}
              )
   end
+
+  test "upcast with custom supersede function" do
+    term = %{"data" => "new"}
+
+    assert %TestEvent{data: "new"} ==
+             Upcaster.upcast(
+               %IntermediateEvent{module: TestCustomSupersedeEvent, term: term},
+               %{}
+             )
+
+    term = %{"data" => "old"}
+
+    assert %TestCustomSupersedeEvent{data: "old"} ==
+             Upcaster.upcast(
+               %IntermediateEvent{module: TestCustomSupersedeEvent, term: term},
+               %{}
+             )
+  end
 end

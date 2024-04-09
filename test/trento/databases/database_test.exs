@@ -26,6 +26,8 @@ defmodule Trento.Databases.DatabaseTest do
     DatabaseTombstoned
   }
 
+  alias Trento.SapSystems.Events, as: SapSystemEvents
+
   alias Trento.Databases.Database
   alias Trento.SapSystems.Instance
 
@@ -1947,6 +1949,52 @@ defmodule Trento.Databases.DatabaseTest do
                      }
                    ]
                  } = state
+        end
+      )
+    end
+  end
+
+  describe "legacy events" do
+    test "should ignore SAP system legacy events and not update the aggregate" do
+      sap_system_id = UUID.uuid4()
+
+      [database_registered_event, _] =
+        initial_events = [
+          build(
+            :database_registered_event,
+            database_id: sap_system_id
+          ),
+          build(
+            :database_instance_registered_event,
+            database_id: sap_system_id,
+            system_replication: nil,
+            system_replication_status: nil
+          )
+        ]
+
+      assert_state(
+        initial_events ++
+          [
+            %SapSystemEvents.ApplicationInstanceDeregistered{sap_system_id: sap_system_id},
+            %SapSystemEvents.ApplicationInstanceHealthChanged{sap_system_id: sap_system_id},
+            %SapSystemEvents.ApplicationInstanceMarkedAbsent{sap_system_id: sap_system_id},
+            %SapSystemEvents.ApplicationInstanceMarkedPresent{sap_system_id: sap_system_id},
+            %SapSystemEvents.ApplicationInstanceMoved{sap_system_id: sap_system_id},
+            %SapSystemEvents.ApplicationInstanceRegistered{sap_system_id: sap_system_id},
+            %SapSystemEvents.SapSystemDeregistered{sap_system_id: sap_system_id},
+            %SapSystemEvents.SapSystemHealthChanged{sap_system_id: sap_system_id},
+            %SapSystemEvents.SapSystemRegistered{sap_system_id: sap_system_id},
+            %SapSystemEvents.SapSystemRestored{sap_system_id: sap_system_id},
+            %SapSystemEvents.SapSystemUpdated{sap_system_id: sap_system_id},
+            %SapSystemEvents.SapSystemRollUpRequested{sap_system_id: sap_system_id},
+            %SapSystemEvents.SapSystemRolledUp{sap_system_id: sap_system_id},
+            %SapSystemEvents.SapSystemTombstoned{sap_system_id: sap_system_id}
+          ],
+        [],
+        fn database ->
+          assert database.database_id == database_registered_event.database_id
+          assert database.sid == database_registered_event.sid
+          assert database.health == database_registered_event.health
         end
       )
     end
