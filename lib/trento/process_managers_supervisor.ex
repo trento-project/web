@@ -3,6 +3,11 @@ defmodule Trento.ProcessManagersSupervisor do
 
   use Supervisor
 
+  alias Trento.Infrastructure.Commanded.ProcessManagers.{
+    DeregistrationProcessManager,
+    SoftwareUpdatesDiscoveryProcessManager
+  }
+
   def start_link(init_arg) do
     Supervisor.start_link(__MODULE__, init_arg, name: __MODULE__)
   end
@@ -10,7 +15,8 @@ defmodule Trento.ProcessManagersSupervisor do
   @impl true
   def init(_init_arg) do
     children = [
-      Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessManager
+      DeregistrationProcessManager,
+      SoftwareUpdatesDiscoveryProcessManager
     ]
 
     Supervisor.init(children, strategy: :one_for_one)
