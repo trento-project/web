@@ -1,5 +1,0 @@
-version: "3"
-services:
-  postgres:
-    volumes:
-      - ./test/fixtures/regression/sap_system_split:/dumps

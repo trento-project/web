@@ -454,6 +454,7 @@ jobs:
     runs-on: ubuntu-22.04
     env:
       MIX_ENV: dev
+      PGPASSWORD: postgres
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.12.1
@@ -497,18 +498,23 @@ jobs:
           path: |
             test/e2e/node_modules
           key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
-      - name: Check Eslint and JS Code Format
-        run: cd test/e2e && npm run lint && npm run format:check
       - name: "Docker compose dependencies"
         uses: isbang/compose-action@v1.5.1
         with:
           compose-file: "./docker-compose.yaml"
           down-flags: "--volumes"
-          compose-flags: "-f docker-compose.regression.yaml"
-      - name: Mix setup
-        run: mix setup
-      - name: Restore DB
-        run: docker exec -i web-postgres-1 bash -c "$(cat hack/restore_databases.sh)"
+      - name: Postgres trento_dev restore
+        uses: tj-actions/pg-restore@v6
+        with:
+          database_url: "postgresql://postgres:postgres@localhost:5433/postgres"
+          backup_file: "test/fixtures/regression/sap_system_split/trento_dev.sql"
+          postgresql_version: "15"
+      - name: Postgres trento_eventstore_dev restore
+        uses: tj-actions/pg-restore@v6
+        with:
+          database_url: "postgresql://postgres:postgres@localhost:5433/postgres"
+          backup_file: "test/fixtures/regression/sap_system_split/trento_eventstore_dev.sql"
+          postgresql_version: "15"
       - name: Run DB migrations
         run: mix ecto.migrate
       - name: Run trento detached
