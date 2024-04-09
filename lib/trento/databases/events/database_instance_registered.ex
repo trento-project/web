@@ -4,10 +4,11 @@ defmodule Trento.Databases.Events.DatabaseInstanceRegistered do
   """
 
   use Trento.Support.Event
+  use Trento.Databases.Event.Upcaster.UpcastDatabaseId
 
   require Trento.Enums.Health, as: Health
 
-  defevent do
+  defevent version: 2 do
     field :database_id, Ecto.UUID
     field :sid, :string
     field :tenant, :string

@@ -326,6 +326,13 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
     }
   end
 
+  # Ignore error if deregistration command returns sap_system_not_registered error.
+  # Most probably it happens because the process manager was populated with legacy
+  # event, and those application instances don't exist anymore
+
+  def error({:error, :sap_system_not_registered}, _command_or_event, _context),
+    do: {:skip, :continue_pending}
+
   # Retry the rollup errors, stop the process on other errors
 
   def error({:error, :host_rolling_up}, _command_or_event, %{context: context}),

@@ -4,8 +4,9 @@ defmodule Trento.Databases.Events.DatabaseDeregistered do
   """
 
   use Trento.Support.Event
+  use Trento.Databases.Event.Upcaster.UpcastDatabaseId
 
-  defevent do
+  defevent version: 2 do
     field :database_id, Ecto.UUID
     field :deregistered_at, :utc_datetime_usec
   end
