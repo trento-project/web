@@ -72,7 +72,8 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
       %SapSystemReadModel{
         id: sap_system_id,
         sid: sid,
-        database_id: database_id
+        database_id: database_id,
+        tenant: tenant
       } = insert(:sap_system, health: Health.critical(), database_id: database_id)
 
       insert(:sap_system, deregistered_at: DateTime.utc_now())
@@ -128,7 +129,8 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
                  hosts_health: Health.unknown(),
                  database_id: database_id,
                  database_instances: database_instances,
-                 application_instances: application_instances
+                 application_instances: application_instances,
+                 tenant: tenant
                }
              ] == HealthSummaryService.get_health_summary()
     end
@@ -144,7 +146,8 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
 
       %SapSystemReadModel{
         id: sap_system_id,
-        sid: sid
+        sid: sid,
+        tenant: tenant
       } = insert(:sap_system, health: Health.critical(), database_id: database_id)
 
       insert(:sap_system, deregistered_at: DateTime.utc_now())
@@ -183,7 +186,8 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
                  application_cluster_health: Health.unknown(),
                  hosts_health: Health.passing(),
                  database_instances: database_instances,
-                 application_instances: application_instances
+                 application_instances: application_instances,
+                 tenant: tenant
                }
              ] == HealthSummaryService.get_health_summary()
     end

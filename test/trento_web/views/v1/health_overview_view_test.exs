@@ -34,8 +34,7 @@ defmodule TrentoWeb.V1.HealthOverviewViewTest do
           2,
           :database_instance_without_host,
           database_id: database_id,
-          host: build(:host, cluster_id: db_cluster_id),
-          tenant: tenant
+          host: build(:host, cluster_id: db_cluster_id)
         )
 
       assert [

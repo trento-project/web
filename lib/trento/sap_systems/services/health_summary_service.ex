@@ -37,6 +37,7 @@ defmodule Trento.SapSystems.Services.HealthSummaryService do
   defp summary_from_sap_system(%SapSystemReadModel{
          id: id,
          sid: sid,
+         tenant: tenant,
          health: health,
          application_instances: application_instances,
          database_instances: database_instances,
@@ -55,7 +56,8 @@ defmodule Trento.SapSystems.Services.HealthSummaryService do
       database_cluster_health: compute_cluster_health(database_instances),
       hosts_health: compute_hosts_health(all_instances),
       application_instances: application_instances,
-      database_instances: database_instances
+      database_instances: database_instances,
+      tenant: tenant
     }
   end
 

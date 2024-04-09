@@ -12,6 +12,7 @@ defmodule TrentoWeb.V1.HealthOverviewView do
         summary: %{
           id: id,
           sid: sid,
+          tenant: tenant,
           sapsystem_health: sapsystem_health,
           application_instances: application_instances,
           database_id: database_id,
@@ -37,7 +38,7 @@ defmodule TrentoWeb.V1.HealthOverviewView do
       cluster_id: extract_cluster_id(database_instances),
       application_cluster_id: extract_cluster_id(application_instances),
       database_cluster_id: extract_cluster_id(database_instances),
-      tenant: extract_tenant(database_instances)
+      tenant: tenant
     }
   end
 
@@ -55,12 +56,4 @@ defmodule TrentoWeb.V1.HealthOverviewView do
       _ -> false
     end)
   end
-
-  # TODO: EXTRACT FROM DB
-  # @spec extract_tenant([DatabaseInstanceReadModel.t()]) :: String.t() | nil
-  # defp extract_tenant([]), do: nil
-
-  # defp extract_tenant([%DatabaseInstanceReadModel{tenants: tenants} | _]),
-  #   do: tenants
-  defp extract_tenant(_), do: "tenant"
 end
