@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
+      types: [opened, synchronize, labeled]
   release:
     types: [published]
   workflow_dispatch:
@@ -15,6 +16,8 @@ env:
   OTP_VERSION: 26
   MIX_ENV: test
   NODE_VERSION: "16"
+  MANTAINERS: '["cdimonaco", "dottorblaster", "fabriziosestito", "rtorrero", "nelsonkopliku", "arbulu89","jagabomb","emaksy","jamie-suse"]'
+  RG_TEST_LABEL: regression
 
 jobs:
   elixir-deps:
@@ -435,6 +438,112 @@ jobs:
         with:
           name: e2e-screenshots
           path: test/e2e/cypress/screenshots/
+
+  check-regression-label:
+    name: Check if the environment creation criteria are met, store in the job output
+    runs-on: ubuntu-latest
+    outputs:
+      run_regression_test: ${{ steps.check.outputs.run_regression_test }}
+    steps:
+      - id: check
+        run: echo "run_regression_test=${{ contains(fromJson(env.MANTAINERS), github.event.sender.login) && contains(github.event.pull_request.labels.*.name, env.RG_TEST_LABEL) }}" >> "$GITHUB_OUTPUT"
+
+  regression-test-e2e:
+    name: Regression tests
+    needs: [elixir-deps, npm-deps, npm-e2e-deps, api-bc-check]
+    runs-on: ubuntu-22.04
+    env:
+      MIX_ENV: dev
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.12.1
+        with:
+          access_token: ${{ github.token }}
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: ${{ env.ELIXIR_VERSION }}
+          otp-version: ${{ env.OTP_VERSION }}
+        env:
+          ImageOS: ubuntu20
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Retrieve Cached Dependencies
+        uses: actions/cache@v4
+        id: mix-cache
+        with:
+          path: |
+            deps
+            _build/dev
+            priv/plts
+          key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.lock') }}
+      - name: Retrieve NPM Cached Dependencies
+        uses: actions/cache@v4
+        id: npm-cache
+        with:
+          path: |
+            assets/node_modules
+          key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
+      - name: Retrieve E2E NPM Cached Dependencies
+        uses: actions/cache@v4
+        id: npm-e2e-cache
+        with:
+          path: |
+            test/e2e/node_modules
+          key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
+      - name: Check Eslint and JS Code Format
+        run: cd test/e2e && npm run lint && npm run format:check
+      - name: "Docker compose dependencies"
+        uses: isbang/compose-action@v1.5.1
+        with:
+          compose-file: "./docker-compose.yaml"
+          down-flags: "--volumes"
+          compose-flags: "-f docker-compose.regression.yaml"
+      - name: Mix setup
+        run: mix setup
+      - name: Restore DB
+        run: docker exec -i web-postgres-1 bash -c "$(cat hack/restore_databases.sh)"
+      - name: Run DB migrations
+        run: mix ecto.migrate
+      - name: Run trento detached
+        run: mix phx.server &
+      - name: Install photofinish
+        uses: jaxxstorm/action-install-gh-release@v1.11.0
+        with:
+          repo: trento-project/photofinish
+          tag: v1.3.0
+          cache: enable
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Give executable permissions to photofinish
+        run: chmod +x $(whereis photofinish | cut -d" " -f2)
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
+        env:
+          cypress_video: false
+          cypress_db_host: postgres
+          cypress_db_port: 5432
+          cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
+        with:
+          working-directory: test/e2e
+          spec: |
+            cypress/e2e/databases_overview.cy.js
+            cypress/e2e/sap_systems_overview.cy.js
+          wait-on-timeout: 30
+          config: baseUrl=http://localhost:4000
+      - name: Upload cypress test screenshots
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: e2e-screenshots
+          path: test/e2e/cypress/screenshots/
+
 
   main-branch-deps:
     name: Rebuild main branch dependencies
