@@ -12,7 +12,6 @@ defmodule TrentoWeb.V1.HealthOverviewView do
         summary: %{
           id: id,
           sid: sid,
-          tenant: tenant,
           sapsystem_health: sapsystem_health,
           application_instances: application_instances,
           database_id: database_id,
@@ -20,7 +19,8 @@ defmodule TrentoWeb.V1.HealthOverviewView do
           database_health: database_health,
           application_cluster_health: application_cluster_health,
           database_cluster_health: database_cluster_health,
-          hosts_health: hosts_health
+          hosts_health: hosts_health,
+          database_sid: database_sid
         }
       }) do
     %{
@@ -38,7 +38,9 @@ defmodule TrentoWeb.V1.HealthOverviewView do
       cluster_id: extract_cluster_id(database_instances),
       application_cluster_id: extract_cluster_id(application_instances),
       database_cluster_id: extract_cluster_id(database_instances),
-      tenant: tenant
+      # deprecated field
+      tenant: database_sid,
+      database_sid: database_sid
     }
   end
 

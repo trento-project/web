@@ -27,6 +27,7 @@ defmodule Trento.SapSystems.Services.HealthSummaryService do
     |> where([s], is_nil(s.deregistered_at))
     |> order_by(asc: :sid)
     |> Repo.all()
+    |> Repo.preload(:database)
     |> Repo.preload(application_instances: :host)
     |> Repo.preload(database_instances: :host)
     |> Repo.preload(:database)
@@ -37,11 +38,10 @@ defmodule Trento.SapSystems.Services.HealthSummaryService do
   defp summary_from_sap_system(%SapSystemReadModel{
          id: id,
          sid: sid,
-         tenant: tenant,
          health: health,
          application_instances: application_instances,
          database_instances: database_instances,
-         database: %{health: database_health},
+         database: %{health: database_health, sid: database_sid},
          database_id: database_id
        }) do
     all_instances = application_instances ++ database_instances
@@ -57,7 +57,7 @@ defmodule Trento.SapSystems.Services.HealthSummaryService do
       hosts_health: compute_hosts_health(all_instances),
       application_instances: application_instances,
       database_instances: database_instances,
-      tenant: tenant
+      database_sid: database_sid
     }
   end
 

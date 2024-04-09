@@ -11,7 +11,7 @@ defmodule TrentoWeb.V1.HealthOverviewViewTest do
     test "should render all the fields" do
       sap_system_id = UUID.uuid4()
       sid = UUID.uuid4()
-      tenant = UUID.uuid4()
+      database_sid = UUID.uuid4()
       app_cluster_id = UUID.uuid4()
       db_cluster_id = UUID.uuid4()
 
@@ -51,7 +51,8 @@ defmodule TrentoWeb.V1.HealthOverviewViewTest do
                  cluster_id: db_cluster_id,
                  application_cluster_id: app_cluster_id,
                  database_cluster_id: db_cluster_id,
-                 tenant: tenant
+                 tenant: database_sid,
+                 database_sid: database_sid
                }
              ] ==
                render(TrentoWeb.V1.HealthOverviewView, "overview.json", %{
@@ -66,7 +67,8 @@ defmodule TrentoWeb.V1.HealthOverviewViewTest do
                      database_health: Health.passing(),
                      application_cluster_health: Health.critical(),
                      database_cluster_health: Health.warning(),
-                     hosts_health: Health.warning()
+                     hosts_health: Health.warning(),
+                     database_sid: database_sid
                    }
                  ]
                })
@@ -74,6 +76,8 @@ defmodule TrentoWeb.V1.HealthOverviewViewTest do
 
     test "should send empty cluster ids" do
       sap_system_id = UUID.uuid4()
+
+      database_sid = "HDP"
 
       application_instances =
         build_list(
@@ -90,8 +94,7 @@ defmodule TrentoWeb.V1.HealthOverviewViewTest do
           2,
           :database_instance_without_host,
           database_id: database_id,
-          host: build(:host, cluster_id: nil),
-          tenant: UUID.uuid4()
+          host: build(:host, cluster_id: nil)
         )
 
       assert [
@@ -101,7 +104,9 @@ defmodule TrentoWeb.V1.HealthOverviewViewTest do
                  application_cluster_id: nil,
                  database_cluster_id: nil,
                  application_cluster_health: Health.unknown(),
-                 database_cluster_health: Health.unknown()
+                 database_cluster_health: Health.unknown(),
+                 tenant: database_sid,
+                 database_sid: database_sid
                }
              ] =
                render(TrentoWeb.V1.HealthOverviewView, "overview.json", %{
@@ -116,7 +121,8 @@ defmodule TrentoWeb.V1.HealthOverviewViewTest do
                      database_health: Health.passing(),
                      application_cluster_health: Health.unknown(),
                      database_cluster_health: Health.unknown(),
-                     hosts_health: Health.warning()
+                     hosts_health: Health.warning(),
+                     database_sid: database_sid
                    }
                  ]
                })

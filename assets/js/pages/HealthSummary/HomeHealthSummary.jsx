@@ -86,7 +86,7 @@ const healthSummaryTableConfig = {
       key: 'hostsHealth',
       className: 'text-center w-1/6',
       render: (content, item) => {
-        const linkToHosts = `/hosts?sid=${item.sid}&sid=${item.tenant}`;
+        const linkToHosts = `/hosts?sid=${item.sid}&sid=${item.database_sid}`;
         return (
           <Link to={linkToHosts}>
             <HealthIcon health={content} centered />
@@ -155,7 +155,7 @@ function HomeHealthSummary({ sapSystemsHealth, loading }) {
     id: summaryDataEntry.id,
     sapsystemHealth: summaryDataEntry.sapsystem_health,
     sid: summaryDataEntry.sid,
-    tenant: summaryDataEntry.tenant,
+    database_sid: summaryDataEntry.database_sid,
   }));
 
   return loading ? (

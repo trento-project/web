@@ -72,7 +72,6 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterApplicationIn
   end
 
   test "should return an error if the database was not found" do
-
     command =
       build(
         :register_application_instance_command,

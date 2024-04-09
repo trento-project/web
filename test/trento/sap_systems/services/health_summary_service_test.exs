@@ -67,13 +67,12 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
       %HostReadModel{id: app_host_id_2} =
         app_host_2 = insert(:host, cluster_id: nil, heartbeat: Health.critical())
 
-      %DatabaseReadModel{id: database_id, health: database_health} = insert(:database)
+      %DatabaseReadModel{id: database_id, health: database_health, sid: database_sid} =
+        insert(:database)
 
       %SapSystemReadModel{
         id: sap_system_id,
-        sid: sid,
-        database_id: database_id,
-        tenant: tenant
+        sid: sid
       } = insert(:sap_system, health: Health.critical(), database_id: database_id)
 
       insert(:sap_system, deregistered_at: DateTime.utc_now())
@@ -130,7 +129,7 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
                  database_id: database_id,
                  database_instances: database_instances,
                  application_instances: application_instances,
-                 tenant: tenant
+                 database_sid: database_sid
                }
              ] == HealthSummaryService.get_health_summary()
     end
@@ -142,12 +141,12 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
       %HostReadModel{id: app_host_id} =
         app_host = insert(:host, cluster_id: nil, health: Health.passing())
 
-      %DatabaseReadModel{id: database_id, health: database_health} = insert(:database)
+      %DatabaseReadModel{id: database_id, health: database_health, sid: database_sid} =
+        insert(:database)
 
       %SapSystemReadModel{
         id: sap_system_id,
-        sid: sid,
-        tenant: tenant
+        sid: sid
       } = insert(:sap_system, health: Health.critical(), database_id: database_id)
 
       insert(:sap_system, deregistered_at: DateTime.utc_now())
@@ -187,7 +186,7 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
                  hosts_health: Health.passing(),
                  database_instances: database_instances,
                  application_instances: application_instances,
-                 tenant: tenant
+                 database_sid: database_sid
                }
              ] == HealthSummaryService.get_health_summary()
     end

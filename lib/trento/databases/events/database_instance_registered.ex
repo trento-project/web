@@ -8,7 +8,7 @@ defmodule Trento.Databases.Events.DatabaseInstanceRegistered do
 
   require Trento.Enums.Health, as: Health
 
-  defevent do
+  defevent version: 2 do
     field :database_id, Ecto.UUID
     field :sid, :string
     field :host_id, Ecto.UUID
