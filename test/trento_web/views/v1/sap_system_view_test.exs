@@ -66,13 +66,11 @@ defmodule TrentoWeb.V1.SapSystemViewTest do
               database_instances: [
                 %DatabaseInstanceReadModel{
                   system_replication: "Secondary",
-                  system_replication_status: "",
-                  tenant: "ed758b1b-358b-47cf-ae99-f9e17da0cc54"
+                  system_replication_status: ""
                 },
                 %DatabaseInstanceReadModel{
                   system_replication: "Primary",
-                  system_replication_status: "ACTIVE",
-                  tenant: "5d4f71dd-b672-470c-b9de-79d2b943a9fd"
+                  system_replication_status: "ACTIVE"
                 }
               ],
               application_instances: []

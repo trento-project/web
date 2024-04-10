@@ -21,7 +21,8 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
     DatabaseInstanceMarkedAbsent,
     DatabaseInstanceMarkedPresent,
     DatabaseInstanceSystemReplicationChanged,
-    DatabaseRestored
+    DatabaseRestored,
+    DatabaseTenantsUpdated
   }
 
   alias Trento.ProjectorTestHelper
@@ -90,8 +91,7 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
       health: health,
       sid: sid,
       features: features,
-      host_id: host_id,
-      tenant: tenant
+      host_id: host_id
     } =
       database_instance_projection =
       Repo.get_by(DatabaseInstanceReadModel,
@@ -102,7 +102,6 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
 
     assert event.database_id == database_instance_projection.database_id
     assert event.sid == database_instance_projection.sid
-    assert event.tenant == database_instance_projection.tenant
     assert event.instance_number == database_instance_projection.instance_number
     assert event.features == database_instance_projection.features
     assert event.host_id == database_instance_projection.host_id
@@ -121,8 +120,7 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
                        database_id: ^database_id,
                        start_priority: "0.3",
                        system_replication: "",
-                       system_replication_status: "",
-                       tenant: ^tenant
+                       system_replication_status: ""
                      },
                      1000
   end
@@ -465,6 +463,37 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
                        database_instances: [^adapted_database_instances],
                        tags: ^tags
                      },
+                     1000
+  end
+
+  test "should project database tenants when DatabaseTenantsUpdated is received" do
+    tenants = build_list(2, :tenant)
+
+    %{id: database_id} =
+      insert(:database,
+        sid: "NWD",
+        deregistered_at: DateTime.utc_now(),
+        health: :critical
+      )
+
+    event = %DatabaseTenantsUpdated{
+      database_id: database_id,
+      tenants: tenants
+    }
+
+    ProjectorTestHelper.project(DatabaseProjector, event, "database_projector")
+
+    projection = Repo.get(DatabaseReadModel, database_id)
+
+    broadcasted_tenants =
+      Enum.map(tenants, fn %{name: name} ->
+        %{name: name}
+      end)
+
+    assert tenants == projection.tenants
+
+    assert_broadcast "database_tenants_updated",
+                     %{database_id: ^database_id, tenants: ^broadcasted_tenants},
                      1000
   end
 end

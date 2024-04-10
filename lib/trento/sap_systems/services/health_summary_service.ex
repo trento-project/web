@@ -40,7 +40,7 @@ defmodule Trento.SapSystems.Services.HealthSummaryService do
          health: health,
          application_instances: application_instances,
          database_instances: database_instances,
-         database: %{health: database_health},
+         database: %{health: database_health, sid: database_sid},
          database_id: database_id
        }) do
     all_instances = application_instances ++ database_instances
@@ -55,7 +55,8 @@ defmodule Trento.SapSystems.Services.HealthSummaryService do
       database_cluster_health: compute_cluster_health(database_instances),
       hosts_health: compute_hosts_health(all_instances),
       application_instances: application_instances,
-      database_instances: database_instances
+      database_instances: database_instances,
+      database_sid: database_sid
     }
   end
 
