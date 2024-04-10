@@ -76,7 +76,6 @@ defmodule Trento.Hosts.Host do
     CompleteHostChecksExecution,
     CompleteSoftwareUpdatesDiscovery,
     DeregisterHost,
-    DiscoverSoftwareUpdates,
     RegisterHost,
     RequestHostDeregistration,
     RollUpHost,
@@ -106,8 +105,7 @@ defmodule Trento.Hosts.Host do
     SaptuneStatusUpdated,
     SlesSubscriptionsUpdated,
     SoftwareUpdatesDiscoveryCleared,
-    SoftwareUpdatesDiscoveryCompleted,
-    SoftwareUpdatesDiscoveryRequested
+    SoftwareUpdatesDiscoveryCompleted
   }
 
   @required_fields []
@@ -539,19 +537,6 @@ defmodule Trento.Hosts.Host do
   # Software Updates Discovery
 
   def execute(
-        %Host{
-          host_id: host_id,
-          fully_qualified_domain_name: fully_qualified_domain_name
-        },
-        %DiscoverSoftwareUpdates{}
-      ) do
-    %SoftwareUpdatesDiscoveryRequested{
-      host_id: host_id,
-      fully_qualified_domain_name: fully_qualified_domain_name
-    }
-  end
-
-  def execute(
         %Host{host_id: host_id} = host,
         %CompleteSoftwareUpdatesDiscovery{
           host_id: host_id,
@@ -736,8 +721,6 @@ defmodule Trento.Hosts.Host do
       | saptune_status: status
     }
   end
-
-  def apply(%Host{} = host, %SoftwareUpdatesDiscoveryRequested{}), do: host
 
   def apply(
         %Host{} = host,
