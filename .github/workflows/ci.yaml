@@ -441,7 +441,7 @@ jobs:
 
   check-regression-label:
     name: Check if the environment creation criteria are met, store in the job output
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     outputs:
       run_regression_test: ${{ steps.check.outputs.run_regression_test }}
     steps:
