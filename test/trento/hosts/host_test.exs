@@ -81,7 +81,8 @@ defmodule Trento.Hosts.HostTest do
           total_memory_mb: total_memory_mb,
           socket_count: socket_count,
           os_version: os_version,
-          installation_source: installation_source
+          installation_source: installation_source,
+          fully_qualified_domain_name: nil
         }),
         %HostRegistered{
           host_id: host_id,
@@ -111,7 +112,7 @@ defmodule Trento.Hosts.HostTest do
       )
     end
 
-    test "should register a host with an FQDN" do
+    test "should register a host with an FQDN and emit software updates discovery request" do
       host_id = Faker.UUID.v4()
       hostname = Faker.StarWars.character()
       fully_qualified_domain_name = Faker.Internet.domain_name()
@@ -137,19 +138,25 @@ defmodule Trento.Hosts.HostTest do
           os_version: os_version,
           installation_source: installation_source
         }),
-        %HostRegistered{
-          host_id: host_id,
-          hostname: hostname,
-          fully_qualified_domain_name: fully_qualified_domain_name,
-          ip_addresses: ip_addresses,
-          agent_version: agent_version,
-          cpu_count: cpu_count,
-          total_memory_mb: total_memory_mb,
-          socket_count: socket_count,
-          os_version: os_version,
-          installation_source: installation_source,
-          heartbeat: :unknown
-        },
+        [
+          %HostRegistered{
+            host_id: host_id,
+            hostname: hostname,
+            fully_qualified_domain_name: fully_qualified_domain_name,
+            ip_addresses: ip_addresses,
+            agent_version: agent_version,
+            cpu_count: cpu_count,
+            total_memory_mb: total_memory_mb,
+            socket_count: socket_count,
+            os_version: os_version,
+            installation_source: installation_source,
+            heartbeat: :unknown
+          },
+          %SoftwareUpdatesDiscoveryRequested{
+            host_id: host_id,
+            fully_qualified_domain_name: fully_qualified_domain_name
+          }
+        ],
         %Host{
           host_id: host_id,
           hostname: hostname,
@@ -166,10 +173,95 @@ defmodule Trento.Hosts.HostTest do
       )
     end
 
-    test "should change an host' FQDN from nil to an actual one" do
+    test "should update FQDN and emit a request for software updates discovery" do
+      scenarios = [
+        %{
+          initial_fqdn: nil,
+          new_fqdn: Faker.Internet.domain_name()
+        },
+        %{
+          initial_fqdn: Faker.Internet.domain_name(),
+          new_fqdn: Faker.Internet.ip_v4_address()
+        }
+      ]
+
+      for %{
+            initial_fqdn: initial_fqdn,
+            new_fqdn: new_fqdn
+          } <- scenarios do
+        host_id = Faker.UUID.v4()
+        hostname = Faker.StarWars.character()
+        ip_addresses = [Faker.Internet.ip_v4_address()]
+        agent_version = Faker.Internet.slug()
+        cpu_count = Enum.random(1..16)
+        total_memory_mb = Enum.random(1..128)
+        socket_count = Enum.random(1..16)
+        os_version = Faker.App.version()
+        installation_source = Enum.random([:community, :suse, :unknown])
+
+        assert_events_and_state(
+          build(:host_registered_event,
+            host_id: host_id,
+            hostname: hostname,
+            fully_qualified_domain_name: initial_fqdn,
+            ip_addresses: ip_addresses,
+            agent_version: agent_version,
+            cpu_count: cpu_count,
+            total_memory_mb: total_memory_mb,
+            socket_count: socket_count,
+            os_version: os_version,
+            installation_source: installation_source
+          ),
+          RegisterHost.new!(%{
+            host_id: host_id,
+            hostname: hostname,
+            fully_qualified_domain_name: new_fqdn,
+            ip_addresses: ip_addresses,
+            agent_version: agent_version,
+            cpu_count: cpu_count,
+            total_memory_mb: total_memory_mb,
+            socket_count: socket_count,
+            os_version: os_version,
+            installation_source: installation_source
+          }),
+          [
+            %HostDetailsUpdated{
+              host_id: host_id,
+              hostname: hostname,
+              fully_qualified_domain_name: new_fqdn,
+              ip_addresses: ip_addresses,
+              agent_version: agent_version,
+              cpu_count: cpu_count,
+              total_memory_mb: total_memory_mb,
+              socket_count: socket_count,
+              os_version: os_version,
+              installation_source: installation_source
+            },
+            %SoftwareUpdatesDiscoveryRequested{
+              host_id: host_id,
+              fully_qualified_domain_name: new_fqdn
+            }
+          ],
+          %Host{
+            host_id: host_id,
+            hostname: hostname,
+            fully_qualified_domain_name: new_fqdn,
+            ip_addresses: ip_addresses,
+            agent_version: agent_version,
+            cpu_count: cpu_count,
+            total_memory_mb: total_memory_mb,
+            socket_count: socket_count,
+            os_version: os_version,
+            installation_source: installation_source,
+            heartbeat: :unknown
+          }
+        )
+      end
+    end
+
+    test "should clear software updates discovery when FQDN gets nullified" do
       host_id = Faker.UUID.v4()
       hostname = Faker.StarWars.character()
-      fully_qualified_domain_name = Faker.Internet.domain_name()
       ip_addresses = [Faker.Internet.ip_v4_address()]
       agent_version = Faker.Internet.slug()
       cpu_count = Enum.random(1..16)
@@ -178,12 +270,26 @@ defmodule Trento.Hosts.HostTest do
       os_version = Faker.App.version()
       installation_source = Enum.random([:community, :suse, :unknown])
 
+      current_fully_qualified_domain_name = Faker.Internet.ip_v4_address()
+      new_fully_qualified_domain_name = nil
+
       assert_events_and_state(
-        build(:host_registered_event, host_id: host_id, fully_qualified_domain_name: nil),
+        build(:host_registered_event,
+          host_id: host_id,
+          hostname: hostname,
+          fully_qualified_domain_name: current_fully_qualified_domain_name,
+          ip_addresses: ip_addresses,
+          agent_version: agent_version,
+          cpu_count: cpu_count,
+          total_memory_mb: total_memory_mb,
+          socket_count: socket_count,
+          os_version: os_version,
+          installation_source: installation_source
+        ),
         RegisterHost.new!(%{
           host_id: host_id,
           hostname: hostname,
-          fully_qualified_domain_name: fully_qualified_domain_name,
+          fully_qualified_domain_name: new_fully_qualified_domain_name,
           ip_addresses: ip_addresses,
           agent_version: agent_version,
           cpu_count: cpu_count,
@@ -192,22 +298,27 @@ defmodule Trento.Hosts.HostTest do
           os_version: os_version,
           installation_source: installation_source
         }),
-        %HostDetailsUpdated{
-          host_id: host_id,
-          hostname: hostname,
-          fully_qualified_domain_name: fully_qualified_domain_name,
-          ip_addresses: ip_addresses,
-          agent_version: agent_version,
-          cpu_count: cpu_count,
-          total_memory_mb: total_memory_mb,
-          socket_count: socket_count,
-          os_version: os_version,
-          installation_source: installation_source
-        },
+        [
+          %HostDetailsUpdated{
+            host_id: host_id,
+            hostname: hostname,
+            fully_qualified_domain_name: new_fully_qualified_domain_name,
+            ip_addresses: ip_addresses,
+            agent_version: agent_version,
+            cpu_count: cpu_count,
+            total_memory_mb: total_memory_mb,
+            socket_count: socket_count,
+            os_version: os_version,
+            installation_source: installation_source
+          },
+          %SoftwareUpdatesDiscoveryCleared{
+            host_id: host_id
+          }
+        ],
         %Host{
           host_id: host_id,
           hostname: hostname,
-          fully_qualified_domain_name: fully_qualified_domain_name,
+          fully_qualified_domain_name: new_fully_qualified_domain_name,
           ip_addresses: ip_addresses,
           agent_version: agent_version,
           cpu_count: cpu_count,
@@ -230,14 +341,17 @@ defmodule Trento.Hosts.HostTest do
       new_socket_count = Enum.random(1..16)
       new_os_version = Faker.App.version()
       new_installation_source = Enum.random([:community, :suse, :unknown])
-      new_fully_qualified_domain_name = Faker.Internet.domain_name()
+      fully_qualified_domain_name = Faker.Internet.domain_name()
 
       assert_events_and_state(
-        build(:host_registered_event, host_id: host_id),
+        build(:host_registered_event,
+          host_id: host_id,
+          fully_qualified_domain_name: fully_qualified_domain_name
+        ),
         RegisterHost.new!(%{
           host_id: host_id,
           hostname: new_hostname,
-          fully_qualified_domain_name: new_fully_qualified_domain_name,
+          fully_qualified_domain_name: fully_qualified_domain_name,
           ip_addresses: new_ip_addresses,
           agent_version: new_agent_version,
           cpu_count: new_cpu_count,
@@ -249,7 +363,7 @@ defmodule Trento.Hosts.HostTest do
         %HostDetailsUpdated{
           host_id: host_id,
           hostname: new_hostname,
-          fully_qualified_domain_name: new_fully_qualified_domain_name,
+          fully_qualified_domain_name: fully_qualified_domain_name,
           ip_addresses: new_ip_addresses,
           agent_version: new_agent_version,
           cpu_count: new_cpu_count,
@@ -261,7 +375,7 @@ defmodule Trento.Hosts.HostTest do
         %Host{
           host_id: host_id,
           hostname: new_hostname,
-          fully_qualified_domain_name: new_fully_qualified_domain_name,
+          fully_qualified_domain_name: fully_qualified_domain_name,
           ip_addresses: new_ip_addresses,
           agent_version: new_agent_version,
           cpu_count: new_cpu_count,
@@ -1825,7 +1939,8 @@ defmodule Trento.Hosts.HostTest do
       host_id = Faker.UUID.v4()
 
       initial_events = [
-        host_registered_event = build(:host_registered_event, host_id: host_id),
+        host_registered_event =
+          build(:host_registered_event, host_id: host_id, fully_qualified_domain_name: nil),
         %HostDeregistered{
           host_id: host_id,
           deregistered_at: DateTime.utc_now()
@@ -1897,6 +2012,110 @@ defmodule Trento.Hosts.HostTest do
           assert nil == host.deregistered_at
         end
       )
+    end
+
+    test "should restore a deregistered host and trigger software updates discovery" do
+      host_id = Faker.UUID.v4()
+
+      initial_events = [
+        host_registered_event = build(:host_registered_event, host_id: host_id),
+        %HostDeregistered{
+          host_id: host_id,
+          deregistered_at: DateTime.utc_now()
+        }
+      ]
+
+      restoration_command =
+        build(
+          :register_host_command,
+          host_id: host_id,
+          hostname: host_registered_event.hostname,
+          fully_qualified_domain_name: host_registered_event.fully_qualified_domain_name,
+          ip_addresses: host_registered_event.ip_addresses,
+          agent_version: host_registered_event.agent_version,
+          cpu_count: host_registered_event.cpu_count,
+          total_memory_mb: host_registered_event.total_memory_mb,
+          socket_count: host_registered_event.socket_count,
+          os_version: host_registered_event.os_version,
+          installation_source: host_registered_event.installation_source
+        )
+
+      assert_events_and_state(
+        initial_events,
+        [
+          restoration_command
+        ],
+        [
+          %HostRestored{host_id: host_id},
+          %SoftwareUpdatesDiscoveryRequested{
+            host_id: host_id,
+            fully_qualified_domain_name: host_registered_event.fully_qualified_domain_name
+          }
+        ],
+        fn host ->
+          assert nil == host.deregistered_at
+        end
+      )
+    end
+
+    test "should restore and update FQDN of a deregistered and and trigger software updates discovery" do
+      scenarios = [
+        %{
+          initial_fqdn: Faker.Internet.domain_name(),
+          new_fqdn: Faker.Internet.ip_v4_address()
+        },
+        %{
+          initial_fqdn: nil,
+          new_fqdn: Faker.Internet.domain_name()
+        }
+      ]
+
+      for %{initial_fqdn: initial_fqdn, new_fqdn: new_fqdn} <- scenarios do
+        host_id = Faker.UUID.v4()
+
+        initial_events = [
+          build(:host_registered_event,
+            host_id: host_id,
+            fully_qualified_domain_name: initial_fqdn
+          ),
+          %HostDeregistered{
+            host_id: host_id,
+            deregistered_at: DateTime.utc_now()
+          }
+        ]
+
+        restoration_command =
+          build(:register_host_command, host_id: host_id, fully_qualified_domain_name: new_fqdn)
+
+        assert_events_and_state(
+          initial_events,
+          [
+            restoration_command
+          ],
+          [
+            %HostRestored{host_id: host_id},
+            %HostDetailsUpdated{
+              host_id: restoration_command.host_id,
+              hostname: restoration_command.hostname,
+              ip_addresses: restoration_command.ip_addresses,
+              agent_version: restoration_command.agent_version,
+              cpu_count: restoration_command.cpu_count,
+              total_memory_mb: restoration_command.total_memory_mb,
+              socket_count: restoration_command.socket_count,
+              os_version: restoration_command.os_version,
+              installation_source: restoration_command.installation_source,
+              fully_qualified_domain_name: restoration_command.fully_qualified_domain_name
+            },
+            %SoftwareUpdatesDiscoveryRequested{
+              host_id: host_id,
+              fully_qualified_domain_name: new_fqdn
+            }
+          ],
+          fn host ->
+            assert nil == host.deregistered_at
+          end
+        )
+      end
     end
 
     test "should clear up software updates discoveries on deregistration" do

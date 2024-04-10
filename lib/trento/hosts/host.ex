@@ -158,7 +158,7 @@ defmodule Trento.Hosts.Host do
 
   # New host registered
   def execute(
-        %Host{host_id: nil},
+        %Host{host_id: nil} = host,
         %RegisterHost{
           host_id: host_id,
           hostname: hostname,
@@ -172,19 +172,24 @@ defmodule Trento.Hosts.Host do
           installation_source: installation_source
         }
       ) do
-    %HostRegistered{
-      host_id: host_id,
-      hostname: hostname,
-      ip_addresses: ip_addresses,
-      agent_version: agent_version,
-      cpu_count: cpu_count,
-      total_memory_mb: total_memory_mb,
-      socket_count: socket_count,
-      os_version: os_version,
-      installation_source: installation_source,
-      fully_qualified_domain_name: fully_qualified_domain_name,
-      heartbeat: :unknown
-    }
+    host
+    |> Multi.new()
+    |> Multi.execute(fn _ ->
+      %HostRegistered{
+        host_id: host_id,
+        hostname: hostname,
+        ip_addresses: ip_addresses,
+        agent_version: agent_version,
+        cpu_count: cpu_count,
+        total_memory_mb: total_memory_mb,
+        socket_count: socket_count,
+        os_version: os_version,
+        installation_source: installation_source,
+        fully_qualified_domain_name: fully_qualified_domain_name,
+        heartbeat: :unknown
+      }
+    end)
+    |> Multi.execute(&maybe_emit_software_updates_discovery_requested_event/1)
   end
 
   # Reject all the commands, except for the registration ones when the host_id does not exists
@@ -209,7 +214,7 @@ defmodule Trento.Hosts.Host do
           fully_qualified_domain_name: fully_qualified_domain_name,
           installation_source: installation_source,
           deregistered_at: deregistered_at
-        },
+        } = host,
         %RegisterHost{
           hostname: hostname,
           ip_addresses: ip_addresses,
@@ -223,16 +228,19 @@ defmodule Trento.Hosts.Host do
         }
       )
       when not is_nil(deregistered_at) do
-    %HostRestored{
-      host_id: host_id
-    }
+    host
+    |> Multi.new()
+    |> Multi.execute(fn _ ->
+      %HostRestored{host_id: host_id}
+    end)
+    |> Multi.execute(&maybe_emit_software_updates_discovery_requested_event/1)
   end
 
   def execute(
         %Host{
           host_id: host_id,
           deregistered_at: deregistered_at
-        },
+        } = host,
         %RegisterHost{
           hostname: hostname,
           ip_addresses: ip_addresses,
@@ -246,10 +254,12 @@ defmodule Trento.Hosts.Host do
         }
       )
       when not is_nil(deregistered_at) do
-    [
-      %HostRestored{
-        host_id: host_id
-      },
+    host
+    |> Multi.new()
+    |> Multi.execute(fn _ ->
+      %HostRestored{host_id: host_id}
+    end)
+    |> Multi.execute(fn _ ->
       %HostDetailsUpdated{
         host_id: host_id,
         hostname: hostname,
@@ -262,7 +272,8 @@ defmodule Trento.Hosts.Host do
         fully_qualified_domain_name: fully_qualified_domain_name,
         installation_source: installation_source
       }
-    ]
+    end)
+    |> Multi.execute(&maybe_emit_software_updates_discovery_requested_event/1)
   end
 
   def execute(
@@ -312,11 +323,13 @@ defmodule Trento.Hosts.Host do
   end
 
   def execute(
-        %Host{},
+        %Host{
+          fully_qualified_domain_name: current_fully_qualified_domain_name
+        } = host,
         %RegisterHost{
           host_id: host_id,
           hostname: hostname,
-          fully_qualified_domain_name: fully_qualified_domain_name,
+          fully_qualified_domain_name: new_fully_qualified_domain_name,
           ip_addresses: ip_addresses,
           agent_version: agent_version,
           cpu_count: cpu_count,
@@ -326,18 +339,29 @@ defmodule Trento.Hosts.Host do
           installation_source: installation_source
         }
       ) do
-    %HostDetailsUpdated{
-      host_id: host_id,
-      hostname: hostname,
-      fully_qualified_domain_name: fully_qualified_domain_name,
-      ip_addresses: ip_addresses,
-      agent_version: agent_version,
-      cpu_count: cpu_count,
-      total_memory_mb: total_memory_mb,
-      socket_count: socket_count,
-      os_version: os_version,
-      installation_source: installation_source
-    }
+    host
+    |> Multi.new()
+    |> Multi.execute(fn _ ->
+      %HostDetailsUpdated{
+        host_id: host_id,
+        hostname: hostname,
+        fully_qualified_domain_name: new_fully_qualified_domain_name,
+        ip_addresses: ip_addresses,
+        agent_version: agent_version,
+        cpu_count: cpu_count,
+        total_memory_mb: total_memory_mb,
+        socket_count: socket_count,
+        os_version: os_version,
+        installation_source: installation_source
+      }
+    end)
+    |> Multi.execute(fn _ ->
+      maybe_emit_software_updates_discovery_requested_event_or_clear_up(
+        host_id,
+        current_fully_qualified_domain_name,
+        new_fully_qualified_domain_name
+      )
+    end)
   end
 
   def execute(
@@ -826,6 +850,45 @@ defmodule Trento.Hosts.Host do
       }
     end
   end
+
+  defp maybe_emit_software_updates_discovery_requested_event(%Host{
+         fully_qualified_domain_name: nil
+       }),
+       do: nil
+
+  defp maybe_emit_software_updates_discovery_requested_event(%Host{
+         host_id: host_id,
+         fully_qualified_domain_name: fully_qualified_domain_name
+       }) do
+    %SoftwareUpdatesDiscoveryRequested{
+      host_id: host_id,
+      fully_qualified_domain_name: fully_qualified_domain_name
+    }
+  end
+
+  defp maybe_emit_software_updates_discovery_requested_event_or_clear_up(
+         host_id,
+         current_fully_qualified_domain_name,
+         new_fully_qualified_domain_name
+       )
+       when current_fully_qualified_domain_name != new_fully_qualified_domain_name and
+              is_nil(new_fully_qualified_domain_name),
+       do: %SoftwareUpdatesDiscoveryCleared{
+         host_id: host_id
+       }
+
+  defp maybe_emit_software_updates_discovery_requested_event_or_clear_up(
+         host_id,
+         current_fully_qualified_domain_name,
+         new_fully_qualified_domain_name
+       )
+       when current_fully_qualified_domain_name != new_fully_qualified_domain_name,
+       do: %SoftwareUpdatesDiscoveryRequested{
+         host_id: host_id,
+         fully_qualified_domain_name: new_fully_qualified_domain_name
+       }
+
+  defp maybe_emit_software_updates_discovery_requested_event_or_clear_up(_, _, _), do: nil
 
   defp compute_saptune_health(nil), do: Health.warning()
 
