@@ -21,8 +21,9 @@ defimpl Trento.Infrastructure.Commanded.Middleware.Enrichable,
         join: h in HostReadModel,
         on: di.host_id == h.id,
         where:
-          ^db_host in h.ip_addresses and ^tenant == di.tenant and is_nil(h.deregistered_at) and
-            is_nil(d.deregistered_at)
+          ^db_host in h.ip_addresses and
+            fragment("? @\\? '$.name \\? (@ == ?)'", d.tenants, literal(^tenant)) and
+            is_nil(h.deregistered_at) and is_nil(d.deregistered_at)
 
     case Repo.one(query) do
       %DatabaseReadModel{id: database_id, health: database_health} ->

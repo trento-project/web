@@ -19,7 +19,8 @@ defmodule TrentoWeb.V1.HealthOverviewView do
           database_health: database_health,
           application_cluster_health: application_cluster_health,
           database_cluster_health: database_cluster_health,
-          hosts_health: hosts_health
+          hosts_health: hosts_health,
+          database_sid: database_sid
         }
       }) do
     %{
@@ -37,7 +38,9 @@ defmodule TrentoWeb.V1.HealthOverviewView do
       cluster_id: extract_cluster_id(database_instances),
       application_cluster_id: extract_cluster_id(application_instances),
       database_cluster_id: extract_cluster_id(database_instances),
-      tenant: extract_tenant(database_instances)
+      # deprecated field
+      tenant: database_sid,
+      database_sid: database_sid
     }
   end
 
@@ -55,10 +58,4 @@ defmodule TrentoWeb.V1.HealthOverviewView do
       _ -> false
     end)
   end
-
-  @spec extract_tenant([DatabaseInstanceReadModel.t()]) :: String.t() | nil
-  defp extract_tenant([]), do: nil
-
-  defp extract_tenant([%DatabaseInstanceReadModel{tenant: tenant} | _]),
-    do: tenant
 end

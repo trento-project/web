@@ -11,7 +11,6 @@ defmodule Trento.Databases.Events.DatabaseInstanceRegistered do
   defevent version: 2 do
     field :database_id, Ecto.UUID
     field :sid, :string
-    field :tenant, :string
     field :host_id, Ecto.UUID
     field :instance_number, :string
     field :instance_hostname, :string

@@ -18,7 +18,6 @@ defmodule Trento.Databases.Projections.DatabaseInstanceReadModel do
   schema "database_instances" do
     field :database_id, Ecto.UUID, primary_key: true
     field :sid, :string
-    field :tenant, :string
     field :instance_number, :string, primary_key: true
     field :instance_hostname, :string
     field :features, :string

@@ -19,6 +19,7 @@ defmodule TrentoWeb.V1.DatabaseView do
     |> Map.delete(:__meta__)
     |> Map.delete(:deregistered_at)
     |> Map.delete(:sap_systems)
+    |> Map.delete(:tenants)
     |> Map.put(:database_instances, rendered_database_instances)
     |> add_system_replication_status_to_secondary_instance
   end
@@ -48,6 +49,12 @@ defmodule TrentoWeb.V1.DatabaseView do
     |> Map.delete(:tags)
     |> Map.delete(:database_instances)
     |> Map.delete(:sap_systems)
+  end
+
+  def render("database_tenant.json", %{tenant: tenant}) do
+    tenant
+    |> Map.from_struct()
+    |> Map.delete(:__meta__)
   end
 
   def render("database_restored.json", %{database: database}) do
@@ -116,6 +123,15 @@ defmodule TrentoWeb.V1.DatabaseView do
         sid: sid,
         absent_at: absent_at
       }
+
+  def render("database_tenants_updated.json", %{tenants: tenants, database_id: database_id}) do
+    rendered_tenants = render_many(tenants, __MODULE__, "database_tenant.json", as: :tenant)
+
+    %{
+      tenants: rendered_tenants,
+      database_id: database_id
+    }
+  end
 
   def add_system_replication_status_to_secondary_instance(
         %{database_instances: database_instances} = sap_system

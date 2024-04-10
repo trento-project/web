@@ -8,13 +8,11 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterApplicationIn
   alias Trento.SapSystems.Commands.RegisterApplicationInstance
 
   test "should return an enriched command if the database was found by the ip and tenant" do
-    %{
-      id: database_id,
-      health: health
-    } = insert(:database)
+    [%{name: tenant_name}, _] = tenants = build_list(2, :tenant)
+
+    %{id: database_id, health: health} = insert(:database, tenants: tenants)
 
     %{
-      tenant: tenant,
       host: %{ip_addresses: [ip]}
     } = insert(:database_instance, database_id: database_id)
 
@@ -23,10 +21,14 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterApplicationIn
         :register_application_instance_command,
         sap_system_id: nil,
         db_host: ip,
-        tenant: tenant
+        tenant: tenant_name,
+        instance_number: "00",
+        features: Faker.Pokemon.name(),
+        host_id: Faker.UUID.v4(),
+        health: :passing
       )
 
-    expected_sap_system_id = UUID.uuid5(database_id, tenant)
+    expected_sap_system_id = UUID.uuid5(database_id, tenant_name)
 
     assert {:ok,
             %RegisterApplicationInstance{
@@ -38,17 +40,19 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterApplicationIn
   end
 
   test "should return a database not found error if the database instance host has been deregistered" do
+    [%{name: tenant_name}, _] = tenants = build_list(2, :tenant)
+
+    %{id: database_id} = insert(:database, tenants: tenants)
+
     deregistered_host = insert(:host, deregistered_at: DateTime.utc_now())
 
-    %{id: database_id} = insert(:database)
-
     %{
-      tenant: tenant,
       host: %{ip_addresses: [ip]}
     } =
       insert(:database_instance_without_host,
         database_id: database_id,
         host_id: deregistered_host.id,
+        database_id: database_id,
         host: deregistered_host
       )
 
@@ -57,7 +61,11 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterApplicationIn
         :register_application_instance_command,
         sap_system_id: nil,
         db_host: ip,
-        tenant: tenant
+        tenant: tenant_name,
+        instance_number: "00",
+        features: Faker.Pokemon.name(),
+        host_id: Faker.UUID.v4(),
+        health: :passing
       )
 
     assert {:error, :database_not_registered} = Enrichable.enrich(command, %{})
@@ -67,7 +75,14 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterApplicationIn
     command =
       build(
         :register_application_instance_command,
-        sap_system_id: nil
+        sap_system_id: nil,
+        sid: Faker.StarWars.planet(),
+        db_host: "not_found",
+        tenant: "the tenant",
+        instance_number: "00",
+        features: Faker.Pokemon.name(),
+        host_id: Faker.UUID.v4(),
+        health: :passing
       )
 
     assert {:error, :database_not_registered} = Enrichable.enrich(command, %{})

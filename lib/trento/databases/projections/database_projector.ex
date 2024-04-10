@@ -25,7 +25,8 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
     DatabaseInstanceRegistered,
     DatabaseInstanceSystemReplicationChanged,
     DatabaseRegistered,
-    DatabaseRestored
+    DatabaseRestored,
+    DatabaseTenantsUpdated
   }
 
   alias Trento.Repo
@@ -62,12 +63,26 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
   )
 
   project(
+    %DatabaseTenantsUpdated{
+      database_id: database_id,
+      tenants: tenants
+    },
+    fn multi ->
+      changeset =
+        DatabaseReadModel
+        |> Repo.get!(database_id)
+        |> DatabaseReadModel.changeset(%{tenants: Enum.map(tenants, &Map.from_struct/1)})
+
+      Ecto.Multi.update(multi, :database, changeset)
+    end
+  )
+
+  project(
     %DatabaseInstanceRegistered{
       database_id: database_id,
       sid: sid,
       instance_number: instance_number,
       instance_hostname: instance_hostname,
-      tenant: tenant,
       features: features,
       http_port: http_port,
       https_port: https_port,
@@ -84,7 +99,6 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
           sid: sid,
           instance_number: instance_number,
           instance_hostname: instance_hostname,
-          tenant: tenant,
           features: features,
           http_port: http_port,
           https_port: https_port,
@@ -463,6 +477,28 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
         instance_number: instance_number,
         host_id: host_id,
         sid: sid
+      )
+    )
+  end
+
+  @impl true
+  def after_update(
+        %DatabaseTenantsUpdated{
+          database_id: database_id
+        },
+        _,
+        %{
+          database: %DatabaseReadModel{
+            tenants: tenants
+          }
+        }
+      ) do
+    TrentoWeb.Endpoint.broadcast(
+      @databases_topic,
+      "database_tenants_updated",
+      DatabaseView.render("database_tenants_updated.json",
+        tenants: tenants,
+        database_id: database_id
       )
     )
   end
