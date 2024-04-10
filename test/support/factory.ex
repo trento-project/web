@@ -35,6 +35,7 @@ defmodule Trento.Factory do
     HostDetailsUpdated,
     HostHealthChanged,
     HostRegistered,
+    HostRestored,
     HostSaptuneHealthChanged,
     HostTombstoned,
     SaptuneStatusUpdated,
@@ -136,6 +137,12 @@ defmodule Trento.Factory do
       socket_count: Enum.random(1..16),
       os_version: Faker.App.semver(),
       installation_source: Enum.random([:community, :suse, :unknown])
+    }
+  end
+
+  def host_restored_event_factory do
+    %HostRestored{
+      host_id: Faker.UUID.v4()
     }
   end
 

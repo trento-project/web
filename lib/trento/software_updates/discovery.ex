@@ -41,7 +41,12 @@ defmodule Trento.SoftwareUpdates.Discovery do
     do:
       {:ok,
        Hosts.get_all_hosts()
-       |> Enum.map(&discover_host_software_updates/1)
+       |> Enum.map(fn %HostReadModel{
+                        id: host_id,
+                        fully_qualified_domain_name: fully_qualified_domain_name
+                      } ->
+         discover_host_software_updates(host_id, fully_qualified_domain_name)
+       end)
        |> Enum.split_with(fn
          {:ok, _, _, _} -> true
          _ -> false
@@ -52,12 +57,8 @@ defmodule Trento.SoftwareUpdates.Discovery do
     hosts = Hosts.get_all_hosts()
 
     hosts
-    |> Enum.map(fn %HostReadModel{id: host_id} -> %{host_id: host_id} end)
-    |> Enum.each(fn command_payload ->
-      command_payload
-      |> ClearSoftwareUpdatesDiscovery.new!()
-      |> commanded().dispatch()
-    end)
+    |> Enum.map(fn %HostReadModel{id: host_id} -> host_id end)
+    |> Enum.each(&clear_host_software_updates_discovery/1)
 
     if !Enum.empty?(hosts) do
       clear()
@@ -66,18 +67,27 @@ defmodule Trento.SoftwareUpdates.Discovery do
     :ok
   end
 
-  defp discover_host_software_updates(%HostReadModel{
-         id: host_id,
-         fully_qualified_domain_name: nil
-       }) do
+  def clear_host_software_updates_discovery(host_id),
+    do:
+      %{host_id: host_id}
+      |> ClearSoftwareUpdatesDiscovery.new!()
+      |> commanded().dispatch()
+
+  @spec discover_host_software_updates(String.t(), String.t()) ::
+          {:ok, any()} | {:error, any(), any()}
+  def discover_host_software_updates(host_id, fully_qualified_domain_name)
+      when is_nil(fully_qualified_domain_name) do
     Logger.info("Host #{host_id} does not have an fqdn. Skipping software updates discovery")
     {:error, host_id, :host_without_fqdn}
   end
 
-  defp discover_host_software_updates(%HostReadModel{
-         id: host_id,
-         fully_qualified_domain_name: fully_qualified_domain_name
-       }) do
+  @spec discover_host_software_updates(String.t(), String.t()) ::
+          {:ok, any()} | {:error, any()}
+  def discover_host_software_updates(_, nil), do: {:error, :host_without_fqdn}
+
+  @spec discover_host_software_updates(String.t(), String.t()) ::
+          {:ok, any()} | {:error, any()}
+  def discover_host_software_updates(host_id, fully_qualified_domain_name) do
     with {:ok, system_id} <- get_system_id(fully_qualified_domain_name),
          {:ok, relevant_patches} <- get_relevant_patches(system_id),
          :ok <-
