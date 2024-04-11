@@ -549,7 +549,6 @@ jobs:
           name: regression-e2e-screenshots
           path: test/e2e/cypress/screenshots/
 
-
   main-branch-deps:
     name: Rebuild main branch dependencies
     runs-on: ubuntu-20.04
