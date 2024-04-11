@@ -16,7 +16,7 @@ env:
   OTP_VERSION: 26
   MIX_ENV: test
   NODE_VERSION: "16"
-  MANTAINERS: '["cdimonaco", "dottorblaster", "fabriziosestito", "rtorrero", "nelsonkopliku", "arbulu89","jagabomb","emaksy","jamie-suse"]'
+  MANTAINERS: '["cdimonaco", "dottorblaster", "janvhs", "rtorrero", "nelsonkopliku", "arbulu89","jagabomb","emaksy","jamie-suse"]'
   RG_TEST_LABEL: regression
 
 jobs:
