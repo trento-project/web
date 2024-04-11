@@ -58,10 +58,7 @@ import {
 
 import { SET_USER_AS_LOGGED } from '@state/user';
 
-import { setEulaVisible, setIsPremium } from '@state/settings';
-
 import { watchNotifications } from '@state/sagas/notifications';
-import { watchAcceptEula } from '@state/sagas/eula';
 
 import { watchCatalogEvents } from '@state/sagas/catalog';
 import { watchClusterEvents } from '@state/sagas/clusters';
@@ -94,14 +91,6 @@ function* initialDataFetch() {
   yield loadSapSystemsHealthSummary();
 
   yield fork(checkApiKeyExpiration);
-
-  const {
-    data: { eula_accepted, premium_subscription },
-  } = yield call(get, '/settings');
-
-  if (!eula_accepted) {
-    yield put(setEulaVisible());
-  }
 
   if (premium_subscription) {
     yield put(setIsPremium());
@@ -236,7 +225,6 @@ function* refreshHealthSummaryOnComponentsHealthChange() {
 export default function* rootSaga() {
   yield all([
     refreshHealthSummaryOnComponentsHealthChange(),
-    watchAcceptEula(),
     watchCatalogEvents(),
     watchChecksSelectionEvents(),
     watchClusterEvents(),

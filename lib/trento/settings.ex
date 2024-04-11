@@ -26,19 +26,6 @@ defmodule Trento.Settings do
     installation_id
   end
 
-  @spec eula_accepted? :: boolean
-  def eula_accepted? do
-    %InstallationSettings{eula_accepted: eula_accepted} =
-      Repo.one!(InstallationSettings.base_query())
-
-    eula_accepted
-  end
-
-  def accept_eula do
-    {1, _} = Repo.update_all(InstallationSettings.base_query(), set: [eula_accepted: true])
-    :ok
-  end
-
   def premium? do
     flavor() == "Premium"
   end

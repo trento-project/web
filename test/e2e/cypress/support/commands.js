@@ -62,19 +62,6 @@ Cypress.Commands.add('apiLogin', () => {
   });
 });
 
-Cypress.Commands.add('acceptEula', () => {
-  apiLogin().then(({ accessToken }) => {
-    cy.request({
-      url: '/api/v1/accept_eula',
-      method: 'POST',
-      auth: {
-        bearer: accessToken,
-      },
-      body: {},
-    });
-  });
-});
-
 Cypress.Commands.add('updateApiKeyExpiration', (apiKeyExpiration) => {
   apiLogin().then(({ accessToken }) => {
     cy.request({
