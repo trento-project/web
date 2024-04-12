@@ -722,7 +722,8 @@ defmodule Trento.Factory do
       total_memory_mb: Enum.random(1..128),
       socket_count: Enum.random(1..16),
       os_version: Faker.App.semver(),
-      installation_source: Enum.random([:community, :suse, :unknown])
+      installation_source: Enum.random([:community, :suse, :unknown]),
+      fully_qualified_domain_name: Faker.Internet.domain_name()
     })
   end
 
