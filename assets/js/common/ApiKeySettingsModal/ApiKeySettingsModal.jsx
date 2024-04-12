@@ -102,8 +102,8 @@ function ApiKeySettingsModal({
             <Banner type="warning">
               <span className="text-sm">
                 Generating a new API Key forces an update of the agent
-                configuration in all the registered hosts. <br />
-                This action cannot be undone
+                configuration on all the registered hosts. <br />
+                This action cannot be undone.
               </span>
             </Banner>
             <span className="my-1 mb-4 text-gray-500">
