@@ -1,9 +1,13 @@
 import React from 'react';
 import { act, screen, waitFor } from '@testing-library/react';
+import { faker } from '@faker-js/faker';
 import userEvent from '@testing-library/user-event';
 import 'intersection-observer';
 import '@testing-library/jest-dom';
-import { hostFactory } from '@lib/test-utils/factories';
+import {
+  hostFactory,
+  sapSystemApplicationInstanceFactory,
+} from '@lib/test-utils/factories';
 
 import {
   renderWithRouter,
@@ -54,7 +58,6 @@ describe('HostsLists component', () => {
           const [StatefulHostsList] = withDefaultState(<HostsList />);
           const params = { route: `/hosts?hostname=${host}` };
           renderWithRouter(StatefulHostsList, params);
-
           const table = screen.getByRole('table');
           expect(table.querySelector('td:nth-child(2)')).toHaveTextContent(
             host
@@ -120,6 +123,30 @@ describe('HostsLists component', () => {
           )
         ).toBeVisible()
       );
+    });
+
+    it('should show only unique SIDs', async () => {
+      const host = hostFactory.build();
+      const duplicateSID = faker.string.alpha({ casing: 'upper', count: 3 });
+      const sapInstances = sapSystemApplicationInstanceFactory.buildList(2, {
+        sid: duplicateSID,
+        host_id: host.id,
+      });
+
+      const state = {
+        ...defaultInitialState,
+        hostsList: {
+          hosts: [host],
+        },
+        sapSystemsList: {
+          applicationInstances: [...sapInstances],
+        },
+      };
+
+      const [StatefulHostsList] = withState(<HostsList />, state);
+      renderWithRouter(StatefulHostsList);
+
+      expect(screen.getAllByText(duplicateSID).length).toBe(1);
     });
   });
 

@@ -15,6 +15,7 @@ import Table from '@common/Table';
 import Tags from '@common/Tags';
 import Tooltip from '@common/Tooltip';
 
+import { uniqBy } from 'lodash';
 import { post, del } from '@lib/network';
 import { agentVersionWarning } from '@lib/agent';
 
@@ -129,8 +130,8 @@ function HostsList() {
               </SapSystemLink>,
             ];
           });
-
-          return sidsArray;
+          const extractSid = (item) => item[1]?.props?.children || null;
+          return uniqBy(sidsArray, extractSid);
         },
       },
       {
