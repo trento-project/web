@@ -31,6 +31,9 @@ context('Settings page', () => {
       cy.get('@quantityInput').type('2');
       cy.get('@generateButton').click();
 
+      cy.get('.generate-api-confirmation').as('confirmationGenerateButton');
+      cy.get('@confirmationGenerateButton').click();
+
       cy.get(':nth-child(1) > .w-full > code').as('generatedApiKey');
       cy.get('@generatedApiKey').should('not.be.empty');
 

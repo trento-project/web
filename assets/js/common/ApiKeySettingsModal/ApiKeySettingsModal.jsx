@@ -201,7 +201,7 @@ function ApiKeySettingsModal({
           {showConfirmation ? (
             <>
               <Button
-                className="w-1/6 mr-2"
+                className="w-1/6 mr-2 generate-api-confirmation"
                 onClick={() => generateApiKeyExpiration()}
                 disabled={loading}
               >
