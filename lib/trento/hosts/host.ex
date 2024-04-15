@@ -233,8 +233,7 @@ defmodule Trento.Hosts.Host do
   def execute(
         %Host{
           host_id: host_id,
-          deregistered_at: deregistered_at,
-          fully_qualified_domain_name: current_fully_qualified_domain_name
+          deregistered_at: deregistered_at
         },
         %RegisterHost{
           hostname: hostname,
@@ -264,11 +263,7 @@ defmodule Trento.Hosts.Host do
         installation_source: installation_source
       }
     ] ++
-      maybe_emit_software_updates_discovery_events(
-        host_id,
-        current_fully_qualified_domain_name,
-        new_fully_qualified_domain_name
-      )
+      maybe_emit_software_updates_discovery_events(host_id, nil, new_fully_qualified_domain_name)
   end
 
   def execute(

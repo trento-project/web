@@ -2193,6 +2193,62 @@ defmodule Trento.Hosts.HostTest do
       end
     end
 
+    test "should restore and update a deregistered host but not trigger software updates discovery when FQDN stays null or gets nullified" do
+      scenarios = [
+        %{
+          initial_fqdn: nil,
+          new_fqdn: nil
+        },
+        %{
+          initial_fqdn: Faker.Internet.domain_name(),
+          new_fqdn: nil
+        }
+      ]
+
+      for %{initial_fqdn: initial_fqdn, new_fqdn: new_fqdn} <- scenarios do
+        host_id = Faker.UUID.v4()
+
+        initial_events = [
+          build(:host_registered_event,
+            host_id: host_id,
+            fully_qualified_domain_name: initial_fqdn
+          ),
+          %HostDeregistered{
+            host_id: host_id,
+            deregistered_at: DateTime.utc_now()
+          }
+        ]
+
+        restoration_command =
+          build(:register_host_command, host_id: host_id, fully_qualified_domain_name: new_fqdn)
+
+        assert_events_and_state(
+          initial_events,
+          [
+            restoration_command
+          ],
+          [
+            %HostRestored{host_id: host_id},
+            %HostDetailsUpdated{
+              host_id: restoration_command.host_id,
+              hostname: restoration_command.hostname,
+              ip_addresses: restoration_command.ip_addresses,
+              agent_version: restoration_command.agent_version,
+              cpu_count: restoration_command.cpu_count,
+              total_memory_mb: restoration_command.total_memory_mb,
+              socket_count: restoration_command.socket_count,
+              os_version: restoration_command.os_version,
+              installation_source: restoration_command.installation_source,
+              fully_qualified_domain_name: restoration_command.fully_qualified_domain_name
+            }
+          ],
+          fn host ->
+            assert nil == host.deregistered_at
+          end
+        )
+      end
+    end
+
     test "should clear up software updates discoveries on deregistration" do
       host_id = Faker.UUID.v4()
       deregistered_at = DateTime.utc_now()
