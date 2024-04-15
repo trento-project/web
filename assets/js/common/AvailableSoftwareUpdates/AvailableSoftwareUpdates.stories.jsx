@@ -5,12 +5,18 @@ export default {
   component: AvailableSoftwareUpdates,
   argTypes: {
     relevantPatches: {
-      type: 'string',
+      type: 'number',
       description: 'Number of relevant patches available for the system',
+      control: {
+        type: 'number',
+      },
     },
     upgradablePackages: {
-      type: 'string',
+      type: 'number',
       description: 'Number of upgradable packages for the system',
+      control: {
+        type: 'number',
+      },
     },
     tooltip: {
       type: 'string',
@@ -24,11 +30,11 @@ export default {
 };
 
 export const Default = {
-  args: { relevantPatches: '412', upgradablePackages: '234' },
+  args: { relevantPatches: 412, upgradablePackages: 234 },
 };
 
 export const Cool = {
-  args: { relevantPatches: '0', upgradablePackages: '42' },
+  args: { relevantPatches: 0, upgradablePackages: 42 },
 };
 
 export const Unknown = { args: { tooltip: 'SUSE Manager is not available' } };
