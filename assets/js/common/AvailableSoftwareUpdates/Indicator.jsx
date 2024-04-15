@@ -9,7 +9,7 @@ import {
 import Tooltip from '@common/Tooltip';
 
 function Indicator({ title, critical, tooltip, icon, loading, children }) {
-  const unknown = !children;
+  const unknown = children === undefined;
 
   if (loading) {
     return (
@@ -49,11 +49,13 @@ function Indicator({ title, critical, tooltip, icon, loading, children }) {
                 className="inline align-bottom fill-red-500"
               />
             )}{' '}
-            {children || (
+            {unknown ? (
               <div>
                 <EOS_ERROR_OUTLINED size="l" className="inline align-bottom" />{' '}
                 Unknown
               </div>
+            ) : (
+              children
             )}
           </div>
         </div>
