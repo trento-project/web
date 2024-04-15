@@ -136,8 +136,9 @@ describe('HostsLists component', () => {
         host_id: host.id,
       });
       const databaseInstances = databaseInstanceFactory.buildList(2, {
-        sid: duplicateSID,
+        database_id: id,
         host_id: host.id,
+        sid: duplicateSID,
       });
       const state = {
         ...defaultInitialState,
@@ -146,9 +147,9 @@ describe('HostsLists component', () => {
         },
         sapSystemsList: {
           applicationInstances: [...sapInstances],
-          databasesList: {
-            databaseInstances: [...databaseInstances],
-          },
+        },
+        databasesList: {
+          databaseInstances: [...databaseInstances],
         },
       };
 

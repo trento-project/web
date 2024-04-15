@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { EOS_WARNING_OUTLINED } from 'eos-icons-react';
+import { uniqBy } from 'lodash';
 
 import CleanUpButton from '@common/CleanUpButton';
 import HealthIcon from '@common/HealthIcon';
@@ -15,7 +16,6 @@ import Table from '@common/Table';
 import Tags from '@common/Tags';
 import Tooltip from '@common/Tooltip';
 
-import { uniqBy } from 'lodash';
 import { post, del } from '@lib/network';
 import { agentVersionWarning } from '@lib/agent';
 
