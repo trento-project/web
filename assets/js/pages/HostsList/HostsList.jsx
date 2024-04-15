@@ -117,21 +117,22 @@ function HostsList() {
         filter: (filter, key) => (element) =>
           element[key].some((sid) => filter.includes(sid)),
         render: (sids, { sap_systems }) => {
-          const sidsArray = sap_systems.map((instance, index) => {
-            const instanceID = getInstanceID(instance);
-            return [
-              index > 0 && ', ',
-              <SapSystemLink
-                key={`${instanceID}-${instance?.id}`}
-                systemType={instance?.type}
-                sapSystemId={instanceID}
-              >
-                {instance?.sid}
-              </SapSystemLink>,
-            ];
-          });
-          const extractSid = (item) => item[1]?.props?.children || null;
-          return uniqBy(sidsArray, extractSid);
+          const sidsArray = uniqBy(sap_systems, getInstanceID).map(
+            (instance, index) => {
+              const instanceID = getInstanceID(instance);
+              return [
+                index > 0 && ', ',
+                <SapSystemLink
+                  key={`${instanceID}-${instance?.id}`}
+                  systemType={instance?.type}
+                  sapSystemId={instanceID}
+                >
+                  {instance?.sid}
+                </SapSystemLink>,
+              ];
+            }
+          );
+          return sidsArray;
         },
       },
       {

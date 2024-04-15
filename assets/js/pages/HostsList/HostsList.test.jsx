@@ -5,6 +5,7 @@ import userEvent from '@testing-library/user-event';
 import 'intersection-observer';
 import '@testing-library/jest-dom';
 import {
+  databaseInstanceFactory,
   hostFactory,
   sapSystemApplicationInstanceFactory,
 } from '@lib/test-utils/factories';
@@ -128,11 +129,16 @@ describe('HostsLists component', () => {
     it('should show only unique SIDs', async () => {
       const host = hostFactory.build();
       const duplicateSID = faker.string.alpha({ casing: 'upper', count: 3 });
+      const id = faker.string.uuid();
       const sapInstances = sapSystemApplicationInstanceFactory.buildList(2, {
+        sap_system_id: id,
         sid: duplicateSID,
         host_id: host.id,
       });
-
+      const databaseInstances = databaseInstanceFactory.buildList(2, {
+        sid: duplicateSID,
+        host_id: host.id,
+      });
       const state = {
         ...defaultInitialState,
         hostsList: {
@@ -140,12 +146,14 @@ describe('HostsLists component', () => {
         },
         sapSystemsList: {
           applicationInstances: [...sapInstances],
+          databasesList: {
+            databaseInstances: [...databaseInstances],
+          },
         },
       };
 
       const [StatefulHostsList] = withState(<HostsList />, state);
       renderWithRouter(StatefulHostsList);
-
       expect(screen.getAllByText(duplicateSID).length).toBe(1);
     });
   });
