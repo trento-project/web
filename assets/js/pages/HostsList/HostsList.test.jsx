@@ -128,34 +128,30 @@ describe('HostsLists component', () => {
 
     it('should show only unique SIDs', async () => {
       const host = hostFactory.build();
-      const duplicateSID = faker.string.alpha({ casing: 'upper', count: 3 });
+      const duplicatedSID = faker.string.alpha({ casing: 'upper', count: 3 });
       const id = faker.string.uuid();
-      const sapInstances = sapSystemApplicationInstanceFactory.buildList(2, {
-        sap_system_id: id,
-        sid: duplicateSID,
-        host_id: host.id,
-      });
+      const applicationInstances =
+        sapSystemApplicationInstanceFactory.buildList(2, {
+          sap_system_id: id,
+          sid: duplicatedSID,
+          host_id: host.id,
+        });
       const databaseInstances = databaseInstanceFactory.buildList(2, {
         database_id: id,
         host_id: host.id,
-        sid: duplicateSID,
+        sid: duplicatedSID,
       });
       const state = {
         ...defaultInitialState,
         hostsList: {
           hosts: [host],
         },
-        sapSystemsList: {
-          applicationInstances: [...sapInstances],
-        },
-        databasesList: {
-          databaseInstances: [...databaseInstances],
-        },
+        sapSystemsList: { applicationInstances },
+        databasesList: { databaseInstances },
       };
-
       const [StatefulHostsList] = withState(<HostsList />, state);
       renderWithRouter(StatefulHostsList);
-      expect(screen.getAllByText(duplicateSID).length).toBe(1);
+      expect(screen.getAllByText(duplicatedSID).length).toBe(1);
     });
   });
 
