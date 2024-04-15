@@ -17,7 +17,12 @@ defmodule Trento.Infrastructure.SoftwareUpdates.MockSuma do
        |> Enum.sum()}
 
   @impl true
-  def get_relevant_patches(_system_id), do: {:ok, mocked_relevant_patches()}
+  def get_relevant_patches(system_id) do
+    case Map.get(mocked_relevant_patches(), system_id) do
+      nil -> {:ok, []}
+      patches -> {:ok, patches}
+    end
+  end
 
   @impl true
   def get_upgradable_packages(_system_id),
