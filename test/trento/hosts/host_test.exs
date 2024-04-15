@@ -1607,6 +1607,33 @@ defmodule Trento.Hosts.HostTest do
       end
     end
 
+    test "should not trigger the software updates discovery process without a valid FQDN" do
+      host_id = Faker.UUID.v4()
+
+      initial_events = [
+        build(:host_registered_event,
+          host_id: host_id,
+          fully_qualified_domain_name: nil
+        ),
+        build(:heartbeat_succeded, host_id: host_id)
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        DiscoverSoftwareUpdates.new!(%{
+          host_id: host_id
+        }),
+        [],
+        fn host ->
+          assert %Host{
+                   host_id: ^host_id,
+                   fully_qualified_domain_name: nil,
+                   heartbeat: Health.passing()
+                 } = host
+        end
+      )
+    end
+
     test "should trigger the software updates discovery process" do
       host_id = Faker.UUID.v4()
       fully_qualified_domain_name = Faker.Internet.domain_name()
