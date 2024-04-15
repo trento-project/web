@@ -83,3 +83,28 @@ config :trento, Trento.Infrastructure.Commanded.EventHandlers.StreamRollUpEventH
 config :joken,
   access_token_signer: "s2ZdE+3+ke1USHEJ5O45KT364KiXPYaB9cJPdH3p60t8yT0nkLexLBNw8TFSzC7k",
   refresh_token_signer: "L0wvcZh3ACQpibVhV/nh5jd/NaZWL4ijZxTxGJMGpacuXIBc4In3YCwXeVM98ygp"
+
+config :trento, Trento.Infrastructure.SoftwareUpdates.MockSuma,
+  relevant_patches: %{
+    # 448 matches to "test" fqdn
+    448 => [
+      %{
+        date: "2024-02-27",
+        advisory_name: "SUSE-15-SP4-2024-630",
+        advisory_type: :bugfix,
+        advisory_status: "stable",
+        id: 4182,
+        advisory_synopsis: "Recommended update for cloud-netconfig",
+        update_date: "2024-02-27"
+      },
+      %{
+        date: "2024-02-26",
+        advisory_name: "SUSE-15-SP4-2024-619",
+        advisory_type: :security_advisory,
+        advisory_status: "stable",
+        id: 4174,
+        advisory_synopsis: "important: Security update for java-1_8_0-ibm",
+        update_date: "2024-02-26"
+      }
+    ]
+  }

@@ -457,7 +457,7 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
   describe "getting software updates" do
     test "successfully returns software updates" do
       insert_software_updates_settings()
-      %{id: host_id} = insert(:host)
+      %{id: host_id} = insert(:host, fully_qualified_domain_name: "test")
 
       assert {:ok, %{relevant_patches: [_, _], upgradable_packages: [_, _]}} =
                SoftwareUpdates.get_software_updates(host_id)
@@ -472,7 +472,7 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
 
     test "returns errors when fetching upgradable packages" do
       insert_software_updates_settings()
-      %{id: host_id} = insert(:host)
+      %{id: host_id} = insert(:host, fully_qualified_domain_name: "test")
 
       expect(Trento.SoftwareUpdates.Discovery.Mock, :get_upgradable_packages, 1, fn _ ->
         {:error, :error_getting_packages}

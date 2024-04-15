@@ -39,7 +39,8 @@ defmodule Trento.Factory do
     HostTombstoned,
     SaptuneStatusUpdated,
     SlesSubscriptionsUpdated,
-    SoftwareUpdatesDiscoveryCompleted
+    SoftwareUpdatesDiscoveryCompleted,
+    SoftwareUpdatesDiscoveryRequested
   }
 
   alias Trento.SapSystems.Events.{
@@ -758,6 +759,13 @@ defmodule Trento.Factory do
       host_id: Faker.UUID.v4(),
       relevant_patches: %{}
     })
+  end
+
+  def software_updates_discovery_requested_event_factory do
+    %SoftwareUpdatesDiscoveryRequested{
+      host_id: Faker.UUID.v4(),
+      fully_qualified_domain_name: Faker.Internet.domain_name()
+    }
   end
 
   def host_health_changed_event_factory do

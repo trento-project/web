@@ -23,7 +23,7 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
       api_spec: api_spec
     } do
       insert_software_updates_settings()
-      %{id: host_id} = insert(:host)
+      %{id: host_id} = insert(:host, fully_qualified_domain_name: "test")
 
       %AvailableSoftwareUpdatesResponse{
         relevant_patches: [
