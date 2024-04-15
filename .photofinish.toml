@@ -22,6 +22,10 @@ directories = ["./test/fixtures/scenarios/aws-landscape"]
 
 directories = ["./test/fixtures/scenarios/gcp-landscape"]
 
+[multi-tenant]
+
+directories = ["./test/fixtures/scenarios/multi-tenant"]
+
 [sap-system-detail-GRAY]
 
 files = [

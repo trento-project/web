@@ -1,0 +1,92 @@
+{
+  "payload": {
+    "Metadata": {
+      "compute": {
+        "azEnvironment": "AzurePublicCloud",
+        "isHostCompatibilityLayerVm": "true",
+        "licenseType": "SLES_BYOS",
+        "location": "westeurope",
+        "name": "hanadb3",
+        "offer": "sles-sap-15-sp4-byos",
+        "osProfile": {
+          "adminUsername": "cloudadmin",
+          "computerName": "hanadb3",
+          "disablePasswordAuthentication": "true"
+        },
+        "osType": "Linux",
+        "plan": {},
+        "platformFaultDomain": "0",
+        "platformUpdateDomain": "2",
+        "provider": "Microsoft.Compute",
+        "publisher": "suse",
+        "resourceGroupName": "multi-tenant",
+        "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/multi-tenant/providers/Microsoft.Compute/virtualMachines/hanadb3",
+        "securityProfile": {
+          "secureBootEnabled": "true",
+          "virtualTpmEnabled": "true"
+        },
+        "sku": "gen2",
+        "storageProfile": {
+          "imageReference": {
+            "offer": "sles-sap-15-sp4-byos",
+            "publisher": "suse",
+            "sku": "gen2",
+            "version": "latest"
+          },
+          "osDisk": {
+            "caching": "ReadWrite",
+            "createOption": "FromImage",
+            "diffDiskSettings": { "option": "" },
+            "diskSizeGB": "30",
+            "encryptionSettings": { "enabled": "false" },
+            "image": { "uri": "" },
+            "managedDisk": {
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/multi-tenant/providers/Microsoft.Compute/disks/hanadb3_OsDisk_1",
+              "storageAccountType": "Premium_LRS"
+            },
+            "name": "hanadb3_OsDisk_1",
+            "osType": "Linux",
+            "vhd": { "uri": "" },
+            "writeAcceleratorEnabled": "false"
+          }
+        },
+        "subscriptionId": "00000000-0000-0000-0000-000000000000",
+        "tags": "",
+        "version": "2024.02.07",
+        "vmId": "fec28a34-ac84-42f6-ba44-3e25d7de02ff",
+        "vmSize": "Standard_E8s_v3"
+      },
+      "network": {
+        "interface": [
+          {
+            "ipv4": {
+              "ipAddress": [{ "privateIpAddress": "10.17.0.6" }],
+              "subnet": [{ "address": "10.17.0.0", "prefix": "24" }]
+            },
+            "ipv6": {},
+            "macAddress": "A1F6CDA5EE43"
+          },
+          {
+            "ipv4": {
+              "ipAddress": [{ "privateIpAddress": "10.17.2.6" }],
+              "subnet": [{ "address": "10.17.2.0", "prefix": "24" }]
+            },
+            "ipv6": {},
+            "macAddress": "CB1FC052B6BD"
+          },
+          {
+            "ipv4": {
+              "ipAddress": [{ "privateIpAddress": "10.17.3.6" }],
+              "subnet": [{ "address": "10.17.3.0", "prefix": "24" }]
+            },
+            "ipv6": {},
+            "macAddress": "74DCFC6D3D6F"
+          }
+        ]
+      }
+    },
+    "Provider": "azure"
+  },
+  "discovery_type": "cloud_discovery",
+  "agent_id": "544cbc99-c856-4b0a-88cf-e6b8db4606f6"
+}
