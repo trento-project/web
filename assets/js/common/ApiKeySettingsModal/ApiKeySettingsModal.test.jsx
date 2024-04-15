@@ -82,7 +82,7 @@ describe('ApiKeySettingsModal', () => {
       ).not.toBeInTheDocument();
     });
 
-    it('should return on onGenerate the correct expiration date when months are selected with a valid quantity', async () => {
+    it('should return on onGenerate the correct expiration date when months are selected with a valid quantity after confirmation', async () => {
       const user = userEvent.setup();
       const onGenerate = jest.fn();
 
@@ -93,6 +93,8 @@ describe('ApiKeySettingsModal', () => {
       await user.type(screen.getByRole('spinbutton'), '20');
 
       await user.click(screen.getByRole('button', { name: 'months' }));
+
+      await user.click(screen.getByRole('button', { name: 'Generate' }));
 
       await user.click(screen.getByRole('button', { name: 'Generate' }));
 
@@ -130,6 +132,8 @@ describe('ApiKeySettingsModal', () => {
 
       await user.click(screen.getByRole('button', { name: 'Generate' }));
 
+      await user.click(screen.getByRole('button', { name: 'Generate' }));
+
       const [{ apiKeyExpiration: generatedApiKeyExpiration }] =
         onGenerate.mock.lastCall;
 
@@ -161,6 +165,8 @@ describe('ApiKeySettingsModal', () => {
       await user.click(screen.getByRole('button', { name: 'months' }));
 
       await user.click(screen.getByRole('option', { name: 'days' }));
+
+      await user.click(screen.getByRole('button', { name: 'Generate' }));
 
       await user.click(screen.getByRole('button', { name: 'Generate' }));
 
@@ -213,6 +219,7 @@ describe('ApiKeySettingsModal', () => {
       await user.click(screen.getByRole('switch'));
 
       await user.click(screen.getByRole('button', { name: 'Generate' }));
+      await user.click(screen.getByRole('button', { name: 'Generate' }));
 
       expect(onGenerate).toBeCalledWith({ apiKeyExpiration: null });
     });
@@ -236,11 +243,87 @@ describe('ApiKeySettingsModal', () => {
       await user.click(screen.getByRole('switch'));
       await user.click(screen.getByRole('button', { name: 'Generate' }));
 
+      await user.click(screen.getByRole('button', { name: 'Generate' }));
+
       await user.click(
         screen.getByRole('button', { name: 'copy to clipboard' })
       );
 
       expect(screen.getByText(apiKey)).toBeVisible();
+    });
+  });
+
+  describe('Intermediate confirmation step', () => {
+    it('should display the confirmation step when the user clicks on form button Generate', async () => {
+      const user = userEvent.setup();
+      const apiKey = faker.string.alpha({ length: { min: 100, max: 100 } });
+      const nowISO = new Date().toISOString();
+
+      await act(async () => {
+        render(
+          <ApiKeySettingsModal
+            open
+            generatedApiKey={apiKey}
+            generatedApiKeyExpiration={nowISO}
+          />
+        );
+      });
+
+      await user.click(screen.getByRole('switch'));
+      await user.click(screen.getByRole('button', { name: 'Generate' }));
+
+      expect(
+        screen.getByText('Are you sure you want to generate a new API key?')
+      ).toBeVisible();
+      expect(screen.getByTestId('banner')).toBeVisible();
+      expect(screen.getByRole('button', { name: 'Generate' })).toBeVisible();
+      expect(screen.getByRole('button', { name: 'Cancel' })).toBeVisible();
+    });
+
+    it('should return to the form when the user clicks cancel in the confirmation modal', async () => {
+      const user = userEvent.setup();
+      const apiKey = faker.string.alpha({ length: { min: 100, max: 100 } });
+      const nowISO = new Date().toISOString();
+
+      await act(async () => {
+        render(
+          <ApiKeySettingsModal
+            open
+            generatedApiKey={apiKey}
+            generatedApiKeyExpiration={nowISO}
+          />
+        );
+      });
+
+      await user.click(screen.getByRole('switch'));
+      await user.click(screen.getByRole('button', { name: 'Generate' }));
+
+      await user.click(screen.getByRole('button', { name: 'Cancel' }));
+      expect(screen.getByRole('spinbutton')).toBeVisible();
+    });
+
+    it('should invoke api key generation when the user clicks generate in the confirmation modal', async () => {
+      const user = userEvent.setup();
+      const apiKey = faker.string.alpha({ length: { min: 100, max: 100 } });
+      const nowISO = new Date().toISOString();
+      const onGenerate = jest.fn();
+
+      await act(async () => {
+        render(
+          <ApiKeySettingsModal
+            open
+            generatedApiKey={apiKey}
+            generatedApiKeyExpiration={nowISO}
+            onGenerate={onGenerate}
+          />
+        );
+      });
+
+      await user.click(screen.getByRole('switch'));
+      await user.click(screen.getByRole('button', { name: 'Generate' }));
+
+      await user.click(screen.getByRole('button', { name: 'Generate' }));
+      expect(onGenerate).toBeCalledWith({ apiKeyExpiration: null });
     });
   });
 });
