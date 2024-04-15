@@ -37,24 +37,24 @@ defmodule Trento.SoftwareUpdates.Discovery do
     do: adapter().get_upgradable_packages(system_id)
 
   @spec discover_software_updates :: {:ok, {list(), list()}}
-  def discover_software_updates,
-    do:
-      {:ok,
-       Hosts.get_all_hosts()
-       |> Enum.map(fn
-         %HostReadModel{id: host_id, fully_qualified_domain_name: fully_qualified_domain_name} ->
-           case discover_host_software_updates(host_id, fully_qualified_domain_name) do
-             {:error, error} ->
-               {:error, host_id, error}
+  def discover_software_updates do
+    {:ok,
+     Hosts.get_all_hosts()
+     |> Enum.map(fn
+       %HostReadModel{id: host_id, fully_qualified_domain_name: fully_qualified_domain_name} ->
+         case discover_host_software_updates(host_id, fully_qualified_domain_name) do
+           {:error, error} ->
+             {:error, host_id, error}
 
-             _ = success ->
-               success
-           end
-       end)
-       |> Enum.split_with(fn
-         {:ok, _, _, _} -> true
-         _ -> false
-       end)}
+           {:ok, _, _, _} = success ->
+             success
+         end
+     end)
+     |> Enum.split_with(fn
+       {:ok, _, _, _} -> true
+       _ -> false
+     end)}
+  end
 
   @spec clear_software_updates_discoveries :: :ok | {:error, any()}
   def clear_software_updates_discoveries do
@@ -82,8 +82,6 @@ defmodule Trento.SoftwareUpdates.Discovery do
     {:error, :host_without_fqdn}
   end
 
-  @spec discover_host_software_updates(String.t(), String.t()) ::
-          {:ok, String.t(), String.t(), any()} | {:error, any()}
   def discover_host_software_updates(host_id, fully_qualified_domain_name) do
     with {:ok, system_id} <- get_system_id(fully_qualified_domain_name),
          {:ok, relevant_patches} <- get_relevant_patches(system_id),

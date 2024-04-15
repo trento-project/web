@@ -8,8 +8,6 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscovery
     application: Trento.Commanded,
     name: "software_updates_discovery_event_handler"
 
-  require Logger
-
   alias Trento.Hosts.Events.SoftwareUpdatesDiscoveryRequested
 
   alias Trento.SoftwareUpdates.Discovery

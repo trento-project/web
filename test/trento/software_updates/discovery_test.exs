@@ -256,6 +256,38 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
     end
   end
 
+  describe "Clearing up software updates discoveries" do
+    test "should pass through an empty hosts list" do
+      expect(Trento.SoftwareUpdates.Discovery.Mock, :clear, 0, fn -> :ok end)
+
+      assert :ok = Discovery.clear_software_updates_discoveries()
+    end
+
+    test "should clear software updates for all registered hosts in a best effort fashion" do
+      %{id: host_id1} = insert(:host)
+      %{id: host_id2} = insert(:host)
+      %{id: host_id3} = insert(:host, fully_qualified_domain_name: nil)
+
+      expect(
+        Trento.Commanded.Mock,
+        :dispatch,
+        3,
+        fn %ClearSoftwareUpdatesDiscovery{host_id: host_id} ->
+          assert host_id in [host_id1, host_id2, host_id3]
+
+          case host_id do
+            ^host_id2 -> {:error, :some_error}
+            _ -> :ok
+          end
+        end
+      )
+
+      expect(Trento.SoftwareUpdates.Discovery.Mock, :clear, 1, fn -> :ok end)
+
+      assert :ok = Discovery.clear_software_updates_discoveries()
+    end
+  end
+
   defp fail_on_getting_system_id(fully_qualified_domain_name, discovery_error) do
     expect(
       SoftwareUpdatesDiscoveryMock,
@@ -322,37 +354,5 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
       :dispatch,
       fn %CompleteSoftwareUpdatesDiscovery{host_id: ^host_id} -> dispatching_error end
     )
-  end
-
-  describe "Clearing up software updates discoveries" do
-    test "should pass through an empty hosts list" do
-      expect(Trento.SoftwareUpdates.Discovery.Mock, :clear, 0, fn -> :ok end)
-
-      assert :ok = Discovery.clear_software_updates_discoveries()
-    end
-
-    test "should clear software updates for all registered hosts in a best effort fashion" do
-      %{id: host_id1} = insert(:host)
-      %{id: host_id2} = insert(:host)
-      %{id: host_id3} = insert(:host, fully_qualified_domain_name: nil)
-
-      expect(
-        Trento.Commanded.Mock,
-        :dispatch,
-        3,
-        fn %ClearSoftwareUpdatesDiscovery{host_id: host_id} ->
-          assert host_id in [host_id1, host_id2, host_id3]
-
-          case host_id do
-            ^host_id2 -> {:error, :some_error}
-            _ -> :ok
-          end
-        end
-      )
-
-      expect(Trento.SoftwareUpdates.Discovery.Mock, :clear, 1, fn -> :ok end)
-
-      assert :ok = Discovery.clear_software_updates_discoveries()
-    end
   end
 end

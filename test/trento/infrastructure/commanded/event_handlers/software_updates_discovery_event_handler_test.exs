@@ -19,7 +19,7 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscovery
       fully_qualified_domain_name: fully_qualified_domain_name
     } = event = build(:software_updates_discovery_requested_event)
 
-    system_id = 100
+    system_id = Faker.UUID.v4()
 
     expect(
       SoftwareUpdatesDiscoveryMock,
