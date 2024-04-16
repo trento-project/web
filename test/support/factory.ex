@@ -10,6 +10,8 @@ defmodule Trento.Factory do
 
   alias Faker.Random.Elixir, as: RandomElixir
 
+  alias Trento.Users.User
+
   alias Trento.Clusters.ValueObjects.{
     AscsErsClusterDetails,
     AscsErsClusterNode,
@@ -881,6 +883,15 @@ defmodule Trento.Factory do
       to_release: "#{RandomElixir.random_between(0, 100)}",
       to_epoch: "#{RandomElixir.random_between(0, 50)}",
       to_package_id: "#{RandomElixir.random_between(0, 1000)}"
+    }
+  end
+
+  def user_factory do
+    %User{
+      username: Faker.Internet.user_name(),
+      email: Faker.Internet.email(),
+      fullname: Faker.Person.first_name(),
+      password: Faker.StarWars.character()
     }
   end
 end

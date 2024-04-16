@@ -16,7 +16,9 @@ defmodule TrentoWeb.SessionControllerTest do
       |> Trento.Users.User.changeset(%{
         username: "admin",
         password: "testpassword",
-        confirm_password: "testpassword"
+        confirm_password: "testpassword",
+        email: "test@trento.com",
+        fullname: "Full Name"
       })
       |> Trento.Repo.insert!()
 

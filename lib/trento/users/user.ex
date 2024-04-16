@@ -2,20 +2,25 @@ defmodule Trento.Users.User do
   @moduledoc false
 
   use Ecto.Schema
+  import Ecto.Changeset
 
   use Pow.Ecto.Schema,
     user_id_field: :username,
-    password_hash_verify: {&Argon2.hash_pwd_salt/1,
-                           &Argon2.verify_pass/2}
+    password_hash_verify: {&Argon2.hash_pwd_salt/1, &Argon2.verify_pass/2}
 
   use Pow.Extension.Ecto.Schema,
     extensions: [PowPersistentSession]
+
+  alias EctoCommons.EmailValidator
 
   @sequences ["01234567890", "abcdefghijklmnopqrstuvwxyz"]
   @max_sequential_chars 3
 
   schema "users" do
     pow_user_fields()
+
+    field :email, :string
+    field :fullname, :string
 
     timestamps(type: :utc_datetime_usec)
   end
@@ -24,7 +29,15 @@ defmodule Trento.Users.User do
     user
     |> pow_changeset(attrs)
     |> pow_extension_changeset(attrs)
+    |> custom_fields_changeset(attrs)
+  end
+
+  defp custom_fields_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:email, :fullname])
+    |> validate_required([:email, :fullname])
     |> validate_password()
+    |> EmailValidator.validate_email(:email, checks: [:pow])
   end
 
   defp validate_password(changeset) do
