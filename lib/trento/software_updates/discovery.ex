@@ -7,8 +7,7 @@ defmodule Trento.SoftwareUpdates.Discovery do
 
   alias Trento.Hosts.Commands.{
     ClearSoftwareUpdatesDiscovery,
-    CompleteSoftwareUpdatesDiscovery,
-    DiscoverSoftwareUpdates
+    CompleteSoftwareUpdatesDiscovery
   }
 
   alias Trento.Hosts.Projections.HostReadModel
@@ -37,14 +36,24 @@ defmodule Trento.SoftwareUpdates.Discovery do
   def get_upgradable_packages(system_id),
     do: adapter().get_upgradable_packages(system_id)
 
-  @spec discover_software_updates :: :ok
+  @spec discover_software_updates :: {:ok, {list(), list()}}
   def discover_software_updates do
-    Enum.each(Hosts.get_all_hosts(), fn
-      %HostReadModel{id: host_id} ->
-        %{host_id: host_id}
-        |> DiscoverSoftwareUpdates.new!()
-        |> commanded().dispatch()
-    end)
+    {:ok,
+     Hosts.get_all_hosts()
+     |> Enum.map(fn
+       %HostReadModel{id: host_id, fully_qualified_domain_name: fully_qualified_domain_name} ->
+         case discover_host_software_updates(host_id, fully_qualified_domain_name) do
+           {:error, error} ->
+             {:error, host_id, error}
+
+           {:ok, _, _, _} = success ->
+             success
+         end
+     end)
+     |> Enum.split_with(fn
+       {:ok, _, _, _} -> true
+       _ -> false
+     end)}
   end
 
   @spec clear_software_updates_discoveries :: :ok | {:error, any()}

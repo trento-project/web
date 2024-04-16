@@ -101,6 +101,7 @@ defmodule Trento.SoftwareUpdates do
     case get_settings() do
       {:ok, _} ->
         Discovery.discover_software_updates()
+        :ok
 
       error ->
         Logger.error("Software updates settings not configured. Skipping discovery.")

@@ -8,7 +8,7 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
 
   import Trento.Factory
 
-  alias Trento.Hosts.Commands.DiscoverSoftwareUpdates
+  alias Trento.Hosts.Commands.CompleteSoftwareUpdatesDiscovery
   alias Trento.SoftwareUpdates
   alias Trento.SoftwareUpdates.Settings
 
@@ -211,7 +211,7 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
           Trento.Commanded.Mock,
           :dispatch,
           5,
-          fn %DiscoverSoftwareUpdates{} -> :ok end
+          fn %CompleteSoftwareUpdatesDiscovery{} -> :ok end
         )
 
         settings = %{
