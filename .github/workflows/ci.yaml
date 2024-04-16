@@ -439,7 +439,7 @@ jobs:
           name: e2e-screenshots
           path: test/e2e/cypress/screenshots/
 
-  check_regression_label:
+  check-regression-label:
     name: Check if the environment creation criteria are met, store in the job output
     runs-on: ubuntu-22.04
     outputs:
@@ -452,14 +452,14 @@ jobs:
     name: Regression tests
     needs:
       [
-        check_regression_label,
+        check-regression-label,
         elixir-deps,
         npm-deps,
         npm-e2e-deps,
         api-bc-check,
       ]
     runs-on: ubuntu-22.04
-    if: needs.check_regression_label.outputs.run_regression_test == 'true'
+    if: needs.check-regression-label.outputs.run_regression_test == 'true'
     env:
       MIX_ENV: dev
     steps:
