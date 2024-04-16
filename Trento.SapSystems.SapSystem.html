@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-43PMFBC7.js"></script>
-    <script src="dist/sidebar_items-B23AE790.js"></script>
+    <script src="dist/sidebar_items-69EEF09D.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -144,12 +144,10 @@ GUIDES
 
   <section id="moduledoc">
 <p>The SAP system aggregate manages all the domain logic related to
-deployed SAP systems, which are composed by a database and application layers.
-<strong>The HANA database is the only supported database type.</strong></p><p>In order to have a fully registered SAP system, both the database and application
-composing this system must be registered.
+deployed SAP systems, which is composed by the application layer.</p><p>In order to have a fully registered SAP system, the database aggregate containing
+this application tenant and application must be registered in the database aggregate.
 The minimum set of application features is ABAP and MESSAGESERVER. Otherwise, a complete SAP system cannot exist.
-And each of the two layers might be composed by multiple instances altogether.
-This means that a SAP system aggregate state can have multiple application/database instances.</p><h2 id="module-sap-instance" class="section-heading">
+This means that a SAP system aggregate state can have multiple application instances.</p><h2 id="module-sap-instance" class="section-heading">
   <a href="#module-sap-instance" class="hover-link">
     <i class="ri-link-m" aria-hidden="true"></i>
   </a>
@@ -157,20 +155,16 @@ This means that a SAP system aggregate state can have multiple application/datab
 </h2>
 <p>A SAP instance can be seen as a single SAP workload installation running in a
 particular host. So the instance runs entirely in one host, but on the other hand
-multiple different SAP instances might be running in the same host.</p><p>For example, a HANA database might be composed by two database instances
-that are working together in a System Replication scenario.</p><h2 id="module-sap-system-registration-process" class="section-heading">
+multiple different SAP instances might be running in the same host.</p><p>For example, a ABAP and MESSAGESERVER applications.</p><h2 id="module-sap-system-registration-process" class="section-heading">
   <a href="#module-sap-system-registration-process" class="hover-link">
     <i class="ri-link-m" aria-hidden="true"></i>
   </a>
   <span class="text">SAP system registration process</span>
 </h2>
-<p>The SAP system registration process has some caveats, so let's see them in more details.</p><p>As a main concept, the SAP system is uniquely identified by the database ID. This means that
-there cannot exist any SAP system without a database, so Trento agents must be running
-in those hosts in order to start the registration.</p><p>That being said, this is the logical order of events in order to register a full system:</p><ol><li>A SAP system discovery message with a new database instance is received.
-Database instances with Secondary role in a system replication scenario are discarded.
-At this point, the registration process starts and the database is registered.
-Any application instance discovery message without an associated database is ignored.</li><li>New database instances/updates coming from already registered database instances are registered/applied.</li><li>When a SAP system discovery with a new application instance is received, and the database associated to
-this application exists:<ul><li>Instances that are not MESSAGESERVER or ABAP will be added without completing a SAP system registration</li><li>To have a fully registered SAP system, a MESSAGESERVER instance and one ABAP instance are required</li></ul></li><li>New application instances/updates coming from already registered application instances are registered/applied.</li></ol><p>Find additional information about the application/database association in <a href="Trento.SapSystems.Commands.RegisterApplicationInstance.html"><code class="inline">Trento.SapSystems.Commands.RegisterApplicationInstance</code></a>.</p>
+<p>The SAP system registration process has some caveats, so let's see them in more details.</p><p>As a main concept, the SAP system is uniquely identified by the database ID plus application tenant.
+This means that there cannot exist any SAP system without a database, so Trento agents must be running
+in those hosts in order to start the registration.</p><p>That being said, this is the logical order of events in order to register a full system:</p><ol><li>A database aggregate containing the tenant for this application must be already registered (check the database aggregate).</li><li>When a SAP system discovery with a new application instance is received, and the database associated to
+this application exists:<ul><li>Instances that are not MESSAGESERVER or ABAP will be added without completing a SAP system registration</li><li>To have a fully registered SAP system, a MESSAGESERVER instance and one ABAP instance are required</li></ul></li><li>New application instances/updates coming from already registered application instances are registered/applied.</li></ol><p>Find additional information about the application association in <a href="Trento.SapSystems.Commands.RegisterApplicationInstance.html"><code class="inline">Trento.SapSystems.Commands.RegisterApplicationInstance</code></a>.</p>
   </section>
 
 
@@ -237,7 +231,7 @@ validates the required ones and returns a changeset.</p></div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#execute/2" translate="no">execute(sap_system, command)</a>
+        <a href="#execute/2" translate="no">execute(sap_system, instance)</a>
 
       </div>
 
@@ -302,7 +296,7 @@ Accepts a map or a list of maps.</p></div>
     </a>
     <h1 class="signature" translate="no">t()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/sap_system.ex#L101" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/sap_system.ex#L81" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -315,11 +309,11 @@ Accepts a map or a list of maps.</p></div>
       <div class="specs">
 
           <pre translate="no"><span class="attribute">@type</span> t() :: %Trento.SapSystems.SapSystem{
-  application: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  database: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+  database_health: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
   deregistered_at: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
   ensa_version: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
   health: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+  instances: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
   rolling_up: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
   sap_system_id: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
   sid: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()
@@ -351,7 +345,7 @@ Accepts a map or a list of maps.</p></div>
     </a>
     <h1 class="signature" translate="no">apply(sap_system, arg2)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/sap_system.ex#L428" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/sap_system.ex#L277" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -373,7 +367,7 @@ Accepts a map or a list of maps.</p></div>
     </a>
     <h1 class="signature" translate="no">cast_and_validate_required_embed(changeset, field, required_fields)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/sap_system.ex#L101" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/sap_system.ex#L81" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -395,7 +389,7 @@ Accepts a map or a list of maps.</p></div>
     </a>
     <h1 class="signature" translate="no">cast_and_validate_required_polymorphic_embed(changeset, field, required_fields)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/sap_system.ex#L101" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/sap_system.ex#L81" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -417,7 +411,7 @@ Accepts a map or a list of maps.</p></div>
     </a>
     <h1 class="signature" translate="no">changeset(struct, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/sap_system.ex#L101" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/sap_system.ex#L81" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -438,9 +432,9 @@ validates the required ones and returns a changeset.</p>
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">execute(sap_system, command)</h1>
+    <h1 class="signature" translate="no">execute(sap_system, instance)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/sap_system.ex#L116" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/sap_system.ex#L97" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -462,7 +456,7 @@ validates the required ones and returns a changeset.</p>
     </a>
     <h1 class="signature" translate="no">instances_have_messageserver?(instances)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/sap_system.ex#L1385" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/sap_system.ex#L817" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -484,7 +478,7 @@ validates the required ones and returns a changeset.</p>
     </a>
     <h1 class="signature" translate="no">new(structs)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/sap_system.ex#L101" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/sap_system.ex#L81" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -513,7 +507,7 @@ Accepts a map or a list of maps.</p>
     </a>
     <h1 class="signature" translate="no">new!(params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/sap_system.ex#L101" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/sap_system.ex#L81" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -541,7 +535,7 @@ Accepts a map or a list of maps.</p>
     </a>
     <h1 class="signature" translate="no">validate_required_fields(changeset, required_fields)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/sap_system.ex#L101" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/sap_system.ex#L81" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>

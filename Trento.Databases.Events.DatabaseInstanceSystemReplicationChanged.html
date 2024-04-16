@@ -8,13 +8,13 @@
     <meta name="project" content="Trento Web v2.2.0">
 
 
-    <title>Trento.SapSystems.Commands.DeregisterDatabaseInstance — Trento Web v2.2.0</title>
+    <title>Trento.Databases.Events.DatabaseInstanceSystemReplicationChanged — Trento Web v2.2.0</title>
     <link rel="stylesheet" href="dist/html-elixir-FM2CSD74.css" />
 
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-43PMFBC7.js"></script>
-    <script src="dist/sidebar_items-B23AE790.js"></script>
+    <script src="dist/sidebar_items-69EEF09D.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -131,19 +131,19 @@ GUIDES
 
 <h1>
 
-    <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/commands/deregister_database_instance.ex#L1" title="View Source" class="icon-action" rel="help">
+    <a href="https://github.com/trento-project/web/blob/main/lib/trento/databases/events/database_instance_system_replication_changed.ex#L1" title="View Source" class="icon-action" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
 
-  <span translate="no">Trento.SapSystems.Commands.DeregisterDatabaseInstance</span> 
+  <span translate="no">Trento.Databases.Events.DatabaseInstanceSystemReplicationChanged</span> 
   <small class="app-vsn" translate="no">(Trento Web v2.2.0)</small>
 
 </h1>
 
 
   <section id="moduledoc">
-<p>Deregister (decommission) a database instance from the monitoring system.</p>
+<p>This event is emitted when a database instance system replication has changed.</p>
   </section>
 
 
@@ -223,6 +223,30 @@ Accepts a map or a list of maps.</p></div>
 
     <div class="summary-row">
       <div class="summary-signature">
+        <a href="#supersede/1" translate="no">supersede(params)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#upcast/2" translate="no">upcast(params, metadata)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#upcast/3" translate="no">upcast(params, _, int)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
         <a href="#validate_required_fields/2" translate="no">validate_required_fields(changeset, required_fields)</a>
 
       </div>
@@ -251,7 +275,7 @@ Accepts a map or a list of maps.</p></div>
     </a>
     <h1 class="signature" translate="no">t()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/commands/deregister_database_instance.ex#L8" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/databases/events/database_instance_system_replication_changed.ex#L6" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -263,11 +287,13 @@ Accepts a map or a list of maps.</p></div>
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@type</span> t() :: %Trento.SapSystems.Commands.DeregisterDatabaseInstance{
-  deregistered_at: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+          <pre translate="no"><span class="attribute">@type</span> t() :: %Trento.Databases.Events.DatabaseInstanceSystemReplicationChanged{
+  database_id: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
   host_id: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
   instance_number: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  sap_system_id: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()
+  system_replication: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+  system_replication_status: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+  version: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()
 }</pre>
 
       </div>
@@ -296,7 +322,7 @@ Accepts a map or a list of maps.</p></div>
     </a>
     <h1 class="signature" translate="no">cast_and_validate_required_embed(changeset, field, required_fields)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/commands/deregister_database_instance.ex#L8" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/databases/events/database_instance_system_replication_changed.ex#L6" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -318,7 +344,7 @@ Accepts a map or a list of maps.</p></div>
     </a>
     <h1 class="signature" translate="no">cast_and_validate_required_polymorphic_embed(changeset, field, required_fields)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/commands/deregister_database_instance.ex#L8" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/databases/events/database_instance_system_replication_changed.ex#L6" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -340,7 +366,7 @@ Accepts a map or a list of maps.</p></div>
     </a>
     <h1 class="signature" translate="no">changeset(struct, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/commands/deregister_database_instance.ex#L8" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/databases/events/database_instance_system_replication_changed.ex#L6" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -363,7 +389,7 @@ validates the required ones and returns a changeset.</p>
     </a>
     <h1 class="signature" translate="no">new(structs)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/commands/deregister_database_instance.ex#L8" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/databases/events/database_instance_system_replication_changed.ex#L6" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -392,7 +418,7 @@ Accepts a map or a list of maps.</p>
     </a>
     <h1 class="signature" translate="no">new!(params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/commands/deregister_database_instance.ex#L8" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/databases/events/database_instance_system_replication_changed.ex#L6" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -411,6 +437,72 @@ Accepts a map or a list of maps.</p>
 <p>Returns new struct(s) if the params are valid, otherwise raises a <a href="https://hexdocs.pm/elixir/RuntimeError.html"><code class="inline">RuntimeError</code></a>.</p>
   </section>
 </section>
+<section class="detail" id="supersede/1">
+
+  <div class="detail-header">
+    <a href="#supersede/1" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">supersede(params)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/databases/events/database_instance_system_replication_changed.ex#L9" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="upcast/2">
+
+  <div class="detail-header">
+    <a href="#upcast/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">upcast(params, metadata)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/databases/events/database_instance_system_replication_changed.ex#L9" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="upcast/3">
+
+  <div class="detail-header">
+    <a href="#upcast/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">upcast(params, _, int)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/databases/events/database_instance_system_replication_changed.ex#L6" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
 <section class="detail" id="validate_required_fields/2">
 
   <div class="detail-header">
@@ -420,7 +512,7 @@ Accepts a map or a list of maps.</p>
     </a>
     <h1 class="signature" translate="no">validate_required_fields(changeset, required_fields)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/commands/deregister_database_instance.ex#L8" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/databases/events/database_instance_system_replication_changed.ex#L6" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>

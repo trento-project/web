@@ -8,13 +8,13 @@
     <meta name="project" content="Trento Web v2.2.0">
 
 
-    <title>Trento.SapSystems.Projections.DatabaseReadModel — Trento Web v2.2.0</title>
+    <title>Trento.Databases.Lifespan — Trento Web v2.2.0</title>
     <link rel="stylesheet" href="dist/html-elixir-FM2CSD74.css" />
 
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-43PMFBC7.js"></script>
-    <script src="dist/sidebar_items-B23AE790.js"></script>
+    <script src="dist/sidebar_items-69EEF09D.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -131,19 +131,19 @@ GUIDES
 
 <h1>
 
-    <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/projections/database_read_model.ex#L1" title="View Source" class="icon-action" rel="help">
+    <a href="https://github.com/trento-project/web/blob/main/lib/trento/databases/lifespan.ex#L1" title="View Source" class="icon-action" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
 
-  <span translate="no">Trento.SapSystems.Projections.DatabaseReadModel</span> 
+  <span translate="no">Trento.Databases.Lifespan</span> 
   <small class="app-vsn" translate="no">(Trento Web v2.2.0)</small>
 
 </h1>
 
 
   <section id="moduledoc">
-<p>Database read model</p>
+<p>Database aggregate lifespan.</p><p>It controls the lifespan of the aggregate GenServer representing a database.</p>
   </section>
 
 
@@ -154,20 +154,6 @@ GUIDES
       </a>
       <span class="text">Summary</span>
     </h1>
-<div class="summary-types summary">
-  <h2>
-    <a href="#types">Types</a>
-  </h2>
-
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#t:t/0" translate="no">t()</a>
-
-      </div>
-
-    </div>
-
-</div>
 <div class="summary-functions summary">
   <h2>
     <a href="#functions">Functions</a>
@@ -175,9 +161,32 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#changeset/2" translate="no">changeset(database, attrs)</a>
+        <a href="#after_command/1" translate="no">after_command(command)</a>
 
       </div>
+
+        <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/commanded/1.4.2/Commanded.Aggregates.AggregateLifespan.html#c:after_command/1"><code class="inline">Commanded.Aggregates.AggregateLifespan.after_command/1</code></a>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#after_error/1" translate="no">after_error(error)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p> If the aggregate is rolling up, it will be stopped to avoid processing any other event.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#after_event/1" translate="no">after_event(event)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>The Database aggregate will be stopped after a DatabaseRollUpRequested event is received.
+This is needed to reset the aggregate version, so the aggregate can start appending events to the new stream.</p></div>
 
     </div>
 
@@ -185,56 +194,6 @@ GUIDES
 
   </section>
 
-
-  <section id="types" class="details-list">
-    <h1 class="section-heading">
-      <a class="hover-link" href="#types">
-        <i class="ri-link-m" aria-hidden="true"></i>
-      </a>
-      <span class="text">Types</span>
-    </h1>
-    <div class="types-list">
-<section class="detail" id="t:t/0">
-
-  <div class="detail-header">
-    <a href="#t:t/0" class="detail-link" title="Link to this type">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this type</span>
-    </a>
-    <h1 class="signature" translate="no">t()</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/projections/database_read_model.ex#L15" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-      <div class="specs">
-
-          <pre translate="no"><span class="attribute">@type</span> t() :: %Trento.SapSystems.Projections.DatabaseReadModel{
-  __meta__: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  database_instances: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  deregistered_at: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  health: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  id: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  inserted_at: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  sid: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  tags: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  updated_at: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()
-}</pre>
-
-      </div>
-
-
-  </section>
-</section>
-
-    </div>
-  </section>
 
   <section id="functions" class="details-list">
     <h1 class="section-heading">
@@ -244,16 +203,16 @@ GUIDES
       <span class="text">Functions</span>
     </h1>
     <div class="functions-list">
-<section class="detail" id="changeset/2">
+<section class="detail" id="after_command/1">
 
   <div class="detail-header">
-    <a href="#changeset/2" class="detail-link" title="Link to this function">
+    <a href="#after_command/1" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">changeset(database, attrs)</h1>
+    <h1 class="signature" translate="no">after_command(command)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/projections/database_read_model.ex#L36" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/databases/lifespan.ex#L22" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -263,13 +222,52 @@ GUIDES
 
   <section class="docstring">
 
-      <div class="specs">
+<p>Callback implementation for <a href="https://hexdocs.pm/commanded/1.4.2/Commanded.Aggregates.AggregateLifespan.html#c:after_command/1"><code class="inline">Commanded.Aggregates.AggregateLifespan.after_command/1</code></a>.</p>
+  </section>
+</section>
+<section class="detail" id="after_error/1">
 
-          <pre translate="no"><span class="attribute">@spec</span> changeset(<a href="#t:t/0">t</a>() | <a href="https://hexdocs.pm/ecto/3.11.1/Ecto.Changeset.html#t:t/0">Ecto.Changeset.t</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()) :: <a href="https://hexdocs.pm/ecto/3.11.1/Ecto.Changeset.html#t:t/0">Ecto.Changeset.t</a>()</pre>
+  <div class="detail-header">
+    <a href="#after_error/1" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">after_error(error)</h1>
 
-      </div>
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/databases/lifespan.ex#L27" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
 
 
+  </div>
+
+  <section class="docstring">
+
+<p> If the aggregate is rolling up, it will be stopped to avoid processing any other event.</p>
+  </section>
+</section>
+<section class="detail" id="after_event/1">
+
+  <div class="detail-header">
+    <a href="#after_event/1" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">after_event(event)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/databases/lifespan.ex#L18" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+<p>The Database aggregate will be stopped after a DatabaseRollUpRequested event is received.
+This is needed to reset the aggregate version, so the aggregate can start appending events to the new stream.</p>
   </section>
 </section>
 

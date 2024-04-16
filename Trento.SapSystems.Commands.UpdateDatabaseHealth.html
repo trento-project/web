@@ -8,13 +8,13 @@
     <meta name="project" content="Trento Web v2.2.0">
 
 
-    <title>Trento.SapSystems.Projections.DatabaseProjector — Trento Web v2.2.0</title>
+    <title>Trento.SapSystems.Commands.UpdateDatabaseHealth — Trento Web v2.2.0</title>
     <link rel="stylesheet" href="dist/html-elixir-FM2CSD74.css" />
 
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-43PMFBC7.js"></script>
-    <script src="dist/sidebar_items-B23AE790.js"></script>
+    <script src="dist/sidebar_items-69EEF09D.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -131,19 +131,19 @@ GUIDES
 
 <h1>
 
-    <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/projections/database_projector.ex#L1" title="View Source" class="icon-action" rel="help">
+    <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/commands/update_database_health.ex#L1" title="View Source" class="icon-action" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
 
-  <span translate="no">Trento.SapSystems.Projections.DatabaseProjector</span> 
+  <span translate="no">Trento.SapSystems.Commands.UpdateDatabaseHealth</span> 
   <small class="app-vsn" translate="no">(Trento Web v2.2.0)</small>
 
 </h1>
 
 
   <section id="moduledoc">
-<p>Database projector</p>
+<p>Update the health of the database associated to the SAP system.</p>
   </section>
 
 
@@ -154,6 +154,20 @@ GUIDES
       </a>
       <span class="text">Summary</span>
     </h1>
+<div class="summary-types summary">
+  <h2>
+    <a href="#types">Types</a>
+  </h2>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:t/0" translate="no">t()</a>
+
+      </div>
+
+    </div>
+
+</div>
 <div class="summary-functions summary">
   <h2>
     <a href="#functions">Functions</a>
@@ -161,48 +175,55 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#child_spec/1" translate="no">child_spec(opts)</a>
+        <a href="#cast_and_validate_required_embed/3" translate="no">cast_and_validate_required_embed(changeset, field, required_fields)</a>
 
       </div>
-
-        <div class="summary-synopsis"><p>Provides a child specification to allow the event handler to be easily
-supervised.</p></div>
 
     </div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#schema_prefix/1" translate="no">schema_prefix(event)</a>
+        <a href="#cast_and_validate_required_polymorphic_embed/3" translate="no">cast_and_validate_required_polymorphic_embed(changeset, field, required_fields)</a>
 
       </div>
-
-        <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/commanded_ecto_projections/1.3.0/Commanded.Projections.Ecto.html#c:schema_prefix/1"><code class="inline">Commanded.Projections.Ecto.schema_prefix/1</code></a>.</p></div>
 
     </div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#schema_prefix/2" translate="no">schema_prefix(event, metadata)</a>
+        <a href="#changeset/2" translate="no">changeset(struct, params)</a>
 
       </div>
 
-        <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/commanded_ecto_projections/1.3.0/Commanded.Projections.Ecto.html#c:schema_prefix/2"><code class="inline">Commanded.Projections.Ecto.schema_prefix/2</code></a>.</p></div>
+        <div class="summary-synopsis"><p>Casts the fields by using Ecto reflection,
+validates the required ones and returns a changeset.</p></div>
 
     </div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#start_link/1" translate="no">start_link(opts \\ [])</a>
+        <a href="#new/1" translate="no">new(structs)</a>
 
       </div>
 
-        <div class="summary-synopsis"><p>Start an event handler <a href="https://hexdocs.pm/elixir/GenServer.html"><code class="inline">GenServer</code></a> process linked to the current process.</p></div>
+        <div class="summary-synopsis"><p>Returns an ok tuple if the params are valid, otherwise returns <code class="inline">{:error, {:validation, errors}}</code>.
+Accepts a map or a list of maps.</p></div>
 
     </div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#update_projection/3" translate="no">update_projection(event, metadata, multi_fn)</a>
+        <a href="#new!/1" translate="no">new!(params)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Returns new struct(s) if the params are valid, otherwise raises a <a href="https://hexdocs.pm/elixir/RuntimeError.html"><code class="inline">RuntimeError</code></a>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#validate_required_fields/2" translate="no">validate_required_fields(changeset, required_fields)</a>
 
       </div>
 
@@ -213,6 +234,49 @@ supervised.</p></div>
   </section>
 
 
+  <section id="types" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#types">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Types</span>
+    </h1>
+    <div class="types-list">
+<section class="detail" id="t:t/0">
+
+  <div class="detail-header">
+    <a href="#t:t/0" class="detail-link" title="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature" translate="no">t()</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/commands/update_database_health.ex#L8" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> t() :: %Trento.SapSystems.Commands.UpdateDatabaseHealth{
+  database_health: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+  sap_system_id: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()
+}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+
+    </div>
+  </section>
+
   <section id="functions" class="details-list">
     <h1 class="section-heading">
       <a class="hover-link" href="#functions">
@@ -221,16 +285,16 @@ supervised.</p></div>
       <span class="text">Functions</span>
     </h1>
     <div class="functions-list">
-<section class="detail" id="child_spec/1">
+<section class="detail" id="cast_and_validate_required_embed/3">
 
   <div class="detail-header">
-    <a href="#child_spec/1" class="detail-link" title="Link to this function">
+    <a href="#cast_and_validate_required_embed/3" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">child_spec(opts)</h1>
+    <h1 class="signature" translate="no">cast_and_validate_required_embed(changeset, field, required_fields)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/projections/database_projector.ex#L6" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/commands/update_database_health.ex#L8" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -240,30 +304,19 @@ supervised.</p></div>
 
   <section class="docstring">
 
-<p>Provides a child specification to allow the event handler to be easily
-supervised.</p><p>Supports the same options as <code class="inline">start_link/3</code>.</p><p>The default options supported by <a href="https://hexdocs.pm/elixir/GenServer.html#start_link/3"><code class="inline">GenServer.start_link/3</code></a> are also
-supported, including the <code class="inline">:hibernate_after</code> option which allows the
-process to go into hibernation after a period of inactivity.</p><h3 id="child_spec/1-example" class="section-heading">
-  <a href="#child_spec/1-example" class="hover-link">
-    <i class="ri-link-m" aria-hidden="true"></i>
-  </a>
-  <span class="text">Example</span>
-</h3>
-<pre><code class="makeup elixir" translate="no"><span class="nc">Supervisor</span><span class="o">.</span><span class="n">start_link</span><span class="p" data-group-id="1775389244-1">(</span><span class="p" data-group-id="1775389244-2">[</span><span class="w">
-  </span><span class="p" data-group-id="1775389244-3">{</span><span class="nc">ExampleHandler</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="1775389244-4">[</span><span class="p" data-group-id="1775389244-4">]</span><span class="p" data-group-id="1775389244-3">}</span><span class="w">
-</span><span class="p" data-group-id="1775389244-2">]</span><span class="p">,</span><span class="w"> </span><span class="ss">strategy</span><span class="p">:</span><span class="w"> </span><span class="ss">:one_for_one</span><span class="p" data-group-id="1775389244-1">)</span></code></pre>
+
   </section>
 </section>
-<section class="detail" id="schema_prefix/1">
+<section class="detail" id="cast_and_validate_required_polymorphic_embed/3">
 
   <div class="detail-header">
-    <a href="#schema_prefix/1" class="detail-link" title="Link to this function">
+    <a href="#cast_and_validate_required_polymorphic_embed/3" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">schema_prefix(event)</h1>
+    <h1 class="signature" translate="no">cast_and_validate_required_polymorphic_embed(changeset, field, required_fields)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/projections/database_projector.ex#L6" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/commands/update_database_health.ex#L8" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -273,19 +326,19 @@ process to go into hibernation after a period of inactivity.</p><h3 id="child_sp
 
   <section class="docstring">
 
-<p>Callback implementation for <a href="https://hexdocs.pm/commanded_ecto_projections/1.3.0/Commanded.Projections.Ecto.html#c:schema_prefix/1"><code class="inline">Commanded.Projections.Ecto.schema_prefix/1</code></a>.</p>
+
   </section>
 </section>
-<section class="detail" id="schema_prefix/2">
+<section class="detail" id="changeset/2">
 
   <div class="detail-header">
-    <a href="#schema_prefix/2" class="detail-link" title="Link to this function">
+    <a href="#changeset/2" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">schema_prefix(event, metadata)</h1>
+    <h1 class="signature" translate="no">changeset(struct, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/projections/database_projector.ex#L6" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/commands/update_database_health.ex#L8" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -295,21 +348,20 @@ process to go into hibernation after a period of inactivity.</p><h3 id="child_sp
 
   <section class="docstring">
 
-<p>Callback implementation for <a href="https://hexdocs.pm/commanded_ecto_projections/1.3.0/Commanded.Projections.Ecto.html#c:schema_prefix/2"><code class="inline">Commanded.Projections.Ecto.schema_prefix/2</code></a>.</p>
+<p>Casts the fields by using Ecto reflection,
+validates the required ones and returns a changeset.</p>
   </section>
 </section>
-<section class="detail" id="start_link/1">
-
-    <span id="start_link/0"></span>
+<section class="detail" id="new/1">
 
   <div class="detail-header">
-    <a href="#start_link/1" class="detail-link" title="Link to this function">
+    <a href="#new/1" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">start_link(opts \\ [])</h1>
+    <h1 class="signature" translate="no">new(structs)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/projections/database_projector.ex#L6" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/commands/update_database_health.ex#L8" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -319,31 +371,54 @@ process to go into hibernation after a period of inactivity.</p><h3 id="child_sp
 
   <section class="docstring">
 
-<p>Start an event handler <a href="https://hexdocs.pm/elixir/GenServer.html"><code class="inline">GenServer</code></a> process linked to the current process.</p><h2 id="start_link/1-options" class="section-heading">
-  <a href="#start_link/1-options" class="hover-link">
-    <i class="ri-link-m" aria-hidden="true"></i>
-  </a>
-  <span class="text">Options</span>
-</h2>
-<ul><li><p><code class="inline">:application</code> - the Commanded application.</p></li><li><p><code class="inline">:name</code> - name of the event handler used to determine its unique event
-store subscription.</p></li><li><p><code class="inline">:concurrency</code> - determines how many processes are started to
-concurrently process events. The default is one process.</p></li><li><p><code class="inline">:consistency</code> - one of either <code class="inline">:eventual</code> (default) or <code class="inline">:strong</code>.</p></li><li><p><code class="inline">:start_from</code> - where to start the event store subscription from when
-first created (default: <code class="inline">:origin</code>).</p></li><li><p>:subscribe_to - which stream to subscribe to can be either <code class="inline">:all</code> to
-subscribe to all events or a named stream (default: <code class="inline">:all</code>).</p></li></ul><p>The default options supported by <a href="https://hexdocs.pm/elixir/GenServer.html#start_link/3"><code class="inline">GenServer.start_link/3</code></a> are supported,
-including the <code class="inline">:hibernate_after</code> option which allows the process to go
-into hibernation after a period of inactivity.</p>
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> new(<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>() | [<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()]) :: {:ok, <a href="#t:t/0">t</a>() | [<a href="#t:t/0">t</a>()]} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+
+      </div>
+
+<p>Returns an ok tuple if the params are valid, otherwise returns <code class="inline">{:error, {:validation, errors}}</code>.
+Accepts a map or a list of maps.</p>
   </section>
 </section>
-<section class="detail" id="update_projection/3">
+<section class="detail" id="new!/1">
 
   <div class="detail-header">
-    <a href="#update_projection/3" class="detail-link" title="Link to this function">
+    <a href="#new!/1" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">update_projection(event, metadata, multi_fn)</h1>
+    <h1 class="signature" translate="no">new!(params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/projections/database_projector.ex#L6" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/commands/update_database_health.ex#L8" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> new!(<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>() | [<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()]) :: <a href="#t:t/0">t</a>() | [<a href="#t:t/0">t</a>()]</pre>
+
+      </div>
+
+<p>Returns new struct(s) if the params are valid, otherwise raises a <a href="https://hexdocs.pm/elixir/RuntimeError.html"><code class="inline">RuntimeError</code></a>.</p>
+  </section>
+</section>
+<section class="detail" id="validate_required_fields/2">
+
+  <div class="detail-header">
+    <a href="#validate_required_fields/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">validate_required_fields(changeset, required_fields)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/commands/update_database_health.ex#L8" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
