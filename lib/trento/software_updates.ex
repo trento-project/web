@@ -44,7 +44,9 @@ defmodule Trento.SoftwareUpdates do
           | {:error, any()}
   def save_settings(settings_submission, date_service \\ DateService) do
     with {:ok, :settings_not_configured, settings} <- ensure_no_settings_configured() do
-      save_new_settings(settings, settings_submission, date_service)
+      settings
+      |> save_or_update_settings(settings_submission, date_service)
+      |> log_error("Error while saving software updates settings")
     end
   end
 
@@ -54,7 +56,9 @@ defmodule Trento.SoftwareUpdates do
           | {:error, any()}
   def change_settings(settings_submission, date_service \\ DateService) do
     with {:ok, settings} <- get_settings() do
-      update_settings(settings, settings_submission, date_service)
+      settings
+      |> save_or_update_settings(settings_submission, date_service)
+      |> log_error("Error while updating software updates settings")
     end
   end
 
@@ -97,7 +101,6 @@ defmodule Trento.SoftwareUpdates do
     case get_settings() do
       {:ok, _} ->
         Discovery.discover_software_updates()
-        :ok
 
       error ->
         Logger.error("Software updates settings not configured. Skipping discovery.")
@@ -148,37 +151,26 @@ defmodule Trento.SoftwareUpdates do
     end
   end
 
-  defp save_new_settings(%Settings{} = settings, settings_submission, date_service) do
-    saving_result =
+  defp save_or_update_settings(%Settings{} = settings, settings_submission, date_service) do
+    result =
       settings
       |> Settings.changeset(settings_submission, date_service)
       |> Repo.update()
 
-    case saving_result do
+    case result do
       {:ok, _} = success ->
+        Discovery.discover_software_updates()
         success
 
       {:error, _} = error ->
-        Logger.error("Error while saving software updates settings: #{inspect(error)}")
-
         error
     end
   end
 
-  defp update_settings(%Settings{} = settings, settings_submission, date_service) do
-    update_result =
-      settings
-      |> Settings.changeset(settings_submission, date_service)
-      |> Repo.update()
-
-    case update_result do
-      {:ok, _} = success ->
-        success
-
-      {:error, _} = error ->
-        Logger.error("Error while updating software updates settings: #{inspect(error)}")
-
-        error
-    end
+  defp log_error({:error, _} = error, message) do
+    Logger.error("#{message}: #{inspect(error)}")
+    error
   end
+
+  defp log_error(result, _), do: result
 end
