@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
-      types: [opened, synchronize, labeled]
+    types: [opened, synchronize, labeled]
   release:
     types: [published]
   workflow_dispatch:
@@ -439,7 +439,7 @@ jobs:
           name: e2e-screenshots
           path: test/e2e/cypress/screenshots/
 
-  check-regression-label:
+  check_regression_label:
     name: Check if the environment creation criteria are met, store in the job output
     runs-on: ubuntu-22.04
     outputs:
@@ -450,8 +450,16 @@ jobs:
 
   regression-test-e2e:
     name: Regression tests
-    needs: [elixir-deps, npm-deps, npm-e2e-deps, api-bc-check]
+    needs:
+      [
+        check_regression_label,
+        elixir-deps,
+        npm-deps,
+        npm-e2e-deps,
+        api-bc-check,
+      ]
     runs-on: ubuntu-22.04
+    if: needs.check_regression_label.outputs.run_regression_test == 'true'
     env:
       MIX_ENV: dev
     steps:
@@ -902,7 +910,7 @@ jobs:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.12.1
         with:
-          access_token: ${{ github.token }}    
+          access_token: ${{ github.token }}
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -924,8 +932,8 @@ jobs:
           sed -i 's~%%VERSION%%~'"${VERSION}"'~' $FOLDER/_service
       - name: Get mix deps & prepare tarball
         run: |
-         mix local.hex --force && mix deps.clean --all && mix deps.get
-         tar -c deps | gzip -n > deps.tar.gz
+          mix local.hex --force && mix deps.clean --all && mix deps.get
+          tar -c deps | gzip -n > deps.tar.gz
       - name: Checkout and prepare OBS package
         run: |
           osc checkout $OBS_PROJECT trento-web -o $OSC_CHECKOUT_DIR
