@@ -41,6 +41,23 @@ defmodule Trento.UsersTest do
       assert user.username == "username"
     end
 
+    test "create_user should return an error if the email has already been taken" do
+      user_already_existing = create_user()
+
+      assert {:error, changeset} =
+               Users.create_user(%{
+                 username: "username",
+                 password: "some password",
+                 email: user_already_existing.email,
+                 fullname: "some fullname",
+                 confirm_password: "some password"
+               })
+
+      assert changeset.errors[:email] ==
+               {"has already been taken",
+                [{:constraint, :unique}, {:constraint_name, "users_email_index"}]}
+    end
+
     test "create_user with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} =
                Users.create_user(%{
@@ -80,6 +97,21 @@ defmodule Trento.UsersTest do
       assert changeset.errors[:password] ==
                {"should be at least %{count} character(s)",
                 [count: 8, validation: :length, kind: :min, type: :string]}
+    end
+
+    test "update_user/2 returns error if the email has already been taken" do
+      user = create_user()
+      user2 = create_user()
+      {:ok, user} = Users.get_user(user.id)
+
+      assert {:error, changeset} =
+               Users.update_user(user, %{
+                 email: user2.email
+               })
+
+      assert changeset.errors[:email] ==
+               {"has already been taken",
+                [{:constraint, :unique}, {:constraint_name, "users_email_index"}]}
     end
 
     test "update_user/2 does not update deleted_at" do

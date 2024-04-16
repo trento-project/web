@@ -102,5 +102,6 @@ defmodule Trento.Users.User do
     |> cast(attrs, [:email, :fullname])
     |> validate_required([:email, :fullname])
     |> EmailValidator.validate_email(:email, checks: [:pow])
+    |> unique_constraint(:email)
   end
 end
