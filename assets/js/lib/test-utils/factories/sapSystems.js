@@ -2,7 +2,7 @@
 import { faker } from '@faker-js/faker';
 import { Factory } from 'fishery';
 
-import { databaseInstanceFactory } from './databases';
+import { databaseInstanceFactory, generateSid } from '.';
 
 const ensaVersion = () =>
   faker.helpers.arrayElement(['no_ensa', 'ensa1', 'ensa2']);
@@ -26,7 +26,7 @@ export const sapSystemApplicationInstanceFactory = Factory.define(() => ({
   https_port: faker.internet.port(),
   instance_hostname: faker.hacker.noun(),
   instance_number: faker.number.int({ min: 10, max: 99 }).toString(),
-  sid: faker.string.alphanumeric(3, { casing: 'upper' }),
+  sid: generateSid(),
   start_priority: faker.number.int({ min: 1, max: 9 }).toString(),
   sap_system_id: faker.string.uuid(),
   absent_at: null,
@@ -34,10 +34,9 @@ export const sapSystemApplicationInstanceFactory = Factory.define(() => ({
 
 export const sapSystemFactory = Factory.define(({ params }) => {
   const id = params.id || faker.string.uuid();
-  const sid = params.sid || faker.string.alphanumeric(3, { casing: 'upper' });
+  const sid = params.sid || generateSid();
   const databaseId = params.database_id || faker.string.uuid();
-  const databaseSid =
-    params.database_sid || faker.string.alphanumeric(3, { casing: 'upper' });
+  const databaseSid = params.database_sid || generateSid();
   return {
     application_instances: sapSystemApplicationInstanceFactory.buildList(2, {
       sap_system_id: id,
@@ -45,7 +44,7 @@ export const sapSystemFactory = Factory.define(({ params }) => {
     }),
     database_instances: databaseInstanceFactory.buildList(2, {
       database_id: databaseId,
-      sid: faker.string.alphanumeric(3, { casing: 'upper' }),
+      sid: generateSid(),
     }),
     db_host: faker.internet.ip(),
     deregistered_at: null,
@@ -55,7 +54,7 @@ export const sapSystemFactory = Factory.define(({ params }) => {
     sid,
     tags: [],
     database_sid: databaseSid,
-    tenant: faker.string.alphanumeric(3, { casing: 'upper' }),
+    tenant: generateSid(),
     database_id: databaseId,
   };
 });

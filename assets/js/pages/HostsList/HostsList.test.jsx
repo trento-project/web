@@ -8,6 +8,7 @@ import {
   databaseInstanceFactory,
   hostFactory,
   sapSystemApplicationInstanceFactory,
+  generateSid,
 } from '@lib/test-utils/factories';
 
 import {
@@ -366,7 +367,7 @@ describe('HostsLists component', () => {
         id: 'host1',
         tags: [{ value: 'Tag1' }],
       });
-      const sid = 'PRD';
+      const sid = generateSid();
       const state = {
         ...cleanInitialState,
         hostsList: {

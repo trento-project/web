@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/react';
 import { faker } from '@faker-js/faker';
 
 import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
+import { generateSid } from '@lib/test-utils/factories';
 
 import DeregistrationModal from '.';
 
@@ -33,7 +34,7 @@ describe('Deregistration Modal component', () => {
   });
 
   it('should render an application instance deregistration modal correctly', async () => {
-    const sid = 'PRD';
+    const sid = generateSid();
     const instanceNumber = '00';
 
     render(
@@ -59,7 +60,7 @@ describe('Deregistration Modal component', () => {
   });
 
   it('should render an application instance deregistration modal correctly', async () => {
-    const sid = 'PRD';
+    const sid = generateSid();
     const instanceNumber = '00';
 
     render(
