@@ -8,6 +8,7 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
 
   import Trento.Factory
 
+  alias Trento.Hosts.Commands.CompleteSoftwareUpdatesDiscovery
   alias Trento.SoftwareUpdates
   alias Trento.SoftwareUpdates.Settings
 
@@ -194,6 +195,34 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
       assert {:ok, _} = SoftwareUpdates.save_settings(settings)
 
       assert {:error, :settings_already_configured} = SoftwareUpdates.save_settings(settings)
+    end
+
+    test "should issue software updates discovery process when saving or updating settings" do
+      insert_list(5, :host)
+      insert(:host, deregistered_at: DateTime.to_iso8601(Faker.DateTime.backward(2)))
+
+      operations = [
+        &SoftwareUpdates.save_settings/1,
+        &SoftwareUpdates.change_settings/1
+      ]
+
+      for operation <- operations do
+        expect(
+          Trento.Commanded.Mock,
+          :dispatch,
+          5,
+          fn %CompleteSoftwareUpdatesDiscovery{} -> :ok end
+        )
+
+        settings = %{
+          url: "https://valid.com",
+          username: Faker.Internet.user_name(),
+          password: Faker.Lorem.word(),
+          ca_cert: Faker.Lorem.sentence()
+        }
+
+        assert {:ok, _} = operation.(settings)
+      end
     end
   end
 

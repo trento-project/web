@@ -549,6 +549,12 @@ defmodule Trento.Hosts.Host do
   # Software Updates Discovery
 
   def execute(
+        %Host{fully_qualified_domain_name: nil},
+        %DiscoverSoftwareUpdates{}
+      ),
+      do: []
+
+  def execute(
         %Host{
           host_id: host_id,
           fully_qualified_domain_name: fully_qualified_domain_name
