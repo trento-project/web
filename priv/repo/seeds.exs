@@ -14,7 +14,9 @@
 |> Trento.Users.User.changeset(%{
   username: "admin",
   password: "adminpassword",
-  confirm_password: "adminpassword"
+  confirm_password: "adminpassword",
+  fullname: "Trento Admin",
+  email: "admin@trento.com"
 })
 |> Trento.Repo.insert!(on_conflict: :nothing)
 
