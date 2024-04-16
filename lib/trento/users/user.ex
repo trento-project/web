@@ -4,7 +4,9 @@ defmodule Trento.Users.User do
   use Ecto.Schema
 
   use Pow.Ecto.Schema,
-    user_id_field: :username
+    user_id_field: :username,
+    password_hash_verify: {&Argon2.hash_pwd_salt/1,
+                           &Argon2.verify_pass/2}
 
   use Pow.Extension.Ecto.Schema,
     extensions: [PowPersistentSession]
