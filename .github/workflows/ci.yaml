@@ -440,7 +440,7 @@ jobs:
           path: test/e2e/cypress/screenshots/
 
   check-regression-label:
-    name: Check if the environment creation criteria are met, store in the job output
+    name: Check if the regression test criteria are met, store in the job output
     runs-on: ubuntu-22.04
     outputs:
       run_regression_test: ${{ steps.check.outputs.run_regression_test }}
