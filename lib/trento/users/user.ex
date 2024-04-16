@@ -21,6 +21,7 @@ defmodule Trento.Users.User do
 
     field :email, :string
     field :fullname, :string
+    field :deleted_at, :utc_datetime_usec
 
     timestamps(type: :utc_datetime_usec)
   end
@@ -29,15 +30,23 @@ defmodule Trento.Users.User do
     user
     |> pow_changeset(attrs)
     |> pow_extension_changeset(attrs)
+    |> validate_password()
     |> custom_fields_changeset(attrs)
   end
 
-  defp custom_fields_changeset(user, attrs) do
+  def update_changeset(user, attrs) do
     user
-    |> cast(attrs, [:email, :fullname])
-    |> validate_required([:email, :fullname])
+    |> pow_user_id_field_changeset(attrs)
+    |> pow_password_changeset(attrs)
+    |> pow_extension_changeset(attrs)
     |> validate_password()
-    |> EmailValidator.validate_email(:email, checks: [:pow])
+    |> custom_fields_changeset(attrs)
+  end
+
+  def delete_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:deleted_at])
+    |> validate_required(:deleted_at)
   end
 
   defp validate_password(changeset) do
@@ -86,5 +95,12 @@ defmodule Trento.Users.User do
 
       String.contains?(password, pattern)
     end)
+  end
+
+  defp custom_fields_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:email, :fullname])
+    |> validate_required([:email, :fullname])
+    |> EmailValidator.validate_email(:email, checks: [:pow])
   end
 end

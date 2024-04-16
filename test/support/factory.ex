@@ -885,13 +885,4 @@ defmodule Trento.Factory do
       to_package_id: "#{RandomElixir.random_between(0, 1000)}"
     }
   end
-
-  def user_factory do
-    %User{
-      username: Faker.Internet.user_name(),
-      email: Faker.Internet.email(),
-      fullname: Faker.Person.first_name(),
-      password: Faker.StarWars.character()
-    }
-  end
 end
