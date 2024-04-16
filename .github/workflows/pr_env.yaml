@@ -1,4 +1,4 @@
-name:  Pull request environment
+name: Pull request environment
 
 on:
   pull_request:
@@ -8,7 +8,6 @@ on:
       - labeled
 
 env:
-  MANTAINERS: "[\"cdimonaco\", \"dottorblaster\", \"fabriziosestito\", \"rtorrero\", \"nelsonkopliku\", \"arbulu89\",\"jagabomb\",\"emaksy\",\"jamie-suse\"]"
   PR_ENV_LABEL: env
   PR_NUMBER: "${{ github.event.pull_request.number }}"
 
@@ -18,9 +17,31 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       create_env: ${{ steps.check.outputs.create_env }}
+    permissions:
+      contents: read
+      packages: write
     steps:
+      - name: Get developers group members
+        run: |
+          MEMBERS_JSON=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/orgs/trento-project/teams/developers/members")
+          
+          echo "API Response:"
+          echo "$MEMBERS_JSON"
+          
+          MEMBERS=$(echo "$MEMBERS_JSON" | jq -r '.[] | .login' | jq -Rsc 'split("\n")[:-1]')
+          echo "Processed Members:"
+          echo "$MEMBERS"
+          
+          echo "DEVELOPERS_JSON=$MEMBERS" >> $GITHUB_ENV
       - id: check
-        run: echo "create_env=${{ contains(fromJson(env.MANTAINERS), github.event.sender.login) && contains(github.event.pull_request.labels.*.name, env.PR_ENV_LABEL) }}" >> "$GITHUB_OUTPUT"
+        run: |
+          DEVELOPERS=$(echo $DEVELOPERS_JSON | jq -r 'join(",")')
+          CREATE_ENV="false"
+          if [[ "$DEVELOPERS" == *"${{ github.event.sender.login }}"* && "$(echo '${{ toJson(github.event.pull_request.labels.*.name) }}')" == *"$PR_ENV_LABEL"* ]]; then
+            CREATE_ENV="true"
+          fi
+          echo "create_env=$CREATE_ENV" >> "$GITHUB_OUTPUT"
 
   build-and-push-pr-image:
     needs: check_env_creation_privilege
