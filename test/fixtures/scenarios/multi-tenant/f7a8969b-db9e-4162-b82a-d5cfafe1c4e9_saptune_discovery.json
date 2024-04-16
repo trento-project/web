@@ -1,0 +1,42 @@
+{
+  "payload": {
+    "package_version": "3.1.1",
+    "saptune_installed": true,
+    "status": {
+      "$schema": "file:///usr/share/saptune/schemas/1.0/saptune_status.schema.json",
+      "argv": "saptune --format json status",
+      "command": "status",
+      "exit code": 1,
+      "messages": [],
+      "pid": 18072,
+      "publish time": "2024-03-07 09:19:58.894",
+      "result": {
+        "Notes applied": [],
+        "Notes applied by Solution": [],
+        "Notes enabled": [],
+        "Notes enabled additionally": [],
+        "Notes enabled by Solution": [],
+        "Solution applied": [],
+        "Solution enabled": [],
+        "configured version": "3",
+        "package version": "3.1.1",
+        "remember message": "\nRemember: if you wish to automatically activate the note's and solution's tuning options after a reboot, you must enable and start saptune.service by running:\n 'saptune service enablestart'.\nYour system has not yet been tuned. Please visit `saptune note` and `saptune solution` to start tuning.\n\n",
+        "services": {
+          "sapconf": ["enabled", "active"],
+          "saptune": ["disabled", "inactive"],
+          "tuned": ["disabled", "inactive"]
+        },
+        "staging": {
+          "Notes staged": [],
+          "Solutions staged": [],
+          "staging enabled": false
+        },
+        "systemd system state": "running",
+        "tuning state": "not tuned",
+        "virtualization": "microsoft"
+      }
+    }
+  },
+  "discovery_type": "saptune_discovery",
+  "agent_id": "f7a8969b-db9e-4162-b82a-d5cfafe1c4e9"
+}

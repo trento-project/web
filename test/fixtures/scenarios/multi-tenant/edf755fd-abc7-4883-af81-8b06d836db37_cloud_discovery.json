@@ -1,0 +1,106 @@
+{
+  "payload": {
+    "Metadata": {
+      "compute": {
+        "azEnvironment": "AzurePublicCloud",
+        "isHostCompatibilityLayerVm": "true",
+        "licenseType": "SLES_BYOS",
+        "location": "westeurope",
+        "name": "vmnwhso02",
+        "offer": "sles-sap-15-sp4-byos",
+        "osProfile": {
+          "adminUsername": "cloudadmin",
+          "computerName": "vmnwhso02",
+          "disablePasswordAuthentication": "true"
+        },
+        "osType": "Linux",
+        "plan": {},
+        "platformFaultDomain": "0",
+        "platformUpdateDomain": "0",
+        "provider": "Microsoft.Compute",
+        "publisher": "suse",
+        "resourceGroupName": "multi-tenant",
+        "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/multi-tenant/providers/Microsoft.Compute/virtualMachines/vmnwhso02",
+        "securityProfile": {
+          "secureBootEnabled": "true",
+          "virtualTpmEnabled": "true"
+        },
+        "sku": "gen2",
+        "storageProfile": {
+          "dataDisks": [
+            {
+              "caching": "ReadOnly",
+              "createOption": "Attach",
+              "diskSizeGB": "10",
+              "image": { "uri": "" },
+              "lun": "0",
+              "managedDisk": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/multi-tenant/providers/Microsoft.Compute/disks/usrsap02",
+                "storageAccountType": "Premium_LRS"
+              },
+              "name": "usrsap02",
+              "vhd": { "uri": "" },
+              "writeAcceleratorEnabled": "false"
+            },
+            {
+              "caching": "ReadOnly",
+              "createOption": "Attach",
+              "diskSizeGB": "10",
+              "image": { "uri": "" },
+              "lun": "1",
+              "managedDisk": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/multi-tenant/providers/Microsoft.Compute/disks/sapmnt02",
+                "storageAccountType": "Premium_LRS"
+              },
+              "name": "sapmnt02",
+              "vhd": { "uri": "" },
+              "writeAcceleratorEnabled": "false"
+            }
+          ],
+          "imageReference": {
+            "offer": "sles-sap-15-sp4-byos",
+            "publisher": "suse",
+            "sku": "gen2",
+            "version": "latest"
+          },
+          "osDisk": {
+            "caching": "ReadWrite",
+            "createOption": "FromImage",
+            "diffDiskSettings": { "option": "" },
+            "diskSizeGB": "30",
+            "encryptionSettings": { "enabled": "false" },
+            "image": { "uri": "" },
+            "managedDisk": {
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/multi-tenant/providers/Microsoft.Compute/disks/vmnwhso02_OsDisk_1",
+              "storageAccountType": "Premium_LRS"
+            },
+            "name": "vmnwhso02_OsDisk_1",
+            "osType": "Linux",
+            "vhd": { "uri": "" },
+            "writeAcceleratorEnabled": "false"
+          }
+        },
+        "subscriptionId": "00000000-0000-0000-0000-000000000000",
+        "tags": "",
+        "version": "2024.02.07",
+        "vmId": "70010f21-03dd-4a4d-b981-1dda68d53147",
+        "vmSize": "Standard_D2s_v3"
+      },
+      "network": {
+        "interface": [
+          {
+            "ipv4": {
+              "ipAddress": [{ "privateIpAddress": "10.17.0.8" }],
+              "subnet": [{ "address": "10.17.0.0", "prefix": "24" }]
+            },
+            "ipv6": {},
+            "macAddress": "DA32D25B4292"
+          }
+        ]
+      }
+    },
+    "Provider": "azure"
+  },
+  "discovery_type": "cloud_discovery",
+  "agent_id": "edf755fd-abc7-4883-af81-8b06d836db37"
+}
