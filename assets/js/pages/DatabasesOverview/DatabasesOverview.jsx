@@ -128,11 +128,10 @@ function DatabasesOverview({
     id: database.id,
     health: database.health,
     sid: database.sid,
-    attachedRdbms: database.tenant,
     tenant: database.tenant,
     dbAddress: database.db_host,
     databaseInstances: filter(databaseInstances, {
-      sap_system_id: database.id,
+      database_id: database.id,
     }),
     tags: (database.tags && database.tags.map((tag) => tag.value)) || [],
   }));

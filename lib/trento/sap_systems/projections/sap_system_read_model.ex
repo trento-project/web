@@ -10,10 +10,12 @@ defmodule Trento.SapSystems.Projections.SapSystemReadModel do
   require Trento.SapSystems.Enums.EnsaVersion, as: EnsaVersion
   require Trento.Enums.Health, as: Health
 
-  alias Trento.SapSystems.Projections.{
-    ApplicationInstanceReadModel,
-    DatabaseInstanceReadModel
+  alias Trento.Databases.Projections.{
+    DatabaseInstanceReadModel,
+    DatabaseReadModel
   }
+
+  alias Trento.SapSystems.Projections.ApplicationInstanceReadModel
 
   alias Trento.Tags.Tag
 
@@ -28,9 +30,11 @@ defmodule Trento.SapSystems.Projections.SapSystemReadModel do
     field :health, Ecto.Enum, values: Health.values()
     field :ensa_version, Ecto.Enum, values: EnsaVersion.values(), default: EnsaVersion.no_ensa()
 
+    belongs_to :database, DatabaseReadModel, type: :binary_id
+
     has_many :database_instances, DatabaseInstanceReadModel,
-      references: :id,
-      foreign_key: :sap_system_id,
+      references: :database_id,
+      foreign_key: :database_id,
       preload_order: [asc: :instance_number, asc: :host_id]
 
     has_many :application_instances, ApplicationInstanceReadModel,

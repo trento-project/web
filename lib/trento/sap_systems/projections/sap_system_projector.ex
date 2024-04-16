@@ -38,7 +38,8 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
       tenant: tenant,
       db_host: db_host,
       health: health,
-      ensa_version: ensa_version
+      ensa_version: ensa_version,
+      database_id: database_id
     },
     fn multi ->
       changeset =
@@ -48,7 +49,8 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
           tenant: tenant,
           db_host: db_host,
           health: health,
-          ensa_version: ensa_version
+          ensa_version: ensa_version,
+          database_id: database_id
         })
 
       Ecto.Multi.insert(multi, :sap_system, changeset)
@@ -270,10 +272,13 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
         _,
         %{sap_system: %SapSystemReadModel{} = sap_system}
       ) do
+    enriched_sap_system =
+      Repo.preload(sap_system, [:database])
+
     TrentoWeb.Endpoint.broadcast(
       @sap_systems_topic,
       "sap_system_registered",
-      SapSystemView.render("sap_system_registered.json", sap_system: sap_system)
+      SapSystemView.render("sap_system_registered.json", sap_system: enriched_sap_system)
     )
   end
 
@@ -386,7 +391,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
         %{sap_system: %SapSystemReadModel{} = sap_system}
       ) do
     enriched_sap_system =
-      Repo.preload(sap_system, [:tags, :database_instances, :application_instances])
+      Repo.preload(sap_system, [:tags, :database, :database_instances, :application_instances])
 
     TrentoWeb.Endpoint.broadcast(
       @sap_systems_topic,
@@ -409,7 +414,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
     TrentoWeb.Endpoint.broadcast(
       @sap_systems_topic,
       "application_instance_absent_at_changed",
-      SapSystemView.render("instance_absent_at_changed.json",
+      SapSystemView.render("application_instance_absent_at_changed.json",
         instance: %{
           instance_number: instance_number,
           host_id: host_id,
@@ -434,7 +439,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
     TrentoWeb.Endpoint.broadcast(
       @sap_systems_topic,
       "application_instance_absent_at_changed",
-      SapSystemView.render("instance_absent_at_changed.json",
+      SapSystemView.render("application_instance_absent_at_changed.json",
         instance: %{
           instance_number: instance_number,
           host_id: host_id,
@@ -461,7 +466,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
     TrentoWeb.Endpoint.broadcast(
       @sap_systems_topic,
       "application_instance_deregistered",
-      SapSystemView.render("instance_deregistered.json",
+      SapSystemView.render("application_instance_deregistered.json",
         sap_system_id: sap_system_id,
         instance_number: instance_number,
         host_id: host_id,

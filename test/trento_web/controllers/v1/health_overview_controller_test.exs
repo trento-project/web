@@ -11,6 +11,7 @@ defmodule TrentoWeb.V1.HealthOverviewControllerTest do
 
   alias Trento.ClusterReadModel
   alias Trento.Clusters.Projections.ClusterReadModel
+  alias Trento.Databases.Projections.DatabaseReadModel
   alias Trento.Hosts.Projections.HostReadModel
   alias Trento.SapSystems.Projections.SapSystemReadModel
 
@@ -20,17 +21,19 @@ defmodule TrentoWeb.V1.HealthOverviewControllerTest do
 
     %HostReadModel{id: host_1_id} = insert(:host, cluster_id: cluster_id, heartbeat: :unknown)
 
+    %DatabaseReadModel{health: database_health, id: database_id} = insert(:database)
+
     %SapSystemReadModel{
       id: sap_system_id,
       sid: sid
-    } = insert(:sap_system, health: Health.critical())
+    } = insert(:sap_system, database_id: database_id, health: Health.critical())
 
     insert(
       :database_instance_without_host,
-      sap_system_id: sap_system_id,
+      database_id: database_id,
       sid: "HDD",
       host_id: host_1_id,
-      health: Health.warning()
+      health: database_health
     )
 
     insert(

@@ -5,7 +5,10 @@ defmodule Trento.EventHandlersSupervisor do
 
   alias Trento.Infrastructure.Commanded.EventHandlers.{
     AlertsEventHandler,
+    DatabaseDeregistrationEventHandler,
+    DatabaseRestoreEventHandler,
     RollUpEventHandler,
+    SapSystemDatabaseHealthEventHandler,
     SoftwareUpdatesDiscoveryEventHandler,
     StreamRollUpEventHandler
   }
@@ -20,7 +23,10 @@ defmodule Trento.EventHandlersSupervisor do
       AlertsEventHandler,
       RollUpEventHandler,
       StreamRollUpEventHandler,
-      SoftwareUpdatesDiscoveryEventHandler
+      SoftwareUpdatesDiscoveryEventHandler,
+      DatabaseDeregistrationEventHandler,
+      DatabaseRestoreEventHandler,
+      SapSystemDatabaseHealthEventHandler
     ]
 
     Supervisor.init(children, strategy: :one_for_one)

@@ -11,6 +11,7 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
 
   alias Trento.Clusters.Projections.ClusterReadModel
+  alias Trento.Databases.Projections.DatabaseReadModel
   alias Trento.Hosts.Projections.HostReadModel
   alias Trento.SapSystems.Projections.SapSystemReadModel
 
@@ -22,14 +23,16 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
     test "should raise an exception when a cluster couldn't be loaded" do
       %HostReadModel{id: a_host_id} = insert(:host, cluster_id: Faker.UUID.v4())
 
+      %DatabaseReadModel{id: database_id} = insert(:database)
+
       %SapSystemReadModel{
         id: sap_system_id,
         sid: sid
-      } = insert(:sap_system)
+      } = insert(:sap_system, database_id: database_id)
 
       insert(
         :database_instance_without_host,
-        sap_system_id: sap_system_id,
+        database_id: database_id,
         host_id: a_host_id
       )
 
@@ -64,17 +67,20 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
       %HostReadModel{id: app_host_id_2} =
         app_host_2 = insert(:host, cluster_id: nil, heartbeat: Health.critical())
 
+      %DatabaseReadModel{id: database_id, health: database_health, sid: database_sid} =
+        insert(:database)
+
       %SapSystemReadModel{
         id: sap_system_id,
         sid: sid
-      } = insert(:sap_system, health: Health.critical())
+      } = insert(:sap_system, health: Health.critical(), database_id: database_id)
 
       insert(:sap_system, deregistered_at: DateTime.utc_now())
 
       database_instances = [
         insert(
           :database_instance,
-          sap_system_id: sap_system_id,
+          database_id: database_id,
           instance_number: "00",
           host_id: db_host_id,
           health: Health.warning(),
@@ -82,7 +88,7 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
         ),
         insert(
           :database_instance,
-          sap_system_id: sap_system_id,
+          database_id: database_id,
           instance_number: "01",
           host_id: db_host_id_2,
           health: Health.passing(),
@@ -116,12 +122,14 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
                  id: sap_system_id,
                  sid: sid,
                  sapsystem_health: Health.critical(),
-                 database_health: Health.warning(),
+                 database_health: database_health,
                  database_cluster_health: Health.passing(),
                  application_cluster_health: Health.warning(),
                  hosts_health: Health.unknown(),
+                 database_id: database_id,
                  database_instances: database_instances,
-                 application_instances: application_instances
+                 application_instances: application_instances,
+                 database_sid: database_sid
                }
              ] == HealthSummaryService.get_health_summary()
     end
@@ -133,10 +141,13 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
       %HostReadModel{id: app_host_id} =
         app_host = insert(:host, cluster_id: nil, health: Health.passing())
 
+      %DatabaseReadModel{id: database_id, health: database_health, sid: database_sid} =
+        insert(:database)
+
       %SapSystemReadModel{
         id: sap_system_id,
         sid: sid
-      } = insert(:sap_system, health: Health.critical())
+      } = insert(:sap_system, health: Health.critical(), database_id: database_id)
 
       insert(:sap_system, deregistered_at: DateTime.utc_now())
 
@@ -144,7 +155,7 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
         insert_list(
           1,
           :database_instance,
-          sap_system_id: sap_system_id,
+          database_id: database_id,
           instance_number: "00",
           host_id: db_host_id,
           health: Health.warning(),
@@ -168,12 +179,14 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
                  id: sap_system_id,
                  sid: sid,
                  sapsystem_health: Health.critical(),
-                 database_health: Health.warning(),
+                 database_health: database_health,
                  database_cluster_health: Health.unknown(),
+                 database_id: database_id,
                  application_cluster_health: Health.unknown(),
                  hosts_health: Health.passing(),
                  database_instances: database_instances,
-                 application_instances: application_instances
+                 application_instances: application_instances,
+                 database_sid: database_sid
                }
              ] == HealthSummaryService.get_health_summary()
     end

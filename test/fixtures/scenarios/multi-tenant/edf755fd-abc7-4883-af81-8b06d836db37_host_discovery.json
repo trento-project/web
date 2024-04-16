@@ -1,0 +1,20 @@
+{
+  "payload": {
+    "agent_version": "2.3.0",
+    "cpu_count": 2,
+    "fully_qualified_domain_name": "vmnwhso02.example.com",
+    "hostname": "vmnwhso02",
+    "installation_source": "Suse",
+    "ip_addresses": [
+      "127.0.0.1",
+      "::1",
+      "10.17.0.8",
+      "fe80::6111:bdef:af94:11ae"
+    ],
+    "os_version": "15-SP4",
+    "socket_count": 1,
+    "total_memory_mb": 7880
+  },
+  "discovery_type": "host_discovery",
+  "agent_id": "edf755fd-abc7-4883-af81-8b06d836db37"
+}

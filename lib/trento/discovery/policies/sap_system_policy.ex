@@ -5,16 +5,19 @@ defmodule Trento.Discovery.Policies.SapSystemPolicy do
 
   require Trento.SapSystems.Enums.EnsaVersion, as: EnsaVersion
 
-  alias Trento.SapSystems.Commands.{
-    DeregisterApplicationInstance,
-    DeregisterDatabaseInstance,
-    MarkApplicationInstanceAbsent,
+  alias Trento.Databases.Commands.{
     MarkDatabaseInstanceAbsent,
-    RegisterApplicationInstance,
     RegisterDatabaseInstance
   }
 
-  alias Trento.SapSystems.Projections.{ApplicationInstanceReadModel, DatabaseInstanceReadModel}
+  alias Trento.SapSystems.Commands.{
+    MarkApplicationInstanceAbsent,
+    RegisterApplicationInstance
+  }
+
+  alias Trento.Databases.Projections.DatabaseInstanceReadModel
+
+  alias Trento.SapSystems.Projections.ApplicationInstanceReadModel
 
   alias Trento.Discovery.Payloads.SapSystemDiscoveryPayload
 
@@ -39,9 +42,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicy do
         ) ::
           {:ok,
            [
-             DeregisterApplicationInstance.t()
-             | DeregisterDatabaseInstance.t()
-             | RegisterApplicationInstance.t()
+             RegisterApplicationInstance.t()
              | RegisterDatabaseInstance.t()
            ]}
           | {:error, any}
@@ -94,24 +95,28 @@ defmodule Trento.Discovery.Policies.SapSystemPolicy do
          host_id,
          _
        ) do
-    Enum.flat_map(databases, fn %{:Database => tenant} ->
-      Enum.map(instances, fn instance ->
-        RegisterDatabaseInstance.new(%{
-          sap_system_id: UUID.uuid5(@uuid_namespace, id),
-          sid: sid,
-          tenant: tenant,
-          host_id: host_id,
-          instance_number: parse_instance_number(instance),
-          instance_hostname: parse_instance_hostname(instance),
-          features: parse_features(instance),
-          http_port: parse_http_port(instance),
-          https_port: parse_https_port(instance),
-          start_priority: parse_start_priority(instance),
-          system_replication: parse_system_replication(instance),
-          system_replication_status: parse_system_replication_status(instance),
-          health: parse_dispstatus(instance)
-        })
+    # extract tenants name from the database
+    tenants =
+      Enum.map(databases, fn %{:Database => tenant} ->
+        %{name: tenant}
       end)
+
+    Enum.map(instances, fn instance ->
+      RegisterDatabaseInstance.new(%{
+        database_id: UUID.uuid5(@uuid_namespace, id),
+        sid: sid,
+        tenants: tenants,
+        host_id: host_id,
+        instance_number: parse_instance_number(instance),
+        instance_hostname: parse_instance_hostname(instance),
+        features: parse_features(instance),
+        http_port: parse_http_port(instance),
+        https_port: parse_https_port(instance),
+        start_priority: parse_start_priority(instance),
+        system_replication: parse_system_replication(instance),
+        system_replication_status: parse_system_replication_status(instance),
+        health: parse_dispstatus(instance)
+      })
     end)
   end
 
@@ -171,7 +176,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicy do
         MarkDatabaseInstanceAbsent.new!(%{
           host_id: instance.host_id,
           instance_number: instance.instance_number,
-          sap_system_id: instance.sap_system_id,
+          database_id: instance.database_id,
           absent_at: DateTime.utc_now()
         })
     end)

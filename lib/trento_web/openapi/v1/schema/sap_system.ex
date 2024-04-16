@@ -76,6 +76,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
           type: :array,
           items: ApplicationInstance
         },
+        database_id: %Schema{type: :string, description: "Database ID", format: :uuid},
+        database_sid: %Schema{type: :string, description: "Database SID"},
         database_instances: Database.DatabaseInstances,
         tags: Tags,
         inserted_at: %Schema{type: :string, format: :datetime},
@@ -134,7 +136,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
         },
         application_cluster_health: ResourceHealth,
         database_cluster_health: ResourceHealth,
-        tenant: %Schema{type: :string, description: "Tenant database SID"}
+        tenant: %Schema{type: :string, description: "Tenant database SID", deprecated: true},
+        database_sid: %Schema{type: :string, description: "Database SID"}
       }
     })
   end

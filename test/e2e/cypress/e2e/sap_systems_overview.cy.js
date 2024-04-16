@@ -265,10 +265,19 @@ context('SAP Systems Overview', () => {
       });
     });
 
-    it(`should have RED health in SAP system and when HANA instance when SAPControl-RED state is received`, () => {
+    it(`should have RED health in SAP system when HANA instance with SAPControl-RED state is received`, () => {
       cy.loadScenario(`sap-systems-overview-hana-RED`);
 
       const healthClasses = healthMap['RED'];
+
+      cy.get('table.table-fixed > tbody > tr')
+        .filter(':visible')
+        .eq(0)
+        .find('td')
+        .eq(0)
+        .get('svg')
+        .should('have.class', healthClasses);
+
       cy.get('table.table-fixed > tbody > tr').filter(':visible').eq(0).click();
       cy.get('table.table-fixed > tbody > tr')
         .filter(':visible')
@@ -295,7 +304,7 @@ context('SAP Systems Overview', () => {
   describe('Move application instance', () => {
     const nwdSystem = {
       sid: 'NWD',
-      id: 'f534a4ad-cef7-5234-b196-e67082ffb50c',
+      id: '67b247e4-ab5b-5094-993a-a4fd70d0e8d1',
       hostId: '9a3ec76a-dd4f-5013-9cf0-5eb4cf89898f',
       instanceNumber: '02',
       hostname: 'vmnwdev01',

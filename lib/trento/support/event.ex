@@ -16,9 +16,9 @@ defmodule Trento.Support.Event do
       end
 
       if is_nil(@superseded_by) do
-        def supersede, do: __MODULE__
+        def supersede(_params), do: __MODULE__
       else
-        def supersede, do: @superseded_by.supersede()
+        def supersede(_params), do: @superseded_by.supersede(_params)
       end
 
       def upcast(params, metadata) do

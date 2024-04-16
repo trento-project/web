@@ -35,14 +35,16 @@ export const sapSystemApplicationInstanceFactory = Factory.define(() => ({
 export const sapSystemFactory = Factory.define(({ params }) => {
   const id = params.id || faker.string.uuid();
   const sid = params.sid || faker.string.alphanumeric(3, { casing: 'upper' });
-
+  const databaseId = params.database_id || faker.string.uuid();
+  const databaseSid =
+    params.database_sid || faker.string.alphanumeric(3, { casing: 'upper' });
   return {
     application_instances: sapSystemApplicationInstanceFactory.buildList(2, {
       sap_system_id: id,
       sid,
     }),
     database_instances: databaseInstanceFactory.buildList(2, {
-      sap_system_id: id,
+      database_id: databaseId,
       sid: faker.string.alphanumeric(3, { casing: 'upper' }),
     }),
     db_host: faker.internet.ip(),
@@ -52,6 +54,8 @@ export const sapSystemFactory = Factory.define(({ params }) => {
     id,
     sid,
     tags: [],
+    database_sid: databaseSid,
     tenant: faker.string.alphanumeric(3, { casing: 'upper' }),
+    database_id: databaseId,
   };
 });

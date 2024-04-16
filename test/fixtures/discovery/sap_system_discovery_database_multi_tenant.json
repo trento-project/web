@@ -1,0 +1,263 @@
+{
+  "agent_id": "6a5dc5da-e28b-5b3c-8808-8dc88714720d",
+  "discovery_type": "sap_system_discovery",
+  "payload": [
+    {
+      "DBAddress": "",
+      "Databases": [
+        {
+          "Active": "yes",
+          "Container": "",
+          "Database": "HS6",
+          "Group": "",
+          "GroupId": "",
+          "Host": "vms4cs3",
+          "SqlPort": "35615",
+          "User": "",
+          "UserId": ""
+        },
+        {
+          "Active": "yes",
+          "Container": "",
+          "Database": "S4TENANT",
+          "Group": "",
+          "GroupId": "",
+          "Host": "vms4cs3",
+          "SqlPort": "35641",
+          "User": "",
+          "UserId": ""
+        }
+      ],
+      "Id": "bf970e0404d21abf439a45bff0e6daa9",
+      "Instances": [
+        {
+          "HdbnsutilSRstate": {
+            "mode": "none",
+            "online": "true"
+          },
+          "Host": "vms4cs3",
+          "HostConfiguration": {
+            "failoverActualGroup": "default",
+            "failoverConfigGroup": "default",
+            "failoverStatus": "",
+            "host": "vms4cs3",
+            "hostActive": "yes",
+            "hostActualRoles": "worker",
+            "hostConfigRoles": "worker",
+            "hostStatus": "ok",
+            "indexServerActualRole": "master",
+            "indexServerConfigRole": "worker",
+            "nameServerActualRole": "master",
+            "nameServerConfigRole": "master 1",
+            "removeStatus": "",
+            "storageActualPartition": "1",
+            "storageConfigPartition": "1",
+            "storagePartition": "1",
+            "workerActualGroups": "default",
+            "workerConfigGroups": "default"
+          },
+          "Name": "HDB56",
+          "SAPControl": {
+            "Instances": [
+              {
+                "dispstatus": "SAPControl-GREEN",
+                "features": "HDB|HDB_WORKER",
+                "hostname": "vms4cs3",
+                "httpPort": 55613,
+                "httpsPort": 55614,
+                "instanceNr": 56,
+                "startPriority": "0.3"
+              }
+            ],
+            "Processes": [
+              {
+                "description": "HDB Daemon",
+                "dispstatus": "SAPControl-GREEN",
+                "elapsedtime": "4:23:43",
+                "name": "hdbdaemon",
+                "pid": 11027,
+                "starttime": "2022 11 14 09:01:50",
+                "textstatus": "Running"
+              },
+              {
+                "description": "HDB Compileserver",
+                "dispstatus": "SAPControl-GREEN",
+                "elapsedtime": "4:23:11",
+                "name": "hdbcompileserver",
+                "pid": 11317,
+                "starttime": "2022 11 14 09:02:22",
+                "textstatus": "Running"
+              },
+              {
+                "description": "HDB Nameserver",
+                "dispstatus": "SAPControl-GREEN",
+                "elapsedtime": "4:23:43",
+                "name": "hdbnameserver",
+                "pid": 11047,
+                "starttime": "2022 11 14 09:01:50",
+                "textstatus": "Running"
+              },
+              {
+                "description": "HDB Preprocessor",
+                "dispstatus": "SAPControl-GREEN",
+                "elapsedtime": "4:23:11",
+                "name": "hdbpreprocessor",
+                "pid": 11320,
+                "starttime": "2022 11 14 09:02:22",
+                "textstatus": "Running"
+              },
+              {
+                "description": "HDB Web Dispatcher",
+                "dispstatus": "SAPControl-GREEN",
+                "elapsedtime": "4:22:33",
+                "name": "hdbwebdispatcher",
+                "pid": 11736,
+                "starttime": "2022 11 14 09:03:00",
+                "textstatus": "Running"
+              },
+              {
+                "description": "HDB Indexserver-HS6",
+                "dispstatus": "SAPControl-GREEN",
+                "elapsedtime": "4:23:11",
+                "name": "hdbindexserver",
+                "pid": 11368,
+                "starttime": "2022 11 14 09:02:22",
+                "textstatus": "Running"
+              },
+              {
+                "description": "HDB XSEngine-HS6",
+                "dispstatus": "SAPControl-GREEN",
+                "elapsedtime": "4:23:11",
+                "name": "hdbxsengine",
+                "pid": 11371,
+                "starttime": "2022 11 14 09:02:22",
+                "textstatus": "Running"
+              },
+              {
+                "description": "HDB Indexserver-S4TENANT",
+                "dispstatus": "SAPControl-GREEN",
+                "elapsedtime": "3:14:29",
+                "name": "hdbindexserver",
+                "pid": 25038,
+                "starttime": "2022 11 14 10:11:04",
+                "textstatus": "Running"
+              },
+              {
+                "description": "HDB Deployment Infrastructure Server-S4TENANT",
+                "dispstatus": "SAPControl-GREEN",
+                "elapsedtime": "3:03:06",
+                "name": "hdbdiserver",
+                "pid": 27778,
+                "starttime": "2022 11 14 10:22:27",
+                "textstatus": "Running"
+              },
+              {
+                "description": "HDB XSEngine-S4TENANT",
+                "dispstatus": "SAPControl-GREEN",
+                "elapsedtime": "3:14:21",
+                "name": "hdbxsengine",
+                "pid": 25111,
+                "starttime": "2022 11 14 10:11:12",
+                "textstatus": "Running"
+              },
+              {
+                "description": "HDB DocStore-S4TENANT",
+                "dispstatus": "SAPControl-GREEN",
+                "elapsedtime": "3:14:21",
+                "name": "hdbdocstore",
+                "pid": 25114,
+                "starttime": "2022 11 14 10:11:12",
+                "textstatus": "Running"
+              },
+              {
+                "description": "HDB DPserver-S4TENANT",
+                "dispstatus": "SAPControl-GREEN",
+                "elapsedtime": "3:14:21",
+                "name": "hdbdpserver",
+                "pid": 25119,
+                "starttime": "2022 11 14 10:11:12",
+                "textstatus": "Running"
+              }
+            ],
+            "Properties": [
+              {
+                "property": "Process List",
+                "propertytype": "NodeWebmethod",
+                "value": "GetProcessList"
+              },
+              {
+                "property": "Access Points",
+                "propertytype": "NodeWebmethod",
+                "value": "GetAccessPointList"
+              },
+              {
+                "property": "Parameter Documentation",
+                "propertytype": "NodeURL",
+                "value": "http://vms4cs3:55613/sapparamEN.html"
+              },
+              {
+                "property": "Protected Webmethods",
+                "propertytype": "Attribute",
+                "value": "ABAPAcknowledgeAlerts,ABAPCheckRFCDestinations,ABAPGetComponentList,ABAPGetSystemWPTable,ABAPGetWPTable,ABAPReadRawSyslog,ABAPReadSyslog,AnalyseLogFiles,Bootstrap,CheckParameter,CheckPSE,CheckUpdateSystem,ConfigureLogFileList,CreatePSECredential,CreateSnapshot,DeletePSE,DeleteSnapshots,EnqGetLockTable,EnqGetStatistic,EnqRemoveLocks,EnqRemoveUserLocks,GetAccessPointList,GetAlerts,GetAlertTree,GetCallstack,GetEnvironment,GetLogFileList,GetProcessParameter,GetQueueStatistic,GetStartProfile,GetSystemUpdateList,GetTraceFile,GetVersionInfo,GWCancelConnections,GWDeleteClients,GWDeleteConnections,GWGetConnectionList,GWGetClientList,HACheckConfig,HACheckFailoverConfig,HACheckMaintenanceMode,HAFailoverToNode,HAGetFailoverConfig,HASetMaintenanceMode,ICMGetCacheEntries,ICMGetConnectionList,ICMGetProxyConnectionList,ICMGetThreadList,InstanceStart,InstanceStop,J2EEControlCluster,J2EEControlComponents,J2EEControlProcess,J2EEDisableDbgSession,J2EEEnableDbgSession,J2EEGetApplicationAliasList,J2EEGetCacheStatistic,J2EEGetCacheStatistic2,J2EEGetClusterMsgList,J2EEGetComponentList,J2EEGetEJBSessionList,J2EEGetProcessList,J2EEGetProcessList2,J2EEGetRemoteObjectList,J2EEGetSessionList,J2EEGetSharedTableInfo,J2EEGetThreadCallStack,J2EEGetThreadList,J2EEGetThreadList2,J2EEGetThreadTaskStack,J2EEGetVMGCHistory,J2EEGetVMGCHistory2,J2EEGetVMHeapInfo,J2EEGetWebSessionList,J2EEGetWebSessionList2,ListConfigFiles,ListDeveloperTraces,ListLogFiles,ListSnapshots,OSExecute,ParameterValue,ReadConfigFile,ReadDeveloperTrace,ReadLogFile,ReadSnapshot,RestartInstance,RestartService,RestartSystem,SendSignal,SetProcessParameter,SetProcessParameter2,ShmDetach,Shutdown,Start,StartBypassHA,StartSystem,Stop,StopBypassHA,StopService,StopSystem,StorePSE,UpdateInstancePSE,UpdateSCSInstance,UpdateSystem,UpdateSystemPKI,WebDispGetServerList,WebDispGetGroupList,WebDispGetVirtHostList,WebDispGetUrlPrefixList,GetAgentConfig,GetListOfMaByCusGrp,GetMcInLocalMs,GetMtesByRequestTable,GetMtListByMtclass,InfoGetTree,MscCustomizeWrite,MscDeleteLines,MscReadCache,MsGetLocalMsInfo,MsGetMteclsInLocalMs,MtChangeStatus,MtCustomizeWrite,MtDbsetToWpsetByTid,MtDestroyMarkNTry,MteGetByToolRunstatus,MtGetAllToCust,MtGetAllToolsToSet,MtGetMteinfo,MtGetTidByName,MtRead,MtReset,PerfCustomizeWrite,PerfRead,PerfReadSmoothData,ReadDirectory,ReadFile,ReadProfileParameters,ReferenceRead,Register,RequestLogonFile,SnglmgsCustomizeWrite,SystemObjectSetValue,TextAttrRead,ToolGetEffective,ToolSet,ToolSetRuntimeStatus,TriggerDataCollection,Unregister,UtilAlChangeStatus,UtilMtGetAidByTid,UtilMtGetTreeLocal,UtilMtReadAll,UtilReadRawalertByAid,UtilSnglmsgReadRawdata"
+              },
+              {
+                "property": "DBServices",
+                "propertytype": "Attribute",
+                "value": "YES"
+              },
+              {
+                "property": "HANA Roles",
+                "propertytype": "Attribute",
+                "value": "worker"
+              },
+              {
+                "property": "StartPriority",
+                "propertytype": "Attribute",
+                "value": "0.3"
+              },
+              {
+                "property": "SAPSYSTEM",
+                "propertytype": "Attribute",
+                "value": "56"
+              },
+              {
+                "property": "SAPSYSTEMNAME",
+                "propertytype": "Attribute",
+                "value": "HS6"
+              },
+              {
+                "property": "SAPLOCALHOST",
+                "propertytype": "Attribute",
+                "value": "vms4cs3"
+              },
+              {
+                "property": "INSTANCE_NAME",
+                "propertytype": "Attribute",
+                "value": "HDB56"
+              },
+              {
+                "property": "Webmethods",
+                "propertytype": "Attribute",
+                "value": "Start,InstanceStart,StartBypassHA,Bootstrap,Stop,InstanceStop,StopBypassHA,Shutdown,ParameterValue,GetProcessList,GetStartProfile,GetTraceFile,GetAlertTree,GetAlerts,RestartService,StopService,GetEnvironment,ListDeveloperTraces,ReadDeveloperTrace,RestartInstance,SendSignal,GetVersionInfo,GetQueueStatistic,GetInstanceProperties,OSExecute,ReadLogFile,AnalyseLogFiles,ListLogFiles,GetAccessPointList,GetSystemInstanceList,GetSystemUpdateList,StartSystem,StopSystem,RestartSystem,UpdateSystem,UpdateSCSInstance,CheckUpdateSystem,AccessCheck,GetProcessParameter,SetProcessParameter,SetProcessParameter2,CheckParameter,ShmDetach,GetNetworkId,GetSecNetworkId,RequestLogonFile,CreateSnapshot,ReadSnapshot,ListSnapshots,DeleteSnapshots,GetCallstack,ABAPReadSyslog,ABAPReadRawSyslog,ABAPGetWPTable,ABAPAcknowledgeAlerts,ABAPGetComponentList,ABAPCheckRFCDestinations,ABAPGetSystemWPTable,J2EEGetProcessList,J2EEGetProcessList2,J2EEControlProcess,J2EEGetThreadList,J2EEGetThreadList2,J2EEGetThreadCallStack,J2EEGetThreadTaskStack,J2EEGetSessionList,J2EEGetWebSessionList,J2EEGetWebSessionList2,J2EEGetCacheStatistic,J2EEGetCacheStatistic2,J2EEGetApplicationAliasList,J2EEGetVMGCHistory,J2EEGetVMGCHistory2,J2EEGetVMHeapInfo,J2EEGetEJBSessionList,J2EEGetRemoteObjectList,J2EEGetClusterMsgList,J2EEGetSharedTableInfo,J2EEGetComponentList,J2EEControlComponents,ICMGetThreadList,ICMGetConnectionList,ICMGetCacheEntries,ICMGetProxyConnectionList,WebDispGetServerList,WebDispGetGroupList,WebDispGetVirtHostList,WebDispGetUrlPrefixList,EnqGetLockTable,EnqRemoveLocks,EnqRemoveUserLocks,EnqGetStatistic,GWCancelConnections,GWDeleteClients,GWDeleteConnections,GWGetConnectionList,GWGetClientList,UpdateSystemPKI,UpdateInstancePSE,StorePSE,DeletePSE,CheckPSE,HACheckConfig,HACheckFailoverConfig,HAGetFailoverConfig,HAFailoverToNode,HASetMaintenanceMode,HACheckMaintenanceMode,ListConfigFiles,ReadConfigFile"
+              }
+            ]
+          },
+          "SystemReplication": {
+            "local_site_id": "0"
+          },
+          "Type": 1
+        }
+      ],
+      "Profile": {
+        "HDB_LINKED_BINARIES": "yes",
+        "HDB_SHARED_BINARIES": "yes",
+        "SAPGLOBALHOST": "vms4cs3",
+        "SAPSYSTEMNAME": "HS6",
+        "hdbConfigType": "DEFAULT",
+        "ssl/ciphersuites": "135:PFS:HIGH::EC_P256:EC_HIGH"
+      },
+      "SID": "HS6",
+      "Type": 1
+    }
+  ]
+}

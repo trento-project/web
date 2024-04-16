@@ -43,7 +43,12 @@ context('HANA cluster details', () => {
       cy.get('.tn-cluster-details')
         .contains('SID')
         .next()
-        .contains(availableHanaCluster.sid);
+        .contains(availableHanaCluster.sid)
+        .should(
+          'have.attr',
+          'href',
+          `/databases/${availableHanaCluster.systemID}`
+        );
     });
 
     it(`should have cluster type ${availableHanaCluster.clusterType}`, () => {

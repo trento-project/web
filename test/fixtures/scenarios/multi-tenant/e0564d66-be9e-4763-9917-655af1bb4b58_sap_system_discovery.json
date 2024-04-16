@@ -1,0 +1,257 @@
+{
+  "payload": [
+    {
+      "DBAddress": "",
+      "Databases": [
+        {
+          "Active": "yes",
+          "Container": "",
+          "Database": "DB1",
+          "Group": "",
+          "GroupId": "",
+          "Host": "hanadb1",
+          "SqlPort": "30341",
+          "User": "",
+          "UserId": ""
+        },
+        {
+          "Active": "yes",
+          "Container": "",
+          "Database": "DB2",
+          "Group": "",
+          "GroupId": "",
+          "Host": "hanadb2",
+          "SqlPort": "30344",
+          "User": "",
+          "UserId": ""
+        }
+      ],
+      "Id": "c0725f6b267f4216ba03be128ce08b27",
+      "Instances": [
+        {
+          "HdbnsutilSRstate": { "mode": "none", "online": "true" },
+          "Host": "hanadb2",
+          "HostConfiguration": {
+            "host/hanadb3/workerActualGroups": "-",
+            "host/hanadb3/storageActualPartition": "0",
+            "host/hanadb3/storageConfigPartition": "0",
+            "host/hanadb3/removeStatus": "",
+            "host/hanadb1/workerConfigGroups": "default",
+            "host/hanadb2/removeStatus": "",
+            "host/hanadb1/storageActualPartition": "1",
+            "host/hanadb1/removeStatus": "",
+            "host/hanadb3/failoverActualGroup": "default",
+            "host/hanadb1/workerActualGroups": "default",
+            "host/hanadb3/workerConfigGroups": "default",
+            "host/hanadb2/storageActualPartition": "2",
+            "host/hanadb2/indexServerActualRole": "slave",
+            "host/hanadb3/host": "hanadb3",
+            "host/hanadb3/hostStatus": "ignore",
+            "host/hanadb2/hostActualRoles": "worker",
+            "host/hanadb1/nameServerActualRole": "master",
+            "host/hanadb3/failoverStatus": "",
+            "host/hanadb2/nameServerActualRole": "slave",
+            "host/hanadb3/hostActualRoles": "standby",
+            "host/hanadb2/hostActive": "yes",
+            "host/hanadb1/hostActive": "yes",
+            "host/hanadb1/hostActualRoles": "worker",
+            "host/hanadb2/workerConfigGroups": "default",
+            "host/hanadb1/failoverStatus": "",
+            "host/hanadb2/failoverStatus": "",
+            "host/hanadb1/hostStatus": "ok",
+            "host/hanadb2/nameServerConfigRole": "master 3",
+            "host/hanadb3/indexServerConfigRole": "standby",
+            "host/hanadb2/failoverConfigGroup": "default",
+            "host/hanadb1/storageConfigPartition": "1",
+            "host/hanadb3/nameServerActualRole": "slave",
+            "host/hanadb2/hostStatus": "ok",
+            "host/hanadb3/hostConfigRoles": "standby",
+            "host/hanadb3/failoverConfigGroup": "default",
+            "overall_status": "ok",
+            "host/hanadb1/host": "hanadb1",
+            "host/hanadb3/indexServerActualRole": "standby",
+            "host/hanadb1/storagePartition": "0",
+            "host/hanadb3/hostActive": "yes",
+            "host/hanadb1/nameServerConfigRole": "master 1",
+            "host/hanadb2/host": "hanadb2",
+            "host/hanadb2/workerActualGroups": "default",
+            "host/hanadb1/indexServerConfigRole": "worker",
+            "host/hanadb1/failoverConfigGroup": "default",
+            "host/hanadb1/indexServerActualRole": "master",
+            "host/hanadb1/failoverActualGroup": "default",
+            "host/hanadb2/failoverActualGroup": "default",
+            "host/hanadb2/storageConfigPartition": "2",
+            "host/hanadb1/hostConfigRoles": "worker",
+            "host/hanadb2/hostConfigRoles": "worker",
+            "host/hanadb2/indexServerConfigRole": "worker",
+            "host/hanadb3/nameServerConfigRole": "master 2"
+          },
+          "Name": "HDB03",
+          "SAPControl": {
+            "Instances": [
+              {
+                "dispstatus": "SAPControl-GREEN",
+                "features": "HDB|HDB_WORKER",
+                "hostname": "hanadb2",
+                "httpPort": 50313,
+                "httpsPort": 50314,
+                "instanceNr": 3,
+                "startPriority": "0.3"
+              },
+              {
+                "dispstatus": "SAPControl-GREEN",
+                "features": "HDB|HDB_STANDBY",
+                "hostname": "hanadb3",
+                "httpPort": 50313,
+                "httpsPort": 50314,
+                "instanceNr": 3,
+                "startPriority": "0.3"
+              },
+              {
+                "dispstatus": "SAPControl-GREEN",
+                "features": "HDB|HDB_WORKER",
+                "hostname": "hanadb1",
+                "httpPort": 50313,
+                "httpsPort": 50314,
+                "instanceNr": 3,
+                "startPriority": "0.3"
+              }
+            ],
+            "Processes": [
+              {
+                "description": "HDB Daemon",
+                "dispstatus": "SAPControl-GREEN",
+                "elapsedtime": "18:14:07",
+                "name": "hdbdaemon",
+                "pid": 4643,
+                "starttime": "2024 03 06 15:11:07",
+                "textstatus": "Running"
+              },
+              {
+                "description": "HDB Compileserver",
+                "dispstatus": "SAPControl-GREEN",
+                "elapsedtime": "18:11:17",
+                "name": "hdbcompileserver",
+                "pid": 5240,
+                "starttime": "2024 03 06 15:13:57",
+                "textstatus": "Running"
+              },
+              {
+                "description": "HDB Nameserver",
+                "dispstatus": "SAPControl-GREEN",
+                "elapsedtime": "18:13:57",
+                "name": "hdbnameserver",
+                "pid": 4828,
+                "starttime": "2024 03 06 15:11:17",
+                "textstatus": "Running"
+              },
+              {
+                "description": "HDB Preprocessor",
+                "dispstatus": "SAPControl-GREEN",
+                "elapsedtime": "18:11:17",
+                "name": "hdbpreprocessor",
+                "pid": 5243,
+                "starttime": "2024 03 06 15:13:57",
+                "textstatus": "Running"
+              },
+              {
+                "description": "HDB Web Dispatcher",
+                "dispstatus": "SAPControl-GREEN",
+                "elapsedtime": "18:09:59",
+                "name": "hdbwebdispatcher",
+                "pid": 6237,
+                "starttime": "2024 03 06 15:15:15",
+                "textstatus": "Running"
+              },
+              {
+                "description": "HDB Indexserver-DB2",
+                "dispstatus": "SAPControl-GREEN",
+                "elapsedtime": "16:10:13",
+                "name": "hdbindexserver",
+                "pid": 2429,
+                "starttime": "2024 03 06 17:15:01",
+                "textstatus": "Running"
+              }
+            ],
+            "Properties": [
+              {
+                "property": "Process List",
+                "propertytype": "NodeWebmethod",
+                "value": "GetProcessList"
+              },
+              {
+                "property": "Access Points",
+                "propertytype": "NodeWebmethod",
+                "value": "GetAccessPointList"
+              },
+              {
+                "property": "Parameter Documentation",
+                "propertytype": "NodeURL",
+                "value": "http://hanadb2:50313/sapparamEN.html"
+              },
+              {
+                "property": "Protected Webmethods",
+                "propertytype": "Attribute",
+                "value": "ABAPAcknowledgeAlerts,ABAPCheckRFCDestinations,ABAPGetComponentList,ABAPGetSystemWPTable,ABAPGetWPTable,ABAPReadRawSyslog,ABAPReadSyslog,AnalyseLogFiles,Bootstrap,CheckParameter,CheckPSE,CheckUpdateSystem,ConfigureLogFileList,CreatePSECredential,CreateSnapshot,DeletePSE,DeleteSnapshots,EnqGetLockTable,EnqGetStatistic,EnqRemoveLocks,EnqRemoveUserLocks,GetAccessPointList,GetAlerts,GetAlertTree,GetCallstack,GetEnvironment,GetLogFileList,GetProcessParameter,GetQueueStatistic,GetStartProfile,GetSystemUpdateList,GetTraceFile,GetVersionInfo,GWCancelConnections,GWDeleteClients,GWDeleteConnections,GWGetConnectionList,GWGetClientList,HACheckConfig,HACheckFailoverConfig,HACheckMaintenanceMode,HAFailoverToNode,HAGetFailoverConfig,HASetMaintenanceMode,ICMGetCacheEntries,ICMGetConnectionList,ICMGetProxyConnectionList,ICMGetThreadList,InstanceStart,InstanceStop,J2EEControlCluster,J2EEControlComponents,J2EEControlProcess,J2EEDisableDbgSession,J2EEEnableDbgSession,J2EEGetApplicationAliasList,J2EEGetCacheStatistic,J2EEGetCacheStatistic2,J2EEGetClusterMsgList,J2EEGetComponentList,J2EEGetEJBSessionList,J2EEGetProcessList,J2EEGetProcessList2,J2EEGetRemoteObjectList,J2EEGetSessionList,J2EEGetSharedTableInfo,J2EEGetThreadCallStack,J2EEGetThreadList,J2EEGetThreadList2,J2EEGetThreadTaskStack,J2EEGetVMGCHistory,J2EEGetVMGCHistory2,J2EEGetVMHeapInfo,J2EEGetWebSessionList,J2EEGetWebSessionList2,ListConfigFiles,ListDeveloperTraces,ListLogFiles,ListSnapshots,OSExecute,ParameterValue,ReadConfigFile,ReadDeveloperTrace,ReadLogFile,ReadSnapshot,RestartInstance,RestartService,RestartSystem,SendSignal,SetProcessParameter,SetProcessParameter2,ShmDetach,Shutdown,Start,StartBypassHA,StartSystem,Stop,StopBypassHA,StopService,StopSystem,StorePSE,UpdateInstancePSE,UpdateSCSInstance,UpdateSystem,UpdateSystemPKI,WebDispGetServerList,WebDispGetGroupList,WebDispGetVirtHostList,WebDispGetUrlPrefixList,GetAgentConfig,GetListOfMaByCusGrp,GetMcInLocalMs,GetMtesByRequestTable,GetMtListByMtclass,InfoGetTree,MscCustomizeWrite,MscDeleteLines,MscReadCache,MsGetLocalMsInfo,MsGetMteclsInLocalMs,MtChangeStatus,MtCustomizeWrite,MtDbsetToWpsetByTid,MtDestroyMarkNTry,MteGetByToolRunstatus,MtGetAllToCust,MtGetAllToolsToSet,MtGetMteinfo,MtGetTidByName,MtRead,MtReset,PerfCustomizeWrite,PerfRead,PerfReadSmoothData,ReadDirectory,ReadFile,ReadProfileParameters,ReferenceRead,Register,RequestLogonFile,SnglmgsCustomizeWrite,SystemObjectSetValue,TextAttrRead,ToolGetEffective,ToolSet,ToolSetRuntimeStatus,TriggerDataCollection,Unregister,UtilAlChangeStatus,UtilMtGetAidByTid,UtilMtGetTreeLocal,UtilMtReadAll,UtilReadRawalertByAid,UtilSnglmsgReadRawdata"
+              },
+              {
+                "property": "DBServices",
+                "propertytype": "Attribute",
+                "value": "YES"
+              },
+              {
+                "property": "HANA Roles",
+                "propertytype": "Attribute",
+                "value": "worker"
+              },
+              {
+                "property": "StartPriority",
+                "propertytype": "Attribute",
+                "value": "0.3"
+              },
+              {
+                "property": "SAPSYSTEM",
+                "propertytype": "Attribute",
+                "value": "03"
+              },
+              {
+                "property": "SAPSYSTEMNAME",
+                "propertytype": "Attribute",
+                "value": "HN1"
+              },
+              {
+                "property": "SAPLOCALHOST",
+                "propertytype": "Attribute",
+                "value": "hanadb2"
+              },
+              {
+                "property": "INSTANCE_NAME",
+                "propertytype": "Attribute",
+                "value": "HDB03"
+              },
+              {
+                "property": "Webmethods",
+                "propertytype": "Attribute",
+                "value": "Start,InstanceStart,StartBypassHA,Bootstrap,Stop,InstanceStop,StopBypassHA,Shutdown,ParameterValue,GetProcessList,GetStartProfile,GetTraceFile,GetAlertTree,GetAlerts,RestartService,StopService,GetEnvironment,ListDeveloperTraces,ReadDeveloperTrace,RestartInstance,SendSignal,GetVersionInfo,GetQueueStatistic,GetInstanceProperties,OSExecute,ReadLogFile,AnalyseLogFiles,ListLogFiles,GetAccessPointList,GetSystemInstanceList,GetSystemUpdateList,StartSystem,StopSystem,RestartSystem,UpdateSystem,UpdateSCSInstance,CheckUpdateSystem,AccessCheck,GetProcessParameter,SetProcessParameter,SetProcessParameter2,CheckParameter,ShmDetach,GetNetworkId,GetSecNetworkId,RequestLogonFile,CreateSnapshot,ReadSnapshot,ListSnapshots,DeleteSnapshots,GetCallstack,ABAPReadSyslog,ABAPReadRawSyslog,ABAPGetWPTable,ABAPAcknowledgeAlerts,ABAPGetComponentList,ABAPCheckRFCDestinations,ABAPGetSystemWPTable,J2EEGetProcessList,J2EEGetProcessList2,J2EEControlProcess,J2EEGetThreadList,J2EEGetThreadList2,J2EEGetThreadCallStack,J2EEGetThreadTaskStack,J2EEGetSessionList,J2EEGetWebSessionList,J2EEGetWebSessionList2,J2EEGetCacheStatistic,J2EEGetCacheStatistic2,J2EEGetApplicationAliasList,J2EEGetVMGCHistory,J2EEGetVMGCHistory2,J2EEGetVMHeapInfo,J2EEGetEJBSessionList,J2EEGetRemoteObjectList,J2EEGetClusterMsgList,J2EEGetSharedTableInfo,J2EEGetComponentList,J2EEControlComponents,ICMGetThreadList,ICMGetConnectionList,ICMGetCacheEntries,ICMGetProxyConnectionList,WebDispGetServerList,WebDispGetGroupList,WebDispGetVirtHostList,WebDispGetUrlPrefixList,EnqGetLockTable,EnqRemoveLocks,EnqRemoveUserLocks,EnqGetStatistic,GWCancelConnections,GWDeleteClients,GWDeleteConnections,GWGetConnectionList,GWGetClientList,UpdateSystemPKI,UpdateInstancePSE,StorePSE,DeletePSE,CheckPSE,HACheckConfig,HACheckFailoverConfig,HAGetFailoverConfig,HAFailoverToNode,HASetMaintenanceMode,HACheckMaintenanceMode,ListConfigFiles,ReadConfigFile"
+              }
+            ]
+          },
+          "SystemReplication": { "local_site_id": "0" },
+          "Type": 1
+        }
+      ],
+      "Profile": {
+        "HDB_LINKED_BINARIES": "yes",
+        "HDB_SHARED_BINARIES": "yes",
+        "SAPGLOBALHOST": "hanadb1",
+        "SAPSYSTEMNAME": "HN1",
+        "hdbConfigType": "DEFAULT",
+        "ssl/ciphersuites": "135:PFS:HIGH::EC_P256:EC_HIGH"
+      },
+      "SID": "HN1",
+      "Type": 1
+    }
+  ],
+  "discovery_type": "sap_system_discovery",
+  "agent_id": "e0564d66-be9e-4763-9917-655af1bb4b58"
+}

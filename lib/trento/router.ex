@@ -27,17 +27,25 @@ defmodule Trento.Router do
     UpdateSlesSubscriptions
   }
 
+  alias Trento.Databases.Commands.{
+    DeregisterDatabaseInstance,
+    MarkDatabaseInstanceAbsent,
+    RegisterDatabaseInstance,
+    RollUpDatabase
+  }
+
   alias Trento.SapSystems.Commands.{
     DeregisterApplicationInstance,
-    DeregisterDatabaseInstance,
+    DeregisterSapSystem,
     MarkApplicationInstanceAbsent,
-    MarkDatabaseInstanceAbsent,
     RegisterApplicationInstance,
-    RegisterDatabaseInstance,
-    RollUpSapSystem
+    RestoreSapSystem,
+    RollUpSapSystem,
+    UpdateDatabaseHealth
   }
 
   alias Trento.Clusters
+  alias Trento.Databases
   alias Trento.Hosts
   alias Trento.SapSystems
 
@@ -80,13 +88,24 @@ defmodule Trento.Router do
 
   dispatch [
              DeregisterApplicationInstance,
-             DeregisterDatabaseInstance,
+             DeregisterSapSystem,
+             RestoreSapSystem,
              MarkApplicationInstanceAbsent,
-             MarkDatabaseInstanceAbsent,
              RegisterApplicationInstance,
-             RegisterDatabaseInstance,
-             RollUpSapSystem
+             RollUpSapSystem,
+             UpdateDatabaseHealth
            ],
            to: SapSystems.SapSystem,
            lifespan: SapSystems.Lifespan
+
+  identify Databases.Database, by: :database_id
+
+  dispatch [
+             DeregisterDatabaseInstance,
+             MarkDatabaseInstanceAbsent,
+             RegisterDatabaseInstance,
+             RollUpDatabase
+           ],
+           to: Databases.Database,
+           lifespan: Databases.Lifespan
 end

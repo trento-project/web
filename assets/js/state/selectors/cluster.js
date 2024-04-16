@@ -8,6 +8,7 @@ import {
 } from '@lib/model/clusters';
 
 import { getHostID } from './host';
+import { getInstanceID } from '../instances';
 
 export const getCluster =
   (id) =>
@@ -41,10 +42,10 @@ export const getClusterByHost = (state, hostID) => {
 };
 
 const getSystemsByClusterHosts = (instances, systems, clusterHostIDs) =>
-  systems.filter((sapSystem) =>
+  systems.filter((system) =>
     clusterHostIDs.some((hostID) =>
       instances
-        .filter(({ sap_system_id }) => sap_system_id === sapSystem.id)
+        .filter((instance) => getInstanceID(instance) === system.id)
         .map(({ host_id }) => host_id)
         .includes(hostID)
     )
