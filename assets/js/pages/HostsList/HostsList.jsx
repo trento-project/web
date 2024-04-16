@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { EOS_WARNING_OUTLINED } from 'eos-icons-react';
+import { uniqBy } from 'lodash';
 
 import CleanUpButton from '@common/CleanUpButton';
 import HealthIcon from '@common/HealthIcon';
@@ -116,20 +117,21 @@ function HostsList() {
         filter: (filter, key) => (element) =>
           element[key].some((sid) => filter.includes(sid)),
         render: (sids, { sap_systems }) => {
-          const sidsArray = sap_systems.map((instance, index) => {
-            const instanceID = getInstanceID(instance);
-            return [
-              index > 0 && ', ',
-              <SapSystemLink
-                key={`${instanceID}-${instance?.id}`}
-                systemType={instance?.type}
-                sapSystemId={instanceID}
-              >
-                {instance?.sid}
-              </SapSystemLink>,
-            ];
-          });
-
+          const sidsArray = uniqBy(sap_systems, getInstanceID).map(
+            (instance, index) => {
+              const instanceID = getInstanceID(instance);
+              return [
+                index > 0 && ', ',
+                <SapSystemLink
+                  key={`${instanceID}-${instance?.id}`}
+                  systemType={instance?.type}
+                  sapSystemId={instanceID}
+                >
+                  {instance?.sid}
+                </SapSystemLink>,
+              ];
+            }
+          );
           return sidsArray;
         },
       },
