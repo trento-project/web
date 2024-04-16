@@ -7,8 +7,6 @@ defmodule TrentoWeb.V1.UserController do
   action_fallback TrentoWeb.FallbackController
 
   def index(conn, _params) do
-    cu = Pow.Plug.current_user(conn)
-    # dbg()
     users = Users.list_users()
     render(conn, "index.json", users: users)
   end

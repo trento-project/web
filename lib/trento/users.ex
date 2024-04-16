@@ -3,10 +3,28 @@ defmodule Trento.Users do
   The Users context.
   """
 
+  use Pow.Ecto.Context,
+    repo: Trento.Repo,
+    user: Trento.Users.User
+
   import Ecto.Query, warn: false
   alias Trento.Repo
 
   alias Trento.Users.User
+
+  @impl true
+  @doc """
+    get_by function overrides the one defined in Pow.Ecto.Context,
+    we retrieve the user by username as traditional Pow flow but we also exclude
+    deleted users
+  """
+  def get_by(clauses) do
+    username = clauses[:username]
+
+    User
+    |> where([u], is_nil(u.deleted_at) and u.username == ^username)
+    |> Repo.one()
+  end
 
   def list_users do
     User
@@ -39,9 +57,5 @@ defmodule Trento.Users do
     user
     |> User.delete_changeset(%{deleted_at: DateTime.utc_now()})
     |> Repo.update()
-  end
-
-  def change_user(%User{} = user, attrs \\ %{}) do
-    User.changeset(user, attrs)
   end
 end
