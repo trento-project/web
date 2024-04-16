@@ -1,6 +1,6 @@
 {
   "payload": {
-    "agent_version": "2.2.0+git.dev26.1709735070.1564aea",
+    "agent_version": "2.3.0",
     "cpu_count": 2,
     "fully_qualified_domain_name": "vmnwhso01.example.com",
     "hostname": "vmnwhso01",
