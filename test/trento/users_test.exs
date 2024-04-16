@@ -26,13 +26,15 @@ defmodule Trento.UsersTest do
     end
 
     test "create_user with valid data creates a user" do
-      assert {:ok, %User{} = user} = Users.create_user(%{
-        username: "username",
-        password: "some password",
-        email: "test@trento.com",
-        fullname: "some fullname",
-        confirm_password: "some password",
-      })
+      assert {:ok, %User{} = user} =
+               Users.create_user(%{
+                 username: "username",
+                 password: "some password",
+                 email: "test@trento.com",
+                 fullname: "some fullname",
+                 confirm_password: "some password"
+               })
+
       assert user.password == nil
       assert user.fullname == "some fullname"
       assert user.email == "test@trento.com"
@@ -40,17 +42,24 @@ defmodule Trento.UsersTest do
     end
 
     test "create_user with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} =  Users.create_user(%{
-        username: "username",
-        email: "test@trento.com",
-        fullname: "some fullname",
-      })
+      assert {:error, %Ecto.Changeset{}} =
+               Users.create_user(%{
+                 username: "username",
+                 email: "test@trento.com",
+                 fullname: "some fullname"
+               })
     end
 
     test "update_user/2 with valid data updates the user" do
       user = create_user()
       {:ok, user} = Users.get_user(user.id)
-      assert {:ok, %User{} = user} = Users.update_user(user, %{fullname: "some updated fullname", email: "newemail@test.com"})
+
+      assert {:ok, %User{} = user} =
+               Users.update_user(user, %{
+                 fullname: "some updated fullname",
+                 email: "newemail@test.com"
+               })
+
       assert user.fullname == "some updated fullname"
       assert user.email == "newemail@test.com"
     end
@@ -58,9 +67,19 @@ defmodule Trento.UsersTest do
     test "update_user/2 with invalid data does not update the user" do
       user = create_user()
       {:ok, user} = Users.get_user(user.id)
-      assert {:error, changeset} = Users.update_user(user, %{email: "invalid", password: "novalid", password_confirmation: "novalid"})
+
+      assert {:error, changeset} =
+               Users.update_user(user, %{
+                 email: "invalid",
+                 password: "novalid",
+                 password_confirmation: "novalid"
+               })
+
       assert changeset.errors[:email] == {"is not a valid email", [validation: :email]}
-      assert changeset.errors[:password] == {"should be at least %{count} character(s)", [count: 8, validation: :length, kind: :min, type: :string]}
+
+      assert changeset.errors[:password] ==
+               {"should be at least %{count} character(s)",
+                [count: 8, validation: :length, kind: :min, type: :string]}
     end
 
     test "update_user/2 does not update deleted_at" do
@@ -80,13 +99,16 @@ defmodule Trento.UsersTest do
   # We can't use factory since we have to deal with pow logic
   defp create_user do
     password = "themightypassword8897"
-    {:ok, user} = Users.create_user(%{
-      email: Faker.Internet.email(),
-      fullname: Faker.Pokemon.name(),
-      password: password,
-      password_confirmation: password,
-      username: Faker.Pokemon.name(),
-    })
+
+    {:ok, user} =
+      Users.create_user(%{
+        email: Faker.Internet.email(),
+        fullname: Faker.Pokemon.name(),
+        password: password,
+        password_confirmation: password,
+        username: Faker.Pokemon.name()
+      })
+
     user
   end
 
