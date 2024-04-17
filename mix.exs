@@ -108,7 +108,8 @@ defmodule Trento.MixProject do
       # https://stackoverflow.com/questions/76562092/hi-i-had-created-elixir-project-with-phoenix-framework-there-is-yaml-file-when
       {:ecto, "~> 3.10", override: true},
       # https://github.com/deadtrickster/ssl_verify_fun.erl/pull/27
-      {:ssl_verify_fun, "~> 1.1", manager: :rebar3, override: true}
+      {:ssl_verify_fun, "~> 1.1", manager: :rebar3, override: true},
+      {:parallel_stream, "~> 1.1.0"}
     ]
   end
 
