@@ -23,7 +23,7 @@ jobs:
     steps:
       - name: Get developers group members
         run: |
-          MEMBERS_JSON=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          MEMBERS_JSON=$(curl -s -H "Authorization: token ${{ secrets.READ_TEAM_MEMBERS_PAT }}" \
             "https://api.github.com/orgs/trento-project/teams/developers/members")
           
           echo "API Response:"
