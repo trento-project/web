@@ -147,9 +147,14 @@ defmodule Trento.UsersTest do
     end
 
     test "delete_user/1 deletes the user" do
-      user = create_user()
+      %{id: user_id, username: original_username} = user = create_user()
       assert {:ok, %User{}} = Users.delete_user(user)
       assert {:error, :not_found} == Users.get_user(user.id)
+
+      %User{deleted_at: deleted_at, username: username} = Trento.Repo.get_by!(User, id: user_id)
+
+      refute deleted_at == nil
+      refute username == original_username
     end
   end
 
