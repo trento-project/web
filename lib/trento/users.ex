@@ -47,11 +47,15 @@ defmodule Trento.Users do
     |> Repo.insert()
   end
 
+  def update_user(%User{id: 1}, _), do: {:error, :operation_not_permitted}
+
   def update_user(%User{} = user, attrs) do
     user
     |> User.update_changeset(attrs)
     |> Repo.update()
   end
+
+  def delete_user(%User{id: 1}, _), do: {:error, :operation_not_permitted}
 
   def delete_user(%User{} = user) do
     user
