@@ -16,7 +16,6 @@ env:
   OTP_VERSION: 26
   MIX_ENV: test
   NODE_VERSION: "16"
-  MANTAINERS: '["cdimonaco", "dottorblaster", "janvhs", "rtorrero", "nelsonkopliku", "arbulu89","jagabomb","emaksy","jamie-suse"]'
   RG_TEST_LABEL: regression
 
 jobs:
@@ -445,8 +444,20 @@ jobs:
     outputs:
       run_regression_test: ${{ steps.check.outputs.run_regression_test }}
     steps:
+      - name: Get developers group members
+        run: |
+          MEMBERS_JSON=$(curl -s -H "Authorization: token ${{ secrets.READ_TEAM_MEMBERS_PAT }}" \
+            "https://api.github.com/orgs/trento-project/teams/developers/members")
+          MEMBERS=$(echo "$MEMBERS_JSON" | jq -r '.[] | .login' | jq -Rsc 'split("\n")[:-1]')
+          echo "DEVELOPERS_JSON=$MEMBERS" >> $GITHUB_ENV    
       - id: check
-        run: echo "run_regression_test=${{ contains(fromJson(env.MANTAINERS), github.event.sender.login) && contains(github.event.pull_request.labels.*.name, env.RG_TEST_LABEL) }}" >> "$GITHUB_OUTPUT"
+        run: |
+          DEVELOPERS=$(echo $DEVELOPERS_JSON | jq -r 'join(",")')
+          RUN_REGRESSION_TEST="false"
+          if [[ "$DEVELOPERS" == *"${{ github.event.sender.login }}"* && "$(echo '${{ toJson(github.event.pull_request.labels.*.name) }}')" == *"$RG_TEST_LABEL"* ]]; then
+            RUN_REGRESSION_TEST="true"
+          fi
+          echo "run_regression_test=$RUN_REGRESSION_TEST" >> "$GITHUB_OUTPUT"        
 
   regression-test-e2e:
     name: Regression tests
