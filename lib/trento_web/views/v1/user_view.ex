@@ -13,7 +13,9 @@ defmodule TrentoWeb.V1.UserView do
     %{
       id: user.id,
       fullname: user.fullname,
-      email: user.email
+      email: user.email,
+      created_at: user.inserted_at,
+      updated_at: user.updated_at
     }
   end
 end
