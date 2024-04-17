@@ -12,6 +12,7 @@ defmodule Trento.SoftwareUpdates.Discovery do
 
   alias Trento.Hosts.Projections.HostReadModel
 
+  require Trento.SoftwareUpdates.Enums.SoftwareUpdatesHealth, as: SoftwareUpdatesHealth
   require Trento.SoftwareUpdates.Enums.AdvisoryType, as: AdvisoryType
 
   require Logger
@@ -104,19 +105,25 @@ defmodule Trento.SoftwareUpdates.Discovery do
     do:
       CompleteSoftwareUpdatesDiscovery.new!(%{
         host_id: host_id,
-        relevant_patches:
-          Enum.reduce(
-            relevant_patches,
-            %{
-              security_advisories: 0,
-              bug_fixes: 0,
-              software_enhancements: 0
-            },
-            &track_relevant_patches/2
-          )
+        health:
+          relevant_patches
+          |> track_relevant_patches
+          |> compute_software_updates_discovery_health
       })
 
-  defp track_relevant_patches(
+  defp track_relevant_patches(relevant_patches),
+    do:
+      Enum.reduce(
+        relevant_patches,
+        %{
+          security_advisories: 0,
+          bug_fixes: 0,
+          software_enhancements: 0
+        },
+        &track_relevant_patch/2
+      )
+
+  defp track_relevant_patch(
          %{advisory_type: AdvisoryType.security_advisory()},
          %{
            security_advisories: security_advisories
@@ -124,7 +131,7 @@ defmodule Trento.SoftwareUpdates.Discovery do
        ),
        do: %{patches | security_advisories: security_advisories + 1}
 
-  defp track_relevant_patches(
+  defp track_relevant_patch(
          %{advisory_type: AdvisoryType.bugfix()},
          %{
            bug_fixes: bug_fixes
@@ -132,13 +139,28 @@ defmodule Trento.SoftwareUpdates.Discovery do
        ),
        do: %{patches | bug_fixes: bug_fixes + 1}
 
-  defp track_relevant_patches(
+  defp track_relevant_patch(
          %{advisory_type: AdvisoryType.enhancement()},
          %{
            software_enhancements: software_enhancements
          } = patches
        ),
        do: %{patches | software_enhancements: software_enhancements + 1}
+
+  defp compute_software_updates_discovery_health(%{
+         security_advisories: 0,
+         bug_fixes: 0,
+         software_enhancements: 0
+       }),
+       do: SoftwareUpdatesHealth.passing()
+
+  defp compute_software_updates_discovery_health(%{
+         security_advisories: security_advisories
+       })
+       when security_advisories > 0,
+       do: SoftwareUpdatesHealth.critical()
+
+  defp compute_software_updates_discovery_health(_), do: SoftwareUpdatesHealth.warning()
 
   defp adapter, do: Application.fetch_env!(:trento, __MODULE__)[:adapter]
 
