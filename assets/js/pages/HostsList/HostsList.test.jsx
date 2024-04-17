@@ -129,7 +129,7 @@ describe('HostsLists component', () => {
 
     it('should show only unique SIDs', async () => {
       const host = hostFactory.build();
-      const duplicatedSID = faker.string.alpha({ casing: 'upper', count: 3 });
+      const duplicatedSID = generateSid();
       const id = faker.string.uuid();
       const applicationInstances =
         sapSystemApplicationInstanceFactory.buildList(2, {

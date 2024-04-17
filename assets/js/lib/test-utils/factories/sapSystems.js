@@ -44,7 +44,7 @@ export const sapSystemFactory = Factory.define(({ params }) => {
     }),
     database_instances: databaseInstanceFactory.buildList(2, {
       database_id: databaseId,
-      sid: generateSid(),
+      sid: databaseSid,
     }),
     db_host: faker.internet.ip(),
     deregistered_at: null,
@@ -54,7 +54,7 @@ export const sapSystemFactory = Factory.define(({ params }) => {
     sid,
     tags: [],
     database_sid: databaseSid,
-    tenant: generateSid(),
+    tenant: databaseSid,
     database_id: databaseId,
   };
 });
