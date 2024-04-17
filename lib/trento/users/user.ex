@@ -36,7 +36,6 @@ defmodule Trento.Users.User do
 
   def update_changeset(user, attrs) do
     user
-    |> pow_user_id_field_changeset(attrs)
     |> pow_password_changeset(attrs)
     |> pow_extension_changeset(attrs)
     |> validate_password()

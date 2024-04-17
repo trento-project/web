@@ -81,6 +81,22 @@ defmodule Trento.UsersTest do
       assert user.email == "newemail@test.com"
     end
 
+    test "update_user/2 will not update user username" do
+      user = create_user()
+      {:ok, fetched_user} = Users.get_user(user.id)
+
+      assert {:ok, %User{} = user} =
+               Users.update_user(fetched_user, %{
+                 fullname: "some updated fullname",
+                 email: "newemail@test.com",
+                 username: "newusername"
+               })
+
+      assert user.fullname == "some updated fullname"
+      assert user.email == "newemail@test.com"
+      assert user.username == fetched_user.username
+    end
+
     test "update_user/2 with invalid data does not update the user" do
       user = create_user()
       {:ok, user} = Users.get_user(user.id)
@@ -124,6 +140,10 @@ defmodule Trento.UsersTest do
     test "update_user/2 does not update user with id 1" do
       assert {:error, :operation_not_permitted} =
                Users.update_user(%User{id: 1}, %{fullname: "new fullname"})
+    end
+
+    test "delete_user/2 does not delete user with id 1" do
+      assert {:error, :operation_not_permitted} = Users.delete(%User{id: 1})
     end
 
     test "delete_user/1 deletes the user" do
