@@ -1,6 +1,6 @@
 defmodule Trento.Hosts.Commands.CompleteSoftwareUpdatesDiscovery do
   @moduledoc """
-  Complete the software updates discovery with the detected info
+  Complete the software updates discovery with the computed health based on detected info
   """
 
   require Trento.SoftwareUpdates.Enums.SoftwareUpdatesHealth, as: SoftwareUpdatesHealth

@@ -51,6 +51,9 @@ defmodule Trento.Hosts.Host do
   Presence of relevant patches determines Software Updates Discovery health and concurs to the host's aggregated health as follows:
   - critical if there is at least one security advisory
   - warning if there are only buxfixes/software enhancements
+
+  The Software Updates Discovery health is computed in the integration layer
+  and only the resulting health is dispatched to the host aggregate along with CompleteSoftwareUpdatesDiscovery command.
   """
 
   require Trento.Enums.Provider, as: Provider
@@ -568,7 +571,10 @@ defmodule Trento.Hosts.Host do
   end
 
   def execute(
-        %Host{host_id: host_id} = host,
+        %Host{
+          host_id: host_id,
+          software_updates_discovery_health: current_software_updates_discovery_health
+        } = host,
         %CompleteSoftwareUpdatesDiscovery{
           host_id: host_id,
           health: health
@@ -577,10 +583,12 @@ defmodule Trento.Hosts.Host do
     host
     |> Multi.new()
     |> Multi.execute(fn _ ->
-      %SoftwareUpdatesHealthChanged{
-        host_id: host_id,
-        health: health
-      }
+      if current_software_updates_discovery_health != health do
+        %SoftwareUpdatesHealthChanged{
+          host_id: host_id,
+          health: health
+        }
+      end
     end)
     |> Multi.execute(&maybe_emit_host_health_changed_event/1)
   end

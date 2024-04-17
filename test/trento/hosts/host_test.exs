@@ -1741,7 +1741,6 @@ defmodule Trento.Hosts.HostTest do
 
       for %{
             initial_host_health: initial_host_health,
-            relevant_patches: relevant_patches_map,
             software_updates_discovery_health: software_updates_discovery_health,
             expected_host_health: expected_host_health
           } = scenario <- scenarios do
@@ -1757,7 +1756,7 @@ defmodule Trento.Hosts.HostTest do
           initial_events,
           CompleteSoftwareUpdatesDiscovery.new!(%{
             host_id: host_id,
-            relevant_patches: relevant_patches_map
+            health: software_updates_discovery_health
           }),
           [
             %SoftwareUpdatesHealthChanged{
@@ -1769,6 +1768,42 @@ defmodule Trento.Hosts.HostTest do
             assert %Host{
                      health: ^expected_host_health,
                      software_updates_discovery_health: ^software_updates_discovery_health
+                   } = host
+          end
+        )
+      end
+    end
+
+    test "should not emit software updates health change when newly discovered software updates health does not change" do
+      unchanging_software_updates_discovery_health = [
+        SoftwareUpdatesHealth.critical(),
+        SoftwareUpdatesHealth.warning(),
+        SoftwareUpdatesHealth.passing()
+      ]
+
+      for unchanged_software_updates_discovery_health <-
+            unchanging_software_updates_discovery_health do
+        host_id = Faker.UUID.v4()
+
+        initial_events = [
+          build(:host_registered_event, host_id: host_id),
+          build(:software_updates_discovery_health_changed_event,
+            host_id: host_id,
+            health: unchanged_software_updates_discovery_health
+          )
+        ]
+
+        assert_events_and_state(
+          initial_events,
+          CompleteSoftwareUpdatesDiscovery.new!(%{
+            host_id: host_id,
+            health: unchanged_software_updates_discovery_health
+          }),
+          [],
+          fn host ->
+            assert %Host{
+                     software_updates_discovery_health:
+                       ^unchanged_software_updates_discovery_health
                    } = host
           end
         )
