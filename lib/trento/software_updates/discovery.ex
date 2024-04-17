@@ -58,9 +58,7 @@ defmodule Trento.SoftwareUpdates.Discovery do
 
   @spec clear_software_updates_discoveries :: :ok | {:error, any()}
   def clear_software_updates_discoveries do
-    hosts = Hosts.get_all_hosts()
-
-    hosts
+    Hosts.get_all_hosts()
     |> Enum.map(fn %HostReadModel{id: host_id} -> %{host_id: host_id} end)
     |> Enum.each(fn command_payload ->
       command_payload
@@ -68,9 +66,7 @@ defmodule Trento.SoftwareUpdates.Discovery do
       |> commanded().dispatch()
     end)
 
-    if !Enum.empty?(hosts) do
-      clear()
-    end
+    clear()
 
     :ok
   end

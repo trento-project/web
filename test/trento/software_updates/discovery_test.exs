@@ -230,8 +230,8 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
   end
 
   describe "Clearing up software updates discoveries" do
-    test "should pass through an empty hosts list" do
-      expect(Trento.SoftwareUpdates.Discovery.Mock, :clear, 0, fn -> :ok end)
+    test "should pass through an empty hosts list and clear settings" do
+      expect(Trento.SoftwareUpdates.Discovery.Mock, :clear, fn -> :ok end)
 
       assert :ok = Discovery.clear_software_updates_discoveries()
     end
