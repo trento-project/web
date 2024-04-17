@@ -17,22 +17,12 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       create_env: ${{ steps.check.outputs.create_env }}
-    permissions:
-      contents: read
-      packages: write
     steps:
       - name: Get developers group members
         run: |
           MEMBERS_JSON=$(curl -s -H "Authorization: token ${{ secrets.READ_TEAM_MEMBERS_PAT }}" \
             "https://api.github.com/orgs/trento-project/teams/developers/members")
-          
-          echo "API Response:"
-          echo "$MEMBERS_JSON"
-          
           MEMBERS=$(echo "$MEMBERS_JSON" | jq -r '.[] | .login' | jq -Rsc 'split("\n")[:-1]')
-          echo "Processed Members:"
-          echo "$MEMBERS"
-          
           echo "DEVELOPERS_JSON=$MEMBERS" >> $GITHUB_ENV
       - id: check
         run: |
