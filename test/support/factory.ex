@@ -7,6 +7,7 @@ defmodule Trento.Factory do
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
   require Trento.SapSystems.Enums.EnsaVersion, as: EnsaVersion
   require Trento.Enums.Health, as: Health
+  require Trento.SoftwareUpdates.Enums.SoftwareUpdatesHealth, as: SoftwareUpdatesHealth
 
   alias Faker.Random.Elixir, as: RandomElixir
 
@@ -39,8 +40,8 @@ defmodule Trento.Factory do
     HostTombstoned,
     SaptuneStatusUpdated,
     SlesSubscriptionsUpdated,
-    SoftwareUpdatesDiscoveryCompleted,
-    SoftwareUpdatesDiscoveryRequested
+    SoftwareUpdatesDiscoveryRequested,
+    SoftwareUpdatesHealthChanged
   }
 
   alias Trento.Databases.Events.{
@@ -790,10 +791,10 @@ defmodule Trento.Factory do
     }
   end
 
-  def software_updates_discovery_completed_event_factory do
-    SoftwareUpdatesDiscoveryCompleted.new!(%{
+  def software_updates_discovery_health_changed_event_factory do
+    SoftwareUpdatesHealthChanged.new!(%{
       host_id: Faker.UUID.v4(),
-      relevant_patches: %{}
+      health: SoftwareUpdatesHealth.passing()
     })
   end
 

@@ -3,7 +3,7 @@ defmodule Trento.Hosts.Commands.CompleteSoftwareUpdatesDiscovery do
   Complete the software updates discovery with the detected info
   """
 
-  alias Trento.Hosts.ValueObjects.RelevantPatches
+  require Trento.SoftwareUpdates.Enums.SoftwareUpdatesHealth, as: SoftwareUpdatesHealth
 
   @required_fields :all
 
@@ -11,6 +11,6 @@ defmodule Trento.Hosts.Commands.CompleteSoftwareUpdatesDiscovery do
 
   defcommand do
     field :host_id, Ecto.UUID
-    embeds_one :relevant_patches, RelevantPatches
+    field :health, Ecto.Enum, values: SoftwareUpdatesHealth.values()
   end
 end

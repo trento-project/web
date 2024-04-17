@@ -55,6 +55,7 @@ defmodule Trento.Hosts.Host do
 
   require Trento.Enums.Provider, as: Provider
   require Trento.Enums.Health, as: Health
+  require Trento.SoftwareUpdates.Enums.SoftwareUpdatesHealth, as: SoftwareUpdatesHealth
 
   alias Commanded.Aggregate.Multi
 
@@ -66,7 +67,6 @@ defmodule Trento.Hosts.Host do
     AwsProvider,
     AzureProvider,
     GcpProvider,
-    RelevantPatches,
     SaptuneStatus,
     SlesSubscription
   }
@@ -106,8 +106,8 @@ defmodule Trento.Hosts.Host do
     SaptuneStatusUpdated,
     SlesSubscriptionsUpdated,
     SoftwareUpdatesDiscoveryCleared,
-    SoftwareUpdatesDiscoveryCompleted,
-    SoftwareUpdatesDiscoveryRequested
+    SoftwareUpdatesDiscoveryRequested,
+    SoftwareUpdatesHealthChanged
   }
 
   @required_fields []
@@ -133,8 +133,8 @@ defmodule Trento.Hosts.Host do
     field :saptune_health, Ecto.Enum, values: Health.values(), default: Health.unknown()
 
     field :software_updates_discovery_health, Ecto.Enum,
-      values: Health.values(),
-      default: Health.unknown()
+      values: SoftwareUpdatesHealth.values(),
+      default: SoftwareUpdatesHealth.not_set()
 
     field :health, Ecto.Enum, values: Health.values(), default: Health.unknown()
     field :rolling_up, :boolean, default: false
@@ -571,22 +571,25 @@ defmodule Trento.Hosts.Host do
         %Host{host_id: host_id} = host,
         %CompleteSoftwareUpdatesDiscovery{
           host_id: host_id,
-          relevant_patches: relevant_patches
+          health: health
         }
       ) do
     host
     |> Multi.new()
     |> Multi.execute(fn _ ->
-      %SoftwareUpdatesDiscoveryCompleted{
+      %SoftwareUpdatesHealthChanged{
         host_id: host_id,
-        relevant_patches: relevant_patches
+        health: health
       }
     end)
     |> Multi.execute(&maybe_emit_host_health_changed_event/1)
   end
 
   def execute(
-        %Host{host_id: host_id, software_updates_discovery_health: Health.unknown()},
+        %Host{
+          host_id: host_id,
+          software_updates_discovery_health: SoftwareUpdatesHealth.not_set()
+        },
         %ClearSoftwareUpdatesDiscovery{host_id: host_id}
       ) do
     []
@@ -757,14 +760,13 @@ defmodule Trento.Hosts.Host do
 
   def apply(
         %Host{} = host,
-        %SoftwareUpdatesDiscoveryCompleted{
-          relevant_patches: relevant_patches
+        %SoftwareUpdatesHealthChanged{
+          health: health
         }
       ) do
     %Host{
       host
-      | software_updates_discovery_health:
-          compute_software_updates_discovery_health(relevant_patches)
+      | software_updates_discovery_health: health
     }
   end
 
@@ -774,7 +776,7 @@ defmodule Trento.Hosts.Host do
       ) do
     %Host{
       host
-      | software_updates_discovery_health: Health.unknown()
+      | software_updates_discovery_health: SoftwareUpdatesHealth.not_set()
     }
   end
 
@@ -876,21 +878,6 @@ defmodule Trento.Hosts.Host do
   defp compute_tuning_health("compliant"), do: Health.passing()
   defp compute_tuning_health(_), do: Health.unknown()
 
-  defp compute_software_updates_discovery_health(%RelevantPatches{
-         security_advisories: 0,
-         bug_fixes: 0,
-         software_enhancements: 0
-       }),
-       do: Health.passing()
-
-  defp compute_software_updates_discovery_health(%RelevantPatches{
-         security_advisories: security_advisories
-       })
-       when security_advisories > 0,
-       do: Health.critical()
-
-  defp compute_software_updates_discovery_health(_), do: Health.warning()
-
   defp maybe_emit_host_health_changed_event(%Host{
          host_id: host_id,
          heartbeat: heartbeat,
@@ -918,7 +905,8 @@ defmodule Trento.Hosts.Host do
   defp maybe_add_saptune_health(healths, Health.unknown()), do: healths
   defp maybe_add_saptune_health(healths, saptune_health), do: [saptune_health | healths]
 
-  defp maybe_add_software_updates_discovery_health(healths, Health.unknown()), do: healths
+  defp maybe_add_software_updates_discovery_health(healths, SoftwareUpdatesHealth.not_set()),
+    do: healths
 
   defp maybe_add_software_updates_discovery_health(healths, software_updates_discovery_health),
     do: [software_updates_discovery_health | healths]
