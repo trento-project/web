@@ -51,6 +51,20 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuth do
   @impl GenServer
   def handle_call(:clear, _, _), do: {:reply, :ok, %State{}}
 
+  @impl GenServer
+  def format_status(_reason, [pdict, state]) do
+    {:ok,
+     [
+       pdict,
+       %{
+         state
+         | auth: "<REDACTED>",
+           password: "<REDACTED>",
+           ca_cert: "<REDACTED>"
+       }
+     ]}
+  end
+
   defp call(server, request), do: GenServer.call(server, request, 15_000)
 
   defp process_identifier(server_name), do: {:global, identification_tuple(server_name)}
