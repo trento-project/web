@@ -8,6 +8,7 @@ import {
   databaseInstanceFactory,
   hostFactory,
   sapSystemApplicationInstanceFactory,
+  generateSid,
 } from '@lib/test-utils/factories';
 
 import {
@@ -128,7 +129,7 @@ describe('HostsLists component', () => {
 
     it('should show only unique SIDs', async () => {
       const host = hostFactory.build();
-      const duplicatedSID = faker.string.alpha({ casing: 'upper', count: 3 });
+      const duplicatedSID = generateSid();
       const id = faker.string.uuid();
       const applicationInstances =
         sapSystemApplicationInstanceFactory.buildList(2, {
@@ -366,7 +367,7 @@ describe('HostsLists component', () => {
         id: 'host1',
         tags: [{ value: 'Tag1' }],
       });
-      const sid = 'PRD';
+      const sid = generateSid();
       const state = {
         ...cleanInitialState,
         hostsList: {

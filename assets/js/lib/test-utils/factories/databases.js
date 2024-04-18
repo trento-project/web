@@ -1,6 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { faker } from '@faker-js/faker';
 import { Factory } from 'fishery';
+import { generateSid } from '.';
 
 const healthEnum = () =>
   faker.helpers.arrayElement(['passing', 'critical', 'warning', 'unknown']);
@@ -15,7 +16,7 @@ export const databaseInstanceFactory = Factory.define(() => ({
   https_port: faker.internet.port(),
   instance_hostname: faker.hacker.noun(),
   instance_number: faker.number.int({ min: 10, max: 99 }).toString(),
-  sid: faker.string.alpha({ casing: 'upper', count: 3 }),
+  sid: generateSid(),
   features: features().join('|'),
   start_priority: faker.number.int({ min: 1, max: 9 }).toString(),
   system_replication: '',
@@ -25,7 +26,7 @@ export const databaseInstanceFactory = Factory.define(() => ({
 
 export const databaseFactory = Factory.define(({ params }) => {
   const id = params.id || faker.string.uuid();
-  const sid = faker.string.alpha({ casing: 'upper', count: 3 });
+  const sid = generateSid();
 
   return {
     id,

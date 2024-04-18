@@ -8,6 +8,7 @@ import {
   cloudProviderEnum,
   hostFactory,
   sapSystemFactory,
+  generateSid,
 } from '.';
 
 const clusterTypeEnum = () =>
@@ -92,7 +93,7 @@ export const ascsErsClusterNodeFactory = Factory.define(({ sequence }) => ({
 }));
 
 export const ascsErsSapSystemFactory = Factory.define(() => ({
-  sid: faker.string.alphanumeric(3, { casing: 'upper' }),
+  sid: generateSid(),
   filesystem_resource_based: faker.datatype.boolean(),
   distributed: faker.datatype.boolean(),
   nodes: ascsErsClusterNodeFactory.buildList(2),
@@ -126,7 +127,7 @@ export const clusterFactory = Factory.define(({ sequence, params }) => {
   return {
     id: faker.string.uuid(),
     name: `${faker.person.firstName()}_${sequence}`,
-    sid: faker.string.alphanumeric(3, { casing: 'upper' }),
+    sid: generateSid(),
     hosts_number: faker.number.int(),
     resources_number: faker.number.int(),
     type: clusterTypeEnum(),
