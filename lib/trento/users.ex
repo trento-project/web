@@ -16,13 +16,13 @@ defmodule Trento.Users do
   @doc """
     get_by function overrides the one defined in Pow.Ecto.Context,
     we retrieve the user by username as traditional Pow flow but we also exclude
-    deleted users
+    deleted and locked users
   """
   def get_by(clauses) do
     username = clauses[:username]
 
     User
-    |> where([u], is_nil(u.deleted_at) and u.username == ^username)
+    |> where([u], is_nil(u.deleted_at) and is_nil(u.locked_at) and u.username == ^username)
     |> Repo.one()
   end
 
@@ -49,10 +49,17 @@ defmodule Trento.Users do
 
   def update_user(%User{id: 1}, _), do: {:error, :operation_not_permitted}
 
+  def update_user(%User{locked_at: nil} = user, %{enabled: false} = attrs) do
+    do_update(user, Map.put(attrs, :locked_at, DateTime.utc_now()))
+  end
+
+  def update_user(%User{locked_at: locked_at} = user, %{enabled: false} = attrs)
+      when not is_nil(locked_at) do
+    do_update(user, attrs)
+  end
+
   def update_user(%User{} = user, attrs) do
-    user
-    |> User.update_changeset(attrs)
-    |> Repo.update()
+    do_update(user, Map.put(attrs, :locked_at, nil))
   end
 
   def delete_user(%User{id: 1}, _), do: {:error, :operation_not_permitted}
@@ -60,6 +67,12 @@ defmodule Trento.Users do
   def delete_user(%User{} = user) do
     user
     |> User.delete_changeset(%{deleted_at: DateTime.utc_now()})
+    |> Repo.update()
+  end
+
+  defp do_update(user, attrs) do
+    user
+    |> User.update_changeset(attrs)
     |> Repo.update()
   end
 end

@@ -22,6 +22,7 @@ defmodule Trento.Users.User do
     field :email, :string
     field :fullname, :string
     field :deleted_at, :utc_datetime_usec
+    field :locked_at, :utc_datetime_usec
 
     timestamps(type: :utc_datetime_usec)
   end
@@ -40,6 +41,7 @@ defmodule Trento.Users.User do
     |> pow_extension_changeset(attrs)
     |> validate_password()
     |> custom_fields_changeset(attrs)
+    |> lock_changeset(attrs)
   end
 
   def delete_changeset(%__MODULE__{username: username} = user, %{deleted_at: deleted_at} = attrs) do
@@ -47,6 +49,11 @@ defmodule Trento.Users.User do
     |> cast(attrs, [:deleted_at])
     |> validate_required(:deleted_at)
     |> put_change(:username, "#{username}__#{deleted_at}")
+  end
+
+  defp lock_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:locked_at])
   end
 
   defp validate_password(changeset) do
