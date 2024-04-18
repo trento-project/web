@@ -134,7 +134,8 @@ defmodule Trento.Databases.Database do
       },
       %DatabaseTenantsUpdated{
         database_id: database_id,
-        tenants: tenants
+        tenants: tenants,
+        previous_tenants: []
       }
     ]
   end
@@ -530,7 +531,8 @@ defmodule Trento.Databases.Database do
     if sorted_current_tenants != sorted_new_tenants do
       %DatabaseTenantsUpdated{
         database_id: database_id,
-        tenants: new_tenants
+        tenants: new_tenants,
+        previous_tenants: current_tenants
       }
     end
   end
