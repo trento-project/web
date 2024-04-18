@@ -228,8 +228,8 @@ Trento.Hosts.Events.ProviderUpdated.html
 Trento.Hosts.Events.SaptuneStatusUpdated.html
 Trento.Hosts.Events.SlesSubscriptionsUpdated.html
 Trento.Hosts.Events.SoftwareUpdatesDiscoveryCleared.html
-Trento.Hosts.Events.SoftwareUpdatesDiscoveryCompleted.html
 Trento.Hosts.Events.SoftwareUpdatesDiscoveryRequested.html
+Trento.Hosts.Events.SoftwareUpdatesHealthChanged.html
 Trento.Hosts.Host.html
 Trento.Hosts.Lifespan.html
 Trento.Hosts.Projections.HostProjector.html
@@ -239,7 +239,6 @@ Trento.Hosts.Projections.SlesSubscriptionsProjector.html
 Trento.Hosts.ValueObjects.AwsProvider.html
 Trento.Hosts.ValueObjects.AzureProvider.html
 Trento.Hosts.ValueObjects.GcpProvider.html
-Trento.Hosts.ValueObjects.RelevantPatches.html
 Trento.Hosts.ValueObjects.SaptuneNote.html
 Trento.Hosts.ValueObjects.SaptuneServiceStatus.html
 Trento.Hosts.ValueObjects.SaptuneSolution.html
@@ -334,6 +333,7 @@ Trento.Settings.html
 Trento.SoftwareUpdates.Discovery.Gen.html
 Trento.SoftwareUpdates.Discovery.html
 Trento.SoftwareUpdates.Enums.AdvisoryType.html
+Trento.SoftwareUpdates.Enums.SoftwareUpdatesHealth.html
 Trento.SoftwareUpdates.Settings.html
 Trento.SoftwareUpdates.html
 Trento.Support.Command.html
@@ -452,8 +452,8 @@ dist/merriweather-latin-ext-300-normal-K6L27CZ5.woff2
 dist/merriweather-vietnamese-300-italic-EHHNZPUO.woff2
 dist/merriweather-vietnamese-300-normal-U376L4Z4.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-99315B8C.js
-dist/sidebar_items-69EEF09D.js
+dist/search_data-97FB0AD4.js
+dist/sidebar_items-C7B83166.js
 environment_variables.html
 hack_on_the_trento.html
 index.html

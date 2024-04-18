@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-43PMFBC7.js"></script>
-    <script src="dist/sidebar_items-69EEF09D.js"></script>
+    <script src="dist/sidebar_items-C7B83166.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -1910,7 +1910,7 @@ tests that require setting an event store.</p></div>
 
   </div>
 
-    <div class="summary-synopsis"><p>Complete the software updates discovery with the detected info</p></div>
+    <div class="summary-synopsis"><p>Complete the software updates discovery with the computed health based on detected info</p></div>
 
 </div>
 <div class="summary-row">
@@ -2169,20 +2169,21 @@ It contains the snapshot of the host aggregate that will be used to restore the 
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="Trento.Hosts.Events.SoftwareUpdatesDiscoveryCompleted.html" translate="no">Trento.Hosts.Events.SoftwareUpdatesDiscoveryCompleted</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>This event is emitted when a host's software updates discovery process complete</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
     <a href="Trento.Hosts.Events.SoftwareUpdatesDiscoveryRequested.html" translate="no">Trento.Hosts.Events.SoftwareUpdatesDiscoveryRequested</a>
 
   </div>
 
     <div class="summary-synopsis"><p>This event is emitted when a host's software updates discovery process is issued</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Hosts.Events.SoftwareUpdatesHealthChanged.html" translate="no">Trento.Hosts.Events.SoftwareUpdatesHealthChanged</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>This event is emitted when a host's software updates discovery process complete
+and its calculated health is taken into account in host's aggregated health.</p></div>
 
 </div>
 <div class="summary-row">
@@ -2265,15 +2266,6 @@ It contains the snapshot of the host aggregate that will be used to restore the 
   </div>
 
     <div class="summary-synopsis"><p>Gcp provider value object</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Hosts.ValueObjects.RelevantPatches.html" translate="no">Trento.Hosts.ValueObjects.RelevantPatches</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Represents a host's relevant patches counts</p></div>
 
 </div>
 <div class="summary-row">
@@ -3124,6 +3116,15 @@ deployed SAP systems, which is composed by the application layer.</p></div>
   </div>
 
     <div class="summary-synopsis"><p>Enum representing possible advisory types.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.SoftwareUpdates.Enums.SoftwareUpdatesHealth.html" translate="no">Trento.SoftwareUpdates.Enums.SoftwareUpdatesHealth</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Type that represents the possible health values for the software updates discovery process.</p></div>
 
 </div>
 <div class="summary-row">

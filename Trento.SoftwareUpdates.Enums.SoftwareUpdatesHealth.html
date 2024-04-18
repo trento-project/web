@@ -8,13 +8,13 @@
     <meta name="project" content="Trento Web v2.2.0">
 
 
-    <title>Trento.Hosts.Events.SoftwareUpdatesDiscoveryCompleted — Trento Web v2.2.0</title>
+    <title>Trento.SoftwareUpdates.Enums.SoftwareUpdatesHealth — Trento Web v2.2.0</title>
     <link rel="stylesheet" href="dist/html-elixir-FM2CSD74.css" />
 
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-43PMFBC7.js"></script>
-    <script src="dist/sidebar_items-69EEF09D.js"></script>
+    <script src="dist/sidebar_items-C7B83166.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -131,19 +131,19 @@ GUIDES
 
 <h1>
 
-    <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/events/software_updates_discovery_completed.ex#L1" title="View Source" class="icon-action" rel="help">
+    <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates/enums/software_updates_health.ex#L1" title="View Source" class="icon-action" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
 
-  <span translate="no">Trento.Hosts.Events.SoftwareUpdatesDiscoveryCompleted</span> 
+  <span translate="no">Trento.SoftwareUpdates.Enums.SoftwareUpdatesHealth</span> 
   <small class="app-vsn" translate="no">(Trento Web v2.2.0)</small>
 
 </h1>
 
 
   <section id="moduledoc">
-<p>This event is emitted when a host's software updates discovery process complete</p>
+<p>Type that represents the possible health values for the software updates discovery process.</p>
   </section>
 
 
@@ -175,7 +175,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#cast_and_validate_required_embed/3" translate="no">cast_and_validate_required_embed(changeset, field, required_fields)</a>
+        <a href="#critical/0" translate="no">critical()</a>
 
       </div>
 
@@ -183,7 +183,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#cast_and_validate_required_polymorphic_embed/3" translate="no">cast_and_validate_required_polymorphic_embed(changeset, field, required_fields)</a>
+        <a href="#not_set/0" translate="no">not_set()</a>
 
       </div>
 
@@ -191,39 +191,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#changeset/2" translate="no">changeset(struct, params)</a>
-
-      </div>
-
-        <div class="summary-synopsis"><p>Casts the fields by using Ecto reflection,
-validates the required ones and returns a changeset.</p></div>
-
-    </div>
-
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#new/1" translate="no">new(structs)</a>
-
-      </div>
-
-        <div class="summary-synopsis"><p>Returns an ok tuple if the params are valid, otherwise returns <code class="inline">{:error, {:validation, errors}}</code>.
-Accepts a map or a list of maps.</p></div>
-
-    </div>
-
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#new!/1" translate="no">new!(params)</a>
-
-      </div>
-
-        <div class="summary-synopsis"><p>Returns new struct(s) if the params are valid, otherwise raises a <a href="https://hexdocs.pm/elixir/RuntimeError.html"><code class="inline">RuntimeError</code></a>.</p></div>
-
-    </div>
-
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#supersede/1" translate="no">supersede(params)</a>
+        <a href="#passing/0" translate="no">passing()</a>
 
       </div>
 
@@ -231,7 +199,7 @@ Accepts a map or a list of maps.</p></div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#upcast/2" translate="no">upcast(params, metadata)</a>
+        <a href="#unknown/0" translate="no">unknown()</a>
 
       </div>
 
@@ -239,7 +207,7 @@ Accepts a map or a list of maps.</p></div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#upcast/3" translate="no">upcast(params, _, int)</a>
+        <a href="#values/0" translate="no">values()</a>
 
       </div>
 
@@ -247,7 +215,7 @@ Accepts a map or a list of maps.</p></div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#validate_required_fields/2" translate="no">validate_required_fields(changeset, required_fields)</a>
+        <a href="#warning/0" translate="no">warning()</a>
 
       </div>
 
@@ -275,7 +243,7 @@ Accepts a map or a list of maps.</p></div>
     </a>
     <h1 class="signature" translate="no">t()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/events/software_updates_discovery_completed.ex#L8" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates/enums/software_updates_health.ex#L6" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -287,11 +255,7 @@ Accepts a map or a list of maps.</p></div>
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@type</span> t() :: %Trento.Hosts.Events.SoftwareUpdatesDiscoveryCompleted{
-  host_id: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  relevant_patches: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  version: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()
-}</pre>
+          <pre translate="no"><span class="attribute">@type</span> t() :: :not_set | :unknown | :critical | :warning | :passing</pre>
 
       </div>
 
@@ -310,20 +274,22 @@ Accepts a map or a list of maps.</p></div>
       <span class="text">Functions</span>
     </h1>
     <div class="functions-list">
-<section class="detail" id="cast_and_validate_required_embed/3">
+<section class="detail" id="critical/0">
 
   <div class="detail-header">
-    <a href="#cast_and_validate_required_embed/3" class="detail-link" title="Link to this function">
+    <a href="#critical/0" class="detail-link" title="Link to this macro">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
+      <span class="sr-only">Link to this macro</span>
     </a>
-    <h1 class="signature" translate="no">cast_and_validate_required_embed(changeset, field, required_fields)</h1>
+    <h1 class="signature" translate="no">critical()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/events/software_updates_discovery_completed.ex#L8" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates/enums/software_updates_health.ex#L6" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
 
+
+      <span class="note">(macro)</span>
 
   </div>
 
@@ -332,20 +298,22 @@ Accepts a map or a list of maps.</p></div>
 
   </section>
 </section>
-<section class="detail" id="cast_and_validate_required_polymorphic_embed/3">
+<section class="detail" id="not_set/0">
 
   <div class="detail-header">
-    <a href="#cast_and_validate_required_polymorphic_embed/3" class="detail-link" title="Link to this function">
+    <a href="#not_set/0" class="detail-link" title="Link to this macro">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
+      <span class="sr-only">Link to this macro</span>
     </a>
-    <h1 class="signature" translate="no">cast_and_validate_required_polymorphic_embed(changeset, field, required_fields)</h1>
+    <h1 class="signature" translate="no">not_set()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/events/software_updates_discovery_completed.ex#L8" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates/enums/software_updates_health.ex#L6" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
 
+
+      <span class="note">(macro)</span>
 
   </div>
 
@@ -354,100 +322,22 @@ Accepts a map or a list of maps.</p></div>
 
   </section>
 </section>
-<section class="detail" id="changeset/2">
+<section class="detail" id="passing/0">
 
   <div class="detail-header">
-    <a href="#changeset/2" class="detail-link" title="Link to this function">
+    <a href="#passing/0" class="detail-link" title="Link to this macro">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
+      <span class="sr-only">Link to this macro</span>
     </a>
-    <h1 class="signature" translate="no">changeset(struct, params)</h1>
+    <h1 class="signature" translate="no">passing()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/events/software_updates_discovery_completed.ex#L8" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates/enums/software_updates_health.ex#L6" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
 
 
-  </div>
-
-  <section class="docstring">
-
-<p>Casts the fields by using Ecto reflection,
-validates the required ones and returns a changeset.</p>
-  </section>
-</section>
-<section class="detail" id="new/1">
-
-  <div class="detail-header">
-    <a href="#new/1" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">new(structs)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/events/software_updates_discovery_completed.ex#L8" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-      <div class="specs">
-
-          <pre translate="no"><span class="attribute">@spec</span> new(<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>() | [<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()]) :: {:ok, <a href="#t:t/0">t</a>() | [<a href="#t:t/0">t</a>()]} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
-
-      </div>
-
-<p>Returns an ok tuple if the params are valid, otherwise returns <code class="inline">{:error, {:validation, errors}}</code>.
-Accepts a map or a list of maps.</p>
-  </section>
-</section>
-<section class="detail" id="new!/1">
-
-  <div class="detail-header">
-    <a href="#new!/1" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">new!(params)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/events/software_updates_discovery_completed.ex#L8" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-      <div class="specs">
-
-          <pre translate="no"><span class="attribute">@spec</span> new!(<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>() | [<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()]) :: <a href="#t:t/0">t</a>() | [<a href="#t:t/0">t</a>()]</pre>
-
-      </div>
-
-<p>Returns new struct(s) if the params are valid, otherwise raises a <a href="https://hexdocs.pm/elixir/RuntimeError.html"><code class="inline">RuntimeError</code></a>.</p>
-  </section>
-</section>
-<section class="detail" id="supersede/1">
-
-  <div class="detail-header">
-    <a href="#supersede/1" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">supersede(params)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/events/software_updates_discovery_completed.ex#L10" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
+      <span class="note">(macro)</span>
 
   </div>
 
@@ -456,20 +346,22 @@ Accepts a map or a list of maps.</p>
 
   </section>
 </section>
-<section class="detail" id="upcast/2">
+<section class="detail" id="unknown/0">
 
   <div class="detail-header">
-    <a href="#upcast/2" class="detail-link" title="Link to this function">
+    <a href="#unknown/0" class="detail-link" title="Link to this macro">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
+      <span class="sr-only">Link to this macro</span>
     </a>
-    <h1 class="signature" translate="no">upcast(params, metadata)</h1>
+    <h1 class="signature" translate="no">unknown()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/events/software_updates_discovery_completed.ex#L10" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates/enums/software_updates_health.ex#L6" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
 
+
+      <span class="note">(macro)</span>
 
   </div>
 
@@ -478,20 +370,22 @@ Accepts a map or a list of maps.</p>
 
   </section>
 </section>
-<section class="detail" id="upcast/3">
+<section class="detail" id="values/0">
 
   <div class="detail-header">
-    <a href="#upcast/3" class="detail-link" title="Link to this function">
+    <a href="#values/0" class="detail-link" title="Link to this macro">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
+      <span class="sr-only">Link to this macro</span>
     </a>
-    <h1 class="signature" translate="no">upcast(params, _, int)</h1>
+    <h1 class="signature" translate="no">values()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/events/software_updates_discovery_completed.ex#L8" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates/enums/software_updates_health.ex#L6" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
 
+
+      <span class="note">(macro)</span>
 
   </div>
 
@@ -500,20 +394,22 @@ Accepts a map or a list of maps.</p>
 
   </section>
 </section>
-<section class="detail" id="validate_required_fields/2">
+<section class="detail" id="warning/0">
 
   <div class="detail-header">
-    <a href="#validate_required_fields/2" class="detail-link" title="Link to this function">
+    <a href="#warning/0" class="detail-link" title="Link to this macro">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
+      <span class="sr-only">Link to this macro</span>
     </a>
-    <h1 class="signature" translate="no">validate_required_fields(changeset, required_fields)</h1>
+    <h1 class="signature" translate="no">warning()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/events/software_updates_discovery_completed.ex#L8" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates/enums/software_updates_health.ex#L6" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
 
+
+      <span class="note">(macro)</span>
 
   </div>
 
