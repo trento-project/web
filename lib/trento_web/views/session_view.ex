@@ -11,7 +11,8 @@ defmodule TrentoWeb.SessionView do
 
   def render("me.json", %{user: user}) do
     %{
-      username: user.username
+      username: user.username,
+      id: user.id
     }
   end
 end
