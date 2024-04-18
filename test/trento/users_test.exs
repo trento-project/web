@@ -154,7 +154,9 @@ defmodule Trento.UsersTest do
     test "update_user/2 does not relock the user if enable false is passed as attribute and the user is already locked" do
       user = create_user()
       {:ok, user} = Users.get_user(user.id)
-      assert {:ok, %User{locked_at: locked_at} = user} = Users.update_user(user, %{enabled: false})
+
+      assert {:ok, %User{locked_at: locked_at} = user} =
+               Users.update_user(user, %{enabled: false})
 
       assert {:ok, %User{} = updated_user} = Users.update_user(user, %{enabled: false})
       assert updated_user.locked_at == locked_at
