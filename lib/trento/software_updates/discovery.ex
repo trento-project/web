@@ -80,32 +80,54 @@ defmodule Trento.SoftwareUpdates.Discovery do
   end
 
   def discover_host_software_updates(host_id, fully_qualified_domain_name) do
-    with {:ok, system_id} <- get_system_id(fully_qualified_domain_name),
-         {:ok, relevant_patches} <- get_relevant_patches(system_id),
-         :ok <-
-           host_id
-           |> build_discovery_completion_command(relevant_patches)
-           |> commanded().dispatch() do
-      {:ok, host_id, system_id, relevant_patches}
-    else
-      error ->
+    case discover_relevant_patches(fully_qualified_domain_name) do
+      {:ok, system_id, relevant_patches} ->
+        determine_health_and_dispatch_completion_command(host_id, system_id, relevant_patches)
+
+      {:error, discovery_error} = error ->
         Logger.error(
           "An error occurred during software updates discovery for host #{host_id}:  #{inspect(error)}"
         )
 
-        {:error, error}
+        dispatch_completion_command_on_discovery_error(host_id, discovery_error)
     end
   end
 
-  defp build_discovery_completion_command(host_id, relevant_patches),
-    do:
+  defp discover_relevant_patches(fully_qualified_domain_name) do
+    with {:ok, system_id} <- get_system_id(fully_qualified_domain_name),
+         {:ok, relevant_patches} <- get_relevant_patches(system_id) do
+      {:ok, system_id, relevant_patches}
+    end
+  end
+
+  defp determine_health_and_dispatch_completion_command(host_id, system_id, relevant_patches) do
+    with :ok <-
+           relevant_patches
+           |> track_relevant_patches
+           |> compute_software_updates_discovery_health
+           |> dispatch_completion_command(host_id) do
+      {:ok, host_id, system_id, relevant_patches}
+    end
+  end
+
+  defp dispatch_completion_command(discovered_software_updates_health, host_id) do
+    commanded().dispatch(
       CompleteSoftwareUpdatesDiscovery.new!(%{
         host_id: host_id,
-        health:
-          relevant_patches
-          |> track_relevant_patches
-          |> compute_software_updates_discovery_health
+        health: discovered_software_updates_health
       })
+    )
+  end
+
+  defp dispatch_completion_command_on_discovery_error(host_id, discovery_error) do
+    case dispatch_completion_command(SoftwareUpdatesHealth.unknown(), host_id) do
+      :ok ->
+        {:error, discovery_error}
+
+      {:error, dispatching_error} ->
+        {:error, [discovery_error, dispatching_error]}
+    end
+  end
 
   defp track_relevant_patches(relevant_patches),
     do:

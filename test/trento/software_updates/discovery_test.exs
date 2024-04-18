@@ -31,9 +31,9 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
       host_id = Faker.UUID.v4()
       fully_qualified_domain_name = Faker.Internet.domain_name()
 
-      discovery_error = {:error, :some_error_while_getting_system_id}
+      discovery_error = :some_error_while_getting_system_id
 
-      fail_on_getting_system_id(fully_qualified_domain_name, discovery_error)
+      fail_on_getting_system_id(host_id, fully_qualified_domain_name, discovery_error)
 
       {:error, ^discovery_error} =
         Discovery.discover_host_software_updates(host_id, fully_qualified_domain_name)
@@ -43,9 +43,14 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
       host_id = Faker.UUID.v4()
       fully_qualified_domain_name = Faker.Internet.domain_name()
       system_id = 100
-      discovery_error = {:error, :some_error_while_getting_relevant_patches}
+      discovery_error = :some_error_while_getting_relevant_patches
 
-      fail_on_getting_relevant_patches(fully_qualified_domain_name, system_id, discovery_error)
+      fail_on_getting_relevant_patches(
+        host_id,
+        fully_qualified_domain_name,
+        system_id,
+        discovery_error
+      )
 
       {:error, ^discovery_error} =
         Discovery.discover_host_software_updates(host_id, fully_qualified_domain_name)
@@ -55,7 +60,7 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
       host_id = Faker.UUID.v4()
       fully_qualified_domain_name = Faker.Internet.domain_name()
       system_id = 100
-      dispatching_error = {:error, :error_while_dispatching_completion_command}
+      dispatching_error = :error_while_dispatching_completion_command
 
       fail_on_dispatching_completion_command(
         host_id,
@@ -66,6 +71,57 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
 
       {:error, ^dispatching_error} =
         Discovery.discover_host_software_updates(host_id, fully_qualified_domain_name)
+    end
+
+    test "should handle failure when dispatching discovery completion command on discovery error" do
+      for discovery_error <- [:failing_get_system_id, :failing_get_relevant_patches] do
+        host_id = Faker.UUID.v4()
+        system_id = 100
+        fully_qualified_domain_name = Faker.Internet.domain_name()
+        dispatching_error = :dispatching_error
+
+        expect(
+          SoftwareUpdatesDiscoveryMock,
+          :get_system_id,
+          fn ^fully_qualified_domain_name ->
+            case discovery_error do
+              :failing_get_system_id -> {:error, discovery_error}
+              _ -> {:ok, system_id}
+            end
+          end
+        )
+
+        expected_get_relevant_patches_calls =
+          case discovery_error do
+            :failing_get_system_id -> 0
+            _ -> 1
+          end
+
+        expect(
+          SoftwareUpdatesDiscoveryMock,
+          :get_relevant_patches,
+          expected_get_relevant_patches_calls,
+          fn _ ->
+            if discovery_error == :failing_get_relevant_patches do
+              {:error, discovery_error}
+            end
+          end
+        )
+
+        expect(
+          Trento.Commanded.Mock,
+          :dispatch,
+          fn %CompleteSoftwareUpdatesDiscovery{
+               host_id: ^host_id,
+               health: SoftwareUpdatesHealth.unknown()
+             } ->
+            {:error, dispatching_error}
+          end
+        )
+
+        {:error, [^discovery_error, ^dispatching_error]} =
+          Discovery.discover_host_software_updates(host_id, fully_qualified_domain_name)
+      end
     end
 
     test "should complete discovery" do
@@ -160,9 +216,9 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
     test "should handle errors when getting a system id" do
       %{id: host_id, fully_qualified_domain_name: fully_qualified_domain_name} = insert(:host)
 
-      discovery_error = {:error, :some_error_while_getting_system_id}
+      discovery_error = :some_error_while_getting_system_id
 
-      fail_on_getting_system_id(fully_qualified_domain_name, discovery_error)
+      fail_on_getting_system_id(host_id, fully_qualified_domain_name, discovery_error)
 
       {:ok, {[], errored_discoveries}} = Discovery.discover_software_updates()
 
@@ -175,7 +231,12 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
       system_id = 100
       discovery_error = {:error, :some_error_while_getting_relevant_patches}
 
-      fail_on_getting_relevant_patches(fully_qualified_domain_name, system_id, discovery_error)
+      fail_on_getting_relevant_patches(
+        host_id,
+        fully_qualified_domain_name,
+        system_id,
+        discovery_error
+      )
 
       {:ok, {[], errored_discoveries}} = Discovery.discover_software_updates()
 
@@ -187,7 +248,7 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
 
       system_id = 100
 
-      dispatching_error = {:error, :error_while_dispatching_completion_command}
+      dispatching_error = :error_while_dispatching_completion_command
 
       fail_on_dispatching_completion_command(
         host_id,
@@ -236,16 +297,18 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
         system_id3 => {:ok, discovered_relevant_patches}
       }
 
-      expected_software_updates_health = SoftwareUpdatesHealth.critical()
-
       expected_commands = %{
         host_id1 => %CompleteSoftwareUpdatesDiscovery{
           host_id: host_id1,
-          health: expected_software_updates_health
+          health: SoftwareUpdatesHealth.critical()
+        },
+        host_id2 => %CompleteSoftwareUpdatesDiscovery{
+          host_id: host_id2,
+          health: SoftwareUpdatesHealth.unknown()
         },
         host_id3 => %CompleteSoftwareUpdatesDiscovery{
           host_id: host_id3,
-          health: expected_software_updates_health
+          health: SoftwareUpdatesHealth.critical()
         }
       }
 
@@ -272,8 +335,8 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
       expect(
         Trento.Commanded.Mock,
         :dispatch,
-        2,
-        fn %{host_id: host_id} = command ->
+        3,
+        fn %CompleteSoftwareUpdatesDiscovery{host_id: host_id} = command ->
           assert Map.get(expected_commands, host_id) == command
 
           :ok
@@ -292,7 +355,7 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
              ] ==
                successful_discoveries
 
-      assert {:error, host_id2, {:error, :some_error}} in errored_discoveries
+      assert {:error, host_id2, :some_error} in errored_discoveries
       assert {:error, host_id4, :host_without_fqdn} in errored_discoveries
     end
   end
@@ -329,11 +392,11 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
     end
   end
 
-  defp fail_on_getting_system_id(fully_qualified_domain_name, discovery_error) do
+  defp fail_on_getting_system_id(host_id, fully_qualified_domain_name, discovery_error) do
     expect(
       SoftwareUpdatesDiscoveryMock,
       :get_system_id,
-      fn ^fully_qualified_domain_name -> discovery_error end
+      fn ^fully_qualified_domain_name -> {:error, discovery_error} end
     )
 
     expect(
@@ -346,12 +409,21 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
     expect(
       Trento.Commanded.Mock,
       :dispatch,
-      0,
-      fn _ -> :ok end
+      fn %CompleteSoftwareUpdatesDiscovery{
+           host_id: ^host_id,
+           health: SoftwareUpdatesHealth.unknown()
+         } ->
+        :ok
+      end
     )
   end
 
-  defp fail_on_getting_relevant_patches(fully_qualified_domain_name, system_id, discovery_error) do
+  defp fail_on_getting_relevant_patches(
+         host_id,
+         fully_qualified_domain_name,
+         system_id,
+         discovery_error
+       ) do
     expect(
       SoftwareUpdatesDiscoveryMock,
       :get_system_id,
@@ -361,14 +433,18 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
     expect(
       SoftwareUpdatesDiscoveryMock,
       :get_relevant_patches,
-      fn ^system_id -> discovery_error end
+      fn ^system_id -> {:error, discovery_error} end
     )
 
     expect(
       Trento.Commanded.Mock,
       :dispatch,
-      0,
-      fn _ -> :ok end
+      fn %CompleteSoftwareUpdatesDiscovery{
+           host_id: ^host_id,
+           health: SoftwareUpdatesHealth.unknown()
+         } ->
+        :ok
+      end
     )
   end
 
@@ -393,7 +469,12 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
     expect(
       Trento.Commanded.Mock,
       :dispatch,
-      fn %CompleteSoftwareUpdatesDiscovery{host_id: ^host_id} -> dispatching_error end
+      fn %CompleteSoftwareUpdatesDiscovery{
+           host_id: ^host_id,
+           health: SoftwareUpdatesHealth.critical()
+         } ->
+        {:error, dispatching_error}
+      end
     )
   end
 end
