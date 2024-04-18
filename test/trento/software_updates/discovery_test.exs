@@ -11,11 +11,11 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
     CompleteSoftwareUpdatesDiscovery
   }
 
-  alias Trento.Hosts.ValueObjects.RelevantPatches
   alias Trento.SoftwareUpdates.Discovery
   alias Trento.SoftwareUpdates.Discovery.Mock, as: SoftwareUpdatesDiscoveryMock
 
   require Trento.SoftwareUpdates.Enums.AdvisoryType, as: AdvisoryType
+  require Trento.SoftwareUpdates.Enums.SoftwareUpdatesHealth, as: SoftwareUpdatesHealth
 
   setup :verify_on_exit!
 
@@ -66,6 +66,78 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
 
       {:error, ^dispatching_error} =
         Discovery.discover_host_software_updates(host_id, fully_qualified_domain_name)
+    end
+
+    test "should complete discovery" do
+      scenarios = [
+        %{
+          discovered_relevant_patches: [
+            %{advisory_type: AdvisoryType.security_advisory()},
+            %{advisory_type: AdvisoryType.security_advisory()},
+            %{advisory_type: AdvisoryType.bugfix()},
+            %{advisory_type: AdvisoryType.enhancement()}
+          ],
+          expected_health: SoftwareUpdatesHealth.critical()
+        },
+        %{
+          discovered_relevant_patches: [
+            %{advisory_type: AdvisoryType.bugfix()},
+            %{advisory_type: AdvisoryType.enhancement()}
+          ],
+          expected_health: SoftwareUpdatesHealth.warning()
+        },
+        %{
+          discovered_relevant_patches: [
+            %{advisory_type: AdvisoryType.enhancement()}
+          ],
+          expected_health: SoftwareUpdatesHealth.warning()
+        },
+        %{
+          discovered_relevant_patches: [
+            %{advisory_type: AdvisoryType.bugfix()}
+          ],
+          expected_health: SoftwareUpdatesHealth.warning()
+        },
+        %{
+          discovered_relevant_patches: [],
+          expected_health: SoftwareUpdatesHealth.passing()
+        }
+      ]
+
+      for %{
+            discovered_relevant_patches: discovered_relevant_patches,
+            expected_health: expected_health
+          } <- scenarios do
+        host_id = Faker.UUID.v4()
+        fully_qualified_domain_name = Faker.Internet.domain_name()
+        system_id = 100
+
+        expect(
+          SoftwareUpdatesDiscoveryMock,
+          :get_system_id,
+          fn ^fully_qualified_domain_name -> {:ok, system_id} end
+        )
+
+        expect(
+          SoftwareUpdatesDiscoveryMock,
+          :get_relevant_patches,
+          fn ^system_id -> {:ok, discovered_relevant_patches} end
+        )
+
+        expect(
+          Trento.Commanded.Mock,
+          :dispatch,
+          fn %CompleteSoftwareUpdatesDiscovery{
+               host_id: ^host_id,
+               health: ^expected_health
+             } ->
+            :ok
+          end
+        )
+
+        {:ok, ^host_id, ^system_id, ^discovered_relevant_patches} =
+          Discovery.discover_host_software_updates(host_id, fully_qualified_domain_name)
+      end
     end
   end
 
@@ -164,20 +236,16 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
         system_id3 => {:ok, discovered_relevant_patches}
       }
 
-      expected_relevant_patches = %RelevantPatches{
-        security_advisories: 2,
-        bug_fixes: 1,
-        software_enhancements: 1
-      }
+      expected_software_updates_health = SoftwareUpdatesHealth.critical()
 
       expected_commands = %{
         host_id1 => %CompleteSoftwareUpdatesDiscovery{
           host_id: host_id1,
-          relevant_patches: expected_relevant_patches
+          health: expected_software_updates_health
         },
         host_id3 => %CompleteSoftwareUpdatesDiscovery{
           host_id: host_id3,
-          relevant_patches: expected_relevant_patches
+          health: expected_software_updates_health
         }
       }
 

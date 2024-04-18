@@ -38,15 +38,14 @@ defmodule Trento.Hosts.HostTest do
     SaptuneStatusUpdated,
     SlesSubscriptionsUpdated,
     SoftwareUpdatesDiscoveryCleared,
-    SoftwareUpdatesDiscoveryCompleted,
-    SoftwareUpdatesDiscoveryRequested
+    SoftwareUpdatesDiscoveryRequested,
+    SoftwareUpdatesHealthChanged
   }
 
   alias Trento.Hosts.ValueObjects.{
     AwsProvider,
     AzureProvider,
-    GcpProvider,
-    RelevantPatches
+    GcpProvider
   }
 
   alias Trento.Hosts.Host
@@ -57,6 +56,7 @@ defmodule Trento.Hosts.HostTest do
   }
 
   require Trento.Enums.Health, as: Health
+  require Trento.SoftwareUpdates.Enums.SoftwareUpdatesHealth, as: SoftwareUpdatesHealth
 
   describe "host registration" do
     test "should register a host" do
@@ -1684,116 +1684,64 @@ defmodule Trento.Hosts.HostTest do
       scenarios = [
         %{
           initial_host_health: Health.passing(),
-          relevant_patches: %{
-            security_advisories: 5,
-            bug_fixes: 0,
-            software_enhancements: 0
-          },
-          expected_software_updates_discovery_health: Health.critical(),
+          software_updates_discovery_health: SoftwareUpdatesHealth.critical(),
           expected_host_health: Health.critical()
         },
         %{
           initial_host_health: Health.passing(),
-          relevant_patches: %{
-            security_advisories: 0,
-            bug_fixes: 4,
-            software_enhancements: 3
-          },
-          expected_software_updates_discovery_health: Health.warning(),
+          software_updates_discovery_health: SoftwareUpdatesHealth.warning(),
           expected_host_health: Health.warning()
         },
         %{
           initial_host_health: Health.passing(),
-          relevant_patches: %{
-            security_advisories: 0,
-            bug_fixes: 0,
-            software_enhancements: 0
-          },
+          software_updates_discovery_health: SoftwareUpdatesHealth.passing(),
           expect_host_health_changed: false,
-          expected_software_updates_discovery_health: Health.passing(),
           expected_host_health: Health.passing()
         },
         %{
           initial_host_health: Health.warning(),
-          relevant_patches: %{
-            security_advisories: 5,
-            bug_fixes: 3,
-            software_enhancements: 42
-          },
-          expected_software_updates_discovery_health: Health.critical(),
+          software_updates_discovery_health: SoftwareUpdatesHealth.critical(),
           expected_host_health: Health.critical()
         },
         %{
           initial_host_health: Health.warning(),
-          relevant_patches: %{
-            security_advisories: 0,
-            bug_fixes: 0,
-            software_enhancements: 0
-          },
-          expected_software_updates_discovery_health: Health.passing(),
+          software_updates_discovery_health: SoftwareUpdatesHealth.passing(),
           expected_host_health: Health.passing()
         },
         %{
           initial_host_health: Health.warning(),
-          relevant_patches: %{
-            security_advisories: 0,
-            bug_fixes: 3,
-            software_enhancements: 42
-          },
+          software_updates_discovery_health: SoftwareUpdatesHealth.warning(),
           expect_host_health_changed: false,
-          expected_software_updates_discovery_health: Health.warning(),
           expected_host_health: Health.warning()
         },
         %{
           initial_host_health: Health.critical(),
           initial_heartbeat: :heartbeat_failed,
-          relevant_patches: %{
-            security_advisories: 0,
-            bug_fixes: 0,
-            software_enhancements: 5
-          },
+          software_updates_discovery_health: SoftwareUpdatesHealth.warning(),
           expect_host_health_changed: false,
-          expected_software_updates_discovery_health: Health.warning(),
           expected_host_health: Health.critical()
         },
         %{
           initial_host_health: Health.critical(),
-          relevant_patches: %{
-            security_advisories: 5,
-            bug_fixes: 0,
-            software_enhancements: 0
-          },
+          software_updates_discovery_health: SoftwareUpdatesHealth.critical(),
           expect_host_health_changed: false,
-          expected_software_updates_discovery_health: Health.critical(),
           expected_host_health: Health.critical()
         },
         %{
           initial_host_health: Health.critical(),
-          relevant_patches: %{
-            security_advisories: 0,
-            bug_fixes: 5,
-            software_enhancements: 0
-          },
-          expected_software_updates_discovery_health: Health.warning(),
+          software_updates_discovery_health: SoftwareUpdatesHealth.warning(),
           expected_host_health: Health.warning()
         },
         %{
           initial_host_health: Health.critical(),
-          relevant_patches: %{
-            security_advisories: 0,
-            bug_fixes: 0,
-            software_enhancements: 0
-          },
-          expected_software_updates_discovery_health: Health.passing(),
+          software_updates_discovery_health: SoftwareUpdatesHealth.passing(),
           expected_host_health: Health.passing()
         }
       ]
 
       for %{
             initial_host_health: initial_host_health,
-            relevant_patches: relevant_patches_map,
-            expected_software_updates_discovery_health:
-              expected_software_updates_discovery_health,
+            software_updates_discovery_health: software_updates_discovery_health,
             expected_host_health: expected_host_health
           } = scenario <- scenarios do
         heartbeat_factory_reference = Map.get(scenario, :initial_heartbeat, :heartbeat_succeded)
@@ -1808,19 +1756,54 @@ defmodule Trento.Hosts.HostTest do
           initial_events,
           CompleteSoftwareUpdatesDiscovery.new!(%{
             host_id: host_id,
-            relevant_patches: relevant_patches_map
+            health: software_updates_discovery_health
           }),
           [
-            %SoftwareUpdatesDiscoveryCompleted{
+            %SoftwareUpdatesHealthChanged{
               host_id: host_id,
-              relevant_patches: RelevantPatches.new!(relevant_patches_map)
+              health: software_updates_discovery_health
             }
           ] ++ get_host_health_changed_event(host_id, scenario),
           fn host ->
             assert %Host{
                      health: ^expected_host_health,
+                     software_updates_discovery_health: ^software_updates_discovery_health
+                   } = host
+          end
+        )
+      end
+    end
+
+    test "should not emit software updates health change when newly discovered software updates health does not change" do
+      unchanging_software_updates_discovery_health = [
+        SoftwareUpdatesHealth.critical(),
+        SoftwareUpdatesHealth.warning(),
+        SoftwareUpdatesHealth.passing()
+      ]
+
+      for unchanged_software_updates_discovery_health <-
+            unchanging_software_updates_discovery_health do
+        host_id = Faker.UUID.v4()
+
+        initial_events = [
+          build(:host_registered_event, host_id: host_id),
+          build(:software_updates_discovery_health_changed_event,
+            host_id: host_id,
+            health: unchanged_software_updates_discovery_health
+          )
+        ]
+
+        assert_events_and_state(
+          initial_events,
+          CompleteSoftwareUpdatesDiscovery.new!(%{
+            host_id: host_id,
+            health: unchanged_software_updates_discovery_health
+          }),
+          [],
+          fn host ->
+            assert %Host{
                      software_updates_discovery_health:
-                       ^expected_software_updates_discovery_health
+                       ^unchanged_software_updates_discovery_health
                    } = host
           end
         )
@@ -1843,15 +1826,11 @@ defmodule Trento.Hosts.HostTest do
         fn host ->
           assert %Host{
                    health: Health.passing(),
-                   software_updates_discovery_health: Health.unknown()
+                   software_updates_discovery_health: SoftwareUpdatesHealth.not_set()
                  } = host
         end
       )
     end
-
-    defp relevant_patches_from_health(Health.passing()), do: %{}
-    defp relevant_patches_from_health(Health.warning()), do: %{bug_fixes: 2}
-    defp relevant_patches_from_health(Health.critical()), do: %{security_advisories: 2}
 
     test "should clear software updates discovery result" do
       host_id = Faker.UUID.v4()
@@ -1859,19 +1838,19 @@ defmodule Trento.Hosts.HostTest do
       scenarios = [
         %{
           initial_host_health: Health.critical(),
-          initial_software_updates_discovery_health: Health.critical(),
+          initial_software_updates_discovery_health: SoftwareUpdatesHealth.critical(),
           expected_host_health: Health.passing()
         },
         %{
           initial_host_health: Health.critical(),
           initial_heartbeat: :heartbeat_failed,
-          initial_software_updates_discovery_health: Health.warning(),
+          initial_software_updates_discovery_health: SoftwareUpdatesHealth.warning(),
           expect_host_health_changed: false,
           expected_host_health: Health.critical()
         },
         %{
           initial_host_health: Health.warning(),
-          initial_software_updates_discovery_health: Health.warning(),
+          initial_software_updates_discovery_health: SoftwareUpdatesHealth.warning(),
           expected_host_health: Health.passing()
         }
       ]
@@ -1886,10 +1865,9 @@ defmodule Trento.Hosts.HostTest do
         initial_events = [
           build(:host_registered_event, host_id: host_id),
           build(heartbeat_factory_reference, host_id: host_id),
-          build(:software_updates_discovery_completed_event,
+          build(:software_updates_discovery_health_changed_event,
             host_id: host_id,
-            relevant_patches:
-              relevant_patches_from_health(initial_software_updates_discovery_health)
+            health: initial_software_updates_discovery_health
           ),
           build(:host_health_changed_event, host_id: host_id, health: initial_host_health)
         ]
@@ -1903,7 +1881,7 @@ defmodule Trento.Hosts.HostTest do
           fn host ->
             assert %Host{
                      health: ^expected_host_health,
-                     software_updates_discovery_health: Health.unknown()
+                     software_updates_discovery_health: SoftwareUpdatesHealth.not_set()
                    } = host
           end
         )
@@ -2283,13 +2261,9 @@ defmodule Trento.Hosts.HostTest do
       assert_state(
         [
           build(:host_registered_event, host_id: host_id),
-          build(:software_updates_discovery_completed_event,
+          build(:software_updates_discovery_health_changed_event,
             host_id: host_id,
-            relevant_patches: %{
-              security_advisories: 5,
-              bug_fixes: 0,
-              software_enhancements: 0
-            }
+            health: SoftwareUpdatesHealth.critical()
           )
         ],
         %DeregisterHost{
@@ -2298,7 +2272,7 @@ defmodule Trento.Hosts.HostTest do
         },
         fn host ->
           assert %Host{
-                   software_updates_discovery_health: Health.unknown(),
+                   software_updates_discovery_health: SoftwareUpdatesHealth.not_set(),
                    deregistered_at: ^deregistered_at
                  } = host
         end

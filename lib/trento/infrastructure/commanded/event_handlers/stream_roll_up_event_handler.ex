@@ -60,7 +60,7 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.StreamRollUpEventHandler
     Trento.Hosts.Events.HostHealthChanged,
     Trento.Hosts.Events.HostSaptuneHealthChanged,
     Trento.Hosts.Events.SaptuneStatusUpdated,
-    Trento.Hosts.Events.SoftwareUpdatesDiscoveryCompleted
+    Trento.Hosts.Events.SoftwareUpdatesHealthChanged
   ]
 
   @sap_system_events [
