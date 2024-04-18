@@ -23,7 +23,7 @@ defmodule Trento.Databases.Projections.DatabaseReadModel do
     field :sid, :string
     field :health, Ecto.Enum, values: Health.values()
 
-    embeds_many :tenants, Tenant
+    embeds_many :tenants, Tenant, on_replace: :delete
 
     has_many :tags, Tag, foreign_key: :resource_id
 
