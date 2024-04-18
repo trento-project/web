@@ -148,10 +148,26 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
 
   describe "Discovering software updates for a collection of hosts" do
     test "should handle empty hosts list" do
+      expect(SoftwareUpdatesDiscoveryMock, :setup, fn -> :ok end)
+
       assert {:ok, {[], []}} = Discovery.discover_software_updates()
     end
 
+    test "should handle authentication error" do
+      expect(SoftwareUpdatesDiscoveryMock, :setup, fn -> {:error, :auth_error} end)
+
+      [%{id: host_id1}, %{id: host_id2}] = insert_list(2, :host)
+
+      {:ok, {[], errored_discoveries}} = Discovery.discover_software_updates()
+
+      Enum.each([host_id1, host_id2], fn host_id ->
+        assert {:error, host_id, :auth_error} in errored_discoveries
+      end)
+    end
+
     test "should handle hosts without fqdn" do
+      expect(SoftwareUpdatesDiscoveryMock, :setup, fn -> :ok end)
+
       %{id: host_id1} = insert(:host, fully_qualified_domain_name: nil)
       %{id: host_id2} = insert(:host, fully_qualified_domain_name: nil)
 
@@ -163,6 +179,8 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
     end
 
     test "should handle errors when getting a system id" do
+      expect(SoftwareUpdatesDiscoveryMock, :setup, fn -> :ok end)
+
       %{id: host_id, fully_qualified_domain_name: fully_qualified_domain_name} = insert(:host)
 
       discovery_error = :some_error_while_getting_system_id
@@ -175,6 +193,8 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
     end
 
     test "should handle errors when getting relevant patches" do
+      expect(SoftwareUpdatesDiscoveryMock, :setup, fn -> :ok end)
+
       %{id: host_id, fully_qualified_domain_name: fully_qualified_domain_name} = insert(:host)
 
       system_id = 100
@@ -193,6 +213,8 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
     end
 
     test "should handle errors when dispatching discovery completion command" do
+      expect(SoftwareUpdatesDiscoveryMock, :setup, fn -> :ok end)
+
       %{id: host_id, fully_qualified_domain_name: fully_qualified_domain_name} = insert(:host)
 
       system_id = 100
@@ -212,6 +234,8 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
     end
 
     test "should complete discovery" do
+      expect(SoftwareUpdatesDiscoveryMock, :setup, fn -> :ok end)
+
       %{id: host_id1, fully_qualified_domain_name: fully_qualified_domain_name1} =
         insert(:host, hostname: "host1")
 
