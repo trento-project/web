@@ -41,7 +41,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuth do
   def handle_call(:authenticate, _, %State{} = state) do
     case setup_auth(state) do
       {:ok, new_state} ->
-        {:reply, :ok, new_state}
+        {:reply, {:ok, new_state}, new_state}
 
       {:error, _} = error ->
         {:reply, error, state}
@@ -51,7 +51,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuth do
   @impl GenServer
   def handle_call(:clear, _, _), do: {:reply, :ok, %State{}}
 
-  defp call(server, request), do: GenServer.call(server, request, 10_000)
+  defp call(server, request), do: GenServer.call(server, request, 15_000)
 
   defp process_identifier(server_name), do: {:global, identification_tuple(server_name)}
 

@@ -191,6 +191,9 @@ config :trento, Trento.Vault,
 config :trento, Trento.SoftwareUpdates.Discovery,
   adapter: Trento.Infrastructure.SoftwareUpdates.MockSuma
 
+config :trento, Trento.Infrastructure.SoftwareUpdates.Suma,
+  auth: Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuth
+
 config :trento, Trento.Infrastructure.SoftwareUpdates.MockSuma, relevant_patches: %{}
 
 config :trento, Trento.Infrastructure.SoftwareUpdates.SumaApi,

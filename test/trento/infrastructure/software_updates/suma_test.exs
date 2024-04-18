@@ -6,282 +6,44 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
   import Trento.Factory
 
   alias Trento.Infrastructure.SoftwareUpdates.Suma
+
+  alias Trento.Infrastructure.SoftwareUpdates.Auth.Mock, as: SumaAuthMock
   alias Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor.Mock, as: SumaApiMock
   alias Trento.Infrastructure.SoftwareUpdates.Suma.State
-  alias Trento.SoftwareUpdates.Settings
 
   setup [:set_mox_from_context, :verify_on_exit!]
 
-  @test_integration_name "test_integration"
-
-  defp setup_initial_settings, do: {:ok, %{settings: insert_software_updates_settings()}}
-
-  describe "Process start up and identification" do
-    setup do
-      setup_initial_settings()
-    end
-
-    test "should find an already started SUMA process" do
-      assert {_, {:already_started, pid}} = start_supervised(Suma)
-
-      assert pid == Suma.identify()
-    end
-
-    test "should start a new identifiable process" do
-      assert {:ok, pid} = start_supervised({Suma, @test_integration_name})
-
-      assert pid == Suma.identify(@test_integration_name)
-    end
-
-    test "should have expected initial state" do
-      {_, {:already_started, _}} = start_supervised(Suma)
-      {:ok, _} = start_supervised({Suma, @test_integration_name})
-
-      expected_state = %State{
-        url: nil,
-        username: nil,
-        password: nil,
-        ca_cert: nil,
-        use_ca_cert: false,
-        auth: nil
-      }
-
-      assert :sys.get_state(Suma.identify()) == expected_state
-      assert :sys.get_state(Suma.identify(@test_integration_name)) == expected_state
-    end
-
-    test "should save existing CA certificate to local file", %{
-      settings: %Settings{ca_cert: ca_cert}
-    } do
-      assert {:ok, _} = start_supervised({Suma, @test_integration_name})
-
-      expect(SumaApiMock, :login, fn _, _, _, true -> successful_login_response() end)
-
-      assert :ok = Suma.setup(@test_integration_name)
-
-      cert_file_path = "/tmp/suma_ca_cert.crt"
-
-      assert File.exists?(cert_file_path)
-      ^ca_cert = File.read!(cert_file_path)
-    end
-
-    test "should not save CA certificate file if no cert is provided" do
-      insert_software_updates_settings(ca_cert: nil, ca_uploaded_at: nil)
-
-      assert {:ok, _} = start_supervised({Suma, @test_integration_name})
-
-      expect(SumaApiMock, :login, fn _, _, _, false -> successful_login_response() end)
-
-      assert :ok = Suma.setup(@test_integration_name)
-
-      refute File.exists?("/tmp/suma_ca_cert.crt")
-    end
-
-    test "should redact sensitive data in SUMA state", %{
-      settings: %Settings{url: url, username: username, password: password}
-    } do
-      {:ok, _} = start_supervised({Suma, @test_integration_name})
-
-      base_api_url = "#{url}/rhn/manager/api"
-
-      expect(SumaApiMock, :login, fn ^base_api_url, ^username, ^password, _ ->
-        successful_login_response()
+  describe "Setup SUMA connection" do
+    test "should setup with successful authentication" do
+      expect(SumaAuthMock, :authenticate, fn ->
+        {:ok, %State{}}
       end)
 
-      assert :ok = Suma.setup(@test_integration_name)
+      assert :ok = Suma.setup()
+    end
 
-      expected = %{
-        url: url,
-        username: username,
-        password: "<REDACTED>",
-        ca_cert: "<REDACTED>",
-        use_ca_cert: true,
-        auth: "<REDACTED>"
-      }
+    test "should fail during setup when authentication fails" do
+      expect(SumaAuthMock, :authenticate, fn ->
+        {:error, :auth_error}
+      end)
 
-      {output, _} =
-        @test_integration_name
-        |> Suma.identify()
-        |> :sys.get_state()
-        |> inspect
-        |> Code.eval_string()
-
-      assert expected == output
+      assert {:error, :auth_error} = Suma.setup()
     end
   end
 
-  describe "Setting up SUMA integration service when settings are not configured" do
-    test "should return an error when settings are not configured" do
-      {:ok, _} = start_supervised({Suma, @test_integration_name})
-
-      assert {:error, :settings_not_configured} = Suma.setup(@test_integration_name)
-    end
-  end
-
-  describe "Setting up SUMA integration service" do
-    setup do
-      setup_initial_settings()
-    end
-
-    test "should setup SUMA state", %{
-      settings: %Settings{url: url, username: username, password: password, ca_cert: ca_cert}
-    } do
-      {:ok, _} = start_supervised({Suma, @test_integration_name})
-
-      base_api_url = "#{url}/rhn/manager/api"
-      auth_cookie = "pxt-session-cookie=4321"
-
-      expect(SumaApiMock, :login, fn ^base_api_url, ^username, ^password, _ ->
-        successful_login_response()
+  describe "Clear authentication data" do
+    test "should clear authentication state" do
+      expect(SumaAuthMock, :clear, fn ->
+        :ok
       end)
 
-      assert :ok = Suma.setup(@test_integration_name)
-
-      expected_state = %State{
-        url: url,
-        username: username,
-        password: password,
-        ca_cert: ca_cert,
-        use_ca_cert: true,
-        auth: auth_cookie
-      }
-
-      assert @test_integration_name
-             |> Suma.identify()
-             |> :sys.get_state() == expected_state
-    end
-
-    test "should handle error when reaching maximum login retries" do
-      {:ok, _} = start_supervised({Suma, @test_integration_name})
-
-      error_causes = [
-        {:ok, %HTTPoison.Response{status_code: 401}},
-        {:ok, %HTTPoison.Response{status_code: 503}},
-        {:error, %HTTPoison.Error{reason: "kaboom"}}
-      ]
-
-      for error_cause <- error_causes do
-        expect(SumaApiMock, :login, 5, fn _, _, _, _ -> error_cause end)
-
-        assert {:error, :max_login_retries_reached} = Suma.setup(@test_integration_name)
-
-        expected_state = %State{
-          url: nil,
-          username: nil,
-          password: nil,
-          ca_cert: nil,
-          use_ca_cert: false,
-          auth: nil
-        }
-
-        assert @test_integration_name
-               |> Suma.identify()
-               |> :sys.get_state() == expected_state
-      end
-    end
-
-    test "should successfully login after retrying" do
-      {:ok, _} = start_supervised({Suma, @test_integration_name})
-
-      auth_cookie = "pxt-session-cookie=4321"
-
-      responses = [
-        {:ok, %HTTPoison.Response{status_code: 401}},
-        {:error, %HTTPoison.Error{reason: "kaboom"}},
-        successful_login_response()
-      ]
-
-      {:ok, _} = Agent.start_link(fn -> 0 end, name: :login_call_iteration)
-
-      expect(SumaApiMock, :login, 3, fn _, _, _, _ ->
-        iteration = Agent.get(:login_call_iteration, & &1)
-
-        iteration_response = Enum.at(responses, iteration)
-        Agent.update(:login_call_iteration, &(&1 + 1))
-
-        iteration_response
-      end)
-
-      assert :ok = Suma.setup(@test_integration_name)
-
-      assert %State{
-               auth: ^auth_cookie
-             } =
-               @test_integration_name
-               |> Suma.identify()
-               |> :sys.get_state()
-    end
-  end
-
-  describe "clearing up integration service" do
-    setup do
-      setup_initial_settings()
-    end
-
-    test "should clear service state", %{
-      settings: %Settings{url: url, username: username, password: password, ca_cert: ca_cert}
-    } do
-      {:ok, _} = start_supervised({Suma, @test_integration_name})
-
-      expect(SumaApiMock, :login, fn _, _, _, _ -> successful_login_response() end)
-
-      assert :ok = Suma.setup(@test_integration_name)
-
-      expected_state = %State{
-        url: url,
-        username: username,
-        password: password,
-        ca_cert: ca_cert,
-        use_ca_cert: true,
-        auth: "pxt-session-cookie=4321"
-      }
-
-      assert @test_integration_name
-             |> Suma.identify()
-             |> :sys.get_state() == expected_state
-
-      assert :ok = Suma.clear(@test_integration_name)
-
-      assert @test_integration_name
-             |> Suma.identify()
-             |> :sys.get_state() == %State{}
-    end
-
-    test "should support clearing an already empty service state" do
-      {:ok, _} = start_supervised({Suma, @test_integration_name})
-
-      empty_state = %State{
-        url: nil,
-        username: nil,
-        password: nil,
-        ca_cert: nil,
-        use_ca_cert: false,
-        auth: nil
-      }
-
-      assert @test_integration_name
-             |> Suma.identify()
-             |> :sys.get_state() == empty_state
-
-      assert :ok = Suma.clear(@test_integration_name)
-
-      assert @test_integration_name
-             |> Suma.identify()
-             |> :sys.get_state() == empty_state
+      assert :ok = Suma.clear()
     end
   end
 
   describe "Integration service" do
-    setup do
-      setup_initial_settings()
-    end
-
     test "should return an error when a system id was not found for a given fqdn" do
-      {:ok, _} = start_supervised({Suma, @test_integration_name})
-
       fqdn = "machine.fqdn.internal"
-
-      expect(SumaApiMock, :login, 1, fn _, _, _, _ -> successful_login_response() end)
 
       error_causes = [
         {:ok, %HTTPoison.Response{status_code: 200, body: ~s({"success":true,"result":[]})}},
@@ -291,18 +53,18 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
       ]
 
       for error_cause <- error_causes do
+        expect(SumaAuthMock, :authenticate, 1, fn -> {:ok, authenticated_state()} end)
         expect(SumaApiMock, :get_system_id, 1, fn _, _, ^fqdn, _ -> error_cause end)
 
-        assert {:error, :system_id_not_found} = Suma.get_system_id(fqdn, @test_integration_name)
+        assert {:error, :system_id_not_found} =
+                 Suma.get_system_id(fqdn)
       end
     end
 
     test "should get a system for a given fqdn" do
-      {:ok, _} = start_supervised({Suma, @test_integration_name})
-
       fqdn = "machine.fqdn.internal"
 
-      expect(SumaApiMock, :login, 1, fn _, _, _, _ -> successful_login_response() end)
+      expect(SumaAuthMock, :authenticate, 1, fn -> {:ok, authenticated_state()} end)
 
       expect(SumaApiMock, :get_system_id, 1, fn _, _, ^fqdn, _ ->
         {:ok,
@@ -312,15 +74,11 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
          }}
       end)
 
-      assert {:ok, 1_000_010_001} = Suma.get_system_id(fqdn, @test_integration_name)
+      assert {:ok, 1_000_010_001} = Suma.get_system_id(fqdn)
     end
 
     test "should return an error when relevant errata was not found for a given system ID" do
-      {:ok, _} = start_supervised({Suma, @test_integration_name})
-
       system_id = 1_000_010_001
-
-      expect(SumaApiMock, :login, 1, fn _, _, _, _ -> successful_login_response() end)
 
       error_causes = [
         {:ok,
@@ -346,16 +104,15 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
       ]
 
       for error_cause <- error_causes do
+        expect(SumaAuthMock, :authenticate, 1, fn -> {:ok, authenticated_state()} end)
         expect(SumaApiMock, :get_relevant_patches, 1, fn _, _, ^system_id, _ -> error_cause end)
 
         assert {:error, :error_getting_patches} =
-                 Suma.get_relevant_patches(system_id, @test_integration_name)
+                 Suma.get_relevant_patches(system_id)
       end
     end
 
     test "should get errata for a given system ID" do
-      {:ok, _} = start_supervised({Suma, @test_integration_name})
-
       system_id = 1_000_010_001
 
       patches = [
@@ -381,7 +138,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
 
       suma_response_body = %{success: true, result: patches}
 
-      expect(SumaApiMock, :login, 1, fn _, _, _, _ -> successful_login_response() end)
+      expect(SumaAuthMock, :authenticate, 1, fn -> {:ok, authenticated_state()} end)
 
       expect(SumaApiMock, :get_relevant_patches, 1, fn _, _, ^system_id, _ ->
         {:ok,
@@ -412,108 +169,72 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
                   update_date: "2024-02-26"
                 }
               ]} =
-               Suma.get_relevant_patches(system_id, @test_integration_name)
+               Suma.get_relevant_patches(system_id)
     end
 
     test "should get upgradable packages for a given system ID" do
-      {:ok, _} = start_supervised({Suma, @test_integration_name})
-
       system_id = 1_000_010_001
 
       %{result: upgradable_packages} =
         suma_response_body = %{success: true, result: build_list(10, :upgradable_package)}
 
-      expect(SumaApiMock, :login, 1, fn _, _, _, _ -> successful_login_response() end)
+      expect(SumaAuthMock, :authenticate, 1, fn -> {:ok, authenticated_state()} end)
 
       expect(SumaApiMock, :get_upgradable_packages, 1, fn _, _, ^system_id, _ ->
         {:ok, %HTTPoison.Response{status_code: 200, body: Jason.encode!(suma_response_body)}}
       end)
 
       assert {:ok, ^upgradable_packages} =
-               Suma.get_upgradable_packages(system_id, @test_integration_name)
+               Suma.get_upgradable_packages(system_id)
     end
 
     test "should return a proper error when getting upgradable packages fails" do
-      {:ok, _} = start_supervised({Suma, @test_integration_name})
-
       system_id = 1_000_010_001
 
-      expect(SumaApiMock, :login, 1, fn _, _, _, _ -> successful_login_response() end)
+      expect(SumaAuthMock, :authenticate, 1, fn -> {:ok, authenticated_state()} end)
 
       expect(SumaApiMock, :get_upgradable_packages, 1, fn _, _, ^system_id, _ ->
         {:error, %HTTPoison.Response{status_code: 500, body: Jason.encode!(%{})}}
       end)
 
       assert {:error, :error_getting_packages} =
-               Suma.get_upgradable_packages(system_id, @test_integration_name)
+               Suma.get_upgradable_packages(system_id)
     end
 
     test "should handle expired authentication" do
-      {:ok, _} = start_supervised({Suma, @test_integration_name})
+      fqdn = "machine.fqdn.internal"
 
-      scenarios = [
-        %{
-          final_response: %HTTPoison.Response{
-            status_code: 200,
-            body: ~s({"success": true,"result": [{"id":1000010001}]})
-          },
-          expected_result: {:ok, 1_000_010_001}
-        },
-        %{
-          final_response: %HTTPoison.Response{
-            status_code: 422
-          },
-          expected_result: {:error, :system_id_not_found}
-        }
-      ]
+      auth_state1 = Map.put(authenticated_state(), :auth, "cookie1")
+      auth_state2 = Map.put(authenticated_state(), :auth, "cookie2")
 
-      for %{final_response: final_response, expected_result: expected_result} <- scenarios do
-        initial_auth_cookie = "pxt-session-cookie=INITIAL-COOKIE"
+      expect(SumaAuthMock, :authenticate, fn -> {:ok, auth_state1} end)
+      expect(SumaAuthMock, :authenticate, fn -> {:ok, auth_state2} end)
+      expect(SumaAuthMock, :clear, fn -> :ok end)
 
-        expect(SumaApiMock, :login, fn _, _, _, _ ->
-          successful_login_response(initial_auth_cookie)
-        end)
+      expect(SumaApiMock, :get_system_id, 1, fn _, "cookie1", ^fqdn, _ ->
+        {:ok, %HTTPoison.Response{status_code: 401}}
+      end)
 
-        :ok = Suma.setup(@test_integration_name)
+      expect(SumaApiMock, :get_system_id, 1, fn _, "cookie2", ^fqdn, _ ->
+        {:ok,
+         %HTTPoison.Response{
+           status_code: 200,
+           body: ~s({"success": true,"result": [{"id":1000010001}]})
+         }}
+      end)
 
-        assert %State{auth: ^initial_auth_cookie} =
-                 @test_integration_name
-                 |> Suma.identify()
-                 |> :sys.get_state()
-
-        new_auth_cookie = "pxt-session-cookie=NEW-COOKIE"
-
-        SumaApiMock
-        |> expect(:get_system_id, fn _, ^initial_auth_cookie, _, _ ->
-          {:ok, %HTTPoison.Response{status_code: 401}}
-        end)
-        |> expect(:login, fn _, _, _, _ -> successful_login_response(new_auth_cookie) end)
-        |> expect(:get_system_id, fn _, ^new_auth_cookie, _, _ -> {:ok, final_response} end)
-
-        assert ^expected_result = Suma.get_system_id("fqdn", @test_integration_name)
-
-        assert %State{auth: ^new_auth_cookie} =
-                 @test_integration_name
-                 |> Suma.identify()
-                 |> :sys.get_state()
-      end
+      assert {:ok, 1_000_010_001} = Suma.get_system_id(fqdn)
     end
   end
 
-  defp successful_login_response(
-         auth_cookie \\ "pxt-session-cookie=4321",
-         ignored_cookie \\ "pxt-session-cookie=1234"
-       ) do
-    {:ok,
-     %HTTPoison.Response{
-       status_code: 200,
-       headers: [
-         {"Set-Cookie", "JSESSIONID=FOOBAR; Path=/; Secure; HttpOnly; HttpOnly;HttpOnly;Secure"},
-         {"Set-Cookie",
-          "#{ignored_cookie}; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:10 GMT; Path=/; Secure; HttpOnly;HttpOnly;Secure"},
-         {"Set-Cookie",
-          "#{auth_cookie}; Max-Age=3600; Expires=Mon, 26 Feb 2024 10:53:57 GMT; Path=/; Secure; HttpOnly;HttpOnly;Secure"}
-       ]
-     }}
+  defp authenticated_state do
+    %State{
+      url: "https://test",
+      username: "user",
+      password: "password",
+      ca_cert: "cert",
+      use_ca_cert: true,
+      auth: "cookie"
+    }
   end
 end
