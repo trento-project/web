@@ -88,12 +88,19 @@ defmodule Trento.SoftwareUpdates.Discovery do
            |> commanded().dispatch() do
       {:ok, host_id, system_id, relevant_patches}
     else
-      error ->
+      {:error, discovery_error} = error ->
         Logger.error(
           "An error occurred during software updates discovery for host #{host_id}:  #{inspect(error)}"
         )
 
-        {:error, error}
+        commanded().dispatch(
+          CompleteSoftwareUpdatesDiscovery.new!(%{
+            host_id: host_id,
+            health: SoftwareUpdatesHealth.unknown()
+          })
+        )
+
+        {:error, discovery_error}
     end
   end
 

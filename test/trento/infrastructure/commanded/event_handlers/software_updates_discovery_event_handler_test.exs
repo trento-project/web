@@ -11,6 +11,8 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscovery
 
   alias Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscoveryEventHandler
 
+  require Trento.SoftwareUpdates.Enums.SoftwareUpdatesHealth, as: SoftwareUpdatesHealth
+
   setup [:set_mox_from_context, :verify_on_exit!]
 
   test "should discover software updates when a SoftwareUpdatesDiscoveryRequested is emitted" do
@@ -63,8 +65,11 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscovery
     expect(
       Trento.Commanded.Mock,
       :dispatch,
-      0,
-      fn _ -> :ok end
+      fn %CompleteSoftwareUpdatesDiscovery{
+           health: SoftwareUpdatesHealth.unknown()
+         } ->
+        :ok
+      end
     )
 
     assert :ok = SoftwareUpdatesDiscoveryEventHandler.handle(event, %{})

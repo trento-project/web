@@ -1736,6 +1736,24 @@ defmodule Trento.Hosts.HostTest do
           initial_host_health: Health.critical(),
           software_updates_discovery_health: SoftwareUpdatesHealth.passing(),
           expected_host_health: Health.passing()
+        },
+        %{
+          initial_host_health: Health.passing(),
+          software_updates_discovery_health: SoftwareUpdatesHealth.unknown(),
+          expected_host_health: Health.unknown()
+        },
+        %{
+          initial_host_health: Health.critical(),
+          initial_heartbeat: :heartbeat_failed,
+          software_updates_discovery_health: SoftwareUpdatesHealth.unknown(),
+          expected_host_health: Health.unknown()
+        },
+        %{
+          initial_host_health: Health.unknown(),
+          initial_heartbeat: :heartbeat_failed,
+          software_updates_discovery_health: SoftwareUpdatesHealth.unknown(),
+          expect_host_health_changed: false,
+          expected_host_health: Health.unknown()
         }
       ]
 
