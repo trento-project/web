@@ -27,15 +27,23 @@ defmodule TrentoWeb.V1.UserController do
 
   def update(conn, %{"id" => id, "user" => user_params}) do
     with {:ok, user} <- Users.get_user(id),
-         {:ok, %User{} = user} <- Users.update_user(user, user_params) do
+         {:ok, %User{} = user} <- Users.update_user(user, user_params),
+         :ok <- broadcast_update_or_locked_user(user) do
       render(conn, "show.json", user: user)
     end
   end
 
   def delete(conn, %{"id" => id}) do
     with {:ok, user} <- Users.get_user(id),
-         {:ok, %User{}} <- Users.delete_user(user) do
+         {:ok, %User{}} <- Users.delete_user(user),
+         :ok <- TrentoWeb.Endpoint.broadcast("user_socket:#{id}", "user_deleted", %{}) do
       send_resp(conn, :no_content, "")
     end
   end
+
+  defp broadcast_update_or_locked_user(%User{id: id, locked_at: nil}),
+    do: TrentoWeb.Endpoint.broadcast("user_socket:#{id}", "user_updated", %{})
+
+  defp broadcast_update_or_locked_user(%User{id: id}),
+    do: TrentoWeb.Endpoint.broadcast("user_socket:#{id}", "user_locked", %{})
 end
