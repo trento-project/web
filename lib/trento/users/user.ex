@@ -52,8 +52,7 @@ defmodule Trento.Users.User do
   end
 
   defp lock_changeset(user, attrs) do
-    user
-    |> cast(attrs, [:locked_at])
+    cast(user, attrs, [:locked_at])
   end
 
   defp validate_password(changeset) do

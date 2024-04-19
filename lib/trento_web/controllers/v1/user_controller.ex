@@ -10,8 +10,8 @@ defmodule TrentoWeb.V1.UserController do
   alias TrentoWeb.OpenApi.V1.Schema.User.{
     UserCollection,
     UserCreationRequest,
-    UserUpdateRequest,
-    UserItem
+    UserItem,
+    UserUpdateRequest
   }
 
   plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
