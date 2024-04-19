@@ -12,6 +12,7 @@ defmodule TrentoWeb.UserSocket do
   ## Channels
 
   channel "monitoring:*", TrentoWeb.MonitoringChannel
+  channel "users:*", TrentoWeb.UserChannel
 
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After

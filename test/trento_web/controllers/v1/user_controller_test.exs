@@ -1,11 +1,15 @@
-defmodule TrentoWeb.UserControllerTest do
+defmodule TrentoWeb.V1.UserControllerTest do
   use TrentoWeb.ConnCase, async: true
 
   import OpenApiSpex.TestAssertions
+  import Phoenix.ChannelTest
+  import TrentoWeb.ChannelCase
 
   alias Trento.Users
 
   alias TrentoWeb.OpenApi.V1.ApiSpec
+
+  @endpoint TrentoWeb.Endpoint
 
   setup %{conn: conn} do
     api_spec = ApiSpec.spec()
@@ -94,6 +98,11 @@ defmodule TrentoWeb.UserControllerTest do
     } do
       %{id: id, updated_at: updated_at} = create_user()
 
+      {:ok, _, _} =
+        TrentoWeb.UserSocket
+        |> socket("user_id", %{current_user_id: id})
+        |> subscribe_and_join(TrentoWeb.UserChannel, "users:#{id}")
+
       resp =
         conn
         |> put_req_header("content-type", "application/json")
@@ -102,6 +111,8 @@ defmodule TrentoWeb.UserControllerTest do
         |> assert_schema("UserItem", api_spec)
 
       assert resp.updated_at == updated_at
+
+      assert_broadcast "user_updated", %{}, 1000
     end
 
     test "should return 404 if the user does not exists", %{
@@ -151,6 +162,11 @@ defmodule TrentoWeb.UserControllerTest do
     test "should update the user if parameters are valid", %{conn: conn, api_spec: api_spec} do
       %{id: id, email: email, fullname: fullname} = create_user()
 
+      {:ok, _, _} =
+        TrentoWeb.UserSocket
+        |> socket("user_id", %{current_user_id: id})
+        |> subscribe_and_join(TrentoWeb.UserChannel, "users:#{id}")
+
       valid_params = %{
         fullname: Faker.Person.name(),
         email: Faker.Internet.email(),
@@ -169,6 +185,8 @@ defmodule TrentoWeb.UserControllerTest do
       refute resp.fullname == fullname
       refute resp.enabled == true
       refute resp.email == email
+
+      assert_broadcast "user_locked", %{}, 1000
     end
   end
 
@@ -184,10 +202,17 @@ defmodule TrentoWeb.UserControllerTest do
     test "should delete a user when the user is found", %{conn: conn} do
       %{id: id} = create_user()
 
+      {:ok, _, _} =
+        TrentoWeb.UserSocket
+        |> socket("user_id", %{current_user_id: id})
+        |> subscribe_and_join(TrentoWeb.UserChannel, "users:#{id}")
+
       conn
       |> put_req_header("content-type", "application/json")
       |> delete("/api/v1/users/#{id}")
       |> response(:no_content)
+
+      assert_broadcast "user_deleted", %{}, 1000
     end
   end
 
