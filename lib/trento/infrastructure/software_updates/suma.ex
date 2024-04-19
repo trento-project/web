@@ -93,7 +93,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma do
     end
   end
 
-  defp call(server, request), do: GenServer.call(server, request, 10_000)
+  defp call(server, request), do: GenServer.call(server, request, 15_000)
 
   defp authenticate_and_handle(request, state) do
     case setup_auth(state) do
