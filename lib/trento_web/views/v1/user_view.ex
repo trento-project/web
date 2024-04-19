@@ -13,7 +13,9 @@ defmodule TrentoWeb.V1.UserView do
     %{
       id: user.id,
       fullname: user.fullname,
+      username: user.username,
       email: user.email,
+      enabled: user.locked_at == nil,
       created_at: user.inserted_at,
       updated_at: user.updated_at
     }
