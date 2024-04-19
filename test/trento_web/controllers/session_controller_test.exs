@@ -6,6 +6,7 @@ defmodule TrentoWeb.SessionControllerTest do
   import Mox
   import OpenApiSpex.TestAssertions
 
+  alias TrentoWeb.Auth.RefreshToken
   alias TrentoWeb.OpenApi.V1.ApiSpec
 
   setup [:set_mox_from_context, :verify_on_exit!]
@@ -44,7 +45,7 @@ defmodule TrentoWeb.SessionControllerTest do
         end
       )
 
-      refresh_token = TrentoWeb.Auth.RefreshToken.generate_and_sign!(%{"sub" => user.id})
+      refresh_token = RefreshToken.generate_and_sign!(%{"sub" => user.id})
 
       conn =
         post(conn, "/api/session/refresh", %{
@@ -73,7 +74,7 @@ defmodule TrentoWeb.SessionControllerTest do
         end
       )
 
-      refresh_token = TrentoWeb.Auth.RefreshToken.generate_and_sign!(%{"sub" => user.id})
+      refresh_token = RefreshToken.generate_and_sign!(%{"sub" => user.id})
 
       conn =
         post(conn, "/api/session/refresh", %{
@@ -100,7 +101,7 @@ defmodule TrentoWeb.SessionControllerTest do
         end
       )
 
-      refresh_token = TrentoWeb.Auth.RefreshToken.generate_and_sign!(%{"sub" => user.id})
+      refresh_token = RefreshToken.generate_and_sign!(%{"sub" => user.id})
 
       conn =
         post(conn, "/api/session/refresh", %{
