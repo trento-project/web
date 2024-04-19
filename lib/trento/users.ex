@@ -62,7 +62,7 @@ defmodule Trento.Users do
     do_update(user, Map.put(attrs, :locked_at, nil))
   end
 
-  def delete_user(%User{id: 1}, _), do: {:error, :operation_not_permitted}
+  def delete_user(%User{id: 1}), do: {:error, :operation_not_permitted}
 
   def delete_user(%User{} = user) do
     user

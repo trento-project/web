@@ -177,7 +177,7 @@ defmodule Trento.UsersTest do
     end
 
     test "delete_user/2 does not delete user with id 1" do
-      assert {:error, :operation_not_permitted} = Users.delete(%User{id: 1})
+      assert {:error, :operation_not_permitted} = Users.delete_user(%User{id: 1})
     end
 
     test "delete_user/1 deletes the user" do
