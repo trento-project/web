@@ -10,8 +10,6 @@ defmodule Trento.Factory do
 
   alias Faker.Random.Elixir, as: RandomElixir
 
-  alias Trento.Users.User
-
   alias Trento.Clusters.ValueObjects.{
     AscsErsClusterDetails,
     AscsErsClusterNode,
