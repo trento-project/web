@@ -61,7 +61,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
     # This is an alternative way of defining schemas without having to deal to default values
     # when the struct is converted to plain parameters in controller
     # by default all the struct values have nil values, so we can't distinguish between a parameter not passed
-    # or a parameter passed explicitely nil.
+    # or a parameter passed explicitly nil.
     # this is an update request and we have to distinguish in PATCH verb values passed or not passed.
     # Having a value not passed as nil by default is not practical nor correct.
     # this means that in the controller the body params are passed as map, without converting from the struct
