@@ -11,7 +11,7 @@ defmodule TrentoWeb.Plugs.AppJWTAuthPlugTest do
 
   alias Trento.Users
   alias Trento.Users.User
-  alias TrentoWeb.Plugs.AppJWTAuthPlugs
+  alias TrentoWeb.Plugs.AppJWTAuthPlug
 
   import Mox
 
@@ -66,7 +66,7 @@ defmodule TrentoWeb.Plugs.AppJWTAuthPlugTest do
       assert %{
                private: %{
                  api_access_token: new_access_token,
-                 access_token_expiration: 600
+                 access_token_expiration: 180
                }
              } = res_conn
 
@@ -139,7 +139,7 @@ defmodule TrentoWeb.Plugs.AppJWTAuthPlugTest do
       assert %{
                private: %{
                  api_access_token: _jwt,
-                 access_token_expiration: 600,
+                 access_token_expiration: 180,
                  api_refresh_token: _refresh
                }
              } = res_conn
