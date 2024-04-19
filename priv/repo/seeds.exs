@@ -16,7 +16,8 @@
   password: "adminpassword",
   confirm_password: "adminpassword",
   fullname: "Trento Admin",
-  email: "admin@trento.com"
+  email: "admin@trento.com",
+  enabled: true
 })
 |> Trento.Repo.insert!(on_conflict: :nothing)
 

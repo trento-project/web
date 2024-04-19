@@ -78,6 +78,7 @@ defmodule Trento.Release do
       password: admin_password,
       confirm_password: admin_password,
       email: admin_email,
+      enabled: true,
       fullname: "Trento Default Admin"
     })
     |> Trento.Repo.insert!(
