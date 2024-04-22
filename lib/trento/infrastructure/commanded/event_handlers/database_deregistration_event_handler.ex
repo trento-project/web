@@ -8,10 +8,16 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEv
     application: Trento.Commanded,
     name: "database_deregistration_event_handler"
 
-  alias Trento.Databases.Events.DatabaseDeregistered
+  alias Trento.Databases.Events.{
+    DatabaseDeregistered,
+    DatabaseTenantsUpdated
+  }
+
   alias Trento.Databases.Projections.DatabaseReadModel
+  alias Trento.Databases.ValueObjects.Tenant
   alias Trento.Repo
   alias Trento.SapSystems.Commands.DeregisterSapSystem
+  alias Trento.SapSystems.Projections.SapSystemReadModel
 
   import Ecto.Query, only: [from: 2]
 
@@ -37,6 +43,39 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEv
         %DeregisterSapSystem{sap_system_id: sap_system_id, deregistered_at: deregistered_at},
         consistency: :strong
       )
+    end
+
+    :ok
+  end
+
+  def handle(
+        %DatabaseTenantsUpdated{
+          database_id: database_id,
+          tenants: tenants,
+          previous_tenants: previous_tenants
+        },
+        %{
+          created_at: dereregistered_at
+        }
+      ) do
+    removed_tenants = previous_tenants -- tenants
+
+    for %Tenant{name: tenant_name} <- removed_tenants do
+      from(s in SapSystemReadModel,
+        where: s.database_id == ^database_id and s.tenant == ^tenant_name,
+        select: [:id, :sid]
+      )
+      |> Repo.all()
+      |> Enum.each(fn %SapSystemReadModel{id: sap_system_id, sid: sid} ->
+        Logger.info(
+          "Deregistering sap system #{sid} attached to database #{database_id} with tenant #{tenant_name}"
+        )
+
+        commanded().dispatch(
+          %DeregisterSapSystem{sap_system_id: sap_system_id, deregistered_at: dereregistered_at},
+          consistency: :strong
+        )
+      end)
     end
 
     :ok

@@ -11,5 +11,6 @@ defmodule Trento.Databases.Events.DatabaseTenantsUpdated do
     field :database_id, Ecto.UUID
 
     embeds_many :tenants, Tenant
+    embeds_many :previous_tenants, Tenant
   end
 end

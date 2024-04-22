@@ -95,7 +95,8 @@ defmodule Trento.Databases.DatabaseTest do
           },
           %DatabaseTenantsUpdated{
             database_id: database_id,
-            tenants: tenants
+            tenants: tenants,
+            previous_tenants: []
           }
         ],
         %Database{
@@ -170,7 +171,8 @@ defmodule Trento.Databases.DatabaseTest do
           },
           %DatabaseTenantsUpdated{
             database_id: database_id,
-            tenants: tenants
+            tenants: tenants,
+            previous_tenants: []
           }
         ],
         %Database{
@@ -809,7 +811,8 @@ defmodule Trento.Databases.DatabaseTest do
           },
           %DatabaseTenantsUpdated{
             database_id: database_id,
-            tenants: tenants
+            tenants: tenants,
+            previous_tenants: []
           }
         ],
         %Database{
@@ -880,7 +883,12 @@ defmodule Trento.Databases.DatabaseTest do
             host_id: host_id,
             health: :passing
           ),
-          build(:database_tenants_updated_event, database_id: database_id, tenants: new_tenants)
+          build(
+            :database_tenants_updated_event,
+            database_id: database_id,
+            tenants: new_tenants,
+            previous_tenants: tenants
+          )
         ],
         fn state ->
           assert %Database{
@@ -1049,7 +1057,8 @@ defmodule Trento.Databases.DatabaseTest do
           },
           %DatabaseTenantsUpdated{
             database_id: database_id,
-            tenants: new_tenants
+            tenants: new_tenants,
+            previous_tenants: tenants
           }
         ],
         fn state ->
