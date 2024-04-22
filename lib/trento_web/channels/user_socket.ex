@@ -1,6 +1,9 @@
 defmodule TrentoWeb.UserSocket do
   use Phoenix.Socket
 
+  require Logger
+  alias TrentoWeb.Auth.AccessToken
+
   # A Socket handler
   #
   # It's possible to control the websocket connection and
@@ -9,6 +12,7 @@ defmodule TrentoWeb.UserSocket do
   ## Channels
 
   channel "monitoring:*", TrentoWeb.MonitoringChannel
+  channel "users:*", TrentoWeb.UserChannel
 
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After
@@ -22,8 +26,20 @@ defmodule TrentoWeb.UserSocket do
   # See `Phoenix.Token` documentation for examples in
   # performing token verification on connect.
   @impl true
-  def connect(_params, socket, _connect_info) do
-    {:ok, socket}
+  def connect(%{"access_token" => access_token}, socket, _connect_info) do
+    case AccessToken.verify_and_validate(access_token) do
+      {:ok, %{"sub" => user_id}} ->
+        {:ok, assign(socket, :current_user_id, user_id)}
+
+      {:error, reason} ->
+        Logger.error("Could not authenticate user socket: #{inspect(reason)}")
+        {:error, reason}
+    end
+  end
+
+  def connect(_, _, _) do
+    Logger.error("Could not authenticate user socket: missing auth token")
+    {:error, :missing_auth_token}
   end
 
   # Socket id's are topics that allow you to identify all sockets for a given user:
@@ -37,5 +53,5 @@ defmodule TrentoWeb.UserSocket do
   #
   # Returning `nil` makes this socket anonymous.
   @impl true
-  def id(_socket), do: nil
+  def id(socket), do: "user_socket:#{socket.assigns.current_user_id}"
 end

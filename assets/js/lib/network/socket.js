@@ -2,6 +2,7 @@
 // eslint-disable-next-line
 import { Socket } from 'phoenix';
 import { logMessage, logError } from '@lib/log';
+import { getAccessTokenFromStore } from '@lib/auth';
 
 export const joinChannel = (channel) => {
   channel
@@ -12,7 +13,9 @@ export const joinChannel = (channel) => {
 };
 
 export const initSocketConnection = () => {
-  const socket = new Socket('/socket', {});
+  const socket = new Socket('/socket', {
+    params: { access_token: getAccessTokenFromStore() },
+  });
   socket.connect();
 
   return socket;

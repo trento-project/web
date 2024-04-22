@@ -96,6 +96,17 @@ defmodule TrentoWeb.ErrorView do
     }
   end
 
+  def render("403.json", _) do
+    %{
+      errors: [
+        %{
+          title: "Forbidden",
+          detail: "You can't perform the operation or access the resource."
+        }
+      ]
+    }
+  end
+
   def template_not_found(template, _assigns) do
     %{
       errors: [
