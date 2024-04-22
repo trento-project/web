@@ -4,7 +4,6 @@ defmodule Trento.Release do
   installed.
   """
 
-  alias Pow.Ecto.Schema.Password
   alias Trento.ActivityLog.Settings, as: ActivityLogSettings
   alias Trento.Settings.ApiKeySettings
 
@@ -73,15 +72,19 @@ defmodule Trento.Release do
 
     admin_user = System.get_env("ADMIN_USER", "admin")
     admin_password = System.get_env("ADMIN_PASSWORD", "adminpassword")
+    admin_email = System.get_env("ADMIN_EMAIL", "admin@trento.suse.com")
 
     %Trento.Users.User{}
     |> Trento.Users.User.changeset(%{
       username: admin_user,
       password: admin_password,
-      confirm_password: admin_password
+      confirm_password: admin_password,
+      email: admin_email,
+      enabled: true,
+      fullname: "Trento Default Admin"
     })
     |> Trento.Repo.insert!(
-      on_conflict: [set: [password_hash: Password.pbkdf2_hash(admin_password)]],
+      on_conflict: [set: [password_hash: Argon2.hash_pwd_salt(admin_password)]],
       conflict_target: :username
     )
   end

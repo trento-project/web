@@ -13,6 +13,8 @@ defmodule TrentoWeb.Plugs.AppJWTAuthPlug do
   require Logger
 
   alias Plug.Conn
+  alias Trento.Users
+  alias Trento.Users.User
   alias TrentoWeb.Auth.AccessToken
   alias TrentoWeb.Auth.RefreshToken
 
@@ -58,22 +60,18 @@ defmodule TrentoWeb.Plugs.AppJWTAuthPlug do
 
   The refresh token should be verified and valid, a new access token will be issued
   with the same validity as other access tokens, for the sub of the refresh token.
+
+  Deleted and locked users, are not allowed to generate a refresh token.
   """
   @spec renew(Conn.t(), String.t()) :: {:ok, Conn.t()} | {:error, any}
   def renew(conn, refresh_token) do
-    case validate_refresh_token(refresh_token) do
-      {:ok, claims} ->
-        new_access_token = AccessToken.generate_access_token!(%{"sub" => claims["sub"]})
-
-        conn =
-          conn
-          |> Conn.put_private(:api_access_token, new_access_token)
-          |> Conn.put_private(:access_token_expiration, AccessToken.expires_in())
-
-        {:ok, conn}
-
+    with {:ok, %{"sub" => user_id}} <- validate_refresh_token(refresh_token),
+         {:ok, user} <- Users.get_user(user_id),
+         {:ok, conn} <- attach_refresh_token_to_conn(conn, user) do
+      {:ok, conn}
+    else
       {:error, reason} ->
-        Logger.error("Invalid refresh token: #{inspect(reason)}")
+        Logger.error("Could not refresh the access token: #{inspect(reason)}")
 
         {:error, reason}
     end
@@ -101,4 +99,25 @@ defmodule TrentoWeb.Plugs.AppJWTAuthPlug do
   @spec validate_refresh_token(binary()) :: {atom(), any()}
   defp validate_refresh_token(jwt_token),
     do: RefreshToken.verify_and_validate(jwt_token)
+
+  defp attach_refresh_token_to_conn(conn, user) do
+    if user_allowed_to_renew?(user) do
+      new_access_token = AccessToken.generate_access_token!(%{"sub" => user.id})
+
+      conn =
+        conn
+        |> Conn.put_private(:api_access_token, new_access_token)
+        |> Conn.put_private(:access_token_expiration, AccessToken.expires_in())
+
+      {:ok, conn}
+    else
+      {:error, :user_not_allowed_to_renew}
+    end
+  end
+
+  defp user_allowed_to_renew?(%User{deleted_at: deleted_at, locked_at: locked_at})
+       when not is_nil(deleted_at) or not is_nil(locked_at),
+       do: false
+
+  defp user_allowed_to_renew?(%User{}), do: true
 end

@@ -24,6 +24,8 @@ defmodule Trento.Factory do
     SbdDevice
   }
 
+  alias Trento.Users.User
+
   alias Trento.Hosts.ValueObjects.{
     SaptuneStatus,
     SlesSubscription
@@ -948,6 +950,20 @@ defmodule Trento.Factory do
     %ActivityLogSettings{
       type: :activity_log_settings,
       retention_time: build(:activity_log_retention_time)
+    }
+  end
+
+  def user_factory do
+    password = Faker.Pokemon.name()
+
+    %User{
+      email: Faker.Internet.email(),
+      fullname: Faker.Pokemon.name(),
+      password: password,
+      password_hash: Argon2.hash_pwd_salt(password),
+      username: Faker.Pokemon.name(),
+      deleted_at: nil,
+      locked_at: nil
     }
   end
 end

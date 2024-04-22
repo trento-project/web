@@ -76,6 +76,7 @@ config :trento, event_stores: [Trento.EventStore]
 config :trento, :pow,
   user: Trento.Users.User,
   repo: Trento.Repo,
+  users_context: Trento.Users,
   web_module: TrentoWeb,
   extensions: [PowPersistentSession],
   controller_callbacks: Pow.Extension.Phoenix.ControllerCallbacks
@@ -168,8 +169,8 @@ config :trento, :jwt_authentication,
   issuer: "https://github.com/trento-project/web",
   app_audience: "trento_app",
   api_key_audience: "trento_api_key",
-  # Seconds, 10 minutes
-  access_token_expiration: 600,
+  # Seconds, 3 minutes
+  access_token_expiration: 180,
   # Seconds, 6 hours
   refresh_token_expiration: 21600
 
