@@ -11,9 +11,11 @@ import {
   setUser,
   setUserAsLogged,
 } from '@state/user';
+import { networkClient } from '@lib/network';
 import { performLogin } from './user';
 
 const axiosMock = new MockAdapter(authClient);
+const networkClientAxiosMock = new MockAdapter(networkClient);
 
 describe('user login saga', () => {
   beforeEach(() => {
@@ -64,6 +66,10 @@ describe('user login saga', () => {
       .onPost('/api/session', { username: 'good', password: 'good' })
       .reply(200, credentialResponse);
 
+    networkClientAxiosMock
+      .onGet('/api/me')
+      .reply(200, { username: 'good', id: 1 });
+
     const dispatched = await recordSaga(performLogin, {
       payload: {
         username: 'good',
@@ -72,7 +78,7 @@ describe('user login saga', () => {
     });
 
     expect(dispatched).toContainEqual(setAuthInProgress());
-    expect(dispatched).toContainEqual(setUser({ username: 'good' }));
+    expect(dispatched).toContainEqual(setUser({ username: 'good', id: 1 }));
     expect(dispatched).toContainEqual(setUserAsLogged());
 
     expect(getAccessTokenFromStore()).toEqual(credentialResponse.access_token);

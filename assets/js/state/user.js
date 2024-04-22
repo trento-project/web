@@ -25,8 +25,9 @@ export const userSlice = createSlice({
       state.authInProgress = false;
       state.authError = null;
     },
-    setUser(state, { payload: { username } }) {
+    setUser(state, { payload: { username, id } }) {
       state.username = username;
+      state.id = id;
     },
   },
 });

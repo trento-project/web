@@ -8,10 +8,12 @@ import {
 } from '@state/user';
 import {
   login,
+  me,
   storeAccessToken,
   storeRefreshToken,
   clearCredentialsFromStore,
 } from '@lib/auth';
+import { networkClient } from '@lib/network';
 
 export const PERFORM_LOGIN = 'PERFORM_LOGIN';
 export const performLoginAction = createAction(
@@ -25,9 +27,11 @@ export function* performLogin({ payload: { username, password } }) {
     const {
       data: { access_token: accessToken, refresh_token: refreshToken },
     } = yield call(login, { username, password });
-    yield put(setUser({ username }));
     yield call(storeAccessToken, accessToken);
     yield call(storeRefreshToken, refreshToken);
+    // Get logged user information
+    const { id, username: profileUsername } = yield call(me, networkClient);
+    yield put(setUser({ username: profileUsername, id }));
     yield put(setUserAsLogged());
   } catch (error) {
     yield put(
