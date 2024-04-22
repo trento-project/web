@@ -39,13 +39,13 @@ defmodule Trento.SoftwareUpdates.Discovery do
 
   @spec discover_software_updates :: {:ok, {list(), list()}}
   def discover_software_updates do
-    authenticated = setup()
+    authentication = setup()
 
     {:ok,
      Hosts.get_all_hosts()
      |> ParallelStream.map(fn
        %HostReadModel{id: host_id, fully_qualified_domain_name: fully_qualified_domain_name} ->
-         case discover_host_software_updates(host_id, fully_qualified_domain_name, authenticated) do
+         case discover_host_software_updates(host_id, fully_qualified_domain_name, authentication) do
            {:error, error} ->
              {:error, host_id, error}
 
