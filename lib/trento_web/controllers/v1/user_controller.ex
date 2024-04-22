@@ -70,7 +70,7 @@ defmodule TrentoWeb.V1.UserController do
   end
 
   operation :update,
-    summary: "Create an existing user",
+    summary: "Update an existing user",
     tags: ["User Management"],
     parameters: [
       id: [

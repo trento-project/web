@@ -8,7 +8,7 @@ defmodule Trento.UsersTest do
   describe "users" do
     test "list_users returns all users except the deleted ones" do
       %{id: user_id} = insert(:user)
-      create_deleted_user()
+      insert(:user, deleted_at: DateTime.utc_now())
       users = Users.list_users()
       assert [%User{id: ^user_id}] = users
       assert length(users) == 1
@@ -21,7 +21,7 @@ defmodule Trento.UsersTest do
     end
 
     test "get_user returns an error when a user does not exist" do
-      %{id: user_id} = create_deleted_user()
+      %{id: user_id} = insert(:user, deleted_at: DateTime.utc_now())
 
       assert {:error, :not_found} = Users.get_user(user_id)
     end
@@ -191,9 +191,5 @@ defmodule Trento.UsersTest do
       refute deleted_at == nil
       refute username == original_username
     end
-  end
-
-  defp create_deleted_user do
-    insert(:user, deleted_at: DateTime.utc_now())
   end
 end

@@ -13,7 +13,9 @@ export const joinChannel = (channel) => {
 };
 
 export const initSocketConnection = () => {
-  const socket = new Socket('/socket', {params: { access_token: getAccessTokenFromStore() }});
+  const socket = new Socket('/socket', {
+    params: { access_token: getAccessTokenFromStore() },
+  });
   socket.connect();
 
   return socket;
