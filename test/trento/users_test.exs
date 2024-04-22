@@ -3,10 +3,11 @@ defmodule Trento.UsersTest do
 
   alias Trento.Users
   alias Trento.Users.User
+  import Trento.Factory
 
   describe "users" do
     test "list_users returns all users except the deleted ones" do
-      %{id: user_id} = create_user()
+      %{id: user_id} = insert(:user)
       create_deleted_user()
       users = Users.list_users()
       assert [%User{id: ^user_id}] = users
@@ -14,7 +15,7 @@ defmodule Trento.UsersTest do
     end
 
     test "get_user returns a user when the user exist" do
-      %{id: user_id} = create_user()
+      %{id: user_id} = insert(:user)
 
       assert {:ok, %User{id: ^user_id}} = Users.get_user(user_id)
     end
@@ -42,7 +43,7 @@ defmodule Trento.UsersTest do
     end
 
     test "create_user should return an error if the email has already been taken" do
-      user_already_existing = create_user()
+      user_already_existing = insert(:user)
 
       assert {:error, changeset} =
                Users.create_user(%{
@@ -68,7 +69,7 @@ defmodule Trento.UsersTest do
     end
 
     test "update_user/2 with valid data updates the user" do
-      user = create_user()
+      user = insert(:user)
       {:ok, user} = Users.get_user(user.id)
 
       assert {:ok, %User{} = user} =
@@ -82,7 +83,7 @@ defmodule Trento.UsersTest do
     end
 
     test "update_user/2 will not update user username" do
-      user = create_user()
+      user = insert(:user)
       {:ok, fetched_user} = Users.get_user(user.id)
 
       assert {:ok, %User{} = user} =
@@ -98,7 +99,7 @@ defmodule Trento.UsersTest do
     end
 
     test "update_user/2 with invalid data does not update the user" do
-      user = create_user()
+      user = insert(:user)
       {:ok, user} = Users.get_user(user.id)
 
       assert {:error, changeset} =
@@ -116,8 +117,8 @@ defmodule Trento.UsersTest do
     end
 
     test "update_user/2 returns error if the email has already been taken" do
-      user = create_user()
-      user2 = create_user()
+      user = insert(:user)
+      user2 = insert(:user)
       {:ok, user} = Users.get_user(user.id)
 
       assert {:error, changeset} =
@@ -131,28 +132,28 @@ defmodule Trento.UsersTest do
     end
 
     test "update_user/2 does not update deleted_at" do
-      user = create_user()
+      user = insert(:user)
       {:ok, user} = Users.get_user(user.id)
       assert {:ok, %User{} = user} = Users.update_user(user, %{deleted_at: DateTime.utc_now()})
       assert user.deleted_at == nil
     end
 
     test "update_user/2 lock the user if enable false is passed as attribute and the user is not locked" do
-      user = create_user()
+      user = insert(:user)
       {:ok, user} = Users.get_user(user.id)
       assert {:ok, %User{} = user} = Users.update_user(user, %{enabled: false})
       refute user.locked_at == nil
     end
 
     test "update_user/2 does no lock the user if enable true is passed as attribute and the user is not locked" do
-      user = create_user()
+      user = insert(:user)
       {:ok, user} = Users.get_user(user.id)
       assert {:ok, %User{} = user} = Users.update_user(user, %{enabled: true})
       assert user.locked_at == nil
     end
 
     test "update_user/2 does not relock the user if enable false is passed as attribute and the user is already locked" do
-      user = create_user()
+      user = insert(:user)
       {:ok, user} = Users.get_user(user.id)
 
       assert {:ok, %User{locked_at: locked_at} = user} =
@@ -163,7 +164,7 @@ defmodule Trento.UsersTest do
     end
 
     test "update_user/2 does unlock the user if enable true is passed as attribute and the user is locked" do
-      user = create_user()
+      user = insert(:user)
       {:ok, user} = Users.get_user(user.id)
       assert {:ok, %User{} = user} = Users.update_user(user, %{enabled: false})
 
@@ -181,7 +182,7 @@ defmodule Trento.UsersTest do
     end
 
     test "delete_user/1 deletes the user" do
-      %{id: user_id, username: original_username} = user = create_user()
+      %{id: user_id, username: original_username} = user = insert(:user)
       assert {:ok, %User{}} = Users.delete_user(user)
       assert {:error, :not_found} == Users.get_user(user.id)
 
@@ -192,25 +193,7 @@ defmodule Trento.UsersTest do
     end
   end
 
-  # We can't use factory since we have to deal with pow logic
-  defp create_user do
-    password = "themightypassword8897"
-
-    {:ok, user} =
-      Users.create_user(%{
-        email: Faker.Internet.email(),
-        fullname: Faker.Pokemon.name(),
-        password: password,
-        password_confirmation: password,
-        username: Faker.Pokemon.name()
-      })
-
-    user
-  end
-
   defp create_deleted_user do
-    user = create_user()
-    {:ok, user} = Trento.Users.delete_user(user)
-    user
+    insert(:user, deleted_at: DateTime.utc_now())
   end
 end

@@ -4,8 +4,7 @@ defmodule TrentoWeb.V1.UserControllerTest do
   import OpenApiSpex.TestAssertions
   import Phoenix.ChannelTest
   import TrentoWeb.ChannelCase
-
-  alias Trento.Users
+  import Trento.Factory
 
   alias TrentoWeb.OpenApi.V1.ApiSpec
 
@@ -19,8 +18,8 @@ defmodule TrentoWeb.V1.UserControllerTest do
 
   describe "index" do
     test "lists all users", %{conn: conn, api_spec: api_spec} do
-      %{id: user_one_id} = create_user()
-      %{id: user_two_id} = create_user()
+      %{id: user_one_id} = insert(:user)
+      %{id: user_two_id} = insert(:user)
 
       conn = get(conn, "/api/v1/users")
 
@@ -72,7 +71,7 @@ defmodule TrentoWeb.V1.UserControllerTest do
 
     test "should not create the user when request parameters are valid but error are returned during creation",
          %{conn: conn, api_spec: api_spec} do
-      %{email: already_taken_email} = create_user()
+      %{email: already_taken_email} = insert(:user)
 
       valid_params = %{
         fullname: Faker.Person.name(),
@@ -96,7 +95,7 @@ defmodule TrentoWeb.V1.UserControllerTest do
       conn: conn,
       api_spec: api_spec
     } do
-      %{id: id, updated_at: updated_at} = create_user()
+      %{id: id, updated_at: updated_at} = insert(:user)
 
       {:ok, _, _} =
         TrentoWeb.UserSocket
@@ -128,8 +127,8 @@ defmodule TrentoWeb.V1.UserControllerTest do
 
     test "should not update the user if parameters are valid but an error is returned from update operation",
          %{conn: conn, api_spec: api_spec} do
-      %{email: already_taken_email} = create_user()
-      %{id: id} = create_user()
+      %{email: already_taken_email} = insert(:user)
+      %{id: id} = insert(:user)
 
       valid_params = %{
         email: already_taken_email
@@ -146,7 +145,7 @@ defmodule TrentoWeb.V1.UserControllerTest do
       conn: conn,
       api_spec: api_spec
     } do
-      %{id: id} = create_user()
+      %{id: id} = insert(:user)
 
       invalid_params = %{
         enabled: "invalid"
@@ -160,7 +159,7 @@ defmodule TrentoWeb.V1.UserControllerTest do
     end
 
     test "should update the user if parameters are valid", %{conn: conn, api_spec: api_spec} do
-      %{id: id, email: email, fullname: fullname} = create_user()
+      %{id: id, email: email, fullname: fullname} = insert(:user)
 
       {:ok, _, _} =
         TrentoWeb.UserSocket
@@ -200,7 +199,7 @@ defmodule TrentoWeb.V1.UserControllerTest do
     end
 
     test "should delete a user when the user is found", %{conn: conn} do
-      %{id: id} = create_user()
+      %{id: id} = insert(:user)
 
       {:ok, _, _} =
         TrentoWeb.UserSocket
@@ -214,20 +213,5 @@ defmodule TrentoWeb.V1.UserControllerTest do
 
       assert_broadcast "user_deleted", %{}, 1000
     end
-  end
-
-  defp create_user do
-    password = "themightypassword8897"
-
-    {:ok, user} =
-      Users.create_user(%{
-        email: Faker.Internet.email(),
-        fullname: Faker.Pokemon.name(),
-        password: password,
-        password_confirmation: password,
-        username: Faker.Pokemon.name()
-      })
-
-    user
   end
 end

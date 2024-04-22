@@ -21,6 +21,8 @@ defmodule Trento.Factory do
     SbdDevice
   }
 
+  alias Trento.Users.User
+
   alias Trento.Hosts.ValueObjects.{
     SaptuneStatus,
     SlesSubscription
@@ -881,6 +883,20 @@ defmodule Trento.Factory do
       to_release: "#{RandomElixir.random_between(0, 100)}",
       to_epoch: "#{RandomElixir.random_between(0, 50)}",
       to_package_id: "#{RandomElixir.random_between(0, 1000)}"
+    }
+  end
+
+  def user_factory do
+    password = Faker.Pokemon.name()
+
+    %User{
+      email: Faker.Internet.email(),
+      fullname: Faker.Pokemon.name(),
+      password: password,
+      password_hash: Argon2.hash_pwd_salt(password),
+      username: Faker.Pokemon.name(),
+      deleted_at: nil,
+      locked_at: nil
     }
   end
 end
