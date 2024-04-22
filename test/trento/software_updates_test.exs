@@ -3,6 +3,7 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
   use Trento.CommandedCase
   use Trento.DataCase
   use Trento.SoftwareUpdates.DiscoveryCase
+  use Trento.TaskCase
 
   import Mox
 
@@ -207,6 +208,8 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
       ]
 
       for operation <- operations do
+        expect(Trento.SoftwareUpdates.Discovery.Mock, :clear, 1, fn -> :ok end)
+
         expect(
           Trento.Commanded.Mock,
           :dispatch,
@@ -222,6 +225,8 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
         }
 
         assert {:ok, _} = operation.(settings)
+
+        wait_for_tasks_completion()
       end
     end
   end

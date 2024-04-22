@@ -160,7 +160,12 @@ defmodule Trento.SoftwareUpdates do
 
     case result do
       {:ok, _} = success ->
-        Discovery.discover_software_updates()
+        Discovery.clear()
+
+        Task.Supervisor.start_child(Trento.TasksSupervisor, fn ->
+          Discovery.discover_software_updates()
+        end)
+
         success
 
       {:error, _} = error ->

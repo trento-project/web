@@ -25,7 +25,8 @@ defmodule Trento.Application do
         Trento.Infrastructure.Messaging.Adapter.AMQP.Publisher,
         Trento.Infrastructure.Checks.AMQP.Consumer,
         Trento.Vault,
-        Trento.Infrastructure.SoftwareUpdates.Suma
+        Trento.Infrastructure.SoftwareUpdates.Suma,
+        {Task.Supervisor, name: Trento.TasksSupervisor}
         # Start a worker by calling: Trento.Worker.start_link(arg)
         # {Trento.Worker, arg}
       ] ++
