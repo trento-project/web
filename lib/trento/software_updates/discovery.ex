@@ -106,8 +106,16 @@ defmodule Trento.SoftwareUpdates.Discovery do
     end
   end
 
-  defp discover_host_software_updates(_, _, {:error, error}),
-    do: {:error, error}
+  defp discover_host_software_updates(host_id, _, {:error, error}) do
+    commanded().dispatch(
+      CompleteSoftwareUpdatesDiscovery.new!(%{
+        host_id: host_id,
+        health: SoftwareUpdatesHealth.unknown()
+      })
+    )
+
+    {:error, error}
+  end
 
   defp discover_host_software_updates(host_id, fully_qualified_domain_name, _),
     do: discover_host_software_updates(host_id, fully_qualified_domain_name)

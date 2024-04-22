@@ -158,6 +158,25 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
 
       [%{id: host_id1}, %{id: host_id2}] = insert_list(2, :host)
 
+      expect(
+        Trento.Commanded.Mock,
+        :dispatch,
+        2,
+        fn
+          %CompleteSoftwareUpdatesDiscovery{
+            host_id: ^host_id1,
+            health: SoftwareUpdatesHealth.unknown()
+          } ->
+            :ok
+
+          %CompleteSoftwareUpdatesDiscovery{
+            host_id: ^host_id2,
+            health: SoftwareUpdatesHealth.unknown()
+          } ->
+            :ok
+        end
+      )
+
       {:ok, {[], errored_discoveries}} = Discovery.discover_software_updates()
 
       Enum.each([host_id1, host_id2], fn host_id ->
