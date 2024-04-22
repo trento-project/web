@@ -3,6 +3,8 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuth do
   GenServer module to authenticate with SUMA
   """
 
+  @behaviour Trento.Infrastructure.SoftwareUpdates.Auth.Gen
+
   use GenServer, restart: :transient
 
   alias Trento.Infrastructure.SoftwareUpdates.{Suma.State, SumaApi}
@@ -25,12 +27,14 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuth do
       |> identification_tuple
       |> :global.whereis_name()
 
+  @impl Trento.Infrastructure.SoftwareUpdates.Auth.Gen
   def authenticate(server_name \\ @default_name),
     do:
       server_name
       |> process_identifier
       |> call(:authenticate)
 
+  @impl Trento.Infrastructure.SoftwareUpdates.Auth.Gen
   def clear(server_name \\ @default_name),
     do:
       server_name
