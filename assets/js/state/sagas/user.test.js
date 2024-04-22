@@ -4,6 +4,8 @@ import {
   authClient,
   getAccessTokenFromStore,
   getRefreshTokenFromStore,
+  storeRefreshToken,
+  storeAccessToken,
 } from '@lib/auth';
 import {
   setAuthInProgress,
@@ -12,10 +14,32 @@ import {
   setUserAsLogged,
 } from '@state/user';
 import { networkClient } from '@lib/network';
-import { performLogin } from './user';
+import { performLogin, clearUserAndLogout } from './user';
 
 const axiosMock = new MockAdapter(authClient);
 const networkClientAxiosMock = new MockAdapter(networkClient);
+
+describe('user actions saga', () => {
+  beforeEach(() => {
+    axiosMock.reset();
+    jest.spyOn(console, 'error').mockImplementation(() => null);
+  });
+
+  afterEach(() => {
+    /* eslint-disable-next-line */
+    console.error.mockRestore();
+  });
+
+  it('should clear the storage in clearUserAndLogout saga', async () => {
+    storeAccessToken('access_token');
+    storeRefreshToken('refresh_token');
+
+    await recordSaga(clearUserAndLogout);
+
+    expect(getAccessTokenFromStore()).toEqual(null);
+    expect(getRefreshTokenFromStore()).toEqual(null);
+  });
+});
 
 describe('user login saga', () => {
   beforeEach(() => {

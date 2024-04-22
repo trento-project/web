@@ -16,6 +16,10 @@ import {
 import { networkClient } from '@lib/network';
 
 export const PERFORM_LOGIN = 'PERFORM_LOGIN';
+export const USER_UPDATED = 'USER_UPDATED';
+export const USER_LOCKED = 'USER_LOCKED';
+export const USER_DELETED = 'USER_DELETED';
+
 export const performLoginAction = createAction(
   PERFORM_LOGIN,
   ({ username, password }) => ({ payload: { username, password } })
@@ -39,6 +43,21 @@ export function* performLogin({ payload: { username, password } }) {
     );
     yield call(clearCredentialsFromStore);
   }
+}
+
+export function* clearUserAndLogout() {
+  yield call(clearCredentialsFromStore);
+  window.location.href = '/session/new';
+}
+
+export function* userUpdated() {
+  yield window.location.reload();
+}
+
+export function* watchUserActions() {
+  yield takeEvery(USER_DELETED, clearUserAndLogout);
+  yield takeEvery(USER_LOCKED, clearUserAndLogout);
+  yield takeEvery(USER_UPDATED, userUpdated);
 }
 
 export function* watchPerformLogin() {
