@@ -8,8 +8,8 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
   alias Trento.Infrastructure.SoftwareUpdates.Suma
 
   alias Trento.Infrastructure.SoftwareUpdates.Auth.Mock, as: SumaAuthMock
+  alias Trento.Infrastructure.SoftwareUpdates.Auth.State
   alias Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor.Mock, as: SumaApiMock
-  alias Trento.Infrastructure.SoftwareUpdates.Suma.State
 
   setup [:set_mox_from_context, :verify_on_exit!]
 

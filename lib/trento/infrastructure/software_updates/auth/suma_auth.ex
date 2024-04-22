@@ -7,7 +7,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuth do
 
   use GenServer, restart: :transient
 
-  alias Trento.Infrastructure.SoftwareUpdates.{Suma.State, SumaApi}
+  alias Trento.Infrastructure.SoftwareUpdates.Auth.State
   alias Trento.Infrastructure.SoftwareUpdates.SumaApi
   alias Trento.SoftwareUpdates
 

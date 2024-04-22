@@ -5,7 +5,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma do
 
   @behaviour Trento.SoftwareUpdates.Discovery.Gen
 
-  alias Trento.Infrastructure.SoftwareUpdates.Suma.State
+  alias Trento.Infrastructure.SoftwareUpdates.Auth.State
   alias Trento.Infrastructure.SoftwareUpdates.SumaApi
 
   @impl Trento.SoftwareUpdates.Discovery.Gen

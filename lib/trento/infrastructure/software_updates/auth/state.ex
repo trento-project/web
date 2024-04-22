@@ -1,4 +1,4 @@
-defmodule Trento.Infrastructure.SoftwareUpdates.Suma.State do
+defmodule Trento.Infrastructure.SoftwareUpdates.Auth.State do
   @moduledoc """
   State for the SUMA Software Updates discovery adapter
   """
