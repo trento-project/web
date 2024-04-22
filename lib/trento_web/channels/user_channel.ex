@@ -1,10 +1,9 @@
 defmodule TrentoWeb.UserChannel do
   @moduledoc """
-  User channel, each use is subscribed to his channel,
+  User channel, each user is subscribed to his channel,
   to receive personal broadcasts
 
-  Users can't join other users channels.
-  This has as prerequisite the websocket authentication defined in user socket
+  Users can't join other users channel
   """
   require Logger
   use TrentoWeb, :channel

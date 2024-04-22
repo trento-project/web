@@ -100,13 +100,7 @@ defmodule TrentoWeb.Plugs.AppJWTAuthPlug do
   defp validate_refresh_token(jwt_token),
     do: RefreshToken.verify_and_validate(jwt_token)
 
-  def user_allowed_to_renew?(%User{deleted_at: deleted_at, locked_at: locked_at})
-      when not is_nil(deleted_at) or not is_nil(locked_at),
-      do: false
-
-  def user_allowed_to_renew?(%User{}), do: true
-
-  def attach_refresh_token_to_conn(conn, user) do
+  defp attach_refresh_token_to_conn(conn, user) do
     if user_allowed_to_renew?(user) do
       new_access_token = AccessToken.generate_access_token!(%{"sub" => user.id})
 
@@ -120,4 +114,10 @@ defmodule TrentoWeb.Plugs.AppJWTAuthPlug do
       {:error, :user_not_allowed_to_renew}
     end
   end
+
+  defp user_allowed_to_renew?(%User{deleted_at: deleted_at, locked_at: locked_at})
+       when not is_nil(deleted_at) or not is_nil(locked_at),
+       do: false
+
+  defp user_allowed_to_renew?(%User{}), do: true
 end

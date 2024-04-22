@@ -65,7 +65,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
     # this is an update request and we have to distinguish in PATCH verb values passed or not passed.
     # Having a value not passed as nil by default is not practical nor correct.
     # this means that in the controller the body params are passed as map, without converting from the struct
-    # and we have everything casted and validated BUT without the hassle of cannot distinguish between passed
+    # and we have everything cast and validated BUT without the hassle of cannot distinguish between passed
     # object keys or not and further conversions in the controller.
     def schema, do: @schema
   end
@@ -101,7 +101,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
           nullable: true
         }
       },
-      required: [:id, :fullname, :email, :created_at]
+      required: [:username, :id, :fullname, :email, :created_at]
     })
   end
 

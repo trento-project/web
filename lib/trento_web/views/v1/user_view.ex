@@ -9,15 +9,25 @@ defmodule TrentoWeb.V1.UserView do
     render_one(user, __MODULE__, "user.json")
   end
 
-  def render("user.json", %{user: user}) do
+  def render("user.json", %{
+        user: %{
+          id: id,
+          fullname: fullname,
+          username: username,
+          email: email,
+          locked_at: locked_at,
+          inserted_at: created_at,
+          updated_at: updated_at
+        }
+      }) do
     %{
-      id: user.id,
-      fullname: user.fullname,
-      username: user.username,
-      email: user.email,
-      enabled: user.locked_at == nil,
-      created_at: user.inserted_at,
-      updated_at: user.updated_at
+      id: id,
+      fullname: fullname,
+      username: username,
+      email: email,
+      enabled: locked_at == nil,
+      created_at: created_at,
+      updated_at: updated_at
     }
   end
 end

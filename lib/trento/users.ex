@@ -14,9 +14,9 @@ defmodule Trento.Users do
 
   @impl true
   @doc """
-    get_by function overrides the one defined in Pow.Ecto.Context,
-    we retrieve the user by username as traditional Pow flow but we also exclude
-    deleted and locked users
+  get_by function overrides the one defined in Pow.Ecto.Context,
+  we retrieve the user by username as traditional Pow flow but we also exclude
+  deleted and locked users
   """
   def get_by(clauses) do
     username = clauses[:username]
