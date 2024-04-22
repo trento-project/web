@@ -27,7 +27,8 @@ defmodule Trento.TaskCase do
             |> List.delete(pid)
             |> wait_for_pids(timeout)
         after
-          timeout -> :timeout
+          timeout ->
+            raise "Timeout waiting for tasks to complete"
         end
       end
     end
