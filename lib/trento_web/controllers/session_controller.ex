@@ -89,11 +89,15 @@ defmodule TrentoWeb.SessionController do
            title: "TrentoUser",
            type: :object,
            example: %{
-             username: "admin"
+             username: "admin",
+             id: 1
            },
            properties: %{
              username: %Schema{
                type: :string
+             },
+             id: %Schema{
+               type: :integer
              }
            }
          }}

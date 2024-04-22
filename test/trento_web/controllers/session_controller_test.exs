@@ -6,6 +6,7 @@ defmodule TrentoWeb.SessionControllerTest do
   import Mox
   import OpenApiSpex.TestAssertions
 
+  alias TrentoWeb.Auth.RefreshToken
   alias TrentoWeb.OpenApi.V1.ApiSpec
 
   setup [:set_mox_from_context, :verify_on_exit!]
@@ -16,7 +17,9 @@ defmodule TrentoWeb.SessionControllerTest do
       |> Trento.Users.User.changeset(%{
         username: "admin",
         password: "testpassword",
-        confirm_password: "testpassword"
+        confirm_password: "testpassword",
+        email: "test@trento.com",
+        fullname: "Full Name"
       })
       |> Trento.Repo.insert!()
 
@@ -26,12 +29,12 @@ defmodule TrentoWeb.SessionControllerTest do
   end
 
   describe "refresh endpoint" do
-    test "should return refreshed credentials for the user when the refresh token is valid", %{
-      conn: conn,
-      api_spec: api_spec
-    } do
-      refresh_token =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG9fYXBwIiwiZXhwIjoxNjcxNjYzNDE0LCJpYXQiOjE2NzE2NDE4MTQsImlzcyI6Imh0dHBzOi8vZ2l0aHViLmNvbS90cmVudG8tcHJvamVjdC93ZWIiLCJqdGkiOiIyc3BpM3MwZnM2ZmpwcTl2dWswMDA1ZTEiLCJuYmYiOjE2NzE2NDE4MTQsInN1YiI6MSwidHlwIjoiUmVmcmVzaCJ9.73ajWvgUml4F4Ml5rACyUeAlipknOUdQFy6t8tYZf5Y"
+    test "should return unauthorized when the refresh token is valid but the user has been deleted",
+         %{
+           conn: conn,
+           user: user
+         } do
+      {:ok, _} = Trento.Users.delete_user(user)
 
       expect(
         Joken.CurrentTime.Mock,
@@ -41,6 +44,64 @@ defmodule TrentoWeb.SessionControllerTest do
           1_671_641_814
         end
       )
+
+      refresh_token = RefreshToken.generate_and_sign!(%{"sub" => user.id})
+
+      conn =
+        post(conn, "/api/session/refresh", %{
+          "refresh_token" => refresh_token
+        })
+
+      resp = json_response(conn, 401)
+
+      assert %{"errors" => [%{"detail" => "Invalid refresh token.", "title" => "Unauthorized"}]} =
+               resp
+    end
+
+    test "should return unauthorized when the refresh token is valid but the user has been locked",
+         %{
+           conn: conn,
+           user: user
+         } do
+      {:ok, _} = Trento.Users.update_user(user, %{enabled: false})
+
+      expect(
+        Joken.CurrentTime.Mock,
+        :current_time,
+        5,
+        fn ->
+          1_671_641_814
+        end
+      )
+
+      refresh_token = RefreshToken.generate_and_sign!(%{"sub" => user.id})
+
+      conn =
+        post(conn, "/api/session/refresh", %{
+          "refresh_token" => refresh_token
+        })
+
+      resp = json_response(conn, 401)
+
+      assert %{"errors" => [%{"detail" => "Invalid refresh token.", "title" => "Unauthorized"}]} =
+               resp
+    end
+
+    test "should return refreshed credentials for the user when the refresh token is valid", %{
+      conn: conn,
+      api_spec: api_spec,
+      user: user
+    } do
+      expect(
+        Joken.CurrentTime.Mock,
+        :current_time,
+        8,
+        fn ->
+          1_671_641_814
+        end
+      )
+
+      refresh_token = RefreshToken.generate_and_sign!(%{"sub" => user.id})
 
       conn =
         post(conn, "/api/session/refresh", %{
@@ -146,7 +207,8 @@ defmodule TrentoWeb.SessionControllerTest do
         |> json_response(200)
         |> assert_schema("TrentoUser", api_spec)
 
-      assert %{username: "admin"} = resp
+      user_id = user.id
+      assert %{username: "admin", id: ^user_id} = resp
     end
   end
 
@@ -173,6 +235,60 @@ defmodule TrentoWeb.SessionControllerTest do
       conn
       |> json_response(200)
       |> assert_schema("Credentials", api_spec)
+    end
+
+    test "should return unauthorized response when the credentials are of a deleted user", %{
+      conn: conn,
+      user: user
+    } do
+      {:ok, _} = Trento.Users.delete_user(user)
+
+      expect(
+        Joken.CurrentTime.Mock,
+        :current_time,
+        0,
+        fn ->
+          1_671_715_992
+        end
+      )
+
+      conn =
+        post(conn, "/api/session", %{
+          "username" => "admin",
+          "password" => "tespassword"
+        })
+
+      resp = json_response(conn, 401)
+
+      assert %{"errors" => [%{"detail" => "Invalid credentials.", "title" => "Unauthorized"}]} =
+               resp
+    end
+
+    test "should return unauthorized response when the credentials are of a locked user", %{
+      conn: conn,
+      user: user
+    } do
+      {:ok, _} = Trento.Users.update_user(user, %{enabled: false})
+
+      expect(
+        Joken.CurrentTime.Mock,
+        :current_time,
+        0,
+        fn ->
+          1_671_715_992
+        end
+      )
+
+      conn =
+        post(conn, "/api/session", %{
+          "username" => "admin",
+          "password" => "tespassword"
+        })
+
+      resp = json_response(conn, 401)
+
+      assert %{"errors" => [%{"detail" => "Invalid credentials.", "title" => "Unauthorized"}]} =
+               resp
     end
 
     test "should return unauthorized response when the credentials are invalid", %{
