@@ -5,103 +5,101 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma do
 
   @behaviour Trento.SoftwareUpdates.Discovery.Gen
 
-  use GenServer, restart: :transient
-
   alias Trento.Infrastructure.SoftwareUpdates.{Suma.State, SumaApi}
   alias Trento.Infrastructure.SoftwareUpdates.SumaApi
   alias Trento.SoftwareUpdates
 
   require Logger
 
-  @default_name "suma"
-
-  def start_link([]), do: start_link(@default_name)
-
-  def start_link(server_name),
-    do: GenServer.start_link(__MODULE__, %State{}, name: process_identifier(server_name))
-
-  @impl GenServer
-  def init(%State{} = state), do: {:ok, state}
-
-  def identify(server_name \\ @default_name),
-    do:
-      server_name
-      |> identification_tuple
-      |> :global.whereis_name()
+  @auth_cache_key "suma_auth"
 
   @impl Trento.SoftwareUpdates.Discovery.Gen
-  def setup(server_name \\ @default_name),
-    do:
-      server_name
-      |> process_identifier
-      |> call(:setup)
-
-  @impl Trento.SoftwareUpdates.Discovery.Gen
-  def clear(server_name \\ @default_name),
-    do:
-      server_name
-      |> process_identifier
-      |> call(:clear)
-
-  @impl Trento.SoftwareUpdates.Discovery.Gen
-  def get_system_id(fully_qualified_domain_name, server_name \\ @default_name),
-    do:
-      server_name
-      |> process_identifier
-      |> call({:get_system_id, fully_qualified_domain_name})
-
-  @impl Trento.SoftwareUpdates.Discovery.Gen
-  def get_relevant_patches(system_id, server_name \\ @default_name),
-    do:
-      server_name
-      |> process_identifier
-      |> call({:get_relevant_patches, system_id})
-
-  @impl Trento.SoftwareUpdates.Discovery.Gen
-  def get_upgradable_packages(system_id, server_name \\ @default_name),
-    do:
-      server_name
-      |> process_identifier
-      |> call({:get_upgradable_packages, system_id})
-
-  @impl GenServer
-  def handle_call(:setup, _from, %State{} = state) do
-    case setup_auth(state) do
-      {:ok, new_state} ->
-        {:reply, :ok, new_state}
+  def setup do
+    case setup_auth() do
+      {:ok, _} ->
+        :ok
 
       {:error, _} = error ->
-        {:reply, error, state}
+        error
     end
   end
 
-  @impl GenServer
-  def handle_call(:clear, _, _), do: {:reply, :ok, %State{}}
+  @impl Trento.SoftwareUpdates.Discovery.Gen
+  def clear do
+    Cachex.del(:trento_cache, @auth_cache_key)
 
-  @impl GenServer
-  def handle_call(request, _, %State{auth: nil} = state),
-    do: authenticate_and_handle(request, state)
+    :ok
+  end
 
-  @impl GenServer
-  def handle_call(request, _, %State{} = state) do
+  @impl Trento.SoftwareUpdates.Discovery.Gen
+  def get_system_id(fully_qualified_domain_name),
+    do: call({:get_system_id, fully_qualified_domain_name})
+
+  @impl Trento.SoftwareUpdates.Discovery.Gen
+  def get_relevant_patches(system_id), do: call({:get_relevant_patches, system_id})
+
+  @impl Trento.SoftwareUpdates.Discovery.Gen
+  def get_upgradable_packages(system_id), do: call({:get_upgradable_packages, system_id})
+
+  defp call(request) do
+    case Cachex.get(:trento_cache, @auth_cache_key) do
+      {:ok, nil} ->
+        IO.inspect("Auth state is nil")
+        authenticate_and_handle(request)
+
+      {:ok, %State{} = auth_state} ->
+        do_handle_with_auth_error(request, auth_state)
+    end
+  end
+
+  defp do_handle_with_auth_error(request, state) do
     case handle_result = do_handle(request, state) do
       {:error, :authentication_error} ->
-        authenticate_and_handle(request, state)
+        authenticate_and_handle(request)
 
       _ ->
-        {:reply, handle_result, state}
+        handle_result
     end
   end
 
-  defp call(server, request), do: GenServer.call(server, request, 15_000)
-
-  defp authenticate_and_handle(request, state) do
-    case setup_auth(state) do
-      {:ok, new_state} ->
-        {:reply, do_handle(request, new_state), new_state}
+  defp authenticate_and_handle(request) do
+    case setup_auth() do
+      {:ok, state} ->
+        do_handle(request, state)
 
       {:error, _} = error ->
-        {:reply, error, state}
+        error
+    end
+  end
+
+  defp setup_auth do
+    with {:ok, %{url: url, username: username, password: password, ca_cert: ca_cert}} <-
+           SoftwareUpdates.get_settings(),
+         :ok <- write_ca_cert_file(ca_cert),
+         {:ok, auth_cookie} <- SumaApi.login(url, username, password, ca_cert != nil) do
+      state = %State{
+        url: url,
+        username: username,
+        password: password,
+        ca_cert: ca_cert,
+        auth: auth_cookie,
+        use_ca_cert: ca_cert != nil
+      }
+
+      result =
+        Cachex.transaction(:trento_cache, [@auth_cache_key], fn cache ->
+          case Cachex.put(cache, @auth_cache_key, state) do
+            {:ok, true} -> {:ok, state}
+            {:error, _} = error -> error
+          end
+        end)
+
+      case result do
+        {:ok, success_or_failure} -> success_or_failure
+        {:error, _} = error -> error
+      end
+
+      {:ok, state}
     end
   end
 
@@ -125,28 +123,6 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma do
          use_ca_cert: use_ca_cert
        }),
        do: SumaApi.get_upgradable_packages(url, auth_cookie, system_id, use_ca_cert)
-
-  defp process_identifier(server_name), do: {:global, identification_tuple(server_name)}
-
-  defp identification_tuple(server_name), do: {__MODULE__, server_name}
-
-  defp setup_auth(%State{} = state) do
-    with {:ok, %{url: url, username: username, password: password, ca_cert: ca_cert}} <-
-           SoftwareUpdates.get_settings(),
-         :ok <- write_ca_cert_file(ca_cert),
-         {:ok, auth_cookie} <- SumaApi.login(url, username, password, ca_cert != nil) do
-      {:ok,
-       %State{
-         state
-         | url: url,
-           username: username,
-           password: password,
-           ca_cert: ca_cert,
-           auth: auth_cookie,
-           use_ca_cert: ca_cert != nil
-       }}
-    end
-  end
 
   defp write_ca_cert_file(nil) do
     case File.rm_rf(SumaApi.ca_cert_path()) do

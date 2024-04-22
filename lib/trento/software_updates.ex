@@ -161,6 +161,7 @@ defmodule Trento.SoftwareUpdates do
     case result do
       {:ok, _} = success ->
         Discovery.discover_software_updates()
+
         success
 
       {:error, _} = error ->
