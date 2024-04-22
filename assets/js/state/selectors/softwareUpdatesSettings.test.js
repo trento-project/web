@@ -1,36 +1,95 @@
-import { getSoftwareUpdatesSettings } from './softwareUpdatesSettings';
+import {
+  getSoftwareUpdatesSettings,
+  getSoftwareUpdatesSettingsSaved,
+} from './softwareUpdatesSettings';
 
 describe('Software Updates Settings selector', () => {
-  const stateScenarios = [
-    {
-      loading: false,
-      settings: {
-        url: 'https://valid.url',
-        username: 'username',
-        ca_uploaded_at: '2021-01-01T00:00:00Z',
+  describe('get software updates settings', () => {
+    const stateScenarios = [
+      {
+        loading: false,
+        settings: {
+          url: 'https://valid.url',
+          username: 'username',
+          ca_uploaded_at: '2021-01-01T00:00:00Z',
+        },
+        errors: null,
+        editing: false,
       },
-      errors: null,
-      editing: false,
-    },
-    {
-      loading: true,
-      settings: {
-        url: undefined,
-        username: undefined,
-        ca_uploaded_at: undefined,
+      {
+        loading: true,
+        settings: {
+          url: undefined,
+          username: undefined,
+          ca_uploaded_at: undefined,
+        },
+        errors: null,
+        editing: false,
+        testingConnection: false,
       },
-      errors: null,
-      editing: false,
-      testingConnection: false,
-    },
-  ];
+    ];
 
-  it.each(stateScenarios)(
-    'should return the correct catalog state',
-    (softwareUpdatesSettings) => {
-      expect(getSoftwareUpdatesSettings({ softwareUpdatesSettings })).toEqual(
-        softwareUpdatesSettings
-      );
-    }
-  );
+    it.each(stateScenarios)(
+      'should return the correct catalog state',
+      (softwareUpdatesSettings) => {
+        expect(getSoftwareUpdatesSettings({ softwareUpdatesSettings })).toEqual(
+          softwareUpdatesSettings
+        );
+      }
+    );
+  });
+
+  describe('getSoftwareUpdatesSettings', () => {
+    const scenarios = [
+      {
+        state: {
+          loading: false,
+          settings: {
+            url: 'https://valid.url',
+            username: 'username',
+            ca_uploaded_at: '2021-01-01T00:00:00Z',
+          },
+          errors: null,
+          editing: false,
+        },
+        result: true,
+      },
+      {
+        state: {
+          loading: false,
+          settings: {
+            url: 'https://valid.url',
+            username: undefined,
+            ca_uploaded_at: '2021-01-01T00:00:00Z',
+          },
+          errors: null,
+          editing: false,
+        },
+        result: false,
+      },
+      {
+        state: {
+          loading: true,
+          settings: {
+            url: undefined,
+            username: undefined,
+            ca_uploaded_at: undefined,
+          },
+          errors: null,
+          editing: false,
+          testingConnection: false,
+        },
+        result: false,
+      },
+    ];
+
+    it.each(scenarios)(
+      'should return if the software updates settings are saved',
+      ({ state, result }) => {
+        expect(
+          getSoftwareUpdatesSettingsSaved({ softwareUpdatesSettings: state })
+        ).toEqual(result);
+      }
+    );
+  });
 });

@@ -12,7 +12,9 @@ import { getClusterByHost } from '@state/selectors/cluster';
 import { getInstancesOnHost } from '@state/selectors/sapSystem';
 import { getCatalog } from '@state/selectors/catalog';
 import { getLastExecution } from '@state/selectors/lastExecutions';
+import { getSoftwareUpdatesSettingsSaved } from '@state/selectors/softwareUpdatesSettings';
 import {
+  getSoftwareUpdatesConnectionError,
   getSoftwareUpdates,
   getSoftwareUpdatesStats,
 } from '@state/selectors/softwareUpdates';
@@ -55,6 +57,12 @@ function HostDetailsPage() {
 
   const { loading: softwareUpdatesLoading } = useSelector((state) =>
     getSoftwareUpdates(state)
+  );
+  const softwareUpdatesConnectionSaved = useSelector((state) =>
+    getSoftwareUpdatesSettingsSaved(state)
+  );
+  const softwareUpdatesConnectionError = useSelector((state) =>
+    getSoftwareUpdatesConnectionError(state)
   );
   const { numRelevantPatches, numUpgradablePackages } = useSelector((state) =>
     getSoftwareUpdatesStats(state, hostID)
@@ -110,7 +118,9 @@ function HostDetailsPage() {
       suseManagerEnabled={suseManagerEnabled}
       relevantPatches={numRelevantPatches}
       upgradablePackages={numUpgradablePackages}
+      softwareUpdatesSettingsSaved={softwareUpdatesConnectionSaved}
       softwareUpdatesLoading={softwareUpdatesLoading}
+      softwareUpdatesConnectionError={softwareUpdatesConnectionError}
       softwareUpdatesTooltip={
         numRelevantPatches === undefined && numUpgradablePackages === undefined
           ? 'SUSE Manager is not available'

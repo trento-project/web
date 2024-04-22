@@ -19,6 +19,11 @@ export const getSoftwareUpdatesSettings = createSelector(
   })
 );
 
+export const getSoftwareUpdatesSettingsSaved = createSelector(
+  [getSoftwareUpdatesSettings],
+  ({ settings: { url, username } }) => !!(url && username)
+);
+
 export const getSoftwareUpdatesSettingsErrors = createSelector(
   [getSoftwareUpdatesSettings],
   ({ errors }) => errors

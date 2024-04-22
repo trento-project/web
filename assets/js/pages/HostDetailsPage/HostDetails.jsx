@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import { get } from 'lodash';
 import classNames from 'classnames';
-import { EOS_CLEAR_ALL, EOS_PLAY_CIRCLE, EOS_SETTINGS } from 'eos-icons-react';
+import {
+  EOS_CLEAR_ALL,
+  EOS_PLAY_CIRCLE,
+  EOS_PLAYLIST_ADD_CHECK_FILLED,
+} from 'eos-icons-react';
 
 import { agentVersionWarning } from '@lib/agent';
 
@@ -67,6 +71,8 @@ function HostDetails({
   relevantPatches,
   upgradablePackages,
   softwareUpdatesLoading,
+  softwareUpdatesSettingsSaved,
+  softwareUpdatesConnectionError = false,
   softwareUpdatesTooltip,
   cleanUpHost,
   requestHostChecksExecution,
@@ -141,7 +147,7 @@ function HostDetails({
                 size="small"
                 onClick={() => navigate(`/hosts/${hostID}/settings`)}
               >
-                <EOS_SETTINGS className="inline-block fill-jungle-green-500" />{' '}
+                <EOS_PLAYLIST_ADD_CHECK_FILLED className="inline-block fill-jungle-green-500" />{' '}
                 Check Selection
               </Button>
 
@@ -226,10 +232,13 @@ function HostDetails({
         {suseManagerEnabled && (
           <AvailableSoftwareUpdates
             className="mx-0 my-4"
+            settingsConfigured={softwareUpdatesSettingsSaved}
             relevantPatches={relevantPatches}
             upgradablePackages={upgradablePackages}
             tooltip={softwareUpdatesTooltip}
             loading={softwareUpdatesLoading}
+            connectionError={softwareUpdatesConnectionError}
+            onBackToSettings={() => navigate(`/settings`)}
           />
         )}
         <ChartsFeatureWrapper chartsEnabled={chartsEnabled}>

@@ -15,6 +15,7 @@ describe('AvailableSoftwareUpdates component', () => {
       <AvailableSoftwareUpdates
         relevantPatches={0}
         upgradablePackages={upgradablePackages}
+        settingsConfigured
       />
     );
 
@@ -31,6 +32,7 @@ describe('AvailableSoftwareUpdates component', () => {
       <AvailableSoftwareUpdates
         relevantPatches={relevantPatches}
         upgradablePackages={upgradablePackages}
+        settingsConfigured
       />
     );
 
@@ -42,7 +44,7 @@ describe('AvailableSoftwareUpdates component', () => {
   it('renders Unknown status', async () => {
     const user = userEvent.setup();
     const tooltip = faker.lorem.words({ min: 3, max: 5 });
-    render(<AvailableSoftwareUpdates tooltip={tooltip} />);
+    render(<AvailableSoftwareUpdates tooltip={tooltip} settingsConfigured />);
 
     expect(screen.getAllByText('Unknown')).toHaveLength(2);
     expect(screen.getAllByTestId('eos-svg-component')).toHaveLength(4);
@@ -52,8 +54,28 @@ describe('AvailableSoftwareUpdates component', () => {
   });
 
   it('renders Loading status', () => {
-    render(<AvailableSoftwareUpdates loading />);
+    render(<AvailableSoftwareUpdates loading settingsConfigured />);
 
     expect(screen.getAllByText('Loading...')).toHaveLength(2);
+  });
+
+  it('renders "SUSE Manager is not configured"', () => {
+    render(<AvailableSoftwareUpdates settingsConfigured={false} />);
+
+    expect(
+      screen.getByText(
+        'SUSE Manager is not configured. Go to Settings to add your SUSE Manager connection credentials.'
+      )
+    ).toBeVisible();
+
+    expect(screen.getByRole('button', { name: 'Settings' })).toBeVisible();
+  });
+
+  it('renders a connection error', () => {
+    render(<AvailableSoftwareUpdates settingsConfigured connectionError />);
+
+    expect(screen.getAllByText('SUSE Manager connection failed')).toHaveLength(
+      2
+    );
   });
 });

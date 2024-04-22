@@ -185,6 +185,7 @@ describe('HostDetails component', () => {
         <HostDetails
           agentVersion="2.0.0"
           suseManagerEnabled
+          softwareUpdatesSettingsSaved
           relevantPatches={relevantPatches}
           upgradablePackages={upgradablePackages}
         />
@@ -213,6 +214,7 @@ describe('HostDetails component', () => {
         <HostDetails
           agentVersion="2.0.0"
           suseManagerEnabled
+          softwareUpdatesSettingsSaved
           relevantPatches={relevantPatches}
           upgradablePackages={upgradablePackages}
         />
@@ -237,6 +239,33 @@ describe('HostDetails component', () => {
         <HostDetails
           agentVersion="2.0.0"
           suseManagerEnabled
+          softwareUpdatesSettingsSaved
+          softwareUpdatesLoading
+          relevantPatches={relevantPatches}
+          upgradablePackages={upgradablePackages}
+        />
+      );
+
+      const relevantPatchesElement = screen
+        .getByText(/Relevant Patches/)
+        .closest('div');
+      const upgradablePackagesElement = screen
+        .getByText(/Upgradable Packages/)
+        .closest('div');
+
+      expect(relevantPatchesElement).toHaveTextContent('Loading');
+      expect(upgradablePackagesElement).toHaveTextContent('Loading');
+    });
+
+    it('should a SUMA software updates when a connection error occurred', () => {
+      const relevantPatches = faker.number.int(100);
+      const upgradablePackages = faker.number.int(100);
+
+      renderWithRouter(
+        <HostDetails
+          agentVersion="2.0.0"
+          suseManagerEnabled
+          softwareUpdatesSettingsSaved
           softwareUpdatesLoading
           relevantPatches={relevantPatches}
           upgradablePackages={upgradablePackages}

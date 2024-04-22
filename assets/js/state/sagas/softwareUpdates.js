@@ -6,6 +6,7 @@ import {
   FETCH_SOFTWARE_UPDATES,
   startLoadingSoftwareUpdates,
   setSoftwareUpdates,
+  setSoftwareUpdatesConnectionError,
   setEmptySoftwareUpdates,
   setSoftwareUpdatesErrors,
 } from '@state/softwareUpdates';
@@ -18,6 +19,9 @@ export function* fetchSoftwareUpdates({ payload: hostID }) {
     yield put(setSoftwareUpdates({ hostID, ...response.data }));
   } catch (error) {
     yield put(setEmptySoftwareUpdates({ hostID }));
+
+    yield put(setSoftwareUpdatesConnectionError());
+
     const errors = get(error, ['response', 'data'], []);
     yield put(setSoftwareUpdatesErrors(errors));
   }

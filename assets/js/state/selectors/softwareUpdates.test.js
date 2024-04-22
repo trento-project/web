@@ -1,5 +1,9 @@
 import { faker } from '@faker-js/faker';
-import { getSoftwareUpdates, getSoftwareUpdatesStats } from './softwareUpdates';
+import {
+  getSoftwareUpdates,
+  getSoftwareUpdatesConnectionError,
+  getSoftwareUpdatesStats,
+} from './softwareUpdates';
 
 describe('Software Updates selector', () => {
   const hostID = faker.string.uuid();
@@ -115,5 +119,25 @@ describe('Software Updates selector', () => {
       numRelevantPatches: undefined,
       numUpgradablePackages: undefined,
     });
+  });
+
+  it('should return the connection error', () => {
+    const stateWithError = {
+      softwareUpdates: {
+        connectionError: true,
+      },
+    };
+
+    const stateWithoutError = {
+      softwareUpdates: {
+        connectionError: false,
+      },
+    };
+
+    expect(getSoftwareUpdatesConnectionError(stateWithError)).toEqual(true);
+    expect(getSoftwareUpdatesConnectionError(stateWithoutError)).toEqual(false);
+    expect(getSoftwareUpdatesConnectionError({ softwareUpdates: {} })).toEqual(
+      undefined
+    );
   });
 });
