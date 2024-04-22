@@ -19,7 +19,10 @@
   email: "admin@trento.suse.com",
   enabled: true
 })
-|> Trento.Repo.insert!(on_conflict: :nothing)
+|> Trento.Repo.insert!(
+  on_conflict: [set: [password_hash: Argon2.hash_pwd_salt("adminpassword")]],
+  conflict_target: :username
+)
 
 %Trento.Settings.ApiKeySettings{}
 |> Trento.Settings.ApiKeySettings.changeset(%{
