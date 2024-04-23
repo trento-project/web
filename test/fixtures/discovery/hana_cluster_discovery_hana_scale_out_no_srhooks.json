@@ -1,0 +1,1175 @@
+{
+  "payload": {
+    "Cib": {
+      "Configuration": {
+        "Constraints": {
+          "RscLocations": [
+            {
+              "Id": "loc_cln_fs_PRD_HDB01_fscheck_not_on_mm",
+              "Node": "hana-s-mm",
+              "Resource": "cln_fs_PRD_HDB01_fscheck",
+              "Role": "",
+              "Score": "-INFINITY"
+            },
+            {
+              "Id": "loc_SAPHanaCon_not_on_majority_maker",
+              "Node": "hana-s-mm",
+              "Resource": "msl_SAPHana_PRD_HDB01",
+              "Role": "",
+              "Score": "-INFINITY"
+            },
+            {
+              "Id": "loc_SAPHanaTop_not_on_majority_maker",
+              "Node": "hana-s-mm",
+              "Resource": "cln_SAPHanaTopology_PRD_HDB01",
+              "Role": "",
+              "Score": "-INFINITY"
+            }
+          ]
+        },
+        "CrmConfig": {
+          "ClusterProperties": [
+            {
+              "Id": "cib-bootstrap-options-have-watchdog",
+              "Name": "have-watchdog",
+              "Value": "true"
+            },
+            {
+              "Id": "cib-bootstrap-options-dc-version",
+              "Name": "dc-version",
+              "Value": "2.1.5+20221208.a3f44794f-150500.6.14.4-2.1.5+20221208.a3f44794f"
+            },
+            {
+              "Id": "cib-bootstrap-options-cluster-infrastructure",
+              "Name": "cluster-infrastructure",
+              "Value": "corosync"
+            },
+            {
+              "Id": "cib-bootstrap-options-cluster-name",
+              "Name": "cluster-name",
+              "Value": "hacluster"
+            },
+            {
+              "Id": "cib-bootstrap-options-stonith-enabled",
+              "Name": "stonith-enabled",
+              "Value": "true"
+            },
+            {
+              "Id": "cib-bootstrap-options-stonith-watchdog-timeout",
+              "Name": "stonith-watchdog-timeout",
+              "Value": "-1"
+            },
+            {
+              "Id": "cib-bootstrap-options-stonith-timeout",
+              "Name": "stonith-timeout",
+              "Value": "210"
+            },
+            {
+              "Id": "cib-bootstrap-options-maintenance-mode",
+              "Name": "maintenance-mode",
+              "Value": "false"
+            },
+            {
+              "Id": "cib-bootstrap-options-last-lrm-refresh",
+              "Name": "last-lrm-refresh",
+              "Value": "1713794020"
+            },
+            {
+              "Id": "SAPHanaSR-hana_prd_site_lss_HANA_S1",
+              "Name": "hana_prd_site_lss_HANA_S1",
+              "Value": "4"
+            },
+            {
+              "Id": "SAPHanaSR-hana_prd_site_srr_HANA_S1",
+              "Name": "hana_prd_site_srr_HANA_S1",
+              "Value": "P"
+            },
+            {
+              "Id": "SAPHanaSR-hana_prd_site_lss_HANA_S2",
+              "Name": "hana_prd_site_lss_HANA_S2",
+              "Value": "4"
+            },
+            {
+              "Id": "SAPHanaSR-hana_prd_site_srr_HANA_S2",
+              "Name": "hana_prd_site_srr_HANA_S2",
+              "Value": "S"
+            },
+            {
+              "Id": "SAPHanaSR-hana_prd_glob_upd",
+              "Name": "hana_prd_glob_upd",
+              "Value": "ok"
+            },
+            {
+              "Id": "SAPHanaSR-hana_prd_site_mns_HANA_S1",
+              "Name": "hana_prd_site_mns_HANA_S1",
+              "Value": "hana-s1-db1"
+            },
+            {
+              "Id": "SAPHanaSR-hana_prd_site_mns_HANA_S2",
+              "Name": "hana_prd_site_mns_HANA_S2",
+              "Value": "hana-s2-db1"
+            },
+            {
+              "Id": "SAPHanaSR-hana_prd_site_lpt_HANA_S2",
+              "Name": "hana_prd_site_lpt_HANA_S2",
+              "Value": "30"
+            },
+            {
+              "Id": "SAPHanaSR-hana_prd_site_lpt_HANA_S1",
+              "Name": "hana_prd_site_lpt_HANA_S1",
+              "Value": "1713801313"
+            },
+            {
+              "Id": "SAPHanaSR-hana_prd_glob_sync_state",
+              "Name": "hana_prd_glob_sync_state",
+              "Value": "SOK"
+            },
+            {
+              "Id": "SAPHanaSR-hana_prd_glob_prim",
+              "Name": "hana_prd_glob_prim",
+              "Value": "HANA_S1"
+            }
+          ]
+        },
+        "Nodes": [
+          {
+            "Id": "1",
+            "InstanceAttributes": [
+              {
+                "Id": "nodes-1-hana_prd_site",
+                "Name": "hana_prd_site",
+                "Value": "HANA_S1"
+              },
+              {
+                "Id": "nodes-1-hana_prd_gra",
+                "Name": "hana_prd_gra",
+                "Value": "2.0"
+              }
+            ],
+            "Uname": "hana-s1-db1"
+          },
+          {
+            "Id": "2",
+            "InstanceAttributes": [
+              {
+                "Id": "nodes-2-hana_prd_site",
+                "Name": "hana_prd_site",
+                "Value": "HANA_S1"
+              },
+              {
+                "Id": "nodes-2-hana_prd_gra",
+                "Name": "hana_prd_gra",
+                "Value": "2.0"
+              }
+            ],
+            "Uname": "hana-s1-db2"
+          },
+          {
+            "Id": "3",
+            "InstanceAttributes": [
+              {
+                "Id": "nodes-3-hana_prd_site",
+                "Name": "hana_prd_site",
+                "Value": "HANA_S2"
+              },
+              {
+                "Id": "nodes-3-hana_prd_gra",
+                "Name": "hana_prd_gra",
+                "Value": "2.0"
+              }
+            ],
+            "Uname": "hana-s2-db1"
+          },
+          {
+            "Id": "4",
+            "InstanceAttributes": [
+              {
+                "Id": "nodes-4-hana_prd_site",
+                "Name": "hana_prd_site",
+                "Value": "HANA_S2"
+              },
+              {
+                "Id": "nodes-4-hana_prd_gra",
+                "Name": "hana_prd_gra",
+                "Value": "2.0"
+              }
+            ],
+            "Uname": "hana-s2-db2"
+          },
+          {
+            "Id": "5",
+            "InstanceAttributes": null,
+            "Uname": "hana-s-mm"
+          }
+        ],
+        "Resources": {
+          "Clones": [
+            {
+              "Id": "cln_fs_PRD_HDB01_fscheck",
+              "MetaAttributes": [
+                {
+                  "Id": "cln_fs_PRD_HDB01_fscheck-meta_attributes-clone-node-max",
+                  "Name": "clone-node-max",
+                  "Value": "1"
+                },
+                {
+                  "Id": "cln_fs_PRD_HDB01_fscheck-meta_attributes-interleave",
+                  "Name": "interleave",
+                  "Value": "true"
+                }
+              ],
+              "Primitive": {
+                "Class": "ocf",
+                "Id": "fs_PRD_HDB01_fscheck",
+                "InstanceAttributes": [
+                  {
+                    "Id": "fs_PRD_HDB01_fscheck-instance_attributes-device",
+                    "Name": "device",
+                    "Value": "/hana/shared/PRD/check"
+                  },
+                  {
+                    "Id": "fs_PRD_HDB01_fscheck-instance_attributes-directory",
+                    "Name": "directory",
+                    "Value": "/hana/check"
+                  },
+                  {
+                    "Id": "fs_PRD_HDB01_fscheck-instance_attributes-fstype",
+                    "Name": "fstype",
+                    "Value": "nfs4"
+                  },
+                  {
+                    "Id": "fs_PRD_HDB01_fscheck-instance_attributes-options",
+                    "Name": "options",
+                    "Value": "bind,defaults,rw,hard,proto=tcp,noatime,nfsvers=4.1,lock"
+                  }
+                ],
+                "MetaAttributes": null,
+                "Operations": [
+                  {
+                    "Id": "fs_PRD_HDB01_fscheck-monitor-120",
+                    "Interval": "120",
+                    "Name": "monitor",
+                    "Role": "",
+                    "Timeout": "120"
+                  },
+                  {
+                    "Id": "fs_PRD_HDB01_fscheck-start-0",
+                    "Interval": "0",
+                    "Name": "start",
+                    "Role": "",
+                    "Timeout": "120"
+                  },
+                  {
+                    "Id": "fs_PRD_HDB01_fscheck-stop-0",
+                    "Interval": "0",
+                    "Name": "stop",
+                    "Role": "",
+                    "Timeout": "120"
+                  }
+                ],
+                "Provider": "heartbeat",
+                "Type": "Filesystem"
+              }
+            },
+            {
+              "Id": "cln_SAPHanaTopology_PRD_HDB01",
+              "MetaAttributes": [
+                {
+                  "Id": "cln_SAPHanaTopology_PRD_HDB01-meta_attributes-clone-node-max",
+                  "Name": "clone-node-max",
+                  "Value": "1"
+                },
+                {
+                  "Id": "cln_SAPHanaTopology_PRD_HDB01-meta_attributes-target-role",
+                  "Name": "target-role",
+                  "Value": "Started"
+                },
+                {
+                  "Id": "cln_SAPHanaTopology_PRD_HDB01-meta_attributes-interleave",
+                  "Name": "interleave",
+                  "Value": "true"
+                }
+              ],
+              "Primitive": {
+                "Class": "ocf",
+                "Id": "rsc_SAPHanaTopology_PRD_HDB01",
+                "InstanceAttributes": [
+                  {
+                    "Id": "rsc_SAPHanaTopology_PRD_HDB01-instance_attributes-SID",
+                    "Name": "SID",
+                    "Value": "PRD"
+                  },
+                  {
+                    "Id": "rsc_SAPHanaTopology_PRD_HDB01-instance_attributes-InstanceNumber",
+                    "Name": "InstanceNumber",
+                    "Value": "04"
+                  }
+                ],
+                "MetaAttributes": null,
+                "Operations": [
+                  {
+                    "Id": "rsc_SAPHanaTopology_PRD_HDB01-monitor-10",
+                    "Interval": "10",
+                    "Name": "monitor",
+                    "Role": "",
+                    "Timeout": "600"
+                  },
+                  {
+                    "Id": "rsc_SAPHanaTopology_PRD_HDB01-start-0",
+                    "Interval": "0",
+                    "Name": "start",
+                    "Role": "",
+                    "Timeout": "600"
+                  },
+                  {
+                    "Id": "rsc_SAPHanaTopology_PRD_HDB01-stop-0",
+                    "Interval": "0",
+                    "Name": "stop",
+                    "Role": "",
+                    "Timeout": "300"
+                  }
+                ],
+                "Provider": "suse",
+                "Type": "SAPHanaTopology"
+              }
+            }
+          ],
+          "Groups": [
+            {
+              "Id": "g_ip_PRD_HDB01",
+              "Primitives": [
+                {
+                  "Class": "ocf",
+                  "Id": "rsc_ip_PRD_HDB01",
+                  "InstanceAttributes": [
+                    {
+                      "Id": "rsc_ip_PRD_HDB01-instance_attributes-ip",
+                      "Name": "ip",
+                      "Value": "10.23.0.30"
+                    }
+                  ],
+                  "MetaAttributes": null,
+                  "Operations": [
+                    {
+                      "Id": "rsc_ip_PRD_HDB01-monitor-10s",
+                      "Interval": "10s",
+                      "Name": "monitor",
+                      "Role": "",
+                      "Timeout": "20s"
+                    },
+                    {
+                      "Id": "rsc_ip_PRD_HDB01-start-0s",
+                      "Interval": "0s",
+                      "Name": "start",
+                      "Role": "",
+                      "Timeout": "20s"
+                    },
+                    {
+                      "Id": "rsc_ip_PRD_HDB01-stop-0s",
+                      "Interval": "0s",
+                      "Name": "stop",
+                      "Role": "",
+                      "Timeout": "20s"
+                    }
+                  ],
+                  "Provider": "heartbeat",
+                  "Type": "IPaddr2"
+                },
+                {
+                  "Class": "ocf",
+                  "Id": "rsc_nc_PRD_HDB01",
+                  "InstanceAttributes": [
+                    {
+                      "Id": "rsc_nc_PRD_HDB01-instance_attributes-port",
+                      "Name": "port",
+                      "Value": "62504"
+                    }
+                  ],
+                  "MetaAttributes": [
+                    {
+                      "Id": "rsc_nc_PRD_HDB01-meta_attributes-resource-stickiness",
+                      "Name": "resource-stickiness",
+                      "Value": "0"
+                    }
+                  ],
+                  "Operations": [
+                    {
+                      "Id": "rsc_nc_PRD_HDB01-monitor-10",
+                      "Interval": "10",
+                      "Name": "monitor",
+                      "Role": "",
+                      "Timeout": "20s"
+                    },
+                    {
+                      "Id": "rsc_nc_PRD_HDB01-start-0s",
+                      "Interval": "0s",
+                      "Name": "start",
+                      "Role": "",
+                      "Timeout": "20s"
+                    },
+                    {
+                      "Id": "rsc_nc_PRD_HDB01-stop-0s",
+                      "Interval": "0s",
+                      "Name": "stop",
+                      "Role": "",
+                      "Timeout": "20s"
+                    }
+                  ],
+                  "Provider": "heartbeat",
+                  "Type": "azure-lb"
+                }
+              ]
+            }
+          ],
+          "Masters": [
+            {
+              "Id": "msl_SAPHana_PRD_HDB01",
+              "MetaAttributes": [
+                {
+                  "Id": "msl_SAPHana_PRD_HDB01-meta_attributes-clone-node-max",
+                  "Name": "clone-node-max",
+                  "Value": "1"
+                },
+                {
+                  "Id": "msl_SAPHana_PRD_HDB01-meta_attributes-master-max",
+                  "Name": "master-max",
+                  "Value": "1"
+                },
+                {
+                  "Id": "msl_SAPHana_PRD_HDB01-meta_attributes-interleave",
+                  "Name": "interleave",
+                  "Value": "true"
+                }
+              ],
+              "Primitive": {
+                "Class": "ocf",
+                "Id": "rsc_SAPHana_PRD_HDB01",
+                "InstanceAttributes": [
+                  {
+                    "Id": "rsc_SAPHana_PRD_HDB01-instance_attributes-SID",
+                    "Name": "SID",
+                    "Value": "PRD"
+                  },
+                  {
+                    "Id": "rsc_SAPHana_PRD_HDB01-instance_attributes-InstanceNumber",
+                    "Name": "InstanceNumber",
+                    "Value": "04"
+                  },
+                  {
+                    "Id": "rsc_SAPHana_PRD_HDB01-instance_attributes-PREFER_SITE_TAKEOVER",
+                    "Name": "PREFER_SITE_TAKEOVER",
+                    "Value": "true"
+                  },
+                  {
+                    "Id": "rsc_SAPHana_PRD_HDB01-instance_attributes-DUPLICATE_PRIMARY_TIMEOUT",
+                    "Name": "DUPLICATE_PRIMARY_TIMEOUT",
+                    "Value": "7200"
+                  },
+                  {
+                    "Id": "rsc_SAPHana_PRD_HDB01-instance_attributes-AUTOMATED_REGISTER",
+                    "Name": "AUTOMATED_REGISTER",
+                    "Value": "false"
+                  }
+                ],
+                "MetaAttributes": null,
+                "Operations": [
+                  {
+                    "Id": "rsc_SAPHana_PRD_HDB01-start-0",
+                    "Interval": "0",
+                    "Name": "start",
+                    "Role": "",
+                    "Timeout": "3600"
+                  },
+                  {
+                    "Id": "rsc_SAPHana_PRD_HDB01-stop-0",
+                    "Interval": "0",
+                    "Name": "stop",
+                    "Role": "",
+                    "Timeout": "3600"
+                  },
+                  {
+                    "Id": "rsc_SAPHana_PRD_HDB01-promote-0",
+                    "Interval": "0",
+                    "Name": "promote",
+                    "Role": "",
+                    "Timeout": "3600"
+                  },
+                  {
+                    "Id": "rsc_SAPHana_PRD_HDB01-monitor-60",
+                    "Interval": "60",
+                    "Name": "monitor",
+                    "Role": "Master",
+                    "Timeout": "700"
+                  },
+                  {
+                    "Id": "rsc_SAPHana_PRD_HDB01-monitor-61",
+                    "Interval": "61",
+                    "Name": "monitor",
+                    "Role": "Slave",
+                    "Timeout": "700"
+                  },
+                  {
+                    "Id": "rsc_SAPHana_PRD_HDB01-demote-0s",
+                    "Interval": "0s",
+                    "Name": "demote",
+                    "Role": "",
+                    "Timeout": "320"
+                  }
+                ],
+                "Provider": "suse",
+                "Type": "SAPHanaController"
+              }
+            }
+          ],
+          "Primitives": null
+        }
+      }
+    },
+    "Crmmon": {
+      "Clones": [
+        {
+          "Failed": false,
+          "FailureIgnored": false,
+          "Id": "cln_fs_PRD_HDB01_fscheck",
+          "Managed": true,
+          "MultiState": false,
+          "Resources": [
+            {
+              "Active": true,
+              "Agent": "ocf::heartbeat:Filesystem",
+              "Blocked": false,
+              "Failed": false,
+              "FailureIgnored": false,
+              "Id": "fs_PRD_HDB01_fscheck",
+              "Managed": true,
+              "Node": {
+                "Cached": true,
+                "Id": "4",
+                "Name": "hana-s2-db2"
+              },
+              "NodesRunningOn": 1,
+              "Orphaned": false,
+              "Role": "Started"
+            },
+            {
+              "Active": true,
+              "Agent": "ocf::heartbeat:Filesystem",
+              "Blocked": false,
+              "Failed": false,
+              "FailureIgnored": false,
+              "Id": "fs_PRD_HDB01_fscheck",
+              "Managed": true,
+              "Node": {
+                "Cached": true,
+                "Id": "1",
+                "Name": "hana-s1-db1"
+              },
+              "NodesRunningOn": 1,
+              "Orphaned": false,
+              "Role": "Started"
+            },
+            {
+              "Active": true,
+              "Agent": "ocf::heartbeat:Filesystem",
+              "Blocked": false,
+              "Failed": false,
+              "FailureIgnored": false,
+              "Id": "fs_PRD_HDB01_fscheck",
+              "Managed": true,
+              "Node": {
+                "Cached": true,
+                "Id": "3",
+                "Name": "hana-s2-db1"
+              },
+              "NodesRunningOn": 1,
+              "Orphaned": false,
+              "Role": "Started"
+            },
+            {
+              "Active": true,
+              "Agent": "ocf::heartbeat:Filesystem",
+              "Blocked": false,
+              "Failed": false,
+              "FailureIgnored": false,
+              "Id": "fs_PRD_HDB01_fscheck",
+              "Managed": true,
+              "Node": {
+                "Cached": true,
+                "Id": "2",
+                "Name": "hana-s1-db2"
+              },
+              "NodesRunningOn": 1,
+              "Orphaned": false,
+              "Role": "Started"
+            },
+            {
+              "Active": false,
+              "Agent": "ocf::heartbeat:Filesystem",
+              "Blocked": false,
+              "Failed": false,
+              "FailureIgnored": false,
+              "Id": "fs_PRD_HDB01_fscheck",
+              "Managed": true,
+              "Node": null,
+              "NodesRunningOn": 0,
+              "Orphaned": false,
+              "Role": "Stopped"
+            }
+          ],
+          "Unique": false
+        },
+        {
+          "Failed": false,
+          "FailureIgnored": false,
+          "Id": "cln_SAPHanaTopology_PRD_HDB01",
+          "Managed": true,
+          "MultiState": false,
+          "Resources": [
+            {
+              "Active": true,
+              "Agent": "ocf::suse:SAPHanaTopology",
+              "Blocked": false,
+              "Failed": false,
+              "FailureIgnored": false,
+              "Id": "rsc_SAPHanaTopology_PRD_HDB01",
+              "Managed": true,
+              "Node": {
+                "Cached": true,
+                "Id": "4",
+                "Name": "hana-s2-db2"
+              },
+              "NodesRunningOn": 1,
+              "Orphaned": false,
+              "Role": "Started"
+            },
+            {
+              "Active": true,
+              "Agent": "ocf::suse:SAPHanaTopology",
+              "Blocked": false,
+              "Failed": false,
+              "FailureIgnored": false,
+              "Id": "rsc_SAPHanaTopology_PRD_HDB01",
+              "Managed": true,
+              "Node": {
+                "Cached": true,
+                "Id": "1",
+                "Name": "hana-s1-db1"
+              },
+              "NodesRunningOn": 1,
+              "Orphaned": false,
+              "Role": "Started"
+            },
+            {
+              "Active": true,
+              "Agent": "ocf::suse:SAPHanaTopology",
+              "Blocked": false,
+              "Failed": false,
+              "FailureIgnored": false,
+              "Id": "rsc_SAPHanaTopology_PRD_HDB01",
+              "Managed": true,
+              "Node": {
+                "Cached": true,
+                "Id": "3",
+                "Name": "hana-s2-db1"
+              },
+              "NodesRunningOn": 1,
+              "Orphaned": false,
+              "Role": "Started"
+            },
+            {
+              "Active": true,
+              "Agent": "ocf::suse:SAPHanaTopology",
+              "Blocked": false,
+              "Failed": false,
+              "FailureIgnored": false,
+              "Id": "rsc_SAPHanaTopology_PRD_HDB01",
+              "Managed": true,
+              "Node": {
+                "Cached": true,
+                "Id": "2",
+                "Name": "hana-s1-db2"
+              },
+              "NodesRunningOn": 1,
+              "Orphaned": false,
+              "Role": "Started"
+            },
+            {
+              "Active": false,
+              "Agent": "ocf::suse:SAPHanaTopology",
+              "Blocked": false,
+              "Failed": false,
+              "FailureIgnored": false,
+              "Id": "rsc_SAPHanaTopology_PRD_HDB01",
+              "Managed": true,
+              "Node": null,
+              "NodesRunningOn": 0,
+              "Orphaned": false,
+              "Role": "Stopped"
+            }
+          ],
+          "Unique": false
+        },
+        {
+          "Failed": false,
+          "FailureIgnored": false,
+          "Id": "msl_SAPHana_PRD_HDB01",
+          "Managed": true,
+          "MultiState": true,
+          "Resources": [
+            {
+              "Active": true,
+              "Agent": "ocf::suse:SAPHanaController",
+              "Blocked": false,
+              "Failed": false,
+              "FailureIgnored": false,
+              "Id": "rsc_SAPHana_PRD_HDB01",
+              "Managed": true,
+              "Node": {
+                "Cached": true,
+                "Id": "4",
+                "Name": "hana-s2-db2"
+              },
+              "NodesRunningOn": 1,
+              "Orphaned": false,
+              "Role": "Slave"
+            },
+            {
+              "Active": true,
+              "Agent": "ocf::suse:SAPHanaController",
+              "Blocked": false,
+              "Failed": false,
+              "FailureIgnored": false,
+              "Id": "rsc_SAPHana_PRD_HDB01",
+              "Managed": true,
+              "Node": {
+                "Cached": true,
+                "Id": "1",
+                "Name": "hana-s1-db1"
+              },
+              "NodesRunningOn": 1,
+              "Orphaned": false,
+              "Role": "Master"
+            },
+            {
+              "Active": true,
+              "Agent": "ocf::suse:SAPHanaController",
+              "Blocked": false,
+              "Failed": false,
+              "FailureIgnored": false,
+              "Id": "rsc_SAPHana_PRD_HDB01",
+              "Managed": true,
+              "Node": {
+                "Cached": true,
+                "Id": "3",
+                "Name": "hana-s2-db1"
+              },
+              "NodesRunningOn": 1,
+              "Orphaned": false,
+              "Role": "Slave"
+            },
+            {
+              "Active": true,
+              "Agent": "ocf::suse:SAPHanaController",
+              "Blocked": false,
+              "Failed": false,
+              "FailureIgnored": false,
+              "Id": "rsc_SAPHana_PRD_HDB01",
+              "Managed": true,
+              "Node": {
+                "Cached": true,
+                "Id": "2",
+                "Name": "hana-s1-db2"
+              },
+              "NodesRunningOn": 1,
+              "Orphaned": false,
+              "Role": "Slave"
+            },
+            {
+              "Active": false,
+              "Agent": "ocf::suse:SAPHanaController",
+              "Blocked": false,
+              "Failed": false,
+              "FailureIgnored": false,
+              "Id": "rsc_SAPHana_PRD_HDB01",
+              "Managed": true,
+              "Node": null,
+              "NodesRunningOn": 0,
+              "Orphaned": false,
+              "Role": "Stopped"
+            }
+          ],
+          "Unique": false
+        }
+      ],
+      "Groups": [
+        {
+          "Id": "g_ip_PRD_HDB01",
+          "Resources": [
+            {
+              "Active": true,
+              "Agent": "ocf::heartbeat:IPaddr2",
+              "Blocked": false,
+              "Failed": false,
+              "FailureIgnored": false,
+              "Id": "rsc_ip_PRD_HDB01",
+              "Managed": true,
+              "Node": {
+                "Cached": true,
+                "Id": "1",
+                "Name": "hana-s1-db1"
+              },
+              "NodesRunningOn": 1,
+              "Orphaned": false,
+              "Role": "Started"
+            },
+            {
+              "Active": true,
+              "Agent": "ocf::heartbeat:azure-lb",
+              "Blocked": false,
+              "Failed": false,
+              "FailureIgnored": false,
+              "Id": "rsc_nc_PRD_HDB01",
+              "Managed": true,
+              "Node": {
+                "Cached": true,
+                "Id": "1",
+                "Name": "hana-s1-db1"
+              },
+              "NodesRunningOn": 1,
+              "Orphaned": false,
+              "Role": "Started"
+            }
+          ]
+        }
+      ],
+      "NodeAttributes": {
+        "Nodes": [
+          {
+            "Attributes": [
+              {
+                "Name": "hana_prd_clone_state",
+                "Value": "PROMOTED"
+              },
+              {
+                "Name": "hana_prd_gra",
+                "Value": "2.0"
+              },
+              {
+                "Name": "hana_prd_roles",
+                "Value": "master1:master:worker:master"
+              },
+              {
+                "Name": "hana_prd_site",
+                "Value": "HANA_S1"
+              },
+              {
+                "Name": "master-rsc_SAPHana_PRD_HDB01",
+                "Value": "150"
+              }
+            ],
+            "Name": "hana-s1-db1"
+          },
+          {
+            "Attributes": [
+              {
+                "Name": "hana_prd_clone_state",
+                "Value": "DEMOTED"
+              },
+              {
+                "Name": "hana_prd_gra",
+                "Value": "2.0"
+              },
+              {
+                "Name": "hana_prd_roles",
+                "Value": "slave:slave:worker:slave"
+              },
+              {
+                "Name": "hana_prd_site",
+                "Value": "HANA_S1"
+              },
+              {
+                "Name": "master-rsc_SAPHana_PRD_HDB01",
+                "Value": "-10000"
+              }
+            ],
+            "Name": "hana-s1-db2"
+          },
+          {
+            "Attributes": [
+              {
+                "Name": "hana_prd_clone_state",
+                "Value": "DEMOTED"
+              },
+              {
+                "Name": "hana_prd_gra",
+                "Value": "2.0"
+              },
+              {
+                "Name": "hana_prd_roles",
+                "Value": "master1:master:worker:master"
+              },
+              {
+                "Name": "hana_prd_site",
+                "Value": "HANA_S2"
+              },
+              {
+                "Name": "master-rsc_SAPHana_PRD_HDB01",
+                "Value": "100"
+              }
+            ],
+            "Name": "hana-s2-db1"
+          },
+          {
+            "Attributes": [
+              {
+                "Name": "hana_prd_clone_state",
+                "Value": "DEMOTED"
+              },
+              {
+                "Name": "hana_prd_gra",
+                "Value": "2.0"
+              },
+              {
+                "Name": "hana_prd_roles",
+                "Value": "slave:slave:worker:slave"
+              },
+              {
+                "Name": "hana_prd_site",
+                "Value": "HANA_S2"
+              },
+              {
+                "Name": "master-rsc_SAPHana_PRD_HDB01",
+                "Value": "-12200"
+              }
+            ],
+            "Name": "hana-s2-db2"
+          }
+        ]
+      },
+      "NodeHistory": {
+        "Nodes": [
+          {
+            "Name": "hana-s2-db2",
+            "ResourceHistory": [
+              {
+                "FailCount": 0,
+                "MigrationThreshold": 50,
+                "Name": "fs_PRD_HDB01_fscheck"
+              },
+              {
+                "FailCount": 0,
+                "MigrationThreshold": 50,
+                "Name": "rsc_SAPHanaTopology_PRD_HDB01"
+              },
+              {
+                "FailCount": 0,
+                "MigrationThreshold": 50,
+                "Name": "rsc_SAPHana_PRD_HDB01"
+              }
+            ]
+          },
+          {
+            "Name": "hana-s1-db1",
+            "ResourceHistory": [
+              {
+                "FailCount": 0,
+                "MigrationThreshold": 50,
+                "Name": "fs_PRD_HDB01_fscheck"
+              },
+              {
+                "FailCount": 0,
+                "MigrationThreshold": 50,
+                "Name": "rsc_SAPHanaTopology_PRD_HDB01"
+              },
+              {
+                "FailCount": 0,
+                "MigrationThreshold": 50,
+                "Name": "rsc_ip_PRD_HDB01"
+              },
+              {
+                "FailCount": 0,
+                "MigrationThreshold": 50,
+                "Name": "rsc_nc_PRD_HDB01"
+              },
+              {
+                "FailCount": 0,
+                "MigrationThreshold": 50,
+                "Name": "rsc_SAPHana_PRD_HDB01"
+              }
+            ]
+          },
+          {
+            "Name": "hana-s2-db1",
+            "ResourceHistory": [
+              {
+                "FailCount": 0,
+                "MigrationThreshold": 50,
+                "Name": "fs_PRD_HDB01_fscheck"
+              },
+              {
+                "FailCount": 0,
+                "MigrationThreshold": 50,
+                "Name": "rsc_SAPHanaTopology_PRD_HDB01"
+              },
+              {
+                "FailCount": 0,
+                "MigrationThreshold": 50,
+                "Name": "rsc_SAPHana_PRD_HDB01"
+              }
+            ]
+          },
+          {
+            "Name": "hana-s1-db2",
+            "ResourceHistory": [
+              {
+                "FailCount": 0,
+                "MigrationThreshold": 50,
+                "Name": "fs_PRD_HDB01_fscheck"
+              },
+              {
+                "FailCount": 0,
+                "MigrationThreshold": 50,
+                "Name": "rsc_SAPHanaTopology_PRD_HDB01"
+              },
+              {
+                "FailCount": 0,
+                "MigrationThreshold": 50,
+                "Name": "rsc_SAPHana_PRD_HDB01"
+              }
+            ]
+          },
+          {
+            "Name": "hana-s-mm",
+            "ResourceHistory": [
+              {
+                "FailCount": 0,
+                "MigrationThreshold": 50,
+                "Name": "rsc_ip_PRD_HDB01"
+              },
+              {
+                "FailCount": 0,
+                "MigrationThreshold": 50,
+                "Name": "rsc_nc_PRD_HDB01"
+              }
+            ]
+          }
+        ]
+      },
+      "Nodes": [
+        {
+          "DC": false,
+          "ExpectedUp": true,
+          "Id": "5",
+          "Maintenance": false,
+          "Name": "hana-s-mm",
+          "Online": true,
+          "Pending": false,
+          "ResourcesRunning": 0,
+          "Shutdown": false,
+          "Standby": false,
+          "StandbyOnFail": false,
+          "Type": "member",
+          "Unclean": false
+        },
+        {
+          "DC": false,
+          "ExpectedUp": true,
+          "Id": "1",
+          "Maintenance": false,
+          "Name": "hana-s1-db1",
+          "Online": true,
+          "Pending": false,
+          "ResourcesRunning": 5,
+          "Shutdown": false,
+          "Standby": false,
+          "StandbyOnFail": false,
+          "Type": "member",
+          "Unclean": false
+        },
+        {
+          "DC": false,
+          "ExpectedUp": true,
+          "Id": "2",
+          "Maintenance": false,
+          "Name": "hana-s1-db2",
+          "Online": true,
+          "Pending": false,
+          "ResourcesRunning": 3,
+          "Shutdown": false,
+          "Standby": false,
+          "StandbyOnFail": false,
+          "Type": "member",
+          "Unclean": false
+        },
+        {
+          "DC": false,
+          "ExpectedUp": true,
+          "Id": "3",
+          "Maintenance": false,
+          "Name": "hana-s2-db1",
+          "Online": true,
+          "Pending": false,
+          "ResourcesRunning": 3,
+          "Shutdown": false,
+          "Standby": false,
+          "StandbyOnFail": false,
+          "Type": "member",
+          "Unclean": false
+        },
+        {
+          "DC": true,
+          "ExpectedUp": true,
+          "Id": "4",
+          "Maintenance": false,
+          "Name": "hana-s2-db2",
+          "Online": true,
+          "Pending": false,
+          "ResourcesRunning": 3,
+          "Shutdown": false,
+          "Standby": false,
+          "StandbyOnFail": false,
+          "Type": "member",
+          "Unclean": false
+        }
+      ],
+      "Resources": null,
+      "Summary": {
+        "ClusterOptions": {
+          "StonithEnabled": true
+        },
+        "LastChange": {
+          "Time": "Mon Apr 22 15:55:13 2024"
+        },
+        "Nodes": {
+          "Number": 5
+        },
+        "Resources": {
+          "Blocked": 0,
+          "Disabled": 0,
+          "Number": 17
+        }
+      },
+      "Version": "2.1.5+20221208.a3f44794f-150500.6.14.4"
+    },
+    "DC": true,
+    "Id": "9379d9d590876eae02a63616181c5374",
+    "Name": "hacluster",
+    "Provider": "azure",
+    "SBD": {
+      "Config": {
+        "SBD_DELAY_START": "186",
+        "SBD_MOVE_TO_ROOT_CGROUP": "auto",
+        "SBD_OPTS": "",
+        "SBD_PACEMAKER": "yes",
+        "SBD_STARTMODE": "always",
+        "SBD_SYNC_RESOURCE_STARTUP": "yes",
+        "SBD_TIMEOUT_ACTION": "flush,reboot",
+        "SBD_WATCHDOG_DEV": "/dev/watchdog",
+        "SBD_WATCHDOG_TIMEOUT": "60"
+      },
+      "Devices": null
+    }
+  },
+  "discovery_type": "ha_cluster_discovery",
+  "agent_id": "6eabc497-6067-4de9-b583-e4c63334ff64"
+}
