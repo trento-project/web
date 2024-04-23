@@ -41,7 +41,9 @@ export const initSocketConnection = () => {
     params: () => getWebsocketParams(),
   });
   socket.onError(async () => {
-    logMessage('socket error try to refresh access token before reconnecting');
+    logMessage(
+      'socket error. trying to refresh the access token before reconnecting'
+    );
     await refreshAuthTokenForSocket();
   });
   socket.connect();

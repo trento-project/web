@@ -1,10 +1,13 @@
 import { call, put, takeEvery } from 'redux-saga/effects';
-import { createAction } from '@reduxjs/toolkit';
 import {
   setAuthInProgress,
   setAuthError,
   setUser,
   setUserAsLogged,
+  USER_DELETED,
+  USER_LOCKED,
+  USER_UPDATED,
+  PERFORM_LOGIN,
 } from '@state/user';
 import {
   login,
@@ -14,16 +17,6 @@ import {
   clearCredentialsFromStore,
 } from '@lib/auth';
 import { networkClient } from '@lib/network';
-
-export const PERFORM_LOGIN = 'PERFORM_LOGIN';
-export const USER_UPDATED = 'USER_UPDATED';
-export const USER_LOCKED = 'USER_LOCKED';
-export const USER_DELETED = 'USER_DELETED';
-
-export const performLoginAction = createAction(
-  PERFORM_LOGIN,
-  ({ username, password }) => ({ payload: { username, password } })
-);
 
 export function* performLogin({ payload: { username, password } }) {
   yield put(setAuthInProgress());
@@ -58,8 +51,5 @@ export function* watchUserActions() {
   yield takeEvery(USER_DELETED, clearUserAndLogout);
   yield takeEvery(USER_LOCKED, clearUserAndLogout);
   yield takeEvery(USER_UPDATED, userUpdated);
-}
-
-export function* watchPerformLogin() {
   yield takeEvery(PERFORM_LOGIN, performLogin);
 }

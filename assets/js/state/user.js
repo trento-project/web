@@ -1,9 +1,10 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createAction, createSlice } from '@reduxjs/toolkit';
 
 // Fields set to undefined for the sake of documenting the state shape
 export const initialState = {
   loggedIn: false,
   username: undefined,
+  id: undefined,
   authError: null,
   authInProgress: false,
 };
@@ -32,7 +33,17 @@ export const userSlice = createSlice({
   },
 });
 
+export const PERFORM_LOGIN = 'PERFORM_LOGIN';
+export const USER_UPDATED = 'USER_UPDATED';
+export const USER_LOCKED = 'USER_LOCKED';
+export const USER_DELETED = 'USER_DELETED';
+
 export const SET_USER_AS_LOGGED = 'user/setUserAsLogged';
+
+export const initiateLogin = createAction(
+  PERFORM_LOGIN,
+  ({ username, password }) => ({ payload: { username, password } })
+);
 
 export const { setUserAsLogged, setUser, setAuthError, setAuthInProgress } =
   userSlice.actions;
