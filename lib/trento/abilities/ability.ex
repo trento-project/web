@@ -1,6 +1,6 @@
 defmodule Trento.Abilities.Ability do
-  @moduledoc """
-  """
+  @moduledoc false
+
   use Ecto.Schema
   import Ecto.Changeset
 
