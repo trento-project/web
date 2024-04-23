@@ -8,13 +8,13 @@
     <meta name="project" content="Trento Web v2.2.0">
 
 
-    <title>Trento.Infrastructure.SoftwareUpdates.Suma.State — Trento Web v2.2.0</title>
+    <title>Trento.Infrastructure.SoftwareUpdates.Auth.Gen — Trento Web v2.2.0</title>
     <link rel="stylesheet" href="dist/html-elixir-FM2CSD74.css" />
 
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-43PMFBC7.js"></script>
-    <script src="dist/sidebar_items-19B0AF72.js"></script>
+    <script src="dist/sidebar_items-E21626FC.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -22,7 +22,7 @@
 
 
   </head>
-  <body data-type="modules" class="page-module">
+  <body data-type="modules" class="page-behaviour">
     <script>
 
       try {
@@ -131,19 +131,19 @@ GUIDES
 
 <h1>
 
-    <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/software_updates/state.ex#L1" title="View Source" class="icon-action" rel="help">
+    <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/software_updates/auth/gen.ex#L1" title="View Source" class="icon-action" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
 
-  <span translate="no">Trento.Infrastructure.SoftwareUpdates.Suma.State</span> 
+  <span translate="no">Trento.Infrastructure.SoftwareUpdates.Auth.Gen</span> <small>behaviour</small>
   <small class="app-vsn" translate="no">(Trento Web v2.2.0)</small>
 
 </h1>
 
 
   <section id="moduledoc">
-<p>State for the SUMA Software Updates discovery adapter</p>
+<p>Behaviour of the SUMA authentication process.</p>
   </section>
 
 
@@ -154,14 +154,22 @@ GUIDES
       </a>
       <span class="text">Summary</span>
     </h1>
-<div class="summary-types summary">
+<div class="summary-callbacks summary">
   <h2>
-    <a href="#types">Types</a>
+    <a href="#callbacks">Callbacks</a>
   </h2>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#t:t/0" translate="no">t()</a>
+        <a href="#c:authenticate/0" translate="no">authenticate()</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:clear/0" translate="no">clear()</a>
 
       </div>
 
@@ -172,24 +180,24 @@ GUIDES
   </section>
 
 
-  <section id="types" class="details-list">
+  <section id="callbacks" class="details-list">
     <h1 class="section-heading">
-      <a class="hover-link" href="#types">
+      <a class="hover-link" href="#callbacks">
         <i class="ri-link-m" aria-hidden="true"></i>
       </a>
-      <span class="text">Types</span>
+      <span class="text">Callbacks</span>
     </h1>
-    <div class="types-list">
-<section class="detail" id="t:t/0">
+    <div class="callbacks-list">
+<section class="detail" id="c:authenticate/0">
 
   <div class="detail-header">
-    <a href="#t:t/0" class="detail-link" title="Link to this type">
+    <a href="#c:authenticate/0" class="detail-link" title="Link to this callback">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this type</span>
+      <span class="sr-only">Link to this callback</span>
     </a>
-    <h1 class="signature" translate="no">t()</h1>
+    <h1 class="signature" translate="no">authenticate()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/software_updates/state.ex#L16" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/software_updates/auth/gen.ex#L8" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -201,14 +209,45 @@ GUIDES
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@type</span> t() :: %{
-  url: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil,
-  username: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil,
-  password: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil,
-  ca_cert: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil,
-  use_ca_cert: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>(),
-  auth: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil
-}</pre>
+          <pre translate="no"><span class="attribute">@callback</span> authenticate() ::
+  {:ok,
+   %Trento.Infrastructure.SoftwareUpdates.Auth.State{
+     auth: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+     ca_cert: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+     password: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+     url: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+     use_ca_cert: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+     username: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()
+   }}
+  | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="c:clear/0">
+
+  <div class="detail-header">
+    <a href="#c:clear/0" class="detail-link" title="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this callback</span>
+    </a>
+    <h1 class="signature" translate="no">clear()</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/software_updates/auth/gen.ex#L10" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> clear() :: :ok</pre>
 
       </div>
 
