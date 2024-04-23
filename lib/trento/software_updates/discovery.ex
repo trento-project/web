@@ -39,11 +39,13 @@ defmodule Trento.SoftwareUpdates.Discovery do
 
   @spec discover_software_updates :: {:ok, {list(), list()}}
   def discover_software_updates do
+    authentication = setup()
+
     {:ok,
      Hosts.get_all_hosts()
      |> ParallelStream.map(fn
        %HostReadModel{id: host_id, fully_qualified_domain_name: fully_qualified_domain_name} ->
-         case discover_host_software_updates(host_id, fully_qualified_domain_name) do
+         case discover_host_software_updates(host_id, fully_qualified_domain_name, authentication) do
            {:error, error} ->
              {:error, host_id, error}
 
@@ -103,6 +105,20 @@ defmodule Trento.SoftwareUpdates.Discovery do
         {:error, discovery_error}
     end
   end
+
+  defp discover_host_software_updates(host_id, _, {:error, error}) do
+    commanded().dispatch(
+      CompleteSoftwareUpdatesDiscovery.new!(%{
+        host_id: host_id,
+        health: SoftwareUpdatesHealth.unknown()
+      })
+    )
+
+    {:error, error}
+  end
+
+  defp discover_host_software_updates(host_id, fully_qualified_domain_name, _),
+    do: discover_host_software_updates(host_id, fully_qualified_domain_name)
 
   defp build_discovery_completion_command(host_id, relevant_patches),
     do:

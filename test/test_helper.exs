@@ -22,6 +22,14 @@ Application.put_env(:trento, Trento.SoftwareUpdates.Discovery,
   adapter: Trento.SoftwareUpdates.Discovery.Mock
 )
 
+Mox.defmock(Trento.Infrastructure.SoftwareUpdates.Auth.Mock,
+  for: Trento.Infrastructure.SoftwareUpdates.Auth.Gen
+)
+
+Application.put_env(:trento, Trento.Infrastructure.SoftwareUpdates.Suma,
+  auth: Trento.Infrastructure.SoftwareUpdates.Auth.Mock
+)
+
 Mox.defmock(Trento.Infrastructure.Messaging.Adapter.Mock,
   for: Trento.Infrastructure.Messaging.Adapter.Gen
 )
