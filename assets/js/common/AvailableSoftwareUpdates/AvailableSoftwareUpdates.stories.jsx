@@ -5,7 +5,9 @@ export default {
   component: AvailableSoftwareUpdates,
   argTypes: {
     settingsConfigured: {
-      type: 'bool',
+      control: {
+        type: 'boolean',
+      },
       description: 'Have settings been saved for the software updates service',
     },
     relevantPatches: {
@@ -27,11 +29,15 @@ export default {
       description: 'Content of the tooltip, if it is rendered',
     },
     loading: {
-      type: 'bool',
+      control: {
+        type: 'boolean',
+      },
       description: 'Is data being fetched?',
     },
     connectionError: {
-      type: 'bool',
+      control: {
+        type: 'boolean',
+      },
       description: 'There an error connecting to the software updates service',
     },
     onBackToSettings: {
