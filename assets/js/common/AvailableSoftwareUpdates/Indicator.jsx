@@ -3,9 +3,9 @@ import classNames from 'classnames';
 import {
   // EOS_KEYBOARD_ARROW_RIGHT_FILLED,
   EOS_ERROR_OUTLINED,
-  EOS_LOADING_ANIMATED,
 } from 'eos-icons-react';
 
+import Spinner from '@common/Spinner';
 import Tooltip from '@common/Tooltip';
 
 function Indicator({
@@ -26,13 +26,7 @@ function Indicator({
         <div>
           <p className="font-bold">{title}</p>
           <div className="text-gray-500">
-            <div>
-              <EOS_LOADING_ANIMATED
-                size="l"
-                className="inline align-bottom fill-gray-400"
-              />
-              Loading...
-            </div>
+            <Spinner size="l" />
           </div>
         </div>
       </div>

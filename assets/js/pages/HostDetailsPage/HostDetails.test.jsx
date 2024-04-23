@@ -1,5 +1,5 @@
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import 'intersection-observer';
 import '@testing-library/jest-dom';
@@ -253,8 +253,12 @@ describe('HostDetails component', () => {
         .getByText(/Upgradable Packages/)
         .closest('div');
 
-      expect(relevantPatchesElement).toHaveTextContent('Loading');
-      expect(upgradablePackagesElement).toHaveTextContent('Loading');
+      expect(
+        within(relevantPatchesElement).getByLabelText('Loading')
+      ).toBeVisible();
+      expect(
+        within(upgradablePackagesElement).getByLabelText('Loading')
+      ).toBeVisible();
     });
 
     it('should a SUMA software updates when a connection error occurred', () => {
@@ -279,8 +283,12 @@ describe('HostDetails component', () => {
         .getByText(/Upgradable Packages/)
         .closest('div');
 
-      expect(relevantPatchesElement).toHaveTextContent('Loading');
-      expect(upgradablePackagesElement).toHaveTextContent('Loading');
+      expect(
+        within(relevantPatchesElement).getByLabelText('Loading')
+      ).toBeVisible();
+      expect(
+        within(upgradablePackagesElement).getByLabelText('Loading')
+      ).toBeVisible();
     });
   });
 
