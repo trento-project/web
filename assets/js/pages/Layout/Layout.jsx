@@ -13,6 +13,7 @@ import {
   EOS_SETTINGS,
   EOS_KEYBOARD_DOUBLE_ARROW_LEFT,
   EOS_KEYBOARD_DOUBLE_ARROW_RIGHT,
+  EOS_SUPERVISED_USER_CIRCLE_OUTLINED,
 } from 'eos-icons-react';
 
 import TrentoLogo from '@static/trento-logo-stacked.svg';
@@ -47,6 +48,7 @@ const navigation = [
     href: '/catalog',
     icon: EOS_LIST,
   },
+  { name: 'Users', href: '/users', icon: EOS_SUPERVISED_USER_CIRCLE_OUTLINED },
   {
     name: 'Settings',
     href: '/settings',
