@@ -90,20 +90,26 @@ defmodule Trento.SoftwareUpdates.Discovery do
     with {:ok, system_id} <- get_system_id(fully_qualified_domain_name),
          {:ok, relevant_patches} <- get_relevant_patches(system_id),
          {:ok, upgradable_packages} <- get_upgradable_packages(system_id),
-         {:ok, _} <- finalize_discovery(host_id, system_id, relevant_patches, upgradable_packages) do
+         {:ok, _} <-
+           finalize_successful_discovery(
+             host_id,
+             system_id,
+             relevant_patches,
+             upgradable_packages
+           ) do
       {:ok, host_id, system_id, relevant_patches, upgradable_packages}
     else
       {:error, :settings_not_configured} ->
         {:error, :settings_not_configured}
 
-      {:error, discovery_error} = error ->
+      {:error, _} = error ->
         Logger.error(
           "An error occurred during software updates discovery for host #{host_id}:  #{inspect(error)}"
         )
 
-        dispatch_completion_command(host_id, SoftwareUpdatesHealth.unknown())
+        finalize_failed_discovery(host_id, error)
 
-        {:error, discovery_error}
+        error
     end
   end
 
@@ -118,15 +124,35 @@ defmodule Trento.SoftwareUpdates.Discovery do
   defp discover_host_software_updates(host_id, fully_qualified_domain_name, _),
     do: discover_host_software_updates(host_id, fully_qualified_domain_name)
 
-  defp finalize_discovery(host_id, system_id, relevant_patches, upgradable_packages) do
-    discovery_result =
-      DiscoveryResult.changeset(%DiscoveryResult{}, %{
-        host_id: host_id,
-        system_id: "#{system_id}",
-        relevant_patches: relevant_patches,
-        upgradable_packages: upgradable_packages
-      })
+  defp finalize_failed_discovery(host_id, {:error, reason}) do
+    %DiscoveryResult{}
+    |> DiscoveryResult.changeset(%{
+      host_id: host_id,
+      system_id: nil,
+      relevant_patches: nil,
+      upgradable_packages: nil,
+      failure_reason: Atom.to_string(reason)
+    })
+    |> finalize_discovery(host_id, SoftwareUpdatesHealth.unknown())
+  end
 
+  defp finalize_successful_discovery(host_id, system_id, relevant_patches, upgradable_packages) do
+    %DiscoveryResult{}
+    |> DiscoveryResult.changeset(%{
+      host_id: host_id,
+      system_id: "#{system_id}",
+      relevant_patches: relevant_patches,
+      upgradable_packages: upgradable_packages
+    })
+    |> finalize_discovery(
+      host_id,
+      relevant_patches
+      |> track_relevant_patches
+      |> compute_software_updates_discovery_health
+    )
+  end
+
+  defp finalize_discovery(discovery_result, host_id, discovered_health) do
     transaction_result =
       Multi.new()
       |> Multi.insert(:insert, discovery_result,
@@ -134,11 +160,6 @@ defmodule Trento.SoftwareUpdates.Discovery do
         on_conflict: :replace_all
       )
       |> Multi.run(:command_dispatching, fn _, _ ->
-        discovered_health =
-          relevant_patches
-          |> track_relevant_patches
-          |> compute_software_updates_discovery_health
-
         dispatch_completion_command(host_id, discovered_health)
       end)
       |> Repo.transaction()
