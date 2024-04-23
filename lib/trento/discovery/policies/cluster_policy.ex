@@ -656,7 +656,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
       ^secondary_site ->
         parse_crm_cluster_property(
           cluster_properties,
-          "hana_#{String.downcase(sid)}_glob_srHook",
+          "hana_#{String.downcase(sid)}_glob_sync_state",
           "Unknown"
         )
 
