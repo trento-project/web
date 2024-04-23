@@ -30,9 +30,7 @@ import SapSystemsOverviewPage from '@pages/SapSystemsOverviewPage';
 import SaptuneDetailsPage from '@pages/SaptuneDetails';
 import SettingsPage from '@pages/SettingsPage';
 import SomethingWentWrong from '@pages/SomethingWentWrong';
-import Users from '@pages/Users';
-import UserCreate from '@pages/UserCreate';
-import UserEdit from '@pages/UserEdit';
+import Users, { UserCreate, UserEdit } from '@pages/Users';
 
 import { me } from '@lib/auth';
 import { networkClient } from '@lib/network';
