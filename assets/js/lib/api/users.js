@@ -1,6 +1,6 @@
 import { networkClient } from '@lib/network';
 
-export const listsUsers = () => networkClient.get('/users');
+export const listUsers = () => networkClient.get('/users');
 
 export const createUser = (userData) => networkClient.post('/users', userData);
 

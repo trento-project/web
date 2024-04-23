@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 
-import { listsUsers, deleteUser } from '@lib/api/users';
+import { listUsers, deleteUser } from '@lib/api/users';
 import { format, parseISO } from 'date-fns';
 
 import Button from '@common/Button';
@@ -11,19 +11,19 @@ import PageHeader from '@common/PageHeader';
 import Modal from '@common/Modal';
 import Tooltip from '@common/Tooltip';
 
-const userCreateRoute = '/users/new';
+const USER_CREATE_ROUTE = '/users/new';
 
 function Users() {
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteUserId, setDeleteUserId] = useState(null);
   const [userData, setUserData] = useState([]);
-  const [updateUserTrigger, setUpdateUserTrigger] = useState(false);
+  const [updateUserTrigger, setUserUpdateTrigger] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const allUsers = await listsUsers();
+        const allUsers = await listUsers();
         const preparedListOfUsers = allUsers.data.map((user) => {
           const data = {
             id: user.id,
@@ -46,13 +46,13 @@ function Users() {
     };
 
     fetchUsers();
-    setUpdateUserTrigger(false);
+    setUserUpdateTrigger(false);
   }, [updateUserTrigger]);
 
   const handleDeleteUser = async (userId) => {
     try {
       await deleteUser(userId);
-      setUpdateUserTrigger(true);
+      setUserUpdateTrigger(true);
     } catch (error) {
       toast.error(`An error occurred during deleting user`);
     }
@@ -164,7 +164,7 @@ function Users() {
           <Button
             className="inline-block mx-1 border-green-500 border"
             size="small"
-            onClick={() => navigate(userCreateRoute)}
+            onClick={() => navigate(USER_CREATE_ROUTE)}
           >
             Create User
           </Button>

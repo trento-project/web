@@ -12,12 +12,11 @@ export const userFactory = Factory.define(() => ({
   email: faker.internet.email(),
 }));
 
-export const adminUser = Factory.define(() => ({
+export const adminUser = userFactory.params({
   id: 1,
   username: 'admin',
   created_at: faker.date.past(),
-  actions: 'Delete',
   enabled: true,
   fullname: 'Trento Admin',
   email: 'admin@trento.suse.com',
-}));
+});
