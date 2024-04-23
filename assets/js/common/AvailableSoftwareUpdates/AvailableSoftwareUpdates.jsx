@@ -1,14 +1,21 @@
 import React from 'react';
 import classNames from 'classnames';
-import {
-  EOS_HEALING,
-  EOS_PACKAGE_UPGRADE_OUTLINED,
-  EOS_SETTINGS,
-} from 'eos-icons-react';
+import { EOS_HEALING, EOS_PACKAGE_UPGRADE_OUTLINED } from 'eos-icons-react';
 import { noop, gt } from 'lodash';
 
-import Button from '@common/Button';
+import SumaNotConfigured from './SumaNotConfigured';
 import Indicator from './Indicator';
+
+const containerClassNames = classNames(
+  'flex',
+  'items-center',
+  'bg-white',
+  'rounded-md',
+  'm-2',
+  'p-5',
+  'gap-x-8',
+  'shadow'
+);
 
 function AvailableSoftwareUpdates({
   className,
@@ -20,52 +27,19 @@ function AvailableSoftwareUpdates({
   connectionError = false,
   onBackToSettings = noop,
 }) {
-  const containerStyles = classNames(
-    'flex',
-    'items-center',
-    'bg-white',
-    'rounded-md',
-    'm-2',
-    'p-5',
-    'gap-x-8',
-    'shadow'
-  );
-
   if (!settingsConfigured) {
     return (
-      <div
-        className={classNames(
-          containerStyles,
-          'place-content-between',
-          className
-        )}
-      >
-        <div>
-          <p className="font-bold text-2xl">Available Software Updates</p>
-
-          <p>
-            SUSE Manager is not configured. Go to Settings to add your SUSE
-            Manager connection credentials.
-          </p>
-        </div>
-
-        <Button
-          type="primary-white-fit"
-          className="inline-block mx-0.5 border-green-500 border"
-          size="small"
-          onClick={onBackToSettings}
-        >
-          <EOS_SETTINGS className="inline-block fill-jungle-green-500" />{' '}
-          Settings
-        </Button>
-      </div>
+      <SumaNotConfigured
+        className={containerClassNames}
+        onBackToSettings={onBackToSettings}
+      />
     );
   }
 
   return (
     <div
       className={classNames(
-        containerStyles,
+        containerClassNames,
         'flex-row',
         'place-content-stretch',
         'w-full',
