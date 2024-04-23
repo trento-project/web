@@ -3,20 +3,20 @@ defmodule Trento.AbilitiesTest do
 
   alias Trento.Abilities
 
+  import Trento.Factory
+
   describe "abilities" do
     alias Trento.Abilities.Ability
-
-    import Trento.AbilitiesFixtures
 
     @invalid_attrs %{label: nil, name: nil, resource: nil}
 
     test "list_abilities/0 returns all abilities" do
-      ability = ability_fixture()
+      ability = insert(:ability)
       assert Abilities.list_abilities() == [ability]
     end
 
     test "get_ability!/1 returns the ability with given id" do
-      ability = ability_fixture()
+      ability = insert(:ability)
       assert Abilities.get_ability!(ability.id) == ability
     end
 
@@ -34,8 +34,13 @@ defmodule Trento.AbilitiesTest do
     end
 
     test "update_ability/2 with valid data updates the ability" do
-      ability = ability_fixture()
-      update_attrs = %{label: "some updated label", name: "some updated name", resource: "some updated resource"}
+      ability = insert(:ability)
+
+      update_attrs = %{
+        label: "some updated label",
+        name: "some updated name",
+        resource: "some updated resource"
+      }
 
       assert {:ok, %Ability{} = ability} = Abilities.update_ability(ability, update_attrs)
       assert ability.label == "some updated label"
@@ -44,19 +49,19 @@ defmodule Trento.AbilitiesTest do
     end
 
     test "update_ability/2 with invalid data returns error changeset" do
-      ability = ability_fixture()
+      ability = insert(:ability)
       assert {:error, %Ecto.Changeset{}} = Abilities.update_ability(ability, @invalid_attrs)
       assert ability == Abilities.get_ability!(ability.id)
     end
 
     test "delete_ability/1 deletes the ability" do
-      ability = ability_fixture()
+      ability = insert(:ability)
       assert {:ok, %Ability{}} = Abilities.delete_ability(ability)
       assert_raise Ecto.NoResultsError, fn -> Abilities.get_ability!(ability.id) end
     end
 
     test "change_ability/1 returns a ability changeset" do
-      ability = ability_fixture()
+      ability = insert(:ability)
       assert %Ecto.Changeset{} = Abilities.change_ability(ability)
     end
   end
