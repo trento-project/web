@@ -28,6 +28,7 @@ import {
 } from '@state/lastExecutions';
 
 import { deregisterHost } from '@state/hosts';
+import { fetchSoftwareUpdatesSettings } from '@state/softwareUpdatesSettings';
 import { fetchSoftwareUpdates } from '@state/softwareUpdates';
 import HostDetails from './HostDetails';
 
@@ -88,6 +89,7 @@ function HostDetailsPage() {
     refreshCatalog();
     dispatch(updateLastExecution(hostID));
     dispatch(fetchSoftwareUpdates(hostID));
+    dispatch(fetchSoftwareUpdatesSettings());
   }, []);
 
   if (!host) {
