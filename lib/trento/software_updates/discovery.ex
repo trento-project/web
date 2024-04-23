@@ -3,6 +3,10 @@ defmodule Trento.SoftwareUpdates.Discovery do
   Software updates integration service
   """
 
+  alias Trento.Repo
+
+  alias Ecto.Multi
+
   alias Trento.Hosts
 
   alias Trento.Hosts.Commands.{
@@ -11,6 +15,7 @@ defmodule Trento.SoftwareUpdates.Discovery do
   }
 
   alias Trento.Hosts.Projections.HostReadModel
+  alias Trento.SoftwareUpdates.Discovery.DiscoveryResult
 
   require Trento.SoftwareUpdates.Enums.SoftwareUpdatesHealth, as: SoftwareUpdatesHealth
   require Trento.SoftwareUpdates.Enums.AdvisoryType, as: AdvisoryType
@@ -49,12 +54,12 @@ defmodule Trento.SoftwareUpdates.Discovery do
            {:error, error} ->
              {:error, host_id, error}
 
-           {:ok, _, _, _} = success ->
+           {:ok, _, _, _, _} = success ->
              success
          end
      end)
      |> Enum.split_with(fn
-       {:ok, _, _, _} -> true
+       {:ok, _, _, _, _} -> true
        _ -> false
      end)}
   end
@@ -75,7 +80,7 @@ defmodule Trento.SoftwareUpdates.Discovery do
   end
 
   @spec discover_host_software_updates(String.t(), String.t()) ::
-          {:ok, String.t(), String.t(), any()} | {:error, any()}
+          {:ok, String.t(), String.t(), any(), any()} | {:error, any()}
   def discover_host_software_updates(host_id, nil) do
     Logger.info("Host #{host_id} does not have an fqdn. Skipping software updates discovery")
     {:error, :host_without_fqdn}
@@ -84,11 +89,9 @@ defmodule Trento.SoftwareUpdates.Discovery do
   def discover_host_software_updates(host_id, fully_qualified_domain_name) do
     with {:ok, system_id} <- get_system_id(fully_qualified_domain_name),
          {:ok, relevant_patches} <- get_relevant_patches(system_id),
-         :ok <-
-           host_id
-           |> build_discovery_completion_command(relevant_patches)
-           |> commanded().dispatch() do
-      {:ok, host_id, system_id, relevant_patches}
+         {:ok, upgradable_packages} <- get_upgradable_packages(system_id),
+         {:ok, _} <- finalize_discovery(host_id, system_id, relevant_patches, upgradable_packages) do
+      {:ok, host_id, system_id, relevant_patches, upgradable_packages}
     else
       {:error, :settings_not_configured} ->
         {:error, :settings_not_configured}
@@ -98,12 +101,7 @@ defmodule Trento.SoftwareUpdates.Discovery do
           "An error occurred during software updates discovery for host #{host_id}:  #{inspect(error)}"
         )
 
-        commanded().dispatch(
-          CompleteSoftwareUpdatesDiscovery.new!(%{
-            host_id: host_id,
-            health: SoftwareUpdatesHealth.unknown()
-          })
-        )
+        dispatch_completion_command(host_id, SoftwareUpdatesHealth.unknown())
 
         {:error, discovery_error}
     end
@@ -112,29 +110,69 @@ defmodule Trento.SoftwareUpdates.Discovery do
   defp discover_host_software_updates(_, _, {:error, :settings_not_configured} = error),
     do: error
 
-  defp discover_host_software_updates(host_id, _, {:error, error}) do
-    commanded().dispatch(
-      CompleteSoftwareUpdatesDiscovery.new!(%{
-        host_id: host_id,
-        health: SoftwareUpdatesHealth.unknown()
-      })
-    )
-
-    {:error, error}
+  defp discover_host_software_updates(host_id, _, {:error, _} = error) do
+    dispatch_completion_command(host_id, SoftwareUpdatesHealth.unknown())
+    error
   end
 
   defp discover_host_software_updates(host_id, fully_qualified_domain_name, _),
     do: discover_host_software_updates(host_id, fully_qualified_domain_name)
 
-  defp build_discovery_completion_command(host_id, relevant_patches),
-    do:
-      CompleteSoftwareUpdatesDiscovery.new!(%{
+  defp finalize_discovery(host_id, system_id, relevant_patches, upgradable_packages) do
+    discovery_result =
+      DiscoveryResult.changeset(%DiscoveryResult{}, %{
         host_id: host_id,
-        health:
+        system_id: "#{system_id}",
+        relevant_patches: relevant_patches,
+        upgradable_packages: upgradable_packages
+      })
+
+    transaction_result =
+      Multi.new()
+      |> Multi.insert(:insert, discovery_result,
+        conflict_target: :host_id,
+        on_conflict: :replace_all
+      )
+      |> Multi.run(:command_dispatching, fn _, _ ->
+        discovered_health =
           relevant_patches
           |> track_relevant_patches
           |> compute_software_updates_discovery_health
-      })
+
+        dispatch_completion_command(host_id, discovered_health)
+      end)
+      |> Repo.transaction()
+
+    case transaction_result do
+      {:ok, _} = success ->
+        success
+
+      {:error, :command_dispatching, dispatching_error, _} ->
+        {:error, dispatching_error}
+
+      {:error, _} = error ->
+        Logger.error(
+          "Error while finalizing software updates discovery for host #{host_id}, error: #{inspect(error)}"
+        )
+
+        error
+    end
+  end
+
+  defp dispatch_completion_command(host_id, discovered_health) do
+    case %{
+           host_id: host_id,
+           health: discovered_health
+         }
+         |> CompleteSoftwareUpdatesDiscovery.new!()
+         |> commanded().dispatch() do
+      :ok ->
+        {:ok, :dispatched}
+
+      {:error, _} = error ->
+        error
+    end
+  end
 
   defp track_relevant_patches(relevant_patches),
     do:

@@ -1,5 +1,5 @@
 defmodule Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscoveryEventHandlerTest do
-  use ExUnit.Case
+  use Trento.DataCase
 
   import Mox
   import Trento.Factory
@@ -36,6 +36,12 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscovery
     )
 
     expect(
+      SoftwareUpdatesDiscoveryMock,
+      :get_upgradable_packages,
+      fn ^system_id -> {:ok, []} end
+    )
+
+    expect(
       Trento.Commanded.Mock,
       :dispatch,
       fn %CompleteSoftwareUpdatesDiscovery{host_id: ^host_id} -> :ok end
@@ -58,6 +64,13 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscovery
     expect(
       SoftwareUpdatesDiscoveryMock,
       :get_relevant_patches,
+      0,
+      fn _ -> :ok end
+    )
+
+    expect(
+      SoftwareUpdatesDiscoveryMock,
+      :get_upgradable_packages,
       0,
       fn _ -> :ok end
     )
