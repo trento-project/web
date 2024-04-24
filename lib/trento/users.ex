@@ -29,12 +29,14 @@ defmodule Trento.Users do
   def list_users do
     User
     |> where([u], is_nil(u.deleted_at))
+    |> preload(:abilities)
     |> Repo.all()
   end
 
   def get_user(id) do
     case User
          |> where([u], is_nil(u.deleted_at) and u.id == ^id)
+         |> preload(:abilities)
          |> Repo.one() do
       nil -> {:error, :not_found}
       user -> {:ok, user}
