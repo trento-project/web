@@ -26,6 +26,10 @@ defmodule Trento.Settings do
     installation_id
   end
 
+  def accept_eula do
+    :ok
+  end
+
   def premium? do
     flavor() == "Premium"
   end

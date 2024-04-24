@@ -26,5 +26,6 @@ before(() => {
   if (!Cypress.env('REAL_CLUSTER_TESTS')) {
     cy.loadScenario('healthy-27-node-SAP-cluster');
   }
+  cy.acceptEula();
   cy.initiateSession();
 });

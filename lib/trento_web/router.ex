@@ -149,6 +149,7 @@ defmodule TrentoWeb.Router do
 
       scope "/settings" do
         get "/", SettingsController, :settings
+        post "/accept_eula", SettingsController, :accept_eula
         get "/api_key", SettingsController, :get_api_key_settings
         patch "/api_key", SettingsController, :update_api_key_settings
 
@@ -162,6 +163,9 @@ defmodule TrentoWeb.Router do
           end
         end
       end
+
+      # Deprecated
+      post "/accept_eula", SettingsController, :accept_eula
 
       scope "/charts" do
         pipe_through :charts_feature

@@ -34,7 +34,7 @@ defmodule Trento.SettingsTest do
     test "should not create a new InstallationSettings if is already present" do
       {:error, errors} =
         %InstallationSettings{}
-        |> InstallationSettings.changeset(%{installation_id: UUID.uuid4(), eula_accepted: true})
+        |> InstallationSettings.changeset(%{installation_id: UUID.uuid4()})
         |> Repo.insert()
 
       assert errors_on(errors) == %{type: ["has already been taken"]}

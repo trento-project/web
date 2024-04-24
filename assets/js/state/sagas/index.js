@@ -58,6 +58,8 @@ import {
 
 import { SET_USER_AS_LOGGED } from '@state/user';
 
+import { setIsPremium } from '@state/settings';
+
 import { watchNotifications } from '@state/sagas/notifications';
 
 import { watchCatalogEvents } from '@state/sagas/catalog';
@@ -91,6 +93,10 @@ function* initialDataFetch() {
   yield loadSapSystemsHealthSummary();
 
   yield fork(checkApiKeyExpiration);
+
+  const {
+    data: { eula_accepted, premium_subscription },
+  } = yield call(get, '/settings');
 
   if (premium_subscription) {
     yield put(setIsPremium());

@@ -796,7 +796,8 @@ defmodule Trento.Factory do
   def installation_settings_factory do
     %InstallationSettings{
       type: :installation_settings,
-      installation_id: Faker.UUID.v4()
+      installation_id: Faker.UUID.v4(),
+      eula_accepted: true
     }
   end
 
