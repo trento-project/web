@@ -53,8 +53,21 @@ describe('AvailableSoftwareUpdates component', () => {
     expect(screen.getByText(tooltip)).toBeInTheDocument();
   });
 
-  it('renders Loading status', () => {
-    render(<AvailableSoftwareUpdates loading settingsConfigured />);
+  it('renders Software Updates Settings Loading status', () => {
+    render(
+      <AvailableSoftwareUpdates
+        softwareUpdatesSettingsLoading
+        settingsConfigured
+      />
+    );
+
+    expect(screen.getAllByLabelText('Loading')).toHaveLength(1);
+  });
+
+  it('renders Software Updates Loading status', () => {
+    render(
+      <AvailableSoftwareUpdates softwareUpdatesLoading settingsConfigured />
+    );
 
     expect(screen.getAllByLabelText('Loading')).toHaveLength(2);
   });

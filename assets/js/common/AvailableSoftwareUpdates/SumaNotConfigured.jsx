@@ -7,7 +7,14 @@ import Button from '@common/Button';
 
 function SumaNotConfigured({ className, onBackToSettings = noop }) {
   return (
-    <div className={classNames(className, 'place-content-between')}>
+    <div
+      className={classNames(
+        className,
+        'place-content-between',
+        'w-full',
+        'my-4'
+      )}
+    >
       <div>
         <p className="font-bold text-2xl">Available Software Updates</p>
 

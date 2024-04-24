@@ -18,6 +18,7 @@ function Indicator({
   children,
 }) {
   const unknown = children === undefined;
+  const error = unknown || connectionError;
 
   if (loading) {
     return (
@@ -41,8 +42,8 @@ function Indicator({
           <p className="font-bold">{title}</p>
           <div
             className={classNames({
-              'text-green-600': !unknown,
-              'text-gray-600': unknown,
+              'text-green-600': !error,
+              'text-gray-600': error,
             })}
           >
             {critical && (
@@ -51,7 +52,7 @@ function Indicator({
                 className="inline align-bottom fill-red-500"
               />
             )}{' '}
-            {connectionError || unknown ? (
+            {error ? (
               <div>
                 <EOS_ERROR_OUTLINED size="l" className="inline align-bottom" />{' '}
                 {connectionError ? 'SUSE Manager connection failed' : 'Unknown'}

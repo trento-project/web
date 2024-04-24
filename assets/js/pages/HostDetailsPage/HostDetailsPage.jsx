@@ -12,7 +12,10 @@ import { getClusterByHost } from '@state/selectors/cluster';
 import { getInstancesOnHost } from '@state/selectors/sapSystem';
 import { getCatalog } from '@state/selectors/catalog';
 import { getLastExecution } from '@state/selectors/lastExecutions';
-import { getSoftwareUpdatesSettingsSaved } from '@state/selectors/softwareUpdatesSettings';
+import {
+  getSoftwareUpdatesSettingsLoading,
+  getSoftwareUpdatesSettingsSaved,
+} from '@state/selectors/softwareUpdatesSettings';
 import {
   getSoftwareUpdatesConnectionError,
   getSoftwareUpdates,
@@ -58,6 +61,9 @@ function HostDetailsPage() {
 
   const { loading: softwareUpdatesLoading } = useSelector((state) =>
     getSoftwareUpdates(state)
+  );
+  const softwareUpdatesSettingsLoading = useSelector((state) =>
+    getSoftwareUpdatesSettingsLoading(state)
   );
   const softwareUpdatesConnectionSaved = useSelector((state) =>
     getSoftwareUpdatesSettingsSaved(state)
@@ -121,6 +127,7 @@ function HostDetailsPage() {
       relevantPatches={numRelevantPatches}
       upgradablePackages={numUpgradablePackages}
       softwareUpdatesSettingsSaved={softwareUpdatesConnectionSaved}
+      softwareUpdatesSettingsLoading={softwareUpdatesSettingsLoading}
       softwareUpdatesLoading={softwareUpdatesLoading}
       softwareUpdatesConnectionError={softwareUpdatesConnectionError}
       softwareUpdatesTooltip={

@@ -28,11 +28,17 @@ export default {
       type: 'string',
       description: 'Content of the tooltip, if it is rendered',
     },
-    loading: {
+    softwareUpdatesSettingsLoading: {
       control: {
         type: 'boolean',
       },
-      description: 'Is data being fetched?',
+      description: 'are software updates settings being fetched?',
+    },
+    softwareUpdatesLoading: {
+      control: {
+        type: 'boolean',
+      },
+      description: 'are software updates being fetched?',
     },
     connectionError: {
       control: {
@@ -72,7 +78,13 @@ export const Unknown = {
   args: { tooltip: 'SUSE Manager is not available', settingsConfigured: true },
 };
 
-export const Loading = { args: { loading: true, settingsConfigured: true } };
+export const SoftwareUpdateSettingsLoading = {
+  args: { softwareUpdateSettingsLoading: true, settingsConfigured: true },
+};
+
+export const SoftwareUpdatesLoading = {
+  args: { softwareUpdatesLoading: true, settingsConfigured: true },
+};
 
 export const ConnectionError = {
   args: { connectionError: true, settingsConfigured: true },

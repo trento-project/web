@@ -1,5 +1,6 @@
 import {
   getSoftwareUpdatesSettings,
+  getSoftwareUpdatesSettingsLoading,
   getSoftwareUpdatesSettingsSaved,
 } from './softwareUpdatesSettings';
 
@@ -39,7 +40,29 @@ describe('Software Updates Settings selector', () => {
     );
   });
 
-  describe('getSoftwareUpdatesSettings', () => {
+  describe('get software updates settings loading', () => {
+    const scenarios = [
+      {
+        state: { loading: false },
+        result: false,
+      },
+      {
+        state: { loading: true },
+        result: true,
+      },
+    ];
+
+    it.each(scenarios)(
+      'should return if the software updates settings are loading',
+      ({ state, result }) => {
+        expect(
+          getSoftwareUpdatesSettingsLoading({ softwareUpdatesSettings: state })
+        ).toEqual(result);
+      }
+    );
+  });
+
+  describe('get if software updates settings saved', () => {
     const scenarios = [
       {
         state: {
@@ -77,7 +100,6 @@ describe('Software Updates Settings selector', () => {
           },
           errors: null,
           editing: false,
-          testingConnection: false,
         },
         result: false,
       },
