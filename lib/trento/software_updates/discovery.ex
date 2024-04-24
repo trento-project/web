@@ -90,6 +90,9 @@ defmodule Trento.SoftwareUpdates.Discovery do
            |> commanded().dispatch() do
       {:ok, host_id, system_id, relevant_patches}
     else
+      {:error, :settings_not_configured} ->
+        {:error, :settings_not_configured}
+
       {:error, discovery_error} = error ->
         Logger.error(
           "An error occurred during software updates discovery for host #{host_id}:  #{inspect(error)}"
@@ -105,6 +108,9 @@ defmodule Trento.SoftwareUpdates.Discovery do
         {:error, discovery_error}
     end
   end
+
+  defp discover_host_software_updates(_, _, {:error, :settings_not_configured} = error),
+    do: error
 
   defp discover_host_software_updates(host_id, _, {:error, error}) do
     commanded().dispatch(
