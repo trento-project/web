@@ -917,9 +917,7 @@ defmodule Trento.Factory do
   def users_abilities_factory do
     %UsersAbilities{
       user_id: 1,
-      ability_id: 1,
-      inserted_at: DateTime.utc_now(),
-      updated_at: DateTime.utc_now()
+      ability_id: 1
     }
   end
 end

@@ -7,7 +7,7 @@ defmodule Trento.Repo.Migrations.CreateAbilities do
       add :resource, :string
       add :label, :string
 
-      timestamps()
+      timestamps(type: :utc_datetime_usec)
     end
 
     create unique_index(:abilities, [:name, :resource])

@@ -11,7 +11,7 @@ defmodule Trento.AbilitiesTest do
     @invalid_attrs %{label: nil, name: nil, resource: nil}
 
     test "list_abilities/0 returns all abilities" do
-      ability = insert(:ability)
+      ability = insert(:ability, inserted_at: DateTime.utc_now(), updated_at: DateTime.utc_now())
       assert Abilities.list_abilities() == [ability]
     end
 
