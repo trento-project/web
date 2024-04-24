@@ -73,6 +73,29 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
         Discovery.discover_host_software_updates(host_id, fully_qualified_domain_name)
     end
 
+    test "should handle failure when SUMA settings are not configured" do
+      host_id = Faker.UUID.v4()
+      fully_qualified_domain_name = Faker.Internet.domain_name()
+
+      expect(
+        SoftwareUpdatesDiscoveryMock,
+        :get_system_id,
+        fn ^fully_qualified_domain_name -> {:error, :settings_not_configured} end
+      )
+
+      expect(
+        Trento.Commanded.Mock,
+        :dispatch,
+        0,
+        fn _ ->
+          :ok
+        end
+      )
+
+      {:error, :settings_not_configured} =
+        Discovery.discover_host_software_updates(host_id, fully_qualified_domain_name)
+    end
+
     test "should complete discovery" do
       scenarios = [
         %{
@@ -181,6 +204,27 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
 
       Enum.each([host_id1, host_id2], fn host_id ->
         assert {:error, host_id, :auth_error} in errored_discoveries
+      end)
+    end
+
+    test "should handle SUMA settings not configured error" do
+      expect(SoftwareUpdatesDiscoveryMock, :setup, fn -> {:error, :settings_not_configured} end)
+
+      [%{id: host_id1}, %{id: host_id2}] = insert_list(2, :host)
+
+      expect(
+        Trento.Commanded.Mock,
+        :dispatch,
+        0,
+        fn _ ->
+          :ok
+        end
+      )
+
+      {:ok, {[], errored_discoveries}} = Discovery.discover_software_updates()
+
+      Enum.each([host_id1, host_id2], fn host_id ->
+        assert {:error, host_id, :settings_not_configured} in errored_discoveries
       end)
     end
 
