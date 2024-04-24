@@ -17,26 +17,24 @@ function Users() {
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteUserId, setDeleteUserId] = useState(null);
   const [userData, setUserData] = useState([]);
-  const [updateUserTrigger, setUserUpdateTrigger] = useState(false);
+  const [userUpdateTrigger, setUserUpdateTrigger] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const allUsers = await listUsers();
-        const preparedListOfUsers = allUsers.data.map((user) => {
-          const data = {
-            id: user.id,
-            username: user.username,
-            created: format(parseISO(user.created_at), 'MMMM dd, yyyy'),
+        const preparedListOfUsers = allUsers.data.map(
+          ({ id, username, created_at, enabled, fullname, email }) => ({
+            id,
+            username,
+            created: format(parseISO(created_at), 'MMMM dd, yyyy'),
             actions: 'Delete',
-            enabled: user.enabled ? 'Enabled' : 'Disabled',
-            fullname: user.fullname,
-            email: user.email,
-          };
-
-          return data;
-        });
+            enabled: enabled ? 'Enabled' : 'Disabled',
+            fullname,
+            email,
+          })
+        );
 
         setUserData(preparedListOfUsers);
       } catch (error) {
@@ -47,7 +45,7 @@ function Users() {
 
     fetchUsers();
     setUserUpdateTrigger(false);
-  }, [updateUserTrigger]);
+  }, [userUpdateTrigger]);
 
   const handleDeleteUser = async (userId) => {
     try {
