@@ -24,8 +24,6 @@ defmodule Trento.Factory do
     SbdDevice
   }
 
-  alias Trento.Users.User
-
   alias Trento.Hosts.ValueObjects.{
     SaptuneStatus,
     SlesSubscription
@@ -129,6 +127,9 @@ defmodule Trento.Factory do
 
   alias Trento.ActivityLog.RetentionTime
   alias Trento.ActivityLog.Settings, as: ActivityLogSettings
+
+  alias Trento.Abilities.Ability
+  alias Trento.Users.User
 
   use ExMachina.Ecto, repo: Trento.Repo
 
@@ -964,6 +965,14 @@ defmodule Trento.Factory do
       username: Faker.Pokemon.name(),
       deleted_at: nil,
       locked_at: nil
+    }
+  end
+
+  def ability_factory do
+    %Ability{
+      name: Faker.Pokemon.name(),
+      label: Faker.Pokemon.name(),
+      resource: Faker.Industry.industry()
     }
   end
 end
