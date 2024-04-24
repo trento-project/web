@@ -40,6 +40,7 @@ defmodule Trento.Factory do
     HostTombstoned,
     SaptuneStatusUpdated,
     SlesSubscriptionsUpdated,
+    SoftwareUpdatesDiscoveryCleared,
     SoftwareUpdatesDiscoveryRequested,
     SoftwareUpdatesHealthChanged
   }
@@ -114,6 +115,7 @@ defmodule Trento.Factory do
     DiscoveryEvent
   }
 
+  alias Trento.SoftwareUpdates.Discovery.DiscoveryResult
   alias Trento.SoftwareUpdates.Settings
 
   alias Trento.Settings.{
@@ -805,6 +807,12 @@ defmodule Trento.Factory do
     }
   end
 
+  def software_updates_discovery_cleared_event_factory do
+    SoftwareUpdatesDiscoveryCleared.new!(%{
+      host_id: Faker.UUID.v4()
+    })
+  end
+
   def host_health_changed_event_factory do
     HostHealthChanged.new!(%{
       host_id: Faker.UUID.v4(),
@@ -882,6 +890,16 @@ defmodule Trento.Factory do
       to_release: "#{RandomElixir.random_between(0, 100)}",
       to_epoch: "#{RandomElixir.random_between(0, 50)}",
       to_package_id: "#{RandomElixir.random_between(0, 1000)}"
+    }
+  end
+
+  def software_updates_discovery_result_factory do
+    %DiscoveryResult{
+      host_id: Faker.UUID.v4(),
+      system_id: Faker.UUID.v4(),
+      relevant_patches: build_list(2, :relevant_patch),
+      upgradable_packages: build_list(2, :upgradable_package),
+      failure_reason: Faker.Lorem.word()
     }
   end
 end

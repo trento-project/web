@@ -584,6 +584,39 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
 
       assert :ok = Discovery.clear_software_updates_discoveries()
     end
+
+    test "should clear a previously tracked software updates discovery result" do
+      %{host_id: host_id} = insert(:software_updates_discovery_result)
+      insert_list(4, :software_updates_discovery_result)
+
+      assert %DiscoveryResult{host_id: ^host_id} = Trento.Repo.get(DiscoveryResult, host_id)
+
+      assert :ok == Discovery.clear_tracked_discovery_result(host_id)
+
+      assert nil == Trento.Repo.get(DiscoveryResult, host_id)
+
+      assert 4 ==
+               DiscoveryResult
+               |> Trento.Repo.all()
+               |> length()
+    end
+
+    test "should ignore not tracked software updates discovery results" do
+      insert_list(4, :software_updates_discovery_result)
+
+      host_id = Faker.UUID.v4()
+
+      assert nil == Trento.Repo.get(DiscoveryResult, host_id)
+
+      assert :ok == Discovery.clear_tracked_discovery_result(host_id)
+
+      assert nil == Trento.Repo.get(DiscoveryResult, host_id)
+
+      assert 4 ==
+               DiscoveryResult
+               |> Trento.Repo.all()
+               |> length()
+    end
   end
 
   defp fail_on_getting_system_id(host_id, fully_qualified_domain_name, discovery_error) do

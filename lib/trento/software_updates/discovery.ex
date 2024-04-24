@@ -3,6 +3,8 @@ defmodule Trento.SoftwareUpdates.Discovery do
   Software updates integration service
   """
 
+  import Ecto.Query
+
   alias Trento.Repo
 
   alias Ecto.Multi
@@ -76,6 +78,12 @@ defmodule Trento.SoftwareUpdates.Discovery do
 
     clear()
 
+    :ok
+  end
+
+  @spec clear_tracked_discovery_result(String.t()) :: :ok
+  def clear_tracked_discovery_result(host_id) do
+    Repo.delete_all(from d in DiscoveryResult, where: d.host_id == ^host_id)
     :ok
   end
 
