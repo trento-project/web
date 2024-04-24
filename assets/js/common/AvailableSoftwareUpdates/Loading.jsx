@@ -4,7 +4,7 @@ import Spinner from '@common/Spinner';
 
 function Loading({ className }) {
   return (
-    <div className={classNames(className, 'w-full', 'my-4')}>
+    <div className={classNames(className, 'w-full', 'my-4', 'py-8')}>
       <p className="font-bold text-2xl">Available Software Updates</p>
       <Spinner size="xl" />
     </div>

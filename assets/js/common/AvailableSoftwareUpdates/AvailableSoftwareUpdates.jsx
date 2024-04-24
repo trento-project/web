@@ -12,7 +12,8 @@ const containerClassNames = classNames(
   'items-center',
   'bg-white',
   'rounded-md',
-  'p-5',
+  'px-8',
+  'py-4',
   'gap-x-8',
   'shadow'
 );
