@@ -111,7 +111,8 @@ defmodule Trento.MixProject do
       {:ssl_verify_fun, "~> 1.1", manager: :rebar3, override: true},
       {:parallel_stream, "~> 1.1.0"},
       {:argon2_elixir, "~> 4.0"},
-      {:ecto_commons, "~> 0.3.4"}
+      {:ecto_commons, "~> 0.3.4"},
+      {:bodyguard, "~> 2.4"}
     ]
   end
 

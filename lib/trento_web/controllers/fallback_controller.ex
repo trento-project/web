@@ -138,6 +138,13 @@ defmodule TrentoWeb.FallbackController do
     |> render(:"403")
   end
 
+  def call(conn, {:error, :forbidden}) do
+    conn
+    |> put_status(:forbidden)
+    |> put_view(ErrorView)
+    |> render(:"403")
+  end
+
   def call(conn, {:error, [error | _]}), do: call(conn, {:error, error})
 
   def call(conn, {:error, _}) do

@@ -11,7 +11,21 @@ defmodule TrentoWeb.V1.UserControllerTest do
   @endpoint TrentoWeb.Endpoint
 
   setup %{conn: conn} do
+    conn =
+      conn
+      |> Plug.Conn.put_private(:plug_session, %{})
+      |> Plug.Conn.put_private(:plug_session_fetch, :done)
+      |> Pow.Plug.put_config(otp_app: :trento)
+
     api_spec = ApiSpec.spec()
+
+    # Default inject all:all abilities user
+    %{id: user_id} = insert(:user)
+    %{id: ability_id} = insert(:ability, name: "all", resource: "all")
+    insert(:users_abilities, user_id: user_id, ability_id: ability_id)
+
+    conn =
+      Pow.Plug.assign_current_user(conn, %{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
 
     {:ok, conn: put_req_header(conn, "accept", "application/json"), api_spec: api_spec}
   end
@@ -28,7 +42,7 @@ defmodule TrentoWeb.V1.UserControllerTest do
         |> json_response(200)
         |> assert_schema("UserCollection", api_spec)
 
-      assert [%{id: ^user_one_id}, %{id: ^user_two_id}] = resp
+      assert [_, %{id: ^user_one_id}, %{id: ^user_two_id}] = resp
     end
   end
 
