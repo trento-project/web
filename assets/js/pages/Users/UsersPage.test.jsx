@@ -9,11 +9,11 @@ import { userEvent } from '@testing-library/user-event';
 import { adminUser, userFactory } from '@lib/test-utils/factories/users';
 import { renderWithRouter } from '@lib/test-utils';
 
-import Users from './Users';
+import UsersPage from './UsersPage';
 
 const axiosMock = new MockAdapter(networkClient);
 
-describe('Users', () => {
+describe('UsersPage', () => {
   afterEach(() => {
     axiosMock.reset();
   });
@@ -21,7 +21,7 @@ describe('Users', () => {
   it('should render users overview with a table without data.', async () => {
     axiosMock.onGet('/api/v1//users').reply(200, []);
     await act(async () => {
-      renderWithRouter(<Users />);
+      renderWithRouter(<UsersPage />);
     });
     const headers = [
       'Username',
@@ -43,7 +43,7 @@ describe('Users', () => {
     const admin = adminUser.build({ created_at: creationTime });
     axiosMock.onGet('/api/v1/users').reply(200, [admin]);
     await act(async () => {
-      renderWithRouter(<Users />);
+      renderWithRouter(<UsersPage />);
     });
 
     expect(await screen.getByText(admin.username)).toBeVisible();
@@ -79,7 +79,7 @@ describe('Users', () => {
     axiosMock.onGet('/api/v1/users').reply(200, [admin, user]);
 
     await act(async () => {
-      renderWithRouter(<Users />);
+      renderWithRouter(<UsersPage />);
     });
 
     expect(await screen.getByText(admin.username)).toBeVisible();

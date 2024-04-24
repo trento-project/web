@@ -1,7 +1,3 @@
-import Users from './Users';
-import UserCreate from './UserCreate';
-import UserEdit from './UserEdit';
+import UsersPage from './UsersPage';
 
-export { UserCreate, UserEdit };
-
-export default Users;
+export default UsersPage;

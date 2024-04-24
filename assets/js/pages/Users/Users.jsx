@@ -1,61 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { toast } from 'react-hot-toast';
-
-import { listUsers, deleteUser } from '@lib/api/users';
-import { format, parseISO } from 'date-fns';
-
+import React from 'react';
+import { Link } from 'react-router-dom';
 import Button from '@common/Button';
 import Table from '@common/Table';
 import PageHeader from '@common/PageHeader';
 import Modal from '@common/Modal';
 import Tooltip from '@common/Tooltip';
+import { EOS_LOADING_ANIMATED } from 'eos-icons-react';
 
 const USER_CREATE_ROUTE = '/users/new';
 
-function Users() {
-  const [modalOpen, setModalOpen] = useState(false);
-  const [deleteUserId, setDeleteUserId] = useState(null);
-  const [userData, setUserData] = useState([]);
-  const [userUpdateTrigger, setUserUpdateTrigger] = useState(false);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const allUsers = await listUsers();
-        const preparedListOfUsers = allUsers.data.map(
-          ({ id, username, created_at, enabled, fullname, email }) => ({
-            id,
-            username,
-            created: format(parseISO(created_at), 'MMMM dd, yyyy'),
-            actions: 'Delete',
-            enabled: enabled ? 'Enabled' : 'Disabled',
-            fullname,
-            email,
-          })
-        );
-
-        setUserData(preparedListOfUsers);
-      } catch (error) {
-        toast.error(`An error occurred during loading users`);
-        setUserData([]);
-      }
-    };
-
-    fetchUsers();
-    setUserUpdateTrigger(false);
-  }, [userUpdateTrigger]);
-
-  const handleDeleteUser = async (userId) => {
-    try {
-      await deleteUser(userId);
-      setUserUpdateTrigger(true);
-    } catch (error) {
-      toast.error(`An error occurred during deleting user`);
-    }
-  };
-
+function Users({
+  handleDeleteUser = () => {},
+  navigate = () => {},
+  setModalOpen = () => {},
+  setDeleteUserId = () => {},
+  deleteUserId = 0,
+  modalOpen = false,
+  users = [],
+  loading = false,
+}) {
   const usersTableConfig = {
     pagination: true,
     usePadding: false,
@@ -166,9 +129,19 @@ function Users() {
           >
             Create User
           </Button>
-        </div>{' '}
+        </div>
       </div>
-      <Table config={usersTableConfig} data={userData} />
+      {loading ? (
+        <div className="flex flex-col items-center justify-center w-full">
+          <EOS_LOADING_ANIMATED
+            size="xxl"
+            className="inline align-bottom fill-green-400"
+          />
+          Loading...
+        </div>
+      ) : (
+        <Table config={usersTableConfig} data={users} />
+      )}
     </div>
   );
 }
