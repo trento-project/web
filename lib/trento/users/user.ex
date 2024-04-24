@@ -13,6 +13,11 @@ defmodule Trento.Users.User do
 
   alias EctoCommons.EmailValidator
 
+  alias Trento.Abilities.{
+    Ability,
+    UsersAbilities
+  }
+
   @sequences ["01234567890", "abcdefghijklmnopqrstuvwxyz"]
   @max_sequential_chars 3
 
@@ -23,6 +28,8 @@ defmodule Trento.Users.User do
     field :fullname, :string
     field :deleted_at, :utc_datetime_usec
     field :locked_at, :utc_datetime_usec
+
+    many_to_many :abilities, Ability, join_through: UsersAbilities, unique: true
 
     timestamps(type: :utc_datetime_usec)
   end

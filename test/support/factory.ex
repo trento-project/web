@@ -123,6 +123,8 @@ defmodule Trento.Factory do
     InstallationSettings
   }
 
+  alias Trento.Abilities.Ability
+
   use ExMachina.Ecto, repo: Trento.Repo
 
   def host_registered_event_factory do
@@ -898,6 +900,14 @@ defmodule Trento.Factory do
       username: Faker.Pokemon.name(),
       deleted_at: nil,
       locked_at: nil
+    }
+  end
+
+  def ability_factory do
+    %Ability{
+      name: Faker.Pokemon.name(),
+      label: Faker.Pokemon.name(),
+      resource: Faker.Industry.industry()
     }
   end
 end
