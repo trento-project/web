@@ -12,6 +12,7 @@ defmodule Trento.Users.User do
     extensions: [PowPersistentSession]
 
   alias EctoCommons.EmailValidator
+
   alias Trento.Abilities.{
     Ability,
     UsersAbilities
