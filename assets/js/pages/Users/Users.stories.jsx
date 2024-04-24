@@ -81,8 +81,13 @@ export const Loading = {
     loading: true,
   },
 };
+export const EmptyUsersTable = {
+  args: {
+    users: [],
+  },
+};
 
-export const UserOverview = {
+export const UsersOverview = {
   args: {
     users: [
       {

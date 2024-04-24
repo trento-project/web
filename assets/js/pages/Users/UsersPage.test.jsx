@@ -18,8 +18,8 @@ describe('UsersPage', () => {
     axiosMock.reset();
   });
 
-  it('should render users overview with a table without data.', async () => {
-    axiosMock.onGet('/api/v1//users').reply(200, []);
+  it('should render users page with a table without data.', async () => {
+    axiosMock.onGet('/api/v1/users').reply(200, []);
     await act(async () => {
       renderWithRouter(<UsersPage />);
     });
@@ -37,7 +37,7 @@ describe('UsersPage', () => {
     expect(await screen.getByText('No data available')).toBeVisible();
   });
 
-  it('should render users overview with a table, only with the admin user.', async () => {
+  it('should render users page with a table, only with the admin user.', async () => {
     const creationTime = '2024-04-22T16:20:57.801758Z';
     const exptedCreationTime = 'April 22, 2024';
     const admin = adminUser.build({ created_at: creationTime });
@@ -61,7 +61,7 @@ describe('UsersPage', () => {
     ).toBeVisible();
   });
 
-  it('should render users overview with a table and multiple users', async () => {
+  it('should render users page with a table and multiple users', async () => {
     const creationTime = [
       '2024-03-22T16:20:57.801758Z',
       '2024-04-22T16:20:57.801758Z',

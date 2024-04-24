@@ -5,6 +5,7 @@ import Table from '@common/Table';
 import PageHeader from '@common/PageHeader';
 import Modal from '@common/Modal';
 import Tooltip from '@common/Tooltip';
+import Banner from '@common/Banners/Banner';
 import { EOS_LOADING_ANIMATED } from 'eos-icons-react';
 
 const USER_CREATE_ROUTE = '/users/new';
@@ -81,11 +82,15 @@ function Users({
                 title="Delete User"
               >
                 <div className="flex flex-col my-2">
-                  <span className="my-1 mb-4 text-gray-500">
+                  <Banner type="warning">
+                    <span className="text-sm">
+                      This Action cannot be undone
+                    </span>
+                  </Banner>
+                  <span className="my-1  text-gray-500">
                     Are you sure you want to delete the following user account?
                   </span>
-                  <span className="my-1 mb-4 text-gray-500">
-                    {' '}
+                  <span className="my-1 mb-4 text-gray-600">
                     {item.username}
                   </span>
 
