@@ -125,7 +125,7 @@ defmodule Trento.SoftwareUpdates.Discovery do
     do: error
 
   defp discover_host_software_updates(host_id, _, {:error, _} = error) do
-    dispatch_completion_command(host_id, SoftwareUpdatesHealth.unknown())
+    finalize_failed_discovery(host_id, error)
     error
   end
 

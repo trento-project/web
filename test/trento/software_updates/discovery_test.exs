@@ -278,7 +278,7 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
         assert {:error, host_id, :auth_error} in errored_discoveries
       end)
 
-      assert 0 ==
+      assert 2 ==
                DiscoveryResult
                |> Trento.Repo.all()
                |> length()
