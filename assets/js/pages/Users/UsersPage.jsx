@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { listUsers, deleteUser } from '@lib/api/users';
-import { format, parseISO } from 'date-fns';
 
 import { toast } from 'react-hot-toast';
 
 import Users from './Users';
 
+const successDeleteMessage = 'User deleted successfully';
+const errorLoadingMessage = 'An error occurred during loading users';
+const errorDeletingMessage = 'An error occurred during deleting user';
+
 function UsersPage() {
-  const [modalOpen, setModalOpen] = useState(false);
-  const [deleteUserId, setDeleteUserId] = useState(null);
-  const [userUpdateTrigger, setUserUpdateTrigger] = useState(false);
   const [loading, setLoading] = useState(false);
   const [userData, setUserData] = useState([]);
   const [error, setError] = useState(null);
@@ -22,29 +22,30 @@ function UsersPage() {
     listUsers()
       .then((response) => {
         setUserData(response.data);
-        setLoading(false);
       })
       .catch((_error) => {
-        setError('An error occurred during loading users');
+        setError(errorLoadingMessage);
         setUserData([]);
+      })
+      .finally(() => {
         setLoading(false);
       });
   };
 
-  const handleDeleteUser = (userId) => {
+  const onDeleteUser = (userId) => {
     deleteUser(userId)
       .then(() => {
-        setUserUpdateTrigger(true);
+        fetchUsers();
+        toast.success(successDeleteMessage);
       })
       .catch((_error) => {
-        setError('An error occurred during deleting user');
+        setError(errorDeletingMessage);
       });
   };
 
   useEffect(() => {
     fetchUsers();
-    setUserUpdateTrigger(false);
-  }, [userUpdateTrigger]);
+  }, []);
 
   useEffect(() => {
     if (error) {
@@ -53,27 +54,11 @@ function UsersPage() {
     }
   }, [error]);
 
-  const usersTableData = userData.map(
-    ({ id, username, created_at, enabled, fullname, email }) => ({
-      id,
-      username,
-      created: format(parseISO(created_at), 'MMMM dd, yyyy'),
-      actions: 'Delete',
-      enabled: enabled ? 'Enabled' : 'Disabled',
-      fullname,
-      email,
-    })
-  );
-
   return (
     <Users
-      handleDeleteUser={handleDeleteUser}
+      onDeleteUser={onDeleteUser}
       navigate={navigate}
-      setModalOpen={setModalOpen}
-      setDeleteUserId={setDeleteUserId}
-      deleteUserId={deleteUserId}
-      modalOpen={modalOpen}
-      users={usersTableData}
+      users={userData}
       loading={loading}
     />
   );

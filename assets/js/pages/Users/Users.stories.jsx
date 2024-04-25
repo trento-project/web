@@ -22,10 +22,10 @@ export default {
     },
   },
   argTypes: {
-    handleDeleteUser: {
+    onDeleteUser: {
       description: 'Function to handle deleting a user',
       control: { type: 'function' },
-      action: 'handleDeleteUser',
+      action: 'onDeleteUser',
     },
     navigate: {
       description: 'Function to navigate pages',

@@ -48,7 +48,11 @@ const navigation = [
     href: '/catalog',
     icon: EOS_LIST,
   },
-  { name: 'Users', href: '/users', icon: EOS_SUPERVISED_USER_CIRCLE_OUTLINED },
+  {
+    name: 'Users',
+    href: '/users',
+    icon: EOS_SUPERVISED_USER_CIRCLE_OUTLINED,
+  },
   {
     name: 'Settings',
     href: '/settings',

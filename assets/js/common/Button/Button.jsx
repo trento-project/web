@@ -28,10 +28,6 @@ const getButtonClasses = (type) => {
       return 'bg-white hover:opacity-75 focus:outline-none text-red-500 border border-red-500 transition ease-in duration-200 text-center font-semibold rounded shadow';
     case 'danger-bold':
       return 'bg-red-500 hover:opacity-75 focus:outline-none text-white border border-red-500 transition ease-in duration-200 text-center font-semibold rounded shadow';
-    case 'danger-no-border':
-      return 'bg-none hover:opacity-75 focus:outline-none text-red-500 border border-none transition ease-in duration-200 text-center font-semibold';
-    case 'danger-op-50-no-border':
-      return 'text-red-500  opacity-50';
     default:
       return 'bg-jungle-green-500 hover:opacity-75 focus:outline-none text-white w-full transition ease-in duration-200 text-center font-semibold rounded shadow disabled:bg-gray-400 disabled:text-gray-200';
   }
