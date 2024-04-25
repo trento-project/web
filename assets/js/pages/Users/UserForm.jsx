@@ -9,6 +9,19 @@ import Select from '@common/Select';
 import { getError } from '@lib/api/validationErrors';
 
 const REQUIRED_FIELD_TEXT = 'Required field';
+const PASSWORD_POLICY_TEXT = (
+  <div>
+    The password must be compliant with:
+    <br />
+    - at least have 8 characters
+    <br />
+    - does not have 3 consecutive repeated numbers or letters (example: 111 or
+    aaa)
+    <br />- does not have 3 consecutive sequential numbers or letters (example:
+    123 or abc)
+  </div>
+);
+
 const defaultErrors = [];
 
 const errorMessage = (message) => (
@@ -132,7 +145,7 @@ function UserForm({
           </div>
           <Label
             className="col-start-1 col-span-1"
-            info="Password policy wip..."
+            info={PASSWORD_POLICY_TEXT}
             required
           >
             Password
