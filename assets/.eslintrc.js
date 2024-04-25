@@ -66,6 +66,7 @@ module.exports = {
           '**/*.stories.*',
           '**/.storybook/**/*',
           '**/*{.,_}{test,spec}.{js,jsx}',
+          '**/test-utils/factories/*',
         ],
       },
     ],
