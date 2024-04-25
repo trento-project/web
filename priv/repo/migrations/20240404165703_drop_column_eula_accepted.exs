@@ -1,4 +1,4 @@
-defmodule Trento.Repo.Migrations.DropColumnInstallationSettingsEulaAccepted do
+defmodule Trento.Repo.Migrations.RemoveColumnInstallationSettingsEulaAccepted do
   use Ecto.Migration
 
   def change do

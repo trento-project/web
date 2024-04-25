@@ -27,6 +27,20 @@ defmodule TrentoWeb.V1.SettingsController do
     )
   end
 
+  operation :accept_eula,
+    summary: "Accept Eula",
+    tags: ["Platform"],
+    description: "Accepting EULA allows the end user to use the platform",
+    responses: [
+      ok:
+        "EULA acceptance has been correctly registered and the user may continue using the platform"
+    ]
+
+  @spec accept_eula(Plug.Conn.t(), any) :: Plug.Conn.t()
+  def accept_eula(conn, _) do
+    json(conn, %{})
+  end
+
   operation :get_api_key_settings,
     summary: "Get Api key settings",
     tags: ["Platform"],
