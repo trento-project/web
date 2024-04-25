@@ -22,7 +22,7 @@ defmodule TrentoWeb.V1.UsersController do
     policy: Trento.Users.Policy,
     action: {Phoenix.Controller, :action_name},
     user: {Pow.Plug, :current_user},
-    params: {__MODULE__, :get_resource},
+    params: {__MODULE__, :get_policy_resource},
     fallback: TrentoWeb.FallbackController
 
   action_fallback TrentoWeb.FallbackController
@@ -129,8 +129,8 @@ defmodule TrentoWeb.V1.UsersController do
     end
   end
 
-  def get_resource(%{assigns: %{fetched_user: fetched_user}}), do: fetched_user
-  def get_resource(_), do: %Trento.Users.User{}
+  def get_policy_resource(%{assigns: %{fetched_user: fetched_user}}), do: fetched_user
+  def get_policy_resource(_), do: %Trento.Users.User{}
 
   defp broadcast_update_or_locked_user(%User{id: id, locked_at: nil}),
     do: TrentoWeb.Endpoint.broadcast("users:#{id}", "user_updated", %{})
