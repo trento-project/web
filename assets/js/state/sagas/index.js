@@ -69,7 +69,7 @@ import { markDeregisterableHosts, watchHostEvents } from '@state/sagas/hosts';
 import { watchLastExecutionEvents } from '@state/sagas/lastExecutions';
 import { watchSapSystemEvents } from '@state/sagas/sapSystems';
 
-import { watchPerformLogin } from '@state/sagas/user';
+import { watchUserActions } from '@state/sagas/user';
 import { watchChecksSelectionEvents } from '@state/sagas/checksSelection';
 import { watchSoftwareUpdateSettings } from '@state/sagas/softwareUpdatesSettings';
 import { watchSoftwareUpdates } from '@state/sagas/softwareUpdates';
@@ -238,7 +238,7 @@ export default function* rootSaga() {
     watchHostEvents(),
     watchLastExecutionEvents(),
     watchNotifications(),
-    watchPerformLogin(),
+    watchUserActions(),
     watchResetState(),
     watchSapSystemEvents(),
     watchUserLoggedIn(),

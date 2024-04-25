@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { setUserAsLogged } from '@state/user';
+import { setUserAsLogged, setUser as setUserInState } from '@state/user';
 import { clearCredentialsFromStore } from '@lib/auth';
 
 export default function Guard({ redirectPath, getUser }) {
@@ -15,6 +15,7 @@ export default function Guard({ redirectPath, getUser }) {
     getUser()
       .then((trentoUser) => {
         setUser(trentoUser);
+        dispatch(setUserInState(trentoUser));
         setUserLoading(false);
         // If the user in the store is already loggedIn, means
         // that the store is hydrated so the guard is triggered on the spa full loaded
