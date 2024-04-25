@@ -48,9 +48,8 @@ defmodule TrentoWeb.V1.UsersController do
       unprocessable_entity: UnprocessableEntity.response()
     ]
 
-  def create(%{body_params: body_params} = conn, _) do
-    with user_params <- decode_body(body_params),
-         {:ok, %User{} = user} <- Users.create_user(user_params) do
+  def create(%{body_params: user_params} = conn, _) do
+    with {:ok, %User{} = user} <- Users.create_user(user_params) do
       conn
       |> put_status(:created)
       |> render("show.json", user: user)
@@ -138,7 +137,4 @@ defmodule TrentoWeb.V1.UsersController do
 
   defp broadcast_update_or_locked_user(%User{id: id}),
     do: TrentoWeb.Endpoint.broadcast("users:#{id}", "user_locked", %{})
-
-  defp decode_body(body) when is_struct(body), do: Map.from_struct(body)
-  defp decode_body(body), do: body
 end
