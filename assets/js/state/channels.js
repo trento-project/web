@@ -18,6 +18,15 @@ const registerEvents = (store, socket, channelName, events) => {
 };
 
 const processChannelEvents = (reduxStore, socket) => {
+  const {
+    user: { id },
+  } = reduxStore.getState();
+
+  registerEvents(reduxStore, socket, `users:${id}`, [
+    'user_updated',
+    'user_locked',
+    'user_deleted',
+  ]);
   registerEvents(reduxStore, socket, 'monitoring:hosts', [
     'host_software_updates_discovery_completed',
     'host_registered',
