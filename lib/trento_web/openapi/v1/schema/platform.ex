@@ -15,7 +15,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
       properties: %{
         eula_accepted: %Schema{
           type: :boolean,
-          description: "Whether the user has accepted EULA (on a Premium installation)"
+          description: "Whether the user has accepted EULA (on a Premium installation)",
+          deprecated: true
         },
         premium_subscription: %Schema{
           type: :boolean,

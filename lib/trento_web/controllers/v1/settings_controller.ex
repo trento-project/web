@@ -21,7 +21,7 @@ defmodule TrentoWeb.V1.SettingsController do
   def settings(conn, _) do
     render(conn, "settings.json",
       settings: %{
-        eula_accepted: Settings.eula_accepted?(),
+        eula_accepted: false,
         premium_subscription: Settings.premium?()
       }
     )
@@ -30,6 +30,7 @@ defmodule TrentoWeb.V1.SettingsController do
   operation :accept_eula,
     summary: "Accept Eula",
     tags: ["Platform"],
+    deprecated: true,
     description: "Accepting EULA allows the end user to use the platform",
     responses: [
       ok:
@@ -38,8 +39,6 @@ defmodule TrentoWeb.V1.SettingsController do
 
   @spec accept_eula(Plug.Conn.t(), any) :: Plug.Conn.t()
   def accept_eula(conn, _) do
-    :ok = Settings.accept_eula()
-
     json(conn, %{})
   end
 

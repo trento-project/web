@@ -16,7 +16,6 @@ import ClusterSettingsPage from '@pages/ClusterSettingsPage';
 import ClustersList from '@pages/ClusterDetails/ClustersList';
 import DatabasesOverviewPage from '@pages/DatabasesOverview';
 import DatabaseDetails from '@pages//DatabaseDetails';
-import Eula from '@pages/Eula';
 import { ExecutionResultsPage } from '@pages/ExecutionResults';
 import Guard from '@pages/Guard';
 import Home from '@pages/Home';
@@ -44,7 +43,6 @@ function App() {
   return (
     <Provider store={store}>
       <Toaster position="top-right" />
-      <Eula />
       <BrowserRouter>
         <ErrorBoundary
           FallbackComponent={SomethingWentWrong}
