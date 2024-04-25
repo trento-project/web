@@ -5,7 +5,6 @@ import {
   EOS_ERROR_OUTLINED,
 } from 'eos-icons-react';
 
-import Spinner from '@common/Spinner';
 import Tooltip from '@common/Tooltip';
 
 function Indicator({
@@ -26,9 +25,7 @@ function Indicator({
         <div className="px-2">{icon}</div>
         <div>
           <p className="font-bold">{title}</p>
-          <div className="text-gray-500">
-            <Spinner size="l" />
-          </div>
+          <div className="text-gray-500">Loading...</div>
         </div>
       </div>
     );

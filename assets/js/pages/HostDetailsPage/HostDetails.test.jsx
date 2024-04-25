@@ -254,10 +254,10 @@ describe('HostDetails component', () => {
         .closest('div');
 
       expect(
-        within(relevantPatchesElement).getByLabelText('Loading')
+        within(relevantPatchesElement).getByText('Loading...')
       ).toBeVisible();
       expect(
-        within(upgradablePackagesElement).getByLabelText('Loading')
+        within(upgradablePackagesElement).getByText('Loading...')
       ).toBeVisible();
     });
 
@@ -284,10 +284,10 @@ describe('HostDetails component', () => {
         .closest('div');
 
       expect(
-        within(relevantPatchesElement).getByLabelText('Loading')
+        within(relevantPatchesElement).getByText('Loading...')
       ).toBeVisible();
       expect(
-        within(upgradablePackagesElement).getByLabelText('Loading')
+        within(upgradablePackagesElement).getByText('Loading...')
       ).toBeVisible();
     });
   });

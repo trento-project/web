@@ -69,7 +69,7 @@ describe('AvailableSoftwareUpdates component', () => {
       <AvailableSoftwareUpdates softwareUpdatesLoading settingsConfigured />
     );
 
-    expect(screen.getAllByLabelText('Loading')).toHaveLength(2);
+    expect(screen.getAllByText('Loading...')).toHaveLength(2);
   });
 
   it('renders "SUSE Manager is not configured"', () => {
