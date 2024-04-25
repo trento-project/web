@@ -2,7 +2,12 @@
 // eslint-disable-next-line
 import { Socket } from 'phoenix';
 import { logMessage, logError } from '@lib/log';
-import { getAccessTokenFromStore } from '@lib/auth';
+import {
+  getAccessTokenFromStore,
+  getRefreshTokenFromStore,
+  refreshAccessToken,
+  storeAccessToken,
+} from '@lib/auth';
 
 export const joinChannel = (channel) => {
   channel
@@ -12,9 +17,34 @@ export const joinChannel = (channel) => {
     .receive('timeout', () => logMessage('Networking issue. Still waiting...'));
 };
 
+const refreshAuthTokenForSocket = async () => {
+  const refreshToken = getRefreshTokenFromStore();
+  if (!refreshToken) {
+    logError(
+      'could not refresh the access token for websockets, refresh token not found'
+    );
+    throw new Error('could not refresh access token for websocket connection');
+  }
+
+  const {
+    data: { access_token: accessToken },
+  } = await refreshAccessToken(refreshToken);
+  storeAccessToken(accessToken);
+};
+
+const getWebsocketParams = () => ({
+  access_token: getAccessTokenFromStore(),
+});
+
 export const initSocketConnection = () => {
   const socket = new Socket('/socket', {
-    params: { access_token: getAccessTokenFromStore() },
+    params: () => getWebsocketParams(),
+  });
+  socket.onError(async () => {
+    logMessage(
+      'socket error. trying to refresh the access token before reconnecting'
+    );
+    await refreshAuthTokenForSocket();
   });
   socket.connect();
 
