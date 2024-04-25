@@ -103,55 +103,56 @@ function Users({
           <Button
             className="inline-block mx-1 border-green-500 border"
             size="small"
+            disabled={loading}
             onClick={() => navigate('/users/new')}
           >
             Create User
           </Button>
         </div>
       </div>
-      {modalOpen && (
-        <Modal
-          open={modalOpen}
-          className="!w-3/4 !max-w-3xl"
-          onClose={() => setModalOpen(false)}
-          title="Delete User"
-        >
-          <div className="flex flex-col my-2">
-            <Banner type="warning">
-              <span className="text-sm">This Action cannot be undone</span>
-            </Banner>
-            <span className="my-1  text-gray-500">
-              Are you sure you want to delete the following user account?
-            </span>
-            {user ? (
-              <span className="my-1 mb-4 text-gray-600">{user.username}</span>
-            ) : (
-              <span className="my-1 mb-4 text-gray-600">User not found</span>
-            )}
 
-            <div className="w-1/6 h-4/5 flex">
-              <Button
-                type="danger-bold"
-                className=" mr-4"
-                onClick={() => {
-                  onDeleteUser(deleteUserID);
-                  setModalOpen(false);
-                }}
-              >
-                Delete
-              </Button>
+      <Modal
+        open={modalOpen}
+        className="!w-3/4 !max-w-3xl"
+        onClose={() => setModalOpen(false)}
+        title="Delete User"
+      >
+        <div className="flex flex-col my-2">
+          <Banner type="warning">
+            <span className="text-sm">This action cannot be undone.</span>
+          </Banner>
+          <span className="my-1  text-gray-500">
+            Are you sure you want to delete the following user account?
+          </span>
+          {user ? (
+            <span className="my-1 mb-4 text-gray-600">{user.username}</span>
+          ) : (
+            <span className="my-1 mb-4 text-gray-600">User not found</span>
+          )}
 
-              <Button
-                type="primary-white"
-                className="w-1/6"
-                onClick={() => setModalOpen(false)}
-              >
-                Cancel
-              </Button>
-            </div>
+          <div className="w-1/6 h-4/5 flex">
+            <Button
+              type="danger-bold"
+              className=" mr-4"
+              onClick={() => {
+                onDeleteUser(deleteUserID);
+                setModalOpen(false);
+              }}
+            >
+              Delete
+            </Button>
+
+            <Button
+              type="primary-white"
+              className="w-1/6"
+              onClick={() => setModalOpen(false)}
+            >
+              Cancel
+            </Button>
           </div>
-        </Modal>
-      )}
+        </div>
+      </Modal>
+
       <Table
         config={usersTableConfig}
         data={users}
