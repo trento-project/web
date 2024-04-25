@@ -14,7 +14,6 @@ export const settingsSlice = createSlice({
   },
 });
 
-export const { setIsPremium  } =
-  settingsSlice.actions;
+export const { setIsPremium } = settingsSlice.actions;
 
 export default settingsSlice.reducer;
