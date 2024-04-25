@@ -1,4 +1,5 @@
 defmodule TrentoWeb.V1.UsersControllerTest do
+  alias Trento.Abilities
   use TrentoWeb.ConnCase, async: true
 
   import OpenApiSpex.TestAssertions
@@ -11,6 +12,8 @@ defmodule TrentoWeb.V1.UsersControllerTest do
   @endpoint TrentoWeb.Endpoint
 
   setup %{conn: conn} do
+    delete_default_abilities()
+
     conn =
       conn
       |> Plug.Conn.put_private(:plug_session, %{})
@@ -30,6 +33,33 @@ defmodule TrentoWeb.V1.UsersControllerTest do
     {:ok, conn: put_req_header(conn, "accept", "application/json"), api_spec: api_spec}
   end
 
+  describe "forbidden response" do
+    test "should return forbidden on any controller action if the user does not have the right permission",
+         %{conn: conn, api_spec: api_spec} do
+      %{id: user_id} = insert(:user)
+
+      conn =
+        conn
+        |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
+        |> put_req_header("content-type", "application/json")
+
+      Enum.each(
+        [
+          get(conn, "/api/v1/users"),
+          post(conn, "/api/v1/users", %{}),
+          patch(conn, "/api/v1/users/1", %{}),
+          get(conn, "/api/v1/users/1"),
+          delete(conn, "/api/v1/users/1")
+        ],
+        fn conn ->
+          conn
+          |> json_response(:forbidden)
+          |> assert_schema("Forbidden", api_spec)
+        end
+      )
+    end
+  end
+
   describe "index" do
     test "lists all users", %{conn: conn, api_spec: api_spec} do
       %{id: user_one_id} = insert(:user)
@@ -43,6 +73,27 @@ defmodule TrentoWeb.V1.UsersControllerTest do
         |> assert_schema("UserCollection", api_spec)
 
       assert [_, %{id: ^user_one_id}, %{id: ^user_two_id}] = resp
+    end
+  end
+
+  describe "show user" do
+    test "should show the user when user exists", %{conn: conn, api_spec: api_spec} do
+      %{id: id} = insert(:user)
+
+      conn = get(conn, "/api/v1/users/#{id}")
+
+      resp =
+        conn
+        |> json_response(200)
+        |> assert_schema("UserItem", api_spec)
+
+      assert %{id: ^id} = resp
+    end
+
+    test "should not show the user when does not exists", %{conn: conn, api_spec: api_spec} do
+      get(conn, "/api/v1/users/98908098")
+      |> json_response(:not_found)
+      |> assert_schema("NotFound", api_spec)
     end
   end
 
@@ -227,5 +278,9 @@ defmodule TrentoWeb.V1.UsersControllerTest do
 
       assert_broadcast "user_deleted", %{}, 1000
     end
+  end
+
+  defp delete_default_abilities do
+    Trento.Repo.delete_all(Abilities.Ability)
   end
 end

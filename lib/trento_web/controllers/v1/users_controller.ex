@@ -14,9 +14,7 @@ defmodule TrentoWeb.V1.UsersController do
     UserUpdateRequest
   }
 
-  plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
   plug TrentoWeb.Plugs.LoadUserPlug
-  plug :get_user when action in [:show, :update, :delete]
 
   plug Bodyguard.Plug.Authorize,
     policy: Trento.Users.Policy,
@@ -24,6 +22,8 @@ defmodule TrentoWeb.V1.UsersController do
     user: {Pow.Plug, :current_user},
     params: {__MODULE__, :get_policy_resource},
     fallback: TrentoWeb.FallbackController
+
+  plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
 
   action_fallback TrentoWeb.FallbackController
 
@@ -72,8 +72,10 @@ defmodule TrentoWeb.V1.UsersController do
       unprocessable_entity: Schema.UnprocessableEntity.response()
     ]
 
-  def show(%{assigns: %{fetched_user: user}} = conn, %{id: _id}) do
-    render(conn, "show.json", user: user)
+  def show(conn, %{id: id}) do
+    with {:ok, user} <- Users.get_user(id) do
+      render(conn, "show.json", user: user)
+    end
   end
 
   operation :update,
@@ -93,8 +95,9 @@ defmodule TrentoWeb.V1.UsersController do
       forbidden: Schema.Forbidden.response()
     ]
 
-  def update(%{body_params: body_params, assigns: %{fetched_user: user}} = conn, %{id: _id}) do
-    with {:ok, %User{} = user} <- Users.update_user(user, body_params),
+  def update(%{body_params: body_params} = conn, %{id: id}) do
+    with {:ok, user} <- Users.get_user(id),
+         {:ok, %User{} = user} <- Users.update_user(user, body_params),
          :ok <- broadcast_update_or_locked_user(user) do
       render(conn, "show.json", user: user)
     end
@@ -115,22 +118,15 @@ defmodule TrentoWeb.V1.UsersController do
       forbidden: Schema.Forbidden.response()
     ]
 
-  def delete(%{assigns: %{fetched_user: user}} = conn, %{id: id}) do
-    with {:ok, %User{}} <- Users.delete_user(user),
+  def delete(conn, %{id: id}) do
+    with {:ok, user} <- Users.get_user(id),
+         {:ok, %User{}} <- Users.delete_user(user),
          :ok <- TrentoWeb.Endpoint.broadcast("users:#{id}", "user_deleted", %{}) do
       send_resp(conn, :no_content, "")
     end
   end
 
-  defp get_user(%{params: %{id: id}} = conn, _) do
-    case Users.get_user(id) do
-      {:ok, user} -> assign(conn, :fetched_user, user)
-      error -> conn |> TrentoWeb.FallbackController.call(error) |> halt()
-    end
-  end
-
-  def get_policy_resource(%{assigns: %{fetched_user: fetched_user}}), do: fetched_user
-  def get_policy_resource(_), do: %Trento.Users.User{}
+  def get_policy_resource(_), do: Trento.Users.User
 
   defp broadcast_update_or_locked_user(%User{id: id, locked_at: nil}),
     do: TrentoWeb.Endpoint.broadcast("users:#{id}", "user_updated", %{})

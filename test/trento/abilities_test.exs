@@ -5,6 +5,11 @@ defmodule Trento.AbilitiesTest do
 
   import Trento.Factory
 
+  setup do
+    Trento.Repo.delete_all(Abilities.Ability)
+    :ok
+  end
+
   describe "abilities" do
     alias Trento.Abilities.Ability
 
