@@ -494,7 +494,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
     |> Enum.filter(fn
       %{name: name} -> String.starts_with?(name, "hana_#{String.downcase(sid)}_site_lss_")
     end)
-    |> Enum.map(fn %{name: name} -> name |> String.split("_") |> Enum.at(-1) end)
+    |> Enum.map(fn %{name: name} -> name |> String.split("_site_lss_") |> Enum.at(-1) end)
     |> Enum.find("Unknown", fn site -> site != primary_site end)
   end
 
@@ -656,7 +656,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
       ^secondary_site ->
         parse_crm_cluster_property(
           cluster_properties,
-          "hana_#{String.downcase(sid)}_glob_srHook",
+          "hana_#{String.downcase(sid)}_glob_sync_state",
           "Unknown"
         )
 

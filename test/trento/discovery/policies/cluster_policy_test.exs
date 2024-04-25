@@ -2761,6 +2761,273 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                |> load_discovery_event_fixture()
                |> ClusterPolicy.handle(nil)
     end
+
+    test "should return the expected commands when a ha_cluster_discovery payload without srHooks is received" do
+      assert {:ok,
+              [
+                %RegisterClusterHost{
+                  additional_sids: [],
+                  cib_last_written: "Mon Apr 22 15:55:13 2024",
+                  cluster_id: "9ee907e0-0edc-50f8-9b4d-e26d0bc3810a",
+                  designated_controller: true,
+                  details: %HanaClusterDetails{
+                    fencing_type: "Diskless SBD",
+                    maintenance_mode: false,
+                    nodes: [
+                      %HanaClusterNode{
+                        attributes: %{},
+                        hana_status: "Unknown",
+                        indexserver_actual_role: nil,
+                        name: "hana-s-mm",
+                        nameserver_actual_role: nil,
+                        resources: [],
+                        site: nil,
+                        status: "Online",
+                        virtual_ip: nil
+                      },
+                      %HanaClusterNode{
+                        attributes: %{
+                          "hana_prd_clone_state" => "PROMOTED",
+                          "hana_prd_gra" => "2.0",
+                          "hana_prd_roles" => "master1:master:worker:master",
+                          "hana_prd_site" => "HANA_S1",
+                          "master-rsc_SAPHana_PRD_HDB01" => "150"
+                        },
+                        hana_status: "Primary",
+                        indexserver_actual_role: "master",
+                        name: "hana-s1-db1",
+                        nameserver_actual_role: "master",
+                        resources: [
+                          %ClusterResource{
+                            fail_count: 0,
+                            id: "fs_PRD_HDB01_fscheck",
+                            managed: true,
+                            role: "Started",
+                            status: "Active",
+                            type: "ocf::heartbeat:Filesystem"
+                          },
+                          %ClusterResource{
+                            fail_count: 0,
+                            id: "rsc_SAPHanaTopology_PRD_HDB01",
+                            managed: true,
+                            role: "Started",
+                            status: "Active",
+                            type: "ocf::suse:SAPHanaTopology"
+                          },
+                          %ClusterResource{
+                            id: "rsc_SAPHana_PRD_HDB01",
+                            type: "ocf::suse:SAPHanaController",
+                            role: "Master",
+                            status: "Active",
+                            fail_count: 0,
+                            managed: true
+                          },
+                          %ClusterResource{
+                            id: "rsc_ip_PRD_HDB01",
+                            type: "ocf::heartbeat:IPaddr2",
+                            role: "Started",
+                            status: "Active",
+                            fail_count: 0,
+                            managed: true
+                          },
+                          %ClusterResource{
+                            id: "rsc_nc_PRD_HDB01",
+                            type: "ocf::heartbeat:azure-lb",
+                            role: "Started",
+                            status: "Active",
+                            fail_count: 0,
+                            managed: true
+                          }
+                        ],
+                        site: "HANA_S1",
+                        status: "Online",
+                        virtual_ip: "10.23.0.30"
+                      },
+                      %HanaClusterNode{
+                        attributes: %{
+                          "hana_prd_clone_state" => "DEMOTED",
+                          "hana_prd_gra" => "2.0",
+                          "hana_prd_roles" => "slave:slave:worker:slave",
+                          "hana_prd_site" => "HANA_S1",
+                          "master-rsc_SAPHana_PRD_HDB01" => "-10000"
+                        },
+                        hana_status: "Primary",
+                        indexserver_actual_role: "slave",
+                        name: "hana-s1-db2",
+                        nameserver_actual_role: "slave",
+                        resources: [
+                          %ClusterResource{
+                            fail_count: 0,
+                            id: "fs_PRD_HDB01_fscheck",
+                            managed: true,
+                            role: "Started",
+                            status: "Active",
+                            type: "ocf::heartbeat:Filesystem"
+                          },
+                          %ClusterResource{
+                            fail_count: 0,
+                            id: "rsc_SAPHanaTopology_PRD_HDB01",
+                            managed: true,
+                            role: "Started",
+                            status: "Active",
+                            type: "ocf::suse:SAPHanaTopology"
+                          },
+                          %ClusterResource{
+                            id: "rsc_SAPHana_PRD_HDB01",
+                            type: "ocf::suse:SAPHanaController",
+                            role: "Slave",
+                            status: "Active",
+                            fail_count: 0,
+                            managed: true
+                          }
+                        ],
+                        site: "HANA_S1",
+                        status: "Online",
+                        virtual_ip: nil
+                      },
+                      %HanaClusterNode{
+                        attributes: %{
+                          "hana_prd_clone_state" => "DEMOTED",
+                          "hana_prd_gra" => "2.0",
+                          "hana_prd_roles" => "master1:master:worker:master",
+                          "hana_prd_site" => "HANA_S2",
+                          "master-rsc_SAPHana_PRD_HDB01" => "100"
+                        },
+                        hana_status: "Secondary",
+                        indexserver_actual_role: "master",
+                        name: "hana-s2-db1",
+                        nameserver_actual_role: "master",
+                        resources: [
+                          %ClusterResource{
+                            fail_count: 0,
+                            id: "fs_PRD_HDB01_fscheck",
+                            managed: true,
+                            role: "Started",
+                            status: "Active",
+                            type: "ocf::heartbeat:Filesystem"
+                          },
+                          %ClusterResource{
+                            fail_count: 0,
+                            id: "rsc_SAPHanaTopology_PRD_HDB01",
+                            managed: true,
+                            role: "Started",
+                            status: "Active",
+                            type: "ocf::suse:SAPHanaTopology"
+                          },
+                          %ClusterResource{
+                            id: "rsc_SAPHana_PRD_HDB01",
+                            type: "ocf::suse:SAPHanaController",
+                            role: "Slave",
+                            status: "Active",
+                            fail_count: 0,
+                            managed: true
+                          }
+                        ],
+                        site: "HANA_S2",
+                        status: "Online",
+                        virtual_ip: nil
+                      },
+                      %HanaClusterNode{
+                        attributes: %{
+                          "hana_prd_clone_state" => "DEMOTED",
+                          "hana_prd_gra" => "2.0",
+                          "hana_prd_roles" => "slave:slave:worker:slave",
+                          "hana_prd_site" => "HANA_S2",
+                          "master-rsc_SAPHana_PRD_HDB01" => "-12200"
+                        },
+                        hana_status: "Secondary",
+                        indexserver_actual_role: "slave",
+                        name: "hana-s2-db2",
+                        nameserver_actual_role: "slave",
+                        resources: [
+                          %ClusterResource{
+                            fail_count: 0,
+                            id: "fs_PRD_HDB01_fscheck",
+                            managed: true,
+                            role: "Started",
+                            status: "Active",
+                            type: "ocf::heartbeat:Filesystem"
+                          },
+                          %ClusterResource{
+                            fail_count: 0,
+                            id: "rsc_SAPHanaTopology_PRD_HDB01",
+                            managed: true,
+                            role: "Started",
+                            status: "Active",
+                            type: "ocf::suse:SAPHanaTopology"
+                          },
+                          %ClusterResource{
+                            id: "rsc_SAPHana_PRD_HDB01",
+                            type: "ocf::suse:SAPHanaController",
+                            role: "Slave",
+                            status: "Active",
+                            fail_count: 0,
+                            managed: true
+                          }
+                        ],
+                        site: "HANA_S2",
+                        status: "Online",
+                        virtual_ip: nil
+                      }
+                    ],
+                    sbd_devices: [],
+                    secondary_sync_state: "SOK",
+                    sites: [
+                      %HanaClusterSite{
+                        name: "HANA_S1",
+                        sr_health_state: "4",
+                        state: "Primary"
+                      },
+                      %HanaClusterSite{
+                        name: "HANA_S2",
+                        sr_health_state: "4",
+                        state: "Secondary"
+                      }
+                    ],
+                    sr_health_state: "4",
+                    stopped_resources: [
+                      %ClusterResource{
+                        id: "fs_PRD_HDB01_fscheck",
+                        type: "ocf::heartbeat:Filesystem",
+                        role: "Stopped",
+                        status: nil,
+                        fail_count: nil,
+                        managed: nil
+                      },
+                      %ClusterResource{
+                        id: "rsc_SAPHanaTopology_PRD_HDB01",
+                        type: "ocf::suse:SAPHanaTopology",
+                        role: "Stopped",
+                        status: nil,
+                        fail_count: nil,
+                        managed: nil
+                      },
+                      %ClusterResource{
+                        id: "rsc_SAPHana_PRD_HDB01",
+                        type: "ocf::suse:SAPHanaController",
+                        role: "Stopped",
+                        status: nil,
+                        fail_count: nil,
+                        managed: nil
+                      }
+                    ],
+                    system_replication_mode: "sync",
+                    system_replication_operation_mode: "logreplay"
+                  },
+                  discovered_health: :passing,
+                  host_id: "6eabc497-6067-4de9-b583-e4c63334ff64",
+                  hosts_number: 5,
+                  name: "hacluster",
+                  provider: :azure,
+                  resources_number: 17,
+                  sid: "PRD",
+                  type: :hana_scale_out
+                }
+              ]} ==
+               "hana_cluster_discovery_hana_scale_out_no_srhooks"
+               |> load_discovery_event_fixture()
+               |> ClusterPolicy.handle(nil)
+    end
   end
 
   describe "delta deregistration" do
