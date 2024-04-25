@@ -4,8 +4,8 @@ defmodule TrentoWeb.Plugs.LoadUserPlugTest do
 
   import Trento.Factory
 
-  alias TrentoWeb.Plugs.LoadUserPlug
   alias Trento.Users.User
+  alias TrentoWeb.Plugs.LoadUserPlug
 
   setup do
     conn =
