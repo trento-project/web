@@ -8,7 +8,7 @@ import { createUser } from '@lib/api/users';
 
 import UserForm from './UserForm';
 
-function CreateUser() {
+function CreateUserPage() {
   const navigate = useNavigate();
   const [savingState, setSaving] = useState(false);
   const [errorsState, setErrors] = useState([]);
@@ -52,4 +52,4 @@ function CreateUser() {
   );
 }
 
-export default CreateUser;
+export default CreateUserPage;

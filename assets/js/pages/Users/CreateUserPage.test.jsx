@@ -7,19 +7,19 @@ import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import MockAdapter from 'axios-mock-adapter';
 
-/* eslint-disable import/no-extraneous-dependencies */
+// eslint-disable-next-line import/no-extraneous-dependencies
 import * as router from 'react-router';
 
 import { networkClient } from '@lib/network';
 
 import { userFactory } from '@lib/test-utils/factories/users';
 
-import CreateUser from './CreateUser';
+import CreateUserPage from './CreateUserPage';
 
 const usersUrl = '/api/v1/users';
 const axiosMock = new MockAdapter(networkClient);
 
-describe('UserForm', () => {
+describe('CreateUserPage', () => {
   beforeEach(() => {
     axiosMock.reset();
     jest.spyOn(console, 'error').mockImplementation(() => null);
@@ -30,7 +30,7 @@ describe('UserForm', () => {
     const navigate = jest.fn();
     jest.spyOn(router, 'useNavigate').mockImplementation(() => navigate);
 
-    render(<CreateUser />);
+    render(<CreateUserPage />);
 
     await user.click(screen.getByRole('button', { name: 'Back to Users' }));
 
@@ -42,7 +42,7 @@ describe('UserForm', () => {
     const navigate = jest.fn();
     jest.spyOn(router, 'useNavigate').mockImplementation(() => navigate);
 
-    render(<CreateUser />);
+    render(<CreateUserPage />);
 
     await user.click(screen.getByRole('button', { name: 'Cancel' }));
 
@@ -57,7 +57,7 @@ describe('UserForm', () => {
 
     axiosMock.onPost(usersUrl).reply(202, {});
 
-    render(<CreateUser />);
+    render(<CreateUserPage />);
 
     await user.type(screen.getByPlaceholderText('Enter full name'), fullname);
     await user.type(screen.getByPlaceholderText('Enter email address'), email);
@@ -86,7 +86,7 @@ describe('UserForm', () => {
 
     axiosMock.onPost(usersUrl).reply(422, { errors });
 
-    render(<CreateUser />);
+    render(<CreateUserPage />);
 
     await user.type(screen.getByPlaceholderText('Enter full name'), fullname);
     await user.type(screen.getByPlaceholderText('Enter email address'), email);
