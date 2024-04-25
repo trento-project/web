@@ -95,7 +95,7 @@ function* initialDataFetch() {
   yield fork(checkApiKeyExpiration);
 
   const {
-    data: { eula_accepted, premium_subscription },
+    data: { premium_subscription },
   } = yield call(get, '/settings');
 
   if (premium_subscription) {

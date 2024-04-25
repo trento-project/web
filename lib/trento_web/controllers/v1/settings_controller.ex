@@ -30,6 +30,7 @@ defmodule TrentoWeb.V1.SettingsController do
   operation :accept_eula,
     summary: "Accept Eula",
     tags: ["Platform"],
+    deprecated: true,
     description: "Accepting EULA allows the end user to use the platform",
     responses: [
       ok:
