@@ -1,4 +1,4 @@
-defmodule TrentoWeb.V1.UserControllerTest do
+defmodule TrentoWeb.V1.UsersControllerTest do
   use TrentoWeb.ConnCase, async: true
 
   import OpenApiSpex.TestAssertions

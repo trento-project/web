@@ -1,4 +1,4 @@
-defmodule TrentoWeb.V1.UserController do
+defmodule TrentoWeb.V1.UsersController do
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
 

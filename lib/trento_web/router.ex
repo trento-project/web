@@ -147,7 +147,7 @@ defmodule TrentoWeb.Router do
              DatabaseController,
              :delete_database_instance
 
-      resources "/users", UserController, except: [:new, :edit]
+      resources "/users", UsersController, except: [:new, :edit]
 
       scope "/settings" do
         get "/", SettingsController, :settings
