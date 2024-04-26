@@ -7,8 +7,8 @@ import { toast } from 'react-hot-toast';
 import Users from './Users';
 
 const SUCCESS_DELETE_MESSAGE = 'User deleted successfully';
-const ERROR_LOADING_MESSAGE = 'An error occurred during loading users';
-const ERROR_DELETING_MESSAGE = 'An error occurred during deleting user';
+const ERROR_LOADING_MESSAGE = 'An error occurred while loading users';
+const ERROR_DELETING_MESSAGE = 'An error occurred while deleting user';
 
 function UsersPage() {
   const [loading, setLoading] = useState(true);
