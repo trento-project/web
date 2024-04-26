@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { noop, find } from 'lodash';
+import { noop } from 'lodash';
 import { format, parseISO } from 'date-fns';
 
 import Button from '@common/Button';
@@ -12,10 +12,6 @@ import Banner from '@common/Banners/Banner';
 
 const defaultUsers = [];
 
-function getUserByID(users, userID) {
-  return find(users, { id: userID }) || null;
-}
-
 function Users({
   onDeleteUser = noop,
   navigate = noop,
@@ -23,7 +19,7 @@ function Users({
   loading = false,
 }) {
   const [modalOpen, setModalOpen] = useState(false);
-  const [deleteUserID, setDeleteUserID] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
 
   const usersTableConfig = {
     pagination: true,
@@ -60,38 +56,34 @@ function Users({
         title: 'Created',
         key: 'created_at',
         render: (content, item) => (
-          <span> {format(parseISO(item.created_at), 'MMMM dd, yyyy')} </span>
+          <span>{format(parseISO(item.created_at), 'MMMM dd, yyyy')}</span>
         ),
       },
       {
         title: 'Actions',
         key: 'actions',
         render: (content, item) => (
-          <div>
-            <Tooltip
-              content="Admin user can not be deleted"
-              isEnabled={item.id === 1}
+          <Tooltip
+            content="Admin user can not be deleted"
+            isEnabled={item.id === 1}
+          >
+            <Button
+              className="text-red-500 text-left"
+              size="small"
+              type="transparent"
+              disabled={item.id === 1}
+              onClick={() => {
+                setModalOpen(true);
+                setSelectedUser(item);
+              }}
             >
-              <Button
-                className="text-red-500"
-                size="small"
-                type="transparent"
-                disabled={item.id === 1}
-                onClick={() => {
-                  setModalOpen(true);
-                  setDeleteUserID(item.id);
-                }}
-              >
-                Delete
-              </Button>
-            </Tooltip>
-          </div>
+              Delete
+            </Button>
+          </Tooltip>
         ),
       },
     ],
   };
-
-  const user = getUserByID(users, deleteUserID);
 
   return (
     <div className="flex flex-wrap">
@@ -103,7 +95,6 @@ function Users({
           <Button
             className="inline-block mx-1 border-green-500 border"
             size="small"
-            disabled={loading}
             onClick={() => navigate('/users/new')}
           >
             Create User
@@ -119,24 +110,24 @@ function Users({
       >
         <div className="flex flex-col my-2">
           <Banner type="warning">
-            <span className="text-sm">This action cannot be undone.</span>
+            <span className="text-sm">This Action cannot be undone</span>
           </Banner>
           <span className="my-1  text-gray-500">
             Are you sure you want to delete the following user account?
           </span>
-          {user ? (
-            <span className="my-1 mb-4 text-gray-600">{user.username}</span>
-          ) : (
-            <span className="my-1 mb-4 text-gray-600">User not found</span>
-          )}
+
+          <span className="my-1 mb-4 text-gray-600">
+            {selectedUser?.username}
+          </span>
 
           <div className="w-1/6 h-4/5 flex">
             <Button
               type="danger-bold"
               className=" mr-4"
               onClick={() => {
-                onDeleteUser(deleteUserID);
+                onDeleteUser(selectedUser.id);
                 setModalOpen(false);
+                setSelectedUser(null);
               }}
             >
               Delete
@@ -145,7 +136,10 @@ function Users({
             <Button
               type="primary-white"
               className="w-1/6"
-              onClick={() => setModalOpen(false)}
+              onClick={() => {
+                setModalOpen(false);
+                setSelectedUser(null);
+              }}
             >
               Cancel
             </Button>

@@ -6,13 +6,13 @@ import { toast } from 'react-hot-toast';
 
 import Users from './Users';
 
-const successDeleteMessage = 'User deleted successfully';
-const errorLoadingMessage = 'An error occurred during loading users';
-const errorDeletingMessage = 'An error occurred during deleting user';
+const SUCCESS_DELETE_MESSAGE = 'User deleted successfully';
+const ERROR_LOADING_MESSAGE = 'An error occurred during loading users';
+const ERROR_DELETING_MESSAGE = 'An error occurred during deleting user';
 
 function UsersPage() {
-  const [loading, setLoading] = useState(false);
-  const [userData, setUserData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [users, setUsers] = useState([]);
   const [error, setError] = useState(null);
 
   const navigate = useNavigate();
@@ -21,25 +21,25 @@ function UsersPage() {
     setLoading(true);
     listUsers()
       .then((response) => {
-        setUserData(response.data);
+        setUsers(response.data);
       })
       .catch((_error) => {
-        setError(errorLoadingMessage);
-        setUserData([]);
+        setError(ERROR_LOADING_MESSAGE);
+        setUsers([]);
       })
       .finally(() => {
         setLoading(false);
       });
   };
 
-  const onDeleteUser = (userId) => {
-    deleteUser(userId)
+  const onDeleteUser = (userID) => {
+    deleteUser(userID)
       .then(() => {
         fetchUsers();
-        toast.success(successDeleteMessage);
+        toast.success(SUCCESS_DELETE_MESSAGE);
       })
       .catch((_error) => {
-        setError(errorDeletingMessage);
+        setError(ERROR_DELETING_MESSAGE);
       });
   };
 
@@ -58,7 +58,7 @@ function UsersPage() {
     <Users
       onDeleteUser={onDeleteUser}
       navigate={navigate}
-      users={userData}
+      users={users}
       loading={loading}
     />
   );
