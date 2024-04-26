@@ -4,7 +4,7 @@ import { Factory } from 'fishery';
 export const userFactory = Factory.define(() => ({
   id: faker.number.int(),
   username: faker.internet.userName(),
-  created_at: faker.date.past(),
+  created_at: faker.date.past().toISOString(),
   actions: 'Delete',
   enabled: faker.datatype.boolean(),
   fullname: faker.internet.displayName(),
@@ -14,7 +14,7 @@ export const userFactory = Factory.define(() => ({
 export const adminUser = userFactory.params({
   id: 1,
   username: 'admin',
-  created_at: faker.date.past(),
+  created_at: faker.date.past().toISOString(),
   enabled: true,
   fullname: 'Trento Admin',
   email: 'admin@trento.suse.com',

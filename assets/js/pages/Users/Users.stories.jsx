@@ -2,9 +2,25 @@ import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { action } from '@storybook/addon-actions';
 
+import { adminUser, userFactory } from '@lib/test-utils/factories/users';
+
 import Users from './Users';
 
 const mockedNavigate = action('navigate');
+
+function ContainerWrapper({ children }) {
+  return (
+    <div className="flex flex-wrap max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+      {children}
+    </div>
+  );
+}
+
+const withContainerWrapper = (args) => (
+  <ContainerWrapper>
+    <Users {...args} />
+  </ContainerWrapper>
+);
 
 export default {
   title: 'Layouts/Users',
@@ -32,24 +48,6 @@ export default {
       control: { type: 'function' },
       action: 'navigate',
     },
-    setModalOpen: {
-      description: 'Function to set the modal open state',
-      control: { type: 'function' },
-      action: 'setModalOpen',
-    },
-    setDeleteUserId: {
-      description: 'Function to set the user ID to delete',
-      control: { type: 'function' },
-      action: 'setDeleteUserId',
-    },
-    deleteUserId: {
-      description: 'Current user ID marked for deletion',
-      control: { type: 'number' },
-    },
-    modalOpen: {
-      description: 'Boolean to show or hide the modal',
-      control: { type: 'boolean' },
-    },
     users: {
       description: 'Array of users',
       control: { type: 'object' },
@@ -62,50 +60,27 @@ export default {
 };
 
 export const Default = {
-  args: {
-    users: [
-      {
-        id: 1,
-        username: 'admin',
-        fullname: 'Administrator',
-        email: 'admin@example.com',
-        enabled: 'Enabled',
-        created: 'January 1, 2020',
-      },
-    ],
-  },
+  args: { users: [adminUser.build()], loading: false },
+  render: withContainerWrapper,
 };
-
 export const Loading = {
-  args: {
-    loading: true,
-  },
+  args: { loading: true },
+  render: withContainerWrapper,
 };
 export const EmptyUsersTable = {
-  args: {
-    users: [],
-  },
+  args: { users: [], loading: false },
+  render: withContainerWrapper,
 };
-
 export const UsersOverview = {
   args: {
     users: [
-      {
-        id: 1,
-        username: 'admin',
-        fullname: 'Administrator',
-        email: 'admin@example.com',
-        enabled: 'Enabled',
-        created: 'January 1, 2020',
-      },
-      {
-        id: 2,
-        username: 'user02',
-        fullname: 'User Two',
-        email: 'user02@example.com',
-        enabled: 'Disabled',
-        created: 'February 1, 2020',
-      },
+      adminUser.build(),
+      userFactory.build(),
+      userFactory.build(),
+      userFactory.build(),
+      userFactory.build(),
     ],
+    loading: false,
   },
+  render: withContainerWrapper,
 };

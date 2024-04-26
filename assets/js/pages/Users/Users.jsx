@@ -16,7 +16,7 @@ function Users({
   onDeleteUser = noop,
   navigate = noop,
   users = defaultUsers,
-  loading = false,
+  loading = true,
 }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -63,23 +63,23 @@ function Users({
         title: 'Actions',
         key: 'actions',
         render: (content, item) => (
-          <Tooltip
-            content="Admin user can not be deleted"
-            isEnabled={item.id === 1}
+          <Button
+            className="text-red-500 text-left w-auto"
+            size="small"
+            type="transparent"
+            disabled={item.id === 1}
+            onClick={() => {
+              setModalOpen(true);
+              setSelectedUser(item);
+            }}
           >
-            <Button
-              className="text-red-500 text-left"
-              size="small"
-              type="transparent"
-              disabled={item.id === 1}
-              onClick={() => {
-                setModalOpen(true);
-                setSelectedUser(item);
-              }}
+            <Tooltip
+              content="Admin user can not be deleted"
+              isEnabled={item.id === 1}
             >
               Delete
-            </Button>
-          </Tooltip>
+            </Tooltip>
+          </Button>
         ),
       },
     ],
@@ -95,13 +95,13 @@ function Users({
           <Button
             className="inline-block mx-1 border-green-500 border"
             size="small"
+            disabled={loading}
             onClick={() => navigate('/users/new')}
           >
             Create User
           </Button>
         </div>
       </div>
-
       <Modal
         open={modalOpen}
         className="!w-3/4 !max-w-3xl"
@@ -110,7 +110,7 @@ function Users({
       >
         <div className="flex flex-col my-2">
           <Banner type="warning">
-            <span className="text-sm">This Action cannot be undone</span>
+            <span className="text-sm">This action cannot be undone.</span>
           </Banner>
           <span className="my-1  text-gray-500">
             Are you sure you want to delete the following user account?
