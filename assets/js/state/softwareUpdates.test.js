@@ -3,6 +3,7 @@ import { faker } from '@faker-js/faker';
 import softwareUpdatesReducer, {
   startLoadingSoftwareUpdates,
   setSoftwareUpdates,
+  setSoftwareUpdatesConnectionError,
   setEmptySoftwareUpdates,
   setSoftwareUpdatesErrors,
 } from './softwareUpdates';
@@ -101,6 +102,7 @@ describe('SoftwareUpdates reducer', () => {
 
     expect(actual).toEqual({
       loading: false,
+      connectionError: false,
       softwareUpdates: {
         [host1]: { relevant_patches: [], upgradable_packages: [] },
         [host2]: newSoftwareUpdates,
@@ -147,6 +149,21 @@ describe('SoftwareUpdates reducer', () => {
       },
       errors: [],
     });
+  });
+
+  it('should set connection error when error occurs', () => {
+    const initialState = {
+      loading: true,
+      connectionError: false,
+      softwareUpdates: {},
+      errors: [],
+    };
+
+    const action = setSoftwareUpdatesConnectionError();
+
+    const actual = softwareUpdatesReducer(initialState, action);
+
+    expect(actual).toEqual({ ...initialState, connectionError: true });
   });
 
   it('should set errors upon if error occurred', () => {

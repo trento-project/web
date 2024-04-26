@@ -13,6 +13,11 @@ import { getInstancesOnHost } from '@state/selectors/sapSystem';
 import { getCatalog } from '@state/selectors/catalog';
 import { getLastExecution } from '@state/selectors/lastExecutions';
 import {
+  getSoftwareUpdatesSettingsLoading,
+  getSoftwareUpdatesSettingsSaved,
+} from '@state/selectors/softwareUpdatesSettings';
+import {
+  getSoftwareUpdatesConnectionError,
   getSoftwareUpdates,
   getSoftwareUpdatesStats,
 } from '@state/selectors/softwareUpdates';
@@ -26,6 +31,7 @@ import {
 } from '@state/lastExecutions';
 
 import { deregisterHost } from '@state/hosts';
+import { fetchSoftwareUpdatesSettings } from '@state/softwareUpdatesSettings';
 import { fetchSoftwareUpdates } from '@state/softwareUpdates';
 import HostDetails from './HostDetails';
 
@@ -56,6 +62,15 @@ function HostDetailsPage() {
   const { loading: softwareUpdatesLoading } = useSelector((state) =>
     getSoftwareUpdates(state)
   );
+  const softwareUpdatesSettingsLoading = useSelector((state) =>
+    getSoftwareUpdatesSettingsLoading(state)
+  );
+  const softwareUpdatesConnectionSaved = useSelector((state) =>
+    getSoftwareUpdatesSettingsSaved(state)
+  );
+  const softwareUpdatesConnectionError = useSelector((state) =>
+    getSoftwareUpdatesConnectionError(state)
+  );
   const { numRelevantPatches, numUpgradablePackages } = useSelector((state) =>
     getSoftwareUpdatesStats(state, hostID)
   );
@@ -80,6 +95,7 @@ function HostDetailsPage() {
     refreshCatalog();
     dispatch(updateLastExecution(hostID));
     dispatch(fetchSoftwareUpdates(hostID));
+    dispatch(fetchSoftwareUpdatesSettings());
   }, []);
 
   if (!host) {
@@ -110,7 +126,10 @@ function HostDetailsPage() {
       suseManagerEnabled={suseManagerEnabled}
       relevantPatches={numRelevantPatches}
       upgradablePackages={numUpgradablePackages}
+      softwareUpdatesSettingsSaved={softwareUpdatesConnectionSaved}
+      softwareUpdatesSettingsLoading={softwareUpdatesSettingsLoading}
       softwareUpdatesLoading={softwareUpdatesLoading}
+      softwareUpdatesConnectionError={softwareUpdatesConnectionError}
       softwareUpdatesTooltip={
         numRelevantPatches === undefined && numUpgradablePackages === undefined
           ? 'SUSE Manager is not available'

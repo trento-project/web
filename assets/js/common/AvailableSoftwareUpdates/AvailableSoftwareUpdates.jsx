@@ -1,31 +1,55 @@
 import React from 'react';
 import classNames from 'classnames';
-import { gt } from 'lodash';
 import { EOS_HEALING, EOS_PACKAGE_UPGRADE_OUTLINED } from 'eos-icons-react';
+import { noop, gt } from 'lodash';
 
+import Loading from './Loading';
+import SumaNotConfigured from './SumaNotConfigured';
 import Indicator from './Indicator';
+
+const containerClassNames = classNames(
+  'flex',
+  'items-center',
+  'bg-white',
+  'rounded-md',
+  'px-8',
+  'py-4',
+  'gap-x-8',
+  'shadow'
+);
 
 function AvailableSoftwareUpdates({
   className,
+  settingsConfigured = false,
   relevantPatches,
   upgradablePackages,
   tooltip,
-  loading,
+  softwareUpdatesSettingsLoading,
+  softwareUpdatesLoading,
+  connectionError = false,
+  onBackToSettings = noop,
 }) {
+  if (softwareUpdatesSettingsLoading) {
+    return <Loading className={containerClassNames} />;
+  }
+
+  if (!settingsConfigured) {
+    return (
+      <SumaNotConfigured
+        className={containerClassNames}
+        onBackToSettings={onBackToSettings}
+      />
+    );
+  }
+
   return (
     <div
       className={classNames(
-        'flex',
+        containerClassNames,
         'flex-row',
-        'items-center',
         'place-content-stretch',
         'w-full',
-        'bg-white',
-        'rounded-md',
         'm-2',
-        'p-5',
-        'gap-x-8',
-        'shadow',
         className
       )}
     >
@@ -35,7 +59,8 @@ function AvailableSoftwareUpdates({
         title="Relevant Patches"
         critical={gt(relevantPatches, 0)}
         tooltip={tooltip}
-        loading={loading}
+        loading={softwareUpdatesLoading}
+        connectionError={connectionError}
         icon={<EOS_HEALING size="xl" />}
       >
         {relevantPatches}
@@ -44,7 +69,8 @@ function AvailableSoftwareUpdates({
       <Indicator
         title="Upgradable Packages"
         tooltip={tooltip}
-        loading={loading}
+        loading={softwareUpdatesLoading}
+        connectionError={connectionError}
         icon={<EOS_PACKAGE_UPGRADE_OUTLINED size="xl" />}
       >
         {upgradablePackages}

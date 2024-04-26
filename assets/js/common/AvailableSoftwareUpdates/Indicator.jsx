@@ -3,13 +3,21 @@ import classNames from 'classnames';
 import {
   // EOS_KEYBOARD_ARROW_RIGHT_FILLED,
   EOS_ERROR_OUTLINED,
-  EOS_LOADING_ANIMATED,
 } from 'eos-icons-react';
 
 import Tooltip from '@common/Tooltip';
 
-function Indicator({ title, critical, tooltip, icon, loading, children }) {
+function Indicator({
+  title,
+  critical,
+  tooltip,
+  icon,
+  loading,
+  connectionError,
+  children,
+}) {
   const unknown = children === undefined;
+  const error = unknown || connectionError;
 
   if (loading) {
     return (
@@ -17,15 +25,7 @@ function Indicator({ title, critical, tooltip, icon, loading, children }) {
         <div className="px-2">{icon}</div>
         <div>
           <p className="font-bold">{title}</p>
-          <div className="text-gray-500">
-            <div>
-              <EOS_LOADING_ANIMATED
-                size="l"
-                className="inline align-bottom fill-gray-400"
-              />
-              Loading...
-            </div>
-          </div>
+          <div className="text-gray-500">Loading...</div>
         </div>
       </div>
     );
@@ -39,8 +39,8 @@ function Indicator({ title, critical, tooltip, icon, loading, children }) {
           <p className="font-bold">{title}</p>
           <div
             className={classNames({
-              'text-green-600': !unknown,
-              'text-gray-600': unknown,
+              'text-green-600': !error,
+              'text-gray-600': error,
             })}
           >
             {critical && (
@@ -49,10 +49,10 @@ function Indicator({ title, critical, tooltip, icon, loading, children }) {
                 className="inline align-bottom fill-red-500"
               />
             )}{' '}
-            {unknown ? (
+            {error ? (
               <div>
                 <EOS_ERROR_OUTLINED size="l" className="inline align-bottom" />{' '}
-                Unknown
+                {connectionError ? 'SUSE Manager connection failed' : 'Unknown'}
               </div>
             ) : (
               children
