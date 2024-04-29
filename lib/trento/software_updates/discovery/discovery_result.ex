@@ -6,6 +6,8 @@ defmodule Trento.SoftwareUpdates.Discovery.DiscoveryResult do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @type t :: %__MODULE__{}
+
   @primary_key {:host_id, :binary_id, autogenerate: false}
   schema "software_updates_discovery_result" do
     field :system_id, :string

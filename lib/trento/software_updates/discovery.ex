@@ -81,6 +81,13 @@ defmodule Trento.SoftwareUpdates.Discovery do
     :ok
   end
 
+  @spec get_discovery_result(String.t()) :: {:ok, list(), list()} | {:error, any()}
+  def get_discovery_result(host_id) do
+    DiscoveryResult
+    |> Repo.get(host_id)
+    |> handle_discovery_result()
+  end
+
   @spec clear_tracked_discovery_result(String.t()) :: :ok
   def clear_tracked_discovery_result(host_id) do
     Repo.delete_all(from d in DiscoveryResult, where: d.host_id == ^host_id)
@@ -253,6 +260,29 @@ defmodule Trento.SoftwareUpdates.Discovery do
        do: SoftwareUpdatesHealth.critical()
 
   defp compute_software_updates_discovery_health(_), do: SoftwareUpdatesHealth.warning()
+
+  defp handle_discovery_result(nil), do: {:error, :not_found}
+
+  defp handle_discovery_result(%DiscoveryResult{failure_reason: failure_reason})
+       when not is_nil(failure_reason),
+       do: {:error, String.to_existing_atom(failure_reason)}
+
+  defp handle_discovery_result(%DiscoveryResult{
+         relevant_patches: relevant_patches,
+         upgradable_packages: upgradable_packages
+       }) do
+    {
+      :ok,
+      normalize_discovered_result_list(relevant_patches),
+      normalize_discovered_result_list(upgradable_packages)
+    }
+  end
+
+  defp normalize_discovered_result_list(discovered_result_list),
+    do:
+      discovered_result_list
+      |> Jason.encode!()
+      |> Jason.decode!(keys: :atoms)
 
   defp adapter, do: Application.fetch_env!(:trento, __MODULE__)[:adapter]
 

@@ -619,6 +619,60 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
     end
   end
 
+  describe "retrieving software updates discovery result" do
+    test "handles non existing discovery result" do
+      host_id = Faker.UUID.v4()
+
+      assert {:error, :not_found} = Discovery.get_discovery_result(host_id)
+    end
+
+    test "successfully returns empty discoveries" do
+      %{host_id: host_id} =
+        insert(:software_updates_discovery_result, relevant_patches: [], upgradable_packages: [])
+
+      assert {:ok, [], []} == Discovery.get_discovery_result(host_id)
+    end
+
+    test "successfully returns non-empty discoveries" do
+      %{
+        host_id: host_id,
+        relevant_patches: relevant_patches,
+        upgradable_packages: upgradable_packages
+      } = insert(:software_updates_discovery_result)
+
+      assert {:ok, tracked_patches, tracked_packages} = Discovery.get_discovery_result(host_id)
+      assert length(relevant_patches) == length(tracked_patches)
+      assert length(upgradable_packages) == length(tracked_packages)
+    end
+
+    test "returns error on failed discovery result" do
+      scenarios = [
+        %{
+          failure_reason: "system_id_not_found",
+          expected_error: :system_id_not_found
+        },
+        %{
+          failure_reason: "error_getting_patches",
+          expected_error: :error_getting_patches
+        },
+        %{
+          failure_reason: "error_getting_packages",
+          expected_error: :error_getting_packages
+        }
+      ]
+
+      for %{
+            failure_reason: failure_reason,
+            expected_error: expected_error
+          } <- scenarios do
+        %{host_id: host_id} =
+          insert(:failed_software_updates_discovery_result, failure_reason: failure_reason)
+
+        assert {:error, ^expected_error} = Discovery.get_discovery_result(host_id)
+      end
+    end
+  end
+
   defp fail_on_getting_system_id(host_id, fully_qualified_domain_name, discovery_error) do
     expect(
       SoftwareUpdatesDiscoveryMock,
