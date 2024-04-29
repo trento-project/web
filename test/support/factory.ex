@@ -909,7 +909,13 @@ defmodule Trento.Factory do
       system_id: nil,
       relevant_patches: nil,
       upgradable_packages: nil,
-      failure_reason: Faker.Lorem.word()
+      failure_reason:
+        Faker.Util.pick([
+          "system_id_not_found",
+          "error_getting_patches",
+          "error_getting_packages",
+          "max_login_retries_reached"
+        ])
     }
   end
 end

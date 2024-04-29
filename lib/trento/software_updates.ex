@@ -114,7 +114,8 @@ defmodule Trento.SoftwareUpdates do
              | :not_found
              | :system_id_not_found
              | :error_getting_patches
-             | :error_getting_packages}
+             | :error_getting_packages
+             | :max_login_retries_reached}
   def get_software_updates(host_id) do
     with {:ok, _} <- get_settings(),
          {:ok, relevant_patches, upgradable_packages} <- Discovery.get_discovery_result(host_id) do

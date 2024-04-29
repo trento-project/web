@@ -658,6 +658,10 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
         %{
           failure_reason: "error_getting_packages",
           expected_error: :error_getting_packages
+        },
+        %{
+          failure_reason: "max_login_retries_reached",
+          expected_error: :max_login_retries_reached
         }
       ]
 

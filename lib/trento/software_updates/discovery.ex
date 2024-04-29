@@ -265,7 +265,7 @@ defmodule Trento.SoftwareUpdates.Discovery do
 
   defp handle_discovery_result(%DiscoveryResult{failure_reason: failure_reason})
        when not is_nil(failure_reason),
-       do: {:error, String.to_existing_atom(failure_reason)}
+       do: {:error, failure_reason_to_atom(failure_reason)}
 
   defp handle_discovery_result(%DiscoveryResult{
          relevant_patches: relevant_patches,
@@ -277,6 +277,12 @@ defmodule Trento.SoftwareUpdates.Discovery do
       normalize_discovered_result_list(upgradable_packages)
     }
   end
+
+  defp failure_reason_to_atom("system_id_not_found"), do: :system_id_not_found
+  defp failure_reason_to_atom("error_getting_patches"), do: :error_getting_patches
+  defp failure_reason_to_atom("error_getting_packages"), do: :error_getting_packages
+  defp failure_reason_to_atom("max_login_retries_reached"), do: :max_login_retries_reached
+  defp failure_reason_to_atom(_), do: :unknown_discovery_error
 
   defp normalize_discovered_result_list(discovered_result_list),
     do:

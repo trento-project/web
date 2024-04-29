@@ -516,30 +516,10 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
     test "returns errors on failed discoveries" do
       insert_software_updates_settings()
 
-      scenarios = [
-        %{
-          failure_reason: "system_id_not_found",
-          expected_error: :system_id_not_found
-        },
-        %{
-          failure_reason: "error_getting_patches",
-          expected_error: :error_getting_patches
-        },
-        %{
-          failure_reason: "error_getting_packages",
-          expected_error: :error_getting_packages
-        }
-      ]
+      %{host_id: host_id} =
+        insert(:failed_software_updates_discovery_result)
 
-      for %{
-            failure_reason: failure_reason,
-            expected_error: expected_error
-          } <- scenarios do
-        %{host_id: host_id} =
-          insert(:failed_software_updates_discovery_result, failure_reason: failure_reason)
-
-        assert {:error, ^expected_error} = SoftwareUpdates.get_software_updates(host_id)
-      end
+      assert {:error, _} = SoftwareUpdates.get_software_updates(host_id)
     end
   end
 
