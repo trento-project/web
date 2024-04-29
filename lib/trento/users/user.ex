@@ -53,6 +53,14 @@ defmodule Trento.Users.User do
     |> lock_changeset(attrs)
   end
 
+  def profile_update_changeset(user, attrs) do
+    user
+    |> pow_password_changeset(attrs)
+    |> pow_extension_changeset(attrs)
+    |> validate_password()
+    |> custom_fields_changeset(attrs)
+  end
+
   def delete_changeset(%__MODULE__{username: username} = user, %{deleted_at: deleted_at} = attrs) do
     user
     |> cast(attrs, [:deleted_at])
