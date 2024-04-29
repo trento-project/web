@@ -86,6 +86,9 @@ defmodule TrentoWeb.Router do
     scope "/v1", TrentoWeb.V1 do
       pipe_through [:api_v1]
 
+      get "/profile", ProfileController, :show
+      patch "/profile", ProfileController, :update
+
       get "/about", AboutController, :info
 
       get "/installation/api-key", InstallationController, :get_api_key
