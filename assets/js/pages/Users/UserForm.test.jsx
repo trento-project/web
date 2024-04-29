@@ -4,6 +4,7 @@ import { act, render, screen } from '@testing-library/react';
 import 'intersection-observer';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
+import { faker } from '@faker-js/faker';
 
 import { userFactory } from '@lib/test-utils/factories/users';
 
@@ -25,6 +26,8 @@ describe('UserForm', () => {
     expect(screen.getByLabelText('password-confirmation').value).toBe('');
     expect(screen.getByText('Permissions')).toBeVisible();
     expect(screen.getByText('Status')).toBeVisible();
+    expect(screen.queryByText('Created')).not.toBeInTheDocument();
+    expect(screen.queryByText('Updated')).not.toBeInTheDocument();
 
     expect(screen.getByRole('button', { name: 'Save' })).toBeVisible();
     expect(screen.getByRole('button', { name: 'Cancel' })).toBeVisible();
@@ -39,8 +42,9 @@ describe('UserForm', () => {
           fullName={fullname}
           emailAddress={email}
           username={username}
-          password={password}
-          confirmPassword={password}
+          createdAt={createdAt}
+          updatedAt={updatedAt}
+          editing
         />
       );
     });
@@ -48,11 +52,13 @@ describe('UserForm', () => {
     expect(screen.getByLabelText('fullname').value).toBe(fullname);
     expect(screen.getByLabelText('email').value).toBe(email);
     expect(screen.getByLabelText('username').value).toBe(username);
-    expect(screen.getByLabelText('password').value).toBe(password);
-    expect(screen.getByLabelText('password-confirmation').value).toBe(password);
+    expect(screen.getByLabelText('username')).toBeDisabled();
+    expect(screen.getAllByPlaceholderText('********').length).toBe(2);
+    expect(screen.getByText('Created')).toBeVisible();
+    expect(screen.getByText('Updated')).toBeVisible();
   });
 
-  it('should display a prepopulated User form with errors', () => {
+  it('should display a form with errors', () => {
     const errors = [
       {
         detail: 'Error validating fullname',
@@ -102,9 +108,29 @@ describe('UserForm', () => {
     expect(screen.getAllByText('Required field').length).toBe(5);
   });
 
-  it('should save the user', async () => {
+  it('should fail if required fields on editing mode are missing', async () => {
     const user = userEvent.setup();
-    const { fullname, email, username, password } = userFactory.build();
+    const { created_at: createdAt, updated_at: updatedAt } =
+      userFactory.build();
+
+    render(
+      <UserForm
+        saveText="Edit"
+        createdAt={createdAt}
+        updatedAt={updatedAt}
+        editing
+      />
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Edit' }));
+
+    expect(screen.getAllByText('Required field').length).toBe(3);
+  });
+
+  it('saves the user', async () => {
+    const user = userEvent.setup();
+    const { fullname, email, username } = userFactory.build();
+    const password = faker.internet.password();
     const mockOnSave = jest.fn();
 
     render(<UserForm saveText="Save" onSave={mockOnSave} />);

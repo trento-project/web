@@ -10,7 +10,8 @@ export const userFactory = Factory.define(() => ({
   enabled: faker.datatype.boolean(),
   fullname: faker.internet.displayName(),
   email: faker.internet.email(),
-  password: faker.internet.password(),
+  created_at: formatISO(faker.date.past()),
+  updated_at: formatISO(faker.date.past()),
 }));
 
 export const adminUser = userFactory.params({
