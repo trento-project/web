@@ -489,48 +489,57 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
   end
 
   describe "getting software updates" do
-    test "successfully returns software updates" do
-      insert_software_updates_settings()
-      %{id: host_id} = insert(:host, fully_qualified_domain_name: "test")
+    test "should fail when settings are not configured" do
+      %{host_id: tracked_discovery_id} = insert(:software_updates_discovery_result)
+      untracked_discovery_id = Faker.UUID.v4()
 
-      assert {:ok, %{relevant_patches: [_, _], upgradable_packages: [_, _]}} =
-               SoftwareUpdates.get_software_updates(host_id)
+      for host_id <- [tracked_discovery_id, untracked_discovery_id] do
+        assert {:error, :settings_not_configured} = SoftwareUpdates.get_software_updates(host_id)
+      end
     end
 
-    test "handles non existing hosts" do
+    test "handles non existing discovery result" do
       insert_software_updates_settings()
       host_id = Faker.UUID.v4()
 
       assert {:error, :not_found} = SoftwareUpdates.get_software_updates(host_id)
     end
 
-    test "returns errors when fetching upgradable packages" do
+    test "successfully returns software updates" do
       insert_software_updates_settings()
-      %{id: host_id} = insert(:host, fully_qualified_domain_name: "test")
+      %{host_id: host_id} = insert(:software_updates_discovery_result)
 
-      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_upgradable_packages, 1, fn _ ->
-        {:error, :error_getting_packages}
-      end)
-
-      assert {:error, :error_getting_packages} = SoftwareUpdates.get_software_updates(host_id)
+      assert {:ok, %{relevant_patches: [_, _], upgradable_packages: [_, _]}} =
+               SoftwareUpdates.get_software_updates(host_id)
     end
 
-    test "returns errors when fetching relevant_patches" do
+    test "returns errors on failed discoveries" do
       insert_software_updates_settings()
-      %{id: host_id} = insert(:host)
 
-      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_relevant_patches, 1, fn _ ->
-        {:error, :error_getting_patches}
-      end)
+      scenarios = [
+        %{
+          failure_reason: "system_id_not_found",
+          expected_error: :system_id_not_found
+        },
+        %{
+          failure_reason: "error_getting_patches",
+          expected_error: :error_getting_patches
+        },
+        %{
+          failure_reason: "error_getting_packages",
+          expected_error: :error_getting_packages
+        }
+      ]
 
-      assert {:error, :error_getting_patches} = SoftwareUpdates.get_software_updates(host_id)
-    end
+      for %{
+            failure_reason: failure_reason,
+            expected_error: expected_error
+          } <- scenarios do
+        %{host_id: host_id} =
+          insert(:failed_software_updates_discovery_result, failure_reason: failure_reason)
 
-    test "errors when non existing fqdns are attempted" do
-      insert_software_updates_settings()
-      %{id: host_id} = insert(:host, fully_qualified_domain_name: nil)
-
-      assert {:error, :fqdn_not_found} = SoftwareUpdates.get_software_updates(host_id)
+        assert {:error, ^expected_error} = SoftwareUpdates.get_software_updates(host_id)
+      end
     end
   end
 
