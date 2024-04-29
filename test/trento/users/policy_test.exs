@@ -1,9 +1,9 @@
 defmodule Trento.Users.PolicyTest do
   use ExUnit.Case
 
+  alias Trento.Abilities.Ability
   alias Trento.Users.Policy
   alias Trento.Users.User
-  alias Trento.Abilities.Ability
 
   test "should allow read operations if the user has all:all ability" do
     user = %User{abilities: [%Ability{name: "all", resource: "all"}]}
@@ -38,7 +38,7 @@ defmodule Trento.Users.PolicyTest do
   end
 
   test "should disallow other abilities" do
-    user = %User{abilities: [%Ability{name: "all", resource: "all"}]}
+    user = %User{abilities: [%Ability{name: "other", resource: "other"}]}
 
     Enum.each([:update, :create, :index, :show, :delete], fn action ->
       assert true == Policy.authorize(action, user, User)

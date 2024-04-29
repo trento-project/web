@@ -6,8 +6,8 @@ defmodule TrentoWeb.V1.UsersControllerTest do
   import TrentoWeb.ChannelCase
   import Trento.Factory
 
-  alias TrentoWeb.OpenApi.V1.ApiSpec
   alias Trento.Abilities
+  alias TrentoWeb.OpenApi.V1.ApiSpec
 
   @endpoint TrentoWeb.Endpoint
 
