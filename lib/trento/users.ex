@@ -49,7 +49,7 @@ defmodule Trento.Users do
     |> Repo.insert()
   end
 
-  def update_user(%User{id: 1}, _), do: {:error, :operation_not_permitted}
+  def update_user(%User{id: 1}, _), do: {:error, :forbidden}
 
   def update_user(%User{locked_at: nil} = user, %{enabled: false} = attrs) do
     do_update(user, Map.put(attrs, :locked_at, DateTime.utc_now()))
@@ -64,7 +64,7 @@ defmodule Trento.Users do
     do_update(user, Map.put(attrs, :locked_at, nil))
   end
 
-  def delete_user(%User{id: 1}), do: {:error, :operation_not_permitted}
+  def delete_user(%User{id: 1}), do: {:error, :forbidden}
 
   def delete_user(%User{} = user) do
     user

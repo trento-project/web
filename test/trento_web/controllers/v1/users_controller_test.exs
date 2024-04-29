@@ -1,5 +1,4 @@
 defmodule TrentoWeb.V1.UsersControllerTest do
-  alias Trento.Abilities
   use TrentoWeb.ConnCase, async: true
 
   import OpenApiSpex.TestAssertions
@@ -8,6 +7,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
   import Trento.Factory
 
   alias TrentoWeb.OpenApi.V1.ApiSpec
+  alias Trento.Abilities
 
   @endpoint TrentoWeb.Endpoint
 

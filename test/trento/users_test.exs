@@ -184,12 +184,12 @@ defmodule Trento.UsersTest do
     end
 
     test "update_user/2 does not update user with id 1" do
-      assert {:error, :operation_not_permitted} =
+      assert {:error, :forbidden} =
                Users.update_user(%User{id: 1}, %{fullname: "new fullname"})
     end
 
     test "delete_user/2 does not delete user with id 1" do
-      assert {:error, :operation_not_permitted} = Users.delete_user(%User{id: 1})
+      assert {:error, :forbidden} = Users.delete_user(%User{id: 1})
     end
 
     test "delete_user/1 deletes the user" do

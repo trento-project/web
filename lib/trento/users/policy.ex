@@ -16,12 +16,15 @@ defmodule Trento.Users.Policy do
 
   def authorize(_, _, _), do: false
 
-  defp has_write_ability?(user), do: has_global_ability?(user) or has_users_all_ability?(user)
   defp has_read_ability?(user), do: has_global_ability?(user) or has_users_all_ability?(user)
+  defp has_write_ability?(user), do: has_global_ability?(user) or has_users_all_ability?(user)
 
-  defp has_global_ability?(%User{abilities: abilities}),
-    do: Enum.any?(abilities, &(&1.name == "all" and &1.resource == "all"))
+  defp has_global_ability?(%User{} = user),
+    do: user_has_ability?(user, %{name: "all", resource: "all"})
 
-  defp has_users_all_ability?(%User{abilities: abilities}),
-    do: Enum.any?(abilities, &(&1.name == "users" and &1.resource == "all"))
+  defp has_users_all_ability?(%User{} = user),
+    do: user_has_ability?(user, %{name: "all", resource: "users"})
+
+  defp user_has_ability?(%User{abilities: abilities}, %{name: name, resource: resource}),
+    do: Enum.any?(abilities, &(&1.name == name and &1.resource == resource))
 end
