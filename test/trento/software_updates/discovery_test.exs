@@ -12,6 +12,7 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
   }
 
   alias Trento.SoftwareUpdates.Discovery
+  alias Trento.SoftwareUpdates.Discovery.DiscoveryResult
   alias Trento.SoftwareUpdates.Discovery.Mock, as: SoftwareUpdatesDiscoveryMock
 
   require Trento.SoftwareUpdates.Enums.AdvisoryType, as: AdvisoryType
@@ -20,57 +21,95 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
   setup :verify_on_exit!
 
   describe "Discovering software updates for a specific host" do
-    test "should return an error when a null FQDN is provided" do
-      host_id = Faker.UUID.v4()
+    test "should handle failures and track causing reasons" do
+      scenarios = [
+        %{
+          name: "should return an error when a null FQDN is provided",
+          host_id: Faker.UUID.v4(),
+          fully_qualified_domain_name: nil,
+          expected_error: :host_without_fqdn,
+          expect_tracked_discovery: false
+        },
+        %{
+          name: "should handle failure when getting host's system id",
+          host_id: Faker.UUID.v4(),
+          fully_qualified_domain_name: Faker.Internet.domain_name(),
+          failure_setup: fn scenario ->
+            fail_on_getting_system_id(
+              scenario.host_id,
+              scenario.fully_qualified_domain_name,
+              scenario.expected_error
+            )
+          end,
+          expected_error: :some_error_while_getting_system_id
+        },
+        %{
+          name: "should handle failure when getting relevant patches",
+          host_id: Faker.UUID.v4(),
+          fully_qualified_domain_name: Faker.Internet.domain_name(),
+          failure_setup: fn scenario ->
+            fail_on_getting_relevant_patches(
+              scenario.host_id,
+              scenario.fully_qualified_domain_name,
+              100,
+              scenario.expected_error
+            )
+          end,
+          expected_error: :some_error_while_getting_relevant_patches
+        },
+        %{
+          name: "should handle failure when getting upgradable packages",
+          host_id: Faker.UUID.v4(),
+          fully_qualified_domain_name: Faker.Internet.domain_name(),
+          failure_setup: fn scenario ->
+            fail_on_getting_upgradable_packages(
+              scenario.host_id,
+              scenario.fully_qualified_domain_name,
+              100,
+              scenario.expected_error
+            )
+          end,
+          expected_error: :some_error_while_getting_relevant_patches
+        },
+        %{
+          name: "should handle failure when dispatching discovery completion command",
+          host_id: Faker.UUID.v4(),
+          fully_qualified_domain_name: Faker.Internet.domain_name(),
+          failure_setup: fn scenario ->
+            fail_on_dispatching_completion_command(
+              scenario.host_id,
+              scenario.fully_qualified_domain_name,
+              100,
+              scenario.expected_error
+            )
+          end,
+          expected_error: :error_while_dispatching_completion_command
+        }
+      ]
 
-      assert {:error, :host_without_fqdn} =
-               Discovery.discover_host_software_updates(host_id, nil)
-    end
+      for %{
+            host_id: host_id,
+            fully_qualified_domain_name: fully_qualified_domain_name,
+            expected_error: expected_error
+          } = scenario <- scenarios do
+        failure_setup = Map.get(scenario, :failure_setup, fn _ -> nil end)
+        failure_setup.(scenario)
 
-    test "should handle failure when getting host's system id" do
-      host_id = Faker.UUID.v4()
-      fully_qualified_domain_name = Faker.Internet.domain_name()
+        {:error, ^expected_error} =
+          Discovery.discover_host_software_updates(host_id, fully_qualified_domain_name)
 
-      discovery_error = :some_error_while_getting_system_id
+        if Map.get(scenario, :expect_tracked_discovery, true) do
+          stored_failure = Atom.to_string(expected_error)
 
-      fail_on_getting_system_id(host_id, fully_qualified_domain_name, discovery_error)
-
-      {:error, ^discovery_error} =
-        Discovery.discover_host_software_updates(host_id, fully_qualified_domain_name)
-    end
-
-    test "should handle failure when getting relevant patches" do
-      host_id = Faker.UUID.v4()
-      fully_qualified_domain_name = Faker.Internet.domain_name()
-      system_id = 100
-      discovery_error = :some_error_while_getting_relevant_patches
-
-      fail_on_getting_relevant_patches(
-        host_id,
-        fully_qualified_domain_name,
-        system_id,
-        discovery_error
-      )
-
-      {:error, ^discovery_error} =
-        Discovery.discover_host_software_updates(host_id, fully_qualified_domain_name)
-    end
-
-    test "should handle failure when dispatching discovery completion command" do
-      host_id = Faker.UUID.v4()
-      fully_qualified_domain_name = Faker.Internet.domain_name()
-      system_id = 100
-      dispatching_error = :error_while_dispatching_completion_command
-
-      fail_on_dispatching_completion_command(
-        host_id,
-        fully_qualified_domain_name,
-        system_id,
-        dispatching_error
-      )
-
-      {:error, ^dispatching_error} =
-        Discovery.discover_host_software_updates(host_id, fully_qualified_domain_name)
+          assert %DiscoveryResult{
+                   host_id: ^host_id,
+                   system_id: nil,
+                   relevant_patches: nil,
+                   upgradable_packages: nil,
+                   failure_reason: ^stored_failure
+                 } = Trento.Repo.get(DiscoveryResult, host_id)
+        end
+      end
     end
 
     test "should handle failure when SUMA settings are not configured" do
@@ -105,6 +144,7 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
             %{advisory_type: AdvisoryType.bugfix()},
             %{advisory_type: AdvisoryType.enhancement()}
           ],
+          discovered_upgradable_packages: build_list(3, :upgradable_package),
           expected_health: SoftwareUpdatesHealth.critical()
         },
         %{
@@ -112,31 +152,37 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
             %{advisory_type: AdvisoryType.bugfix()},
             %{advisory_type: AdvisoryType.enhancement()}
           ],
+          discovered_upgradable_packages: build_list(3, :upgradable_package),
           expected_health: SoftwareUpdatesHealth.warning()
         },
         %{
           discovered_relevant_patches: [
             %{advisory_type: AdvisoryType.enhancement()}
           ],
+          discovered_upgradable_packages: [],
           expected_health: SoftwareUpdatesHealth.warning()
         },
         %{
           discovered_relevant_patches: [
             %{advisory_type: AdvisoryType.bugfix()}
           ],
+          discovered_upgradable_packages: build_list(3, :upgradable_package),
           expected_health: SoftwareUpdatesHealth.warning()
         },
         %{
           discovered_relevant_patches: [],
+          discovered_upgradable_packages: build_list(3, :upgradable_package),
           expected_health: SoftwareUpdatesHealth.passing()
         }
       ]
 
       for %{
             discovered_relevant_patches: discovered_relevant_patches,
+            discovered_upgradable_packages: discovered_upgradable_packages,
             expected_health: expected_health
           } <- scenarios do
         host_id = Faker.UUID.v4()
+
         fully_qualified_domain_name = Faker.Internet.domain_name()
         system_id = 100
 
@@ -153,6 +199,12 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
         )
 
         expect(
+          SoftwareUpdatesDiscoveryMock,
+          :get_upgradable_packages,
+          fn ^system_id -> {:ok, discovered_upgradable_packages} end
+        )
+
+        expect(
           Trento.Commanded.Mock,
           :dispatch,
           fn %CompleteSoftwareUpdatesDiscovery{
@@ -163,8 +215,23 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
           end
         )
 
-        {:ok, ^host_id, ^system_id, ^discovered_relevant_patches} =
+        {:ok, ^host_id, ^system_id, ^discovered_relevant_patches, ^discovered_upgradable_packages} =
           Discovery.discover_host_software_updates(host_id, fully_qualified_domain_name)
+
+        stored_discovered_relevant_patches = to_stored_representation(discovered_relevant_patches)
+
+        stored_discovered_upgradable_packages =
+          to_stored_representation(discovered_upgradable_packages)
+
+        stored_system_id = "#{system_id}"
+
+        assert %DiscoveryResult{
+                 host_id: ^host_id,
+                 system_id: ^stored_system_id,
+                 relevant_patches: ^stored_discovered_relevant_patches,
+                 upgradable_packages: ^stored_discovered_upgradable_packages,
+                 failure_reason: nil
+               } = Trento.Repo.get(DiscoveryResult, host_id)
       end
     end
   end
@@ -174,6 +241,11 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
       expect(SoftwareUpdatesDiscoveryMock, :setup, fn -> :ok end)
 
       assert {:ok, {[], []}} = Discovery.discover_software_updates()
+
+      assert 0 ==
+               DiscoveryResult
+               |> Trento.Repo.all()
+               |> length()
     end
 
     test "should handle authentication error" do
@@ -205,6 +277,11 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
       Enum.each([host_id1, host_id2], fn host_id ->
         assert {:error, host_id, :auth_error} in errored_discoveries
       end)
+
+      assert 2 ==
+               DiscoveryResult
+               |> Trento.Repo.all()
+               |> length()
     end
 
     test "should handle SUMA settings not configured error" do
@@ -239,6 +316,11 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
       Enum.each([host_id1, host_id2], fn host_id ->
         assert {:error, host_id, :host_without_fqdn} in errored_discoveries
       end)
+
+      assert 0 ==
+               DiscoveryResult
+               |> Trento.Repo.all()
+               |> length()
     end
 
     test "should handle errors when getting a system id" do
@@ -253,6 +335,13 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
       {:ok, {[], errored_discoveries}} = Discovery.discover_software_updates()
 
       assert {:error, host_id, discovery_error} in errored_discoveries
+
+      assert 1 ==
+               DiscoveryResult
+               |> Trento.Repo.all()
+               |> length()
+
+      assert_failure_result_tracked(host_id, discovery_error)
     end
 
     test "should handle errors when getting relevant patches" do
@@ -261,7 +350,7 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
       %{id: host_id, fully_qualified_domain_name: fully_qualified_domain_name} = insert(:host)
 
       system_id = 100
-      discovery_error = {:error, :some_error_while_getting_relevant_patches}
+      discovery_error = :some_error_while_getting_relevant_patches
 
       fail_on_getting_relevant_patches(
         host_id,
@@ -273,6 +362,40 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
       {:ok, {[], errored_discoveries}} = Discovery.discover_software_updates()
 
       assert {:error, host_id, discovery_error} in errored_discoveries
+
+      assert 1 ==
+               DiscoveryResult
+               |> Trento.Repo.all()
+               |> length()
+
+      assert_failure_result_tracked(host_id, discovery_error)
+    end
+
+    test "should handle errors when getting upgradable packages" do
+      expect(SoftwareUpdatesDiscoveryMock, :setup, fn -> :ok end)
+
+      %{id: host_id, fully_qualified_domain_name: fully_qualified_domain_name} = insert(:host)
+
+      system_id = 100
+      discovery_error = :some_error_while_getting_upgradable_packages
+
+      fail_on_getting_upgradable_packages(
+        host_id,
+        fully_qualified_domain_name,
+        system_id,
+        discovery_error
+      )
+
+      {:ok, {[], errored_discoveries}} = Discovery.discover_software_updates()
+
+      assert {:error, host_id, discovery_error} in errored_discoveries
+
+      assert 1 ==
+               DiscoveryResult
+               |> Trento.Repo.all()
+               |> length()
+
+      assert_failure_result_tracked(host_id, discovery_error)
     end
 
     test "should handle errors when dispatching discovery completion command" do
@@ -294,6 +417,13 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
       {:ok, {[], errored_discoveries}} = Discovery.discover_software_updates()
 
       assert {:error, host_id, dispatching_error} in errored_discoveries
+
+      assert 1 ==
+               DiscoveryResult
+               |> Trento.Repo.all()
+               |> length()
+
+      assert_failure_result_tracked(host_id, dispatching_error)
     end
 
     test "should complete discovery" do
@@ -368,6 +498,15 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
         end
       )
 
+      upgradable_packages = build_list(3, :upgradable_package)
+
+      expect(
+        SoftwareUpdatesDiscoveryMock,
+        :get_upgradable_packages,
+        2,
+        fn _ -> {:ok, upgradable_packages} end
+      )
+
       expect(
         Trento.Commanded.Mock,
         :dispatch,
@@ -386,13 +525,32 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
       assert length(errored_discoveries) == 2
 
       assert [
-               {:ok, host_id1, system_id1, discovered_relevant_patches},
-               {:ok, host_id3, system_id3, discovered_relevant_patches}
+               {:ok, host_id1, system_id1, discovered_relevant_patches, upgradable_packages},
+               {:ok, host_id3, system_id3, discovered_relevant_patches, upgradable_packages}
              ] ==
                successful_discoveries
 
       assert {:error, host_id2, :some_error} in errored_discoveries
       assert {:error, host_id4, :host_without_fqdn} in errored_discoveries
+
+      assert 3 ==
+               DiscoveryResult
+               |> Trento.Repo.all()
+               |> length()
+
+      assert_failure_result_tracked(host_id2, :some_error)
+
+      assert nil == Trento.Repo.get(DiscoveryResult, host_id4)
+
+      assert %DiscoveryResult{
+               host_id: ^host_id1,
+               failure_reason: nil
+             } = Trento.Repo.get(DiscoveryResult, host_id1)
+
+      assert %DiscoveryResult{
+               host_id: ^host_id3,
+               failure_reason: nil
+             } = Trento.Repo.get(DiscoveryResult, host_id3)
     end
   end
 
@@ -426,6 +584,39 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
 
       assert :ok = Discovery.clear_software_updates_discoveries()
     end
+
+    test "should clear a previously tracked software updates discovery result" do
+      %{host_id: host_id} = insert(:software_updates_discovery_result)
+      insert_list(4, :software_updates_discovery_result)
+
+      assert %DiscoveryResult{host_id: ^host_id} = Trento.Repo.get(DiscoveryResult, host_id)
+
+      assert :ok == Discovery.clear_tracked_discovery_result(host_id)
+
+      assert nil == Trento.Repo.get(DiscoveryResult, host_id)
+
+      assert 4 ==
+               DiscoveryResult
+               |> Trento.Repo.all()
+               |> length()
+    end
+
+    test "should ignore not tracked software updates discovery results" do
+      insert_list(4, :software_updates_discovery_result)
+
+      host_id = Faker.UUID.v4()
+
+      assert nil == Trento.Repo.get(DiscoveryResult, host_id)
+
+      assert :ok == Discovery.clear_tracked_discovery_result(host_id)
+
+      assert nil == Trento.Repo.get(DiscoveryResult, host_id)
+
+      assert 4 ==
+               DiscoveryResult
+               |> Trento.Repo.all()
+               |> length()
+    end
   end
 
   defp fail_on_getting_system_id(host_id, fully_qualified_domain_name, discovery_error) do
@@ -438,6 +629,13 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
     expect(
       SoftwareUpdatesDiscoveryMock,
       :get_relevant_patches,
+      0,
+      fn _ -> :ok end
+    )
+
+    expect(
+      SoftwareUpdatesDiscoveryMock,
+      :get_upgradable_packages,
       0,
       fn _ -> :ok end
     )
@@ -473,6 +671,49 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
     )
 
     expect(
+      SoftwareUpdatesDiscoveryMock,
+      :get_upgradable_packages,
+      0,
+      fn _ -> :ok end
+    )
+
+    expect(
+      Trento.Commanded.Mock,
+      :dispatch,
+      fn %CompleteSoftwareUpdatesDiscovery{
+           host_id: ^host_id,
+           health: SoftwareUpdatesHealth.unknown()
+         } ->
+        :ok
+      end
+    )
+  end
+
+  defp fail_on_getting_upgradable_packages(
+         host_id,
+         fully_qualified_domain_name,
+         system_id,
+         discovery_error
+       ) do
+    expect(
+      SoftwareUpdatesDiscoveryMock,
+      :get_system_id,
+      fn ^fully_qualified_domain_name -> {:ok, system_id} end
+    )
+
+    expect(
+      SoftwareUpdatesDiscoveryMock,
+      :get_relevant_patches,
+      fn ^system_id -> {:ok, [%{advisory_type: AdvisoryType.security_advisory()}]} end
+    )
+
+    expect(
+      SoftwareUpdatesDiscoveryMock,
+      :get_upgradable_packages,
+      fn _ -> {:error, discovery_error} end
+    )
+
+    expect(
       Trento.Commanded.Mock,
       :dispatch,
       fn %CompleteSoftwareUpdatesDiscovery{
@@ -503,6 +744,12 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
     )
 
     expect(
+      SoftwareUpdatesDiscoveryMock,
+      :get_upgradable_packages,
+      fn _ -> {:ok, build_list(3, :upgradable_package)} end
+    )
+
+    expect(
       Trento.Commanded.Mock,
       :dispatch,
       fn %CompleteSoftwareUpdatesDiscovery{
@@ -523,5 +770,23 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
         :ok
       end
     )
+  end
+
+  defp assert_failure_result_tracked(host_id, failure_reason) do
+    stored_failure = Atom.to_string(failure_reason)
+
+    assert %DiscoveryResult{
+             host_id: ^host_id,
+             system_id: nil,
+             relevant_patches: nil,
+             upgradable_packages: nil,
+             failure_reason: ^stored_failure
+           } = Trento.Repo.get(DiscoveryResult, host_id)
+  end
+
+  defp to_stored_representation(map_with_atoms) do
+    map_with_atoms
+    |> Jason.encode!()
+    |> Jason.decode!()
   end
 end

@@ -8,7 +8,10 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscovery
     application: Trento.Commanded,
     name: "software_updates_discovery_event_handler"
 
-  alias Trento.Hosts.Events.SoftwareUpdatesDiscoveryRequested
+  alias Trento.Hosts.Events.{
+    SoftwareUpdatesDiscoveryCleared,
+    SoftwareUpdatesDiscoveryRequested
+  }
 
   alias Trento.SoftwareUpdates.Discovery
 
@@ -23,4 +26,12 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscovery
 
     :ok
   end
+
+  def handle(
+        %SoftwareUpdatesDiscoveryCleared{
+          host_id: host_id
+        },
+        _
+      ),
+      do: Discovery.clear_tracked_discovery_result(host_id)
 end
