@@ -3,12 +3,12 @@ import { Link } from 'react-router-dom';
 import { noop } from 'lodash';
 import { format, parseISO } from 'date-fns';
 
-import Button from '@common/Button';
-import Table from '@common/Table';
-import PageHeader from '@common/PageHeader';
-import Modal from '@common/Modal';
-import Tooltip from '@common/Tooltip';
 import Banner from '@common/Banners/Banner';
+import Button from '@common/Button';
+import Modal from '@common/Modal';
+import PageHeader from '@common/PageHeader';
+import Table from '@common/Table';
+import Tooltip from '@common/Tooltip';
 
 const defaultUsers = [];
 
@@ -19,7 +19,7 @@ function Users({
   loading = true,
 }) {
   const [modalOpen, setModalOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
+  const [user, setUser] = useState(null);
 
   const usersTableConfig = {
     pagination: true,
@@ -70,7 +70,7 @@ function Users({
             disabled={item.id === 1}
             onClick={() => {
               setModalOpen(true);
-              setSelectedUser(item);
+              setUser(item);
             }}
           >
             <Tooltip
@@ -116,18 +116,16 @@ function Users({
             Are you sure you want to delete the following user account?
           </span>
 
-          <span className="my-1 mb-4 text-gray-600">
-            {selectedUser?.username}
-          </span>
+          <span className="my-1 mb-4 text-gray-600">{user?.username}</span>
 
           <div className="w-1/6 h-4/5 flex">
             <Button
               type="danger-bold"
               className=" mr-4"
               onClick={() => {
-                onDeleteUser(selectedUser.id);
+                onDeleteUser(user.id);
                 setModalOpen(false);
-                setSelectedUser(null);
+                setUser(null);
               }}
             >
               Delete
@@ -138,7 +136,7 @@ function Users({
               className="w-1/6"
               onClick={() => {
                 setModalOpen(false);
-                setSelectedUser(null);
+                setUser(null);
               }}
             >
               Cancel

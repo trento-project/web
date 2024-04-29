@@ -53,7 +53,8 @@ describe('UsersPage', () => {
     });
     const toolTipText = 'Admin user can not be deleted';
     const bannerText = 'This action cannot be undone.';
-    const modalWarningText = 'This action cannot be undone.';
+    const modalWarningText =
+      'Are you sure you want to delete the following user account?';
     axiosMock.onGet('/api/v1/users').reply(200, [admin, user]);
 
     await act(async () => {
@@ -61,16 +62,16 @@ describe('UsersPage', () => {
     });
 
     expect(await screen.getByText(admin.username)).toBeVisible();
-    expect(await screen.getByText(admin.email)).toBeVisible();
     expect(await screen.getByText(admin.fullname)).toBeVisible();
-    expect(await screen.getByText(exptedCreationTime[0])).toBeVisible();
+    expect(await screen.getByText(admin.email)).toBeVisible();
     expect(await screen.getAllByText('Enabled').length).toBe(1);
+    expect(await screen.getByText(exptedCreationTime[0])).toBeVisible();
 
     expect(await screen.getByText(user.username)).toBeVisible();
-    expect(await screen.getByText(user.email)).toBeVisible();
     expect(await screen.getByText(user.fullname)).toBeVisible();
-    expect(await screen.getByText(exptedCreationTime[1])).toBeVisible();
+    expect(await screen.getByText(user.email)).toBeVisible();
     expect(await screen.getAllByText('Disabled').length).toBe(1);
+    expect(await screen.getByText(exptedCreationTime[1])).toBeVisible();
 
     let deleteButtons = screen.getAllByText('Delete');
     expect(deleteButtons.length).toBe(2);
@@ -78,13 +79,13 @@ describe('UsersPage', () => {
     expect(await screen.findByText(toolTipText)).toBeVisible();
 
     await userEvent.click(deleteButtons[1]);
-    expect(await screen.getByText(modalWarningText)).toBeVisible();
     expect(await screen.getByText(bannerText)).toBeVisible();
+    expect(await screen.getByText(modalWarningText)).toBeVisible();
     expect(screen.getAllByText(user.username)[1]).toBeVisible();
+
     deleteButtons = screen.getAllByText('Delete');
-    await userEvent.click(deleteButtons[2]);
-    axiosMock.onDelete(`/api/v1/users/${user.id}`).reply(200);
-    await waitFor(() => {
+    userEvent.click(deleteButtons[2]);
+    waitFor(() => {
       expect(axiosMock.history.delete.length).toBe(1);
       expect(axiosMock.history.delete[0].url).toBe(`/users/${user.id}`);
     });
