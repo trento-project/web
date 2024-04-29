@@ -132,7 +132,7 @@ function HostDetailsPage() {
       softwareUpdatesConnectionError={softwareUpdatesConnectionError}
       softwareUpdatesTooltip={
         numRelevantPatches === undefined && numUpgradablePackages === undefined
-          ? 'SUSE Manager is not available'
+          ? 'SUSE Manager was not able to retrieve the requested data'
           : undefined
       }
       cleanUpHost={() => {

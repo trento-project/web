@@ -287,6 +287,7 @@ export const SuseManagerUnknown = {
     suseManagerEnabled: true,
     relevantPatches: undefined,
     upgradablePackages: undefined,
-    softwareUpdatesTooltip: 'SUSE Manager is not available',
+    softwareUpdatesTooltip:
+      'SUSE Manager was not able to retrieve the requested data',
   },
 };

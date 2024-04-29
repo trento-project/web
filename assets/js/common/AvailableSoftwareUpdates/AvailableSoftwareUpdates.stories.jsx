@@ -75,7 +75,10 @@ export const Cool = {
 export const NoSettingsConfigured = { args: { settingsConfigured: false } };
 
 export const Unknown = {
-  args: { tooltip: 'SUSE Manager is not available', settingsConfigured: true },
+  args: {
+    tooltip: 'SUSE Manager was not able to retrieve the requested data',
+    settingsConfigured: true,
+  },
 };
 
 export const SoftwareUpdateSettingsLoading = {
