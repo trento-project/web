@@ -79,7 +79,6 @@ defmodule Trento.Hosts.Host do
     CompleteHostChecksExecution,
     CompleteSoftwareUpdatesDiscovery,
     DeregisterHost,
-    DiscoverSoftwareUpdates,
     RegisterHost,
     RequestHostDeregistration,
     RollUpHost,
@@ -550,25 +549,6 @@ defmodule Trento.Hosts.Host do
   end
 
   # Software Updates Discovery
-
-  def execute(
-        %Host{fully_qualified_domain_name: nil},
-        %DiscoverSoftwareUpdates{}
-      ),
-      do: []
-
-  def execute(
-        %Host{
-          host_id: host_id,
-          fully_qualified_domain_name: fully_qualified_domain_name
-        },
-        %DiscoverSoftwareUpdates{}
-      ) do
-    %SoftwareUpdatesDiscoveryRequested{
-      host_id: host_id,
-      fully_qualified_domain_name: fully_qualified_domain_name
-    }
-  end
 
   def execute(
         %Host{
