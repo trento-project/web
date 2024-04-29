@@ -16,7 +16,6 @@ defmodule Trento.Router do
     CompleteHostChecksExecution,
     CompleteSoftwareUpdatesDiscovery,
     DeregisterHost,
-    DiscoverSoftwareUpdates,
     RegisterHost,
     RequestHostDeregistration,
     RollUpHost,
@@ -64,7 +63,6 @@ defmodule Trento.Router do
              RequestHostDeregistration,
              DeregisterHost,
              CompleteHostChecksExecution,
-             DiscoverSoftwareUpdates,
              CompleteSoftwareUpdatesDiscovery,
              ClearSoftwareUpdatesDiscovery
            ],

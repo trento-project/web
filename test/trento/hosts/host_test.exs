@@ -8,7 +8,6 @@ defmodule Trento.Hosts.HostTest do
     CompleteHostChecksExecution,
     CompleteSoftwareUpdatesDiscovery,
     DeregisterHost,
-    DiscoverSoftwareUpdates,
     RegisterHost,
     RequestHostDeregistration,
     RollUpHost,
@@ -1597,7 +1596,6 @@ defmodule Trento.Hosts.HostTest do
   describe "software updates discovery" do
     test "should not accept software updates discovery commands if a host is not registered yet" do
       commands = [
-        %DiscoverSoftwareUpdates{host_id: Faker.UUID.v4()},
         %CompleteSoftwareUpdatesDiscovery{host_id: Faker.UUID.v4()},
         %ClearSoftwareUpdatesDiscovery{host_id: Faker.UUID.v4()}
       ]
@@ -1605,64 +1603,6 @@ defmodule Trento.Hosts.HostTest do
       for command <- commands do
         assert_error(command, {:error, :host_not_registered})
       end
-    end
-
-    test "should not trigger the software updates discovery process without a valid FQDN" do
-      host_id = Faker.UUID.v4()
-
-      initial_events = [
-        build(:host_registered_event,
-          host_id: host_id,
-          fully_qualified_domain_name: nil
-        ),
-        build(:heartbeat_succeded, host_id: host_id)
-      ]
-
-      assert_events_and_state(
-        initial_events,
-        DiscoverSoftwareUpdates.new!(%{
-          host_id: host_id
-        }),
-        [],
-        fn host ->
-          assert %Host{
-                   host_id: ^host_id,
-                   fully_qualified_domain_name: nil,
-                   heartbeat: Health.passing()
-                 } = host
-        end
-      )
-    end
-
-    test "should trigger the software updates discovery process" do
-      host_id = Faker.UUID.v4()
-      fully_qualified_domain_name = Faker.Internet.domain_name()
-
-      initial_events = [
-        build(:host_registered_event,
-          host_id: host_id,
-          fully_qualified_domain_name: fully_qualified_domain_name
-        ),
-        build(:heartbeat_succeded, host_id: host_id)
-      ]
-
-      assert_events_and_state(
-        initial_events,
-        DiscoverSoftwareUpdates.new!(%{
-          host_id: host_id
-        }),
-        %SoftwareUpdatesDiscoveryRequested{
-          host_id: host_id,
-          fully_qualified_domain_name: fully_qualified_domain_name
-        },
-        fn host ->
-          assert %Host{
-                   host_id: ^host_id,
-                   fully_qualified_domain_name: ^fully_qualified_domain_name,
-                   heartbeat: Health.passing()
-                 } = host
-        end
-      )
     end
 
     defp get_host_health_changed_event(host_id, scenario) do
@@ -1972,7 +1912,6 @@ defmodule Trento.Hosts.HostTest do
             vpc_id: "vpc-12345"
           }
         }),
-        DiscoverSoftwareUpdates.new!(%{host_id: host_id}),
         RollUpHost.new!(%{
           host_id: host_id
         })
@@ -2315,7 +2254,6 @@ defmodule Trento.Hosts.HostTest do
         %UpdateHeartbeat{host_id: host_id},
         %UpdateProvider{host_id: host_id},
         %UpdateSlesSubscriptions{host_id: host_id},
-        %DiscoverSoftwareUpdates{host_id: host_id},
         %CompleteSoftwareUpdatesDiscovery{host_id: host_id},
         %ClearSoftwareUpdatesDiscovery{host_id: host_id},
         %SelectHostChecks{host_id: host_id}
