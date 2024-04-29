@@ -96,13 +96,6 @@ defmodule TrentoWeb.FallbackController do
     |> render(:"422", reason: "No checks were selected for the target.")
   end
 
-  def call(conn, {:error, :fqdn_not_found}) do
-    conn
-    |> put_status(:unprocessable_entity)
-    |> put_view(ErrorView)
-    |> render(:"422", reason: "No FQDN was found for the target host.")
-  end
-
   def call(conn, {:error, :system_id_not_found}) do
     conn
     |> put_status(:unprocessable_entity)
