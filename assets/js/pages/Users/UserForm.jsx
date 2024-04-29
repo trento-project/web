@@ -8,6 +8,7 @@ import Select from '@common/Select';
 
 import { getError } from '@lib/api/validationErrors';
 
+const USER_ENABLED = 'Enabled';
 const REQUIRED_FIELD_TEXT = 'Required field';
 const PASSWORD_POLICY_TEXT = (
   <div>
@@ -89,6 +90,22 @@ function UserForm({
     }
 
     return error;
+  };
+
+  const onSaveClicked = () => {
+    if (validateRequired()) {
+      return;
+    }
+
+    const user = {
+      fullname: fullNameState,
+      email: emailAddressState,
+      username: usernameState,
+      password: passwordState,
+      password_confirmation: confirmPasswordState,
+      enabled: statusState === USER_ENABLED,
+    };
+    onSave(user);
   };
 
   return (
@@ -201,25 +218,7 @@ function UserForm({
           </p>
         </div>
         <div className="flex flex-row w-80 space-x-2 mt-5">
-          <Button
-            disabled={saving}
-            type="default-fit"
-            onClick={() => {
-              if (validateRequired()) {
-                return;
-              }
-
-              const user = {
-                fullname: fullNameState,
-                email: emailAddressState,
-                username: usernameState,
-                password: passwordState,
-                password_confirmation: confirmPasswordState,
-                enabled: statusState === 'Enabled',
-              };
-              onSave(user);
-            }}
-          >
+          <Button disabled={saving} type="default-fit" onClick={onSaveClicked}>
             {saveText}
           </Button>
           <Button type="primary-white-fit" onClick={onCancel}>
