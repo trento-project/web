@@ -331,6 +331,7 @@ Trento.Services.HealthService.html
 Trento.Settings.ApiKeySettings.html
 Trento.Settings.InstallationSettings.html
 Trento.Settings.html
+Trento.SoftwareUpdates.Discovery.DiscoveryResult.html
 Trento.SoftwareUpdates.Discovery.Gen.html
 Trento.SoftwareUpdates.Discovery.html
 Trento.SoftwareUpdates.Enums.AdvisoryType.html
@@ -454,8 +455,8 @@ dist/merriweather-latin-ext-300-normal-K6L27CZ5.woff2
 dist/merriweather-vietnamese-300-italic-EHHNZPUO.woff2
 dist/merriweather-vietnamese-300-normal-U376L4Z4.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-74339A6D.js
-dist/sidebar_items-8C9ACCBE.js
+dist/search_data-57174EF5.js
+dist/sidebar_items-8B1A0E2B.js
 environment_variables.html
 hack_on_the_trento.html
 index.html
