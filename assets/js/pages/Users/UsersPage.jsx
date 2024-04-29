@@ -6,9 +6,9 @@ import { toast } from 'react-hot-toast';
 
 import Users from './Users';
 
-const SUCCESS_DELETE_MESSAGE = 'User deleted successfully';
-const ERROR_LOADING_MESSAGE = 'An error occurred while loading users';
-const ERROR_DELETING_MESSAGE = 'An error occurred while deleting user';
+export const SUCCESS_DELETE_MESSAGE = 'User deleted successfully';
+export const ERROR_DELETE_MESSAGE = 'An error occurred: User not found';
+export const ERROR_FETCH_MESSAGE = 'An error occurred: Fetching users failed';
 
 function UsersPage() {
   const [loading, setLoading] = useState(true);
@@ -24,7 +24,7 @@ function UsersPage() {
         setUsers(response.data);
       })
       .catch((_error) => {
-        setError(ERROR_LOADING_MESSAGE);
+        setError(ERROR_FETCH_MESSAGE);
         setUsers([]);
       })
       .finally(() => {
@@ -35,11 +35,13 @@ function UsersPage() {
   const onDeleteUser = (userID) => {
     deleteUser(userID)
       .then(() => {
-        fetchUsers();
         toast.success(SUCCESS_DELETE_MESSAGE);
       })
       .catch((_error) => {
-        setError(ERROR_DELETING_MESSAGE);
+        setError(ERROR_DELETE_MESSAGE);
+      })
+      .finally(() => {
+        fetchUsers();
       });
   };
 

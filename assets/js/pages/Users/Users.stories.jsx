@@ -1,12 +1,9 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { action } from '@storybook/addon-actions';
 
 import { adminUser, userFactory } from '@lib/test-utils/factories/users';
 
 import Users from './Users';
-
-const mockedNavigate = action('navigate');
 
 function ContainerWrapper({ children }) {
   return (
@@ -32,11 +29,7 @@ export default {
       </MemoryRouter>
     ),
   ],
-  parameters: {
-    reactRouter: {
-      useNavigate: () => mockedNavigate,
-    },
-  },
+
   argTypes: {
     onDeleteUser: {
       description: 'Function to handle deleting a user',
@@ -68,7 +61,7 @@ export const Loading = {
   render: withContainerWrapper,
 };
 export const EmptyUsersTable = {
-  args: { users: [], loading: false },
+  args: { loading: false },
   render: withContainerWrapper,
 };
 export const UsersOverview = {

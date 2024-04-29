@@ -74,7 +74,7 @@ function Users({
             }}
           >
             <Tooltip
-              content="Admin user can not be deleted"
+              content="Admin user cannot be deleted"
               isEnabled={item.id === 1}
             >
               Delete
@@ -93,7 +93,7 @@ function Users({
       <div className="flex w-1/2 justify-end">
         <div className="flex w-fit whitespace-nowrap">
           <Button
-            className="inline-block mx-1 border-green-500 border"
+            className="inline-block mx-1"
             size="small"
             disabled={loading}
             onClick={() => navigate('/users/new')}
@@ -147,7 +147,7 @@ function Users({
 
       <Table
         config={usersTableConfig}
-        data={users}
+        data={loading ? defaultUsers : users}
         emptyStateText={loading ? 'Loading...' : 'No data available'}
       />
     </div>

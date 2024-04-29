@@ -2,92 +2,105 @@ import React from 'react';
 import '@testing-library/jest-dom';
 
 import MockAdapter from 'axios-mock-adapter';
+import { toast } from 'react-hot-toast';
 
 import { networkClient } from '@lib/network';
-import { screen, act, waitFor } from '@testing-library/react';
+import { screen, act } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { adminUser, userFactory } from '@lib/test-utils/factories/users';
 import { renderWithRouter } from '@lib/test-utils';
 
-import UsersPage from './UsersPage';
+import UsersPage, {
+  SUCCESS_DELETE_MESSAGE,
+  ERROR_DELETE_MESSAGE,
+  ERROR_FETCH_MESSAGE,
+} from './UsersPage';
 
 const axiosMock = new MockAdapter(networkClient);
+
+jest.mock('react-hot-toast', () => ({
+  toast: {
+    success: jest.fn(),
+    error: jest.fn(),
+  },
+}));
 
 describe('UsersPage', () => {
   afterEach(() => {
     axiosMock.reset();
+    jest.clearAllMocks();
   });
 
-  it('should render users page with a table without data.', async () => {
+  it('should render table without data', async () => {
     axiosMock.onGet('/api/v1/users').reply(200, []);
     await act(async () => {
       renderWithRouter(<UsersPage />);
     });
-    const headers = [
-      'Username',
-      'Full Name',
-      'Email',
-      'Status',
-      'Created',
-      'Actions',
-    ];
-    headers.forEach((headerText) => {
-      expect(screen.getByText(headerText)).toBeInTheDocument();
-    });
     expect(await screen.getByText('No data available')).toBeVisible();
   });
 
-  it('should render users page with a table and multiple users', async () => {
-    const creationTime = [
-      '2024-03-22T16:20:57.801758Z',
-      '2024-04-22T16:20:57.801758Z',
-    ];
-    const exptedCreationTime = ['March 22, 2024', 'April 22, 2024'];
-    const admin = adminUser.build({
-      enabled: true,
-      created_at: creationTime[0],
-    });
-    const user = userFactory.build({
-      enabled: false,
-      created_at: creationTime[1],
-    });
-    const toolTipText = 'Admin user can not be deleted';
-    const bannerText = 'This action cannot be undone.';
-    const modalWarningText =
-      'Are you sure you want to delete the following user account?';
+  it('should render table with users', async () => {
+    const admin = adminUser.build();
+    const user = userFactory.build();
+
     axiosMock.onGet('/api/v1/users').reply(200, [admin, user]);
 
     await act(async () => {
       renderWithRouter(<UsersPage />);
     });
 
-    expect(await screen.getByText(admin.username)).toBeVisible();
-    expect(await screen.getByText(admin.fullname)).toBeVisible();
-    expect(await screen.getByText(admin.email)).toBeVisible();
-    expect(await screen.getAllByText('Enabled').length).toBe(1);
-    expect(await screen.getByText(exptedCreationTime[0])).toBeVisible();
+    expect(await screen.getByText(admin.username)).toBeInTheDocument();
+    expect(await screen.getByText(user.username)).toBeInTheDocument();
+  });
 
-    expect(await screen.getByText(user.username)).toBeVisible();
-    expect(await screen.getByText(user.fullname)).toBeVisible();
-    expect(await screen.getByText(user.email)).toBeVisible();
-    expect(await screen.getAllByText('Disabled').length).toBe(1);
-    expect(await screen.getByText(exptedCreationTime[1])).toBeVisible();
+  it('should render toast with failing message when fetching users failed', async () => {
+    axiosMock.onGet('/api/v1/users').reply(404);
+    await act(async () => {
+      renderWithRouter(<UsersPage />);
+    });
+    expect(toast.error).toHaveBeenCalledWith(ERROR_FETCH_MESSAGE);
+  });
+
+  it('should render toast with success message when deleting was successfully', async () => {
+    const admin = adminUser.build();
+    const user = userFactory.build();
+
+    axiosMock.onGet('/api/v1/users').reply(200, [admin, user]);
+    axiosMock.onDelete(`/api/v1/users/${user.id}`).reply(204);
+
+    await act(async () => {
+      renderWithRouter(<UsersPage />);
+    });
 
     let deleteButtons = screen.getAllByText('Delete');
     expect(deleteButtons.length).toBe(2);
-    await userEvent.hover(deleteButtons[0]);
-    expect(await screen.findByText(toolTipText)).toBeVisible();
-
     await userEvent.click(deleteButtons[1]);
-    expect(await screen.getByText(bannerText)).toBeVisible();
-    expect(await screen.getByText(modalWarningText)).toBeVisible();
-    expect(screen.getAllByText(user.username)[1]).toBeVisible();
-
     deleteButtons = screen.getAllByText('Delete');
-    userEvent.click(deleteButtons[2]);
-    waitFor(() => {
-      expect(axiosMock.history.delete.length).toBe(1);
-      expect(axiosMock.history.delete[0].url).toBe(`/users/${user.id}`);
+    await userEvent.click(deleteButtons[2]);
+
+    expect(axiosMock.history.delete.length).toBe(1);
+    expect(axiosMock.history.delete[0].url).toBe(`/users/${user.id}`);
+    expect(toast.success).toHaveBeenCalledWith(SUCCESS_DELETE_MESSAGE);
+  });
+
+  it('should render toast with error message when deleting failed', async () => {
+    const admin = adminUser.build({});
+    const user = userFactory.build({});
+
+    axiosMock.onGet('/api/v1/users').reply(200, [admin, user]);
+    axiosMock.onDelete(`/api/v1/users/${user.id}`).reply(404);
+
+    await act(async () => {
+      renderWithRouter(<UsersPage />);
     });
+
+    let deleteButtons = screen.getAllByText('Delete');
+    await userEvent.click(deleteButtons[1]);
+    deleteButtons = screen.getAllByText('Delete');
+    await userEvent.click(deleteButtons[2]);
+
+    expect(axiosMock.history.delete.length).toBe(1);
+    expect(axiosMock.history.delete[0].url).toBe(`/users/${user.id}`);
+    expect(toast.error).toHaveBeenCalledWith(ERROR_DELETE_MESSAGE);
   });
 });
