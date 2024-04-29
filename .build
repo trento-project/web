@@ -201,7 +201,6 @@ Trento.Hosts.Commands.ClearSoftwareUpdatesDiscovery.html
 Trento.Hosts.Commands.CompleteHostChecksExecution.html
 Trento.Hosts.Commands.CompleteSoftwareUpdatesDiscovery.html
 Trento.Hosts.Commands.DeregisterHost.html
-Trento.Hosts.Commands.DiscoverSoftwareUpdates.html
 Trento.Hosts.Commands.RegisterHost.html
 Trento.Hosts.Commands.RequestHostDeregistration.html
 Trento.Hosts.Commands.RollUpHost.html
@@ -455,8 +454,8 @@ dist/merriweather-latin-ext-300-normal-K6L27CZ5.woff2
 dist/merriweather-vietnamese-300-italic-EHHNZPUO.woff2
 dist/merriweather-vietnamese-300-normal-U376L4Z4.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-29BCC767.js
-dist/sidebar_items-0D79279A.js
+dist/search_data-74339A6D.js
+dist/sidebar_items-8C9ACCBE.js
 environment_variables.html
 hack_on_the_trento.html
 index.html
