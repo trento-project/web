@@ -50,7 +50,7 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
         ca_uploaded_at: ca_uploaded_at
       } =
         insert_software_updates_settings(
-          ca_cert: Faker.Lorem.sentence(),
+          ca_cert: build(:self_signed_certificate),
           ca_uploaded_at: DateTime.utc_now()
         )
 
@@ -172,7 +172,7 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
         url: url = "https://valid.com",
         username: username = Faker.Internet.user_name(),
         password: password = Faker.Lorem.word(),
-        ca_cert: ca_cert = Faker.Lorem.sentence()
+        ca_cert: ca_cert = build(:self_signed_certificate)
       }
 
       assert {:ok,
@@ -221,7 +221,7 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
           url: "https://valid.com",
           username: Faker.Internet.user_name(),
           password: Faker.Lorem.word(),
-          ca_cert: Faker.Lorem.sentence()
+          ca_cert: build(:self_signed_certificate)
         }
 
         assert {:ok, _} = operation.(settings)
@@ -358,7 +358,7 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
 
       change_submission = %{
         url: new_url = "https://new.com",
-        ca_cert: new_ca_cert = "new_ca_cert"
+        ca_cert: new_ca_cert = build(:self_signed_certificate)
       }
 
       assert {:ok,
@@ -381,7 +381,7 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
         ca_uploaded_at: _initial_ca_uploaded_at
       } =
         insert_software_updates_settings(
-          ca_cert: Faker.Lorem.sentence(),
+          ca_cert: build(:self_signed_certificate),
           ca_uploaded_at: DateTime.utc_now()
         )
 
@@ -395,7 +395,7 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
 
       change_submission = %{
         url: new_url = "https://new.com",
-        ca_cert: new_ca_cert = "new_ca_cert"
+        ca_cert: new_ca_cert = build(:self_signed_certificate)
       }
 
       Enum.each(1..3, fn run_iteration ->
