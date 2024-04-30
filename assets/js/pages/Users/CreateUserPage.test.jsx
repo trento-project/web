@@ -16,7 +16,7 @@ import { userFactory } from '@lib/test-utils/factories/users';
 
 import CreateUserPage from './CreateUserPage';
 
-const usersUrl = '/api/v1/users';
+const USERS_URL = '/api/v1/users';
 const axiosMock = new MockAdapter(networkClient);
 
 describe('CreateUserPage', () => {
@@ -25,7 +25,7 @@ describe('CreateUserPage', () => {
     jest.spyOn(console, 'error').mockImplementation(() => null);
   });
 
-  it('Back To Users redirects to the users view', async () => {
+  it('should redirect back to users when the Back To Users button is clicked', async () => {
     const user = userEvent.setup();
     const navigate = jest.fn();
     jest.spyOn(router, 'useNavigate').mockImplementation(() => navigate);
@@ -37,7 +37,7 @@ describe('CreateUserPage', () => {
     expect(navigate).toHaveBeenCalledWith('/users');
   });
 
-  it('Cancel button redirects to the users view', async () => {
+  it('should redirect back to users when the Cancel button is clicked', async () => {
     const user = userEvent.setup();
     const navigate = jest.fn();
     jest.spyOn(router, 'useNavigate').mockImplementation(() => navigate);
@@ -49,13 +49,13 @@ describe('CreateUserPage', () => {
     expect(navigate).toHaveBeenCalledWith('/users');
   });
 
-  it('saves a new user and redirects to users view', async () => {
+  it('should save a new user and redirect to users view', async () => {
     const user = userEvent.setup();
     const navigate = jest.fn();
     jest.spyOn(router, 'useNavigate').mockImplementation(() => navigate);
     const { fullname, email, username, password } = userFactory.build();
 
-    axiosMock.onPost(usersUrl).reply(202, {});
+    axiosMock.onPost(USERS_URL).reply(202, {});
 
     render(<CreateUserPage />);
 
@@ -70,7 +70,7 @@ describe('CreateUserPage', () => {
     expect(navigate).toHaveBeenCalledWith('/users');
   });
 
-  it('displays validation errors', async () => {
+  it('should display validation errors', async () => {
     const user = userEvent.setup();
     const navigate = jest.fn();
     jest.spyOn(router, 'useNavigate').mockImplementation(() => navigate);
@@ -84,7 +84,7 @@ describe('CreateUserPage', () => {
       },
     ];
 
-    axiosMock.onPost(usersUrl).reply(422, { errors });
+    axiosMock.onPost(USERS_URL).reply(422, { errors });
 
     render(<CreateUserPage />);
 

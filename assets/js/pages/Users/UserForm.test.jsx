@@ -10,7 +10,7 @@ import { userFactory } from '@lib/test-utils/factories/users';
 import UserForm from './UserForm';
 
 describe('UserForm', () => {
-  it('displays an empty User form', () => {
+  it('should display an empty User form', () => {
     render(<UserForm saveText="Save" />);
 
     expect(screen.getByText('Full Name')).toBeVisible();
@@ -30,7 +30,7 @@ describe('UserForm', () => {
     expect(screen.getByRole('button', { name: 'Cancel' })).toBeVisible();
   });
 
-  it('displays a prepopulated User form', async () => {
+  it('should display a prepopulated User form', async () => {
     const { fullname, email, username, password } = userFactory.build();
 
     await act(async () => {
@@ -52,7 +52,7 @@ describe('UserForm', () => {
     expect(screen.getByLabelText('password-confirmation').value).toBe(password);
   });
 
-  it('displays a prepopulated User form with errors', () => {
+  it('should display a prepopulated User form with errors', () => {
     const errors = [
       {
         detail: 'Error validating fullname',
@@ -92,7 +92,7 @@ describe('UserForm', () => {
     ).toBeVisible();
   });
 
-  it('fails if required fields are missing', async () => {
+  it('should fail if required fields are missing', async () => {
     const user = userEvent.setup();
 
     render(<UserForm saveText="Save" />);
@@ -102,7 +102,7 @@ describe('UserForm', () => {
     expect(screen.getAllByText('Required field').length).toBe(5);
   });
 
-  it('saves the user', async () => {
+  it('should save the user', async () => {
     const user = userEvent.setup();
     const { fullname, email, username, password } = userFactory.build();
     const mockOnSave = jest.fn();
