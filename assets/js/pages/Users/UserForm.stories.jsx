@@ -42,13 +42,13 @@ export default {
       },
     },
     createdAt: {
-      description: 'User creation time',
+      description: 'User creation timestamp',
       control: {
         type: 'text',
       },
     },
     udpatedAt: {
-      description: 'User last edition time',
+      description: 'User last update timestamp',
       control: {
         type: 'text',
       },

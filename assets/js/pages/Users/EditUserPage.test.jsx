@@ -76,7 +76,7 @@ describe('EditUserPage', () => {
     await screen.findByText('Not found');
   });
 
-  it('should edit a  user and redirect to users view', async () => {
+  it('should edit a user and redirect to users view', async () => {
     const user = userEvent.setup();
     const navigate = jest.fn();
     jest.spyOn(router, 'useNavigate').mockImplementation(() => navigate);
