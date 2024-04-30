@@ -21,13 +21,12 @@ const containerClassNames = classNames(
 function AvailableSoftwareUpdates({
   className,
   settingsConfigured = false,
+  softwareUpdatesSettingsLoading,
+  onBackToSettings = noop,
+  softwareUpdatesLoading,
   relevantPatches,
   upgradablePackages,
   tooltip,
-  softwareUpdatesSettingsLoading,
-  softwareUpdatesLoading,
-  connectionError = false,
-  onBackToSettings = noop,
 }) {
   if (softwareUpdatesSettingsLoading) {
     return <Loading className={containerClassNames} />;
@@ -60,7 +59,6 @@ function AvailableSoftwareUpdates({
         critical={gt(relevantPatches, 0)}
         tooltip={tooltip}
         loading={softwareUpdatesLoading}
-        connectionError={connectionError}
         icon={<EOS_HEALING size="xl" />}
       >
         {relevantPatches}
@@ -70,7 +68,6 @@ function AvailableSoftwareUpdates({
         title="Upgradable Packages"
         tooltip={tooltip}
         loading={softwareUpdatesLoading}
-        connectionError={connectionError}
         icon={<EOS_PACKAGE_UPGRADE_OUTLINED size="xl" />}
       >
         {upgradablePackages}

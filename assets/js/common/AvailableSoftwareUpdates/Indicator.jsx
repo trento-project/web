@@ -7,17 +7,8 @@ import {
 
 import Tooltip from '@common/Tooltip';
 
-function Indicator({
-  title,
-  critical,
-  tooltip,
-  icon,
-  loading,
-  connectionError,
-  children,
-}) {
+function Indicator({ title, critical, tooltip, icon, loading, children }) {
   const unknown = children === undefined;
-  const error = unknown || connectionError;
 
   if (loading) {
     return (
@@ -39,20 +30,19 @@ function Indicator({
           <p className="font-bold">{title}</p>
           <div
             className={classNames({
-              'text-green-600': !error,
-              'text-gray-600': error,
+              'text-green-600': !unknown,
+              'text-gray-600': unknown,
             })}
           >
-            {critical && (
-              <EOS_ERROR_OUTLINED
-                size="l"
-                className="inline align-bottom fill-red-500"
-              />
-            )}{' '}
-            {error ? (
+            {critical || unknown ? (
               <div>
-                <EOS_ERROR_OUTLINED size="l" className="inline align-bottom" />{' '}
-                {connectionError ? 'SUSE Manager connection failed' : 'Unknown'}
+                <EOS_ERROR_OUTLINED
+                  size="l"
+                  className={`inline align-bottom${
+                    critical && ' fill-red-500'
+                  }`}
+                />{' '}
+                {critical && children ? children : 'Unknown'}
               </div>
             ) : (
               children
