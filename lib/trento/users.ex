@@ -10,6 +10,7 @@ defmodule Trento.Users do
   import Ecto.Query, warn: false
   alias Trento.Repo
 
+  alias Trento.Abilities.UsersAbilities
   alias Trento.Users.User
 
   @impl true
@@ -43,8 +44,24 @@ defmodule Trento.Users do
     end
   end
 
-  def create_user(attrs \\ %{}) do
-    %User{}
+  def create_user(%{abilities: abilities} = attrs) do
+    result =
+      Ecto.Multi.new()
+      |> Ecto.Multi.insert(:user, User.changeset(%User{}, set_locked_at(attrs)))
+      |> insert_abilities_multi(abilities)
+      |> Repo.transaction()
+
+    case result do
+      {:ok, %{user: user}} ->
+        {:ok, Map.put(user, :abilities, abilities)}
+
+      {:error, _, changeset_error, _} ->
+        {:error, changeset_error}
+    end
+  end
+
+  def create_user(attrs) do
+    %User{abilities: []}
     |> User.changeset(set_locked_at(attrs))
     |> Repo.insert()
   end
@@ -85,6 +102,36 @@ defmodule Trento.Users do
   end
 
   defp set_locked_at(attrs), do: attrs
+
+  defp insert_abilities_multi(multi, []), do: multi
+
+  defp insert_abilities_multi(multi, abilities) do
+    Enum.reduce(abilities, multi, fn %{id: ability_id}, acc ->
+      Ecto.Multi.insert(acc, "ability_#{ability_id}", fn %{user: %User{id: user_id}} ->
+        UsersAbilities.changeset(%UsersAbilities{}, %{user_id: user_id, ability_id: ability_id})
+      end)
+    end)
+  end
+
+  defp do_update(%{id: user_id} = user, %{abilities: abilities} = attrs) do
+    result =
+      Ecto.Multi.new()
+      |> Ecto.Multi.update(:user, User.update_changeset(user, attrs))
+      |> Ecto.Multi.delete_all(
+        :delete_abilities,
+        from(u in UsersAbilities, where: u.user_id == ^user_id)
+      )
+      |> insert_abilities_multi(abilities)
+      |> Repo.transaction()
+
+    case result do
+      {:ok, %{user: user}} ->
+        {:ok, Map.put(user, :abilities, abilities)}
+
+      {:error, _, changeset_error, _} ->
+        {:error, changeset_error}
+    end
+  end
 
   defp do_update(user, attrs) do
     user

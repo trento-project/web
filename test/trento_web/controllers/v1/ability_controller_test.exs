@@ -7,9 +7,13 @@ defmodule TrentoWeb.V1.AbilityControllerTest do
 
   alias TrentoWeb.OpenApi.V1.ApiSpec
 
+  alias Trento.Abilities
+
   @endpoint TrentoWeb.Endpoint
 
   setup %{conn: conn} do
+    delete_default_abilities()
+
     api_spec = ApiSpec.spec()
 
     {:ok, conn: put_req_header(conn, "accept", "application/json"), api_spec: api_spec}
@@ -28,5 +32,9 @@ defmodule TrentoWeb.V1.AbilityControllerTest do
 
       assert [%{id: ^ability_id1}, %{id: ^ability_id2}] = resp
     end
+  end
+
+  defp delete_default_abilities do
+    Trento.Repo.delete_all(Abilities.Ability)
   end
 end
