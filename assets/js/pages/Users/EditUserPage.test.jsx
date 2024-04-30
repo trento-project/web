@@ -17,7 +17,7 @@ import { userFactory } from '@lib/test-utils/factories/users';
 
 import EditUserPage from './EditUserPage';
 
-const usersUrl = '/api/v1/users/';
+const USERS_URL = '/api/v1/users/';
 const axiosMock = new MockAdapter(networkClient);
 
 describe('EditUserPage', () => {
@@ -26,12 +26,12 @@ describe('EditUserPage', () => {
     jest.spyOn(console, 'error').mockImplementation(() => null);
   });
 
-  it('Back To Users redirects to the users view', async () => {
+  it('should redirect back to users when the Back To Users button is clicked', async () => {
     const user = userEvent.setup();
     const navigate = jest.fn();
     jest.spyOn(router, 'useNavigate').mockImplementation(() => navigate);
     const userData = userFactory.build();
-    axiosMock.onGet(usersUrl.concat(userData.id)).reply(200, userData);
+    axiosMock.onGet(USERS_URL.concat(userData.id)).reply(200, userData);
 
     renderWithRouterMatch(<EditUserPage />, {
       path: '/users/:userID/edit',
@@ -45,12 +45,12 @@ describe('EditUserPage', () => {
     expect(navigate).toHaveBeenCalledWith('/users');
   });
 
-  it('Cancel button redirects to the users view', async () => {
+  it('should redirect back to users when the Cancel button is clicked', async () => {
     const user = userEvent.setup();
     const navigate = jest.fn();
     jest.spyOn(router, 'useNavigate').mockImplementation(() => navigate);
     const userData = userFactory.build();
-    axiosMock.onGet(usersUrl.concat(userData.id)).reply(200, userData);
+    axiosMock.onGet(USERS_URL.concat(userData.id)).reply(200, userData);
 
     renderWithRouterMatch(<EditUserPage />, {
       path: '/users/:userID/edit',
@@ -64,9 +64,9 @@ describe('EditUserPage', () => {
     expect(navigate).toHaveBeenCalledWith('/users');
   });
 
-  it('shows user not found if the given user ID does not exist', async () => {
+  it('should show user not found if the given user ID does not exist', async () => {
     const userID = '1';
-    axiosMock.onGet(usersUrl.concat(userID)).reply(404, {});
+    axiosMock.onGet(USERS_URL.concat(userID)).reply(404, {});
 
     renderWithRouterMatch(<EditUserPage />, {
       path: '/users/:userID/edit',
@@ -76,16 +76,16 @@ describe('EditUserPage', () => {
     await screen.findByText('Not found');
   });
 
-  it('edits a  user and redirects to users view', async () => {
+  it('should edit a  user and redirect to users view', async () => {
     const user = userEvent.setup();
     const navigate = jest.fn();
     jest.spyOn(router, 'useNavigate').mockImplementation(() => navigate);
     const userData = userFactory.build();
 
     axiosMock
-      .onGet(usersUrl.concat(userData.id))
+      .onGet(USERS_URL.concat(userData.id))
       .reply(200, userData)
-      .onPatch(usersUrl.concat(userData.id))
+      .onPatch(USERS_URL.concat(userData.id))
       .reply(204, {});
 
     renderWithRouterMatch(<EditUserPage />, {
@@ -100,7 +100,7 @@ describe('EditUserPage', () => {
     expect(navigate).toHaveBeenCalledWith('/users');
   });
 
-  it('displays validation errors', async () => {
+  it('should display validation errors', async () => {
     const user = userEvent.setup();
     const userData = userFactory.build();
 
@@ -113,9 +113,9 @@ describe('EditUserPage', () => {
     ];
 
     axiosMock
-      .onGet(usersUrl.concat(userData.id))
+      .onGet(USERS_URL.concat(userData.id))
       .reply(200, userData)
-      .onPatch(usersUrl.concat(userData.id))
+      .onPatch(USERS_URL.concat(userData.id))
       .reply(422, { errors });
 
     renderWithRouterMatch(<EditUserPage />, {
@@ -130,14 +130,14 @@ describe('EditUserPage', () => {
     await screen.findByText('Error validating fullname');
   });
 
-  it('displays user already updated warning banner', async () => {
+  it('should display user already updated warning banner', async () => {
     const user = userEvent.setup();
     const userData = userFactory.build();
 
     axiosMock
-      .onGet(usersUrl.concat(userData.id))
+      .onGet(USERS_URL.concat(userData.id))
       .reply(200, userData)
-      .onPatch(usersUrl.concat(userData.id))
+      .onPatch(USERS_URL.concat(userData.id))
       .reply(412, {});
 
     renderWithRouterMatch(<EditUserPage />, {

@@ -11,7 +11,7 @@ import { userFactory } from '@lib/test-utils/factories/users';
 import UserForm from './UserForm';
 
 describe('UserForm', () => {
-  it('should display an empty User form', () => {
+  it('should display an empty user form', () => {
     render(<UserForm saveText="Save" />);
 
     expect(screen.getByText('Full Name')).toBeVisible();
@@ -33,8 +33,14 @@ describe('UserForm', () => {
     expect(screen.getByRole('button', { name: 'Cancel' })).toBeVisible();
   });
 
-  it('should display a prepopulated User form', async () => {
-    const { fullname, email, username, password } = userFactory.build();
+  it('should display an editing user form', async () => {
+    const {
+      fullname,
+      email,
+      username,
+      created_at: createdAt,
+      updated_at: updatedAt,
+    } = userFactory.build();
 
     await act(async () => {
       render(
