@@ -22,6 +22,10 @@ jest.mock('react-hot-toast', () => ({
 }));
 
 describe('UsersPage', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'error').mockImplementation(() => null);
+  });
+
   afterEach(() => {
     axiosMock.reset();
     jest.clearAllMocks();

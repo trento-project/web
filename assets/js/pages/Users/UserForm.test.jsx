@@ -1,0 +1,129 @@
+import React from 'react';
+
+import { act, render, screen } from '@testing-library/react';
+import 'intersection-observer';
+import '@testing-library/jest-dom';
+import userEvent from '@testing-library/user-event';
+
+import { userFactory } from '@lib/test-utils/factories/users';
+
+import UserForm from './UserForm';
+
+describe('UserForm', () => {
+  it('should display an empty User form', () => {
+    render(<UserForm saveText="Save" />);
+
+    expect(screen.getByText('Full Name')).toBeVisible();
+    expect(screen.getByLabelText('fullname').value).toBe('');
+    expect(screen.getByText('Email Address')).toBeVisible();
+    expect(screen.getByLabelText('email').value).toBe('');
+    expect(screen.getByText('Username')).toBeVisible();
+    expect(screen.getByLabelText('username').value).toBe('');
+    expect(screen.getByText('Password')).toBeVisible();
+    expect(screen.getByLabelText('password').value).toBe('');
+    expect(screen.getByText('Confirm Password')).toBeVisible();
+    expect(screen.getByLabelText('password-confirmation').value).toBe('');
+    expect(screen.getByText('Permissions')).toBeVisible();
+    expect(screen.getByText('Status')).toBeVisible();
+
+    expect(screen.getByRole('button', { name: 'Save' })).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Cancel' })).toBeVisible();
+  });
+
+  it('should display a prepopulated User form', async () => {
+    const { fullname, email, username, password } = userFactory.build();
+
+    await act(async () => {
+      render(
+        <UserForm
+          fullName={fullname}
+          emailAddress={email}
+          username={username}
+          password={password}
+          confirmPassword={password}
+        />
+      );
+    });
+
+    expect(screen.getByLabelText('fullname').value).toBe(fullname);
+    expect(screen.getByLabelText('email').value).toBe(email);
+    expect(screen.getByLabelText('username').value).toBe(username);
+    expect(screen.getByLabelText('password').value).toBe(password);
+    expect(screen.getByLabelText('password-confirmation').value).toBe(password);
+  });
+
+  it('should display a prepopulated User form with errors', () => {
+    const errors = [
+      {
+        detail: 'Error validating fullname',
+        source: { pointer: '/fullname' },
+        title: 'Invalid value',
+      },
+      {
+        detail: 'Error validating email',
+        source: { pointer: '/email' },
+        title: 'Invalid value',
+      },
+      {
+        detail: 'Error validating username',
+        source: { pointer: '/username' },
+        title: 'Invalid value',
+      },
+      {
+        detail: 'Error validating password',
+        source: { pointer: '/password' },
+        title: 'Invalid value',
+      },
+      {
+        detail: 'Error validating password_confirmation',
+        source: { pointer: '/password_confirmation' },
+        title: 'Invalid value',
+      },
+    ];
+
+    render(<UserForm saveText="Save" errors={errors} />);
+
+    expect(screen.getByText('Error validating fullname')).toBeVisible();
+    expect(screen.getByText('Error validating email')).toBeVisible();
+    expect(screen.getByText('Error validating username')).toBeVisible();
+    expect(screen.getByText('Error validating password')).toBeVisible();
+    expect(
+      screen.getByText('Error validating password_confirmation')
+    ).toBeVisible();
+  });
+
+  it('should fail if required fields are missing', async () => {
+    const user = userEvent.setup();
+
+    render(<UserForm saveText="Save" />);
+
+    await user.click(screen.getByRole('button', { name: 'Save' }));
+
+    expect(screen.getAllByText('Required field').length).toBe(5);
+  });
+
+  it('should save the user', async () => {
+    const user = userEvent.setup();
+    const { fullname, email, username, password } = userFactory.build();
+    const mockOnSave = jest.fn();
+
+    render(<UserForm saveText="Save" onSave={mockOnSave} />);
+
+    await user.type(screen.getByPlaceholderText('Enter full name'), fullname);
+    await user.type(screen.getByPlaceholderText('Enter email address'), email);
+    await user.type(screen.getByPlaceholderText('Enter username'), username);
+    await user.type(screen.getByPlaceholderText('Enter password'), password);
+    await user.type(screen.getByPlaceholderText('Re-enter password'), password);
+
+    await user.click(screen.getByRole('button', { name: 'Save' }));
+
+    expect(mockOnSave).toHaveBeenNthCalledWith(1, {
+      fullname,
+      email,
+      username,
+      password,
+      password_confirmation: password,
+      enabled: true,
+    });
+  });
+});
