@@ -16,6 +16,7 @@ function Password({
   error = false,
   disabled = false,
   onChange = () => {},
+  ...props
 }) {
   const [inputType, setInputType] = useState('password');
   return (
@@ -44,6 +45,7 @@ function Password({
         </button>
       }
       onChange={onChange}
+      {...props}
     />
   );
 }
