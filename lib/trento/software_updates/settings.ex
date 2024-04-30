@@ -43,9 +43,42 @@ defmodule Trento.SoftwareUpdates.Settings do
     end
   end
 
+  defp validate_ca_cert(_ca_cert_atom, ca_cert) do
+    with {:ok, certificate} <- parse_ca_cert(ca_cert),
+         :ok <- ca_cert_valid?(certificate) do
+      []
+    else
+      {:error, errors} -> errors
+    end
+  end
+
+  defp parse_ca_cert(ca_cert) do
+    case X509.Certificate.from_pem(ca_cert) do
+      {:ok, _} = result ->
+        result
+
+      _ ->
+        {:error, [ca_cert: {"unable to parse X.509 certificate", validation: :ca_cert_parsing}]}
+    end
+  end
+
+  defp ca_cert_valid?(certificate) do
+    now = DateTime.utc_now()
+    {:Validity, never_before, never_after} = X509.Certificate.validity(certificate)
+
+    if never_before |> X509.DateTime.to_datetime() |> DateTime.compare(now) == :lt and
+         never_after |> X509.DateTime.to_datetime() |> DateTime.compare(now) == :gt do
+      :ok
+    else
+      {:error, [ca_cert: {"the X.509 certificate is not valid", validation: :ca_cert_validity}]}
+    end
+  end
+
   defp maybe_validate_ca_cert(changeset, settings_submission) do
     if nil != Map.get(settings_submission, :ca_cert) do
-      validate_required(changeset, :ca_cert)
+      changeset
+      |> validate_required(:ca_cert)
+      |> validate_change(:ca_cert, &validate_ca_cert/2)
     else
       changeset
     end
