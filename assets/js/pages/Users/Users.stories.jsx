@@ -53,7 +53,7 @@ export default {
 };
 
 export const Default = {
-  args: { users: [adminUser.build()], loading: false },
+  args: { users: [adminUser.build()] },
   render: withContainerWrapper,
 };
 export const Loading = {
@@ -61,7 +61,6 @@ export const Loading = {
   render: withContainerWrapper,
 };
 export const EmptyUsersTable = {
-  args: { loading: false },
   render: withContainerWrapper,
 };
 export const UsersOverview = {
@@ -73,7 +72,6 @@ export const UsersOverview = {
       userFactory.build(),
       userFactory.build(),
     ],
-    loading: false,
   },
   render: withContainerWrapper,
 };

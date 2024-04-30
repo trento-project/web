@@ -16,7 +16,7 @@ function Users({
   onDeleteUser = noop,
   navigate = noop,
   users = defaultUsers,
-  loading = true,
+  loading = false,
 }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [user, setUser] = useState(null);

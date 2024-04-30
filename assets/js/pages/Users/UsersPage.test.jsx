@@ -10,11 +10,7 @@ import { userEvent } from '@testing-library/user-event';
 import { adminUser, userFactory } from '@lib/test-utils/factories/users';
 import { renderWithRouter } from '@lib/test-utils';
 
-import UsersPage, {
-  SUCCESS_DELETE_MESSAGE,
-  ERROR_DELETE_MESSAGE,
-  ERROR_FETCH_MESSAGE,
-} from './UsersPage';
+import UsersPage from './UsersPage';
 
 const axiosMock = new MockAdapter(networkClient);
 
@@ -54,39 +50,45 @@ describe('UsersPage', () => {
   });
 
   it('should render toast with failing message when fetching users failed', async () => {
+    const fetchErrorMessage = 'An error occurred: Fetching users failed';
     axiosMock.onGet('/api/v1/users').reply(404);
     await act(async () => {
       renderWithRouter(<UsersPage />);
     });
-    expect(toast.error).toHaveBeenCalledWith(ERROR_FETCH_MESSAGE);
+    expect(toast.error).toHaveBeenCalledWith(fetchErrorMessage);
   });
 
   it('should render toast with success message when deleting was successfully', async () => {
     const admin = adminUser.build();
     const user = userFactory.build();
 
-    axiosMock.onGet('/api/v1/users').reply(200, [admin, user]);
-    axiosMock.onDelete(`/api/v1/users/${user.id}`).reply(204);
+    const deleteMessage = 'User deleted successfully';
+
+    axiosMock
+      .onGet('/api/v1/users')
+      .reply(200, [admin, user])
+      .onDelete(`/api/v1/users/${user.id}`)
+      .reply(204);
 
     await act(async () => {
       renderWithRouter(<UsersPage />);
     });
 
-    let deleteButtons = screen.getAllByText('Delete');
+    const deleteButtons = screen.getAllByText('Delete');
     expect(deleteButtons.length).toBe(2);
     await userEvent.click(deleteButtons[1]);
-    deleteButtons = screen.getAllByText('Delete');
-    await userEvent.click(deleteButtons[2]);
+    const modalDeleteButton = screen.getAllByText('Delete')[2];
+    await userEvent.click(modalDeleteButton);
 
     expect(axiosMock.history.delete.length).toBe(1);
     expect(axiosMock.history.delete[0].url).toBe(`/users/${user.id}`);
-    expect(toast.success).toHaveBeenCalledWith(SUCCESS_DELETE_MESSAGE);
+    expect(toast.success).toHaveBeenCalledWith(deleteMessage);
   });
 
   it('should render toast with error message when deleting failed', async () => {
     const admin = adminUser.build({});
     const user = userFactory.build({});
-
+    const userNotFoundMessage = 'An error occurred: User not found';
     axiosMock.onGet('/api/v1/users').reply(200, [admin, user]);
     axiosMock.onDelete(`/api/v1/users/${user.id}`).reply(404);
 
@@ -94,13 +96,13 @@ describe('UsersPage', () => {
       renderWithRouter(<UsersPage />);
     });
 
-    let deleteButtons = screen.getAllByText('Delete');
+    const deleteButtons = screen.getAllByText('Delete');
     await userEvent.click(deleteButtons[1]);
-    deleteButtons = screen.getAllByText('Delete');
-    await userEvent.click(deleteButtons[2]);
+    const modalDeleteButton = screen.getAllByText('Delete')[2];
+    await userEvent.click(modalDeleteButton);
 
     expect(axiosMock.history.delete.length).toBe(1);
     expect(axiosMock.history.delete[0].url).toBe(`/users/${user.id}`);
-    expect(toast.error).toHaveBeenCalledWith(ERROR_DELETE_MESSAGE);
+    expect(toast.error).toHaveBeenCalledWith(userNotFoundMessage);
   });
 });

@@ -7,7 +7,7 @@ import { userEvent } from '@testing-library/user-event';
 import Users from './Users';
 
 describe('Users', () => {
-  it('should render a loading table with a disabled create user button', async () => {
+  it('should render a loading table with a disabled create user button', () => {
     render(<Users loading />);
 
     const headers = [
@@ -26,7 +26,7 @@ describe('Users', () => {
     expect(screen.getByText('Loading...')).toBeVisible();
   });
 
-  it('should render an empty table with an enabled create user button', async () => {
+  it('should render an empty table with an enabled create user button', () => {
     render(<Users loading={false} />);
 
     const button = screen.getByRole('button', { name: /Create User/i });
@@ -39,7 +39,7 @@ describe('Users', () => {
       '2024-03-22T16:20:57.801758Z',
       '2024-04-22T16:20:57.801758Z',
     ];
-    const exptedCreationTime = ['March 22, 2024', 'April 22, 2024'];
+    const expectedCreationTime = ['March 22, 2024', 'April 22, 2024'];
     const admin = adminUser.build({
       enabled: true,
       created_at: creationTime[0],
@@ -56,13 +56,13 @@ describe('Users', () => {
     expect(screen.getByText(admin.fullname)).toBeVisible();
     expect(screen.getByText(admin.email)).toBeVisible();
     expect(screen.getAllByText('Enabled').length).toBe(1);
-    expect(screen.getByText(exptedCreationTime[0])).toBeVisible();
+    expect(screen.getByText(expectedCreationTime[0])).toBeVisible();
 
     expect(screen.getByText(user.username)).toBeVisible();
     expect(screen.getByText(user.fullname)).toBeVisible();
     expect(screen.getByText(user.email)).toBeVisible();
     expect(screen.getAllByText('Disabled').length).toBe(1);
-    expect(screen.getByText(exptedCreationTime[1])).toBeVisible();
+    expect(screen.getByText(expectedCreationTime[1])).toBeVisible();
 
     const toolTipText = 'Admin user cannot be deleted';
     const deleteButtons = screen.getAllByText('Delete');
