@@ -30,6 +30,7 @@ import SapSystemsOverviewPage from '@pages/SapSystemsOverviewPage';
 import SaptuneDetailsPage from '@pages/SaptuneDetails';
 import SettingsPage from '@pages/SettingsPage';
 import SomethingWentWrong from '@pages/SomethingWentWrong';
+import UsersPage from '@pages/Users';
 
 import { me } from '@lib/auth';
 import { networkClient } from '@lib/network';
@@ -78,6 +79,7 @@ function App() {
                   <Route path="catalog" element={<ChecksCatalogPage />} />
                   <Route path="settings" element={<SettingsPage />} />
                   <Route path="about" element={<AboutPage />} />
+                  <Route path="users" element={<UsersPage />} />
                   <Route path="hosts/:hostID" element={<HostDetailsPage />} />
                   <Route
                     path="sap_systems/:id"
