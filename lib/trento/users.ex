@@ -44,7 +44,7 @@ defmodule Trento.Users do
     end
   end
 
-  def create_user(%{abilities: abilities} = attrs) do
+  def create_user(%{abilities: abilities} = attrs) when not is_nil(abilities) do
     result =
       Ecto.Multi.new()
       |> Ecto.Multi.insert(:user, User.changeset(%User{}, set_locked_at(attrs)))
