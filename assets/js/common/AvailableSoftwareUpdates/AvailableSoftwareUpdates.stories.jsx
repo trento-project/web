@@ -79,6 +79,6 @@ export const SoftwareUpdatesLoading = {
 export const Unknown = {
   args: {
     settingsConfigured: true,
-    tooltip: 'SUSE Manager was not able to retrieve the requested data',
+    tooltip: 'Trento was not able to retrieve the requested data',
   },
 };
