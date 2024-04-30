@@ -2,9 +2,6 @@ import { createSelector } from '@reduxjs/toolkit';
 
 export const getSoftwareUpdates = (state) => state?.softwareUpdates;
 
-export const getSoftwareUpdatesConnectionError = (state) =>
-  state?.softwareUpdates.connectionError;
-
 export const getSoftwareUpdatesForHost = (id) => (state) =>
   state?.softwareUpdates.softwareUpdates[id];
 

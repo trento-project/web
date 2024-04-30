@@ -8,7 +8,6 @@ import { networkClient } from '@lib/network';
 import {
   startLoadingSoftwareUpdates,
   setSoftwareUpdates,
-  setSoftwareUpdatesConnectionError,
   setSoftwareUpdatesErrors,
   setEmptySoftwareUpdates,
 } from '@state/softwareUpdates';
@@ -83,7 +82,6 @@ describe('Software Updates saga', () => {
         expect(dispatched).toEqual([
           startLoadingSoftwareUpdates(),
           setEmptySoftwareUpdates({ hostID }),
-          setSoftwareUpdatesConnectionError(),
           setSoftwareUpdatesErrors(body),
         ]);
       }

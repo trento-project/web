@@ -17,7 +17,6 @@ import {
   getSoftwareUpdatesSettingsSaved,
 } from '@state/selectors/softwareUpdatesSettings';
 import {
-  getSoftwareUpdatesConnectionError,
   getSoftwareUpdates,
   getSoftwareUpdatesStats,
 } from '@state/selectors/softwareUpdates';
@@ -67,9 +66,6 @@ function HostDetailsPage() {
   );
   const softwareUpdatesConnectionSaved = useSelector((state) =>
     getSoftwareUpdatesSettingsSaved(state)
-  );
-  const softwareUpdatesConnectionError = useSelector((state) =>
-    getSoftwareUpdatesConnectionError(state)
   );
   const { numRelevantPatches, numUpgradablePackages } = useSelector((state) =>
     getSoftwareUpdatesStats(state, hostID)
@@ -129,10 +125,9 @@ function HostDetailsPage() {
       softwareUpdatesSettingsSaved={softwareUpdatesConnectionSaved}
       softwareUpdatesSettingsLoading={softwareUpdatesSettingsLoading}
       softwareUpdatesLoading={softwareUpdatesLoading}
-      softwareUpdatesConnectionError={softwareUpdatesConnectionError}
       softwareUpdatesTooltip={
         numRelevantPatches === undefined && numUpgradablePackages === undefined
-          ? 'SUSE Manager was not able to retrieve the requested data'
+          ? 'Trento was not able to retrieve the requested data'
           : undefined
       }
       cleanUpHost={() => {

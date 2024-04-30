@@ -2,7 +2,6 @@ import { createAction, createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   loading: false,
-  connectionError: false,
   softwareUpdates: {},
   errors: [],
 };
@@ -19,7 +18,6 @@ export const softwareUpdatesSlice = createSlice({
       { payload: { hostID, relevant_patches, upgradable_packages } }
     ) => {
       state.loading = false;
-      state.connectionError = false;
 
       state.softwareUpdates = {
         ...state.softwareUpdates,
@@ -28,9 +26,6 @@ export const softwareUpdatesSlice = createSlice({
           upgradable_packages,
         },
       };
-    },
-    setSoftwareUpdatesConnectionError: (state) => {
-      state.connectionError = true;
     },
     setEmptySoftwareUpdates: (state, { payload: { hostID } }) => {
       state.loading = false;
@@ -50,7 +45,6 @@ export const fetchSoftwareUpdates = createAction(FETCH_SOFTWARE_UPDATES);
 export const {
   startLoadingSoftwareUpdates,
   setSoftwareUpdates,
-  setSoftwareUpdatesConnectionError,
   setEmptySoftwareUpdates,
   setSoftwareUpdatesErrors,
 } = softwareUpdatesSlice.actions;

@@ -73,7 +73,6 @@ function HostDetails({
   softwareUpdatesLoading,
   softwareUpdatesSettingsSaved,
   softwareUpdatesSettingsLoading,
-  softwareUpdatesConnectionError = false,
   softwareUpdatesTooltip,
   cleanUpHost,
   requestHostChecksExecution,
@@ -239,7 +238,6 @@ function HostDetails({
             tooltip={softwareUpdatesTooltip}
             softwareUpdatesSettingsLoading={softwareUpdatesSettingsLoading}
             softwareUpdatesLoading={softwareUpdatesLoading}
-            connectionError={softwareUpdatesConnectionError}
             onBackToSettings={() => navigate(`/settings`)}
           />
         )}
