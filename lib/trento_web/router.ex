@@ -1,4 +1,7 @@
 defmodule TrentoWeb.Router do
+  use Boundary,
+    deps: [TrentoWeb, TrentoWeb.V1, TrentoWeb.SessionController]
+
   use TrentoWeb, :router
   use Pow.Phoenix.Router
 

@@ -1,6 +1,7 @@
 defmodule TrentoWeb.Telemetry do
   @moduledoc false
 
+  use Boundary
   use Supervisor
   import Telemetry.Metrics
 

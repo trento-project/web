@@ -16,6 +16,7 @@ defmodule TrentoWeb do
   below. Instead, define any helper function in modules
   and import those modules here.
   """
+  use Boundary, deps: [], exports: [Telemetry, Endpoint, V1, V2]
 
   def controller do
     quote do

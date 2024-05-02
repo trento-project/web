@@ -3,6 +3,7 @@ defmodule Trento.Commanded do
   Trento Commanded Application
   """
 
+  use Boundary
   use Commanded.Application, otp_app: :trento
 
   router(Trento.Router)

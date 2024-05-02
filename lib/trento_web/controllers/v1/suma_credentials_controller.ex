@@ -1,4 +1,5 @@
 defmodule TrentoWeb.V1.SUMACredentialsController do
+  use Boundary, deps: [TrentoWeb]
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
 

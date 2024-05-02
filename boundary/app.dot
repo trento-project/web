@@ -1,0 +1,34 @@
+digraph {
+  label="trento application";
+  labelloc=top;
+  rankdir=LR;
+
+  "Trento.Application" [shape=box];
+  "Trento.Clusters" [shape=box];
+  "Trento.Commanded" [shape=box];
+  "Trento.EventHandlersSupervisor" [shape=box];
+  "Trento.Hosts" [shape=box];
+  "Trento.Infrastructure" [shape=box];
+  "Trento.ProcessManagersSupervisor" [shape=box];
+  "Trento.ProjectorsSupervisor" [shape=box];
+  "Trento.Repo" [shape=box];
+  "Trento.SapSystems" [shape=box];
+  "Trento.Scheduler" [shape=box];
+  "Trento.Vault" [shape=box];
+  "TrentoWeb" [shape=box];
+
+  "Trento.Application" -> "Trento.Commanded";
+  "Trento.Application" -> "Trento.EventHandlersSupervisor";
+  "Trento.Application" -> "Trento.Infrastructure";
+  "Trento.Application" -> "Trento.ProcessManagersSupervisor";
+  "Trento.Application" -> "Trento.ProjectorsSupervisor";
+  "Trento.Application" -> "Trento.Repo";
+  "Trento.Application" -> "Trento.Scheduler";
+  "Trento.Application" -> "Trento.Vault";
+  "Trento.Application" -> "TrentoWeb";
+  "Trento.Clusters" -> "Trento.Clusters";
+  "Trento.Clusters" -> "Trento.Hosts";
+  "Trento.Clusters" -> "Trento.Infrastructure";
+  "Trento.Clusters" -> "Trento.Repo";
+  "Trento.Clusters" -> "Trento.SapSystems";
+}

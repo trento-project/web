@@ -3,6 +3,21 @@ defmodule Trento.Application do
   # for more information on OTP Applications
   @moduledoc false
 
+  use Boundary,
+    deps: [
+      Trento.{
+        Repo,
+        Commanded,
+        Scheduler,
+        EventHandlersSupervisor,
+        ProjectorsSupervisor,
+        ProcessManagersSupervisor,
+        Infrastructure,
+        Vault
+      },
+      TrentoWeb
+    ]
+
   use Application
 
   @impl true

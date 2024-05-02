@@ -1,4 +1,5 @@
 defmodule TrentoWeb.SessionController do
+  use Boundary, deps: [TrentoWeb]
   alias OpenApiSpex.Schema
 
   alias Trento.Repo

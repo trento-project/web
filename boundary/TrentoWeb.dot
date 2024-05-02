@@ -1,0 +1,16 @@
+digraph {
+  label="TrentoWeb boundary";
+  labelloc=top;
+  rankdir=LR;
+
+  "Endpoint" [shape=box];
+  "Router" [shape=box];
+  "SessionController" [shape=box];
+  "Telemetry" [shape=box];
+  "V1" [shape=box];
+  "V2" [shape=box];
+
+  "Endpoint" -> "Router";
+  "Router" -> "SessionController";
+  "Router" -> "V1";
+}

@@ -1,6 +1,7 @@
 defmodule Trento.EventHandlersSupervisor do
   @moduledoc false
 
+  use Boundary
   use Supervisor
 
   alias Trento.Infrastructure.Commanded.EventHandlers.{

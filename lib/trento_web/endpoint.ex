@@ -1,4 +1,5 @@
 defmodule TrentoWeb.Endpoint do
+  use Boundary, deps: [TrentoWeb.Router]
   use Phoenix.Endpoint, otp_app: :trento
 
   # The session will be stored in the cookie and signed,

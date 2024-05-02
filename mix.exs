@@ -11,7 +11,7 @@ defmodule Trento.MixProject do
       version: get_version(),
       elixir: "~> 1.13",
       elixirc_paths: elixirc_paths(Mix.env()),
-      compilers: Mix.compilers(),
+      compilers: [:boundary] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
@@ -54,6 +54,7 @@ defmodule Trento.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:boundary, "~> 0.10", runtime: false},
       {:commanded, "~> 1.4"},
       {:commanded_ecto_projections, "~> 1.3"},
       {:commanded_eventstore_adapter, "~> 1.4"},

@@ -2,7 +2,7 @@ defmodule Trento.SapSystems do
   @moduledoc """
   Provides a set of functions to interact with SAP systems.
   """
-
+  use Boundary
   import Ecto.Query
 
   alias Trento.SapSystems.Projections.{

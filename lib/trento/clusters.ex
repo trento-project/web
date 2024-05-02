@@ -2,6 +2,7 @@ defmodule Trento.Clusters do
   @moduledoc """
   Provides a set of functions to interact with clusters.
   """
+  use Boundary, deps: [Trento.{Hosts, Clusters, SapSystems, Infrastructure, Repo}]
 
   import Ecto.Query
 

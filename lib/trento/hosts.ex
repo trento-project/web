@@ -3,6 +3,7 @@ defmodule Trento.Hosts do
   Provides a set of functions to interact with hosts.
   """
 
+  use Boundary, exports: {:all, except: []}
   import Ecto.Query
 
   require Logger

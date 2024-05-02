@@ -1,6 +1,7 @@
 defmodule Trento.ProcessManagersSupervisor do
   @moduledoc false
 
+  use Boundary
   use Supervisor
 
   def start_link(init_arg) do

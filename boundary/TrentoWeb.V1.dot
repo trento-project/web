@@ -1,0 +1,7 @@
+digraph {
+  label="TrentoWeb.V1 boundary";
+  labelloc=top;
+  rankdir=LR;
+
+  "SUMACredentialsController" [shape=box];
+}

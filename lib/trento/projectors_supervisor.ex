@@ -1,6 +1,7 @@
 defmodule Trento.ProjectorsSupervisor do
   @moduledoc false
 
+  use Boundary
   use Supervisor
 
   alias Trento.Clusters.Projections.ClusterProjector
