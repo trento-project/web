@@ -26,7 +26,7 @@ defmodule Trento.SoftwareUpdates do
 
   @spec get_settings :: {:ok, Settings.t()} | {:error, :settings_not_configured}
   def get_settings do
-    case has_settings?(settings = Repo.one!(Settings)) do
+    case has_settings?(settings = Repo.one(Settings.base_query())) do
       true ->
         {:ok, settings}
 
@@ -61,17 +61,7 @@ defmodule Trento.SoftwareUpdates do
 
   @spec clear_settings :: :ok
   def clear_settings do
-    {1, _} =
-      Repo.update_all(Settings,
-        set: [
-          url: nil,
-          username: nil,
-          password: nil,
-          ca_cert: nil,
-          ca_uploaded_at: nil,
-          updated_at: DateTime.utc_now()
-        ]
-      )
+    Repo.delete_all(Settings.base_query())
 
     Discovery.clear_software_updates_discoveries()
 
@@ -123,11 +113,14 @@ defmodule Trento.SoftwareUpdates do
     end
   end
 
-  defp has_settings?(%Settings{url: url, username: username, password: password}),
-    do: url != nil and username != nil and password != nil
+  defp has_settings?(%Settings{}),
+    do: true
+
+  defp has_settings?(nil),
+    do: false
 
   defp ensure_no_settings_configured do
-    case has_settings?(settings = Repo.one!(Settings)) do
+    case has_settings?(settings = Repo.one(Settings.base_query())) do
       false ->
         {:ok, :settings_not_configured, settings}
 
@@ -137,11 +130,19 @@ defmodule Trento.SoftwareUpdates do
     end
   end
 
-  defp save_or_update_settings(%Settings{} = settings, settings_submission, date_service) do
+  defp save_or_update_settings(settings, settings_submission, date_service) do
     result =
-      settings
-      |> Settings.changeset(settings_submission, date_service)
-      |> Repo.update()
+      case settings do
+        nil ->
+          %Settings{}
+          |> Settings.changeset(settings_submission, date_service)
+          |> Repo.insert()
+
+        %Settings{} ->
+          settings
+          |> Settings.changeset(settings_submission, date_service)
+          |> Repo.update()
+      end
 
     case result do
       {:ok, _} = success ->

@@ -4,6 +4,7 @@ defmodule Trento.SoftwareUpdates.Settings do
   """
 
   use Ecto.Schema
+  use Trento.Support.Ecto.STI, sti_identifier: :suse_manager_settings
 
   import Ecto.Changeset
 
@@ -11,15 +12,17 @@ defmodule Trento.SoftwareUpdates.Settings do
 
   @type t :: %__MODULE__{}
 
-  @primary_key {:id, :binary_id, autogenerate: false}
-  schema "software_update_settings" do
-    field :url, :string
-    field :username, :string
-    field :password, Trento.Support.Ecto.EncryptedBinary
-    field :ca_cert, Trento.Support.Ecto.EncryptedBinary
-    field :ca_uploaded_at, :utc_datetime_usec
+  @derive {Jason.Encoder, except: [:__meta__, :__struct__]}
+  @primary_key {:id, :binary_id, autogenerate: true}
+  schema "settings" do
+    field :url, :string, source: :suse_manager_settings_url
+    field :username, :string, source: :suse_manager_settings_username
+    field :password, Trento.Support.Ecto.EncryptedBinary, source: :suse_manager_settings_password
+    field :ca_cert, Trento.Support.Ecto.EncryptedBinary, source: :suse_manager_settings_ca_cert
+    field :ca_uploaded_at, :utc_datetime_usec, source: :suse_manager_settings_ca_uploaded_at
 
     timestamps(type: :utc_datetime_usec)
+    sti_fields()
   end
 
   @spec changeset(t() | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()
@@ -30,7 +33,8 @@ defmodule Trento.SoftwareUpdates.Settings do
     |> validate_change(:url, &validate_url/2)
     |> maybe_validate_ca_cert(attrs)
     |> maybe_change_cert_upload_date(attrs, date_service)
-    |> unique_constraint(:id, name: :software_update_settings_pkey)
+    |> sti_changes()
+    |> unique_constraint(:type)
   end
 
   defp validate_url(_url_atom, url) do

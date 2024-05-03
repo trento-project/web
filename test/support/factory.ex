@@ -822,7 +822,7 @@ defmodule Trento.Factory do
   end
 
   def software_updates_settings_factory(attrs) do
-    self_signed_cert = build(:self_signed_certificate) 
+    self_signed_cert = build(:self_signed_certificate)
 
     url = Map.get(attrs, :url, Faker.Internet.url())
     username = Map.get(attrs, :username, Faker.Internet.user_name())
@@ -832,6 +832,7 @@ defmodule Trento.Factory do
 
     %Settings{}
     |> Settings.changeset(%{
+      type: :suse_manager_settings,
       url: url,
       username: username,
       password: password,
@@ -862,7 +863,7 @@ defmodule Trento.Factory do
     insert(
       :software_updates_settings,
       attrs,
-      conflict_target: :id,
+      conflict_target: :type,
       on_conflict: :replace_all
     )
   end
