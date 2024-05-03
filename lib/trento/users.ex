@@ -29,12 +29,14 @@ defmodule Trento.Users do
   def list_users do
     User
     |> where([u], is_nil(u.deleted_at))
+    |> preload(:abilities)
     |> Repo.all()
   end
 
   def get_user(id) do
     case User
          |> where([u], is_nil(u.deleted_at) and u.id == ^id)
+         |> preload(:abilities)
          |> Repo.one() do
       nil -> {:error, :not_found}
       user -> {:ok, user}
@@ -47,7 +49,7 @@ defmodule Trento.Users do
     |> Repo.insert()
   end
 
-  def update_user(%User{id: 1}, _), do: {:error, :operation_not_permitted}
+  def update_user(%User{id: 1}, _), do: {:error, :forbidden}
 
   def update_user(%User{locked_at: nil} = user, %{enabled: false} = attrs) do
     do_update(user, Map.put(attrs, :locked_at, DateTime.utc_now()))
@@ -62,7 +64,7 @@ defmodule Trento.Users do
     do_update(user, Map.put(attrs, :locked_at, nil))
   end
 
-  def delete_user(%User{id: 1}), do: {:error, :operation_not_permitted}
+  def delete_user(%User{id: 1}), do: {:error, :forbidden}
 
   def delete_user(%User{} = user) do
     user

@@ -14,7 +14,7 @@ defmodule Trento.Abilities.Ability do
 
     many_to_many :users, User, join_through: UsersAbilities, unique: true
 
-    timestamps()
+    timestamps(type: :utc_datetime_usec)
   end
 
   @doc false

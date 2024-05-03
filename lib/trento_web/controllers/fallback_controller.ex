@@ -124,7 +124,7 @@ defmodule TrentoWeb.FallbackController do
     |> render(:"422", reason: "Connection with software updates provider failed.")
   end
 
-  def call(conn, {:error, :operation_not_permitted}) do
+  def call(conn, {:error, :forbidden}) do
     conn
     |> put_status(:forbidden)
     |> put_view(ErrorView)
