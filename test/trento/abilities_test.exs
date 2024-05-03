@@ -5,13 +5,18 @@ defmodule Trento.AbilitiesTest do
 
   import Trento.Factory
 
+  setup do
+    Trento.Repo.delete_all(Abilities.Ability)
+    :ok
+  end
+
   describe "abilities" do
     alias Trento.Abilities.Ability
 
     @invalid_attrs %{label: nil, name: nil, resource: nil}
 
     test "list_abilities/0 returns all abilities" do
-      ability = insert(:ability)
+      ability = insert(:ability, inserted_at: DateTime.utc_now(), updated_at: DateTime.utc_now())
       assert Abilities.list_abilities() == [ability]
     end
 

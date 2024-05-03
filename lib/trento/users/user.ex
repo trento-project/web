@@ -18,6 +18,8 @@ defmodule Trento.Users.User do
     UsersAbilities
   }
 
+  defdelegate authorize(action, user, params), to: Trento.Users.Policy
+
   @sequences ["01234567890", "abcdefghijklmnopqrstuvwxyz"]
   @max_sequential_chars 3
 

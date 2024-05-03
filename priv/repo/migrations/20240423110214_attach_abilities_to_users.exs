@@ -6,7 +6,7 @@ defmodule Trento.Repo.Migrations.AttachAbilitiesToUsers do
       add :user_id, references(:users, primary_key: true)
       add :ability_id, references(:abilities, primary_key: true)
 
-      timestamps()
+      timestamps(type: :utc_datetime_usec)
     end
 
     create unique_index(:users_abilities, [:user_id, :ability_id])

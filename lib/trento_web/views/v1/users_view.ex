@@ -1,12 +1,12 @@
-defmodule TrentoWeb.V1.UserView do
+defmodule TrentoWeb.V1.UsersView do
   use TrentoWeb, :view
 
   def render("index.json", %{users: users}) do
-    render_many(users, __MODULE__, "user.json")
+    render_many(users, __MODULE__, "user.json", as: :user)
   end
 
   def render("show.json", %{user: user}) do
-    render_one(user, __MODULE__, "user.json")
+    render_one(user, __MODULE__, "user.json", as: :user)
   end
 
   def render("user.json", %{

@@ -1,4 +1,4 @@
-defmodule TrentoWeb.V1.UserController do
+defmodule TrentoWeb.V1.UsersController do
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
 
@@ -14,7 +14,17 @@ defmodule TrentoWeb.V1.UserController do
     UserUpdateRequest
   }
 
+  plug TrentoWeb.Plugs.LoadUserPlug
+
+  plug Bodyguard.Plug.Authorize,
+    policy: Trento.Users.Policy,
+    action: {Phoenix.Controller, :action_name},
+    user: {Pow.Plug, :current_user},
+    params: {__MODULE__, :get_policy_resource},
+    fallback: TrentoWeb.FallbackController
+
   plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
+
   action_fallback TrentoWeb.FallbackController
 
   operation :index,
@@ -38,9 +48,8 @@ defmodule TrentoWeb.V1.UserController do
       unprocessable_entity: UnprocessableEntity.response()
     ]
 
-  def create(%{body_params: body_params} = conn, _) do
-    with user_params <- decode_body(body_params),
-         {:ok, %User{} = user} <- Users.create_user(user_params) do
+  def create(%{body_params: user_params} = conn, _) do
+    with {:ok, %User{} = user} <- Users.create_user(user_params) do
       conn
       |> put_status(:created)
       |> render("show.json", user: user)
@@ -117,12 +126,11 @@ defmodule TrentoWeb.V1.UserController do
     end
   end
 
+  def get_policy_resource(_), do: Trento.Users.User
+
   defp broadcast_update_or_locked_user(%User{id: id, locked_at: nil}),
     do: TrentoWeb.Endpoint.broadcast("users:#{id}", "user_updated", %{})
 
   defp broadcast_update_or_locked_user(%User{id: id}),
     do: TrentoWeb.Endpoint.broadcast("users:#{id}", "user_locked", %{})
-
-  defp decode_body(body) when is_struct(body), do: Map.from_struct(body)
-  defp decode_body(body), do: body
 end

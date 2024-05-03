@@ -74,19 +74,25 @@ defmodule Trento.Release do
     admin_password = System.get_env("ADMIN_PASSWORD", "adminpassword")
     admin_email = System.get_env("ADMIN_EMAIL", "admin@trento.suse.com")
 
-    %Trento.Users.User{}
-    |> Trento.Users.User.changeset(%{
-      username: admin_user,
-      password: admin_password,
-      confirm_password: admin_password,
-      email: admin_email,
-      enabled: true,
-      fullname: "Trento Default Admin"
-    })
-    |> Trento.Repo.insert!(
-      on_conflict: [set: [password_hash: Argon2.hash_pwd_salt(admin_password)]],
-      conflict_target: :username
-    )
+    %{id: admin_user_id} =
+      %Trento.Users.User{}
+      |> Trento.Users.User.changeset(%{
+        username: admin_user,
+        password: admin_password,
+        confirm_password: admin_password,
+        email: admin_email,
+        enabled: true,
+        fullname: "Trento Default Admin"
+      })
+      |> Trento.Repo.insert!(
+        on_conflict: [set: [password_hash: Argon2.hash_pwd_salt(admin_password)]],
+        conflict_target: :username
+      )
+
+    # Attach all:all ability
+    %Trento.Abilities.UsersAbilities{}
+    |> Trento.Abilities.UsersAbilities.changeset(%{user_id: admin_user_id, ability_id: 1})
+    |> Trento.Repo.insert!(on_conflict: :nothing)
   end
 
   def init_default_api_key do

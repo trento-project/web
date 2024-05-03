@@ -8,9 +8,12 @@ defmodule Trento.UsersTest do
   describe "users" do
     test "list_users returns all users except the deleted ones" do
       %{id: user_id} = insert(:user)
+      %{id: ability_id} = insert(:ability)
+      insert(:users_abilities, user_id: user_id, ability_id: ability_id)
+
       insert(:user, deleted_at: DateTime.utc_now())
       users = Users.list_users()
-      assert [%User{id: ^user_id}] = users
+      assert [%User{id: ^user_id, abilities: [%{id: ^ability_id}]}] = users
       assert length(users) == 1
     end
 
@@ -24,6 +27,14 @@ defmodule Trento.UsersTest do
       %{id: user_id} = insert(:user, deleted_at: DateTime.utc_now())
 
       assert {:error, :not_found} = Users.get_user(user_id)
+    end
+
+    test "get_user return a user with the abilities" do
+      %{id: user_id} = insert(:user)
+      %{id: ability_id} = insert(:ability)
+      insert(:users_abilities, user_id: user_id, ability_id: ability_id)
+
+      assert {:ok, %User{id: ^user_id, abilities: [%{id: ^ability_id}]}} = Users.get_user(user_id)
     end
 
     test "create_user with valid data creates a user" do
@@ -173,12 +184,12 @@ defmodule Trento.UsersTest do
     end
 
     test "update_user/2 does not update user with id 1" do
-      assert {:error, :operation_not_permitted} =
+      assert {:error, :forbidden} =
                Users.update_user(%User{id: 1}, %{fullname: "new fullname"})
     end
 
     test "delete_user/2 does not delete user with id 1" do
-      assert {:error, :operation_not_permitted} = Users.delete_user(%User{id: 1})
+      assert {:error, :forbidden} = Users.delete_user(%User{id: 1})
     end
 
     test "delete_user/1 deletes the user" do

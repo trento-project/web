@@ -112,7 +112,8 @@ defmodule Trento.MixProject do
       {:parallel_stream, "~> 1.1.0"},
       {:x509, "~> 0.8.8"},
       {:argon2_elixir, "~> 4.0"},
-      {:ecto_commons, "~> 0.3.4"}
+      {:ecto_commons, "~> 0.3.4"},
+      {:bodyguard, "~> 2.4"}
     ]
   end
 

@@ -16,6 +16,8 @@ defmodule Trento.Abilities.UsersAbilities do
   schema "users_abilities" do
     belongs_to :user, User
     belongs_to :ability, Ability
+
+    timestamps(type: :utc_datetime_usec)
   end
 
   def changeset(association, attrs) do
