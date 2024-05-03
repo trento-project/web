@@ -70,23 +70,23 @@ defmodule Trento.SoftwareUpdates.Settings do
     now = DateTime.utc_now()
     {:Validity, never_before, never_after} = X509.Certificate.validity(certificate)
 
-    if never_before |> X509.DateTime.to_datetime() |> DateTime.compare(now) == :lt and
-         never_after |> X509.DateTime.to_datetime() |> DateTime.compare(now) == :gt do
+    if never_before |> X509.DateTime.to_datetime() |> DateTime.before?(now) and
+         never_after |> X509.DateTime.to_datetime() |> DateTime.after?(now) do
       :ok
     else
       {:error, [ca_cert: {"the X.509 certificate is not valid", validation: :ca_cert_validity}]}
     end
   end
 
-  defp maybe_validate_ca_cert(changeset, settings_submission) do
-    if nil != Map.get(settings_submission, :ca_cert) do
-      changeset
-      |> validate_required(:ca_cert)
-      |> validate_change(:ca_cert, &validate_ca_cert/2)
-    else
-      changeset
-    end
+  defp maybe_validate_ca_cert(changeset, %{ca_cert: nil}), do: changeset
+
+  defp maybe_validate_ca_cert(changeset, %{ca_cert: _ca_cert}) do
+    changeset
+    |> validate_required(:ca_cert)
+    |> validate_change(:ca_cert, &validate_ca_cert/2)
   end
+
+  defp maybe_validate_ca_cert(changeset, _), do: changeset
 
   defp maybe_change_cert_upload_date(changeset, settings_submission, date_service) do
     changeset

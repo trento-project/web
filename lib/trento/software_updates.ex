@@ -26,12 +26,12 @@ defmodule Trento.SoftwareUpdates do
 
   @spec get_settings :: {:ok, Settings.t()} | {:error, :settings_not_configured}
   def get_settings do
-    case has_settings?(settings = Repo.one(Settings.base_query())) do
-      true ->
-        {:ok, settings}
+    settings = Repo.one(Settings.base_query())
 
-      false ->
-        {:error, :settings_not_configured}
+    if has_settings?(settings) do
+      {:ok, settings}
+    else
+      {:error, :settings_not_configured}
     end
   end
 
