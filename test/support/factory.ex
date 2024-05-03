@@ -123,7 +123,10 @@ defmodule Trento.Factory do
     InstallationSettings
   }
 
-  alias Trento.Abilities.Ability
+  alias Trento.Abilities.{
+    Ability,
+    UsersAbilities
+  }
 
   use ExMachina.Ecto, repo: Trento.Repo
 
@@ -908,6 +911,13 @@ defmodule Trento.Factory do
       name: Faker.Pokemon.name(),
       label: Faker.Pokemon.name(),
       resource: Faker.Industry.industry()
+    }
+  end
+
+  def users_abilities_factory do
+    %UsersAbilities{
+      user_id: 1,
+      ability_id: 1
     }
   end
 end

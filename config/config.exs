@@ -200,6 +200,10 @@ config :trento, Trento.Infrastructure.SoftwareUpdates.MockSuma, relevant_patches
 config :trento, Trento.Infrastructure.SoftwareUpdates.SumaApi,
   executor: Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor
 
+config :bodyguard,
+  # The second element of the {:error, reason} tuple returned on auth failure
+  default_error: :forbidden
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"

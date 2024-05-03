@@ -7,7 +7,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
   defmodule UserCreationRequest do
     @moduledoc false
 
-    OpenApiSpex.schema(%{
+    @schema %Schema{
       title: "UserCreationRequest",
       description: "Request body to create a user",
       type: :object,
@@ -29,7 +29,9 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
         }
       },
       required: [:fullname, :email, :enabled, :password, :password_confirmation, :username]
-    })
+    }
+
+    def schema, do: @schema
   end
 
   defmodule UserUpdateRequest do
