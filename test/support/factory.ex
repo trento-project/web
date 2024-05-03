@@ -922,10 +922,14 @@ defmodule Trento.Factory do
     }
   end
 
-  def self_signed_certificate_factory(_) do
+  def self_signed_certificate_factory(attrs) do
+    validity = Map.get(attrs, :validity, 500)
+
     2048
     |> X509.PrivateKey.new_rsa()
-    |> X509.Certificate.self_signed("/C=US/ST=NT/L=Springfield/O=ACME Inc./CN=Intermediate CA")
+    |> X509.Certificate.self_signed("/C=US/ST=NT/L=Springfield/O=ACME Inc./CN=Intermediate CA",
+      validity: validity
+    )
     |> X509.Certificate.to_pem()
   end
 end

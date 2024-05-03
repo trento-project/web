@@ -445,6 +445,36 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
                 ca_uploaded_at: nil
               }} = SoftwareUpdates.change_settings(change_submission)
     end
+
+    test "should reject an invalid SSL certificate" do
+      insert_software_updates_settings(ca_cert: nil)
+
+      change_submission = %{
+        ca_cert: Faker.Lorem.word()
+      }
+
+      assert {:error,
+              %{
+                errors: [
+                  ca_cert: {"unable to parse X.509 certificate", [validation: :ca_cert_parsing]}
+                ]
+              }} = SoftwareUpdates.change_settings(change_submission)
+    end
+
+    test "should reject an expired SSL certificate" do
+      insert_software_updates_settings(ca_cert: nil)
+
+      change_submission = %{
+        ca_cert: build(:self_signed_certificate, validity: 0)
+      }
+
+      assert {:error,
+              %{
+                errors: [
+                  ca_cert: {"the X.509 certificate is not valid", [validation: :ca_cert_validity]}
+                ]
+              }} = SoftwareUpdates.change_settings(change_submission)
+    end
   end
 
   describe "clearing software update settings" do
