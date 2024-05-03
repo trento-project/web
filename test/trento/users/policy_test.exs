@@ -41,7 +41,7 @@ defmodule Trento.Users.PolicyTest do
     user = %User{abilities: [%Ability{name: "other", resource: "other"}]}
 
     Enum.each([:update, :create, :index, :show, :delete], fn action ->
-      assert true == Policy.authorize(action, user, User)
+      assert false == Policy.authorize(action, user, User)
     end)
   end
 end
