@@ -52,6 +52,7 @@ defmodule TrentoWeb.V1.UsersController do
     with {:ok, %User{} = user} <- Users.create_user(user_params) do
       conn
       |> put_status(:created)
+      |> attach_user_version_as_etag_header(user)
       |> render("show.json", user: user)
     end
   end
@@ -67,13 +68,23 @@ defmodule TrentoWeb.V1.UsersController do
       ]
     ],
     responses: [
-      ok: {"UserItem", "application/json", UserItem},
+      ok:
+        {"UserItem", "application/json", UserItem,
+         headers: %{
+           etag: %{
+             required: true,
+             description: "Entity version, used in conditional http requests",
+             type: %OpenApiSpex.Schema{type: :string},
+             allowEmptyValues: false
+           }
+         }},
       not_found: Schema.NotFound.response(),
       unprocessable_entity: Schema.UnprocessableEntity.response()
     ]
 
   def show(conn, %{id: id}) do
-    with {:ok, user} <- Users.get_user(id) do
+    with {:ok, user} <- Users.get_user(id),
+         conn <- attach_user_version_as_etag_header(conn, user) do
       render(conn, "show.json", user: user)
     end
   end
@@ -81,24 +92,45 @@ defmodule TrentoWeb.V1.UsersController do
   operation :update,
     summary: "Update an existing user",
     tags: ["User Management"],
+    description:
+      "Update an existing user, this is a conditional HTTP request, make sure you provide precondition with the If-Match header",
     parameters: [
       id: [
         in: :path,
         required: true,
         type: %OpenApiSpex.Schema{type: :integer}
+      ],
+      "if-match": [
+        required: true,
+        in: :header,
+        type: %OpenApiSpex.Schema{type: :integer}
       ]
     ],
     request_body: {"UserUpdateRequest", "application/json", UserUpdateRequest},
     responses: [
-      created: {"User updated successfully", "application/json", UserItem},
+      created:
+        {"User updated successfully", "application/json", UserItem,
+         headers: %{
+           etag: %{
+             required: true,
+             description: "Entity version, used in conditional http requests",
+             type: %OpenApiSpex.Schema{type: :string},
+             allowEmptyValues: false
+           }
+         }},
       unprocessable_entity: UnprocessableEntity.response(),
-      forbidden: Schema.Forbidden.response()
+      forbidden: Schema.Forbidden.response(),
+      precondition_failed: Schema.PreconditionFailed.response(),
+      precondition_required: Schema.PreconditionRequired.response()
     ]
 
   def update(%{body_params: body_params} = conn, %{id: id}) do
     with {:ok, user} <- Users.get_user(id),
-         {:ok, %User{} = user} <- Users.update_user(user, body_params),
-         :ok <- broadcast_update_or_locked_user(user) do
+         {:ok, lock_version} <- user_version_from_if_match_header(conn),
+         update_params <- Map.put(body_params, :lock_version, lock_version),
+         {:ok, %User{} = user} <- Users.update_user(user, update_params),
+         :ok <- broadcast_update_or_locked_user(user),
+         conn <- attach_user_version_as_etag_header(conn, user) do
       render(conn, "show.json", user: user)
     end
   end
@@ -135,9 +167,13 @@ defmodule TrentoWeb.V1.UsersController do
     do: TrentoWeb.Endpoint.broadcast("users:#{id}", "user_locked", %{})
 
   defp user_version_from_if_match_header(conn) do
-    case get_req_header(conn, "If-Match") do
-      [version, _] -> version
+    case get_req_header(conn, "if-match") do
+      [version] -> {:ok, version}
       _ -> {:error, :precondition_missing}
     end
+  end
+
+  defp attach_user_version_as_etag_header(conn, %User{lock_version: lock_version}) do
+    put_resp_header(conn, "etag", Integer.to_string(lock_version))
   end
 end

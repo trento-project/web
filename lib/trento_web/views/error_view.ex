@@ -101,7 +101,8 @@ defmodule TrentoWeb.ErrorView do
       errors: [
         %{
           title: "Precondition failed",
-          detail: "Mid-air collision detected, please refresh the resource you are trying to update."
+          detail:
+            "Mid-air collision detected, please refresh the resource you are trying to update."
         }
       ]
     }
