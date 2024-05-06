@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { noop } from 'lodash';
 import { format, parseISO } from 'date-fns';
 
+import { isAdmin } from '@lib/model/users';
+
 import Banner from '@common/Banners/Banner';
 import Button from '@common/Button';
 import Modal from '@common/Modal';
@@ -67,7 +69,7 @@ function Users({
             className="text-red-500 text-left w-auto"
             size="small"
             type="transparent"
-            disabled={item.id === 1}
+            disabled={isAdmin(item)}
             onClick={() => {
               setModalOpen(true);
               setUser(item);
@@ -75,7 +77,7 @@ function Users({
           >
             <Tooltip
               content="Admin user cannot be deleted"
-              isEnabled={item.id === 1}
+              isEnabled={isAdmin(item)}
             >
               Delete
             </Tooltip>

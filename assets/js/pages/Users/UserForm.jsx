@@ -6,6 +6,7 @@ import Button from '@common/Button';
 import Input, { Password } from '@common/Input';
 import Label from '@common/Label';
 import Select from '@common/Select';
+import Tooltip from '@common/Tooltip';
 
 import { getError } from '@lib/api/validationErrors';
 
@@ -40,6 +41,7 @@ function UserForm({
   updatedAt = '',
   errors = defaultErrors,
   saving = false,
+  saveEnabled = true,
   saveText = 'Create',
   editing = false,
   onSave = noop,
@@ -236,9 +238,18 @@ function UserForm({
           </p>
         </div>
         <div className="flex flex-row w-80 space-x-2 mt-5">
-          <Button disabled={saving} type="default-fit" onClick={onSaveClicked}>
-            {saveText}
-          </Button>
+          <Tooltip
+            content="Admin user cannot be edited"
+            isEnabled={!saveEnabled}
+          >
+            <Button
+              disabled={!saveEnabled || saving}
+              type="default-fit"
+              onClick={onSaveClicked}
+            >
+              {saveText}
+            </Button>
+          </Tooltip>
           <Button type="primary-white-fit" onClick={onCancel}>
             Cancel
           </Button>
