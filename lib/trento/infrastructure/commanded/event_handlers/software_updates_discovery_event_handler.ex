@@ -27,11 +27,13 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscovery
     :ok
   end
 
-  def handle(
-        %SoftwareUpdatesDiscoveryCleared{
-          host_id: host_id
-        },
-        _
-      ),
-      do: Discovery.clear_tracked_discovery_result(host_id)
+  def handle(%SoftwareUpdatesDiscoveryCleared{host_id: host_id}, _) do
+    Discovery.clear_tracked_discovery_result(host_id)
+
+    TrentoWeb.Endpoint.broadcast(
+      "monitoring:hosts",
+      "host_software_updates_discovery_completed",
+      %{id: host_id}
+    )
+  end
 end

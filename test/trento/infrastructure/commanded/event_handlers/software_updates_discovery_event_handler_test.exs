@@ -2,6 +2,8 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscovery
   use Trento.DataCase
 
   import Mox
+  import Phoenix.ChannelTest
+  import TrentoWeb.ChannelCase
   import Trento.Factory
 
   alias Trento.SoftwareUpdates.Discovery.DiscoveryResult
@@ -16,6 +18,17 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscovery
   require Trento.SoftwareUpdates.Enums.SoftwareUpdatesHealth, as: SoftwareUpdatesHealth
 
   setup [:set_mox_from_context, :verify_on_exit!]
+
+  @endpoint TrentoWeb.Endpoint
+
+  setup do
+    {:ok, _, socket} =
+      TrentoWeb.UserSocket
+      |> socket("user_id", %{some: :assign})
+      |> subscribe_and_join(TrentoWeb.MonitoringChannel, "monitoring:hosts")
+
+    %{socket: socket}
+  end
 
   describe "Discovering software updates" do
     test "should discover software updates when a SoftwareUpdatesDiscoveryRequested is emitted" do
@@ -100,6 +113,12 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscovery
                :software_updates_discovery_cleared_event
                |> build(host_id: host_id)
                |> SoftwareUpdatesDiscoveryEventHandler.handle(%{})
+
+      assert_broadcast(
+        "host_software_updates_discovery_completed",
+        %{id: ^host_id},
+        1000
+      )
 
       assert nil == Trento.Repo.get(DiscoveryResult, host_id)
     end

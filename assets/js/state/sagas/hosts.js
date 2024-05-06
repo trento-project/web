@@ -14,6 +14,7 @@ import {
   HOST_RESTORED,
   HOST_HEALTH_CHANGED,
   SAPTUNE_STATUS_UPDATED,
+  HOST_SOFTWARE_UPDATES_DISCOVERY_COMPLETED,
   removeHost,
   setHostListDeregisterable,
   setHostDeregistering,
@@ -28,6 +29,9 @@ import {
   checkHostIsDeregisterable,
   cancelCheckHostIsDeregisterable,
 } from '@state/hosts';
+
+import { fetchSoftwareUpdatesSettings } from '@state/sagas/softwareUpdatesSettings';
+import { fetchSoftwareUpdates } from '@state/sagas/softwareUpdates';
 
 import { notify } from '@state/notifications';
 
@@ -156,6 +160,11 @@ export function* hostHealthChanged({ payload: { id, hostname, health } }) {
   );
 }
 
+export function* hostSoftwareUpdatesDiscoveryCompleted({ payload: { id } }) {
+  yield fetchSoftwareUpdatesSettings();
+  yield fetchSoftwareUpdates({ payload: id });
+}
+
 export function* watchHostEvents() {
   yield takeEvery(HOST_REGISTERED, hostRegistered);
   yield takeEvery(HOST_DETAILS_UPDATED, hostDetailsUpdated);
@@ -167,4 +176,8 @@ export function* watchHostEvents() {
   yield takeEvery(HOST_RESTORED, hostRestored);
   yield takeEvery(SAPTUNE_STATUS_UPDATED, saptuneStatusUpdated);
   yield takeEvery(HOST_HEALTH_CHANGED, hostHealthChanged);
+  yield takeEvery(
+    HOST_SOFTWARE_UPDATES_DISCOVERY_COMPLETED,
+    hostSoftwareUpdatesDiscoveryCompleted
+  );
 }

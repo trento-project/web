@@ -19,6 +19,7 @@ const registerEvents = (store, socket, channelName, events) => {
 
 const processChannelEvents = (reduxStore, socket) => {
   registerEvents(reduxStore, socket, 'monitoring:hosts', [
+    'host_software_updates_discovery_completed',
     'host_registered',
     'host_details_updated',
     'heartbeat_succeded',
