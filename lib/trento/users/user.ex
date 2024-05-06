@@ -62,11 +62,15 @@ defmodule Trento.Users.User do
     |> custom_fields_changeset(attrs)
   end
 
-  def delete_changeset(%__MODULE__{username: username} = user, %{deleted_at: deleted_at} = attrs) do
+  def delete_changeset(
+        %__MODULE__{username: username, email: email} = user,
+        %{deleted_at: deleted_at} = attrs
+      ) do
     user
     |> cast(attrs, [:deleted_at])
     |> validate_required(:deleted_at)
     |> put_change(:username, "#{username}__#{deleted_at}")
+    |> put_change(:email, "#{email}__#{deleted_at}")
   end
 
   defp validate_current_password(changeset, %{password: _password} = attrs),

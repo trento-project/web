@@ -255,14 +255,19 @@ defmodule Trento.UsersTest do
     end
 
     test "delete_user/1 deletes the user" do
-      %{id: user_id, username: original_username} = user = insert(:user)
+      %{id: user_id, username: original_username, email: original_email} = user = insert(:user)
+
       assert {:ok, %User{}} = Users.delete_user(user)
       assert {:error, :not_found} == Users.get_user(user.id)
 
-      %User{deleted_at: deleted_at, username: username} = Trento.Repo.get_by!(User, id: user_id)
+      %User{deleted_at: deleted_at, username: username, email: email} =
+        Trento.Repo.get_by!(User, id: user_id)
 
       refute deleted_at == nil
       refute username == original_username
+      refute email == original_email
+      assert username == "#{original_username}__#{deleted_at}"
+      assert email == "#{original_email}__#{deleted_at}"
     end
   end
 end
