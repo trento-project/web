@@ -5,7 +5,13 @@ import { userFactory } from '@lib/test-utils/factories/users';
 
 import UserForm from './UserForm';
 
-const { fullname, email, username, password } = userFactory.build();
+const {
+  fullname,
+  email,
+  username,
+  created_at: createdAt,
+  updated_at: updatedAt,
+} = userFactory.build();
 
 function ContainerWrapper({ children }) {
   return (
@@ -35,16 +41,22 @@ export default {
         type: 'text',
       },
     },
-    password: {
-      description: 'Password',
+    createdAt: {
+      description: 'User creation timestamp',
       control: {
         type: 'text',
       },
     },
-    confirmPassword: {
-      description: 'Password confirmation',
+    udpatedAt: {
+      description: 'User last update timestamp',
       control: {
         type: 'text',
+      },
+    },
+    editing: {
+      description: 'User is being edited',
+      control: {
+        type: 'boolean',
       },
     },
     errors: {
@@ -75,19 +87,20 @@ export default {
 
 export const Empty = {};
 
-export const PrePopulated = {
+export const Editing = {
   args: {
     fullName: fullname,
     emailAddress: email,
     username,
-    password,
-    confirmPassword: password,
+    createdAt,
+    updatedAt,
+    editing: true,
   },
 };
 
 export const WithErrors = {
   args: {
-    ...PrePopulated.args,
+    ...Editing.args,
     errors: [
       {
         detail: 'Error validating fullname',
