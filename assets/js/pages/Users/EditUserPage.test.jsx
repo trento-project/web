@@ -13,7 +13,7 @@ import * as router from 'react-router';
 import { networkClient } from '@lib/network';
 
 import { renderWithRouterMatch } from '@lib/test-utils';
-import { userFactory } from '@lib/test-utils/factories/users';
+import { adminUser, userFactory } from '@lib/test-utils/factories/users';
 
 import EditUserPage from './EditUserPage';
 
@@ -152,5 +152,25 @@ describe('EditUserPage', () => {
     await screen.findByText('Information has been updated by another user', {
       exact: false,
     });
+  });
+
+  it('should not enable editing if the user is admin', async () => {
+    const user = userEvent.setup();
+    const userData = adminUser.build();
+
+    axiosMock.onGet(USERS_URL.concat(userData.id)).reply(200, userData);
+
+    renderWithRouterMatch(<EditUserPage />, {
+      path: '/users/:userID/edit',
+      route: `/users/${userData.id}/edit`,
+    });
+
+    await screen.findByText('Edit User');
+
+    const editButton = screen.getByRole('button', { name: 'Edit' });
+    expect(editButton).toBeDisabled();
+    const toolTipText = 'Admin user cannot be edited';
+    await user.hover(editButton);
+    expect(await screen.findByText(toolTipText)).toBeVisible();
   });
 });
