@@ -23,7 +23,22 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
       api_spec: api_spec
     } do
       insert_software_updates_settings()
-      %{id: host_id} = insert(:host, fully_qualified_domain_name: "test")
+
+      relevant_patches = [
+        build(:relevant_patch, id: 4182),
+        build(:relevant_patch, id: 4174)
+      ]
+
+      upgradable_packages = [
+        build(:upgradable_package, name: "elixir"),
+        build(:upgradable_package, name: "systemd")
+      ]
+
+      %{host_id: host_id} =
+        insert(:software_updates_discovery_result,
+          relevant_patches: relevant_patches,
+          upgradable_packages: upgradable_packages
+        )
 
       %AvailableSoftwareUpdatesResponse{
         relevant_patches: [
@@ -75,19 +90,6 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
       |> get("/api/v1/hosts/#{host_id}/software_updates")
       |> json_response(:not_found)
       |> assert_schema("NotFound", api_spec)
-    end
-
-    test "should return 422 when a host does not have an fqdn", %{
-      conn: conn,
-      api_spec: api_spec
-    } do
-      insert_software_updates_settings()
-      %{id: host_id} = insert(:host, fully_qualified_domain_name: nil)
-
-      conn
-      |> get("/api/v1/hosts/#{host_id}/software_updates")
-      |> json_response(:unprocessable_entity)
-      |> assert_schema("UnprocessableEntity", api_spec)
     end
   end
 end

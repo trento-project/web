@@ -7,6 +7,7 @@ defmodule Trento.Factory do
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
   require Trento.SapSystems.Enums.EnsaVersion, as: EnsaVersion
   require Trento.Enums.Health, as: Health
+  require Trento.SoftwareUpdates.Enums.AdvisoryType, as: AdvisoryType
   require Trento.SoftwareUpdates.Enums.SoftwareUpdatesHealth, as: SoftwareUpdatesHealth
 
   alias Faker.Random.Elixir, as: RandomElixir
@@ -868,11 +869,10 @@ defmodule Trento.Factory do
     %{
       date: Faker.Date.backward(30),
       advisory_name: String.downcase(Faker.Pokemon.name()),
-      advisory_type:
-        Faker.Util.pick(["Bug Fix Advisory", "Security Advisory", "Product Enhancement"]),
+      advisory_type: Faker.Util.pick(AdvisoryType.values()),
       advisory_status: "stable",
       id: RandomElixir.random_between(2000, 5000),
-      advisory_synopsis: Faker.Lorem.words(30),
+      advisory_synopsis: Faker.Lorem.sentence(),
       update_date: Faker.Date.backward(30)
     }
   end
@@ -899,7 +899,23 @@ defmodule Trento.Factory do
       system_id: Faker.UUID.v4(),
       relevant_patches: build_list(2, :relevant_patch),
       upgradable_packages: build_list(2, :upgradable_package),
-      failure_reason: Faker.Lorem.word()
+      failure_reason: nil
+    }
+  end
+
+  def failed_software_updates_discovery_result_factory do
+    %DiscoveryResult{
+      host_id: Faker.UUID.v4(),
+      system_id: nil,
+      relevant_patches: nil,
+      upgradable_packages: nil,
+      failure_reason:
+        Faker.Util.pick([
+          "system_id_not_found",
+          "error_getting_patches",
+          "error_getting_packages",
+          "max_login_retries_reached"
+        ])
     }
   end
 end

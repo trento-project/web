@@ -4,9 +4,6 @@ defmodule Trento.SoftwareUpdates do
   """
   require Logger
 
-  alias Trento.Hosts
-  alias Trento.Hosts.Projections.HostReadModel
-
   alias Trento.Support.DateService
 
   alias Trento.Repo
@@ -114,27 +111,15 @@ defmodule Trento.SoftwareUpdates do
           {:ok, map()}
           | {:error,
              :settings_not_configured
-             | :system_id_not_found
              | :not_found
-             | :fqdn_not_found
+             | :system_id_not_found
              | :error_getting_patches
-             | :error_getting_packages}
+             | :error_getting_packages
+             | :max_login_retries_reached}
   def get_software_updates(host_id) do
     with {:ok, _} <- get_settings(),
-         {:ok, fqdn} <- get_host_fqdn(host_id),
-         {:ok, system_id} <- Discovery.get_system_id(fqdn),
-         {:ok, relevant_patches} <- Discovery.get_relevant_patches(system_id),
-         {:ok, upgradable_packages} <-
-           Discovery.get_upgradable_packages(system_id) do
+         {:ok, relevant_patches, upgradable_packages} <- Discovery.get_discovery_result(host_id) do
       {:ok, %{relevant_patches: relevant_patches, upgradable_packages: upgradable_packages}}
-    end
-  end
-
-  defp get_host_fqdn(host_id) do
-    case Hosts.get_host_by_id(host_id) do
-      nil -> {:error, :not_found}
-      %HostReadModel{fully_qualified_domain_name: nil} -> {:error, :fqdn_not_found}
-      %HostReadModel{fully_qualified_domain_name: fqdn} -> {:ok, fqdn}
     end
   end
 
