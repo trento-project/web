@@ -30,7 +30,8 @@ defmodule TrentoWeb.V1.ProfileController do
       {"UserProfileUpdateRequest", "application/json", Schema.User.UserProfileUpdateRequest},
     responses: [
       ok: {"Profile updated successfully", "application/json", Schema.User.UserProfile},
-      unprocessable_entity: Schema.UnprocessableEntity.response()
+      unprocessable_entity: Schema.UnprocessableEntity.response(),
+      forbidden: Schema.Forbidden.response()
     ]
 
   def update(%{body_params: profile_params} = conn, _) do

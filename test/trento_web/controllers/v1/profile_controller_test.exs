@@ -41,13 +41,14 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
   test "should update the profile with allowed fields", %{
     conn: conn,
     api_spec: api_spec,
-    user: %{id: user_id}
+    user: %{id: user_id, password: current_password}
   } do
     %{fullname: fullname, email: email} =
       valid_params = %{
         fullname: Faker.Person.name(),
         email: Faker.Internet.email(),
         password: "testpassword89",
+        current_password: current_password,
         password_confirmation: "testpassword89"
       }
 

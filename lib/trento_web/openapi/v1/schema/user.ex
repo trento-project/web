@@ -48,6 +48,11 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
         fullname: %Schema{type: :string, description: "User full name", nullable: false},
         email: %Schema{type: :string, description: "User email", nullable: false, format: :email},
         password: %Schema{type: :string, description: "User new password", nullable: false},
+        current_password: %Schema{
+          type: :string,
+          description: "User current password, used to set a new password",
+          nullable: false
+        },
         password_confirmation: %Schema{
           type: :string,
           description: "User new password, should be the same as password field",
