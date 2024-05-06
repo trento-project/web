@@ -149,6 +149,9 @@ defmodule TrentoWeb.Router do
 
       resources "/users", UsersController, except: [:new, :edit]
 
+      get "/profile", ProfileController, :show
+      patch "/profile", ProfileController, :update
+
       scope "/settings" do
         get "/", SettingsController, :settings
         post "/accept_eula", SettingsController, :accept_eula
