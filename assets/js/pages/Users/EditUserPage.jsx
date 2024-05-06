@@ -5,6 +5,7 @@ import BackButton from '@common/BackButton';
 import Banner from '@common/Banners/Banner';
 import PageHeader from '@common/PageHeader';
 
+import { isAdmin } from '@lib/model/users';
 import { editUser, getUser } from '@lib/api/users';
 
 import UserForm from './UserForm';
@@ -96,6 +97,7 @@ function EditUserPage() {
         status={enabled ? 'Enabled' : 'Disabled'}
         createdAt={createdAt}
         updatedAt={updatedAt}
+        saveEnabled={!isAdmin(userState)}
         saving={savingState}
         errors={errorsState}
         onSave={onEditUser}

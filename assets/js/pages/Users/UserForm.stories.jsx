@@ -1,7 +1,7 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
-import { userFactory } from '@lib/test-utils/factories/users';
+import { adminUser, userFactory } from '@lib/test-utils/factories/users';
 
 import UserForm from './UserForm';
 
@@ -12,6 +12,12 @@ const {
   created_at: createdAt,
   updated_at: updatedAt,
 } = userFactory.build();
+
+const {
+  fullname: adminFullName,
+  email: adminEmail,
+  username: adminUsername,
+} = adminUser.build();
 
 function ContainerWrapper({ children }) {
   return (
@@ -68,6 +74,24 @@ export default {
         type: 'boolean',
       },
     },
+    saving: {
+      description: 'User is being saved',
+      control: {
+        type: 'boolean',
+      },
+    },
+    saveEnabled: {
+      description: 'User saving is enabled',
+      control: {
+        type: 'text',
+      },
+    },
+    saveText: {
+      description: 'Save button text',
+      control: {
+        type: 'text',
+      },
+    },
     errors: {
       description: 'OpenAPI errors coming from backend validation',
     },
@@ -104,6 +128,17 @@ export const Editing = {
     createdAt,
     updatedAt,
     editing: true,
+    saveText: 'Edit',
+  },
+};
+
+export const Admin = {
+  args: {
+    ...Editing.args,
+    fullName: adminFullName,
+    emailAddress: adminEmail,
+    username: adminUsername,
+    saveEnabled: false,
   },
 };
 
