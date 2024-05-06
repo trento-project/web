@@ -213,9 +213,8 @@ function UserForm({
             <Select
               optionsName="status"
               options={['Enabled', 'Disabled']}
-              value={status}
-              disabled
-              onChange={({ target: { value } }) => {
+              value={statusState}
+              onChange={(value) => {
                 setStatus(value);
               }}
             />

@@ -45,7 +45,7 @@ defmodule Trento.Users do
 
   def create_user(attrs \\ %{}) do
     %User{}
-    |> User.changeset(attrs)
+    |> User.changeset(set_locked_at(attrs))
     |> Repo.insert()
   end
 
@@ -79,6 +79,12 @@ defmodule Trento.Users do
     |> User.delete_changeset(%{deleted_at: DateTime.utc_now()})
     |> Repo.update()
   end
+
+  defp set_locked_at(%{enabled: false} = attrs) do
+    Map.put(attrs, :locked_at, DateTime.utc_now())
+  end
+
+  defp set_locked_at(attrs), do: attrs
 
   defp do_update(user, attrs) do
     user
