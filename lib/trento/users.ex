@@ -49,6 +49,14 @@ defmodule Trento.Users do
     |> Repo.insert()
   end
 
+  def update_user_profile(%User{id: 1}, _), do: {:error, :forbidden}
+
+  def update_user_profile(%User{} = user, attrs) do
+    user
+    |> User.profile_update_changeset(attrs)
+    |> Repo.update()
+  end
+
   def update_user(%User{id: 1}, _), do: {:error, :forbidden}
 
   def update_user(%User{locked_at: nil} = user, %{enabled: false} = attrs) do
