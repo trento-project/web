@@ -5,12 +5,12 @@ import { formatISO } from 'date-fns';
 export const userFactory = Factory.define(() => ({
   id: faker.number.int(),
   username: faker.internet.userName(),
-  created_at: formatISO(faker.date.past()),
   actions: 'Delete',
   enabled: faker.datatype.boolean(),
   fullname: faker.internet.displayName(),
   email: faker.internet.email(),
-  password: faker.internet.password(),
+  created_at: formatISO(faker.date.past()),
+  updated_at: formatISO(faker.date.past()),
 }));
 
 export const adminUser = userFactory.params({
