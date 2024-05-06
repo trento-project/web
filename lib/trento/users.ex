@@ -87,8 +87,12 @@ defmodule Trento.Users do
   defp set_locked_at(attrs), do: attrs
 
   defp do_update(user, attrs) do
-    user
-    |> User.update_changeset(attrs)
-    |> Repo.update()
+    try do
+      user
+      |> User.update_changeset(attrs)
+      |> Repo.update()
+    rescue
+      Ecto.StaleEntryError -> {:error, :stale_entry}
+    end
   end
 end
