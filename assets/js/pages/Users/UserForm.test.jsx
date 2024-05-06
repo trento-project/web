@@ -133,7 +133,7 @@ describe('UserForm', () => {
     expect(screen.getAllByText('Required field').length).toBe(3);
   });
 
-  it('saves the user', async () => {
+  it('should save the user', async () => {
     const user = userEvent.setup();
     const { fullname, email, username } = userFactory.build();
     const password = faker.internet.password();
@@ -156,6 +156,47 @@ describe('UserForm', () => {
       password,
       password_confirmation: password,
       enabled: true,
+    });
+  });
+
+  it.each([
+    { option: 'Enabled', result: true },
+    { option: 'Disabled', result: false },
+  ])('should set the user status correctly', async ({ option, result }) => {
+    const user = userEvent.setup();
+    const mockOnSave = jest.fn();
+
+    const {
+      fullname,
+      email,
+      username,
+      created_at: createdAt,
+      updated_at: updatedAt,
+    } = userFactory.build();
+
+    await act(async () => {
+      render(
+        <UserForm
+          fullName={fullname}
+          emailAddress={email}
+          username={username}
+          createdAt={createdAt}
+          updatedAt={updatedAt}
+          editing
+          onSave={mockOnSave}
+        />
+      );
+    });
+
+    await user.click(screen.getByText('Enabled'));
+    await user.click(screen.getAllByText(option)[0]);
+
+    await user.click(screen.getByRole('button', { name: 'Create' }));
+
+    expect(mockOnSave).toHaveBeenNthCalledWith(1, {
+      fullname,
+      email,
+      enabled: result,
     });
   });
 });

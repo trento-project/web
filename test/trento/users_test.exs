@@ -113,6 +113,23 @@ defmodule Trento.UsersTest do
       assert user.fullname == "some fullname"
       assert user.email == "test@trento.com"
       assert user.username == "username"
+      assert user.locked_at == nil
+    end
+
+    test "create_user creates a disabled user" do
+      %{username: username, email: email, fullname: fullname} = build(:user)
+
+      assert {:ok, %User{} = user} =
+               Users.create_user(%{
+                 username: username,
+                 password: "some password",
+                 email: email,
+                 fullname: fullname,
+                 confirm_password: "some password",
+                 enabled: false
+               })
+
+      refute user.locked_at == nil
     end
 
     test "create_user should return an error if the email has already been taken" do
