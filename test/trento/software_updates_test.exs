@@ -50,7 +50,7 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
         ca_uploaded_at: ca_uploaded_at
       } =
         insert_software_updates_settings(
-          ca_cert: Faker.Lorem.sentence(),
+          ca_cert: build(:self_signed_certificate),
           ca_uploaded_at: DateTime.utc_now()
         )
 
@@ -172,7 +172,7 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
         url: url = "https://valid.com",
         username: username = Faker.Internet.user_name(),
         password: password = Faker.Lorem.word(),
-        ca_cert: ca_cert = Faker.Lorem.sentence()
+        ca_cert: ca_cert = build(:self_signed_certificate)
       }
 
       assert {:ok,
@@ -221,7 +221,7 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
           url: "https://valid.com",
           username: Faker.Internet.user_name(),
           password: Faker.Lorem.word(),
-          ca_cert: Faker.Lorem.sentence()
+          ca_cert: build(:self_signed_certificate)
         }
 
         assert {:ok, _} = operation.(settings)
@@ -358,7 +358,7 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
 
       change_submission = %{
         url: new_url = "https://new.com",
-        ca_cert: new_ca_cert = "new_ca_cert"
+        ca_cert: new_ca_cert = build(:self_signed_certificate)
       }
 
       assert {:ok,
@@ -381,7 +381,7 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
         ca_uploaded_at: _initial_ca_uploaded_at
       } =
         insert_software_updates_settings(
-          ca_cert: Faker.Lorem.sentence(),
+          ca_cert: build(:self_signed_certificate),
           ca_uploaded_at: DateTime.utc_now()
         )
 
@@ -395,7 +395,7 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
 
       change_submission = %{
         url: new_url = "https://new.com",
-        ca_cert: new_ca_cert = "new_ca_cert"
+        ca_cert: new_ca_cert = build(:self_signed_certificate)
       }
 
       Enum.each(1..3, fn run_iteration ->
@@ -443,6 +443,55 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
                 password: ^initial_password,
                 ca_cert: nil,
                 ca_uploaded_at: nil
+              }} = SoftwareUpdates.change_settings(change_submission)
+    end
+
+    test "should reject an invalid SSL certificate" do
+      insert_software_updates_settings(ca_cert: nil)
+
+      change_submission = %{
+        ca_cert: Faker.Lorem.word()
+      }
+
+      assert {:error,
+              %{
+                errors: [
+                  ca_cert: {"unable to parse X.509 certificate", [validation: :ca_cert_parsing]}
+                ]
+              }} = SoftwareUpdates.change_settings(change_submission)
+    end
+
+    test "should reject a 'foobar' SSL certificate" do
+      insert_software_updates_settings(ca_cert: nil)
+
+      change_submission = %{
+        ca_cert: """
+        -----BEGIN CERTIFICATE-----
+        foobar
+        -----END CERTIFICATE-----
+        """
+      }
+
+      assert {:error,
+              %{
+                errors: [
+                  ca_cert: {"unable to parse X.509 certificate", [validation: :ca_cert_parsing]}
+                ]
+              }} = SoftwareUpdates.change_settings(change_submission)
+    end
+
+    test "should reject an expired SSL certificate" do
+      insert_software_updates_settings(ca_cert: nil)
+
+      change_submission = %{
+        ca_cert: build(:self_signed_certificate, validity: 0)
+      }
+
+      assert {:error,
+              %{
+                errors: [
+                  ca_cert: {"the X.509 certificate is not valid", [validation: :ca_cert_validity]}
+                ]
               }} = SoftwareUpdates.change_settings(change_submission)
     end
   end

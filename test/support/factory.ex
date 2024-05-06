@@ -822,14 +822,17 @@ defmodule Trento.Factory do
   end
 
   def software_updates_settings_factory(attrs) do
+    self_signed_cert = build(:self_signed_certificate)
+
     url = Map.get(attrs, :url, Faker.Internet.url())
     username = Map.get(attrs, :username, Faker.Internet.user_name())
     password = Map.get(attrs, :password, Faker.Lorem.word())
-    ca_cert = Map.get(attrs, :ca_cert, Faker.Lorem.sentence())
+    ca_cert = Map.get(attrs, :ca_cert, self_signed_cert)
     ca_uploaded_at = Map.get(attrs, :ca_uploaded_at, DateTime.utc_now())
 
     %Settings{}
     |> Settings.changeset(%{
+      type: :suse_manager_settings,
       url: url,
       username: username,
       password: password,
@@ -860,7 +863,7 @@ defmodule Trento.Factory do
     insert(
       :software_updates_settings,
       attrs,
-      conflict_target: :id,
+      conflict_target: :type,
       on_conflict: :replace_all
     )
   end
@@ -917,5 +920,16 @@ defmodule Trento.Factory do
           "max_login_retries_reached"
         ])
     }
+  end
+
+  def self_signed_certificate_factory(attrs) do
+    validity = Map.get(attrs, :validity, 500)
+
+    2048
+    |> X509.PrivateKey.new_rsa()
+    |> X509.Certificate.self_signed("/C=US/ST=NT/L=Springfield/O=ACME Inc./CN=Intermediate CA",
+      validity: validity
+    )
+    |> X509.Certificate.to_pem()
   end
 end

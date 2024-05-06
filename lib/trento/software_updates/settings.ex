@@ -4,6 +4,7 @@ defmodule Trento.SoftwareUpdates.Settings do
   """
 
   use Ecto.Schema
+  use Trento.Support.Ecto.STI, sti_identifier: :suse_manager_settings
 
   import Ecto.Changeset
 
@@ -11,15 +12,17 @@ defmodule Trento.SoftwareUpdates.Settings do
 
   @type t :: %__MODULE__{}
 
-  @primary_key {:id, :binary_id, autogenerate: false}
-  schema "software_update_settings" do
-    field :url, :string
-    field :username, :string
-    field :password, Trento.Support.Ecto.EncryptedBinary
-    field :ca_cert, Trento.Support.Ecto.EncryptedBinary
-    field :ca_uploaded_at, :utc_datetime_usec
+  @derive {Jason.Encoder, except: [:__meta__, :__struct__]}
+  @primary_key {:id, :binary_id, autogenerate: true}
+  schema "settings" do
+    field :url, :string, source: :suse_manager_settings_url
+    field :username, :string, source: :suse_manager_settings_username
+    field :password, Trento.Support.Ecto.EncryptedBinary, source: :suse_manager_settings_password
+    field :ca_cert, Trento.Support.Ecto.EncryptedBinary, source: :suse_manager_settings_ca_cert
+    field :ca_uploaded_at, :utc_datetime_usec, source: :suse_manager_settings_ca_uploaded_at
 
     timestamps(type: :utc_datetime_usec)
+    sti_fields()
   end
 
   @spec changeset(t() | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()
@@ -30,7 +33,8 @@ defmodule Trento.SoftwareUpdates.Settings do
     |> validate_change(:url, &validate_url/2)
     |> maybe_validate_ca_cert(attrs)
     |> maybe_change_cert_upload_date(attrs, date_service)
-    |> unique_constraint(:id, name: :software_update_settings_pkey)
+    |> sti_changes()
+    |> unique_constraint(:type)
   end
 
   defp validate_url(_url_atom, url) do
@@ -43,11 +47,50 @@ defmodule Trento.SoftwareUpdates.Settings do
     end
   end
 
-  defp maybe_validate_ca_cert(changeset, settings_submission) do
-    if nil != Map.get(settings_submission, :ca_cert) do
-      validate_required(changeset, :ca_cert)
+  defp maybe_validate_ca_cert(changeset, %{ca_cert: nil}), do: changeset
+
+  defp maybe_validate_ca_cert(changeset, %{ca_cert: _ca_cert}) do
+    changeset
+    |> validate_required(:ca_cert)
+    |> validate_change(:ca_cert, &validate_ca_cert/2)
+  end
+
+  defp maybe_validate_ca_cert(changeset, _), do: changeset
+
+  defp validate_ca_cert(_ca_cert_atom, ca_cert) do
+    with {:ok, certificate} <- parse_ca_cert(ca_cert),
+         :ok <- ca_cert_valid?(certificate) do
+      []
     else
-      changeset
+      {:error, errors} -> errors
+    end
+  end
+
+  defp parse_ca_cert(ca_cert) do
+    case X509.Certificate.from_pem(ca_cert) do
+      {:ok, _} = result ->
+        result
+
+      _ ->
+        {:error, [ca_cert: {"unable to parse X.509 certificate", validation: :ca_cert_parsing}]}
+    end
+  rescue
+    _ ->
+      # We discovered that an exception is thrown when attempting to parse invalid strings
+      # wrapped in valid headers like "foobar"
+      # https://github.com/trento-project/web/pull/2581#pullrequestreview-2040240059
+      {:error, [ca_cert: {"unable to parse X.509 certificate", validation: :ca_cert_parsing}]}
+  end
+
+  defp ca_cert_valid?(certificate) do
+    now = DateTime.utc_now()
+    {:Validity, never_before, never_after} = X509.Certificate.validity(certificate)
+
+    if never_before |> X509.DateTime.to_datetime() |> DateTime.before?(now) and
+         never_after |> X509.DateTime.to_datetime() |> DateTime.after?(now) do
+      :ok
+    else
+      {:error, [ca_cert: {"the X.509 certificate is not valid", validation: :ca_cert_validity}]}
     end
   end
 

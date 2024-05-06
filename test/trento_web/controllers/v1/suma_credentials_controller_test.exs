@@ -16,7 +16,7 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
   describe "retrieve user settings" do
     test "should return user settings", %{conn: conn} do
       insert_software_updates_settings(
-        ca_cert: Faker.Lorem.sentence(),
+        ca_cert: build(:self_signed_certificate),
         ca_uploaded_at: DateTime.utc_now()
       )
 
@@ -45,7 +45,7 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
           url: Faker.Internet.image_url(),
           username: Faker.Internet.user_name(),
           password: Faker.Lorem.word(),
-          ca_cert: Faker.Lorem.sentence()
+          ca_cert: build(:self_signed_certificate)
         }
 
       %{"ca_uploaded_at" => ca_uploaded_at} =
@@ -64,7 +64,7 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
         url: "http://insecureurl.com",
         username: Faker.Internet.user_name(),
         password: Faker.Lorem.word(),
-        ca_cert: Faker.Lorem.sentence()
+        ca_cert: build(:self_signed_certificate)
       }
 
       resp =
@@ -119,7 +119,7 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
         url: Faker.Internet.image_url(),
         username: Faker.Internet.user_name(),
         password: Faker.Lorem.word(),
-        ca_cert: Faker.Lorem.sentence()
+        ca_cert: build(:self_signed_certificate)
       }
 
       resp =
@@ -341,7 +341,7 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
         ca_uploaded_at: initial_ca_uploaded_at
       } =
         insert_software_updates_settings(
-          ca_cert: Faker.Lorem.sentence(),
+          ca_cert: build(:self_signed_certificate),
           ca_uploaded_at: DateTime.utc_now()
         )
 
@@ -374,11 +374,14 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
         ca_uploaded_at: initial_ca_uploaded_at
       } =
         insert_software_updates_settings(
-          ca_cert: Faker.Lorem.sentence(),
+          ca_cert: build(:self_signed_certificate),
           ca_uploaded_at: DateTime.utc_now()
         )
 
-      change_submission = %{url: new_url = "https://new.com", ca_cert: "new_ca_cert"}
+      change_submission = %{
+        url: new_url = "https://new.com",
+        ca_cert: build(:self_signed_certificate)
+      }
 
       resp =
         conn
@@ -402,7 +405,7 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
         ca_uploaded_at: _initial_ca_uploaded_at
       } =
         insert_software_updates_settings(
-          ca_cert: Faker.Lorem.sentence(),
+          ca_cert: build(:self_signed_certificate),
           ca_uploaded_at: DateTime.utc_now()
         )
 
