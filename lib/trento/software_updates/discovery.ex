@@ -273,8 +273,8 @@ defmodule Trento.SoftwareUpdates.Discovery do
        }) do
     {
       :ok,
-      normalize_discovered_result_list(relevant_patches),
-      normalize_discovered_result_list(upgradable_packages)
+      keys_to_atoms(relevant_patches),
+      keys_to_atoms(upgradable_packages)
     }
   end
 
@@ -284,7 +284,7 @@ defmodule Trento.SoftwareUpdates.Discovery do
   defp failure_reason_to_atom("max_login_retries_reached"), do: :max_login_retries_reached
   defp failure_reason_to_atom(_), do: :unknown_discovery_error
 
-  defp normalize_discovered_result_list(discovered_result_list),
+  defp keys_to_atoms(discovered_result_list),
     do:
       discovered_result_list
       |> Jason.encode!()
