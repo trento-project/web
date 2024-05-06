@@ -70,7 +70,7 @@ defmodule Trento.Users.User do
   end
 
   defp validate_current_password(changeset, %{password: _password} = attrs),
-    do: changeset |> pow_current_password_changeset(attrs)
+    do: pow_current_password_changeset(changeset, attrs)
 
   defp validate_current_password(changeset, _), do: changeset
 
