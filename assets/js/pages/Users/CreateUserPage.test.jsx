@@ -6,6 +6,7 @@ import '@testing-library/jest-dom';
 
 import userEvent from '@testing-library/user-event';
 import MockAdapter from 'axios-mock-adapter';
+import { faker } from '@faker-js/faker';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 import * as router from 'react-router';
@@ -53,7 +54,8 @@ describe('CreateUserPage', () => {
     const user = userEvent.setup();
     const navigate = jest.fn();
     jest.spyOn(router, 'useNavigate').mockImplementation(() => navigate);
-    const { fullname, email, username, password } = userFactory.build();
+    const { fullname, email, username } = userFactory.build();
+    const password = faker.internet.password();
 
     axiosMock.onPost(USERS_URL).reply(202, {});
 
@@ -74,7 +76,8 @@ describe('CreateUserPage', () => {
     const user = userEvent.setup();
     const navigate = jest.fn();
     jest.spyOn(router, 'useNavigate').mockImplementation(() => navigate);
-    const { fullname, email, username, password } = userFactory.build();
+    const { fullname, email, username } = userFactory.build();
+    const password = faker.internet.password();
 
     const errors = [
       {

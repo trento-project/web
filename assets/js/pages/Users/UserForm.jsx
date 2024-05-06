@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { capitalize, noop } from 'lodash';
+import { format, parseISO } from 'date-fns';
 
 import Button from '@common/Button';
 import Input, { Password } from '@common/Input';
@@ -10,6 +11,7 @@ import { getError } from '@lib/api/validationErrors';
 
 const USER_ENABLED = 'Enabled';
 const REQUIRED_FIELD_TEXT = 'Required field';
+const PASSWORD_PLACEHOLDER = '********';
 const PASSWORD_POLICY_TEXT = (
   <div>
     The password must be compliant with:
@@ -33,12 +35,13 @@ function UserForm({
   fullName = '',
   emailAddress = '',
   username = '',
-  password = '',
-  confirmPassword = '',
   status = 'Enabled',
+  createdAt = '',
+  updatedAt = '',
   errors = defaultErrors,
   saving = false,
   saveText = 'Create',
+  editing = false,
   onSave = noop,
   onCancel = noop,
 }) {
@@ -48,9 +51,9 @@ function UserForm({
   const [emailAddressErrorState, setEmailAddressError] = useState(null);
   const [usernameState, setUsername] = useState(username);
   const [usernameErrorState, setUsernameError] = useState(null);
-  const [passwordState, setPassword] = useState(password);
+  const [passwordState, setPassword] = useState('');
   const [passwordErrorState, setPasswordError] = useState(null);
-  const [confirmPasswordState, setConfirmPassword] = useState(confirmPassword);
+  const [confirmPasswordState, setConfirmPassword] = useState('');
   const [confirmPasswordErrorState, setConfirmPasswordError] = useState(null);
   const [statusState, setStatus] = useState(status);
 
@@ -79,12 +82,12 @@ function UserForm({
       error = true;
     }
 
-    if (!passwordState) {
+    if (!editing && !passwordState) {
       setPasswordError(REQUIRED_FIELD_TEXT);
       error = true;
     }
 
-    if (!confirmPasswordState) {
+    if (!editing && !confirmPasswordState) {
       setConfirmPasswordError(REQUIRED_FIELD_TEXT);
       error = true;
     }
@@ -100,11 +103,14 @@ function UserForm({
     const user = {
       fullname: fullNameState,
       email: emailAddressState,
-      username: usernameState,
-      password: passwordState,
-      password_confirmation: confirmPasswordState,
       enabled: statusState === USER_ENABLED,
+      ...(!editing && { username: usernameState }),
+      ...(passwordState && { password: passwordState }),
+      ...(confirmPasswordState && {
+        password_confirmation: confirmPasswordState,
+      }),
     };
+
     onSave(user);
   };
 
@@ -157,6 +163,7 @@ function UserForm({
                 setUsername(value);
                 setUsernameError(null);
               }}
+              disabled={editing}
             />
             {usernameErrorState && errorMessage(usernameErrorState)}
           </div>
@@ -171,7 +178,7 @@ function UserForm({
             <Password
               value={passwordState}
               aria-label="password"
-              placeholder="Enter password"
+              placeholder={editing ? PASSWORD_PLACEHOLDER : 'Enter password'}
               error={passwordErrorState}
               onChange={({ target: { value } }) => {
                 setPassword(value);
@@ -187,7 +194,7 @@ function UserForm({
             <Password
               value={confirmPasswordState}
               aria-label="password-confirmation"
-              placeholder="Re-enter password"
+              placeholder={editing ? PASSWORD_PLACEHOLDER : 'Re-enter password'}
               error={confirmPasswordErrorState}
               onChange={({ target: { value } }) => {
                 setConfirmPassword(value);
@@ -213,6 +220,18 @@ function UserForm({
               }}
             />
           </div>
+          {editing && (
+            <>
+              <Label className="col-start-1 col-span-1">Created</Label>
+              <span className="col-start-2 col-span-3">
+                {format(parseISO(createdAt), 'PPpp')}
+              </span>
+              <Label className="col-start-1 col-span-1">Updated</Label>
+              <span className="col-start-2 col-span-3">
+                {format(parseISO(updatedAt), 'PPpp')}
+              </span>
+            </>
+          )}
           <p className="col-span-6">
             <span className="text-red-500">*</span> Required Fields
           </p>

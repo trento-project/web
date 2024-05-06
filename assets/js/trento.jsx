@@ -30,7 +30,7 @@ import SapSystemsOverviewPage from '@pages/SapSystemsOverviewPage';
 import SaptuneDetailsPage from '@pages/SaptuneDetails';
 import SettingsPage from '@pages/SettingsPage';
 import SomethingWentWrong from '@pages/SomethingWentWrong';
-import UsersPage, { CreateUserPage } from '@pages/Users';
+import UsersPage, { CreateUserPage, EditUserPage } from '@pages/Users';
 
 import { me } from '@lib/auth';
 import { networkClient } from '@lib/network';
@@ -81,6 +81,7 @@ function App() {
                   <Route path="about" element={<AboutPage />} />
                   <Route path="users" element={<UsersPage />} />
                   <Route path="users/new" element={<CreateUserPage />} />
+                  <Route path="users/:userID/edit" element={<EditUserPage />} />
                   <Route path="hosts/:hostID" element={<HostDetailsPage />} />
                   <Route
                     path="sap_systems/:id"
