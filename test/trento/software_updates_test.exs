@@ -461,6 +461,25 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
               }} = SoftwareUpdates.change_settings(change_submission)
     end
 
+    test "should reject a 'foobar' SSL certificate" do
+      insert_software_updates_settings(ca_cert: nil)
+
+      change_submission = %{
+        ca_cert: """
+        -----BEGIN CERTIFICATE-----
+        foobar
+        -----END CERTIFICATE-----
+        """
+      }
+
+      assert {:error,
+              %{
+                errors: [
+                  ca_cert: {"unable to parse X.509 certificate", [validation: :ca_cert_parsing]}
+                ]
+              }} = SoftwareUpdates.change_settings(change_submission)
+    end
+
     test "should reject an expired SSL certificate" do
       insert_software_updates_settings(ca_cert: nil)
 

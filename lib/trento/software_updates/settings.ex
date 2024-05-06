@@ -47,6 +47,16 @@ defmodule Trento.SoftwareUpdates.Settings do
     end
   end
 
+  defp maybe_validate_ca_cert(changeset, %{ca_cert: nil}), do: changeset
+
+  defp maybe_validate_ca_cert(changeset, %{ca_cert: _ca_cert}) do
+    changeset
+    |> validate_required(:ca_cert)
+    |> validate_change(:ca_cert, &validate_ca_cert/2)
+  end
+
+  defp maybe_validate_ca_cert(changeset, _), do: changeset
+
   defp validate_ca_cert(_ca_cert_atom, ca_cert) do
     with {:ok, certificate} <- parse_ca_cert(ca_cert),
          :ok <- ca_cert_valid?(certificate) do
@@ -64,6 +74,12 @@ defmodule Trento.SoftwareUpdates.Settings do
       _ ->
         {:error, [ca_cert: {"unable to parse X.509 certificate", validation: :ca_cert_parsing}]}
     end
+  rescue
+    _ ->
+      # We discovered that an exception is thrown when attempting to parse invalid strings
+      # wrapped in valid headers like "foobar"
+      # https://github.com/trento-project/web/pull/2581#pullrequestreview-2040240059
+      {:error, [ca_cert: {"unable to parse X.509 certificate", validation: :ca_cert_parsing}]}
   end
 
   defp ca_cert_valid?(certificate) do
@@ -77,16 +93,6 @@ defmodule Trento.SoftwareUpdates.Settings do
       {:error, [ca_cert: {"the X.509 certificate is not valid", validation: :ca_cert_validity}]}
     end
   end
-
-  defp maybe_validate_ca_cert(changeset, %{ca_cert: nil}), do: changeset
-
-  defp maybe_validate_ca_cert(changeset, %{ca_cert: _ca_cert}) do
-    changeset
-    |> validate_required(:ca_cert)
-    |> validate_change(:ca_cert, &validate_ca_cert/2)
-  end
-
-  defp maybe_validate_ca_cert(changeset, _), do: changeset
 
   defp maybe_change_cert_upload_date(changeset, settings_submission, date_service) do
     changeset

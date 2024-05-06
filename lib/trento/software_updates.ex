@@ -28,7 +28,7 @@ defmodule Trento.SoftwareUpdates do
   def get_settings do
     settings = Repo.one(Settings.base_query())
 
-    if has_settings?(settings) do
+    if settings do
       {:ok, settings}
     else
       {:error, :settings_not_configured}
@@ -113,18 +113,12 @@ defmodule Trento.SoftwareUpdates do
     end
   end
 
-  defp has_settings?(%Settings{}),
-    do: true
-
-  defp has_settings?(nil),
-    do: false
-
   defp ensure_no_settings_configured do
-    case has_settings?(settings = Repo.one(Settings.base_query())) do
-      false ->
-        {:ok, :settings_not_configured, settings}
+    case Repo.one(Settings.base_query()) do
+      nil ->
+        {:ok, :settings_not_configured, nil}
 
-      true ->
+      %Settings{} ->
         Logger.error("Error: software updates settings already configured")
         {:error, :settings_already_configured}
     end
