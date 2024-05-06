@@ -4,9 +4,9 @@
 
 In order to run the Trento Web application, the following software must be installed:
 
-1. [Elixir](https://elixir-lang.org/)
-2. [Erlang OTP](https://www.erlang.org/)
-3. [Node.js](https://nodejs.org/en/)
+1. [Elixir](https://elixir-lang.org/) - 1.15.7 preferred
+2. [Erlang OTP](https://www.erlang.org/) - 26.1.2 preferred
+3. [Node.js](https://nodejs.org/en/) - 16.16.0 preferred
 4. [Docker](https://docs.docker.com/get-docker/)
 5. [Docker Compose](https://docs.docker.com/compose/install/)
 
