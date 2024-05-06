@@ -208,7 +208,7 @@ defmodule TrentoWeb.SessionControllerTest do
         |> assert_schema("TrentoUser", api_spec)
 
       user_id = user.id
-      assert %{username: "admin", id: ^user_id} = resp
+      assert %{username: "admin", email: "test@trento.com", id: ^user_id} = resp
     end
   end
 

@@ -9,10 +9,11 @@ defmodule TrentoWeb.SessionView do
     %{access_token: token, expires_in: expiration}
   end
 
-  def render("me.json", %{user: %{username: username, id: id}}) do
+  def render("me.json", %{user: %{username: username, id: id, email: email}}) do
     %{
       username: username,
-      id: id
+      id: id,
+      email: email
     }
   end
 end
