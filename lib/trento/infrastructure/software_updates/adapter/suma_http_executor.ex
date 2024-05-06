@@ -9,86 +9,178 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
               base_url :: String.t(),
               username :: String.t(),
               password :: String.t(),
-              use_ca_cert :: boolean()
+              ca_cert :: String.t() | nil
             ) ::
-              {:ok, HTTPoison.Response.t()} | {:error, HTTPoison.Error.t()}
+              {:ok, Finch.Response.t()} | {:error, Exception.t()}
 
   @callback get_system_id(
               base_url :: String.t(),
               auth :: String.t(),
               fully_qualified_domain_name :: String.t(),
-              use_ca_cert :: boolean()
+              ca_cert :: String.t() | nil
             ) ::
-              {:ok, HTTPoison.Response.t()} | {:error, HTTPoison.Error.t()}
+              {:ok, Finch.Response.t()} | {:error, Exception.t()}
 
   @callback get_relevant_patches(
               base_url :: String.t(),
               auth :: String.t(),
               system_id :: pos_integer(),
-              use_ca_cert :: boolean()
+              ca_cert :: String.t() | nil
             ) ::
-              {:ok, HTTPoison.Response.t()} | {:error, HTTPoison.Error.t()}
+              {:ok, Finch.Response.t()} | {:error, Exception.t()}
 
   @callback get_upgradable_packages(
               base_url :: String.t(),
               auth :: String.t(),
               system_id :: pos_integer(),
-              use_ca_cert :: boolean()
+              ca_cert :: String.t() | nil
             ) ::
-              {:ok, HTTPoison.Response.t()} | {:error, HTTPoison.Error.t()}
+              {:ok, Finch.Response.t()} | {:error, Exception.t()}
 
   @behaviour Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor
 
   @impl true
-  def login(base_url, username, password, use_ca_cert \\ false) do
+  def login(base_url, username, password, ca_cert \\ nil) do
     payload =
       Jason.encode!(%{
         "login" => username,
         "password" => password
       })
 
-    HTTPoison.post(
+    start_finch(ca_cert)
+
+    Finch.build(
+      :post,
       "#{base_url}/auth/login",
-      payload,
       [{"Content-type", "application/json"}],
-      ssl_options(use_ca_cert) ++ timeout_options()
+      payload
+    )
+    |> Finch.request(Trento.Finch)
+  end
+
+  def start_finch(ca_cert) do
+    transport_options =
+      case ca_cert do
+        nil ->
+          IO.puts("No CA cert provided")
+          [
+            {:verify, :verify_peer},
+            {:versions, [:"tlsv1.3"]},
+          ]
+
+        _ ->
+          IO.puts("CA cert provided")
+          [
+            {:verify, :verify_peer},
+            {:cacerts, [get_cert_der(ca_cert)]},
+            {:keep_secrets, true},
+            {:versions, [:"tlsv1.3"]},
+            {:log_level, :debug}
+          ]
+      end
+
+    Finch.start_link(
+      name: Trento.Finch,
+      pools: %{
+        default: [
+          conn_opts: [
+            transport_opts: transport_options,
+            ssl_key_log_file: "/tmp/trento-ssl.log"
+          ]
+        ]
+      }
     )
   end
 
   @impl true
-  def get_system_id(base_url, auth, fully_qualified_domain_name, use_ca_cert \\ false) do
-    HTTPoison.get(
+  def get_system_id(base_url, auth, fully_qualified_domain_name, ca_cert \\ nil) do
+    start_finch(ca_cert)
+
+    Finch.build(
+      :get,
       "#{base_url}/system/getId?name=#{fully_qualified_domain_name}",
-      [{"Content-type", "application/json"}],
-      request_options(auth, use_ca_cert)
+      request_headers(auth)
     )
+    |> Finch.request(Trento.Finch)
   end
 
   @impl true
-  def get_relevant_patches(base_url, auth, system_id, use_ca_cert \\ false) do
-    HTTPoison.get(
+  def get_relevant_patches(base_url, auth, system_id, ca_cert \\ nil) do
+    start_finch(ca_cert)
+
+    Finch.build(
+      :get,
       "#{base_url}/system/getRelevantErrata?sid=#{system_id}",
-      [{"Content-type", "application/json"}],
-      request_options(auth, use_ca_cert)
+      request_headers(auth)
     )
+    |> Finch.request(Trento.Finch)
   end
+
+  defp request_headers(auth),
+    do: [
+      {"Content-type", "application/json"},
+      {"Cookie", auth}
+    ]
 
   @impl true
-  def get_upgradable_packages(base_url, auth, system_id, use_ca_cert \\ false) do
-    HTTPoison.get(
+  def get_upgradable_packages(base_url, auth, system_id, ca_cert \\ nil) do
+    start_finch(ca_cert)
+
+    Finch.build(
+      :get,
       "#{base_url}/system/listLatestUpgradablePackages?sid=#{system_id}",
-      [{"Content-type", "application/json"}],
-      request_options(auth, use_ca_cert)
+      request_headers(auth)
     )
+    |> Finch.request(Trento.Finch)
   end
 
-  defp request_options(auth, use_ca_cert),
-    do: [hackney: [cookie: [auth]]] ++ ssl_options(use_ca_cert) ++ timeout_options()
+  defp request_options(auth, ca_cert),
+    do: [hackney: [cookie: [auth]]] ++ ssl_options(ca_cert) ++ timeout_options()
 
-  defp timeout_options, do: [timeout: 500, recv_timeout: 1_500]
+  defp timeout_options, do: [timeout: 1_500, recv_timeout: 1_500]
 
-  defp ssl_options(true),
-    do: [ssl: [verify: :verify_peer, cacertfile: SumaApi.ca_cert_path()]]
+  defp ssl_options(nil), do: []
 
-  defp ssl_options(_), do: []
+  defp ssl_options(ca_cert) do
+    host = "https://sumafortrento.1x5gt0ji011u1b2nyny3mouqsc.ax.internal.cloudapp.net/"
+    port = 443
+    {_ans1_type, cert} = get_cert_der(222)
+    # key = get_key_der()
+
+    [
+      recv_timeout: 30_000,
+      ssl: [
+        versions: [:"tlsv1.2", :"tlsv1.3"],
+        cert: cert
+        # key: key
+      ]
+    ]
+  end
+
+  def decode_pem_bin(pem_bin) do
+    pem_bin |> :public_key.pem_decode() |> hd()
+  end
+
+  def decode_pem_entry(pem_entry) do
+    :public_key.pem_entry_decode(pem_entry)
+  end
+
+  def encode_der(ans1_type, ans1_entity) do
+    :public_key.der_encode(ans1_type, ans1_entity)
+  end
+
+  def split_type_and_entry(ans1_entry) do
+    ans1_type = elem(ans1_entry, 0)
+    {ans1_type, ans1_entry}
+  end
+
+  def get_cert_der(cert) do
+    {cert_type, cert_entry} =
+      cert
+      |> decode_pem_bin()
+      |> decode_pem_entry()
+      |> split_type_and_entry()
+
+    encode_der(cert_type, cert_entry)
+  end
 end

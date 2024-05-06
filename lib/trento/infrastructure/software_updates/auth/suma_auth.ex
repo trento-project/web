@@ -78,8 +78,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuth do
   defp setup_auth(%State{auth: nil} = state) do
     with {:ok, %{url: url, username: username, password: password, ca_cert: ca_cert}} <-
            SoftwareUpdates.get_settings(),
-         :ok <- write_ca_cert_file(ca_cert),
-         {:ok, auth_cookie} <- SumaApi.login(url, username, password, ca_cert != nil) do
+         {:ok, auth_cookie} <- SumaApi.login(url, username, password, ca_cert) do
       {:ok,
        %State{
          state
@@ -87,26 +86,10 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuth do
            username: username,
            password: password,
            ca_cert: ca_cert,
-           auth: auth_cookie,
-           use_ca_cert: ca_cert != nil
+           auth: auth_cookie
        }}
     end
   end
 
   defp setup_auth(%State{} = state), do: {:ok, state}
-
-  defp write_ca_cert_file(nil) do
-    case File.rm_rf(SumaApi.ca_cert_path()) do
-      {:ok, _} -> :ok
-      _ -> :error
-    end
-  end
-
-  defp write_ca_cert_file(ca_cert) do
-    SumaApi.ca_cert_path()
-    |> Path.dirname()
-    |> File.mkdir_p!()
-
-    File.write(SumaApi.ca_cert_path(), ca_cert)
-  end
 end

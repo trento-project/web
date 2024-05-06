@@ -8,42 +8,38 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
 
   @login_retries 5
 
-  @ca_cert_path "/tmp/suma_ca_cert.crt"
-
-  def ca_cert_path, do: @ca_cert_path
-
   @spec login(
           url :: String.t(),
           username :: String.t(),
           password :: String.t(),
-          use_ca_cert :: boolean()
+          ca_cert :: String.t() | nil
         ) ::
           {:ok, any()} | {:error, :max_login_retries_reached | any()}
-  def login(url, username, password, use_ca_cert),
+  def login(url, username, password, ca_cert),
     do:
       url
       |> get_suma_api_url()
-      |> try_login(username, password, use_ca_cert, @login_retries)
+      |> try_login(username, password, ca_cert, @login_retries)
 
   @spec get_system_id(
           url :: String.t(),
           auth :: any(),
           fully_qualified_domain_name :: String.t(),
-          use_ca_cert :: boolean()
+          ca_cert :: String.t() | nil
         ) ::
           {:ok, pos_integer()} | {:error, :system_id_not_found | :authentication_error}
-  def get_system_id(url, auth, fully_qualified_domain_name, use_ca_cert) do
+  def get_system_id(url, auth, fully_qualified_domain_name, ca_cert) do
     response =
       url
       |> get_suma_api_url()
-      |> http_executor().get_system_id(auth, fully_qualified_domain_name, use_ca_cert)
+      |> http_executor().get_system_id(auth, fully_qualified_domain_name, ca_cert)
 
-    with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <- response,
+    with {:ok, %Finch.Response{status: 200, body: body}} <- response,
          {:ok, %{success: true, result: result}} <- Jason.decode(body, keys: :atoms),
          {:ok, system_id} <- extract_system_id(result) do
       {:ok, system_id}
     else
-      {:ok, %HTTPoison.Response{status_code: 401}} ->
+      {:ok, %Finch.Response{status: 401}} ->
         {:error, :authentication_error}
 
       error ->
@@ -59,24 +55,24 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
           url :: String.t(),
           auth :: any(),
           system_id :: pos_integer(),
-          use_ca_cert :: boolean()
+          ca_cert :: String.t() | nil
         ) ::
           {:ok, [map()]}
           | {:error, :error_getting_patches | :authentication_error}
-  def get_relevant_patches(url, auth, system_id, use_ca_cert) do
+  def get_relevant_patches(url, auth, system_id, ca_cert) do
     response =
       url
       |> get_suma_api_url()
-      |> http_executor().get_relevant_patches(auth, system_id, use_ca_cert)
+      |> http_executor().get_relevant_patches(auth, system_id, ca_cert)
 
-    with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <- response,
+    with {:ok, %Finch.Response{status: 200, body: body}} <- response,
          {:ok, %{success: true, result: result}} <- Jason.decode(body, keys: :atoms) do
       {:ok,
        Enum.map(result, fn %{advisory_type: advisory_type} = advisory ->
          %{advisory | advisory_type: AdvisoryType.from_string(advisory_type)}
        end)}
     else
-      {:ok, %HTTPoison.Response{status_code: 401}} ->
+      {:ok, %Finch.Response{status: 401}} ->
         {:error, :authentication_error}
 
       error ->
@@ -90,14 +86,14 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
           url :: String.t(),
           auth :: any(),
           system_id :: pos_integer(),
-          use_ca_cert :: boolean()
+          ca_cert :: String.t() | nil
         ) ::
           {:ok, [map()]}
           | {:error, :error_getting_packages | :authentication_error}
-  def get_upgradable_packages(url, auth, system_id, use_ca_cert) do
+  def get_upgradable_packages(url, auth, system_id, ca_cert) do
     url
     |> get_suma_api_url()
-    |> http_executor().get_upgradable_packages(auth, system_id, use_ca_cert)
+    |> http_executor().get_upgradable_packages(auth, system_id, ca_cert)
     |> handle_auth_error()
     |> decode_response(
       error_atom: :error_getting_packages,
@@ -106,10 +102,10 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
     |> extract_upgradable_packages()
   end
 
-  defp handle_auth_error({:ok, %HTTPoison.Response{status_code: 200, body: body}}),
+  defp handle_auth_error({:ok, %Finch.Response{status: 200, body: body}}),
     do: {:ok, body}
 
-  defp handle_auth_error({:ok, %HTTPoison.Response{status_code: 401}}),
+  defp handle_auth_error({:ok, %Finch.Response{status: 401}}),
     do: {:error, :authentication_error}
 
   defp handle_auth_error(error), do: error
@@ -136,24 +132,24 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
     {:error, :max_login_retries_reached}
   end
 
-  defp try_login(url, username, password, use_ca_cert, retry) do
-    case do_login(url, username, password, use_ca_cert) do
+  defp try_login(url, username, password, ca_cert, retry) do
+    case do_login(url, username, password, ca_cert) do
       {:ok, _} = successful_login ->
         successful_login
 
       {:error, reason} ->
         Logger.error("Failed to Log into SUSE Manager, retrying...", error: inspect(reason))
-        try_login(url, username, password, use_ca_cert, retry - 1)
+        try_login(url, username, password, ca_cert, retry - 1)
     end
   end
 
-  defp do_login(url, username, password, use_ca_cert) do
-    case http_executor().login(url, username, password, use_ca_cert) do
-      {:ok, %HTTPoison.Response{headers: headers, status_code: 200} = response} ->
+  defp do_login(url, username, password, ca_cert) do
+    case http_executor().login(url, username, password, ca_cert) do
+      {:ok, %Finch.Response{headers: headers, status: 200} = response} ->
         Logger.debug("Successfully logged into suma #{inspect(response)}")
         {:ok, get_session_cookies(headers)}
 
-      {:ok, %HTTPoison.Response{status_code: _} = response} ->
+      {:ok, %Finch.Response{status: _} = response} ->
         Logger.error(
           "Failed to login to SUSE Manager due to unsuccessful response. Response: #{inspect(response)}"
         )

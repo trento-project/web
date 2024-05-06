@@ -56,23 +56,23 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma do
   defp do_handle({:get_system_id, fully_qualified_domain_name}, %State{
          url: url,
          auth: auth_cookie,
-         use_ca_cert: use_ca_cert
+         ca_cert: ca_cert
        }),
-       do: SumaApi.get_system_id(url, auth_cookie, fully_qualified_domain_name, use_ca_cert)
+       do: SumaApi.get_system_id(url, auth_cookie, fully_qualified_domain_name, ca_cert)
 
   defp do_handle({:get_relevant_patches, system_id}, %State{
          url: url,
          auth: auth_cookie,
-         use_ca_cert: use_ca_cert
+         ca_cert: ca_cert
        }),
-       do: SumaApi.get_relevant_patches(url, auth_cookie, system_id, use_ca_cert)
+       do: SumaApi.get_relevant_patches(url, auth_cookie, system_id, ca_cert)
 
   defp do_handle({:get_upgradable_packages, system_id}, %State{
          url: url,
          auth: auth_cookie,
-         use_ca_cert: use_ca_cert
+         ca_cert: ca_cert
        }),
-       do: SumaApi.get_upgradable_packages(url, auth_cookie, system_id, use_ca_cert)
+       do: SumaApi.get_upgradable_packages(url, auth_cookie, system_id, ca_cert)
 
   defp auth, do: Application.fetch_env!(:trento, __MODULE__)[:auth]
 end

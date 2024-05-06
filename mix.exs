@@ -110,7 +110,8 @@ defmodule Trento.MixProject do
       # https://github.com/deadtrickster/ssl_verify_fun.erl/pull/27
       {:ssl_verify_fun, "~> 1.1", manager: :rebar3, override: true},
       {:parallel_stream, "~> 1.1.0"},
-      {:x509, "~> 0.8.8"}
+      {:x509, "~> 0.8.8"},
+      {:finch, "~> 0.18"}
     ]
   end
 
