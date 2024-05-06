@@ -55,6 +55,7 @@ defmodule Trento.Users.User do
 
   def profile_update_changeset(user, attrs) do
     user
+    |> validate_current_password(attrs)
     |> pow_password_changeset(attrs)
     |> pow_extension_changeset(attrs)
     |> validate_password()
@@ -67,6 +68,11 @@ defmodule Trento.Users.User do
     |> validate_required(:deleted_at)
     |> put_change(:username, "#{username}__#{deleted_at}")
   end
+
+  defp validate_current_password(changeset, %{password: _password} = attrs),
+    do: changeset |> pow_current_password_changeset(attrs)
+
+  defp validate_current_password(changeset, _), do: changeset
 
   defp lock_changeset(user, attrs) do
     cast(user, attrs, [:locked_at])

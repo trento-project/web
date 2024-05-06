@@ -26,8 +26,26 @@ defmodule Trento.UsersTest do
       assert password_hash == updated_password_hash
     end
 
+    test "update_user_profile does not require current password when the password field is not involved in the update" do
+      %{id: user_id} =
+        insert(:user)
+
+      {:ok, user} = Users.get_user(user_id)
+
+      assert {:ok, %User{} = user} =
+               Users.update_user_profile(user, %{
+                 fullname: "some updated fullname",
+                 email: "newemail@test.com"
+               })
+
+      assert user.fullname == "some updated fullname"
+      assert user.email == "newemail@test.com"
+    end
+
     test "update_user_profile update only the user profile fields" do
-      %{id: user_id, username: username, password_hash: password_hash} = insert(:user)
+      %{id: user_id, username: username, password_hash: password_hash, password: current_password} =
+        insert(:user)
+
       {:ok, user} = Users.get_user(user_id)
 
       assert {:ok, %User{locked_at: locked_at, password_hash: updated_password_hash} = user} =
@@ -36,6 +54,7 @@ defmodule Trento.UsersTest do
                  email: "newemail@test.com",
                  username: "new_username",
                  enabled: false,
+                 current_password: current_password,
                  password: "newpassword989",
                  confirm_password: "newpassword989"
                })
