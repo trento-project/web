@@ -133,4 +133,11 @@ defmodule TrentoWeb.V1.UsersController do
 
   defp broadcast_update_or_locked_user(%User{id: id}),
     do: TrentoWeb.Endpoint.broadcast("users:#{id}", "user_locked", %{})
+
+  defp user_version_from_if_match_header(conn) do
+    case get_req_header(conn, "If-Match") do
+      [version, _] -> version
+      _ -> {:error, :precondition_missing}
+    end
+  end
 end
