@@ -10,7 +10,8 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscovery
 
   alias Trento.Hosts.Events.{
     SoftwareUpdatesDiscoveryCleared,
-    SoftwareUpdatesDiscoveryRequested
+    SoftwareUpdatesDiscoveryRequested,
+    SoftwareUpdatesHealthChanged
   }
 
   alias Trento.SoftwareUpdates.Discovery
@@ -25,6 +26,14 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscovery
     Discovery.discover_host_software_updates(host_id, fully_qualified_domain_name)
 
     :ok
+  end
+
+  def handle(%SoftwareUpdatesHealthChanged{host_id: host_id}, _) do
+    TrentoWeb.Endpoint.broadcast(
+      "monitoring:hosts",
+      "host_software_updates_discovery_completed",
+      %{id: host_id}
+    )
   end
 
   def handle(%SoftwareUpdatesDiscoveryCleared{host_id: host_id}, _) do

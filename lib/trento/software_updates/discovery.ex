@@ -177,16 +177,6 @@ defmodule Trento.SoftwareUpdates.Discovery do
       |> Multi.run(:command_dispatching, fn _, _ ->
         dispatch_completion_command(host_id, discovered_health)
       end)
-      |> Multi.run(:notify_client, fn _, _ ->
-        with :ok <-
-               TrentoWeb.Endpoint.broadcast(
-                 "monitoring:hosts",
-                 "host_software_updates_discovery_completed",
-                 %{id: host_id}
-               ) do
-          {:ok, nil}
-        end
-      end)
       |> Repo.transaction()
 
     case transaction_result do

@@ -3,8 +3,7 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
   use Trento.DataCase
 
   import Mox
-  import Phoenix.ChannelTest
-  import TrentoWeb.ChannelCase
+
   import Trento.Factory
 
   alias Trento.Hosts.Commands.{
@@ -20,17 +19,6 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
   require Trento.SoftwareUpdates.Enums.SoftwareUpdatesHealth, as: SoftwareUpdatesHealth
 
   setup :verify_on_exit!
-
-  @endpoint TrentoWeb.Endpoint
-
-  setup do
-    {:ok, _, socket} =
-      TrentoWeb.UserSocket
-      |> socket("user_id", %{some: :assign})
-      |> subscribe_and_join(TrentoWeb.MonitoringChannel, "monitoring:hosts")
-
-    %{socket: socket}
-  end
 
   describe "Discovering software updates for a specific host" do
     test "should handle failures and track causing reasons" do
@@ -236,12 +224,6 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
           to_stored_representation(discovered_upgradable_packages)
 
         stored_system_id = "#{system_id}"
-
-        assert_broadcast(
-          "host_software_updates_discovery_completed",
-          %{id: ^host_id},
-          1000
-        )
 
         assert %DiscoveryResult{
                  host_id: ^host_id,
@@ -550,14 +532,6 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
 
       assert {:error, host_id2, :some_error} in errored_discoveries
       assert {:error, host_id4, :host_without_fqdn} in errored_discoveries
-
-      for {:ok, host_id, _, _, _} <- successful_discoveries do
-        assert_broadcast(
-          "host_software_updates_discovery_completed",
-          %{id: ^host_id},
-          1000
-        )
-      end
 
       assert 3 ==
                DiscoveryResult

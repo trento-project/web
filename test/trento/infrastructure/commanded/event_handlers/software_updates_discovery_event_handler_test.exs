@@ -11,7 +11,7 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscovery
 
   alias Trento.Hosts.Commands.CompleteSoftwareUpdatesDiscovery
 
-  alias Trento.Hosts.Events.SoftwareUpdatesDiscoveryRequested
+  alias Trento.Hosts.Events.{SoftwareUpdatesDiscoveryRequested, SoftwareUpdatesHealthChanged}
 
   alias Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscoveryEventHandler
 
@@ -102,6 +102,21 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscovery
       )
 
       assert :ok = SoftwareUpdatesDiscoveryEventHandler.handle(event, %{})
+    end
+  end
+
+  describe "Host health changed" do
+    test "Should broadcast 'host_software_updates_discovery_completed' message when SoftwareUpdatesHealthChanged is emitted" do
+      %SoftwareUpdatesHealthChanged{host_id: host_id} =
+        event = build(:software_updates_discovery_health_changed_event)
+
+      assert :ok == SoftwareUpdatesDiscoveryEventHandler.handle(event, %{})
+
+      assert_broadcast(
+        "host_software_updates_discovery_completed",
+        %{id: ^host_id},
+        1000
+      )
     end
   end
 
