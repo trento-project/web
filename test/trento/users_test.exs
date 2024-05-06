@@ -5,6 +5,68 @@ defmodule Trento.UsersTest do
   alias Trento.Users.User
   import Trento.Factory
 
+  describe "user profile" do
+    test "update_user_profile does not update the profile when fields are not present" do
+      %{id: user_id, username: username, password_hash: password_hash} = insert(:user)
+      {:ok, user} = Users.get_user(user_id)
+
+      assert {:ok,
+              %User{
+                locked_at: locked_at,
+                password_hash: updated_password_hash,
+                fullname: updated_fullname,
+                email: updated_email
+              } = user} =
+               Users.update_user_profile(user, %{})
+
+      assert user.fullname == updated_fullname
+      assert user.email == updated_email
+      assert user.username == username
+      assert nil == locked_at
+      assert password_hash == updated_password_hash
+    end
+
+    test "update_user_profile does not require current password when the password field is not involved in the update" do
+      %{id: user_id} =
+        insert(:user)
+
+      {:ok, user} = Users.get_user(user_id)
+
+      assert {:ok, %User{} = user} =
+               Users.update_user_profile(user, %{
+                 fullname: "some updated fullname",
+                 email: "newemail@test.com"
+               })
+
+      assert user.fullname == "some updated fullname"
+      assert user.email == "newemail@test.com"
+    end
+
+    test "update_user_profile update only the user profile fields" do
+      %{id: user_id, username: username, password_hash: password_hash, password: current_password} =
+        insert(:user)
+
+      {:ok, user} = Users.get_user(user_id)
+
+      assert {:ok, %User{locked_at: locked_at, password_hash: updated_password_hash} = user} =
+               Users.update_user_profile(user, %{
+                 fullname: "some updated fullname",
+                 email: "newemail@test.com",
+                 username: "new_username",
+                 enabled: false,
+                 current_password: current_password,
+                 password: "newpassword989",
+                 confirm_password: "newpassword989"
+               })
+
+      assert user.fullname == "some updated fullname"
+      assert user.email == "newemail@test.com"
+      assert user.username == username
+      assert nil == locked_at
+      assert password_hash != updated_password_hash
+    end
+  end
+
   describe "users" do
     test "list_users returns all users except the deleted ones" do
       %{id: user_id} = insert(:user)

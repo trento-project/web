@@ -4,6 +4,66 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
   require OpenApiSpex
   alias OpenApiSpex.Schema
 
+  defmodule UserProfile do
+    @moduledoc false
+
+    @schema %Schema{
+      title: "UserProfile",
+      description: "Trento User profile",
+      type: :object,
+      additionalProperties: false,
+      properties: %{
+        id: %Schema{type: :integer, description: "User ID", nullable: false},
+        fullname: %Schema{type: :string, description: "User full name", nullable: false},
+        username: %Schema{type: :string, description: "User username", nullable: false},
+        email: %Schema{type: :string, description: "User email", nullable: false, format: :email},
+        created_at: %OpenApiSpex.Schema{
+          type: :string,
+          format: :"date-time",
+          description: "Date of user creation",
+          nullable: false
+        },
+        updated_at: %OpenApiSpex.Schema{
+          type: :string,
+          format: :"date-time",
+          description: "Date of user last update",
+          nullable: true
+        }
+      },
+      required: [:username, :id, :fullname, :email, :created_at]
+    }
+
+    def schema, do: @schema
+  end
+
+  defmodule UserProfileUpdateRequest do
+    @moduledoc false
+
+    @schema %Schema{
+      title: "UserProfileUpdateRequest",
+      description: "Request body to update a user profile",
+      additionalProperties: false,
+      type: :object,
+      properties: %{
+        fullname: %Schema{type: :string, description: "User full name", nullable: false},
+        email: %Schema{type: :string, description: "User email", nullable: false, format: :email},
+        password: %Schema{type: :string, description: "User new password", nullable: false},
+        current_password: %Schema{
+          type: :string,
+          description: "User current password, used to set a new password",
+          nullable: false
+        },
+        password_confirmation: %Schema{
+          type: :string,
+          description: "User new password, should be the same as password field",
+          nullable: false
+        }
+      }
+    }
+
+    def schema, do: @schema
+  end
+
   defmodule UserCreationRequest do
     @moduledoc false
 
