@@ -41,6 +41,15 @@ export default {
         type: 'text',
       },
     },
+    status: {
+      control: { type: 'radio' },
+      options: ['Enabled', 'Disabled'],
+      description: 'Status',
+      table: {
+        type: { summary: 'string' },
+        defaultValue: { summary: 'Enabled' },
+      },
+    },
     createdAt: {
       description: 'User creation timestamp',
       control: {
