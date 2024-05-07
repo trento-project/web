@@ -38,7 +38,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
   @behaviour Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor
 
   @impl true
-  def login(base_url, username, password, ca_cert \\ nil) do
+  def login(base_url, username, password, ca_cert) do
     payload =
       Jason.encode!(%{
         "login" => username,
@@ -54,7 +54,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
   end
 
   @impl true
-  def get_system_id(base_url, auth, fully_qualified_domain_name, ca_cert \\ nil) do
+  def get_system_id(base_url, auth, fully_qualified_domain_name, ca_cert) do
     HTTPoison.get(
       "#{base_url}/system/getId?name=#{fully_qualified_domain_name}",
       [{"Content-type", "application/json"}],
@@ -63,7 +63,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
   end
 
   @impl true
-  def get_relevant_patches(base_url, auth, system_id, ca_cert \\ nil) do
+  def get_relevant_patches(base_url, auth, system_id, ca_cert) do
     HTTPoison.get(
       "#{base_url}/system/getRelevantErrata?sid=#{system_id}",
       [{"Content-type", "application/json"}],
@@ -72,7 +72,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
   end
 
   @impl true
-  def get_upgradable_packages(base_url, auth, system_id, ca_cert \\ nil) do
+  def get_upgradable_packages(base_url, auth, system_id, ca_cert) do
     HTTPoison.get(
       "#{base_url}/system/listLatestUpgradablePackages?sid=#{system_id}",
       [{"Content-type", "application/json"}],
