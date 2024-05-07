@@ -233,7 +233,6 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
       username: "user",
       password: "password",
       ca_cert: "cert",
-      use_ca_cert: true,
       auth: "cookie"
     }
   end
