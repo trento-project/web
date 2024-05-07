@@ -28,25 +28,27 @@ export default {
 };
 
 const options = [
-  { value: 1, label: 'Orange' },
-  { value: 2, label: 'Apple' },
-  { value: 3, label: 'Banana' },
+  { value: 1, label: 'orange' },
+  { value: 2, label: 'apple' },
+  { value: 3, label: 'banana' },
 ];
 
 const optionsWithTooltip = [
-  { value: 1, label: 'Orange', tooltip: 'A nice orange' },
-  { value: 2, label: 'Apple', tooltip: 'A nice apple' },
-  { value: 3, label: 'Banana', tooltip: 'A nice banana' },
+  { value: 1, label: 'orange', tooltip: 'A nice orange' },
+  { value: 2, label: 'apple', tooltip: 'A nice apple' },
+  { value: 3, label: 'banana', tooltip: 'A nice banana' },
 ];
 
 export const Default = {
   args: {
     options,
+    className: 'w-96',
   },
 };
 
 export const WithTooltip = {
   args: {
+    ...Default.args,
     options: optionsWithTooltip,
   },
 };

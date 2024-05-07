@@ -53,7 +53,7 @@ const defaultComponents = {
 };
 
 const defaultClassNames = {
-  multiValue: () => 'rounded-md px-1 py-2px bg-gray-200 space-x-1 mr-1',
+  multiValue: () => 'rounded-md bg-gray-200 px-1 py-2px space-x-1 mr-1',
   multiValueLabel: () => 'ml-1',
   control: () =>
     'relative w-full py-2 px-3 text-left bg-white rounded-lg cursor-default border border-gray-300 sm:text-sm',
@@ -73,6 +73,7 @@ function MultiSelect({
   selectClassNames = defaultClassNames,
   unstyled = true,
   onChange = noop,
+  className,
   ...props
 }) {
   return (
@@ -84,6 +85,7 @@ function MultiSelect({
       components={components}
       onChange={onChange}
       unstyled={unstyled}
+      className={className}
       {...props}
     />
   );
