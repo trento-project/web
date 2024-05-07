@@ -101,7 +101,8 @@ defmodule TrentoWeb.V1.UsersController do
         type: %OpenApiSpex.Schema{type: :integer}
       ],
       "if-match": [
-        required: true,
+        # The field is required, we put to false to avoid openapispex validate that value with 422 status code.
+        required: false,
         in: :header,
         type: %OpenApiSpex.Schema{type: :integer}
       ]
