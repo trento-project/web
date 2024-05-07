@@ -23,6 +23,17 @@ defmodule TrentoWeb.ErrorView do
     }
   end
 
+  def render("403.json", %{reason: reason}) do
+    %{
+      errors: [
+        %{
+          title: "Forbidden",
+          detail: reason
+        }
+      ]
+    }
+  end
+
   def render("404.json", _) do
     %{
       errors: [
