@@ -10,6 +10,7 @@ defmodule Trento.Users do
   import Ecto.Query, warn: false
   alias Trento.Repo
 
+  alias Trento.Abilities.UsersAbilities
   alias Trento.Users.User
 
   @impl true
@@ -43,8 +44,24 @@ defmodule Trento.Users do
     end
   end
 
-  def create_user(attrs \\ %{}) do
-    %User{}
+  def create_user(%{abilities: abilities} = attrs) when not is_nil(abilities) do
+    result =
+      Ecto.Multi.new()
+      |> Ecto.Multi.insert(:user, User.changeset(%User{}, set_locked_at(attrs)))
+      |> insert_abilities_multi(abilities)
+      |> Repo.transaction()
+
+    case result do
+      {:ok, %{user: user}} ->
+        {:ok, Map.put(user, :abilities, abilities)}
+
+      {:error, _, changeset_error, _} ->
+        {:error, changeset_error}
+    end
+  end
+
+  def create_user(attrs) do
+    %User{abilities: []}
     |> User.changeset(set_locked_at(attrs))
     |> Repo.insert()
   end
@@ -74,10 +91,26 @@ defmodule Trento.Users do
 
   def delete_user(%User{id: 1}), do: {:error, :forbidden}
 
-  def delete_user(%User{} = user) do
+  def delete_user(%User{abilities: []} = user) do
     user
     |> User.delete_changeset(%{deleted_at: DateTime.utc_now()})
     |> Repo.update()
+  end
+
+  def delete_user(%User{} = user) do
+    result =
+      Ecto.Multi.new()
+      |> Ecto.Multi.update(:user, User.delete_changeset(user, %{deleted_at: DateTime.utc_now()}))
+      |> delete_abilities_multi()
+      |> Repo.transaction()
+
+    case result do
+      {:ok, %{user: user}} ->
+        {:ok, user}
+
+      {:error, _, changeset_error, _} ->
+        {:error, changeset_error}
+    end
   end
 
   defp set_locked_at(%{enabled: false} = attrs) do
@@ -85,6 +118,43 @@ defmodule Trento.Users do
   end
 
   defp set_locked_at(attrs), do: attrs
+
+  defp insert_abilities_multi(multi, []), do: multi
+
+  defp insert_abilities_multi(multi, abilities) do
+    Enum.reduce(abilities, multi, fn %{id: ability_id}, acc ->
+      Ecto.Multi.insert(acc, "ability_#{ability_id}", fn %{user: %User{id: user_id}} ->
+        UsersAbilities.changeset(%UsersAbilities{}, %{user_id: user_id, ability_id: ability_id})
+      end)
+    end)
+  end
+
+  defp delete_abilities_multi(multi) do
+    Ecto.Multi.delete_all(
+      multi,
+      :delete_abilities,
+      fn %{user: %User{id: user_id}} ->
+        from(u in UsersAbilities, where: u.user_id == ^user_id)
+      end
+    )
+  end
+
+  defp do_update(user, %{abilities: abilities} = attrs) do
+    result =
+      Ecto.Multi.new()
+      |> Ecto.Multi.update(:user, User.update_changeset(user, attrs))
+      |> delete_abilities_multi()
+      |> insert_abilities_multi(abilities)
+      |> Repo.transaction()
+
+    case result do
+      {:ok, %{user: user}} ->
+        {:ok, Map.put(user, :abilities, abilities)}
+
+      {:error, _, changeset_error, _} ->
+        {:error, changeset_error}
+    end
+  end
 
   defp do_update(user, attrs) do
     user

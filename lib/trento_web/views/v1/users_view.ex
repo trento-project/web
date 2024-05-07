@@ -1,6 +1,8 @@
 defmodule TrentoWeb.V1.UsersView do
   use TrentoWeb, :view
 
+  alias TrentoWeb.V1.AbilityView
+
   def render("index.json", %{users: users}) do
     render_many(users, __MODULE__, "user.json", as: :user)
   end
@@ -15,6 +17,7 @@ defmodule TrentoWeb.V1.UsersView do
           fullname: fullname,
           username: username,
           email: email,
+          abilities: abilities,
           locked_at: locked_at,
           inserted_at: created_at,
           updated_at: updated_at
@@ -25,6 +28,7 @@ defmodule TrentoWeb.V1.UsersView do
       fullname: fullname,
       username: username,
       email: email,
+      abilities: render_many(abilities, AbilityView, "ability.json", as: :ability),
       enabled: locked_at == nil,
       created_at: created_at,
       updated_at: updated_at
