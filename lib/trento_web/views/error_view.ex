@@ -107,6 +107,29 @@ defmodule TrentoWeb.ErrorView do
     }
   end
 
+  def render("412.json", _) do
+    %{
+      errors: [
+        %{
+          title: "Precondition failed",
+          detail:
+            "Mid-air collision detected, please refresh the resource you are trying to update."
+        }
+      ]
+    }
+  end
+
+  def render("428.json", _) do
+    %{
+      errors: [
+        %{
+          title: "Precondition required",
+          detail: "Request needs to be conditional, please provide If-Match header."
+        }
+      ]
+    }
+  end
+
   def template_not_found(template, _assigns) do
     %{
       errors: [

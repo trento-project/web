@@ -30,6 +30,7 @@ defmodule Trento.Users.User do
     field :fullname, :string
     field :deleted_at, :utc_datetime_usec
     field :locked_at, :utc_datetime_usec
+    field :lock_version, :integer, default: 1
 
     many_to_many :abilities, Ability, join_through: UsersAbilities, unique: true
 
@@ -52,6 +53,8 @@ defmodule Trento.Users.User do
     |> validate_password()
     |> custom_fields_changeset(attrs)
     |> lock_changeset(attrs)
+    |> cast(attrs, [:lock_version])
+    |> optimistic_lock(:lock_version)
   end
 
   def profile_update_changeset(user, attrs) do
