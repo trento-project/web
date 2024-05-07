@@ -25,6 +25,17 @@ defmodule TrentoWeb.ErrorViewTest do
            } == render(TrentoWeb.ErrorView, "401.json", reason: "Invalid credentials.")
   end
 
+  test "should render a 403 error" do
+    assert %{
+             errors: [
+               %{
+                 detail: "Insufficient permissions.",
+                 title: "Forbidden"
+               }
+             ]
+           } == render(TrentoWeb.ErrorView, "403.json", reason: "Insufficient permissions.")
+  end
+
   test "should render a 404 error" do
     assert %{
              errors: [

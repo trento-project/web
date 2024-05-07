@@ -64,17 +64,17 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
         |> assert_schema("AvailableSoftwareUpdatesResponse", api_spec)
     end
 
-    test "should return 401 when no settings have been saved", %{conn: conn} do
+    test "should return 403 when no settings have been saved", %{conn: conn} do
       %{id: host_id} = insert(:host)
 
       resp =
         conn
         |> get("/api/v1/hosts/#{host_id}/software_updates")
-        |> json_response(:unauthorized)
+        |> json_response(:forbidden)
 
       assert %{
                "errors" => [
-                 %{"detail" => "SUSE Manager settings not configured.", "title" => "Unauthorized"}
+                 %{"detail" => "SUSE Manager settings not configured.", "title" => "Forbidden"}
                ]
              } == resp
     end

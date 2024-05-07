@@ -28,12 +28,12 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
       |> assert_schema("SUMACredentials", api_spec)
     end
 
-    test "should return 401 if no user settings have been saved", %{conn: conn} do
+    test "should return 403 if no user settings have been saved", %{conn: conn} do
       api_spec = ApiSpec.spec()
 
       conn
       |> get("/api/v1/settings/suma_credentials")
-      |> json_response(:unauthorized)
+      |> json_response(:forbidden)
       |> assert_schema("NotFound", api_spec)
     end
   end
@@ -177,11 +177,11 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
         conn
         |> put_req_header("content-type", "application/json")
         |> patch("/api/v1/settings/suma_credentials", submission)
-        |> json_response(:unauthorized)
+        |> json_response(:forbidden)
 
       assert %{
                "errors" => [
-                 %{"detail" => "SUSE Manager settings not configured.", "title" => "Unauthorized"}
+                 %{"detail" => "SUSE Manager settings not configured.", "title" => "Forbidden"}
                ]
              } == resp
     end
