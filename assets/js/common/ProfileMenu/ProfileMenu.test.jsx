@@ -1,5 +1,6 @@
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react';
+import { render } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { userFactory } from '@lib/test-utils/factories/users';
 
@@ -15,27 +16,30 @@ describe('ProfileMenu component', () => {
     expect(usernameElement).toBeInTheDocument();
   });
 
-  test('should render a profile menu with email when opened', () => {
+  test('should render a profile menu with email when opened', async () => {
+    const user = userEvent.setup();
+
     const { email, username } = userFactory.build();
     const { getByText, getByRole } = render(
       <ProfileMenu username={username} email={email} />
     );
-    const button = getByRole('button');
-    fireEvent.click(button);
+    await user.click(getByRole('button'));
     const emailElement = getByText(email);
     expect(emailElement).toBeInTheDocument();
   });
 
-  test('should trigger logout when sign out button is clicked', () => {
+  test('should trigger logout when sign out button is clicked', async () => {
+    const user = userEvent.setup();
+
     const logoutMock = jest.fn();
     const { email, username } = userFactory.build();
     const { getByText, getByRole } = render(
       <ProfileMenu username={username} email={email} logout={logoutMock} />
     );
-    const button = getByRole('button');
-    fireEvent.click(button);
+
+    await user.click(getByRole('button'));
     const signOutButton = getByText('Sign out');
-    fireEvent.click(signOutButton);
+    await user.click(signOutButton);
     expect(logoutMock).toHaveBeenCalled();
   });
 });
