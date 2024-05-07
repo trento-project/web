@@ -30,8 +30,8 @@ import {
   cancelCheckHostIsDeregisterable,
 } from '@state/hosts';
 
-import { fetchSoftwareUpdatesSettings } from '@state/sagas/softwareUpdatesSettings';
-import { fetchSoftwareUpdates } from '@state/sagas/softwareUpdates';
+import { fetchSoftwareUpdatesSettings } from '@state/softwareUpdatesSettings';
+import { fetchSoftwareUpdates } from '@state/softwareUpdates';
 
 import { notify } from '@state/notifications';
 
@@ -161,8 +161,8 @@ export function* hostHealthChanged({ payload: { id, hostname, health } }) {
 }
 
 export function* hostSoftwareUpdatesDiscoveryCompleted({ payload: { id } }) {
-  yield fetchSoftwareUpdatesSettings();
-  yield fetchSoftwareUpdates({ payload: id });
+  yield put(fetchSoftwareUpdatesSettings());
+  yield put(fetchSoftwareUpdates(id));
 }
 
 export function* watchHostEvents() {

@@ -1,5 +1,5 @@
 import { get } from 'lodash';
-import { put, call, takeEvery } from 'redux-saga/effects';
+import { put, call, takeEvery, debounce } from 'redux-saga/effects';
 import { notify } from '@state/notifications';
 import {
   getSettings,
@@ -98,7 +98,8 @@ export function* testSoftwareUpdatesConnection() {
 }
 
 export function* watchSoftwareUpdateSettings() {
-  yield takeEvery(
+  yield debounce(
+    1000,
     FETCH_SOFTWARE_UPDATES_SETTINGS,
     fetchSoftwareUpdatesSettings
   );

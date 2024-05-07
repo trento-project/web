@@ -1,10 +1,16 @@
 import { faker } from '@faker-js/faker';
-import { getSoftwareUpdates, getSoftwareUpdatesStats } from './softwareUpdates';
+import {
+  getSoftwareUpdates,
+  getSoftwareUpdatesStats,
+  getSoftwareUpdatesLoading,
+} from './softwareUpdates';
 
 describe('Software Updates selector', () => {
   const hostID = faker.string.uuid();
   const softwareUpdates = {
     [hostID]: {
+      loading: false,
+      errors: [],
       relevant_patches: [
         {
           date: '2024-03-13',
@@ -88,17 +94,13 @@ describe('Software Updates selector', () => {
   };
   const state = {
     softwareUpdates: {
-      loading: false,
       softwareUpdates,
-      errors: [],
     },
   };
 
   it('should return the software updates', () => {
     expect(getSoftwareUpdates(state)).toEqual({
-      loading: false,
       softwareUpdates,
-      errors: [],
     });
   });
 
@@ -115,5 +117,14 @@ describe('Software Updates selector', () => {
       numRelevantPatches: undefined,
       numUpgradablePackages: undefined,
     });
+  });
+
+  it('should seek if a host is loading its software updates', () => {
+    expect(getSoftwareUpdatesLoading(state, hostID)).toEqual(false);
+
+    const newState = {
+      softwareUpdates: { softwareUpdates: { [hostID]: { loading: true } } },
+    };
+    expect(getSoftwareUpdatesLoading(newState, hostID)).toEqual(true);
   });
 });

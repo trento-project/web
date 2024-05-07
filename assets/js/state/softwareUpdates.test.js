@@ -9,11 +9,14 @@ import softwareUpdatesReducer, {
 
 describe('SoftwareUpdates reducer', () => {
   it('should mark retrieval of software updates in loading state', () => {
-    const initialState = { loading: false };
+    const hostID = faker.string.uuid();
+    const initialState = { softwareUpdates: {} };
 
-    const action = startLoadingSoftwareUpdates();
+    const action = startLoadingSoftwareUpdates({ hostID });
 
-    const expectedState = { loading: true };
+    const expectedState = {
+      softwareUpdates: { [hostID]: { loading: true, errors: [] } },
+    };
 
     expect(softwareUpdatesReducer(initialState, action)).toEqual(expectedState);
   });
@@ -23,9 +26,13 @@ describe('SoftwareUpdates reducer', () => {
     const host2 = faker.string.uuid();
 
     const initialState = {
-      loading: true,
       softwareUpdates: {
-        [host1]: { relevant_patches: [], upgradable_packages: [] },
+        [host1]: {
+          relevant_patches: [],
+          upgradable_packages: [],
+          loading: false,
+          errors: [],
+        },
         [host2]: {
           relevant_patches: [
             {
@@ -53,9 +60,10 @@ describe('SoftwareUpdates reducer', () => {
               to_arch: 'x86_64',
             },
           ],
+          loading: false,
+          errors: [],
         },
       },
-      errors: [],
     };
 
     const newRelevantPatches = [
@@ -100,12 +108,19 @@ describe('SoftwareUpdates reducer', () => {
     const actual = softwareUpdatesReducer(initialState, action);
 
     expect(actual).toEqual({
-      loading: false,
       softwareUpdates: {
-        [host1]: { relevant_patches: [], upgradable_packages: [] },
-        [host2]: newSoftwareUpdates,
+        [host1]: {
+          relevant_patches: [],
+          upgradable_packages: [],
+          loading: false,
+          errors: [],
+        },
+        [host2]: {
+          ...newSoftwareUpdates,
+          loading: false,
+          errors: [],
+        },
       },
-      errors: [],
     });
   });
 
@@ -114,10 +129,16 @@ describe('SoftwareUpdates reducer', () => {
     const host2 = faker.string.uuid();
 
     const initialState = {
-      loading: true,
       softwareUpdates: {
-        [host1]: { relevant_patches: [], upgradable_packages: [] },
+        [host1]: {
+          relevant_patches: [],
+          upgradable_packages: [],
+          loading: false,
+          errors: [],
+        },
         [host2]: {
+          loading: false,
+          errors: [],
           relevant_patches: [
             {
               date: '2023-03-22',
@@ -132,7 +153,6 @@ describe('SoftwareUpdates reducer', () => {
           upgradable_packages: [],
         },
       },
-      errors: [],
     };
 
     const action = setEmptySoftwareUpdates({ hostID: host2 });
@@ -140,12 +160,15 @@ describe('SoftwareUpdates reducer', () => {
     const actual = softwareUpdatesReducer(initialState, action);
 
     expect(actual).toEqual({
-      loading: false,
       softwareUpdates: {
-        [host1]: { relevant_patches: [], upgradable_packages: [] },
-        [host2]: {},
+        [host1]: {
+          relevant_patches: [],
+          upgradable_packages: [],
+          errors: [],
+          loading: false,
+        },
+        [host2]: { errors: [], loading: false },
       },
-      errors: [],
     });
   });
 
@@ -153,9 +176,10 @@ describe('SoftwareUpdates reducer', () => {
     const host1 = faker.string.uuid();
 
     const initialState = {
-      loading: true,
       softwareUpdates: {
         [host1]: {
+          loading: false,
+          errors: [],
           relevant_patches: [
             {
               date: '2024-03-11',
@@ -184,7 +208,6 @@ describe('SoftwareUpdates reducer', () => {
           ],
         },
       },
-      errors: [],
     };
 
     const errors = [
@@ -198,10 +221,14 @@ describe('SoftwareUpdates reducer', () => {
       },
     ];
 
-    const action = setSoftwareUpdatesErrors(errors);
+    const action = setSoftwareUpdatesErrors({ hostID: host1, errors });
 
     const actual = softwareUpdatesReducer(initialState, action);
 
-    expect(actual).toEqual({ ...initialState, loading: false, errors });
+    expect(actual).toEqual({
+      softwareUpdates: {
+        [host1]: { ...initialState[host1], loading: false, errors },
+      },
+    });
   });
 });

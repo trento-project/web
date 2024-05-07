@@ -24,6 +24,9 @@ import {
   updateSaptuneStatus,
 } from '@state/hosts';
 
+import { fetchSoftwareUpdatesSettings } from '@state/softwareUpdatesSettings';
+import { fetchSoftwareUpdates } from '@state/softwareUpdates';
+
 import { networkClient } from '@lib/network';
 import { notify } from '@state/notifications';
 import { hostFactory } from '@lib/test-utils/factories';
@@ -212,19 +215,8 @@ describe('Hosts sagas', () => {
     });
 
     expect(dispatched).toEqual([
-      { type: 'softwareUpdatesSettings/startLoadingSoftwareUpdatesSettings' },
-      {
-        type: 'softwareUpdatesSettings/setSoftwareUpdatesSettings',
-        payload: settingsResponse,
-      },
-      { type: 'softwareUpdates/startLoadingSoftwareUpdates' },
-      {
-        type: 'softwareUpdates/setSoftwareUpdates',
-        payload: {
-          hostID: id,
-          ...softwareUpdatesResponse,
-        },
-      },
+      fetchSoftwareUpdatesSettings(),
+      fetchSoftwareUpdates(id),
     ]);
   });
 });
