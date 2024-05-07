@@ -57,7 +57,7 @@ describe('Software Updates saga', () => {
       });
 
       expect(dispatched).toEqual([
-        startLoadingSoftwareUpdates(),
+        startLoadingSoftwareUpdates({ hostID }),
         setSoftwareUpdates({ hostID, ...response }),
       ]);
     });
@@ -80,9 +80,9 @@ describe('Software Updates saga', () => {
         });
 
         expect(dispatched).toEqual([
-          startLoadingSoftwareUpdates(),
+          startLoadingSoftwareUpdates({ hostID }),
           setEmptySoftwareUpdates({ hostID }),
-          setSoftwareUpdatesErrors(body),
+          setSoftwareUpdatesErrors({ hostID, errors: body }),
         ]);
       }
     );

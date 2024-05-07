@@ -2,6 +2,8 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscovery
   use Trento.DataCase
 
   import Mox
+  import Phoenix.ChannelTest
+  import TrentoWeb.ChannelCase
   import Trento.Factory
 
   alias Trento.SoftwareUpdates.Discovery.DiscoveryResult
@@ -9,13 +11,24 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscovery
 
   alias Trento.Hosts.Commands.CompleteSoftwareUpdatesDiscovery
 
-  alias Trento.Hosts.Events.SoftwareUpdatesDiscoveryRequested
+  alias Trento.Hosts.Events.{SoftwareUpdatesDiscoveryRequested, SoftwareUpdatesHealthChanged}
 
   alias Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscoveryEventHandler
 
   require Trento.SoftwareUpdates.Enums.SoftwareUpdatesHealth, as: SoftwareUpdatesHealth
 
   setup [:set_mox_from_context, :verify_on_exit!]
+
+  @endpoint TrentoWeb.Endpoint
+
+  setup do
+    {:ok, _, socket} =
+      TrentoWeb.UserSocket
+      |> socket("user_id", %{some: :assign})
+      |> subscribe_and_join(TrentoWeb.MonitoringChannel, "monitoring:hosts")
+
+    %{socket: socket}
+  end
 
   describe "Discovering software updates" do
     test "should discover software updates when a SoftwareUpdatesDiscoveryRequested is emitted" do
@@ -92,6 +105,21 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscovery
     end
   end
 
+  describe "Host health changed" do
+    test "Should broadcast 'host_software_updates_discovery_completed' message when SoftwareUpdatesHealthChanged is emitted" do
+      %SoftwareUpdatesHealthChanged{host_id: host_id} =
+        event = build(:software_updates_discovery_health_changed_event)
+
+      assert :ok == SoftwareUpdatesDiscoveryEventHandler.handle(event, %{})
+
+      assert_broadcast(
+        "host_software_updates_discovery_completed",
+        %{id: ^host_id},
+        1000
+      )
+    end
+  end
+
   describe "Clearing up software updates discoveries" do
     test "should clear previously tracked software updates discoveries when a SoftwareUpdatesDiscoveryCleared is emitted" do
       [%{host_id: host_id} | _] = insert_list(6, :software_updates_discovery_result)
@@ -100,6 +128,12 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscovery
                :software_updates_discovery_cleared_event
                |> build(host_id: host_id)
                |> SoftwareUpdatesDiscoveryEventHandler.handle(%{})
+
+      assert_broadcast(
+        "host_software_updates_discovery_completed",
+        %{id: ^host_id},
+        1000
+      )
 
       assert nil == Trento.Repo.get(DiscoveryResult, host_id)
     end

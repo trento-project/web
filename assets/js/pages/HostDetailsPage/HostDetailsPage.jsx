@@ -17,7 +17,7 @@ import {
   getSoftwareUpdatesSettingsSaved,
 } from '@state/selectors/softwareUpdatesSettings';
 import {
-  getSoftwareUpdates,
+  getSoftwareUpdatesLoading,
   getSoftwareUpdatesStats,
 } from '@state/selectors/softwareUpdates';
 
@@ -58,9 +58,6 @@ function HostDetailsPage() {
 
   const [exportersStatus, setExportersStatus] = useState([]);
 
-  const { loading: softwareUpdatesLoading } = useSelector((state) =>
-    getSoftwareUpdates(state)
-  );
   const softwareUpdatesSettingsLoading = useSelector((state) =>
     getSoftwareUpdatesSettingsLoading(state)
   );
@@ -69,6 +66,10 @@ function HostDetailsPage() {
   );
   const { numRelevantPatches, numUpgradablePackages } = useSelector((state) =>
     getSoftwareUpdatesStats(state, hostID)
+  );
+
+  const softwareUpdatesLoading = useSelector((state) =>
+    getSoftwareUpdatesLoading(state, hostID)
   );
 
   const getExportersStatus = async () => {

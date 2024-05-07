@@ -11,7 +11,7 @@ import {
 } from '@state/softwareUpdates';
 
 export function* fetchSoftwareUpdates({ payload: hostID }) {
-  yield put(startLoadingSoftwareUpdates());
+  yield put(startLoadingSoftwareUpdates({ hostID }));
 
   try {
     const response = yield call(getSoftwareUpdates, hostID);
@@ -20,7 +20,7 @@ export function* fetchSoftwareUpdates({ payload: hostID }) {
     yield put(setEmptySoftwareUpdates({ hostID }));
 
     const errors = get(error, ['response', 'data'], []);
-    yield put(setSoftwareUpdatesErrors(errors));
+    yield put(setSoftwareUpdatesErrors({ hostID, errors }));
   }
 }
 

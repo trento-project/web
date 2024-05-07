@@ -10,6 +10,7 @@ import {
   hostRestored,
   hostHealthChanged,
   saptuneStatusUpdated,
+  hostSoftwareUpdatesDiscoveryCompleted,
 } from '@state/sagas/hosts';
 
 import {
@@ -23,9 +24,13 @@ import {
   updateSaptuneStatus,
 } from '@state/hosts';
 
+import { fetchSoftwareUpdatesSettings } from '@state/softwareUpdatesSettings';
+import { fetchSoftwareUpdates } from '@state/softwareUpdates';
+
 import { networkClient } from '@lib/network';
 import { notify } from '@state/notifications';
 import { hostFactory } from '@lib/test-utils/factories';
+import { softwareUpdatesSettingsFactory } from '@lib/test-utils/factories/softwareUpdatesSettings';
 
 const axiosMock = new MockAdapter(networkClient);
 
@@ -162,6 +167,56 @@ describe('Hosts sagas', () => {
         text: `Host ${hostname} health changed to ${health}.`,
         icon: 'ℹ️',
       }),
+    ]);
+  });
+
+  it('should fetch SUMA settings and software updates when host software updates discovery is completed', async () => {
+    const { id } = hostFactory.build();
+
+    const settingsResponse = softwareUpdatesSettingsFactory.build();
+
+    axiosMock.onGet('/settings/suma_credentials').reply(200, settingsResponse);
+
+    const softwareUpdatesResponse = {
+      relevant_patches: [
+        {
+          date: '2023-05-18',
+          advisory_name: 'SUSE-15-SP4-2023-2245',
+          advisory_type: 'bugfix',
+          advisory_status: 'stable',
+          id: 2192,
+          advisory_synopsis: 'Recommended update for libzypp, zypper',
+          update_date: '2023-05-18',
+        },
+      ],
+      upgradable_packages: [
+        {
+          from_epoch: ' ',
+          to_release: '150400.7.60.2',
+          name: 'openssl-1_1',
+          from_release: '150400.7.25.1',
+          to_epoch: ' ',
+          arch: 'x86_64',
+          to_package_id: 37454,
+          from_version: '1.1.1l',
+          to_version: '1.1.1l',
+          from_arch: 'x86_64',
+          to_arch: 'x86_64',
+        },
+      ],
+    };
+
+    axiosMock
+      .onGet(`/api/v1/hosts/${id}/software_updates`)
+      .reply(200, softwareUpdatesResponse);
+
+    const dispatched = await recordSaga(hostSoftwareUpdatesDiscoveryCompleted, {
+      payload: { id },
+    });
+
+    expect(dispatched).toEqual([
+      fetchSoftwareUpdatesSettings(),
+      fetchSoftwareUpdates(id),
     ]);
   });
 });
