@@ -84,7 +84,7 @@ function Layout() {
       : localStorage.setItem('sidebar-collapsed', true);
   }, [isCollapsed]);
 
-  const userProfile = useSelector(getUserProfile);
+  const { username: username, email: email } = useSelector(getUserProfile);
 
   const sidebarIconColor = 'currentColor';
   const sidebarIconClassName = 'text-gray-400 hover:text-gray-300';
@@ -174,8 +174,8 @@ function Layout() {
             <div className="relative flex flex-col justify-end h-full px-8 md:w-full">
               <div className="relative p-5 flex items-center w-full space-x-8 justify-end mr-20">
                 <ProfileMenu
-                  username={userProfile.username}
-                  email={userProfile.email}
+                  username={username}
+                  email={email}
                   logout={logout}
                 />
               </div>
