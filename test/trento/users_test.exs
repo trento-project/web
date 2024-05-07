@@ -1,6 +1,11 @@
 defmodule Trento.UsersTest do
   use Trento.DataCase
 
+  alias Trento.Abilities.{
+    Ability,
+    UsersAbilities
+  }
+
   alias Trento.Users
   alias Trento.Users.User
   import Trento.Factory
@@ -114,6 +119,8 @@ defmodule Trento.UsersTest do
       assert user.email == "test@trento.com"
       assert user.username == "username"
       assert user.locked_at == nil
+
+      assert [] == Trento.Repo.all(from u in UsersAbilities, where: u.user_id == ^user.id)
     end
 
     test "create_user creates a disabled user" do
@@ -130,6 +137,30 @@ defmodule Trento.UsersTest do
                })
 
       refute user.locked_at == nil
+    end
+
+    test "create_user with abilities attaches the abilities to the user" do
+      [%Ability{id: ability_id1}, %Ability{id: ability_id2}] =
+        abilities = insert_list(2, :ability)
+
+      assert {:ok, %User{} = user} =
+               Users.create_user(%{
+                 username: "username",
+                 password: "some password",
+                 email: "test@trento.com",
+                 fullname: "some fullname",
+                 confirm_password: "some password",
+                 abilities: abilities
+               })
+
+      assert user.username == "username"
+      assert user.abilities == abilities
+
+      assert [
+               %UsersAbilities{ability_id: ^ability_id1},
+               %UsersAbilities{ability_id: ^ability_id2}
+             ] =
+               Trento.Repo.all(from u in UsersAbilities, where: u.user_id == ^user.id)
     end
 
     test "create_user should return an error if the email has already been taken" do
@@ -170,6 +201,47 @@ defmodule Trento.UsersTest do
 
       assert user.fullname == "some updated fullname"
       assert user.email == "newemail@test.com"
+    end
+
+    test "update_user/2 deletes the user abilities" do
+      [%Ability{id: ability_id1}, %Ability{id: ability_id2}] = insert_list(2, :ability)
+      user = insert(:user)
+      insert(:users_abilities, user_id: user.id, ability_id: ability_id1)
+      insert(:users_abilities, user_id: user.id, ability_id: ability_id2)
+
+      {:ok, user} = Users.get_user(user.id)
+
+      assert {:ok, %User{} = user} =
+               Users.update_user(user, %{
+                 fullname: "some updated fullname",
+                 email: "newemail@test.com",
+                 abilities: []
+               })
+
+      assert user.abilities == []
+      assert [] == Trento.Repo.all(from u in UsersAbilities, where: u.user_id == ^user.id)
+    end
+
+    test "update_user/2 updates the user abilities" do
+      [%Ability{id: ability_id1}, %Ability{id: ability_id2}] = insert_list(2, :ability)
+      user = insert(:user)
+      insert(:users_abilities, user_id: user.id, ability_id: ability_id1)
+
+      new_abilities = build_list(1, :ability, id: ability_id2)
+
+      {:ok, user} = Users.get_user(user.id)
+
+      assert {:ok, %User{} = user} =
+               Users.update_user(user, %{
+                 fullname: "some updated fullname",
+                 email: "newemail@test.com",
+                 abilities: new_abilities
+               })
+
+      assert user.abilities == new_abilities
+
+      assert [%UsersAbilities{ability_id: ^ability_id2}] =
+               Trento.Repo.all(from u in UsersAbilities, where: u.user_id == ^user.id)
     end
 
     test "update_user/2 will not update user username" do
@@ -285,6 +357,21 @@ defmodule Trento.UsersTest do
       refute email == original_email
       assert username == "#{original_username}__#{deleted_at}"
       assert email == "#{original_email}__#{deleted_at}"
+    end
+
+    test "delete_user/1 deletes user abilities" do
+      [%Ability{id: ability_id1}, %Ability{id: ability_id2}] = insert_list(2, :ability)
+      %{id: user_id} = user = insert(:user)
+      insert(:users_abilities, user_id: user_id, ability_id: ability_id1)
+      insert(:users_abilities, user_id: user_id, ability_id: ability_id2)
+
+      assert {:ok, %User{}} = Users.delete_user(user)
+
+      %User{deleted_at: deleted_at} =
+        Trento.Repo.get_by!(User, id: user_id)
+
+      refute deleted_at == nil
+      assert [] == Trento.Repo.all(from u in UsersAbilities, where: u.user_id == ^user_id)
     end
   end
 end

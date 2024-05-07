@@ -115,6 +115,26 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       |> assert_schema("UserItem", api_spec)
     end
 
+    test "should create the user with abilities", %{conn: conn, api_spec: api_spec} do
+      %{id: id, name: name, resource: resource, label: label} = insert(:ability)
+
+      valid_params = %{
+        fullname: Faker.Person.name(),
+        email: Faker.Internet.email(),
+        username: Faker.Pokemon.name(),
+        enabled: true,
+        password: "testpassword89",
+        password_confirmation: "testpassword89",
+        abilities: [%{id: id, name: name, resource: resource, label: label}]
+      }
+
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> post("/api/v1/users", valid_params)
+      |> json_response(:created)
+      |> assert_schema("UserItem", api_spec)
+    end
+
     test "should not create the user when request parameters are not valid", %{
       conn: conn,
       api_spec: api_spec
@@ -251,6 +271,26 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       refute resp.email == email
 
       assert_broadcast "user_locked", %{}, 1000
+    end
+
+    test "should update the user with abilities", %{conn: conn, api_spec: api_spec} do
+      %{id: id, name: name, resource: resource, label: label} = insert(:ability)
+      %{id: user_id} = insert(:user)
+
+      valid_params = %{
+        fullname: Faker.Person.name(),
+        email: Faker.Internet.email(),
+        enabled: false,
+        password: "testpassword89",
+        password_confirmation: "testpassword89",
+        abilities: [%{id: id, name: name, resource: resource, label: label}]
+      }
+
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> patch("/api/v1/users/#{user_id}", valid_params)
+      |> json_response(:ok)
+      |> assert_schema("UserItem", api_spec)
     end
   end
 

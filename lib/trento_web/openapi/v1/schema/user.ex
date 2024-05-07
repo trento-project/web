@@ -4,6 +4,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
   require OpenApiSpex
   alias OpenApiSpex.Schema
 
+  alias TrentoWeb.OpenApi.V1.Schema.Ability.AbilityCollection
+
   defmodule UserProfile do
     @moduledoc false
 
@@ -17,6 +19,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
         fullname: %Schema{type: :string, description: "User full name", nullable: false},
         username: %Schema{type: :string, description: "User username", nullable: false},
         email: %Schema{type: :string, description: "User email", nullable: false, format: :email},
+        abilities: AbilityCollection,
         created_at: %OpenApiSpex.Schema{
           type: :string,
           format: :"date-time",
@@ -86,7 +89,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
           type: :string,
           description: "User new password, should be the same as password field",
           nullable: false
-        }
+        },
+        abilities: AbilityCollection
       },
       required: [:fullname, :email, :enabled, :password, :password_confirmation, :username]
     }
@@ -115,7 +119,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
           type: :string,
           description: "User new password, should be the same as password field",
           nullable: false
-        }
+        },
+        abilities: AbilityCollection
       }
     }
 
@@ -150,6 +155,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
           description: "User enabled in the system",
           nullable: false
         },
+        abilities: AbilityCollection,
         created_at: %OpenApiSpex.Schema{
           type: :string,
           format: :"date-time",
