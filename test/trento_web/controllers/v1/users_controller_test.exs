@@ -78,7 +78,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
 
   describe "show user" do
     test "should show the user when user exists", %{conn: conn, api_spec: api_spec} do
-      %{id: id} = insert(:user)
+      %{id: id, lock_version: lock_version} = insert(:user)
 
       conn = get(conn, "/api/v1/users/#{id}")
 
@@ -87,6 +87,8 @@ defmodule TrentoWeb.V1.UsersControllerTest do
         |> json_response(200)
         |> assert_schema("UserItem", api_spec)
 
+      [etag] = get_resp_header(conn, "etag")
+      assert etag == Integer.to_string(lock_version)
       assert %{id: ^id} = resp
     end
 
@@ -108,11 +110,17 @@ defmodule TrentoWeb.V1.UsersControllerTest do
         password_confirmation: "testpassword89"
       }
 
+      conn =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> post("/api/v1/users", valid_params)
+
       conn
-      |> put_req_header("content-type", "application/json")
-      |> post("/api/v1/users", valid_params)
       |> json_response(:created)
       |> assert_schema("UserItem", api_spec)
+
+      [etag] = get_resp_header(conn, "etag")
+      assert etag == "1"
     end
 
     test "should create the user with abilities", %{conn: conn, api_spec: api_spec} do
@@ -180,7 +188,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       conn: conn,
       api_spec: api_spec
     } do
-      %{id: id, updated_at: updated_at} = insert(:user)
+      %{id: id, updated_at: updated_at, lock_version: lock_version} = insert(:user)
 
       {:ok, _, _} =
         TrentoWeb.UserSocket
@@ -190,6 +198,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       resp =
         conn
         |> put_req_header("content-type", "application/json")
+        |> put_req_header("if-match", "#{lock_version}")
         |> patch("/api/v1/users/#{id}", %{})
         |> json_response(:ok)
         |> assert_schema("UserItem", api_spec)
@@ -212,7 +221,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
 
     test "should not update the user if parameters are valid but an error is returned from update operation",
          %{conn: conn, api_spec: api_spec} do
-      %{email: already_taken_email} = insert(:user)
+      %{email: already_taken_email, lock_version: lock_version} = insert(:user)
       %{id: id} = insert(:user)
 
       valid_params = %{
@@ -221,6 +230,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
 
       conn
       |> put_req_header("content-type", "application/json")
+      |> put_req_header("if-match", "#{lock_version}")
       |> patch("/api/v1/users/#{id}", valid_params)
       |> json_response(:unprocessable_entity)
       |> assert_schema("UnprocessableEntity", api_spec)
@@ -243,8 +253,22 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       |> assert_schema("UnprocessableEntity", api_spec)
     end
 
-    test "should update the user if parameters are valid", %{conn: conn, api_spec: api_spec} do
-      %{id: id, email: email, fullname: fullname} = insert(:user)
+    test "should not update the user when the request conditional prerequisite is missing", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      %{id: id} = insert(:user)
+
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> patch("/api/v1/users/#{id}", %{})
+      |> json_response(:precondition_required)
+      |> assert_schema("PreconditionRequired", api_spec)
+    end
+
+    test "should not update the user when the request conditional prerequisite is failing due to mid-air collision",
+         %{conn: conn, api_spec: api_spec} do
+      %{id: id} = insert(:user)
 
       {:ok, _, _} =
         TrentoWeb.UserSocket
@@ -259,10 +283,38 @@ defmodule TrentoWeb.V1.UsersControllerTest do
         password_confirmation: "testpassword89"
       }
 
-      resp =
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> put_req_header("if-match", "222")
+      |> patch("/api/v1/users/#{id}", valid_params)
+      |> json_response(:precondition_failed)
+      |> assert_schema("PreconditionFailed", api_spec)
+    end
+
+    test "should update the user if parameters are valid", %{conn: conn, api_spec: api_spec} do
+      %{id: id, email: email, fullname: fullname, lock_version: lock_version} = insert(:user)
+
+      {:ok, _, _} =
+        TrentoWeb.UserSocket
+        |> socket("user_id", %{current_user_id: id})
+        |> subscribe_and_join(TrentoWeb.UserChannel, "users:#{id}")
+
+      valid_params = %{
+        fullname: Faker.Person.name(),
+        email: Faker.Internet.email(),
+        enabled: false,
+        password: "testpassword89",
+        password_confirmation: "testpassword89"
+      }
+
+      conn =
         conn
         |> put_req_header("content-type", "application/json")
+        |> put_req_header("if-match", "#{lock_version}")
         |> patch("/api/v1/users/#{id}", valid_params)
+
+      resp =
+        conn
         |> json_response(:ok)
         |> assert_schema("UserItem", api_spec)
 
@@ -271,6 +323,9 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       refute resp.email == email
 
       assert_broadcast "user_locked", %{}, 1000
+
+      [etag] = get_resp_header(conn, "etag")
+      assert etag == "#{lock_version + 1}"
     end
 
     test "should update the user with abilities", %{conn: conn, api_spec: api_spec} do

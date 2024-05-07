@@ -339,6 +339,22 @@ defmodule Trento.UsersTest do
                Users.update_user(%User{id: 1}, %{fullname: "new fullname"})
     end
 
+    test "update_user/2 returns stale error when the lock version in the update is not valid" do
+      user = insert(:user)
+      {:ok, user} = Users.get_user(user.id)
+
+      assert {:ok, updated_user} =
+               Users.update_user(user, %{
+                 fullname: "some updated fullname"
+               })
+
+      assert {:error, :stale_entry} =
+               Users.update_user(updated_user, %{
+                 fullname: "some updated fullname 2",
+                 lock_version: 1
+               })
+    end
+
     test "delete_user/2 does not delete user with id 1" do
       assert {:error, :forbidden} = Users.delete_user(%User{id: 1})
     end

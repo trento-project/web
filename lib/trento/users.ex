@@ -160,5 +160,7 @@ defmodule Trento.Users do
     user
     |> User.update_changeset(attrs)
     |> Repo.update()
+  rescue
+    Ecto.StaleEntryError -> {:error, :stale_entry}
   end
 end

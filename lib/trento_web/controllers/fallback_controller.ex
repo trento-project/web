@@ -131,6 +131,20 @@ defmodule TrentoWeb.FallbackController do
     |> render(:"403")
   end
 
+  def call(conn, {:error, :stale_entry}) do
+    conn
+    |> put_status(:precondition_failed)
+    |> put_view(ErrorView)
+    |> render(:"412")
+  end
+
+  def call(conn, {:error, :precondition_missing}) do
+    conn
+    |> put_status(:precondition_required)
+    |> put_view(ErrorView)
+    |> render(:"428")
+  end
+
   def call(conn, {:error, [error | _]}), do: call(conn, {:error, error})
 
   def call(conn, {:error, _}) do
