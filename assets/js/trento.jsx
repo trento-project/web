@@ -32,14 +32,14 @@ import SettingsPage from '@pages/SettingsPage';
 import SomethingWentWrong from '@pages/SomethingWentWrong';
 import UsersPage, { CreateUserPage, EditUserPage } from '@pages/Users';
 
-import { me } from '@lib/auth';
+import { profile } from '@lib/auth';
 import { networkClient } from '@lib/network';
 import { TARGET_CLUSTER, TARGET_HOST } from '@lib/model';
 
 import { store } from './state';
 
 function App() {
-  const getUser = () => me(networkClient);
+  const getUser = () => profile(networkClient);
 
   return (
     <Provider store={store}>
