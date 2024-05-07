@@ -165,6 +165,9 @@ describe('EditUserPage', () => {
       route: `/users/${userData.id}/edit`,
     });
 
+    const generatePasswordButton = await screen.findByText('Generate Password');
+    expect(generatePasswordButton).toBeDisabled();
+
     await screen.findByText('Edit User');
 
     const editButton = screen.getByRole('button', { name: 'Edit' });

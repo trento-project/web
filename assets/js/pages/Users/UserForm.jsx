@@ -213,7 +213,11 @@ function UserForm({
               errorMessage(confirmPasswordErrorState)}
           </div>
           <div className="col-start-2 col-span-3">
-            <Button type="primary-white" onClick={onGeneratePassword}>
+            <Button
+              type="primary-white"
+              onClick={onGeneratePassword}
+              disabled={!saveEnabled}
+            >
               Generate Password
             </Button>
           </div>
