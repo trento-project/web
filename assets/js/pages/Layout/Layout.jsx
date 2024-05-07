@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { NavLink, Outlet } from 'react-router-dom';
 
 import { clearCredentialsFromStore } from '@lib/auth';
-import { selectUserEmail, selectUserName } from '@state/selectors/user';
+import { getUserProfile } from '@state/selectors/user';
 
 import {
   EOS_HOME_OUTLINED,
@@ -84,8 +84,7 @@ function Layout() {
       : localStorage.setItem('sidebar-collapsed', true);
   }, [isCollapsed]);
 
-  const email = useSelector(selectUserEmail);
-  const username = useSelector(selectUserName);
+  const userProfile = useSelector(getUserProfile);
 
   const sidebarIconColor = 'currentColor';
   const sidebarIconClassName = 'text-gray-400 hover:text-gray-300';
@@ -175,8 +174,8 @@ function Layout() {
             <div className="relative flex flex-col justify-end h-full px-8 md:w-full">
               <div className="relative p-5 flex items-center w-full space-x-8 justify-end mr-20">
                 <ProfileMenu
-                  username={username}
-                  email={email}
+                  username={userProfile.username}
+                  email={userProfile.email}
                   logout={logout}
                 />
               </div>

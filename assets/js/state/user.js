@@ -27,10 +27,16 @@ export const userSlice = createSlice({
       state.authInProgress = false;
       state.authError = null;
     },
-    setUser(state, { payload: { username, id, email } }) {
+    setUser(
+      state,
+      { payload: { username, id, email, created_at, fullname, updated_at } }
+    ) {
       state.username = username;
       state.email = email;
       state.id = id;
+      state.created_at = created_at;
+      state.fullname = fullname;
+      state.updated_at = updated_at;
     },
   },
 });

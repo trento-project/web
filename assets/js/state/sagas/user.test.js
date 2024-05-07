@@ -91,7 +91,7 @@ describe('user login saga', () => {
       .reply(200, credentialResponse);
 
     networkClientAxiosMock
-      .onGet('/api/me')
+      .onGet('/api/v1/profile')
       .reply(200, { username: 'good', id: 1 });
 
     const dispatched = await recordSaga(performLogin, {
