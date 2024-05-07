@@ -41,7 +41,6 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuthTest do
         username: nil,
         password: nil,
         ca_cert: nil,
-        use_ca_cert: false,
         auth: nil
       }
 
@@ -53,34 +52,6 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuthTest do
   describe "Authenticate" do
     setup do
       setup_initial_settings()
-    end
-
-    test "should save existing CA certificate to local file", %{
-      settings: %Settings{ca_cert: ca_cert}
-    } do
-      assert {:ok, _} = start_supervised({SumaAuth, @test_integration_name})
-
-      expect(SumaApiMock, :login, fn _, _, _, true -> successful_login_response() end)
-
-      assert {:ok, %State{ca_cert: ^ca_cert}} = SumaAuth.authenticate(@test_integration_name)
-
-      cert_file_path = "/tmp/suma_ca_cert.crt"
-
-      assert File.exists?(cert_file_path)
-      ^ca_cert = File.read!(cert_file_path)
-    end
-
-    test "should not save CA certificate file if no cert is provided" do
-      insert_software_updates_settings(ca_cert: nil, ca_uploaded_at: nil)
-
-      assert {:ok, _} = start_supervised({SumaAuth, @test_integration_name})
-
-      expect(SumaApiMock, :login, fn _, _, _, false -> successful_login_response() end)
-
-      assert {:ok, %State{ca_cert: nil}} =
-               SumaAuth.authenticate(@test_integration_name)
-
-      refute File.exists?("/tmp/suma_ca_cert.crt")
     end
 
     test "should redact sensitive data in SUMA state", %{
@@ -101,7 +72,6 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuthTest do
         username: username,
         password: "<REDACTED>",
         ca_cert: "<REDACTED>",
-        use_ca_cert: true,
         auth: "<REDACTED>"
       }
 
@@ -153,7 +123,6 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuthTest do
           username: nil,
           password: nil,
           ca_cert: nil,
-          use_ca_cert: false,
           auth: nil
         }
 
@@ -214,7 +183,6 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuthTest do
         username: username,
         password: password,
         ca_cert: ca_cert,
-        use_ca_cert: true,
         auth: "pxt-session-cookie=4321"
       }
 
@@ -235,7 +203,6 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuthTest do
         username: nil,
         password: nil,
         ca_cert: nil,
-        use_ca_cert: false,
         auth: nil
       }
 
