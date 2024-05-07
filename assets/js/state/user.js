@@ -4,8 +4,11 @@ import { createAction, createSlice } from '@reduxjs/toolkit';
 export const initialState = {
   loggedIn: false,
   username: undefined,
+  fullname: undefined,
   email: undefined,
   id: undefined,
+  created_at: undefined,
+  updated_at: undefined,
   authError: null,
   authInProgress: false,
 };

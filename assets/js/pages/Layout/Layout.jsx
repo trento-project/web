@@ -84,7 +84,7 @@ function Layout() {
       : localStorage.setItem('sidebar-collapsed', true);
   }, [isCollapsed]);
 
-  const { username: username, email: email } = useSelector(getUserProfile);
+  const { username, email } = useSelector(getUserProfile);
 
   const sidebarIconColor = 'currentColor';
   const sidebarIconClassName = 'text-gray-400 hover:text-gray-300';
