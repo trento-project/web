@@ -152,6 +152,8 @@ defmodule TrentoWeb.Router do
       get "/profile", ProfileController, :show
       patch "/profile", ProfileController, :update
 
+      get "/abilities", AbilityController, :index
+
       scope "/settings" do
         get "/", SettingsController, :settings
         post "/accept_eula", SettingsController, :accept_eula
