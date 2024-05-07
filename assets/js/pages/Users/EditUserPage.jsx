@@ -17,11 +17,13 @@ function EditUserPage() {
   const [errorsState, setErrors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [userState, setUser] = useState(null);
+  const [userVersion, setUserVersion] = useState(null);
   const [updatedByOther, setUpdatedByOther] = useState(false);
 
   useEffect(() => {
     getUser(userID)
-      .then(({ data: user }) => {
+      .then(({ data: user, headers: { etag } }) => {
+        setUserVersion(etag);
         setUser(user);
       })
       .catch(() => {})
@@ -32,7 +34,7 @@ function EditUserPage() {
 
   const onEditUser = (payload) => {
     setSaving(true);
-    editUser(userID, payload)
+    editUser(userID, payload, userVersion)
       .then(() => {
         navigate('/users');
       })
