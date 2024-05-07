@@ -358,5 +358,20 @@ defmodule Trento.UsersTest do
       assert username == "#{original_username}__#{deleted_at}"
       assert email == "#{original_email}__#{deleted_at}"
     end
+
+    test "delete_user/1 deletes user abilities" do
+      [%Ability{id: ability_id1}, %Ability{id: ability_id2}] = insert_list(2, :ability)
+      %{id: user_id} = user = insert(:user)
+      insert(:users_abilities, user_id: user_id, ability_id: ability_id1)
+      insert(:users_abilities, user_id: user_id, ability_id: ability_id2)
+
+      assert {:ok, %User{}} = Users.delete_user(user)
+
+      %User{deleted_at: deleted_at} =
+        Trento.Repo.get_by!(User, id: user_id)
+
+      refute deleted_at == nil
+      assert [] == Trento.Repo.all(from u in UsersAbilities, where: u.user_id == ^user_id)
+    end
   end
 end

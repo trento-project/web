@@ -91,10 +91,26 @@ defmodule Trento.Users do
 
   def delete_user(%User{id: 1}), do: {:error, :forbidden}
 
-  def delete_user(%User{} = user) do
+  def delete_user(%User{abilities: []} = user) do
     user
     |> User.delete_changeset(%{deleted_at: DateTime.utc_now()})
     |> Repo.update()
+  end
+
+  def delete_user(%User{} = user) do
+    result =
+      Ecto.Multi.new()
+      |> Ecto.Multi.update(:user, User.delete_changeset(user, %{deleted_at: DateTime.utc_now()}))
+      |> delete_abilities_multi()
+      |> Repo.transaction()
+
+    case result do
+      {:ok, %{user: user}} ->
+        {:ok, user}
+
+      {:error, _, changeset_error, _} ->
+        {:error, changeset_error}
+    end
   end
 
   defp set_locked_at(%{enabled: false} = attrs) do
@@ -113,14 +129,21 @@ defmodule Trento.Users do
     end)
   end
 
-  defp do_update(%{id: user_id} = user, %{abilities: abilities} = attrs) do
+  defp delete_abilities_multi(multi) do
+    Ecto.Multi.delete_all(
+      multi,
+      :delete_abilities,
+      fn %{user: %User{id: user_id}} ->
+        from(u in UsersAbilities, where: u.user_id == ^user_id)
+      end
+    )
+  end
+
+  defp do_update(user, %{abilities: abilities} = attrs) do
     result =
       Ecto.Multi.new()
       |> Ecto.Multi.update(:user, User.update_changeset(user, attrs))
-      |> Ecto.Multi.delete_all(
-        :delete_abilities,
-        from(u in UsersAbilities, where: u.user_id == ^user_id)
-      )
+      |> delete_abilities_multi()
       |> insert_abilities_multi(abilities)
       |> Repo.transaction()
 
