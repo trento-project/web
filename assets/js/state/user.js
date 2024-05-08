@@ -7,6 +7,7 @@ export const initialState = {
   fullname: undefined,
   email: undefined,
   id: undefined,
+  abilities: undefined,
   created_at: undefined,
   updated_at: undefined,
   authError: null,
