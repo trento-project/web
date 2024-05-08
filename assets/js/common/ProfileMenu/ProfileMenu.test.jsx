@@ -1,7 +1,7 @@
 import React from 'react';
-import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
+import { renderWithRouter } from '@lib/test-utils';
 import { userFactory } from '@lib/test-utils/factories/users';
 
 import ProfileMenu from './ProfileMenu';
@@ -9,7 +9,7 @@ import ProfileMenu from './ProfileMenu';
 describe('ProfileMenu component', () => {
   test('should render a profile menu button with username', () => {
     const { email, username } = userFactory.build();
-    const { getByText } = render(
+    const { getByText } = renderWithRouter(
       <ProfileMenu username={username} email={email} />
     );
     const usernameElement = getByText(username);
@@ -20,7 +20,7 @@ describe('ProfileMenu component', () => {
     const user = userEvent.setup();
 
     const { email, username } = userFactory.build();
-    const { getByText, getByRole } = render(
+    const { getByText, getByRole } = renderWithRouter(
       <ProfileMenu username={username} email={email} />
     );
     await user.click(getByRole('button'));
@@ -33,7 +33,7 @@ describe('ProfileMenu component', () => {
 
     const logoutMock = jest.fn();
     const { email, username } = userFactory.build();
-    const { getByText, getByRole } = render(
+    const { getByText, getByRole } = renderWithRouter(
       <ProfileMenu username={username} email={email} logout={logoutMock} />
     );
 

@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { MemoryRouter } from 'react-router-dom';
 import { action } from '@storybook/addon-actions';
 import ProfileMenu from '.';
 
@@ -19,6 +19,13 @@ export default {
     email: { control: 'text' },
     logout: { action: 'logout' },
   },
+  decorators: [
+    (Story) => (
+      <MemoryRouter>
+        <Story />
+      </MemoryRouter>
+    ),
+  ],
   render: (args) => (
     <ContainerWrapper>
       <ProfileMenu {...args} />
