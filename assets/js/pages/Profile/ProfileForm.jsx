@@ -4,6 +4,8 @@ import { getError } from '@lib/api/validationErrors';
 import Button from '@common/Button';
 import Input from '@common/Input';
 import Label from '@common/Label';
+import Modal from '@common/Modal';
+import ProfilePasswordChangeForm from '@pages/Profile/ProfilePasswordChangeForm';
 import { REQUIRED_FIELD_TEXT, errorMessage } from '@lib/forms';
 
 function ProfileForm({
@@ -15,6 +17,7 @@ function ProfileForm({
   loading,
   onSave = noop,
 }) {
+  const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
   const [fullNameState, setFullName] = useState(fullName);
   const [fullNameErrorState, setFullNameError] = useState(null);
   const [emailAddressState, setEmailAddress] = useState(emailAddress);
@@ -93,6 +96,15 @@ function ProfileForm({
           <div className="col-start-2 col-span-3">
             <Input value={username} aria-label="username" disabled />
           </div>
+          <Label className="col-start-1 col-span-1">Password</Label>
+          <div className="col-start-2 col-span-3">
+            <Button
+              onClick={() => setPasswordDialogOpen(true)}
+              type="primary-white"
+            >
+              Change Password
+            </Button>
+          </div>
           <Label className="col-start-1 col-span-1">Permissions</Label>
           <div className="col-start-2 col-span-3">
             <Input value={formattedAbilities} aria-label="abilities" disabled />
@@ -104,6 +116,19 @@ function ProfileForm({
           </Button>
         </div>
       </div>
+      <Modal
+        title="Change Password"
+        className="!w-3/4 !max-w-3xl"
+        open={passwordDialogOpen}
+        onClose={() => setPasswordDialogOpen(false)}
+      >
+        <ProfilePasswordChangeForm
+          loading={loading}
+          onSave={onSave}
+          onCancel={() => setPasswordDialogOpen(false)}
+          errors={errors}
+        />
+      </Modal>
     </div>
   );
 }

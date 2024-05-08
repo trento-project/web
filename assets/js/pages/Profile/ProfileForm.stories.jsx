@@ -1,6 +1,4 @@
 import React from 'react';
-import { MemoryRouter } from 'react-router-dom';
-
 import { userFactory } from '@lib/test-utils/factories/users';
 
 import ProfileForm from './ProfileForm';
