@@ -13,13 +13,13 @@ In order to run the Trento Web application, the following software must be insta
 ### Additional requirements
 
 Some platforms might not be able to use pre-built versions of some dependencies.
-Therefore, some additional dependencies might be required. This will not effect
-most users and should be referred to when installation issues come up.
-For these dependencies, the distro packaged version will usually be sufficient.
+Therefore, some additional dependencies might be required. This does not effect
+most users and can be referred to, when installation issues come up.
+For these dependencies, the distro packaged version is usually sufficient.
 
 1. [Python3](https://www.python.org/)
 2. [setuptools](https://setuptools.pypa.io/en/latest/index.html)
-3. [gcc](https://gcc.gnu.org/) or [clang](https://clang.llvm.org/)
+3. [gcc](https://gcc.gnu.org/)
 4. [pkg-config](https://www.freedesktop.org/wiki/Software/pkg-config/)
 
 ### Ensure Compatibility with asdf
