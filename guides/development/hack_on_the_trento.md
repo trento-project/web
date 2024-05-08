@@ -4,11 +4,23 @@
 
 In order to run the Trento Web application, the following software must be installed:
 
-1. [Elixir](https://elixir-lang.org/)
-2. [Erlang OTP](https://www.erlang.org/)
-3. [Node.js](https://nodejs.org/en/)
+1. [Elixir](https://elixir-lang.org/) - 1.15.7 preferred
+2. [Erlang OTP](https://www.erlang.org/) - 26.1.2 preferred
+3. [Node.js](https://nodejs.org/en/) - 16.16.0 preferred
 4. [Docker](https://docs.docker.com/get-docker/)
 5. [Docker Compose](https://docs.docker.com/compose/install/)
+
+### Additional requirements
+
+Some platforms might not be able to use pre-built versions of some dependencies.
+Therefore, some additional dependencies might be required. This does not effect
+most users and can be referred to, when installation issues come up.
+For these dependencies, the distro packaged version is usually sufficient.
+
+1. [Python3](https://www.python.org/)
+2. [setuptools](https://setuptools.pypa.io/en/latest/index.html)
+3. [gcc](https://gcc.gnu.org/)
+4. [pkg-config](https://www.freedesktop.org/wiki/Software/pkg-config/)
 
 ### Ensure Compatibility with asdf
 
