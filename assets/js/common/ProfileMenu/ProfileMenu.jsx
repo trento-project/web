@@ -1,5 +1,6 @@
 import React from 'react';
 import { Menu } from '@headlessui/react';
+import { Link } from 'react-router-dom';
 
 import { EOS_ACCOUNT_CIRCLE_OUTLINED } from 'eos-icons-react';
 
@@ -43,12 +44,12 @@ function ProfileMenu({ username, email, logout }) {
           </span>
         </Menu.Item>
         <Menu.Item>
-          <a
-            href="/profile"
+          <Link
+            to="/profile"
             className="text-gray-700 hover:bg-gray-100 block px-4 py-4 text-sm"
           >
             Profile
-          </a>
+          </Link>
         </Menu.Item>
         <Menu.Item>
           <button
