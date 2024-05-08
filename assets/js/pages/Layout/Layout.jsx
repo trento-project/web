@@ -1,6 +1,10 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState, useCallback } from 'react';
+import { useSelector } from 'react-redux';
 import { NavLink, Outlet } from 'react-router-dom';
+
+import { clearCredentialsFromStore } from '@lib/auth';
+import { getUserProfile } from '@state/selectors/user';
 
 import {
   EOS_HOME_OUTLINED,
@@ -19,7 +23,7 @@ import {
 import TrentoLogo from '@static/trento-logo-stacked.svg';
 
 import classNames from 'classnames';
-import { clearCredentialsFromStore } from '@lib/auth';
+import ProfileMenu from '@common/ProfileMenu';
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: EOS_HOME_OUTLINED },
@@ -79,6 +83,8 @@ function Layout() {
       ? localStorage.removeItem('sidebar-collapsed')
       : localStorage.setItem('sidebar-collapsed', true);
   }, [isCollapsed]);
+
+  const { username, email } = useSelector(getUserProfile);
 
   const sidebarIconColor = 'currentColor';
   const sidebarIconClassName = 'text-gray-400 hover:text-gray-300';
@@ -167,14 +173,11 @@ function Layout() {
           <header className="w-full h-16 flex items-center justify-between">
             <div className="relative flex flex-col justify-end h-full px-8 md:w-full">
               <div className="relative p-5 flex items-center w-full space-x-8 justify-end mr-20">
-                <a
-                  role="button"
-                  aria-hidden="true"
-                  onClick={logout}
-                  className="flex text-md text-gray-500 hover:text-gray-700"
-                >
-                  Sign out
-                </a>
+                <ProfileMenu
+                  username={username}
+                  email={email}
+                  logout={logout}
+                />
               </div>
             </div>
           </header>

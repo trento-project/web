@@ -4,7 +4,11 @@ import { createAction, createSlice } from '@reduxjs/toolkit';
 export const initialState = {
   loggedIn: false,
   username: undefined,
+  fullname: undefined,
+  email: undefined,
   id: undefined,
+  created_at: undefined,
+  updated_at: undefined,
   authError: null,
   authInProgress: false,
 };
@@ -26,9 +30,16 @@ export const userSlice = createSlice({
       state.authInProgress = false;
       state.authError = null;
     },
-    setUser(state, { payload: { username, id } }) {
+    setUser(
+      state,
+      { payload: { username, id, email, created_at, fullname, updated_at } }
+    ) {
       state.username = username;
+      state.email = email;
       state.id = id;
+      state.created_at = created_at;
+      state.fullname = fullname;
+      state.updated_at = updated_at;
     },
   },
 });

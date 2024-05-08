@@ -11,7 +11,7 @@ import {
 } from '@state/user';
 import {
   login,
-  me,
+  profile,
   storeAccessToken,
   storeRefreshToken,
   clearCredentialsFromStore,
@@ -27,8 +27,24 @@ export function* performLogin({ payload: { username, password } }) {
     yield call(storeAccessToken, accessToken);
     yield call(storeRefreshToken, refreshToken);
     // Get logged user information
-    const { id, username: profileUsername } = yield call(me, networkClient);
-    yield put(setUser({ username: profileUsername, id }));
+    const {
+      id,
+      username: profileUsername,
+      created_at,
+      email,
+      fullname,
+      updated_at,
+    } = yield call(profile, networkClient);
+    yield put(
+      setUser({
+        username: profileUsername,
+        id,
+        created_at,
+        email,
+        fullname,
+        updated_at,
+      })
+    );
     yield put(setUserAsLogged());
   } catch (error) {
     yield put(
