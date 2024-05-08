@@ -8,6 +8,12 @@ import Label from '@common/Label';
 import MultiSelect from '@common/MultiSelect';
 import Select from '@common/Select';
 import Tooltip from '@common/Tooltip';
+import {
+  PASSWORD_POLICY_TEXT,
+  PASSWORD_PLACEHOLDER,
+  REQUIRED_FIELD_TEXT,
+  errorMessage,
+} from '@lib/forms';
 import { getError } from '@lib/api/validationErrors';
 import {
   REQUIRED_FIELD_TEXT,
