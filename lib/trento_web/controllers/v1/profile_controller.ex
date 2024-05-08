@@ -19,8 +19,10 @@ defmodule TrentoWeb.V1.ProfileController do
     ]
 
   def show(conn, _) do
-    %User{} = user = Pow.Plug.current_user(conn)
-    render(conn, "profile.json", user: user)
+    with %User{} = user <- Pow.Plug.current_user(conn),
+         conn <- attach_user_version_as_etag_header(conn, user) do
+      render(conn, "profile.json", user: user)
+    end
   end
 
   operation :update,

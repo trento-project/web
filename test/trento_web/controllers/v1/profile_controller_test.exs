@@ -38,6 +38,9 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
       |> assert_schema("UserProfile", api_spec)
 
     assert %{id: ^user_id} = resp
+
+    [etag] = get_resp_header(conn, "etag")
+    assert etag == "1"
   end
 
   test "should update the profile with allowed fields", %{
