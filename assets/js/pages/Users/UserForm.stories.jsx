@@ -83,7 +83,7 @@ export default {
     saveEnabled: {
       description: 'User saving is enabled',
       control: {
-        type: 'text',
+        type: 'boolean',
       },
     },
     saveText: {
