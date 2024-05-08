@@ -40,7 +40,7 @@ const clearIndicator = (props) => (
 
 const multiValueRemove = (props) => (
   <selectComponents.MultiValueRemove {...props}>
-    <XMarkIcon className="w-4 h-4 text-gray-400" aria-hidden="true" />
+    <XMarkIcon className="w-4 h-4 text-green-800" aria-hidden="true" />
   </selectComponents.MultiValueRemove>
 );
 
@@ -53,7 +53,8 @@ const defaultComponents = {
 };
 
 const defaultClassNames = {
-  multiValue: () => 'rounded-md bg-gray-200 px-1 py-2px space-x-1 mr-1',
+  multiValue: () =>
+    'rounded-md bg-green-100 text-green-800 px-1 py-2px space-x-1 mr-1',
   multiValueLabel: () => 'ml-1',
   control: () =>
     'relative w-full py-2 px-3 text-left bg-white rounded-lg cursor-default border border-gray-300 sm:text-sm',
