@@ -59,7 +59,7 @@ describe('CreateUserPage', () => {
     expect(navigate).toHaveBeenCalledWith('/users');
   });
 
-  it('should save a new user and redirect to users view', async () => {
+  it('should save a new user, redirect to users view and render success toast', async () => {
     const toastMessage = 'User created successfully';
     const user = userEvent.setup();
     const navigate = jest.fn();
@@ -124,7 +124,7 @@ describe('CreateUserPage', () => {
     await screen.findByText('Error validating fullname');
   });
 
-  it('should render toast with failing message when creating user failed on network error', async () => {
+  it('should render toast with an error message when creating a user failed because of a network error', async () => {
     const toastMessage = 'Unexpected error occurred, refresh the page';
     const user = userEvent.setup();
 

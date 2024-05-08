@@ -201,7 +201,7 @@ describe('EditUserPage', () => {
     expect(await screen.findByText(toolTipText)).toBeVisible();
   });
 
-  it('should render toast with failing message when editing user failed', async () => {
+  it('should render toast with an error message when editing a user failed because of a network error', async () => {
     const toastMessage = 'Unexpected error occurred, refresh the page';
     const user = userEvent.setup();
     const userData = userFactory.build();
