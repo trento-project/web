@@ -2,6 +2,13 @@ import { faker } from '@faker-js/faker';
 import { Factory } from 'fishery';
 import { formatISO } from 'date-fns';
 
+export const abilityFactory = Factory.define(() => ({
+  id: faker.number.int(),
+  name: faker.word.noun(),
+  resource: faker.word.noun(),
+  label: faker.hacker.phrase(),
+}));
+
 export const userFactory = Factory.define(() => ({
   id: faker.number.int(),
   username: faker.internet.userName(),
@@ -9,6 +16,7 @@ export const userFactory = Factory.define(() => ({
   enabled: faker.datatype.boolean(),
   fullname: faker.internet.displayName(),
   email: faker.internet.email(),
+  abilities: abilityFactory.buildList(2),
   created_at: formatISO(faker.date.past()),
   updated_at: formatISO(faker.date.past()),
 }));
