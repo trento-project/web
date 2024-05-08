@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
+import { toast } from 'react-hot-toast';
+
 import PageHeader from '@common/PageHeader';
 import ProfileForm from '@pages/Profile/ProfileForm';
-import { getUserProfile } from '@lib/api/users';
+import { getUserProfile, updateUserProfile } from '@lib/api/users';
 
 function ProfilePage() {
   const [errorsState, setErrors] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [userState, setUser] = useState(null);
 
   useEffect(() => {
@@ -18,6 +21,27 @@ function ProfilePage() {
         setLoading(false);
       });
   }, []);
+
+  const updateProfile = (payload) => {
+    setSaving(true);
+    updateUserProfile(payload)
+      .then(({ data: updatedUser }) => {
+        toast.success('Profile changes saved!');
+        setUser(updatedUser);
+      })
+      .catch(
+        ({
+          response: {
+            data: { errors },
+          },
+        }) => {
+          setErrors(errors);
+        }
+      )
+      .finally(() => {
+        setSaving(false);
+      });
+  };
 
   if (loading) {
     return <div>Loading...</div>;
@@ -33,7 +57,8 @@ function ProfilePage() {
         username={username}
         abilities={abilities}
         errors={errorsState}
-        loading={loading}
+        loading={loading || saving}
+        onSave={updateProfile}
       />
     </>
   );

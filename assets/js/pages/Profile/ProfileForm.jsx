@@ -54,7 +54,7 @@ function ProfileForm({
   }, [errors]);
 
   const formattedAbilities = abilities.map(
-    ({ name, resource }) => `${name}:${resource}`
+    ({ name, resource }) => `${resource}:${name}`
   );
 
   return (
