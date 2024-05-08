@@ -7,8 +7,8 @@ import Input, { Password } from '@common/Input';
 import Label from '@common/Label';
 import Select from '@common/Select';
 import Tooltip from '@common/Tooltip';
-
 import { getError } from '@lib/api/validationErrors';
+import { generatePassword } from './generatePassword';
 
 const USER_ENABLED = 'Enabled';
 const REQUIRED_FIELD_TEXT = 'Required field';
@@ -116,6 +116,12 @@ function UserForm({
     onSave(user);
   };
 
+  const onGeneratePassword = () => {
+    const newPassword = generatePassword();
+    setPassword(newPassword);
+    setConfirmPassword(newPassword);
+  };
+
   return (
     <div>
       <div className="container max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 bg-white dark:bg-gray-800 rounded-lg">
@@ -205,6 +211,15 @@ function UserForm({
             />
             {confirmPasswordErrorState &&
               errorMessage(confirmPasswordErrorState)}
+          </div>
+          <div className="col-start-2 col-span-3">
+            <Button
+              type="primary-white"
+              onClick={onGeneratePassword}
+              disabled={!saveEnabled}
+            >
+              Generate Password
+            </Button>
           </div>
           <Label className="col-start-1 col-span-1">Permissions</Label>
           <div className="col-start-2 col-span-3">

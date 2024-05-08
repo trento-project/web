@@ -24,6 +24,7 @@ describe('UserForm', () => {
     expect(screen.getByLabelText('password').value).toBe('');
     expect(screen.getByText('Confirm Password')).toBeVisible();
     expect(screen.getByLabelText('password-confirmation').value).toBe('');
+    expect(screen.getByText('Generate Password'));
     expect(screen.getByText('Permissions')).toBeVisible();
     expect(screen.getByText('Status')).toBeVisible();
     expect(screen.queryByText('Created')).not.toBeInTheDocument();
@@ -131,6 +132,28 @@ describe('UserForm', () => {
     await user.click(screen.getByRole('button', { name: 'Edit' }));
 
     expect(screen.getAllByText('Required field').length).toBe(3);
+  });
+
+  it('should generate a password on button click', async () => {
+    const user = userEvent.setup();
+    const defaultPasswordSize = 16;
+    render(<UserForm />);
+    const passwordValueDefault = screen.getByLabelText('password').value;
+    expect(passwordValueDefault).toBe('');
+    const confirmPasswordValueDefault = screen.getByLabelText(
+      'password-confirmation'
+    ).value;
+    expect(confirmPasswordValueDefault).toBe('');
+
+    await user.click(screen.getByRole('button', { name: 'Generate Password' }));
+    const passwordValue = screen.getByLabelText('password').value;
+    const confirmPasswordValue = screen.getByLabelText(
+      'password-confirmation'
+    ).value;
+    expect(passwordValue).not.toBe('');
+    expect(confirmPasswordValue).not.toBe('');
+    expect(passwordValue.length).toBe(defaultPasswordSize);
+    expect(confirmPasswordValue.length).toBe(defaultPasswordSize);
   });
 
   it('should save the user', async () => {

@@ -12,6 +12,7 @@ function Password({
   id,
   name,
   value,
+  initialValue,
   placeholder = 'Password',
   error = false,
   disabled = false,
@@ -24,7 +25,8 @@ function Password({
       className={classNames(className)}
       id={id}
       name={name}
-      initialValue={value}
+      value={value}
+      initialValue={initialValue}
       placeholder={placeholder}
       type={inputType}
       error={error}
