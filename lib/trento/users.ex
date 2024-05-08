@@ -72,6 +72,8 @@ defmodule Trento.Users do
     user
     |> User.profile_update_changeset(attrs)
     |> Repo.update()
+  rescue
+    Ecto.StaleEntryError -> {:error, :stale_entry}
   end
 
   def update_user(%User{id: 1}, _), do: {:error, :forbidden}

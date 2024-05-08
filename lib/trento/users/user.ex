@@ -53,8 +53,7 @@ defmodule Trento.Users.User do
     |> validate_password()
     |> custom_fields_changeset(attrs)
     |> lock_changeset(attrs)
-    |> cast(attrs, [:lock_version])
-    |> optimistic_lock(:lock_version)
+    |> optimistic_lock_changeset(attrs)
   end
 
   def profile_update_changeset(user, attrs) do
@@ -64,6 +63,7 @@ defmodule Trento.Users.User do
     |> pow_extension_changeset(attrs)
     |> validate_password()
     |> custom_fields_changeset(attrs)
+    |> optimistic_lock_changeset(attrs)
   end
 
   def delete_changeset(
@@ -84,6 +84,12 @@ defmodule Trento.Users.User do
 
   defp lock_changeset(user, attrs) do
     cast(user, attrs, [:locked_at])
+  end
+
+  defp optimistic_lock_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:lock_version])
+    |> optimistic_lock(:lock_version)
   end
 
   defp validate_password(changeset) do

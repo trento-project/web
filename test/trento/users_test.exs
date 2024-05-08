@@ -70,6 +70,22 @@ defmodule Trento.UsersTest do
       assert nil == locked_at
       assert password_hash != updated_password_hash
     end
+
+    test "update_user_profile returns stale error when the lock version in the update is not valid" do
+      user = insert(:user)
+      {:ok, user} = Users.get_user(user.id)
+
+      assert {:ok, updated_user} =
+               Users.update_user_profile(user, %{
+                 fullname: "some updated fullname"
+               })
+
+      assert {:error, :stale_entry} =
+               Users.update_user_profile(updated_user, %{
+                 fullname: "some updated fullname 2",
+                 lock_version: 1
+               })
+    end
   end
 
   describe "users" do
