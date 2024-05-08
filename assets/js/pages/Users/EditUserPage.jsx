@@ -8,6 +8,7 @@ import PageHeader from '@common/PageHeader';
 import { isAdmin } from '@lib/model/users';
 import { editUser, getUser } from '@lib/api/users';
 
+import { fetchAbilities } from './CreateUserPage';
 import UserForm from './UserForm';
 
 function EditUserPage() {
@@ -19,6 +20,7 @@ function EditUserPage() {
   const [userState, setUser] = useState(null);
   const [userVersion, setUserVersion] = useState(null);
   const [updatedByOther, setUpdatedByOther] = useState(false);
+  const [abilitiesState, setAbilities] = useState([]);
 
   useEffect(() => {
     getUser(userID)
@@ -31,6 +33,10 @@ function EditUserPage() {
         setLoading(false);
       });
   }, [userID]);
+
+  useEffect(() => {
+    fetchAbilities(setAbilities);
+  }, []);
 
   const onEditUser = (payload) => {
     setSaving(true);
@@ -74,6 +80,7 @@ function EditUserPage() {
     email,
     username,
     enabled,
+    abilities: userAbilities,
     created_at: createdAt,
     updated_at: updatedAt,
   } = userState;
@@ -92,6 +99,8 @@ function EditUserPage() {
       )}
       <PageHeader className="font-bold">Edit User</PageHeader>
       <UserForm
+        abilities={abilitiesState}
+        userAbilities={userAbilities}
         saveText="Edit"
         fullName={fullname}
         emailAddress={email}
