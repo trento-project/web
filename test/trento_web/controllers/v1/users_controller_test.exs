@@ -330,7 +330,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
 
     test "should update the user with abilities", %{conn: conn, api_spec: api_spec} do
       %{id: id, name: name, resource: resource, label: label} = insert(:ability)
-      %{id: user_id} = insert(:user)
+      %{id: user_id, lock_version: lock_version} = insert(:user)
 
       valid_params = %{
         fullname: Faker.Person.name(),
@@ -343,6 +343,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
 
       conn
       |> put_req_header("content-type", "application/json")
+      |> put_req_header("if-match", "#{lock_version}")
       |> patch("/api/v1/users/#{user_id}", valid_params)
       |> json_response(:ok)
       |> assert_schema("UserItem", api_spec)
