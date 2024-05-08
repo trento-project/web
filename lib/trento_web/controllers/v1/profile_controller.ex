@@ -26,19 +26,43 @@ defmodule TrentoWeb.V1.ProfileController do
   operation :update,
     summary: "Update the current user profile",
     tags: ["Platform"],
+    parameters: [
+      "if-match": [
+        # The field is required, we put to false to avoid openapispex validate that value with 422 status code.
+        required: false,
+        in: :header,
+        type: %OpenApiSpex.Schema{type: :integer}
+      ]
+    ],
     request_body:
       {"UserProfileUpdateRequest", "application/json", Schema.User.UserProfileUpdateRequest},
     responses: [
       ok: {"Profile updated successfully", "application/json", Schema.User.UserProfile},
       unprocessable_entity: Schema.UnprocessableEntity.response(),
-      forbidden: Schema.Forbidden.response()
+      forbidden: Schema.Forbidden.response(),
+      precondition_failed: Schema.PreconditionFailed.response(),
+      precondition_required: Schema.PreconditionRequired.response()
     ]
 
   def update(%{body_params: profile_params} = conn, _) do
     %User{} = user = Pow.Plug.current_user(conn)
 
-    with {:ok, %User{} = updated_user} <- Users.update_user_profile(user, profile_params) do
+    with {:ok, lock_version} <- user_version_from_if_match_header(conn),
+         update_params <- Map.put(profile_params, :lock_version, lock_version),
+         {:ok, %User{} = updated_user} <- Users.update_user_profile(user, update_params),
+         conn <- attach_user_version_as_etag_header(conn, updated_user) do
       render(conn, "profile.json", user: updated_user)
     end
+  end
+
+  defp user_version_from_if_match_header(conn) do
+    case get_req_header(conn, "if-match") do
+      [version] -> {:ok, version}
+      _ -> {:error, :precondition_missing}
+    end
+  end
+
+  defp attach_user_version_as_etag_header(conn, %User{lock_version: lock_version}) do
+    put_resp_header(conn, "etag", Integer.to_string(lock_version))
   end
 end
