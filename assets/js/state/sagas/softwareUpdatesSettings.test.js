@@ -3,7 +3,6 @@ import { faker } from '@faker-js/faker';
 import { recordSaga } from '@lib/test-utils';
 
 import { networkClient } from '@lib/network';
-import { authClient, storeRefreshToken } from '@lib/auth';
 import MockAdapter from 'axios-mock-adapter';
 
 import { softwareUpdatesSettingsFactory } from '@lib/test-utils/factories/softwareUpdatesSettings';
@@ -46,20 +45,8 @@ describe('Software Updates Settings saga', () => {
 
     it('should empty software updates settings when no configured settings were found', async () => {
       const axiosMock = new MockAdapter(networkClient);
-      const mockAuthClient = new MockAdapter(authClient);
-      storeRefreshToken('refresh-token');
 
-      mockAuthClient.onPost('/api/session/refresh').reply(200, {
-        access_token: 'new_token',
-      });
-
-      axiosMock
-        .onGet('/settings/suma_credentials')
-        .replyOnce(401, {
-          error: 'unauthorized',
-        })
-        .onGet('/settings/suma_credentials')
-        .reply(401);
+      axiosMock.onGet('/settings/suma_credentials').reply(403);
 
       const dispatched = await recordSaga(fetchSoftwareUpdatesSettings);
 
@@ -69,7 +56,7 @@ describe('Software Updates Settings saga', () => {
       ]);
     });
 
-    it.each([403, 404, 500, 502, 504])(
+    it.each([404, 500, 502, 504])(
       'should empty software updates settings and put a network error flag on failed fetching',
       async (status) => {
         const axiosMock = new MockAdapter(networkClient);
