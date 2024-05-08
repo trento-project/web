@@ -6,6 +6,8 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
   alias TrentoWeb.OpenApi.V1.ApiSpec
 
   setup %{conn: conn} do
+    # admin user to avoid forbidden error
+    insert(:user)
     user = insert(:user)
 
     conn =
