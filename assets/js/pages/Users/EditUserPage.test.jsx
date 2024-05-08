@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { screen } from '@testing-library/react';
+import { toast } from 'react-hot-toast';
 import 'intersection-observer';
 import '@testing-library/jest-dom';
 
@@ -24,6 +25,13 @@ import EditUserPage from './EditUserPage';
 const ABILITIES_URL = `/api/v1/abilities`;
 const USERS_URL = '/api/v1/users/';
 const axiosMock = new MockAdapter(networkClient);
+
+jest.mock('react-hot-toast', () => ({
+  toast: {
+    success: jest.fn(),
+    error: jest.fn(),
+  },
+}));
 
 describe('EditUserPage', () => {
   beforeEach(() => {
@@ -82,6 +90,7 @@ describe('EditUserPage', () => {
   });
 
   it('should edit a user and redirect to users view', async () => {
+    const toastMessage = 'User edited successfully';
     const user = userEvent.setup();
     const navigate = jest.fn();
     jest.spyOn(router, 'useNavigate').mockImplementation(() => navigate);
@@ -112,6 +121,7 @@ describe('EditUserPage', () => {
     await user.click(screen.getByRole('button', { name: 'Edit' }));
 
     expect(navigate).toHaveBeenCalledWith('/users');
+    expect(toast.success).toHaveBeenCalledWith(toastMessage);
   });
 
   it('should display validation errors', async () => {
@@ -189,5 +199,25 @@ describe('EditUserPage', () => {
     const toolTipText = 'Admin user cannot be edited';
     await user.hover(editButton);
     expect(await screen.findByText(toolTipText)).toBeVisible();
+  });
+
+  it('should render toast with failing message when editing user failed', async () => {
+    const toastMessage = 'Unexpected error occurred, refresh the page';
+    const user = userEvent.setup();
+    const userData = userFactory.build();
+
+    axiosMock
+      .onGet(USERS_URL.concat(userData.id))
+      .reply(200, userData)
+      .onPatch(USERS_URL.concat(userData.id))
+      .networkError();
+
+    renderWithRouterMatch(<EditUserPage />, {
+      path: '/users/:userID/edit',
+      route: `/users/${userData.id}/edit`,
+    });
+    await screen.findByText('Edit User');
+    await user.click(screen.getByRole('button', { name: 'Edit' }));
+    expect(toast.error).toHaveBeenCalledWith(toastMessage);
   });
 });
