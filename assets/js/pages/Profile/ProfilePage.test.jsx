@@ -102,10 +102,10 @@ describe('ProfilePage', () => {
 
     const testUser = userEvent.setup();
 
-    await testUser.click(screen.getByRole('button', { name: 'Save' }));
-
     await act(async () => {
-      await screen.findByText('Error validating fullname');
+      await testUser.click(screen.getByRole('button', { name: 'Save' }));
     });
+
+    await screen.findByText('Error validating fullname');
   });
 });

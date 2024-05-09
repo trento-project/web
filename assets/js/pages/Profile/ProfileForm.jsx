@@ -16,9 +16,10 @@ function ProfileForm({
   errors,
   loading,
   disableForm,
+  passwordModalOpen = false,
+  togglePasswordModal = noop,
   onSave = noop,
 }) {
-  const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
   const [fullNameState, setFullName] = useState(fullName);
   const [fullNameErrorState, setFullNameError] = useState(null);
   const [emailAddressState, setEmailAddress] = useState(emailAddress);
@@ -100,7 +101,7 @@ function ProfileForm({
           <Label className="col-start-1 col-span-1">Password</Label>
           <div className="col-start-2 col-span-3">
             <Button
-              onClick={() => setPasswordDialogOpen(true)}
+              onClick={togglePasswordModal}
               type="primary-white"
               disabled={loading || disableForm}
             >
@@ -129,16 +130,13 @@ function ProfileForm({
       <Modal
         title="Change Password"
         className="!w-3/4 !max-w-3xl"
-        open={passwordDialogOpen}
-        onClose={() => setPasswordDialogOpen(false)}
+        open={passwordModalOpen}
+        onClose={togglePasswordModal}
       >
         <ProfilePasswordChangeForm
           loading={loading}
-          onSave={(payload) => {
-            onSave(payload);
-            setPasswordDialogOpen(false);
-          }}
-          onCancel={() => setPasswordDialogOpen(false)}
+          onSave={onSave}
+          onCancel={togglePasswordModal}
           errors={errors}
         />
       </Modal>

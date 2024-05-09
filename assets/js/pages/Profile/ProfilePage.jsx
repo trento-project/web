@@ -7,6 +7,7 @@ import { getUserProfile, updateUserProfile } from '@lib/api/users';
 
 function ProfilePage() {
   const [errorsState, setErrors] = useState([]);
+  const [passwordModalOpen, setPasswordModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [userState, setUser] = useState(null);
@@ -22,12 +23,19 @@ function ProfilePage() {
       });
   }, []);
 
+  const passwordModalToggle = () => {
+    setPasswordModalOpen((modalState) => !modalState);
+    setErrors([]);
+  };
+
   const updateProfile = (payload) => {
     setSaving(true);
+    setErrors([]);
     updateUserProfile(payload)
       .then(({ data: updatedUser }) => {
         toast.success('Profile changes saved!');
         setUser(updatedUser);
+        setPasswordModalOpen(false);
       })
       .catch(
         ({
@@ -58,6 +66,8 @@ function ProfilePage() {
         username={username}
         abilities={abilities}
         errors={errorsState}
+        togglePasswordModal={passwordModalToggle}
+        passwordModalOpen={passwordModalOpen}
         loading={loading || saving}
         disableForm={isDefaultAdmin}
         onSave={updateProfile}
