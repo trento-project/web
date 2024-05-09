@@ -128,7 +128,10 @@ function ProfileForm({
       >
         <ProfilePasswordChangeForm
           loading={loading}
-          onSave={onSave}
+          onSave={(payload) => {
+            onSave(payload);
+            setPasswordDialogOpen(false);
+          }}
           onCancel={() => setPasswordDialogOpen(false)}
           errors={errors}
         />
