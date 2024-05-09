@@ -76,7 +76,7 @@ function ProfilePasswordChangeForm({
           <div className="col-start-2 col-span-3">
             <Password
               value={currentPassword}
-              aria-label="current-password"
+              aria-label="current_password"
               placeholder={PASSWORD_PLACEHOLDER}
               error={currentPasswordError}
               onChange={({ target: { value } }) => {
@@ -112,7 +112,7 @@ function ProfilePasswordChangeForm({
           <div className="col-start-2 col-span-3">
             <Password
               value={confirmPassword}
-              aria-label="password-confirmation"
+              aria-label="password_confirmation"
               placeholder={PASSWORD_PLACEHOLDER}
               error={confirmPasswordError}
               onChange={({ target: { value } }) => {
