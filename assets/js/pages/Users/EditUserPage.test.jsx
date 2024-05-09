@@ -13,10 +13,15 @@ import * as router from 'react-router';
 import { networkClient } from '@lib/network';
 
 import { renderWithRouterMatch } from '@lib/test-utils';
-import { adminUser, userFactory } from '@lib/test-utils/factories/users';
+import {
+  abilityFactory,
+  adminUser,
+  userFactory,
+} from '@lib/test-utils/factories/users';
 
 import EditUserPage from './EditUserPage';
 
+const ABILITIES_URL = `/api/v1/abilities`;
 const USERS_URL = '/api/v1/users/';
 const axiosMock = new MockAdapter(networkClient);
 
@@ -81,10 +86,13 @@ describe('EditUserPage', () => {
     const navigate = jest.fn();
     jest.spyOn(router, 'useNavigate').mockImplementation(() => navigate);
     const userData = userFactory.build();
+    const abilities = abilityFactory.buildList(2);
 
     axiosMock
       .onGet(USERS_URL.concat(userData.id))
       .reply(200, userData)
+      .onGet(ABILITIES_URL)
+      .reply(200, abilities)
       .onPatch(USERS_URL.concat(userData.id))
       .reply(204, {});
 
@@ -94,6 +102,12 @@ describe('EditUserPage', () => {
     });
 
     await screen.findByText('Edit User');
+
+    await user.click(screen.getByLabelText('permissions'));
+
+    abilities.forEach(({ name, resource }) =>
+      expect(screen.getAllByText(`${name}:${resource}`).length).toBe(1)
+    );
 
     await user.click(screen.getByRole('button', { name: 'Edit' }));
 

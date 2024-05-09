@@ -6,7 +6,7 @@ import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import { faker } from '@faker-js/faker';
 
-import { userFactory } from '@lib/test-utils/factories/users';
+import { abilityFactory, userFactory } from '@lib/test-utils/factories/users';
 
 import UserForm from './UserForm';
 
@@ -179,6 +179,7 @@ describe('UserForm', () => {
       password,
       password_confirmation: password,
       enabled: true,
+      abilities: [],
     });
   });
 
@@ -220,6 +221,60 @@ describe('UserForm', () => {
       fullname,
       email,
       enabled: result,
+      abilities: [],
+    });
+  });
+
+  it('should save the new abilities', async () => {
+    const user = userEvent.setup();
+    const abilities = abilityFactory.buildList(3);
+    const userAbilities = [abilities[0]];
+    const {
+      fullname,
+      email,
+      username,
+      created_at: createdAt,
+      updated_at: updatedAt,
+    } = userFactory.build();
+
+    const mockOnSave = jest.fn();
+
+    render(
+      <UserForm
+        saveText="Save"
+        onSave={mockOnSave}
+        fullName={fullname}
+        emailAddress={email}
+        username={username}
+        abilities={abilities}
+        userAbilities={userAbilities}
+        createdAt={createdAt}
+        updatedAt={updatedAt}
+        editing
+      />
+    );
+
+    expect(
+      screen.getByText(`${userAbilities[0].name}:${userAbilities[0].resource}`)
+    ).toBeVisible();
+
+    await user.click(screen.getByLabelText('permissions'));
+
+    abilities.forEach(({ name, resource }) =>
+      expect(screen.getByText(`${name}:${resource}`)).toBeVisible()
+    );
+
+    await user.click(
+      screen.getByText(`${abilities[1].name}:${abilities[1].resource}`)
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Save' }));
+
+    expect(mockOnSave).toHaveBeenNthCalledWith(1, {
+      fullname,
+      email,
+      enabled: true,
+      abilities: abilities.slice(0, 2),
     });
   });
 });

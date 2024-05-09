@@ -5,6 +5,7 @@ import { format, parseISO } from 'date-fns';
 import Button from '@common/Button';
 import Input, { Password } from '@common/Input';
 import Label from '@common/Label';
+import MultiSelect from '@common/MultiSelect';
 import Select from '@common/Select';
 import Tooltip from '@common/Tooltip';
 import { getError } from '@lib/api/validationErrors';
@@ -26,17 +27,27 @@ const PASSWORD_POLICY_TEXT = (
   </div>
 );
 
+const defaultAbilities = [];
 const defaultErrors = [];
 
 const errorMessage = (message) => (
   <p className="text-red-500 mt-1">{capitalize(message)}</p>
 );
 
+const mapAbilities = (abilities) =>
+  abilities.map(({ id, name, resource, label }) => ({
+    value: id,
+    label: `${name}:${resource}`,
+    tooltip: label,
+  }));
+
 function UserForm({
   fullName = '',
   emailAddress = '',
   username = '',
   status = 'Enabled',
+  abilities = defaultAbilities,
+  userAbilities = defaultAbilities,
   createdAt = '',
   updatedAt = '',
   errors = defaultErrors,
@@ -58,6 +69,9 @@ function UserForm({
   const [confirmPasswordState, setConfirmPassword] = useState('');
   const [confirmPasswordErrorState, setConfirmPasswordError] = useState(null);
   const [statusState, setStatus] = useState(status);
+  const [selectedAbilities, setAbilities] = useState(
+    userAbilities.map(({ id }) => id)
+  );
 
   useEffect(() => {
     setFullNameError(getError('fullname', errors));
@@ -111,6 +125,7 @@ function UserForm({
       ...(confirmPasswordState && {
         password_confirmation: confirmPasswordState,
       }),
+      abilities: abilities.filter(({ id }) => selectedAbilities.includes(id)),
     };
 
     onSave(user);
@@ -223,7 +238,14 @@ function UserForm({
           </div>
           <Label className="col-start-1 col-span-1">Permissions</Label>
           <div className="col-start-2 col-span-3">
-            <Input value="" placeholder="all:all" error={false} disabled />
+            <MultiSelect
+              aria-label="permissions"
+              values={mapAbilities(userAbilities)}
+              options={mapAbilities(abilities)}
+              onChange={(values) =>
+                setAbilities(values.map(({ value }) => value))
+              }
+            />
           </div>
           <Label className="col-start-1 col-span-1">Status</Label>
           <div className="col-start-2 col-span-3">

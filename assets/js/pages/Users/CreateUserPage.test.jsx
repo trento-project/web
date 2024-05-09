@@ -13,10 +13,11 @@ import * as router from 'react-router';
 
 import { networkClient } from '@lib/network';
 
-import { userFactory } from '@lib/test-utils/factories/users';
+import { abilityFactory, userFactory } from '@lib/test-utils/factories/users';
 
 import CreateUserPage from './CreateUserPage';
 
+const ABILITIES_URL = `/api/v1/abilities`;
 const USERS_URL = '/api/v1/users';
 const axiosMock = new MockAdapter(networkClient);
 
@@ -56,8 +57,13 @@ describe('CreateUserPage', () => {
     jest.spyOn(router, 'useNavigate').mockImplementation(() => navigate);
     const { fullname, email, username } = userFactory.build();
     const password = faker.internet.password();
+    const abilities = abilityFactory.buildList(2);
 
-    axiosMock.onPost(USERS_URL).reply(202, {});
+    axiosMock
+      .onPost(USERS_URL)
+      .reply(202, {})
+      .onGet(ABILITIES_URL)
+      .reply(200, abilities);
 
     render(<CreateUserPage />);
 
@@ -66,6 +72,12 @@ describe('CreateUserPage', () => {
     await user.type(screen.getByPlaceholderText('Enter username'), username);
     await user.type(screen.getByPlaceholderText('Enter password'), password);
     await user.type(screen.getByPlaceholderText('Re-enter password'), password);
+
+    await user.click(screen.getByLabelText('permissions'));
+
+    abilities.forEach(({ name, resource }) =>
+      expect(screen.getAllByText(`${name}:${resource}`).length).toBe(1)
+    );
 
     await user.click(screen.getByRole('button', { name: 'Create' }));
 
