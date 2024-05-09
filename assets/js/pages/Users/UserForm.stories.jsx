@@ -1,7 +1,11 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
-import { adminUser, userFactory } from '@lib/test-utils/factories/users';
+import {
+  abilityFactory,
+  adminUser,
+  userFactory,
+} from '@lib/test-utils/factories/users';
 
 import UserForm from './UserForm';
 
@@ -18,6 +22,9 @@ const {
   email: adminEmail,
   username: adminUsername,
 } = adminUser.build();
+
+const abilities = abilityFactory.buildList(3);
+const userAbilities = abilities.slice(0, 1);
 
 function ContainerWrapper({ children }) {
   return (
@@ -55,6 +62,14 @@ export default {
         type: { summary: 'string' },
         defaultValue: { summary: 'Enabled' },
       },
+    },
+    abilities: {
+      description: 'Available abilities',
+      control: { type: 'object' },
+    },
+    userAbilities: {
+      description: 'User abilities',
+      control: { type: 'object' },
     },
     createdAt: {
       description: 'User creation timestamp',
@@ -139,6 +154,14 @@ export const Admin = {
     emailAddress: adminEmail,
     username: adminUsername,
     saveEnabled: false,
+  },
+};
+
+export const WithAbilities = {
+  args: {
+    ...Editing.args,
+    abilities,
+    userAbilities,
   },
 };
 
