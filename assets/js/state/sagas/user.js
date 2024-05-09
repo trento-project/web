@@ -34,6 +34,7 @@ export function* performLogin({ payload: { username, password } }) {
       email,
       fullname,
       updated_at,
+      abilities,
     } = yield call(profile, networkClient);
     yield put(
       setUser({
@@ -43,6 +44,7 @@ export function* performLogin({ payload: { username, password } }) {
         email,
         fullname,
         updated_at,
+        abilities,
       })
     );
     yield put(setUserAsLogged());

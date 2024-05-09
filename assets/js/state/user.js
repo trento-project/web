@@ -7,6 +7,7 @@ export const initialState = {
   fullname: undefined,
   email: undefined,
   id: undefined,
+  abilities: undefined,
   created_at: undefined,
   updated_at: undefined,
   authError: null,
@@ -32,7 +33,17 @@ export const userSlice = createSlice({
     },
     setUser(
       state,
-      { payload: { username, id, email, created_at, fullname, updated_at } }
+      {
+        payload: {
+          username,
+          id,
+          email,
+          created_at,
+          fullname,
+          updated_at,
+          abilities,
+        },
+      }
     ) {
       state.username = username;
       state.email = email;
@@ -40,6 +51,7 @@ export const userSlice = createSlice({
       state.created_at = created_at;
       state.fullname = fullname;
       state.updated_at = updated_at;
+      state.abilities = abilities;
     },
   },
 });
