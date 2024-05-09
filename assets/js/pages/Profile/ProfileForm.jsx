@@ -56,9 +56,9 @@ function ProfileForm({
     setEmailAddressError(getError('email', errors));
   }, [errors]);
 
-  const formattedAbilities = abilities.map(
-    ({ name, resource }) => `${resource}:${name}`
-  );
+  const formattedAbilities = abilities
+    .map(({ name, resource }) => `${resource}:${name}`)
+    .join(' ');
 
   return (
     <div>
@@ -107,7 +107,11 @@ function ProfileForm({
           </div>
           <Label className="col-start-1 col-span-1">Permissions</Label>
           <div className="col-start-2 col-span-3">
-            <Input value={formattedAbilities} aria-label="abilities" disabled />
+            <Input
+              value={formattedAbilities}
+              aria-label="permissions"
+              disabled
+            />
           </div>
         </div>
         <div className="flex flex-row w-80 space-x-2 mt-5">
