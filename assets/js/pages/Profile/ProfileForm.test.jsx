@@ -4,7 +4,7 @@ import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import { faker } from '@faker-js/faker';
-import { abilitiesFactory } from '@lib/test-utils/factories/users';
+import { abilityFactory } from '@lib/test-utils/factories/users';
 
 import ProfileForm from '@pages/Profile/ProfileForm';
 
@@ -13,7 +13,7 @@ describe('ProfileForm', () => {
     const username = faker.internet.userName();
     const fullName = faker.person.fullName();
     const email = faker.internet.email();
-    const abilities = abilitiesFactory.buildList(2);
+    const abilities = abilityFactory.buildList(2);
 
     render(
       <ProfileForm
@@ -72,7 +72,7 @@ describe('ProfileForm', () => {
     const username = faker.internet.userName();
     const fullName = faker.person.fullName();
     const email = faker.internet.email();
-    const abilities = abilitiesFactory.buildList(2);
+    const abilities = abilityFactory.buildList(2);
     const mockOnSave = jest.fn();
 
     render(

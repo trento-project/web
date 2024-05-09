@@ -15,12 +15,6 @@ import {
   errorMessage,
 } from '@lib/forms';
 import { getError } from '@lib/api/validationErrors';
-import {
-  REQUIRED_FIELD_TEXT,
-  errorMessage,
-  PASSWORD_PLACEHOLDER,
-  PASSWORD_POLICY_TEXT,
-} from '@lib/forms';
 
 import { generatePassword } from './generatePassword';
 
