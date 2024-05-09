@@ -18,6 +18,7 @@ import DatabasesOverviewPage from '@pages/DatabasesOverview';
 import DatabaseDetails from '@pages//DatabaseDetails';
 import { ExecutionResultsPage } from '@pages/ExecutionResults';
 import Guard from '@pages/Guard';
+import ForbiddenGuard from '@pages/ForbiddenGuard';
 import Home from '@pages/Home';
 import HostDetailsPage from '@pages/HostDetailsPage';
 import HostSettingsPage from '@pages/HostSettingsPage';
@@ -79,9 +80,6 @@ function App() {
                   <Route path="catalog" element={<ChecksCatalogPage />} />
                   <Route path="settings" element={<SettingsPage />} />
                   <Route path="about" element={<AboutPage />} />
-                  <Route path="users" element={<UsersPage />} />
-                  <Route path="users/new" element={<CreateUserPage />} />
-                  <Route path="users/:userID/edit" element={<EditUserPage />} />
                   <Route path="hosts/:hostID" element={<HostDetailsPage />} />
                   <Route
                     path="sap_systems/:id"
@@ -116,7 +114,18 @@ function App() {
                     path="hosts/:targetID/executions/last/:checkID/:resultTargetType/:resultTargetName"
                     element={<CheckResultDetailPage targetType={TARGET_HOST} />}
                   />
-                  <Route path="users/new" element={<CreateUserPage />} />
+                  <Route
+                    element={
+                      <ForbiddenGuard permitted={['all:users']} outletMode />
+                    }
+                  >
+                    <Route path="users" element={<UsersPage />} />
+                    <Route path="users/new" element={<CreateUserPage />} />
+                    <Route
+                      path="users/:userID/edit"
+                      element={<EditUserPage />}
+                    />
+                  </Route>
                 </Route>
               </Route>
             </Route>

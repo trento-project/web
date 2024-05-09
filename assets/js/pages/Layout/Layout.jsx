@@ -25,6 +25,8 @@ import TrentoLogo from '@static/trento-logo-stacked.svg';
 import classNames from 'classnames';
 import ProfileMenu from '@common/ProfileMenu';
 
+import ForbiddenGuard from '@pages/ForbiddenGuard';
+
 const navigation = [
   { name: 'Dashboard', href: '/', icon: EOS_HOME_OUTLINED },
   {
@@ -56,6 +58,7 @@ const navigation = [
     name: 'Users',
     href: '/users',
     icon: EOS_SUPERVISED_USER_CIRCLE_OUTLINED,
+    permittedFor: ['all:users'],
   },
   {
     name: 'Settings',
@@ -140,30 +143,35 @@ function Layout() {
             <nav className="mt-6">
               <div>
                 {navigation.map((item) => (
-                  <NavLink
+                  <ForbiddenGuard
                     key={item.name}
-                    className={({ isActive }) =>
-                      `tn-menu-item w-full text-gray-800 dark:text-white flex items-center pl-6 p-2 my-2 transition-colors duration-200 justify-start ${
-                        isActive
-                          ? 'pl-5 border-l-4 border-jungle-green-500'
-                          : 'hover:pl-5 hover:border-l-4 hover:border-jungle-green-300'
-                      }`
-                    }
-                    to={item.href}
-                    end={item.href === '/'}
-                    title={item.name}
+                    disabled={!item.permittedFor}
+                    permitted={item.permittedFor}
                   >
-                    <span className="text-left">
-                      <item.icon />
-                    </span>
-                    <span
-                      className={classNames('mx-2 text-sm font-normal', {
-                        hidden: isCollapsed,
-                      })}
+                    <NavLink
+                      className={({ isActive }) =>
+                        `tn-menu-item w-full text-gray-800 dark:text-white flex items-center pl-6 p-2 my-2 transition-colors duration-200 justify-start ${
+                          isActive
+                            ? 'pl-5 border-l-4 border-jungle-green-500'
+                            : 'hover:pl-5 hover:border-l-4 hover:border-jungle-green-300'
+                        }`
+                      }
+                      to={item.href}
+                      end={item.href === '/'}
+                      title={item.name}
                     >
-                      {item.name}
-                    </span>
-                  </NavLink>
+                      <span className="text-left">
+                        <item.icon />
+                      </span>
+                      <span
+                        className={classNames('mx-2 text-sm font-normal', {
+                          hidden: isCollapsed,
+                        })}
+                      >
+                        {item.name}
+                      </span>
+                    </NavLink>
+                  </ForbiddenGuard>
                 ))}
               </div>
             </nav>

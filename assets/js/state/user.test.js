@@ -43,13 +43,14 @@ describe('user reducer', () => {
   });
 
   it('should set the user when setUser is dispatched', () => {
-    const { email, username, fullname, created_at, updated_at } =
+    const { email, username, fullname, abilities, created_at, updated_at } =
       userFactory.build();
 
     const action = setUser({
       username,
       email,
       fullname,
+      abilities,
       created_at,
       updated_at,
     });
@@ -59,6 +60,7 @@ describe('user reducer', () => {
       username,
       email,
       fullname,
+      abilities,
       created_at,
       updated_at,
     });
