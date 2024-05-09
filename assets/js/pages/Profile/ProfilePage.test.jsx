@@ -41,6 +41,24 @@ describe('ProfilePage', () => {
     expect(await screen.getByLabelText('fullname').value).toBe(user.fullname);
   });
 
+  it('should show the pre-filled form with profile information but disable the form is the user is the default admin', async () => {
+    const user = userFactory.build();
+
+    axiosMock.onGet(PROFILE_URL).reply(200, { ...user, id: 1 });
+
+    await act(async () => {
+      await render(<ProfilePage />);
+    });
+
+    expect(await screen.getByLabelText('email').value).toBe(user.email);
+    expect(await screen.getByLabelText('username').value).toBe(user.username);
+    expect(await screen.getByLabelText('fullname').value).toBe(user.fullname);
+    expect(screen.getByRole('button', { name: 'Save' })).toBeDisabled();
+    expect(
+      screen.getByRole('button', { name: 'Change Password' })
+    ).toBeDisabled();
+  });
+
   it('should submit the profile form and show a success toast', async () => {
     const user = userFactory.build();
 

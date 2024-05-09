@@ -46,7 +46,8 @@ function ProfilePage() {
   if (loading) {
     return <div>Loading...</div>;
   }
-  const { fullname, email, username, abilities } = userState;
+  const { fullname, email, username, abilities, id } = userState;
+  const isDefaultAdmin = id === 1;
 
   return (
     <>
@@ -58,6 +59,7 @@ function ProfilePage() {
         abilities={abilities}
         errors={errorsState}
         loading={loading || saving}
+        disableForm={isDefaultAdmin}
         onSave={updateProfile}
       />
     </>

@@ -15,6 +15,7 @@ function ProfileForm({
   abilities = [],
   errors,
   loading,
+  disableForm,
   onSave = noop,
 }) {
   const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
@@ -101,6 +102,7 @@ function ProfileForm({
             <Button
               onClick={() => setPasswordDialogOpen(true)}
               type="primary-white"
+              disabled={loading || disableForm}
             >
               Change Password
             </Button>
@@ -115,7 +117,11 @@ function ProfileForm({
           </div>
         </div>
         <div className="flex flex-row w-80 space-x-2 mt-5">
-          <Button disabled={loading} type="default-fit" onClick={onSaveClicked}>
+          <Button
+            disabled={loading || disableForm}
+            type="default-fit"
+            onClick={onSaveClicked}
+          >
             Save
           </Button>
         </div>
