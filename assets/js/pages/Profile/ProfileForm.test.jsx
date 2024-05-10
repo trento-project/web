@@ -31,9 +31,9 @@ describe('ProfileForm', () => {
     expect(screen.getByText('Username')).toBeVisible();
     expect(screen.getByLabelText('username').value).toBe(username);
     expect(screen.getByText('Permissions')).toBeVisible();
-    expect(screen.getByLabelText('permissions').value).toBe(
-      abilities.map(({ name, resource }) => `${resource}:${name}`).join(' ')
-    );
+    abilities.forEach(({ resource, name }) => {
+      expect(screen.getByText(`${name}:${resource}`)).toBeVisible();
+    });
     expect(screen.getByText('Change Password')).toBeVisible();
     expect(screen.getByText('Save')).toBeVisible();
   });

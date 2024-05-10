@@ -13,6 +13,7 @@ import {
   PASSWORD_PLACEHOLDER,
   REQUIRED_FIELD_TEXT,
   errorMessage,
+  mapAbilities,
 } from '@lib/forms';
 import { getError } from '@lib/api/validationErrors';
 
@@ -22,13 +23,6 @@ const USER_ENABLED = 'Enabled';
 
 const defaultAbilities = [];
 const defaultErrors = [];
-
-const mapAbilities = (abilities) =>
-  abilities.map(({ id, name, resource, label }) => ({
-    value: id,
-    label: `${name}:${resource}`,
-    tooltip: label,
-  }));
 
 function UserForm({
   fullName = '',

@@ -5,8 +5,9 @@ import Button from '@common/Button';
 import Input from '@common/Input';
 import Label from '@common/Label';
 import Modal from '@common/Modal';
+import MultiSelect from '@common/MultiSelect';
 import ProfilePasswordChangeForm from '@pages/Profile/ProfilePasswordChangeForm';
-import { REQUIRED_FIELD_TEXT, errorMessage } from '@lib/forms';
+import { REQUIRED_FIELD_TEXT, errorMessage, mapAbilities } from '@lib/forms';
 
 function ProfileForm({
   fullName = '',
@@ -58,10 +59,6 @@ function ProfileForm({
     setEmailAddressError(getError('email', errors));
   }, [errors]);
 
-  const formattedAbilities = abilities
-    .map(({ name, resource }) => `${resource}:${name}`)
-    .join(' ');
-
   return (
     <div>
       <div className="container max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 bg-white dark:bg-gray-800 rounded-lg">
@@ -110,10 +107,11 @@ function ProfileForm({
           </div>
           <Label className="col-start-1 col-span-1">Permissions</Label>
           <div className="col-start-2 col-span-3">
-            <Input
-              value={formattedAbilities}
+            <MultiSelect
               aria-label="permissions"
-              disabled
+              values={mapAbilities(abilities)}
+              isDisabled
+              options={mapAbilities(abilities)}
             />
           </div>
         </div>
