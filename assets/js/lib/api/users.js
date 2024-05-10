@@ -17,4 +17,4 @@ export const deleteUser = (userID) => del(`/users/${userID}`);
 
 export const getUserProfile = () => get('/profile');
 
-export const updateUserProfile = (payload) => patch('/profile', payload);
+export const editUserProfile = (payload) => patch('/profile', payload);

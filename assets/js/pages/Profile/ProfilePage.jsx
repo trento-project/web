@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 
 import PageHeader from '@common/PageHeader';
+import { isAdmin } from '@lib/model/users';
 import ProfileForm from '@pages/Profile/ProfileForm';
-import { getUserProfile, updateUserProfile } from '@lib/api/users';
+import { getUserProfile, editUserProfile } from '@lib/api/users';
 
 function ProfilePage() {
   const [errorsState, setErrors] = useState([]);
@@ -31,7 +32,7 @@ function ProfilePage() {
   const updateProfile = (payload) => {
     setSaving(true);
     setErrors([]);
-    updateUserProfile(payload)
+    editUserProfile(payload)
       .then(({ data: updatedUser }) => {
         toast.success('Profile changes saved!');
         setUser(updatedUser);
@@ -54,8 +55,8 @@ function ProfilePage() {
   if (loading) {
     return <div>Loading...</div>;
   }
-  const { fullname, email, username, abilities, id } = userState;
-  const isDefaultAdmin = id === 1;
+  const { fullname, email, username, abilities } = userState;
+  const isDefaultAdmin = isAdmin(userState);
 
   return (
     <>

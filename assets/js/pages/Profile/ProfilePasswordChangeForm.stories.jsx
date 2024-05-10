@@ -43,6 +43,8 @@ export const Loading = {
   },
 };
 
+export const Empty = {};
+
 export const WithErrors = {
   args: {
     ...Loading.args,

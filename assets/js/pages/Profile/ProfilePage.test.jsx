@@ -7,7 +7,7 @@ import { toast } from 'react-hot-toast';
 import { networkClient } from '@lib/network';
 import { screen, act, render } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import { userFactory } from '@lib/test-utils/factories/users';
+import { userFactory, adminUser } from '@lib/test-utils/factories/users';
 
 import ProfilePage from '@pages/Profile';
 
@@ -42,9 +42,9 @@ describe('ProfilePage', () => {
   });
 
   it('should show the pre-filled form with profile information but disable the form is the user is the default admin', async () => {
-    const user = userFactory.build();
+    const user = adminUser.build();
 
-    axiosMock.onGet(PROFILE_URL).reply(200, { ...user, id: 1 });
+    axiosMock.onGet(PROFILE_URL).reply(200, user);
 
     await act(async () => {
       await render(<ProfilePage />);

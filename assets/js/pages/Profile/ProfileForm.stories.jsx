@@ -62,7 +62,7 @@ export default {
   ),
 };
 
-export const Empty = {
+export const Default = {
   args: {
     username,
     abilities,
@@ -83,7 +83,7 @@ export const Loading = {
 
 export const WithErrors = {
   args: {
-    ...Loading.args,
+    ...Default.args,
     errors: [
       {
         detail: 'Error validating fullname',
