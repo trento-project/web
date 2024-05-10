@@ -3,11 +3,13 @@ import '@testing-library/jest-dom';
 
 import MockAdapter from 'axios-mock-adapter';
 import { toast } from 'react-hot-toast';
+import { withState } from '@lib/test-utils';
 
 import { networkClient } from '@lib/network';
 import { screen, act, render } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { userFactory, adminUser } from '@lib/test-utils/factories/users';
+import { setUser } from '@state/user';
 
 import ProfilePage from '@pages/Profile';
 
@@ -32,8 +34,9 @@ describe('ProfilePage', () => {
 
     axiosMock.onGet(PROFILE_URL).reply(200, user);
 
+    const [StatefulProfile] = withState(<ProfilePage />);
     await act(async () => {
-      await render(<ProfilePage />);
+      await render(StatefulProfile);
     });
 
     expect(await screen.getByLabelText('email').value).toBe(user.email);
@@ -46,8 +49,9 @@ describe('ProfilePage', () => {
 
     axiosMock.onGet(PROFILE_URL).reply(200, user);
 
+    const [StatefulProfile] = withState(<ProfilePage />);
     await act(async () => {
-      await render(<ProfilePage />);
+      await render(StatefulProfile);
     });
 
     expect(await screen.getByLabelText('email').value).toBe(user.email);
@@ -68,8 +72,9 @@ describe('ProfilePage', () => {
       .onPatch(PROFILE_URL)
       .reply(200, { ...user, fullname: 'New fullname' });
 
+    const [StatefulProfile, store] = withState(<ProfilePage />);
     await act(async () => {
-      await render(<ProfilePage />);
+      await render(StatefulProfile);
     });
 
     const testUser = userEvent.setup();
@@ -77,6 +82,10 @@ describe('ProfilePage', () => {
     await testUser.click(screen.getByRole('button', { name: 'Save' }));
 
     expect(toast.success).toHaveBeenCalledWith('Profile changes saved!');
+    const actions = store.getActions();
+    const expectedPayload = [setUser({ ...user, fullname: 'New fullname' })];
+
+    expect(actions).toEqual(expectedPayload);
   });
 
   it('should pass errors to form when patch call fails', async () => {
@@ -96,8 +105,9 @@ describe('ProfilePage', () => {
       .onPatch(PROFILE_URL)
       .reply(422, { errors });
 
+    const [StatefulProfile] = withState(<ProfilePage />);
     await act(async () => {
-      await render(<ProfilePage />);
+      await render(StatefulProfile);
     });
 
     const testUser = userEvent.setup();

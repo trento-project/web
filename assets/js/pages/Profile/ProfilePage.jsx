@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
-
+import { useDispatch } from 'react-redux';
 import PageHeader from '@common/PageHeader';
 import { isAdmin } from '@lib/model/users';
 import ProfileForm from '@pages/Profile/ProfileForm';
 import { getUserProfile, editUserProfile } from '@lib/api/users';
+import { setUser as setUserInState } from '@state/user';
 
 function ProfilePage() {
   const [errorsState, setErrors] = useState([]);
@@ -12,6 +13,7 @@ function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [userState, setUser] = useState(null);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     getUserProfile()
@@ -36,6 +38,7 @@ function ProfilePage() {
       .then(({ data: updatedUser }) => {
         toast.success('Profile changes saved!');
         setUser(updatedUser);
+        dispatch(setUserInState(updatedUser));
         setPasswordModalOpen(false);
       })
       .catch(
