@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { capitalize, noop } from 'lodash';
+import { noop } from 'lodash';
 import { format, parseISO } from 'date-fns';
 
 import Button from '@common/Button';
@@ -8,38 +8,21 @@ import Label from '@common/Label';
 import MultiSelect from '@common/MultiSelect';
 import Select from '@common/Select';
 import Tooltip from '@common/Tooltip';
+import {
+  PASSWORD_POLICY_TEXT,
+  PASSWORD_PLACEHOLDER,
+  REQUIRED_FIELD_TEXT,
+  errorMessage,
+  mapAbilities,
+} from '@lib/forms';
 import { getError } from '@lib/api/validationErrors';
+
 import { generatePassword } from './generatePassword';
 
 const USER_ENABLED = 'Enabled';
-const REQUIRED_FIELD_TEXT = 'Required field';
-const PASSWORD_PLACEHOLDER = '********';
-const PASSWORD_POLICY_TEXT = (
-  <div>
-    The password must be compliant with:
-    <br />
-    - at least have 8 characters
-    <br />
-    - does not have 3 consecutive repeated numbers or letters (example: 111 or
-    aaa)
-    <br />- does not have 3 consecutive sequential numbers or letters (example:
-    123 or abc)
-  </div>
-);
 
 const defaultAbilities = [];
 const defaultErrors = [];
-
-const errorMessage = (message) => (
-  <p className="text-red-500 mt-1">{capitalize(message)}</p>
-);
-
-const mapAbilities = (abilities) =>
-  abilities.map(({ id, name, resource, label }) => ({
-    value: id,
-    label: `${name}:${resource}`,
-    tooltip: label,
-  }));
 
 function UserForm({
   fullName = '',
