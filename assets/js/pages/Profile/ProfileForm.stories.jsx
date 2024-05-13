@@ -19,7 +19,7 @@ function ContainerWrapper({ children }) {
 }
 
 export default {
-  title: 'Components/ProfileForm',
+  title: 'Layouts/ProfileForm',
   component: ProfileForm,
   argTypes: {
     fullName: {

@@ -47,7 +47,7 @@ export const Empty = {};
 
 export const WithErrors = {
   args: {
-    ...Loading.args,
+    ...Empty.args,
     errors: [
       {
         detail: 'Error validating password',
