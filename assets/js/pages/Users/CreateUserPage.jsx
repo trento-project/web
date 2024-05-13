@@ -11,6 +11,8 @@ import { createUser } from '@lib/api/users';
 import UserForm from './UserForm';
 
 const ERROR_GETTING_ABILITIES = 'Error getting user abilities';
+const SUCCESS_USER_CREATION = 'User created successfully';
+const UNEXPECTED_ERROR_MESSAGE = 'Unexpected error occurred, refresh the page';
 
 export const fetchAbilities = (setAbilities) => {
   listAbilities()
@@ -33,17 +35,17 @@ function CreateUserPage() {
     setSaving(true);
     createUser(payload)
       .then(() => {
+        toast.success(SUCCESS_USER_CREATION);
         navigate('/users');
       })
-      .catch(
-        ({
-          response: {
-            data: { errors },
-          },
-        }) => {
+      .catch((error) => {
+        if (error.response) {
+          const { errors } = error.response.data;
           setErrors(errors);
+          return;
         }
-      )
+        toast.error(UNEXPECTED_ERROR_MESSAGE);
+      })
       .finally(() => {
         setSaving(false);
       });

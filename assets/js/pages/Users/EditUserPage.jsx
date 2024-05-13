@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
 
 import BackButton from '@common/BackButton';
 import Banner from '@common/Banners/Banner';
@@ -10,6 +11,9 @@ import { editUser, getUser } from '@lib/api/users';
 
 import { fetchAbilities } from './CreateUserPage';
 import UserForm from './UserForm';
+
+const SUCCESS_EDIT_MESSAGE = 'User edited successfully';
+const UNEXPECTED_ERROR_MESSAGE = 'Unexpected error occurred, refresh the page';
 
 function EditUserPage() {
   const { userID } = useParams();
@@ -28,7 +32,9 @@ function EditUserPage() {
         setUserVersion(etag);
         setUser(user);
       })
-      .catch(() => {})
+      .catch(() => {
+        toast.error(UNEXPECTED_ERROR_MESSAGE);
+      })
       .finally(() => {
         setLoading(false);
       });
@@ -42,22 +48,23 @@ function EditUserPage() {
     setSaving(true);
     editUser(userID, payload, userVersion)
       .then(() => {
+        toast.success(SUCCESS_EDIT_MESSAGE);
         navigate('/users');
       })
-      .catch(
-        ({
-          response: {
-            status,
-            data: { errors },
-          },
-        }) => {
+      .catch((error) => {
+        if (error.response) {
+          const { data, status } = error.response;
           if (status === 412) {
             setUpdatedByOther(true);
             return;
           }
-          setErrors(errors);
+          setErrors(data.errors);
+
+          return;
         }
-      )
+        toast.error(UNEXPECTED_ERROR_MESSAGE);
+      })
+
       .finally(() => {
         setSaving(false);
       });
