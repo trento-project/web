@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { render, screen } from '@testing-library/react';
+import { toast } from 'react-hot-toast';
 import 'intersection-observer';
 import '@testing-library/jest-dom';
 
@@ -20,6 +21,13 @@ import CreateUserPage from './CreateUserPage';
 const ABILITIES_URL = `/api/v1/abilities`;
 const USERS_URL = '/api/v1/users';
 const axiosMock = new MockAdapter(networkClient);
+
+jest.mock('react-hot-toast', () => ({
+  toast: {
+    success: jest.fn(),
+    error: jest.fn(),
+  },
+}));
 
 describe('CreateUserPage', () => {
   beforeEach(() => {
@@ -51,7 +59,8 @@ describe('CreateUserPage', () => {
     expect(navigate).toHaveBeenCalledWith('/users');
   });
 
-  it('should save a new user and redirect to users view', async () => {
+  it('should save a new user, redirect to users view and render success toast', async () => {
+    const toastMessage = 'User created successfully';
     const user = userEvent.setup();
     const navigate = jest.fn();
     jest.spyOn(router, 'useNavigate').mockImplementation(() => navigate);
@@ -82,6 +91,7 @@ describe('CreateUserPage', () => {
     await user.click(screen.getByRole('button', { name: 'Create' }));
 
     expect(navigate).toHaveBeenCalledWith('/users');
+    expect(toast.success).toHaveBeenCalledWith(toastMessage);
   });
 
   it('should display validation errors', async () => {
@@ -112,5 +122,26 @@ describe('CreateUserPage', () => {
     await user.click(screen.getByRole('button', { name: 'Create' }));
 
     await screen.findByText('Error validating fullname');
+  });
+
+  it('should render toast with an error message when creating a user failed because of a network error', async () => {
+    const toastMessage = 'Unexpected error occurred, refresh the page';
+    const user = userEvent.setup();
+
+    const { fullname, email, username } = userFactory.build();
+    const password = faker.internet.password();
+
+    axiosMock.onPost(USERS_URL).networkError();
+
+    render(<CreateUserPage />);
+
+    await user.type(screen.getByPlaceholderText('Enter full name'), fullname);
+    await user.type(screen.getByPlaceholderText('Enter email address'), email);
+    await user.type(screen.getByPlaceholderText('Enter username'), username);
+    await user.type(screen.getByPlaceholderText('Enter password'), password);
+    await user.type(screen.getByPlaceholderText('Re-enter password'), password);
+
+    await user.click(screen.getByRole('button', { name: 'Create' }));
+    expect(toast.error).toHaveBeenCalledWith(toastMessage);
   });
 });
