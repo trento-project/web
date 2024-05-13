@@ -20,6 +20,12 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
         username: %Schema{type: :string, description: "User username", nullable: false},
         email: %Schema{type: :string, description: "User email", nullable: false, format: :email},
         abilities: AbilityCollection,
+        password_change_requested_at: %OpenApiSpex.Schema{
+          type: :string,
+          format: :"date-time",
+          description: "Date of password change request",
+          nullable: true
+        },
         created_at: %OpenApiSpex.Schema{
           type: :string,
           format: :"date-time",
