@@ -32,7 +32,9 @@ function EditUserPage() {
         setUserVersion(etag);
         setUser(user);
       })
-      .catch(() => {})
+      .catch(() => {
+        toast.error(UNEXPECTED_ERROR_MESSAGE);
+      })
       .finally(() => {
         setLoading(false);
       });

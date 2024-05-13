@@ -24,6 +24,7 @@ import EditUserPage from './EditUserPage';
 
 const ABILITIES_URL = `/api/v1/abilities`;
 const USERS_URL = '/api/v1/users/';
+const TOAST_ERROR_MESSAGE = 'Unexpected error occurred, refresh the page';
 const axiosMock = new MockAdapter(networkClient);
 
 jest.mock('react-hot-toast', () => ({
@@ -87,6 +88,7 @@ describe('EditUserPage', () => {
     });
 
     await screen.findByText('Not found');
+    expect(toast.error).toHaveBeenCalledWith(TOAST_ERROR_MESSAGE);
   });
 
   it('should edit a user and redirect to users view', async () => {
@@ -202,7 +204,6 @@ describe('EditUserPage', () => {
   });
 
   it('should render toast with an error message when editing a user failed because of a network error', async () => {
-    const toastMessage = 'Unexpected error occurred, refresh the page';
     const user = userEvent.setup();
     const userData = userFactory.build();
 
@@ -218,6 +219,6 @@ describe('EditUserPage', () => {
     });
     await screen.findByText('Edit User');
     await user.click(screen.getByRole('button', { name: 'Edit' }));
-    expect(toast.error).toHaveBeenCalledWith(toastMessage);
+    expect(toast.error).toHaveBeenCalledWith(TOAST_ERROR_MESSAGE);
   });
 });

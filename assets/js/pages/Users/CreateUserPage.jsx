@@ -11,7 +11,7 @@ import { createUser } from '@lib/api/users';
 import UserForm from './UserForm';
 
 const ERROR_GETTING_ABILITIES = 'Error getting user abilities';
-const SUCCESS_USER_CREATION = 'User created succesfuly';
+const SUCCESS_USER_CREATION = 'User created successfully';
 const UNEXPECTED_ERROR_MESSAGE = 'Unexpected error occurred, refresh the page';
 
 export const fetchAbilities = (setAbilities) => {
