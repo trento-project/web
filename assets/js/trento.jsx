@@ -32,6 +32,7 @@ import SaptuneDetailsPage from '@pages/SaptuneDetails';
 import SettingsPage from '@pages/SettingsPage';
 import SomethingWentWrong from '@pages/SomethingWentWrong';
 import UsersPage, { CreateUserPage, EditUserPage } from '@pages/Users';
+import ProfilePage from '@pages/Profile';
 
 import { profile } from '@lib/auth';
 import { networkClient } from '@lib/network';
@@ -62,6 +63,7 @@ function App() {
               >
                 <Route element={<Layout />}>
                   <Route index element={<Home />} />
+                  <Route index path="profile" element={<ProfilePage />} />
                   <Route index path="hosts" element={<HostsList />} />
                   <Route
                     path="hosts/:hostID/settings"
