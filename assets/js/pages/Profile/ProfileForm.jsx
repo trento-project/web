@@ -109,8 +109,9 @@ function ProfileForm({
           <div className="col-start-2 col-span-3">
             <MultiSelect
               aria-label="permissions"
+              placeholder=""
               values={mapAbilities(abilities)}
-              isDisabled
+              disabled
               options={mapAbilities(abilities)}
             />
           </div>
