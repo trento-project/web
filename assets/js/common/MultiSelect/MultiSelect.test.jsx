@@ -23,12 +23,20 @@ describe('MultiSelect Component', () => {
     });
   });
 
-  it('should display initial values', async () => {
+  it('should display initial values', () => {
     const values = options.slice(0, 1);
 
     render(<MultiSelect options={options} values={values} />);
 
     expect(screen.getByText(values[0].label)).toBeVisible();
+  });
+
+  it('should disable the component', () => {
+    render(<MultiSelect options={options} disabled />);
+
+    const disabled = document.querySelector('[aria-disabled="true"]');
+
+    expect(disabled).toBeInTheDocument();
   });
 
   it('should change the values', async () => {

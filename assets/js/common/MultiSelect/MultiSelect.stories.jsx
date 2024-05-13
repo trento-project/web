@@ -18,6 +18,13 @@ export default {
         type: 'array',
       },
     },
+    disabled: {
+      type: 'boolean',
+      description: 'Component is disabled or not',
+      control: {
+        type: 'boolean',
+      },
+    },
     onChange: {
       description: 'A function to be called when selected options are changed',
       table: {
@@ -57,5 +64,12 @@ export const WithInitialValues = {
   args: {
     ...Default.args,
     values: options[0],
+  },
+};
+
+export const Disabled = {
+  args: {
+    ...WithInitialValues.args,
+    disabled: true,
   },
 };
