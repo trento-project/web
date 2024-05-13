@@ -154,6 +154,8 @@ defmodule Trento.Users do
       {:error, _, changeset_error, _} ->
         {:error, changeset_error}
     end
+  rescue
+    Ecto.StaleEntryError -> {:error, :stale_entry}
   end
 
   defp do_update(user, attrs) do
