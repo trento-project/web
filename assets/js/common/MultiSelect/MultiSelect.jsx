@@ -56,8 +56,14 @@ const defaultClassNames = {
   multiValue: () =>
     'rounded-md bg-green-100 text-green-800 px-1 py-2px space-x-1 mr-1',
   multiValueLabel: () => 'ml-1',
-  control: () =>
-    'relative w-full py-2 px-3 text-left bg-white rounded-lg cursor-default border border-gray-300 sm:text-sm',
+  control: ({ isDisabled }) =>
+    classNames(
+      {
+        'bg-gray-50': isDisabled,
+        'bg-white': !isDisabled,
+      },
+      'relative w-full py-2 px-3 text-left rounded-lg cursor-default border border-gray-300 sm:text-sm'
+    ),
   menu: () =>
     'absolute w-full py-1 mt-1 overflow-auto text-base bg-white rounded-md shadow-lg max-h-60 ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm z-[1]',
   option: ({ isFocused }) =>
@@ -72,6 +78,7 @@ const defaultClassNames = {
 function MultiSelect({
   options,
   values,
+  disabled = false,
   components = defaultComponents,
   selectClassNames = defaultClassNames,
   unstyled = true,
@@ -89,6 +96,7 @@ function MultiSelect({
       onChange={onChange}
       unstyled={unstyled}
       className={className}
+      isDisabled={disabled}
       {...props}
     />
   );
