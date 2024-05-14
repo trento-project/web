@@ -1,4 +1,4 @@
-import { call, put, takeEvery } from 'redux-saga/effects';
+import { call, put, takeEvery, select } from 'redux-saga/effects';
 import {
   setAuthInProgress,
   setAuthError,
@@ -8,7 +8,10 @@ import {
   USER_LOCKED,
   USER_UPDATED,
   PERFORM_LOGIN,
+  USER_PASSWORD_CHANGE_REQUESTED_NOTIFICATION_ID,
 } from '@state/user';
+import { customNotify } from '@state/notifications';
+import { getUserProfile } from '@state/selectors/user';
 import {
   login,
   profile,
@@ -65,6 +68,21 @@ export function* clearUserAndLogout() {
 
 export function* userUpdated() {
   yield window.location.reload();
+}
+
+export function* checkUserPasswordChangeRequested() {
+  const { password_change_requested_at } = yield select(getUserProfile);
+
+  if (!password_change_requested_at) {
+    return;
+  }
+
+  yield put(
+    customNotify({
+      duration: Infinity,
+      id: USER_PASSWORD_CHANGE_REQUESTED_NOTIFICATION_ID,
+    })
+  );
 }
 
 export function* watchUserActions() {

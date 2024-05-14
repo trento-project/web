@@ -1,4 +1,5 @@
 import MockAdapter from 'axios-mock-adapter';
+import { faker } from '@faker-js/faker';
 import { recordSaga } from '@lib/test-utils';
 import {
   authClient,
@@ -13,9 +14,14 @@ import {
   setUser,
   setUserAsLogged,
 } from '@state/user';
+import { customNotify } from '@state/notifications';
 import { networkClient } from '@lib/network';
 import { userFactory } from '@lib/test-utils/factories/users';
-import { performLogin, clearUserAndLogout } from './user';
+import {
+  performLogin,
+  clearUserAndLogout,
+  checkUserPasswordChangeRequested,
+} from './user';
 
 const axiosMock = new MockAdapter(authClient);
 const networkClientAxiosMock = new MockAdapter(networkClient);
@@ -139,5 +145,38 @@ describe('user login saga', () => {
     expect(getRefreshTokenFromStore()).toEqual(
       credentialResponse.refresh_token
     );
+  });
+
+  it('should dispatch password change request custom notification', async () => {
+    const dispatched = await recordSaga(
+      checkUserPasswordChangeRequested,
+      {},
+      {
+        user: {
+          password_change_requested_at: faker.date.past(),
+        },
+      }
+    );
+
+    const expectedAction = customNotify({
+      duration: Infinity,
+      id: 'password-change-requested-toast',
+    });
+
+    expect(dispatched).toEqual([expectedAction]);
+  });
+
+  it('should not dispatch notification is password change is not requested', async () => {
+    const dispatched = await recordSaga(
+      checkUserPasswordChangeRequested,
+      {},
+      {
+        user: {
+          password_change_requested_at: null,
+        },
+      }
+    );
+
+    expect(dispatched).toEqual([]);
   });
 });

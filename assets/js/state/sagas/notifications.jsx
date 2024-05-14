@@ -6,8 +6,10 @@ import {
   NOTIFICATION,
   DISMISSABLE_NOTIFICATION,
   DISMISS_NOTIFICATION,
+  CUSTOM_NOTIFICATION,
 } from '@state/notifications';
 import DismissableToast from '@common/DismissableToast';
+import { getNotification } from '@common/ToastNotifications';
 
 const DEFAULT_DURATION = 4000;
 
@@ -36,8 +38,20 @@ export function* dismissNotification({ payload }) {
   toast.dismiss(id);
 }
 
+export function* customNotification({ payload }) {
+  const { id, duration } = payload;
+  const { component, icon } = getNotification(payload);
+  toast(component, {
+    position: 'top-right',
+    icon,
+    id,
+    duration: duration || DEFAULT_DURATION,
+  });
+}
+
 export function* watchNotifications() {
   yield takeEvery(NOTIFICATION, notification);
   yield takeEvery(DISMISSABLE_NOTIFICATION, dismissableNotification);
   yield takeEvery(DISMISS_NOTIFICATION, dismissNotification);
+  yield takeEvery(CUSTOM_NOTIFICATION, customNotification);
 }
