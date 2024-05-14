@@ -40,3 +40,17 @@ npm-debug.log
 
 # Local dev.local.exs file
 config/dev.local.exs
+
+
+# Nix related
+result
+trento
+
+# Devenv
+.devenv*
+
+# direnv
+.direnv
+
+# pre-commit
+.pre-commit-config.yaml
