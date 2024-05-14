@@ -11,13 +11,13 @@ import classNames from 'classnames';
 import Table from '@common/Table';
 import { computedIconCssClass } from '@lib/icon';
 
-function iconFromAdvisoryType(
+const IconFromAdvisoryType = (
   advisoryType,
   centered = false,
   hoverOpacity = true,
   size = 'l'
-) {
-  const hoverOpacityClass = {
+) => {
+  const hoverOpacityClassName = {
     'hover:opacity-75': hoverOpacity,
     'hover:opacity-100': !hoverOpacity,
   };
@@ -27,7 +27,7 @@ function iconFromAdvisoryType(
       return (
         <EOS_SHIELD_OUTLINED
           className={classNames(
-            hoverOpacityClass,
+            hoverOpacityClassName,
             computedIconCssClass('fill-red-500', centered)
           )}
           size={size}
@@ -37,7 +37,7 @@ function iconFromAdvisoryType(
       return (
         <EOS_CRITICAL_BUG_OUTLINED
           className={classNames(
-            hoverOpacityClass,
+            hoverOpacityClassName,
             computedIconCssClass('fill-yellow-500', centered)
           )}
           size={size}
@@ -47,7 +47,7 @@ function iconFromAdvisoryType(
       return (
         <EOS_ADD_BOX_OUTLINED
           className={classNames(
-            hoverOpacityClass,
+            hoverOpacityClassName,
             computedIconCssClass('fill-yellow-500', centered)
           )}
           size={size}
@@ -56,7 +56,7 @@ function iconFromAdvisoryType(
     default:
       return null;
   }
-}
+};
 
 const patchListConfig = {
   usePadding: false,
@@ -65,10 +65,7 @@ const patchListConfig = {
     {
       title: 'Type',
       key: 'advisory_type',
-      render: (content, _) => {
-        const PrimaryIcon = iconFromAdvisoryType(content);
-        return PrimaryIcon;
-      },
+      render: (content, _) => IconFromAdvisoryType(content),
     },
     {
       title: 'Advisory',

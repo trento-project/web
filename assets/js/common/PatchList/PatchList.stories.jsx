@@ -2,11 +2,7 @@ import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
 import { relevantPatchFactory } from '@lib/test-utils/factories/relevantPatches';
-import PatchList from './PatchList';
-
-const fakePatchArgs = {
-  patches: relevantPatchFactory.buildList(5),
-};
+import PatchList from '.';
 
 export default {
   title: 'Components/PatchList',
@@ -30,7 +26,9 @@ export default {
 };
 
 export const Default = {
-  args: fakePatchArgs,
+  args: {
+    patches: relevantPatchFactory.buildList(5),
+  },
 };
 
 export const NoPatches = {
