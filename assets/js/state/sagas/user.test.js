@@ -87,8 +87,16 @@ describe('user login saga', () => {
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTY0MDY1NiwiaWF0IjoxNjcxNjQwNTk2LCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwZG9ndmxtZWhmbG1kdm1nMDAwbmMxIiwibmJmIjoxNjcxNjQwNTk2LCJzdWIiOjEsInR5cCI6IlJlZnJlc2gifQ.AW6-iV1XHWdzQKBVadhf7o7gUdidYg6mEyyuDke_zlA',
     };
 
-    const { email, username, id, fullname, abilities, created_at, updated_at } =
-      userFactory.build();
+    const {
+      email,
+      username,
+      id,
+      fullname,
+      abilities,
+      password_change_requested_at,
+      created_at,
+      updated_at,
+    } = userFactory.build();
 
     axiosMock
       .onPost('/api/session', { username, password: 'good' })
@@ -100,6 +108,7 @@ describe('user login saga', () => {
       email,
       fullname,
       abilities,
+      password_change_requested_at,
       created_at,
       updated_at,
     });
@@ -119,6 +128,7 @@ describe('user login saga', () => {
         email,
         fullname,
         abilities,
+        password_change_requested_at,
         created_at,
         updated_at,
       })
