@@ -61,8 +61,6 @@
             export PATH="${pkgs.nodejs}/bin:${nodePackages}/bin:$PATH"
             ${nodejs}/bin/npm run deploy --prefix ./assets
 
-            # for external task you need a workaround for the no deps check flag
-            # https://github.com/phoenixframework/phoenix/issues/2690
             mix do deps.loadpaths --no-deps-check, phx.digest
             
           '';
@@ -88,7 +86,6 @@
               elixir_ls
               insomnia
               nodejs
-              # for dashboard scripts
               jq
               psql
               psql_eventstore
