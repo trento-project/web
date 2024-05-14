@@ -11,7 +11,7 @@ import classNames from 'classnames';
 import Table from '@common/Table';
 import { computedIconCssClass } from '@lib/icon';
 
-const IconFromAdvisoryType = (
+const iconFromAdvisoryType = (
   advisoryType,
   centered = false,
   hoverOpacity = true,
@@ -65,7 +65,7 @@ const patchListConfig = {
     {
       title: 'Type',
       key: 'advisory_type',
-      render: (content, _) => IconFromAdvisoryType(content),
+      render: (content, _) => iconFromAdvisoryType(content),
     },
     {
       title: 'Advisory',
