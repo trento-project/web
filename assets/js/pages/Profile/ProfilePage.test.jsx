@@ -1,5 +1,7 @@
 import React from 'react';
 import '@testing-library/jest-dom';
+import { faker } from '@faker-js/faker';
+import { formatISO } from 'date-fns';
 
 import MockAdapter from 'axios-mock-adapter';
 import { toast } from 'react-hot-toast';
@@ -24,9 +26,15 @@ jest.mock('react-hot-toast', () => ({
 }));
 
 describe('ProfilePage', () => {
-  afterEach(() => {
+  beforeEach(() => {
     axiosMock.reset();
     jest.clearAllMocks();
+    jest.spyOn(console, 'error').mockImplementation(() => null);
+  });
+
+  afterEach(() => {
+    /* eslint-disable-next-line */
+    console.error.mockRestore();
   });
 
   it('should show the pre-filled form with profile information', async () => {
@@ -65,12 +73,17 @@ describe('ProfilePage', () => {
 
   it('should submit the profile form and show a success toast', async () => {
     const user = userFactory.build();
+    const updatedUser = {
+      ...user,
+      fullname: 'New fullname',
+      password_change_requested_at: formatISO(faker.date.past()),
+    };
 
     axiosMock
       .onGet(PROFILE_URL)
       .reply(200, user)
       .onPatch(PROFILE_URL)
-      .reply(200, { ...user, fullname: 'New fullname' });
+      .reply(200, updatedUser);
 
     const [StatefulProfile, store] = withState(<ProfilePage />);
     await act(async () => {
@@ -83,7 +96,7 @@ describe('ProfilePage', () => {
 
     expect(toast.success).toHaveBeenCalledWith('Profile changes saved!');
     const actions = store.getActions();
-    const expectedPayload = [setUser({ ...user, fullname: 'New fullname' })];
+    const expectedPayload = [setUser(updatedUser)];
 
     expect(actions).toEqual(expectedPayload);
   });
@@ -117,5 +130,36 @@ describe('ProfilePage', () => {
     });
 
     await screen.findByText('Error validating fullname');
+  });
+
+  it('should dismiss password change toast when password is changed', async () => {
+    const user = userFactory.build();
+    const updatedUser = { ...user, password_change_requested_at: null };
+
+    axiosMock
+      .onGet(PROFILE_URL)
+      .reply(200, user)
+      .onPatch(PROFILE_URL)
+      .reply(200, updatedUser);
+
+    const [StatefulProfile, store] = withState(<ProfilePage />);
+    await act(async () => {
+      await render(StatefulProfile);
+    });
+
+    const testUser = userEvent.setup();
+
+    await testUser.click(screen.getByRole('button', { name: 'Save' }));
+
+    const actions = store.getActions();
+    const expectedActions = [
+      {
+        type: 'DISMISS_NOTIFICATION',
+        payload: {
+          id: 'password-change-requested-toast',
+        },
+      },
+    ];
+    expect(actions).toEqual(expect.arrayContaining(expectedActions));
   });
 });

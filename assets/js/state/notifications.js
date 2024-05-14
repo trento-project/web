@@ -19,12 +19,9 @@ export const dismissableNotify = createAction(
   })
 );
 
-export const dismissNotification = createAction(
-  DISMISS_NOTIFICATION,
-  ({ notificationID }) => ({
-    payload: { notificationID },
-  })
-);
+export const dismissNotification = createAction(DISMISS_NOTIFICATION, (id) => ({
+  payload: { id },
+}));
 
 export const customNotify = createAction(
   CUSTOM_NOTIFICATION,
