@@ -13,9 +13,14 @@ import {
   setUser,
   setUserAsLogged,
 } from '@state/user';
+import { customNotify } from '@state/notifications';
 import { networkClient } from '@lib/network';
-import { userFactory } from '@lib/test-utils/factories/users';
-import { performLogin, clearUserAndLogout } from './user';
+import { profileFactory } from '@lib/test-utils/factories/users';
+import {
+  performLogin,
+  clearUserAndLogout,
+  checkUserPasswordChangeRequested,
+} from './user';
 
 const axiosMock = new MockAdapter(authClient);
 const networkClientAxiosMock = new MockAdapter(networkClient);
@@ -87,8 +92,16 @@ describe('user login saga', () => {
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTY0MDY1NiwiaWF0IjoxNjcxNjQwNTk2LCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwZG9ndmxtZWhmbG1kdm1nMDAwbmMxIiwibmJmIjoxNjcxNjQwNTk2LCJzdWIiOjEsInR5cCI6IlJlZnJlc2gifQ.AW6-iV1XHWdzQKBVadhf7o7gUdidYg6mEyyuDke_zlA',
     };
 
-    const { email, username, id, fullname, abilities, created_at, updated_at } =
-      userFactory.build();
+    const {
+      email,
+      username,
+      id,
+      fullname,
+      abilities,
+      password_change_requested,
+      created_at,
+      updated_at,
+    } = profileFactory.build();
 
     axiosMock
       .onPost('/api/session', { username, password: 'good' })
@@ -100,6 +113,7 @@ describe('user login saga', () => {
       email,
       fullname,
       abilities,
+      password_change_requested,
       created_at,
       updated_at,
     });
@@ -119,6 +133,7 @@ describe('user login saga', () => {
         email,
         fullname,
         abilities,
+        password_change_requested,
         created_at,
         updated_at,
       })
@@ -129,5 +144,40 @@ describe('user login saga', () => {
     expect(getRefreshTokenFromStore()).toEqual(
       credentialResponse.refresh_token
     );
+  });
+
+  it('should dispatch password change request custom notification', async () => {
+    const dispatched = await recordSaga(
+      checkUserPasswordChangeRequested,
+      {},
+      {
+        user: {
+          password_change_requested: true,
+        },
+      }
+    );
+
+    const expectedAction = customNotify({
+      duration: Infinity,
+      id: 'password-change-requested-toast',
+      icon: 'warning',
+      isHealthIcon: true,
+    });
+
+    expect(dispatched).toEqual([expectedAction]);
+  });
+
+  it('should not dispatch notification is password change is not requested', async () => {
+    const dispatched = await recordSaga(
+      checkUserPasswordChangeRequested,
+      {},
+      {
+        user: {
+          password_change_requested: false,
+        },
+      }
+    );
+
+    expect(dispatched).toEqual([]);
   });
 });

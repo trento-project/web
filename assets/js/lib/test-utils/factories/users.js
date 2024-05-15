@@ -17,6 +17,18 @@ export const userFactory = Factory.define(() => ({
   fullname: faker.internet.displayName(),
   email: faker.internet.email(),
   abilities: abilityFactory.buildList(2),
+  password_change_requested_at: null,
+  created_at: formatISO(faker.date.past()),
+  updated_at: formatISO(faker.date.past()),
+}));
+
+export const profileFactory = Factory.define(() => ({
+  id: faker.number.int(),
+  username: faker.internet.userName(),
+  fullname: faker.internet.displayName(),
+  email: faker.internet.email(),
+  abilities: abilityFactory.buildList(2),
+  password_change_requested: false,
   created_at: formatISO(faker.date.past()),
   updated_at: formatISO(faker.date.past()),
 }));

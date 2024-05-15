@@ -6,7 +6,7 @@ import { EOS_ACCOUNT_CIRCLE_OUTLINED } from 'eos-icons-react';
 
 function ProfileMenu({ username, email, logout }) {
   return (
-    <Menu as="div" className="relative inline-block text-left z-10">
+    <Menu as="div" className="relative inline-block text-left z-[100]">
       <Menu.Button as="button" className="group">
         <span className="flex items-center">
           <EOS_ACCOUNT_CIRCLE_OUTLINED
