@@ -120,7 +120,7 @@ describe('EditUserPage', () => {
       expect(screen.getAllByText(`${name}:${resource}`).length).toBe(1)
     );
 
-    await user.click(screen.getByRole('button', { name: 'Edit' }));
+    await user.click(screen.getByRole('button', { name: 'Save' }));
 
     expect(navigate).toHaveBeenCalledWith('/users');
     expect(toast.success).toHaveBeenCalledWith(toastMessage);
@@ -151,7 +151,7 @@ describe('EditUserPage', () => {
 
     await screen.findByText('Edit User');
 
-    await user.click(screen.getByRole('button', { name: 'Edit' }));
+    await user.click(screen.getByRole('button', { name: 'Save' }));
 
     await screen.findByText('Error validating fullname');
   });
@@ -173,7 +173,7 @@ describe('EditUserPage', () => {
 
     await screen.findByText('Edit User');
 
-    await user.click(screen.getByRole('button', { name: 'Edit' }));
+    await user.click(screen.getByRole('button', { name: 'Save' }));
 
     await screen.findByText('Information has been updated by another user', {
       exact: false,
@@ -196,7 +196,7 @@ describe('EditUserPage', () => {
 
     await screen.findByText('Edit User');
 
-    const editButton = screen.getByRole('button', { name: 'Edit' });
+    const editButton = screen.getByRole('button', { name: 'Save' });
     expect(editButton).toBeDisabled();
     const toolTipText = 'Admin user cannot be edited';
     await user.hover(editButton);
@@ -218,7 +218,7 @@ describe('EditUserPage', () => {
       route: `/users/${userData.id}/edit`,
     });
     await screen.findByText('Edit User');
-    await user.click(screen.getByRole('button', { name: 'Edit' }));
+    await user.click(screen.getByRole('button', { name: 'Save' }));
     expect(toast.error).toHaveBeenCalledWith(TOAST_ERROR_MESSAGE);
   });
 });
