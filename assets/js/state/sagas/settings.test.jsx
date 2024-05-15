@@ -1,4 +1,3 @@
-import React from 'react';
 import { recordSaga } from '@lib/test-utils';
 
 import { networkClient } from '@lib/network';
@@ -6,7 +5,6 @@ import MockAdapter from 'axios-mock-adapter';
 
 import { apiKeySettingsFactory } from '@lib/test-utils/factories/settings';
 import { addDays, addHours, formatISO, subDays } from 'date-fns';
-import HealthIcon from '@common/HealthIcon';
 import { notify, dismissableNotify } from '@state/notifications';
 import { checkApiKeyExpiration } from './settings';
 
@@ -39,9 +37,10 @@ describe('Settings sagas', () => {
       const dispatched = await recordSaga(checkApiKeyExpiration, {});
       const expectedAction = notify({
         text: 'API Key has expired. Go to Settings to issue a new key',
-        icon: <HealthIcon health="critical" />,
+        icon: 'critical',
         duration: Infinity,
         id: 'api-key-expiration-toast',
+        isHealthIcon: true,
       });
       expect(dispatched).toEqual([expectedAction]);
     });
@@ -57,9 +56,10 @@ describe('Settings sagas', () => {
       const dispatched = await recordSaga(checkApiKeyExpiration, {});
       const expectedAction = dismissableNotify({
         text: `API Key expires in 2 days`,
-        icon: <HealthIcon health="warning" />,
+        icon: 'warning',
         duration: Infinity,
         id: 'api-key-expiration-toast',
+        isHealthIcon: true,
       });
       expect(dispatched).toEqual([expectedAction]);
     });
@@ -86,9 +86,10 @@ describe('Settings sagas', () => {
       const dispatched = await recordSaga(checkApiKeyExpiration, {});
       const expectedAction = dismissableNotify({
         text: `API Key expires today`,
-        icon: <HealthIcon health="warning" />,
+        icon: 'warning',
         duration: Infinity,
         id: 'api-key-expiration-toast',
+        isHealthIcon: true,
       });
       expect(dispatched).toEqual([expectedAction]);
     });

@@ -81,6 +81,8 @@ export function* checkUserPasswordChangeRequested() {
     customNotify({
       duration: Infinity,
       id: USER_PASSWORD_CHANGE_REQUESTED_NOTIFICATION_ID,
+      icon: 'warning',
+      isHealthIcon: true,
     })
   );
 }

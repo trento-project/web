@@ -160,6 +160,8 @@ describe('user login saga', () => {
     const expectedAction = customNotify({
       duration: Infinity,
       id: 'password-change-requested-toast',
+      icon: 'warning',
+      isHealthIcon: true,
     });
 
     expect(dispatched).toEqual([expectedAction]);
