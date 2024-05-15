@@ -45,8 +45,11 @@ function App() {
 
   return (
     <Provider store={store}>
-      <Toaster position="top-right" />
       <BrowserRouter>
+        <Toaster
+          position="top-right"
+          containerStyle={{ top: 50, zIndex: 99 }}
+        />
         <ErrorBoundary
           FallbackComponent={SomethingWentWrong}
           onReset={() => {

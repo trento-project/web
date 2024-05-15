@@ -5,7 +5,11 @@ import PageHeader from '@common/PageHeader';
 import { isAdmin } from '@lib/model/users';
 import ProfileForm from '@pages/Profile/ProfileForm';
 import { getUserProfile, editUserProfile } from '@lib/api/users';
-import { setUser as setUserInState } from '@state/user';
+import {
+  setUser as setUserInState,
+  USER_PASSWORD_CHANGE_REQUESTED_NOTIFICATION_ID,
+} from '@state/user';
+import { dismissNotification } from '@state/notifications';
 
 function ProfilePage() {
   const [errorsState, setErrors] = useState([]);
@@ -40,6 +44,11 @@ function ProfilePage() {
         setUser(updatedUser);
         dispatch(setUserInState(updatedUser));
         setPasswordModalOpen(false);
+        if (!updatedUser.password_change_requested) {
+          dispatch(
+            dismissNotification(USER_PASSWORD_CHANGE_REQUESTED_NOTIFICATION_ID)
+          );
+        }
       })
       .catch(
         ({

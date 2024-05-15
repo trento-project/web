@@ -8,6 +8,7 @@ export const initialState = {
   email: undefined,
   id: undefined,
   abilities: undefined,
+  password_change_requested: undefined,
   created_at: undefined,
   updated_at: undefined,
   authError: null,
@@ -42,6 +43,7 @@ export const userSlice = createSlice({
           fullname,
           updated_at,
           abilities,
+          password_change_requested,
         },
       }
     ) {
@@ -52,6 +54,7 @@ export const userSlice = createSlice({
       state.fullname = fullname;
       state.updated_at = updated_at;
       state.abilities = abilities;
+      state.password_change_requested = password_change_requested;
     },
   },
 });
@@ -62,6 +65,9 @@ export const USER_LOCKED = 'USER_LOCKED';
 export const USER_DELETED = 'USER_DELETED';
 
 export const SET_USER_AS_LOGGED = 'user/setUserAsLogged';
+
+export const USER_PASSWORD_CHANGE_REQUESTED_NOTIFICATION_ID =
+  'password-change-requested-toast';
 
 export const initiateLogin = createAction(
   PERFORM_LOGIN,
