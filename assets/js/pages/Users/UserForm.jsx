@@ -223,6 +223,7 @@ function UserForm({
           <div className="col-start-2 col-span-3">
             <MultiSelect
               aria-label="permissions"
+              placeholder="Default"
               values={mapAbilities(userAbilities)}
               options={mapAbilities(abilities)}
               onChange={(values) =>

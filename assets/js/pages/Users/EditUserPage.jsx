@@ -108,7 +108,7 @@ function EditUserPage() {
       <UserForm
         abilities={abilitiesState}
         userAbilities={userAbilities}
-        saveText="Edit"
+        saveText="Save"
         fullName={fullname}
         emailAddress={email}
         username={username}

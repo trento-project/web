@@ -143,7 +143,7 @@ export const Editing = {
     createdAt,
     updatedAt,
     editing: true,
-    saveText: 'Edit',
+    saveText: 'Save',
   },
 };
 

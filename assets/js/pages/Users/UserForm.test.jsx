@@ -122,14 +122,14 @@ describe('UserForm', () => {
 
     render(
       <UserForm
-        saveText="Edit"
+        saveText="Save"
         createdAt={createdAt}
         updatedAt={updatedAt}
         editing
       />
     );
 
-    await user.click(screen.getByRole('button', { name: 'Edit' }));
+    await user.click(screen.getByRole('button', { name: 'Save' }));
 
     expect(screen.getAllByText('Required field').length).toBe(3);
   });
