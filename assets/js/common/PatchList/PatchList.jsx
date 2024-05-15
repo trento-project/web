@@ -6,6 +6,7 @@ import {
 } from 'eos-icons-react';
 import { format as formatDate } from 'date-fns';
 import classNames from 'classnames';
+import { noop } from 'lodash';
 
 import Table from '@common/Table';
 import { computedIconCssClass } from '@lib/icon';
@@ -57,40 +58,40 @@ const iconFromAdvisoryType = (
   }
 };
 
-const patchListConfig = {
-  usePadding: false,
-  pagination: true,
-  columns: [
-    {
-      title: 'Type',
-      key: 'advisory_type',
-      render: (content, _) => iconFromAdvisoryType(content),
-    },
-    {
-      title: 'Advisory',
-      key: 'advisory_name',
-      render: (content, item) => (
-        <button
-          type="button"
-          className="text-jungle-green-500 hover:opacity-75"
-          onClick={() => item?.onNavigate?.()}
-        >
-          {content}
-        </button>
-      ),
-    },
-    {
-      title: 'Synopsis',
-      key: 'advisory_synopsis',
-    },
-    {
-      title: 'Updated',
-      key: 'update_date',
-      render: (content, _) => formatDate(content, 'd MMM y'),
-    },
-  ],
-};
+export default function PatchList({ patches, onNavigate = noop }) {
+  const patchListConfig = {
+    usePadding: false,
+    pagination: true,
+    columns: [
+      {
+        title: 'Type',
+        key: 'advisory_type',
+        render: (content, _) => iconFromAdvisoryType(content),
+      },
+      {
+        title: 'Advisory',
+        key: 'advisory_name',
+        render: (content, item) => (
+          <button
+            type="button"
+            className="text-jungle-green-500 hover:opacity-75"
+            onClick={() => onNavigate(item)}
+          >
+            {content}
+          </button>
+        ),
+      },
+      {
+        title: 'Synopsis',
+        key: 'advisory_synopsis',
+      },
+      {
+        title: 'Updated',
+        key: 'update_date',
+        render: (content, _) => formatDate(content, 'd MMM y'),
+      },
+    ],
+  };
 
-export default function PatchList({ patches }) {
   return <Table config={patchListConfig} data={patches} />;
 }

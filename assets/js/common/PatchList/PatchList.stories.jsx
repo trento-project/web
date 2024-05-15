@@ -1,17 +1,9 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
+import { action } from '@storybook/addon-actions';
 
 import { relevantPatchFactory } from '@lib/test-utils/factories/relevantPatches';
 import PatchList from '.';
-
-const enhancePatchWithNavigation = (patches = []) => {
-  const enhance = (patch) => ({
-    ...patch,
-    onNavigate: () => alert(`Navigating to Patch #${patch.id}`),
-  });
-
-  return Array.isArray(patches) ? patches.map(enhance) : enhance(patches);
-};
 
 export default {
   title: 'Components/PatchList',
@@ -36,22 +28,25 @@ export default {
 
 export const Default = {
   args: {
-    patches: enhancePatchWithNavigation(relevantPatchFactory.buildList(5)),
+    patches: relevantPatchFactory.buildList(5),
+    onNavigate: action('onNavigate'),
   },
 };
 
 export const NoPatches = {
   args: {
     patches: undefined,
+    onNavigate: action('onNavigate'),
   },
 };
 
 export const AllStates = {
   args: {
-    patches: enhancePatchWithNavigation([
+    patches: [
       relevantPatchFactory.build({ advisory_type: 'security_advisory' }),
       relevantPatchFactory.build({ advisory_type: 'bugfix' }),
       relevantPatchFactory.build({ advisory_type: 'enhancement' }),
-    ]),
+    ],
+    onNavigate: action('onNavigate'),
   },
 };
