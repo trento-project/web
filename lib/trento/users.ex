@@ -47,8 +47,8 @@ defmodule Trento.Users do
   def create_user(%{abilities: abilities} = attrs) when not is_nil(abilities) do
     updated_attrs =
       attrs
-      |> set_locked_at()
-      |> set_password_change_requested_at(false)
+      |> maybe_set_locked_at()
+      |> maybe_set_password_change_requested_at(false)
 
     result =
       Ecto.Multi.new()
@@ -68,8 +68,8 @@ defmodule Trento.Users do
   def create_user(attrs) do
     updated_attrs =
       attrs
-      |> set_locked_at()
-      |> set_password_change_requested_at(false)
+      |> maybe_set_locked_at()
+      |> maybe_set_password_change_requested_at(false)
 
     %User{abilities: []}
     |> User.changeset(updated_attrs)
@@ -79,7 +79,7 @@ defmodule Trento.Users do
   def update_user_profile(%User{id: 1}, _), do: {:error, :forbidden}
 
   def update_user_profile(%User{} = user, attrs) do
-    updated_attrs = set_password_change_requested_at(attrs, true)
+    updated_attrs = maybe_set_password_change_requested_at(attrs, true)
 
     user
     |> User.profile_update_changeset(updated_attrs)
@@ -92,21 +92,21 @@ defmodule Trento.Users do
     updated_attrs =
       attrs
       |> Map.put(:locked_at, DateTime.utc_now())
-      |> set_password_change_requested_at(false)
+      |> maybe_set_password_change_requested_at(false)
 
     do_update(user, updated_attrs)
   end
 
   def update_user(%User{locked_at: locked_at} = user, %{enabled: false} = attrs)
       when not is_nil(locked_at) do
-    do_update(user, set_password_change_requested_at(attrs, false))
+    do_update(user, maybe_set_password_change_requested_at(attrs, false))
   end
 
   def update_user(%User{} = user, attrs) do
     updated_attrs =
       attrs
       |> Map.put(:locked_at, nil)
-      |> set_password_change_requested_at(false)
+      |> maybe_set_password_change_requested_at(false)
 
     do_update(user, updated_attrs)
   end
@@ -135,22 +135,22 @@ defmodule Trento.Users do
     end
   end
 
-  defp set_locked_at(%{enabled: false} = attrs) do
+  defp maybe_set_locked_at(%{enabled: false} = attrs) do
     Map.put(attrs, :locked_at, DateTime.utc_now())
   end
 
-  defp set_locked_at(attrs), do: attrs
+  defp maybe_set_locked_at(attrs), do: attrs
 
   # 2nd argument is a boolean. true if it is a profile change, false otherwise
-  defp set_password_change_requested_at(%{password: _} = attrs, true) do
+  defp maybe_set_password_change_requested_at(%{password: _} = attrs, true) do
     Map.put(attrs, :password_change_requested_at, nil)
   end
 
-  defp set_password_change_requested_at(%{password: _} = attrs, false) do
+  defp maybe_set_password_change_requested_at(%{password: _} = attrs, false) do
     Map.put(attrs, :password_change_requested_at, DateTime.utc_now())
   end
 
-  defp set_password_change_requested_at(attrs, _), do: attrs
+  defp maybe_set_password_change_requested_at(attrs, _), do: attrs
 
   defp insert_abilities_multi(multi, []), do: multi
 
