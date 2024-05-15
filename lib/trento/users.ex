@@ -45,9 +45,14 @@ defmodule Trento.Users do
   end
 
   def create_user(%{abilities: abilities} = attrs) when not is_nil(abilities) do
+    updated_attrs =
+      attrs
+      |> maybe_set_locked_at()
+      |> maybe_set_password_change_requested_at(false)
+
     result =
       Ecto.Multi.new()
-      |> Ecto.Multi.insert(:user, User.changeset(%User{}, set_locked_at(attrs)))
+      |> Ecto.Multi.insert(:user, User.changeset(%User{}, updated_attrs))
       |> insert_abilities_multi(abilities)
       |> Repo.transaction()
 
@@ -61,32 +66,49 @@ defmodule Trento.Users do
   end
 
   def create_user(attrs) do
+    updated_attrs =
+      attrs
+      |> maybe_set_locked_at()
+      |> maybe_set_password_change_requested_at(false)
+
     %User{abilities: []}
-    |> User.changeset(set_locked_at(attrs))
+    |> User.changeset(updated_attrs)
     |> Repo.insert()
   end
 
   def update_user_profile(%User{id: 1}, _), do: {:error, :forbidden}
 
   def update_user_profile(%User{} = user, attrs) do
+    updated_attrs = maybe_set_password_change_requested_at(attrs, true)
+
     user
-    |> User.profile_update_changeset(attrs)
+    |> User.profile_update_changeset(updated_attrs)
     |> Repo.update()
   end
 
   def update_user(%User{id: 1}, _), do: {:error, :forbidden}
 
   def update_user(%User{locked_at: nil} = user, %{enabled: false} = attrs) do
-    do_update(user, Map.put(attrs, :locked_at, DateTime.utc_now()))
+    updated_attrs =
+      attrs
+      |> Map.put(:locked_at, DateTime.utc_now())
+      |> maybe_set_password_change_requested_at(false)
+
+    do_update(user, updated_attrs)
   end
 
   def update_user(%User{locked_at: locked_at} = user, %{enabled: false} = attrs)
       when not is_nil(locked_at) do
-    do_update(user, attrs)
+    do_update(user, maybe_set_password_change_requested_at(attrs, false))
   end
 
   def update_user(%User{} = user, attrs) do
-    do_update(user, Map.put(attrs, :locked_at, nil))
+    updated_attrs =
+      attrs
+      |> Map.put(:locked_at, nil)
+      |> maybe_set_password_change_requested_at(false)
+
+    do_update(user, updated_attrs)
   end
 
   def delete_user(%User{id: 1}), do: {:error, :forbidden}
@@ -113,11 +135,22 @@ defmodule Trento.Users do
     end
   end
 
-  defp set_locked_at(%{enabled: false} = attrs) do
+  defp maybe_set_locked_at(%{enabled: false} = attrs) do
     Map.put(attrs, :locked_at, DateTime.utc_now())
   end
 
-  defp set_locked_at(attrs), do: attrs
+  defp maybe_set_locked_at(attrs), do: attrs
+
+  # 2nd argument is a boolean. true if it is a profile change, false otherwise
+  defp maybe_set_password_change_requested_at(%{password: _} = attrs, true) do
+    Map.put(attrs, :password_change_requested_at, nil)
+  end
+
+  defp maybe_set_password_change_requested_at(%{password: _} = attrs, false) do
+    Map.put(attrs, :password_change_requested_at, DateTime.utc_now())
+  end
+
+  defp maybe_set_password_change_requested_at(attrs, _), do: attrs
 
   defp insert_abilities_multi(multi, []), do: multi
 

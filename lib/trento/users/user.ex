@@ -30,6 +30,7 @@ defmodule Trento.Users.User do
     field :fullname, :string
     field :deleted_at, :utc_datetime_usec
     field :locked_at, :utc_datetime_usec
+    field :password_change_requested_at, :utc_datetime_usec
     field :lock_version, :integer, default: 1
 
     many_to_many :abilities, Ability, join_through: UsersAbilities, unique: true
@@ -43,7 +44,7 @@ defmodule Trento.Users.User do
     |> pow_extension_changeset(attrs)
     |> validate_password()
     |> custom_fields_changeset(attrs)
-    |> lock_changeset(attrs)
+    |> cast(attrs, [:locked_at, :password_change_requested_at])
   end
 
   def update_changeset(user, attrs) do
@@ -52,8 +53,7 @@ defmodule Trento.Users.User do
     |> pow_extension_changeset(attrs)
     |> validate_password()
     |> custom_fields_changeset(attrs)
-    |> lock_changeset(attrs)
-    |> cast(attrs, [:lock_version])
+    |> cast(attrs, [:locked_at, :lock_version, :password_change_requested_at])
     |> optimistic_lock(:lock_version)
   end
 
@@ -64,6 +64,7 @@ defmodule Trento.Users.User do
     |> pow_extension_changeset(attrs)
     |> validate_password()
     |> custom_fields_changeset(attrs)
+    |> cast(attrs, [:password_change_requested_at])
   end
 
   def delete_changeset(
@@ -81,10 +82,6 @@ defmodule Trento.Users.User do
     do: pow_current_password_changeset(changeset, attrs)
 
   defp validate_current_password(changeset, _), do: changeset
-
-  defp lock_changeset(user, attrs) do
-    cast(user, attrs, [:locked_at])
-  end
 
   defp validate_password(changeset) do
     changeset
