@@ -968,7 +968,8 @@ defmodule Trento.Factory do
       password_hash: Argon2.hash_pwd_salt(password),
       username: Faker.Pokemon.name(),
       deleted_at: nil,
-      locked_at: nil
+      locked_at: nil,
+      password_change_requested_at: nil
     }
   end
 

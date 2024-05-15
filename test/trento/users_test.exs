@@ -70,6 +70,29 @@ defmodule Trento.UsersTest do
       assert nil == locked_at
       assert password_hash != updated_password_hash
     end
+
+    test "update_user_profile removes password change request if password is changed" do
+      %{id: user_id, password: current_password} =
+        insert(:user, password_change_requested_at: DateTime.utc_now())
+
+      {:ok, user} = Users.get_user(user_id)
+
+      assert {:ok, %User{} = user} =
+               Users.update_user_profile(user, %{
+                 fullname: "some updated fullname"
+               })
+
+      refute user.password_change_requested_at == nil
+
+      assert {:ok, %User{} = user} =
+               Users.update_user_profile(user, %{
+                 current_password: current_password,
+                 password: "newpassword989",
+                 confirm_password: "newpassword989"
+               })
+
+      assert user.password_change_requested_at == nil
+    end
   end
 
   describe "users" do
@@ -119,6 +142,8 @@ defmodule Trento.UsersTest do
       assert user.email == "test@trento.com"
       assert user.username == "username"
       assert user.locked_at == nil
+      assert user.abilities == []
+      refute user.password_change_requested_at == nil
 
       assert [] == Trento.Repo.all(from u in UsersAbilities, where: u.user_id == ^user.id)
     end
@@ -155,6 +180,7 @@ defmodule Trento.UsersTest do
 
       assert user.username == "username"
       assert user.abilities == abilities
+      refute user.password_change_requested_at == nil
 
       assert [
                %UsersAbilities{ability_id: ^ability_id1},
@@ -353,6 +379,26 @@ defmodule Trento.UsersTest do
                  fullname: "some updated fullname 2",
                  lock_version: 1
                })
+    end
+
+    test "update_user/2 requests password change if password is changed" do
+      %{id: user_id} = insert(:user)
+      {:ok, user} = Users.get_user(user_id)
+
+      assert {:ok, %User{} = user} =
+               Users.update_user(user, %{
+                 fullname: "some updated fullname"
+               })
+
+      assert user.password_change_requested_at == nil
+
+      assert {:ok, %User{} = user} =
+               Users.update_user(user, %{
+                 password: "newpassword989",
+                 confirm_password: "newpassword989"
+               })
+
+      refute user.password_change_requested_at == nil
     end
 
     test "delete_user/2 does not delete user with id 1" do
