@@ -4,6 +4,15 @@ import { MemoryRouter } from 'react-router-dom';
 import { relevantPatchFactory } from '@lib/test-utils/factories/relevantPatches';
 import PatchList from '.';
 
+const enhancePatchWithNavigation = (patches = []) => {
+  const enhance = (patch) => ({
+    ...patch,
+    onNavigate: () => alert(`Navigating to Patch #${patch.id}`),
+  });
+
+  return Array.isArray(patches) ? patches.map(enhance) : enhance(patches);
+};
+
 export default {
   title: 'Components/PatchList',
   components: PatchList,
@@ -27,7 +36,7 @@ export default {
 
 export const Default = {
   args: {
-    patches: relevantPatchFactory.buildList(5),
+    patches: enhancePatchWithNavigation(relevantPatchFactory.buildList(5)),
   },
 };
 
@@ -39,10 +48,10 @@ export const NoPatches = {
 
 export const AllStates = {
   args: {
-    patches: [
+    patches: enhancePatchWithNavigation([
       relevantPatchFactory.build({ advisory_type: 'security_advisory' }),
       relevantPatchFactory.build({ advisory_type: 'bugfix' }),
       relevantPatchFactory.build({ advisory_type: 'enhancement' }),
-    ],
+    ]),
   },
 };

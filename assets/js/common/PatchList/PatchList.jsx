@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import {
   EOS_SHIELD_OUTLINED,
   EOS_CRITICAL_BUG_OUTLINED,
@@ -71,9 +70,13 @@ const patchListConfig = {
       title: 'Advisory',
       key: 'advisory_name',
       render: (content, item) => (
-        <Link className="text-jungle-green-500 hover:opacity-75" to={item.url}>
+        <button
+          type="button"
+          className="text-jungle-green-500 hover:opacity-75"
+          onClick={() => item?.onNavigate?.()}
+        >
           {content}
-        </Link>
+        </button>
       ),
     },
     {

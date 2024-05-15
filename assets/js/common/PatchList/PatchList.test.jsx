@@ -1,5 +1,4 @@
 import React from 'react';
-import { MemoryRouter } from 'react-router-dom';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
@@ -22,11 +21,7 @@ describe('PatchList', () => {
       }),
     ];
 
-    render(
-      <MemoryRouter>
-        <PatchList patches={patches} />
-      </MemoryRouter>
-    );
+    render(<PatchList patches={patches} />);
 
     patches.forEach((patch) => {
       expect(
@@ -48,11 +43,7 @@ describe('PatchList', () => {
       }),
     ];
 
-    render(
-      <MemoryRouter>
-        <PatchList patches={patchUnknownAdvisoryType} />
-      </MemoryRouter>
-    );
+    render(<PatchList patches={patchUnknownAdvisoryType} />);
 
     expect(
       screen.getByText(patchUnknownAdvisoryType[0].advisory_synopsis)
