@@ -21,7 +21,7 @@ defmodule TrentoWeb.V1.ProfileView do
       username: username,
       email: email,
       abilities: render_many(abilities, AbilityView, "ability.json", as: :ability),
-      password_change_requested_at: password_change_requested_at,
+      password_change_requested: password_change_requested_at != nil,
       created_at: created_at,
       updated_at: updated_at
     }
