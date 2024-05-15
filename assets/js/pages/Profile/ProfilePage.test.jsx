@@ -1,7 +1,5 @@
 import React from 'react';
 import '@testing-library/jest-dom';
-import { faker } from '@faker-js/faker';
-import { formatISO } from 'date-fns';
 
 import MockAdapter from 'axios-mock-adapter';
 import { toast } from 'react-hot-toast';
@@ -10,7 +8,7 @@ import { withState } from '@lib/test-utils';
 import { networkClient } from '@lib/network';
 import { screen, act, render } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import { userFactory, adminUser } from '@lib/test-utils/factories/users';
+import { profileFactory, adminUser } from '@lib/test-utils/factories/users';
 import { setUser } from '@state/user';
 
 import ProfilePage from '@pages/Profile';
@@ -38,7 +36,7 @@ describe('ProfilePage', () => {
   });
 
   it('should show the pre-filled form with profile information', async () => {
-    const user = userFactory.build();
+    const user = profileFactory.build();
 
     axiosMock.onGet(PROFILE_URL).reply(200, user);
 
@@ -72,11 +70,11 @@ describe('ProfilePage', () => {
   });
 
   it('should submit the profile form and show a success toast', async () => {
-    const user = userFactory.build();
+    const user = profileFactory.build();
     const updatedUser = {
       ...user,
       fullname: 'New fullname',
-      password_change_requested_at: formatISO(faker.date.past()),
+      password_change_requested: true,
     };
 
     axiosMock
@@ -102,7 +100,7 @@ describe('ProfilePage', () => {
   });
 
   it('should pass errors to form when patch call fails', async () => {
-    const user = userFactory.build();
+    const user = profileFactory.build();
 
     const errors = [
       {
@@ -133,8 +131,8 @@ describe('ProfilePage', () => {
   });
 
   it('should dismiss password change toast when password is changed', async () => {
-    const user = userFactory.build();
-    const updatedUser = { ...user, password_change_requested_at: null };
+    const user = profileFactory.build();
+    const updatedUser = { ...user, password_change_requested: false };
 
     axiosMock
       .onGet(PROFILE_URL)

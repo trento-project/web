@@ -38,7 +38,7 @@ export function* performLogin({ payload: { username, password } }) {
       fullname,
       updated_at,
       abilities,
-      password_change_requested_at,
+      password_change_requested,
     } = yield call(profile, networkClient);
     yield put(
       setUser({
@@ -49,7 +49,7 @@ export function* performLogin({ payload: { username, password } }) {
         fullname,
         updated_at,
         abilities,
-        password_change_requested_at,
+        password_change_requested,
       })
     );
     yield put(setUserAsLogged());
@@ -71,9 +71,9 @@ export function* userUpdated() {
 }
 
 export function* checkUserPasswordChangeRequested() {
-  const { password_change_requested_at } = yield select(getUserProfile);
+  const { password_change_requested } = yield select(getUserProfile);
 
-  if (!password_change_requested_at) {
+  if (!password_change_requested) {
     return;
   }
 

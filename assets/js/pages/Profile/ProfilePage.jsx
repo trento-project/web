@@ -44,7 +44,7 @@ function ProfilePage() {
         setUser(updatedUser);
         dispatch(setUserInState(updatedUser));
         setPasswordModalOpen(false);
-        if (updatedUser.password_change_requested_at === null) {
+        if (!updatedUser.password_change_requested) {
           dispatch(
             dismissNotification(USER_PASSWORD_CHANGE_REQUESTED_NOTIFICATION_ID)
           );

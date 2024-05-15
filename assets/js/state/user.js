@@ -8,7 +8,7 @@ export const initialState = {
   email: undefined,
   id: undefined,
   abilities: undefined,
-  password_change_requested_at: undefined,
+  password_change_requested: undefined,
   created_at: undefined,
   updated_at: undefined,
   authError: null,
@@ -43,7 +43,7 @@ export const userSlice = createSlice({
           fullname,
           updated_at,
           abilities,
-          password_change_requested_at,
+          password_change_requested,
         },
       }
     ) {
@@ -54,7 +54,7 @@ export const userSlice = createSlice({
       state.fullname = fullname;
       state.updated_at = updated_at;
       state.abilities = abilities;
-      state.password_change_requested_at = password_change_requested_at;
+      state.password_change_requested = password_change_requested;
     },
   },
 });

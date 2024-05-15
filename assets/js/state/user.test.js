@@ -48,7 +48,7 @@ describe('user reducer', () => {
       username,
       fullname,
       abilities,
-      password_change_requested_at,
+      password_change_requested,
       created_at,
       updated_at,
     } = userFactory.build();
@@ -58,7 +58,7 @@ describe('user reducer', () => {
       email,
       fullname,
       abilities,
-      password_change_requested_at,
+      password_change_requested,
       created_at,
       updated_at,
     });
@@ -69,7 +69,7 @@ describe('user reducer', () => {
       email,
       fullname,
       abilities,
-      password_change_requested_at,
+      password_change_requested,
       created_at,
       updated_at,
     });

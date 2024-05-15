@@ -1,5 +1,4 @@
 import MockAdapter from 'axios-mock-adapter';
-import { faker } from '@faker-js/faker';
 import { recordSaga } from '@lib/test-utils';
 import {
   authClient,
@@ -16,7 +15,7 @@ import {
 } from '@state/user';
 import { customNotify } from '@state/notifications';
 import { networkClient } from '@lib/network';
-import { userFactory } from '@lib/test-utils/factories/users';
+import { profileFactory } from '@lib/test-utils/factories/users';
 import {
   performLogin,
   clearUserAndLogout,
@@ -99,10 +98,10 @@ describe('user login saga', () => {
       id,
       fullname,
       abilities,
-      password_change_requested_at,
+      password_change_requested,
       created_at,
       updated_at,
-    } = userFactory.build();
+    } = profileFactory.build();
 
     axiosMock
       .onPost('/api/session', { username, password: 'good' })
@@ -114,7 +113,7 @@ describe('user login saga', () => {
       email,
       fullname,
       abilities,
-      password_change_requested_at,
+      password_change_requested,
       created_at,
       updated_at,
     });
@@ -134,7 +133,7 @@ describe('user login saga', () => {
         email,
         fullname,
         abilities,
-        password_change_requested_at,
+        password_change_requested,
         created_at,
         updated_at,
       })
@@ -153,7 +152,7 @@ describe('user login saga', () => {
       {},
       {
         user: {
-          password_change_requested_at: faker.date.past(),
+          password_change_requested: true,
         },
       }
     );
@@ -172,7 +171,7 @@ describe('user login saga', () => {
       {},
       {
         user: {
-          password_change_requested_at: null,
+          password_change_requested: false,
         },
       }
     );
