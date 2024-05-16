@@ -140,19 +140,19 @@ GUIDES
   <span>Alerting</span>
 </h1>
 
-<p>Alerting feature notifies the SAP Administrator about important updated in the Landscape being monitored/observed by Trento.</p><p>Some of the notified events:</p><ul><li><strong>Host Health detected critical</strong></li><li><strong>Cluster Health detected critical</strong></li><li><strong>Database Health detected critical</strong></li><li><strong>SAP System Health detected critical</strong></li><li>...</li></ul><h2 id="enabling-alerting" class="section-heading">
+<p>The Alerting feature notifies the SAP Administrator about important events detected in the Landscape being monitored/observed by Trento.</p><p>Some of the notified events:</p><ul><li><strong>Host Health detected critical</strong></li><li><strong>Cluster Health detected critical</strong></li><li><strong>Database Health detected critical</strong></li><li><strong>SAP System Health detected critical</strong></li><li>...</li></ul><h2 id="enabling-alerting" class="section-heading">
   <a href="#enabling-alerting" class="hover-link">
     <i class="ri-link-m" aria-hidden="true"></i>
   </a>
   <span class="text">Enabling Alerting</span>
 </h2>
-<p>The feature is <strong>disabled by default</strong>.</p><p>Provide <code class="inline">ENABLE_ALERTING=true</code> as an environment variable when starting Trento.</p><h2 id="delivery-and-recipient" class="section-heading">
+<p>This feature is <strong>disabled by default</strong>.</p><p>Provide <code class="inline">ENABLE_ALERTING=true</code> as an environment variable when starting Trento.</p><h2 id="delivery-and-recipient" class="section-heading">
   <a href="#delivery-and-recipient" class="hover-link">
     <i class="ri-link-m" aria-hidden="true"></i>
   </a>
   <span class="text">Delivery and Recipient</span>
 </h2>
-<p>A notification needs to be <em>delivered to someone</em> in <em>some way</em>.</p><p>With alerting enabled some extra configuration is needed to define the recipient and the delivery mechanism.</p><p>Currently <strong>SMTP</strong> is the <strong>only supported delivery mechanism</strong> for notification.</p><pre><code class="makeup elixir" translate="no"><span class="nc">ENABLE_ALERTING</span><span class="o">=</span><span class="no">true</span><span class="w">
+<p>A notification needs to be <em>delivered to someone</em> in <em>some way</em>.</p><p>With alerting enabled some extra configuration is needed to define the recipient and the delivery mechanism.</p><p>Currently <strong>authenticated SMTP</strong> is the <strong>only supported delivery mechanism</strong> for alert notifications.</p><pre><code class="makeup elixir" translate="no"><span class="nc">ENABLE_ALERTING</span><span class="o">=</span><span class="no">true</span><span class="w">
 </span><span class="nc">ALERT_SENDER</span><span class="o">=</span><span class="n">sender</span><span class="na">@yourmail</span><span class="o">.</span><span class="n">com</span><span class="w">
 </span><span class="nc">ALERT_RECIPIENT</span><span class="o">=</span><span class="n">recipient</span><span class="na">@yourmail</span><span class="o">.</span><span class="n">com</span><span class="w">
 
