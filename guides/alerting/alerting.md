@@ -1,6 +1,6 @@
 # Alerting
 
-Alerting feature notifies the SAP Administrator about important updated in the Landscape being monitored/observed by Trento.
+The Alerting feature notifies the SAP Administrator about important events detected in the Landscape being monitored/observed by Trento.
 
 Some of the notified events:
 - **Host Health detected critical**
@@ -11,15 +11,16 @@ Some of the notified events:
 
 ## Enabling Alerting
 
-The feature is **disabled by default**.
+This feature is **disabled by default**.
 
 Provide `ENABLE_ALERTING=true` as an environment variable when starting Trento.
+
 ## Delivery and Recipient
 A notification needs to be _delivered to someone_ in _some way_.
 
 With alerting enabled some extra configuration is needed to define the recipient and the delivery mechanism.
 
-Currently **SMTP** is the **only supported delivery mechanism** for notification.
+Currently **authenticated SMTP** is the **only supported delivery mechanism** for alert notifications.
 
 ```
 ENABLE_ALERTING=true
