@@ -23,5 +23,6 @@ import './commands';
 //
 
 before(() => {
-  cy.initiateSession();
+  Cypress.session.clearAllSavedSessions();
+  cy.login();
 });

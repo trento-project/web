@@ -24,13 +24,12 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
+const DEFAULT_USERNAME = Cypress.env('login_user');
+const DEFAULT_PASSWORD = Cypress.env('login_password');
+
 const initializeOpenSidebar = () => cy.setCookie('sidebar-collapsed', 'false');
 
-const apiLogin = () => {
-  const [username, password] = [
-    Cypress.env('login_user'),
-    Cypress.env('login_password'),
-  ];
+const apiLogin = (username, password) => {
   return cy
     .request({
       method: 'POST',
@@ -47,23 +46,32 @@ const apiLogin = () => {
     });
 };
 
-Cypress.Commands.add('initiateSession', () => {
-  cy.session('trento-jwt', () => {
-    apiLogin().then(({ accessToken, refreshToken }) => {
-      window.localStorage.setItem('access_token', accessToken);
-      window.localStorage.setItem('refresh_token', refreshToken);
+Cypress.Commands.add(
+  'login',
+  (username = DEFAULT_USERNAME, password = DEFAULT_PASSWORD) => {
+    cy.session([username, password], () => {
+      apiLogin(username, password).then(({ accessToken, refreshToken }) => {
+        window.localStorage.setItem('access_token', accessToken);
+        window.localStorage.setItem('refresh_token', refreshToken);
+      });
     });
-  });
+  }
+);
+
+Cypress.Commands.add('logout', () => {
+  window.localStorage.removeItem('access_token');
+  window.localStorage.removeItem('refresh_token');
 });
 
-Cypress.Commands.add('apiLogin', () => {
-  return apiLogin().then(({ accessToken }) => {
-    localStorage.setItem('access_token', accessToken);
-  });
-});
+Cypress.Commands.add(
+  'apiLogin',
+  (username = DEFAULT_USERNAME, password = DEFAULT_PASSWORD) => {
+    apiLogin(username, password);
+  }
+);
 
 Cypress.Commands.add('updateApiKeyExpiration', (apiKeyExpiration) => {
-  apiLogin().then(({ accessToken }) => {
+  cy.apiLogin().then(({ accessToken }) => {
     cy.request({
       url: '/api/v1/settings/api_key',
       method: 'PATCH',
@@ -117,7 +125,7 @@ Cypress.Commands.add('selectChecks', (clusterId, checks) => {
     'Content-Type': 'application/json;charset=UTF-8',
   };
 
-  apiLogin().then(({ accessToken }) => {
+  cy.apiLogin().then(({ accessToken }) => {
     const url = `http://${webAPIHost}:${webAPIPort}/api/clusters/${clusterId}/checks`;
     cy.request({
       method: 'POST',
@@ -174,7 +182,7 @@ Cypress.Commands.add('requestChecksExecution', (clusterId) => {
     'Content-Type': 'application/json;charset=UTF-8',
   };
 
-  apiLogin().then(({ accessToken }) => {
+  cy.apiLogin().then(({ accessToken }) => {
     const url = `http://${webAPIHost}:${webAPIPort}/api/clusters/${clusterId}/checks/request_execution`;
     cy.request({
       method: 'POST',
@@ -197,7 +205,7 @@ Cypress.Commands.add('deregisterHost', (hostId) => {
     'Content-Type': 'application/json;charset=UTF-8',
   };
 
-  apiLogin().then(({ accessToken }) => {
+  cy.apiLogin().then(({ accessToken }) => {
     const url = `http://${webAPIHost}:${webAPIPort}/api/v1/hosts/${hostId}`;
     cy.request({
       method: 'DELETE',
@@ -222,7 +230,7 @@ Cypress.Commands.add(
       'Content-Type': 'application/json;charset=UTF-8',
     };
 
-    apiLogin().then(({ accessToken }) => {
+    cy.apiLogin().then(({ accessToken }) => {
       const url = `http://${webAPIHost}:${webAPIPort}/api/v1/sap_systems/${sapSystemdId}/hosts/${hostId}/instances/${instanceNumber}`;
       cy.request({
         method: 'DELETE',
