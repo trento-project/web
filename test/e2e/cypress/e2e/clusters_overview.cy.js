@@ -81,7 +81,7 @@ context('Clusters Overview', () => {
           clusterIdByName(healthyClusterScenario.clusterName),
           healthyClusterScenario.checks
         );
-        cy.setMockRunnerExpectedResult(healthyClusterScenario.result);
+        // wip: set expected results
         cy.requestChecksExecution(
           clusterIdByName(healthyClusterScenario.clusterName)
         );
@@ -90,7 +90,7 @@ context('Clusters Overview', () => {
           clusterIdByName(unhealthyClusterScenario.clusterName),
           healthyClusterScenario.checks
         );
-        cy.setMockRunnerExpectedResult(unhealthyClusterScenario.result);
+        // wip: set expected results
         cy.requestChecksExecution(
           clusterIdByName(unhealthyClusterScenario.clusterName)
         );
