@@ -1,5 +1,5 @@
 import {
-  hasValidLength,
+  hasValidPwdLength,
   validateNoRepetitiveCharacters,
   validateNoSequentialCharacters,
   generateValidPassword,
@@ -24,15 +24,15 @@ describe('generatePassword', () => {
   });
 });
 
-describe('Validation helpers', () => {
-  test('validates password length to be minimum of 8', () => {
+describe('Validation helper', () => {
+  test('should check password length to be minimum of 8', () => {
     const validPwdLength = '12345678';
-    const invalidPWDLength = '1234567';
-    expect(hasValidLength(validPwdLength)).toBe(true);
-    expect(hasValidLength(invalidPWDLength)).toBe(false);
+    const invalidPwdLength = '1234567';
+    expect(hasValidPwdLength(validPwdLength)).toBe(true);
+    expect(hasValidPwdLength(invalidPwdLength)).toBe(false);
   });
 
-  test('checks for repetitive characters', () => {
+  test('should check for repetitive characters', () => {
     const validPwdWithoutRepetition = 'abcdef';
     const invalidPwdWithRepetition = 'aaabbb';
     expect(validateNoRepetitiveCharacters(validPwdWithoutRepetition)).toBe(
@@ -43,14 +43,14 @@ describe('Validation helpers', () => {
     );
   });
 
-  test('checks for sequential characters', () => {
-    const validPwdWithoutSequentialCharacters = 'abc';
-    const invalidPwdWithSequentialCharacters = 'abd';
+  test('should check for sequential characters', () => {
+    const validPwdWithoutSequentialCharacters = 'abd';
+    const invalidPwdWithSequentialCharacters = 'abc';
     expect(
       validateNoSequentialCharacters(validPwdWithoutSequentialCharacters)
-    ).toBe(false);
+    ).toBe(true);
     expect(
       validateNoSequentialCharacters(invalidPwdWithSequentialCharacters)
-    ).toBe(true);
+    ).toBe(false);
   });
 });

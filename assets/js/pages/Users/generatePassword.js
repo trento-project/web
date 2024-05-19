@@ -6,28 +6,40 @@ const SPECIAL_CHARACTERS = '~!@#$%^&*()_+={}[]|:;<>,.?/-\'"`';
 const PASSWORD_CHARACTERS =
   DIGITS + UPPERCASE_LETTERS + LOWERCASE_LETTERS + SPECIAL_CHARACTERS;
 
-export const hasValidLength = (password, pwdLength = 8) =>
+export const hasValidPwdLength = (password, pwdLength = 8) =>
   password.length >= pwdLength;
 
 export const validateNoRepetitiveCharacters = (password) =>
   !/(.)\1{2,}/.test(password);
 
+const isAlphanumeric = (char) => /[A-Za-z0-9]/.test(char);
+
 export const validateNoSequentialCharacters = (password) => {
   if (password.length < 3) {
     return true;
   }
-  for (let i = 2; i < password.length; i += 1) {
-    const firstCharCode = password.charCodeAt(i - 2);
-    const secondCharCode = password.charCodeAt(i - 1);
-    const thirdCharCode = password.charCodeAt(i);
 
+  for (let i = 2; i < password.length; i += 1) {
+    const firstChar = password[i - 2];
+    const secondChar = password[i - 1];
+    const thirdChar = password[i];
     if (
-      (secondCharCode === firstCharCode + 1 &&
-        thirdCharCode === secondCharCode + 1) ||
-      (secondCharCode === firstCharCode - 1 &&
-        thirdCharCode === secondCharCode - 1)
+      isAlphanumeric(firstChar) &&
+      isAlphanumeric(secondChar) &&
+      isAlphanumeric(thirdChar)
     ) {
-      return false;
+      const firstCharCode = firstChar.charCodeAt(0);
+      const secondCharCode = secondChar.charCodeAt(0);
+      const thirdCharCode = thirdChar.charCodeAt(0);
+
+      if (
+        (secondCharCode === firstCharCode + 1 &&
+          thirdCharCode === secondCharCode + 1) ||
+        (secondCharCode === firstCharCode - 1 &&
+          thirdCharCode === secondCharCode - 1)
+      ) {
+        return false;
+      }
     }
   }
   return true;
@@ -41,7 +53,7 @@ const generatePassword = (length = 16, characters = PASSWORD_CHARACTERS) =>
 export const generateValidPassword = (length = 16) => {
   const password = generatePassword(length);
   if (
-    hasValidLength(password) &&
+    hasValidPwdLength(password) &&
     validateNoRepetitiveCharacters(password) &&
     validateNoSequentialCharacters(password)
   ) {
