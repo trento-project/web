@@ -6,6 +6,7 @@ import {
 
 context('SAP system details', () => {
   before(() => {
+    cy.loadScenario('healthy-27-node-SAP-cluster');
     cy.visit(`/sap_systems/${selectedSystem.Id}`);
     cy.url().should('include', `/sap_systems/${selectedSystem.Id}`);
   });
