@@ -20,5 +20,17 @@ defmodule TrentoWeb.V1.DiscoveryControllerTest do
                ]
              } = resp
     end
+
+    test "collect action should accept nil payloads",
+         %{conn: conn} do
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> post("/api/v1/collect", %{
+        "discovery_type" => "ha_cluster_discovery",
+        "agent_id" => UUID.uuid4(),
+        "payload" => nil
+      })
+      |> json_response(202)
+    end
   end
 end

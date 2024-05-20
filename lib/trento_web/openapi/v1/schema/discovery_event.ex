@@ -14,6 +14,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.DiscoveryEvent do
       agent_id: %Schema{type: :string, format: :uuid},
       discovery_type: %Schema{type: :string},
       payload: %Schema{
+        nullable: true,
         oneOf: [%Schema{type: :object}, %Schema{type: :array}]
       }
     },
