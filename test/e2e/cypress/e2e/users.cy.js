@@ -166,6 +166,12 @@ describe('Users', () => {
   });
 
   describe('Edit user', () => {
+    it('should not allow saving edited admin user', () => {
+      cy.contains('a', 'admin').click();
+      cy.contains('button', 'Save').should('be.disabled');
+      cy.contains('button', 'Cancel').click();
+    });
+
     it('should redirect to user edition form', () => {
       cy.contains('a', USER.username).click();
       cy.get('h1').should('contain', 'Edit User');
@@ -196,6 +202,15 @@ describe('Users', () => {
       cy.get('div').contains('User edited successfully');
       cy.get('h1').should('contain', 'Users');
       cy.get('p').contains(fullname);
+    });
+  });
+
+  describe('Admin user profile', () => {
+    it('should not allow editing admin user profile', () => {
+      cy.contains('span', 'admin', { exact: true }).click();
+      cy.contains('a', 'Profile').click();
+      cy.contains('button', 'Save').should('be.disabled');
+      cy.contains('button', 'Change Password').should('be.disabled');
     });
   });
 
