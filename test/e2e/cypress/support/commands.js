@@ -276,3 +276,35 @@ Cypress.Commands.add(
     });
   }
 );
+
+Cypress.Commands.add(
+  'saveSUMASettings',
+  ({ url, username, password, ca_cert }) =>
+    apiLogin().then(({ accessToken }) =>
+      cy.request({
+        url: '/api/v1/settings/suma_credentials',
+        method: 'POST',
+        auth: {
+          bearer: accessToken,
+        },
+        body: {
+          url,
+          username,
+          password,
+          ...(ca_cert && { ca_cert }),
+        },
+      })
+    )
+);
+
+Cypress.Commands.add('clearSUMASettings', () =>
+  apiLogin().then(({ accessToken }) =>
+    cy.request({
+      url: '/api/v1/settings/suma_credentials',
+      method: 'DELETE',
+      auth: {
+        bearer: accessToken,
+      },
+    })
+  )
+);

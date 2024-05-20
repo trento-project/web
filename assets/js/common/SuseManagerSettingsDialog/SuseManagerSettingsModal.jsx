@@ -47,7 +47,7 @@ function SuseManagerSettingsModal({
 
   const [url, setUrl] = useState(initialUrl);
   const [username, setUsername] = useState(initialUsername);
-  const [password, setPassword] = useState('');
+  const [password, setPassword] = useState(undefined);
   const [certificate, setCertificate] = useState('');
   const [editingCertificate, setEditingCertificate] = useState(!certUploadDate);
   const [editingPassword, setEditingPassword] = useState(!settingsExist);
@@ -62,6 +62,7 @@ function SuseManagerSettingsModal({
           <Input
             value={url}
             placeholder="Enter a URL"
+            name="suma-url-input"
             error={hasError('url', errors)}
             onChange={({ target: { value } }) => {
               setUrl(value);
@@ -69,7 +70,7 @@ function SuseManagerSettingsModal({
             }}
           />
           {hasError('url', errors) && (
-            <p className="text-red-500 mt-1">
+            <p aria-label="suma-url-input-error" className="text-red-500 mt-1">
               {capitalize(getError('url', errors))}
             </p>
           )}
@@ -84,6 +85,7 @@ function SuseManagerSettingsModal({
           <div className="col-span-4">
             <Textarea
               value={certificate}
+              name="suma-cacert-input"
               placeholder="Starts with -----BEGIN CERTIFICATE-----"
               error={hasError('ca_cert', errors)}
               onChange={({ target: { value } }) => {
@@ -92,7 +94,10 @@ function SuseManagerSettingsModal({
               }}
             />
             {hasError('ca_cert', errors) && (
-              <p className="text-red-500 mt-1">
+              <p
+                aria-label="suma-cacert-input-error"
+                className="text-red-500 mt-1"
+              >
                 {capitalize(getError('ca_cert', errors))}
               </p>
             )}
@@ -107,7 +112,11 @@ function SuseManagerSettingsModal({
               </div>
             </div>
             <div className="flex flex-row grow justify-end">
-              <Button type="danger" onClick={() => setEditingCertificate(true)}>
+              <Button
+                aria-label="remove-suma-cacert"
+                type="danger"
+                onClick={() => setEditingCertificate(true)}
+              >
                 Remove
               </Button>
             </div>
@@ -119,6 +128,7 @@ function SuseManagerSettingsModal({
         <div className="col-span-4">
           <Input
             value={username}
+            name="suma-username-input"
             placeholder="Enter a SUSE Manager username"
             error={hasError('username', errors)}
             onChange={({ target: { value } }) => {
@@ -127,7 +137,10 @@ function SuseManagerSettingsModal({
             }}
           />
           {hasError('username', errors) && (
-            <p className="text-red-500 mt-1">
+            <p
+              aria-label="suma-username-input-error"
+              className="text-red-500 mt-1"
+            >
               {capitalize(getError('username', errors))}
             </p>
           )}
@@ -138,7 +151,8 @@ function SuseManagerSettingsModal({
         {editingPassword ? (
           <div className="col-span-4">
             <Password
-              value={password}
+              initialValue={password}
+              name="suma-password-input"
               placeholder="Enter a SUSE Manager password"
               error={hasError('password', errors)}
               onChange={({ target: { value } }) => {
@@ -147,7 +161,10 @@ function SuseManagerSettingsModal({
               }}
             />
             {hasError('password', errors) && (
-              <p className="text-red-500 mt-1">
+              <p
+                aria-label="suma-password-input-error"
+                className="text-red-500 mt-1"
+              >
                 {capitalize(getError('password', errors))}
               </p>
             )}
@@ -156,6 +173,7 @@ function SuseManagerSettingsModal({
           <div className="col-span-4 border border-gray-200 p-5 rounded-md">
             <p className="inline align-sub leading-10">•••••</p>
             <Button
+              aria-label="remove-suma-password"
               className="float-right"
               type="danger"
               onClick={() => setEditingPassword(true)}

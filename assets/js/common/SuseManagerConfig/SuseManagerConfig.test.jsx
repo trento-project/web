@@ -13,9 +13,7 @@ describe('SuseManagerConfig', () => {
     expect(screen.getByText('https://')).toBeInTheDocument();
     expect(screen.getAllByText('-')).toHaveLength(1);
     expect(screen.getAllByText('.....')).toHaveLength(2);
-    expect(
-      screen.getByRole('button', { name: 'Test Connection' })
-    ).toBeDisabled();
+    expect(screen.getByLabelText('test-suma-connection')).toBeDisabled();
   });
 
   it('renders settings', async () => {
@@ -59,9 +57,7 @@ describe('SuseManagerConfig', () => {
         onTestConnection={onTestConnection}
       />
     );
-    expect(
-      screen.getByRole('button', { name: 'Test Connection' })
-    ).toBeEnabled();
+    expect(screen.getByLabelText('test-suma-connection')).toBeEnabled();
 
     const testConnectionButton = screen.getByText('Test Connection');
     await user.click(testConnectionButton);
