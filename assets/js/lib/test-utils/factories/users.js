@@ -12,7 +12,6 @@ export const abilityFactory = Factory.define(() => ({
 export const userFactory = Factory.define(() => ({
   id: faker.number.int(),
   username: faker.internet.userName(),
-  actions: 'Delete',
   enabled: faker.datatype.boolean(),
   fullname: faker.internet.displayName(),
   email: faker.internet.email(),
