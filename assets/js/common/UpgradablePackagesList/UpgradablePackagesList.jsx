@@ -2,10 +2,11 @@ import React from 'react';
 import classNames from 'classnames';
 import Table from '@common/Table';
 
+const upgradablePackagesDefault = [];
+
 function UpgradablePackagesList({
   hostname,
-  upgradablePackages,
-  relevantPatches,
+  upgradablePackages = upgradablePackagesDefault,
 }) {
   const config = {
     pagination: true,
@@ -14,7 +15,7 @@ function UpgradablePackagesList({
       {
         title: 'Installed Packages',
         key: 'installedPackage',
-        render: (content, _) => <div>{content}</div>,
+        render: (content, _) => <div className="font-bold">{content}</div>,
       },
       {
         title: 'Latest Package',
@@ -23,33 +24,26 @@ function UpgradablePackagesList({
       },
       {
         title: 'Related Patches',
-        key: 'advisory_name',
-        render: (content, _) => <div>{content}</div>,
+        key: 'patches',
+        render: (content, { to_package_id }) => (
+          <div>
+            {content.map(({ advisory }) => (
+              <div key={`${to_package_id}-${advisory}`}>{advisory}</div>
+            ))}
+          </div>
+        ),
       },
     ],
   };
 
-  const relevantPatchesMap = relevantPatches.reduce(
-    (m, p) => m.set(p.id, p),
-    new Map()
-  );
-
   const data = upgradablePackages.map((up) => {
-    const {
-      name,
-      from_version,
-      from_release,
-      to_version,
-      to_release,
-      arch,
-      to_package_id,
-    } = up;
+    const { name, from_version, from_release, to_version, to_release, arch } =
+      up;
 
     return {
       ...up,
       installedPackage: `${name}-${from_version}-${from_release}.${arch}`,
       latestPackage: `${name}-${to_version}-${to_release}.${arch}`,
-      ...relevantPatchesMap.get(to_package_id),
     };
   });
 
