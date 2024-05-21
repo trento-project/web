@@ -90,8 +90,6 @@ describe('Users', () => {
     cy.url().should('include', '/users');
   });
 
-  describe('List users', () => {});
-
   describe('Create user', () => {
     it('should redirect to user creation form', () => {
       cy.contains('button', 'Create User').click();
