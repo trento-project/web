@@ -12,8 +12,6 @@ on:
     types: [start-ci, deploy-demo]
 
 env:
-  ELIXIR_VERSION: 1.15.7
-  OTP_VERSION: 26
   MIX_ENV: test
   NODE_VERSION: "16"
   MANTAINERS: '["cdimonaco", "dottorblaster", "janvhs", "rtorrero", "nelsonkopliku", "arbulu89","jagabomb","emaksy","jamie-suse"]'
@@ -21,13 +19,8 @@ env:
 
 jobs:
   elixir-deps:
-    name: Elixir dependencies (Elixir ${{ matrix.elixir }}, OTP ${{ matrix.otp }})
+    name: Elixir dependencies
     runs-on: ubuntu-20.04
-    strategy:
-      matrix:
-        include:
-          - elixir: 1.15.7
-            otp: 26
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.12.1
@@ -38,10 +31,11 @@ jobs:
         with:
           fetch-depth: 0
       - name: Setup
+        id: setup-elixir
         uses: erlef/setup-beam@v1
         with:
-          elixir-version: ${{ matrix.elixir }}
-          otp-version: ${{ matrix.otp }}
+          version-file: .tool-versions
+          version-type: strict 
         env:
           ImageOS: ubuntu20
       - name: Retrieve Cached Dependencies
@@ -52,7 +46,7 @@ jobs:
             deps
             _build/test
             priv/plts
-          key: ${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles('mix.lock') }}
+          key: ${{ runner.os }}-${{ steps.setup-elixir.outputs.otp-version }}-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}
       - name: Install Dependencies
         if: steps.mix-cache.outputs.cache-hit != 'true'
         run: |
@@ -119,10 +113,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Set up Elixir
+        id: setup-elixir
         uses: erlef/setup-beam@v1
         with:
-          elixir-version: ${{ env.ELIXIR_VERSION }}
-          otp-version: ${{ env.OTP_VERSION }}
+          version-file: .tool-versions
+          version-type: strict
       - name: Retrieve Cached Dependencies
         uses: actions/cache@v4
         id: mix-cache
@@ -131,7 +126,7 @@ jobs:
             deps
             _build/test
             priv/plts
-          key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.lock') }}
+          key: ${{ runner.os }}-${{ steps.setup-elixir.outputs.otp-version }}-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}
       - name: Build docs
         uses: lee-dohm/generate-elixir-docs@v1
       - name: Generate openapi.json
@@ -161,10 +156,11 @@ jobs:
         with:
           fetch-depth: 0
       - name: Setup
+        id: setup-elixir
         uses: erlef/setup-beam@v1
         with:
-          elixir-version: ${{ env.ELIXIR_VERSION }}
-          otp-version: ${{ env.OTP_VERSION }}
+          version-file: .tool-versions
+          version-type: strict
         env:
           ImageOS: ubuntu20
       - name: Setup Node
@@ -179,7 +175,7 @@ jobs:
             deps
             _build/test
             priv/plts
-          key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.lock') }}
+          key: ${{ runner.os }}-${{ steps.setup-elixir.outputs.otp-version }}-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}
       - name: Retrieve NPM Cached Dependencies
         uses: actions/cache@v4
         id: npm-cache
@@ -228,14 +224,9 @@ jobs:
         run: cd assets && npm test
 
   test:
-    name: Test (Elixir ${{ matrix.elixir }}, OTP ${{ matrix.otp }})
+    name: Test
     needs: [elixir-deps, api-bc-check]
     runs-on: ubuntu-20.04
-    strategy:
-      matrix:
-        include:
-          - elixir: 1.15.7
-            otp: 26
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.12.1
@@ -246,10 +237,11 @@ jobs:
         with:
           fetch-depth: 0
       - name: Setup
+        id: setup-elixir
         uses: erlef/setup-beam@v1
         with:
-          elixir-version: ${{ matrix.elixir }}
-          otp-version: ${{ matrix.otp }}
+          version-file: .tool-versions
+          version-type: strict
       - name: Retrieve Cached Dependencies
         uses: actions/cache@v4
         id: mix-cache
@@ -258,7 +250,7 @@ jobs:
             deps
             _build/test
             priv/plts
-          key: ${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles('mix.lock') }}
+          key: ${{ runner.os }}-${{ steps.setup-elixir.outputs.otp-version }}-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}
       - name: Compile
         run: mix compile --warnings-as-errors
       - name: "Docker compose dependencies"
@@ -286,10 +278,11 @@ jobs:
         with:
           fetch-depth: 0
       - name: Setup
+        id: setup-elixir
         uses: erlef/setup-beam@v1
         with:
-          elixir-version: ${{ env.ELIXIR_VERSION }}
-          otp-version: ${{ env.OTP_VERSION }}
+          version-file: .tool-versions
+          version-type: strict
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -302,7 +295,7 @@ jobs:
             deps
             _build/test
             priv/plts
-          key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.lock') }}
+          key: ${{ runner.os }}-${{ steps.setup-elixir.outputs.otp-version }}-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}
       - name: Retrieve NPM Cached Dependencies
         uses: actions/cache@v4
         id: npm-cache
@@ -367,10 +360,11 @@ jobs:
         with:
           fetch-depth: 0
       - name: Setup
+        id: setup-elixir
         uses: erlef/setup-beam@v1
         with:
-          elixir-version: ${{ env.ELIXIR_VERSION }}
-          otp-version: ${{ env.OTP_VERSION }}
+          version-file: .tool-versions
+          version-type: strict
         env:
           ImageOS: ubuntu20
       - name: Setup Node
@@ -385,7 +379,7 @@ jobs:
             deps
             _build/dev
             priv/plts
-          key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.lock') }}
+          key: ${{ runner.os }}-${{ steps.setup-elixir.outputs.otp-version }}-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}
       - name: Retrieve NPM Cached Dependencies
         uses: actions/cache@v4
         id: npm-cache
@@ -472,10 +466,11 @@ jobs:
         with:
           fetch-depth: 0
       - name: Setup
+        id: setup-elixir
         uses: erlef/setup-beam@v1
         with:
-          elixir-version: ${{ env.ELIXIR_VERSION }}
-          otp-version: ${{ env.OTP_VERSION }}
+          version-file: .tool-versions
+          version-type: strict
         env:
           ImageOS: ubuntu20
       - name: Setup Node
@@ -490,7 +485,7 @@ jobs:
             deps
             _build/dev
             priv/plts
-          key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.lock') }}
+          key: ${{ runner.os }}-${{ steps.setup-elixir.outputs.otp-version }}-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}
       - name: Retrieve NPM Cached Dependencies
         uses: actions/cache@v4
         id: npm-cache
@@ -566,17 +561,18 @@ jobs:
         if: github.ref_name != 'main'
         with:
           access_token: ${{ github.token }}
-      - name: Set up Elixir
-        uses: erlef/setup-beam@v1
-        if: github.ref_name != 'main'
-        with:
-          elixir-version: ${{ env.ELIXIR_VERSION }}
-          otp-version: ${{ env.OTP_VERSION }}
       - name: Checkout main branch
         uses: actions/checkout@v4
         if: github.ref_name != 'main'
         with:
           ref: main
+      - name: Set up Elixir
+        id: setup-elixir
+        uses: erlef/setup-beam@v1
+        if: github.ref_name != 'main'
+        with:
+          version-file: .tool-versions
+          version-type: strict
       - name: Retrieve Cached Dependencies - main branch
         uses: actions/cache@v4
         id: mix-cache-main
@@ -586,7 +582,7 @@ jobs:
             deps
             _build/test
             priv/plts
-          key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.lock') }}
+          key: ${{ runner.os }}-${{ steps.setup-elixir.outputs.otp-version }}-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}
       - name: Install missing dependencies
         if: steps.mix-cache-main.outputs.cache-hit != 'true' && github.ref_name != 'main'
         run: |
@@ -611,13 +607,14 @@ jobs:
         uses: styfle/cancel-workflow-action@0.12.1
         with:
           access_token: ${{ github.token }}
-      - name: Set up Elixir
-        uses: erlef/setup-beam@v1
-        with:
-          elixir-version: ${{ env.ELIXIR_VERSION }}
-          otp-version: ${{ env.OTP_VERSION }}
       - name: Checkout current branch
         uses: actions/checkout@v4
+      - name: Set up Elixir
+        id: setup-elixir
+        uses: erlef/setup-beam@v1
+        with:
+          version-file: .tool-versions
+          version-type: strict
       - name: Retrieve Cached Dependencies - current branch
         uses: actions/cache@v4
         id: mix-cache-current
@@ -626,7 +623,7 @@ jobs:
             deps
             _build/test
             priv/plts
-          key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.lock') }}
+          key: ${{ runner.os }}-${{ steps.setup-elixir.outputs.otp-version }}-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}
       - name: Generate current openapi.json
         run: |
           mix openapi.spec.json --start-app=false --spec TrentoWeb.OpenApi.${{ matrix.version }}.ApiSpec /tmp/specs/current-spec.json
@@ -643,7 +640,7 @@ jobs:
             deps
             _build/test
             priv/plts
-          key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.lock') }}
+          key: ${{ runner.os }}-${{ steps.setup-elixir.outputs.otp-version }}-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}
       - name: Generate main openapi.json
         run: |
           mix openapi.spec.json --start-app=false --spec TrentoWeb.OpenApi.${{ matrix.version }}.ApiSpec /tmp/specs/main-spec.json
