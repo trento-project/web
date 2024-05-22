@@ -572,6 +572,37 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
     end
   end
 
+  describe "getting related patches for some packages" do
+    test "should return an aggregated list of packages and related patches" do
+      insert_software_updates_settings()
+
+      [first_package_id, second_package_id, _] =
+        packages_ids = [Faker.UUID.v4(), Faker.UUID.v4(), Faker.UUID.v4()]
+
+      first_patch = [build(:patch_for_package)]
+      second_patch = [build(:patch_for_package)]
+
+      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_patches_for_package, 3, fn
+        ^first_package_id ->
+          {:ok, first_patch}
+
+        ^second_package_id ->
+          {:ok, second_patch}
+
+        _ ->
+          {:error, :some_error}
+      end)
+
+      assert {:ok,
+              [
+                %{package_id: ^first_package_id, patches: ^first_patch},
+                %{package_id: ^second_package_id, patches: ^second_patch},
+                %{package_id: _, patches: []}
+              ]} =
+               SoftwareUpdates.get_packages_patches(packages_ids)
+    end
+  end
+
   describe "testing connection settings" do
     test "should return an error when connection test fails" do
       expect(Trento.SoftwareUpdates.Discovery.Mock, :setup, fn -> {:error, :some_error} end)
