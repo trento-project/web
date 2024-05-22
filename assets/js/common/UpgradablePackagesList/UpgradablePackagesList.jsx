@@ -27,8 +27,10 @@ function UpgradablePackagesList({
         key: 'patches',
         render: (content, { to_package_id }) => (
           <div>
-            {content.map(({ advisory }) => (
-              <div key={`${to_package_id}-${advisory}`}>{advisory}</div>
+            {content.map(({ advisory_name }) => (
+              <div key={`${to_package_id}-${advisory_name}`}>
+                {advisory_name}
+              </div>
             ))}
           </div>
         ),
