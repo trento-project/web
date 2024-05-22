@@ -1,11 +1,14 @@
 # Changelog
 
-## [2.3.0](https://github.com/trento-project/web/tree/2.3.0) (2024-05-13)
+## [2.3.0](https://github.com/trento-project/web/tree/2.3.0) (2024-05-22)
 
 [Full Changelog](https://github.com/trento-project/web/compare/2.2.0...2.3.0)
 
 **Implemented enhancements:**
 
+- Require elixir\>=1.15 in dockerfiles [\#2644](https://github.com/trento-project/web/pull/2644) ([nelsonkopliku](https://github.com/nelsonkopliku))
+- Pin erlang version to 26.2.1 [\#2641](https://github.com/trento-project/web/pull/2641) ([nelsonkopliku](https://github.com/nelsonkopliku))
+- Specify elixir version \>= 1.15 in rpm spec [\#2639](https://github.com/trento-project/web/pull/2639) ([nelsonkopliku](https://github.com/nelsonkopliku))
 - Use plain string certificates [\#2596](https://github.com/trento-project/web/pull/2596) ([nelsonkopliku](https://github.com/nelsonkopliku))
 - Make SUSE Manager section in Host Details page reactive [\#2593](https://github.com/trento-project/web/pull/2593) ([jamie-suse](https://github.com/jamie-suse))
 - Validation of CA certificate inside SUSE Manager settings [\#2581](https://github.com/trento-project/web/pull/2581) ([dottorblaster](https://github.com/dottorblaster))
@@ -161,6 +164,8 @@
 
 **Merged pull requests:**
 
+- Update alerting.md [\#2629](https://github.com/trento-project/web/pull/2629) ([stefanotorresi](https://github.com/stefanotorresi))
+- Release 2.3.0 [\#2621](https://github.com/trento-project/web/pull/2621) ([nelsonkopliku](https://github.com/nelsonkopliku))
 - Bump semver from 7.6.1 to 7.6.2 in /assets [\#2617](https://github.com/trento-project/web/pull/2617) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump chromatic from 11.3.0 to 11.3.2 in /assets [\#2614](https://github.com/trento-project/web/pull/2614) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump semver from 7.6.0 to 7.6.1 in /assets [\#2606](https://github.com/trento-project/web/pull/2606) ([dependabot[bot]](https://github.com/apps/dependabot))
