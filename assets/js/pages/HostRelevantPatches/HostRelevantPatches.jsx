@@ -24,9 +24,9 @@ const filterPatchesBySynopsis = (patches, synopsis) =>
       : advisory_synopsis.trim().startsWith(synopsis.trim())
   );
 
-function HostRelevanPatches({ children, host, onNavigate, patches }) {
+function HostRelevanPatches({ children, hostName, onNavigate, patches }) {
   // FIXME(janvhs): does this re-run when patches changes?
-  const advisoryTypes = ["all"].concat(advisoryTypesFromPatches(patches));
+  const advisoryTypes = ['all'].concat(advisoryTypesFromPatches(patches));
 
   const [displayedAdvisories, setDisplayedAdvisories] = useState('all');
   const [search, setSearch] = useState('');
@@ -45,7 +45,9 @@ function HostRelevanPatches({ children, host, onNavigate, patches }) {
   return (
     <>
       <div className="">
-        <PageHeader className="font-bold">Relevant Patches: {host}</PageHeader>
+        <PageHeader className="font-bold">
+          Relevant Patches: {hostName}
+        </PageHeader>
         <Select
           onChange={setDisplayedAdvisories}
           options={advisoryTypes}
