@@ -6,58 +6,40 @@ const SPECIAL_CHARACTERS = '~!@#$%^&*()_+={}[]|:;<>,.?/-\'"`';
 const PASSWORD_CHARACTERS =
   DIGITS + UPPERCASE_LETTERS + LOWERCASE_LETTERS + SPECIAL_CHARACTERS;
 
-export const hasValidPwdLength = (password, pwdLength = 8) =>
+const MAX_SEQUENTIAL_CHARS = 3;
+const SEQUENCES = [DIGITS, UPPERCASE_LETTERS, LOWERCASE_LETTERS];
+
+const hasValidPwdLength = (password, pwdLength = 8) =>
   password.length >= pwdLength;
 
-export const validateNoRepetitiveCharacters = (password) =>
-  !/(.)\1{2,}/.test(password);
+const hasNoRepetitiveCharacters = (password) => !/(.)\1{2,}/.test(password);
 
-const isAlphanumeric = (char) => /[A-Za-z0-9]/.test(char);
-
-export const validateNoSequentialCharacters = (password) => {
-  if (password.length < 3) {
-    return true;
-  }
-
-  for (let i = 2; i < password.length; i += 1) {
-    const firstChar = password[i - 2];
-    const secondChar = password[i - 1];
-    const thirdChar = password[i];
-    if (
-      isAlphanumeric(firstChar) &&
-      isAlphanumeric(secondChar) &&
-      isAlphanumeric(thirdChar)
-    ) {
-      const firstCharCode = firstChar.charCodeAt(0);
-      const secondCharCode = secondChar.charCodeAt(0);
-      const thirdCharCode = thirdChar.charCodeAt(0);
-
-      if (
-        (secondCharCode === firstCharCode + 1 &&
-          thirdCharCode === secondCharCode + 1) ||
-        (secondCharCode === firstCharCode - 1 &&
-          thirdCharCode === secondCharCode - 1)
-      ) {
-        return false;
-      }
-    }
-  }
-  return true;
-};
+const hasNoSequentialCharacters = (password) =>
+  !SEQUENCES.some((seq) => {
+    const max = seq.length - MAX_SEQUENTIAL_CHARS;
+    return Array.from(Array(max).keys()).some((i) => {
+      const pattern = seq.slice(i, i + MAX_SEQUENTIAL_CHARS + 1);
+      return password.includes(pattern);
+    });
+  });
 
 const generatePassword = (length = 16, characters = PASSWORD_CHARACTERS) =>
   Array.from(crypto.getRandomValues(new Uint32Array(length)))
     .map((char) => characters[char % characters.length])
     .join('');
 
-export const generateValidPassword = (length = 16) => {
-  const password = generatePassword(length);
+export const isValidPassword = (password) => {
   if (
     hasValidPwdLength(password) &&
-    validateNoRepetitiveCharacters(password) &&
-    validateNoSequentialCharacters(password)
+    hasNoRepetitiveCharacters(password) &&
+    hasNoSequentialCharacters(password)
   ) {
-    return password;
+    return true;
   }
-  return generateValidPassword(length);
+  return false;
+};
+
+export const generateValidPassword = (length = 16) => {
+  const password = generatePassword(length);
+  return isValidPassword(password) ? password : generateValidPassword(length);
 };

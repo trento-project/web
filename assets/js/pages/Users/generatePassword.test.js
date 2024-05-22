@@ -1,32 +1,4 @@
-import {
-  hasValidPwdLength,
-  validateNoRepetitiveCharacters,
-  validateNoSequentialCharacters,
-  generateValidPassword,
-} from './generatePassword';
-
-describe('Validation helper', () => {
-  test('should check password length to be minimum of 8', () => {
-    const validPwd = '12345678';
-    const invalidPwd = '1234567';
-    expect(hasValidPwdLength(validPwd)).toBe(true);
-    expect(hasValidPwdLength(invalidPwd)).toBe(false);
-  });
-
-  test('should check for repetitive characters', () => {
-    const validPwd = 'abcdef';
-    const invalidPwd = 'aaabbb';
-    expect(validateNoRepetitiveCharacters(validPwd)).toBe(true);
-    expect(validateNoRepetitiveCharacters(invalidPwd)).toBe(false);
-  });
-
-  test('should check for sequential characters', () => {
-    const validPwd = 'abd';
-    const invalidPwd = 'abc';
-    expect(validateNoSequentialCharacters(validPwd)).toBe(true);
-    expect(validateNoSequentialCharacters(invalidPwd)).toBe(false);
-  });
-});
+import { isValidPassword, generateValidPassword } from './generatePassword';
 
 describe('generateValidPassword', () => {
   test('should generate a password with a default length of 16', () => {
@@ -44,5 +16,35 @@ describe('generateValidPassword', () => {
     const firstPassword = generateValidPassword();
     const secondPassword = generateValidPassword();
     expect(firstPassword).not.toBe(secondPassword);
+  });
+});
+describe('isValidPassword', () => {
+  const passwordList = [
+    {
+      expectedResult: false,
+      password: '1234567',
+    },
+    {
+      expectedResult: false,
+      password: 'aaabbbcccdddeee',
+    },
+    {
+      expectedResult: false,
+      password: 'ABCDabcd1234',
+    },
+    {
+      expectedResult: true,
+      password: 'H^a*~wvFSv88*NRG',
+    },
+  ];
+  it.each(passwordList)(
+    'should return false if the password is invalid',
+    ({ expectedResult, password }) => {
+      expect(isValidPassword(password)).toBe(expectedResult);
+    }
+  );
+  test('should return true if the password is valid', () => {
+    const password = generateValidPassword();
+    expect(isValidPassword(password)).toBe(true);
   });
 });
