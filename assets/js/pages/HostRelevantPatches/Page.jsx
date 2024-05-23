@@ -12,8 +12,6 @@ import { getSoftwareUpdatesPatches } from '@state/selectors/softwareUpdates';
 export default function Page() {
   const { hostID } = useParams();
 
-  // TODO(janvhs): When do I need this?
-  const dispatch = useDispatch();
   const host = useSelector(getHost(hostID));
   const patches = useSelector((state) =>
     getSoftwareUpdatesPatches(state, hostID)

@@ -25,7 +25,6 @@ const filterPatchesBySynopsis = (patches, synopsis) =>
   );
 
 function HostRelevanPatches({ children, hostName, onNavigate, patches }) {
-  // FIXME(janvhs): does this re-run when patches changes?
   const advisoryTypes = ['all'].concat(advisoryTypesFromPatches(patches));
 
   const [displayedAdvisories, setDisplayedAdvisories] = useState('all');
