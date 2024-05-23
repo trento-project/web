@@ -401,6 +401,25 @@ defmodule Trento.UsersTest do
       refute user.password_change_requested_at == nil
     end
 
+    test "update_user_totp/2 updates user totp fields" do
+      user = insert(:user)
+      enabled_at = DateTime.utc_now()
+      secret = Faker.Lorem.word()
+      last_used_at = DateTime.utc_now()
+
+      assert {:ok,
+              %User{
+                totp_enabled_at: ^enabled_at,
+                totp_secret: ^secret,
+                totp_last_used_at: ^last_used_at
+              }} =
+               Users.update_user_totp(user, %{
+                 totp_enabled_at: enabled_at,
+                 totp_secret: secret,
+                 totp_last_used_at: last_used_at
+               })
+    end
+
     test "delete_user/2 does not delete user with id 1" do
       assert {:error, :forbidden} = Users.delete_user(%User{id: 1})
     end

@@ -111,6 +111,14 @@ defmodule Trento.Users do
     do_update(user, updated_attrs)
   end
 
+  def update_user_totp(%User{id: 1}, _), do: {:error, :forbidden}
+
+  def update_user_totp(%User{} = user, attrs) do
+    user
+    |> User.totp_update_changeset(attrs)
+    |> Repo.update()
+  end
+
   def delete_user(%User{id: 1}), do: {:error, :forbidden}
 
   def delete_user(%User{abilities: []} = user) do
