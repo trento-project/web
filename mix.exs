@@ -80,6 +80,7 @@ defmodule Trento.MixProject do
       {:httpoison, "~> 2.0"},
       {:jason, "~> 1.2"},
       {:mox, "~> 1.0", only: :test},
+      {:oban, "~> 2.17"},
       {:open_api_spex, "~> 3.11"},
       {:phoenix, "~> 1.6.2"},
       {:phoenix_ecto, "~> 4.4"},

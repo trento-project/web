@@ -108,3 +108,5 @@ config :trento, Trento.Infrastructure.SoftwareUpdates.MockSuma,
       }
     ]
   }
+
+config :trento, Oban, testing: :inline
