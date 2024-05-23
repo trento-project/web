@@ -435,5 +435,21 @@ defmodule Trento.UsersTest do
       refute deleted_at == nil
       assert [] == Trento.Repo.all(from u in UsersAbilities, where: u.user_id == ^user_id)
     end
+
+    test "reset_user_topt/1 reset user topt values" do
+      user =
+        insert(:user, %{
+          totp_enabled_at: DateTime.utc_now(),
+          totp_secret: Faker.Internet.domain_name(),
+          totp_last_used_at: DateTime.utc_now()
+        })
+
+      assert {:ok,
+              %User{
+                totp_enabled_at: nil,
+                totp_secret: nil,
+                totp_last_used_at: nil
+              }} = Users.reset_user_topt(user)
+    end
   end
 end

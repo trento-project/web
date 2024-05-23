@@ -135,6 +135,22 @@ defmodule Trento.Users do
     end
   end
 
+  def update_user_totp(%User{id: 1}, _), do: {:error, :forbidden}
+
+  def update_user_totp(%User{} = user, attrs) do
+    user
+    |> User.totp_update_changeset(attrs)
+    |> Repo.update()
+  end
+
+  def reset_user_topt(%User{} = user) do
+    update_user_totp(user, %{
+      totp_enabled_at: nil,
+      totp_secret: nil,
+      totp_last_used_at: nil
+    })
+  end
+
   defp maybe_set_locked_at(%{enabled: false} = attrs) do
     Map.put(attrs, :locked_at, DateTime.utc_now())
   end
