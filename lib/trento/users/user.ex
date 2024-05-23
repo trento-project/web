@@ -74,8 +74,7 @@ defmodule Trento.Users.User do
   end
 
   def totp_update_changeset(user, attrs) do
-    user
-    |> cast(attrs, [:totp_enabled_at, :totp_secret, :totp_last_used_at])
+    cast(user, attrs, [:totp_enabled_at, :totp_secret, :totp_last_used_at])
   end
 
   def delete_changeset(
