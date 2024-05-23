@@ -1,36 +1,53 @@
 import { isValidPassword, generateValidPassword } from './generatePassword';
 
 describe('generateValidPassword', () => {
-  test('should generate a password with a default length of 16', () => {
+  it('should generate a password with a default length of 16', () => {
     const password = generateValidPassword();
     expect(password).toHaveLength(16);
   });
 
-  test('should generate a password of specific length', () => {
+  it('should generate a password of specific length', () => {
     const length = 20;
     const password = generateValidPassword(length);
     expect(password).toHaveLength(length);
   });
 
-  test('should generate passwords that vary', () => {
+  it('should generate passwords that vary', () => {
     const firstPassword = generateValidPassword();
     const secondPassword = generateValidPassword();
     expect(firstPassword).not.toBe(secondPassword);
   });
 });
+
 describe('isValidPassword', () => {
   const passwordList = [
     {
       expectedResult: false,
-      password: '1234567',
+      password: 'short',
     },
     {
       expectedResult: false,
-      password: 'aaabbbcccdddeee',
+      password: 'passwordaaa',
     },
     {
       expectedResult: false,
-      password: 'ABCDabcd1234',
+      password: 'passwordBBB',
+    },
+    {
+      expectedResult: false,
+      password: 'password555',
+    },
+    {
+      expectedResult: false,
+      password: 'password1234',
+    },
+    {
+      expectedResult: false,
+      password: 'passwordefgh',
+    },
+    {
+      expectedResult: false,
+      password: 'passwordKLMNO',
     },
     {
       expectedResult: true,
@@ -43,7 +60,7 @@ describe('isValidPassword', () => {
       expect(isValidPassword(password)).toBe(expectedResult);
     }
   );
-  test('should return true if the password is valid', () => {
+  it('should return true if the password is valid', () => {
     const password = generateValidPassword();
     expect(isValidPassword(password)).toBe(true);
   });
