@@ -1,11 +1,9 @@
 import React from 'react';
-import classNames from 'classnames';
 import Table from '@common/Table';
 
 const upgradablePackagesDefault = [];
 
 function UpgradablePackagesList({
-  hostname,
   upgradablePackages = upgradablePackagesDefault,
 }) {
   const config = {
@@ -38,33 +36,21 @@ function UpgradablePackagesList({
     ],
   };
 
-  const data = upgradablePackages.map((up) => {
+  const data = upgradablePackages.map((packageDetails) => {
     const { name, from_version, from_release, to_version, to_release, arch } =
-      up;
+      packageDetails;
 
     return {
-      ...up,
+      ...packageDetails,
       installedPackage: `${name}-${from_version}-${from_release}.${arch}`,
       latestPackage: `${name}-${to_version}-${to_release}.${arch}`,
     };
   });
 
   return (
-    <>
-      <h1 className="text-3xl w-4/5 p-4">
-        <span className="font-medium">Upgradable Packages: </span>
-        <span
-          className={classNames(
-            'font-bold truncate w-60 inline-block align-top'
-          )}
-        >
-          {hostname}
-        </span>
-      </h1>
-      <div className="bg-white rounded-lg shadow">
-        <Table config={config} data={data} />
-      </div>
-    </>
+    <div className="bg-white rounded-lg shadow">
+      <Table config={config} data={data} />
+    </div>
   );
 }
 
