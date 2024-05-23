@@ -2,6 +2,7 @@ defmodule TrentoWeb.SessionController do
   alias OpenApiSpex.Schema
 
   alias Trento.Repo
+  alias Trento.Users
   alias Trento.Users.User
 
   alias TrentoWeb.Plugs.AppJWTAuthPlug
@@ -65,13 +66,16 @@ defmodule TrentoWeb.SessionController do
     ]
 
   def create(conn, credentials) do
-    case Pow.Plug.authenticate_user(conn, credentials) do
+    case authenticate_trento_user(conn, credentials) do
       {:ok, conn} ->
         render(conn, "logged.json",
           token: conn.private[:api_access_token],
           expiration: conn.private[:access_token_expiration],
           refresh_token: conn.private[:api_refresh_token]
         )
+
+      {:error, :totp_code_missing} ->
+        {:error, :totp_code_missing}
 
       {:error, _} ->
         {:error, :invalid_credentials}
@@ -164,4 +168,19 @@ defmodule TrentoWeb.SessionController do
         {:error, :invalid_refresh_token}
     end
   end
+
+  defp authenticate_trento_user(conn, credentials) do
+    with {:ok, %{assigns: %{current_user: logged_user}} = conn} <-
+           Pow.Plug.authenticate_user(conn, credentials),
+         {:ok, _} <- maybe_validate_totp(logged_user, credentials) do
+      {:ok, conn}
+    end
+  end
+
+  defp maybe_validate_totp(%User{totp_enabled_at: nil} = user, _), do: {:ok, user}
+
+  defp maybe_validate_totp(user, %{"totp_code" => totp_code}),
+    do: Users.validate_totp(user, totp_code)
+
+  defp maybe_validate_totp(_, _), do: {:error, :totp_code_missing}
 end
