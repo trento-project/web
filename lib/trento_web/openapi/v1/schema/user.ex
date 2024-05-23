@@ -28,6 +28,28 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
     def schema, do: @schema
   end
 
+  defmodule UserTOTPEnrollmentConfirmPayload do
+    @moduledoc false
+
+    @schema %Schema{
+      title: "UserTOTPEnrollmentConfirmPayload",
+      description: "Trento User TOTP enrollment completed payload",
+      type: :object,
+      additionalProperties: false,
+      properties: %{
+        totp_enabled_at: %OpenApiSpex.Schema{
+          type: :string,
+          format: :"date-time",
+          description: "Date of TOTP enrollment",
+          nullable: false
+        }
+      },
+      required: [:totp_enabled_at]
+    }
+
+    def schema, do: @schema
+  end
+
   defmodule UserTOTPEnrollmentConfirmRequest do
     @moduledoc false
 

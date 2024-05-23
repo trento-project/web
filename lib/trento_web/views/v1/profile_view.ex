@@ -26,4 +26,17 @@ defmodule TrentoWeb.V1.ProfileView do
       updated_at: updated_at
     }
   end
+
+  def render("totp_enrollment_completed.json", %{
+        totp_enabled_at: totp_enabled_at
+      }),
+      do: %{totp_enabled_at: totp_enabled_at}
+
+  def render("totp_enrollment_data.json", %{
+        enrollment_payload: %{
+          secret: secret,
+          secret_qr_encoded: secret_qr_encoded
+        }
+      }),
+      do: %{secret: Base.encode32(secret, padding: false), secret_qr_encoded: secret_qr_encoded}
 end

@@ -135,13 +135,7 @@ defmodule Trento.Users do
     end
   end
 
-  def update_user_totp(%User{id: 1}, _), do: {:error, :forbidden}
-
-  def update_user_totp(%User{} = user, attrs) do
-    user
-    |> User.totp_update_changeset(attrs)
-    |> Repo.update()
-  end
+  def reset_totp(%User{id: 1}), do: {:error, :forbidden}
 
   def reset_totp(%User{} = user) do
     update_user_totp(user, %{
@@ -258,5 +252,13 @@ defmodule Trento.Users do
     |> Repo.update()
   rescue
     Ecto.StaleEntryError -> {:error, :stale_entry}
+  end
+
+  defp update_user_totp(%User{id: 1}, _), do: {:error, :forbidden}
+
+  defp update_user_totp(%User{} = user, attrs) do
+    user
+    |> User.totp_update_changeset(attrs)
+    |> Repo.update()
   end
 end
