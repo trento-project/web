@@ -53,6 +53,9 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
+# Redact sensitive parameters in phoenix logs
+config :phoenix, :filter_parameters, ["password", "totp_code"]
+
 config :trento, Trento.Commanded, adapter: Trento.Commanded
 
 config :trento, Trento.Commanded,
