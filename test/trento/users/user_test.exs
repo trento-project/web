@@ -37,5 +37,15 @@ defmodule Trento.Users.UsersTest do
       changeset = User.changeset(%User{}, %{"password" => "secretafgh"})
       refute changeset.errors[:password]
     end
+
+    test "update_changeset/2 validates totp_enabled_at unique valid value is nil" do
+      changeset = User.update_changeset(%User{}, %{"totp_enabled_at" => nil})
+      refute changeset.errors[:totp_enabled_at]
+
+      changeset = User.update_changeset(%User{}, %{"totp_enabled_at" => DateTime.utc_now()})
+
+      assert changeset.errors[:totp_enabled_at] ==
+               {"is invalid", [validation: :inclusion, enum: [nil]]}
+    end
   end
 end

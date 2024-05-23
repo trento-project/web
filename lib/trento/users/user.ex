@@ -18,6 +18,8 @@ defmodule Trento.Users.User do
     UsersAbilities
   }
 
+  alias Trento.Support.Ecto.EncryptedBinary
+
   defdelegate authorize(action, user, params), to: Trento.Users.Policy
 
   @sequences ["01234567890", "abcdefghijklmnopqrstuvwxyz", "ABCDEFGHIJKLMNOPQRSTUVWXYZ"]
@@ -31,6 +33,9 @@ defmodule Trento.Users.User do
     field :deleted_at, :utc_datetime_usec
     field :locked_at, :utc_datetime_usec
     field :password_change_requested_at, :utc_datetime_usec
+    field :totp_enabled_at, :utc_datetime_usec
+    field :totp_secret, EncryptedBinary, redact: true
+    field :totp_last_used_at, :utc_datetime_usec
     field :lock_version, :integer, default: 1
 
     many_to_many :abilities, Ability, join_through: UsersAbilities, unique: true
@@ -53,7 +58,8 @@ defmodule Trento.Users.User do
     |> pow_extension_changeset(attrs)
     |> validate_password()
     |> custom_fields_changeset(attrs)
-    |> cast(attrs, [:locked_at, :lock_version, :password_change_requested_at])
+    |> cast(attrs, [:locked_at, :lock_version, :password_change_requested_at, :totp_enabled_at])
+    |> validate_inclusion(:totp_enabled_at, [nil])
     |> optimistic_lock(:lock_version)
   end
 
@@ -65,6 +71,10 @@ defmodule Trento.Users.User do
     |> validate_password()
     |> custom_fields_changeset(attrs)
     |> cast(attrs, [:password_change_requested_at])
+  end
+
+  def totp_update_changeset(user, attrs) do
+    cast(user, attrs, [:totp_enabled_at, :totp_secret, :totp_last_used_at])
   end
 
   def delete_changeset(
