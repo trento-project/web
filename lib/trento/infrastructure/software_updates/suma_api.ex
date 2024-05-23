@@ -309,7 +309,13 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
     {:ok, system_id}
   end
 
-  defp extract_system_id({:ok, _}), do: {:error, :system_id_not_found}
+  defp extract_system_id({:ok, response}) do
+    Logger.error(
+      "Could not get system id for host from suma result. Result: #{inspect(response)}"
+    )
+
+    {:error, :system_id_not_found}
+  end
 
   defp extract_system_id({:error, _} = error), do: error
 
