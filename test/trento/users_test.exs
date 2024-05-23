@@ -436,7 +436,7 @@ defmodule Trento.UsersTest do
       assert [] == Trento.Repo.all(from u in UsersAbilities, where: u.user_id == ^user_id)
     end
 
-    test "reset_user_topt/1 reset user topt values" do
+    test "reset_totp/1 reset user topt values" do
       user =
         insert(:user, %{
           totp_enabled_at: DateTime.utc_now(),
@@ -449,7 +449,7 @@ defmodule Trento.UsersTest do
                 totp_enabled_at: nil,
                 totp_secret: nil,
                 totp_last_used_at: nil
-              }} = Users.reset_user_topt(user)
+              }} = Users.reset_totp(user)
     end
 
     test "initiate_totp_enrollment/1 returns error if the totp is already configured for the user" do

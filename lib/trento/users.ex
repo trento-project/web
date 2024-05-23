@@ -143,7 +143,7 @@ defmodule Trento.Users do
     |> Repo.update()
   end
 
-  def reset_user_topt(%User{} = user) do
+  def reset_totp(%User{} = user) do
     update_user_totp(user, %{
       totp_enabled_at: nil,
       totp_secret: nil,
@@ -155,7 +155,7 @@ defmodule Trento.Users do
     result =
       Ecto.Multi.new()
       |> Ecto.Multi.run(:user_without_totp, fn _, _ ->
-        reset_user_topt(user)
+        reset_totp(user)
       end)
       |> Ecto.Multi.run(
         :user_totp_enrolled,
