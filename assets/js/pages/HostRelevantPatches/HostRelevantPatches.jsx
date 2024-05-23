@@ -43,22 +43,28 @@ function HostRelevanPatches({ children, hostName, onNavigate, patches }) {
 
   return (
     <>
-      <div className="">
-        <PageHeader className="font-bold">
-          Relevant Patches: {hostName}
-        </PageHeader>
-        <Select
-          onChange={setDisplayedAdvisories}
-          options={advisoryTypes}
-          optionsName="optionz"
-          value={displayedAdvisories}
-        />
-        <Input
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search by Synopsis"
-          prefix={<EOS_SEARCH size="l" />}
-        />
-        <Button type="primary-white">Download CSV</Button>
+      <div className="flex flex-wrap bg-green-500">
+        <div className="flex w-1/2 overflow-ellipsis break-words">
+          <PageHeader>
+            Relevant Patches: <span className="font-bold">{hostName}</span>
+          </PageHeader>
+        </div>
+        <div className="flex w-1/2 bg-purple-500 gap-2 justify-end">
+          <Select
+            className=""
+            onChange={setDisplayedAdvisories}
+            options={advisoryTypes}
+            optionsName="optionz"
+            value={displayedAdvisories}
+          />
+          <Input
+            className="flex"
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search by Synopsis"
+            prefix={<EOS_SEARCH size="l" />}
+          />
+          <Button type="primary-white">Download CSV</Button>
+        </div>
       </div>
       <PatchList onNavigate={onNavigate} patches={displayedPatches} />
     </>
