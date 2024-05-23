@@ -42,13 +42,13 @@ function HostRelevanPatches({ hostName, onNavigate, patches }) {
 
   return (
     <>
-      <div className="flex flex-wrap bg-green-500">
+      <div className="flex flex-wrap">
         <div className="flex w-1/2 overflow-ellipsis break-words">
           <PageHeader>
             Relevant Patches: <span className="font-bold">{hostName}</span>
           </PageHeader>
         </div>
-        <div className="flex w-1/2 bg-purple-500 gap-2 justify-end">
+        <div className="flex w-1/2 gap-2 justify-end">
           <Select
             className=""
             onChange={setDisplayedAdvisories}
