@@ -34,6 +34,26 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma do
   def get_upgradable_packages(system_id),
     do: handle_request({:get_upgradable_packages, system_id})
 
+  @impl Trento.SoftwareUpdates.Discovery.Gen
+  def get_patches_for_package(package_id),
+    do: handle_request({:get_patches_for_package, package_id})
+
+  @impl Trento.SoftwareUpdates.Discovery.Gen
+  def get_errata_details(advisory_name),
+    do: handle_request({:get_errata_details, advisory_name})
+
+  @impl Trento.SoftwareUpdates.Discovery.Gen
+  def get_affected_systems(advisory_name),
+    do: handle_request({:get_affected_systems, advisory_name})
+
+  @impl Trento.SoftwareUpdates.Discovery.Gen
+  def get_cves(advisory_name),
+    do: handle_request({:get_cves, advisory_name})
+
+  @impl Trento.SoftwareUpdates.Discovery.Gen
+  def get_affected_packages(advisory_name),
+    do: handle_request({:get_affected_packages, advisory_name})
+
   defp handle_request(request) do
     case auth().authenticate() do
       {:ok, new_state} ->
@@ -73,6 +93,41 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma do
          ca_cert: ca_cert
        }),
        do: SumaApi.get_upgradable_packages(url, auth_cookie, system_id, ca_cert)
+
+  defp do_handle({:get_patches_for_package, package_id}, %State{
+         url: url,
+         auth: auth_cookie,
+         ca_cert: ca_cert
+       }),
+       do: SumaApi.get_patches_for_package(url, auth_cookie, package_id, ca_cert)
+
+  defp do_handle({:get_errata_details, advisory_name}, %State{
+         url: url,
+         auth: auth_cookie,
+         ca_cert: ca_cert
+       }),
+       do: SumaApi.get_errata_details(url, auth_cookie, advisory_name, ca_cert)
+
+  defp do_handle({:get_affected_systems, advisory_name}, %State{
+         url: url,
+         auth: auth_cookie,
+         ca_cert: ca_cert
+       }),
+       do: SumaApi.get_affected_systems(url, auth_cookie, advisory_name, ca_cert)
+
+  defp do_handle({:get_cves, advisory_name}, %State{
+         url: url,
+         auth: auth_cookie,
+         ca_cert: ca_cert
+       }),
+       do: SumaApi.get_cves(url, auth_cookie, advisory_name, ca_cert)
+
+  defp do_handle({:get_affected_packages, advisory_name}, %State{
+         url: url,
+         auth: auth_cookie,
+         ca_cert: ca_cert
+       }),
+       do: SumaApi.get_affected_packages(url, auth_cookie, advisory_name, ca_cert)
 
   defp auth, do: Application.fetch_env!(:trento, __MODULE__)[:auth]
 end

@@ -113,6 +113,28 @@ defmodule Trento.SoftwareUpdates do
     end
   end
 
+  @spec get_packages_patches([String.t()]) ::
+          {:ok, [map()]}
+          | {:error,
+             :settings_not_configured
+             | :error_getting_patches
+             | :max_login_retries_reached}
+  def get_packages_patches(package_ids) do
+    with {:ok, _} <- get_settings() do
+      result =
+        package_ids
+        |> ParallelStream.map(fn package_id ->
+          {package_id, Discovery.get_patches_for_package(package_id)}
+        end)
+        |> Enum.map(fn
+          {package_id, {:ok, patches}} -> %{package_id: package_id, patches: patches}
+          {package_id, _} -> %{package_id: package_id, patches: []}
+        end)
+
+      {:ok, result}
+    end
+  end
+
   defp ensure_no_settings_configured do
     case Repo.one(Settings.base_query()) do
       nil ->

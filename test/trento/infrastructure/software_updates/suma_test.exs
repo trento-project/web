@@ -194,11 +194,159 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
       expect(SumaAuthMock, :authenticate, 1, fn -> {:ok, authenticated_state()} end)
 
       expect(SumaApiMock, :get_upgradable_packages, 1, fn _, _, ^system_id, _ ->
-        {:error, %HTTPoison.Response{status_code: 500, body: Jason.encode!(%{})}}
+        {:ok, %HTTPoison.Response{status_code: 500, body: Jason.encode!(%{})}}
       end)
 
       assert {:error, :error_getting_packages} =
                Suma.get_upgradable_packages(system_id)
+    end
+
+    test "should get patches for a single package" do
+      package_id = Faker.UUID.v4()
+
+      %{result: patches} =
+        suma_response_body = %{success: true, result: build_list(10, :patch_for_package)}
+
+      expect(SumaAuthMock, :authenticate, 1, fn -> {:ok, authenticated_state()} end)
+
+      expect(SumaApiMock, :get_patches_for_package, 1, fn _, _, ^package_id, _ ->
+        {:ok, %HTTPoison.Response{status_code: 200, body: Jason.encode!(suma_response_body)}}
+      end)
+
+      assert {:ok, ^patches} =
+               Suma.get_patches_for_package(package_id)
+    end
+
+    test "should return a proper error when getting patches for a specific package fails" do
+      package_id = Faker.UUID.v4()
+
+      expect(SumaAuthMock, :authenticate, 1, fn -> {:ok, authenticated_state()} end)
+
+      expect(SumaApiMock, :get_patches_for_package, 1, fn _, _, ^package_id, _ ->
+        {:ok, %HTTPoison.Response{status_code: 500, body: Jason.encode!(%{})}}
+      end)
+
+      assert {:error, :error_getting_patches} =
+               Suma.get_patches_for_package(package_id)
+    end
+
+    test "should get affected systems for a single patch" do
+      advisory_name = Faker.UUID.v4()
+
+      %{result: affected_systems} =
+        suma_response_body = %{success: true, result: build_list(10, :affected_system)}
+
+      expect(SumaAuthMock, :authenticate, 1, fn -> {:ok, authenticated_state()} end)
+
+      expect(SumaApiMock, :get_affected_systems, 1, fn _, _, ^advisory_name, _ ->
+        {:ok, %HTTPoison.Response{status_code: 200, body: Jason.encode!(suma_response_body)}}
+      end)
+
+      assert {:ok, ^affected_systems} =
+               Suma.get_affected_systems(advisory_name)
+    end
+
+    test "should return a proper error when getting affected systems for a patch fails" do
+      advisory_name = Faker.UUID.v4()
+
+      expect(SumaAuthMock, :authenticate, 1, fn -> {:ok, authenticated_state()} end)
+
+      expect(SumaApiMock, :get_affected_systems, 1, fn _, _, ^advisory_name, _ ->
+        {:ok, %HTTPoison.Response{status_code: 500, body: Jason.encode!(%{})}}
+      end)
+
+      assert {:error, :error_getting_affected_systems} =
+               Suma.get_affected_systems(advisory_name)
+    end
+
+    test "should get covered CVEs for a single patch" do
+      advisory_name = Faker.UUID.v4()
+
+      %{result: cves} =
+        suma_response_body = %{
+          success: true,
+          result: Enum.map(1..10, fn _ -> Faker.UUID.v4() end)
+        }
+
+      expect(SumaAuthMock, :authenticate, 1, fn -> {:ok, authenticated_state()} end)
+
+      expect(SumaApiMock, :get_cves, 1, fn _, _, ^advisory_name, _ ->
+        {:ok, %HTTPoison.Response{status_code: 200, body: Jason.encode!(suma_response_body)}}
+      end)
+
+      assert {:ok, ^cves} =
+               Suma.get_cves(advisory_name)
+    end
+
+    test "should return a proper error when getting CVEs for a patch fails" do
+      advisory_name = Faker.UUID.v4()
+
+      expect(SumaAuthMock, :authenticate, 1, fn -> {:ok, authenticated_state()} end)
+
+      expect(SumaApiMock, :get_cves, 1, fn _, _, ^advisory_name, _ ->
+        {:ok, %HTTPoison.Response{status_code: 500, body: Jason.encode!(%{})}}
+      end)
+
+      assert {:error, :error_getting_cves} =
+               Suma.get_cves(advisory_name)
+    end
+
+    test "should get affected packages for a single patch" do
+      advisory_name = Faker.UUID.v4()
+
+      %{result: affected_packages} =
+        suma_response_body = %{success: true, result: build_list(10, :affected_package)}
+
+      expect(SumaAuthMock, :authenticate, 1, fn -> {:ok, authenticated_state()} end)
+
+      expect(SumaApiMock, :get_affected_packages, 1, fn _, _, ^advisory_name, _ ->
+        {:ok, %HTTPoison.Response{status_code: 200, body: Jason.encode!(suma_response_body)}}
+      end)
+
+      assert {:ok, ^affected_packages} =
+               Suma.get_affected_packages(advisory_name)
+    end
+
+    test "should return a proper error when getting affected packages for a patch fails" do
+      advisory_name = Faker.UUID.v4()
+
+      expect(SumaAuthMock, :authenticate, 1, fn -> {:ok, authenticated_state()} end)
+
+      expect(SumaApiMock, :get_affected_packages, 1, fn _, _, ^advisory_name, _ ->
+        {:ok, %HTTPoison.Response{status_code: 500, body: Jason.encode!(%{})}}
+      end)
+
+      assert {:error, :error_getting_affected_packages} =
+               Suma.get_affected_packages(advisory_name)
+    end
+
+    test "should get details for a single errata" do
+      advisory_name = Faker.UUID.v4()
+
+      %{result: errata_details} =
+        suma_response_body = %{success: true, result: build(:errata_details)}
+
+      expect(SumaAuthMock, :authenticate, 1, fn -> {:ok, authenticated_state()} end)
+
+      expect(SumaApiMock, :get_errata_details, 1, fn _, _, ^advisory_name, _ ->
+        {:ok, %HTTPoison.Response{status_code: 200, body: Jason.encode!(suma_response_body)}}
+      end)
+
+      assert {:ok, ^errata_details} =
+               Suma.get_errata_details(advisory_name)
+    end
+
+    test "should return a proper error when getting errata details" do
+      advisory_name = Faker.UUID.v4()
+
+      expect(SumaAuthMock, :authenticate, 1, fn -> {:ok, authenticated_state()} end)
+
+      expect(SumaApiMock, :get_errata_details, 1, fn _, _, ^advisory_name, _ ->
+        {:ok, %HTTPoison.Response{status_code: 500, body: Jason.encode!(%{})}}
+      end)
+
+      assert {:error, :error_getting_errata_details} =
+               Suma.get_errata_details(advisory_name)
     end
 
     test "should handle expired authentication" do
