@@ -98,6 +98,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
     HTTPoison.request(
       :get,
       "#{base_url}/system/getId",
+      "",
       [{"Content-type", "application/json"}],
       [params: %{name: fully_qualified_domain_name}] ++ request_options(auth, ca_cert)
     )
@@ -108,6 +109,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
     HTTPoison.request(
       :get,
       "#{base_url}/system/getRelevantErrata",
+      "",
       [{"Content-type", "application/json"}],
       [params: %{sid: system_id}] ++ request_options(auth, ca_cert)
     )
@@ -118,6 +120,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
     HTTPoison.request(
       :get,
       "#{base_url}/system/listLatestUpgradablePackages",
+      "",
       [{"Content-type", "application/json"}],
       [params: %{sid: system_id}] ++ request_options(auth, ca_cert)
     )
@@ -128,6 +131,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
     HTTPoison.request(
       :get,
       "#{base_url}/errata/getDetails",
+      "",
       [{"Content-type", "application/json"}],
       [params: %{"advisoryName" => advisory_name}] ++ request_options(auth, ca_cert)
     )
@@ -138,6 +142,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
     HTTPoison.request(
       :get,
       "#{base_url}/errata/listAffectedSystems",
+      "",
       [{"Content-type", "application/json"}],
       [params: %{"advisoryName" => advisory_name}] ++ request_options(auth, ca_cert)
     )
@@ -148,6 +153,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
     HTTPoison.request(
       :get,
       "#{base_url}/errata/listCves",
+      "",
       [{"Content-type", "application/json"}],
       [params: %{"advisoryName" => advisory_name}] ++ request_options(auth, ca_cert)
     )
@@ -158,6 +164,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
     HTTPoison.request(
       :get,
       "#{base_url}/errata/listPackages",
+      "",
       [{"Content-type", "application/json"}],
       [params: %{"advisoryName" => advisory_name}] ++ request_options(auth, ca_cert)
     )
@@ -168,8 +175,9 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
     HTTPoison.request(
       :get,
       "#{base_url}/packages/listProvidingErrata",
+      "",
       [{"Content-type", "application/json"}],
-      [params: %{pid: Integer.parse(package_id)}] ++ request_options(auth, ca_cert)
+      [params: %{pid: String.to_integer(package_id)}] ++ request_options(auth, ca_cert)
     )
   end
 
