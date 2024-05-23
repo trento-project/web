@@ -504,7 +504,7 @@ defmodule Trento.UsersTest do
           totp_last_used_at: nil
         })
 
-      assert {:error, :totp_invalid} == Users.confirm_totp_enrollment(user, "123")
+      assert {:error, :enrollment_totp_not_valid} == Users.confirm_totp_enrollment(user, "123")
     end
 
     test "confirm_totp_enrollment/2 returns the updated user with otp configured if the otp is valid for enrollment secret" do

@@ -190,7 +190,7 @@ defmodule Trento.Users do
       now = DateTime.utc_now()
       update_user_totp(user, %{totp_enabled_at: now, totp_last_used_at: now})
     else
-      {:error, :totp_invalid}
+      {:error, :enrollment_totp_not_valid}
     end
   end
 
