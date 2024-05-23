@@ -1,9 +1,8 @@
 defmodule TrentoWeb.SessionController do
-  alias OpenApiSpex.Schema
-
   alias Trento.Repo
   alias Trento.Users
   alias Trento.Users.User
+  alias TrentoWeb.OpenApi.V1.Schema
 
   alias TrentoWeb.Plugs.AppJWTAuthPlug
 
@@ -22,26 +21,31 @@ defmodule TrentoWeb.SessionController do
     security: [],
     request_body:
       {"User login credentials", "application/json",
-       %Schema{
+       %OpenApiSpex.Schema{
          title: "LoginCredentials",
          type: :object,
+         additionalProperties: false,
          example: %{
            username: "admin",
            password: "thepassword"
          },
          properties: %{
-           username: %Schema{
+           username: %OpenApiSpex.Schema{
              type: :string
            },
-           password: %Schema{
+           password: %OpenApiSpex.Schema{
+             type: :string
+           },
+           totp_code: %OpenApiSpex.Schema{
              type: :string
            }
-         }
+         },
+         required: [:username, :password]
        }},
     responses: [
       ok:
         {"User credentials", "application/json",
-         %Schema{
+         %OpenApiSpex.Schema{
            title: "Credentials",
            type: :object,
            example: %{
@@ -52,17 +56,19 @@ defmodule TrentoWeb.SessionController do
                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTU1NjY5MiwiaWF0IjoxNjcxNTQ5NDkyLCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwOGlxMmkxNnRlbHNycWE4MDAwMWM4IiwibmJmIjoxNjcxNTQ5NDkyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYtTrbVcCEO_UgIkHn6A"
            },
            properties: %{
-             access_token: %Schema{
+             access_token: %OpenApiSpex.Schema{
                type: :string
              },
-             refresh_token: %Schema{
+             refresh_token: %OpenApiSpex.Schema{
                type: :string
              },
-             expires_in: %Schema{
+             expires_in: %OpenApiSpex.Schema{
                type: :integer
              }
            }
-         }}
+         }},
+      unauthorized: Schema.Unauthorized.response(),
+      unprocessable_entity: Schema.UnprocessableEntity.response()
     ]
 
   def create(conn, credentials) do
@@ -89,7 +95,7 @@ defmodule TrentoWeb.SessionController do
     responses: [
       ok:
         {"Trento User", "application/json",
-         %Schema{
+         %OpenApiSpex.Schema{
            title: "TrentoUser",
            type: :object,
            example: %{
@@ -97,10 +103,10 @@ defmodule TrentoWeb.SessionController do
              id: 1
            },
            properties: %{
-             username: %Schema{
+             username: %OpenApiSpex.Schema{
                type: :string
              },
-             id: %Schema{
+             id: %OpenApiSpex.Schema{
                type: :integer
              }
            }
@@ -121,7 +127,7 @@ defmodule TrentoWeb.SessionController do
     security: [],
     request_body:
       {"User login credentials", "application/json",
-       %Schema{
+       %OpenApiSpex.Schema{
          title: "Refresh Credentials",
          type: :object,
          example: %{
@@ -129,7 +135,7 @@ defmodule TrentoWeb.SessionController do
              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTU1NjY5MiwiaWF0IjoxNjcxNTQ5NDkyLCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwOGlxMmkxNnRlbHNycWE4MDAwMWM4IiwibmJmIjoxNjcxNTQ5NDkyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYtTrbVcCEO_UgIkHn6A"
          },
          properties: %{
-           refresh_token: %Schema{
+           refresh_token: %OpenApiSpex.Schema{
              type: :string
            }
          }
@@ -137,7 +143,7 @@ defmodule TrentoWeb.SessionController do
     responses: [
       ok:
         {"User refreshed credentials", "application/json",
-         %Schema{
+         %OpenApiSpex.Schema{
            title: "RefreshedCredentials",
            type: :object,
            example: %{
@@ -146,10 +152,10 @@ defmodule TrentoWeb.SessionController do
                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTU1NjY5MiwiaWF0IjoxNjcxNTQ5NDkyLCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwOGlxMmkxNnRlbHNycWE4MDAwMWM4IiwibmJmIjoxNjcxNTQ5NDkyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYtTrbVcCEO_UgIkHn6A"
            },
            properties: %{
-             access_token: %Schema{
+             access_token: %OpenApiSpex.Schema{
                type: :string
              },
-             expires_in: %Schema{
+             expires_in: %OpenApiSpex.Schema{
                type: :integer
              }
            }
