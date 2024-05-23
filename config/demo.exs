@@ -35,26 +35,7 @@ config :trento, Trento.Charts,
 config :trento, suse_manager_enabled: true
 
 config :trento, Trento.Infrastructure.SoftwareUpdates.MockSuma,
-  relevant_patches: %{
+  relevant_patches_system_ids: [
     # 5870 matches to "vmhdbdev01.l15cqsinwnpu5gfyrf1r5l51fe.ax.internal.cloudapp.net" fqdn
-    5870 => [
-      %{
-        date: "2024-02-27",
-        advisory_name: "SUSE-15-SP4-2024-630",
-        advisory_type: :bugfix,
-        advisory_status: "stable",
-        id: 4182,
-        advisory_synopsis: "Recommended update for cloud-netconfig",
-        update_date: "2024-02-27"
-      },
-      %{
-        date: "2024-02-26",
-        advisory_name: "SUSE-15-SP4-2024-619",
-        advisory_type: :security_advisory,
-        advisory_status: "stable",
-        id: 4174,
-        advisory_synopsis: "important: Security update for java-1_8_0-ibm",
-        update_date: "2024-02-26"
-      }
-    ]
-  }
+    5870
+  ]
