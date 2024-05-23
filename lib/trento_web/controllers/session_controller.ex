@@ -39,8 +39,7 @@ defmodule TrentoWeb.SessionController do
            totp_code: %OpenApiSpex.Schema{
              type: :string
            }
-         },
-         required: [:username, :password]
+         }
        }},
     responses: [
       ok:
