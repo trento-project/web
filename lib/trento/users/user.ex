@@ -59,6 +59,7 @@ defmodule Trento.Users.User do
     |> validate_password()
     |> custom_fields_changeset(attrs)
     |> cast(attrs, [:locked_at, :lock_version, :password_change_requested_at, :totp_enabled_at])
+    |> validate_inclusion(:totp_enabled_at, [nil])
     |> optimistic_lock(:lock_version)
   end
 
