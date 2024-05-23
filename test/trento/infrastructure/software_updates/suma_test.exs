@@ -336,7 +336,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
                Suma.get_errata_details(advisory_name)
     end
 
-    test "should return a proper error when getting " do
+    test "should return a proper error when getting errata details" do
       advisory_name = Faker.UUID.v4()
 
       expect(SumaAuthMock, :authenticate, 1, fn -> {:ok, authenticated_state()} end)
