@@ -907,6 +907,17 @@ defmodule Trento.Factory do
     }
   end
 
+  def patch_for_package_factory do
+    %{
+      advisory: String.downcase(Faker.Pokemon.name()),
+      type: AdvisoryType.values() |> Faker.Util.pick() |> Atom.to_string(),
+      synopsis: Faker.Lorem.sentence(),
+      issue_date: 30 |> Faker.Date.backward() |> Date.to_string(),
+      update_date: 30 |> Faker.Date.backward() |> Date.to_string(),
+      last_modified_date: 30 |> Faker.Date.backward() |> Date.to_string()
+    }
+  end
+
   def software_updates_discovery_result_factory do
     %DiscoveryResult{
       host_id: Faker.UUID.v4(),
@@ -930,6 +941,35 @@ defmodule Trento.Factory do
           "error_getting_packages",
           "max_login_retries_reached"
         ])
+    }
+  end
+
+  def affected_package_factory do
+    package_name = Faker.Pokemon.name()
+
+    %{
+      name: String.downcase(package_name),
+      arch_label: Faker.Util.pick(["x86_64", "i586", "aarch64"]),
+      version: Faker.App.version(),
+      release: "#{RandomElixir.random_between(0, 100)}",
+      epoch: "#{RandomElixir.random_between(0, 50)}"
+    }
+  end
+
+  def affected_system_factory do
+    %{name: Faker.UUID.v4()}
+  end
+
+  def errata_details_factory do
+    %{
+      type: AdvisoryType.values() |> Faker.Util.pick() |> Atom.to_string(),
+      synopsis: Faker.Lorem.sentence(),
+      issue_date: 30 |> Faker.Date.backward() |> Date.to_string(),
+      update_date: 30 |> Faker.Date.backward() |> Date.to_string(),
+      last_modified_date: 30 |> Faker.Date.backward() |> Date.to_string(),
+      advisory_status: "stable",
+      reboot_suggested: Faker.Util.pick([true, false]),
+      restart_suggested: Faker.Util.pick([true, false])
     }
   end
 
