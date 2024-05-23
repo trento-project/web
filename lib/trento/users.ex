@@ -151,6 +151,51 @@ defmodule Trento.Users do
     })
   end
 
+  def initiate_totp_enrollment(%User{totp_enabled_at: nil} = user) do
+    result =
+      Ecto.Multi.new()
+      |> Ecto.Multi.run(:user_without_totp, fn _, _ ->
+        reset_user_topt(user)
+      end)
+      |> Ecto.Multi.run(
+        :user_totp_enrolled,
+        fn _, %{user_without_totp: user} ->
+          update_user_totp(user, %{
+            totp_secret: NimbleTOTP.secret()
+          })
+        end
+      )
+      |> Repo.transaction()
+
+    case result do
+      {:ok, %{user_totp_enrolled: %User{totp_secret: totp_secret, username: username}}} ->
+        {:ok,
+         %{
+           secret: totp_secret,
+           secret_qr_encoded:
+             NimbleTOTP.otpauth_uri("trento:#{username}", totp_secret, issuer: "Trento")
+         }}
+
+      {:error, _, changeset_error, _} ->
+        {:error, changeset_error}
+    end
+  end
+
+  def initiate_totp_enrollment(_), do: {:error, :totp_already_enabled}
+
+  def confirm_totp_enrollment(%User{id: 1}, _), do: {:error, :forbidden}
+
+  def confirm_totp_enrollment(%User{totp_secret: totp_secret, totp_enabled_at: nil} = user, totp) do
+    if NimbleTOTP.valid?(totp_secret, totp) do
+      now = DateTime.utc_now()
+      update_user_totp(user, %{totp_enabled_at: now, totp_last_used_at: now})
+    else
+      {:error, :totp_invalid}
+    end
+  end
+
+  def confirm_totp_enrollment(_, _), do: {:error, :totp_already_enabled}
+
   defp maybe_set_locked_at(%{enabled: false} = attrs) do
     Map.put(attrs, :locked_at, DateTime.utc_now())
   end
