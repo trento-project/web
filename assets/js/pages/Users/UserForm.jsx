@@ -17,7 +17,7 @@ import {
 } from '@lib/forms';
 import { getError } from '@lib/api/validationErrors';
 
-import { generatePassword } from './generatePassword';
+import { generateValidPassword } from './generatePassword';
 
 const USER_ENABLED = 'Enabled';
 
@@ -115,7 +115,7 @@ function UserForm({
   };
 
   const onGeneratePassword = () => {
-    const newPassword = generatePassword();
+    const newPassword = generateValidPassword();
     setPassword(newPassword);
     setConfirmPassword(newPassword);
   };

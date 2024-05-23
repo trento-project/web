@@ -10,8 +10,8 @@ export const PASSWORD_POLICY_TEXT = (
     <br />
     - does not have 3 consecutive repeated numbers or letters (example: 111 or
     aaa)
-    <br />- does not have 3 consecutive sequential numbers or letters (example:
-    123 or abc)
+    <br />- does not have 4 consecutive sequential numbers or letters (example:
+    1234, abcd or ABCD)
   </div>
 );
 export const REQUIRED_FIELD_TEXT = 'Required field';
