@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
 import { EOS_SEARCH } from 'eos-icons-react';
 
 import PageHeader from '@common/PageHeader';
@@ -24,7 +23,7 @@ const filterPatchesBySynopsis = (patches, synopsis) =>
       : advisory_synopsis.trim().startsWith(synopsis.trim())
   );
 
-function HostRelevanPatches({ children, hostName, onNavigate, patches }) {
+function HostRelevanPatches({ hostName, onNavigate, patches }) {
   const advisoryTypes = ['all'].concat(advisoryTypesFromPatches(patches));
 
   const [displayedAdvisories, setDisplayedAdvisories] = useState('all');
