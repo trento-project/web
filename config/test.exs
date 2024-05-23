@@ -85,7 +85,7 @@ config :joken,
   refresh_token_signer: "L0wvcZh3ACQpibVhV/nh5jd/NaZWL4ijZxTxGJMGpacuXIBc4In3YCwXeVM98ygp"
 
 config :trento, Trento.Infrastructure.SoftwareUpdates.MockSuma,
-  relevant_patches_hosts: [
+  relevant_patches_system_ids: [
     # 448 matches to "test" fqdn
     448
   ]

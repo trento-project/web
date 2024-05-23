@@ -18,7 +18,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.MockSuma do
 
   @impl true
   def get_relevant_patches(system_id) do
-    if system_id in mocked_relevant_patches_hosts() do
+    if system_id in mocked_relevant_patches_system_ids() do
       {:ok,
        [
          %{
@@ -150,6 +150,6 @@ defmodule Trento.Infrastructure.SoftwareUpdates.MockSuma do
   @impl true
   def clear, do: :ok
 
-  defp mocked_relevant_patches_hosts,
-    do: Application.fetch_env!(:trento, __MODULE__)[:relevant_patches_hosts]
+  defp mocked_relevant_patches_system_ids,
+    do: Application.fetch_env!(:trento, __MODULE__)[:relevant_patches_system_ids]
 end
