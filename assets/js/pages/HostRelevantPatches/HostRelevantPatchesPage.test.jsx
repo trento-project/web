@@ -6,7 +6,7 @@ import '@testing-library/jest-dom';
 import { renderWithRouter as render } from '@lib/test-utils';
 import { hostFactory, relevantPatchFactory } from '@lib/test-utils/factories';
 
-import HostRelevantPatches from './HostRelevantPatches';
+import HostRelevantPatchesPage from './HostRelevantPatchesPage';
 
 const enhancePachesWithAdvisoryType = (
   patches,
@@ -17,12 +17,12 @@ const enhancePachesWithAdvisoryType = (
     advisory_type: `${prefix}-${index % Math.floor(patches.length / amount)}`,
   }));
 
-describe('HostRelevantPatches', () => {
+describe('HostRelevantPatchesPage', () => {
   describe('renders relevant information correctly', () => {
     it('displays the hostname', () => {
       const host = hostFactory.build();
 
-      render(<HostRelevantPatches hostName={host.hostname} patches={[]} />);
+      render(<HostRelevantPatchesPage hostName={host.hostname} patches={[]} />);
       expect(
         screen.getByRole('heading', {
           name: `Relevant Patches: ${host.hostname}`,
@@ -38,7 +38,7 @@ describe('HostRelevantPatches', () => {
       const user = userEvent.setup();
 
       render(
-        <HostRelevantPatches hostName={host.hostname} patches={patches} />
+        <HostRelevantPatchesPage hostName={host.hostname} patches={patches} />
       );
 
       const advisorySelect = screen.getByRole('button', { name: 'all' });
@@ -57,13 +57,13 @@ describe('HostRelevantPatches', () => {
     });
 
     it('shows an input for searching the patches', () => {
-      render(<HostRelevantPatches patches={[]} />);
+      render(<HostRelevantPatchesPage patches={[]} />);
 
       expect(screen.getByRole('textbox')).toBeVisible();
     });
 
     it('shows a button for downloading the data as CSV', () => {
-      render(<HostRelevantPatches patches={[]} />);
+      render(<HostRelevantPatchesPage patches={[]} />);
 
       expect(
         screen.getByRole('button', { name: 'Download CSV' })
@@ -71,7 +71,7 @@ describe('HostRelevantPatches', () => {
     });
 
     it('shows the relevant patches component', () => {
-      render(<HostRelevantPatches patches={[]} />);
+      render(<HostRelevantPatchesPage patches={[]} />);
 
       expect(
         screen.getByRole('row', { name: 'Type Advisory Synopsis Updated' })
@@ -83,12 +83,13 @@ describe('HostRelevantPatches', () => {
     it('shows all patches by default', () => {
       const patches = relevantPatchFactory.buildList(8);
 
-      render(<HostRelevantPatches patches={patches} />);
+      render(<HostRelevantPatchesPage patches={patches} />);
 
       patches.forEach((patch) => {
         expect(screen.getByText(patch.advisory_synopsis)).toBeVisible();
       });
     });
+
     it('only shows the selected patch kind', async () => {
       const user = userEvent.setup();
 
@@ -101,7 +102,7 @@ describe('HostRelevantPatches', () => {
         (patch) => patch.advisory_type === filteredType
       );
 
-      render(<HostRelevantPatches patches={patches} />);
+      render(<HostRelevantPatchesPage patches={patches} />);
 
       const advisorySelect = screen.getByRole('button', { name: 'all' });
       await user.click(advisorySelect);

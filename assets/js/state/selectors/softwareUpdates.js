@@ -17,7 +17,6 @@ export const getSoftwareUpdatesStats = createSelector(
   })
 );
 
-// TODO(janvhs): Add a test
 export const getSoftwareUpdatesPatches = createSelector(
   [(state, id) => getSoftwareUpdatesForHost(id)(state)],
   (softwareUpdates) => get(softwareUpdates, ['relevant_patches'], [])

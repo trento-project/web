@@ -6,7 +6,7 @@ import BackButton from '@common/BackButton';
 
 import { getHost } from '@state/selectors/host';
 import { getSoftwareUpdatesPatches } from '@state/selectors/softwareUpdates';
-import HostRelevantPatches from './HostRelevantPatches';
+import HostRelevantPatchesPage from './HostRelevantPatchesPage';
 
 export default function Page() {
   const { hostID } = useParams();
@@ -26,7 +26,7 @@ export default function Page() {
   return (
     <>
       <BackButton url={`/hosts/${hostID}`}>Back to Host Details</BackButton>
-      <HostRelevantPatches patches={patches} hostName={hostName} />
+      <HostRelevantPatchesPage patches={patches} hostName={hostName} />
     </>
   );
 }
