@@ -193,6 +193,19 @@ defmodule Trento.Users do
 
   def confirm_totp_enrollment(_, _), do: {:error, :totp_already_enabled}
 
+  def validate_totp(%User{totp_enabled_at: nil} = user, _), do: {:ok, user}
+
+  def validate_totp(
+        %User{totp_secret: totp_secret, totp_last_used_at: totp_last_used_at} = user,
+        totp_code
+      ) do
+    if NimbleTOTP.valid?(totp_secret, totp_code, since: totp_last_used_at) do
+      update_user_totp(user, %{totp_last_used_at: DateTime.utc_now()})
+    else
+      {:error, :totp_invalid}
+    end
+  end
+
   defp maybe_set_locked_at(%{enabled: false} = attrs) do
     Map.put(attrs, :locked_at, DateTime.utc_now())
   end
