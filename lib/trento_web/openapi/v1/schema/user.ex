@@ -6,6 +6,71 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
 
   alias TrentoWeb.OpenApi.V1.Schema.Ability.AbilityCollection
 
+  defmodule UserTOTPEnrollmentPayload do
+    @moduledoc false
+
+    @schema %Schema{
+      title: "UserTOTPEnrollmentPayload",
+      description: "Trento User TOTP enrollment payload",
+      type: :object,
+      additionalProperties: false,
+      properties: %{
+        secret: %Schema{type: :string, description: "TOTP secret", nullable: false},
+        secret_qr_encoded: %Schema{
+          type: :string,
+          description: "TOTP secret qr encoded",
+          nullable: false
+        }
+      },
+      required: [:secret, :secret_qr_encoded]
+    }
+
+    def schema, do: @schema
+  end
+
+  defmodule UserTOTPEnrollmentConfirmPayload do
+    @moduledoc false
+
+    @schema %Schema{
+      title: "UserTOTPEnrollmentConfirmPayload",
+      description: "Trento User TOTP enrollment completed payload",
+      type: :object,
+      additionalProperties: false,
+      properties: %{
+        totp_enabled_at: %OpenApiSpex.Schema{
+          type: :string,
+          format: :"date-time",
+          description: "Date of TOTP enrollment",
+          nullable: false
+        }
+      },
+      required: [:totp_enabled_at]
+    }
+
+    def schema, do: @schema
+  end
+
+  defmodule UserTOTPEnrollmentConfirmRequest do
+    @moduledoc false
+
+    @schema %Schema{
+      title: "UserTOTPEnrollmentConfirmRequest",
+      description: "Trento User totp enrollment confirmation payload",
+      type: :object,
+      additionalProperties: false,
+      properties: %{
+        totp_code: %Schema{
+          type: :string,
+          description: "TOTP generated from enrollment secret",
+          nullable: false
+        }
+      },
+      required: [:totp_code]
+    }
+
+    def schema, do: @schema
+  end
+
   defmodule UserProfile do
     @moduledoc false
 

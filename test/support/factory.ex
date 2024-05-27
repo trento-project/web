@@ -969,7 +969,10 @@ defmodule Trento.Factory do
       username: Faker.Pokemon.name(),
       deleted_at: nil,
       locked_at: nil,
-      password_change_requested_at: nil
+      password_change_requested_at: nil,
+      totp_enabled_at: nil,
+      totp_secret: nil,
+      totp_last_used_at: nil
     }
   end
 

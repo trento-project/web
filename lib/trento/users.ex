@@ -135,6 +135,64 @@ defmodule Trento.Users do
     end
   end
 
+  def reset_totp(%User{id: 1}), do: {:error, :forbidden}
+
+  def reset_totp(%User{} = user) do
+    update_user_totp(user, %{
+      totp_enabled_at: nil,
+      totp_secret: nil,
+      totp_last_used_at: nil
+    })
+  end
+
+  def initiate_totp_enrollment(%User{totp_enabled_at: nil} = user) do
+    result =
+      Ecto.Multi.new()
+      |> Ecto.Multi.run(:reset_totp, fn _, _ ->
+        reset_totp(user)
+      end)
+      |> Ecto.Multi.run(
+        :enroll_totp,
+        fn _, %{reset_totp: user} ->
+          update_user_totp(user, %{
+            totp_secret: NimbleTOTP.secret()
+          })
+        end
+      )
+      |> Repo.transaction()
+
+    case result do
+      {:ok, %{enroll_totp: %User{totp_secret: totp_secret, username: username}}} ->
+        {:ok,
+         %{
+           secret: totp_secret,
+           secret_qr_encoded:
+             NimbleTOTP.otpauth_uri("trento:#{username}", totp_secret, issuer: "Trento")
+         }}
+
+      {:error, _, changeset_error, _} ->
+        {:error, changeset_error}
+    end
+  end
+
+  def initiate_totp_enrollment(_), do: {:error, :totp_already_enabled}
+
+  def confirm_totp_enrollment(%User{id: 1}, _), do: {:error, :forbidden}
+
+  def confirm_totp_enrollment(
+        %User{totp_secret: totp_secret, totp_enabled_at: nil} = user,
+        totp_code
+      ) do
+    if NimbleTOTP.valid?(totp_secret, totp_code) do
+      now = DateTime.utc_now()
+      update_user_totp(user, %{totp_enabled_at: now, totp_last_used_at: now})
+    else
+      {:error, :enrollment_totp_not_valid}
+    end
+  end
+
+  def confirm_totp_enrollment(_, _), do: {:error, :totp_already_enabled}
+
   defp maybe_set_locked_at(%{enabled: false} = attrs) do
     Map.put(attrs, :locked_at, DateTime.utc_now())
   end
@@ -197,5 +255,13 @@ defmodule Trento.Users do
     |> Repo.update()
   rescue
     Ecto.StaleEntryError -> {:error, :stale_entry}
+  end
+
+  defp update_user_totp(%User{id: 1}, _), do: {:error, :forbidden}
+
+  defp update_user_totp(%User{} = user, attrs) do
+    user
+    |> User.totp_update_changeset(attrs)
+    |> Repo.update()
   end
 end

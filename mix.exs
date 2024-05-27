@@ -113,7 +113,8 @@ defmodule Trento.MixProject do
       {:x509, "~> 0.8.8"},
       {:argon2_elixir, "~> 4.0"},
       {:ecto_commons, "~> 0.3.4"},
-      {:bodyguard, "~> 2.4"}
+      {:bodyguard, "~> 2.4"},
+      {:nimble_totp, "~> 1.0"}
     ]
   end
 
