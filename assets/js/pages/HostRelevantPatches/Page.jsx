@@ -1,17 +1,26 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 import BackButton from '@common/BackButton';
 
 import { getHost } from '@state/selectors/host';
 import { getSoftwareUpdatesPatches } from '@state/selectors/softwareUpdates';
+import { fetchSoftwareUpdatesSettings } from '@state/softwareUpdatesSettings';
+import { fetchSoftwareUpdates } from '@state/softwareUpdates';
 import HostRelevantPatchesPage from './HostRelevantPatchesPage';
 
 export default function Page() {
   const { hostID } = useParams();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchSoftwareUpdates(hostID));
+    dispatch(fetchSoftwareUpdatesSettings());
+  }, []);
 
   const host = useSelector(getHost(hostID));
+
   const patches = useSelector((state) =>
     getSoftwareUpdatesPatches(state, hostID)
   );
