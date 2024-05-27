@@ -124,6 +124,13 @@ defmodule TrentoWeb.FallbackController do
     |> render(:"422", reason: "Connection with software updates provider failed.")
   end
 
+  def call(conn, {:error, :totp_code_missing}) do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> put_view(ErrorView)
+    |> render(:"422", reason: "TOTP code missing.")
+  end
+
   def call(conn, {:error, :forbidden}) do
     conn
     |> put_status(:forbidden)

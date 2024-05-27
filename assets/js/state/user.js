@@ -71,7 +71,9 @@ export const USER_PASSWORD_CHANGE_REQUESTED_NOTIFICATION_ID =
 
 export const initiateLogin = createAction(
   PERFORM_LOGIN,
-  ({ username, password }) => ({ payload: { username, password } })
+  ({ username, password, totpCode }) => ({
+    payload: { username, password, totpCode },
+  })
 );
 
 export const { setUserAsLogged, setUser, setAuthError, setAuthInProgress } =

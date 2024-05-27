@@ -104,7 +104,7 @@ describe('user login saga', () => {
     } = profileFactory.build();
 
     axiosMock
-      .onPost('/api/session', { username, password: 'good' })
+      .onPost('/api/session', { username, password: 'good', totp_code: 'code' })
       .reply(200, credentialResponse);
 
     networkClientAxiosMock.onGet('/api/v1/profile').reply(200, {
@@ -122,6 +122,7 @@ describe('user login saga', () => {
       payload: {
         username,
         password: 'good',
+        totpCode: 'code',
       },
     });
 

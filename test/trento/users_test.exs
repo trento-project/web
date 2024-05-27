@@ -524,5 +524,42 @@ defmodule Trento.UsersTest do
       refute totp_last_used_at == nil
       assert totp_enabled_at == totp_last_used_at
     end
+
+    test "validate_totp/2 validates only if totp is enabled" do
+      user = insert(:user, totp_enabled_at: nil)
+
+      assert {:ok, ^user} = Users.validate_totp(user, Faker.StarWars.planet())
+    end
+
+    test "validate_totp/2 validates totp correctly" do
+      secret = NimbleTOTP.secret()
+      totp_code = NimbleTOTP.verification_code(secret)
+
+      user =
+        insert(:user,
+          totp_enabled_at: DateTime.utc_now(),
+          totp_secret: secret,
+          totp_last_used_at: nil
+        )
+
+      assert {:ok, %User{totp_last_used_at: last_used_at}} = Users.validate_totp(user, totp_code)
+      refute last_used_at == nil
+
+      assert {:error, :totp_invalid} = Users.validate_totp(user, Faker.StarWars.planet())
+    end
+
+    test "validate_totp/2 refuses already used totp code" do
+      secret = NimbleTOTP.secret()
+      totp_code = NimbleTOTP.verification_code(secret)
+
+      user =
+        insert(:user,
+          totp_enabled_at: DateTime.utc_now(),
+          totp_secret: secret,
+          totp_last_used_at: DateTime.utc_now()
+        )
+
+      assert {:error, :totp_invalid} = Users.validate_totp(user, totp_code)
+    end
   end
 end

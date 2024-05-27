@@ -21,12 +21,12 @@ import {
 } from '@lib/auth';
 import { networkClient } from '@lib/network';
 
-export function* performLogin({ payload: { username, password } }) {
+export function* performLogin({ payload: { username, password, totpCode } }) {
   yield put(setAuthInProgress());
   try {
     const {
       data: { access_token: accessToken, refresh_token: refreshToken },
-    } = yield call(login, { username, password });
+    } = yield call(login, { username, password, totp_code: totpCode });
     yield call(storeAccessToken, accessToken);
     yield call(storeRefreshToken, refreshToken);
     // Get logged user information
