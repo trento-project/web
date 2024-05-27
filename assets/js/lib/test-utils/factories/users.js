@@ -30,6 +30,7 @@ export const profileFactory = Factory.define(() => ({
   password_change_requested: false,
   created_at: formatISO(faker.date.past()),
   updated_at: formatISO(faker.date.past()),
+  totp_enabled: faker.datatype.boolean(),
 }));
 
 export const adminUser = userFactory.params({

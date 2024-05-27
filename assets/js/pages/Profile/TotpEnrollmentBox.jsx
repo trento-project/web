@@ -32,7 +32,7 @@ export default function TotpEnrollmentBox({
     <div className="container max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 bg-white dark:bg-gray-800 rounded-lg">
       <div className="flex flex-col">
         <div className="text-lg">
-          Your new OTP secret is: <span className="font-bold">{secret}</span>
+          Your new TOTP secret is: <span className="font-bold">{secret}</span>
         </div>
         <div>
           <span> For quick setup, scan this QR code with your TOTP app: </span>
