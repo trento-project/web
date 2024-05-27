@@ -11,7 +11,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
 
     @schema %Schema{
       title: "UserTOTPEnrollmentPayload",
-      description: "Trento User totp enrollment payload",
+      description: "Trento User TOTP enrollment payload",
       type: :object,
       additionalProperties: false,
       properties: %{
@@ -59,13 +59,13 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
       type: :object,
       additionalProperties: false,
       properties: %{
-        totp: %Schema{
+        totp_code: %Schema{
           type: :string,
           description: "TOTP generated from enrollment secret",
           nullable: false
         }
       },
-      required: [:totp]
+      required: [:totp_code]
     }
 
     def schema, do: @schema

@@ -148,12 +148,12 @@ defmodule Trento.Users do
   def initiate_totp_enrollment(%User{totp_enabled_at: nil} = user) do
     result =
       Ecto.Multi.new()
-      |> Ecto.Multi.run(:user_without_totp, fn _, _ ->
+      |> Ecto.Multi.run(:reset_totp, fn _, _ ->
         reset_totp(user)
       end)
       |> Ecto.Multi.run(
-        :user_totp_enrolled,
-        fn _, %{user_without_totp: user} ->
+        :enroll_totp,
+        fn _, %{reset_totp: user} ->
           update_user_totp(user, %{
             totp_secret: NimbleTOTP.secret()
           })
@@ -162,7 +162,7 @@ defmodule Trento.Users do
       |> Repo.transaction()
 
     case result do
-      {:ok, %{user_totp_enrolled: %User{totp_secret: totp_secret, username: username}}} ->
+      {:ok, %{enroll_totp: %User{totp_secret: totp_secret, username: username}}} ->
         {:ok,
          %{
            secret: totp_secret,
@@ -179,8 +179,11 @@ defmodule Trento.Users do
 
   def confirm_totp_enrollment(%User{id: 1}, _), do: {:error, :forbidden}
 
-  def confirm_totp_enrollment(%User{totp_secret: totp_secret, totp_enabled_at: nil} = user, totp) do
-    if NimbleTOTP.valid?(totp_secret, totp) do
+  def confirm_totp_enrollment(
+        %User{totp_secret: totp_secret, totp_enabled_at: nil} = user,
+        totp_code
+      ) do
+    if NimbleTOTP.valid?(totp_secret, totp_code) do
       now = DateTime.utc_now()
       update_user_totp(user, %{totp_enabled_at: now, totp_last_used_at: now})
     else

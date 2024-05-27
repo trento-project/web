@@ -121,7 +121,7 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
     |> assert_schema("Forbidden", api_spec)
   end
 
-  test "should not reset totp when a reset is requested by the default admin", %{
+  test "should not reset totp when a reset is requested for the default admin", %{
     conn: conn,
     api_spec: api_spec
   } do
@@ -165,7 +165,7 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
 
     conn
     |> put_req_header("content-type", "application/json")
-    |> post("/api/v1/profile/totp_enrollment", %{totp: "12345"})
+    |> post("/api/v1/profile/totp_enrollment", %{totp_code: "12345"})
     |> json_response(:forbidden)
     |> assert_schema("Forbidden", api_spec)
   end
@@ -190,7 +190,7 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
 
     conn
     |> put_req_header("content-type", "application/json")
-    |> post("/api/v1/profile/totp_enrollment", %{totp: "12345"})
+    |> post("/api/v1/profile/totp_enrollment", %{totp_code: "12345"})
     |> json_response(:unprocessable_entity)
     |> assert_schema("UnprocessableEntity", api_spec)
   end
@@ -213,7 +213,7 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
 
     conn
     |> put_req_header("content-type", "application/json")
-    |> post("/api/v1/profile/totp_enrollment", %{totp: "12345"})
+    |> post("/api/v1/profile/totp_enrollment", %{totp_code: "12345"})
     |> json_response(:unprocessable_entity)
     |> assert_schema("UnprocessableEntity", api_spec)
   end
@@ -238,7 +238,7 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
 
     conn
     |> put_req_header("content-type", "application/json")
-    |> post("/api/v1/profile/totp_enrollment", %{totp: NimbleTOTP.verification_code(secret)})
+    |> post("/api/v1/profile/totp_enrollment", %{totp_code: NimbleTOTP.verification_code(secret)})
     |> json_response(:ok)
     |> assert_schema("UserTOTPEnrollmentConfirmPayload", api_spec)
   end

@@ -46,7 +46,8 @@ defmodule TrentoWeb.V1.ProfileController do
     summary: "Reset the TOTP configuration for the user",
     tags: ["Platform"],
     responses: [
-      forbidden: Schema.Forbidden.response()
+      forbidden: Schema.Forbidden.response(),
+      no_content: "User TOTP enrollment reset."
     ]
 
   def reset_totp(conn, _) do
@@ -91,10 +92,10 @@ defmodule TrentoWeb.V1.ProfileController do
 
   def confirm_totp_enrollment(%{body_params: body_params} = conn, _) do
     %User{} = user = Pow.Plug.current_user(conn)
-    totp = Map.get(body_params, :totp)
+    totp_code = Map.get(body_params, :totp_code)
 
     with {:ok, %User{totp_enabled_at: totp_enabled_at}} <-
-           Users.confirm_totp_enrollment(user, totp) do
+           Users.confirm_totp_enrollment(user, totp_code) do
       render(conn, "totp_enrollment_completed.json", %{totp_enabled_at: totp_enabled_at})
     end
   end
