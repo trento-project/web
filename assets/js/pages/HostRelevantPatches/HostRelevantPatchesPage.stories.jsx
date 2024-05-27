@@ -4,13 +4,13 @@ import { action } from '@storybook/addon-actions';
 import { relevantPatchFactory } from '@lib/test-utils/factories/relevantPatches';
 import { hostFactory } from '@lib/test-utils/factories/hosts';
 
-import HostRelevanPatches from './HostRelevantPatches';
+import HostRelevanPatchesPage from './HostRelevantPatchesPage';
 
 export default {
-  title: 'Layouts/HostRelevanPatches',
-  components: HostRelevanPatches,
+  title: 'Layouts/HostRelevanPatchesPage',
+  components: HostRelevanPatchesPage,
   argTypes: {},
-  render: (args) => <HostRelevanPatches {...args} />,
+  render: (args) => <HostRelevanPatchesPage {...args} />,
 };
 
 export const HasPatches = {
