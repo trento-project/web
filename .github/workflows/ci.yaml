@@ -752,6 +752,10 @@ jobs:
         )
     env:
       IMAGE_REPOSITORY: ghcr.io/${{ github.repository_owner }}
+      TRENTO_DOMAIN: ${{ secrets.TRENTO_DEMO_IP }}
+      TRENTO_NAMESPACE: ${{ secrets.TRENTO_NAMESPACE }}
+      TRENTO_ADMIN_EMAIL: ${{ secrets.TRENTO_ADMIN_EMAIL }}
+      TRENTO_INGRESS_CLASS: ${{ secrets.TRENTO_INGRESS_CLASS }}
     needs: [build-demo-img, test-e2e]
     steps:
       - name: Start a local k8s cluster
@@ -773,6 +777,11 @@ jobs:
           rm -rf helm-charts-rolling | true
           wget https://github.com/trento-project/helm-charts/archive/refs/tags/rolling.zip
           unzip rolling.zip
+      - name: Prepare valid cluster-issuer and certificate (for cert-manager)
+        run: |
+          envsubst < helm-charts-rolling/hack/cert-manager/certificate.tpl.yaml > helm-charts-rolling/hack/cert-manager/certificate.yaml
+          envsubst < helm-charts-rolling/hack/cert-manager/cluster-issuer.tpl.yaml > helm-charts-rolling/hack/cert-manager/cluster-issuer.yaml
+          envsubst < helm-charts-rolling/hack/cert-manager/override-values.tpl.yaml > helm-charts-rolling/hack/cert-manager/override-values.yaml
       - name: Apply cluster-issuer and certificate (for cert-manager)
         run: |
           kubectl apply -f helm-charts-rolling/hack/cert-manager/cluster-issuer.yaml
