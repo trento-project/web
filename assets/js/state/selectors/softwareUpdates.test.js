@@ -3,6 +3,7 @@ import {
   getSoftwareUpdates,
   getSoftwareUpdatesStats,
   getSoftwareUpdatesLoading,
+  getSoftwareUpdatesPatches,
 } from './softwareUpdates';
 
 describe('Software Updates selector', () => {
@@ -126,5 +127,11 @@ describe('Software Updates selector', () => {
       softwareUpdates: { softwareUpdates: { [hostID]: { loading: true } } },
     };
     expect(getSoftwareUpdatesLoading(newState, hostID)).toEqual(true);
+  });
+
+  it('should return the relevant patches', () => {
+    expect(getSoftwareUpdatesPatches(state, hostID)).toEqual(
+      softwareUpdates[hostID].relevant_patches
+    );
   });
 });
