@@ -435,5 +435,94 @@ defmodule Trento.UsersTest do
       refute deleted_at == nil
       assert [] == Trento.Repo.all(from u in UsersAbilities, where: u.user_id == ^user_id)
     end
+
+    test "reset_totp/1 reset user topt values" do
+      user =
+        insert(:user, %{
+          totp_enabled_at: DateTime.utc_now(),
+          totp_secret: Faker.Internet.domain_name(),
+          totp_last_used_at: DateTime.utc_now()
+        })
+
+      assert {:ok,
+              %User{
+                totp_enabled_at: nil,
+                totp_secret: nil,
+                totp_last_used_at: nil
+              }} = Users.reset_totp(user)
+    end
+
+    test "initiate_totp_enrollment/1 returns error if the totp is already configured for the user" do
+      user =
+        insert(:user, %{
+          totp_enabled_at: DateTime.utc_now(),
+          totp_secret: Faker.Internet.domain_name(),
+          totp_last_used_at: DateTime.utc_now()
+        })
+
+      assert {:error, :totp_already_enabled} == Users.initiate_totp_enrollment(user)
+    end
+
+    test "initiate_totp_enrollment/1 could not initiate enrollment for the default admin" do
+      assert {:error, :forbidden} == Users.initiate_totp_enrollment(%User{id: 1})
+    end
+
+    test "initiate_totp_enrollment/1 returns a totp secret for enrollment" do
+      user =
+        insert(:user)
+
+      {:ok, %{secret: secret, secret_qr_encoded: secret_qr_encoded}} =
+        Users.initiate_totp_enrollment(user)
+
+      assert {:ok, %User{totp_secret: totp_secret, totp_enabled_at: nil, totp_last_used_at: nil}} =
+               Users.get_user(user.id)
+
+      assert secret == totp_secret
+      refute secret_qr_encoded == nil
+    end
+
+    test "confirm_totp_enrollment/2 returns error if the user has already the totp enabled" do
+      user =
+        insert(:user, %{
+          totp_enabled_at: DateTime.utc_now(),
+          totp_secret: Faker.Internet.domain_name(),
+          totp_last_used_at: DateTime.utc_now()
+        })
+
+      assert {:error, :totp_already_enabled} == Users.confirm_totp_enrollment(user, "123")
+    end
+
+    test "confirm_totp_enrollment/2 returns error if the user is the default admin" do
+      assert {:error, :forbidden} == Users.confirm_totp_enrollment(%User{id: 1}, "123")
+    end
+
+    test "confirm_totp_enrollment/2 returns error if the totp is not valid for the secret" do
+      user =
+        insert(:user, %{
+          totp_enabled_at: nil,
+          totp_secret: Faker.Internet.domain_name(),
+          totp_last_used_at: nil
+        })
+
+      assert {:error, :enrollment_totp_not_valid} == Users.confirm_totp_enrollment(user, "123")
+    end
+
+    test "confirm_totp_enrollment/2 returns the updated user with otp configured if the otp is valid for enrollment secret" do
+      secret = NimbleTOTP.secret()
+
+      user =
+        insert(:user, %{
+          totp_enabled_at: nil,
+          totp_secret: secret,
+          totp_last_used_at: nil
+        })
+
+      assert {:ok, %User{totp_enabled_at: totp_enabled_at, totp_last_used_at: totp_last_used_at}} =
+               Users.confirm_totp_enrollment(user, NimbleTOTP.verification_code(secret))
+
+      refute totp_enabled_at == nil
+      refute totp_last_used_at == nil
+      assert totp_enabled_at == totp_last_used_at
+    end
   end
 end

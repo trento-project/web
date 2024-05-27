@@ -151,6 +151,9 @@ defmodule TrentoWeb.Router do
 
       get "/profile", ProfileController, :show
       patch "/profile", ProfileController, :update
+      delete "/profile/totp_enrollment", ProfileController, :reset_totp
+      get "/profile/totp_enrollment", ProfileController, :get_totp_enrollment_data
+      post "/profile/totp_enrollment", ProfileController, :confirm_totp_enrollment
 
       get "/abilities", AbilityController, :index
 

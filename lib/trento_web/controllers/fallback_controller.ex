@@ -145,6 +145,20 @@ defmodule TrentoWeb.FallbackController do
     |> render(:"428")
   end
 
+  def call(conn, {:error, :totp_already_enabled}) do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> put_view(ErrorView)
+    |> render(:"422", reason: "TOTP already enabled, could not process the enrollment procedure")
+  end
+
+  def call(conn, {:error, :enrollment_totp_not_valid}) do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> put_view(ErrorView)
+    |> render(:"422", reason: "TOTP code not valid for the enrollment procedure.")
+  end
+
   def call(conn, {:error, [error | _]}), do: call(conn, {:error, error})
 
   def call(conn, {:error, _}) do
