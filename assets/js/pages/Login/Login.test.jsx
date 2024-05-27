@@ -48,7 +48,7 @@ describe('Login component', () => {
 
     ['username', 'password'].forEach((id) => {
       const element = screen.getByTestId(`login-${id}`);
-      expect(element).toHaveClass('border-red-300');
+      expect(element).toHaveClass('border-red-500');
     });
   });
 
