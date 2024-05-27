@@ -9,12 +9,14 @@ defmodule TrentoWeb.SessionControllerTest do
   alias TrentoWeb.Auth.RefreshToken
   alias TrentoWeb.OpenApi.V1.ApiSpec
 
+  alias Trento.Users.User
+
   setup [:set_mox_from_context, :verify_on_exit!]
 
   setup do
     user =
-      %Trento.Users.User{}
-      |> Trento.Users.User.changeset(%{
+      %User{}
+      |> User.changeset(%{
         username: "admin",
         password: "testpassword",
         confirm_password: "testpassword",
@@ -319,7 +321,10 @@ defmodule TrentoWeb.SessionControllerTest do
       conn: conn,
       user: user
     } do
-      {:ok, _} = Trento.Users.update_user_totp(user, %{totp_enabled_at: DateTime.utc_now()})
+      {:ok, _} =
+        user
+        |> User.totp_update_changeset(%{totp_enabled_at: DateTime.utc_now()})
+        |> Trento.Repo.update()
 
       expect(
         Joken.CurrentTime.Mock,
@@ -355,11 +360,13 @@ defmodule TrentoWeb.SessionControllerTest do
       totp_code = NimbleTOTP.verification_code(secret)
 
       {:ok, _} =
-        Trento.Users.update_user_totp(user, %{
+        user
+        |> User.totp_update_changeset(%{
           totp_enabled_at: DateTime.utc_now(),
           totp_secret: secret,
           totp_last_used_at: nil
         })
+        |> Trento.Repo.update()
 
       expect(
         Joken.CurrentTime.Mock,
