@@ -11,6 +11,7 @@ export const initialState = {
   password_change_requested: undefined,
   created_at: undefined,
   updated_at: undefined,
+  totp_enabled_at: undefined,
   authError: null,
   authInProgress: false,
 };
@@ -42,6 +43,7 @@ export const userSlice = createSlice({
           created_at,
           fullname,
           updated_at,
+          totp_enabled_at,
           abilities,
           password_change_requested,
         },
@@ -53,6 +55,7 @@ export const userSlice = createSlice({
       state.created_at = created_at;
       state.fullname = fullname;
       state.updated_at = updated_at;
+      state.totp_enabled_at = totp_enabled_at;
       state.abilities = abilities;
       state.password_change_requested = password_change_requested;
     },
