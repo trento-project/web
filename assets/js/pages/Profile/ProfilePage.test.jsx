@@ -257,7 +257,7 @@ describe('ProfilePage', () => {
     });
 
     expect(toast.error).toHaveBeenCalledWith(
-      'Error retriving totp enrollment information, please refresh profile.'
+      'Error retrieving totp enrollment information, please refresh profile.'
     );
   });
 

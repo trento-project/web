@@ -96,7 +96,7 @@ function ProfilePage() {
       })
       .catch(() =>
         toast.error(
-          'Error retriving totp enrollment information, please refresh profile.'
+          'Error retrieving totp enrollment information, please refresh profile.'
         )
       )
       .finally(() => setSaving(false));
