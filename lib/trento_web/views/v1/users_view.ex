@@ -21,7 +21,8 @@ defmodule TrentoWeb.V1.UsersView do
           locked_at: locked_at,
           password_change_requested_at: password_change_requested_at,
           inserted_at: created_at,
-          updated_at: updated_at
+          updated_at: updated_at,
+          totp_enabled_at: totp_enabled_at
         }
       }) do
     %{
@@ -33,7 +34,8 @@ defmodule TrentoWeb.V1.UsersView do
       enabled: locked_at == nil,
       password_change_requested_at: password_change_requested_at,
       created_at: created_at,
-      updated_at: updated_at
+      updated_at: updated_at,
+      totp_enabled_at: totp_enabled_at
     }
   end
 end

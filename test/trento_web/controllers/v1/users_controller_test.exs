@@ -330,7 +330,9 @@ defmodule TrentoWeb.V1.UsersControllerTest do
 
     test "should update the user with abilities", %{conn: conn, api_spec: api_spec} do
       %{id: id, name: name, resource: resource, label: label} = insert(:ability)
-      %{id: user_id, lock_version: lock_version} = insert(:user)
+
+      %{id: user_id, lock_version: lock_version} =
+        insert(:user, totp_enabled_at: DateTime.utc_now())
 
       valid_params = %{
         fullname: Faker.Person.name(),
@@ -338,7 +340,8 @@ defmodule TrentoWeb.V1.UsersControllerTest do
         enabled: false,
         password: "testpassword89",
         password_confirmation: "testpassword89",
-        abilities: [%{id: id, name: name, resource: resource, label: label}]
+        abilities: [%{id: id, name: name, resource: resource, label: label}],
+        totp_enabled: false
       }
 
       conn
