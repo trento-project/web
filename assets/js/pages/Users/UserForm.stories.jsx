@@ -89,7 +89,7 @@ export default {
       control: {
         type: 'text',
       },
-    },    
+    },
     editing: {
       description: 'User is being edited',
       control: {

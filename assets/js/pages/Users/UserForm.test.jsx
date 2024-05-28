@@ -235,7 +235,7 @@ describe('UserForm', () => {
   it('should allow to disable TOTP correctly', async () => {
     const user = userEvent.setup();
     const mockOnSave = jest.fn();
-  
+
     const {
       fullname,
       email,
@@ -244,7 +244,7 @@ describe('UserForm', () => {
       updated_at: updatedAt,
       totp_enabled_at: totpEnabledAt,
     } = userFactory.build();
-  
+
     await act(async () => {
       render(
         <UserForm
@@ -282,20 +282,20 @@ describe('UserForm', () => {
       created_at: createdAt,
       updated_at: updatedAt,
       totp_enabled_at: totpEnabledAt,
-    } = userFactory.build({totp_enabled_at: null});
-  
-      render(
-        <UserForm
-          fullName={fullname}
-          emailAddress={email}
-          username={username}
-          createdAt={createdAt}
-          updatedAt={updatedAt}
-          totpEnabledAt={totpEnabledAt}
-          editing
-        />
-      );
-  
+    } = userFactory.build({ totp_enabled_at: null });
+
+    render(
+      <UserForm
+        fullName={fullname}
+        emailAddress={email}
+        username={username}
+        createdAt={createdAt}
+        updatedAt={updatedAt}
+        totpEnabledAt={totpEnabledAt}
+        editing
+      />
+    );
+
     const totpSelect = screen.getByText('Disabled');
     expect(totpSelect).toBeDisabled();
   });

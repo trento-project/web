@@ -245,7 +245,13 @@ function UserForm({
               }}
             />
           </div>
-          <Label className="col-start-1 col-span-1" htmlFor="totp" aria-label="totp">TOTP</Label>
+          <Label
+            className="col-start-1 col-span-1"
+            htmlFor="totp"
+            aria-label="totp"
+          >
+            TOTP
+          </Label>
           <div className="col-start-2 col-span-3">
             <Select
               optionsName="totp"
