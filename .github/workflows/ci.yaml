@@ -13,7 +13,7 @@ on:
 
 env:
   MIX_ENV: test
-  NODE_VERSION: "16"
+  NODE_VERSION: "20"
   MANTAINERS: '["cdimonaco", "dottorblaster", "janvhs", "rtorrero", "nelsonkopliku", "arbulu89","jagabomb","emaksy","jamie-suse"]'
   RG_TEST_LABEL: regression
 
