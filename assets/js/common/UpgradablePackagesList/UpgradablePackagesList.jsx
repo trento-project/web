@@ -25,11 +25,10 @@ function UpgradablePackagesList({
         key: 'patches',
         render: (content, { to_package_id }) => (
           <div>
-            {content.map(({ advisory_name }) => (
-              <div key={`${to_package_id}-${advisory_name}`}>
-                {advisory_name}
-              </div>
-            ))}
+            {content &&
+              content.map(({ advisory }) => (
+                <div key={`${to_package_id}-${advisory}`}>{advisory}</div>
+              ))}
           </div>
         ),
       },
@@ -47,11 +46,7 @@ function UpgradablePackagesList({
     };
   });
 
-  return (
-    <div className="bg-white rounded-lg shadow">
-      <Table config={config} data={data} />
-    </div>
-  );
+  return <Table config={config} data={data} />;
 }
 
 export default UpgradablePackagesList;

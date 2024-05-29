@@ -1,10 +1,13 @@
 import { faker } from '@faker-js/faker';
 
+import { patchForPackageFactory } from '@lib/test-utils/factories';
+
 import softwareUpdatesReducer, {
   startLoadingSoftwareUpdates,
   setSoftwareUpdates,
   setEmptySoftwareUpdates,
   setSoftwareUpdatesErrors,
+  setPatchesForPackages,
 } from './softwareUpdates';
 
 describe('SoftwareUpdates reducer', () => {
@@ -230,5 +233,79 @@ describe('SoftwareUpdates reducer', () => {
         [host1]: { ...initialState[host1], loading: false, errors },
       },
     });
+  });
+
+  it('should set patches that cover a specific package upgrade', () => {
+    const host1 = faker.string.uuid();
+
+    const initialState = {
+      softwareUpdates: {
+        [host1]: {
+          loading: false,
+          errors: [],
+          relevant_patches: [
+            {
+              date: '2024-03-11',
+              advisory_name: 'SUSE-15-SP4-2024-833',
+              advisory_type: 'security_advisory',
+              advisory_status: 'stable',
+              id: 4244,
+              advisory_synopsis: 'moderate: Security update for openssl-1_1',
+              update_date: '2024-03-11',
+            },
+          ],
+          upgradable_packages: [
+            {
+              from_epoch: ' ',
+              to_release: '150100.8.33.1',
+              name: 'saptune',
+              from_release: '150400.3.208.1',
+              to_epoch: ' ',
+              arch: 'x86_64',
+              to_package_id: 39942,
+              from_version: '3.1.0',
+              to_version: '3.1.2',
+              from_arch: 'x86_64',
+              to_arch: 'x86_64',
+            },
+          ],
+        },
+      },
+    };
+
+    const patch = patchForPackageFactory.build();
+    const action = setPatchesForPackages({
+      hostID: host1,
+      patches: [{ package_id: 39942, patches: [patch] }],
+    });
+
+    const {
+      softwareUpdates: {
+        [host1]: {
+          upgradable_packages: [{ patches }],
+        },
+      },
+    } = softwareUpdatesReducer(initialState, action);
+
+    expect(patches).toHaveLength(1);
+    expect(patches[0]).toEqual(patch);
+  });
+
+  it('should not apply any patch if the host does not exist', () => {
+    const host1 = faker.string.uuid();
+
+    const initialState = {
+      softwareUpdates: {},
+    };
+
+    const patch = patchForPackageFactory.build();
+    const action = setPatchesForPackages({
+      hostID: host1,
+      patches: [{ package_id: 39942, patches: [patch] }],
+    });
+
+    const { softwareUpdates } = softwareUpdatesReducer(initialState, action);
+
+    expect(softwareUpdates).toEqual({});
   });
 });

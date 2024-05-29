@@ -22,6 +22,7 @@ import Home from '@pages/Home';
 import HostDetailsPage from '@pages/HostDetailsPage';
 import HostSettingsPage from '@pages/HostSettingsPage';
 import HostRelevanPatchesPage from '@pages/HostRelevantPatches';
+import UpgradablePackagesPage from '@pages/UpgradablePackagesPage';
 import HostsList from '@pages/HostsList';
 import Layout from '@pages/Layout';
 import Login from '@pages/Login';
@@ -73,6 +74,10 @@ function App() {
                   <Route
                     path="hosts/:hostID/patches"
                     element={<HostRelevanPatchesPage />}
+                  />
+                  <Route
+                    path="hosts/:hostID/packages"
+                    element={<UpgradablePackagesPage />}
                   />
                   <Route path="clusters" element={<ClustersList />} />
                   <Route
