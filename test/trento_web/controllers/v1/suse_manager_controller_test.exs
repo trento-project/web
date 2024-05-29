@@ -2,6 +2,7 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
   use TrentoWeb.ConnCase, async: true
   use Trento.SoftwareUpdates.DiscoveryCase
 
+  import Mox
   import OpenApiSpex.TestAssertions
   import Trento.Factory
 
@@ -9,6 +10,8 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
 
   alias TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates.{
     AvailableSoftwareUpdatesResponse,
+    PatchesForPackage,
+    PatchesForPackagesResponse,
     RelevantPatch,
     UpgradablePackage
   }
@@ -90,6 +93,50 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
       |> get("/api/v1/hosts/#{host_id}/software_updates")
       |> json_response(:not_found)
       |> assert_schema("NotFound", api_spec)
+    end
+  end
+
+  describe "retrieve upgradable packages related patches" do
+    test "should return relevant patches grouped by package id", %{conn: conn, api_spec: api_spec} do
+      insert_software_updates_settings()
+
+      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_patches_for_package, 3, fn _ ->
+        {:ok, build_list(10, :patch_for_package)}
+      end)
+
+      %PatchesForPackagesResponse{
+        patches: [
+          %PatchesForPackage{package_id: _, patches: _},
+          %PatchesForPackage{package_id: _, patches: _}
+        ]
+      } =
+        conn
+        |> get(
+          "/api/v1/software_updates/packages?package_ids[]=#{Faker.UUID.v4()}&package_ids[]=#{Faker.UUID.v4()}"
+        )
+        |> json_response(:ok)
+        |> assert_schema("PatchesForPackagesResponse", api_spec)
+    end
+
+    test "should return an empty list if every call errors", %{conn: conn, api_spec: api_spec} do
+      insert_software_updates_settings()
+
+      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_patches_for_package, 3, fn _ ->
+        {:error, :error_getting_patches}
+      end)
+
+      %PatchesForPackagesResponse{
+        patches: [
+          %PatchesForPackage{package_id: _, patches: []},
+          %PatchesForPackage{package_id: _, patches: []}
+        ]
+      } =
+        conn
+        |> get(
+          "/api/v1/software_updates/packages?package_ids[]=#{Faker.UUID.v4()}&package_ids[]=#{Faker.UUID.v4()}"
+        )
+        |> json_response(:ok)
+        |> assert_schema("PatchesForPackagesResponse", api_spec)
     end
   end
 end
