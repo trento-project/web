@@ -128,7 +128,7 @@ defmodule TrentoWeb.V1.UsersController do
   def update(%{body_params: body_params} = conn, %{id: id}) do
     with {:ok, user} <- Users.get_user(id),
          {:ok, lock_version} <- user_version_from_if_match_header(conn),
-         update_params <- prepare_update_params(body_params, lock_version),
+         update_params <- Map.put(body_params, :lock_version, lock_version),
          {:ok, %User{} = user} <- Users.update_user(user, update_params),
          :ok <- broadcast_update_or_locked_user(user),
          conn <- attach_user_version_as_etag_header(conn, user) do
@@ -176,18 +176,5 @@ defmodule TrentoWeb.V1.UsersController do
 
   defp attach_user_version_as_etag_header(conn, %User{lock_version: lock_version}) do
     put_resp_header(conn, "etag", Integer.to_string(lock_version))
-  end
-
-  defp prepare_update_params(body_params, lock_version) do
-    body_params
-    |> Map.put(:lock_version, lock_version)
-    |> handle_totp_disabled()
-  end
-
-  defp handle_totp_disabled(attrs) do
-    case Map.get(attrs, :totp_enabled) do
-      false -> Map.put(attrs, :totp_enabled_at, nil)
-      _ -> attrs
-    end
   end
 end

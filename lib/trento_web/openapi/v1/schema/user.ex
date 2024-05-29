@@ -253,7 +253,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
         totp_enabled_at: %OpenApiSpex.Schema{
           type: :string,
           format: :"date-time",
-          description: "Date TOTP enrollment",
+          description: "Date of TOTP enrollment",
           nullable: true
         }
       },
