@@ -261,7 +261,7 @@ function UserForm({
               ]}
               value={totpState ? 'Enabled' : 'Disabled'}
               onChange={(value) => {
-                setTotpState(value == 'Enabled');
+                setTotpState(value === 'Enabled');
               }}
             />
           </div>
