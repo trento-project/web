@@ -272,7 +272,7 @@ describe('UserForm', () => {
     });
   });
 
-  it('should not allow to re-enable TOTP', async () => {
+  it('should not allow to enable TOTP from user mgmt', async () => {
     const user = userEvent.setup();
     const mockOnSave = jest.fn();
 
