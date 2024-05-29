@@ -5,7 +5,11 @@ defmodule TrentoWeb.V1.SUSEManagerController do
   alias Trento.SoftwareUpdates
 
   alias TrentoWeb.OpenApi.V1.Schema
-  alias TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates.AvailableSoftwareUpdatesResponse
+
+  alias TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates.{
+    AvailableSoftwareUpdatesResponse,
+    PatchesForPackagesResponse
+  }
 
   plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
   action_fallback TrentoWeb.FallbackController
@@ -39,6 +43,35 @@ defmodule TrentoWeb.V1.SUSEManagerController do
           }} <-
            SoftwareUpdates.get_software_updates(host_id) do
       render(conn, %{relevant_patches: relevant_patches, upgradable_packages: upgradable_packages})
+    end
+  end
+
+  operation :patches_for_packages,
+    summary: "Gets patches covered by package upgrades in SUSE Manager",
+    tags: ["Platform"],
+    description: "Endpoint to fetch relevant patches covered by package upgrades in SUSE Manager",
+    parameters: [
+      package_ids: [
+        in: :query,
+        required: true,
+        type: %OpenApiSpex.Schema{
+          type: :array,
+          items: %OpenApiSpex.Schema{
+            type: :string
+          }
+        }
+      ]
+    ],
+    responses: [
+      ok:
+        {"Available software updates for the host", "application/json",
+         PatchesForPackagesResponse}
+    ]
+
+  @spec patches_for_packages(Plug.Conn.t(), any) :: Plug.Conn.t()
+  def patches_for_packages(conn, %{package_ids: package_ids}) do
+    with {:ok, packages_patches} <- SoftwareUpdates.get_packages_patches(package_ids) do
+      render(conn, %{patches: packages_patches})
     end
   end
 end

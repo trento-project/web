@@ -48,6 +48,38 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
     })
   end
 
+  defmodule PatchesForPackage do
+    @moduledoc false
+    OpenApiSpex.schema(%{
+      title: "PatchesForPackage",
+      description: "Relevant patches covered by a package upgrade",
+      type: :object,
+      additionalProperties: false,
+      properties: %{
+        package_id: %Schema{type: :string, description: ""},
+        patches: %Schema{
+          type: :array,
+          additionalProperties: false,
+          items: %Schema{
+            title: "PatchForPackage",
+            description: "A list of relevant patches that the upgrade covers",
+            additionalProperties: false,
+            properties: %{
+              advisory_type: %Schema{type: :string, description: "Advisory type"},
+              advisory: %Schema{type: :string, description: "Advisory name for the patch"},
+              synopsis: %Schema{type: :string, description: "Advisory synopsis for the patch"},
+              issue_date: %Schema{type: :string, description: "Advisory issue date"},
+              last_modified_date: %Schema{
+                type: :string,
+                description: "Advisory last modified date"
+              }
+            }
+          }
+        }
+      }
+    })
+  end
+
   defmodule AvailableSoftwareUpdatesResponse do
     @moduledoc false
     OpenApiSpex.schema(%{
@@ -67,6 +99,24 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
           description: "A list of upgradable packages for the host",
           type: :array,
           items: UpgradablePackage
+        }
+      }
+    })
+  end
+
+  defmodule PatchesForPackagesResponse do
+    @moduledoc false
+    OpenApiSpex.schema(%{
+      title: "PatchesForPackagesResponse",
+      description: "Response returned from the patches for packages endpoint",
+      type: :object,
+      additionalProperties: false,
+      properties: %{
+        patches: %Schema{
+          title: "PatchesForPackages",
+          description: "A list of the relevant patches covered by the provided package upgrades",
+          type: :array,
+          items: PatchesForPackage
         }
       }
     })

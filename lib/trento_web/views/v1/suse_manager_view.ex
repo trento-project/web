@@ -60,4 +60,6 @@ defmodule TrentoWeb.V1.SUSEManagerView do
         to_epoch: to_epoch,
         to_package_id: to_package_id
       }
+
+  def render("patches_for_packages.json", %{patches: patches}), do: %{patches: patches}
 end
