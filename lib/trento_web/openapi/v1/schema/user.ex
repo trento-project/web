@@ -193,7 +193,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
         abilities: AbilityCollection,
         totp_enabled: %Schema{
           type: :boolean,
-          description: "TOTP feature enabled for the user",
+          description:
+            "TOTP feature enabled for the user. The only accepted value here is 'false'",
           nullable: false
         }
       }
@@ -252,7 +253,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
         totp_enabled_at: %OpenApiSpex.Schema{
           type: :string,
           format: :"date-time",
-          description: "Date of user enablement of the TOTP feature",
+          description: "Date TOTP enrollment",
           nullable: true
         }
       },

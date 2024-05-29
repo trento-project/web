@@ -330,9 +330,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
 
     test "should update the user with abilities", %{conn: conn, api_spec: api_spec} do
       %{id: id, name: name, resource: resource, label: label} = insert(:ability)
-
-      %{id: user_id, lock_version: lock_version} =
-        insert(:user, totp_enabled_at: DateTime.utc_now())
+      %{id: user_id, lock_version: lock_version} = insert(:user)
 
       valid_params = %{
         fullname: Faker.Person.name(),
@@ -340,7 +338,22 @@ defmodule TrentoWeb.V1.UsersControllerTest do
         enabled: false,
         password: "testpassword89",
         password_confirmation: "testpassword89",
-        abilities: [%{id: id, name: name, resource: resource, label: label}],
+        abilities: [%{id: id, name: name, resource: resource, label: label}]
+      }
+
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> put_req_header("if-match", "#{lock_version}")
+      |> patch("/api/v1/users/#{user_id}", valid_params)
+      |> json_response(:ok)
+      |> assert_schema("UserItem", api_spec)
+    end
+
+    test "should disable the TOTP feature for a user", %{conn: conn, api_spec: api_spec} do
+      %{id: user_id, lock_version: lock_version} =
+        insert(:user, totp_enabled_at: DateTime.utc_now())
+
+      valid_params = %{
         totp_enabled: false
       }
 
