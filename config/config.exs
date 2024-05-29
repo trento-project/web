@@ -15,7 +15,7 @@ config :trento, WalEx0,
   publication: "trento_repo_audit",
   database: "trento_dev",
   destinations: [
-    modules: [Trento.Events.Events]
+    modules: [Trento.Audit.User]
   ],
   subscriptions: ["users"],
   name: Trento.RepoAudit

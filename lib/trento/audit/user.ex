@@ -1,4 +1,4 @@
-defmodule Trento.Events.Events do
+defmodule Trento.Audit.User do
   use WalEx.Event, name: Trento.RepoAudit
   require Logger
 
