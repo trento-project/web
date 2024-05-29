@@ -43,6 +43,7 @@ services:
       - 5433:5432
     volumes:
       - pg_data:/var/lib/postgresql/data
+    command: [ "postgres", "-c", "wal_level=logical" ]
   rabbitmq:
     image: rabbitmq:3.12.6-management-alpine
     ports:

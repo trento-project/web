@@ -11,6 +11,14 @@ defmodule Trento.Application do
       [
         # Start the Ecto repository
         Trento.Repo,
+        # Start the Ecto audit process
+        Supervisor.child_spec({WalEx.Supervisor, Application.get_env(:trento, WalEx0)},
+          id: :trento_repo_audit
+        ),
+        Supervisor.child_spec({WalEx.Supervisor, Application.get_env(:trento, WalEx1)},
+          id: :trento_eventstore_audit
+        ),
+        Trento.AuditRepo,
         # Start the Telemetry supervisor
         TrentoWeb.Telemetry,
         # Start the PubSub system

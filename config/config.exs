@@ -7,8 +7,41 @@
 # General application configuration
 import Config
 
+config :trento, WalEx0,
+  hostname: "localhost",
+  username: "postgres",
+  password: "postgres",
+  port: "5433",
+  publication: "trento_repo_audit",
+  database: "trento_dev",
+  destinations: [
+    modules: [Trento.Events.Events]
+  ],
+  subscriptions: ["users"],
+  name: Trento.RepoAudit
+
+config :trento, WalEx1,
+  hostname: "localhost",
+  username: "postgres",
+  password: "postgres",
+  port: "5433",
+  publication: "eventstore_audit",
+  database: "trento_eventstore_dev",
+  destinations: [
+    modules: [Trento.AuditEvents.EventStore]
+  ],
+  subscriptions: ["events"],
+  name: Trento.EventStoreAudit
+
+config :trento, Trento.AuditRepo,
+  database: "trento_audit",
+  username: "postgres",
+  password: "postgres",
+  hostname: "localhost",
+  port: "5433"
+
 config :trento,
-  ecto_repos: [Trento.Repo]
+  ecto_repos: [Trento.Repo, Trento.AuditRepo]
 
 # Configures the endpoint
 config :trento, TrentoWeb.Endpoint,
