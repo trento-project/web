@@ -136,7 +136,7 @@ function ChecksCatalog({
         {filters.map((filterProps) => (
           <Select
             key={filterProps.optionsName}
-            className="ml-auto"
+            className="ml-auto pb-4"
             {...filterProps}
             options={[OPTION_ALL, ...filterProps.options]}
           />

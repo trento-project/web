@@ -152,6 +152,7 @@ function ApiKeySettingsModal({
               </div>
               <div className="w-2/4 pt-4">
                 <Select
+                  className="pb-4"
                   optionsName=""
                   options={timeOptions}
                   disabled={apiKeyNeverExpires}
