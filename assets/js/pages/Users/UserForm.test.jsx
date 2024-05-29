@@ -301,8 +301,10 @@ describe('UserForm', () => {
 
     await user.click(screen.getByText('Disabled'));
 
-    // This should not change the selected option as it should be disabled
-    await user.click(screen.getAllByText('Enabled')[1]);
+    expect(screen.getAllByText('Enabled')[1].closest('li')).toHaveAttribute(
+      'aria-disabled',
+      'true'
+    );
     expect(mockOnSave).not.toHaveBeenCalled();
   });
 
