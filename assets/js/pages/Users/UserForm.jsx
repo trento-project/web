@@ -53,7 +53,7 @@ function UserForm({
   const [confirmPasswordState, setConfirmPassword] = useState('');
   const [confirmPasswordErrorState, setConfirmPasswordError] = useState(null);
   const [statusState, setStatus] = useState(status);
-  const [totpEnabled, setTotpEnabled] = useState(totpEnabledAt !== null);
+  const [isTotpDisabled, setTotpDisabled] = useState(totpEnabledAt === null);
   const [selectedAbilities, setAbilities] = useState(
     userAbilities.map(({ id }) => id)
   );
@@ -111,8 +111,11 @@ function UserForm({
         password_confirmation: confirmPasswordState,
       }),
       abilities: abilities.filter(({ id }) => selectedAbilities.includes(id)),
-      totp_enabled: totpEnabled,
     };
+
+    if (isTotpDisabled !== (totpEnabledAt === null)) {
+      user.totp_enabled = !isTotpDisabled;
+    }
 
     onSave(user);
   };
@@ -255,14 +258,13 @@ function UserForm({
           <div className="col-start-2 col-span-3">
             <Select
               optionsName="totp"
-              options={['Enabled', 'Disabled']}
-              value={totpEnabled ? 'Enabled' : 'Disabled'}
+              options={[{ value: 'Enabled', disabled: true }, 'Disabled']}
+              value={isTotpDisabled ? 'Disabled' : 'Enabled'}
               onChange={(value) => {
                 if (value === 'Disabled') {
-                  setTotpEnabled(false);
+                  setTotpDisabled(true);
                 }
               }}
-              disabled={!totpEnabled}
             />
           </div>
           {editing && (

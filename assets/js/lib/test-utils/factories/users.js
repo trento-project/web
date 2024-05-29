@@ -17,9 +17,9 @@ export const userFactory = Factory.define(() => ({
   email: faker.internet.email(),
   abilities: abilityFactory.buildList(2),
   password_change_requested_at: null,
+  totp_enabled_at: formatISO(faker.date.past()),
   created_at: formatISO(faker.date.past()),
   updated_at: formatISO(faker.date.past()),
-  totp_enabled_at: formatISO(faker.date.past()),
 }));
 
 export const profileFactory = Factory.define(() => ({
@@ -31,7 +31,6 @@ export const profileFactory = Factory.define(() => ({
   password_change_requested: false,
   created_at: formatISO(faker.date.past()),
   updated_at: formatISO(faker.date.past()),
-  totp_enabled_at: formatISO(faker.date.past()),
 }));
 
 export const adminUser = userFactory.params({

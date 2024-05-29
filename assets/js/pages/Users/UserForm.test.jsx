@@ -184,7 +184,6 @@ describe('UserForm', () => {
       password,
       password_confirmation: password,
       enabled: true,
-      totp_enabled: false,
       abilities: [],
     });
   });
@@ -228,7 +227,6 @@ describe('UserForm', () => {
       email,
       enabled: result,
       abilities: [],
-      totp_enabled: false,
     });
   });
 
@@ -274,7 +272,10 @@ describe('UserForm', () => {
     });
   });
 
-  it('should not allow to re-enable TOTP', () => {
+  it('should not allow to re-enable TOTP', async () => {
+    const user = userEvent.setup();
+    const mockOnSave = jest.fn();
+
     const {
       fullname,
       email,
@@ -284,20 +285,25 @@ describe('UserForm', () => {
       totp_enabled_at: totpEnabledAt,
     } = userFactory.build({ totp_enabled_at: null });
 
-    render(
-      <UserForm
-        fullName={fullname}
-        emailAddress={email}
-        username={username}
-        createdAt={createdAt}
-        updatedAt={updatedAt}
-        totpEnabledAt={totpEnabledAt}
-        editing
-      />
-    );
+    await act(async () => {
+      render(
+        <UserForm
+          fullName={fullname}
+          emailAddress={email}
+          username={username}
+          createdAt={createdAt}
+          updatedAt={updatedAt}
+          totpEnabledAt={totpEnabledAt}
+          editing
+        />
+      );
+    });
 
-    const totpSelect = screen.getByText('Disabled');
-    expect(totpSelect).toBeDisabled();
+    await user.click(screen.getByText('Disabled'));
+
+    // This should not change the selected option as it should be disabled
+    await user.click(screen.getAllByText('Enabled')[1]);
+    expect(mockOnSave).not.toHaveBeenCalled();
   });
 
   it('should save the new abilities', async () => {
@@ -349,7 +355,6 @@ describe('UserForm', () => {
       fullname,
       email,
       enabled: true,
-      totp_enabled: false,
       abilities: abilities.slice(0, 2),
     });
   });
