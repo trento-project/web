@@ -155,13 +155,13 @@ describe('ProfileForm', () => {
     ).toBe('false');
   });
 
-  it('should call onTotpEnable when totpEnabled is false and the switch is clicked', async () => {
+  it('should call onEnableTotp when totpEnabled is false and the switch is clicked', async () => {
     const username = faker.internet.userName();
     const fullName = faker.person.fullName();
     const email = faker.internet.email();
     const abilities = abilityFactory.buildList(2);
 
-    const onTotpEnable = jest.fn();
+    const onEnableTotp = jest.fn();
     const user = userEvent.setup();
 
     render(
@@ -171,7 +171,7 @@ describe('ProfileForm', () => {
         username={username}
         abilities={abilities}
         totpEnabled={false}
-        onTotpEnable={onTotpEnable}
+        onEnableTotp={onEnableTotp}
       />
     );
 
@@ -181,7 +181,7 @@ describe('ProfileForm', () => {
       await user.click(screen.getByRole('switch'));
     });
 
-    expect(onTotpEnable).toHaveBeenCalled();
+    expect(onEnableTotp).toHaveBeenCalled();
   });
 
   it('should call onResetTotp when totpEnabled is true, the switch is clicked and the user confirms with the modal', async () => {

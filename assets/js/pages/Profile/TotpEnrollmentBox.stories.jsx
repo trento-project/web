@@ -17,8 +17,13 @@ export default {
         type: 'text',
       },
     },
-    verifyError: {
-      description: 'Totp error during the enrollment verify procedure',
+    errors: {
+      description: 'Totp errors during the enrollment verify procedure',
+      control: {
+        type: 'boolean',
+      },
+    },
+    loading: {
       control: {
         type: 'boolean',
       },
@@ -26,11 +31,6 @@ export default {
     verifyTotp: {
       action: 'Verify enrollment TOTP',
     },
-  },
-  args: {
-    secret: faker.string.uuid(),
-    qrData:
-      'otpauth://totp/Example:alice@google.com?secret=JBSWY3DPEHPK3PXP&issuer=Example',
   },
 };
 

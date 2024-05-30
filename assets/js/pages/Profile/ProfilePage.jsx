@@ -48,7 +48,7 @@ function ProfilePage() {
     setErrors([]);
   };
 
-  const verifyTotpEnrolling = async (enrollmentTotp) => {
+  const verifyTotpEnrollment = async (enrollmentTotp) => {
     setSaving(true);
     setErrors([]);
 
@@ -65,6 +65,7 @@ function ProfilePage() {
         },
       },
     }) {
+      // Transform the received error to known errors format
       setErrors([{ ...error, source: { pointer: '/totp_code' } }]);
     }
     setSaving(false);
@@ -79,7 +80,7 @@ function ProfilePage() {
       setSaving(false);
       toast.success('TOTP Disabled');
     } catch {
-      toast.error('Error disabling totp, please refresh profile.');
+      toast.error('Error disabling totp, please refresh your profile.');
     }
     await loadUserProfile();
     setSaving(false);
@@ -161,8 +162,8 @@ function ProfilePage() {
         loading={loading || saving}
         disableForm={isDefaultAdmin}
         onSave={updateProfile}
-        onTotpEnable={totpInitiateEnrolling}
-        onVerifyTotp={verifyTotpEnrolling}
+        onEnableTotp={totpInitiateEnrolling}
+        onVerifyTotp={verifyTotpEnrollment}
         onResetTotp={disableTotp}
       />
     </>

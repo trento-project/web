@@ -183,6 +183,10 @@ describe('ProfilePage', () => {
       await testUser.click(screen.getByRole('switch'));
     });
 
+    await act(async () => {
+      await testUser.click(screen.getByText('Disable'));
+    });
+
     expect(toast.success).toHaveBeenCalledWith('TOTP Disabled');
   });
 
@@ -206,8 +210,12 @@ describe('ProfilePage', () => {
       await testUser.click(screen.getByRole('switch'));
     });
 
+    await act(async () => {
+      await testUser.click(screen.getByText('Disable'));
+    });
+
     expect(toast.error).toHaveBeenCalledWith(
-      'Error disabling totp, please refresh profile.'
+      'Error disabling totp, please refresh your profile.'
     );
   });
 

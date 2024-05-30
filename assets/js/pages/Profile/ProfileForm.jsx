@@ -29,7 +29,7 @@ function ProfileForm({
   onSave = noop,
   onResetTotp = noop,
   onVerifyTotp = noop,
-  onTotpEnable = noop,
+  onEnableTotp = noop,
 }) {
   const [fullNameState, setFullName] = useState(fullName);
   const [fullNameErrorState, setFullNameError] = useState(null);
@@ -67,7 +67,7 @@ function ProfileForm({
 
   const toggleTotp = () => {
     if (!totpEnabled) {
-      onTotpEnable();
+      onEnableTotp();
       return;
     }
     setTotpDisableModalOpen(true);
@@ -139,7 +139,7 @@ function ProfileForm({
             <>
               <Label
                 className="col-start-1 col-span-1"
-                info="Use a second factor besides your password to increase security
+                info="Setup a multi factor TOTP authentication besides your password to increase security
               for your account."
               >
                 Authenticator App
