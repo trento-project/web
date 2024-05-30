@@ -35,6 +35,7 @@ function ProfileForm({
   const [fullNameErrorState, setFullNameError] = useState(null);
   const [emailAddressState, setEmailAddress] = useState(emailAddress);
   const [emailAddressErrorState, setEmailAddressError] = useState(null);
+  const [totpDisableModalOpen, setTotpDisableModalOpen] = useState(false);
 
   const validateRequired = () => {
     let error = false;
@@ -69,7 +70,7 @@ function ProfileForm({
       onTotpEnable();
       return;
     }
-    onResetTotp();
+    setTotpDisableModalOpen(true);
   };
 
   useEffect(() => {
@@ -170,6 +171,38 @@ function ProfileForm({
           </Button>
         </div>
       </div>
+      <Modal
+        title="Disable TOTP"
+        className="!w-3/4 !max-w-3xl"
+        open={totpDisableModalOpen}
+        onClose={() => setTotpDisableModalOpen((opened) => !opened)}
+      >
+        <div className="flex flex-col my-2">
+          <span className="font-semibold">
+            Are you sure you want to disable TOTP?{' '}
+          </span>
+          <div className="w-1/6 h-4/5 flex mt-4">
+            <Button
+              type="danger-bold"
+              className="mr-2"
+              onClick={() => {
+                onResetTotp();
+                setTotpDisableModalOpen(false);
+              }}
+              disabled={loading}
+            >
+              Disable
+            </Button>
+            <Button
+              type="primary-white"
+              onClick={() => setTotpDisableModalOpen(false)}
+              className=""
+            >
+              Cancel
+            </Button>
+          </div>
+        </div>
+      </Modal>
       <Modal
         title="Change Password"
         className="!w-3/4 !max-w-3xl"

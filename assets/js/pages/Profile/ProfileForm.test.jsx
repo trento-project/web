@@ -184,7 +184,7 @@ describe('ProfileForm', () => {
     expect(onTotpEnable).toHaveBeenCalled();
   });
 
-  it('should call onResetTotp when totpEnabled is true and the switch is clicked', async () => {
+  it('should call onResetTotp when totpEnabled is true, the switch is clicked and the user confirms with the modal', async () => {
     const username = faker.internet.userName();
     const fullName = faker.person.fullName();
     const email = faker.internet.email();
@@ -208,6 +208,10 @@ describe('ProfileForm', () => {
 
     await act(async () => {
       await user.click(screen.getByRole('switch'));
+    });
+
+    await act(async () => {
+      await user.click(screen.getByText('Disable'));
     });
 
     expect(onResetTotp).toHaveBeenCalled();
