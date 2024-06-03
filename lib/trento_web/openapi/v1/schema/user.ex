@@ -195,7 +195,13 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
           description: "User new password, should be the same as password field",
           nullable: false
         },
-        abilities: AbilityCollection
+        abilities: AbilityCollection,
+        totp_disabled: %Schema{
+          type: :boolean,
+          description:
+            "TOTP feature disabled for the user. The only accepted value here is 'true'",
+          nullable: false
+        }
       }
     }
 
@@ -247,6 +253,12 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
           type: :string,
           format: :"date-time",
           description: "Date of user last update",
+          nullable: true
+        },
+        totp_enabled_at: %OpenApiSpex.Schema{
+          type: :string,
+          format: :"date-time",
+          description: "Date of TOTP enrollment",
           nullable: true
         }
       },

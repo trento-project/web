@@ -348,6 +348,22 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       |> json_response(:ok)
       |> assert_schema("UserItem", api_spec)
     end
+
+    test "should disable the TOTP feature for a user", %{conn: conn, api_spec: api_spec} do
+      %{id: user_id, lock_version: lock_version} =
+        insert(:user, totp_enabled_at: DateTime.utc_now())
+
+      valid_params = %{
+        totp_disabled: true
+      }
+
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> put_req_header("if-match", "#{lock_version}")
+      |> patch("/api/v1/users/#{user_id}", valid_params)
+      |> json_response(:ok)
+      |> assert_schema("UserItem", api_spec)
+    end
   end
 
   describe "delete user" do

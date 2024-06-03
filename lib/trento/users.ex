@@ -93,13 +93,19 @@ defmodule Trento.Users do
       attrs
       |> Map.put(:locked_at, DateTime.utc_now())
       |> maybe_set_password_change_requested_at(false)
+      |> maybe_disable_totp()
 
     do_update(user, updated_attrs)
   end
 
   def update_user(%User{locked_at: locked_at} = user, %{enabled: false} = attrs)
       when not is_nil(locked_at) do
-    do_update(user, maybe_set_password_change_requested_at(attrs, false))
+    updated_attrs =
+      attrs
+      |> maybe_set_password_change_requested_at(false)
+      |> maybe_disable_totp()
+
+    do_update(user, updated_attrs)
   end
 
   def update_user(%User{} = user, attrs) do
@@ -107,9 +113,15 @@ defmodule Trento.Users do
       attrs
       |> Map.put(:locked_at, nil)
       |> maybe_set_password_change_requested_at(false)
+      |> maybe_disable_totp()
 
     do_update(user, updated_attrs)
   end
+
+  def maybe_disable_totp(%{totp_disabled: true} = attrs),
+    do: Map.put(attrs, :totp_enabled_at, nil)
+
+  def maybe_disable_totp(attrs), do: attrs
 
   def delete_user(%User{id: 1}), do: {:error, :forbidden}
 

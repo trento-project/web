@@ -90,6 +90,7 @@ function EditUserPage() {
     abilities: userAbilities,
     created_at: createdAt,
     updated_at: updatedAt,
+    totp_enabled_at: totpEnabledAt,
   } = userState;
 
   return (
@@ -115,6 +116,7 @@ function EditUserPage() {
         status={enabled ? 'Enabled' : 'Disabled'}
         createdAt={createdAt}
         updatedAt={updatedAt}
+        totpEnabledAt={totpEnabledAt}
         saveEnabled={!isAdmin(userState)}
         saving={savingState}
         errors={errorsState}

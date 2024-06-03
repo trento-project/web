@@ -27,6 +27,7 @@ describe('UserForm', () => {
     expect(screen.getByText('Generate Password'));
     expect(screen.getByText('Permissions')).toBeVisible();
     expect(screen.getByText('Status')).toBeVisible();
+    expect(screen.getByText('TOTP')).toBeVisible();
     expect(screen.queryByText('Created')).not.toBeInTheDocument();
     expect(screen.queryByText('Updated')).not.toBeInTheDocument();
 
@@ -41,6 +42,7 @@ describe('UserForm', () => {
       username,
       created_at: createdAt,
       updated_at: updatedAt,
+      totp_enabled_at: totpEnabledAt,
     } = userFactory.build();
 
     await act(async () => {
@@ -51,6 +53,7 @@ describe('UserForm', () => {
           username={username}
           createdAt={createdAt}
           updatedAt={updatedAt}
+          totp_enabled_at={totpEnabledAt}
           editing
         />
       );
@@ -63,6 +66,8 @@ describe('UserForm', () => {
     expect(screen.getAllByPlaceholderText('********').length).toBe(2);
     expect(screen.getByText('Created')).toBeVisible();
     expect(screen.getByText('Updated')).toBeVisible();
+    expect(screen.getByText('TOTP')).toBeVisible();
+    expect(screen.getByText('Enabled')).toBeVisible();
   });
 
   it('should display a form with errors', () => {
@@ -223,6 +228,84 @@ describe('UserForm', () => {
       enabled: result,
       abilities: [],
     });
+  });
+
+  it('should allow to disable TOTP correctly', async () => {
+    const user = userEvent.setup();
+    const mockOnSave = jest.fn();
+
+    const {
+      fullname,
+      email,
+      username,
+      created_at: createdAt,
+      updated_at: updatedAt,
+      totp_enabled_at: totpEnabledAt,
+    } = userFactory.build();
+
+    await act(async () => {
+      render(
+        <UserForm
+          saveText="Save"
+          fullName={fullname}
+          emailAddress={email}
+          username={username}
+          createdAt={createdAt}
+          updatedAt={updatedAt}
+          totpEnabledAt={totpEnabledAt}
+          editing
+          onSave={mockOnSave}
+        />
+      );
+    });
+    await user.click(screen.getAllByText('Enabled')[1]);
+    await user.click(screen.getByText('Disabled'));
+
+    await user.click(screen.getByRole('button', { name: 'Save' }));
+
+    expect(mockOnSave).toHaveBeenNthCalledWith(1, {
+      fullname,
+      email,
+      enabled: true,
+      abilities: [],
+      totp_disabled: true,
+    });
+  });
+
+  it('should not allow to enable TOTP from user mgmt', async () => {
+    const user = userEvent.setup();
+    const mockOnSave = jest.fn();
+
+    const {
+      fullname,
+      email,
+      username,
+      created_at: createdAt,
+      updated_at: updatedAt,
+      totp_enabled_at: totpEnabledAt,
+    } = userFactory.build({ totp_enabled_at: null });
+
+    await act(async () => {
+      render(
+        <UserForm
+          fullName={fullname}
+          emailAddress={email}
+          username={username}
+          createdAt={createdAt}
+          updatedAt={updatedAt}
+          totpEnabledAt={totpEnabledAt}
+          editing
+        />
+      );
+    });
+
+    await user.click(screen.getByText('Disabled'));
+
+    expect(screen.getAllByText('Enabled')[1].closest('li')).toHaveAttribute(
+      'aria-disabled',
+      'true'
+    );
+    expect(mockOnSave).not.toHaveBeenCalled();
   });
 
   it('should save the new abilities', async () => {
