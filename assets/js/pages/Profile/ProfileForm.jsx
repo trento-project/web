@@ -5,26 +5,37 @@ import Button from '@common/Button';
 import Input from '@common/Input';
 import Label from '@common/Label';
 import Modal from '@common/Modal';
+import Switch from '@common/Switch';
 import MultiSelect from '@common/MultiSelect';
 import ProfilePasswordChangeForm from '@pages/Profile/ProfilePasswordChangeForm';
+import TotpEnrollementBox from '@pages/Profile/TotpEnrollmentBox';
+
 import { REQUIRED_FIELD_TEXT, errorMessage, mapAbilities } from '@lib/forms';
 
 function ProfileForm({
   fullName = '',
   emailAddress = '',
   username = '',
+  totpEnabled = false,
+  totpSecret = '',
+  totpQrData = '',
   abilities = [],
   errors,
   loading,
   disableForm,
   passwordModalOpen = false,
+  totpBoxOpen = false,
   togglePasswordModal = noop,
   onSave = noop,
+  onResetTotp = noop,
+  onVerifyTotp = noop,
+  onEnableTotp = noop,
 }) {
   const [fullNameState, setFullName] = useState(fullName);
   const [fullNameErrorState, setFullNameError] = useState(null);
   const [emailAddressState, setEmailAddress] = useState(emailAddress);
   const [emailAddressErrorState, setEmailAddressError] = useState(null);
+  const [totpDisableModalOpen, setTotpDisableModalOpen] = useState(false);
 
   const validateRequired = () => {
     let error = false;
@@ -52,6 +63,14 @@ function ProfileForm({
     };
 
     onSave(user);
+  };
+
+  const toggleTotp = () => {
+    if (!totpEnabled) {
+      onEnableTotp();
+      return;
+    }
+    setTotpDisableModalOpen(true);
   };
 
   useEffect(() => {
@@ -105,6 +124,32 @@ function ProfileForm({
               Change Password
             </Button>
           </div>
+          {totpBoxOpen ? (
+            <div className="col-start-1 col-span-5">
+              <h2 className="font-bold text-xl"> Configure TOTP </h2>
+              <TotpEnrollementBox
+                errors={errors}
+                qrData={totpQrData}
+                secret={totpSecret}
+                loading={loading}
+                verifyTotp={onVerifyTotp}
+              />
+            </div>
+          ) : (
+            <>
+              <Label
+                className="col-start-1 col-span-1"
+                info="Setup a multi factor TOTP authentication besides your password to increase security
+              for your account."
+              >
+                Authenticator App
+              </Label>
+              <div className="col-start-2 col-span-3">
+                <Switch selected={totpEnabled} onChange={toggleTotp} />
+              </div>
+            </>
+          )}
+
           <Label className="col-start-1 col-span-1">Permissions</Label>
           <div className="col-start-2 col-span-3">
             <MultiSelect
@@ -126,6 +171,38 @@ function ProfileForm({
           </Button>
         </div>
       </div>
+      <Modal
+        title="Disable TOTP"
+        className="!w-3/4 !max-w-3xl"
+        open={totpDisableModalOpen}
+        onClose={() => setTotpDisableModalOpen((opened) => !opened)}
+      >
+        <div className="flex flex-col my-2">
+          <span className="font-semibold">
+            Are you sure you want to disable TOTP?{' '}
+          </span>
+          <div className="w-1/6 h-4/5 flex mt-4">
+            <Button
+              type="danger-bold"
+              className="mr-2"
+              onClick={() => {
+                onResetTotp();
+                setTotpDisableModalOpen(false);
+              }}
+              disabled={loading}
+            >
+              Disable
+            </Button>
+            <Button
+              type="primary-white"
+              onClick={() => setTotpDisableModalOpen(false)}
+              className=""
+            >
+              Cancel
+            </Button>
+          </div>
+        </div>
+      </Modal>
       <Modal
         title="Change Password"
         className="!w-3/4 !max-w-3xl"

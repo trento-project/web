@@ -90,6 +90,11 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
           description: "Password change is requested",
           nullable: false
         },
+        totp_enabled: %Schema{
+          type: :boolean,
+          description: "TOTP is enabled",
+          nullable: false
+        },
         created_at: %OpenApiSpex.Schema{
           type: :string,
           format: :"date-time",
@@ -103,7 +108,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
           nullable: true
         }
       },
-      required: [:username, :id, :fullname, :email, :created_at]
+      required: [:username, :id, :fullname, :email, :created_at, :totp_enabled]
     }
 
     def schema, do: @schema

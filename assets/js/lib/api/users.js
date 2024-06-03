@@ -18,3 +18,10 @@ export const deleteUser = (userID) => del(`/users/${userID}`);
 export const getUserProfile = () => get('/profile');
 
 export const editUserProfile = (payload) => patch('/profile', payload);
+
+export const initiateTotpEnrolling = () => get('/profile/totp_enrollment');
+
+export const resetTotpEnrolling = () => del('/profile/totp_enrollment');
+
+export const confirmTotpEnrolling = (payload) =>
+  post('/profile/totp_enrollment', payload);

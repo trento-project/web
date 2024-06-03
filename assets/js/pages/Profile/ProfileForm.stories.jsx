@@ -50,10 +50,30 @@ export default {
       action: 'Save user',
       description: 'Save user action',
     },
-  },
-  args: {
-    username,
-    abilities,
+    totpEnabled: {
+      description: 'User TOTP enabled',
+      control: {
+        type: 'boolean',
+      },
+    },
+    totpSecret: {
+      description: 'User TOTP secret',
+      control: {
+        type: 'text',
+      },
+    },
+    totpQrData: {
+      description: 'User TOTP secret encoded as qr',
+      control: {
+        type: 'text',
+      },
+    },
+    totpBoxOpen: {
+      description: 'Show TOTP enrollment box',
+      control: {
+        type: 'text',
+      },
+    },
   },
   render: (args) => (
     <ContainerWrapper>
@@ -66,6 +86,9 @@ export const Default = {
   args: {
     username,
     abilities,
+    totpSecret: 'HKJDFHJKHDIU379847HJKDJKH',
+    totpQrData:
+      'otpauth://totp/Example:alice@google.com?secret=JBSWY3DPEHPK3PXP&issuer=Example',
   },
 };
 
@@ -78,6 +101,14 @@ export const Loading = {
     abilities,
     updatedAt,
     loading: true,
+  },
+};
+
+export const WithTotpEnrollmentBoxEnabled = {
+  args: {
+    ...Default.args,
+    totpEnabled: true,
+    totpBoxOpen: true,
   },
 };
 
