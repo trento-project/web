@@ -118,7 +118,7 @@ defmodule Trento.Users do
     do_update(user, updated_attrs)
   end
 
-  def maybe_disable_totp(%{totp_enabled: false} = attrs),
+  def maybe_disable_totp(%{totp_disabled: true} = attrs),
     do: Map.put(attrs, :totp_enabled_at, nil)
 
   def maybe_disable_totp(attrs), do: attrs

@@ -268,7 +268,7 @@ describe('UserForm', () => {
       email,
       enabled: true,
       abilities: [],
-      totp_enabled: false,
+      totp_disabled: true,
     });
   });
 

@@ -354,7 +354,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
         insert(:user, totp_enabled_at: DateTime.utc_now())
 
       valid_params = %{
-        totp_enabled: false
+        totp_disabled: true
       }
 
       conn

@@ -405,9 +405,10 @@ defmodule Trento.UsersTest do
       user = insert(:user, totp_enabled_at: DateTime.utc_now())
       {:ok, user} = Users.get_user(user.id)
 
-      assert {:ok, %User{} = user} = Users.update_user(user, %{totp_enabled: false})
+      assert {:ok, %User{} = user} = Users.update_user(user, %{totp_disabled: true})
       assert user.totp_enabled_at == nil
-      assert {:error, :forbidden} = Users.update_user(user, %{totp_enabled: true})
+      assert {:ok, %User{} = user} = Users.update_user(user, %{totp_disabled: false})
+      assert user.totp_enabled_at == nil
     end
 
     test "delete_user/2 does not delete user with id 1" do

@@ -191,10 +191,10 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
           nullable: false
         },
         abilities: AbilityCollection,
-        totp_enabled: %Schema{
+        totp_disabled: %Schema{
           type: :boolean,
           description:
-            "TOTP feature enabled for the user. The only accepted value here is 'false'",
+            "TOTP feature disabled for the user. The only accepted value here is 'true'",
           nullable: false
         }
       }
