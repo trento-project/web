@@ -129,16 +129,16 @@ config :unplug, :init_mode, :runtime
 
 config :open_api_spex, :cache_adapter, OpenApiSpex.Plug.NoneCache
 
-config :opentelemetry, traces_exporter: {:otel_exporter_stdout, []}
-# config :opentelemetry,
-#   span_processor: :batch,
-#   exporter: :otlp
-#
-# config :opentelemetry_exporter,
-#   otlp_protocol: :grpc,
-#   otlp_endpoint: "0.0.0.0:7281",
-#   ssl_options: [{:verify, :verify_none}]
-#
+# config :opentelemetry, traces_exporter: {:otel_exporter_stdout, []}
+config :opentelemetry,
+  span_processor: :batch,
+  traces_exporter: :otlp
+
+config :opentelemetry_exporter,
+  otlp_protocol: :grpc,
+  otlp_endpoint: "http://127.0.0.1:7281",
+  ssl_options: [{:verify, :verify_none}]
+
 # Override with local dev.local.exs file
 if File.exists?("#{__DIR__}/dev.local.exs") do
   import_config "dev.local.exs"

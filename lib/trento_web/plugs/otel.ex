@@ -8,7 +8,9 @@ defmodule TrentoWeb.Plugs.Otel do
 
   def call(conn, _default) do
     _span_ctx = Tracer.start_span(:request_init)
-    Tracer.set_attribute(:user, conn.assigns.current_user)
+    current_user = conn.assigns.current_user
+
+    Tracer.add_event("OTELLO", [{"user", current_user}])
 
     conn
   end

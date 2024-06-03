@@ -54,10 +54,10 @@ services:
   quickwit:
     image: quickwit/quickwit:edge
     environment:
-      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://localhost:7281
-      - QW_ENABLE_OPENTELEMETRY_OTLP_EXPORTER=true
+      - QW_ENABLE_OTLP_ENDPOINT=true
       - QW_DISABLE_TELEMETRY=1
     command: ["run"]
     ports:
-      - 7280:7280/tcp
-      - 7281:7281/tcp
+      - 7280:7280
+      - 7281:7281
+  
