@@ -20,6 +20,7 @@ defmodule TrentoWeb.V1.UsersView do
           abilities: abilities,
           locked_at: locked_at,
           password_change_requested_at: password_change_requested_at,
+          totp_enabled_at: totp_enabled_at,
           inserted_at: created_at,
           updated_at: updated_at
         }
@@ -32,6 +33,7 @@ defmodule TrentoWeb.V1.UsersView do
       abilities: render_many(abilities, AbilityView, "ability.json", as: :ability),
       enabled: locked_at == nil,
       password_change_requested_at: password_change_requested_at,
+      totp_enabled_at: totp_enabled_at,
       created_at: created_at,
       updated_at: updated_at
     }

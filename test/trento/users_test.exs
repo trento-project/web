@@ -401,6 +401,16 @@ defmodule Trento.UsersTest do
       refute user.password_change_requested_at == nil
     end
 
+    test "update_user/2 allows TOTP to be disabled but not enabled again" do
+      user = insert(:user, totp_enabled_at: DateTime.utc_now())
+      {:ok, user} = Users.get_user(user.id)
+
+      assert {:ok, %User{} = user} = Users.update_user(user, %{totp_disabled: true})
+      assert user.totp_enabled_at == nil
+      assert {:ok, %User{} = user} = Users.update_user(user, %{totp_disabled: false})
+      assert user.totp_enabled_at == nil
+    end
+
     test "delete_user/2 does not delete user with id 1" do
       assert {:error, :forbidden} = Users.delete_user(%User{id: 1})
     end

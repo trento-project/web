@@ -15,6 +15,7 @@ const {
   username,
   created_at: createdAt,
   updated_at: updatedAt,
+  totp_enabled_at: totpEnabledAt,
 } = userFactory.build();
 
 const {
@@ -83,6 +84,12 @@ export default {
         type: 'text',
       },
     },
+    totpEnabledAt: {
+      description: 'User enablement of totp feature',
+      control: {
+        type: 'text',
+      },
+    },
     editing: {
       description: 'User is being edited',
       control: {
@@ -142,6 +149,7 @@ export const Editing = {
     username,
     createdAt,
     updatedAt,
+    totpEnabledAt,
     editing: true,
     saveText: 'Save',
   },
