@@ -59,6 +59,7 @@
     "date-fns": "^3.6.0",
     "eos-icons-react": "^2.4.0",
     "lodash": "^4.17.21",
+    "qrcode.react": "^3.1.0",
     "rc-input": "^1.4.5",
     "rc-input-number": "^9.0.0",
     "rc-tooltip": "^6.2.0",
