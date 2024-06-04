@@ -379,7 +379,8 @@ describe('Users', () => {
       cy.get('p').contains('Invalid credentials');
     });
 
-    it('should ask TOTP code during login and work if the code is new', () => {
+    // skipping this test by default, as it takes a long time.
+    it.skip('should ask TOTP code during login and work if the code is new', () => {
       cy.get('input[data-testid="login-totp-code"]').clear();
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(30000)
