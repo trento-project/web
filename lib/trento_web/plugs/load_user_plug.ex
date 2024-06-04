@@ -16,5 +16,8 @@ defmodule TrentoWeb.Plugs.LoadUserPlug do
     {:ok, user} = Users.get_user(user_id)
 
     Pow.Plug.assign_current_user(conn, user, config)
+  rescue
+    _ ->
+      conn
   end
 end
