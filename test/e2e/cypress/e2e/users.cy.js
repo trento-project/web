@@ -287,6 +287,15 @@ describe('Users', () => {
       });
       cy.contains('Users');
     });
+  });
+
+  describe('Lock user', () => {
+    before(() => {
+      cy.logout();
+      cy.login(USER.username, PASSWORD);
+      cy.visit('/profile');
+      cy.url().should('include', '/profile');
+    });
 
     it('should logout the user when an admin disables the user', () => {
       getProfile(USER.username, PASSWORD).then(({ id }) => {
