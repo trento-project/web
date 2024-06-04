@@ -1,4 +1,5 @@
 defmodule TrentoWeb.Plugs.Otel do
+  @moduledoc false
   require OpenTelemetry.Tracer, as: Tracer
 
   def init(default) do
