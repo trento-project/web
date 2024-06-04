@@ -121,7 +121,7 @@ export const Sorted = {
       return c;
     });
 
-    const orderByUserAsc = (a, b) => {
+    const orderByUser = (a, b) => {
       const userA = a.user.toUpperCase();
       const userB = b.user.toUpperCase();
 
@@ -139,7 +139,7 @@ export const Sorted = {
     return (
       <Table
         config={{ ...config, columns: sortedColumnsConfig }}
-        sortBy={orderByUserAsc}
+        sortBy={orderByUser}
         data={data}
       />
     );
