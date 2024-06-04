@@ -1,6 +1,7 @@
 /* eslint-disable react/no-array-index-key */
 
 import React, { Fragment, useState, useEffect } from 'react';
+import { EOS_ARROW_UPWARD, EOS_ARROW_DOWNWARD } from 'eos-icons-react';
 import classNames from 'classnames';
 import { page, pages } from '@lib/lists';
 import {
@@ -58,6 +59,7 @@ const updateSearchParams = (searchParams, values) => {
 function Table({
   config,
   data = [],
+  sortBy,
   searchParams,
   setSearchParams,
   emptyStateText = 'No data available',
@@ -128,15 +130,39 @@ function Table({
       if (value.length === 0) {
         return () => true;
       }
+
       return filterFunction;
     })
     .reduce((d, filterFunction) => d.filter(filterFunction), data);
 
-  const totalPages = pages(filteredData);
+  const sortedData = sortBy ? [...filteredData].sort(sortBy) : filteredData;
 
-  const renderedData = pagination
-    ? page(currentPage, filteredData)
-    : filteredData;
+  const renderedData = pagination ? page(currentPage, sortedData) : sortedData;
+
+  const totalPages = pages(sortedData);
+
+  const displaySortIcons = ({
+    sortable = false,
+    sortDirection = undefined,
+  }) => {
+    if (!sortable) return null;
+
+    if (sortDirection === 'asc')
+      return (
+        <span className="inline-table relative top-1">
+          <EOS_ARROW_UPWARD />
+        </span>
+      );
+
+    if (sortDirection === 'desc')
+      return (
+        <span className="inline-table relative top-1">
+          <EOS_ARROW_DOWNWARD />
+        </span>
+      );
+
+    return null;
+  };
 
   return (
     <div
@@ -171,18 +197,31 @@ function Table({
             <table className="min-w-full leading-normal table-fixed">
               <thead>
                 <tr>
-                  {columns.map(({ title, className }) => (
-                    <th
-                      key={title}
-                      scope="col"
-                      className={classNames(
-                        'px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-100',
-                        className
-                      )}
-                    >
-                      {title}
-                    </th>
-                  ))}
+                  {columns.map(
+                    ({
+                      title,
+                      className,
+                      sortable = false,
+                      sortDirection = undefined,
+                      handleClick = () => {},
+                    }) => (
+                      <th
+                        key={title}
+                        scope="col"
+                        className={classNames(
+                          `${
+                            sortable
+                              ? 'cursor-pointer hover:text-gray-700 '
+                              : null
+                          }px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-100`,
+                          className
+                        )}
+                        onClick={handleClick}
+                      >
+                        {title} {displaySortIcons({ sortable, sortDirection })}
+                      </th>
+                    )
+                  )}
                 </tr>
               </thead>
               <tbody>

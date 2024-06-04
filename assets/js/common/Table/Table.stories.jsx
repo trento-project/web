@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import Table from '.';
 
@@ -94,6 +94,57 @@ const data = [
     created_at: '2022-02-31',
   },
 ];
+
+export const Sorted = {
+  args: {},
+  render: () => {
+    const [sortDirection, setSortDirection] = useState('asc');
+
+    const handleClickUsers = () => {
+      if (sortDirection === 'asc') {
+        setSortDirection('desc');
+      } else {
+        setSortDirection('asc');
+      }
+    };
+
+    const sortedColumnsConfig = config.columns.map((c) => {
+      if (c.key !== 'status') {
+        return {
+          ...c,
+          sortable: true,
+          sortDirection: c.key === 'user' ? sortDirection : null,
+          handleClick: c.key === 'user' ? handleClickUsers : null,
+        };
+      }
+
+      return c;
+    });
+
+    const orderByUserAsc = (a, b) => {
+      const userA = a.user.toUpperCase();
+      const userB = b.user.toUpperCase();
+
+      if (userA < userB) {
+        return sortDirection === 'asc' ? -1 : 1;
+      }
+
+      if (userA > userB) {
+        return sortDirection === 'asc' ? 1 : -1;
+      }
+
+      return 0;
+    };
+
+    return (
+      <Table
+        config={{ ...config, columns: sortedColumnsConfig }}
+        sortBy={orderByUserAsc}
+        data={data}
+      />
+    );
+  },
+};
 
 export function Populated() {
   return <Table config={config} data={data} />;
