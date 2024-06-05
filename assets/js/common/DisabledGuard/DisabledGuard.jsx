@@ -24,25 +24,25 @@ function DisabledGuard({
     .map(({ name, resource }) => `${name}:${resource}`)
     .some((ability) => permittedFor.includes(ability));
 
-  if (!isPermitted) {
-    const element =
-      children.type === Tooltip
-        ? React.cloneElement(children.props.children, { disabled: true })
-        : React.cloneElement(children, { disabled: true });
-
-    return (
-      <Tooltip
-        isEnabled={withTooltip}
-        content={tooltipMessage}
-        place="bottom"
-        wrap={false}
-      >
-        <div>{element}</div>
-      </Tooltip>
-    );
+  if (isPermitted) {
+    return children;
   }
 
-  return children;
+  const element =
+    children.type === Tooltip
+      ? React.cloneElement(children.props.children, { disabled: true })
+      : React.cloneElement(children, { disabled: true });
+
+  return (
+    <Tooltip
+      isEnabled={withTooltip}
+      content={tooltipMessage}
+      place="bottom"
+      wrap={false}
+    >
+      <div>{element}</div>
+    </Tooltip>
+  );
 }
 
 export default DisabledGuard;
