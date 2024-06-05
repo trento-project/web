@@ -99,7 +99,7 @@ const data = [
 export const Sorted = {
   args: {},
   render: () => {
-    const [sortingByCol, setSortingByCol] = useState(null);
+    const [sortingColumn, setSortingColumn] = useState(null);
     const [sortDirection, setSortDirection] = useState('asc');
 
     const toggleSortDirection = () => {
@@ -111,12 +111,12 @@ export const Sorted = {
     };
 
     const createOnClickHandler = (key) => () => {
-      if (sortingByCol === key) {
+      if (sortingColumn === key) {
         toggleSortDirection();
       } else {
         setSortDirection('asc');
       }
-      setSortingByCol(key);
+      setSortingColumn(key);
     };
 
     const handleUserColClick = createOnClickHandler('user');
@@ -129,21 +129,21 @@ export const Sorted = {
           title: 'User',
           key: 'user',
           sortable: true,
-          sortDirection: sortingByCol === 'user' ? sortDirection : null,
+          sortDirection: sortingColumn === 'user' ? sortDirection : null,
           handleClick: handleUserColClick,
         },
         {
           title: 'Created At',
           key: 'created_at',
           sortable: true,
-          sortDirection: sortingByCol === 'created_at' ? sortDirection : null,
+          sortDirection: sortingColumn === 'created_at' ? sortDirection : null,
           handleClick: handleCreatedAtColClick,
         },
         {
           title: 'Role',
           key: 'role',
           sortable: true,
-          sortDirection: sortingByCol === 'role' ? sortDirection : null,
+          sortDirection: sortingColumn === 'role' ? sortDirection : null,
           handleClick: handleRoleColClick,
         },
         {
@@ -165,7 +165,7 @@ export const Sorted = {
     return (
       <Table
         config={sortedConfig}
-        sortBy={createStringSortingPredicate(sortingByCol, sortDirection)}
+        sortBy={createStringSortingPredicate(sortingColumn, sortDirection)}
         data={data}
       />
     );
