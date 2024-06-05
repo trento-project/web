@@ -98,9 +98,10 @@ const data = [
 export const Sorted = {
   args: {},
   render: () => {
+    const [sortingByCol, setSortingByCol] = useState(null);
     const [sortDirection, setSortDirection] = useState('asc');
 
-    const handleClickUsers = () => {
+    const toggleSortDirection = () => {
       if (sortDirection === 'asc') {
         setSortDirection('desc');
       } else {
@@ -108,38 +109,83 @@ export const Sorted = {
       }
     };
 
-    const sortedColumnsConfig = config.columns.map((c) => {
-      if (c.key !== 'status') {
-        return {
-          ...c,
+    const sortingFunc = (sortingCol, direction) => {
+      if (!sortingCol) {
+        return null;
+      }
+
+      return (a, b) => {
+        const keyA = a[sortingCol].toUpperCase();
+        const keyB = b[sortingCol].toUpperCase();
+
+        if (keyA < keyB) {
+          return direction === 'asc' ? -1 : 1;
+        }
+
+        if (keyA > keyB) {
+          return direction === 'asc' ? 1 : -1;
+        }
+
+        return 0;
+      };
+    };
+
+    const createOnClickHandler = (key) => () => {
+      if (sortingByCol === key) {
+        toggleSortDirection();
+      } else {
+        setSortDirection('asc');
+      }
+      setSortingByCol(key);
+    };
+
+    const handleUserColClick = createOnClickHandler('user');
+    const handleCreatedAtColClick = createOnClickHandler('created_at');
+    const handleRoleColClick = createOnClickHandler('role');
+
+    const sortedConfig = {
+      columns: [
+        {
+          title: 'User',
+          key: 'user',
           sortable: true,
-          sortDirection: c.key === 'user' ? sortDirection : null,
-          handleClick: c.key === 'user' ? handleClickUsers : null,
-        };
-      }
-
-      return c;
-    });
-
-    const orderByUser = (a, b) => {
-      const userA = a.user.toUpperCase();
-      const userB = b.user.toUpperCase();
-
-      if (userA < userB) {
-        return sortDirection === 'asc' ? -1 : 1;
-      }
-
-      if (userA > userB) {
-        return sortDirection === 'asc' ? 1 : -1;
-      }
-
-      return 0;
+          sortDirection: sortingByCol === 'user' ? sortDirection : null,
+          handleClick: handleUserColClick,
+        },
+        {
+          title: 'Created At',
+          key: 'created_at',
+          sortable: true,
+          sortDirection: sortingByCol === 'created_at' ? sortDirection : null,
+          handleClick: handleCreatedAtColClick,
+        },
+        {
+          title: 'Role',
+          key: 'role',
+          sortable: true,
+          sortDirection: sortingByCol === 'role' ? sortDirection : null,
+          handleClick: handleRoleColClick,
+        },
+        {
+          title: 'Status',
+          key: 'status',
+          render: (content) => (
+            <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
+              <span
+                aria-hidden="true"
+                className="absolute inset-0 bg-green-200 opacity-50 rounded-full"
+              />
+              <span className="relative">{content}</span>
+            </span>
+          ),
+        },
+      ],
     };
 
     return (
       <Table
-        config={{ ...config, columns: sortedColumnsConfig }}
-        sortBy={orderByUser}
+        config={sortedConfig}
+        sortBy={sortingFunc(sortingByCol, sortDirection)}
         data={data}
       />
     );
