@@ -1,7 +1,6 @@
 /* eslint-disable react/no-array-index-key */
 
 import React, { Fragment, useState, useEffect } from 'react';
-import { EOS_ARROW_UPWARD, EOS_ARROW_DOWNWARD } from 'eos-icons-react';
 import classNames from 'classnames';
 import { page, pages } from '@lib/lists';
 import {
@@ -9,11 +8,11 @@ import {
   createFilter,
   TableFilters,
 } from './filters';
-
+import { defaultRowKey } from './defaultRowKey';
+import SortingIcon from './SortingIcon';
+import EmptyState from './EmptyState';
 import CollapsibleTableRow from './CollapsibleTableRow';
 import Pagination from './Pagination';
-import EmptyState from './EmptyState';
-import { defaultRowKey } from './defaultRowKey';
 
 const defaultCellRender = (content) => (
   <p className="text-gray-900 whitespace-no-wrap">{content}</p>
@@ -141,29 +140,6 @@ function Table({
 
   const totalPages = pages(sortedData);
 
-  const displaySortIcons = ({
-    sortable = false,
-    sortDirection = undefined,
-  }) => {
-    if (!sortable) return null;
-
-    if (sortDirection === 'asc')
-      return (
-        <span className="inline-table relative top-1">
-          <EOS_ARROW_UPWARD />
-        </span>
-      );
-
-    if (sortDirection === 'desc')
-      return (
-        <span className="inline-table relative top-1">
-          <EOS_ARROW_DOWNWARD />
-        </span>
-      );
-
-    return null;
-  };
-
   return (
     <div
       className={classNames('container mx-auto', {
@@ -218,7 +194,11 @@ function Table({
                         )}
                         onClick={handleClick}
                       >
-                        {title} {displaySortIcons({ sortable, sortDirection })}
+                        {title}{' '}
+                        <SortingIcon
+                          sortable={sortable}
+                          sortDirection={sortDirection}
+                        />
                       </th>
                     )
                   )}
