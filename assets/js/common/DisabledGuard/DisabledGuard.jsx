@@ -28,10 +28,12 @@ function DisabledGuard({
     return children;
   }
 
-  const element =
-    children.type === Tooltip
-      ? React.cloneElement(children.props.children, { disabled: true })
-      : React.cloneElement(children, { disabled: true });
+  const guardedElement =
+    children.type === Tooltip ? children.props.children : children;
+
+  const disabledElement = React.cloneElement(guardedElement, {
+    disabled: true,
+  });
 
   return (
     <Tooltip
@@ -40,7 +42,7 @@ function DisabledGuard({
       place="bottom"
       wrap={false}
     >
-      <div>{element}</div>
+      <div>{disabledElement}</div>
     </Tooltip>
   );
 }
