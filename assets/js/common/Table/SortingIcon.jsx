@@ -1,6 +1,8 @@
 import React from 'react';
 import { EOS_ARROW_UPWARD, EOS_ARROW_DOWNWARD } from 'eos-icons-react';
 
+const styles = 'inline-table relative top-1';
+
 export default function SortingIcon({
   sortable = false,
   sortDirection = undefined,
@@ -9,17 +11,21 @@ export default function SortingIcon({
 
   if (sortDirection === 'asc')
     return (
-      <span className="inline-table relative top-1">
+      <span className={styles}>
         <EOS_ARROW_UPWARD />
       </span>
     );
 
   if (sortDirection === 'desc')
     return (
-      <span className="inline-table relative top-1">
+      <span className={styles}>
         <EOS_ARROW_DOWNWARD />
       </span>
     );
 
-  return null;
+  return (
+    <span className={`invisible ${styles}`}>
+      <EOS_ARROW_UPWARD />
+    </span>
+  );
 }
