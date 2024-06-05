@@ -145,7 +145,11 @@ function ProfileForm({
                 Authenticator App
               </Label>
               <div className="col-start-2 col-span-3">
-                <Switch selected={totpEnabled} onChange={toggleTotp} />
+                <Switch
+                  selected={totpEnabled}
+                  onChange={toggleTotp}
+                  disabled={loading || disableForm}
+                />
               </div>
             </>
           )}
