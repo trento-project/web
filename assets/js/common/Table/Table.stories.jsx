@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createStringSortingPredicate } from './sorting';
 
 import Table from '.';
 
@@ -109,27 +110,6 @@ export const Sorted = {
       }
     };
 
-    const sortingFunc = (sortingCol, direction) => {
-      if (!sortingCol) {
-        return null;
-      }
-
-      return (a, b) => {
-        const keyA = a[sortingCol].toUpperCase();
-        const keyB = b[sortingCol].toUpperCase();
-
-        if (keyA < keyB) {
-          return direction === 'asc' ? -1 : 1;
-        }
-
-        if (keyA > keyB) {
-          return direction === 'asc' ? 1 : -1;
-        }
-
-        return 0;
-      };
-    };
-
     const createOnClickHandler = (key) => () => {
       if (sortingByCol === key) {
         toggleSortDirection();
@@ -185,7 +165,7 @@ export const Sorted = {
     return (
       <Table
         config={sortedConfig}
-        sortBy={sortingFunc(sortingByCol, sortDirection)}
+        sortBy={createStringSortingPredicate(sortingByCol, sortDirection)}
         data={data}
       />
     );
