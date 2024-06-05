@@ -116,7 +116,7 @@ export function* deregisterHost({
   yield put(setHostDeregistering(payload));
   try {
     yield call(del, `/hosts/${id}`);
-    navigate('/hosts');
+    navigate(-1);
   } catch (error) {
     yield put(
       notify({
