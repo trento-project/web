@@ -24,8 +24,7 @@ import TrentoLogo from '@static/trento-logo-stacked.svg';
 
 import classNames from 'classnames';
 import ProfileMenu from '@common/ProfileMenu';
-
-import ForbiddenGuard from '@pages/ForbiddenGuard';
+import ForbiddenGuard from '@common/ForbiddenGuard';
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: EOS_HOME_OUTLINED },
