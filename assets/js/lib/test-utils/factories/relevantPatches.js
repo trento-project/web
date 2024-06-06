@@ -12,3 +12,12 @@ export const relevantPatchFactory = Factory.define(() => ({
   date: faker.date.anytime(),
   update_date: faker.date.anytime(),
 }));
+
+export const patchForPackageFactory = Factory.define(() => ({
+  advisory: faker.animal.cat(),
+  type: faker.helpers.arrayElement(advisoryType),
+  synopsis: faker.lorem.sentence(),
+  issue_date: faker.date.anytime().toString(),
+  update_date: faker.date.anytime().toString(),
+  last_modified_date: faker.date.anytime().toString(),
+}));

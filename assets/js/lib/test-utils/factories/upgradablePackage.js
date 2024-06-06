@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { Factory } from 'fishery';
-import { relevantPatchFactory } from './relevantPatches';
+import { patchForPackageFactory } from './relevantPatches';
 
 const releaseVersionFactory = () =>
   `${faker.number.int({ min: 100000, max: 160000 })}.${faker.system.semver()}`;
@@ -17,5 +17,5 @@ export const upgradablePackageFactory = Factory.define(() => ({
   to_version: faker.system.semver(),
   from_arch: faker.airline.flightNumber(),
   to_arch: faker.airline.flightNumber(),
-  patches: relevantPatchFactory.buildList(2),
+  patches: patchForPackageFactory.buildList(2),
 }));
