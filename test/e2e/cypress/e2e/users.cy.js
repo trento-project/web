@@ -301,7 +301,7 @@ describe('Users', () => {
 
     it('should display TOTP enrollment failure if the given code is invalid', () => {
       cy.get('button[role="switch"]').click();
-      cy.get('h2').should('contain', 'Configure TOTP');
+      cy.get('div').should('contain', 'Your new TOTP secret is');
 
       cy.get('input[placeholder="TOTP code"]').type('invalid');
       cy.contains('button', 'Verify').click();
@@ -311,7 +311,8 @@ describe('Users', () => {
 
     it('should complete TOTP enrollment properly', () => {
       cy.get('input[placeholder="TOTP code"]').clear();
-      cy.get('div:contains("Your new TOTP secret is") > span')
+      cy.contains('Your new TOTP secret is')
+        .next()
         .invoke('text')
         .as('totpSecret');
 
@@ -337,7 +338,8 @@ describe('Users', () => {
 
     it('should reconfigure TOTP authentication with a new secret', () => {
       cy.get('button[role="switch"]').click();
-      cy.get('div:contains("Your new TOTP secret is") > span')
+      cy.contains('Your new TOTP secret is')
+        .next()
         .invoke('text')
         .as('totpSecret');
 
