@@ -16,8 +16,8 @@ describe('UpgradablePackagesList component', () => {
 
     expect(screen.getByText(expectedInstalledPackage)).toBeVisible();
     expect(screen.getByText(expectedLatestPackage)).toBeVisible();
-    patches.forEach(({ advisory_name }) => {
-      expect(screen.getByText(advisory_name)).toBeVisible();
+    patches.forEach(({ advisory }) => {
+      expect(screen.getByText(advisory)).toBeVisible();
     });
   });
 });

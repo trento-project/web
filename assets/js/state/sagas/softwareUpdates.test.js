@@ -2,6 +2,7 @@ import { faker } from '@faker-js/faker';
 import MockAdapter from 'axios-mock-adapter';
 
 import { recordSaga } from '@lib/test-utils';
+import { patchForPackageFactory } from '@lib/test-utils/factories';
 
 import { networkClient } from '@lib/network';
 
@@ -10,9 +11,13 @@ import {
   setSoftwareUpdates,
   setSoftwareUpdatesErrors,
   setEmptySoftwareUpdates,
+  setPatchesForPackages,
 } from '@state/softwareUpdates';
 
-import { fetchSoftwareUpdates } from './softwareUpdates';
+import {
+  fetchSoftwareUpdates,
+  fetchUpgradablePackagesPatches,
+} from './softwareUpdates';
 
 describe('Software Updates saga', () => {
   describe('Fetching Software Updates', () => {
@@ -86,5 +91,30 @@ describe('Software Updates saga', () => {
         ]);
       }
     );
+  });
+
+  describe('Fetching patches for packages', () => {
+    it('sets patches for upgradable packages', async () => {
+      const axiosMock = new MockAdapter(networkClient);
+      const hostID = faker.string.uuid();
+      const packageIDs = [faker.string.uuid(), faker.string.uuid()];
+      const patches = patchForPackageFactory.buildList(3);
+      const response = {
+        patches: [
+          { package_id: packageIDs[0], patches },
+          { package_id: packageIDs[1], patches },
+        ],
+      };
+
+      axiosMock.onGet(`/api/v1/software_updates/packages`).reply(200, response);
+
+      const dispatched = await recordSaga(fetchUpgradablePackagesPatches, {
+        payload: { hostID, packageIDs },
+      });
+
+      expect(dispatched).toEqual([
+        setPatchesForPackages({ hostID, patches: response.patches }),
+      ]);
+    });
   });
 });
