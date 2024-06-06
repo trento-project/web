@@ -1,9 +1,10 @@
 import Config
 
 config :trento, TrentoWeb.Endpoint,
-  check_origin: false,
+  check_origin: :conn,
   cache_static_manifest: "priv/static/cache_manifest.json",
-  server: true
+  server: true,
+  url: [host: "demo.trento-project.io"]
 
 config :swoosh, local: false
 
