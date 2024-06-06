@@ -1,3 +1,5 @@
+import { TOTP } from 'totp-generator';
+
 import { userFactory } from '@lib/test-utils/factories/users';
 
 const PASSWORD = 'password';
@@ -69,7 +71,7 @@ const getProfile = (username, password) => {
   });
 };
 
-const expectLoginFails = (username, password) => {
+const expectLoginFails = (username, password, code = 401) => {
   cy.request({
     method: 'POST',
     url: '/api/session',
@@ -79,7 +81,7 @@ const expectLoginFails = (username, password) => {
     },
     failOnStatusCode: false,
   }).then((response) => {
-    expect(response.status).to.eq(401);
+    expect(response.status).to.eq(code);
   });
 };
 
@@ -286,6 +288,150 @@ describe('Users', () => {
         });
       });
       cy.contains('Users');
+    });
+  });
+
+  describe('TOTP authentication', () => {
+    before(() => {
+      cy.logout();
+      cy.login(USER.username, PASSWORD);
+      cy.visit('/profile');
+      cy.url().should('include', '/profile');
+    });
+
+    it('should display TOTP enrollment failure if the given code is invalid', () => {
+      cy.get('button[role="switch"]').click();
+      cy.get('h2').should('contain', 'Configure TOTP');
+
+      cy.get('input[placeholder="TOTP code"]').type('invalid');
+      cy.contains('button', 'Verify').click();
+
+      cy.get('p').contains('Totp code not valid for the enrollment procedure.');
+    });
+
+    it('should complete TOTP enrollment properly', () => {
+      cy.get('input[placeholder="TOTP code"]').clear();
+      cy.get('div:contains("Your new TOTP secret is") > span')
+        .invoke('text')
+        .as('totpSecret');
+
+      cy.get('@totpSecret').then((totpSecret) => {
+        cy.wrap(TOTP.generate(totpSecret)).then(({ otp }) => {
+          cy.get('input[placeholder="TOTP code"]').type(otp);
+        });
+      });
+
+      cy.contains('button', 'Verify').click();
+      cy.get('button[role="switch"]').should('be.enabled');
+    });
+
+    it('should fail to login if TOTP code is not given', () => {
+      expectLoginFails(USER.username, PASSWORD, 422);
+    });
+
+    it('should disable TOTP authentication', () => {
+      cy.get('button[role="switch"]').click();
+      cy.contains('button', 'Disable').click();
+      cy.apiLogin(USER.username, PASSWORD);
+    });
+
+    it('should reconfigure TOTP authentication with a new secret', () => {
+      cy.get('button[role="switch"]').click();
+      cy.get('div:contains("Your new TOTP secret is") > span')
+        .invoke('text')
+        .as('totpSecret');
+
+      cy.get('@totpSecret').then((totpSecret) => {
+        cy.wrap(TOTP.generate(totpSecret)).then(({ otp }) => {
+          cy.get('input[placeholder="TOTP code"]').type(otp);
+        });
+
+        Cypress.env('totp_secret', totpSecret);
+      });
+
+      cy.contains('button', 'Verify').click();
+      cy.get('button[role="switch"]').should('be.enabled');
+    });
+
+    it('should ask TOTP code during login and fail if given code is invalid', () => {
+      cy.logout();
+      cy.visit('/');
+      cy.get('input[data-testid="login-username"]').type(USER.username);
+      cy.get('input[data-testid="login-password"]').type(PASSWORD);
+      cy.contains('button', 'Login').click();
+
+      cy.get('label').should('contain', 'TOTP code');
+
+      cy.get('input[data-testid="login-totp-code"]').type('invalid');
+      cy.contains('button', 'Login').click();
+
+      cy.get('p').contains('Invalid credentials');
+    });
+
+    it('should fail login in if the code is already used', () => {
+      cy.get('input[data-testid="login-totp-code"]').clear();
+
+      cy.wrap(TOTP.generate(Cypress.env('totp_secret'))).then(({ otp }) => {
+        cy.get('input[data-testid="login-totp-code"]').type(otp);
+      });
+
+      cy.contains('button', 'Login').click();
+      cy.get('p').contains('Invalid credentials');
+    });
+
+    // skipping this test by default, as it takes a long time.
+    it.skip('should ask TOTP code during login and work if the code is new', () => {
+      cy.get('input[data-testid="login-totp-code"]').clear();
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(30000)
+        .then(() => TOTP.generate(Cypress.env('totp_secret')))
+        .as('otpCode');
+
+      cy.get('@otpCode').then(({ otp }) => {
+        cy.get('input[data-testid="login-totp-code"]').type(otp);
+      });
+
+      cy.contains('button', 'Login').click();
+
+      cy.get('h1').should('contain', 'At a glance');
+    });
+
+    it('should be disabled by admin user', () => {
+      cy.logout();
+      cy.login();
+      cy.visit('/users');
+      cy.contains('a', USER.username).click();
+      cy.get('h1').should('contain', 'Edit User');
+
+      cy.get('button.totp-selection-dropdown').click();
+
+      cy.get('li:contains("Disabled")').click();
+      cy.contains('button', 'Save').click();
+
+      cy.get('div').contains('User edited successfully');
+      cy.get('h1').should('contain', 'Users');
+
+      cy.apiLogin(USER.username, PASSWORD);
+    });
+
+    it('should not be enabled by admin user', () => {
+      cy.contains('a', USER.username).click();
+      cy.get('h1').should('contain', 'Edit User');
+
+      cy.get('button.totp-selection-dropdown').click();
+
+      cy.get('ul > li:nth-child(1)')
+        .invoke('attr', 'aria-disabled')
+        .should('eq', 'true');
+    });
+  });
+
+  describe('Lock user', () => {
+    before(() => {
+      cy.logout();
+      cy.login(USER.username, PASSWORD);
+      cy.visit('/profile');
+      cy.get('h1').should('contain', 'Profile');
     });
 
     it('should logout the user when an admin disables the user', () => {
