@@ -128,7 +128,7 @@ function ProfileForm({
 
           <Label
             className="col-start-1 col-span-1"
-            info="Setup a multi factor TOTP authentication besides your password to increase security
+            info="Setup a multi-factor TOTP authentication besides your password to increase security
               for your account."
           >
             Authenticator App
