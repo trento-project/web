@@ -20,12 +20,14 @@ Dig into [./config](https://github.com/trento-project/web/blob/main/config/) dir
 
 **Server**
 - `PORT`
+- `TRENTO_DOMAIN`
 
 **Runner integration**
 - `RUNNER_URL`
 
 **Monitoring**
 - `PROMETHEUS_URL`
+- `CHARTS_ENABLED`
 
 **Alerting**
 - `ENABLE_ALERTING`
