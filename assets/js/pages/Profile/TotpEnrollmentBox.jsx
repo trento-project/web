@@ -29,22 +29,21 @@ export default function TotpEnrollmentBox({
   }, [errors]);
 
   return (
-    <div className="container max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 bg-white dark:bg-gray-800 rounded-lg">
+    <div className="container max-w-7xl mx-auto bg-white dark:bg-gray-800 rounded-lg">
       <div className="flex flex-col">
-        <div className="text-lg">
-          Your new TOTP secret is: <span className="font-bold">{secret}</span>
-        </div>
-        <div>
-          <span> For quick setup, scan this QR code with your TOTP app: </span>
+        <div>Your new TOTP secret is: </div>
+        <div className="font-bold text-lg">{secret}</div>
+        <div className="mt-1">
+          For quick setup, scan this QR code with your Authenticator App.
         </div>
         <div className="mt-4">
           <QRCodeSVG value={qrData} role="img" />
         </div>
         <div className="mt-4">
-          After you configured your app, enter a test code below to ensure
-          everything works correctly:
+          After you have configured your App, enter a test code below to ensure
+          everything works correctly.
         </div>
-        <div className="mt-4 flex w-1/4 space-x-4">
+        <div className="mt-4 flex space-x-4">
           <Input
             autoComplete="off"
             placeholder="TOTP code"

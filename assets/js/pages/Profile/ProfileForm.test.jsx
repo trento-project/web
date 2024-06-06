@@ -240,6 +240,39 @@ describe('ProfileForm', () => {
     expect(screen.getByText(totpSecret)).toBeVisible();
   });
 
+  it('should hide the totp enrollment box when Cancel button is clicked', async () => {
+    const username = faker.internet.userName();
+    const fullName = faker.person.fullName();
+    const email = faker.internet.email();
+    const abilities = abilityFactory.buildList(2);
+
+    const totpSecret = faker.string.uuid();
+    const toggleTotpBox = jest.fn();
+
+    const user = userEvent.setup();
+
+    render(
+      <ProfileForm
+        fullName={fullName}
+        emailAddress={email}
+        username={username}
+        abilities={abilities}
+        totpSecret={totpSecret}
+        totpQrData={totpSecret}
+        totpBoxOpen
+        toggleTotpBox={toggleTotpBox}
+      />
+    );
+
+    expect(screen.getByText(totpSecret)).toBeVisible();
+
+    await act(async () => {
+      await user.click(screen.getByText('Cancel'));
+    });
+
+    expect(toggleTotpBox).toHaveBeenCalledWith(false);
+  });
+
   it('should call onVerifyTotp when the totp box is shown and the verify button is clicked', async () => {
     const username = faker.internet.userName();
     const fullName = faker.person.fullName();
