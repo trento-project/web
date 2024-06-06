@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { createStringSortingPredicate } from './sorting';
 
 import Table from '.';
 
@@ -94,6 +95,82 @@ const data = [
     created_at: '2022-02-31',
   },
 ];
+
+export const Sorted = {
+  args: {},
+  render: () => {
+    const [sortingColumn, setSortingColumn] = useState(null);
+    const [sortDirection, setSortDirection] = useState('asc');
+
+    const toggleSortDirection = () => {
+      if (sortDirection === 'asc') {
+        setSortDirection('desc');
+      } else {
+        setSortDirection('asc');
+      }
+    };
+
+    const createOnClickHandler = (key) => () => {
+      if (sortingColumn === key) {
+        toggleSortDirection();
+      } else {
+        setSortDirection('asc');
+      }
+      setSortingColumn(key);
+    };
+
+    const handleUserColClick = createOnClickHandler('user');
+    const handleCreatedAtColClick = createOnClickHandler('created_at');
+    const handleRoleColClick = createOnClickHandler('role');
+
+    const sortedConfig = {
+      columns: [
+        {
+          title: 'User',
+          key: 'user',
+          sortable: true,
+          sortDirection: sortingColumn === 'user' ? sortDirection : null,
+          handleClick: handleUserColClick,
+        },
+        {
+          title: 'Created At',
+          key: 'created_at',
+          sortable: true,
+          sortDirection: sortingColumn === 'created_at' ? sortDirection : null,
+          handleClick: handleCreatedAtColClick,
+        },
+        {
+          title: 'Role',
+          key: 'role',
+          sortable: true,
+          sortDirection: sortingColumn === 'role' ? sortDirection : null,
+          handleClick: handleRoleColClick,
+        },
+        {
+          title: 'Status',
+          key: 'status',
+          render: (content) => (
+            <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
+              <span
+                aria-hidden="true"
+                className="absolute inset-0 bg-green-200 opacity-50 rounded-full"
+              />
+              <span className="relative">{content}</span>
+            </span>
+          ),
+        },
+      ],
+    };
+
+    return (
+      <Table
+        config={sortedConfig}
+        sortBy={createStringSortingPredicate(sortingColumn, sortDirection)}
+        data={data}
+      />
+    );
+  },
+};
 
 export function Populated() {
   return <Table config={config} data={data} />;
