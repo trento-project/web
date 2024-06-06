@@ -16,6 +16,7 @@ function DisabledGuard({
   permitted,
   withTooltip = true,
   tooltipMessage = DEFAULT_TOOLTIP_MESSAGE,
+  tooltipPlace = 'bottom',
   children,
 }) {
   const permittedFor = ALL_PERMITTED.concat(permitted);
@@ -39,7 +40,7 @@ function DisabledGuard({
     <Tooltip
       isEnabled={withTooltip}
       content={tooltipMessage}
-      place="bottom"
+      place={tooltipPlace}
       wrap={false}
     >
       <div>{disabledElement}</div>
