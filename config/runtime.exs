@@ -118,6 +118,9 @@ if config_env() in [:prod, :demo] do
     sender: System.get_env("ALERT_SENDER", "alerts@trento-project.io"),
     recipient: System.get_env("ALERT_RECIPIENT", "admin@trento-project.io")
 
+  :ok = :public_key.cacerts_load()
+  [_ | _] = cacerts = :public_key.cacerts_get()
+
   config :trento, Trento.Mailer,
     adapter: Swoosh.Adapters.SMTP,
     relay: System.get_env("SMTP_SERVER") || "",
@@ -126,7 +129,13 @@ if config_env() in [:prod, :demo] do
     password: System.get_env("SMTP_PASSWORD") || "",
     auth: :always,
     ssl: :if_available,
-    tls: :if_available
+    tls: :if_available,
+    tls_options: [
+      versions: [:"tlsv1.2", :"tlsv1.3"],
+      cacerts: cacerts,
+      server_name_indication: String.to_charlist(System.get_env("SMTP_SERVER")),
+      depth: 99
+    ]
 
   config :trento, Trento.Scheduler,
     jobs: [
