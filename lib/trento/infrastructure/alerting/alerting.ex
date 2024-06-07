@@ -123,7 +123,8 @@ defmodule Trento.Infrastructure.Alerting.Alerting do
         :ok
 
       {:error, reason} ->
-        Logger.error("Failed to send alert notification with subject \"#{subject}\": #{reason}",
+        Logger.error(
+          "Failed to send alert notification with subject \"#{subject}\": #{inspect(reason)}",
           error: reason
         )
 
