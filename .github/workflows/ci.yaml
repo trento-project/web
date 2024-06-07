@@ -752,7 +752,7 @@ jobs:
         )
     env:
       IMAGE_REPOSITORY: ghcr.io/${{ github.repository_owner }}
-      TRENTO_DOMAIN: ${{ secrets.TRENTO_DEMO_IP }}
+      TRENTO_WEB_ORIGIN: ${{ secrets.TRENTO_DEMO_IP }}
       TRENTO_NAMESPACE: ${{ secrets.TRENTO_NAMESPACE }}
       TRENTO_ADMIN_EMAIL: ${{ secrets.TRENTO_ADMIN_EMAIL }}
       TRENTO_INGRESS_CLASS: ${{ secrets.TRENTO_INGRESS_CLASS }}
@@ -799,7 +799,7 @@ jobs:
             --set trento-wanda.image.pullPolicy=Always \
             --set trento-wanda.image.repository="${IMAGE_REPOSITORY}/trento-wanda" \
             --set trento-wanda.image.tag="demo" \
-            --set trento-web.trentoDomain="${TRENTO_DOMAIN}" \
+            --set trento-web.trentoDomain="${TRENTO_WEB_ORIGIN}" \
             -f ../../hack/cert-manager/override-values.yaml
 
   run-photofinish-demo-env:

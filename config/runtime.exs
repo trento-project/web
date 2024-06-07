@@ -58,9 +58,9 @@ if config_env() in [:prod, :demo] do
         """)
 
   trento_origin =
-    System.get_env("TRENTO_DOMAIN") ||
+    System.get_env("TRENTO_WEB_ORIGIN") ||
       raise """
-      environment variable TRENTO_DOMAIN is missing.
+      environment variable TRENTO_WEB_ORIGIN is missing.
       For example: yourdomain.example.com
       """
 
