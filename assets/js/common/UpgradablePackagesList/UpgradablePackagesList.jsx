@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { createStringSortingPredicate } from '@common/Table/sorting';
 import Table from '@common/Table';
 
 const upgradablePackagesDefault = [];
@@ -6,6 +7,21 @@ const upgradablePackagesDefault = [];
 function UpgradablePackagesList({
   upgradablePackages = upgradablePackagesDefault,
 }) {
+  const [sortDirection, setSortDirection] = useState('asc');
+
+  const toggleSortDirection = () => {
+    if (sortDirection === 'asc') {
+      setSortDirection('desc');
+    } else {
+      setSortDirection('asc');
+    }
+  };
+
+  const sortByLatestPackage = createStringSortingPredicate(
+    'latestPackage',
+    sortDirection
+  );
+
   const config = {
     pagination: true,
     usePadding: false,
@@ -18,6 +34,9 @@ function UpgradablePackagesList({
       {
         title: 'Latest Package',
         key: 'latestPackage',
+        sortable: true,
+        sortDirection,
+        handleClick: () => toggleSortDirection(),
         render: (content, _) => <div>{content}</div>,
       },
       {
@@ -46,7 +65,7 @@ function UpgradablePackagesList({
     };
   });
 
-  return <Table config={config} data={data} />;
+  return <Table config={config} data={data} sortBy={sortByLatestPackage} />;
 }
 
 export default UpgradablePackagesList;

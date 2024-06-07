@@ -4,14 +4,14 @@ export const createStringSortingPredicate = (key, direction) => {
   }
 
   return (a, b) => {
-    const keyA = a[key].toUpperCase();
-    const keyB = b[key].toUpperCase();
+    const stringA = a[key].toUpperCase();
+    const stringB = b[key].toUpperCase();
 
-    if (keyA < keyB) {
+    if (stringA < stringB) {
       return direction === 'asc' ? -1 : 1;
     }
 
-    if (keyA > keyB) {
+    if (stringA > stringB) {
       return direction === 'asc' ? 1 : -1;
     }
 
@@ -30,6 +30,27 @@ export const createNumberSortingPredicate = (key, direction) => {
     }
 
     if (a[key] > b[key]) {
+      return direction === 'asc' ? 1 : -1;
+    }
+
+    return 0;
+  };
+};
+
+export const createDateSortingPredicate = (key, direction) => {
+  if (!key) {
+    return null;
+  }
+
+  return (a, b) => {
+    const dateA = Date.parse(a[key]);
+    const dateB = Date.parse(b[key]);
+
+    if (dateA < dateB) {
+      return direction === 'asc' ? -1 : 1;
+    }
+
+    if (dateA > dateB) {
       return direction === 'asc' ? 1 : -1;
     }
 
