@@ -799,7 +799,7 @@ jobs:
             --set trento-wanda.image.pullPolicy=Always \
             --set trento-wanda.image.repository="${IMAGE_REPOSITORY}/trento-wanda" \
             --set trento-wanda.image.tag="demo" \
-            --set trento-web.trentoDomain="${TRENTO_WEB_ORIGIN}" \
+            --set trento-web.trentoWebOrigin="${TRENTO_WEB_ORIGIN}" \
             -f ../../hack/cert-manager/override-values.yaml
 
   run-photofinish-demo-env:
