@@ -128,7 +128,7 @@ if config_env() in [:prod, :demo] do
     username: System.get_env("SMTP_USER") || "",
     password: System.get_env("SMTP_PASSWORD") || "",
     auth: :always,
-    ssl: :if_available,
+    ssl: false,
     tls: :if_available,
     tls_options: [
       versions: [:"tlsv1.2", :"tlsv1.3"],
