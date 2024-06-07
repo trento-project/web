@@ -8,11 +8,10 @@ import { format as formatDate } from 'date-fns';
 import classNames from 'classnames';
 import { noop } from 'lodash';
 
-import {
+import Table, {
   createStringSortingPredicate,
   createDateSortingPredicate,
-} from '@common/Table/sorting';
-import Table from '@common/Table';
+} from '@common/Table';
 import { computedIconCssClass } from '@lib/icon';
 
 const iconFromAdvisoryType = (

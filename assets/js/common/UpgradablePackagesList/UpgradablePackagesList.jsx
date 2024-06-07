@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { createStringSortingPredicate } from '@common/Table/sorting';
-import Table from '@common/Table';
+import Table, { createStringSortingPredicate } from '@common/Table';
 
 const upgradablePackagesDefault = [];
 
