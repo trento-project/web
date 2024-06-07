@@ -142,7 +142,7 @@ if config_env() in [:prod, :demo] do
     tls_options: [
       versions: [:"tlsv1.2", :"tlsv1.3"],
       cacerts: cacerts,
-      server_name_indication: String.to_charlist(System.get_env("SMTP_SERVER")),
+      server_name_indication: String.to_charlist(System.get_env("SMTP_SERVER", "")),
       depth: 99
     ]
 
