@@ -1184,7 +1184,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                |> ClusterPolicy.handle(nil)
     end
 
-    test "should set the health to critical when the SAPInstance resourece is running the same node" do
+    test "should set the health to critical when the SAPInstance resource is running the same node" do
       group_1_resources =
         build_list(1, :crm_resource, %{
           "Id" => "rsc_sap_NWP_ASCS00",
