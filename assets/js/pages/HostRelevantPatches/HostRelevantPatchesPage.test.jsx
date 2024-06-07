@@ -8,7 +8,7 @@ import { hostFactory, relevantPatchFactory } from '@lib/test-utils/factories';
 
 import HostRelevantPatchesPage from './HostRelevantPatchesPage';
 
-const enhancePachesWithAdvisoryType = (
+const enhancePatchesWithAdvisoryType = (
   patches,
   { amount = 2, prefix = 'adv' } = {}
 ) =>
@@ -32,7 +32,7 @@ describe('HostRelevantPatchesPage', () => {
 
     it('shows all unique advisory types to select from', async () => {
       const host = hostFactory.build();
-      const patches = enhancePachesWithAdvisoryType(
+      const patches = enhancePatchesWithAdvisoryType(
         relevantPatchFactory.buildList(8)
       );
       const user = userEvent.setup();
@@ -48,7 +48,7 @@ describe('HostRelevantPatchesPage', () => {
 
       Array.from(new Set(patches.map((patch) => patch.advisory_type))).forEach(
         (advisoryType) => {
-          // This tests for uniqeness as well.
+          // This tests for uniqueness as well.
           expect(
             screen.getByRole('option', { name: advisoryType })
           ).toBeVisible();
@@ -93,7 +93,7 @@ describe('HostRelevantPatchesPage', () => {
     it('only shows the selected patch kind', async () => {
       const user = userEvent.setup();
 
-      const patches = enhancePachesWithAdvisoryType(
+      const patches = enhancePatchesWithAdvisoryType(
         relevantPatchFactory.buildList(8)
       );
 

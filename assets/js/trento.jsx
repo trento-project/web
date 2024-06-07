@@ -26,7 +26,7 @@ import ForbiddenGuard from '@common/ForbiddenGuard';
 import Home from '@pages/Home';
 import HostDetailsPage from '@pages/HostDetailsPage';
 import HostSettingsPage from '@pages/HostSettingsPage';
-import HostRelevanPatchesPage from '@pages/HostRelevantPatches';
+import HostRelevantPatchesPage from '@pages/HostRelevantPatches';
 import UpgradablePackagesPage from '@pages/UpgradablePackagesPage';
 import HostsList from '@pages/HostsList';
 import Layout from '@pages/Layout';
@@ -102,7 +102,7 @@ const createRouter = ({ getUser }) =>
               />
               <Route
                 path="hosts/:hostID/patches"
-                element={<HostRelevanPatchesPage />}
+                element={<HostRelevantPatchesPage />}
               />
               <Route
                 path="hosts/:hostID/packages"

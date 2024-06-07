@@ -23,7 +23,7 @@ const filterPatchesBySynopsis = (patches, synopsis) =>
       : advisory_synopsis.trim().startsWith(synopsis.trim())
   );
 
-function HostRelevanPatches({ hostName, onNavigate, patches }) {
+function HostRelevantPatches({ hostName, onNavigate, patches }) {
   const advisoryTypes = ['all'].concat(advisoryTypesFromPatches(patches));
 
   const [displayedAdvisories, setDisplayedAdvisories] = useState('all');
@@ -53,7 +53,7 @@ function HostRelevanPatches({ hostName, onNavigate, patches }) {
             className=""
             onChange={setDisplayedAdvisories}
             options={advisoryTypes}
-            optionsName="optionz"
+            optionsName="options"
             value={displayedAdvisories}
           />
           <Input
@@ -70,4 +70,4 @@ function HostRelevanPatches({ hostName, onNavigate, patches }) {
   );
 }
 
-export default HostRelevanPatches;
+export default HostRelevantPatches;
