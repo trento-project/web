@@ -40,7 +40,7 @@ defmodule Trento.Discovery.Payloads.SapSystemDiscoveryPayload do
       required: true
     )
     |> cast_embed(:Databases)
-    |> cast_embed(:Instances, required: true)
+    |> cast_embed(:Instances)
     |> validate_required_fields(@required_fields)
     |> validate_inclusion(:Type, @system_types)
   end
