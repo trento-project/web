@@ -57,6 +57,13 @@ if config_env() in [:prod, :demo] do
         You can generate one by calling: mix phx.gen.secret
         """)
 
+  trento_origin =
+    System.get_env("TRENTO_DOMAIN") ||
+      raise """
+      environment variable TRENTO_DOMAIN is missing.
+      For example: yourdomain.example.com
+      """
+
   config :trento, TrentoWeb.Endpoint,
     http: [
       # Enable IPv6 and bind on all interfaces.
@@ -66,6 +73,8 @@ if config_env() in [:prod, :demo] do
       ip: {0, 0, 0, 0, 0, 0, 0, 0},
       port: String.to_integer(System.get_env("PORT") || "4000")
     ],
+    check_origin: true,
+    url: [host: trento_origin],
     secret_key_base: secret_key_base
 
   amqp_url =
