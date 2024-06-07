@@ -1,0 +1,47 @@
+{
+  "agent_id": "9cd46919-5f19-59aa-993e-cf3736c71053",
+  "discovery_type": "sap_system_discovery",
+  "payload": [
+    {
+      "DBAddress": "",
+      "Databases": null,
+      "Id": "-",
+      "Instances": [],
+      "Profile": {
+        "SAPDBHOST": "10.90.1.13",
+        "SAPGLOBALHOST": "sapnwqas",
+        "SAPSYSTEMNAME": "NWQ",
+        "dbms/name": "HDQ",
+        "dbms/type": "hdb",
+        "dbs/hdb/dbname": "HDQ",
+        "dbs/hdb/schema": "SAPABAP1",
+        "enque/deque_wait_answer": "TRUE",
+        "enque/process_location": "REMOTESA",
+        "enque/serverhost": "sapnwqas",
+        "enque/serverinst": "00",
+        "gw/acl_mode": "1",
+        "gw/sec_info": "$(DIR_GLOBAL)$(DIR_SEP)secinfo$(FT_DAT)",
+        "icf/user_recheck": "1",
+        "icm/HTTP/ASJava/disable_url_session_tracking": "TRUE",
+        "is/HTTP/show_detailed_errors": "FALSE",
+        "login/password_downwards_compatibility": "0",
+        "login/system_client": "001",
+        "rdisp/autoabaptime": "0",
+        "rdisp/btctime": "0",
+        "rdisp/bufrefmode": "sendoff",
+        "rdisp/mshost": "sapnwqas",
+        "rdisp/msserv": "sapmsNWQ",
+        "rdisp/msserv_internal": "3900",
+        "rsdb/ssfs_connect": "0",
+        "rsec/ssfs_datapath": "$(DIR_GLOBAL)$(DIR_SEP)security$(DIR_SEP)rsecssfs$(DIR_SEP)data",
+        "rsec/ssfs_keypath": "$(DIR_GLOBAL)$(DIR_SEP)security$(DIR_SEP)rsecssfs$(DIR_SEP)key",
+        "service/protectedwebmethods": "SDEFAULT",
+        "system/secure_communication": "ON",
+        "system/type": "ABAP",
+        "vmcj/enable": "off"
+      },
+      "SID": "NWQ",
+      "Type": 0
+    }
+  ]
+}

@@ -324,5 +324,30 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
                |> load_discovery_event_fixture()
                |> SapSystemPolicy.handle([application_instance, database_instance], nil)
     end
+
+    test "should deregister all instances if the discovered instances contains an empty list inside a regular payload" do
+      application_instance =
+        build(:application_instance_without_host,
+          instance_number: "02"
+        )
+
+      database_instance =
+        build(:database_instance_without_host,
+          instance_number: "10"
+        )
+
+      assert {:ok,
+              [
+                %MarkApplicationInstanceAbsent{
+                  instance_number: "02"
+                },
+                %MarkDatabaseInstanceAbsent{
+                  instance_number: "10"
+                }
+              ]} =
+               "sap_system_discovery_empty_application_instances"
+               |> load_discovery_event_fixture()
+               |> SapSystemPolicy.handle([application_instance, database_instance], nil)
+    end
   end
 end
