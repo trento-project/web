@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
+import { get } from 'lodash';
 
+import { getHost } from '@state/selectors/host';
 import { getUpgradablePackages } from '@state/selectors/softwareUpdates';
 import { fetchSoftwareUpdatesSettings } from '@state/softwareUpdatesSettings';
 import {
@@ -9,6 +11,7 @@ import {
   fetchUpgradablePackagesPatches,
 } from '@state/softwareUpdates';
 
+import PageHeader from '@common/PageHeader';
 import BackButton from '@common/BackButton';
 import UpgradablePackagesList from '@common/UpgradablePackagesList';
 
@@ -20,6 +23,10 @@ function UpgradablePackagesPage() {
     dispatch(fetchSoftwareUpdates(hostID));
     dispatch(fetchSoftwareUpdatesSettings());
   }, []);
+
+  const host = useSelector(getHost(hostID));
+
+  const hostname = get(host, 'hostname', '');
 
   const upgradablePackages = useSelector((state) =>
     getUpgradablePackages(state, hostID)
@@ -36,6 +43,9 @@ function UpgradablePackagesPage() {
   return (
     <>
       <BackButton url={`/hosts/${hostID}`}>Back to Host Details</BackButton>
+      <PageHeader>
+        Upgradable packages: <span className="font-bold">{hostname}</span>
+      </PageHeader>
       <UpgradablePackagesList upgradablePackages={upgradablePackages} />
     </>
   );
