@@ -1,23 +1,19 @@
-const canonicalise = (val) => val.normalize().trim().toLowerCase();
+const regularize = (val) => val.normalize().trim().toLowerCase();
 
-const stringContains = (subject, predicate) =>
-  canonicalise(subject).includes(canonicalise(predicate));
+const stringContains = (str, substring) =>
+  regularize(str).includes(regularize(substring));
 
-const arrayContains = (subject, predicate) =>
-  subject
-    .map((it) => stringContains(it, predicate))
-    .reduce((accumulator, currentValue) => accumulator || currentValue, false);
+const arrayContains = (arr, substring) =>
+  arr.map((str) => stringContains(str, substring)).includes(true);
 
-const contains = (subject, predicate) =>
-  Array.isArray(subject)
-    ? arrayContains(subject, predicate)
-    : stringContains(subject, predicate);
+const contains = (str, substring) =>
+  Array.isArray(str)
+    ? arrayContains(str, substring)
+    : stringContains(str, substring);
 
-export const searchByKey = (subject, predicate, ...key) =>
-  key
+export const search = (row, searchTerm, columnKeys) =>
+  columnKeys
     .map((it) =>
-      Object.hasOwn(subject, it)
-        ? contains(subject[it] ?? '', predicate)
-        : false
+      Object.hasOwn(row, it) ? contains(row[it] ?? '', searchTerm) : false
     )
-    .reduce((accumulator, currentValue) => accumulator || currentValue, false);
+    .includes(true);
