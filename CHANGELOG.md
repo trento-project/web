@@ -1,5 +1,24 @@
 # Changelog
 
+## [2.3.1](https://github.com/trento-project/web/tree/2.3.1) (2024-06-10)
+
+[Full Changelog](https://github.com/trento-project/web/compare/2.3.0...2.3.1)
+
+**Fixed bugs:**
+
+- Default empty string for smtp server [\#2681](https://github.com/trento-project/web/pull/2681) ([CDimonaco](https://github.com/CDimonaco))
+- Fix SAP systems policy receiving an empty list of instances [\#2677](https://github.com/trento-project/web/pull/2677) ([dottorblaster](https://github.com/dottorblaster))
+- Fix SMTP usage in runtime configuration [\#2675](https://github.com/trento-project/web/pull/2675) ([CDimonaco](https://github.com/CDimonaco))
+- Fix Websocket usage with https [\#2671](https://github.com/trento-project/web/pull/2671) ([CDimonaco](https://github.com/CDimonaco))
+- Make discovery payload nullable in schema [\#2638](https://github.com/trento-project/web/pull/2638) ([arbulu89](https://github.com/arbulu89))
+
+**Merged pull requests:**
+
+- Rename `TRENTO_DOMAIN` to `TRENTO_WEB_ORIGIN` [\#2682](https://github.com/trento-project/web/pull/2682) ([nelsonkopliku](https://github.com/nelsonkopliku))
+- Allow to continue when cert-manager has already been installed in the CI [\#2680](https://github.com/trento-project/web/pull/2680) ([rtorrero](https://github.com/rtorrero))
+- Fix misspelling of resource in a test [\#2678](https://github.com/trento-project/web/pull/2678) ([dottorblaster](https://github.com/dottorblaster))
+- Add HTTPS using cert-manager for demo env [\#2632](https://github.com/trento-project/web/pull/2632) ([rtorrero](https://github.com/rtorrero))
+
 ## [2.3.0](https://github.com/trento-project/web/tree/2.3.0) (2024-05-22)
 
 [Full Changelog](https://github.com/trento-project/web/compare/2.2.0...2.3.0)
