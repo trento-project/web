@@ -107,7 +107,7 @@ export const Loading = {
 export const WithTotpEnrollmentBoxEnabled = {
   args: {
     ...Default.args,
-    totpEnabled: true,
+    totpEnabled: false,
     totpBoxOpen: true,
   },
 };

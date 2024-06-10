@@ -4,20 +4,17 @@ import { render, screen, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import { faker } from '@faker-js/faker';
-import { abilityFactory } from '@lib/test-utils/factories/users';
+import { profileFactory } from '@lib/test-utils/factories/users';
 
 import ProfileForm from '@pages/Profile/ProfileForm';
 
 describe('ProfileForm', () => {
   it('should render a pre-filled form', () => {
-    const username = faker.internet.userName();
-    const fullName = faker.person.fullName();
-    const email = faker.internet.email();
-    const abilities = abilityFactory.buildList(2);
+    const { username, fullname, email, abilities } = profileFactory.build();
 
     render(
       <ProfileForm
-        fullName={fullName}
+        fullName={fullname}
         emailAddress={email}
         username={username}
         abilities={abilities}
@@ -25,7 +22,7 @@ describe('ProfileForm', () => {
     );
 
     expect(screen.getByText('Full Name')).toBeVisible();
-    expect(screen.getByLabelText('fullname').value).toBe(fullName);
+    expect(screen.getByLabelText('fullname').value).toBe(fullname);
     expect(screen.getByText('Email Address')).toBeVisible();
     expect(screen.getByLabelText('email').value).toBe(email);
     expect(screen.getByText('Username')).toBeVisible();
@@ -69,15 +66,12 @@ describe('ProfileForm', () => {
   });
 
   it('should send the form values when correctly filled', async () => {
-    const username = faker.internet.userName();
-    const fullName = faker.person.fullName();
-    const email = faker.internet.email();
-    const abilities = abilityFactory.buildList(2);
+    const { username, fullname, email, abilities } = profileFactory.build();
     const mockOnSave = jest.fn();
 
     render(
       <ProfileForm
-        fullName={fullName}
+        fullName={fullname}
         emailAddress={email}
         username={username}
         abilities={abilities}
@@ -90,7 +84,7 @@ describe('ProfileForm', () => {
     await user.click(screen.getByRole('button', { name: 'Save' }));
 
     expect(mockOnSave).toHaveBeenNthCalledWith(1, {
-      fullname: fullName,
+      fullname,
       email,
     });
   });
@@ -112,14 +106,11 @@ describe('ProfileForm', () => {
   });
 
   it('should set the authenticator app switch when totpEnabled is true', async () => {
-    const username = faker.internet.userName();
-    const fullName = faker.person.fullName();
-    const email = faker.internet.email();
-    const abilities = abilityFactory.buildList(2);
+    const { username, fullname, email, abilities } = profileFactory.build();
 
     render(
       <ProfileForm
-        fullName={fullName}
+        fullName={fullname}
         emailAddress={email}
         username={username}
         abilities={abilities}
@@ -134,14 +125,11 @@ describe('ProfileForm', () => {
   });
 
   it('should not set the authenticator app switch when totpEnabled is false', async () => {
-    const username = faker.internet.userName();
-    const fullName = faker.person.fullName();
-    const email = faker.internet.email();
-    const abilities = abilityFactory.buildList(2);
+    const { username, fullname, email, abilities } = profileFactory.build();
 
     render(
       <ProfileForm
-        fullName={fullName}
+        fullName={fullname}
         emailAddress={email}
         username={username}
         abilities={abilities}
@@ -156,17 +144,14 @@ describe('ProfileForm', () => {
   });
 
   it('should call onEnableTotp when totpEnabled is false and the switch is clicked', async () => {
-    const username = faker.internet.userName();
-    const fullName = faker.person.fullName();
-    const email = faker.internet.email();
-    const abilities = abilityFactory.buildList(2);
+    const { username, fullname, email, abilities } = profileFactory.build();
 
     const onEnableTotp = jest.fn();
     const user = userEvent.setup();
 
     render(
       <ProfileForm
-        fullName={fullName}
+        fullName={fullname}
         emailAddress={email}
         username={username}
         abilities={abilities}
@@ -185,17 +170,14 @@ describe('ProfileForm', () => {
   });
 
   it('should call onResetTotp when totpEnabled is true, the switch is clicked and the user confirms with the modal', async () => {
-    const username = faker.internet.userName();
-    const fullName = faker.person.fullName();
-    const email = faker.internet.email();
-    const abilities = abilityFactory.buildList(2);
+    const { username, fullname, email, abilities } = profileFactory.build();
 
     const onResetTotp = jest.fn();
     const user = userEvent.setup();
 
     render(
       <ProfileForm
-        fullName={fullName}
+        fullName={fullname}
         emailAddress={email}
         username={username}
         abilities={abilities}
@@ -218,16 +200,13 @@ describe('ProfileForm', () => {
   });
 
   it('should show the totp enrollment box when totpBoxOpen is set to true', async () => {
-    const username = faker.internet.userName();
-    const fullName = faker.person.fullName();
-    const email = faker.internet.email();
-    const abilities = abilityFactory.buildList(2);
+    const { username, fullname, email, abilities } = profileFactory.build();
 
     const totpSecret = faker.string.uuid();
 
     render(
       <ProfileForm
-        fullName={fullName}
+        fullName={fullname}
         emailAddress={email}
         username={username}
         abilities={abilities}
@@ -240,11 +219,38 @@ describe('ProfileForm', () => {
     expect(screen.getByText(totpSecret)).toBeVisible();
   });
 
+  it('should hide the totp enrollment box when Cancel button is clicked', async () => {
+    const { username, fullname, email, abilities } = profileFactory.build();
+
+    const totpSecret = faker.string.uuid();
+    const toggleTotpBox = jest.fn();
+
+    const user = userEvent.setup();
+
+    render(
+      <ProfileForm
+        fullName={fullname}
+        emailAddress={email}
+        username={username}
+        abilities={abilities}
+        totpSecret={totpSecret}
+        totpQrData={totpSecret}
+        totpBoxOpen
+        toggleTotpBox={toggleTotpBox}
+      />
+    );
+
+    expect(screen.getByText(totpSecret)).toBeVisible();
+
+    await act(async () => {
+      await user.click(screen.getByText('Cancel'));
+    });
+
+    expect(toggleTotpBox).toHaveBeenCalledWith(false);
+  });
+
   it('should call onVerifyTotp when the totp box is shown and the verify button is clicked', async () => {
-    const username = faker.internet.userName();
-    const fullName = faker.person.fullName();
-    const email = faker.internet.email();
-    const abilities = abilityFactory.buildList(2);
+    const { username, fullname, email, abilities } = profileFactory.build();
 
     const onVerifyTotp = jest.fn();
     const totpSecret = faker.string.uuid();
@@ -253,7 +259,7 @@ describe('ProfileForm', () => {
 
     render(
       <ProfileForm
-        fullName={fullName}
+        fullName={fullname}
         emailAddress={email}
         username={username}
         abilities={abilities}
@@ -273,10 +279,7 @@ describe('ProfileForm', () => {
   });
 
   it('should forward errors to the totp enrollment box', async () => {
-    const username = faker.internet.userName();
-    const fullName = faker.person.fullName();
-    const email = faker.internet.email();
-    const abilities = abilityFactory.buildList(2);
+    const { username, fullname, email, abilities } = profileFactory.build();
 
     const totpSecret = faker.string.uuid();
 
@@ -290,7 +293,7 @@ describe('ProfileForm', () => {
 
     render(
       <ProfileForm
-        fullName={fullName}
+        fullName={fullname}
         emailAddress={email}
         username={username}
         abilities={abilities}

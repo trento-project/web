@@ -159,6 +159,7 @@ function ProfilePage() {
         togglePasswordModal={passwordModalToggle}
         passwordModalOpen={passwordModalOpen}
         totpBoxOpen={totpBoxOpen}
+        toggleTotpBox={setTotpBoxOpen}
         loading={loading || saving}
         disableForm={isDefaultAdmin}
         onSave={updateProfile}

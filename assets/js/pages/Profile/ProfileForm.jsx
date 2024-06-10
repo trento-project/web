@@ -25,6 +25,7 @@ function ProfileForm({
   disableForm,
   passwordModalOpen = false,
   totpBoxOpen = false,
+  toggleTotpBox = noop,
   togglePasswordModal = noop,
   onSave = noop,
   onResetTotp = noop,
@@ -124,35 +125,44 @@ function ProfileForm({
               Change Password
             </Button>
           </div>
-          {totpBoxOpen ? (
-            <div className="col-start-1 col-span-5">
-              <h2 className="font-bold text-xl"> Configure TOTP </h2>
-              <TotpEnrollementBox
-                errors={errors}
-                qrData={totpQrData}
-                secret={totpSecret}
-                loading={loading}
-                verifyTotp={onVerifyTotp}
-              />
-            </div>
-          ) : (
-            <>
-              <Label
-                className="col-start-1 col-span-1"
-                info="Setup a multi factor TOTP authentication besides your password to increase security
+
+          <Label
+            className="col-start-1 col-span-1"
+            info="Setup a multi-factor TOTP authentication besides your password to increase security
               for your account."
-              >
-                Authenticator App
-              </Label>
+          >
+            Authenticator App
+          </Label>
+          <div className="col-start-2 col-span-3">
+            <div className="inline-flex">
+              <Switch
+                selected={totpEnabled}
+                onChange={toggleTotp}
+                disabled={loading || disableForm || totpBoxOpen}
+              />
+              {totpBoxOpen && (
+                <span
+                  className="ml-5 cursor-pointer text-jungle-green-500 hover:opacity-75"
+                  onClick={() => toggleTotpBox(false)}
+                  aria-hidden="true"
+                >
+                  Cancel
+                </span>
+              )}
+            </div>
+
+            {totpBoxOpen && (
               <div className="col-start-2 col-span-3">
-                <Switch
-                  selected={totpEnabled}
-                  onChange={toggleTotp}
-                  disabled={loading || disableForm}
+                <TotpEnrollementBox
+                  errors={errors}
+                  qrData={totpQrData}
+                  secret={totpSecret}
+                  loading={loading}
+                  verifyTotp={onVerifyTotp}
                 />
               </div>
-            </>
-          )}
+            )}
+          </div>
 
           <Label className="col-start-1 col-span-1">Permissions</Label>
           <div className="col-start-2 col-span-3">
