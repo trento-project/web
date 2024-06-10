@@ -20,7 +20,7 @@ Dig into [./config](https://github.com/trento-project/web/blob/main/config/) dir
 
 **Server**
 - `PORT`
-- `TRENTO_DOMAIN`
+- `TRENTO_WEB_ORIGIN`
 
 **Runner integration**
 - `RUNNER_URL`
