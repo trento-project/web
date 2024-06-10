@@ -18,7 +18,7 @@ import DatabasesOverviewPage from '@pages/DatabasesOverview';
 import DatabaseDetails from '@pages//DatabaseDetails';
 import { ExecutionResultsPage } from '@pages/ExecutionResults';
 import Guard from '@pages/Guard';
-import ForbiddenGuard from '@pages/ForbiddenGuard';
+import ForbiddenGuard from '@common/ForbiddenGuard';
 import Home from '@pages/Home';
 import HostDetailsPage from '@pages/HostDetailsPage';
 import HostSettingsPage from '@pages/HostSettingsPage';
