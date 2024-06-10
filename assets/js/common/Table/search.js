@@ -13,13 +13,11 @@ const contains = (subject, predicate) =>
     ? arrayContains(subject, predicate)
     : stringContains(subject, predicate);
 
-export const searchByKey = (subject, predicate, ...key) => {
-  let found = false;
-  for (const it of key) {
-    if (Object.hasOwn(subject, it)) {
-      found ||= contains(subject[it] ?? '', predicate);
-    }
-  }
-
-  return found;
-};
+export const searchByKey = (subject, predicate, ...key) =>
+  key
+    .map((it) =>
+      Object.hasOwn(subject, it)
+        ? contains(subject[it] ?? '', predicate)
+        : false
+    )
+    .reduce((accumulator, currentValue) => accumulator || currentValue, false);
