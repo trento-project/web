@@ -58,7 +58,7 @@ const iconFromAdvisoryType = (
   }
 };
 
-export default function PatchList({ patches, onNavigate = noop }) {
+export default function PatchList({ patches, searchBy, onNavigate = noop }) {
   const patchListConfig = {
     usePadding: false,
     pagination: true,
@@ -84,6 +84,7 @@ export default function PatchList({ patches, onNavigate = noop }) {
       {
         title: 'Synopsis',
         key: 'advisory_synopsis',
+        searchable: true,
       },
       {
         title: 'Updated',
@@ -93,5 +94,5 @@ export default function PatchList({ patches, onNavigate = noop }) {
     ],
   };
 
-  return <Table config={patchListConfig} data={patches} />;
+  return <Table config={patchListConfig} searchBy={searchBy} data={patches} />;
 }
