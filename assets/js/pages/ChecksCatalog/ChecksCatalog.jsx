@@ -129,8 +129,8 @@ function ChecksCatalog({
 
   return (
     <>
-      <div className="flex items-center space-x-4">
-        <PageHeader className="font-bold flex-1 w-64 pb-4">
+      <div className="flex items-center space-x-4 mb-4">
+        <PageHeader className="font-bold flex-1 w-64">
           Checks catalog
         </PageHeader>
         {filters.map((filterProps) => (

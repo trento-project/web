@@ -150,7 +150,7 @@ function ApiKeySettingsModal({
                   }}
                 />
               </div>
-              <div className="w-2/4 pt-4">
+              <div className="w-2/4">
                 <Select
                   optionsName=""
                   options={timeOptions}
