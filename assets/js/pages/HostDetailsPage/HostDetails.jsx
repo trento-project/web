@@ -239,6 +239,8 @@ function HostDetails({
             softwareUpdatesSettingsLoading={softwareUpdatesSettingsLoading}
             softwareUpdatesLoading={softwareUpdatesLoading}
             onBackToSettings={() => navigate(`/settings`)}
+            onNavigateToPatches={() => navigate(`/hosts/${hostID}/patches`)}
+            onNavigateToPackages={() => navigate(`/hosts/${hostID}/packages`)}
           />
         )}
         <ChartsFeatureWrapper chartsEnabled={chartsEnabled}>

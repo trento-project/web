@@ -1,13 +1,21 @@
 import React from 'react';
 import classNames from 'classnames';
 import {
-  // EOS_KEYBOARD_ARROW_RIGHT_FILLED,
+  EOS_KEYBOARD_ARROW_RIGHT_FILLED,
   EOS_ERROR_OUTLINED,
 } from 'eos-icons-react';
 
 import Tooltip from '@common/Tooltip';
 
-function Indicator({ title, critical, tooltip, icon, loading, children }) {
+function Indicator({
+  title,
+  critical,
+  tooltip,
+  icon,
+  loading,
+  navigate,
+  children,
+}) {
   const unknown = children === undefined;
 
   if (loading) {
@@ -24,7 +32,13 @@ function Indicator({ title, critical, tooltip, icon, loading, children }) {
 
   return (
     <Tooltip isEnabled={unknown} content={tooltip} wrap={false}>
-      <div className="flex flex-row items-center border border-gray-200 p-2 rounded-md grow">
+      <div
+        className={classNames(
+          'flex flex-row items-center border border-gray-200 p-2 rounded-md grow',
+          { 'cursor-pointer': !unknown }
+        )}
+        onClick={navigate}
+      >
         <div className="px-2">{icon}</div>
         <div>
           <p className="font-bold">{title}</p>
@@ -50,14 +64,14 @@ function Indicator({ title, critical, tooltip, icon, loading, children }) {
           </div>
         </div>
         <div className="flex grow justify-end">
-          {/* {!unknown && (
+          {!unknown && (
             <div>
               <EOS_KEYBOARD_ARROW_RIGHT_FILLED
                 size="l"
                 className="fill-gray-400"
               />
             </div>
-          )} */}
+          )}
         </div>
       </div>
     </Tooltip>
