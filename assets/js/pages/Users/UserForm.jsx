@@ -245,26 +245,30 @@ function UserForm({
               }}
             />
           </div>
-          <Label
-            className="col-start-1 col-span-1"
-            htmlFor="totp"
-            aria-label="totp"
-          >
-            TOTP
-          </Label>
-          <div className="col-start-2 col-span-3">
-            <Select
-              optionsName="totp"
-              options={[
-                { value: 'Enabled', disabled: !totpEnabledAt },
-                'Disabled',
-              ]}
-              value={totpState ? 'Enabled' : 'Disabled'}
-              onChange={(value) => {
-                setTotpState(value === 'Enabled');
-              }}
-            />
-          </div>
+          {editing && (
+            <>
+              <Label
+                className="col-start-1 col-span-1"
+                htmlFor="totp"
+                aria-label="totp"
+              >
+                TOTP
+              </Label>
+              <div className="col-start-2 col-span-3">
+                <Select
+                  optionsName="totp"
+                  options={[
+                    { value: 'Enabled', disabled: !totpEnabledAt },
+                    'Disabled',
+                  ]}
+                  value={totpState ? 'Enabled' : 'Disabled'}
+                  onChange={(value) => {
+                    setTotpState(value === 'Enabled');
+                  }}
+                />
+              </div>
+            </>
+          )}
           {editing && (
             <>
               <Label className="col-start-1 col-span-1">Created</Label>
