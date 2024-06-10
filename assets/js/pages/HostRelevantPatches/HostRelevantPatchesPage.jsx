@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { EOS_SEARCH } from 'eos-icons-react';
+import Papa from 'papaparse';
 
 import PageHeader from '@common/PageHeader';
 import PatchList from '@common/PatchList';
@@ -37,6 +38,16 @@ function HostRelevantPatches({ hostName, onNavigate, patches }) {
     setDisplayedPatches(searchResult);
   }, [patches, displayedAdvisories, search]);
 
+  const file = window.URL.createObjectURL
+    ? window.URL.createObjectURL(
+        new File(
+          [Papa.unparse(displayedPatches, { header: true })],
+          `${hostName}-patches.csv`,
+          { type: 'text/csv' }
+        )
+      )
+    : null;
+
   return (
     <>
       <div className="flex flex-wrap">
@@ -59,7 +70,9 @@ function HostRelevantPatches({ hostName, onNavigate, patches }) {
             placeholder="Search by Synopsis"
             prefix={<EOS_SEARCH size="l" />}
           />
-          <Button type="primary-white">Download CSV</Button>
+          <a href={file} download={`${hostName}-patches.csv`}>
+            <Button type="primary-white">Download CSV</Button>
+          </a>
         </div>
       </div>
       <PatchList onNavigate={onNavigate} patches={displayedPatches} />
