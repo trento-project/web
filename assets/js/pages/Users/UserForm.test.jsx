@@ -27,7 +27,7 @@ describe('UserForm', () => {
     expect(screen.getByText('Generate Password'));
     expect(screen.getByText('Permissions')).toBeVisible();
     expect(screen.getByText('Status')).toBeVisible();
-    expect(screen.getByText('TOTP')).toBeVisible();
+    expect(screen.queryByText('TOTP')).not.toBeInTheDocument();
     expect(screen.queryByText('Created')).not.toBeInTheDocument();
     expect(screen.queryByText('Updated')).not.toBeInTheDocument();
 
