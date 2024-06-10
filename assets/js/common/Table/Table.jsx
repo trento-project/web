@@ -8,6 +8,7 @@ import {
   createFilter,
   TableFilters,
 } from './filters';
+import { searchByKey } from './search';
 import { defaultRowKey } from './defaultRowKey';
 import SortingIcon from './SortingIcon';
 import EmptyState from './EmptyState';
@@ -59,6 +60,7 @@ function Table({
   config,
   data = [],
   sortBy,
+  searchBy,
   searchParams,
   setSearchParams,
   emptyStateText = 'No data available',
@@ -134,7 +136,15 @@ function Table({
     })
     .reduce((d, filterFunction) => d.filter(filterFunction), data);
 
-  const sortedData = sortBy ? [...filteredData].sort(sortBy) : filteredData;
+  const searchKeys = columns
+    .filter(({ searchable = false }) => searchable === true)
+    .map(({ key }) => key);
+
+  const searchedData = searchBy
+    ? [...filteredData].filter((it) => searchByKey(it, searchBy, ...searchKeys))
+    : filteredData;
+
+  const sortedData = sortBy ? [...searchedData].sort(sortBy) : searchedData;
 
   const renderedData = pagination ? page(currentPage, sortedData) : sortedData;
 
