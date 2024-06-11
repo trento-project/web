@@ -1,5 +1,5 @@
-import React from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { APPLICATION_TYPE } from '@lib/model/sapSystems';
@@ -15,6 +15,13 @@ function SapSystemDetails() {
     getEnrichedSapSystemDetails(state, id)
   );
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!sapSystem) {
+      navigate('/sap_systems');
+    }
+  }, [sapSystem, navigate]);
 
   if (!sapSystem) {
     return <div>Not Found</div>;

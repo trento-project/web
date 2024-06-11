@@ -42,6 +42,12 @@ export function ClusterDetailsPage() {
   );
 
   useEffect(() => {
+    if (!cluster) {
+      navigate('/clusters');
+    }
+  }, [cluster, navigate]);
+
+  useEffect(() => {
     const env = buildEnv({
       provider,
       target_type: TARGET_CLUSTER,

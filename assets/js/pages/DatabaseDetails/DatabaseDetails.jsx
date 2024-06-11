@@ -1,5 +1,5 @@
-import React from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { DATABASE_TYPE } from '@lib/model/sapSystems';
@@ -17,6 +17,13 @@ function DatabaseDetails() {
     getEnrichedDatabaseDetails(state, id)
   );
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!database) {
+      navigate('/databases');
+    }
+  }, [database, navigate]);
 
   if (!database) {
     return <div>Not Found</div>;
