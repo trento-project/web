@@ -9,6 +9,8 @@ import {
   takeLatest,
 } from 'redux-saga/effects';
 
+import { initSocketConnection } from '@lib/network/socket';
+
 import {
   HOST_REGISTERED,
   HEARTBEAT_SUCCEDED,
@@ -130,7 +132,8 @@ function* initialDataFetch() {
 }
 
 function* setupSocketEvents() {
-  yield call(watchSocketEvents);
+  const socket = yield call(initSocketConnection);
+  yield call(watchSocketEvents, socket);
 }
 
 function* watchUserLoggedIn() {

@@ -1,7 +1,7 @@
-import { eventChannel } from 'redux-saga';
+import { eventChannel, END } from 'redux-saga';
 import { all, call, fork, put, take } from 'redux-saga/effects';
 
-import { initSocketConnection, joinChannel } from '@lib/network/socket';
+import { joinChannel } from '@lib/network/socket';
 
 import {
   hostRegistered,
@@ -53,6 +53,8 @@ import {
   setExecutionStarted,
   updateLastExecution,
 } from '@state/lastExecutions';
+
+const CLOSE_CHANNEL_EVENT = 'close';
 
 const hostEvents = [
   {
@@ -227,6 +229,10 @@ const createEventChannel = (channel, events) =>
       });
     });
 
+    channel.on(CLOSE_CHANNEL_EVENT, () => {
+      emitter(END);
+    });
+
     // Unsubscribe function
     return () => {};
   });
@@ -246,8 +252,7 @@ function* watchChannelEvents(socket, channelName, events) {
   }
 }
 
-export function* watchSocketEvents() {
-  const socket = yield call(initSocketConnection);
+export function* watchSocketEvents(socket) {
   yield all([
     fork(watchChannelEvents, socket, 'monitoring:hosts', hostEvents),
     fork(watchChannelEvents, socket, 'monitoring:clusters', clusterEvents),
