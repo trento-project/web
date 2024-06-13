@@ -11,7 +11,7 @@ import {
 import { upgradablePackageFactory } from '@lib/test-utils/factories/upgradablePackage';
 import { patchForPackageFactory } from '@lib/test-utils/factories/relevantPatches';
 
-import UpgradablePackagesPage from './UpgradablePackagesPage';
+import UpgradablePackagesPage from '.';
 
 describe('UpgradablePackagesPage', () => {
   it('should render correctly', () => {

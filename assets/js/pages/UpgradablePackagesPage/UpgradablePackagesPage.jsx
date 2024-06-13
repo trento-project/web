@@ -1,44 +1,43 @@
-import React, { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useState } from 'react';
+import { EOS_SEARCH } from 'eos-icons-react';
 
-import { getUpgradablePackages } from '@state/selectors/softwareUpdates';
-import { fetchSoftwareUpdatesSettings } from '@state/softwareUpdatesSettings';
-import {
-  fetchSoftwareUpdates,
-  fetchUpgradablePackagesPatches,
-} from '@state/softwareUpdates';
-
-import BackButton from '@common/BackButton';
 import UpgradablePackagesList from '@common/UpgradablePackagesList';
+import PageHeader from '@common/PageHeader';
+import Input from '@common/Input';
+import { foundStringNaive } from '@lib/filter';
 
-function UpgradablePackagesPage() {
-  const { hostID } = useParams();
-  const dispatch = useDispatch();
+export default function UpgradablePackagesPage({
+  hostName,
+  upgradablePackages,
+}) {
+  const [search, setSearch] = useState('');
 
-  useEffect(() => {
-    dispatch(fetchSoftwareUpdates(hostID));
-    dispatch(fetchSoftwareUpdatesSettings());
-  }, []);
-
-  const upgradablePackages = useSelector((state) =>
-    getUpgradablePackages(state, hostID)
+  const displayedPackages = upgradablePackages.filter(
+    ({ name, patches }) =>
+      foundStringNaive(name, search) ||
+      patches
+        .map(({ advisory }) => foundStringNaive(advisory, search))
+        .includes(true)
   );
-
-  useEffect(() => {
-    const packageIDs = upgradablePackages.map(
-      ({ to_package_id: packageID }) => packageID
-    );
-
-    dispatch(fetchUpgradablePackagesPatches({ hostID, packageIDs }));
-  }, [upgradablePackages.length, hostID]);
 
   return (
     <>
-      <BackButton url={`/hosts/${hostID}`}>Back to Host Details</BackButton>
-      <UpgradablePackagesList upgradablePackages={upgradablePackages} />
+      <div className="flex flex-wrap">
+        <div className="flex w-2/3 h-auto overflow-ellipsis break-words">
+          <PageHeader>
+            Upgradable packages: <span className="font-bold">{hostName}</span>
+          </PageHeader>
+        </div>
+        <div className="flex w-1/3 justify-end">
+          <Input
+            className="flex"
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search by Name or Patch"
+            prefix={<EOS_SEARCH size="l" />}
+          />
+        </div>
+      </div>
+      <UpgradablePackagesList upgradablePackages={displayedPackages} />
     </>
   );
 }
-
-export default UpgradablePackagesPage;

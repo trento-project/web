@@ -1,3 +1,3 @@
-import UpgradablePackagesPage from './UpgradablePackagesPage';
+import Page from './Page';
 
-export default UpgradablePackagesPage;
+export default Page;
