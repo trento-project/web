@@ -17,7 +17,7 @@ const filterPatchesByAdvisoryType = (patches, advisoryType) =>
     advisoryType === 'all' ? true : advisory_type === advisoryType
   );
 
-function HostRelevanPatches({ hostName, onNavigate, patches }) {
+function HostRelevantPatches({ hostName, onNavigate, patches }) {
   const advisoryTypes = ['all'].concat(advisoryTypesFromPatches(patches));
 
   const [displayedAdvisories, setDisplayedAdvisories] = useState('all');
@@ -50,7 +50,7 @@ function HostRelevanPatches({ hostName, onNavigate, patches }) {
             className=""
             onChange={setDisplayedAdvisories}
             options={advisoryTypes}
-            optionsName="optionz"
+            optionsName="options"
             value={displayedAdvisories}
           />
           <Input
@@ -67,4 +67,4 @@ function HostRelevanPatches({ hostName, onNavigate, patches }) {
   );
 }
 
-export default HostRelevanPatches;
+export default HostRelevantPatches;
