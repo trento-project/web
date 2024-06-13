@@ -104,8 +104,8 @@ describe('HostRelevantPatchesPage', () => {
 
       render(<HostRelevantPatchesPage patches={patches} />);
 
-      const advisoryselect = screen.getByRole('button', { name: 'all' });
-      await user.click(advisoryselect);
+      const advisorySelect = screen.getByRole('button', { name: 'all' });
+      await user.click(advisorySelect);
       const advisoryoption = screen.getByRole('option', { name: filteredType });
       await user.click(advisoryoption);
 
