@@ -96,7 +96,7 @@ module.exports = {
     '^@lib(.*)$': '<rootDir>/js/lib$1',
     '^@pages(.*)$': '<rootDir>/js/pages$1',
     '^@state(.*)$': '<rootDir>/js/state$1',
-    phoenix: '<rootDir>/../deps/phoenix/priv/static/phoenix.cjs.js',
+    phoenix: '<rootDir>/mocks/phoenix.js',
     'react-markdown': '<rootDir>/mocks/reactMarkdown.js',
     'remark-gfm': '<rootDir>/mocks/remarkPlugin.js',
     '\\.(jpg|ico|jpeg|png|gif|svg)$': '<rootDir>/mocks/fileMock.js',
