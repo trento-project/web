@@ -149,6 +149,26 @@ export const SAP_SYSTEM_UPDATED = 'SAP_SYSTEM_UPDATED';
 export const DEREGISTER_APPLICATION_INSTANCE =
   'DEREGISTER_APPLICATION_INSTANCE';
 
+export const sapSystemRegistered = createAction(SAP_SYSTEM_REGISTERED);
+export const sapSystemHealthChanged = createAction(SAP_SYSTEM_HEALTH_CHANGED);
+export const applicationInstanceRegistered = createAction(
+  APPLICATION_INSTANCE_REGISTERED
+);
+export const applicationInstanceMoved = createAction(
+  APPLICATION_INSTANCE_MOVED
+);
+export const applicationInstanceAbsentAtChanged = createAction(
+  APPLICATION_INSTANCE_ABSENT_AT_CHANGED
+);
+export const applicationInstanceDeregistered = createAction(
+  APPLICATION_INSTANCE_DEREGISTERED
+);
+export const applicationInstanceHealthChanged = createAction(
+  APPLICATION_INSTANCE_HEALTH_CHANGED
+);
+export const sapSystemDeregistered = createAction(SAP_SYSTEM_DEREGISTERED);
+export const sapSystemRestored = createAction(SAP_SYSTEM_RESTORED);
+export const sapSystemUpdated = createAction(SAP_SYSTEM_UPDATED);
 export const deregisterApplicationInstance = createAction(
   DEREGISTER_APPLICATION_INSTANCE
 );

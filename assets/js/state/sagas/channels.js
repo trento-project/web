@@ -25,6 +25,19 @@ import {
 } from '@state/clusters';
 
 import {
+  sapSystemRegistered,
+  sapSystemHealthChanged,
+  applicationInstanceRegistered,
+  applicationInstanceMoved,
+  applicationInstanceAbsentAtChanged,
+  applicationInstanceDeregistered,
+  applicationInstanceHealthChanged,
+  sapSystemDeregistered,
+  sapSystemRestored,
+  sapSystemUpdated,
+} from '@state/sapSystems';
+
+import {
   setExecutionStarted,
   updateLastExecution,
 } from '@state/lastExecutions';
@@ -95,6 +108,49 @@ const clusterEvents = [
   },
 ];
 
+const sapSystemEvents = [
+  {
+    name: 'sap_system_registered',
+    action: sapSystemRegistered,
+  },
+  {
+    name: 'sap_system_health_changed',
+    action: sapSystemHealthChanged,
+  },
+  {
+    name: 'application_instance_registered',
+    action: applicationInstanceRegistered,
+  },
+  {
+    name: 'application_instance_moved',
+    action: applicationInstanceMoved,
+  },
+  {
+    name: 'application_instance_absent_at_changed',
+    action: applicationInstanceAbsentAtChanged,
+  },
+  {
+    name: 'application_instance_deregistered',
+    action: applicationInstanceDeregistered,
+  },
+  {
+    name: 'application_instance_health_changed',
+    action: applicationInstanceHealthChanged,
+  },
+  {
+    name: 'sap_system_deregistered',
+    action: sapSystemDeregistered,
+  },
+  {
+    name: 'sap_system_restored',
+    action: sapSystemRestored,
+  },
+  {
+    name: 'sap_system_updated',
+    action: sapSystemUpdated,
+  },
+];
+
 const executionEvents = [
   {
     name: 'execution_completed',
@@ -144,6 +200,7 @@ export function* watchSocketEvents() {
   yield all([
     fork(watchChannelEvents, socket, 'monitoring:hosts', hostEvents),
     fork(watchChannelEvents, socket, 'monitoring:clusters', clusterEvents),
+    fork(watchChannelEvents, socket, 'monitoring:sap_systems', sapSystemEvents),
     fork(watchChannelEvents, socket, 'monitoring:executions', executionEvents),
   ]);
 }
