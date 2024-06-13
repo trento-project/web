@@ -6,7 +6,7 @@ import '@testing-library/jest-dom';
 import { renderWithRouter as render } from '@lib/test-utils';
 import { upgradablePackageFactory } from '@lib/test-utils/factories/upgradablePackage';
 
-import UpgradablePackagesPage from './UpgradablePackagesPage';
+import UpgradablePackagesPage from '.';
 
 describe('UpgradablePackagesPage', () => {
   it('shows all packages by default', () => {
