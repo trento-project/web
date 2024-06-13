@@ -106,8 +106,8 @@ describe('HostRelevantPatchesPage', () => {
 
       const advisorySelect = screen.getByRole('button', { name: 'all' });
       await user.click(advisorySelect);
-      const advisoryoption = screen.getByRole('option', { name: filteredType });
-      await user.click(advisoryoption);
+      const advisoryOption = screen.getByRole('option', { name: filteredType });
+      await user.click(advisoryOption);
 
       expectedPatches.forEach((patch) => {
         expect(screen.getByText(patch.advisory_synopsis)).toBeVisible();
