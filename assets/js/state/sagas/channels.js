@@ -16,6 +16,15 @@ import {
 } from '@state/hosts';
 
 import {
+  clusterRegistered,
+  clusterDetailsUpdated,
+  clusterHealthChanged,
+  clusterCibLastWrittenUpdated,
+  clusterDeregistered,
+  clusterRestored,
+} from '@state/clusters';
+
+import {
   setExecutionStarted,
   updateLastExecution,
 } from '@state/lastExecutions';
@@ -56,6 +65,33 @@ const hostEvents = [
   {
     name: 'saptune_status_updated',
     action: saptuneStatusUpdated,
+  },
+];
+
+const clusterEvents = [
+  {
+    name: 'cluster_registered',
+    action: clusterRegistered,
+  },
+  {
+    name: 'cluster_details_updated',
+    action: clusterDetailsUpdated,
+  },
+  {
+    name: 'cluster_health_changed',
+    action: clusterHealthChanged,
+  },
+  {
+    name: 'cluster_cib_last_written_updated',
+    action: clusterCibLastWrittenUpdated,
+  },
+  {
+    name: 'cluster_deregistered',
+    action: clusterDeregistered,
+  },
+  {
+    name: 'cluster_restored',
+    action: clusterRestored,
   },
 ];
 
@@ -107,6 +143,7 @@ export function* watchSocketEvents() {
   const socket = yield call(initSocketConnection);
   yield all([
     fork(watchChannelEvents, socket, 'monitoring:hosts', hostEvents),
+    fork(watchChannelEvents, socket, 'monitoring:clusters', clusterEvents),
     fork(watchChannelEvents, socket, 'monitoring:executions', executionEvents),
   ]);
 }

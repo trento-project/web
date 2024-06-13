@@ -88,6 +88,15 @@ export const CLUSTER_DEREGISTERED = 'CLUSTER_DEREGISTERED';
 export const CLUSTER_RESTORED = 'CLUSTER_RESTORED';
 export const CLUSTER_CHECKS_SELECTED = 'CLUSTER_CHECKS_SELECTED';
 export const CLUSTER_HEALTH_CHANGED = 'CLUSTER_HEALTH_CHANGED';
+
+export const clusterRegistered = createAction(CLUSTER_REGISTERED);
+export const clusterDetailsUpdated = createAction(CLUSTER_DETAILS_UPDATED);
+export const clusterHealthChanged = createAction(CLUSTER_HEALTH_CHANGED);
+export const clusterCibLastWrittenUpdated = createAction(
+  CLUSTER_CIB_LAST_WRITTEN_UPDATED
+);
+export const clusterDeregistered = createAction(CLUSTER_DEREGISTERED);
+export const clusterRestored = createAction(CLUSTER_RESTORED);
 export const checksSelected = createAction(CLUSTER_CHECKS_SELECTED);
 
 export const {
