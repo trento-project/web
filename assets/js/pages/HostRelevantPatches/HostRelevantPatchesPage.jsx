@@ -7,7 +7,7 @@ import Input from '@common/Input';
 import Select from '@common/Select';
 import Button from '@common/Button';
 
-import { foundStringNaive } from '@lib/filter';
+import { containsSubstring } from '@lib/filter';
 
 const advisoryTypesFromPatches = (patches) =>
   Array.from(new Set(patches.map(({ advisory_type }) => advisory_type))).sort();
@@ -26,13 +26,13 @@ function HostRelevantPatches({ hostName, onNavigate, patches }) {
   const [displayedPatches, setDisplayedPatches] = useState(patches);
 
   useEffect(() => {
-    const filteredByAdvisoryKind = filterPatchesByAdvisoryType(
+    const filteredByAdvisoryType = filterPatchesByAdvisoryType(
       patches,
       displayedAdvisories
     );
-    const searchResult = filteredByAdvisoryKind.filter(
+    const searchResult = filteredByAdvisoryType.filter(
       ({ advisory_synopsis }) =>
-        advisory_synopsis ? foundStringNaive(advisory_synopsis, search) : false
+        advisory_synopsis ? containsSubstring(advisory_synopsis, search) : false
     );
     setDisplayedPatches(searchResult);
   }, [patches, displayedAdvisories, search]);

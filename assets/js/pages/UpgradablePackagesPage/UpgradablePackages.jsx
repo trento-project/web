@@ -4,19 +4,16 @@ import { EOS_SEARCH } from 'eos-icons-react';
 import UpgradablePackagesList from '@common/UpgradablePackagesList';
 import PageHeader from '@common/PageHeader';
 import Input from '@common/Input';
-import { foundStringNaive } from '@lib/filter';
+import { containsSubstring } from '@lib/filter';
 
-export default function UpgradablePackages({
-  hostName,
-  upgradablePackages,
-}) {
+export default function UpgradablePackages({ hostName, upgradablePackages }) {
   const [search, setSearch] = useState('');
 
   const displayedPackages = upgradablePackages.filter(
     ({ name, patches }) =>
-      foundStringNaive(name, search) ||
+      containsSubstring(name, search) ||
       patches
-        .map(({ advisory }) => foundStringNaive(advisory, search))
+        .map(({ advisory }) => containsSubstring(advisory, search))
         .includes(true)
   );
 

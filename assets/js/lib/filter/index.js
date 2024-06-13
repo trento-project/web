@@ -1,4 +1,4 @@
 const regularizeString = (str) => str.normalize().trim().toLowerCase();
 
-export const foundStringNaive = (str = '', substring = '') =>
+export const containsSubstring = (str = '', substring = '') =>
   regularizeString(str).includes(regularizeString(substring));
