@@ -103,7 +103,7 @@ function* watchChannelEvents(socket, channelName, events) {
   }
 }
 
-export function* watchEvents() {
+export function* watchSocketEvents() {
   const socket = yield call(initSocketConnection);
   yield all([
     fork(watchChannelEvents, socket, 'monitoring:hosts', hostEvents),

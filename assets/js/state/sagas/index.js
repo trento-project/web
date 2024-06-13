@@ -77,7 +77,7 @@ import { watchChecksSelectionEvents } from '@state/sagas/checksSelection';
 import { watchSoftwareUpdateSettings } from '@state/sagas/softwareUpdatesSettings';
 import { watchSoftwareUpdates } from '@state/sagas/softwareUpdates';
 
-import { watchEvents } from '@state/sagas/channels';
+import { watchSocketEvents } from '@state/sagas/channels';
 import { checkApiKeyExpiration } from '@state/sagas/settings';
 
 const RESET_STATE = 'RESET_STATE';
@@ -130,7 +130,7 @@ function* initialDataFetch() {
 }
 
 function* setupSocketEvents() {
-  yield call(watchEvents);
+  yield call(watchSocketEvents);
 }
 
 function* watchUserLoggedIn() {
