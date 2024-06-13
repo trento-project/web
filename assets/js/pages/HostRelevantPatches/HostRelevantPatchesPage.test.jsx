@@ -104,14 +104,33 @@ describe('HostRelevantPatchesPage', () => {
 
       render(<HostRelevantPatchesPage patches={patches} />);
 
-      const advisorySelect = screen.getByRole('button', { name: 'all' });
-      await user.click(advisorySelect);
-      const advisoryOption = screen.getByRole('option', { name: filteredType });
-      await user.click(advisoryOption);
+      const advisoryselect = screen.getByRole('button', { name: 'all' });
+      await user.click(advisoryselect);
+      const advisoryoption = screen.getByRole('option', { name: filteredType });
+      await user.click(advisoryoption);
 
       expectedPatches.forEach((patch) => {
         expect(screen.getByText(patch.advisory_synopsis)).toBeVisible();
       });
+    });
+
+    it('should filter patch by content', async () => {
+      const user = userEvent.setup();
+
+      const patches = relevantPatchFactory.buildList(8);
+      const searchTerm = patches[0].advisory_synopsis;
+
+      const { container } = render(
+        <HostRelevantPatchesPage patches={patches} />
+      );
+
+      const searchInput = screen.getByRole('textbox');
+      await user.click(searchInput);
+      await user.type(searchInput, searchTerm);
+
+      const tableRows = container.querySelectorAll('tbody > tr');
+
+      expect(tableRows.length).toBe(1);
     });
   });
 });
