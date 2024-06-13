@@ -38,6 +38,18 @@ import {
 } from '@state/sapSystems';
 
 import {
+  databaseRegistered,
+  databaseDeregistered,
+  databaseRestored,
+  databaseHealthChanged,
+  databaseInstanceRegistered,
+  databaseInstanceAbsentAtChanged,
+  databaseInstanceDeregistered,
+  databaseInstanceHealthChanged,
+  databaseInstanceSystemReplicationChanged,
+} from '@state/databases';
+
+import {
   setExecutionStarted,
   updateLastExecution,
 } from '@state/lastExecutions';
@@ -151,6 +163,45 @@ const sapSystemEvents = [
   },
 ];
 
+const databaseEvents = [
+  {
+    name: 'database_registered',
+    action: databaseRegistered,
+  },
+  {
+    name: 'database_deregistered',
+    action: databaseDeregistered,
+  },
+  {
+    name: 'database_restored',
+    action: databaseRestored,
+  },
+  {
+    name: 'database_health_changed',
+    action: databaseHealthChanged,
+  },
+  {
+    name: 'database_instance_registered',
+    action: databaseInstanceRegistered,
+  },
+  {
+    name: 'database_instance_absent_at_changed',
+    action: databaseInstanceAbsentAtChanged,
+  },
+  {
+    name: 'database_instance_deregistered',
+    action: databaseInstanceDeregistered,
+  },
+  {
+    name: 'database_instance_health_changed',
+    action: databaseInstanceHealthChanged,
+  },
+  {
+    name: 'database_instance_system_replication_changed',
+    action: databaseInstanceSystemReplicationChanged,
+  },
+];
+
 const executionEvents = [
   {
     name: 'execution_completed',
@@ -201,6 +252,7 @@ export function* watchSocketEvents() {
     fork(watchChannelEvents, socket, 'monitoring:hosts', hostEvents),
     fork(watchChannelEvents, socket, 'monitoring:clusters', clusterEvents),
     fork(watchChannelEvents, socket, 'monitoring:sap_systems', sapSystemEvents),
+    fork(watchChannelEvents, socket, 'monitoring:databases', databaseEvents),
     fork(watchChannelEvents, socket, 'monitoring:executions', executionEvents),
   ]);
 }

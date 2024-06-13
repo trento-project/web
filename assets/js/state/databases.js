@@ -131,6 +131,25 @@ export const DATABASE_INSTANCE_SYSTEM_REPLICATION_CHANGED =
   'DATABASE_INSTANCE_SYSTEM_REPLICATION_CHANGED';
 export const DEREGISTER_DATABASE_INSTANCE = 'DEREGISTER_DATABASE_INSTANCE';
 
+export const databaseRegistered = createAction(DATABASE_REGISTERED);
+export const databaseDeregistered = createAction(DATABASE_DEREGISTERED);
+export const databaseRestored = createAction(DATABASE_RESTORED);
+export const databaseHealthChanged = createAction(DATABASE_HEALTH_CHANGED);
+export const databaseInstanceRegistered = createAction(
+  DATABASE_INSTANCE_REGISTERED
+);
+export const databaseInstanceAbsentAtChanged = createAction(
+  DATABASE_INSTANCE_ABSENT_AT_CHANGED
+);
+export const databaseInstanceDeregistered = createAction(
+  DATABASE_INSTANCE_DEREGISTERED
+);
+export const databaseInstanceHealthChanged = createAction(
+  DATABASE_INSTANCE_HEALTH_CHANGED
+);
+export const databaseInstanceSystemReplicationChanged = createAction(
+  DATABASE_INSTANCE_SYSTEM_REPLICATION_CHANGED
+);
 export const deregisterDatabaseInstance = createAction(
   DEREGISTER_DATABASE_INSTANCE
 );
