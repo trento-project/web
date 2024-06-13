@@ -92,3 +92,8 @@ export async function recordSaga(
 
   return dispatched;
 }
+
+export const inspect = (val) => {
+  console.dir(val); // eslint-disable-line no-console
+  return val;
+};
