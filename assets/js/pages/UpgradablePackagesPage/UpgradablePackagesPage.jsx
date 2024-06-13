@@ -11,7 +11,6 @@ import {
   fetchUpgradablePackagesPatches,
 } from '@state/softwareUpdates';
 
-import PageHeader from '@common/PageHeader';
 import BackButton from '@common/BackButton';
 import UpgradablePackages from './UpgradablePackages';
 
