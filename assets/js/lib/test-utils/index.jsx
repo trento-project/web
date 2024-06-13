@@ -86,3 +86,8 @@ export async function recordSaga(saga, initialAction, state = {}) {
 
   return dispatched;
 }
+
+export const inspect = (val) => {
+  console.dir(val); // eslint-disable-line no-console
+  return val;
+};

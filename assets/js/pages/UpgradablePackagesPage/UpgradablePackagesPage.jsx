@@ -11,9 +11,8 @@ import {
   fetchUpgradablePackagesPatches,
 } from '@state/softwareUpdates';
 
-import PageHeader from '@common/PageHeader';
 import BackButton from '@common/BackButton';
-import UpgradablePackagesList from '@common/UpgradablePackagesList';
+import UpgradablePackages from './UpgradablePackages';
 
 function UpgradablePackagesPage() {
   const { hostID } = useParams();
@@ -43,10 +42,10 @@ function UpgradablePackagesPage() {
   return (
     <>
       <BackButton url={`/hosts/${hostID}`}>Back to Host Details</BackButton>
-      <PageHeader>
-        Upgradable packages: <span className="font-bold">{hostname}</span>
-      </PageHeader>
-      <UpgradablePackagesList upgradablePackages={upgradablePackages} />
+      <UpgradablePackages
+        hostName={hostname}
+        upgradablePackages={upgradablePackages}
+      />
     </>
   );
 }
