@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 
-import Input from '@common/Input';
 import Table from '.';
 
 import { createStringSortingPredicate } from './sorting';
@@ -60,39 +59,6 @@ const filteredConfig = {
       title: 'Role',
       key: 'role',
       filter: true,
-    },
-    {
-      title: 'Status',
-      key: 'status',
-      render: (content) => (
-        <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
-          <span
-            aria-hidden="true"
-            className="absolute inset-0 bg-green-200 opacity-50 rounded-full"
-          />
-          <span className="relative">{content}</span>
-        </span>
-      ),
-    },
-  ],
-};
-
-const searchConfig = {
-  usePadding: false,
-  columns: [
-    {
-      title: 'User',
-      key: 'user',
-      searchable: true,
-    },
-    {
-      title: 'Created At',
-      key: 'created_at',
-    },
-    {
-      title: 'Role',
-      key: 'role',
-      searchable: true,
     },
     {
       title: 'Status',
@@ -217,16 +183,6 @@ export function Paginated() {
 
 export function WithFilters(args) {
   return <Table config={filteredConfig} data={data} {...args} />;
-}
-
-export function WithSearch(args) {
-  const [search, setSearch] = useState('');
-  return (
-    <>
-      <Input onChange={(e) => setSearch(e.target.value)} placeholder="Search" />
-      <Table config={searchConfig} data={data} searchBy={search} {...args} />
-    </>
-  );
 }
 
 export function WithHeader(args) {
