@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { createStringSortingPredicate } from './sorting';
 
 import Table from '.';
+
+import { createStringSortingPredicate } from './sorting';
 
 export default {
   /* 👇 The title prop is optional.
