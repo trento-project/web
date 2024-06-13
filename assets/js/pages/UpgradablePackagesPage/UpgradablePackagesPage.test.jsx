@@ -1,42 +1,45 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import '@testing-library/jest-dom';
 
-import { renderWithRouter as render } from '@lib/test-utils';
+import { faker } from '@faker-js/faker';
+
+import {
+  renderWithRouterMatch,
+  withState,
+  defaultInitialState,
+} from '@lib/test-utils';
 import { upgradablePackageFactory } from '@lib/test-utils/factories/upgradablePackage';
+import { patchForPackageFactory } from '@lib/test-utils/factories/relevantPatches';
 
 import UpgradablePackagesPage from '.';
 
 describe('UpgradablePackagesPage', () => {
-  it('shows all packages by default', () => {
-    const packages = upgradablePackageFactory.buildList(8);
+  it('should render correctly', () => {
+    const hostID = faker.string.uuid();
+    const patch = patchForPackageFactory.build();
+    const upgradablePackages = upgradablePackageFactory.buildList(10, {
+      patches: [patch],
+    });
+    const [{ name }] = upgradablePackages;
 
-    const { container } = render(
-      <UpgradablePackagesPage upgradablePackages={packages} />
-    );
+    const [StatefulPage] = withState(<UpgradablePackagesPage />, {
+      ...defaultInitialState,
+      softwareUpdates: {
+        softwareUpdates: {
+          [hostID]: {
+            loading: false,
+            errors: [],
+            upgradable_packages: upgradablePackages,
+          },
+        },
+      },
+    });
 
-    const tableRows = container.querySelectorAll('tbody > tr');
+    renderWithRouterMatch(StatefulPage, {
+      path: 'hosts/:hostID/packages',
+      route: `/hosts/${hostID}/packages`,
+    });
 
-    expect(tableRows.length).toBe(8);
-  });
-
-  it('should filter package by its name', async () => {
-    const user = userEvent.setup();
-
-    const packages = upgradablePackageFactory.buildList(8);
-    const searchTerm = packages[0].name;
-
-    const { container } = render(
-      <UpgradablePackagesPage upgradablePackages={packages} />
-    );
-
-    const searchInput = screen.getByRole('textbox');
-    await user.click(searchInput);
-    await user.type(searchInput, searchTerm);
-
-    const tableRows = container.querySelectorAll('tbody > tr');
-
-    expect(tableRows.length).toBe(1);
+    expect(screen.getAllByText(name, { exact: false })).toHaveLength(2);
   });
 });

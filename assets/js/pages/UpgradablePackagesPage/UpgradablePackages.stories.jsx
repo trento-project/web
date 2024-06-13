@@ -3,13 +3,13 @@ import React from 'react';
 import { upgradablePackageFactory } from '@lib/test-utils/factories/upgradablePackage';
 import { hostFactory } from '@lib/test-utils/factories/hosts';
 
-import UpgradablePackagesPage from './UpgradablePackagesPage';
+import UpgradablePackages from './UpgradablePackages';
 
 export default {
-  title: 'Layouts/UpgradablePackagesPage',
-  components: UpgradablePackagesPage,
+  title: 'Layouts/UpgradablePackages',
+  components: UpgradablePackages,
   argTypes: {},
-  render: (args) => <UpgradablePackagesPage {...args} />,
+  render: (args) => <UpgradablePackages {...args} />,
 };
 
 export const Default = {
