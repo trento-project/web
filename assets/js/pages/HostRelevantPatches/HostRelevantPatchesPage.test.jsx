@@ -190,6 +190,7 @@ describe('HostRelevantPatchesPage', () => {
       });
     });
 
+    // codespell:ignore afterAll
     afterAll(() => {
       delete window.URL.createObjectURL;
       delete window.URL.revokeObjectURL;
