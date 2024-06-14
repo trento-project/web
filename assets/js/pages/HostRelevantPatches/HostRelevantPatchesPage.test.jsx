@@ -2,6 +2,8 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
+import { faker } from '@faker-js/faker';
+import { noop } from 'lodash';
 
 import { renderWithRouter as render } from '@lib/test-utils';
 import { hostFactory, relevantPatchFactory } from '@lib/test-utils/factories';
@@ -131,6 +133,66 @@ describe('HostRelevantPatchesPage', () => {
       const tableRows = container.querySelectorAll('tbody > tr');
 
       expect(tableRows.length).toBe(1);
+    });
+  });
+
+  describe('exports the patches in CSV format', () => {
+    beforeAll(() => {
+      const createObjectURL = jest.fn(({ name, size }) => ({
+        name,
+        size,
+      }));
+      const revokeObjectURL = jest.fn(() => noop());
+
+      window.URL = { createObjectURL, revokeObjectURL };
+    });
+
+    it('disables button if no patches are available', () => {
+      const hostName = faker.string.uuid();
+
+      const patches = [];
+
+      render(<HostRelevantPatchesPage hostName={hostName} patches={patches} />);
+
+      const csvButton = screen.getByText('Download CSV');
+
+      expect(csvButton).toBeDisabled();
+      expect(window.URL.createObjectURL).not.toHaveBeenCalled();
+      expect(window.URL.revokeObjectURL).not.toHaveBeenCalled();
+    });
+
+    it('and it does it the right way', () => {
+      const user = userEvent.setup();
+      const hostName = faker.string.uuid();
+
+      const patches = [
+        relevantPatchFactory.build({
+          advisory_name: 'carbonara123',
+          advisory_type: 'bugfix',
+          advisory_status: 'kekw',
+          id: 1234,
+          advisory_synopsis: 'lorem ipsum',
+          date: '12 oct 1990',
+          update_date: '12 oct 1990',
+        }),
+      ];
+
+      render(<HostRelevantPatchesPage hostName={hostName} patches={patches} />);
+
+      const csvButton = screen.getByText('Download CSV');
+      user.click(csvButton);
+
+      // Note: this only validates the type, we cannot match the content
+      expect(window.URL.createObjectURL).toHaveBeenCalledWith(new File([], ''));
+      expect(window.URL.createObjectURL).toHaveReturnedWith({
+        name: `${hostName}-patches.csv`,
+        size: 148,
+      });
+    });
+
+    afterAll(() => {
+      delete window.URL.createObjectURL;
+      delete window.URL.revokeObjectURL;
     });
   });
 });
