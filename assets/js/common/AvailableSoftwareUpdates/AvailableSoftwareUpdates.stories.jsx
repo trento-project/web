@@ -17,6 +17,20 @@ export default {
         type: 'function',
       },
     },
+    onNavigateToPatches: {
+      description:
+        'Callback function to trigger when the "Relevant Patches" area is clicked',
+      control: {
+        type: 'function',
+      },
+    },
+    onNavigateToPackages: {
+      description:
+        'Callback function to trigger when the "Upgradable Packages" area is clicked',
+      control: {
+        type: 'function',
+      },
+    },
     softwareUpdatesSettingsLoading: {
       control: {
         type: 'boolean',

@@ -21,7 +21,7 @@ describe('AvailableSoftwareUpdates component', () => {
 
     expect(screen.getByText('0')).toBeVisible();
     expect(screen.getByText(upgradablePackages)).toBeVisible();
-    expect(screen.getAllByTestId('eos-svg-component')).toHaveLength(3);
+    expect(screen.getAllByTestId('eos-svg-component')).toHaveLength(4);
   });
 
   it('renders critical counters', () => {
