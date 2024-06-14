@@ -2,10 +2,18 @@ import React, { useState, useEffect, useRef } from 'react';
 import classNames from 'classnames';
 import { EOS_NEW_LABEL, EOS_CLOSE } from 'eos-icons-react';
 import Pill from '@common/Pill';
+import Tooltip from '@common/Tooltip';
 import useOnClickOutside from '@hooks/useOnClickOutside';
 // eslint-disable-next-line
 const tagRegexValidation = /^[\+\-=.,_:@\p{L}\w]*$/u;
 const tagValidation = (char) => tagRegexValidation.test(char);
+const tagValidationMessage = (
+  <>
+    Only alphanumeric characters
+    <br />
+    are allowed, e.g. A-Z and 0-9
+  </>
+);
 
 function Tags({ className, tags, onChange, onAdd, onRemove, resourceId }) {
   const [renderedTags, setTags] = useState(tags);
@@ -73,33 +81,35 @@ function Tags({ className, tags, onChange, onAdd, onRemove, resourceId }) {
         </Pill>
       ))}
       {addingTag ? (
-        <Pill className="ml-2 bg-green-100 text-green-800 animate-fade">
-          <input
-            ref={inputRef}
-            className="bg-green-100"
-            onChange={({ target: { value } }) => {
-              if (tagValidation(value)) {
-                setNewTagValue(value);
-              }
-            }}
-            onKeyDown={({ key }) => {
-              if (key === 'Enter') {
-                if (
-                  newTagValue.length === 0 ||
-                  renderedTags.includes(newTagValue)
-                ) {
-                  return;
+        <Tooltip content={tagValidationMessage} trigger={'focus'}>
+          <Pill className="ml-2 bg-green-100 text-green-800 animate-fade">
+            <input
+              ref={inputRef}
+              className="bg-green-100"
+              onChange={({ target: { value } }) => {
+                if (tagValidation(value)) {
+                  setNewTagValue(value);
                 }
-                renderedTags.push(newTagValue);
-                setAddingTag(false);
-                setNewTagValue('');
-                onChange(renderedTags);
-                onAdd(newTagValue);
-              }
-            }}
-            value={newTagValue}
-          />
-        </Pill>
+              }}
+              onKeyDown={({ key }) => {
+                if (key === 'Enter') {
+                  if (
+                    newTagValue.length === 0 ||
+                    renderedTags.includes(newTagValue)
+                  ) {
+                    return;
+                  }
+                  renderedTags.push(newTagValue);
+                  setAddingTag(false);
+                  setNewTagValue('');
+                  onChange(renderedTags);
+                  onAdd(newTagValue);
+                }
+              }}
+              value={newTagValue}
+            />
+          </Pill>
+        </Tooltip>
       ) : (
         <Pill
           className={classNames({
