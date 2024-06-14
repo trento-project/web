@@ -33,11 +33,18 @@ function Indicator({
   return (
     <Tooltip isEnabled={unknown} content={tooltip} wrap={false}>
       <div
+        role="button"
+        tabIndex={0}
         className={classNames(
           'flex flex-row items-center border border-gray-200 p-2 rounded-md grow',
           { 'cursor-pointer': !unknown }
         )}
         onClick={navigate}
+        onKeyDown={({ code }) => {
+          if (code === 'Enter') {
+            navigate();
+          }
+        }}
       >
         <div className="px-2">{icon}</div>
         <div>
