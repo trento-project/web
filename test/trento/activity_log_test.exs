@@ -23,16 +23,16 @@ defmodule Trento.ActivityLogTest do
     test "should return settings" do
       %{
         retention_time: %{
-          retention_period: retention_period,
-          retention_period_unit: retention_period_unit
+          value: value,
+          unit: unit
         }
       } = insert(:activity_log_settings)
 
       assert {:ok,
               %Settings{
                 retention_time: %RetentionTime{
-                  retention_period: ^retention_period,
-                  retention_period_unit: ^retention_period_unit
+                  value: ^value,
+                  unit: ^unit
                 }
               }} = ActivityLog.get_settings()
     end
@@ -48,14 +48,14 @@ defmodule Trento.ActivityLogTest do
       %{
         invalid_retention_periods: [-1, 0],
         expected_errors: [
-          retention_period:
+          value:
             {"must be greater than %{number}",
              [validation: :number, kind: :greater_than, number: 0]}
         ]
       },
       %{
         invalid_retention_periods: [nil, "", "  "],
-        expected_errors: [retention_period: {"can't be blank", [validation: :required]}]
+        expected_errors: [value: {"can't be blank", [validation: :required]}]
       }
     ]
 
@@ -67,7 +67,7 @@ defmodule Trento.ActivityLogTest do
             expected_errors: expected_errors
           } <- @validation_scenarios do
         Enum.each(invalid_retention_periods, fn invalid_retention_period ->
-          retention_period_unit = Faker.Util.pick(RetentionPeriodUnit.values())
+          unit = Faker.Util.pick(RetentionPeriodUnit.values())
 
           assert {:error,
                   %{
@@ -76,7 +76,7 @@ defmodule Trento.ActivityLogTest do
                   }} =
                    ActivityLog.change_retention_period(
                      invalid_retention_period,
-                     retention_period_unit
+                     unit
                    )
         end)
       end
@@ -85,41 +85,41 @@ defmodule Trento.ActivityLogTest do
     test "should not accept unsupported retention period units" do
       insert(:activity_log_settings)
 
-      for retention_period_unit <- [:foo, :bar, :baz] do
+      for unit <- [:foo, :bar, :baz] do
         assert {:error,
                 %{
                   valid?: false,
                   changes: %{
                     retention_time: %{
                       errors: [
-                        retention_period_unit: {"is invalid", _}
+                        unit: {"is invalid", _}
                       ]
                     }
                   }
-                }} = ActivityLog.change_retention_period(42, retention_period_unit)
+                }} = ActivityLog.change_retention_period(42, unit)
       end
     end
 
     scenarios = [
       %{
         name: "days",
-        retention_period: 1,
-        retention_period_unit: RetentionPeriodUnit.days()
+        value: 1,
+        unit: RetentionPeriodUnit.days()
       },
       %{
         name: "weeks",
-        retention_period: 3,
-        retention_period_unit: RetentionPeriodUnit.weeks()
+        value: 3,
+        unit: RetentionPeriodUnit.weeks()
       },
       %{
         name: "months",
-        retention_period: 5,
-        retention_period_unit: RetentionPeriodUnit.months()
+        value: 5,
+        unit: RetentionPeriodUnit.months()
       },
       %{
         name: "years",
-        retention_period: 7,
-        retention_period_unit: RetentionPeriodUnit.years()
+        value: 7,
+        unit: RetentionPeriodUnit.years()
       }
     ]
 
@@ -129,26 +129,26 @@ defmodule Trento.ActivityLogTest do
       test "should successfully change retention periods #{name}" do
         insert(:activity_log_settings,
           retention_time: %{
-            retention_period: 92,
-            retention_period_unit: RetentionPeriodUnit.years()
+            value: 92,
+            unit: RetentionPeriodUnit.years()
           }
         )
 
         %{
-          retention_period: retention_period,
-          retention_period_unit: retention_period_unit
+          value: value,
+          unit: unit
         } = @scenario
 
         assert {:ok,
                 %Settings{
                   retention_time: %RetentionTime{
-                    retention_period: ^retention_period,
-                    retention_period_unit: ^retention_period_unit
+                    value: ^value,
+                    unit: ^unit
                   }
                 }} =
                  ActivityLog.change_retention_period(
-                   retention_period,
-                   retention_period_unit
+                   value,
+                   unit
                  )
       end
     end
@@ -159,16 +159,16 @@ defmodule Trento.ActivityLogTest do
 
       insert(:activity_log_settings,
         retention_time: %{
-          retention_period: initial_retention_period,
-          retention_period_unit: initial_retention_period_unit
+          value: initial_retention_period,
+          unit: initial_retention_period_unit
         }
       )
 
       assert {:ok,
               %Settings{
                 retention_time: %RetentionTime{
-                  retention_period: ^initial_retention_period,
-                  retention_period_unit: ^initial_retention_period_unit
+                  value: ^initial_retention_period,
+                  unit: ^initial_retention_period_unit
                 }
               }} =
                ActivityLog.change_retention_period(

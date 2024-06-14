@@ -16,20 +16,20 @@ defmodule Trento.ReleaseTest do
 
       assert %ActivityLogSettings{
                retention_time: %RetentionTime{
-                 retention_period: 1,
-                 retention_period_unit: RetentionPeriodUnit.months()
+                 value: 1,
+                 unit: RetentionPeriodUnit.months()
                }
              } = Trento.Repo.one(ActivityLogSettings.base_query())
     end
 
     test "should not change previously saved retention time" do
-      retention_period = 3
-      retention_period_unit = RetentionPeriodUnit.weeks()
+      value = 3
+      unit = RetentionPeriodUnit.weeks()
 
       insert(:activity_log_settings,
         retention_time: %{
-          retention_period: retention_period,
-          retention_period_unit: retention_period_unit
+          value: value,
+          unit: unit
         }
       )
 
@@ -37,8 +37,8 @@ defmodule Trento.ReleaseTest do
 
       assert %ActivityLogSettings{
                retention_time: %RetentionTime{
-                 retention_period: ^retention_period,
-                 retention_period_unit: ^retention_period_unit
+                 value: ^value,
+                 unit: ^unit
                }
              } = Trento.Repo.one(ActivityLogSettings.base_query())
     end

@@ -24,13 +24,13 @@ defmodule Trento.ActivityLog do
           {:ok, Settings.t()}
           | {:error, :activity_log_settings_not_configured}
           | {:error, any()}
-  def change_retention_period(retention_period, unit) do
+  def change_retention_period(value, unit) do
     with {:ok, settings} <- get_settings() do
       settings
       |> Settings.changeset(%{
         retention_time: %{
-          retention_period: retention_period,
-          retention_period_unit: unit
+          value: value,
+          unit: unit
         }
       })
       |> Repo.update()

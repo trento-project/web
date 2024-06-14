@@ -12,9 +12,9 @@ defmodule Trento.ActivityLog.RetentionTime do
   alias __MODULE__
 
   deftype do
-    field :retention_period, :integer
+    field :value, :integer
 
-    field :retention_period_unit, Ecto.Enum, values: RetentionPeriodUnit.values()
+    field :unit, Ecto.Enum, values: RetentionPeriodUnit.values()
   end
 
   @spec changeset(t() | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()
@@ -23,16 +23,16 @@ defmodule Trento.ActivityLog.RetentionTime do
 
   def changeset(retention_time, attrs) do
     retention_time
-    |> cast(attrs, [:retention_period, :retention_period_unit])
-    |> validate_required([:retention_period, :retention_period_unit])
-    |> validate_number(:retention_period, greater_than: 0)
-    |> validate_inclusion(:retention_period_unit, RetentionPeriodUnit.values())
+    |> cast(attrs, [:value, :unit])
+    |> validate_required([:value, :unit])
+    |> validate_number(:value, greater_than: 0)
+    |> validate_inclusion(:unit, RetentionPeriodUnit.values())
   end
 
   def default do
     %RetentionTime{
-      retention_period: 1,
-      retention_period_unit: RetentionPeriodUnit.months()
+      value: 1,
+      unit: RetentionPeriodUnit.months()
     }
   end
 end

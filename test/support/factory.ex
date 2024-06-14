@@ -939,8 +939,8 @@ defmodule Trento.Factory do
 
   def activity_log_retention_time_factory do
     RetentionTime.new!(%{
-      retention_period: Enum.random(1..30),
-      retention_period_unit: Faker.Util.pick(RetentionPeriodUnit.values())
+      value: Enum.random(1..30),
+      unit: Faker.Util.pick(RetentionPeriodUnit.values())
     })
   end
 
