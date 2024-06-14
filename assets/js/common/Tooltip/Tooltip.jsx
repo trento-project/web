@@ -21,7 +21,7 @@ const getPlacement = (place) => (PLACES.includes(place) ? place : 'top');
 
 function Tooltip({
   className,
-  content,
+  content = '',
   children,
   place = 'top',
   isEnabled = true,
@@ -32,13 +32,13 @@ function Tooltip({
     return children;
   }
   const overlayClasses = classNames(
-    'leading-5 text-xs font-semibold bg-black text-white flex items-center px-4 py-2 rounded',
+    'leading-5 text-xs font-semibold bg-black text-white flex items-center px-4 py-2 rounded whitespace-pre-line text-center',
     className
   );
   return (
     <RcTooltip
       motion={{ motionName: 'rc-tooltip-fade' }}
-      overlay={<span className={overlayClasses}>{content}</span>}
+      overlay={<span className={overlayClasses}>{content.trim()}</span>}
       placement={getPlacement(place)}
       {...rest}
     >

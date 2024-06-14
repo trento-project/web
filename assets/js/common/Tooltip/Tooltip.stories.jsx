@@ -61,3 +61,20 @@ export const Positioning = {
     </div>
   ),
 };
+
+// Prove tooltips can render multiline text
+// Extra spaces such as leading and trailing newlines are collapsed
+export const MultilineText = {
+  args: {
+    content: '\nthe head line\nthe middle line\nthe bottom line\n',
+  },
+  render: (args) => (
+    <div className="p-12 flex items-center justify-center">
+      <Tooltip {...args}>
+        <div className="bg-sky-400 p-2 text-white font-semibold rounded">
+          Hover me!
+        </div>
+      </Tooltip>
+    </div>
+  ),
+};
