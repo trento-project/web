@@ -26,6 +26,17 @@ function HostRelevantPatches({ hostName, onNavigate, patches }) {
 
   const [displayedPatches, setDisplayedPatches] = useState(patches);
 
+  const file =
+    window?.URL?.createObjectURL && displayedPatches?.length > 0
+      ? window.URL.createObjectURL(
+          new File(
+            [Papa.unparse(displayedPatches, { header: true })],
+            `${hostName}-patches.csv`,
+            { type: 'text/csv' }
+          )
+        )
+      : null;
+
   useEffect(() => {
     const filteredByAdvisoryType = filterPatchesByAdvisoryType(
       patches,
@@ -36,17 +47,13 @@ function HostRelevantPatches({ hostName, onNavigate, patches }) {
         advisory_synopsis ? containsSubstring(advisory_synopsis, search) : false
     );
     setDisplayedPatches(searchResult);
-  }, [patches, displayedAdvisories, search]);
 
-  const file = window.URL.createObjectURL
-    ? window.URL.createObjectURL(
-        new File(
-          [Papa.unparse(displayedPatches, { header: true })],
-          `${hostName}-patches.csv`,
-          { type: 'text/csv' }
-        )
-      )
-    : null;
+    return () => {
+      if (window?.URL?.revokeObjectURL && displayedPatches?.length > 0) {
+        window.URL.revokeObjectURL(file);
+      }
+    };
+  }, [patches, displayedAdvisories, search]);
 
   return (
     <>
@@ -71,7 +78,12 @@ function HostRelevantPatches({ hostName, onNavigate, patches }) {
             prefix={<EOS_SEARCH size="l" />}
           />
           <a href={file} download={`${hostName}-patches.csv`}>
-            <Button type="primary-white">Download CSV</Button>
+            <Button
+              type="primary-white"
+              disabled={displayedPatches?.length <= 0}
+            >
+              Download CSV
+            </Button>
           </a>
         </div>
       </div>
