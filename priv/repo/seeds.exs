@@ -24,3 +24,7 @@
   created_at: DateTime.utc_now()
 })
 |> Trento.Repo.insert!(on_conflict: :nothing)
+
+Trento.Repo.insert!(Trento.ActivityLog.Settings.with_default_retention_time(),
+  on_conflict: :nothing
+)
