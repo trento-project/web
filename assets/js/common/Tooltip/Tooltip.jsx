@@ -26,6 +26,7 @@ function Tooltip({
   place = 'top',
   isEnabled = true,
   wrap = true,
+  visible,
   ...rest
 }) {
   if (!isEnabled) {
@@ -40,6 +41,7 @@ function Tooltip({
       motion={{ motionName: 'rc-tooltip-fade' }}
       overlay={<span className={overlayClasses}>{content}</span>}
       placement={getPlacement(place)}
+      visible={visible}
       {...rest}
     >
       {wrap ? <span>{children}</span> : children}
