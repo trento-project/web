@@ -7,7 +7,7 @@ import useOnClickOutside from '@hooks/useOnClickOutside';
 // eslint-disable-next-line
 const tagRegexValidation = /^[\+\-=.,_:@\p{L}\w]*$/u;
 const tagValidation = (char) => tagRegexValidation.test(char);
-const tagValidationMessage = (
+const tagValidationDefaultMessage = (
   <>
     Only alphanumeric characters
     <br />
@@ -15,9 +15,18 @@ const tagValidationMessage = (
   </>
 );
 
-function Tags({ className, tags, onChange, onAdd, onRemove, resourceId }) {
+function Tags({
+  className,
+  tags,
+  onChange,
+  onAdd,
+  onRemove,
+  resourceId,
+  validationMessage = tagValidationDefaultMessage,
+}) {
   const [renderedTags, setTags] = useState(tags);
   const [addingTag, setAddingTag] = useState(false);
+  const [showValidationTooltip, setShowValidationTooltip] = useState(false);
   const [newTagValue, setNewTagValue] = useState('');
   const inputRef = useRef(null);
 
@@ -81,15 +90,15 @@ function Tags({ className, tags, onChange, onAdd, onRemove, resourceId }) {
         </Pill>
       ))}
       {addingTag ? (
-        <Tooltip content={tagValidationMessage} trigger={'focus'}>
+        <Tooltip content={validationMessage} visible={showValidationTooltip}>
           <Pill className="ml-2 bg-green-100 text-green-800 animate-fade">
             <input
               ref={inputRef}
               className="bg-green-100"
               onChange={({ target: { value } }) => {
-                if (tagValidation(value)) {
-                  setNewTagValue(value);
-                }
+                const isValid = tagValidation(value);
+                setShowValidationTooltip(!isValid);
+                isValid && setNewTagValue(value);
               }}
               onKeyDown={({ key }) => {
                 if (key === 'Enter') {
