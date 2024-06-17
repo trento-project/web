@@ -7,7 +7,7 @@ import '@testing-library/jest-dom';
 import Tags from '.';
 
 describe('Tags', () => {
-  it('should show validation tooltip when inserting an unsuported character in a tag', async () => {
+  it('should show validation tooltip when inserting an unsupported character in a tag', async () => {
     const user = userEvent.setup();
     const msg = 'invalid character';
 
