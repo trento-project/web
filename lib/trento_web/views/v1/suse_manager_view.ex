@@ -96,7 +96,7 @@ defmodule TrentoWeb.V1.SUSEManagerView do
         vendor_advisory: vendor_advisory,
         type: type,
         product: product,
-        errataFrom: errataFrom,
+        errata_from: errataFrom,
         topic: topic,
         description: description,
         references: references,

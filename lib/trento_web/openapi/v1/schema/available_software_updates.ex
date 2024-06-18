@@ -152,7 +152,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
         vendor_advisory: %Schema{type: :string, description: "Vendor advisory"},
         type: %Schema{type: :string, description: "Advisory type"},
         product: %Schema{type: :string, description: "Advisory product"},
-        errataFrom: %Schema{type: :string, description: "Advisory errata"},
+        errata_from: %Schema{type: :string, description: "Advisory errata"},
         topic: %Schema{type: :string, description: "Advisory topic"},
         description: %Schema{type: :string, description: "Advisory description"},
         references: %Schema{type: :string, description: "Advisory references"},

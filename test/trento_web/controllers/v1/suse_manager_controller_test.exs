@@ -146,13 +146,53 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
       insert_software_updates_settings()
 
       advisory_name = Faker.Pokemon.name()
-      errata_details = build(:errata_details)
+
+      %{
+        id: id,
+        issue_date: issue_date,
+        update_date: update_date,
+        last_modified_date: last_modified_date,
+        synopsis: synopsis,
+        release: release,
+        advisory_status: advisory_status,
+        vendor_advisory: vendor_advisory,
+        type: type,
+        product: product,
+        errataFrom: errata_from,
+        topic: topic,
+        description: description,
+        references: references,
+        notes: notes,
+        solution: solution,
+        reboot_suggested: reboot_suggested,
+        restart_suggested: restart_suggested
+      } = errata_details = build(:errata_details)
 
       expect(Trento.SoftwareUpdates.Discovery.Mock, :get_errata_details, 1, fn _ ->
         {:ok, errata_details}
       end)
 
-      resp = struct(ErrataDetailsResponse, errata_details)
+      resp =
+        struct(ErrataDetailsResponse, %{
+          id: id,
+          issue_date: issue_date,
+          update_date: update_date,
+          last_modified_date: last_modified_date,
+          synopsis: synopsis,
+          release: release,
+          advisory_status: advisory_status,
+          vendor_advisory: vendor_advisory,
+          type: type,
+          product: product,
+          errata_from: errata_from,
+          topic: topic,
+          description: description,
+          references: references,
+          notes: notes,
+          solution: solution,
+          reboot_suggested: reboot_suggested,
+          restart_suggested: restart_suggested
+        })
 
       ^resp =
         conn
