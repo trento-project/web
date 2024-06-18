@@ -13,8 +13,8 @@ function Indicator({
   tooltip,
   icon,
   loading,
-  navigate,
   children,
+  onNavigate,
 }) {
   const unknown = children === undefined;
 
@@ -39,10 +39,10 @@ function Indicator({
           'flex flex-row items-center border border-gray-200 p-2 rounded-md grow',
           { 'cursor-pointer': !unknown }
         )}
-        onClick={navigate}
+        onClick={onNavigate}
         onKeyDown={({ code }) => {
           if (code === 'Enter') {
-            navigate();
+            onNavigate();
           }
         }}
       >

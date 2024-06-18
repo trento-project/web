@@ -62,7 +62,7 @@ function AvailableSoftwareUpdates({
         tooltip={tooltip}
         loading={softwareUpdatesLoading}
         icon={<EOS_HEALING size="xl" />}
-        navigate={onNavigateToPatches}
+        onNavigate={onNavigateToPatches}
       >
         {relevantPatches}
       </Indicator>
@@ -72,7 +72,7 @@ function AvailableSoftwareUpdates({
         tooltip={tooltip}
         loading={softwareUpdatesLoading}
         icon={<EOS_PACKAGE_UPGRADE_OUTLINED size="xl" />}
-        navigate={onNavigateToPackages}
+        onNavigate={onNavigateToPackages}
       >
         {upgradablePackages}
       </Indicator>
