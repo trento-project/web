@@ -84,4 +84,25 @@ describe('Tooltip', () => {
       expect(screen.queryByText('This is my tooltip text')).toBeNull()
     );
   });
+
+  it('should hide the text when the mouse go away', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <div>
+        <Tooltip content="This is my tooltip text">This is my anchor</Tooltip>
+      </div>
+    );
+
+    expect(screen.queryByText('This is my tooltip text')).toBeNull();
+
+    await act(async () => user.hover(screen.queryByText('This is my anchor')));
+    await act(async () =>
+      user.unhover(screen.queryByText('This is my anchor'))
+    );
+
+    await waitFor(() =>
+      expect(screen.queryByText('This is my tooltip text')).not.toBeVisible()
+    );
+  });
 });
