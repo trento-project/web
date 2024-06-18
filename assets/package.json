@@ -87,6 +87,7 @@
     "lint": "eslint . --ext js,jsx",
     "format:check": "prettier -c .",
     "format": "prettier --write .",
+    "pretest": "ls ../priv/static/assets/app.css || npm run tailwind:build",
     "test": "jest",
     "chromatic": "npx chromatic --exit-zero-on-changes"
   }
