@@ -2,6 +2,7 @@ defmodule TrentoWeb.V1.SettingsController do
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
 
+  alias Trento.ActivityLog
   alias Trento.Settings
   alias TrentoWeb.OpenApi.V1.Schema
   alias TrentoWeb.Plugs.AuthenticateAPIKeyPlug
@@ -91,6 +92,60 @@ defmodule TrentoWeb.V1.SettingsController do
       render(conn, "api_key_settings.json", %{
         settings: api_key
       })
+    end
+  end
+
+  operation :update_activity_log_settings,
+    summary: "Updates the Activity Log settings",
+    tags: ["Platform"],
+    request_body:
+      {"ActivityLogSettings", "application/json", Schema.Platform.ActivityLogSettings},
+    responses: [
+      ok:
+        {"Activity Log settings saved successfully", "application/json",
+         Schema.Platform.ActivityLogSettings},
+      unprocessable_entity: Schema.UnprocessableEntity.response(),
+      not_found: Schema.NotFound.response()
+    ]
+
+  def update_activity_log_settings(%{body_params: body_params} = conn, _) do
+    %{retention_period: retention_period, retention_period_unit: retention_period_unit} =
+      body_params
+
+    case ActivityLog.change_retention_period(retention_period, retention_period_unit) do
+      {:ok, updated_settings} ->
+        render(conn, "activity_log_settings.json", %{
+          activity_log_settings: updated_settings
+        })
+
+      _ ->
+        {:error, :unprocessable_entity}
+    end
+  end
+
+  operation :get_activity_log_settings,
+    summary: "Fetches the Activity Log settings",
+    tags: ["Platform"],
+    request_body:
+      {"ActivityLogSettings", "application/json", Schema.Platform.ActivityLogSettings},
+    responses: [
+      ok:
+        {"Activity Log settings fetched successfully", "application/json",
+         Schema.Platform.ActivityLogSettings},
+      not_found: Schema.NotFound.response()
+    ]
+
+  require Logger
+
+  def get_activity_log_settings(conn, _) do
+    case ActivityLog.get_settings() do
+      {:ok, settings} ->
+        render(conn, "activity_log_settings.json", %{
+          activity_log_settings: settings
+        })
+
+      _ ->
+        {:error, :not_found}
     end
   end
 end

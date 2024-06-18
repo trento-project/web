@@ -163,6 +163,10 @@ defmodule TrentoWeb.Router do
         get "/api_key", SettingsController, :get_api_key_settings
         patch "/api_key", SettingsController, :update_api_key_settings
 
+        # Activity Log Settings
+        put "/activity_log", SettingsController, :update_activity_log_settings
+        get "/activity_log", SettingsController, :get_activity_log_settings
+
         if Application.compile_env!(:trento, :suse_manager_enabled) do
           scope "/suma_credentials" do
             resources "/", SUMACredentialsController,
