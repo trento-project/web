@@ -10,6 +10,7 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
 
   alias TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates.{
     AvailableSoftwareUpdatesResponse,
+    ErrataDetailsResponse,
     PatchesForPackage,
     PatchesForPackagesResponse,
     RelevantPatch,
@@ -137,6 +138,45 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
         )
         |> json_response(:ok)
         |> assert_schema("PatchesForPackagesResponse", api_spec)
+    end
+  end
+
+  describe "retrieve errata details" do
+    test "should return errata details", %{conn: conn, api_spec: api_spec} do
+      insert_software_updates_settings()
+
+      advisory_name = Faker.Pokemon.name()
+      errata_details = build(:errata_details)
+
+      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_errata_details, 1, fn _ ->
+        {:ok, errata_details}
+      end)
+
+      resp = struct(ErrataDetailsResponse, errata_details)
+
+      ^resp =
+        conn
+        |> get("/api/v1/software_updates/errata_details/#{advisory_name}")
+        |> json_response(:ok)
+        |> assert_schema("ErrataDetailsResponse", api_spec)
+    end
+
+    test "should return 404 when advisory details are not found", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      insert_software_updates_settings()
+
+      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_errata_details, 1, fn _ ->
+        {:error, :error_getting_errata_details}
+      end)
+
+      advisory_name = Faker.Pokemon.name()
+
+      conn
+      |> get("/api/v1/software_updates/errata_details/#{advisory_name}")
+      |> json_response(:unprocessable_entity)
+      |> assert_schema("UnprocessableEntity", api_spec)
     end
   end
 end

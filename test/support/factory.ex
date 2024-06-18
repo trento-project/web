@@ -951,12 +951,22 @@ defmodule Trento.Factory do
 
   def errata_details_factory do
     %{
-      type: AdvisoryType.values() |> Faker.Util.pick() |> Atom.to_string(),
-      synopsis: Faker.Lorem.sentence(),
+      id: Enum.random(1..65_536),
       issue_date: 30 |> Faker.Date.backward() |> Date.to_string(),
       update_date: 30 |> Faker.Date.backward() |> Date.to_string(),
       last_modified_date: 30 |> Faker.Date.backward() |> Date.to_string(),
+      synopsis: Faker.Lorem.sentence(),
+      release: Enum.random(1..256),
       advisory_status: "stable",
+      vendor_advisory: Faker.Lorem.word(),
+      type: Faker.Beer.name(),
+      product: Faker.StarWars.character(),
+      errataFrom: Faker.Lorem.word(),
+      topic: Faker.StarWars.planet(),
+      description: Faker.Lorem.sentence(),
+      references: Faker.Lorem.sentence(),
+      notes: Faker.Lorem.sentence(),
+      solution: Faker.Lorem.sentence(),
       reboot_suggested: Faker.Util.pick([true, false]),
       restart_suggested: Faker.Util.pick([true, false])
     }

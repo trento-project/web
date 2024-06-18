@@ -3,11 +3,13 @@ defmodule TrentoWeb.V1.SUSEManagerController do
   use OpenApiSpex.ControllerSpecs
 
   alias Trento.SoftwareUpdates
+  alias Trento.SoftwareUpdates.Discovery
 
   alias TrentoWeb.OpenApi.V1.Schema
 
   alias TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates.{
     AvailableSoftwareUpdatesResponse,
+    ErrataDetailsResponse,
     PatchesForPackagesResponse
   }
 
@@ -72,6 +74,28 @@ defmodule TrentoWeb.V1.SUSEManagerController do
   def patches_for_packages(conn, %{package_ids: package_ids}) do
     with {:ok, packages_patches} <- SoftwareUpdates.get_packages_patches(package_ids) do
       render(conn, %{patches: packages_patches})
+    end
+  end
+
+  operation :errata_details,
+    summary: "Gets the details for an advisory",
+    tags: ["Platform"],
+    description: "Endpoint to fetch advisory details for a given advisory name",
+    parameters: [
+      advisory_name: [
+        in: :path,
+        required: true,
+        type: %OpenApiSpex.Schema{type: :string}
+      ]
+    ],
+    responses: [
+      ok: {"Errata details for the advisory", "application/json", ErrataDetailsResponse}
+    ]
+
+  @spec errata_details(Plug.Conn.t(), any) :: Plug.Conn.t()
+  def errata_details(conn, %{advisory_name: advisory_name}) do
+    with {:ok, errata_details} <- Discovery.get_errata_details(advisory_name) do
+      render(conn, %{errata_details: errata_details})
     end
   end
 end
