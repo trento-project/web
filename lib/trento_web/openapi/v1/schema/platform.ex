@@ -99,4 +99,30 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
       }
     })
   end
+
+  defmodule ActivityLogSettings do
+    @moduledoc false
+
+    OpenApiSpex.schema(%{
+      title: "ActivityLogSettings",
+      description: "Activity Log settings of the current installation",
+      type: :object,
+      additionalProperties: false,
+      properties: %{
+        retention_period: %Schema{
+          type: :integer,
+          description:
+            "The integer retention duration, that is used in conjunction with the retention time unit.",
+          minimum: 1
+        },
+        retention_period_unit: %Schema{
+          type: :string,
+          description:
+            "The retention duration unit, that is used in conjunction with the retention time period.",
+          enum: [:days, :weeks, :months, :years]
+        }
+      },
+      required: [:retention_period, :retention_period_unit]
+    })
+  end
 end
