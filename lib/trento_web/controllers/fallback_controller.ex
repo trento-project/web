@@ -164,6 +164,11 @@ defmodule TrentoWeb.FallbackController do
     |> put_status(:unprocessable_entity)
     |> put_view(ErrorView)
     |> render(:"422", reason: "TOTP code not valid for the enrollment procedure.")
+  def call(conn, {:error, :activity_log_settings_not_configured}) do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> put_view(ErrorView)
+    |> render(:"422", reason: "Activity Log Settings must be set up before being updated.")
   end
 
   def call(conn, {:error, [error | _]}), do: call(conn, {:error, error})

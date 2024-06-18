@@ -151,5 +151,17 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       |> json_response(200)
       |> assert_schema("ActivityLogSettings", api_spec)
     end
+
+    test "should not update the activity log settings if it is not already configured",
+         %{conn: conn, api_spec: api_spec} do
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> put("/api/v1/settings/activity_log", %{
+        retention_period: 42,
+        retention_period_unit: :years
+      })
+      |> json_response(422)
+      |> assert_schema("UnprocessableEntity", api_spec)
+    end
   end
 end

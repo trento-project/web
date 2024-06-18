@@ -118,8 +118,8 @@ defmodule TrentoWeb.V1.SettingsController do
           activity_log_settings: updated_settings
         })
 
-      _ ->
-        {:error, :unprocessable_entity}
+      error ->
+        error
     end
   end
 
@@ -134,8 +134,6 @@ defmodule TrentoWeb.V1.SettingsController do
          Schema.Platform.ActivityLogSettings},
       not_found: Schema.NotFound.response()
     ]
-
-  require Logger
 
   def get_activity_log_settings(conn, _) do
     case ActivityLog.get_settings() do
