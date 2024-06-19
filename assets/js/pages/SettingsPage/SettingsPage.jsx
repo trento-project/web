@@ -10,13 +10,14 @@ import { getFromConfig } from '@lib/config';
 
 import PageHeader from '@common/PageHeader';
 import Button from '@common/Button';
-import SuseManagerConfig, {
-  SuseManagerSettingsContainer,
-} from '@common/SuseManagerConfig';
+import SuseManagerConfig from '@common/SuseManagerConfig';
 import SuseManagerSettingsModal from '@common/SuseManagerSettingsDialog';
 import ApiKeySettingsModal from '@common/ApiKeySettingsModal';
 import ApiKeyBox from '@common/ApiKeyBox';
 import CopyButton from '@common/CopyButton';
+import SettingsLoader, {
+  calculateStatus as calculateSettingsLoaderStatus,
+} from '@common/SettingsLoader';
 
 import {
   fetchSoftwareUpdatesSettings,
@@ -248,9 +249,12 @@ function SettingsPage() {
       />
       {getFromConfig('suseManagerEnabled') && (
         <div className="py-4">
-          <SuseManagerSettingsContainer
-            loading={softwareUpdatesSettingsLoading}
-            error={softwareUpdatesSettingsNetworkError}
+          <SettingsLoader
+            sectionName="SUSE Manager"
+            status={calculateSettingsLoaderStatus(
+              softwareUpdatesSettingsLoading,
+              softwareUpdatesSettingsNetworkError
+            )}
             onRetry={() => dispatch(fetchSoftwareUpdatesSettings())}
           >
             <SuseManagerConfig
@@ -274,7 +278,7 @@ function SettingsPage() {
               }}
               onCancel={() => setClearingSoftwareUpdatesSettings(false)}
             />
-          </SuseManagerSettingsContainer>
+          </SettingsLoader>
           <SuseManagerSettingsModal
             key={`${settings.url}-${settings.username}-${settings.ca_uploaded_at}-${editingSoftwareUpdatesSettings}`}
             open={editingSoftwareUpdatesSettings}

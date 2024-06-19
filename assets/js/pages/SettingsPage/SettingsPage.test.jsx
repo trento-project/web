@@ -68,7 +68,7 @@ describe('Settings Page', () => {
 
     renderWithRouter(StatefulSettings);
 
-    expect(screen.getByText('Loading Settings...')).toBeVisible();
+    expect(screen.getByText('Loading SUSE Manager Settings...')).toBeVisible();
   });
 
   it('should render an empty SUSE Manager Config Section', async () => {
