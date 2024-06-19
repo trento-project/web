@@ -6,9 +6,6 @@ import Button from '@common/Button';
 import SuseManagerClearSettingsModal from '@common/SuseManagerClearSettingsDialog';
 import CertificateUploadDate from './CertificateUploadDate';
 
-const renderPassword = (username, certUploadDate) =>
-  username && certUploadDate ? '•••••' : '.....';
-
 function SuseManagerConfig({
   url = 'https://',
   username,
@@ -35,6 +32,7 @@ function SuseManagerConfig({
           </h2>
           <span className="float-right">
             <Button
+              aria-label="test-suma-connection"
               className="mr-2"
               type="default-fit"
               size="small"
@@ -51,7 +49,12 @@ function SuseManagerConfig({
             >
               Edit Settings
             </Button>
-            <Button type="danger" size="small" onClick={onClearClick}>
+            <Button
+              aria-label="clear-suma-settings"
+              type="danger"
+              size="small"
+              onClick={onClearClick}
+            >
               Clear Settings
             </Button>
           </span>
@@ -63,21 +66,27 @@ function SuseManagerConfig({
 
         <div className="grid grid-cols-6 mt-5 items-center">
           <div className="font-bold mb-3">SUSE Manager URL</div>
-          <div className="col-span-2 text-gray-500 mb-3 truncate pr-12">
+          <div
+            aria-label="suma-url"
+            className="col-span-2 text-gray-500 mb-3 truncate pr-12"
+          >
             {url}
           </div>
           <div className="font-bold mb-3">CA Certificate</div>
-          <div className="col-span-2 text-gray-500 mb-3">
+          <div
+            aria-label="suma-cacert-upload-date"
+            className="col-span-2 text-gray-500 mb-3"
+          >
             <CertificateUploadDate date={certUploadDate} />
           </div>
 
           <div className="font-bold">Username</div>
-          <div className="col-span-2 text-gray-500">
+          <div aria-label="suma-username" className="col-span-2 text-gray-500">
             {defaultTo(username, '.....')}
           </div>
           <div className="font-bold">Password</div>
-          <div className="col-span-2 text-gray-500">
-            {renderPassword(username, certUploadDate)}
+          <div aria-label="suma-password" className="col-span-2 text-gray-500">
+            {username ? '•••••' : '.....'}
           </div>
         </div>
       </div>
