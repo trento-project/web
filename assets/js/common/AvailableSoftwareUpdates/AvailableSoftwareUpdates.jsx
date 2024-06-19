@@ -22,11 +22,13 @@ function AvailableSoftwareUpdates({
   className,
   settingsConfigured = false,
   softwareUpdatesSettingsLoading,
-  onBackToSettings = noop,
   softwareUpdatesLoading,
   relevantPatches,
   upgradablePackages,
   tooltip,
+  onBackToSettings = noop,
+  onNavigateToPatches = noop,
+  onNavigateToPackages = noop,
 }) {
   if (softwareUpdatesSettingsLoading) {
     return <Loading className={containerClassNames} />;
@@ -60,6 +62,7 @@ function AvailableSoftwareUpdates({
         tooltip={tooltip}
         loading={softwareUpdatesLoading}
         icon={<EOS_HEALING size="xl" />}
+        onNavigate={onNavigateToPatches}
       >
         {relevantPatches}
       </Indicator>
@@ -69,6 +72,7 @@ function AvailableSoftwareUpdates({
         tooltip={tooltip}
         loading={softwareUpdatesLoading}
         icon={<EOS_PACKAGE_UPGRADE_OUTLINED size="xl" />}
+        onNavigate={onNavigateToPackages}
       >
         {upgradablePackages}
       </Indicator>
