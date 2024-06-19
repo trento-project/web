@@ -62,4 +62,10 @@ defmodule TrentoWeb.V1.SUSEManagerView do
       }
 
   def render("patches_for_packages.json", %{patches: patches}), do: %{patches: patches}
+
+  def render("errata_details.json", %{errata_details: errata_details = %{errataFrom: errataFrom}}),
+    do:
+      errata_details
+      |> Map.drop([:errataFrom])
+      |> Map.put(:errata_from, errataFrom)
 end
