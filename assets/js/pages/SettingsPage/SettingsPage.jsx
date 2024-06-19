@@ -35,9 +35,6 @@ import {
 
 import { dismissNotification } from '@state/notifications';
 import { API_KEY_EXPIRATION_NOTIFICATION_ID } from '@state/sagas/settings';
-import SettingsLoader, {
-  calculateStatus as calculateSettingsLoaderStatus,
-} from '@common/SettingsLoader';
 
 function ApiKeyExpireInfo({ apiKeyExpiration }) {
   const expirationLabel = () => {
