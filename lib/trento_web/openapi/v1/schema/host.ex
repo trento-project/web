@@ -54,6 +54,17 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Host do
             ]
           }
         },
+        ip_addresses_netmasks: %Schema{
+          type: :array,
+          description: "IP addresses in CIDR notation",
+          items: %Schema{
+            title: "IPAddressNetmasks",
+            anyOf: [
+              IPv4,
+              IPv6
+            ]
+          }
+        },
         agent_version: %Schema{
           type: :string,
           description: "Version of the agent installed on the host"

@@ -127,10 +127,14 @@ defmodule Trento.Factory do
   use ExMachina.Ecto, repo: Trento.Repo
 
   def host_registered_event_factory do
+    ip_addresses = Faker.Internet.ip_v4_address()
+    netmask = Enum.random(1..32)
+
     %HostRegistered{
       host_id: Faker.UUID.v4(),
       hostname: Faker.StarWars.character(),
-      ip_addresses: [Faker.Internet.ip_v4_address()],
+      ip_addresses: [ip_addresses],
+      ip_addresses_netmasks: ["#{ip_addresses}/#{to_string(netmask)}"],
       agent_version: Faker.App.semver(),
       cpu_count: Enum.random(1..16),
       total_memory_mb: Enum.random(1..128),
@@ -158,11 +162,15 @@ defmodule Trento.Factory do
   end
 
   def host_factory do
+    ip_addresses = Faker.Internet.ip_v4_address()
+    netmask = Enum.random(1..32)
+
     %HostReadModel{
       id: Faker.UUID.v4(),
       hostname: Faker.StarWars.character(),
       fully_qualified_domain_name: Faker.Internet.domain_name(),
-      ip_addresses: [Faker.Internet.ip_v4_address()],
+      ip_addresses: [ip_addresses],
+      ip_addresses_netmasks: ["#{ip_addresses}/#{to_string(netmask)}"],
       agent_version: Faker.StarWars.planet(),
       cluster_id: Faker.UUID.v4(),
       heartbeat: :unknown,

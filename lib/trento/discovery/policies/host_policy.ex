@@ -131,6 +131,7 @@ defmodule Trento.Discovery.Policies.HostPolicy do
   defp build_register_host_command(agent_id, %HostDiscoveryPayload{
          hostname: hostname,
          ip_addresses: ip_addresses,
+         ip_addresses_netmasks: ip_addresses_netmasks,
          agent_version: agent_version,
          cpu_count: cpu_count,
          total_memory_mb: total_memory_mb,
@@ -144,6 +145,11 @@ defmodule Trento.Discovery.Policies.HostPolicy do
            host_id: agent_id,
            hostname: hostname,
            ip_addresses: Enum.filter(ip_addresses, &non_loopback_ipv4?/1),
+           ip_addresses_netmasks: Enum.filter(ip_addresses_netmasks || [], fn address ->
+            address
+            |> remove_netmask()
+            |> non_loopback_ipv4?()
+          end),
            agent_version: agent_version,
            cpu_count: cpu_count,
            total_memory_mb: total_memory_mb,
@@ -230,6 +236,9 @@ defmodule Trento.Discovery.Policies.HostPolicy do
             subscription |> Map.from_struct() |> Map.put(:host_id, agent_id)
           end)
       })
+
+  @spec remove_netmask(String.t()) :: String.t()
+  defp remove_netmask(address), do: String.split(address, "/") |> hd()
 
   @spec non_loopback_ipv4?(String.t()) :: boolean
   defp non_loopback_ipv4?("127.0.0.1"), do: false
