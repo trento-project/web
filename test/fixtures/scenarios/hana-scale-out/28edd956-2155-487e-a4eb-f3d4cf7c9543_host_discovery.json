@@ -12,6 +12,12 @@
       "10.0.0.8",
       "ba:32:8e:e8:91:83"
     ],
+    "ip_addresses_netmasks": [
+      "127.0.0.1/8",
+      "::1/128",
+      "10.0.0.8/24",
+      "ba:32:8e:e8:91:83/64"
+    ],    
     "os_version": "15-SP5",
     "socket_count": 1,
     "total_memory_mb": 3862,

@@ -102,13 +102,15 @@ export const saptuneStatusFactory = Factory.define(() => {
 });
 export const hostFactory = Factory.define(({ params, sequence }) => {
   const id = params.id || faker.string.uuid();
+  const ip_addresses = faker.internet.ip();
 
   return {
     id,
     agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
     hostname: `${faker.person.firstName()}_${sequence}`,
     cluster_id: faker.string.uuid(),
-    ip_addresses: [faker.internet.ip()],
+    ip_addresses: [ip_addresses],
+    ip_addresses_netmasks: [ip_addresses + "/" + faker.number.int({ min: 1, max: 32 })],
     provider: cloudProviderEnum(),
     health: healthEnum(),
     heartbeat: heartbeatEnum(),

@@ -12,6 +12,12 @@
       "10.0.1.10",
       "fe80::bc:ffff:fe56:bd6a"
     ],
+    "ip_addresses_netmasks": [
+      "127.0.0.1/8",
+      "::1/128",
+      "10.0.1.10/24",
+      "fe80::bc:ffff:fe56:bd6a/64"
+    ],
     "os_version": "15-SP4",
     "socket_count": 1,
     "total_memory_mb": 31578,

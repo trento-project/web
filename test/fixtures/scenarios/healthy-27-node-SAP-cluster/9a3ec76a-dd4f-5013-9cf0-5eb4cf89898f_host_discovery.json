@@ -12,6 +12,13 @@
       "10.100.1.27",
       "fe80::6245:bdff:fe8d:9ef4"
     ],
+    "ip_addresses_netmasks": [
+      "127.0.0.1/8",
+      "::1/128",
+      "10.100.1.23/24",
+      "10.100.1.27/24",
+      "fe80::6245:bdff:fe8d:9ef4/64"
+    ],
     "socket_count": 1,
     "agent_version": "2.1.0",
     "total_memory_mb": 7951,

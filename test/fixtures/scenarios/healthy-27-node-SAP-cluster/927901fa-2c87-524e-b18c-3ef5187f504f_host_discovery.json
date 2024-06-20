@@ -11,6 +11,12 @@
       "10.80.1.32",
       "fe80::20d:3aff:fe2e:8b91"
     ],
+    "ip_addresses_netmasks": [
+      "127.0.0.1/8",
+      "::1/128",
+      "10.80.1.32/24",
+      "fe80::20d:3aff:fe2e:8b91/64"
+    ],
     "socket_count": 1,
     "agent_version": "2.1.0",
     "total_memory_mb": 7951,

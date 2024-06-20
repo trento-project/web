@@ -12,6 +12,12 @@
       "10.0.0.5",
       "15:f5:98:ac:13:bb"
     ],
+    "ip_addresses_netmasks": [
+      "127.0.0.1/8",
+      "::1/128",
+      "10.0.0.5/24",
+      "15:f5:98:ac:13:bb/64"
+    ],
     "os_version": "15-SP5",
     "socket_count": 1,
     "total_memory_mb": 32043,
