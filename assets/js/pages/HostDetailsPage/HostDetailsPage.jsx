@@ -110,7 +110,7 @@ function HostDetailsPage() {
       heartbeat={host.heartbeat}
       hostID={host.id}
       hostname={host.hostname}
-      ipAddresses={host.ip_addresses}
+      ipAddresses={host.ip_addresses_netmasks}
       provider={host.provider}
       providerData={host.provider_data}
       sapInstances={sapInstances}
