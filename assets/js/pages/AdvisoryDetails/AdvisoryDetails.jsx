@@ -1,73 +1,9 @@
 import React from 'react';
-import {
-  EOS_SHIELD_OUTLINED,
-  EOS_CRITICAL_BUG_OUTLINED,
-  EOS_ADD_BOX_OUTLINED,
-} from 'eos-icons-react';
-import classNames from 'classnames';
+import { format } from 'date-fns';
 
 import PageHeader from '@common/PageHeader';
 import ListView from '@common/ListView';
-import Tooltip from '@common/Tooltip';
-import { computedIconCssClass } from '@lib/icon';
-
-import { format } from 'date-fns';
-
-const iconFromAdvisoryType = (
-  advisoryType,
-  centered = false,
-  hoverOpacity = true,
-  size = 'l'
-) => {
-  const hoverOpacityClassName = {
-    'hover:opacity-75': hoverOpacity,
-    'hover:opacity-100': !hoverOpacity,
-  };
-
-  switch (advisoryType) {
-    case 'security_advisory':
-      return (
-        <Tooltip content={advisoryType}>
-          <EOS_SHIELD_OUTLINED
-            className={classNames(
-              hoverOpacityClassName,
-              computedIconCssClass('fill-red-500', centered),
-              'inline-block'
-            )}
-            size={size}
-          />
-        </Tooltip>
-      );
-    case 'bugfix':
-      return (
-        <Tooltip content={advisoryType}>
-          <EOS_CRITICAL_BUG_OUTLINED
-            className={classNames(
-              hoverOpacityClassName,
-              computedIconCssClass('fill-yellow-500', centered),
-              'inline-block'
-            )}
-            size={size}
-          />
-        </Tooltip>
-      );
-    case 'enhancement':
-      return (
-        <Tooltip content={advisoryType}>
-          <EOS_ADD_BOX_OUTLINED
-            className={classNames(
-              hoverOpacityClassName,
-              computedIconCssClass('fill-yellow-500', centered),
-              'inline-block'
-            )}
-            size={size}
-          />
-        </Tooltip>
-      );
-    default:
-      return null;
-  }
-};
+import AdvisoryIcon from '@common/AdvisoryIcon';
 
 function EmptyData() {
   return <p>No data dvailable</p>;
@@ -97,7 +33,7 @@ function AdvisoryDetails({
         <h1 className="mr-2">
           Advisory Details: <span className="font-bold">{advisoryName}</span>
         </h1>{' '}
-        {iconFromAdvisoryType(type, false, true, 'xxl')}
+        <AdvisoryIcon type={type} />
       </PageHeader>
       <div className="flex flex-col mb-4">
         <h2 className="text-xl font-bold mb-2">Synopsis</h2>

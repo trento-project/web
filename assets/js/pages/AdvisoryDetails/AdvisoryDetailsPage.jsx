@@ -5,7 +5,6 @@ import { getAvirosyErrata } from '@lib/api/softwareUpdates';
 import BackButton from '@common/BackButton';
 import AdvisoryDetails from './AdvisoryDetails';
 
-// FIXME: The reboot isn't required, it is suggested
 function AdvisoryDetailsPage() {
   const [advisoryErrata, setAdvisoryErrata] = useState(undefined);
   const { hostID, advisoryID } = useParams();
