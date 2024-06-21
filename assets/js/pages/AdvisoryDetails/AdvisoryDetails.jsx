@@ -74,31 +74,35 @@ function EmptyData() {
 }
 
 function AdvisoryDetails({
-  name,
-  status,
-  type,
-  synopsis,
-  description,
-  issueDate,
-  updateDate,
-  rebootRequired,
-  affectsPackageMaintanaceStack,
+  advisoryName,
+  errata,
   fixes,
   cves,
   packages,
+  affectsPackageMaintanaceStack,
 }) {
+  const {
+    issue_date: issueDate,
+    update_date: updateDate,
+    synopsis,
+    advisory_status: status,
+    type,
+    description,
+    reboot_suggested: rebootSuggested,
+  } = errata;
+
   return (
     <div>
       <PageHeader className="flex h-auto items-center">
         <h1 className="mr-2">
-          Advisory Details: <span className="font-bold">{name}</span>
+          Advisory Details: <span className="font-bold">{advisoryName}</span>
         </h1>{' '}
         {iconFromAdvisoryType(type, false, true, 'xxl')}
       </PageHeader>
       <div className="flex flex-col mb-4">
         <h2 className="text-xl font-bold mb-2">Synopsis</h2>
         <div className="bg-white py-4 px-6 shadow shadow-md rounded-lg">
-          <p className="mb-2">{synopsis}</p>
+          <p className="mb-6">{synopsis}</p>
           <ListView
             orientation="horizontal"
             titleClassName="text-sm"
@@ -117,7 +121,7 @@ function AdvisoryDetails({
               },
               {
                 title: 'Reboot Required',
-                content: rebootRequired ? 'Yes' : 'No',
+                content: rebootSuggested ? 'Yes' : 'No',
               },
               {
                 title: 'Affects Package Maintanace Stack',
