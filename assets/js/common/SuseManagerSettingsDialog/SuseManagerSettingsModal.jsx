@@ -8,7 +8,7 @@ import Modal from '@common/Modal';
 import Input, { Password, Textarea } from '@common/Input';
 import Label from '@common/Label';
 
-import { hasError, getError } from '@lib/api/validationErrors';
+import { hasError, getError } from '@lib/input/errors';
 
 const defaultErrors = [];
 
