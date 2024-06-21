@@ -2172,7 +2172,7 @@ export default [
     hostname: 'vmnwprd01',
     id: '116d49bd-85e1-5e59-b820-83f66db8800c',
     ip_addresses: ['10.80.1.21', '10.80.1.25'],
-    ip_addresses_netmasks:  ['10.80.1.21/24', '10.80.1.25/24'],
+    ip_addresses_netmasks: ['10.80.1.21/24', '10.80.1.25/24'],
     provider: 'azure',
     provider_data: {
       admin_username: 'cloudadmin',
