@@ -5,6 +5,7 @@ import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
 import Tooltip from '.';
+import { WithStyle } from '../../lib/test-utils/ui';
 
 describe('Tooltip', () => {
   it('should show a text when mouse is hovering', async () => {
@@ -82,6 +83,29 @@ describe('Tooltip', () => {
 
     await waitFor(() =>
       expect(screen.queryByText('This is my tooltip text')).toBeNull()
+    );
+  });
+
+  it('should hide the text when the mouse go away', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <WithStyle>
+        <div>
+          <Tooltip content="This is my tooltip text">This is my anchor</Tooltip>
+        </div>
+      </WithStyle>
+    );
+
+    expect(screen.queryByText('This is my tooltip text')).toBeNull();
+
+    await act(async () => user.hover(screen.queryByText('This is my anchor')));
+    await act(async () =>
+      user.unhover(screen.queryByText('This is my anchor'))
+    );
+
+    await waitFor(() =>
+      expect(screen.queryByText('This is my tooltip text')).not.toBeVisible()
     );
   });
 });
