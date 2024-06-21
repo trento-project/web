@@ -2,14 +2,31 @@ import React, { useState, useEffect, useRef } from 'react';
 import classNames from 'classnames';
 import { EOS_NEW_LABEL, EOS_CLOSE } from 'eos-icons-react';
 import Pill from '@common/Pill';
+import Tooltip from '@common/Tooltip';
 import useOnClickOutside from '@hooks/useOnClickOutside';
 // eslint-disable-next-line
 const tagRegexValidation = /^[\+\-=.,_:@\p{L}\w]*$/u;
 const tagValidation = (char) => tagRegexValidation.test(char);
+const tagValidationDefaultMessage = (
+  <>
+    Only alphanumeric characters
+    <br />
+    are allowed, e.g. A-Z and 0-9
+  </>
+);
 
-function Tags({ className, tags, onChange, onAdd, onRemove, resourceId }) {
+function Tags({
+  className,
+  tags,
+  onChange,
+  onAdd,
+  onRemove,
+  resourceId,
+  validationMessage = tagValidationDefaultMessage,
+}) {
   const [renderedTags, setTags] = useState(tags);
   const [addingTag, setAddingTag] = useState(false);
+  const [showValidationTooltip, setShowValidationTooltip] = useState(false);
   const [newTagValue, setNewTagValue] = useState('');
   const inputRef = useRef(null);
 
@@ -73,33 +90,35 @@ function Tags({ className, tags, onChange, onAdd, onRemove, resourceId }) {
         </Pill>
       ))}
       {addingTag ? (
-        <Pill className="ml-2 bg-green-100 text-green-800 animate-fade">
-          <input
-            ref={inputRef}
-            className="bg-green-100"
-            onChange={({ target: { value } }) => {
-              if (tagValidation(value)) {
-                setNewTagValue(value);
-              }
-            }}
-            onKeyDown={({ key }) => {
-              if (key === 'Enter') {
-                if (
-                  newTagValue.length === 0 ||
-                  renderedTags.includes(newTagValue)
-                ) {
-                  return;
+        <Tooltip content={validationMessage} visible={showValidationTooltip}>
+          <Pill className="ml-2 bg-green-100 text-green-800 animate-fade">
+            <input
+              ref={inputRef}
+              className="bg-green-100"
+              onChange={({ target: { value } }) => {
+                const isValid = tagValidation(value);
+                setShowValidationTooltip(!isValid);
+                isValid && setNewTagValue(value);
+              }}
+              onKeyDown={({ key }) => {
+                if (key === 'Enter') {
+                  if (
+                    newTagValue.length === 0 ||
+                    renderedTags.includes(newTagValue)
+                  ) {
+                    return;
+                  }
+                  renderedTags.push(newTagValue);
+                  setAddingTag(false);
+                  setNewTagValue('');
+                  onChange(renderedTags);
+                  onAdd(newTagValue);
                 }
-                renderedTags.push(newTagValue);
-                setAddingTag(false);
-                setNewTagValue('');
-                onChange(renderedTags);
-                onAdd(newTagValue);
-              }
-            }}
-            value={newTagValue}
-          />
-        </Pill>
+              }}
+              value={newTagValue}
+            />
+          </Pill>
+        </Tooltip>
       ) : (
         <Pill
           className={classNames({

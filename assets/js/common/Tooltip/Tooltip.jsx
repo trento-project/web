@@ -26,6 +26,12 @@ function Tooltip({
   place = 'top',
   isEnabled = true,
   wrap = true,
+  // The visible ternary flag forces the tooltip to show/hide
+  // regardless of the user interaction.
+  //  true -> tooltip is always visible
+  //  false -> tooltip is never visible
+  //  undefined -> tooltip is visible when the user triggers the action (e.g. hover)
+  visible,
   ...rest
 }) {
   if (!isEnabled) {
@@ -40,6 +46,7 @@ function Tooltip({
       motion={{ motionName: 'rc-tooltip-fade' }}
       overlay={<span className={overlayClasses}>{content}</span>}
       placement={getPlacement(place)}
+      visible={visible}
       {...rest}
     >
       {wrap ? <span>{children}</span> : children}
