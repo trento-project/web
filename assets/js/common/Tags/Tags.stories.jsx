@@ -15,7 +15,3 @@ export function Populated(args) {
 export function Empty(args) {
   return <Tags tags={[]} {...args} />;
 }
-
-export function WithValidation(args) {
-  return <Tags tags={[]} {...args} />;
-}
