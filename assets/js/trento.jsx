@@ -27,6 +27,7 @@ import Home from '@pages/Home';
 import HostDetailsPage from '@pages/HostDetailsPage';
 import HostSettingsPage from '@pages/HostSettingsPage';
 import HostRelevantPatchesPage from '@pages/HostRelevantPatches';
+import AdvisoryDetailsPage from '@pages/AdvisoryDetails';
 import UpgradablePackagesPage from '@pages/UpgradablePackagesPage';
 import HostsList from '@pages/HostsList';
 import Layout from '@pages/Layout';
