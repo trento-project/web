@@ -104,8 +104,7 @@ defmodule TrentoWeb.V1.SettingsController do
       ok:
         {"Activity Log settings saved successfully", "application/json",
          Schema.Platform.ActivityLogSettings},
-      unprocessable_entity: Schema.UnprocessableEntity.response(),
-      not_found: Schema.NotFound.response()
+      unprocessable_entity: Schema.UnprocessableEntity.response()
     ]
 
   def update_activity_log_settings(%{body_params: body_params} = conn, _) do
@@ -126,8 +125,6 @@ defmodule TrentoWeb.V1.SettingsController do
   operation :get_activity_log_settings,
     summary: "Fetches the Activity Log settings",
     tags: ["Platform"],
-    request_body:
-      {"ActivityLogSettings", "application/json", Schema.Platform.ActivityLogSettings},
     responses: [
       ok:
         {"Activity Log settings fetched successfully", "application/json",
