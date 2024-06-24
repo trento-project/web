@@ -147,7 +147,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       |> put("/api/v1/settings/activity_log", %{
         retention_time: %{
           value: 42,
-          unit: :years
+          unit: :year
         }
       })
       |> json_response(200)
@@ -161,7 +161,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       |> put("/api/v1/settings/activity_log", %{
         retention_time: %{
           value: 42,
-          unit: :years
+          unit: :year
         }
       })
       |> json_response(422)

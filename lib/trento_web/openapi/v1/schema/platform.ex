@@ -119,7 +119,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
           type: :string,
           description:
             "The retention duration unit, that is used in conjunction with the retention time period.",
-          enum: [:days, :weeks, :months, :years]
+          enum: [:day, :week, :month, :year]
         }
       },
       required: [:value, :unit]

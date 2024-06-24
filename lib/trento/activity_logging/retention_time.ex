@@ -32,7 +32,7 @@ defmodule Trento.ActivityLog.RetentionTime do
   def default do
     %RetentionTime{
       value: 1,
-      unit: RetentionPeriodUnit.months()
+      unit: RetentionPeriodUnit.month()
     }
   end
 end

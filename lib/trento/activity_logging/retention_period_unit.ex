@@ -3,5 +3,5 @@ defmodule Trento.ActivityLog.RetentionPeriodUnit do
   Type that represents the possible retention period units.
   """
 
-  use Trento.Support.Enum, values: [:days, :weeks, :months, :years]
+  use Trento.Support.Enum, values: [:day, :week, :month, :year]
 end
