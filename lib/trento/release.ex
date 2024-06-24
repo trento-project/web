@@ -5,6 +5,7 @@ defmodule Trento.Release do
   """
 
   alias Pow.Ecto.Schema.Password
+  alias Trento.ActivityLog.Settings, as: ActivityLogSettings
   alias Trento.Settings.ApiKeySettings
 
   @app :trento
@@ -15,6 +16,7 @@ defmodule Trento.Release do
     migrate_event_store()
     init_admin_user()
     init_default_api_key()
+    init_default_activity_log_retention_time()
   end
 
   def migrate do
@@ -99,6 +101,17 @@ defmodule Trento.Release do
       })
       |> Trento.Repo.insert!()
     end
+  end
+
+  def init_default_activity_log_retention_time do
+    load_app()
+    Enum.each([:postgrex, :ecto], &Application.ensure_all_started/1)
+    Trento.Repo.start_link()
+
+    Trento.Repo.insert!(ActivityLogSettings.with_default_retention_time(),
+      on_conflict: :nothing,
+      conflict_target: :type
+    )
   end
 
   defp repos do

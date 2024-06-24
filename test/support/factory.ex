@@ -9,6 +9,7 @@ defmodule Trento.Factory do
   require Trento.Enums.Health, as: Health
   require Trento.SoftwareUpdates.Enums.AdvisoryType, as: AdvisoryType
   require Trento.SoftwareUpdates.Enums.SoftwareUpdatesHealth, as: SoftwareUpdatesHealth
+  require Trento.ActivityLog.RetentionPeriodUnit, as: RetentionPeriodUnit
 
   alias Faker.Random.Elixir, as: RandomElixir
 
@@ -123,6 +124,9 @@ defmodule Trento.Factory do
     ApiKeySettings,
     InstallationSettings
   }
+
+  alias Trento.ActivityLog.RetentionTime
+  alias Trento.ActivityLog.Settings, as: ActivityLogSettings
 
   use ExMachina.Ecto, repo: Trento.Repo
 
@@ -931,5 +935,19 @@ defmodule Trento.Factory do
       validity: validity
     )
     |> X509.Certificate.to_pem()
+  end
+
+  def activity_log_retention_time_factory do
+    RetentionTime.new!(%{
+      value: Enum.random(1..30),
+      unit: Faker.Util.pick(RetentionPeriodUnit.values())
+    })
+  end
+
+  def activity_log_settings_factory do
+    %ActivityLogSettings{
+      type: :activity_log_settings,
+      retention_time: build(:activity_log_retention_time)
+    }
   end
 end
