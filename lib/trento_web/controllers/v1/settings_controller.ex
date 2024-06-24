@@ -111,14 +111,11 @@ defmodule TrentoWeb.V1.SettingsController do
     %{retention_period: retention_period, retention_period_unit: retention_period_unit} =
       body_params
 
-    case ActivityLog.change_retention_period(retention_period, retention_period_unit) do
-      {:ok, updated_settings} ->
-        render(conn, "activity_log_settings.json", %{
-          activity_log_settings: updated_settings
-        })
-
-      error ->
-        error
+    with {:ok, updated_settings} <-
+           ActivityLog.change_retention_period(retention_period, retention_period_unit) do
+      render(conn, "activity_log_settings.json", %{
+        activity_log_settings: updated_settings
+      })
     end
   end
 
