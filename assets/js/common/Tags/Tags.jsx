@@ -40,7 +40,10 @@ function Tags({
     setTags(tags);
   }, [tags]);
 
-  useOnClickOutside(inputRef, () => setAddingTag(false));
+  useOnClickOutside(inputRef, () => {
+    setAddingTag(false);
+    setShowValidationTooltip(false);
+  });
 
   return (
     <span
