@@ -4,6 +4,10 @@ Mix.Tasks.PruneEvents.html
 Mix.Tasks.Version.html
 TestCommandedApp.html
 TestEventHandlerWithFailureContext.html
+Trento.ActivityLog.RetentionPeriodUnit.html
+Trento.ActivityLog.RetentionTime.html
+Trento.ActivityLog.Settings.html
+Trento.ActivityLog.html
 Trento.AggregateCase.html
 Trento.Charts.ChartTimeSeries.html
 Trento.Charts.ChartTimeSeriesSample.html
@@ -455,8 +459,8 @@ dist/merriweather-latin-ext-300-normal-K6L27CZ5.woff2
 dist/merriweather-vietnamese-300-italic-EHHNZPUO.woff2
 dist/merriweather-vietnamese-300-normal-U376L4Z4.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-21BB8FDC.js
-dist/sidebar_items-281F0474.js
+dist/search_data-830F4DD8.js
+dist/sidebar_items-F912B9BF.js
 environment_variables.html
 hack_on_the_trento.html
 index.html
