@@ -31,4 +31,32 @@ describe('Tags', () => {
     // Being the css is not loaded, it cannot be detected by js-dom
     // await waitFor(() => expect(screen.queryByText(msg)).not.toBeVisible());
   });
+
+  it('should not show validation message when focusing back on the same tag', async () => {
+    const user = userEvent.setup();
+    const msg = 'invalid character';
+
+    render(
+      <>
+        <div>sibling</div>
+        <Tags tags={[]} validationMessage={msg} />
+      </>
+    );
+
+    expect(screen.queryByText(msg)).toBeNull();
+
+    await act(async () => user.click(screen.queryByText('Add Tag')));
+
+    await act(async () => userEvent.keyboard('>'));
+
+    await waitFor(() => expect(screen.queryByText(msg)).toBeVisible());
+
+    await act(async () => user.click(screen.queryByText('sibling')));
+
+    await waitFor(() => expect(screen.queryByText(msg)).toBeNull());
+
+    await act(async () => user.click(screen.queryByText('Add Tag')));
+
+    await waitFor(() => expect(screen.queryByText(msg)).toBeNull());
+  });
 });
