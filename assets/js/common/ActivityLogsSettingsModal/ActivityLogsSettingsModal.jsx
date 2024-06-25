@@ -11,7 +11,7 @@ import { hasError, getError } from '@lib/input/errors';
 
 const defaultErrors = [];
 
-const timeUnitOptions = ['days', 'weeks', 'months', 'years'];
+const timeUnitOptions = ['day', 'week', 'month', 'year'];
 const defaultTimeUnit = timeUnitOptions[0];
 
 function TimeSpan({ time: initialTime, error = false, onChange = noop }) {

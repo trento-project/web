@@ -12,7 +12,7 @@ const positiveInt = () => faker.number.int({ min: 1 });
 
 describe('ActivityLogsSettingsModal component', () => {
   it('renders correctly', async () => {
-    const initialRetentionTime = { value: faker.number.int(), unit: 'days' };
+    const initialRetentionTime = { value: faker.number.int(), unit: 'day' };
     await act(async () => {
       render(
         <ActivityLogsSettingsModal
@@ -42,7 +42,7 @@ describe('ActivityLogsSettingsModal component', () => {
   });
 
   it('renders previous settings', async () => {
-    const initialRetentionTime = { value: faker.number.int(), unit: 'days' };
+    const initialRetentionTime = { value: faker.number.int(), unit: 'day' };
     await act(async () => {
       render(
         <ActivityLogsSettingsModal
@@ -63,11 +63,11 @@ describe('ActivityLogsSettingsModal component', () => {
     const user = userEvent.setup();
     const initialRetentionTime = {
       value: positiveInt(),
-      unit: 'months',
+      unit: 'month',
     };
     const expectedRetentionTime = {
       value: positiveInt(),
-      unit: 'days',
+      unit: 'day',
     };
     const onSave = jest.fn();
 
@@ -103,7 +103,7 @@ describe('ActivityLogsSettingsModal component', () => {
 
   it('should try to save all the unchanged fields', async () => {
     const user = userEvent.setup();
-    const initialRetentionTime = { value: positiveInt(), unit: 'months' };
+    const initialRetentionTime = { value: positiveInt(), unit: 'month' };
     const onSave = jest.fn();
 
     await act(async () => {
@@ -126,7 +126,7 @@ describe('ActivityLogsSettingsModal component', () => {
 
   it('should display errors', async () => {
     const detail = capitalize(faker.lorem.words(5));
-    const initialRetentionTime = { value: positiveInt(), unit: 'months' };
+    const initialRetentionTime = { value: positiveInt(), unit: 'month' };
 
     const errors = [
       {
