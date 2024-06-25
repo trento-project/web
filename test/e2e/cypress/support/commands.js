@@ -247,7 +247,7 @@ Cypress.Commands.add(
 Cypress.Commands.add(
   'saveSUMASettings',
   ({ url, username, password, ca_cert }) =>
-    apiLogin().then(({ accessToken }) =>
+    cy.apiLogin().then(({ accessToken }) =>
       cy.request({
         url: '/api/v1/settings/suma_credentials',
         method: 'POST',
@@ -265,7 +265,7 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add('clearSUMASettings', () =>
-  apiLogin().then(({ accessToken }) =>
+  cy.apiLogin().then(({ accessToken }) =>
     cy.request({
       url: '/api/v1/settings/suma_credentials',
       method: 'DELETE',
