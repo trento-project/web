@@ -7,7 +7,7 @@ import { InputNumber } from '@common/Input';
 import Select from '@common/Select';
 import Label from '@common/Label';
 
-import { hasError, getError } from '@lib/input/errors';
+import { hasError, getError } from '@lib/api/validationErrors';
 
 const defaultErrors = [];
 
