@@ -25,8 +25,8 @@ function TimeLabel({ time }) {
  * Render the saved configuration for the Activity Logs.
  * Editing is demanded to another component, activated by the Edit button
  *
- * @param {{value: number, unit: "days"|"months"|"years"}} props.retentionTime A structured `{value,unit}`
- * object that defines a retention time interval. `unit` is one of `days`, `months`, `years`.'
+ * @param {{value: number, unit: "day"|"week"|"month"|"year"}} props.retentionTime A structured `{value,unit}`
+ * object that defines a retention time interval. `unit` is one of `day`, `week`, `month`, `year`.'
  * @param {function} props.onEditClick Handles the edit button click
  */
 function ActivityLogsConfig({ retentionTime, onEditClick = noop }) {
@@ -45,10 +45,7 @@ function ActivityLogsConfig({ retentionTime, onEditClick = noop }) {
           </Button>
         </span>
       </div>
-      <p className="mt-3 mb-3 text-gray-500">
-        Activity Log dolor sit amet, consectetur adipiscing elit. Nunc sit amet
-        ex sem. Duis faucibus tellus ipsum, sit amet euismod magna porttitor et
-      </p>
+      <p className="mt-3 mb-3 text-gray-500" />
 
       <div className="grid grid-cols-6 mt-5 items-center">
         <div className="font-bold mb-3">Retention Time</div>
