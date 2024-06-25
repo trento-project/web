@@ -75,6 +75,9 @@ export const initiateLogin = createAction(
     payload: { username, password, totpCode },
   })
 );
+export const userUpdated = createAction(USER_UPDATED);
+export const userLocked = createAction(USER_LOCKED);
+export const userDeleted = createAction(USER_DELETED);
 
 export const { setUserAsLogged, setUser, setAuthError, setAuthInProgress } =
   userSlice.actions;

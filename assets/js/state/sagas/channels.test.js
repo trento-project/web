@@ -5,8 +5,11 @@ import {
   updateLastExecution,
   setExecutionStarted,
 } from '@state/lastExecutions';
+import { userUpdated } from '@state/user';
 
 import { watchSocketEvents } from './channels';
+
+const USER_ID = 1;
 
 const mockJoinedChannel = {
   receive: () => mockJoinedChannel,
@@ -44,6 +47,7 @@ const channels = {
   'monitoring:sap_systems': new MockChannel(),
   'monitoring:databases': new MockChannel(),
   'monitoring:executions': new MockChannel(),
+  [`users:${USER_ID}`]: new MockChannel(),
 };
 
 const mockSocket = {
@@ -56,6 +60,7 @@ const runWatchSocketEventsSaga = (socket) => {
   const sagaExecution = runSaga(
     {
       dispatch: (action) => dispatched.push(action),
+      getState: () => ({ user: { id: USER_ID } }),
     },
     watchSocketEvents,
     socket
@@ -106,5 +111,18 @@ describe('Channels saga', () => {
     expect(dispatched).toEqual([
       setExecutionStarted({ groupID: 'group', targets: [] }),
     ]);
+  });
+
+  it('should listen to a specific user events', async () => {
+    const { saga, dispatched } = runWatchSocketEventsSaga(mockSocket);
+
+    channels[`users:${USER_ID}`].emit('user_updated', {
+      email: 'new@email.com',
+    });
+
+    closeSocket();
+    await saga;
+
+    expect(dispatched).toEqual([userUpdated({ email: 'new@email.com' })]);
   });
 });

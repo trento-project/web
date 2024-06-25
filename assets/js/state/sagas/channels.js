@@ -1,5 +1,5 @@
 import { eventChannel, END } from 'redux-saga';
-import { all, call, fork, put, take } from 'redux-saga/effects';
+import { all, call, fork, put, select, take } from 'redux-saga/effects';
 
 import { joinChannel } from '@lib/network/socket';
 
@@ -53,6 +53,10 @@ import {
   setExecutionStarted,
   updateLastExecution,
 } from '@state/lastExecutions';
+
+import { userUpdated, userLocked, userDeleted } from '@state/user';
+
+import { getUserProfile } from '@state/selectors/user';
 
 const CLOSE_CHANNEL_EVENT = 'close';
 
@@ -217,6 +221,21 @@ const executionEvents = [
   },
 ];
 
+const userEvents = [
+  {
+    name: 'user_updated',
+    action: userUpdated,
+  },
+  {
+    name: 'user_locked',
+    action: userLocked,
+  },
+  {
+    name: 'user_deleted',
+    action: userDeleted,
+  },
+];
+
 const createEventChannel = (channel, events) =>
   eventChannel((emitter) => {
     events.forEach((event) => {
@@ -253,11 +272,14 @@ function* watchChannelEvents(socket, channelName, events) {
 }
 
 export function* watchSocketEvents(socket) {
+  const { id: userID } = yield select(getUserProfile);
+
   yield all([
     fork(watchChannelEvents, socket, 'monitoring:hosts', hostEvents),
     fork(watchChannelEvents, socket, 'monitoring:clusters', clusterEvents),
     fork(watchChannelEvents, socket, 'monitoring:sap_systems', sapSystemEvents),
     fork(watchChannelEvents, socket, 'monitoring:databases', databaseEvents),
     fork(watchChannelEvents, socket, 'monitoring:executions', executionEvents),
+    fork(watchChannelEvents, socket, `users:${userID}`, userEvents),
   ]);
 }
