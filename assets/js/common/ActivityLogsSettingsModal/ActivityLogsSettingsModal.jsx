@@ -14,6 +14,42 @@ const defaultErrors = [];
 const timeUnitOptions = ['days', 'weeks', 'months', 'years'];
 const defaultTimeUnit = timeUnitOptions[0];
 
+function TimeSpan({ time: initialTime, error = false, onChange = noop }) {
+  const [time, setTime] = useState(initialTime);
+
+  return (
+    <div className="flex  items-center space-x-2">
+      <div className="w-2/4 pb-4">
+        <InputNumber
+          value={time.value}
+          className="!h-8"
+          type="number"
+          min="0"
+          error={error}
+          onChange={(value) => {
+            const newTime = { ...time, value };
+            setTime(newTime);
+            onChange(newTime);
+          }}
+        />
+      </div>
+      <div className="w-2/4 ">
+        <Select
+          optionsName=""
+          options={timeUnitOptions}
+          value={time.unit || defaultTimeUnit}
+          error={error}
+          onChange={(unit) => {
+            const newTime = { ...time, unit };
+            setTime(newTime);
+            onChange(newTime);
+          }}
+        />
+      </div>
+    </div>
+  );
+}
+
 /**
  * Modal to edit Activity Logs settings
  */
@@ -35,33 +71,14 @@ function ActivityLogsSettingsModal({
           Retention Time
         </Label>
         <div className="col-span-4">
-          <div className="flex  items-center my-1 space-x-2">
-            <div className="w-2/4 pt-1">
-              <InputNumber
-                value={retentionTime.value}
-                className="!h-8"
-                type="number"
-                min="0"
-                error={hasError('retentionTime', errors)}
-                onChange={(value) => {
-                  setRetentionTime({ ...retentionTime, value });
-                  onClearErrors();
-                }}
-              />
-            </div>
-            <div className="w-2/4 pt-4">
-              <Select
-                optionsName=""
-                options={timeUnitOptions}
-                value={retentionTime.unit || defaultTimeUnit}
-                error={hasError('retentionTime', errors)}
-                onChange={(value) => {
-                  setRetentionTime({ ...retentionTime, unit: value });
-                  onClearErrors();
-                }}
-              />
-            </div>
-          </div>
+          <TimeSpan
+            time={retentionTime}
+            error={hasError('retentionTime', errors)}
+            onChange={(time) => {
+              setRetentionTime(time);
+              onClearErrors();
+            }}
+          />
           {hasError('retentionTime', errors) && (
             <p
               aria-label="retention-time-input-error"
