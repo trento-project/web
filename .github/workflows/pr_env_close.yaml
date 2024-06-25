@@ -13,7 +13,7 @@ env:
 jobs:
   check_env_creation_privilege:
     name: Check if the environment deletion criteria are met, store in the job output
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     outputs:
       create_env: ${{ steps.check.outputs.create_env }}
     steps:
@@ -23,7 +23,7 @@ jobs:
   delete-pr-image:
     needs: check_env_creation_privilege
     name: Build and push pull request container image
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     if: needs.check_env_creation_privilege.outputs.create_env == 'true'
     permissions:
       contents: read
@@ -56,7 +56,7 @@ jobs:
 
   delete_pr_environment:
     name: Delete the pr environment
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     needs: delete-pr-image
     steps:
       - name: Checkout ansible repo
@@ -78,6 +78,7 @@ jobs:
             all:
               vars:
                 ansible_user: ec2-user
+                ansible_python_interpreter: /usr/bin/python3
               children:
                 trento-server:
                   hosts:
