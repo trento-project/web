@@ -11,7 +11,7 @@ import { hasError, getError } from '@lib/input/errors';
 
 const defaultErrors = [];
 
-const timeUnitOptions = ['days', 'months', 'years'];
+const timeUnitOptions = ['days', 'weeks', 'months', 'years'];
 const defaultTimeUnit = timeUnitOptions[0];
 
 /**
