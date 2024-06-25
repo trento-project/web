@@ -34,6 +34,7 @@ export const Default = {
 export const WithErrors = {
   args: {
     open: false,
+    initialRetentionTime: { value: 1, unit: 'months' },
     errors: [
       {
         detail: "can't be blank",
