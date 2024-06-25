@@ -26,7 +26,7 @@ defmodule TrentoWeb.AccessTokenTest do
 
   describe "generate_access_token!/1" do
     test "should generate and sign a jwt token with the default claims correctly set" do
-      expected_expiry = @test_timestamp + 600
+      expected_expiry = @test_timestamp + 180
 
       token = AccessToken.generate_access_token!(%{})
       {:ok, claims} = Joken.peek_claims(token)

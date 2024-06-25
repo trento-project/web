@@ -10,12 +10,24 @@
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
 
-%Trento.Users.User{}
-|> Trento.Users.User.changeset(%{
-  username: "admin",
-  password: "adminpassword",
-  confirm_password: "adminpassword"
-})
+%{id: admin_user_id} =
+  %Trento.Users.User{}
+  |> Trento.Users.User.changeset(%{
+    username: "admin",
+    password: "adminpassword",
+    confirm_password: "adminpassword",
+    fullname: "Trento Admin",
+    email: "admin@trento.suse.com",
+    enabled: true
+  })
+  |> Trento.Repo.insert!(
+    on_conflict: [set: [password_hash: Argon2.hash_pwd_salt("adminpassword")]],
+    conflict_target: :username
+  )
+
+# Attach all:all ability
+%Trento.Abilities.UsersAbilities{}
+|> Trento.Abilities.UsersAbilities.changeset(%{user_id: admin_user_id, ability_id: 1})
 |> Trento.Repo.insert!(on_conflict: :nothing)
 
 %Trento.Settings.ApiKeySettings{}

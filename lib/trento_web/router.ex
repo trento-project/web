@@ -147,6 +147,16 @@ defmodule TrentoWeb.Router do
              DatabaseController,
              :delete_database_instance
 
+      resources "/users", UsersController, except: [:new, :edit]
+
+      get "/profile", ProfileController, :show
+      patch "/profile", ProfileController, :update
+      delete "/profile/totp_enrollment", ProfileController, :reset_totp
+      get "/profile/totp_enrollment", ProfileController, :get_totp_enrollment_data
+      post "/profile/totp_enrollment", ProfileController, :confirm_totp_enrollment
+
+      get "/abilities", AbilityController, :index
+
       scope "/settings" do
         get "/", SettingsController, :settings
         post "/accept_eula", SettingsController, :accept_eula

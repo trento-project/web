@@ -17,6 +17,7 @@ context('HANA cluster details', () => {
   const catalog = catalogFactory.build();
 
   before(() => {
+    cy.loadScenario('healthy-27-node-SAP-cluster');
     cy.intercept(lastExecutionURL, {
       body: lastExecution,
     }).as('lastExecution');

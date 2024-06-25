@@ -15,6 +15,7 @@ const clusterTags = {
 
 context('Clusters Overview', () => {
   before(() => {
+    cy.loadScenario('healthy-27-node-SAP-cluster');
     cy.visit('/clusters');
     cy.url().should('include', '/clusters');
   });
@@ -81,7 +82,7 @@ context('Clusters Overview', () => {
           clusterIdByName(healthyClusterScenario.clusterName),
           healthyClusterScenario.checks
         );
-        cy.setMockRunnerExpectedResult(healthyClusterScenario.result);
+        // wip: set expected results
         cy.requestChecksExecution(
           clusterIdByName(healthyClusterScenario.clusterName)
         );
@@ -90,7 +91,7 @@ context('Clusters Overview', () => {
           clusterIdByName(unhealthyClusterScenario.clusterName),
           healthyClusterScenario.checks
         );
-        cy.setMockRunnerExpectedResult(unhealthyClusterScenario.result);
+        // wip: set expected results
         cy.requestChecksExecution(
           clusterIdByName(unhealthyClusterScenario.clusterName)
         );

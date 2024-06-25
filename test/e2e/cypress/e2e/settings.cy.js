@@ -85,6 +85,11 @@ context('Settings page', () => {
     const sumaUsername = 'admin';
     const sumaPassword = 'adminpassword';
 
+    before(() => {
+      cy.clearSUMASettings();
+      cy.reload();
+    });
+
     it('should show empty settings', () => {
       cy.get('[aria-label="suma-url"]').should('have.text', 'https://');
       cy.get('[aria-label="suma-cacert-upload-date"]').should('contain', '-');
@@ -311,6 +316,11 @@ context('Settings page', () => {
       initialEditFormScenarios.forEach(({ name, settings }) => {
         it(`should show settings edit form. Scenario: ${name}`, () => {
           cy.saveSUMASettings(settings);
+          cy.reload();
+          cy.intercept('GET', '/api/v1/settings/suma_credentials').as(
+            'getSettings'
+          );
+          cy.wait('@getSettings');
 
           const { url, username, ca_cert } = settings;
           cy.get('button').contains('Edit Settings').click();
@@ -398,7 +408,7 @@ context('Settings page', () => {
                 ...(withInitialCert && { ca_cert: validCertificate }),
               };
               cy.saveSUMASettings(initialSettings);
-
+              cy.reload();
               cy.intercept('GET', '/api/v1/settings/suma_credentials').as(
                 'getSettings'
               );
@@ -522,6 +532,7 @@ context('Settings page', () => {
 
           it(`should change settings: ${name}`, () => {
             cy.saveSUMASettings(initialSettings);
+            cy.reload();
             cy.intercept('GET', '/api/v1/settings/suma_credentials').as(
               'getSettings'
             );
@@ -570,6 +581,7 @@ context('Settings page', () => {
           password: sumaPassword,
           ca_cert: validCertificate,
         });
+        cy.reload();
         cy.intercept('GET', '/api/v1/settings/suma_credentials').as(
           'getSettings'
         );
@@ -627,6 +639,7 @@ context('Settings page', () => {
     describe('Testing Connection', () => {
       it('should be disabled when there are no settings', () => {
         cy.clearSUMASettings();
+        cy.reload();
         cy.get('[aria-label="test-suma-connection"]').should('be.disabled');
       });
 
@@ -638,13 +651,15 @@ context('Settings page', () => {
             password: sumaPassword,
             ca_cert: validCertificate,
           });
+          cy.reload();
           cy.get('[aria-label="test-suma-connection"]').should('be.enabled');
         });
 
         it('should succeed', () => {
-          cy.intercept('POST', '/api/v1/settings/suma_credentials/test').as(
-            'testConnection'
-          );
+          cy.intercept('POST', '/api/v1/settings/suma_credentials/test', {
+            statusCode: 200,
+          }).as('testConnection');
+
           cy.get('[aria-label="test-suma-connection"]').click();
           cy.wait('@testConnection');
           cy.get('body').should('contain', 'Connection succeeded!');

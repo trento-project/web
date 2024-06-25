@@ -519,6 +519,8 @@ jobs:
           postgresql_version: "15"
       - name: Run DB migrations
         run: mix ecto.migrate
+      - name: Run DB seed
+        run: mix run priv/repo/seeds.exs
       - name: Run trento detached
         run: mix phx.server &
       - name: Install photofinish

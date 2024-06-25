@@ -18,6 +18,7 @@ import DatabasesOverviewPage from '@pages/DatabasesOverview';
 import DatabaseDetails from '@pages//DatabaseDetails';
 import { ExecutionResultsPage } from '@pages/ExecutionResults';
 import Guard from '@pages/Guard';
+import ForbiddenGuard from '@common/ForbiddenGuard';
 import Home from '@pages/Home';
 import HostDetailsPage from '@pages/HostDetailsPage';
 import HostSettingsPage from '@pages/HostSettingsPage';
@@ -30,20 +31,25 @@ import SapSystemsOverviewPage from '@pages/SapSystemsOverviewPage';
 import SaptuneDetailsPage from '@pages/SaptuneDetails';
 import SettingsPage from '@pages/SettingsPage';
 import SomethingWentWrong from '@pages/SomethingWentWrong';
+import UsersPage, { CreateUserPage, EditUserPage } from '@pages/Users';
+import ProfilePage from '@pages/Profile';
 
-import { me } from '@lib/auth';
+import { profile } from '@lib/auth';
 import { networkClient } from '@lib/network';
 import { TARGET_CLUSTER, TARGET_HOST } from '@lib/model';
 
 import { store } from './state';
 
 function App() {
-  const getUser = () => me(networkClient);
+  const getUser = () => profile(networkClient);
 
   return (
     <Provider store={store}>
-      <Toaster position="top-right" />
       <BrowserRouter>
+        <Toaster
+          position="top-right"
+          containerStyle={{ top: 50, zIndex: 99 }}
+        />
         <ErrorBoundary
           FallbackComponent={SomethingWentWrong}
           onReset={() => {
@@ -60,6 +66,7 @@ function App() {
               >
                 <Route element={<Layout />}>
                   <Route index element={<Home />} />
+                  <Route index path="profile" element={<ProfilePage />} />
                   <Route index path="hosts" element={<HostsList />} />
                   <Route
                     path="hosts/:hostID/settings"
@@ -112,6 +119,18 @@ function App() {
                     path="hosts/:targetID/executions/last/:checkID/:resultTargetType/:resultTargetName"
                     element={<CheckResultDetailPage targetType={TARGET_HOST} />}
                   />
+                  <Route
+                    element={
+                      <ForbiddenGuard permitted={['all:users']} outletMode />
+                    }
+                  >
+                    <Route path="users" element={<UsersPage />} />
+                    <Route path="users/new" element={<CreateUserPage />} />
+                    <Route
+                      path="users/:userID/edit"
+                      element={<EditUserPage />}
+                    />
+                  </Route>
                 </Route>
               </Route>
             </Route>

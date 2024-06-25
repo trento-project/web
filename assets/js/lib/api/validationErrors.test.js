@@ -1,4 +1,4 @@
-import { hasError, getError } from './errors';
+import { hasError, getError } from './validationErrors';
 
 describe('hasError', () => {
   it('should tell that a list contains an error about a specific field', () => {

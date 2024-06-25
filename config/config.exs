@@ -53,6 +53,9 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
+# Redact sensitive parameters in phoenix logs
+config :phoenix, :filter_parameters, ["password", "totp_code"]
+
 config :trento, Trento.Commanded, adapter: Trento.Commanded
 
 config :trento, Trento.Commanded,
@@ -76,6 +79,7 @@ config :trento, event_stores: [Trento.EventStore]
 config :trento, :pow,
   user: Trento.Users.User,
   repo: Trento.Repo,
+  users_context: Trento.Users,
   web_module: TrentoWeb,
   extensions: [PowPersistentSession],
   controller_callbacks: Pow.Extension.Phoenix.ControllerCallbacks
@@ -168,8 +172,8 @@ config :trento, :jwt_authentication,
   issuer: "https://github.com/trento-project/web",
   app_audience: "trento_app",
   api_key_audience: "trento_api_key",
-  # Seconds, 10 minutes
-  access_token_expiration: 600,
+  # Seconds, 3 minutes
+  access_token_expiration: 180,
   # Seconds, 6 hours
   refresh_token_expiration: 21600
 
@@ -198,6 +202,10 @@ config :trento, Trento.Infrastructure.SoftwareUpdates.MockSuma, relevant_patches
 
 config :trento, Trento.Infrastructure.SoftwareUpdates.SumaApi,
   executor: Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor
+
+config :bodyguard,
+  # The second element of the {:error, reason} tuple returned on auth failure
+  default_error: :forbidden
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

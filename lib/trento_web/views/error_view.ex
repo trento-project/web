@@ -49,7 +49,11 @@ defmodule TrentoWeb.ErrorView do
     error =
       Ecto.Changeset.traverse_errors(
         changeset,
-        fn {message, _} -> message end
+        fn {message, opts} ->
+          Regex.replace(~r"%{(\w+)}", message, fn _, key ->
+            opts |> Keyword.get(String.to_existing_atom(key), key) |> to_string()
+          end)
+        end
       )
 
     %{
@@ -91,6 +95,40 @@ defmodule TrentoWeb.ErrorView do
         %{
           title: "Not implemented",
           detail: reason
+        }
+      ]
+    }
+  end
+
+  def render("403.json", _) do
+    %{
+      errors: [
+        %{
+          title: "Forbidden",
+          detail: "You can't perform the operation or access the resource."
+        }
+      ]
+    }
+  end
+
+  def render("412.json", _) do
+    %{
+      errors: [
+        %{
+          title: "Precondition failed",
+          detail:
+            "Mid-air collision detected, please refresh the resource you are trying to update."
+        }
+      ]
+    }
+  end
+
+  def render("428.json", _) do
+    %{
+      errors: [
+        %{
+          title: "Precondition required",
+          detail: "Request needs to be conditional, please provide If-Match header."
         }
       ]
     }

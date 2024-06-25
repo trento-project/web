@@ -1,6 +1,10 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState, useCallback } from 'react';
+import { useSelector } from 'react-redux';
 import { NavLink, Outlet } from 'react-router-dom';
+
+import { clearCredentialsFromStore } from '@lib/auth';
+import { getUserProfile } from '@state/selectors/user';
 
 import {
   EOS_HOME_OUTLINED,
@@ -13,12 +17,14 @@ import {
   EOS_SETTINGS,
   EOS_KEYBOARD_DOUBLE_ARROW_LEFT,
   EOS_KEYBOARD_DOUBLE_ARROW_RIGHT,
+  EOS_SUPERVISED_USER_CIRCLE_OUTLINED,
 } from 'eos-icons-react';
 
 import TrentoLogo from '@static/trento-logo-stacked.svg';
 
 import classNames from 'classnames';
-import { clearCredentialsFromStore } from '@lib/auth';
+import ProfileMenu from '@common/ProfileMenu';
+import ForbiddenGuard from '@common/ForbiddenGuard';
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: EOS_HOME_OUTLINED },
@@ -48,6 +54,12 @@ const navigation = [
     icon: EOS_LIST,
   },
   {
+    name: 'Users',
+    href: '/users',
+    icon: EOS_SUPERVISED_USER_CIRCLE_OUTLINED,
+    permittedFor: ['all:users'],
+  },
+  {
     name: 'Settings',
     href: '/settings',
     icon: EOS_SETTINGS,
@@ -73,6 +85,8 @@ function Layout() {
       ? localStorage.removeItem('sidebar-collapsed')
       : localStorage.setItem('sidebar-collapsed', true);
   }, [isCollapsed]);
+
+  const { username, email } = useSelector(getUserProfile);
 
   const sidebarIconColor = 'currentColor';
   const sidebarIconClassName = 'text-gray-400 hover:text-gray-300';
@@ -128,30 +142,35 @@ function Layout() {
             <nav className="mt-6">
               <div>
                 {navigation.map((item) => (
-                  <NavLink
+                  <ForbiddenGuard
                     key={item.name}
-                    className={({ isActive }) =>
-                      `tn-menu-item w-full text-gray-800 dark:text-white flex items-center pl-6 p-2 my-2 transition-colors duration-200 justify-start ${
-                        isActive
-                          ? 'pl-5 border-l-4 border-jungle-green-500'
-                          : 'hover:pl-5 hover:border-l-4 hover:border-jungle-green-300'
-                      }`
-                    }
-                    to={item.href}
-                    end={item.href === '/'}
-                    title={item.name}
+                    disabled={!item.permittedFor}
+                    permitted={item.permittedFor}
                   >
-                    <span className="text-left">
-                      <item.icon />
-                    </span>
-                    <span
-                      className={classNames('mx-2 text-sm font-normal', {
-                        hidden: isCollapsed,
-                      })}
+                    <NavLink
+                      className={({ isActive }) =>
+                        `tn-menu-item w-full text-gray-800 dark:text-white flex items-center pl-6 p-2 my-2 transition-colors duration-200 justify-start ${
+                          isActive
+                            ? 'pl-5 border-l-4 border-jungle-green-500'
+                            : 'hover:pl-5 hover:border-l-4 hover:border-jungle-green-300'
+                        }`
+                      }
+                      to={item.href}
+                      end={item.href === '/'}
+                      title={item.name}
                     >
-                      {item.name}
-                    </span>
-                  </NavLink>
+                      <span className="text-left">
+                        <item.icon />
+                      </span>
+                      <span
+                        className={classNames('mx-2 text-sm font-normal', {
+                          hidden: isCollapsed,
+                        })}
+                      >
+                        {item.name}
+                      </span>
+                    </NavLink>
+                  </ForbiddenGuard>
                 ))}
               </div>
             </nav>
@@ -161,14 +180,11 @@ function Layout() {
           <header className="w-full h-16 flex items-center justify-between">
             <div className="relative flex flex-col justify-end h-full px-8 md:w-full">
               <div className="relative p-5 flex items-center w-full space-x-8 justify-end mr-20">
-                <a
-                  role="button"
-                  aria-hidden="true"
-                  onClick={logout}
-                  className="flex text-md text-gray-500 hover:text-gray-700"
-                >
-                  Sign out
-                </a>
+                <ProfileMenu
+                  username={username}
+                  email={email}
+                  logout={logout}
+                />
               </div>
             </div>
           </header>

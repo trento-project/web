@@ -48,7 +48,7 @@ describe('Login component', () => {
 
     ['username', 'password'].forEach((id) => {
       const element = screen.getByTestId(`login-${id}`);
-      expect(element).toHaveClass('border-red-300');
+      expect(element).toHaveClass('border-red-500');
     });
   });
 
@@ -120,6 +120,7 @@ describe('Login component', () => {
     await act(async () => {
       const usernameField = screen.getByTestId('login-username');
       const passwordField = screen.getByTestId('login-password');
+      expect(screen.queryByTestId('login-totp-code')).not.toBeInTheDocument();
 
       await user.type(usernameField, 'admin');
       await user.type(passwordField, 'admin');
@@ -150,5 +151,36 @@ describe('Login component', () => {
     });
 
     expect(store.getActions()).toEqual([]);
+  });
+
+  it('should request totp code if the field is missing', async () => {
+    const totpCode = '123456';
+
+    const [StatefulLogin, store] = withState(<Login />, {
+      user: {
+        authInProgress: false,
+        authError: { message: 'TOTP code missing', code: 422 },
+      },
+    });
+
+    renderWithRouter(StatefulLogin);
+
+    const user = userEvent.setup();
+
+    await act(async () => {
+      const totpField = screen.getByTestId('login-totp-code');
+      expect(screen.queryByTestId('login-username')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('login-password')).not.toBeInTheDocument();
+
+      await user.type(totpField, totpCode);
+
+      const submitButton = screen.getByTestId('login-submit');
+      await user.click(submitButton);
+    });
+
+    expect(store.getActions()).toContainEqual({
+      type: 'PERFORM_LOGIN',
+      payload: { username: '', password: '', totpCode },
+    });
   });
 });

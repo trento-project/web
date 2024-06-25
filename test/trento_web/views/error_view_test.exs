@@ -111,6 +111,21 @@ defmodule TrentoWeb.ErrorViewTest do
            } == render(TrentoWeb.ErrorView, "422.json", changeset: changeset)
   end
 
+  test "should render a 422 error (changeset) with interpolated values" do
+    changeset =
+      TestDataWithValidation.changeset(%TestDataWithValidation{}, %{password: "short"})
+
+    assert %{
+             errors: [
+               %{
+                 detail: "should be at least 8 character(s)",
+                 source: %{pointer: "/password"},
+                 title: "Invalid value"
+               }
+             ]
+           } == render(TrentoWeb.ErrorView, "422.json", changeset: changeset)
+  end
+
   test "should render a 500 error" do
     assert %{
              errors: [

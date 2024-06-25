@@ -12,10 +12,12 @@ function Password({
   id,
   name,
   value,
+  initialValue,
   placeholder = 'Password',
   error = false,
   disabled = false,
   onChange = () => {},
+  ...props
 }) {
   const [inputType, setInputType] = useState('password');
   return (
@@ -23,7 +25,8 @@ function Password({
       className={classNames(className)}
       id={id}
       name={name}
-      initialValue={value}
+      value={value}
+      initialValue={initialValue}
       placeholder={placeholder}
       type={inputType}
       error={error}
@@ -44,6 +47,7 @@ function Password({
         </button>
       }
       onChange={onChange}
+      {...props}
     />
   );
 }

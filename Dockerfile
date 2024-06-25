@@ -2,7 +2,7 @@ FROM opensuse/tumbleweed AS elixir-build
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
-RUN zypper -n in git-core elixir elixir-hex erlang-rebar3
+RUN zypper -n in make gcc git-core elixir elixir-hex erlang-rebar3
 COPY . /build
 WORKDIR /build
 ARG MIX_ENV=prod

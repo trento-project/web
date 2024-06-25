@@ -6,6 +6,7 @@ import {
 
 context('Host Details', () => {
   before(() => {
+    cy.loadScenario('healthy-27-node-SAP-cluster');
     cy.task('startAgentHeartbeat', [selectedHost.agentId]);
     cy.visit('/hosts');
 

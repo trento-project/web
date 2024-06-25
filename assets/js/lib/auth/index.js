@@ -23,8 +23,8 @@ export const refreshAccessToken = (refreshToken) =>
       return response;
     });
 
-export const me = (apiClient = authClient) =>
-  apiClient.get('/api/me', { baseURL: '' }).then((response) => {
+export const profile = (apiClient = authClient) =>
+  apiClient.get('/api/v1/profile', { baseURL: '' }).then((response) => {
     if (response.status !== 200) {
       throw Error('unauthorized', { cause: response.status });
     }

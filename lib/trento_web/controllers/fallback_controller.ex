@@ -124,6 +124,48 @@ defmodule TrentoWeb.FallbackController do
     |> render(:"422", reason: "Connection with software updates provider failed.")
   end
 
+  def call(conn, {:error, :totp_code_missing}) do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> put_view(ErrorView)
+    |> render(:"422", reason: "TOTP code missing.")
+  end
+
+  def call(conn, {:error, :forbidden}) do
+    conn
+    |> put_status(:forbidden)
+    |> put_view(ErrorView)
+    |> render(:"403")
+  end
+
+  def call(conn, {:error, :stale_entry}) do
+    conn
+    |> put_status(:precondition_failed)
+    |> put_view(ErrorView)
+    |> render(:"412")
+  end
+
+  def call(conn, {:error, :precondition_missing}) do
+    conn
+    |> put_status(:precondition_required)
+    |> put_view(ErrorView)
+    |> render(:"428")
+  end
+
+  def call(conn, {:error, :totp_already_enabled}) do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> put_view(ErrorView)
+    |> render(:"422", reason: "TOTP already enabled, could not process the enrollment procedure")
+  end
+
+  def call(conn, {:error, :enrollment_totp_not_valid}) do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> put_view(ErrorView)
+    |> render(:"422", reason: "TOTP code not valid for the enrollment procedure.")
+  end
+
   def call(conn, {:error, [error | _]}), do: call(conn, {:error, error})
 
   def call(conn, {:error, _}) do

@@ -7,6 +7,7 @@ const availableHosts1stPage = availableHosts.slice(0, 10);
 
 context('Hosts Overview', () => {
   before(() => {
+    cy.loadScenario('healthy-27-node-SAP-cluster');
     cy.visit('/hosts');
     cy.url().should('include', '/hosts');
   });

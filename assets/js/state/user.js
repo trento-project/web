@@ -1,9 +1,16 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createAction, createSlice } from '@reduxjs/toolkit';
 
 // Fields set to undefined for the sake of documenting the state shape
 export const initialState = {
   loggedIn: false,
   username: undefined,
+  fullname: undefined,
+  email: undefined,
+  id: undefined,
+  abilities: undefined,
+  password_change_requested: undefined,
+  created_at: undefined,
+  updated_at: undefined,
   authError: null,
   authInProgress: false,
 };
@@ -25,13 +32,49 @@ export const userSlice = createSlice({
       state.authInProgress = false;
       state.authError = null;
     },
-    setUser(state, { payload: { username } }) {
+    setUser(
+      state,
+      {
+        payload: {
+          username,
+          id,
+          email,
+          created_at,
+          fullname,
+          updated_at,
+          abilities,
+          password_change_requested,
+        },
+      }
+    ) {
       state.username = username;
+      state.email = email;
+      state.id = id;
+      state.created_at = created_at;
+      state.fullname = fullname;
+      state.updated_at = updated_at;
+      state.abilities = abilities;
+      state.password_change_requested = password_change_requested;
     },
   },
 });
 
+export const PERFORM_LOGIN = 'PERFORM_LOGIN';
+export const USER_UPDATED = 'USER_UPDATED';
+export const USER_LOCKED = 'USER_LOCKED';
+export const USER_DELETED = 'USER_DELETED';
+
 export const SET_USER_AS_LOGGED = 'user/setUserAsLogged';
+
+export const USER_PASSWORD_CHANGE_REQUESTED_NOTIFICATION_ID =
+  'password-change-requested-toast';
+
+export const initiateLogin = createAction(
+  PERFORM_LOGIN,
+  ({ username, password, totpCode }) => ({
+    payload: { username, password, totpCode },
+  })
+);
 
 export const { setUserAsLogged, setUser, setAuthError, setAuthInProgress } =
   userSlice.actions;

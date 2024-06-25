@@ -35,13 +35,13 @@ export default {
 export const Default = {};
 export const WithValue = {
   args: {
-    value: 'somepassword',
+    initialValue: 'somepassword',
   },
 };
 
 export const WithError = {
   args: {
-    value: 'someotherpassword',
+    initialValue: 'someotherpassword',
     error: true,
   },
 };
@@ -52,7 +52,7 @@ export const Disabled = {
   },
 };
 
-export const WithDisabled = {
+export const DisabledWithInitialValue = {
   args: {
     ...WithValue.args,
     ...Disabled.args,

@@ -1,5 +1,6 @@
 context('Homepage', () => {
   before(() => {
+    cy.loadScenario('healthy-27-node-SAP-cluster');
     cy.visit('/');
     cy.url().should('include', '/');
   });

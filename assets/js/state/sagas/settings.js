@@ -1,8 +1,6 @@
-import React from 'react';
 import { get } from '@lib/network';
 import { differenceInDays, parseISO, isAfter } from 'date-fns';
 import { call, put } from 'redux-saga/effects';
-import HealthIcon from '@common/HealthIcon';
 import { notify, dismissableNotify } from '@state/notifications';
 
 export const API_KEY_EXPIRATION_NOTIFICATION_ID = 'api-key-expiration-toast';
@@ -25,9 +23,10 @@ export function* checkApiKeyExpiration() {
     yield put(
       notify({
         text: 'API Key has expired. Go to Settings to issue a new key',
-        icon: <HealthIcon health="critical" />,
+        icon: 'critical',
         duration: Infinity,
         id: API_KEY_EXPIRATION_NOTIFICATION_ID,
+        isHealthIcon: true,
       })
     );
     return;
@@ -41,9 +40,10 @@ export function* checkApiKeyExpiration() {
   yield put(
     dismissableNotify({
       text: notificationText,
-      icon: <HealthIcon health="warning" />,
+      icon: 'warning',
       duration: Infinity,
       id: API_KEY_EXPIRATION_NOTIFICATION_ID,
+      isHealthIcon: true,
     })
   );
 }

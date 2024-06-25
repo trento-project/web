@@ -9,6 +9,8 @@ defmodule TrentoWeb.Plugs.AppJWTAuthPlugTest do
     RefreshToken
   }
 
+  alias Trento.Users
+  alias Trento.Users.User
   alias TrentoWeb.Plugs.AppJWTAuthPlug
 
   import Mox
@@ -38,21 +40,63 @@ defmodule TrentoWeb.Plugs.AppJWTAuthPlugTest do
   end
 
   describe "renew/2" do
+    setup do
+      password = "themightypassword8897"
+
+      {:ok, user} =
+        Users.create_user(%{
+          email: Faker.Internet.email(),
+          fullname: Faker.Pokemon.name(),
+          password: password,
+          password_confirmation: password,
+          username: Faker.Pokemon.name()
+        })
+
+      %{user: user}
+    end
+
     test "should renew a token and put it in the conn private if the refresh token is valid", %{
-      conn: conn
+      conn: conn,
+      user: user
     } do
-      valid_refresh = RefreshToken.generate_refresh_token!(%{"sub" => 1})
+      valid_refresh = RefreshToken.generate_refresh_token!(%{"sub" => user.id})
 
       {:ok, res_conn} = AppJWTAuthPlug.renew(conn, valid_refresh)
 
       assert %{
                private: %{
                  api_access_token: new_access_token,
-                 access_token_expiration: 600
+                 access_token_expiration: 180
                }
              } = res_conn
 
       assert {:ok, %{"typ" => "Bearer"}} = Joken.peek_claims(new_access_token)
+    end
+
+    test "should not renew a token if the token is valid but the associated user is not found", %{
+      conn: conn
+    } do
+      valid_refresh = RefreshToken.generate_refresh_token!(%{"sub" => Faker.Address.zip_code()})
+
+      {:error, :not_found} = AppJWTAuthPlug.renew(conn, valid_refresh)
+    end
+
+    test "should not renew a token if the token is valid but the associated user is deleted", %{
+      conn: conn,
+      user: user
+    } do
+      {:ok, %User{} = user} = Trento.Users.delete_user(user)
+      valid_refresh = RefreshToken.generate_refresh_token!(%{"sub" => user.id})
+      {:error, :not_found} = AppJWTAuthPlug.renew(conn, valid_refresh)
+    end
+
+    test "should not renew a token if the token is valid but the associated user is locked", %{
+      conn: conn,
+      user: user
+    } do
+      {:ok, %User{} = user} = Trento.Users.update_user(user, %{enabled: false})
+      valid_refresh = RefreshToken.generate_refresh_token!(%{"sub" => user.id})
+      {:error, :user_not_allowed_to_renew} = AppJWTAuthPlug.renew(conn, valid_refresh)
     end
 
     test "should return an error if the refresh token is malformed", %{conn: conn} do
@@ -95,7 +139,7 @@ defmodule TrentoWeb.Plugs.AppJWTAuthPlugTest do
       assert %{
                private: %{
                  api_access_token: _jwt,
-                 access_token_expiration: 600,
+                 access_token_expiration: 180,
                  api_refresh_token: _refresh
                }
              } = res_conn

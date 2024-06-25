@@ -7,6 +7,7 @@ import { act } from 'react-dom/test-utils';
 import { Route, Routes } from 'react-router-dom';
 import { renderWithRouter, withState } from '@lib/test-utils';
 import Guard from './Guard';
+import { setUser, setUserAsLogged } from '../../state/user';
 
 describe('Guard component', () => {
   it('should redirect to the redirectPath prop plus the current pathname if present when the user cannot be loaded', async () => {
@@ -65,8 +66,8 @@ describe('Guard component', () => {
   });
 
   it('should render the outlet when the user can be loaded', async () => {
-    const goodGetUser = () => Promise.resolve({ username: 'admin' });
-    const [StatefulGuard] = withState(
+    const goodGetUser = () => Promise.resolve({ username: 'admin', id: 1 });
+    const [StatefulGuard, store] = withState(
       <Routes>
         <Route
           element={<Guard redirectPath="/session/new" getUser={goodGetUser} />}
@@ -84,7 +85,17 @@ describe('Guard component', () => {
       }
     );
 
-    renderWithRouter(StatefulGuard);
+    await act(async () => {
+      renderWithRouter(StatefulGuard);
+    });
+
+    const actions = store.getActions();
+    const expectedPayload = [
+      setUser({ username: 'admin', id: 1 }),
+      setUserAsLogged(),
+    ];
+
+    expect(actions).toEqual(expectedPayload);
 
     await waitFor(() => {
       expect(screen.getByTestId('inner-component')).toBeDefined();

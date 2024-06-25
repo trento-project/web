@@ -128,6 +128,13 @@ defmodule Trento.Factory do
   alias Trento.ActivityLog.RetentionTime
   alias Trento.ActivityLog.Settings, as: ActivityLogSettings
 
+  alias Trento.Abilities.{
+    Ability,
+    UsersAbilities
+  }
+
+  alias Trento.Users.User
+
   use ExMachina.Ecto, repo: Trento.Repo
 
   def host_registered_event_factory do
@@ -948,6 +955,39 @@ defmodule Trento.Factory do
     %ActivityLogSettings{
       type: :activity_log_settings,
       retention_time: build(:activity_log_retention_time)
+    }
+  end
+
+  def user_factory do
+    password = Faker.Pokemon.name()
+
+    %User{
+      email: Faker.Internet.email(),
+      fullname: Faker.Pokemon.name(),
+      password: password,
+      password_hash: Argon2.hash_pwd_salt(password),
+      username: Faker.Pokemon.name(),
+      deleted_at: nil,
+      locked_at: nil,
+      password_change_requested_at: nil,
+      totp_enabled_at: nil,
+      totp_secret: nil,
+      totp_last_used_at: nil
+    }
+  end
+
+  def ability_factory do
+    %Ability{
+      name: Faker.Pokemon.name(),
+      label: Faker.Pokemon.name(),
+      resource: Faker.Industry.industry()
+    }
+  end
+
+  def users_abilities_factory do
+    %UsersAbilities{
+      user_id: 1,
+      ability_id: 1
     }
   end
 end

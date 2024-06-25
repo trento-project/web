@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker';
+import { userFactory } from '@lib/test-utils/factories/users';
 
 import userReducer, {
   setAuthError,
@@ -42,10 +43,35 @@ describe('user reducer', () => {
   });
 
   it('should set the user when setUser is dispatched', () => {
-    const action = setUser({ username: 'admin' });
+    const {
+      email,
+      username,
+      fullname,
+      abilities,
+      password_change_requested,
+      created_at,
+      updated_at,
+    } = userFactory.build();
+
+    const action = setUser({
+      username,
+      email,
+      fullname,
+      abilities,
+      password_change_requested,
+      created_at,
+      updated_at,
+    });
+
     expect(userReducer(initialState, action)).toEqual({
       ...initialState,
-      username: 'admin',
+      username,
+      email,
+      fullname,
+      abilities,
+      password_change_requested,
+      created_at,
+      updated_at,
     });
   });
 });
