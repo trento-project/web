@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-43PMFBC7.js"></script>
-    <script src="dist/sidebar_items-F912B9BF.js"></script>
+    <script src="dist/sidebar_items-A7894789.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -291,7 +291,7 @@ will be called.</p>
     </a>
     <h1 class="signature" translate="no">create(conn, user, config)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/plugs/app_jwt_auth_plug.ex#L42" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/plugs/app_jwt_auth_plug.ex#L44" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -314,7 +314,7 @@ will be called.</p>
     </a>
     <h1 class="signature" translate="no">delete(conn, config)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/plugs/app_jwt_auth_plug.ex#L86" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/plugs/app_jwt_auth_plug.ex#L84" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -403,7 +403,7 @@ will be called.</p>
     </a>
     <h1 class="signature" translate="no">fetch(conn, config)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/plugs/app_jwt_auth_plug.ex#L23" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/plugs/app_jwt_auth_plug.ex#L25" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -425,7 +425,7 @@ will be called.</p>
     </a>
     <h1 class="signature" translate="no">renew(conn, refresh_token)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/plugs/app_jwt_auth_plug.ex#L63" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/plugs/app_jwt_auth_plug.ex#L67" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -442,7 +442,7 @@ will be called.</p>
       </div>
 
 <p>Creates new tokens using the refresh token.</p><p>The refresh token should be verified and valid, a new access token will be issued
-with the same validity as other access tokens, for the sub of the refresh token.</p>
+with the same validity as other access tokens, for the sub of the refresh token.</p><p>Deleted and locked users, are not allowed to generate a refresh token.</p>
   </section>
 </section>
 

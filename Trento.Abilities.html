@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.31.1">
+    <meta name="project" content="Trento Web v2.3.1">
+
+
+    <title>Trento.Abilities — Trento Web v2.3.1</title>
+    <link rel="stylesheet" href="dist/html-elixir-FM2CSD74.css" />
+
+
+    <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
+    <script src="dist/handlebars.templates-43PMFBC7.js"></script>
+    <script src="dist/sidebar_items-A7894789.js"></script>
+
+      <script src="docs_config.js"></script>
+
+    <script async src="dist/html-L4O5OK2K.js"></script>
+
+
+  </head>
+  <body data-type="modules" class="page-module">
+    <script>
+
+      try {
+        var settings = JSON.parse(localStorage.getItem('ex_doc:settings') || '{}');
+
+        if (settings.theme === 'dark' ||
+           ((settings.theme === 'system' || settings.theme == null) &&
+             window.matchMedia('(prefers-color-scheme: dark)').matches)
+           ) {
+          document.body.classList.add('dark')
+        }
+      } catch (error) { }
+    </script>
+
+<div class="main">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<div class="background-layer"></div>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+        <a href="readme.html" class="sidebar-projectImage">
+          <img src="assets/logo.svg" alt="Trento Web" />
+        </a>
+
+      <div>
+        <a href="readme.html" class="sidebar-projectName" translate="no">
+Trento Web
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v2.3.1
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-listNav" class="sidebar-listNav" role="tablist">
+      <li>
+        <button id="extras-list-tab-button" role="tab" data-type="extras" aria-controls="extras-tab-panel" aria-selected="true" tabindex="0">
+GUIDES
+        </button>
+      </li>
+
+        <li>
+          <button id="modules-list-tab-button" role="tab" data-type="modules" aria-controls="modules-tab-panel" aria-selected="false" tabindex="-1">
+            Modules
+          </button>
+        </li>
+
+
+        <li>
+          <button id="tasks-list-tab-button" role="tab" data-type="tasks" aria-controls="tasks-tab-panel" aria-selected="false" tabindex="-1">
+            <span translate="no">Mix</span> Tasks
+          </button>
+        </li>
+
+    </ul>
+  </div>
+
+  <div id="extras-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="extras-list-tab-button">
+    <ul id="extras-full-list" class="full-list"></ul>
+  </div>
+
+    <div id="modules-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="modules-list-tab-button" hidden>
+      <ul id="modules-full-list" class="full-list"></ul>
+    </div>
+
+
+    <div id="tasks-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="tasks-list-tab-button" hidden>
+      <ul id="tasks-full-list" class="full-list"></ul>
+    </div>
+
+</nav>
+
+<main class="content">
+  <output role="status" id="toast"></output>
+  <div class="content-outer">
+    <div id="content" class="content-inner">
+      <div class="top-search">
+        <div class="search-settings">
+          <form class="search-bar" action="search.html">
+            <label class="search-label">
+              <span class="sr-only">Search documentation of Trento Web</span>
+              <input name="q" type="text" class="search-input" placeholder="Search Documentation (press /)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+            </label>
+            <button type="submit" class="search-button" aria-label="Submit Search">
+              <i class="ri-search-2-line ri-lg" aria-hidden="true" title="Submit search"></i>
+            </button>
+            <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+              <i class="ri-close-line ri-lg" title="Cancel search"></i>
+            </button>
+          </form>
+          <div class="autocomplete">
+          </div>
+          <button class="icon-settings display-settings">
+            <i class="ri-settings-3-line"></i>
+            <span class="sr-only">Settings</span>
+          </button>
+        </div>
+
+      </div>
+
+<h1>
+
+    <a href="https://github.com/trento-project/web/blob/main/lib/trento/abilities.ex#L1" title="View Source" class="icon-action" rel="help">
+      <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+      <span class="sr-only">View Source</span>
+    </a>
+
+  <span translate="no">Trento.Abilities</span> 
+  <small class="app-vsn" translate="no">(Trento Web v2.3.1)</small>
+
+</h1>
+
+
+  <section id="moduledoc">
+<p>The Abilities context.</p>
+  </section>
+
+
+  <section id="summary" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#summary">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Summary</span>
+    </h1>
+<div class="summary-functions summary">
+  <h2>
+    <a href="#functions">Functions</a>
+  </h2>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#change_ability/2" translate="no">change_ability(ability, attrs \\ %{})</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Returns an <code class="inline">%Ecto.Changeset{}</code> for tracking ability changes.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#create_ability/1" translate="no">create_ability(attrs \\ %{})</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Creates a ability.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#delete_ability/1" translate="no">delete_ability(ability)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Deletes a ability.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#get_ability!/1" translate="no">get_ability!(id)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Gets a single ability.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#list_abilities/0" translate="no">list_abilities()</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Returns the list of abilities.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#update_ability/2" translate="no">update_ability(ability, attrs)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Updates a ability.</p></div>
+
+    </div>
+
+</div>
+
+  </section>
+
+
+  <section id="functions" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#functions">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Functions</span>
+    </h1>
+    <div class="functions-list">
+<section class="detail" id="change_ability/2">
+
+    <span id="change_ability/1"></span>
+
+  <div class="detail-header">
+    <a href="#change_ability/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">change_ability(ability, attrs \\ %{})</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/abilities.ex#L101" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+<p>Returns an <code class="inline">%Ecto.Changeset{}</code> for tracking ability changes.</p><h2 id="change_ability/2-examples" class="section-heading">
+  <a href="#change_ability/2-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="n">change_ability</span><span class="p" data-group-id="1178488922-1">(</span><span class="n">ability</span><span class="p" data-group-id="1178488922-1">)</span><span class="w">
+</span><span class="p" data-group-id="1178488922-2">%</span><span class="nc" data-group-id="1178488922-2">Ecto.Changeset</span><span class="p" data-group-id="1178488922-2">{</span><span class="ss">data</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="1178488922-3">%</span><span class="nc" data-group-id="1178488922-3">Ability</span><span class="p" data-group-id="1178488922-3">{</span><span class="p" data-group-id="1178488922-3">}</span><span class="p" data-group-id="1178488922-2">}</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="create_ability/1">
+
+    <span id="create_ability/0"></span>
+
+  <div class="detail-header">
+    <a href="#create_ability/1" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">create_ability(attrs \\ %{})</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/abilities.ex#L52" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+<p>Creates a ability.</p><h2 id="create_ability/1-examples" class="section-heading">
+  <a href="#create_ability/1-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="n">create_ability</span><span class="p" data-group-id="3235032039-1">(</span><span class="p" data-group-id="3235032039-2">%{</span><span class="ss">field</span><span class="p">:</span><span class="w"> </span><span class="n">value</span><span class="p" data-group-id="3235032039-2">}</span><span class="p" data-group-id="3235032039-1">)</span><span class="w">
+</span><span class="p" data-group-id="3235032039-3">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3235032039-4">%</span><span class="nc" data-group-id="3235032039-4">Ability</span><span class="p" data-group-id="3235032039-4">{</span><span class="p" data-group-id="3235032039-4">}</span><span class="p" data-group-id="3235032039-3">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">create_ability</span><span class="p" data-group-id="3235032039-5">(</span><span class="p" data-group-id="3235032039-6">%{</span><span class="ss">field</span><span class="p">:</span><span class="w"> </span><span class="n">bad_value</span><span class="p" data-group-id="3235032039-6">}</span><span class="p" data-group-id="3235032039-5">)</span><span class="w">
+</span><span class="p" data-group-id="3235032039-7">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3235032039-8">%</span><span class="nc" data-group-id="3235032039-8">Ecto.Changeset</span><span class="p" data-group-id="3235032039-8">{</span><span class="p" data-group-id="3235032039-8">}</span><span class="p" data-group-id="3235032039-7">}</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="delete_ability/1">
+
+  <div class="detail-header">
+    <a href="#delete_ability/1" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">delete_ability(ability)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/abilities.ex#L88" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+<p>Deletes a ability.</p><h2 id="delete_ability/1-examples" class="section-heading">
+  <a href="#delete_ability/1-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="n">delete_ability</span><span class="p" data-group-id="7785213710-1">(</span><span class="n">ability</span><span class="p" data-group-id="7785213710-1">)</span><span class="w">
+</span><span class="p" data-group-id="7785213710-2">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="7785213710-3">%</span><span class="nc" data-group-id="7785213710-3">Ability</span><span class="p" data-group-id="7785213710-3">{</span><span class="p" data-group-id="7785213710-3">}</span><span class="p" data-group-id="7785213710-2">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">delete_ability</span><span class="p" data-group-id="7785213710-4">(</span><span class="n">ability</span><span class="p" data-group-id="7785213710-4">)</span><span class="w">
+</span><span class="p" data-group-id="7785213710-5">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="7785213710-6">%</span><span class="nc" data-group-id="7785213710-6">Ecto.Changeset</span><span class="p" data-group-id="7785213710-6">{</span><span class="p" data-group-id="7785213710-6">}</span><span class="p" data-group-id="7785213710-5">}</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="get_ability!/1">
+
+  <div class="detail-header">
+    <a href="#get_ability!/1" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">get_ability!(id)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/abilities.ex#L38" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+<p>Gets a single ability.</p><p>Raises <a href="https://hexdocs.pm/ecto/3.11.1/Ecto.NoResultsError.html"><code class="inline">Ecto.NoResultsError</code></a> if the Ability does not exist.</p><h2 id="get_ability!/1-examples" class="section-heading">
+  <a href="#get_ability!/1-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="n">get_ability!</span><span class="p" data-group-id="4242251443-1">(</span><span class="mi">123</span><span class="p" data-group-id="4242251443-1">)</span><span class="w">
+</span><span class="p" data-group-id="4242251443-2">%</span><span class="nc" data-group-id="4242251443-2">Ability</span><span class="p" data-group-id="4242251443-2">{</span><span class="p" data-group-id="4242251443-2">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">get_ability!</span><span class="p" data-group-id="4242251443-3">(</span><span class="mi">456</span><span class="p" data-group-id="4242251443-3">)</span><span class="w">
+</span><span class="gt">** (Ecto.NoResultsError)</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="list_abilities/0">
+
+  <div class="detail-header">
+    <a href="#list_abilities/0" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">list_abilities()</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/abilities.ex#L20" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+<p>Returns the list of abilities.</p><h2 id="list_abilities/0-examples" class="section-heading">
+  <a href="#list_abilities/0-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="n">list_abilities</span><span class="p" data-group-id="3142557786-1">(</span><span class="p" data-group-id="3142557786-1">)</span><span class="w">
+</span><span class="p" data-group-id="3142557786-2">[</span><span class="p" data-group-id="3142557786-3">%</span><span class="nc" data-group-id="3142557786-3">Ability</span><span class="p" data-group-id="3142557786-3">{</span><span class="p" data-group-id="3142557786-3">}</span><span class="p">,</span><span class="w"> </span><span class="n">...</span><span class="p" data-group-id="3142557786-2">]</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="update_ability/2">
+
+  <div class="detail-header">
+    <a href="#update_ability/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">update_ability(ability, attrs)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/abilities.ex#L70" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+<p>Updates a ability.</p><h2 id="update_ability/2-examples" class="section-heading">
+  <a href="#update_ability/2-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Examples</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="n">update_ability</span><span class="p" data-group-id="2884710390-1">(</span><span class="n">ability</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="2884710390-2">%{</span><span class="ss">field</span><span class="p">:</span><span class="w"> </span><span class="n">new_value</span><span class="p" data-group-id="2884710390-2">}</span><span class="p" data-group-id="2884710390-1">)</span><span class="w">
+</span><span class="p" data-group-id="2884710390-3">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="2884710390-4">%</span><span class="nc" data-group-id="2884710390-4">Ability</span><span class="p" data-group-id="2884710390-4">{</span><span class="p" data-group-id="2884710390-4">}</span><span class="p" data-group-id="2884710390-3">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="n">update_ability</span><span class="p" data-group-id="2884710390-5">(</span><span class="n">ability</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="2884710390-6">%{</span><span class="ss">field</span><span class="p">:</span><span class="w"> </span><span class="n">bad_value</span><span class="p" data-group-id="2884710390-6">}</span><span class="p" data-group-id="2884710390-5">)</span><span class="w">
+</span><span class="p" data-group-id="2884710390-7">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="2884710390-8">%</span><span class="nc" data-group-id="2884710390-8">Ecto.Changeset</span><span class="p" data-group-id="2884710390-8">{</span><span class="p" data-group-id="2884710390-8">}</span><span class="p" data-group-id="2884710390-7">}</span></code></pre>
+  </section>
+</section>
+
+    </div>
+  </section>
+
+      <footer class="footer">
+        <p>
+
+          <span class="line">
+            <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+              Search HexDocs
+            </button>
+
+              <a href="Trento Web.epub" title="ePub version">
+                Download ePub version
+              </a>
+
+          </span>
+        </p>
+
+        <p class="built-using">
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.31.1) for the
+
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+        </p>
+      </footer>
+    </div>
+  </div>
+</main>
+</div>
+
+
+  </body>
+</html>
