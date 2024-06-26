@@ -29,5 +29,7 @@ defmodule Trento.SoftwareUpdates.Discovery.Gen do
   @callback get_affected_packages(advisory_name :: String.t()) ::
               {:ok, [map()]} | {:error, any()}
 
+  @callback get_bugzilla_fixes(advisory_name :: String.t()) :: {:ok, map()} | {:error, any()}
+
   @callback clear() :: :ok
 end

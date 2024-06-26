@@ -148,6 +148,14 @@ defmodule Trento.Infrastructure.SoftwareUpdates.MockSuma do
        ]}
 
   @impl true
+  def get_bugzilla_fixes(_advisory_name),
+    do:
+      {:ok,
+       %{
+         "1210660": "VUL-0: CVE-2023-2137: sqlite2,sqlite3: Heap buffer overflow in sqlite"
+       }}
+
+  @impl true
   def clear, do: :ok
 
   defp mocked_relevant_patches_system_ids,

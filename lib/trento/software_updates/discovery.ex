@@ -63,6 +63,9 @@ defmodule Trento.SoftwareUpdates.Discovery do
   @impl true
   def get_affected_packages(advisory_name), do: adapter().get_affected_packages(advisory_name)
 
+  @impl true
+  def get_bugzilla_fixes(advisory_name), do: adapter().get_bugzilla_fixes(advisory_name)
+
   @spec discover_software_updates :: {:ok, {list(), list()}}
   def discover_software_updates do
     authentication = setup()

@@ -172,30 +172,45 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
         {:ok, errata_details}
       end)
 
-      %ErrataDetailsResponse{
-        id: ^id,
-        issue_date: ^issue_date,
-        update_date: ^update_date,
-        last_modified_date: ^last_modified_date,
-        synopsis: ^synopsis,
-        release: ^release,
-        advisory_status: ^advisory_status,
-        vendor_advisory: ^vendor_advisory,
-        type: ^type,
-        product: ^product,
-        errata_from: ^errata_from,
-        topic: ^topic,
-        description: ^description,
-        references: ^references,
-        notes: ^notes,
-        solution: ^solution,
-        reboot_suggested: ^reboot_suggested,
-        restart_suggested: ^restart_suggested
-      } =
+      fixes = build(:bugzilla_fix)
+
+      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_bugzilla_fixes, 1, fn _ ->
+        {:ok, fixes}
+      end)
+
+      json =
         conn
         |> get("/api/v1/software_updates/errata_details/#{advisory_name}")
         |> json_response(:ok)
-        |> assert_schema("ErrataDetailsResponse", api_spec)
+
+      %{"fixes" => json_fixes} = json
+
+      assert fixes |> Map.keys() |> length == json_fixes |> Map.keys() |> length
+
+      result = assert_schema(json, "ErrataDetailsResponse", api_spec)
+
+      %ErrataDetailsResponse{
+        errata_details: %{
+          id: ^id,
+          issue_date: ^issue_date,
+          update_date: ^update_date,
+          last_modified_date: ^last_modified_date,
+          synopsis: ^synopsis,
+          release: ^release,
+          advisory_status: ^advisory_status,
+          vendor_advisory: ^vendor_advisory,
+          type: ^type,
+          product: ^product,
+          errata_from: ^errata_from,
+          topic: ^topic,
+          description: ^description,
+          references: ^references,
+          notes: ^notes,
+          solution: ^solution,
+          reboot_suggested: ^reboot_suggested,
+          restart_suggested: ^restart_suggested
+        }
+      } = result
     end
 
     test "should return 404 when advisory details are not found", %{

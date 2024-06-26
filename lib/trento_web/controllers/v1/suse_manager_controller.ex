@@ -94,8 +94,32 @@ defmodule TrentoWeb.V1.SUSEManagerController do
 
   @spec errata_details(Plug.Conn.t(), any) :: Plug.Conn.t()
   def errata_details(conn, %{advisory_name: advisory_name}) do
-    with {:ok, errata_details} <- Discovery.get_errata_details(advisory_name) do
-      render(conn, %{errata_details: errata_details})
+
+    with {:ok, errata_details} <- Discovery.get_errata_details(advisory_name),
+         {:ok, fixes} <- Discovery.get_bugzilla_fixes(advisory_name) do
+      render(conn, %{errata_details: errata_details, fixes: fixes})
     end
   end
+
+  # operation :get_bugzilla_fixes,
+  #   summary: "Gets the fixes for an advisory",
+  #   tags: ["Platform"],
+  #   description: "Endpoint to fetch Bugzilla fixes for a given advisory name",
+  #   parameters: [
+  #     advisory_name: [
+  #       in: :path,
+  #       required: true,
+  #       type: %OpenApiSpex.Schema{type: :string}
+  #     ]
+  #   ],
+  #   responses: [
+  #     ok: {"Bugzilla fixes for the advisory", "application/json", AdvisoryFixesResponse}
+  #   ]
+
+  # @spec get_bugzilla_fixes(Plug.Conn.t(), any) :: Plug.Conn.t()
+  # def get_bugzilla_fixes(conn, %{advisory_name: advisory_name}) do
+  #   with {:ok, fixes} <- Discovery.get_bugzilla_fixes(advisory_name) do
+  #     render(conn, %{fixes: fixes})
+  #   end
+  # end
 end
