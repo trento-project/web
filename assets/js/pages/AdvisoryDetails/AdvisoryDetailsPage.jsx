@@ -14,16 +14,16 @@ function AdvisoryDetailsPage() {
   useEffect(() => {
     getAdvirosyErrata(advisoryID)
       .then((errata) => {
-	setAdvisoryErrata(errata.data)
-	setIsLoading(false)
+        setAdvisoryErrata(errata.data);
+        setIsLoading(false);
       })
-      .catch((e) => logError(e))
+      .catch((e) => logError(e));
   }, []);
 
   return (
     <>
       <BackButton url={`/hosts/${hostID}`}>Back</BackButton>
-      { !isLoading ? <AdvisoryDetails errata={advisoryErrata} /> : null}
+      {!isLoading ? <AdvisoryDetails errata={advisoryErrata} /> : null}
     </>
   );
 }
