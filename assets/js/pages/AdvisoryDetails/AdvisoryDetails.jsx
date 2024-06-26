@@ -6,7 +6,7 @@ import ListView from '@common/ListView';
 import AdvisoryIcon from '@common/AdvisoryIcon';
 
 function EmptyData() {
-  return <p>No data dvailable</p>;
+  return <p>No data available</p>;
 }
 
 function AdvisoryDetails({

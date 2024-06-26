@@ -17,6 +17,6 @@ describe('AdvisoryDetails', () => {
       <AdvisoryDetails advisoryName={faker.lorem.word()} errata={errata} />
     );
 
-    expect(screen.getAllByText('No data dvailable').length).toBe(3);
+    expect(screen.getAllByText('No data available').length).toBe(3);
   });
 });
