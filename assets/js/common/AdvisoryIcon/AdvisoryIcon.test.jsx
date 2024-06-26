@@ -24,7 +24,7 @@ describe('AdvisoryIcon', () => {
 
       const svgRCInstance = iconEl[fiberKey].return;
 
-      const svgRCName = elementType.name;
+      const svgRCName = svgRCInstance.elementType.name;
       expect(svgRCName).toBe(componentName);
     });
   });
@@ -43,7 +43,7 @@ describe('AdvisoryIcon', () => {
 
     const svgRCInstance = iconEl[fiberKey].return;
 
-    const svgRCName = elementType.name;
+    const svgRCName = svgRCInstance.elementType.name;
     expect(svgRCName).toBe(componentName);
   });
 });
