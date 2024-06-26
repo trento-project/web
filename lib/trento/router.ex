@@ -106,4 +106,6 @@ defmodule Trento.Router do
            ],
            to: Databases.Database,
            lifespan: Databases.Lifespan
+
+  middleware OpentelemetryCommanded.Middleware
 end

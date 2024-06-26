@@ -13,6 +13,15 @@ defmodule Trento.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: Mix.compilers(),
       start_permanent: Mix.env() == :prod,
+      releases: [
+        trento: [
+          applications: [
+            trento: :permanent,
+            opentelemetry_exporter: :permanent,
+            opentelemetry: :temporary
+          ]
+        ]
+      ],
       aliases: aliases(),
       deps: deps(),
       name: "Trento Web",
@@ -81,6 +90,15 @@ defmodule Trento.MixProject do
       {:jason, "~> 1.2"},
       {:mox, "~> 1.0", only: :test},
       {:open_api_spex, "~> 3.11"},
+      {:opentelemetry, "~> 1.3"},
+      {:opentelemetry_api, "~> 1.2"},
+      {:opentelemetry_exporter, "~> 1.6"},
+      {:opentelemetry_ecto, "~> 1.2"},
+      {:opentelemetry_phoenix, "~> 1.1"},
+      {:opentelemetry_cowboy, "~> 0.2"},
+      {:opentelemetry_commanded,
+       github: "simplebet/opentelemetry_commanded",
+       ref: "042e29af6bbeea102165cf9d19372a3e810a670a"},
       {:phoenix, "~> 1.6.2"},
       {:phoenix_ecto, "~> 4.4"},
       {:phoenix_html, "~> 3.0"},

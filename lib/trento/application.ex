@@ -7,6 +7,11 @@ defmodule Trento.Application do
 
   @impl true
   def start(_type, _args) do
+    :ok = :opentelemetry_cowboy.setup()
+    :ok = OpentelemetryPhoenix.setup(adapter: :cowboy2)
+    :ok = OpentelemetryCommanded.setup()
+    # :ok = OpentelemetryEcto.setup([:trento, :repo])
+
     children =
       [
         # Start the Ecto repository

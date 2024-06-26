@@ -12,11 +12,13 @@ defmodule TrentoWeb.Router do
     plug :put_root_layout, {TrentoWeb.LayoutView, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug TrentoWeb.Plugs.Otel
   end
 
   pipeline :api do
     plug :accepts, ["json"]
     plug TrentoWeb.Plugs.AppJWTAuthPlug, otp_app: :trento
+    plug TrentoWeb.Plugs.Otel
   end
 
   pipeline :api_v1 do
