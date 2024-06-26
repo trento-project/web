@@ -122,11 +122,11 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
     })
   end
 
-  defmodule ErrataDetails do
+  defmodule ErrataDetailsResponse do
     @moduledoc false
     OpenApiSpex.schema(%{
-      title: "ErrataDetails",
-      description: "Details for the erratum matching the given advisory name",
+      title: "ErrataDetailsResponse",
+      description: "Response returned from the errata details endpoint",
       type: :object,
       additionalProperties: false,
       properties: %{
@@ -168,31 +168,6 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
           description:
             "A boolean flag signaling a weather reboot of the package manager is advisable following the application of the errata. This is commonly used to address update stack issues before proceeding with other updates."
         }
-      }
-    })
-  end
-
-  defmodule AdvisoryFixes do
-    @moduledoc false
-    OpenApiSpex.schema(%{
-      title: "AdvisoryFixes",
-      description: "Response returned from the get advisory fixes endpoint",
-      type: :object,
-      # properties: %Schema{type: :string},
-      additionalProperties: %Schema{type: :string}
-    })
-  end
-
-  defmodule ErrataDetailsResponse do
-    @moduledoc false
-    OpenApiSpex.schema(%{
-      title: "ErrataDetailsResponse",
-      description: "Response returned from the errata details endpoint",
-      type: :object,
-      additionalProperties: false,
-      properties: %{
-        errata_details: ErrataDetails,
-        fixes: AdvisoryFixes
       }
     })
   end
