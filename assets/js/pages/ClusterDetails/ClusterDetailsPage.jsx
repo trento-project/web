@@ -88,10 +88,8 @@ export function ClusterDetailsPage() {
           details={cluster.details}
           catalog={catalog}
           lastExecution={lastExecution}
-          onStartExecution={(_, hostList, checks, navigateFunction) =>
-            dispatch(
-              executionRequested(clusterID, hostList, checks, navigateFunction)
-            )
+          onStartExecution={(_, hostList, checks) =>
+            dispatch(executionRequested(clusterID, hostList, checks))
           }
           navigate={navigate}
         />
@@ -110,10 +108,8 @@ export function ClusterDetailsPage() {
           details={cluster.details}
           catalog={catalog}
           lastExecution={lastExecution}
-          onStartExecution={(_, hostList, checks, navigateFunction) =>
-            dispatch(
-              executionRequested(clusterID, hostList, checks, navigateFunction)
-            )
+          onStartExecution={(_, hostList, checks) =>
+            dispatch(executionRequested(clusterID, hostList, checks))
           }
           navigate={navigate}
         />

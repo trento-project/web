@@ -157,7 +157,7 @@ function AscsErsClusterDetails({
                 className="mx-0.5"
                 size="small"
                 onClick={() => {
-                  onStartExecution(clusterID, hosts, selectedChecks, navigate);
+                  onStartExecution(clusterID, hosts, selectedChecks);
                 }}
                 disabled={startExecutionDisabled}
               >

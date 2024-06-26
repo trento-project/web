@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import LoadingBox from '@common/LoadingBox';
 
@@ -22,7 +22,6 @@ import ChecksSelectionHeader from '@pages/ChecksSelection/ChecksSelectionHeader'
 
 function HostSettingsPage() {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const { hostID } = useParams();
   const [selection, setSelection] = useState([]);
 
@@ -67,7 +66,7 @@ function HostSettingsPage() {
   };
 
   const requestChecksExecution = () => {
-    dispatch(hostExecutionRequested(host, selectedChecks, navigate));
+    dispatch(hostExecutionRequested(host, selectedChecks));
   };
 
   return (

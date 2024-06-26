@@ -8,14 +8,14 @@ export const CLUSTER_EXECUTION_REQUESTED = 'CLUSTER_EXECUTION_REQUESTED';
 export const HOST_EXECUTION_REQUESTED = 'HOST_EXECUTION_REQUESTED';
 export const UPDATE_LAST_EXECUTION = 'UPDATE_LAST_EXECUTION';
 
-export const executionRequested = (clusterID, hosts, checks, navigate) => ({
+export const executionRequested = (clusterID, hosts, checks) => ({
   type: CLUSTER_EXECUTION_REQUESTED,
-  payload: { clusterID, hosts, checks, navigate },
+  payload: { clusterID, hosts, checks },
 });
 
-export const hostExecutionRequested = (host, checks, navigate) => ({
+export const hostExecutionRequested = (host, checks) => ({
   type: HOST_EXECUTION_REQUESTED,
-  payload: { host, checks, navigate },
+  payload: { host, checks },
 });
 
 export const updateLastExecution = (groupID) => ({

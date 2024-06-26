@@ -96,13 +96,17 @@ describe('lastExecutions saga', () => {
     const clusterName = faker.animal.cat();
     const hosts = [faker.string.uuid(), faker.string.uuid()];
     const checks = [faker.color.human(), faker.color.human()];
-    const navigate = jest.fn();
+    const mockNavigate = jest.fn();
+    const router = {
+      navigate: mockNavigate,
+    };
+    const context = { router };
 
     axiosMock
       .onPost(triggerClusterChecksExecutionURL(clusterID))
       .reply(202, {});
 
-    const payload = { clusterID, hosts, checks, navigate };
+    const payload = { clusterID, hosts, checks };
     const dispatched = await recordSaga(
       requestExecution,
       {
@@ -112,7 +116,8 @@ describe('lastExecutions saga', () => {
         clustersList: {
           clusters: [{ id: clusterID, name: clusterName }],
         },
-      }
+      },
+      context
     );
 
     expect(dispatched).toContainEqual(setExecutionRequested(payload));
@@ -122,7 +127,7 @@ describe('lastExecutions saga', () => {
         icon: '🐰',
       })
     );
-    expect(navigate).toHaveBeenCalledWith(
+    expect(mockNavigate).toHaveBeenCalledWith(
       `/clusters/${clusterID}/executions/last`
     );
   });
@@ -132,13 +137,17 @@ describe('lastExecutions saga', () => {
     const clusterName = faker.animal.cat();
     const hosts = [faker.string.uuid(), faker.string.uuid()];
     const checks = [faker.color.human(), faker.color.human()];
-    const navigate = jest.fn();
+    const mockNavigate = jest.fn();
+    const router = {
+      navigate: mockNavigate,
+    };
+    const context = { router };
 
     axiosMock
       .onPost(triggerClusterChecksExecutionURL(clusterID))
       .reply(400, {});
 
-    const payload = { clusterID, hosts, checks, navigate };
+    const payload = { clusterID, hosts, checks };
     const dispatched = await recordSaga(
       requestExecution,
       {
@@ -148,7 +157,8 @@ describe('lastExecutions saga', () => {
         clustersList: {
           clusters: [{ id: clusterID, name: clusterName }],
         },
-      }
+      },
+      context
     );
 
     expect(dispatched).not.toContainEqual(setExecutionRequested(payload));
@@ -158,21 +168,30 @@ describe('lastExecutions saga', () => {
         icon: '❌',
       })
     );
-    expect(navigate).not.toHaveBeenCalled();
+    expect(mockNavigate).not.toHaveBeenCalled();
   });
 
   it('should set the last host execution to requested state', async () => {
     const host = hostFactory.build();
     const { id: hostID, hostname: hostName } = host;
     const checks = [faker.string.uuid(), faker.string.uuid()];
-    const navigate = jest.fn();
+    const mockNavigate = jest.fn();
+    const router = {
+      navigate: mockNavigate,
+    };
+    const context = { router };
 
     axiosMock.onPost(triggerHostChecksExecutionURL(hostID)).reply(202, {});
-    const payload = { checks, host, navigate };
+    const payload = { checks, host };
 
-    const dispatched = await recordSaga(requestHostExecution, {
-      payload,
-    });
+    const dispatched = await recordSaga(
+      requestHostExecution,
+      {
+        payload,
+      },
+      {},
+      context
+    );
     expect(dispatched).toContainEqual(setHostChecksExecutionRequested(payload));
     expect(dispatched).toContainEqual(
       notify({
@@ -180,21 +199,32 @@ describe('lastExecutions saga', () => {
         icon: '🐰',
       })
     );
-    expect(navigate).toHaveBeenCalledWith(`/hosts/${hostID}/executions/last`);
+    expect(mockNavigate).toHaveBeenCalledWith(
+      `/hosts/${hostID}/executions/last`
+    );
   });
 
   it('should not set the host last execution to requested state on failure', async () => {
     const host = hostFactory.build();
     const { id: hostID, hostname: hostName } = host;
     const checks = [faker.string.uuid(), faker.string.uuid()];
-    const navigate = jest.fn();
+    const mockNavigate = jest.fn();
+    const router = {
+      navigate: mockNavigate,
+    };
+    const context = { router };
 
     axiosMock.onPost(triggerHostChecksExecutionURL(hostID)).reply(400, {});
 
-    const payload = { checks, host, navigate };
-    const dispatched = await recordSaga(requestHostExecution, {
-      payload,
-    });
+    const payload = { checks, host };
+    const dispatched = await recordSaga(
+      requestHostExecution,
+      {
+        payload,
+      },
+      {},
+      context
+    );
     expect(dispatched).not.toContainEqual(
       setHostChecksExecutionRequested(payload)
     );
@@ -204,6 +234,6 @@ describe('lastExecutions saga', () => {
         icon: '❌',
       })
     );
-    expect(navigate).not.toHaveBeenCalled();
+    expect(mockNavigate).not.toHaveBeenCalled();
   });
 });

@@ -1,4 +1,4 @@
-import { put, call, takeEvery, select } from 'redux-saga/effects';
+import { put, call, takeEvery, select, getContext } from 'redux-saga/effects';
 
 import { notify } from '@state/notifications';
 import {
@@ -41,8 +41,9 @@ export function* updateLastExecution({ payload }) {
 }
 
 export function* requestExecution({ payload }) {
-  const { clusterID, navigate } = payload;
+  const { clusterID } = payload;
   const clusterName = yield select(getClusterName(clusterID));
+  const router = yield getContext('router');
 
   try {
     yield call(triggerClusterChecksExecution, clusterID);
@@ -53,7 +54,7 @@ export function* requestExecution({ payload }) {
         icon: '🐰',
       })
     );
-    navigate(`/clusters/${clusterID}/executions/last`);
+    yield call(router.navigate, `/clusters/${clusterID}/executions/last`);
   } catch (error) {
     yield put(
       notify({
@@ -65,8 +66,9 @@ export function* requestExecution({ payload }) {
 }
 
 export function* requestHostExecution({ payload }) {
-  const { host, navigate } = payload;
+  const { host } = payload;
   const { id: hostID, hostname: hostName } = host;
+  const router = yield getContext('router');
 
   try {
     yield call(triggerHostChecksExecution, hostID);
@@ -77,7 +79,7 @@ export function* requestHostExecution({ payload }) {
         icon: '🐰',
       })
     );
-    navigate(`/hosts/${hostID}/executions/last`);
+    yield call(router.navigate, `/hosts/${hostID}/executions/last`);
   } catch (error) {
     yield put(
       notify({

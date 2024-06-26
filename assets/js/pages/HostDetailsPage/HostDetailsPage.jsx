@@ -132,9 +132,7 @@ function HostDetailsPage() {
           : undefined
       }
       cleanUpHost={() => {
-        dispatch(
-          deregisterHost({ id: hostID, hostname: host.hostname, navigate })
-        );
+        dispatch(deregisterHost({ id: hostID, hostname: host.hostname }));
       }}
       requestHostChecksExecution={() => {
         dispatch(hostExecutionRequested(host, hostSelectedChecks, navigate));
