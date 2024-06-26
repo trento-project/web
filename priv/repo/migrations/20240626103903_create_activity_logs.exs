@@ -10,9 +10,5 @@ defmodule Trento.Repo.Migrations.CreateActivityLogs do
 
       timestamps(type: :utc_datetime_usec)
     end
-
-    create index(:activity_logs, [:type])
-    create index(:activity_logs, [:actor])
-    create index(:activity_logs, [:inserted_at])
   end
 end
