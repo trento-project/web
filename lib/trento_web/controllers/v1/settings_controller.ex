@@ -2,6 +2,7 @@ defmodule TrentoWeb.V1.SettingsController do
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
 
+  alias Trento.ActivityLog
   alias Trento.Settings
   alias TrentoWeb.OpenApi.V1.Schema
   alias TrentoWeb.Plugs.AuthenticateAPIKeyPlug
@@ -91,6 +92,56 @@ defmodule TrentoWeb.V1.SettingsController do
       render(conn, "api_key_settings.json", %{
         settings: api_key
       })
+    end
+  end
+
+  operation :update_activity_log_settings,
+    summary: "Updates the Activity Log settings",
+    tags: ["Platform"],
+    request_body:
+      {"ActivityLogSettings", "application/json", Schema.Platform.ActivityLogSettings},
+    responses: [
+      ok:
+        {"Activity Log settings saved successfully", "application/json",
+         Schema.Platform.ActivityLogSettings},
+      unprocessable_entity: Schema.UnprocessableEntity.response()
+    ]
+
+  def update_activity_log_settings(%{body_params: body_params} = conn, _) do
+    %{retention_time: %{value: retention_period, unit: retention_period_unit}} =
+      body_params
+
+    with {:ok, updated_settings} <-
+           ActivityLog.change_retention_period(retention_period, retention_period_unit) do
+      render(conn, "activity_log_settings.json", %{
+        activity_log_settings: updated_settings
+      })
+    end
+  end
+
+  operation :get_activity_log_settings,
+    summary: "Fetches the Activity Log settings",
+    tags: ["Platform"],
+    responses: [
+      ok:
+        {"Activity Log settings fetched successfully", "application/json",
+         Schema.Platform.ActivityLogSettings},
+      not_found: Schema.NotFound.response()
+    ]
+
+  def get_activity_log_settings(conn, _) do
+    case ActivityLog.get_settings() do
+      {:ok, settings} ->
+        render(conn, "activity_log_settings.json", %{
+          activity_log_settings: settings
+        })
+
+      _ ->
+        # Here we rebind the error returned by the ActivityLog.get_settings/0 function
+        # to a "not_found" in order to disambiguate from a similar error being returned by the
+        # ActivityLog.change_retention_period/2 function. This error gets picked up by the FallbackController
+        # and leads to dispatching to the appropriate error response.
+        {:error, :not_found}
     end
   end
 end

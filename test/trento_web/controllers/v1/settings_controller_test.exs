@@ -110,4 +110,62 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       assert expire_year == expected_infinite_year
     end
   end
+
+  describe "ActivityLogSettings" do
+    setup do
+      %{api_spec: ApiSpec.spec()}
+    end
+
+    test "should return activity retention settings after setting up", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      insert(:activity_log_settings)
+
+      conn
+      |> get("/api/v1/settings/activity_log")
+      |> json_response(200)
+      |> assert_schema("ActivityLogSettings", api_spec)
+    end
+
+    test "should not return activity retention settings without setting up", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      conn
+      |> get("/api/v1/settings/activity_log")
+      |> json_response(404)
+      |> assert_schema("NotFound", api_spec)
+    end
+
+    test "should update the activity log settings if it is configured returning the updated settings",
+         %{conn: conn, api_spec: api_spec} do
+      insert(:activity_log_settings)
+
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> put("/api/v1/settings/activity_log", %{
+        retention_time: %{
+          value: 42,
+          unit: :years
+        }
+      })
+      |> json_response(200)
+      |> assert_schema("ActivityLogSettings", api_spec)
+    end
+
+    test "should not update the activity log settings if it is not already configured",
+         %{conn: conn, api_spec: api_spec} do
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> put("/api/v1/settings/activity_log", %{
+        retention_time: %{
+          value: 42,
+          unit: :years
+        }
+      })
+      |> json_response(422)
+      |> assert_schema("UnprocessableEntity", api_spec)
+    end
+  end
 end

@@ -26,4 +26,16 @@ defmodule TrentoWeb.V1.SettingsView do
       expire_at: expire_at
     }
   end
+
+  def render(
+        "activity_log_settings.json",
+        %{activity_log_settings: %{retention_time: %{value: value, unit: unit}}}
+      ) do
+    %{
+      retention_time: %{
+        value: value,
+        unit: unit
+      }
+    }
+  end
 end
