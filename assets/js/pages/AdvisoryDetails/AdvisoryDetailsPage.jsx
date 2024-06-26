@@ -1,40 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { getAvirosyErrata } from '@lib/api/softwareUpdates';
+import { getAdvirosyErrata } from '@lib/api/softwareUpdates';
+import { logError } from '@lib/log';
 import BackButton from '@common/BackButton';
 import AdvisoryDetails from './AdvisoryDetails';
 
 function AdvisoryDetailsPage() {
   const [advisoryErrata, setAdvisoryErrata] = useState(undefined);
+  const [isLoading, setIsLoading] = useState(true);
   const { hostID, advisoryID } = useParams();
 
   useEffect(() => {
-    try {
-      setAdvisoryErrata(getAvirosyErrata(advisoryID));
-    } catch (e) {
-      /* eslint-disable no-console */
-      console.error(e);
-    }
+    getAdvirosyErrata(advisoryID)
+      .then((errata) => setAdvisoryErrata(errata))
+      .catch((e) => logError(e))
+      .finally(() => setIsLoading(false));
   }, []);
 
   return (
     <>
       <BackButton url={`/hosts/${hostID}`}>Back</BackButton>
-      <AdvisoryDetails
-        name={advisoryErrata.id}
-        status={advisoryErrata.advisory_status}
-        type={advisoryErrata.type}
-        synopsis={advisoryErrata.synopsis}
-        description={advisoryErrata.description}
-        issueDate={advisoryErrata.issue_date}
-        updateDate={advisoryErrata.update_date}
-        rebootRequired={advisoryErrata.reboot_suggested}
-        affectsPackageMaintanaceStack={undefined}
-        fixes={undefined}
-        cves={undefined}
-        packages={undefined}
-      />
+      {isLoading ? <AdvisoryDetails errata={advisoryErrata} /> : null}
     </>
   );
 }
