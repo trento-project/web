@@ -239,7 +239,11 @@ defmodule Trento.Discovery.Policies.HostPolicy do
       })
 
   @spec remove_netmask(String.t()) :: String.t()
-  defp remove_netmask(address), do: hd(String.split(address, "/"))
+  defp remove_netmask(address) do
+    address
+    |> String.split("/")
+    |> hd()
+  end
 
   @spec non_loopback_ipv4?(String.t()) :: boolean
   defp non_loopback_ipv4?("127.0.0.1"), do: false
