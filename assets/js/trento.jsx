@@ -1,7 +1,12 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { Routes, Route, BrowserRouter } from 'react-router-dom';
+import {
+  createRoutesFromElements,
+  createBrowserRouter,
+  Route,
+  RouterProvider,
+} from 'react-router-dom';
 
 import { Toaster } from 'react-hot-toast';
 import { Provider } from 'react-redux';
@@ -38,106 +43,95 @@ import { profile } from '@lib/auth';
 import { networkClient } from '@lib/network';
 import { TARGET_CLUSTER, TARGET_HOST } from '@lib/model';
 
-import { store } from './state';
+import { createStore } from './state';
+
+const createRouter = ({ getUser }) =>
+  createBrowserRouter(
+    createRoutesFromElements(
+      <>
+        <Route path="/session/new" element={<Login />} />
+        <Route path="/">
+          <Route
+            element={<Guard redirectPath="/session/new" getUser={getUser} />}
+          >
+            <Route element={<Layout />}>
+              <Route index element={<Home />} />
+              <Route index path="profile" element={<ProfilePage />} />
+              <Route index path="hosts" element={<HostsList />} />
+              <Route
+                path="hosts/:hostID/settings"
+                element={<HostSettingsPage />}
+              />
+              <Route
+                path="hosts/:hostID/saptune"
+                element={<SaptuneDetailsPage />}
+              />
+              <Route path="clusters" element={<ClustersList />} />
+              <Route path="sap_systems" element={<SapSystemsOverviewPage />} />
+              <Route path="databases" element={<DatabasesOverviewPage />} />
+              <Route path="catalog" element={<ChecksCatalogPage />} />
+              <Route path="settings" element={<SettingsPage />} />
+              <Route path="about" element={<AboutPage />} />
+              <Route path="hosts/:hostID" element={<HostDetailsPage />} />
+              <Route path="sap_systems/:id" element={<SapSystemDetails />} />
+              <Route path="databases/:id" element={<DatabaseDetails />} />
+              <Route
+                path="clusters/:clusterID"
+                element={<ClusterDetailsPage />}
+              />
+              <Route
+                path="clusters/:clusterID/settings"
+                element={<ClusterSettingsPage />}
+              />
+              <Route
+                path="clusters/:targetID/executions/last"
+                element={<ExecutionResultsPage targetType={TARGET_CLUSTER} />}
+              />
+              <Route
+                path="hosts/:targetID/executions/last"
+                element={<ExecutionResultsPage targetType={TARGET_HOST} />}
+              />
+              <Route
+                path="clusters/:targetID/executions/last/:checkID/:resultTargetType/:resultTargetName"
+                element={<CheckResultDetailPage targetType={TARGET_CLUSTER} />}
+              />
+              <Route
+                path="hosts/:targetID/executions/last/:checkID/:resultTargetType/:resultTargetName"
+                element={<CheckResultDetailPage targetType={TARGET_HOST} />}
+              />
+              <Route
+                element={
+                  <ForbiddenGuard permitted={['all:users']} outletMode />
+                }
+              >
+                <Route path="users" element={<UsersPage />} />
+                <Route path="users/new" element={<CreateUserPage />} />
+                <Route path="users/:userID/edit" element={<EditUserPage />} />
+              </Route>
+            </Route>
+          </Route>
+        </Route>
+        <Route path="*" element={<NotFound />} />
+      </>
+    )
+  );
 
 function App() {
   const getUser = () => profile(networkClient);
+  const router = createRouter({ getUser });
+  const store = createStore(router);
 
   return (
     <Provider store={store}>
-      <BrowserRouter>
-        <Toaster
-          position="top-right"
-          containerStyle={{ top: 50, zIndex: 99 }}
-        />
-        <ErrorBoundary
-          FallbackComponent={SomethingWentWrong}
-          onReset={() => {
-            store.dispatch({ type: 'RESET_STATE' });
-          }}
-        >
-          <Routes>
-            <Route path="/session/new" element={<Login />} />
-            <Route path="/">
-              <Route
-                element={
-                  <Guard redirectPath="/session/new" getUser={getUser} />
-                }
-              >
-                <Route element={<Layout />}>
-                  <Route index element={<Home />} />
-                  <Route index path="profile" element={<ProfilePage />} />
-                  <Route index path="hosts" element={<HostsList />} />
-                  <Route
-                    path="hosts/:hostID/settings"
-                    element={<HostSettingsPage />}
-                  />
-                  <Route
-                    path="hosts/:hostID/saptune"
-                    element={<SaptuneDetailsPage />}
-                  />
-                  <Route path="clusters" element={<ClustersList />} />
-                  <Route
-                    path="sap_systems"
-                    element={<SapSystemsOverviewPage />}
-                  />
-                  <Route path="databases" element={<DatabasesOverviewPage />} />
-                  <Route path="catalog" element={<ChecksCatalogPage />} />
-                  <Route path="settings" element={<SettingsPage />} />
-                  <Route path="about" element={<AboutPage />} />
-                  <Route path="hosts/:hostID" element={<HostDetailsPage />} />
-                  <Route
-                    path="sap_systems/:id"
-                    element={<SapSystemDetails />}
-                  />
-                  <Route path="databases/:id" element={<DatabaseDetails />} />
-                  <Route
-                    path="clusters/:clusterID"
-                    element={<ClusterDetailsPage />}
-                  />
-                  <Route
-                    path="clusters/:clusterID/settings"
-                    element={<ClusterSettingsPage />}
-                  />
-                  <Route
-                    path="clusters/:targetID/executions/last"
-                    element={
-                      <ExecutionResultsPage targetType={TARGET_CLUSTER} />
-                    }
-                  />
-                  <Route
-                    path="hosts/:targetID/executions/last"
-                    element={<ExecutionResultsPage targetType={TARGET_HOST} />}
-                  />
-                  <Route
-                    path="clusters/:targetID/executions/last/:checkID/:resultTargetType/:resultTargetName"
-                    element={
-                      <CheckResultDetailPage targetType={TARGET_CLUSTER} />
-                    }
-                  />
-                  <Route
-                    path="hosts/:targetID/executions/last/:checkID/:resultTargetType/:resultTargetName"
-                    element={<CheckResultDetailPage targetType={TARGET_HOST} />}
-                  />
-                  <Route
-                    element={
-                      <ForbiddenGuard permitted={['all:users']} outletMode />
-                    }
-                  >
-                    <Route path="users" element={<UsersPage />} />
-                    <Route path="users/new" element={<CreateUserPage />} />
-                    <Route
-                      path="users/:userID/edit"
-                      element={<EditUserPage />}
-                    />
-                  </Route>
-                </Route>
-              </Route>
-            </Route>
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </ErrorBoundary>
-      </BrowserRouter>
+      <Toaster position="top-right" />
+      <ErrorBoundary
+        FallbackComponent={SomethingWentWrong}
+        onReset={() => {
+          store.dispatch({ type: 'RESET_STATE' });
+        }}
+      >
+        <RouterProvider router={router} />
+      </ErrorBoundary>
     </Provider>
   );
 }
