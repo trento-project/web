@@ -145,8 +145,10 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       conn
       |> put_req_header("content-type", "application/json")
       |> put("/api/v1/settings/activity_log", %{
-        retention_period: 42,
-        retention_period_unit: :years
+        retention_time: %{
+          value: 42,
+          unit: :years
+        }
       })
       |> json_response(200)
       |> assert_schema("ActivityLogSettings", api_spec)
@@ -157,8 +159,10 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       conn
       |> put_req_header("content-type", "application/json")
       |> put("/api/v1/settings/activity_log", %{
-        retention_period: 42,
-        retention_period_unit: :years
+        retention_time: %{
+          value: 42,
+          unit: :years
+        }
       })
       |> json_response(422)
       |> assert_schema("UnprocessableEntity", api_spec)

@@ -108,7 +108,7 @@ defmodule TrentoWeb.V1.SettingsController do
     ]
 
   def update_activity_log_settings(%{body_params: body_params} = conn, _) do
-    %{retention_period: retention_period, retention_period_unit: retention_period_unit} =
+    %{retention_time: %{value: retention_period, unit: retention_period_unit}} =
       body_params
 
     with {:ok, updated_settings} <-

@@ -27,12 +27,15 @@ defmodule TrentoWeb.V1.SettingsView do
     }
   end
 
-  def render("activity_log_settings.json", %{
-        activity_log_settings: %{retention_time: %{value: value, unit: unit}}
-      }) do
+  def render(
+        "activity_log_settings.json",
+        %{activity_log_settings: %{retention_time: %{value: value, unit: unit}}}
+      ) do
     %{
-      retention_period: value,
-      retention_period_unit: unit
+      retention_time: %{
+        value: value,
+        unit: unit
+      }
     }
   end
 end
