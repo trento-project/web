@@ -41,7 +41,7 @@ defmodule Trento.ActivityLogTest do
   describe "changing activity log settings" do
     test "should not be able to change retention time if no activity log settings were previously saved" do
       assert {:error, :activity_log_settings_not_configured} ==
-               ActivityLog.change_retention_period(42, RetentionPeriodUnit.days())
+               ActivityLog.change_retention_period(42, RetentionPeriodUnit.day())
     end
 
     @validation_scenarios [
@@ -104,22 +104,22 @@ defmodule Trento.ActivityLogTest do
       %{
         name: "days",
         value: 1,
-        unit: RetentionPeriodUnit.days()
+        unit: RetentionPeriodUnit.day()
       },
       %{
         name: "weeks",
         value: 3,
-        unit: RetentionPeriodUnit.weeks()
+        unit: RetentionPeriodUnit.week()
       },
       %{
         name: "months",
         value: 5,
-        unit: RetentionPeriodUnit.months()
+        unit: RetentionPeriodUnit.month()
       },
       %{
         name: "years",
         value: 7,
-        unit: RetentionPeriodUnit.years()
+        unit: RetentionPeriodUnit.year()
       }
     ]
 
@@ -130,7 +130,7 @@ defmodule Trento.ActivityLogTest do
         insert(:activity_log_settings,
           retention_time: %{
             value: 92,
-            unit: RetentionPeriodUnit.years()
+            unit: RetentionPeriodUnit.year()
           }
         )
 
@@ -155,7 +155,7 @@ defmodule Trento.ActivityLogTest do
 
     test "should successfully handle unchanging retention periods" do
       initial_retention_period = 42
-      initial_retention_period_unit = RetentionPeriodUnit.days()
+      initial_retention_period_unit = RetentionPeriodUnit.day()
 
       insert(:activity_log_settings,
         retention_time: %{
