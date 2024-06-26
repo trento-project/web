@@ -6,12 +6,11 @@ import {
   createBrowserRouter,
   Route,
   RouterProvider,
+  Outlet,
 } from 'react-router-dom';
 
 import { Toaster } from 'react-hot-toast';
 import { Provider } from 'react-redux';
-
-import { ErrorBoundary } from 'react-error-boundary';
 
 import AboutPage from '@pages/AboutPage';
 import CheckResultDetailPage from '@pages/ExecutionResults/CheckResultDetail';
@@ -48,7 +47,7 @@ import { createStore } from './state';
 const createRouter = ({ getUser }) =>
   createBrowserRouter(
     createRoutesFromElements(
-      <>
+      <Route element={<RoutesWrapper />} ErrorBoundary={SomethingWentWrong}>
         <Route path="/session/new" element={<Login />} />
         <Route path="/">
           <Route
@@ -112,9 +111,18 @@ const createRouter = ({ getUser }) =>
           </Route>
         </Route>
         <Route path="*" element={<NotFound />} />
-      </>
+      </Route>
     )
   );
+
+function RoutesWrapper() {
+  return (
+    <>
+      <Toaster position="top-right" />
+      <Outlet />
+    </>
+  );
+}
 
 function App() {
   const getUser = () => profile(networkClient);
@@ -123,15 +131,7 @@ function App() {
 
   return (
     <Provider store={store}>
-      <Toaster position="top-right" />
-      <ErrorBoundary
-        FallbackComponent={SomethingWentWrong}
-        onReset={() => {
-          store.dispatch({ type: 'RESET_STATE' });
-        }}
-      >
-        <RouterProvider router={router} />
-      </ErrorBoundary>
+      <RouterProvider router={router} />
     </Provider>
   );
 }
