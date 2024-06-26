@@ -206,10 +206,6 @@ defmodule TrentoWeb.Router do
       pipe_through [:api_v2]
 
       get "/clusters", ClusterController, :list
-
-      get "/software_updates/errata_details/:advisory_name",
-          SUSEManagerController,
-          :errata_details
     end
   end
 
