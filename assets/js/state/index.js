@@ -16,26 +16,34 @@ import softwareUpdatesReducer from './softwareUpdates';
 import softwareUpdatesSettingsReducer from './softwareUpdatesSettings';
 import rootSaga from './sagas';
 
-const sagaMiddleware = createSagaMiddleware();
+export const createStore = (router) => {
+  const sagaMiddleware = createSagaMiddleware({
+    context: {
+      router,
+    },
+  });
 
-export const store = configureStore({
-  reducer: {
-    sapSystemsHealthSummary: sapSystemsHealthSummaryReducer,
-    hostsList: hostsListReducer,
-    clustersList: clustersListReducer,
-    checksSelection: checksSelectionReducer,
-    checksResultsFilters: checksResultsFiltersReducer,
-    sapSystemsList: sapSystemListReducer,
-    databasesList: databasesListReducer,
-    catalog: catalogReducer,
-    lastExecutions: lastExecutionsReducer,
-    settings: settingsReducer,
-    user: userReducer,
-    softwareUpdates: softwareUpdatesReducer,
-    softwareUpdatesSettings: softwareUpdatesSettingsReducer,
-  },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(sagaMiddleware),
-});
+  const store = configureStore({
+    reducer: {
+      sapSystemsHealthSummary: sapSystemsHealthSummaryReducer,
+      hostsList: hostsListReducer,
+      clustersList: clustersListReducer,
+      checksSelection: checksSelectionReducer,
+      checksResultsFilters: checksResultsFiltersReducer,
+      sapSystemsList: sapSystemListReducer,
+      databasesList: databasesListReducer,
+      catalog: catalogReducer,
+      lastExecutions: lastExecutionsReducer,
+      settings: settingsReducer,
+      user: userReducer,
+      softwareUpdates: softwareUpdatesReducer,
+      softwareUpdatesSettings: softwareUpdatesSettingsReducer,
+    },
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware().concat(sagaMiddleware),
+  });
 
-sagaMiddleware.run(rootSaga);
+  sagaMiddleware.run(rootSaga);
+
+  return store;
+};

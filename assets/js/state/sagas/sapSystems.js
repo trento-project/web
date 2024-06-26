@@ -1,4 +1,4 @@
-import { call, put, select, takeEvery } from 'redux-saga/effects';
+import { call, put, select, takeEvery, getContext } from 'redux-saga/effects';
 import { del } from '@lib/network';
 
 import {
@@ -101,6 +101,11 @@ export function* sapSystemDeregistered({ payload: { id, sid } }) {
       icon: 'ℹ️',
     })
   );
+
+  const router = yield getContext('router');
+  if (router.state.location.pathname === `/sap_systems/${id}`) {
+    yield call(router.navigate, '/sap_systems');
+  }
 }
 
 export function* sapSystemRestored({ payload }) {
