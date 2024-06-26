@@ -76,37 +76,43 @@ function AdvisoryDetails({
       <div className="flex flex-col mb-4">
         <h2 className="text-xl font-bold mb-2">Fixes</h2>
         <div className="bg-white py-4 px-6 shadow shadow-md rounded-lg">
-          <ul>
-            {fixes && fixes.length > 1 ? (
-              fixes.map((fix) => <li>{fix}</li>)
-            ) : (
-              <EmptyData />
-            )}
-          </ul>
+          {fixes && fixes.length > 1 ? (
+            <ul>
+              {fixes.map((fix) => (
+                <li>{fix}</li>
+              ))}
+            </ul>
+          ) : (
+            <EmptyData />
+          )}
         </div>
       </div>
       <div className="flex flex-col mb-4">
         <h2 className="text-xl font-bold mb-2">CVEs</h2>
         <div className="bg-white py-4 px-6 shadow shadow-md rounded-lg">
-          <ul>
-            {cves && cves.length > 1 ? (
-              cves.map((cve) => <li>{cve}</li>)
-            ) : (
-              <EmptyData />
-            )}
-          </ul>
+          {cves && cves.length > 1 ? (
+            <ul>
+              {cves.map((cve) => (
+                <li>{cve}</li>
+              ))}
+            </ul>
+          ) : (
+            <EmptyData />
+          )}
         </div>
       </div>
       <div className="flex flex-col mb-4">
         <h2 className="text-xl font-bold mb-2">Affected Packages</h2>
         <div className="bg-white py-4 px-6 shadow shadow-md rounded-lg">
-          <ul>
-            {packages && packages.length > 1 ? (
-              packages.map((pkg) => <li>{pkg}</li>)
-            ) : (
-              <EmptyData />
-            )}
-          </ul>
+          {packages && packages.length > 1 ? (
+            <ul>
+              {packages.map((pkg) => (
+                <li>{pkg}</li>
+              ))}
+            </ul>
+          ) : (
+            <EmptyData />
+          )}
         </div>
       </div>
     </div>
