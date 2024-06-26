@@ -113,7 +113,9 @@ defmodule TrentoWeb.Router do
 
       delete "/hosts/:id", HostController, :delete
 
-      delete "/hosts/:id/tags/:value", TagsController, :remove_tag, as: :hosts_tagging
+      delete "/hosts/:id/tags/:value", TagsController, :remove_tag,
+        assigns: %{resource_type: :host},
+        as: :hosts_tagging
 
       get "/hosts/:id/exporters_status", PrometheusController, :exporters_status
 
@@ -125,13 +127,17 @@ defmodule TrentoWeb.Router do
         assigns: %{resource_type: :cluster},
         as: :clusters_tagging
 
-      delete "/clusters/:id/tags/:value", TagsController, :remove_tag, as: :clusters_tagging
+      delete "/clusters/:id/tags/:value", TagsController, :remove_tag,
+        assigns: %{resource_type: :cluster},
+        as: :clusters_tagging
 
       post "/sap_systems/:id/tags", TagsController, :add_tag,
         assigns: %{resource_type: :sap_system},
         as: :sap_systems_tagging
 
-      delete "/sap_systems/:id/tags/:value", TagsController, :remove_tag, as: :sap_systems_tagging
+      delete "/sap_systems/:id/tags/:value", TagsController, :remove_tag,
+        assigns: %{resource_type: :sap_system},
+        as: :sap_systems_tagging
 
       delete "/sap_systems/:id/hosts/:host_id/instances/:instance_number",
              SapSystemController,
@@ -141,7 +147,9 @@ defmodule TrentoWeb.Router do
         assigns: %{resource_type: :database},
         as: :databases_tagging
 
-      delete "/databases/:id/tags/:value", TagsController, :remove_tag, as: :databases_tagging
+      delete "/databases/:id/tags/:value", TagsController, :remove_tag,
+        assigns: %{resource_type: :database},
+        as: :databases_tagging
 
       delete "/databases/:id/hosts/:host_id/instances/:instance_number",
              DatabaseController,
