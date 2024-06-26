@@ -223,6 +223,32 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
         {:error, :error_getting_errata_details}
       end)
 
+      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_bugzilla_fixes, 1, fn _ ->
+        {:ok, build(:bugzilla_fix)}
+      end)
+
+      advisory_name = Faker.Pokemon.name()
+
+      conn
+      |> get("/api/v1/software_updates/errata_details/#{advisory_name}")
+      |> json_response(:unprocessable_entity)
+      |> assert_schema("UnprocessableEntity", api_spec)
+    end
+
+    test "should return 422 when advisory fixes are not found", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      insert_software_updates_settings()
+
+      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_errata_details, 1, fn _ ->
+        {:ok, build(:errata_details)}
+      end)
+
+      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_bugzilla_fixes, 1, fn _ ->
+        {:error, :error_getting_fixes}
+      end)
+
       advisory_name = Faker.Pokemon.name()
 
       conn
