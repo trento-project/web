@@ -19,4 +19,18 @@ describe('AdvisoryDetails', () => {
 
     expect(screen.getAllByText('No data available').length).toBe(3);
   });
+
+  it('displays relevant errata data', () => {
+    const errata = advisoryErrataFactory.build();
+    const advisoryName = faker.lorem.word()
+
+    render(
+      <AdvisoryDetails advisoryName={advisoryName} errata={errata} />
+    );
+
+    expect(screen.getByText(advisoryName)).toBeVisible()
+    expect(screen.getByText(errata.synopsis)).toBeVisible()
+    expect(screen.getByText(errata.advisory_status)).toBeVisible()
+    expect(screen.getByText(errata.description)).toBeVisible()
+  });
 });
