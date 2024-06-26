@@ -8,8 +8,9 @@ export default {
   argTypes: {
     type: {
       description: 'The type of advisory',
+      options: ['security_advisory', 'bugfix', 'enhancement', 'NONEXISTENT'],
       control: {
-        type: 'string',
+        type: 'radio',
       },
     },
     centered: {
@@ -25,9 +26,10 @@ export default {
       },
     },
     size: {
-      description: 'Size of the icon. Values are xs, s, m, l, xl, xxl, xxxl',
+      description: 'Size of the icon',
+      options: ['xs', 's', 'm', 'l', 'xl', 'xxl', 'xxxl'],
       control: {
-        type: 'string',
+        type: 'radio',
       },
     },
   },
