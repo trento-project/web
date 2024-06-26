@@ -13,8 +13,7 @@ export const advisoryErrataFactory = Factory.define(() => ({
   vendor_advisory: faker.lorem.word(),
   type: faker.helpers.arrayElement(advisoryType),
   product: faker.internet.userName(),
-  // FIXME: why is this cased in CamelCalse?
-  erratFrom: faker.lorem.word(),
+  errata_from: faker.lorem.word(),
   topic: faker.animal.cat(),
   description: faker.lorem.sentence(),
   references: faker.lorem.sentence(),
