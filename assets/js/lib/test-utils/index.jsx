@@ -72,13 +72,19 @@ export function renderWithRouterMatch(ui, { path = '/', route = '/' } = {}) {
   };
 }
 
-export async function recordSaga(saga, initialAction, state = {}) {
+export async function recordSaga(
+  saga,
+  initialAction,
+  state = {},
+  context = {}
+) {
   const dispatched = [];
 
   await runSaga(
     {
       dispatch: (action) => dispatched.push(action),
       getState: () => state,
+      context,
     },
     saga,
     initialAction

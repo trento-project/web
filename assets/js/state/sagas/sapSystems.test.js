@@ -45,11 +45,52 @@ describe('SAP Systems sagas', () => {
   it('should remove the SAP system', async () => {
     const { id, sid } = sapSystemFactory.build();
 
-    const dispatched = await recordSaga(sapSystemDeregistered, {
-      payload: { id, sid },
-    });
+    const router = {
+      state: {
+        location: {
+          pathname: '/home',
+        },
+      },
+    };
+    const context = { router };
+
+    const dispatched = await recordSaga(
+      sapSystemDeregistered,
+      {
+        payload: { id, sid },
+      },
+      {},
+      context
+    );
 
     expect(dispatched).toContainEqual(removeSAPSystem({ id }));
+  });
+
+  it('should remove the SAP system and navigate to overview page', async () => {
+    const { id, sid } = sapSystemFactory.build();
+
+    const mockNavigate = jest.fn();
+    const router = {
+      navigate: mockNavigate,
+      state: {
+        location: {
+          pathname: `/sap_systems/${id}`,
+        },
+      },
+    };
+    const context = { router };
+
+    const dispatched = await recordSaga(
+      sapSystemDeregistered,
+      {
+        payload: { id, sid },
+      },
+      {},
+      context
+    );
+
+    expect(dispatched).toContainEqual(removeSAPSystem({ id }));
+    expect(mockNavigate).toHaveBeenCalledWith('/sap_systems');
   });
 
   it('should restore the SAP system', async () => {
