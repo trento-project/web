@@ -113,6 +113,18 @@ export const DEREGISTER_HOST = 'DEREGISTER_HOST';
 export const HOST_SOFTWARE_UPDATES_DISCOVERY_COMPLETED =
   'HOST_SOFTWARE_UPDATES_DISCOVERY_COMPLETED';
 
+export const hostRegistered = createAction(HOST_REGISTERED);
+export const hostDetailsUpdated = createAction(HOST_DETAILS_UPDATED);
+export const heartbeatSucceded = createAction(HEARTBEAT_SUCCEDED);
+export const heartbeatFailed = createAction(HEARTBEAT_FAILED);
+export const hostDeregisterd = createAction(HOST_DEREGISTERED);
+export const hostRestored = createAction(HOST_RESTORED);
+export const saptuneStatusUpdated = createAction(SAPTUNE_STATUS_UPDATED);
+export const hostHelathChanged = createAction(HOST_HEALTH_CHANGED);
+export const hostSoftwareUpdatesDiscoveryCompleted = createAction(
+  HOST_SOFTWARE_UPDATES_DISCOVERY_COMPLETED
+);
+
 export const checkHostIsDeregisterable = createAction(
   CHECK_HOST_IS_DEREGISTERABLE
 );
