@@ -137,6 +137,10 @@ defmodule TrentoWeb.V1.SettingsController do
         })
 
       _ ->
+        # Here we rebind the error returned by the ActivityLog.get_settings/0 function
+        # to a "not_found" in order to disambiguate from a similar error being returned by the
+        # ActivityLog.change_retention_period/2 function. This error gets picked up by the FallbackController
+        # and leads to dispatching to the appropriate error response.
         {:error, :not_found}
     end
   end
