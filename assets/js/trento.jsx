@@ -124,11 +124,11 @@ function RoutesWrapper() {
   );
 }
 
-function App() {
-  const getUser = () => profile(networkClient);
-  const router = createRouter({ getUser });
-  const store = createStore(router);
+const getUser = () => profile(networkClient);
+const router = createRouter({ getUser });
+const store = createStore(router);
 
+function App() {
   return (
     <Provider store={store}>
       <RouterProvider router={router} />
