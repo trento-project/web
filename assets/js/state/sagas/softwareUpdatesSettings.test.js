@@ -46,7 +46,7 @@ describe('Software Updates Settings saga', () => {
     it('should empty software updates settings when no configured settings were found', async () => {
       const axiosMock = new MockAdapter(networkClient);
 
-      axiosMock.onGet('/settings/suma_credentials').reply(403);
+      axiosMock.onGet('/settings/suma_credentials').reply(404);
 
       const dispatched = await recordSaga(fetchSoftwareUpdatesSettings);
 
@@ -56,7 +56,7 @@ describe('Software Updates Settings saga', () => {
       ]);
     });
 
-    it.each([404, 500, 502, 504])(
+    it.each([400, 500, 502, 504])(
       'should empty software updates settings and put a network error flag on failed fetching',
       async (status) => {
         const axiosMock = new MockAdapter(networkClient);

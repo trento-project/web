@@ -33,7 +33,7 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
 
       conn
       |> get("/api/v1/settings/suma_credentials")
-      |> json_response(:forbidden)
+      |> json_response(:not_found)
       |> assert_schema("NotFound", api_spec)
     end
   end
@@ -177,11 +177,11 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
         conn
         |> put_req_header("content-type", "application/json")
         |> patch("/api/v1/settings/suma_credentials", submission)
-        |> json_response(:forbidden)
+        |> json_response(:not_found)
 
       assert %{
                "errors" => [
-                 %{"detail" => "SUSE Manager settings not configured.", "title" => "Forbidden"}
+                 %{"detail" => "The requested resource cannot be found.", "title" => "Not Found"}
                ]
              } == resp
     end
