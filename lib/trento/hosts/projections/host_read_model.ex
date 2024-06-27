@@ -13,6 +13,8 @@ defmodule Trento.Hosts.Projections.HostReadModel do
   alias Trento.Hosts.Projections.SlesSubscriptionReadModel
   alias Trento.Tags.Tag
 
+  defdelegate authorize(action, user, params), to: Trento.Hosts.Policy
+
   @type t :: %__MODULE__{}
 
   @derive {Jason.Encoder, except: [:__meta__, :__struct__]}
