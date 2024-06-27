@@ -5,7 +5,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
   import Phoenix.ChannelTest
   import TrentoWeb.ChannelCase
   import Trento.Factory
-  import Trento.Support.Helpers.AbilitiesHelper
+  import Trento.Support.Helpers.AbilitiesTestHelper
 
   @endpoint TrentoWeb.Endpoint
 

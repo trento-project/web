@@ -4,7 +4,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
   import OpenApiSpex.TestAssertions
   import Mox
   import Trento.Factory
-  import Trento.Support.Helpers.AbilitiesHelper
+  import Trento.Support.Helpers.AbilitiesTestHelper
 
   alias TrentoWeb.OpenApi.V1.ApiSpec
 
