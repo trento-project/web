@@ -477,6 +477,10 @@ context('Host Details', () => {
   describe('Forbidden actions', () => {
     const password = 'password';
 
+    before(() => {
+      cy.loadScenario(`host-details-${selectedHost.hostName}`);
+    });
+
     beforeEach(() => {
       cy.deleteAllUsers();
       cy.logout();
