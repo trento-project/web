@@ -70,11 +70,11 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
       resp =
         conn
         |> get("/api/v1/hosts/#{host_id}/software_updates")
-        |> json_response(:forbidden)
+        |> json_response(:not_found)
 
       assert %{
                "errors" => [
-                 %{"detail" => "SUSE Manager settings not configured.", "title" => "Forbidden"}
+                 %{"detail" => "The requested resource cannot be found.", "title" => "Not Found"}
                ]
              } == resp
     end

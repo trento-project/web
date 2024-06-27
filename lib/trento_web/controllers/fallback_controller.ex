@@ -12,9 +12,9 @@ defmodule TrentoWeb.FallbackController do
 
   def call(conn, {:error, :settings_not_configured}) do
     conn
-    |> put_status(:forbidden)
+    |> put_status(:not_found)
     |> put_view(ErrorView)
-    |> render(:"403", reason: "SUSE Manager settings not configured.")
+    |> render(:"404", reason: "SUSE Manager settings not configured.")
   end
 
   def call(conn, {:error, :invalid_refresh_token}) do
