@@ -42,3 +42,17 @@ export const adminUser = userFactory.params({
   fullname: 'Trento Admin',
   email: 'admin@trento.suse.com',
 });
+
+export const createUserRequestFactory = Factory.define(() => {
+  const password = 'password';
+
+  return {
+    username: faker.internet.userName().toLowerCase(),
+    enabled: true,
+    fullname: faker.internet.displayName(),
+    email: faker.internet.email(),
+    abilities: [],
+    password,
+    password_confirmation: password,
+  };
+});
