@@ -275,3 +275,28 @@ Cypress.Commands.add('clearSUMASettings', () =>
     })
   )
 );
+
+Cypress.Commands.add('deleteAllUsers', () =>
+  cy.apiLogin().then(({ accessToken }) =>
+    cy
+      .request({
+        url: '/api/v1/users',
+        method: 'GET',
+        auth: { bearer: accessToken },
+        body: {},
+      })
+      .then(({ body: users }) => {
+        users.forEach(({ id }) => {
+          if (id === 1) {
+            return;
+          }
+          cy.request({
+            url: `/api/v1/users/${id}`,
+            method: 'DELETE',
+            auth: { bearer: accessToken },
+            body: {},
+          });
+        });
+      })
+  )
+);
