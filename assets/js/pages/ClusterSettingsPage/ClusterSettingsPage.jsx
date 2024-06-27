@@ -15,6 +15,7 @@ import {
 import { updateCatalog } from '@state/catalog';
 import { getCatalog } from '@state/selectors/catalog';
 import { isSaving } from '@state/selectors/checksSelection';
+import { getUserProfile } from '@state/selectors/user';
 import { executionRequested } from '@state/lastExecutions';
 
 import { buildEnv } from '@lib/checks';
@@ -46,6 +47,7 @@ function ClusterSettingsPage() {
   const { clusterID } = useParams();
   const [selection, setSelection] = useState([]);
 
+  const { abilities } = useSelector(getUserProfile);
   const cluster = useSelector(getCluster(clusterID));
   const clusterHosts = useSelector((state) =>
     getClusterHosts(state, clusterID)
@@ -124,6 +126,8 @@ function ClusterSettingsPage() {
         isSavingSelection={saving}
         savedSelection={selectedChecks}
         selection={selection}
+        userAbilities={abilities}
+        checkSelectionPermittedFor={['all:cluster_checks_selection']}
         onSaveSelection={saveSelection}
         onStartExecution={requestChecksExecution}
       />

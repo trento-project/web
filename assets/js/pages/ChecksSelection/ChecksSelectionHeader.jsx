@@ -4,6 +4,7 @@ import classNames from 'classnames';
 
 import Button from '@common/Button';
 import Tooltip from '@common/Tooltip';
+import DisabledGuard from '@common/DisabledGuard';
 
 import { canStartExecution } from '@pages/ChecksSelection';
 
@@ -15,6 +16,8 @@ function ChecksSelectionHeader({
   isSavingSelection,
   savedSelection,
   selection,
+  userAbilities,
+  checkSelectionPermittedFor,
   onSaveSelection = () => {},
   onStartExecution = () => {},
 }) {
@@ -31,14 +34,19 @@ function ChecksSelectionHeader({
         </div>
         <div className="flex w-1/2 justify-end">
           <div className="flex w-fit whitespace-nowrap">
-            <Button
-              type="primary-white"
-              className="mx-1 border-green-500 border"
-              onClick={() => onSaveSelection(selection, targetID, targetName)}
-              disabled={isSavingSelection}
+            <DisabledGuard
+              userAbilities={userAbilities}
+              permitted={checkSelectionPermittedFor}
             >
-              Save Checks Selection
-            </Button>
+              <Button
+                type="primary-white"
+                className="mx-1 border-green-500 border"
+                onClick={() => onSaveSelection(selection, targetID, targetName)}
+                disabled={isSavingSelection}
+              >
+                Save Checks Selection
+              </Button>
+            </DisabledGuard>
             <Tooltip
               className="w-56"
               content="Click Start Execution or wait for Trento to periodically run checks."

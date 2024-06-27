@@ -43,6 +43,14 @@ export default {
       control: 'array',
       description: 'The check selection currently displayed',
     },
+    userAbilities: {
+      control: 'array',
+      description: 'Current user abilities',
+    },
+    checkSelectionPermittedFor: {
+      control: 'array',
+      description: 'Abilities that allow check selection',
+    },
     savedSelection: {
       control: 'array',
       description: 'The last saved check selection for the target',
@@ -90,6 +98,8 @@ export const Default = {
       </PageHeader>
     ),
     selection,
+    userAbilities: [{ name: 'all', resource: 'all' }],
+    checkSelectionPermittedFor: ['all:cluster_checks_selection'],
     savedSelection,
     isSavingSelection: false,
   },
@@ -97,8 +107,7 @@ export const Default = {
 
 export const ClusterChecksSelection = {
   args: {
-    targetID,
-    targetName,
+    ...Default.args,
     backTo: (
       <BackButton url={`/clusters/${targetID}`}>
         Back to Cluster Details
@@ -109,16 +118,12 @@ export const ClusterChecksSelection = {
         Cluster Settings for <span className="font-bold">{targetName}</span>
       </PageHeader>
     ),
-    selection,
-    savedSelection,
-    isSavingSelection: false,
   },
 };
 
 export const HostChecksSelection = {
   args: {
-    targetID,
-    targetName,
+    ...Default.args,
     backTo: (
       <BackButton url={`/hosts/${targetID}`}>Back to Host Details</BackButton>
     ),
@@ -127,44 +132,27 @@ export const HostChecksSelection = {
         Check Settings for <span className="font-bold">{targetName}</span>
       </PageHeader>
     ),
-    selection,
-    savedSelection,
-    isSavingSelection: false,
   },
 };
 
 export const SavedSelectionDisabled = {
   args: {
-    targetID,
-    targetName,
-    backTo: (
-      <BackButton url={`/hosts/${targetID}`}>Back to Host Details</BackButton>
-    ),
-    pageHeader: (
-      <PageHeader>
-        Check Settings for <span className="font-bold">{targetName}</span>
-      </PageHeader>
-    ),
-    selection,
-    savedSelection,
+    ...Default.args,
     isSavingSelection: true,
   },
 };
 
 export const CannotStartExecution = {
   args: {
-    targetID,
-    targetName,
-    backTo: (
-      <BackButton url={`/hosts/${targetID}`}>Back to Host Details</BackButton>
-    ),
-    pageHeader: (
-      <PageHeader>
-        Check Settings for <span className="font-bold">{targetName}</span>
-      </PageHeader>
-    ),
-    selection,
+    ...Default.args,
     savedSelection: [],
     isSavingSelection: false,
+  },
+};
+
+export const CheckSelectionForbidden = {
+  args: {
+    ...Default.args,
+    userAbilities: [],
   },
 };

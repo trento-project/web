@@ -12,6 +12,7 @@ import { hostExecutionRequested } from '@state/lastExecutions';
 import { getCatalog } from '@state/selectors/catalog';
 import { getHost, getHostSelectedChecks } from '@state/selectors/host';
 import { isSaving } from '@state/selectors/checksSelection';
+import { getUserProfile } from '@state/selectors/user';
 
 import BackButton from '@common/BackButton';
 import HostInfoBox from '@common/HostInfoBox';
@@ -26,6 +27,7 @@ function HostSettingsPage() {
   const { hostID } = useParams();
   const [selection, setSelection] = useState([]);
 
+  const { abilities } = useSelector(getUserProfile);
   const host = useSelector(getHost(hostID));
   const selectedChecks = useSelector((state) =>
     getHostSelectedChecks(state, hostID)
@@ -86,6 +88,8 @@ function HostSettingsPage() {
         isSavingSelection={saving}
         savedSelection={selectedChecks}
         selection={selection}
+        userAbilities={abilities}
+        checkSelectionPermittedFor={['all:host_checks_selection']}
         onSaveSelection={saveSelection}
         onStartExecution={requestChecksExecution}
       />

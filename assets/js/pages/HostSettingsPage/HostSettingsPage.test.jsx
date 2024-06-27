@@ -18,6 +18,7 @@ describe('HostSettingsPage component', () => {
     const state = {
       ...defaultInitialState,
       hostsList: { hosts: [] },
+      user: { abilities: [] },
     };
 
     const [StatefulHostSettingsPage] = withState(<HostSettingsPage />, state);
@@ -50,6 +51,7 @@ describe('HostSettingsPage component', () => {
       ...defaultInitialState,
       catalog: { ...defaultInitialState.catalog, data: catalog },
       hostsList: { hosts },
+      user: { abilities: [] },
     };
     const { id: hostID, agent_version: agentVersion } = hosts[1];
 
@@ -79,6 +81,7 @@ describe('HostSettingsPage component', () => {
     const state = {
       ...defaultInitialState,
       hostsList: { hosts },
+      user: { abilities: [] },
     };
     const { id: hostID } = hosts[1];
 
@@ -100,6 +103,7 @@ describe('HostSettingsPage component', () => {
     const state = {
       ...defaultInitialState,
       hostsList: { hosts },
+      user: { abilities: [] },
     };
     const { id: hostID } = hosts[1];
     const [StatefulHostSettingsPage] = withState(<HostSettingsPage />, state);
