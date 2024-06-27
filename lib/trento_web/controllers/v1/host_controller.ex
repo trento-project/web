@@ -15,7 +15,7 @@ defmodule TrentoWeb.V1.HostController do
     UnprocessableEntity
   }
 
-  plug TrentoWeb.Plugs.LoadUserPlug
+  plug TrentoWeb.Plugs.LoadUserPlug when action not in [:heartbeat]
 
   plug Bodyguard.Plug.Authorize,
     policy: Trento.Hosts.Policy,

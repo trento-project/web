@@ -21,7 +21,7 @@ defmodule Trento.Hosts.PolicyTest do
   test "should allow unguarded actions" do
     user = %User{abilities: []}
 
-    Enum.each([:list, :delete, :heartbeat, :request_checks_execution], fn action ->
+    Enum.each([:list, :delete, :request_checks_execution], fn action ->
       assert Policy.authorize(action, user, HostReadModel)
     end)
   end
