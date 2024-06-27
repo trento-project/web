@@ -4,6 +4,8 @@ import {
   saptuneDetailsDataUnsupportedVersion,
 } from '../fixtures/saptune-details/saptune_details_data';
 
+import { createUserRequestFactory } from '@lib/test-utils/factories';
+
 context('Host Details', () => {
   before(() => {
     cy.loadScenario('healthy-27-node-SAP-cluster');
@@ -468,6 +470,44 @@ context('Host Details', () => {
         cy.get('@modal').should('not.exist');
         cy.url().should('eq', cy.config().baseUrl + '/hosts');
         cy.get(`#host-${selectedHost.agentId}`).should('not.exist');
+      });
+    });
+  });
+
+  describe('Forbidden actions', () => {
+    const password = 'password';
+
+    beforeEach(() => {
+      cy.deleteAllUsers();
+      cy.logout();
+      const user = createUserRequestFactory.build({
+        password,
+        password_confirmation: password,
+      });
+      cy.wrap(user).as('user');
+    });
+
+    describe('Check Selection', () => {
+      it('should forbid check selection saving', () => {
+        cy.get('@user').then((user) => {
+          cy.createUserWithAbilities(user, []);
+          cy.login(user.username, password);
+        });
+        cy.visit(`/hosts/${selectedHost.agentId}/settings`);
+
+        cy.contains('button', 'Save Checks Selection').should('be.disabled');
+      });
+
+      it('should allow check selection saving', () => {
+        cy.get('@user').then((user) => {
+          cy.createUserWithAbilities(user, [
+            { name: 'all', resource: 'host_checks_selection' },
+          ]);
+          cy.login(user.username, password);
+        });
+        cy.visit(`/hosts/${selectedHost.agentId}/settings`);
+
+        cy.contains('button', 'Save Checks Selection').should('be.enabled');
       });
     });
   });
