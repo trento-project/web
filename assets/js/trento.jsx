@@ -110,6 +110,10 @@ const createRouter = ({ getUser }) =>
                 element={<UpgradablePackagesPage />}
               />
               <Route
+                path="hosts/:hostID/patches/:advisoryID"
+                element={<AdvisoryDetailsPage />}
+              />
+              <Route
                 element={
                   <ForbiddenGuard permitted={['all:users']} outletMode />
                 }
