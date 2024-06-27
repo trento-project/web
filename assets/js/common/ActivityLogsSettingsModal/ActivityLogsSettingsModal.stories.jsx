@@ -12,7 +12,7 @@ export default {
     },
     initialRetentionTime: {
       description:
-        'A structured `{value,unit}` object that defines a retention time interval. `unit` is one of `days`, `months`, `years`.',
+        'A structured `{value,unit}` object that defines a retention time interval. `unit` is one of `day`, `week`, `month`, `year`.',
       control: {
         type: 'object',
       },
