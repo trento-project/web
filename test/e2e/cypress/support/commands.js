@@ -276,6 +276,33 @@ Cypress.Commands.add('clearSUMASettings', () =>
   )
 );
 
+Cypress.Commands.add('createUserWithAbilities', (payload, abilities) =>
+  cy.apiLogin().then(({ accessToken }) =>
+    cy
+      .request({
+        url: '/api/v1/abilities',
+        method: 'GET',
+        auth: { bearer: accessToken },
+        body: {},
+      })
+      .then(({ body }) => {
+        const abilitiesWithID = abilities.map((ability) => ({
+          ...body.find(
+            ({ name, resource }) =>
+              ability.name === name && ability.resource === resource
+          ),
+        }));
+
+        cy.request({
+          url: '/api/v1/users',
+          method: 'POST',
+          auth: { bearer: accessToken },
+          body: { ...payload, abilities: abilitiesWithID },
+        });
+      })
+  )
+);
+
 Cypress.Commands.add('deleteAllUsers', () =>
   cy.apiLogin().then(({ accessToken }) =>
     cy
