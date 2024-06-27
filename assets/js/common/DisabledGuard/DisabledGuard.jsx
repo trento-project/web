@@ -43,7 +43,7 @@ function DisabledGuard({
       place={tooltipPlace}
       wrap={false}
     >
-      <div>{disabledElement}</div>
+      {disabledElement}
     </Tooltip>
   );
 }
