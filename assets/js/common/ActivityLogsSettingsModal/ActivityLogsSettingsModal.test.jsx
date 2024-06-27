@@ -25,6 +25,10 @@ describe('ActivityLogsSettingsModal component', () => {
     });
 
     expect(screen.getByText('Retention Time')).toBeVisible();
+
+    expect(screen.getByRole('spinbutton')).toHaveValue();
+    expect(screen.getByRole('spinbutton')).toBeVisible();
+    expect(screen.getByText(initialRetentionTime.unit)).toBeVisible();
   });
 
   it('should throw when required props are not provided', async () => {
@@ -39,24 +43,6 @@ describe('ActivityLogsSettingsModal component', () => {
         );
       })
     ).rejects.toEqual(expect.any(Error));
-  });
-
-  it('renders previous settings', async () => {
-    const initialRetentionTime = { value: faker.number.int(), unit: 'day' };
-    await act(async () => {
-      render(
-        <ActivityLogsSettingsModal
-          open
-          initialRetentionTime={initialRetentionTime}
-          onSave={() => {}}
-          onCancel={() => {}}
-        />
-      );
-    });
-
-    expect(screen.getByRole('spinbutton')).toHaveValue();
-    expect(screen.getByRole('spinbutton')).toBeVisible();
-    expect(screen.getByText(initialRetentionTime.unit)).toBeVisible();
   });
 
   it('should try to save all the changed fields', async () => {
