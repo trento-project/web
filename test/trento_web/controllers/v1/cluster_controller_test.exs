@@ -4,29 +4,14 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
   import OpenApiSpex.TestAssertions
   import Mox
   import Trento.Factory
+  import Trento.Support.Helpers.AbilitiesHelper
 
   alias TrentoWeb.OpenApi.V1.ApiSpec
 
   setup [:set_mox_from_context, :verify_on_exit!]
 
-  setup %{conn: conn} do
-    conn =
-      conn
-      |> Plug.Conn.put_private(:plug_session, %{})
-      |> Plug.Conn.put_private(:plug_session_fetch, :done)
-      |> Pow.Plug.put_config(otp_app: :trento)
-
-    api_spec = ApiSpec.spec()
-
-    # Default inject all:all abilities user. ability_id 1 is all:all
-    %{id: user_id} = insert(:user)
-    insert(:users_abilities, user_id: user_id, ability_id: 1)
-
-    conn =
-      Pow.Plug.assign_current_user(conn, %{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
-
-    {:ok, conn: put_req_header(conn, "accept", "application/json"), api_spec: api_spec}
-  end
+  setup :setup_api_spec_v1
+  setup :setup_user
 
   describe "list" do
     test "should list all clusters", %{conn: conn} do

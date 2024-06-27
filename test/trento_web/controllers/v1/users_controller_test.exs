@@ -5,33 +5,12 @@ defmodule TrentoWeb.V1.UsersControllerTest do
   import Phoenix.ChannelTest
   import TrentoWeb.ChannelCase
   import Trento.Factory
-
-  alias Trento.Abilities
-  alias TrentoWeb.OpenApi.V1.ApiSpec
+  import Trento.Support.Helpers.AbilitiesHelper
 
   @endpoint TrentoWeb.Endpoint
 
-  setup %{conn: conn} do
-    delete_default_abilities()
-
-    conn =
-      conn
-      |> Plug.Conn.put_private(:plug_session, %{})
-      |> Plug.Conn.put_private(:plug_session_fetch, :done)
-      |> Pow.Plug.put_config(otp_app: :trento)
-
-    api_spec = ApiSpec.spec()
-
-    # Default inject all:all abilities user
-    %{id: user_id} = insert(:user)
-    %{id: ability_id} = insert(:ability, name: "all", resource: "all")
-    insert(:users_abilities, user_id: user_id, ability_id: ability_id)
-
-    conn =
-      Pow.Plug.assign_current_user(conn, %{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
-
-    {:ok, conn: put_req_header(conn, "accept", "application/json"), api_spec: api_spec}
-  end
+  setup :setup_api_spec_v1
+  setup :setup_user
 
   describe "forbidden response" do
     test "should return forbidden on any controller action if the user does not have the right permission",
@@ -390,9 +369,5 @@ defmodule TrentoWeb.V1.UsersControllerTest do
 
       assert_broadcast "user_deleted", %{}, 1000
     end
-  end
-
-  defp delete_default_abilities do
-    Trento.Repo.delete_all(Abilities.Ability)
   end
 end
