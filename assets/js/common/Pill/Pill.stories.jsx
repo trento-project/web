@@ -17,6 +17,15 @@ export function ExtraSmall() {
   return <Pill size="xs">Extra small!</Pill>;
 }
 
+export function Disabled() {
+  return (
+    <Pill size="xs" disabled>
+      {' '}
+      Disabled
+    </Pill>
+  );
+}
+
 export function WithIcon() {
   return (
     <Pill className="bg-green-100 text-green-800 group flex items-center">
