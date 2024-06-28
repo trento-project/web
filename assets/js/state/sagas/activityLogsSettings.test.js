@@ -34,7 +34,6 @@ describe('Activity Logs Settings saga', () => {
       ]);
     });
 
-
     it.each([403, 404, 500, 502, 504])(
       'should put a network error flag on failed fetching',
       async (status) => {
