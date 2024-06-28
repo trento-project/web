@@ -18,7 +18,7 @@ function ChecksSelectionHeader({
   selection,
   userAbilities,
   checkSelectionPermittedFor,
-  checkExecutionPermettidedFor,
+  checkExecutionPermittedFor,
   onSaveSelection = () => {},
   onStartExecution = () => {},
 }) {
@@ -56,7 +56,7 @@ function ChecksSelectionHeader({
             >
               <DisabledGuard
                 userAbilities={userAbilities}
-                permitted={checkExecutionPermettidedFor}
+                permitted={checkExecutionPermittedFor}
               >
                 <Button
                   type="primary"
