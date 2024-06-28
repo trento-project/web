@@ -43,6 +43,7 @@ Trento.Clusters.Events.ClusterTombstoned.html
 Trento.Clusters.Events.HostAddedToCluster.html
 Trento.Clusters.Events.HostRemovedFromCluster.html
 Trento.Clusters.Lifespan.html
+Trento.Clusters.Policy.html
 Trento.Clusters.Projections.ClusterProjector.html
 Trento.Clusters.Projections.ClusterReadModel.html
 Trento.Clusters.ValueObjects.AscsErsClusterDetails.html
@@ -238,6 +239,7 @@ Trento.Hosts.Events.SoftwareUpdatesDiscoveryRequested.html
 Trento.Hosts.Events.SoftwareUpdatesHealthChanged.html
 Trento.Hosts.Host.html
 Trento.Hosts.Lifespan.html
+Trento.Hosts.Policy.html
 Trento.Hosts.Projections.HostProjector.html
 Trento.Hosts.Projections.HostReadModel.html
 Trento.Hosts.Projections.SlesSubscriptionReadModel.html
@@ -353,6 +355,7 @@ Trento.Support.Ecto.STI.html
 Trento.Support.Enum.html
 Trento.Support.Event.html
 Trento.Support.EventHandlerFailureContext.html
+Trento.Support.Helpers.AbilitiesTestHelper.html
 Trento.Support.IntermediateEvent.html
 Trento.Support.JsonbSerializer.html
 Trento.Support.ListHelper.html
@@ -477,8 +480,8 @@ dist/merriweather-latin-ext-300-normal-K6L27CZ5.woff2
 dist/merriweather-vietnamese-300-italic-EHHNZPUO.woff2
 dist/merriweather-vietnamese-300-normal-U376L4Z4.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-325229DA.js
-dist/sidebar_items-3F2758B0.js
+dist/search_data-1B8DC1F3.js
+dist/sidebar_items-BF19B8F2.js
 environment_variables.html
 hack_on_the_trento.html
 index.html
