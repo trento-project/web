@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-43PMFBC7.js"></script>
-    <script src="dist/sidebar_items-BF19B8F2.js"></script>
+    <script src="dist/sidebar_items-16F61CBE.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -161,6 +161,54 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
+        <a href="#c:get_affected_packages/4" translate="no">get_affected_packages(base_url, auth, advisory_name, ca_cert)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:get_affected_systems/4" translate="no">get_affected_systems(base_url, auth, advisory_name, ca_cert)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:get_bugzilla_fixes/4" translate="no">get_bugzilla_fixes(base_url, auth, advisory_name, ca_cert)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:get_cves/4" translate="no">get_cves(base_url, auth, advisory_name, ca_cert)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:get_errata_details/4" translate="no">get_errata_details(base_url, auth, advisory_name, ca_cert)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:get_patches_for_package/4" translate="no">get_patches_for_package(base_url, auth, package_id, ca_cert)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
         <a href="#c:get_relevant_patches/4" translate="no">get_relevant_patches(base_url, auth, system_id, ca_cert)</a>
 
       </div>
@@ -226,6 +274,204 @@ GUIDES
       <span class="text">Callbacks</span>
     </h1>
     <div class="callbacks-list">
+<section class="detail" id="c:get_affected_packages/4">
+
+  <div class="detail-header">
+    <a href="#c:get_affected_packages/4" class="detail-link" title="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this callback</span>
+    </a>
+    <h1 class="signature" translate="no">get_affected_packages(base_url, auth, advisory_name, ca_cert)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/software_updates/adapter/suma_http_executor.ex#L62" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> get_affected_packages(
+  base_url :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  auth :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  advisory_name :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  ca_cert :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil
+) :: {:ok, <a href="https://hexdocs.pm/httpoison/2.2.1/HTTPoison.Response.html#t:t/0">HTTPoison.Response.t</a>()} | {:error, <a href="https://hexdocs.pm/httpoison/2.2.1/HTTPoison.Error.html#t:t/0">HTTPoison.Error.t</a>()}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="c:get_affected_systems/4">
+
+  <div class="detail-header">
+    <a href="#c:get_affected_systems/4" class="detail-link" title="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this callback</span>
+    </a>
+    <h1 class="signature" translate="no">get_affected_systems(base_url, auth, advisory_name, ca_cert)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/software_updates/adapter/suma_http_executor.ex#L46" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> get_affected_systems(
+  base_url :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  auth :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  advisory_name :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  ca_cert :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil
+) :: {:ok, <a href="https://hexdocs.pm/httpoison/2.2.1/HTTPoison.Response.html#t:t/0">HTTPoison.Response.t</a>()} | {:error, <a href="https://hexdocs.pm/httpoison/2.2.1/HTTPoison.Error.html#t:t/0">HTTPoison.Error.t</a>()}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="c:get_bugzilla_fixes/4">
+
+  <div class="detail-header">
+    <a href="#c:get_bugzilla_fixes/4" class="detail-link" title="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this callback</span>
+    </a>
+    <h1 class="signature" translate="no">get_bugzilla_fixes(base_url, auth, advisory_name, ca_cert)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/software_updates/adapter/suma_http_executor.ex#L78" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> get_bugzilla_fixes(
+  base_url :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  auth :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  advisory_name :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  ca_cert :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil
+) :: {:ok, <a href="https://hexdocs.pm/httpoison/2.2.1/HTTPoison.Response.html#t:t/0">HTTPoison.Response.t</a>()} | {:error, <a href="https://hexdocs.pm/httpoison/2.2.1/HTTPoison.Error.html#t:t/0">HTTPoison.Error.t</a>()}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="c:get_cves/4">
+
+  <div class="detail-header">
+    <a href="#c:get_cves/4" class="detail-link" title="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this callback</span>
+    </a>
+    <h1 class="signature" translate="no">get_cves(base_url, auth, advisory_name, ca_cert)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/software_updates/adapter/suma_http_executor.ex#L54" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> get_cves(
+  base_url :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  auth :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  advisory_name :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  ca_cert :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil
+) :: {:ok, <a href="https://hexdocs.pm/httpoison/2.2.1/HTTPoison.Response.html#t:t/0">HTTPoison.Response.t</a>()} | {:error, <a href="https://hexdocs.pm/httpoison/2.2.1/HTTPoison.Error.html#t:t/0">HTTPoison.Error.t</a>()}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="c:get_errata_details/4">
+
+  <div class="detail-header">
+    <a href="#c:get_errata_details/4" class="detail-link" title="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this callback</span>
+    </a>
+    <h1 class="signature" translate="no">get_errata_details(base_url, auth, advisory_name, ca_cert)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/software_updates/adapter/suma_http_executor.ex#L38" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> get_errata_details(
+  base_url :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  auth :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  advisory_name :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  ca_cert :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil
+) :: {:ok, <a href="https://hexdocs.pm/httpoison/2.2.1/HTTPoison.Response.html#t:t/0">HTTPoison.Response.t</a>()} | {:error, <a href="https://hexdocs.pm/httpoison/2.2.1/HTTPoison.Error.html#t:t/0">HTTPoison.Error.t</a>()}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="c:get_patches_for_package/4">
+
+  <div class="detail-header">
+    <a href="#c:get_patches_for_package/4" class="detail-link" title="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this callback</span>
+    </a>
+    <h1 class="signature" translate="no">get_patches_for_package(base_url, auth, package_id, ca_cert)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/software_updates/adapter/suma_http_executor.ex#L70" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> get_patches_for_package(
+  base_url :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  auth :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  package_id :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  ca_cert :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil
+) :: {:ok, <a href="https://hexdocs.pm/httpoison/2.2.1/HTTPoison.Response.html#t:t/0">HTTPoison.Response.t</a>()} | {:error, <a href="https://hexdocs.pm/httpoison/2.2.1/HTTPoison.Error.html#t:t/0">HTTPoison.Error.t</a>()}</pre>
+
+      </div>
+
+
+  </section>
+</section>
 <section class="detail" id="c:get_relevant_patches/4">
 
   <div class="detail-header">
@@ -379,7 +625,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">get_cert_der(ca_cert)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/software_updates/adapter/suma_http_executor.ex#L93" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/software_updates/adapter/suma_http_executor.ex#L213" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -401,7 +647,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">split_type_and_entry(ans1_entry)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/software_updates/adapter/suma_http_executor.ex#L104" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/software_updates/adapter/suma_http_executor.ex#L224" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
