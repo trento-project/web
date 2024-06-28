@@ -128,6 +128,7 @@ function ClusterSettingsPage() {
         selection={selection}
         userAbilities={abilities}
         checkSelectionPermittedFor={['all:cluster_checks_selection']}
+        checkExecutionPermittedFor={['all:cluster_checks_execution']}
         onSaveSelection={saveSelection}
         onStartExecution={requestChecksExecution}
       />

@@ -81,7 +81,7 @@ describe('HostSettingsPage component', () => {
     const state = {
       ...defaultInitialState,
       hostsList: { hosts },
-      user: { abilities: [] },
+      user: { abilities: [{ name: 'all', resource: 'host_checks_execution' }] },
     };
     const { id: hostID } = hosts[1];
 
@@ -103,7 +103,7 @@ describe('HostSettingsPage component', () => {
     const state = {
       ...defaultInitialState,
       hostsList: { hosts },
-      user: { abilities: [] },
+      user: { abilities: [{ name: 'all', resource: 'host_checks_execution' }] },
     };
     const { id: hostID } = hosts[1];
     const [StatefulHostSettingsPage] = withState(<HostSettingsPage />, state);
