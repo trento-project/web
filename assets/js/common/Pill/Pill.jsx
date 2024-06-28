@@ -13,6 +13,7 @@ function Pill({
   size = 'sm',
   roundedMode = 'rounded-full',
   display = 'inline-flex',
+  disabled,
 }) {
   return (
     <span
@@ -22,13 +23,17 @@ function Pill({
           'bg-green-100': !className,
           'text-green-800': !className,
         },
+        { 'opacity-50 pointer-events-none': disabled },
         roundedMode,
         sizeClasses[size],
         display,
         className
       )}
       aria-hidden="true"
-      onClick={onClick}
+      onClick={(e) => {
+        if (disabled) return;
+        onClick(e);
+      }}
     >
       {children}
     </span>
