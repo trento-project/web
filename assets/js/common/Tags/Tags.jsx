@@ -15,6 +15,23 @@ const tagValidationDefaultMessage = (
   </>
 );
 
+function TagDeleteButton({ onClick, disabled }) {
+  return (
+    <span
+      aria-hidden="true"
+      className={classNames('ml-2 cursor-pointer group-hover:opacity-60', {
+        'opacity-50 pointer-events-none': disabled,
+      })}
+      onClick={() => {
+        if (disabled) return;
+        onClick();
+      }}
+    >
+      <EOS_CLOSE color="#276749" size="base" />
+    </span>
+  );
+}
+
 function Tags({
   className,
   tags,
@@ -75,9 +92,7 @@ function Tags({
           }}
         >
           {tag}
-          <span
-            aria-hidden="true"
-            className="ml-2 cursor-pointer group-hover:opacity-60"
+          <TagDeleteButton
             onClick={() => {
               const newTagsList = renderedTags.reduce(
                 (acc, current) => (current === tag ? acc : [...acc, current]),
@@ -87,9 +102,7 @@ function Tags({
               onChange(newTagsList);
               onRemove(tag);
             }}
-          >
-            <EOS_CLOSE color="#276749" size="base" />
-          </span>
+          />
         </Pill>
       ))}
       {addingTag ? (
