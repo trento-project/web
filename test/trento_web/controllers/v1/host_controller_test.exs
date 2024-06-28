@@ -7,7 +7,6 @@ defmodule TrentoWeb.V1.HostControllerTest do
   import Trento.Support.Helpers.AbilitiesTestHelper
 
   alias Trento.Hosts.Commands.RequestHostDeregistration
-  alias Trento.Abilities
 
   setup [:set_mox_from_context, :verify_on_exit!]
 
