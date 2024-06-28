@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { Factory } from 'fishery';
 
-const advisoryType = ['security_advisory', 'bugfix', 'enhancement'];
+export const advisoryType = ['security_advisory', 'bugfix', 'enhancement'];
 
 export const relevantPatchFactory = Factory.define(() => ({
   advisory_name: faker.animal.cat(),

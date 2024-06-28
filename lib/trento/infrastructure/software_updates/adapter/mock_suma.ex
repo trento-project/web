@@ -109,7 +109,17 @@ defmodule Trento.Infrastructure.SoftwareUpdates.MockSuma do
          last_modified_date: "2024-02-27",
          advisory_status: "stable",
          reboot_suggested: true,
-         restart_suggested: true
+         restart_suggested: true,
+         id: 2,
+         release: 3,
+         vendor_advisory: "IBM",
+         product: "IBM® Semeru Runtime™ Certified Edition",
+         errataFrom: "SUSE",
+         topic: "Java",
+         description: "Minor security bug fixes",
+         references: "N.A.",
+         notes: "N.A.",
+         solution: "N.A."
        }}
 
   @impl true
