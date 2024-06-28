@@ -94,8 +94,9 @@ defmodule TrentoWeb.V1.SUSEManagerController do
 
   @spec errata_details(Plug.Conn.t(), any) :: Plug.Conn.t()
   def errata_details(conn, %{advisory_name: advisory_name}) do
-    with {:ok, errata_details} <- Discovery.get_errata_details(advisory_name) do
-      render(conn, %{errata_details: errata_details})
+    with {:ok, errata_details} <- Discovery.get_errata_details(advisory_name),
+         {:ok, fixes} <- Discovery.get_bugzilla_fixes(advisory_name) do
+      render(conn, %{errata_details: errata_details, fixes: fixes})
     end
   end
 end

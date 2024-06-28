@@ -124,6 +124,13 @@ defmodule TrentoWeb.FallbackController do
     |> render(:"422", reason: "Unable to retrieve errata details for this advisory.")
   end
 
+  def call(conn, {:error, :error_getting_fixes}) do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> put_view(ErrorView)
+    |> render(:"422", reason: "Unable to retrieve Bugzilla fixes for this advisory.")
+  end
+
   def call(conn, {:error, :connection_test_failed}) do
     conn
     |> put_status(:unprocessable_entity)

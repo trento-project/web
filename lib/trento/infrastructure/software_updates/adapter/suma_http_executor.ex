@@ -75,6 +75,14 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
             ) ::
               {:ok, HTTPoison.Response.t()} | {:error, HTTPoison.Error.t()}
 
+  @callback get_bugzilla_fixes(
+              base_url :: String.t(),
+              auth :: String.t(),
+              advisory_name :: String.t(),
+              ca_cert :: String.t() | nil
+            ) ::
+              {:ok, HTTPoison.Response.t()} | {:error, HTTPoison.Error.t()}
+
   @behaviour Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor
 
   @impl true
@@ -178,6 +186,17 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
       "",
       [{"Content-type", "application/json"}],
       [params: %{pid: String.to_integer(package_id)}] ++ request_options(auth, ca_cert)
+    )
+  end
+
+  @impl true
+  def get_bugzilla_fixes(base_url, auth, advisory_name, ca_cert) do
+    HTTPoison.request(
+      :post,
+      "#{base_url}/errata/bugzillaFixes",
+      "",
+      [{"Content-type", "application/json"}],
+      [params: %{"advisoryName" => advisory_name}] ++ request_options(auth, ca_cert)
     )
   end
 

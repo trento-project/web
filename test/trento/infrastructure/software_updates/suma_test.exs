@@ -349,6 +349,21 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
                Suma.get_errata_details(advisory_name)
     end
 
+    test "should get Bugzilla fixes for an advisory" do
+      advisory_name = Faker.UUID.v4()
+
+      %{result: fixes} =
+        suma_response_body = %{success: true, result: build(:bugzilla_fix)}
+
+      expect(SumaAuthMock, :authenticate, 1, fn -> {:ok, authenticated_state()} end)
+
+      expect(SumaApiMock, :get_bugzilla_fixes, 1, fn _, _, ^advisory_name, _ ->
+        {:ok, %HTTPoison.Response{status_code: 200, body: Jason.encode!(suma_response_body)}}
+      end)
+
+      {:ok, ^fixes} = Suma.get_bugzilla_fixes(advisory_name)
+    end
+
     test "should handle expired authentication" do
       fqdn = "machine.fqdn.internal"
 

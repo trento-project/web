@@ -983,6 +983,16 @@ defmodule Trento.Factory do
     }
   end
 
+  def bugzilla_fix_factory do
+    1..Enum.random(1..4)
+    |> Enum.map(fn _ ->
+      bugzilla_id = Integer.to_string(Enum.random(1..65_536))
+      bug_summary = Faker.Lorem.sentence()
+      {String.to_atom(bugzilla_id), bug_summary}
+    end)
+    |> Map.new()
+  end
+
   def self_signed_certificate_factory(attrs) do
     validity = Map.get(attrs, :validity, 500)
 

@@ -180,6 +180,26 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
     |> extract_result()
   end
 
+  @spec get_bugzilla_fixes(
+          url :: String.t(),
+          auth :: any(),
+          advisory_name :: String.t(),
+          ca_cert :: String.t() | nil
+        ) ::
+          {:ok, [map()]}
+          | {:error, :error_getting_fixes | :authentication_error}
+  def get_bugzilla_fixes(url, auth, advisory_name, ca_cert) do
+    url
+    |> get_suma_api_url()
+    |> http_executor().get_bugzilla_fixes(auth, advisory_name, ca_cert)
+    |> handle_auth_error()
+    |> decode_response(
+      error_atom: :error_getting_fixes,
+      error_log: "Failed to get Bugzilla fixes for advisory #{advisory_name}."
+    )
+    |> extract_result()
+  end
+
   defp handle_auth_error({:ok, %HTTPoison.Response{status_code: 401}}),
     do: {:error, :authentication_error}
 
@@ -257,7 +277,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
   defp do_login(url, username, password, ca_cert) do
     case http_executor().login(url, username, password, ca_cert) do
       {:ok, %HTTPoison.Response{headers: headers, status_code: 200} = response} ->
-        Logger.debug("Successfully logged into suma #{inspect(response)}")
+        Logger.debug("Successfully logged into SUMA #{inspect(response)}")
         {:ok, get_session_cookies(headers)}
 
       {:ok, %HTTPoison.Response{status_code: _} = response} ->
@@ -311,7 +331,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
 
   defp extract_system_id({:ok, response}) do
     Logger.error(
-      "Could not get system id for host from suma result. Result: #{inspect(response)}"
+      "Could not get system id for host from SUMA result. Result: #{inspect(response)}"
     )
 
     {:error, :system_id_not_found}

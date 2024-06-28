@@ -54,6 +54,9 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma do
   def get_affected_packages(advisory_name),
     do: handle_request({:get_affected_packages, advisory_name})
 
+  @impl Trento.SoftwareUpdates.Discovery.Gen
+  def get_bugzilla_fixes(advisory_name), do: handle_request({:get_bugzilla_fixes, advisory_name})
+
   defp handle_request(request) do
     case auth().authenticate() do
       {:ok, new_state} ->
@@ -128,6 +131,13 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma do
          ca_cert: ca_cert
        }),
        do: SumaApi.get_affected_packages(url, auth_cookie, advisory_name, ca_cert)
+
+  defp do_handle({:get_bugzilla_fixes, advisory_name}, %State{
+         url: url,
+         auth: auth_cookie,
+         ca_cert: ca_cert
+       }),
+       do: SumaApi.get_bugzilla_fixes(url, auth_cookie, advisory_name, ca_cert)
 
   defp auth, do: Application.fetch_env!(:trento, __MODULE__)[:auth]
 end
