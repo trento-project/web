@@ -121,6 +121,11 @@ defmodule TrentoWeb.Router do
 
       if Application.compile_env!(:trento, :suse_manager_enabled) do
         get "/hosts/:id/software_updates", SUSEManagerController, :software_updates
+        get "/software_updates/packages", SUSEManagerController, :patches_for_packages
+
+        get "/software_updates/errata_details/:advisory_name",
+            SUSEManagerController,
+            :errata_details
       end
 
       post "/clusters/:id/tags", TagsController, :add_tag,

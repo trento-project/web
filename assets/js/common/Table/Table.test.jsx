@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { noop } from 'lodash';
 import { screen, fireEvent, render, waitFor } from '@testing-library/react';
 import 'intersection-observer';
 import '@testing-library/jest-dom';
@@ -197,6 +198,58 @@ describe('Table component', () => {
       expect(rowKey).toHaveBeenCalledWith(data[0], 0);
       expect(rowKey).toHaveBeenCalledWith(data[1], 1);
       expect(rowKey).toHaveBeenCalledWith(data[2], 2);
+    });
+  });
+
+  describe('sorting', () => {
+    it('should sort by the chosen column', async () => {
+      const data = tableDataFactory.buildList(10);
+
+      const columnsConfigForSorted = tableConfig.columns.map((c) => {
+        if (c.key === 'column1') {
+          return {
+            ...c,
+            sortable: true,
+            sortDirection: 'asc',
+            handleClick: noop,
+          };
+        }
+
+        return c;
+      });
+
+      const orderByColumn1 = (a, b) => {
+        const column1A = a.column1.toUpperCase();
+        const column1B = b.column1.toUpperCase();
+
+        if (column1A < column1B) {
+          return -1;
+        }
+
+        if (column1A > column1B) {
+          return 1;
+        }
+
+        return 0;
+      };
+
+      const { container } = render(
+        <Table
+          config={{ ...tableConfig, columns: columnsConfigForSorted }}
+          sortBy={orderByColumn1}
+          data={data}
+        />
+      );
+
+      const tableRows = container.querySelectorAll('tbody > tr');
+
+      expect(tableRows.length).toBe(10);
+
+      const sortedData = [...data].sort(orderByColumn1);
+
+      sortedData.forEach((expectedText, i) => {
+        expect(tableRows[i]).toHaveTextContent(expectedText.column1);
+      });
     });
   });
 });

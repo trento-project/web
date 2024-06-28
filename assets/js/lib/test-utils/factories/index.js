@@ -8,6 +8,8 @@ export * from './hosts';
 export * from './sapSystems';
 export * from './clusters';
 export * from './databases';
+export * from './relevantPatches';
+export * from './advisoryErrata';
 
 export const randomObjectFactory = Factory.define(({ transientParams }) => {
   const depth = transientParams.depth || 2;

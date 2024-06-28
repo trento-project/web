@@ -44,6 +44,28 @@ defmodule Trento.SoftwareUpdates.Discovery do
   def get_upgradable_packages(system_id),
     do: adapter().get_upgradable_packages(system_id)
 
+  @impl true
+  def get_patches_for_package(package_id),
+    do: adapter().get_patches_for_package(package_id)
+
+  @impl true
+  def get_errata_details(advisory_name),
+    do: adapter().get_errata_details(advisory_name)
+
+  @impl true
+  def get_cves(advisory_name),
+    do: adapter().get_cves(advisory_name)
+
+  @impl true
+  def get_affected_systems(advisory_name),
+    do: adapter().get_affected_systems(advisory_name)
+
+  @impl true
+  def get_affected_packages(advisory_name), do: adapter().get_affected_packages(advisory_name)
+
+  @impl true
+  def get_bugzilla_fixes(advisory_name), do: adapter().get_bugzilla_fixes(advisory_name)
+
   @spec discover_software_updates :: {:ok, {list(), list()}}
   def discover_software_updates do
     authentication = setup()

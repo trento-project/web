@@ -198,7 +198,7 @@ config :trento, Trento.SoftwareUpdates.Discovery,
 config :trento, Trento.Infrastructure.SoftwareUpdates.Suma,
   auth: Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuth
 
-config :trento, Trento.Infrastructure.SoftwareUpdates.MockSuma, relevant_patches: %{}
+config :trento, Trento.Infrastructure.SoftwareUpdates.MockSuma, relevant_patches_system_ids: []
 
 config :trento, Trento.Infrastructure.SoftwareUpdates.SumaApi,
   executor: Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor

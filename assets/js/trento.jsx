@@ -26,6 +26,9 @@ import ForbiddenGuard from '@common/ForbiddenGuard';
 import Home from '@pages/Home';
 import HostDetailsPage from '@pages/HostDetailsPage';
 import HostSettingsPage from '@pages/HostSettingsPage';
+import HostRelevantPatchesPage from '@pages/HostRelevantPatches';
+import AdvisoryDetailsPage from '@pages/AdvisoryDetails';
+import UpgradablePackagesPage from '@pages/UpgradablePackagesPage';
 import HostsList from '@pages/HostsList';
 import Layout from '@pages/Layout';
 import Login from '@pages/Login';
@@ -97,6 +100,18 @@ const createRouter = ({ getUser }) =>
               <Route
                 path="hosts/:targetID/executions/last/:checkID/:resultTargetType/:resultTargetName"
                 element={<CheckResultDetailPage targetType={TARGET_HOST} />}
+              />
+              <Route
+                path="hosts/:hostID/patches"
+                element={<HostRelevantPatchesPage />}
+              />
+              <Route
+                path="hosts/:hostID/packages"
+                element={<UpgradablePackagesPage />}
+              />
+              <Route
+                path="hosts/:hostID/patches/:advisoryID"
+                element={<AdvisoryDetailsPage />}
               />
               <Route
                 element={

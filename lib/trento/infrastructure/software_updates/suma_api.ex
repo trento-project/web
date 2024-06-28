@@ -29,26 +29,15 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
         ) ::
           {:ok, pos_integer()} | {:error, :system_id_not_found | :authentication_error}
   def get_system_id(url, auth, fully_qualified_domain_name, ca_cert) do
-    response =
-      url
-      |> get_suma_api_url()
-      |> http_executor().get_system_id(auth, fully_qualified_domain_name, ca_cert)
-
-    with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <- response,
-         {:ok, %{success: true, result: result}} <- Jason.decode(body, keys: :atoms),
-         {:ok, system_id} <- extract_system_id(result) do
-      {:ok, system_id}
-    else
-      {:ok, %HTTPoison.Response{status_code: 401}} ->
-        {:error, :authentication_error}
-
-      error ->
-        Logger.error(
-          "Failed to get system id for host #{fully_qualified_domain_name}. Error: #{inspect(error)}"
-        )
-
-        {:error, :system_id_not_found}
-    end
+    url
+    |> get_suma_api_url()
+    |> http_executor().get_system_id(auth, fully_qualified_domain_name, ca_cert)
+    |> handle_auth_error()
+    |> decode_response(
+      error_atom: :system_id_not_found,
+      error_log: "Failed to get system id for host #{fully_qualified_domain_name}."
+    )
+    |> extract_system_id()
   end
 
   @spec get_relevant_patches(
@@ -60,26 +49,15 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
           {:ok, [map()]}
           | {:error, :error_getting_patches | :authentication_error}
   def get_relevant_patches(url, auth, system_id, ca_cert) do
-    response =
-      url
-      |> get_suma_api_url()
-      |> http_executor().get_relevant_patches(auth, system_id, ca_cert)
-
-    with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <- response,
-         {:ok, %{success: true, result: result}} <- Jason.decode(body, keys: :atoms) do
-      {:ok,
-       Enum.map(result, fn %{advisory_type: advisory_type} = advisory ->
-         %{advisory | advisory_type: AdvisoryType.from_string(advisory_type)}
-       end)}
-    else
-      {:ok, %HTTPoison.Response{status_code: 401}} ->
-        {:error, :authentication_error}
-
-      error ->
-        Logger.error("Failed to get errata for system ID #{system_id}. Error: #{inspect(error)}")
-
-        {:error, :error_getting_patches}
-    end
+    url
+    |> get_suma_api_url()
+    |> http_executor().get_relevant_patches(auth, system_id, ca_cert)
+    |> handle_auth_error()
+    |> decode_response(
+      error_atom: :error_getting_patches,
+      error_log: "Failed to get errata for system ID #{system_id}."
+    )
+    |> extract_relevant_patches()
   end
 
   @spec get_upgradable_packages(
@@ -102,15 +80,153 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
     |> extract_upgradable_packages()
   end
 
-  defp handle_auth_error({:ok, %HTTPoison.Response{status_code: 200, body: body}}),
-    do: {:ok, body}
+  @spec get_patches_for_package(
+          url :: String.t(),
+          auth :: any(),
+          package_id :: String.t(),
+          ca_cert :: String.t() | nil
+        ) ::
+          {:ok, [map()]}
+          | {:error, :error_getting_patches | :authentication_error}
+  def get_patches_for_package(url, auth, package_id, ca_cert) do
+    url
+    |> get_suma_api_url()
+    |> http_executor().get_patches_for_package(auth, package_id, ca_cert)
+    |> handle_auth_error()
+    |> decode_response(
+      error_atom: :error_getting_patches,
+      error_log: "Failed to get patches for package ID #{package_id}."
+    )
+    |> extract_result()
+  end
+
+  @spec get_affected_systems(
+          url :: String.t(),
+          auth :: any(),
+          advisory_name :: String.t(),
+          ca_cert :: String.t() | nil
+        ) ::
+          {:ok, [map()]}
+          | {:error, :error_getting_affected_systems | :authentication_error}
+  def get_affected_systems(url, auth, advisory_name, ca_cert) do
+    url
+    |> get_suma_api_url()
+    |> http_executor().get_affected_systems(auth, advisory_name, ca_cert)
+    |> handle_auth_error()
+    |> decode_response(
+      error_atom: :error_getting_affected_systems,
+      error_log: "Failed to get affected systems for advisory #{advisory_name}."
+    )
+    |> extract_result()
+  end
+
+  @spec get_errata_details(
+          url :: String.t(),
+          auth :: any(),
+          advisory_name :: String.t(),
+          ca_cert :: String.t() | nil
+        ) ::
+          {:ok, [map()]}
+          | {:error, :error_getting_errata_details | :authentication_error}
+  def get_errata_details(url, auth, advisory_name, ca_cert) do
+    url
+    |> get_suma_api_url()
+    |> http_executor().get_errata_details(auth, advisory_name, ca_cert)
+    |> handle_auth_error()
+    |> decode_response(
+      error_atom: :error_getting_errata_details,
+      error_log: "Failed to get patches for advisory #{advisory_name}."
+    )
+    |> extract_result()
+  end
+
+  @spec get_cves(
+          url :: String.t(),
+          auth :: any(),
+          advisory_name :: String.t(),
+          ca_cert :: String.t() | nil
+        ) ::
+          {:ok, [map()]}
+          | {:error, :error_getting_cves | :authentication_error}
+  def get_cves(url, auth, advisory_name, ca_cert) do
+    url
+    |> get_suma_api_url()
+    |> http_executor().get_cves(auth, advisory_name, ca_cert)
+    |> handle_auth_error()
+    |> decode_response(
+      error_atom: :error_getting_cves,
+      error_log: "Failed to get CVEs for advisory #{advisory_name}."
+    )
+    |> extract_result()
+  end
+
+  @spec get_affected_packages(
+          url :: String.t(),
+          auth :: any(),
+          advisory_name :: String.t(),
+          ca_cert :: String.t() | nil
+        ) ::
+          {:ok, [map()]}
+          | {:error, :error_getting_affected_packages | :authentication_error}
+  def get_affected_packages(url, auth, advisory_name, ca_cert) do
+    url
+    |> get_suma_api_url()
+    |> http_executor().get_affected_packages(auth, advisory_name, ca_cert)
+    |> handle_auth_error()
+    |> decode_response(
+      error_atom: :error_getting_affected_packages,
+      error_log: "Failed to get affected packages for advisory #{advisory_name}."
+    )
+    |> extract_result()
+  end
+
+  @spec get_bugzilla_fixes(
+          url :: String.t(),
+          auth :: any(),
+          advisory_name :: String.t(),
+          ca_cert :: String.t() | nil
+        ) ::
+          {:ok, [map()]}
+          | {:error, :error_getting_fixes | :authentication_error}
+  def get_bugzilla_fixes(url, auth, advisory_name, ca_cert) do
+    url
+    |> get_suma_api_url()
+    |> http_executor().get_bugzilla_fixes(auth, advisory_name, ca_cert)
+    |> handle_auth_error()
+    |> decode_response(
+      error_atom: :error_getting_fixes,
+      error_log: "Failed to get Bugzilla fixes for advisory #{advisory_name}."
+    )
+    |> extract_result()
+  end
 
   defp handle_auth_error({:ok, %HTTPoison.Response{status_code: 401}}),
     do: {:error, :authentication_error}
 
+  defp handle_auth_error({:ok, %HTTPoison.Response{status_code: _, body: body}}),
+    do: {:ok, body}
+
   defp handle_auth_error(error), do: error
 
-  defp decode_response({:ok, body}, _), do: Jason.decode(body, keys: :atoms)
+  defp decode_response({:ok, nil}, error_atom: error_atom, error_log: error_log) do
+    Logger.error("#{error_log}. Nil body received.")
+
+    {:error, error_atom}
+  end
+
+  defp decode_response({:ok, body}, error_atom: error_atom, error_log: error_log) do
+    case Jason.decode(body, keys: :atoms) do
+      {:ok, %{success: true}} = result ->
+        result
+
+      error ->
+        Logger.error("#{error_log} Error: #{inspect(error)}")
+
+        {:error, error_atom}
+    end
+  end
+
+  defp decode_response({:error, :authentication_error}, _), do: {:error, :authentication_error}
 
   defp decode_response({:error, _} = error, error_atom: error_atom, error_log: error_log) do
     Logger.error("#{error_log} Error: #{inspect(error)}")
@@ -118,11 +234,26 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
     {:error, error_atom}
   end
 
+  defp extract_relevant_patches({:ok, %{success: true, result: result}}) do
+    {:ok,
+     Enum.map(result, fn %{advisory_type: advisory_type} = advisory ->
+       %{advisory | advisory_type: AdvisoryType.from_string(advisory_type)}
+     end)}
+  end
+
+  defp extract_relevant_patches({:error, _} = error), do: error
+
   defp extract_upgradable_packages({:ok, %{success: true, result: result}}) do
     {:ok, result}
   end
 
   defp extract_upgradable_packages({:error, _} = error), do: error
+
+  defp extract_result({:ok, %{success: true, result: result}}) do
+    {:ok, result}
+  end
+
+  defp extract_result({:error, _} = error), do: error
 
   defp get_suma_api_url(base_url),
     do: String.trim_trailing(base_url, "/") <> "/rhn/manager/api"
@@ -146,7 +277,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
   defp do_login(url, username, password, ca_cert) do
     case http_executor().login(url, username, password, ca_cert) do
       {:ok, %HTTPoison.Response{headers: headers, status_code: 200} = response} ->
-        Logger.debug("Successfully logged into suma #{inspect(response)}")
+        Logger.debug("Successfully logged into SUMA #{inspect(response)}")
         {:ok, get_session_cookies(headers)}
 
       {:ok, %HTTPoison.Response{status_code: _} = response} ->
@@ -183,19 +314,30 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
       |> String.split(";")
       |> Enum.find(&match_suma_session_cookie(&1))
 
-  defp extract_system_id(result) do
-    with false <- Enum.empty?(result),
-         %{id: system_id} <- Enum.at(result, 0) do
-      {:ok, system_id}
-    else
-      _ ->
-        Logger.error(
-          "Could not get system id for host from suma result. Result: #{inspect(result)}"
-        )
-
-        {:error, :system_id_not_found}
-    end
+  defp extract_system_id(
+         {:ok,
+          %{
+            success: true,
+            result: [
+              %{
+                id: system_id
+              }
+              | _
+            ]
+          }}
+       ) do
+    {:ok, system_id}
   end
+
+  defp extract_system_id({:ok, response}) do
+    Logger.error(
+      "Could not get system id for host from SUMA result. Result: #{inspect(response)}"
+    )
+
+    {:error, :system_id_not_found}
+  end
+
+  defp extract_system_id({:error, _} = error), do: error
 
   defp http_executor, do: Application.fetch_env!(:trento, __MODULE__)[:executor]
 end

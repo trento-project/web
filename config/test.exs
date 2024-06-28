@@ -85,26 +85,7 @@ config :joken,
   refresh_token_signer: "L0wvcZh3ACQpibVhV/nh5jd/NaZWL4ijZxTxGJMGpacuXIBc4In3YCwXeVM98ygp"
 
 config :trento, Trento.Infrastructure.SoftwareUpdates.MockSuma,
-  relevant_patches: %{
+  relevant_patches_system_ids: [
     # 448 matches to "test" fqdn
-    448 => [
-      %{
-        date: "2024-02-27",
-        advisory_name: "SUSE-15-SP4-2024-630",
-        advisory_type: :bugfix,
-        advisory_status: "stable",
-        id: 4182,
-        advisory_synopsis: "Recommended update for cloud-netconfig",
-        update_date: "2024-02-27"
-      },
-      %{
-        date: "2024-02-26",
-        advisory_name: "SUSE-15-SP4-2024-619",
-        advisory_type: :security_advisory,
-        advisory_status: "stable",
-        id: 4174,
-        advisory_synopsis: "important: Security update for java-1_8_0-ibm",
-        update_date: "2024-02-26"
-      }
-    ]
-  }
+    448
+  ]

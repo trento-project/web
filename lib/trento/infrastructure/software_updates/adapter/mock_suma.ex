@@ -18,9 +18,30 @@ defmodule Trento.Infrastructure.SoftwareUpdates.MockSuma do
 
   @impl true
   def get_relevant_patches(system_id) do
-    case Map.get(mocked_relevant_patches(), system_id) do
-      nil -> {:ok, []}
-      patches -> {:ok, patches}
+    if system_id in mocked_relevant_patches_system_ids() do
+      {:ok,
+       [
+         %{
+           date: "2024-02-27",
+           advisory_name: "SUSE-15-SP4-2024-630",
+           advisory_type: :bugfix,
+           advisory_status: "stable",
+           id: 4182,
+           advisory_synopsis: "Recommended update for cloud-netconfig",
+           update_date: "2024-02-27"
+         },
+         %{
+           date: "2024-02-26",
+           advisory_name: "SUSE-15-SP4-2024-619",
+           advisory_type: :security_advisory,
+           advisory_status: "stable",
+           id: 4174,
+           advisory_synopsis: "important: Security update for java-1_8_0-ibm",
+           update_date: "2024-02-26"
+         }
+       ]}
+    else
+      {:ok, []}
     end
   end
 
@@ -54,7 +75,99 @@ defmodule Trento.Infrastructure.SoftwareUpdates.MockSuma do
        ]}
 
   @impl true
+  def get_patches_for_package(_package_id),
+    do:
+      {:ok,
+       [
+         %{
+           advisory: "SUSE-15-SP4-2024-630",
+           type: "bugfix",
+           synopsis: "Recommended update for cloud-netconfig",
+           issue_date: "2024-02-27",
+           update_date: "2024-02-27",
+           last_modified_date: "2024-02-27"
+         },
+         %{
+           advisory: "SUSE-15-SP4-2024-619",
+           type: "security_advisory",
+           synopsis: "important: Security update for java-1_8_0-ibm",
+           issue_date: "2024-02-27",
+           update_date: "2024-02-27",
+           last_modified_date: "2024-02-27"
+         }
+       ]}
+
+  @impl true
+  def get_errata_details(_advisory_name),
+    do:
+      {:ok,
+       %{
+         type: "security_advisory",
+         synopsis: "important: Security update for java-1_8_0-ibm",
+         issue_date: "2024-02-27",
+         update_date: "2024-02-27",
+         last_modified_date: "2024-02-27",
+         advisory_status: "stable",
+         reboot_suggested: true,
+         restart_suggested: true,
+         id: 2,
+         release: 3,
+         vendor_advisory: "IBM",
+         product: "IBM® Semeru Runtime™ Certified Edition",
+         errataFrom: "SUSE",
+         topic: "Java",
+         description: "Minor security bug fixes",
+         references: "N.A.",
+         notes: "N.A.",
+         solution: "N.A."
+       }}
+
+  @impl true
+  def get_affected_systems(_advisory_name),
+    do:
+      {:ok,
+       [
+         %{
+           name: "test"
+         },
+         %{name: "test2"}
+       ]}
+
+  @impl true
+  def get_cves(_advisory_name),
+    do:
+      {:ok,
+       [
+         "SUSE-15-SP4-2024-630",
+         "SUSE-15-SP4-2024-234",
+         "SUSE-15-SP4-2024-990"
+       ]}
+
+  @impl true
+  def get_affected_packages(_advisory_name),
+    do:
+      {:ok,
+       [
+         %{
+           name: "kernel",
+           version: "6.9.7",
+           release: "2",
+           arch_label: "x86_64",
+           epoch: "0"
+         }
+       ]}
+
+  @impl true
+  def get_bugzilla_fixes(_advisory_name),
+    do:
+      {:ok,
+       %{
+         "1210660": "VUL-0: CVE-2023-2137: sqlite2,sqlite3: Heap buffer overflow in sqlite"
+       }}
+
+  @impl true
   def clear, do: :ok
 
-  defp mocked_relevant_patches, do: Application.fetch_env!(:trento, __MODULE__)[:relevant_patches]
+  defp mocked_relevant_patches_system_ids,
+    do: Application.fetch_env!(:trento, __MODULE__)[:relevant_patches_system_ids]
 end
