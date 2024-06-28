@@ -7,12 +7,20 @@ import { InputNumber } from '@common/Input';
 import Select from '@common/Select';
 import Label from '@common/Label';
 
-import { hasError, getError } from '@lib/api/validationErrors';
+import { getError } from '@lib/api/validationErrors';
 
 const defaultErrors = [];
 
 const timeUnitOptions = ['day', 'week', 'month', 'year'];
 const defaultTimeUnit = timeUnitOptions[0];
+
+const toErrorMessage = (errors) =>
+  [
+    capitalize(getError('retention_time/value', errors)),
+    capitalize(getError('retention_time/unit', errors)),
+  ]
+    .filter(Boolean)
+    .join(', ');
 
 function TimeSpan({ time: initialTime, error = false, onChange = noop }) {
   const [time, setTime] = useState(initialTime);
@@ -64,6 +72,8 @@ function ActivityLogsSettingsModal({
 }) {
   const [retentionTime, setRetentionTime] = useState(initialRetentionTime);
 
+  const errorMessage = toErrorMessage(errors);
+
   return (
     <Modal title="Enter Activity Logs Settings" open={open} onClose={onCancel}>
       <div className="grid grid-cols-6 my-5 gap-6">
@@ -73,18 +83,18 @@ function ActivityLogsSettingsModal({
         <div className="col-span-4">
           <TimeSpan
             time={retentionTime}
-            error={hasError('retentionTime', errors)}
+            error={Boolean(errorMessage)}
             onChange={(time) => {
               setRetentionTime(time);
               onClearErrors();
             }}
           />
-          {hasError('retentionTime', errors) && (
+          {errorMessage && (
             <p
               aria-label="retention-time-input-error"
               className="text-red-500 mt-1"
             >
-              {capitalize(getError('retentionTime', errors))}
+              {errorMessage}
             </p>
           )}
         </div>
@@ -98,7 +108,7 @@ function ActivityLogsSettingsModal({
           disabled={loading}
           onClick={() => {
             const payload = {
-              retentionTime,
+              retention_time: retentionTime,
             };
             onSave(payload);
           }}

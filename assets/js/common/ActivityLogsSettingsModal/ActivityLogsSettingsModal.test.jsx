@@ -4,8 +4,6 @@ import { render, screen, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
-import { capitalize } from 'lodash';
-
 import ActivityLogsSettingsModal from '.';
 
 const positiveInt = () => faker.number.int({ min: 1 });
@@ -83,7 +81,7 @@ describe('ActivityLogsSettingsModal component', () => {
     await user.click(screen.getByText('Save Settings'));
 
     expect(onSave).toHaveBeenCalledWith({
-      retentionTime: expectedRetentionTime,
+      retention_time: expectedRetentionTime,
     });
   });
 
@@ -106,34 +104,47 @@ describe('ActivityLogsSettingsModal component', () => {
     await user.click(screen.getByText('Save Settings'));
 
     expect(onSave).toHaveBeenCalledWith({
-      retentionTime: initialRetentionTime,
+      retention_time: initialRetentionTime,
     });
   });
 
-  it('should display errors', async () => {
-    const detail = capitalize(faker.lorem.words(5));
-    const initialRetentionTime = { value: positiveInt(), unit: 'month' };
+  const valueError = {
+    detail: faker.lorem.words(20),
+    source: { pointer: '/retention_time/value' },
+    title: faker.lorem.words(10),
+  };
+  const unitError = {
+    detail: faker.lorem.words(20),
+    source: { pointer: '/retention_time/unit' },
+    title: faker.lorem.words(10),
+  };
 
-    const errors = [
-      {
-        detail,
-        source: { pointer: '/retentionTime' },
-        title: 'Invalid value',
-      },
-    ];
+  it.each`
+    scenario                       | errors                     | expectedErrorMessage
+    ${'value error'}               | ${[valueError]}            | ${valueError.detail}
+    ${'unit error'}                | ${[unitError]}             | ${unitError.detail}
+    ${'value and unit errors (1)'} | ${[valueError, unitError]} | ${valueError.detail}
+    ${'value and unit errors (2)'} | ${[valueError, unitError]} | ${unitError.detail}
+  `(
+    'should display errors on $scenario',
+    async ({ errors, expectedErrorMessage }) => {
+      const initialRetentionTime = { value: positiveInt(), unit: 'month' };
 
-    await act(async () => {
-      render(
-        <ActivityLogsSettingsModal
-          errors={errors}
-          initialRetentionTime={initialRetentionTime}
-          open
-          onSave={() => {}}
-          onCancel={() => {}}
-        />
-      );
-    });
+      await act(async () => {
+        render(
+          <ActivityLogsSettingsModal
+            errors={errors}
+            initialRetentionTime={initialRetentionTime}
+            open
+            onSave={() => {}}
+            onCancel={() => {}}
+          />
+        );
+      });
 
-    expect(screen.getAllByText(detail)).toHaveLength(1);
-  });
+      expect(
+        screen.getAllByText(expectedErrorMessage, { exact: false })
+      ).toHaveLength(1);
+    }
+  );
 });
