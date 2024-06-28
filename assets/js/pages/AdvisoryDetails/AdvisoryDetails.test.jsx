@@ -31,4 +31,35 @@ describe('AdvisoryDetails', () => {
     expect(screen.getByText(errata.advisory_status)).toBeVisible();
     expect(screen.getByText(errata.description)).toBeVisible();
   });
+
+  it('displays CVEs, packages and fixes', () => {
+    const errata = advisoryErrataFactory.build();
+    const advisoryName = faker.lorem.word();
+
+    const fixes = faker.word.words(2).split(' ');
+    const packages = faker.word.words(2).split(' ');
+    const cves = faker.word.words(2).split(' ');
+
+    render(
+      <AdvisoryDetails
+        advisoryName={advisoryName}
+        errata={errata}
+        fixes={fixes}
+        cves={cves}
+        packages={packages}
+      />
+    );
+
+    fixes.forEach((expectedWord) => {
+      expect(screen.getByText(expectedWord)).toBeVisible();
+    });
+
+    cves.forEach((expectedWord) => {
+      expect(screen.getByText(expectedWord)).toBeVisible();
+    });
+
+    packages.forEach((expectedWord) => {
+      expect(screen.getByText(expectedWord)).toBeVisible();
+    });
+  });
 });

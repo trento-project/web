@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { getAdvirosyErrata } from '@lib/api/softwareUpdates';
+import { getAdvisoryErrata } from '@lib/api/softwareUpdates';
 import { logError } from '@lib/log';
 import BackButton from '@common/BackButton';
 import AdvisoryDetails from './AdvisoryDetails';
@@ -12,7 +12,7 @@ function AdvisoryDetailsPage() {
   const { hostID, advisoryID } = useParams();
 
   useEffect(() => {
-    getAdvirosyErrata(advisoryID)
+    getAdvisoryErrata(advisoryID)
       .then((errata) => {
         setAdvisoryErrata(errata.data);
         setIsLoading(false);

@@ -8,5 +8,5 @@ export const getPatchesForPackages = (packageIDs) =>
     params: { package_ids: packageIDs },
   });
 
-export const getAdvirosyErrata = (advisoryName) =>
+export const getAdvisoryErrata = (advisoryName) =>
   networkClient.get(`/software_updates/errata_details/${advisoryName}`);
