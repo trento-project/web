@@ -25,6 +25,7 @@ describe('ClusterDetails ClusterSettings component', () => {
       {
         ...defaultInitialState,
         catalog: { loading: false, data: catalog, error: null },
+        user: { abilities: [] },
       }
     );
 
@@ -54,6 +55,7 @@ describe('ClusterDetails ClusterSettings component', () => {
       ...defaultInitialState,
       catalog: { loading: false, data: catalog, error: null },
       clustersList: { clusters },
+      user: { abilities: [] },
     };
     const { id: clusterID } = clusters[0];
 
@@ -100,6 +102,7 @@ describe('ClusterDetails ClusterSettings component', () => {
       const [StatefulClusterSettings] = withState(<ClusterSettingsPage />, {
         ...defaultInitialState,
         clustersList: { clusters: [cluster] },
+        user: { abilities: [] },
       });
 
       renderWithRouterMatch(StatefulClusterSettings, {

@@ -28,6 +28,8 @@ describe('ChecksSelectionHeader component', () => {
         pageHeader={<div>Target Check Settings</div>}
         isSavingSelection={false}
         selection={selection}
+        userAbilities={[{ name: 'all', resource: 'all' }]}
+        checkSelectionPermittedFor={['all:all']}
         savedSelection={savedSelection}
         onSaveSelection={onSaveSelection}
         onStartExecution={onStartExecution}
@@ -81,6 +83,8 @@ describe('ChecksSelectionHeader component', () => {
         pageHeader={<div>Target Check Settings</div>}
         isSavingSelection
         selection={selection}
+        userAbilities={[{ name: 'all', resource: 'all' }]}
+        checkSelectionPermittedFor={['all:all']}
         savedSelection={selection}
         onSaveSelection={onSaveSelection}
         onStartExecution={() => {}}
@@ -126,6 +130,8 @@ describe('ChecksSelectionHeader component', () => {
           pageHeader={<div>Target Check Settings</div>}
           isSavingSelection={isSavingSelection}
           selection={savedSelection}
+          userAbilities={[{ name: 'all', resource: 'all' }]}
+          checkSelectionPermittedFor={['all:all']}
           savedSelection={savedSelection}
           onSaveSelection={() => {}}
           onStartExecution={onStartExecution}
@@ -139,4 +145,41 @@ describe('ChecksSelectionHeader component', () => {
       expect(onStartExecution).not.toHaveBeenCalled();
     }
   );
+
+  it('should forbid saving a selection', async () => {
+    const user = userEvent.setup();
+
+    const targetID = faker.string.uuid();
+    const targetName = faker.lorem.word();
+    const selection = [faker.string.uuid(), faker.string.uuid()];
+    const onSaveSelection = jest.fn();
+
+    renderWithRouter(
+      <ChecksSelectionHeader
+        targetID={targetID}
+        targetName={targetName}
+        backTo={<button type="button">Back to Target Details</button>}
+        pageHeader={<div>Target Check Settings</div>}
+        isSavingSelection
+        selection={selection}
+        userAbilities={[]}
+        checkSelectionPermittedFor={['all:all']}
+        savedSelection={selection}
+        onSaveSelection={onSaveSelection}
+        onStartExecution={() => {}}
+      />
+    );
+
+    expect(screen.getByText('Save Checks Selection')).toBeDisabled();
+
+    await user.click(screen.getByText('Save Checks Selection'));
+
+    expect(onSaveSelection).not.toHaveBeenCalled();
+
+    await user.hover(screen.getByText('Save Checks Selection'));
+
+    expect(
+      screen.queryByText('You are not authorized for this action')
+    ).toBeVisible();
+  });
 });
