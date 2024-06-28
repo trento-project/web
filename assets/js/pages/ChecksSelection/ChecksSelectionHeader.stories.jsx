@@ -51,6 +51,10 @@ export default {
       control: 'array',
       description: 'Abilities that allow check selection',
     },
+    checkExecutionPermittedFor: {
+      control: 'array',
+      description: 'Abilities that allow check execution',
+    },
     savedSelection: {
       control: 'array',
       description: 'The last saved check selection for the target',
@@ -100,6 +104,7 @@ export const Default = {
     selection,
     userAbilities: [{ name: 'all', resource: 'all' }],
     checkSelectionPermittedFor: ['all:cluster_checks_selection'],
+    checkExecutionPermittedFor: ['all:cluster_checks_execution'],
     savedSelection,
     isSavingSelection: false,
   },

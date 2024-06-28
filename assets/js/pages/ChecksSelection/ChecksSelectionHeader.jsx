@@ -18,6 +18,7 @@ function ChecksSelectionHeader({
   selection,
   userAbilities,
   checkSelectionPermittedFor,
+  checkExecutionPermettidedFor,
   onSaveSelection = () => {},
   onStartExecution = () => {},
 }) {
@@ -53,20 +54,25 @@ function ChecksSelectionHeader({
               visible={isAbleToStartExecution}
               wrap={false}
             >
-              <Button
-                type="primary"
-                className="mx-1"
-                onClick={onStartExecution}
-                disabled={!isAbleToStartExecution}
+              <DisabledGuard
+                userAbilities={userAbilities}
+                permitted={checkExecutionPermettidedFor}
               >
-                <EOS_PLAY_CIRCLE
-                  className={classNames('inline-block align-sub', {
-                    'fill-white': isAbleToStartExecution,
-                    'fill-gray-200': !isAbleToStartExecution,
-                  })}
-                />{' '}
-                Start Execution
-              </Button>
+                <Button
+                  type="primary"
+                  className="mx-1"
+                  onClick={onStartExecution}
+                  disabled={!isAbleToStartExecution}
+                >
+                  <EOS_PLAY_CIRCLE
+                    className={classNames('inline-block align-sub', {
+                      'fill-white': isAbleToStartExecution,
+                      'fill-gray-200': !isAbleToStartExecution,
+                    })}
+                  />{' '}
+                  Start Execution
+                </Button>
+              </DisabledGuard>
             </Tooltip>
           </div>
         </div>

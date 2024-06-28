@@ -30,6 +30,7 @@ describe('ChecksSelectionHeader component', () => {
         selection={selection}
         userAbilities={[{ name: 'all', resource: 'all' }]}
         checkSelectionPermittedFor={['all:all']}
+        checkExecutionPermittedFor={['all:all']}
         savedSelection={savedSelection}
         onSaveSelection={onSaveSelection}
         onStartExecution={onStartExecution}
@@ -85,6 +86,7 @@ describe('ChecksSelectionHeader component', () => {
         selection={selection}
         userAbilities={[{ name: 'all', resource: 'all' }]}
         checkSelectionPermittedFor={['all:all']}
+        checkExecutionPermittedFor={['all:all']}
         savedSelection={selection}
         onSaveSelection={onSaveSelection}
         onStartExecution={() => {}}
@@ -132,6 +134,7 @@ describe('ChecksSelectionHeader component', () => {
           selection={savedSelection}
           userAbilities={[{ name: 'all', resource: 'all' }]}
           checkSelectionPermittedFor={['all:all']}
+          checkExecutionPermittedFor={['all:all']}
           savedSelection={savedSelection}
           onSaveSelection={() => {}}
           onStartExecution={onStartExecution}
@@ -164,6 +167,7 @@ describe('ChecksSelectionHeader component', () => {
         selection={selection}
         userAbilities={[]}
         checkSelectionPermittedFor={['all:all']}
+        checkExecutionPermittedFor={['all:all']}
         savedSelection={selection}
         onSaveSelection={onSaveSelection}
         onStartExecution={() => {}}
