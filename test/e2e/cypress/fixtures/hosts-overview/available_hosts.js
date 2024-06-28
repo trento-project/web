@@ -2,7 +2,7 @@ export const availableHosts = [
   {
     id: '240f96b1-8d26-53b7-9e99-ffb0f2e735bf',
     name: 'vmdrbddev01',
-    ipAddresses: ['10.100.1.31', '10.100.1.33'],
+    ipAddresses: ['10.100.1.31/24', '10.100.1.33/24'],
     provider: 'Azure',
     clusterName: 'drbd_cluster',
     clusterId: '',

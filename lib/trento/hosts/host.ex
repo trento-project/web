@@ -123,6 +123,7 @@ defmodule Trento.Hosts.Host do
     field :hostname, :string
     field :fully_qualified_domain_name, :string
     field :ip_addresses, {:array, :string}
+    field :ip_addresses_netmasks, {:array, :string}
     field :agent_version, :string
     field :cpu_count, :integer
     field :total_memory_mb, :integer
@@ -165,6 +166,7 @@ defmodule Trento.Hosts.Host do
           host_id: host_id,
           hostname: hostname,
           ip_addresses: ip_addresses,
+          ip_addresses_netmasks: ip_addresses_netmasks,
           agent_version: agent_version,
           cpu_count: cpu_count,
           total_memory_mb: total_memory_mb,
@@ -179,6 +181,7 @@ defmodule Trento.Hosts.Host do
         host_id: host_id,
         hostname: hostname,
         ip_addresses: ip_addresses,
+        ip_addresses_netmasks: ip_addresses_netmasks,
         agent_version: agent_version,
         cpu_count: cpu_count,
         total_memory_mb: total_memory_mb,
@@ -205,6 +208,7 @@ defmodule Trento.Hosts.Host do
           host_id: host_id,
           hostname: hostname,
           ip_addresses: ip_addresses,
+          ip_addresses_netmasks: ip_addresses_netmasks,
           agent_version: agent_version,
           cpu_count: cpu_count,
           total_memory_mb: total_memory_mb,
@@ -217,6 +221,7 @@ defmodule Trento.Hosts.Host do
         %RegisterHost{
           hostname: hostname,
           ip_addresses: ip_addresses,
+          ip_addresses_netmasks: ip_addresses_netmasks,
           agent_version: agent_version,
           cpu_count: cpu_count,
           total_memory_mb: total_memory_mb,
@@ -240,6 +245,7 @@ defmodule Trento.Hosts.Host do
         %RegisterHost{
           hostname: hostname,
           ip_addresses: ip_addresses,
+          ip_addresses_netmasks: ip_addresses_netmasks,
           agent_version: agent_version,
           cpu_count: cpu_count,
           total_memory_mb: total_memory_mb,
@@ -256,6 +262,7 @@ defmodule Trento.Hosts.Host do
         host_id: host_id,
         hostname: hostname,
         ip_addresses: ip_addresses,
+        ip_addresses_netmasks: ip_addresses_netmasks,
         agent_version: agent_version,
         cpu_count: cpu_count,
         total_memory_mb: total_memory_mb,
@@ -292,6 +299,7 @@ defmodule Trento.Hosts.Host do
           hostname: hostname,
           fully_qualified_domain_name: fully_qualified_domain_name,
           ip_addresses: ip_addresses,
+          ip_addresses_netmasks: ip_addresses_netmasks,
           agent_version: agent_version,
           cpu_count: cpu_count,
           total_memory_mb: total_memory_mb,
@@ -303,6 +311,7 @@ defmodule Trento.Hosts.Host do
           hostname: hostname,
           fully_qualified_domain_name: fully_qualified_domain_name,
           ip_addresses: ip_addresses,
+          ip_addresses_netmasks: ip_addresses_netmasks,
           agent_version: agent_version,
           cpu_count: cpu_count,
           total_memory_mb: total_memory_mb,
@@ -323,6 +332,7 @@ defmodule Trento.Hosts.Host do
           hostname: hostname,
           fully_qualified_domain_name: new_fully_qualified_domain_name,
           ip_addresses: ip_addresses,
+          ip_addresses_netmasks: ip_addresses_netmasks,
           agent_version: agent_version,
           cpu_count: cpu_count,
           total_memory_mb: total_memory_mb,
@@ -337,6 +347,7 @@ defmodule Trento.Hosts.Host do
         hostname: hostname,
         fully_qualified_domain_name: new_fully_qualified_domain_name,
         ip_addresses: ip_addresses,
+        ip_addresses_netmasks: ip_addresses_netmasks,
         agent_version: agent_version,
         cpu_count: cpu_count,
         total_memory_mb: total_memory_mb,
@@ -599,6 +610,7 @@ defmodule Trento.Hosts.Host do
           host_id: host_id,
           hostname: hostname,
           ip_addresses: ip_addresses,
+          ip_addresses_netmasks: ip_addresses_netmasks,
           agent_version: agent_version,
           cpu_count: cpu_count,
           total_memory_mb: total_memory_mb,
@@ -614,6 +626,7 @@ defmodule Trento.Hosts.Host do
       | host_id: host_id,
         hostname: hostname,
         ip_addresses: ip_addresses,
+        ip_addresses_netmasks: ip_addresses_netmasks,
         agent_version: agent_version,
         cpu_count: cpu_count,
         total_memory_mb: total_memory_mb,
@@ -630,6 +643,7 @@ defmodule Trento.Hosts.Host do
         %HostDetailsUpdated{
           hostname: hostname,
           ip_addresses: ip_addresses,
+          ip_addresses_netmasks: ip_addresses_netmasks,
           agent_version: agent_version,
           cpu_count: cpu_count,
           total_memory_mb: total_memory_mb,
@@ -643,6 +657,7 @@ defmodule Trento.Hosts.Host do
       host
       | hostname: hostname,
         ip_addresses: ip_addresses,
+        ip_addresses_netmasks: ip_addresses_netmasks,
         agent_version: agent_version,
         cpu_count: cpu_count,
         total_memory_mb: total_memory_mb,

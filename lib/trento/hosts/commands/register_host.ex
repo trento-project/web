@@ -20,6 +20,7 @@ defmodule Trento.Hosts.Commands.RegisterHost do
     field :host_id, Ecto.UUID
     field :hostname, :string
     field :ip_addresses, {:array, :string}
+    field :ip_addresses_netmasks, {:array, :string}
     field :agent_version, :string
     field :cpu_count, :integer
     field :total_memory_mb, :integer

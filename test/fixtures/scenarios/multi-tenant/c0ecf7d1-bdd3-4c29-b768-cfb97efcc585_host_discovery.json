@@ -11,6 +11,12 @@
       "10.17.0.7",
       "fe80::1525:bdaa:fa1c:c411"
     ],
+    "ip_addresses_netmasks": [
+      "127.0.0.1/8",
+      "::1/128",
+      "10.17.0.7/24",
+      "fe80::1525:bdaa:fa1c:c411/64"
+    ],
     "os_version": "15-SP4",
     "socket_count": 1,
     "total_memory_mb": 7880

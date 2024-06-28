@@ -12,6 +12,12 @@
       "10.0.0.4",
       "11:6c:ba:82:4c:06"
     ],
+    "ip_addresses_netmasks": [
+      "127.0.0.1/8",
+      "::1/128",
+      "10.0.0.4/24",
+      "11:6c:ba:82:4c:06/64"
+    ],
     "os_version": "15-SP5",
     "socket_count": 1,
     "total_memory_mb": 32043,

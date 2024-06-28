@@ -37,6 +37,7 @@ defmodule Trento.Discovery.Policies.HostPolicyTest do
                host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
                hostname: "suse",
                ip_addresses: ["10.1.1.4", "10.1.1.5", "10.1.1.6"],
+               ip_addresses_netmasks: ["10.1.1.4/24", "10.1.1.5/24", "10.1.1.6/24"],
                installation_source: :unknown
              }
            } =
@@ -53,6 +54,7 @@ defmodule Trento.Discovery.Policies.HostPolicyTest do
                host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
                hostname: "suse",
                ip_addresses: ["10.1.1.4", "10.1.1.5", "10.1.1.6"],
+               ip_addresses_netmasks: ["10.1.1.4/24", "10.1.1.5/24", "10.1.1.6/24"],
                installation_source: :community
              }
            } =

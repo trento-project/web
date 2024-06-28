@@ -218,7 +218,7 @@ function HostsList() {
     return {
       health: host.health,
       hostname: host.hostname,
-      ip: host.ip_addresses,
+      ip: host.ip_addresses_netmasks,
       provider: host.provider,
       sid: sapSystemList.map((sapSystem) => sapSystem.sid),
       cluster,

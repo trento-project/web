@@ -27,7 +27,7 @@ describe('HostsLists component', () => {
     [
       {
         host: 'vmhdbdev01',
-        ip: '10.100.1.1110.100.1.13',
+        ip: '10.100.1.11/2410.100.1.13/24',
         provider: 'Azure',
         cluster: 'hana_cluster_1',
         sid: 'HDD',
@@ -37,7 +37,7 @@ describe('HostsLists component', () => {
       },
       {
         host: 'vmnwqas03',
-        ip: '10.90.1.2710.90.1.23',
+        ip: '10.90.1.27/2410.90.1.23/24',
         provider: '',
         cluster: '',
         sid: 'NWQ',
