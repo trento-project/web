@@ -1,9 +1,70 @@
 defmodule TrentoWeb.V1.TagsControllerTest do
   use TrentoWeb.ConnCase, async: true
 
+  import OpenApiSpex.TestAssertions
   import Trento.Factory
+  import Trento.Support.Helpers.AbilitiesTestHelper
   alias Faker.Color
   alias Trento.Tags.Tag
+
+  setup :setup_api_spec_v1
+  setup :setup_user
+
+  describe "forbidden actions" do
+    test "should not return forbidden on any controller action if the user have the right ability for the tag resource",
+         %{conn: conn} do
+      %{id: user_id} = insert(:user)
+
+      for tag_resource <- [:host, :sap_system, :cluster, :database] do
+        %{id: ability_id} = insert(:ability, name: "all", resource: "#{tag_resource}_tags")
+        insert(:users_abilities, user_id: user_id, ability_id: ability_id)
+        %{id: resource_id} = insert(tag_resource)
+
+        conn =
+          conn
+          |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
+          |> put_req_header("content-type", "application/json")
+
+        resp =
+          post(conn, "/api/v1/#{tag_resource}s/#{resource_id}/tags", %{
+            "value" => "thetag"
+          })
+
+        assert resp.status == 201
+
+        resp =
+          delete(conn, "/api/v1/#{tag_resource}s/#{resource_id}/tags/thetag")
+
+        assert resp.status == 204
+      end
+    end
+
+    test "should return forbidden on any controller action if the user does not have the right permission",
+         %{conn: conn, api_spec: api_spec} do
+      %{id: user_id} = insert(:user)
+
+      conn =
+        conn
+        |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
+        |> put_req_header("content-type", "application/json")
+
+      for tag_resource <- [:host, :sap_system, :cluster, :database] do
+        Enum.each(
+          [
+            post(conn, "/api/v1/#{tag_resource}s/#{Faker.UUID.v4()}/tags", %{
+              "value" => "thetag"
+            }),
+            delete(conn, "/api/v1/#{tag_resource}s/#{Faker.UUID.v4()}/tags/thetag")
+          ],
+          fn conn ->
+            conn
+            |> json_response(:forbidden)
+            |> assert_schema("Forbidden", api_spec)
+          end
+        )
+      end
+    end
+  end
 
   describe "Tag Validation" do
     test "should decline tag with whitespace", %{conn: conn} do
