@@ -7,6 +7,15 @@ defmodule TrentoWeb.V1.TagsController do
 
   alias TrentoWeb.OpenApi.V1.Schema
 
+  plug TrentoWeb.Plugs.LoadUserPlug
+
+  plug Bodyguard.Plug.Authorize,
+    policy: Trento.Tags.Policy,
+    action: {Phoenix.Controller, :action_name},
+    user: {Pow.Plug, :current_user},
+    params: {__MODULE__, :get_policy_resource},
+    fallback: TrentoWeb.FallbackController
+
   action_fallback TrentoWeb.FallbackController
   plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
 
@@ -83,4 +92,11 @@ defmodule TrentoWeb.V1.TagsController do
       send_resp(conn, :no_content, "")
     end
   end
+
+  def get_policy_resource(%{
+        assigns: %{
+          resource_type: resource_type
+        }
+      }),
+      do: %{tag_resource: resource_type, resource: Tag}
 end
