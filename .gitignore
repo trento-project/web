@@ -40,3 +40,15 @@ npm-debug.log
 
 # Local dev.local.exs file
 config/dev.local.exs
+# Devenv
+.devenv*
+devenv.local.nix
+
+# direnv
+.direnv
+
+# pre-commit
+.pre-commit-config.yaml
+
+# locally built/copied binary
+photofinish
