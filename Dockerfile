@@ -9,7 +9,7 @@ ARG MIX_ENV=prod
 ENV MIX_ENV=$MIX_ENV
 RUN mix deps.get
 
-FROM registry.suse.com/bci/nodejs:16 AS assets-build
+FROM registry.suse.com/bci/nodejs:20 AS assets-build
 COPY --from=elixir-build /build /build
 WORKDIR /build/assets
 RUN npm install

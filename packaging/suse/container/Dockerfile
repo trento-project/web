@@ -5,7 +5,7 @@
 #!UseOBSRepositories
 #!ExclusiveArch: x86_64
 
-FROM bci/nodejs:16 AS assets-build
+FROM bci/nodejs:20 AS assets-build
 ADD web.tar.gz /build/
 WORKDIR /build/web/assets
 RUN npm run tailwind:build
