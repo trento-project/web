@@ -5,6 +5,8 @@ defmodule Trento.Tags.Tag do
 
   import Ecto.Changeset
 
+  defdelegate authorize(action, user, params), to: Trento.Tags.Policy
+
   @forbidden_tag_chars_regex ~r/^[\+\-=.,_:@\p{L}\w]*$/u
   @type t :: %__MODULE__{}
 
