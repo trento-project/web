@@ -25,4 +25,21 @@ defmodule TrentoWeb.Plugs.LoadUserPlugTest do
 
     assert %User{id: ^user_id} = Pow.Plug.current_user(conn, config)
   end
+
+  test "should keep an already loaded user details", %{conn: conn} do
+    user = insert(:user)
+    config = Pow.Plug.fetch_config(conn)
+    conn = Pow.Plug.assign_current_user(conn, user, config)
+    conn = LoadUserPlug.call(conn, nil)
+
+    assert ^user = Pow.Plug.current_user(conn, config)
+  end
+
+  test "should pass through connections without user references", %{conn: conn} do
+    config = Pow.Plug.fetch_config(conn)
+
+    conn = LoadUserPlug.call(conn, nil)
+
+    assert nil == Pow.Plug.current_user(conn, config)
+  end
 end

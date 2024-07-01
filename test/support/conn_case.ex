@@ -36,6 +36,16 @@ defmodule TrentoWeb.ConnCase do
   setup tags do
     pid = Sandbox.start_owner!(Trento.Repo, shared: not tags[:async])
     on_exit(fn -> Sandbox.stop_owner(pid) end)
+
+    stub_activity_logger()
+
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
+
+  defp stub_activity_logger,
+    do:
+      Mox.stub_with(
+        Trento.ActivityLog.ActivityLogger.Mock,
+        Trento.Infrastructure.ActivityLog.Logger.NoopLogger
+      )
 end
