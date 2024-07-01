@@ -1,17 +1,46 @@
-import React from 'react';
-
 import Tags from '.';
 
 export default {
   title: 'Components/Tags',
   component: Tags,
-  argTypes: { onChange: { action: 'tag changed' } },
+  args: {
+    tags: ['carbonara', 'Amatriciana'],
+    userAbilities: [{ name: 'all', resource: 'all' }],
+    tagAdditionPermittedFor: ['all:all'],
+    tagDeletionPermittedFor: ['all:all'],
+  },
+  argTypes: {
+    onChange: { action: 'tag changed' },
+    tagAdditionPermittedFor: {
+      control: 'array',
+      description: 'Abilities that allow tag creation',
+    },
+    tagDeletionPermittedFor: {
+      control: 'array',
+      description: 'Abilities that allow tag deletion',
+    },
+  },
 };
 
-export function Populated(args) {
-  return <Tags tags={['carbonara', 'Amatriciana']} {...args} />;
-}
+export const Default = {
+  args: {
+    tags: ['carbonara', 'Amatriciana'],
+    userAbilities: [{ name: 'all', resource: 'all' }],
+    tagAdditionPermittedFor: ['all:all'],
+    tagDeletionPermittedFor: ['all:all'],
+  },
+};
 
-export function Empty(args) {
-  return <Tags tags={[]} {...args} />;
-}
+export const Empty = {
+  args: {
+    ...Default.args,
+    tags: [],
+  },
+};
+
+export const Disabled = {
+  args: {
+    ...Default.args,
+    userAbilities: [],
+  },
+};
