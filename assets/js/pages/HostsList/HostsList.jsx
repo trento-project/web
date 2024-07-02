@@ -26,6 +26,7 @@ import { getCounters } from '@pages/HealthSummary/summarySelection';
 
 import { addTagToHost, removeTagFromHost, deregisterHost } from '@state/hosts';
 import { getAllSAPInstances } from '@state/selectors/sapSystem';
+import { getUserProfile } from '@state/selectors/user';
 import { getInstanceID } from '@state/instances';
 
 const getInstancesByHost = (instances, hostId) =>
@@ -45,6 +46,7 @@ function HostsList() {
   const hosts = useSelector((state) => state.hostsList.hosts);
   const clusters = useSelector((state) => state.clustersList.clusters);
   const allInstances = useSelector(getAllSAPInstances);
+  const { abilities } = useSelector(getUserProfile);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [cleanUpModalOpen, setCleanUpModalOpen] = useState(false);
@@ -201,6 +203,8 @@ function HostsList() {
               cleaning={item.deregistering}
               size="fit"
               className="border-none shadow-none"
+              userAbilities={abilities}
+              permittedFor={['cleanup:host']}
               onClick={() => {
                 openDeregistrationModal(item);
               }}
