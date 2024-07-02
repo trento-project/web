@@ -65,6 +65,7 @@ defmodule TrentoWeb.V1.SUSEManagerView do
 
   def render("errata_details.json", %{
         errata_details: errata_details = %{errataFrom: errataFrom},
+        cves: cves,
         fixes: fixes
       }),
       do: %{
@@ -72,6 +73,7 @@ defmodule TrentoWeb.V1.SUSEManagerView do
           errata_details
           |> Map.drop([:errataFrom])
           |> Map.put(:errata_from, errataFrom),
+        cves: cves,
         fixes: fixes
       }
 end

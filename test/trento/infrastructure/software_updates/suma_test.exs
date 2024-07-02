@@ -274,8 +274,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
         {:ok, %HTTPoison.Response{status_code: 200, body: Jason.encode!(suma_response_body)}}
       end)
 
-      assert {:ok, ^cves} =
-               Suma.get_cves(advisory_name)
+      assert {:ok, ^cves} = Suma.get_cves(advisory_name)
     end
 
     test "should return a proper error when getting CVEs for a patch fails" do

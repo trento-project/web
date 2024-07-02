@@ -172,6 +172,12 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
         {:ok, errata_details}
       end)
 
+      cves = generate_cves(10)
+
+      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_cves, 1, fn _ ->
+        {:ok, cves}
+      end)
+
       fixes = build(:bugzilla_fix)
 
       expect(Trento.SoftwareUpdates.Discovery.Mock, :get_bugzilla_fixes, 1, fn _ ->
@@ -185,6 +191,8 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
 
       %{"fixes" => json_fixes} = json
 
+      # The returned struct from `assert_schema/3` empties the dynamic Map in `fixes`.
+      # Assert on the JSON response that the `fixes` Map contains entries.
       assert fixes |> Map.keys() |> length == json_fixes |> Map.keys() |> length
 
       result = assert_schema(json, "ErrataDetailsResponse", api_spec)
@@ -209,7 +217,8 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
           solution: ^solution,
           reboot_suggested: ^reboot_suggested,
           restart_suggested: ^restart_suggested
-        }
+        },
+        cves: ^cves
       } = result
     end
 
@@ -221,6 +230,36 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
 
       expect(Trento.SoftwareUpdates.Discovery.Mock, :get_errata_details, 1, fn _ ->
         {:error, :error_getting_errata_details}
+      end)
+
+      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_cves, 1, fn _ ->
+        {:ok, generate_cves(10)}
+      end)
+
+      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_bugzilla_fixes, 1, fn _ ->
+        {:ok, build(:bugzilla_fix)}
+      end)
+
+      advisory_name = Faker.Pokemon.name()
+
+      conn
+      |> get("/api/v1/software_updates/errata_details/#{advisory_name}")
+      |> json_response(:unprocessable_entity)
+      |> assert_schema("UnprocessableEntity", api_spec)
+    end
+
+    test "should return 422 when advisory CVEs are not found", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      insert_software_updates_settings()
+
+      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_errata_details, 1, fn _ ->
+        {:ok, build(:errata_details)}
+      end)
+
+      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_cves, 1, fn _ ->
+        {:error, :error_getting_cves}
       end)
 
       expect(Trento.SoftwareUpdates.Discovery.Mock, :get_bugzilla_fixes, 1, fn _ ->
@@ -245,6 +284,10 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
         {:ok, build(:errata_details)}
       end)
 
+      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_cves, 1, fn _ ->
+        {:ok, generate_cves(10)}
+      end)
+
       expect(Trento.SoftwareUpdates.Discovery.Mock, :get_bugzilla_fixes, 1, fn _ ->
         {:error, :error_getting_fixes}
       end)
@@ -256,5 +299,16 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
       |> json_response(:unprocessable_entity)
       |> assert_schema("UnprocessableEntity", api_spec)
     end
+  end
+
+  defp generate_cves(n) do
+    Enum.map(
+      1..n,
+      fn _ ->
+        year = Enum.random(1_991..2_024)
+        id = Enum.random(0..9_999)
+        "CVE-#{year}-#{id}"
+      end
+    )
   end
 end
