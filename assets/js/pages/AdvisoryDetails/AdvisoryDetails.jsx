@@ -12,8 +12,6 @@ function EmptyData() {
 function AdvisoryDetails({
   advisoryName,
   errata,
-  fixes,
-  cves,
   packages,
   affectsPackageMaintanaceStack,
 }) {
@@ -25,7 +23,9 @@ function AdvisoryDetails({
     type,
     description,
     reboot_suggested: rebootSuggested,
-  } = errata;
+  } = errata.errata_details;
+
+  const { fixes, cves } = errata;
 
   return (
     <div>
@@ -76,10 +76,17 @@ function AdvisoryDetails({
       <div className="flex flex-col mb-4">
         <h2 className="text-xl font-bold mb-2">Fixes</h2>
         <div className="bg-white py-4 px-6 shadow shadow-md rounded-lg">
-          {fixes && fixes.length > 1 ? (
+          {fixes && Object.keys(fixes).length >= 1 ? (
             <ul>
-              {fixes.map((fix) => (
-                <li>{fix}</li>
+              {Object.entries(fixes).map(([id, fix]) => (
+                <li key={`CVE-${id}`}>
+                  <a
+                    className="text-jungle-green-500 hover:opacity-75"
+                    href={`https://bugzilla.suse.com/show_bug.cgi?id=${id}`}
+                  >
+                    {fix}
+                  </a>
+                </li>
               ))}
             </ul>
           ) : (
