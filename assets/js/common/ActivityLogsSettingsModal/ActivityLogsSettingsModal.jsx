@@ -14,13 +14,19 @@ const defaultErrors = [];
 const timeUnitOptions = ['day', 'week', 'month', 'year'];
 const defaultTimeUnit = timeUnitOptions[0];
 
-const toErrorMessage = (errors) =>
+const toRetentionTimeErrorMessage = (errors) =>
   [
     capitalize(getError('retention_time/value', errors)),
     capitalize(getError('retention_time/unit', errors)),
   ]
     .filter(Boolean)
-    .join(', ');
+    .join('; ');
+
+const toGenericErrorMessage = (errors) =>
+  // If there is at lease one error not related to a specific field, return a generic error message
+  errors.some((error) => !error.source)
+    ? 'Something went wrong while saving'
+    : '';
 
 function TimeSpan({ time: initialTime, error = false, onChange = noop }) {
   const [time, setTime] = useState(initialTime);
@@ -59,6 +65,19 @@ function TimeSpan({ time: initialTime, error = false, onChange = noop }) {
 }
 
 /**
+ * Display an error message. If no error is provided, an empty space is displayed to keep the layout stable
+ * @param {string} text The error message to display
+ * @returns {JSX.Element}
+ */
+function Error({ text }) {
+  return text ? (
+    <p className="text-red-500 mt-1">{text}</p>
+  ) : (
+    <p className="mt-1">&nbsp;</p>
+  );
+}
+
+/**
  * Modal to edit Activity Logs settings
  */
 function ActivityLogsSettingsModal({
@@ -72,7 +91,8 @@ function ActivityLogsSettingsModal({
 }) {
   const [retentionTime, setRetentionTime] = useState(initialRetentionTime);
 
-  const errorMessage = toErrorMessage(errors);
+  const retentionTimeError = toRetentionTimeErrorMessage(errors);
+  const genericError = toGenericErrorMessage(errors);
 
   return (
     <Modal title="Enter Activity Logs Settings" open={open} onClose={onCancel}>
@@ -83,20 +103,13 @@ function ActivityLogsSettingsModal({
         <div className="col-span-4">
           <TimeSpan
             time={retentionTime}
-            error={Boolean(errorMessage)}
+            error={Boolean(retentionTimeError)}
             onChange={(time) => {
               setRetentionTime(time);
               onClearErrors();
             }}
           />
-          {errorMessage && (
-            <p
-              aria-label="retention-time-input-error"
-              className="text-red-500 mt-1"
-            >
-              {errorMessage}
-            </p>
-          )}
+          <Error text={retentionTimeError} />
         </div>
 
         <p className="col-span-6">
@@ -118,6 +131,9 @@ function ActivityLogsSettingsModal({
         <Button type="primary-white" onClick={onCancel}>
           Cancel
         </Button>
+      </div>
+      <div className="flex flex-row w-80 space-x-2">
+        <Error text={genericError} />
       </div>
     </Modal>
   );

@@ -31,16 +31,43 @@ export const Default = {
   },
 };
 
-export const WithErrors = {
+export const WithFieldValidationError = {
   args: {
     open: false,
     initialRetentionTime: { value: 1, unit: 'month' },
     errors: [
       {
-        detail: "can't be blank",
-        source: { pointer: '/retentionTime' },
+        detail: 'must be greater than or equal to 1',
+        source: { pointer: '/retention_time/value' },
         title: 'Invalid value',
       },
     ],
+  },
+};
+
+export const WithCompositeFieldValidationError = {
+  args: {
+    open: false,
+    initialRetentionTime: { value: 1, unit: 'month' },
+    errors: [
+      {
+        detail: 'must be greater than or equal to 1',
+        source: { pointer: '/retention_time/value' },
+        title: 'Invalid value',
+      },
+      {
+        detail: 'invalid time unit',
+        source: { pointer: '/retention_time/unit' },
+        title: 'Invalid unit',
+      },
+    ],
+  },
+};
+
+export const WithGenericError = {
+  args: {
+    open: false,
+    initialRetentionTime: { value: 1, unit: 'month' },
+    errors: ['any error'],
   },
 };

@@ -110,7 +110,7 @@ describe('ActivityLogsSettings reducer', () => {
       },
       networkError: false,
       errors: [],
-      editing: false
+      editing: false,
     };
 
     [true, false].forEach((hasNetworkError) => {
