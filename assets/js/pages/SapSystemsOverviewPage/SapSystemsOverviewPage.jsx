@@ -8,6 +8,7 @@ import {
   getEnrichedApplicationInstances,
   getEnrichedDatabaseInstances,
 } from '@state/selectors/sapSystem';
+import { getUserProfile } from '@state/selectors/user';
 import {
   addTagToSAPSystem,
   removeTagFromSAPSystem,
@@ -35,6 +36,7 @@ function SapSystemOverviewPage() {
   const enrichedDatabaseInstances = useSelector((state) =>
     getEnrichedDatabaseInstances(state)
   );
+  const { abilities } = useSelector(getUserProfile);
   const dispatch = useDispatch();
 
   return (
@@ -43,6 +45,7 @@ function SapSystemOverviewPage() {
       applicationInstances={enrichedApplicationInstances}
       databaseInstances={enrichedDatabaseInstances}
       loading={loading}
+      userAbilities={abilities}
       onTagAdd={(tag, sapSystemID) => {
         addTag(tag, sapSystemID);
         dispatch(
