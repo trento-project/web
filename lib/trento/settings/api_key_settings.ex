@@ -8,6 +8,8 @@ defmodule Trento.Settings.ApiKeySettings do
 
   import Ecto.Changeset
 
+  defdelegate authorize(action, user, params), to: Trento.Settings.Policy
+
   @type t :: %__MODULE__{}
 
   @derive {Jason.Encoder, except: [:__meta__, :__struct__]}
