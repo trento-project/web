@@ -23,10 +23,8 @@ const toRetentionTimeErrorMessage = (errors) =>
     .join('; ');
 
 const toGenericErrorMessage = (errors) =>
-  // If there is at lease one error not related to a specific field, return a generic error message
-  errors.some((error) => !error.source)
-    ? 'Something went wrong while saving'
-    : '';
+  // the first error of type string is considered the generic error
+  errors.find((error) => typeof error === 'string');
 
 function TimeSpan({ time: initialTime, error = false, onChange = noop }) {
   const [time, setTime] = useState(initialTime);
@@ -38,7 +36,7 @@ function TimeSpan({ time: initialTime, error = false, onChange = noop }) {
           value={time.value}
           className="!h-8"
           type="number"
-          min="0"
+          min="1"
           error={error}
           onChange={(value) => {
             const newTime = { ...time, value };

@@ -118,17 +118,16 @@ describe('ActivityLogsSettingsModal component', () => {
     source: { pointer: '/retention_time/unit' },
     title: faker.lorem.words(10),
   };
-  const anyPayloadError = { foo: 'bar' };
 
   it.each`
-    scenario                               | errors                           | expectedErrorMessage
-    ${'value error'}                       | ${[valueError]}                  | ${valueError.detail}
-    ${'unit error'}                        | ${[unitError]}                   | ${unitError.detail}
-    ${'value and unit errors (1)'}         | ${[valueError, unitError]}       | ${valueError.detail}
-    ${'value and unit errors (2)'}         | ${[valueError, unitError]}       | ${unitError.detail}
-    ${'generic error'}                     | ${[anyPayloadError]}             | ${'Something went wrong while saving'}
-    ${'generic error and value error (1)'} | ${[anyPayloadError, valueError]} | ${'Something went wrong while saving'}
-    ${'generic error and value error (2)'} | ${[anyPayloadError, valueError]} | ${valueError.detail}
+    scenario                               | errors                             | expectedErrorMessage
+    ${'value error'}                       | ${[valueError]}                    | ${valueError.detail}
+    ${'unit error'}                        | ${[unitError]}                     | ${unitError.detail}
+    ${'value and unit errors (1)'}         | ${[valueError, unitError]}         | ${valueError.detail}
+    ${'value and unit errors (2)'}         | ${[valueError, unitError]}         | ${unitError.detail}
+    ${'generic error'}                     | ${['a generic error']}             | ${'a generic error'}
+    ${'generic error and value error (1)'} | ${['a generic error', valueError]} | ${'a generic error'}
+    ${'generic error and value error (2)'} | ${['a generic error', valueError]} | ${valueError.detail}
   `(
     'should display errors on $scenario',
     async ({ errors, expectedErrorMessage }) => {

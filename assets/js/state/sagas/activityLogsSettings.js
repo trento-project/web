@@ -1,5 +1,5 @@
 import { get } from 'lodash';
-import { put, call, takeEvery, debounce } from 'redux-saga/effects';
+import { put, call, takeEvery } from 'redux-saga/effects';
 import { getSettings, updateSettings } from '@lib/api/activityLogsSettings';
 
 import {
@@ -31,12 +31,16 @@ export function* updateActivityLogsSettings({ payload }) {
     yield put(setEditingActivityLogsSettings(false));
     yield put(setActivityLogsSettingsErrors([]));
   } catch (error) {
-    const errors = get(error, ['response', 'data', 'errors'], []);
+    const errors = get(
+      error,
+      ['response', 'data', 'errors'],
+      ['An error occurred while saving the settings']
+    );
     yield put(setActivityLogsSettingsErrors(errors));
   }
 }
 
 export function* watchActivityLogsSettings() {
-  yield debounce(1000, FETCH_ACTIVITY_LOGS_SETTINGS, fetchActivityLogsSettings);
+  yield takeEvery(FETCH_ACTIVITY_LOGS_SETTINGS, fetchActivityLogsSettings);
   yield takeEvery(UPDATE_ACTIVITY_LOGS_SETTINGS, updateActivityLogsSettings);
 }

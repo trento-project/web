@@ -38,7 +38,7 @@ describe('Activity Logs Settings saga', () => {
       'should put a network error flag on failed fetching',
       async (status) => {
         const axiosMock = new MockAdapter(networkClient);
-        axiosMock.onGet('/settings/activity_logs').reply(status);
+        axiosMock.onGet('/settings/activity_log').reply(status);
 
         const dispatched = await recordSaga(fetchActivityLogsSettings);
 
@@ -92,5 +92,24 @@ describe('Activity Logs Settings saga', () => {
         setActivityLogsSettingsErrors(errors),
       ]);
     });
+
+    it.each([403, 404, 500, 502, 504])(
+      'should put a network error flag on failed saving',
+      async (status) => {
+        const axiosMock = new MockAdapter(networkClient);
+        axiosMock.onPut('/settings/activity_log').reply(status);
+
+        const payload = activityLogsSettingsFactory.build();
+
+        const dispatched = await recordSaga(updateActivityLogsSettings, {
+          payload,
+        });
+
+        expect(dispatched).toEqual([
+          startLoadingActivityLogsSettings(),
+          setActivityLogsSettingsErrors([expect.any(String)]),
+        ]);
+      }
+    );
   });
 });
