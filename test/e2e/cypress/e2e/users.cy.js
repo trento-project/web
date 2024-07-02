@@ -10,31 +10,6 @@ const getUserIdFromPath = () =>
     return pathname.split('/')[2];
   });
 
-const deleteAllUsers = () => {
-  cy.apiLogin().then(({ accessToken }) =>
-    cy
-      .request({
-        url: '/api/v1/users',
-        method: 'GET',
-        auth: { bearer: accessToken },
-        body: {},
-      })
-      .then(({ body: users }) => {
-        users.forEach(({ id }) => {
-          if (id === 1) {
-            return;
-          }
-          cy.request({
-            url: `/api/v1/users/${id}`,
-            method: 'DELETE',
-            auth: { bearer: accessToken },
-            body: {},
-          });
-        });
-      })
-  );
-};
-
 const patchUser = (id, payload) => {
   cy.apiLogin().then(({ accessToken }) =>
     cy
@@ -87,7 +62,7 @@ const expectLoginFails = (username, password, code = 401) => {
 
 describe('Users', () => {
   before(() => {
-    deleteAllUsers();
+    cy.deleteAllUsers();
     cy.visit('/users');
     cy.url().should('include', '/users');
   });

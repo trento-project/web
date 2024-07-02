@@ -1,6 +1,7 @@
 import {
   checksExecutionCompletedFactory,
-  catalogFactory,
+  catalogCheckFactory,
+  createUserRequestFactory,
 } from '@lib/test-utils/factories';
 import { capitalize } from 'lodash';
 import { availableHanaCluster } from '../fixtures/hana-cluster-details/available_hana_cluster';
@@ -14,14 +15,14 @@ context('HANA cluster details', () => {
     critical_count: 1,
   });
   const catalogURL = `**/api/v3/checks/catalog*`;
-  const catalog = catalogFactory.build();
+  const catalog = catalogCheckFactory.buildList(5);
 
   before(() => {
     cy.loadScenario('healthy-27-node-SAP-cluster');
     cy.intercept(lastExecutionURL, {
       body: lastExecution,
     }).as('lastExecution');
-    cy.intercept(catalogURL, { body: catalog }).as('catalog');
+    cy.intercept(catalogURL, { body: { items: catalog } }).as('catalog');
     cy.visit(`/clusters/${availableHanaCluster.id}`);
     cy.url().should('include', `/clusters/${availableHanaCluster.id}`);
     cy.wait('@lastExecution');
@@ -325,6 +326,44 @@ context('HANA cluster details', () => {
       cy.get(`.tn-site-details-${hostToDeregister.sid}`)
         .contains('a', hostToDeregister.name)
         .should('exist');
+    });
+  });
+
+  describe('Forbidden actions', () => {
+    const password = 'password';
+
+    beforeEach(() => {
+      cy.deleteAllUsers();
+      cy.logout();
+      const user = createUserRequestFactory.build({
+        password,
+        password_confirmation: password,
+      });
+      cy.wrap(user).as('user');
+    });
+
+    describe('Check Selection', () => {
+      it('should forbid check selection saving', () => {
+        cy.get('@user').then((user) => {
+          cy.createUserWithAbilities(user, []);
+          cy.login(user.username, password);
+        });
+        cy.visit(`/clusters/${availableHanaCluster.id}/settings`);
+
+        cy.contains('button', 'Save Checks Selection').should('be.disabled');
+      });
+
+      it('should allow check selection saving', () => {
+        cy.get('@user').then((user) => {
+          cy.createUserWithAbilities(user, [
+            { name: 'all', resource: 'cluster_checks_selection' },
+          ]);
+          cy.login(user.username, password);
+        });
+        cy.visit(`/clusters/${availableHanaCluster.id}/settings`);
+
+        cy.contains('button', 'Save Checks Selection').should('be.enabled');
+      });
     });
   });
 });

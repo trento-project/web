@@ -10,6 +10,7 @@ export * from './clusters';
 export * from './databases';
 export * from './relevantPatches';
 export * from './advisoryErrata';
+export * from './users';
 
 export const randomObjectFactory = Factory.define(({ transientParams }) => {
   const depth = transientParams.depth || 2;
