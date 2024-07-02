@@ -19,10 +19,7 @@ export function* fetchActivityLogsSettings() {
     const response = yield call(getSettings);
     yield put(setActivityLogsSettings(response.data));
   } catch (error) {
-    const errorCode = get(error, ['response', 'status']);
-    if (errorCode !== 403) {
-      yield put(setNetworkError(true));
-    }
+    yield put(setNetworkError(true));
   }
 }
 
