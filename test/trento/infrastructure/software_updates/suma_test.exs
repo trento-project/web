@@ -263,10 +263,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
       advisory_name = Faker.UUID.v4()
 
       %{result: cves} =
-        suma_response_body = %{
-          success: true,
-          result: Enum.map(1..10, fn _ -> Faker.UUID.v4() end)
-        }
+        suma_response_body = %{success: true, result: build_list(10, :cve)}
 
       expect(SumaAuthMock, :authenticate, 1, fn -> {:ok, authenticated_state()} end)
 

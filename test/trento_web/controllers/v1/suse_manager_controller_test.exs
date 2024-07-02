@@ -172,7 +172,7 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
         {:ok, errata_details}
       end)
 
-      cves = generate_cves(10)
+      cves = build_list(10, :cve)
 
       expect(Trento.SoftwareUpdates.Discovery.Mock, :get_cves, 1, fn _ ->
         {:ok, cves}
@@ -233,7 +233,7 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
       end)
 
       expect(Trento.SoftwareUpdates.Discovery.Mock, :get_cves, 1, fn _ ->
-        {:ok, generate_cves(10)}
+        {:ok, build_list(10, :cve)}
       end)
 
       expect(Trento.SoftwareUpdates.Discovery.Mock, :get_bugzilla_fixes, 1, fn _ ->
@@ -285,7 +285,7 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
       end)
 
       expect(Trento.SoftwareUpdates.Discovery.Mock, :get_cves, 1, fn _ ->
-        {:ok, generate_cves(10)}
+        {:ok, build_list(10, :cve)}
       end)
 
       expect(Trento.SoftwareUpdates.Discovery.Mock, :get_bugzilla_fixes, 1, fn _ ->
@@ -299,16 +299,5 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
       |> json_response(:unprocessable_entity)
       |> assert_schema("UnprocessableEntity", api_spec)
     end
-  end
-
-  defp generate_cves(n) do
-    Enum.map(
-      1..n,
-      fn _ ->
-        year = Enum.random(1_991..2_024)
-        id = Enum.random(0..9_999)
-        "CVE-#{year}-#{id}"
-      end
-    )
   end
 end
