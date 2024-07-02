@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
 import { EOS_SEARCH } from 'eos-icons-react';
+import { noop } from 'lodash';
 
 import UpgradablePackagesList from '@common/UpgradablePackagesList';
 import PageHeader from '@common/PageHeader';
 import Input from '@common/Input';
 import { containsSubstring } from '@lib/filter';
 
-export default function UpgradablePackages({ hostName, upgradablePackages }) {
+export default function UpgradablePackages({
+  hostName,
+  upgradablePackages,
+  onPatchClick = noop,
+}) {
   const [search, setSearch] = useState('');
 
   const displayedPackages = upgradablePackages.filter(
@@ -34,7 +39,10 @@ export default function UpgradablePackages({ hostName, upgradablePackages }) {
           />
         </div>
       </div>
-      <UpgradablePackagesList upgradablePackages={displayedPackages} />
+      <UpgradablePackagesList
+        upgradablePackages={displayedPackages}
+        onPatchClick={onPatchClick}
+      />
     </>
   );
 }

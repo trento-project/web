@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
+import { noop } from 'lodash';
+
 import Table, { createStringSortingPredicate } from '@common/Table';
 
 const upgradablePackagesDefault = [];
 
 function UpgradablePackagesList({
   upgradablePackages = upgradablePackagesDefault,
+  onPatchClick = noop,
 }) {
   const [sortDirection, setSortDirection] = useState('asc');
 
@@ -45,7 +48,11 @@ function UpgradablePackagesList({
           <div>
             {content &&
               content.map(({ advisory }) => (
-                <div key={`${to_package_id}-${advisory}`}>{advisory}</div>
+                <div key={`${to_package_id}-${advisory}`}>
+                  <a href="" onClick={() => onPatchClick(advisory)}>
+                    {advisory}
+                  </a>
+                </div>
               ))}
           </div>
         ),
