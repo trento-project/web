@@ -35,6 +35,7 @@ export const defaultInitialState = {
   },
   checksSelection: { host: {}, cluster: {} },
   catalog: { loading: false, data: [], error: null },
+  user: { abilities: [{ name: 'all', resource: 'all' }] },
 };
 
 export const withState = (component, initialState = {}) => {
