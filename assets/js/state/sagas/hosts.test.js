@@ -94,16 +94,28 @@ describe('Hosts sagas', () => {
 
   it('should send host deregister request', async () => {
     const { id, hostname } = hostFactory.build();
-    const payload = { id, hostname, navigate: () => {} };
+    const payload = { id, hostname };
+    const mockNavigate = jest.fn();
+    const router = {
+      navigate: mockNavigate,
+    };
+    const context = { router };
 
     axiosMock.onDelete(`/hosts/${id}`).reply(204, {});
 
-    const dispatched = await recordSaga(deregisterHost, { payload });
+    const dispatched = await recordSaga(
+      deregisterHost,
+      { payload },
+      {},
+      context
+    );
 
     expect(dispatched).toEqual([
       setHostDeregistering(payload),
       unsetHostDeregistering(payload),
     ]);
+
+    expect(mockNavigate).toHaveBeenCalledWith('/hosts');
   });
 
   it('should notify error on host deregistration request', async () => {

@@ -206,15 +206,11 @@ function CheckResultDetailPage({ targetType }) {
             dispatch(updateLastExecution(targetID));
           }
         }}
-        onStartExecution={(targetId, hosts, selectedChecks, onNavigate) => {
+        onStartExecution={(targetId, hosts, selectedChecks) => {
           isTargetHost(targetType) &&
-            dispatch(
-              hostExecutionRequested(target, selectedChecks, onNavigate)
-            );
+            dispatch(hostExecutionRequested(target, selectedChecks));
           isTargetCluster(targetType) &&
-            dispatch(
-              executionRequested(targetId, hosts, selectedChecks, onNavigate)
-            );
+            dispatch(executionRequested(targetId, hosts, selectedChecks));
         }}
       >
         <CheckResultDetail

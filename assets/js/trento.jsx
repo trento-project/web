@@ -133,7 +133,7 @@ const createRouter = ({ getUser }) =>
 function RoutesWrapper() {
   return (
     <>
-      <Toaster position="top-right" />
+      <Toaster position="top-right" containerStyle={{ top: 50, zIndex: 99 }} />
       <Outlet />
     </>
   );

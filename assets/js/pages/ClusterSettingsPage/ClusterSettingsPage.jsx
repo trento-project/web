@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { get } from 'lodash';
 
 import { clusterChecksSelected } from '@state/checksSelection';
@@ -42,7 +42,6 @@ const catalogBanner = {
 };
 
 function ClusterSettingsPage() {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { clusterID } = useParams();
   const [selection, setSelection] = useState([]);
@@ -102,9 +101,7 @@ function ClusterSettingsPage() {
     );
 
   const requestChecksExecution = () => {
-    dispatch(
-      executionRequested(clusterID, clusterHosts, selectedChecks, navigate)
-    );
+    dispatch(executionRequested(clusterID, clusterHosts, selectedChecks));
   };
 
   return (

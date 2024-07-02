@@ -109,7 +109,7 @@ function HanaClusterDetails({
                 className="mx-0.5 border border-green-500"
                 size="small"
                 onClick={() => {
-                  onStartExecution(clusterID, hosts, selectedChecks, navigate);
+                  onStartExecution(clusterID, hosts, selectedChecks);
                 }}
                 disabled={startExecutionDisabled}
               >

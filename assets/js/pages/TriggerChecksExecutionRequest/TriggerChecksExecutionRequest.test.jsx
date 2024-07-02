@@ -12,11 +12,7 @@ describe('TriggerChecksExecutionRequest component', () => {
   it('should dispatch execution requested on click and navigate to the correct url', async () => {
     const user = userEvent.setup();
 
-    const onStartExecution = jest.fn(
-      (targetID, _hosts, _selectedChecks, navigate) => {
-        navigate(`/clusters/${targetID}/executions/last`);
-      }
-    );
+    const onStartExecution = jest.fn();
 
     const targetID = faker.string.uuid();
     const hosts = hostFactory.buildList(2);
@@ -39,11 +35,7 @@ describe('TriggerChecksExecutionRequest component', () => {
     expect(onStartExecution).toHaveBeenCalledWith(
       targetID,
       hosts,
-      selectedChecks,
-      expect.any(Function)
-    );
-    expect(window.location.pathname).toBe(
-      `/clusters/${targetID}/executions/last`
+      selectedChecks
     );
   });
 });

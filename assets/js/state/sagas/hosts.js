@@ -1,4 +1,12 @@
-import { delay, put, race, call, take, takeEvery } from 'redux-saga/effects';
+import {
+  delay,
+  put,
+  race,
+  call,
+  take,
+  takeEvery,
+  getContext,
+} from 'redux-saga/effects';
 import { del } from '@lib/network';
 
 import {
@@ -109,14 +117,12 @@ export function* hostDeregistered({ payload }) {
   );
 }
 
-export function* deregisterHost({
-  payload,
-  payload: { id, hostname, navigate },
-}) {
+export function* deregisterHost({ payload, payload: { id, hostname } }) {
   yield put(setHostDeregistering(payload));
+  const router = yield getContext('router');
   try {
     yield call(del, `/hosts/${id}`);
-    navigate('/hosts');
+    yield call(router.navigate, '/hosts');
   } catch (error) {
     yield put(
       notify({

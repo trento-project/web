@@ -78,13 +78,10 @@ function ExecutionResultsPage({ targetType }) {
       executionError={executionError}
       targetSelectedChecks={target.selected_checks}
       savedFilters={savedFilters}
-      onStartExecution={(targetId, hosts, selectedChecks, navigate) => {
-        isHost &&
-          dispatch(hostExecutionRequested(target, selectedChecks, navigate));
+      onStartExecution={(targetId, hosts, selectedChecks) => {
+        isHost && dispatch(hostExecutionRequested(target, selectedChecks));
         isCluster &&
-          dispatch(
-            executionRequested(targetId, hosts, selectedChecks, navigate)
-          );
+          dispatch(executionRequested(targetId, hosts, selectedChecks));
       }}
       onSaveFilters={(filters) =>
         dispatch(setSelectedFilters({ resourceID: targetID, filters }))
