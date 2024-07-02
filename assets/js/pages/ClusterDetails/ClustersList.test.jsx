@@ -8,25 +8,58 @@ import { renderWithRouter, withState } from '@lib/test-utils';
 
 import ClustersList from './ClustersList';
 
-describe('ClustersList component', () => {
-  describe('filtering', () => {
-    const cleanInitialState = {
-      hostsList: {
-        hosts: [],
-      },
-      clustersList: {
-        clusters: [],
-      },
-      sapSystemsList: {
-        sapSystems: [],
-        applicationInstances: [],
-        databaseInstances: [],
-      },
-      databasesList: {
-        databaseInstances: [],
-      },
-    };
+const cleanInitialState = {
+  hostsList: {
+    hosts: [],
+  },
+  clustersList: {
+    clusters: [],
+  },
+  sapSystemsList: {
+    sapSystems: [],
+    applicationInstances: [],
+    databaseInstances: [],
+  },
+  databasesList: {
+    databaseInstances: [],
+  },
+  user: {
+    abilities: [{ name: 'all', resource: 'all' }],
+  },
+};
 
+describe('ClustersList component', () => {
+  describe('tags operations', () => {
+    it('should disable tag creation and deletion if the user abilities are not compatible', async () => {
+      const state = {
+        ...cleanInitialState,
+        clustersList: {
+          clusters: [].concat(
+            clusterFactory.buildList(1, {
+              tags: [{ value: 'Tag2' }, { value: 'Tag1' }],
+            })
+          ),
+        },
+        user: {
+          abilities: [{ name: 'all', resource: 'a_resource' }],
+        },
+      };
+
+      const [StatefulClustersList] = withState(<ClustersList />, state);
+
+      renderWithRouter(StatefulClustersList);
+      expect(screen.queryByText('Add Tag')).toHaveClass('opacity-50');
+      // grab the X
+      expect(
+        screen.queryByText('Tag1').children.item(0).children.item(0)
+      ).toHaveClass('opacity-50');
+      expect(
+        screen.queryByText('Tag2').children.item(0).children.item(0)
+      ).toHaveClass('opacity-50');
+    });
+  });
+
+  describe('filtering', () => {
     const scenarios = [
       {
         filter: 'Health',
