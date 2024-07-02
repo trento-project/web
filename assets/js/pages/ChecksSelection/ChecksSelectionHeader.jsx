@@ -48,15 +48,16 @@ function ChecksSelectionHeader({
                 Save Checks Selection
               </Button>
             </DisabledGuard>
-            <Tooltip
-              className="w-56"
-              content="Click Start Execution or wait for Trento to periodically run checks."
-              visible={isAbleToStartExecution}
-              wrap={false}
+
+            <DisabledGuard
+              userAbilities={userAbilities}
+              permitted={checkExecutionPermittedFor}
             >
-              <DisabledGuard
-                userAbilities={userAbilities}
-                permitted={checkExecutionPermittedFor}
+              <Tooltip
+                className="w-56"
+                content="Click Start Execution or wait for Trento to periodically run checks."
+                visible={isAbleToStartExecution}
+                wrap={false}
               >
                 <Button
                   type="primary"
@@ -72,8 +73,8 @@ function ChecksSelectionHeader({
                   />{' '}
                   Start Execution
                 </Button>
-              </DisabledGuard>
-            </Tooltip>
+              </Tooltip>
+            </DisabledGuard>
           </div>
         </div>
       </div>

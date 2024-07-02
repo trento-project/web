@@ -14,21 +14,6 @@ defmodule TrentoWeb.V1.HostControllerTest do
   setup :setup_user
 
   describe "forbidden routes" do
-    test "should return forbidden on request_check_execution controller action when the user does not have all:all or all:host_checks_execution abilities",
-         %{conn: conn, api_spec: api_spec} do
-      %{id: user_id} = insert(:user)
-
-      conn =
-        conn
-        |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
-        |> put_req_header("content-type", "application/json")
-
-      conn
-      |> post("/api/v1/hosts/host_id/checks/request_execution")
-      |> json_response(:forbidden)
-      |> assert_schema("Forbidden", api_spec)
-    end
-
     test "should return forbidden on any controller action if the user does not have the right permission",
          %{conn: conn, api_spec: api_spec} do
       %{id: user_id} = insert(:user)
@@ -41,7 +26,8 @@ defmodule TrentoWeb.V1.HostControllerTest do
 
       Enum.each(
         [
-          post(conn, "/api/v1/hosts/#{host_id}/checks", %{})
+          post(conn, "/api/v1/hosts/#{host_id}/checks", %{}),
+          post(conn, "/api/v1/hosts/host_id/#{host_id}/request_execution", %{})
         ],
         fn conn ->
           conn

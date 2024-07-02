@@ -13,6 +13,8 @@ defmodule Trento.Clusters.Projections.ClusterReadModel do
 
   alias Trento.Tags.Tag
 
+  defdelegate authorize(action, user, params), to: Trento.Clusters.Policy
+
   @type t :: %__MODULE__{}
 
   @derive {Jason.Encoder, except: [:__meta__, :__struct__]}
