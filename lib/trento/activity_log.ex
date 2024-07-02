@@ -6,9 +6,8 @@ defmodule Trento.ActivityLog do
   require Logger
 
   require Trento.ActivityLog.RetentionPeriodUnit, as: RetentionPeriodUnit
-
+  alias Trento.ActivityLog.ActivityLog
   alias Trento.ActivityLog.Settings
-
   alias Trento.Repo
 
   @spec get_settings() ::
@@ -36,6 +35,12 @@ defmodule Trento.ActivityLog do
       |> Repo.update()
       |> log_error("Error while updating activity log retention period")
     end
+  end
+
+  @spec list_activity_log() :: list(ActivityLog)
+  def list_activity_log() do
+    # This will be made filterable/paginatable in a later PR
+    Repo.all(ActivityLog)
   end
 
   defp log_error({:error, _} = error, message) do
