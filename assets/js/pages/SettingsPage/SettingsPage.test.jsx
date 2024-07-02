@@ -6,7 +6,7 @@ import '@testing-library/jest-dom';
 
 import {
   withState,
-  defaultInitialState,
+  defaultInitialState as defaultInitialStateBase,
   renderWithRouter,
 } from '@lib/test-utils';
 import { softwareUpdatesSettingsFactory } from '@lib/test-utils/factories/softwareUpdatesSettings';
@@ -16,6 +16,22 @@ import MockAdapter from 'axios-mock-adapter';
 import SettingsPage from './SettingsPage';
 
 const axiosMock = new MockAdapter(networkClient);
+
+const defaultInitialState = {
+  ...defaultInitialStateBase,
+  softwareUpdatesSettings: {
+    settings: {
+      url: undefined,
+      username: undefined,
+      ca_uploaded_at: undefined,
+    },
+  },
+  activityLogsSettings: {
+    settings: {
+      retention_time: { value: 1, unit: 'day' },
+    },
+  },
+};
 
 describe('Settings Page', () => {
   afterEach(() => {
@@ -40,9 +56,6 @@ describe('Settings Page', () => {
             username: undefined,
             ca_uploaded_at: undefined,
           },
-        },
-        activityLogsSettings: {
-          settings: { retention_time: { value: 1, unit: 'day' } },
         },
       });
 
@@ -70,9 +83,6 @@ describe('Settings Page', () => {
             ca_uploaded_at: undefined,
           },
         },
-        activityLogsSettings: {
-          settings: { retention_time: { value: 1, unit: 'day' } },
-        },
       });
 
       renderWithRouter(StatefulSettings);
@@ -93,9 +103,6 @@ describe('Settings Page', () => {
             ca_uploaded_at: undefined,
           },
           error: null,
-        },
-        activityLogsSettings: {
-          settings: { retention_time: { value: 1, unit: 'day' } },
         },
       });
 
@@ -122,9 +129,6 @@ describe('Settings Page', () => {
           loading: false,
           settings,
           error: null,
-        },
-        activityLogsSettings: {
-          settings: { retention_time: { value: 1, unit: 'day' } },
         },
       });
 
@@ -153,14 +157,6 @@ describe('Settings Page', () => {
     it('should render activity logs section', async () => {
       const [StatefulSettings] = withState(<SettingsPage />, {
         ...defaultInitialState,
-        softwareUpdatesSettings: {
-          loading: true,
-          settings: {
-            url: undefined,
-            username: undefined,
-            ca_uploaded_at: undefined,
-          },
-        },
         activityLogsSettings: {
           loading: false,
           settings: { retention_time: { value: 1, unit: 'day' } },
@@ -177,14 +173,6 @@ describe('Settings Page', () => {
     it('should render loader on activity logs section', async () => {
       const [StatefulSettings] = withState(<SettingsPage />, {
         ...defaultInitialState,
-        softwareUpdatesSettings: {
-          loading: true,
-          settings: {
-            url: undefined,
-            username: undefined,
-            ca_uploaded_at: undefined,
-          },
-        },
         activityLogsSettings: {
           loading: true,
           settings: { retention_time: { value: 1, unit: 'day' } },
@@ -203,14 +191,6 @@ describe('Settings Page', () => {
     it('should render edit modal', async () => {
       const [StatefulSettings] = withState(<SettingsPage />, {
         ...defaultInitialState,
-        softwareUpdatesSettings: {
-          loading: true,
-          settings: {
-            url: undefined,
-            username: undefined,
-            ca_uploaded_at: undefined,
-          },
-        },
         activityLogsSettings: {
           editing: true,
           settings: { retention_time: { value: 1, unit: 'day' } },
@@ -235,14 +215,6 @@ describe('Settings Page', () => {
     it('should render saving errors', async () => {
       const [StatefulSettings] = withState(<SettingsPage />, {
         ...defaultInitialState,
-        softwareUpdatesSettings: {
-          loading: true,
-          settings: {
-            url: undefined,
-            username: undefined,
-            ca_uploaded_at: undefined,
-          },
-        },
         activityLogsSettings: {
           editing: true,
           settings: { retention_time: { value: 1, unit: 'day' } },
@@ -266,14 +238,6 @@ describe('Settings Page', () => {
     it('should render saved configuration', async () => {
       const [StatefulSettings] = withState(<SettingsPage />, {
         ...defaultInitialState,
-        softwareUpdatesSettings: {
-          loading: true,
-          settings: {
-            url: undefined,
-            username: undefined,
-            ca_uploaded_at: undefined,
-          },
-        },
         activityLogsSettings: {
           settings: { retention_time: { value: 2, unit: 'day' } },
         },
