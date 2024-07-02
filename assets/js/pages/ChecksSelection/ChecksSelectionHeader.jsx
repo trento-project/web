@@ -18,6 +18,7 @@ function ChecksSelectionHeader({
   selection,
   userAbilities,
   checkSelectionPermittedFor,
+  checkExecutionPermittedFor,
   onSaveSelection = () => {},
   onStartExecution = () => {},
 }) {
@@ -47,27 +48,33 @@ function ChecksSelectionHeader({
                 Save Checks Selection
               </Button>
             </DisabledGuard>
-            <Tooltip
-              className="w-56"
-              content="Click Start Execution or wait for Trento to periodically run checks."
-              visible={isAbleToStartExecution}
-              wrap={false}
+
+            <DisabledGuard
+              userAbilities={userAbilities}
+              permitted={checkExecutionPermittedFor}
             >
-              <Button
-                type="primary"
-                className="mx-1"
-                onClick={onStartExecution}
-                disabled={!isAbleToStartExecution}
+              <Tooltip
+                className="w-56"
+                content="Click Start Execution or wait for Trento to periodically run checks."
+                visible={isAbleToStartExecution}
+                wrap={false}
               >
-                <EOS_PLAY_CIRCLE
-                  className={classNames('inline-block align-sub', {
-                    'fill-white': isAbleToStartExecution,
-                    'fill-gray-200': !isAbleToStartExecution,
-                  })}
-                />{' '}
-                Start Execution
-              </Button>
-            </Tooltip>
+                <Button
+                  type="primary"
+                  className="mx-1"
+                  onClick={onStartExecution}
+                  disabled={!isAbleToStartExecution}
+                >
+                  <EOS_PLAY_CIRCLE
+                    className={classNames('inline-block align-sub', {
+                      'fill-white': isAbleToStartExecution,
+                      'fill-gray-200': !isAbleToStartExecution,
+                    })}
+                  />{' '}
+                  Start Execution
+                </Button>
+              </Tooltip>
+            </DisabledGuard>
           </div>
         </div>
       </div>

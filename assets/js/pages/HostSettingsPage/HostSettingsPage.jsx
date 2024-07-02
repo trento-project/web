@@ -89,6 +89,7 @@ function HostSettingsPage() {
         selection={selection}
         userAbilities={abilities}
         checkSelectionPermittedFor={['all:host_checks_selection']}
+        checkExecutionPermittedFor={['all:host_checks_execution']}
         onSaveSelection={saveSelection}
         onStartExecution={requestChecksExecution}
       />

@@ -47,6 +47,37 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
   end
 
   describe "request check executions" do
+    test "should perform the request when the user has all:cluster_checks_execution ability", %{
+      conn: conn
+    } do
+      %{id: cluster_id} = insert(:cluster)
+
+      %{id: user_id} = insert(:user)
+
+      %{id: ability_id} = insert(:ability, name: "all", resource: "cluster_checks_execution")
+      insert(:users_abilities, user_id: user_id, ability_id: ability_id)
+
+      conn =
+        conn
+        |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
+        |> put_req_header("content-type", "application/json")
+
+      expect(
+        Trento.Infrastructure.Messaging.Adapter.Mock,
+        :publish,
+        fn _, _ ->
+          :ok
+        end
+      )
+
+      resp =
+        conn
+        |> post("/api/v1/clusters/#{cluster_id}/checks/request_execution")
+        |> json_response(:accepted)
+
+      assert resp == %{}
+    end
+
     test "should return 404 when the cluster is not found", %{conn: conn} do
       cluster_id = UUID.uuid4()
 
@@ -103,7 +134,8 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
 
       Enum.each(
         [
-          post(conn, "/api/v1/clusters/#{cluster_id}/checks", %{})
+          post(conn, "/api/v1/clusters/#{cluster_id}/checks", %{}),
+          post(conn, "/api/v1/clusters/#{cluster_id}/checks/request_execution", %{})
         ],
         fn conn ->
           conn

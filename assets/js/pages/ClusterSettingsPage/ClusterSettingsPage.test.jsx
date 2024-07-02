@@ -102,7 +102,7 @@ describe('ClusterDetails ClusterSettings component', () => {
       const [StatefulClusterSettings] = withState(<ClusterSettingsPage />, {
         ...defaultInitialState,
         clustersList: { clusters: [cluster] },
-        user: { abilities: [] },
+        user: { abilities: [{ name: 'all', resource: 'all' }] },
       });
 
       renderWithRouterMatch(StatefulClusterSettings, {

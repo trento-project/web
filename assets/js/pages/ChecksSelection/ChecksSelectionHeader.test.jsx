@@ -30,6 +30,7 @@ describe('ChecksSelectionHeader component', () => {
         selection={selection}
         userAbilities={[{ name: 'all', resource: 'all' }]}
         checkSelectionPermittedFor={['all:all']}
+        checkExecutionPermittedFor={['all:all']}
         savedSelection={savedSelection}
         onSaveSelection={onSaveSelection}
         onStartExecution={onStartExecution}
@@ -85,6 +86,7 @@ describe('ChecksSelectionHeader component', () => {
         selection={selection}
         userAbilities={[{ name: 'all', resource: 'all' }]}
         checkSelectionPermittedFor={['all:all']}
+        checkExecutionPermittedFor={['all:all']}
         savedSelection={selection}
         onSaveSelection={onSaveSelection}
         onStartExecution={() => {}}
@@ -132,6 +134,7 @@ describe('ChecksSelectionHeader component', () => {
           selection={savedSelection}
           userAbilities={[{ name: 'all', resource: 'all' }]}
           checkSelectionPermittedFor={['all:all']}
+          checkExecutionPermittedFor={['all:all']}
           savedSelection={savedSelection}
           onSaveSelection={() => {}}
           onStartExecution={onStartExecution}
@@ -145,6 +148,44 @@ describe('ChecksSelectionHeader component', () => {
       expect(onStartExecution).not.toHaveBeenCalled();
     }
   );
+
+  it('should forbid starting a check execution', async () => {
+    const user = userEvent.setup();
+
+    const targetID = faker.string.uuid();
+    const targetName = faker.lorem.word();
+    const selection = [faker.string.uuid(), faker.string.uuid()];
+    const onStartExecution = jest.fn();
+
+    renderWithRouter(
+      <ChecksSelectionHeader
+        targetID={targetID}
+        targetName={targetName}
+        backTo={<button type="button">Back to Target Details</button>}
+        pageHeader={<div>Target Check Settings</div>}
+        isSavingSelection
+        selection={selection}
+        userAbilities={[{ name: 'all', resource: 'other_resource' }]}
+        checkSelectionPermittedFor={['all:all']}
+        checkExecutionPermittedFor={['all:host_check_execution']}
+        savedSelection={selection}
+        onSaveSelection={() => {}}
+        onStartExecution={onStartExecution}
+      />
+    );
+
+    expect(screen.getByText('Start Execution')).toBeDisabled();
+
+    await user.click(screen.getByText('Start Execution'));
+
+    expect(onStartExecution).not.toHaveBeenCalled();
+
+    await user.hover(screen.getByText('Start Execution'));
+
+    expect(
+      screen.queryByText('You are not authorized for this action')
+    ).toBeVisible();
+  });
 
   it('should forbid saving a selection', async () => {
     const user = userEvent.setup();
@@ -164,6 +205,7 @@ describe('ChecksSelectionHeader component', () => {
         selection={selection}
         userAbilities={[]}
         checkSelectionPermittedFor={['all:all']}
+        checkExecutionPermittedFor={['all:all']}
         savedSelection={selection}
         onSaveSelection={onSaveSelection}
         onStartExecution={() => {}}
