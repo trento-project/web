@@ -2,20 +2,12 @@ import { createSelector } from '@reduxjs/toolkit';
 
 export const getActivityLogsSettings = createSelector(
   [({ activityLogsSettings }) => activityLogsSettings],
-  ({
+  ({ settings, errors, loading, editing, networkError }) => ({
     settings,
     errors,
     loading,
     editing,
     networkError,
-    testingConnection,
-  }) => ({
-    settings,
-    errors,
-    loading,
-    editing,
-    networkError,
-    testingConnection,
   })
 );
 

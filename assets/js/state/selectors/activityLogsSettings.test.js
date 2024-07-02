@@ -22,7 +22,6 @@ describe('Activity Logs Settings selector', () => {
         },
         errors: null,
         editing: false,
-        testingConnection: false,
       },
     ];
 
