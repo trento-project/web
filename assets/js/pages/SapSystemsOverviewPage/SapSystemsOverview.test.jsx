@@ -219,6 +219,7 @@ describe('SapSystemsOverviews component', () => {
             sapSystems={[sapSystem]}
             applicationInstances={sapSystem.application_instances}
             databaseInstances={sapSystem.database_instances}
+            userAbilities={[{ name: 'all', resource: 'all' }]}
             onInstanceCleanUp={mockedCleanUp}
           />
         );
@@ -240,6 +241,47 @@ describe('SapSystemsOverviews component', () => {
         expect(mockedCleanUp).toHaveBeenCalledWith(sapSystem[field][0], type);
       }
     );
+
+    it('should forbid instance cleanup', async () => {
+      const user = userEvent.setup();
+
+      const sapSystem = sapSystemFactory.build();
+
+      sapSystem.database_instances[0].absent_at = faker.date
+        .past()
+        .toISOString();
+
+      sapSystem.application_instances[0].absent_at = faker.date
+        .past()
+        .toISOString();
+
+      renderWithRouter(
+        <SapSystemsOverview
+          sapSystems={[sapSystem]}
+          applicationInstances={sapSystem.application_instances}
+          databaseInstances={sapSystem.database_instances}
+          userAbilities={[]}
+        />
+      );
+
+      const cleanUpButtons = screen.getAllByRole('button', {
+        name: 'Clean up',
+      });
+
+      const applicationCleanUpButton = cleanUpButtons[0].closest('button');
+      const databaseCleanUpButton = cleanUpButtons[1].closest('button');
+
+      expect(applicationCleanUpButton).toBeDisabled();
+      expect(databaseCleanUpButton).toBeDisabled();
+
+      await user.click(applicationCleanUpButton);
+
+      await user.hover(applicationCleanUpButton);
+
+      expect(
+        screen.queryByText('You are not authorized for this action')
+      ).toBeVisible();
+    });
   });
 
   describe('filtering', () => {

@@ -78,6 +78,10 @@ export default {
         defaultValue: { summary: false },
       },
     },
+    userAbilities: {
+      control: 'array',
+      description: 'Current user abilities',
+    },
     onTagAdd: {
       action: 'Add tag',
       description: 'Called when a new tag is added',
@@ -110,6 +114,7 @@ export const Databases = {
     databases,
     databaseInstances: enrichedInstances,
     loading: false,
+    userAbilities: [{ name: 'all', resource: 'all' }],
   },
 };
 
@@ -118,6 +123,7 @@ export const WithSystemReplication = {
     databases: [databaseWithSR],
     databaseInstances: systemReplicationInstances,
     loading: false,
+    userAbilities: [{ name: 'all', resource: 'all' }],
   },
 };
 
@@ -126,5 +132,13 @@ export const WithAbsentInstances = {
     databases: [databaseWithAbsentInstances],
     databaseInstances: absentInstance,
     loading: false,
+    userAbilities: [{ name: 'all', resource: 'all' }],
+  },
+};
+
+export const UnauthorizedCleanUp = {
+  args: {
+    ...WithAbsentInstances.args,
+    userAbilities: [],
   },
 };

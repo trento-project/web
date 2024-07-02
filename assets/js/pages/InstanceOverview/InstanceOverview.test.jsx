@@ -57,6 +57,7 @@ describe('InstanceOverview', () => {
       <InstanceOverview
         instanceType={APPLICATION_TYPE}
         instance={absentInstance}
+        userAbilities={[{ name: 'all', resource: 'all' }]}
       />
     );
 
@@ -95,9 +96,38 @@ describe('InstanceOverview', () => {
       <InstanceOverview
         instanceType={DATABASE_TYPE}
         instance={absentInstance}
+        userAbilities={[{ name: 'all', resource: 'all' }]}
       />
     );
 
     expect(screen.getByLabelText('Loading')).toBeInTheDocument();
+  });
+
+  it('should forbid instance cleanup', async () => {
+    const user = userEvent.setup();
+
+    const absentInstance = databaseInstanceFactory.build({
+      absent_at: faker.date.past().toISOString(),
+    });
+
+    renderWithRouter(
+      <InstanceOverview
+        instanceType={DATABASE_TYPE}
+        instance={absentInstance}
+        userAbilities={[]}
+      />
+    );
+
+    const cleanUpButton = screen.getByText('Clean up').closest('button');
+
+    expect(cleanUpButton).toBeDisabled();
+
+    await user.click(cleanUpButton);
+
+    await user.hover(cleanUpButton);
+
+    expect(
+      screen.queryByText('You are not authorized for this action')
+    ).toBeVisible();
   });
 });

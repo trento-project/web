@@ -134,6 +134,10 @@ export default {
       control: 'object',
       description: 'Last execution data',
     },
+    userAbilities: {
+      control: 'array',
+      description: 'Current user abilities',
+    },
     cleanUpHost: {
       action: 'Deregister host',
       description: 'Deregister host',
@@ -197,6 +201,7 @@ export const Default = {
     softwareUpdatesTooltip: undefined,
     selectedChecks: [],
     slesSubscriptions: host.sles_subscriptions,
+    userAbilities: [{ name: 'all', resource: 'all' }],
   },
 };
 
@@ -218,6 +223,14 @@ export const Deregisterable = {
   args: {
     ...Default.args,
     deregisterable: true,
+  },
+};
+
+export const CleanUpUnauthorized = {
+  args: {
+    ...Default.args,
+    deregisterable: true,
+    userAbilities: [],
   },
 };
 

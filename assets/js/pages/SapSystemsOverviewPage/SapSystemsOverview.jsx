@@ -20,6 +20,7 @@ function SapSystemsOverview({
   applicationInstances,
   databaseInstances,
   loading,
+  userAbilities,
   onTagAdd,
   onTagRemove,
   onInstanceCleanUp,
@@ -106,6 +107,7 @@ function SapSystemsOverview({
     collapsibleDetailRenderer: (sapSystem) => (
       <SAPSystemItemOverview
         sapSystem={sapSystem}
+        userAbilities={userAbilities}
         onCleanUpClick={(instance, type) => {
           setCleanUpModalOpen(true);
           setInstanceToDeregister(instance);

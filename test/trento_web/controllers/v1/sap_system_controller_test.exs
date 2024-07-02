@@ -7,11 +7,16 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
 
   import Mox
 
+  import Trento.Support.Helpers.AbilitiesTestHelper
+
   alias TrentoWeb.OpenApi.V1.ApiSpec
 
   alias Trento.SapSystems.Commands.DeregisterApplicationInstance
 
   setup [:set_mox_from_context, :verify_on_exit!]
+
+  setup :setup_api_spec_v1
+  setup :setup_user
 
   describe "list" do
     test "should list all sap_systems", %{conn: conn} do
@@ -115,6 +120,36 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
       )
       |> json_response(404)
       |> assert_schema("NotFound", api_spec)
+    end
+  end
+
+  describe "forbidden response" do
+    test "should return forbidden on any controller action if the user does not have the right permission",
+         %{conn: conn, api_spec: api_spec} do
+      %{id: user_id} = insert(:user)
+      %{id: sap_system_id} = build(:sap_system)
+
+      %{host_id: host_id, instance_number: instance_number} =
+        build(:application_instance, sap_system_id: sap_system_id)
+
+      conn =
+        conn
+        |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
+        |> put_req_header("content-type", "application/json")
+
+      Enum.each(
+        [
+          delete(
+            conn,
+            "/api/v1/sap_systems/#{sap_system_id}/hosts/#{host_id}/instances/#{instance_number}"
+          )
+        ],
+        fn conn ->
+          conn
+          |> json_response(:forbidden)
+          |> assert_schema("Forbidden", api_spec)
+        end
+      )
     end
   end
 end

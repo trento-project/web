@@ -97,7 +97,13 @@ describe('HostDetails component', () => {
     });
 
     it('should display clean up button when host is deregisterable', () => {
-      renderWithRouter(<HostDetails agentVersion="2.0.0" deregisterable />);
+      renderWithRouter(
+        <HostDetails
+          agentVersion="2.0.0"
+          deregisterable
+          userAbilities={[{ name: 'all', resource: 'all' }]}
+        />
+      );
 
       expect(
         screen.getByRole('button', { name: 'Clean up' })
@@ -106,7 +112,12 @@ describe('HostDetails component', () => {
 
     it('should show the host in deregistering state', () => {
       renderWithRouter(
-        <HostDetails agentVersion="2.0.0" deregisterable deregistering />
+        <HostDetails
+          agentVersion="2.0.0"
+          deregisterable
+          deregistering
+          userAbilities={[{ name: 'all', resource: 'all' }]}
+        />
       );
 
       expect(
@@ -127,6 +138,7 @@ describe('HostDetails component', () => {
           agentVersion="2.0.0"
           deregisterable
           hostname={hostname}
+          userAbilities={[{ name: 'all', resource: 'all' }]}
           cleanUpHost={mockCleanUp}
         />
       );
@@ -146,6 +158,32 @@ describe('HostDetails component', () => {
       await user.click(cleanUpModalButton);
 
       expect(mockCleanUp).toHaveBeenCalled();
+    });
+
+    it('should forbid host cleanup', async () => {
+      const user = userEvent.setup();
+      const { hostname } = hostFactory.build();
+
+      renderWithRouter(
+        <HostDetails
+          agentVersion="2.0.0"
+          deregisterable
+          hostname={hostname}
+          userAbilities={[]}
+        />
+      );
+
+      const cleanUpButton = screen.getByText('Clean up').closest('button');
+
+      expect(cleanUpButton).toBeDisabled();
+
+      await user.click(cleanUpButton);
+
+      await user.hover(cleanUpButton);
+
+      expect(
+        screen.queryByText('You are not authorized for this action')
+      ).toBeVisible();
     });
   });
 

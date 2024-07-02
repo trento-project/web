@@ -8,6 +8,7 @@ import { networkClient } from '@lib/network';
 
 import { TARGET_HOST } from '@lib/model';
 
+import { getUserProfile } from '@state/selectors/user';
 import { getClusterByHost } from '@state/selectors/cluster';
 import { getInstancesOnHost } from '@state/selectors/sapSystem';
 import { getCatalog } from '@state/selectors/catalog';
@@ -47,6 +48,7 @@ function HostDetailsPage() {
   const sapInstances = useSelector((state) =>
     getInstancesOnHost(state, hostID)
   );
+  const { abilities } = useSelector(getUserProfile);
 
   const lastExecution = useSelector(getLastExecution(hostID));
   const catalog = useSelector(getCatalog());
@@ -131,6 +133,7 @@ function HostDetailsPage() {
           ? 'Trento was not able to retrieve the requested data'
           : undefined
       }
+      userAbilities={abilities}
       cleanUpHost={() => {
         dispatch(deregisterHost({ id: hostID, hostname: host.hostname }));
       }}

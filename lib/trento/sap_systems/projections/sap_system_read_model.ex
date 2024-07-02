@@ -19,6 +19,8 @@ defmodule Trento.SapSystems.Projections.SapSystemReadModel do
 
   alias Trento.Tags.Tag
 
+  defdelegate authorize(action, user, params), to: Trento.SapSystems.Policy
+
   @type t :: %__MODULE__{}
 
   @derive {Jason.Encoder, except: [:__meta__, :__struct__]}

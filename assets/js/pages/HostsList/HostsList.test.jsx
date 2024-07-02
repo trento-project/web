@@ -93,6 +93,7 @@ describe('HostsLists component', () => {
         hostsList: {
           hosts: [].concat(host1, host2),
         },
+        user: { abilities: [{ name: 'all', resource: 'all' }] },
       };
 
       const [StatefulHostsList] = withState(<HostsList />, state);
@@ -165,6 +166,7 @@ describe('HostsLists component', () => {
         hostsList: {
           hosts: [].concat(host1, host2),
         },
+        user: { abilities: [{ name: 'all', resource: 'all' }] },
       };
 
       const [StatefulHostsList] = withState(<HostsList />, state);
@@ -191,6 +193,7 @@ describe('HostsLists component', () => {
         hostsList: {
           hosts: [host],
         },
+        user: { abilities: [{ name: 'all', resource: 'all' }] },
       };
 
       const [StatefulHostsList] = withState(<HostsList />, state);
@@ -208,6 +211,7 @@ describe('HostsLists component', () => {
         hostsList: {
           hosts: [host],
         },
+        user: { abilities: [{ name: 'all', resource: 'all' }] },
       };
 
       const [StatefulHostsList, store] = withState(<HostsList />, state);
@@ -245,6 +249,35 @@ describe('HostsLists component', () => {
       ];
       expect(actions).toEqual(expect.arrayContaining(expectedActions));
     });
+
+    it('should forbid cleaning up a host', async () => {
+      const user = userEvent.setup();
+
+      const host = hostFactory.build({ deregisterable: true });
+      const state = {
+        ...defaultInitialState,
+        hostsList: {
+          hosts: [host],
+        },
+        user: { abilities: [] },
+      };
+
+      const [StatefulHostsList] = withState(<HostsList />, state);
+
+      renderWithRouter(StatefulHostsList);
+
+      const cleanUpButton = screen.getByText('Clean up').closest('button');
+
+      expect(cleanUpButton).toBeDisabled();
+
+      await user.click(cleanUpButton);
+
+      await user.hover(cleanUpButton);
+
+      expect(
+        screen.queryByText('You are not authorized for this action')
+      ).toBeVisible();
+    });
   });
 
   describe('filtering', () => {
@@ -264,6 +297,7 @@ describe('HostsLists component', () => {
         databases: [],
         databaseInstances: [],
       },
+      user: { abilities: [{ name: 'all', resource: 'all' }] },
     };
 
     const scenarios = [

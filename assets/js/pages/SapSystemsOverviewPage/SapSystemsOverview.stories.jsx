@@ -82,6 +82,10 @@ export default {
         defaultValue: { summary: false },
       },
     },
+    userAbilities: {
+      control: 'array',
+      description: 'Current user abilities',
+    },
     onTagAdd: {
       action: 'Add tag',
       description: 'Called when a new tag is added',
@@ -115,6 +119,7 @@ export const SapSystems = {
     applicationInstances: enrichedApplicationInstances,
     databaseInstances: enrichedDatabaseInstances,
     loading: false,
+    userAbilities: [{ name: 'all', resource: 'all' }],
   },
 };
 
@@ -124,5 +129,13 @@ export const WithAbsentInstances = {
     applicationInstances: enrichedAbsentApplicationInstances,
     databaseInstances: enrichedAbsentDatabaseInstances,
     loading: false,
+    userAbilities: [{ name: 'all', resource: 'all' }],
+  },
+};
+
+export const UnauthorizedCleanUp = {
+  args: {
+    ...WithAbsentInstances.args,
+    userAbilities: [],
   },
 };
