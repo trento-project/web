@@ -11,6 +11,15 @@ defmodule TrentoWeb.V1.SapSystemController do
     UnprocessableEntity
   }
 
+  plug TrentoWeb.Plugs.LoadUserPlug
+
+  plug Bodyguard.Plug.Authorize,
+    policy: Trento.SapSystems.Policy,
+    action: {Phoenix.Controller, :action_name},
+    user: {Pow.Plug, :current_user},
+    params: {__MODULE__, :get_policy_resource},
+    fallback: TrentoWeb.FallbackController
+
   plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
   action_fallback TrentoWeb.FallbackController
 
@@ -69,4 +78,6 @@ defmodule TrentoWeb.V1.SapSystemController do
       send_resp(conn, 204, "")
     end
   end
+
+  def get_policy_resource(_), do: Trento.SapSystems.Projections.SapSystemReadModel
 end
