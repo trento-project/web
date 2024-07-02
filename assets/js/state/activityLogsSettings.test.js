@@ -27,14 +27,14 @@ describe('ActivityLogsSettings reducer', () => {
     const initialState = {
       loading: true,
       settings: {
-        retentionTime: undefined,
+        retention_time: undefined,
       },
       networkError: false,
       errors: [],
     };
 
     const settings = {
-      retentionTime: { value: 2, unit: 'week' },
+      retention_time: { value: 2, unit: 'week' },
     };
 
     const action = setActivityLogsSettings(settings);
@@ -53,7 +53,7 @@ describe('ActivityLogsSettings reducer', () => {
     const initialState = {
       loading: false,
       settings: {
-        retentionTime: { value: 2, unit: 'week' },
+        retention_time: { value: 2, unit: 'week' },
       },
       networkError: false,
       errors: [],
@@ -62,7 +62,7 @@ describe('ActivityLogsSettings reducer', () => {
     const errors = [
       {
         detail: "can't be blank",
-        source: { pointer: '/retentionTime' },
+        source: { pointer: '/retention_time' },
         title: 'Invalid value',
       },
     ];
@@ -74,7 +74,7 @@ describe('ActivityLogsSettings reducer', () => {
     expect(actual).toEqual({
       loading: false,
       settings: {
-        retentionTime: { value: 2, unit: 'week' },
+        retention_time: { value: 2, unit: 'week' },
       },
       networkError: false,
       errors,
@@ -85,7 +85,7 @@ describe('ActivityLogsSettings reducer', () => {
     const initialState = {
       loading: false,
       settings: {
-        retentionTime: { value: 2, unit: 'week' },
+        retention_time: { value: 2, unit: 'week' },
       },
       networkError: false,
       errors: [],
@@ -106,7 +106,7 @@ describe('ActivityLogsSettings reducer', () => {
     const initialState = {
       loading: true,
       settings: {
-        retentionTime: { value: 2, unit: 'week' },
+        retention_time: { value: 2, unit: 'week' },
       },
       networkError: false,
       errors: [],
