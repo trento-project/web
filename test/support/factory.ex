@@ -983,6 +983,13 @@ defmodule Trento.Factory do
     }
   end
 
+  def cve_factory(attrs) do
+    year = Enum.random(1_991..2_024)
+    id = Enum.random(0..9_999)
+    %{year: year, id: id} = Map.merge(%{year: year, id: id}, attrs)
+    "CVE-#{year}-#{id}"
+  end
+
   def bugzilla_fix_factory do
     1..Enum.random(1..4)
     |> Enum.map(fn _ ->
