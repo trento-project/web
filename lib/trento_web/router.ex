@@ -88,6 +88,8 @@ defmodule TrentoWeb.Router do
 
       get "/about", AboutController, :info
 
+      get "/activity_log", ActivityLogController, :get_activity_log
+
       get "/installation/api-key", InstallationController, :get_api_key
 
       get "/hosts", HostController, :list
