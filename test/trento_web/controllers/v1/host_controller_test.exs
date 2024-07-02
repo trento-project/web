@@ -27,7 +27,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
       Enum.each(
         [
           post(conn, "/api/v1/hosts/#{host_id}/checks", %{}),
-          post(conn, "/api/v1/hosts/host_id/#{host_id}/request_execution", %{})
+          post(conn, "/api/v1/hosts/#{host_id}/checks/request_execution", %{})
         ],
         fn conn ->
           conn
