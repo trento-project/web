@@ -8,6 +8,7 @@ import { logError } from '@lib/log';
 import { get, patch } from '@lib/network';
 import { getFromConfig } from '@lib/config';
 
+import DisabledGuard from '@common/DisabledGuard';
 import PageHeader from '@common/PageHeader';
 import Button from '@common/Button';
 import SuseManagerConfig from '@common/SuseManagerConfig';
@@ -33,6 +34,8 @@ import {
   getSoftwareUpdatesSettingsErrors,
 } from '@state/selectors/softwareUpdatesSettings';
 
+import { getUserProfile } from '@state/selectors/user';
+
 import { dismissNotification } from '@state/notifications';
 import { API_KEY_EXPIRATION_NOTIFICATION_ID } from '@state/sagas/settings';
 
@@ -57,6 +60,8 @@ function ApiKeyExpireInfo({ apiKeyExpiration }) {
     </div>
   );
 }
+const apiKeyGenerationPermittedFor = ['all:api_key_settings'];
+const sumaSettingsPermittedFor = ['all:suma_settings'];
 
 function SettingsPage() {
   const dispatch = useDispatch();
@@ -116,6 +121,8 @@ function SettingsPage() {
     getSoftwareUpdatesSettingsErrors
   );
 
+  const { abilities } = useSelector(getUserProfile);
+
   const hasSoftwareUpdatesSettings = values(settings).every(
     (value) => !isUndefined(value)
   );
@@ -170,12 +177,17 @@ function SettingsPage() {
           </div>
           <div className="w-full lg:w-1/2 px-8">
             <div className="!ml-auto w-1/4">
-              <Button
-                onClick={() => setApiKeySettingsModalOpen(true)}
-                type="primary-white"
+              <DisabledGuard
+                userAbilities={abilities}
+                permitted={apiKeyGenerationPermittedFor}
               >
-                Generate Key
-              </Button>
+                <Button
+                  onClick={() => setApiKeySettingsModalOpen(true)}
+                  type="primary-white"
+                >
+                  Generate Key
+                </Button>
+              </DisabledGuard>
             </div>
             <ul className="space-y-12">
               <li className="flex -mx-4">
@@ -258,6 +270,8 @@ function SettingsPage() {
             onRetry={() => dispatch(fetchSoftwareUpdatesSettings())}
           >
             <SuseManagerConfig
+              userAbilities={abilities}
+              sumaSettingsPermittedFor={sumaSettingsPermittedFor}
               url={settings.url}
               username={settings.username}
               certUploadDate={settings.ca_uploaded_at}

@@ -3,6 +3,7 @@ import { defaultTo, noop } from 'lodash';
 
 import Button from '@common/Button';
 
+import DisabledGuard from '@common/DisabledGuard';
 import SuseManagerClearSettingsModal from '@common/SuseManagerClearSettingsDialog';
 import CertificateUploadDate from './CertificateUploadDate';
 
@@ -17,6 +18,8 @@ function SuseManagerConfig({
   onClearSettings = noop,
   onTestConnection = noop,
   onCancel = noop,
+  userAbilities = noop,
+  sumaSettingsPermittedFor = noop,
 }) {
   return (
     <>
@@ -41,22 +44,32 @@ function SuseManagerConfig({
             >
               Test Connection
             </Button>
-            <Button
-              className="mr-2"
-              type="primary-white-fit"
-              size="small"
-              onClick={onEditClick}
+            <DisabledGuard
+              userAbilities={userAbilities}
+              permitted={sumaSettingsPermittedFor}
             >
-              Edit Settings
-            </Button>
-            <Button
-              aria-label="clear-suma-settings"
-              type="danger"
-              size="small"
-              onClick={onClearClick}
+              <Button
+                className="mr-2"
+                type="primary-white-fit"
+                size="small"
+                onClick={onEditClick}
+              >
+                Edit Settings
+              </Button>
+            </DisabledGuard>
+            <DisabledGuard
+              userAbilities={userAbilities}
+              permitted={sumaSettingsPermittedFor}
             >
-              Clear Settings
-            </Button>
+              <Button
+                aria-label="clear-suma-settings"
+                type="danger"
+                size="small"
+                onClick={onClearClick}
+              >
+                Clear Settings
+              </Button>
+            </DisabledGuard>
           </span>
         </div>
         <p className="mt-3 mb-3 text-gray-500">
