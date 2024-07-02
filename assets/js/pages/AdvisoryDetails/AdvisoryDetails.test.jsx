@@ -12,6 +12,7 @@ import AdvisoryDetails from './AdvisoryDetails';
 describe('AdvisoryDetails', () => {
   it('displays a message, when the CVE, packages or fixes section is empty', () => {
     const errata = advisoryErrataFactory.build();
+    errata.fixes = {};
 
     render(
       <AdvisoryDetails advisoryName={faker.lorem.word()} errata={errata} />
@@ -27,32 +28,29 @@ describe('AdvisoryDetails', () => {
     render(<AdvisoryDetails advisoryName={advisoryName} errata={errata} />);
 
     expect(screen.getByText(advisoryName)).toBeVisible();
-    expect(screen.getByText(errata.synopsis)).toBeVisible();
-    expect(screen.getByText(errata.advisory_status)).toBeVisible();
-    expect(screen.getByText(errata.description)).toBeVisible();
+    expect(screen.getByText(errata.errata_details.synopsis)).toBeVisible();
+    expect(
+      screen.getByText(errata.errata_details.advisory_status)
+    ).toBeVisible();
+    expect(screen.getByText(errata.errata_details.description)).toBeVisible();
   });
 
-  it('displays CVEs, packages and fixes', () => {
+  it('displays CVEs, packages', () => {
     const errata = advisoryErrataFactory.build();
     const advisoryName = faker.lorem.word();
 
-    const fixes = faker.word.words(2).split(' ');
     const packages = faker.word.words(2).split(' ');
     const cves = faker.word.words(2).split(' ');
+
+    errata.cves = cves;
 
     render(
       <AdvisoryDetails
         advisoryName={advisoryName}
         errata={errata}
-        fixes={fixes}
-        cves={cves}
         packages={packages}
       />
     );
-
-    fixes.forEach((expectedWord) => {
-      expect(screen.getByText(expectedWord)).toBeVisible();
-    });
 
     cves.forEach((expectedWord) => {
       expect(screen.getByText(expectedWord)).toBeVisible();
@@ -60,6 +58,19 @@ describe('AdvisoryDetails', () => {
 
     packages.forEach((expectedWord) => {
       expect(screen.getByText(expectedWord)).toBeVisible();
+    });
+  });
+
+  it('displays fixes with according link', () => {
+    const errata = advisoryErrataFactory.build();
+    const advisoryName = faker.lorem.word();
+
+    render(<AdvisoryDetails advisoryName={advisoryName} errata={errata} />);
+
+    Object.entries(errata.fixes).forEach(([id, fixText]) => {
+      const el = screen.getByText(fixText);
+      el.href.includes(id);
+      expect(el).toBeVisible();
     });
   });
 });
