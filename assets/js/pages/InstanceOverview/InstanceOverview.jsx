@@ -26,6 +26,8 @@ function InstanceOverview({
     absent_at: absentAt,
     deregistering,
   },
+  userAbilities,
+  cleanUpPermittedFor,
   onCleanUpClick,
 }) {
   const isDatabase = DATABASE_TYPE === instanceType;
@@ -77,6 +79,8 @@ function InstanceOverview({
             type="transparent"
             className="jungle-green-500 border-none shadow-none"
             cleaning={deregistering}
+            userAbilities={userAbilities}
+            permittedFor={cleanUpPermittedFor}
             onClick={() => onCleanUpClick(instance, instanceType)}
           />
         </div>
