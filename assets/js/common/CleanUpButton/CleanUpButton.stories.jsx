@@ -12,6 +12,14 @@ export default {
         defaultValue: { summary: false },
       },
     },
+    userAbilities: {
+      control: 'array',
+      description: 'Current user abilities',
+    },
+    permittedFor: {
+      control: 'array',
+      description: 'Abilities that allow check selection',
+    },
     onClick: { action: 'Click button' },
     className: {
       control: 'text',
@@ -42,7 +50,9 @@ export default {
 };
 
 export const Default = {
-  args: {},
+  args: {
+    userAbilities: [{ name: 'all', resource: 'all' }],
+  },
 };
 
 export const Cleaning = {
@@ -65,5 +75,12 @@ export const AbsentInstanceRow = {
     type: 'transparent',
     className: 'jungle-green-500 border-none shadown-none',
     size: 'fit',
+  },
+};
+
+export const Unauthorized = {
+  args: {
+    ...Default.args,
+    userAbilities: [],
   },
 };
