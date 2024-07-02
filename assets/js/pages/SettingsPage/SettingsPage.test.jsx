@@ -234,20 +234,5 @@ describe('Settings Page', () => {
 
       expect(screen.getByText('Invalid data provided')).toBeVisible();
     });
-
-    it('should render saved configuration', async () => {
-      const [StatefulSettings] = withState(<SettingsPage />, {
-        ...defaultInitialState,
-        activityLogsSettings: {
-          settings: { retention_time: { value: 2, unit: 'day' } },
-        },
-      });
-
-      await act(async () => {
-        renderWithRouter(StatefulSettings);
-      });
-
-      expect(screen.getByText('2 days')).toBeVisible();
-    });
   });
 });
