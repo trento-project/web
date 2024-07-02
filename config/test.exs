@@ -12,6 +12,8 @@ config :trento, Trento.Repo,
   hostname: "localhost",
   port: 5433,
   pool: Ecto.Adapters.SQL.Sandbox,
+  queue_target: 200,
+  queue_interval: 2000,
   pool_size: 10
 
 config :trento, Trento.EventStore,
