@@ -26,8 +26,8 @@ defmodule Trento.Hosts.PolicyTest do
     end)
   end
 
-  test "should allow request_checks_execution action if the user has all:hosts_checks_execution ability" do
-    user = %User{abilities: [%Ability{name: "all", resource: "hosts_checks_execution"}]}
+  test "should allow request_checks_execution action if the user has all:host_checks_execution ability" do
+    user = %User{abilities: [%Ability{name: "all", resource: "host_checks_execution"}]}
 
     assert true == Policy.authorize(:request_checks_execution, user, HostReadModel)
   end
@@ -38,7 +38,7 @@ defmodule Trento.Hosts.PolicyTest do
     assert true == Policy.authorize(:request_checks_execution, user, HostReadModel)
   end
 
-  test "should not allow request_checks_execution action if the user does not have the all:hosts_checks_execution ability" do
+  test "should not allow request_checks_execution action if the user does not have the all:host_checks_execution ability" do
     user = %User{abilities: [%Ability{name: "all", resource: "other_resource"}]}
 
     assert false == Policy.authorize(:request_checks_execution, user, HostReadModel)

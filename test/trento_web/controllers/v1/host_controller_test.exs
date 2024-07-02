@@ -14,7 +14,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
   setup :setup_user
 
   describe "forbidden routes" do
-    test "should return forbidden on request_check_execution controller action when the user does not have all:all or all:hosts_checks_execution abilities",
+    test "should return forbidden on request_check_execution controller action when the user does not have all:all or all:host_checks_execution abilities",
          %{conn: conn, api_spec: api_spec} do
       %{id: user_id} = insert(:user)
 
@@ -221,14 +221,14 @@ defmodule TrentoWeb.V1.HostControllerTest do
   end
 
   describe "Request check executions" do
-    test "should perform the request when the user has all:hosts_checks_execution ability", %{
+    test "should perform the request when the user has all:host_checks_execution ability", %{
       conn: conn
     } do
       %{id: host_id} = insert(:host)
 
       %{id: user_id} = insert(:user)
 
-      %{id: ability_id} = insert(:ability, name: "all", resource: "hosts_checks_execution")
+      %{id: ability_id} = insert(:ability, name: "all", resource: "host_checks_execution")
       insert(:users_abilities, user_id: user_id, ability_id: ability_id)
 
       conn =
