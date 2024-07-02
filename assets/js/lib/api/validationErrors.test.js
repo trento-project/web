@@ -18,6 +18,18 @@ describe('hasError', () => {
     expect(hasError('url', errors)).toBe(true);
   });
 
+  it('should match subfields', () => {
+    const errors = [
+      {
+        detail: "can't be blank",
+        source: { pointer: '/date/year' },
+        title: 'Invalid value',
+      },
+    ];
+
+    expect(hasError('date/year', errors)).toBe(true);
+  });
+
   it('should spot nothing in an empty list', () => {
     expect(hasError('url', [])).toBe(false);
   });

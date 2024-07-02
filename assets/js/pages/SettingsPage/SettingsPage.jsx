@@ -33,6 +33,19 @@ import {
   getSoftwareUpdatesSettingsErrors,
 } from '@state/selectors/softwareUpdatesSettings';
 
+import ActivityLogsConfig from '@common/ActivityLogsConfig';
+import ActivityLogsSettingsModal from '@common/ActivityLogsSettingsModal';
+import {
+  fetchActivityLogsSettings,
+  updateActivityLogsSettings,
+  setEditingActivityLogsSettings,
+  setActivityLogsSettingsErrors,
+} from '@state/activityLogsSettings';
+import {
+  getActivityLogsSettings,
+  getActivityLogsSettingsErrors,
+} from '@state/selectors/activityLogsSettings';
+
 import { dismissNotification } from '@state/notifications';
 import { API_KEY_EXPIRATION_NOTIFICATION_ID } from '@state/sagas/settings';
 
@@ -102,6 +115,7 @@ function SettingsPage() {
     setLoading(true);
     fetchApiKeySettings();
     dispatch(fetchSoftwareUpdatesSettings());
+    dispatch(fetchActivityLogsSettings());
   }, []);
 
   const {
@@ -118,6 +132,17 @@ function SettingsPage() {
 
   const hasSoftwareUpdatesSettings = values(settings).every(
     (value) => !isUndefined(value)
+  );
+
+  const {
+    settings: activityLogsSettings = {},
+    loading: activityLogsSettingsLoading,
+    editing: editingActivityLogsSettings,
+    networkError: activityLogsSettingsNetworkError,
+  } = useSelector(getActivityLogsSettings);
+
+  const activityLogsValidationErrors = useSelector(
+    getActivityLogsSettingsErrors
   );
 
   const hasApiKey = Boolean(apiKey);
@@ -305,6 +330,36 @@ function SettingsPage() {
           />
         </div>
       )}
+
+      <SettingsLoader
+        sectionName="Activity Logs"
+        status={calculateSettingsLoaderStatus(
+          activityLogsSettingsLoading,
+          activityLogsSettingsNetworkError
+        )}
+        onRetry={() => dispatch(fetchActivityLogsSettings())}
+      >
+        <ActivityLogsConfig
+          retentionTime={activityLogsSettings.retention_time}
+          onEditClick={() => dispatch(setEditingActivityLogsSettings(true))}
+        />
+      </SettingsLoader>
+      <ActivityLogsSettingsModal
+        key={`${JSON.stringify(
+          activityLogsSettings
+        )}-${editingActivityLogsSettings}`}
+        open={editingActivityLogsSettings}
+        errors={activityLogsValidationErrors}
+        loading={activityLogsSettingsLoading}
+        initialRetentionTime={activityLogsSettings.retention_time}
+        onSave={(payload) => {
+          dispatch(updateActivityLogsSettings(payload));
+        }}
+        onCancel={() => {
+          dispatch(setActivityLogsSettingsErrors([]));
+          dispatch(setEditingActivityLogsSettings(false));
+        }}
+      />
     </section>
   );
 }
