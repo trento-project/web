@@ -102,7 +102,7 @@ describe('ActivityLogsSettings reducer', () => {
     });
   });
 
-  it('should mark that the connection is being tested', () => {
+  it('should mark loading false on received network error', () => {
     const initialState = {
       loading: true,
       settings: {
@@ -110,8 +110,7 @@ describe('ActivityLogsSettings reducer', () => {
       },
       networkError: false,
       errors: [],
-      editing: false,
-      testingConnection: false,
+      editing: false
     };
 
     [true, false].forEach((hasNetworkError) => {
