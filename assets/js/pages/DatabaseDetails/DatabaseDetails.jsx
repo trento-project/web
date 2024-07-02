@@ -9,6 +9,7 @@ import BackButton from '@common/BackButton';
 import { GenericSystemDetails } from '@pages/SapSystemDetails';
 
 import { getEnrichedDatabaseDetails } from '@state/selectors/sapSystem';
+import { getUserProfile } from '@state/selectors/user';
 import { deregisterDatabaseInstance } from '@state/databases';
 
 function DatabaseDetails() {
@@ -16,6 +17,7 @@ function DatabaseDetails() {
   const database = useSelector((state) =>
     getEnrichedDatabaseDetails(state, id)
   );
+  const { abilities } = useSelector(getUserProfile);
   const dispatch = useDispatch();
 
   if (!database) {
@@ -29,6 +31,8 @@ function DatabaseDetails() {
         title="HANA Database Details"
         type={DATABASE_TYPE}
         system={database}
+        userAbilities={abilities}
+        cleanUpPermittedFor={['cleanup:database_instance']}
         onInstanceCleanUp={(instance) => {
           dispatch(deregisterDatabaseInstance(instance));
         }}

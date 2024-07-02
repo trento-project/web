@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { APPLICATION_TYPE } from '@lib/model/sapSystems';
 import { getEnrichedSapSystemDetails } from '@state/selectors/sapSystem';
+import { getUserProfile } from '@state/selectors/user';
 import { deregisterApplicationInstance } from '@state/sapSystems';
 
 import BackButton from '@common/BackButton';
@@ -14,6 +15,7 @@ function SapSystemDetails() {
   const sapSystem = useSelector((state) =>
     getEnrichedSapSystemDetails(state, id)
   );
+  const { abilities } = useSelector(getUserProfile);
   const dispatch = useDispatch();
 
   if (!sapSystem) {
@@ -27,6 +29,8 @@ function SapSystemDetails() {
         title="SAP System Details"
         type={APPLICATION_TYPE}
         system={sapSystem}
+        userAbilities={abilities}
+        cleanUpPermittedFor={['cleanup:application_instance']}
         onInstanceCleanUp={(instance) => {
           dispatch(deregisterApplicationInstance(instance));
         }}

@@ -44,6 +44,14 @@ export default {
       description:
         'The object containing the details that are going to be represented in this view',
     },
+    userAbilities: {
+      control: 'array',
+      description: 'Current user abilities',
+    },
+    cleanUpPermittedFor: {
+      control: 'array',
+      description: 'Abilities that allow instance clean up',
+    },
     onInstanceCleanUp: {
       action: 'Clean up instance',
       description: 'Deregister and clean up an absent instance',
@@ -68,12 +76,21 @@ export const SapSystem = {
     title: 'SAP System Details',
     type: APPLICATION_TYPE,
     system,
+    userAbilities: [{ name: 'all', resource: 'all' }],
+    cleanUpPermittedFor: ['cleanup:application_instance'],
   },
 };
 
 export const SapSystemWithAbsentInstance = {
   args: {
-    ...SapSystem,
+    ...SapSystem.args,
     system: systemWithAbsentInstance,
+  },
+};
+
+export const CleanUpUnauthorized = {
+  args: {
+    ...SapSystemWithAbsentInstance.args,
+    userAbilities: [],
   },
 };
