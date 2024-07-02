@@ -74,6 +74,7 @@ function HostDetails({
   softwareUpdatesSettingsSaved,
   softwareUpdatesSettingsLoading,
   softwareUpdatesTooltip,
+  userAbilities,
   cleanUpHost,
   requestHostChecksExecution,
   navigate,
@@ -136,6 +137,8 @@ function HostDetails({
               {deregisterable && (
                 <CleanUpButton
                   cleaning={deregistering}
+                  userAbilities={userAbilities}
+                  permittedFor={['cleanup:host']}
                   onClick={() => {
                     setCleanUpModalOpen(true);
                   }}
