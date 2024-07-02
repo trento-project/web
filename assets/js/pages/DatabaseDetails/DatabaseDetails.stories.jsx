@@ -39,6 +39,14 @@ export default {
       control: 'object',
       description: 'The represented HANA database',
     },
+    userAbilities: {
+      control: 'array',
+      description: 'Current user abilities',
+    },
+    cleanUpPermittedFor: {
+      control: 'array',
+      description: 'Abilities that allow instance clean up',
+    },
     onInstanceCleanUp: {
       action: 'Clean up instance',
       description: 'Deregister and clean up an absent instance',
@@ -63,12 +71,21 @@ export const Database = {
     title: 'Database Details',
     type: DATABASE_TYPE,
     system: database,
+    userAbilities: [{ name: 'all', resource: 'all' }],
+    cleanUpPermittedFor: ['cleanup:database_instance'],
   },
 };
 
 export const DatabaseWithAbsentInstance = {
   args: {
-    ...Database,
+    ...Database.args,
     system: databaseWithAbsentInstance,
+  },
+};
+
+export const CleanUpUnauthorized = {
+  args: {
+    ...DatabaseWithAbsentInstance.args,
+    userAbilities: [],
   },
 };

@@ -16,7 +16,11 @@ const cellRender = (content, item) => (
   </span>
 );
 
-export const getSystemInstancesTableConfiguration = ({ onCleanUpClick }) => ({
+export const getSystemInstancesTableConfiguration = ({
+  userAbilities,
+  cleanUpPermittedFor,
+  onCleanUpClick,
+}) => ({
   usePadding: false,
   columns: [
     {
@@ -78,6 +82,8 @@ export const getSystemInstancesTableConfiguration = ({ onCleanUpClick }) => ({
             type="transparent"
             className="jungle-green-500 border-none shadow-none"
             cleaning={item.deregistering}
+            userAbilities={userAbilities}
+            permittedFor={cleanUpPermittedFor}
             onClick={() => {
               onCleanUpClick(item);
             }}
