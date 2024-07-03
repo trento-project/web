@@ -1,3 +1,5 @@
+import { createUserRequestFactory } from '@lib/test-utils/factories';
+
 import {
   availableHosts,
   agents,
@@ -332,6 +334,44 @@ context('Hosts Overview', () => {
           cy.deregisterHost(sapSystemHostToDeregister.id);
           cy.contains('a', sapSystemHostToDeregister.sid).should('not.exist');
         });
+      });
+    });
+  });
+
+  describe('Forbidden actions', () => {
+    const password = 'password';
+
+    beforeEach(() => {
+      cy.deleteAllUsers();
+      cy.logout();
+      const user = createUserRequestFactory.build({
+        password,
+        password_confirmation: password,
+      });
+      cy.wrap(user).as('user');
+    });
+
+    describe('Clean up', () => {
+      it('should forbid host clean up', () => {
+        cy.get('@user').then((user) => {
+          cy.createUserWithAbilities(user, []);
+          cy.login(user.username, password);
+        });
+        cy.visit(`/hosts`);
+
+        cy.contains('button', 'Clean up').should('be.disabled');
+      });
+
+      it('should allow host clean up', () => {
+        cy.get('@user').then((user) => {
+          cy.createUserWithAbilities(user, [
+            { name: 'cleanup', resource: 'host' },
+          ]);
+          cy.login(user.username, password);
+        });
+        cy.visit(`/hosts`);
+
+        cy.contains('button', 'Clean up').should('be.enabled');
       });
     });
   });
