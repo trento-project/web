@@ -125,9 +125,9 @@ defmodule Trento.Factory do
     InstallationSettings
   }
 
+  alias Trento.ActivityLog.ActivityLog, as: ActivityLogEntry
   alias Trento.ActivityLog.RetentionTime
   alias Trento.ActivityLog.Settings, as: ActivityLogSettings
-  alias Trento.ActivityLog.ActivityLog, as: ActivityLogEntry
 
   alias Trento.Abilities.{
     Ability,
