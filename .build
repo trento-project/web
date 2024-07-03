@@ -81,6 +81,7 @@ Trento.Databases.Events.DatabaseRolledUp.html
 Trento.Databases.Events.DatabaseTenantsUpdated.html
 Trento.Databases.Events.DatabaseTombstoned.html
 Trento.Databases.Lifespan.html
+Trento.Databases.Policy.html
 Trento.Databases.Projections.DatabaseInstanceReadModel.html
 Trento.Databases.Projections.DatabaseProjector.html
 Trento.Databases.Projections.DatabaseReadModel.html
@@ -331,6 +332,7 @@ Trento.SapSystems.Events.SapSystemTombstoned.html
 Trento.SapSystems.Events.SapSystemUpdated.html
 Trento.SapSystems.Instance.html
 Trento.SapSystems.Lifespan.html
+Trento.SapSystems.Policy.html
 Trento.SapSystems.Projections.ApplicationInstanceReadModel.html
 Trento.SapSystems.Projections.SapSystemProjector.html
 Trento.SapSystems.Projections.SapSystemReadModel.html
@@ -483,8 +485,8 @@ dist/merriweather-latin-ext-300-normal-K6L27CZ5.woff2
 dist/merriweather-vietnamese-300-italic-EHHNZPUO.woff2
 dist/merriweather-vietnamese-300-normal-U376L4Z4.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-681A49FC.js
-dist/sidebar_items-4CDCD8CD.js
+dist/search_data-DE7AD826.js
+dist/sidebar_items-931E63AE.js
 environment_variables.html
 hack_on_the_trento.html
 index.html
