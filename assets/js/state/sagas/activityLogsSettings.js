@@ -11,6 +11,7 @@ import {
   setEditingActivityLogsSettings,
   setNetworkError,
 } from '@state/activityLogsSettings';
+import { defaultGlobalError } from '../../lib/api/validationErrors';
 
 export function* fetchActivityLogsSettings() {
   yield put(startLoadingActivityLogsSettings());
@@ -34,7 +35,7 @@ export function* updateActivityLogsSettings({ payload }) {
     const errors = get(
       error,
       ['response', 'data', 'errors'],
-      ['An error occurred while saving the settings']
+      [defaultGlobalError]
     );
     yield put(setActivityLogsSettingsErrors(errors));
   }

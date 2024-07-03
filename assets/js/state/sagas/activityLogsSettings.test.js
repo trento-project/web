@@ -17,6 +17,7 @@ import {
   fetchActivityLogsSettings,
   updateActivityLogsSettings,
 } from './activityLogsSettings';
+import { defaultGlobalError } from '../../lib/api/validationErrors';
 
 describe('Activity Logs Settings saga', () => {
   describe('Fetching Activity Logs Settings', () => {
@@ -93,6 +94,44 @@ describe('Activity Logs Settings saga', () => {
       ]);
     });
 
+    it('should have generic errors on update (receiving empty body)', async () => {
+      const axiosMock = new MockAdapter(networkClient);
+      const payload = activityLogsSettingsFactory.build();
+
+      axiosMock.onPut('/settings/activity_log', payload).reply(500);
+
+      const dispatched = await recordSaga(updateActivityLogsSettings, {
+        payload,
+      });
+
+      expect(dispatched).toEqual([
+        startLoadingActivityLogsSettings(),
+        setActivityLogsSettingsErrors([defaultGlobalError]),
+      ]);
+    });
+
+    it('should have generic errors on update', async () => {
+      const axiosMock = new MockAdapter(networkClient);
+      const payload = activityLogsSettingsFactory.build();
+
+      axiosMock.onPut('/settings/activity_log', payload).reply(500, {
+        errors: [
+          { title: 'Internal Server Error', detail: 'Something went wrong.' },
+        ],
+      });
+
+      const dispatched = await recordSaga(updateActivityLogsSettings, {
+        payload,
+      });
+
+      expect(dispatched).toEqual([
+        startLoadingActivityLogsSettings(),
+        setActivityLogsSettingsErrors([
+          { title: 'Internal Server Error', detail: 'Something went wrong.' },
+        ]),
+      ]);
+    });
+
     it.each([403, 404, 500, 502, 504])(
       'should put a network error flag on failed saving',
       async (status) => {
@@ -107,7 +146,7 @@ describe('Activity Logs Settings saga', () => {
 
         expect(dispatched).toEqual([
           startLoadingActivityLogsSettings(),
-          setActivityLogsSettingsErrors([expect.any(String)]),
+          setActivityLogsSettingsErrors([defaultGlobalError]),
         ]);
       }
     );

@@ -1,4 +1,9 @@
-import { hasError, getError } from './validationErrors';
+import {
+  hasError,
+  getError,
+  getGlobalError,
+  defaultGlobalError,
+} from './validationErrors';
 
 describe('hasError', () => {
   it('should tell that a list contains an error about a specific field', () => {
@@ -90,4 +95,59 @@ describe('getError', () => {
 
     expect(getError('url', errors)).toBe(undefined);
   });
+});
+
+describe('getGlobalError', () => {
+  it('should return the first global error', () => {
+    const errors = [
+      {
+        detail: 'a detail',
+        title: 'a title',
+      },
+      {
+        detail: 'another detail',
+        source: { pointer: '/some_field' },
+        title: 'another title',
+      },
+      {
+        detail: 'do not return this detail',
+        title: 'do not return this title',
+      },
+    ];
+
+    expect(getGlobalError(errors)).toBe('a detail');
+  });
+
+  it('should return undefined when there is no global error', () => {
+    const errors = [
+      {
+        detail: "can't be blank",
+        source: { pointer: '/some_value' },
+        title: 'Invalid value',
+      },
+    ];
+
+    expect(getGlobalError(errors)).not.toBeDefined();
+  });
+
+  it('should return undefined when no error', () => {
+    const errors = [];
+
+    expect(getGlobalError(errors)).not.toBeDefined();
+  });
+
+  it.each`
+    input
+    ${{ malformed: true }}
+    ${undefined}
+    ${null}
+    ${'string'}
+    ${1234 /* number */}
+    ${[12, 34] /* array */}
+  `(
+    'should return the default error if the received error is malformed',
+    ({ input }) => {
+      expect(getGlobalError([input])).toBe(defaultGlobalError.detail);
+    }
+  );
 });

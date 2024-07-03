@@ -5,6 +5,7 @@ import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
 import ActivityLogsSettingsModal from '.';
+import { defaultGlobalError } from '../../lib/api/validationErrors';
 
 const positiveInt = () => faker.number.int({ min: 1 });
 
@@ -125,8 +126,8 @@ describe('ActivityLogsSettingsModal component', () => {
     ${'unit error'}                        | ${[unitError]}                     | ${unitError.detail}
     ${'value and unit errors (1)'}         | ${[valueError, unitError]}         | ${valueError.detail}
     ${'value and unit errors (2)'}         | ${[valueError, unitError]}         | ${unitError.detail}
-    ${'generic error'}                     | ${['a generic error']}             | ${'a generic error'}
-    ${'generic error and value error (1)'} | ${['a generic error', valueError]} | ${'a generic error'}
+    ${'generic error'}                     | ${['a generic error']}             | ${defaultGlobalError.detail}
+    ${'generic error and value error (1)'} | ${['a generic error', valueError]} | ${defaultGlobalError.detail}
     ${'generic error and value error (2)'} | ${['a generic error', valueError]} | ${valueError.detail}
   `(
     'should display errors on $scenario',
