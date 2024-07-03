@@ -16,6 +16,9 @@ const middlewares = [];
 const mockStore = configureStore(middlewares);
 
 export const defaultInitialState = {
+  user: {
+    abilities: [{ name: 'all', resource: 'all' }],
+  },
   hostsList: { hosts },
   clustersList: { clusters },
   sapSystemsList: {
@@ -35,7 +38,6 @@ export const defaultInitialState = {
   },
   checksSelection: { host: {}, cluster: {} },
   catalog: { loading: false, data: [], error: null },
-  user: { abilities: [{ name: 'all', resource: 'all' }] },
 };
 
 export const withState = (component, initialState = {}) => {

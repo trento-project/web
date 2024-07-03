@@ -177,6 +177,9 @@ function HostsList() {
           element[key].some((tag) => filter.includes(tag)),
         render: (content, item) => (
           <Tags
+            userAbilities={abilities}
+            tagAdditionPermittedFor={['all:host_tags']}
+            tagDeletionPermittedFor={['all:host_tags']}
             tags={content}
             resourceId={item.id}
             onChange={() => {}}
