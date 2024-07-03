@@ -12,8 +12,18 @@ const buildFixes = (size) =>
       ])
   );
 
+const buildCVE = () =>
+  `CVE-${faker.number.int({ min: 1991, max: 2024 })}-${faker.number.int({
+    min: 0,
+    max: 9999,
+  })}`;
+
 export const advisoryErrataFactory = Factory.define(() => ({
   fixes: buildFixes(faker.number.int({ min: 1, max: 4 })),
+  cves: faker.helpers.uniqueArray(
+    buildCVE,
+    faker.number.int({ min: 1, max: 10 })
+  ),
   errata_details: {
     id: faker.number.int({ min: 1, max: 65536 }),
     issue_date: faker.date.recent({ days: 30 }),
