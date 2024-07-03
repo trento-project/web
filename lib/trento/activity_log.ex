@@ -37,7 +37,7 @@ defmodule Trento.ActivityLog do
     end
   end
 
-  @spec list_activity_log() :: list(ActivityLog)
+  @spec list_activity_log() :: list(ActivityLog.t())
   def list_activity_log() do
     # This will be made filterable/paginatable in a later PR
     Repo.all(ActivityLog)
