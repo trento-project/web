@@ -10,6 +10,7 @@ import {
 
 import SapSystemsOverview from './SapSystemsOverview';
 
+const userAbilities = [{ name: 'all', resource: 'all' }];
 const enrichInstances = (systems, instanceType) =>
   systems
     .map((system) => system[instanceType])
@@ -70,6 +71,10 @@ export default {
       control: { type: 'array' },
       description: 'Application instances',
     },
+    userAbilities: {
+      control: { type: 'array' },
+      description: 'User profile abilities',
+    },
     databaseInstances: {
       control: { type: 'array' },
       description: 'Database instances',
@@ -81,10 +86,6 @@ export default {
         type: { summary: 'string' },
         defaultValue: { summary: false },
       },
-    },
-    userAbilities: {
-      control: 'array',
-      description: 'Current user abilities',
     },
     onTagAdd: {
       action: 'Add tag',
@@ -115,21 +116,21 @@ export default {
 
 export const SapSystems = {
   args: {
+    userAbilities,
     sapSystems,
     applicationInstances: enrichedApplicationInstances,
     databaseInstances: enrichedDatabaseInstances,
     loading: false,
-    userAbilities: [{ name: 'all', resource: 'all' }],
   },
 };
 
 export const WithAbsentInstances = {
   args: {
+    userAbilities,
     sapSystems: sapSystemsWithAbsentInstances,
     applicationInstances: enrichedAbsentApplicationInstances,
     databaseInstances: enrichedAbsentDatabaseInstances,
     loading: false,
-    userAbilities: [{ name: 'all', resource: 'all' }],
   },
 };
 

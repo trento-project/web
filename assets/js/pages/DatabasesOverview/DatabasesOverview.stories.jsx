@@ -80,8 +80,8 @@ export default {
       },
     },
     userAbilities: {
-      control: 'array',
-      description: 'Current user abilities',
+      control: { type: 'array' },
+      description: 'User profile abilities',
     },
     onTagAdd: {
       action: 'Add tag',

@@ -41,11 +41,11 @@ function SapSystemOverviewPage() {
 
   return (
     <SapSystemsOverview
+      userAbilities={abilities}
       sapSystems={sapSystems}
       applicationInstances={enrichedApplicationInstances}
       databaseInstances={enrichedDatabaseInstances}
       loading={loading}
-      userAbilities={abilities}
       onTagAdd={(tag, sapSystemID) => {
         addTag(tag, sapSystemID);
         dispatch(
