@@ -7,12 +7,24 @@ import { InputNumber } from '@common/Input';
 import Select from '@common/Select';
 import Label from '@common/Label';
 
-import { hasError, getError } from '@lib/api/validationErrors';
+import { getError } from '@lib/api/validationErrors';
 
 const defaultErrors = [];
 
 const timeUnitOptions = ['day', 'week', 'month', 'year'];
 const defaultTimeUnit = timeUnitOptions[0];
+
+const toRetentionTimeErrorMessage = (errors) =>
+  [
+    capitalize(getError('retention_time/value', errors)),
+    capitalize(getError('retention_time/unit', errors)),
+  ]
+    .filter(Boolean)
+    .join('; ');
+
+const toGenericErrorMessage = (errors) =>
+  // the first error of type string is considered the generic error
+  errors.find((error) => typeof error === 'string');
 
 function TimeSpan({ time: initialTime, error = false, onChange = noop }) {
   const [time, setTime] = useState(initialTime);
@@ -24,7 +36,7 @@ function TimeSpan({ time: initialTime, error = false, onChange = noop }) {
           value={time.value}
           className="!h-8"
           type="number"
-          min="0"
+          min="1"
           error={error}
           onChange={(value) => {
             const newTime = { ...time, value };
@@ -51,6 +63,19 @@ function TimeSpan({ time: initialTime, error = false, onChange = noop }) {
 }
 
 /**
+ * Display an error message. If no error is provided, an empty space is displayed to keep the layout stable
+ * @param {string} text The error message to display
+ * @returns {JSX.Element}
+ */
+function Error({ text }) {
+  return text ? (
+    <p className="text-red-500 mt-1">{text}</p>
+  ) : (
+    <p className="mt-1">&nbsp;</p>
+  );
+}
+
+/**
  * Modal to edit Activity Logs settings
  */
 function ActivityLogsSettingsModal({
@@ -64,6 +89,9 @@ function ActivityLogsSettingsModal({
 }) {
   const [retentionTime, setRetentionTime] = useState(initialRetentionTime);
 
+  const retentionTimeError = toRetentionTimeErrorMessage(errors);
+  const genericError = toGenericErrorMessage(errors);
+
   return (
     <Modal title="Enter Activity Logs Settings" open={open} onClose={onCancel}>
       <div className="grid grid-cols-6 my-5 gap-6">
@@ -73,20 +101,13 @@ function ActivityLogsSettingsModal({
         <div className="col-span-4">
           <TimeSpan
             time={retentionTime}
-            error={hasError('retentionTime', errors)}
+            error={Boolean(retentionTimeError)}
             onChange={(time) => {
               setRetentionTime(time);
               onClearErrors();
             }}
           />
-          {hasError('retentionTime', errors) && (
-            <p
-              aria-label="retention-time-input-error"
-              className="text-red-500 mt-1"
-            >
-              {capitalize(getError('retentionTime', errors))}
-            </p>
-          )}
+          <Error text={retentionTimeError} />
         </div>
 
         <p className="col-span-6">
@@ -98,7 +119,7 @@ function ActivityLogsSettingsModal({
           disabled={loading}
           onClick={() => {
             const payload = {
-              retentionTime,
+              retention_time: retentionTime,
             };
             onSave(payload);
           }}
@@ -108,6 +129,9 @@ function ActivityLogsSettingsModal({
         <Button type="primary-white" onClick={onCancel}>
           Cancel
         </Button>
+      </div>
+      <div className="flex flex-row w-80 space-x-2">
+        <Error text={genericError} />
       </div>
     </Modal>
   );
