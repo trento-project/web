@@ -23,8 +23,6 @@ Yesterday, I left before the post arrived. Normally, the post just delivers my p
 However, the post didn't come by today, and I am starting to wonder, if my Geekos ate my quiche. AITA? 😟`,
       reboot_suggested: true,
     },
-    fixes: undefined,
-    cves: undefined,
     packages: undefined,
     affectsPackageMaintanaceStack: false,
   },

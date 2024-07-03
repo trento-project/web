@@ -79,7 +79,7 @@ function AdvisoryDetails({
           {fixes && Object.keys(fixes).length >= 1 ? (
             <ul>
               {Object.entries(fixes).map(([id, fix]) => (
-                <li key={`CVE-${id}`}>
+                <li key={`bug-${id}`}>
                   <a
                     className="text-jungle-green-500 hover:opacity-75"
                     href={`https://bugzilla.suse.com/show_bug.cgi?id=${id}`}
@@ -100,7 +100,14 @@ function AdvisoryDetails({
           {cves && cves.length >= 1 ? (
             <ul>
               {cves.map((cve) => (
-                <li>{cve}</li>
+                <li key={cve}>
+                  <a
+                    className="text-jungle-green-500 hover:opacity-75"
+                    href={`https://cve.mitre.org/cgi-bin/cvename.cgi?name=${cve}`}
+                  >
+                    {cve}
+                  </a>
+                </li>
               ))}
             </ul>
           ) : (

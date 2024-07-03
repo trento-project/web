@@ -13,6 +13,7 @@ describe('AdvisoryDetails', () => {
   it('displays a message, when the CVE, packages or fixes section is empty', () => {
     const errata = advisoryErrataFactory.build();
     errata.fixes = {};
+    errata.cves = [];
 
     render(
       <AdvisoryDetails advisoryName={faker.lorem.word()} errata={errata} />
@@ -35,14 +36,11 @@ describe('AdvisoryDetails', () => {
     expect(screen.getByText(errata.errata_details.description)).toBeVisible();
   });
 
-  it('displays CVEs, packages', () => {
+  it('packages', () => {
     const errata = advisoryErrataFactory.build();
     const advisoryName = faker.lorem.word();
 
     const packages = faker.word.words(2).split(' ');
-    const cves = faker.word.words(2).split(' ');
-
-    errata.cves = cves;
 
     render(
       <AdvisoryDetails
@@ -51,10 +49,6 @@ describe('AdvisoryDetails', () => {
         packages={packages}
       />
     );
-
-    cves.forEach((expectedWord) => {
-      expect(screen.getByText(expectedWord)).toBeVisible();
-    });
 
     packages.forEach((expectedWord) => {
       expect(screen.getByText(expectedWord)).toBeVisible();
@@ -70,6 +64,47 @@ describe('AdvisoryDetails', () => {
     Object.entries(errata.fixes).forEach(([id, fixText]) => {
       const el = screen.getByText(fixText);
       el.href.includes(id);
+      expect(el).toBeVisible();
+    });
+  });
+
+  it('displays CVEs with according link', () => {
+    const errata = advisoryErrataFactory.build();
+    const advisoryName = faker.lorem.word();
+
+    render(<AdvisoryDetails advisoryName={advisoryName} errata={errata} />);
+
+    errata.cves.forEach((cve) => {
+      const el = screen.getByText(cve);
+      el.href.includes(cve);
+      expect(el).toBeVisible();
+    });
+  });
+
+  it('displays a single fix with according link', () => {
+    const errata = advisoryErrataFactory.build();
+    errata.fixes = Object.fromEntries([Object.entries(errata.fixes)[0]]);
+    const advisoryName = faker.lorem.word();
+
+    render(<AdvisoryDetails advisoryName={advisoryName} errata={errata} />);
+
+    Object.entries(errata.fixes).forEach(([id, fixText]) => {
+      const el = screen.getByText(fixText);
+      el.href.includes(id);
+      expect(el).toBeVisible();
+    });
+  });
+
+  it('displays a single CVE with according link', () => {
+    const errata = advisoryErrataFactory.build();
+    errata.cves = [errata.cves[0]];
+    const advisoryName = faker.lorem.word();
+
+    render(<AdvisoryDetails advisoryName={advisoryName} errata={errata} />);
+
+    errata.cves.forEach((cve) => {
+      const el = screen.getByText(cve);
+      el.href.includes(cve);
       expect(el).toBeVisible();
     });
   });
