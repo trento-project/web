@@ -6,16 +6,16 @@ defmodule Trento.Tags.Policy do
   User with the ability all:<resource_type>_tags can perform any operations on the tags of the permitted resource.
 
   Resource type can be one of:
-  host
-  cluster
-  sap_system
-  database
+  - host
+  - cluster
+  - sap_system
+  - database
   """
   @behaviour Bodyguard.Policy
 
   import Trento.Support.PolicyHelper
-  alias Trento.Users.User
   alias Trento.Tags.Tag
+  alias Trento.Users.User
 
   def authorize(action, %User{} = user, %{tag_resource: tag_resource, resource: Tag})
       when action in [:add_tag, :remove_tag],

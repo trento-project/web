@@ -20,10 +20,10 @@ function DatabasesOverview({
   databases,
   databaseInstances,
   loading,
+  userAbilities,
   onTagAdd,
   onTagRemove,
   onInstanceCleanUp,
-  userAbilities,
 }) {
   const [searchParams, setSearchParams] = useSearchParams();
   const [cleanUpModalOpen, setCleanUpModalOpen] = useState(false);

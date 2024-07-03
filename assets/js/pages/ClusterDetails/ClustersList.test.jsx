@@ -34,11 +34,9 @@ describe('ClustersList component', () => {
       const state = {
         ...cleanInitialState,
         clustersList: {
-          clusters: [].concat(
-            clusterFactory.buildList(1, {
-              tags: [{ value: 'Tag2' }, { value: 'Tag1' }],
-            })
-          ),
+          clusters: clusterFactory.buildList(1, {
+            tags: [{ value: 'Tag2' }, { value: 'Tag1' }],
+          }),
         },
         user: {
           abilities: [{ name: 'all', resource: 'a_resource' }],

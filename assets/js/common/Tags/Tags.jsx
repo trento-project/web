@@ -16,7 +16,7 @@ const tagValidationDefaultMessage = (
   </>
 );
 
-function TagDeleteButton({ onClick, disabled }) {
+function ExistingTag({ onClick, disabled }) {
   return (
     <span
       aria-hidden="true"
@@ -101,7 +101,7 @@ function Tags({
             permitted={tagDeletionPermittedFor}
             tooltipWrap
           >
-            <TagDeleteButton
+            <ExistingTag
               onClick={() => {
                 const newTagsList = renderedTags.reduce(
                   (acc, current) => (current === tag ? acc : [...acc, current]),
