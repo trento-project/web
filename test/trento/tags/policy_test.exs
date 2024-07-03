@@ -9,8 +9,7 @@ defmodule Trento.Tags.PolicyTest do
     user = %User{abilities: [%{resource: "all", name: "all"}]}
 
     Enum.each([:cluster, :host, :sap_system, :database], fn tag_resource ->
-      assert true ==
-               Policy.authorize(:add_tag, user, %{tag_resource: tag_resource, resource: Tag})
+      assert Policy.authorize(:add_tag, user, %{tag_resource: tag_resource, resource: Tag})
     end)
   end
 
@@ -18,8 +17,7 @@ defmodule Trento.Tags.PolicyTest do
     user = %User{abilities: []}
 
     Enum.each([:cluster, :host, :sap_system, :database], fn tag_resource ->
-      assert false ==
-               Policy.authorize(:add_tag, user, %{tag_resource: tag_resource, resource: Tag})
+      refute Policy.authorize(:add_tag, user, %{tag_resource: tag_resource, resource: Tag})
     end)
   end
 
@@ -27,8 +25,7 @@ defmodule Trento.Tags.PolicyTest do
     user = %User{abilities: []}
 
     Enum.each([:cluster, :host, :sap_system, :database], fn tag_resource ->
-      assert false ==
-               Policy.authorize(:delete_tag, user, %{tag_resource: tag_resource, resource: Tag})
+      refute Policy.authorize(:delete_tag, user, %{tag_resource: tag_resource, resource: Tag})
     end)
   end
 
@@ -36,8 +33,7 @@ defmodule Trento.Tags.PolicyTest do
     Enum.each([:cluster, :host, :sap_system, :database], fn tag_resource ->
       user = %User{abilities: [%{resource: "#{tag_resource}_tags", name: "all"}]}
 
-      assert true ==
-               Policy.authorize(:add_tag, user, %{tag_resource: tag_resource, resource: Tag})
+      assert Policy.authorize(:add_tag, user, %{tag_resource: tag_resource, resource: Tag})
     end)
   end
 
@@ -45,8 +41,7 @@ defmodule Trento.Tags.PolicyTest do
     Enum.each([:cluster, :host, :sap_system, :database], fn tag_resource ->
       user = %User{abilities: [%{resource: "#{tag_resource}_tags", name: "all"}]}
 
-      assert true ==
-               Policy.authorize(:remove_tag, user, %{tag_resource: tag_resource, resource: Tag})
+      assert Policy.authorize(:remove_tag, user, %{tag_resource: tag_resource, resource: Tag})
     end)
   end
 end
