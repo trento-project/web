@@ -46,7 +46,9 @@ function UpgradablePackagesPage() {
       <UpgradablePackages
         hostName={hostname}
         upgradablePackages={upgradablePackages}
-        onPatchClick={(advisoryID) => navigate()}
+        onPatchClick={(advisoryID) =>
+          navigate(`hosts/${hostID}/patches/${advisoryID}`)
+        }
       />
     </>
   );
