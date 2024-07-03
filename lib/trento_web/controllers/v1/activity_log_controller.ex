@@ -10,7 +10,7 @@ defmodule TrentoWeb.V1.ActivityLogController do
 
   operation :get_activity_log,
     summary: "Fetches the Activity Log entries.",
-    tags: ["Activity Logging"],
+    tags: ["Platform"],
     responses: [
       ok: {"Activity Log settings fetched successfully", "application/json", Schema.ActivityLog}
     ]
