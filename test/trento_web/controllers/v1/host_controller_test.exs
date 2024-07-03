@@ -329,6 +329,34 @@ defmodule TrentoWeb.V1.HostControllerTest do
       |> json_response(404)
       |> assert_schema("NotFound", api_spec)
     end
+
+    test "should allow the request when the user has cleanup:host ability", %{
+      conn: conn
+    } do
+      %{id: host_id} = insert(:host)
+
+      %{id: user_id} = insert(:user)
+
+      %{id: ability_id} = insert(:ability, name: "cleanup", resource: "host")
+      insert(:users_abilities, user_id: user_id, ability_id: ability_id)
+
+      conn =
+        conn
+        |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
+        |> put_req_header("content-type", "application/json")
+
+      expect(
+        Trento.Commanded.Mock,
+        :dispatch,
+        fn %RequestHostDeregistration{host_id: ^host_id} ->
+          :ok
+        end
+      )
+
+      conn
+      |> delete("/api/v1/hosts/#{host_id}")
+      |> response(204)
+    end
   end
 
   describe "forbidden response" do

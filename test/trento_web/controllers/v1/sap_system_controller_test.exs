@@ -121,6 +121,43 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
       |> json_response(404)
       |> assert_schema("NotFound", api_spec)
     end
+
+    test "should allow the request when the user has cleanup:application_instance ability", %{
+      conn: conn
+    } do
+      %{id: sap_system_id} = build(:sap_system)
+
+      %{host_id: host_id, instance_number: instance_number} =
+        build(:application_instance, sap_system_id: sap_system_id)
+
+      %{id: user_id} = insert(:user)
+
+      %{id: ability_id} = insert(:ability, name: "cleanup", resource: "application_instance")
+      insert(:users_abilities, user_id: user_id, ability_id: ability_id)
+
+      conn =
+        conn
+        |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
+        |> put_req_header("content-type", "application/json")
+
+      expect(
+        Trento.Commanded.Mock,
+        :dispatch,
+        fn %DeregisterApplicationInstance{
+             sap_system_id: ^sap_system_id,
+             host_id: ^host_id,
+             instance_number: ^instance_number
+           } ->
+          :ok
+        end
+      )
+
+      conn
+      |> delete(
+        "/api/v1/sap_systems/#{sap_system_id}/hosts/#{host_id}/instances/#{instance_number}"
+      )
+      |> response(204)
+    end
   end
 
   describe "forbidden response" do
