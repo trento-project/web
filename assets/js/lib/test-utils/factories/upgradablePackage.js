@@ -8,7 +8,7 @@ const releaseVersionFactory = () =>
 export const upgradablePackageFactory = Factory.define(() => ({
   from_epoch: faker.date.anytime(),
   to_release: releaseVersionFactory(),
-  name: faker.company.buzzNoun(),
+  name: faker.word.noun(),
   from_release: releaseVersionFactory(),
   to_epoch: faker.date.anytime(),
   arch: faker.airline.flightNumber(),
