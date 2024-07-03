@@ -514,5 +514,29 @@ context('Host Details', () => {
         cy.contains('button', 'Save Checks Selection').should('be.enabled');
       });
     });
+
+    describe('Clean up', () => {
+      it('should forbid host clean up', () => {
+        cy.get('@user').then((user) => {
+          cy.createUserWithAbilities(user, []);
+          cy.login(user.username, password);
+        });
+        cy.visit(`/hosts/${selectedHost.agentId}`);
+
+        cy.contains('button', 'Clean up').should('be.disabled');
+      });
+
+      it('should allow host clean up', () => {
+        cy.get('@user').then((user) => {
+          cy.createUserWithAbilities(user, [
+            { name: 'cleanup', resource: 'host' },
+          ]);
+          cy.login(user.username, password);
+        });
+        cy.visit(`/hosts/${selectedHost.agentId}`);
+
+        cy.contains('button', 'Clean up').should('be.enabled');
+      });
+    });
   });
 });
