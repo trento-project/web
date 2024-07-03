@@ -135,11 +135,11 @@ function SettingsPage() {
     getSoftwareUpdatesSettingsErrors
   );
 
-  const { abilities } = useSelector(getUserProfile);
-
   const hasSoftwareUpdatesSettings = values(settings).every(
     (value) => !isUndefined(value)
   );
+
+  const { abilities } = useSelector(getUserProfile);
 
   const {
     settings: activityLogsSettings = {},

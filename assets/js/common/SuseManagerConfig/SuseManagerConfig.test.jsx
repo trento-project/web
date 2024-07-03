@@ -6,9 +6,17 @@ import '@testing-library/jest-dom';
 
 import SuseManagerConfig from '.';
 
+const adminUser = [{ name: 'all', resource: 'all' }];
+const sumaSettingsPermittedFor = ['all:suma_settings'];
+
 describe('SuseManagerConfig', () => {
   it('renders a default state', () => {
-    render(<SuseManagerConfig />);
+    render(
+      <SuseManagerConfig
+        userAbilities={adminUser}
+        sumaSettingsPermittedFor={sumaSettingsPermittedFor}
+      />
+    );
 
     expect(screen.getByText('https://')).toBeInTheDocument();
     expect(screen.getAllByText('-')).toHaveLength(1);
@@ -30,6 +38,8 @@ describe('SuseManagerConfig', () => {
         username={username}
         certUploadDate={certUploadDate}
         onEditClick={onEditClick}
+        userAbilities={adminUser}
+        sumaSettingsPermittedFor={sumaSettingsPermittedFor}
       />
     );
 
@@ -55,6 +65,8 @@ describe('SuseManagerConfig', () => {
         certUploadDate={faker.date.anytime()}
         testConnectionEnabled
         onTestConnection={onTestConnection}
+        userAbilities={adminUser}
+        sumaSettingsPermittedFor={sumaSettingsPermittedFor}
       />
     );
     expect(screen.getByLabelText('test-suma-connection')).toBeEnabled();
@@ -62,5 +74,42 @@ describe('SuseManagerConfig', () => {
     const testConnectionButton = screen.getByText('Test Connection');
     await user.click(testConnectionButton);
     expect(onTestConnection).toHaveBeenCalled();
+  });
+
+  it('renders default state without ability to edit or clear settings', async () => {
+    const userWithoutPermission = [{ name: '', resource: '' }];
+    const user = userEvent.setup();
+    const onEditClick = jest.fn();
+    const onClearClick = jest.fn();
+    render(
+      <SuseManagerConfig
+        userAbilities={userWithoutPermission}
+        sumaSettingsPermittedFor={sumaSettingsPermittedFor}
+        onEditClick={onEditClick}
+        onClearClick={onClearClick}
+      />
+    );
+
+    expect(screen.getByText('Edit Settings')).toBeDisabled();
+    await user.click(screen.getByText('Edit Settings'));
+    expect(onEditClick).not.toHaveBeenCalled();
+    await user.hover(screen.getByText('Edit Settings'));
+    expect(
+      screen.queryAllByText('You are not authorized for this action').length
+    ).toBeGreaterThan(0);
+    expect(
+      screen.queryAllByText('You are not authorized for this action')[0]
+    ).toBeVisible();
+
+    expect(screen.getByText('Clear Settings')).toBeDisabled();
+    await user.click(screen.getByText('Clear Settings'));
+    expect(onClearClick).not.toHaveBeenCalled();
+    await user.hover(screen.getByText('Clear Settings'));
+    expect(
+      screen.queryAllByText('You are not authorized for this action').length
+    ).toBeGreaterThan(0);
+    expect(
+      screen.queryAllByText('You are not authorized for this action')[0]
+    ).toBeVisible();
   });
 });
