@@ -7,11 +7,16 @@ defmodule TrentoWeb.V1.DatabaseControllerTest do
 
   import Mox
 
+  import Trento.Support.Helpers.AbilitiesTestHelper
+
   alias TrentoWeb.OpenApi.V1.ApiSpec
 
   alias Trento.Databases.Commands.DeregisterDatabaseInstance
 
   setup [:set_mox_from_context, :verify_on_exit!]
+
+  setup :setup_api_spec_v1
+  setup :setup_user
 
   describe "list" do
     test "should list all databases", %{conn: conn} do
@@ -107,6 +112,71 @@ defmodule TrentoWeb.V1.DatabaseControllerTest do
       |> delete("/api/v1/databases/#{database_id}/hosts/#{host_id}/instances/#{instance_number}")
       |> json_response(404)
       |> assert_schema("NotFound", api_spec)
+    end
+
+    test "should allow the request when the user has cleanup:database_instance ability", %{
+      conn: conn
+    } do
+      %{id: database_id} = build(:database)
+
+      %{host_id: host_id, instance_number: instance_number} =
+        build(:database_instance, database_id: database_id)
+
+      %{id: user_id} = insert(:user)
+
+      %{id: ability_id} = insert(:ability, name: "cleanup", resource: "database_instance")
+      insert(:users_abilities, user_id: user_id, ability_id: ability_id)
+
+      conn =
+        conn
+        |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
+        |> put_req_header("content-type", "application/json")
+
+      expect(
+        Trento.Commanded.Mock,
+        :dispatch,
+        fn %DeregisterDatabaseInstance{
+             database_id: ^database_id,
+             host_id: ^host_id,
+             instance_number: ^instance_number
+           } ->
+          :ok
+        end
+      )
+
+      conn
+      |> delete("/api/v1/databases/#{database_id}/hosts/#{host_id}/instances/#{instance_number}")
+      |> response(204)
+    end
+  end
+
+  describe "forbidden response" do
+    test "should return forbidden on any controller action if the user does not have the right permission",
+         %{conn: conn, api_spec: api_spec} do
+      %{id: user_id} = insert(:user)
+      %{id: database_id} = build(:database)
+
+      %{host_id: host_id, instance_number: instance_number} =
+        build(:database_instance, database_id: database_id)
+
+      conn =
+        conn
+        |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
+        |> put_req_header("content-type", "application/json")
+
+      Enum.each(
+        [
+          delete(
+            conn,
+            "/api/v1/databases/#{database_id}/hosts/#{host_id}/instances/#{instance_number}"
+          )
+        ],
+        fn conn ->
+          conn
+          |> json_response(:forbidden)
+          |> assert_schema("Forbidden", api_spec)
+        end
+      )
     end
   end
 end

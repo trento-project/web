@@ -87,6 +87,8 @@ describe('GenericSystemDetails', () => {
       <GenericSystemDetails
         title={faker.string.uuid()}
         system={sapSystem}
+        userAbilities={[{ name: 'all', resource: 'all' }]}
+        cleanUpPermittedFor={['cleanup:application_instance']}
         type={APPLICATION_TYPE}
       />
     );
@@ -122,6 +124,8 @@ describe('GenericSystemDetails', () => {
         title={faker.string.uuid()}
         system={sapSystem}
         type={type}
+        userAbilities={[{ name: 'all', resource: 'all' }]}
+        cleanUpPermittedFor={['cleanup:application_instance']}
         onInstanceCleanUp={mockedCleanUp}
       />
     );
@@ -141,5 +145,40 @@ describe('GenericSystemDetails', () => {
     })[0];
     await user.click(cleanUpModalButton);
     expect(mockedCleanUp).toHaveBeenCalledWith(sapSystem.instances[0]);
+  });
+
+  it('should forbid instance cleanup', async () => {
+    const user = userEvent.setup();
+    const mockedCleanUp = jest.fn();
+
+    const sapSystem = sapSystemFactory.build({
+      instances: sapSystemApplicationInstanceFactory.buildList(2),
+    });
+
+    sapSystem.instances[0].absent_at = faker.date.past().toISOString();
+    sapSystem.hosts = hostFactory.buildList(5);
+
+    renderWithRouter(
+      <GenericSystemDetails
+        title={faker.string.uuid()}
+        system={sapSystem}
+        type={APPLICATION_TYPE}
+        userAbilities={[]}
+        cleanUpPermittedFor={['cleanup:application_instance']}
+        onInstanceCleanUp={mockedCleanUp}
+      />
+    );
+
+    const cleanUpButton = screen.getByText('Clean up').closest('button');
+
+    expect(cleanUpButton).toBeDisabled();
+
+    await user.click(cleanUpButton);
+
+    await user.hover(cleanUpButton);
+
+    expect(
+      screen.queryByText('You are not authorized for this action')
+    ).toBeVisible();
   });
 });

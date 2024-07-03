@@ -34,6 +34,8 @@ export function GenericSystemDetails({
   title,
   type,
   system,
+  userAbilities,
+  cleanUpPermittedFor,
   onInstanceCleanUp,
 }) {
   if (!system) {
@@ -109,7 +111,11 @@ export function GenericSystemDetails({
           <h2 className="text-2xl font-bold self-center">Layout</h2>
         </div>
         <Table
-          config={getSystemInstancesTableConfiguration({ onCleanUpClick })}
+          config={getSystemInstancesTableConfiguration({
+            userAbilities,
+            cleanUpPermittedFor,
+            onCleanUpClick,
+          })}
           data={system.instances}
         />
       </div>

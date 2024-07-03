@@ -4,11 +4,13 @@ import React from 'react';
 import { DATABASE_TYPE } from '@lib/model/sapSystems';
 import InstanceOverview from '@pages/InstanceOverview';
 
-export function DatabaseInstance({ instance, onCleanUpClick }) {
+export function DatabaseInstance({ instance, userAbilities, onCleanUpClick }) {
   return (
     <InstanceOverview
       instanceType={DATABASE_TYPE}
       instance={instance}
+      userAbilities={userAbilities}
+      cleanUpPermittedFor={['cleanup:database_instance']}
       onCleanUpClick={onCleanUpClick}
     />
   );
@@ -27,6 +29,7 @@ const databaseInstanceColumns = [
 function PlainDatabaseItemOverview({
   instances,
   asDatabaseLayer = false,
+  userAbilities,
   onCleanUpClick,
 }) {
   return (
@@ -59,6 +62,7 @@ function PlainDatabaseItemOverview({
                 <DatabaseInstance
                   key={`${instance.host_id}_${instance.instance_number}`}
                   instance={instance}
+                  userAbilities={userAbilities}
                   onCleanUpClick={onCleanUpClick}
                 />
               ))}
@@ -69,21 +73,23 @@ function PlainDatabaseItemOverview({
   );
 }
 
-function DatabaseLayer({ instances, onCleanUpClick }) {
+function DatabaseLayer({ instances, userAbilities, onCleanUpClick }) {
   return (
     <PlainDatabaseItemOverview
       instances={instances}
       asDatabaseLayer
+      userAbilities={userAbilities}
       onCleanUpClick={onCleanUpClick}
     />
   );
 }
 
-function DatabaseInstances({ instances, onCleanUpClick }) {
+function DatabaseInstances({ instances, userAbilities, onCleanUpClick }) {
   return (
     <div className="p-2">
       <PlainDatabaseItemOverview
         instances={instances}
+        userAbilities={userAbilities}
         onCleanUpClick={onCleanUpClick}
       />
     </div>
@@ -93,6 +99,7 @@ function DatabaseInstances({ instances, onCleanUpClick }) {
 function DatabaseItemOverview({
   database,
   asDatabaseLayer = false,
+  userAbilities,
   onCleanUpClick,
 }) {
   const { databaseInstances } = database;
@@ -100,11 +107,13 @@ function DatabaseItemOverview({
   return asDatabaseLayer ? (
     <DatabaseLayer
       instances={databaseInstances}
+      userAbilities={userAbilities}
       onCleanUpClick={onCleanUpClick}
     />
   ) : (
     <DatabaseInstances
       instances={databaseInstances}
+      userAbilities={userAbilities}
       onCleanUpClick={onCleanUpClick}
     />
   );

@@ -13,31 +13,6 @@ defmodule TrentoWeb.V1.HostControllerTest do
   setup :setup_api_spec_v1
   setup :setup_user
 
-  describe "forbidden routes" do
-    test "should return forbidden on any controller action if the user does not have the right permission",
-         %{conn: conn, api_spec: api_spec} do
-      %{id: user_id} = insert(:user)
-      %{id: host_id} = insert(:host)
-
-      conn =
-        conn
-        |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
-        |> put_req_header("content-type", "application/json")
-
-      Enum.each(
-        [
-          post(conn, "/api/v1/hosts/#{host_id}/checks", %{}),
-          post(conn, "/api/v1/hosts/#{host_id}/checks/request_execution", %{})
-        ],
-        fn conn ->
-          conn
-          |> json_response(:forbidden)
-          |> assert_schema("Forbidden", api_spec)
-        end
-      )
-    end
-  end
-
   describe "list" do
     test "should list all hosts", %{conn: conn, api_spec: api_spec} do
       %{id: host_id} = insert(:host)
@@ -353,6 +328,60 @@ defmodule TrentoWeb.V1.HostControllerTest do
       |> delete("/api/v1/hosts/#{host_id}")
       |> json_response(404)
       |> assert_schema("NotFound", api_spec)
+    end
+
+    test "should allow the request when the user has cleanup:host ability", %{
+      conn: conn
+    } do
+      %{id: host_id} = insert(:host)
+
+      %{id: user_id} = insert(:user)
+
+      %{id: ability_id} = insert(:ability, name: "cleanup", resource: "host")
+      insert(:users_abilities, user_id: user_id, ability_id: ability_id)
+
+      conn =
+        conn
+        |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
+        |> put_req_header("content-type", "application/json")
+
+      expect(
+        Trento.Commanded.Mock,
+        :dispatch,
+        fn %RequestHostDeregistration{host_id: ^host_id} ->
+          :ok
+        end
+      )
+
+      conn
+      |> delete("/api/v1/hosts/#{host_id}")
+      |> response(204)
+    end
+  end
+
+  describe "forbidden response" do
+    test "should return forbidden on any controller action if the user does not have the right permission",
+         %{conn: conn, api_spec: api_spec} do
+      %{id: user_id} = insert(:user)
+      %{id: host_id} = insert(:host)
+
+      conn =
+        conn
+        |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
+        |> put_req_header("content-type", "application/json")
+
+      Enum.each(
+        [
+          post(conn, "/api/v1/hosts/#{host_id}/checks", %{}),
+          post(conn, "/api/v1/hosts/#{host_id}/checks/request_execution", %{}),
+          delete(conn, "/api/v1/hosts/#{host_id}")
+        ],
+        fn conn ->
+          conn
+          |> json_response(:forbidden)
+          |> assert_schema("Forbidden", api_spec)
+        end
+      )
     end
   end
 end

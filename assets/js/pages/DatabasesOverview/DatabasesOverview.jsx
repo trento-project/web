@@ -20,6 +20,7 @@ function DatabasesOverview({
   databases,
   databaseInstances,
   loading,
+  userAbilities,
   onTagAdd,
   onTagRemove,
   onInstanceCleanUp,
@@ -116,6 +117,7 @@ function DatabasesOverview({
     collapsibleDetailRenderer: (database) => (
       <DatabaseItemOverview
         database={database}
+        userAbilities={userAbilities}
         onCleanUpClick={(instance, _type) => {
           setCleanUpModalOpen(true);
           setInstanceToDeregister(instance);

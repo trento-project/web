@@ -27,6 +27,7 @@ describe('DatabasesOverview component', () => {
         <DatabasesOverview
           databases={[database]}
           databaseInstances={database.database_instances}
+          userAbilities={[{ name: 'all', resource: 'all' }]}
           onInstanceCleanUp={mockedCleanUp}
         />
       );
@@ -46,6 +47,36 @@ describe('DatabasesOverview component', () => {
       expect(mockedCleanUp).toHaveBeenCalledWith(
         database.database_instances[0]
       );
+    });
+
+    it('should forbid instance cleanup', async () => {
+      const user = userEvent.setup();
+
+      const database = databaseFactory.build();
+
+      database.database_instances[0].absent_at = faker.date
+        .past()
+        .toISOString();
+
+      renderWithRouter(
+        <DatabasesOverview
+          databases={[database]}
+          databaseInstances={database.database_instances}
+          userAbilities={[]}
+        />
+      );
+
+      const cleanUpButton = screen.getByText('Clean up').closest('button');
+
+      expect(cleanUpButton).toBeDisabled();
+
+      await user.click(cleanUpButton);
+
+      await user.hover(cleanUpButton);
+
+      expect(
+        screen.queryByText('You are not authorized for this action')
+      ).toBeVisible();
     });
   });
 

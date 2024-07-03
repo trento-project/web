@@ -15,6 +15,8 @@ defmodule Trento.Databases.Projections.DatabaseReadModel do
 
   alias Trento.Tags.Tag
 
+  defdelegate authorize(action, user, params), to: Trento.Databases.Policy
+
   @type t :: %__MODULE__{}
 
   @derive {Jason.Encoder, except: [:__meta__, :__struct__]}

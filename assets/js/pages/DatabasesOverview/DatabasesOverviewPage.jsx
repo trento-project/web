@@ -3,6 +3,7 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { getEnrichedDatabaseInstances } from '@state/selectors/sapSystem';
+import { getUserProfile } from '@state/selectors/user';
 import {
   addTagToDatabase,
   removeTagFromDatabase,
@@ -27,6 +28,7 @@ function DatabasesOverviewPage() {
   const enrichedDatabaseInstances = useSelector((state) =>
     getEnrichedDatabaseInstances(state)
   );
+  const { abilities } = useSelector(getUserProfile);
   const dispatch = useDispatch();
 
   return (
@@ -34,6 +36,7 @@ function DatabasesOverviewPage() {
       databases={databases}
       databaseInstances={enrichedDatabaseInstances}
       loading={loading}
+      userAbilities={abilities}
       onTagAdd={(tag, databaseID) => {
         addTag(tag, databaseID);
         dispatch(addTagToDatabase({ tags: [{ value: tag }], id: databaseID }));
