@@ -491,6 +491,43 @@ context('Host Details', () => {
       cy.wrap(user).as('user');
     });
 
+    describe('Check Execution', () => {
+      it('should forbid check execution when the correct user abilities are not present', () => {
+        cy.get('@user').then((user) => {
+          cy.createUserWithAbilities(user, []);
+          cy.login(user.username, password);
+        });
+        cy.visit(`/hosts/${selectedHost.agentId}/settings`);
+
+        cy.contains('button', 'Start Execution').should('be.disabled');
+
+        cy.contains('button', 'Start Execution').click({ force: true });
+
+        cy.contains('span', 'You are not authorized for this action').should(
+          'be.visible'
+        );
+      });
+
+      it('should enable check execution button when the correct user abilities are present', () => {
+        cy.get('@user').then((user) => {
+          cy.createUserWithAbilities(user, [
+            { name: 'all', resource: 'host_checks_execution' },
+          ]);
+          cy.login(user.username, password);
+        });
+
+        cy.visit(`/hosts/${selectedHost.agentId}/settings`);
+
+        cy.contains('button', 'Start Execution').trigger('mouseover', {
+          force: true,
+        });
+
+        cy.contains('span', 'You are not authorized for this action').should(
+          'not.exist'
+        );
+      });
+    });
+
     describe('Check Selection', () => {
       it('should forbid check selection saving', () => {
         cy.get('@user').then((user) => {
