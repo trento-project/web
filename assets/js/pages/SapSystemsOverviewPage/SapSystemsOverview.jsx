@@ -95,6 +95,9 @@ function SapSystemsOverview({
           element[key].some((tag) => filters.includes(tag)),
         render: (content, item) => (
           <Tags
+            userAbilities={userAbilities}
+            tagAdditionPermittedFor={['all:sap_system_tags']}
+            tagDeletionPermittedFor={['all:sap_system_tags']}
             tags={content}
             resourceId={item.id}
             onChange={() => {}}

@@ -15,6 +15,7 @@ function DisabledGuard({
   userAbilities,
   permitted,
   withTooltip = true,
+  tooltipWrap = false,
   tooltipMessage = DEFAULT_TOOLTIP_MESSAGE,
   tooltipPlace = 'bottom',
   children,
@@ -41,7 +42,7 @@ function DisabledGuard({
       isEnabled={withTooltip}
       content={tooltipMessage}
       place={tooltipPlace}
-      wrap={false}
+      wrap={tooltipWrap}
     >
       {disabledElement}
     </Tooltip>

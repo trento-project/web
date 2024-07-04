@@ -16,6 +16,8 @@ import { filterTable, clearFilter } from '@common/Table/Table.test';
 
 import SapSystemsOverview from './SapSystemsOverview';
 
+const userAbilities = [{ name: 'all', resource: 'all' }];
+
 describe('SapSystemsOverviews component', () => {
   describe('overview content', () => {
     it('should display the correct number of SAP systems', () => {
@@ -26,6 +28,7 @@ describe('SapSystemsOverviews component', () => {
 
       renderWithRouter(
         <SapSystemsOverview
+          userAbilities={userAbilities}
           sapSystems={sapSystems}
           applicationInstances={[]}
           databaseInstances={[]}
@@ -53,6 +56,7 @@ describe('SapSystemsOverviews component', () => {
       renderWithRouter(
         <SapSystemsOverview
           sapSystems={[sapSystem]}
+          userAbilities={userAbilities}
           applicationInstances={applicationInstances}
           databaseInstances={databaseInstances}
         />
@@ -122,6 +126,7 @@ describe('SapSystemsOverviews component', () => {
       });
       renderWithRouter(
         <SapSystemsOverview
+          userAbilities={userAbilities}
           sapSystems={[sapSystem]}
           applicationInstances={enrichedApplicationInstances}
           databaseInstances={enrichedDatabaseInstances}
@@ -217,9 +222,9 @@ describe('SapSystemsOverviews component', () => {
         renderWithRouter(
           <SapSystemsOverview
             sapSystems={[sapSystem]}
+            userAbilities={userAbilities}
             applicationInstances={sapSystem.application_instances}
             databaseInstances={sapSystem.database_instances}
-            userAbilities={[{ name: 'all', resource: 'all' }]}
             onInstanceCleanUp={mockedCleanUp}
           />
         );
@@ -325,6 +330,7 @@ describe('SapSystemsOverviews component', () => {
       ({ filter, options, sapSystems, expectedRows }) => {
         renderWithRouter(
           <SapSystemsOverview
+            userAbilities={userAbilities}
             sapSystems={sapSystems}
             applicationInstances={[]}
             databaseInstances={[]}
@@ -354,6 +360,7 @@ describe('SapSystemsOverviews component', () => {
 
       renderWithRouter(
         <SapSystemsOverview
+          userAbilities={userAbilities}
           sapSystems={sapSystems}
           applicationInstances={[]}
           databaseInstances={[]}
@@ -371,6 +378,34 @@ describe('SapSystemsOverviews component', () => {
       expect(window.location.search).toEqual(
         `?health=${health}&sid=${sid}&tags=${tags[0].value}`
       );
+    });
+  });
+
+  describe('tag operations', () => {
+    it('should disable tag creation and deletion if the user abilities are not compatible', () => {
+      const abilities = [{ name: 'all', resource: 'another_resource' }];
+
+      const sapSystem = sapSystemFactory.build({
+        tags: [{ value: 'Tag1' }, { value: 'Tag2' }],
+      });
+
+      renderWithRouter(
+        <SapSystemsOverview
+          userAbilities={abilities}
+          sapSystems={[sapSystem]}
+          applicationInstances={[]}
+          databaseInstances={[]}
+        />
+      );
+
+      expect(screen.queryByText('Add Tag')).toHaveClass('opacity-50');
+      // grab the X
+      expect(
+        screen.queryByText('Tag1').children.item(0).children.item(0)
+      ).toHaveClass('opacity-50');
+      expect(
+        screen.queryByText('Tag2').children.item(0).children.item(0)
+      ).toHaveClass('opacity-50');
     });
   });
 });

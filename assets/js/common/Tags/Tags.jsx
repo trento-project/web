@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import { EOS_NEW_LABEL, EOS_CLOSE } from 'eos-icons-react';
 import Pill from '@common/Pill';
 import Tooltip from '@common/Tooltip';
+import DisabledGuard from '@common/DisabledGuard';
 import useOnClickOutside from '@hooks/useOnClickOutside';
 // eslint-disable-next-line
 const tagRegexValidation = /^[\+\-=.,_:@\p{L}\w]*$/u;
@@ -15,6 +16,23 @@ const tagValidationDefaultMessage = (
   </>
 );
 
+function ExistingTag({ onClick, disabled }) {
+  return (
+    <span
+      aria-hidden="true"
+      className={classNames('cursor-pointer group-hover:opacity-60', {
+        'opacity-50 pointer-events-none': disabled,
+      })}
+      onClick={() => {
+        if (disabled) return;
+        onClick();
+      }}
+    >
+      <EOS_CLOSE className="ml-2" color="#276749" size="base" />
+    </span>
+  );
+}
+
 function Tags({
   className,
   tags,
@@ -22,6 +40,9 @@ function Tags({
   onAdd,
   onRemove,
   resourceId,
+  userAbilities,
+  tagAdditionPermittedFor = [],
+  tagDeletionPermittedFor = [],
   validationMessage = tagValidationDefaultMessage,
 }) {
   const [renderedTags, setTags] = useState(tags);
@@ -75,21 +96,23 @@ function Tags({
           }}
         >
           {tag}
-          <span
-            aria-hidden="true"
-            className="ml-2 cursor-pointer group-hover:opacity-60"
-            onClick={() => {
-              const newTagsList = renderedTags.reduce(
-                (acc, current) => (current === tag ? acc : [...acc, current]),
-                []
-              );
-              setTags(newTagsList);
-              onChange(newTagsList);
-              onRemove(tag);
-            }}
+          <DisabledGuard
+            userAbilities={userAbilities}
+            permitted={tagDeletionPermittedFor}
+            tooltipWrap
           >
-            <EOS_CLOSE color="#276749" size="base" />
-          </span>
+            <ExistingTag
+              onClick={() => {
+                const newTagsList = renderedTags.reduce(
+                  (acc, current) => (current === tag ? acc : [...acc, current]),
+                  []
+                );
+                setTags(newTagsList);
+                onChange(newTagsList);
+                onRemove(tag);
+              }}
+            />
+          </DisabledGuard>
         </Pill>
       ))}
       {addingTag ? (
@@ -123,25 +146,31 @@ function Tags({
           </Pill>
         </Tooltip>
       ) : (
-        <Pill
-          className={classNames({
-            'text-green-800': true,
-            'bg-green-100': true,
-            flex: true,
-            'items-center': true,
-            'cursor-pointer': true,
-            'hover:scale-110': true,
-            transition: true,
-            'ease-in-out': true,
-            'delay-50': true,
-          })}
-          onClick={(e) => {
-            e.stopPropagation();
-            setAddingTag(true);
-          }}
+        <DisabledGuard
+          userAbilities={userAbilities}
+          permitted={tagAdditionPermittedFor}
+          tooltipWrap
         >
-          <EOS_NEW_LABEL color="#276749" size="base" /> Add Tag
-        </Pill>
+          <Pill
+            className={classNames({
+              'text-green-800': true,
+              'bg-green-100': true,
+              flex: true,
+              'items-center': true,
+              'cursor-pointer': true,
+              'hover:scale-110': true,
+              transition: true,
+              'ease-in-out': true,
+              'delay-50': true,
+            })}
+            onClick={(e) => {
+              e.stopPropagation();
+              setAddingTag(true);
+            }}
+          >
+            <EOS_NEW_LABEL color="#276749" size="base" /> Add Tag
+          </Pill>
+        </DisabledGuard>
       )}
     </span>
   );

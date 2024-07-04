@@ -11,6 +11,7 @@ import {
 
 import DatabasesOverview from './DatabasesOverview';
 
+const userAbilities = [{ name: 'all', resource: 'all' }];
 const databases = databaseFactory.buildList(3);
 
 const enrichedInstances = databases[0].database_instances
@@ -79,8 +80,8 @@ export default {
       },
     },
     userAbilities: {
-      control: 'array',
-      description: 'Current user abilities',
+      control: { type: 'array' },
+      description: 'User profile abilities',
     },
     onTagAdd: {
       action: 'Add tag',
@@ -111,28 +112,28 @@ export default {
 
 export const Databases = {
   args: {
+    userAbilities,
     databases,
     databaseInstances: enrichedInstances,
     loading: false,
-    userAbilities: [{ name: 'all', resource: 'all' }],
   },
 };
 
 export const WithSystemReplication = {
   args: {
+    userAbilities,
     databases: [databaseWithSR],
     databaseInstances: systemReplicationInstances,
     loading: false,
-    userAbilities: [{ name: 'all', resource: 'all' }],
   },
 };
 
 export const WithAbsentInstances = {
   args: {
+    userAbilities,
     databases: [databaseWithAbsentInstances],
     databaseInstances: absentInstance,
     loading: false,
-    userAbilities: [{ name: 'all', resource: 'all' }],
   },
 };
 

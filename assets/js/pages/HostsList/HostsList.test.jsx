@@ -432,4 +432,34 @@ describe('HostsLists component', () => {
       );
     });
   });
+  describe('tag operations', () => {
+    it('should disable tag creation and deletion if the user abilities are not compatible', async () => {
+      const host1 = hostFactory.build({
+        agent_version: '1.0.0',
+        tags: [{ value: 'Tag1' }, { value: 'Tag2' }],
+      });
+      const state = {
+        ...defaultInitialState,
+        hostsList: {
+          hosts: [host1],
+        },
+        user: {
+          abilities: [{ name: 'all', resource: 'a_resource' }],
+        },
+      };
+
+      const [StatefulHostsList] = withState(<HostsList />, state);
+
+      renderWithRouter(StatefulHostsList);
+
+      expect(screen.queryByText('Add Tag')).toHaveClass('opacity-50');
+      // grab the X
+      expect(
+        screen.queryByText('Tag1').children.item(0).children.item(0)
+      ).toHaveClass('opacity-50');
+      expect(
+        screen.queryByText('Tag2').children.item(0).children.item(0)
+      ).toHaveClass('opacity-50');
+    });
+  });
 });

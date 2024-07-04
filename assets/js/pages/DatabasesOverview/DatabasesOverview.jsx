@@ -105,6 +105,9 @@ function DatabasesOverview({
           element[key].some((tag) => filters.includes(tag)),
         render: (content, item) => (
           <Tags
+            userAbilities={userAbilities}
+            tagAdditionPermittedFor={['all:database_tags']}
+            tagDeletionPermittedFor={['all:database_tags']}
             tags={content}
             resourceId={item.id}
             onChange={() => {}}

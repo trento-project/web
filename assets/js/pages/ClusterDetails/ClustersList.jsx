@@ -9,6 +9,8 @@ import { addTagToCluster, removeTagFromCluster } from '@state/clusters';
 import { getAllSAPInstances } from '@state/selectors/sapSystem';
 import { getInstanceID } from '@state/instances';
 
+import { getUserProfile } from '@state/selectors/user';
+
 import PageHeader from '@common/PageHeader';
 import SapSystemLink from '@common/SapSystemLink';
 import Table from '@common/Table';
@@ -38,6 +40,7 @@ function ClustersList() {
   const allInstances = useSelector(getAllSAPInstances);
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
+  const { abilities } = useSelector(getUserProfile);
 
   const config = {
     pagination: true,
@@ -118,6 +121,9 @@ function ClustersList() {
           element[key].some((tag) => filter.includes(tag)),
         render: (content, item) => (
           <Tags
+            userAbilities={abilities}
+            tagAdditionPermittedFor={['all:cluster_tags']}
+            tagDeletionPermittedFor={['all:cluster_tags']}
             tags={content}
             resourceId={item.id}
             onChange={() => {}}

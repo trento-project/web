@@ -12,10 +12,36 @@ import { filterTable, clearFilter } from '@common/Table/Table.test';
 import DatabasesOverview from './DatabasesOverview';
 
 describe('DatabasesOverview component', () => {
+  describe('tag operations', () => {
+    it('should disable tag creation and delete when user abilities are not compatible', () => {
+      const database = databaseFactory.build({
+        tags: [{ value: 'Tag1' }, { value: 'Tag2' }],
+      });
+      const userAbilities = [{ name: 'all', resource: 'another_resource' }];
+
+      renderWithRouter(
+        <DatabasesOverview
+          databases={[database]}
+          databaseInstances={database.database_instances}
+          userAbilities={userAbilities}
+        />
+      );
+
+      expect(screen.queryByText('Add Tag')).toHaveClass('opacity-50');
+      // grab the X
+      expect(
+        screen.queryByText('Tag1').children.item(0).children.item(0)
+      ).toHaveClass('opacity-50');
+      expect(
+        screen.queryByText('Tag2').children.item(0).children.item(0)
+      ).toHaveClass('opacity-50');
+    });
+  });
   describe('instance cleanup', () => {
     it('should clean up database instance on request', async () => {
       const user = userEvent.setup();
       const mockedCleanUp = jest.fn();
+      const userAbilities = [{ name: 'all', resource: 'all' }];
 
       const database = databaseFactory.build();
 
@@ -26,8 +52,8 @@ describe('DatabasesOverview component', () => {
       renderWithRouter(
         <DatabasesOverview
           databases={[database]}
+          userAbilities={userAbilities}
           databaseInstances={database.database_instances}
-          userAbilities={[{ name: 'all', resource: 'all' }]}
           onInstanceCleanUp={mockedCleanUp}
         />
       );
@@ -81,6 +107,8 @@ describe('DatabasesOverview component', () => {
   });
 
   describe('filtering', () => {
+    const userAbilities = [{ name: 'all', resource: 'all' }];
+
     const scenarios = [
       {
         filter: 'Health',
@@ -119,7 +147,11 @@ describe('DatabasesOverview component', () => {
       'should filter the table content by $filter filter',
       ({ filter, options, databases, expectedRows }) => {
         renderWithRouter(
-          <DatabasesOverview databases={databases} databaseInstances={[]} />
+          <DatabasesOverview
+            databases={databases}
+            databaseInstances={[]}
+            userAbilities={userAbilities}
+          />
         );
 
         options.forEach(async (option) => {
@@ -144,7 +176,11 @@ describe('DatabasesOverview component', () => {
       const { health, sid, tags } = databases[0];
 
       renderWithRouter(
-        <DatabasesOverview databases={databases} databaseInstances={[]} />
+        <DatabasesOverview
+          databases={databases}
+          databaseInstances={[]}
+          userAbilities={userAbilities}
+        />
       );
 
       [
