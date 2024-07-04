@@ -1,3 +1,5 @@
+import { createUserRequestFactory } from '@lib/test-utils/factories';
+
 import {
   selectedSystem,
   attachedHosts,
@@ -151,6 +153,48 @@ context('SAP system details', () => {
       cy.loadScenario(`host-${hostToDeregister.name}-restore`);
       cy.contains(hostToDeregister.name).should('exist');
       cy.contains(hostToDeregister.features).should('exist');
+    });
+  });
+
+  describe('Forbidden actions', () => {
+    const password = 'password';
+
+    beforeEach(() => {
+      cy.deleteAllUsers();
+      cy.logout();
+      const user = createUserRequestFactory.build({
+        password,
+        password_confirmation: password,
+      });
+      cy.wrap(user).as('user');
+    });
+
+    describe('Application instance clean up', () => {
+      before(() => {
+        cy.loadScenario(`sap-systems-overview-NWD-00-absent`);
+      });
+
+      it('should forbid application instance cleanup', () => {
+        cy.get('@user').then((user) => {
+          cy.createUserWithAbilities(user, []);
+          cy.login(user.username, password);
+        });
+        cy.visit(`/sap_systems/${selectedSystem.Id}`);
+
+        cy.contains('button', 'Clean up').should('be.disabled');
+      });
+
+      it('should allow application instance clenaup', () => {
+        cy.get('@user').then((user) => {
+          cy.createUserWithAbilities(user, [
+            { name: 'cleanup', resource: 'application_instance' },
+          ]);
+          cy.login(user.username, password);
+        });
+        cy.visit(`/sap_systems/${selectedSystem.Id}`);
+
+        cy.contains('button', 'Clean up').should('be.enabled');
+      });
     });
   });
 });
