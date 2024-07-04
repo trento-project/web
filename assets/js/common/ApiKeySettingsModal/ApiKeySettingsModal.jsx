@@ -18,6 +18,7 @@ import Select from '@common/Select';
 import Switch from '@common/Switch';
 import CopyButton from '@common/CopyButton';
 import ApiKeyBox from '@common/ApiKeyBox';
+import DisabledGuard from '@common/DisabledGuard';
 import Banner from '../Banners/Banner';
 
 const normalizeExpiration = (expiration) =>
@@ -39,6 +40,8 @@ const availableTimeOptions = [
 ];
 
 function ApiKeySettingsModal({
+  userAbilities,
+  permitted,
   open = false,
   loading = false,
   onGenerate = noop,
@@ -161,13 +164,18 @@ function ApiKeySettingsModal({
                 />
               </div>
               <div className="w-1/6 h-4/5">
-                <Button
-                  className="generate-api-key"
-                  onClick={() => validateApiKeySettingsRequest()}
-                  disabled={quantityError || loading}
+                <DisabledGuard
+                  userAbilities={userAbilities}
+                  permitted={permitted}
                 >
-                  Generate
-                </Button>
+                  <Button
+                    className="generate-api-key"
+                    onClick={() => validateApiKeySettingsRequest()}
+                    disabled={quantityError || loading}
+                  >
+                    Generate
+                  </Button>
+                </DisabledGuard>
               </div>
             </div>
             {quantityError && (

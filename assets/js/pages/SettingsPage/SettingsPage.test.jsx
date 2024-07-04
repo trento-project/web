@@ -2,6 +2,7 @@ import React from 'react';
 
 import { format } from 'date-fns';
 import { act, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
 import {
@@ -233,6 +234,31 @@ describe('Settings Page', () => {
       });
 
       expect(screen.getByText('Invalid data provided')).toBeVisible();
+    });
+
+    it('should render settings page with a disabled Generate Key button when the user has not the right permissions', async () => {
+      const userWithoutPermission = [{ name: '', resource: '' }];
+      const user = userEvent.setup();
+      const setApiKeySettingsModalOpen = jest.fn();
+      const [StatefulSettings] = withState(<SettingsPage />, {
+        ...defaultInitialState,
+        user: { abilities: userWithoutPermission },
+      });
+
+      await act(async () => {
+        renderWithRouter(StatefulSettings);
+      });
+
+      expect(screen.getByText('Generate Key')).toBeDisabled();
+      await user.click(screen.getByText('Generate Key'));
+      expect(setApiKeySettingsModalOpen).not.toHaveBeenCalled();
+      await user.hover(screen.getByText('Generate Key'));
+      expect(
+        screen.queryAllByText('You are not authorized for this action').length
+      ).toBeGreaterThan(0);
+      expect(
+        screen.queryAllByText('You are not authorized for this action')[0]
+      ).toBeVisible();
     });
   });
 });
