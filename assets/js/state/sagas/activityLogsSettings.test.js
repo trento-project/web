@@ -18,7 +18,7 @@ import {
   fetchActivityLogsSettings,
   updateActivityLogsSettings,
 } from './activityLogsSettings';
-import { defaultGlobalError } from '../../lib/api/validationErrors';
+import { defaultGlobalError } from '@lib/api/validationErrors';
 
 describe('Activity Logs Settings saga', () => {
   describe('Fetching Activity Logs Settings', () => {
