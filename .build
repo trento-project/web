@@ -366,6 +366,7 @@ Trento.Support.ListHelper.html
 Trento.Support.PolicyHelper.html
 Trento.Support.StructHelper.html
 Trento.Support.Type.html
+Trento.Tags.Policy.html
 Trento.Tags.html
 Trento.TaskCase.html
 Trento.Tasks.Helper.html
@@ -485,8 +486,8 @@ dist/merriweather-latin-ext-300-normal-K6L27CZ5.woff2
 dist/merriweather-vietnamese-300-italic-EHHNZPUO.woff2
 dist/merriweather-vietnamese-300-normal-U376L4Z4.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-DE7AD826.js
-dist/sidebar_items-931E63AE.js
+dist/search_data-89FE255D.js
+dist/sidebar_items-F680A558.js
 environment_variables.html
 hack_on_the_trento.html
 index.html
