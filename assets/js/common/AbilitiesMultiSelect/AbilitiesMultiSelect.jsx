@@ -29,6 +29,16 @@ const groupedAbilities = [
       'cleanup:application_instance',
     ],
   },
+  {
+    ability: 'all:tags',
+    tooltip: 'Permits all operations on tags',
+    groupAbilities: [
+      'all:host_tags',
+      'all:cluster_tags',
+      'all:database_tags',
+      'all:sap_system_tags',
+    ],
+  },
 ];
 
 const mapAbilities = (abilities) =>
