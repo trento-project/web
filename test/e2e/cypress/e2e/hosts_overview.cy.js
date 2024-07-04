@@ -351,6 +351,37 @@ context('Hosts Overview', () => {
       cy.wrap(user).as('user');
     });
 
+    describe('Tag creation', () => {
+      it('it should prevent a tag update when the user abilities are not compliant', () => {
+        cy.get('@user').then((user) => {
+          cy.createUserWithAbilities(user, []);
+          cy.login(user.username, password);
+        });
+
+        cy.visit('/hosts');
+
+        cy.contains('span', 'Add Tag').should('have.class', 'opacity-50');
+        cy.get('[data-test-id="tag-tag1"]').should('have.class', 'opacity-50');
+      });
+
+      it('it should allow a tag update when the user abilities are compliant', () => {
+        cy.get('@user').then((user) => {
+          cy.createUserWithAbilities(user, [
+            { name: 'all', resource: 'host_tags' },
+          ]);
+          cy.login(user.username, password);
+        });
+
+        cy.visit('/hosts');
+
+        cy.contains('span', 'Add Tag').should('not.have.class', 'opacity-50');
+        cy.get('[data-test-id="tag-tag1"]').should(
+          'not.have.class',
+          'opacity-50'
+        );
+      });
+    });
+
     describe('Clean up', () => {
       it('should forbid host clean up', () => {
         cy.get('@user').then((user) => {
