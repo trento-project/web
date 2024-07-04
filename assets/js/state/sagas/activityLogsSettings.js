@@ -11,7 +11,7 @@ import {
   setEditingActivityLogsSettings,
   setNetworkError,
 } from '@state/activityLogsSettings';
-import { defaultGlobalError } from '../../lib/api/validationErrors';
+import { defaultGlobalError } from '@lib/api/validationErrors';
 
 export function* fetchActivityLogsSettings() {
   yield put(startLoadingActivityLogsSettings());

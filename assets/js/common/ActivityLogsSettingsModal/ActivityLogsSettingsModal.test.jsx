@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
 import ActivityLogsSettingsModal from '.';
-import { defaultGlobalError } from '../../lib/api/validationErrors';
+import { defaultGlobalError } from '@lib/api/validationErrors';
 
 const positiveInt = () => faker.number.int({ min: 1 });
 
