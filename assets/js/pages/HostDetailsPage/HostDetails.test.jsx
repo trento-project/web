@@ -395,7 +395,7 @@ describe('HostDetails component', () => {
   });
 
   describe('forbidden actions', () => {
-    it('should not show start execution button when the user abilities are not compatible', async () => {
+    it('should disable start execution button when the user abilities are not compatible', async () => {
       const user = userEvent.setup();
       const selectedChecks = [faker.animal.bear(), faker.animal.bear()];
 
@@ -416,7 +416,7 @@ describe('HostDetails component', () => {
       ).toBeInTheDocument();
     });
 
-    it('should show start execution button when the user abilities are compatible', () => {
+    it('should enable execution button when the user abilities are compatible', () => {
       const selectedChecks = [faker.animal.bear(), faker.animal.bear()];
 
       renderWithRouter(
