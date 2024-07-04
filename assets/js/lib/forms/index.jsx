@@ -18,10 +18,3 @@ export const REQUIRED_FIELD_TEXT = 'Required field';
 export const errorMessage = (message) => (
   <p className="text-red-500 mt-1">{capitalize(message)}</p>
 );
-
-export const mapAbilities = (abilities) =>
-  abilities.map(({ id, name, resource, label }) => ({
-    value: id,
-    label: `${name}:${resource}`,
-    tooltip: label,
-  }));
