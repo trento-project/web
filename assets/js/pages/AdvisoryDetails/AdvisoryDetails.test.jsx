@@ -5,16 +5,13 @@ import '@testing-library/jest-dom';
 import { faker } from '@faker-js/faker';
 
 import { renderWithRouter as render } from '@lib/test-utils';
-import { advisoryErrataFactory } from '@lib/test-utils/factories';
+import { advisoryErrataFactory, cveFactory } from '@lib/test-utils/factories';
 
 import AdvisoryDetails from './AdvisoryDetails';
 
 describe('AdvisoryDetails', () => {
   it('displays a message, when the CVE, packages or fixes section is empty', () => {
-    const errata = advisoryErrataFactory.build(
-      { cves: [] },
-      { transient: { fixesLength: 0 } }
-    );
+    const errata = advisoryErrataFactory.build({ cves: [], fixes: {} });
 
     render(
       <AdvisoryDetails advisoryName={faker.lorem.word()} errata={errata} />
@@ -57,10 +54,7 @@ describe('AdvisoryDetails', () => {
   });
 
   it('displays fixes with a valid link', () => {
-    const errata = advisoryErrataFactory.build(
-      {},
-      { transient: { fixesLength: faker.number.int({ min: 2, max: 10 }) } }
-    );
+    const errata = advisoryErrataFactory.build();
     const advisoryName = faker.lorem.word();
 
     render(<AdvisoryDetails advisoryName={advisoryName} errata={errata} />);
@@ -73,10 +67,10 @@ describe('AdvisoryDetails', () => {
   });
 
   it('displays CVEs with a valid link', () => {
-    const errata = advisoryErrataFactory.build(
-      {},
-      { transient: { cvesLength: faker.number.int({ min: 2, max: 10 }) } }
-    );
+    const errata = advisoryErrataFactory.build({
+      cves: cveFactory.buildList(faker.number.int({ min: 2, max: 10 })),
+    });
+
     const advisoryName = faker.lorem.word();
 
     render(<AdvisoryDetails advisoryName={advisoryName} errata={errata} />);
@@ -90,7 +84,6 @@ describe('AdvisoryDetails', () => {
 
   it('displays a single fix with a valid link', () => {
     const errata = advisoryErrataFactory.build();
-    errata.fixes = Object.fromEntries([Object.entries(errata.fixes)[0]]);
     const advisoryName = faker.lorem.word();
 
     render(<AdvisoryDetails advisoryName={advisoryName} errata={errata} />);
@@ -104,7 +97,6 @@ describe('AdvisoryDetails', () => {
 
   it('displays a single CVE with a valid link', () => {
     const errata = advisoryErrataFactory.build();
-    errata.cves = [errata.cves[0]];
     const advisoryName = faker.lorem.word();
 
     render(<AdvisoryDetails advisoryName={advisoryName} errata={errata} />);

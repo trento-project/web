@@ -2,29 +2,35 @@ import { faker } from '@faker-js/faker';
 import { Factory } from 'fishery';
 import { advisoryType } from './relevantPatches';
 
-const fixMapFactory = Factory.define(({ transientParams }) =>
-  Object.fromEntries(
-    new Array(transientParams.length ?? 1)
+const fixMapFactory = Factory.define(({ transientParams }) => {
+  const { length = 1 } = transientParams;
+
+  return Object.fromEntries(
+    new Array(length)
       .fill(0)
       .map(() => [
         faker.number.int({ min: 1, max: 65536 }),
         faker.lorem.sentence(),
       ])
-  )
+  );
+});
+
+export const cveFactory = Factory.define(
+  () =>
+    `CVE-${faker.number.int({ min: 1991, max: 2024 })}-${faker.number.int({
+      min: 0,
+      max: 9999,
+    })}`
 );
 
-const buildCVE = () =>
-  `CVE-${faker.number.int({ min: 1991, max: 2024 })}-${faker.number.int({
-    min: 0,
-    max: 9999,
-  })}`;
-
-export const advisoryErrataFactory = Factory.define(({ transientParams }) => ({
-  fixes: fixMapFactory.build(
-    {},
-    { transient: { length: transientParams.fixesLength ?? 1 } }
-  ),
-  cves: faker.helpers.uniqueArray(buildCVE, transientParams.cvesLength ?? 1),
+export const advisoryErrataFactory = Factory.define(({ params }) => ({
+  fixes:
+    params.fixes ||
+    fixMapFactory.build(
+      {},
+      { transient: { length: faker.number.int({ min: 1, max: 10 }) } }
+    ),
+  cves: cveFactory.buildList(10),
   errata_details: {
     id: faker.number.int({ min: 1, max: 65536 }),
     issue_date: faker.date.recent({ days: 30 }),
