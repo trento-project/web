@@ -14,6 +14,7 @@ import { TUNING_VALUES } from '@pages/SaptuneDetails/SaptuneDetails.test';
 import HostDetails from './HostDetails';
 
 const axiosMock = new MockAdapter(networkClient);
+const userAbilities = [{ name: 'all', resource: 'all' }];
 
 describe('HostDetails component', () => {
   beforeEach(() => {
@@ -23,7 +24,9 @@ describe('HostDetails component', () => {
 
   describe('Checks execution', () => {
     it('should show the Checks related action buttons', () => {
-      renderWithRouter(<HostDetails agentVersion="1.0.0" />);
+      renderWithRouter(
+        <HostDetails agentVersion="1.0.0" userAbilities={userAbilities} />
+      );
 
       expect(
         screen.getByRole('button', { name: 'Check Selection' })
@@ -40,7 +43,11 @@ describe('HostDetails component', () => {
       const user = userEvent.setup();
 
       renderWithRouter(
-        <HostDetails agentVersion="1.0.0" selectedChecks={[]} />
+        <HostDetails
+          agentVersion="1.0.0"
+          selectedChecks={[]}
+          userAbilities={userAbilities}
+        />
       );
 
       const startExecutionButton = screen.getByText('Start Execution');
@@ -55,7 +62,11 @@ describe('HostDetails component', () => {
       const selectedChecks = [faker.animal.bear(), faker.animal.bear()];
 
       renderWithRouter(
-        <HostDetails agentVersion="1.0.0" selectedChecks={selectedChecks} />
+        <HostDetails
+          agentVersion="1.0.0"
+          selectedChecks={selectedChecks}
+          userAbilities={userAbilities}
+        />
       );
 
       const startExecutionButton = screen.getByText('Start Execution');
@@ -73,13 +84,17 @@ describe('HostDetails component', () => {
       'The Agent version is outdated, some features might not work properly. It is advised to keep the Agents up to date with the Server.';
 
     it('should not show any warning message if the agent version is correct', () => {
-      renderWithRouter(<HostDetails agentVersion="2.0.0" />);
+      renderWithRouter(
+        <HostDetails agentVersion="2.0.0" userAbilities={userAbilities} />
+      );
 
       expect(screen.queryByText(message)).not.toBeInTheDocument();
     });
 
     it('should show a warning message if the agent version is outdated', () => {
-      renderWithRouter(<HostDetails agentVersion="1.0.0" />);
+      renderWithRouter(
+        <HostDetails agentVersion="1.0.0" userAbilities={userAbilities} />
+      );
 
       expect(screen.getByText(message)).toBeInTheDocument();
     });
@@ -88,7 +103,11 @@ describe('HostDetails component', () => {
   describe('deregistration', () => {
     it('should not display clean up button when host is not deregisterable', () => {
       renderWithRouter(
-        <HostDetails agentVersion="2.0.0" deregisterable={false} />
+        <HostDetails
+          agentVersion="2.0.0"
+          deregisterable={false}
+          userAbilities={userAbilities}
+        />
       );
 
       expect(
@@ -197,7 +216,11 @@ describe('HostDetails component', () => {
       } = saptuneStatus;
 
       renderWithRouter(
-        <HostDetails agentVersion="2.0.0" saptuneStatus={saptuneStatus} />
+        <HostDetails
+          agentVersion="2.0.0"
+          saptuneStatus={saptuneStatus}
+          userAbilities={userAbilities}
+        />
       );
 
       expect(screen.getByText('Package').nextSibling).toHaveTextContent(
@@ -226,6 +249,7 @@ describe('HostDetails component', () => {
           softwareUpdatesSettingsSaved
           relevantPatches={relevantPatches}
           upgradablePackages={upgradablePackages}
+          userAbilities={userAbilities}
         />
       );
 
@@ -255,6 +279,7 @@ describe('HostDetails component', () => {
           softwareUpdatesSettingsSaved
           relevantPatches={relevantPatches}
           upgradablePackages={upgradablePackages}
+          userAbilities={userAbilities}
         />
       );
 
@@ -281,6 +306,7 @@ describe('HostDetails component', () => {
           softwareUpdatesLoading
           relevantPatches={relevantPatches}
           upgradablePackages={upgradablePackages}
+          userAbilities={userAbilities}
         />
       );
 
@@ -311,6 +337,7 @@ describe('HostDetails component', () => {
           softwareUpdatesLoading
           relevantPatches={relevantPatches}
           upgradablePackages={upgradablePackages}
+          userAbilities={userAbilities}
         />
       );
 
@@ -346,18 +373,62 @@ describe('HostDetails component', () => {
       };
 
       renderWithRouter(
-        <HostDetails agentVersion="2.0.0" lastExecution={lastExecution} />
+        <HostDetails
+          agentVersion="2.0.0"
+          lastExecution={lastExecution}
+          userAbilities={userAbilities}
+        />
       );
 
       expect(screen.getByText(passingCount)).toBeInTheDocument();
     });
 
     it('should display nothing if lastExecution is an empty object', () => {
-      renderWithRouter(<HostDetails agentVersion="2.0.0" />);
+      renderWithRouter(
+        <HostDetails agentVersion="2.0.0" userAbilities={userAbilities} />
+      );
 
       expect(
         screen.getByText('No check results available.')
       ).toBeInTheDocument();
+    });
+  });
+
+  describe('forbidden actions', () => {
+    it('should disable start execution button when the user abilities are not compatible', async () => {
+      const user = userEvent.setup();
+      const selectedChecks = [faker.animal.bear(), faker.animal.bear()];
+
+      renderWithRouter(
+        <HostDetails
+          agentVersion="1.0.0"
+          selectedChecks={selectedChecks}
+          userAbilities={[{ name: 'all', resource: 'another_resource' }]}
+        />
+      );
+
+      const startExecutionButton = screen.getByText('Start Execution');
+      expect(startExecutionButton).toBeDisabled();
+
+      await user.hover(startExecutionButton);
+      expect(
+        screen.queryByText('You are not authorized for this action')
+      ).toBeInTheDocument();
+    });
+
+    it('should enable execution button when the user abilities are compatible', () => {
+      const selectedChecks = [faker.animal.bear(), faker.animal.bear()];
+
+      renderWithRouter(
+        <HostDetails
+          agentVersion="1.0.0"
+          selectedChecks={selectedChecks}
+          userAbilities={[{ name: 'all', resource: 'host_checks_execution' }]}
+        />
+      );
+
+      const startExecutionButton = screen.getByText('Start Execution');
+      expect(startExecutionButton).toBeEnabled();
     });
   });
 });

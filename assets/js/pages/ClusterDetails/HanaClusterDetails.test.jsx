@@ -16,6 +16,8 @@ import {
 
 import HanaClusterDetails from './HanaClusterDetails';
 
+const userAbilities = [{ name: 'all', resource: 'all' }];
+
 describe('HanaClusterDetails component', () => {
   const executionId = faker.string.uuid();
   const scenarios = [
@@ -96,6 +98,7 @@ describe('HanaClusterDetails component', () => {
           provider={provider}
           sapSystems={[]}
           details={details}
+          userAbilities={userAbilities}
           lastExecution={lastExecution}
         />
       );
@@ -133,6 +136,7 @@ describe('HanaClusterDetails component', () => {
         sapSystems={sapSystems}
         details={details}
         lastExecution={null}
+        userAbilities={userAbilities}
       />
     );
 
@@ -172,6 +176,7 @@ describe('HanaClusterDetails component', () => {
         sapSystems={[]}
         details={details}
         lastExecution={null}
+        userAbilities={userAbilities}
       />
     );
 
@@ -214,6 +219,7 @@ describe('HanaClusterDetails component', () => {
         sapSystems={[]}
         details={details}
         lastExecution={null}
+        userAbilities={userAbilities}
       />
     );
 
@@ -254,6 +260,7 @@ describe('HanaClusterDetails component', () => {
         sapSystems={[]}
         details={details}
         lastExecution={null}
+        userAbilities={userAbilities}
       />
     );
 
@@ -294,6 +301,7 @@ describe('HanaClusterDetails component', () => {
         sapSystems={[]}
         details={details}
         lastExecution={null}
+        userAbilities={userAbilities}
       />
     );
 
@@ -335,6 +343,7 @@ describe('HanaClusterDetails component', () => {
         sapSystems={[]}
         details={updatedDetails}
         lastExecution={null}
+        userAbilities={userAbilities}
       />
     );
 
@@ -376,6 +385,7 @@ describe('HanaClusterDetails component', () => {
         sapSystems={[]}
         details={details}
         lastExecution={null}
+        userAbilities={userAbilities}
       />
     );
 
@@ -444,6 +454,7 @@ describe('HanaClusterDetails component', () => {
           sapSystems={[]}
           details={details}
           lastExecution={null}
+          userAbilities={userAbilities}
         />
       );
 
@@ -454,4 +465,99 @@ describe('HanaClusterDetails component', () => {
       );
     }
   );
+
+  describe('forbidden actions', () => {
+    it('should disable the check execution button when the user abilities are not compatible', async () => {
+      const user = userEvent.setup();
+
+      const scenario = {
+        selectedChecks: ['A123'],
+        hasSelectedChecks: true,
+      };
+
+      const {
+        clusterID,
+        clusterName,
+        cib_last_written: cibLastWritten,
+        type: clusterType,
+        sid,
+        provider,
+        details,
+      } = clusterFactory.build();
+
+      const hosts = hostFactory.buildList(2, { cluster_id: clusterID });
+
+      renderWithRouter(
+        <HanaClusterDetails
+          clusterID={clusterID}
+          clusterName={clusterName}
+          selectedChecks={scenario.selectedChecks}
+          hasSelectedChecks={scenario.hasSelectedChecks}
+          hosts={hosts}
+          clusterType={clusterType}
+          cibLastWritten={cibLastWritten}
+          sid={sid}
+          provider={provider}
+          sapSystems={[]}
+          details={details}
+          lastExecution={null}
+          userAbilities={[{ name: 'all', resource: 'other_resource' }]}
+        />
+      );
+
+      const startExecutionButton = screen.getByText('Start Execution');
+      expect(startExecutionButton).toBeDisabled();
+      await user.hover(startExecutionButton);
+      expect(
+        screen.queryByText('You are not authorized for this action')
+      ).toBeInTheDocument();
+    });
+
+    it('should enable the check execution button when the user abilities are compatible', async () => {
+      const user = userEvent.setup();
+
+      const scenario = {
+        selectedChecks: ['A123'],
+        hasSelectedChecks: true,
+      };
+
+      const {
+        clusterID,
+        clusterName,
+        cib_last_written: cibLastWritten,
+        type: clusterType,
+        sid,
+        provider,
+        details,
+      } = clusterFactory.build();
+
+      const hosts = hostFactory.buildList(2, { cluster_id: clusterID });
+
+      renderWithRouter(
+        <HanaClusterDetails
+          clusterID={clusterID}
+          clusterName={clusterName}
+          selectedChecks={scenario.selectedChecks}
+          hasSelectedChecks={scenario.hasSelectedChecks}
+          hosts={hosts}
+          clusterType={clusterType}
+          cibLastWritten={cibLastWritten}
+          sid={sid}
+          provider={provider}
+          sapSystems={[]}
+          details={details}
+          lastExecution={null}
+          userAbilities={[
+            { name: 'all', resource: 'cluster_checks_execution' },
+          ]}
+        />
+      );
+
+      const startExecutionButton = screen.getByText('Start Execution');
+      await user.hover(startExecutionButton);
+      expect(
+        screen.queryByText('You are not authorized for this action')
+      ).not.toBeInTheDocument();
+    });
+  });
 });

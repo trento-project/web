@@ -15,6 +15,7 @@ import ProviderLabel from '@common/ProviderLabel';
 import SapSystemLink from '@common/SapSystemLink';
 import Table from '@common/Table';
 import Tooltip from '@common/Tooltip';
+import DisabledGuard from '@common/DisabledGuard';
 
 import ClusterNodeName from '@pages/ClusterDetails/ClusterNodeName';
 import CheckResultsOverview from '@pages/CheckResultsOverview';
@@ -83,6 +84,7 @@ function AscsErsClusterDetails({
   sapSystems,
   details,
   catalog,
+  userAbilities,
   lastExecution,
   onStartExecution = () => {},
   navigate = () => {},
@@ -146,30 +148,35 @@ function AscsErsClusterDetails({
               Show Results
             </Button>
 
-            <Tooltip
-              isEnabled={!hasSelectedChecks}
-              content="Select some Checks first!"
-              place="bottom"
-              wrap={false}
+            <DisabledGuard
+              userAbilities={userAbilities}
+              permitted={['all:cluster_checks_execution']}
             >
-              <Button
-                type="primary"
-                className="mx-0.5"
-                size="small"
-                onClick={() => {
-                  onStartExecution(clusterID, hosts, selectedChecks);
-                }}
-                disabled={startExecutionDisabled}
+              <Tooltip
+                isEnabled={!hasSelectedChecks}
+                content="Select some Checks first!"
+                place="bottom"
+                wrap={false}
               >
-                <EOS_PLAY_CIRCLE
-                  className={classNames('inline-block align-sub', {
-                    'fill-white': !startExecutionDisabled,
-                    'fill-gray-200': startExecutionDisabled,
-                  })}
-                />{' '}
-                Start Execution
-              </Button>
-            </Tooltip>
+                <Button
+                  type="primary"
+                  className="mx-0.5"
+                  size="small"
+                  onClick={() => {
+                    onStartExecution(clusterID, hosts, selectedChecks);
+                  }}
+                  disabled={startExecutionDisabled}
+                >
+                  <EOS_PLAY_CIRCLE
+                    className={classNames('inline-block align-sub', {
+                      'fill-white': !startExecutionDisabled,
+                      'fill-gray-200': startExecutionDisabled,
+                    })}
+                  />{' '}
+                  Start Execution
+                </Button>
+              </Tooltip>
+            </DisabledGuard>
           </div>
         </div>
       </div>

@@ -16,6 +16,8 @@ import {
 
 import HanaClusterDetails from './HanaClusterDetails';
 
+const userAbilities = [{ name: 'all', resource: 'all' }];
+
 const {
   id: clusterID,
   name: clusterName,
@@ -144,6 +146,7 @@ export const Hana = {
     details,
     lastExecution,
     catalog,
+    userAbilities,
     onStartExecution: () => {},
     navigate: () => {},
   },

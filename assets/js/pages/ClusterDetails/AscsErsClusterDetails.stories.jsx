@@ -46,6 +46,8 @@ const failoverDetails = ascsErsClusterDetailsFactory.build({
   catalog,
 });
 
+const userAbilities = [{ name: 'all', resource: 'all' }];
+
 export default {
   title: 'Layouts/AscsErsClusterDetails',
   components: AscsErsClusterDetails,
@@ -72,6 +74,7 @@ export const Single = {
     hosts: buildHostsFromAscsErsClusterDetails(details),
     sapSystems: buildSapSystemsFromAscsErsClusterDetails(details),
     details,
+    userAbilities,
   },
   render: (args) => (
     <ContainerWrapper>
@@ -123,6 +126,7 @@ export const Failover = {
     clusterName,
     cibLastWritten,
     provider,
+    userAbilities,
     hosts: buildHostsFromAscsErsClusterDetails(failoverDetails),
     sapSystems: buildSapSystemsFromAscsErsClusterDetails(failoverDetails),
     details: failoverDetails,

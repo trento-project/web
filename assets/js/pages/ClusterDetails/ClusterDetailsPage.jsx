@@ -12,6 +12,7 @@ import {
 } from '@state/selectors/cluster';
 import { getCatalog } from '@state/selectors/catalog';
 import { getLastExecution } from '@state/selectors/lastExecutions';
+import { getUserProfile } from '@state/selectors/user';
 import { updateCatalog } from '@state/catalog';
 import { executionRequested, updateLastExecution } from '@state/lastExecutions';
 import { buildEnv } from '@lib/checks';
@@ -40,6 +41,8 @@ export function ClusterDetailsPage() {
   const filesystemType = useSelector((state) =>
     getFilesystemType(state, clusterID)
   );
+
+  const { abilities } = useSelector(getUserProfile);
 
   useEffect(() => {
     const env = buildEnv({
@@ -76,6 +79,7 @@ export function ClusterDetailsPage() {
       return (
         <HanaClusterDetails
           clusterID={clusterID}
+          userAbilities={abilities}
           clusterName={getClusterName(cluster)}
           selectedChecks={cluster.selected_checks}
           hasSelectedChecks={hasSelectedChecks}
@@ -98,6 +102,7 @@ export function ClusterDetailsPage() {
       return (
         <AscsErsClusterDetails
           clusterID={clusterID}
+          userAbilities={abilities}
           clusterName={getClusterName(cluster)}
           selectedChecks={cluster.selected_checks}
           hasSelectedChecks={hasSelectedChecks}

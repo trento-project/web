@@ -18,6 +18,7 @@ import Tooltip from '@common/Tooltip';
 import Banner from '@common/Banners/Banner';
 import ChartsFeatureWrapper from '@common/ChartsFeatureWrapper';
 import AvailableSoftwareUpdates from '@common/AvailableSoftwareUpdates';
+import DisabledGuard from '@common/DisabledGuard';
 
 import { subHours } from 'date-fns';
 
@@ -164,34 +165,39 @@ function HostDetails({
                 Show Results
               </Button>
 
-              <Tooltip
-                wrap={false}
-                isEnabled={!canStartExecution(selectedChecks, savingChecks)}
-                content="Select some Checks first!"
-                place="bottom"
+              <DisabledGuard
+                userAbilities={userAbilities}
+                permitted={['all:host_checks_execution']}
               >
-                <Button
-                  type="primary"
-                  className="mx-0.5"
-                  size="small"
-                  onClick={requestHostChecksExecution}
-                  disabled={!canStartExecution(selectedChecks, savingChecks)}
+                <Tooltip
+                  wrap={false}
+                  isEnabled={!canStartExecution(selectedChecks, savingChecks)}
+                  content="Select some Checks first!"
+                  place="bottom"
                 >
-                  <EOS_PLAY_CIRCLE
-                    className={classNames('inline-block align-sub', {
-                      'fill-white': canStartExecution(
-                        selectedChecks,
-                        savingChecks
-                      ),
-                      'fill-gray-200': !canStartExecution(
-                        selectedChecks,
-                        savingChecks
-                      ),
-                    })}
-                  />{' '}
-                  Start Execution
-                </Button>
-              </Tooltip>
+                  <Button
+                    type="primary"
+                    className="mx-0.5"
+                    size="small"
+                    onClick={requestHostChecksExecution}
+                    disabled={!canStartExecution(selectedChecks, savingChecks)}
+                  >
+                    <EOS_PLAY_CIRCLE
+                      className={classNames('inline-block align-sub', {
+                        'fill-white': canStartExecution(
+                          selectedChecks,
+                          savingChecks
+                        ),
+                        'fill-gray-200': !canStartExecution(
+                          selectedChecks,
+                          savingChecks
+                        ),
+                      })}
+                    />{' '}
+                    Start Execution
+                  </Button>
+                </Tooltip>
+              </DisabledGuard>
             </div>
           </div>
           <div className="pb-3">

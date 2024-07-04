@@ -21,6 +21,8 @@ import { providerData } from '@common/ProviderLabel/ProviderLabel';
 
 import AscsErsClusterDetails from './AscsErsClusterDetails';
 
+const userAbilities = [{ name: 'all', resource: 'all' }];
+
 describe('ClusterDetails AscsErsClusterDetails component', () => {
   it('should show the main details of a ASCS/ERS cluster', () => {
     const {
@@ -49,6 +51,7 @@ describe('ClusterDetails AscsErsClusterDetails component', () => {
         hosts={buildHostsFromAscsErsClusterDetails(details)}
         sapSystems={sapSystems}
         details={details}
+        userAbilities={userAbilities}
       />
     );
 
@@ -105,6 +108,7 @@ describe('ClusterDetails AscsErsClusterDetails component', () => {
         hosts={buildHostsFromAscsErsClusterDetails(details)}
         sapSystems={buildSapSystemsFromAscsErsClusterDetails(details)}
         details={details}
+        userAbilities={userAbilities}
       />
     );
 
@@ -168,6 +172,7 @@ describe('ClusterDetails AscsErsClusterDetails component', () => {
         hosts={buildHostsFromAscsErsClusterDetails(details)}
         sapSystems={buildSapSystemsFromAscsErsClusterDetails(details)}
         details={details}
+        userAbilities={userAbilities}
       />
     );
 
@@ -198,6 +203,7 @@ describe('ClusterDetails AscsErsClusterDetails component', () => {
         hosts={buildHostsFromAscsErsClusterDetails(details)}
         sapSystems={[]}
         details={details}
+        userAbilities={userAbilities}
       />
     );
 
@@ -226,6 +232,7 @@ describe('ClusterDetails AscsErsClusterDetails component', () => {
         provider={provider}
         sapSystems={[]}
         details={details}
+        userAbilities={userAbilities}
       />
     );
     const unregisteredHostContainer = screen.getByText(
@@ -260,6 +267,7 @@ describe('ClusterDetails AscsErsClusterDetails component', () => {
         hosts={buildHostsFromAscsErsClusterDetails(details)}
         sapSystems={sapSystems}
         details={details}
+        userAbilities={userAbilities}
       />
     );
 
@@ -309,6 +317,7 @@ describe('ClusterDetails AscsErsClusterDetails component', () => {
         sapSystems={[]}
         details={details}
         lastExecution={null}
+        userAbilities={userAbilities}
       />
     );
 
@@ -398,10 +407,95 @@ describe('ClusterDetails AscsErsClusterDetails component', () => {
           sapSystems={[]}
           details={details}
           lastExecution={lastExecution}
+          userAbilities={userAbilities}
         />
       );
 
       expect(screen.getByText('Start Execution')).toBeDisabled();
     }
   );
+
+  describe('forbidden actions', () => {
+    it('should disable check execution button when the user abilities are not compatible', async () => {
+      const user = userEvent.setup();
+
+      const {
+        clusterID,
+        clusterName,
+        cib_last_written: cibLastWritten,
+        type: clusterType,
+        sid,
+        provider,
+        details,
+      } = clusterFactory.build({ type: 'ascs_ers' });
+
+      const hosts = hostFactory.buildList(2, { cluster_id: clusterID });
+
+      renderWithRouter(
+        <AscsErsClusterDetails
+          clusterID={clusterID}
+          clusterName={clusterName}
+          selectedChecks={['ABCD']}
+          hasSelectedChecks
+          hosts={hosts}
+          clusterType={clusterType}
+          cibLastWritten={cibLastWritten}
+          sid={sid}
+          provider={provider}
+          sapSystems={[]}
+          details={details}
+          lastExecution={null}
+          userAbilities={[{ name: 'all', resource: 'other' }]}
+        />
+      );
+
+      const startExecutionButton = screen.getByText('Start Execution');
+      await user.hover(startExecutionButton);
+      expect(
+        screen.queryByText('You are not authorized for this action')
+      ).toBeInTheDocument();
+    });
+
+    it('should enable check execution button when the user abilities are compatible', async () => {
+      const user = userEvent.setup();
+
+      const {
+        clusterID,
+        clusterName,
+        cib_last_written: cibLastWritten,
+        type: clusterType,
+        sid,
+        provider,
+        details,
+      } = clusterFactory.build({ type: 'ascs_ers' });
+
+      const hosts = hostFactory.buildList(2, { cluster_id: clusterID });
+
+      renderWithRouter(
+        <AscsErsClusterDetails
+          clusterID={clusterID}
+          clusterName={clusterName}
+          selectedChecks={['ABCD']}
+          hasSelectedChecks
+          hosts={hosts}
+          clusterType={clusterType}
+          cibLastWritten={cibLastWritten}
+          sid={sid}
+          provider={provider}
+          sapSystems={[]}
+          details={details}
+          lastExecution={null}
+          userAbilities={[
+            { name: 'all', resource: 'cluster_checks_execution' },
+          ]}
+        />
+      );
+
+      const startExecutionButton = screen.getByText('Start Execution');
+      await user.hover(startExecutionButton);
+      expect(
+        screen.queryByText('You are not authorized for this action')
+      ).not.toBeInTheDocument();
+    });
+  });
 });
