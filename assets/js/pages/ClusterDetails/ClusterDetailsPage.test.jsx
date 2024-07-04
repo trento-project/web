@@ -26,6 +26,9 @@ describe('ClusterDetails ClusterDetailsPage component', () => {
           [cluster.id]: { data: null, loading: false, error: null },
         },
         catalog: { data: null, loading: false, error: null },
+        user: {
+          abilities: [{ name: 'all', resource: 'all' }],
+        },
       };
 
       const [statefulClusterDetailsPage, _] = withState(

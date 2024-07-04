@@ -12,6 +12,7 @@ import PageHeader from '@common/PageHeader';
 import ProviderLabel from '@common/ProviderLabel';
 import SapSystemLink from '@common/SapSystemLink';
 import Tooltip from '@common/Tooltip';
+import DisabledGuard from '@common/DisabledGuard';
 
 import CheckResultsOverview from '@pages/CheckResultsOverview';
 
@@ -40,6 +41,7 @@ function HanaClusterDetails({
   sapSystems,
   details,
   catalog,
+  userAbilities,
   lastExecution,
   onStartExecution = () => {},
   navigate = () => {},
@@ -98,30 +100,35 @@ function HanaClusterDetails({
               Show Results
             </Button>
 
-            <Tooltip
-              isEnabled={!hasSelectedChecks}
-              content="Select some Checks first!"
-              place="bottom"
-              wrap={false}
+            <DisabledGuard
+              userAbilities={userAbilities}
+              permitted={['all:cluster_checks_execution']}
             >
-              <Button
-                type="primary"
-                className="mx-0.5 border border-green-500"
-                size="small"
-                onClick={() => {
-                  onStartExecution(clusterID, hosts, selectedChecks);
-                }}
-                disabled={startExecutionDisabled}
+              <Tooltip
+                isEnabled={!hasSelectedChecks}
+                content="Select some Checks first!"
+                place="bottom"
+                wrap={false}
               >
-                <EOS_PLAY_CIRCLE
-                  className={classNames('inline-block align-sub', {
-                    'fill-white': !startExecutionDisabled,
-                    'fill-gray-200': startExecutionDisabled,
-                  })}
-                />{' '}
-                Start Execution
-              </Button>
-            </Tooltip>
+                <Button
+                  type="primary"
+                  className="mx-0.5 border border-green-500"
+                  size="small"
+                  onClick={() => {
+                    onStartExecution(clusterID, hosts, selectedChecks);
+                  }}
+                  disabled={startExecutionDisabled}
+                >
+                  <EOS_PLAY_CIRCLE
+                    className={classNames('inline-block align-sub', {
+                      'fill-white': !startExecutionDisabled,
+                      'fill-gray-200': startExecutionDisabled,
+                    })}
+                  />{' '}
+                  Start Execution
+                </Button>
+              </Tooltip>
+            </DisabledGuard>
           </div>
         </div>
       </div>
