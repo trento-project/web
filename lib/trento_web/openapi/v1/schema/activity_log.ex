@@ -24,12 +24,12 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ActivityLog do
         metadata: %Schema{
           type: :object
         },
-        inserted_at: %Schema{
+        occured_on: %Schema{
           type: :string,
           description: "Timestamp upon Activity Log entry insertion."
         }
       },
-      required: [:type, :actor, :metadata, :inserted_at]
+      required: [:type, :actor, :metadata, :occured_on]
     }
   })
 end

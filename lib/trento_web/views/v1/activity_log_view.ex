@@ -10,7 +10,8 @@ defmodule TrentoWeb.V1.ActivityLogView do
       type: entry.type,
       actor: entry.actor,
       metadata: entry.metadata,
-      inserted_at: entry.inserted_at
+      # Time of occurence approximated by time of insertion in DB.
+      occured_on: entry.inserted_at
     }
   end
 end
