@@ -492,12 +492,21 @@ context('Host Details', () => {
     });
 
     describe('Check Execution', () => {
-      it('should forbid check execution when the correct user abilities are not present', () => {
+      it('should forbid check execution when the correct user abilities are not present in both settings and details', () => {
         cy.get('@user').then((user) => {
           cy.createUserWithAbilities(user, []);
           cy.login(user.username, password);
         });
         cy.visit(`/hosts/${selectedHost.agentId}/settings`);
+
+        cy.contains('button', 'Start Execution').should('be.disabled');
+
+        cy.contains('button', 'Start Execution').click({ force: true });
+
+        cy.contains('span', 'You are not authorized for this action').should(
+          'be.visible'
+        );
+        cy.visit(`/hosts/${selectedHost.agentId}`);
 
         cy.contains('button', 'Start Execution').should('be.disabled');
 

@@ -343,13 +343,23 @@ context('HANA cluster details', () => {
     });
 
     describe('Check Execution', () => {
-      it('should forbid check execution when the correct user abilities are missing', () => {
+      it('should forbid check execution when the correct user abilities are missing in details and settings', () => {
         cy.get('@user').then((user) => {
           cy.createUserWithAbilities(user, []);
           cy.login(user.username, password);
         });
 
         cy.visit(`/clusters/${availableHanaCluster.id}/settings`);
+
+        cy.contains('button', 'Start Execution').should('be.disabled');
+
+        cy.contains('button', 'Start Execution').click({ force: true });
+
+        cy.contains('span', 'You are not authorized for this action').should(
+          'be.visible'
+        );
+
+        cy.visit(`/clusters/${availableHanaCluster.id}`);
 
         cy.contains('button', 'Start Execution').should('be.disabled');
 
