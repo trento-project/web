@@ -237,8 +237,8 @@ describe('Settings Page', () => {
     });
 
     it('should render settings page with a disabled Generate Key button when the user has not the right permissions', async () => {
-      const userWithoutPermission = [{ name: '', resource: '' }];
       const user = userEvent.setup();
+      const userWithoutPermission = [{ name: '', resource: '' }];
       const setApiKeySettingsModalOpen = jest.fn();
       const [StatefulSettings] = withState(<SettingsPage />, {
         ...defaultInitialState,

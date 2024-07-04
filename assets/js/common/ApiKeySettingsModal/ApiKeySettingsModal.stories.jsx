@@ -13,6 +13,14 @@ export default {
         type: 'boolean',
       },
     },
+    userAbilities: {
+      description: 'Users abilities that allow changing SUSE Manager settings',
+      control: 'array',
+    },
+    permitted: {
+      description: 'Abilities that allow generating a new api key in the modal',
+      control: 'array',
+    },
     loading: {
       description: 'Whether the settings are loading or submitting',
       control: {
@@ -37,6 +45,8 @@ export default {
     generatedApiKeyExpiration: new Date().toISOString(),
     generatedApiKey:
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG9fYXBpX2tleSIsImV4cCI6MTcxMjE1MzE3MCwiaWF0IjoxNzA5NzMzOTcxLCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiYmZmMjA0YjUtMzJmMS00YmVlLThiMGItY2IxZGQwNTlmNGRjIiwibmJmIjoxNzA5NzMzOTcxLCJ0eXAiOiJCZWFyZXIifQ.0Lz0MwZaFpIGbSohnkiJ6AN5FFb5Vg5ZVhqM3fdUf3M',
+    userAbilities: [{ name: 'all', resource: 'all' }],
+    permitted: ['all:api_key_settings'],
   },
 };
 
@@ -69,6 +79,25 @@ export const OnlyGenerationForm = (args) => {
         {...args}
         generatedApiKeyExpiration={null}
         generatedApiKey={null}
+        onClose={handleClose}
+      />
+    </>
+  );
+};
+
+export const WithoutPermission = (args) => {
+  const [{ open }, updateArgs] = useArgs();
+  const handleClose = () => updateArgs({ open: !open });
+
+  return (
+    <>
+      <button type="button" onClick={() => handleClose()}>
+        {' '}
+        Toggle modal{' '}
+      </button>
+      <ApiKeySettingsModal
+        {...args}
+        userAbilities={[{ name: '', resource: '' }]}
         onClose={handleClose}
       />
     </>
