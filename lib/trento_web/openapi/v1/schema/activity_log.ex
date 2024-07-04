@@ -9,6 +9,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ActivityLog do
     description: "Activity Log for the current installation.",
     type: :array,
     items: %Schema{
+      title: "ActivityLogEntry",
       type: :object,
       additionalProperties: false,
       properties: %{
