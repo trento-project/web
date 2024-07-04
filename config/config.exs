@@ -204,7 +204,8 @@ config :trento, Trento.Infrastructure.SoftwareUpdates.SumaApi,
   executor: Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor
 
 config :trento, Trento.ActivityLog.ActivityLogger,
-  adapter: Trento.Infrastructure.ActivityLog.Logger.NoopLogger
+  adapter: Trento.ActivityLog.Logger.PersistentLogger,
+  writer: Trento.Infrastructure.ActivityLog.Logger.DatabasetWriter
 
 config :bodyguard,
   # The second element of the {:error, reason} tuple returned on auth failure
