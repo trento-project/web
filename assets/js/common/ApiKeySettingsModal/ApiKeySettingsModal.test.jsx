@@ -58,6 +58,26 @@ describe('ApiKeySettingsModal', () => {
       expect(screen.getByRole('option', { name: 'days' })).toBeVisible();
     });
 
+    it('render the generation form with disabled generate button when the user does not have the right permissions', async () => {
+      const user = userEvent.setup();
+      const userWithoutPermission = [{ name: '', resource: '' }];
+      await act(async () => {
+        render(
+          <ApiKeySettingsModal
+            open
+            userAbilities={userWithoutPermission}
+            permitted={permitted}
+          />
+        );
+      });
+
+      expect(screen.getByText('Generate')).toBeDisabled();
+      await user.hover(screen.getByText('Generate'));
+      expect(
+        screen.queryByText('You are not authorized for this action')
+      ).toBeVisible();
+    });
+
     it('should show a validation error when quantity is 0 and the form is enabled', async () => {
       const user = userEvent.setup();
 
