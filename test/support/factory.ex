@@ -125,6 +125,7 @@ defmodule Trento.Factory do
     InstallationSettings
   }
 
+  alias Trento.ActivityLog.ActivityLog, as: ActivityLogEntry
   alias Trento.ActivityLog.RetentionTime
   alias Trento.ActivityLog.Settings, as: ActivityLogSettings
 
@@ -1022,6 +1023,14 @@ defmodule Trento.Factory do
     %ActivityLogSettings{
       type: :activity_log_settings,
       retention_time: build(:activity_log_retention_time)
+    }
+  end
+
+  def activity_log_entry_factory do
+    %ActivityLogEntry{
+      type: Faker.Pokemon.name(),
+      actor: Enum.random(["user", "system"]),
+      metadata: %{}
     }
   end
 
