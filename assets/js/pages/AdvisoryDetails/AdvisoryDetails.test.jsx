@@ -11,9 +11,10 @@ import AdvisoryDetails from './AdvisoryDetails';
 
 describe('AdvisoryDetails', () => {
   it('displays a message, when the CVE, packages or fixes section is empty', () => {
-    const errata = advisoryErrataFactory.build();
-    errata.fixes = {};
-    errata.cves = [];
+    const errata = advisoryErrataFactory.build(
+      { cves: [] },
+      { transient: { fixesLength: 0 } }
+    );
 
     render(
       <AdvisoryDetails advisoryName={faker.lorem.word()} errata={errata} />
@@ -36,7 +37,7 @@ describe('AdvisoryDetails', () => {
     expect(screen.getByText(errata.errata_details.description)).toBeVisible();
   });
 
-  it('packages', () => {
+  it('displays packages', () => {
     const errata = advisoryErrataFactory.build();
     const advisoryName = faker.lorem.word();
 
@@ -55,33 +56,39 @@ describe('AdvisoryDetails', () => {
     });
   });
 
-  it('displays fixes with according link', () => {
-    const errata = advisoryErrataFactory.build();
+  it('displays fixes with a valid link', () => {
+    const errata = advisoryErrataFactory.build(
+      {},
+      { transient: { fixesLength: faker.number.int({ min: 2, max: 10 }) } }
+    );
     const advisoryName = faker.lorem.word();
 
     render(<AdvisoryDetails advisoryName={advisoryName} errata={errata} />);
 
     Object.entries(errata.fixes).forEach(([id, fixText]) => {
       const el = screen.getByText(fixText);
-      el.href.includes(id);
+      expect(el.href.includes(id)).toBe(true);
       expect(el).toBeVisible();
     });
   });
 
-  it('displays CVEs with according link', () => {
-    const errata = advisoryErrataFactory.build();
+  it('displays CVEs with a valid link', () => {
+    const errata = advisoryErrataFactory.build(
+      {},
+      { transient: { cvesLength: faker.number.int({ min: 2, max: 10 }) } }
+    );
     const advisoryName = faker.lorem.word();
 
     render(<AdvisoryDetails advisoryName={advisoryName} errata={errata} />);
 
     errata.cves.forEach((cve) => {
       const el = screen.getByText(cve);
-      el.href.includes(cve);
+      expect(el.href.includes(cve)).toBe(true);
       expect(el).toBeVisible();
     });
   });
 
-  it('displays a single fix with according link', () => {
+  it('displays a single fix with a valid link', () => {
     const errata = advisoryErrataFactory.build();
     errata.fixes = Object.fromEntries([Object.entries(errata.fixes)[0]]);
     const advisoryName = faker.lorem.word();
@@ -90,12 +97,12 @@ describe('AdvisoryDetails', () => {
 
     Object.entries(errata.fixes).forEach(([id, fixText]) => {
       const el = screen.getByText(fixText);
-      el.href.includes(id);
+      expect(el.href.includes(id)).toBe(true);
       expect(el).toBeVisible();
     });
   });
 
-  it('displays a single CVE with according link', () => {
+  it('displays a single CVE with a valid link', () => {
     const errata = advisoryErrataFactory.build();
     errata.cves = [errata.cves[0]];
     const advisoryName = faker.lorem.word();
@@ -104,7 +111,7 @@ describe('AdvisoryDetails', () => {
 
     errata.cves.forEach((cve) => {
       const el = screen.getByText(cve);
-      el.href.includes(cve);
+      expect(el.href.includes(cve)).toBe(true);
       expect(el).toBeVisible();
     });
   });

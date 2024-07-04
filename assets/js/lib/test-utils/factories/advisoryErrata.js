@@ -2,15 +2,16 @@ import { faker } from '@faker-js/faker';
 import { Factory } from 'fishery';
 import { advisoryType } from './relevantPatches';
 
-const buildFixes = (size) =>
+const fixMapFactory = Factory.define(({ transientParams }) =>
   Object.fromEntries(
-    new Array(size)
+    new Array(transientParams.length ?? 1)
       .fill(0)
       .map(() => [
         faker.number.int({ min: 1, max: 65536 }),
         faker.lorem.sentence(),
       ])
-  );
+  )
+);
 
 const buildCVE = () =>
   `CVE-${faker.number.int({ min: 1991, max: 2024 })}-${faker.number.int({
@@ -18,12 +19,12 @@ const buildCVE = () =>
     max: 9999,
   })}`;
 
-export const advisoryErrataFactory = Factory.define(() => ({
-  fixes: buildFixes(faker.number.int({ min: 1, max: 4 })),
-  cves: faker.helpers.uniqueArray(
-    buildCVE,
-    faker.number.int({ min: 1, max: 10 })
+export const advisoryErrataFactory = Factory.define(({ transientParams }) => ({
+  fixes: fixMapFactory.build(
+    {},
+    { transient: { length: transientParams.fixesLength ?? 1 } }
   ),
+  cves: faker.helpers.uniqueArray(buildCVE, transientParams.cvesLength ?? 1),
   errata_details: {
     id: faker.number.int({ min: 1, max: 65536 }),
     issue_date: faker.date.recent({ days: 30 }),
