@@ -1,3 +1,5 @@
+import { createUserRequestFactory } from '@lib/test-utils/factories';
+
 import {
   availableSAPSystems,
   isHanaInstace,
@@ -500,6 +502,82 @@ context('SAP Systems Overview', () => {
       cy.get('@modal').contains('button', 'Clean up').click();
 
       cy.contains(nwdSystem.sid).should('not.exist');
+    });
+  });
+
+  describe('Forbidden actions', () => {
+    const password = 'password';
+
+    before(() => {
+      cy.loadScenario('sapsystem-NWD-restore');
+    });
+
+    beforeEach(() => {
+      cy.deleteAllUsers();
+      cy.logout();
+      const user = createUserRequestFactory.build({
+        password,
+        password_confirmation: password,
+      });
+      cy.wrap(user).as('user');
+    });
+
+    describe('Application instance clean up', () => {
+      before(() => {
+        cy.loadScenario('sap-systems-overview-NWD-00-absent');
+        cy.loadScenario('sap-systems-overview-HDD-10-present');
+      });
+
+      it('should forbid application instance cleanup', () => {
+        cy.get('@user').then((user) => {
+          cy.createUserWithAbilities(user, []);
+          cy.login(user.username, password);
+        });
+        cy.visit('/sap_systems');
+
+        cy.contains('button', 'Clean up').should('be.disabled');
+      });
+
+      it('should allow application instance clenaup', () => {
+        cy.get('@user').then((user) => {
+          cy.createUserWithAbilities(user, [
+            { name: 'cleanup', resource: 'application_instance' },
+          ]);
+          cy.login(user.username, password);
+        });
+        cy.visit('/sap_systems');
+
+        cy.contains('button', 'Clean up').should('be.enabled');
+      });
+    });
+
+    describe('Database instance clean up', () => {
+      before(() => {
+        cy.loadScenario('sap-systems-overview-NWD-00-present');
+        cy.loadScenario('sap-systems-overview-HDD-10-absent');
+      });
+
+      it('should forbid database instance cleanup', () => {
+        cy.get('@user').then((user) => {
+          cy.createUserWithAbilities(user, []);
+          cy.login(user.username, password);
+        });
+        cy.visit('/sap_systems');
+
+        cy.contains('button', 'Clean up').should('be.disabled');
+      });
+
+      it('should allow database instance clean up', () => {
+        cy.get('@user').then((user) => {
+          cy.createUserWithAbilities(user, [
+            { name: 'cleanup', resource: 'database_instance' },
+          ]);
+          cy.login(user.username, password);
+        });
+        cy.visit('/sap_systems');
+
+        cy.contains('button', 'Clean up').should('be.enabled');
+      });
     });
   });
 });

@@ -1,3 +1,5 @@
+import { createUserRequestFactory } from '@lib/test-utils/factories';
+
 context('Databases Overview', () => {
   before(() => {
     cy.loadScenario('healthy-27-node-SAP-cluster');
@@ -126,6 +128,49 @@ context('Databases Overview', () => {
       cy.get('@modal').contains('button', 'Clean up').click();
 
       cy.contains(hddDatabase.sid).should('not.exist');
+    });
+  });
+
+  describe('Forbidden actions', () => {
+    const password = 'password';
+
+    beforeEach(() => {
+      cy.deleteAllUsers();
+      cy.logout();
+      const user = createUserRequestFactory.build({
+        password,
+        password_confirmation: password,
+      });
+      cy.wrap(user).as('user');
+    });
+
+    describe('Database instance clean up', () => {
+      before(() => {
+        cy.loadScenario('sap-systems-overview-HDD-10-present');
+        cy.loadScenario('sap-systems-overview-HDD-10-absent');
+      });
+
+      it('should forbid database instance cleanup', () => {
+        cy.get('@user').then((user) => {
+          cy.createUserWithAbilities(user, []);
+          cy.login(user.username, password);
+        });
+        cy.visit('/databases');
+
+        cy.contains('button', 'Clean up').should('be.disabled');
+      });
+
+      it('should allow database instance clean up', () => {
+        cy.get('@user').then((user) => {
+          cy.createUserWithAbilities(user, [
+            { name: 'cleanup', resource: 'database_instance' },
+          ]);
+          cy.login(user.username, password);
+        });
+        cy.visit('/databases');
+
+        cy.contains('button', 'Clean up').should('be.enabled');
+      });
     });
   });
 });
