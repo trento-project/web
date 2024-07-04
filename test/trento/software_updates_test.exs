@@ -13,6 +13,11 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
   alias Trento.SoftwareUpdates
   alias Trento.SoftwareUpdates.Settings
 
+  alias Trento.Settings.ApiKeySettings
+  alias Trento.Abilities.Ability
+  alias Trento.Settings.Policy
+  alias Trento.Users.User
+
   setup :verify_on_exit!
 
   describe "retrieving software updates settings" do
@@ -614,6 +619,26 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
       expect(Trento.SoftwareUpdates.Discovery.Mock, :setup, fn -> :ok end)
 
       assert :ok == SoftwareUpdates.test_connection_settings()
+    end
+  end
+
+  describe "testing user permissions to make changes to the settings" do
+    test "should allow to generate new api key if the user has all:api_key_settings ability" do
+      user = %User{abilities: [%Ability{name: "all", resource: "api_key_settings"}]}
+      assert Policy.authorize(:api_key_settings, user, ApiKeySettings)
+    end
+
+    test "should disallow to generate new api key if the user does not have all:api_key_settings ability" do
+      user = %User{abilities: []}
+      refute Policy.authorize(:api_key_settings, user, ApiKeySettings)
+    end
+
+    test "should allow unguarded actions" do
+      user = %User{abilities: []}
+
+      Enum.each([:list], fn action ->
+        assert Policy.authorize(action, user, ApiKeySettings)
+      end)
     end
   end
 end
