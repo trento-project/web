@@ -172,6 +172,21 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
     })
   end
 
+  defmodule CVEs do
+    @moduledoc false
+    OpenApiSpex.schema(%{
+      title: "CVEs",
+      description: "List of CVEs applicable to the errata with the given advisory name.",
+      type: :array,
+      additionalProperties: false,
+      items: %Schema{
+        title: "CVE",
+        description: "A fix for a publicly known security vulnerability",
+        type: :string
+      }
+    })
+  end
+
   defmodule AdvisoryFixes do
     @moduledoc false
     OpenApiSpex.schema(%{
@@ -191,6 +206,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
       additionalProperties: false,
       properties: %{
         errata_details: ErrataDetails,
+        cves: CVEs,
         fixes: AdvisoryFixes
       }
     })
