@@ -418,6 +418,8 @@ TrentoWeb.V1.AbilityController.html
 TrentoWeb.V1.AbilityView.html
 TrentoWeb.V1.AboutController.html
 TrentoWeb.V1.AboutView.html
+TrentoWeb.V1.ActivityLogController.html
+TrentoWeb.V1.ActivityLogView.html
 TrentoWeb.V1.ChartController.html
 TrentoWeb.V1.ChartView.html
 TrentoWeb.V1.ChecksResultView.html
@@ -486,8 +488,8 @@ dist/merriweather-latin-ext-300-normal-K6L27CZ5.woff2
 dist/merriweather-vietnamese-300-italic-EHHNZPUO.woff2
 dist/merriweather-vietnamese-300-normal-U376L4Z4.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-9C94F2FC.js
-dist/sidebar_items-FC32ED88.js
+dist/search_data-6C4558A6.js
+dist/sidebar_items-108D3E53.js
 environment_variables.html
 hack_on_the_trento.html
 index.html
