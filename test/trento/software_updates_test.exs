@@ -13,9 +13,8 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
   alias Trento.SoftwareUpdates
   alias Trento.SoftwareUpdates.Settings
 
-  alias Trento.Settings.ApiKeySettings
   alias Trento.Abilities.Ability
-  alias Trento.Settings.Policy
+  alias Trento.SoftwareUpdates.Policy
   alias Trento.Users.User
 
   setup :verify_on_exit!
@@ -622,22 +621,22 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
     end
   end
 
-  describe "testing user permissions to make changes to the settings" do
-    test "should allow to generate new api key if the user has all:api_key_settings ability" do
-      user = %User{abilities: [%Ability{name: "all", resource: "api_key_settings"}]}
-      assert Policy.authorize(:api_key_settings, user, ApiKeySettings)
+  describe "testing user permissions to make changes to the SoftwareUpdates settings " do
+    test "should allow to edit and clear suma settings if the user has all:suma_settings ability" do
+      user = %User{abilities: [%Ability{name: "all", resource: "suma_settings"}]}
+      assert Policy.authorize(:suma_settings, user, Settings)
     end
 
-    test "should disallow to generate new api key if the user does not have all:api_key_settings ability" do
+    test "should disallow to edit and clear  suma settings  if the user does not have all:suma_settings ability" do
       user = %User{abilities: []}
-      refute Policy.authorize(:api_key_settings, user, ApiKeySettings)
+      refute Policy.authorize(:suma_settings, user, Settings)
     end
 
     test "should allow unguarded actions" do
       user = %User{abilities: []}
 
       Enum.each([:list], fn action ->
-        assert Policy.authorize(action, user, ApiKeySettings)
+        assert Policy.authorize(action, user, Settings)
       end)
     end
   end

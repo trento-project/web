@@ -10,7 +10,7 @@ defmodule Trento.SoftwareUpdates.Settings do
 
   alias Trento.Support.DateService
 
-  defdelegate authorize(action, user, params), to: Trento.Settings.Policy
+  defdelegate authorize(action, user, params), to: Trento.SoftwareUpdates.Policy
 
   @type t :: %__MODULE__{}
 
