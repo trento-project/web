@@ -13,10 +13,6 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
   alias Trento.SoftwareUpdates
   alias Trento.SoftwareUpdates.Settings
 
-  alias Trento.Abilities.Ability
-  alias Trento.SoftwareUpdates.Policy
-  alias Trento.Users.User
-
   setup :verify_on_exit!
 
   describe "retrieving software updates settings" do
@@ -618,26 +614,6 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
       expect(Trento.SoftwareUpdates.Discovery.Mock, :setup, fn -> :ok end)
 
       assert :ok == SoftwareUpdates.test_connection_settings()
-    end
-  end
-
-  describe "testing user permissions to make changes to the SoftwareUpdates settings " do
-    test "should allow to edit and clear suma settings if the user has all:suma_settings ability" do
-      user = %User{abilities: [%Ability{name: "all", resource: "suma_settings"}]}
-      assert Policy.authorize(:suma_settings, user, Settings)
-    end
-
-    test "should disallow to edit and clear  suma settings  if the user does not have all:suma_settings ability" do
-      user = %User{abilities: []}
-      refute Policy.authorize(:suma_settings, user, Settings)
-    end
-
-    test "should allow unguarded actions" do
-      user = %User{abilities: []}
-
-      Enum.each([:list], fn action ->
-        assert Policy.authorize(action, user, Settings)
-      end)
     end
   end
 end

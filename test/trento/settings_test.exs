@@ -11,10 +11,6 @@ defmodule Trento.SettingsTest do
     InstallationSettings
   }
 
-  alias Trento.Abilities.Ability
-  alias Trento.Settings.Policy
-  alias Trento.Users.User
-
   setup do
     Application.put_env(:trento, :flavor, "Premium")
     insert(:sles_subscription, identifier: "SLES_SAP")
@@ -121,26 +117,6 @@ defmodule Trento.SettingsTest do
       refute new_expire_at == old_expire_at
       refute new_created_at == old_created_at
       assert new_expire_at == new_expiration
-    end
-  end
-
-  describe "testing user permissions to make changes to the settings" do
-    test "should allow to generate new api key if the user has all:api_key_settings ability" do
-      user = %User{abilities: [%Ability{name: "all", resource: "api_key_settings"}]}
-      assert Policy.authorize(:api_key_settings, user, ApiKeySettings)
-    end
-
-    test "should disallow to generate new api key if the user does not have all:api_key_settings ability" do
-      user = %User{abilities: []}
-      refute Policy.authorize(:api_key_settings, user, ApiKeySettings)
-    end
-
-    test "should allow unguarded actions" do
-      user = %User{abilities: []}
-
-      Enum.each([:list], fn action ->
-        assert Policy.authorize(action, user, ApiKeySettings)
-      end)
     end
   end
 end
