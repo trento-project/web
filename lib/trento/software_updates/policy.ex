@@ -15,7 +15,7 @@ defmodule Trento.SoftwareUpdates.Policy do
   def authorize(:suma_settings, %User{} = user, SumaSettings),
     do: has_global_ability?(user) or has_suma_settings_change_ability?(user)
 
-  def authorize(_, _, _), do: true
+  def authorize(_, user, _), do: has_global_ability?(user)
 
   defp has_suma_settings_change_ability?(user),
     do: user_has_ability?(user, %{name: "all", resource: "suma_settings"})
