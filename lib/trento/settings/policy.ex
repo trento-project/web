@@ -5,7 +5,7 @@ defmodule Trento.Settings.Policy do
   User with the ability all:all can generate a new api key.
   User with the ability all:api_key_settings can generate a new api key.
   """
-
+  require Logger
   @behaviour Bodyguard.Policy
 
   import Trento.Support.PolicyHelper
@@ -15,7 +15,7 @@ defmodule Trento.Settings.Policy do
   def authorize(:api_key_settings, %User{} = user, ApiKeySettings),
     do: has_global_ability?(user) or has_api_key_settings_change_ability?(user)
 
-  def authorize(_, _, _), do: true
+  def authorize(_, user, _), do: has_global_ability?(user)
 
   defp has_api_key_settings_change_ability?(user),
     do: user_has_ability?(user, %{name: "all", resource: "api_key_settings"})

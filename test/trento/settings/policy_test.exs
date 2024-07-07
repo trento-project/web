@@ -6,21 +6,23 @@ defmodule Trento.Settings.PolicyTest do
   alias Trento.Settings.Policy
   alias Trento.Users.User
 
-  test "should allow to generate new api key if the user has all:api_key_settings ability" do
+  test "should allow generating a new api key if the user has all:all ability" do
+    user = %User{abilities: [%Ability{name: "all", resource: "all"}]}
+    assert Policy.authorize(:api_key_settings, user, ApiKeySettings)
+  end
+
+  test "should allow generating a new api key if the user has all:api_key_settings ability" do
     user = %User{abilities: [%Ability{name: "all", resource: "api_key_settings"}]}
     assert Policy.authorize(:api_key_settings, user, ApiKeySettings)
   end
 
-  test "should disallow to generate new api key if the user does not have all:api_key_settings ability" do
-    user = %User{abilities: []}
-    refute Policy.authorize(:api_key_settings, user, ApiKeySettings)
+  test "should disallow new api key generation for other abilities" do
+    user = %User{abilities: [%Ability{name: "other", resource: "other"}]}
+    refute Policy.authorize(:other_ability, user, ApiKeySettings)
   end
 
-  test "should allow unguarded actions" do
+  test "should disallow new api key generation when user has no abilities" do
     user = %User{abilities: []}
-
-    Enum.each([:list], fn action ->
-      assert Policy.authorize(action, user, ApiKeySettings)
-    end)
+    refute Policy.authorize(:api_key_settings, user, ApiKeySettings)
   end
 end
