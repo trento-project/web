@@ -14,7 +14,7 @@ export default {
       },
     },
     userAbilities: {
-      description: 'Users abilities that allow changing SUSE Manager settings',
+      description: 'Users abilities that allow generating a new api key',
       control: 'array',
     },
     permitted: {

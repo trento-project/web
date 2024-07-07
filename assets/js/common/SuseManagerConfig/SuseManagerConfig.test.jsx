@@ -14,7 +14,7 @@ describe('SuseManagerConfig', () => {
     render(
       <SuseManagerConfig
         userAbilities={adminUser}
-        sumaSettingsPermittedFor={sumaSettingsPermittedFor}
+        permitted={sumaSettingsPermittedFor}
       />
     );
 
@@ -39,7 +39,7 @@ describe('SuseManagerConfig', () => {
         certUploadDate={certUploadDate}
         onEditClick={onEditClick}
         userAbilities={adminUser}
-        sumaSettingsPermittedFor={sumaSettingsPermittedFor}
+        permitted={sumaSettingsPermittedFor}
       />
     );
 
@@ -66,7 +66,7 @@ describe('SuseManagerConfig', () => {
         testConnectionEnabled
         onTestConnection={onTestConnection}
         userAbilities={adminUser}
-        sumaSettingsPermittedFor={sumaSettingsPermittedFor}
+        permitted={sumaSettingsPermittedFor}
       />
     );
     expect(screen.getByLabelText('test-suma-connection')).toBeEnabled();
@@ -84,7 +84,7 @@ describe('SuseManagerConfig', () => {
     render(
       <SuseManagerConfig
         userAbilities={userWithoutPermission}
-        sumaSettingsPermittedFor={sumaSettingsPermittedFor}
+        permitted={sumaSettingsPermittedFor}
         onEditClick={onEditClick}
         onClearClick={onClearClick}
       />

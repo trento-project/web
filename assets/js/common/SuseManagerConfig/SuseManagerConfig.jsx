@@ -18,8 +18,8 @@ function SuseManagerConfig({
   onClearSettings = noop,
   onTestConnection = noop,
   onCancel = noop,
-  userAbilities = noop,
-  sumaSettingsPermittedFor = noop,
+  userAbilities,
+  permitted,
 }) {
   return (
     <>
@@ -44,10 +44,7 @@ function SuseManagerConfig({
             >
               Test Connection
             </Button>
-            <DisabledGuard
-              userAbilities={userAbilities}
-              permitted={sumaSettingsPermittedFor}
-            >
+            <DisabledGuard userAbilities={userAbilities} permitted={permitted}>
               <Button
                 className="mr-2"
                 type="primary-white-fit"
@@ -57,10 +54,7 @@ function SuseManagerConfig({
                 Edit Settings
               </Button>
             </DisabledGuard>
-            <DisabledGuard
-              userAbilities={userAbilities}
-              permitted={sumaSettingsPermittedFor}
-            >
+            <DisabledGuard userAbilities={userAbilities} permitted={permitted}>
               <Button
                 aria-label="clear-suma-settings"
                 type="danger"
