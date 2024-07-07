@@ -12,10 +12,12 @@ defmodule Trento.Settings.Policy do
   alias Trento.Settings.ApiKeySettings
   alias Trento.Users.User
 
-  def authorize(:api_key_settings, %User{} = user, ApiKeySettings),
-    do: has_global_ability?(user) or has_api_key_settings_change_ability?(user)
+  def authorize(action, %User{} = user, ApiKeySettings)
+      when action in [:update_api_key_settings, :get_api_key_settings, :settings] do
+    has_global_ability?(user) or has_api_key_settings_change_ability?(user)
+  end
 
-  def authorize(_, user, _), do: has_global_ability?(user)
+  def authorize(_, %User{} = user, _), do: has_global_ability?(user)
 
   defp has_api_key_settings_change_ability?(user),
     do: user_has_ability?(user, %{name: "all", resource: "api_key_settings"})

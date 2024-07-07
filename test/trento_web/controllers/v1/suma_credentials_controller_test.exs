@@ -6,12 +6,12 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
 
   import Mox
   import Trento.Factory
+  import Trento.Support.Helpers.AbilitiesTestHelper
 
   alias TrentoWeb.OpenApi.V1.ApiSpec
 
-  setup do
-    %{api_spec: ApiSpec.spec()}
-  end
+  setup :setup_api_spec_v1
+  setup :setup_user
 
   describe "retrieve user settings" do
     test "should return user settings", %{conn: conn} do

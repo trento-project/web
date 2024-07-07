@@ -10,6 +10,8 @@ defmodule Trento.SoftwareUpdates do
   alias Trento.SoftwareUpdates.Discovery
   alias Trento.SoftwareUpdates.Settings
 
+  defdelegate authorize(action, user, params), to: Trento.SoftwareUpdates.Policy
+
   @type software_update_settings_save_submission :: %{
           url: String.t(),
           username: String.t(),
