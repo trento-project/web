@@ -95,9 +95,6 @@ describe('SuseManagerConfig', () => {
     expect(onEditClick).not.toHaveBeenCalled();
     await user.hover(screen.getByText('Edit Settings'));
     expect(
-      screen.queryAllByText('You are not authorized for this action').length
-    ).toBeGreaterThan(0);
-    expect(
       screen.queryAllByText('You are not authorized for this action')[0]
     ).toBeVisible();
 
@@ -106,10 +103,7 @@ describe('SuseManagerConfig', () => {
     expect(onClearClick).not.toHaveBeenCalled();
     await user.hover(screen.getByText('Clear Settings'));
     expect(
-      screen.queryAllByText('You are not authorized for this action').length
-    ).toBeGreaterThan(0);
-    expect(
-      screen.queryAllByText('You are not authorized for this action')[0]
+      screen.queryAllByText('You are not authorized for this action')[1]
     ).toBeVisible();
   });
 });
