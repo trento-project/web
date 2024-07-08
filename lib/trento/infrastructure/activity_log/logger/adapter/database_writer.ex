@@ -3,6 +3,8 @@ defmodule Trento.Infrastructure.ActivityLog.Logger.DatabasetWriter do
   Persistent Activity Log Writer Adapter
   """
 
+  alias Trento.Repo
+
   alias Trento.ActivityLog.ActivityLog
 
   @behaviour Trento.ActivityLog.Logger.ActivityLogWriter
@@ -12,5 +14,5 @@ defmodule Trento.Infrastructure.ActivityLog.Logger.DatabasetWriter do
     do:
       %ActivityLog{}
       |> ActivityLog.changeset(log_entry)
-      |> Trento.Repo.insert()
+      |> Repo.insert()
 end
