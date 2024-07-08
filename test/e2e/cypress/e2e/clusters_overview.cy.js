@@ -1,10 +1,10 @@
+import { createUserRequestFactory } from '@lib/test-utils/factories';
+
 import {
   availableClusters,
   healthyClusterScenario,
   unhealthyClusterScenario,
 } from '../fixtures/clusters-overview/available_clusters';
-
-import { createUserRequestFactory } from '@lib/test-utils/factories';
 
 const clusterIdByName = (clusterName) =>
   availableClusters.find(({ name }) => name === clusterName).id;
@@ -196,29 +196,35 @@ describe('Forbidden action', () => {
   });
 
   const password = 'password';
-  it('it should prevent a tag update when the user abilities are not compliant', () => {
-    cy.get('@user').then((user) => {
-      cy.createUserWithAbilities(user, []);
-      cy.login(user.username, password);
+
+  describe('Tag operations', () => {
+    it('should prevent a tag update when the user abilities are not compliant', () => {
+      cy.get('@user').then((user) => {
+        cy.createUserWithAbilities(user, []);
+        cy.login(user.username, password);
+      });
+
+      cy.visit('/clusters');
+
+      cy.contains('span', 'Add Tag').should('have.class', 'opacity-50');
+      cy.get('[data-test-id="tag-env1"]').should('have.class', 'opacity-50');
     });
 
-    cy.visit('/clusters');
+    it('should allow a tag update when the user abilities are compliant', () => {
+      cy.get('@user').then((user) => {
+        cy.createUserWithAbilities(user, [
+          { name: 'all', resource: 'cluster_tags' },
+        ]);
+        cy.login(user.username, password);
+      });
 
-    cy.contains('span', 'Add Tag').should('have.class', 'opacity-50');
-    cy.get('[data-test-id="tag-env1"]').should('have.class', 'opacity-50');
-  });
+      cy.visit('/clusters');
 
-  it('it should allow a tag update when the user abilities are compliant', () => {
-    cy.get('@user').then((user) => {
-      cy.createUserWithAbilities(user, [
-        { name: 'all', resource: 'cluster_tags' },
-      ]);
-      cy.login(user.username, password);
+      cy.contains('span', 'Add Tag').should('not.have.class', 'opacity-50');
+      cy.get('[data-test-id="tag-env1"]').should(
+        'not.have.class',
+        'opacity-50'
+      );
     });
-
-    cy.visit('/clusters');
-
-    cy.contains('span', 'Add Tag').should('not.have.class', 'opacity-50');
-    cy.get('[data-test-id="tag-env1"]').should('not.have.class', 'opacity-50');
   });
 });
