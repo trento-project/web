@@ -16,6 +16,14 @@ export default {
       description: 'Callback when the edit button is clicked',
       control: { type: 'function' },
     },
+    userAbilities: {
+      description: 'Users abilities that allow editing activity logs settings',
+      control: 'array',
+    },
+    permitted: {
+      description: 'Abilities that allow editing activity logs settings',
+      control: 'array',
+    },
   },
 };
 
@@ -23,6 +31,8 @@ export const Default = {
   args: {
     retentionTime: { value: 1, unit: 'month' },
     onEditClick: action('edit clicked'),
+    userAbilities: [{ name: 'all', resource: 'all' }],
+    permitted: ['all:activity_logs_settings'],
   },
 };
 
@@ -30,6 +40,8 @@ export const WithPlurals = {
   args: {
     retentionTime: { value: 2, unit: 'month' },
     onEditClick: action('edit clicked'),
+    userAbilities: [{ name: 'all', resource: 'all' }],
+    permitted: ['all:activity_logs_settings'],
   },
 };
 
@@ -37,5 +49,15 @@ export const WithInvalidValue = {
   args: {
     retentionTime: { is: 'invalid' },
     onEditClick: action('edit clicked'),
+    userAbilities: [{ name: 'all', resource: 'all' }],
+    permitted: ['all:activity_logs_settings'],
+  },
+};
+export const WithoutPermission = {
+  args: {
+    retentionTime: { value: 1, unit: 'month' },
+    onEditClick: action('edit clicked'),
+    userAbilities: [{ name: '', resource: '' }],
+    permitted: ['all:activity_logs_settings'],
   },
 };

@@ -193,5 +193,25 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       |> json_response(:forbidden)
       |> assert_schema("Forbidden", api_spec)
     end
+
+    test "should return forbidden when controller actions without permisson tries to edit activity logs settings",
+         %{conn: conn, api_spec: api_spec} do
+      %{id: user_id} = insert(:user)
+      insert(:activity_log_settings)
+
+      conn =
+        conn
+        |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
+        |> put_req_header("content-type", "application/json")
+
+      conn =
+        put(conn, "/api/v1/settings/activity_log", %{
+          "retention_time" => %{"unit" => "month", "value" => 3}
+        })
+
+      conn
+      |> json_response(:forbidden)
+      |> assert_schema("Forbidden", api_spec)
+    end
   end
 end
