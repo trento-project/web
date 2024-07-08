@@ -30,7 +30,21 @@ function HostRelevantPatches({ hostName, onNavigate, patches }) {
     window?.URL?.createObjectURL && displayedPatches?.length > 0
       ? window.URL.createObjectURL(
           new File(
-            [Papa.unparse(displayedPatches, { header: true })],
+            [
+              Papa.unparse(
+                {
+                  fields: [
+                    'id',
+                    'advisory_type',
+                    'advisory_name',
+                    'advisory_synopsis',
+                    'update_date',
+                  ],
+                  data: displayedPatches,
+                },
+                { header: true }
+              ),
+            ],
             `${hostName}-patches.csv`,
             { type: 'text/csv' }
           )
