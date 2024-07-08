@@ -3,6 +3,8 @@ defmodule Trento.ActivityLog do
   Activity Log module provides functionality to manage activity log settings and track activity.
   """
 
+  import Ecto.Query
+
   require Logger
 
   require Trento.ActivityLog.RetentionPeriodUnit, as: RetentionPeriodUnit
@@ -40,7 +42,11 @@ defmodule Trento.ActivityLog do
   @spec list_activity_log() :: list(ActivityLog.t())
   def list_activity_log do
     # This will be made filterable/paginatable in a later PR
-    Repo.all(ActivityLog)
+    query =
+      from activity in ActivityLog,
+        order_by: [desc: activity.inserted_at]
+
+    Repo.all(query)
   end
 
   defp log_error({:error, _} = error, message) do

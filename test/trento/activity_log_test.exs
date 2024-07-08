@@ -10,6 +10,7 @@ defmodule Trento.ActivityLogTest do
   require Trento.ActivityLog.RetentionPeriodUnit, as: RetentionPeriodUnit
 
   alias Trento.ActivityLog
+  alias Trento.ActivityLog.ActivityLog, as: ActivityLogEntry
   alias Trento.ActivityLog.RetentionTime
   alias Trento.ActivityLog.Settings
 
@@ -175,6 +176,29 @@ defmodule Trento.ActivityLogTest do
                  initial_retention_period,
                  initial_retention_period_unit
                )
+    end
+  end
+
+  describe "retrieving logged activity" do
+    test "should return an emtpty list" do
+      assert [] == ActivityLog.list_activity_log()
+    end
+
+    test "should return entries ordered by occurrence date" do
+      older_occurrence = Faker.DateTime.backward(1)
+      newer_occurrence = Faker.DateTime.forward(2)
+
+      insert(:activity_log_entry, inserted_at: newer_occurrence)
+      insert(:activity_log_entry, inserted_at: older_occurrence)
+
+      assert [
+               %ActivityLogEntry{
+                 inserted_at: ^newer_occurrence
+               },
+               %ActivityLogEntry{
+                 inserted_at: ^older_occurrence
+               }
+             ] = ActivityLog.list_activity_log()
     end
   end
 end
