@@ -522,6 +522,37 @@ context('SAP Systems Overview', () => {
       cy.wrap(user).as('user');
     });
 
+    describe('Tag creation', () => {
+      it('it should prevent a tag update when the user abilities are not compliant', () => {
+        cy.get('@user').then((user) => {
+          cy.createUserWithAbilities(user, []);
+          cy.login(user.username, password);
+        });
+
+        cy.visit('/sap_systems');
+
+        cy.contains('span', 'Add Tag').should('have.class', 'opacity-50');
+        cy.get('[data-test-id="tag-env3"]').should('have.class', 'opacity-50');
+      });
+
+      it('it should allow a tag update when the user abilities are compliant', () => {
+        cy.get('@user').then((user) => {
+          cy.createUserWithAbilities(user, [
+            { name: 'all', resource: 'sap_system_tags' },
+          ]);
+          cy.login(user.username, password);
+        });
+
+        cy.visit('/sap_systems');
+
+        cy.contains('span', 'Add Tag').should('not.have.class', 'opacity-50');
+        cy.get('[data-test-id="tag-env3"]').should(
+          'not.have.class',
+          'opacity-50'
+        );
+      });
+    });
+
     describe('Application instance clean up', () => {
       before(() => {
         cy.loadScenario('sap-systems-overview-NWD-00-absent');

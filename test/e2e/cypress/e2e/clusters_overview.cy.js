@@ -1,3 +1,5 @@
+import { createUserRequestFactory } from '@lib/test-utils/factories';
+
 import {
   availableClusters,
   healthyClusterScenario,
@@ -178,6 +180,51 @@ context('Clusters Overview', () => {
       cy.contains('tr', hanaCluster1.name).within(() => {
         cy.contains(clusterTags[hanaCluster1.name]).should('exist');
       });
+    });
+  });
+});
+
+describe('Forbidden action', () => {
+  beforeEach(() => {
+    cy.deleteAllUsers();
+    cy.logout();
+    const user = createUserRequestFactory.build({
+      password,
+      password_confirmation: password,
+    });
+    cy.wrap(user).as('user');
+  });
+
+  const password = 'password';
+
+  describe('Tag operations', () => {
+    it('should prevent a tag update when the user abilities are not compliant', () => {
+      cy.get('@user').then((user) => {
+        cy.createUserWithAbilities(user, []);
+        cy.login(user.username, password);
+      });
+
+      cy.visit('/clusters');
+
+      cy.contains('span', 'Add Tag').should('have.class', 'opacity-50');
+      cy.get('[data-test-id="tag-env1"]').should('have.class', 'opacity-50');
+    });
+
+    it('should allow a tag update when the user abilities are compliant', () => {
+      cy.get('@user').then((user) => {
+        cy.createUserWithAbilities(user, [
+          { name: 'all', resource: 'cluster_tags' },
+        ]);
+        cy.login(user.username, password);
+      });
+
+      cy.visit('/clusters');
+
+      cy.contains('span', 'Add Tag').should('not.have.class', 'opacity-50');
+      cy.get('[data-test-id="tag-env1"]').should(
+        'not.have.class',
+        'opacity-50'
+      );
     });
   });
 });

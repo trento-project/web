@@ -16,9 +16,10 @@ const tagValidationDefaultMessage = (
   </>
 );
 
-function ExistingTag({ onClick, disabled }) {
+function ExistingTag({ onClick, disabled, tag }) {
   return (
     <span
+      data-test-id={`tag-${tag}`}
       aria-hidden="true"
       className={classNames('cursor-pointer group-hover:opacity-60', {
         'opacity-50 pointer-events-none': disabled,
@@ -102,6 +103,7 @@ function Tags({
             tooltipWrap
           >
             <ExistingTag
+              tag={tag}
               onClick={() => {
                 const newTagsList = renderedTags.reduce(
                   (acc, current) => (current === tag ? acc : [...acc, current]),
