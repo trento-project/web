@@ -16,7 +16,7 @@ const tagValidationDefaultMessage = (
   </>
 );
 
-function ExistingTag({ onClick, disabled, tag }) {
+function DeleteTagButton({ onClick, disabled, tag }) {
   return (
     <span
       data-test-id={`tag-${tag}`}
@@ -102,7 +102,7 @@ function Tags({
             permitted={tagDeletionPermittedFor}
             tooltipWrap
           >
-            <ExistingTag
+            <DeleteTagButton
               tag={tag}
               onClick={() => {
                 const newTagsList = renderedTags.reduce(
