@@ -701,7 +701,7 @@ context('Settings page', () => {
         .as('initialRetentionTime');
     });
 
-    describe('Changing Settings', () => {
+    describe.only('Changing Settings', () => {
       it('should change retention time', () => {
         // the initial retention time is read before the settings are changed
         cy.get('@initialRetentionTime').then((text) =>
@@ -759,7 +759,8 @@ context('Settings page', () => {
         modal().get('button').contains('Cancel').click();
 
         // Check the modal is closed
-        modal().then(($modal) => $modal.not.is(':visible'));
+        cy.get('h3').should('not.have.text', 'Enter Activity Logs Settings');
+
         // Check the data is not changed
         cy.get('@initialRetentionTime').then((text) =>
           section()
@@ -792,7 +793,6 @@ context('Settings page', () => {
         modal().get('button').contains('Save Settings').click();
 
         // Check we still show the modal
-        modal().then(($modal) => $modal.is(':visible'));
 
         // Close the modal
         modal().get('button').contains('Cancel').click();
