@@ -7,7 +7,7 @@ import { InputNumber } from '@common/Input';
 import Select from '@common/Select';
 import Label from '@common/Label';
 
-import { getError, getGlobalError } from '@lib/api/validationErrors';
+import { getError } from '@lib/api/validationErrors';
 
 const defaultErrors = [];
 
@@ -22,7 +22,9 @@ const toRetentionTimeErrorMessage = (errors) =>
     .filter(Boolean)
     .join('; ');
 
-const toGlobalErrorMessage = (errors) => capitalize(getGlobalError(errors));
+const toGenericErrorMessage = (errors) =>
+  // the first error of type string is considered the generic error
+  errors.find((error) => typeof error === 'string');
 
 function TimeSpan({ time: initialTime, error = false, onChange = noop }) {
   const [time, setTime] = useState(initialTime);
@@ -88,7 +90,7 @@ function ActivityLogsSettingsModal({
   const [retentionTime, setRetentionTime] = useState(initialRetentionTime);
 
   const retentionTimeError = toRetentionTimeErrorMessage(errors);
-  const genericError = toGlobalErrorMessage(errors);
+  const genericError = toGenericErrorMessage(errors);
 
   return (
     <Modal

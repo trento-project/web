@@ -64,7 +64,7 @@ export const WithCompositeFieldValidationError = {
   },
 };
 
-export const WithGlobalError = {
+export const WithGenericError = {
   args: {
     open: false,
     initialRetentionTime: { value: 1, unit: 'month' },

@@ -1,32 +1,20 @@
 import { flow, first } from 'lodash';
-import { get, filter, map } from 'lodash/fp';
+import { get, filter } from 'lodash/fp';
 
-const selectField = (keyword) => (error) => {
-  const pointer = get(['source', 'pointer'], error);
+export const hasError = (keyword, errors) =>
+  errors.some((error) => {
+    const pointer = get(['source', 'pointer'], error);
 
-  return pointer === `/${keyword}`;
-};
-
-export const hasError = (keyword, errors) => errors.some(selectField(keyword));
+    return pointer === `/${keyword}`;
+  });
 
 export const getError = (keyword, errors) =>
-  flow([filter(selectField(keyword)), first, get('detail')])(errors);
-
-export const defaultGlobalError = {
-  title: 'Unexpected error',
-  detail: 'Something went wrong.',
-};
-
-export const getGlobalError = (errors) =>
   flow([
-    filter(
-      (error) => !(typeof error === 'object' && error && 'source' in error)
-    ),
-    map((error) =>
-      typeof error === 'object' && error && 'detail' in error
-        ? error
-        : defaultGlobalError
-    ),
+    filter((error) => {
+      const pointer = get(['source', 'pointer'], error);
+
+      return pointer === `/${keyword}`;
+    }),
     first,
     get('detail'),
   ])(errors);
