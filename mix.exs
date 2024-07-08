@@ -80,6 +80,7 @@ defmodule Trento.MixProject do
       {:gen_rmq, "~> 4.0"},
       {:httpoison, "~> 2.0"},
       {:jason, "~> 1.2"},
+      {:junit_formatter, "~> 3.4", only: [:test]},
       {:mox, "~> 1.0", only: :test},
       {:open_api_spex, "~> 3.19.1"},
       {:phoenix, "~> 1.7.14"},
