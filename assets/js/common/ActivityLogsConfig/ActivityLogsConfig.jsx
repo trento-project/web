@@ -40,7 +40,9 @@ function ActivityLogsConfig({ retentionTime, onEditClick = noop }) {
           </Button>
         </span>
       </div>
-      <p className="mt-3 mb-3 text-gray-500" />
+      <p className="mt-3 mb-3 text-gray-500">
+        Configure data retention times for log entries.
+      </p>
 
       <div className="grid grid-cols-6 mt-5 items-center">
         <div className="font-bold mb-3">Retention Time</div>
