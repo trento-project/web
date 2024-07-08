@@ -91,3 +91,14 @@ config :trento, Trento.Infrastructure.SoftwareUpdates.MockSuma,
     # 448 matches to "test" fqdn
     448
   ]
+
+config :junit_formatter,
+  report_file: "report_file_test_#{DateTime.now!("Etc/UTC")}.xml",
+  report_dir: "/tmp",
+  print_report_file: true,
+  prepend_project_name?: true,
+  include_filename?: true
+
+config :trento,
+       :flaky_tests_detection,
+       enabled?: System.get_env("WRITE_JUNIT") == "1" || false
