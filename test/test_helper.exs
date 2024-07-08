@@ -49,5 +49,9 @@ Application.put_env(:joken, :current_time_adapter, Joken.CurrentTime.Mock)
 
 Application.ensure_all_started(:ex_machina, :faker)
 
+if Application.get_env(:trento, :flaky_tests_detection)[:enabled?] == true do
+  ExUnit.configure(formatters: [JUnitFormatter, ExUnit.CLIFormatter])
+end
+
 ExUnit.start(capture_log: true)
 Ecto.Adapters.SQL.Sandbox.mode(Trento.Repo, :manual)
