@@ -5,6 +5,20 @@ defmodule Trento.ActivityLog.ActivityCatalog do
 
   @type logged_activity :: {controller :: module(), activity :: atom()}
 
+  @type activity_type ::
+          :login_attempt
+          | :resource_tagging
+          | :resource_untagging
+          | :api_key_generation
+          | :saving_suma_settings
+          | :changing_suma_settings
+          | :clearing_suma_settings
+          | :user_creation
+          | :user_modification
+          | :user_deletion
+          | :profile_update
+          | :cluster_checks_execution_request
+
   @login_attempt {TrentoWeb.SessionController, :create}
   @api_key_generation {TrentoWeb.V1.SettingsController, :update_api_key_settings}
   @saving_suma_settings {TrentoWeb.V1.SUMACredentialsController, :create}
@@ -58,8 +72,7 @@ defmodule Trento.ActivityLog.ActivityCatalog do
   end
 
   @spec interesting_occurrence?(
-          conn_activity_occurrence ::
-            {activity_type :: atom(), relevant_status :: integer() | :any},
+          conn_activity_occurrence :: {activity_type(), relevant_status :: integer() | :any},
           detected_status :: integer()
         ) ::
           boolean()
