@@ -31,7 +31,7 @@ function TimeSpan({ time: initialTime, error = false, onChange = noop }) {
 
   return (
     <div className="flex  items-center space-x-2">
-      <div className="w-2/4 pb-4">
+      <div className="w-2/4 pt-1">
         <InputNumber
           value={time.value}
           className="!h-8"
@@ -45,7 +45,7 @@ function TimeSpan({ time: initialTime, error = false, onChange = noop }) {
           }}
         />
       </div>
-      <div className="w-2/4 ">
+      <div className="w-2/4">
         <Select
           optionsName=""
           options={timeUnitOptions}
