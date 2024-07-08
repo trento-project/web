@@ -30,8 +30,8 @@ function TimeSpan({ time: initialTime, error = false, onChange = noop }) {
   const [time, setTime] = useState(initialTime);
 
   return (
-    <div className="flex  items-center space-x-2">
-      <div className="w-2/4 pb-4">
+    <div className="flex items-center space-x-2">
+      <div className="w-1/4 pt-1">
         <InputNumber
           value={time.value}
           className="!h-8"
@@ -45,7 +45,7 @@ function TimeSpan({ time: initialTime, error = false, onChange = noop }) {
           }}
         />
       </div>
-      <div className="w-2/4 ">
+      <div className="flex w-1/4">
         <Select
           optionsName=""
           options={timeUnitOptions}
@@ -93,7 +93,15 @@ function ActivityLogsSettingsModal({
   const genericError = toGenericErrorMessage(errors);
 
   return (
-    <Modal title="Enter Activity Logs Settings" open={open} onClose={onCancel}>
+    <Modal
+      className="!w-3/4 !max-w-3xl"
+      title="Enter Activity Logs Settings"
+      open={open}
+      onClose={onCancel}
+    >
+      <div className="text-gray-500">
+        Set the data retention times for log entries.
+      </div>
       <div className="grid grid-cols-6 my-5 gap-6">
         <Label className="col-span-2" required>
           Retention Time

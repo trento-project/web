@@ -35,17 +35,14 @@ function ActivityLogsConfig({ retentionTime, onEditClick = noop }) {
       <div>
         <h2 className="text-2xl font-bold inline-block">Activity Logs</h2>
         <span className="float-right">
-          <Button
-            className="mr-2"
-            type="primary-white-fit"
-            size="small"
-            onClick={onEditClick}
-          >
+          <Button type="primary-white-fit" size="small" onClick={onEditClick}>
             Edit Settings
           </Button>
         </span>
       </div>
-      <p className="mt-3 mb-3 text-gray-500" />
+      <p className="mt-3 mb-3 text-gray-500">
+        Configure data retention times for log entries.
+      </p>
 
       <div className="grid grid-cols-6 mt-5 items-center">
         <div className="font-bold mb-3">Retention Time</div>
