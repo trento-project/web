@@ -29,5 +29,8 @@ defmodule Trento.Support.StructHelper do
     |> Map.new()
   end
 
+  def to_map(value) when is_boolean(value), do: value
+  def to_map(value) when is_nil(value), do: value
+  def to_map(value) when is_atom(value), do: Atom.to_string(value)
   def to_map(value), do: value
 end

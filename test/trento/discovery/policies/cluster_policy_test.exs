@@ -8,6 +8,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
 
   require Trento.Enums.Provider, as: Provider
 
+  require Trento.Clusters.Enums.HanaArchitectureType, as: HanaArchitectureType
+
   alias Trento.Discovery.Policies.ClusterPolicy
 
   alias Trento.Clusters.Commands.{DeregisterClusterHost, RegisterClusterHost}
@@ -251,7 +253,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     }
                   ],
                   system_replication_mode: "sync",
-                  system_replication_operation_mode: "logreplay"
+                  system_replication_operation_mode: "logreplay",
+                  architecture_type: HanaArchitectureType.classic()
                 },
                 host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
                 name: "hana_cluster",
@@ -500,7 +503,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     }
                   ],
                   system_replication_mode: "sync",
-                  system_replication_operation_mode: "logreplay"
+                  system_replication_operation_mode: "logreplay",
+                  architecture_type: HanaArchitectureType.classic()
                 },
                 host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
                 name: "hana_cluster",
@@ -1388,7 +1392,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                   sr_health_state: "4",
                   stopped_resources: [],
                   system_replication_mode: "sync",
-                  system_replication_operation_mode: "logreplay"
+                  system_replication_operation_mode: "logreplay",
+                  architecture_type: HanaArchitectureType.classic()
                 },
                 discovered_health: :passing,
                 host_id: "a3279fd0-0443-1234-9354-2d7909fd6bc6",
@@ -1556,7 +1561,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     }
                   ],
                   system_replication_mode: "sync",
-                  system_replication_operation_mode: "logreplay"
+                  system_replication_operation_mode: "logreplay",
+                  architecture_type: HanaArchitectureType.classic()
                 },
                 discovered_health: :critical,
                 host_id: "1dc79771-0a96-1234-b5b6-cd4d0aef6acc",
@@ -1805,7 +1811,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     }
                   ],
                   system_replication_mode: "sync",
-                  system_replication_operation_mode: "logreplay"
+                  system_replication_operation_mode: "logreplay",
+                  architecture_type: HanaArchitectureType.classic()
                 },
                 host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
                 name: nil,
@@ -1940,7 +1947,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                   sr_health_state: "4",
                   stopped_resources: [],
                   system_replication_mode: "sync",
-                  system_replication_operation_mode: "logreplay"
+                  system_replication_operation_mode: "logreplay",
+                  architecture_type: HanaArchitectureType.classic()
                 },
                 host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
                 name: "hana_cluster",
@@ -1999,6 +2007,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                   discovered_health: :passing,
                   cib_last_written: "Thu Feb 23 15:59:56 2023",
                   details: %HanaClusterDetails{
+                    architecture_type: HanaArchitectureType.classic(),
                     system_replication_mode: "syncmem",
                     system_replication_operation_mode: "delta_datashipping",
                     secondary_sync_state: "SOK",
@@ -2271,6 +2280,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                   discovered_health: :passing,
                   cib_last_written: "Tue Jan 23 12:49:07 2024",
                   details: %HanaClusterDetails{
+                    architecture_type: HanaArchitectureType.classic(),
                     system_replication_mode: "sync",
                     system_replication_operation_mode: "logreplay",
                     secondary_sync_state: "SOK",
@@ -2507,6 +2517,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                   discovered_health: :passing,
                   cib_last_written: "Thu Feb 23 15:59:56 2023",
                   details: %HanaClusterDetails{
+                    architecture_type: HanaArchitectureType.classic(),
                     system_replication_mode: "syncmem",
                     system_replication_operation_mode: "delta_datashipping",
                     secondary_sync_state: "SOK",
@@ -3012,7 +3023,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       }
                     ],
                     system_replication_mode: "sync",
-                    system_replication_operation_mode: "logreplay"
+                    system_replication_operation_mode: "logreplay",
+                    architecture_type: HanaArchitectureType.classic()
                   },
                   discovered_health: :passing,
                   host_id: "6eabc497-6067-4de9-b583-e4c63334ff64",
