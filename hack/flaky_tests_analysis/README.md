@@ -1,10 +1,4 @@
-## Frontend Tests Analysis
-
-###  Setup
-
-### Execution 
-
-### Analysis & Results - 2024-07-09
+# Flaky Tests Analysis
 
 ## Backend Tests Analysis
 
