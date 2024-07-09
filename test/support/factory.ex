@@ -1042,7 +1042,7 @@ defmodule Trento.Factory do
       fullname: Faker.Pokemon.name(),
       password: password,
       password_hash: Argon2.hash_pwd_salt(password),
-      username: Faker.Pokemon.name(),
+      username: Faker.UUID.v4(),
       deleted_at: nil,
       locked_at: nil,
       password_change_requested_at: nil,
