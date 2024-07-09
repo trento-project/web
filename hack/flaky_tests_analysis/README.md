@@ -1,0 +1,70 @@
+## Frontend Tests Analysis
+
+###  Setup
+
+### Execution 
+
+### Analysis & Results - 2024-07-09
+
+## Backend Tests Analysis
+
+###  Setup
+
+`mix test` along with some config that makes the test runner process write to a JUnit file for every run was set up. 
+
+
+### Execution 
+
+```
+❯ make N-TIMES=500 gen-test-data
+```
+By default this will write to the `/tmp` directory. Approximate run time is 30 minutes per 100 test runs.
+
+Next we pass the generated JUnit XML files and pass them to the python script.
+The script parses the files and scores the failing tests according to their "flip-rate".
+We also save a raw log of the CLI output of `mix test`. This would be useful for searching through 
+and understanding the reasons/trace of failing/flaky tests.
+
+### Analysis & Results - 2024-07-09
+
+First, we install python dependencies needed by the script file.
+There is a make target provided by this, as well as a requirements file should once choose to do so in a custom/different way.
+
+On non-Nix systems:
+```
+❯ make install-deps
+```
+
+On Nix systems:
+```
+❯ make install-deps
+```
+
+```
+❯ make PATH-TO-JUNIT-FILES=/tmp analyze-files
+python check_flakes.py --junit-files=/tmp --grouping-option=runs --window-size=5 --window-count=100 --top-n=40
+
+Top 40 flaky tests based on latest window exponential weighted moving average fliprate score
+Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify api key will be expired soon --- score: 0.1038
+Elixir.TrentoWeb.V1.ProfileControllerTest::test should not confirm a totp enrollment if totp is already enabled for the user --- score: 0.08546
+Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed --- score: 0.08458
+Elixir.TrentoWeb.V1.UsersControllerTest::test index lists all users --- score: 0.07423
+Elixir.TrentoWeb.V1.HostControllerTest::test delete should allow the request when the user has cleanup:host ability --- score: 0.07392
+Elixir.TrentoWeb.V1.ProfileControllerTest::test should not confirm a totp enrollment if totp is not valid --- score: 0.05231
+Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should register and not move an application instance, if the instance number exists but it's in another host and the application is not clustered --- score: 0.05102
+Elixir.TrentoWeb.V1.UsersControllerTest::test update user should not update the user if parameters are valid but an error is returned from update operation --- score: 0.05001
+Elixir.Trento.Infrastructure.Checks.AMQP.ConsumerTest::test handle_error/1 should reject unknown events and move them to the dead letter queue --- score: 0.05001
+Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should not register or move application, if the application has an already existing instance number and the host is the same --- score: 0.05001
+Elixir.TrentoWeb.V1.ClusterControllerTest::test request check executions should perform the request when the user has all:cluster_checks_execution ability --- score: 0.05001
+Elixir.TrentoWeb.V1.HostControllerTest::test Request check executions should perform the request when the user has all:host_checks_execution ability --- score: 0.05001
+Elixir.TrentoWeb.V1.ProfileControllerTest::test should not reset totp when a reset is requested for the default admin --- score: 0.05001
+Elixir.Trento.UsersTest::test users update_user/2 returns error if the email has already been taken --- score: 0.05001
+Elixir.TrentoWeb.V1.SapSystemControllerTest::test forbidden response should return forbidden on any controller action if the user does not have the right permission --- score: 0.05001
+Elixir.TrentoWeb.V1.TagsControllerTest::test forbidden actions should not return forbidden on any controller action if the user have the right ability for the tag resource --- score: 0.05001
+Elixir.TrentoWeb.V1.ProfileControllerTest::test should return forbidden if the totp enrollment is requested for default admin --- score: 0.05001
+Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should move an application instance if the host_id changed and the instance number already exists and the application is clustered --- score: 0.02501
+Elixir.TrentoWeb.V1.ProfileControllerTest::test should not confirm a totp enrollment for the default admin --- score: 0.02501
+Elixir.TrentoWeb.V1.DatabaseControllerTest::test delete should allow the request when the user has cleanup:database_instance ability --- score: 0.02501
+Elixir.TrentoWeb.V1.SapSystemControllerTest::test delete should allow the request when the user has cleanup:application_instance ability --- score: 0.02501
+Elixir.TrentoWeb.V1.UsersControllerTest::test update user should update the user if parameters are valid --- score: 0.02501
+```
