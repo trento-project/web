@@ -4,7 +4,7 @@ import { advisoryType } from './relevantPatches';
 
 const affectedPackageFactory = Factory.define(() => ({
   name: faker.animal.cat().toLowerCase(),
-  arch_label: faker.helpers.arrayElement(["x86_64", "i586", "aarch64"]),
+  arch_label: faker.helpers.arrayElement(['x86_64', 'i586', 'aarch64']),
   version: faker.system.semver(),
   release: `${faker.number.int({ min: 0, max: 100 })}`,
   epoch: `${faker.number.int({ min: 0, max: 50 })}`,
