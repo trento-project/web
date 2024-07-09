@@ -4,13 +4,14 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
   """
 
   @required_fields [:dc, :provider, :id, :cluster_type]
-  @required_fields_hana [:sid]
+  @required_fields_hana [:sid, :hana_architecture_type]
   @required_fields_ascs_ers [:additional_sids]
 
   use Trento.Support.Type
 
   require Trento.Enums.Provider, as: Provider
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
+  require Trento.Clusters.Enums.HanaArchitectureType, as: HanaArchitectureType
 
   alias Trento.Discovery.Payloads.Cluster.{
     CibDiscoveryPayload,
@@ -28,6 +29,7 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
     field :id, :string
     field :name, :string
     field :cluster_type, Ecto.Enum, values: ClusterType.values()
+    field :hana_architecture_type, Ecto.Enum, values: HanaArchitectureType.values()
     field :sid, :string
     field :additional_sids, {:array, :string}
 
@@ -41,6 +43,7 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
       attrs
       |> enrich_cluster_type
       |> enrich_cluster_sid
+      |> enrich_hana_architecture_type
 
     cluster
     |> cast(enriched_attributes, fields())
@@ -66,6 +69,19 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
     |> Map.put("additional_sids", parse_cluster_additional_sids(attrs))
   end
 
+  defp enrich_hana_architecture_type(%{"cluster_type" => cluster_type} = attrs)
+       when cluster_type in [ClusterType.hana_scale_up(), ClusterType.hana_scale_out()] do
+    hana_architecture_type =
+      case parse_hana_glob_topology(attrs) do
+        nil -> HanaArchitectureType.classic()
+        _ -> HanaArchitectureType.angi()
+      end
+
+    Map.put(attrs, "hana_architecture_type", hana_architecture_type)
+  end
+
+  defp enrich_hana_architecture_type(attrs), do: attrs
+
   defp parse_cluster_type(%{"crmmon" => %{"clones" => nil, "groups" => nil}}),
     do: ClusterType.unknown()
 
@@ -80,7 +96,9 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
     do_detect_cluster_type(sap_instance_count)
   end
 
-  defp parse_cluster_type(%{"crmmon" => %{"clones" => clones}}) do
+  defp parse_cluster_type(%{"crmmon" => %{"clones" => clones}} = payload) do
+    has_hana_glop_topology = parse_hana_glob_topology(payload)
+
     has_sap_hana_topology =
       Enum.any?(clones, fn %{"resources" => resources} ->
         Enum.any?(resources, fn %{"agent" => agent} -> agent == "ocf::suse:SAPHanaTopology" end)
@@ -98,14 +116,37 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
         end)
       end)
 
-    do_detect_cluster_type(has_sap_hana_topology, has_sap_hana, has_sap_hana_controller)
+    do_detect_cluster_type(
+      has_hana_glop_topology,
+      has_sap_hana_topology,
+      has_sap_hana,
+      has_sap_hana_controller
+    )
   end
 
   defp parse_cluster_type(_), do: ClusterType.unknown()
 
-  defp do_detect_cluster_type(true, true, _), do: ClusterType.hana_scale_up()
-  defp do_detect_cluster_type(true, _, true), do: ClusterType.hana_scale_out()
-  defp do_detect_cluster_type(_, _, _), do: ClusterType.unknown()
+  defp parse_hana_glob_topology(%{
+         "cib" => %{
+           "configuration" => %{"crm_config" => %{"cluster_properties" => cluster_properties}}
+         }
+       }) do
+    Enum.find_value(cluster_properties, nil, fn
+      %{"name" => name, "value" => value} ->
+        if String.ends_with?(name, "_glob_topology"), do: value
+
+      _ ->
+        nil
+    end)
+  end
+
+  # Angi architecture
+  defp do_detect_cluster_type("ScaleUp", _, _, _), do: ClusterType.hana_scale_up()
+  defp do_detect_cluster_type("ScaleOut", _, _, _), do: ClusterType.hana_scale_out()
+  # Classic architecture
+  defp do_detect_cluster_type(_, true, true, _), do: ClusterType.hana_scale_up()
+  defp do_detect_cluster_type(_, true, _, true), do: ClusterType.hana_scale_out()
+  defp do_detect_cluster_type(_, _, _, _), do: ClusterType.unknown()
 
   defp do_detect_cluster_type(count) when count >= 2 and rem(count, 2) == 0,
     do: ClusterType.ascs_ers()
