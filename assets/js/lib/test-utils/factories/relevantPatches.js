@@ -3,8 +3,8 @@ import { Factory } from 'fishery';
 
 export const advisoryType = ['security_advisory', 'bugfix', 'enhancement'];
 
-export const relevantPatchFactory = Factory.define(() => ({
-  advisory_name: faker.animal.cat(),
+export const relevantPatchFactory = Factory.define(({ sequence }) => ({
+  advisory_name: `${faker.animal.cat()}${sequence}`,
   advisory_type: faker.helpers.arrayElement(advisoryType),
   advisory_status: 'stable',
   id: faker.number.int({ min: 2000, max: 5000 }),
@@ -13,8 +13,8 @@ export const relevantPatchFactory = Factory.define(() => ({
   update_date: faker.date.anytime(),
 }));
 
-export const patchForPackageFactory = Factory.define(() => ({
-  advisory: faker.animal.cat(),
+export const patchForPackageFactory = Factory.define(({ sequence }) => ({
+  advisory: `${faker.animal.cat()}${sequence}`,
   type: faker.helpers.arrayElement(advisoryType),
   synopsis: faker.lorem.sentence(),
   issue_date: faker.date.anytime().toString(),
