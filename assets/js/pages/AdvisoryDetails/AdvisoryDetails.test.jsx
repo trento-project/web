@@ -7,11 +7,15 @@ import { faker } from '@faker-js/faker';
 import { renderWithRouter as render } from '@lib/test-utils';
 import { advisoryErrataFactory, cveFactory } from '@lib/test-utils/factories';
 
-import AdvisoryDetails from './AdvisoryDetails';
+import AdvisoryDetails, { formatPackage } from './AdvisoryDetails';
 
 describe('AdvisoryDetails', () => {
   it('displays a message, when the CVE, packages or fixes section is empty', () => {
-    const errata = advisoryErrataFactory.build({ cves: [], fixes: {} });
+    const errata = advisoryErrataFactory.build({
+      cves: [],
+      fixes: {},
+      affected_packages: {},
+    });
 
     render(
       <AdvisoryDetails advisoryName={faker.lorem.word()} errata={errata} />
@@ -34,22 +38,15 @@ describe('AdvisoryDetails', () => {
     expect(screen.getByText(errata.errata_details.description)).toBeVisible();
   });
 
-  it('displays packages', () => {
+  it('displays affected packages', () => {
     const errata = advisoryErrataFactory.build();
     const advisoryName = faker.lorem.word();
 
-    const packages = faker.word.words(2).split(' ');
+    render(<AdvisoryDetails advisoryName={advisoryName} errata={errata} />);
 
-    render(
-      <AdvisoryDetails
-        advisoryName={advisoryName}
-        errata={errata}
-        packages={packages}
-      />
-    );
-
-    packages.forEach((expectedWord) => {
-      expect(screen.getByText(expectedWord)).toBeVisible();
+    errata.affected_packages.forEach((pkg) => {
+      const el = screen.getByText(formatPackage(pkg));
+      expect(el).toBeVisible();
     });
   });
 

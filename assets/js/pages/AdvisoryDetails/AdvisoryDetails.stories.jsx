@@ -28,8 +28,16 @@ However, the post didn't come by today, and I am starting to wonder, if my Geeko
         4815162342: 'Geekos unexpectedly eating quiches',
       },
       cves: ['CVE-2024-35938'],
+      affected_packages: [
+        {
+          name: 'libprocps7',
+          version: '3.3.15',
+          release: '7.34.1',
+          epoch: '150000',
+          arch_label: 'x86_64',
+        },
+      ],
     },
-    packages: undefined,
     affectsPackageMaintanaceStack: false,
   },
 };
