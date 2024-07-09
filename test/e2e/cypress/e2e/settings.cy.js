@@ -677,4 +677,133 @@ context('Settings page', () => {
       });
     });
   });
+
+  describe('Activity log', () => {
+    // Elements must be filtered to match only the ones relate to the Activity Logs.
+    // Readable texts is contained by the section,
+    // while inputs are contained by the modal.
+    // The use of helpers instead of Cypress alias avoid problems with the React rendering,
+    // as the alias is not updated when the component is re-rendered.
+    const section = () => cy.contains('Activity Logs').parents('section');
+    const modal = () =>
+      cy.contains('Enter Activity Logs Settings').parents('div').first();
+
+    before(() => {
+      cy.reload();
+    });
+
+    beforeEach(() => {
+      // Read the initial retention time to compare with the new value
+      // Also, it checks the retention time is displayed correctly
+      section()
+        .get('[aria-label="retention-time"]')
+        .invoke('text')
+        .as('initialRetentionTime');
+    });
+
+    describe.only('Changing Settings', () => {
+      it('should change retention time', () => {
+        // the initial retention time is read before the settings are changed
+        cy.get('@initialRetentionTime').then((text) =>
+          section()
+            .get('[aria-label="retention-time"]')
+            .should('have.text', text)
+        );
+
+        // Open the modal to change the settings
+        section().within(() => {
+          cy.get('button').contains('Edit Settings').click();
+        });
+
+        // Write the new retention time in the number selector
+        modal().get('input[role="spinbutton"]').clear().type('5', { delay: 0 });
+
+        // Save the new settings and wait for the response
+        cy.intercept('PUT', '/api/v1/settings/activity_log').as(
+          'changeSettings'
+        );
+        modal().get('button').contains('Save Settings').click();
+        cy.wait('@changeSettings');
+
+        // Check the new retention time is displayed correctly
+        section()
+          .get('[aria-label="retention-time"]')
+          .should('have.text', '5 months');
+      });
+
+      it('should not change settings when cancelling operation', () => {
+        // the initial retention time is read before the settings are changed
+        cy.get('@initialRetentionTime').then((text) =>
+          section()
+            .get('[aria-label="retention-time"]')
+            .should('have.text', text)
+        );
+
+        // Open the modal to change the settings
+        section().within(() => {
+          cy.get('button').contains('Edit Settings').click();
+        });
+
+        // Write some random value
+        modal()
+          .get('input[role="spinbutton"]')
+          .clear()
+          .type('999', { delay: 0 });
+
+        // Abort the operation
+        cy.intercept(
+          'PUT',
+          '/api/v1/settings/activity_log',
+          cy.spy().as('changeSettings')
+        );
+        modal().get('button').contains('Cancel').click();
+
+        // Check the modal is closed
+        cy.get('h3').should('not.have.text', 'Enter Activity Logs Settings');
+
+        // Check the data is not changed
+        cy.get('@initialRetentionTime').then((text) =>
+          section()
+            .get('[aria-label="retention-time"]')
+            .should('have.text', text)
+        );
+        cy.get('@changeSettings').should('not.have.been.called');
+      });
+
+      it('should return validation error on invalid input', () => {
+        // the initial retention time is read before the settings are changed
+        cy.get('@initialRetentionTime').then((text) =>
+          section()
+            .get('[aria-label="retention-time"]')
+            .should('have.text', text)
+        );
+
+        // Open the modal to change the settings
+        section().within(() => {
+          cy.get('button').contains('Edit Settings').click();
+        });
+
+        // Write some random value
+        modal()
+          .get('input[role="spinbutton"]')
+          .clear()
+          .type('invalid', { delay: 0 });
+
+        // Try to save data
+        modal().get('button').contains('Save Settings').click();
+
+        // Check we still show the modal
+
+        // Close the modal
+        modal().get('button').contains('Cancel').click();
+
+        // Check the data is not changed
+        cy.get('@initialRetentionTime').then((text) =>
+          section()
+            .get('[aria-label="retention-time"]')
+            .should('have.text', text)
+        );
+      });
+    });
+  });
 });
