@@ -300,6 +300,10 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
     end)
   end
 
+  # parse_nodes_actual_roles parses each node roles depending on the cluster and architecture type
+  # 1st param is the roles array, 2nd param is the cluster type and the 3rd the hana architecture
+  # In classic scale out, the roles string has 6 values: 4:P:master1:master:worker:master
+  # In scale out and angi architecture, the roles have only 4 values: "master1:master:worker:master"
   defp parse_nodes_actual_roles(
          [_, _, _, nameserver_actual_role, _, indexserver_actual_role],
          ClusterType.hana_scale_up(),
