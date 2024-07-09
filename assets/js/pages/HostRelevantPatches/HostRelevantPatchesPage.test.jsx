@@ -186,7 +186,7 @@ describe('HostRelevantPatchesPage', () => {
       expect(window.URL.createObjectURL).toHaveBeenCalledWith(new File([], ''));
       expect(window.URL.createObjectURL).toHaveReturnedWith({
         name: `${hostName}-patches.csv`,
-        size: 148,
+        size: 110,
       });
     });
 
