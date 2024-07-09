@@ -33,16 +33,20 @@ defmodule TrentoWeb.V1.SUSEManagerViewTest do
 
       fixes = build(:bugzilla_fix)
 
+      affected_packages = build_list(10, :affected_package)
+
       assert %{
                errata_details: ^expected_errata_details,
                cves: ^cves,
-               fixes: ^fixes
+               fixes: ^fixes,
+               affected_packages: ^affected_packages
              } =
                render(SUSEManagerView, "errata_details.json", %{
                  errata_details:
                    Map.put(errata_details_sans_errata_from, :errataFrom, errata_from),
                  cves: cves,
-                 fixes: fixes
+                 fixes: fixes,
+                 affected_packages: affected_packages
                })
     end
   end

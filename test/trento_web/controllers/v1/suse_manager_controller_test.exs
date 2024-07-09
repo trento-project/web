@@ -184,6 +184,12 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
         {:ok, fixes}
       end)
 
+      affected_packages = build_list(10, :affected_package)
+
+      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_affected_packages, 1, fn _ ->
+        {:ok, affected_packages}
+      end)
+
       json =
         conn
         |> get("/api/v1/software_updates/errata_details/#{advisory_name}")
@@ -218,7 +224,8 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
           reboot_suggested: ^reboot_suggested,
           restart_suggested: ^restart_suggested
         },
-        cves: ^cves
+        cves: ^cves,
+        affected_packages: ^affected_packages
       } = result
     end
 
@@ -238,6 +245,10 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
 
       expect(Trento.SoftwareUpdates.Discovery.Mock, :get_bugzilla_fixes, 1, fn _ ->
         {:ok, build(:bugzilla_fix)}
+      end)
+
+      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_affected_packages, 1, fn _ ->
+        {:ok, build_list(10, :affected_package)}
       end)
 
       advisory_name = Faker.Pokemon.name()
@@ -266,6 +277,10 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
         {:ok, build(:bugzilla_fix)}
       end)
 
+      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_affected_packages, 1, fn _ ->
+        {:ok, build_list(10, :affected_package)}
+      end)
+
       advisory_name = Faker.Pokemon.name()
 
       conn
@@ -290,6 +305,40 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
 
       expect(Trento.SoftwareUpdates.Discovery.Mock, :get_bugzilla_fixes, 1, fn _ ->
         {:error, :error_getting_fixes}
+      end)
+
+      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_affected_packages, 1, fn _ ->
+        {:ok, build_list(10, :affected_package)}
+      end)
+
+      advisory_name = Faker.Pokemon.name()
+
+      conn
+      |> get("/api/v1/software_updates/errata_details/#{advisory_name}")
+      |> json_response(:unprocessable_entity)
+      |> assert_schema("UnprocessableEntity", api_spec)
+    end
+
+    test "should return 422 when advisory affected packages are not found", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      insert_software_updates_settings()
+
+      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_errata_details, 1, fn _ ->
+        {:ok, build(:errata_details)}
+      end)
+
+      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_cves, 1, fn _ ->
+        {:ok, build_list(10, :cve)}
+      end)
+
+      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_bugzilla_fixes, 1, fn _ ->
+        {:ok, build(:bugzilla_fix)}
+      end)
+
+      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_affected_packages, 1, fn _ ->
+        {:error, :error_getting_affected_packages}
       end)
 
       advisory_name = Faker.Pokemon.name()
