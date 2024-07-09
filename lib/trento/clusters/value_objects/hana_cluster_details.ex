@@ -4,7 +4,6 @@ defmodule Trento.Clusters.ValueObjects.HanaClusterDetails do
   """
 
   @required_fields [
-    :architecture_type,
     :system_replication_mode,
     :system_replication_operation_mode,
     :sr_health_state,
