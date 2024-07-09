@@ -39,11 +39,12 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
   end
 
   def changeset(cluster, attrs) do
+    glob_topology = parse_hana_glob_topology(attrs)
+
     enriched_attributes =
       attrs
-      |> enrich_cluster_type
+      |> enrich_cluster_and_hana_architecture_types(glob_topology)
       |> enrich_cluster_sid
-      |> enrich_hana_architecture_type
 
     cluster
     |> cast(enriched_attributes, fields())
@@ -54,33 +55,37 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
     |> maybe_validate_required_fields(enriched_attributes)
   end
 
-  defp enrich_cluster_type(attrs),
-    do: Map.put(attrs, "cluster_type", parse_cluster_type(attrs))
+  defp parse_hana_glob_topology(%{
+         "cib" => %{
+           "configuration" => %{"crm_config" => %{"cluster_properties" => cluster_properties}}
+         }
+       }) do
+    Enum.find_value(cluster_properties, nil, fn
+      %{"name" => name, "value" => value} ->
+        if String.ends_with?(name, "_glob_topology"), do: value
 
-  defp enrich_cluster_sid(%{"cluster_type" => ClusterType.unknown()} = attrs) do
+      _ ->
+        nil
+    end)
+  end
+
+  defp enrich_cluster_and_hana_architecture_types(attrs, "ScaleUp") do
     attrs
-    |> Map.put("sid", nil)
-    |> Map.put("additional_sids", [])
+    |> Map.put("cluster_type", ClusterType.hana_scale_up())
+    |> Map.put("hana_architecture_type", HanaArchitectureType.angi())
   end
 
-  defp enrich_cluster_sid(attrs) do
+  defp enrich_cluster_and_hana_architecture_types(attrs, "ScaleOut") do
     attrs
-    |> Map.put("sid", parse_cluster_sid(attrs))
-    |> Map.put("additional_sids", parse_cluster_additional_sids(attrs))
+    |> Map.put("cluster_type", ClusterType.hana_scale_out())
+    |> Map.put("hana_architecture_type", HanaArchitectureType.angi())
   end
 
-  defp enrich_hana_architecture_type(%{"cluster_type" => cluster_type} = attrs)
-       when cluster_type in [ClusterType.hana_scale_up(), ClusterType.hana_scale_out()] do
-    hana_architecture_type =
-      case parse_hana_glob_topology(attrs) do
-        nil -> HanaArchitectureType.classic()
-        _ -> HanaArchitectureType.angi()
-      end
-
-    Map.put(attrs, "hana_architecture_type", hana_architecture_type)
+  defp enrich_cluster_and_hana_architecture_types(attrs, nil) do
+    attrs
+    |> Map.put("cluster_type", parse_cluster_type(attrs))
+    |> put_hana_architecture
   end
-
-  defp enrich_hana_architecture_type(attrs), do: attrs
 
   defp parse_cluster_type(%{"crmmon" => %{"clones" => nil, "groups" => nil}}),
     do: ClusterType.unknown()
@@ -96,9 +101,7 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
     do_detect_cluster_type(sap_instance_count)
   end
 
-  defp parse_cluster_type(%{"crmmon" => %{"clones" => clones}} = payload) do
-    has_hana_glop_topology = parse_hana_glob_topology(payload)
-
+  defp parse_cluster_type(%{"crmmon" => %{"clones" => clones}}) do
     has_sap_hana_topology =
       Enum.any?(clones, fn %{"resources" => resources} ->
         Enum.any?(resources, fn %{"agent" => agent} -> agent == "ocf::suse:SAPHanaTopology" end)
@@ -116,42 +119,37 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
         end)
       end)
 
-    do_detect_cluster_type(
-      has_hana_glop_topology,
-      has_sap_hana_topology,
-      has_sap_hana,
-      has_sap_hana_controller
-    )
+    do_detect_cluster_type(has_sap_hana_topology, has_sap_hana, has_sap_hana_controller)
   end
 
   defp parse_cluster_type(_), do: ClusterType.unknown()
 
-  defp parse_hana_glob_topology(%{
-         "cib" => %{
-           "configuration" => %{"crm_config" => %{"cluster_properties" => cluster_properties}}
-         }
-       }) do
-    Enum.find_value(cluster_properties, nil, fn
-      %{"name" => name, "value" => value} ->
-        if String.ends_with?(name, "_glob_topology"), do: value
-
-      _ ->
-        nil
-    end)
-  end
-
-  # Angi architecture
-  defp do_detect_cluster_type("ScaleUp", _, _, _), do: ClusterType.hana_scale_up()
-  defp do_detect_cluster_type("ScaleOut", _, _, _), do: ClusterType.hana_scale_out()
-  # Classic architecture
-  defp do_detect_cluster_type(_, true, true, _), do: ClusterType.hana_scale_up()
-  defp do_detect_cluster_type(_, true, _, true), do: ClusterType.hana_scale_out()
-  defp do_detect_cluster_type(_, _, _, _), do: ClusterType.unknown()
+  defp do_detect_cluster_type(true, true, _), do: ClusterType.hana_scale_up()
+  defp do_detect_cluster_type(true, _, true), do: ClusterType.hana_scale_out()
+  defp do_detect_cluster_type(_, _, _), do: ClusterType.unknown()
 
   defp do_detect_cluster_type(count) when count >= 2 and rem(count, 2) == 0,
     do: ClusterType.ascs_ers()
 
   defp do_detect_cluster_type(_), do: ClusterType.unknown()
+
+  defp put_hana_architecture(%{"cluster_type" => type} = attrs)
+       when type in [ClusterType.hana_scale_up(), ClusterType.hana_scale_out()],
+       do: Map.put(attrs, "hana_architecture_type", HanaArchitectureType.classic())
+
+  defp put_hana_architecture(attrs), do: attrs
+
+  defp enrich_cluster_sid(%{"cluster_type" => ClusterType.unknown()} = attrs) do
+    attrs
+    |> Map.put("sid", nil)
+    |> Map.put("additional_sids", [])
+  end
+
+  defp enrich_cluster_sid(attrs) do
+    attrs
+    |> Map.put("sid", parse_cluster_sid(attrs))
+    |> Map.put("additional_sids", parse_cluster_additional_sids(attrs))
+  end
 
   defp parse_cluster_sid(%{
          "cib" => %{"configuration" => %{"resources" => %{"clones" => nil}}}
