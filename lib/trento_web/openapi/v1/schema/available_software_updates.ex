@@ -197,6 +197,43 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
     })
   end
 
+  defmodule AffectedPackages do
+    @moduledoc false
+    OpenApiSpex.schema(%{
+      title: "AffectedPackages",
+      description: "Response returned from the get affected packages endpoint",
+      type: :array,
+      additionalProperties: false,
+      items: %Schema{
+        title: "AffectedPackage",
+        description: "Metadata for a package effected from an advisory",
+        type: :object,
+        properties: %{
+          name: %Schema{
+            type: :string,
+            description: "Package name"
+          },
+          arch_label: %Schema{
+            type: :string,
+            description: "Package architecture"
+          },
+          version: %Schema{
+            type: :string,
+            description: "Package version"
+          },
+          release: %Schema{
+            type: :string,
+            description: "Package release number"
+          },
+          epoch: %Schema{
+            type: :string,
+            description: "Package epoch number"
+          }
+        }
+      }
+    })
+  end
+
   defmodule ErrataDetailsResponse do
     @moduledoc false
     OpenApiSpex.schema(%{
@@ -207,7 +244,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
       properties: %{
         errata_details: ErrataDetails,
         cves: CVEs,
-        fixes: AdvisoryFixes
+        fixes: AdvisoryFixes,
+        affected_packages: AffectedPackages
       }
     })
   end
