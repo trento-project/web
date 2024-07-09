@@ -57,10 +57,10 @@ describe('Table component', () => {
     ],
   };
 
-  const tableDataFactory = Factory.define(() => ({
-    column1: faker.person.firstName(),
-    column2: [faker.location.city()],
-    column3: faker.animal.dog(),
+  const tableDataFactory = Factory.define(({ sequence }) => ({
+    column1: `${faker.person.firstName()}${sequence}`,
+    column2: [`${faker.location.city()}${sequence}`],
+    column3: `${faker.animal.dog()}${sequence}`,
   }));
 
   it('should allow custom classes for table rows', () => {
