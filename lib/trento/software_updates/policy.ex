@@ -13,9 +13,13 @@ defmodule Trento.SoftwareUpdates.Policy do
   alias Trento.Users.User
 
   def authorize(action, %User{} = user, SoftwareUpdates)
-      when action in [:show, :create, :update, :delete, :test] do
+      when action in [:create, :update, :delete] do
     has_global_ability?(user) or has_suma_settings_change_ability?(user)
   end
+
+  def authorize(action, %User{}, SoftwareUpdates)
+      when action in [:show, :test],
+      do: true
 
   def authorize(_, %User{} = user, _), do: has_global_ability?(user)
 

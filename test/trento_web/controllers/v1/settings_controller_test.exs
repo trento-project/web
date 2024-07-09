@@ -174,7 +174,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
   end
 
   describe "forbidden response" do
-    test "should return forbidden on any controller action if the user does not have the right permission",
+    test "should return forbidden if the user does not have the permission to update the api key",
          %{conn: conn, api_spec: api_spec} do
       insert(:api_key_settings)
       %{id: user_id} = insert(:user)
@@ -194,7 +194,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       |> assert_schema("Forbidden", api_spec)
     end
 
-    test "should return forbidden when controller actions without permisson tries to edit activity logs settings",
+    test "should return forbidden if the user does not have the permission to edit activity logs settings",
          %{conn: conn, api_spec: api_spec} do
       %{id: user_id} = insert(:user)
       insert(:activity_log_settings)

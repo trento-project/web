@@ -482,4 +482,67 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
       assert "" == resp
     end
   end
+
+  describe "forbidden response" do
+    test "should return 403 when user tries to create settings without right abilities", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      settings = %{
+        url: Faker.Internet.image_url(),
+        username: Faker.Internet.user_name(),
+        password: Faker.Lorem.word(),
+        ca_cert: build(:self_signed_certificate)
+      }
+
+      %{id: user_id} = insert(:user)
+
+      conn =
+        conn
+        |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
+        |> put_req_header("content-type", "application/json")
+
+      conn
+      |> post("/api/v1/settings/suma_credentials", settings)
+      |> json_response(:forbidden)
+      |> assert_schema("Forbidden", api_spec)
+    end
+
+    test "should return 403 when user tries to update settings without right abilities", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      insert_software_updates_settings()
+      %{id: user_id} = insert(:user)
+
+      change_submission = %{}
+
+      conn =
+        conn
+        |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
+        |> put_req_header("content-type", "application/json")
+
+      conn
+      |> patch("/api/v1/settings/suma_credentials", change_submission)
+      |> json_response(:forbidden)
+      |> assert_schema("Forbidden", api_spec)
+    end
+  end
+
+  test "should return 403 when user tries to delete settings without right abilities", %{
+    conn: conn,
+    api_spec: api_spec
+  } do
+    %{id: user_id} = insert(:user)
+
+    conn =
+      conn
+      |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
+      |> put_req_header("content-type", "application/json")
+
+    conn
+    |> delete("/api/v1/settings/suma_credentials")
+    |> json_response(:forbidden)
+    |> assert_schema("Forbidden", api_spec)
+  end
 end

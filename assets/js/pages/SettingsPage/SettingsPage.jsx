@@ -52,7 +52,7 @@ import {
 import { dismissNotification } from '@state/notifications';
 import { API_KEY_EXPIRATION_NOTIFICATION_ID } from '@state/sagas/settings';
 
-const apiKeyGenerationPermittedFor = ['all:api_key_settings'];
+const apiKeySettingsPermittedFor = ['all:api_key_settings'];
 const sumaSettingsPermittedFor = ['all:suma_settings'];
 const activityLogsSettingsPermittedFor = ['all:activity_logs_settings'];
 
@@ -207,7 +207,7 @@ function SettingsPage() {
               <div className="!ml-auto w-1/4">
                 <DisabledGuard
                   userAbilities={abilities}
-                  permitted={apiKeyGenerationPermittedFor}
+                  permitted={apiKeySettingsPermittedFor}
                 >
                   <Button
                     onClick={() => setApiKeySettingsModalOpen(true)}

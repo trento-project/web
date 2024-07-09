@@ -27,23 +27,26 @@ defmodule Trento.SoftwareUpdates.PolicyTest do
     assert Policy.authorize(:test, user, SoftwareUpdates)
   end
 
-  test "should disallow suma settings actions if the user has other abilities" do
-    user = %User{abilities: [%Ability{name: "other", resource: "other"}]}
+  test "should allow suma settings actions if the user has default abilities" do
+    user = %User{abilities: [%Ability{name: "all", resource: "suma_settings"}]}
 
-    refute Policy.authorize(:show, user, SoftwareUpdates)
-    refute Policy.authorize(:create, user, SoftwareUpdates)
-    refute Policy.authorize(:update, user, SoftwareUpdates)
-    refute Policy.authorize(:delete, user, SoftwareUpdates)
-    refute Policy.authorize(:test, user, SoftwareUpdates)
+    assert Policy.authorize(:show, user, SoftwareUpdates)
+    assert Policy.authorize(:test, user, SoftwareUpdates)
   end
 
-  test "should disallow suma settings actions if the user has no abilities" do
-    user = %User{abilities: []}
+  test "should disallow creating, updating or changing suma settings if the user has other abilities" do
+    user = %User{abilities: [%Ability{name: "other", resource: "other"}]}
 
-    refute Policy.authorize(:show, user, SoftwareUpdates)
     refute Policy.authorize(:create, user, SoftwareUpdates)
     refute Policy.authorize(:update, user, SoftwareUpdates)
     refute Policy.authorize(:delete, user, SoftwareUpdates)
-    refute Policy.authorize(:test, user, SoftwareUpdates)
+  end
+
+  test "should disallow creating, updating or changing suma settings if the user has no abilities" do
+    user = %User{abilities: []}
+
+    refute Policy.authorize(:create, user, SoftwareUpdates)
+    refute Policy.authorize(:update, user, SoftwareUpdates)
+    refute Policy.authorize(:delete, user, SoftwareUpdates)
   end
 end
