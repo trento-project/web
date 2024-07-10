@@ -5,7 +5,7 @@ import PageHeader from '@common/PageHeader';
 import ListView from '@common/ListView';
 import AdvisoryIcon from '@common/AdvisoryIcon';
 
-export const formatPackage = ({ name, version, epoch, release, arch_label }) =>
+const formatPackage = ({ name, version, epoch, release, arch_label }) =>
   `${name}-${version}-${epoch}.${release}-${arch_label}`;
 
 function EmptyData() {

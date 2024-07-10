@@ -7,14 +7,14 @@ import { faker } from '@faker-js/faker';
 import { renderWithRouter as render } from '@lib/test-utils';
 import { advisoryErrataFactory, cveFactory } from '@lib/test-utils/factories';
 
-import AdvisoryDetails, { formatPackage } from './AdvisoryDetails';
+import AdvisoryDetails from './AdvisoryDetails';
 
 describe('AdvisoryDetails', () => {
   it('displays a message, when the CVE, packages or fixes section is empty', () => {
     const errata = advisoryErrataFactory.build({
       cves: [],
       fixes: {},
-      affected_packages: {},
+      affected_packages: [],
     });
 
     render(
@@ -44,8 +44,8 @@ describe('AdvisoryDetails', () => {
 
     render(<AdvisoryDetails advisoryName={advisoryName} errata={errata} />);
 
-    errata.affected_packages.forEach((pkg) => {
-      const el = screen.getByText(formatPackage(pkg));
+    errata.affected_packages.forEach(({ name }) => {
+      const el = screen.getByText(name, { exact: false });
       expect(el).toBeVisible();
     });
   });
