@@ -59,7 +59,7 @@ describe('Deregistration Modal component', () => {
     ).toBeTruthy();
   });
 
-  it('should render an application instance deregistration modal correctly', async () => {
+  it('should render a database instance deregistration modal correctly', async () => {
     const sid = generateSid();
     const instanceNumber = '00';
 
