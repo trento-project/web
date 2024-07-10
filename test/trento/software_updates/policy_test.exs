@@ -27,8 +27,8 @@ defmodule Trento.SoftwareUpdates.PolicyTest do
     assert Policy.authorize(:test, user, Settings)
   end
 
-  test "should allow suma settings actions if the user has default abilities" do
-    user = %User{abilities: [%Ability{name: "all", resource: "suma_settings"}]}
+  test "should allow suma settings actions if the user has no abilities" do
+    user = %User{abilities: []}
 
     assert Policy.authorize(:show, user, Settings)
     assert Policy.authorize(:test, user, Settings)
