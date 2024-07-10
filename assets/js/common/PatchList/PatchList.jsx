@@ -8,6 +8,7 @@ import { format as formatDate } from 'date-fns';
 import classNames from 'classnames';
 import { noop } from 'lodash';
 
+import Button from '@common/Button';
 import Table, {
   createStringSortingPredicate,
   createDateSortingPredicate,
@@ -120,14 +121,10 @@ export default function PatchList({ patches, onNavigate = noop }) {
         sortable: true,
         sortDirection: sortingColumn === 'advisory_name' ? sortDirection : null,
         handleClick: handleNameColClick,
-        render: (content, item) => (
-          <button
-            type="button"
-            className="text-jungle-green-500 hover:opacity-75"
-            onClick={() => onNavigate(item)}
-          >
+        render: (content) => (
+          <Button type="link" size="fit" onClick={() => onNavigate(content)}>
             {content}
-          </button>
+          </Button>
         ),
       },
       {

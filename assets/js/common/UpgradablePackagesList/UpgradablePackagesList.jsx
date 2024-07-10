@@ -50,7 +50,11 @@ function UpgradablePackagesList({
             {content &&
               content.map(({ advisory }) => (
                 <div key={`${to_package_id}-${advisory}`}>
-                  <Button type="link" onClick={() => onPatchClick(advisory)}>
+                  <Button
+                    type="link"
+                    size="fit"
+                    onClick={() => onPatchClick(advisory)}
+                  >
                     {advisory}
                   </Button>
                 </div>

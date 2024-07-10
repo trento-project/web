@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
 import BackButton from '@common/BackButton';
@@ -12,6 +12,7 @@ import HostRelevantPatchesPage from './HostRelevantPatchesPage';
 
 export default function Page() {
   const { hostID } = useParams();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -31,11 +32,16 @@ export default function Page() {
 
   const { hostname: hostName } = host;
 
-  // TODO(janvhs): Handle navigation
   return (
     <>
       <BackButton url={`/hosts/${hostID}`}>Back to Host Details</BackButton>
-      <HostRelevantPatchesPage patches={patches} hostName={hostName} />
+      <HostRelevantPatchesPage
+        patches={patches}
+        hostName={hostName}
+        onNavigate={(advisoryID) =>
+          navigate(`hosts/${hostID}/patches/${advisoryID}`)
+        }
+      />
     </>
   );
 }
