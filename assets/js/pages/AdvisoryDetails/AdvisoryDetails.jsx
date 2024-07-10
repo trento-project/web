@@ -15,7 +15,7 @@ function EmptyData() {
 function AdvisoryDetails({
   advisoryName,
   errata,
-  affectsPackageMaintanaceStack,
+  affectsPackageMaintenanceStack,
 }) {
   const {
     issue_date: issueDate,
@@ -62,8 +62,8 @@ function AdvisoryDetails({
                 content: rebootSuggested ? 'Yes' : 'No',
               },
               {
-                title: 'Affects Package Maintanace Stack',
-                content: affectsPackageMaintanaceStack ? 'Yes' : 'No',
+                title: 'Affects Package Maintenance Stack',
+                content: affectsPackageMaintenanceStack ? 'Yes' : 'No',
               },
             ]}
           />

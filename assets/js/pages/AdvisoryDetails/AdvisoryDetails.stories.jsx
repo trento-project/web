@@ -38,6 +38,6 @@ However, the post didn't come by today, and I am starting to wonder, if my Geeko
         },
       ],
     },
-    affectsPackageMaintanaceStack: false,
+    affectsPackageMaintenanceStack: false,
   },
 };
