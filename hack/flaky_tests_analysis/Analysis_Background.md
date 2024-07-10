@@ -47,5 +47,5 @@ Implementation is based on ["Modeling and ranking flaky tests at Apple"](https:/
 ### Full examples
 
 * `JUnit` files with calculations per 5 runs. 15 runs history and 5 tests printed out.
-  * `--junit-files=/tmp/trento-report_file_test* --grouping-option=runs --window-size=5 --window-count=3 --top-n=5`
+  * `--junit-files=/tmp --grouping-option=runs --window-size=5 --window-count=3 --top-n=5`
 
