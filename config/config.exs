@@ -203,9 +203,6 @@ config :trento, Trento.Infrastructure.SoftwareUpdates.MockSuma, relevant_patches
 config :trento, Trento.Infrastructure.SoftwareUpdates.SumaApi,
   executor: Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor
 
-config :trento, Trento.ActivityLog.ActivityLogger,
-  writer: Trento.Infrastructure.ActivityLog.Logger.DatabasetWriter
-
 config :bodyguard,
   # The second element of the {:error, reason} tuple returned on auth failure
   default_error: :forbidden

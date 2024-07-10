@@ -3,8 +3,10 @@ defmodule Trento.ActivityLog.ActivityLogger do
   ActivityLogger entry point
   """
 
+  alias Trento.Repo
+
   alias Trento.ActivityLog.ActivityCatalog
-  alias Trento.ActivityLog.Logger.ActivityLogWriter
+  alias Trento.ActivityLog.ActivityLog
 
   require Logger
 
@@ -46,7 +48,9 @@ defmodule Trento.ActivityLog.ActivityLogger do
     do: activity_parser.get_activity_metadata(detected_activity, activity_context)
 
   defp write_log(%{type: activity_type} = entry) do
-    case ActivityLogWriter.write_log(entry) do
+    case %ActivityLog{}
+         |> ActivityLog.changeset(entry)
+         |> Repo.insert() do
       {:ok, _} ->
         Logger.info("Logged activity: #{activity_type}")
 
