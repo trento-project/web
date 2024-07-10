@@ -1,6 +1,10 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { screen, render } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import userEvent from '@testing-library/user-event';
+
+import { renderWithRouter } from '@lib/test-utils';
+
 import ClusterInfoBox from './ClusterInfoBox';
 
 describe('Cluster Info Box', () => {
@@ -61,5 +65,33 @@ describe('Cluster Info Box', () => {
       expect(getByText(providerText)).toBeTruthy();
       expect(getByText(haScenarioText)).toBeTruthy();
     });
+  });
+
+  it.each([
+    { architectureType: 'classic', tooltip: 'Classic architecture' },
+    { architectureType: 'angi', tooltip: 'Angi architecture' },
+  ])(
+    'should display architecture type icon',
+    async ({ architectureType, tooltip }) => {
+      const user = userEvent.setup();
+
+      renderWithRouter(
+        <ClusterInfoBox
+          haScenario="hana_scale_up"
+          provider="azure"
+          architectureType={architectureType}
+        />
+      );
+
+      const icon = screen.getByTestId('eos-svg-component');
+
+      await user.hover(icon);
+      expect(screen.getByText(tooltip, { exact: false })).toBeInTheDocument();
+    }
+  );
+
+  it('should not display architecture type icon if architecture is unknown', () => {
+    render(<ClusterInfoBox haScenario="ascs_ers" provider="azure" />);
+    expect(screen.queryByTestId('eos-svg-component')).not.toBeInTheDocument();
   });
 });

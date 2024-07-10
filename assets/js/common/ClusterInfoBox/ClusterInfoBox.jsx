@@ -1,12 +1,10 @@
 import React from 'react';
 
-import { getClusterTypeLabel } from '@lib/model/clusters';
-
 import ListView from '@common/ListView';
 import ProviderLabel from '@common/ProviderLabel';
+import ClusterTypeLabel from '@common/ClusterTypeLabel';
 
-// eslint-disable-next-line import/prefer-default-export
-function ClusterInfoBox({ haScenario, provider }) {
+function ClusterInfoBox({ haScenario, provider, architectureType }) {
   return (
     <div className="tn-cluster-details w-full my-6 mr-4 bg-white shadow rounded-lg px-8 py-4">
       <ListView
@@ -16,7 +14,13 @@ function ClusterInfoBox({ haScenario, provider }) {
         data={[
           {
             title: 'HA Scenario',
-            content: getClusterTypeLabel(haScenario),
+            content: haScenario,
+            render: (content) => (
+              <ClusterTypeLabel
+                clusterType={content}
+                architectureType={architectureType}
+              />
+            ),
           },
           {
             title: 'Provider',

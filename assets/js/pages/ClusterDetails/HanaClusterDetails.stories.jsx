@@ -27,11 +27,15 @@ const {
   provider,
   cib_last_written: cibLastWritten,
   details,
-} = clusterFactory.build({ type: 'hana_scale_up' });
+} = clusterFactory.build({
+  type: 'hana_scale_up',
+  details: { architecture_type: 'classic' },
+});
 
 const scaleOutSites = hanaClusterSiteFactory.buildList(2);
 
 const scaleOutDetails = hanaClusterDetailsFactory.build({
+  architecture_type: 'classic',
   sites: scaleOutSites,
   nodes: [
     hanaClusterDetailsNodesFactory.build({
@@ -210,6 +214,16 @@ export const WithNoSBDDevices = {
       ...Hana.args.details,
       fencing_type: 'Diskless SBD',
       sbd_devices: [],
+    },
+  },
+};
+
+export const AngiArchitecture = {
+  args: {
+    ...Hana.args,
+    details: {
+      ...Hana.args.details,
+      architecture_type: 'angi',
     },
   },
 };

@@ -466,6 +466,53 @@ describe('HanaClusterDetails component', () => {
     }
   );
 
+  it.each([
+    { arch: 'angi', tooltip: 'Angi architecture' },
+    { arch: 'classic', tooltip: 'Classic architecture' },
+  ])(
+    'should show cluster type with $arch architecture',
+    async ({ arch, tooltip }) => {
+      const user = userEvent.setup();
+
+      const {
+        clusterID,
+        clusterName,
+        cib_last_written: cibLastWritten,
+        type: clusterType,
+        sid,
+        provider,
+        details,
+      } = clusterFactory.build({
+        type: 'hana_scale_up',
+        details: { architecture_type: arch },
+      });
+
+      const hosts = hostFactory.buildList(2, { cluster_id: clusterID });
+
+      renderWithRouter(
+        <HanaClusterDetails
+          clusterID={clusterID}
+          clusterName={clusterName}
+          selectedChecks={[]}
+          hasSelectedChecks={false}
+          hosts={hosts}
+          clusterType={clusterType}
+          cibLastWritten={cibLastWritten}
+          sid={sid}
+          provider={provider}
+          sapSystems={[]}
+          details={details}
+          lastExecution={null}
+          userAbilities={userAbilities}
+        />
+      );
+
+      const icon = screen.getByText('HANA Scale Up').children.item(0);
+      await user.hover(icon);
+      expect(screen.getByText(tooltip, { exact: false })).toBeInTheDocument();
+    }
+  );
+
   describe('forbidden actions', () => {
     it('should disable the check execution button when the user abilities are not compatible', async () => {
       const user = userEvent.setup();
