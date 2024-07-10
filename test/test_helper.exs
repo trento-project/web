@@ -30,17 +30,6 @@ Application.put_env(:trento, Trento.Infrastructure.SoftwareUpdates.Suma,
   auth: Trento.Infrastructure.SoftwareUpdates.Auth.Mock
 )
 
-Mox.defmock(Trento.ActivityLog.ActivityLogger.Mock,
-  for: Trento.ActivityLog.ActivityLogger
-)
-
-activity_log_config =
-  :trento
-  |> Application.fetch_env!(Trento.ActivityLog.ActivityLogger)
-  |> Keyword.put(:adapter, Trento.ActivityLog.ActivityLogger.Mock)
-
-Application.put_env(:trento, Trento.ActivityLog.ActivityLogger, activity_log_config)
-
 Mox.defmock(Trento.Infrastructure.Messaging.Adapter.Mock,
   for: Trento.Infrastructure.Messaging.Adapter.Gen
 )

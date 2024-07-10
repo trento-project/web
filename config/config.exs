@@ -204,7 +204,6 @@ config :trento, Trento.Infrastructure.SoftwareUpdates.SumaApi,
   executor: Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor
 
 config :trento, Trento.ActivityLog.ActivityLogger,
-  adapter: Trento.ActivityLog.Logger.PersistentLogger,
   writer: Trento.Infrastructure.ActivityLog.Logger.DatabasetWriter
 
 config :bodyguard,

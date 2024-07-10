@@ -1,7 +1,7 @@
-defmodule Trento.ActivityLog.PersistentLoggerTest do
+defmodule Trento.ActivityLog.ActivityLoggerTest do
   @moduledoc false
 
-  use TrentoWeb.ConnCase, async: false
+  use TrentoWeb.ConnCase, async: true
   use Plug.Test
 
   import Trento.Factory
@@ -11,7 +11,6 @@ defmodule Trento.ActivityLog.PersistentLoggerTest do
   alias Trento.Abilities.Ability
 
   alias Trento.ActivityLog.ActivityLog
-  alias Trento.ActivityLog.Logger.PersistentLogger
   alias Trento.Tags.Tag
 
   alias TrentoWeb.Auth.AccessToken
@@ -80,9 +79,9 @@ defmodule Trento.ActivityLog.PersistentLoggerTest do
         %{credentials: %{username: username} = credentials, expected_metadata: expected_metadata} =
           @scenario
 
-        conn = login(conn, credentials)
+        login(conn, credentials)
 
-        :ok = PersistentLogger.log_activity(conn)
+        wait_for_tasks_completion()
 
         assert [
                  %ActivityLog{
@@ -90,7 +89,6 @@ defmodule Trento.ActivityLog.PersistentLoggerTest do
                    actor: ^username,
                    metadata: ^expected_metadata
                  }
-                 | _
                ] = Trento.Repo.all(ActivityLog)
       end
     end
@@ -143,12 +141,11 @@ defmodule Trento.ActivityLog.PersistentLoggerTest do
         resource_id = Faker.UUID.v4()
         tag = Faker.Lorem.word()
 
-        conn =
-          conn
-          |> with_token(user_id)
-          |> tag_resource(resource_id, path_resource, tag)
+        conn
+        |> with_token(user_id)
+        |> tag_resource(resource_id, path_resource, tag)
 
-        :ok = PersistentLogger.log_activity(conn)
+        wait_for_tasks_completion()
 
         assert [
                  %ActivityLog{
@@ -160,7 +157,6 @@ defmodule Trento.ActivityLog.PersistentLoggerTest do
                      "added_tag" => ^tag
                    }
                  }
-                 | _
                ] = Trento.Repo.all(ActivityLog)
       end
     end
@@ -180,12 +176,11 @@ defmodule Trento.ActivityLog.PersistentLoggerTest do
           resource_id: resource_id
         } = insert(:tag, resource_type: expected_resource_type)
 
-        conn =
-          conn
-          |> with_token(user_id)
-          |> untag_resource(resource_id, path_resource, tag)
+        conn
+        |> with_token(user_id)
+        |> untag_resource(resource_id, path_resource, tag)
 
-        :ok = PersistentLogger.log_activity(conn)
+        wait_for_tasks_completion()
 
         assert [
                  %ActivityLog{
@@ -197,7 +192,6 @@ defmodule Trento.ActivityLog.PersistentLoggerTest do
                      "removed_tag" => ^tag
                    }
                  }
-                 | _
                ] = Trento.Repo.all(ActivityLog)
       end
     end
