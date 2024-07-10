@@ -84,7 +84,7 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
   defp enrich_cluster_and_hana_architecture_types(attrs, nil) do
     attrs
     |> Map.put("cluster_type", parse_cluster_type(attrs))
-    |> put_hana_architecture
+    |> maybe_put_hana_classic_architecture
   end
 
   defp parse_cluster_type(%{"crmmon" => %{"clones" => nil, "groups" => nil}}),
@@ -133,11 +133,11 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
 
   defp do_detect_cluster_type(_), do: ClusterType.unknown()
 
-  defp put_hana_architecture(%{"cluster_type" => type} = attrs)
+  defp maybe_put_hana_classic_architecture(%{"cluster_type" => type} = attrs)
        when type in [ClusterType.hana_scale_up(), ClusterType.hana_scale_out()],
        do: Map.put(attrs, "hana_architecture_type", HanaArchitectureType.classic())
 
-  defp put_hana_architecture(attrs), do: attrs
+  defp maybe_put_hana_classic_architecture(attrs), do: attrs
 
   defp enrich_cluster_sid(%{"cluster_type" => ClusterType.unknown()} = attrs) do
     attrs
