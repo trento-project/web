@@ -11,22 +11,18 @@ defmodule Trento.Settings.Policy do
   @behaviour Bodyguard.Policy
 
   import Trento.Support.PolicyHelper
+  alias Trento.ActivityLog.Settings, as: ActivityLogSettings
   alias Trento.Settings.ApiKeySettings
+
   alias Trento.Users.User
 
   def authorize(:update_api_key_settings, %User{} = user, ApiKeySettings),
     do: has_global_ability?(user) or has_api_key_settings_change_ability?(user)
 
-  def authorize(action, %User{}, ApiKeySettings)
-      when action in [:settings, :get_api_key_settings],
-      do: true
-
-  def authorize(:update_activity_log_settings, %User{} = user, ApiKeySettings),
+  def authorize(:update_activity_log_settings, %User{} = user, ActivityLogSettings),
     do: has_global_ability?(user) or has_activity_logs_settings_change_ability?(user)
 
-  def authorize(:get_activity_log_settings, %User{}, ApiKeySettings), do: true
-
-  def authorize(_, %User{} = user, _), do: has_global_ability?(user)
+  def authorize(_, _, _), do: true
 
   defp has_api_key_settings_change_ability?(user),
     do: user_has_ability?(user, %{name: "all", resource: "api_key_settings"})

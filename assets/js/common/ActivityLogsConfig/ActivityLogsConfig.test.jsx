@@ -25,7 +25,7 @@ describe('ActivityLogsConfig', () => {
         <ActivityLogsConfig
           retentionTime={time}
           userAbilities={adminAbilities}
-          permitted={abilities}
+          settingsEditPermittedFor={abilities}
         />
       );
 
@@ -41,7 +41,7 @@ describe('ActivityLogsConfig', () => {
       <ActivityLogsConfig
         onEditClick={spy}
         userAbilities={adminAbilities}
-        permitted={abilities}
+        settingsEditPermittedFor={abilities}
       />
     );
 
@@ -50,16 +50,16 @@ describe('ActivityLogsConfig', () => {
     expect(spy).toHaveBeenCalledTimes(1);
   });
 
-  it('should render with a disabled Edit Settings button as the user has not the right permissions', async () => {
+  it('should render with a disabled Edit Settings button as the user does not the right permissions', async () => {
     const user = userEvent.setup();
     const spy = jest.fn();
-    const userWithoutPermission = [{ name: '', resource: '' }];
+    const userWithoutPermission = [];
 
     render(
       <ActivityLogsConfig
         onEditClick={spy}
         userAbilities={userWithoutPermission}
-        permitted={abilities}
+        settingsEditPermittedFor={abilities}
       />
     );
 

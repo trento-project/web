@@ -20,7 +20,7 @@ export default {
       description: 'Users abilities that allow editing activity logs settings',
       control: 'array',
     },
-    permitted: {
+    settingsEditPermittedFor: {
       description: 'Abilities that allow editing activity logs settings',
       control: 'array',
     },
@@ -32,7 +32,7 @@ export const Default = {
     retentionTime: { value: 1, unit: 'month' },
     onEditClick: action('edit clicked'),
     userAbilities: [{ name: 'all', resource: 'all' }],
-    permitted: ['all:activity_logs_settings'],
+    settingsEditPermittedFor: ['all:activity_logs_settings'],
   },
 };
 
@@ -41,7 +41,7 @@ export const WithPlurals = {
     retentionTime: { value: 2, unit: 'month' },
     onEditClick: action('edit clicked'),
     userAbilities: [{ name: 'all', resource: 'all' }],
-    permitted: ['all:activity_logs_settings'],
+    settingsEditPermittedFor: ['all:activity_logs_settings'],
   },
 };
 
@@ -50,14 +50,13 @@ export const WithInvalidValue = {
     retentionTime: { is: 'invalid' },
     onEditClick: action('edit clicked'),
     userAbilities: [{ name: 'all', resource: 'all' }],
-    permitted: ['all:activity_logs_settings'],
+    settingsEditPermittedFor: ['all:activity_logs_settings'],
   },
 };
-export const WithoutPermission = {
+export const EditUnauthorized = {
   args: {
-    retentionTime: { value: 1, unit: 'month' },
-    onEditClick: action('edit clicked'),
-    userAbilities: [{ name: '', resource: '' }],
-    permitted: ['all:activity_logs_settings'],
+    ...Default.args,
+    userAbilities: [],
+    settingsEditPermittedFor: ['all:activity_logs_settings'],
   },
 };

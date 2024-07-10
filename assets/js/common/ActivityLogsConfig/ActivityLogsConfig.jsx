@@ -34,14 +34,17 @@ function ActivityLogsConfig({
   retentionTime,
   onEditClick = noop,
   userAbilities,
-  permitted,
+  settingsEditPermittedFor,
 }) {
   return (
     <div className="container max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 bg-white dark:bg-gray-800 rounded-lg">
       <div>
         <h2 className="text-2xl font-bold inline-block">Activity Logs</h2>
         <span className="float-right">
-          <DisabledGuard userAbilities={userAbilities} permitted={permitted}>
+          <DisabledGuard
+            userAbilities={userAbilities}
+            permitted={settingsEditPermittedFor}
+          >
             <Button type="primary-white-fit" size="small" onClick={onEditClick}>
               Edit Settings
             </Button>

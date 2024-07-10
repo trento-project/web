@@ -4,7 +4,7 @@ defmodule Trento.Repo.Migrations.AddSettingsPermissions do
   def up do
     execute """
     INSERT INTO abilities (id, name, resource, label, inserted_at, updated_at)
-    VALUES (DEFAULT, 'all', 'api_key_settings', 'Permits generation of API keys', NOW(), NOW())
+    VALUES (DEFAULT, 'all', 'api_key_settings', 'Permits all operations in API keys settings', NOW(), NOW())
     """
 
     execute """

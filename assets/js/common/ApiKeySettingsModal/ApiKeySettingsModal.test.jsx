@@ -13,9 +13,6 @@ import {
 import ApiKeySettingsModal from './ApiKeySettingsModal';
 import '@testing-library/jest-dom';
 
-const userAbility = [{ name: 'all', resource: 'all' }];
-const permitted = ['all:api_key_settings'];
-
 describe('ApiKeySettingsModal', () => {
   afterEach(() => {
     jest.restoreAllMocks();
@@ -25,13 +22,7 @@ describe('ApiKeySettingsModal', () => {
     it('render the generation form', async () => {
       const user = userEvent.setup();
       await act(async () => {
-        render(
-          <ApiKeySettingsModal
-            open
-            userAbilities={userAbility}
-            permitted={permitted}
-          />
-        );
+        render(<ApiKeySettingsModal open />);
       });
 
       expect(screen.getByText('Never Expires')).toBeVisible();
@@ -58,37 +49,11 @@ describe('ApiKeySettingsModal', () => {
       expect(screen.getByRole('option', { name: 'days' })).toBeVisible();
     });
 
-    it('render the generation form with disabled generate button when the user does not have the right permissions', async () => {
-      const user = userEvent.setup();
-      const userWithoutPermission = [{ name: '', resource: '' }];
-      await act(async () => {
-        render(
-          <ApiKeySettingsModal
-            open
-            userAbilities={userWithoutPermission}
-            permitted={permitted}
-          />
-        );
-      });
-
-      expect(screen.getByText('Generate')).toBeDisabled();
-      await user.hover(screen.getByText('Generate'));
-      expect(
-        screen.queryByText('You are not authorized for this action')
-      ).toBeVisible();
-    });
-
     it('should show a validation error when quantity is 0 and the form is enabled', async () => {
       const user = userEvent.setup();
 
       await act(async () => {
-        render(
-          <ApiKeySettingsModal
-            open
-            userAbilities={userAbility}
-            permitted={permitted}
-          />
-        );
+        render(<ApiKeySettingsModal open />);
       });
 
       await user.type(screen.getByRole('spinbutton'), '0');
@@ -104,13 +69,7 @@ describe('ApiKeySettingsModal', () => {
       const user = userEvent.setup();
 
       await act(async () => {
-        render(
-          <ApiKeySettingsModal
-            open
-            userAbilities={userAbility}
-            permitted={permitted}
-          />
-        );
+        render(<ApiKeySettingsModal open />);
       });
 
       await user.type(screen.getByRole('spinbutton'), '20');
@@ -127,14 +86,7 @@ describe('ApiKeySettingsModal', () => {
       const onGenerate = jest.fn();
 
       await act(async () => {
-        render(
-          <ApiKeySettingsModal
-            open
-            onGenerate={onGenerate}
-            userAbilities={userAbility}
-            permitted={permitted}
-          />
-        );
+        render(<ApiKeySettingsModal open onGenerate={onGenerate} />);
       });
 
       await user.type(screen.getByRole('spinbutton'), '20');
@@ -167,14 +119,7 @@ describe('ApiKeySettingsModal', () => {
       const onGenerate = jest.fn();
 
       await act(async () => {
-        render(
-          <ApiKeySettingsModal
-            open
-            onGenerate={onGenerate}
-            userAbilities={userAbility}
-            permitted={permitted}
-          />
-        );
+        render(<ApiKeySettingsModal open onGenerate={onGenerate} />);
       });
 
       await user.type(screen.getByRole('spinbutton'), '2');
@@ -210,14 +155,7 @@ describe('ApiKeySettingsModal', () => {
       const onGenerate = jest.fn();
 
       await act(async () => {
-        render(
-          <ApiKeySettingsModal
-            open
-            onGenerate={onGenerate}
-            userAbilities={userAbility}
-            permitted={permitted}
-          />
-        );
+        render(<ApiKeySettingsModal open onGenerate={onGenerate} />);
       });
 
       await user.type(screen.getByRole('spinbutton'), '20');
@@ -250,14 +188,7 @@ describe('ApiKeySettingsModal', () => {
 
     it('should have generate button disabled when the modal has loading prop set to true', async () => {
       await act(async () => {
-        render(
-          <ApiKeySettingsModal
-            open
-            loading
-            userAbilities={userAbility}
-            permitted={permitted}
-          />
-        );
+        render(<ApiKeySettingsModal open loading />);
       });
       expect(screen.getByRole('button', { name: 'Generate' })).toBeDisabled();
     });
@@ -266,13 +197,7 @@ describe('ApiKeySettingsModal', () => {
       const user = userEvent.setup();
 
       await act(async () => {
-        render(
-          <ApiKeySettingsModal
-            open
-            userAbilities={userAbility}
-            permitted={permitted}
-          />
-        );
+        render(<ApiKeySettingsModal open />);
       });
 
       await user.click(screen.getByRole('switch'));
@@ -287,14 +212,7 @@ describe('ApiKeySettingsModal', () => {
       const onGenerate = jest.fn();
 
       await act(async () => {
-        render(
-          <ApiKeySettingsModal
-            open
-            onGenerate={onGenerate}
-            userAbilities={userAbility}
-            permitted={permitted}
-          />
-        );
+        render(<ApiKeySettingsModal open onGenerate={onGenerate} />);
       });
 
       await user.click(screen.getByRole('switch'));
@@ -317,8 +235,6 @@ describe('ApiKeySettingsModal', () => {
             open
             generatedApiKey={apiKey}
             generatedApiKeyExpiration={nowISO}
-            userAbilities={userAbility}
-            permitted={permitted}
           />
         );
       });
@@ -348,8 +264,6 @@ describe('ApiKeySettingsModal', () => {
             open
             generatedApiKey={apiKey}
             generatedApiKeyExpiration={nowISO}
-            userAbilities={userAbility}
-            permitted={permitted}
           />
         );
       });
@@ -376,8 +290,6 @@ describe('ApiKeySettingsModal', () => {
             open
             generatedApiKey={apiKey}
             generatedApiKeyExpiration={nowISO}
-            userAbilities={userAbility}
-            permitted={permitted}
           />
         );
       });
@@ -402,8 +314,6 @@ describe('ApiKeySettingsModal', () => {
             generatedApiKey={apiKey}
             generatedApiKeyExpiration={nowISO}
             onGenerate={onGenerate}
-            userAbilities={userAbility}
-            permitted={permitted}
           />
         );
       });

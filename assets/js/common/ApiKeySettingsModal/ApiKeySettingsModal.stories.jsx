@@ -13,19 +13,19 @@ export default {
         type: 'boolean',
       },
     },
-    userAbilities: {
-      description: 'Users abilities that allow generating a new api key',
-      control: 'array',
-    },
-    permitted: {
-      description: 'Abilities that allow generating a new api key in the modal',
-      control: 'array',
-    },
     loading: {
       description: 'Whether the settings are loading or submitting',
       control: {
         type: 'boolean',
       },
+    },
+    onGenerate: {
+      action: 'Generate key',
+      description: 'New key is generated',
+    },
+    onClose: {
+      action: 'Cancel key',
+      description: 'Closes the modal',
     },
     generatedApiKeyExpiration: {
       description:
@@ -33,10 +33,6 @@ export default {
     },
     generatedApiKey: {
       description: 'The new generated api key',
-    },
-    onGenerate: {
-      action: 'Generate key',
-      description: 'New key is generated',
     },
   },
   args: {
@@ -79,25 +75,6 @@ export const OnlyGenerationForm = (args) => {
         {...args}
         generatedApiKeyExpiration={null}
         generatedApiKey={null}
-        onClose={handleClose}
-      />
-    </>
-  );
-};
-
-export const WithoutPermission = (args) => {
-  const [{ open }, updateArgs] = useArgs();
-  const handleClose = () => updateArgs({ open: !open });
-
-  return (
-    <>
-      <button type="button" onClick={() => handleClose()}>
-        {' '}
-        Toggle modal{' '}
-      </button>
-      <ApiKeySettingsModal
-        {...args}
-        userAbilities={[{ name: '', resource: '' }]}
         onClose={handleClose}
       />
     </>

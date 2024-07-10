@@ -206,7 +206,10 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
 
       conn =
         put(conn, "/api/v1/settings/activity_log", %{
-          "retention_time" => %{"unit" => "month", "value" => 3}
+          retention_time: %{
+            value: 42,
+            unit: :year
+          }
         })
 
       conn

@@ -115,7 +115,7 @@ defmodule TrentoWeb.V1.SUMACredentialsController do
     end
   end
 
-  def get_policy_resource(_), do: Trento.SoftwareUpdates
+  def get_policy_resource(_), do: Trento.SoftwareUpdates.Settings
 
   defp decode_body(body) when is_struct(body), do: Map.from_struct(body)
   defp decode_body(body), do: body

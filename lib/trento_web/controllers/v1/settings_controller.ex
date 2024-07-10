@@ -154,5 +154,14 @@ defmodule TrentoWeb.V1.SettingsController do
     end
   end
 
-  def get_policy_resource(_), do: Trento.Settings.ApiKeySettings
+  # here we need to pass the : :get_api_key_settings,,
+  def get_policy_resource(conn) do
+    case Phoenix.Controller.action_name(conn) do
+      :get_api_key_settings -> Trento.Settings.ApiKeySettings
+      :update_api_key_settings -> Trento.Settings.ApiKeySettings
+      :get_activity_log_settings -> Trento.ActivityLog.Settings
+      :update_activity_log_settings -> Trento.ActivityLog.Settings
+      _ -> nil
+    end
+  end
 end

@@ -9,19 +9,16 @@ defmodule Trento.SoftwareUpdates.Policy do
   @behaviour Bodyguard.Policy
 
   import Trento.Support.PolicyHelper
-  alias Trento.SoftwareUpdates
+  alias Trento.SoftwareUpdates.Settings
+
   alias Trento.Users.User
 
-  def authorize(action, %User{} = user, SoftwareUpdates)
+  def authorize(action, %User{} = user, Settings)
       when action in [:create, :update, :delete] do
     has_global_ability?(user) or has_suma_settings_change_ability?(user)
   end
 
-  def authorize(action, %User{}, SoftwareUpdates)
-      when action in [:show, :test],
-      do: true
-
-  def authorize(_, %User{} = user, _), do: has_global_ability?(user)
+  def authorize(_, _, _), do: true
 
   defp has_suma_settings_change_ability?(user),
     do: user_has_ability?(user, %{name: "all", resource: "suma_settings"})

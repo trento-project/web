@@ -302,7 +302,7 @@ function SettingsPage() {
             >
               <SuseManagerConfig
                 userAbilities={abilities}
-                sumaSettingsPermittedFor={sumaSettingsPermittedFor}
+                configEditPermittedFor={sumaSettingsPermittedFor}
                 url={settings.url}
                 username={settings.username}
                 certUploadDate={settings.ca_uploaded_at}
@@ -363,7 +363,7 @@ function SettingsPage() {
         >
           <ActivityLogsConfig
             userAbilities={abilities}
-            permitted={activityLogsSettingsPermittedFor}
+            settingsEditPermittedFor={activityLogsSettingsPermittedFor}
             retentionTime={activityLogsSettings.retention_time}
             onEditClick={() => dispatch(setEditingActivityLogsSettings(true))}
           />

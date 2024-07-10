@@ -14,7 +14,7 @@ describe('SuseManagerConfig', () => {
     render(
       <SuseManagerConfig
         userAbilities={adminUser}
-        permitted={sumaSettingsPermittedFor}
+        configEditPermittedFor={sumaSettingsPermittedFor}
       />
     );
 
@@ -39,7 +39,7 @@ describe('SuseManagerConfig', () => {
         certUploadDate={certUploadDate}
         onEditClick={onEditClick}
         userAbilities={adminUser}
-        permitted={sumaSettingsPermittedFor}
+        configEditPermittedFor={sumaSettingsPermittedFor}
       />
     );
 
@@ -66,7 +66,7 @@ describe('SuseManagerConfig', () => {
         testConnectionEnabled
         onTestConnection={onTestConnection}
         userAbilities={adminUser}
-        permitted={sumaSettingsPermittedFor}
+        configEditPermittedFor={sumaSettingsPermittedFor}
       />
     );
     expect(screen.getByLabelText('test-suma-connection')).toBeEnabled();
@@ -77,14 +77,14 @@ describe('SuseManagerConfig', () => {
   });
 
   it('renders default state without ability to edit or clear settings', async () => {
-    const userWithoutPermission = [{ name: '', resource: '' }];
+    const userWithoutPermission = [];
     const user = userEvent.setup();
     const onEditClick = jest.fn();
     const onClearClick = jest.fn();
     render(
       <SuseManagerConfig
         userAbilities={userWithoutPermission}
-        permitted={sumaSettingsPermittedFor}
+        configEditPermittedFor={sumaSettingsPermittedFor}
         onEditClick={onEditClick}
         onClearClick={onClearClick}
       />

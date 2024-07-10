@@ -28,7 +28,7 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
       |> assert_schema("SUMACredentials", api_spec)
     end
 
-    test "should return 403 if no user settings have been saved", %{conn: conn} do
+    test "should return forbidden if no user settings have been saved", %{conn: conn} do
       api_spec = ApiSpec.spec()
 
       conn
@@ -484,7 +484,7 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
   end
 
   describe "forbidden response" do
-    test "should return 403 when user tries to create settings without right abilities", %{
+    test "should return forbidden when user tries to create settings without right abilities", %{
       conn: conn,
       api_spec: api_spec
     } do
@@ -508,7 +508,7 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
       |> assert_schema("Forbidden", api_spec)
     end
 
-    test "should return 403 when user tries to update settings without right abilities", %{
+    test "should return forbidden when user tries to update settings without right abilities", %{
       conn: conn,
       api_spec: api_spec
     } do
@@ -529,7 +529,7 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
     end
   end
 
-  test "should return 403 when user tries to delete settings without right abilities", %{
+  test "should return forbidden when user tries to delete settings without right abilities", %{
     conn: conn,
     api_spec: api_spec
   } do
