@@ -6,8 +6,11 @@ TestCommandedApp.html
 TestEventHandlerWithFailureContext.html
 Trento.Abilities.UsersAbilities.html
 Trento.Abilities.html
+Trento.ActivityLog.ActivityCatalog.html
 Trento.ActivityLog.ActivityLog.html
 Trento.ActivityLog.ActivityLogger.html
+Trento.ActivityLog.Logger.Parser.PhoenixConnParser.html
+Trento.ActivityLog.Parser.ActivityParser.html
 Trento.ActivityLog.RetentionPeriodUnit.html
 Trento.ActivityLog.RetentionTime.html
 Trento.ActivityLog.Settings.html
@@ -257,7 +260,6 @@ Trento.Hosts.ValueObjects.SaptuneStaging.html
 Trento.Hosts.ValueObjects.SaptuneStatus.html
 Trento.Hosts.ValueObjects.SlesSubscription.html
 Trento.Hosts.html
-Trento.Infrastructure.ActivityLog.Logger.NoopLogger.html
 Trento.Infrastructure.Alerting.Alerting.html
 Trento.Infrastructure.Checks.AMQP.Consumer.html
 Trento.Infrastructure.Checks.AMQP.Processor.html
@@ -489,8 +491,8 @@ dist/merriweather-latin-ext-300-normal-K6L27CZ5.woff2
 dist/merriweather-vietnamese-300-italic-EHHNZPUO.woff2
 dist/merriweather-vietnamese-300-normal-U376L4Z4.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-E879956F.js
-dist/sidebar_items-48B95A9B.js
+dist/search_data-6DC61CC5.js
+dist/sidebar_items-5DA6146F.js
 environment_variables.html
 hack_on_the_trento.html
 index.html

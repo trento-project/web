@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-43PMFBC7.js"></script>
-    <script src="dist/sidebar_items-48B95A9B.js"></script>
+    <script src="dist/sidebar_items-5DA6146F.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -22,7 +22,7 @@
 
 
   </head>
-  <body data-type="modules" class="page-behaviour">
+  <body data-type="modules" class="page-module">
     <script>
 
       try {
@@ -136,7 +136,7 @@ GUIDES
       <span class="sr-only">View Source</span>
     </a>
 
-  <span translate="no">Trento.ActivityLog.ActivityLogger</span> <small>behaviour</small>
+  <span translate="no">Trento.ActivityLog.ActivityLogger</span> 
   <small class="app-vsn" translate="no">(Trento Web v2.3.1)</small>
 
 </h1>
@@ -154,20 +154,6 @@ GUIDES
       </a>
       <span class="text">Summary</span>
     </h1>
-<div class="summary-callbacks summary">
-  <h2>
-    <a href="#callbacks">Callbacks</a>
-  </h2>
-
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#c:log_activity/1" translate="no">log_activity(context)</a>
-
-      </div>
-
-    </div>
-
-</div>
 <div class="summary-functions summary">
   <h2>
     <a href="#functions">Functions</a>
@@ -175,7 +161,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#log_activity/1" translate="no">log_activity(context)</a>
+        <a href="#log_activity/1" translate="no">log_activity(activity_context)</a>
 
       </div>
 
@@ -185,46 +171,6 @@ GUIDES
 
   </section>
 
-
-  <section id="callbacks" class="details-list">
-    <h1 class="section-heading">
-      <a class="hover-link" href="#callbacks">
-        <i class="ri-link-m" aria-hidden="true"></i>
-      </a>
-      <span class="text">Callbacks</span>
-    </h1>
-    <div class="callbacks-list">
-<section class="detail" id="c:log_activity/1">
-
-  <div class="detail-header">
-    <a href="#c:log_activity/1" class="detail-link" title="Link to this callback">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this callback</span>
-    </a>
-    <h1 class="signature" translate="no">log_activity(context)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/activity_logger.ex#L6" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-      <div class="specs">
-
-          <pre translate="no"><span class="attribute">@callback</span> log_activity(context :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()) :: :ok</pre>
-
-      </div>
-
-
-  </section>
-</section>
-
-    </div>
-  </section>
 
   <section id="functions" class="details-list">
     <h1 class="section-heading">
@@ -241,9 +187,9 @@ GUIDES
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">log_activity(context)</h1>
+    <h1 class="signature" translate="no">log_activity(activity_context)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/activity_logger.ex#L8" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/activity_logger.ex#L13" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
