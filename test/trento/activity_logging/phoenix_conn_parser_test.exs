@@ -13,7 +13,7 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
   describe "activity detection" do
     test "should not be able to detect an activity from a connection without controller/action info",
          %{conn: conn} do
-      assert nil == PhoenixConnParser.detect_activity(conn)
+      assert {:error, :cannot_detect_activity} == PhoenixConnParser.detect_activity(conn)
     end
 
     test "should detect activity from a connection with controller/action info", %{conn: conn} do
