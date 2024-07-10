@@ -4,13 +4,14 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
   """
 
   @required_fields [:dc, :provider, :id, :cluster_type]
-  @required_fields_hana [:sid]
+  @required_fields_hana [:sid, :hana_architecture_type]
   @required_fields_ascs_ers [:additional_sids]
 
   use Trento.Support.Type
 
   require Trento.Enums.Provider, as: Provider
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
+  require Trento.Clusters.Enums.HanaArchitectureType, as: HanaArchitectureType
 
   alias Trento.Discovery.Payloads.Cluster.{
     CibDiscoveryPayload,
@@ -28,6 +29,7 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
     field :id, :string
     field :name, :string
     field :cluster_type, Ecto.Enum, values: ClusterType.values()
+    field :hana_architecture_type, Ecto.Enum, values: HanaArchitectureType.values()
     field :sid, :string
     field :additional_sids, {:array, :string}
 
@@ -37,9 +39,11 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
   end
 
   def changeset(cluster, attrs) do
+    glob_topology = parse_hana_glob_topology(attrs)
+
     enriched_attributes =
       attrs
-      |> enrich_cluster_type
+      |> enrich_cluster_and_hana_architecture_types(glob_topology)
       |> enrich_cluster_sid
 
     cluster
@@ -51,19 +55,36 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
     |> maybe_validate_required_fields(enriched_attributes)
   end
 
-  defp enrich_cluster_type(attrs),
-    do: Map.put(attrs, "cluster_type", parse_cluster_type(attrs))
+  defp parse_hana_glob_topology(%{
+         "cib" => %{
+           "configuration" => %{"crm_config" => %{"cluster_properties" => cluster_properties}}
+         }
+       }) do
+    Enum.find_value(cluster_properties, nil, fn
+      %{"name" => name, "value" => value} ->
+        if String.ends_with?(name, "_glob_topology"), do: value
 
-  defp enrich_cluster_sid(%{"cluster_type" => ClusterType.unknown()} = attrs) do
-    attrs
-    |> Map.put("sid", nil)
-    |> Map.put("additional_sids", [])
+      _ ->
+        nil
+    end)
   end
 
-  defp enrich_cluster_sid(attrs) do
+  defp enrich_cluster_and_hana_architecture_types(attrs, "ScaleUp") do
     attrs
-    |> Map.put("sid", parse_cluster_sid(attrs))
-    |> Map.put("additional_sids", parse_cluster_additional_sids(attrs))
+    |> Map.put("cluster_type", ClusterType.hana_scale_up())
+    |> Map.put("hana_architecture_type", HanaArchitectureType.angi())
+  end
+
+  defp enrich_cluster_and_hana_architecture_types(attrs, "ScaleOut") do
+    attrs
+    |> Map.put("cluster_type", ClusterType.hana_scale_out())
+    |> Map.put("hana_architecture_type", HanaArchitectureType.angi())
+  end
+
+  defp enrich_cluster_and_hana_architecture_types(attrs, nil) do
+    attrs
+    |> Map.put("cluster_type", parse_cluster_type(attrs))
+    |> maybe_put_hana_classic_architecture
   end
 
   defp parse_cluster_type(%{"crmmon" => %{"clones" => nil, "groups" => nil}}),
@@ -111,6 +132,24 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
     do: ClusterType.ascs_ers()
 
   defp do_detect_cluster_type(_), do: ClusterType.unknown()
+
+  defp maybe_put_hana_classic_architecture(%{"cluster_type" => type} = attrs)
+       when type in [ClusterType.hana_scale_up(), ClusterType.hana_scale_out()],
+       do: Map.put(attrs, "hana_architecture_type", HanaArchitectureType.classic())
+
+  defp maybe_put_hana_classic_architecture(attrs), do: attrs
+
+  defp enrich_cluster_sid(%{"cluster_type" => ClusterType.unknown()} = attrs) do
+    attrs
+    |> Map.put("sid", nil)
+    |> Map.put("additional_sids", [])
+  end
+
+  defp enrich_cluster_sid(attrs) do
+    attrs
+    |> Map.put("sid", parse_cluster_sid(attrs))
+    |> Map.put("additional_sids", parse_cluster_additional_sids(attrs))
+  end
 
   defp parse_cluster_sid(%{
          "cib" => %{"configuration" => %{"resources" => %{"clones" => nil}}}

@@ -8,6 +8,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
 
   require Trento.Enums.Provider, as: Provider
 
+  require Trento.Clusters.Enums.HanaArchitectureType, as: HanaArchitectureType
+
   alias Trento.Discovery.Policies.ClusterPolicy
 
   alias Trento.Clusters.Commands.{DeregisterClusterHost, RegisterClusterHost}
@@ -251,7 +253,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     }
                   ],
                   system_replication_mode: "sync",
-                  system_replication_operation_mode: "logreplay"
+                  system_replication_operation_mode: "logreplay",
+                  architecture_type: HanaArchitectureType.classic()
                 },
                 host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
                 name: "hana_cluster",
@@ -500,7 +503,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     }
                   ],
                   system_replication_mode: "sync",
-                  system_replication_operation_mode: "logreplay"
+                  system_replication_operation_mode: "logreplay",
+                  architecture_type: HanaArchitectureType.classic()
                 },
                 host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
                 name: "hana_cluster",
@@ -1388,7 +1392,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                   sr_health_state: "4",
                   stopped_resources: [],
                   system_replication_mode: "sync",
-                  system_replication_operation_mode: "logreplay"
+                  system_replication_operation_mode: "logreplay",
+                  architecture_type: HanaArchitectureType.classic()
                 },
                 discovered_health: :passing,
                 host_id: "a3279fd0-0443-1234-9354-2d7909fd6bc6",
@@ -1556,7 +1561,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     }
                   ],
                   system_replication_mode: "sync",
-                  system_replication_operation_mode: "logreplay"
+                  system_replication_operation_mode: "logreplay",
+                  architecture_type: HanaArchitectureType.classic()
                 },
                 discovered_health: :critical,
                 host_id: "1dc79771-0a96-1234-b5b6-cd4d0aef6acc",
@@ -1805,7 +1811,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     }
                   ],
                   system_replication_mode: "sync",
-                  system_replication_operation_mode: "logreplay"
+                  system_replication_operation_mode: "logreplay",
+                  architecture_type: HanaArchitectureType.classic()
                 },
                 host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
                 name: nil,
@@ -1940,7 +1947,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                   sr_health_state: "4",
                   stopped_resources: [],
                   system_replication_mode: "sync",
-                  system_replication_operation_mode: "logreplay"
+                  system_replication_operation_mode: "logreplay",
+                  architecture_type: HanaArchitectureType.classic()
                 },
                 host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
                 name: "hana_cluster",
@@ -1999,6 +2007,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                   discovered_health: :passing,
                   cib_last_written: "Thu Feb 23 15:59:56 2023",
                   details: %HanaClusterDetails{
+                    architecture_type: HanaArchitectureType.classic(),
                     system_replication_mode: "syncmem",
                     system_replication_operation_mode: "delta_datashipping",
                     secondary_sync_state: "SOK",
@@ -2271,6 +2280,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                   discovered_health: :passing,
                   cib_last_written: "Tue Jan 23 12:49:07 2024",
                   details: %HanaClusterDetails{
+                    architecture_type: HanaArchitectureType.classic(),
                     system_replication_mode: "sync",
                     system_replication_operation_mode: "logreplay",
                     secondary_sync_state: "SOK",
@@ -2507,6 +2517,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                   discovered_health: :passing,
                   cib_last_written: "Thu Feb 23 15:59:56 2023",
                   details: %HanaClusterDetails{
+                    architecture_type: HanaArchitectureType.classic(),
                     system_replication_mode: "syncmem",
                     system_replication_operation_mode: "delta_datashipping",
                     secondary_sync_state: "SOK",
@@ -3012,7 +3023,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       }
                     ],
                     system_replication_mode: "sync",
-                    system_replication_operation_mode: "logreplay"
+                    system_replication_operation_mode: "logreplay",
+                    architecture_type: HanaArchitectureType.classic()
                   },
                   discovered_health: :passing,
                   host_id: "6eabc497-6067-4de9-b583-e4c63334ff64",
@@ -3025,6 +3037,270 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 }
               ]} ==
                "hana_cluster_discovery_hana_scale_out_no_srhooks"
+               |> load_discovery_event_fixture()
+               |> ClusterPolicy.handle(nil)
+    end
+  end
+
+  describe "Angi architecture" do
+    test "should return the expected commands when a ha_cluster_discovery payload with Angi scale up is received" do
+      assert {
+               :ok,
+               [
+                 %RegisterClusterHost{
+                   additional_sids: [],
+                   cib_last_written: "Mon Jun 10 13:03:57 2024",
+                   cluster_id: "34a94290-2236-5e4d-8def-05beb32d14d4",
+                   designated_controller: true,
+                   details: %HanaClusterDetails{
+                     architecture_type: HanaArchitectureType.angi(),
+                     fencing_type: "external/sbd",
+                     maintenance_mode: false,
+                     nodes: [
+                       %HanaClusterNode{
+                         attributes: %{
+                           "hana_hn9_clone_state" => "PROMOTED",
+                           "hana_hn9_roles" => "master1:master:worker:master",
+                           "hana_hn9_site" => "WDF",
+                           "hana_hn9_srah" => "-",
+                           "hana_hn9_version" => "2.00.073.00",
+                           "hana_hn9_vhost" => "vmhana01",
+                           "master-rsc_SAPHanaCon_HN9_HDB09" => "150"
+                         },
+                         hana_status: "Primary",
+                         indexserver_actual_role: "master",
+                         name: "vmhana01",
+                         nameserver_actual_role: "master",
+                         resources: [
+                           %ClusterResource{
+                             id: "stonith-sbd",
+                             type: "stonith:external/sbd",
+                             role: "Started",
+                             status: "Active",
+                             fail_count: 0,
+                             managed: true
+                           },
+                           %ClusterResource{
+                             id: "rsc_ip_HN9_HDB09",
+                             type: "ocf::heartbeat:IPaddr2",
+                             role: "Started",
+                             status: "Active",
+                             fail_count: 0,
+                             managed: true
+                           },
+                           %ClusterResource{
+                             id: "rsc_SAPHanaTop_HN9_HDB09",
+                             type: "ocf::suse:SAPHanaTopology",
+                             role: "Started",
+                             status: "Active",
+                             fail_count: 0,
+                             managed: true
+                           },
+                           %ClusterResource{
+                             id: "rsc_SAPHanaCon_HN9_HDB09",
+                             type: "ocf::suse:SAPHanaController",
+                             role: "Master",
+                             status: "Active",
+                             fail_count: 0,
+                             managed: true
+                           }
+                         ],
+                         site: "WDF",
+                         status: "Online",
+                         virtual_ip: "10.70.1.13"
+                       },
+                       %HanaClusterNode{
+                         attributes: %{
+                           "hana_hn9_clone_state" => "DEMOTED",
+                           "hana_hn9_roles" => "master1:master:worker:master",
+                           "hana_hn9_site" => "ROT",
+                           "hana_hn9_srah" => "-",
+                           "hana_hn9_version" => "2.00.073.00",
+                           "hana_hn9_vhost" => "vmhana02",
+                           "master-rsc_SAPHanaCon_HN9_HDB09" => "100"
+                         },
+                         hana_status: "Secondary",
+                         indexserver_actual_role: "master",
+                         name: "vmhana02",
+                         nameserver_actual_role: "master",
+                         resources: [
+                           %ClusterResource{
+                             fail_count: 0,
+                             id: "rsc_SAPHanaTop_HN9_HDB09",
+                             managed: true,
+                             role: "Started",
+                             status: "Active",
+                             type: "ocf::suse:SAPHanaTopology"
+                           },
+                           %ClusterResource{
+                             fail_count: 0,
+                             id: "rsc_SAPHanaCon_HN9_HDB09",
+                             managed: true,
+                             role: "Slave",
+                             status: "Active",
+                             type: "ocf::suse:SAPHanaController"
+                           }
+                         ],
+                         site: "ROT",
+                         status: "Online",
+                         virtual_ip: nil
+                       }
+                     ],
+                     sbd_devices: [%SbdDevice{device: "/dev/vdb", status: "healthy"}],
+                     secondary_sync_state: "SOK",
+                     sites: [
+                       %HanaClusterSite{name: "WDF", sr_health_state: "4", state: "Primary"},
+                       %HanaClusterSite{name: "ROT", sr_health_state: "4", state: "Secondary"}
+                     ],
+                     sr_health_state: "4",
+                     stopped_resources: [],
+                     system_replication_mode: "sync",
+                     system_replication_operation_mode: "logreplay"
+                   },
+                   discovered_health: :passing,
+                   host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
+                   hosts_number: 2,
+                   name: "hana_cluster",
+                   provider: :azure,
+                   resources_number: 6,
+                   sid: "HN9",
+                   type: :hana_scale_up
+                 }
+               ]
+             } ==
+               "ha_cluster_discovery_angi_hana_scale_up"
+               |> load_discovery_event_fixture()
+               |> ClusterPolicy.handle(nil)
+    end
+
+    test "should return the expected commands when a ha_cluster_discovery payload with Angi scale up with failover is received" do
+      assert {
+               :ok,
+               [
+                 %RegisterClusterHost{
+                   additional_sids: [],
+                   cib_last_written: "Mon Jun 10 13:06:54 2024",
+                   cluster_id: "34a94290-2236-5e4d-8def-05beb32d14d4",
+                   designated_controller: true,
+                   details: %HanaClusterDetails{
+                     architecture_type: HanaArchitectureType.angi(),
+                     fencing_type: "external/sbd",
+                     maintenance_mode: false,
+                     nodes: [
+                       %HanaClusterNode{
+                         attributes: %{
+                           "hana_hn9_clone_state" => "UNDEFINED",
+                           "hana_hn9_roles" => "master1::worker:",
+                           "hana_hn9_site" => "WDF",
+                           "hana_hn9_srah" => "-",
+                           "hana_hn9_version" => "2.00.073.00",
+                           "hana_hn9_vhost" => "vmhana01",
+                           "master-rsc_SAPHanaCon_HN9_HDB09" => "-9000"
+                         },
+                         hana_status: "Failed",
+                         indexserver_actual_role: nil,
+                         name: "vmhana01",
+                         nameserver_actual_role: nil,
+                         resources: [
+                           %ClusterResource{
+                             fail_count: 0,
+                             id: "stonith-sbd",
+                             managed: true,
+                             role: "Started",
+                             status: "Active",
+                             type: "stonith:external/sbd"
+                           },
+                           %ClusterResource{
+                             fail_count: 0,
+                             id: "rsc_SAPHanaTop_HN9_HDB09",
+                             managed: true,
+                             role: "Started",
+                             status: "Active",
+                             type: "ocf::suse:SAPHanaTopology"
+                           }
+                         ],
+                         site: "WDF",
+                         status: "Online",
+                         virtual_ip: nil
+                       },
+                       %HanaClusterNode{
+                         attributes: %{
+                           "hana_hn9_clone_state" => "PROMOTED",
+                           "hana_hn9_roles" => "master1:master:worker:master",
+                           "hana_hn9_site" => "ROT",
+                           "hana_hn9_srah" => "-",
+                           "hana_hn9_version" => "2.00.073.00",
+                           "hana_hn9_vhost" => "vmhana02",
+                           "master-rsc_SAPHanaCon_HN9_HDB09" => "150",
+                           "hana_hn9_sra" => "-"
+                         },
+                         hana_status: "Primary",
+                         indexserver_actual_role: "master",
+                         name: "vmhana02",
+                         nameserver_actual_role: "master",
+                         resources: [
+                           %ClusterResource{
+                             id: "rsc_ip_HN9_HDB09",
+                             type: "ocf::heartbeat:IPaddr2",
+                             role: "Started",
+                             status: "Active",
+                             fail_count: 0,
+                             managed: true
+                           },
+                           %ClusterResource{
+                             fail_count: 0,
+                             id: "rsc_SAPHanaTop_HN9_HDB09",
+                             managed: true,
+                             role: "Started",
+                             status: "Active",
+                             type: "ocf::suse:SAPHanaTopology"
+                           },
+                           %ClusterResource{
+                             id: "rsc_SAPHanaCon_HN9_HDB09",
+                             type: "ocf::suse:SAPHanaController",
+                             role: "Master",
+                             status: "Active",
+                             fail_count: 0,
+                             managed: true
+                           }
+                         ],
+                         site: "ROT",
+                         status: "Online",
+                         virtual_ip: "10.70.1.13"
+                       }
+                     ],
+                     sbd_devices: [%SbdDevice{device: "/dev/vdb", status: "healthy"}],
+                     secondary_sync_state: "SFAIL",
+                     sites: [
+                       %HanaClusterSite{name: "ROT", sr_health_state: "4", state: "Primary"},
+                       %HanaClusterSite{name: "WDF", sr_health_state: "1", state: "Failed"}
+                     ],
+                     sr_health_state: "Unknown",
+                     stopped_resources: [
+                       %ClusterResource{
+                         id: "rsc_SAPHanaCon_HN9_HDB09",
+                         type: "ocf::suse:SAPHanaController",
+                         role: "Stopped",
+                         status: nil,
+                         fail_count: nil,
+                         managed: nil
+                       }
+                     ],
+                     system_replication_mode: "sync",
+                     system_replication_operation_mode: "logreplay"
+                   },
+                   discovered_health: :critical,
+                   host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
+                   hosts_number: 2,
+                   name: "hana_cluster",
+                   provider: :azure,
+                   resources_number: 6,
+                   sid: "HN9",
+                   type: :hana_scale_up
+                 }
+               ]
+             } ==
+               "ha_cluster_discovery_angi_hana_scale_up_failover"
                |> load_discovery_event_fixture()
                |> ClusterPolicy.handle(nil)
     end

@@ -5,6 +5,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
 
   require Trento.Enums.Provider, as: Provider
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
+  require Trento.Clusters.Enums.HanaArchitectureType, as: HanaArchitectureType
   require Trento.Enums.Health, as: Health
   require Trento.Clusters.Enums.AscsErsClusterRole, as: AscsErsClusterRole
 
@@ -126,6 +127,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
            crmmon: crmmon,
            sbd: sbd,
            cluster_type: ClusterType.hana_scale_up(),
+           hana_architecture_type: HanaArchitectureType.classic(),
            sid: sid,
            cib: cib
          } = payload
@@ -133,6 +135,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
     nodes = parse_cluster_nodes(payload, sid)
 
     %{
+      architecture_type: HanaArchitectureType.classic(),
       system_replication_mode: parse_hana_scale_up_system_replication_mode(nodes, sid),
       system_replication_operation_mode:
         parse_hana_scale_up_system_replication_operation_mode(nodes, sid),
@@ -153,10 +156,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
            cib: cib,
            sbd: sbd,
            cluster_type: ClusterType.hana_scale_out(),
+           hana_architecture_type: HanaArchitectureType.classic(),
            sid: sid
          } = payload
        ) do
     %{
+      architecture_type: HanaArchitectureType.classic(),
       system_replication_mode: parse_hana_scale_out_system_replication_mode(cib, sid),
       system_replication_operation_mode:
         parse_hana_scale_out_system_replication_operation_mode(cib, sid),
@@ -167,7 +172,34 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
       stopped_resources: parse_cluster_stopped_resources(crmmon),
       nodes: parse_cluster_nodes(payload, sid),
       sbd_devices: parse_sbd_devices(sbd),
-      sites: parse_hana_scale_out_sites(cib, sid)
+      sites: parse_hana_scale_out_sites(HanaArchitectureType.classic(), cib, sid)
+    }
+  end
+
+  # angi architecture follows a really similar configuration to the scale out one.
+  # That's why some functions are shared with classic scale out setup
+  defp parse_cluster_details(
+         %{
+           crmmon: crmmon,
+           cib: cib,
+           sbd: sbd,
+           hana_architecture_type: HanaArchitectureType.angi(),
+           sid: sid
+         } = payload
+       ) do
+    %{
+      architecture_type: HanaArchitectureType.angi(),
+      system_replication_mode: parse_hana_angi_system_replication_mode(cib, sid),
+      system_replication_operation_mode:
+        parse_hana_angi_system_replication_operation_mode(cib, sid),
+      secondary_sync_state: parse_hana_angi_secondary_sync_state(cib, sid),
+      sr_health_state: parse_hana_scale_out_sr_health_state(cib, sid),
+      fencing_type: parse_cluster_fencing_type(crmmon, sbd),
+      maintenance_mode: parse_maintenance_mode(cib),
+      stopped_resources: parse_cluster_stopped_resources(crmmon),
+      nodes: parse_cluster_nodes(payload, sid),
+      sbd_devices: parse_sbd_devices(sbd),
+      sites: parse_hana_scale_out_sites(HanaArchitectureType.angi(), cib, sid)
     }
   end
 
@@ -197,6 +229,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
          %{
            provider: provider,
            cluster_type: cluster_type,
+           hana_architecture_type: hana_architecture_type,
            cib: %{
              configuration: %{
                resources: resources,
@@ -240,7 +273,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
         attributes
         |> Map.get("hana_#{String.downcase(sid)}_roles", "")
         |> String.split(":")
-        |> parse_nodes_actual_roles(cluster_type)
+        |> parse_nodes_actual_roles(cluster_type, hana_architecture_type)
 
       node = %{
         name: name,
@@ -255,21 +288,26 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
       }
 
       hana_status =
-        case cluster_type do
-          ClusterType.hana_scale_up() ->
+        case [cluster_type, hana_architecture_type] do
+          [ClusterType.hana_scale_up(), HanaArchitectureType.classic()] ->
             parse_hana_scale_up_status(node, sid)
 
-          ClusterType.hana_scale_out() ->
-            parse_hana_scale_out_status(cluster_properties, site, sid)
+          [_, _] ->
+            parse_hana_scale_out_status(hana_architecture_type, cluster_properties, site, sid)
         end
 
       %{node | hana_status: hana_status}
     end)
   end
 
+  # parse_nodes_actual_roles parses each node roles depending on the cluster and architecture type
+  # 1st param is the roles array, 2nd param is the cluster type and the 3rd the hana architecture
+  # In classic scale out, the roles string has 6 values: 4:P:master1:master:worker:master
+  # In scale out and angi architecture, the roles have only 4 values: "master1:master:worker:master"
   defp parse_nodes_actual_roles(
          [_, _, _, nameserver_actual_role, _, indexserver_actual_role],
-         ClusterType.hana_scale_up()
+         ClusterType.hana_scale_up(),
+         HanaArchitectureType.classic()
        ) do
     %{
       indexserver_actual_role: indexserver_actual_role,
@@ -279,7 +317,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
 
   defp parse_nodes_actual_roles(
          [_, nameserver_actual_role, _, indexserver_actual_role],
-         ClusterType.hana_scale_out()
+         _,
+         _
        ) do
     %{
       indexserver_actual_role: indexserver_actual_role,
@@ -287,7 +326,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
     }
   end
 
-  defp parse_nodes_actual_roles(_, _) do
+  defp parse_nodes_actual_roles(_, _, _) do
     %{indexserver_actual_role: "", nameserver_actual_role: ""}
   end
 
@@ -323,6 +362,19 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
     )
   end
 
+  defp parse_hana_angi_system_replication_mode(
+         %{configuration: %{crm_config: %{cluster_properties: cluster_properties}}},
+         sid
+       ) do
+    primary_site = get_primary_site(cluster_properties, sid)
+
+    parse_crm_cluster_property(
+      cluster_properties,
+      "hana_#{String.downcase(sid)}_site_srMode_#{primary_site}",
+      @default_hana_scale_out_replication_mode
+    )
+  end
+
   defp parse_hana_scale_out_system_replication_operation_mode(
          %{configuration: %{crm_config: %{cluster_properties: cluster_properties}}},
          sid
@@ -330,6 +382,19 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
     parse_crm_cluster_property(
       cluster_properties,
       "hana_#{String.downcase(sid)}_glob_op_mode",
+      @default_hana_scale_out_operation_mode
+    )
+  end
+
+  defp parse_hana_angi_system_replication_operation_mode(
+         %{configuration: %{crm_config: %{cluster_properties: cluster_properties}}},
+         sid
+       ) do
+    primary_site = get_primary_site(cluster_properties, sid)
+
+    parse_crm_cluster_property(
+      cluster_properties,
+      "hana_#{String.downcase(sid)}_site_opMode_#{primary_site}",
       @default_hana_scale_out_operation_mode
     )
   end
@@ -364,6 +429,19 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
     )
   end
 
+  defp parse_hana_angi_secondary_sync_state(
+         %{configuration: %{crm_config: %{cluster_properties: cluster_properties}}},
+         sid
+       ) do
+    secondary_site = get_secondary_site(cluster_properties, sid)
+
+    parse_crm_cluster_property(
+      cluster_properties,
+      "hana_#{String.downcase(sid)}_site_srPoll_#{secondary_site}",
+      "Unknown"
+    )
+  end
+
   defp parse_hana_scale_up_sites(nodes, sid) do
     nodes
     |> Enum.filter(fn %{site: site} -> site != "" end)
@@ -381,24 +459,20 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
   end
 
   defp parse_hana_scale_out_sites(
+         architecture_type,
          %{
            configuration: %{crm_config: %{cluster_properties: cluster_properties}}
          },
          sid
        ) do
-    primary_site =
-      parse_crm_cluster_property(
-        cluster_properties,
-        "hana_#{String.downcase(sid)}_glob_prim",
-        "Unknown"
-      )
-
+    primary_site = get_primary_site(cluster_properties, sid)
     secondary_site = get_secondary_site(cluster_properties, sid)
 
     [
       %{
         name: primary_site,
-        state: parse_hana_scale_out_status(cluster_properties, primary_site, sid),
+        state:
+          parse_hana_scale_out_status(architecture_type, cluster_properties, primary_site, sid),
         sr_health_state:
           parse_crm_cluster_property(
             cluster_properties,
@@ -408,7 +482,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
       },
       %{
         name: secondary_site,
-        state: parse_hana_scale_out_status(cluster_properties, secondary_site, sid),
+        state:
+          parse_hana_scale_out_status(architecture_type, cluster_properties, secondary_site, sid),
         sr_health_state:
           parse_crm_cluster_property(
             cluster_properties,
@@ -481,14 +556,17 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
     )
   end
 
+  defp get_primary_site(cluster_properties, sid) do
+    parse_crm_cluster_property(
+      cluster_properties,
+      "hana_#{String.downcase(sid)}_glob_prim",
+      "Unknown"
+    )
+  end
+
   # get_secondary_site gets the secondary site discarding the primary site name
   defp get_secondary_site(cluster_properties, sid) do
-    primary_site =
-      parse_crm_cluster_property(
-        cluster_properties,
-        "hana_#{String.downcase(sid)}_glob_prim",
-        nil
-      )
+    primary_site = get_primary_site(cluster_properties, sid)
 
     cluster_properties
     |> Enum.filter(fn
@@ -624,7 +702,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
     do_parse_hana_status(status, sync_state)
   end
 
-  defp parse_hana_scale_out_status(cluster_properties, site, sid) do
+  defp parse_hana_scale_out_status(HanaArchitectureType.classic(), cluster_properties, site, sid) do
     status =
       parse_crm_cluster_property(
         cluster_properties,
@@ -645,6 +723,24 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
         nil -> parse_single_target_status(cluster_properties, sid, site)
         state -> state
       end
+
+    do_parse_hana_status(status, sync_state)
+  end
+
+  defp parse_hana_scale_out_status(HanaArchitectureType.angi(), cluster_properties, site, sid) do
+    status =
+      parse_crm_cluster_property(
+        cluster_properties,
+        "hana_#{String.downcase(sid)}_site_srr_#{site}",
+        "Unknown"
+      )
+
+    sync_state =
+      parse_crm_cluster_property(
+        cluster_properties,
+        "hana_#{String.downcase(sid)}_site_srPoll_#{site}",
+        "Unknown"
+      )
 
     do_parse_hana_status(status, sync_state)
   end

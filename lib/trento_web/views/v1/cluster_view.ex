@@ -39,7 +39,7 @@ defmodule TrentoWeb.V1.ClusterView do
 
     adapted_details =
       details
-      |> Map.drop([:sites, :maintenance_mode])
+      |> Map.drop([:sites, :maintenance_mode, :architecture_type])
       |> Map.put(:nodes, adapted_nodes)
       |> Map.put(:stopped_resources, adapted_stopped_resources)
 

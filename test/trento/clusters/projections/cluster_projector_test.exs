@@ -68,6 +68,7 @@ defmodule Trento.Clusters.Projections.ClusterProjectorTest do
       %{
         cib_last_written: nil,
         details: %HanaClusterDetails{
+          architecture_type: :classic,
           fencing_type: "external/sbd",
           nodes: [
             %HanaClusterNode{
@@ -154,6 +155,7 @@ defmodule Trento.Clusters.Projections.ClusterProjectorTest do
       "cluster_details_updated",
       %{
         details: %HanaClusterDetails{
+          architecture_type: :classic,
           fencing_type: "external/sbd",
           nodes: [
             %HanaClusterNode{
