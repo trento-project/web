@@ -6,11 +6,11 @@ import Input from '@common/Input';
 import Label from '@common/Label';
 import Modal from '@common/Modal';
 import Switch from '@common/Switch';
-import MultiSelect from '@common/MultiSelect';
+import AbilitiesMultiSelect from '@common/AbilitiesMultiSelect';
 import ProfilePasswordChangeForm from '@pages/Profile/ProfilePasswordChangeForm';
 import TotpEnrollementBox from '@pages/Profile/TotpEnrollmentBox';
 
-import { REQUIRED_FIELD_TEXT, errorMessage, mapAbilities } from '@lib/forms';
+import { REQUIRED_FIELD_TEXT, errorMessage } from '@lib/forms';
 
 function ProfileForm({
   fullName = '',
@@ -166,12 +166,11 @@ function ProfileForm({
 
           <Label className="col-start-1 col-span-1">Permissions</Label>
           <div className="col-start-2 col-span-3">
-            <MultiSelect
-              aria-label="permissions"
+            <AbilitiesMultiSelect
+              userAbilities={abilities}
+              abilities={abilities}
               placeholder=""
-              values={mapAbilities(abilities)}
               disabled
-              options={mapAbilities(abilities)}
             />
           </div>
         </div>

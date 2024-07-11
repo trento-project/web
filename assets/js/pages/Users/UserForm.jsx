@@ -5,7 +5,7 @@ import { format, parseISO } from 'date-fns';
 import Button from '@common/Button';
 import Input, { Password } from '@common/Input';
 import Label from '@common/Label';
-import MultiSelect from '@common/MultiSelect';
+import AbilitiesMultiSelect from '@common/AbilitiesMultiSelect';
 import Select from '@common/Select';
 import Tooltip from '@common/Tooltip';
 import {
@@ -13,7 +13,6 @@ import {
   PASSWORD_PLACEHOLDER,
   REQUIRED_FIELD_TEXT,
   errorMessage,
-  mapAbilities,
 } from '@lib/forms';
 import { getError } from '@lib/api/validationErrors';
 
@@ -224,14 +223,11 @@ function UserForm({
           </div>
           <Label className="col-start-1 col-span-1">Permissions</Label>
           <div className="col-start-2 col-span-3">
-            <MultiSelect
-              aria-label="permissions"
+            <AbilitiesMultiSelect
+              userAbilities={userAbilities}
+              abilities={abilities}
               placeholder="Default"
-              values={mapAbilities(userAbilities)}
-              options={mapAbilities(abilities)}
-              onChange={(values) =>
-                setAbilities(values.map(({ value }) => value))
-              }
+              setAbilities={setAbilities}
             />
           </div>
           <Label className="col-start-1 col-span-1">Status</Label>
