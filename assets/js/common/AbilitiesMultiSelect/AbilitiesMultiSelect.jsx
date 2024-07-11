@@ -39,6 +39,15 @@ const groupedAbilities = [
       'all:sap_system_tags',
     ],
   },
+  {
+    ability: 'all:settings',
+    tooltip: 'Permits all operations on settings',
+    groupAbilities: [
+      'all:api_key_settings',
+      'all:suma_settings',
+      'all:activity_logs_settings',
+    ],
+  },
 ];
 
 const mapAbilities = (abilities) =>

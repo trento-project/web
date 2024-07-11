@@ -28,6 +28,9 @@ describe('AbilitiesMultiSelect Component', () => {
       { id: 9, name: 'all', resource: 'cluster_tags' },
       { id: 10, name: 'all', resource: 'database_tags' },
       { id: 11, name: 'all', resource: 'sap_system_tags' },
+      { id: 12, name: 'all', resource: 'api_key_settings' },
+      { id: 13, name: 'all', resource: 'suma_settings' },
+      { id: 14, name: 'all', resource: 'activity_logs_settings' },
     ];
 
     render(
@@ -54,6 +57,8 @@ describe('AbilitiesMultiSelect Component', () => {
     await user.click(screen.getByText('cleanup:all'));
     await user.click(screen.getByLabelText('permissions'));
     await user.click(screen.getByText('all:tags'));
+    await user.click(screen.getByLabelText('permissions'));
+    await user.click(screen.getByText('all:settings'));
     await user.click(screen.getByLabelText('permissions'));
 
     expect(screen.getByText('No options')).toBeVisible();
