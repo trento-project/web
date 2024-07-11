@@ -67,7 +67,8 @@ defmodule TrentoWeb.V1.SUSEManagerView do
         errata_details: errata_details = %{errataFrom: errataFrom},
         cves: cves,
         fixes: fixes,
-        affected_packages: affected_packages
+        affected_packages: affected_packages,
+        affected_systems: affected_systems
       }),
       do: %{
         errata_details:
@@ -76,6 +77,7 @@ defmodule TrentoWeb.V1.SUSEManagerView do
           |> Map.put(:errata_from, errataFrom),
         cves: cves,
         fixes: fixes,
-        affected_packages: affected_packages
+        affected_packages: affected_packages,
+        affected_systems: affected_systems
       }
 end

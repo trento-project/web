@@ -97,12 +97,14 @@ defmodule TrentoWeb.V1.SUSEManagerController do
     with {:ok, errata_details} <- Discovery.get_errata_details(advisory_name),
          {:ok, cves} <- Discovery.get_cves(advisory_name),
          {:ok, fixes} <- Discovery.get_bugzilla_fixes(advisory_name),
-         {:ok, affected_packages} <- Discovery.get_affected_packages(advisory_name) do
+         {:ok, affected_packages} <- Discovery.get_affected_packages(advisory_name),
+         {:ok, affected_systems} <- Discovery.get_affected_systems(advisory_name) do
       render(conn, %{
         errata_details: errata_details,
         cves: cves,
         fixes: fixes,
-        affected_packages: affected_packages
+        affected_packages: affected_packages,
+        affected_systems: affected_systems
       })
     end
   end
