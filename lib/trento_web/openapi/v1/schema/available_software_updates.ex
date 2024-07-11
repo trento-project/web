@@ -206,7 +206,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
       additionalProperties: false,
       items: %Schema{
         title: "AffectedPackage",
-        description: "Metadata for a package effected from an advisory",
+        description: "Metadata for a package effected by an advisory",
         type: :object,
         properties: %{
           name: %Schema{
@@ -219,11 +219,11 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
           },
           version: %Schema{
             type: :string,
-            description: "Package version"
+            description: "Package upstream version"
           },
           release: %Schema{
             type: :string,
-            description: "Package release number"
+            description: "Package RPM release number"
           },
           epoch: %Schema{
             type: :string,
