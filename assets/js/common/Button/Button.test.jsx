@@ -57,11 +57,9 @@ describe('Button', () => {
     'should display a button with size %s with its text',
     (buttonSize) => {
       const content = faker.vehicle.vehicle();
-      render(
-        <Button size={buttonSize} disabled>
-          {content}
-        </Button>
-      );
+
+      render(<Button size={buttonSize}>{content}</Button>);
+
       expect(screen.getByRole('button')).toHaveTextContent(content);
     }
   );
