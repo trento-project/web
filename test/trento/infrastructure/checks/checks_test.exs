@@ -24,7 +24,8 @@ defmodule Trento.Infrastructure.Checks.ChecksTest do
 
       env = %Checks.ClusterExecutionEnv{
         cluster_type: :hana_scale_up,
-        provider: :azure
+        provider: :azure,
+        architecture_type: :classic
       }
 
       selected_checks = ["check_1", "check_2"]
@@ -44,7 +45,8 @@ defmodule Trento.Infrastructure.Checks.ChecksTest do
                  ],
                  env: %{
                    "cluster_type" => %{kind: {:string_value, "hana_scale_up"}},
-                   "provider" => %{kind: {:string_value, "azure"}}
+                   "provider" => %{kind: {:string_value, "azure"}},
+                   "architecture_type" => %{kind: {:string_value, "classic"}}
                  },
                  target_type: "cluster"
                } = event

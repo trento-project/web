@@ -108,10 +108,15 @@ defmodule Trento.Infrastructure.Checks do
     }
   end
 
-  defp build_env(%ClusterExecutionEnv{cluster_type: cluster_type, provider: provider}) do
+  defp build_env(%ClusterExecutionEnv{
+         cluster_type: cluster_type,
+         provider: provider,
+         architecture_type: architecture_type
+       }) do
     %{
       "cluster_type" => %{kind: {:string_value, Atom.to_string(cluster_type)}},
-      "provider" => %{kind: {:string_value, Atom.to_string(provider)}}
+      "provider" => %{kind: {:string_value, Atom.to_string(provider)}},
+      "architecture_type" => %{kind: {:string_value, Atom.to_string(architecture_type)}}
     }
   end
 

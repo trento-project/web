@@ -22,6 +22,8 @@ defmodule Trento.ClustersTest do
 
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
   require Trento.Clusters.Enums.ClusterEnsaVersion, as: ClusterEnsaVersion
+  require Trento.Clusters.Enums.FilesystemType, as: FilesystemType
+  require Trento.Clusters.Enums.HanaArchitectureType, as: HanaArchitectureType
 
   require Trento.SapSystems.Enums.EnsaVersion, as: EnsaVersion
 
@@ -30,10 +32,37 @@ defmodule Trento.ClustersTest do
   setup [:set_mox_from_context, :verify_on_exit!]
 
   describe "checks execution with wanda adapter" do
-    test "should start a checks execution on demand if checks are selected" do
-      %{id: cluster_id, provider: provider, type: cluster_type} = insert(:cluster)
+    test "should start a checks execution on demand in a ascs_ers cluster if checks are selected" do
+      sid = "prd"
+
+      details =
+        build(:ascs_ers_cluster_details,
+          sap_systems:
+            build_list(1, :ascs_ers_cluster_sap_system, filesystem_resource_based: true)
+        )
+
+      %{
+        id: cluster_id,
+        provider: provider,
+        type: cluster_type
+      } = insert(:cluster, type: ClusterType.ascs_ers(), additional_sids: [sid], details: details)
+
       insert(:host, deregistered_at: DateTime.utc_now(), cluster_id: cluster_id)
-      insert_list(2, :host, cluster_id: cluster_id)
+      [%{id: host_id_1}, %{id: host_id_2}] = insert_list(2, :host, cluster_id: cluster_id)
+
+      %{id: sap_system_id, ensa_version: ensa_version} = insert(:sap_system)
+
+      insert(:application_instance_without_host,
+        sap_system_id: sap_system_id,
+        host_id: host_id_1,
+        sid: sid
+      )
+
+      insert(:application_instance_without_host,
+        sap_system_id: sap_system_id,
+        host_id: host_id_2,
+        sid: sid
+      )
 
       expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn "executions", message ->
         assert message.group_id == cluster_id
@@ -41,7 +70,11 @@ defmodule Trento.ClustersTest do
 
         assert message.env == %{
                  "provider" => %{kind: {:string_value, Atom.to_string(provider)}},
-                 "cluster_type" => %{kind: {:string_value, Atom.to_string(cluster_type)}}
+                 "cluster_type" => %{kind: {:string_value, Atom.to_string(cluster_type)}},
+                 "ensa_version" => %{kind: {:string_value, Atom.to_string(ensa_version)}},
+                 "filesystem_type" => %{
+                   kind: {:string_value, Atom.to_string(FilesystemType.resource_managed())}
+                 }
                }
 
         assert message.target_type == "cluster"
@@ -50,6 +83,42 @@ defmodule Trento.ClustersTest do
       end)
 
       assert :ok = Clusters.request_checks_execution(cluster_id)
+    end
+
+    test "should start a checks execution on demand in a hana cluster if checks are selected" do
+      for architecture_type <- [HanaArchitectureType.angi(), HanaArchitectureType.classic()] do
+        %{
+          id: cluster_id,
+          provider: provider,
+          type: cluster_type
+        } =
+          insert(:cluster,
+            type: ClusterType.hana_scale_up(),
+            details: build(:hana_cluster_details, architecture_type: architecture_type)
+          )
+
+        insert(:host, deregistered_at: DateTime.utc_now(), cluster_id: cluster_id)
+        insert_list(2, :host, cluster_id: cluster_id)
+
+        expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn "executions", message ->
+          assert message.group_id == cluster_id
+          assert length(message.targets) == 2
+
+          assert message.env == %{
+                   "provider" => %{kind: {:string_value, Atom.to_string(provider)}},
+                   "cluster_type" => %{kind: {:string_value, Atom.to_string(cluster_type)}},
+                   "architecture_type" => %{
+                     kind: {:string_value, Atom.to_string(architecture_type)}
+                   }
+                 }
+
+          assert message.target_type == "cluster"
+
+          :ok
+        end)
+
+        assert :ok = Clusters.request_checks_execution(cluster_id)
+      end
     end
 
     test "should not start checks execution if the cluster is not registered" do
