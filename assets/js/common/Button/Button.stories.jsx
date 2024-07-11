@@ -50,6 +50,10 @@ export function Fit() {
   return <Button size="fit">Hello world!</Button>;
 }
 
+export function Link() {
+  return <Button type="link">Go to another page</Button>;
+}
+
 export function SmallSecondary() {
   return (
     <Button size="small" type="secondary">

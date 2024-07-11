@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { get } from 'lodash';
 
@@ -16,6 +16,7 @@ import UpgradablePackages from './UpgradablePackages';
 
 function UpgradablePackagesPage() {
   const { hostID } = useParams();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -45,6 +46,9 @@ function UpgradablePackagesPage() {
       <UpgradablePackages
         hostName={hostname}
         upgradablePackages={upgradablePackages}
+        onPatchClick={(advisoryID) =>
+          navigate(`hosts/${hostID}/patches/${advisoryID}`)
+        }
       />
     </>
   );
