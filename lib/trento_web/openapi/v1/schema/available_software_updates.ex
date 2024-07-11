@@ -197,6 +197,64 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
     })
   end
 
+  defmodule AffectedPackages do
+    @moduledoc false
+    OpenApiSpex.schema(%{
+      title: "AffectedPackages",
+      description: "Response returned from the get affected packages endpoint",
+      type: :array,
+      additionalProperties: false,
+      items: %Schema{
+        title: "AffectedPackage",
+        description: "Metadata for a package effected by an advisory",
+        type: :object,
+        properties: %{
+          name: %Schema{
+            type: :string,
+            description: "Package name"
+          },
+          arch_label: %Schema{
+            type: :string,
+            description: "Package architecture"
+          },
+          version: %Schema{
+            type: :string,
+            description: "Package upstream version"
+          },
+          release: %Schema{
+            type: :string,
+            description: "Package RPM release number"
+          },
+          epoch: %Schema{
+            type: :string,
+            description: "Package epoch number"
+          }
+        }
+      }
+    })
+  end
+
+  defmodule AffectedSystems do
+    @moduledoc false
+    OpenApiSpex.schema(%{
+      title: "AffectedSystems",
+      description: "Response returned from the get affected systems endpoint",
+      type: :array,
+      additionalProperties: false,
+      items: %Schema{
+        title: "AffectedSystem",
+        description: "Metadata for a system effected by an advisory",
+        type: :object,
+        properties: %{
+          name: %Schema{
+            type: :string,
+            description: "System name"
+          }
+        }
+      }
+    })
+  end
+
   defmodule ErrataDetailsResponse do
     @moduledoc false
     OpenApiSpex.schema(%{
@@ -207,7 +265,9 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
       properties: %{
         errata_details: ErrataDetails,
         cves: CVEs,
-        fixes: AdvisoryFixes
+        fixes: AdvisoryFixes,
+        affected_packages: AffectedPackages,
+        affected_systems: AffectedSystems
       }
     })
   end

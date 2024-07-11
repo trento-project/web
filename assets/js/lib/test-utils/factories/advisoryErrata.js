@@ -2,6 +2,18 @@ import { faker } from '@faker-js/faker';
 import { Factory } from 'fishery';
 import { advisoryType } from './relevantPatches';
 
+const affectedPackageFactory = Factory.define(({ sequence }) => ({
+  name: `${faker.animal.cat().toLowerCase()}${sequence}`,
+  arch_label: faker.helpers.arrayElement(['x86_64', 'i586', 'aarch64']),
+  version: faker.system.semver(),
+  release: `${faker.number.int({ min: 0, max: 100 })}`,
+  epoch: `${faker.number.int({ min: 0, max: 50 })}`,
+}));
+
+const affectedSystemFactory = Factory.define(({ sequence }) => ({
+  name: `${faker.string.uuid()}-${sequence}`,
+}));
+
 const fixMapFactory = Factory.define(({ transientParams }) => {
   const { length = 1 } = transientParams;
 
@@ -31,6 +43,8 @@ export const advisoryErrataFactory = Factory.define(({ params }) => ({
       { transient: { length: faker.number.int({ min: 1, max: 10 }) } }
     ),
   cves: cveFactory.buildList(10),
+  affected_packages: affectedPackageFactory.buildList(10),
+  affected_systems: affectedSystemFactory.buildList(10),
   errata_details: {
     id: faker.number.int({ min: 1, max: 65536 }),
     issue_date: faker.date.recent({ days: 30 }),

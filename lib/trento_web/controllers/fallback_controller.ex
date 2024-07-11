@@ -138,6 +138,20 @@ defmodule TrentoWeb.FallbackController do
     |> render(:"422", reason: "Unable to retrieve Bugzilla fixes for this advisory.")
   end
 
+  def call(conn, {:error, :error_getting_affected_packages}) do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> put_view(ErrorView)
+    |> render(:"422", reason: "Unable to retrieve affected packages for this advisory.")
+  end
+
+  def call(conn, {:error, :error_getting_affected_systems}) do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> put_view(ErrorView)
+    |> render(:"422", reason: "Unable to retrieve affected systems for this advisory.")
+  end
+
   def call(conn, {:error, :connection_test_failed}) do
     conn
     |> put_status(:unprocessable_entity)

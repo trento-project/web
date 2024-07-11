@@ -5,6 +5,9 @@ import PageHeader from '@common/PageHeader';
 import ListView from '@common/ListView';
 import AdvisoryIcon from '@common/AdvisoryIcon';
 
+const formatPackage = ({ name, version, epoch, release, arch_label }) =>
+  `${name}-${version}-${epoch}.${release}-${arch_label}`;
+
 function EmptyData() {
   return <p>No data available</p>;
 }
@@ -12,8 +15,7 @@ function EmptyData() {
 function AdvisoryDetails({
   advisoryName,
   errata,
-  packages,
-  affectsPackageMaintanaceStack,
+  affectsPackageMaintenanceStack,
 }) {
   const {
     issue_date: issueDate,
@@ -25,7 +27,12 @@ function AdvisoryDetails({
     reboot_suggested: rebootSuggested,
   } = errata.errata_details;
 
-  const { fixes, cves } = errata;
+  const {
+    fixes,
+    cves,
+    affected_packages: affectedPackages,
+    affected_systems: affectedSystems,
+  } = errata;
 
   return (
     <div>
@@ -60,8 +67,8 @@ function AdvisoryDetails({
                 content: rebootSuggested ? 'Yes' : 'No',
               },
               {
-                title: 'Affects Package Maintanace Stack',
-                content: affectsPackageMaintanaceStack ? 'Yes' : 'No',
+                title: 'Affects Package Maintenance Stack',
+                content: affectsPackageMaintenanceStack ? 'Yes' : 'No',
               },
             ]}
           />
@@ -118,10 +125,24 @@ function AdvisoryDetails({
       <div className="flex flex-col mb-4">
         <h2 className="text-xl font-bold mb-2">Affected Packages</h2>
         <div className="bg-white py-4 px-6 shadow shadow-md rounded-lg">
-          {packages && packages.length ? (
+          {affectedPackages && affectedPackages.length ? (
             <ul>
-              {packages.map((pkg) => (
-                <li>{pkg}</li>
+              {affectedPackages.map((pkg) => (
+                <li key={formatPackage(pkg)}>{formatPackage(pkg)}</li>
+              ))}
+            </ul>
+          ) : (
+            <EmptyData />
+          )}
+        </div>
+      </div>
+      <div className="flex flex-col mb-4">
+        <h2 className="text-xl font-bold mb-2">Affected Systems</h2>
+        <div className="bg-white py-4 px-6 shadow shadow-md rounded-lg">
+          {affectedSystems && affectedSystems.length ? (
+            <ul>
+              {affectedSystems.map(({ name }) => (
+                <li key={`system-${name}`}>{name}</li>
               ))}
             </ul>
           ) : (

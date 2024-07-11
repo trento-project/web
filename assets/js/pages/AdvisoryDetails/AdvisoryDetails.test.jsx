@@ -11,13 +11,18 @@ import AdvisoryDetails from './AdvisoryDetails';
 
 describe('AdvisoryDetails', () => {
   it('displays a message, when the CVE, packages or fixes section is empty', () => {
-    const errata = advisoryErrataFactory.build({ cves: [], fixes: {} });
+    const errata = advisoryErrataFactory.build({
+      cves: [],
+      fixes: {},
+      affected_packages: [],
+      affected_systems: [],
+    });
 
     render(
       <AdvisoryDetails advisoryName={faker.lorem.word()} errata={errata} />
     );
 
-    expect(screen.getAllByText('No data available').length).toBe(3);
+    expect(screen.getAllByText('No data available').length).toBe(4);
   });
 
   it('displays relevant errata data', () => {
@@ -34,22 +39,27 @@ describe('AdvisoryDetails', () => {
     expect(screen.getByText(errata.errata_details.description)).toBeVisible();
   });
 
-  it('displays packages', () => {
+  it('displays affected packages', () => {
     const errata = advisoryErrataFactory.build();
     const advisoryName = faker.lorem.word();
 
-    const packages = faker.word.words(2).split(' ');
+    render(<AdvisoryDetails advisoryName={advisoryName} errata={errata} />);
 
-    render(
-      <AdvisoryDetails
-        advisoryName={advisoryName}
-        errata={errata}
-        packages={packages}
-      />
-    );
+    errata.affected_packages.forEach(({ name }) => {
+      const el = screen.getByText(name, { exact: false });
+      expect(el).toBeVisible();
+    });
+  });
 
-    packages.forEach((expectedWord) => {
-      expect(screen.getByText(expectedWord)).toBeVisible();
+  it('displays affected systems', () => {
+    const errata = advisoryErrataFactory.build();
+    const advisoryName = faker.lorem.word();
+
+    render(<AdvisoryDetails advisoryName={advisoryName} errata={errata} />);
+
+    errata.affected_systems.forEach(({ name }) => {
+      const el = screen.getByText(name);
+      expect(el).toBeVisible();
     });
   });
 
