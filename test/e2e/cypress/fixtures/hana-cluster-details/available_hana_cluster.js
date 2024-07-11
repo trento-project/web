@@ -216,3 +216,28 @@ export const availableHanaCluster = {
     },
   ],
 };
+
+export const availableAngiCluster = {
+  id: '69851bfe-5364-5ea8-93e1-cbe14268ccaf',
+  name: 'hana_angi',
+  sid: 'HN9',
+  systemID: '3daab481-1f21-5e32-84bc-0014bda8efdf',
+  clusterType: 'HANA Scale Up',
+  provider: 'Azure',
+  hanaSystemReplicationMode: 'sync',
+  fencingType: 'external/sbd',
+  maintenanceMode: false,
+  hanaSecondarySyncState: 'SOK',
+  cibLastWritten: 'Mon Jun 10 13:03:57 2024',
+  hanaSystemReplicationOperationMode: 'logreplay',
+  sites: [
+    {
+      name: 'WDF',
+      state: 'Primary',
+    },
+    {
+      name: 'ROT',
+      state: 'Secondary',
+    },
+  ],
+};
