@@ -9,6 +9,7 @@ defmodule Trento.Clusters do
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
   require Trento.Clusters.Enums.FilesystemType, as: FilesystemType
   require Trento.Clusters.Enums.ClusterEnsaVersion, as: ClusterEnsaVersion
+  require Trento.Clusters.Enums.HanaArchitectureType, as: HanaArchitectureType
 
   alias Trento.Hosts.Projections.HostReadModel
 
@@ -206,7 +207,8 @@ defmodule Trento.Clusters do
          id: cluster_id,
          provider: provider,
          type: cluster_type,
-         selected_checks: selected_checks
+         selected_checks: selected_checks,
+         details: details
        }) do
     hosts_data =
       Repo.all(
@@ -217,7 +219,8 @@ defmodule Trento.Clusters do
 
     env = %Checks.ClusterExecutionEnv{
       provider: provider,
-      cluster_type: cluster_type
+      cluster_type: cluster_type,
+      architecture_type: parse_architecture_type(details)
     }
 
     Checks.request_execution(
@@ -248,4 +251,9 @@ defmodule Trento.Clusters do
       _ -> ClusterEnsaVersion.mixed_versions()
     end
   end
+
+  defp parse_architecture_type(%{"architecture_type" => "angi"}),
+    do: HanaArchitectureType.angi()
+
+  defp parse_architecture_type(_), do: HanaArchitectureType.classic()
 end
