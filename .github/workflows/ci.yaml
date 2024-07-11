@@ -839,6 +839,7 @@ jobs:
           photofinish run hana-scale-out -u "http://$TRENTO_DEMO_IP/api/collect" "$TRENTO_API_KEY"
           photofinish run hana-diskless-sbd -u "http://$TRENTO_DEMO_IP/api/collect" "$TRENTO_API_KEY"
           photofinish run multi-tenant -u "http://$TRENTO_DEMO_IP/api/collect" "$TRENTO_API_KEY"
+          photofinish run hana-scale-up-angi -u "http://$TRENTO_DEMO_IP/api/collect" "$TRENTO_API_KEY"
 
   obs-commit-image:
     name: Commit to OBS to generate container image
