@@ -63,6 +63,18 @@ context('HANA cluster details', () => {
         .contains(availableHanaCluster.clusterType);
     });
 
+    it(`should have architecture type ${availableHanaCluster.clusterType}`, () => {
+      cy.get('.tn-cluster-details')
+        .contains('Cluster type')
+        .next()
+        .find('svg')
+        .trigger('mouseover');
+
+      cy.contains('span', availableHanaCluster.architectureType).should(
+        'exist'
+      );
+    });
+
     it(`should have log replication mode ${availableHanaCluster.hanaSystemReplicationMode}`, () => {
       cy.get('.tn-cluster-details')
         .contains('HANA log replication mode')
@@ -252,6 +264,16 @@ context('HANA cluster details', () => {
         .contains('Cluster type')
         .next()
         .contains(availableAngiCluster.clusterType);
+
+      cy.get('.tn-cluster-details')
+        .contains('Cluster type')
+        .next()
+        .find('svg')
+        .trigger('mouseover');
+
+      cy.contains('span', availableAngiCluster.architectureType).should(
+        'exist'
+      );
 
       cy.get('.tn-cluster-details')
         .contains('HANA log replication mode')
