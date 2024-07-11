@@ -7,7 +7,7 @@ defmodule Trento.Settings.PolicyTest do
   alias Trento.Settings.Policy
   alias Trento.Users.User
 
-  describe "API Key Settings Authorization" do
+  describe "api key settings suthorization" do
     test "should allow generating a new api key if the user has all:all ability" do
       user = %User{abilities: [%Ability{name: "all", resource: "all"}]}
       assert Policy.authorize(:update_api_key_settings, user, ApiKeySettings)
@@ -39,7 +39,7 @@ defmodule Trento.Settings.PolicyTest do
     end
   end
 
-  describe "Activity Log Settings Authorization" do
+  describe "activity log settings authorization" do
     test "should allow updating activity logs settings if the user has all:all ability" do
       user = %User{abilities: [%Ability{name: "all", resource: "all"}]}
       assert Policy.authorize(:update_activity_log_settings, user, ActivityLogSettings)

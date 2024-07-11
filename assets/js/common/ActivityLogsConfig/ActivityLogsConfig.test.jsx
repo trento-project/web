@@ -6,7 +6,6 @@ import '@testing-library/jest-dom';
 import ActivityLogsConfig from '.';
 
 const adminAbilities = [{ name: 'all', resource: 'all' }];
-const abilities = ['all:activity_logs_settings'];
 
 describe('ActivityLogsConfig', () => {
   it.each`
@@ -25,7 +24,6 @@ describe('ActivityLogsConfig', () => {
         <ActivityLogsConfig
           retentionTime={time}
           userAbilities={adminAbilities}
-          settingsEditPermittedFor={abilities}
         />
       );
 
@@ -38,11 +36,7 @@ describe('ActivityLogsConfig', () => {
     const user = userEvent.setup();
 
     render(
-      <ActivityLogsConfig
-        onEditClick={spy}
-        userAbilities={adminAbilities}
-        settingsEditPermittedFor={abilities}
-      />
+      <ActivityLogsConfig onEditClick={spy} userAbilities={adminAbilities} />
     );
 
     await user.click(screen.getByRole('button', { name: 'Edit Settings' }));
@@ -59,7 +53,6 @@ describe('ActivityLogsConfig', () => {
       <ActivityLogsConfig
         onEditClick={spy}
         userAbilities={userWithoutPermission}
-        settingsEditPermittedFor={abilities}
       />
     );
 

@@ -53,8 +53,6 @@ import { dismissNotification } from '@state/notifications';
 import { API_KEY_EXPIRATION_NOTIFICATION_ID } from '@state/sagas/settings';
 
 const apiKeySettingsPermittedFor = ['all:api_key_settings'];
-const sumaSettingsPermittedFor = ['all:suma_settings'];
-const activityLogsSettingsPermittedFor = ['all:activity_logs_settings'];
 
 function ApiKeyExpireInfo({ apiKeyExpiration }) {
   const expirationLabel = () => {
@@ -302,7 +300,6 @@ function SettingsPage() {
             >
               <SuseManagerConfig
                 userAbilities={abilities}
-                configEditPermittedFor={sumaSettingsPermittedFor}
                 url={settings.url}
                 username={settings.username}
                 certUploadDate={settings.ca_uploaded_at}
@@ -363,7 +360,6 @@ function SettingsPage() {
         >
           <ActivityLogsConfig
             userAbilities={abilities}
-            settingsEditPermittedFor={activityLogsSettingsPermittedFor}
             retentionTime={activityLogsSettings.retention_time}
             onEditClick={() => dispatch(setEditingActivityLogsSettings(true))}
           />

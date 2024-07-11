@@ -7,16 +7,10 @@ import '@testing-library/jest-dom';
 import SuseManagerConfig from '.';
 
 const adminUser = [{ name: 'all', resource: 'all' }];
-const sumaSettingsPermittedFor = ['all:suma_settings'];
 
 describe('SuseManagerConfig', () => {
   it('renders a default state', () => {
-    render(
-      <SuseManagerConfig
-        userAbilities={adminUser}
-        configEditPermittedFor={sumaSettingsPermittedFor}
-      />
-    );
+    render(<SuseManagerConfig userAbilities={adminUser} />);
 
     expect(screen.getByText('https://')).toBeInTheDocument();
     expect(screen.getAllByText('-')).toHaveLength(1);
@@ -39,7 +33,6 @@ describe('SuseManagerConfig', () => {
         certUploadDate={certUploadDate}
         onEditClick={onEditClick}
         userAbilities={adminUser}
-        configEditPermittedFor={sumaSettingsPermittedFor}
       />
     );
 
@@ -66,7 +59,6 @@ describe('SuseManagerConfig', () => {
         testConnectionEnabled
         onTestConnection={onTestConnection}
         userAbilities={adminUser}
-        configEditPermittedFor={sumaSettingsPermittedFor}
       />
     );
     expect(screen.getByLabelText('test-suma-connection')).toBeEnabled();
@@ -84,7 +76,6 @@ describe('SuseManagerConfig', () => {
     render(
       <SuseManagerConfig
         userAbilities={userWithoutPermission}
-        configEditPermittedFor={sumaSettingsPermittedFor}
         onEditClick={onEditClick}
         onClearClick={onClearClick}
       />

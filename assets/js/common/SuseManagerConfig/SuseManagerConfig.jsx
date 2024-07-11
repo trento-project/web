@@ -7,6 +7,8 @@ import DisabledGuard from '@common/DisabledGuard';
 import SuseManagerClearSettingsModal from '@common/SuseManagerClearSettingsDialog';
 import CertificateUploadDate from './CertificateUploadDate';
 
+const sumaSettingsPermittedFor = ['all:suma_settings'];
+
 function SuseManagerConfig({
   url = 'https://',
   username,
@@ -19,7 +21,6 @@ function SuseManagerConfig({
   onTestConnection = noop,
   onCancel = noop,
   userAbilities,
-  configEditPermittedFor,
 }) {
   return (
     <>
@@ -46,7 +47,7 @@ function SuseManagerConfig({
             </Button>
             <DisabledGuard
               userAbilities={userAbilities}
-              permitted={configEditPermittedFor}
+              permitted={sumaSettingsPermittedFor}
             >
               <Button
                 className="mr-2"
@@ -59,7 +60,7 @@ function SuseManagerConfig({
             </DisabledGuard>
             <DisabledGuard
               userAbilities={userAbilities}
-              permitted={configEditPermittedFor}
+              permitted={sumaSettingsPermittedFor}
             >
               <Button
                 aria-label="clear-suma-settings"

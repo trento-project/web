@@ -14,11 +14,6 @@ export default {
       description: 'Users abilities that allow changing SUSE Manager settings',
       control: 'array',
     },
-    configEditPermittedFor: {
-      description:
-        'Abilities that allow editing and clearing SUSE Manager settings',
-      control: 'array',
-    },
     url: {
       description: 'SUSE Manager URL',
       control: {
@@ -77,7 +72,6 @@ export const Default = {
     username: 'trentoAdm',
     certUploadDate: '2024-01-29T08:41:47.291734Z',
     userAbilities: [{ name: 'all', resource: 'all' }],
-    configEditPermittedFor: ['all:all'],
   },
 };
 
@@ -91,7 +85,6 @@ export const WithVeryLongSUMAUrl = {
 export const Empty = {
   args: {
     userAbilities: [{ name: 'all', resource: 'all' }],
-    configEditPermittedFor: ['all:all'],
   },
 };
 
