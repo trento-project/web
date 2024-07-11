@@ -282,6 +282,20 @@ context('HANA cluster details', () => {
       cy.get(`.tn-site-details-${site1.name}`).contains(site1.state);
       cy.get(`.tn-site-details-${site2.name}`).contains(site2.state);
     });
+
+    it('should discover a Angi cluster with failover', () => {
+      cy.loadScenario('cluster-hana-scale-up-angi-failover');
+
+      cy.get('.tn-cluster-details')
+        .contains('HANA secondary sync state')
+        .next()
+        .contains('SFAIL');
+
+      const site1 = availableAngiCluster.sites[0];
+      const site2 = availableAngiCluster.sites[1];
+      cy.get(`.tn-site-details-${site1.name}`).contains('Failed');
+      cy.get(`.tn-site-details-${site2.name}`).contains(site1.state);
+    });
   });
 
   describe.skip('Check Selection should allow to enable checks from the checks catalog', () => {
