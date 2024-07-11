@@ -32,6 +32,7 @@ export function ClusterDetailsPage() {
 
   const provider = get(cluster, 'provider');
   const type = get(cluster, 'type');
+  const architectureType = get(cluster, 'details.architecture_type');
 
   const catalog = useSelector(getCatalog());
 
@@ -51,13 +52,14 @@ export function ClusterDetailsPage() {
       cluster_type: type,
       ensa_version: ensaVersion,
       filesystem_type: filesystemType,
+      architecture_type: architectureType,
     });
 
     if (provider && type) {
       dispatch(updateCatalog(env));
       dispatch(updateLastExecution(clusterID));
     }
-  }, [dispatch, provider, type, ensaVersion, filesystemType]);
+  }, [dispatch, provider, type, ensaVersion, filesystemType, architectureType]);
 
   const clusterHosts = useSelector((state) =>
     getClusterHosts(state, clusterID)

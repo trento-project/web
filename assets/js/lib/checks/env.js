@@ -6,6 +6,7 @@ export const buildEnv = ({
   cluster_type,
   ensa_version,
   filesystem_type,
+  architecture_type,
 }) => {
   switch (cluster_type) {
     case ASCS_ERS: {
@@ -22,6 +23,7 @@ export const buildEnv = ({
         provider,
         target_type,
         cluster_type,
+        architecture_type,
       };
     }
   }

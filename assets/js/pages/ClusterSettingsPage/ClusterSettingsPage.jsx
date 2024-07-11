@@ -78,6 +78,7 @@ function ClusterSettingsPage() {
 
   const provider = get(cluster, 'provider');
   const type = get(cluster, 'type');
+  const architectureType = get(cluster, 'details.architecture_type');
 
   const refreshCatalog = () => {
     const env = buildEnv({
@@ -86,6 +87,7 @@ function ClusterSettingsPage() {
       cluster_type: type,
       ensa_version: ensaVersion,
       filesystem_type: filesystemType,
+      architecture_type: architectureType,
     });
 
     dispatch(updateCatalog(env));
@@ -130,7 +132,11 @@ function ClusterSettingsPage() {
         onStartExecution={requestChecksExecution}
       />
       {catalogBanner[provider]}
-      <ClusterInfoBox haScenario={type} provider={provider} />
+      <ClusterInfoBox
+        haScenario={type}
+        provider={provider}
+        architectureType={architectureType}
+      />
       <ChecksSelection
         catalog={catalog}
         catalogError={catalogError}

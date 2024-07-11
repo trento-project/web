@@ -2,7 +2,6 @@ import React from 'react';
 import { get, capitalize, sortBy } from 'lodash';
 import classNames from 'classnames';
 
-import { getClusterTypeLabel } from '@lib/model/clusters';
 import { RUNNING_STATES } from '@state/lastExecutions';
 
 import BackButton from '@common/BackButton';
@@ -10,6 +9,7 @@ import Button from '@common/Button';
 import ListView from '@common/ListView';
 import PageHeader from '@common/PageHeader';
 import ProviderLabel from '@common/ProviderLabel';
+import ClusterTypeLabel from '@common/ClusterTypeLabel';
 import SapSystemLink from '@common/SapSystemLink';
 import Tooltip from '@common/Tooltip';
 import DisabledGuard from '@common/DisabledGuard';
@@ -162,7 +162,13 @@ function HanaClusterDetails({
               },
               {
                 title: 'Cluster type',
-                content: getClusterTypeLabel(clusterType),
+                content: clusterType,
+                render: (content) => (
+                  <ClusterTypeLabel
+                    clusterType={content}
+                    architectureType={details.architecture_type}
+                  />
+                ),
               },
               {
                 title: 'Cluster maintenance',
