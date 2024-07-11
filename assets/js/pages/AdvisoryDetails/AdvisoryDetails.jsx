@@ -27,7 +27,12 @@ function AdvisoryDetails({
     reboot_suggested: rebootSuggested,
   } = errata.errata_details;
 
-  const { fixes, cves, affected_packages: affectedPackages } = errata;
+  const {
+    fixes,
+    cves,
+    affected_packages: affectedPackages,
+    affected_systems: affectedSystems,
+  } = errata;
 
   return (
     <div>
@@ -124,6 +129,20 @@ function AdvisoryDetails({
             <ul>
               {affectedPackages.map((pkg) => (
                 <li key={formatPackage(pkg)}>{formatPackage(pkg)}</li>
+              ))}
+            </ul>
+          ) : (
+            <EmptyData />
+          )}
+        </div>
+      </div>
+      <div className="flex flex-col mb-4">
+        <h2 className="text-xl font-bold mb-2">Affected Systems</h2>
+        <div className="bg-white py-4 px-6 shadow shadow-md rounded-lg">
+          {affectedSystems && affectedSystems.length ? (
+            <ul>
+              {affectedSystems.map(({ name }) => (
+                <li key={`system-${name}`}>{name}</li>
               ))}
             </ul>
           ) : (

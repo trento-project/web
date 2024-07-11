@@ -15,13 +15,14 @@ describe('AdvisoryDetails', () => {
       cves: [],
       fixes: {},
       affected_packages: [],
+      affected_systems: [],
     });
 
     render(
       <AdvisoryDetails advisoryName={faker.lorem.word()} errata={errata} />
     );
 
-    expect(screen.getAllByText('No data available').length).toBe(3);
+    expect(screen.getAllByText('No data available').length).toBe(4);
   });
 
   it('displays relevant errata data', () => {
@@ -46,6 +47,18 @@ describe('AdvisoryDetails', () => {
 
     errata.affected_packages.forEach(({ name }) => {
       const el = screen.getByText(name, { exact: false });
+      expect(el).toBeVisible();
+    });
+  });
+
+  it('displays affected systems', () => {
+    const errata = advisoryErrataFactory.build();
+    const advisoryName = faker.lorem.word();
+
+    render(<AdvisoryDetails advisoryName={advisoryName} errata={errata} />);
+
+    errata.affected_systems.forEach(({ name }) => {
+      const el = screen.getByText(name);
       expect(el).toBeVisible();
     });
   });
