@@ -346,12 +346,14 @@ Trento.Scheduler.html
 Trento.Services.HealthService.html
 Trento.Settings.ApiKeySettings.html
 Trento.Settings.InstallationSettings.html
+Trento.Settings.Policy.html
 Trento.Settings.html
 Trento.SoftwareUpdates.Discovery.DiscoveryResult.html
 Trento.SoftwareUpdates.Discovery.Gen.html
 Trento.SoftwareUpdates.Discovery.html
 Trento.SoftwareUpdates.Enums.AdvisoryType.html
 Trento.SoftwareUpdates.Enums.SoftwareUpdatesHealth.html
+Trento.SoftwareUpdates.Policy.html
 Trento.SoftwareUpdates.Settings.html
 Trento.SoftwareUpdates.html
 Trento.Support.Command.html
@@ -491,8 +493,8 @@ dist/merriweather-latin-ext-300-normal-K6L27CZ5.woff2
 dist/merriweather-vietnamese-300-italic-EHHNZPUO.woff2
 dist/merriweather-vietnamese-300-normal-U376L4Z4.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-6DC61CC5.js
-dist/sidebar_items-5DA6146F.js
+dist/search_data-CF7891AB.js
+dist/sidebar_items-C68BEFD9.js
 environment_variables.html
 hack_on_the_trento.html
 index.html
