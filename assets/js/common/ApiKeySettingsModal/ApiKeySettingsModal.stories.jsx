@@ -19,16 +19,20 @@ export default {
         type: 'boolean',
       },
     },
+    onGenerate: {
+      action: 'Generate key',
+      description: 'New key is generated',
+    },
+    onClose: {
+      action: 'Cancel key',
+      description: 'Closes the modal',
+    },
     generatedApiKeyExpiration: {
       description:
         'The new generated api key expiration expressed in ISO8601 Timestamp',
     },
     generatedApiKey: {
       description: 'The new generated api key',
-    },
-    onGenerate: {
-      action: 'Generate key',
-      description: 'New key is generated',
     },
   },
   args: {

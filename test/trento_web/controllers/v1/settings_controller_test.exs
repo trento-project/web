@@ -3,8 +3,12 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
 
   import Trento.Factory
   import OpenApiSpex.TestAssertions
+  import Trento.Support.Helpers.AbilitiesTestHelper
 
   alias TrentoWeb.OpenApi.V1.ApiSpec
+
+  setup :setup_api_spec_v1
+  setup :setup_user
 
   test "should return the settings according to the schema", %{conn: conn} do
     api_spec = ApiSpec.spec()
@@ -166,6 +170,51 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       })
       |> json_response(422)
       |> assert_schema("UnprocessableEntity", api_spec)
+    end
+  end
+
+  describe "forbidden response" do
+    test "should return forbidden if the user does not have the permission to update the api key",
+         %{conn: conn, api_spec: api_spec} do
+      insert(:api_key_settings)
+      %{id: user_id} = insert(:user)
+
+      conn =
+        conn
+        |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
+        |> put_req_header("content-type", "application/json")
+
+      conn =
+        patch(conn, "/api/v1/settings/api_key", %{
+          "expire_at" => DateTime.to_iso8601(DateTime.utc_now())
+        })
+
+      conn
+      |> json_response(:forbidden)
+      |> assert_schema("Forbidden", api_spec)
+    end
+
+    test "should return forbidden if the user does not have the permission to edit activity logs settings",
+         %{conn: conn, api_spec: api_spec} do
+      %{id: user_id} = insert(:user)
+      insert(:activity_log_settings)
+
+      conn =
+        conn
+        |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
+        |> put_req_header("content-type", "application/json")
+
+      conn =
+        put(conn, "/api/v1/settings/activity_log", %{
+          retention_time: %{
+            value: 42,
+            unit: :year
+          }
+        })
+
+      conn
+      |> json_response(:forbidden)
+      |> assert_schema("Forbidden", api_spec)
     end
   end
 end

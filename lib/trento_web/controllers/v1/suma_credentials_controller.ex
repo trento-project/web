@@ -8,6 +8,15 @@ defmodule TrentoWeb.V1.SUMACredentialsController do
   alias TrentoWeb.OpenApi.V1.Schema.SUMACredentials
   alias TrentoWeb.OpenApi.V1.Schema.UnprocessableEntity
 
+  plug TrentoWeb.Plugs.LoadUserPlug
+
+  plug Bodyguard.Plug.Authorize,
+    policy: Trento.SoftwareUpdates.Policy,
+    action: {Phoenix.Controller, :action_name},
+    user: {Pow.Plug, :current_user},
+    params: {__MODULE__, :get_policy_resource},
+    fallback: TrentoWeb.FallbackController
+
   plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
   action_fallback TrentoWeb.FallbackController
 
@@ -105,6 +114,8 @@ defmodule TrentoWeb.V1.SUMACredentialsController do
       |> json("")
     end
   end
+
+  def get_policy_resource(_), do: Trento.SoftwareUpdates.Settings
 
   defp decode_body(body) when is_struct(body), do: Map.from_struct(body)
   defp decode_body(body), do: body

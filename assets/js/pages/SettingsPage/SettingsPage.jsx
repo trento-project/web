@@ -8,6 +8,7 @@ import { logError } from '@lib/log';
 import { get, patch } from '@lib/network';
 import { getFromConfig } from '@lib/config';
 
+import DisabledGuard from '@common/DisabledGuard';
 import PageHeader from '@common/PageHeader';
 import Button from '@common/Button';
 import SuseManagerConfig from '@common/SuseManagerConfig';
@@ -33,6 +34,8 @@ import {
   getSoftwareUpdatesSettingsErrors,
 } from '@state/selectors/softwareUpdatesSettings';
 
+import { getUserProfile } from '@state/selectors/user';
+
 import ActivityLogsConfig from '@common/ActivityLogsConfig';
 import ActivityLogsSettingsModal from '@common/ActivityLogsSettingsModal';
 import {
@@ -48,6 +51,8 @@ import {
 
 import { dismissNotification } from '@state/notifications';
 import { API_KEY_EXPIRATION_NOTIFICATION_ID } from '@state/sagas/settings';
+
+const apiKeySettingsPermittedFor = ['all:api_key_settings'];
 
 function ApiKeyExpireInfo({ apiKeyExpiration }) {
   const expirationLabel = () => {
@@ -134,6 +139,8 @@ function SettingsPage() {
     (value) => !isUndefined(value)
   );
 
+  const { abilities } = useSelector(getUserProfile);
+
   const {
     settings: activityLogsSettings = {},
     loading: activityLogsSettingsLoading,
@@ -196,12 +203,17 @@ function SettingsPage() {
             </div>
             <div className="w-full lg:w-1/2 px-8">
               <div className="!ml-auto w-1/4">
-                <Button
-                  onClick={() => setApiKeySettingsModalOpen(true)}
-                  type="primary-white"
+                <DisabledGuard
+                  userAbilities={abilities}
+                  permitted={apiKeySettingsPermittedFor}
                 >
-                  Generate Key
-                </Button>
+                  <Button
+                    onClick={() => setApiKeySettingsModalOpen(true)}
+                    type="primary-white"
+                  >
+                    Generate Key
+                  </Button>
+                </DisabledGuard>
               </div>
               <ul className="space-y-12">
                 <li className="flex -mx-4">
@@ -287,6 +299,7 @@ function SettingsPage() {
               onRetry={() => dispatch(fetchSoftwareUpdatesSettings())}
             >
               <SuseManagerConfig
+                userAbilities={abilities}
                 url={settings.url}
                 username={settings.username}
                 certUploadDate={settings.ca_uploaded_at}
@@ -346,6 +359,7 @@ function SettingsPage() {
           onRetry={() => dispatch(fetchActivityLogsSettings())}
         >
           <ActivityLogsConfig
+            userAbilities={abilities}
             retentionTime={activityLogsSettings.retention_time}
             onEditClick={() => dispatch(setEditingActivityLogsSettings(true))}
           />

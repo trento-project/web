@@ -21,7 +21,6 @@ describe('ApiKeySettingsModal', () => {
   describe('Generation form', () => {
     it('render the generation form', async () => {
       const user = userEvent.setup();
-
       await act(async () => {
         render(<ApiKeySettingsModal open />);
       });

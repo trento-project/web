@@ -10,6 +10,10 @@ export default {
         type: 'text',
       },
     },
+    userAbilities: {
+      description: 'Users abilities that allow changing SUSE Manager settings',
+      control: 'array',
+    },
     url: {
       description: 'SUSE Manager URL',
       control: {
@@ -67,6 +71,7 @@ export const Default = {
     url: 'https://trento-project.io/suse-manager',
     username: 'trentoAdm',
     certUploadDate: '2024-01-29T08:41:47.291734Z',
+    userAbilities: [{ name: 'all', resource: 'all' }],
   },
 };
 
@@ -77,4 +82,15 @@ export const WithVeryLongSUMAUrl = {
   },
 };
 
-export const Empty = { args: {} };
+export const Empty = {
+  args: {
+    userAbilities: [{ name: 'all', resource: 'all' }],
+  },
+};
+
+export const EditUnauthorized = {
+  args: {
+    ...Default.args,
+    userAbilities: [],
+  },
+};

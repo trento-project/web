@@ -6,12 +6,12 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
 
   import Mox
   import Trento.Factory
+  import Trento.Support.Helpers.AbilitiesTestHelper
 
   alias TrentoWeb.OpenApi.V1.ApiSpec
 
-  setup do
-    %{api_spec: ApiSpec.spec()}
-  end
+  setup :setup_api_spec_v1
+  setup :setup_user
 
   describe "retrieve user settings" do
     test "should return user settings", %{conn: conn} do
@@ -28,7 +28,7 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
       |> assert_schema("SUMACredentials", api_spec)
     end
 
-    test "should return 403 if no user settings have been saved", %{conn: conn} do
+    test "should return forbidden if no user settings have been saved", %{conn: conn} do
       api_spec = ApiSpec.spec()
 
       conn
@@ -481,5 +481,68 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
 
       assert "" == resp
     end
+  end
+
+  describe "forbidden response" do
+    test "should return forbidden when user tries to create settings without right abilities", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      settings = %{
+        url: Faker.Internet.image_url(),
+        username: Faker.Internet.user_name(),
+        password: Faker.Lorem.word(),
+        ca_cert: build(:self_signed_certificate)
+      }
+
+      %{id: user_id} = insert(:user)
+
+      conn =
+        conn
+        |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
+        |> put_req_header("content-type", "application/json")
+
+      conn
+      |> post("/api/v1/settings/suma_credentials", settings)
+      |> json_response(:forbidden)
+      |> assert_schema("Forbidden", api_spec)
+    end
+
+    test "should return forbidden when user tries to update settings without right abilities", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      insert_software_updates_settings()
+      %{id: user_id} = insert(:user)
+
+      change_submission = %{}
+
+      conn =
+        conn
+        |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
+        |> put_req_header("content-type", "application/json")
+
+      conn
+      |> patch("/api/v1/settings/suma_credentials", change_submission)
+      |> json_response(:forbidden)
+      |> assert_schema("Forbidden", api_spec)
+    end
+  end
+
+  test "should return forbidden when user tries to delete settings without right abilities", %{
+    conn: conn,
+    api_spec: api_spec
+  } do
+    %{id: user_id} = insert(:user)
+
+    conn =
+      conn
+      |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
+      |> put_req_header("content-type", "application/json")
+
+    conn
+    |> delete("/api/v1/settings/suma_credentials")
+    |> json_response(:forbidden)
+    |> assert_schema("Forbidden", api_spec)
   end
 end

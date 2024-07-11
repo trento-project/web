@@ -5,6 +5,8 @@ import '@testing-library/jest-dom';
 
 import ActivityLogsConfig from '.';
 
+const adminAbilities = [{ name: 'all', resource: 'all' }];
+
 describe('ActivityLogsConfig', () => {
   it.each`
     time                           | expected
@@ -18,7 +20,12 @@ describe('ActivityLogsConfig', () => {
   `(
     'should render `$expected` with retention time `$time`',
     ({ time, expected }) => {
-      render(<ActivityLogsConfig retentionTime={time} />);
+      render(
+        <ActivityLogsConfig
+          retentionTime={time}
+          userAbilities={adminAbilities}
+        />
+      );
 
       expect(screen.getByText(expected)).toBeInTheDocument();
     }
@@ -28,10 +35,33 @@ describe('ActivityLogsConfig', () => {
     const spy = jest.fn();
     const user = userEvent.setup();
 
-    render(<ActivityLogsConfig onEditClick={spy} />);
+    render(
+      <ActivityLogsConfig onEditClick={spy} userAbilities={adminAbilities} />
+    );
 
     await user.click(screen.getByRole('button', { name: 'Edit Settings' }));
 
     expect(spy).toHaveBeenCalledTimes(1);
+  });
+
+  it('should render with a disabled Edit Settings button as the user does not the right permissions', async () => {
+    const user = userEvent.setup();
+    const spy = jest.fn();
+    const userWithoutPermission = [];
+
+    render(
+      <ActivityLogsConfig
+        onEditClick={spy}
+        userAbilities={userWithoutPermission}
+      />
+    );
+
+    expect(screen.getByText('Edit Settings')).toBeDisabled();
+    await user.click(screen.getByText('Edit Settings'));
+    expect(spy).not.toHaveBeenCalled();
+    await user.hover(screen.getByText('Edit Settings'));
+    expect(
+      screen.queryByText('You are not authorized for this action')
+    ).toBeVisible();
   });
 });

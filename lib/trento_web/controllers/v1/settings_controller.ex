@@ -7,6 +7,15 @@ defmodule TrentoWeb.V1.SettingsController do
   alias TrentoWeb.OpenApi.V1.Schema
   alias TrentoWeb.Plugs.AuthenticateAPIKeyPlug
 
+  plug TrentoWeb.Plugs.LoadUserPlug
+
+  plug Bodyguard.Plug.Authorize,
+    policy: Trento.Settings.Policy,
+    action: {Phoenix.Controller, :action_name},
+    user: {Pow.Plug, :current_user},
+    params: {__MODULE__, :get_policy_resource},
+    fallback: TrentoWeb.FallbackController
+
   plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
   action_fallback TrentoWeb.FallbackController
 
@@ -142,6 +151,14 @@ defmodule TrentoWeb.V1.SettingsController do
         # ActivityLog.change_retention_period/2 function. This error gets picked up by the FallbackController
         # and leads to dispatching to the appropriate error response.
         {:error, :not_found}
+    end
+  end
+
+  def get_policy_resource(conn) do
+    case Phoenix.Controller.action_name(conn) do
+      :update_api_key_settings -> Trento.Settings.ApiKeySettings
+      :update_activity_log_settings -> Trento.ActivityLog.Settings
+      _ -> nil
     end
   end
 end

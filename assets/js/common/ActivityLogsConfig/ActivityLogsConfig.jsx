@@ -1,8 +1,10 @@
 import React from 'react';
 import { noop } from 'lodash';
 
+import DisabledGuard from '@common/DisabledGuard';
 import Button from '@common/Button';
 
+const activityLogsSettingsPermittedFor = ['all:activity_logs_settings'];
 /**
  * Simplistic utility to transform a time interval in a readable string
  */
@@ -29,15 +31,24 @@ function TimeLabel({ time }) {
  * object that defines a retention time interval. `unit` is one of `day`, `week`, `month`, `year`.'
  * @param {function} props.onEditClick Handles the edit button click
  */
-function ActivityLogsConfig({ retentionTime, onEditClick = noop }) {
+function ActivityLogsConfig({
+  retentionTime,
+  onEditClick = noop,
+  userAbilities,
+}) {
   return (
     <div className="container max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 bg-white dark:bg-gray-800 rounded-lg">
       <div>
         <h2 className="text-2xl font-bold inline-block">Activity Logs</h2>
         <span className="float-right">
-          <Button type="primary-white-fit" size="small" onClick={onEditClick}>
-            Edit Settings
-          </Button>
+          <DisabledGuard
+            userAbilities={userAbilities}
+            permitted={activityLogsSettingsPermittedFor}
+          >
+            <Button type="primary-white-fit" size="small" onClick={onEditClick}>
+              Edit Settings
+            </Button>
+          </DisabledGuard>
         </span>
       </div>
       <p className="mt-3 mb-3 text-gray-500">
