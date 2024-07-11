@@ -1,0 +1,93 @@
+{
+  "agent_id": "4b67842f-ccf7-46a4-a344-9e918648b117",
+  "discovery_type": "cloud_discovery",
+  "payload": {
+    "Metadata": {
+      "compute": {
+        "azEnvironment": "AzurePublicCloud",
+        "isHostCompatibilityLayerVm": "true",
+        "licenseType": "SLES_BYOS",
+        "location": "westeurope",
+        "name": "vmangi02",
+        "offer": "sles-sap-15-sp5-byos",
+        "osProfile": {
+          "adminUsername": "cloudadmin",
+          "computerName": "vmangi02",
+          "disablePasswordAuthentication": "true"
+        },
+        "osType": "Linux",
+        "plan": {},
+        "platformFaultDomain": "0",
+        "platformUpdateDomain": "0",
+        "provider": "Microsoft.Compute",
+        "publisher": "suse",
+        "resourceGroupName": "hana-scale-up-angi",
+        "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hana-scale-up-angi/providers/Microsoft.Compute/virtualMachines/vmangi02",
+        "securityProfile": {
+          "secureBootEnabled": "true",
+          "virtualTpmEnabled": "true"
+        },
+        "sku": "gen2",
+        "storageProfile": {
+          "imageReference": {
+            "offer": "sles-sap-15-sp5-byos",
+            "publisher": "suse",
+            "sku": "gen2",
+            "version": "latest"
+          },
+          "osDisk": {
+            "caching": "ReadWrite",
+            "createOption": "FromImage",
+            "diffDiskSettings": {
+              "option": ""
+            },
+            "diskSizeGB": "30",
+            "encryptionSettings": {
+              "enabled": "false"
+            },
+            "image": {
+              "uri": ""
+            },
+            "managedDisk": {
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hana-scale-up-angi/providers/Microsoft.Compute/disks/vmangi02_OsDisk_1",
+              "storageAccountType": "Premium_LRS"
+            },
+            "name": "vmangi02_OsDisk_1",
+            "osType": "Linux",
+            "vhd": {
+              "uri": ""
+            },
+            "writeAcceleratorEnabled": "false"
+          }
+        },
+        "subscriptionId": "00000000-0000-0000-0000-000000000000",
+        "tags": "",
+        "version": "2024.05.08",
+        "vmId": "d2239c71-086f-4375-ac20-a088a4411482",
+        "vmSize": "Standard_E4s_v3"
+      },
+      "network": {
+        "interface": [
+          {
+            "ipv4": {
+              "ipAddress": [
+                {
+                  "privateIpAddress": "10.70.1.5"
+                }
+              ],
+              "subnet": [
+                {
+                  "address": "10.70.1.0",
+                  "prefix": "24"
+                }
+              ]
+            },
+            "ipv6": {},
+            "macAddress": "CEF9CDAE7CEB"
+          }
+        ]
+      }
+    },
+    "Provider": "azure"
+  }
+}
