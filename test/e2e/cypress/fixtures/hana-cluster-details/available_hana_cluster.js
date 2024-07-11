@@ -230,6 +230,14 @@ export const availableAngiCluster = {
   hanaSecondarySyncState: 'SOK',
   cibLastWritten: 'Mon Jun 10 13:03:57 2024',
   hanaSystemReplicationOperationMode: 'logreplay',
+  hosts: [
+    {
+      id: '851a4dd3-9693-44c3-a40b-b32d22872e74',
+    },
+    {
+      id: '4b67842f-ccf7-46a4-a344-9e918648b117',
+    },
+  ],
   sites: [
     {
       name: 'WDF',

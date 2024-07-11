@@ -224,6 +224,12 @@ context('HANA cluster details', () => {
       cy.visit(`/clusters/${availableAngiCluster.id}`);
     });
 
+    after(() => {
+      availableAngiCluster.hosts.forEach(({ id }) => {
+        cy.deregisterHost(id);
+      });
+    });
+
     it('should discover and display properly Angi architecture HANA scale up cluster', () => {
       cy.get('h1').contains(availableAngiCluster.name);
 
