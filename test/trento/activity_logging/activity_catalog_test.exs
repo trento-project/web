@@ -7,10 +7,31 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
 
   require Trento.ActivityLog.ActivityCatalog, as: ActivityCatalog
 
+  describe "activity detection" do
+    test "should not detect activity from invalid input" do
+      Enum.each([nil, %{}, "", 42], fn input ->
+        assert nil == ActivityCatalog.detect_activity(input)
+      end)
+    end
+
+    test "should not be able to detect an activity from a connection without controller/action info",
+         %{conn: conn} do
+      assert nil == ActivityCatalog.detect_activity(conn)
+    end
+
+    test "should detect activity from a connection with controller/action info", %{conn: conn} do
+      assert {Foo.Bar.AcmeController, :foo_action} ==
+               conn
+               |> Plug.Conn.put_private(:phoenix_controller, Foo.Bar.AcmeController)
+               |> Plug.Conn.put_private(:phoenix_action, :foo_action)
+               |> ActivityCatalog.detect_activity()
+    end
+  end
+
   test "should ignore unknown activities", %{
     conn: conn
   } do
-    Enum.each([:foo_bar, %{bar: "baz"}, "not-interesting"], fn activity ->
+    Enum.each([:foo_bar, %{bar: "baz"}, "not-interesting", nil, %{}, 42], fn activity ->
       refute ActivityCatalog.interested?(activity, conn)
       assert nil == ActivityCatalog.get_activity_type(activity)
     end)
