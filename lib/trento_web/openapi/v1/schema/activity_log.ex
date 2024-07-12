@@ -13,6 +13,11 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ActivityLog do
       type: :object,
       additionalProperties: false,
       properties: %{
+        id: %Schema{
+          type: :string,
+          description: "Identifier of Activity Log entry.",
+          format: :uuid
+        },
         type: %Schema{
           type: :string,
           description: "Type of Activity Log entry."
@@ -29,7 +34,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ActivityLog do
           description: "Timestamp upon Activity Log entry insertion."
         }
       },
-      required: [:type, :actor, :metadata, :occurred_on]
+      required: [:id, :type, :actor, :metadata, :occurred_on]
     }
   })
 end
