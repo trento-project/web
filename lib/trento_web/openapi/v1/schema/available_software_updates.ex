@@ -91,44 +91,51 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
 
   defmodule AvailableSoftwareUpdatesResponse do
     @moduledoc false
-    OpenApiSpex.schema(%{
-      title: "AvailableSoftwareUpdatesResponse",
-      description: "Response returned from the available software updates endpoint",
-      type: :object,
-      additionalProperties: false,
-      properties: %{
-        relevant_patches: %Schema{
-          title: "RelevantPatches",
-          description: "A list relevant patches for the host",
-          type: :array,
-          items: RelevantPatch
-        },
-        upgradable_packages: %Schema{
-          title: "UpgradablePackages",
-          description: "A list of upgradable packages for the host",
-          type: :array,
-          items: UpgradablePackage
+    OpenApiSpex.schema(
+      %{
+        title: "AvailableSoftwareUpdatesResponse",
+        description: "Response returned from the available software updates endpoint",
+        type: :object,
+        additionalProperties: false,
+        properties: %{
+          relevant_patches: %Schema{
+            title: "RelevantPatches",
+            description: "A list relevant patches for the host",
+            type: :array,
+            items: RelevantPatch
+          },
+          upgradable_packages: %Schema{
+            title: "UpgradablePackages",
+            description: "A list of upgradable packages for the host",
+            type: :array,
+            items: UpgradablePackage
+          }
         }
-      }
-    })
+      },
+      struct?: false
+    )
   end
 
   defmodule PatchesForPackagesResponse do
     @moduledoc false
-    OpenApiSpex.schema(%{
-      title: "PatchesForPackagesResponse",
-      description: "Response returned from the patches for packages endpoint",
-      type: :object,
-      additionalProperties: false,
-      properties: %{
-        patches: %Schema{
-          title: "PatchesForPackages",
-          description: "A list of the relevant patches covered by the provided package upgrades",
-          type: :array,
-          items: PatchesForPackage
+    OpenApiSpex.schema(
+      %{
+        title: "PatchesForPackagesResponse",
+        description: "Response returned from the patches for packages endpoint",
+        type: :object,
+        additionalProperties: false,
+        properties: %{
+          patches: %Schema{
+            title: "PatchesForPackages",
+            description:
+              "A list of the relevant patches covered by the provided package upgrades",
+            type: :array,
+            items: PatchesForPackage
+          }
         }
-      }
-    })
+      },
+      struct?: false
+    )
   end
 
   defmodule ErrataDetails do
@@ -281,18 +288,21 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
 
   defmodule ErrataDetailsResponse do
     @moduledoc false
-    OpenApiSpex.schema(%{
-      title: "ErrataDetailsResponse",
-      description: "Response returned from the errata details endpoint",
-      type: :object,
-      additionalProperties: false,
-      properties: %{
-        errata_details: ErrataDetails,
-        cves: CVEs,
-        fixes: AdvisoryFixes,
-        affected_packages: AffectedPackages,
-        affected_systems: AffectedSystems
-      }
-    })
+    OpenApiSpex.schema(
+      %{
+        title: "ErrataDetailsResponse",
+        description: "Response returned from the errata details endpoint",
+        type: :object,
+        additionalProperties: false,
+        properties: %{
+          errata_details: ErrataDetails,
+          cves: CVEs,
+          fixes: AdvisoryFixes,
+          affected_packages: AffectedPackages,
+          affected_systems: AffectedSystems
+        }
+      },
+      struct?: false
+    )
   end
 end
