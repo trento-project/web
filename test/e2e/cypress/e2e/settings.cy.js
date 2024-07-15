@@ -807,7 +807,8 @@ context('Settings page', () => {
       });
     });
   });
-  describe('Forbidden action', () => {
+
+  describe('Forbidden actions', () => {
     const password = 'password';
 
     beforeEach(() => {
