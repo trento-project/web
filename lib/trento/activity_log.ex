@@ -45,7 +45,6 @@ defmodule Trento.ActivityLog do
 
   @spec list_activity_log() :: list(ActivityLog.t())
   def list_activity_log do
-    # This will be made filterable/paginatable in a later PR
     query =
       from activity in ActivityLog,
         order_by: [desc: activity.inserted_at]
@@ -59,6 +58,17 @@ defmodule Trento.ActivityLog do
          expiration_date <- calculate_expiration_date(retention_time) do
       delete_logs_before(expiration_date)
       :ok
+    end
+  end
+
+  @spec list_activity_log(map()) :: {:ok, list(ActivityLog.t()), Flop.Meta.t()}
+  def list_activity_log(params) do
+    case Flop.validate_and_run(ActivityLog, params, for: ActivityLog) do
+      {:ok, {activity_log_entries, meta}} ->
+        {:ok, activity_log_entries, meta}
+
+      error ->
+        log_error(error, "Error while paginating activity log")
     end
   end
 
