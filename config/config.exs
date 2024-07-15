@@ -213,6 +213,8 @@ config :bodyguard,
   # The second element of the {:error, reason} tuple returned on auth failure
   default_error: :forbidden
 
+config :flop, repo: Trento.Repo
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"

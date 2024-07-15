@@ -71,6 +71,7 @@ defmodule Trento.MixProject do
       {:excoveralls, "~> 0.10", only: :test},
       {:faker, "~> 0.17", only: [:dev, :test]},
       {:floki, ">= 0.30.0", only: :test},
+      {:flop, "~> 0.25.0"},
       {:fun_with_flags, "~> 1.8.1"},
       {:fun_with_flags_ui, "~> 0.8.0"},
       {:gettext, "~> 0.18"},
