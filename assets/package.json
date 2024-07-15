@@ -11,7 +11,7 @@
     "@storybook/addon-links": "^7.6.17",
     "@storybook/client-api": "^7.6.17",
     "@storybook/react": "^7.6.16",
-    "@storybook/react-webpack5": "^7.6.17",
+    "@storybook/react-webpack5": "^7.6.20",
     "@storybook/testing-library": "^0.2.2",
     "@testing-library/jest-dom": "^6.4.5",
     "@testing-library/react": "^16.0.0",
