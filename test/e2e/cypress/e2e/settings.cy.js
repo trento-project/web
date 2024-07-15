@@ -5,6 +5,7 @@ import {
   anotherValidCertificate,
   expiredCertificate,
 } from '../fixtures/suma_credentials/certificates';
+import { createUserRequestFactory } from '@lib/test-utils/factories';
 
 context('Settings page', () => {
   before(() => {
@@ -701,7 +702,7 @@ context('Settings page', () => {
         .as('initialRetentionTime');
     });
 
-    describe.only('Changing Settings', () => {
+    describe('Changing Settings', () => {
       it('should change retention time', () => {
         // the initial retention time is read before the settings are changed
         cy.get('@initialRetentionTime').then((text) =>
@@ -804,6 +805,72 @@ context('Settings page', () => {
             .should('have.text', text)
         );
       });
+    });
+  });
+
+  describe('Forbidden actions', () => {
+    const password = 'password';
+
+    beforeEach(() => {
+      cy.deleteAllUsers();
+      cy.logout();
+      const user = createUserRequestFactory.build({
+        password,
+        password_confirmation: password,
+      });
+      cy.wrap(user).as('user');
+    });
+
+    it('should enable settings buttons if the user has the correct abilities', () => {
+      const userAbilites = [
+        { name: 'all', resource: 'activity_logs_settings' },
+        { name: 'all', resource: 'api_key_settings' },
+        { name: 'all', resource: 'suma_settings' },
+      ];
+      cy.get('@user').then((user) => {
+        cy.createUserWithAbilities(user, userAbilites);
+        cy.login(user.username, password);
+      });
+      cy.visit(`/settings`);
+      // API Key settings button
+      cy.contains('button', 'Generate Key')
+        .should('be.visible')
+        .and('be.enabled');
+      // SUSE Manager config settings button
+      cy.contains('button', 'Test Connection').should('be.enabled');
+      cy.contains('h2', 'SUSE Manager Config')
+        .next()
+        .contains('button', 'Edit Settings')
+        .should('be.enabled');
+      cy.contains('button', 'Clear Settings').should('be.enabled');
+      // Activity Logs settings button
+      cy.contains('h2', 'Activity Logs')
+        .next()
+        .contains('button', 'Edit Settings')
+        .should('be.enabled');
+    });
+
+    it('should disable settings buttons if the user has no abilities', () => {
+      cy.get('@user').then((user) => {
+        cy.createUserWithAbilities(user, []);
+        cy.login(user.username, password);
+      });
+      cy.visit(`/settings`);
+      // API Key settings button
+      cy.contains('button', 'Generate Key').should('have.class', 'opacity-50');
+      cy.contains('button', 'Generate Key').should('be.disabled');
+      // SUSE Manager config settings button
+      cy.contains('button', 'Test Connection').should('be.enabled');
+      cy.contains('h2', 'SUSE Manager Config')
+        .next()
+        .contains('button', 'Edit Settings')
+        .should('be.disabled');
+      cy.contains('button', 'Clear Settings').should('be.disabled');
+      // Activity Logs settings button
+      cy.contains('h2', 'Activity Logs')
+        .next()
+        .contains('button', 'Edit Settings')
+        .should('be.disabled');
     });
   });
 });
