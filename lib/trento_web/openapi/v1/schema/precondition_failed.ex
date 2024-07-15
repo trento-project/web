@@ -7,27 +7,30 @@ defmodule TrentoWeb.OpenApi.V1.Schema.PreconditionFailed do
   alias OpenApiSpex.Operation
   alias OpenApiSpex.Schema
 
-  OpenApiSpex.schema(%{
-    title: "PreconditionFailed",
-    type: :object,
-    additionalProperties: false,
-    properties: %{
-      errors: %Schema{
-        type: :array,
-        items: %Schema{
-          type: :object,
-          properties: %{
-            detail: %Schema{
-              type: :string,
-              example:
-                "Mid-air collision detected, please refresh the resource you are trying to update."
-            },
-            title: %Schema{type: :string, example: "Precondition Failed"}
+  OpenApiSpex.schema(
+    %{
+      title: "PreconditionFailed",
+      type: :object,
+      additionalProperties: false,
+      properties: %{
+        errors: %Schema{
+          type: :array,
+          items: %Schema{
+            type: :object,
+            properties: %{
+              detail: %Schema{
+                type: :string,
+                example:
+                  "Mid-air collision detected, please refresh the resource you are trying to update."
+              },
+              title: %Schema{type: :string, example: "Precondition Failed"}
+            }
           }
         }
       }
-    }
-  })
+    },
+    struct?: false
+  )
 
   def response do
     Operation.response(

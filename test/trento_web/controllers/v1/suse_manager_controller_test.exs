@@ -11,10 +11,7 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
   alias TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates.{
     AvailableSoftwareUpdatesResponse,
     ErrataDetailsResponse,
-    PatchesForPackage,
-    PatchesForPackagesResponse,
-    RelevantPatch,
-    UpgradablePackage
+    PatchesForPackagesResponse
   }
 
   setup do
@@ -46,18 +43,18 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
 
       %AvailableSoftwareUpdatesResponse{
         relevant_patches: [
-          %RelevantPatch{
+          %{
             id: 4182
           },
-          %RelevantPatch{
+          %{
             id: 4174
           }
         ],
         upgradable_packages: [
-          %UpgradablePackage{
+          %{
             name: "elixir"
           },
-          %UpgradablePackage{
+          %{
             name: "systemd"
           }
         ]
@@ -107,8 +104,8 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
 
       %PatchesForPackagesResponse{
         patches: [
-          %PatchesForPackage{package_id: _, patches: _},
-          %PatchesForPackage{package_id: _, patches: _}
+          %{package_id: _, patches: _},
+          %{package_id: _, patches: _}
         ]
       } =
         conn
@@ -128,8 +125,8 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
 
       %PatchesForPackagesResponse{
         patches: [
-          %PatchesForPackage{package_id: _, patches: []},
-          %PatchesForPackage{package_id: _, patches: []}
+          %{package_id: _, patches: []},
+          %{package_id: _, patches: []}
         ]
       } =
         conn

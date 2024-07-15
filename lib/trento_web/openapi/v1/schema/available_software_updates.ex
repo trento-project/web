@@ -6,78 +6,87 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
 
   defmodule UpgradablePackage do
     @moduledoc false
-    OpenApiSpex.schema(%{
-      title: "UpgradablePackage",
-      description: "Upgradable package",
-      type: :object,
-      additionalProperties: false,
-      properties: %{
-        arch: %Schema{type: :string, description: "Package name"},
-        from_epoch: %Schema{type: :string, description: "From epoch"},
-        from_release: %Schema{type: :string, description: "From which release"},
-        from_version: %Schema{type: :string, description: "From version"},
-        name: %Schema{type: :string, description: "Upgradable package name"},
-        to_epoch: %Schema{type: :string, description: "To epoch"},
-        to_package_id: %Schema{type: :string, description: "To package id"},
-        to_release: %Schema{type: :string, description: "To release"},
-        to_version: %Schema{type: :string, description: "To version"}
-      }
-    })
+    OpenApiSpex.schema(
+      %{
+        title: "UpgradablePackage",
+        description: "Upgradable package",
+        type: :object,
+        additionalProperties: false,
+        properties: %{
+          arch: %Schema{type: :string, description: "Package name"},
+          from_epoch: %Schema{type: :string, description: "From epoch"},
+          from_release: %Schema{type: :string, description: "From which release"},
+          from_version: %Schema{type: :string, description: "From version"},
+          name: %Schema{type: :string, description: "Upgradable package name"},
+          to_epoch: %Schema{type: :string, description: "To epoch"},
+          to_package_id: %Schema{type: :string, description: "To package id"},
+          to_release: %Schema{type: :string, description: "To release"},
+          to_version: %Schema{type: :string, description: "To version"}
+        }
+      },
+      struct?: false
+    )
   end
 
   defmodule RelevantPatch do
     @moduledoc false
-    OpenApiSpex.schema(%{
-      title: "RelevantPatch",
-      description: "Relevant patch",
-      type: :object,
-      additionalProperties: false,
-      properties: %{
-        id: %Schema{type: :integer, description: "Advisory's id"},
-        advisory_name: %Schema{type: :string, description: "Advisory name"},
-        advisory_status: %Schema{type: :string, description: "Advisory status"},
-        advisory_synopsis: %Schema{type: :string, description: "Advisory's synopsis"},
-        advisory_type: %Schema{
-          type: :string,
-          description: "Advisory's type",
-          enum: [:security_advisory, :bugfix, :enhancement]
-        },
-        date: %Schema{type: :string, description: "Advisory's date"},
-        update_date: %Schema{type: :string, description: "Advisory's update date"}
-      }
-    })
+    OpenApiSpex.schema(
+      %{
+        title: "RelevantPatch",
+        description: "Relevant patch",
+        type: :object,
+        additionalProperties: false,
+        properties: %{
+          id: %Schema{type: :integer, description: "Advisory's id"},
+          advisory_name: %Schema{type: :string, description: "Advisory name"},
+          advisory_status: %Schema{type: :string, description: "Advisory status"},
+          advisory_synopsis: %Schema{type: :string, description: "Advisory's synopsis"},
+          advisory_type: %Schema{
+            type: :string,
+            description: "Advisory's type",
+            enum: [:security_advisory, :bugfix, :enhancement]
+          },
+          date: %Schema{type: :string, description: "Advisory's date"},
+          update_date: %Schema{type: :string, description: "Advisory's update date"}
+        }
+      },
+      struct?: false
+    )
   end
 
   defmodule PatchesForPackage do
     @moduledoc false
-    OpenApiSpex.schema(%{
-      title: "PatchesForPackage",
-      description: "Relevant patches covered by a package upgrade",
-      type: :object,
-      additionalProperties: false,
-      properties: %{
-        package_id: %Schema{type: :string, description: ""},
-        patches: %Schema{
-          type: :array,
-          additionalProperties: false,
-          items: %Schema{
-            title: "PatchForPackage",
-            description: "A list of relevant patches that the upgrade covers",
+    OpenApiSpex.schema(
+      %{
+        title: "PatchesForPackage",
+        description: "Relevant patches covered by a package upgrade",
+        type: :object,
+        additionalProperties: false,
+        properties: %{
+          package_id: %Schema{type: :string, description: ""},
+          patches: %Schema{
+            type: :array,
             additionalProperties: false,
-            properties: %{
-              advisory_type: %Schema{type: :string, description: "Advisory type"},
-              advisory: %Schema{type: :string, description: "Advisory name for the patch"},
-              synopsis: %Schema{type: :string, description: "Advisory synopsis for the patch"},
-              issue_date: %Schema{type: :string, description: "Advisory issue date"},
-              last_modified_date: %Schema{
-                type: :string,
-                description: "Advisory last modified date"
+            items: %Schema{
+              title: "PatchForPackage",
+              description: "A list of relevant patches that the upgrade covers",
+              additionalProperties: false,
+              properties: %{
+                advisory_type: %Schema{type: :string, description: "Advisory type"},
+                advisory: %Schema{type: :string, description: "Advisory name for the patch"},
+                synopsis: %Schema{type: :string, description: "Advisory synopsis for the patch"},
+                issue_date: %Schema{type: :string, description: "Advisory issue date"},
+                last_modified_date: %Schema{
+                  type: :string,
+                  description: "Advisory last modified date"
+                }
               }
             }
           }
         }
-      }
-    })
+      },
+      struct?: false
+    )
   end
 
   defmodule AvailableSoftwareUpdatesResponse do
@@ -124,135 +133,150 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
 
   defmodule ErrataDetails do
     @moduledoc false
-    OpenApiSpex.schema(%{
-      title: "ErrataDetails",
-      description: "Details for the erratum matching the given advisory name",
-      type: :object,
-      additionalProperties: false,
-      properties: %{
-        id: %Schema{type: :number, format: :int, description: "Advisory ID number"},
-        issue_date: %Schema{
-          type: :string,
-          format: "date",
-          description: "Advisory issue date"
-        },
-        update_date: %Schema{
-          type: :string,
-          format: "date",
-          description: "Advisory update date"
-        },
-        last_modified_date: %Schema{
-          type: :string,
-          format: "date",
-          description: "Advisory last modified date"
-        },
-        synopsis: %Schema{type: :string, description: "Advisory synopsis"},
-        release: %Schema{type: :number, format: :int, description: "Advisory Release number"},
-        advisory_status: %Schema{type: :string, description: "Advisory status"},
-        vendor_advisory: %Schema{type: :string, description: "Vendor advisory"},
-        type: %Schema{type: :string, description: "Advisory type"},
-        product: %Schema{type: :string, description: "Advisory product"},
-        errata_from: %Schema{type: :string, description: "Advisory errata"},
-        topic: %Schema{type: :string, description: "Advisory topic"},
-        description: %Schema{type: :string, description: "Advisory description"},
-        references: %Schema{type: :string, description: "Advisory references"},
-        notes: %Schema{type: :string, description: "Advisory notes"},
-        solution: %Schema{type: :string, description: "Advisory solution"},
-        reboot_suggested: %Schema{
-          type: :boolean,
-          description:
-            "A boolean flag signaling whether a system reboot is advisable following the application of the errata. Typical example is upon kernel update."
-        },
-        restart_suggested: %Schema{
-          type: :boolean,
-          description:
-            "A boolean flag signaling a weather reboot of the package manager is advisable following the application of the errata. This is commonly used to address update stack issues before proceeding with other updates."
+    OpenApiSpex.schema(
+      %{
+        title: "ErrataDetails",
+        description: "Details for the erratum matching the given advisory name",
+        type: :object,
+        additionalProperties: false,
+        properties: %{
+          id: %Schema{type: :number, format: :int, description: "Advisory ID number"},
+          issue_date: %Schema{
+            type: :string,
+            format: "date",
+            description: "Advisory issue date"
+          },
+          update_date: %Schema{
+            type: :string,
+            format: "date",
+            description: "Advisory update date"
+          },
+          last_modified_date: %Schema{
+            type: :string,
+            format: "date",
+            description: "Advisory last modified date"
+          },
+          synopsis: %Schema{type: :string, description: "Advisory synopsis"},
+          release: %Schema{type: :number, format: :int, description: "Advisory Release number"},
+          advisory_status: %Schema{type: :string, description: "Advisory status"},
+          vendor_advisory: %Schema{type: :string, description: "Vendor advisory"},
+          type: %Schema{type: :string, description: "Advisory type"},
+          product: %Schema{type: :string, description: "Advisory product"},
+          errata_from: %Schema{type: :string, description: "Advisory errata"},
+          topic: %Schema{type: :string, description: "Advisory topic"},
+          description: %Schema{type: :string, description: "Advisory description"},
+          references: %Schema{type: :string, description: "Advisory references"},
+          notes: %Schema{type: :string, description: "Advisory notes"},
+          solution: %Schema{type: :string, description: "Advisory solution"},
+          reboot_suggested: %Schema{
+            type: :boolean,
+            description:
+              "A boolean flag signaling whether a system reboot is advisable following the application of the errata. Typical example is upon kernel update."
+          },
+          restart_suggested: %Schema{
+            type: :boolean,
+            description:
+              "A boolean flag signaling a weather reboot of the package manager is advisable following the application of the errata. This is commonly used to address update stack issues before proceeding with other updates."
+          }
         }
-      }
-    })
+      },
+      struct?: false
+    )
   end
 
   defmodule CVEs do
     @moduledoc false
-    OpenApiSpex.schema(%{
-      title: "CVEs",
-      description: "List of CVEs applicable to the errata with the given advisory name.",
-      type: :array,
-      additionalProperties: false,
-      items: %Schema{
-        title: "CVE",
-        description: "A fix for a publicly known security vulnerability",
-        type: :string
-      }
-    })
+    OpenApiSpex.schema(
+      %{
+        title: "CVEs",
+        description: "List of CVEs applicable to the errata with the given advisory name.",
+        type: :array,
+        additionalProperties: false,
+        items: %Schema{
+          title: "CVE",
+          description: "A fix for a publicly known security vulnerability",
+          type: :string
+        }
+      },
+      struct?: false
+    )
   end
 
   defmodule AdvisoryFixes do
     @moduledoc false
-    OpenApiSpex.schema(%{
-      title: "AdvisoryFixes",
-      description: "Response returned from the get advisory fixes endpoint",
-      type: :object,
-      additionalProperties: %Schema{type: :string}
-    })
+    OpenApiSpex.schema(
+      %{
+        title: "AdvisoryFixes",
+        description: "Response returned from the get advisory fixes endpoint",
+        type: :object,
+        additionalProperties: %Schema{type: :string}
+      },
+      struct?: false
+    )
   end
 
   defmodule AffectedPackages do
     @moduledoc false
-    OpenApiSpex.schema(%{
-      title: "AffectedPackages",
-      description: "Response returned from the get affected packages endpoint",
-      type: :array,
-      additionalProperties: false,
-      items: %Schema{
-        title: "AffectedPackage",
-        description: "Metadata for a package effected by an advisory",
-        type: :object,
-        properties: %{
-          name: %Schema{
-            type: :string,
-            description: "Package name"
-          },
-          arch_label: %Schema{
-            type: :string,
-            description: "Package architecture"
-          },
-          version: %Schema{
-            type: :string,
-            description: "Package upstream version"
-          },
-          release: %Schema{
-            type: :string,
-            description: "Package RPM release number"
-          },
-          epoch: %Schema{
-            type: :string,
-            description: "Package epoch number"
+    OpenApiSpex.schema(
+      %{
+        title: "AffectedPackages",
+        description: "Response returned from the get affected packages endpoint",
+        type: :array,
+        additionalProperties: false,
+        items: %Schema{
+          title: "AffectedPackage",
+          description: "Metadata for a package effected by an advisory",
+          type: :object,
+          properties: %{
+            name: %Schema{
+              type: :string,
+              description: "Package name"
+            },
+            arch_label: %Schema{
+              type: :string,
+              description: "Package architecture"
+            },
+            version: %Schema{
+              type: :string,
+              description: "Package upstream version"
+            },
+            release: %Schema{
+              type: :string,
+              description: "Package RPM release number"
+            },
+            epoch: %Schema{
+              type: :string,
+              description: "Package epoch number"
+            }
           }
         }
-      }
-    })
+      },
+      struct?: false
+    )
   end
 
   defmodule AffectedSystems do
     @moduledoc false
-    OpenApiSpex.schema(%{
-      title: "AffectedSystems",
-      description: "Response returned from the get affected systems endpoint",
-      type: :array,
-      additionalProperties: false,
-      items: %Schema{
-        title: "AffectedSystem",
-        description: "Metadata for a system effected by an advisory",
-        type: :object,
-        properties: %{
-          name: %Schema{
-            type: :string,
-            description: "System name"
+    OpenApiSpex.schema(
+      %{
+        title: "AffectedSystems",
+        description: "Response returned from the get affected systems endpoint",
+        type: :array,
+        additionalProperties: false,
+        items: %Schema{
+          title: "AffectedSystem",
+          description: "Metadata for a system effected by an advisory",
+          type: :object,
+          properties: %{
+            name: %Schema{
+              type: :string,
+              description: "System name"
+            }
           }
         }
-      }
-    })
+      },
+      struct?: false
+    )
   end
 
   defmodule ErrataDetailsResponse do

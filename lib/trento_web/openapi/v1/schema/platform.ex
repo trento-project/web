@@ -7,137 +7,155 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
   defmodule Settings do
     @moduledoc false
 
-    OpenApiSpex.schema(%{
-      title: "PlatformSettings",
-      description: "Settings values for the current installation",
-      type: :object,
-      additionalProperties: false,
-      properties: %{
-        eula_accepted: %Schema{
-          type: :boolean,
-          description: "Whether the user has accepted EULA (on a Premium installation)",
-          deprecated: true
-        },
-        premium_subscription: %Schema{
-          type: :boolean,
-          description: "Whether current installation is a Premium one"
+    OpenApiSpex.schema(
+      %{
+        title: "PlatformSettings",
+        description: "Settings values for the current installation",
+        type: :object,
+        additionalProperties: false,
+        properties: %{
+          eula_accepted: %Schema{
+            type: :boolean,
+            description: "Whether the user has accepted EULA (on a Premium installation)",
+            deprecated: true
+          },
+          premium_subscription: %Schema{
+            type: :boolean,
+            description: "Whether current installation is a Premium one"
+          }
         }
-      }
-    })
+      },
+      struct?: false
+    )
   end
 
   defmodule ApiKeySettings do
     @moduledoc false
-    OpenApiSpex.schema(%{
-      title: "ApiKeySettings",
-      description: "Settings for Api Key generation",
-      type: :object,
-      additionalProperties: false,
-      properties: %{
-        created_at: %Schema{
-          type: :string,
-          format: :"date-time",
-          description: "The creation date of api key"
+    OpenApiSpex.schema(
+      %{
+        title: "ApiKeySettings",
+        description: "Settings for Api Key generation",
+        type: :object,
+        additionalProperties: false,
+        properties: %{
+          created_at: %Schema{
+            type: :string,
+            format: :"date-time",
+            description: "The creation date of api key"
+          },
+          generated_api_key: %Schema{
+            type: :string,
+            description: "The generated api key from api key settings"
+          },
+          expire_at: %Schema{
+            type: :string,
+            format: :"date-time",
+            description: "The expire date of api key",
+            nullable: true
+          }
         },
-        generated_api_key: %Schema{
-          type: :string,
-          description: "The generated api key from api key settings"
-        },
-        expire_at: %Schema{
-          type: :string,
-          format: :"date-time",
-          description: "The expire date of api key",
-          nullable: true
-        }
+        required: [:generated_api_key, :expire_at, :created_at]
       },
-      required: [:generated_api_key, :expire_at, :created_at]
-    })
+      struct?: false
+    )
   end
 
   defmodule ApiKeySettingsUpdateRequest do
     @moduledoc false
 
-    OpenApiSpex.schema(%{
-      title: "ApiKeySettingsUpdateRequest",
-      description: "Request body for api key settings update",
-      type: :object,
-      additionalProperties: false,
-      properties: %{
-        expire_at: %Schema{
-          type: :string,
-          format: :"date-time",
-          description: "The expire date of api key",
-          nullable: true
-        }
+    OpenApiSpex.schema(
+      %{
+        title: "ApiKeySettingsUpdateRequest",
+        description: "Request body for api key settings update",
+        type: :object,
+        additionalProperties: false,
+        properties: %{
+          expire_at: %Schema{
+            type: :string,
+            format: :"date-time",
+            description: "The expire date of api key",
+            nullable: true
+          }
+        },
+        required: [:expire_at]
       },
-      required: [:expire_at]
-    })
+      struct?: false
+    )
   end
 
   defmodule GeneralInformation do
     @moduledoc false
 
-    OpenApiSpex.schema(%{
-      title: "GeneralInformation",
-      description: "General information about the current installation",
-      type: :object,
-      additionalProperties: false,
-      properties: %{
-        flavor: %Schema{
-          type: :string,
-          description: "Flavor of the current installation",
-          enum: ["Community", "Premium"]
-        },
-        version: %Schema{
-          type: :string,
-          description: "Version of the current server component installation"
-        },
-        sles_subscriptions: %Schema{
-          type: :integer,
-          description: "The number of SLES Subscription discovered on the target infrastructure"
+    OpenApiSpex.schema(
+      %{
+        title: "GeneralInformation",
+        description: "General information about the current installation",
+        type: :object,
+        additionalProperties: false,
+        properties: %{
+          flavor: %Schema{
+            type: :string,
+            description: "Flavor of the current installation",
+            enum: ["Community", "Premium"]
+          },
+          version: %Schema{
+            type: :string,
+            description: "Version of the current server component installation"
+          },
+          sles_subscriptions: %Schema{
+            type: :integer,
+            description: "The number of SLES Subscription discovered on the target infrastructure"
+          }
         }
-      }
-    })
+      },
+      struct?: false
+    )
   end
 
   defmodule RetentionTimeSettings do
     @moduledoc false
 
-    OpenApiSpex.schema(%{
-      title: "RetentionTimeSettings",
-      description: "Retention Time settings of the Activity Log",
-      type: :object,
-      additionalProperties: false,
-      properties: %{
-        value: %Schema{
-          type: :integer,
-          description:
-            "The integer retention duration, that is used in conjunction with the retention time unit.",
-          minimum: 1
+    OpenApiSpex.schema(
+      %{
+        title: "RetentionTimeSettings",
+        description: "Retention Time settings of the Activity Log",
+        type: :object,
+        additionalProperties: false,
+        properties: %{
+          value: %Schema{
+            type: :integer,
+            description:
+              "The integer retention duration, that is used in conjunction with the retention time unit.",
+            minimum: 1
+          },
+          unit: %Schema{
+            type: :string,
+            description:
+              "The retention duration unit, that is used in conjunction with the retention time period.",
+            enum: [:day, :week, :month, :year]
+          }
         },
-        unit: %Schema{
-          type: :string,
-          description:
-            "The retention duration unit, that is used in conjunction with the retention time period.",
-          enum: [:day, :week, :month, :year]
-        }
+        required: [:value, :unit]
       },
-      required: [:value, :unit]
-    })
+      struct?: false
+    )
   end
 
   defmodule ActivityLogSettings do
     @moduledoc false
 
-    OpenApiSpex.schema(%{
-      title: "ActivityLogSettings",
-      description: "Activity Log settings of the current installation",
-      type: :object,
-      additionalProperties: false,
-      properties: %{
-        retention_time: RetentionTimeSettings
+    OpenApiSpex.schema(
+      %{
+        title: "ActivityLogSettings",
+        description: "Activity Log settings of the current installation",
+        type: :object,
+        additionalProperties: false,
+        properties: %{
+          retention_time: RetentionTimeSettings
+        },
+        required: [:retention_time]
       },
-      required: [:retention_time]
-    })
+      struct?: false
+    )
   end
 end

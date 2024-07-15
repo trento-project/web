@@ -7,20 +7,23 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Ready do
 
   require OpenApiSpex
 
-  OpenApiSpex.schema(%Schema{
-    title: "Ready",
-    type: :object,
-    example: %{
-      ready: true
-    },
-    additionalProperties: false,
-    properties: %{
-      ready: %Schema{
-        description: "Trento Web platform ready",
-        type: :boolean
+  OpenApiSpex.schema(
+    %Schema{
+      title: "Ready",
+      type: :object,
+      example: %{
+        ready: true
+      },
+      additionalProperties: false,
+      properties: %{
+        ready: %Schema{
+          description: "Trento Web platform ready",
+          type: :boolean
+        }
       }
-    }
-  })
+    },
+    struct?: false
+  )
 
   def response do
     Operation.response(
