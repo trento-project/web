@@ -200,5 +200,57 @@ defmodule Trento.ActivityLogTest do
                }
              ] = ActivityLog.list_activity_log()
     end
+
+    test "should return paginated and default ordered by occurrence date activity log when no params provided" do
+      # insert 100 log entries
+      Enum.each(1..100, fn _ -> insert(:activity_log_entry) end)
+
+      default_params = %{}
+      {:ok, logs, _} = ActivityLog.list_activity_log(default_params)
+
+      # default limit is 25
+      assert length(logs) == 25
+      # default order is by inserted_at timestamp
+      assert logs == Enum.sort_by(logs, fn entry -> entry.inserted_at end, :desc)
+    end
+
+    test "should return earliest 5 paginated activity log entries" do
+      all_logs = Enum.map(1..100, fn _ -> insert(:activity_log_entry) end)
+      params = %{last: 5, order_by: [:inserted_at], order_directions: [:desc]}
+
+      {:ok, logs, _} = ActivityLog.list_activity_log(params)
+
+      assert length(logs) == 5
+
+      all_logs_sorted =
+        all_logs
+        |> Enum.sort_by(fn entry -> entry.inserted_at end, :desc)
+        |> Enum.drop(95)
+
+      assert length(all_logs_sorted) == length(logs)
+      assert all_logs_sorted == logs
+    end
+
+    test "should return latest paginated activity log entries number 26 to 50 (desc)" do
+      all_logs = Enum.map(1..100, fn _ -> insert(:activity_log_entry) end)
+      params = %{}
+
+      {:ok, logs, meta} = ActivityLog.list_activity_log(params)
+
+      assert length(logs) == 25
+      new_params = Flop.to_next_cursor(meta)
+
+      {:ok, next_logs, _next_meta} = ActivityLog.list_activity_log(new_params)
+
+      next_logs_alt =
+        all_logs
+        |> Enum.sort_by(fn entry -> entry.inserted_at end, :desc)
+        |> Enum.drop(25)
+        |> Enum.take(25)
+
+      assert length(next_logs) == 25
+      assert length(next_logs_alt) == length(next_logs)
+      assert next_logs_alt == next_logs
+    end
   end
 end
