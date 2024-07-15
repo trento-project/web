@@ -1,0 +1,21 @@
+{
+  "agent_id": "851a4dd3-9693-44c3-a40b-b32d22872e74",
+  "discovery_type": "host_discovery",
+  "payload": {
+    "agent_version": "2.3.0",
+    "cpu_count": 4,
+    "fully_qualified_domain_name": "vmangi01",
+    "hostname": "vmangi01",
+    "installation_source": "Suse",
+    "ip_addresses": [
+      "127.0.0.1",
+      "::1",
+      "10.70.1.4",
+      "10.70.1.13",
+      "f62a:7172:570f:a509:6475"
+    ],
+    "os_version": "15-SP5",
+    "socket_count": 1,
+    "total_memory_mb": 32043
+  }
+}

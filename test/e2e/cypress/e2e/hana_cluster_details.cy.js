@@ -4,7 +4,10 @@ import {
   createUserRequestFactory,
 } from '@lib/test-utils/factories';
 import { capitalize } from 'lodash';
-import { availableHanaCluster } from '../fixtures/hana-cluster-details/available_hana_cluster';
+import {
+  availableHanaCluster,
+  availableAngiCluster,
+} from '../fixtures/hana-cluster-details/available_hana_cluster';
 
 context('HANA cluster details', () => {
   const lastExecutionURL = `**/api/v2/checks/groups/**/executions/last`;
@@ -58,6 +61,18 @@ context('HANA cluster details', () => {
         .contains('Cluster type')
         .next()
         .contains(availableHanaCluster.clusterType);
+    });
+
+    it(`should have architecture type ${availableHanaCluster.clusterType}`, () => {
+      cy.get('.tn-cluster-details')
+        .contains('Cluster type')
+        .next()
+        .find('svg')
+        .trigger('mouseover');
+
+      cy.contains('span', availableHanaCluster.architectureType).should(
+        'exist'
+      );
     });
 
     it(`should have log replication mode ${availableHanaCluster.hanaSystemReplicationMode}`, () => {
@@ -212,6 +227,102 @@ context('HANA cluster details', () => {
           .children()
           .contains(item.status);
       });
+    });
+  });
+
+  describe('Angi architecture', () => {
+    before(() => {
+      cy.loadScenario('hana-scale-up-angi');
+      cy.visit(`/clusters/${availableAngiCluster.id}`);
+    });
+
+    after(() => {
+      availableAngiCluster.hosts.forEach(({ id }) => {
+        cy.deregisterHost(id);
+      });
+    });
+
+    it('should discover and display properly Angi architecture HANA scale up cluster', () => {
+      cy.get('h1').contains(availableAngiCluster.name);
+
+      cy.get('.tn-cluster-details')
+        .contains('Provider')
+        .next()
+        .contains(availableAngiCluster.provider);
+
+      cy.get('.tn-cluster-details')
+        .contains('SID')
+        .next()
+        .contains(availableAngiCluster.sid)
+        .should(
+          'have.attr',
+          'href',
+          `/databases/${availableAngiCluster.systemID}`
+        );
+
+      cy.get('.tn-cluster-details')
+        .contains('Cluster type')
+        .next()
+        .contains(availableAngiCluster.clusterType);
+
+      cy.get('.tn-cluster-details')
+        .contains('Cluster type')
+        .next()
+        .find('svg')
+        .trigger('mouseover');
+
+      cy.contains('span', availableAngiCluster.architectureType).should(
+        'exist'
+      );
+
+      cy.get('.tn-cluster-details')
+        .contains('HANA log replication mode')
+        .next()
+        .contains(availableAngiCluster.hanaSystemReplicationMode);
+
+      cy.get('.tn-cluster-details')
+        .contains('Fencing type')
+        .next()
+        .contains(availableAngiCluster.fencingType);
+
+      cy.get('.tn-cluster-details')
+        .contains('HANA secondary sync state')
+        .next()
+        .contains(availableAngiCluster.hanaSecondarySyncState);
+
+      cy.get('.tn-cluster-details')
+        .contains('Cluster maintenance')
+        .next()
+        .contains('False');
+
+      cy.get('.tn-cluster-details')
+        .contains('HANA log operation mode')
+        .next()
+        .contains(availableAngiCluster.hanaSystemReplicationOperationMode);
+
+      cy.get('.tn-cluster-details')
+        .contains('CIB last written')
+        .next()
+        .contains(availableAngiCluster.cibLastWritten);
+
+      const site1 = availableAngiCluster.sites[0];
+      const site2 = availableAngiCluster.sites[1];
+      cy.get(`.tn-site-details-${site1.name}`).contains(site1.state);
+      cy.get(`.tn-site-details-${site2.name}`).contains(site2.state);
+    });
+
+    it('should discover a Angi cluster with failover', () => {
+      cy.loadScenario('cluster-hana-scale-up-angi-failover');
+
+      cy.get('.tn-cluster-details')
+        .contains('HANA secondary sync state')
+        .next()
+        .contains('SFAIL');
+
+      const site1 = availableAngiCluster.sites[0];
+      const site2 = availableAngiCluster.sites[1];
+      cy.get(`.tn-site-details-${site1.name}`).contains('Failed');
+      cy.get(`.tn-site-details-${site2.name}`).contains(site1.state);
     });
   });
 

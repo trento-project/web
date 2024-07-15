@@ -1,0 +1,145 @@
+{
+  "agent_id": "4b67842f-ccf7-46a4-a344-9e918648b117",
+  "discovery_type": "saptune_discovery",
+  "payload": {
+    "package_version": "3.1.2",
+    "saptune_installed": true,
+    "status": {
+      "$schema": "file:///usr/share/saptune/schemas/1.0/saptune_status.schema.json",
+      "argv": "saptune --format json status",
+      "command": "status",
+      "exit code": 0,
+      "messages": [
+        {
+          "message": "sysctl.go:75: Parameter 'fs.aio-max-nr' additional defined in the following sysctl config file /usr/lib/sysctl.d/99-sysctl.conf(18446744073709551615).\n",
+          "priority": "WARNING"
+        },
+        {
+          "message": "ini.go:310: block device related section settings detected: Traversing all block devices can take a considerable amount of time.\n",
+          "priority": "NOTICE"
+        },
+        {
+          "message": "sysctl.go:75: Parameter 'vm.dirty_bytes' additional defined in the following sysctl config file /usr/lib/sysctl.d/99-sysctl.conf(629145600).\n",
+          "priority": "WARNING"
+        },
+        {
+          "message": "sysctl.go:75: Parameter 'vm.dirty_background_bytes' additional defined in the following sysctl config file /usr/lib/sysctl.d/99-sysctl.conf(314572800).\n",
+          "priority": "WARNING"
+        },
+        {
+          "message": "sysctl.go:75: Parameter 'net.core.somaxconn' additional defined in the following sysctl config file /usr/lib/sysctl.d/99-sysctl.conf(4096).\n",
+          "priority": "WARNING"
+        },
+        {
+          "message": "sysctl.go:75: Parameter 'net.ipv4.tcp_max_syn_backlog' additional defined in the following sysctl config file /usr/lib/sysctl.d/99-sysctl.conf(8192).\n",
+          "priority": "WARNING"
+        },
+        {
+          "message": "sysctl.go:75: Parameter 'net.ipv4.tcp_slow_start_after_idle' additional defined in the following sysctl config file /usr/lib/sysctl.d/99-sysctl.conf(0).\n",
+          "priority": "WARNING"
+        },
+        {
+          "message": "sysctl.go:75: Parameter 'net.ipv4.tcp_window_scaling' additional defined in the following sysctl config file /usr/lib/sysctl.d/99-sysctl.conf(1).\n",
+          "priority": "WARNING"
+        }
+      ],
+      "pid": 1892,
+      "publish time": "2024-06-10 12:57:13.784",
+      "result": {
+        "Notes applied": [
+          "941735",
+          "1771258",
+          "1868829",
+          "1980196",
+          "2578899",
+          "2684254",
+          "2382421",
+          "2534844",
+          "2993054",
+          "1656250"
+        ],
+        "Notes applied by Solution": [
+          {
+            "Note list": [
+              "941735",
+              "1771258",
+              "1868829",
+              "1980196",
+              "2578899",
+              "2684254",
+              "2382421",
+              "2534844",
+              "2993054",
+              "1656250"
+            ],
+            "Solution ID": "HANA"
+          }
+        ],
+        "Notes enabled": [
+          "941735",
+          "1771258",
+          "1868829",
+          "1980196",
+          "2578899",
+          "2684254",
+          "2382421",
+          "2534844",
+          "2993054",
+          "1656250"
+        ],
+        "Notes enabled additionally": [],
+        "Notes enabled by Solution": [
+          {
+            "Note list": [
+              "941735",
+              "1771258",
+              "1868829",
+              "1980196",
+              "2578899",
+              "2684254",
+              "2382421",
+              "2534844",
+              "2993054",
+              "1656250"
+            ],
+            "Solution ID": "HANA"
+          }
+        ],
+        "Solution applied": [
+          {
+            "Solution ID": "HANA",
+            "applied partially": false
+          }
+        ],
+        "Solution enabled": [
+          "HANA"
+        ],
+        "configured version": "3",
+        "package version": "3.1.2",
+        "remember message": "\n\n",
+        "services": {
+          "sapconf": [
+            "disabled",
+            "inactive"
+          ],
+          "saptune": [
+            "enabled",
+            "active"
+          ],
+          "tuned": [
+            "disabled",
+            "inactive"
+          ]
+        },
+        "staging": {
+          "Notes staged": [],
+          "Solutions staged": [],
+          "staging enabled": false
+        },
+        "systemd system state": "running",
+        "tuning state": "compliant",
+        "virtualization": "microsoft"
+      }
+    }
+  }
+}

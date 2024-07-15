@@ -14,6 +14,10 @@ directories = ["./test/fixtures/scenarios/hana-scale-out"]
 
 directories = ["./test/fixtures/scenarios/hana-diskless-sbd"]
 
+[hana-scale-up-angi]
+
+directories = ["./test/fixtures/scenarios/hana-scale-up-angi"]
+
 [aws-landscape]
 
 directories = ["./test/fixtures/scenarios/aws-landscape"]
@@ -210,6 +214,12 @@ files = [
 
 files = [
     "./test/fixtures/scenarios/hana-cluster-details/b767b3e9-e802-587e-a442-541d093b86b9_ha_cluster_discovery_nutanix_provider.json",
+]
+
+[cluster-hana-scale-up-angi-failover]
+
+files = [
+    "./test/fixtures/scenarios/hana-cluster-details/4b67842f-ccf7-46a4-a344-9e918648b117_ha_cluster_discovery_angi_failover.json",
 ]
 
 [host-details-vmhdbprd01]
