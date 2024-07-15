@@ -24,12 +24,16 @@ defmodule TrentoWeb.V1.DiscoveryController do
         conn,
         _
       ) do
-    body_params = Map.get(conn, :body_params)
+    %{
+      agent_id: agent_id,
+      discovery_type: discovery_type,
+      payload: payload
+    } = OpenApiSpex.body_params(conn)
 
     event = %{
-      "agent_id" => body_params.agent_id,
-      "discovery_type" => body_params.discovery_type,
-      "payload" => body_params.payload
+      "agent_id" => agent_id,
+      "discovery_type" => discovery_type,
+      "payload" => payload
     }
 
     with :ok <- Discovery.handle(event) do

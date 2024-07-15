@@ -52,7 +52,7 @@ defmodule TrentoWeb.V1.TagsController do
         } = conn,
         %{id: id}
       ) do
-    %{value: value} = Map.get(conn, :body_params)
+    %{value: value} = OpenApiSpex.body_params(conn)
 
     with {:ok, %Tag{value: value}} <- Tags.add_tag(value, id, resource_type) do
       conn

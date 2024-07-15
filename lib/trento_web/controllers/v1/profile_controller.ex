@@ -34,8 +34,9 @@ defmodule TrentoWeb.V1.ProfileController do
       forbidden: Schema.Forbidden.response()
     ]
 
-  def update(%{body_params: profile_params} = conn, _) do
+  def update(conn, _) do
     %User{} = user = Pow.Plug.current_user(conn)
+    profile_params = OpenApiSpex.body_params(conn)
 
     with {:ok, %User{} = updated_user} <- Users.update_user_profile(user, profile_params) do
       render(conn, "profile.json", user: updated_user)
@@ -90,9 +91,10 @@ defmodule TrentoWeb.V1.ProfileController do
       forbidden: Schema.Forbidden.response()
     ]
 
-  def confirm_totp_enrollment(%{body_params: body_params} = conn, _) do
+  def confirm_totp_enrollment(conn, _) do
     %User{} = user = Pow.Plug.current_user(conn)
-    totp_code = Map.get(body_params, :totp_code)
+
+    %{totp_code: totp_code} = OpenApiSpex.body_params(conn)
 
     with {:ok, %User{totp_enabled_at: totp_enabled_at}} <-
            Users.confirm_totp_enrollment(user, totp_code) do

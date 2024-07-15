@@ -79,8 +79,8 @@ defmodule TrentoWeb.V1.ClusterController do
       unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
     ]
 
-  def select_checks(%{body_params: body_params} = conn, %{cluster_id: cluster_id}) do
-    %{checks: checks} = body_params
+  def select_checks(conn, %{cluster_id: cluster_id}) do
+    %{checks: checks} = OpenApiSpex.body_params(conn)
 
     with :ok <- Clusters.select_checks(cluster_id, checks) do
       conn

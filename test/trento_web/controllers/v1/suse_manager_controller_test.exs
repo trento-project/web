@@ -8,12 +8,6 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
 
   alias TrentoWeb.OpenApi.V1.ApiSpec
 
-  alias TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates.{
-    AvailableSoftwareUpdatesResponse,
-    ErrataDetailsResponse,
-    PatchesForPackagesResponse
-  }
-
   setup do
     %{api_spec: ApiSpec.spec()}
   end
@@ -41,7 +35,7 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
           upgradable_packages: upgradable_packages
         )
 
-      %AvailableSoftwareUpdatesResponse{
+      %{
         relevant_patches: [
           %{
             id: 4182
@@ -102,7 +96,7 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
         {:ok, build_list(10, :patch_for_package)}
       end)
 
-      %PatchesForPackagesResponse{
+      %{
         patches: [
           %{package_id: _, patches: _},
           %{package_id: _, patches: _}
@@ -123,7 +117,7 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
         {:error, :error_getting_patches}
       end)
 
-      %PatchesForPackagesResponse{
+      %{
         patches: [
           %{package_id: _, patches: []},
           %{package_id: _, patches: []}
@@ -206,7 +200,7 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
 
       result = assert_schema(json, "ErrataDetailsResponse", api_spec)
 
-      %ErrataDetailsResponse{
+      %{
         errata_details: %{
           id: ^id,
           issue_date: ^issue_date,
