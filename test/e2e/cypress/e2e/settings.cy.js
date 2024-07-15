@@ -838,18 +838,16 @@ context('Settings page', () => {
         .and('be.enabled');
       // SUSE Manager config settings button
       cy.contains('button', 'Test Connection').should('be.enabled');
-      cy.get(
-        '.py-4 > .container > :nth-child(1) > .float-right > .text-jungle-green-500'
-      )
-        .should('be.enabled')
-        .and('contain.text', 'Edit Settings');
+      cy.contains('h2', 'SUSE Manager Config')
+        .next()
+        .contains('button', 'Edit Settings')
+        .should('be.enabled');
       cy.contains('button', 'Clear Settings').should('be.enabled');
       // Activity Logs settings button
-      cy.get(
-        ':nth-child(4) > .container > :nth-child(1) > .float-right > .bg-white'
-      )
-        .should('be.enabled')
-        .and('contain.text', 'Edit Settings');
+      cy.contains('h2', 'Activity Logs')
+        .next()
+        .contains('button', 'Edit Settings')
+        .should('be.enabled');
     });
 
     it('should disable settings buttons if the user has no abilities', () => {
@@ -863,18 +861,16 @@ context('Settings page', () => {
       cy.contains('button', 'Generate Key').should('be.disabled');
       // SUSE Manager config settings button
       cy.contains('button', 'Test Connection').should('be.enabled');
-      cy.get(
-        '.py-4 > .container > :nth-child(1) > .float-right > .text-jungle-green-500'
-      )
-        .should('be.disabled')
-        .and('contain.text', 'Edit Settings');
+      cy.contains('h2', 'SUSE Manager Config')
+        .next()
+        .contains('button', 'Edit Settings')
+        .should('be.disabled');
       cy.contains('button', 'Clear Settings').should('be.disabled');
       // Activity Logs settings button
-      cy.get(
-        ':nth-child(4) > .container > :nth-child(1) > .float-right > .bg-white'
-      )
-        .should('be.disabled')
-        .and('contain.text', 'Edit Settings');
+      cy.contains('h2', 'Activity Logs')
+        .next()
+        .contains('button', 'Edit Settings')
+        .should('be.disabled');
     });
   });
 });
