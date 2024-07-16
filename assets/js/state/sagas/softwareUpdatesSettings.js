@@ -7,7 +7,7 @@ import {
   updateSettings,
   clearSettings,
   testConnection,
-} from '@lib/api/softwareUpdatesSettings';
+} from '@lib/api/suseManagerSettings';
 
 import {
   FETCH_SOFTWARE_UPDATES_SETTINGS,

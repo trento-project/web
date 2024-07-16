@@ -11,7 +11,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuthTest do
   }
 
   alias Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor.Mock, as: SumaApiMock
-  alias Trento.SoftwareUpdates.Settings
+  alias Trento.Settings.SuseManagerSettings
 
   setup [:set_mox_from_context, :verify_on_exit!]
 
@@ -55,7 +55,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuthTest do
     end
 
     test "should redact sensitive data in SUMA state", %{
-      settings: %Settings{url: url, username: username, password: password}
+      settings: %SuseManagerSettings{url: url, username: username, password: password}
     } do
       {:ok, _} = start_supervised({SumaAuth, @test_integration_name})
 
@@ -86,7 +86,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuthTest do
     end
 
     test "should use an already authenticated auth cookie", %{
-      settings: %Settings{url: url, username: username, password: password}
+      settings: %SuseManagerSettings{url: url, username: username, password: password}
     } do
       {:ok, _} = start_supervised({SumaAuth, @test_integration_name})
 
@@ -172,7 +172,12 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuthTest do
     end
 
     test "should clear service state", %{
-      settings: %Settings{url: url, username: username, password: password, ca_cert: ca_cert}
+      settings: %SuseManagerSettings{
+        url: url,
+        username: username,
+        password: password,
+        ca_cert: ca_cert
+      }
     } do
       {:ok, _} = start_supervised({SumaAuth, @test_integration_name})
 

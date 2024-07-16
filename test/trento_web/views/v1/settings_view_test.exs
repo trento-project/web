@@ -1,11 +1,11 @@
-defmodule TrentoWeb.V1.SUMACredentialsViewTest do
+defmodule TrentoWeb.V1.SettingsViewTest do
   use TrentoWeb.ConnCase, async: true
 
   import Phoenix.View
 
-  alias TrentoWeb.V1.SUMACredentialsView
+  alias TrentoWeb.V1.SettingsView
 
-  describe "renders suma_credentials.json" do
+  describe "renders suse_manager.json" do
     test "should render relevant fields" do
       %{url: url, username: username, ca_uploaded_at: ca_uploaded_at} =
         settings = %{
@@ -17,7 +17,7 @@ defmodule TrentoWeb.V1.SUMACredentialsViewTest do
         }
 
       assert %{url: url, username: username, ca_uploaded_at: ca_uploaded_at} ==
-               render(SUMACredentialsView, "suma_credentials.json", %{settings: settings})
+               render(SettingsView, "suse_manager.json", %{settings: settings})
     end
   end
 end

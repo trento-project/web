@@ -183,12 +183,23 @@ defmodule TrentoWeb.Router do
         get "/activity_log", SettingsController, :get_activity_log_settings
 
         if Application.compile_env!(:trento, :suse_manager_enabled) do
-          scope "/suma_credentials" do
-            resources "/", SUMACredentialsController,
-              only: [:show, :create, :update, :delete],
-              singleton: true
+          scope "/suse_manager" do
+            get "/", SettingsController, :get_suse_manager_settings
+            post "/", SettingsController, :save_suse_manager_settings
+            patch "/", SettingsController, :update_suse_manager_settings
+            put "/", SettingsController, :update_suse_manager_settings
+            delete "/", SettingsController, :delete_suse_manager_settings
+            post "/test", SettingsController, :test_suse_manager_settings
+          end
 
-            post "/test", SUMACredentialsController, :test
+          # deprecated
+          scope "/suma_credentials" do
+            get "/", SettingsController, :get_suse_manager_settings
+            post "/", SettingsController, :save_suse_manager_settings
+            patch "/", SettingsController, :update_suse_manager_settings
+            put "/", SettingsController, :update_suse_manager_settings
+            delete "/", SettingsController, :delete_suse_manager_settings
+            post "/test", SettingsController, :test_suse_manager_settings
           end
         end
       end

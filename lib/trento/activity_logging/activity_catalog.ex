@@ -21,9 +21,9 @@ defmodule Trento.ActivityLog.ActivityCatalog do
 
   @login_attempt {TrentoWeb.SessionController, :create}
   @api_key_generation {TrentoWeb.V1.SettingsController, :update_api_key_settings}
-  @saving_suma_settings {TrentoWeb.V1.SUMACredentialsController, :create}
-  @changing_suma_settings {TrentoWeb.V1.SUMACredentialsController, :update}
-  @clearing_suma_settings {TrentoWeb.V1.SUMACredentialsController, :delete}
+  @saving_suma_settings {TrentoWeb.V1.SettingsController, :save_suse_manager_settings}
+  @changing_suma_settings {TrentoWeb.V1.SettingsController, :update_suse_manager_settings}
+  @clearing_suma_settings {TrentoWeb.V1.SettingsController, :delete_suse_manager_settings}
   @tagging {TrentoWeb.V1.TagsController, :add_tag}
   @untagging {TrentoWeb.V1.TagsController, :remove_tag}
   @user_creation {TrentoWeb.V1.UsersController, :create}
