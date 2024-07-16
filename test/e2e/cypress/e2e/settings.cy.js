@@ -76,7 +76,7 @@ context('Settings page', () => {
     });
   });
 
-  describe('SUMA Credentials Management', () => {
+  describe('Suse Manager Settings Management', () => {
     const URL_INPUT = 'suma-url-input';
     const CA_CERT_INPUT = 'suma-cacert-input';
     const USERNAME_INPUT = 'suma-username-input';
@@ -199,7 +199,7 @@ context('Settings page', () => {
 
         before(() => {
           cy.reload();
-          cy.intercept('GET', '/api/v1/settings/suma_credentials').as(
+          cy.intercept('GET', '/api/v1/settings/suse_manager').as(
             'getSettings'
           );
           cy.wait('@getSettings');
@@ -213,7 +213,7 @@ context('Settings page', () => {
                 cy.get(`[name="${name}"]`).type(value, { delay: 0 });
               });
 
-              cy.intercept('POST', '/api/v1/settings/suma_credentials').as(
+              cy.intercept('POST', '/api/v1/settings/suse_manager').as(
                 'saveSettings'
               );
               cy.get('button').contains('Save Settings').click();
@@ -272,7 +272,7 @@ context('Settings page', () => {
               cy.get(`[name="${name}"]`).type(value, { delay: 0 });
             });
 
-            cy.intercept('POST', '/api/v1/settings/suma_credentials').as(
+            cy.intercept('POST', '/api/v1/settings/suse_manager').as(
               'saveSettings'
             );
             cy.get('button').contains('Save Settings').click();
@@ -318,7 +318,7 @@ context('Settings page', () => {
         it(`should show settings edit form. Scenario: ${name}`, () => {
           cy.saveSUMASettings(settings);
           cy.reload();
-          cy.intercept('GET', '/api/v1/settings/suma_credentials').as(
+          cy.intercept('GET', '/api/v1/settings/suse_manager').as(
             'getSettings'
           );
           cy.wait('@getSettings');
@@ -410,7 +410,7 @@ context('Settings page', () => {
               };
               cy.saveSUMASettings(initialSettings);
               cy.reload();
-              cy.intercept('GET', '/api/v1/settings/suma_credentials').as(
+              cy.intercept('GET', '/api/v1/settings/suse_manager').as(
                 'getSettings'
               );
               cy.wait('@getSettings');
@@ -425,7 +425,7 @@ context('Settings page', () => {
               newValues.forEach(({ name, value }) => {
                 cy.get(`[name="${name}"]`).clear().type(value, { delay: 0 });
               });
-              cy.intercept('PATCH', '/api/v1/settings/suma_credentials').as(
+              cy.intercept('PATCH', '/api/v1/settings/suse_manager').as(
                 'changeSettings'
               );
               cy.get('button').contains('Save Settings').click();
@@ -534,7 +534,7 @@ context('Settings page', () => {
           it(`should change settings: ${name}`, () => {
             cy.saveSUMASettings(initialSettings);
             cy.reload();
-            cy.intercept('GET', '/api/v1/settings/suma_credentials').as(
+            cy.intercept('GET', '/api/v1/settings/suse_manager').as(
               'getSettings'
             );
             cy.wait('@getSettings');
@@ -549,7 +549,7 @@ context('Settings page', () => {
             newValues.forEach(({ name, value }) => {
               cy.get(`[name="${name}"]`).clear().type(value, { delay: 0 });
             });
-            cy.intercept('PATCH', '/api/v1/settings/suma_credentials').as(
+            cy.intercept('PATCH', '/api/v1/settings/suse_manager').as(
               'changeSettings'
             );
             cy.get('button').contains('Save Settings').click();
@@ -583,9 +583,7 @@ context('Settings page', () => {
           ca_cert: validCertificate,
         });
         cy.reload();
-        cy.intercept('GET', '/api/v1/settings/suma_credentials').as(
-          'getSettings'
-        );
+        cy.intercept('GET', '/api/v1/settings/suse_manager').as('getSettings');
         cy.wait('@getSettings');
 
         cy.get('[aria-label="suma-url"]').should('contain', sumaUrl);
@@ -596,7 +594,7 @@ context('Settings page', () => {
         cy.get('[aria-label="suma-username"]').should('contain', sumaUsername);
         cy.get('[aria-label="suma-password"]').should('contain', '•••••');
 
-        cy.intercept('DELETE', '/api/v1/settings/suma_credentials').as(
+        cy.intercept('DELETE', '/api/v1/settings/suse_manager').as(
           'deleteSUMASettings'
         );
         cy.get('[aria-label="clear-suma-settings"]').click();
@@ -613,9 +611,7 @@ context('Settings page', () => {
         cy.clearSUMASettings();
         cy.reload();
 
-        cy.intercept('GET', '/api/v1/settings/suma_credentials').as(
-          'getSettings'
-        );
+        cy.intercept('GET', '/api/v1/settings/suse_manager').as('getSettings');
         cy.wait('@getSettings');
 
         cy.get('[aria-label="suma-url"]').should('have.text', 'https://');
@@ -623,7 +619,7 @@ context('Settings page', () => {
         cy.get('[aria-label="suma-username"]').should('contain', '.....');
         cy.get('[aria-label="suma-password"]').should('contain', '.....');
 
-        cy.intercept('DELETE', '/api/v1/settings/suma_credentials').as(
+        cy.intercept('DELETE', '/api/v1/settings/suse_manager').as(
           'deleteSUMASettings'
         );
         cy.get('[aria-label="clear-suma-settings"]').click();
@@ -657,7 +653,7 @@ context('Settings page', () => {
         });
 
         it('should succeed', () => {
-          cy.intercept('POST', '/api/v1/settings/suma_credentials/test', {
+          cy.intercept('POST', '/api/v1/settings/suse_manager/test', {
             statusCode: 200,
           }).as('testConnection');
 
@@ -667,7 +663,7 @@ context('Settings page', () => {
         });
 
         it('should fail', () => {
-          cy.intercept('POST', '/api/v1/settings/suma_credentials/test', {
+          cy.intercept('POST', '/api/v1/settings/suse_manager/test', {
             statusCode: 422,
           }).as('testConnection');
 

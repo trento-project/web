@@ -5,7 +5,7 @@ defmodule TrentoWeb.V1.SettingsViewTest do
 
   alias TrentoWeb.V1.SettingsView
 
-  describe "renders suma_credentials.json" do
+  describe "renders suse_manager.json" do
     test "should render relevant fields" do
       %{url: url, username: username, ca_uploaded_at: ca_uploaded_at} =
         settings = %{
@@ -17,7 +17,7 @@ defmodule TrentoWeb.V1.SettingsViewTest do
         }
 
       assert %{url: url, username: username, ca_uploaded_at: ca_uploaded_at} ==
-               render(SettingsView, "suma_credentials.json", %{settings: settings})
+               render(SettingsView, "suse_manager.json", %{settings: settings})
     end
   end
 end

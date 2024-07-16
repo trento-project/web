@@ -249,7 +249,7 @@ Cypress.Commands.add(
   ({ url, username, password, ca_cert }) =>
     cy.apiLogin().then(({ accessToken }) =>
       cy.request({
-        url: '/api/v1/settings/suma_credentials',
+        url: '/api/v1/settings/suse_manager',
         method: 'POST',
         auth: {
           bearer: accessToken,
@@ -267,7 +267,7 @@ Cypress.Commands.add(
 Cypress.Commands.add('clearSUMASettings', () =>
   cy.apiLogin().then(({ accessToken }) =>
     cy.request({
-      url: '/api/v1/settings/suma_credentials',
+      url: '/api/v1/settings/suse_manager',
       method: 'DELETE',
       auth: {
         bearer: accessToken,

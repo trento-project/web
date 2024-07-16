@@ -163,7 +163,7 @@ defmodule TrentoWeb.V1.SettingsController do
   @spec get_suse_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
   def get_suse_manager_settings(conn, _) do
     with {:ok, settings} <- Settings.get_suse_manager_settings() do
-      render(conn, "suma_credentials.json", %{settings: settings})
+      render(conn, "suse_manager.json", %{settings: settings})
     end
   end
 
@@ -187,7 +187,7 @@ defmodule TrentoWeb.V1.SettingsController do
     with {:ok, saved_settings} <- Settings.save_suse_manager_settings(settings_params) do
       conn
       |> put_status(:created)
-      |> render("suma_credentials.json", %{settings: saved_settings})
+      |> render("suse_manager.json", %{settings: saved_settings})
     end
   end
 
@@ -211,7 +211,7 @@ defmodule TrentoWeb.V1.SettingsController do
     with {:ok, saved_settings} <- Settings.change_suse_manager_settings(update_settings_paylod) do
       conn
       |> put_status(:ok)
-      |> render("suma_credentials.json", %{settings: saved_settings})
+      |> render("suse_manager.json", %{settings: saved_settings})
     end
   end
 

@@ -39,7 +39,7 @@ defmodule TrentoWeb.V1.SettingsView do
     }
   end
 
-  def render("suma_credentials.json", %{
+  def render("suse_manager.json", %{
         settings: %{
           url: url,
           username: username,

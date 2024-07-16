@@ -187,7 +187,7 @@ describe('Hosts sagas', () => {
 
     const settingsResponse = softwareUpdatesSettingsFactory.build();
 
-    axiosMock.onGet('/settings/suma_credentials').reply(200, settingsResponse);
+    axiosMock.onGet('/settings/suse_manager').reply(200, settingsResponse);
 
     const softwareUpdatesResponse = {
       relevant_patches: [
