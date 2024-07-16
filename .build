@@ -347,14 +347,13 @@ Trento.Services.HealthService.html
 Trento.Settings.ApiKeySettings.html
 Trento.Settings.InstallationSettings.html
 Trento.Settings.Policy.html
+Trento.Settings.SuseManagerSettings.html
 Trento.Settings.html
 Trento.SoftwareUpdates.Discovery.DiscoveryResult.html
 Trento.SoftwareUpdates.Discovery.Gen.html
 Trento.SoftwareUpdates.Discovery.html
 Trento.SoftwareUpdates.Enums.AdvisoryType.html
 Trento.SoftwareUpdates.Enums.SoftwareUpdatesHealth.html
-Trento.SoftwareUpdates.Policy.html
-Trento.SoftwareUpdates.Settings.html
 Trento.SoftwareUpdates.html
 Trento.Support.Command.html
 Trento.Support.DateService.html
@@ -443,8 +442,6 @@ TrentoWeb.V1.ProfileController.html
 TrentoWeb.V1.ProfileView.html
 TrentoWeb.V1.PrometheusController.html
 TrentoWeb.V1.PrometheusView.html
-TrentoWeb.V1.SUMACredentialsController.html
-TrentoWeb.V1.SUMACredentialsView.html
 TrentoWeb.V1.SUSEManagerController.html
 TrentoWeb.V1.SUSEManagerView.html
 TrentoWeb.V1.SapSystemController.html
@@ -493,8 +490,8 @@ dist/merriweather-latin-ext-300-normal-K6L27CZ5.woff2
 dist/merriweather-vietnamese-300-italic-EHHNZPUO.woff2
 dist/merriweather-vietnamese-300-normal-U376L4Z4.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-ED7869CA.js
-dist/sidebar_items-C3AF5D2E.js
+dist/search_data-238D1739.js
+dist/sidebar_items-A3AD6D60.js
 environment_variables.html
 hack_on_the_trento.html
 index.html

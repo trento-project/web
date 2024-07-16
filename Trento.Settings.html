@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-43PMFBC7.js"></script>
-    <script src="dist/sidebar_items-C3AF5D2E.js"></script>
+    <script src="dist/sidebar_items-A3AD6D60.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -154,10 +154,48 @@ GUIDES
       </a>
       <span class="text">Summary</span>
     </h1>
+<div class="summary-types summary">
+  <h2>
+    <a href="#types">Types</a>
+  </h2>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:suse_manager_settings_change_submission/0" translate="no">suse_manager_settings_change_submission()</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:suse_manager_settings_save_submission/0" translate="no">suse_manager_settings_save_submission()</a>
+
+      </div>
+
+    </div>
+
+</div>
 <div class="summary-functions summary">
   <h2>
     <a href="#functions">Functions</a>
   </h2>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#change_suse_manager_settings/2" translate="no">change_suse_manager_settings(settings_submission, date_service \\ DateService)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#clear_suse_manager_settings/0" translate="no">clear_suse_manager_settings()</a>
+
+      </div>
+
+    </div>
 
     <div class="summary-row">
       <div class="summary-signature">
@@ -193,6 +231,14 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
+        <a href="#get_suse_manager_settings/0" translate="no">get_suse_manager_settings()</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
         <a href="#has_premium_subscription?/0" translate="no">has_premium_subscription?()</a>
 
       </div>
@@ -217,6 +263,14 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
+        <a href="#save_suse_manager_settings/2" translate="no">save_suse_manager_settings(settings_submission, date_service \\ DateService)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
         <a href="#update_api_key_settings/1" translate="no">update_api_key_settings(expiration)</a>
 
       </div>
@@ -228,6 +282,84 @@ GUIDES
   </section>
 
 
+  <section id="types" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#types">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Types</span>
+    </h1>
+    <div class="types-list">
+<section class="detail" id="t:suse_manager_settings_change_submission/0">
+
+  <div class="detail-header">
+    <a href="#t:suse_manager_settings_change_submission/0" class="detail-link" title="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature" translate="no">suse_manager_settings_change_submission()</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L30" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> suse_manager_settings_change_submission() :: %{
+  url: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil,
+  username: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil,
+  password: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil,
+  ca_cert: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil
+}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="t:suse_manager_settings_save_submission/0">
+
+  <div class="detail-header">
+    <a href="#t:suse_manager_settings_save_submission/0" class="detail-link" title="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature" translate="no">suse_manager_settings_save_submission()</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L23" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> suse_manager_settings_save_submission() :: %{
+  url: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  username: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  password: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  ca_cert: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil
+}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+
+    </div>
+  </section>
+
   <section id="functions" class="details-list">
     <h1 class="section-heading">
       <a class="hover-link" href="#functions">
@@ -236,6 +368,70 @@ GUIDES
       <span class="text">Functions</span>
     </h1>
     <div class="functions-list">
+<section class="detail" id="change_suse_manager_settings/2">
+
+    <span id="change_suse_manager_settings/1"></span>
+
+  <div class="detail-header">
+    <a href="#change_suse_manager_settings/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">change_suse_manager_settings(settings_submission, date_service \\ DateService)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L130" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> change_suse_manager_settings(
+  <a href="#t:suse_manager_settings_change_submission/0">suse_manager_settings_change_submission</a>(),
+  <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">module</a>()
+) ::
+  {:ok, <a href="Trento.Settings.SuseManagerSettings.html#t:t/0">Trento.Settings.SuseManagerSettings.t</a>()}
+  | {:error, :settings_not_configured}
+  | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="clear_suse_manager_settings/0">
+
+  <div class="detail-header">
+    <a href="#clear_suse_manager_settings/0" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">clear_suse_manager_settings()</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L139" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> clear_suse_manager_settings() :: :ok</pre>
+
+      </div>
+
+
+  </section>
+</section>
 <section class="detail" id="create_api_key_settings/1">
 
   <div class="detail-header">
@@ -245,7 +441,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">create_api_key_settings(settings)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L51" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L69" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -274,7 +470,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">flavor()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L48" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L66" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -302,7 +498,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">get_api_key_settings()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L58" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L76" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -331,7 +527,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">get_installation_id()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L22" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L40" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -350,6 +546,36 @@ GUIDES
 
   </section>
 </section>
+<section class="detail" id="get_suse_manager_settings/0">
+
+  <div class="detail-header">
+    <a href="#get_suse_manager_settings/0" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">get_suse_manager_settings()</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L104" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> get_suse_manager_settings() ::
+  {:ok, <a href="Trento.Settings.SuseManagerSettings.html#t:t/0">Trento.Settings.SuseManagerSettings.t</a>()}
+  | {:error, :settings_not_configured}</pre>
+
+      </div>
+
+
+  </section>
+</section>
 <section class="detail" id="has_premium_subscription?/0">
 
   <div class="detail-header">
@@ -359,7 +585,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">has_premium_subscription?()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L39" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L57" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -387,7 +613,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">premium?()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L29" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L47" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -409,7 +635,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">premium_active?()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L34" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L52" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -428,6 +654,39 @@ GUIDES
 
   </section>
 </section>
+<section class="detail" id="save_suse_manager_settings/2">
+
+    <span id="save_suse_manager_settings/1"></span>
+
+  <div class="detail-header">
+    <a href="#save_suse_manager_settings/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">save_suse_manager_settings(settings_submission, date_service \\ DateService)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L118" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> save_suse_manager_settings(<a href="#t:suse_manager_settings_save_submission/0">suse_manager_settings_save_submission</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">module</a>()) ::
+  {:ok, <a href="Trento.Settings.SuseManagerSettings.html#t:t/0">Trento.Settings.SuseManagerSettings.t</a>()}
+  | {:error, :settings_already_configured}
+  | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+
+      </div>
+
+
+  </section>
+</section>
 <section class="detail" id="update_api_key_settings/1">
 
   <div class="detail-header">
@@ -437,7 +696,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">update_api_key_settings(expiration)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L66" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L84" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>

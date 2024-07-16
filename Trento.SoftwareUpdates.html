@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-43PMFBC7.js"></script>
-    <script src="dist/sidebar_items-C3AF5D2E.js"></script>
+    <script src="dist/sidebar_items-A3AD6D60.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -154,28 +154,6 @@ GUIDES
       </a>
       <span class="text">Summary</span>
     </h1>
-<div class="summary-types summary">
-  <h2>
-    <a href="#types">Types</a>
-  </h2>
-
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#t:software_update_settings_change_submission/0" translate="no">software_update_settings_change_submission()</a>
-
-      </div>
-
-    </div>
-
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#t:software_update_settings_save_submission/0" translate="no">software_update_settings_save_submission()</a>
-
-      </div>
-
-    </div>
-
-</div>
 <div class="summary-functions summary">
   <h2>
     <a href="#functions">Functions</a>
@@ -183,31 +161,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#change_settings/2" translate="no">change_settings(settings_submission, date_service \\ DateService)</a>
-
-      </div>
-
-    </div>
-
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#clear_settings/0" translate="no">clear_settings()</a>
-
-      </div>
-
-    </div>
-
-    <div class="summary-row">
-      <div class="summary-signature">
         <a href="#get_packages_patches/1" translate="no">get_packages_patches(package_ids)</a>
-
-      </div>
-
-    </div>
-
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#get_settings/0" translate="no">get_settings()</a>
 
       </div>
 
@@ -231,14 +185,6 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#save_settings/2" translate="no">save_settings(settings_submission, date_service \\ DateService)</a>
-
-      </div>
-
-    </div>
-
-    <div class="summary-row">
-      <div class="summary-signature">
         <a href="#test_connection_settings/0" translate="no">test_connection_settings()</a>
 
       </div>
@@ -250,84 +196,6 @@ GUIDES
   </section>
 
 
-  <section id="types" class="details-list">
-    <h1 class="section-heading">
-      <a class="hover-link" href="#types">
-        <i class="ri-link-m" aria-hidden="true"></i>
-      </a>
-      <span class="text">Types</span>
-    </h1>
-    <div class="types-list">
-<section class="detail" id="t:software_update_settings_change_submission/0">
-
-  <div class="detail-header">
-    <a href="#t:software_update_settings_change_submission/0" class="detail-link" title="Link to this type">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this type</span>
-    </a>
-    <h1 class="signature" translate="no">software_update_settings_change_submission()</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates.ex#L20" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-      <div class="specs">
-
-          <pre translate="no"><span class="attribute">@type</span> software_update_settings_change_submission() :: %{
-  url: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil,
-  username: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil,
-  password: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil,
-  ca_cert: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil
-}</pre>
-
-      </div>
-
-
-  </section>
-</section>
-<section class="detail" id="t:software_update_settings_save_submission/0">
-
-  <div class="detail-header">
-    <a href="#t:software_update_settings_save_submission/0" class="detail-link" title="Link to this type">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this type</span>
-    </a>
-    <h1 class="signature" translate="no">software_update_settings_save_submission()</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates.ex#L13" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-      <div class="specs">
-
-          <pre translate="no"><span class="attribute">@type</span> software_update_settings_save_submission() :: %{
-  url: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
-  username: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
-  password: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
-  ca_cert: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil
-}</pre>
-
-      </div>
-
-
-  </section>
-</section>
-
-    </div>
-  </section>
-
   <section id="functions" class="details-list">
     <h1 class="section-heading">
       <a class="hover-link" href="#functions">
@@ -336,67 +204,6 @@ GUIDES
       <span class="text">Functions</span>
     </h1>
     <div class="functions-list">
-<section class="detail" id="change_settings/2">
-
-    <span id="change_settings/1"></span>
-
-  <div class="detail-header">
-    <a href="#change_settings/2" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">change_settings(settings_submission, date_service \\ DateService)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates.ex#L54" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-      <div class="specs">
-
-          <pre translate="no"><span class="attribute">@spec</span> change_settings(<a href="#t:software_update_settings_change_submission/0">software_update_settings_change_submission</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">module</a>()) ::
-  {:ok, <a href="Trento.SoftwareUpdates.Settings.html#t:t/0">Trento.SoftwareUpdates.Settings.t</a>()}
-  | {:error, :settings_not_configured}
-  | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
-
-      </div>
-
-
-  </section>
-</section>
-<section class="detail" id="clear_settings/0">
-
-  <div class="detail-header">
-    <a href="#clear_settings/0" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">clear_settings()</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates.ex#L63" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-      <div class="specs">
-
-          <pre translate="no"><span class="attribute">@spec</span> clear_settings() :: :ok</pre>
-
-      </div>
-
-
-  </section>
-</section>
 <section class="detail" id="get_packages_patches/1">
 
   <div class="detail-header">
@@ -406,7 +213,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">get_packages_patches(package_ids)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates.ex#L122" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates.ex#L61" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -430,36 +237,6 @@ GUIDES
 
   </section>
 </section>
-<section class="detail" id="get_settings/0">
-
-  <div class="detail-header">
-    <a href="#get_settings/0" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">get_settings()</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates.ex#L28" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-      <div class="specs">
-
-          <pre translate="no"><span class="attribute">@spec</span> get_settings() ::
-  {:ok, <a href="Trento.SoftwareUpdates.Settings.html#t:t/0">Trento.SoftwareUpdates.Settings.t</a>()}
-  | {:error, :settings_not_configured}</pre>
-
-      </div>
-
-
-  </section>
-</section>
 <section class="detail" id="get_software_updates/1">
 
   <div class="detail-header">
@@ -469,7 +246,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">get_software_updates(host_id)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates.ex#L109" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates.ex#L48" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -505,7 +282,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">run_discovery()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates.ex#L87" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates.ex#L26" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -524,39 +301,6 @@ GUIDES
 
   </section>
 </section>
-<section class="detail" id="save_settings/2">
-
-    <span id="save_settings/1"></span>
-
-  <div class="detail-header">
-    <a href="#save_settings/2" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">save_settings(settings_submission, date_service \\ DateService)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates.ex#L42" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-      <div class="specs">
-
-          <pre translate="no"><span class="attribute">@spec</span> save_settings(<a href="#t:software_update_settings_save_submission/0">software_update_settings_save_submission</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">module</a>()) ::
-  {:ok, <a href="Trento.SoftwareUpdates.Settings.html#t:t/0">Trento.SoftwareUpdates.Settings.t</a>()}
-  | {:error, :settings_already_configured}
-  | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
-
-      </div>
-
-
-  </section>
-</section>
 <section class="detail" id="test_connection_settings/0">
 
   <div class="detail-header">
@@ -566,7 +310,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">test_connection_settings()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates.ex#L72" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates.ex#L11" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
