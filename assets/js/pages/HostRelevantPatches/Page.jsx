@@ -39,7 +39,7 @@ export default function Page() {
         patches={patches}
         hostName={hostName}
         onNavigate={(advisoryID) =>
-          navigate(`hosts/${hostID}/patches/${advisoryID}`)
+          navigate(`/hosts/${hostID}/patches/${advisoryID}`)
         }
       />
     </>
