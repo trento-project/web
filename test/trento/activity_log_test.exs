@@ -203,7 +203,7 @@ defmodule Trento.ActivityLogTest do
 
     test "should return paginated and default ordered by occurrence date activity log when no params provided" do
       # insert 100 log entries
-      Enum.each(1..100, fn _ -> insert(:activity_log_entry) end)
+      all_logs = Enum.map(1..100, fn _ -> insert(:activity_log_entry) end)
 
       default_params = %{}
       {:ok, logs, _} = ActivityLog.list_activity_log(default_params)
@@ -211,7 +211,10 @@ defmodule Trento.ActivityLogTest do
       # default limit is 25
       assert length(logs) == 25
       # default order is by inserted_at timestamp
-      assert logs == Enum.sort_by(logs, fn entry -> entry.inserted_at end, :desc)
+      all_logs_sorted =
+        all_logs |> Enum.sort_by(fn entry -> entry.inserted_at end, :desc) |> Enum.take(25)
+
+      assert logs == all_logs_sorted
     end
 
     test "should return earliest 5 paginated activity log entries" do
