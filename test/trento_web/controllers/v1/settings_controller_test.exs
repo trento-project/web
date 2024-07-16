@@ -187,7 +187,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       conn
       |> get("/api/v1/settings/suma_credentials")
       |> json_response(:ok)
-      |> assert_schema("SUMACredentials", api_spec)
+      |> assert_schema("SuseManagerSettings", api_spec)
     end
 
     test "should return forbidden if no user settings have been saved", %{conn: conn} do

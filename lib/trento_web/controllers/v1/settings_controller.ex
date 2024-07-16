@@ -155,7 +155,8 @@ defmodule TrentoWeb.V1.SettingsController do
     tags: ["Platform"],
     description: "Gets the saved settings for SUSE Manager",
     responses: [
-      ok: {"The SUSE Manager credentials", "application/json", Schema.SUMACredentials.Settings},
+      ok:
+        {"The SUSE Manager credentials", "application/json", Schema.Platform.SuseManagerSettings},
       not_found: Schema.NotFound.response()
     ]
 
@@ -171,11 +172,11 @@ defmodule TrentoWeb.V1.SettingsController do
     tags: ["Platform"],
     description: "Saves credentials for SUSE Manager",
     request_body:
-      {"SaveSUMACredentialsRequest", "application/json",
-       Schema.SUMACredentials.SaveSUMACredentialsRequest},
+      {"SaveSuseManagerSettingsRequest", "application/json",
+       Schema.Platform.SaveSuseManagerSettingsRequest},
     responses: [
       created:
-        {"Settings saved successfully", "application/json", Schema.SUMACredentials.Settings},
+        {"Settings saved successfully", "application/json", Schema.Platform.SuseManagerSettings},
       unprocessable_entity: Schema.UnprocessableEntity.response()
     ]
 
@@ -195,10 +196,11 @@ defmodule TrentoWeb.V1.SettingsController do
     tags: ["Platform"],
     description: "Updates suse manager settings",
     request_body:
-      {"UpdateSUMACredentialsRequest", "application/json",
-       Schema.SUMACredentials.UpdateSUMACredentialsRequest},
+      {"UpdateSuseManagerSettingsRequest", "application/json",
+       Schema.Platform.UpdateSuseManagerSettingsRequest},
     responses: [
-      ok: {"Settings saved successfully", "application/json", Schema.SUMACredentials.Settings},
+      ok:
+        {"Settings saved successfully", "application/json", Schema.Platform.SuseManagerSettings},
       unprocessable_entity: Schema.UnprocessableEntity.response()
     ]
 

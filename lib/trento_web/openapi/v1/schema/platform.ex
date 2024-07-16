@@ -158,4 +158,94 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
       struct?: false
     )
   end
+
+  defmodule SaveSuseManagerSettingsRequest do
+    @moduledoc false
+
+    OpenApiSpex.schema(
+      %{
+        title: "SaveSuseManagerSettingsRequest",
+        description: "Request body for saving SUMA settings",
+        type: :object,
+        additionalProperties: false,
+        properties: %{
+          url: %Schema{
+            type: :string
+          },
+          username: %Schema{
+            type: :string
+          },
+          password: %Schema{
+            type: :string
+          },
+          ca_cert: %Schema{
+            type: :string
+          }
+        },
+        required: [:url, :username, :password]
+      },
+      struct?: false
+    )
+  end
+
+  defmodule UpdateSuseManagerSettingsRequest do
+    @moduledoc false
+
+    OpenApiSpex.schema(
+      %{
+        title: "UpdateSuseManagerSettingsRequest",
+        description:
+          "Request body for updating SUMA settings.\nOnly provide fields to be updated",
+        type: :object,
+        minProperties: 1,
+        additionalProperties: false,
+        properties: %{
+          url: %Schema{
+            type: :string
+          },
+          username: %Schema{
+            type: :string
+          },
+          password: %Schema{
+            type: :string
+          },
+          ca_cert: %Schema{
+            type: :string,
+            nullable: true
+          }
+        }
+      },
+      struct?: false
+    )
+  end
+
+  defmodule SuseManagerSettings do
+    @moduledoc false
+
+    OpenApiSpex.schema(
+      %{
+        title: "SuseManagerSettings",
+        description: "Settings for SUSE Manager",
+        type: :object,
+        additionalProperties: false,
+        properties: %{
+          url: %Schema{
+            type: :string,
+            description: "URL of SUSE Manager"
+          },
+          username: %Schema{
+            type: :string,
+            description: "Username"
+          },
+          ca_uploaded_at: %Schema{
+            type: :string,
+            format: :datetime,
+            nullable: true,
+            description: "Time that SSL certificate was uploaded."
+          }
+        }
+      },
+      struct?: false
+    )
+  end
 end
