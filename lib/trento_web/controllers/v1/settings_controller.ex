@@ -4,9 +4,9 @@ defmodule TrentoWeb.V1.SettingsController do
 
   alias Trento.ActivityLog
   alias Trento.Settings
+  alias Trento.SoftwareUpdates
   alias TrentoWeb.OpenApi.V1.Schema
   alias TrentoWeb.Plugs.AuthenticateAPIKeyPlug
-  alias Trento.SoftwareUpdates
 
   plug TrentoWeb.Plugs.LoadUserPlug
 

@@ -4,8 +4,8 @@ defmodule Trento.SoftwareUpdates do
   """
   require Logger
 
-  alias Trento.SoftwareUpdates.Discovery
   alias Trento.Settings
+  alias Trento.SoftwareUpdates.Discovery
 
   @spec test_connection_settings :: :ok | {:error, :connection_test_failed}
   def test_connection_settings do

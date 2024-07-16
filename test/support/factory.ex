@@ -118,7 +118,6 @@ defmodule Trento.Factory do
     DiscoveryEvent
   }
 
-  alias Trento.SoftwareUpdates.Discovery.DiscoveryResult
   alias Trento.Settings.SuseManagerSettings
 
   alias Trento.Settings.{
@@ -135,6 +134,7 @@ defmodule Trento.Factory do
     UsersAbilities
   }
 
+  alias Trento.SoftwareUpdates.Discovery.DiscoveryResult
   alias Trento.Users.User
 
   use ExMachina.Ecto, repo: Trento.Repo

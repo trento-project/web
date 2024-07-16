@@ -9,8 +9,8 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
 
   import Trento.Factory
 
-  alias Trento.SoftwareUpdates
   alias Trento.Settings
+  alias Trento.SoftwareUpdates
 
   setup :verify_on_exit!
 

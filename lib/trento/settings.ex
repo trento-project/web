@@ -7,7 +7,6 @@ defmodule Trento.Settings do
 
   alias Trento.Repo
 
-  alias Trento.Support.DateService
   alias Trento.Hosts.Projections.SlesSubscriptionReadModel
   alias Trento.SoftwareUpdates.Discovery, as: SoftwareUpdatesDiscovery
 
@@ -16,6 +15,7 @@ defmodule Trento.Settings do
     InstallationSettings,
     SuseManagerSettings
   }
+  alias Trento.Support.DateService
 
   require Logger
 
