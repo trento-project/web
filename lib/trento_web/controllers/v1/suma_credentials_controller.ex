@@ -49,10 +49,10 @@ defmodule TrentoWeb.V1.SUMACredentialsController do
     ]
 
   @spec create(Plug.Conn.t(), any) :: Plug.Conn.t()
-  def create(%{body_params: body_params} = conn, _) do
-    attrs = decode_body(body_params)
+  def create(conn, _) do
+    settings_params = OpenApiSpex.body_params(conn)
 
-    with {:ok, saved_settings} <- SoftwareUpdates.save_settings(attrs) do
+    with {:ok, saved_settings} <- SoftwareUpdates.save_settings(settings_params) do
       conn
       |> put_status(:created)
       |> render("suma_credentials.json", %{settings: saved_settings})
@@ -72,10 +72,10 @@ defmodule TrentoWeb.V1.SUMACredentialsController do
     ]
 
   @spec update(Plug.Conn.t(), any) :: Plug.Conn.t()
-  def update(%{body_params: body_params} = conn, _) do
-    attrs = decode_body(body_params)
+  def update(conn, _) do
+    update_settings_paylod = OpenApiSpex.body_params(conn)
 
-    with {:ok, saved_settings} <- SoftwareUpdates.change_settings(attrs) do
+    with {:ok, saved_settings} <- SoftwareUpdates.change_settings(update_settings_paylod) do
       conn
       |> put_status(:ok)
       |> render("suma_credentials.json", %{settings: saved_settings})
@@ -116,7 +116,4 @@ defmodule TrentoWeb.V1.SUMACredentialsController do
   end
 
   def get_policy_resource(_), do: Trento.SoftwareUpdates.Settings
-
-  defp decode_body(body) when is_struct(body), do: Map.from_struct(body)
-  defp decode_body(body), do: body
 end

@@ -259,7 +259,7 @@ describe('Users', () => {
     it('should see Users entry in sidebar when the all:users ability is given', () => {
       getProfile(USER.username, PASSWORD).then(({ id }) => {
         patchUser(id, {
-          abilities: [{ id: 2, name: 'all', resource: 'users' }],
+          abilities: [{ id: 2, name: 'all', resource: 'users', label: 'test' }],
         });
       });
       cy.contains('Users');

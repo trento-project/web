@@ -13,29 +13,32 @@ defmodule Trento.ActivityLog do
   alias Trento.Repo
 
   @spec get_settings() ::
-          {:ok, Settings.t()} | {:error, :activity_log_settings_not_configured}
+          {:ok, Settings.t()} | {:error, :not_found}
   def get_settings do
     case Repo.one(Settings.base_query()) do
       %Settings{} = settings -> {:ok, settings}
-      nil -> {:error, :activity_log_settings_not_configured}
+      nil -> {:error, :not_found}
     end
   end
 
   @spec change_retention_period(integer(), RetentionPeriodUnit.t()) ::
           {:ok, Settings.t()}
           | {:error, :activity_log_settings_not_configured}
-          | {:error, any()}
   def change_retention_period(value, unit) do
-    with {:ok, settings} <- get_settings() do
-      settings
-      |> Settings.changeset(%{
-        retention_time: %{
-          value: value,
-          unit: unit
-        }
-      })
-      |> Repo.update()
-      |> log_error("Error while updating activity log retention period")
+    case get_settings() do
+      {:ok, settings} ->
+        settings
+        |> Settings.changeset(%{
+          retention_time: %{
+            value: value,
+            unit: unit
+          }
+        })
+        |> Repo.update()
+        |> log_error("Error while updating activity log retention period")
+
+      {:error, :not_found} ->
+        {:error, :activity_log_settings_not_configured}
     end
   end
 

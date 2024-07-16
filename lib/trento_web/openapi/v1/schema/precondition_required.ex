@@ -7,26 +7,29 @@ defmodule TrentoWeb.OpenApi.V1.Schema.PreconditionRequired do
   alias OpenApiSpex.Operation
   alias OpenApiSpex.Schema
 
-  OpenApiSpex.schema(%{
-    title: "PreconditionRequired",
-    type: :object,
-    additionalProperties: false,
-    properties: %{
-      errors: %Schema{
-        type: :array,
-        items: %Schema{
-          type: :object,
-          properties: %{
-            detail: %Schema{
-              type: :string,
-              example: "Request needs to be conditional, please provide If-Match header."
-            },
-            title: %Schema{type: :string, example: "Precondition Required"}
+  OpenApiSpex.schema(
+    %{
+      title: "PreconditionRequired",
+      type: :object,
+      additionalProperties: false,
+      properties: %{
+        errors: %Schema{
+          type: :array,
+          items: %Schema{
+            type: :object,
+            properties: %{
+              detail: %Schema{
+                type: :string,
+                example: "Request needs to be conditional, please provide If-Match header."
+              },
+              title: %Schema{type: :string, example: "Precondition Required"}
+            }
           }
         }
       }
-    }
-  })
+    },
+    struct?: false
+  )
 
   def response do
     Operation.response(

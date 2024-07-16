@@ -18,7 +18,7 @@ defmodule Trento.ActivityLogTest do
 
   describe "retrieving activity log settings" do
     test "should return an error when settings are not available" do
-      assert {:error, :activity_log_settings_not_configured} == ActivityLog.get_settings()
+      assert {:error, :not_found} == ActivityLog.get_settings()
     end
 
     test "should return settings" do

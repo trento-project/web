@@ -87,8 +87,8 @@ defmodule TrentoWeb.V1.SettingsController do
       not_found: Schema.NotFound.response()
     ]
 
-  def update_api_key_settings(%{body_params: body_params} = conn, _) do
-    %{expire_at: expire_at} = body_params
+  def update_api_key_settings(conn, _) do
+    %{expire_at: expire_at} = OpenApiSpex.body_params(conn)
 
     with {:ok, updated_settings} <- Settings.update_api_key_settings(expire_at) do
       api_key =
@@ -116,9 +116,12 @@ defmodule TrentoWeb.V1.SettingsController do
       unprocessable_entity: Schema.UnprocessableEntity.response()
     ]
 
-  def update_activity_log_settings(%{body_params: body_params} = conn, _) do
+  def update_activity_log_settings(
+        conn,
+        _
+      ) do
     %{retention_time: %{value: retention_period, unit: retention_period_unit}} =
-      body_params
+      OpenApiSpex.body_params(conn)
 
     with {:ok, updated_settings} <-
            ActivityLog.change_retention_period(retention_period, retention_period_unit) do
@@ -139,18 +142,10 @@ defmodule TrentoWeb.V1.SettingsController do
     ]
 
   def get_activity_log_settings(conn, _) do
-    case ActivityLog.get_settings() do
-      {:ok, settings} ->
-        render(conn, "activity_log_settings.json", %{
-          activity_log_settings: settings
-        })
-
-      _ ->
-        # Here we rebind the error returned by the ActivityLog.get_settings/0 function
-        # to a "not_found" in order to disambiguate from a similar error being returned by the
-        # ActivityLog.change_retention_period/2 function. This error gets picked up by the FallbackController
-        # and leads to dispatching to the appropriate error response.
-        {:error, :not_found}
+    with {:ok, settings} <- ActivityLog.get_settings() do
+      render(conn, "activity_log_settings.json", %{
+        activity_log_settings: settings
+      })
     end
   end
 

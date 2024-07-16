@@ -7,23 +7,26 @@ defmodule TrentoWeb.OpenApi.V1.Schema.NotFound do
   alias OpenApiSpex.Operation
   alias OpenApiSpex.Schema
 
-  OpenApiSpex.schema(%{
-    title: "NotFound",
-    type: :object,
-    additionalProperties: false,
-    properties: %{
-      errors: %Schema{
-        type: :array,
-        items: %Schema{
-          type: :object,
-          properties: %{
-            detail: %Schema{type: :string, example: "The requested resource cannot be found."},
-            title: %Schema{type: :string, example: "Not Found"}
+  OpenApiSpex.schema(
+    %{
+      title: "NotFound",
+      type: :object,
+      additionalProperties: false,
+      properties: %{
+        errors: %Schema{
+          type: :array,
+          items: %Schema{
+            type: :object,
+            properties: %{
+              detail: %Schema{type: :string, example: "The requested resource cannot be found."},
+              title: %Schema{type: :string, example: "Not Found"}
+            }
           }
         }
       }
-    }
-  })
+    },
+    struct?: false
+  )
 
   def response do
     Operation.response(

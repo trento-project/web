@@ -109,8 +109,8 @@ defmodule TrentoWeb.V1.HostController do
       unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
     ]
 
-  def select_checks(%{body_params: body_params} = conn, %{id: host_id}) do
-    %{checks: checks} = body_params
+  def select_checks(conn, %{id: host_id}) do
+    %{checks: checks} = OpenApiSpex.body_params(conn)
 
     with :ok <- Hosts.select_checks(host_id, checks) do
       conn
