@@ -1,4 +1,4 @@
-defmodule Trento.SoftwareUpdates.Settings do
+defmodule Trento.Settings.SuseManagerSettings do
   @moduledoc """
   Schema for software updates settings.
   """

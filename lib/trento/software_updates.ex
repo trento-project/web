@@ -8,7 +8,7 @@ defmodule Trento.SoftwareUpdates do
 
   alias Trento.Repo
   alias Trento.SoftwareUpdates.Discovery
-  alias Trento.SoftwareUpdates.Settings
+  alias Trento.Settings.SuseManagerSettings
 
   @type software_update_settings_save_submission :: %{
           url: String.t(),
@@ -24,9 +24,9 @@ defmodule Trento.SoftwareUpdates do
           ca_cert: String.t() | nil
         }
 
-  @spec get_settings :: {:ok, Settings.t()} | {:error, :settings_not_configured}
+  @spec get_settings :: {:ok, SuseManagerSettings.t()} | {:error, :settings_not_configured}
   def get_settings do
-    settings = Repo.one(Settings.base_query())
+    settings = Repo.one(SuseManagerSettings.base_query())
 
     if settings do
       {:ok, settings}
@@ -36,7 +36,7 @@ defmodule Trento.SoftwareUpdates do
   end
 
   @spec save_settings(software_update_settings_save_submission, module()) ::
-          {:ok, Settings.t()}
+          {:ok, SuseManagerSettings.t()}
           | {:error, :settings_already_configured}
           | {:error, any()}
   def save_settings(settings_submission, date_service \\ DateService) do
@@ -48,7 +48,7 @@ defmodule Trento.SoftwareUpdates do
   end
 
   @spec change_settings(software_update_settings_change_submission, module()) ::
-          {:ok, Settings.t()}
+          {:ok, SuseManagerSettings.t()}
           | {:error, :settings_not_configured}
           | {:error, any()}
   def change_settings(settings_submission, date_service \\ DateService) do
@@ -61,7 +61,7 @@ defmodule Trento.SoftwareUpdates do
 
   @spec clear_settings :: :ok
   def clear_settings do
-    Repo.delete_all(Settings.base_query())
+    Repo.delete_all(SuseManagerSettings.base_query())
 
     Discovery.clear_software_updates_discoveries()
 
@@ -136,11 +136,11 @@ defmodule Trento.SoftwareUpdates do
   end
 
   defp ensure_no_settings_configured do
-    case Repo.one(Settings.base_query()) do
+    case Repo.one(SuseManagerSettings.base_query()) do
       nil ->
         {:ok, :settings_not_configured, nil}
 
-      %Settings{} ->
+      %SuseManagerSettings{} ->
         Logger.error("Error: software updates settings already configured")
         {:error, :settings_already_configured}
     end
@@ -150,13 +150,13 @@ defmodule Trento.SoftwareUpdates do
     result =
       case settings do
         nil ->
-          %Settings{}
-          |> Settings.changeset(settings_submission, date_service)
+          %SuseManagerSettings{}
+          |> SuseManagerSettings.changeset(settings_submission, date_service)
           |> Repo.insert()
 
-        %Settings{} ->
+        %SuseManagerSettings{} ->
           settings
-          |> Settings.changeset(settings_submission, date_service)
+          |> SuseManagerSettings.changeset(settings_submission, date_service)
           |> Repo.update()
       end
 

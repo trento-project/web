@@ -115,5 +115,5 @@ defmodule TrentoWeb.V1.SUMACredentialsController do
     end
   end
 
-  def get_policy_resource(_), do: Trento.SoftwareUpdates.Settings
+  def get_policy_resource(_), do: Trento.Settings.SuseManagerSettings
 end
