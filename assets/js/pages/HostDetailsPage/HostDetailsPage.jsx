@@ -14,10 +14,7 @@ import { getInstancesOnHost } from '@state/selectors/sapSystem';
 import { getCatalog } from '@state/selectors/catalog';
 import { getLastExecution } from '@state/selectors/lastExecutions';
 import {
-  getSoftwareUpdatesSettingsLoading,
-  getSoftwareUpdatesSettingsSaved,
-} from '@state/selectors/softwareUpdatesSettings';
-import {
+  getSoftwareUpdatesSettingsConfigured,
   getSoftwareUpdatesLoading,
   getSoftwareUpdatesStats,
 } from '@state/selectors/softwareUpdates';
@@ -31,7 +28,6 @@ import {
 } from '@state/lastExecutions';
 
 import { deregisterHost } from '@state/hosts';
-import { fetchSoftwareUpdatesSettings } from '@state/softwareUpdatesSettings';
 import { fetchSoftwareUpdates } from '@state/softwareUpdates';
 import HostDetails from './HostDetails';
 
@@ -60,12 +56,10 @@ function HostDetailsPage() {
 
   const [exportersStatus, setExportersStatus] = useState([]);
 
-  const softwareUpdatesSettingsLoading = useSelector((state) =>
-    getSoftwareUpdatesSettingsLoading(state)
+  const settingsConfigured = useSelector((state) =>
+    getSoftwareUpdatesSettingsConfigured(state)
   );
-  const softwareUpdatesConnectionSaved = useSelector((state) =>
-    getSoftwareUpdatesSettingsSaved(state)
-  );
+
   const { numRelevantPatches, numUpgradablePackages } = useSelector((state) =>
     getSoftwareUpdatesStats(state, hostID)
   );
@@ -90,11 +84,10 @@ function HostDetailsPage() {
     );
 
   useEffect(() => {
+    dispatch(fetchSoftwareUpdates(hostID));
     getExportersStatus();
     refreshCatalog();
     dispatch(updateLastExecution(hostID));
-    dispatch(fetchSoftwareUpdates(hostID));
-    dispatch(fetchSoftwareUpdatesSettings());
   }, []);
 
   if (!host) {
@@ -125,8 +118,7 @@ function HostDetailsPage() {
       suseManagerEnabled={suseManagerEnabled}
       relevantPatches={numRelevantPatches}
       upgradablePackages={numUpgradablePackages}
-      softwareUpdatesSettingsSaved={softwareUpdatesConnectionSaved}
-      softwareUpdatesSettingsLoading={softwareUpdatesSettingsLoading}
+      softwareUpdatesSettingsSaved={settingsConfigured}
       softwareUpdatesLoading={softwareUpdatesLoading}
       softwareUpdatesTooltip={
         numRelevantPatches === undefined && numUpgradablePackages === undefined

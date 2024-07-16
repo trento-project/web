@@ -17,6 +17,11 @@ export const getSoftwareUpdatesStats = createSelector(
   })
 );
 
+export const getSoftwareUpdatesSettingsConfigured = createSelector(
+  [(state) => getSoftwareUpdates(state)],
+  (softwareUpdates) => get(softwareUpdates, ['settingsConfigured'], false)
+);
+
 export const getSoftwareUpdatesPatches = createSelector(
   [(state, id) => getSoftwareUpdatesForHost(id)(state)],
   (softwareUpdates) => get(softwareUpdates, ['relevant_patches'], [])

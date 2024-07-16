@@ -8,6 +8,8 @@ import {
 import {
   FETCH_UPGRADABLE_PACKAGES_PATCHES,
   FETCH_SOFTWARE_UPDATES,
+  setSettingsConfigured,
+  setSettingsNotConfigured,
   startLoadingSoftwareUpdates,
   setSoftwareUpdates,
   setEmptySoftwareUpdates,
@@ -21,8 +23,15 @@ export function* fetchSoftwareUpdates({ payload: hostID }) {
   try {
     const response = yield call(getSoftwareUpdates, hostID);
     yield put(setSoftwareUpdates({ hostID, ...response.data }));
+    yield put(setSettingsConfigured());
   } catch (error) {
     yield put(setEmptySoftwareUpdates({ hostID }));
+
+    const errorCode = get(error, ['response', 'status']);
+
+    if (errorCode === 403) {
+      yield put(setSettingsNotConfigured());
+    }
 
     const errors = get(error, ['response', 'data'], []);
     yield put(setSoftwareUpdatesErrors({ hostID, errors }));
@@ -37,7 +46,13 @@ export function* fetchUpgradablePackagesPatches({
       data: { patches },
     } = yield call(getPatchesForPackages, packageIDs);
     yield put(setPatchesForPackages({ hostID, patches }));
+    yield put(setSettingsConfigured());
   } catch (error) {
+    const errorCode = get(error, ['response', 'status']);
+
+    if (errorCode === 403) {
+      yield put(setSettingsNotConfigured());
+    }
     yield put(setPatchesForPackages({ hostID, patches: [] }));
   }
 }

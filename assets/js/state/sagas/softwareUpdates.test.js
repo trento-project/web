@@ -7,6 +7,8 @@ import { patchForPackageFactory } from '@lib/test-utils/factories';
 import { networkClient } from '@lib/network';
 
 import {
+  setSettingsConfigured,
+  setSettingsNotConfigured,
   startLoadingSoftwareUpdates,
   setSoftwareUpdates,
   setSoftwareUpdatesErrors,
@@ -64,6 +66,7 @@ describe('Software Updates saga', () => {
       expect(dispatched).toEqual([
         startLoadingSoftwareUpdates({ hostID }),
         setSoftwareUpdates({ hostID, ...response }),
+        setSettingsConfigured(),
       ]);
     });
 
@@ -91,6 +94,32 @@ describe('Software Updates saga', () => {
         ]);
       }
     );
+
+    it('should set settings not configured when 403', async () => {
+      const axiosMock = new MockAdapter(networkClient);
+      const hostID = faker.string.uuid();
+
+      const errorBody = {
+        errors: [
+          { title: 'Forbidden', detail: 'SUSE Manager authentication error.' },
+        ],
+      };
+
+      axiosMock
+        .onGet(`/api/v1/hosts/${hostID}/software_updates`)
+        .reply(403, errorBody);
+
+      const dispatched = await recordSaga(fetchSoftwareUpdates, {
+        payload: hostID,
+      });
+
+      expect(dispatched).toEqual([
+        startLoadingSoftwareUpdates({ hostID }),
+        setEmptySoftwareUpdates({ hostID }),
+        setSettingsNotConfigured(),
+        setSoftwareUpdatesErrors({ hostID, errors: errorBody }),
+      ]);
+    });
   });
 
   describe('Fetching patches for packages', () => {
@@ -114,6 +143,33 @@ describe('Software Updates saga', () => {
 
       expect(dispatched).toEqual([
         setPatchesForPackages({ hostID, patches: response.patches }),
+        setSettingsConfigured(),
+      ]);
+    });
+
+    it('should set settings not configured when 403', async () => {
+      const axiosMock = new MockAdapter(networkClient);
+      const hostID = faker.string.uuid();
+
+      const errorBody = {
+        errors: [
+          { title: 'Forbidden', detail: 'SUSE Manager authentication error.' },
+        ],
+      };
+
+      axiosMock
+        .onGet(`/api/v1/hosts/${hostID}/software_updates`)
+        .reply(403, errorBody);
+
+      const dispatched = await recordSaga(fetchSoftwareUpdates, {
+        payload: hostID,
+      });
+
+      expect(dispatched).toEqual([
+        startLoadingSoftwareUpdates({ hostID }),
+        setEmptySoftwareUpdates({ hostID }),
+        setSettingsNotConfigured(),
+        setSoftwareUpdatesErrors({ hostID, errors: errorBody }),
       ]);
     });
   });
