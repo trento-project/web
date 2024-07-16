@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-43PMFBC7.js"></script>
-    <script src="dist/sidebar_items-C68BEFD9.js"></script>
+    <script src="dist/sidebar_items-D28EF94F.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -205,7 +205,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">change_retention_period(value, unit)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_log.ex#L28" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_log.ex#L27" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -219,8 +219,7 @@ GUIDES
 
           <pre translate="no"><span class="attribute">@spec</span> change_retention_period(<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">integer</a>(), <a href="Trento.ActivityLog.RetentionPeriodUnit.html#t:t/0">Trento.ActivityLog.RetentionPeriodUnit.t</a>()) ::
   {:ok, <a href="Trento.ActivityLog.Settings.html#t:t/0">Trento.ActivityLog.Settings.t</a>()}
-  | {:error, :activity_log_settings_not_configured}
-  | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+  | {:error, :activity_log_settings_not_configured}</pre>
 
       </div>
 
@@ -248,9 +247,7 @@ GUIDES
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> get_settings() ::
-  {:ok, <a href="Trento.ActivityLog.Settings.html#t:t/0">Trento.ActivityLog.Settings.t</a>()}
-  | {:error, :activity_log_settings_not_configured}</pre>
+          <pre translate="no"><span class="attribute">@spec</span> get_settings() :: {:ok, <a href="Trento.ActivityLog.Settings.html#t:t/0">Trento.ActivityLog.Settings.t</a>()} | {:error, :not_found}</pre>
 
       </div>
 
@@ -266,7 +263,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">list_activity_log()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_log.ex#L43" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_log.ex#L46" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
