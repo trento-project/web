@@ -9,7 +9,7 @@ defmodule Trento.ActivityLog.ActivityLog do
 
   @derive {
     Flop.Schema,
-    filterable: [:type, :actor],
+    filterable: [:type, :actor, :inserted_at],
     sortable: [:type, :actor, :inserted_at],
     max_limit: 100,
     default_limit: 25,
