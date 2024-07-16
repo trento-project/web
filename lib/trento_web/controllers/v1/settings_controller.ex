@@ -6,6 +6,7 @@ defmodule TrentoWeb.V1.SettingsController do
   alias Trento.Settings
   alias TrentoWeb.OpenApi.V1.Schema
   alias TrentoWeb.Plugs.AuthenticateAPIKeyPlug
+  alias Trento.SoftwareUpdates
 
   plug TrentoWeb.Plugs.LoadUserPlug
 
@@ -149,10 +150,110 @@ defmodule TrentoWeb.V1.SettingsController do
     end
   end
 
+  operation :get_suse_manager_settings,
+    summary: "Gets the Suse Manager Settings",
+    tags: ["Platform"],
+    description: "Gets the saved settings for SUSE Manager",
+    responses: [
+      ok: {"The SUSE Manager credentials", "application/json", Schema.SUMACredentials.Settings},
+      not_found: Schema.NotFound.response()
+    ]
+
+  @spec get_suse_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
+  def get_suse_manager_settings(conn, _) do
+    with {:ok, settings} <- Settings.get_suse_manager_settings() do
+      render(conn, "suma_credentials.json", %{settings: settings})
+    end
+  end
+
+  operation :save_suse_manager_settings,
+    summary: "Saves the suse manager settings",
+    tags: ["Platform"],
+    description: "Saves credentials for SUSE Manager",
+    request_body:
+      {"SaveSUMACredentialsRequest", "application/json",
+       Schema.SUMACredentials.SaveSUMACredentialsRequest},
+    responses: [
+      created:
+        {"Settings saved successfully", "application/json", Schema.SUMACredentials.Settings},
+      unprocessable_entity: Schema.UnprocessableEntity.response()
+    ]
+
+  @spec save_suse_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
+  def save_suse_manager_settings(conn, _) do
+    settings_params = OpenApiSpex.body_params(conn)
+
+    with {:ok, saved_settings} <- Settings.save_suse_manager_settings(settings_params) do
+      conn
+      |> put_status(:created)
+      |> render("suma_credentials.json", %{settings: saved_settings})
+    end
+  end
+
+  operation :update_suse_manager_settings,
+    summary: "Updates the suse manager settings",
+    tags: ["Platform"],
+    description: "Updates suse manager settings",
+    request_body:
+      {"UpdateSUMACredentialsRequest", "application/json",
+       Schema.SUMACredentials.UpdateSUMACredentialsRequest},
+    responses: [
+      ok: {"Settings saved successfully", "application/json", Schema.SUMACredentials.Settings},
+      unprocessable_entity: Schema.UnprocessableEntity.response()
+    ]
+
+  @spec update_suse_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
+  def update_suse_manager_settings(conn, _) do
+    update_settings_paylod = OpenApiSpex.body_params(conn)
+
+    with {:ok, saved_settings} <- Settings.change_suse_manager_settings(update_settings_paylod) do
+      conn
+      |> put_status(:ok)
+      |> render("suma_credentials.json", %{settings: saved_settings})
+    end
+  end
+
+  operation :delete_suse_manager_settings,
+    summary: "Clears the suse manager settings",
+    tags: ["Platform"],
+    description: "Clears the saved settings for SUSE Manager",
+    responses: [
+      no_content: "Settings cleared successfully"
+    ]
+
+  @spec delete_suse_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
+  def delete_suse_manager_settings(conn, _) do
+    :ok = Settings.clear_suse_manager_settings()
+    send_resp(conn, :no_content, "")
+  end
+
+  operation :test_suse_manager_settings,
+    summary: "Tests connection with SUMA",
+    tags: ["Platform"],
+    description: "Tests connection with SUMA with the saved settings",
+    responses: [
+      ok: "The connection with SUMA was successful",
+      unprocessable_entity:
+        {"The connection with SUMA failed", "application/json", Schema.UnprocessableEntity}
+    ]
+
+  @spec test_suse_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
+  def test_suse_manager_settings(conn, _) do
+    with :ok <- SoftwareUpdates.test_connection_settings() do
+      conn
+      |> put_status(:ok)
+      |> json("")
+    end
+  end
+
   def get_policy_resource(conn) do
     case Phoenix.Controller.action_name(conn) do
       :update_api_key_settings -> Trento.Settings.ApiKeySettings
       :update_activity_log_settings -> Trento.ActivityLog.Settings
+      :save_suse_manager_settings -> Trento.Settings.SuseManagerSettings
+      :update_suse_manager_settings -> Trento.Settings.SuseManagerSettings
+      :delete_suse_manager_settings -> Trento.Settings.SuseManagerSettings
+      :test_suse_manager_settings -> Trento.Settings.SuseManagerSettings
       _ -> nil
     end
   end

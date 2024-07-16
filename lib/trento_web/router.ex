@@ -184,11 +184,11 @@ defmodule TrentoWeb.Router do
 
         if Application.compile_env!(:trento, :suse_manager_enabled) do
           scope "/suma_credentials" do
-            resources "/", SUMACredentialsController,
-              only: [:show, :create, :update, :delete],
-              singleton: true
-
-            post "/test", SUMACredentialsController, :test
+            get "/", SettingsController, :get_suse_manager_settings
+            post "/", SettingsController, :save_suse_manager_settings
+            patch "/", SettingsController, :update_suse_manager_settings
+            delete "/", SettingsController, :delete_suse_manager_settings
+            post "/test", SettingsController, :test_suse_manager_settings
           end
         end
       end

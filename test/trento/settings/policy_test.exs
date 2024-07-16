@@ -4,6 +4,8 @@ defmodule Trento.Settings.PolicyTest do
   alias Trento.Abilities.Ability
   alias Trento.ActivityLog.Settings, as: ActivityLogSettings
   alias Trento.Settings.ApiKeySettings
+  alias Trento.Settings.SuseManagerSettings
+
   alias Trento.Settings.Policy
   alias Trento.Users.User
 
@@ -63,6 +65,43 @@ defmodule Trento.Settings.PolicyTest do
     test "should not allow updating activity logs settings if the user has no abilities" do
       user = %User{abilities: []}
       refute Policy.authorize(:update_activity_log_settings, user, ActivityLogSettings)
+    end
+  end
+
+  describe "suse manager settings authorization" do
+    test "should allow suma settings actions if the user has all:all ability" do
+      user = %User{abilities: [%Ability{name: "all", resource: "all"}]}
+
+      assert Policy.authorize(:get_suse_manager_settings, user, SuseManagerSettings)
+      assert Policy.authorize(:save_suse_manager_settings, user, SuseManagerSettings)
+      assert Policy.authorize(:update_suse_manager_settings, user, SuseManagerSettings)
+      assert Policy.authorize(:delete_suse_manager_settings, user, SuseManagerSettings)
+      assert Policy.authorize(:test_suse_manager_settings, user, SuseManagerSettings)
+    end
+
+    test "should allow suma settings actions if the user has all:suma_settings ability" do
+      user = %User{abilities: [%Ability{name: "all", resource: "suma_settings"}]}
+
+      assert Policy.authorize(:get_suse_manager_settings, user, SuseManagerSettings)
+      assert Policy.authorize(:save_suse_manager_settings, user, SuseManagerSettings)
+      assert Policy.authorize(:update_suse_manager_settings, user, SuseManagerSettings)
+      assert Policy.authorize(:delete_suse_manager_settings, user, SuseManagerSettings)
+      assert Policy.authorize(:test_suse_manager_settings, user, SuseManagerSettings)
+    end
+
+    test "should allow suma settings actions if the user has no abilities" do
+      user = %User{abilities: []}
+
+      assert Policy.authorize(:get_suse_manager_settings, user, SuseManagerSettings)
+      assert Policy.authorize(:test_suse_manager_settings, user, SuseManagerSettings)
+    end
+
+    test "should disallow creating, updating or changing suma settings if the user has no abilities" do
+      user = %User{abilities: []}
+
+      refute Policy.authorize(:save_suse_manager_settings, user, SuseManagerSettings)
+      refute Policy.authorize(:update_suse_manager_settings, user, SuseManagerSettings)
+      refute Policy.authorize(:delete_suse_manager_settings, user, SuseManagerSettings)
     end
   end
 end

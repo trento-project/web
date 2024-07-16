@@ -11,6 +11,7 @@ defmodule Trento.Settings.Policy do
   import Trento.Support.PolicyHelper
   alias Trento.ActivityLog.Settings, as: ActivityLogSettings
   alias Trento.Settings.ApiKeySettings
+  alias Trento.Settings.SuseManagerSettings
 
   alias Trento.Users.User
 
@@ -20,6 +21,15 @@ defmodule Trento.Settings.Policy do
   def authorize(:update_activity_log_settings, %User{} = user, ActivityLogSettings),
     do: has_global_ability?(user) or has_activity_logs_settings_change_ability?(user)
 
+  def authorize(action, %User{} = user, SuseManagerSettings)
+      when action in [
+             :save_suse_manager_settings,
+             :update_suse_manager_settings,
+             :delete_suse_manager_settings
+           ] do
+    has_global_ability?(user) or has_suma_settings_change_ability?(user)
+  end
+
   def authorize(_, _, _), do: true
 
   defp has_api_key_settings_change_ability?(user),
@@ -27,4 +37,7 @@ defmodule Trento.Settings.Policy do
 
   defp has_activity_logs_settings_change_ability?(user),
     do: user_has_ability?(user, %{name: "all", resource: "activity_logs_settings"})
+
+  defp has_suma_settings_change_ability?(user),
+    do: user_has_ability?(user, %{name: "all", resource: "suma_settings"})
 end
