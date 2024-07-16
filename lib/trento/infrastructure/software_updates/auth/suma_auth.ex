@@ -9,7 +9,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuth do
 
   alias Trento.Infrastructure.SoftwareUpdates.Auth.State
   alias Trento.Infrastructure.SoftwareUpdates.SumaApi
-  alias Trento.SoftwareUpdates
+  alias Trento.Settings
 
   @default_name "suma_authentication"
 
@@ -77,7 +77,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuth do
 
   defp setup_auth(%State{auth: nil} = state) do
     with {:ok, %{url: url, username: username, password: password, ca_cert: ca_cert}} <-
-           SoftwareUpdates.get_settings(),
+           Settings.get_suse_manager_settings(),
          {:ok, auth_cookie} <- SumaApi.login(url, username, password, ca_cert) do
       {:ok,
        %State{

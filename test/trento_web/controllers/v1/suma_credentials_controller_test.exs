@@ -162,8 +162,8 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
     end
   end
 
-  describe "changing software updates settings" do
-    test "should not be able to change software updates settings if none previously saved", %{
+  describe "changing suse manager settings" do
+    test "should not be able to change suse manager settings if none previously saved", %{
       conn: conn
     } do
       submission = %{
@@ -210,7 +210,7 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
              } == resp
     end
 
-    test "should validate partial changes to software updates settings", %{conn: conn} do
+    test "should validate partial changes to suse manager settings", %{conn: conn} do
       insert_software_updates_settings()
 
       change_settings_scenarios = [
@@ -332,7 +332,7 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
       end
     end
 
-    test "should support partial change of software updates settings", %{conn: conn} do
+    test "should support partial change of suse manager settings", %{conn: conn} do
       %{
         url: initial_url,
         username: _initial_username,

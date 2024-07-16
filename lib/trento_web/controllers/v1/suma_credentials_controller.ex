@@ -2,6 +2,7 @@ defmodule TrentoWeb.V1.SUMACredentialsController do
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
 
+  alias Trento.Settings
   alias Trento.SoftwareUpdates
 
   alias TrentoWeb.OpenApi.V1.Schema
@@ -31,7 +32,7 @@ defmodule TrentoWeb.V1.SUMACredentialsController do
 
   @spec show(Plug.Conn.t(), any) :: Plug.Conn.t()
   def show(conn, _) do
-    with {:ok, settings} <- SoftwareUpdates.get_settings() do
+    with {:ok, settings} <- Settings.get_suse_manager_settings() do
       render(conn, "suma_credentials.json", %{settings: settings})
     end
   end
@@ -52,7 +53,7 @@ defmodule TrentoWeb.V1.SUMACredentialsController do
   def create(conn, _) do
     settings_params = OpenApiSpex.body_params(conn)
 
-    with {:ok, saved_settings} <- SoftwareUpdates.save_settings(settings_params) do
+    with {:ok, saved_settings} <- Settings.save_suse_manager_settings(settings_params) do
       conn
       |> put_status(:created)
       |> render("suma_credentials.json", %{settings: saved_settings})
@@ -75,7 +76,7 @@ defmodule TrentoWeb.V1.SUMACredentialsController do
   def update(conn, _) do
     update_settings_paylod = OpenApiSpex.body_params(conn)
 
-    with {:ok, saved_settings} <- SoftwareUpdates.change_settings(update_settings_paylod) do
+    with {:ok, saved_settings} <- Settings.change_suse_manager_settings(update_settings_paylod) do
       conn
       |> put_status(:ok)
       |> render("suma_credentials.json", %{settings: saved_settings})
@@ -92,7 +93,7 @@ defmodule TrentoWeb.V1.SUMACredentialsController do
 
   @spec delete(Plug.Conn.t(), any) :: Plug.Conn.t()
   def delete(conn, _) do
-    :ok = SoftwareUpdates.clear_settings()
+    :ok = Settings.clear_suse_manager_settings()
     send_resp(conn, :no_content, "")
   end
 
