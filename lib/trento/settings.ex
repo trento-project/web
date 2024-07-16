@@ -15,6 +15,7 @@ defmodule Trento.Settings do
     InstallationSettings,
     SuseManagerSettings
   }
+
   alias Trento.Support.DateService
 
   require Logger

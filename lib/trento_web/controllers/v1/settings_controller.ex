@@ -151,12 +151,12 @@ defmodule TrentoWeb.V1.SettingsController do
   end
 
   operation :get_suse_manager_settings,
-    summary: "Gets the Suse Manager Settings",
+    summary: "Gets the Suse manager Settings",
     tags: ["Platform"],
-    description: "Gets the saved settings for SUSE Manager",
+    description: "Gets the saved settings for Suse Manager",
     responses: [
       ok:
-        {"The SUSE Manager credentials", "application/json", Schema.Platform.SuseManagerSettings},
+        {"The Suse Manager credentials", "application/json", Schema.Platform.SuseManagerSettings},
       not_found: Schema.NotFound.response()
     ]
 
@@ -168,9 +168,9 @@ defmodule TrentoWeb.V1.SettingsController do
   end
 
   operation :save_suse_manager_settings,
-    summary: "Saves the suse manager settings",
+    summary: "Saves the Suse manager settings",
     tags: ["Platform"],
-    description: "Saves credentials for SUSE Manager",
+    description: "Saves credentials for Suse manager",
     request_body:
       {"SaveSuseManagerSettingsRequest", "application/json",
        Schema.Platform.SaveSuseManagerSettingsRequest},
@@ -192,9 +192,9 @@ defmodule TrentoWeb.V1.SettingsController do
   end
 
   operation :update_suse_manager_settings,
-    summary: "Updates the suse manager settings",
+    summary: "Updates the Suse manager settings",
     tags: ["Platform"],
-    description: "Updates suse manager settings",
+    description: "Updates Suse manager settings",
     request_body:
       {"UpdateSuseManagerSettingsRequest", "application/json",
        Schema.Platform.UpdateSuseManagerSettingsRequest},
@@ -216,9 +216,9 @@ defmodule TrentoWeb.V1.SettingsController do
   end
 
   operation :delete_suse_manager_settings,
-    summary: "Clears the suse manager settings",
+    summary: "Clears the Suse manager settings",
     tags: ["Platform"],
-    description: "Clears the saved settings for SUSE Manager",
+    description: "Clears the saved settings for Suse manager",
     responses: [
       no_content: "Settings cleared successfully"
     ]
@@ -230,13 +230,14 @@ defmodule TrentoWeb.V1.SettingsController do
   end
 
   operation :test_suse_manager_settings,
-    summary: "Tests connection with SUMA",
+    summary: "Tests connection with Suse Manager",
     tags: ["Platform"],
-    description: "Tests connection with SUMA with the saved settings",
+    description: "Tests connection with Suse manager with the saved settings",
     responses: [
-      ok: "The connection with SUMA was successful",
+      ok: "The connection with Suse manager was successful",
       unprocessable_entity:
-        {"The connection with SUMA failed", "application/json", Schema.UnprocessableEntity}
+        {"The connection with Suse Manager failed", "application/json",
+         Schema.UnprocessableEntity}
     ]
 
   @spec test_suse_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
