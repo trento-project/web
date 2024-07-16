@@ -119,7 +119,7 @@ defmodule Trento.Factory do
   }
 
   alias Trento.SoftwareUpdates.Discovery.DiscoveryResult
-  alias Trento.SoftwareUpdates.Settings
+  alias Trento.Settings.SuseManagerSettings
 
   alias Trento.Settings.{
     ApiKeySettings,
@@ -844,8 +844,8 @@ defmodule Trento.Factory do
     ca_cert = Map.get(attrs, :ca_cert, self_signed_cert)
     ca_uploaded_at = Map.get(attrs, :ca_uploaded_at, DateTime.utc_now())
 
-    %Settings{}
-    |> Settings.changeset(%{
+    %SuseManagerSettings{}
+    |> SuseManagerSettings.changeset(%{
       type: :suse_manager_settings,
       url: url,
       username: username,

@@ -9,11 +9,11 @@ defmodule Trento.SoftwareUpdates.Policy do
   @behaviour Bodyguard.Policy
 
   import Trento.Support.PolicyHelper
-  alias Trento.SoftwareUpdates.Settings
+  alias Trento.Settings.SuseManagerSettings
 
   alias Trento.Users.User
 
-  def authorize(action, %User{} = user, Settings)
+  def authorize(action, %User{} = user, SuseManagerSettings)
       when action in [:create, :update, :delete] do
     has_global_ability?(user) or has_suma_settings_change_ability?(user)
   end

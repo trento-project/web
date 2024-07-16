@@ -11,7 +11,7 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
 
   alias Trento.Hosts.Commands.CompleteSoftwareUpdatesDiscovery
   alias Trento.SoftwareUpdates
-  alias Trento.SoftwareUpdates.Settings
+  alias Trento.Settings.SuseManagerSettings
 
   setup :verify_on_exit!
 
@@ -32,7 +32,7 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
         )
 
       assert {:ok,
-              %Settings{
+              %SuseManagerSettings{
                 url: ^url,
                 username: ^username,
                 password: ^password,
@@ -55,7 +55,7 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
         )
 
       assert {:ok,
-              %Settings{
+              %SuseManagerSettings{
                 url: ^url,
                 username: ^username,
                 password: ^password,
@@ -132,7 +132,7 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
       }
 
       assert {:ok,
-              %Settings{
+              %SuseManagerSettings{
                 url: ^url,
                 username: ^username,
                 password: ^password,
@@ -150,7 +150,7 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
       }
 
       assert {:ok,
-              %Settings{
+              %SuseManagerSettings{
                 url: ^url,
                 username: ^username,
                 password: ^password,
@@ -176,7 +176,7 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
       }
 
       assert {:ok,
-              %Settings{
+              %SuseManagerSettings{
                 url: ^url,
                 username: ^username,
                 password: ^password,
