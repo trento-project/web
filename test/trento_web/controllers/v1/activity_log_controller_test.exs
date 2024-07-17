@@ -83,7 +83,7 @@ defmodule TrentoWeb.V1.ActivityLogControllerTest do
         |> get("/api/v1/activity_log?actor[]=not-aktor")
         |> json_response(200)
 
-      assert length(resp["data"]) == 0
+      assert Enum.empty?(resp["data"])
       assert_schema(resp, "ActivityLog", api_spec)
     end
 
