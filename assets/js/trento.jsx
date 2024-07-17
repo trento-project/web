@@ -40,6 +40,7 @@ import SettingsPage from '@pages/SettingsPage';
 import SomethingWentWrong from '@pages/SomethingWentWrong';
 import UsersPage, { CreateUserPage, EditUserPage } from '@pages/Users';
 import ProfilePage from '@pages/Profile';
+import ActivityLogPage from '@pages/ActivityLogPage';
 
 import { profile } from '@lib/auth';
 import { networkClient } from '@lib/network';
@@ -112,6 +113,10 @@ const createRouter = ({ getUser }) =>
               <Route
                 path="hosts/:hostID/patches/:advisoryID"
                 element={<AdvisoryDetailsPage />}
+              />
+              <Route
+                path="activity_log"
+                element={<ActivityLogPage />}
               />
               <Route
                 element={
