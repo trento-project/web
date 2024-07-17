@@ -128,22 +128,29 @@ defmodule Trento.Discovery.Policies.HostPolicy do
     end
   end
 
-  defp build_register_host_command(agent_id, %HostDiscoveryPayload{
-         hostname: hostname,
-         ip_addresses: ip_addresses,
-         agent_version: agent_version,
-         cpu_count: cpu_count,
-         total_memory_mb: total_memory_mb,
-         socket_count: socket_count,
-         os_version: os_version,
-         installation_source: installation_source,
-         fully_qualified_domain_name: fqdn
-       }),
+  defp build_register_host_command(
+         agent_id,
+         %HostDiscoveryPayload{
+           hostname: hostname,
+           network_interfaces: network_interfaces,
+           agent_version: agent_version,
+           cpu_count: cpu_count,
+           total_memory_mb: total_memory_mb,
+           socket_count: socket_count,
+           os_version: os_version,
+           installation_source: installation_source,
+           fully_qualified_domain_name: fqdn
+         }
+       ),
        do:
          RegisterHost.new(%{
            host_id: agent_id,
            hostname: hostname,
-           ip_addresses: Enum.filter(ip_addresses, &non_loopback_ipv4?/1),
+           ip_addresses:
+             network_interfaces
+             |> Enum.flat_map(fn %{addresses: addresses} -> addresses end)
+             |> Enum.filter(&non_loopback_ipv4?/1)
+             |> Enum.map(fn %{address: address, netmask: netmask} -> "#{address}/#{netmask}" end),
            agent_version: agent_version,
            cpu_count: cpu_count,
            total_memory_mb: total_memory_mb,
@@ -231,11 +238,11 @@ defmodule Trento.Discovery.Policies.HostPolicy do
           end)
       })
 
-  @spec non_loopback_ipv4?(String.t()) :: boolean
-  defp non_loopback_ipv4?("127.0.0.1"), do: false
+  @spec non_loopback_ipv4?(map) :: boolean
+  defp non_loopback_ipv4?(%{address: "127.0.0.1"}), do: false
 
-  defp non_loopback_ipv4?(ip) do
-    case :inet.parse_ipv4_address(String.to_charlist(ip)) do
+  defp non_loopback_ipv4?(%{address: address}) do
+    case :inet.parse_ipv4_address(String.to_charlist(address)) do
       {:ok, _} ->
         true
 
