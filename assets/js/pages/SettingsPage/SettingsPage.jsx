@@ -4,8 +4,6 @@ import { Transition } from '@headlessui/react';
 import { values, isUndefined } from 'lodash';
 import { format, isBefore, parseISO } from 'date-fns';
 import { EOS_INFO_OUTLINED } from 'eos-icons-react';
-import { logError } from '@lib/log';
-import { get, patch } from '@lib/network';
 import { getFromConfig } from '@lib/config';
 
 import DisabledGuard from '@common/DisabledGuard';
@@ -49,8 +47,7 @@ import {
   getActivityLogsSettingsErrors,
 } from '@state/selectors/activityLogsSettings';
 
-import { dismissNotification } from '@state/notifications';
-import { API_KEY_EXPIRATION_NOTIFICATION_ID } from '@state/sagas/settings';
+import { useApiKeySettings } from '@pages/SettingsPage/hooks';
 
 const apiKeySettingsPermittedFor = ['all:api_key_settings'];
 
@@ -78,47 +75,14 @@ function ApiKeyExpireInfo({ apiKeyExpiration }) {
 
 function SettingsPage() {
   const dispatch = useDispatch();
+  const { saveApiKeySettings, apiKey, apiKeyExpiration, apiKeyLoading } =
+    useApiKeySettings();
 
-  const [loading, setLoading] = useState(false);
-  const [apiKey, setApiKey] = useState(null);
-  const [apiKeyExpiration, setApiKeyExpiration] = useState(null);
   const [apiKeySettingModalOpen, setApiKeySettingsModalOpen] = useState(false);
   const [clearingSoftwareUpdatesSettings, setClearingSoftwareUpdatesSettings] =
     useState(false);
 
-  const fetchApiKeySettings = () =>
-    get('/settings/api_key')
-      .then(
-        ({ data: { generated_api_key: newApiKey, expire_at: expireAt } }) => {
-          setApiKey(newApiKey);
-          setApiKeyExpiration(expireAt);
-        }
-      )
-      .catch((error) => {
-        logError(error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-
-  const saveApiKeySettings = (expiration) => {
-    setLoading(true);
-    patch('/settings/api_key', { expire_at: expiration })
-      .then(
-        ({ data: { generated_api_key: newApiKey, expire_at: expireAt } }) => {
-          setApiKey(newApiKey);
-          setApiKeyExpiration(expireAt);
-          dispatch(dismissNotification(API_KEY_EXPIRATION_NOTIFICATION_ID));
-        }
-      )
-      .finally(() => {
-        setLoading(false);
-      });
-  };
-
   useEffect(() => {
-    setLoading(true);
-    fetchApiKeySettings();
     dispatch(fetchSoftwareUpdatesSettings());
     dispatch(fetchActivityLogsSettings());
   }, []);
@@ -277,7 +241,7 @@ function SettingsPage() {
         </div>
         <ApiKeySettingsModal
           open={apiKeySettingModalOpen}
-          loading={loading}
+          loading={apiKeyLoading}
           generatedApiKey={apiKey}
           generatedApiKeyExpiration={apiKeyExpiration}
           onClose={() => setApiKeySettingsModalOpen(false)}

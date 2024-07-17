@@ -53,6 +53,21 @@ export const withState = (component, initialState = {}) => {
 export const withDefaultState = (component) =>
   withState(component, defaultInitialState);
 
+export const hookWrapperWithState = (initialState = defaultInitialState) => {
+  const store = mockStore(initialState);
+
+  return [
+    function hookStateWrapper({ children }) {
+      return (
+        <Provider key="root" store={store}>
+          {children}
+        </Provider>
+      );
+    },
+    store,
+  ];
+};
+
 export const renderWithRouter = (ui, { route = '/' } = {}) => {
   window.history.pushState({}, 'Test page', route);
 
