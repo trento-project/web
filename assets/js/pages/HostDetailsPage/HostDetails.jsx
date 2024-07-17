@@ -48,6 +48,13 @@ function formatBytes(bytes, decimals = 2) {
   return `${parseFloat((bytes / k ** i).toFixed(dm))} ${sizes[i]}`;
 }
 
+export const buildCidrNotation = (ipAddresses, netmasks) =>
+  zipWith(
+    ipAddresses,
+    netmasks,
+    (address, netmask) => `${address}${netmask ? `/${netmask}` : ''}`
+  );
+
 function HostDetails({
   agentVersion,
   chartsEnabled,
@@ -112,11 +119,6 @@ function HostDetails({
   const lastExecutionError = get(lastExecution, 'error');
 
   const timeNow = new Date();
-  const cidrIpAddresses = zipWith(
-    ipAddresses,
-    netmasks,
-    (address, netmask) => `${address}${netmask ? `/${netmask}` : ''}`
-  );
 
   return (
     <>
@@ -220,7 +222,7 @@ function HostDetails({
           <HostSummary
             agentVersion={agentVersion}
             cluster={cluster}
-            ipAddresses={cidrIpAddresses}
+            ipAddresses={buildCidrNotation(ipAddresses, netmasks)}
           />
           <div className="flex flex-col mt-4 bg-white shadow rounded-lg pt-8 px-8 xl:w-2/5 mr-4">
             <SaptuneSummary

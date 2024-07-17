@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { EOS_WARNING_OUTLINED } from 'eos-icons-react';
-import { uniqBy, zipWith } from 'lodash';
+import { uniqBy } from 'lodash';
 
 import CleanUpButton from '@common/CleanUpButton';
 import HealthIcon from '@common/HealthIcon';
@@ -23,6 +23,7 @@ import ClusterLink from '@pages/ClusterDetails/ClusterLink';
 import DeregistrationModal from '@pages/DeregistrationModal';
 import HealthSummary from '@pages/HealthSummary';
 import { getCounters } from '@pages/HealthSummary/summarySelection';
+import { buildCidrNotation } from '@pages/HostDetailsPage/HostDetails';
 
 import { addTagToHost, removeTagFromHost, deregisterHost } from '@state/hosts';
 import { getAllSAPInstances } from '@state/selectors/sapSystem';
@@ -220,16 +221,11 @@ function HostsList() {
   const data = hosts.map((host) => {
     const cluster = clusters.find((c) => c.id === host.cluster_id);
     const sapSystemList = getInstancesByHost(allInstances, host.id);
-    const cidrAddresses = zipWith(
-      host.ip_addresses,
-      host.netmasks,
-      (address, netmask) => `${address}${netmask ? `/${netmask}` : ''}`
-    );
 
     return {
       health: host.health,
       hostname: host.hostname,
-      ip: cidrAddresses,
+      ip: buildCidrNotation(host.ip_addresses, host.netmasks),
       provider: host.provider,
       sid: sapSystemList.map((sapSystem) => sapSystem.sid),
       cluster,

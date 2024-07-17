@@ -101,7 +101,7 @@ describe('HostDetails component', () => {
       });
     });
 
-    describe('ip addresses', () => {
+    describe('IP addresses', () => {
       it('should show IP addresses with CIDR notation', () => {
         renderWithRouter(
           <HostDetails
