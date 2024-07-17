@@ -355,7 +355,7 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
     for %{name: name} = scenario <- unauthorized_scenarios do
       @scenario scenario
 
-      test "should return 403 for #{name}", %{conn: conn, api_spec: api_spec} do
+      test "should return 422 for #{name}", %{conn: conn, api_spec: api_spec} do
         %{mocks: mocks} = @scenario
 
         Enum.each(mocks, fn {network_call, response} ->
@@ -366,8 +366,8 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
 
         conn
         |> get("/api/v1/software_updates/errata_details/#{advisory_name}")
-        |> json_response(:forbidden)
-        |> assert_schema("Forbidden", api_spec)
+        |> json_response(:unprocessable_entity)
+        |> assert_schema("UnprocessableEntity", api_spec)
       end
     end
   end

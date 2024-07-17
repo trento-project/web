@@ -19,9 +19,9 @@ defmodule TrentoWeb.FallbackController do
 
   def call(conn, {:error, :suma_authentication_error}) do
     conn
-    |> put_status(:forbidden)
+    |> put_status(:unprocessable_entity)
     |> put_view(ErrorView)
-    |> render(:"403", reason: "SUSE Manager authentication error.")
+    |> render(:"422", reason: "SUSE Manager authentication error.")
   end
 
   def call(conn, {:error, :invalid_refresh_token}) do

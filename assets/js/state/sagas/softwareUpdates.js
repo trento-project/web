@@ -28,12 +28,15 @@ export function* fetchSoftwareUpdates({ payload: hostID }) {
     yield put(setEmptySoftwareUpdates({ hostID }));
 
     const errorCode = get(error, ['response', 'status']);
+    const { errors } = get(error, ['response', 'data'], []);
+    const suma_unauthorized = errors.some(
+      ({ detail }) => detail === 'SUSE Manager authentication error.'
+    );
 
-    if (errorCode === 403) {
+    if (errorCode === 422 && suma_unauthorized) {
       yield put(setSettingsNotConfigured());
     }
 
-    const errors = get(error, ['response', 'data'], []);
     yield put(setSoftwareUpdatesErrors({ hostID, errors }));
   }
 }
@@ -49,8 +52,12 @@ export function* fetchUpgradablePackagesPatches({
     yield put(setSettingsConfigured());
   } catch (error) {
     const errorCode = get(error, ['response', 'status']);
+    const { errors } = get(error, ['response', 'data'], []);
+    const suma_unauthorized = errors.some(
+      ({ detail }) => detail === 'SUSE Manager authentication error.'
+    );
 
-    if (errorCode === 403) {
+    if (errorCode === 422 && suma_unauthorized) {
       yield put(setSettingsNotConfigured());
     }
     yield put(setPatchesForPackages({ hostID, patches: [] }));
