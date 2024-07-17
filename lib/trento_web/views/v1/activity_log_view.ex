@@ -22,7 +22,6 @@ defmodule TrentoWeb.V1.ActivityLogView do
   def render("pagination.json", %{pagination: pagination}) when is_map(pagination) do
     %{
       end_cursor: end_cursor,
-      page_size: page_size,
       start_cursor: start_cursor,
       flop: %{
         first: first,
@@ -37,7 +36,6 @@ defmodule TrentoWeb.V1.ActivityLogView do
     %{
       start_cursor: start_cursor,
       end_cursor: end_cursor,
-      page_size: page_size,
       first: first,
       last: last,
       filters: Enum.map(filters, &Map.from_struct(&1)),

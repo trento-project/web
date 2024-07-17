@@ -22,14 +22,14 @@ defmodule TrentoWeb.V1.ActivityLogController do
         schema: %OpenApiSpex.Schema{type: :integer},
         required: false
       ],
-      start_cursor: [
+      after: [
         in: :query,
-        schema: %OpenApiSpex.Schema{type: :integer},
+        schema: %OpenApiSpex.Schema{type: :string},
         required: false
       ],
-      end_cursor: [
+      before: [
         in: :query,
-        schema: %OpenApiSpex.Schema{type: :integer},
+        schema: %OpenApiSpex.Schema{type: :string},
         required: false
       ],
       from_date: [

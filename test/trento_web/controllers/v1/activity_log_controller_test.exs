@@ -87,6 +87,50 @@ defmodule TrentoWeb.V1.ActivityLogControllerTest do
       assert_schema(resp, "ActivityLog", api_spec)
     end
 
+    test "should return valid response of paginated first, second and third page of results",
+         %{
+           conn: conn,
+           api_spec: api_spec
+         } do
+      inserted_records = insert_list(6, :activity_log_entry)
+
+      resp =
+        conn
+        |> get("/api/v1/activity_log?first=2")
+        |> json_response(200)
+
+      assert length(resp["data"]) == 2
+      assert_schema(resp, "ActivityLog", api_spec)
+      next = resp["pagination"]["end_cursor"]
+
+      resp2 =
+        conn
+        |> get("/api/v1/activity_log?first=2&after=#{next}")
+        |> json_response(200)
+
+      assert length(resp2["data"]) == 2
+      assert_schema(resp2, "ActivityLog", api_spec)
+
+      next = resp2["pagination"]["end_cursor"]
+
+      resp3 =
+        conn
+        |> get("/api/v1/activity_log?first=2&after=#{next}")
+        |> json_response(200)
+
+      assert length(resp3["data"]) == 2
+
+      paginated_results =
+        (resp["data"] ++ resp2["data"] ++ resp3["data"])
+        |> Enum.map(fn e -> e["type"] end)
+        |> Enum.sort()
+
+      sorted_inserted_records =
+        inserted_records |> Enum.map(fn e -> e.type end) |> Enum.sort()
+
+      assert paginated_results == sorted_inserted_records
+    end
+
     test "should return valid response of a list for type Tagging entries provided with suitable params",
          %{
            conn: conn,
