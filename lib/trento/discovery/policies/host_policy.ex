@@ -132,7 +132,6 @@ defmodule Trento.Discovery.Policies.HostPolicy do
          agent_id,
          %HostDiscoveryPayload{
            hostname: hostname,
-           network_interfaces: network_interfaces,
            agent_version: agent_version,
            cpu_count: cpu_count,
            total_memory_mb: total_memory_mb,
@@ -140,17 +139,13 @@ defmodule Trento.Discovery.Policies.HostPolicy do
            os_version: os_version,
            installation_source: installation_source,
            fully_qualified_domain_name: fqdn
-         }
+         } = payload
        ),
        do:
          RegisterHost.new(%{
            host_id: agent_id,
            hostname: hostname,
-           ip_addresses:
-             network_interfaces
-             |> Enum.flat_map(fn %{addresses: addresses} -> addresses end)
-             |> Enum.filter(&non_loopback_ipv4?/1)
-             |> Enum.map(fn %{address: address, netmask: netmask} -> "#{address}/#{netmask}" end),
+           ip_addresses: build_ip_addresses(payload),
            agent_version: agent_version,
            cpu_count: cpu_count,
            total_memory_mb: total_memory_mb,
@@ -159,6 +154,30 @@ defmodule Trento.Discovery.Policies.HostPolicy do
            installation_source: installation_source,
            fully_qualified_domain_name: fqdn
          })
+
+  defp build_ip_addresses(%{ip_addresses: ip_addresses, netmasks: nil}) do
+    Enum.filter(ip_addresses, &non_loopback_ipv4?/1)
+  end
+
+  defp build_ip_addresses(%{ip_addresses: ip_addresses, netmasks: netmasks}) do
+    [ip_addresses, netmasks]
+    |> Enum.zip_with(fn [address, netmask] -> %{address: address, netmask: netmask} end)
+    |> Enum.filter(fn %{address: address} -> non_loopback_ipv4?(address) end)
+    |> Enum.map(fn %{address: address, netmask: netmask} -> "#{address}/#{netmask}" end)
+  end
+
+  @spec non_loopback_ipv4?(String.t()) :: boolean
+  defp non_loopback_ipv4?("127.0.0.1"), do: false
+
+  defp non_loopback_ipv4?(address) do
+    case :inet.parse_ipv4_address(String.to_charlist(address)) do
+      {:ok, _} ->
+        true
+
+      {:error, :einval} ->
+        false
+    end
+  end
 
   defp build_update_saptune_command(
          agent_id,
@@ -237,19 +256,6 @@ defmodule Trento.Discovery.Policies.HostPolicy do
             subscription |> Map.from_struct() |> Map.put(:host_id, agent_id)
           end)
       })
-
-  @spec non_loopback_ipv4?(map) :: boolean
-  defp non_loopback_ipv4?(%{address: "127.0.0.1"}), do: false
-
-  defp non_loopback_ipv4?(%{address: address}) do
-    case :inet.parse_ipv4_address(String.to_charlist(address)) do
-      {:ok, _} ->
-        true
-
-      {:error, :einval} ->
-        false
-    end
-  end
 
   @spec parse_cloud_provider_metadata(Provider.t(), map) ::
           map
