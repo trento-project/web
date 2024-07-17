@@ -22,6 +22,7 @@ defmodule Trento.Hosts.Projections.HostReadModel do
   schema "hosts" do
     field :hostname, :string
     field :ip_addresses, {:array, :string}
+    field :netmasks, {:array, :integer}
     field :agent_version, :string
     field :fully_qualified_domain_name, :string
     field :cluster_id, Ecto.UUID
