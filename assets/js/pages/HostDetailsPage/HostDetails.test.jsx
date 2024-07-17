@@ -79,24 +79,56 @@ describe('HostDetails component', () => {
     });
   });
 
-  describe('agent version', () => {
-    const message =
-      'The Agent version is outdated, some features might not work properly. It is advised to keep the Agents up to date with the Server.';
+  describe('Summary box', () => {
+    describe('agent version', () => {
+      const message =
+        'The Agent version is outdated, some features might not work properly. It is advised to keep the Agents up to date with the Server.';
 
-    it('should not show any warning message if the agent version is correct', () => {
-      renderWithRouter(
-        <HostDetails agentVersion="2.0.0" userAbilities={userAbilities} />
-      );
+      it('should not show any warning message if the agent version is correct', () => {
+        renderWithRouter(
+          <HostDetails agentVersion="2.0.0" userAbilities={userAbilities} />
+        );
 
-      expect(screen.queryByText(message)).not.toBeInTheDocument();
+        expect(screen.queryByText(message)).not.toBeInTheDocument();
+      });
+
+      it('should show a warning message if the agent version is outdated', () => {
+        renderWithRouter(
+          <HostDetails agentVersion="1.0.0" userAbilities={userAbilities} />
+        );
+
+        expect(screen.getByText(message)).toBeInTheDocument();
+      });
     });
 
-    it('should show a warning message if the agent version is outdated', () => {
-      renderWithRouter(
-        <HostDetails agentVersion="1.0.0" userAbilities={userAbilities} />
-      );
+    describe('ip addresses', () => {
+      it('should show IP addresses with CIDR notation', () => {
+        renderWithRouter(
+          <HostDetails
+            agentVersion="2.0.0"
+            ipAddresses={['10.0.0.5', '10.0.0.6']}
+            netmasks={[24, 32]}
+            userAbilities={userAbilities}
+          />
+        );
 
-      expect(screen.getByText(message)).toBeInTheDocument();
+        expect(
+          screen.getByText('10.0.0.5/24, 10.0.0.6/32')
+        ).toBeInTheDocument();
+      });
+
+      it('should show plain IP addresses if netmasks are null', () => {
+        renderWithRouter(
+          <HostDetails
+            agentVersion="2.0.0"
+            ipAddresses={['10.0.0.5', '10.0.0.6']}
+            netmasks={[null, null]}
+            userAbilities={userAbilities}
+          />
+        );
+
+        expect(screen.getByText('10.0.0.5, 10.0.0.6')).toBeInTheDocument();
+      });
     });
   });
 

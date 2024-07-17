@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { get } from 'lodash';
+import { get, zipWith } from 'lodash';
 import classNames from 'classnames';
 import {
   EOS_CLEAR_ALL,
@@ -59,6 +59,7 @@ function HostDetails({
   hostID,
   hostname,
   ipAddresses = [],
+  netmasks = [],
   provider,
   providerData,
   sapInstances,
@@ -111,6 +112,11 @@ function HostDetails({
   const lastExecutionError = get(lastExecution, 'error');
 
   const timeNow = new Date();
+  const cidrIpAddresses = zipWith(
+    ipAddresses,
+    netmasks,
+    (address, netmask) => `${address}${netmask ? `/${netmask}` : ''}`
+  );
 
   return (
     <>
@@ -214,7 +220,7 @@ function HostDetails({
           <HostSummary
             agentVersion={agentVersion}
             cluster={cluster}
-            ipAddresses={ipAddresses}
+            ipAddresses={cidrIpAddresses}
           />
           <div className="flex flex-col mt-4 bg-white shadow rounded-lg pt-8 px-8 xl:w-2/5 mr-4">
             <SaptuneSummary

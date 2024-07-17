@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { EOS_WARNING_OUTLINED } from 'eos-icons-react';
-import { uniqBy } from 'lodash';
+import { uniqBy, zipWith } from 'lodash';
 
 import CleanUpButton from '@common/CleanUpButton';
 import HealthIcon from '@common/HealthIcon';
@@ -220,11 +220,16 @@ function HostsList() {
   const data = hosts.map((host) => {
     const cluster = clusters.find((c) => c.id === host.cluster_id);
     const sapSystemList = getInstancesByHost(allInstances, host.id);
+    const cidrAddresses = zipWith(
+      host.ip_addresses,
+      host.netmasks,
+      (address, netmask) => `${address}${netmask ? `/${netmask}` : ''}`
+    );
 
     return {
       health: host.health,
       hostname: host.hostname,
-      ip: host.ip_addresses,
+      ip: cidrAddresses,
       provider: host.provider,
       sid: sapSystemList.map((sapSystem) => sapSystem.sid),
       cluster,

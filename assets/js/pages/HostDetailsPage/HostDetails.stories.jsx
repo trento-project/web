@@ -91,6 +91,10 @@ export default {
       control: { type: 'array' },
       description: 'IP addresses',
     },
+    netmasks: {
+      control: { type: 'array' },
+      description: 'Netmasks associated to ip addresses',
+    },
     provider: {
       control: 'text',
       description: 'The discovered CSP where the host is running',
@@ -176,6 +180,7 @@ export const Default = {
     hostID: host.id,
     hostname: host.hostname,
     ipAddresses: host.ip_addresses,
+    netmasks: host.netmasks,
     provider: host.provider,
     providerData: host.provider_data,
     sapInstances,
@@ -274,6 +279,9 @@ export const HostSummaryWithTooltip = {
   args: {
     ...Default.args,
     ipAddresses: Array.from({ length: 10 }, () => faker.internet.ipv4()),
+    netmasks: Array.from({ length: 10 }, () =>
+      faker.helpers.arrayElement([8, 16, 24, 32])
+    ),
   },
 };
 
