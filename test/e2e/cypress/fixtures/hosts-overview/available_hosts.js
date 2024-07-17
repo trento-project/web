@@ -2,7 +2,7 @@ export const availableHosts = [
   {
     id: '240f96b1-8d26-53b7-9e99-ffb0f2e735bf',
     name: 'vmdrbddev01',
-    ipAddresses: ['10.100.1.31', '10.100.1.33'],
+    ipAddresses: ['10.100.1.31/24', '10.100.1.33/24'],
     provider: 'Azure',
     clusterName: 'drbd_cluster',
     clusterId: '',
@@ -14,7 +14,7 @@ export const availableHosts = [
   {
     id: '21de186a-e38f-5804-b643-7f4ef22fecfd',
     name: 'vmdrbddev02',
-    ipAddresses: ['10.100.1.32'],
+    ipAddresses: ['10.100.1.32/24'],
     provider: 'Azure',
     clusterName: 'drbd_cluster',
     clusterId: '',
@@ -26,7 +26,7 @@ export const availableHosts = [
   {
     id: 'a09d9cf3-46c1-505c-8fb8-4b0a71a9114e',
     name: 'vmdrbdprd01',
-    ipAddresses: ['10.80.1.31', '10.80.1.33'],
+    ipAddresses: ['10.80.1.31/24', '10.80.1.33/24'],
     provider: 'Azure',
     clusterName: 'drbd_cluster',
     clusterId: '',
@@ -38,7 +38,7 @@ export const availableHosts = [
   {
     id: '927901fa-2c87-524e-b18c-3ef5187f504f',
     name: 'vmdrbdprd02',
-    ipAddresses: ['10.80.1.32'],
+    ipAddresses: ['10.80.1.32/24'],
     provider: 'Azure',
     clusterName: 'drbd_cluster',
     clusterId: '',
@@ -50,7 +50,7 @@ export const availableHosts = [
   {
     id: 'ddcb7992-2ffb-5c10-8b39-80685f6eaaba',
     name: 'vmdrbdqas01',
-    ipAddresses: ['10.90.1.31', '10.90.1.33'],
+    ipAddresses: ['10.90.1.31/24', '10.90.1.33/24'],
     provider: 'Azure',
     clusterName: 'drbd_cluster',
     clusterId: '',
@@ -62,7 +62,7 @@ export const availableHosts = [
   {
     id: '422686d6-b2d1-5092-93e8-a744854f5085',
     name: 'vmdrbdqas02',
-    ipAddresses: ['10.90.1.32'],
+    ipAddresses: ['10.90.1.32/24'],
     provider: 'Azure',
     clusterName: 'drbd_cluster',
     clusterId: '',
@@ -74,7 +74,7 @@ export const availableHosts = [
   {
     id: '13e8c25c-3180-5a9a-95c8-51ec38e50cfc',
     name: 'vmhdbdev01',
-    ipAddresses: ['10.100.1.11', '10.100.1.13'],
+    ipAddresses: ['10.100.1.11/24', '10.100.1.13/24'],
     provider: 'Azure',
     clusterName: 'hana_cluster_1',
     clusterId: '7965f822-0254-5858-abca-f6e8b4c27714',
@@ -86,7 +86,7 @@ export const availableHosts = [
   {
     id: '0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4',
     name: 'vmhdbdev02',
-    ipAddresses: ['10.100.1.12'],
+    ipAddresses: ['10.100.1.12/24'],
     provider: 'Azure',
     clusterName: 'hana_cluster_1',
     clusterId: '7965f822-0254-5858-abca-f6e8b4c27714',
@@ -98,7 +98,7 @@ export const availableHosts = [
   {
     id: '9cd46919-5f19-59aa-993e-cf3736c71053',
     name: 'vmhdbprd01',
-    ipAddresses: ['10.80.1.11', '10.80.1.13'],
+    ipAddresses: ['10.80.1.11/24', '10.80.1.13/24'],
     provider: 'Azure',
     clusterName: 'hana_cluster_3',
     clusterId: '469e7be5-4e20-5007-b044-c6f540a87493',
@@ -110,7 +110,7 @@ export const availableHosts = [
   {
     id: 'b767b3e9-e802-587e-a442-541d093b86b9',
     name: 'vmhdbprd02',
-    ipAddresses: ['10.80.1.12'],
+    ipAddresses: ['10.80.1.12/24'],
     provider: 'Azure',
     clusterName: 'hana_cluster_3',
     clusterId: '469e7be5-4e20-5007-b044-c6f540a87493',
