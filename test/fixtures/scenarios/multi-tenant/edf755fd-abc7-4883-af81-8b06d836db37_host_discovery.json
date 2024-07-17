@@ -11,6 +11,12 @@
       "10.17.0.8",
       "fe80::6111:bdef:af94:11ae"
     ],
+    "netmasks": [
+      "8",
+      "128",
+      "24",
+      "64"
+    ],
     "os_version": "15-SP4",
     "socket_count": 1,
     "total_memory_mb": 7880
