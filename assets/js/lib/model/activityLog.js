@@ -26,3 +26,15 @@ export const ACTIVITY_TYPES = [
   PROFILE_UPDATE,
   CLUSTER_CHECKS_EXECUTION_REQUEST,
 ];
+
+export const LEVEL_DEBUG = 'debug';
+export const LEVEL_INFO = 'info';
+export const LEVEL_WARNING = 'warning';
+export const LEVEL_ERROR = 'error';
+
+export const ACTIVITY_LOG_LEVELS = [
+  LEVEL_DEBUG,
+  LEVEL_INFO,
+  LEVEL_WARNING,
+  LEVEL_ERROR,
+];

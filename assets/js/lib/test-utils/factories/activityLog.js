@@ -4,6 +4,7 @@ import {
   ACTIVITY_TYPES,
   RESOURCE_TAGGING,
   RESOURCE_UNTAGGING,
+  ACTIVITY_LOG_LEVELS,
 } from '@lib/model/activityLog';
 import { randomObjectFactory } from '.';
 
@@ -41,5 +42,6 @@ export const activityLogEntryFactory = Factory.define(() => {
     type: activityType,
     occurred_on: faker.date.anytime(),
     metadata: metadataForActivity(activityType),
+    level: faker.helpers.arrayElement(ACTIVITY_LOG_LEVELS),
   };
 });
