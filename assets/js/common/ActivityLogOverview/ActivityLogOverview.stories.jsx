@@ -25,3 +25,17 @@ export const Empty = {
     activityLog: [],
   },
 };
+
+export const UnknwonActivityType = {
+  args: {
+    ...Default.args,
+    activityLog: [activityLogEntryFactory.build({ type: 'foo_bar' })],
+  },
+};
+
+export const UnknwonLevel = {
+  args: {
+    ...Default.args,
+    activityLog: [activityLogEntryFactory.build({ level: 'foo_bar' })],
+  },
+};

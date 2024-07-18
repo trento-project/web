@@ -1,9 +1,9 @@
-import React from 'react';
-import { format } from 'date-fns';
+import React, { useState } from 'react';
+import { noop } from 'lodash';
+import { EOS_KEYBOARD_ARROW_RIGHT_FILLED } from 'eos-icons-react';
 import Table from '@common/Table';
 
 import {
-  ACTIVITY_TYPES,
   API_KEY_GENERATION,
   CHANGING_SUMA_SETTINGS,
   CLEARING_SUMA_SETTINGS,
@@ -16,56 +16,14 @@ import {
   USER_CREATION,
   USER_DELETION,
   USER_MODIFICATION,
+  LEVEL_DEBUG,
+  LEVEL_ERROR,
+  LEVEL_INFO,
+  LEVEL_WARNING,
 } from '@lib/model/activityLog';
 
-const activityTypesLabels = {
-  [LOGIN_ATTEMPT]: 'Login Attempt',
-  [RESOURCE_TAGGING]: 'Tag Added',
-  [RESOURCE_UNTAGGING]: 'Tag Removed',
-  [API_KEY_GENERATION]: 'API Key Generated',
-  [SAVING_SUMA_SETTINGS]: 'SUMA Settings Saved',
-  [CHANGING_SUMA_SETTINGS]: 'SUMA Settings Changed',
-  [CLEARING_SUMA_SETTINGS]: 'SUMA Settings Cleared',
-  [USER_CREATION]: 'User Created',
-  [USER_MODIFICATION]: 'User Modified',
-  [USER_DELETION]: 'User Deleted',
-  [PROFILE_UPDATE]: 'Profile Updated',
-  [CLUSTER_CHECKS_EXECUTION_REQUEST]: 'Checks Execution Requested',
-};
-
-const resourceTypesLabels = {
-  host: 'Host',
-  cluster: 'Cluster',
-  database: 'Database',
-  sap_system: 'SAP System',
-};
-
-const toResource = (activityLogEntry) => {
-  const { metadata, type } = activityLogEntry;
-  switch (type) {
-    case LOGIN_ATTEMPT:
-      return 'Application';
-    case RESOURCE_TAGGING:
-    case RESOURCE_UNTAGGING:
-      return resourceTypesLabels[metadata.resource_type];
-    case USER_CREATION:
-    case USER_MODIFICATION:
-    case USER_DELETION:
-      return 'User';
-    case PROFILE_UPDATE:
-      return 'Profile';
-    case SAVING_SUMA_SETTINGS:
-    case CHANGING_SUMA_SETTINGS:
-    case CLEARING_SUMA_SETTINGS:
-      return 'SUMA Settings';
-    case API_KEY_GENERATION:
-      return 'API Key';
-    case CLUSTER_CHECKS_EXECUTION_REQUEST:
-      return 'Cluster Checks';
-    default:
-      return 'Unrecognized resource';
-  }
-};
+import ActivityLogDetailModal from '@common/ActivityLogDetailsModal';
+import { format } from 'date-fns';
 
 const toMessage = (activityLogEntry) => {
   const { metadata, type } = activityLogEntry;
@@ -100,50 +58,85 @@ const toMessage = (activityLogEntry) => {
   }
 };
 
-const activityLogTableConfig = {
-  pagination: true,
-  usePadding: false,
-  columns: [
-    {
-      title: 'Time',
-      key: 'occurred_on',
-      render: (time) => format(time, 'yyyy-MM-dd HH:mm:ss'),
-    },
-    {
-      title: 'Event Type',
-      key: 'type',
-      render: (type) => (
-        <span aria-label="activity-log-type">
-          {ACTIVITY_TYPES.includes(type)
-            ? activityTypesLabels[type]
-            : 'Unknown'}
-        </span>
-      ),
-    },
-    {
-      title: 'Resource',
-      key: 'metadata',
-      render: (_, activityLogEntry) => (
-        <span aria-label="activity-log-resource">
-          {toResource(activityLogEntry)}
-        </span>
-      ),
-    },
-    {
-      title: 'User',
-      key: 'actor',
-    },
-    {
-      title: 'Message',
-      key: 'metadata',
-      render: (_, activityLogEntry) => toMessage(activityLogEntry),
-    },
-  ],
-  collapsibleDetailRenderer: ({ metadata }) => (
-    <pre>{JSON.stringify(metadata, null, 2)}</pre>
-  ),
+const logLevelToLabel = {
+  [LEVEL_DEBUG]: 'Debug',
+  [LEVEL_INFO]: 'Info',
+  [LEVEL_WARNING]: 'Warning',
+  [LEVEL_ERROR]: 'Error',
 };
 
-export default function ActivityLogOverview({ activityLog }) {
-  return <Table config={activityLogTableConfig} data={activityLog} />;
+export const toRenderedEntry = (entry) => ({
+  id: entry.id,
+  type: entry.type,
+  time: format(entry.occurred_on, 'yyyy-MM-dd HH:mm:ss'),
+  message: toMessage(entry),
+  user: entry.actor,
+  level: logLevelToLabel[entry.level] ?? 'Unknown',
+  metadata: entry.metadata,
+});
+
+function ActivityLogOverview({
+  activityLog,
+  activityLogDetailModalOpen = false,
+  onActivityLogEntryClick = noop,
+  onCloseActivityLogEntryDetails = noop,
+}) {
+  const [selectedEntry, setEntry] = useState({});
+
+  const activityLogTableConfig = {
+    pagination: true,
+    usePadding: false,
+    columns: [
+      {
+        title: 'Time',
+        key: 'time',
+      },
+      {
+        title: 'Message',
+        key: 'message',
+      },
+      {
+        title: 'User',
+        key: 'user',
+      },
+      {
+        title: 'Level',
+        key: 'level',
+      },
+      {
+        title: '',
+        key: 'metadata',
+        render: (_metadata, logEntry) => (
+          <div
+            aria-label={`entry-${logEntry.id}`}
+            role="presentation"
+            className="cursor-pointer w-full inline-block"
+            onClick={() => {
+              setEntry(logEntry);
+              onActivityLogEntryClick();
+            }}
+            onKeyDown={() => {}}
+          >
+            <EOS_KEYBOARD_ARROW_RIGHT_FILLED className="fill-gray-400 float-right" />
+          </div>
+        ),
+      },
+    ],
+  };
+
+  return (
+    <>
+      <ActivityLogDetailModal
+        open={activityLogDetailModalOpen}
+        entry={selectedEntry}
+        onCancel={onCloseActivityLogEntryDetails}
+      />
+      <Table
+        config={activityLogTableConfig}
+        data={activityLog.map(toRenderedEntry)}
+      />
+    </>
+  );
 }
+
+export default ActivityLogOverview;

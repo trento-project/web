@@ -1,5 +1,8 @@
 import React from 'react';
+import { faker } from '@faker-js/faker';
+
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import {
   activityLogEntryFactory,
   taggingMetadataFactory,
@@ -18,6 +21,10 @@ import {
   USER_CREATION,
   USER_DELETION,
   USER_MODIFICATION,
+  LEVEL_DEBUG,
+  LEVEL_ERROR,
+  LEVEL_INFO,
+  LEVEL_WARNING,
 } from '@lib/model/activityLog';
 import '@testing-library/jest-dom';
 
@@ -36,46 +43,55 @@ describe('Activity Log Overview', () => {
       entry: activityLogEntryFactory.build({
         actor: 'admin',
         type: LOGIN_ATTEMPT,
+        level: LEVEL_DEBUG,
+        metadata: {},
       }),
-      expectedEventType: 'Login Attempt',
-      expectedResource: 'Application',
       expectedUser: 'admin',
+      expectedMessage: 'User logged in',
+      expectedLevel: 'Debug',
     },
     {
       name: RESOURCE_TAGGING,
       entry: activityLogEntryFactory.build({
         actor: 'foo',
         type: RESOURCE_TAGGING,
+        level: LEVEL_INFO,
         metadata: taggingMetadataFactory.build({
           resource_type: 'host',
+          added_tag: 'bar',
+          resource_id: 'foo-bar',
         }),
       }),
-      expectedEventType: 'Tag Added',
-      expectedResource: 'Host',
       expectedUser: 'foo',
+      expectedMessage: 'Tag "bar" added to "foo-bar"',
+      expectedLevel: 'Info',
     },
     {
       name: RESOURCE_UNTAGGING,
       entry: activityLogEntryFactory.build({
         actor: 'bar',
         type: RESOURCE_UNTAGGING,
+        level: LEVEL_WARNING,
         metadata: untaggingMetadataFactory.build({
           resource_type: 'cluster',
+          removed_tag: 'foo',
+          resource_id: 'bar-foo',
         }),
       }),
-      expectedEventType: 'Tag Removed',
-      expectedResource: 'Cluster',
       expectedUser: 'bar',
+      expectedMessage: 'Tag "foo" removed from "bar-foo"',
+      expectedLevel: 'Warning',
     },
     {
       name: API_KEY_GENERATION,
       entry: activityLogEntryFactory.build({
         actor: 'baz',
         type: API_KEY_GENERATION,
+        level: LEVEL_ERROR,
       }),
-      expectedEventType: 'API Key Generated',
-      expectedResource: 'API Key',
       expectedUser: 'baz',
+      expectedMessage: 'API Key was generated',
+      expectedLevel: 'Error',
     },
     {
       name: SAVING_SUMA_SETTINGS,
@@ -83,9 +99,8 @@ describe('Activity Log Overview', () => {
         actor: 'user-1',
         type: SAVING_SUMA_SETTINGS,
       }),
-      expectedEventType: 'SUMA Settings Saved',
-      expectedResource: 'SUMA Settings',
       expectedUser: 'user-1',
+      expectedMessage: 'SUMA Settings was saved',
     },
     {
       name: CHANGING_SUMA_SETTINGS,
@@ -93,9 +108,8 @@ describe('Activity Log Overview', () => {
         actor: 'user-2',
         type: CHANGING_SUMA_SETTINGS,
       }),
-      expectedEventType: 'SUMA Settings Changed',
-      expectedResource: 'SUMA Settings',
       expectedUser: 'user-2',
+      expectedMessage: 'SUMA Settings was changed',
     },
     {
       name: CLEARING_SUMA_SETTINGS,
@@ -103,9 +117,8 @@ describe('Activity Log Overview', () => {
         actor: 'user-3',
         type: CLEARING_SUMA_SETTINGS,
       }),
-      expectedEventType: 'SUMA Settings Cleared',
-      expectedResource: 'SUMA Settings',
       expectedUser: 'user-3',
+      expectedMessage: 'SUMA Settings was cleared',
     },
     {
       name: USER_CREATION,
@@ -113,9 +126,8 @@ describe('Activity Log Overview', () => {
         actor: 'user-4',
         type: USER_CREATION,
       }),
-      expectedEventType: 'User Created',
-      expectedResource: 'User',
       expectedUser: 'user-4',
+      expectedMessage: 'User was created',
     },
     {
       name: USER_MODIFICATION,
@@ -123,9 +135,8 @@ describe('Activity Log Overview', () => {
         actor: 'user-5',
         type: USER_MODIFICATION,
       }),
-      expectedEventType: 'User Modified',
-      expectedResource: 'User',
       expectedUser: 'user-5',
+      expectedMessage: 'User was modified',
     },
     {
       name: USER_DELETION,
@@ -133,9 +144,8 @@ describe('Activity Log Overview', () => {
         actor: 'user-6',
         type: USER_DELETION,
       }),
-      expectedEventType: 'User Deleted',
-      expectedResource: 'User',
       expectedUser: 'user-6',
+      expectedMessage: 'User was deleted',
     },
     {
       name: PROFILE_UPDATE,
@@ -143,9 +153,8 @@ describe('Activity Log Overview', () => {
         actor: 'user-7',
         type: PROFILE_UPDATE,
       }),
-      expectedEventType: 'Profile Updated',
-      expectedResource: 'Profile',
       expectedUser: 'user-7',
+      expectedMessage: 'User modified profile',
     },
     {
       name: CLUSTER_CHECKS_EXECUTION_REQUEST,
@@ -153,26 +162,35 @@ describe('Activity Log Overview', () => {
         actor: 'user-8',
         type: CLUSTER_CHECKS_EXECUTION_REQUEST,
       }),
-      expectedEventType: 'Checks Execution Requested',
-      expectedResource: 'Cluster Checks',
       expectedUser: 'user-8',
+      expectedMessage: 'Checks execution requested for cluster',
     },
   ];
 
   it.each(scenarios)(
     'should render log entry for activity `$name`',
-    ({ entry, expectedEventType, expectedResource, expectedUser }) => {
+    ({ entry, expectedUser, expectedMessage, expectedLevel }) => {
       render(<ActivityLogOverview activityLog={[entry]} />);
 
-      const eventType = screen.getByLabelText('activity-log-type');
-      expect(eventType).toBeVisible();
-      expect(eventType).toHaveTextContent(expectedEventType);
-
-      const resource = screen.getByLabelText('activity-log-resource');
-      expect(resource).toBeVisible();
-      expect(resource).toHaveTextContent(expectedResource);
-
+      expect(screen.getByText(expectedMessage)).toBeVisible();
       expect(screen.getByText(expectedUser)).toBeVisible();
+      if (expectedLevel) {
+        expect(screen.getByText(expectedLevel)).toBeVisible();
+      }
     }
   );
+
+  it('should call onActivityLogEntryClick when clicking on an entry in the table', async () => {
+    const onActivityLogEntryClick = jest.fn();
+    const id = faker.string.uuid();
+    render(
+      <ActivityLogOverview
+        activityLog={[activityLogEntryFactory.build({ id })]}
+        onActivityLogEntryClick={onActivityLogEntryClick}
+      />
+    );
+
+    await userEvent.click(screen.getByLabelText(`entry-${id}`));
+    expect(onActivityLogEntryClick).toHaveBeenCalled();
+  });
 });
