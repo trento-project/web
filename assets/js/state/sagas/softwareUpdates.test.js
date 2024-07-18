@@ -7,6 +7,8 @@ import { patchForPackageFactory } from '@lib/test-utils/factories';
 import { networkClient } from '@lib/network';
 
 import {
+  setSettingsConfigured,
+  setSettingsNotConfigured,
   startLoadingSoftwareUpdates,
   setSoftwareUpdates,
   setSoftwareUpdatesErrors,
@@ -64,12 +66,30 @@ describe('Software Updates saga', () => {
       expect(dispatched).toEqual([
         startLoadingSoftwareUpdates({ hostID }),
         setSoftwareUpdates({ hostID, ...response }),
+        setSettingsConfigured(),
       ]);
     });
 
     it.each([
-      { status: 404, body: { message: '404 Not found' } },
-      { status: 500, body: { message: 'java.lang.NullPointerException' } },
+      {
+        status: 404,
+        body: {
+          errors: [
+            {
+              title: 'Not Found',
+              detail: 'The requested resource cannot be found.',
+            },
+          ],
+        },
+      },
+      {
+        status: 500,
+        body: {
+          errors: [
+            { title: 'Internal Server Error', detail: 'Something went wrong.' },
+          ],
+        },
+      },
     ])(
       'should empty software updates settings on failed fetching',
       async ({ status, body }) => {
@@ -87,10 +107,39 @@ describe('Software Updates saga', () => {
         expect(dispatched).toEqual([
           startLoadingSoftwareUpdates({ hostID }),
           setEmptySoftwareUpdates({ hostID }),
-          setSoftwareUpdatesErrors({ hostID, errors: body }),
+          setSoftwareUpdatesErrors({ hostID, errors: body.errors }),
         ]);
       }
     );
+
+    it('should set settings not configured when 422 with relevant error message', async () => {
+      const axiosMock = new MockAdapter(networkClient);
+      const hostID = faker.string.uuid();
+
+      const errorBody = {
+        errors: [
+          {
+            title: 'Unprocessable Entity',
+            detail: 'SUSE Manager authentication error.',
+          },
+        ],
+      };
+
+      axiosMock
+        .onGet(`/api/v1/hosts/${hostID}/software_updates`)
+        .reply(422, errorBody);
+
+      const dispatched = await recordSaga(fetchSoftwareUpdates, {
+        payload: hostID,
+      });
+
+      expect(dispatched).toEqual([
+        startLoadingSoftwareUpdates({ hostID }),
+        setEmptySoftwareUpdates({ hostID }),
+        setSettingsNotConfigured(),
+        setSoftwareUpdatesErrors({ hostID, errors: errorBody.errors }),
+      ]);
+    });
   });
 
   describe('Fetching patches for packages', () => {
@@ -114,6 +163,36 @@ describe('Software Updates saga', () => {
 
       expect(dispatched).toEqual([
         setPatchesForPackages({ hostID, patches: response.patches }),
+        setSettingsConfigured(),
+      ]);
+    });
+
+    it('should set settings not configured when 422 with relevant error message', async () => {
+      const axiosMock = new MockAdapter(networkClient);
+      const hostID = faker.string.uuid();
+
+      const errorBody = {
+        errors: [
+          {
+            title: 'Unprocessable Entity',
+            detail: 'SUSE Manager authentication error.',
+          },
+        ],
+      };
+
+      axiosMock
+        .onGet(`/api/v1/hosts/${hostID}/software_updates`)
+        .reply(422, errorBody);
+
+      const dispatched = await recordSaga(fetchSoftwareUpdates, {
+        payload: hostID,
+      });
+
+      expect(dispatched).toEqual([
+        startLoadingSoftwareUpdates({ hostID }),
+        setEmptySoftwareUpdates({ hostID }),
+        setSettingsNotConfigured(),
+        setSoftwareUpdatesErrors({ hostID, errors: errorBody.errors }),
       ]);
     });
   });

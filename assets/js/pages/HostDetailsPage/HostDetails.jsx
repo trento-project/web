@@ -73,7 +73,6 @@ function HostDetails({
   upgradablePackages,
   softwareUpdatesLoading,
   softwareUpdatesSettingsSaved,
-  softwareUpdatesSettingsLoading,
   softwareUpdatesTooltip,
   userAbilities,
   cleanUpHost,
@@ -245,8 +244,7 @@ function HostDetails({
             relevantPatches={relevantPatches}
             upgradablePackages={upgradablePackages}
             tooltip={softwareUpdatesTooltip}
-            softwareUpdatesSettingsLoading={softwareUpdatesSettingsLoading}
-            softwareUpdatesLoading={softwareUpdatesLoading}
+            loading={softwareUpdatesLoading}
             onBackToSettings={() => navigate(`/settings`)}
             onNavigateToPatches={() => navigate(`/hosts/${hostID}/patches`)}
             onNavigateToPackages={() => navigate(`/hosts/${hostID}/packages`)}

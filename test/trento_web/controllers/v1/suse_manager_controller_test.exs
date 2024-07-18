@@ -227,174 +227,148 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
       } = result
     end
 
-    test "should return 422 when advisory details are not found", %{
-      conn: conn,
-      api_spec: api_spec
-    } do
-      insert_software_updates_settings()
+    error_scenarios = [
+      %{
+        name: "advisory details not found",
+        mocks: [
+          get_errata_details: {:error, :error_getting_errata_details},
+          get_cves: {:ok, build_list(10, :cve)},
+          get_bugzilla_fixes: {:ok, build(:bugzilla_fix)},
+          get_affected_packages: {:ok, build_list(10, :affected_package)},
+          get_affected_systems: {:ok, build_list(10, :affected_system)}
+        ]
+      },
+      %{
+        name: "CVEs not found",
+        mocks: [
+          get_errata_details: {:ok, build(:errata_details)},
+          get_cves: {:error, :error_getting_cves},
+          get_bugzilla_fixes: {:ok, build(:bugzilla_fix)},
+          get_affected_packages: {:ok, build_list(10, :affected_package)},
+          get_affected_systems: {:ok, build_list(10, :affected_system)}
+        ]
+      },
+      %{
+        name: "advisory fixes not found",
+        mocks: [
+          get_errata_details: {:ok, build(:errata_details)},
+          get_cves: {:ok, build_list(10, :cve)},
+          get_bugzilla_fixes: {:error, :error_getting_fixes},
+          get_affected_packages: {:ok, build_list(10, :affected_package)},
+          get_affected_systems: {:ok, build_list(10, :affected_system)}
+        ]
+      },
+      %{
+        name: "affected packages not found",
+        mocks: [
+          get_errata_details: {:ok, build(:errata_details)},
+          get_cves: {:ok, build_list(10, :cve)},
+          get_bugzilla_fixes: {:ok, build(:bugzilla_fix)},
+          get_affected_packages: {:error, :error_getting_affected_packages},
+          get_affected_systems: {:ok, build_list(10, :affected_system)}
+        ]
+      },
+      %{
+        name: "affected systems not found",
+        mocks: [
+          get_errata_details: {:ok, build(:errata_details)},
+          get_cves: {:ok, build_list(10, :cve)},
+          get_bugzilla_fixes: {:ok, build(:bugzilla_fix)},
+          get_affected_packages: {:ok, build_list(10, :affected_package)},
+          get_affected_systems: {:error, :error_getting_affected_systems}
+        ]
+      }
+    ]
 
-      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_errata_details, 1, fn _ ->
-        {:error, :error_getting_errata_details}
-      end)
+    for %{name: name} = scenario <- error_scenarios do
+      @scenario scenario
 
-      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_cves, 1, fn _ ->
-        {:ok, build_list(10, :cve)}
-      end)
+      test "should return 422 when #{name}", %{conn: conn, api_spec: api_spec} do
+        %{mocks: mocks} = @scenario
 
-      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_bugzilla_fixes, 1, fn _ ->
-        {:ok, build(:bugzilla_fix)}
-      end)
+        Enum.each(mocks, fn {network_call, response} ->
+          expect(Trento.SoftwareUpdates.Discovery.Mock, network_call, 1, fn _ -> response end)
+        end)
 
-      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_affected_packages, 1, fn _ ->
-        {:ok, build_list(10, :affected_package)}
-      end)
+        advisory_name = Faker.Pokemon.name()
 
-      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_affected_systems, 1, fn _ ->
-        {:ok, build_list(10, :affected_system)}
-      end)
-
-      advisory_name = Faker.Pokemon.name()
-
-      conn
-      |> get("/api/v1/software_updates/errata_details/#{advisory_name}")
-      |> json_response(:unprocessable_entity)
-      |> assert_schema("UnprocessableEntity", api_spec)
+        conn
+        |> get("/api/v1/software_updates/errata_details/#{advisory_name}")
+        |> json_response(:unprocessable_entity)
+        |> assert_schema("UnprocessableEntity", api_spec)
+      end
     end
 
-    test "should return 422 when advisory CVEs are not found", %{
-      conn: conn,
-      api_spec: api_spec
-    } do
-      insert_software_updates_settings()
+    unauthorized_scenarios = [
+      %{
+        name: "get_errata_details unauthorized",
+        mocks: [
+          get_errata_details: {:error, :suma_authentication_error},
+          get_cves: {:ok, build_list(10, :cve)},
+          get_bugzilla_fixes: {:ok, build(:bugzilla_fix)},
+          get_affected_packages: {:ok, build_list(10, :affected_package)},
+          get_affected_systems: {:ok, build_list(10, :affected_system)}
+        ]
+      },
+      %{
+        name: "get_cves unauthorized",
+        mocks: [
+          get_errata_details: {:ok, build(:errata_details)},
+          get_cves: {:error, :suma_authentication_error},
+          get_bugzilla_fixes: {:ok, build(:bugzilla_fix)},
+          get_affected_packages: {:ok, build_list(10, :affected_package)},
+          get_affected_systems: {:ok, build_list(10, :affected_system)}
+        ]
+      },
+      %{
+        name: "get_bugzilla_fixes unauthorized",
+        mocks: [
+          get_errata_details: {:ok, build(:errata_details)},
+          get_cves: {:ok, build_list(10, :cve)},
+          get_bugzilla_fixes: {:error, :suma_authentication_error},
+          get_affected_packages: {:ok, build_list(10, :affected_package)},
+          get_affected_systems: {:ok, build_list(10, :affected_system)}
+        ]
+      },
+      %{
+        name: "get_affected_packages unauthorized",
+        mocks: [
+          get_errata_details: {:ok, build(:errata_details)},
+          get_cves: {:ok, build_list(10, :cve)},
+          get_bugzilla_fixes: {:ok, build(:bugzilla_fix)},
+          get_affected_packages: {:error, :suma_authentication_error},
+          get_affected_systems: {:ok, build_list(10, :affected_system)}
+        ]
+      },
+      %{
+        name: "get_affected_systems unauthorized",
+        mocks: [
+          get_errata_details: {:ok, build(:errata_details)},
+          get_cves: {:ok, build_list(10, :cve)},
+          get_bugzilla_fixes: {:ok, build(:bugzilla_fix)},
+          get_affected_packages: {:ok, build_list(10, :affected_package)},
+          get_affected_systems: {:error, :suma_authentication_error}
+        ]
+      }
+    ]
 
-      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_errata_details, 1, fn _ ->
-        {:ok, build(:errata_details)}
-      end)
+    for %{name: name} = scenario <- unauthorized_scenarios do
+      @scenario scenario
 
-      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_cves, 1, fn _ ->
-        {:error, :error_getting_cves}
-      end)
+      test "should return 422 for #{name}", %{conn: conn, api_spec: api_spec} do
+        %{mocks: mocks} = @scenario
 
-      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_bugzilla_fixes, 1, fn _ ->
-        {:ok, build(:bugzilla_fix)}
-      end)
+        Enum.each(mocks, fn {network_call, response} ->
+          expect(Trento.SoftwareUpdates.Discovery.Mock, network_call, 1, fn _ -> response end)
+        end)
 
-      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_affected_packages, 1, fn _ ->
-        {:ok, build_list(10, :affected_package)}
-      end)
+        advisory_name = Faker.Pokemon.name()
 
-      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_affected_systems, 1, fn _ ->
-        {:ok, build_list(10, :affected_system)}
-      end)
-
-      advisory_name = Faker.Pokemon.name()
-
-      conn
-      |> get("/api/v1/software_updates/errata_details/#{advisory_name}")
-      |> json_response(:unprocessable_entity)
-      |> assert_schema("UnprocessableEntity", api_spec)
-    end
-
-    test "should return 422 when advisory fixes are not found", %{
-      conn: conn,
-      api_spec: api_spec
-    } do
-      insert_software_updates_settings()
-
-      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_errata_details, 1, fn _ ->
-        {:ok, build(:errata_details)}
-      end)
-
-      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_cves, 1, fn _ ->
-        {:ok, build_list(10, :cve)}
-      end)
-
-      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_bugzilla_fixes, 1, fn _ ->
-        {:error, :error_getting_fixes}
-      end)
-
-      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_affected_packages, 1, fn _ ->
-        {:ok, build_list(10, :affected_package)}
-      end)
-
-      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_affected_systems, 1, fn _ ->
-        {:ok, build_list(10, :affected_system)}
-      end)
-
-      advisory_name = Faker.Pokemon.name()
-
-      conn
-      |> get("/api/v1/software_updates/errata_details/#{advisory_name}")
-      |> json_response(:unprocessable_entity)
-      |> assert_schema("UnprocessableEntity", api_spec)
-    end
-
-    test "should return 422 when advisory affected packages are not found", %{
-      conn: conn,
-      api_spec: api_spec
-    } do
-      insert_software_updates_settings()
-
-      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_errata_details, 1, fn _ ->
-        {:ok, build(:errata_details)}
-      end)
-
-      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_cves, 1, fn _ ->
-        {:ok, build_list(10, :cve)}
-      end)
-
-      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_bugzilla_fixes, 1, fn _ ->
-        {:ok, build(:bugzilla_fix)}
-      end)
-
-      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_affected_packages, 1, fn _ ->
-        {:error, :error_getting_affected_packages}
-      end)
-
-      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_affected_systems, 1, fn _ ->
-        {:ok, build_list(10, :affected_system)}
-      end)
-
-      advisory_name = Faker.Pokemon.name()
-
-      conn
-      |> get("/api/v1/software_updates/errata_details/#{advisory_name}")
-      |> json_response(:unprocessable_entity)
-      |> assert_schema("UnprocessableEntity", api_spec)
-    end
-
-    test "should return 422 when advisory affected systems are not found", %{
-      conn: conn,
-      api_spec: api_spec
-    } do
-      insert_software_updates_settings()
-
-      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_errata_details, 1, fn _ ->
-        {:ok, build(:errata_details)}
-      end)
-
-      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_cves, 1, fn _ ->
-        {:ok, build_list(10, :cve)}
-      end)
-
-      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_bugzilla_fixes, 1, fn _ ->
-        {:ok, build(:bugzilla_fix)}
-      end)
-
-      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_affected_packages, 1, fn _ ->
-        {:ok, build_list(10, :affected_package)}
-      end)
-
-      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_affected_systems, 1, fn _ ->
-        {:error, :error_getting_affected_systems}
-      end)
-
-      advisory_name = Faker.Pokemon.name()
-
-      conn
-      |> get("/api/v1/software_updates/errata_details/#{advisory_name}")
-      |> json_response(:unprocessable_entity)
-      |> assert_schema("UnprocessableEntity", api_spec)
+        conn
+        |> get("/api/v1/software_updates/errata_details/#{advisory_name}")
+        |> json_response(:unprocessable_entity)
+        |> assert_schema("UnprocessableEntity", api_spec)
+      end
     end
   end
 end

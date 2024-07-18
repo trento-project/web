@@ -21,8 +21,7 @@ const containerClassNames = classNames(
 function AvailableSoftwareUpdates({
   className,
   settingsConfigured = false,
-  softwareUpdatesSettingsLoading,
-  softwareUpdatesLoading,
+  loading,
   relevantPatches,
   upgradablePackages,
   tooltip,
@@ -30,7 +29,7 @@ function AvailableSoftwareUpdates({
   onNavigateToPatches = noop,
   onNavigateToPackages = noop,
 }) {
-  if (softwareUpdatesSettingsLoading) {
+  if (loading) {
     return <Loading className={containerClassNames} />;
   }
 
@@ -60,7 +59,6 @@ function AvailableSoftwareUpdates({
         title="Relevant Patches"
         critical={gt(relevantPatches, 0)}
         tooltip={tooltip}
-        loading={softwareUpdatesLoading}
         icon={<EOS_HEALING size="xl" />}
         onNavigate={onNavigateToPatches}
       >
@@ -70,7 +68,6 @@ function AvailableSoftwareUpdates({
       <Indicator
         title="Upgradable Packages"
         tooltip={tooltip}
-        loading={softwareUpdatesLoading}
         icon={<EOS_PACKAGE_UPGRADE_OUTLINED size="xl" />}
         onNavigate={onNavigateToPackages}
       >

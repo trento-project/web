@@ -17,6 +17,13 @@ defmodule TrentoWeb.FallbackController do
     |> render(:"404", reason: "SUSE Manager settings not configured.")
   end
 
+  def call(conn, {:error, :suma_authentication_error}) do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> put_view(ErrorView)
+    |> render(:"422", reason: "SUSE Manager authentication error.")
+  end
+
   def call(conn, {:error, :invalid_refresh_token}) do
     conn
     |> put_status(:unauthorized)

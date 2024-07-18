@@ -1,5 +1,5 @@
 import React from 'react';
-import { screen, within } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import 'intersection-observer';
 import '@testing-library/jest-dom';
@@ -310,50 +310,7 @@ describe('HostDetails component', () => {
         />
       );
 
-      const relevantPatchesElement = screen
-        .getByText(/Relevant Patches/)
-        .closest('div');
-      const upgradablePackagesElement = screen
-        .getByText(/Upgradable Packages/)
-        .closest('div');
-
-      expect(
-        within(relevantPatchesElement).getByText('Loading...')
-      ).toBeVisible();
-      expect(
-        within(upgradablePackagesElement).getByText('Loading...')
-      ).toBeVisible();
-    });
-
-    it('should a SUMA software updates when a connection error occurred', () => {
-      const relevantPatches = faker.number.int(100);
-      const upgradablePackages = faker.number.int(100);
-
-      renderWithRouter(
-        <HostDetails
-          agentVersion="2.0.0"
-          suseManagerEnabled
-          softwareUpdatesSettingsSaved
-          softwareUpdatesLoading
-          relevantPatches={relevantPatches}
-          upgradablePackages={upgradablePackages}
-          userAbilities={userAbilities}
-        />
-      );
-
-      const relevantPatchesElement = screen
-        .getByText(/Relevant Patches/)
-        .closest('div');
-      const upgradablePackagesElement = screen
-        .getByText(/Upgradable Packages/)
-        .closest('div');
-
-      expect(
-        within(relevantPatchesElement).getByText('Loading...')
-      ).toBeVisible();
-      expect(
-        within(upgradablePackagesElement).getByText('Loading...')
-      ).toBeVisible();
+      expect(screen.getAllByLabelText('Loading')).toHaveLength(1);
     });
   });
 

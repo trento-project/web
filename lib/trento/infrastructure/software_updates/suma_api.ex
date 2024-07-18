@@ -27,7 +27,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
           fully_qualified_domain_name :: String.t(),
           ca_cert :: String.t() | nil
         ) ::
-          {:ok, pos_integer()} | {:error, :system_id_not_found | :authentication_error}
+          {:ok, pos_integer()} | {:error, :system_id_not_found | :suma_authentication_error}
   def get_system_id(url, auth, fully_qualified_domain_name, ca_cert) do
     url
     |> get_suma_api_url()
@@ -47,7 +47,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
           ca_cert :: String.t() | nil
         ) ::
           {:ok, [map()]}
-          | {:error, :error_getting_patches | :authentication_error}
+          | {:error, :error_getting_patches | :suma_authentication_error}
   def get_relevant_patches(url, auth, system_id, ca_cert) do
     url
     |> get_suma_api_url()
@@ -67,7 +67,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
           ca_cert :: String.t() | nil
         ) ::
           {:ok, [map()]}
-          | {:error, :error_getting_packages | :authentication_error}
+          | {:error, :error_getting_packages | :suma_authentication_error}
   def get_upgradable_packages(url, auth, system_id, ca_cert) do
     url
     |> get_suma_api_url()
@@ -87,7 +87,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
           ca_cert :: String.t() | nil
         ) ::
           {:ok, [map()]}
-          | {:error, :error_getting_patches | :authentication_error}
+          | {:error, :error_getting_patches | :suma_authentication_error}
   def get_patches_for_package(url, auth, package_id, ca_cert) do
     url
     |> get_suma_api_url()
@@ -107,7 +107,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
           ca_cert :: String.t() | nil
         ) ::
           {:ok, [map()]}
-          | {:error, :error_getting_affected_systems | :authentication_error}
+          | {:error, :error_getting_affected_systems | :suma_authentication_error}
   def get_affected_systems(url, auth, advisory_name, ca_cert) do
     url
     |> get_suma_api_url()
@@ -127,7 +127,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
           ca_cert :: String.t() | nil
         ) ::
           {:ok, [map()]}
-          | {:error, :error_getting_errata_details | :authentication_error}
+          | {:error, :error_getting_errata_details | :suma_authentication_error}
   def get_errata_details(url, auth, advisory_name, ca_cert) do
     url
     |> get_suma_api_url()
@@ -147,7 +147,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
           ca_cert :: String.t() | nil
         ) ::
           {:ok, [map()]}
-          | {:error, :error_getting_cves | :authentication_error}
+          | {:error, :error_getting_cves | :suma_authentication_error}
   def get_cves(url, auth, advisory_name, ca_cert) do
     url
     |> get_suma_api_url()
@@ -167,7 +167,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
           ca_cert :: String.t() | nil
         ) ::
           {:ok, [map()]}
-          | {:error, :error_getting_affected_packages | :authentication_error}
+          | {:error, :error_getting_affected_packages | :suma_authentication_error}
   def get_affected_packages(url, auth, advisory_name, ca_cert) do
     url
     |> get_suma_api_url()
@@ -187,7 +187,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
           ca_cert :: String.t() | nil
         ) ::
           {:ok, [map()]}
-          | {:error, :error_getting_fixes | :authentication_error}
+          | {:error, :error_getting_fixes | :suma_authentication_error}
   def get_bugzilla_fixes(url, auth, advisory_name, ca_cert) do
     url
     |> get_suma_api_url()
@@ -201,7 +201,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
   end
 
   defp handle_auth_error({:ok, %HTTPoison.Response{status_code: 401}}),
-    do: {:error, :authentication_error}
+    do: {:error, :suma_authentication_error}
 
   defp handle_auth_error({:ok, %HTTPoison.Response{status_code: _, body: body}}),
     do: {:ok, body}
@@ -226,7 +226,8 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
     end
   end
 
-  defp decode_response({:error, :authentication_error}, _), do: {:error, :authentication_error}
+  defp decode_response({:error, :suma_authentication_error}, _),
+    do: {:error, :suma_authentication_error}
 
   defp decode_response({:error, _} = error, error_atom: error_atom, error_log: error_log) do
     Logger.error("#{error_log} Error: #{inspect(error)}")

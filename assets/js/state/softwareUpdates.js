@@ -2,6 +2,7 @@ import { createAction, createSlice } from '@reduxjs/toolkit';
 import { find, get, isEmpty } from 'lodash';
 
 const initialState = {
+  settingsConfigured: false,
   softwareUpdates: {},
 };
 
@@ -14,6 +15,12 @@ export const softwareUpdatesSlice = createSlice({
   name: 'softwareUpdates',
   initialState,
   reducers: {
+    setSettingsConfigured: (state) => {
+      state.settingsConfigured = true;
+    },
+    setSettingsNotConfigured: (state) => {
+      state.settingsConfigured = false;
+    },
     startLoadingSoftwareUpdates: (state, { payload: { hostID } }) => {
       state.softwareUpdates = {
         ...state.softwareUpdates,
@@ -81,6 +88,8 @@ export const fetchUpgradablePackagesPatches = createAction(
 );
 
 export const {
+  setSettingsConfigured,
+  setSettingsNotConfigured,
   startLoadingSoftwareUpdates,
   setSoftwareUpdates,
   setEmptySoftwareUpdates,
