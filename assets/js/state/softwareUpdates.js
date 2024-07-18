@@ -2,7 +2,7 @@ import { createAction, createSlice } from '@reduxjs/toolkit';
 import { find, get, isEmpty } from 'lodash';
 
 const initialState = {
-  settingsConfigured: false,
+  settingsConfigured: true,
   softwareUpdates: {},
 };
 
