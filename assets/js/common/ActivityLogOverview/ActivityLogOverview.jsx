@@ -129,7 +129,7 @@ function ActivityLogOverview({
       <ActivityLogDetailModal
         open={activityLogDetailModalOpen}
         entry={selectedEntry}
-        onCancel={onCloseActivityLogEntryDetails}
+        onClose={onCloseActivityLogEntryDetails}
       />
       <Table
         config={activityLogTableConfig}
