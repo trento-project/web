@@ -61,7 +61,7 @@
     "lodash": "^4.17.21",
     "qrcode.react": "^3.1.0",
     "papaparse": "^5.4.1",
-    "rc-input": "^1.4.5",
+    "rc-input": "^1.6.1",
     "rc-input-number": "^9.1.0",
     "rc-tooltip": "^6.2.0",
     "react": "^18.2.0",
