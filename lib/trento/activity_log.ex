@@ -55,7 +55,7 @@ defmodule Trento.ActivityLog do
 
   @spec clear_expired_logs() :: :ok | {:error, any()}
   def clear_expired_logs do
-    with {:ok, retention_time} <- get_retention_time(),
+    with {:ok, %{retention_time: retention_time}} <- Trento.ActivityLog.get_settings(),
          expiration_date <- calculate_expiration_date(retention_time) do
       delete_logs_before(expiration_date)
       :ok
@@ -68,13 +68,6 @@ defmodule Trento.ActivityLog do
   end
 
   defp log_error(result, _), do: result
-
-  defp get_retention_time do
-    case Trento.ActivityLog.get_settings() do
-      {:ok, settings} -> {:ok, settings.retention_time}
-      {:error, _} = error -> error
-    end
-  end
 
   defp calculate_expiration_date(%RetentionTime{value: value, unit: :day}),
     do: DateTime.add(DateTime.utc_now(), -value, :day)
