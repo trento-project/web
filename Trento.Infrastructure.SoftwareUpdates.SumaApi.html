@@ -280,7 +280,7 @@ GUIDES
   ca_cert :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil
 ) ::
   {:ok, [<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()]}
-  | {:error, :error_getting_affected_packages | :authentication_error}</pre>
+  | {:error, :error_getting_affected_packages | :suma_authentication_error}</pre>
 
       </div>
 
@@ -315,7 +315,7 @@ GUIDES
   ca_cert :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil
 ) ::
   {:ok, [<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()]}
-  | {:error, :error_getting_affected_systems | :authentication_error}</pre>
+  | {:error, :error_getting_affected_systems | :suma_authentication_error}</pre>
 
       </div>
 
@@ -348,7 +348,8 @@ GUIDES
   auth :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>(),
   advisory_name :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
   ca_cert :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil
-) :: {:ok, [<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()]} | {:error, :error_getting_fixes | :authentication_error}</pre>
+) ::
+  {:ok, [<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()]} | {:error, :error_getting_fixes | :suma_authentication_error}</pre>
 
       </div>
 
@@ -381,7 +382,7 @@ GUIDES
   auth :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>(),
   advisory_name :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
   ca_cert :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil
-) :: {:ok, [<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()]} | {:error, :error_getting_cves | :authentication_error}</pre>
+) :: {:ok, [<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()]} | {:error, :error_getting_cves | :suma_authentication_error}</pre>
 
       </div>
 
@@ -416,7 +417,7 @@ GUIDES
   ca_cert :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil
 ) ::
   {:ok, [<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()]}
-  | {:error, :error_getting_errata_details | :authentication_error}</pre>
+  | {:error, :error_getting_errata_details | :suma_authentication_error}</pre>
 
       </div>
 
@@ -449,7 +450,8 @@ GUIDES
   auth :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>(),
   package_id :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
   ca_cert :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil
-) :: {:ok, [<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()]} | {:error, :error_getting_patches | :authentication_error}</pre>
+) ::
+  {:ok, [<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()]} | {:error, :error_getting_patches | :suma_authentication_error}</pre>
 
       </div>
 
@@ -482,7 +484,8 @@ GUIDES
   auth :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>(),
   system_id :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>(),
   ca_cert :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil
-) :: {:ok, [<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()]} | {:error, :error_getting_patches | :authentication_error}</pre>
+) ::
+  {:ok, [<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()]} | {:error, :error_getting_patches | :suma_authentication_error}</pre>
 
       </div>
 
@@ -516,7 +519,8 @@ GUIDES
   fully_qualified_domain_name :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
   ca_cert :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil
 ) ::
-  {:ok, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>()} | {:error, :system_id_not_found | :authentication_error}</pre>
+  {:ok, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>()}
+  | {:error, :system_id_not_found | :suma_authentication_error}</pre>
 
       </div>
 
@@ -549,7 +553,9 @@ GUIDES
   auth :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>(),
   system_id :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>(),
   ca_cert :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil
-) :: {:ok, [<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()]} | {:error, :error_getting_packages | :authentication_error}</pre>
+) ::
+  {:ok, [<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()]}
+  | {:error, :error_getting_packages | :suma_authentication_error}</pre>
 
       </div>
 
