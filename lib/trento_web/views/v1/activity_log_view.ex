@@ -3,7 +3,7 @@ defmodule TrentoWeb.V1.ActivityLogView do
 
   def render("activity_log.json", %{activity_log: entries, pagination: meta}) do
     %{
-      data: render_many(entries, __MODULE__, "activity_log_entry.json", as: :entries),
+      data: render_many(entries, __MODULE__, "activity_log_entry.json", as: :activity_log_entry),
       pagination: render_one(meta, __MODULE__, "pagination.json", pagination: meta)
     }
   end
