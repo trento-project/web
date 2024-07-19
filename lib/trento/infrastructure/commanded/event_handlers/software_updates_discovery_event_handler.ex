@@ -14,6 +14,8 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscovery
     SoftwareUpdatesHealthChanged
   }
 
+  alias Trento.Settings
+
   alias Trento.SoftwareUpdates.Discovery
 
   def handle(
@@ -23,9 +25,14 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscovery
         },
         _
       ) do
-    Discovery.discover_host_software_updates(host_id, fully_qualified_domain_name)
+    case Settings.get_suse_manager_settings() do
+      {:ok, _} ->
+        Discovery.discover_host_software_updates(host_id, fully_qualified_domain_name)
+        :ok
 
-    :ok
+      _ ->
+        :ok
+    end
   end
 
   def handle(%SoftwareUpdatesHealthChanged{host_id: host_id}, _) do
