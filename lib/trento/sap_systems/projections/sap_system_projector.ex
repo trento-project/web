@@ -39,7 +39,8 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
       db_host: db_host,
       health: health,
       ensa_version: ensa_version,
-      database_id: database_id
+      database_id: database_id,
+      type: type
     },
     fn multi ->
       changeset =
@@ -50,7 +51,8 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
           db_host: db_host,
           health: health,
           ensa_version: ensa_version,
-          database_id: database_id
+          database_id: database_id,
+          type: type
         })
 
       Ecto.Multi.insert(multi, :sap_system, changeset)

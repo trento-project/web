@@ -17,5 +17,6 @@ defmodule Trento.SapSystems.Events.SapSystemRegistered do
     field :health, Ecto.Enum, values: Health.values()
     field :database_health, Ecto.Enum, values: Health.values()
     field :ensa_version, Ecto.Enum, values: EnsaVersion.values(), default: EnsaVersion.no_ensa()
+    field :type, :string
   end
 end

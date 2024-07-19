@@ -60,6 +60,14 @@ function SapSystemsOverview({
           </Link>
         ),
       },
+
+      {
+        title: 'Type',
+        key: 'type',
+        filterFromParams: true,
+        filter: true,
+        render: (content, item) => item.type,
+      },
       {
         title: 'Attached RDBMS',
         key: 'attachedRdbms',
@@ -126,6 +134,7 @@ function SapSystemsOverview({
     sid: sapSystem.sid,
     attachedRdbms: sapSystem.database_sid,
     tenant: sapSystem.tenant,
+    type: sapSystem.type,
     dbAddress: sapSystem.db_host,
     ensaVersion: sapSystem.ensa_version || '-',
     applicationInstances: filter(applicationInstances, {

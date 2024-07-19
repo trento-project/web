@@ -89,6 +89,7 @@ defmodule Trento.SapSystems.SapSystem do
     field :ensa_version, Ecto.Enum, values: EnsaVersion.values(), default: EnsaVersion.no_ensa()
     field :rolling_up, :boolean, default: false
     field :deregistered_at, :utc_datetime_usec, default: nil
+    field :type, :string
 
     embeds_many :instances, Instance
   end
@@ -377,7 +378,8 @@ defmodule Trento.SapSystems.SapSystem do
         sid: sid,
         health: health,
         database_health: database_health,
-        ensa_version: ensa_version
+        ensa_version: ensa_version,
+        type: type
       }) do
     %SapSystem{
       sap_system
@@ -385,7 +387,8 @@ defmodule Trento.SapSystems.SapSystem do
         sid: sid,
         health: health,
         database_health: database_health,
-        ensa_version: ensa_version
+        ensa_version: ensa_version,
+        type: type
     }
   end
 
@@ -683,7 +686,8 @@ defmodule Trento.SapSystems.SapSystem do
            database_health: database_health
          }
        ) do
-    if instances_have_abap?(instances) and instances_have_messageserver?(instances) do
+    if instances_have_abap?(instances) or
+         (instances_have_java?(instances) and instances_have_messageserver?(instances)) do
       %SapSystemRegistered{
         sap_system_id: sap_system_id,
         sid: sid,
@@ -692,7 +696,8 @@ defmodule Trento.SapSystems.SapSystem do
         health: health,
         ensa_version: ensa_version,
         database_id: database_id,
-        database_health: database_health
+        database_health: database_health,
+        type: instance_type_abap_java?(instances)
       }
     end
   end
@@ -794,7 +799,8 @@ defmodule Trento.SapSystems.SapSystem do
          },
          deregistered_at
        ) do
-    unless instances_have_abap?(instances) and instances_have_messageserver?(instances) do
+    unless instances_have_abap?(instances) or
+             (instances_have_java?(instances) and instances_have_messageserver?(instances)) do
       %SapSystemDeregistered{sap_system_id: sap_system_id, deregistered_at: deregistered_at}
     end
   end
@@ -812,6 +818,21 @@ defmodule Trento.SapSystems.SapSystem do
 
   defp instances_have_abap?(instances) do
     Enum.any?(instances, fn %{features: features} -> features =~ "ABAP" end)
+  end
+
+  defp instances_have_java?(instances) do
+    Enum.any?(instances, fn %{features: features} -> features =~ "J2EE" end)
+  end
+
+  defp instance_type_abap_java?(instances) do
+    instance_abap? = instances_have_abap?(instances)
+    instance_java? = instances_have_java?(instances)
+
+    cond do
+      instance_abap? && instance_java? -> "abap/java"
+      instance_abap? -> "abap"
+      instance_java? -> "java"
+    end
   end
 
   def instances_have_messageserver?(instances) do

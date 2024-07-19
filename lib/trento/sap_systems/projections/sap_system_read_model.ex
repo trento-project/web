@@ -29,6 +29,7 @@ defmodule Trento.SapSystems.Projections.SapSystemReadModel do
     field :sid, :string
     field :tenant, :string
     field :db_host, :string
+    field :type, :string
     field :health, Ecto.Enum, values: Health.values()
     field :ensa_version, Ecto.Enum, values: EnsaVersion.values(), default: EnsaVersion.no_ensa()
 
