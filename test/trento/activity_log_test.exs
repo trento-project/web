@@ -181,7 +181,7 @@ defmodule Trento.ActivityLogTest do
 
   describe "retrieving logged activity" do
     test "should return an emtpty list" do
-      assert [] == ActivityLog.list_activity_log()
+      assert {:ok, [], %Flop.Meta{}} = ActivityLog.list_activity_log(%{})
     end
 
     test "should return entries ordered by occurrence date" do
@@ -191,14 +191,15 @@ defmodule Trento.ActivityLogTest do
       insert(:activity_log_entry, inserted_at: newer_occurrence)
       insert(:activity_log_entry, inserted_at: older_occurrence)
 
-      assert [
-               %ActivityLogEntry{
-                 inserted_at: ^newer_occurrence
-               },
-               %ActivityLogEntry{
-                 inserted_at: ^older_occurrence
-               }
-             ] = ActivityLog.list_activity_log()
+      assert {:ok,
+              [
+                %ActivityLogEntry{
+                  inserted_at: ^newer_occurrence
+                },
+                %ActivityLogEntry{
+                  inserted_at: ^older_occurrence
+                }
+              ], _} = ActivityLog.list_activity_log(%{})
     end
 
     test "should return paginated and default ordered by occurrence date activity log when no params provided" do
@@ -241,7 +242,7 @@ defmodule Trento.ActivityLogTest do
       {:ok, logs, meta} = ActivityLog.list_activity_log(params)
 
       assert length(logs) == 25
-      new_params = Flop.to_next_cursor(meta)
+      new_params = %{first: 25, after: meta.end_cursor}
 
       {:ok, next_logs, _next_meta} = ActivityLog.list_activity_log(new_params)
 

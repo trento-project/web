@@ -3,6 +3,13 @@ defmodule TrentoWeb.FallbackController do
 
   alias TrentoWeb.ErrorView
 
+  def call(conn, {:error, :activity_log_fetch_error}) do
+    conn
+    |> put_status(:bad_request)
+    |> put_view(ErrorView)
+    |> render(:"400", reason: "Activity Log fetch error.")
+  end
+
   def call(conn, {:error, :invalid_credentials}) do
     conn
     |> put_status(:unauthorized)

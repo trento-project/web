@@ -3,8 +3,6 @@ defmodule Trento.ActivityLog do
   Activity Log module provides functionality to manage activity log settings and track activity.
   """
 
-  import Ecto.Query
-
   require Logger
 
   alias Trento.ActivityLog.RetentionTime
@@ -61,15 +59,41 @@ defmodule Trento.ActivityLog do
     end
   end
 
-  @spec list_activity_log(map()) :: {:ok, list(ActivityLog.t()), Flop.Meta.t()}
+  @spec list_activity_log(map()) ::
+          {:ok, list(ActivityLog.t()), Flop.Meta.t()} | {:error, :activity_log_fetch_error}
   def list_activity_log(params) do
-    case Flop.validate_and_run(ActivityLog, params, for: ActivityLog) do
+    parsed_params =
+      case params do
+        [] -> %{}
+        params -> parse_params(params)
+      end
+
+    case Flop.validate_and_run(ActivityLog, parsed_params, for: ActivityLog) do
       {:ok, {activity_log_entries, meta}} ->
         {:ok, activity_log_entries, meta}
 
       error ->
-        log_error(error, "Error while paginating activity log")
+        Logger.error("Activity log fetch error: #{inspect(error)}")
+        {:error, :activity_log_fetch_error}
     end
+  end
+
+  defp parse_params(query_params) do
+    query_params
+    |> Enum.map(fn
+      {:from_date, v} -> {:filters, %{field: :inserted_at, op: :<=, value: v}}
+      {:to_date, v} -> {:filters, %{field: :inserted_at, op: :>=, value: v}}
+      {:actor, v} -> {:filters, %{field: :actor, op: :ilike_or, value: v}}
+      {:type, v} -> {:filters, %{field: :type, op: :ilike_or, value: v}}
+      param -> param
+    end)
+    |> Enum.reduce(%{filters: %{}}, fn
+      {:filters, filter}, acc ->
+        Map.put(acc, :filters, Map.put(acc.filters, filter.field, filter))
+
+      {k, v}, acc ->
+        Map.put(acc, k, v)
+    end)
   end
 
   defp log_error({:error, _} = error, message) do
