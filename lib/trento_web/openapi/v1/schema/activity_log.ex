@@ -10,37 +10,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ActivityLog do
       description: "Activity Log for the current installation.",
       type: :object,
       properties: %{
-        data: %Schema{
-          type: :array,
-          items: %Schema{
-            title: "ActivityLogEntry",
-            type: :object,
-            additionalProperties: false,
-            properties: %{
-              id: %Schema{
-                type: :string,
-                description: "UUID (v4) of Activity Log entry."
-              },
-              type: %Schema{
-                type: :string,
-                description: "Type of Activity Log entry."
-              },
-              actor: %Schema{
-                type: :string,
-                description:
-                  "Actor causing an Activity Log entry. E.g. System or a specific user."
-              },
-              metadata: %Schema{
-                type: :object
-              },
-              occurred_on: %Schema{
-                type: :string,
-                description: "Timestamp upon Activity Log entry insertion."
-              }
-            },
-            required: [:type, :actor, :metadata, :occurred_on]
-          }
-        },
+        data: ActivityLogEntry,
         pagination: %Schema{
           type: :object
         }
@@ -49,4 +19,38 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ActivityLog do
     },
     struct?: false
   )
+
+  defmodule ActivityLogEntry do
+    @moduledoc false
+    OpenApiSpex.schema(%{
+      type: :array,
+      items: %Schema{
+        title: "ActivityLogEntry",
+        type: :object,
+        additionalProperties: false,
+        properties: %{
+          id: %Schema{
+            type: :string,
+            description: "UUID (v4) of Activity Log entry."
+          },
+          type: %Schema{
+            type: :string,
+            description: "Type of Activity Log entry."
+          },
+          actor: %Schema{
+            type: :string,
+            description: "Actor causing an Activity Log entry. E.g. System or a specific user."
+          },
+          metadata: %Schema{
+            type: :object
+          },
+          occurred_on: %Schema{
+            type: :string,
+            description: "Timestamp upon Activity Log entry insertion."
+          }
+        },
+        required: [:type, :actor, :metadata, :occurred_on]
+      }
+    })
+  end
 end
