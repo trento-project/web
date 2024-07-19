@@ -78,6 +78,16 @@ defmodule Trento.ActivityLog do
     end
   end
 
+  # ''&& false' is a workaround until we reach OTP 27 that allows doc tag for private functions;
+  # we get a compile warning without this with OTP 26
+  @doc """
+       Parses the query parameters and returns a map with the parsed values as expected by the Flop library.
+       Some parameters are recognized by Flop and are used as is (example: last, first, after, before);
+       some other parameters are used to build filters with custom operator logic (example: from_date, to_date, actor, type).
+       ## Examples
+             iex> parse_params([{:from_date, "2021-01-01"}, {:to_date, "2021-01-31"}, last: 10])
+             %{filters: %{from_date: "2021-01-01", to_date: "2021-01-31"}, last: 10}
+       """ && false
   defp parse_params(query_params) do
     query_params
     |> Enum.map(fn
