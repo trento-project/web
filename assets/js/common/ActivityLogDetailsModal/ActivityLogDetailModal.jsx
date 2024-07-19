@@ -1,5 +1,7 @@
 import React from 'react';
 import { noop } from 'lodash';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 import Button from '@common/Button';
 import Modal from '@common/Modal';
@@ -19,6 +21,7 @@ import {
   USER_DELETION,
   USER_MODIFICATION,
 } from '@lib/model/activityLog';
+import classNames from 'classnames';
 
 const activityTypesLabels = {
   [LOGIN_ATTEMPT]: 'Login Attempt',
@@ -85,7 +88,9 @@ const toResource = (activityLogEntry) => {
 };
 
 const renderMetadata = (metadata) => (
-  <pre>{JSON.stringify(metadata, null, 2)}</pre>
+  <ReactMarkdown className="markdown text-sm" remarkPlugins={[remarkGfm]}>
+    {`\`\`\`json\n${JSON.stringify(metadata, null, 2)}\n\`\`\``}
+  </ReactMarkdown>
 );
 
 const renderType = (type) => activityTypesLabels[type] ?? type;
@@ -105,7 +110,9 @@ function ActivityLogDetailModal({ open = false, entry, onClose = noop }) {
     title: keyToLabel[key] || key,
     content: key === 'resource' ? entry : entry[key],
     render: keyRenderers[key] || undefined,
-    className: 'col-span-5',
+    className: classNames('col-span-5', {
+      'text-gray-500': key !== 'metadata',
+    }),
   }));
 
   return (
@@ -116,12 +123,12 @@ function ActivityLogDetailModal({ open = false, entry, onClose = noop }) {
       onClose={onClose}
     >
       <ListView
-        titleClassName="col-span-2"
+        titleClassName="col-span-2 text-gray-500"
         className="text-sm"
         orientation="horizontal"
         data={data}
       />
-      <div className="flex flex-row w-1/6 space-x-2">
+      <div className="flex flex-row w-24 space-x-2 mt-3">
         <Button type="primary-white" className="w-1/2" onClick={onClose}>
           Close
         </Button>

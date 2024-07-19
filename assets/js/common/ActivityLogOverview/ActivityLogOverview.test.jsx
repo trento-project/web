@@ -48,7 +48,7 @@ describe('Activity Log Overview', () => {
       }),
       expectedUser: 'admin',
       expectedMessage: 'User logged in',
-      expectedLevel: 'Debug',
+      expectedLevel: 'debug',
     },
     {
       name: RESOURCE_TAGGING,
@@ -64,7 +64,7 @@ describe('Activity Log Overview', () => {
       }),
       expectedUser: 'foo',
       expectedMessage: 'Tag "bar" added to "foo-bar"',
-      expectedLevel: 'Info',
+      expectedLevel: 'info',
     },
     {
       name: RESOURCE_UNTAGGING,
@@ -80,7 +80,7 @@ describe('Activity Log Overview', () => {
       }),
       expectedUser: 'bar',
       expectedMessage: 'Tag "foo" removed from "bar-foo"',
-      expectedLevel: 'Warning',
+      expectedLevel: 'warning',
     },
     {
       name: API_KEY_GENERATION,
@@ -91,7 +91,7 @@ describe('Activity Log Overview', () => {
       }),
       expectedUser: 'baz',
       expectedMessage: 'API Key was generated',
-      expectedLevel: 'Error',
+      expectedLevel: 'error',
     },
     {
       name: SAVING_SUMA_SETTINGS,
@@ -175,7 +175,9 @@ describe('Activity Log Overview', () => {
       expect(screen.getByText(expectedMessage)).toBeVisible();
       expect(screen.getByText(expectedUser)).toBeVisible();
       if (expectedLevel) {
-        expect(screen.getByText(expectedLevel)).toBeVisible();
+        expect(
+          screen.getByLabelText(`log-level-${expectedLevel}`)
+        ).toBeVisible();
       }
     }
   );

@@ -1,7 +1,15 @@
 import React, { useState } from 'react';
 import { noop } from 'lodash';
-import { EOS_KEYBOARD_ARROW_RIGHT_FILLED } from 'eos-icons-react';
+import {
+  EOS_BUG_REPORT_OUTLINED,
+  EOS_ERROR_OUTLINED,
+  EOS_INFO_OUTLINED,
+  EOS_KEYBOARD_ARROW_RIGHT_FILLED,
+  EOS_QUESTION_MARK,
+  EOS_WARNING_OUTLINED,
+} from 'eos-icons-react';
 import Table from '@common/Table';
+import Tooltip from '@common/Tooltip';
 
 import {
   API_KEY_GENERATION,
@@ -58,6 +66,12 @@ const toMessage = (activityLogEntry) => {
   }
 };
 
+const logLevelToIcon = {
+  [LEVEL_DEBUG]: <EOS_BUG_REPORT_OUTLINED className="w-full" />,
+  [LEVEL_INFO]: <EOS_INFO_OUTLINED className="w-full" />,
+  [LEVEL_WARNING]: <EOS_WARNING_OUTLINED className="fill-yellow-500 w-full" />,
+  [LEVEL_ERROR]: <EOS_ERROR_OUTLINED className="fill-red-500 w-full" />,
+};
 const logLevelToLabel = {
   [LEVEL_DEBUG]: 'Debug',
   [LEVEL_INFO]: 'Info',
@@ -71,7 +85,7 @@ export const toRenderedEntry = (entry) => ({
   time: format(entry.occurred_on, 'yyyy-MM-dd HH:mm:ss'),
   message: toMessage(entry),
   user: entry.actor,
-  level: logLevelToLabel[entry.level] ?? 'Unknown',
+  level: entry.level,
   metadata: entry.metadata,
 });
 
@@ -102,6 +116,16 @@ function ActivityLogOverview({
       {
         title: 'Level',
         key: 'level',
+        className: 'text-center',
+        render: (level) => (
+          <Tooltip content={logLevelToLabel[level] ?? 'Unknown'} wrap={false}>
+            <span aria-label={`log-level-${level}`}>
+              {logLevelToIcon[level] ?? (
+                <EOS_QUESTION_MARK className="w-full" />
+              )}
+            </span>
+          </Tooltip>
+        ),
       },
       {
         title: '',
