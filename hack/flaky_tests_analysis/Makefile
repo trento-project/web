@@ -6,11 +6,18 @@ N-TIMES ?= 10
 WRITE_JUNIT ?= 1
 CLI_LOG_PREFIX ?= Trento_Flaky_Test_Analysis_Log
 LOG_FILENAME="$(CLI_LOG_PREFIX)_$(shell date +%F_%T).txt"
+JEST_TS ?= "$(shell date +%F_%T)"
 
 gen-test-data:
 	cd ../../ ; touch $(LOG_FILENAME) ;  for i in $$(seq 1 $(N-TIMES)) ; do \
 			echo "Run $$i of $(N-TIMES)" ;\
 		  WRITE_JUNIT=$(WRITE_JUNIT) mix test | tee -a  $(LOG_FILENAME) ;\
+		done 
+
+gen-test-data-fe:
+	cd ../../assets ;  export JEST_TS=$(JEST_TS) ; for i in $$(seq 1 $(N-TIMES)) ; do \
+			echo "Run $$i of $(N-TIMES)" ;\
+		  JEST_JUNIT_OUTPUT_FILE="/tmp/junit_FE_$(JEST_TS)_$$i.xml" npm test --reporters=jest-junit ;\
 		done 
 
 analyze-files:
