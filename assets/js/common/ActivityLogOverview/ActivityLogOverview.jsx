@@ -5,7 +5,6 @@ import {
   EOS_ERROR_OUTLINED,
   EOS_INFO_OUTLINED,
   EOS_KEYBOARD_ARROW_RIGHT_FILLED,
-  EOS_QUESTION_MARK,
   EOS_WARNING_OUTLINED,
 } from 'eos-icons-react';
 import Table from '@common/Table';
@@ -24,6 +23,7 @@ import {
   USER_CREATION,
   USER_DELETION,
   USER_MODIFICATION,
+  ACTIVITY_LOG_LEVELS,
   LEVEL_DEBUG,
   LEVEL_ERROR,
   LEVEL_INFO,
@@ -85,7 +85,7 @@ export const toRenderedEntry = (entry) => ({
   time: format(entry.occurred_on, 'yyyy-MM-dd HH:mm:ss'),
   message: toMessage(entry),
   user: entry.actor,
-  level: entry.level,
+  level: ACTIVITY_LOG_LEVELS.includes(entry?.level) ? entry?.level : LEVEL_INFO,
   metadata: entry.metadata,
 });
 
@@ -120,9 +120,7 @@ function ActivityLogOverview({
         render: (level) => (
           <Tooltip content={logLevelToLabel[level] ?? 'Unknown'} wrap={false}>
             <span aria-label={`log-level-${level}`}>
-              {logLevelToIcon[level] ?? (
-                <EOS_QUESTION_MARK className="w-full" />
-              )}
+              {logLevelToIcon[level]}
             </span>
           </Tooltip>
         ),

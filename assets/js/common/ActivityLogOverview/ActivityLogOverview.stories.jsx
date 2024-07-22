@@ -1,4 +1,5 @@
 import { activityLogEntryFactory } from '@lib/test-utils/factories/activityLog';
+import _ from 'lodash';
 import ActivityLogOverview from './ActivityLogOverview';
 
 export default {
@@ -37,5 +38,12 @@ export const UnknwonLevel = {
   args: {
     ...Default.args,
     activityLog: [activityLogEntryFactory.build({ level: 'foo_bar' })],
+  },
+};
+
+export const MissingLevel = {
+  args: {
+    ...Default.args,
+    activityLog: [_.omit(activityLogEntryFactory.build(), 'level')],
   },
 };
