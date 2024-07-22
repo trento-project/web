@@ -86,7 +86,7 @@ defmodule Trento.ActivityLog do
        some other parameters are used to build filters with custom operator logic (example: from_date, to_date, actor, type).
        ## Examples
              iex> parse_params([{:from_date, "2021-01-01"}, {:to_date, "2021-01-31"}, last: 10])
-             %{filters: %{from_date: "2021-01-01", to_date: "2021-01-31"}, last: 10}
+             %{filters: %{inserted_at: %{value: "2021-01-31", op: :>=, field: :inserted_at}}, last: 10}
        """ && false
   defp parse_params(query_params) do
     query_params
