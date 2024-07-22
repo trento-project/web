@@ -19,7 +19,7 @@ The script parses the files and scores the failing tests according to their "fli
 We also save a raw log of the CLI output of `mix test`. This would be useful for searching through 
 and understanding the reasons/trace of failing/flaky tests.
 
-### Analysis & Results - 2024-07-09
+### Analysis & Results
 
 First, we install python dependencies needed by the script file.
 There is a make target provided by this, as well as a requirements file should once choose to do so in a custom/different way.
@@ -61,4 +61,24 @@ Elixir.TrentoWeb.V1.ProfileControllerTest::test should not confirm a totp enroll
 Elixir.TrentoWeb.V1.DatabaseControllerTest::test delete should allow the request when the user has cleanup:database_instance ability --- score: 0.02501
 Elixir.TrentoWeb.V1.SapSystemControllerTest::test delete should allow the request when the user has cleanup:application_instance ability --- score: 0.02501
 Elixir.TrentoWeb.V1.UsersControllerTest::test update user should update the user if parameters are valid --- score: 0.02501
+```
+
+
+From front-end jest tests:
+
+```
+❯ make analyze-files
+python check_flakes.py --junit-files=/tmp --grouping-option=runs --window-size=5 --window-count=100 --top-n=40
+
+Top 40 flaky tests based on latest window exponential weighted moving average fliprate score
+SuseManagerSettingsModal component::should try to save all the fields --- score: 0.4945
+SuseManagerSettingsModal component::should attempt saving only what changed --- score: 0.4945
+PatchList::renders the content correctly --- score: 0.1325
+search::should not match not included words --- score: 0.06413
+Table component::should display the header --- score: 0.05145
+Label Component::should display an info tooltip if specified --- score: 0.05001
+UsersPage::should render toast with error message when deleting failed --- score: 0.05001
+Table component › filtering::should filter by the chosen filter option with default filter --- score: 0.05001
+UpgradablePackagesList component::should render the upgradable packages list --- score: 0.03644
+HanaClusterDetails component::should display a host link in the site details if the host is registered --- score: 0.02501
 ```
