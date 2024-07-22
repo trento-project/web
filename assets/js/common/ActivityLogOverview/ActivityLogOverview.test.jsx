@@ -37,6 +37,12 @@ describe('Activity Log Overview', () => {
     expect(screen.getByText('No data available')).toBeVisible();
   });
 
+  it('should render a loading activity log', () => {
+    render(<ActivityLogOverview activityLog={[]} loading />);
+
+    expect(screen.getByText('Loading...')).toBeVisible();
+  });
+
   const scenarios = [
     {
       name: LOGIN_ATTEMPT,
