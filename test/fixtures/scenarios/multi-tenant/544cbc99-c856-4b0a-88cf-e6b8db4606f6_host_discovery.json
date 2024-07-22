@@ -5,7 +5,20 @@
     "fully_qualified_domain_name": "hanadb3.example.com",
     "hostname": "hanadb3",
     "installation_source": "Suse",
-    "ip_addresses": ["127.0.0.1", "::1", "10.17.0.6", "10.17.2.6", "10.17.3.6"],
+    "ip_addresses": [
+      "127.0.0.1",
+      "::1",
+      "10.17.0.6",
+      "10.17.2.6",
+      "10.17.3.6"
+    ],
+    "netmasks": [
+      "8",
+      "128",
+      "24",
+      "24",
+      "24"
+    ],
     "os_version": "15-SP4",
     "socket_count": 1,
     "total_memory_mb": 64240

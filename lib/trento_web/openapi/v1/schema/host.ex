@@ -61,6 +61,12 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Host do
               ]
             }
           },
+          netmasks: %Schema{
+            type: :array,
+            description:
+              "Netmasks associated to the ip_addresses field. The position of the item is associated to the ip address position in ip_addresses",
+            items: %Schema{type: :integer, nullable: true}
+          },
           agent_version: %Schema{
             type: :string,
             description: "Version of the agent installed on the host"

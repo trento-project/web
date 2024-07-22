@@ -23,6 +23,7 @@ import ClusterLink from '@pages/ClusterDetails/ClusterLink';
 import DeregistrationModal from '@pages/DeregistrationModal';
 import HealthSummary from '@pages/HealthSummary';
 import { getCounters } from '@pages/HealthSummary/summarySelection';
+import { buildCidrNotation } from '@pages/HostDetailsPage/HostDetails';
 
 import { addTagToHost, removeTagFromHost, deregisterHost } from '@state/hosts';
 import { getAllSAPInstances } from '@state/selectors/sapSystem';
@@ -224,7 +225,7 @@ function HostsList() {
     return {
       health: host.health,
       hostname: host.hostname,
-      ip: host.ip_addresses,
+      ip: buildCidrNotation(host.ip_addresses, host.netmasks),
       provider: host.provider,
       sid: sapSystemList.map((sapSystem) => sapSystem.sid),
       cluster,

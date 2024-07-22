@@ -18,6 +18,7 @@ defmodule Trento.Discovery.Payloads.HostDiscoveryPayload do
   deftype do
     field :hostname, :string
     field :ip_addresses, {:array, :string}
+    field :netmasks, {:array, :integer}
     field :agent_version, :string
     field :cpu_count, :integer
     field :total_memory_mb, :integer

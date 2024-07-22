@@ -12,6 +12,12 @@
       "10.0.0.9",
       "a9:77:8c:c5:43:f9"
     ],
+    "netmasks": [
+      "8",
+      "128",
+      "24",
+      "64"
+    ],
     "os_version": "15-SP5",
     "socket_count": 1,
     "total_memory_mb": 7888,

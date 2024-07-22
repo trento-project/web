@@ -13,6 +13,12 @@
       "10.70.1.5",
       "82ef:e867:1dcc:8e1a:50a6"
     ],
+    "netmasks": [
+      "8",
+      "128",
+      "24",
+      "64"
+    ],
     "os_version": "15-SP5",
     "socket_count": 1,
     "total_memory_mb": 32043

@@ -42,10 +42,13 @@ defmodule Trento.Hosts.Projections.HostProjector do
       heartbeat: heartbeat
     },
     fn multi ->
+      {addresses, netmasks} = parse_address_netmask(ip_addresses)
+
       changeset =
         HostReadModel.changeset(%HostReadModel{id: id}, %{
           hostname: hostname,
-          ip_addresses: ip_addresses,
+          ip_addresses: addresses,
+          netmasks: netmasks,
           agent_version: agent_version,
           fully_qualified_domain_name: fully_qualified_domain_name,
           heartbeat: heartbeat
@@ -143,12 +146,15 @@ defmodule Trento.Hosts.Projections.HostProjector do
       agent_version: agent_version
     },
     fn multi ->
+      {addresses, netmasks} = parse_address_netmask(ip_addresses)
+
       changeset =
         HostReadModel
         |> Repo.get!(id)
         |> HostReadModel.changeset(%{
           hostname: hostname,
-          ip_addresses: ip_addresses,
+          ip_addresses: addresses,
+          netmasks: netmasks,
           fully_qualified_domain_name: fully_qualified_domain_name,
           agent_version: agent_version
         })
@@ -423,4 +429,15 @@ defmodule Trento.Hosts.Projections.HostProjector do
   end
 
   def after_update(_, _, _), do: :ok
+
+  defp parse_address_netmask(ip_addresses) do
+    ip_addresses
+    |> Enum.map(fn address ->
+      case String.split(address, "/") do
+        [ip, mask] -> {ip, String.to_integer(mask)}
+        [ip] -> {ip, nil}
+      end
+    end)
+    |> Enum.unzip()
+  end
 end

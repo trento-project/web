@@ -106,6 +106,7 @@ function HostDetailsPage() {
       hostID={host.id}
       hostname={host.hostname}
       ipAddresses={host.ip_addresses}
+      netmasks={host.netmasks}
       provider={host.provider}
       providerData={host.provider_data}
       sapInstances={sapInstances}

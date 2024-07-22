@@ -109,6 +109,7 @@ export const hostFactory = Factory.define(({ params, sequence }) => {
     hostname: `${faker.person.firstName()}_${sequence}`,
     cluster_id: faker.string.uuid(),
     ip_addresses: [faker.internet.ip()],
+    netmasks: [faker.helpers.arrayElement([8, 16, 24, 32])],
     provider: cloudProviderEnum(),
     health: healthEnum(),
     heartbeat: heartbeatEnum(),

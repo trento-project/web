@@ -70,6 +70,7 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
       hostname: hostname,
       id: id,
       ip_addresses: ip_addresses,
+      netmasks: netmasks,
       provider: provider,
       provider_data: provider_data
     } = host_projection = Repo.get!(HostReadModel, event.host_id)
@@ -77,7 +78,12 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
     assert event.host_id == host_projection.id
     assert event.hostname == host_projection.hostname
     assert event.fully_qualified_domain_name == host_projection.fully_qualified_domain_name
-    assert event.ip_addresses == host_projection.ip_addresses
+
+    assert event.ip_addresses ==
+             Enum.zip_with([ip_addresses, netmasks], fn [address, netmaks] ->
+               "#{address}/#{netmaks}"
+             end)
+
     assert event.agent_version == host_projection.agent_version
     assert event.heartbeat == host_projection.heartbeat
 
@@ -89,6 +95,7 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
                        hostname: ^hostname,
                        id: ^id,
                        ip_addresses: ^ip_addresses,
+                       netmasks: ^netmasks,
                        provider: ^provider,
                        provider_data: ^provider_data
                      },
@@ -109,6 +116,26 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
                      %{
                        id: ^host_id,
                        cluster_id: ^cluster_id
+                     },
+                     1000
+  end
+
+  test "should project nil netmasks when HostRegistered event without netmasks is received" do
+    event = build(:host_registered_event, ip_addresses: [Faker.Internet.ip_v4_address()])
+
+    ProjectorTestHelper.project(HostProjector, event, "host_projector")
+
+    %{
+      ip_addresses: ip_addresses,
+      netmasks: [nil]
+    } = Repo.get!(HostReadModel, event.host_id)
+
+    assert event.ip_addresses == ip_addresses
+
+    assert_broadcast "host_registered",
+                     %{
+                       ip_addresses: ^ip_addresses,
+                       netmasks: [nil]
                      },
                      1000
   end
@@ -206,15 +233,17 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
   test "should update an existing host when HostDetailsUpdated event is received", %{
     host_id: host_id
   } do
+    ip_address = Faker.Internet.ip_v4_address()
+    netmask = Enum.random([16, 24, 32])
+
     %{
       agent_version: agent_version,
-      hostname: hostname,
-      ip_addresses: ip_addresses
+      hostname: hostname
     } =
       event = %HostDetailsUpdated{
         host_id: host_id,
         hostname: Faker.StarWars.character(),
-        ip_addresses: [Faker.Internet.ip_v4_address()],
+        ip_addresses: ["#{ip_address}/#{netmask}"],
         agent_version: Faker.StarWars.planet(),
         cpu_count: Enum.random(1..16),
         total_memory_mb: Enum.random(1..128),
@@ -227,7 +256,8 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
 
     assert event.host_id == host_projection.id
     assert event.hostname == host_projection.hostname
-    assert event.ip_addresses == host_projection.ip_addresses
+    assert [ip_address] == host_projection.ip_addresses
+    assert [netmask] == host_projection.netmasks
     assert event.agent_version == host_projection.agent_version
 
     assert_broadcast "host_details_updated",
@@ -235,7 +265,8 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
                        agent_version: ^agent_version,
                        hostname: ^hostname,
                        id: ^host_id,
-                       ip_addresses: ^ip_addresses,
+                       ip_addresses: [^ip_address],
+                       netmasks: [^netmask],
                        provider_data: nil
                      },
                      1000

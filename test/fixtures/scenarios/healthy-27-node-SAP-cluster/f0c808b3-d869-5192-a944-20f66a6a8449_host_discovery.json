@@ -11,6 +11,12 @@
       "10.90.1.4",
       "fe80::222:48ff:fe7f:d2f9"
     ],
+    "netmasks": [
+      "8",
+      "128",
+      "24",
+      "64"
+    ],
     "socket_count": 1,
     "agent_version": "2.1.0",
     "total_memory_mb": 3422,
