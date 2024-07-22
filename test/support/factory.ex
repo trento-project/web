@@ -577,7 +577,8 @@ defmodule Trento.Factory do
       health: Health.unknown(),
       ensa_version: EnsaVersion.ensa1(),
       deregistered_at: nil,
-      database_id: Faker.UUID.v4()
+      database_id: Faker.UUID.v4(),
+      type: Enum.random(["ABAP", "JAVA"])
     }
   end
 

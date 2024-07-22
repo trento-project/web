@@ -85,7 +85,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
           database_instances: Database.DatabaseInstances,
           tags: Tags,
           inserted_at: %Schema{type: :string, format: :datetime},
-          updated_at: %Schema{type: :string, format: :datetime, nullable: true}
+          updated_at: %Schema{type: :string, format: :datetime, nullable: true},
+          type: %Schema{type: :string}
         }
       },
       struct?: false

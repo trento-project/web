@@ -641,7 +641,7 @@ defmodule Trento.SapSystems.SapSystem do
            database_health: database_health
          }
        ) do
-    if instances_have_abap?(instances) and instances_have_messageserver?(instances) do
+    if instances_have_abap_or_java?(instances) and instances_have_messageserver?(instances) do
       %SapSystemRestored{
         db_host: db_host,
         health: health,
@@ -662,7 +662,7 @@ defmodule Trento.SapSystems.SapSystem do
            database_health: database_health
          }
        ) do
-    if instances_have_abap?(instances) and instances_have_messageserver?(instances) do
+    if instances_have_abap_or_java?(instances) and instances_have_messageserver?(instances) do
       %SapSystemRestored{
         health: health,
         db_host: db_host,
@@ -686,8 +686,7 @@ defmodule Trento.SapSystems.SapSystem do
            database_health: database_health
          }
        ) do
-    if instances_have_abap?(instances) or
-         (instances_have_java?(instances) and instances_have_messageserver?(instances)) do
+    if instances_have_abap_or_java?(instances) and instances_have_messageserver?(instances) do
       %SapSystemRegistered{
         sap_system_id: sap_system_id,
         sid: sid,
@@ -697,7 +696,7 @@ defmodule Trento.SapSystems.SapSystem do
         ensa_version: ensa_version,
         database_id: database_id,
         database_health: database_health,
-        type: instance_type_abap_java?(instances)
+        type: instance_type(instances)
       }
     end
   end
@@ -799,8 +798,7 @@ defmodule Trento.SapSystems.SapSystem do
          },
          deregistered_at
        ) do
-    unless instances_have_abap?(instances) or
-             (instances_have_java?(instances) and instances_have_messageserver?(instances)) do
+    unless instances_have_abap_or_java?(instances) and instances_have_messageserver?(instances) do
       %SapSystemDeregistered{sap_system_id: sap_system_id, deregistered_at: deregistered_at}
     end
   end
@@ -824,14 +822,19 @@ defmodule Trento.SapSystems.SapSystem do
     Enum.any?(instances, fn %{features: features} -> features =~ "J2EE" end)
   end
 
-  defp instance_type_abap_java?(instances) do
-    instance_abap? = instances_have_abap?(instances)
-    instance_java? = instances_have_java?(instances)
+  defp instances_have_abap_or_java?(instances) do
+    instances_have_abap?(instances) or instances_have_java?(instances)
+  end
+
+  defp instance_type(instances) do
+    instance_abap = instances_have_abap?(instances)
+    instance_java = instances_have_java?(instances)
 
     cond do
-      instance_abap? && instance_java? -> "abap/java"
-      instance_abap? -> "abap"
-      instance_java? -> "java"
+      instance_abap and instance_java -> "ABAP/JAVA"
+      instance_abap -> "ABAP"
+      instance_java -> "JAVA"
+      true -> "Unknown"
     end
   end
 

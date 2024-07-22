@@ -98,7 +98,8 @@ defmodule Trento.SapSystems.SapSystemTest do
             tenant: tenant,
             health: :passing,
             database_health: :passing,
-            ensa_version: ensa_version
+            ensa_version: ensa_version,
+            type: "ABAP"
           }
         ],
         fn state ->
@@ -643,7 +644,8 @@ defmodule Trento.SapSystems.SapSystemTest do
             tenant: tenant,
             health: :passing,
             database_health: :passing,
-            ensa_version: ensa_version
+            ensa_version: ensa_version,
+            type: "ABAP"
           }
         ],
         fn state ->
@@ -928,7 +930,8 @@ defmodule Trento.SapSystems.SapSystemTest do
             health: :critical,
             ensa_version: ensa_version,
             database_id: database_id,
-            database_health: :passing
+            database_health: :passing,
+            type: "ABAP"
           }
         ],
         fn state ->
