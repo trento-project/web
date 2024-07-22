@@ -54,7 +54,9 @@ defmodule TrentoWeb.V1.ActivityLogController do
       ]
     ],
     responses: [
-      ok: {"Activity Log settings fetched successfully", "application/json", Schema.ActivityLog}
+      ok:
+        {"Activity Log settings fetched successfully", "application/json",
+         Schema.ActivityLog.ActivityLog}
     ]
 
   def get_activity_log(conn, params) do
