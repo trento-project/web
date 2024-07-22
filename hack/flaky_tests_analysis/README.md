@@ -31,7 +31,7 @@ On non-Nix systems:
 
 On Nix systems:
 ```
-❯ make install-deps
+❯ make alt-install-deps
 ```
 
 ```
