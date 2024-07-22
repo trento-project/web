@@ -97,9 +97,9 @@ defmodule Trento.ActivityLog do
       {:type, v} -> {:filters, %{field: :type, op: :ilike_or, value: v}}
       param -> param
     end)
-    |> Enum.reduce(%{filters: %{}}, fn
+    |> Enum.reduce(%{filters: []}, fn
       {:filters, filter}, acc ->
-        Map.put(acc, :filters, Map.put(acc.filters, filter.field, filter))
+        Map.put(acc, :filters, [filter | acc.filters])
 
       {k, v}, acc ->
         Map.put(acc, k, v)
