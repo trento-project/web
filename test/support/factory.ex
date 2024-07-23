@@ -36,6 +36,7 @@ defmodule Trento.Factory do
     HeartbeatFailed,
     HeartbeatSucceeded,
     HostChecksHealthChanged,
+    HostChecksSelected,
     HostDetailsUpdated,
     HostHealthChanged,
     HostRegistered,
@@ -793,6 +794,13 @@ defmodule Trento.Factory do
     HeartbeatFailed.new!(%{
       host_id: Faker.UUID.v4()
     })
+  end
+
+  def host_checks_selected_factory do
+    %HostChecksSelected{
+      host_id: Faker.UUID.v4(),
+      checks: Enum.map(0..4, fn _ -> Faker.UUID.v4() end)
+    }
   end
 
   def host_checks_health_changed_factory do

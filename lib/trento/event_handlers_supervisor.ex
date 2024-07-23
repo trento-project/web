@@ -4,6 +4,7 @@ defmodule Trento.EventHandlersSupervisor do
   use Supervisor
 
   alias Trento.Infrastructure.Commanded.EventHandlers.{
+    ActivityLogEventHandler,
     AlertsEventHandler,
     DatabaseDeregistrationEventHandler,
     DatabaseRestoreEventHandler,
@@ -20,6 +21,7 @@ defmodule Trento.EventHandlersSupervisor do
   @impl true
   def init(_init_arg) do
     children = [
+      ActivityLogEventHandler,
       AlertsEventHandler,
       RollUpEventHandler,
       StreamRollUpEventHandler,

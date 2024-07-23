@@ -4,7 +4,7 @@ defmodule Trento.ActivityLog.Parser.ActivityParser do
   """
 
   alias Trento.ActivityLog.ActivityCatalog
-  alias Trento.ActivityLog.Logger.Parser.PhoenixConnParser
+  alias Trento.ActivityLog.Logger.Parser.{EventParser, PhoenixConnParser}
 
   require Trento.ActivityLog.ActivityCatalog, as: ActivityCatalog
 
@@ -20,6 +20,18 @@ defmodule Trento.ActivityLog.Parser.ActivityParser do
          |> Atom.to_string(),
        actor: PhoenixConnParser.get_activity_actor(activity, activity_context),
        metadata: PhoenixConnParser.get_activity_metadata(activity, activity_context)
+     }}
+  end
+
+  def to_activity_log(event_activity, %{event: %event_activity{}} = activity_context) do
+    {:ok,
+     %{
+       type:
+         event_activity
+         |> ActivityCatalog.get_activity_type()
+         |> Atom.to_string(),
+       actor: EventParser.get_activity_actor(event_activity, activity_context),
+       metadata: EventParser.get_activity_metadata(event_activity, activity_context)
      }}
   end
 

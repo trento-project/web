@@ -5,8 +5,9 @@ defmodule Trento.ActivityLog.ActivityCatalog do
 
   alias Phoenix.Controller
 
-  @type logged_activity :: {controller :: module(), activity :: atom()}
+  @type domain_event_activity :: module()
 
+  @type logged_activity :: {controller :: module(), activity :: atom()} | domain_event_activity()
   @type activity_type ::
           :login_attempt
           | :resource_tagging
@@ -64,25 +65,38 @@ defmodule Trento.ActivityLog.ActivityCatalog do
     _ -> nil
   end
 
+  def detect_activity(%{event: %event{}}), do: event
+
   def detect_activity(_), do: nil
 
   @spec interested?(logged_activity(), any()) :: boolean()
-  def interested?(activity, %Plug.Conn{status: status}),
+  def interested?(activity, %Plug.Conn{status: status}) when activity in activity_catalog(),
     do:
-      Map.has_key?(@activity_catalog, activity) &&
-        @activity_catalog
-        |> Map.fetch!(activity)
-        |> interesting_occurrence?(status)
+      @activity_catalog
+      |> Map.fetch!(activity)
+      |> interesting_occurrence?(status)
+
+  def interested?(_, %{event: _}),
+    do: true
 
   def interested?(_, _), do: false
 
   @spec get_activity_type(logged_activity()) :: atom() | nil
-  def get_activity_type(activity) do
-    case Map.fetch(@activity_catalog, activity) do
-      {:ok, {activity_type, _}} -> activity_type
-      :error -> nil
-    end
+  def get_activity_type(activity) when activity in activity_catalog() do
+    @activity_catalog
+    |> Map.fetch!(activity)
+    |> elem(0)
   end
+
+  def get_activity_type(activity) when is_atom(activity) do
+    activity
+    |> Module.split()
+    |> List.last()
+    |> Macro.underscore()
+    |> String.to_atom()
+  end
+
+  def get_activity_type(_), do: nil
 
   @spec interesting_occurrence?(
           conn_activity_occurrence :: {activity_type(), relevant_status :: integer() | :any},

@@ -1,6 +1,8 @@
 defmodule Trento.ActivityLog.ActivityCatalogTest do
   @moduledoc false
 
+  import Trento.Factory
+
   use TrentoWeb.ConnCase, async: false
 
   alias Trento.ActivityLog.ActivityCatalog
@@ -26,6 +28,12 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
                |> Plug.Conn.put_private(:phoenix_action, :foo_action)
                |> ActivityCatalog.detect_activity()
     end
+
+    test "should detect activity from domain events" do
+      %event_module{} = event = build(:host_registered_event)
+      metadata = %{}
+      assert event_module == ActivityCatalog.detect_activity(%{event: event, metadata: metadata})
+    end
   end
 
   test "should ignore unknown activities", %{
@@ -35,6 +43,32 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
       refute ActivityCatalog.interested?(activity, conn)
       assert nil == ActivityCatalog.get_activity_type(activity)
     end)
+  end
+
+  describe "activity type detectiion" do
+    test "should detect correct activity type" do
+      %heartbeat_succeded_event{} = build(:heartbeat_succeded)
+      %heartbeat_failed_event{} = build(:heartbeat_failed)
+      %host_registered_event{} = build(:host_registered_event)
+      %host_checks_health_changed_event{} = build(:host_checks_health_changed)
+      %host_checks_selected_event{} = build(:host_checks_selected)
+
+      %software_updates_discovery_requested_event{} =
+        build(:software_updates_discovery_requested_event)
+
+      event_to_activity_type_map = [
+        {host_registered_event, :host_registered},
+        {heartbeat_succeded_event, :heartbeat_succeeded},
+        {heartbeat_failed_event, :heartbeat_failed},
+        {host_checks_health_changed_event, :host_checks_health_changed},
+        {host_checks_selected_event, :host_checks_selected},
+        {software_updates_discovery_requested_event, :software_updates_discovery_requested}
+      ]
+
+      for {event_module, expected_activity_type} <- event_to_activity_type_map do
+        assert expected_activity_type == ActivityCatalog.get_activity_type(event_module)
+      end
+    end
   end
 
   scenarios = [
