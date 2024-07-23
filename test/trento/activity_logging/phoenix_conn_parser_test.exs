@@ -10,21 +10,6 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
 
   require Trento.ActivityLog.ActivityCatalog, as: ActivityCatalog
 
-  describe "activity detection" do
-    test "should not be able to detect an activity from a connection without controller/action info",
-         %{conn: conn} do
-      assert nil == PhoenixConnParser.detect_activity(conn)
-    end
-
-    test "should detect activity from a connection with controller/action info", %{conn: conn} do
-      assert {Foo.Bar.AcmeController, :foo_action} ==
-               conn
-               |> Plug.Conn.put_private(:phoenix_controller, Foo.Bar.AcmeController)
-               |> Plug.Conn.put_private(:phoenix_action, :foo_action)
-               |> PhoenixConnParser.detect_activity()
-    end
-  end
-
   describe "actor detection" do
     test "should get the actor from the request payload for login attempts", %{conn: conn} do
       scenarios = [

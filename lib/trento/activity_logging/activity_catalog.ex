@@ -3,6 +3,8 @@ defmodule Trento.ActivityLog.ActivityCatalog do
   Activity logging catalog
   """
 
+  alias Phoenix.Controller
+
   @type logged_activity :: {controller :: module(), activity :: atom()}
 
   @type activity_type ::
@@ -52,8 +54,19 @@ defmodule Trento.ActivityLog.ActivityCatalog do
     defmacro unquote(activity_type)(), do: unquote(activity)
   end)
 
-  def activity_catalog, do: Enum.map(@activity_catalog, fn {activity, _} -> activity end)
+  @spec activity_catalog() :: [logged_activity()]
+  defmacro activity_catalog, do: Enum.map(@activity_catalog, fn {activity, _} -> activity end)
 
+  @spec detect_activity(any()) :: logged_activity() | nil
+  def detect_activity(%Plug.Conn{} = conn) do
+    {Controller.controller_module(conn), Controller.action_name(conn)}
+  rescue
+    _ -> nil
+  end
+
+  def detect_activity(_), do: nil
+
+  @spec interested?(logged_activity(), any()) :: boolean()
   def interested?(activity, %Plug.Conn{status: status}),
     do:
       Map.has_key?(@activity_catalog, activity) &&
