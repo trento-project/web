@@ -148,5 +148,42 @@ defmodule TrentoWeb.V1.ActivityLogControllerTest do
       assert length(resp["data"]) == 20
       assert_schema(resp, "ActivityLog", api_spec)
     end
+
+    test "should return valid response of entries provided with date ranges params",
+         %{
+           conn: conn,
+           api_spec: api_spec
+         } do
+      now = DateTime.utc_now()
+      now_minus_30d = DateTime.add(now, -30, :day)
+      now_minus_60d = DateTime.add(now, -60, :day)
+      now_minus_90d = DateTime.add(now, -90, :day)
+      _inserted_records = insert_list(2, :activity_log_entry, %{inserted_at: now})
+      _inserted_records = insert_list(4, :activity_log_entry, %{inserted_at: now_minus_30d})
+      _inserted_records = insert_list(6, :activity_log_entry, %{inserted_at: now_minus_60d})
+      _inserted_records = insert_list(8, :activity_log_entry, %{inserted_at: now_minus_90d})
+
+      resp =
+        conn
+        |> get("/api/v1/activity_log?from_date=#{now}&to_date=#{now_minus_30d}")
+        |> json_response(200)
+
+      assert length(resp["data"]) == 6
+
+      resp =
+        conn
+        |> get("/api/v1/activity_log?from_date=#{now}&to_date=#{now_minus_60d}")
+        |> json_response(200)
+
+      assert length(resp["data"]) == 12
+
+      resp =
+        conn
+        |> get("/api/v1/activity_log?from_date=#{now_minus_30d}&to_date=#{now_minus_90d}")
+        |> json_response(200)
+
+      assert length(resp["data"]) == 18
+      assert_schema(resp, "ActivityLog", api_spec)
+    end
   end
 end
