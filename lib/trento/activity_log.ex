@@ -3,6 +3,8 @@ defmodule Trento.ActivityLog do
   Activity Log module provides functionality to manage activity log settings and track activity.
   """
 
+  import Ecto.Query
+
   require Logger
 
   alias Trento.ActivityLog.RetentionTime
@@ -39,15 +41,6 @@ defmodule Trento.ActivityLog do
       {:error, :not_found} ->
         {:error, :activity_log_settings_not_configured}
     end
-  end
-
-  @spec list_activity_log() :: list(ActivityLog.t())
-  def list_activity_log do
-    query =
-      from activity in ActivityLog,
-        order_by: [desc: activity.inserted_at]
-
-    Repo.all(query)
   end
 
   @spec clear_expired_logs() :: :ok | {:error, any()}
