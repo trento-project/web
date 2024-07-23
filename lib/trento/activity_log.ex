@@ -7,6 +7,7 @@ defmodule Trento.ActivityLog do
 
   require Logger
 
+  alias Trento.ActivityLog.RetentionTime
   require Trento.ActivityLog.RetentionPeriodUnit, as: RetentionPeriodUnit
   alias Trento.ActivityLog.ActivityLog
   alias Trento.ActivityLog.Settings
@@ -52,10 +53,35 @@ defmodule Trento.ActivityLog do
     Repo.all(query)
   end
 
+  @spec clear_expired_logs() :: :ok | {:error, any()}
+  def clear_expired_logs do
+    with {:ok, %{retention_time: retention_time}} <- Trento.ActivityLog.get_settings(),
+         expiration_date <- calculate_expiration_date(retention_time) do
+      delete_logs_before(expiration_date)
+      :ok
+    end
+  end
+
   defp log_error({:error, _} = error, message) do
     Logger.error("#{message}: #{inspect(error)}")
     error
   end
 
   defp log_error(result, _), do: result
+
+  defp calculate_expiration_date(%RetentionTime{value: value, unit: :day}),
+    do: DateTime.add(DateTime.utc_now(), -value, :day)
+
+  defp calculate_expiration_date(%RetentionTime{value: value, unit: :week}),
+    do: DateTime.add(DateTime.utc_now(), -value * 7, :day)
+
+  defp calculate_expiration_date(%RetentionTime{value: value, unit: :month}),
+    do: DateTime.add(DateTime.utc_now(), -value * 30, :day)
+
+  defp calculate_expiration_date(%RetentionTime{value: value, unit: :year}),
+    do: DateTime.add(DateTime.utc_now(), -value * 365, :day)
+
+  defp delete_logs_before(%DateTime{} = expiration_date) do
+    Repo.delete_all(from l in ActivityLog, where: l.inserted_at < ^expiration_date)
+  end
 end

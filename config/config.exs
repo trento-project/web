@@ -126,6 +126,12 @@ config :trento, Trento.Scheduler,
       task: {Trento.Infrastructure.Alerting.Alerting, :notify_api_key_expiration, []},
       run_strategy: {Quantum.RunStrategy.Random, :cluster},
       overlap: false
+    ],
+    activity_log_cleaning: [
+      schedule: "@daily",
+      task: {Trento.ActivityLog.ActivityLogger, :clear_expired_logs, []},
+      run_strategy: {Quantum.RunStrategy.Random, :cluster},
+      overlap: false
     ]
   ],
   debug_logging: false
