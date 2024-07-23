@@ -32,6 +32,8 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscovery
 
   describe "Discovering software updates" do
     test "should discover software updates when a SoftwareUpdatesDiscoveryRequested is emitted" do
+      insert_software_updates_settings()
+
       %SoftwareUpdatesDiscoveryRequested{
         host_id: host_id,
         fully_qualified_domain_name: fully_qualified_domain_name
@@ -66,7 +68,43 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscovery
       assert :ok = SoftwareUpdatesDiscoveryEventHandler.handle(event, %{})
     end
 
+    test "should discover data about hosts just when SUSE Manager's settings are set" do
+      event = build(:software_updates_discovery_requested_event)
+
+      expect(
+        SoftwareUpdatesDiscoveryMock,
+        :get_system_id,
+        0,
+        fn _ -> :ok end
+      )
+
+      expect(
+        SoftwareUpdatesDiscoveryMock,
+        :get_relevant_patches,
+        0,
+        fn _ -> :ok end
+      )
+
+      expect(
+        SoftwareUpdatesDiscoveryMock,
+        :get_upgradable_packages,
+        0,
+        fn _ -> :ok end
+      )
+
+      expect(
+        Trento.Commanded.Mock,
+        :dispatch,
+        0,
+        fn _ -> :ok end
+      )
+
+      assert :ok = SoftwareUpdatesDiscoveryEventHandler.handle(event, %{})
+    end
+
     test "should pass through failures" do
+      insert_software_updates_settings()
+
       %SoftwareUpdatesDiscoveryRequested{
         fully_qualified_domain_name: fully_qualified_domain_name
       } = event = build(:software_updates_discovery_requested_event)
