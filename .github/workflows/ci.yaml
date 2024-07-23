@@ -454,6 +454,16 @@ jobs:
       ]
     runs-on: ubuntu-22.04
     if: needs.check-regression-label.outputs.run_regression_test == 'true'
+    strategy:
+      matrix:
+        include:
+          - test: sap_system_split
+            cypress_spec: |
+              cypress/e2e/databases_overview.cy.js
+              cypress/e2e/sap_systems_overview.cy.js
+          - test: process_manager_rename
+            cypress_spec: |
+              cypress/e2e/host_details.cy.js
     env:
       MIX_ENV: dev
     steps:
@@ -509,13 +519,13 @@ jobs:
         uses: tj-actions/pg-restore@v6
         with:
           database_url: "postgresql://postgres:postgres@localhost:5433/postgres"
-          backup_file: "test/fixtures/regression/sap_system_split/trento_dev.sql"
+          backup_file: "test/fixtures/regression/${{ matrix.test }}/trento_dev.sql"
           postgresql_version: "15"
       - name: Postgres trento_eventstore_dev restore
         uses: tj-actions/pg-restore@v6
         with:
           database_url: "postgresql://postgres:postgres@localhost:5433/postgres"
-          backup_file: "test/fixtures/regression/sap_system_split/trento_eventstore_dev.sql"
+          backup_file: "test/fixtures/regression/${{ matrix.test }}/trento_eventstore_dev.sql"
           postgresql_version: "15"
       - name: Run DB migrations
         run: mix ecto.migrate
@@ -540,16 +550,14 @@ jobs:
           cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
         with:
           working-directory: test/e2e
-          spec: |
-            cypress/e2e/databases_overview.cy.js
-            cypress/e2e/sap_systems_overview.cy.js
+          spec: ${{ matrix.cypress_spec }}
           wait-on-timeout: 30
           config: baseUrl=http://localhost:4000
       - name: Upload cypress test screenshots
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: regression-e2e-screenshots
+          name: regression-${{ matrix.test }}-e2e-screenshots
           path: test/e2e/cypress/screenshots/
 
   main-branch-deps:
