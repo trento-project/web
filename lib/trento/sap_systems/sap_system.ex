@@ -638,7 +638,7 @@ defmodule Trento.SapSystems.SapSystem do
            database_health: database_health
          }
        ) do
-    if instances_have_abap?(instances) and instances_have_messageserver?(instances) do
+    if instances_have_abap_or_java?(instances) and instances_have_messageserver?(instances) do
       %SapSystemRestored{
         db_host: db_host,
         health: health,
@@ -659,7 +659,7 @@ defmodule Trento.SapSystems.SapSystem do
            database_health: database_health
          }
        ) do
-    if instances_have_abap?(instances) and instances_have_messageserver?(instances) do
+    if instances_have_abap_or_java?(instances) and instances_have_messageserver?(instances) do
       %SapSystemRestored{
         health: health,
         db_host: db_host,
@@ -683,7 +683,7 @@ defmodule Trento.SapSystems.SapSystem do
            database_health: database_health
          }
        ) do
-    if instances_have_abap?(instances) and instances_have_messageserver?(instances) do
+    if instances_have_abap_or_java?(instances) and instances_have_messageserver?(instances) do
       %SapSystemRegistered{
         sap_system_id: sap_system_id,
         sid: sid,
@@ -794,7 +794,7 @@ defmodule Trento.SapSystems.SapSystem do
          },
          deregistered_at
        ) do
-    unless instances_have_abap?(instances) and instances_have_messageserver?(instances) do
+    unless instances_have_abap_or_java?(instances) and instances_have_messageserver?(instances) do
       %SapSystemDeregistered{sap_system_id: sap_system_id, deregistered_at: deregistered_at}
     end
   end
@@ -812,6 +812,15 @@ defmodule Trento.SapSystems.SapSystem do
 
   defp instances_have_abap?(instances) do
     Enum.any?(instances, fn %{features: features} -> features =~ "ABAP" end)
+  end
+
+
+  defp instances_have_java?(instances) do
+    Enum.any?(instances, fn %{features: features} -> features =~ "J2EE" end)
+  end
+
+  defp instances_have_abap_or_java?(instances) do
+    instances_have_abap?(instances) or instances_have_java?(instances)
   end
 
   def instances_have_messageserver?(instances) do
