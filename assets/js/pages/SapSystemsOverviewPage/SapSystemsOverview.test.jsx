@@ -44,7 +44,7 @@ describe('SapSystemsOverviews component', () => {
       const sapSystemType = 'ABAP';
       const sapSystem = sapSystemFactory.build({
         ensa_version: 'ensa1',
-        sap_system_type: 'ABAP',
+        sap_system_type: sapSystemType,
       });
       const {
         id: sapSystemID,
@@ -91,6 +91,83 @@ describe('SapSystemsOverviews component', () => {
       );
       expect(mainRow.querySelector('td:nth-child(7)')).toHaveTextContent(
         'ENSA1'
+      );
+    });
+
+    it('should display the correct SAP system type', () => {
+      const sapSystemTypes = [
+        'ABAP',
+        'J2EE',
+        'ABAP|J2EE',
+        'J2EE|ABAP',
+        'SOME_SAP_SYSTEM_FEATURE|NOT_A_REAL_SYSTEM',
+      ];
+
+      const expectedSapSystemTypes = [
+        'ABAP',
+        'JAVA',
+        'ABAP/JAVA',
+        'ABAP/JAVA',
+        '',
+      ];
+      const sapSystems = [
+        sapSystemFactory.build({
+          sap_system_type: sapSystemTypes[0],
+        }),
+        sapSystemFactory.build({
+          sap_system_type: sapSystemTypes[1],
+        }),
+        sapSystemFactory.build({
+          sap_system_type: sapSystemTypes[2],
+        }),
+        sapSystemFactory.build({
+          sap_system_type: sapSystemTypes[3],
+        }),
+        sapSystemFactory.build({
+          sap_system_type: sapSystemTypes[4],
+        }),
+      ];
+
+      const sapSystemApplicationInstances = [
+        sapSystems[0].application_instances,
+        sapSystems[1].application_instances,
+        sapSystems[2].application_instances,
+        sapSystems[3].application_instances,
+        sapSystems[4].application_instances,
+      ].flat();
+
+      renderWithRouter(
+        <SapSystemsOverview
+          sapSystems={sapSystems}
+          userAbilities={userAbilities}
+          applicationInstances={sapSystemApplicationInstances}
+          databaseInstances={[]}
+        />
+      );
+      const rows = screen.getByRole('table').querySelectorAll('tbody > tr');
+      const firstSapSystem = rows[0];
+      const secondSapSystem = rows[2];
+      const thirdSapSystem = rows[4];
+      const fourthSapSystem = rows[6];
+      const fifthSapSystem = rows[8];
+
+      expect(firstSapSystem.querySelector('td:nth-child(5)')).toHaveTextContent(
+        expectedSapSystemTypes[0]
+      );
+      expect(
+        secondSapSystem.querySelector('td:nth-child(5)')
+      ).toHaveTextContent(expectedSapSystemTypes[1]);
+
+      expect(thirdSapSystem.querySelector('td:nth-child(5)')).toHaveTextContent(
+        expectedSapSystemTypes[2]
+      );
+
+      expect(
+        fourthSapSystem.querySelector('td:nth-child(5)')
+      ).toHaveTextContent(expectedSapSystemTypes[3]);
+
+      expect(fifthSapSystem.querySelector('td:nth-child(5)')).toHaveTextContent(
+        expectedSapSystemTypes[4]
       );
     });
 
