@@ -55,11 +55,7 @@ defmodule Trento.ActivityLog do
   @spec list_activity_log(map()) ::
           {:ok, list(ActivityLog.t()), Flop.Meta.t()} | {:error, :activity_log_fetch_error}
   def list_activity_log(params) do
-    parsed_params =
-      case params do
-        [] -> %{}
-        params -> parse_params(params)
-      end
+    parsed_params = parse_params(params)
 
     case Flop.validate_and_run(ActivityLog, parsed_params, for: ActivityLog) do
       {:ok, {activity_log_entries, meta}} ->
@@ -78,10 +74,22 @@ defmodule Trento.ActivityLog do
        Some parameters are recognized by Flop and are used as is (example: last, first, after, before);
        some other parameters are used to build filters with custom operator logic (example: from_date, to_date, actor, type).
        ## Examples
-             iex> parse_params([{:from_date, "2021-01-01"}, {:to_date, "2021-01-31"}, last: 10])
-             %{filters: %{inserted_at: %{value: "2021-01-31", op: :>=, field: :inserted_at}}, last: 10}
+             iex> parse_params([{:from_date, "2021-01-31"}, {:to_date, "2021-01-01"}, last: 10])
+       %{
+          filters: [
+                     %{value: "2021-01-31", op: :<=, field: :inserted_at}, 
+                     %{value: "2021-01-01", op: :>=, field: :inserted_at}], 
+          last: 10
+       }
        """ && false
-  defp parse_params(query_params) do
+  @spec parse_params(map()) :: map()
+  def parse_params(query_params) when query_params == %{} do
+    # Implies
+    # %{first: 25, order_by: [:inserted_at], order_directions: [:desc]}
+    %{}
+  end
+
+  def parse_params(query_params) do
     query_params
     |> Enum.map(fn
       {:from_date, v} -> {:filters, %{field: :inserted_at, op: :<=, value: v}}
