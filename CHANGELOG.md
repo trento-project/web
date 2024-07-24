@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.3.2](https://github.com/trento-project/web/tree/2.3.2) (2024-07-24)
+
+[Full Changelog](https://github.com/trento-project/web/compare/2.3.1...2.3.2)
+
+**Fixed bugs:**
+
+- Fix process manager rename [\#2814](https://github.com/trento-project/web/pull/2814) ([arbulu89](https://github.com/arbulu89))
+
 ## [2.3.1](https://github.com/trento-project/web/tree/2.3.1) (2024-06-10)
 
 [Full Changelog](https://github.com/trento-project/web/compare/2.3.0...2.3.1)
