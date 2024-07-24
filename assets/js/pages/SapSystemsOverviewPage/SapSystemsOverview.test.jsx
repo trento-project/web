@@ -41,7 +41,11 @@ describe('SapSystemsOverviews component', () => {
     });
 
     it('should display the correct content for a SAP system main row', () => {
-      const sapSystem = sapSystemFactory.build({ ensa_version: 'ensa1' });
+      const sapSystemType = 'ABAP';
+      const sapSystem = sapSystemFactory.build({
+        ensa_version: 'ensa1',
+        sap_system_type: 'ABAP',
+      });
       const {
         id: sapSystemID,
         sid,
@@ -80,9 +84,12 @@ describe('SapSystemsOverviews component', () => {
         tenant
       );
       expect(mainRow.querySelector('td:nth-child(5)')).toHaveTextContent(
-        dbAddress
+        sapSystemType
       );
       expect(mainRow.querySelector('td:nth-child(6)')).toHaveTextContent(
+        dbAddress
+      );
+      expect(mainRow.querySelector('td:nth-child(7)')).toHaveTextContent(
         'ENSA1'
       );
     });

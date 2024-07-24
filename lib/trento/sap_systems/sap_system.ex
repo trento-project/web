@@ -814,7 +814,6 @@ defmodule Trento.SapSystems.SapSystem do
     Enum.any?(instances, fn %{features: features} -> features =~ "ABAP" end)
   end
 
-
   defp instances_have_java?(instances) do
     Enum.any?(instances, fn %{features: features} -> features =~ "J2EE" end)
   end
