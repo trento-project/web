@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unstable-nested-components */
 import React, { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { filter, uniq, flatMap } from 'lodash';
+import { filter, uniq } from 'lodash';
 
 import { getEnsaVersionLabel } from '@lib/model/sapSystems';
 
@@ -79,7 +79,15 @@ function SapSystemsOverview({
       },
       {
         title: 'Type',
-        key: 'type',
+        key: 'applicationInstances',
+        render: (content) =>
+          uniq(
+            content
+              .filter(({ features }) => /ABAP|J2EE/.test(features))
+              .map(({ features }) =>
+                features.includes('ABAP') ? 'ABAP' : 'JAVA'
+              )
+          ).join('/'),
       },
 
       {
@@ -125,42 +133,10 @@ function SapSystemsOverview({
     ),
   };
 
-  const filterApplicationInstances = (sapSystem) =>
+  const filteredApplicationInstances = (sapSystem) =>
     filter(applicationInstances, {
       sap_system_id: sapSystem.id,
     });
-
-  const getInstanceSystemType = (instanceFeatures) => {
-    if (
-      instanceFeatures.includes('ABAP') &&
-      instanceFeatures.includes('J2EE')
-    ) {
-      return 'ABAP/JAVA';
-    }
-
-    if (instanceFeatures.includes('ABAP')) {
-      return 'ABAP';
-    }
-
-    if (instanceFeatures.includes('J2EE')) {
-      return 'JAVA';
-    }
-
-    return 'Unknown';
-  };
-  const filterSapSystemType = (sapSystem) => {
-    const instances = filterApplicationInstances(sapSystem);
-    const uniqueInstanceFeatures = uniq(
-      flatMap(
-        instances
-          .map((instance) => instance.features)
-          .map((feature) => feature.split('|'))
-      )
-    );
-
-    const systemType = getInstanceSystemType(uniqueInstanceFeatures);
-    return systemType;
-  };
 
   const data = sapSystems.map((sapSystem) => ({
     id: sapSystem.id,
@@ -168,10 +144,10 @@ function SapSystemsOverview({
     sid: sapSystem.sid,
     attachedRdbms: sapSystem.database_sid,
     tenant: sapSystem.tenant,
-    type: filterSapSystemType(sapSystem),
+    type: filteredApplicationInstances(sapSystem),
     dbAddress: sapSystem.db_host,
     ensaVersion: sapSystem.ensa_version || '-',
-    applicationInstances: filterApplicationInstances(sapSystem),
+    applicationInstances: filteredApplicationInstances(sapSystem),
     databaseInstances: filter(databaseInstances, {
       database_id: sapSystem.database_id,
     }),
