@@ -80,17 +80,20 @@ function SapSystemsOverview({
       {
         title: 'Type',
         key: 'applicationInstances',
-        render: (content) =>
-          uniq(
-            flatMap(
-              content
-                .map((instance) => instance.features)
-                .map((feature) => feature.split('|'))
-            )
+        render: (content) => {
+          const instanceTypes = uniq(
+            flatMap(content, (instance) => instance.features.split('|'))
           )
             .filter((item) => item === 'J2EE' || item === 'ABAP')
-            .map((item) => (item === 'J2EE' ? 'JAVA' : item))
-            .join('/'),
+            .map((item) => (item === 'J2EE' ? 'JAVA' : item));
+          // Join the results in a fixed order
+          const systemHasABAP = instanceTypes.includes('ABAP');
+          const systemHasJAVA = instanceTypes.includes('JAVA');
+          const sapSystemType = [];
+          if (systemHasABAP) sapSystemType.push('ABAP');
+          if (systemHasJAVA) sapSystemType.push('JAVA');
+          return sapSystemType.join('/');
+        },
       },
 
       {

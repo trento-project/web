@@ -54,8 +54,9 @@ const sapSystemsWithDifferentTypes = [
   sapSystemFactory.build({ sap_system_type: 'ABAP' }),
   sapSystemFactory.build({ sap_system_type: 'ABAP|J2EE' }),
   sapSystemFactory.build({ sap_system_type: 'ABAP|J2EE|SAP_APP' }),
+  sapSystemFactory.build({ sap_system_type: 'J2EE|ABAP|SAP_APP' }),
   sapSystemFactory.build({
-    sap_system_type: 'NOT_ABAP|NOT_JAVA|JAVA|NOT_J2EE',
+    sap_system_type: 'NOT_ABAP|NOT_JAVA|JAVA|NOT_J2EE|NOT_A_REAL_SAP_SYSTEM',
   }),
 ];
 const enrichedApplicationInstancesType = enrichInstances(
@@ -89,10 +90,6 @@ export default {
       control: { type: 'array' },
       description: 'Application instances',
     },
-    userAbilities: {
-      control: { type: 'array' },
-      description: 'User profile abilities',
-    },
     databaseInstances: {
       control: { type: 'array' },
       description: 'Database instances',
@@ -104,6 +101,10 @@ export default {
         type: { summary: 'string' },
         defaultValue: { summary: false },
       },
+    },
+    userAbilities: {
+      control: { type: 'array' },
+      description: 'User profile abilities',
     },
     onTagAdd: {
       action: 'Add tag',
