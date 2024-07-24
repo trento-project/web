@@ -92,6 +92,7 @@ export const toRenderedEntry = (entry) => ({
 function ActivityLogOverview({
   activityLog,
   activityLogDetailModalOpen = false,
+  loading = false,
   onActivityLogEntryClick = noop,
   onCloseActivityLogEntryDetails = noop,
 }) {
@@ -156,6 +157,7 @@ function ActivityLogOverview({
       <Table
         config={activityLogTableConfig}
         data={activityLog.map(toRenderedEntry)}
+        emptyStateText={loading ? 'Loading...' : 'No data available'}
       />
     </>
   );

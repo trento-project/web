@@ -12,12 +12,23 @@ export default {
         type: 'array',
       },
     },
+    loading: {
+      description: 'Display loading state of the component',
+      control: { type: 'boolean' },
+    },
   },
 };
 
 export const Default = {
   args: {
     activityLog: activityLogEntryFactory.buildList(20),
+  },
+};
+
+export const Loading = {
+  args: {
+    loading: true,
+    activityLog: [],
   },
 };
 
