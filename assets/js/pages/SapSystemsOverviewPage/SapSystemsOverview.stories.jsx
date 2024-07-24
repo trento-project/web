@@ -49,6 +49,24 @@ const enrichedAbsentDatabaseInstances = enrichInstances(
   'database_instances'
 );
 
+const sapSystemsWithDifferentTypes = [
+  sapSystemFactory.build({ sap_system_type: 'J2EE' }),
+  sapSystemFactory.build({ sap_system_type: 'ABAP' }),
+  sapSystemFactory.build({ sap_system_type: 'ABAP|J2EE' }),
+  sapSystemFactory.build({ sap_system_type: 'ABAP|J2EE|SAP_APP' }),
+  sapSystemFactory.build({
+    sap_system_type: 'NOT_ABAP|NOT_JAVA|JAVA|NOT_J2EE',
+  }),
+];
+const enrichedApplicationInstancesType = enrichInstances(
+  sapSystemsWithDifferentTypes,
+  'application_instances'
+);
+const enrichedAbsentDatabaseInstancesType = enrichInstances(
+  sapSystemsWithDifferentTypes,
+  'database_instances'
+);
+
 enrichedAbsentApplicationInstances[1].absent_at = faker.date
   .past()
   .toISOString();
@@ -138,5 +156,13 @@ export const UnauthorizedCleanUp = {
   args: {
     ...WithAbsentInstances.args,
     userAbilities: [],
+  },
+};
+export const SapSystemsWithDifferentTypes = {
+  args: {
+    userAbilities,
+    sapSystems: sapSystemsWithDifferentTypes,
+    applicationInstances: enrichedApplicationInstancesType,
+    databaseInstances: enrichedAbsentDatabaseInstancesType,
   },
 };

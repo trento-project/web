@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unstable-nested-components */
 import React, { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { filter, uniq } from 'lodash';
+import { filter, uniq, flatMap } from 'lodash';
 
 import { getEnsaVersionLabel } from '@lib/model/sapSystems';
 
@@ -82,12 +82,15 @@ function SapSystemsOverview({
         key: 'applicationInstances',
         render: (content) =>
           uniq(
-            content
-              .filter(({ features }) => /ABAP|J2EE/.test(features))
-              .map(({ features }) =>
-                features.includes('ABAP') ? 'ABAP' : 'JAVA'
-              )
-          ).join('/'),
+            flatMap(
+              content
+                .map((instance) => instance.features)
+                .map((feature) => feature.split('|'))
+            )
+          )
+            .filter((item) => item === 'J2EE' || item === 'ABAP')
+            .map((item) => (item === 'J2EE' ? 'JAVA' : item))
+            .join('/'),
       },
 
       {
