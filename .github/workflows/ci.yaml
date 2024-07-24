@@ -19,8 +19,15 @@ env:
 
 jobs:
   elixir-deps:
-    name: Elixir dependencies
+    name: Elixir ${{ matrix.mix_env }} dependencies
     runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        include:
+          - mix_env: dev
+          - mix_env: test
+    env:
+      MIX_ENV: ${{ matrix.mix_env }}
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.12.1
@@ -44,7 +51,7 @@ jobs:
         with:
           path: |
             deps
-            _build/test
+            _build/${{ matrix.mix_env }}
             priv/plts
           key: ${{ runner.os }}-${{ steps.setup-elixir.outputs.otp-version }}-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}
       - name: Install Dependencies
