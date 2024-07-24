@@ -3,6 +3,6 @@ defmodule Trento.DeregistrationProcessManager do
   Legacy DeregistrationProcessManager module
   """
 
-  def supersede,
+  def superseded_by,
     do: Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessManager
 end
