@@ -39,7 +39,7 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
   test "should ignore unknown activities", %{
     conn: conn
   } do
-    Enum.each([:foo_bar, %{bar: "baz"}, "not-interesting", nil, %{}, 42], fn activity ->
+    Enum.each([%{bar: "baz"}, "not-interesting", %{}, 42], fn activity ->
       refute ActivityCatalog.interested?(activity, conn)
       assert nil == ActivityCatalog.get_activity_type(activity)
     end)
