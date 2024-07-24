@@ -19,7 +19,7 @@ defmodule TrentoWeb.V1.ActivityLogView do
     }
   end
 
-  def render("pagination.json", %{pagination: pagination}) when is_map(pagination) do
+  def render("pagination.json", %{pagination: pagination}) do
     %{
       end_cursor: end_cursor,
       start_cursor: start_cursor,
