@@ -36,10 +36,12 @@ export const sapSystemFactory = Factory.define(({ params }) => {
   const sid = params.sid || generateSid();
   const databaseId = params.database_id || faker.string.uuid();
   const databaseSid = params.database_sid || generateSid();
+  const sapSystemType = params.sap_system_type || 'ABAP';
   return {
     application_instances: sapSystemApplicationInstanceFactory.buildList(2, {
       sap_system_id: id,
       sid,
+      features: sapSystemType,
     }),
     database_instances: databaseInstanceFactory.buildList(2, {
       database_id: databaseId,
