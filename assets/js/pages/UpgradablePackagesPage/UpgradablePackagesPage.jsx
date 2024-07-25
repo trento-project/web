@@ -5,7 +5,6 @@ import { get } from 'lodash';
 
 import { getHost } from '@state/selectors/host';
 import { getUpgradablePackages } from '@state/selectors/softwareUpdates';
-import { fetchSoftwareUpdatesSettings } from '@state/softwareUpdatesSettings';
 import {
   fetchSoftwareUpdates,
   fetchUpgradablePackagesPatches,
@@ -21,7 +20,6 @@ function UpgradablePackagesPage() {
 
   useEffect(() => {
     dispatch(fetchSoftwareUpdates(hostID));
-    dispatch(fetchSoftwareUpdatesSettings());
   }, []);
 
   const host = useSelector(getHost(hostID));

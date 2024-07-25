@@ -74,16 +74,15 @@ describe('Settings Page', () => {
 
   describe('Software Updates Section', () => {
     it('should render a loading box while fetching settings', async () => {
+      axiosMock.onGet('/api/v1/settings/suse_manager').reply(
+        (_) =>
+          new Promise((resolve) => {
+            setTimeout(() => resolve([200, {}]), 5000);
+          })
+      );
+
       const [StatefulSettings] = withState(<SettingsPage />, {
         ...defaultInitialState,
-        softwareUpdatesSettings: {
-          loading: true,
-          settings: {
-            url: undefined,
-            username: undefined,
-            ca_uploaded_at: undefined,
-          },
-        },
       });
 
       renderWithRouter(StatefulSettings);
@@ -96,18 +95,13 @@ describe('Settings Page', () => {
     it('should render an empty SUSE Manager Config Section', async () => {
       const [StatefulSettings] = withState(<SettingsPage />, {
         ...defaultInitialState,
-        softwareUpdatesSettings: {
-          loading: false,
-          settings: {
-            url: undefined,
-            username: undefined,
-            ca_uploaded_at: undefined,
-          },
-          error: null,
-        },
       });
 
-      renderWithRouter(StatefulSettings);
+      axiosMock.onGet('/api/v1/settings/suse_manager').reply(404, {});
+
+      await act(async () => {
+        renderWithRouter(StatefulSettings);
+      });
 
       expect(screen.getByText('SUSE Manager URL')).toBeVisible();
       expect(screen.getByText('https://')).toBeVisible();
@@ -126,17 +120,15 @@ describe('Settings Page', () => {
 
       const [StatefulSettings] = withState(<SettingsPage />, {
         ...defaultInitialState,
-        softwareUpdatesSettings: {
-          loading: false,
-          settings,
-          error: null,
-        },
       });
+
+      axiosMock.onGet('/api/v1/settings/suse_manager').reply(200, settings);
 
       const { url, username, ca_uploaded_at } = settings;
 
-      renderWithRouter(StatefulSettings);
-
+      await act(async () => {
+        renderWithRouter(StatefulSettings);
+      });
       expect(screen.getByText('SUSE Manager URL')).toBeVisible();
       expect(screen.getByText(url)).toBeVisible();
 

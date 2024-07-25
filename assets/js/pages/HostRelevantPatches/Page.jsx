@@ -6,7 +6,6 @@ import BackButton from '@common/BackButton';
 
 import { getHost } from '@state/selectors/host';
 import { getSoftwareUpdatesPatches } from '@state/selectors/softwareUpdates';
-import { fetchSoftwareUpdatesSettings } from '@state/softwareUpdatesSettings';
 import { fetchSoftwareUpdates } from '@state/softwareUpdates';
 import HostRelevantPatchesPage from './HostRelevantPatchesPage';
 
@@ -17,7 +16,6 @@ export default function Page() {
 
   useEffect(() => {
     dispatch(fetchSoftwareUpdates(hostID));
-    dispatch(fetchSoftwareUpdatesSettings());
   }, []);
 
   const host = useSelector(getHost(hostID));

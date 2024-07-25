@@ -24,7 +24,6 @@ import {
   updateSaptuneStatus,
 } from '@state/hosts';
 
-import { fetchSoftwareUpdatesSettings } from '@state/softwareUpdatesSettings';
 import { fetchSoftwareUpdates } from '@state/softwareUpdates';
 
 import { networkClient } from '@lib/network';
@@ -226,9 +225,6 @@ describe('Hosts sagas', () => {
       payload: { id },
     });
 
-    expect(dispatched).toEqual([
-      fetchSoftwareUpdatesSettings(),
-      fetchSoftwareUpdates(id),
-    ]);
+    expect(dispatched).toEqual([fetchSoftwareUpdates(id)]);
   });
 });
