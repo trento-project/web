@@ -62,7 +62,6 @@ function Table({
   searchParams,
   setSearchParams,
   emptyStateText = 'No data available',
-  withPadding = true,
   header = null,
   rowKey = defaultRowKey,
 }) {
@@ -160,7 +159,7 @@ function Table({
       <div className="">
         <div
           className={classNames('-mx-4 sm:-mx-8 px-4 sm:px-8', {
-            'pt-4': withPadding,
+            'pt-4': usePadding,
           })}
         >
           <div

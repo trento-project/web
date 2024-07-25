@@ -84,7 +84,6 @@ function HanaClusterSite({ name, nodes, state = null, srHealthState = null }) {
         className="tn-site-table"
         config={siteDetailsConfig}
         data={nodes}
-        withPadding={false}
         header={
           <div className="flex space-x-2 p-4">
             {state && (
