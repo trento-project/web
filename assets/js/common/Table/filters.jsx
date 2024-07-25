@@ -2,7 +2,7 @@ import React from 'react';
 
 import { uniq } from 'lodash';
 
-import Filter from './Filter';
+import Filter from '@common/Filter';
 
 export const getDefaultFilterFunction = (filter, key) => (element) =>
   filter.includes(element[key]);
