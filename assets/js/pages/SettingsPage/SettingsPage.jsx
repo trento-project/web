@@ -95,9 +95,8 @@ function SettingsPage() {
     setSuseManagerSettingsModalOpen(false);
   }, [suseManagerSettings]);
 
-  const hasSoftwareUpdatesSettings = values(suseManagerSettings).every(
-    (value) => !isUndefined(value)
-  );
+  const hasSoftwareUpdatesSettings =
+    Object.keys(suseManagerSettings).length > 0;
 
   const { abilities } = useSelector(getUserProfile);
 
