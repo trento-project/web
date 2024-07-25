@@ -144,7 +144,7 @@ jobs:
 
   static-code-analysis:
     name: Static Code Analysis
-    needs: [elixir-deps, npm-deps ]
+    needs: [elixir-deps, npm-deps, api-bc-check]
     runs-on: ubuntu-20.04
     steps:
       - name: Cancel Previous Runs
@@ -225,7 +225,7 @@ jobs:
 
   test:
     name: Test
-    needs: [elixir-deps ]
+    needs: [elixir-deps, api-bc-check]
     runs-on: ubuntu-20.04
     steps:
       - name: Cancel Previous Runs
@@ -346,7 +346,7 @@ jobs:
 
   test-e2e:
     name: End to end tests
-    needs: [elixir-deps, npm-deps, npm-e2e-deps ]
+    needs: [elixir-deps, npm-deps, npm-e2e-deps, api-bc-check]
     runs-on: ubuntu-20.04
     env:
       MIX_ENV: dev
@@ -449,7 +449,8 @@ jobs:
         check-regression-label,
         elixir-deps,
         npm-deps,
-        npm-e2e-deps
+        npm-e2e-deps,
+        api-bc-check,
       ]
     runs-on: ubuntu-22.04
     if: needs.check-regression-label.outputs.run_regression_test == 'true'
