@@ -76,7 +76,6 @@ import {
   checkUserPasswordChangeRequested,
 } from '@state/sagas/user';
 import { watchChecksSelectionEvents } from '@state/sagas/checksSelection';
-import { watchSoftwareUpdateSettings } from '@state/sagas/softwareUpdatesSettings';
 import { watchActivityLogsSettings } from '@state/sagas/activityLogsSettings';
 import { watchSoftwareUpdates } from '@state/sagas/softwareUpdates';
 
@@ -248,7 +247,6 @@ export default function* rootSaga() {
     watchResetState(),
     watchSapSystemEvents(),
     watchUserLoggedIn(),
-    watchSoftwareUpdateSettings(),
     watchActivityLogsSettings(),
     watchSoftwareUpdates(),
   ]);
