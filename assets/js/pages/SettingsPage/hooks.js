@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import { logError } from '@lib/log';
 import { useDispatch } from 'react-redux';
-import { dismissNotification } from '@state/notifications';
-import { notify } from '@state/notifications';
+import { dismissNotification, notify } from '@state/notifications';
 import { API_KEY_EXPIRATION_NOTIFICATION_ID } from '@state/sagas/settings';
 import { get, patch } from '@lib/network';
 import {
