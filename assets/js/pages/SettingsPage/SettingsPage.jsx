@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Transition } from '@headlessui/react';
-import { values, isUndefined } from 'lodash';
 import { format, isBefore, parseISO } from 'date-fns';
 import { EOS_INFO_OUTLINED } from 'eos-icons-react';
 import { getFromConfig } from '@lib/config';
