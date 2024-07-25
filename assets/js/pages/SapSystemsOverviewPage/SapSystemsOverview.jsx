@@ -86,13 +86,12 @@ function SapSystemsOverview({
           )
             .filter((item) => item === 'J2EE' || item === 'ABAP')
             .map((item) => (item === 'J2EE' ? 'JAVA' : item));
-          // Join the results in a fixed order
-          const systemHasABAP = instanceTypes.includes('ABAP');
-          const systemHasJAVA = instanceTypes.includes('JAVA');
-          const sapSystemType = [];
-          if (systemHasABAP) sapSystemType.push('ABAP');
-          if (systemHasJAVA) sapSystemType.push('JAVA');
-          return sapSystemType.join('/');
+          // Join the results in a fixed order ABAP, JAVA, ABAP/JAVA or ''
+          const sapSystemType = ['ABAP', 'JAVA']
+            .filter((type) => instanceTypes.includes(type))
+            .join('/');
+
+          return sapSystemType;
         },
       },
 
