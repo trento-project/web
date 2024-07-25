@@ -1,10 +1,12 @@
 import { faker } from '@faker-js/faker';
 import {
+  getSoftwareUpdatesSettingsConfigured,
   getSoftwareUpdates,
   getSoftwareUpdatesStats,
   getSoftwareUpdatesLoading,
   getSoftwareUpdatesPatches,
   getUpgradablePackages,
+  getSoftwareUpdatesErrors,
 } from './softwareUpdates';
 
 describe('Software Updates selector', () => {
@@ -96,14 +98,28 @@ describe('Software Updates selector', () => {
   };
   const state = {
     softwareUpdates: {
+      settingsConfigured: true,
       softwareUpdates,
     },
   };
 
   it('should return the software updates', () => {
-    expect(getSoftwareUpdates(state)).toEqual({
-      softwareUpdates,
-    });
+    expect(getSoftwareUpdates(state)).toEqual(state.softwareUpdates);
+  });
+
+  it('should return the software updates settings configured', () => {
+    expect(getSoftwareUpdatesSettingsConfigured(state)).toEqual(true);
+  });
+
+  it('should return the software updates settings not configured', () => {
+    expect(
+      getSoftwareUpdatesSettingsConfigured({
+        softwareUpdates: {
+          settingsConfigured: false,
+          softwareUpdates,
+        },
+      })
+    ).toEqual(false);
   });
 
   it('should return the correct software updates statistics', () => {
@@ -128,6 +144,30 @@ describe('Software Updates selector', () => {
       softwareUpdates: { softwareUpdates: { [hostID]: { loading: true } } },
     };
     expect(getSoftwareUpdatesLoading(newState, hostID)).toEqual(true);
+  });
+
+  it('should get errors', () => {
+    const errors = [
+      {
+        title: 'Internal Server Error',
+        detail: 'Something went wrong.',
+      },
+    ];
+
+    const softwareUpdatesWithError = {
+      ...softwareUpdates,
+      [hostID]: { ...softwareUpdates[hostID], errors },
+    };
+
+    expect(
+      getSoftwareUpdatesErrors(
+        {
+          ...state,
+          softwareUpdates: { softwareUpdates: softwareUpdatesWithError },
+        },
+        hostID
+      )
+    ).toEqual(errors);
   });
 
   it('should return the relevant patches', () => {

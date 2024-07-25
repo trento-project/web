@@ -35,6 +35,8 @@ export function* fetchSoftwareUpdates({ payload: hostID }) {
 
     if (errorCode === 422 && suma_unauthorized) {
       yield put(setSettingsNotConfigured());
+    } else {
+      yield put(setSettingsConfigured());
     }
 
     yield put(setSoftwareUpdatesErrors({ hostID, errors }));
@@ -59,7 +61,10 @@ export function* fetchUpgradablePackagesPatches({
 
     if (errorCode === 422 && suma_unauthorized) {
       yield put(setSettingsNotConfigured());
+    } else {
+      yield put(setSettingsConfigured());
     }
+
     yield put(setPatchesForPackages({ hostID, patches: [] }));
   }
 }
