@@ -25,10 +25,7 @@ defmodule TrentoWeb.V1.ActivityLogView do
       start_cursor: start_cursor,
       flop: %{
         first: first,
-        last: last,
-        order_by: order_by,
-        order_directions: order_directions,
-        filters: filters
+        last: last
       }
     } =
       pagination
@@ -37,10 +34,7 @@ defmodule TrentoWeb.V1.ActivityLogView do
       start_cursor: start_cursor,
       end_cursor: end_cursor,
       first: first,
-      last: last,
-      filters: Enum.map(filters, &Map.from_struct(&1)),
-      order_by: order_by,
-      order_directions: order_directions
+      last: last
     }
   end
 end
