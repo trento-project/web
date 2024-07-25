@@ -104,6 +104,7 @@ export const useSuseManagerSettings = () => {
     updateSuseManagerSettings,
     testSuseManagerSettings,
     deleteSuseManagerSettings,
+    clearSuseManagerEntityErrors: () => setEntityErrors([]),
     suseManagerSettingsLoading: loading,
     suseManagerSettings: settings,
     suseManagerSettingsEntityErrors: entityErrors,

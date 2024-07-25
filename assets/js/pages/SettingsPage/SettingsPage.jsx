@@ -77,6 +77,7 @@ function SettingsPage() {
     suseManagerSettingsEntityErrors,
     suseManagerSettingsfetchError,
     suseManagerSettingsTesting,
+    clearSuseManagerEntityErrors,
   } = useSuseManagerSettings();
 
   const [suseManagerSettingsModalOpen, setSuseManagerSettingsModalOpen] =
@@ -262,7 +263,10 @@ function SettingsPage() {
                 url={suseManagerSettings.url}
                 username={suseManagerSettings.username}
                 certUploadDate={suseManagerSettings.ca_uploaded_at}
-                onEditClick={() => setSuseManagerSettingsModalOpen(true)}
+                onEditClick={() => {
+                  clearSuseManagerEntityErrors();
+                  setSuseManagerSettingsModalOpen(true);
+                }}
                 clearSettingsDialogOpen={clearingSoftwareUpdatesSettings}
                 onClearClick={() => setClearingSoftwareUpdatesSettings(true)}
                 onClearSettings={() => {
@@ -273,7 +277,9 @@ function SettingsPage() {
                   hasSoftwareUpdatesSettings && !suseManagerSettingsTesting
                 }
                 onTestConnection={() => testSuseManagerSettings()}
-                onCancel={() => setClearingSoftwareUpdatesSettings(false)}
+                onCancel={() => {
+                  setClearingSoftwareUpdatesSettings(false);
+                }}
               />
             </SettingsLoader>
             <SuseManagerSettingsModal
