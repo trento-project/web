@@ -4,7 +4,12 @@
     padding: 0;
   }
   body {
-    font: 13.34px helvetica, arial, freesans, clean, sans-serif;
+    font:
+      13.34px helvetica,
+      arial,
+      freesans,
+      clean,
+      sans-serif;
     color: black;
     line-height: 1.4em;
     background-color: #f8f8f8;
@@ -29,7 +34,11 @@
   input[type='password'],
   input[type='image'],
   textarea {
-    font: 99% helvetica, arial, freesans, sans-serif;
+    font:
+      99% helvetica,
+      arial,
+      freesans,
+      sans-serif;
   }
   select,
   option {
@@ -40,7 +49,11 @@
   }
   pre,
   code {
-    font: 12px Menlo, Monaco, 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono',
+    font:
+      12px Menlo,
+      Monaco,
+      'DejaVu Sans Mono',
+      'Bitstream Vera Sans Mono',
       monospace;
   }
   pre {
