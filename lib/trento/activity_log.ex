@@ -89,7 +89,7 @@ defmodule Trento.ActivityLog do
     %{}
   end
 
-  def parse_params(query_params) do
+  defp parse_params(query_params) do
     query_params
     |> Enum.map(fn
       {:from_date, v} -> {:filters, %{field: :inserted_at, op: :<=, value: v}}
