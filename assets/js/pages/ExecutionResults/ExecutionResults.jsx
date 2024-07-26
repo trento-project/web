@@ -209,7 +209,6 @@ function ExecutionResults({
             <Table
               config={resultsTableConfig}
               data={filterAndSortData(tableData, item)}
-              withPadding={false}
             />
           </Accordion>
         ))}
