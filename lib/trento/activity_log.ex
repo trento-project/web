@@ -83,7 +83,7 @@ defmodule Trento.ActivityLog do
        }
        """ && false
   @spec parse_params(map()) :: map()
-  def parse_params(query_params) when query_params == %{} do
+  defp parse_params(query_params) when query_params == %{} do
     # Implies
     # %{first: 25, order_by: [:inserted_at], order_directions: [:desc]}
     %{}
