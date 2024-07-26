@@ -4,20 +4,19 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ActivityLog do
   require OpenApiSpex
   alias OpenApiSpex.Schema
 
-  OpenApiSpex.schema(
-    %{
-      title: "ActivityLog",
-      description: "Activity Log for the current installation.",
+  defmodule ActivityLogEntries do
+    @moduledoc false
+    OpenApiSpex.schema(%{
       type: :array,
       items: %Schema{
-        title: "ActivityLogEntry",
+        title: "ActivityLogEntries",
         type: :object,
         additionalProperties: false,
         properties: %{
           id: %Schema{
             type: :string,
-            description: "Identifier of Activity Log entry.",
-            format: :uuid
+            format: :uuid,
+            description: "UUID (v4) of Activity Log entry."
           },
           type: %Schema{
             type: :string,
@@ -37,7 +36,26 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ActivityLog do
         },
         required: [:id, :type, :actor, :metadata, :occurred_on]
       }
-    },
-    struct?: false
-  )
+    })
+  end
+
+  defmodule ActivityLog do
+    @moduledoc false
+
+    OpenApiSpex.schema(
+      %{
+        title: "ActivityLog",
+        description: "Activity Log for the current installation.",
+        type: :object,
+        properties: %{
+          data: ActivityLogEntries,
+          pagination: %Schema{
+            type: :object
+          }
+        },
+        required: [:data, :pagination]
+      },
+      struct?: false
+    )
+  end
 end

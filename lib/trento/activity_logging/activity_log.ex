@@ -7,6 +7,20 @@ defmodule Trento.ActivityLog.ActivityLog do
 
   @type t() :: %__MODULE__{}
 
+  @derive {
+    Flop.Schema,
+    filterable: [:type, :actor, :inserted_at],
+    sortable: [:type, :actor, :inserted_at],
+    max_limit: 100,
+    default_limit: 25,
+    default_order: %{
+      order_by: [:inserted_at],
+      order_directions: [:desc]
+    },
+    pagination_types: [:first, :last],
+    default_pagination_type: :first
+  }
+
   @primary_key {:id, :binary_id, autogenerate: true}
   schema "activity_logs" do
     field :type, :string

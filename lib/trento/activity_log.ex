@@ -43,16 +43,6 @@ defmodule Trento.ActivityLog do
     end
   end
 
-  @spec list_activity_log() :: list(ActivityLog.t())
-  def list_activity_log do
-    # This will be made filterable/paginatable in a later PR
-    query =
-      from activity in ActivityLog,
-        order_by: [desc: activity.inserted_at]
-
-    Repo.all(query)
-  end
-
   @spec clear_expired_logs() :: :ok | {:error, any()}
   def clear_expired_logs do
     with {:ok, %{retention_time: retention_time}} <- Trento.ActivityLog.get_settings(),
@@ -60,6 +50,61 @@ defmodule Trento.ActivityLog do
       delete_logs_before(expiration_date)
       :ok
     end
+  end
+
+  @spec list_activity_log(map()) ::
+          {:ok, list(ActivityLog.t()), Flop.Meta.t()} | {:error, :activity_log_fetch_error}
+  def list_activity_log(params) do
+    parsed_params = parse_params(params)
+
+    case Flop.validate_and_run(ActivityLog, parsed_params, for: ActivityLog) do
+      {:ok, {activity_log_entries, meta}} ->
+        {:ok, activity_log_entries, meta}
+
+      error ->
+        Logger.error("Activity log fetch error: #{inspect(error)}")
+        {:error, :activity_log_fetch_error}
+    end
+  end
+
+  # ''&& false' is a workaround until we reach OTP 27 that allows doc tag for private functions;
+  # we get a compile warning without this with OTP 26
+  @doc """
+       Parses the query parameters and returns a map with the parsed values as expected by the Flop library.
+       Some parameters are recognized by Flop and are used as is (example: last, first, after, before);
+       some other parameters are used to build filters with custom operator logic (example: from_date, to_date, actor, type).
+       ## Examples
+             iex> parse_params([{:from_date, "2021-01-31"}, {:to_date, "2021-01-01"}, last: 10])
+       %{
+          filters: [
+                     %{value: "2021-01-31", op: :<=, field: :inserted_at}, 
+                     %{value: "2021-01-01", op: :>=, field: :inserted_at}], 
+          last: 10
+       }
+       """ && false
+  @spec parse_params(map()) :: map()
+  defp parse_params(query_params) when query_params == %{} do
+    # Implies
+    # %{first: 25, order_by: [:inserted_at], order_directions: [:desc]}
+    %{}
+  end
+
+  defp parse_params(query_params) do
+    query_params
+    |> Enum.map(fn
+      {:from_date, v} -> {:filters, %{field: :inserted_at, op: :<=, value: v}}
+      {:to_date, v} -> {:filters, %{field: :inserted_at, op: :>=, value: v}}
+      {:actor, v} -> {:filters, %{field: :actor, op: :ilike_or, value: v}}
+      {:type, v} -> {:filters, %{field: :type, op: :ilike_or, value: v}}
+      param -> param
+    end)
+    |> Enum.reduce(%{filters: []}, fn
+      {:filters, filter}, acc ->
+        Map.put(acc, :filters, [filter | acc.filters])
+
+      {k, v}, acc ->
+        Map.put(acc, k, v)
+    end)
   end
 
   defp log_error({:error, _} = error, message) do

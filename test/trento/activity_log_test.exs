@@ -181,7 +181,7 @@ defmodule Trento.ActivityLogTest do
 
   describe "retrieving logged activity" do
     test "should return an emtpty list" do
-      assert [] == ActivityLog.list_activity_log()
+      assert {:ok, [], %Flop.Meta{}} = ActivityLog.list_activity_log(%{})
     end
 
     test "should return entries ordered by occurrence date" do
@@ -191,14 +191,109 @@ defmodule Trento.ActivityLogTest do
       insert(:activity_log_entry, inserted_at: newer_occurrence)
       insert(:activity_log_entry, inserted_at: older_occurrence)
 
-      assert [
-               %ActivityLogEntry{
-                 inserted_at: ^newer_occurrence
-               },
-               %ActivityLogEntry{
-                 inserted_at: ^older_occurrence
-               }
-             ] = ActivityLog.list_activity_log()
+      assert {:ok,
+              [
+                %ActivityLogEntry{
+                  inserted_at: ^newer_occurrence
+                },
+                %ActivityLogEntry{
+                  inserted_at: ^older_occurrence
+                }
+              ], _} = ActivityLog.list_activity_log(%{})
+    end
+
+    test "should return paginated and default ordered by occurrence date activity log when no params provided" do
+      # insert 100 log entries
+      all_logs = insert_list(100, :activity_log_entry)
+
+      default_params = %{}
+      {:ok, logs, _} = ActivityLog.list_activity_log(default_params)
+
+      # default limit is 25
+      assert length(logs) == 25
+      # default order is by inserted_at timestamp
+      all_logs_sorted =
+        all_logs |> Enum.sort_by(fn entry -> entry.inserted_at end, :desc) |> Enum.take(25)
+
+      assert logs == all_logs_sorted
+    end
+
+    test "should return earliest 5 paginated activity log entries" do
+      all_logs = insert_list(100, :activity_log_entry)
+      params = %{last: 5, order_by: [:inserted_at], order_directions: [:desc]}
+
+      {:ok, logs, _} = ActivityLog.list_activity_log(params)
+
+      assert length(logs) == 5
+
+      all_logs_sorted =
+        all_logs
+        |> Enum.sort_by(fn entry -> entry.inserted_at end, :desc)
+        |> Enum.drop(95)
+
+      assert length(all_logs_sorted) == length(logs)
+      assert all_logs_sorted == logs
+    end
+
+    test "should return most recent 5 paginated activity log entries" do
+      all_logs = insert_list(100, :activity_log_entry)
+
+      params = %{first: 5}
+      {:ok, logs, _} = ActivityLog.list_activity_log(params)
+
+      assert length(logs) == 5
+
+      all_logs_sorted =
+        all_logs
+        |> Enum.sort_by(fn entry -> entry.inserted_at end, :desc)
+        |> Enum.take(5)
+
+      assert length(all_logs_sorted) == length(logs)
+      assert all_logs_sorted == logs
+    end
+
+    test "should return latest paginated activity log entries number 26 to 50 (desc)" do
+      all_logs = insert_list(100, :activity_log_entry)
+      params = %{}
+
+      {:ok, logs, meta} = ActivityLog.list_activity_log(params)
+
+      assert length(logs) == 25
+      new_params = %{first: 25, after: meta.end_cursor}
+
+      {:ok, next_logs, _next_meta} = ActivityLog.list_activity_log(new_params)
+
+      next_logs_alt =
+        all_logs
+        |> Enum.sort_by(fn entry -> entry.inserted_at end, :desc)
+        |> Enum.drop(25)
+        |> Enum.take(25)
+
+      assert length(next_logs) == 25
+      assert length(next_logs_alt) == length(next_logs)
+      assert next_logs_alt == next_logs
+    end
+
+    test "should return latest paginated activity log entries number 21 to 25 (desc)" do
+      all_logs = insert_list(100, :activity_log_entry)
+      params = %{first: 26}
+
+      {:ok, logs, meta} = ActivityLog.list_activity_log(params)
+
+      assert length(logs) == 26
+      new_params = %{last: 5, before: meta.end_cursor}
+
+      {:ok, next_logs, _next_meta} = ActivityLog.list_activity_log(new_params)
+
+      next_logs_alt =
+        all_logs
+        |> Enum.sort_by(fn entry -> entry.inserted_at end, :desc)
+        |> Enum.drop(20)
+        |> Enum.take(5)
+
+      assert length(next_logs) == 5
+      assert length(next_logs_alt) == length(next_logs)
+      assert next_logs_alt == next_logs
     end
   end
 end
