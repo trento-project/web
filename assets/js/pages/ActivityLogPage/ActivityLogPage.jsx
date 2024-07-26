@@ -14,7 +14,7 @@ function ActivityLogPage() {
   useEffect(() => {
     getActivityLog()
       .then((response) => {
-        setActivityLog(response.data);
+        setActivityLog(response.data?.data ?? []);
       })
       .catch(() => setActivityLog([]))
       .finally(() => {

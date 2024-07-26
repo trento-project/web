@@ -14,19 +14,26 @@ const axiosMock = new MockAdapter(networkClient);
 
 describe('ActivityLogPage', () => {
   it('should render table without data', async () => {
-    axiosMock.onGet('/api/v1/activity_log').reply(200, []);
+    axiosMock.onGet('/api/v1/activity_log').reply(200, { data: [] });
     await act(async () => renderWithRouter(<ActivityLogPage />));
     expect(screen.getByText('No data available')).toBeVisible();
   });
 
   it.each`
     responseStatus | responseBody
+    ${200}         | ${{ dataz: [] }}
+    ${200}         | ${[]}
+    ${200}         | ${{}}
+    ${200}         | ${{ foo: [] }}
+    ${200}         | ${''}
+    ${200}         | ${null}
     ${404}         | ${[]}
+    ${404}         | ${{ data: [] }}
     ${500}         | ${{ error: 'Internal Server Error' }}
     ${503}         | ${null}
     ${504}         | ${''}
   `(
-    'should render empty activity log on error `$responseStatus`',
+    'should render empty activity log on responseStatus: `$responseStatus` and responseBody: `$responseBody`',
     async ({ responseStatus, responseBody }) => {
       axiosMock
         .onGet('/api/v1/activity_log')
@@ -41,7 +48,7 @@ describe('ActivityLogPage', () => {
   it('should render tracked activity log', async () => {
     axiosMock
       .onGet('/api/v1/activity_log')
-      .reply(200, activityLogEntryFactory.buildList(5));
+      .reply(200, { data: activityLogEntryFactory.buildList(5) });
 
     const { container } = await act(() =>
       renderWithRouter(<ActivityLogPage />)
