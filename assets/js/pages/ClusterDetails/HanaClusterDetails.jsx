@@ -16,7 +16,7 @@ import DisabledGuard from '@common/DisabledGuard';
 
 import CheckResultsOverview from '@pages/CheckResultsOverview';
 
-import { EOS_SETTINGS, EOS_CLEAR_ALL, EOS_PLAY_CIRCLE } from 'eos-icons-react';
+import { EOS_PLAYLIST_ADD_CHECK_FILLED, EOS_CLEAR_ALL, EOS_PLAY_CIRCLE } from 'eos-icons-react';
 
 import HanaClusterSite from './HanaClusterSite';
 import SBDDetails from './SBDDetails';
@@ -86,7 +86,7 @@ function HanaClusterDetails({
               size="small"
               onClick={() => navigate(`/clusters/${clusterID}/settings`)}
             >
-              <EOS_SETTINGS className="inline-block fill-jungle-green-500" />{' '}
+              <EOS_PLAYLIST_ADD_CHECK_FILLED className="inline-block fill-jungle-green-500" />{' '}
               Check Selection
             </Button>
 
