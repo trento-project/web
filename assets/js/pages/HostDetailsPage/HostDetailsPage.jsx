@@ -50,7 +50,7 @@ const getSoftwareUpdatesErrorMessage = (errors) => {
     return 'Connection to SUMA not working';
   }
 
-  return undefined;
+  return 'Unknown';
 };
 
 const getSoftwareUpdatesErrorTooltip = (errors) => {

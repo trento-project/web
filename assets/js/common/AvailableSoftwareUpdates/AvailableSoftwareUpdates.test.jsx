@@ -41,15 +41,22 @@ describe('AvailableSoftwareUpdates component', () => {
     expect(screen.getAllByTestId('eos-svg-component')).toHaveLength(5);
   });
 
-  it('renders Unknown status', async () => {
+  it('renders error status', async () => {
     const user = userEvent.setup();
     const tooltip = faker.lorem.words({ min: 3, max: 5 });
-    render(<AvailableSoftwareUpdates settingsConfigured tooltip={tooltip} />);
+    const errorMessage = faker.person.jobType();
+    render(
+      <AvailableSoftwareUpdates
+        settingsConfigured
+        tooltip={tooltip}
+        errorMessage={errorMessage}
+      />
+    );
 
-    expect(screen.getAllByText('Unknown')).toHaveLength(2);
+    expect(screen.getAllByText(errorMessage)).toHaveLength(2);
     expect(screen.getAllByTestId('eos-svg-component')).toHaveLength(4);
 
-    await user.hover(screen.getAllByText('Unknown')[0]);
+    await user.hover(screen.getAllByText(errorMessage)[0]);
     expect(screen.getByText(tooltip)).toBeInTheDocument();
   });
 

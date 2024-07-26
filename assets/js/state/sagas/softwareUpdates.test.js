@@ -107,6 +107,7 @@ describe('Software Updates saga', () => {
         expect(dispatched).toEqual([
           startLoadingSoftwareUpdates({ hostID }),
           setEmptySoftwareUpdates({ hostID }),
+          setSettingsConfigured(),
           setSoftwareUpdatesErrors({ hostID, errors: body.errors }),
         ]);
       }
