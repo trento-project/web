@@ -112,7 +112,7 @@ function HanaClusterDetails({
               >
                 <Button
                   type="primary"
-                  className="mx-0.5 border border-green-500"
+                  className="mx-0.5"
                   size="small"
                   onClick={() => {
                     onStartExecution(clusterID, hosts, selectedChecks);
