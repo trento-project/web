@@ -11,7 +11,15 @@ import { EOS_CLOSE } from 'eos-icons-react';
 const getLabel = (value, placeholder) =>
   value.length === 0 ? placeholder : value.join(', ');
 
-function Filter({ options, title, value, onChange }) {
+/**
+ * Filter component
+ *
+ * @param {string[]} props.options List of options to filter, e.g. ['Option 1', 'Option 2']
+ * @param {string} props.title Title of the filter. It will be displayed in the button when the filter is empty
+ * @param {string[]} props.value Selected options. Default is an empty array
+ * @param {function} props.onChange Function to call when the selected options change
+ */
+function Filter({ options, title, value = [], onChange }) {
   const ref = useRef();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
