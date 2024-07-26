@@ -1,11 +1,12 @@
 const path = require('path');
 module.exports = {
-  stories: ['../js/**/*.stories.mdx', '../js/**/*.stories.@(js|jsx|ts|tsx)'],
+  stories: ['../js/**/*.mdx', '../js/**/*.stories.@(js|jsx|ts|tsx)'],
   addons: [
     '@storybook/addon-links',
     '@storybook/addon-essentials',
     '@storybook/addon-actions',
     '@storybook/addon-interactions',
+    '@storybook/addon-webpack5-compiler-babel',
   ],
   framework: {
     name: '@storybook/react-webpack5',
@@ -26,8 +27,6 @@ module.exports = {
 
     return config;
   },
-  docs: {
-    autodocs: true,
-  },
+  docs: {},
   staticDirs: ['../../priv/static'],
 };

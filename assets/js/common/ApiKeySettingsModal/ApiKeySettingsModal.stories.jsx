@@ -1,6 +1,6 @@
 /* eslint-disable no-console, react/function-component-definition */
 import React from 'react';
-import { useArgs } from '@storybook/client-api';
+import { useArgs } from '@storybook/preview-api';
 import ApiKeySettingsModal from './ApiKeySettingsModal';
 
 export default {
