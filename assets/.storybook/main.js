@@ -6,7 +6,7 @@ module.exports = {
     '@storybook/addon-essentials',
     '@storybook/addon-actions',
     '@storybook/addon-interactions',
-    '@storybook/addon-webpack5-compiler-babel'
+    '@storybook/addon-webpack5-compiler-babel',
   ],
   framework: {
     name: '@storybook/react-webpack5',
