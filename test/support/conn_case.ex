@@ -32,6 +32,8 @@ defmodule TrentoWeb.ConnCase do
 
       # The default endpoint for testing
       @endpoint TrentoWeb.Endpoint
+
+      use TrentoWeb, :verified_routes
     end
   end
 

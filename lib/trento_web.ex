@@ -16,6 +16,7 @@ defmodule TrentoWeb do
   below. Instead, define any helper function in modules
   and import those modules here.
   """
+  def static_paths, do: ~w(assets fonts images favicon.ico robots.txt)
 
   def controller do
     quote do
@@ -23,6 +24,8 @@ defmodule TrentoWeb do
 
       import Plug.Conn
       import TrentoWeb.Gettext
+
+      unquote(verified_routes())
       alias TrentoWeb.Router.Helpers, as: Routes
     end
   end
@@ -82,7 +85,8 @@ defmodule TrentoWeb do
       use Phoenix.HTML
 
       # Import LiveView and .heex helpers (live_render, live_patch, <.form>, etc)
-      import Phoenix.LiveView.Helpers
+      # https://elixirforum.com/t/phoenix-liveview-0-18-and-live-flash/50841
+      import Phoenix.Component
 
       # Import basic rendering functionality (render, render_layout, etc)
       import Phoenix.View
@@ -90,6 +94,17 @@ defmodule TrentoWeb do
       import TrentoWeb.ErrorHelpers
       import TrentoWeb.Gettext
       alias TrentoWeb.Router.Helpers, as: Routes
+
+      unquote(verified_routes())
+    end
+  end
+
+  def verified_routes do
+    quote do
+      use Phoenix.VerifiedRoutes,
+        endpoint: TrentoWeb.Endpoint,
+        router: TrentoWeb.Router,
+        statics: TrentoWeb.static_paths()
     end
   end
 

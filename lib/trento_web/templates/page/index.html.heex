@@ -1,12 +1,18 @@
 <div id="trento" />
 
 <script>
-const config = {
-    checksServiceBaseUrl: '<%= @check_service_base_url %>',
-    deregistrationDebounce: <%= @deregistration_debounce %>,
-    chartsEnabled: <%= @charts_enabled %>,
-    suseManagerEnabled: <%= @suse_manager_enabled %>,
-};
+  const config = {
+      checksServiceBaseUrl: '<%= @check_service_base_url %>',
+      deregistrationDebounce: <%= @deregistration_debounce %>,
+      chartsEnabled: <%= @charts_enabled %>,
+      suseManagerEnabled: <%= @suse_manager_enabled %>,
+  };
 </script>
 
-<script defer phx-track-static type="text/javascript" src={Routes.static_path(@conn, "/assets/trento.js")}></script>
+<script
+  defer
+  phx-track-static
+  type="text/javascript"
+  src={Routes.static_path(@conn, "/assets/trento.js")}
+>
+</script>

@@ -82,12 +82,12 @@ defmodule Trento.MixProject do
       {:jason, "~> 1.2"},
       {:mox, "~> 1.0", only: :test},
       {:open_api_spex, "~> 3.19.1"},
-      {:phoenix, "~> 1.6.2"},
+      {:phoenix, "~> 1.7.0"},
       {:phoenix_ecto, "~> 4.4"},
       {:phoenix_html, "~> 3.0"},
-      {:phoenix_live_dashboard, "~> 0.6"},
+      {:phoenix_live_dashboard, "~> 0.7.2"},
       {:phoenix_live_reload, "~> 1.2", only: [:dev, :wanda]},
-      {:phoenix_live_view, "~> 0.17.1"},
+      {:phoenix_live_view, "~> 0.18.18"},
       {:phoenix_swoosh, "~> 1.0"},
       {:plug_cowboy, "~> 2.5"},
       {:postgrex, ">= 0.0.0"},
@@ -115,7 +115,8 @@ defmodule Trento.MixProject do
       {:argon2_elixir, "~> 4.0"},
       {:ecto_commons, "~> 0.3.4"},
       {:bodyguard, "~> 2.4"},
-      {:nimble_totp, "~> 1.0"}
+      {:nimble_totp, "~> 1.0"},
+      {:phoenix_view, "~> 2.0"}
     ]
   end
 
