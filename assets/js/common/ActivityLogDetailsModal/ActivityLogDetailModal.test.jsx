@@ -3,6 +3,7 @@ import { render, screen, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
+import { faker } from '@faker-js/faker';
 import {
   activityLogEntryFactory,
   taggingMetadataFactory,
@@ -176,14 +177,19 @@ describe('ActivityLogDetailModal component', () => {
   );
 
   it('should render detail for unknown activity type', async () => {
-    const entry = activityLogEntryFactory.build({ type: 'foo_bar' });
+    const unknownActivityType = faker.lorem.word();
+    const entry = activityLogEntryFactory.build({ type: unknownActivityType });
     await act(async () => {
       render(<ActivityLogDetailModal open entry={toRenderedEntry(entry)} />);
     });
 
-    expect(screen.getByText('foo_bar')).toBeVisible();
+    const activityReferences = screen.getAllByText(unknownActivityType);
+    expect(activityReferences).toHaveLength(2);
+    activityReferences.forEach((activityReference) => {
+      expect(activityReference).toBeVisible();
+    });
+
     expect(screen.getByText('Unrecognized resource')).toBeVisible();
-    expect(screen.getByText('Unrecognized activity')).toBeVisible();
   });
 
   it('should call onClose when the close button is clicked', async () => {

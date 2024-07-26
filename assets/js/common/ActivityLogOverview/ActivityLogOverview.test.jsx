@@ -171,6 +171,15 @@ describe('Activity Log Overview', () => {
       expectedUser: 'user-8',
       expectedMessage: 'Checks execution requested for cluster',
     },
+    {
+      name: 'unknown activity type',
+      entry: activityLogEntryFactory.build({
+        actor: 'user-9',
+        type: 'foo_bar',
+      }),
+      expectedUser: 'user-9',
+      expectedMessage: 'foo_bar',
+    },
   ];
 
   it.each(scenarios)(
