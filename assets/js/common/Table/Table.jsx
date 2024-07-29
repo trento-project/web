@@ -174,10 +174,9 @@ function Table({
           })}
         >
           <div
-            className={classNames(
-              'min-w-fit shadow rounded-b-lg overflow-hidden',
-              { 'rounded-t-lg': !hasFilters }
-            )}
+            className={classNames('min-w-fit shadow rounded-b-lg', {
+              'rounded-t-lg': !hasFilters,
+            })}
           >
             {header}
             <table className="min-w-full leading-normal table-fixed">
