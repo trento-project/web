@@ -5,6 +5,7 @@ import { MemoryRouter } from 'react-router-dom';
 import {
   clusterFactory,
   hostFactory,
+  sapSystemApplicationInstanceFactory,
   sapSystemFactory,
 } from '@lib/test-utils/factories';
 
@@ -19,6 +20,7 @@ const enrichInstances = (systems, instanceType) =>
       const cluster = clusterFactory.build();
       return {
         ...instance,
+        features: 'ABAP',
         host: {
           ...hostFactory.build({
             id: instance.host_id,
@@ -57,24 +59,19 @@ const sapSystemTypes = [
   'SOME_SAP_SYSTEM_FEATURE|NOT_A_REAL_SYSTEM',
 ];
 
-const sapSystemsWithDifferentTypes = sapSystemFactory
-  .buildList(5)
-  .map((sapSystem, index) => ({
-    ...sapSystem,
-    application_instances: sapSystem.application_instances.map((instance) => ({
-      ...instance,
-      features: sapSystemTypes[index],
-    })),
-  }));
-
-const enrichedApplicationInstancesType = enrichInstances(
-  sapSystemsWithDifferentTypes,
-  'application_instances'
+const sapSystemIDList = sapSystemTypes.map((_) => faker.string.uuid());
+const sapSystemsWithCustomTypes = sapSystemTypes.map((type, index) =>
+  sapSystemFactory.build({
+    id: sapSystemIDList[index],
+    application_instances: sapSystemApplicationInstanceFactory.buildList(2, {
+      sap_system_id: sapSystemIDList[index],
+      features: type,
+    }),
+  })
 );
-const enrichedAbsentDatabaseInstancesType = enrichInstances(
-  sapSystemsWithDifferentTypes,
-  'database_instances'
-);
+const sapSystemApplicationInstances = sapSystemsWithCustomTypes
+  .map((sapSystem) => sapSystem.application_instances)
+  .flat();
 
 enrichedAbsentApplicationInstances[1].absent_at = faker.date
   .past()
@@ -170,8 +167,8 @@ export const UnauthorizedCleanUp = {
 export const SapSystemsWithDifferentTypes = {
   args: {
     userAbilities,
-    sapSystems: sapSystemsWithDifferentTypes,
-    applicationInstances: enrichedApplicationInstancesType,
-    databaseInstances: enrichedAbsentDatabaseInstancesType,
+    sapSystems: sapSystemsWithCustomTypes,
+    applicationInstances: sapSystemApplicationInstances,
+    databaseInstances: {},
   },
 };

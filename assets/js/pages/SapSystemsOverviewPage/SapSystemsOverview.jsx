@@ -79,14 +79,9 @@ function SapSystemsOverview({
       },
       {
         title: 'Type',
-        key: 'type',
-        render: (_, items) =>
-          uniq(
-            flatMap(
-              filter(items.applicationInstances, { sap_system_id: items.id }),
-              ({ features }) => features.split('|')
-            )
-          )
+        key: 'applicationInstances',
+        render: (content) =>
+          uniq(flatMap(content, ({ features }) => features.split('|')))
             .filter((item) => item === 'J2EE' || item === 'ABAP')
             .map((item) => (item === 'J2EE' ? 'JAVA' : item))
             .toSorted()
