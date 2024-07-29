@@ -11,13 +11,15 @@ export const hasOne = (elements, list) =>
     false
   );
 
-export const pages = (list) => {
-  const hasRest = Boolean(list.length % 10);
-  return hasRest ? ~~(list.length / 10) + 1 : ~~(list.length / 10);
+export const pages = (list, itemsPerPage = 10) => {
+  const hasRest = Boolean(list.length % itemsPerPage);
+  return hasRest
+    ? ~~(list.length / itemsPerPage) + 1
+    : ~~(list.length / itemsPerPage);
 };
 
-export const page = (p, list) => {
-  const start = 10 * (p - 1);
-  const end = start + 10;
+export const page = (p, list, itemsPerPage = 10) => {
+  const start = itemsPerPage * (p - 1);
+  const end = start + itemsPerPage;
   return list.slice(start, end);
 };
