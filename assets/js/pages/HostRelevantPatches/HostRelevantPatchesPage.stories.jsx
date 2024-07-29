@@ -16,7 +16,7 @@ export default {
 export const HasPatches = {
   args: {
     hostName: hostFactory.build().hostname,
-    patches: relevantPatchFactory.buildList(5),
+    patches: relevantPatchFactory.buildList(15),
     onNavigate: action('onNavigate'),
   },
 };
