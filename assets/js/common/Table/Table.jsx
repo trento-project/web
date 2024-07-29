@@ -1,13 +1,9 @@
 /* eslint-disable react/no-array-index-key */
 
-import React, { Fragment, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import classNames from 'classnames';
 import { page, pages } from '@lib/lists';
-import {
-  getDefaultFilterFunction,
-  createFilter,
-  TableFilters,
-} from './filters';
+import { TableFilters, createFilter } from './filters';
 import { defaultRowKey } from './defaultRowKey';
 import SortingIcon from './SortingIcon';
 import EmptyState from './EmptyState';
@@ -54,6 +50,14 @@ const updateSearchParams = (searchParams, values) => {
 
   return searchParams;
 };
+
+const getDefaultFilterFunction = (filter, key) => (element) =>
+  filter.includes(element[key]);
+
+const getFilterFunction = (column, value) =>
+  typeof column.filter === 'function'
+    ? column.filter(value, column.key)
+    : getDefaultFilterFunction(value, column.key);
 
 function Table({
   config,
@@ -107,10 +111,7 @@ function Table({
 
       if (paramsFilterValue.length === 0) return [...acc];
 
-      const filterFunction =
-        typeof curr.filter === 'function'
-          ? curr.filter(paramsFilterValue, curr.key)
-          : getDefaultFilterFunction(paramsFilterValue, curr.key);
+      const filterFunction = getFilterFunction(curr, paramsFilterValue);
 
       return [
         ...acc,
@@ -124,10 +125,14 @@ function Table({
   }, [searchParams]);
 
   const filteredData = filters
-    .map(({ value, filterFunction }) => {
+    .map(({ key, value }) => {
       if (value.length === 0) {
         return () => true;
       }
+
+      const column = config.columns.find((c) => c.key === key);
+
+      const filterFunction = getFilterFunction(column, value);
 
       return filterFunction;
     })
