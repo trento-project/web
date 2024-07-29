@@ -14,21 +14,8 @@ function Indicator({
   message,
   icon,
   isError,
-  loading,
   onNavigate,
 }) {
-  if (loading) {
-    return (
-      <div className="flex flex-row items-center border border-gray-200 p-2 rounded-md grow">
-        <div className="px-2">{icon}</div>
-        <div>
-          <p className="font-bold">{title}</p>
-          <div className="text-gray-500">Loading...</div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <Tooltip isEnabled={isError} content={tooltip} wrap={false}>
       <div
