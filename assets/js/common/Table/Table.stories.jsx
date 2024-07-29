@@ -178,7 +178,12 @@ export function Populated() {
 }
 
 export function Paginated() {
-  return <Table config={{ ...config, pagination: true }} data={data} />;
+  return (
+    <Table
+      config={{ ...config, pagination: true }}
+      data={data.concat(data).concat(data).concat(data)}
+    />
+  );
 }
 
 export function WithFilters(args) {
