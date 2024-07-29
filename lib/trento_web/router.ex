@@ -284,10 +284,7 @@ defmodule TrentoWeb.Router do
       pipe_through :browser
 
       live_dashboard "/dashboard",
-        metrics: TrentoWeb.Telemetry,
-        additional_pages: [
-          eventstores: {EventStore.Dashboard, event_stores: [Trento.EventStore]}
-        ]
+        metrics: TrentoWeb.Telemetry
     end
   end
 

@@ -108,7 +108,7 @@ defmodule TrentoWeb.Plugs.ApiRedirectorTest do
     test "should redirect to the next available version path if the newest version is not available",
          %{conn: conn} do
       defmodule V1FoundRouter do
-        def __match_route__(_, ["api", "v1", "test"], _) do
+        def __match_route__(["api", "v1", "test"], _, _) do
           {%{}, %{}, %{}, {%{}, %{}}}
         end
 

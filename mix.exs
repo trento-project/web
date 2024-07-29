@@ -65,13 +65,13 @@ defmodule Trento.MixProject do
       {:esbuild, "~> 0.2", runtime: Mix.env() == :dev},
       {:eventstore, "~> 1.1",
        [env: :prod, git: "https://github.com/commanded/eventstore.git", override: true]},
-      {:eventstore_dashboard, github: "commanded/eventstore-dashboard"},
+      # {:eventstore_dashboard, github: "commanded/eventstore-dashboard"},
       {:ex_doc, "~> 0.29", only: [:dev, :test], runtime: false},
       {:ex_machina, "~> 2.7.0", only: :test},
       {:excoveralls, "~> 0.10", only: :test},
       {:faker, "~> 0.17", only: [:dev, :test]},
-      {:floki, ">= 0.30.0", only: :test},
       {:flop, "~> 0.25.0"},
+      {:floki, ">= 0.36.2", only: :test},
       {:fun_with_flags, "~> 1.8.1"},
       {:fun_with_flags_ui, "~> 0.8.0"},
       {:gettext, "~> 0.18"},
@@ -82,16 +82,16 @@ defmodule Trento.MixProject do
       {:jason, "~> 1.2"},
       {:mox, "~> 1.0", only: :test},
       {:open_api_spex, "~> 3.19.1"},
-      {:phoenix, "~> 1.6.2"},
-      {:phoenix_ecto, "~> 4.4"},
-      {:phoenix_html, "~> 3.0"},
-      {:phoenix_live_dashboard, "~> 0.6"},
+      {:phoenix, "~> 1.7.14"},
+      {:phoenix_ecto, "~> 4.5"},
+      {:phoenix_html, "~> 4.1"},
+      {:phoenix_live_dashboard, "~> 0.8.4"},
       {:phoenix_live_reload, "~> 1.2", only: [:dev, :wanda]},
-      {:phoenix_live_view, "~> 0.17.1"},
+      {:phoenix_live_view, "~> 0.20.17"},
       {:phoenix_swoosh, "~> 1.0"},
       {:plug_cowboy, "~> 2.5"},
       {:postgrex, ">= 0.0.0"},
-      {:pow, "~> 1.0.26"},
+      {:pow, "~> 1.0.38"},
       {:quantum, ">= 1.8.0"},
       {:swoosh, "~> 1.3"},
       {:telemetry_metrics, "~> 0.6"},
@@ -103,7 +103,7 @@ defmodule Trento.MixProject do
        sparse: "elixir"},
       {:unplug, "~> 1.0.0"},
       {:proper_case, "~> 1.3.1"},
-      {:polymorphic_embed, "~> 2.0.0"},
+      {:polymorphic_embed, "~> 4.1"},
       {:joken, "~> 2.5.0"},
       # required overrides to upgrade to elixir 1.15.7 and erlang otp 26
       # https://stackoverflow.com/questions/76562092/hi-i-had-created-elixir-project-with-phoenix-framework-there-is-yaml-file-when
@@ -115,7 +115,9 @@ defmodule Trento.MixProject do
       {:argon2_elixir, "~> 4.0"},
       {:ecto_commons, "~> 0.3.4"},
       {:bodyguard, "~> 2.4"},
-      {:nimble_totp, "~> 1.0"}
+      {:nimble_totp, "~> 1.0"},
+      {:phoenix_view, "~> 2.0"},
+      {:phoenix_html_helpers, "~> 1.0"}
     ]
   end
 
