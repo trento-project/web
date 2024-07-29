@@ -4,22 +4,19 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="ExDoc v0.31.1">
+    <meta name="generator" content="ExDoc v0.34.2">
     <meta name="project" content="Trento Web v2.3.1">
 
 
     <title>TrentoWeb.Router — Trento Web v2.3.1</title>
-    <link rel="stylesheet" href="dist/html-elixir-FM2CSD74.css" />
+    <link rel="stylesheet" href="dist/html-elixir-F2VRIOKR.css" />
 
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
-    <script src="dist/handlebars.templates-43PMFBC7.js"></script>
-    <script src="dist/sidebar_items-17A74293.js"></script>
-
-      <script src="docs_config.js"></script>
-
-    <script async src="dist/html-L4O5OK2K.js"></script>
-
+    <script src="dist/handlebars.templates-K7URE6B4.js"></script>
+    <script src="dist/sidebar_items-9EBB0DE8.js"></script>
+    <script src="docs_config.js"></script>
+    <script async src="dist/html-YIPIRHGU.js"></script>
 
   </head>
   <body data-type="modules" class="page-module">
@@ -37,13 +34,11 @@
       } catch (error) { }
     </script>
 
-<div class="main">
+<div class="body-wrapper">
 
 <button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
   <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
 </button>
-
-<div class="background-layer"></div>
 
 <nav id="sidebar" class="sidebar">
 
@@ -103,45 +98,46 @@ GUIDES
 
 <main class="content">
   <output role="status" id="toast"></output>
-  <div class="content-outer">
-    <div id="content" class="content-inner">
-      <div class="top-search">
-        <div class="search-settings">
-          <form class="search-bar" action="search.html">
-            <label class="search-label">
-              <span class="sr-only">Search documentation of Trento Web</span>
-              <input name="q" type="text" class="search-input" placeholder="Search Documentation (press /)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
-            </label>
-            <button type="submit" class="search-button" aria-label="Submit Search">
-              <i class="ri-search-2-line ri-lg" aria-hidden="true" title="Submit search"></i>
-            </button>
-            <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
-              <i class="ri-close-line ri-lg" title="Cancel search"></i>
-            </button>
-          </form>
-          <div class="autocomplete">
-          </div>
-          <button class="icon-settings display-settings">
-            <i class="ri-settings-3-line"></i>
-            <span class="sr-only">Settings</span>
+
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Trento Web</span>
+            <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+          </label>
+          <button type="submit" class="search-button" aria-label="Submit Search">
+            <i class="ri-search-2-line ri-lg" aria-hidden="true" title="Submit search"></i>
           </button>
+          <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+            <i class="ri-close-line ri-lg" title="Cancel search"></i>
+          </button>
+        </form>
+        <div class="autocomplete">
         </div>
-
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
       </div>
+    </div>
 
-<h1>
+<div id="top-content">
+  <h1>
 
-    <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" title="View Source" class="icon-action" rel="help">
-      <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-      <span class="sr-only">View Source</span>
-    </a>
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
 
-  <span translate="no">TrentoWeb.Router</span> 
-  <small class="app-vsn" translate="no">(Trento Web v2.3.1)</small>
+    <span translate="no">TrentoWeb.Router</span> 
+    <small class="app-vsn" translate="no">(Trento Web v2.3.1)</small>
 
-</h1>
+  </h1>
 
 
+</div>
 
   <section id="summary" class="details-list">
     <h1 class="section-heading">
@@ -157,7 +153,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#api/2" translate="no">api(conn, _)</a>
+        <a href="#api/2" data-no-tooltip translate="no">api(conn, _)</a>
 
       </div>
 
@@ -165,7 +161,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#api_v1/2" translate="no">api_v1(conn, _)</a>
+        <a href="#api_v1/2" data-no-tooltip translate="no">api_v1(conn, _)</a>
 
       </div>
 
@@ -173,7 +169,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#api_v2/2" translate="no">api_v2(conn, _)</a>
+        <a href="#api_v2/2" data-no-tooltip translate="no">api_v2(conn, _)</a>
 
       </div>
 
@@ -181,7 +177,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#apikey_authenticated/2" translate="no">apikey_authenticated(conn, _)</a>
+        <a href="#apikey_authenticated/2" data-no-tooltip translate="no">apikey_authenticated(conn, _)</a>
 
       </div>
 
@@ -189,7 +185,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#available_api_versions/0" translate="no">available_api_versions()</a>
+        <a href="#available_api_versions/0" data-no-tooltip translate="no">available_api_versions()</a>
 
       </div>
 
@@ -197,7 +193,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#browser/2" translate="no">browser(conn, _)</a>
+        <a href="#browser/2" data-no-tooltip translate="no">browser(conn, _)</a>
 
       </div>
 
@@ -205,7 +201,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#call/2" translate="no">call(conn, opts)</a>
+        <a href="#call/2" data-no-tooltip translate="no">call(conn, opts)</a>
 
       </div>
 
@@ -215,7 +211,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#charts_feature/2" translate="no">charts_feature(conn, _)</a>
+        <a href="#charts_feature/2" data-no-tooltip translate="no">charts_feature(conn, _)</a>
 
       </div>
 
@@ -223,7 +219,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#init/1" translate="no">init(opts)</a>
+        <a href="#init/1" data-no-tooltip translate="no">init(opts)</a>
 
       </div>
 
@@ -234,7 +230,7 @@ for serving web requests.</p></div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#protected_api/2" translate="no">protected_api(conn, _)</a>
+        <a href="#protected_api/2" data-no-tooltip translate="no">protected_api(conn, _)</a>
 
       </div>
 
@@ -256,7 +252,7 @@ for serving web requests.</p></div>
 <section class="detail" id="api/2">
 
   <div class="detail-header">
-    <a href="#api/2" class="detail-link" title="Link to this function">
+    <a href="#api/2" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -278,7 +274,7 @@ for serving web requests.</p></div>
 <section class="detail" id="api_v1/2">
 
   <div class="detail-header">
-    <a href="#api_v1/2" class="detail-link" title="Link to this function">
+    <a href="#api_v1/2" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -300,7 +296,7 @@ for serving web requests.</p></div>
 <section class="detail" id="api_v2/2">
 
   <div class="detail-header">
-    <a href="#api_v2/2" class="detail-link" title="Link to this function">
+    <a href="#api_v2/2" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -322,7 +318,7 @@ for serving web requests.</p></div>
 <section class="detail" id="apikey_authenticated/2">
 
   <div class="detail-header">
-    <a href="#apikey_authenticated/2" class="detail-link" title="Link to this function">
+    <a href="#apikey_authenticated/2" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -344,13 +340,13 @@ for serving web requests.</p></div>
 <section class="detail" id="available_api_versions/0">
 
   <div class="detail-header">
-    <a href="#available_api_versions/0" class="detail-link" title="Link to this function">
+    <a href="#available_api_versions/0" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
     <h1 class="signature" translate="no">available_api_versions()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L312" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L309" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -366,7 +362,7 @@ for serving web requests.</p></div>
 <section class="detail" id="browser/2">
 
   <div class="detail-header">
-    <a href="#browser/2" class="detail-link" title="Link to this function">
+    <a href="#browser/2" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -388,7 +384,7 @@ for serving web requests.</p></div>
 <section class="detail" id="call/2">
 
   <div class="detail-header">
-    <a href="#call/2" class="detail-link" title="Link to this function">
+    <a href="#call/2" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -410,7 +406,7 @@ for serving web requests.</p></div>
 <section class="detail" id="charts_feature/2">
 
   <div class="detail-header">
-    <a href="#charts_feature/2" class="detail-link" title="Link to this function">
+    <a href="#charts_feature/2" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -432,7 +428,7 @@ for serving web requests.</p></div>
 <section class="detail" id="init/1">
 
   <div class="detail-header">
-    <a href="#init/1" class="detail-link" title="Link to this function">
+    <a href="#init/1" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -455,7 +451,7 @@ for serving web requests.</p>
 <section class="detail" id="protected_api/2">
 
   <div class="detail-header">
-    <a href="#protected_api/2" class="detail-link" title="Link to this function">
+    <a href="#protected_api/2" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -478,34 +474,33 @@ for serving web requests.</p>
     </div>
   </section>
 
-      <footer class="footer">
-        <p>
+    <footer class="footer">
+      <p>
 
-          <span class="line">
-            <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
-              Search HexDocs
-            </button>
+        <span class="line">
+          <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+            Search HexDocs
+          </button>
 
-              <a href="Trento Web.epub" title="ePub version">
-                Download ePub version
-              </a>
+            <a href="Trento Web.epub" title="ePub version">
+              Download ePub version
+            </a>
 
-          </span>
-        </p>
+        </span>
+      </p>
 
-        <p class="built-using">
-          Built using
-          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.31.1) for the
+      <p class="built-using">
+        Built using
+        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.34.2) for the
 
-            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
 
-        </p>
-      </footer>
-    </div>
+      </p>
+
+    </footer>
   </div>
 </main>
 </div>
-
 
   </body>
 </html>

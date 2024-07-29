@@ -4,22 +4,19 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="ExDoc v0.31.1">
+    <meta name="generator" content="ExDoc v0.34.2">
     <meta name="project" content="Trento Web v2.3.1">
 
 
     <title>Trento.Commanded — Trento Web v2.3.1</title>
-    <link rel="stylesheet" href="dist/html-elixir-FM2CSD74.css" />
+    <link rel="stylesheet" href="dist/html-elixir-F2VRIOKR.css" />
 
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
-    <script src="dist/handlebars.templates-43PMFBC7.js"></script>
-    <script src="dist/sidebar_items-17A74293.js"></script>
-
-      <script src="docs_config.js"></script>
-
-    <script async src="dist/html-L4O5OK2K.js"></script>
-
+    <script src="dist/handlebars.templates-K7URE6B4.js"></script>
+    <script src="dist/sidebar_items-9EBB0DE8.js"></script>
+    <script src="docs_config.js"></script>
+    <script async src="dist/html-YIPIRHGU.js"></script>
 
   </head>
   <body data-type="modules" class="page-module">
@@ -37,13 +34,11 @@
       } catch (error) { }
     </script>
 
-<div class="main">
+<div class="body-wrapper">
 
 <button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
   <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
 </button>
-
-<div class="background-layer"></div>
 
 <nav id="sidebar" class="sidebar">
 
@@ -103,49 +98,50 @@ GUIDES
 
 <main class="content">
   <output role="status" id="toast"></output>
-  <div class="content-outer">
-    <div id="content" class="content-inner">
-      <div class="top-search">
-        <div class="search-settings">
-          <form class="search-bar" action="search.html">
-            <label class="search-label">
-              <span class="sr-only">Search documentation of Trento Web</span>
-              <input name="q" type="text" class="search-input" placeholder="Search Documentation (press /)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
-            </label>
-            <button type="submit" class="search-button" aria-label="Submit Search">
-              <i class="ri-search-2-line ri-lg" aria-hidden="true" title="Submit search"></i>
-            </button>
-            <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
-              <i class="ri-close-line ri-lg" title="Cancel search"></i>
-            </button>
-          </form>
-          <div class="autocomplete">
-          </div>
-          <button class="icon-settings display-settings">
-            <i class="ri-settings-3-line"></i>
-            <span class="sr-only">Settings</span>
+
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Trento Web</span>
+            <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+          </label>
+          <button type="submit" class="search-button" aria-label="Submit Search">
+            <i class="ri-search-2-line ri-lg" aria-hidden="true" title="Submit search"></i>
           </button>
+          <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+            <i class="ri-close-line ri-lg" title="Cancel search"></i>
+          </button>
+        </form>
+        <div class="autocomplete">
         </div>
-
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
       </div>
+    </div>
 
-<h1>
+<div id="top-content">
+  <h1>
 
-    <a href="https://github.com/trento-project/web/blob/main/lib/trento/commanded.ex#L1" title="View Source" class="icon-action" rel="help">
-      <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-      <span class="sr-only">View Source</span>
-    </a>
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/commanded.ex#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
 
-  <span translate="no">Trento.Commanded</span> 
-  <small class="app-vsn" translate="no">(Trento Web v2.3.1)</small>
+    <span translate="no">Trento.Commanded</span> 
+    <small class="app-vsn" translate="no">(Trento Web v2.3.1)</small>
 
-</h1>
+  </h1>
 
 
-  <section id="moduledoc">
+    <section id="moduledoc">
 <p>Trento Commanded Application</p>
-  </section>
+    </section>
 
+</div>
 
   <section id="summary" class="details-list">
     <h1 class="section-heading">
@@ -161,7 +157,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#aggregate_state/3" translate="no">aggregate_state(aggregate_module, aggregate_uuid, timeout \\ 5000)</a>
+        <a href="#aggregate_state/3" data-no-tooltip translate="no">aggregate_state(aggregate_module, aggregate_uuid, timeout \\ 5000)</a>
 
       </div>
 
@@ -171,7 +167,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#child_spec/1" translate="no">child_spec(opts)</a>
+        <a href="#child_spec/1" data-no-tooltip translate="no">child_spec(opts)</a>
 
       </div>
 
@@ -179,31 +175,41 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#config/0" translate="no">config()</a>
+        <a href="#config/0" data-no-tooltip translate="no">config()</a>
 
       </div>
 
-        <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/commanded/1.4.2/Commanded.Application.html#c:config/0"><code class="inline">Commanded.Application.config/0</code></a>.</p></div>
+        <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/commanded/1.4.3/Commanded.Application.html#c:config/0"><code class="inline">Commanded.Application.config/0</code></a>.</p></div>
 
     </div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#start_link/1" translate="no">start_link(opts \\ [])</a>
+        <a href="#dispatch/2" data-no-tooltip translate="no">dispatch(command, opts \\ [])</a>
 
       </div>
 
-        <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/commanded/1.4.2/Commanded.Application.html#c:start_link/1"><code class="inline">Commanded.Application.start_link/1</code></a>.</p></div>
+        <div class="summary-synopsis"><p>Dispatch a registered command.</p></div>
 
     </div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#stop/2" translate="no">stop(pid, timeout \\ 5000)</a>
+        <a href="#start_link/1" data-no-tooltip translate="no">start_link(opts \\ [])</a>
 
       </div>
 
-        <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/commanded/1.4.2/Commanded.Application.html#c:stop/2"><code class="inline">Commanded.Application.stop/2</code></a>.</p></div>
+        <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/commanded/1.4.3/Commanded.Application.html#c:start_link/1"><code class="inline">Commanded.Application.start_link/1</code></a>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#stop/2" data-no-tooltip translate="no">stop(pid, timeout \\ 5000)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/commanded/1.4.3/Commanded.Application.html#c:stop/2"><code class="inline">Commanded.Application.stop/2</code></a>.</p></div>
 
     </div>
 
@@ -225,7 +231,7 @@ GUIDES
     <span id="aggregate_state/2"></span>
 
   <div class="detail-header">
-    <a href="#aggregate_state/3" class="detail-link" title="Link to this function">
+    <a href="#aggregate_state/3" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -245,9 +251,9 @@ GUIDES
 
           <pre translate="no"><span class="attribute">@spec</span> aggregate_state(
   aggregate_module :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">module</a>(),
-  aggregate_uuid :: <a href="https://hexdocs.pm/commanded/1.4.2/Commanded.Aggregates.Aggregate.html#t:uuid/0">Commanded.Aggregates.Aggregate.uuid</a>(),
+  aggregate_uuid :: <a href="https://hexdocs.pm/commanded/1.4.3/Commanded.Aggregates.Aggregate.html#t:uuid/0">Commanded.Aggregates.Aggregate.uuid</a>(),
   timeout :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">integer</a>()
-) :: <a href="https://hexdocs.pm/commanded/1.4.2/Commanded.Aggregates.Aggregate.html#t:state/0">Commanded.Aggregates.Aggregate.state</a>()</pre>
+) :: <a href="https://hexdocs.pm/commanded/1.4.3/Commanded.Aggregates.Aggregate.html#t:state/0">Commanded.Aggregates.Aggregate.state</a>()</pre>
 
       </div>
 
@@ -259,7 +265,7 @@ and then replaying the aggregate's event stream.</p>
 <section class="detail" id="child_spec/1">
 
   <div class="detail-header">
-    <a href="#child_spec/1" class="detail-link" title="Link to this function">
+    <a href="#child_spec/1" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -277,7 +283,7 @@ and then replaying the aggregate's event stream.</p>
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> child_spec(opts :: <a href="https://hexdocs.pm/commanded/1.4.2/Commanded.Application.html#t:options/0">Commanded.Application.options</a>()) :: <a href="https://hexdocs.pm/elixir/Supervisor.html#t:child_spec/0">Supervisor.child_spec</a>()</pre>
+          <pre translate="no"><span class="attribute">@spec</span> child_spec(opts :: <a href="https://hexdocs.pm/commanded/1.4.3/Commanded.Application.html#t:options/0">Commanded.Application.options</a>()) :: <a href="https://hexdocs.pm/elixir/Supervisor.html#t:child_spec/0">Supervisor.child_spec</a>()</pre>
 
       </div>
 
@@ -287,7 +293,7 @@ and then replaying the aggregate's event stream.</p>
 <section class="detail" id="config/0">
 
   <div class="detail-header">
-    <a href="#config/0" class="detail-link" title="Link to this function">
+    <a href="#config/0" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -303,7 +309,41 @@ and then replaying the aggregate's event stream.</p>
 
   <section class="docstring">
 
-<p>Callback implementation for <a href="https://hexdocs.pm/commanded/1.4.2/Commanded.Application.html#c:config/0"><code class="inline">Commanded.Application.config/0</code></a>.</p>
+<p>Callback implementation for <a href="https://hexdocs.pm/commanded/1.4.3/Commanded.Application.html#c:config/0"><code class="inline">Commanded.Application.config/0</code></a>.</p>
+  </section>
+</section>
+<section class="detail" id="dispatch/2">
+
+    <span id="dispatch/1"></span>
+
+  <div class="detail-header">
+    <a href="#dispatch/2" class="detail-link" data-no-tooltip title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">dispatch(command, opts \\ [])</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/commanded.ex#L1" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> dispatch(
+  command :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">struct</a>(),
+  timeout_or_opts :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>() | :infinity | <a href="https://hexdocs.pm/elixir/Keyword.html#t:t/0">Keyword.t</a>()
+) ::
+  <a href="https://hexdocs.pm/commanded/1.4.3/Commanded.Commands.Router.html#t:dispatch_resp/0">Commanded.Commands.Router.dispatch_resp</a>()</pre>
+
+      </div>
+
+<p>Dispatch a registered command.</p>
   </section>
 </section>
 <section class="detail" id="start_link/1">
@@ -311,7 +351,7 @@ and then replaying the aggregate's event stream.</p>
     <span id="start_link/0"></span>
 
   <div class="detail-header">
-    <a href="#start_link/1" class="detail-link" title="Link to this function">
+    <a href="#start_link/1" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -327,7 +367,7 @@ and then replaying the aggregate's event stream.</p>
 
   <section class="docstring">
 
-<p>Callback implementation for <a href="https://hexdocs.pm/commanded/1.4.2/Commanded.Application.html#c:start_link/1"><code class="inline">Commanded.Application.start_link/1</code></a>.</p>
+<p>Callback implementation for <a href="https://hexdocs.pm/commanded/1.4.3/Commanded.Application.html#c:start_link/1"><code class="inline">Commanded.Application.start_link/1</code></a>.</p>
   </section>
 </section>
 <section class="detail" id="stop/2">
@@ -335,7 +375,7 @@ and then replaying the aggregate's event stream.</p>
     <span id="stop/1"></span>
 
   <div class="detail-header">
-    <a href="#stop/2" class="detail-link" title="Link to this function">
+    <a href="#stop/2" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -351,41 +391,40 @@ and then replaying the aggregate's event stream.</p>
 
   <section class="docstring">
 
-<p>Callback implementation for <a href="https://hexdocs.pm/commanded/1.4.2/Commanded.Application.html#c:stop/2"><code class="inline">Commanded.Application.stop/2</code></a>.</p>
+<p>Callback implementation for <a href="https://hexdocs.pm/commanded/1.4.3/Commanded.Application.html#c:stop/2"><code class="inline">Commanded.Application.stop/2</code></a>.</p>
   </section>
 </section>
 
     </div>
   </section>
 
-      <footer class="footer">
-        <p>
+    <footer class="footer">
+      <p>
 
-          <span class="line">
-            <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
-              Search HexDocs
-            </button>
+        <span class="line">
+          <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+            Search HexDocs
+          </button>
 
-              <a href="Trento Web.epub" title="ePub version">
-                Download ePub version
-              </a>
+            <a href="Trento Web.epub" title="ePub version">
+              Download ePub version
+            </a>
 
-          </span>
-        </p>
+        </span>
+      </p>
 
-        <p class="built-using">
-          Built using
-          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.31.1) for the
+      <p class="built-using">
+        Built using
+        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.34.2) for the
 
-            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
 
-        </p>
-      </footer>
-    </div>
+      </p>
+
+    </footer>
   </div>
 </main>
 </div>
-
 
   </body>
 </html>

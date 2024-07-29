@@ -4,22 +4,19 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="ExDoc v0.31.1">
+    <meta name="generator" content="ExDoc v0.34.2">
     <meta name="project" content="Trento Web v2.3.1">
 
 
     <title>Trento.Infrastructure.SoftwareUpdates.SumaApi — Trento Web v2.3.1</title>
-    <link rel="stylesheet" href="dist/html-elixir-FM2CSD74.css" />
+    <link rel="stylesheet" href="dist/html-elixir-F2VRIOKR.css" />
 
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
-    <script src="dist/handlebars.templates-43PMFBC7.js"></script>
-    <script src="dist/sidebar_items-17A74293.js"></script>
-
-      <script src="docs_config.js"></script>
-
-    <script async src="dist/html-L4O5OK2K.js"></script>
-
+    <script src="dist/handlebars.templates-K7URE6B4.js"></script>
+    <script src="dist/sidebar_items-9EBB0DE8.js"></script>
+    <script src="docs_config.js"></script>
+    <script async src="dist/html-YIPIRHGU.js"></script>
 
   </head>
   <body data-type="modules" class="page-module">
@@ -37,13 +34,11 @@
       } catch (error) { }
     </script>
 
-<div class="main">
+<div class="body-wrapper">
 
 <button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
   <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
 </button>
-
-<div class="background-layer"></div>
 
 <nav id="sidebar" class="sidebar">
 
@@ -103,49 +98,50 @@ GUIDES
 
 <main class="content">
   <output role="status" id="toast"></output>
-  <div class="content-outer">
-    <div id="content" class="content-inner">
-      <div class="top-search">
-        <div class="search-settings">
-          <form class="search-bar" action="search.html">
-            <label class="search-label">
-              <span class="sr-only">Search documentation of Trento Web</span>
-              <input name="q" type="text" class="search-input" placeholder="Search Documentation (press /)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
-            </label>
-            <button type="submit" class="search-button" aria-label="Submit Search">
-              <i class="ri-search-2-line ri-lg" aria-hidden="true" title="Submit search"></i>
-            </button>
-            <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
-              <i class="ri-close-line ri-lg" title="Cancel search"></i>
-            </button>
-          </form>
-          <div class="autocomplete">
-          </div>
-          <button class="icon-settings display-settings">
-            <i class="ri-settings-3-line"></i>
-            <span class="sr-only">Settings</span>
+
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Trento Web</span>
+            <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+          </label>
+          <button type="submit" class="search-button" aria-label="Submit Search">
+            <i class="ri-search-2-line ri-lg" aria-hidden="true" title="Submit search"></i>
           </button>
+          <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+            <i class="ri-close-line ri-lg" title="Cancel search"></i>
+          </button>
+        </form>
+        <div class="autocomplete">
         </div>
-
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
       </div>
+    </div>
 
-<h1>
+<div id="top-content">
+  <h1>
 
-    <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/software_updates/suma_api.ex#L1" title="View Source" class="icon-action" rel="help">
-      <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-      <span class="sr-only">View Source</span>
-    </a>
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/software_updates/suma_api.ex#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
 
-  <span translate="no">Trento.Infrastructure.SoftwareUpdates.SumaApi</span> 
-  <small class="app-vsn" translate="no">(Trento Web v2.3.1)</small>
+    <span translate="no">Trento.Infrastructure.SoftwareUpdates.SumaApi</span> 
+    <small class="app-vsn" translate="no">(Trento Web v2.3.1)</small>
 
-</h1>
+  </h1>
 
 
-  <section id="moduledoc">
+    <section id="moduledoc">
 <p>SUMA API client supporting software updates discovery.</p>
-  </section>
+    </section>
 
+</div>
 
   <section id="summary" class="details-list">
     <h1 class="section-heading">
@@ -161,7 +157,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#get_affected_packages/4" translate="no">get_affected_packages(url, auth, advisory_name, ca_cert)</a>
+        <a href="#get_affected_packages/4" data-no-tooltip translate="no">get_affected_packages(url, auth, advisory_name, ca_cert)</a>
 
       </div>
 
@@ -169,7 +165,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#get_affected_systems/4" translate="no">get_affected_systems(url, auth, advisory_name, ca_cert)</a>
+        <a href="#get_affected_systems/4" data-no-tooltip translate="no">get_affected_systems(url, auth, advisory_name, ca_cert)</a>
 
       </div>
 
@@ -177,7 +173,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#get_bugzilla_fixes/4" translate="no">get_bugzilla_fixes(url, auth, advisory_name, ca_cert)</a>
+        <a href="#get_bugzilla_fixes/4" data-no-tooltip translate="no">get_bugzilla_fixes(url, auth, advisory_name, ca_cert)</a>
 
       </div>
 
@@ -185,7 +181,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#get_cves/4" translate="no">get_cves(url, auth, advisory_name, ca_cert)</a>
+        <a href="#get_cves/4" data-no-tooltip translate="no">get_cves(url, auth, advisory_name, ca_cert)</a>
 
       </div>
 
@@ -193,7 +189,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#get_errata_details/4" translate="no">get_errata_details(url, auth, advisory_name, ca_cert)</a>
+        <a href="#get_errata_details/4" data-no-tooltip translate="no">get_errata_details(url, auth, advisory_name, ca_cert)</a>
 
       </div>
 
@@ -201,7 +197,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#get_patches_for_package/4" translate="no">get_patches_for_package(url, auth, package_id, ca_cert)</a>
+        <a href="#get_patches_for_package/4" data-no-tooltip translate="no">get_patches_for_package(url, auth, package_id, ca_cert)</a>
 
       </div>
 
@@ -209,7 +205,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#get_relevant_patches/4" translate="no">get_relevant_patches(url, auth, system_id, ca_cert)</a>
+        <a href="#get_relevant_patches/4" data-no-tooltip translate="no">get_relevant_patches(url, auth, system_id, ca_cert)</a>
 
       </div>
 
@@ -217,7 +213,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#get_system_id/4" translate="no">get_system_id(url, auth, fully_qualified_domain_name, ca_cert)</a>
+        <a href="#get_system_id/4" data-no-tooltip translate="no">get_system_id(url, auth, fully_qualified_domain_name, ca_cert)</a>
 
       </div>
 
@@ -225,7 +221,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#get_upgradable_packages/4" translate="no">get_upgradable_packages(url, auth, system_id, ca_cert)</a>
+        <a href="#get_upgradable_packages/4" data-no-tooltip translate="no">get_upgradable_packages(url, auth, system_id, ca_cert)</a>
 
       </div>
 
@@ -233,7 +229,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#login/4" translate="no">login(url, username, password, ca_cert)</a>
+        <a href="#login/4" data-no-tooltip translate="no">login(url, username, password, ca_cert)</a>
 
       </div>
 
@@ -255,7 +251,7 @@ GUIDES
 <section class="detail" id="get_affected_packages/4">
 
   <div class="detail-header">
-    <a href="#get_affected_packages/4" class="detail-link" title="Link to this function">
+    <a href="#get_affected_packages/4" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -290,7 +286,7 @@ GUIDES
 <section class="detail" id="get_affected_systems/4">
 
   <div class="detail-header">
-    <a href="#get_affected_systems/4" class="detail-link" title="Link to this function">
+    <a href="#get_affected_systems/4" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -325,7 +321,7 @@ GUIDES
 <section class="detail" id="get_bugzilla_fixes/4">
 
   <div class="detail-header">
-    <a href="#get_bugzilla_fixes/4" class="detail-link" title="Link to this function">
+    <a href="#get_bugzilla_fixes/4" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -359,7 +355,7 @@ GUIDES
 <section class="detail" id="get_cves/4">
 
   <div class="detail-header">
-    <a href="#get_cves/4" class="detail-link" title="Link to this function">
+    <a href="#get_cves/4" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -392,7 +388,7 @@ GUIDES
 <section class="detail" id="get_errata_details/4">
 
   <div class="detail-header">
-    <a href="#get_errata_details/4" class="detail-link" title="Link to this function">
+    <a href="#get_errata_details/4" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -427,7 +423,7 @@ GUIDES
 <section class="detail" id="get_patches_for_package/4">
 
   <div class="detail-header">
-    <a href="#get_patches_for_package/4" class="detail-link" title="Link to this function">
+    <a href="#get_patches_for_package/4" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -461,7 +457,7 @@ GUIDES
 <section class="detail" id="get_relevant_patches/4">
 
   <div class="detail-header">
-    <a href="#get_relevant_patches/4" class="detail-link" title="Link to this function">
+    <a href="#get_relevant_patches/4" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -495,7 +491,7 @@ GUIDES
 <section class="detail" id="get_system_id/4">
 
   <div class="detail-header">
-    <a href="#get_system_id/4" class="detail-link" title="Link to this function">
+    <a href="#get_system_id/4" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -530,7 +526,7 @@ GUIDES
 <section class="detail" id="get_upgradable_packages/4">
 
   <div class="detail-header">
-    <a href="#get_upgradable_packages/4" class="detail-link" title="Link to this function">
+    <a href="#get_upgradable_packages/4" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -565,7 +561,7 @@ GUIDES
 <section class="detail" id="login/4">
 
   <div class="detail-header">
-    <a href="#login/4" class="detail-link" title="Link to this function">
+    <a href="#login/4" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -599,34 +595,33 @@ GUIDES
     </div>
   </section>
 
-      <footer class="footer">
-        <p>
+    <footer class="footer">
+      <p>
 
-          <span class="line">
-            <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
-              Search HexDocs
-            </button>
+        <span class="line">
+          <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+            Search HexDocs
+          </button>
 
-              <a href="Trento Web.epub" title="ePub version">
-                Download ePub version
-              </a>
+            <a href="Trento Web.epub" title="ePub version">
+              Download ePub version
+            </a>
 
-          </span>
-        </p>
+        </span>
+      </p>
 
-        <p class="built-using">
-          Built using
-          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.31.1) for the
+      <p class="built-using">
+        Built using
+        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.34.2) for the
 
-            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
 
-        </p>
-      </footer>
-    </div>
+      </p>
+
+    </footer>
   </div>
 </main>
 </div>
-
 
   </body>
 </html>

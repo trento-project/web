@@ -4,22 +4,19 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="ExDoc v0.31.1">
+    <meta name="generator" content="ExDoc v0.34.2">
     <meta name="project" content="Trento Web v2.3.1">
 
 
     <title>TrentoWeb.Plugs.AppJWTAuthPlug — Trento Web v2.3.1</title>
-    <link rel="stylesheet" href="dist/html-elixir-FM2CSD74.css" />
+    <link rel="stylesheet" href="dist/html-elixir-F2VRIOKR.css" />
 
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
-    <script src="dist/handlebars.templates-43PMFBC7.js"></script>
-    <script src="dist/sidebar_items-17A74293.js"></script>
-
-      <script src="docs_config.js"></script>
-
-    <script async src="dist/html-L4O5OK2K.js"></script>
-
+    <script src="dist/handlebars.templates-K7URE6B4.js"></script>
+    <script src="dist/sidebar_items-9EBB0DE8.js"></script>
+    <script src="docs_config.js"></script>
+    <script async src="dist/html-YIPIRHGU.js"></script>
 
   </head>
   <body data-type="modules" class="page-module">
@@ -37,13 +34,11 @@
       } catch (error) { }
     </script>
 
-<div class="main">
+<div class="body-wrapper">
 
 <button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
   <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
 </button>
-
-<div class="background-layer"></div>
 
 <nav id="sidebar" class="sidebar">
 
@@ -103,51 +98,52 @@ GUIDES
 
 <main class="content">
   <output role="status" id="toast"></output>
-  <div class="content-outer">
-    <div id="content" class="content-inner">
-      <div class="top-search">
-        <div class="search-settings">
-          <form class="search-bar" action="search.html">
-            <label class="search-label">
-              <span class="sr-only">Search documentation of Trento Web</span>
-              <input name="q" type="text" class="search-input" placeholder="Search Documentation (press /)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
-            </label>
-            <button type="submit" class="search-button" aria-label="Submit Search">
-              <i class="ri-search-2-line ri-lg" aria-hidden="true" title="Submit search"></i>
-            </button>
-            <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
-              <i class="ri-close-line ri-lg" title="Cancel search"></i>
-            </button>
-          </form>
-          <div class="autocomplete">
-          </div>
-          <button class="icon-settings display-settings">
-            <i class="ri-settings-3-line"></i>
-            <span class="sr-only">Settings</span>
+
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Trento Web</span>
+            <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+          </label>
+          <button type="submit" class="search-button" aria-label="Submit Search">
+            <i class="ri-search-2-line ri-lg" aria-hidden="true" title="Submit search"></i>
           </button>
+          <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+            <i class="ri-close-line ri-lg" title="Cancel search"></i>
+          </button>
+        </form>
+        <div class="autocomplete">
         </div>
-
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
       </div>
+    </div>
 
-<h1>
+<div id="top-content">
+  <h1>
 
-    <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/plugs/app_jwt_auth_plug.ex#L1" title="View Source" class="icon-action" rel="help">
-      <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-      <span class="sr-only">View Source</span>
-    </a>
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/plugs/app_jwt_auth_plug.ex#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
 
-  <span translate="no">TrentoWeb.Plugs.AppJWTAuthPlug</span> 
-  <small class="app-vsn" translate="no">(Trento Web v2.3.1)</small>
+    <span translate="no">TrentoWeb.Plugs.AppJWTAuthPlug</span> 
+    <small class="app-vsn" translate="no">(Trento Web v2.3.1)</small>
 
-</h1>
+  </h1>
 
 
-  <section id="moduledoc">
+    <section id="moduledoc">
 <p>  The AppJWTAuthPlug is a Pow compatible authorization flow.
   Handles the login and the credentials recovery at each request</p><p>  Uses Joken for jwt management</p><p>  See the pow documentation for further details.
   <a href="https://hexdocs.pm/pow/Pow.Plug.Base.html">https://hexdocs.pm/pow/Pow.Plug.Base.html</a></p>
-  </section>
+    </section>
 
+</div>
 
   <section id="summary" class="details-list">
     <h1 class="section-heading">
@@ -163,7 +159,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#call/2" translate="no">call(conn, config)</a>
+        <a href="#call/2" data-no-tooltip translate="no">call(conn, config)</a>
 
       </div>
 
@@ -173,7 +169,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#create/3" translate="no">create(conn, user, config)</a>
+        <a href="#create/3" data-no-tooltip translate="no">create(conn, user, config)</a>
 
       </div>
 
@@ -184,7 +180,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#delete/2" translate="no">delete(conn, config)</a>
+        <a href="#delete/2" data-no-tooltip translate="no">delete(conn, config)</a>
 
       </div>
 
@@ -194,7 +190,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#do_create/3" translate="no">do_create(conn, user, config)</a>
+        <a href="#do_create/3" data-no-tooltip translate="no">do_create(conn, user, config)</a>
 
       </div>
 
@@ -204,7 +200,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#do_delete/2" translate="no">do_delete(conn, config)</a>
+        <a href="#do_delete/2" data-no-tooltip translate="no">do_delete(conn, config)</a>
 
       </div>
 
@@ -214,7 +210,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#do_fetch/2" translate="no">do_fetch(conn, config)</a>
+        <a href="#do_fetch/2" data-no-tooltip translate="no">do_fetch(conn, config)</a>
 
       </div>
 
@@ -224,7 +220,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#fetch/2" translate="no">fetch(conn, config)</a>
+        <a href="#fetch/2" data-no-tooltip translate="no">fetch(conn, config)</a>
 
       </div>
 
@@ -234,7 +230,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#renew/2" translate="no">renew(conn, refresh_token)</a>
+        <a href="#renew/2" data-no-tooltip translate="no">renew(conn, refresh_token)</a>
 
       </div>
 
@@ -258,7 +254,7 @@ GUIDES
 <section class="detail" id="call/2">
 
   <div class="detail-header">
-    <a href="#call/2" class="detail-link" title="Link to this function">
+    <a href="#call/2" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -275,17 +271,17 @@ GUIDES
   <section class="docstring">
 
 <p>Configures the connection for Pow, and fetches user.</p><p>If no options have been passed to the plug, the existing configuration
-will be pulled with <a href="https://hexdocs.pm/pow/1.0.28/Pow.Plug.html#fetch_config/1"><code class="inline">Pow.Plug.fetch_config/1</code></a></p><p><code class="inline">:plug</code> is appended to the passed configuration, so the current plug will
+will be pulled with <a href="https://hexdocs.pm/pow/1.0.38/Pow.Plug.html#fetch_config/1"><code class="inline">Pow.Plug.fetch_config/1</code></a></p><p><code class="inline">:plug</code> is appended to the passed configuration, so the current plug will
 be used in any subsequent calls to create, update and delete user
 credentials from the connection. The configuration is then set for the
-conn with <a href="https://hexdocs.pm/pow/1.0.28/Pow.Plug.html#put_config/2"><code class="inline">Pow.Plug.put_config/2</code></a>.</p><p>If a user can't be fetched with <a href="https://hexdocs.pm/pow/1.0.28/Pow.Plug.html#current_user/2"><code class="inline">Pow.Plug.current_user/2</code></a>, <a href="#do_fetch/2"><code class="inline">do_fetch/2</code></a>
+conn with <a href="https://hexdocs.pm/pow/1.0.38/Pow.Plug.html#put_config/2"><code class="inline">Pow.Plug.put_config/2</code></a>.</p><p>If a user can't be fetched with <a href="https://hexdocs.pm/pow/1.0.38/Pow.Plug.html#current_user/2"><code class="inline">Pow.Plug.current_user/2</code></a>, <a href="#do_fetch/2"><code class="inline">do_fetch/2</code></a>
 will be called.</p>
   </section>
 </section>
 <section class="detail" id="create/3">
 
   <div class="detail-header">
-    <a href="#create/3" class="detail-link" title="Link to this function">
+    <a href="#create/3" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -308,7 +304,7 @@ will be called.</p>
 <section class="detail" id="delete/2">
 
   <div class="detail-header">
-    <a href="#delete/2" class="detail-link" title="Link to this function">
+    <a href="#delete/2" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -330,7 +326,7 @@ will be called.</p>
 <section class="detail" id="do_create/3">
 
   <div class="detail-header">
-    <a href="#do_create/3" class="detail-link" title="Link to this function">
+    <a href="#do_create/3" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -346,13 +342,13 @@ will be called.</p>
 
   <section class="docstring">
 
-<p>Calls <a href="#create/3"><code class="inline">create/3</code></a> and assigns the current user.</p><p>The user is assigned to the conn with <a href="https://hexdocs.pm/pow/1.0.28/Pow.Plug.html#assign_current_user/3"><code class="inline">Pow.Plug.assign_current_user/3</code></a>.</p>
+<p>Calls <a href="#create/3"><code class="inline">create/3</code></a> and assigns the current user.</p><p>The user is assigned to the conn with <a href="https://hexdocs.pm/pow/1.0.38/Pow.Plug.html#assign_current_user/3"><code class="inline">Pow.Plug.assign_current_user/3</code></a>.</p>
   </section>
 </section>
 <section class="detail" id="do_delete/2">
 
   <div class="detail-header">
-    <a href="#do_delete/2" class="detail-link" title="Link to this function">
+    <a href="#do_delete/2" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -369,13 +365,13 @@ will be called.</p>
   <section class="docstring">
 
 <p>Calls <a href="#delete/2"><code class="inline">delete/2</code></a> and removes the current user assigned to the conn.</p><p>The user assigned is removed from the conn with
-<a href="https://hexdocs.pm/pow/1.0.28/Pow.Plug.html#assign_current_user/3"><code class="inline">Pow.Plug.assign_current_user/3</code></a>.</p>
+<a href="https://hexdocs.pm/pow/1.0.38/Pow.Plug.html#assign_current_user/3"><code class="inline">Pow.Plug.assign_current_user/3</code></a>.</p>
   </section>
 </section>
 <section class="detail" id="do_fetch/2">
 
   <div class="detail-header">
-    <a href="#do_fetch/2" class="detail-link" title="Link to this function">
+    <a href="#do_fetch/2" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -391,13 +387,13 @@ will be called.</p>
 
   <section class="docstring">
 
-<p>Calls <a href="#fetch/2"><code class="inline">fetch/2</code></a> and assigns the current user to the conn.</p><p>The user is assigned to the conn with <a href="https://hexdocs.pm/pow/1.0.28/Pow.Plug.html#assign_current_user/3"><code class="inline">Pow.Plug.assign_current_user/3</code></a>.</p>
+<p>Calls <a href="#fetch/2"><code class="inline">fetch/2</code></a> and assigns the current user to the conn.</p><p>The user is assigned to the conn with <a href="https://hexdocs.pm/pow/1.0.38/Pow.Plug.html#assign_current_user/3"><code class="inline">Pow.Plug.assign_current_user/3</code></a>.</p>
   </section>
 </section>
 <section class="detail" id="fetch/2">
 
   <div class="detail-header">
-    <a href="#fetch/2" class="detail-link" title="Link to this function">
+    <a href="#fetch/2" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -419,7 +415,7 @@ will be called.</p>
 <section class="detail" id="renew/2">
 
   <div class="detail-header">
-    <a href="#renew/2" class="detail-link" title="Link to this function">
+    <a href="#renew/2" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -449,34 +445,33 @@ with the same validity as other access tokens, for the sub of the refresh token.
     </div>
   </section>
 
-      <footer class="footer">
-        <p>
+    <footer class="footer">
+      <p>
 
-          <span class="line">
-            <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
-              Search HexDocs
-            </button>
+        <span class="line">
+          <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+            Search HexDocs
+          </button>
 
-              <a href="Trento Web.epub" title="ePub version">
-                Download ePub version
-              </a>
+            <a href="Trento Web.epub" title="ePub version">
+              Download ePub version
+            </a>
 
-          </span>
-        </p>
+        </span>
+      </p>
 
-        <p class="built-using">
-          Built using
-          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.31.1) for the
+      <p class="built-using">
+        Built using
+        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.34.2) for the
 
-            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
 
-        </p>
-      </footer>
-    </div>
+      </p>
+
+    </footer>
   </div>
 </main>
 </div>
-
 
   </body>
 </html>

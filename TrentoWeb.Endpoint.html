@@ -4,22 +4,19 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="ExDoc v0.31.1">
+    <meta name="generator" content="ExDoc v0.34.2">
     <meta name="project" content="Trento Web v2.3.1">
 
 
     <title>TrentoWeb.Endpoint — Trento Web v2.3.1</title>
-    <link rel="stylesheet" href="dist/html-elixir-FM2CSD74.css" />
+    <link rel="stylesheet" href="dist/html-elixir-F2VRIOKR.css" />
 
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
-    <script src="dist/handlebars.templates-43PMFBC7.js"></script>
-    <script src="dist/sidebar_items-17A74293.js"></script>
-
-      <script src="docs_config.js"></script>
-
-    <script async src="dist/html-L4O5OK2K.js"></script>
-
+    <script src="dist/handlebars.templates-K7URE6B4.js"></script>
+    <script src="dist/sidebar_items-9EBB0DE8.js"></script>
+    <script src="docs_config.js"></script>
+    <script async src="dist/html-YIPIRHGU.js"></script>
 
   </head>
   <body data-type="modules" class="page-module">
@@ -37,13 +34,11 @@
       } catch (error) { }
     </script>
 
-<div class="main">
+<div class="body-wrapper">
 
 <button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
   <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
 </button>
-
-<div class="background-layer"></div>
 
 <nav id="sidebar" class="sidebar">
 
@@ -103,45 +98,46 @@ GUIDES
 
 <main class="content">
   <output role="status" id="toast"></output>
-  <div class="content-outer">
-    <div id="content" class="content-inner">
-      <div class="top-search">
-        <div class="search-settings">
-          <form class="search-bar" action="search.html">
-            <label class="search-label">
-              <span class="sr-only">Search documentation of Trento Web</span>
-              <input name="q" type="text" class="search-input" placeholder="Search Documentation (press /)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
-            </label>
-            <button type="submit" class="search-button" aria-label="Submit Search">
-              <i class="ri-search-2-line ri-lg" aria-hidden="true" title="Submit search"></i>
-            </button>
-            <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
-              <i class="ri-close-line ri-lg" title="Cancel search"></i>
-            </button>
-          </form>
-          <div class="autocomplete">
-          </div>
-          <button class="icon-settings display-settings">
-            <i class="ri-settings-3-line"></i>
-            <span class="sr-only">Settings</span>
+
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Trento Web</span>
+            <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+          </label>
+          <button type="submit" class="search-button" aria-label="Submit Search">
+            <i class="ri-search-2-line ri-lg" aria-hidden="true" title="Submit search"></i>
           </button>
+          <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+            <i class="ri-close-line ri-lg" title="Cancel search"></i>
+          </button>
+        </form>
+        <div class="autocomplete">
         </div>
-
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
       </div>
+    </div>
 
-<h1>
+<div id="top-content">
+  <h1>
 
-    <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/endpoint.ex#L1" title="View Source" class="icon-action" rel="help">
-      <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-      <span class="sr-only">View Source</span>
-    </a>
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/endpoint.ex#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
 
-  <span translate="no">TrentoWeb.Endpoint</span> 
-  <small class="app-vsn" translate="no">(Trento Web v2.3.1)</small>
+    <span translate="no">TrentoWeb.Endpoint</span> 
+    <small class="app-vsn" translate="no">(Trento Web v2.3.1)</small>
 
-</h1>
+  </h1>
 
 
+</div>
 
   <section id="summary" class="details-list">
     <h1 class="section-heading">
@@ -157,47 +153,47 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#broadcast/3" translate="no">broadcast(topic, event, msg)</a>
+        <a href="#broadcast/3" data-no-tooltip translate="no">broadcast(topic, event, msg)</a>
 
       </div>
 
-        <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/phoenix/1.6.16/Phoenix.Endpoint.html#c:broadcast/3"><code class="inline">Phoenix.Endpoint.broadcast/3</code></a>.</p></div>
+        <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/phoenix/1.7.14/Phoenix.Endpoint.html#c:broadcast/3"><code class="inline">Phoenix.Endpoint.broadcast/3</code></a>.</p></div>
 
     </div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#broadcast!/3" translate="no">broadcast!(topic, event, msg)</a>
+        <a href="#broadcast!/3" data-no-tooltip translate="no">broadcast!(topic, event, msg)</a>
 
       </div>
 
-        <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/phoenix/1.6.16/Phoenix.Endpoint.html#c:broadcast!/3"><code class="inline">Phoenix.Endpoint.broadcast!/3</code></a>.</p></div>
+        <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/phoenix/1.7.14/Phoenix.Endpoint.html#c:broadcast!/3"><code class="inline">Phoenix.Endpoint.broadcast!/3</code></a>.</p></div>
 
     </div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#broadcast_from/4" translate="no">broadcast_from(from, topic, event, msg)</a>
+        <a href="#broadcast_from/4" data-no-tooltip translate="no">broadcast_from(from, topic, event, msg)</a>
 
       </div>
 
-        <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/phoenix/1.6.16/Phoenix.Endpoint.html#c:broadcast_from/4"><code class="inline">Phoenix.Endpoint.broadcast_from/4</code></a>.</p></div>
+        <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/phoenix/1.7.14/Phoenix.Endpoint.html#c:broadcast_from/4"><code class="inline">Phoenix.Endpoint.broadcast_from/4</code></a>.</p></div>
 
     </div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#broadcast_from!/4" translate="no">broadcast_from!(from, topic, event, msg)</a>
+        <a href="#broadcast_from!/4" data-no-tooltip translate="no">broadcast_from!(from, topic, event, msg)</a>
 
       </div>
 
-        <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/phoenix/1.6.16/Phoenix.Endpoint.html#c:broadcast_from!/4"><code class="inline">Phoenix.Endpoint.broadcast_from!/4</code></a>.</p></div>
+        <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/phoenix/1.7.14/Phoenix.Endpoint.html#c:broadcast_from!/4"><code class="inline">Phoenix.Endpoint.broadcast_from!/4</code></a>.</p></div>
 
     </div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#call/2" translate="no">call(conn, opts)</a>
+        <a href="#call/2" data-no-tooltip translate="no">call(conn, opts)</a>
 
       </div>
 
@@ -207,7 +203,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#child_spec/1" translate="no">child_spec(opts)</a>
+        <a href="#child_spec/1" data-no-tooltip translate="no">child_spec(opts)</a>
 
       </div>
 
@@ -218,7 +214,7 @@ under a supervision tree.</p></div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#config/2" translate="no">config(key, default \\ nil)</a>
+        <a href="#config/2" data-no-tooltip translate="no">config(key, default \\ nil)</a>
 
       </div>
 
@@ -228,7 +224,7 @@ under a supervision tree.</p></div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#config_change/2" translate="no">config_change(changed, removed)</a>
+        <a href="#config_change/2" data-no-tooltip translate="no">config_change(changed, removed)</a>
 
       </div>
 
@@ -238,7 +234,7 @@ under a supervision tree.</p></div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#host/0" translate="no">host()</a>
+        <a href="#host/0" data-no-tooltip translate="no">host()</a>
 
       </div>
 
@@ -248,7 +244,7 @@ under a supervision tree.</p></div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#init/1" translate="no">init(opts)</a>
+        <a href="#init/1" data-no-tooltip translate="no">init(opts)</a>
 
       </div>
 
@@ -258,27 +254,27 @@ under a supervision tree.</p></div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#local_broadcast/3" translate="no">local_broadcast(topic, event, msg)</a>
+        <a href="#local_broadcast/3" data-no-tooltip translate="no">local_broadcast(topic, event, msg)</a>
 
       </div>
 
-        <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/phoenix/1.6.16/Phoenix.Endpoint.html#c:local_broadcast/3"><code class="inline">Phoenix.Endpoint.local_broadcast/3</code></a>.</p></div>
+        <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/phoenix/1.7.14/Phoenix.Endpoint.html#c:local_broadcast/3"><code class="inline">Phoenix.Endpoint.local_broadcast/3</code></a>.</p></div>
 
     </div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#local_broadcast_from/4" translate="no">local_broadcast_from(from, topic, event, msg)</a>
+        <a href="#local_broadcast_from/4" data-no-tooltip translate="no">local_broadcast_from(from, topic, event, msg)</a>
 
       </div>
 
-        <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/phoenix/1.6.16/Phoenix.Endpoint.html#c:local_broadcast_from/4"><code class="inline">Phoenix.Endpoint.local_broadcast_from/4</code></a>.</p></div>
+        <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/phoenix/1.7.14/Phoenix.Endpoint.html#c:local_broadcast_from/4"><code class="inline">Phoenix.Endpoint.local_broadcast_from/4</code></a>.</p></div>
 
     </div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#path/1" translate="no">path(path)</a>
+        <a href="#path/1" data-no-tooltip translate="no">path(path)</a>
 
       </div>
 
@@ -288,7 +284,7 @@ under a supervision tree.</p></div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#script_name/0" translate="no">script_name()</a>
+        <a href="#script_name/0" data-no-tooltip translate="no">script_name()</a>
 
       </div>
 
@@ -298,7 +294,17 @@ under a supervision tree.</p></div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#start_link/1" translate="no">start_link(opts \\ [])</a>
+        <a href="#server_info/1" data-no-tooltip translate="no">server_info(scheme)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Returns the address and port that the server is running on</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#start_link/1" data-no-tooltip translate="no">start_link(opts \\ [])</a>
 
       </div>
 
@@ -308,7 +314,7 @@ under a supervision tree.</p></div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#static_integrity/1" translate="no">static_integrity(path)</a>
+        <a href="#static_integrity/1" data-no-tooltip translate="no">static_integrity(path)</a>
 
       </div>
 
@@ -319,7 +325,7 @@ in <code class="inline">priv/static</code>. Meant to be used for Subresource Int
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#static_lookup/1" translate="no">static_lookup(path)</a>
+        <a href="#static_lookup/1" data-no-tooltip translate="no">static_lookup(path)</a>
 
       </div>
 
@@ -330,7 +336,7 @@ and the second item being the <code class="inline">static_integrity</code>.</p><
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#static_path/1" translate="no">static_path(path)</a>
+        <a href="#static_path/1" data-no-tooltip translate="no">static_path(path)</a>
 
       </div>
 
@@ -340,7 +346,7 @@ and the second item being the <code class="inline">static_integrity</code>.</p><
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#static_url/0" translate="no">static_url()</a>
+        <a href="#static_url/0" data-no-tooltip translate="no">static_url()</a>
 
       </div>
 
@@ -350,7 +356,7 @@ and the second item being the <code class="inline">static_integrity</code>.</p><
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#struct_url/0" translate="no">struct_url()</a>
+        <a href="#struct_url/0" data-no-tooltip translate="no">struct_url()</a>
 
       </div>
 
@@ -360,27 +366,27 @@ and the second item being the <code class="inline">static_integrity</code>.</p><
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#subscribe/2" translate="no">subscribe(topic, opts \\ [])</a>
+        <a href="#subscribe/2" data-no-tooltip translate="no">subscribe(topic, opts \\ [])</a>
 
       </div>
 
-        <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/phoenix/1.6.16/Phoenix.Endpoint.html#c:subscribe/2"><code class="inline">Phoenix.Endpoint.subscribe/2</code></a>.</p></div>
+        <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/phoenix/1.7.14/Phoenix.Endpoint.html#c:subscribe/2"><code class="inline">Phoenix.Endpoint.subscribe/2</code></a>.</p></div>
 
     </div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#unsubscribe/1" translate="no">unsubscribe(topic)</a>
+        <a href="#unsubscribe/1" data-no-tooltip translate="no">unsubscribe(topic)</a>
 
       </div>
 
-        <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/phoenix/1.6.16/Phoenix.Endpoint.html#c:unsubscribe/1"><code class="inline">Phoenix.Endpoint.unsubscribe/1</code></a>.</p></div>
+        <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/phoenix/1.7.14/Phoenix.Endpoint.html#c:unsubscribe/1"><code class="inline">Phoenix.Endpoint.unsubscribe/1</code></a>.</p></div>
 
     </div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#url/0" translate="no">url()</a>
+        <a href="#url/0" data-no-tooltip translate="no">url()</a>
 
       </div>
 
@@ -404,7 +410,7 @@ and the second item being the <code class="inline">static_integrity</code>.</p><
 <section class="detail" id="broadcast/3">
 
   <div class="detail-header">
-    <a href="#broadcast/3" class="detail-link" title="Link to this function">
+    <a href="#broadcast/3" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -420,13 +426,13 @@ and the second item being the <code class="inline">static_integrity</code>.</p><
 
   <section class="docstring">
 
-<p>Callback implementation for <a href="https://hexdocs.pm/phoenix/1.6.16/Phoenix.Endpoint.html#c:broadcast/3"><code class="inline">Phoenix.Endpoint.broadcast/3</code></a>.</p>
+<p>Callback implementation for <a href="https://hexdocs.pm/phoenix/1.7.14/Phoenix.Endpoint.html#c:broadcast/3"><code class="inline">Phoenix.Endpoint.broadcast/3</code></a>.</p>
   </section>
 </section>
 <section class="detail" id="broadcast!/3">
 
   <div class="detail-header">
-    <a href="#broadcast!/3" class="detail-link" title="Link to this function">
+    <a href="#broadcast!/3" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -442,13 +448,13 @@ and the second item being the <code class="inline">static_integrity</code>.</p><
 
   <section class="docstring">
 
-<p>Callback implementation for <a href="https://hexdocs.pm/phoenix/1.6.16/Phoenix.Endpoint.html#c:broadcast!/3"><code class="inline">Phoenix.Endpoint.broadcast!/3</code></a>.</p>
+<p>Callback implementation for <a href="https://hexdocs.pm/phoenix/1.7.14/Phoenix.Endpoint.html#c:broadcast!/3"><code class="inline">Phoenix.Endpoint.broadcast!/3</code></a>.</p>
   </section>
 </section>
 <section class="detail" id="broadcast_from/4">
 
   <div class="detail-header">
-    <a href="#broadcast_from/4" class="detail-link" title="Link to this function">
+    <a href="#broadcast_from/4" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -464,13 +470,13 @@ and the second item being the <code class="inline">static_integrity</code>.</p><
 
   <section class="docstring">
 
-<p>Callback implementation for <a href="https://hexdocs.pm/phoenix/1.6.16/Phoenix.Endpoint.html#c:broadcast_from/4"><code class="inline">Phoenix.Endpoint.broadcast_from/4</code></a>.</p>
+<p>Callback implementation for <a href="https://hexdocs.pm/phoenix/1.7.14/Phoenix.Endpoint.html#c:broadcast_from/4"><code class="inline">Phoenix.Endpoint.broadcast_from/4</code></a>.</p>
   </section>
 </section>
 <section class="detail" id="broadcast_from!/4">
 
   <div class="detail-header">
-    <a href="#broadcast_from!/4" class="detail-link" title="Link to this function">
+    <a href="#broadcast_from!/4" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -486,13 +492,13 @@ and the second item being the <code class="inline">static_integrity</code>.</p><
 
   <section class="docstring">
 
-<p>Callback implementation for <a href="https://hexdocs.pm/phoenix/1.6.16/Phoenix.Endpoint.html#c:broadcast_from!/4"><code class="inline">Phoenix.Endpoint.broadcast_from!/4</code></a>.</p>
+<p>Callback implementation for <a href="https://hexdocs.pm/phoenix/1.7.14/Phoenix.Endpoint.html#c:broadcast_from!/4"><code class="inline">Phoenix.Endpoint.broadcast_from!/4</code></a>.</p>
   </section>
 </section>
 <section class="detail" id="call/2">
 
   <div class="detail-header">
-    <a href="#call/2" class="detail-link" title="Link to this function">
+    <a href="#call/2" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -514,7 +520,7 @@ and the second item being the <code class="inline">static_integrity</code>.</p><
 <section class="detail" id="child_spec/1">
 
   <div class="detail-header">
-    <a href="#child_spec/1" class="detail-link" title="Link to this function">
+    <a href="#child_spec/1" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -539,7 +545,7 @@ under a supervision tree.</p>
     <span id="config/1"></span>
 
   <div class="detail-header">
-    <a href="#config/2" class="detail-link" title="Link to this function">
+    <a href="#config/2" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -561,7 +567,7 @@ under a supervision tree.</p>
 <section class="detail" id="config_change/2">
 
   <div class="detail-header">
-    <a href="#config_change/2" class="detail-link" title="Link to this function">
+    <a href="#config_change/2" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -583,7 +589,7 @@ under a supervision tree.</p>
 <section class="detail" id="host/0">
 
   <div class="detail-header">
-    <a href="#host/0" class="detail-link" title="Link to this function">
+    <a href="#host/0" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -605,7 +611,7 @@ under a supervision tree.</p>
 <section class="detail" id="init/1">
 
   <div class="detail-header">
-    <a href="#init/1" class="detail-link" title="Link to this function">
+    <a href="#init/1" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -627,7 +633,7 @@ under a supervision tree.</p>
 <section class="detail" id="local_broadcast/3">
 
   <div class="detail-header">
-    <a href="#local_broadcast/3" class="detail-link" title="Link to this function">
+    <a href="#local_broadcast/3" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -643,13 +649,13 @@ under a supervision tree.</p>
 
   <section class="docstring">
 
-<p>Callback implementation for <a href="https://hexdocs.pm/phoenix/1.6.16/Phoenix.Endpoint.html#c:local_broadcast/3"><code class="inline">Phoenix.Endpoint.local_broadcast/3</code></a>.</p>
+<p>Callback implementation for <a href="https://hexdocs.pm/phoenix/1.7.14/Phoenix.Endpoint.html#c:local_broadcast/3"><code class="inline">Phoenix.Endpoint.local_broadcast/3</code></a>.</p>
   </section>
 </section>
 <section class="detail" id="local_broadcast_from/4">
 
   <div class="detail-header">
-    <a href="#local_broadcast_from/4" class="detail-link" title="Link to this function">
+    <a href="#local_broadcast_from/4" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -665,13 +671,13 @@ under a supervision tree.</p>
 
   <section class="docstring">
 
-<p>Callback implementation for <a href="https://hexdocs.pm/phoenix/1.6.16/Phoenix.Endpoint.html#c:local_broadcast_from/4"><code class="inline">Phoenix.Endpoint.local_broadcast_from/4</code></a>.</p>
+<p>Callback implementation for <a href="https://hexdocs.pm/phoenix/1.7.14/Phoenix.Endpoint.html#c:local_broadcast_from/4"><code class="inline">Phoenix.Endpoint.local_broadcast_from/4</code></a>.</p>
   </section>
 </section>
 <section class="detail" id="path/1">
 
   <div class="detail-header">
-    <a href="#path/1" class="detail-link" title="Link to this function">
+    <a href="#path/1" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -693,7 +699,7 @@ under a supervision tree.</p>
 <section class="detail" id="script_name/0">
 
   <div class="detail-header">
-    <a href="#script_name/0" class="detail-link" title="Link to this function">
+    <a href="#script_name/0" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -712,12 +718,34 @@ under a supervision tree.</p>
 <p>Generates the script name.</p>
   </section>
 </section>
+<section class="detail" id="server_info/1">
+
+  <div class="detail-header">
+    <a href="#server_info/1" class="detail-link" data-no-tooltip title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">server_info(scheme)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/endpoint.ex#L2" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+<p>Returns the address and port that the server is running on</p>
+  </section>
+</section>
 <section class="detail" id="start_link/1">
 
     <span id="start_link/0"></span>
 
   <div class="detail-header">
-    <a href="#start_link/1" class="detail-link" title="Link to this function">
+    <a href="#start_link/1" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -733,20 +761,13 @@ under a supervision tree.</p>
 
   <section class="docstring">
 
-<p>Starts the endpoint supervision tree.</p><h2 id="start_link/1-options" class="section-heading">
-  <a href="#start_link/1-options" class="hover-link">
-    <i class="ri-link-m" aria-hidden="true"></i>
-  </a>
-  <span class="text">Options</span>
-</h2>
-<ul><li><code class="inline">:log_access_url</code> - if the access url should be logged
-once the endpoint starts</li></ul><p>All other options are merged into the endpoint configuration.</p>
+<p>Starts the endpoint supervision tree.</p><p>All other options are merged into the endpoint configuration.</p>
   </section>
 </section>
 <section class="detail" id="static_integrity/1">
 
   <div class="detail-header">
-    <a href="#static_integrity/1" class="detail-link" title="Link to this function">
+    <a href="#static_integrity/1" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -769,7 +790,7 @@ in <code class="inline">priv/static</code>. Meant to be used for Subresource Int
 <section class="detail" id="static_lookup/1">
 
   <div class="detail-header">
-    <a href="#static_lookup/1" class="detail-link" title="Link to this function">
+    <a href="#static_lookup/1" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -792,7 +813,7 @@ and the second item being the <code class="inline">static_integrity</code>.</p>
 <section class="detail" id="static_path/1">
 
   <div class="detail-header">
-    <a href="#static_path/1" class="detail-link" title="Link to this function">
+    <a href="#static_path/1" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -814,7 +835,7 @@ and the second item being the <code class="inline">static_integrity</code>.</p>
 <section class="detail" id="static_url/0">
 
   <div class="detail-header">
-    <a href="#static_url/0" class="detail-link" title="Link to this function">
+    <a href="#static_url/0" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -837,7 +858,7 @@ such. It falls back to <code class="inline">:url</code> if <code class="inline">
 <section class="detail" id="struct_url/0">
 
   <div class="detail-header">
-    <a href="#struct_url/0" class="detail-link" title="Link to this function">
+    <a href="#struct_url/0" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -863,7 +884,7 @@ URL helpers.</p>
     <span id="subscribe/1"></span>
 
   <div class="detail-header">
-    <a href="#subscribe/2" class="detail-link" title="Link to this function">
+    <a href="#subscribe/2" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -879,13 +900,13 @@ URL helpers.</p>
 
   <section class="docstring">
 
-<p>Callback implementation for <a href="https://hexdocs.pm/phoenix/1.6.16/Phoenix.Endpoint.html#c:subscribe/2"><code class="inline">Phoenix.Endpoint.subscribe/2</code></a>.</p>
+<p>Callback implementation for <a href="https://hexdocs.pm/phoenix/1.7.14/Phoenix.Endpoint.html#c:subscribe/2"><code class="inline">Phoenix.Endpoint.subscribe/2</code></a>.</p>
   </section>
 </section>
 <section class="detail" id="unsubscribe/1">
 
   <div class="detail-header">
-    <a href="#unsubscribe/1" class="detail-link" title="Link to this function">
+    <a href="#unsubscribe/1" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -901,13 +922,13 @@ URL helpers.</p>
 
   <section class="docstring">
 
-<p>Callback implementation for <a href="https://hexdocs.pm/phoenix/1.6.16/Phoenix.Endpoint.html#c:unsubscribe/1"><code class="inline">Phoenix.Endpoint.unsubscribe/1</code></a>.</p>
+<p>Callback implementation for <a href="https://hexdocs.pm/phoenix/1.7.14/Phoenix.Endpoint.html#c:unsubscribe/1"><code class="inline">Phoenix.Endpoint.unsubscribe/1</code></a>.</p>
   </section>
 </section>
 <section class="detail" id="url/0">
 
   <div class="detail-header">
-    <a href="#url/0" class="detail-link" title="Link to this function">
+    <a href="#url/0" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -930,34 +951,33 @@ URL helpers.</p>
     </div>
   </section>
 
-      <footer class="footer">
-        <p>
+    <footer class="footer">
+      <p>
 
-          <span class="line">
-            <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
-              Search HexDocs
-            </button>
+        <span class="line">
+          <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+            Search HexDocs
+          </button>
 
-              <a href="Trento Web.epub" title="ePub version">
-                Download ePub version
-              </a>
+            <a href="Trento Web.epub" title="ePub version">
+              Download ePub version
+            </a>
 
-          </span>
-        </p>
+        </span>
+      </p>
 
-        <p class="built-using">
-          Built using
-          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.31.1) for the
+      <p class="built-using">
+        Built using
+        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.34.2) for the
 
-            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
 
-        </p>
-      </footer>
-    </div>
+      </p>
+
+    </footer>
   </div>
 </main>
 </div>
-
 
   </body>
 </html>

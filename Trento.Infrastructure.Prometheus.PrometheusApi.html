@@ -4,22 +4,19 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="ExDoc v0.31.1">
+    <meta name="generator" content="ExDoc v0.34.2">
     <meta name="project" content="Trento Web v2.3.1">
 
 
     <title>Trento.Infrastructure.Prometheus.PrometheusApi — Trento Web v2.3.1</title>
-    <link rel="stylesheet" href="dist/html-elixir-FM2CSD74.css" />
+    <link rel="stylesheet" href="dist/html-elixir-F2VRIOKR.css" />
 
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
-    <script src="dist/handlebars.templates-43PMFBC7.js"></script>
-    <script src="dist/sidebar_items-17A74293.js"></script>
-
-      <script src="docs_config.js"></script>
-
-    <script async src="dist/html-L4O5OK2K.js"></script>
-
+    <script src="dist/handlebars.templates-K7URE6B4.js"></script>
+    <script src="dist/sidebar_items-9EBB0DE8.js"></script>
+    <script src="docs_config.js"></script>
+    <script async src="dist/html-YIPIRHGU.js"></script>
 
   </head>
   <body data-type="modules" class="page-module">
@@ -37,13 +34,11 @@
       } catch (error) { }
     </script>
 
-<div class="main">
+<div class="body-wrapper">
 
 <button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
   <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
 </button>
-
-<div class="background-layer"></div>
 
 <nav id="sidebar" class="sidebar">
 
@@ -103,49 +98,50 @@ GUIDES
 
 <main class="content">
   <output role="status" id="toast"></output>
-  <div class="content-outer">
-    <div id="content" class="content-inner">
-      <div class="top-search">
-        <div class="search-settings">
-          <form class="search-bar" action="search.html">
-            <label class="search-label">
-              <span class="sr-only">Search documentation of Trento Web</span>
-              <input name="q" type="text" class="search-input" placeholder="Search Documentation (press /)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
-            </label>
-            <button type="submit" class="search-button" aria-label="Submit Search">
-              <i class="ri-search-2-line ri-lg" aria-hidden="true" title="Submit search"></i>
-            </button>
-            <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
-              <i class="ri-close-line ri-lg" title="Cancel search"></i>
-            </button>
-          </form>
-          <div class="autocomplete">
-          </div>
-          <button class="icon-settings display-settings">
-            <i class="ri-settings-3-line"></i>
-            <span class="sr-only">Settings</span>
+
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Trento Web</span>
+            <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+          </label>
+          <button type="submit" class="search-button" aria-label="Submit Search">
+            <i class="ri-search-2-line ri-lg" aria-hidden="true" title="Submit search"></i>
           </button>
+          <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+            <i class="ri-close-line ri-lg" title="Cancel search"></i>
+          </button>
+        </form>
+        <div class="autocomplete">
         </div>
-
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
       </div>
+    </div>
 
-<h1>
+<div id="top-content">
+  <h1>
 
-    <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/adapter/prometheus_api.ex#L1" title="View Source" class="icon-action" rel="help">
-      <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-      <span class="sr-only">View Source</span>
-    </a>
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/adapter/prometheus_api.ex#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
 
-  <span translate="no">Trento.Infrastructure.Prometheus.PrometheusApi</span> 
-  <small class="app-vsn" translate="no">(Trento Web v2.3.1)</small>
+    <span translate="no">Trento.Infrastructure.Prometheus.PrometheusApi</span> 
+    <small class="app-vsn" translate="no">(Trento Web v2.3.1)</small>
 
-</h1>
+  </h1>
 
 
-  <section id="moduledoc">
+    <section id="moduledoc">
 <p>Prometheus API adapter</p>
-  </section>
+    </section>
 
+</div>
 
   <section id="summary" class="details-list">
     <h1 class="section-heading">
@@ -161,7 +157,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#cpu_busy_iowait/3" translate="no">cpu_busy_iowait(host_id, from, to)</a>
+        <a href="#cpu_busy_iowait/3" data-no-tooltip translate="no">cpu_busy_iowait(host_id, from, to)</a>
 
       </div>
 
@@ -171,7 +167,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#cpu_busy_irqs/3" translate="no">cpu_busy_irqs(host_id, from, to)</a>
+        <a href="#cpu_busy_irqs/3" data-no-tooltip translate="no">cpu_busy_irqs(host_id, from, to)</a>
 
       </div>
 
@@ -181,7 +177,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#cpu_busy_other/3" translate="no">cpu_busy_other(host_id, from, to)</a>
+        <a href="#cpu_busy_other/3" data-no-tooltip translate="no">cpu_busy_other(host_id, from, to)</a>
 
       </div>
 
@@ -191,7 +187,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#cpu_busy_system/3" translate="no">cpu_busy_system(host_id, from, to)</a>
+        <a href="#cpu_busy_system/3" data-no-tooltip translate="no">cpu_busy_system(host_id, from, to)</a>
 
       </div>
 
@@ -201,7 +197,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#cpu_busy_user/3" translate="no">cpu_busy_user(host_id, from, to)</a>
+        <a href="#cpu_busy_user/3" data-no-tooltip translate="no">cpu_busy_user(host_id, from, to)</a>
 
       </div>
 
@@ -211,7 +207,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#cpu_idle/3" translate="no">cpu_idle(host_id, from, to)</a>
+        <a href="#cpu_idle/3" data-no-tooltip translate="no">cpu_idle(host_id, from, to)</a>
 
       </div>
 
@@ -221,7 +217,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#get_exporters_status/1" translate="no">get_exporters_status(host_id)</a>
+        <a href="#get_exporters_status/1" data-no-tooltip translate="no">get_exporters_status(host_id)</a>
 
       </div>
 
@@ -231,7 +227,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#num_cpus/2" translate="no">num_cpus(from, to)</a>
+        <a href="#num_cpus/2" data-no-tooltip translate="no">num_cpus(from, to)</a>
 
       </div>
 
@@ -241,7 +237,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#ram_cache_and_buffer/3" translate="no">ram_cache_and_buffer(host_id, from, to)</a>
+        <a href="#ram_cache_and_buffer/3" data-no-tooltip translate="no">ram_cache_and_buffer(host_id, from, to)</a>
 
       </div>
 
@@ -251,7 +247,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#ram_free/3" translate="no">ram_free(host_id, from, to)</a>
+        <a href="#ram_free/3" data-no-tooltip translate="no">ram_free(host_id, from, to)</a>
 
       </div>
 
@@ -261,7 +257,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#ram_total/3" translate="no">ram_total(host_id, from, to)</a>
+        <a href="#ram_total/3" data-no-tooltip translate="no">ram_total(host_id, from, to)</a>
 
       </div>
 
@@ -271,7 +267,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#ram_used/3" translate="no">ram_used(host_id, from, to)</a>
+        <a href="#ram_used/3" data-no-tooltip translate="no">ram_used(host_id, from, to)</a>
 
       </div>
 
@@ -281,7 +277,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#swap_used/3" translate="no">swap_used(host_id, from, to)</a>
+        <a href="#swap_used/3" data-no-tooltip translate="no">swap_used(host_id, from, to)</a>
 
       </div>
 
@@ -305,7 +301,7 @@ GUIDES
 <section class="detail" id="cpu_busy_iowait/3">
 
   <div class="detail-header">
-    <a href="#cpu_busy_iowait/3" class="detail-link" title="Link to this function">
+    <a href="#cpu_busy_iowait/3" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -327,7 +323,7 @@ GUIDES
 <section class="detail" id="cpu_busy_irqs/3">
 
   <div class="detail-header">
-    <a href="#cpu_busy_irqs/3" class="detail-link" title="Link to this function">
+    <a href="#cpu_busy_irqs/3" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -349,7 +345,7 @@ GUIDES
 <section class="detail" id="cpu_busy_other/3">
 
   <div class="detail-header">
-    <a href="#cpu_busy_other/3" class="detail-link" title="Link to this function">
+    <a href="#cpu_busy_other/3" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -371,7 +367,7 @@ GUIDES
 <section class="detail" id="cpu_busy_system/3">
 
   <div class="detail-header">
-    <a href="#cpu_busy_system/3" class="detail-link" title="Link to this function">
+    <a href="#cpu_busy_system/3" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -393,7 +389,7 @@ GUIDES
 <section class="detail" id="cpu_busy_user/3">
 
   <div class="detail-header">
-    <a href="#cpu_busy_user/3" class="detail-link" title="Link to this function">
+    <a href="#cpu_busy_user/3" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -415,7 +411,7 @@ GUIDES
 <section class="detail" id="cpu_idle/3">
 
   <div class="detail-header">
-    <a href="#cpu_idle/3" class="detail-link" title="Link to this function">
+    <a href="#cpu_idle/3" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -437,7 +433,7 @@ GUIDES
 <section class="detail" id="get_exporters_status/1">
 
   <div class="detail-header">
-    <a href="#get_exporters_status/1" class="detail-link" title="Link to this function">
+    <a href="#get_exporters_status/1" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -459,7 +455,7 @@ GUIDES
 <section class="detail" id="num_cpus/2">
 
   <div class="detail-header">
-    <a href="#num_cpus/2" class="detail-link" title="Link to this function">
+    <a href="#num_cpus/2" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -481,7 +477,7 @@ GUIDES
 <section class="detail" id="ram_cache_and_buffer/3">
 
   <div class="detail-header">
-    <a href="#ram_cache_and_buffer/3" class="detail-link" title="Link to this function">
+    <a href="#ram_cache_and_buffer/3" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -503,7 +499,7 @@ GUIDES
 <section class="detail" id="ram_free/3">
 
   <div class="detail-header">
-    <a href="#ram_free/3" class="detail-link" title="Link to this function">
+    <a href="#ram_free/3" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -525,7 +521,7 @@ GUIDES
 <section class="detail" id="ram_total/3">
 
   <div class="detail-header">
-    <a href="#ram_total/3" class="detail-link" title="Link to this function">
+    <a href="#ram_total/3" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -547,7 +543,7 @@ GUIDES
 <section class="detail" id="ram_used/3">
 
   <div class="detail-header">
-    <a href="#ram_used/3" class="detail-link" title="Link to this function">
+    <a href="#ram_used/3" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -569,7 +565,7 @@ GUIDES
 <section class="detail" id="swap_used/3">
 
   <div class="detail-header">
-    <a href="#swap_used/3" class="detail-link" title="Link to this function">
+    <a href="#swap_used/3" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
@@ -592,34 +588,33 @@ GUIDES
     </div>
   </section>
 
-      <footer class="footer">
-        <p>
+    <footer class="footer">
+      <p>
 
-          <span class="line">
-            <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
-              Search HexDocs
-            </button>
+        <span class="line">
+          <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+            Search HexDocs
+          </button>
 
-              <a href="Trento Web.epub" title="ePub version">
-                Download ePub version
-              </a>
+            <a href="Trento Web.epub" title="ePub version">
+              Download ePub version
+            </a>
 
-          </span>
-        </p>
+        </span>
+      </p>
 
-        <p class="built-using">
-          Built using
-          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.31.1) for the
+      <p class="built-using">
+        Built using
+        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.34.2) for the
 
-            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
 
-        </p>
-      </footer>
-    </div>
+      </p>
+
+    </footer>
   </div>
 </main>
 </div>
-
 
   </body>
 </html>
