@@ -300,7 +300,7 @@ describe('HostDetails component', () => {
       );
     });
 
-    it("should display software updates as 'Unknown' when no SUMA updates data is available", () => {
+    it('should display software updates showing an error message when no SUMA updates data is available', () => {
       const relevantPatches = undefined;
       const upgradablePackages = undefined;
 
@@ -309,6 +309,7 @@ describe('HostDetails component', () => {
           agentVersion="2.0.0"
           suseManagerEnabled
           softwareUpdatesSettingsSaved
+          softwareUpdatesErrorMessage="An error message"
           relevantPatches={relevantPatches}
           upgradablePackages={upgradablePackages}
           userAbilities={userAbilities}
@@ -322,8 +323,8 @@ describe('HostDetails component', () => {
         .getByText(/Upgradable Packages/)
         .closest('div');
 
-      expect(relevantPatchesElement).toHaveTextContent('Unknown');
-      expect(upgradablePackagesElement).toHaveTextContent('Unknown');
+      expect(relevantPatchesElement).toHaveTextContent('An error message');
+      expect(upgradablePackagesElement).toHaveTextContent('An error message');
     });
 
     it('should show the summary of SUMA software updates in a loading state', () => {

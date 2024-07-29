@@ -81,6 +81,7 @@ function HostDetails({
   upgradablePackages,
   softwareUpdatesLoading,
   softwareUpdatesSettingsSaved,
+  softwareUpdatesErrorMessage,
   softwareUpdatesTooltip,
   userAbilities,
   cleanUpHost,
@@ -251,6 +252,7 @@ function HostDetails({
             settingsConfigured={softwareUpdatesSettingsSaved}
             relevantPatches={relevantPatches}
             upgradablePackages={upgradablePackages}
+            errorMessage={softwareUpdatesErrorMessage}
             tooltip={softwareUpdatesTooltip}
             loading={softwareUpdatesLoading}
             onBackToSettings={() => navigate(`/settings`)}

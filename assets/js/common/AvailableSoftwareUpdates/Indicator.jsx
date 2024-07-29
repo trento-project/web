@@ -11,33 +11,19 @@ function Indicator({
   title,
   critical,
   tooltip,
+  message,
   icon,
-  loading,
-  children,
+  isError,
   onNavigate,
 }) {
-  const unknown = children === undefined;
-
-  if (loading) {
-    return (
-      <div className="flex flex-row items-center border border-gray-200 p-2 rounded-md grow">
-        <div className="px-2">{icon}</div>
-        <div>
-          <p className="font-bold">{title}</p>
-          <div className="text-gray-500">Loading...</div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <Tooltip isEnabled={unknown} content={tooltip} wrap={false}>
+    <Tooltip isEnabled={isError} content={tooltip} wrap={false}>
       <div
         role="button"
         tabIndex={0}
         className={classNames(
           'flex flex-row items-center border border-gray-200 p-2 rounded-md grow',
-          { 'cursor-pointer': !unknown }
+          { 'cursor-pointer': !isError }
         )}
         onClick={onNavigate}
         onKeyDown={({ code }) => {
@@ -51,11 +37,11 @@ function Indicator({
           <p className="font-bold">{title}</p>
           <div
             className={classNames({
-              'text-green-600': !unknown,
-              'text-gray-600': unknown,
+              'text-green-600': !isError,
+              'text-gray-600': isError,
             })}
           >
-            {critical || unknown ? (
+            {critical || isError ? (
               <div>
                 <EOS_ERROR_OUTLINED
                   size="l"
@@ -63,15 +49,15 @@ function Indicator({
                     critical && ' fill-red-500'
                   }`}
                 />{' '}
-                {critical && children ? children : 'Unknown'}
+                {message}
               </div>
             ) : (
-              children
+              message
             )}
           </div>
         </div>
         <div className="flex grow justify-end">
-          {!unknown && (
+          {!isError && (
             <div>
               <EOS_KEYBOARD_ARROW_RIGHT_FILLED
                 size="l"

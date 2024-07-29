@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import { EOS_HEALING, EOS_PACKAGE_UPGRADE_OUTLINED } from 'eos-icons-react';
-import { noop, gt } from 'lodash';
+import { noop, gt, gte } from 'lodash';
 
 import Loading from './Loading';
 import SumaNotConfigured from './SumaNotConfigured';
@@ -24,6 +24,7 @@ function AvailableSoftwareUpdates({
   loading,
   relevantPatches,
   upgradablePackages,
+  errorMessage,
   tooltip,
   onBackToSettings = noop,
   onNavigateToPatches = noop,
@@ -58,21 +59,21 @@ function AvailableSoftwareUpdates({
       <Indicator
         title="Relevant Patches"
         critical={gt(relevantPatches, 0)}
+        isError={relevantPatches === undefined}
+        message={gte(relevantPatches, 0) ? relevantPatches : errorMessage}
         tooltip={tooltip}
         icon={<EOS_HEALING size="xl" />}
         onNavigate={onNavigateToPatches}
-      >
-        {relevantPatches}
-      </Indicator>
+      />
 
       <Indicator
         title="Upgradable Packages"
+        isError={upgradablePackages === undefined}
+        message={gte(upgradablePackages, 0) ? upgradablePackages : errorMessage}
         tooltip={tooltip}
         icon={<EOS_PACKAGE_UPGRADE_OUTLINED size="xl" />}
         onNavigate={onNavigateToPackages}
-      >
-        {upgradablePackages}
-      </Indicator>
+      />
     </div>
   );
 }

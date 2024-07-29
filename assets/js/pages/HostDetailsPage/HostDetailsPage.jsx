@@ -17,6 +17,7 @@ import {
   getSoftwareUpdatesSettingsConfigured,
   getSoftwareUpdatesLoading,
   getSoftwareUpdatesStats,
+  getSoftwareUpdatesErrors,
 } from '@state/selectors/softwareUpdates';
 
 import { getHost, getHostSelectedChecks } from '@state/selectors/host';
@@ -33,6 +34,42 @@ import HostDetails from './HostDetails';
 
 const chartsEnabled = getFromConfig('chartsEnabled');
 const suseManagerEnabled = getFromConfig('suseManagerEnabled');
+
+const getSoftwareUpdatesErrorMessage = (errors) => {
+  const hostNotFoundInSUMA = errors.some(
+    ({ detail }) =>
+      detail === 'The requested resource cannot be found.' ||
+      detail === 'No system ID was found on SUSE Manager for this host.'
+  );
+
+  if (hostNotFoundInSUMA) {
+    return 'Host not found in SUSE Manager';
+  }
+
+  if (errors.length) {
+    return 'Connection to SUMA not working';
+  }
+
+  return 'Unknown';
+};
+
+const getSoftwareUpdatesErrorTooltip = (errors) => {
+  const hostNotFoundInSUMA = errors.some(
+    ({ detail }) =>
+      detail === 'The requested resource cannot be found.' ||
+      detail === 'No system ID was found on SUSE Manager for this host.'
+  );
+
+  if (hostNotFoundInSUMA) {
+    return 'Contact your SUSE Manager admin to ensure the host is managed by SUSE Manager';
+  }
+
+  if (errors.length) {
+    return 'Please review SUSE Manager settings';
+  }
+
+  return undefined;
+};
 
 function HostDetailsPage() {
   const { hostID } = useParams();
@@ -66,6 +103,17 @@ function HostDetailsPage() {
 
   const softwareUpdatesLoading = useSelector((state) =>
     getSoftwareUpdatesLoading(state, hostID)
+  );
+
+  const softwareUpdatesErrors = useSelector((state) =>
+    getSoftwareUpdatesErrors(state, hostID)
+  );
+
+  const softwareUpdatesErrorMessage = getSoftwareUpdatesErrorMessage(
+    softwareUpdatesErrors
+  );
+  const softwareUpdatesTooltip = getSoftwareUpdatesErrorTooltip(
+    softwareUpdatesErrors
   );
 
   const getExportersStatus = async () => {
@@ -121,11 +169,8 @@ function HostDetailsPage() {
       upgradablePackages={numUpgradablePackages}
       softwareUpdatesSettingsSaved={settingsConfigured}
       softwareUpdatesLoading={softwareUpdatesLoading}
-      softwareUpdatesTooltip={
-        numRelevantPatches === undefined && numUpgradablePackages === undefined
-          ? 'Trento was not able to retrieve the requested data'
-          : undefined
-      }
+      softwareUpdatesErrorMessage={softwareUpdatesErrorMessage}
+      softwareUpdatesTooltip={softwareUpdatesTooltip}
       userAbilities={abilities}
       cleanUpHost={() => {
         dispatch(deregisterHost({ id: hostID, hostname: host.hostname }));
