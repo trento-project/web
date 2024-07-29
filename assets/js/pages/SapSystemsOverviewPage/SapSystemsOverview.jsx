@@ -79,20 +79,18 @@ function SapSystemsOverview({
       },
       {
         title: 'Type',
-        key: 'applicationInstances',
-        render: (content) => {
-          const instanceTypes = uniq(
-            flatMap(content, (instance) => instance.features.split('|'))
+        key: 'type',
+        render: (_, items) =>
+          uniq(
+            flatMap(
+              filter(items.applicationInstances, { sap_system_id: items.id }),
+              ({ features }) => features.split('|')
+            )
           )
             .filter((item) => item === 'J2EE' || item === 'ABAP')
-            .map((item) => (item === 'J2EE' ? 'JAVA' : item));
-          // Join the results in a fixed order ABAP, JAVA, ABAP/JAVA or ''
-          const sapSystemType = ['ABAP', 'JAVA']
-            .filter((type) => instanceTypes.includes(type))
-            .join('/');
-
-          return sapSystemType;
-        },
+            .map((item) => (item === 'J2EE' ? 'JAVA' : item))
+            .toSorted()
+            .join('/'),
       },
 
       {
@@ -138,21 +136,17 @@ function SapSystemsOverview({
     ),
   };
 
-  const filteredApplicationInstances = (sapSystem) =>
-    filter(applicationInstances, {
-      sap_system_id: sapSystem.id,
-    });
-
   const data = sapSystems.map((sapSystem) => ({
     id: sapSystem.id,
     health: sapSystem.health,
     sid: sapSystem.sid,
     attachedRdbms: sapSystem.database_sid,
     tenant: sapSystem.tenant,
-    type: filteredApplicationInstances(sapSystem),
     dbAddress: sapSystem.db_host,
     ensaVersion: sapSystem.ensa_version || '-',
-    applicationInstances: filteredApplicationInstances(sapSystem),
+    applicationInstances: filter(applicationInstances, {
+      sap_system_id: sapSystem.id,
+    }),
     databaseInstances: filter(databaseInstances, {
       database_id: sapSystem.database_id,
     }),

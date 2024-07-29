@@ -41,10 +41,8 @@ describe('SapSystemsOverviews component', () => {
     });
 
     it('should display the correct content for a SAP system main row', () => {
-      const sapSystemType = 'ABAP';
       const sapSystem = sapSystemFactory.build({
         ensa_version: 'ensa1',
-        sap_system_type: sapSystemType,
       });
       const {
         id: sapSystemID,
@@ -57,11 +55,19 @@ describe('SapSystemsOverviews component', () => {
         database_sid: attachedRdbms,
       } = sapSystem;
 
+      const sapSystemType = 'ABAP';
+      const modifiedApplicationInstances = applicationInstances.map(
+        (instance) => ({
+          ...instance,
+          features: sapSystemType,
+        })
+      );
+
       renderWithRouter(
         <SapSystemsOverview
           sapSystems={[sapSystem]}
           userAbilities={userAbilities}
-          applicationInstances={applicationInstances}
+          applicationInstances={modifiedApplicationInstances}
           databaseInstances={databaseInstances}
         />
       );
@@ -110,65 +116,41 @@ describe('SapSystemsOverviews component', () => {
         'ABAP/JAVA',
         '',
       ];
-      const sapSystems = [
-        sapSystemFactory.build({
-          sap_system_type: sapSystemTypes[0],
-        }),
-        sapSystemFactory.build({
-          sap_system_type: sapSystemTypes[1],
-        }),
-        sapSystemFactory.build({
-          sap_system_type: sapSystemTypes[2],
-        }),
-        sapSystemFactory.build({
-          sap_system_type: sapSystemTypes[3],
-        }),
-        sapSystemFactory.build({
-          sap_system_type: sapSystemTypes[4],
-        }),
-      ];
 
-      const sapSystemApplicationInstances = [
-        sapSystems[0].application_instances,
-        sapSystems[1].application_instances,
-        sapSystems[2].application_instances,
-        sapSystems[3].application_instances,
-        sapSystems[4].application_instances,
-      ].flat();
+      const sapSystems = sapSystemFactory.buildList(5);
+
+      const updatedSapSystemsApplication = sapSystems.map(
+        (sapSystem, index) => ({
+          ...sapSystem,
+          application_instances: sapSystem.application_instances.map(
+            (instance) => ({
+              ...instance,
+              features: sapSystemTypes[index],
+            })
+          ),
+        })
+      );
+
+      const sapSystemApplicationInstances = updatedSapSystemsApplication
+        .map((sapSystem) => sapSystem.application_instances)
+        .flat();
 
       renderWithRouter(
         <SapSystemsOverview
-          sapSystems={sapSystems}
+          sapSystems={updatedSapSystemsApplication}
           userAbilities={userAbilities}
           applicationInstances={sapSystemApplicationInstances}
           databaseInstances={[]}
         />
       );
       const rows = screen.getByRole('table').querySelectorAll('tbody > tr');
-      const firstSapSystem = rows[0];
-      const secondSapSystem = rows[2];
-      const thirdSapSystem = rows[4];
-      const fourthSapSystem = rows[6];
-      const fifthSapSystem = rows[8];
-
-      expect(firstSapSystem.querySelector('td:nth-child(5)')).toHaveTextContent(
-        expectedSapSystemTypes[0]
-      );
-      expect(
-        secondSapSystem.querySelector('td:nth-child(5)')
-      ).toHaveTextContent(expectedSapSystemTypes[1]);
-
-      expect(thirdSapSystem.querySelector('td:nth-child(5)')).toHaveTextContent(
-        expectedSapSystemTypes[2]
-      );
-
-      expect(
-        fourthSapSystem.querySelector('td:nth-child(5)')
-      ).toHaveTextContent(expectedSapSystemTypes[3]);
-
-      expect(fifthSapSystem.querySelector('td:nth-child(5)')).toHaveTextContent(
-        expectedSapSystemTypes[4]
-      );
+      expectedSapSystemTypes.forEach((expectedType, index) => {
+        const rowIndex = index * 2;
+        const sapSystemRow = rows[rowIndex];
+        expect(sapSystemRow.querySelector('td:nth-child(5)')).toHaveTextContent(
+          expectedType
+        );
+      });
     });
 
     it('should display the correct content for a SAP system instances', () => {

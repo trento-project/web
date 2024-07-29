@@ -49,16 +49,24 @@ const enrichedAbsentDatabaseInstances = enrichInstances(
   'database_instances'
 );
 
-const sapSystemsWithDifferentTypes = [
-  sapSystemFactory.build({ sap_system_type: 'J2EE' }),
-  sapSystemFactory.build({ sap_system_type: 'ABAP' }),
-  sapSystemFactory.build({ sap_system_type: 'ABAP|J2EE' }),
-  sapSystemFactory.build({ sap_system_type: 'ABAP|J2EE|SAP_APP' }),
-  sapSystemFactory.build({ sap_system_type: 'J2EE|ABAP|SAP_APP' }),
-  sapSystemFactory.build({
-    sap_system_type: 'NOT_ABAP|NOT_JAVA|JAVA|NOT_J2EE|NOT_A_REAL_SAP_SYSTEM',
-  }),
+const sapSystemTypes = [
+  'ABAP',
+  'J2EE',
+  'ABAP|J2EE',
+  'J2EE|ABAP',
+  'SOME_SAP_SYSTEM_FEATURE|NOT_A_REAL_SYSTEM',
 ];
+
+const sapSystemsWithDifferentTypes = sapSystemFactory
+  .buildList(5)
+  .map((sapSystem, index) => ({
+    ...sapSystem,
+    application_instances: sapSystem.application_instances.map((instance) => ({
+      ...instance,
+      features: sapSystemTypes[index],
+    })),
+  }));
+
 const enrichedApplicationInstancesType = enrichInstances(
   sapSystemsWithDifferentTypes,
   'application_instances'
