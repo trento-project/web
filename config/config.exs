@@ -129,7 +129,7 @@ config :trento, Trento.Scheduler,
     ],
     activity_log_cleaning: [
       schedule: "@daily",
-      task: {Trento.ActivityLog.ActivityLogger, :clear_expired_logs, []},
+      task: {Trento.ActivityLog, :clear_expired_logs, []},
       run_strategy: {Quantum.RunStrategy.Random, :cluster},
       overlap: false
     ]
