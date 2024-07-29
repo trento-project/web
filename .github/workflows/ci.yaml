@@ -353,10 +353,26 @@ jobs:
         if: steps.npm-e2e-cache.outputs.cache-hit != 'true'
         run: cd test/e2e && npm install
 
+  prepare:
+    runs-on: ubuntu-20.04
+    outputs:
+      matrix: ${{ steps.prepare.outputs.matrix }}
+    steps:
+      - name: Create matrix ⊹
+        id: prepare
+        uses: bahmutov/gh-build-matrix@main
+        with:
+          n: 4
+      - name: Print result 🖨
+        run: echo '${{ steps.prepare.outputs.matrix }}'
+
   test-e2e:
     name: End to end tests
-    needs: [elixir-deps, npm-deps, npm-e2e-deps]
+    needs: [elixir-deps, npm-deps, npm-e2e-deps, prepare]
     runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
     env:
       MIX_ENV: dev
     steps:
@@ -424,14 +440,18 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Give executable permissions to photofinish
         run: chmod +x $(whereis photofinish | cut -d" " -f2)
-      - name: Cypress run
+      - name: Parallel cypress
         uses: cypress-io/github-action@v6
         env:
+          SPLIT: ${{ strategy.job-total }}
+          SPLIT_INDEX: ${{ strategy.job-index }}
+          DEBUG: cypress-split
           cypress_video: false
           cypress_db_host: postgres
           cypress_db_port: 5432
           cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
         with:
+          n: 4
           working-directory: test/e2e
           wait-on-timeout: 30
           config: baseUrl=http://localhost:4000
