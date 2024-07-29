@@ -43,7 +43,7 @@ const getSoftwareUpdatesErrorMessage = (errors) => {
   );
 
   if (hostNotFoundInSUMA) {
-    return 'Host not found in SUSE manager';
+    return 'Host not found in SUSE Manager';
   }
 
   if (errors.length) {
