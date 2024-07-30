@@ -24,16 +24,20 @@ function Pagination({
 
   return (
     <div className="flex justify-between p-2 bg-gray-50 width-full">
-      <div className="flex pl-3 items-center">
-        <span className="pr-2 text-gray-600">Results per page </span>
-        <Select
-          className="z-50"
-          optionsName=""
-          options={itemsPerPageOptions}
-          value={currentItemsPerPage}
-          onChange={onChangeItemsPerPage}
-        />
-      </div>
+      {itemsPerPageOptions.length > 1 ? (
+        <div className="flex pl-3 items-center">
+          <span className="pr-2 text-gray-600">Results per page </span>
+          <Select
+            className="z-50"
+            optionsName=""
+            options={itemsPerPageOptions}
+            value={currentItemsPerPage}
+            onChange={onChangeItemsPerPage}
+          />
+        </div>
+      ) : (
+        <span />
+      )}
       <div className="flex items-center">
         {pagesList.map((pageNumber) => {
           const isFirst = pageNumber === 1;
