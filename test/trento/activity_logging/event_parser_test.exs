@@ -8,8 +8,6 @@ defmodule Trento.ActivityLog.EventParser do
 
   alias Trento.ActivityLog.Logger.Parser.EventParser
 
-  require Trento.ActivityLog.ActivityCatalog, as: ActivityCatalog
-
   @events [
     build(:heartbeat_succeded),
     build(:heartbeat_failed),
