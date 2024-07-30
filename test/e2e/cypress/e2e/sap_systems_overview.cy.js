@@ -2,6 +2,7 @@ import { createUserRequestFactory } from '@lib/test-utils/factories';
 
 import {
   availableSAPSystems,
+  availableJavaSystem,
   isHanaInstace,
   isHanaPrimary,
   isHanaSecondary,
@@ -64,7 +65,7 @@ context('SAP Systems Overview', () => {
         cy.url().should('include', '/sap_systems');
       });
       availableSAPSystems.forEach(
-        ({ sid: sid, attachedDatabase: attachedDatabase }) => {
+        ({ sid: sid, attachedDatabase: attachedDatabase, type: type }) => {
           it(`should show the expected attached database details`, () => {
             cy.get('td')
               .contains(sid)
@@ -73,7 +74,7 @@ context('SAP Systems Overview', () => {
               .within(() => {
                 cy.get('td').eq(2).contains(attachedDatabase.sid);
                 cy.get('td').eq(3).contains(attachedDatabase.tenant);
-
+                cy.get('td').eq(4).contains(type);
                 cy.get('td').eq(5).contains(attachedDatabase.dbAddress);
               });
           });
@@ -210,6 +211,31 @@ context('SAP Systems Overview', () => {
               cy.go('back');
             });
         });
+      });
+    });
+
+    describe('JAVA system discovery', () => {
+      before(() => {
+        cy.loadScenario('multi-tenant');
+        cy.loadScenario('java-system');
+        cy.visit('/sap_systems');
+        cy.url().should('include', '/sap_systems');
+      });
+
+      after(() => {
+        availableJavaSystem.instances.forEach(({ hostID }) => {
+          cy.deregisterHost(hostID);
+        });
+      });
+
+      it(`should discover a JAVA system`, () => {
+        cy.get('td')
+          .contains(availableJavaSystem.sid)
+          .parent('td')
+          .parent('tr')
+          .within(() => {
+            cy.get('td').eq(4).contains(availableJavaSystem.type);
+          });
       });
     });
   });
