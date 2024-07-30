@@ -213,7 +213,7 @@ defmodule Trento.ActivityLogTest do
       assert length(logs) == 25
       # default order is by inserted_at timestamp
       all_logs_sorted =
-        all_logs |> Enum.sort_by(fn entry -> entry.inserted_at end, :desc) |> Enum.take(25)
+        all_logs |> Enum.sort_by(& &1.inserted_at, {:desc, DateTime}) |> Enum.take(25)
 
       assert logs == all_logs_sorted
     end
@@ -228,7 +228,7 @@ defmodule Trento.ActivityLogTest do
 
       all_logs_sorted =
         all_logs
-        |> Enum.sort_by(fn entry -> entry.inserted_at end, :desc)
+        |> Enum.sort_by(& &1.inserted_at, {:desc, DateTime})
         |> Enum.drop(95)
 
       assert length(all_logs_sorted) == length(logs)
@@ -245,7 +245,7 @@ defmodule Trento.ActivityLogTest do
 
       all_logs_sorted =
         all_logs
-        |> Enum.sort_by(fn entry -> entry.inserted_at end, :desc)
+        |> Enum.sort_by(& &1.inserted_at, {:desc, DateTime})
         |> Enum.take(5)
 
       assert length(all_logs_sorted) == length(logs)
@@ -265,7 +265,7 @@ defmodule Trento.ActivityLogTest do
 
       next_logs_alt =
         all_logs
-        |> Enum.sort_by(fn entry -> entry.inserted_at end, :desc)
+        |> Enum.sort_by(& &1.inserted_at, {:desc, DateTime})
         |> Enum.drop(25)
         |> Enum.take(25)
 
@@ -287,7 +287,7 @@ defmodule Trento.ActivityLogTest do
 
       next_logs_alt =
         all_logs
-        |> Enum.sort_by(fn entry -> entry.inserted_at end, :desc)
+        |> Enum.sort_by(& &1.inserted_at, {:desc, DateTime})
         |> Enum.drop(20)
         |> Enum.take(5)
 
