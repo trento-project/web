@@ -26,9 +26,9 @@ function Pagination({
     <div className="flex justify-between p-2 bg-gray-50 width-full">
       {itemsPerPageOptions.length > 1 ? (
         <div className="flex pl-3 items-center">
-          <span className="pr-2 text-gray-600">Results per page </span>
+          <span className="pr-2 text-gray-600">Results per page</span>
           <Select
-            className="z-50"
+            className=""
             optionsName=""
             options={itemsPerPageOptions}
             value={currentItemsPerPage}
