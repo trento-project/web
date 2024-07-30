@@ -124,6 +124,92 @@ defmodule Trento.SapSystems.SapSystemTest do
       )
     end
 
+    test "should register a SAP System and add an application instance when a MESSAGESERVER instance is already present and a new JAVA instance is added" do
+      sap_system_id = Faker.UUID.v4()
+      sid = Faker.StarWars.planet()
+      db_host = Faker.Internet.ip_v4_address()
+      tenant = Faker.Beer.style()
+      instance_hostname = Faker.Airports.iata()
+      http_port = 80
+      https_port = 443
+      start_priority = "0.9"
+      host_id = Faker.UUID.v4()
+      ensa_version = EnsaVersion.ensa1()
+      java_system_type = "J2EE"
+
+      initial_events = [
+        build(:application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          features: "MESSAGESERVER",
+          instance_number: "00"
+        )
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        RegisterApplicationInstance.new!(%{
+          sap_system_id: sap_system_id,
+          sid: sid,
+          db_host: db_host,
+          tenant: tenant,
+          instance_number: "10",
+          instance_hostname: instance_hostname,
+          features: java_system_type,
+          http_port: http_port,
+          https_port: https_port,
+          start_priority: start_priority,
+          host_id: host_id,
+          health: :passing,
+          ensa_version: ensa_version,
+          database_health: :passing
+        }),
+        [
+          %ApplicationInstanceRegistered{
+            sap_system_id: sap_system_id,
+            sid: sid,
+            instance_number: "10",
+            instance_hostname: instance_hostname,
+            features: java_system_type,
+            http_port: http_port,
+            https_port: https_port,
+            start_priority: start_priority,
+            host_id: host_id,
+            health: :passing
+          },
+          %SapSystemRegistered{
+            sap_system_id: sap_system_id,
+            sid: sid,
+            db_host: db_host,
+            tenant: tenant,
+            health: :passing,
+            database_health: :passing,
+            ensa_version: ensa_version
+          }
+        ],
+        fn state ->
+          assert %SapSystem{
+                   sid: ^sid,
+                   ensa_version: ^ensa_version,
+                   database_health: :passing,
+                   instances: [
+                     %Instance{
+                       sid: ^sid,
+                       instance_number: "10",
+                       features: ^java_system_type,
+                       host_id: ^host_id,
+                       health: :passing,
+                       absent_at: nil
+                     },
+                     %Instance{
+                       features: "MESSAGESERVER"
+                     }
+                   ]
+                 } = state
+        end
+      )
+    end
+
     test "should move an application instance if the host_id changed and the instance number already exists and the application is clustered" do
       sap_system_id = Faker.UUID.v4()
       sid = fake_sid()
@@ -1243,16 +1329,21 @@ defmodule Trento.SapSystems.SapSystemTest do
   end
 
   describe "tombstoning" do
-    test "should tombstone a deregistered SAP system when no application instances are left" do
+    test "should tombstone a deregistered SAP system when no ABAP or JAVA application instances are left" do
       sap_system_id = UUID.uuid4()
       deregistered_at = DateTime.utc_now()
 
       message_server_host_id = UUID.uuid4()
       message_server_instance_number = "00"
       abap_host_id = UUID.uuid4()
+      java_host_id = UUID.uuid4()
       abap_instance_number = "01"
+      java_instance_number = "02"
 
       application_sid = fake_sid()
+      # Sap System type
+      abap_system_type = "ABAP"
+      java_system_type = "J2EE"
 
       initial_events = [
         build(
@@ -1266,10 +1357,18 @@ defmodule Trento.SapSystems.SapSystemTest do
         build(
           :application_instance_registered_event,
           sap_system_id: sap_system_id,
-          features: "ABAP|GATEWAY|ICMAN|IGS",
+          features: abap_system_type,
           host_id: abap_host_id,
           sid: application_sid,
           instance_number: abap_instance_number
+        ),
+        build(
+          :application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          features: java_system_type,
+          host_id: java_host_id,
+          sid: application_sid,
+          instance_number: java_instance_number
         ),
         build(
           :sap_system_registered_event,
@@ -1292,6 +1391,12 @@ defmodule Trento.SapSystems.SapSystemTest do
             host_id: abap_host_id,
             instance_number: abap_instance_number,
             deregistered_at: deregistered_at
+          },
+          %DeregisterApplicationInstance{
+            sap_system_id: sap_system_id,
+            host_id: java_host_id,
+            instance_number: java_instance_number,
+            deregistered_at: deregistered_at
           }
         ],
         [
@@ -1309,6 +1414,12 @@ defmodule Trento.SapSystems.SapSystemTest do
             sap_system_id: sap_system_id,
             host_id: abap_host_id,
             instance_number: abap_instance_number,
+            deregistered_at: deregistered_at
+          },
+          %ApplicationInstanceDeregistered{
+            sap_system_id: sap_system_id,
+            host_id: java_host_id,
+            instance_number: java_instance_number,
             deregistered_at: deregistered_at
           },
           %SapSystemTombstoned{
