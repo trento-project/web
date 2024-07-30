@@ -44,10 +44,9 @@ describe('SapSystemsOverviews component', () => {
     it('should display the correct content for a SAP system main row', () => {
       const sapSystemType = 'ABAP';
       const sapSystemID = faker.string.uuid();
-      const sapSystemSID = faker.string.uuid();
+
       const sapSystem = sapSystemFactory.build({
         id: sapSystemID,
-        sid: sapSystemSID,
         ensa_version: 'ensa1',
         application_instances: sapSystemApplicationInstanceFactory.buildList(
           2,
@@ -61,6 +60,7 @@ describe('SapSystemsOverviews component', () => {
         database_instances: databaseInstances,
         database_id: databaseID,
         database_sid: attachedRdbms,
+        sid,
       } = sapSystem;
 
       renderWithRouter(
@@ -74,9 +74,7 @@ describe('SapSystemsOverviews component', () => {
       const rows = screen.getByRole('table').querySelectorAll('tbody > tr');
       const mainRow = rows[0];
 
-      expect(mainRow.querySelector('td:nth-child(2)')).toHaveTextContent(
-        sapSystemSID
-      );
+      expect(mainRow.querySelector('td:nth-child(2)')).toHaveTextContent(sid);
       expect(mainRow.querySelector('td:nth-child(2) > a')).toHaveAttribute(
         'href',
         `/sap_systems/${sapSystemID}`
@@ -111,16 +109,16 @@ describe('SapSystemsOverviews component', () => {
 
       const expectedSapSystemTypes = ['ABAP', 'JAVA', ''];
 
-      const sapSystemIDList = sapSystemTypes.map((_) => faker.string.uuid());
-      const sapSystems = sapSystemTypes.map((type, index) =>
-        sapSystemFactory.build({
-          id: sapSystemIDList[index],
+      const sapSystems = sapSystemTypes.map((type) => {
+        const sapSystemID = faker.string.uuid();
+        return sapSystemFactory.build({
+          id: sapSystemID,
           application_instances: sapSystemApplicationInstanceFactory.buildList(
             2,
-            { sap_system_id: sapSystemIDList[index], features: type }
+            { sap_system_id: sapSystemID, features: type }
           ),
-        })
-      );
+        });
+      });
 
       const sapSystemApplicationInstances = sapSystems
         .map((sapSystem) => sapSystem.application_instances)
@@ -145,29 +143,22 @@ describe('SapSystemsOverviews component', () => {
     });
 
     it('should display the correct SAP system type JAVA and ABAP', () => {
-      const sapSystemTypes = [
-        'ABAP',
-        'J2EE',
-        'SOME_SAP_SYSTEM_FEATURE|OTHER_SAP_APP',
-      ];
       const expectedSapSystemTypes = 'ABAP/JAVA';
       const sapSystemID = faker.string.uuid();
-      const sapSystemSID = faker.string.uuid();
       const sapSystem = sapSystemFactory.build({
         id: sapSystemID,
-        sid: sapSystemSID,
         application_instances: [
           sapSystemApplicationInstanceFactory.build({
             sap_system_id: sapSystemID,
-            features: sapSystemTypes[0],
+            features: 'ABAP',
           }),
           sapSystemApplicationInstanceFactory.build({
             sap_system_id: sapSystemID,
-            features: sapSystemTypes[1],
+            features: 'J2EE',
           }),
           sapSystemApplicationInstanceFactory.build({
             sap_system_id: sapSystemID,
-            features: sapSystemTypes[2],
+            features: 'SOME_SAP_SYSTEM_FEATURE|OTHER_SAP_APP',
           }),
         ],
       });
