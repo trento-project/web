@@ -114,7 +114,7 @@ defmodule Trento.ActivityLog.ActivityCatalog do
                                     end)
 
                                   _ ->
-                                    %{}
+                                    %{:unsupported => {:unsupported, :always}}
                                 end)
     )
   end
