@@ -3,6 +3,23 @@ volumes:
   pg_data:
   prometheus_data:
 services:
+  keycloak:
+    profiles: [idp]
+    image: quay.io/keycloak/keycloak:25.0.2
+    depends_on: [postgres]
+    command: ["start-dev", "--import-realm"]
+    environment:
+      KC_DB: postgres
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: password
+      KC_DB_URL: "jdbc:postgresql://postgres:5432/keycloak"
+      KC_REALM_NAME: trento
+      KEYCLOAK_ADMIN: keycloak
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    ports:
+      - 8081:8080
+    volumes:
+      - ./container_fixtures/keycloak/realm.json:/opt/keycloak/data/import/realm.json:ro
   node_exporter:
     image: prom/node-exporter:v1.7.0
     volumes:
@@ -10,10 +27,10 @@ services:
       - /sys:/host/sys:ro
       - /:/rootfs:ro
     command:
-      - '--path.procfs=/host/proc'
-      - '--path.rootfs=/rootfs'
-      - '--path.sysfs=/host/sys'
-      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+      - "--path.procfs=/host/proc"
+      - "--path.rootfs=/rootfs"
+      - "--path.sysfs=/host/sys"
+      - "--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)"
   prometheus:
     image: prom/prometheus:v2.48.1
     user: "0:0"
@@ -23,14 +40,14 @@ services:
       - prometheus_data:/prometheus
     entrypoint: "/container_init/prometheus_entrypoint.sh"
     command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--storage.tsdb.retention.time=5y'
-      - '--storage.tsdb.retention.size=1GB'
-      - '--web.console.libraries=/etc/prometheus/console_libraries'
-      - '--web.console.templates=/etc/prometheus/consoles'
-      - '--web.enable-lifecycle'
-      - '--web.enable-admin-api'
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=5y"
+      - "--storage.tsdb.retention.size=1GB"
+      - "--web.console.libraries=/etc/prometheus/console_libraries"
+      - "--web.console.templates=/etc/prometheus/consoles"
+      - "--web.enable-lifecycle"
+      - "--web.enable-admin-api"
     ports:
       - 9090:9090
   postgres:
@@ -43,6 +60,7 @@ services:
       - 5433:5432
     volumes:
       - pg_data:/var/lib/postgresql/data
+      - ./container_fixtures/keycloak/init_keycloak_db.sh:/docker-entrypoint-initdb.d/init_keycloak_db.sh
   rabbitmq:
     image: rabbitmq:3.12.6-management-alpine
     ports:
