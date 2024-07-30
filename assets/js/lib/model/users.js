@@ -1,3 +1,5 @@
-const TRENTO_ADMIN_ID = 1;
+import { getFromConfig } from '@lib/config';
 
-export const isAdmin = (user) => user.id === TRENTO_ADMIN_ID;
+const TRENTO_ADMIN_USERNAME = getFromConfig('adminUsername') || 'admin';
+
+export const isAdmin = (user) => user.username === TRENTO_ADMIN_USERNAME;
