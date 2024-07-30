@@ -181,7 +181,7 @@ export function Paginated() {
   return (
     <Table
       config={{ ...config, pagination: true }}
-      data={data.concat(data).concat(data).concat(data)}
+      data={[].concat(data, data, data, data)}
     />
   );
 }
