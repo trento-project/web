@@ -291,7 +291,7 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
     end
 
     test "should detect correct activity type" do
-      %heartbeat_succeded_event{} = build(:heartbeat_succeded)
+      %heartbeat_succeeded_event{} = build(:heartbeat_succeded)
       %heartbeat_failed_event{} = build(:heartbeat_failed)
       %host_registered_event{} = build(:host_registered_event)
       %host_checks_health_changed_event{} = build(:host_checks_health_changed)
@@ -302,7 +302,7 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
 
       event_to_activity_type_map = [
         {host_registered_event, :host_registered},
-        {heartbeat_succeded_event, :heartbeat_succeeded},
+        {heartbeat_succeeded_event, :heartbeat_succeeded},
         {heartbeat_failed_event, :heartbeat_failed},
         {host_checks_health_changed_event, :host_checks_health_changed},
         {host_checks_selected_event, :host_checks_selected},
