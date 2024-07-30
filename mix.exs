@@ -117,7 +117,8 @@ defmodule Trento.MixProject do
       {:bodyguard, "~> 2.4"},
       {:nimble_totp, "~> 1.0"},
       {:phoenix_view, "~> 2.0"},
-      {:phoenix_html_helpers, "~> 1.0"}
+      {:phoenix_html_helpers, "~> 1.0"},
+      {:pow_assent, "~> 0.4.18"},
     ]
   end
 
