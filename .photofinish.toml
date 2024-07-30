@@ -30,6 +30,10 @@ directories = ["./test/fixtures/scenarios/gcp-landscape"]
 
 directories = ["./test/fixtures/scenarios/multi-tenant"]
 
+[java-system]
+
+directories = ["./test/fixtures/scenarios/sap-system-java"]
+
 [sap-system-detail-GRAY]
 
 files = [
