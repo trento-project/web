@@ -362,7 +362,9 @@ defmodule Trento.UsersTest do
 
     test "update_user/2 does not update user with id 1" do
       assert {:error, :forbidden} =
-               Users.update_user(%User{id: 1}, %{fullname: "new fullname"})
+               Users.update_user(%User{username: Users.admin_username()}, %{
+                 fullname: "new fullname"
+               })
     end
 
     test "update_user/2 returns stale error when the lock version in the update is not valid" do
@@ -412,7 +414,7 @@ defmodule Trento.UsersTest do
     end
 
     test "delete_user/2 does not delete user with id 1" do
-      assert {:error, :forbidden} = Users.delete_user(%User{id: 1})
+      assert {:error, :forbidden} = Users.delete_user(%User{username: Users.admin_username()})
     end
 
     test "delete_user/1 deletes the user" do
@@ -474,7 +476,8 @@ defmodule Trento.UsersTest do
     end
 
     test "initiate_totp_enrollment/1 could not initiate enrollment for the default admin" do
-      assert {:error, :forbidden} == Users.initiate_totp_enrollment(%User{id: 1})
+      assert {:error, :forbidden} ==
+               Users.initiate_totp_enrollment(%User{username: Users.admin_username()})
     end
 
     test "initiate_totp_enrollment/1 returns a totp secret for enrollment" do
@@ -503,7 +506,8 @@ defmodule Trento.UsersTest do
     end
 
     test "confirm_totp_enrollment/2 returns error if the user is the default admin" do
-      assert {:error, :forbidden} == Users.confirm_totp_enrollment(%User{id: 1}, "123")
+      assert {:error, :forbidden} ==
+               Users.confirm_totp_enrollment(%User{username: Users.admin_username()}, "123")
     end
 
     test "confirm_totp_enrollment/2 returns error if the totp is not valid for the secret" do

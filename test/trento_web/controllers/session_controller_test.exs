@@ -17,7 +17,7 @@ defmodule TrentoWeb.SessionControllerTest do
     user =
       %User{}
       |> User.changeset(%{
-        username: "admin",
+        username: "trento_user",
         password: "testpassword",
         confirm_password: "testpassword",
         email: "test@trento.com",
@@ -210,7 +210,7 @@ defmodule TrentoWeb.SessionControllerTest do
         |> assert_schema("TrentoUser", api_spec)
 
       user_id = user.id
-      assert %{username: "admin", id: ^user_id} = resp
+      assert %{username: "trento_user", id: ^user_id} = resp
     end
   end
 
@@ -230,7 +230,7 @@ defmodule TrentoWeb.SessionControllerTest do
 
       conn =
         post(conn, "/api/session", %{
-          "username" => "admin",
+          "username" => "trento_user",
           "password" => "testpassword"
         })
 
@@ -256,7 +256,7 @@ defmodule TrentoWeb.SessionControllerTest do
 
       conn =
         post(conn, "/api/session", %{
-          "username" => "admin",
+          "username" => "trento_user",
           "password" => "tespassword"
         })
 
@@ -283,7 +283,7 @@ defmodule TrentoWeb.SessionControllerTest do
 
       conn =
         post(conn, "/api/session", %{
-          "username" => "admin",
+          "username" => "trento_user",
           "password" => "tespassword"
         })
 
@@ -307,7 +307,7 @@ defmodule TrentoWeb.SessionControllerTest do
 
       conn =
         post(conn, "/api/session", %{
-          "username" => "admin",
+          "username" => "trento_user",
           "password" => "testpassword2"
         })
 
@@ -337,7 +337,7 @@ defmodule TrentoWeb.SessionControllerTest do
 
       conn =
         post(conn, "/api/session", %{
-          "username" => "admin",
+          "username" => "trento_user",
           "password" => "testpassword"
         })
 
@@ -379,7 +379,7 @@ defmodule TrentoWeb.SessionControllerTest do
 
       conn =
         post(conn, "/api/session", %{
-          "username" => "admin",
+          "username" => "trento_user",
           "password" => "testpassword",
           "totp_code" => totp_code
         })

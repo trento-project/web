@@ -4,6 +4,7 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
   import OpenApiSpex.TestAssertions
   import Trento.Factory
   alias TrentoWeb.OpenApi.V1.ApiSpec
+  alias Trento.Users
 
   setup %{conn: conn} do
     # admin user to avoid forbidden error
@@ -105,12 +106,12 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
     conn: conn,
     api_spec: api_spec
   } do
-    insert(:user, id: 1)
+    %{id: user_id} = insert(:user, username: Users.admin_username())
 
     conn =
       Pow.Plug.assign_current_user(
         conn,
-        %{"user_id" => 1},
+        %{"user_id" => user_id},
         Pow.Plug.fetch_config(conn)
       )
 
@@ -125,12 +126,12 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
     conn: conn,
     api_spec: api_spec
   } do
-    insert(:user, id: 1)
+    %{id: user_id} = insert(:user, username: Users.admin_username())
 
     conn =
       Pow.Plug.assign_current_user(
         conn,
-        %{"user_id" => 1},
+        %{"user_id" => user_id},
         Pow.Plug.fetch_config(conn)
       )
 
@@ -154,12 +155,12 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
     conn: conn,
     api_spec: api_spec
   } do
-    insert(:user, id: 1)
+    %{id: user_id} = insert(:user, username: Users.admin_username())
 
     conn =
       Pow.Plug.assign_current_user(
         conn,
-        %{"user_id" => 1},
+        %{"user_id" => user_id},
         Pow.Plug.fetch_config(conn)
       )
 
