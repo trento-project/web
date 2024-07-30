@@ -197,7 +197,7 @@ defmodule Trento.ActivityLog.ActivityLoggerTest do
     end
   end
 
-  test "domain event activity detection" do
+  test "domain event activity logging" do
     heartbeat_succeeded_event = build(:heartbeat_succeded)
     heartbeat_failed_event = build(:heartbeat_failed)
     host_registered_event = build(:host_registered_event)
