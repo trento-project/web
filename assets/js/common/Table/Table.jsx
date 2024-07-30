@@ -59,6 +59,8 @@ const getFilterFunction = (column, value) =>
     ? column.filter(value, column.key)
     : getDefaultFilterFunction(value, column.key);
 
+const itemsPerPageOptions = [10, 20, 50, 75, 100];
+
 function Table({
   config,
   data = [],
@@ -80,19 +82,6 @@ function Table({
 
   const [filters, setFilters] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-
-  let itemsPerPageOptions = [10, 20, 50, 75, 100];
-  let enablePagination = false;
-  if (typeof pagination === 'number') {
-    itemsPerPageOptions = [pagination];
-    enablePagination = true;
-  } else if (Array.isArray(pagination)) {
-    itemsPerPageOptions = pagination;
-    enablePagination = true;
-  } else if (pagination === true) {
-    enablePagination = true;
-  }
-
   const [currentItemsPerPage, setCurrentItemsPerPage] = useState(
     itemsPerPageOptions[0]
   );
@@ -156,7 +145,7 @@ function Table({
 
   const sortedData = sortBy ? [...filteredData].sort(sortBy) : filteredData;
 
-  const renderedData = enablePagination
+  const renderedData = pagination
     ? page(currentPage, sortedData, currentItemsPerPage)
     : sortedData;
 
@@ -251,7 +240,7 @@ function Table({
                 )}
               </tbody>
             </table>
-            {enablePagination && (
+            {pagination && (
               <Pagination
                 pages={totalPages}
                 currentPage={currentPage}
