@@ -59,16 +59,16 @@ const sapSystemTypes = [
   'SOME_SAP_SYSTEM_FEATURE|NOT_A_REAL_SYSTEM',
 ];
 
-const sapSystemIDList = sapSystemTypes.map((_) => faker.string.uuid());
-const sapSystemsWithCustomTypes = sapSystemTypes.map((type, index) =>
-  sapSystemFactory.build({
-    id: sapSystemIDList[index],
+const sapSystemsWithCustomTypes = sapSystemTypes.map((type) => {
+  const sapSystemID = faker.string.uuid();
+  return sapSystemFactory.build({
+    id: sapSystemID,
     application_instances: sapSystemApplicationInstanceFactory.buildList(2, {
-      sap_system_id: sapSystemIDList[index],
+      sap_system_id: sapSystemID,
       features: type,
     }),
-  })
-);
+  });
+});
 const sapSystemApplicationInstances = sapSystemsWithCustomTypes
   .map((sapSystem) => sapSystem.application_instances)
   .flat();
