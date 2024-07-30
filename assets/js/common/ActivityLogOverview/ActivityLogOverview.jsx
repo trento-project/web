@@ -62,7 +62,7 @@ const toMessage = (activityLogEntry) => {
     case CLUSTER_CHECKS_EXECUTION_REQUEST:
       return 'Checks execution requested for cluster';
     default:
-      return 'Unrecognized activity';
+      return type;
   }
 };
 
