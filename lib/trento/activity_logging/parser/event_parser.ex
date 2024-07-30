@@ -4,7 +4,11 @@ defmodule Trento.ActivityLog.Logger.Parser.EventParser do
   """
   require Trento.ActivityLog.ActivityCatalog, as: ActivityCatalog
 
-  def get_activity_actor(_, %{event: _}), do: "system"
+  def get_activity_actor(event_type, %{event: _})
+      when event_type in ActivityCatalog.domain_event_activities(),
+      do: "system"
+
+  def get_activity_actor(_, _), do: nil
 
   def get_activity_metadata(
         event_type,
