@@ -170,6 +170,7 @@ export default function Login() {
               >
                 Login
               </button>
+              <a href={config.oidcLoginUrl}> Login with SSO </a>
             </div>
           </form>
         </div>

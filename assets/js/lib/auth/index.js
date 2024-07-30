@@ -5,6 +5,16 @@ const STORAGE_REFRESH_TOKEN_IDENTIFIER = 'refresh_token';
 
 export const authClient = axios.create();
 
+export const oidcEnrollment = (credentials) =>
+  authClient
+    .post('/api/session/oidc_local/callback', credentials)
+    .then((response) => {
+      if (response.status !== 200) {
+        throw Error('unauthorized', { cause: response.status });
+      }
+      return response;
+    });
+
 export const login = (credentials) =>
   authClient.post('/api/session', credentials).then((response) => {
     if (response.status !== 200) {
