@@ -1,0 +1,101 @@
+{
+    "agent_id": "a18a203d-4f2f-4d21-b9a5-e300a9c5eeee",
+    "discovery_type": "saptune_discovery",
+    "payload": {
+        "package_version": "3.1.2",
+        "saptune_installed": true,
+        "status": {
+            "$schema": "file:///usr/share/saptune/schemas/1.0/saptune_status.schema.json",
+            "argv": "saptune --format json status",
+            "command": "status",
+            "exit code": 0,
+            "messages": [
+                {
+                    "message": "ini.go:310: block device related section settings detected: Traversing all block devices can take a considerable amount of time.\n",
+                    "priority": "NOTICE"
+                }
+            ],
+            "pid": 31089,
+            "publish time": "2024-06-12 15:28:31.640",
+            "result": {
+                "Notes applied": [
+                    "941735",
+                    "1771258",
+                    "2578899",
+                    "2993054",
+                    "1656250",
+                    "900929"
+                ],
+                "Notes applied by Solution": [
+                    {
+                        "Note list": [
+                            "941735",
+                            "1771258",
+                            "2578899",
+                            "2993054",
+                            "1656250",
+                            "900929"
+                        ],
+                        "Solution ID": "NETWEAVER"
+                    }
+                ],
+                "Notes enabled": [
+                    "941735",
+                    "1771258",
+                    "2578899",
+                    "2993054",
+                    "1656250",
+                    "900929"
+                ],
+                "Notes enabled additionally": [],
+                "Notes enabled by Solution": [
+                    {
+                        "Note list": [
+                            "941735",
+                            "1771258",
+                            "2578899",
+                            "2993054",
+                            "1656250",
+                            "900929"
+                        ],
+                        "Solution ID": "NETWEAVER"
+                    }
+                ],
+                "Solution applied": [
+                    {
+                        "Solution ID": "NETWEAVER",
+                        "applied partially": false
+                    }
+                ],
+                "Solution enabled": [
+                    "NETWEAVER"
+                ],
+                "configured version": "3",
+                "package version": "3.1.2",
+                "remember message": "\n\n",
+                "services": {
+                    "sapconf": [
+                        "disabled",
+                        "inactive"
+                    ],
+                    "saptune": [
+                        "enabled",
+                        "active"
+                    ],
+                    "tuned": [
+                        "disabled",
+                        "inactive"
+                    ]
+                },
+                "staging": {
+                    "Notes staged": [],
+                    "Solutions staged": [],
+                    "staging enabled": false
+                },
+                "systemd system state": "running",
+                "tuning state": "compliant",
+                "virtualization": "microsoft"
+            }
+        }
+    }
+}

@@ -21,6 +21,7 @@ export const availableSAPSystems = [
     sid: 'NWD',
     id: '67b247e4-ab5b-5094-993a-a4fd70d0e8d1',
     health: 'GREEN',
+    type: 'ABAP',
     attachedDatabase: {
       sid: 'HDD',
       id: 'f534a4ad-cef7-5234-b196-e67082ffb50c',
@@ -107,6 +108,7 @@ export const availableSAPSystems = [
     id: 'eb7bc03e-166f-5ed0-b22d-79672d110d04',
     sid: 'NWP',
     health: 'GREEN',
+    type: 'ABAP',
     attachedDatabase: {
       sid: 'HDP',
       id: '6c9208eb-a5bb-57ef-be5c-6422dedab602',
@@ -193,6 +195,7 @@ export const availableSAPSystems = [
     id: '6748d2dd-b5a1-5599-895c-d1308b2d6541',
     sid: 'NWQ',
     health: 'GREEN',
+    type: 'ABAP',
     attachedDatabase: {
       sid: 'HDQ',
       id: 'cd52e571-c897-5bba-b0f9-e155ceca1fff',
@@ -276,3 +279,16 @@ export const availableSAPSystems = [
     tag: 'env2',
   },
 ];
+
+export const availableJavaSystem = {
+  sid: 'NWJ',
+  type: 'JAVA',
+  instances: [
+    { hostID: 'a18a203d-4f2f-4d21-b9a5-e300a9c5eeee' },
+    { hostID: '544cbc99-c856-4b0a-88cf-e6b8db4606f6' },
+    { hostID: 'c0ecf7d1-bdd3-4c29-b768-cfb97efcc585' },
+    { hostID: 'e0564d66-be9e-4763-9917-655af1bb4b58' },
+    { hostID: 'edf755fd-abc7-4883-af81-8b06d836db37' },
+    { hostID: 'f7a8969b-db9e-4162-b82a-d5cfafe1c4e9' },
+  ],
+};

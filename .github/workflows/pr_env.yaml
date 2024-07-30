@@ -163,3 +163,4 @@ jobs:
           photofinish run hana-diskless-sbd -u "https://$TRENTO_PR_ENV_URL/api/v1/collect"
           photofinish run multi-tenant -u "https://$TRENTO_PR_ENV_URL/api/v1/collect"
           photofinish run hana-scale-up-angi -u "https://$TRENTO_PR_ENV_URL/api/collect"
+          photofinish run java-system -u "https://$TRENTO_PR_ENV_URL/api/collect"
