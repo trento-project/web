@@ -41,6 +41,7 @@ import SomethingWentWrong from '@pages/SomethingWentWrong';
 import UsersPage, { CreateUserPage, EditUserPage } from '@pages/Users';
 import ProfilePage from '@pages/Profile';
 import ActivityLogPage from '@pages/ActivityLogPage';
+import OidCallback from '@pages/OidcCallback';
 
 import { profile } from '@lib/auth';
 import { networkClient } from '@lib/network';
@@ -53,6 +54,7 @@ const createRouter = ({ getUser }) =>
     createRoutesFromElements(
       <Route element={<RoutesWrapper />} ErrorBoundary={SomethingWentWrong}>
         <Route path="/session/new" element={<Login />} />
+        <Route path="/auth/oidc_callback" element={<OidCallback />} />
         <Route path="/">
           <Route
             element={<Guard redirectPath="/session/new" getUser={getUser} />}

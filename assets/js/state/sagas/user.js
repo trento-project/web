@@ -8,18 +8,60 @@ import {
   USER_LOCKED,
   USER_UPDATED,
   PERFORM_LOGIN,
+  PERFORM_OIDC_ENROLLMENT,
   USER_PASSWORD_CHANGE_REQUESTED_NOTIFICATION_ID,
 } from '@state/user';
 import { customNotify } from '@state/notifications';
 import { getUserProfile } from '@state/selectors/user';
 import {
   login,
+  oidcEnrollment,
   profile,
   storeAccessToken,
   storeRefreshToken,
   clearCredentialsFromStore,
 } from '@lib/auth';
 import { networkClient } from '@lib/network';
+
+export function* performOIDCEnrollment({ payload: { code, state } }) {
+  yield put(setAuthInProgress());
+  try {
+    const {
+      data: { access_token: accessToken, refresh_token: refreshToken },
+    } = yield call(oidcEnrollment, { code, session_state: state });
+    yield call(storeAccessToken, accessToken);
+    yield call(storeRefreshToken, refreshToken);
+
+    const {
+      id,
+      username: profileUsername,
+      created_at,
+      email,
+      fullname,
+      updated_at,
+      abilities,
+      password_change_requested,
+    } = yield call(profile, networkClient);
+    yield put(
+      setUser({
+        username: profileUsername,
+        id,
+        created_at,
+        email,
+        fullname,
+        updated_at,
+        abilities,
+        password_change_requested,
+      })
+    );
+    yield put(setUserAsLogged());
+  } catch (error) {
+    yield put(
+      setAuthError({ message: error.message, code: error.response?.status })
+    );
+    yield call(clearCredentialsFromStore);
+  }
+}
 
 export function* performLogin({ payload: { username, password, totpCode } }) {
   yield put(setAuthInProgress());
@@ -92,4 +134,5 @@ export function* watchUserActions() {
   yield takeEvery(USER_LOCKED, clearUserAndLogout);
   yield takeEvery(USER_UPDATED, userUpdated);
   yield takeEvery(PERFORM_LOGIN, performLogin);
+  yield takeEvery(PERFORM_OIDC_ENROLLMENT, performOIDCEnrollment);
 }
