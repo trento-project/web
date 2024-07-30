@@ -8,9 +8,7 @@ defmodule Trento.ActivityLog.Parser.ActivityParser do
 
   require Trento.ActivityLog.ActivityCatalog, as: ActivityCatalog
 
-  @spec to_activity_log(ActivityCatalog.logged_activity(), any()) ::
-          {:ok, map()} | {:error, any()}
-  def to_activity_log(activity, %Plug.Conn{} = activity_context)
+  def to_activity_log(activity, activity_context)
       when activity in ActivityCatalog.activity_catalog() do
     {:ok,
      %{
@@ -18,22 +16,26 @@ defmodule Trento.ActivityLog.Parser.ActivityParser do
          activity
          |> ActivityCatalog.get_activity_type()
          |> Atom.to_string(),
-       actor: PhoenixConnParser.get_activity_actor(activity, activity_context),
-       metadata: PhoenixConnParser.get_activity_metadata(activity, activity_context)
-     }}
-  end
-
-  def to_activity_log(event_activity, %{event: %event_activity{}} = activity_context) do
-    {:ok,
-     %{
-       type:
-         event_activity
-         |> ActivityCatalog.get_activity_type()
-         |> Atom.to_string(),
-       actor: EventParser.get_activity_actor(event_activity, activity_context),
-       metadata: EventParser.get_activity_metadata(event_activity, activity_context)
+       actor: get_activity_actor(activity, activity_context),
+       metadata: get_activity_metadata(activity, activity_context)
      }}
   end
 
   def to_activity_log(_, _), do: {:error, :cannot_parse_activity}
+
+  defp get_activity_actor(activity, activity_context)
+       when activity in ActivityCatalog.connection_activities(),
+       do: PhoenixConnParser.get_activity_actor(activity, activity_context)
+
+  defp get_activity_actor(activity, activity_context)
+       when activity in ActivityCatalog.domain_event_activities(),
+       do: EventParser.get_activity_actor(activity, activity_context)
+
+  defp get_activity_metadata(activity, activity_context)
+       when activity in ActivityCatalog.connection_activities(),
+       do: PhoenixConnParser.get_activity_metadata(activity, activity_context)
+
+  defp get_activity_metadata(activity, activity_context)
+       when activity in ActivityCatalog.domain_event_activities(),
+       do: EventParser.get_activity_metadata(activity, activity_context)
 end

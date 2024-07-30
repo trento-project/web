@@ -10,7 +10,7 @@ defmodule Trento.ActivityLog.ActivityLoggerTest do
 
   alias Trento.Abilities.Ability
 
-  alias Trento.ActivityLog.ActivityLog
+  alias Trento.ActivityLog.{ActivityLog, ActivityLogger}
   alias Trento.Tags.Tag
 
   alias TrentoWeb.Auth.AccessToken
@@ -194,6 +194,48 @@ defmodule Trento.ActivityLog.ActivityLoggerTest do
                  }
                ] = Trento.Repo.all(ActivityLog)
       end
+    end
+  end
+
+  test "domain event activity detection" do
+    heartbeat_succeded_event = build(:heartbeat_succeded)
+    heartbeat_failed_event = build(:heartbeat_failed)
+    host_registered_event = build(:host_registered_event)
+    host_checks_health_changed_event = build(:host_checks_health_changed)
+    host_checks_selected_event = build(:host_checks_selected)
+
+    software_updates_discovery_requested_event =
+      build(:software_updates_discovery_requested_event)
+
+    events = [
+      {host_registered_event, "host_registered"},
+      {heartbeat_succeded_event, "heartbeat_succeeded"},
+      {heartbeat_failed_event, "heartbeat_failed"},
+      {host_checks_health_changed_event, "host_checks_health_changed"},
+      {host_checks_selected_event, "host_checks_selected"},
+      {software_updates_discovery_requested_event, "software_updates_discovery_requested"}
+    ]
+
+    Enum.each(events, fn {event, _} ->
+      assert :ok == ActivityLogger.log_activity(%{event: event, metadata: %{}})
+    end)
+
+    activity_log = Trento.Repo.all(ActivityLog)
+
+    assert Enum.count(activity_log) == length(events)
+
+    for {event, expected_activity_type} <- events do
+      metadata =
+        event
+        |> Jason.encode!()
+        |> Jason.decode!()
+
+      assert %ActivityLog{
+               type: ^expected_activity_type,
+               actor: "system",
+               metadata: ^metadata
+             } =
+               Enum.find(activity_log, &(&1.type == expected_activity_type))
     end
   end
 end

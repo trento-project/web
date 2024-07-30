@@ -12,8 +12,7 @@ defmodule Trento.ActivityLog.ActivityLogger do
   require Logger
 
   def log_activity(activity_context) do
-    with detected_activity <- ActivityCatalog.detect_activity(activity_context),
-         true <- ActivityCatalog.interested?(detected_activity, activity_context),
+    with {:ok, detected_activity} <- ActivityCatalog.detect_activity(activity_context),
          {:ok, log_entry} <- ActivityParser.to_activity_log(detected_activity, activity_context) do
       write_log(log_entry)
     end
