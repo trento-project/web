@@ -79,14 +79,14 @@ defmodule Trento.Users do
   end
 
   def update_user_profile(%User{username: username} = user, attrs) do
-    unless username == admin_username() do
+    if username == admin_username() do
+      {:error, :forbidden}
+    else
       updated_attrs = maybe_set_password_change_requested_at(attrs, true)
 
       user
       |> User.profile_update_changeset(updated_attrs)
       |> Repo.update()
-    else
-      {:error, :forbidden}
     end
   end
 
@@ -126,17 +126,19 @@ defmodule Trento.Users do
   def maybe_disable_totp(attrs), do: attrs
 
   def delete_user(%User{abilities: [], username: username} = user) do
-    unless username == admin_username() do
+    if username == admin_username() do
+      {:error, :forbidden}
+    else
       user
       |> User.delete_changeset(%{deleted_at: DateTime.utc_now()})
       |> Repo.update()
-    else
-      {:error, :forbidden}
     end
   end
 
   def delete_user(%User{username: username} = user) do
-    unless username == admin_username() do
+    if username == admin_username() do
+      {:error, :forbidden}
+    else
       result =
         Ecto.Multi.new()
         |> Ecto.Multi.update(
@@ -153,8 +155,6 @@ defmodule Trento.Users do
         {:error, _, changeset_error, _} ->
           {:error, changeset_error}
       end
-    else
-      {:error, :forbidden}
     end
   end
 
@@ -202,15 +202,15 @@ defmodule Trento.Users do
         %User{totp_secret: totp_secret, totp_enabled_at: nil, username: username} = user,
         totp_code
       ) do
-    unless username == admin_username() do
+    if username == admin_username() do
+      {:error, :forbidden}
+    else
       if NimbleTOTP.valid?(totp_secret, totp_code) do
         now = DateTime.utc_now()
         update_user_totp(user, %{totp_enabled_at: now, totp_last_used_at: now})
       else
         {:error, :enrollment_totp_not_valid}
       end
-    else
-      {:error, :forbidden}
     end
   end
 
@@ -267,7 +267,9 @@ defmodule Trento.Users do
   end
 
   defp do_update(%User{username: username} = user, %{abilities: abilities} = attrs) do
-    unless username == admin_username() do
+    if username == admin_username() do
+      {:error, :forbidden}
+    else
       result =
         Ecto.Multi.new()
         |> Ecto.Multi.update(:user, User.update_changeset(user, attrs))
@@ -282,32 +284,30 @@ defmodule Trento.Users do
         {:error, _, changeset_error, _} ->
           {:error, changeset_error}
       end
-    else
-      {:error, :forbidden}
     end
   rescue
     Ecto.StaleEntryError -> {:error, :stale_entry}
   end
 
   defp do_update(%User{username: username} = user, attrs) do
-    unless username == admin_username() do
+    if username == admin_username() do
+      {:error, :forbidden}
+    else
       user
       |> User.update_changeset(attrs)
       |> Repo.update()
-    else
-      {:error, :forbidden}
     end
   rescue
     Ecto.StaleEntryError -> {:error, :stale_entry}
   end
 
   defp update_user_totp(%User{username: username} = user, attrs) do
-    unless username == admin_username() do
+    if username == admin_username() do
+      {:error, :forbidden}
+    else
       user
       |> User.totp_update_changeset(attrs)
       |> Repo.update()
-    else
-      {:error, :forbidden}
     end
   end
 end

@@ -3,8 +3,8 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
 
   import OpenApiSpex.TestAssertions
   import Trento.Factory
-  alias TrentoWeb.OpenApi.V1.ApiSpec
   alias Trento.Users
+  alias TrentoWeb.OpenApi.V1.ApiSpec
 
   setup %{conn: conn} do
     # admin user to avoid forbidden error
