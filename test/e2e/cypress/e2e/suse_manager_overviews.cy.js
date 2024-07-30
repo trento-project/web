@@ -78,8 +78,12 @@ context('SUSE Manager overviews', () => {
       // Navigate to vmdrbddev02
       cy.visit('/hosts/21de186a-e38f-5804-b643-7f4ef22fecfd');
 
-      cy.contains('Relevant Patches').parent().should('contain', 'Unknown');
-      cy.contains('Upgradable Packages').parent().should('contain', 'Unknown');
+      cy.contains('Relevant Patches')
+        .parent()
+        .should('contain', 'Host not found in SUSE Manager');
+      cy.contains('Upgradable Packages')
+        .parent()
+        .should('contain', 'Host not found in SUSE Manager');
 
       cy.clearSUMASettings();
     });
