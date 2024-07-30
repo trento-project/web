@@ -59,10 +59,10 @@ defmodule Trento.ActivityLog.ActivityCatalog do
   # }
   #
   # <EventActivityType> is the lowercase and underscored version of the last part of the event module name.
-  # <WhenOccurrenceIsInteresting> is anything useful to mark as interesting an activity occurence.
+  # <WhenOccurrenceIsInteresting> is anything useful to mark as interesting an activity occurrence.
   # For connection related activities it is the status code that makes the occurrence interesting for logging.
   #
-  # Marking <WhenOccurrenceIsInteresting> as `:always` means the occurence is always interesting for logging.
+  # Marking <WhenOccurrenceIsInteresting> as `:always` means the occurrence is always interesting for logging.
   # Currently, all events are marked as `:always` interesting for logging.
   #
   # example:
