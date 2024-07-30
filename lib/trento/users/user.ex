@@ -13,6 +13,8 @@ defmodule Trento.Users.User do
 
   alias EctoCommons.EmailValidator
 
+  use PowAssent.Ecto.Schema
+
   alias Trento.Abilities.{
     Ability,
     UsersAbilities

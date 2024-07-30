@@ -84,6 +84,8 @@ config :trento, :pow,
   extensions: [PowPersistentSession],
   controller_callbacks: Pow.Extension.Phoenix.ControllerCallbacks
 
+config :trento, :oidc, enabled: false
+
 # Agent heartbeat interval. Adding one extra second to the agent 5s interval to avoid glitches
 config :trento, Trento.Heartbeats, interval: :timer.seconds(6)
 
