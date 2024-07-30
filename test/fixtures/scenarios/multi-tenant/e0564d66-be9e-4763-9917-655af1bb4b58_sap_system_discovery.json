@@ -24,12 +24,26 @@
           "SqlPort": "30344",
           "User": "",
           "UserId": ""
+        },
+        {
+          "Active": "yes",
+          "Container": "",
+          "Database": "HTJ",
+          "Group": "",
+          "GroupId": "",
+          "Host": "hanadb3",
+          "SqlPort": "30348",
+          "User": "",
+          "UserId": ""
         }
       ],
       "Id": "c0725f6b267f4216ba03be128ce08b27",
       "Instances": [
         {
-          "HdbnsutilSRstate": { "mode": "none", "online": "true" },
+          "HdbnsutilSRstate": {
+            "mode": "none",
+            "online": "true"
+          },
           "Host": "hanadb2",
           "HostConfiguration": {
             "host/hanadb3/workerActualGroups": "-",
@@ -236,7 +250,9 @@
               }
             ]
           },
-          "SystemReplication": { "local_site_id": "0" },
+          "SystemReplication": {
+            "local_site_id": "0"
+          },
           "Type": 1
         }
       ],
