@@ -13,7 +13,6 @@ import lastExecutionsReducer from './lastExecutions';
 import settingsReducer from './settings';
 import userReducer from './user';
 import softwareUpdatesReducer from './softwareUpdates';
-import softwareUpdatesSettingsReducer from './softwareUpdatesSettings';
 import activityLogsSettingsReducer from './activityLogsSettings';
 import rootSaga from './sagas';
 
@@ -38,7 +37,6 @@ export const createStore = (router) => {
       settings: settingsReducer,
       user: userReducer,
       softwareUpdates: softwareUpdatesReducer,
-      softwareUpdatesSettings: softwareUpdatesSettingsReducer,
       activityLogsSettings: activityLogsSettingsReducer,
     },
     middleware: (getDefaultMiddleware) =>

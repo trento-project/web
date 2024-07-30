@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Transition } from '@headlessui/react';
-import { values, isUndefined } from 'lodash';
 import { format, isBefore, parseISO } from 'date-fns';
 import { EOS_INFO_OUTLINED } from 'eos-icons-react';
-import { logError } from '@lib/log';
-import { get, patch } from '@lib/network';
 import { getFromConfig } from '@lib/config';
 
 import DisabledGuard from '@common/DisabledGuard';
@@ -19,20 +16,6 @@ import CopyButton from '@common/CopyButton';
 import SettingsLoader, {
   calculateStatus as calculateSettingsLoaderStatus,
 } from '@common/SettingsLoader';
-
-import {
-  fetchSoftwareUpdatesSettings,
-  saveSoftwareUpdatesSettings,
-  updateSoftwareUpdatesSettings,
-  setEditingSoftwareUpdatesSettings,
-  clearSoftwareUpdatesSettings,
-  testSoftwareUpdatesConnection,
-  setSoftwareUpdatesSettingsErrors,
-} from '@state/softwareUpdatesSettings';
-import {
-  getSoftwareUpdatesSettings,
-  getSoftwareUpdatesSettingsErrors,
-} from '@state/selectors/softwareUpdatesSettings';
 
 import { getUserProfile } from '@state/selectors/user';
 
@@ -49,8 +32,10 @@ import {
   getActivityLogsSettingsErrors,
 } from '@state/selectors/activityLogsSettings';
 
-import { dismissNotification } from '@state/notifications';
-import { API_KEY_EXPIRATION_NOTIFICATION_ID } from '@state/sagas/settings';
+import {
+  useApiKeySettings,
+  useSuseManagerSettings,
+} from '@pages/SettingsPage/hooks';
 
 const apiKeySettingsPermittedFor = ['all:api_key_settings'];
 
@@ -78,66 +63,39 @@ function ApiKeyExpireInfo({ apiKeyExpiration }) {
 
 function SettingsPage() {
   const dispatch = useDispatch();
+  const { saveApiKeySettings, apiKey, apiKeyExpiration, apiKeyLoading } =
+    useApiKeySettings();
+  const {
+    fetchSuseManagerSettings,
+    saveSuseManagerSettings,
+    updateSuseManagerSettings,
+    testSuseManagerSettings,
+    deleteSuseManagerSettings,
+    suseManagerSettingsLoading,
+    suseManagerSettings,
+    suseManagerSettingsEntityErrors,
+    suseManagerSettingsfetchError,
+    suseManagerSettingsTesting,
+    clearSuseManagerEntityErrors,
+  } = useSuseManagerSettings();
 
-  const [loading, setLoading] = useState(false);
-  const [apiKey, setApiKey] = useState(null);
-  const [apiKeyExpiration, setApiKeyExpiration] = useState(null);
+  const [suseManagerSettingsModalOpen, setSuseManagerSettingsModalOpen] =
+    useState(false);
+
   const [apiKeySettingModalOpen, setApiKeySettingsModalOpen] = useState(false);
   const [clearingSoftwareUpdatesSettings, setClearingSoftwareUpdatesSettings] =
     useState(false);
 
-  const fetchApiKeySettings = () =>
-    get('/settings/api_key')
-      .then(
-        ({ data: { generated_api_key: newApiKey, expire_at: expireAt } }) => {
-          setApiKey(newApiKey);
-          setApiKeyExpiration(expireAt);
-        }
-      )
-      .catch((error) => {
-        logError(error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-
-  const saveApiKeySettings = (expiration) => {
-    setLoading(true);
-    patch('/settings/api_key', { expire_at: expiration })
-      .then(
-        ({ data: { generated_api_key: newApiKey, expire_at: expireAt } }) => {
-          setApiKey(newApiKey);
-          setApiKeyExpiration(expireAt);
-          dispatch(dismissNotification(API_KEY_EXPIRATION_NOTIFICATION_ID));
-        }
-      )
-      .finally(() => {
-        setLoading(false);
-      });
-  };
-
   useEffect(() => {
-    setLoading(true);
-    fetchApiKeySettings();
-    dispatch(fetchSoftwareUpdatesSettings());
     dispatch(fetchActivityLogsSettings());
   }, []);
 
-  const {
-    settings,
-    loading: softwareUpdatesSettingsLoading,
-    editing: editingSoftwareUpdatesSettings,
-    networkError: softwareUpdatesSettingsNetworkError,
-    testingConnection: testingSoftwareUpdatesConnection,
-  } = useSelector(getSoftwareUpdatesSettings);
+  useEffect(() => {
+    setSuseManagerSettingsModalOpen(false);
+  }, [suseManagerSettings]);
 
-  const suseManagerValidationErrors = useSelector(
-    getSoftwareUpdatesSettingsErrors
-  );
-
-  const hasSoftwareUpdatesSettings = values(settings).every(
-    (value) => !isUndefined(value)
-  );
+  const hasSoftwareUpdatesSettings =
+    Object.keys(suseManagerSettings).length > 0;
 
   const { abilities } = useSelector(getUserProfile);
 
@@ -277,7 +235,7 @@ function SettingsPage() {
         </div>
         <ApiKeySettingsModal
           open={apiKeySettingModalOpen}
-          loading={loading}
+          loading={apiKeyLoading}
           generatedApiKey={apiKey}
           generatedApiKeyExpiration={apiKeyExpiration}
           onClose={() => setApiKeySettingsModalOpen(false)}
@@ -293,58 +251,55 @@ function SettingsPage() {
             <SettingsLoader
               sectionName="SUSE Manager"
               status={calculateSettingsLoaderStatus(
-                softwareUpdatesSettingsLoading,
-                softwareUpdatesSettingsNetworkError
+                suseManagerSettingsLoading,
+                suseManagerSettingsfetchError
               )}
-              onRetry={() => dispatch(fetchSoftwareUpdatesSettings())}
+              onRetry={() => fetchSuseManagerSettings()}
             >
               <SuseManagerConfig
                 userAbilities={abilities}
-                url={settings.url}
-                username={settings.username}
-                certUploadDate={settings.ca_uploaded_at}
-                onEditClick={() =>
-                  dispatch(setEditingSoftwareUpdatesSettings(true))
-                }
+                url={suseManagerSettings.url}
+                username={suseManagerSettings.username}
+                certUploadDate={suseManagerSettings.ca_uploaded_at}
+                onEditClick={() => {
+                  clearSuseManagerEntityErrors();
+                  setSuseManagerSettingsModalOpen(true);
+                }}
                 clearSettingsDialogOpen={clearingSoftwareUpdatesSettings}
                 onClearClick={() => setClearingSoftwareUpdatesSettings(true)}
                 onClearSettings={() => {
+                  deleteSuseManagerSettings();
                   setClearingSoftwareUpdatesSettings(false);
-                  dispatch(clearSoftwareUpdatesSettings());
                 }}
                 testConnectionEnabled={
-                  hasSoftwareUpdatesSettings &&
-                  !testingSoftwareUpdatesConnection
+                  hasSoftwareUpdatesSettings && !suseManagerSettingsTesting
                 }
-                onTestConnection={() => {
-                  dispatch(testSoftwareUpdatesConnection());
+                onTestConnection={() => testSuseManagerSettings()}
+                onCancel={() => {
+                  setClearingSoftwareUpdatesSettings(false);
                 }}
-                onCancel={() => setClearingSoftwareUpdatesSettings(false)}
               />
             </SettingsLoader>
             <SuseManagerSettingsModal
-              key={`${settings.url}-${settings.username}-${settings.ca_uploaded_at}-${editingSoftwareUpdatesSettings}`}
-              open={editingSoftwareUpdatesSettings}
-              errors={suseManagerValidationErrors}
-              loading={softwareUpdatesSettingsLoading}
-              initialUsername={settings.username}
-              initialUrl={settings.url}
-              certUploadDate={settings.ca_uploaded_at}
+              key={`${suseManagerSettings.url}-${suseManagerSettings.username}-${suseManagerSettings.ca_uploaded_at}-${suseManagerSettingsModalOpen}`}
+              open={suseManagerSettingsModalOpen}
+              errors={suseManagerSettingsEntityErrors}
+              loading={suseManagerSettingsLoading}
+              initialUsername={suseManagerSettings.username}
+              initialUrl={suseManagerSettings.url}
+              certUploadDate={suseManagerSettings.ca_uploaded_at}
               onSave={(payload) => {
                 if (
-                  settings.username ||
-                  settings.url ||
-                  settings.ca_uploaded_at
+                  suseManagerSettings.username ||
+                  suseManagerSettings.url ||
+                  suseManagerSettings.ca_uploaded_at
                 ) {
-                  dispatch(updateSoftwareUpdatesSettings(payload));
+                  updateSuseManagerSettings(payload);
                 } else {
-                  dispatch(saveSoftwareUpdatesSettings(payload));
+                  saveSuseManagerSettings(payload);
                 }
               }}
-              onCancel={() => {
-                dispatch(setSoftwareUpdatesSettingsErrors([]));
-                dispatch(setEditingSoftwareUpdatesSettings(false));
-              }}
+              onCancel={() => setSuseManagerSettingsModalOpen(false)}
             />
           </div>
         </section>
