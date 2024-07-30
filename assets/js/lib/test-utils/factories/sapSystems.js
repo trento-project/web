@@ -15,6 +15,7 @@ const roles = () =>
     'GATEWAY',
     'ICMAN',
     'IGS',
+    'J2EE',
   ]);
 
 export const sapSystemApplicationInstanceFactory = Factory.define(() => ({

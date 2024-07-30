@@ -8,6 +8,7 @@ import userEvent from '@testing-library/user-event';
 import {
   clusterFactory,
   hostFactory,
+  sapSystemApplicationInstanceFactory,
   sapSystemFactory,
 } from '@lib/test-utils/factories';
 import { renderWithRouter } from '@lib/test-utils';
@@ -41,16 +42,25 @@ describe('SapSystemsOverviews component', () => {
     });
 
     it('should display the correct content for a SAP system main row', () => {
-      const sapSystem = sapSystemFactory.build({ ensa_version: 'ensa1' });
-      const {
+      const sapSystemType = 'ABAP';
+      const sapSystemID = faker.string.uuid();
+
+      const sapSystem = sapSystemFactory.build({
         id: sapSystemID,
-        sid,
+        ensa_version: 'ensa1',
+        application_instances: sapSystemApplicationInstanceFactory.buildList(
+          2,
+          { sap_system_id: sapSystemID, features: sapSystemType }
+        ),
+      });
+      const {
         tenant,
         db_host: dbAddress,
         application_instances: applicationInstances,
         database_instances: databaseInstances,
         database_id: databaseID,
         database_sid: attachedRdbms,
+        sid,
       } = sapSystem;
 
       renderWithRouter(
@@ -80,10 +90,92 @@ describe('SapSystemsOverviews component', () => {
         tenant
       );
       expect(mainRow.querySelector('td:nth-child(5)')).toHaveTextContent(
-        dbAddress
+        sapSystemType
       );
       expect(mainRow.querySelector('td:nth-child(6)')).toHaveTextContent(
+        dbAddress
+      );
+      expect(mainRow.querySelector('td:nth-child(7)')).toHaveTextContent(
         'ENSA1'
+      );
+    });
+
+    it('should display the correct SAP system type JAVA or ABAP', () => {
+      const sapSystemTypes = [
+        'ABAP',
+        'J2EE',
+        'SOME_SAP_SYSTEM_FEATURE|NOT_A_REAL_SYSTEM',
+      ];
+
+      const expectedSapSystemTypes = ['ABAP', 'JAVA', ''];
+
+      const sapSystems = sapSystemTypes.map((type) => {
+        const sapSystemID = faker.string.uuid();
+        return sapSystemFactory.build({
+          id: sapSystemID,
+          application_instances: sapSystemApplicationInstanceFactory.buildList(
+            2,
+            { sap_system_id: sapSystemID, features: type }
+          ),
+        });
+      });
+
+      const sapSystemApplicationInstances = sapSystems
+        .map((sapSystem) => sapSystem.application_instances)
+        .flat();
+
+      renderWithRouter(
+        <SapSystemsOverview
+          sapSystems={sapSystems}
+          userAbilities={userAbilities}
+          applicationInstances={sapSystemApplicationInstances}
+          databaseInstances={[]}
+        />
+      );
+      const rows = screen.getByRole('table').querySelectorAll('tbody > tr');
+      expectedSapSystemTypes.forEach((expectedType, index) => {
+        const rowIndex = index * 2;
+        const sapSystemRow = rows[rowIndex];
+        expect(sapSystemRow.querySelector('td:nth-child(5)')).toHaveTextContent(
+          expectedType
+        );
+      });
+    });
+
+    it('should display the correct SAP system type JAVA and ABAP', () => {
+      const expectedSapSystemTypes = 'ABAP/JAVA';
+      const sapSystemID = faker.string.uuid();
+      const sapSystem = sapSystemFactory.build({
+        id: sapSystemID,
+        application_instances: [
+          sapSystemApplicationInstanceFactory.build({
+            sap_system_id: sapSystemID,
+            features: 'ABAP',
+          }),
+          sapSystemApplicationInstanceFactory.build({
+            sap_system_id: sapSystemID,
+            features: 'J2EE',
+          }),
+          sapSystemApplicationInstanceFactory.build({
+            sap_system_id: sapSystemID,
+            features: 'SOME_SAP_SYSTEM_FEATURE|OTHER_SAP_APP',
+          }),
+        ],
+      });
+
+      const { application_instances: applicationInstances } = sapSystem;
+
+      renderWithRouter(
+        <SapSystemsOverview
+          sapSystems={[sapSystem]}
+          userAbilities={userAbilities}
+          applicationInstances={applicationInstances}
+          databaseInstances={[]}
+        />
+      );
+      const rows = screen.getByRole('table').querySelectorAll('tbody > tr');
+      expect(rows[0].querySelector('td:nth-child(5)')).toHaveTextContent(
+        expectedSapSystemTypes
       );
     });
 

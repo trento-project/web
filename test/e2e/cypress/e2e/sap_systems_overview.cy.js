@@ -73,7 +73,8 @@ context('SAP Systems Overview', () => {
               .within(() => {
                 cy.get('td').eq(2).contains(attachedDatabase.sid);
                 cy.get('td').eq(3).contains(attachedDatabase.tenant);
-                cy.get('td').eq(4).contains(attachedDatabase.dbAddress);
+
+                cy.get('td').eq(5).contains(attachedDatabase.dbAddress);
               });
           });
           it(`should have a link to the attached HANA database with id: ${attachedDatabase.id}`, () => {

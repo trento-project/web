@@ -5,6 +5,7 @@ import { MemoryRouter } from 'react-router-dom';
 import {
   clusterFactory,
   hostFactory,
+  sapSystemApplicationInstanceFactory,
   sapSystemFactory,
 } from '@lib/test-utils/factories';
 
@@ -19,6 +20,7 @@ const enrichInstances = (systems, instanceType) =>
       const cluster = clusterFactory.build();
       return {
         ...instance,
+        features: 'ABAP',
         host: {
           ...hostFactory.build({
             id: instance.host_id,
@@ -49,6 +51,28 @@ const enrichedAbsentDatabaseInstances = enrichInstances(
   'database_instances'
 );
 
+const sapSystemTypes = [
+  'ABAP',
+  'J2EE',
+  'ABAP|J2EE',
+  'J2EE|ABAP',
+  'SOME_SAP_SYSTEM_FEATURE|NOT_A_REAL_SYSTEM',
+];
+
+const sapSystemsWithCustomTypes = sapSystemTypes.map((type) => {
+  const sapSystemID = faker.string.uuid();
+  return sapSystemFactory.build({
+    id: sapSystemID,
+    application_instances: sapSystemApplicationInstanceFactory.buildList(2, {
+      sap_system_id: sapSystemID,
+      features: type,
+    }),
+  });
+});
+const sapSystemApplicationInstances = sapSystemsWithCustomTypes
+  .map((sapSystem) => sapSystem.application_instances)
+  .flat();
+
 enrichedAbsentApplicationInstances[1].absent_at = faker.date
   .past()
   .toISOString();
@@ -71,10 +95,6 @@ export default {
       control: { type: 'array' },
       description: 'Application instances',
     },
-    userAbilities: {
-      control: { type: 'array' },
-      description: 'User profile abilities',
-    },
     databaseInstances: {
       control: { type: 'array' },
       description: 'Database instances',
@@ -86,6 +106,10 @@ export default {
         type: { summary: 'string' },
         defaultValue: { summary: false },
       },
+    },
+    userAbilities: {
+      control: { type: 'array' },
+      description: 'User profile abilities',
     },
     onTagAdd: {
       action: 'Add tag',
@@ -138,5 +162,13 @@ export const UnauthorizedCleanUp = {
   args: {
     ...WithAbsentInstances.args,
     userAbilities: [],
+  },
+};
+export const SapSystemsWithDifferentTypes = {
+  args: {
+    userAbilities,
+    sapSystems: sapSystemsWithCustomTypes,
+    applicationInstances: sapSystemApplicationInstances,
+    databaseInstances: {},
   },
 };
