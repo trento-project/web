@@ -2,10 +2,7 @@ import React from 'react';
 
 import { uniq } from 'lodash';
 
-import Filter from '@common/Filter';
-
-export const getDefaultFilterFunction = (filter, key) => (element) =>
-  filter.includes(element[key]);
+import ComposedFilter from '@common/ComposedFilter';
 
 export const createFilter = (
   filters,
@@ -36,41 +33,41 @@ export const createFilter = (
     : [...filtersList, { key: filterKey, value: filterValue, filterFunction }];
 };
 
-const getFilter = (key, list) =>
-  list.reduce(
-    (accumulator, current) =>
-      current.key === key && accumulator.length === 0
-        ? current.value
-        : accumulator,
-    []
-  );
+const mapToList = (map) =>
+  Object.entries(map).map(([key, value]) => ({ key, value }));
 
-export const TableFilters = ({ config, data, filters, onChange }) =>
+const listToMap = (list) =>
+  list.reduce((acc, { key, value }) => ({ ...acc, [key]: value }), {});
+
+const filterOptionsFromTableConfig = (config, data, value) =>
   config.columns
     .filter(({ filter }) => Boolean(filter))
-    .map((column) => {
-      const filterValue = getFilter(column.key, filters);
+    .map(({ key, title }) => {
+      const filterValue = value[key];
       const filterOptions = uniq(
         data
-          .map(({ [column.key]: option }) => option)
+          .map(({ [key]: option }) => option)
           .flat(Infinity)
           .concat(filterValue)
       );
 
-      return (
-        <Filter
-          key={column.key}
-          title={column.title}
-          options={filterOptions}
-          value={filterValue}
-          onChange={(list) => {
-            const filterFunction =
-              typeof column.filter === 'function'
-                ? column.filter(list, column.key)
-                : getDefaultFilterFunction(list, column.key);
-
-            onChange(createFilter(filters, column.key, list, filterFunction));
-          }}
-        />
-      );
+      return {
+        key,
+        type: 'select',
+        title,
+        options: filterOptions,
+      };
     });
+
+export function TableFilters({ config, data, filters, onChange }) {
+  const value = listToMap(filters);
+  const filterOptions = filterOptionsFromTableConfig(config, data, value);
+  return (
+    <ComposedFilter
+      filters={filterOptions}
+      value={value}
+      onChange={(newValue) => onChange(mapToList(newValue))}
+      autoApply
+    />
+  );
+}
