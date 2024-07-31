@@ -5,10 +5,8 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
 
   alias Trento.Users.User
 
-  require Trento.ActivityLog.ActivityCatalog, as: ActivityCatalog
-
-  def get_activity_actor(ActivityCatalog.login_attempt(), %Plug.Conn{body_params: request_payload}),
-      do: Map.get(request_payload, "username", "no_username")
+  def get_activity_actor(:login_attempt, %Plug.Conn{body_params: request_payload}),
+    do: Map.get(request_payload, "username", "no_username")
 
   def get_activity_actor(_, %Plug.Conn{} = conn) do
     case Pow.Plug.current_user(conn) do
@@ -18,7 +16,7 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
   end
 
   def get_activity_metadata(
-        ActivityCatalog.login_attempt() = action,
+        :login_attempt = action,
         %Plug.Conn{
           assigns: %{
             reason: reason
@@ -33,7 +31,7 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
   end
 
   def get_activity_metadata(
-        ActivityCatalog.resource_tagging(),
+        :resource_tagging,
         %Plug.Conn{
           params: %{id: resource_id},
           assigns: %{
@@ -50,7 +48,7 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
   end
 
   def get_activity_metadata(
-        ActivityCatalog.resource_untagging(),
+        :resource_untagging,
         %Plug.Conn{
           params: %{
             id: resource_id,
@@ -69,7 +67,7 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
   end
 
   def get_activity_metadata(
-        ActivityCatalog.api_key_generation(),
+        :api_key_generation,
         %Plug.Conn{
           body_params: request_body
         }
@@ -84,8 +82,8 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
         }
       )
       when action in [
-             ActivityCatalog.saving_suma_settings(),
-             ActivityCatalog.changing_suma_settings()
+             :saving_suma_settings,
+             :changing_suma_setting
            ] do
     request_body
     |> redact(:password)
@@ -99,9 +97,9 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
         }
       )
       when action in [
-             ActivityCatalog.user_creation(),
-             ActivityCatalog.user_modification(),
-             ActivityCatalog.profile_update()
+             :user_creation,
+             :user_modification,
+             :profile_update
            ] do
     request_body
     |> redact(:password)

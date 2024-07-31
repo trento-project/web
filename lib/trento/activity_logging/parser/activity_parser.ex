@@ -6,36 +6,51 @@ defmodule Trento.ActivityLog.Parser.ActivityParser do
   alias Trento.ActivityLog.ActivityCatalog
   alias Trento.ActivityLog.Logger.Parser.{EventParser, PhoenixConnParser}
 
-  require Trento.ActivityLog.ActivityCatalog, as: ActivityCatalog
+  @type activity_log :: %{
+          type: String.t(),
+          actor: String.t(),
+          metadata: map()
+        }
 
-  def to_activity_log(activity, activity_context)
-      when activity in ActivityCatalog.activity_catalog() do
-    {:ok,
-     %{
-       type:
-         activity
-         |> ActivityCatalog.get_activity_type()
-         |> Atom.to_string(),
-       actor: get_activity_actor(activity, activity_context),
-       metadata: get_activity_metadata(activity, activity_context)
-     }}
+  @spec to_activity_log(ActivityCatalog.activity_type(), map()) ::
+          {:ok, activity_log()} | {:error, :cannot_parse_activity}
+  def to_activity_log(activity, activity_context) do
+    with true <- activity in ActivityCatalog.supported_activities(),
+         {:ok, actor} <- get_activity_info(:actor, activity, activity_context),
+         {:ok, metadata} <- get_activity_info(:metadata, activity, activity_context) do
+      {:ok,
+       %{
+         type: Atom.to_string(activity),
+         actor: actor,
+         metadata: metadata
+       }}
+    else
+      _ -> {:error, :cannot_parse_activity}
+    end
   end
 
-  def to_activity_log(_, _), do: {:error, :cannot_parse_activity}
+  defp get_activity_info(info, activity, activity_context) do
+    case ActivityCatalog.detect_activity_category(activity) do
+      :connection_activity ->
+        {:ok, parse_connection_activity_info(info, activity, activity_context)}
 
-  defp get_activity_actor(activity, activity_context)
-       when activity in ActivityCatalog.connection_activities(),
-       do: PhoenixConnParser.get_activity_actor(activity, activity_context)
+      :domain_event_activity ->
+        {:ok, parse_domain_event_activity_info(info, activity, activity_context)}
 
-  defp get_activity_actor(activity, activity_context)
-       when activity in ActivityCatalog.domain_event_activities(),
-       do: EventParser.get_activity_actor(activity, activity_context)
+      :unsupported_activity ->
+        {:error, :unsupported_activity}
+    end
+  end
 
-  defp get_activity_metadata(activity, activity_context)
-       when activity in ActivityCatalog.connection_activities(),
-       do: PhoenixConnParser.get_activity_metadata(activity, activity_context)
+  defp parse_connection_activity_info(:actor, activity, activity_context),
+    do: PhoenixConnParser.get_activity_actor(activity, activity_context)
 
-  defp get_activity_metadata(activity, activity_context)
-       when activity in ActivityCatalog.domain_event_activities(),
-       do: EventParser.get_activity_metadata(activity, activity_context)
+  defp parse_connection_activity_info(:metadata, activity, activity_context),
+    do: PhoenixConnParser.get_activity_metadata(activity, activity_context)
+
+  defp parse_domain_event_activity_info(:actor, activity, activity_context),
+    do: EventParser.get_activity_actor(activity, activity_context)
+
+  defp parse_domain_event_activity_info(:metadata, activity, activity_context),
+    do: EventParser.get_activity_metadata(activity, activity_context)
 end
