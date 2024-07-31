@@ -105,6 +105,12 @@ config :trento, Trento.Infrastructure.Messaging.Adapter.AMQP.Publisher,
 config :trento, Trento.Infrastructure.Prometheus,
   adapter: Trento.Infrastructure.Prometheus.MockPrometheusApi
 
+config :trento, Trento.Infrastructure.SoftwareUpdates.MockSuma,
+  relevant_patches_system_ids: [
+    # vmdrbddev01
+    5980
+  ]
+
 # Do not include metadata nor timestamps in development logs
 # config :logger, :console, format: "[$level] $message\n"
 
