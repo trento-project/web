@@ -19,7 +19,9 @@ function Pagination({
   // Can happen if the items per page get changed, while being on the last
   // page
   if (currentPage > pages) {
-    onSelect(pages);
+    // "what if pages is 0?"
+    // otherwise the user is always staying at page 0
+    onSelect(pages || 1);
   }
 
   return (
