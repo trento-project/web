@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { capitalize, get } from 'lodash';
 import classNames from 'classnames';
-import { EOS_SETTINGS, EOS_CLEAR_ALL, EOS_PLAY_CIRCLE } from 'eos-icons-react';
+import {
+  EOS_PLAYLIST_ADD_CHECK_FILLED,
+  EOS_CLEAR_ALL,
+  EOS_PLAY_CIRCLE,
+} from 'eos-icons-react';
 
 import { getEnsaVersionLabel } from '@lib/model/sapSystems';
 import { RUNNING_STATES } from '@state/lastExecutions';
@@ -134,7 +138,7 @@ function AscsErsClusterDetails({
               size="small"
               onClick={() => navigate(`/clusters/${clusterID}/settings`)}
             >
-              <EOS_SETTINGS className="inline-block fill-jungle-green-500" />{' '}
+              <EOS_PLAYLIST_ADD_CHECK_FILLED className="inline-block fill-jungle-green-500" />{' '}
               Check Selection
             </Button>
 
