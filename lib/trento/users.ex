@@ -34,8 +34,6 @@ defmodule Trento.Users do
     |> Repo.all()
   end
 
-  def admin_username, do: Application.fetch_env!(:trento, :admin_username)
-
   def get_user(id) do
     case User
          |> where([u], is_nil(u.deleted_at) and u.id == ^id)
@@ -228,6 +226,8 @@ defmodule Trento.Users do
       {:error, :totp_invalid}
     end
   end
+
+  defp admin_username, do: Application.fetch_env!(:trento, :admin_user)
 
   defp maybe_set_locked_at(%{enabled: false} = attrs) do
     Map.put(attrs, :locked_at, DateTime.utc_now())
