@@ -29,14 +29,7 @@ defmodule Trento.ActivityLog.ActivityCatalog do
             false
         end)
         |> Enum.map(&Module.concat/1)
-        |> Enum.filter(fn module_name ->
-          module_location =
-            module_name.__info__(:compile)
-            |> Keyword.get(:source)
-            |> Path.split()
-
-          "legacy" not in module_location
-        end)
+        |> Enum.filter(&(not function_exported?(&1, :legacy, 0)))
         |> Map.new(fn event_module ->
           {event_module,
            {event_module

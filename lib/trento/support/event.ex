@@ -19,6 +19,7 @@ defmodule Trento.Support.Event do
         def supersede(_params), do: __MODULE__
       else
         def supersede(_params), do: @superseded_by.supersede(_params)
+        def legacy?, do: true
       end
 
       def upcast(params, metadata) do
