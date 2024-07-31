@@ -76,17 +76,17 @@ defmodule Trento.Users do
     |> Repo.insert()
   end
 
-  def update_user_profile(%User{id: 1}, _), do: {:error, :forbidden}
+  def update_user_profile(%User{username: username} = user, attrs) do
+    if username == admin_username() do
+      {:error, :forbidden}
+    else
+      updated_attrs = maybe_set_password_change_requested_at(attrs, true)
 
-  def update_user_profile(%User{} = user, attrs) do
-    updated_attrs = maybe_set_password_change_requested_at(attrs, true)
-
-    user
-    |> User.profile_update_changeset(updated_attrs)
-    |> Repo.update()
+      user
+      |> User.profile_update_changeset(updated_attrs)
+      |> Repo.update()
+    end
   end
-
-  def update_user(%User{id: 1}, _), do: {:error, :forbidden}
 
   def update_user(%User{locked_at: nil} = user, %{enabled: false} = attrs) do
     updated_attrs =
@@ -123,31 +123,38 @@ defmodule Trento.Users do
 
   def maybe_disable_totp(attrs), do: attrs
 
-  def delete_user(%User{id: 1}), do: {:error, :forbidden}
-
-  def delete_user(%User{abilities: []} = user) do
-    user
-    |> User.delete_changeset(%{deleted_at: DateTime.utc_now()})
-    |> Repo.update()
-  end
-
-  def delete_user(%User{} = user) do
-    result =
-      Ecto.Multi.new()
-      |> Ecto.Multi.update(:user, User.delete_changeset(user, %{deleted_at: DateTime.utc_now()}))
-      |> delete_abilities_multi()
-      |> Repo.transaction()
-
-    case result do
-      {:ok, %{user: user}} ->
-        {:ok, user}
-
-      {:error, _, changeset_error, _} ->
-        {:error, changeset_error}
+  def delete_user(%User{abilities: [], username: username} = user) do
+    if username == admin_username() do
+      {:error, :forbidden}
+    else
+      user
+      |> User.delete_changeset(%{deleted_at: DateTime.utc_now()})
+      |> Repo.update()
     end
   end
 
-  def reset_totp(%User{id: 1}), do: {:error, :forbidden}
+  def delete_user(%User{username: username} = user) do
+    if username == admin_username() do
+      {:error, :forbidden}
+    else
+      result =
+        Ecto.Multi.new()
+        |> Ecto.Multi.update(
+          :user,
+          User.delete_changeset(user, %{deleted_at: DateTime.utc_now()})
+        )
+        |> delete_abilities_multi()
+        |> Repo.transaction()
+
+      case result do
+        {:ok, %{user: user}} ->
+          {:ok, user}
+
+        {:error, _, changeset_error, _} ->
+          {:error, changeset_error}
+      end
+    end
+  end
 
   def reset_totp(%User{} = user) do
     update_user_totp(user, %{
@@ -189,17 +196,19 @@ defmodule Trento.Users do
 
   def initiate_totp_enrollment(_), do: {:error, :totp_already_enabled}
 
-  def confirm_totp_enrollment(%User{id: 1}, _), do: {:error, :forbidden}
-
   def confirm_totp_enrollment(
-        %User{totp_secret: totp_secret, totp_enabled_at: nil} = user,
+        %User{totp_secret: totp_secret, totp_enabled_at: nil, username: username} = user,
         totp_code
       ) do
-    if NimbleTOTP.valid?(totp_secret, totp_code) do
-      now = DateTime.utc_now()
-      update_user_totp(user, %{totp_enabled_at: now, totp_last_used_at: now})
+    if username == admin_username() do
+      {:error, :forbidden}
     else
-      {:error, :enrollment_totp_not_valid}
+      if NimbleTOTP.valid?(totp_secret, totp_code) do
+        now = DateTime.utc_now()
+        update_user_totp(user, %{totp_enabled_at: now, totp_last_used_at: now})
+      else
+        {:error, :enrollment_totp_not_valid}
+      end
     end
   end
 
@@ -217,6 +226,8 @@ defmodule Trento.Users do
       {:error, :totp_invalid}
     end
   end
+
+  defp admin_username, do: Application.fetch_env!(:trento, :admin_user)
 
   defp maybe_set_locked_at(%{enabled: false} = attrs) do
     Map.put(attrs, :locked_at, DateTime.utc_now())
@@ -255,38 +266,48 @@ defmodule Trento.Users do
     )
   end
 
-  defp do_update(user, %{abilities: abilities} = attrs) do
-    result =
-      Ecto.Multi.new()
-      |> Ecto.Multi.update(:user, User.update_changeset(user, attrs))
-      |> delete_abilities_multi()
-      |> insert_abilities_multi(abilities)
-      |> Repo.transaction()
+  defp do_update(%User{username: username} = user, %{abilities: abilities} = attrs) do
+    if username == admin_username() do
+      {:error, :forbidden}
+    else
+      result =
+        Ecto.Multi.new()
+        |> Ecto.Multi.update(:user, User.update_changeset(user, attrs))
+        |> delete_abilities_multi()
+        |> insert_abilities_multi(abilities)
+        |> Repo.transaction()
 
-    case result do
-      {:ok, %{user: user}} ->
-        {:ok, Map.put(user, :abilities, abilities)}
+      case result do
+        {:ok, %{user: user}} ->
+          {:ok, Map.put(user, :abilities, abilities)}
 
-      {:error, _, changeset_error, _} ->
-        {:error, changeset_error}
+        {:error, _, changeset_error, _} ->
+          {:error, changeset_error}
+      end
     end
   rescue
     Ecto.StaleEntryError -> {:error, :stale_entry}
   end
 
-  defp do_update(user, attrs) do
-    user
-    |> User.update_changeset(attrs)
-    |> Repo.update()
+  defp do_update(%User{username: username} = user, attrs) do
+    if username == admin_username() do
+      {:error, :forbidden}
+    else
+      user
+      |> User.update_changeset(attrs)
+      |> Repo.update()
+    end
   rescue
     Ecto.StaleEntryError -> {:error, :stale_entry}
   end
 
-  defp update_user_totp(%User{id: 1}, _), do: {:error, :forbidden}
-
-  defp update_user_totp(%User{} = user, attrs) do
-    user
-    |> User.totp_update_changeset(attrs)
-    |> Repo.update()
+  defp update_user_totp(%User{username: username} = user, attrs) do
+    if username == admin_username() do
+      {:error, :forbidden}
+    else
+      user
+      |> User.totp_update_changeset(attrs)
+      |> Repo.update()
+    end
   end
 end

@@ -7,6 +7,11 @@ import Config
 # any compile-time configuration in here, as it won't be applied.
 # The block below contains prod specific runtime configuration.
 if config_env() in [:prod, :demo] do
+  admin_user = System.get_env("ADMIN_USER", "admin")
+
+  config :trento,
+    admin_user: admin_user
+
   database_url =
     System.get_env("DATABASE_URL") ||
       raise """

@@ -105,12 +105,12 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
     conn: conn,
     api_spec: api_spec
   } do
-    insert(:user, id: 1)
+    %{id: user_id} = insert(:user, username: admin_username())
 
     conn =
       Pow.Plug.assign_current_user(
         conn,
-        %{"user_id" => 1},
+        %{"user_id" => user_id},
         Pow.Plug.fetch_config(conn)
       )
 
@@ -125,12 +125,12 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
     conn: conn,
     api_spec: api_spec
   } do
-    insert(:user, id: 1)
+    %{id: user_id} = insert(:user, username: admin_username())
 
     conn =
       Pow.Plug.assign_current_user(
         conn,
-        %{"user_id" => 1},
+        %{"user_id" => user_id},
         Pow.Plug.fetch_config(conn)
       )
 
@@ -154,12 +154,12 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
     conn: conn,
     api_spec: api_spec
   } do
-    insert(:user, id: 1)
+    %{id: user_id} = insert(:user, username: admin_username())
 
     conn =
       Pow.Plug.assign_current_user(
         conn,
-        %{"user_id" => 1},
+        %{"user_id" => user_id},
         Pow.Plug.fetch_config(conn)
       )
 
@@ -242,4 +242,6 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
     |> json_response(:ok)
     |> assert_schema("UserTOTPEnrollmentConfirmPayload", api_spec)
   end
+
+  defp admin_username, do: Application.fetch_env!(:trento, :admin_user)
 end
