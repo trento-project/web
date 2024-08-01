@@ -236,7 +236,7 @@ defmodule TrentoWeb.SessionController do
 
     conn
     |> Conn.put_private(:pow_assent_session_params, session_params)
-    |> PowAssentPlug.callback_upsert(provider, params, idp_redirect_uri(conn))
+    |> PowAssentPlug.callback_upsert(provider, params, idp_redirect_uri())
     |> case do
       {:ok, conn} ->
         render(conn, "logged.json",
@@ -268,9 +268,5 @@ defmodule TrentoWeb.SessionController do
 
   defp maybe_validate_totp(_, _), do: {:error, :totp_code_missing}
 
-  defp idp_redirect_uri(conn) do
-    "#{trento_idp_origin()}/auth/oidc_callback"
-  end
-
-  defp trento_idp_origin(), do: Application.fetch_env!(:trento, :oidc)[:trento_origin]
+  defp idp_redirect_uri(), do: Application.fetch_env!(:trento, :oidc)[:callback_url]
 end

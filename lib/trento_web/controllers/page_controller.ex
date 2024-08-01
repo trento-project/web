@@ -20,10 +20,10 @@ defmodule TrentoWeb.PageController do
   end
 
   defp oidc_login_url(conn, true) do
-    oidc_trento_origin = Application.fetch_env!(:trento, :oidc)[:trento_origin]
+    oidc_callback = Application.fetch_env!(:trento, :oidc)[:callback_url]
 
     {:ok, url, _} =
-      PowAssent.Plug.authorize_url(conn, :oidc_local, "#{oidc_trento_origin}/auth/oidc_callback")
+      PowAssent.Plug.authorize_url(conn, :oidc_local, oidc_callback)
 
     url
   end
