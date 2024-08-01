@@ -54,6 +54,14 @@ defmodule Trento.Users.User do
     |> cast(attrs, [:locked_at, :password_change_requested_at])
   end
 
+  # def user_identity_changeset(user_or_changeset, user_identity, attrs, user_id_attrs) do
+  #   dbg()
+
+  #   user_or_changeset
+  #   |> Ecto.Changeset.cast(attrs, [:custom_field])
+  #   |> pow_assent_user_identity_changeset(user_identity, attrs, user_id_attrs)
+  # end
+
   def update_changeset(user, attrs) do
     user
     |> pow_password_changeset(attrs)

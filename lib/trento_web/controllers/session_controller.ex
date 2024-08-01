@@ -208,6 +208,7 @@ defmodule TrentoWeb.SessionController do
       ]
     ],
     responses: [
+      unauthorized: Schema.Unauthorized.response(),
       ok:
         {"User IDP credentials", "application/json",
          %OpenApiSpex.Schema{
@@ -245,11 +246,11 @@ defmodule TrentoWeb.SessionController do
           refresh_token: conn.private[:api_refresh_token]
         )
 
-      {:error, conn} ->
-        # get error from idp
-        conn
-        |> put_status(500)
-        |> json(%{error: %{status: 500, message: "An unexpected error occurred"}})
+      {:error, %{private: %{pow_assent_callback_error: {:user_not_allowed, _}}}} ->
+        {:error, :invalid_credentials}
+
+      error ->
+        error
     end
   end
 
