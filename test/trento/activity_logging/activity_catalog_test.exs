@@ -12,18 +12,18 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
   describe "activity exposure" do
     test "should expose connection related activities" do
       logged_connection_activities = [
-        {TrentoWeb.SessionController, :create},
-        {TrentoWeb.V1.ClusterController, :request_checks_execution},
-        {TrentoWeb.V1.ProfileController, :update},
-        {TrentoWeb.V1.SettingsController, :delete_suse_manager_settings},
-        {TrentoWeb.V1.SettingsController, :save_suse_manager_settings},
-        {TrentoWeb.V1.SettingsController, :update_api_key_settings},
-        {TrentoWeb.V1.SettingsController, :update_suse_manager_settings},
-        {TrentoWeb.V1.TagsController, :add_tag},
-        {TrentoWeb.V1.TagsController, :remove_tag},
-        {TrentoWeb.V1.UsersController, :create},
-        {TrentoWeb.V1.UsersController, :delete},
-        {TrentoWeb.V1.UsersController, :update}
+        :login_attempt,
+        :resource_tagging,
+        :resource_untagging,
+        :api_key_generation,
+        :saving_suma_settings,
+        :changing_suma_settings,
+        :clearing_suma_settings,
+        :user_creation,
+        :user_modification,
+        :user_deletion,
+        :profile_update,
+        :cluster_checks_execution_request
       ]
 
       connection_activity_catalog = ActivityCatalog.connection_activities()
@@ -37,68 +37,68 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
 
     test "should expose domain event related activities" do
       domain_events = [
-        Trento.Hosts.Events.HostRestored,
-        Trento.Hosts.Events.HostRolledUp,
-        Trento.Hosts.Events.SoftwareUpdatesDiscoveryCleared,
-        Trento.Hosts.Events.SaptuneStatusUpdated,
-        Trento.Hosts.Events.HostRollUpRequested,
-        Trento.Hosts.Events.HeartbeatFailed,
-        Trento.Hosts.Events.HostDetailsUpdated,
-        Trento.Hosts.Events.HostHealthChanged,
-        Trento.Hosts.Events.HostDeregistered,
-        Trento.Hosts.Events.ProviderUpdated,
-        Trento.Hosts.Events.HostSaptuneHealthChanged,
-        Trento.Hosts.Events.SoftwareUpdatesHealthChanged,
-        Trento.Hosts.Events.SoftwareUpdatesDiscoveryRequested,
-        Trento.Hosts.Events.HeartbeatSucceeded,
-        Trento.Hosts.Events.HostChecksSelected,
-        Trento.Hosts.Events.SlesSubscriptionsUpdated,
-        Trento.Hosts.Events.HostChecksHealthChanged,
-        Trento.Hosts.Events.HostDeregistrationRequested,
-        Trento.Hosts.Events.HostTombstoned,
-        Trento.Hosts.Events.HostRegistered,
-        Trento.Clusters.Events.ClusterRegistered,
-        Trento.Clusters.Events.ClusterRolledUp,
-        Trento.Clusters.Events.ClusterTombstoned,
-        Trento.Clusters.Events.ClusterRollUpRequested,
-        Trento.Clusters.Events.ClusterChecksHealthChanged,
-        Trento.Clusters.Events.HostAddedToCluster,
-        Trento.Clusters.Events.ClusterDeregistered,
-        Trento.Clusters.Events.ClusterHealthChanged,
-        Trento.Clusters.Events.ClusterRestored,
-        Trento.Clusters.Events.ClusterDiscoveredHealthChanged,
-        Trento.Clusters.Events.HostRemovedFromCluster,
-        Trento.Clusters.Events.ChecksSelected,
-        Trento.Clusters.Events.ClusterDetailsUpdated,
-        Trento.Databases.Events.DatabaseDeregistered,
-        Trento.Databases.Events.DatabaseTombstoned,
-        Trento.Databases.Events.DatabaseRollUpRequested,
-        Trento.Databases.Events.DatabaseRolledUp,
-        Trento.Databases.Events.DatabaseInstanceSystemReplicationChanged,
-        Trento.Databases.Events.DatabaseInstanceMarkedAbsent,
-        Trento.Databases.Events.DatabaseInstanceHealthChanged,
-        Trento.Databases.Events.DatabaseInstanceMarkedPresent,
-        Trento.Databases.Events.DatabaseInstanceDeregistered,
-        Trento.Databases.Events.DatabaseTenantsUpdated,
-        Trento.Databases.Events.DatabaseRestored,
-        Trento.Databases.Events.DatabaseRegistered,
-        Trento.Databases.Events.DatabaseInstanceRegistered,
-        Trento.Databases.Events.DatabaseHealthChanged,
-        Trento.SapSystems.Events.ApplicationInstanceMarkedAbsent,
-        Trento.SapSystems.Events.SapSystemHealthChanged,
-        Trento.SapSystems.Events.SapSystemTombstoned,
-        Trento.SapSystems.Events.SapSystemDatabaseHealthChanged,
-        Trento.SapSystems.Events.SapSystemRolledUp,
-        Trento.SapSystems.Events.ApplicationInstanceDeregistered,
-        Trento.SapSystems.Events.SapSystemRegistered,
-        Trento.SapSystems.Events.ApplicationInstanceMarkedPresent,
-        Trento.SapSystems.Events.SapSystemRestored,
-        Trento.SapSystems.Events.SapSystemDeregistered,
-        Trento.SapSystems.Events.ApplicationInstanceHealthChanged,
-        Trento.SapSystems.Events.SapSystemRollUpRequested,
-        Trento.SapSystems.Events.SapSystemUpdated,
-        Trento.SapSystems.Events.ApplicationInstanceMoved,
-        Trento.SapSystems.Events.ApplicationInstanceRegistered
+        :host_restored,
+        :host_rolled_up,
+        :software_updates_discovery_cleared,
+        :saptune_status_updated,
+        :host_roll_up_requested,
+        :heartbeat_failed,
+        :host_details_updated,
+        :host_health_changed,
+        :host_deregistered,
+        :provider_updated,
+        :host_saptune_health_changed,
+        :software_updates_health_changed,
+        :software_updates_discovery_requested,
+        :heartbeat_succeeded,
+        :host_checks_selected,
+        :sles_subscriptions_updated,
+        :host_checks_health_changed,
+        :host_deregistration_requested,
+        :host_tombstoned,
+        :host_registered,
+        :cluster_registered,
+        :cluster_rolled_up,
+        :cluster_tombstoned,
+        :cluster_roll_up_requested,
+        :cluster_checks_health_changed,
+        :host_added_to_cluster,
+        :cluster_deregistered,
+        :cluster_health_changed,
+        :cluster_restored,
+        :cluster_discovered_health_changed,
+        :host_removed_from_cluster,
+        :checks_selected,
+        :cluster_details_updated,
+        :database_deregistered,
+        :database_tombstoned,
+        :database_roll_up_requested,
+        :database_rolled_up,
+        :database_instance_system_replication_changed,
+        :database_instance_marked_absent,
+        :database_instance_health_changed,
+        :database_instance_marked_present,
+        :database_instance_deregistered,
+        :database_tenants_updated,
+        :database_restored,
+        :database_registered,
+        :database_instance_registered,
+        :database_health_changed,
+        :application_instance_marked_absent,
+        :sap_system_health_changed,
+        :sap_system_tombstoned,
+        :sap_system_database_health_changed,
+        :sap_system_rolled_up,
+        :application_instance_deregistered,
+        :sap_system_registered,
+        :application_instance_marked_present,
+        :sap_system_restored,
+        :sap_system_deregistered,
+        :application_instance_health_changed,
+        :sap_system_roll_up_requested,
+        :sap_system_updated,
+        :application_instance_moved,
+        :application_instance_registered
       ]
 
       events_activities_catalog = ActivityCatalog.domain_event_activities()
@@ -113,7 +113,7 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
 
   describe "activity detection" do
     test "should not detect activity from invalid input" do
-      Enum.each([nil, %{}, "", 42], fn input ->
+      Enum.each([nil, %{}, "", 42, Foo.Bar.Event], fn input ->
         assert {:error, :not_interesting} == ActivityCatalog.detect_activity(input)
       end)
     end
@@ -135,79 +135,79 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
 
     scenarios = [
       %{
-        activity: ActivityCatalog.login_attempt(),
-        interesting_statuses: [200, 401, 404, 500],
-        name: :login_attempt
+        activity: :login_attempt,
+        connection_info: {TrentoWeb.SessionController, :create},
+        interesting_statuses: [200, 401, 404, 500]
       },
       %{
-        activity: ActivityCatalog.resource_tagging(),
+        activity: :resource_tagging,
+        connection_info: {TrentoWeb.V1.TagsController, :add_tag},
         interesting_statuses: 201,
-        not_interesting_statuses: [400, 401, 403, 404, 500],
-        name: :resource_tagging
+        not_interesting_statuses: [400, 401, 403, 404, 500]
       },
       %{
-        activity: ActivityCatalog.resource_untagging(),
+        activity: :resource_untagging,
+        connection_info: {TrentoWeb.V1.TagsController, :remove_tag},
         interesting_statuses: 204,
-        not_interesting_statuses: [400, 401, 403, 404, 500],
-        name: :resource_untagging
+        not_interesting_statuses: [400, 401, 403, 404, 500]
       },
       %{
-        activity: ActivityCatalog.api_key_generation(),
+        activity: :api_key_generation,
+        connection_info: {TrentoWeb.V1.SettingsController, :update_api_key_settings},
         interesting_statuses: 200,
-        not_interesting_statuses: [400, 401, 403, 404, 500],
-        name: :api_key_generation
+        not_interesting_statuses: [400, 401, 403, 404, 500]
       },
       %{
-        activity: ActivityCatalog.saving_suma_settings(),
+        activity: :saving_suma_settings,
+        connection_info: {TrentoWeb.V1.SettingsController, :save_suse_manager_settings},
         interesting_statuses: 201,
-        not_interesting_statuses: [400, 401, 403, 404, 500],
-        name: :saving_suma_settings
+        not_interesting_statuses: [400, 401, 403, 404, 500]
       },
       %{
-        activity: ActivityCatalog.changing_suma_settings(),
+        activity: :changing_suma_settings,
+        connection_info: {TrentoWeb.V1.SettingsController, :update_suse_manager_settings},
         interesting_statuses: 200,
-        not_interesting_statuses: [400, 401, 403, 404, 500],
-        name: :changing_suma_settings
+        not_interesting_statuses: [400, 401, 403, 404, 500]
       },
       %{
-        activity: ActivityCatalog.clearing_suma_settings(),
+        activity: :clearing_suma_settings,
+        connection_info: {TrentoWeb.V1.SettingsController, :delete_suse_manager_settings},
         interesting_statuses: 204,
-        not_interesting_statuses: [400, 401, 403, 404, 500],
-        name: :clearing_suma_settings
+        not_interesting_statuses: [400, 401, 403, 404, 500]
       },
       %{
-        activity: ActivityCatalog.user_creation(),
+        activity: :user_creation,
+        connection_info: {TrentoWeb.V1.UsersController, :create},
         interesting_statuses: 201,
-        not_interesting_statuses: [400, 401, 403, 404, 500],
-        name: :user_creation
+        not_interesting_statuses: [400, 401, 403, 404, 500]
       },
       %{
-        activity: ActivityCatalog.user_modification(),
+        activity: :user_modification,
+        connection_info: {TrentoWeb.V1.UsersController, :update},
         interesting_statuses: 200,
-        not_interesting_statuses: [400, 401, 403, 404, 500],
-        name: :user_modification
+        not_interesting_statuses: [400, 401, 403, 404, 500]
       },
       %{
-        activity: ActivityCatalog.user_deletion(),
+        activity: :user_deletion,
+        connection_info: {TrentoWeb.V1.UsersController, :delete},
         interesting_statuses: 204,
-        not_interesting_statuses: [400, 401, 403, 404, 500],
-        name: :user_deletion
+        not_interesting_statuses: [400, 401, 403, 404, 500]
       },
       %{
-        activity: ActivityCatalog.profile_update(),
+        activity: :profile_update,
+        connection_info: {TrentoWeb.V1.ProfileController, :update},
         interesting_statuses: 200,
-        not_interesting_statuses: [400, 401, 403, 404, 500],
-        name: :profile_update
+        not_interesting_statuses: [400, 401, 403, 404, 500]
       },
       %{
-        activity: ActivityCatalog.cluster_checks_execution_request(),
+        activity: :cluster_checks_execution_request,
+        connection_info: {TrentoWeb.V1.ClusterController, :request_checks_execution},
         interesting_statuses: 202,
-        not_interesting_statuses: [400, 401, 403, 404, 500],
-        name: :cluster_checks_execution_request
+        not_interesting_statuses: [400, 401, 403, 404, 500]
       }
     ]
 
-    for %{name: scenario_name} = scenario <- scenarios do
+    for %{activity: scenario_name} = scenario <- scenarios do
       @scenario scenario
 
       test "should detect connection activity for: #{scenario_name}",
@@ -216,6 +216,7 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
            } do
         %{
           activity: activity,
+          connection_info: connection_info,
           interesting_statuses: interesting_statuses
         } = @scenario
 
@@ -231,7 +232,7 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
         |> Enum.each(fn status ->
           assert {:ok, ^activity} =
                    conn
-                   |> populate_conn.(activity, status)
+                   |> populate_conn.(connection_info, status)
                    |> ActivityCatalog.detect_activity()
         end)
 
@@ -240,7 +241,7 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
         |> Enum.each(fn status ->
           assert {:error, :not_interesting} ==
                    conn
-                   |> populate_conn.(activity, status)
+                   |> populate_conn.(connection_info, status)
                    |> ActivityCatalog.detect_activity()
         end)
       end
@@ -248,69 +249,18 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
 
     test "should detect activity from domain events" do
       events = [
-        build(:heartbeat_succeded),
-        build(:heartbeat_failed),
-        build(:host_registered_event),
-        build(:host_checks_health_changed),
-        build(:host_checks_selected)
+        {build(:host_registered_event), :host_registered},
+        {build(:heartbeat_succeded), :heartbeat_succeeded},
+        {build(:heartbeat_failed), :heartbeat_failed},
+        {build(:host_checks_health_changed), :host_checks_health_changed},
+        {build(:host_checks_selected), :host_checks_selected},
+        {build(:software_updates_discovery_requested_event),
+         :software_updates_discovery_requested}
       ]
 
-      for %event_module{} = event <- events do
-        assert {:ok, event_module} ==
+      for {event, expected_activity_type} <- events do
+        assert {:ok, expected_activity_type} ==
                  ActivityCatalog.detect_activity(%{event: event, metadata: %{}})
-      end
-    end
-  end
-
-  describe "activity type detection" do
-    test "should ignore irrelevant activities" do
-      Enum.each([%{bar: "baz"}, "not-interesting", %{}, 42], fn activity ->
-        assert nil == ActivityCatalog.get_activity_type(activity)
-      end)
-    end
-
-    test "should detect activity type for interesting connections" do
-      scenarios = [
-        {ActivityCatalog.login_attempt(), :login_attempt},
-        {ActivityCatalog.resource_tagging(), :resource_tagging},
-        {ActivityCatalog.resource_untagging(), :resource_untagging},
-        {ActivityCatalog.api_key_generation(), :api_key_generation},
-        {ActivityCatalog.saving_suma_settings(), :saving_suma_settings},
-        {ActivityCatalog.changing_suma_settings(), :changing_suma_settings},
-        {ActivityCatalog.clearing_suma_settings(), :clearing_suma_settings},
-        {ActivityCatalog.user_creation(), :user_creation},
-        {ActivityCatalog.user_modification(), :user_modification},
-        {ActivityCatalog.user_deletion(), :user_deletion},
-        {ActivityCatalog.profile_update(), :profile_update},
-        {ActivityCatalog.cluster_checks_execution_request(), :cluster_checks_execution_request}
-      ]
-
-      for {activity, expected_activity_type} <- scenarios do
-        assert expected_activity_type == ActivityCatalog.get_activity_type(activity)
-      end
-    end
-
-    test "should detect correct activity type" do
-      %heartbeat_succeeded_event{} = build(:heartbeat_succeded)
-      %heartbeat_failed_event{} = build(:heartbeat_failed)
-      %host_registered_event{} = build(:host_registered_event)
-      %host_checks_health_changed_event{} = build(:host_checks_health_changed)
-      %host_checks_selected_event{} = build(:host_checks_selected)
-
-      %software_updates_discovery_requested_event{} =
-        build(:software_updates_discovery_requested_event)
-
-      event_to_activity_type_map = [
-        {host_registered_event, :host_registered},
-        {heartbeat_succeeded_event, :heartbeat_succeeded},
-        {heartbeat_failed_event, :heartbeat_failed},
-        {host_checks_health_changed_event, :host_checks_health_changed},
-        {host_checks_selected_event, :host_checks_selected},
-        {software_updates_discovery_requested_event, :software_updates_discovery_requested}
-      ]
-
-      for {event_module, expected_activity_type} <- event_to_activity_type_map do
-        assert expected_activity_type == ActivityCatalog.get_activity_type(event_module)
       end
     end
   end
