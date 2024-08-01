@@ -1,4 +1,5 @@
 defmodule Trento.UsersTest do
+  alias Trento.UserIdentities.UserIdentity
   use Trento.DataCase
 
   alias Trento.Abilities.{
@@ -446,6 +447,19 @@ defmodule Trento.UsersTest do
 
       refute deleted_at == nil
       assert [] == Trento.Repo.all(from u in UsersAbilities, where: u.user_id == ^user_id)
+    end
+
+    test "delete_user/1 deletes user identities" do
+      %{id: user_id} = user = insert(:user)
+      insert(:user_identity, user_id: user_id)
+
+      assert {:ok, %User{}} = Users.delete_user(user)
+
+      %User{deleted_at: deleted_at} =
+        Trento.Repo.get_by!(User, id: user_id)
+
+      refute deleted_at == nil
+      assert [] == Trento.Repo.all(from u in UserIdentity, where: u.user_id == ^user_id)
     end
 
     test "reset_totp/1 reset user topt values" do

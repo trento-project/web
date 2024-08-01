@@ -11,6 +11,8 @@ defmodule Trento.Users do
   alias Trento.Repo
 
   alias Trento.Abilities.UsersAbilities
+  alias Trento.UserIdentities.UserIdentity
+
   alias Trento.Users.User
 
   @impl true
@@ -123,16 +125,6 @@ defmodule Trento.Users do
 
   def maybe_disable_totp(attrs), do: attrs
 
-  def delete_user(%User{abilities: [], username: username} = user) do
-    if username == admin_username() do
-      {:error, :forbidden}
-    else
-      user
-      |> User.delete_changeset(%{deleted_at: DateTime.utc_now()})
-      |> Repo.update()
-    end
-  end
-
   def delete_user(%User{username: username} = user) do
     if username == admin_username() do
       {:error, :forbidden}
@@ -144,6 +136,7 @@ defmodule Trento.Users do
           User.delete_changeset(user, %{deleted_at: DateTime.utc_now()})
         )
         |> delete_abilities_multi()
+        |> delete_user_identities_multi()
         |> Repo.transaction()
 
       case result do
@@ -262,6 +255,16 @@ defmodule Trento.Users do
       :delete_abilities,
       fn %{user: %User{id: user_id}} ->
         from(u in UsersAbilities, where: u.user_id == ^user_id)
+      end
+    )
+  end
+
+  defp delete_user_identities_multi(multi) do
+    Ecto.Multi.delete_all(
+      multi,
+      :delete_user_identities,
+      fn %{user: %User{id: user_id}} ->
+        from(u in UserIdentity, where: u.user_id == ^user_id)
       end
     )
   end
