@@ -136,6 +136,7 @@ defmodule Trento.Factory do
   }
 
   alias Trento.SoftwareUpdates.Discovery.DiscoveryResult
+  alias Trento.UserIdentities.UserIdentity
   alias Trento.Users.User
 
   use ExMachina.Ecto, repo: Trento.Repo
@@ -1075,6 +1076,14 @@ defmodule Trento.Factory do
     %UsersAbilities{
       user_id: 1,
       ability_id: 1
+    }
+  end
+
+  def user_identity_factory do
+    %UserIdentity{
+      user_id: 1,
+      uid: Faker.UUID.v4(),
+      provider: Faker.Pokemon.name()
     }
   end
 end
