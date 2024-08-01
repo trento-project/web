@@ -59,6 +59,8 @@ const getFilterFunction = (column, value) =>
     ? column.filter(value, column.key)
     : getDefaultFilterFunction(value, column.key);
 
+const itemsPerPageOptions = [10, 20, 50, 75, 100];
+
 function Table({
   config,
   data = [],
@@ -80,6 +82,9 @@ function Table({
 
   const [filters, setFilters] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [currentItemsPerPage, setCurrentItemsPerPage] = useState(
+    itemsPerPageOptions[0]
+  );
 
   const searchParamsEnabled = Boolean(searchParams && setSearchParams);
 
@@ -140,9 +145,11 @@ function Table({
 
   const sortedData = sortBy ? [...filteredData].sort(sortBy) : filteredData;
 
-  const renderedData = pagination ? page(currentPage, sortedData) : sortedData;
+  const renderedData = pagination
+    ? page(currentPage, sortedData, currentItemsPerPage)
+    : sortedData;
 
-  const totalPages = pages(sortedData);
+  const totalPages = pages(sortedData, currentItemsPerPage);
 
   return (
     <div
@@ -168,10 +175,9 @@ function Table({
           })}
         >
           <div
-            className={classNames(
-              'min-w-fit shadow rounded-b-lg overflow-hidden',
-              { 'rounded-t-lg': !hasFilters }
-            )}
+            className={classNames('min-w-fit shadow rounded-b-lg', {
+              'rounded-t-lg': !hasFilters,
+            })}
           >
             {header}
             <table className="min-w-full leading-normal table-fixed">
@@ -238,6 +244,11 @@ function Table({
               <Pagination
                 pages={totalPages}
                 currentPage={currentPage}
+                itemsPerPageOptions={itemsPerPageOptions}
+                currentItemsPerPage={currentItemsPerPage}
+                onChangeItemsPerPage={(perPage) =>
+                  setCurrentItemsPerPage(perPage)
+                }
                 onSelect={(selectedPage) => setCurrentPage(selectedPage)}
               />
             )}

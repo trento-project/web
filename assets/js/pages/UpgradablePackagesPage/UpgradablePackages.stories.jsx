@@ -15,6 +15,6 @@ export default {
 export const Default = {
   args: {
     hostName: hostFactory.build().hostname,
-    upgradablePackages: upgradablePackageFactory.buildList(5),
+    upgradablePackages: upgradablePackageFactory.buildList(15),
   },
 };

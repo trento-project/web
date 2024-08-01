@@ -155,6 +155,41 @@ describe('Table component', () => {
       });
     });
 
+    it('should display the correct items per page', () => {
+      const data = tableDataFactory.buildList(11);
+
+      const { container } = render(
+        <Table config={tableConfig} data={data} setSearchParams={() => {}} />
+      );
+
+      const page1 = screen.getByRole('table');
+      expect(page1.querySelectorAll('tbody > tr')).toHaveLength(10);
+
+      fireEvent.click(container.querySelector('.tn-page-item:nth-child(2)'));
+
+      const page2 = screen.getByRole('table');
+      expect(page2.querySelectorAll('tbody > tr')).toHaveLength(1);
+    });
+
+    it('should be able to change the items per page', () => {
+      const data = tableDataFactory.buildList(11);
+
+      const { container } = render(
+        <Table config={tableConfig} data={data} setSearchParams={() => {}} />
+      );
+
+      const pageOriginal = screen.getByRole('table');
+      expect(pageOriginal.querySelectorAll('tbody > tr')).toHaveLength(10);
+
+      fireEvent.click(screen.getByRole('button', { name: '10' }));
+      fireEvent.click(screen.getByRole('option', { name: '20' }));
+
+      const pageMoreItems = screen.getByRole('table');
+      expect(pageMoreItems.querySelectorAll('tbody > tr')).toHaveLength(11);
+
+      expect(container.querySelector('.tn-page-item:nth-child(2)')).toBeNull();
+    });
+
     it('should return empty state message when data is empty', () => {
       const data = [];
       const emptyStateText = faker.lorem.words(5);
