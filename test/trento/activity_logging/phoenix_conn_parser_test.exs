@@ -28,7 +28,7 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
       ]
 
       for %{body_params: body_params, expected_username: expected_username} <- scenarios do
-        assert PhoenixConnParser.get_activity_actor(ActivityCatalog.login_attempt(), %{
+        assert PhoenixConnParser.get_activity_actor(:login_attempt, %{
                  conn
                  | body_params: body_params
                }) == expected_username
@@ -62,8 +62,8 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
   end
 
   defp assert_for_relevant_activity(assertion_function) do
-    ActivityCatalog.activity_catalog()
-    |> Enum.filter(&(&1 != ActivityCatalog.login_attempt()))
+    ActivityCatalog.connection_activities()
+    |> Enum.filter(&(&1 != :login_attempt))
     |> Enum.each(fn activity -> assertion_function.(activity) end)
   end
 end
