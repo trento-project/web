@@ -54,13 +54,17 @@ defmodule Trento.Users.User do
     |> cast(attrs, [:locked_at, :password_change_requested_at])
   end
 
-  # def user_identity_changeset(user_or_changeset, user_identity, attrs, user_id_attrs) do
-  #   dbg()
+  def user_identity_changeset(user_or_changeset, user_identity, attrs, user_id_attrs) do
+    username = Map.get(attrs, "username")
 
-  #   user_or_changeset
-  #   |> Ecto.Changeset.cast(attrs, [:custom_field])
-  #   |> pow_assent_user_identity_changeset(user_identity, attrs, user_id_attrs)
-  # end
+    user_or_changeset
+    |> cast(attrs, [:username, :email])
+    |> put_change(
+      :fullname,
+      Map.get(attrs, "given_namme", "Trento IDP User #{username}")
+    )
+    |> pow_assent_user_identity_changeset(user_identity, attrs, user_id_attrs)
+  end
 
   def update_changeset(user, attrs) do
     user
