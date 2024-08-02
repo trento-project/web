@@ -1,11 +1,18 @@
 import React, { useState } from 'react';
 import Button from '@common/Button';
 import Filter from '@common/Filter';
+import DateFilter from '@common/DateFilter';
 
-const renderFilter = (key, { type, ...filterProps }, value, onChange) =>
-  type === 'select' ? (
-    <Filter key={key} {...filterProps} value={value} onChange={onChange} />
-  ) : null;
+const renderFilter = ({ type, ...filterProps }, value, onChange) => {
+  switch (type) {
+    case 'select':
+      return <Filter {...filterProps} value={value} onChange={onChange} />;
+    case 'date':
+      return <DateFilter {...filterProps} value={value} onChange={onChange} />;
+    default:
+      return null;
+  }
+};
 
 /**
  * Define a filter which is the composition of several filters.

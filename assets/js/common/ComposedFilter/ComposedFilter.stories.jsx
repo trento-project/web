@@ -68,3 +68,24 @@ export const Default = {
     onChange: action('onChange'),
   },
 };
+
+export const WithDateFilter = {
+  args: {
+    filters: [
+      {
+        key: 'filter1',
+        type: 'select',
+        title: 'Pasta',
+        options: ['Carbonara', 'Amatriciana', 'Ajo & Ojo', 'Gricia'],
+      },
+      {
+        key: 'filter2',
+        type: 'date',
+        title: 'Date',
+        prefill: true,
+        options: [['My birthday', () => new Date(1986, 0, 24)]],
+      },
+    ],
+    onChange: action('onChange'),
+  },
+};
