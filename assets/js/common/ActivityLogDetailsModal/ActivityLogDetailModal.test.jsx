@@ -135,7 +135,7 @@ describe('ActivityLogDetailModal component', () => {
         type: CLUSTER_CHECKS_EXECUTION_REQUEST,
       }),
       expectedActivityType: 'Checks Execution Requested',
-      expectedResource: 'Cluster Checks',
+      expectedResource: 'Cluster',
     },
   ];
 
