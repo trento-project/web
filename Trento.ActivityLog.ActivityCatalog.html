@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-K7URE6B4.js"></script>
-    <script src="dist/sidebar_items-CCA727AD.js"></script>
+    <script src="dist/sidebar_items-97A9449C.js"></script>
     <script src="docs_config.js"></script>
     <script async src="dist/html-YIPIRHGU.js"></script>
 
@@ -165,6 +165,22 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
+        <a href="#t:connection_activity/0" data-no-tooltip translate="no">connection_activity()</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:domain_event_activity/0" data-no-tooltip translate="no">domain_event_activity()</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
         <a href="#t:logged_activity/0" data-no-tooltip translate="no">logged_activity()</a>
 
       </div>
@@ -179,7 +195,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#activity_catalog/0" data-no-tooltip translate="no">activity_catalog()</a>
+        <a href="#connection_activities/0" data-no-tooltip translate="no">connection_activities()</a>
 
       </div>
 
@@ -187,7 +203,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#api_key_generation/0" data-no-tooltip translate="no">api_key_generation()</a>
+        <a href="#detect_activity/1" data-no-tooltip translate="no">detect_activity(activity_context)</a>
 
       </div>
 
@@ -195,7 +211,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#changing_suma_settings/0" data-no-tooltip translate="no">changing_suma_settings()</a>
+        <a href="#detect_activity_category/1" data-no-tooltip translate="no">detect_activity_category(activity)</a>
 
       </div>
 
@@ -203,7 +219,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#clearing_suma_settings/0" data-no-tooltip translate="no">clearing_suma_settings()</a>
+        <a href="#domain_event_activities/0" data-no-tooltip translate="no">domain_event_activities()</a>
 
       </div>
 
@@ -211,87 +227,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#cluster_checks_execution_request/0" data-no-tooltip translate="no">cluster_checks_execution_request()</a>
-
-      </div>
-
-    </div>
-
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#get_activity_type/1" data-no-tooltip translate="no">get_activity_type(activity)</a>
-
-      </div>
-
-    </div>
-
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#interested?/2" data-no-tooltip translate="no">interested?(activity, arg2)</a>
-
-      </div>
-
-    </div>
-
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#login_attempt/0" data-no-tooltip translate="no">login_attempt()</a>
-
-      </div>
-
-    </div>
-
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#profile_update/0" data-no-tooltip translate="no">profile_update()</a>
-
-      </div>
-
-    </div>
-
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#resource_tagging/0" data-no-tooltip translate="no">resource_tagging()</a>
-
-      </div>
-
-    </div>
-
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#resource_untagging/0" data-no-tooltip translate="no">resource_untagging()</a>
-
-      </div>
-
-    </div>
-
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#saving_suma_settings/0" data-no-tooltip translate="no">saving_suma_settings()</a>
-
-      </div>
-
-    </div>
-
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#user_creation/0" data-no-tooltip translate="no">user_creation()</a>
-
-      </div>
-
-    </div>
-
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#user_deletion/0" data-no-tooltip translate="no">user_deletion()</a>
-
-      </div>
-
-    </div>
-
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#user_modification/0" data-no-tooltip translate="no">user_modification()</a>
+        <a href="#supported_activities/0" data-no-tooltip translate="no">supported_activities()</a>
 
       </div>
 
@@ -331,19 +267,63 @@ GUIDES
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@type</span> activity_type() ::
-  :login_attempt
-  | :resource_tagging
-  | :resource_untagging
-  | :api_key_generation
-  | :saving_suma_settings
-  | :changing_suma_settings
-  | :clearing_suma_settings
-  | :user_creation
-  | :user_modification
-  | :user_deletion
-  | :profile_update
-  | :cluster_checks_execution_request</pre>
+          <pre translate="no"><span class="attribute">@type</span> activity_type() :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>()</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="t:connection_activity/0">
+
+  <div class="detail-header">
+    <a href="#t:connection_activity/0" class="detail-link" data-no-tooltip title="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature" translate="no">connection_activity()</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/activity_catalog.ex#L9" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> connection_activity() :: {controller :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">module</a>(), action :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>()}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="t:domain_event_activity/0">
+
+  <div class="detail-header">
+    <a href="#t:domain_event_activity/0" class="detail-link" data-no-tooltip title="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature" translate="no">domain_event_activity()</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/activity_catalog.ex#L10" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> domain_event_activity() :: event_module :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">module</a>()</pre>
 
       </div>
 
@@ -359,7 +339,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">logged_activity()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/activity_catalog.ex#L6" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/activity_catalog.ex#L11" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -371,7 +351,7 @@ GUIDES
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@type</span> logged_activity() :: {controller :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">module</a>(), activity :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>()}</pre>
+          <pre translate="no"><span class="attribute">@type</span> logged_activity() :: <a href="#t:connection_activity/0">connection_activity</a>() | <a href="#t:domain_event_activity/0">domain_event_activity</a>()</pre>
 
       </div>
 
@@ -390,134 +370,16 @@ GUIDES
       <span class="text">Functions</span>
     </h1>
     <div class="functions-list">
-<section class="detail" id="activity_catalog/0">
+<section class="detail" id="connection_activities/0">
 
   <div class="detail-header">
-    <a href="#activity_catalog/0" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#connection_activities/0" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">activity_catalog()</h1>
+    <h1 class="signature" translate="no">connection_activities()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/activity_catalog.ex#L55" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-
-  </section>
-</section>
-<section class="detail" id="api_key_generation/0">
-
-  <div class="detail-header">
-    <a href="#api_key_generation/0" class="detail-link" data-no-tooltip title="Link to this macro">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this macro</span>
-    </a>
-    <h1 class="signature" translate="no">api_key_generation()</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/activity_catalog.ex#L52" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-      <span class="note">(macro)</span>
-
-  </div>
-
-  <section class="docstring">
-
-
-  </section>
-</section>
-<section class="detail" id="changing_suma_settings/0">
-
-  <div class="detail-header">
-    <a href="#changing_suma_settings/0" class="detail-link" data-no-tooltip title="Link to this macro">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this macro</span>
-    </a>
-    <h1 class="signature" translate="no">changing_suma_settings()</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/activity_catalog.ex#L52" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-      <span class="note">(macro)</span>
-
-  </div>
-
-  <section class="docstring">
-
-
-  </section>
-</section>
-<section class="detail" id="clearing_suma_settings/0">
-
-  <div class="detail-header">
-    <a href="#clearing_suma_settings/0" class="detail-link" data-no-tooltip title="Link to this macro">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this macro</span>
-    </a>
-    <h1 class="signature" translate="no">clearing_suma_settings()</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/activity_catalog.ex#L52" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-      <span class="note">(macro)</span>
-
-  </div>
-
-  <section class="docstring">
-
-
-  </section>
-</section>
-<section class="detail" id="cluster_checks_execution_request/0">
-
-  <div class="detail-header">
-    <a href="#cluster_checks_execution_request/0" class="detail-link" data-no-tooltip title="Link to this macro">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this macro</span>
-    </a>
-    <h1 class="signature" translate="no">cluster_checks_execution_request()</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/activity_catalog.ex#L52" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-      <span class="note">(macro)</span>
-
-  </div>
-
-  <section class="docstring">
-
-
-  </section>
-</section>
-<section class="detail" id="get_activity_type/1">
-
-  <div class="detail-header">
-    <a href="#get_activity_type/1" class="detail-link" data-no-tooltip title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">get_activity_type(activity)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/activity_catalog.ex#L67" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/activity_catalog.ex#L17" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -529,23 +391,23 @@ GUIDES
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> get_activity_type(<a href="#t:logged_activity/0">logged_activity</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>() | nil</pre>
+          <pre translate="no"><span class="attribute">@spec</span> connection_activities() :: [<a href="#t:activity_type/0">activity_type</a>()]</pre>
 
       </div>
 
 
   </section>
 </section>
-<section class="detail" id="interested?/2">
+<section class="detail" id="detect_activity/1">
 
   <div class="detail-header">
-    <a href="#interested?/2" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#detect_activity/1" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">interested?(activity, arg2)</h1>
+    <h1 class="signature" translate="no">detect_activity(activity_context)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/activity_catalog.ex#L57" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/activity_catalog.ex#L38" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -554,198 +416,97 @@ GUIDES
   </div>
 
   <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> detect_activity(<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()) :: {:ok, <a href="#t:activity_type/0">activity_type</a>()} | {:error, :not_interesting}</pre>
+
+      </div>
 
 
   </section>
 </section>
-<section class="detail" id="login_attempt/0">
+<section class="detail" id="detect_activity_category/1">
 
   <div class="detail-header">
-    <a href="#login_attempt/0" class="detail-link" data-no-tooltip title="Link to this macro">
+    <a href="#detect_activity_category/1" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this macro</span>
+      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">login_attempt()</h1>
+    <h1 class="signature" translate="no">detect_activity_category(activity)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/activity_catalog.ex#L52" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/activity_catalog.ex#L24" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
 
 
-      <span class="note">(macro)</span>
-
   </div>
 
   <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> detect_activity_category(<a href="#t:activity_type/0">activity_type</a>()) ::
+  :connection_activity | :domain_event_activity | :unsupported_activity</pre>
+
+      </div>
 
 
   </section>
 </section>
-<section class="detail" id="profile_update/0">
+<section class="detail" id="domain_event_activities/0">
 
   <div class="detail-header">
-    <a href="#profile_update/0" class="detail-link" data-no-tooltip title="Link to this macro">
+    <a href="#domain_event_activities/0" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this macro</span>
+      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">profile_update()</h1>
+    <h1 class="signature" translate="no">domain_event_activities()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/activity_catalog.ex#L52" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/activity_catalog.ex#L20" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
 
 
-      <span class="note">(macro)</span>
-
   </div>
 
   <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> domain_event_activities() :: [<a href="#t:activity_type/0">activity_type</a>()]</pre>
+
+      </div>
 
 
   </section>
 </section>
-<section class="detail" id="resource_tagging/0">
+<section class="detail" id="supported_activities/0">
 
   <div class="detail-header">
-    <a href="#resource_tagging/0" class="detail-link" data-no-tooltip title="Link to this macro">
+    <a href="#supported_activities/0" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this macro</span>
+      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">resource_tagging()</h1>
+    <h1 class="signature" translate="no">supported_activities()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/activity_catalog.ex#L52" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/activity_catalog.ex#L14" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
 
 
-      <span class="note">(macro)</span>
-
   </div>
 
   <section class="docstring">
 
+      <div class="specs">
 
-  </section>
-</section>
-<section class="detail" id="resource_untagging/0">
+          <pre translate="no"><span class="attribute">@spec</span> supported_activities() :: [<a href="#t:activity_type/0">activity_type</a>()]</pre>
 
-  <div class="detail-header">
-    <a href="#resource_untagging/0" class="detail-link" data-no-tooltip title="Link to this macro">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this macro</span>
-    </a>
-    <h1 class="signature" translate="no">resource_untagging()</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/activity_catalog.ex#L52" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-      <span class="note">(macro)</span>
-
-  </div>
-
-  <section class="docstring">
-
-
-  </section>
-</section>
-<section class="detail" id="saving_suma_settings/0">
-
-  <div class="detail-header">
-    <a href="#saving_suma_settings/0" class="detail-link" data-no-tooltip title="Link to this macro">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this macro</span>
-    </a>
-    <h1 class="signature" translate="no">saving_suma_settings()</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/activity_catalog.ex#L52" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-      <span class="note">(macro)</span>
-
-  </div>
-
-  <section class="docstring">
-
-
-  </section>
-</section>
-<section class="detail" id="user_creation/0">
-
-  <div class="detail-header">
-    <a href="#user_creation/0" class="detail-link" data-no-tooltip title="Link to this macro">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this macro</span>
-    </a>
-    <h1 class="signature" translate="no">user_creation()</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/activity_catalog.ex#L52" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-      <span class="note">(macro)</span>
-
-  </div>
-
-  <section class="docstring">
-
-
-  </section>
-</section>
-<section class="detail" id="user_deletion/0">
-
-  <div class="detail-header">
-    <a href="#user_deletion/0" class="detail-link" data-no-tooltip title="Link to this macro">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this macro</span>
-    </a>
-    <h1 class="signature" translate="no">user_deletion()</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/activity_catalog.ex#L52" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-      <span class="note">(macro)</span>
-
-  </div>
-
-  <section class="docstring">
-
-
-  </section>
-</section>
-<section class="detail" id="user_modification/0">
-
-  <div class="detail-header">
-    <a href="#user_modification/0" class="detail-link" data-no-tooltip title="Link to this macro">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this macro</span>
-    </a>
-    <h1 class="signature" translate="no">user_modification()</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/activity_catalog.ex#L52" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-      <span class="note">(macro)</span>
-
-  </div>
-
-  <section class="docstring">
+      </div>
 
 
   </section>

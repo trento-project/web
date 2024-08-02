@@ -14,12 +14,12 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-K7URE6B4.js"></script>
-    <script src="dist/sidebar_items-CCA727AD.js"></script>
+    <script src="dist/sidebar_items-97A9449C.js"></script>
     <script src="docs_config.js"></script>
     <script async src="dist/html-YIPIRHGU.js"></script>
 
   </head>
-  <body data-type="modules" class="page-behaviour">
+  <body data-type="modules" class="page-module">
     <script>
 
       try {
@@ -131,15 +131,14 @@ GUIDES
         <span class="sr-only">View Source</span>
       </a>
 
-    <span translate="no">Trento.ActivityLog.Parser.ActivityParser</span> <small>behaviour</small>
+    <span translate="no">Trento.ActivityLog.Parser.ActivityParser</span> 
     <small class="app-vsn" translate="no">(Trento Web v2.3.1)</small>
 
   </h1>
 
 
     <section id="moduledoc">
-<p>Behavior for activity parsers.
-It extracts the activity relevant information from the context.</p>
+<p>Activity parser extracts the activity relevant information from the context.</p>
     </section>
 
 </div>
@@ -151,30 +150,28 @@ It extracts the activity relevant information from the context.</p>
       </a>
       <span class="text">Summary</span>
     </h1>
-<div class="summary-callbacks summary">
+<div class="summary-types summary">
   <h2>
-    <a href="#callbacks">Callbacks</a>
+    <a href="#types">Types</a>
   </h2>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#c:detect_activity/1" data-no-tooltip translate="no">detect_activity(activity_context)</a>
+        <a href="#t:activity_log/0" data-no-tooltip translate="no">activity_log()</a>
 
       </div>
 
     </div>
 
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#c:get_activity_actor/2" data-no-tooltip translate="no">get_activity_actor(activity, activity_context)</a>
-
-      </div>
-
-    </div>
+</div>
+<div class="summary-functions summary">
+  <h2>
+    <a href="#functions">Functions</a>
+  </h2>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#c:get_activity_metadata/2" data-no-tooltip translate="no">get_activity_metadata(activity, activity_context)</a>
+        <a href="#to_activity_log/2" data-no-tooltip translate="no">to_activity_log(activity, activity_context)</a>
 
       </div>
 
@@ -185,22 +182,22 @@ It extracts the activity relevant information from the context.</p>
   </section>
 
 
-  <section id="callbacks" class="details-list">
+  <section id="types" class="details-list">
     <h1 class="section-heading">
-      <a class="hover-link" href="#callbacks">
+      <a class="hover-link" href="#types">
         <i class="ri-link-m" aria-hidden="true"></i>
       </a>
-      <span class="text">Callbacks</span>
+      <span class="text">Types</span>
     </h1>
-    <div class="callbacks-list">
-<section class="detail" id="c:detect_activity/1">
+    <div class="types-list">
+<section class="detail" id="t:activity_log/0">
 
   <div class="detail-header">
-    <a href="#c:detect_activity/1" class="detail-link" data-no-tooltip title="Link to this callback">
+    <a href="#t:activity_log/0" class="detail-link" data-no-tooltip title="Link to this type">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this callback</span>
+      <span class="sr-only">Link to this type</span>
     </a>
-    <h1 class="signature" translate="no">detect_activity(activity_context)</h1>
+    <h1 class="signature" translate="no">activity_log()</h1>
 
       <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/parser/activity_parser.ex#L9" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
@@ -214,24 +211,35 @@ It extracts the activity relevant information from the context.</p>
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@callback</span> detect_activity(activity_context :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()) ::
-  <a href="Trento.ActivityLog.ActivityCatalog.html#t:logged_activity/0">Trento.ActivityLog.ActivityCatalog.logged_activity</a>() | nil</pre>
+          <pre translate="no"><span class="attribute">@type</span> activity_log() :: %{type: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(), actor: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(), metadata: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()}</pre>
 
       </div>
 
 
   </section>
 </section>
-<section class="detail" id="c:get_activity_actor/2">
+
+    </div>
+  </section>
+
+  <section id="functions" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#functions">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Functions</span>
+    </h1>
+    <div class="functions-list">
+<section class="detail" id="to_activity_log/2">
 
   <div class="detail-header">
-    <a href="#c:get_activity_actor/2" class="detail-link" data-no-tooltip title="Link to this callback">
+    <a href="#to_activity_log/2" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this callback</span>
+      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">get_activity_actor(activity, activity_context)</h1>
+    <h1 class="signature" translate="no">to_activity_log(activity, activity_context)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/parser/activity_parser.ex#L11" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/parser/activity_parser.ex#L17" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -243,41 +251,8 @@ It extracts the activity relevant information from the context.</p>
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@callback</span> get_activity_actor(
-  activity :: <a href="Trento.ActivityLog.ActivityCatalog.html#t:logged_activity/0">Trento.ActivityLog.ActivityCatalog.logged_activity</a>(),
-  activity_context :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()
-) :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()</pre>
-
-      </div>
-
-
-  </section>
-</section>
-<section class="detail" id="c:get_activity_metadata/2">
-
-  <div class="detail-header">
-    <a href="#c:get_activity_metadata/2" class="detail-link" data-no-tooltip title="Link to this callback">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this callback</span>
-    </a>
-    <h1 class="signature" translate="no">get_activity_metadata(activity, activity_context)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/parser/activity_parser.ex#L16" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-      <div class="specs">
-
-          <pre translate="no"><span class="attribute">@callback</span> get_activity_metadata(
-  activity :: <a href="Trento.ActivityLog.ActivityCatalog.html#t:logged_activity/0">Trento.ActivityLog.ActivityCatalog.logged_activity</a>(),
-  activity_context :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()
-) :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()</pre>
+          <pre translate="no"><span class="attribute">@spec</span> to_activity_log(<a href="Trento.ActivityLog.ActivityCatalog.html#t:activity_type/0">Trento.ActivityLog.ActivityCatalog.activity_type</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()) ::
+  {:ok, <a href="#t:activity_log/0">activity_log</a>()} | {:error, :cannot_parse_activity}</pre>
 
       </div>
 
