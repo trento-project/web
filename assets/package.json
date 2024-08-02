@@ -50,7 +50,7 @@
     "@headlessui/react": "^1.7.19",
     "@heroicons/react": "^2.1.5",
     "@reduxjs/toolkit": "^2.2.2",
-    "axios": "^1.7.2",
+    "axios": "^1.7.3",
     "axios-auth-refresh": "^3.3.6",
     "chart.js": "^4.4.3",
     "chartjs-adapter-date-fns": "^3.0.0",
