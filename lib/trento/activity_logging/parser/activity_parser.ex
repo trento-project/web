@@ -1,20 +1,56 @@
 defmodule Trento.ActivityLog.Parser.ActivityParser do
   @moduledoc """
-  Behavior for activity parsers.
-  It extracts the activity relevant information from the context.
+  Activity parser extracts the activity relevant information from the context.
   """
 
   alias Trento.ActivityLog.ActivityCatalog
+  alias Trento.ActivityLog.Logger.Parser.{EventParser, PhoenixConnParser}
 
-  @callback detect_activity(activity_context :: any()) :: ActivityCatalog.logged_activity() | nil
+  @type activity_log :: %{
+          type: String.t(),
+          actor: String.t(),
+          metadata: map()
+        }
 
-  @callback get_activity_actor(
-              activity :: ActivityCatalog.logged_activity(),
-              activity_context :: any()
-            ) :: any()
+  @spec to_activity_log(ActivityCatalog.activity_type(), map()) ::
+          {:ok, activity_log()} | {:error, :cannot_parse_activity}
+  def to_activity_log(activity, activity_context) do
+    with true <- activity in ActivityCatalog.supported_activities(),
+         {:ok, actor} <- get_activity_info(:actor, activity, activity_context),
+         {:ok, metadata} <- get_activity_info(:metadata, activity, activity_context) do
+      {:ok,
+       %{
+         type: Atom.to_string(activity),
+         actor: actor,
+         metadata: metadata
+       }}
+    else
+      _ -> {:error, :cannot_parse_activity}
+    end
+  end
 
-  @callback get_activity_metadata(
-              activity :: ActivityCatalog.logged_activity(),
-              activity_context :: any()
-            ) :: map()
+  defp get_activity_info(info, activity, activity_context) do
+    case ActivityCatalog.detect_activity_category(activity) do
+      :connection_activity ->
+        {:ok, parse_connection_activity_info(info, activity, activity_context)}
+
+      :domain_event_activity ->
+        {:ok, parse_domain_event_activity_info(info, activity, activity_context)}
+
+      :unsupported_activity ->
+        {:error, :unsupported_activity}
+    end
+  end
+
+  defp parse_connection_activity_info(:actor, activity, activity_context),
+    do: PhoenixConnParser.get_activity_actor(activity, activity_context)
+
+  defp parse_connection_activity_info(:metadata, activity, activity_context),
+    do: PhoenixConnParser.get_activity_metadata(activity, activity_context)
+
+  defp parse_domain_event_activity_info(:actor, activity, activity_context),
+    do: EventParser.get_activity_actor(activity, activity_context)
+
+  defp parse_domain_event_activity_info(:metadata, activity, activity_context),
+    do: EventParser.get_activity_metadata(activity, activity_context)
 end

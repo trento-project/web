@@ -6,7 +6,9 @@ defmodule Trento.EventStoreCase do
 
   use ExUnit.CaseTemplate
 
-  setup do
+  alias Ecto.Adapters.SQL.Sandbox
+
+  setup tags do
     :ok = Application.stop(:trento)
     :ok = Application.stop(:commanded)
     :ok = Application.stop(:eventstore)
@@ -17,6 +19,9 @@ defmodule Trento.EventStoreCase do
     EventStore.Storage.Initializer.reset!(conn, config)
 
     {:ok, _} = Application.ensure_all_started(:trento)
+
+    pid = Sandbox.start_owner!(Trento.Repo, shared: not tags[:async])
+    on_exit(fn -> Sandbox.stop_owner(pid) end)
 
     {:ok, %{conn: conn}}
   end
