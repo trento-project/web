@@ -4,140 +4,24 @@ import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
 import { faker } from '@faker-js/faker';
-import {
-  activityLogEntryFactory,
-  taggingMetadataFactory,
-  untaggingMetadataFactory,
-} from '@lib/test-utils/factories/activityLog';
+import { activityLogEntryFactory } from '@lib/test-utils/factories/activityLog';
 
-import {
-  LOGIN_ATTEMPT,
-  RESOURCE_TAGGING,
-  RESOURCE_UNTAGGING,
-  API_KEY_GENERATION,
-  CHANGING_SUMA_SETTINGS,
-  CLEARING_SUMA_SETTINGS,
-  SAVING_SUMA_SETTINGS,
-  CLUSTER_CHECKS_EXECUTION_REQUEST,
-  PROFILE_UPDATE,
-  USER_CREATION,
-  USER_DELETION,
-  USER_MODIFICATION,
-  LEVEL_WARNING,
-} from '@lib/model/activityLog';
+import { ACTIVITY_TYPES, toLabel, toResource } from '@lib/model/activityLog';
 import { toRenderedEntry } from '@common/ActivityLogOverview/ActivityLogOverview';
 import ActivityLogDetailModal from '.';
 
 describe('ActivityLogDetailModal component', () => {
-  const scenarios = [
-    {
-      name: LOGIN_ATTEMPT,
-      entry: activityLogEntryFactory.build({
-        type: LOGIN_ATTEMPT,
-        metadata: {},
-      }),
-      expectedActivityType: 'Login Attempt',
-      expectedResource: 'Application',
-    },
-    {
-      name: RESOURCE_TAGGING,
-      entry: activityLogEntryFactory.build({
-        type: RESOURCE_TAGGING,
-        metadata: taggingMetadataFactory.build({
-          resource_type: 'host',
-        }),
-      }),
-      expectedActivityType: 'Tag Added',
-      expectedResource: 'Host',
-    },
-    {
-      name: RESOURCE_UNTAGGING,
-      entry: activityLogEntryFactory.build({
-        type: RESOURCE_UNTAGGING,
-        level: LEVEL_WARNING,
-        metadata: untaggingMetadataFactory.build({
-          resource_type: 'cluster',
-        }),
-      }),
-      expectedActivityType: 'Tag Removed',
-      expectedResource: 'Cluster',
-    },
-    {
-      name: API_KEY_GENERATION,
-      entry: activityLogEntryFactory.build({
-        type: API_KEY_GENERATION,
-      }),
-      expectedActivityType: 'API Key Generated',
-      expectedResource: 'API Key',
-    },
-    {
-      name: SAVING_SUMA_SETTINGS,
-      entry: activityLogEntryFactory.build({
-        type: SAVING_SUMA_SETTINGS,
-      }),
-      expectedActivityType: 'SUMA Settings Saved',
-      expectedResource: 'SUMA Settings',
-    },
-    {
-      name: CHANGING_SUMA_SETTINGS,
-      entry: activityLogEntryFactory.build({
-        type: CHANGING_SUMA_SETTINGS,
-      }),
-      expectedActivityType: 'SUMA Settings Changed',
-      expectedResource: 'SUMA Settings',
-    },
-    {
-      name: CLEARING_SUMA_SETTINGS,
-      entry: activityLogEntryFactory.build({
-        type: CLEARING_SUMA_SETTINGS,
-      }),
-      expectedActivityType: 'SUMA Settings Cleared',
-      expectedResource: 'SUMA Settings',
-    },
-    {
-      name: USER_CREATION,
-      entry: activityLogEntryFactory.build({
-        type: USER_CREATION,
-      }),
-      expectedActivityType: 'User Created',
-      expectedResource: 'User',
-      userRelatedActivity: true,
-    },
-    {
-      name: USER_MODIFICATION,
-      entry: activityLogEntryFactory.build({
-        type: USER_MODIFICATION,
-      }),
-      expectedActivityType: 'User Modified',
-      expectedResource: 'User',
-      userRelatedActivity: true,
-    },
-    {
-      name: USER_DELETION,
-      entry: activityLogEntryFactory.build({
-        type: USER_DELETION,
-      }),
-      expectedActivityType: 'User Deleted',
-      expectedResource: 'User',
-      userRelatedActivity: true,
-    },
-    {
-      name: PROFILE_UPDATE,
-      entry: activityLogEntryFactory.build({
-        type: PROFILE_UPDATE,
-      }),
-      expectedActivityType: 'Profile Updated',
-      expectedResource: 'Profile',
-    },
-    {
-      name: CLUSTER_CHECKS_EXECUTION_REQUEST,
-      entry: activityLogEntryFactory.build({
-        type: CLUSTER_CHECKS_EXECUTION_REQUEST,
-      }),
-      expectedActivityType: 'Checks Execution Requested',
-      expectedResource: 'Cluster',
-    },
-  ];
+  const scenarios = ACTIVITY_TYPES.map((activityType) => {
+    const entry = activityLogEntryFactory.build({
+      type: activityType,
+    });
+    return {
+      name: activityType,
+      entry,
+      expectedActivityType: toLabel(entry),
+      expectedResource: toResource(entry),
+    };
+  });
 
   it.each(scenarios)(
     'should render detail for activity entry `$name`',
