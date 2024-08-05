@@ -61,6 +61,20 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
     end
   end
 
+  describe "metadata detection" do
+    test "should extract the request body as metadata for relevant activities", %{conn: conn} do
+      for activity <- [:api_key_generation, :activity_log_settings_update] do
+        request_body = %{"foo" => "bar"}
+
+        assert request_body ==
+                 PhoenixConnParser.get_activity_metadata(activity, %Plug.Conn{
+                   conn
+                   | body_params: request_body
+                 })
+      end
+    end
+  end
+
   defp assert_for_relevant_activity(assertion_function) do
     ActivityCatalog.connection_activities()
     |> Enum.filter(&(&1 != :login_attempt))

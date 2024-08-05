@@ -67,11 +67,12 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
   end
 
   def get_activity_metadata(
-        :api_key_generation,
+        activity,
         %Plug.Conn{
           body_params: request_body
         }
-      ) do
+      )
+      when activity in [:api_key_generation, :activity_log_settings_update] do
     request_body
   end
 
