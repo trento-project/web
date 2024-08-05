@@ -16,6 +16,7 @@ import {
 import { customNotify } from '@state/notifications';
 import { networkClient } from '@lib/network';
 import { profileFactory } from '@lib/test-utils/factories/users';
+import * as usersModel from '@lib/model/users';
 import {
   performLogin,
   clearUserAndLogout,
@@ -168,7 +169,7 @@ describe('user login saga', () => {
     expect(dispatched).toEqual([expectedAction]);
   });
 
-  it('should not dispatch notification is password change is not requested', async () => {
+  it('should not dispatch notification if password change is not requested', async () => {
     const dispatched = await recordSaga(
       checkUserPasswordChangeRequested,
       {},
@@ -180,5 +181,23 @@ describe('user login saga', () => {
     );
 
     expect(dispatched).toEqual([]);
+  });
+
+  describe('Single sign on', () => {
+    it('should not dispatch notification if single sign on is enabled', async () => {
+      jest.spyOn(usersModel, 'isSingleSignOnEnabled').mockReturnValue(true);
+
+      const dispatched = await recordSaga(
+        checkUserPasswordChangeRequested,
+        {},
+        {
+          user: {
+            password_change_requested: true,
+          },
+        }
+      );
+
+      expect(dispatched).toEqual([]);
+    });
   });
 });

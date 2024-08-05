@@ -22,6 +22,7 @@ import {
   clearCredentialsFromStore,
 } from '@lib/auth';
 import { networkClient } from '@lib/network';
+import { isSingleSignOnEnabled } from '@lib/model/users';
 
 export function* performOIDCEnrollment({ payload: { code, state } }) {
   yield put(setAuthInProgress());
@@ -113,6 +114,10 @@ export function* userUpdated() {
 }
 
 export function* checkUserPasswordChangeRequested() {
+  if (isSingleSignOnEnabled()) {
+    return;
+  }
+
   const { password_change_requested } = yield select(getUserProfile);
 
   if (!password_change_requested) {
