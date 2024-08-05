@@ -23,7 +23,8 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
         :user_modification,
         :user_deletion,
         :profile_update,
-        :cluster_checks_execution_request
+        :cluster_checks_execution_request,
+        :activity_log_settings_update
       ]
 
       connection_activity_catalog = ActivityCatalog.connection_activities()
