@@ -95,4 +95,11 @@ describe('Users', () => {
     await userEvent.click(cancelButton);
     expect(modalTitel).not.toBeInTheDocument();
   });
+
+  describe('Single sign on', () => {
+    it('should disable user creation', () => {
+      renderWithRouter(<Users users={[]} singleSignOnEnabled />);
+      expect(screen.queryByText('Create User')).not.toBeInTheDocument();
+    });
+  });
 });

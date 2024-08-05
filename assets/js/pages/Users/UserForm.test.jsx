@@ -360,4 +360,74 @@ describe('UserForm', () => {
       abilities: abilities.slice(0, 2),
     });
   });
+
+  describe('Single sign on', () => {
+    it('should disable fullname, email and username fields', () => {
+      render(<UserForm saveText="Save" editing singleSignOnEnabled />);
+
+      expect(screen.getByLabelText('fullname')).toBeDisabled();
+      expect(screen.getByLabelText('email')).toBeDisabled();
+      expect(screen.getByLabelText('username')).toBeDisabled();
+    });
+
+    it('should remove password, totp and timestamp fields', () => {
+      render(<UserForm saveText="Save" editing singleSignOnEnabled />);
+
+      expect(screen.queryByText('Created')).not.toBeInTheDocument();
+      expect(screen.queryByText('Updated')).not.toBeInTheDocument();
+      expect(screen.queryByText('TOTP')).not.toBeInTheDocument();
+      expect(screen.getByText('Permissions')).toBeVisible();
+      expect(screen.getByText('Enabled')).toBeVisible();
+    });
+
+    it('should save permissions and status', async () => {
+      const user = userEvent.setup();
+
+      const { fullname, email, username } = userFactory.build();
+
+      const abilities = abilityFactory.buildList(3);
+      const userAbilities = [abilities[0]];
+
+      const mockOnSave = jest.fn();
+
+      render(
+        <UserForm
+          saveText="Save"
+          onSave={mockOnSave}
+          fullName={fullname}
+          emailAddress={email}
+          username={username}
+          editing
+          abilities={abilities}
+          userAbilities={userAbilities}
+          singleSignOnEnabled
+        />
+      );
+
+      expect(
+        screen.getByText(
+          `${userAbilities[0].name}:${userAbilities[0].resource}`
+        )
+      ).toBeVisible();
+
+      await user.click(screen.getByLabelText('permissions'));
+
+      abilities.forEach(({ name, resource }) =>
+        expect(screen.getByText(`${name}:${resource}`)).toBeVisible()
+      );
+
+      await user.click(
+        screen.getByText(`${abilities[1].name}:${abilities[1].resource}`)
+      );
+
+      await user.click(screen.getByRole('button', { name: 'Save' }));
+
+      screen.debug(undefined, 100000);
+
+      expect(mockOnSave).toHaveBeenNthCalledWith(1, {
+        enabled: true,
+        abilities: abilities.slice(0, 2),
+      });
+    });
+  });
 });

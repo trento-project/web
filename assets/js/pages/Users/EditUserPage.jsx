@@ -6,7 +6,7 @@ import BackButton from '@common/BackButton';
 import Banner from '@common/Banners/Banner';
 import PageHeader from '@common/PageHeader';
 
-import { isAdmin } from '@lib/model/users';
+import { isAdmin, isSingleSignOnEnabled } from '@lib/model/users';
 import { editUser, getUser } from '@lib/api/users';
 
 import { fetchAbilities } from './CreateUserPage';
@@ -123,6 +123,7 @@ function EditUserPage() {
         onSave={onEditUser}
         onCancel={onCancel}
         editing
+        singleSignOnEnabled={isSingleSignOnEnabled()}
       />
     </div>
   );
