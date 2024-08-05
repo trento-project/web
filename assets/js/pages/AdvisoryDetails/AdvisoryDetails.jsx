@@ -89,6 +89,7 @@ function AdvisoryDetails({
                 <li key={`bug-${id}`}>
                   <a
                     className="text-jungle-green-500 hover:opacity-75"
+                    target="_blank"
                     href={`https://bugzilla.suse.com/show_bug.cgi?id=${id}`}
                   >
                     {fix}
@@ -110,6 +111,7 @@ function AdvisoryDetails({
                 <li key={cve}>
                   <a
                     className="text-jungle-green-500 hover:opacity-75"
+                    target="_blank"
                     href={`https://cve.mitre.org/cgi-bin/cvename.cgi?name=${cve}`}
                   >
                     {cve}

@@ -23,7 +23,9 @@ function AdvisoryDetailsPage() {
   return (
     <>
       <BackButton url={`/hosts/${hostID}`}>Back</BackButton>
-      {!isLoading ? <AdvisoryDetails errata={advisoryErrata} /> : null}
+      {!isLoading ? (
+        <AdvisoryDetails advisoryName={advisoryID} errata={advisoryErrata} />
+      ) : null}
     </>
   );
 }
