@@ -289,6 +289,8 @@ export const WithSuseManager = {
   args: {
     ...Default.args,
     suseManagerEnabled: true,
+    softwareUpdatesSettingsSaved: true,
+    softwareUpdatesLoading: false,
     relevantPatches: 123,
     upgradablePackages: 456,
   },
@@ -306,9 +308,10 @@ export const SuseManagerUnknown = {
   args: {
     ...Default.args,
     suseManagerEnabled: true,
+    softwareUpdatesSettingsSaved: true,
     relevantPatches: undefined,
     upgradablePackages: undefined,
-    softwareUpdatesTooltip:
-      'SUSE Manager was not able to retrieve the requested data',
+    softwareUpdatesErrorMessage: 'Connection to SUMA not working',
+    softwareUpdatesTooltip: 'Please review SUSE Manager settings',
   },
 };
