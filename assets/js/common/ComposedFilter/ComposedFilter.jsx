@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import Button from '@common/Button';
 import Filter from '@common/Filter';
 
-const renderFilter = ({ type, ...filterProps }, value, onChange) =>
+const renderFilter = (key, { type, ...filterProps }, value, onChange) =>
   type === 'select' ? (
-    <Filter {...filterProps} value={value} onChange={onChange} />
+    <Filter key={key} {...filterProps} value={value} onChange={onChange} />
   ) : null;
 
 /**
@@ -38,7 +38,7 @@ function ComposedFilter({
   return (
     <>
       {filters
-        .map(({ key, ...rest }) => [rest, value[key], onFilterChange(key)])
+        .map(({ key, ...rest }) => [key, rest, value[key], onFilterChange(key)])
         .map((args) => renderFilter(...args))}
       {!autoApply && (
         <div className="flex flex-row w-80 space-x-2">

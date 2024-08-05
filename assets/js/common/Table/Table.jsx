@@ -157,7 +157,7 @@ function Table({
         'px-4 sm:px-8': usePadding,
       })}
     >
-      <div className="flex items-center px-4 space-x-4">
+      <div className="flex items-center px-4 space-x-4 pb-4">
         <TableFilters
           config={config}
           data={data}
