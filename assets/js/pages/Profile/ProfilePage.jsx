@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
 import PageHeader from '@common/PageHeader';
-import { isAdmin } from '@lib/model/users';
+import { isAdmin, isSingleSignOnEnabled } from '@lib/model/users';
 import ProfileForm from '@pages/Profile/ProfileForm';
 import {
   getUserProfile,
@@ -162,6 +162,7 @@ function ProfilePage() {
         toggleTotpBox={setTotpBoxOpen}
         loading={loading || saving}
         disableForm={isDefaultAdmin}
+        singleSignOnEnabled={isSingleSignOnEnabled()}
         onSave={updateProfile}
         onEnableTotp={totpInitiateEnrolling}
         onVerifyTotp={verifyTotpEnrollment}
