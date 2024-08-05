@@ -197,6 +197,63 @@ defmodule Trento.ActivityLog.ActivityLoggerTest do
     end
   end
 
+  describe "changing activity log retention time detection" do
+    defp change_retention_time(conn, retention_time) do
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> put("/api/v1/settings/activity_log", retention_time)
+    end
+
+    test "should not log a failing update of the activity log settings",
+         %{conn: conn, user: %{id: user_id}} do
+      insert(:activity_log_settings)
+
+      conn
+      |> with_token(user_id)
+      |> change_retention_time(%{
+        retention_time: %{
+          value: 42,
+          unit: :invalid_unit
+        }
+      })
+      |> json_response(422)
+
+      wait_for_tasks_completion()
+
+      assert [] = Trento.Repo.all(ActivityLog)
+    end
+
+    test "should log a successful update of the activity log settings",
+         %{conn: conn, user: %{id: user_id, username: username}} do
+      insert(:activity_log_settings)
+
+      conn
+      |> with_token(user_id)
+      |> change_retention_time(%{
+        retention_time: %{
+          value: 42,
+          unit: :day
+        }
+      })
+      |> json_response(200)
+
+      wait_for_tasks_completion()
+
+      assert [
+               %ActivityLog{
+                 type: "activity_log_settings_update",
+                 actor: ^username,
+                 metadata: %{
+                   "retention_time" => %{
+                     "unit" => "day",
+                     "value" => 42
+                   }
+                 }
+               }
+             ] = Trento.Repo.all(ActivityLog)
+    end
+  end
+
   test "domain event activity logging" do
     heartbeat_succeeded_event = build(:heartbeat_succeded)
     heartbeat_failed_event = build(:heartbeat_failed)
