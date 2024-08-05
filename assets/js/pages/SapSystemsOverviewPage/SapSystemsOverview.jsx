@@ -85,7 +85,7 @@ function SapSystemsOverview({
             .filter((item) => item === 'J2EE' || item === 'ABAP')
             .map((item) => (item === 'J2EE' ? 'JAVA' : item))
             .toSorted()
-            .join('/'),
+            .join('+'),
       },
 
       {

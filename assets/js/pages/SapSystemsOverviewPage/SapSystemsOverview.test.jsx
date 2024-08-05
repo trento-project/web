@@ -143,7 +143,7 @@ describe('SapSystemsOverviews component', () => {
     });
 
     it('should display the correct SAP system type JAVA and ABAP', () => {
-      const expectedSapSystemTypes = 'ABAP/JAVA';
+      const expectedSapSystemTypes = 'ABAP+JAVA';
       const sapSystemID = faker.string.uuid();
       const sapSystem = sapSystemFactory.build({
         id: sapSystemID,
