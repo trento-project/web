@@ -12,6 +12,7 @@ defmodule TrentoWeb.V1.ProfileView do
           abilities: abilities,
           password_change_requested_at: password_change_requested_at,
           totp_enabled_at: totp_enabled_at,
+          user_identities: user_identities,
           inserted_at: created_at,
           updated_at: updated_at
         }
@@ -25,6 +26,7 @@ defmodule TrentoWeb.V1.ProfileView do
       password_change_requested: password_change_requested_at != nil,
       totp_enabled: totp_enabled_at != nil,
       created_at: created_at,
+      idp_user: length(user_identities) > 0,
       updated_at: updated_at
     }
   end

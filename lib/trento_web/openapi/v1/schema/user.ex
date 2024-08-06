@@ -93,6 +93,11 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
             nullable: false,
             format: :email
           },
+          idp_user: %Schema{
+            type: :boolean,
+            description: "User coming from an external IDP",
+            nullable: false
+          },
           abilities: AbilityCollection,
           password_change_requested: %Schema{
             type: :boolean,
