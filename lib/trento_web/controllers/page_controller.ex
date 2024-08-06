@@ -24,7 +24,7 @@ defmodule TrentoWeb.PageController do
     oidc_callback = Application.fetch_env!(:trento, :oidc)[:callback_url]
 
     {:ok, url, _} =
-      PowAssent.Plug.authorize_url(conn, :oidc_local, oidc_callback)
+      PowAssent.Plug.authorize_url(conn, "oidc_local", oidc_callback)
 
     url
   end

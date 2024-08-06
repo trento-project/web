@@ -14,6 +14,8 @@ defmodule TrentoWeb.V1.UsersController do
     UserUpdateRequest
   }
 
+  plug TrentoWeb.Plugs.ExternalIdpGuardPlug when action in [:create]
+
   plug TrentoWeb.Plugs.LoadUserPlug
 
   plug Bodyguard.Plug.Authorize,
