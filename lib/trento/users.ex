@@ -33,6 +33,7 @@ defmodule Trento.Users do
     User
     |> where([u], is_nil(u.deleted_at))
     |> preload(:abilities)
+    |> preload(:user_identities)
     |> Repo.all()
   end
 
@@ -40,6 +41,7 @@ defmodule Trento.Users do
     case User
          |> where([u], is_nil(u.deleted_at) and u.id == ^id)
          |> preload(:abilities)
+         |> preload(:user_identities)
          |> Repo.one() do
       nil -> {:error, :not_found}
       user -> {:ok, user}
