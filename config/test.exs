@@ -47,6 +47,8 @@ config :trento, Trento.Heartbeats, interval: :timer.seconds(6)
 # to wait before displaying the deregistration button
 config :trento, deregistration_debounce: :timer.seconds(5)
 
+config :trento, :oidc, enabled: false
+
 config :trento,
   api_key_authentication_enabled: false,
   jwt_authentication_enabled: false,

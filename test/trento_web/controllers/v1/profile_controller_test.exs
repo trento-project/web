@@ -44,6 +44,8 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
         |> json_response(501)
       end
     )
+
+    Application.put_env(:trento, :oidc, enabled: false)
   end
 
   test "should show the current user profile", %{

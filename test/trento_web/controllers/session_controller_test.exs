@@ -400,6 +400,8 @@ defmodule TrentoWeb.SessionControllerTest do
         })
 
       json_response(conn, 501)
+
+      Application.put_env(:trento, :oidc, enabled: false)
     end
   end
 

@@ -15,6 +15,8 @@ defmodule TrentoWeb.Plugs.ExternalIdpGuardPlugTest do
 
       assert res.status == 501
       assert res.halted
+
+      Application.put_env(:trento, :oidc, enabled: false)
     end
 
     test "should not halt connection when external idp integration is disabled", %{conn: conn} do

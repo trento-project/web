@@ -20,6 +20,8 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       res = post(conn, "/api/v1/users", %{})
 
       json_response(res, 501)
+
+      Application.put_env(:trento, :oidc, enabled: false)
     end
 
     test "should return forbidden on any controller action if the user does not have the right permission",
