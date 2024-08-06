@@ -14,7 +14,7 @@ const MIGRATION_URL =
   'https://www.suse.com/c/how-to-upgrade-to-saphanasr-angi/';
 const ANGI_TOOLTIP_MESSAGE = 'Angi architecture';
 const CLASSIC_TOOLTIP_MESSAGE = (
-  <>
+  <span>
     Classic architecture. Recommended{' '}
     <Link
       to={MIGRATION_URL}
@@ -24,7 +24,7 @@ const CLASSIC_TOOLTIP_MESSAGE = (
       migration
     </Link>{' '}
     to Angi architecture
-  </>
+  </span>
 );
 
 const icons = {
