@@ -31,17 +31,11 @@ export default {
         type: 'function',
       },
     },
-    softwareUpdatesSettingsLoading: {
+    loading: {
       control: {
         type: 'boolean',
       },
       description: 'are software updates settings being fetched?',
-    },
-    softwareUpdatesLoading: {
-      control: {
-        type: 'boolean',
-      },
-      description: 'are software updates being fetched?',
     },
     relevantPatches: {
       type: 'number',
@@ -82,17 +76,14 @@ export const Cool = {
 
 export const NoSettingsConfigured = { args: { settingsConfigured: false } };
 
-export const SoftwareUpdateSettingsLoading = {
-  args: { softwareUpdatesSettingsLoading: true },
+export const Loading = {
+  args: { settingsConfigured: true, loading: true },
 };
 
-export const SoftwareUpdatesLoading = {
-  args: { settingsConfigured: true, softwareUpdatesLoading: true },
-};
-
-export const Unknown = {
+export const Error = {
   args: {
     settingsConfigured: true,
-    tooltip: 'Trento was not able to retrieve the requested data',
+    errorMessage: 'Connection to SUMA not working',
+    tooltip: 'Please review SUSE Manager settings',
   },
 };
