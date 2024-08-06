@@ -6,7 +6,7 @@ import BackButton from '@common/BackButton';
 import PageHeader from '@common/PageHeader';
 import NotFound from '@pages/NotFound';
 
-import { isSingleSignOnEnabled } from '@lib/model/users';
+import { isSingleSignOnEnabled } from '@lib/auth/config';
 import { listAbilities } from '@lib/api/abilities';
 import { createUser } from '@lib/api/users';
 

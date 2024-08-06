@@ -22,7 +22,7 @@ import {
   clearCredentialsFromStore,
 } from '@lib/auth';
 import { networkClient } from '@lib/network';
-import { isSingleSignOnEnabled } from '@lib/model/users';
+import { isSingleSignOnEnabled } from '@lib/auth/config';
 
 export function* performOIDCEnrollment({ payload: { code, state } }) {
   yield put(setAuthInProgress());

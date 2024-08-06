@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
 import PageHeader from '@common/PageHeader';
-import { isAdmin, isSingleSignOnEnabled } from '@lib/model/users';
+import { isAdmin } from '@lib/model/users';
+import { isSingleSignOnEnabled } from '@lib/auth/config';
 import ProfileForm from '@pages/Profile/ProfileForm';
 import {
   getUserProfile,

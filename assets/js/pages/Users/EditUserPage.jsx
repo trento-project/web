@@ -6,7 +6,9 @@ import BackButton from '@common/BackButton';
 import Banner from '@common/Banners/Banner';
 import PageHeader from '@common/PageHeader';
 
-import { isAdmin, isSingleSignOnEnabled } from '@lib/model/users';
+import { isAdmin } from '@lib/model/users';
+import { isSingleSignOnEnabled } from '@lib/auth/config';
+
 import { editUser, getUser } from '@lib/api/users';
 
 import { fetchAbilities } from './CreateUserPage';

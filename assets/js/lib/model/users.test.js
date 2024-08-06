@@ -1,6 +1,6 @@
 import { adminUser, userFactory } from '@lib/test-utils/factories/users';
 
-import { isAdmin, isSingleSignOnEnabled } from './users';
+import { isAdmin } from './users';
 
 describe('users', () => {
   it('should check if a user is admin', () => {
@@ -9,9 +9,5 @@ describe('users', () => {
 
     const user = userFactory.build({ username: 'other' });
     expect(isAdmin(user)).toBe(false);
-  });
-
-  it('should check if single sign on is enabled', () => {
-    expect(isSingleSignOnEnabled()).toBe(false);
   });
 });

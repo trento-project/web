@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 
 import { listUsers, deleteUser } from '@lib/api/users';
-import { isSingleSignOnEnabled } from '@lib/model/users';
+import { isSingleSignOnEnabled } from '@lib/auth/config';
 
 import Users from './Users';
 

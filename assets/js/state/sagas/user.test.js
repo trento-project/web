@@ -16,7 +16,7 @@ import {
 import { customNotify } from '@state/notifications';
 import { networkClient } from '@lib/network';
 import { profileFactory } from '@lib/test-utils/factories/users';
-import * as usersModel from '@lib/model/users';
+import * as authConfig from '@lib/auth/config';
 import {
   performLogin,
   clearUserAndLogout,
@@ -185,7 +185,7 @@ describe('user login saga', () => {
 
   describe('Single sign on', () => {
     it('should not dispatch notification if single sign on is enabled', async () => {
-      jest.spyOn(usersModel, 'isSingleSignOnEnabled').mockReturnValue(true);
+      jest.spyOn(authConfig, 'isSingleSignOnEnabled').mockReturnValue(true);
 
       const dispatched = await recordSaga(
         checkUserPasswordChangeRequested,
