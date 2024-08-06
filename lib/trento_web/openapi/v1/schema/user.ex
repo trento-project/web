@@ -270,6 +270,11 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
             description: "User enabled in the system",
             nullable: false
           },
+          idp_user: %Schema{
+            type: :boolean,
+            description: "User coming from an external IDP",
+            nullable: false
+          },
           abilities: AbilityCollection,
           password_change_requested_at: %OpenApiSpex.Schema{
             type: :string,
