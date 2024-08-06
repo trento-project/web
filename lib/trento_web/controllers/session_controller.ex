@@ -13,6 +13,8 @@ defmodule TrentoWeb.SessionController do
 
   action_fallback TrentoWeb.FallbackController
 
+  plug TrentoWeb.Plugs.ExternalIdpGuardPlug when action in [:create]
+
   require Logger
 
   operation :create,

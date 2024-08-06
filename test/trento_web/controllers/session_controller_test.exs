@@ -389,6 +389,18 @@ defmodule TrentoWeb.SessionControllerTest do
       |> json_response(200)
       |> assert_schema("Credentials", api_spec)
     end
+
+    test "should return 501 if external IDP integration is enabled", %{conn: conn} do
+      Application.put_env(:trento, :oidc, enabled: true)
+
+      conn =
+        post(conn, "/api/session", %{
+          "username" => "trento_user",
+          "password" => "testpassword"
+        })
+
+      json_response(conn, 501)
+    end
   end
 
   describe "callback endpoint" do
