@@ -101,10 +101,19 @@ defmodule Trento.UsersTest do
       %{id: user_id} = insert(:user)
       %{id: ability_id} = insert(:ability)
       insert(:users_abilities, user_id: user_id, ability_id: ability_id)
+      %{id: identity_id} = insert(:user_identity, user_id: user_id)
 
       insert(:user, deleted_at: DateTime.utc_now())
       users = Users.list_users()
-      assert [%User{id: ^user_id, abilities: [%{id: ^ability_id}]}] = users
+
+      assert [
+               %User{
+                 id: ^user_id,
+                 user_identities: [%{id: ^identity_id}],
+                 abilities: [%{id: ^ability_id}]
+               }
+             ] = users
+
       assert length(users) == 1
     end
 
@@ -126,6 +135,20 @@ defmodule Trento.UsersTest do
       insert(:users_abilities, user_id: user_id, ability_id: ability_id)
 
       assert {:ok, %User{id: ^user_id, abilities: [%{id: ^ability_id}]}} = Users.get_user(user_id)
+    end
+
+    test "get_user return a user with the user identities" do
+      %{id: user_id} = insert(:user)
+      %{id: ability_id} = insert(:ability)
+      insert(:users_abilities, user_id: user_id, ability_id: ability_id)
+      %{id: identity_id} = insert(:user_identity, user_id: user_id)
+
+      assert {:ok,
+              %User{
+                id: ^user_id,
+                user_identities: [%{id: ^identity_id}],
+                abilities: [%{id: ^ability_id}]
+              }} = Users.get_user(user_id)
     end
 
     test "create_user with valid data creates a user" do
