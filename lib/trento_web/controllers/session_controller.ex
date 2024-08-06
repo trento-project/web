@@ -1,17 +1,18 @@
 defmodule TrentoWeb.SessionController do
+  alias Plug.Conn
+  alias PowAssent.Plug, as: PowAssentPlug
   alias Trento.Repo
   alias Trento.Users
   alias Trento.Users.User
   alias TrentoWeb.OpenApi.V1.Schema
-
   alias TrentoWeb.Plugs.AppJWTAuthPlug
-  alias PowAssent.Plug, as: PowAssentPlug
-  alias Plug.Conn
 
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
 
   action_fallback TrentoWeb.FallbackController
+
+  plug TrentoWeb.Plugs.ExternalIdpGuardPlug when action in [:create]
 
   require Logger
 
@@ -269,5 +270,5 @@ defmodule TrentoWeb.SessionController do
 
   defp maybe_validate_totp(_, _), do: {:error, :totp_code_missing}
 
-  defp idp_redirect_uri(), do: Application.fetch_env!(:trento, :oidc)[:callback_url]
+  defp idp_redirect_uri, do: Application.fetch_env!(:trento, :oidc)[:callback_url]
 end

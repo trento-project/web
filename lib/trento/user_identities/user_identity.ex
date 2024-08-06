@@ -1,4 +1,5 @@
 defmodule Trento.UserIdentities.UserIdentity do
+  @moduledoc false
   use Ecto.Schema
   use PowAssent.Ecto.UserIdentities.Schema, user: Trento.Users.User
 
