@@ -6,7 +6,11 @@ defmodule TrentoWeb.V1.ProfileController do
   alias Trento.Users.User
   alias TrentoWeb.OpenApi.V1.Schema
 
+  plug TrentoWeb.Plugs.ExternalIdpGuardPlug
+       when action in [:update, :reset_totp, :get_totp_enrollment_data, :confirm_totp_enrollment]
+
   plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
+
   plug TrentoWeb.Plugs.LoadUserPlug
   action_fallback TrentoWeb.FallbackController
 
