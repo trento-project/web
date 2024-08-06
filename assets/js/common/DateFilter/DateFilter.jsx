@@ -5,6 +5,8 @@ import { Transition } from '@headlessui/react';
 import useOnClickOutside from '@hooks/useOnClickOutside';
 import { EOS_CLOSE } from 'eos-icons-react';
 
+import Input from '@common/Input';
+
 const oneHour = 60 * 60 * 1000;
 const preconfiguredOptions = {
   '1h ago': () => new Date(Date.now() - oneHour),
@@ -12,6 +14,11 @@ const preconfiguredOptions = {
   '7d ago': () => new Date(Date.now() - 7 * 24 * oneHour),
   '30d ago': () => new Date(Date.now() - 30 * 24 * oneHour),
 };
+
+const toHumanDate = (date) =>
+  date &&
+  date instanceof Date &&
+  `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
 
 const renderOptionItem = (option, placeholder) => {
   if (!option || !Array.isArray(option)) {
@@ -48,11 +55,57 @@ const parseInputOptions = (options) =>
 
 const getSelectedOption = (options, value) => {
   const selectedId = Array.isArray(value) ? value[0] : value;
+  if (selectedId === 'custom') {
+    return ['custom', value[1], () => toHumanDate(value[1])];
+  }
   if (typeof selectedId === 'string') {
     return options.find((option) => option[0] === selectedId);
   }
   return undefined;
 };
+
+function Tick() {
+  return (
+    <span className="absolute inset-y-0 right-0 flex items-center pr-4">
+      <svg
+        className="h-5 w-5"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+        aria-hidden="true"
+      >
+        <path
+          fillRule="evenodd"
+          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+          clipRule="evenodd"
+        />
+      </svg>
+    </span>
+  );
+}
+
+function DateTimeInput({ value, onChange }) {
+  const valueToDate = (v) => {
+    const tzoffset = new Date().getTimezoneOffset() * 60000;
+    const date = new Date(`${v}:00.000Z`);
+    return new Date(date.getTime() + tzoffset);
+  };
+  const dateToValue = (date) => {
+    const tzoffset = new Date().getTimezoneOffset() * 60000;
+    const newDate = new Date(date.getTime() - tzoffset);
+    return newDate.toISOString().split('.')[0];
+  };
+
+  return (
+    <Input
+      value={value && dateToValue(value)}
+      onChange={(e) => {
+        onChange(valueToDate(e.target.value));
+      }}
+      type="datetime-local"
+    />
+  );
+}
 
 /**
  * A component for filtering dates.
@@ -97,6 +150,8 @@ function DateFilter({
 
   useOnClickOutside(ref, () => setOpen(false));
 
+  const text = renderOptionItem(selectedOption, `Filter ${title}...`);
+
   return (
     <div className="flex-1 w-64 top-16" ref={ref}>
       <div className="mt-1 relative">
@@ -127,7 +182,7 @@ function DateFilter({
                 'text-gray-500': !value,
               })}
             >
-              {renderOptionItem(selectedOption, `Filter ${title}...`)}
+              {text}
             </span>
           </span>
           <span className="ml-3 absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
@@ -184,27 +239,35 @@ function DateFilter({
                       <div className="flex items-center">
                         <span className="ml-3 block font-normal truncate">
                           {label}
+                          {isSelected && <Tick />}
                         </span>
                       </div>
-                      {isSelected && (
-                        <span className="absolute inset-y-0 right-0 flex items-center pr-4">
-                          <svg
-                            className="h-5 w-5"
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 20 20"
-                            fill="currentColor"
-                            aria-hidden="true"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-                        </span>
-                      )}
                     </li>
                   ))}
+                <li
+                  role="option"
+                  aria-selected={
+                    selectedOption && selectedOption[0] === 'custom'
+                  }
+                  aria-hidden="true"
+                  className="text-gray-900 cursor-default select-none hover:bg-jungle-green-500 hover:text-white relative py-2 pl-3 pr-9"
+                >
+                  <div className="flex items-center">
+                    <span className="ml-3 block font-normal truncate">
+                      <DateTimeInput
+                        value={
+                          selectedOption &&
+                          selectedOption[0] === 'custom' &&
+                          selectedOption[1]
+                        }
+                        onChange={(date) => onChange(['custom', date])}
+                      />
+                      {selectedOption && selectedOption[0] === 'custom' && (
+                        <Tick />
+                      )}
+                    </span>
+                  </div>
+                </li>
               </ul>
             </div>
           </div>
