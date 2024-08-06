@@ -139,7 +139,9 @@ defmodule Trento.ActivityLog.ActivityCatalog do
       {TrentoWeb.V1.UsersController, :delete} => {:user_deletion, 204},
       {TrentoWeb.V1.ProfileController, :update} => {:profile_update, 200},
       {TrentoWeb.V1.ClusterController, :request_checks_execution} =>
-        {:cluster_checks_execution_request, 202}
+        {:cluster_checks_execution_request, 202},
+      {TrentoWeb.V1.SettingsController, :update_activity_log_settings} =>
+        {:activity_log_settings_update, 200}
     }
   end
 end
