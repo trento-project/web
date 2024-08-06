@@ -67,7 +67,7 @@ module.exports = {
     config: {
       checksServiceBaseUrl: '',
       suseManagerEnabled: true,
-      adminUsernam: 'admin',
+      adminUsername: 'admin',
       oidcEnabled: false,
       aTestVariable: 123,
     },

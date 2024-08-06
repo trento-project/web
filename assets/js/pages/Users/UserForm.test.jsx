@@ -422,8 +422,6 @@ describe('UserForm', () => {
 
       await user.click(screen.getByRole('button', { name: 'Save' }));
 
-      screen.debug(undefined, 100000);
-
       expect(mockOnSave).toHaveBeenNthCalledWith(1, {
         enabled: true,
         abilities: abilities.slice(0, 2),
