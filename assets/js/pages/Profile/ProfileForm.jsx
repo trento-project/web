@@ -25,6 +25,7 @@ function ProfileForm({
   disableForm,
   passwordModalOpen = false,
   totpBoxOpen = false,
+  singleSignOnEnabled = false,
   toggleTotpBox = noop,
   togglePasswordModal = noop,
   onSave = noop,
@@ -94,6 +95,7 @@ function ProfileForm({
                 setFullName(value);
                 setFullNameError(null);
               }}
+              disabled={singleSignOnEnabled}
             />
             {fullNameErrorState && errorMessage(fullNameErrorState)}
           </div>
@@ -108,6 +110,7 @@ function ProfileForm({
                 setEmailAddress(value);
                 setEmailAddressError(null);
               }}
+              disabled={singleSignOnEnabled}
             />
             {emailAddressErrorState && errorMessage(emailAddressErrorState)}
           </div>
@@ -115,54 +118,58 @@ function ProfileForm({
           <div className="col-start-2 col-span-3">
             <Input value={username} aria-label="username" disabled />
           </div>
-          <Label className="col-start-1 col-span-1">Password</Label>
-          <div className="col-start-2 col-span-3">
-            <Button
-              onClick={togglePasswordModal}
-              type="primary-white"
-              disabled={loading || disableForm}
-            >
-              Change Password
-            </Button>
-          </div>
-
-          <Label
-            className="col-start-1 col-span-1"
-            info="Setup a multi-factor TOTP authentication besides your password to increase security
-              for your account."
-          >
-            Authenticator App
-          </Label>
-          <div className="col-start-2 col-span-3">
-            <div className="inline-flex">
-              <Switch
-                selected={totpEnabled}
-                onChange={toggleTotp}
-                disabled={loading || disableForm || totpBoxOpen}
-              />
-              {totpBoxOpen && (
-                <span
-                  className="ml-5 cursor-pointer text-jungle-green-500 hover:opacity-75"
-                  onClick={() => toggleTotpBox(false)}
-                  aria-hidden="true"
-                >
-                  Cancel
-                </span>
-              )}
-            </div>
-
-            {totpBoxOpen && (
+          {!singleSignOnEnabled && (
+            <>
+              <Label className="col-start-1 col-span-1">Password</Label>
               <div className="col-start-2 col-span-3">
-                <TotpEnrollementBox
-                  errors={errors}
-                  qrData={totpQrData}
-                  secret={totpSecret}
-                  loading={loading}
-                  verifyTotp={onVerifyTotp}
-                />
+                <Button
+                  onClick={togglePasswordModal}
+                  type="primary-white"
+                  disabled={loading || disableForm || singleSignOnEnabled}
+                >
+                  Change Password
+                </Button>
               </div>
-            )}
-          </div>
+
+              <Label
+                className="col-start-1 col-span-1"
+                info="Setup a multi-factor TOTP authentication besides your password to increase security
+              for your account."
+              >
+                Authenticator App
+              </Label>
+              <div className="col-start-2 col-span-3">
+                <div className="inline-flex">
+                  <Switch
+                    selected={totpEnabled}
+                    onChange={toggleTotp}
+                    disabled={loading || disableForm || totpBoxOpen}
+                  />
+                  {totpBoxOpen && (
+                    <span
+                      className="ml-5 cursor-pointer text-jungle-green-500 hover:opacity-75"
+                      onClick={() => toggleTotpBox(false)}
+                      aria-hidden="true"
+                    >
+                      Cancel
+                    </span>
+                  )}
+                </div>
+
+                {totpBoxOpen && (
+                  <div className="col-start-2 col-span-3">
+                    <TotpEnrollementBox
+                      errors={errors}
+                      qrData={totpQrData}
+                      secret={totpSecret}
+                      loading={loading}
+                      verifyTotp={onVerifyTotp}
+                    />
+                  </div>
+                )}
+              </div>
+            </>
+          )}
 
           <Label className="col-start-1 col-span-1">Permissions</Label>
           <div className="col-start-2 col-span-3">
@@ -174,15 +181,17 @@ function ProfileForm({
             />
           </div>
         </div>
-        <div className="flex flex-row w-80 space-x-2 mt-5">
-          <Button
-            disabled={loading || disableForm}
-            type="default-fit"
-            onClick={onSaveClicked}
-          >
-            Save
-          </Button>
-        </div>
+        {!singleSignOnEnabled && (
+          <div className="flex flex-row w-80 space-x-2 mt-5">
+            <Button
+              disabled={loading || disableForm}
+              type="default-fit"
+              onClick={onSaveClicked}
+            >
+              Save
+            </Button>
+          </div>
+        )}
       </div>
       <Modal
         title="Disable TOTP"

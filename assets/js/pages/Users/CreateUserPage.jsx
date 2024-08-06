@@ -4,7 +4,9 @@ import { toast } from 'react-hot-toast';
 
 import BackButton from '@common/BackButton';
 import PageHeader from '@common/PageHeader';
+import NotFound from '@pages/NotFound';
 
+import { isSingleSignOnEnabled } from '@lib/auth/config';
 import { listAbilities } from '@lib/api/abilities';
 import { createUser } from '@lib/api/users';
 
@@ -54,6 +56,10 @@ function CreateUserPage() {
   const onCancel = () => {
     navigate('/users');
   };
+
+  if (isSingleSignOnEnabled()) {
+    return <NotFound />;
+  }
 
   useEffect(() => {
     fetchAbilities(setAbilities);
