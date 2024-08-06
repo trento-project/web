@@ -13,6 +13,15 @@ defmodule TrentoWeb.V1.UsersControllerTest do
   setup :setup_user
 
   describe "forbidden response" do
+    test "should return not implemented on create endpoint when external idp integration is enabled",
+         %{conn: conn} do
+      Application.put_env(:trento, :oidc, enabled: true)
+
+      res = post(conn, "/api/v1/users", %{})
+
+      json_response(res, 501)
+    end
+
     test "should return forbidden on any controller action if the user does not have the right permission",
          %{conn: conn, api_spec: api_spec} do
       %{id: user_id} = insert(:user)
