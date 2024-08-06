@@ -15,6 +15,7 @@ defmodule TrentoWeb.PageController do
       deregistration_debounce: deregistration_debounce,
       suse_manager_enabled: suse_manager_enabled,
       admin_username: admin_username,
+      oidc_enabled: oidc_enabled,
       oidc_login_url: oidc_login_url(conn, oidc_enabled)
     )
   end

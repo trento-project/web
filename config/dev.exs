@@ -136,7 +136,7 @@ config :unplug, :init_mode, :runtime
 config :open_api_spex, :cache_adapter, OpenApiSpex.Plug.NoneCache
 
 config :trento, :oidc,
-  enabled: true,
+  enabled: false,
   callback_url: "http://localhost:4000/auth/oidc_callback"
 
 config :trento, :pow_assent,

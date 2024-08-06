@@ -74,6 +74,10 @@ export default {
         type: 'text',
       },
     },
+    singleSignOnEnabled: {
+      description: 'Single sign on login is enabled',
+      control: { type: 'boolean' },
+    },
   },
   render: (args) => (
     <ContainerWrapper>
@@ -127,5 +131,12 @@ export const WithErrors = {
         title: 'Invalid value',
       },
     ],
+  },
+};
+
+export const SingleSignOnEnabled = {
+  args: {
+    ...Default.args,
+    singleSignOnEnabled: true,
   },
 };
