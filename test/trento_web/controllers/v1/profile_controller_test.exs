@@ -25,6 +25,28 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
      conn: put_req_header(conn, "accept", "application/json"), api_spec: api_spec, user: user}
   end
 
+  test "should disable write profile action when external IDP integration is enabled", %{
+    conn: conn
+  } do
+    Application.put_env(:trento, :oidc, enabled: true)
+
+    conn = put_req_header(conn, "content-type", "application/json")
+
+    Enum.each(
+      [
+        patch(conn, "/api/v1/profile", %{}),
+        get(conn, "/api/v1/profile/totp_enrollment"),
+        post(conn, "/api/v1/profile/totp_enrollment", %{}),
+        delete(conn, "/api/v1/profile/totp_enrollment")
+      ],
+      fn conn ->
+        json_response(conn, 501)
+      end
+    )
+
+    Application.put_env(:trento, :oidc, enabled: false)
+  end
+
   test "should show the current user profile", %{
     user: %{id: user_id},
     conn: conn,
