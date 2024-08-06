@@ -38,6 +38,7 @@ function UserForm({
   saveEnabled = true,
   saveText = 'Create',
   editing = false,
+  singleSignOnEnabled = false,
   onSave = noop,
   onCancel = noop,
 }) {
@@ -95,23 +96,32 @@ function UserForm({
     return error;
   };
 
+  const buildUserPayload = () => ({
+    fullname: fullNameState,
+    email: emailAddressState,
+    enabled: statusState === USER_ENABLED,
+    ...(!editing && { username: usernameState }),
+    ...(passwordState && { password: passwordState }),
+    ...(confirmPasswordState && {
+      password_confirmation: confirmPasswordState,
+    }),
+    abilities: abilities.filter(({ id }) => selectedAbilities.includes(id)),
+    ...(totpEnabledAt && !totpState && { totp_disabled: true }),
+  });
+
+  const buildSSOUserPayload = () => ({
+    enabled: statusState === USER_ENABLED,
+    abilities: abilities.filter(({ id }) => selectedAbilities.includes(id)),
+  });
+
   const onSaveClicked = () => {
     if (validateRequired()) {
       return;
     }
 
-    const user = {
-      fullname: fullNameState,
-      email: emailAddressState,
-      enabled: statusState === USER_ENABLED,
-      ...(!editing && { username: usernameState }),
-      ...(passwordState && { password: passwordState }),
-      ...(confirmPasswordState && {
-        password_confirmation: confirmPasswordState,
-      }),
-      abilities: abilities.filter(({ id }) => selectedAbilities.includes(id)),
-      ...(totpEnabledAt && !totpState && { totp_disabled: true }),
-    };
+    const user = singleSignOnEnabled
+      ? buildSSOUserPayload()
+      : buildUserPayload();
 
     onSave(user);
   };
@@ -139,6 +149,7 @@ function UserForm({
                 setFullName(value);
                 setFullNameError(null);
               }}
+              disabled={singleSignOnEnabled}
             />
             {fullNameErrorState && errorMessage(fullNameErrorState)}
           </div>
@@ -155,6 +166,7 @@ function UserForm({
                 setEmailAddress(value);
                 setEmailAddressError(null);
               }}
+              disabled={singleSignOnEnabled}
             />
             {emailAddressErrorState && errorMessage(emailAddressErrorState)}
           </div>
@@ -171,56 +183,64 @@ function UserForm({
                 setUsername(value);
                 setUsernameError(null);
               }}
-              disabled={editing}
+              disabled={editing || singleSignOnEnabled}
             />
             {usernameErrorState && errorMessage(usernameErrorState)}
           </div>
-          <Label
-            className="col-start-1 col-span-1"
-            info={PASSWORD_POLICY_TEXT}
-            required
-          >
-            Password
-          </Label>
-          <div className="col-start-2 col-span-3">
-            <Password
-              value={passwordState}
-              aria-label="password"
-              placeholder={editing ? PASSWORD_PLACEHOLDER : 'Enter password'}
-              error={passwordErrorState}
-              onChange={({ target: { value } }) => {
-                setPassword(value);
-                setPasswordError(null);
-              }}
-            />
-            {passwordErrorState && errorMessage(passwordErrorState)}
-          </div>
-          <Label className="col-start-1 col-span-1" required>
-            Confirm Password
-          </Label>
-          <div className="col-start-2 col-span-3">
-            <Password
-              value={confirmPasswordState}
-              aria-label="password-confirmation"
-              placeholder={editing ? PASSWORD_PLACEHOLDER : 'Re-enter password'}
-              error={confirmPasswordErrorState}
-              onChange={({ target: { value } }) => {
-                setConfirmPassword(value);
-                setConfirmPasswordError(null);
-              }}
-            />
-            {confirmPasswordErrorState &&
-              errorMessage(confirmPasswordErrorState)}
-          </div>
-          <div className="col-start-2 col-span-3">
-            <Button
-              type="primary-white"
-              onClick={onGeneratePassword}
-              disabled={!saveEnabled}
-            >
-              Generate Password
-            </Button>
-          </div>
+          {!singleSignOnEnabled && (
+            <>
+              <Label
+                className="col-start-1 col-span-1"
+                info={PASSWORD_POLICY_TEXT}
+                required
+              >
+                Password
+              </Label>
+              <div className="col-start-2 col-span-3">
+                <Password
+                  value={passwordState}
+                  aria-label="password"
+                  placeholder={
+                    editing ? PASSWORD_PLACEHOLDER : 'Enter password'
+                  }
+                  error={passwordErrorState}
+                  onChange={({ target: { value } }) => {
+                    setPassword(value);
+                    setPasswordError(null);
+                  }}
+                />
+                {passwordErrorState && errorMessage(passwordErrorState)}
+              </div>
+              <Label className="col-start-1 col-span-1" required>
+                Confirm Password
+              </Label>
+              <div className="col-start-2 col-span-3">
+                <Password
+                  value={confirmPasswordState}
+                  aria-label="password-confirmation"
+                  placeholder={
+                    editing ? PASSWORD_PLACEHOLDER : 'Re-enter password'
+                  }
+                  error={confirmPasswordErrorState}
+                  onChange={({ target: { value } }) => {
+                    setConfirmPassword(value);
+                    setConfirmPasswordError(null);
+                  }}
+                />
+                {confirmPasswordErrorState &&
+                  errorMessage(confirmPasswordErrorState)}
+              </div>
+              <div className="col-start-2 col-span-3">
+                <Button
+                  type="primary-white"
+                  onClick={onGeneratePassword}
+                  disabled={!saveEnabled}
+                >
+                  Generate Password
+                </Button>
+              </div>
+            </>
+          )}
           <Label className="col-start-1 col-span-1">Permissions</Label>
           <div className="col-start-2 col-span-3">
             <AbilitiesMultiSelect
@@ -241,7 +261,7 @@ function UserForm({
               }}
             />
           </div>
-          {editing && (
+          {editing && !singleSignOnEnabled && (
             <>
               <Label
                 className="col-start-1 col-span-1"
@@ -263,10 +283,6 @@ function UserForm({
                   }}
                 />
               </div>
-            </>
-          )}
-          {editing && (
-            <>
               <Label className="col-start-1 col-span-1">Created</Label>
               <span className="col-start-2 col-span-3">
                 {format(parseISO(createdAt), 'PPpp')}

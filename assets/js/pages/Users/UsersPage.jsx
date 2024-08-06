@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { listUsers, deleteUser } from '@lib/api/users';
-
 import { toast } from 'react-hot-toast';
+
+import { listUsers, deleteUser } from '@lib/api/users';
+import { isSingleSignOnEnabled } from '@lib/auth/config';
 
 import Users from './Users';
 
@@ -62,6 +63,7 @@ function UsersPage() {
       navigate={navigate}
       users={users}
       loading={loading}
+      singleSignOnEnabled={isSingleSignOnEnabled()}
     />
   );
 }

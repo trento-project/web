@@ -49,6 +49,10 @@ export default {
       description: 'Display loading state of the component',
       control: { type: 'boolean' },
     },
+    singleSignOnEnabled: {
+      description: 'Single sign on login is enabled',
+      control: { type: 'boolean' },
+    },
   },
 };
 
@@ -73,5 +77,9 @@ export const UsersOverview = {
       userFactory.build(),
     ],
   },
+  render: withContainerWrapper,
+};
+export const SingleSignOn = {
+  args: { singleSignOnEnabled: true },
   render: withContainerWrapper,
 };

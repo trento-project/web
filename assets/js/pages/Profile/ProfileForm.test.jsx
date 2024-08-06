@@ -305,4 +305,59 @@ describe('ProfileForm', () => {
     );
     expect(screen.getByText('Error validating totp code')).toBeVisible();
   });
+
+  describe('Single sign on', () => {
+    it('should disable fullname, email and username fields', () => {
+      const { username, fullname, email, abilities } = profileFactory.build();
+
+      render(
+        <ProfileForm
+          fullName={fullname}
+          emailAddress={email}
+          username={username}
+          abilities={abilities}
+          singleSignOnEnabled
+        />
+      );
+
+      expect(screen.getByLabelText('fullname')).toBeDisabled();
+      expect(screen.getByLabelText('email')).toBeDisabled();
+      expect(screen.getByLabelText('username')).toBeDisabled();
+      expect(screen.getByLabelText('permissions')).toBeDisabled();
+    });
+
+    it('should remove password and totp fields', () => {
+      const { username, fullname, email, abilities } = profileFactory.build();
+
+      render(
+        <ProfileForm
+          fullName={fullname}
+          emailAddress={email}
+          username={username}
+          abilities={abilities}
+          singleSignOnEnabled
+        />
+      );
+
+      expect(screen.queryByText('Password')).not.toBeInTheDocument();
+      expect(screen.queryByText('Authenticator App')).not.toBeInTheDocument();
+      expect(screen.getByText('Permissions')).toBeVisible();
+    });
+
+    it('should remove save button', () => {
+      const { username, fullname, email, abilities } = profileFactory.build();
+
+      render(
+        <ProfileForm
+          fullName={fullname}
+          emailAddress={email}
+          username={username}
+          abilities={abilities}
+          singleSignOnEnabled
+        />
+      );
+
+      expect(screen.queryByText('Save')).not.toBeInTheDocument();
+    });
+  });
 });
