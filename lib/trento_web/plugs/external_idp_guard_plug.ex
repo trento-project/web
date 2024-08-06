@@ -33,5 +33,5 @@ defmodule TrentoWeb.Plugs.ExternalIdpGuardPlug do
 
   def call(conn, _), do: conn
 
-  defp oidc_enabled?(), do: Application.fetch_env!(:trento, :oidc)[:enabled]
+  defp oidc_enabled?, do: Application.fetch_env!(:trento, :oidc)[:enabled]
 end

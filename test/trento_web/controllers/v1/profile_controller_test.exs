@@ -40,8 +40,7 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
         delete(conn, "/api/v1/profile/totp_enrollment")
       ],
       fn conn ->
-        conn
-        |> json_response(501)
+        json_response(conn, 501)
       end
     )
 
