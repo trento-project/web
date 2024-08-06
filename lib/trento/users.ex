@@ -33,6 +33,7 @@ defmodule Trento.Users do
     User
     |> where([u], is_nil(u.deleted_at))
     |> preload(:abilities)
+    |> preload(:user_identities)
     |> Repo.all()
   end
 
@@ -40,6 +41,7 @@ defmodule Trento.Users do
     case User
          |> where([u], is_nil(u.deleted_at) and u.id == ^id)
          |> preload(:abilities)
+         |> preload(:user_identities)
          |> Repo.one() do
       nil -> {:error, :not_found}
       user -> {:ok, user}
@@ -54,7 +56,7 @@ defmodule Trento.Users do
 
     result =
       Ecto.Multi.new()
-      |> Ecto.Multi.insert(:user, User.changeset(%User{}, updated_attrs))
+      |> Ecto.Multi.insert(:user, User.changeset(%User{user_identities: []}, updated_attrs))
       |> insert_abilities_multi(abilities)
       |> Repo.transaction()
 
@@ -73,7 +75,7 @@ defmodule Trento.Users do
       |> maybe_set_locked_at()
       |> maybe_set_password_change_requested_at(false)
 
-    %User{abilities: []}
+    %User{abilities: [], user_identities: []}
     |> User.changeset(updated_attrs)
     |> Repo.insert()
   end
