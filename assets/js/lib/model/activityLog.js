@@ -11,6 +11,7 @@ export const USER_DELETION = 'user_deletion';
 export const PROFILE_UPDATE = 'profile_update';
 export const CLUSTER_CHECKS_EXECUTION_REQUEST =
   'cluster_checks_execution_request';
+export const ACTIVITY_LOG_SETTINGS_UPDATE = 'activity_log_settings_update';
 
 // Host events
 export const HEARTBEAT_FAILED = 'heartbeat_failed';
@@ -110,6 +111,7 @@ export const ACTIVITY_TYPES = [
   USER_DELETION,
   PROFILE_UPDATE,
   CLUSTER_CHECKS_EXECUTION_REQUEST,
+  ACTIVITY_LOG_SETTINGS_UPDATE,
   // Host events
   HEARTBEAT_FAILED,
   HEARTBEAT_SUCCEEDED,
@@ -256,6 +258,11 @@ export const ACTIVITY_TYPES_CONFIG = {
     label: 'Checks Execution Requested',
     message: (_entry) => `Checks execution requested for cluster`,
     resource: clusterResourceType,
+  },
+  [ACTIVITY_LOG_SETTINGS_UPDATE]: {
+    label: 'Activity Log Settings Updated',
+    message: (_entry) => `Activity log settings were updated`,
+    resource: (_entry) => 'Activity Log Settings',
   },
   // Host events
   [HEARTBEAT_FAILED]: {
