@@ -25,7 +25,7 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
      conn: put_req_header(conn, "accept", "application/json"), api_spec: api_spec, user: user}
   end
 
-  test "should disable write profile action when external idp integration is enabled", %{
+  test "should disable write profile action when external IDP integration is enabled", %{
     conn: conn
   } do
     Application.put_env(:trento, :oidc, enabled: true)

@@ -1,7 +1,6 @@
 defmodule TrentoWeb.Plugs.ExternalIdpGuardPlug do
   @moduledoc """
-  This plug acts as a guard for certain actions/endpoint, to disable them when an external idp integration
-  is enabled
+  This plug acts as a guard for certain actions/endpoint to disable them when an external idp integration is enabled
   """
   @behaviour Plug
 
@@ -23,8 +22,7 @@ defmodule TrentoWeb.Plugs.ExternalIdpGuardPlug do
       501,
       Jason.encode!(
         ErrorView.render("501.json", %{
-          reason:
-            "Endpoint disabled, external idp enabled, check the documentation for further details"
+          reason: "Endpoint disabled due an external IDP is enabled"
         })
       )
     )
