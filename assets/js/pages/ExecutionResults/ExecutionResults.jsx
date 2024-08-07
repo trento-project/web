@@ -5,7 +5,6 @@ import { getHostID } from '@state/selectors/host';
 import Accordion from '@common/Accordion';
 import HealthIcon from '@common/HealthIcon';
 import Modal from '@common/Modal';
-import PremiumPill from '@common/PremiumPill';
 import Table from '@common/Table';
 
 import {
@@ -15,7 +14,6 @@ import {
   getCheckRemediation,
   getCheckExpectations,
   getCheckGroup,
-  isPremium,
 } from './checksUtils';
 
 import ResultsContainer from './ResultsContainer';
@@ -39,7 +37,7 @@ const resultsTableConfig = {
       key: 'checkID',
       fontSize: 'text-base',
       className: 'bg-gray-50 border-b w-1/6 h-auto',
-      render: (checkID, { onClick, premium }) => (
+      render: (checkID, { onClick }) => (
         <div className="flex whitespace-nowrap text-jungle-green-500 justify-between">
           <span
             className="inline-flex leading-5"
@@ -51,7 +49,6 @@ const resultsTableConfig = {
           >
             {checkID}
           </span>
-          {premium && <PremiumPill className="ml-1" />}
         </div>
       ),
     },
@@ -155,7 +152,6 @@ function ExecutionResults({
         executionState: executionData?.status,
         description: getCheckDescription(catalog, checkID),
         expectations: getCheckExpectations(catalog, checkID),
-        premium: isPremium(catalog, checkID),
         expectationResults,
         agentsCheckResults,
         onClick: () => {

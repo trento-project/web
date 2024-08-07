@@ -32,22 +32,6 @@ describe('ChecksCatalog CheckItem component', () => {
     expect(screen.getByTestId('target-icon-cluster')).toBeVisible();
   });
 
-  it('should show premium badge if the check is premium', () => {
-    const check = catalogCheckFactory.build();
-
-    renderWithRouter(
-      <CheckItem
-        key={check.id}
-        checkID={check.id}
-        premium
-        description={check.description}
-        remediation={check.remediation}
-      />
-    );
-
-    expect(screen.getByText('Premium')).toBeVisible();
-  });
-
   it('should show check remediation when the row is clicked', async () => {
     const check = catalogCheckFactory.build();
     const user = userEvent.setup();
