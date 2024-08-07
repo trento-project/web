@@ -62,6 +62,7 @@ export const WithSelectedValue = {
 
 export const WithCustomOptions = {
   args: {
+    ...Default.args,
     options: [['2h ago', () => new Date(Date.now() - 2 * 60 * 60 * 1000)]],
   },
 };
