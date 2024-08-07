@@ -90,6 +90,7 @@ function AdvisoryDetails({
                   <a
                     className="text-jungle-green-500 hover:opacity-75"
                     target="_blank"
+                    rel="noreferrer"
                     href={`https://bugzilla.suse.com/show_bug.cgi?id=${id}`}
                   >
                     {fix}
@@ -112,6 +113,7 @@ function AdvisoryDetails({
                   <a
                     className="text-jungle-green-500 hover:opacity-75"
                     target="_blank"
+                    rel="noreferrer"
                     href={`https://cve.mitre.org/cgi-bin/cvename.cgi?name=${cve}`}
                   >
                     {cve}
