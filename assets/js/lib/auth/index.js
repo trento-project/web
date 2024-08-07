@@ -5,6 +5,14 @@ const STORAGE_REFRESH_TOKEN_IDENTIFIER = 'refresh_token';
 
 export const authClient = axios.create();
 
+export const login = (credentials) =>
+  authClient.post('/api/session', credentials).then((response) => {
+    if (response.status !== 200) {
+      throw Error('unauthorized', { cause: response.status });
+    }
+    return response;
+  });
+
 export const oidcEnrollment = (credentials) =>
   authClient
     .post('/api/session/oidc_local/callback', credentials)
@@ -14,14 +22,6 @@ export const oidcEnrollment = (credentials) =>
       }
       return response;
     });
-
-export const login = (credentials) =>
-  authClient.post('/api/session', credentials).then((response) => {
-    if (response.status !== 200) {
-      throw Error('unauthorized', { cause: response.status });
-    }
-    return response;
-  });
 
 export const refreshAccessToken = (refreshToken) =>
   authClient
