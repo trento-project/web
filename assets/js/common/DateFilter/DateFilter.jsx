@@ -63,7 +63,7 @@ const getSelectedOption = (options, value) => {
  * //   options={['1h ago', '24h ago', '7d ago', '30d ago']}
  * //   title="Date"
  * //   value="24h ago"
- * //   prefill
+ * //   prefilled
  * //   onChange={(value) => console.log(value)}
  * // />
  *
@@ -76,15 +76,21 @@ const getSelectedOption = (options, value) => {
  * Options will be displayed sorted by date in descending order.
  * @param {string} props.title - The title of the date filter, to be shown as placeholder when no value is selected.
  * @param {string} props.value - The selected id of the selected option. It accepted either a string or an array with the id as the first element.
- * @param {boolean} props.prefill - Whether to include pre-configured options in the options list. Default is false.
+ * @param {boolean} props.prefilled - Whether to include pre-configured options in the options list. Default is true.
  * @param {function} props.onChange - The callback function to be called when the value of the date filter changes. It will provide a couple with the selected id and the actual date.
  */
-function DateFilter({ options = [], title, value, prefill, onChange }) {
+function DateFilter({
+  options = [],
+  title,
+  value,
+  prefilled = true,
+  onChange,
+}) {
   const ref = useRef();
   const [open, setOpen] = useState(false);
 
   const parsedOptions = parseInputOptions(
-    prefill ? [...Object.entries(preconfiguredOptions), ...options] : options
+    prefilled ? [...Object.entries(preconfiguredOptions), ...options] : options
   );
 
   const selectedOption = getSelectedOption(parsedOptions, value);

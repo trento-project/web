@@ -8,7 +8,7 @@ describe('DateFilter component', () => {
   it('should render with pre-configured options', async () => {
     const user = userEvent.setup();
 
-    render(<DateFilter title="by date" prefill onChange={jest.fn()} />);
+    render(<DateFilter title="by date" prefilled onChange={jest.fn()} />);
 
     const placeholder = 'Filter by date...';
 
@@ -27,7 +27,7 @@ describe('DateFilter component', () => {
     const user = userEvent.setup();
     const mockOnChange = jest.fn();
 
-    render(<DateFilter title="by date" prefill onChange={mockOnChange} />);
+    render(<DateFilter title="by date" prefilled onChange={mockOnChange} />);
 
     await act(() => user.click(screen.getByText('Filter by date...')));
 
@@ -40,7 +40,7 @@ describe('DateFilter component', () => {
     render(
       <DateFilter
         title="by date"
-        prefill
+        prefilled
         value="24h ago"
         onChange={jest.fn()}
       />
@@ -53,7 +53,7 @@ describe('DateFilter component', () => {
     render(
       <DateFilter
         title="by date"
-        prefill
+        prefilled
         value={['24h ago', new Date()]}
         onChange={jest.fn()}
       />
@@ -71,7 +71,7 @@ describe('DateFilter component', () => {
         options={[
           ['Custom', () => new Date(Date.now() - 42 * 24 * 60 * 60 * 1000)],
         ]}
-        prefill
+        prefilled
         onChange={jest.fn()}
       />
     );
@@ -95,7 +95,7 @@ describe('DateFilter component', () => {
       <DateFilter
         title="by date"
         options={[option]}
-        prefill={false}
+        prefilled={false}
         onChange={jest.fn()}
       />
     );
@@ -114,7 +114,7 @@ describe('DateFilter component', () => {
       <DateFilter
         title="by date"
         options={[['30d ago', () => anyDate, () => 'my overridden item']]}
-        prefill
+        prefilled
         onChange={mockOnChange}
       />
     );

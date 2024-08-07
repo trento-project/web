@@ -37,7 +37,7 @@ export default {
         title={args.title}
         options={args.options}
         value={value}
-        prefill={args.prefill}
+        prefilled={args.prefilled}
         onChange={(newValue) => {
           setValue(newValue);
           action('onChange')(newValue);
@@ -50,7 +50,6 @@ export default {
 export const Default = {
   args: {
     title: 'by date',
-    prefill: true,
   },
 };
 
@@ -86,7 +85,7 @@ export const WithOverriddenOptions = {
 export const WithPickedOptionsOnly = {
   args: {
     ...Default.args,
-    prefill: false,
+    prefilled: false,
     options: ['1h ago', '30d ago'],
   },
 };
@@ -94,7 +93,7 @@ export const WithPickedOptionsOnly = {
 export const WithCustomRenderer = {
   args: {
     ...Default.args,
-    prefill: false,
+    prefilled: false,
     options: [['epoch', () => new Date(0), () => '⌛ Beginning of time']],
   },
 };

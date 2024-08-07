@@ -82,7 +82,7 @@ export const WithDateFilter = {
         key: 'filter2',
         type: 'date',
         title: 'Date',
-        prefill: true,
+        prefilled: true,
         options: [['My birthday', () => new Date(1986, 0, 24)]],
       },
     ],
