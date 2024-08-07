@@ -5,16 +5,16 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.34.2">
-    <meta name="project" content="Trento Web v2.3.1">
+    <meta name="project" content="Trento Web v2.3.2">
 
 
-    <title>Trento.Support.JsonbSerializer — Trento Web v2.3.1</title>
+    <title>Trento.Support.JsonbSerializer — Trento Web v2.3.2</title>
     <link rel="stylesheet" href="dist/html-elixir-F2VRIOKR.css" />
 
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-K7URE6B4.js"></script>
-    <script src="dist/sidebar_items-97A9449C.js"></script>
+    <script src="dist/sidebar_items-2643C43C.js"></script>
     <script src="docs_config.js"></script>
     <script async src="dist/html-YIPIRHGU.js"></script>
 
@@ -54,7 +54,7 @@
 Trento Web
         </a>
         <div class="sidebar-projectVersion" translate="no">
-          v2.3.1
+          v2.3.2
         </div>
       </div>
     </div>
@@ -132,7 +132,7 @@ GUIDES
       </a>
 
     <span translate="no">Trento.Support.JsonbSerializer</span> 
-    <small class="app-vsn" translate="no">(Trento Web v2.3.1)</small>
+    <small class="app-vsn" translate="no">(Trento Web v2.3.2)</small>
 
   </h1>
 
@@ -170,7 +170,9 @@ This function is called by the event store when reading events and snapshots fro
 In case the type supports upcasting (i.e. it has a <code class="inline">upcast/2</code> function),
 the event is wrapped in an <code class="inline">IntermediateEvent</code> struct.
 The upcaster protocol is implemented for <code class="inline">IntermediateEvent</code> and it will take care of calling the <code class="inline">new!/1</code> function
-after the upcasting is done.</p></div>
+after the upcasting is done.
+If a process manager supports superseding because it was renamed (i.e. it has a <code class="inline">superseded_by/0</code> function),
+the snapshotted process manager is superseded by the new module.</p></div>
 
     </div>
 
@@ -206,7 +208,7 @@ after the upcasting is done.</p></div>
     </a>
     <h1 class="signature" translate="no">deserialize(term, config)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/support/jsonb_serializer.ex#L29" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/support/jsonb_serializer.ex#L31" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -221,7 +223,9 @@ This function is called by the event store when reading events and snapshots fro
 In case the type supports upcasting (i.e. it has a <code class="inline">upcast/2</code> function),
 the event is wrapped in an <code class="inline">IntermediateEvent</code> struct.
 The upcaster protocol is implemented for <code class="inline">IntermediateEvent</code> and it will take care of calling the <code class="inline">new!/1</code> function
-after the upcasting is done.</p>
+after the upcasting is done.
+If a process manager supports superseding because it was renamed (i.e. it has a <code class="inline">superseded_by/0</code> function),
+the snapshotted process manager is superseded by the new module.</p>
   </section>
 </section>
 <section class="detail" id="serialize/1">

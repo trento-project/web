@@ -97,6 +97,7 @@ Trento.Databases.Projections.DatabaseProjector.html
 Trento.Databases.Projections.DatabaseReadModel.html
 Trento.Databases.ValueObjects.Tenant.html
 Trento.Databases.html
+Trento.DeregistrationProcessManager.html
 Trento.Discovery.DiscardedDiscoveryEvent.html
 Trento.Discovery.DiscoveryEvent.html
 Trento.Discovery.Payloads.CloudDiscoveryPayload.AwsMetadata.html
@@ -482,8 +483,8 @@ dist/lato-latin-ext-300-normal-VPGGJKJL.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-FB78DA6F.js
-dist/sidebar_items-97A9449C.js
+dist/search_data-9D7BC7AE.js
+dist/sidebar_items-2643C43C.js
 environment_variables.html
 hack_on_the_trento.html
 index.html
