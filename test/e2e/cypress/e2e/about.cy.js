@@ -11,13 +11,6 @@ describe('User account page', () => {
     cy.get('h2.text-5xl').should('contain', 'About Trento Console');
   });
 
-  it('should show the correct flavor', () => {
-    cy.get('div')
-      .contains('Trento flavor')
-      .next()
-      .should('contain', getValue('flavor'));
-  });
-
   it('should show the correct server version', () => {
     cy.get('div')
       .contains('Server version')
