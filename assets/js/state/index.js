@@ -10,7 +10,6 @@ import sapSystemListReducer from './sapSystems';
 import databasesListReducer from './databases';
 import catalogReducer from './catalog';
 import lastExecutionsReducer from './lastExecutions';
-import settingsReducer from './settings';
 import userReducer from './user';
 import softwareUpdatesReducer from './softwareUpdates';
 import activityLogsSettingsReducer from './activityLogsSettings';
@@ -35,7 +34,6 @@ export const createStore = (router) => {
       databasesList: databasesListReducer,
       catalog: catalogReducer,
       lastExecutions: lastExecutionsReducer,
-      settings: settingsReducer,
       user: userReducer,
       softwareUpdates: softwareUpdatesReducer,
       activityLogsSettings: activityLogsSettingsReducer,

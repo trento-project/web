@@ -10,7 +10,6 @@ import AboutPageLogo from './AboutPageLogo';
 import AboutPageText from './AboutPageText';
 
 function AboutPage({ onFetch = getAboutData }) {
-  const [flavor, setFlavor] = useState('N/A');
   const [subscriptions, setSubscriptions] = useState(0);
   const [version, setVersion] = useState('v0.0.0');
   const [loading, setLoading] = useState(false);
@@ -20,10 +19,9 @@ function AboutPage({ onFetch = getAboutData }) {
     onFetch()
       .then(
         ({
-          data: { flavor: newFlavor, version: newVersion, sles_subscriptions },
+          data: { version: newVersion, sles_subscriptions },
         }) => {
           setLoading(false);
-          undefined !== newFlavor && setFlavor(newFlavor);
           setVersion(newVersion);
           setSubscriptions(sles_subscriptions);
         }
@@ -34,11 +32,8 @@ function AboutPage({ onFetch = getAboutData }) {
       });
   }, []);
 
+  // TODO: check if the data is off now
   const listViewData = [
-    {
-      title: 'Trento flavor',
-      content: loading ? 'Loading...' : flavor,
-    },
     {
       title: 'Server version',
       content: loading ? 'Loading...' : version,

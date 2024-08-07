@@ -35,14 +35,6 @@ export const getCheckResults = (executionData) => {
   return executionData.check_results;
 };
 
-export const isPremium = (catalog, checkID) => {
-  const check = findCheck(catalog, checkID);
-  if (check) {
-    return check.premium;
-  }
-  return false;
-};
-
 export const getCatalogCategoryList = (catalog, checksResults = []) => {
   if (!catalog || catalog.length === 0 || !checksResults) {
     return [];
