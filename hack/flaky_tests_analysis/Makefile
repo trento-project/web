@@ -6,7 +6,7 @@ N-TIMES ?= 10
 WRITE_JUNIT ?= 1
 CLI_LOG_PREFIX ?= Trento_Flaky_Test_Analysis_Log
 LOG_FILENAME="$(CLI_LOG_PREFIX)_$(shell date +%F_%T).txt"
-JEST_TS ?= "$(shell date +%F_%T)"
+ENV_TS ?= "$(shell date +%F_%T)"
 
 gen-test-data:
 	cd ../../ ; touch $(LOG_FILENAME) ;  for i in $$(seq 1 $(N-TIMES)) ; do \
@@ -15,9 +15,15 @@ gen-test-data:
 		done 
 
 gen-test-data-fe:
-	cd ../../assets ;  export JEST_TS=$(JEST_TS) ; for i in $$(seq 1 $(N-TIMES)) ; do \
+	cd ../../assets ;  export ENV_TS=$(ENV_TS) ; for i in $$(seq 1 $(N-TIMES)) ; do \
 			echo "Run $$i of $(N-TIMES)" ;\
-		  JEST_JUNIT_OUTPUT_FILE="/tmp/junit_FE_$(JEST_TS)_$$i.xml" npm test --reporters=jest-junit ;\
+		  JEST_JUNIT_OUTPUT_FILE="$(PATH-TO-JUNIT-FILES)/junit_FE_$(ENV_TS)_$$i.xml" npm test --reporters=jest-junit ;\
+		done 
+
+gen-test-data-e2e:
+	cd ../../test/e2e ; export ENV_TS=$(ENV_TS) ; for i in $$(seq 1 $(N-TIMES)) ; do \
+			echo "Run $$i of $(N-TIMES)" ;\
+			npx cypress run --reporter junit --reporter-options "mochaFile=$(PATH-TO-JUNIT-FILES)/trento-e2e-junit-[hash]-$(ENV_TS).xml" ;\
 		done 
 
 analyze-files:
