@@ -13,6 +13,7 @@
     "cypress-localstorage-commands": "^2.2.2",
     "eslint": "^8.15.0",
     "eslint-plugin-cypress": "^2.12.1",
+    "mocha-junit-reporter": "^2.2.1",
     "prettier": "2.6.2"
   },
   "dependencies": {
