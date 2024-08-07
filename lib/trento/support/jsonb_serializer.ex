@@ -25,6 +25,8 @@ defmodule Trento.Support.JsonbSerializer do
   the event is wrapped in an `IntermediateEvent` struct.
   The upcaster protocol is implemented for `IntermediateEvent` and it will take care of calling the `new!/1` function
   after the upcasting is done.
+  If a process manager supports superseding because it was renamed (i.e. it has a `superseded_by/0` function),
+  the snapshotted process manager is superseded by the new module.
   """
   def deserialize(term, config) do
     case Keyword.get(config, :type) do
@@ -35,10 +37,15 @@ defmodule Trento.Support.JsonbSerializer do
         module = String.to_existing_atom(type)
         Code.ensure_loaded?(module)
 
-        if Kernel.function_exported?(module, :upcast, 2) do
-          %IntermediateEvent{module: module, term: term}
-        else
-          module.new!(term)
+        cond do
+          Kernel.function_exported?(module, :upcast, 2) ->
+            %IntermediateEvent{module: module, term: term}
+
+          Kernel.function_exported?(module, :superseded_by, 0) ->
+            module.superseded_by().new!(term)
+
+          true ->
+            module.new!(term)
         end
     end
   end

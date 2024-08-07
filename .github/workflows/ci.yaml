@@ -19,8 +19,15 @@ env:
 
 jobs:
   elixir-deps:
-    name: Elixir dependencies
+    name: Elixir ${{ matrix.mix_env }} dependencies
     runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        include:
+          - mix_env: dev
+          - mix_env: test
+    env:
+      MIX_ENV: ${{ matrix.mix_env }}
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.12.1
@@ -44,7 +51,7 @@ jobs:
         with:
           path: |
             deps
-            _build/test
+            _build/${{ matrix.mix_env }}
             priv/plts
           key: ${{ runner.os }}-${{ steps.setup-elixir.outputs.otp-version }}-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}
       - name: Install Dependencies
@@ -454,6 +461,16 @@ jobs:
       ]
     runs-on: ubuntu-22.04
     if: needs.check-regression-label.outputs.run_regression_test == 'true'
+    strategy:
+      matrix:
+        include:
+          - test: sap_system_split
+            cypress_spec: |
+              cypress/e2e/databases_overview.cy.js
+              cypress/e2e/sap_systems_overview.cy.js
+          - test: process_manager_rename
+            cypress_spec: |
+              cypress/e2e/host_details.cy.js
     env:
       MIX_ENV: dev
     steps:
@@ -509,13 +526,13 @@ jobs:
         uses: tj-actions/pg-restore@v6
         with:
           database_url: "postgresql://postgres:postgres@localhost:5433/postgres"
-          backup_file: "test/fixtures/regression/sap_system_split/trento_dev.sql"
+          backup_file: "test/fixtures/regression/${{ matrix.test }}/trento_dev.sql"
           postgresql_version: "15"
       - name: Postgres trento_eventstore_dev restore
         uses: tj-actions/pg-restore@v6
         with:
           database_url: "postgresql://postgres:postgres@localhost:5433/postgres"
-          backup_file: "test/fixtures/regression/sap_system_split/trento_eventstore_dev.sql"
+          backup_file: "test/fixtures/regression/${{ matrix.test }}/trento_eventstore_dev.sql"
           postgresql_version: "15"
       - name: Run DB migrations
         run: mix ecto.migrate
@@ -542,43 +559,43 @@ jobs:
           cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
         with:
           working-directory: test/e2e
-          spec: |
-            cypress/e2e/databases_overview.cy.js
-            cypress/e2e/sap_systems_overview.cy.js
+          spec: ${{ matrix.cypress_spec }}
           wait-on-timeout: 30
           config: baseUrl=http://localhost:4000
       - name: Upload cypress test screenshots
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: regression-e2e-screenshots
+          name: regression-${{ matrix.test }}-e2e-screenshots
           path: test/e2e/cypress/screenshots/
 
-  main-branch-deps:
-    name: Rebuild main branch dependencies
+  target-branch-deps:
+    name: Rebuild target branch dependencies
     runs-on: ubuntu-20.04
+    env:
+      BRANCH_NAME: ${{ github.event.pull_request.base.ref || github.ref_name }} 
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.12.1
-        if: github.ref_name != 'main'
+        if: github.ref_name != '${{ env.BRANCH_NAME }}'
         with:
           access_token: ${{ github.token }}
-      - name: Checkout main branch
+      - name: Checkout target branch
         uses: actions/checkout@v4
-        if: github.ref_name != 'main'
+        if: github.ref_name != '${{ env.BRANCH_NAME }}'
         with:
-          ref: main
+          ref: ${{ env.BRANCH_NAME }}
       - name: Set up Elixir
         id: setup-elixir
         uses: erlef/setup-beam@v1
-        if: github.ref_name != 'main'
+        if: github.ref_name != '${{ env.BRANCH_NAME }}'
         with:
           version-file: .tool-versions
           version-type: strict
-      - name: Retrieve Cached Dependencies - main branch
+      - name: Retrieve Cached Dependencies - target branch
         uses: actions/cache@v4
-        id: mix-cache-main
-        if: github.ref_name != 'main'
+        id: mix-cache-target
+        if: github.ref_name != '${{ env.BRANCH_NAME }}'
         with:
           path: |
             deps
@@ -586,7 +603,7 @@ jobs:
             priv/plts
           key: ${{ runner.os }}-${{ steps.setup-elixir.outputs.otp-version }}-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}
       - name: Install missing dependencies
-        if: steps.mix-cache-main.outputs.cache-hit != 'true' && github.ref_name != 'main'
+        if: steps.mix-cache-target.outputs.cache-hit != 'true' && github.ref_name != '${{ env.BRANCH_NAME }}'
         run: |
           mkdir -p priv/plts
           mix local.rebar --force
@@ -597,7 +614,7 @@ jobs:
 
   api-bc-check:
     name: API bc check
-    needs: [elixir-deps, main-branch-deps]
+    needs: [elixir-deps, target-branch-deps]
     runs-on: ubuntu-20.04
     strategy:
       matrix:
@@ -630,28 +647,28 @@ jobs:
         run: |
           mix openapi.spec.json --start-app=false --spec TrentoWeb.OpenApi.${{ matrix.version }}.ApiSpec /tmp/specs/current-spec.json
 
-      - name: Checkout main branch
+      - name: Checkout target branch
         uses: actions/checkout@v4
         with:
-          ref: main
-      - name: Retrieve Cached Dependencies - main branch
+          ref: ${{ github.event.pull_request.base.ref || github.ref_name }} 
+      - name: Retrieve Cached Dependencies - target branch
         uses: actions/cache@v4
-        id: mix-cache-main
+        id: mix-cache-target
         with:
           path: |
             deps
             _build/test
             priv/plts
           key: ${{ runner.os }}-${{ steps.setup-elixir.outputs.otp-version }}-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}
-      - name: Generate main openapi.json
+      - name: Generate target openapi.json
         run: |
-          mix openapi.spec.json --start-app=false --spec TrentoWeb.OpenApi.${{ matrix.version }}.ApiSpec /tmp/specs/main-spec.json
+          mix openapi.spec.json --start-app=false --spec TrentoWeb.OpenApi.${{ matrix.version }}.ApiSpec /tmp/specs/target-spec.json
       - name: Locate generated specs
         run: mv /tmp/specs .
       - name: Find difference between OpenAPI specifications
         run: |
           docker run -v "$(pwd)/specs:/specs" --rm openapitools/openapi-diff:2.0.1 \
-            /specs/main-spec.json \
+            /specs/target-spec.json \
             /specs/current-spec.json \
             --fail-on-incompatible \
             --markdown /specs/changes.md \
