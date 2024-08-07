@@ -20,25 +20,11 @@ defmodule Trento.SettingsTest do
   alias Trento.Hosts.Commands.CompleteSoftwareUpdatesDiscovery
 
   setup do
-    Application.put_env(:trento, :flavor, "Premium")
     insert(:sles_subscription, identifier: "SLES_SAP")
-
-    on_exit(fn -> Application.put_env(:trento, :flavor, "Community") end)
   end
 
   describe "installation_settings" do
-    test "should return premium active if flavor is premium and at least one SLES_SAP subscription exist" do
-      assert Settings.premium_active?()
-    end
-
-    test "should give the flavor for the current installation" do
-      Application.put_env(:trento, :flavor, "Premium")
-      assert Settings.flavor() === "Premium"
-
-      Application.put_env(:trento, :flavor, "Community")
-      assert Settings.flavor() === "Community"
-    end
-
+    # TODO: remove InstallationSettings since premium does not exist anymore?
     test "should not create a new InstallationSettings if is already present" do
       {:error, errors} =
         %InstallationSettings{}

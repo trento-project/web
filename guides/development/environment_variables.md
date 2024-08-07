@@ -6,9 +6,6 @@ Dig into [./config](https://github.com/trento-project/web/blob/main/config/) dir
 
 ---
 
-**Installation**
-- `FLAVOR`
-
 **Persistence**
 - `DATABASE_URL`
 - `DATABASE_POOL_SIZE`
