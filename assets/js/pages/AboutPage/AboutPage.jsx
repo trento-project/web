@@ -17,15 +17,11 @@ function AboutPage({ onFetch = getAboutData }) {
   useEffect(() => {
     setLoading(true);
     onFetch()
-      .then(
-        ({
-          data: { version: newVersion, sles_subscriptions },
-        }) => {
-          setLoading(false);
-          setVersion(newVersion);
-          setSubscriptions(sles_subscriptions);
-        }
-      )
+      .then(({ data: { version: newVersion, sles_subscriptions } }) => {
+        setLoading(false);
+        setVersion(newVersion);
+        setSubscriptions(sles_subscriptions);
+      })
       .catch((error) => {
         logError(error);
         setLoading(false);
