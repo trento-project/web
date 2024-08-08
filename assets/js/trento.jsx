@@ -44,6 +44,10 @@ import ActivityLogPage from '@pages/ActivityLogPage';
 import OidCallback from '@pages/OidcCallback';
 
 import { profile } from '@lib/auth';
+import {
+  isSingleSignOnEnabled,
+  getSingleSignOnCallbackUrl,
+} from '@lib/auth/config';
 import { networkClient } from '@lib/network';
 import { TARGET_CLUSTER, TARGET_HOST } from '@lib/model';
 
@@ -54,7 +58,12 @@ const createRouter = ({ getUser }) =>
     createRoutesFromElements(
       <Route element={<RoutesWrapper />} ErrorBoundary={SomethingWentWrong}>
         <Route path="/session/new" element={<Login />} />
-        <Route path="/auth/oidc_callback" element={<OidCallback />} />
+        {isSingleSignOnEnabled() && (
+          <Route
+            path={getSingleSignOnCallbackUrl()}
+            element={<OidCallback />}
+          />
+        )}
         <Route path="/">
           <Route
             element={<Guard redirectPath="/session/new" getUser={getUser} />}
