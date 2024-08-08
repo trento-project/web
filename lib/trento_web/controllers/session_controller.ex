@@ -251,6 +251,7 @@ defmodule TrentoWeb.SessionController do
         {:error, :invalid_credentials}
 
       error ->
+        Logger.error("error during oidc callback execution: #{inspect(error)}")
         error
     end
   end
