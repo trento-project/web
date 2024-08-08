@@ -17,17 +17,15 @@ defmodule Trento.UserIdentities do
 
   @impl true
   @doc """
-  redefining the PowAssent create user method, this is called when the user login through idp but
-  does not exist in our user database
+  redefining the PowAssent create user method, this is called when the user login through idp and a user identity
+  does not exists on our database.
+
+  If a user with the same username exists on our database, the user will be recovered and associated with the idp identity,
+  otherwise the user will be created.
   """
   def create_user(user_identity_params, user_params, user_id_params) do
-    case pow_assent_create_user(user_identity_params, user_params, user_id_params) do
-      {:ok, %User{} = user} ->
-        {:ok, maybe_assign_global_abilities(user)}
-
-      error ->
-        error
-    end
+    existing_user = Users.get_by(username: user_params["username"])
+    maybe_create_user(existing_user, user_identity_params, user_params, user_id_params)
   end
 
   @impl true
@@ -51,6 +49,20 @@ defmodule Trento.UserIdentities do
     else
       user
     end
+  end
+
+  defp maybe_create_user(nil, user_identity_params, user_params, user_id_params) do
+    case pow_assent_create_user(user_identity_params, user_params, user_id_params) do
+      {:ok, %User{} = user} ->
+        {:ok, maybe_assign_global_abilities(user)}
+
+      error ->
+        error
+    end
+  end
+
+  defp maybe_create_user(user, _, _, _) do
+    {:ok, maybe_assign_global_abilities(user)}
   end
 
   # assign_global_abilities assigns the global ability to the admin user retrieved from oidc

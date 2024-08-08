@@ -479,6 +479,35 @@ defmodule TrentoWeb.SessionControllerTest do
       |> assert_schema("Credentials", api_spec)
     end
 
+    test "should return the credentials when the oidc callback flow is completed without errors and the user exists on trento but without an associated user identity",
+         %{conn: conn, api_spec: api_spec} do
+      user = insert(:user)
+
+      expect(
+        Joken.CurrentTime.Mock,
+        :current_time,
+        6,
+        fn ->
+          1_671_715_992
+        end
+      )
+
+      Application.put_env(:trento, :pow_assent,
+        user_identities_context: Trento.UserIdentities,
+        providers: [
+          test_provider: [strategy: TestProvider, test_user: user]
+        ]
+      )
+
+      valid_params = %{"code" => "valid", "session_params" => %{"a" => 1}}
+
+      conn = post(conn, ~p"/api/session/test_provider/callback?#{valid_params}")
+
+      conn
+      |> json_response(200)
+      |> assert_schema("Credentials", api_spec)
+    end
+
     test "should return the credentials when the oidc callback flow is completed without errors and the user does exist on trento",
          %{conn: conn, api_spec: api_spec} do
       user = insert(:user)
