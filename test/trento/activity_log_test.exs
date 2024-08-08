@@ -295,5 +295,36 @@ defmodule Trento.ActivityLogTest do
       assert length(next_logs_alt) == length(next_logs)
       assert next_logs_alt == next_logs
     end
+
+    test "should expose information about the existence of previous or next page to navigate to" do
+      insert_list(100, :activity_log_entry)
+
+      assert {:ok, _,
+              %{has_previous_page?: false, has_next_page?: true, start_cursor: start_cursor}} =
+               ActivityLog.list_activity_log(%{first: 5})
+
+      assert {:ok, [],
+              %{
+                end_cursor: nil,
+                start_cursor: nil
+              }} =
+               ActivityLog.list_activity_log(%{last: 5, before: start_cursor})
+
+      assert {:ok, _, %{has_previous_page?: true, has_next_page?: true}} =
+               ActivityLog.list_activity_log(%{first: 5, after: start_cursor})
+
+      assert {:ok, _, %{has_previous_page?: true, has_next_page?: false, end_cursor: end_cursor}} =
+               ActivityLog.list_activity_log(%{last: 5})
+
+      assert {:ok, [],
+              %{
+                end_cursor: nil,
+                start_cursor: nil
+              }} =
+               ActivityLog.list_activity_log(%{first: 5, after: end_cursor})
+
+      assert {:ok, _, %{has_previous_page?: true, has_next_page?: true}} =
+               ActivityLog.list_activity_log(%{last: 5, before: end_cursor})
+    end
   end
 end
