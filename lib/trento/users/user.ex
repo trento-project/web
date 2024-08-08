@@ -61,7 +61,7 @@ defmodule Trento.Users.User do
     |> cast(attrs, [:username, :email])
     |> put_change(
       :fullname,
-      Map.get(attrs, "given_name", "Trento IDP User #{username}")
+      Map.get(attrs, "name", "Trento IDP User #{username}")
     )
     |> pow_assent_user_identity_changeset(user_identity, attrs, user_id_attrs)
   end
