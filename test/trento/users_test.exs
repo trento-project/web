@@ -458,8 +458,9 @@ defmodule Trento.UsersTest do
 
       # we create the user with the user identity changeset
       {:ok, %User{} = user} =
-        User.user_identity_changeset(%User{}, user_identity_params, user_attrs, %{})
-        |> Trento.Repo.insert()
+        Trento.Repo.insert(
+          User.user_identity_changeset(%User{}, user_identity_params, user_attrs, %{})
+        )
 
       assert {:ok, %User{}} = Users.update_user(user, %{})
     end
