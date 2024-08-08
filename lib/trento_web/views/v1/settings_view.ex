@@ -3,13 +3,11 @@ defmodule TrentoWeb.V1.SettingsView do
 
   def render("settings.json", %{
         settings: %{
-          eula_accepted: eula_accepted,
-          premium_subscription: premium_subscription
+          eula_accepted: eula_accepted
         }
       }) do
     %{
-      eula_accepted: eula_accepted,
-      premium_subscription: premium_subscription
+      eula_accepted: eula_accepted
     }
   end
 

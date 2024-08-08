@@ -84,7 +84,6 @@ function ChecksSelection({
                 checkID={check.id}
                 name={check.name}
                 description={check.description}
-                premium={check.premium}
                 selected={check.selected}
                 onChange={() => {
                   onChange(toggle(check.id, selectedChecks));

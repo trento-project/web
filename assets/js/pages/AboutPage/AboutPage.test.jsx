@@ -14,7 +14,6 @@ describe('AboutPage component', () => {
       );
     });
 
-    expect(screen.getByText(apiRequestData.flavor)).toBeTruthy();
     expect(screen.getByText(apiRequestData.version)).toBeTruthy();
     expect(
       screen.getByText(`${apiRequestData.sles_subscriptions} found`)
@@ -22,7 +21,7 @@ describe('AboutPage component', () => {
   });
 
   it('should render the about page with default values if api get request fails', async () => {
-    const stateValues = { flavor: 'N/A', subscriptions: 0, version: 'v0.0.0' };
+    const stateValues = { subscriptions: 0, version: 'v0.0.0' };
     const errorMessage = { messages: "Get request '/api/about' failed" };
     jest.spyOn(console, 'error').mockImplementation(() => null);
 
@@ -32,7 +31,6 @@ describe('AboutPage component', () => {
       );
     });
 
-    expect(screen.getByText(stateValues.flavor)).toBeTruthy();
     expect(screen.getByText(stateValues.version)).toBeTruthy();
     expect(screen.getByText(`${stateValues.subscriptions} found`)).toBeTruthy();
   });
