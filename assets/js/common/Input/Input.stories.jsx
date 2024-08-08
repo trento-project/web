@@ -160,6 +160,12 @@ export const Date = {
   },
 };
 
+export const DateTime = {
+  args: {
+    type: 'datetime-local',
+  },
+};
+
 export const File = {
   args: {
     type: 'file',

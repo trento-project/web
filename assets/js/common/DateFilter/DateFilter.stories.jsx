@@ -60,6 +60,13 @@ export const WithSelectedValue = {
   },
 };
 
+export const WithCustomDateValue = {
+  args: {
+    ...Default.args,
+    value: ['custom', new Date()],
+  },
+};
+
 export const WithCustomOptions = {
   args: {
     ...Default.args,
