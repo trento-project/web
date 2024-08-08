@@ -339,16 +339,19 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       |> assert_schema("UserItem", api_spec)
     end
 
-    test "should only update abilities when oidc is enabled", %{conn: conn, api_spec: api_spec} do
+    test "should only update abilities and enabled when oidc is enabled", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
       Application.put_env(:trento, :oidc, enabled: true)
 
       %{id: id, name: name, resource: resource, label: label} = insert(:ability)
-      %{id: user_id, lock_version: lock_version} = insert(:user)
+      %{id: user_id, lock_version: lock_version} = insert(:user, locked_at: DateTime.utc_now())
 
       valid_params = %{
         fullname: Faker.Person.name(),
         email: Faker.Internet.email(),
-        enabled: false,
+        enabled: true,
         password: "testpassword89",
         password_confirmation: "testpassword89",
         abilities: [%{id: id, name: name, resource: resource, label: label}]
@@ -365,17 +368,18 @@ defmodule TrentoWeb.V1.UsersControllerTest do
 
       refute resp.fullname == valid_params.fullname
       refute resp.email == valid_params.email
-      refute resp.enabled == valid_params.enabled
+      assert resp.enabled
       assert resp.password_change_requested_at == nil
       assert abilities == [%{id: id, name: name, resource: resource, label: label}]
 
       Application.put_env(:trento, :oidc, enabled: false)
     end
 
-    test "should not perform an update when oidc is enabled and abilities are not passed", %{
-      conn: conn,
-      api_spec: api_spec
-    } do
+    test "should not perform an update when oidc is enabled and abilities or enabled are not passed",
+         %{
+           conn: conn,
+           api_spec: api_spec
+         } do
       Application.put_env(:trento, :oidc, enabled: true)
 
       %{id: user_id, lock_version: lock_version} = insert(:user)
@@ -383,7 +387,6 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       valid_params = %{
         fullname: Faker.Person.name(),
         email: Faker.Internet.email(),
-        enabled: false,
         password: "testpassword89",
         password_confirmation: "testpassword89"
       }
@@ -398,7 +401,6 @@ defmodule TrentoWeb.V1.UsersControllerTest do
 
       refute resp.fullname == valid_params.fullname
       refute resp.email == valid_params.email
-      refute resp.enabled == valid_params.enabled
       assert resp.password_change_requested_at == nil
 
       Application.put_env(:trento, :oidc, enabled: false)

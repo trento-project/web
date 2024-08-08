@@ -182,7 +182,7 @@ defmodule TrentoWeb.V1.UsersController do
   end
 
   # when oidc is enabled, we only allow abilities as parameter
-  defp clean_params_for_oidc_integration(attrs, true), do: Map.take(attrs, [:abilities])
+  defp clean_params_for_oidc_integration(attrs, true), do: Map.take(attrs, [:abilities, :enabled])
   defp clean_params_for_oidc_integration(attrs, _), do: attrs
 
   defp oidc_enabled?, do: Application.fetch_env!(:trento, :oidc)[:enabled]
