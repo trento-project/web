@@ -339,6 +339,71 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       |> assert_schema("UserItem", api_spec)
     end
 
+    test "should only update abilities when oidc is enabled", %{conn: conn, api_spec: api_spec} do
+      Application.put_env(:trento, :oidc, enabled: true)
+
+      %{id: id, name: name, resource: resource, label: label} = insert(:ability)
+      %{id: user_id, lock_version: lock_version} = insert(:user)
+
+      valid_params = %{
+        fullname: Faker.Person.name(),
+        email: Faker.Internet.email(),
+        enabled: false,
+        password: "testpassword89",
+        password_confirmation: "testpassword89",
+        abilities: [%{id: id, name: name, resource: resource, label: label}]
+      }
+
+      %{abilities: abilities} =
+        resp =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> put_req_header("if-match", "#{lock_version}")
+        |> patch("/api/v1/users/#{user_id}", valid_params)
+        |> json_response(:ok)
+        |> assert_schema("UserItem", api_spec)
+
+      refute resp.fullname == valid_params.fullname
+      refute resp.email == valid_params.email
+      refute resp.enabled == valid_params.enabled
+      assert resp.password_change_requested_at == nil
+      assert abilities == [%{id: id, name: name, resource: resource, label: label}]
+
+      Application.put_env(:trento, :oidc, enabled: false)
+    end
+
+    test "should not perform an update when oidc is enabled and abilities are not passed", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      Application.put_env(:trento, :oidc, enabled: true)
+
+      %{id: user_id, lock_version: lock_version} = insert(:user)
+
+      valid_params = %{
+        fullname: Faker.Person.name(),
+        email: Faker.Internet.email(),
+        enabled: false,
+        password: "testpassword89",
+        password_confirmation: "testpassword89"
+      }
+
+      resp =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> put_req_header("if-match", "#{lock_version}")
+        |> patch("/api/v1/users/#{user_id}", valid_params)
+        |> json_response(:ok)
+        |> assert_schema("UserItem", api_spec)
+
+      refute resp.fullname == valid_params.fullname
+      refute resp.email == valid_params.email
+      refute resp.enabled == valid_params.enabled
+      assert resp.password_change_requested_at == nil
+
+      Application.put_env(:trento, :oidc, enabled: false)
+    end
+
     test "should disable the TOTP feature for a user", %{conn: conn, api_spec: api_spec} do
       %{id: user_id, lock_version: lock_version} =
         insert(:user, totp_enabled_at: DateTime.utc_now())
