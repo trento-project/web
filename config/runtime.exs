@@ -174,4 +174,31 @@ if config_env() in [:prod, :demo] do
         iv_length: 12
       }
     ]
+
+  enable_oidc = System.get_env("ENABLE_OIDC", "false") == "true"
+
+  config :trento, :oidc,
+    enabled: enable_oidc,
+    callback_url:
+      System.get_env(
+        "OIDC_CALLBACK_URL",
+        "https://#{System.get_env("TRENTO_WEB_ORIGIN")}:#{System.get_env("PORT", "4000")}/auth/oidc_callback"
+      )
+
+  if enable_oidc do
+    config :trento, :pow_assent,
+      providers: [
+        oidc_local: [
+          client_id:
+            System.get_env("OIDC_CLIENT_ID") ||
+              raise("environment variable OIDC_CLIENT_ID is missing"),
+          client_secret:
+            System.get_env("OIDC_CLIENT_SECRET") ||
+              raise("environment variable OIDC_CLIENT_SECRET is missing"),
+          base_url:
+            System.get_env("OIDC_BASE_URL") ||
+              raise("environment variable OIDC_BASE_URL is missing")
+        ]
+      ]
+  end
 end
