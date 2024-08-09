@@ -1,6 +1,7 @@
 /* eslint-disable react/no-array-index-key */
 
 import React, { useState, useEffect } from 'react';
+import { noop } from 'lodash';
 import classNames from 'classnames';
 import { page, pages } from '@lib/lists';
 import { TableFilters, createFilter } from './filters';
@@ -77,6 +78,12 @@ function Table({
     rowClassName = '',
     collapsedRowClassName = '',
     pagination,
+    cursorPagination = false,
+    onChangeItemsPerPage = noop,
+    canNavigateToPreviousPage = undefined,
+    onPreviousPage = undefined,
+    canNavigateToNextPage = undefined,
+    onNextPage = undefined,
     usePadding = true,
   } = config;
 
@@ -150,6 +157,10 @@ function Table({
     : sortedData;
 
   const totalPages = pages(sortedData, currentItemsPerPage);
+
+  const onPreviousPageClick =
+    onPreviousPage ?? (() => setCurrentPage(currentPage - 1));
+  const onNextPageClick = onNextPage ?? (() => setCurrentPage(currentPage + 1));
 
   return (
     <div
@@ -242,13 +253,19 @@ function Table({
             </table>
             {pagination && (
               <Pagination
+                cursor={cursorPagination}
                 pages={totalPages}
                 currentPage={currentPage}
                 itemsPerPageOptions={itemsPerPageOptions}
                 currentItemsPerPage={currentItemsPerPage}
-                onChangeItemsPerPage={(perPage) =>
-                  setCurrentItemsPerPage(perPage)
-                }
+                onChangeItemsPerPage={(perPage) => {
+                  setCurrentItemsPerPage(perPage);
+                  onChangeItemsPerPage(perPage);
+                }}
+                canNavigateToPreviousPage={canNavigateToPreviousPage}
+                onPreviousPage={onPreviousPageClick}
+                canNavigateToNextPage={canNavigateToNextPage}
+                onNextPage={onNextPageClick}
                 onSelect={(selectedPage) => setCurrentPage(selectedPage)}
               />
             )}
