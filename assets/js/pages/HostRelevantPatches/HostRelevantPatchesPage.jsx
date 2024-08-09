@@ -76,23 +76,22 @@ function HostRelevantPatches({ hostName, onNavigate, patches }) {
             Relevant Patches: <span className="font-bold">{hostName}</span>
           </PageHeader>
         </div>
-        <div className="flex w-1/2 gap-2 justify-end bg-red-500">
+        <div className="flex w-1/2 gap-2 justify-end">
           <Select
-            className=""
             onChange={setDisplayedAdvisories}
             options={advisoryTypes}
             optionsName="options"
             value={displayedAdvisories}
           />
           <Input
-            className="flex h-min"
+            className="w-1/4"
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by Synopsis"
             prefix={<EOS_SEARCH size="l" />}
           />
           <a href={file} download={`${hostName}-patches.csv`}>
             <Button
-             className="h-min w-max"
+              className="w-max"
               type="primary-white"
               disabled={displayedPatches?.length <= 0}
             >
