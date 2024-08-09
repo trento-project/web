@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 import PageHeader from '@common/PageHeader';
 import ActivityLogOverview from '@common/ActivityLogOverview';
@@ -10,17 +10,20 @@ function ActivityLogPage() {
   const [isLoading, setLoading] = useState(true);
   const [activityLogDetailModalOpen, setActivityLogDetailModalOpen] =
     useState(false);
+  const [currentPaginationData, setCurrentPaginationData] = useState({});
 
-  useEffect(() => {
-    getActivityLog()
+  const loadActivityLog = (filters) => {
+    setLoading(true);
+    getActivityLog(filters)
       .then((response) => {
         setActivityLog(response.data?.data ?? []);
+        setCurrentPaginationData(response.data?.pagination ?? {});
       })
       .catch(() => setActivityLog([]))
       .finally(() => {
         setLoading(false);
       });
-  }, []);
+  };
 
   return (
     <>
@@ -33,6 +36,10 @@ function ActivityLogPage() {
         onCloseActivityLogEntryDetails={() =>
           setActivityLogDetailModalOpen(false)
         }
+        currentPaginationData={currentPaginationData}
+        loadActivityLog={(filtersAndPagination) => {
+          loadActivityLog(filtersAndPagination);
+        }}
       />
     </>
   );
