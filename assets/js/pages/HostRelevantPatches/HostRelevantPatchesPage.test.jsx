@@ -170,7 +170,6 @@ describe('HostRelevantPatchesPage', () => {
           advisory_name: 'carbonara123',
           advisory_type: 'bugfix',
           advisory_status: 'kekw',
-          id: 1234,
           advisory_synopsis: 'lorem ipsum',
           date: '12 oct 1990',
           update_date: '12 oct 1990',
