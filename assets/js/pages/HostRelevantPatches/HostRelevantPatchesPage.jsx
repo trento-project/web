@@ -34,7 +34,6 @@ function HostRelevantPatches({ hostName, onNavigate, patches }) {
               Papa.unparse(
                 {
                   fields: [
-                    'id',
                     'advisory_type',
                     'advisory_name',
                     'advisory_synopsis',
