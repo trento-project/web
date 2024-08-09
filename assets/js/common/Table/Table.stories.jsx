@@ -1,4 +1,8 @@
 import React, { useState } from 'react';
+import { faker } from '@faker-js/faker';
+
+import { format } from 'date-fns';
+import { Factory } from 'fishery';
 
 import Table from '.';
 
@@ -97,6 +101,19 @@ const data = [
   },
 ];
 
+const dataFactory = Factory.define(() => ({
+  user: faker.internet.userName(),
+  role: faker.helpers.arrayElement([
+    'Administrator',
+    'Employee',
+    'Head of Keks',
+  ]),
+  status: faker.helpers.arrayElement(['active', 'inactive']),
+  created_at: format(faker.date.past(), 'yyyy-MM-dd'),
+}));
+
+const paginatableData = dataFactory.buildList(55);
+
 export const Sorted = {
   args: {},
   render: () => {
@@ -173,34 +190,69 @@ export const Sorted = {
   },
 };
 
-export function Populated() {
-  return <Table config={config} data={data} />;
-}
+export const Populated = {
+  args: {
+    config,
+    data,
+  },
+};
 
-export function Paginated() {
-  return (
-    <Table
-      config={{ ...config, pagination: true }}
-      data={[].concat(data, data, data, data)}
-    />
-  );
-}
+export const WithPageBasedPagination = {
+  args: {
+    config: { ...config, pagination: true },
+    data: paginatableData,
+  },
+};
 
-export function WithFilters(args) {
-  return <Table config={filteredConfig} data={data} {...args} />;
-}
+export const WithCursorPagination = {
+  args: {
+    ...WithPageBasedPagination.args,
+    config: {
+      ...config,
+      pagination: true,
+      cursorPagination: true,
+    },
+  },
+};
 
-export function WithHeader(args) {
-  return (
-    <Table
-      config={config}
-      data={data}
-      header={<h3 className="bg-white px-4 py-4">Header</h3>}
-      {...args}
-    />
-  );
-}
+export const WithFilters = {
+  args: {
+    ...Populated.args,
+    config: filteredConfig,
+  },
+};
 
-export function Empty() {
-  return <Table config={config} data={[]} />;
-}
+export const WithFiltersAndPageBasedPagination = {
+  args: {
+    data: paginatableData,
+    config: {
+      ...filteredConfig,
+      pagination: true,
+    },
+  },
+};
+
+export const WithFiltersAndCursorBasedPagination = {
+  args: {
+    data: paginatableData,
+    config: {
+      ...filteredConfig,
+      pagination: true,
+      cursorPagination: true,
+    },
+  },
+};
+
+export const WithHeader = {
+  args: {
+    ...Populated.args,
+    header: <h3 className="bg-white px-4 py-4">Header</h3>,
+  },
+};
+
+export const Empty = {
+  args: {
+    config,
+    data: [],
+  },
+};

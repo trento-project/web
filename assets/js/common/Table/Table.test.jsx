@@ -190,6 +190,33 @@ describe('Table component', () => {
       expect(container.querySelector('.tn-page-item:nth-child(2)')).toBeNull();
     });
 
+    it('should support custom onChangeItemsPerPage callback', async () => {
+      const onChangeItemsPerPage = jest.fn();
+      const data = tableDataFactory.buildList(13);
+
+      render(
+        <Table
+          config={{
+            ...tableConfig,
+            onChangeItemsPerPage,
+          }}
+          data={data}
+        />
+      );
+
+      const initialPage = screen.getByRole('table');
+      expect(initialPage.querySelectorAll('tbody > tr')).toHaveLength(10);
+
+      fireEvent.click(screen.getByRole('button', { name: '10' }));
+      fireEvent.click(screen.getByRole('option', { name: '20' }));
+
+      expect(onChangeItemsPerPage).toHaveBeenCalledTimes(1);
+      expect(onChangeItemsPerPage).toHaveBeenCalledWith(20);
+
+      const expandedPage = screen.getByRole('table');
+      expect(expandedPage.querySelectorAll('tbody > tr')).toHaveLength(13);
+    });
+
     it('should return empty state message when data is empty', () => {
       const data = [];
       const emptyStateText = faker.lorem.words(5);
@@ -207,6 +234,116 @@ describe('Table component', () => {
       expect(tableRows.length).toBe(2);
       const tableCell = screen.getByRole('cell');
       expect(tableCell).toHaveTextContent(emptyStateText);
+    });
+
+    it('should support cursor based pagination', async () => {
+      const data = tableDataFactory.buildList(23);
+
+      render(
+        <Table
+          config={{ ...tableConfig, cursorPagination: true }}
+          data={data}
+        />
+      );
+
+      const page1 = screen.getByRole('table');
+      expect(page1.querySelectorAll('tbody > tr')).toHaveLength(10);
+
+      const prevPageButton = screen.getByLabelText('prev-page');
+      expect(prevPageButton).toBeVisible();
+      expect(prevPageButton).toBeDisabled();
+
+      const nextPageButton = screen.getByLabelText('next-page');
+      expect(nextPageButton).toBeVisible();
+      expect(nextPageButton).toBeEnabled();
+
+      fireEvent.click(nextPageButton);
+
+      const page2 = screen.getByRole('table');
+      expect(page2.querySelectorAll('tbody > tr')).toHaveLength(10);
+
+      const prevPageButtonOnPage2 = screen.getByLabelText('prev-page');
+      expect(prevPageButtonOnPage2).toBeVisible();
+      expect(prevPageButtonOnPage2).toBeEnabled();
+
+      const nextPageButtonOnPage2 = screen.getByLabelText('next-page');
+      expect(nextPageButtonOnPage2).toBeVisible();
+      expect(nextPageButtonOnPage2).toBeEnabled();
+
+      fireEvent.click(nextPageButtonOnPage2);
+
+      const page3 = screen.getByRole('table');
+      expect(page3.querySelectorAll('tbody > tr')).toHaveLength(3);
+
+      const prevPageButtonOnPage3 = screen.getByLabelText('prev-page');
+      expect(prevPageButtonOnPage3).toBeVisible();
+      expect(prevPageButtonOnPage3).toBeEnabled();
+
+      const nextPageButtonOnPage3 = screen.getByLabelText('next-page');
+      expect(nextPageButtonOnPage3).toBeVisible();
+      expect(nextPageButtonOnPage3).toBeDisabled();
+    });
+
+    it.each`
+      canNavigateToPreviousPage | canNavigateToNextPage
+      ${true}                   | ${true}
+      ${true}                   | ${false}
+      ${false}                  | ${true}
+      ${false}                  | ${false}
+    `(
+      'should support custom enablement of previous/next page buttons',
+      async ({ canNavigateToPreviousPage, canNavigateToNextPage }) => {
+        const data = tableDataFactory.buildList(23);
+
+        render(
+          <Table
+            config={{
+              ...tableConfig,
+              cursorPagination: true,
+              canNavigateToPreviousPage,
+              canNavigateToNextPage,
+            }}
+            data={data}
+          />
+        );
+
+        const prevPageButton = screen.getByLabelText('prev-page');
+        canNavigateToPreviousPage
+          ? expect(prevPageButton).toBeEnabled()
+          : expect(prevPageButton).toBeDisabled();
+
+        const nextPageButton = screen.getByLabelText('next-page');
+        canNavigateToNextPage
+          ? expect(nextPageButton).toBeEnabled()
+          : expect(nextPageButton).toBeDisabled();
+      }
+    );
+
+    it('should support custom callback on prev/next pagination', async () => {
+      const onPreviousPage = jest.fn();
+      const onNextPage = jest.fn();
+
+      render(
+        <Table
+          config={{
+            ...tableConfig,
+            cursorPagination: true,
+            canNavigateToPreviousPage: true,
+            canNavigateToNextPage: true,
+            onPreviousPage,
+            onNextPage,
+          }}
+          data={tableDataFactory.buildList(23)}
+        />
+      );
+
+      const prevPageButton = screen.getByLabelText('prev-page');
+      fireEvent.click(prevPageButton);
+      expect(onPreviousPage).toHaveBeenCalledTimes(1);
+
+      const nextPageButton = screen.getByLabelText('next-page');
+      fireEvent.click(nextPageButton);
+      expect(onNextPage).toHaveBeenCalledTimes(1);
     });
   });
 
