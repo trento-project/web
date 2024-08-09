@@ -61,6 +61,7 @@ const getFilterFunction = (column, value) =>
     : getDefaultFilterFunction(value, column.key);
 
 const itemsPerPageOptions = [10, 20, 50, 75, 100];
+export const defaultItemsPerPage = itemsPerPageOptions[0];
 
 function Table({
   config,
@@ -89,9 +90,8 @@ function Table({
 
   const [filters, setFilters] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [currentItemsPerPage, setCurrentItemsPerPage] = useState(
-    itemsPerPageOptions[0]
-  );
+  const [currentItemsPerPage, setCurrentItemsPerPage] =
+    useState(defaultItemsPerPage);
 
   const searchParamsEnabled = Boolean(searchParams && setSearchParams);
 
