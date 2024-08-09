@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { noop } from 'lodash';
 import {
   EOS_BUG_REPORT_OUTLINED,
@@ -21,6 +21,7 @@ import {
 
 import ActivityLogDetailModal from '@common/ActivityLogDetailsModal';
 import { format } from 'date-fns';
+import { defaultItemsPerPage } from '../Table/Table';
 
 const logLevelToIcon = {
   [LEVEL_DEBUG]: <EOS_BUG_REPORT_OUTLINED className="w-full" />,
@@ -51,11 +52,56 @@ function ActivityLogOverview({
   loading = false,
   onActivityLogEntryClick = noop,
   onCloseActivityLogEntryDetails = noop,
+  currentPaginationData,
+  loadActivityLog = noop,
 }) {
   const [selectedEntry, setEntry] = useState({});
+  const [currentlyAppliedFilters, setCurrentlyAppliedFilters] = useState({
+    first: defaultItemsPerPage,
+  });
+
+  const loadFilteredAndPaginatedActivityLog = (filtersAndPagination) => {
+    setCurrentlyAppliedFilters(filtersAndPagination);
+    loadActivityLog(filtersAndPagination);
+  };
+
+  useEffect(() => {
+    loadFilteredAndPaginatedActivityLog(currentlyAppliedFilters);
+  }, []);
+
+  const onChangeItemsPerPage = (itemsPerPage) =>
+    loadFilteredAndPaginatedActivityLog({
+      ...currentlyAppliedFilters,
+      ...(currentlyAppliedFilters?.first
+        ? { first: itemsPerPage }
+        : { last: itemsPerPage }),
+    });
+
+  const onPreviousPage = () =>
+    loadFilteredAndPaginatedActivityLog({
+      last: currentlyAppliedFilters?.first || currentlyAppliedFilters?.last,
+      before: currentPaginationData?.start_cursor,
+    });
+
+  const onNextPage = () =>
+    loadFilteredAndPaginatedActivityLog({
+      first: currentlyAppliedFilters?.first || currentlyAppliedFilters?.last,
+      after: currentPaginationData?.end_cursor,
+    });
+
+  const canNavigateToPreviousPage =
+    !loading && currentPaginationData?.has_previous_page;
+  const canNavigateToNextPage =
+    !loading && currentPaginationData?.has_next_page;
 
   const activityLogTableConfig = {
     pagination: true,
+    cursorPagination: true,
+    onChangeItemsPerPage,
+    canNavigateToPreviousPage,
+    onPreviousPage,
+    canNavigateToNextPage,
+    onNextPage,
     usePadding: false,
     columns: [
       {
