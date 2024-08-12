@@ -318,4 +318,47 @@ describe('Filter component', () => {
       });
     });
   });
+
+  it('should use options with label', async () => {
+    const user = userEvent.setup();
+    const mockOnChange = jest.fn();
+    const options = [
+      ['john-doe', 'John Doe'],
+      ['jane-smith', 'Jane Smith'],
+      ['michael-scott', 'Michael Scott'],
+      ['ella-fitzgerald', 'Ella Fitzgerald'],
+    ];
+
+    const selectedItem = 'michael-scott';
+    const selectedItemLabel = 'Michael Scott';
+
+    const anotherSelectedItem = 'jane-smith';
+    const anotherSelectedItemLabel = 'Jane Smith';
+
+    render(
+      <Filter
+        options={options}
+        title="names"
+        onChange={mockOnChange}
+        value={['michael-scott']}
+      />
+    );
+
+    await act(() => user.click(screen.getByText(selectedItemLabel)));
+
+    await act(() => {
+      options.forEach(([, label]) => {
+        expect(screen.getAllByText(label)[0]).toBeInTheDocument();
+      });
+    });
+
+    await act(() =>
+      user.click(screen.getAllByText(anotherSelectedItemLabel)[0])
+    );
+
+    expect(mockOnChange).toHaveBeenCalledWith([
+      selectedItem,
+      anotherSelectedItem,
+    ]);
+  });
 });
