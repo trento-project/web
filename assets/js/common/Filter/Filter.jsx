@@ -14,7 +14,7 @@ const getLabel = (value, placeholder) =>
 /**
  * Filter component
  *
- * @param {string[]} props.options List of options to filter, e.g. ['Option 1', 'Option 2']
+ * @param {string[]|[string, string][]} props.options List of options to filter, e.g. ['Option 1', 'Option 2']
  * @param {string} props.title Title of the filter. It will be displayed in the button when the filter is empty
  * @param {string[]} props.value Selected options. Default is an empty array
  * @param {function} props.onChange Function to call when the selected options change
@@ -24,9 +24,18 @@ function Filter({ options, title, value = [], onChange }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
 
-  const filteredOptions = options
+  const labeledOptions = options.map((option) =>
+    typeof option === 'string' ? [option, option] : option
+  );
+
+  const filteredOptions = labeledOptions
     .filter((option) => option !== undefined && option !== null)
-    .filter((option) => option.toLowerCase().includes(query.toLowerCase()));
+    .filter((option) => option[0].toLowerCase().includes(query.toLowerCase()));
+
+  const selectedLabels = value.reduce((acc, key) => {
+    const e = labeledOptions.find(([optionKey]) => optionKey === key);
+    return e ? [...acc, e[1]] : acc;
+  }, []);
 
   useOnClickOutside(ref, () => setOpen(false));
 
@@ -60,7 +69,7 @@ function Filter({ options, title, value = [], onChange }) {
                 'text-gray-500': value.length === 0,
               })}
             >
-              {getLabel(value, `Filter ${title}...`)}
+              {getLabel(selectedLabels, `Filter ${title}...`)}
             </span>
           </span>
           <span className="ml-3 absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
@@ -107,21 +116,21 @@ function Filter({ options, title, value = [], onChange }) {
                 aria-labelledby="listbox-label"
                 className="max-h-56 py-2 text-base overflow-auto focus:outline-none sm:text-sm"
               >
-                {filteredOptions.map((option, index) => (
+                {filteredOptions.map(([key, label], index) => (
                   <li
                     key={index}
                     role="option"
-                    aria-selected={hasOne(value, [option])}
+                    aria-selected={hasOne(value, [key])}
                     aria-hidden="true"
                     className="text-gray-900 cursor-default select-none hover:bg-jungle-green-500 hover:text-white relative py-2 pl-3 pr-9"
-                    onClick={() => onChange(toggle(option, value))}
+                    onClick={() => onChange(toggle(key, value))}
                   >
                     <div className="flex items-center">
                       <span className="ml-3 block font-normal truncate">
-                        {option}
+                        {label}
                       </span>
                     </div>
-                    {hasOne(value, [option]) && (
+                    {hasOne(value, [key]) && (
                       <span className="absolute inset-y-0 right-0 flex items-center pr-4">
                         <EOS_CHECK size="m" />
                       </span>
