@@ -23,8 +23,8 @@ defmodule Trento.UserIdentities do
   If a user with the same username exists on our database, the user will be recovered and associated with the idp identity,
   otherwise the user will be created.
   """
-  def create_user(user_identity_params, user_params, user_id_params) do
-    existing_user = Users.get_by(username: user_params["username"])
+  def create_user(user_identity_params, %{"username" => username} = user_params, user_id_params) do
+    existing_user = Users.get_by(username: username)
     maybe_create_user(existing_user, user_identity_params, user_params, user_id_params)
   end
 
@@ -41,16 +41,6 @@ defmodule Trento.UserIdentities do
     pow_assent_upsert(maybe_assign_global_abilities(user), user_identity_params)
   end
 
-  defp maybe_assign_global_abilities(user) do
-    if admin_user?(user) do
-      {:ok, user} = assign_global_abilities(user)
-
-      user
-    else
-      user
-    end
-  end
-
   defp maybe_create_user(nil, user_identity_params, user_params, user_id_params) do
     case pow_assent_create_user(user_identity_params, user_params, user_id_params) do
       {:ok, %User{} = user} ->
@@ -63,6 +53,16 @@ defmodule Trento.UserIdentities do
 
   defp maybe_create_user(user, _, _, _) do
     {:ok, maybe_assign_global_abilities(user)}
+  end
+
+  defp maybe_assign_global_abilities(user) do
+    if admin_user?(user) do
+      {:ok, user} = assign_global_abilities(user)
+
+      user
+    else
+      user
+    end
   end
 
   # assign_global_abilities assigns the global ability to the admin user retrieved from oidc
