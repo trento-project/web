@@ -7,11 +7,20 @@ defmodule Trento.ActivityLog do
 
   require Logger
 
+  alias Trento.ActivityLog
   alias Trento.ActivityLog.RetentionTime
   require Trento.ActivityLog.RetentionPeriodUnit, as: RetentionPeriodUnit
   alias Trento.ActivityLog.ActivityLog
   alias Trento.ActivityLog.Settings
   alias Trento.Repo
+
+  @privileged_log_types [
+    "login_attempt",
+    "user_creation",
+    "user_modification",
+    "user_deletion",
+    "profile_update"
+  ]
 
   @spec get_settings() ::
           {:ok, Settings.t()} | {:error, :not_found}
@@ -54,10 +63,12 @@ defmodule Trento.ActivityLog do
 
   @spec list_activity_log(map()) ::
           {:ok, list(ActivityLog.t()), Flop.Meta.t()} | {:error, :activity_log_fetch_error}
-  def list_activity_log(params) do
+  def list_activity_log(params, is_privileged_user? \\ false) do
     parsed_params = parse_params(params)
 
-    case Flop.validate_and_run(ActivityLog, parsed_params, for: ActivityLog) do
+    case ActivityLog
+         |> scope(is_privileged_user?)
+         |> Flop.validate_and_run(parsed_params, for: ActivityLog) do
       {:ok, {activity_log_entries, meta}} ->
         {:ok, activity_log_entries, meta}
 
@@ -65,6 +76,12 @@ defmodule Trento.ActivityLog do
         Logger.error("Activity log fetch error: #{inspect(error)}")
         {:error, :activity_log_fetch_error}
     end
+  end
+
+  defp scope(ActivityLog = q, true = _is_privileged_user?), do: q
+
+  defp scope(ActivityLog = q, false = _is_privileged_user?) do
+    from(l in q, where: l.type not in @privileged_log_types)
   end
 
   # ''&& false' is a workaround until we reach OTP 27 that allows doc tag for private functions;

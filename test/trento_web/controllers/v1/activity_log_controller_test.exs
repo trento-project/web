@@ -3,14 +3,12 @@ defmodule TrentoWeb.V1.ActivityLogControllerTest do
 
   import Trento.Factory
   import OpenApiSpex.TestAssertions
+  import Trento.Support.Helpers.AbilitiesTestHelper
 
-  alias TrentoWeb.OpenApi.V1.ApiSpec
+  setup :setup_api_spec_v1
+  setup :setup_user
 
   describe "ActivityLogController" do
-    setup do
-      %{api_spec: ApiSpec.spec()}
-    end
-
     test "should return activity logs after inserting a few entries.", %{
       conn: conn,
       api_spec: api_spec
