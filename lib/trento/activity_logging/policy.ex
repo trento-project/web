@@ -11,7 +11,7 @@ defmodule Trento.ActivityLog.Policy do
 
   @all_user_ability %{
     name: "all",
-    resource: "user"
+    resource: "users"
   }
   def authorize(:get_activity_log, user, _params) do
     case {Helper.has_global_ability?(user), Helper.user_has_ability?(user, @all_user_ability)} do
