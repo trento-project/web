@@ -35,7 +35,9 @@ function UpgradablePackagesPage() {
       ({ to_package_id: packageID }) => packageID
     );
 
-    dispatch(fetchUpgradablePackagesPatches({ hostID, packageIDs }));
+    if (packageIDs.length > 0) {
+      dispatch(fetchUpgradablePackagesPatches({ hostID, packageIDs }));
+    }
   }, [upgradablePackages.length, hostID]);
 
   return (
