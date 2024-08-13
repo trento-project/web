@@ -83,6 +83,36 @@ describe('Filter component', () => {
     expect(mockOnChange).toHaveBeenCalledWith([selectedItem, 'Jane Smith']);
   });
 
+  it('should select with one element if passed as string', async () => {
+    const user = userEvent.setup();
+    const mockOnChange = jest.fn();
+    const options = [
+      'John Doe',
+      'Jane Smith',
+      'Michael Scott',
+      'Ella Fitzgerald',
+    ];
+
+    const selectedItem = 'Michael Scott';
+
+    render(
+      <Filter
+        options={options}
+        title="names"
+        onChange={mockOnChange}
+        value={selectedItem}
+      />
+    );
+
+    await act(() => user.click(screen.getByText(selectedItem)));
+
+    await act(() => user.click(screen.getByText('Jane Smith')));
+
+    expect(mockOnChange).toHaveBeenCalledTimes(1);
+
+    expect(mockOnChange).toHaveBeenCalledWith([selectedItem, 'Jane Smith']);
+  });
+
   it('should deselect an item on multiple item selected', async () => {
     const user = userEvent.setup();
     const mockOnChange = jest.fn();

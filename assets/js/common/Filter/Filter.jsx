@@ -16,7 +16,7 @@ const getLabel = (value, placeholder) =>
  *
  * @param {string[]|[string, string][]} props.options List of options to filter, e.g. ['Option 1', 'Option 2']
  * @param {string} props.title Title of the filter. It will be displayed in the button when the filter is empty
- * @param {string[]} props.value Selected options. Default is an empty array
+ * @param {string|string[]} props.value Selected options. Default is an empty array
  * @param {function} props.onChange Function to call when the selected options change
  */
 function Filter({ options, title, value = [], onChange }) {
@@ -32,7 +32,9 @@ function Filter({ options, title, value = [], onChange }) {
     option[0].toLowerCase().includes(query.toLowerCase())
   );
 
-  const selectedLabels = value.reduce((acc, key) => {
+  const parsedValue = typeof value === 'string' ? [value] : value;
+
+  const selectedLabels = parsedValue.reduce((acc, key) => {
     const e = labeledOptions.find(([optionKey]) => optionKey === key);
     return e ? [...acc, e[1]] : acc;
   }, []);
@@ -42,7 +44,7 @@ function Filter({ options, title, value = [], onChange }) {
   return (
     <div className="flex-1 w-64 top-16" ref={ref}>
       <div className="mt-1 relative">
-        {value.length !== 0 && (
+        {parsedValue.length !== 0 && (
           <button
             type="button"
             aria-label="Clear filter"
@@ -66,14 +68,14 @@ function Filter({ options, title, value = [], onChange }) {
           <span className="flex items-center">
             <span
               className={classNames('ml-3 block truncate', {
-                'text-gray-500': value.length === 0,
+                'text-gray-500': parsedValue.length === 0,
               })}
             >
               {getLabel(selectedLabels, `Filter ${title}...`)}
             </span>
           </span>
           <span className="ml-3 absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-            {value.length === 0 && (
+            {parsedValue.length === 0 && (
               <svg
                 className="h-5 w-5 text-gray-400"
                 xmlns="http://www.w3.org/2000/svg"
@@ -120,17 +122,17 @@ function Filter({ options, title, value = [], onChange }) {
                   <li
                     key={index}
                     role="option"
-                    aria-selected={hasOne(value, [key])}
+                    aria-selected={hasOne(parsedValue, [key])}
                     aria-hidden="true"
                     className="text-gray-900 cursor-default select-none hover:bg-jungle-green-500 hover:text-white relative py-2 pl-3 pr-9"
-                    onClick={() => onChange(toggle(key, value))}
+                    onClick={() => onChange(toggle(key, parsedValue))}
                   >
                     <div className="flex items-center">
                       <span className="ml-3 block font-normal truncate">
                         {label}
                       </span>
                     </div>
-                    {hasOne(value, [key]) && (
+                    {hasOne(parsedValue, [key]) && (
                       <span className="absolute inset-y-0 right-0 flex items-center pr-4">
                         <EOS_CHECK size="m" />
                       </span>
