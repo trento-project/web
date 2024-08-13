@@ -24,13 +24,13 @@ function Filter({ options, title, value = [], onChange }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
 
-  const labeledOptions = options.map((option) =>
-    typeof option === 'string' ? [option, option] : option
-  );
-
-  const filteredOptions = labeledOptions
+  const labeledOptions = options
     .filter((option) => option !== undefined && option !== null)
-    .filter((option) => option[0].toLowerCase().includes(query.toLowerCase()));
+    .map((option) => (typeof option === 'string' ? [option, option] : option));
+
+  const filteredOptions = labeledOptions.filter((option) =>
+    option[0].toLowerCase().includes(query.toLowerCase())
+  );
 
   const selectedLabels = value.reduce((acc, key) => {
     const e = labeledOptions.find(([optionKey]) => optionKey === key);
