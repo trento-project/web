@@ -35,8 +35,8 @@ function Filter({ options, title, value = [], onChange }) {
   const parsedValue = typeof value === 'string' ? [value] : value;
 
   const selectedLabels = parsedValue.reduce((acc, key) => {
-    const e = labeledOptions.find(([optionKey]) => optionKey === key);
-    return e ? [...acc, e[1]] : acc;
+    const element = labeledOptions.find(([optionKey]) => optionKey === key);
+    return element ? [...acc, element[1]] : acc;
   }, []);
 
   useOnClickOutside(ref, () => setOpen(false));
