@@ -1,5 +1,5 @@
-import React from 'react';
-import { act, screen } from '@testing-library/react';
+import React, { act } from 'react';
+import { screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 import MockAdapter from 'axios-mock-adapter';
