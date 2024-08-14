@@ -57,7 +57,7 @@ function ComposedFilter({
         .map(({ key, ...rest }) => [key, rest, value[key], onFilterChange(key)])
         .map((args) => renderFilter(...args))}
       {!autoApply && (
-        <div className="flex flex-row w-80 space-x-2">
+        <div className="flex flex-row w-64 space-x-2">
           <Button
             disabled={!isChanged}
             onClick={() => {
