@@ -73,3 +73,17 @@ export const WithMultipleValues = {
     value: ['Tony Kekw', 'Chad Carbonara'],
   },
 };
+
+export const WithLabel = {
+  args: {
+    ...Default.args,
+    options: [
+      ['tony-kekw', 'Tony Kekw'],
+      ['chad-carbonara', 'Chad Carbonara'],
+      ['chuck-amatriciana', 'Chuck Amatriciana'],
+      ['kco-pepe', 'K.C.O. Pepe'],
+      ['virginia-gricia', 'Virginia Gricia'],
+    ],
+    value: ['tony-kekw'],
+  },
+};
