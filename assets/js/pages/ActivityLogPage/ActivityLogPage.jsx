@@ -19,7 +19,7 @@ const filters = [
     ]),
   },
   {
-    key: 'from_date',
+    key: 'to_date',
     title: 'From date',
     type: 'date',
     prefilled: true,
@@ -40,8 +40,8 @@ const searchParamsToFilters = (searchParams) =>
 const filtersToParams = (selectedFilters) =>
   Object.entries(selectedFilters).reduce((acc, [key, value]) => {
     switch (key) {
-      case 'from_date':
-        return { ...acc, from_date: new Date(value[1]).toISOString() };
+      case 'to_date':
+        return { ...acc, to_date: new Date(value[1]).toISOString() };
       default:
         return { ...acc, [key]: value };
     }
