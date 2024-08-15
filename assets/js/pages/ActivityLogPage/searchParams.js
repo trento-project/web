@@ -25,6 +25,7 @@ export const searchParamsToAPIParams = pipe(
   map(([key, value]) => {
     switch (key) {
       case 'from_date':
+      case 'to_date':
         return [key, new Date(value[1]).toISOString()];
       default:
         return [key, value];
@@ -42,6 +43,7 @@ export const searchParamsToFilterValue = pipe(
   map(([k, v]) => {
     switch (k) {
       case 'from_date':
+      case 'to_date':
         return [k, [v[0], toZonedTime(new Date(v[1]))]];
       default:
         return [k, v];
@@ -60,6 +62,7 @@ export const filterValueToSearchParams = pipe(
   map(([k, v]) => {
     switch (k) {
       case 'from_date':
+      case 'to_date':
         return [k, [v[0], fromZonedTime(new Date(v[1])).toISOString()]];
       default:
         return [k, v];

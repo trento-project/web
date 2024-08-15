@@ -11,22 +11,28 @@ context('Activity Log page', () => {
       cy.contains('Filter Resource type', { matchCase: false }).should(
         'be.visible'
       );
-      cy.contains('Filter From', { matchCase: false }).should('be.visible');
+      cy.contains('Filter older than', { matchCase: false }).should(
+        'be.visible'
+      );
+      cy.contains('Filter newer than', { matchCase: false }).should(
+        'be.visible'
+      );
 
       cy.wait('@data').its('response.statusCode').should('eq', 200);
     });
 
     it('should render with selected filters from querystring', () => {
       cy.intercept({
-        url: '/api/v1/activity_log?from_date=2024-08-14T10:21:00.000Z&type[]=login_attempt&type[]=resource_tagging',
+        url: '/api/v1/activity_log?from_date=2024-08-14T10:21:00.000Z&to_date=2024-08-13T10:21:00.000Z&type[]=login_attempt&type[]=resource_tagging',
       }).as('data');
 
       cy.visit(
-        '/activity_log?from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging'
+        '/activity_log?from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&to_date=custom&to_date=2024-08-13T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging'
       );
 
       cy.contains('Login Attempt, Tag Added').should('be.visible');
       cy.contains('8/14/2024 10:21:00 AM').should('be.visible');
+      cy.contains('8/13/2024 10:21:00 AM').should('be.visible');
 
       cy.wait('@data').its('response.statusCode').should('eq', 200);
     });
@@ -34,8 +40,11 @@ context('Activity Log page', () => {
     it('should update querystring when filters are selected', () => {
       cy.visit('/activity_log');
 
-      cy.contains('Filter From').click();
-      cy.get('input[type="datetime-local"]').type('2024-08-14T10:21');
+      cy.contains('Filter older than').click();
+      cy.get('input[type="datetime-local"]:first').type('2024-08-14T10:21');
+
+      cy.contains('Filter newer than').click();
+      cy.get('input[type="datetime-local"]:last').type('2024-08-13T10:21');
 
       cy.contains('Filter Resource type').click();
       cy.contains('Login Attempt').click();
@@ -47,7 +56,7 @@ context('Activity Log page', () => {
         'eq',
         `${
           Cypress.config().baseUrl
-        }/activity_log?from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging`
+        }/activity_log?from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&to_date=custom&to_date=2024-08-13T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging`
       );
     });
 
@@ -65,7 +74,12 @@ context('Activity Log page', () => {
       cy.contains('Filter Resource type', { matchCase: false }).should(
         'be.visible'
       );
-      cy.contains('Filter From', { matchCase: false }).should('be.visible');
+      cy.contains('Filter older than', { matchCase: false }).should(
+        'be.visible'
+      );
+      cy.contains('Filter newer than', { matchCase: false }).should(
+        'be.visible'
+      );
 
       cy.wait('@data').its('response.statusCode').should('eq', 200);
     });

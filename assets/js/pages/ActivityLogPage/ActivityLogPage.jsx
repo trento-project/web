@@ -25,7 +25,13 @@ const filters = [
   },
   {
     key: 'from_date',
-    title: 'From date',
+    title: 'older than',
+    type: 'date',
+    prefilled: true,
+  },
+  {
+    key: 'to_date',
+    title: 'newer than',
     type: 'date',
     prefilled: true,
   },
