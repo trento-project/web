@@ -18,11 +18,11 @@ context('Activity Log page', () => {
 
     it('should render with selected filters from querystring', () => {
       cy.intercept({
-        url: '/api/v1/activity_log?from_date=2024-08-14T08:21:00.000Z&type[]=login_attempt&type[]=resource_tagging',
+        url: '/api/v1/activity_log?from_date=2024-08-14T10:21:00.000Z&type[]=login_attempt&type[]=resource_tagging',
       }).as('data');
 
       cy.visit(
-        '/activity_log?from_date=custom&from_date=Wed+Aug+14+2024+10%3A21%3A00+GMT%2B0200+%28Central+European+Summer+Time%29&type=login_attempt&type=resource_tagging'
+        '/activity_log?from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging'
       );
 
       cy.contains('Login Attempt, Tag Added').should('be.visible');
@@ -47,7 +47,7 @@ context('Activity Log page', () => {
         'eq',
         `${
           Cypress.config().baseUrl
-        }/activity_log?from_date=custom&from_date=Wed+Aug+14+2024+10%3A21%3A00+GMT%2B0200+%28Central+European+Summer+Time%29&type=login_attempt&type=resource_tagging`
+        }/activity_log?from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging`
       );
     });
 
@@ -57,7 +57,7 @@ context('Activity Log page', () => {
       }).as('data');
 
       cy.visit(
-        '/activity_log?from_date=custom&from_date=Wed+Aug+14+2024+10%3A21%3A00+GMT%2B0200+%28Central+European+Summer+Time%29&type=login_attempt&type=resource_tagging'
+        '/activity_log?from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging'
       );
 
       cy.contains('Reset').click();

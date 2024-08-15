@@ -7,6 +7,11 @@ import ComposedFilter from '@common/ComposedFilter';
 
 import { getActivityLog } from '@lib/api/activityLogs';
 import { ACTIVITY_TYPES_CONFIG } from '@lib/model/activityLog';
+import {
+  filterValueToSearchParams,
+  searchParamsToAPIParams,
+  searchParamsToFilterValue,
+} from './searchParams';
 
 const filters = [
   {
@@ -26,27 +31,6 @@ const filters = [
   },
 ];
 
-const removeUndefinedFields = (obj) =>
-  Object.fromEntries(
-    Object.entries(obj).filter(([_, v]) => typeof v !== 'undefined')
-  );
-
-const searchParamsToFilters = (searchParams) =>
-  [...searchParams.entries()].reduce(
-    (acc, [key, value]) => ({ ...acc, [key]: [...(acc[key] || []), value] }),
-    {}
-  );
-
-const filtersToParams = (selectedFilters) =>
-  Object.entries(selectedFilters).reduce((acc, [key, value]) => {
-    switch (key) {
-      case 'from_date':
-        return { ...acc, from_date: new Date(value[1]).toISOString() };
-      default:
-        return { ...acc, [key]: value };
-    }
-  }, {});
-
 function ActivityLogPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [activityLog, setActivityLog] = useState([]);
@@ -54,9 +38,10 @@ function ActivityLogPage() {
   const [activityLogDetailModalOpen, setActivityLogDetailModalOpen] =
     useState(false);
 
-  const fetchActivityLog = (selectedFilters) => {
+  const fetchActivityLog = () => {
     setLoading(true);
-    getActivityLog(filtersToParams(selectedFilters))
+    const params = searchParamsToAPIParams(searchParams);
+    getActivityLog(params)
       .then((response) => {
         setActivityLog(response.data?.data ?? []);
       })
@@ -67,7 +52,7 @@ function ActivityLogPage() {
   };
 
   useEffect(() => {
-    fetchActivityLog(searchParamsToFilters(searchParams));
+    fetchActivityLog();
   }, [searchParams]);
 
   return (
@@ -79,8 +64,8 @@ function ActivityLogPage() {
           <ComposedFilter
             filters={filters}
             autoApply={false}
-            value={searchParamsToFilters(searchParams)}
-            onChange={(p) => setSearchParams(removeUndefinedFields(p))}
+            value={searchParamsToFilterValue(searchParams)}
+            onChange={(p) => setSearchParams(filterValueToSearchParams(p))}
           />
         </div>
         <ActivityLogOverview
