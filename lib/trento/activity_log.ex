@@ -14,7 +14,7 @@ defmodule Trento.ActivityLog do
   alias Trento.ActivityLog.Settings
   alias Trento.Repo
 
-  @privileged_log_types [
+  @user_management_log_types [
     "login_attempt",
     "user_creation",
     "user_modification",
@@ -63,11 +63,11 @@ defmodule Trento.ActivityLog do
 
   @spec list_activity_log(map()) ::
           {:ok, list(ActivityLog.t()), Flop.Meta.t()} | {:error, :activity_log_fetch_error}
-  def list_activity_log(params, is_privileged_user? \\ false) do
+  def list_activity_log(params, user_has_ability? \\ false) do
     parsed_params = parse_params(params)
 
     case ActivityLog
-         |> scope(is_privileged_user?)
+         |> scope(user_has_ability?)
          |> Flop.validate_and_run(parsed_params, for: ActivityLog) do
       {:ok, {activity_log_entries, meta}} ->
         {:ok, activity_log_entries, meta}
@@ -79,14 +79,14 @@ defmodule Trento.ActivityLog do
   end
 
   # for usage in tests only
-  def privileged_log_types do
-    @privileged_log_types
+  def user_management_log_types do
+    @user_management_log_types
   end
 
-  defp scope(ActivityLog = q, true = _is_privileged_user?), do: q
+  defp scope(ActivityLog = q, true = _user_has_ability?), do: q
 
-  defp scope(ActivityLog = q, false = _is_privileged_user?) do
-    from(l in q, where: l.type not in @privileged_log_types)
+  defp scope(ActivityLog = q, false = _user_has_ability?) do
+    from(l in q, where: l.type not in @user_management_log_types)
   end
 
   # ''&& false' is a workaround until we reach OTP 27 that allows doc tag for private functions;

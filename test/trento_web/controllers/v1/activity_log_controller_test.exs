@@ -191,7 +191,7 @@ defmodule TrentoWeb.V1.ActivityLogControllerTest do
            conn: conn,
            api_spec: api_spec
          } do
-      for type <- ActivityLog.privileged_log_types() do
+      for type <- ActivityLog.user_management_log_types() do
         insert_list(10, :activity_log_entry, %{type: type})
       end
 
@@ -221,7 +221,7 @@ defmodule TrentoWeb.V1.ActivityLogControllerTest do
            conn: conn,
            api_spec: api_spec
          } do
-      for type <- ActivityLog.privileged_log_types() do
+      for type <- ActivityLog.user_management_log_types() do
         insert_list(10, :activity_log_entry, %{type: type})
       end
 
