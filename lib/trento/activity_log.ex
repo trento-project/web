@@ -78,6 +78,11 @@ defmodule Trento.ActivityLog do
     end
   end
 
+  # for usage in tests only
+  def privileged_log_types do
+    @privileged_log_types
+  end
+
   defp scope(ActivityLog = q, true = _is_privileged_user?), do: q
 
   defp scope(ActivityLog = q, false = _is_privileged_user?) do

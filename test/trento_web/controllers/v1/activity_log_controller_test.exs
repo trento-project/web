@@ -1,6 +1,8 @@
 defmodule TrentoWeb.V1.ActivityLogControllerTest do
   use TrentoWeb.ConnCase, async: true
 
+  alias Trento.ActivityLog
+
   import Trento.Factory
   import OpenApiSpex.TestAssertions
   import Trento.Support.Helpers.AbilitiesTestHelper
@@ -181,6 +183,62 @@ defmodule TrentoWeb.V1.ActivityLogControllerTest do
         |> json_response(200)
 
       assert length(resp["data"]) == 18
+      assert_schema(resp, "ActivityLog", api_spec)
+    end
+
+    test "should not return user management log types if user has all:foo ability",
+         %{
+           conn: conn,
+           api_spec: api_spec
+         } do
+      for type <- ActivityLog.privileged_log_types() do
+        insert_list(10, :activity_log_entry, %{type: type})
+      end
+
+      %{id: user_id} = insert(:user)
+
+      # We do not use all:all or all:users, in order to test
+      # segregation of user mgmt log entries
+      %{id: ability_id} = insert(:ability, name: "all", resource: "foo")
+      insert(:users_abilities, user_id: user_id, ability_id: ability_id)
+
+      conn =
+        Pow.Plug.assign_current_user(conn, %{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
+
+      resp =
+        conn
+        |> get("/api/v1/activity_log")
+        |> json_response(200)
+
+      # We expect an empty response since there are no entries
+      # other than user management related ones.
+      assert Enum.empty?(resp["data"])
+      assert_schema(resp, "ActivityLog", api_spec)
+    end
+
+    test "should return user management log types if user has all:users ability",
+         %{
+           conn: conn,
+           api_spec: api_spec
+         } do
+      for type <- ActivityLog.privileged_log_types() do
+        insert_list(10, :activity_log_entry, %{type: type})
+      end
+
+      %{id: user_id} = insert(:user)
+
+      %{id: ability_id} = insert(:ability, name: "all", resource: "foo")
+      insert(:users_abilities, user_id: user_id, ability_id: ability_id)
+
+      conn =
+        Pow.Plug.assign_current_user(conn, %{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
+
+      resp =
+        conn
+        |> get("/api/v1/activity_log")
+        |> json_response(200)
+
+      assert length(resp["data"]) == 25
       assert_schema(resp, "ActivityLog", api_spec)
     end
   end
