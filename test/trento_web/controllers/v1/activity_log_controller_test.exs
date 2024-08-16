@@ -186,7 +186,7 @@ defmodule TrentoWeb.V1.ActivityLogControllerTest do
       assert_schema(resp, "ActivityLog", api_spec)
     end
 
-    test "should not return user management log types if user has all:foo ability",
+    test "should not return user management logs if user has all:foo ability",
          %{
            conn: conn,
            api_spec: api_spec
@@ -216,7 +216,7 @@ defmodule TrentoWeb.V1.ActivityLogControllerTest do
       assert_schema(resp, "ActivityLog", api_spec)
     end
 
-    test "should return user management log types if user has all:users ability",
+    test "should return user management logs if user has all:users ability",
          %{
            conn: conn,
            api_spec: api_spec
@@ -227,7 +227,7 @@ defmodule TrentoWeb.V1.ActivityLogControllerTest do
 
       %{id: user_id} = insert(:user)
 
-      %{id: ability_id} = insert(:ability, name: "all", resource: "foo")
+      %{id: ability_id} = insert(:ability, name: "all", resource: "users")
       insert(:users_abilities, user_id: user_id, ability_id: ability_id)
 
       conn =
