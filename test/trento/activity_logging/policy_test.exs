@@ -4,7 +4,7 @@ defmodule Trento.ActivityLog.PolicyTest do
   alias Trento.ActivityLog.Policy
   alias Trento.Users.User
 
-  test "should allow get_activity_log action by default for  aall users with any ability" do
+  test "should allow get_activity_log action by default for all users with any ability" do
     user = %User{abilities: [%{resource: "foo", name: "bar"}]}
 
     assert Policy.authorize(:get_activity_log, user, %{})
