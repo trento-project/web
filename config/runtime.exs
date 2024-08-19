@@ -182,7 +182,7 @@ if config_env() in [:prod, :demo] do
     callback_url:
       System.get_env(
         "OIDC_CALLBACK_URL",
-        "https://#{System.get_env("TRENTO_WEB_ORIGIN")}:#{System.get_env("PORT", "4000")}/auth/oidc_callback"
+        "https://#{System.get_env("TRENTO_WEB_ORIGIN")}/auth/oidc_callback"
       )
 
   if enable_oidc do
