@@ -62,12 +62,12 @@ defmodule TrentoWeb.V1.ActivityLogController do
     ]
 
   def get_activity_log(conn, params) do
-    {current_function, _} = __ENV__.function
-    user = conn.assigns.current_user
-    user_has_ability? = Bodyguard.permit?(Policy, current_function, user)
+    current_function = Phoenix.Controller.action_name(conn)
+    user = Pow.Plug.current_user(conn)
+    include_all_logs? = Bodyguard.permit?(Policy, current_function, user)
 
     with {:ok, activity_log_entries, meta} <-
-           ActivityLog.list_activity_log(params, user_has_ability?) do
+           ActivityLog.list_activity_log(params, include_all_logs?) do
       render(conn, "activity_log.json", %{
         activity_log: activity_log_entries,
         pagination: meta

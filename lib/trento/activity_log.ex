@@ -62,11 +62,11 @@ defmodule Trento.ActivityLog do
 
   @spec list_activity_log(map()) ::
           {:ok, list(ActivityLog.t()), Flop.Meta.t()} | {:error, :activity_log_fetch_error}
-  def list_activity_log(params, user_has_ability? \\ false) do
+  def list_activity_log(params, include_all_log_types? \\ false) do
     parsed_params = parse_params(params)
 
     case ActivityLog
-         |> scope(user_has_ability?)
+         |> maybe_exclude_user_logs(include_all_log_types?)
          |> Flop.validate_and_run(parsed_params, for: ActivityLog) do
       {:ok, {activity_log_entries, meta}} ->
         {:ok, activity_log_entries, meta}
@@ -77,14 +77,9 @@ defmodule Trento.ActivityLog do
     end
   end
 
-  # for usage in tests only
-  def user_management_log_types do
-    @user_management_log_types
-  end
+  defp maybe_exclude_user_logs(ActivityLog = q, true = _include_all_log_types?), do: q
 
-  defp scope(ActivityLog = q, true = _user_has_ability?), do: q
-
-  defp scope(ActivityLog = q, false = _user_has_ability?) do
+  defp maybe_exclude_user_logs(ActivityLog = q, false = _include_all_log_types?) do
     from(l in q, where: l.type not in @user_management_log_types)
   end
 

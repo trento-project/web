@@ -1,14 +1,20 @@
 defmodule TrentoWeb.V1.ActivityLogControllerTest do
   use TrentoWeb.ConnCase, async: true
 
-  alias Trento.ActivityLog
-
   import Trento.Factory
   import OpenApiSpex.TestAssertions
   import Trento.Support.Helpers.AbilitiesTestHelper
 
   setup :setup_api_spec_v1
   setup :setup_user
+
+  @user_management_log_types [
+    "login_attempt",
+    "user_creation",
+    "user_modification",
+    "user_deletion",
+    "profile_update"
+  ]
 
   describe "ActivityLogController" do
     test "should return activity logs after inserting a few entries.", %{
@@ -191,7 +197,7 @@ defmodule TrentoWeb.V1.ActivityLogControllerTest do
            conn: conn,
            api_spec: api_spec
          } do
-      for type <- ActivityLog.user_management_log_types() do
+      for type <- @user_management_log_types do
         insert_list(10, :activity_log_entry, %{type: type})
       end
 
@@ -221,7 +227,7 @@ defmodule TrentoWeb.V1.ActivityLogControllerTest do
            conn: conn,
            api_spec: api_spec
          } do
-      for type <- ActivityLog.user_management_log_types() do
+      for type <- @user_management_log_types do
         insert_list(10, :activity_log_entry, %{type: type})
       end
 
