@@ -318,4 +318,145 @@ describe('Filter component', () => {
       });
     });
   });
+
+  it('should use options with label', async () => {
+    const user = userEvent.setup();
+    const mockOnChange = jest.fn();
+    const options = [
+      ['john-doe', 'John Doe'],
+      ['jane-smith', 'Jane Smith'],
+      ['michael-scott', 'Michael Scott'],
+      ['ella-fitzgerald', 'Ella Fitzgerald'],
+    ];
+
+    const selectedItem = 'michael-scott';
+    const selectedItemLabel = 'Michael Scott';
+
+    const anotherSelectedItem = 'jane-smith';
+    const anotherSelectedItemLabel = 'Jane Smith';
+
+    render(
+      <Filter
+        options={options}
+        title="names"
+        onChange={mockOnChange}
+        value={['michael-scott']}
+      />
+    );
+
+    await act(() => user.click(screen.getByText(selectedItemLabel)));
+
+    await act(() => {
+      options.forEach(([, label]) => {
+        expect(screen.getAllByText(label)[0]).toBeInTheDocument();
+      });
+    });
+
+    await act(() =>
+      user.click(screen.getAllByText(anotherSelectedItemLabel)[0])
+    );
+
+    expect(mockOnChange).toHaveBeenCalledWith([
+      selectedItem,
+      anotherSelectedItem,
+    ]);
+  });
+
+  it('should render correctly mixed options', async () => {
+    const user = userEvent.setup();
+    const mockOnChange = jest.fn();
+    const options = [
+      'Michael Scott',
+      undefined,
+      ['john-doe', 'John Doe'],
+      'Jane Smith',
+    ];
+
+    render(
+      <Filter
+        options={options}
+        title="names"
+        onChange={mockOnChange}
+        value={['Michael Scott']}
+      />
+    );
+
+    await act(() => user.click(screen.getByText('Michael Scott')));
+
+    await act(() => {
+      expect(screen.getByText('John Doe')).toBeInTheDocument();
+      expect(screen.getByText('Jane Smith')).toBeInTheDocument();
+    });
+
+    /* Remember that the component is stateless, 
+      it does not change its internal state on selection. */
+
+    await act(() => user.click(screen.getByText('John Doe')));
+    expect(mockOnChange).toHaveBeenCalledWith(['Michael Scott', 'john-doe']);
+
+    await act(() => user.click(screen.getByText('Jane Smith')));
+    expect(mockOnChange).toHaveBeenCalledWith(['Michael Scott', 'Jane Smith']);
+  });
+
+  it('should ignore undefined values', async () => {
+    const user = userEvent.setup();
+    const mockOnChange = jest.fn();
+    const options = [
+      'John Doe',
+      'Jane Smith',
+      'Michael Scott',
+      'Ella Fitzgerald',
+    ];
+
+    render(
+      <Filter
+        options={options}
+        title="names"
+        onChange={mockOnChange}
+        value={['Michael Scott', undefined]}
+      />
+    );
+
+    await act(() => user.click(screen.getByText('Michael Scott')));
+
+    await act(() => {
+      options.forEach((label) => {
+        expect(screen.getAllByText(label)[0]).toBeInTheDocument();
+      });
+    });
+  });
+
+  it('should ignore undefined options', async () => {
+    const user = userEvent.setup();
+    const mockOnChange = jest.fn();
+    const options = [
+      '5E8',
+      undefined,
+      '32S',
+      '4B9',
+      'MF5',
+      'PRD',
+      'QAS',
+      'HA1',
+      'HA2',
+    ];
+    const value = ['PRD'];
+
+    render(
+      <Filter
+        options={options}
+        title="names"
+        onChange={mockOnChange}
+        value={value}
+      />
+    );
+
+    await act(() => user.click(screen.getByText('PRD')));
+
+    await act(() => {
+      options.filter(Boolean).forEach((label) => {
+        expect(screen.getAllByText(label)[0]).toBeInTheDocument();
+      });
+    });
+  });
 });

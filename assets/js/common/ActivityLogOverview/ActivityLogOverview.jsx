@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { noop } from 'lodash';
+import { format, toZonedTime } from 'date-fns-tz';
+
 import {
   EOS_BUG_REPORT_OUTLINED,
   EOS_ERROR_OUTLINED,
@@ -20,7 +22,6 @@ import {
 } from '@lib/model/activityLog';
 
 import ActivityLogDetailModal from '@common/ActivityLogDetailsModal';
-import { format } from 'date-fns';
 
 const logLevelToIcon = {
   [LEVEL_DEBUG]: <EOS_BUG_REPORT_OUTLINED className="w-full" />,
@@ -38,7 +39,7 @@ const logLevelToLabel = {
 export const toRenderedEntry = (entry) => ({
   id: entry.id,
   type: entry.type,
-  time: format(entry.occurred_on, 'yyyy-MM-dd HH:mm:ss'),
+  time: format(toZonedTime(entry.occurred_on), 'yyyy-MM-dd HH:mm:ss'),
   message: toMessage(entry),
   user: entry.actor,
   level: ACTIVITY_LOG_LEVELS.includes(entry?.level) ? entry?.level : LEVEL_INFO,

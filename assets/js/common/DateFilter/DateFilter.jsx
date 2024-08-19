@@ -56,7 +56,8 @@ const parseInputOptions = (options) =>
 const getSelectedOption = (options, value) => {
   const selectedId = Array.isArray(value) ? value[0] : value;
   if (selectedId === 'custom') {
-    return ['custom', value[1], () => toHumanDate(value[1])];
+    const date = new Date(value[1]);
+    return ['custom', date, () => toHumanDate(date)];
   }
   if (typeof selectedId === 'string') {
     return options.find((option) => option[0] === selectedId);
