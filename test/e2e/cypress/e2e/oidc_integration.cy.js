@@ -18,6 +18,10 @@ const loginWithOIDC = (username, password) => {
 };
 
 describe('OIDC integration', () => {
+  if (!Cypress.env('OIDC_INTEGRATION_TESTS')) {
+    return;
+  }
+
   before(() => {
     cy.clearAllLocalStorage();
     cy.clearAllCookies();
