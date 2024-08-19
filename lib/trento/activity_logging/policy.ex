@@ -4,7 +4,7 @@ defmodule Trento.ActivityLog.Policy do
 
   User with the ability all:all/all:users can see all logs including user management 
   activity log entries when accessing from the get_activity_log_all action.
-  All users with any abilitiy can access all logs except user management from the 
+  All users with any ability can access all logs except user management from the 
   get_activity_log action.
   """
 
