@@ -7,7 +7,6 @@ defmodule Trento.ActivityLog do
 
   require Logger
 
-  alias Trento.ActivityLog
   alias Trento.ActivityLog.RetentionTime
   require Trento.ActivityLog.RetentionPeriodUnit, as: RetentionPeriodUnit
   alias Trento.ActivityLog.ActivityLog
