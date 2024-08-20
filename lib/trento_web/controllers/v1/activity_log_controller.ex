@@ -3,8 +3,8 @@ defmodule TrentoWeb.V1.ActivityLogController do
   use OpenApiSpex.ControllerSpecs
 
   alias Trento.ActivityLog
-  alias TrentoWeb.OpenApi.V1.Schema
   alias Trento.Support.PolicyHelper
+  alias TrentoWeb.OpenApi.V1.Schema
 
   plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
   action_fallback TrentoWeb.FallbackController
