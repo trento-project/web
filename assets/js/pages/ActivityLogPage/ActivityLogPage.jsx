@@ -24,14 +24,14 @@ const filters = [
     ]),
   },
   {
-    key: 'from_date',
-    title: 'older than',
+    key: 'to_date',
+    title: 'newer than',
     type: 'date',
     prefilled: true,
   },
   {
-    key: 'to_date',
-    title: 'newer than',
+    key: 'from_date',
+    title: 'older than',
     type: 'date',
     prefilled: true,
   },
