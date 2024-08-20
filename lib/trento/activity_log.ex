@@ -13,6 +13,14 @@ defmodule Trento.ActivityLog do
   alias Trento.ActivityLog.Settings
   alias Trento.Repo
 
+  @user_management_log_types [
+    "login_attempt",
+    "user_creation",
+    "user_modification",
+    "user_deletion",
+    "profile_update"
+  ]
+
   @spec get_settings() ::
           {:ok, Settings.t()} | {:error, :not_found}
   def get_settings do
@@ -54,10 +62,12 @@ defmodule Trento.ActivityLog do
 
   @spec list_activity_log(map()) ::
           {:ok, list(ActivityLog.t()), Flop.Meta.t()} | {:error, :activity_log_fetch_error}
-  def list_activity_log(params) do
+  def list_activity_log(params, include_all_log_types? \\ false) do
     parsed_params = parse_params(params)
 
-    case Flop.validate_and_run(ActivityLog, parsed_params, for: ActivityLog) do
+    case ActivityLog
+         |> maybe_exclude_user_logs(include_all_log_types?)
+         |> Flop.validate_and_run(parsed_params, for: ActivityLog) do
       {:ok, {activity_log_entries, meta}} ->
         {:ok, activity_log_entries, meta}
 
@@ -65,6 +75,12 @@ defmodule Trento.ActivityLog do
         Logger.error("Activity log fetch error: #{inspect(error)}")
         {:error, :activity_log_fetch_error}
     end
+  end
+
+  defp maybe_exclude_user_logs(ActivityLog = q, true = _include_all_log_types?), do: q
+
+  defp maybe_exclude_user_logs(ActivityLog = q, false = _include_all_log_types?) do
+    from(l in q, where: l.type not in @user_management_log_types)
   end
 
   # ''&& false' is a workaround until we reach OTP 27 that allows doc tag for private functions;
