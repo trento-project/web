@@ -6,7 +6,7 @@ defmodule Trento.Users.Policy do
   """
   @behaviour Bodyguard.Policy
 
-  import Trento.Support.PolicyHelper
+  import Trento.Support.AbilitiesHelper
   alias Trento.Users.User
 
   def authorize(action, %User{} = user, User) when action in [:index, :show],

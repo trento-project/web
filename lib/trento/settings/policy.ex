@@ -8,7 +8,7 @@ defmodule Trento.Settings.Policy do
   """
   @behaviour Bodyguard.Policy
 
-  import Trento.Support.PolicyHelper
+  import Trento.Support.AbilitiesHelper
   alias Trento.ActivityLog.Settings, as: ActivityLogSettings
   alias Trento.Settings.ApiKeySettings
   alias Trento.Settings.SuseManagerSettings

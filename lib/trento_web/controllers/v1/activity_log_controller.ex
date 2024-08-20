@@ -3,7 +3,7 @@ defmodule TrentoWeb.V1.ActivityLogController do
   use OpenApiSpex.ControllerSpecs
 
   alias Trento.ActivityLog
-  alias Trento.Support.PolicyHelper
+  alias Trento.Support.AbilitiesHelper
   alias TrentoWeb.OpenApi.V1.Schema
 
   plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
@@ -76,8 +76,8 @@ defmodule TrentoWeb.V1.ActivityLogController do
 
   defp include_all_logs?(user),
     do:
-      PolicyHelper.has_global_ability?(user) or
-        PolicyHelper.user_has_ability?(user, %{
+      AbilitiesHelper.has_global_ability?(user) or
+        AbilitiesHelper.user_has_ability?(user, %{
           name: "all",
           resource: "users"
         })

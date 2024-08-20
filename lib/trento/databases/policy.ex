@@ -6,7 +6,7 @@ defmodule Trento.Databases.Policy do
   """
   @behaviour Bodyguard.Policy
 
-  import Trento.Support.PolicyHelper
+  import Trento.Support.AbilitiesHelper
   alias Trento.Databases.Projections.DatabaseReadModel
   alias Trento.Users.User
 
