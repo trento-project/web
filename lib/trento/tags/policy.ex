@@ -13,7 +13,7 @@ defmodule Trento.Tags.Policy do
   """
   @behaviour Bodyguard.Policy
 
-  import Trento.Support.PolicyHelper
+  import Trento.Support.AbilitiesHelper
   alias Trento.Tags.Tag
   alias Trento.Users.User
 

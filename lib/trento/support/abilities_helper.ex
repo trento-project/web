@@ -1,4 +1,4 @@
-defmodule Trento.Support.PolicyHelper do
+defmodule Trento.Support.AbilitiesHelper do
   @moduledoc """
   Helper functions for bodyguard policies
   """

@@ -9,7 +9,7 @@ defmodule Trento.Hosts.Policy do
   """
   @behaviour Bodyguard.Policy
 
-  import Trento.Support.PolicyHelper
+  import Trento.Support.AbilitiesHelper
   alias Trento.Hosts.Projections.HostReadModel
   alias Trento.Users.User
 

@@ -6,7 +6,7 @@ defmodule Trento.SapSystems.Policy do
   """
   @behaviour Bodyguard.Policy
 
-  import Trento.Support.PolicyHelper
+  import Trento.Support.AbilitiesHelper
   alias Trento.SapSystems.Projections.SapSystemReadModel
   alias Trento.Users.User
 

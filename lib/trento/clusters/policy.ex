@@ -4,7 +4,7 @@ defmodule Trento.Clusters.Policy do
   """
   @behaviour Bodyguard.Policy
 
-  import Trento.Support.PolicyHelper
+  import Trento.Support.AbilitiesHelper
   alias Trento.Clusters.Projections.ClusterReadModel
   alias Trento.Users.User
 
