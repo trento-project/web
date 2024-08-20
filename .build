@@ -363,6 +363,7 @@ Trento.SoftwareUpdates.Discovery.html
 Trento.SoftwareUpdates.Enums.AdvisoryType.html
 Trento.SoftwareUpdates.Enums.SoftwareUpdatesHealth.html
 Trento.SoftwareUpdates.html
+Trento.Support.AbilitiesHelper.html
 Trento.Support.Command.html
 Trento.Support.DateService.html
 Trento.Support.Ecto.EncryptedBinary.html
@@ -375,7 +376,6 @@ Trento.Support.Helpers.AbilitiesTestHelper.html
 Trento.Support.IntermediateEvent.html
 Trento.Support.JsonbSerializer.html
 Trento.Support.ListHelper.html
-Trento.Support.PolicyHelper.html
 Trento.Support.StructHelper.html
 Trento.Support.Type.html
 Trento.Tags.Policy.html
@@ -483,8 +483,8 @@ dist/lato-latin-ext-300-normal-VPGGJKJL.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-EF806577.js
-dist/sidebar_items-013D8A7A.js
+dist/search_data-4C37427A.js
+dist/sidebar_items-7F5A123A.js
 environment_variables.html
 hack_on_the_trento.html
 index.html
