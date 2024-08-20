@@ -28,6 +28,22 @@
   ],
   "users": [
     {
+      "id": "trento-admin",
+      "email": "trentoadmin@trento.suse.com",
+      "username": "admin",
+      "firstName": "Trento admin user",
+      "lastName": "Superadmin",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        {
+          "temporary": false,
+          "type": "admin",
+          "value": "admin"
+        }
+      ]
+    },
+    {
       "id": "trento-idp-user",
       "email": "trentoidp@trento.suse.com",
       "username": "trentoidp",
