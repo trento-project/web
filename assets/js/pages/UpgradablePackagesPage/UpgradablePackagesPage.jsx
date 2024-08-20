@@ -31,11 +31,13 @@ function UpgradablePackagesPage() {
   );
 
   useEffect(() => {
-    const packageIDs = upgradablePackages.map(
-      ({ to_package_id: packageID }) => packageID
-    );
+    if (upgradablePackages.length) {
+      const packageIDs = upgradablePackages.map(
+        ({ to_package_id: packageID }) => packageID
+      );
 
-    dispatch(fetchUpgradablePackagesPatches({ hostID, packageIDs }));
+      dispatch(fetchUpgradablePackagesPatches({ hostID, packageIDs }));
+    }
   }, [upgradablePackages.length, hostID]);
 
   return (
