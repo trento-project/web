@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-K7URE6B4.js"></script>
-    <script src="dist/sidebar_items-2643C43C.js"></script>
+    <script src="dist/sidebar_items-013D8A7A.js"></script>
     <script src="docs_config.js"></script>
     <script async src="dist/html-YIPIRHGU.js"></script>
 
@@ -181,7 +181,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#list_activity_log/1" data-no-tooltip translate="no">list_activity_log(params)</a>
+        <a href="#list_activity_log/2" data-no-tooltip translate="no">list_activity_log(params, include_all_log_types? \\ false)</a>
 
       </div>
 
@@ -209,7 +209,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">change_retention_period(value, unit)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_log.ex#L28" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_log.ex#L36" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -239,7 +239,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">clear_expired_logs()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_log.ex#L47" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_log.ex#L55" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -267,7 +267,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">get_settings()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_log.ex#L18" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_log.ex#L26" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -286,16 +286,18 @@ GUIDES
 
   </section>
 </section>
-<section class="detail" id="list_activity_log/1">
+<section class="detail" id="list_activity_log/2">
+
+    <span id="list_activity_log/1"></span>
 
   <div class="detail-header">
-    <a href="#list_activity_log/1" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#list_activity_log/2" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">list_activity_log(params)</h1>
+    <h1 class="signature" translate="no">list_activity_log(params, include_all_log_types? \\ false)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_log.ex#L57" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_log.ex#L65" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -304,14 +306,6 @@ GUIDES
   </div>
 
   <section class="docstring">
-
-      <div class="specs">
-
-          <pre translate="no"><span class="attribute">@spec</span> list_activity_log(<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()) ::
-  {:ok, [<a href="Trento.ActivityLog.ActivityLog.html#t:t/0">Trento.ActivityLog.ActivityLog.t</a>()], <a href="https://hexdocs.pm/flop/0.25.0/Flop.Meta.html#t:t/0">Flop.Meta.t</a>()}
-  | {:error, :activity_log_fetch_error}</pre>
-
-      </div>
 
 
   </section>
