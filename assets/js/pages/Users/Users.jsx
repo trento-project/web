@@ -19,6 +19,7 @@ function Users({
   navigate = noop,
   users = defaultUsers,
   loading = false,
+  singleSignOnEnabled = false,
 }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [user, setUser] = useState(null);
@@ -92,18 +93,20 @@ function Users({
       <div className="flex w-1/2 h-auto overflow-hidden overflow-ellipsis break-words">
         <PageHeader className="font-bold">Users</PageHeader>
       </div>
-      <div className="flex w-1/2 justify-end">
-        <div className="flex w-fit whitespace-nowrap">
-          <Button
-            className="inline-block mx-1"
-            size="small"
-            disabled={loading}
-            onClick={() => navigate('/users/new')}
-          >
-            Create User
-          </Button>
+      {!singleSignOnEnabled && (
+        <div className="flex w-1/2 justify-end">
+          <div className="flex w-fit whitespace-nowrap">
+            <Button
+              className="inline-block mx-1"
+              size="small"
+              disabled={loading}
+              onClick={() => navigate('/users/new')}
+            >
+              Create User
+            </Button>
+          </div>
         </div>
-      </div>
+      )}
       <Modal
         open={modalOpen}
         className="!w-3/4 !max-w-3xl"

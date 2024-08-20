@@ -1,15 +1,18 @@
 defmodule TrentoWeb.SessionController do
+  alias Plug.Conn
+  alias PowAssent.Plug, as: PowAssentPlug
   alias Trento.Repo
   alias Trento.Users
   alias Trento.Users.User
   alias TrentoWeb.OpenApi.V1.Schema
-
   alias TrentoWeb.Plugs.AppJWTAuthPlug
 
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
 
   action_fallback TrentoWeb.FallbackController
+
+  plug TrentoWeb.Plugs.ExternalIdpGuardPlug when action in [:create]
 
   require Logger
 
@@ -174,6 +177,85 @@ defmodule TrentoWeb.SessionController do
     end
   end
 
+  operation :callback,
+    summary: "Platform external IDP callback",
+    tags: ["Platform"],
+    description: "Authenticate against an external authentication provider",
+    security: [],
+    request_body:
+      {"User IDP credentials", "application/json",
+       %OpenApiSpex.Schema{
+         title: "UserIDPEnrollmentCredentials",
+         type: :object,
+         example: %{
+           code: "kyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYt",
+           session_sate: "frHteBttgtW8706m7nqYC6ruYt"
+         },
+         properties: %{
+           code: %OpenApiSpex.Schema{
+             type: :string
+           },
+           session_state: %OpenApiSpex.Schema{
+             type: :string
+           }
+         },
+         required: [:code, :session_state]
+       }},
+    parameters: [
+      provider: [
+        in: :path,
+        schema: %OpenApiSpex.Schema{type: :string},
+        required: true
+      ]
+    ],
+    responses: [
+      unauthorized: Schema.Unauthorized.response(),
+      ok:
+        {"User IDP credentials", "application/json",
+         %OpenApiSpex.Schema{
+           title: "UserIDPCredentials",
+           type: :object,
+           example: %{
+             access_token:
+               "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTU1NjY5MiwiaWF0IjoxNjcxNTQ5NDkyLCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwOGlxMmkxNnRlbHNycWE4MDAwMWM4IiwibmJmIjoxNjcxNTQ5NDkyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYtTrbVcCEO_UgIkHn6A",
+             refresh_token:
+               "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTU1NjY5MiwiaWF0IjoxNjcxNTQ5NDkyLCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwOGlxMmkxNnRlbHNycWE4MDAwMWM4IiwibmJmIjoxNjcxNTQ5NDkyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYtTrbVcCEO_UgIkHn6A"
+           },
+           properties: %{
+             access_token: %OpenApiSpex.Schema{
+               type: :string
+             },
+             refresh_token: %OpenApiSpex.Schema{
+               type: :string
+             }
+           }
+         }}
+    ]
+
+  def callback(%{body_params: body_params} = conn, %{"provider" => provider}) do
+    params = Map.drop(body_params, ["session_params"])
+    session_params = Map.get(body_params, "session_params")
+
+    conn
+    |> Conn.put_private(:pow_assent_session_params, session_params)
+    |> PowAssentPlug.callback_upsert(provider, params, idp_redirect_uri())
+    |> case do
+      {:ok, conn} ->
+        render(conn, "logged.json",
+          token: conn.private[:api_access_token],
+          expiration: conn.private[:access_token_expiration],
+          refresh_token: conn.private[:api_refresh_token]
+        )
+
+      {:error, %{private: %{pow_assent_callback_error: {:user_not_allowed, _}}}} ->
+        {:error, :invalid_credentials}
+
+      error ->
+        Logger.error("error during oidc callback execution: #{inspect(error)}")
+        error
+    end
+  end
+
   defp authenticate_trento_user(conn, credentials) do
     with {:ok, %{assigns: %{current_user: logged_user}} = conn} <-
            Pow.Plug.authenticate_user(conn, credentials),
@@ -188,4 +270,6 @@ defmodule TrentoWeb.SessionController do
     do: Users.validate_totp(user, totp_code)
 
   defp maybe_validate_totp(_, _), do: {:error, :totp_code_missing}
+
+  defp idp_redirect_uri, do: Application.fetch_env!(:trento, :oidc)[:callback_url]
 end

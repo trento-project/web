@@ -135,6 +135,22 @@ config :unplug, :init_mode, :runtime
 
 config :open_api_spex, :cache_adapter, OpenApiSpex.Plug.NoneCache
 
+config :trento, :oidc,
+  enabled: false,
+  callback_url: "http://localhost:4000/auth/oidc_callback"
+
+config :trento, :pow_assent,
+  providers: [
+    oidc_local: [
+      client_id: "trento-web",
+      client_secret: "ihfasdEaB5M5r44i4AbNulmLWjgejluX",
+      strategy: Assent.Strategy.OIDC,
+      base_url: "http://localhost:8081/realms/trento",
+      # The default oidc ones, replicated just for the sake of docs
+      authorization_params: [scope: "openid profile"]
+    ]
+  ]
+
 # Override with local dev.local.exs file
 if File.exists?("#{__DIR__}/dev.local.exs") do
   import_config "dev.local.exs"

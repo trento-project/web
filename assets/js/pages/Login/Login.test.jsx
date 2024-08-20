@@ -5,6 +5,7 @@ import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import { Toaster } from 'react-hot-toast';
 import { withState, renderWithRouter } from '@lib/test-utils';
+import * as authConfig from '@lib/auth/config';
 import Login from './Login';
 
 describe('Login component', () => {
@@ -181,6 +182,29 @@ describe('Login component', () => {
     expect(store.getActions()).toContainEqual({
       type: 'PERFORM_LOGIN',
       payload: { username: '', password: '', totpCode },
+    });
+  });
+
+  describe('Single sign on', () => {
+    it('should display the SSO login button', async () => {
+      jest.spyOn(authConfig, 'isSingleSignOnEnabled').mockReturnValue(true);
+      jest
+        .spyOn(authConfig, 'getSingleSignOnLoginUrl')
+        .mockReturnValue('http://idp-url');
+
+      const [StatefulLogin] = withState(<Login />, {
+        user: {
+          loggedIn: false,
+          authInProgress: false,
+        },
+      });
+
+      renderWithRouter(StatefulLogin);
+
+      const loginButton = screen.getByRole('button', {
+        name: 'Login with Single Sign-on',
+      });
+      expect(loginButton).toBeVisible();
     });
   });
 });

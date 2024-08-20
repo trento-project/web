@@ -1,4 +1,5 @@
 defmodule Trento.UsersTest do
+  alias Trento.UserIdentities.UserIdentity
   use Trento.DataCase
 
   alias Trento.Abilities.{
@@ -100,10 +101,19 @@ defmodule Trento.UsersTest do
       %{id: user_id} = insert(:user)
       %{id: ability_id} = insert(:ability)
       insert(:users_abilities, user_id: user_id, ability_id: ability_id)
+      %{id: identity_id} = insert(:user_identity, user_id: user_id)
 
       insert(:user, deleted_at: DateTime.utc_now())
       users = Users.list_users()
-      assert [%User{id: ^user_id, abilities: [%{id: ^ability_id}]}] = users
+
+      assert [
+               %User{
+                 id: ^user_id,
+                 user_identities: [%{id: ^identity_id}],
+                 abilities: [%{id: ^ability_id}]
+               }
+             ] = users
+
       assert length(users) == 1
     end
 
@@ -125,6 +135,20 @@ defmodule Trento.UsersTest do
       insert(:users_abilities, user_id: user_id, ability_id: ability_id)
 
       assert {:ok, %User{id: ^user_id, abilities: [%{id: ^ability_id}]}} = Users.get_user(user_id)
+    end
+
+    test "get_user return a user with the user identities" do
+      %{id: user_id} = insert(:user)
+      %{id: ability_id} = insert(:ability)
+      insert(:users_abilities, user_id: user_id, ability_id: ability_id)
+      %{id: identity_id} = insert(:user_identity, user_id: user_id)
+
+      assert {:ok,
+              %User{
+                id: ^user_id,
+                user_identities: [%{id: ^identity_id}],
+                abilities: [%{id: ^ability_id}]
+              }} = Users.get_user(user_id)
     end
 
     test "create_user with valid data creates a user" do
@@ -413,6 +437,34 @@ defmodule Trento.UsersTest do
       assert user.totp_enabled_at == nil
     end
 
+    test "update_user/2 does not care for password validation when a user has user_identities associated" do
+      user_attrs = %{
+        "email" => Faker.Internet.email(),
+        "sub" => Faker.Internet.user_name(),
+        "username" => Faker.Internet.user_name()
+      }
+
+      user_identity_params = %{
+        "provider" => "test_provider",
+        "token" => %{"access_token" => "access_token"},
+        "uid" => Faker.UUID.v4(),
+        "userinfo" => %{
+          "email" => user_attrs["email"],
+          "sid" => nil,
+          "sub" => user_attrs["username"],
+          "username" => user_attrs["username"]
+        }
+      }
+
+      # we create the user with the user identity changeset
+      {:ok, %User{} = user} =
+        Trento.Repo.insert(
+          User.user_identity_changeset(%User{}, user_identity_params, user_attrs, %{})
+        )
+
+      assert {:ok, %User{}} = Users.update_user(user, %{})
+    end
+
     test "delete_user/2 does not delete user with id 1" do
       assert {:error, :forbidden} = Users.delete_user(%User{username: admin_username()})
     end
@@ -446,6 +498,19 @@ defmodule Trento.UsersTest do
 
       refute deleted_at == nil
       assert [] == Trento.Repo.all(from u in UsersAbilities, where: u.user_id == ^user_id)
+    end
+
+    test "delete_user/1 deletes user identities" do
+      %{id: user_id} = user = insert(:user)
+      insert(:user_identity, user_id: user_id)
+
+      assert {:ok, %User{}} = Users.delete_user(user)
+
+      %User{deleted_at: deleted_at} =
+        Trento.Repo.get_by!(User, id: user_id)
+
+      refute deleted_at == nil
+      assert [] == Trento.Repo.all(from u in UserIdentity, where: u.user_id == ^user_id)
     end
 
     test "reset_totp/1 reset user topt values" do

@@ -13,6 +13,8 @@ defmodule Trento.Users.User do
 
   alias EctoCommons.EmailValidator
 
+  use PowAssent.Ecto.Schema
+
   alias Trento.Abilities.{
     Ability,
     UsersAbilities
@@ -52,11 +54,22 @@ defmodule Trento.Users.User do
     |> cast(attrs, [:locked_at, :password_change_requested_at])
   end
 
+  def user_identity_changeset(user_or_changeset, user_identity, attrs, user_id_attrs) do
+    username = Map.get(attrs, "username")
+
+    user_or_changeset
+    |> cast(attrs, [:username, :email])
+    |> put_change(
+      :fullname,
+      Map.get(attrs, "name", "Trento IDP User #{username}")
+    )
+    |> pow_assent_user_identity_changeset(user_identity, attrs, user_id_attrs)
+  end
+
   def update_changeset(user, attrs) do
     user
-    |> pow_password_changeset(attrs)
+    |> maybe_apply_password_changesets(attrs)
     |> pow_extension_changeset(attrs)
-    |> validate_password()
     |> custom_fields_changeset(attrs)
     |> cast(attrs, [:locked_at, :lock_version, :password_change_requested_at, :totp_enabled_at])
     |> validate_inclusion(:totp_enabled_at, [nil])
@@ -87,6 +100,16 @@ defmodule Trento.Users.User do
     |> put_change(:username, "#{username}__#{deleted_at}")
     |> put_change(:email, "#{email}__#{deleted_at}")
   end
+
+  # When the user has user identities associated, means that the user comes from an external IDP
+  # the password is not set in the user schema, so it should be skipped in updates.
+  defp maybe_apply_password_changesets(%{user_identities: []} = user, attrs) do
+    user
+    |> pow_password_changeset(attrs)
+    |> validate_password()
+  end
+
+  defp maybe_apply_password_changesets(user, _), do: user
 
   defp validate_current_password(changeset, %{password: _password} = attrs),
     do: pow_current_password_changeset(changeset, attrs)

@@ -5,10 +5,12 @@ defmodule TrentoWeb.SessionControllerTest do
 
   import Mox
   import OpenApiSpex.TestAssertions
+  import Trento.Factory
 
   alias TrentoWeb.Auth.RefreshToken
   alias TrentoWeb.OpenApi.V1.ApiSpec
 
+  alias Trento.Users
   alias Trento.Users.User
 
   setup [:set_mox_from_context, :verify_on_exit!]
@@ -387,6 +389,252 @@ defmodule TrentoWeb.SessionControllerTest do
       conn
       |> json_response(200)
       |> assert_schema("Credentials", api_spec)
+    end
+
+    test "should return 501 if external IDP integration is enabled", %{conn: conn} do
+      Application.put_env(:trento, :oidc, enabled: true)
+
+      conn =
+        post(conn, "/api/session", %{
+          "username" => "trento_user",
+          "password" => "testpassword"
+        })
+
+      json_response(conn, 501)
+
+      Application.put_env(:trento, :oidc, enabled: false)
+    end
+  end
+
+  describe "callback endpoint" do
+    defmodule TestProvider do
+      @moduledoc false
+      @behaviour Assent.Strategy
+
+      @impl true
+      def authorize_url(config) do
+        case config[:error] do
+          nil ->
+            {:ok, %{url: "https://provider.example.com/oauth/authorize", session_params: %{a: 1}}}
+
+          error ->
+            {:error, error}
+        end
+      end
+
+      @impl true
+      def callback(config, _params) do
+        user = Keyword.get(config, :test_user)
+
+        {:ok,
+         %{
+           uid: user.username,
+           user: %{
+             "sub" => user.username,
+             "sid" => user.id,
+             "email" => user.email,
+             "username" => user.username
+           },
+           token: %{"access_token" => "access_token"}
+         }}
+      end
+    end
+
+    setup %{conn: conn} = context do
+      conn =
+        conn
+        |> Plug.Conn.put_private(:plug_session, %{})
+        |> Plug.Conn.put_private(:plug_session_fetch, :done)
+        |> Pow.Plug.put_config(otp_app: :trento)
+
+      Map.put(context, :conn, conn)
+    end
+
+    test "should return the credentials when the oidc callback flow is completed without errors and the user does not exist on trento",
+         %{conn: conn, api_spec: api_spec} do
+      user = build(:user)
+
+      expect(
+        Joken.CurrentTime.Mock,
+        :current_time,
+        6,
+        fn ->
+          1_671_715_992
+        end
+      )
+
+      Application.put_env(:trento, :pow_assent,
+        user_identities_context: Trento.UserIdentities,
+        providers: [
+          test_provider: [strategy: TestProvider, test_user: user]
+        ]
+      )
+
+      valid_params = %{"code" => "valid", "session_params" => %{"a" => 1}}
+
+      conn = post(conn, ~p"/api/session/test_provider/callback?#{valid_params}")
+
+      conn
+      |> json_response(200)
+      |> assert_schema("Credentials", api_spec)
+    end
+
+    test "should return the credentials when the oidc callback flow is completed without errors and the user exists on trento but without an associated user identity",
+         %{conn: conn, api_spec: api_spec} do
+      user = insert(:user)
+
+      expect(
+        Joken.CurrentTime.Mock,
+        :current_time,
+        6,
+        fn ->
+          1_671_715_992
+        end
+      )
+
+      Application.put_env(:trento, :pow_assent,
+        user_identities_context: Trento.UserIdentities,
+        providers: [
+          test_provider: [strategy: TestProvider, test_user: user]
+        ]
+      )
+
+      valid_params = %{"code" => "valid", "session_params" => %{"a" => 1}}
+
+      conn = post(conn, ~p"/api/session/test_provider/callback?#{valid_params}")
+
+      conn
+      |> json_response(200)
+      |> assert_schema("Credentials", api_spec)
+    end
+
+    test "should return the credentials when the oidc callback flow is completed without errors and the user does exist on trento",
+         %{conn: conn, api_spec: api_spec} do
+      user = insert(:user)
+
+      expect(
+        Joken.CurrentTime.Mock,
+        :current_time,
+        6,
+        fn ->
+          1_671_715_992
+        end
+      )
+
+      Application.put_env(:trento, :pow_assent,
+        user_identities_context: Trento.UserIdentities,
+        providers: [
+          test_provider: [strategy: TestProvider, test_user: user]
+        ]
+      )
+
+      valid_params = %{"code" => "valid", "session_params" => %{"a" => 1}}
+
+      conn =
+        conn
+        |> Pow.Plug.assign_current_user(user, Pow.Plug.fetch_config(conn))
+        |> post(~p"/api/session/test_provider/callback?#{valid_params}")
+
+      conn
+      |> json_response(200)
+      |> assert_schema("Credentials", api_spec)
+    end
+
+    test "should return the credentials when the oidc callback flow is completed without errors and assign the global abilities when the oidc user is the default admin and does not exists on trento",
+         %{conn: conn, api_spec: api_spec} do
+      %{username: username} = user = build(:user)
+      Application.put_env(:trento, :admin_user, username)
+
+      expect(
+        Joken.CurrentTime.Mock,
+        :current_time,
+        6,
+        fn ->
+          1_671_715_992
+        end
+      )
+
+      Application.put_env(:trento, :pow_assent,
+        user_identities_context: Trento.UserIdentities,
+        providers: [
+          test_provider: [strategy: TestProvider, test_user: user]
+        ]
+      )
+
+      valid_params = %{"code" => "valid", "session_params" => %{"a" => 1}}
+
+      conn = post(conn, ~p"/api/session/test_provider/callback?#{valid_params}")
+
+      conn
+      |> json_response(200)
+      |> assert_schema("Credentials", api_spec)
+
+      %User{id: user_id} = Users.get_by(username: username)
+      {:ok, %User{abilities: abilities}} = Users.get_user(user_id)
+      assert [%{id: 1}] = abilities
+
+      Application.put_env(:trento, :admin_user, "admin")
+    end
+
+    test "should return the credentials when the oidc callback flow is completed without errors and assign the global abilities when the oidc user is the default admin and already exists on trento",
+         %{conn: conn, api_spec: api_spec} do
+      %{username: username, id: user_id} = user = insert(:user)
+      Application.put_env(:trento, :admin_user, username)
+
+      expect(
+        Joken.CurrentTime.Mock,
+        :current_time,
+        6,
+        fn ->
+          1_671_715_992
+        end
+      )
+
+      Application.put_env(:trento, :pow_assent,
+        user_identities_context: Trento.UserIdentities,
+        providers: [
+          test_provider: [strategy: TestProvider, test_user: user]
+        ]
+      )
+
+      valid_params = %{"code" => "valid", "session_params" => %{"a" => 1}}
+
+      conn =
+        conn
+        |> Pow.Plug.assign_current_user(user, Pow.Plug.fetch_config(conn))
+        |> post(~p"/api/session/test_provider/callback?#{valid_params}")
+
+      conn
+      |> json_response(200)
+      |> assert_schema("Credentials", api_spec)
+
+      {:ok, %User{abilities: abilities}} = Users.get_user(user_id)
+      assert [%{id: 1}] = abilities
+
+      Application.put_env(:trento, :admin_user, "admin")
+    end
+
+    test "should return unauthorized when the oidc callback flow is completed without errors and the user is locked on trento",
+         %{conn: conn, api_spec: api_spec} do
+      user = insert(:user, locked_at: DateTime.utc_now())
+
+      Application.put_env(:trento, :pow_assent,
+        user_identities_context: Trento.UserIdentities,
+        providers: [
+          test_provider: [strategy: TestProvider, test_user: user]
+        ]
+      )
+
+      valid_params = %{"code" => "valid", "session_params" => %{"a" => 1}}
+
+      conn =
+        conn
+        |> Pow.Plug.assign_current_user(user, Pow.Plug.fetch_config(conn))
+        |> post(~p"/api/session/test_provider/callback?#{valid_params}")
+
+      conn
+      |> json_response(401)
+      |> assert_schema("Unauthorized", api_spec)
     end
   end
 end

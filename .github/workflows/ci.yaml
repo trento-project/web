@@ -16,6 +16,7 @@ env:
   NODE_VERSION: "20"
   MANTAINERS: '["cdimonaco", "dottorblaster", "janvhs", "rtorrero", "nelsonkopliku", "arbulu89","jagabomb","emaksy","jamie-suse"]'
   RG_TEST_LABEL: regression
+  INTEGRATION_TEST_LABEL: integration
 
 jobs:
   elixir-deps:
@@ -560,6 +561,108 @@ jobs:
         if: failure()
         with:
           name: regression-${{ matrix.test }}-e2e-screenshots
+          path: test/e2e/cypress/screenshots/
+
+  check-integration-tests-label:
+    name: Check if the integration test criteria are met, store in the job output
+    runs-on: ubuntu-22.04
+    outputs:
+      run_integration_test: ${{ steps.check.outputs.run_integration_test }}
+    steps:
+      - id: check
+        run: echo "run_integration_test=${{ contains(fromJson(env.MANTAINERS), github.event.sender.login) && contains(github.event.pull_request.labels.*.name, env.INTEGRATION_TEST_LABEL) }}" >> "$GITHUB_OUTPUT"
+
+  integration-test-e2e:
+    name: Integration tests
+    needs: [check-integration-tests-label, elixir-deps, npm-deps, npm-e2e-deps]
+    runs-on: ubuntu-22.04
+    if: needs.check-integration-tests-label.outputs.run_integration_test == 'true'
+    strategy:
+      matrix:
+        include:
+          - test: oidc
+            cypress_spec: |
+              cypress/e2e/oidc_integration.cy.js
+            config_file_content: |
+              import Config
+
+              config :trento, :oidc, enabled: true
+            env:
+              MIX_ENV: dev
+              CYPRESS_OIDC_INTEGRATION_TESTS: true
+    env: ${{ matrix.env }}      
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.12.1
+        with:
+          access_token: ${{ github.token }}
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup
+        id: setup-elixir
+        uses: erlef/setup-beam@v1
+        with:
+          version-file: .tool-versions
+          version-type: strict
+        env:
+          ImageOS: ubuntu20
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Retrieve Cached Dependencies
+        uses: actions/cache@v4
+        id: mix-cache
+        with:
+          path: |
+            deps
+            _build/dev
+            priv/plts
+          key: ${{ runner.os }}-${{ steps.setup-elixir.outputs.otp-version }}-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}
+      - name: Retrieve NPM Cached Dependencies
+        uses: actions/cache@v4
+        id: npm-cache
+        with:
+          path: |
+            assets/node_modules
+          key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
+      - name: Retrieve E2E NPM Cached Dependencies
+        uses: actions/cache@v4
+        id: npm-e2e-cache
+        with:
+          path: |
+            test/e2e/node_modules
+          key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
+      - name: "Docker compose dependencies"
+        uses: isbang/compose-action@v2.0.1
+        with:
+          compose-file: "./docker-compose.yaml"
+          compose-flags: "--profile idp"
+          down-flags: "--volumes"
+      - name: Create dev.local.exs file
+        run: echo "${{ matrix.config_file_content }}" > config/dev.local.exs
+      - name: Mix setup
+        run: mix setup
+      - name: Run trento detached
+        run: mix phx.server &
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
+        env:
+          cypress_video: false
+          cypress_db_host: postgres
+          cypress_db_port: 5432
+        with:
+          working-directory: test/e2e
+          spec: ${{ matrix.cypress_spec }}
+          wait-on-timeout: 30
+          config: baseUrl=http://localhost:4000
+      - name: Upload cypress test screenshots
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: integration-${{ matrix.test }}-e2e-screenshots
           path: test/e2e/cypress/screenshots/
 
   target-branch-deps:

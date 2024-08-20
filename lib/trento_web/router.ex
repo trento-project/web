@@ -1,6 +1,7 @@
 defmodule TrentoWeb.Router do
   use TrentoWeb, :router
   use Pow.Phoenix.Router
+  use PowAssent.Phoenix.Router
 
   # From newest to oldest
   @available_api_versions ["v2", "v1"]
@@ -65,6 +66,7 @@ defmodule TrentoWeb.Router do
 
     post "/session", SessionController, :create, as: :login
     post "/session/refresh", SessionController, :refresh, as: :refresh
+    post "/session/:provider/callback", SessionController, :callback
   end
 
   scope "/feature-flags" do

@@ -67,6 +67,10 @@ module.exports = {
     config: {
       checksServiceBaseUrl: '',
       suseManagerEnabled: true,
+      adminUsername: 'admin',
+      oidcEnabled: false,
+      oidcLoginUrl: 'http://localhost:4000/auth/oidc_callback',
+      oidcCallbackUrl: '/auth/oidc_callback',
       aTestVariable: 123,
     },
   },

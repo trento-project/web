@@ -13,7 +13,7 @@ import { faker } from '@faker-js/faker';
 import * as router from 'react-router';
 
 import { networkClient } from '@lib/network';
-
+import * as authConfig from '@lib/auth/config';
 import { abilityFactory, userFactory } from '@lib/test-utils/factories/users';
 
 import CreateUserPage from './CreateUserPage';
@@ -143,5 +143,17 @@ describe('CreateUserPage', () => {
 
     await user.click(screen.getByRole('button', { name: 'Create' }));
     expect(toast.error).toHaveBeenCalledWith(toastMessage);
+  });
+
+  describe('Single sign on', () => {
+    it('should redirect to not found page', async () => {
+      jest.spyOn(authConfig, 'isSingleSignOnEnabled').mockReturnValue(true);
+
+      render(<CreateUserPage />);
+
+      expect(
+        screen.getByText('the page is in another castle', { exact: false })
+      ).toBeVisible();
+    });
   });
 });

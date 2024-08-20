@@ -6,7 +6,10 @@
       deregistrationDebounce: <%= @deregistration_debounce %>,
       chartsEnabled: <%= @charts_enabled %>,
       suseManagerEnabled: <%= @suse_manager_enabled %>,
-      adminUsername: '<%= @admin_username %>'
+      adminUsername: '<%= @admin_username %>',
+      oidcEnabled: <%= @oidc_enabled %>,
+      oidcLoginUrl: '<%= raw @oidc_login_url %>',
+      oidcCallbackUrl: '<%= raw @oidc_callback_url %>',
   };
 </script>
 

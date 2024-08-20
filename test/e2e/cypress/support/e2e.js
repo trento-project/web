@@ -24,5 +24,7 @@ import './commands';
 
 before(() => {
   Cypress.session.clearAllSavedSessions();
-  cy.login();
+  if (!Cypress.env('OIDC_INTEGRATION_TESTS')) {
+    cy.login();
+  }
 });

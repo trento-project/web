@@ -117,6 +117,10 @@ export default {
     errors: {
       description: 'OpenAPI errors coming from backend validation',
     },
+    singleSignOnEnabled: {
+      description: 'Single sign on login is enabled',
+      control: { type: 'boolean' },
+    },
     onSave: {
       action: 'Save user',
       description: 'Save user action',
@@ -203,5 +207,12 @@ export const WithErrors = {
         title: 'Invalid value',
       },
     ],
+  },
+};
+
+export const SingleSignOnEnabled = {
+  args: {
+    ...Editing.args,
+    singleSignOnEnabled: true,
   },
 };
