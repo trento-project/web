@@ -192,7 +192,7 @@ defmodule TrentoWeb.V1.ActivityLogControllerTest do
       assert_schema(resp, "ActivityLog", api_spec)
     end
 
-    test "should return 403 from /activity_log_all endpoint if user has all:foo ability",
+    test "should not return user management logs if user has all:foo ability",
          %{
            conn: conn,
            api_spec: api_spec
@@ -213,13 +213,16 @@ defmodule TrentoWeb.V1.ActivityLogControllerTest do
 
       resp =
         conn
-        |> get("/api/v1/activity_log_all")
-        |> json_response(403)
+        |> get("/api/v1/activity_log")
+        |> json_response(200)
 
-      assert_schema(resp, "Forbidden", api_spec)
+      # We expect an empty response since there are no entries
+      # other than user management related ones.
+      assert Enum.empty?(resp["data"])
+      assert_schema(resp, "ActivityLog", api_spec)
     end
 
-    test "should return user management logs from /activity_log_all endpoint if user has all:users ability",
+    test "should return user management logs if user has all:users ability",
          %{
            conn: conn,
            api_spec: api_spec
@@ -238,7 +241,7 @@ defmodule TrentoWeb.V1.ActivityLogControllerTest do
 
       resp =
         conn
-        |> get("/api/v1/activity_log_all")
+        |> get("/api/v1/activity_log")
         |> json_response(200)
 
       assert length(resp["data"]) == 25
