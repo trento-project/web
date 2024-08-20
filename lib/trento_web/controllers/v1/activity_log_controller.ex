@@ -3,8 +3,8 @@ defmodule TrentoWeb.V1.ActivityLogController do
   use OpenApiSpex.ControllerSpecs
 
   alias Trento.ActivityLog
-  alias Trento.ActivityLog.Policy
   alias TrentoWeb.OpenApi.V1.Schema
+  alias Trento.Support.PolicyHelper
 
   plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
   action_fallback TrentoWeb.FallbackController
@@ -62,9 +62,8 @@ defmodule TrentoWeb.V1.ActivityLogController do
     ]
 
   def get_activity_log(conn, params) do
-    current_function = Phoenix.Controller.action_name(conn)
     user = Pow.Plug.current_user(conn)
-    include_all_logs? = Bodyguard.permit?(Policy, current_function, user)
+    include_all_logs? = include_all_logs?(user)
 
     with {:ok, activity_log_entries, meta} <-
            ActivityLog.list_activity_log(params, include_all_logs?) do
@@ -74,4 +73,12 @@ defmodule TrentoWeb.V1.ActivityLogController do
       })
     end
   end
+
+  defp include_all_logs?(user),
+    do:
+      PolicyHelper.has_global_ability?(user) or
+        PolicyHelper.user_has_ability?(user, %{
+          name: "all",
+          resource: "users"
+        })
 end
