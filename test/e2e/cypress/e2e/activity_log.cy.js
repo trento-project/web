@@ -44,7 +44,7 @@ context('Activity Log page', () => {
       cy.get('input[type="datetime-local"]:first').type('2024-08-14T10:21');
 
       cy.contains('Filter newer than').click();
-      cy.get('input[type="datetime-local"]:last').type('2024-08-13T10:21');
+      cy.get('input[type="datetime-local"]:first').type('2024-08-13T10:21');
 
       cy.contains('Filter Resource type').click();
       cy.contains('Login Attempt').click();
