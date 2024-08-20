@@ -11,9 +11,6 @@ defmodule Trento.ActivityLog.Policy do
   @behaviour Bodyguard.Policy
   alias Trento.Support.PolicyHelper
 
-  def authorize(:get_activity_log, _user, _params),
-    do: true
-
   def authorize(:get_activity_log_all, user, _params),
     do:
       PolicyHelper.has_global_ability?(user) or
@@ -22,5 +19,5 @@ defmodule Trento.ActivityLog.Policy do
           resource: "users"
         })
 
-  def authorize(_, _, _), do: false
+  def authorize(_, _, _), do: true
 end
