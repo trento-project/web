@@ -1,8 +1,10 @@
 ./assets
+./assets/keycloack_login.png
 ./assets/trento-monitoring.png
 ./assets/trento-spa-login.png
 ./assets/trento-spa-refresh-failed.png
 ./assets/trento-spa-refresh.png
+./assets/trento_single_sign_on_login.png
 404.html
 Mix.Tasks.DumpScenario.html
 Mix.Tasks.PruneEvents.html
