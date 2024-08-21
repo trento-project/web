@@ -1,26 +1,29 @@
 # OpenID Connect
 
-Trento integrates with identity providers that use the OpenID Connect **(OIDC)** protocol to authenticate users accessing the console. Authorization for specific abilities/permissions is managed by Trento, which means that only basic user information is retrieved from the external identity provider **(IDP)**.
+Trento integrates with an identity provider (IDP) that use the OpenID Connect (OIDC) protocol to authenticate users accessing the console. Authorization for specific abilities/permissions is managed by Trento, which means that only basic user information is retrieved from the external IDP.
 
 ## Enabling OIDC
 
 The OIDC authentication is **disabled by default**.
 
-Provide the following environment variable to enable OIDC feature when starting Trento.
+Provide the following environment variables to enable OIDC feature when starting Trento.
 
 ```
+# Required:
 ENABLE_OIDC=true
 OIDC_CLIENT_ID=<<OIDC_CLIENT_ID>>
 OIDC_CLIENT_SECRET=<<OIDC_CLIENT_SECRET>>
 OIDC_BASE_URL=<<OIDC_BASE_URL>>
+
+# Optional:
 OIDC_CALLBACK_URL=<<OIDC_CALLBACK_URL>>
 ```
 
 ## Enabling OIDC in Development
 
-Enable OIDC in the development environment using Docker and [Keycloak](https://github.com/keycloak/keycloak) as a simulated IDP.
+Enable OIDC in the development environment using Docker and [Keycloak](https://github.com/keycloak/keycloak) as IDP.
 
-### Starting the Keycloak Identity Provider
+### Starting Keycloak Identity Provider
 
 Use a custom Docker profile to start Keycloak as IDP for local development.
 
@@ -34,19 +37,21 @@ Keycloak server can be accessed at [http://localhost:8081](http://localhost:8081
 
 ### Create OIDC configuration
 
-1. Create a new runtime configuration `dev.local.exs` in `config` directory.
+1. Create a new local development configuration `dev.local.exs` in `config` directory.
 
-1. Enable OIDC in runtime config:
-    ```elixir
-    import Config
+1. Enable OIDC in  `dev.local.exs` config:
 
-    config :trento, :oidc, enabled: true
-    ```
+   ```elixir
+   import Config
+
+   config :trento, :oidc, enabled: true
+   ```
+
 1. Start Trento web as usual
-   
-    ```iex -S mix phx.server```
 
-### Login into Trento web console by using Single Sign-on with Keycloak
+   `iex -S mix phx.server`
+
+### Login into Trento web console using Single Sign-on with Keycloak
 
 1. Navigate to the [Trento web console](http://localhost:4000/).
 
@@ -102,19 +107,12 @@ config :trento,
   admin_user: "trentoidp"
 ```
 
-
 ### Run OIDC integration E2E tests
+
 Running OIDC e2e tests, requires a running IDP provider.
 
-Run docker compose with the ```--profile idp``` flag, to use our [Keycloak](https://github.com/keycloak/keycloak) deployment for testing.
-
-   1. Start Keycloak: 
-       ```
-      docker compose --profile idp up
-       ```
-   1. Run E2E tests with cypress
+Run docker compose with the `--profile idp` flag, to use our [Keycloak](https://github.com/keycloak/keycloak) deployment for testing.
 
 ### Run OIDC tests in the GitHub CI
 
-  Add the ```integration``` label to the PR, otherwise CI is executed without OIDC integration tests.
-
+Add the `integration` label to the PR, otherwise CI is executed without OIDC integration tests.
