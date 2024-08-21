@@ -36,9 +36,7 @@ describe('UsersPage', () => {
     await act(async () => {
       renderWithRouter(<UsersPage />);
     });
-    await waitFor(() => {
-      expect(screen.getByText('No data available')).toBeVisible();
-    });
+    expect(await screen.getByText('No data available')).toBeVisible();
   });
 
   it('should render table with users', async () => {
@@ -51,10 +49,8 @@ describe('UsersPage', () => {
       renderWithRouter(<UsersPage />);
     });
 
-    await waitFor(() => {
-      expect(screen.getByText(admin.username)).toBeInTheDocument();
-      expect(screen.getByText(user.username)).toBeInTheDocument();
-    });
+    expect(await screen.getByText(admin.username)).toBeInTheDocument();
+    expect(await screen.getByText(user.username)).toBeInTheDocument();
   });
 
   it('should render toast with failing message when fetching users failed', async () => {
