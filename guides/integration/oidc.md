@@ -57,10 +57,10 @@ Keycloak server can be accessed at [http://localhost:8081](http://localhost:8081
 
 2. Click on `Login with Single Sign-on`:
 
-![LoginView](loginView.png)
+![trento_single_sign_on_login](https://raw.githubusercontent.com/trento-project/web/main/guides/assets/trento_single_sign_on_login.png)
 
 You will be redirected to the Keycloak login page:
-![KeycloakLoginView](keycloakView.png)
+![keycloack_login](https://raw.githubusercontent.com/trento-project/web/main/guides/assets/keycloack_login.png)
 
 ### Login as Trento user through keycloak IDP
 
