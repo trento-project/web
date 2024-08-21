@@ -197,7 +197,9 @@ if config_env() in [:prod, :demo] do
               raise("environment variable OIDC_CLIENT_SECRET is missing"),
           base_url:
             System.get_env("OIDC_BASE_URL") ||
-              raise("environment variable OIDC_BASE_URL is missing")
+              raise("environment variable OIDC_BASE_URL is missing"),
+          strategy: Assent.Strategy.OIDC,
+          authorization_params: [scope: "openid profile"]
         ]
       ]
   end
