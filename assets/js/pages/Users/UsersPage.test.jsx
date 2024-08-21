@@ -5,7 +5,7 @@ import MockAdapter from 'axios-mock-adapter';
 import { toast } from 'react-hot-toast';
 
 import { networkClient } from '@lib/network';
-import { screen, act } from '@testing-library/react';
+import { screen, act, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { adminUser, userFactory } from '@lib/test-utils/factories/users';
 import { renderWithRouter } from '@lib/test-utils';
@@ -59,7 +59,9 @@ describe('UsersPage', () => {
     await act(async () => {
       renderWithRouter(<UsersPage />);
     });
-    expect(toast.error).toHaveBeenCalledWith(fetchErrorMessage);
+    await waitFor(() => {
+      expect(toast.error).toHaveBeenCalledWith(fetchErrorMessage);
+    });
   });
 
   it('should render toast with success message when deleting was successfully', async () => {
@@ -86,7 +88,9 @@ describe('UsersPage', () => {
 
     expect(axiosMock.history.delete.length).toBe(1);
     expect(axiosMock.history.delete[0].url).toBe(`/users/${user.id}`);
-    expect(toast.success).toHaveBeenCalledWith(deleteMessage);
+    await waitFor(() => {
+      expect(toast.success).toHaveBeenCalledWith(deleteMessage);
+    });
   });
 
   it('should render toast with error message when deleting failed', async () => {
@@ -107,6 +111,8 @@ describe('UsersPage', () => {
 
     expect(axiosMock.history.delete.length).toBe(1);
     expect(axiosMock.history.delete[0].url).toBe(`/users/${user.id}`);
-    expect(toast.error).toHaveBeenCalledWith(userNotFoundMessage);
+    await waitFor(() => {
+      expect(toast.error).toHaveBeenCalledWith(userNotFoundMessage);
+    });
   });
 });
