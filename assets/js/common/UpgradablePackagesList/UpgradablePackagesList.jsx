@@ -9,6 +9,7 @@ const upgradablePackagesDefault = [];
 function UpgradablePackagesList({
   upgradablePackages = upgradablePackagesDefault,
   onPatchClick = noop,
+  onLoad = noop,
 }) {
   const [sortDirection, setSortDirection] = useState('asc');
 
@@ -28,6 +29,7 @@ function UpgradablePackagesList({
   const config = {
     pagination: true,
     usePadding: false,
+    onPageChange: onLoad,
     columns: [
       {
         title: 'Installed Packages',

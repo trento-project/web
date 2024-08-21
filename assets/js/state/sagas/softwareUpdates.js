@@ -1,5 +1,5 @@
-import { get } from 'lodash';
-import { put, call, takeEvery } from 'redux-saga/effects';
+import { get, chunk } from 'lodash';
+import { all, put, call, takeEvery } from 'redux-saga/effects';
 import {
   getSoftwareUpdates,
   getPatchesForPackages,
@@ -28,7 +28,7 @@ export function* fetchSoftwareUpdates({ payload: hostID }) {
     yield put(setEmptySoftwareUpdates({ hostID }));
 
     const errorCode = get(error, ['response', 'status']);
-    const { errors } = get(error, ['response', 'data'], []);
+    const errors = get(error, ['response', 'data', 'errors'], []);
     const suma_unauthorized = errors.some(
       ({ detail }) => detail === 'SUSE Manager authentication error.'
     );
@@ -46,15 +46,29 @@ export function* fetchSoftwareUpdates({ payload: hostID }) {
 export function* fetchUpgradablePackagesPatches({
   payload: { hostID, packageIDs },
 }) {
+  const chunks = chunk(packageIDs, 50);
+
+  const effects = chunks.map((packageIDsChunk) =>
+    call(getPatchesForPackages, packageIDsChunk)
+  );
+
   try {
-    const {
-      data: { patches },
-    } = yield call(getPatchesForPackages, packageIDs);
+    const responses = yield all(effects);
+    const patches = responses
+      .map(({ data: { patches: patchesForChunk } }) =>
+        patchesForChunk.map((patch) => ({
+          ...patch,
+          package_id: Number(patch.package_id),
+        }))
+      )
+      .flat();
+
     yield put(setPatchesForPackages({ hostID, patches }));
     yield put(setSettingsConfigured());
   } catch (error) {
     const errorCode = get(error, ['response', 'status']);
-    const { errors } = get(error, ['response', 'data'], []);
+    const errors = get(error, ['response', 'data', 'errors'], []);
+
     const suma_unauthorized = errors.some(
       ({ detail }) => detail === 'SUSE Manager authentication error.'
     );
