@@ -1,6 +1,6 @@
 import React from 'react';
 import '@testing-library/jest-dom';
-import { screen, render } from '@testing-library/react';
+import { screen, render, waitFor } from '@testing-library/react';
 import { adminUser, userFactory } from '@lib/test-utils/factories/users';
 import { renderWithRouter } from '@lib/test-utils';
 import { userEvent } from '@testing-library/user-event';
@@ -44,6 +44,7 @@ describe('Users', () => {
       enabled: true,
       created_at: creationTime[0],
     });
+
     const user = userFactory.build({
       enabled: false,
       created_at: creationTime[1],
@@ -90,10 +91,10 @@ describe('Users', () => {
     expect(screen.getAllByText(user.username)[1]).toBeVisible();
 
     const cancelButton = screen.getByRole('button', { name: /Cancel/i });
-    const modalTitel = screen.getByText(modalHeader);
-    expect(modalTitel).toBeInTheDocument();
+    const modalTitle = screen.getByText(modalHeader);
+    expect(modalTitle).toBeInTheDocument();
     await userEvent.click(cancelButton);
-    expect(modalTitel).not.toBeInTheDocument();
+    await waitFor(() => expect(modalTitle).not.toBeInTheDocument());
   });
 
   describe('Single sign on', () => {

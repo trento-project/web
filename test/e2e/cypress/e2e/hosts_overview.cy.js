@@ -294,12 +294,10 @@ context('Hosts Overview', () => {
 
         cy.get('#headlessui-portal-root').as('modal');
 
-        cy.get('@modal')
-          .find('.w-full')
-          .should(
-            'contain.text',
-            `Clean up data discovered by agent on host ${hostToDeregister.name}`
-          );
+        cy.get('@modal').should(
+          'contain.text',
+          `Clean up data discovered by agent on host ${hostToDeregister.name}`
+        );
 
         cy.get('@modal').contains('button', 'Clean up').click();
 
