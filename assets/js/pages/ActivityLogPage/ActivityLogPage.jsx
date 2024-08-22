@@ -20,6 +20,35 @@ import {
 } from './searchParams';
 
 function ActivityLogPage() {
+  const filters = [
+    {
+      key: 'type',
+      type: 'select',
+      title: 'Resource type',
+      options: Object.entries(ACTIVITY_TYPES_CONFIG).map(([key, value]) => [
+        key,
+        value.label,
+      ]),
+    },
+    {
+      key: 'actor',
+      type: 'remoteselect',
+      title: 'User',
+    },
+    {
+      key: 'to_date',
+      title: 'newer than',
+      type: 'date',
+      prefilled: true,
+    },
+    {
+      key: 'from_date',
+      title: 'older than',
+      type: 'date',
+      prefilled: true,
+    },
+  ];
+
   const [searchParams, setSearchParams] = useSearchParams();
   const [activityLog, setActivityLog] = useState([]);
   const [isLoading, setLoading] = useState(true);
