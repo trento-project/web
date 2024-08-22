@@ -10,8 +10,10 @@ import { allowedActivities } from '@lib/model/activityLog';
 import { getUserProfile } from '@state/selectors/user';
 
 import PageHeader from '@common/PageHeader';
+import { useSelector } from 'react-redux';
 import ActivityLogOverview from '@common/ActivityLogOverview';
 import ComposedFilter from '@common/ComposedFilter';
+import { getAlUsers } from '@state/selectors/activityLog';
 
 import {
   filterValueToSearchParams,
@@ -20,6 +22,7 @@ import {
 } from './searchParams';
 
 function ActivityLogPage() {
+  const users = useSelector(getAlUsers);
   const filters = [
     {
       key: 'type',
@@ -32,8 +35,9 @@ function ActivityLogPage() {
     },
     {
       key: 'actor',
-      type: 'remoteselect',
+      type: 'select',
       title: 'User',
+      options: users,
     },
     {
       key: 'to_date',
