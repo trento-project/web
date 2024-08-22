@@ -55,20 +55,34 @@ describe('Pagination component', () => {
     const user = userEvent.setup();
 
     const onChangeItemsPerPage = jest.fn();
+    const currentItemsPerPage = 10;
+    const itemsPerPageOptions = [10, 20, 50];
     render(
       <Pagination
         pages={5}
         currentPage={1}
-        currentItemsPerPage={10}
-        itemsPerPageOptions={[10, 20, 50]}
+        currentItemsPerPage={currentItemsPerPage}
+        itemsPerPageOptions={itemsPerPageOptions}
         onSelect={noop}
         onChangeItemsPerPage={onChangeItemsPerPage}
       />
     );
 
-    await act(() => user.click(screen.getByText('10')));
-    await act(() => user.click(screen.getByText('20')));
+    for (let i = 0; i < itemsPerPageOptions.length; i += 1) {
+      // open dropdown
+      // eslint-disable-next-line no-await-in-loop
+      await act(() => user.click(screen.getByText(`${currentItemsPerPage}`)));
 
-    expect(onChangeItemsPerPage).toHaveBeenCalledWith(20);
+      // select item
+      const selection = itemsPerPageOptions[i];
+      const [selectable] = screen.getAllByText(`${selection}`).reverse();
+      // eslint-disable-next-line no-await-in-loop
+      await act(() => user.click(selectable));
+
+      // check if the correct item was selected
+      expect(onChangeItemsPerPage).toHaveBeenCalledTimes(1);
+      expect(onChangeItemsPerPage).toHaveBeenCalledWith(selection);
+      onChangeItemsPerPage.mockClear();
+    }
   });
 });
