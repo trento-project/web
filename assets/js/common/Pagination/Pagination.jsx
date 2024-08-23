@@ -1,10 +1,9 @@
 import React from 'react';
 import classNames from 'classnames';
 import { noop } from 'lodash';
+import ReactPaginate from 'react-paginate';
 
 import Select from '@common/Select';
-
-const getPagesArray = (pages) => Array.from({ length: pages }, (_, i) => 1 + i);
 
 function Pagination({
   pages,
@@ -14,8 +13,6 @@ function Pagination({
   itemsPerPageOptions = [10],
   onChangeItemsPerPage = noop,
 }) {
-  const pagesList = getPagesArray(pages);
-
   // Can happen if the items per page get changed, while being on the last
   // page
   if (currentPage > pages) {
@@ -23,6 +20,19 @@ function Pagination({
     // otherwise the user is always staying at page 0
     onSelect(pages || 1);
   }
+
+  const boxStyle = classNames(
+    'tn-page-item',
+    'w-full',
+    'px-4',
+    'py-2',
+    'text-xs',
+    'bg-white',
+    'border-t',
+    'border-b',
+    'border-l',
+    'hover:bg-gray-100'
+  );
 
   return (
     <div
@@ -43,43 +53,29 @@ function Pagination({
       ) : (
         <span />
       )}
-      <div className="flex items-center">
-        {pagesList.map((pageNumber) => {
-          const isFirst = pageNumber === 1;
-          const isLast = pageNumber === pages;
-          const classes = classNames(
-            'tn-page-item',
-            'w-full',
-            'px-4',
-            'py-2',
-            'text-xs',
-            'bg-white',
-            'hover:bg-gray-100',
-            {
-              'rounded-l-lg': isFirst,
-              'rounded-r-lg': isLast,
-              'border-l': isFirst,
-              'border-r': isLast,
-              'text-gray-600': currentPage !== pageNumber,
-              'text-jungle-green-500': currentPage === pageNumber,
-              border: pageNumber % 2 === 0,
-              'border-t': pageNumber % 2 === 1,
-              'border-b': pageNumber % 2 === 1,
-            }
-          );
-
-          return (
-            <button
-              key={pageNumber}
-              type="button"
-              className={classes}
-              onClick={() => onSelect(pageNumber)}
-            >
-              {pageNumber}
-            </button>
-          );
-        })}
-      </div>
+      <ReactPaginate
+        forcePage={currentPage - 1}
+        pageRangeDisplayed={3}
+        marginPagesDisplayed={1}
+        breakLabel="..."
+        nextLabel=">"
+        onClick={(e) => {
+          const selected =
+            typeof e.nextSelectedPage === 'number'
+              ? e.nextSelectedPage
+              : e.selected;
+          onSelect(selected + 1);
+        }}
+        pageCount={pages}
+        previousLabel="<"
+        renderOnZeroPageCount={null}
+        containerClassName="flex items-center"
+        pageClassName={boxStyle}
+        activeLinkClassName="text-gray-600 text-jungle-green-500"
+        previousClassName={classNames(boxStyle, 'rounded-l-lg')}
+        nextClassName={classNames(boxStyle, 'border-r', 'rounded-r-lg')}
+        breakClassName={boxStyle}
+      />
     </div>
   );
 }
