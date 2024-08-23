@@ -13,13 +13,7 @@ function Pagination({
   itemsPerPageOptions = [10],
   onChangeItemsPerPage = noop,
 }) {
-  // Can happen if the items per page get changed, while being on the last
-  // page
-  if (currentPage > pages) {
-    // "what if pages is 0?"
-    // otherwise the user is always staying at page 0
-    onSelect(pages || 1);
-  }
+  const selectedPage = Math.min(currentPage, pages);
 
   const boxStyle = classNames(
     'tn-page-item',
@@ -53,8 +47,10 @@ function Pagination({
       ) : (
         <span />
       )}
+
+      {/* ReactPaginate paged are 0-based */}
       <ReactPaginate
-        forcePage={currentPage - 1}
+        forcePage={selectedPage - 1}
         pageRangeDisplayed={3}
         marginPagesDisplayed={1}
         breakLabel="..."

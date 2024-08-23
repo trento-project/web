@@ -206,10 +206,10 @@ describe('Pagination component', () => {
     render(<ControlledComponent />);
 
     const actions = [
-      { action: `<`, expected: 1 },
+      { action: `<`, expected: 1 }, // previous of the first is the first
       { action: `>`, expected: 2 },
       { action: `>`, expected: 3 },
-      { action: `>`, expected: 3 },
+      { action: `>`, expected: 3 }, // next of the last is the last
       { action: `<`, expected: 2 },
     ];
 
@@ -217,7 +217,38 @@ describe('Pagination component', () => {
       // eslint-disable-next-line no-await-in-loop
       await act(() => user.click(screen.getByText(actions[i].action)));
       expect(onSelect).toHaveBeenCalledWith(actions[i].expected);
+      expect(onSelect).toHaveBeenCalledTimes(1);
       onSelect.mockClear();
     }
   });
+
+  it.each`
+    currentPage | pages | selected
+    ${1}        | ${5}  | ${1}
+    ${3}        | ${5}  | ${3}
+    ${5}        | ${5}  | ${5}
+    ${6}        | ${5}  | ${5}
+    ${1}        | ${99} | ${1}
+    ${21}       | ${99} | ${21}
+    ${99}       | ${99} | ${99}
+    ${200}      | ${99} | ${99}
+  `(
+    'should highlight the current page ($pages, $currentPage)',
+    ({ pages, currentPage, selected }) => {
+      render(
+        <Pagination
+          pages={pages}
+          currentPage={currentPage}
+          currentItemsPerPage={10}
+          itemsPerPageOptions={[10, 20, 50]}
+          onSelect={noop}
+          onChangeItemsPerPage={noop}
+        />
+      );
+
+      expect(screen.getByText(`${selected}`)).toHaveStyle(
+        'color: rgb(48 186 120)'
+      );
+    }
+  );
 });
