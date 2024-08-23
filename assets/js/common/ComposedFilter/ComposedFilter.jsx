@@ -1,16 +1,10 @@
 import React, { useState } from 'react';
 import Button from '@common/Button';
 import Filter from '@common/Filter';
-import RemoteFilter from '@common/RemoteFilter';
 import DateFilter from '@common/DateFilter';
 
 const renderFilter = (key, { type, ...filterProps }, value, onChange) => {
   switch (type) {
-    case 'remoteselect':
-        return (
-          <RemoteFilter key={key} {...filterProps} value={value} onChange={onChange} />
-        );
-
     case 'select':
       return (
         <Filter key={key} {...filterProps} value={value} onChange={onChange} />

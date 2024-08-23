@@ -5,6 +5,7 @@ defmodule TrentoWeb.ActivityLogChannel do
   """
   require Logger
   use TrentoWeb, :channel
+  alias Trento.Users
 
   @impl true
   def join(
@@ -32,9 +33,9 @@ defmodule TrentoWeb.ActivityLogChannel do
 
   @impl true
   def handle_info(:after_join, socket) do
-    Logger.warning("updates users list")
-    push(socket, "al_users_pushed", %{users: ["foo", "bar", "baz", "admin"]})
-    Process.send_after(self(), :after_join, 5000)
+    users = Users.list_all_usernames()
+    push(socket, "al_users_pushed", %{users: users})
+    Process.send_after(self(), :after_join, 60_000)
     {:noreply, socket}
   end
 end

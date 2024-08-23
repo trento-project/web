@@ -37,6 +37,15 @@ defmodule Trento.Users do
     |> Repo.all()
   end
 
+  @doc """
+  Returns all usernames, including those for users that are soft-deleted.
+  """
+  def list_all_usernames do
+    User
+    |> select([u], u.username)
+    |> Repo.all()
+  end
+
   def get_user(id) do
     case User
          |> where([u], is_nil(u.deleted_at) and u.id == ^id)
