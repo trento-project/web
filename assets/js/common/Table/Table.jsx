@@ -3,12 +3,12 @@
 import React, { useState, useEffect } from 'react';
 import classNames from 'classnames';
 import { page, pages } from '@lib/lists';
+import Pagination from '@common/Pagination';
 import { TableFilters, createFilter } from './filters';
 import { defaultRowKey } from './defaultRowKey';
 import SortingIcon from './SortingIcon';
 import EmptyState from './EmptyState';
 import CollapsibleTableRow from './CollapsibleTableRow';
-import Pagination from './Pagination';
 
 const defaultCellRender = (content) => (
   <p className="text-gray-900 whitespace-no-wrap">{content}</p>
