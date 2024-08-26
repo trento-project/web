@@ -1,6 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
 
-export const getAlUsers = createSelector(
+export const getALUsers = createSelector(
   [(state) => state.activityLog],
   (activityLog) => activityLog.users
 );
