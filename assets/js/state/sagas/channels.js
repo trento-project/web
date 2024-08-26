@@ -241,9 +241,8 @@ const activityLogEvents = [
   {
     name: 'al_users_pushed',
     action: alUsersPushed,
-  }
+  },
 ];
-
 
 const createEventChannel = (channel, events) =>
   eventChannel((emitter) => {
@@ -290,6 +289,11 @@ export function* watchSocketEvents(socket) {
     fork(watchChannelEvents, socket, 'monitoring:databases', databaseEvents),
     fork(watchChannelEvents, socket, 'monitoring:executions', executionEvents),
     fork(watchChannelEvents, socket, `users:${userID}`, userEvents),
-    fork(watchChannelEvents, socket, `activity_log:${userID}`, activityLogEvents),
+    fork(
+      watchChannelEvents,
+      socket,
+      `activity_log:${userID}`,
+      activityLogEvents
+    ),
   ]);
 }
