@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import classNames from 'classnames';
+import { noop } from 'lodash';
+
 import { page, pages } from '@lib/lists';
 import Pagination from '@common/Pagination';
 import { TableFilters, createFilter } from './filters';
@@ -78,6 +80,7 @@ function Table({
     collapsedRowClassName = '',
     pagination,
     usePadding = true,
+    onPageChange = noop,
   } = config;
 
   const [filters, setFilters] = useState([]);
@@ -148,6 +151,10 @@ function Table({
   const renderedData = pagination
     ? page(currentPage, sortedData, currentItemsPerPage)
     : sortedData;
+
+  useEffect(() => {
+    onPageChange(renderedData);
+  }, [currentPage, renderedData.length]);
 
   const totalPages = pages(sortedData, currentItemsPerPage);
 

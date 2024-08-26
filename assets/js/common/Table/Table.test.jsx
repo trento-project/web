@@ -97,6 +97,23 @@ describe('Table component', () => {
     expect(screen.queryByText(headerText)).toBeInTheDocument();
   });
 
+  it('should fire the onPageChange callback', () => {
+    const data = tableDataFactory.buildList(20);
+    const onPageChange = jest.fn();
+
+    const expectedPayload = data.slice(0, 10);
+
+    render(
+      <Table
+        config={{ ...tableConfig, onPageChange }}
+        data={data}
+        setSearchParams={() => {}}
+      />
+    );
+
+    expect(onPageChange).toHaveBeenCalledWith(expectedPayload);
+  });
+
   describe('filtering', () => {
     it('should filter by the chosen filter option with default filter', async () => {
       const data = tableDataFactory.buildList(10);

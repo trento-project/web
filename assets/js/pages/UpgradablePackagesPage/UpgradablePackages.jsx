@@ -11,6 +11,7 @@ export default function UpgradablePackages({
   hostName,
   upgradablePackages,
   onPatchClick = noop,
+  onLoad = noop,
 }) {
   const [search, setSearch] = useState('');
 
@@ -42,6 +43,7 @@ export default function UpgradablePackages({
       <UpgradablePackagesList
         upgradablePackages={displayedPackages}
         onPatchClick={onPatchClick}
+        onLoad={onLoad}
       />
     </>
   );
