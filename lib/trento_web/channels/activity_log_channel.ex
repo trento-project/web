@@ -13,14 +13,12 @@ defmodule TrentoWeb.ActivityLogChannel do
         _payload,
         %{assigns: %{current_user_id: current_user_id}} = socket
       ) do
-    user_id = String.to_integer(user_id)
-
-    if user_id == current_user_id do
+    if allowed?(user_id, current_user_id) do
       send(self(), :after_join)
       {:ok, socket}
     else
       Logger.error(
-        "Could not join user channel, requested user id: #{user_id}, authenticated user id: #{current_user_id}"
+        "Could not join activity_log channel, requested user id: #{user_id}, authenticated user id: #{current_user_id}"
       )
 
       {:error, :unauthorized}
@@ -38,4 +36,6 @@ defmodule TrentoWeb.ActivityLogChannel do
     Process.send_after(self(), :after_join, 60_000)
     {:noreply, socket}
   end
+
+  defp allowed?(user_id, current_user_id), do: String.to_integer(user_id) == current_user_id
 end
