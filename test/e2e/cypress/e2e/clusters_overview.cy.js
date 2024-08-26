@@ -29,7 +29,8 @@ context('Clusters Overview', () => {
         .should('eq', availableClusters.length);
     });
     it('should have 1 pages', () => {
-      cy.get('.tn-page-item').its('length').should('eq', 1);
+      cy.get(`[data-testid="pagination"]`).should('include.text', '1');
+      cy.get(`[data-testid="pagination"]`).should('not.include.text', '2');
     });
     it('should show the expected clusters data', () => {
       cy.get('.container').eq(0).as('clustersTable');
