@@ -80,7 +80,7 @@ import { watchActivityLogsSettings } from '@state/sagas/activityLogsSettings';
 import { watchSoftwareUpdates } from '@state/sagas/softwareUpdates';
 
 import { watchSocketEvents } from '@state/sagas/channels';
-import { watchAlActions } from '@state/sagas/activityLog';
+import { watchActivityLogActions } from '@state/sagas/activityLog';
 import { checkApiKeyExpiration } from '@state/sagas/settings';
 
 const RESET_STATE = 'RESET_STATE';
@@ -250,6 +250,6 @@ export default function* rootSaga() {
     watchUserLoggedIn(),
     watchActivityLogsSettings(),
     watchSoftwareUpdates(),
-    watchAlActions(),
+    watchActivityLogActions(),
   ]);
 }

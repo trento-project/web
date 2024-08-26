@@ -4,11 +4,11 @@ import {
   AL_USERS_PUSHED
 } from '@state/activityLog';
 
-export function* alUsersUpdate({payload: {users}}) {
+export function* activityLogUsersUpdate({payload: {users}}) {
   yield put(setUsers({users}))
 }
 
-export function* watchAlActions() {
-  yield takeEvery(AL_USERS_PUSHED, alUsersUpdate);
+export function* watchActivityLogActions() {
+  yield takeEvery(AL_USERS_PUSHED, activityLogUsersUpdate);
   
 }
