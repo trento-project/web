@@ -1,7 +1,13 @@
 import React from 'react';
 
 import { noop } from 'lodash';
-import { screen, fireEvent, render, waitFor } from '@testing-library/react';
+import {
+  screen,
+  fireEvent,
+  render,
+  waitFor,
+  within,
+} from '@testing-library/react';
 import 'intersection-observer';
 import '@testing-library/jest-dom';
 
@@ -158,11 +164,13 @@ describe('Table component', () => {
         tableDataFactory.buildList(1, { column3: 'value3' })
       );
 
-      const { container } = render(
+      render(
         <Table config={tableConfig} data={data} setSearchParams={() => {}} />
       );
 
-      fireEvent.click(container.querySelector('.tn-page-item:nth-child(2)'));
+      const pages = screen.getByTestId('pagination');
+      const page2Button = within(pages).getByText('2');
+      fireEvent.click(page2Button);
 
       filterTable('Column3', 'value3');
 
@@ -175,14 +183,16 @@ describe('Table component', () => {
     it('should display the correct items per page', () => {
       const data = tableDataFactory.buildList(11);
 
-      const { container } = render(
+      render(
         <Table config={tableConfig} data={data} setSearchParams={() => {}} />
       );
 
       const page1 = screen.getByRole('table');
       expect(page1.querySelectorAll('tbody > tr')).toHaveLength(10);
 
-      fireEvent.click(container.querySelector('.tn-page-item:nth-child(2)'));
+      const pages = screen.getByTestId('pagination');
+      const page2Button = within(pages).getByText('2');
+      fireEvent.click(page2Button);
 
       const page2 = screen.getByRole('table');
       expect(page2.querySelectorAll('tbody > tr')).toHaveLength(1);
@@ -191,7 +201,7 @@ describe('Table component', () => {
     it('should be able to change the items per page', () => {
       const data = tableDataFactory.buildList(11);
 
-      const { container } = render(
+      render(
         <Table config={tableConfig} data={data} setSearchParams={() => {}} />
       );
 
@@ -204,7 +214,8 @@ describe('Table component', () => {
       const pageMoreItems = screen.getByRole('table');
       expect(pageMoreItems.querySelectorAll('tbody > tr')).toHaveLength(11);
 
-      expect(container.querySelector('.tn-page-item:nth-child(2)')).toBeNull();
+      const pages = screen.getByTestId('pagination');
+      expect(within(pages).queryByText('2')).toBeNull();
     });
 
     it('should return empty state message when data is empty', () => {

@@ -24,7 +24,10 @@ context('Hosts Overview', () => {
       cy.get('.tn-hostname').its('length').should('eq', 10);
     });
     it('should have 3 pages', () => {
-      cy.get('.tn-page-item').its('length').should('eq', 3);
+      cy.get(`[data-testid="pagination"]`).should('include.text', '1');
+      cy.get(`[data-testid="pagination"]`).should('include.text', '2');
+      cy.get(`[data-testid="pagination"]`).should('include.text', '3');
+      cy.get(`[data-testid="pagination"]`).should('not.include.text', '4');
     });
     it('should show the ip addresses, provider and agent version data for the hosts in the 1st page', () => {
       cy.get('.container').eq(0).as('hostsTable');

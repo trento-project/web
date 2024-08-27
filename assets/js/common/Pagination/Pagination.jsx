@@ -25,7 +25,10 @@ function Pagination({
   }
 
   return (
-    <div className="flex justify-between p-2 bg-gray-50 width-full">
+    <div
+      className="flex justify-between p-2 bg-gray-50 width-full"
+      data-testid="pagination"
+    >
       {itemsPerPageOptions.length > 1 ? (
         <div className="flex pl-3 items-center text-sm">
           <span className="pr-2 text-gray-600">Results per page</span>
