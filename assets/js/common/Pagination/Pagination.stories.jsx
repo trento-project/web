@@ -56,3 +56,11 @@ export const Default = {
     itemsPerPageOptions: [10, 20, 50],
   },
 };
+
+export const WithManyPages = {
+  args: {
+    ...Default.args,
+    pages: 99,
+    currentPage: 20,
+  },
+};
