@@ -24,10 +24,11 @@ context('Hosts Overview', () => {
       cy.get('.tn-hostname').its('length').should('eq', 10);
     });
     it('should have 3 pages', () => {
-      cy.get(`[data-testid="pagination"]`).should('include.text', '1');
-      cy.get(`[data-testid="pagination"]`).should('include.text', '2');
-      cy.get(`[data-testid="pagination"]`).should('include.text', '3');
-      cy.get(`[data-testid="pagination"]`).should('not.include.text', '4');
+      cy.get(`[data-testid="pagination"]`).as('pagination');
+      cy.get(`@pagination`).contains(/^1$/).should('exist');
+      cy.get(`@pagination`).contains(/^2$/).should('exist');
+      cy.get(`@pagination`).contains(/^3$/).should('exist');
+      cy.get(`@pagination`).contains(/^4$/).should('not.exist');
     });
     it('should show the ip addresses, provider and agent version data for the hosts in the 1st page', () => {
       cy.get('.container').eq(0).as('hostsTable');
@@ -328,11 +329,12 @@ context('Hosts Overview', () => {
         });
 
         beforeEach(() => {
-          cy.contains('button', '1').click(); // Move to 1st host list view page
+          cy.get(`[data-testid="pagination"]`).as('pagination');
+          cy.get(`@pagination`).contains(/^1$/).click();
         });
 
         it('should remove the SAP system sid from hosts belonging the deregistered SAP system', () => {
-          cy.contains('button', '2').click();
+          cy.get(`@pagination`).contains(/^2$/).click();
           cy.contains('a', sapSystemHostToDeregister.sid).should('exist');
           cy.deregisterHost(sapSystemHostToDeregister.id);
           cy.contains('a', sapSystemHostToDeregister.sid).should('not.exist');
