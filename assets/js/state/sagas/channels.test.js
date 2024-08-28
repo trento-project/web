@@ -128,15 +128,17 @@ describe('Channels saga', () => {
     expect(dispatched).toEqual([userUpdated({ email: 'new@email.com' })]);
   });
   it('should listen to specific activity log events', async () => {
-      const { saga, dispatched } = runWatchSocketEventsSaga(mockSocket);
+    const { saga, dispatched } = runWatchSocketEventsSaga(mockSocket);
 
-      channels[`activity_log:${USER_ID}`].emit('al_users_pushed', {
-        users: ["user1", "user2", "user3"],
-      });
-
-      closeSocket();
-      await saga;
-
-      expect(dispatched).toEqual([alUsersPushed({ users: ["user1", "user2", "user3"] })]);
+    channels[`activity_log:${USER_ID}`].emit('al_users_pushed', {
+      users: ['user1', 'user2', 'user3'],
     });
+
+    closeSocket();
+    await saga;
+
+    expect(dispatched).toEqual([
+      alUsersPushed({ users: ['user1', 'user2', 'user3'] }),
+    ]);
   });
+});
