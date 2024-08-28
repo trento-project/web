@@ -85,13 +85,8 @@ function Pagination({
         pageCount={pages}
         breakLabel="..."
         renderOnZeroPageCount={null}
-        onClick={(e) => {
-          const selected =
-            typeof e.nextSelectedPage === 'number'
-              ? e.nextSelectedPage
-              : e.selected;
-          onSelect(selected + 1);
-        }}
+        onPageActive={({ selected }) => onSelect(selected + 1)}
+        onPageChange={({ selected }) => onSelect(selected + 1)}
         previousLabel={PREV_LABEL}
         nextLabel={NEXT_LABEL}
         containerClassName={containerClassNames}
