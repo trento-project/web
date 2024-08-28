@@ -56,6 +56,62 @@ function ItemsPerPageSelector({
   );
 }
 
+function PaginationPrevNext({
+  hasPrev = true,
+  hasNext = true,
+  onSelect,
+  currentItemsPerPage = 10,
+  itemsPerPageOptions = [10],
+  onChangeItemsPerPage = noop,
+}) {
+  return (
+    <div
+      className="flex justify-between p-2 bg-gray-50 width-full"
+      data-testid="pagination"
+    >
+      <ItemsPerPageSelector
+        itemsPerPageOptions={itemsPerPageOptions}
+        currentItemsPerPage={currentItemsPerPage}
+        onChange={onChangeItemsPerPage}
+      />
+      <ul className={containerClassNames}>
+        <li>
+          <a
+            role="button"
+            href
+            className={classNames(
+              leftBoxClassNames,
+              hasPrev || disabledLinkClassNames
+            )}
+            onClick={() => {
+              hasPrev && onSelect('prev');
+              return false;
+            }}
+          >
+            {PREV_LABEL}
+          </a>
+        </li>
+        <li>
+          <a
+            role="button"
+            href
+            className={classNames(
+              rightBoxClassNames,
+              hasNext || disabledLinkClassNames
+            )}
+            onClick={() => {
+              hasNext && onSelect('next');
+              return false;
+            }}
+          >
+            {NEXT_LABEL}
+          </a>
+        </li>
+      </ul>
+    </div>
+  );
+}
+
 function Pagination({
   pages,
   currentPage,
@@ -102,3 +158,5 @@ function Pagination({
 }
 
 export default Pagination;
+
+export { PaginationPrevNext };

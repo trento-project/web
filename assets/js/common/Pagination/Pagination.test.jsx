@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { noop } from 'lodash';
-import Pagination from '.';
+import Pagination, { PaginationPrevNext } from '.';
 
 describe('Pagination component', () => {
   it('should render', () => {
@@ -304,4 +304,59 @@ describe('Pagination component', () => {
       );
     }
   );
+});
+
+describe('PaginationPrevNext component', () => {
+  it('should render', () => {
+    render(<PaginationPrevNext hasNext onSelect={noop} />);
+
+    expect(screen.getByText('<')).toBeInTheDocument();
+    expect(screen.getByText('>')).toBeInTheDocument();
+  });
+
+  it('should call onSelect', async () => {
+    const onSelect = jest.fn();
+    const user = userEvent.setup();
+
+    render(<PaginationPrevNext onSelect={onSelect} />);
+
+    await act(() => user.click(screen.getByText('<')));
+    expect(onSelect).toHaveBeenCalledWith('prev');
+    expect(onSelect).toHaveBeenCalledTimes(1);
+    onSelect.mockClear();
+
+    await act(() => user.click(screen.getByText('>')));
+    expect(onSelect).toHaveBeenCalledWith('next');
+    expect(onSelect).toHaveBeenCalledTimes(1);
+  });
+
+  it('should disable prev button', async () => {
+    const onSelect = jest.fn();
+    const user = userEvent.setup();
+
+    render(<PaginationPrevNext hasPrev={false} onSelect={onSelect} />);
+
+    await act(() => user.click(screen.getByText('<')));
+    expect(onSelect).not.toHaveBeenCalled();
+
+    await act(() => user.click(screen.getByText('>')));
+    expect(onSelect).toHaveBeenCalledWith('next');
+    expect(onSelect).toHaveBeenCalledTimes(1);
+    onSelect.mockClear();
+  });
+
+  it('should disable next button', async () => {
+    const onSelect = jest.fn();
+    const user = userEvent.setup();
+
+    render(<PaginationPrevNext hasNext={false} onSelect={onSelect} />);
+
+    await act(() => user.click(screen.getByText('>')));
+    expect(onSelect).not.toHaveBeenCalled();
+    onSelect.mockClear();
+
+    await act(() => user.click(screen.getByText('<')));
+    expect(onSelect).toHaveBeenCalledWith('prev');
+    expect(onSelect).toHaveBeenCalledTimes(1);
+  });
 });
