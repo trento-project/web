@@ -1,12 +1,11 @@
-import React, { act } from 'react';
-import { screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
-import MockAdapter from 'axios-mock-adapter';
-import { renderWithRouter, withDefaultState } from '@lib/test-utils';
-
 import { networkClient } from '@lib/network';
+import { renderWithRouter, withDefaultState } from '@lib/test-utils';
 import { activityLogEntryFactory } from '@lib/test-utils/factories/activityLog';
+import { screen } from '@testing-library/react';
+import MockAdapter from 'axios-mock-adapter';
+import React, { act } from 'react';
 
 import ActivityLogPage from './ActivityLogPage';
 
