@@ -1,10 +1,6 @@
 import { userFactory } from '@lib/test-utils/factories/users';
 
-import activityLogReducer, {
-  setUsers,
-  initialState,
-  // alUsersPushed,
-} from './activityLog';
+import activityLogReducer, { setUsers, initialState } from './activityLog';
 
 describe('activityLog reducer', () => {
   it('should set the users for activity log when setUsers is dispatched', () => {
