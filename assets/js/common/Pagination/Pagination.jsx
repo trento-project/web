@@ -35,6 +35,27 @@ const disabledLinkClassNames = classNames(
 );
 const containerClassNames = 'flex items-center';
 
+function ItemsPerPageSelector({
+  itemsPerPageOptions,
+  currentItemsPerPage,
+  onChange,
+}) {
+  return (
+    itemsPerPageOptions.length > 1 && (
+      <div className="flex pl-3 items-center text-sm">
+        <span className="pr-2 text-gray-600">Results per page</span>
+        <Select
+          className="z-40"
+          optionsName=""
+          options={itemsPerPageOptions}
+          value={currentItemsPerPage}
+          onChange={onChange}
+        />
+      </div>
+    )
+  );
+}
+
 function Pagination({
   pages,
   currentPage,
@@ -50,20 +71,11 @@ function Pagination({
       className="flex justify-between p-2 bg-gray-50 width-full"
       data-testid="pagination"
     >
-      {itemsPerPageOptions.length > 1 ? (
-        <div className="flex pl-3 items-center text-sm">
-          <span className="pr-2 text-gray-600">Results per page</span>
-          <Select
-            className="z-40"
-            optionsName=""
-            options={itemsPerPageOptions}
-            value={currentItemsPerPage}
-            onChange={onChangeItemsPerPage}
-          />
-        </div>
-      ) : (
-        <span />
-      )}
+      <ItemsPerPageSelector
+        itemsPerPageOptions={itemsPerPageOptions}
+        currentItemsPerPage={currentItemsPerPage}
+        onChange={onChangeItemsPerPage}
+      />
 
       {/* ReactPaginate paged are 0-based */}
       <ReactPaginate
