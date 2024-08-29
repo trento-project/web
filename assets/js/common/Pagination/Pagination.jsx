@@ -76,36 +76,28 @@ function PaginationPrevNext({
       />
       <ul className={containerClassNames}>
         <li>
-          <a
-            role="button"
-            href
+          <button
+            type="button"
             className={classNames(
               leftBoxClassNames,
               hasPrev || disabledLinkClassNames
             )}
-            onClick={() => {
-              hasPrev && onSelect('prev');
-              return false;
-            }}
+            onClick={() => hasPrev && onSelect('prev')}
           >
             {PREV_LABEL}
-          </a>
+          </button>
         </li>
         <li>
-          <a
-            role="button"
-            href
+          <button
+            type="button"
             className={classNames(
               rightBoxClassNames,
               hasNext || disabledLinkClassNames
             )}
-            onClick={() => {
-              hasNext && onSelect('next');
-              return false;
-            }}
+            onClick={() => hasNext && onSelect('next')}
           >
             {NEXT_LABEL}
-          </a>
+          </button>
         </li>
       </ul>
     </div>
