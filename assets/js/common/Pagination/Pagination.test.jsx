@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { noop } from 'lodash';
-import Pagination from '.';
+import Pagination, { PaginationPrevNext } from '.';
 
 describe('Pagination component', () => {
   it('should render', () => {
@@ -120,12 +120,10 @@ describe('Pagination component', () => {
 
   it.each`
     currentPage | pages | previousPage
-    ${1}        | ${5}  | ${1}
     ${2}        | ${5}  | ${1}
     ${5}        | ${5}  | ${4}
     ${5}        | ${15} | ${4}
     ${15}       | ${99} | ${14}
-    ${1}        | ${99} | ${1}
     ${99}       | ${99} | ${98}
   `(
     'should select previous page ($pages, $currentPage)',
@@ -150,14 +148,38 @@ describe('Pagination component', () => {
   );
 
   it.each`
+    currentPage | pages
+    ${1}        | ${5}
+    ${1}        | ${99}
+  `(
+    'should disable prev button ($pages, $currentPage)',
+    async ({ pages, currentPage }) => {
+      const user = userEvent.setup();
+      const onSelect = jest.fn();
+
+      render(
+        <Pagination
+          pages={pages}
+          currentPage={currentPage}
+          currentItemsPerPage={10}
+          itemsPerPageOptions={[10, 20, 50]}
+          onSelect={onSelect}
+          onChangeItemsPerPage={noop}
+        />
+      );
+
+      await act(() => user.click(screen.getByText(`<`)));
+      expect(onSelect).not.toHaveBeenCalled();
+    }
+  );
+
+  it.each`
     currentPage | pages | nextPage
     ${1}        | ${5}  | ${2}
     ${2}        | ${5}  | ${3}
-    ${5}        | ${5}  | ${5}
     ${5}        | ${15} | ${6}
     ${15}       | ${99} | ${16}
     ${1}        | ${99} | ${2}
-    ${99}       | ${99} | ${99}
   `(
     'should select next page ($pages, $currentPage)',
     async ({ pages, currentPage, nextPage }) => {
@@ -177,6 +199,32 @@ describe('Pagination component', () => {
 
       await act(() => user.click(screen.getByText(`>`)));
       expect(onSelect).toHaveBeenCalledWith(nextPage);
+    }
+  );
+
+  it.each`
+    currentPage | pages
+    ${5}        | ${5}
+    ${99}       | ${99}
+  `(
+    'should disable next button ($pages, $currentPage)',
+    async ({ pages, currentPage }) => {
+      const user = userEvent.setup();
+      const onSelect = jest.fn();
+
+      render(
+        <Pagination
+          pages={pages}
+          currentPage={currentPage}
+          currentItemsPerPage={10}
+          itemsPerPageOptions={[10, 20, 50]}
+          onSelect={onSelect}
+          onChangeItemsPerPage={noop}
+        />
+      );
+
+      await act(() => user.click(screen.getByText(`>`)));
+      expect(onSelect).not.toHaveBeenCalled();
     }
   );
 
@@ -206,18 +254,23 @@ describe('Pagination component', () => {
     render(<ControlledComponent />);
 
     const actions = [
-      { action: `<`, expected: 1 }, // previous of the first is the first
+      { action: `<`, expected: null }, // previous of the first is noop
       { action: `>`, expected: 2 },
       { action: `>`, expected: 3 },
-      { action: `>`, expected: 3 }, // next of the last is the last
+      { action: `>`, expected: null }, // next of the last is noop
       { action: `<`, expected: 2 },
     ];
 
     for (let i = 0; i < actions.length; i += 1) {
+      const { action, expected } = actions[i];
       // eslint-disable-next-line no-await-in-loop
-      await act(() => user.click(screen.getByText(actions[i].action)));
-      expect(onSelect).toHaveBeenCalledWith(actions[i].expected);
-      expect(onSelect).toHaveBeenCalledTimes(1);
+      await act(() => user.click(screen.getByText(action)));
+      if (expected === null) {
+        expect(onSelect).not.toHaveBeenCalled();
+      } else {
+        expect(onSelect).toHaveBeenCalledWith(expected);
+        expect(onSelect).toHaveBeenCalledTimes(1);
+      }
       onSelect.mockClear();
     }
   });
@@ -251,4 +304,59 @@ describe('Pagination component', () => {
       );
     }
   );
+});
+
+describe('PaginationPrevNext component', () => {
+  it('should render', () => {
+    render(<PaginationPrevNext hasNext onSelect={noop} />);
+
+    expect(screen.getByText('<')).toBeInTheDocument();
+    expect(screen.getByText('>')).toBeInTheDocument();
+  });
+
+  it('should call onSelect', async () => {
+    const onSelect = jest.fn();
+    const user = userEvent.setup();
+
+    render(<PaginationPrevNext onSelect={onSelect} />);
+
+    await act(() => user.click(screen.getByText('<')));
+    expect(onSelect).toHaveBeenCalledWith('prev');
+    expect(onSelect).toHaveBeenCalledTimes(1);
+    onSelect.mockClear();
+
+    await act(() => user.click(screen.getByText('>')));
+    expect(onSelect).toHaveBeenCalledWith('next');
+    expect(onSelect).toHaveBeenCalledTimes(1);
+  });
+
+  it('should disable prev button', async () => {
+    const onSelect = jest.fn();
+    const user = userEvent.setup();
+
+    render(<PaginationPrevNext hasPrev={false} onSelect={onSelect} />);
+
+    await act(() => user.click(screen.getByText('<')));
+    expect(onSelect).not.toHaveBeenCalled();
+
+    await act(() => user.click(screen.getByText('>')));
+    expect(onSelect).toHaveBeenCalledWith('next');
+    expect(onSelect).toHaveBeenCalledTimes(1);
+    onSelect.mockClear();
+  });
+
+  it('should disable next button', async () => {
+    const onSelect = jest.fn();
+    const user = userEvent.setup();
+
+    render(<PaginationPrevNext hasNext={false} onSelect={onSelect} />);
+
+    await act(() => user.click(screen.getByText('>')));
+    expect(onSelect).not.toHaveBeenCalled();
+    onSelect.mockClear();
+
+    await act(() => user.click(screen.getByText('<')));
+    expect(onSelect).toHaveBeenCalledWith('prev');
+    expect(onSelect).toHaveBeenCalledTimes(1);
+  });
 });
