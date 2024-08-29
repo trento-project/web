@@ -62,7 +62,7 @@
     "eos-icons-react": "^2.4.0",
     "lodash": "^4.17.21",
     "papaparse": "^5.4.1",
-    "qrcode.react": "^4.0.0",
+    "qrcode.react": "^4.0.1",
     "rc-input": "^1.6.3",
     "rc-input-number": "^9.2.0",
     "rc-tooltip": "^6.2.0",
