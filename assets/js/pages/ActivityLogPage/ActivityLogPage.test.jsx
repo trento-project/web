@@ -7,6 +7,7 @@ import { renderWithRouter } from '@lib/test-utils';
 
 import { networkClient } from '@lib/network';
 import { activityLogEntryFactory } from '@lib/test-utils/factories/activityLog';
+import { paginationFirstPageFactory } from '@lib/test-utils/factories/pagination';
 
 import ActivityLogPage from './ActivityLogPage';
 
@@ -55,5 +56,19 @@ describe('ActivityLogPage', () => {
     );
 
     expect(container.querySelectorAll('tbody > tr')).toHaveLength(5);
+  });
+
+  it('should render pagination', async () => {
+    const response = {
+      data: activityLogEntryFactory.buildList(20),
+      pagination: paginationFirstPageFactory.build(),
+    };
+
+    axiosMock.onGet('/api/v1/activity_log').reply(200, response);
+
+    await act(() => renderWithRouter(<ActivityLogPage />));
+
+    expect(screen.getByText('<')).toBeInTheDocument();
+    expect(screen.getByText('>')).toBeInTheDocument();
   });
 });

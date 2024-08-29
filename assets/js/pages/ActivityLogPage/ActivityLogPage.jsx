@@ -7,10 +7,15 @@ import ComposedFilter from '@common/ComposedFilter';
 
 import { getActivityLog } from '@lib/api/activityLogs';
 import { ACTIVITY_TYPES_CONFIG } from '@lib/model/activityLog';
+import { PaginationPrevNext } from '@common/Pagination/Pagination';
+import { pipe } from 'lodash/fp';
 import {
-  filterValueToSearchParams,
+  getItemsPerPageFromSearchParams,
+  resetPaginationToSearchParams,
   searchParamsToAPIParams,
   searchParamsToFilterValue,
+  setFilterValueToSearchParams,
+  setPaginationToSearchParams,
 } from './searchParams';
 
 const filters = [
@@ -37,19 +42,47 @@ const filters = [
   },
 ];
 
+const defaultItemsPerPage = 20;
+const itemsPerPageOptions = [10, 20, 50, 75, 100];
+
+const changeItemsPerPage = (searchParams) => (items) => {
+  if (searchParams.has('after')) {
+    return {
+      first: items,
+      after: searchParams.get('after'),
+    };
+  }
+  if (searchParams.has('before')) {
+    return {
+      last: items,
+      before: searchParams.get('before'),
+    };
+  }
+  return { first: items };
+};
+
 function ActivityLogPage() {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams(
+    resetPaginationToSearchParams(defaultItemsPerPage)()
+  );
   const [activityLog, setActivityLog] = useState([]);
+  const [activityLogMetadata, setActivityLogMetadata] = useState({});
+
   const [isLoading, setLoading] = useState(true);
   const [activityLogDetailModalOpen, setActivityLogDetailModalOpen] =
     useState(false);
+
+  const itemsPerPage = pipe(getItemsPerPageFromSearchParams, (n) =>
+    itemsPerPageOptions.includes(n) ? n : itemsPerPageOptions[0]
+  )(searchParams);
 
   const fetchActivityLog = () => {
     setLoading(true);
     const params = searchParamsToAPIParams(searchParams);
     getActivityLog(params)
-      .then((response) => {
-        setActivityLog(response.data?.data ?? []);
+      .then(({ data: { data = [], ...metadata } = {} }) => {
+        setActivityLog(data);
+        setActivityLogMetadata(metadata);
       })
       .catch(() => setActivityLog([]))
       .finally(() => {
@@ -71,7 +104,11 @@ function ActivityLogPage() {
             filters={filters}
             autoApply={false}
             value={searchParamsToFilterValue(searchParams)}
-            onChange={(p) => setSearchParams(filterValueToSearchParams(p))}
+            onChange={pipe(
+              setFilterValueToSearchParams,
+              resetPaginationToSearchParams(itemsPerPage),
+              setSearchParams
+            )}
           />
         </div>
         <ActivityLogOverview
@@ -82,6 +119,31 @@ function ActivityLogPage() {
           onCloseActivityLogEntryDetails={() =>
             setActivityLogDetailModalOpen(false)
           }
+        />
+        <PaginationPrevNext
+          hasPrev={activityLogMetadata.pagination?.has_previous_page}
+          hasNext={activityLogMetadata.pagination?.has_next_page}
+          currentItemsPerPage={itemsPerPage}
+          itemsPerPageOptions={itemsPerPageOptions}
+          onSelect={pipe(
+            (selection) =>
+              selection === 'prev'
+                ? {
+                    last: itemsPerPage,
+                    before: activityLogMetadata.pagination.start_cursor,
+                  }
+                : {
+                    first: itemsPerPage,
+                    after: activityLogMetadata.pagination.end_cursor,
+                  },
+            setPaginationToSearchParams,
+            setSearchParams
+          )}
+          onChangeItemsPerPage={pipe(
+            changeItemsPerPage(searchParams),
+            setPaginationToSearchParams,
+            setSearchParams
+          )}
         />
       </div>
     </>
