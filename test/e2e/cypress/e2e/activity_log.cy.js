@@ -1,10 +1,14 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 
 context('Activity Log page', () => {
+  before(() => {
+    cy.loadScenario('healthy-27-node-SAP-cluster');
+  });
+
   describe('Filtering', () => {
     it('should render without selected filters', () => {
       cy.intercept({
-        url: '/api/v1/activity_log',
+        url: '/api/v1/activity_log?first=20',
       }).as('data');
       cy.visit('/activity_log');
 
@@ -23,7 +27,7 @@ context('Activity Log page', () => {
 
     it('should render with selected filters from querystring', () => {
       cy.intercept({
-        url: '/api/v1/activity_log?from_date=2024-08-14T10:21:00.000Z&to_date=2024-08-13T10:21:00.000Z&type[]=login_attempt&type[]=resource_tagging',
+        url: '/api/v1/activity_log?from_date=2024-08-14T10:21:00.000Z&to_date=2024-08-13T10:21:00.000Z&type[]=login_attempt&type[]=resource_tagging&first=20',
       }).as('data');
 
       cy.visit(
@@ -56,13 +60,13 @@ context('Activity Log page', () => {
         'eq',
         `${
           Cypress.config().baseUrl
-        }/activity_log?from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&to_date=custom&to_date=2024-08-13T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging`
+        }/activity_log?first=20&from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&to_date=custom&to_date=2024-08-13T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging`
       );
     });
 
     it('should reset filters', () => {
       cy.intercept({
-        url: '/api/v1/activity_log',
+        url: '/api/v1/activity_log?first=20',
       }).as('data');
 
       cy.visit(
