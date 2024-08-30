@@ -17,7 +17,7 @@ const mockStore = configureStore(middlewares);
 
 export const defaultInitialState = {
   activityLog: {
-    users: ['user1', 'user2'],
+    users: [],
   },
   user: {
     abilities: [{ name: 'all', resource: 'all' }],
