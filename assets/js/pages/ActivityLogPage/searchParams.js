@@ -47,12 +47,6 @@ export const searchParamsToAPIParams = pipe(
  * Make the necessary transformations to the values before setting them in the search params
  */
 export const searchParamsToFilterValue = pipe(
-  /*   (sp) => {
-    if (!sp.has('first') && !sp.has('last')) {
-      sp.set('first', '20');
-    }
-    return sp;
-  }, */
   searchParamsToEntries,
   map(([k, v]) => {
     switch (k) {
@@ -64,6 +58,21 @@ export const searchParamsToFilterValue = pipe(
     }
   }),
   Object.fromEntries
+);
+
+const structToSearchParams = pipe(
+  omitUndefined,
+  Object.entries,
+  reduce((acc, [k, v]) => {
+    const sp = acc || new URLSearchParams();
+    if (scalarKeys.includes(k)) {
+      sp.set(k, v);
+    } else {
+      Array.from(v).forEach((value) => sp.append(k, value));
+    }
+    return sp;
+  }, null),
+  defaultTo(new URLSearchParams())
 );
 
 /**
@@ -146,5 +155,5 @@ export const resetPaginationToSearchParams =
       omit(paginationFields)
     )(searchParams);
 
-    return filterValueToSearchParams({ first: itemsPerPage, ...filters });
+    return structToSearchParams({ first: itemsPerPage, ...filters });
   };
