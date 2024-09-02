@@ -65,8 +65,7 @@ function ActivityLogPage() {
   const [searchParams, setSearchParams] = useSearchParams(
     resetPaginationToSearchParams(defaultItemsPerPage)()
   );
-  const [activityLog, setActivityLog] = useState([]);
-  const [activityLogMetadata, setActivityLogMetadata] = useState({});
+  const [activityLogResponse, setActivityLogResponse] = useState({ data: [] });
 
   const [isLoading, setLoading] = useState(true);
   const [activityLogDetailModalOpen, setActivityLogDetailModalOpen] =
@@ -80,11 +79,10 @@ function ActivityLogPage() {
     setLoading(true);
     const params = searchParamsToAPIParams(searchParams);
     getActivityLog(params)
-      .then(({ data: { data = [], ...metadata } = {} }) => {
-        setActivityLog(data);
-        setActivityLogMetadata(metadata);
+      .then(({ data }) => {
+        setActivityLogResponse(data);
       })
-      .catch(() => setActivityLog([]))
+      .catch(() => setActivityLogResponse({ data: [] }))
       .finally(() => {
         setLoading(false);
       });
@@ -109,7 +107,7 @@ function ActivityLogPage() {
         </div>
         <ActivityLogOverview
           activityLogDetailModalOpen={activityLogDetailModalOpen}
-          activityLog={activityLog}
+          activityLog={activityLogResponse.data}
           loading={isLoading}
           onActivityLogEntryClick={() => setActivityLogDetailModalOpen(true)}
           onCloseActivityLogEntryDetails={() =>
@@ -117,8 +115,8 @@ function ActivityLogPage() {
           }
         />
         <PaginationPrevNext
-          hasPrev={activityLogMetadata.pagination?.has_previous_page}
-          hasNext={activityLogMetadata.pagination?.has_next_page}
+          hasPrev={activityLogResponse.pagination?.has_previous_page}
+          hasNext={activityLogResponse.pagination?.has_next_page}
           currentItemsPerPage={itemsPerPage}
           itemsPerPageOptions={itemsPerPageOptions}
           onSelect={pipe(
@@ -126,11 +124,11 @@ function ActivityLogPage() {
               selection === 'prev'
                 ? {
                     last: itemsPerPage,
-                    before: activityLogMetadata.pagination.start_cursor,
+                    before: activityLogResponse.pagination?.start_cursor,
                   }
                 : {
                     first: itemsPerPage,
-                    after: activityLogMetadata.pagination.end_cursor,
+                    after: activityLogResponse.pagination?.end_cursor,
                   },
             setPaginationToSearchParams,
             setSearchParams
