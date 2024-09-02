@@ -31,7 +31,7 @@ defmodule TrentoWeb.ActivityLogChannel do
 
   @impl true
   def handle_info(:after_join, socket) do
-    users = Users.list_all_usernames()
+    users = ["system" | Users.list_all_usernames()]
     push(socket, "al_users_pushed", %{users: users})
     Process.send_after(self(), :after_join, 60_000)
     {:noreply, socket}
