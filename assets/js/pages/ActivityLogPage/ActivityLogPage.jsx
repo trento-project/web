@@ -104,11 +104,7 @@ function ActivityLogPage() {
             filters={filters}
             autoApply={false}
             value={searchParamsToFilterValue(searchParams)}
-            onChange={pipe(
-              setFilterValueToSearchParams,
-              resetPaginationToSearchParams(itemsPerPage),
-              setSearchParams
-            )}
+            onChange={pipe(setFilterValueToSearchParams, setSearchParams)}
           />
         </div>
         <ActivityLogOverview
