@@ -1,65 +1,34 @@
-import React, { Fragment, useRef } from 'react';
-import { Dialog, Transition } from '@headlessui/react';
+import {
+  Dialog,
+  DialogBackdrop,
+  DialogPanel,
+  DialogTitle,
+} from '@headlessui/react';
 import classNames from 'classnames';
+import React from 'react';
 
 function Modal({ children, open, onClose, title, className }) {
-  const refContent = useRef(null);
-
   return (
-    <Transition appear show={open} as={Fragment}>
-      <Dialog
-        initialFocus={refContent}
-        as="div"
-        className="fixed inset-0 z-50 overflow-y-auto"
-        onClose={onClose}
-      >
-        <div ref={refContent} className="min-h-screen px-4 text-center">
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <Dialog.Overlay className="fixed inset-0 bg-white/60 backdrop-blur-sm" />
-          </Transition.Child>
-
-          {/* This element is to trick the browser into centering the modal contents. */}
-          <span
-            className="inline-block h-screen align-middle"
-            aria-hidden="true"
-          >
-            &#8203;
-          </span>
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0 scale-95"
-            enterTo="opacity-100 scale-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100 scale-100"
-            leaveTo="opacity-0 scale-95"
-          >
-            <div
-              className={classNames(
-                'inline-block w-full max-w-7xl p-6 my-8 text-left align-middle transition-all transform bg-white shadow-lg rounded-lg',
-                className
-              )}
-            >
-              <Dialog.Title
-                as="h3"
-                className="text-xl font-semibold leading-6 text-gray-900"
-              >
-                {title}
-              </Dialog.Title>
-              <div className="mt-2">{children}</div>
-            </div>
-          </Transition.Child>
-        </div>
-      </Dialog>
-    </Transition>
+    <Dialog open={open} onClose={onClose} className="relative z-50">
+      <DialogBackdrop
+        transition
+        className="fixed inset-0 bg-white/60 backdrop-blur-sm duration-300 ease-out data-[closed]:opacity-0"
+      />
+      <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
+        <DialogPanel
+          transition
+          className={classNames(
+            'max-w-lg space-y-4 bg-white p-12 duration-300 ease-out data-[closed]:scale-95 data-[closed]:opacity-0',
+            className
+          )}
+        >
+          <DialogTitle className="text-xl font-semibold leading-6 text-gray-900">
+            {title}
+          </DialogTitle>
+          <div className="mt-2">{children}</div>
+        </DialogPanel>
+      </div>
+    </Dialog>
   );
 }
 

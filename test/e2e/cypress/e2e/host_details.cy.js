@@ -459,12 +459,10 @@ context('Host Details', () => {
 
         cy.get('#headlessui-portal-root').as('modal');
 
-        cy.get('@modal')
-          .find('.w-full')
-          .should(
-            'contain.text',
-            `Clean up data discovered by agent on host ${selectedHost.hostName}`
-          );
+        cy.get('@modal').should(
+          'contain.text',
+          `Clean up data discovered by agent on host ${selectedHost.hostName}`
+        );
         cy.get('@modal').contains('button', 'Clean up').click();
 
         cy.get('@modal').should('not.exist');

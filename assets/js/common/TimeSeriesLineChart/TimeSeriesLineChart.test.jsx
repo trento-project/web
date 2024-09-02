@@ -4,6 +4,10 @@ import { render } from '@testing-library/react';
 import TimeSeriesLineChart from './TimeSeriesLineChart';
 import '@testing-library/jest-dom';
 
+jest.mock('react-chartjs-2', () => ({
+  Line: () => <canvas />,
+}));
+
 describe('TimeSeriesLineChart component', () => {
   it('should raise an error if the datasets are more then 5', () => {
     const datasets = [
@@ -92,7 +96,6 @@ describe('TimeSeriesLineChart component', () => {
       </div>
     );
 
-    const canvas = container.querySelector('canvas');
-    expect(canvas).toBeDefined();
+    expect(container.querySelector('canvas')).toBeDefined();
   });
 });

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 
@@ -67,6 +67,8 @@ describe('ChecksCatalog CheckItem component', () => {
     await user.click(checkDiv);
     expect(screen.getByText(check.remediation)).toBeVisible();
     await user.click(checkDiv);
-    expect(screen.queryByText(check.remediation)).not.toBeInTheDocument();
+    await waitFor(() =>
+      expect(screen.queryByText(check.remediation)).not.toBeInTheDocument()
+    );
   });
 });
