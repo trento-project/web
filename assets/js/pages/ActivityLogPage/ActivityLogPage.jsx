@@ -80,7 +80,10 @@ function ActivityLogPage() {
     const params = searchParamsToAPIParams(searchParams);
     getActivityLog(params)
       .then(({ data }) => {
-        setActivityLogResponse(data);
+        setActivityLogResponse({
+          data: data?.data || [],
+          pagination: data?.pagination,
+        });
       })
       .catch(() => setActivityLogResponse({ data: [] }))
       .finally(() => {
