@@ -1,4 +1,8 @@
-import Pagination, { PaginationPrevNext } from './Pagination';
+import Pagination, {
+  PaginationPrevNext,
+  defaultItemsPerPageOptions,
+  defaultItemsPerPage,
+} from './Pagination';
 
 export default Pagination;
-export { PaginationPrevNext };
+export { PaginationPrevNext, defaultItemsPerPageOptions, defaultItemsPerPage };

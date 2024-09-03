@@ -35,8 +35,11 @@ const disabledLinkClassNames = classNames(
 );
 const containerClassNames = 'flex items-center';
 
+const defaultItemsPerPageOptions = [10, 20, 50, 75, 100];
+const defaultItemsPerPage = 10;
+
 function ItemsPerPageSelector({
-  itemsPerPageOptions,
+  itemsPerPageOptions = defaultItemsPerPageOptions,
   currentItemsPerPage,
   onChange,
 }) {
@@ -60,8 +63,8 @@ function PaginationPrevNext({
   hasPrev = true,
   hasNext = true,
   onSelect,
-  currentItemsPerPage = 10,
-  itemsPerPageOptions = [10],
+  currentItemsPerPage = defaultItemsPerPage,
+  itemsPerPageOptions = defaultItemsPerPageOptions,
   onChangeItemsPerPage = noop,
 }) {
   return (
@@ -108,8 +111,8 @@ function Pagination({
   pages,
   currentPage,
   onSelect,
-  currentItemsPerPage = 10,
-  itemsPerPageOptions = [10],
+  currentItemsPerPage = defaultItemsPerPage,
+  itemsPerPageOptions = defaultItemsPerPageOptions,
   onChangeItemsPerPage = noop,
 }) {
   const selectedPage = Math.min(currentPage, pages);
@@ -151,4 +154,4 @@ function Pagination({
 
 export default Pagination;
 
-export { PaginationPrevNext };
+export { PaginationPrevNext, defaultItemsPerPageOptions, defaultItemsPerPage };

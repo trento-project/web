@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import { noop } from 'lodash';
 
 import { page, pages } from '@lib/lists';
-import Pagination from '@common/Pagination';
+import Pagination, { defaultItemsPerPage } from '@common/Pagination';
 import { TableFilters, createFilter } from './filters';
 import { defaultRowKey } from './defaultRowKey';
 import SortingIcon from './SortingIcon';
@@ -61,8 +61,6 @@ const getFilterFunction = (column, value) =>
     ? column.filter(value, column.key)
     : getDefaultFilterFunction(value, column.key);
 
-const itemsPerPageOptions = [10, 20, 50, 75, 100];
-
 function Table({
   config,
   data = [],
@@ -85,9 +83,8 @@ function Table({
 
   const [filters, setFilters] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [currentItemsPerPage, setCurrentItemsPerPage] = useState(
-    itemsPerPageOptions[0]
-  );
+  const [currentItemsPerPage, setCurrentItemsPerPage] =
+    useState(defaultItemsPerPage);
 
   const searchParamsEnabled = Boolean(searchParams && setSearchParams);
 
@@ -251,7 +248,6 @@ function Table({
               <Pagination
                 pages={totalPages}
                 currentPage={currentPage}
-                itemsPerPageOptions={itemsPerPageOptions}
                 currentItemsPerPage={currentItemsPerPage}
                 onChangeItemsPerPage={(perPage) =>
                   setCurrentItemsPerPage(perPage)

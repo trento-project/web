@@ -7,7 +7,10 @@ import ComposedFilter from '@common/ComposedFilter';
 
 import { getActivityLog } from '@lib/api/activityLogs';
 import { ACTIVITY_TYPES_CONFIG } from '@lib/model/activityLog';
-import { PaginationPrevNext } from '@common/Pagination/Pagination';
+import {
+  PaginationPrevNext,
+  defaultItemsPerPageOptions,
+} from '@common/Pagination/Pagination';
 import { pipe } from 'lodash/fp';
 import {
   getItemsPerPageFromSearchParams,
@@ -43,7 +46,6 @@ const filters = [
 ];
 
 const defaultItemsPerPage = 20;
-const itemsPerPageOptions = [10, 20, 50, 75, 100];
 
 const changeItemsPerPage = (searchParams) => (items) => {
   if (searchParams.has('after')) {
@@ -72,7 +74,7 @@ function ActivityLogPage() {
     useState(false);
 
   const itemsPerPage = pipe(getItemsPerPageFromSearchParams, (n) =>
-    itemsPerPageOptions.includes(n) ? n : itemsPerPageOptions[0]
+    defaultItemsPerPageOptions.includes(n) ? n : defaultItemsPerPageOptions[0]
   )(searchParams);
 
   const fetchActivityLog = () => {
@@ -121,7 +123,6 @@ function ActivityLogPage() {
           hasPrev={activityLogResponse.pagination?.has_previous_page}
           hasNext={activityLogResponse.pagination?.has_next_page}
           currentItemsPerPage={itemsPerPage}
-          itemsPerPageOptions={itemsPerPageOptions}
           onSelect={pipe(
             (selection) =>
               selection === 'prev'
