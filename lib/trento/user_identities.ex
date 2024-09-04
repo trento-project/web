@@ -23,9 +23,22 @@ defmodule Trento.UserIdentities do
   If a user with the same username exists on our database, the user will be recovered and associated with the idp identity,
   otherwise the user will be created.
   """
-  def create_user(user_identity_params, %{"username" => username} = user_params, user_id_params) do
-    existing_user = Users.get_by(username: username)
-    maybe_create_user(existing_user, user_identity_params, user_params, user_id_params)
+  def create_user(user_identity_params, user_params, user_id_params) do
+    case extract_username(user_params) do
+      {:ok, username} ->
+        existing_user = Users.get_by(username: username)
+
+        maybe_create_user(
+          existing_user,
+          user_identity_params,
+          Map.put(user_params, "username", username),
+          user_id_params
+        )
+
+      error ->
+        Logger.error("could not extract username from user_params: #{inspect(user_params)}")
+        error
+    end
   end
 
   @impl true
@@ -99,4 +112,9 @@ defmodule Trento.UserIdentities do
 
   defp admin_user?(%User{username: username}),
     do: username == Application.fetch_env!(:trento, :admin_user)
+
+  # God bless standards.
+  defp extract_username(%{"username" => username}), do: {:ok, username}
+  defp extract_username(%{"nickname" => nickname}), do: {:ok, nickname}
+  defp extract_username(_), do: {:error, :username_not_found}
 end
