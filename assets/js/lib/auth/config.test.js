@@ -8,15 +8,15 @@ describe('auth config', () => {
   it('should check if single sign on is enabled', () => {
     expect(isSingleSignOnEnabled()).toBeFalsy();
 
-    global.config.oidcEnabled = true;
+    global.config.ssoEnabled = true;
 
     return import('./config').then((config) => {
       expect(config.isSingleSignOnEnabled()).toBeTruthy();
     });
   });
 
-  it('should get OIDC login url if OIDC is enabled', async () => {
-    global.config.oidcEnabled = true;
+  it('should get SSO login url if SSO is enabled', async () => {
+    global.config.ssoEnabled = true;
 
     return import('./config').then((config) => {
       expect(config.getSingleSignOnLoginUrl()).toBe(
@@ -25,8 +25,8 @@ describe('auth config', () => {
     });
   });
 
-  it('should get OIDC callback url if OIDC is enabled', async () => {
-    global.config.oidcEnabled = true;
+  it('should get SSO callback url if SSO is enabled', async () => {
+    global.config.ssoEnabled = true;
 
     return import('./config').then((config) => {
       expect(config.getSingleSignOnCallbackUrl()).toBe('/auth/oidc_callback');

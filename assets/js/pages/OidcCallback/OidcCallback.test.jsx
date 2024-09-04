@@ -24,7 +24,7 @@ describe('OidcCallback component', () => {
     expect(screen.getByText('Loading...')).toBeVisible();
 
     expect(store.getActions()).toContainEqual({
-      type: 'PERFORM_OIDC_ENROLLMENT',
+      type: 'PERFORM_SSO_ENROLLMENT',
       payload: { code: 'code', state: 'state' },
     });
   });

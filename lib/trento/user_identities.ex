@@ -90,7 +90,7 @@ defmodule Trento.UserIdentities do
 
       {:error, _, changeset_error, _} ->
         Logger.error(
-          "could not assign the global abilities to the oidc admin user #{inspect(changeset_error)}"
+          "could not assign the global abilities to the sso admin user #{inspect(changeset_error)}"
         )
 
         {:error, :assign_global_abilities}

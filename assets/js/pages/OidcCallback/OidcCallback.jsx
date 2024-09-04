@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import TrentoLogo from '@static/trento-dark.svg';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { performOidcEnrollment } from '@state/user';
+import { performSSOEnrollment } from '@state/user';
 import { getSingleSignOnLoginUrl } from '@lib/auth/config';
 import LoginSSO from '@pages/Login/LoginSSO';
 import { getUserProfile } from '@state/selectors/user';
@@ -21,7 +21,7 @@ function OidCallback() {
 
     setError(!code || !state);
 
-    dispatch(performOidcEnrollment({ state, code }));
+    dispatch(performSSOEnrollment({ state, code }));
   }, [search]);
 
   useEffect(() => {

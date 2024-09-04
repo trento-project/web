@@ -450,7 +450,7 @@ defmodule TrentoWeb.SessionControllerTest do
       Map.put(context, :conn, conn)
     end
 
-    test "should return the credentials when the oidc callback flow is completed without errors and the user does not exist on trento",
+    test "should return the credentials when the sso callback flow is completed without errors and the user does not exist on trento",
          %{conn: conn, api_spec: api_spec} do
       user = build(:user)
 
@@ -479,7 +479,7 @@ defmodule TrentoWeb.SessionControllerTest do
       |> assert_schema("Credentials", api_spec)
     end
 
-    test "should return the credentials when the oidc callback flow is completed without errors and the user exists on trento but without an associated user identity",
+    test "should return the credentials when the sso callback flow is completed without errors and the user exists on trento but without an associated user identity",
          %{conn: conn, api_spec: api_spec} do
       user = insert(:user)
 
@@ -508,7 +508,7 @@ defmodule TrentoWeb.SessionControllerTest do
       |> assert_schema("Credentials", api_spec)
     end
 
-    test "should return the credentials when the oidc callback flow is completed without errors and the user does exist on trento",
+    test "should return the credentials when the sso callback flow is completed without errors and the user does exist on trento",
          %{conn: conn, api_spec: api_spec} do
       user = insert(:user)
 
@@ -540,7 +540,7 @@ defmodule TrentoWeb.SessionControllerTest do
       |> assert_schema("Credentials", api_spec)
     end
 
-    test "should return the credentials when the oidc callback flow is completed without errors and assign the global abilities when the oidc user is the default admin and does not exists on trento",
+    test "should return the credentials when the sso callback flow is completed without errors and assign the global abilities when the oidc user is the default admin and does not exists on trento",
          %{conn: conn, api_spec: api_spec} do
       %{username: username} = user = build(:user)
       Application.put_env(:trento, :admin_user, username)
@@ -576,7 +576,7 @@ defmodule TrentoWeb.SessionControllerTest do
       Application.put_env(:trento, :admin_user, "admin")
     end
 
-    test "should return the credentials when the oidc callback flow is completed without errors and assign the global abilities when the oidc user is the default admin and already exists on trento",
+    test "should return the credentials when the sso callback flow is completed without errors and assign the global abilities when the oidc user is the default admin and already exists on trento",
          %{conn: conn, api_spec: api_spec} do
       %{username: username, id: user_id} = user = insert(:user)
       Application.put_env(:trento, :admin_user, username)
@@ -614,7 +614,7 @@ defmodule TrentoWeb.SessionControllerTest do
       Application.put_env(:trento, :admin_user, "admin")
     end
 
-    test "should return unauthorized when the oidc callback flow is completed without errors and the user is locked on trento",
+    test "should return unauthorized when the sso callback flow is completed without errors and the user is locked on trento",
          %{conn: conn, api_spec: api_spec} do
       user = insert(:user, locked_at: DateTime.utc_now())
 

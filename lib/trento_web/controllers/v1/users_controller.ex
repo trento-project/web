@@ -130,7 +130,8 @@ defmodule TrentoWeb.V1.UsersController do
   def update(%{body_params: body_params} = conn, %{id: id}) do
     with {:ok, user} <- Users.get_user(id),
          {:ok, lock_version} <- user_version_from_if_match_header(conn),
-         body_params <- clean_params_for_oidc_integration(body_params, oidc_enabled?()),
+         body_params <-
+           clean_params_for_sso_integration(body_params, oidc_enabled?()),
          update_params <- Map.put(body_params, :lock_version, lock_version),
          {:ok, %User{} = user} <- Users.update_user(user, update_params),
          :ok <- broadcast_update_or_locked_user(user),
@@ -181,9 +182,9 @@ defmodule TrentoWeb.V1.UsersController do
     put_resp_header(conn, "etag", Integer.to_string(lock_version))
   end
 
-  # when oidc is enabled, we only allow abilities as parameter
-  defp clean_params_for_oidc_integration(attrs, true), do: Map.take(attrs, [:abilities, :enabled])
-  defp clean_params_for_oidc_integration(attrs, _), do: attrs
+  # when sso is enabled, we only allow abilities as parameter
+  defp clean_params_for_sso_integration(attrs, true), do: Map.take(attrs, [:abilities, :enabled])
+  defp clean_params_for_sso_integration(attrs, _), do: attrs
 
   defp oidc_enabled?, do: Application.fetch_env!(:trento, :oidc)[:enabled]
 end

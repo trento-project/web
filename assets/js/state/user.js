@@ -63,7 +63,7 @@ export const PERFORM_LOGIN = 'PERFORM_LOGIN';
 export const USER_UPDATED = 'USER_UPDATED';
 export const USER_LOCKED = 'USER_LOCKED';
 export const USER_DELETED = 'USER_DELETED';
-export const PERFORM_OIDC_ENROLLMENT = 'PERFORM_OIDC_ENROLLMENT';
+export const PERFORM_SSO_ENROLLMENT = 'PERFORM_SSO_ENROLLMENT';
 
 export const SET_USER_AS_LOGGED = 'user/setUserAsLogged';
 
@@ -77,8 +77,8 @@ export const initiateLogin = createAction(
   })
 );
 
-export const performOidcEnrollment = createAction(
-  PERFORM_OIDC_ENROLLMENT,
+export const performSSOEnrollment = createAction(
+  PERFORM_SSO_ENROLLMENT,
   ({ state, code }) => ({
     payload: { state, code },
   })

@@ -238,7 +238,7 @@ defmodule TrentoWeb.SessionController do
 
     conn
     |> Conn.put_private(:pow_assent_session_params, session_params)
-    |> PowAssentPlug.callback_upsert(provider, params, idp_redirect_uri())
+    |> PowAssentPlug.callback_upsert(provider, params, idp_redirect_uri(provider))
     |> case do
       {:ok, conn} ->
         render(conn, "logged.json",
@@ -251,7 +251,7 @@ defmodule TrentoWeb.SessionController do
         {:error, :invalid_credentials}
 
       error ->
-        Logger.error("error during oidc callback execution: #{inspect(error)}")
+        Logger.error("error during sso callback execution: #{inspect(error)}")
         error
     end
   end
@@ -271,5 +271,6 @@ defmodule TrentoWeb.SessionController do
 
   defp maybe_validate_totp(_, _), do: {:error, :totp_code_missing}
 
-  defp idp_redirect_uri, do: Application.fetch_env!(:trento, :oidc)[:callback_url]
+  defp idp_redirect_uri("oidc_local"), do: Application.fetch_env!(:trento, :oidc)[:callback_url]
+  defp idp_redirect_uri(_), do: ""
 end

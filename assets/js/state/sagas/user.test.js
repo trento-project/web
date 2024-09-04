@@ -21,7 +21,7 @@ import {
   performLogin,
   clearUserAndLogout,
   checkUserPasswordChangeRequested,
-  performOIDCEnrollment,
+  performSSOEnrollment,
 } from './user';
 
 const axiosMock = new MockAdapter(authClient);
@@ -201,7 +201,7 @@ describe('user login saga', () => {
       expect(dispatched).toEqual([]);
     });
 
-    it('should permorm OIDC enrollment', async () => {
+    it('should perform SSO enrollment', async () => {
       const { email, username, id, fullname, abilities } =
         profileFactory.build();
 
@@ -221,7 +221,7 @@ describe('user login saga', () => {
       });
 
       const dispatched = await recordSaga(
-        performOIDCEnrollment,
+        performSSOEnrollment,
         {
           payload: {
             code: 'code',
@@ -255,7 +255,7 @@ describe('user login saga', () => {
       );
     });
 
-    it('should set the error when the OIDC enrollment fails', async () => {
+    it('should set the error when the SSO enrollment fails', async () => {
       axiosMock
         .onPost('/api/session/oidc_local/callback', {
           code: 'bad',
@@ -265,7 +265,7 @@ describe('user login saga', () => {
           error: 'unauthorized',
         });
 
-      const dispatched = await recordSaga(performOIDCEnrollment, {
+      const dispatched = await recordSaga(performSSOEnrollment, {
         payload: {
           code: 'bad',
           state: 'bad',

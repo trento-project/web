@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { getFromConfig } from '@lib/config';
 
 const STORAGE_ACCESS_TOKEN_IDENTIFIER = 'access_token';
 const STORAGE_REFRESH_TOKEN_IDENTIFIER = 'refresh_token';
@@ -13,9 +14,9 @@ export const login = (credentials) =>
     return response;
   });
 
-export const oidcEnrollment = (credentials) =>
+export const ssoEnrollment = (credentials) =>
   authClient
-    .post('/api/session/oidc_local/callback', credentials)
+    .post(getFromConfig('ssoEnrollmentUrl'), credentials)
     .then((response) => {
       if (response.status !== 200) {
         throw Error('unauthorized', { cause: response.status });
