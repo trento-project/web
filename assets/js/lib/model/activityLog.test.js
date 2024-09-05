@@ -1,5 +1,7 @@
 import { abilityFactory } from '@lib/test-utils/factories/users';
+import { difference } from 'lodash';
 import {
+  ACTIVITY_TYPES,
   allowedActivities,
   LOGIN_ATTEMPT,
   PROFILE_UPDATE,
@@ -8,13 +10,13 @@ import {
   USER_MODIFICATION,
 } from './activityLog';
 
-const userManagementActivities = [
+const nonUserManagementActivities = difference(ACTIVITY_TYPES, [
   LOGIN_ATTEMPT,
   USER_CREATION,
   USER_MODIFICATION,
   USER_DELETION,
   PROFILE_UPDATE,
-];
+]);
 
 describe('activityLog', () => {
   it.each`
@@ -39,18 +41,9 @@ describe('activityLog', () => {
         ([key, _value]) => key
       );
 
-      const containsAllUserMgmtActivities = userManagementActivities.every(
-        (activity) => relevantActivities.includes(activity)
-      );
-
-      const doesNotContainAnyUserMgmtActivities =
-        userManagementActivities.every(
-          (activity) => !relevantActivities.includes(activity)
-        );
-
       hasUserMgmtActivities
-        ? expect(containsAllUserMgmtActivities).toBe(true)
-        : expect(doesNotContainAnyUserMgmtActivities).toBe(true);
+        ? expect(relevantActivities).toEqual(ACTIVITY_TYPES)
+        : expect(relevantActivities).toEqual(nonUserManagementActivities);
     }
   );
 });
