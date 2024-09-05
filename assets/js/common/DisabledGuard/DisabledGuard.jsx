@@ -1,4 +1,5 @@
 import React from 'react';
+import { isPermitted } from '@lib/model/users';
 
 import Tooltip from '@common/Tooltip';
 
@@ -22,11 +23,7 @@ function DisabledGuard({
 }) {
   const permittedFor = ALL_PERMITTED.concat(permitted);
 
-  const isPermitted = userAbilities
-    .map(({ name, resource }) => `${name}:${resource}`)
-    .some((ability) => permittedFor.includes(ability));
-
-  if (isPermitted) {
+  if (isPermitted(userAbilities, permittedFor)) {
     return children;
   }
 
