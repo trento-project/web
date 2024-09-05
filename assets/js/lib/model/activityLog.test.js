@@ -20,16 +20,16 @@ const nonUserManagementActivities = difference(ACTIVITY_TYPES, [
 
 describe('activityLog', () => {
   it.each`
-    userAbilities                        | hasUserMgmtActivities
-    ${[]}                                | ${false}
-    ${[['all', 'all']]}                  | ${true}
-    ${[['all', 'user']]}                 | ${true}
-    ${[['all', 'all'], ['all', 'user']]} | ${true}
-    ${[['all', 'all'], ['foo', 'bar']]}  | ${true}
-    ${[['all', 'user'], ['bar', 'baz']]} | ${true}
-    ${[['baz', 'qux'], ['bar', 'baz']]}  | ${false}
-    ${[['baz', 'qux']]}                  | ${false}
-    ${[['qux', 'ber']]}                  | ${false}
+    userAbilities                         | hasUserMgmtActivities
+    ${[]}                                 | ${false}
+    ${[['all', 'all']]}                   | ${true}
+    ${[['all', 'users']]}                 | ${true}
+    ${[['all', 'all'], ['all', 'users']]} | ${true}
+    ${[['all', 'all'], ['foo', 'bar']]}   | ${true}
+    ${[['all', 'users'], ['bar', 'baz']]} | ${true}
+    ${[['baz', 'qux'], ['bar', 'baz']]}   | ${false}
+    ${[['baz', 'qux']]}                   | ${false}
+    ${[['qux', 'ber']]}                   | ${false}
   `(
     'should return relevant activities for the given user abilities',
     ({ userAbilities, hasUserMgmtActivities }) => {

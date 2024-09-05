@@ -117,7 +117,7 @@ const taggingResourceType = (entry) =>
     sap_system: sapSystemResourceType(entry),
   })[entry.metadata?.resource_type] ?? 'Unable to determine resource type';
 
-const userManagement = ['all:all', 'all:user'];
+const userManagement = ['all:all', 'all:users'];
 
 export const ACTIVITY_TYPES_CONFIG = {
   [LOGIN_ATTEMPT]: {
