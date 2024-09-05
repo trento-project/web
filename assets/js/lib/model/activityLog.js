@@ -1,3 +1,7 @@
+import { has } from 'lodash';
+import { entries, filter, get, pipe } from 'lodash/fp';
+import { isPermitted } from './users';
+
 export const LOGIN_ATTEMPT = 'login_attempt';
 export const RESOURCE_TAGGING = 'resource_tagging';
 export const RESOURCE_UNTAGGING = 'resource_untagging';
@@ -195,12 +199,15 @@ const taggingResourceType = (entry) =>
     sap_system: sapSystemResourceType(entry),
   })[entry.metadata?.resource_type] ?? 'Unable to determine resource type';
 
+const userManagement = ['all:all', 'all:user'];
+
 export const ACTIVITY_TYPES_CONFIG = {
   [LOGIN_ATTEMPT]: {
     label: 'Login Attempt',
     message: ({ metadata }) =>
       metadata?.reason ? 'Login failed' : 'User logged in',
     resource: (_entry) => 'Application',
+    allowedTo: userManagement,
   },
   [RESOURCE_TAGGING]: {
     label: 'Tag Added',
@@ -233,26 +240,31 @@ export const ACTIVITY_TYPES_CONFIG = {
     label: 'SUMA Settings Cleared',
     message: (_entry) => 'SUMA Settings was cleared',
     resource: sumaSettingsResourceType,
+    allowedTo: userManagement,
   },
   [USER_CREATION]: {
     label: 'User Created',
     message: (_entry) => `User was created`,
     resource: userResourceType,
+    allowedTo: userManagement,
   },
   [USER_MODIFICATION]: {
     label: 'User Modified',
     message: (_entry) => `User was modified`,
     resource: userResourceType,
+    allowedTo: userManagement,
   },
   [USER_DELETION]: {
     label: 'User Deleted',
     message: (_entry) => `User was deleted`,
     resource: userResourceType,
+    allowedTo: userManagement,
   },
   [PROFILE_UPDATE]: {
     label: 'Profile Updated',
     message: (_entry) => `User modified profile`,
     resource: (_entry) => 'Profile',
+    allowedTo: userManagement,
   },
   [CLUSTER_CHECKS_EXECUTION_REQUEST]: {
     label: 'Checks Execution Requested',
@@ -590,6 +602,18 @@ export const toMessage = (entry) =>
 
 export const toResource = (entry) =>
   activityTypeConfig(entry)?.resource(entry) ?? 'Unrecognized resource';
+
+export const allowedActivities = (abilities) =>
+  pipe(
+    entries,
+    filter(
+      ([_key, value]) =>
+        !has(value, 'allowedTo') ||
+        pipe(get('allowedTo'), (allowedTo) =>
+          isPermitted(abilities, allowedTo)
+        )(value)
+    )
+  )(ACTIVITY_TYPES_CONFIG);
 
 export const LEVEL_DEBUG = 'debug';
 export const LEVEL_INFO = 'info';
