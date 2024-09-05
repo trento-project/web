@@ -60,21 +60,6 @@ export const searchParamsToFilterValue = pipe(
   Object.fromEntries
 );
 
-const structToSearchParams = pipe(
-  omitUndefined,
-  Object.entries,
-  reduce((acc, [k, v]) => {
-    const sp = acc || new URLSearchParams();
-    if (scalarKeys.includes(k)) {
-      sp.set(k, v);
-    } else {
-      Array.from(v).forEach((value) => sp.append(k, value));
-    }
-    return sp;
-  }, null),
-  defaultTo(new URLSearchParams())
-);
-
 /**
  * Convert a filter value object to a search params object as expected by the URLSearchParams API
  * Make the necessary transformations to the values before setting them in the search params
@@ -103,29 +88,18 @@ export const filterValueToSearchParams = pipe(
   defaultTo(new URLSearchParams())
 );
 
-export const paginatorToFilterValues =
-  (paginationMetadata) =>
-  (selection, itemsPerPage = paginationMetadata.first) => ({
-    ...(selection === 'prev'
-      ? { before: paginationMetadata.start_cursor }
-      : {}),
-    ...(selection === 'next' ? { after: paginationMetadata.end_cursor } : {}),
-    first: itemsPerPage,
-  });
+export const setPaginationToSearchParams =
+  (searchParams = new URLSearchParams()) =>
+  (pagination) => {
+    // eslint-disable-next-line no-unused-vars
+    const filters = pipe(
+      searchParamsToEntries,
+      Object.fromEntries,
+      omit(paginationFields)
+    )(searchParams);
 
-export const setPaginationToSearchParams = (
-  pagination,
-  searchParams = new URLSearchParams()
-) => {
-  // eslint-disable-next-line no-unused-vars
-  const filters = pipe(
-    searchParamsToEntries,
-    Object.fromEntries,
-    omit(paginationFields)
-  )(searchParams);
-
-  return filterValueToSearchParams({ ...pagination, ...filters });
-};
+    return filterValueToSearchParams({ ...pagination, ...filters });
+  };
 
 export const setFilterValueToSearchParams = (
   filterValue,
@@ -145,15 +119,8 @@ export const setFilterValueToSearchParams = (
 export const getItemsPerPageFromSearchParams = (searchParams) =>
   Number(searchParams.get('first') || searchParams.get('last'));
 
-export const resetPaginationToSearchParams =
-  (itemsPerPage) =>
-  (searchParams = new URLSearchParams()) => {
-    // eslint-disable-next-line no-unused-vars
-    const filters = pipe(
-      searchParamsToEntries,
-      Object.fromEntries,
-      omit(paginationFields)
-    )(searchParams);
+export const applyItemsPerPage = (itemsPerPage) => (searchParams) => {
+  searchParams.set('first', itemsPerPage);
 
-    return structToSearchParams({ first: itemsPerPage, ...filters });
-  };
+  return searchParams;
+};

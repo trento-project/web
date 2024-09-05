@@ -207,13 +207,10 @@ describe('searchParams helpers', () => {
       const newFirst = faker.number.int();
       const newAfter = faker.string.uuid();
 
-      const result = setPaginationToSearchParams(
-        {
-          after: newAfter,
-          first: newFirst,
-        },
-        sp
-      );
+      const result = setPaginationToSearchParams(sp)({
+        after: newAfter,
+        first: newFirst,
+      });
 
       expect(result.get('after')).toEqual(newAfter);
       expect(result.get('first')).toEqual(`${newFirst}`);
@@ -231,13 +228,10 @@ describe('searchParams helpers', () => {
       const newFirst = faker.number.int();
       const newAfter = faker.string.uuid();
 
-      const result = setPaginationToSearchParams(
-        {
-          after: newAfter,
-          first: newFirst,
-        },
-        sp
-      );
+      const result = setPaginationToSearchParams(sp)({
+        after: newAfter,
+        first: newFirst,
+      });
 
       expect(result.get('after')).toEqual(newAfter);
       expect(result.get('first')).toEqual(`${newFirst}`);
@@ -262,13 +256,10 @@ describe('searchParams helpers', () => {
       const newFirst = faker.number.int();
       const newAfter = faker.string.uuid();
 
-      const result = setPaginationToSearchParams(
-        {
-          after: newAfter,
-          first: newFirst,
-        },
-        sp
-      );
+      const result = setPaginationToSearchParams(sp)({
+        after: newAfter,
+        first: newFirst,
+      });
 
       expect(result.get('after')).toEqual(newAfter);
       expect(result.get('first')).toEqual(`${newFirst}`);

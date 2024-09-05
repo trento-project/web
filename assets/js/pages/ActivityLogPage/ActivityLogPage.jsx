@@ -13,8 +13,8 @@ import {
 } from '@common/Pagination/Pagination';
 import { pipe } from 'lodash/fp';
 import {
+  applyItemsPerPage,
   getItemsPerPageFromSearchParams,
-  resetPaginationToSearchParams,
   searchParamsToAPIParams,
   searchParamsToFilterValue,
   setFilterValueToSearchParams,
@@ -63,38 +63,51 @@ const changeItemsPerPage = (searchParams) => (items) => {
   return { first: items };
 };
 
+const emptyActivityLogResponse = {
+  data: [],
+  pagination: {},
+};
+
+const detectItemsPerPage = (number) =>
+  defaultItemsPerPageOptions.includes(number) ? number : defaultItemsPerPage;
+
 function ActivityLogPage() {
-  const [searchParams, setSearchParams] = useSearchParams(
-    resetPaginationToSearchParams(defaultItemsPerPage)()
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const [activityLogResponse, setActivityLogResponse] = useState(
+    emptyActivityLogResponse
   );
-  const [activityLogResponse, setActivityLogResponse] = useState({ data: [] });
 
   const [isLoading, setLoading] = useState(true);
   const [activityLogDetailModalOpen, setActivityLogDetailModalOpen] =
     useState(false);
 
-  const itemsPerPage = pipe(getItemsPerPageFromSearchParams, (n) =>
-    defaultItemsPerPageOptions.includes(n) ? n : defaultItemsPerPageOptions[0]
+  const itemsPerPage = pipe(
+    getItemsPerPageFromSearchParams,
+    detectItemsPerPage
   )(searchParams);
 
   const fetchActivityLog = () => {
     setLoading(true);
-    const params = searchParamsToAPIParams(searchParams);
-    getActivityLog(params)
+    pipe(
+      searchParamsToAPIParams,
+      getActivityLog
+    )(searchParams)
       .then(({ data }) => {
         setActivityLogResponse({
           data: data?.data || [],
           pagination: data?.pagination,
         });
       })
-      .catch(() => setActivityLogResponse({ data: [] }))
-      .finally(() => {
-        setLoading(false);
-      });
+      .catch(() => setActivityLogResponse(emptyActivityLogResponse))
+      .finally(() => setLoading(false));
   };
 
   useEffect(() => {
-    fetchActivityLog();
+    searchParams.size === 0 ||
+    (!searchParams.has('first') && !searchParams.has('last'))
+      ? pipe(applyItemsPerPage(itemsPerPage), setSearchParams)(searchParams)
+      : fetchActivityLog();
   }, [searchParams]);
 
   return (
@@ -107,7 +120,11 @@ function ActivityLogPage() {
             filters={filters}
             autoApply={false}
             value={searchParamsToFilterValue(searchParams)}
-            onChange={pipe(setFilterValueToSearchParams, setSearchParams)}
+            onChange={pipe(
+              setFilterValueToSearchParams,
+              applyItemsPerPage(itemsPerPage),
+              setSearchParams
+            )}
           />
         </div>
         <ActivityLogOverview
@@ -134,12 +151,12 @@ function ActivityLogPage() {
                     first: itemsPerPage,
                     after: activityLogResponse.pagination?.end_cursor,
                   },
-            setPaginationToSearchParams,
+            setPaginationToSearchParams(searchParams),
             setSearchParams
           )}
           onChangeItemsPerPage={pipe(
             changeItemsPerPage(searchParams),
-            setPaginationToSearchParams,
+            setPaginationToSearchParams(searchParams),
             setSearchParams
           )}
         />

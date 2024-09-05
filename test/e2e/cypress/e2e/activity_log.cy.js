@@ -60,7 +60,7 @@ context('Activity Log page', () => {
         'eq',
         `${
           Cypress.config().baseUrl
-        }/activity_log?first=20&from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&to_date=custom&to_date=2024-08-13T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging`
+        }/activity_log?from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&to_date=custom&to_date=2024-08-13T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging&first=20`
       );
     });
 
