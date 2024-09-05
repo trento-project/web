@@ -1,5 +1,11 @@
 import '@testing-library/jest-dom';
 
+<<<<<<< HEAD
+=======
+import MockAdapter from 'axios-mock-adapter';
+import { withDefaultState, renderWithRouter } from '@lib/test-utils';
+
+>>>>>>> d9845ca54 (Refactors ActivityLogPage test)
 import { networkClient } from '@lib/network';
 import { renderWithRouter, withDefaultState } from '@lib/test-utils';
 import { activityLogEntryFactory } from '@lib/test-utils/factories/activityLog';
@@ -55,7 +61,6 @@ describe('ActivityLogPage', () => {
     const { container } = await act(() =>
       renderWithRouter(StatefulActivityLogPage)
     );
-
     expect(container.querySelectorAll('tbody > tr')).toHaveLength(5);
   });
 });
