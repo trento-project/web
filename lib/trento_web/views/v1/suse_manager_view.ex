@@ -1,6 +1,8 @@
 defmodule TrentoWeb.V1.SUSEManagerView do
   use TrentoWeb, :view
 
+  alias Trento.SoftwareUpdates.Enums.AdvisoryType
+
   def render("software_updates.json", %{
         relevant_patches: relevant_patches,
         upgradable_packages: upgradable_packages
@@ -74,7 +76,8 @@ defmodule TrentoWeb.V1.SUSEManagerView do
         errata_details:
           errata_details
           |> Map.drop([:errataFrom])
-          |> Map.put(:errata_from, errataFrom),
+          |> Map.put(:errata_from, errataFrom)
+          |> Map.update(:type, "", &AdvisoryType.from_string/1),
         cves: cves,
         fixes: fixes,
         affected_packages: affected_packages,

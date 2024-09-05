@@ -44,7 +44,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
           advisory_type: %Schema{
             type: :string,
             description: "Advisory's type",
-            enum: [:security_advisory, :bugfix, :enhancement]
+            enum: [:security_advisory, :bugfix, :enhancement, :unknown]
           },
           date: %Schema{type: :string, description: "Advisory's date"},
           update_date: %Schema{type: :string, description: "Advisory's update date"}

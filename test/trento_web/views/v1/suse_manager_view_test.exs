@@ -24,10 +24,10 @@ defmodule TrentoWeb.V1.SUSEManagerViewTest do
     test "should render relevant fields" do
       %{errataFrom: errata_from} = errata_details = build(:errata_details)
 
-      errata_details_sans_errata_from = Map.delete(errata_details, :errataFrom)
-
       expected_errata_details =
-        Map.put(errata_details_sans_errata_from, :errata_from, errata_from)
+        %{errata_details | type: :bugfix}
+        |> Map.delete(:errataFrom)
+        |> Map.put(:errata_from, errata_from)
 
       cves = build_list(10, :cve)
 
@@ -45,8 +45,7 @@ defmodule TrentoWeb.V1.SUSEManagerViewTest do
                affected_systems: ^affected_systems
              } =
                render(SUSEManagerView, "errata_details.json", %{
-                 errata_details:
-                   Map.put(errata_details_sans_errata_from, :errataFrom, errata_from),
+                 errata_details: errata_details,
                  cves: cves,
                  fixes: fixes,
                  affected_packages: affected_packages,
