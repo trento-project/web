@@ -117,6 +117,17 @@ defmodule Trento.UsersTest do
       assert length(users) == 1
     end
 
+    test "list_all_usernames returns all usernames including those for deleted users" do
+      %{username: username1} = insert(:user)
+      %{username: username2} = insert(:user, deleted_at: DateTime.utc_now())
+      inserted_sorted_usernames = Enum.sort([username1, username2])
+      sorted_usernames = Enum.sort(Users.list_all_usernames())
+
+      assert inserted_sorted_usernames == sorted_usernames
+      assert length(sorted_usernames) == 2
+      assert length(inserted_sorted_usernames) == 2
+    end
+
     test "get_user returns a user when the user exist" do
       %{id: user_id} = insert(:user)
 
