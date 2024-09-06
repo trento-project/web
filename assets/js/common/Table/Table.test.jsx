@@ -129,9 +129,9 @@ describe('Table component', () => {
     screen
       .getByRole('table')
       .querySelector('th')
-      .classList.forEach((className) =>
-        className.match('px-') ? (pxClass = className) : ''
-      );
+      .classList.forEach((className) => {
+        className.match('px-') && (pxClass = className);
+      });
 
     screen
       .getByRole('table')
