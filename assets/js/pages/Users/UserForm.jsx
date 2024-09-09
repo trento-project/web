@@ -136,7 +136,7 @@ function UserForm({
     <div>
       <div className="container max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 bg-white dark:bg-gray-800 rounded-lg">
         <div className="grid grid-cols-6 gap-6">
-          <Label className="col-start-1 col-span-1" required>
+          <Label className="col-start-1 col-span-1 sm:pt-2" required>
             Full Name
           </Label>
           <div className="col-start-2 col-span-3">
@@ -153,7 +153,7 @@ function UserForm({
             />
             {fullNameErrorState && errorMessage(fullNameErrorState)}
           </div>
-          <Label className="col-start-1 col-span-1" required>
+          <Label className="col-start-1 col-span-1 sm:pt-2" required>
             Email Address
           </Label>
           <div className="col-start-2 col-span-3">
@@ -170,7 +170,7 @@ function UserForm({
             />
             {emailAddressErrorState && errorMessage(emailAddressErrorState)}
           </div>
-          <Label className="col-start-1 col-span-1" required>
+          <Label className="col-start-1 col-span-1 sm:pt-2" required>
             Username
           </Label>
           <div className="col-start-2 col-span-3">
@@ -190,7 +190,7 @@ function UserForm({
           {!singleSignOnEnabled && (
             <>
               <Label
-                className="col-start-1 col-span-1"
+                className="col-start-1 col-span-1 sm:pt-2"
                 info={PASSWORD_POLICY_TEXT}
                 required
               >
@@ -211,7 +211,7 @@ function UserForm({
                 />
                 {passwordErrorState && errorMessage(passwordErrorState)}
               </div>
-              <Label className="col-start-1 col-span-1" required>
+              <Label className="col-start-1 col-span-1 sm:pt-2" required>
                 Confirm Password
               </Label>
               <div className="col-start-2 col-span-3">
@@ -241,7 +241,7 @@ function UserForm({
               </div>
             </>
           )}
-          <Label className="col-start-1 col-span-1">Permissions</Label>
+          <Label className="col-start-1 col-span-1 sm:pt-2">Permissions</Label>
           <div className="col-start-2 col-span-3">
             <AbilitiesMultiSelect
               userAbilities={userAbilities}
@@ -250,7 +250,7 @@ function UserForm({
               setAbilities={setAbilities}
             />
           </div>
-          <Label className="col-start-1 col-span-1">Status</Label>
+          <Label className="col-start-1 col-span-1 sm:pt-2">Status</Label>
           <div className="col-start-2 col-span-3">
             <Select
               optionsName="status"
@@ -264,7 +264,7 @@ function UserForm({
           {editing && !singleSignOnEnabled && (
             <>
               <Label
-                className="col-start-1 col-span-1"
+                className="col-start-1 col-span-1 sm:pt-2"
                 htmlFor="totp"
                 aria-label="totp"
               >
@@ -283,11 +283,11 @@ function UserForm({
                   }}
                 />
               </div>
-              <Label className="col-start-1 col-span-1">Created</Label>
+              <Label className="col-start-1 col-span-1 sm:pt-2">Created</Label>
               <span className="col-start-2 col-span-3">
                 {format(parseISO(createdAt), 'PPpp')}
               </span>
-              <Label className="col-start-1 col-span-1">Updated</Label>
+              <Label className="col-start-1 col-span-1 sm:pt-2">Updated</Label>
               <span className="col-start-2 col-span-3">
                 {format(parseISO(updatedAt), 'PPpp')}
               </span>
