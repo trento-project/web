@@ -1,3 +1,7 @@
+import { has } from 'lodash';
+import { entries, filter, get, map, pipe } from 'lodash/fp';
+import { isPermitted } from './users';
+
 export const LOGIN_ATTEMPT = 'login_attempt';
 export const RESOURCE_TAGGING = 'resource_tagging';
 export const RESOURCE_UNTAGGING = 'resource_untagging';
@@ -98,88 +102,6 @@ export const DATABASE_ROLL_UP_REQUESTED = 'database_roll_up_requested';
 export const DATABASE_TENANTS_UPDATED = 'database_tenants_updated';
 export const DATABASE_TOMBSTONED = 'database_tombstoned';
 
-export const ACTIVITY_TYPES = [
-  LOGIN_ATTEMPT,
-  RESOURCE_TAGGING,
-  RESOURCE_UNTAGGING,
-  API_KEY_GENERATION,
-  SAVING_SUMA_SETTINGS,
-  CHANGING_SUMA_SETTINGS,
-  CLEARING_SUMA_SETTINGS,
-  USER_CREATION,
-  USER_MODIFICATION,
-  USER_DELETION,
-  PROFILE_UPDATE,
-  CLUSTER_CHECKS_EXECUTION_REQUEST,
-  ACTIVITY_LOG_SETTINGS_UPDATE,
-  // Host events
-  HEARTBEAT_FAILED,
-  HEARTBEAT_SUCCEEDED,
-  HOST_CHECKS_HEALTH_CHANGED,
-  HOST_CHECKS_SELECTED,
-  HOST_DEREGISTERED,
-  HOST_DEREGISTRATION_REQUESTED,
-  HOST_DETAILS_UPDATED,
-  HOST_HEALTH_CHANGED,
-  HOST_REGISTERED,
-  HOST_RESTORED,
-  HOST_ROLLED_UP,
-  HOST_ROLL_UP_REQUESTED,
-  HOST_SAPTUNE_HEALTH_CHANGED,
-  HOST_TOMBSTONED,
-  PROVIDER_UPDATED,
-  SAPTUNE_STATUS_UPDATED,
-  SLES_SUBSCRIPTIONS_UPDATED,
-  SOFTWARE_UPDATES_DISCOVERY_CLEARED,
-  SOFTWARE_UPDATES_DISCOVERY_REQUESTED,
-  SOFTWARE_UPDATES_HEALTH_CHANGED,
-  // Cluster events
-  CHECKS_SELECTED,
-  CLUSTER_CHECKS_HEALTH_CHANGED,
-  CLUSTER_DEREGISTERED,
-  CLUSTER_DETAILS_UPDATED,
-  CLUSTER_DISCOVERED_HEALTH_CHANGED,
-  CLUSTER_HEALTH_CHANGED,
-  CLUSTER_REGISTERED,
-  CLUSTER_RESTORED,
-  CLUSTER_ROLLED_UP,
-  CLUSTER_ROLL_UP_REQUESTED,
-  CLUSTER_TOMBSTONED,
-  HOST_ADDED_TO_CLUSTER,
-  HOST_REMOVED_FROM_CLUSTER,
-  // SAP System events
-  APPLICATION_INSTANCE_DEREGISTERED,
-  APPLICATION_INSTANCE_HEALTH_CHANGED,
-  APPLICATION_INSTANCE_MARKED_ABSENT,
-  APPLICATION_INSTANCE_MARKED_PRESENT,
-  APPLICATION_INSTANCE_MOVED,
-  APPLICATION_INSTANCE_REGISTERED,
-  SAP_SYSTEM_DATABASE_HEALTH_CHANGED,
-  SAP_SYSTEM_DEREGISTERED,
-  SAP_SYSTEM_HEALTH_CHANGED,
-  SAP_SYSTEM_REGISTERED,
-  SAP_SYSTEM_RESTORED,
-  SAP_SYSTEM_ROLLED_UP,
-  SAP_SYSTEM_ROLL_UP_REQUESTED,
-  SAP_SYSTEM_TOMBSTONED,
-  SAP_SYSTEM_UPDATED,
-  // Database events
-  DATABASE_DEREGISTERED,
-  DATABASE_HEALTH_CHANGED,
-  DATABASE_INSTANCE_DEREGISTERED,
-  DATABASE_INSTANCE_HEALTH_CHANGED,
-  DATABASE_INSTANCE_MARKED_ABSENT,
-  DATABASE_INSTANCE_MARKED_PRESENT,
-  DATABASE_INSTANCE_REGISTERED,
-  DATABASE_INSTANCE_SYSTEM_REPLICATION_CHANGED,
-  DATABASE_REGISTERED,
-  DATABASE_RESTORED,
-  DATABASE_ROLLED_UP,
-  DATABASE_ROLL_UP_REQUESTED,
-  DATABASE_TENANTS_UPDATED,
-  DATABASE_TOMBSTONED,
-];
-
 const sumaSettingsResourceType = (_entry) => 'SUMA Settings';
 const userResourceType = (_entry) => 'User';
 const clusterResourceType = (_entry) => 'Cluster';
@@ -195,12 +117,15 @@ const taggingResourceType = (entry) =>
     sap_system: sapSystemResourceType(entry),
   })[entry.metadata?.resource_type] ?? 'Unable to determine resource type';
 
+const userManagement = ['all:all', 'all:users'];
+
 export const ACTIVITY_TYPES_CONFIG = {
   [LOGIN_ATTEMPT]: {
     label: 'Login Attempt',
     message: ({ metadata }) =>
       metadata?.reason ? 'Login failed' : 'User logged in',
     resource: (_entry) => 'Application',
+    allowedTo: userManagement,
   },
   [RESOURCE_TAGGING]: {
     label: 'Tag Added',
@@ -238,21 +163,25 @@ export const ACTIVITY_TYPES_CONFIG = {
     label: 'User Created',
     message: (_entry) => `User was created`,
     resource: userResourceType,
+    allowedTo: userManagement,
   },
   [USER_MODIFICATION]: {
     label: 'User Modified',
     message: (_entry) => `User was modified`,
     resource: userResourceType,
+    allowedTo: userManagement,
   },
   [USER_DELETION]: {
     label: 'User Deleted',
     message: (_entry) => `User was deleted`,
     resource: userResourceType,
+    allowedTo: userManagement,
   },
   [PROFILE_UPDATE]: {
     label: 'Profile Updated',
     message: (_entry) => `User modified profile`,
     resource: (_entry) => 'Profile',
+    allowedTo: userManagement,
   },
   [CLUSTER_CHECKS_EXECUTION_REQUEST]: {
     label: 'Checks Execution Requested',
@@ -580,6 +509,11 @@ export const ACTIVITY_TYPES_CONFIG = {
   },
 };
 
+export const ACTIVITY_TYPES = pipe(
+  entries,
+  map(([key, _value]) => key)
+)(ACTIVITY_TYPES_CONFIG);
+
 const activityTypeConfig = ({ type }) => ACTIVITY_TYPES_CONFIG[type];
 
 export const toLabel = (entry) =>
@@ -590,6 +524,18 @@ export const toMessage = (entry) =>
 
 export const toResource = (entry) =>
   activityTypeConfig(entry)?.resource(entry) ?? 'Unrecognized resource';
+
+export const allowedActivities = (abilities) =>
+  pipe(
+    entries,
+    filter(
+      ([_key, value]) =>
+        !has(value, 'allowedTo') ||
+        pipe(get('allowedTo'), (allowedTo) =>
+          isPermitted(abilities, allowedTo)
+        )(value)
+    )
+  )(ACTIVITY_TYPES_CONFIG);
 
 export const LEVEL_DEBUG = 'debug';
 export const LEVEL_INFO = 'info';

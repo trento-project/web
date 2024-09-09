@@ -1,41 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+
+import { map, pipe } from 'lodash/fp';
+
+import { getActivityLog } from '@lib/api/activityLogs';
+import { allowedActivities } from '@lib/model/activityLog';
+
+import { getUserProfile } from '@state/selectors/user';
 
 import PageHeader from '@common/PageHeader';
 import ActivityLogOverview from '@common/ActivityLogOverview';
 import ComposedFilter from '@common/ComposedFilter';
 
-import { getActivityLog } from '@lib/api/activityLogs';
-import { ACTIVITY_TYPES_CONFIG } from '@lib/model/activityLog';
 import {
   filterValueToSearchParams,
   searchParamsToAPIParams,
   searchParamsToFilterValue,
 } from './searchParams';
-
-const filters = [
-  {
-    key: 'type',
-    type: 'select',
-    title: 'Resource type',
-    options: Object.entries(ACTIVITY_TYPES_CONFIG).map(([key, value]) => [
-      key,
-      value.label,
-    ]),
-  },
-  {
-    key: 'to_date',
-    title: 'newer than',
-    type: 'date',
-    prefilled: true,
-  },
-  {
-    key: 'from_date',
-    title: 'older than',
-    type: 'date',
-    prefilled: true,
-  },
-];
 
 function ActivityLogPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -43,6 +25,31 @@ function ActivityLogPage() {
   const [isLoading, setLoading] = useState(true);
   const [activityLogDetailModalOpen, setActivityLogDetailModalOpen] =
     useState(false);
+  const { abilities } = useSelector(getUserProfile);
+
+  const filters = [
+    {
+      key: 'type',
+      type: 'select',
+      title: 'Resource type',
+      options: pipe(
+        allowedActivities,
+        map(([key, value]) => [key, value.label])
+      )(abilities),
+    },
+    {
+      key: 'to_date',
+      title: 'newer than',
+      type: 'date',
+      prefilled: true,
+    },
+    {
+      key: 'from_date',
+      title: 'older than',
+      type: 'date',
+      prefilled: true,
+    },
+  ];
 
   const fetchActivityLog = () => {
     setLoading(true);

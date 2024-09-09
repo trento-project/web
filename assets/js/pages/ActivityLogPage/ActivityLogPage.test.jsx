@@ -3,7 +3,7 @@ import { screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 import MockAdapter from 'axios-mock-adapter';
-import { renderWithRouter } from '@lib/test-utils';
+import { renderWithRouter, withDefaultState } from '@lib/test-utils';
 
 import { networkClient } from '@lib/network';
 import { activityLogEntryFactory } from '@lib/test-utils/factories/activityLog';
@@ -15,7 +15,8 @@ const axiosMock = new MockAdapter(networkClient);
 describe('ActivityLogPage', () => {
   it('should render table without data', async () => {
     axiosMock.onGet('/api/v1/activity_log').reply(200, { data: [] });
-    await act(async () => renderWithRouter(<ActivityLogPage />));
+    const [StatefulActivityLogPage] = withDefaultState(<ActivityLogPage />);
+    await act(async () => renderWithRouter(StatefulActivityLogPage));
     expect(screen.getByText('No data available')).toBeVisible();
   });
 
@@ -38,8 +39,8 @@ describe('ActivityLogPage', () => {
       axiosMock
         .onGet('/api/v1/activity_log')
         .reply(responseStatus, responseBody);
-
-      await act(() => renderWithRouter(<ActivityLogPage />));
+      const [StatefulActivityLogPage] = withDefaultState(<ActivityLogPage />);
+      await act(() => renderWithRouter(StatefulActivityLogPage));
 
       expect(screen.getByText('No data available')).toBeVisible();
     }
@@ -50,8 +51,10 @@ describe('ActivityLogPage', () => {
       .onGet('/api/v1/activity_log')
       .reply(200, { data: activityLogEntryFactory.buildList(5) });
 
+    const [StatefulActivityLogPage] = withDefaultState(<ActivityLogPage />);
+
     const { container } = await act(() =>
-      renderWithRouter(<ActivityLogPage />)
+      renderWithRouter(StatefulActivityLogPage)
     );
 
     expect(container.querySelectorAll('tbody > tr')).toHaveLength(5);
