@@ -7,7 +7,7 @@ import { getSingleSignOnLoginUrl } from '@lib/auth/config';
 import LoginSSO from '@pages/Login/LoginSSO';
 import { getUserProfile } from '@state/selectors/user';
 
-function OidCallback() {
+function OidcOauthCallback() {
   const { search } = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -68,4 +68,4 @@ function OidCallback() {
   );
 }
 
-export default OidCallback;
+export default OidcOauthCallback;
