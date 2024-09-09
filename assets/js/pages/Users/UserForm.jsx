@@ -198,6 +198,7 @@ function UserForm({
               </Label>
               <div className="col-start-3 col-span-4">
                 <Password
+                  className="border-none"
                   value={passwordState}
                   aria-label="password"
                   placeholder={
@@ -216,6 +217,7 @@ function UserForm({
               </Label>
               <div className="col-start-3 col-span-4">
                 <Password
+                  className="border-none"
                   value={confirmPasswordState}
                   aria-label="password-confirmation"
                   placeholder={
