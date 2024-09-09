@@ -34,6 +34,17 @@ defmodule TrentoWeb.ErrorView do
     }
   end
 
+  def render("404.json", %{reason: reason}) do
+    %{
+      errors: [
+        %{
+          title: "Not Found",
+          detail: reason
+        }
+      ]
+    }
+  end
+
   def render("404.json", _) do
     %{
       errors: [

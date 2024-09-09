@@ -120,15 +120,15 @@ describe('Software Updates saga', () => {
       const errorBody = {
         errors: [
           {
-            title: 'Unprocessable Entity',
-            detail: 'SUSE Manager authentication error.',
+            title: 'Not Found',
+            detail: 'SUSE Manager settings not configured.',
           },
         ],
       };
 
       axiosMock
         .onGet(`/api/v1/hosts/${hostID}/software_updates`)
-        .reply(422, errorBody);
+        .reply(404, errorBody);
 
       const dispatched = await recordSaga(fetchSoftwareUpdates, {
         payload: hostID,
@@ -206,15 +206,15 @@ describe('Software Updates saga', () => {
       const errorBody = {
         errors: [
           {
-            title: 'Unprocessable Entity',
-            detail: 'SUSE Manager authentication error.',
+            title: 'Not Found',
+            detail: 'SUSE Manager settings not configured.',
           },
         ],
       };
 
       axiosMock
         .onGet(`/api/v1/hosts/${hostID}/software_updates`)
-        .reply(422, errorBody);
+        .reply(404, errorBody);
 
       const dispatched = await recordSaga(fetchSoftwareUpdates, {
         payload: hostID,

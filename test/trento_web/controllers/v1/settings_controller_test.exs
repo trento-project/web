@@ -339,7 +339,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
 
       assert %{
                "errors" => [
-                 %{"detail" => "The requested resource cannot be found.", "title" => "Not Found"}
+                 %{"detail" => "SUSE Manager settings not configured.", "title" => "Not Found"}
                ]
              } == resp
     end
