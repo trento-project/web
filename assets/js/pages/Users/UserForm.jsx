@@ -287,11 +287,11 @@ function UserForm({
                   }}
                 />
               </div>
-              <Label className="col-start-1 col-span-2 sm:pt-2">Created</Label>
+              <Label className="col-start-1 col-span-2">Created</Label>
               <span className="col-start-3 col-span-4">
                 {format(parseISO(createdAt), 'PPpp')}
               </span>
-              <Label className="col-start-1 col-span-2 sm:pt-2">Updated</Label>
+              <Label className="col-start-1 col-span-2">Updated</Label>
               <span className="col-start-3 col-span-4">
                 {format(parseISO(updatedAt), 'PPpp')}
               </span>
