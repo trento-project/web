@@ -14,10 +14,8 @@ export const activityLogSlice = createSlice({
   },
 });
 
-export const AL_USERS_PUSHED = 'AL_USERS_PUSHED';
-export const alUsersPushed = createAction(AL_USERS_PUSHED, ({ users }) => ({
-  payload: { users },
-}));
+export const ACTIVITY_LOG_USERS_PUSHED = 'ACTIVITY_LOG_USERS_PUSHED';
+export const alUsersPushed = createAction(ACTIVITY_LOG_USERS_PUSHED);
 export const { setUsers } = activityLogSlice.actions;
 
 export default activityLogSlice.reducer;
