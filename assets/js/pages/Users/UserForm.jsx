@@ -135,11 +135,11 @@ function UserForm({
   return (
     <div>
       <div className="container max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 bg-white dark:bg-gray-800 rounded-lg">
-        <div className="grid grid-cols-6 gap-6">
-          <Label className="col-start-1 col-span-1 sm:pt-2" required>
+        <div className="grid grid-cols-8 gap-6">
+          <Label className="col-start-1 col-span-2 sm:pt-2" required>
             Full Name
           </Label>
-          <div className="col-start-2 col-span-3">
+          <div className="col-start-3 col-span-4">
             <Input
               value={fullNameState}
               aria-label="fullname"
@@ -153,10 +153,10 @@ function UserForm({
             />
             {fullNameErrorState && errorMessage(fullNameErrorState)}
           </div>
-          <Label className="col-start-1 col-span-1 sm:pt-2" required>
+          <Label className="col-start-1 col-span-2 sm:pt-2" required>
             Email Address
           </Label>
-          <div className="col-start-2 col-span-3">
+          <div className="col-start-3 col-span-4">
             <Input
               value={emailAddressState}
               aria-label="email"
@@ -170,10 +170,10 @@ function UserForm({
             />
             {emailAddressErrorState && errorMessage(emailAddressErrorState)}
           </div>
-          <Label className="col-start-1 col-span-1 sm:pt-2" required>
+          <Label className="col-start-1 col-span-2 sm:pt-2" required>
             Username
           </Label>
-          <div className="col-start-2 col-span-3">
+          <div className="col-start-3 col-span-4">
             <Input
               value={usernameState}
               aria-label="username"
@@ -190,13 +190,13 @@ function UserForm({
           {!singleSignOnEnabled && (
             <>
               <Label
-                className="col-start-1 col-span-1 sm:pt-2"
+                className="col-start-1 col-span-2 sm:pt-2"
                 info={PASSWORD_POLICY_TEXT}
                 required
               >
                 Password
               </Label>
-              <div className="col-start-2 col-span-3">
+              <div className="col-start-3 col-span-4">
                 <Password
                   value={passwordState}
                   aria-label="password"
@@ -211,10 +211,10 @@ function UserForm({
                 />
                 {passwordErrorState && errorMessage(passwordErrorState)}
               </div>
-              <Label className="col-start-1 col-span-1 sm:pt-2" required>
+              <Label className="col-start-1 col-span-2 sm:pt-2" required>
                 Confirm Password
               </Label>
-              <div className="col-start-2 col-span-3">
+              <div className="col-start-3 col-span-4">
                 <Password
                   value={confirmPasswordState}
                   aria-label="password-confirmation"
@@ -230,7 +230,7 @@ function UserForm({
                 {confirmPasswordErrorState &&
                   errorMessage(confirmPasswordErrorState)}
               </div>
-              <div className="col-start-2 col-span-3">
+              <div className="col-start-3 col-span-4">
                 <Button
                   type="primary-white"
                   onClick={onGeneratePassword}
@@ -241,8 +241,8 @@ function UserForm({
               </div>
             </>
           )}
-          <Label className="col-start-1 col-span-1 sm:pt-2">Permissions</Label>
-          <div className="col-start-2 col-span-3">
+          <Label className="col-start-1 col-span-2 sm:pt-2">Permissions</Label>
+          <div className="col-start-3 col-span-4">
             <AbilitiesMultiSelect
               userAbilities={userAbilities}
               abilities={abilities}
@@ -250,8 +250,8 @@ function UserForm({
               setAbilities={setAbilities}
             />
           </div>
-          <Label className="col-start-1 col-span-1 sm:pt-2">Status</Label>
-          <div className="col-start-2 col-span-3">
+          <Label className="col-start-1 col-span-2 sm:pt-2">Status</Label>
+          <div className="col-start-3 col-span-4">
             <Select
               optionsName="status"
               options={['Enabled', 'Disabled']}
@@ -264,13 +264,13 @@ function UserForm({
           {editing && !singleSignOnEnabled && (
             <>
               <Label
-                className="col-start-1 col-span-1 sm:pt-2"
+                className="col-start-1 col-span-2 sm:pt-2"
                 htmlFor="totp"
                 aria-label="totp"
               >
                 TOTP
               </Label>
-              <div className="col-start-2 col-span-3">
+              <div className="col-start-3 col-span-4">
                 <Select
                   optionsName="totp"
                   options={[
@@ -283,12 +283,12 @@ function UserForm({
                   }}
                 />
               </div>
-              <Label className="col-start-1 col-span-1 sm:pt-2">Created</Label>
-              <span className="col-start-2 col-span-3">
+              <Label className="col-start-1 col-span-2 sm:pt-2">Created</Label>
+              <span className="col-start-3 col-span-4">
                 {format(parseISO(createdAt), 'PPpp')}
               </span>
-              <Label className="col-start-1 col-span-1 sm:pt-2">Updated</Label>
-              <span className="col-start-2 col-span-3">
+              <Label className="col-start-1 col-span-2 sm:pt-2">Updated</Label>
+              <span className="col-start-3 col-span-4">
                 {format(parseISO(updatedAt), 'PPpp')}
               </span>
             </>
