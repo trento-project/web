@@ -176,6 +176,11 @@ if config_env() in [:prod, :demo] do
     ]
 
   enable_oidc = System.get_env("ENABLE_OIDC", "false") == "true"
+  enable_oauth2 = System.get_env("ENABLE_OAUTH2", "false") == "true"
+
+  if enable_oauth2 and enable_oidc do
+    raise("Cannot start Trento with OIDC and OAUTH2 integrations both enabled.")
+  end
 
   config :trento, :oidc,
     enabled: enable_oidc,
@@ -184,6 +189,44 @@ if config_env() in [:prod, :demo] do
         "OIDC_CALLBACK_URL",
         "https://#{System.get_env("TRENTO_WEB_ORIGIN")}/auth/oidc_callback"
       )
+
+  config :trento, :oauth2,
+    enabled: enable_oauth2,
+    callback_url:
+      System.get_env(
+        "OAUTH2_CALLBACK_URL",
+        "https://#{System.get_env("TRENTO_WEB_ORIGIN")}/auth/oidc_callback"
+      )
+
+  if enable_oauth2 do
+    config :trento, :pow_assent,
+      providers: [
+        oauth2_local: [
+          client_id:
+            System.get_env("OAUTH2_CLIENT_ID") ||
+              raise("environment variable OAUTH2_CLIENT_ID is missing"),
+          client_secret:
+            System.get_env("OAUTH2_CLIENT_SECRET") ||
+              raise("environment variable OAUTH2_CLIENT_SECRET is missing"),
+          base_url:
+            System.get_env("OAUTH2_BASE_URL") ||
+              raise("environment variable OAUTH2_BASE_URL is missing"),
+          authorize_url:
+            System.get_env("OAUTH2_AUTHORIZE_URL") ||
+              raise("environment variable OAUTH2_AUTHORIZE_URL is missing"),
+          token_url:
+            System.get_env("OAUTH2_TOKEN_URL") ||
+              raise("environment variable OAUTH2_TOKEN_URL is missing"),
+          user_url:
+            System.get_env("OAUTH2_USER_URL") ||
+              raise("environment variable OAUTH2_USER_URL is missing"),
+          strategy: Assent.Strategy.OAuth2,
+          auth_method: :client_secret_post,
+          authorization_params:
+            String.split(System.get_env("OAUTH2_SCOPES", "profile,email"), ",")
+        ]
+      ]
+  end
 
   if enable_oidc do
     config :trento, :pow_assent,
