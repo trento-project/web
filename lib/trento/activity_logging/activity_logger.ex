@@ -15,6 +15,9 @@ defmodule Trento.ActivityLog.ActivityLogger do
     with {:ok, detected_activity} <- ActivityCatalog.detect_activity(activity_context),
          {:ok, log_entry} <- ActivityParser.to_activity_log(detected_activity, activity_context) do
       write_log(log_entry)
+    else
+      _ = err ->
+        IO.inspect(err, label: "failed to log activity")
     end
 
     :ok

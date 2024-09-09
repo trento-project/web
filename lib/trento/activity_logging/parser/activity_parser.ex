@@ -16,11 +16,15 @@ defmodule Trento.ActivityLog.Parser.ActivityParser do
           {:ok, activity_log()} | {:error, :cannot_parse_activity}
   def to_activity_log(activity, activity_context) do
     with true <- activity in ActivityCatalog.supported_activities(),
-         {:ok, actor} <- get_activity_info(:actor, activity, activity_context),
+         {:ok, {actor_id, actor}} <- get_activity_info(:actor, activity, activity_context),
          {:ok, metadata} <- get_activity_info(:metadata, activity, activity_context) do
+      IO.inspect(actor_id, label: "actor_id")
+      IO.inspect(actor, label: "actor")
+
       {:ok,
        %{
          type: Atom.to_string(activity),
+         actor_id: actor_id,
          actor: actor,
          metadata: metadata
        }}

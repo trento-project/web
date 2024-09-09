@@ -4,14 +4,28 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
   """
 
   alias Trento.Users.User
+  alias Trento.Users
 
-  def get_activity_actor(:login_attempt, %Plug.Conn{body_params: request_payload}),
-    do: Map.get(request_payload, "username", "no_username")
+  def get_activity_actor(:login_attempt, %Plug.Conn{status: status, body_params: request_payload}) do
+    username = Map.get(request_payload, "username", "no_username")
+
+    case status do
+      200 ->
+        %User{id: id, username: username} = Users.get_by_username(username)
+        {id, username}
+
+      401 ->
+        {nil, username}
+
+      _ ->
+        {nil, nil}
+    end
+  end
 
   def get_activity_actor(_, %Plug.Conn{} = conn) do
     case Pow.Plug.current_user(conn) do
-      %User{username: username} -> username
-      _ -> "system"
+      %User{id: id, username: username} -> {id, username}
+      _ -> {0, "system"}
     end
   end
 
@@ -25,7 +39,10 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
         } = conn
       ) do
     %{
-      username: get_activity_actor(action, conn),
+      username:
+        action
+        |> get_activity_actor(conn)
+        |> elem(1),
       reason: reason
     }
   end

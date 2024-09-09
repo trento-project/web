@@ -86,6 +86,7 @@ defmodule Trento.ActivityLog.ActivityLoggerTest do
         assert [
                  %ActivityLog{
                    type: "login_attempt",
+                   actor_id: nil,
                    actor: ^username,
                    metadata: ^expected_metadata
                  }
@@ -150,6 +151,7 @@ defmodule Trento.ActivityLog.ActivityLoggerTest do
         assert [
                  %ActivityLog{
                    type: "resource_tagging",
+                   actor_id: ^user_id,
                    actor: ^username,
                    metadata: %{
                      "resource_id" => ^resource_id,
@@ -185,6 +187,7 @@ defmodule Trento.ActivityLog.ActivityLoggerTest do
         assert [
                  %ActivityLog{
                    type: "resource_untagging",
+                   actor_id: ^user_id,
                    actor: ^username,
                    metadata: %{
                      "resource_id" => ^resource_id,
@@ -242,6 +245,7 @@ defmodule Trento.ActivityLog.ActivityLoggerTest do
       assert [
                %ActivityLog{
                  type: "activity_log_settings_update",
+                 actor_id: ^user_id,
                  actor: ^username,
                  metadata: %{
                    "retention_time" => %{
@@ -289,6 +293,7 @@ defmodule Trento.ActivityLog.ActivityLoggerTest do
 
       assert %ActivityLog{
                type: ^expected_activity_type,
+               actor_id: 0,
                actor: "system",
                metadata: ^metadata
              } =

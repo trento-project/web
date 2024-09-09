@@ -5,6 +5,8 @@ defmodule Trento.ActivityLog.ActivityLog do
   use Ecto.Schema
   import Ecto.Changeset
 
+  # alias Trento.Users.User
+
   @type t() :: %__MODULE__{}
 
   @derive {
@@ -24,6 +26,8 @@ defmodule Trento.ActivityLog.ActivityLog do
   @primary_key {:id, :binary_id, autogenerate: true}
   schema "activity_logs" do
     field :type, :string
+    # belongs_to :actor, User
+    field :actor_id, :integer
     field :actor, :string
     field :metadata, :map
 

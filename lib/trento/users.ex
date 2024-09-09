@@ -29,6 +29,12 @@ defmodule Trento.Users do
     |> Repo.one()
   end
 
+  def get_by_username(username) do
+    User
+    |> where([u], u.username == ^username)
+    |> Repo.one()
+  end
+
   def list_users do
     User
     |> where([u], is_nil(u.deleted_at))
