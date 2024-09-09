@@ -195,7 +195,7 @@ if config_env() in [:prod, :demo] do
     callback_url:
       System.get_env(
         "OAUTH2_CALLBACK_URL",
-        "https://#{System.get_env("TRENTO_WEB_ORIGIN")}/auth/oidc_callback"
+        "https://#{System.get_env("TRENTO_WEB_ORIGIN")}/auth/oauth2_callback"
       )
 
   if enable_oauth2 do

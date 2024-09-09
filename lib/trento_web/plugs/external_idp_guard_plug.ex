@@ -10,7 +10,7 @@ defmodule TrentoWeb.Plugs.ExternalIdpGuardPlug do
 
   @impl true
   def init(opts) do
-    Keyword.put(opts, :external_idp_enabled, oidc_enabled?() or oauth2_enabled?())
+    Keyword.put(opts, :external_idp_enabled, sso_enabled?())
   end
 
   @impl true
@@ -33,4 +33,6 @@ defmodule TrentoWeb.Plugs.ExternalIdpGuardPlug do
 
   defp oidc_enabled?, do: Application.fetch_env!(:trento, :oidc)[:enabled]
   defp oauth2_enabled?, do: Application.fetch_env!(:trento, :oauth2)[:enabled]
+
+  defp sso_enabled?, do: oidc_enabled?() or oauth2_enabled?()
 end

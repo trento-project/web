@@ -141,7 +141,7 @@ config :trento, :oidc,
 
 config :trento, :oauth2,
   enabled: false,
-  callback_url: "http://localhost:4000/auth/oidc_callback"
+  callback_url: "http://localhost:4000/auth/oauth2_callback"
 
 config :trento, :pow_assent,
   providers: [

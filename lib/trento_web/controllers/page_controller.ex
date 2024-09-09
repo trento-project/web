@@ -43,14 +43,14 @@ defmodule TrentoWeb.PageController do
 
   defp sso_details_for_provider(conn, provider) do
     full_callback_url = Application.fetch_env!(:trento, provider)[:callback_url]
+    enrollment_provider = "#{provider}_local"
 
     %URI{path: callback_url} =
       URI.parse(full_callback_url)
 
     {:ok, login_url, _} =
-      PowAssent.Plug.authorize_url(conn, "#{provider}_local", full_callback_url)
+      PowAssent.Plug.authorize_url(conn, enrollment_provider, full_callback_url)
 
-    enrollment_provider = "#{provider}_local"
     enrollment_url = ~p"/api/session/#{enrollment_provider}/callback"
 
     {true, callback_url, login_url, enrollment_url}

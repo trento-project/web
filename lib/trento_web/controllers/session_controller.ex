@@ -272,5 +272,9 @@ defmodule TrentoWeb.SessionController do
   defp maybe_validate_totp(_, _), do: {:error, :totp_code_missing}
 
   defp idp_redirect_uri("oidc_local"), do: Application.fetch_env!(:trento, :oidc)[:callback_url]
+
+  defp idp_redirect_uri("oauth2_local"),
+    do: Application.fetch_env!(:trento, :oauth2)[:callback_url]
+
   defp idp_redirect_uri(_), do: ""
 end
