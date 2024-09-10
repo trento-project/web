@@ -8,7 +8,40 @@ defmodule Trento.UserIdentitiesTest do
   import Trento.Factory
 
   describe "create_user/3" do
-    test "should create the user and assign the global abilities when the user is the default admin" do
+    test "should create the user and assign the global abilities when the user is the default admin and the username is on the nickname claim" do
+      %{username: username} = user = build(:user)
+      Application.put_env(:trento, :admin_user, username)
+
+      user_id_params = nil
+
+      user_identity_params = %{
+        "provider" => "test_provider",
+        "token" => %{"access_token" => "access_token"},
+        "uid" => Faker.UUID.v4(),
+        "userinfo" => %{
+          "email" => user.email,
+          "sid" => nil,
+          "sub" => user.username,
+          "nickname" => user.username
+        }
+      }
+
+      user_params = %{
+        "email" => user.email,
+        "sid" => nil,
+        "nickname" => user.username
+      }
+
+      assert {:ok, %User{id: user_id}} =
+               UserIdentities.create_user(user_identity_params, user_params, user_id_params)
+
+      {:ok, %{abilities: abilities}} = Users.get_user(user_id)
+      assert [%{id: 1}] = abilities
+
+      Application.put_env(:trento, :admin_user, "admin")
+    end
+
+    test "should create the user and assign the global abilities when the user is the default admin and the username is on the username claim" do
       %{username: username} = user = build(:user)
       Application.put_env(:trento, :admin_user, username)
 

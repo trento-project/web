@@ -139,8 +139,23 @@ config :trento, :oidc,
   enabled: false,
   callback_url: "http://localhost:4000/auth/oidc_callback"
 
+config :trento, :oauth2,
+  enabled: false,
+  callback_url: "http://localhost:4000/auth/oauth2_callback"
+
 config :trento, :pow_assent,
   providers: [
+    oauth2_local: [
+      client_id: "trento-web",
+      client_secret: "ihfasdEaB5M5r44i4AbNulmLWjgejluX",
+      auth_method: :client_secret_post,
+      base_url: "http://localhost:8081/realms/trento",
+      authorize_url: "http://localhost:8081/realms/trento/protocol/openid-connect/auth",
+      token_url: "http://localhost:8081/realms/trento/protocol/openid-connect/token",
+      user_url: "http://localhost:8081/realms/trento/protocol/openid-connect/userinfo",
+      authorization_params: [scope: "openid profile email"],
+      strategy: Assent.Strategy.OAuth2
+    ],
     oidc_local: [
       client_id: "trento-web",
       client_secret: "ihfasdEaB5M5r44i4AbNulmLWjgejluX",

@@ -8,14 +8,14 @@ import {
   USER_LOCKED,
   USER_UPDATED,
   PERFORM_LOGIN,
-  PERFORM_OIDC_ENROLLMENT,
+  PERFORM_SSO_ENROLLMENT,
   USER_PASSWORD_CHANGE_REQUESTED_NOTIFICATION_ID,
 } from '@state/user';
 import { customNotify } from '@state/notifications';
 import { getUserProfile } from '@state/selectors/user';
 import {
   login,
-  oidcEnrollment,
+  ssoEnrollment,
   profile,
   storeAccessToken,
   storeRefreshToken,
@@ -64,12 +64,12 @@ export function* performLogin({ payload: { username, password, totpCode } }) {
   }
 }
 
-export function* performOIDCEnrollment({ payload: { code, state } }) {
+export function* performSSOEnrollment({ payload: { code, state } }) {
   yield put(setAuthInProgress());
   try {
     const {
       data: { access_token: accessToken, refresh_token: refreshToken },
-    } = yield call(oidcEnrollment, { code, session_state: state });
+    } = yield call(ssoEnrollment, { code, session_state: state });
     yield call(storeAccessToken, accessToken);
     yield call(storeRefreshToken, refreshToken);
 
@@ -133,5 +133,5 @@ export function* watchUserActions() {
   yield takeEvery(USER_LOCKED, clearUserAndLogout);
   yield takeEvery(USER_UPDATED, userUpdated);
   yield takeEvery(PERFORM_LOGIN, performLogin);
-  yield takeEvery(PERFORM_OIDC_ENROLLMENT, performOIDCEnrollment);
+  yield takeEvery(PERFORM_SSO_ENROLLMENT, performSSOEnrollment);
 }

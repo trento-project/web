@@ -4,15 +4,15 @@ import 'intersection-observer';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import { withState, renderWithRouterMatch } from '@lib/test-utils';
-import OidcCallback from './OidcCallback';
+import OidcOauthCallaback from './OidcOauthCallback';
 
-describe('OidcCallback component', () => {
+describe('OidcOauthCallaback component', () => {
   beforeEach(() => {
     jest.resetModules();
   });
 
   it('should display loading state when authentication is happening', async () => {
-    const [StatefulOidCallback, store] = withState(<OidcCallback />, {
+    const [StatefulOidCallback, store] = withState(<OidcOauthCallaback />, {
       user: {},
     });
 
@@ -24,7 +24,7 @@ describe('OidcCallback component', () => {
     expect(screen.getByText('Loading...')).toBeVisible();
 
     expect(store.getActions()).toContainEqual({
-      type: 'PERFORM_OIDC_ENROLLMENT',
+      type: 'PERFORM_SSO_ENROLLMENT',
       payload: { code: 'code', state: 'state' },
     });
   });
@@ -32,7 +32,7 @@ describe('OidcCallback component', () => {
   it('should display an error message if some search param is missing', async () => {
     const user = userEvent.setup();
 
-    const [StatefulOidCallback] = withState(<OidcCallback />, {
+    const [StatefulOidCallback] = withState(<OidcOauthCallaback />, {
       user: {},
     });
 
@@ -58,7 +58,7 @@ describe('OidcCallback component', () => {
   });
 
   it('should display an error message if authentication fails', async () => {
-    const [StatefulOidCallback] = withState(<OidcCallback />, {
+    const [StatefulOidCallback] = withState(<OidcOauthCallaback />, {
       user: {
         authError: true,
       },
@@ -79,7 +79,7 @@ describe('OidcCallback component', () => {
   });
 
   it('should navigate to home after user is logged in', () => {
-    const [StatefulOidCallback] = withState(<OidcCallback />, {
+    const [StatefulOidCallback] = withState(<OidcOauthCallaback />, {
       user: {
         loggedIn: true,
       },

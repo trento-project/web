@@ -339,7 +339,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       |> assert_schema("UserItem", api_spec)
     end
 
-    test "should only update abilities and enabled when oidc is enabled", %{
+    test "should only update abilities and enabled when sso is enabled", %{
       conn: conn,
       api_spec: api_spec
     } do
@@ -375,7 +375,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       Application.put_env(:trento, :oidc, enabled: false)
     end
 
-    test "should not perform an update when oidc is enabled and abilities or enabled are not passed",
+    test "should not perform an update when sso is enabled and abilities or enabled are not passed",
          %{
            conn: conn,
            api_spec: api_spec

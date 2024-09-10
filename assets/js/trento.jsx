@@ -41,7 +41,7 @@ import SomethingWentWrong from '@pages/SomethingWentWrong';
 import UsersPage, { CreateUserPage, EditUserPage } from '@pages/Users';
 import ProfilePage from '@pages/Profile';
 import ActivityLogPage from '@pages/ActivityLogPage';
-import OidCallback from '@pages/OidcCallback';
+import OidcOauthCallback from '@pages/OidcOauthCallback';
 
 import { profile } from '@lib/auth';
 import {
@@ -61,7 +61,7 @@ const createRouter = ({ getUser }) =>
         {isSingleSignOnEnabled() && (
           <Route
             path={getSingleSignOnCallbackUrl()}
-            element={<OidCallback />}
+            element={<OidcOauthCallback />}
           />
         )}
         <Route path="/">

@@ -22,7 +22,10 @@
       "rootUrl": "http://localhost:4000",
       "adminUrl": "http://localhost:4000",
       "baseUrl": "http://localhost:4000",
-      "redirectUris": ["http://localhost:4000/auth/oidc_callback"],
+      "redirectUris": [
+        "http://localhost:4000/auth/oidc_callback",
+        "http://localhost:4000/auth/oauth2_callback"
+      ],
       "webOrigins": ["http://localhost:4000"]
     }
   ],

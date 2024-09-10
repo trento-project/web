@@ -55,15 +55,15 @@ defmodule Trento.Users.User do
   end
 
   def user_identity_changeset(user_or_changeset, user_identity, attrs, user_id_attrs) do
-    username = Map.get(attrs, "username")
-
-    user_or_changeset
-    |> cast(attrs, [:username, :email])
-    |> put_change(
-      :fullname,
-      Map.get(attrs, "name", "Trento IDP User #{username}")
-    )
-    |> pow_assent_user_identity_changeset(user_identity, attrs, user_id_attrs)
+    with {:ok, username} <- extract_sso_username(attrs) do
+      user_or_changeset
+      |> cast(attrs, [:username, :email])
+      |> put_change(
+        :fullname,
+        Map.get(attrs, "name", "Trento IDP User #{username}")
+      )
+      |> pow_assent_user_identity_changeset(user_identity, attrs, user_id_attrs)
+    end
   end
 
   def update_changeset(user, attrs) do
@@ -171,4 +171,8 @@ defmodule Trento.Users.User do
     |> EmailValidator.validate_email(:email, checks: [:pow])
     |> unique_constraint(:email)
   end
+
+  defp extract_sso_username(%{"username" => username}), do: {:ok, username}
+  defp extract_sso_username(%{"nickname" => nickname}), do: {:ok, nickname}
+  defp extract_sso_username(_), do: {:error, :username_not_found}
 end
