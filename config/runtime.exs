@@ -222,8 +222,9 @@ if config_env() in [:prod, :demo] do
               raise("environment variable OAUTH2_USER_URL is missing"),
           strategy: Assent.Strategy.OAuth2,
           auth_method: :client_secret_post,
-          authorization_params:
-            String.split(System.get_env("OAUTH2_SCOPES", "profile,email"), ",")
+          authorization_params: [
+            scope: System.get_env("OAUTH2_SCOPES", "profile email")
+          ]
         ]
       ]
   end
