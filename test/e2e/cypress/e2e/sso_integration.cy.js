@@ -85,6 +85,7 @@ describe('OIDC/OAUTH2 integration', () => {
     });
 
     it('should have the ability to update user permissions and status', () => {
+      cy.visit('/users');
       cy.get('a').contains(plainUser.username).click();
       cy.get('div').contains('Default').click({ force: true });
       cy.get('div').contains('all:users').click();
