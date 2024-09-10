@@ -131,13 +131,13 @@ export const ACTIVITY_TYPES_CONFIG = {
   [RESOURCE_TAGGING]: {
     label: 'Tag Added',
     message: ({ metadata }) =>
-      `Tag "${metadata.added_tag}" added to "${metadata.resource_id}"`,
+      `Tag "${metadata.added_tag}" added to ${taggingResourceType({ metadata })} "${metadata.resource_name}"`,
     resource: taggingResourceType,
   },
   [RESOURCE_UNTAGGING]: {
     label: 'Tag Removed',
     message: ({ metadata }) =>
-      `Tag "${metadata.removed_tag}" removed from "${metadata.resource_id}"`,
+      `Tag "${metadata.removed_tag}" removed from ${taggingResourceType({ metadata })} "${metadata.resource_name}"`,
     resource: taggingResourceType,
   },
   [API_KEY_GENERATION]: {

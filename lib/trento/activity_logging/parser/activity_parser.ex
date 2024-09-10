@@ -4,7 +4,7 @@ defmodule Trento.ActivityLog.Parser.ActivityParser do
   """
 
   alias Trento.ActivityLog.ActivityCatalog
-  alias Trento.ActivityLog.Logger.Parser.{EventParser, PhoenixConnParser}
+  alias Trento.ActivityLog.Logger.Parser.{EventParser, MetadataEnricher, PhoenixConnParser}
 
   @type activity_log :: %{
           type: String.t(),
@@ -17,12 +17,13 @@ defmodule Trento.ActivityLog.Parser.ActivityParser do
   def to_activity_log(activity, activity_context) do
     with true <- activity in ActivityCatalog.supported_activities(),
          {:ok, actor} <- get_activity_info(:actor, activity, activity_context),
-         {:ok, metadata} <- get_activity_info(:metadata, activity, activity_context) do
+         {:ok, metadata} <- get_activity_info(:metadata, activity, activity_context),
+         {:ok, enriched_metadata} <- MetadataEnricher.enrich(metadata, activity) do
       {:ok,
        %{
          type: Atom.to_string(activity),
          actor: actor,
-         metadata: metadata
+         metadata: enriched_metadata
        }}
     else
       _ -> {:error, :cannot_parse_activity}
