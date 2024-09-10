@@ -17,10 +17,10 @@ describe('activityLog reducer', () => {
     const { username: username2 } = userFactory.build();
     const { username: username3 } = userFactory.build();
     const users = [username1, username2];
-    const nonEmptyInitialState = {users: [username3]};
+    const nonEmptyInitialState = { users: [username3] };
     const action = setUsers({ users });
     expect(activityLogReducer(nonEmptyInitialState, action)).toEqual({
-      users
+      users,
     });
   });
 });
