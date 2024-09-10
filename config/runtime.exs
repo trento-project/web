@@ -223,7 +223,7 @@ if config_env() in [:prod, :demo] do
           strategy: Assent.Strategy.OAuth2,
           auth_method: :client_secret_post,
           authorization_params: [
-            scope: String.split(System.get_env("OAUTH2_SCOPES", "profile,email"), ",")
+            scope: System.get_env("OAUTH2_SCOPES", "profile email")
           ]
         ]
       ]
