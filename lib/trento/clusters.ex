@@ -160,7 +160,8 @@ defmodule Trento.Clusters do
     end
   end
 
-  defp maybe_request_checks_execution(%ClusterReadModel{selected_checks: []}), do: :ok
+  defp maybe_request_checks_execution(%ClusterReadModel{selected_checks: []}),
+    do: {:error, :no_checks_selected}
 
   defp maybe_request_checks_execution(%ClusterReadModel{
          id: cluster_id,
