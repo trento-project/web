@@ -2,6 +2,7 @@ defmodule Trento.ActivityLog.ActivityLoggerTest do
   @moduledoc false
 
   use TrentoWeb.ConnCase, async: true
+  use Trento.MessagingCase
   use Plug.Test
 
   import Trento.Factory
@@ -251,6 +252,99 @@ defmodule Trento.ActivityLog.ActivityLoggerTest do
                  }
                }
              ] = Trento.Repo.all(ActivityLog)
+    end
+  end
+
+  describe "checks execution request activity detection" do
+    defp request_checks_execution(conn, component_id, component_type) do
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> post("/api/v1/#{component_type}/#{component_id}/checks/request_execution")
+    end
+
+    test "should not log a checks execution request failing because of a non existent resource",
+         %{conn: conn, user: %{id: user_id}} do
+      for component_type <- ["clusters", "hosts"] do
+        conn
+        |> with_token(user_id)
+        |> request_checks_execution(Faker.UUID.v4(), component_type)
+        |> json_response(404)
+
+        wait_for_tasks_completion()
+
+        assert [] = Trento.Repo.all(ActivityLog)
+      end
+    end
+
+    test "should not log a checks execution request failing because of empty checks selection", %{
+      conn: conn,
+      user: %{id: user_id}
+    } do
+      for {component_type, factory_reference} <- [{"clusters", :cluster}, {"hosts", :host}] do
+        %{id: component_id} = insert(factory_reference, selected_checks: [])
+
+        conn
+        |> with_token(user_id)
+        |> request_checks_execution(component_id, component_type)
+        |> json_response(422)
+
+        wait_for_tasks_completion()
+
+        assert [] = Trento.Repo.all(ActivityLog)
+      end
+    end
+
+    successful_checks_execution_request_scenarios = [
+      %{
+        component_type: "clusters",
+        factory_reference: :cluster,
+        expected_activity_type: "cluster_checks_execution_request",
+        expected_metadata_entry: "cluster_id"
+      },
+      %{
+        component_type: "hosts",
+        factory_reference: :host,
+        expected_activity_type: "host_checks_execution_request",
+        expected_metadata_entry: "host_id"
+      }
+    ]
+
+    for %{component_type: component_type} = scenario <-
+          successful_checks_execution_request_scenarios do
+      @scenario scenario
+
+      test "should log a successful checks execution request for #{component_type}", %{
+        conn: conn,
+        user: %{id: user_id, username: username}
+      } do
+        %{
+          component_type: component_type,
+          factory_reference: factory_reference,
+          expected_activity_type: expected_activity_type,
+          expected_metadata_entry: expected_metadata_entry
+        } = @scenario
+
+        %{id: component_id} = insert(factory_reference)
+
+        conn
+        |> with_token(user_id)
+        |> request_checks_execution(component_id, component_type)
+        |> json_response(202)
+
+        wait_for_tasks_completion()
+
+        expected_metadata = %{
+          expected_metadata_entry => component_id
+        }
+
+        assert [
+                 %ActivityLog{
+                   type: ^expected_activity_type,
+                   actor: ^username,
+                   metadata: ^expected_metadata
+                 }
+               ] = Trento.Repo.all(ActivityLog)
+      end
     end
   end
 
