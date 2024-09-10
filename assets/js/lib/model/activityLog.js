@@ -15,6 +15,7 @@ export const USER_DELETION = 'user_deletion';
 export const PROFILE_UPDATE = 'profile_update';
 export const CLUSTER_CHECKS_EXECUTION_REQUEST =
   'cluster_checks_execution_request';
+export const HOST_CHECKS_EXECUTION_REQUEST = 'host_checks_execution_request';
 export const ACTIVITY_LOG_SETTINGS_UPDATE = 'activity_log_settings_update';
 
 // Host events
@@ -187,6 +188,11 @@ export const ACTIVITY_TYPES_CONFIG = {
     label: 'Checks Execution Requested',
     message: (_entry) => `Checks execution requested for cluster`,
     resource: clusterResourceType,
+  },
+  [HOST_CHECKS_EXECUTION_REQUEST]: {
+    label: 'Checks Execution Requested',
+    message: (_entry) => `Checks execution requested for host`,
+    resource: hostResourceType,
   },
   [ACTIVITY_LOG_SETTINGS_UPDATE]: {
     label: 'Activity Log Settings Updated',
