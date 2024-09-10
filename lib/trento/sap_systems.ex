@@ -16,6 +16,15 @@ defmodule Trento.SapSystems do
 
   alias Trento.Repo
 
+  def by_sap_system_id(id) do
+    case SapSystemReadModel
+         |> where([s], s.id == ^id and is_nil(s.deregistered_at))
+         |> Repo.one() do
+      nil -> {:error, :not_found}
+      sap_system -> {:ok, sap_system}
+    end
+  end
+
   @spec get_all_sap_systems :: [SapSystemReadModel.t()]
   def get_all_sap_systems do
     SapSystemReadModel

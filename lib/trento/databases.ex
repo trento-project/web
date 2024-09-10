@@ -16,6 +16,15 @@ defmodule Trento.Databases do
 
   alias Trento.Repo
 
+  def by_database_id(id) do
+    case DatabaseReadModel
+         |> where([d], d.id == ^id and is_nil(d.deregistered_at))
+         |> Repo.one() do
+      nil -> {:error, :not_found}
+      database -> {:ok, database}
+    end
+  end
+
   @spec get_all_databases :: [DatabaseReadModel.t()]
   def get_all_databases do
     DatabaseReadModel
