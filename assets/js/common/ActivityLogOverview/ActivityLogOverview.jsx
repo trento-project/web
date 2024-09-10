@@ -56,7 +56,6 @@ function ActivityLogOverview({
   const [selectedEntry, setEntry] = useState({});
 
   const activityLogTableConfig = {
-    pagination: true,
     usePadding: false,
     columns: [
       {
