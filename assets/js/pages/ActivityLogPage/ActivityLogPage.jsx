@@ -19,10 +19,12 @@ import {
   searchParamsToFilterValue,
 } from './searchParams';
 
+const emptyResponse = { data: [] };
+
 function ActivityLogPage() {
   const users = useSelector(getActivityLogUsers);
   const [searchParams, setSearchParams] = useSearchParams();
-  const [activityLog, setActivityLog] = useState([]);
+  const [activityLogResponse, setActivityLogResponse] = useState(emptyResponse);
   const [isLoading, setLoading] = useState(true);
   const [activityLogDetailModalOpen, setActivityLogDetailModalOpen] =
     useState(false);
@@ -62,10 +64,13 @@ function ActivityLogPage() {
     setLoading(true);
     const params = searchParamsToAPIParams(searchParams);
     getActivityLog(params)
-      .then((response) => {
-        setActivityLog(response.data?.data ?? []);
+      .then(({ data }) => {
+        setActivityLogResponse({
+          data: data?.data || [],
+          pagination: data?.pagination,
+        });
       })
-      .catch(() => setActivityLog([]))
+      .catch(() => setActivityLogResponse(emptyResponse))
       .finally(() => {
         setLoading(false);
       });
@@ -90,7 +95,7 @@ function ActivityLogPage() {
         </div>
         <ActivityLogOverview
           activityLogDetailModalOpen={activityLogDetailModalOpen}
-          activityLog={activityLog}
+          activityLog={activityLogResponse.data}
           loading={isLoading}
           onActivityLogEntryClick={() => setActivityLogDetailModalOpen(true)}
           onCloseActivityLogEntryDetails={() =>
