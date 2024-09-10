@@ -13,7 +13,7 @@ import PageHeader from '@common/PageHeader';
 import { useSelector } from 'react-redux';
 import ActivityLogOverview from '@common/ActivityLogOverview';
 import ComposedFilter from '@common/ComposedFilter';
-import { getALUsers } from '@state/selectors/activityLog';
+import { getActivityLogUsers } from '@state/selectors/activityLog';
 
 import {
   filterValueToSearchParams,
@@ -22,7 +22,7 @@ import {
 } from './searchParams';
 
 function ActivityLogPage() {
-  const users = useSelector(getALUsers);
+  const users = useSelector(getActivityLogUsers);
   const filters = [
     {
       key: 'type',

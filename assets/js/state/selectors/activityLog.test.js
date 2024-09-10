@@ -1,4 +1,4 @@
-import { getALUsers } from './activityLog';
+import { getActivityLogUsers } from './activityLog';
 
 describe('Activity Log users selector', () => {
   it('should return a list of users from activity log state', () => {
@@ -7,6 +7,6 @@ describe('Activity Log users selector', () => {
       activityLog: { users },
     };
 
-    expect(getALUsers(state)).toEqual(users);
+    expect(getActivityLogUsers(state)).toEqual(users);
   });
 });

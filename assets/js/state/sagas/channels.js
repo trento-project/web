@@ -55,7 +55,7 @@ import {
 } from '@state/lastExecutions';
 
 import { userUpdated, userLocked, userDeleted } from '@state/user';
-import { alUsersPushed } from '@state/activityLog';
+import { activityLogUsersPushed } from '@state/activityLog';
 
 import { getUserProfile } from '@state/selectors/user';
 
@@ -240,7 +240,7 @@ const userEvents = [
 const activityLogEvents = [
   {
     name: 'al_users_pushed',
-    action: alUsersPushed,
+    action: activityLogUsersPushed,
   },
 ];
 

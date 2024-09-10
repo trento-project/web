@@ -6,7 +6,7 @@ import {
   setExecutionStarted,
 } from '@state/lastExecutions';
 import { userUpdated } from '@state/user';
-import { alUsersPushed } from '@state/activityLog';
+import { activityLogUsersPushed } from '@state/activityLog';
 
 import { watchSocketEvents } from './channels';
 
@@ -138,7 +138,7 @@ describe('Channels saga', () => {
     await saga;
 
     expect(dispatched).toEqual([
-      alUsersPushed({ users: ['user1', 'user2', 'user3'] }),
+      activityLogUsersPushed({ users: ['user1', 'user2', 'user3'] }),
     ]);
   });
 });
