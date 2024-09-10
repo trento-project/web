@@ -1,24 +1,26 @@
 import { adminUser, plainUser } from '../fixtures/oidc-integration/users';
 
+const ssoType = Cypress.env('SSO_TYPE') || 'oidc';
+
 const loginWithOIDC = (username, password) => {
   const args = [username, password];
   cy.session(args, () => {
     cy.visit('/');
     cy.get('button').contains('Login with Single Sign-on').click();
-    cy.origin(Cypress.env('oidc_url'), { args }, ([username, password]) => {
+    cy.origin(Cypress.env('idp_url'), { args }, ([username, password]) => {
       cy.get('[id="username"]').type(username);
       cy.get('[id="password"]').type(password);
       cy.get('input').contains('Sign In').click();
     });
 
-    cy.url().should('contain', '/auth/oidc_callback');
+    cy.url().should('contain', `/auth/${ssoType}_callback`);
     cy.get('h2').contains('Loading...');
     cy.get('h1').contains('At a glance');
   });
 };
 
-describe('OIDC integration', () => {
-  if (!Cypress.env('OIDC_INTEGRATION_TESTS')) {
+describe('OIDC/OAUTH2 integration', () => {
+  if (!Cypress.env('SSO_INTEGRATION_TESTS')) {
     return;
   }
 
@@ -35,7 +37,7 @@ describe('OIDC integration', () => {
 
   it('should redirect to external IDP login page when login button is clicked', () => {
     cy.get('button').contains('Login with Single Sign-on').click();
-    cy.origin(Cypress.env('oidc_url'), () => {
+    cy.origin(Cypress.env('idp_url'), () => {
       cy.url().should('contain', '/realms/trento');
     });
   });

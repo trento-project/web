@@ -15,7 +15,7 @@ module.exports = defineConfig({
     login_user: 'admin',
     login_password: 'adminpassword',
     destination_environment: 'dev',
-    oidc_url: 'http://localhost:8081',
+    idp_url: 'http://localhost:8081',
   },
   e2e: {
     // We've imported your old cypress plugins here.
