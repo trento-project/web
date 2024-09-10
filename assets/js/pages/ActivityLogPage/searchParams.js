@@ -4,7 +4,9 @@
 
 import { uniq } from 'lodash';
 import { pipe, map, reduce, defaultTo } from 'lodash/fp';
-import { fromZonedTime, toZonedTime } from 'date-fns-tz';
+import { format as formatDate, toZonedTime } from 'date-fns-tz';
+
+const toUTC = (date) => formatDate(date, "yyyy-MM-dd'T'HH:mm:ss.000'Z'");
 
 const omitUndefined = (obj) =>
   Object.fromEntries(
@@ -63,7 +65,7 @@ export const filterValueToSearchParams = pipe(
     switch (k) {
       case 'from_date':
       case 'to_date':
-        return [k, [v[0], fromZonedTime(new Date(v[1])).toISOString()]];
+        return [k, [v[0], toUTC(new Date(v[1]))]];
       default:
         return [k, v];
     }

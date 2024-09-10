@@ -1,6 +1,7 @@
 import React, { Fragment, useState, useRef } from 'react';
 import classNames from 'classnames';
 import { Transition } from '@headlessui/react';
+import { format as formatDate } from 'date-fns-tz';
 
 import useOnClickOutside from '@hooks/useOnClickOutside';
 import { EOS_CLOSE, EOS_CHECK } from 'eos-icons-react';
@@ -16,9 +17,7 @@ const preconfiguredOptions = {
 };
 
 const toHumanDate = (date) =>
-  date &&
-  date instanceof Date &&
-  `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+  date && date instanceof Date && formatDate(date, 'MM/dd/yyyy hh:mm:ss a');
 
 const renderOptionItem = (option, placeholder) => {
   if (!option || !Array.isArray(option)) {
@@ -74,22 +73,13 @@ function Tick() {
 }
 
 function DateTimeInput({ value, onChange }) {
-  const valueToDate = (v) => {
-    const tzoffset = new Date().getTimezoneOffset() * 60000;
-    const date = new Date(`${v}:00.000Z`);
-    return new Date(date.getTime() + tzoffset);
-  };
-  const dateToValue = (date) => {
-    const tzoffset = new Date().getTimezoneOffset() * 60000;
-    const newDate = new Date(date.getTime() - tzoffset);
-    return newDate.toISOString().split('.')[0];
-  };
+  const dateToValue = (date) => formatDate(date, "yyyy-MM-dd'T'HH:mm:ss.SSS");
 
   return (
     <Input
       value={value && dateToValue(value)}
       onChange={(e) => {
-        onChange(valueToDate(e.target.value));
+        onChange(new Date(`${e.target.value}`));
       }}
       type="datetime-local"
     />
