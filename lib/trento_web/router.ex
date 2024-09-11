@@ -50,6 +50,10 @@ defmodule TrentoWeb.Router do
       do: TrentoWeb.Plugs.ChartsDisabledPlug
   end
 
+  scope "/sso" do
+    forward "/", Samly.Router
+  end
+
   scope "/" do
     pipe_through :browser
 

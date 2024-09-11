@@ -166,6 +166,36 @@ config :trento, :pow_assent,
     ]
   ]
 
+config :trento, :saml,
+  enabled: false,
+  idp_id: "saml"
+
+config :samly, Samly.Provider,
+  idp_id_from: :path_segment,
+  service_providers: [
+    %{
+      id: "trento-saml",
+      entity_id: "http://localhost:8081/realms/trento"
+      # certfile: "priv/cert/selfsigned.pem",
+      # keyfile: "priv/cert/selfsigned_key.pem"
+    }
+  ],
+  identity_providers: [
+    %{
+      id: "saml",
+      sp_id: "trento-saml",
+      base_url: "http://localhost:4000/sso",
+      # Get the metadata file running:
+      # wget -O priv/saml/metadata.xml http://localhost:8081/realms/trento/protoc/saml/descriptor
+      metadata_file: "priv/saml/metadata.xml",
+      sign_requests: false,
+      sign_metadata: false,
+      signed_assertion_in_resp: false,
+      signed_envelopes_in_resp: false,
+      nameid_format: :persistent
+    }
+  ]
+
 # Override with local dev.local.exs file
 if File.exists?("#{__DIR__}/dev.local.exs") do
   import_config "dev.local.exs"

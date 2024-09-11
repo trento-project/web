@@ -88,6 +88,7 @@ config :trento, :pow_assent, user_identities_context: Trento.UserIdentities
 
 config :trento, :oidc, enabled: false
 config :trento, :oauth2, enabled: false
+config :trento, :saml, enabled: false
 
 # Agent heartbeat interval. Adding one extra second to the agent 5s interval to avoid glitches
 config :trento, Trento.Heartbeats, interval: :timer.seconds(6)
