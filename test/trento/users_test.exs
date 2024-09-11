@@ -117,11 +117,19 @@ defmodule Trento.UsersTest do
       assert length(users) == 1
     end
 
-    test "list_all_usernames returns all usernames including those for deleted users" do
-      %{username: username1} = insert(:user)
-      %{username: username2} = insert(:user, deleted_at: DateTime.utc_now())
-      inserted_sorted_usernames = Enum.sort([username1, username2])
-      sorted_usernames = Enum.sort(Users.list_all_usernames())
+    test "list_all_usernames returns all usernames tupled with the deleted_at field, including those for deleted users" do
+      %{username: username1, deleted_at: deleted_at1} = insert(:user)
+
+      %{username: username2, deleted_at: deleted_at2} =
+        insert(:user, deleted_at: DateTime.utc_now())
+
+      sorter_fn = fn {username, _deleted_at} -> username end
+
+      inserted_sorted_usernames =
+        Enum.sort_by([{username1, deleted_at1}, {username2, deleted_at2}], sorter_fn)
+
+      sorted_usernames =
+        Enum.sort_by(Users.list_all_usernames_ts(), sorter_fn)
 
       assert inserted_sorted_usernames == sorted_usernames
       assert length(sorted_usernames) == 2

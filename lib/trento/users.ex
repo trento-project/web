@@ -38,11 +38,12 @@ defmodule Trento.Users do
   end
 
   @doc """
-  Returns all usernames, including those for users that are soft-deleted.
+  Returns all usernames tupled with the deleted_at timestamp, including those for users that are soft-deleted.
   """
-  def list_all_usernames do
+  @spec list_all_usernames_ts :: list({String.t(), DateTime.t()})
+  def list_all_usernames_ts do
     User
-    |> select([u], u.username)
+    |> select([u], {u.username, u.deleted_at})
     |> Repo.all()
   end
 

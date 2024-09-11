@@ -32,8 +32,8 @@ defmodule TrentoWeb.ActivityLogChannel do
 
   @impl true
   def handle_info(:after_join, socket) do
-    all_usernames = Users.list_all_usernames()
-    collapsed_usernames = collapse_usernames(all_usernames)
+    all_usernames_ts = Users.list_all_usernames_ts()
+    collapsed_usernames = collapse_usernames(all_usernames_ts)
 
     users = ["system" | collapsed_usernames]
     push(socket, "al_users_pushed", %{users: users})
@@ -43,21 +43,14 @@ defmodule TrentoWeb.ActivityLogChannel do
 
   defp allowed?(user_id, current_user_id), do: String.to_integer(user_id) == current_user_id
 
-  defp collapse_usernames(usernames) do
-    usernames
-    |> Enum.map(fn username ->
-      maybe_ts =
+  defp collapse_usernames(usernames_ts) do
+    usernames_ts
+    |> Enum.map(fn
+      {username, nil} ->
         username
-        |> String.split("__")
-        |> List.last()
 
-      case DateTime.from_iso8601(maybe_ts) do
-        {:ok, _, _} ->
-          String.trim_trailing(username, "__" <> maybe_ts)
-
-        _ ->
-          username
-      end
+      {username, deleted_at} ->
+        String.trim_trailing(username, "__" <> DateTime.to_string(deleted_at))
     end)
     |> Enum.uniq()
   end
