@@ -30,6 +30,12 @@ function UpgradablePackagesPage() {
     getUpgradablePackages(state, hostID)
   );
 
+  useEffect(() => {
+    if (upgradablePackages.length > 0) {
+      dispatch(fetchUpgradablePackagesPatches({ hostID }));
+    }
+  }, [upgradablePackages.length]);
+
   return (
     <>
       <BackButton url={`/hosts/${hostID}`}>Back to Host Details</BackButton>
@@ -39,15 +45,6 @@ function UpgradablePackagesPage() {
         onPatchClick={(advisoryID) =>
           navigate(`/hosts/${hostID}/patches/${advisoryID}`)
         }
-        onLoad={(items) => {
-          if (items.length) {
-            const packageIDs = items.map(
-              ({ to_package_id: packageID }) => packageID
-            );
-
-            dispatch(fetchUpgradablePackagesPatches({ hostID, packageIDs }));
-          }
-        }}
       />
     </>
   );

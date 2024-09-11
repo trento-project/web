@@ -63,7 +63,29 @@ defmodule TrentoWeb.V1.SUSEManagerView do
         to_package_id: to_package_id
       }
 
-  def render("patches_for_packages.json", %{patches: patches}), do: %{patches: patches}
+  def render("patches_for_packages.json", %{patches: patches}),
+    do: %{patches: render_many(patches, __MODULE__, "package.json", as: :package)}
+
+  def render("package.json", %{package: %{package_id: package_id, patches: patches}}) do
+    %{package_id: package_id, patches: render_many(patches, __MODULE__, "patch.json", as: :patch)}
+  end
+
+  def render("patch.json", %{
+        patch: %{
+          date: date,
+          advisory_name: advisory_name,
+          advisory_type: advisory_type,
+          advisory_synopsis: advisory_synopsis,
+          update_date: update_date
+        }
+      }),
+      do: %{
+        issue_date: date,
+        advisory: advisory_name,
+        advisory_type: advisory_type,
+        synopsis: advisory_synopsis,
+        last_modified_date: update_date
+      }
 
   def render("errata_details.json", %{
         errata_details: errata_details = %{errataFrom: errataFrom},

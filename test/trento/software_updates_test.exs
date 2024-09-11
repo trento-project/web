@@ -78,18 +78,37 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
     test "should return an aggregated list of packages and related patches" do
       insert_software_updates_settings()
 
-      [first_package_id, second_package_id, _] =
-        packages_ids = [Faker.UUID.v4(), Faker.UUID.v4(), Faker.UUID.v4()]
+      [first_package_id, second_package_id] =
+        [Faker.UUID.v4(), Faker.UUID.v4()]
 
-      first_patch = [build(:patch_for_package)]
-      second_patch = [build(:patch_for_package)]
+      [%{advisory_name: first_patch_name}, %{advisory_name: second_patch_name}] =
+        relevant_patches = [
+          build(:relevant_patch, id: 4182),
+          build(:relevant_patch, id: 4174)
+        ]
 
-      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_patches_for_package, 3, fn
-        ^first_package_id ->
-          {:ok, first_patch}
+      upgradable_packages = [
+        build(:upgradable_package, name: "elixir", to_package_id: first_package_id),
+        build(:upgradable_package, name: "systemd", to_package_id: second_package_id)
+      ]
 
-        ^second_package_id ->
-          {:ok, second_patch}
+      affected_packages = [
+        build(:affected_package, name: "elixir"),
+        build(:affected_package, name: "systemd")
+      ]
+
+      %{host_id: host_id} =
+        insert(:software_updates_discovery_result,
+          relevant_patches: relevant_patches,
+          upgradable_packages: upgradable_packages
+        )
+
+      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_affected_packages, 2, fn
+        ^first_patch_name ->
+          {:ok, affected_packages}
+
+        ^second_patch_name ->
+          {:ok, affected_packages}
 
         _ ->
           {:error, :some_error}
@@ -97,11 +116,22 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
 
       assert {:ok,
               [
-                %{package_id: ^first_package_id, patches: ^first_patch},
-                %{package_id: ^second_package_id, patches: ^second_patch},
-                %{package_id: _, patches: []}
+                %{
+                  package_id: ^first_package_id,
+                  patches: [
+                    %{advisory_name: ^first_patch_name},
+                    %{advisory_name: ^second_patch_name}
+                  ]
+                },
+                %{
+                  package_id: ^second_package_id,
+                  patches: [
+                    %{advisory_name: ^first_patch_name},
+                    %{advisory_name: ^second_patch_name}
+                  ]
+                }
               ]} =
-               SoftwareUpdates.get_packages_patches(packages_ids)
+               SoftwareUpdates.get_packages_patches(host_id)
     end
   end
 

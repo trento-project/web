@@ -59,7 +59,7 @@ context('SUSE Manager overviews', () => {
 
       cy.contains('CVEs').next().should('contain', 'SUSE-15-SP4');
 
-      cy.contains('Affected Packages').next().should('contain', 'kernel');
+      cy.contains('Affected Packages').next().should('contain', 'elixir');
       cy.contains('Affected Systems')
         .next()
         .should('contain', 'vmdrbddev01')

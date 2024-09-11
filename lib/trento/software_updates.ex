@@ -58,19 +58,37 @@ defmodule Trento.SoftwareUpdates do
              :settings_not_configured
              | :error_getting_patches
              | :max_login_retries_reached}
-  def get_packages_patches(package_ids) do
+  def get_packages_patches(host_id) do
     with {:ok, _} <- Settings.get_suse_manager_settings() do
-      result =
-        package_ids
-        |> ParallelStream.map(fn package_id ->
-          {package_id, Discovery.get_patches_for_package(package_id)}
+      {:ok, relevant_patches, upgradable_packages} = Discovery.get_discovery_result(host_id)
+
+      affected_packages_for_patches =
+        relevant_patches
+        |> ParallelStream.map(fn %{advisory_name: advisory_name} = advisory ->
+          {advisory, Discovery.get_affected_packages(advisory_name)}
         end)
         |> Enum.map(fn
-          {package_id, {:ok, patches}} -> %{package_id: package_id, patches: patches}
-          {package_id, _} -> %{package_id: package_id, patches: []}
+          {advisory, {:ok, packages}} -> Map.put(advisory, :packages, packages)
+          {advisory, _} -> Map.put(advisory, :packages, [])
         end)
+
+      result = group_patches(upgradable_packages, affected_packages_for_patches)
 
       {:ok, result}
     end
   end
+
+  defp group_patches(upgradable_packages, affected_packages_for_patches),
+    do:
+      Enum.map(upgradable_packages, fn %{to_package_id: to_package_id, name: package_name} ->
+        patches = filter_affected_packages(affected_packages_for_patches, package_name)
+
+        %{package_id: to_package_id, patches: patches}
+      end)
+
+  defp filter_affected_packages(affected_packages_for_patches, package_name),
+    do:
+      Enum.filter(affected_packages_for_patches, fn %{packages: packages} ->
+        Enum.find(packages, fn %{name: name} -> name === package_name end)
+      end)
 end

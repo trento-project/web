@@ -168,37 +168,6 @@ describe('Software Updates saga', () => {
       ]);
     });
 
-    it('chunks 600 unique package IDs', async () => {
-      const axiosMock = new MockAdapter(networkClient);
-      const hostID = faker.string.uuid();
-      const packageIDs = Array.from(new Array(160)).map(() =>
-        faker.number.int()
-      );
-      const patches = patchForPackageFactory.buildList(3);
-      const response = {
-        patches: [{ package_id: packageIDs[0], patches }],
-      };
-
-      axiosMock.onGet(`/api/v1/software_updates/packages`).reply(200, response);
-
-      const dispatched = await recordSaga(fetchUpgradablePackagesPatches, {
-        payload: { hostID, packageIDs },
-      });
-
-      expect(dispatched).toEqual([
-        setPatchesForPackages({
-          hostID,
-          patches: [
-            ...response.patches,
-            ...response.patches,
-            ...response.patches,
-            ...response.patches,
-          ],
-        }),
-        setSettingsConfigured(),
-      ]);
-    });
-
     it('should set settings not configured when 422 with relevant error message', async () => {
       const axiosMock = new MockAdapter(networkClient);
       const hostID = faker.string.uuid();
