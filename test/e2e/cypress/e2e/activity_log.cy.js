@@ -244,4 +244,38 @@ context('Activity Log page', () => {
       cy.get('button').contains('10').should('be.visible');
     });
   });
+
+  it('should navigate backward', () => {
+    cy.intercept({
+      url: '/api/v1/activity_log?first=20',
+    }).as('firstPage');
+
+    cy.visit('/activity_log');
+
+    cy.wait('@firstPage').then(({ response: firstPageResponse }) => {
+      expect(firstPageResponse.body.pagination).to.have.property('first', 20);
+      expect(firstPageResponse.body.pagination).to.have.property('end_cursor');
+
+      cy.intercept({
+        url: `/api/v1/activity_log?first=20&after=*`,
+      }).as('secondPage');
+
+      cy.contains('>').click();
+
+      cy.wait('@secondPage').its('response.statusCode').should('eq', 200);
+
+      cy.intercept({
+        url: `/api/v1/activity_log?last=20&before=*`,
+      }).as('firstPage-back');
+
+      cy.contains('<').click();
+
+      cy.wait('@firstPage-back').then(({ response }) => {
+        expect(response.body.pagination).to.have.property('last', 20);
+        firstPageResponse.body.data.forEach((element, i) => {
+          expect(element.id).to.eq(response.body.data[i].id);
+        });
+      });
+    });
+  });
 });
