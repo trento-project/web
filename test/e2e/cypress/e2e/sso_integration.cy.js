@@ -1,24 +1,26 @@
 import { adminUser, plainUser } from '../fixtures/oidc-integration/users';
 
-const loginWithOIDC = (username, password) => {
+const ssoType = Cypress.env('SSO_TYPE') || 'oidc';
+
+const loginWithSSO = (username, password) => {
   const args = [username, password];
   cy.session(args, () => {
     cy.visit('/');
     cy.get('button').contains('Login with Single Sign-on').click();
-    cy.origin(Cypress.env('oidc_url'), { args }, ([username, password]) => {
+    cy.origin(Cypress.env('idp_url'), { args }, ([username, password]) => {
       cy.get('[id="username"]').type(username);
       cy.get('[id="password"]').type(password);
       cy.get('input').contains('Sign In').click();
     });
 
-    cy.url().should('contain', '/auth/oidc_callback');
+    cy.url().should('contain', `/auth/${ssoType}_callback`);
     cy.get('h2').contains('Loading...');
     cy.get('h1').contains('At a glance');
   });
 };
 
-describe('OIDC integration', () => {
-  if (!Cypress.env('OIDC_INTEGRATION_TESTS')) {
+describe('OIDC/OAUTH2 integration', () => {
+  if (!Cypress.env('SSO_INTEGRATION_TESTS')) {
     return;
   }
 
@@ -35,19 +37,19 @@ describe('OIDC integration', () => {
 
   it('should redirect to external IDP login page when login button is clicked', () => {
     cy.get('button').contains('Login with Single Sign-on').click();
-    cy.origin(Cypress.env('oidc_url'), () => {
+    cy.origin(Cypress.env('idp_url'), () => {
       cy.url().should('contain', '/realms/trento');
     });
   });
 
   it('should login properly once authentication is completed', () => {
-    loginWithOIDC(plainUser.username, plainUser.password);
+    loginWithSSO(plainUser.username, plainUser.password);
     cy.get('span').contains(plainUser.username);
   });
 
   describe('Plain user', () => {
     beforeEach(() => {
-      loginWithOIDC(plainUser.username, plainUser.password);
+      loginWithSSO(plainUser.username, plainUser.password);
     });
 
     it('should have a read only profile view and empty list of permissions', () => {
@@ -68,7 +70,7 @@ describe('OIDC integration', () => {
 
   describe('Admin user', () => {
     beforeEach(() => {
-      loginWithOIDC(adminUser.username, adminUser.password);
+      loginWithSSO(adminUser.username, adminUser.password);
     });
 
     it('should have access to Users view', () => {
@@ -83,6 +85,7 @@ describe('OIDC integration', () => {
     });
 
     it('should have the ability to update user permissions and status', () => {
+      cy.visit('/users');
       cy.get('a').contains(plainUser.username).click();
       cy.get('div').contains('Default').click({ force: true });
       cy.get('div').contains('all:users').click();

@@ -582,14 +582,26 @@ jobs:
         include:
           - test: oidc
             cypress_spec: |
-              cypress/e2e/oidc_integration.cy.js
+              cypress/e2e/sso_integration.cy.js
             config_file_content: |
               import Config
 
               config :trento, :oidc, enabled: true
             env:
               MIX_ENV: dev
-              CYPRESS_OIDC_INTEGRATION_TESTS: true
+              CYPRESS_SSO_INTEGRATION_TESTS: true
+              CYPRESS_SSO_TYPE: oidc
+          - test: oauth2
+            cypress_spec: |
+              cypress/e2e/sso_integration.cy.js
+            config_file_content: |
+              import Config
+
+              config :trento, :oauth2, enabled: true
+            env:
+              MIX_ENV: dev
+              CYPRESS_SSO_INTEGRATION_TESTS: true
+              CYPRESS_SSO_TYPE: oauth2
     env: ${{ matrix.env }}      
     steps:
       - name: Cancel Previous Runs
