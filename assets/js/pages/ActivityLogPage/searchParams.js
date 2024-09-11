@@ -63,7 +63,7 @@ export const searchParamsToFilterValue = pipe(
     switch (k) {
       case 'from_date':
       case 'to_date':
-        return [k, [v[0], toZonedTime(new Date(v[1]))]];
+        return [k, [v[0], toZonedTime(v[1])]];
       default:
         return [k, v];
     }
@@ -91,6 +91,13 @@ export const filterValueToSearchParams = pipe(
   defaultTo(new URLSearchParams())
 );
 
+export const structToSearchParams = pipe(
+  omitUndefined,
+  Object.entries,
+  entriesToSearchParams,
+  defaultTo(new URLSearchParams())
+);
+
 export const setPaginationToSearchParams =
   (searchParams = new URLSearchParams()) =>
   (pagination) => {
@@ -101,7 +108,7 @@ export const setPaginationToSearchParams =
       omit(paginationFields)
     )(searchParams);
 
-    const v = filterValueToSearchParams({ ...pagination, ...filters });
+    const v = structToSearchParams({ ...pagination, ...filters });
     return v;
   };
 

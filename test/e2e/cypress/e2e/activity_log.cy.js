@@ -168,5 +168,32 @@ context('Activity Log page', () => {
         );
       });
     });
+
+    it('should select correct date filter when changing page', () => {
+      cy.intercept({
+        url: '/api/v1/activity_log?to_date=2024-08-14T10:21:00.000Z',
+      }).as('firstPage');
+
+      cy.visit(
+        '/activity_log?to_date=custom&to_date=2024-08-14T10%3A21%3A00.000Z'
+      );
+
+      cy.contains('08/14/2024 10:21:00 AM').should('be.visible');
+
+      
+      
+      cy.wait('@firstPage').then(({ response }) => {
+        const after = response.body.pagination.end_cursor;
+
+        cy.intercept({
+          url: `/api/v1/activity_log?first=20&after=${after}&to_date=2024-08-14T10:21:00.000Z`,
+        }).as('secondPage');
+        
+        cy.contains('>').click();
+
+        cy.wait('@secondPage').its('response.statusCode').should('eq', 200);
+        cy.contains('08/14/2024 10:21:00 AM').should('be.visible');
+      });
+    });
   });
 });
