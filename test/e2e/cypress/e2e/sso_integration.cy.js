@@ -2,7 +2,7 @@ import { adminUser, plainUser } from '../fixtures/oidc-integration/users';
 
 const ssoType = Cypress.env('SSO_TYPE') || 'oidc';
 
-const loginWithOIDC = (username, password) => {
+const loginWithSSO = (username, password) => {
   const args = [username, password];
   cy.session(args, () => {
     cy.visit('/');
@@ -43,13 +43,13 @@ describe('OIDC/OAUTH2 integration', () => {
   });
 
   it('should login properly once authentication is completed', () => {
-    loginWithOIDC(plainUser.username, plainUser.password);
+    loginWithSSO(plainUser.username, plainUser.password);
     cy.get('span').contains(plainUser.username);
   });
 
   describe('Plain user', () => {
     beforeEach(() => {
-      loginWithOIDC(plainUser.username, plainUser.password);
+      loginWithSSO(plainUser.username, plainUser.password);
     });
 
     it('should have a read only profile view and empty list of permissions', () => {
@@ -70,7 +70,7 @@ describe('OIDC/OAUTH2 integration', () => {
 
   describe('Admin user', () => {
     beforeEach(() => {
-      loginWithOIDC(adminUser.username, adminUser.password);
+      loginWithSSO(adminUser.username, adminUser.password);
     });
 
     it('should have access to Users view', () => {
