@@ -2,6 +2,30 @@
 
 context('Activity Log page', () => {
   describe('Navigation', () => {
+    it('should navigate to Activity Log page', () => {
+      cy.visit('/');
+
+      cy.get('nav').contains('Activity Log').click();
+
+      cy.url().should('eq', `${Cypress.config().baseUrl}/activity_log`);
+      cy.get('h1').contains('Activity Log').should('be.visible');
+    });
+
+    it('should not load the page twice', () => {
+      cy.visit('/');
+
+      cy.intercept({
+        url: '/api/v1/activity_log*',
+      }).as('data');
+
+      for (let i = 0; i < 5; i++) {
+        cy.get('nav').contains('Activity Log').click();
+      }
+
+      cy.wait('@data');
+      cy.get('@data.all').should('have.length', 1);
+    });
+
     it('should reset querystring when reloading the page from navigation menu', () => {
       cy.visit(
         '/activity_log?from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&to_date=custom&to_date=2024-08-13T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging'
@@ -15,6 +39,7 @@ context('Activity Log page', () => {
       cy.url().should('eq', `${Cypress.config().baseUrl}/activity_log`);
     });
   });
+
   describe('Filtering', () => {
     it('should render without selected filters', () => {
       cy.intercept({
