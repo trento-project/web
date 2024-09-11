@@ -31,8 +31,8 @@ context('Activity Log page', () => {
       );
 
       cy.contains('Login Attempt, Tag Added').should('be.visible');
-      cy.contains('8/14/2024 10:21:00 AM').should('be.visible');
-      cy.contains('8/13/2024 10:21:00 AM').should('be.visible');
+      cy.contains('08/14/2024 10:21:00 AM').should('be.visible');
+      cy.contains('08/13/2024 10:21:00 AM').should('be.visible');
 
       cy.wait('@data').its('response.statusCode').should('eq', 200);
     });
@@ -60,7 +60,7 @@ context('Activity Log page', () => {
       );
     });
 
-    it('should reset filters', () => {
+    it('should reset filonlyters', () => {
       cy.intercept({
         url: '/api/v1/activity_log',
       }).as('data');

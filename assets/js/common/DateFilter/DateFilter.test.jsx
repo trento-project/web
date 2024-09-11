@@ -124,4 +124,40 @@ describe('DateFilter component', () => {
 
     expect(mockOnChange).toHaveBeenCalledWith(['30d ago', anyDate]);
   });
+
+  it('should select a custom date when typed into the input field', async () => {
+    const user = userEvent.setup();
+    const mockOnChange = jest.fn();
+    const { container } = render(
+      <DateFilter title="by date" prefilled onChange={mockOnChange} />
+    );
+    await act(() => user.click(screen.getByText('Filter by date...')));
+    const input = container.querySelector('input[type="datetime-local"]');
+    await act(() => user.type(input, '2024-08-14T10:21'));
+
+    expect(mockOnChange).toHaveBeenCalledWith([
+      'custom',
+      new Date('2024-08-14T10:21'),
+    ]);
+  });
+
+  it.each`
+    value                              | expected
+    ${new Date('2024-08-14T15:21:00')} | ${'08/14/2024 03:21:00 PM'}
+    ${'2021-01-24T05:50:23'}           | ${'01/24/2021 05:50:23 AM'}
+  `('should render the custom date ($value)', async ({ value, expected }) => {
+    const mockOnChange = jest.fn();
+
+    render(
+      <DateFilter
+        title="by date"
+        value={['custom', value]}
+        prefilled
+        onChange={mockOnChange}
+      />
+    );
+
+    expect(screen.getByText(expected)).toBeInTheDocument();
+    expect(mockOnChange).not.toHaveBeenCalled();
+  });
 });

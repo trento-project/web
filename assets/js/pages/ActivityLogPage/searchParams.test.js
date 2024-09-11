@@ -1,95 +1,100 @@
-import { fromZonedTime } from 'date-fns-tz';
 import {
   filterValueToSearchParams,
   searchParamsToAPIParams,
   searchParamsToFilterValue,
 } from './searchParams';
 
-describe('searchParams helpers', () => {});
-describe('searchParamsToAPIParams', () => {
-  it('should convert search params to API params', () => {
-    const nowUTC = '2024-08-01T17:23:00.000Z';
+describe('searchParams helpers', () => {
+  describe('searchParamsToAPIParams', () => {
+    it('should convert search params to API params', () => {
+      const nowUTC = '2024-08-01T17:23:00.000Z';
 
-    const sp = new URLSearchParams();
-    sp.append('from_date', 'custom');
-    sp.append('from_date', nowUTC);
-    sp.append('type', 'login_attempt');
-    sp.append('type', 'resource_tagging');
+      const sp = new URLSearchParams();
+      sp.append('from_date', 'custom');
+      sp.append('from_date', nowUTC);
+      sp.append('type', 'login_attempt');
+      sp.append('type', 'resource_tagging');
 
-    const result = searchParamsToAPIParams(sp);
+      const result = searchParamsToAPIParams(sp);
 
-    expect(result).toEqual({
-      from_date: nowUTC,
-      type: ['login_attempt', 'resource_tagging'],
+      expect(result).toEqual({
+        from_date: nowUTC,
+        type: ['login_attempt', 'resource_tagging'],
+      });
     });
   });
-});
 
-describe('searchParamsToFilterValue', () => {
-  it('should convert search params to filter value', () => {
-    const nowUTC = '2024-08-01T17:23:00.000Z';
+  describe('searchParamsToFilterValue', () => {
+    it('should convert search params to filter value', () => {
+      const nowUTC = '2024-08-01T17:23:00.000Z';
+      const now = new Date(nowUTC);
 
-    const sp = new URLSearchParams();
-    sp.append('from_date', 'custom');
-    sp.append('from_date', nowUTC);
-    sp.append('type', 'login_attempt');
-    sp.append('type', 'resource_tagging');
+      const sp = new URLSearchParams();
+      sp.append('from_date', 'custom');
+      sp.append('from_date', nowUTC);
+      sp.append('type', 'login_attempt');
+      sp.append('type', 'resource_tagging');
 
-    const result = searchParamsToFilterValue(sp);
+      const result = searchParamsToFilterValue(sp);
 
-    expect(result).toEqual({
-      from_date: ['custom', expect.any(Date)],
-      type: ['login_attempt', 'resource_tagging'],
+      expect(result).toEqual({
+        from_date: ['custom', expect.any(Date)],
+        type: ['login_attempt', 'resource_tagging'],
+      });
+
+      expect(result.from_date[1].getTime()).toEqual(
+        now.getTime() + now.getTimezoneOffset() * 60 * 1000
+      );
+    });
+  });
+
+  describe('filterValueToSearchParams', () => {
+    it('should convert filter value to search params', () => {
+      const base = '2024-08-14T10:21:00';
+      const utcNow = `${base}.000Z`;
+      const now = new Date(base);
+
+      const filterValue = {
+        from_date: ['custom', now],
+        type: ['login_attempt', 'resource_tagging'],
+      };
+
+      const result = filterValueToSearchParams(filterValue);
+
+      expect(result.getAll('from_date')).toEqual(['custom', utcNow]);
+      expect(result.getAll('type')).toEqual([
+        'login_attempt',
+        'resource_tagging',
+      ]);
     });
 
-    expect(result.from_date[1].getHours()).toEqual(17);
-  });
-});
+    it('should use a fresh URLSearchParams instance', () => {
+      const base = '2024-08-14T10:21:00';
+      const utcNow = `${base}.000Z`;
+      const now = new Date(base);
 
-describe('filterValueToSearchParams', () => {
-  it('should convert filter value to search params', () => {
-    const now = new Date();
-    const utcNow = fromZonedTime(now).toISOString();
+      const filterValue = {
+        from_date: ['custom', now],
+        type: ['login_attempt', 'resource_tagging'],
+      };
 
-    const filterValue = {
-      from_date: ['custom', now],
-      type: ['login_attempt', 'resource_tagging'],
-    };
+      // apply two times to test if the function is using a fresh URLSearchParams instance
+      /*          */ filterValueToSearchParams(filterValue);
+      const result = filterValueToSearchParams(filterValue);
 
-    const result = filterValueToSearchParams(filterValue);
+      expect(result.getAll('from_date')).toEqual(['custom', utcNow]);
+      expect(result.getAll('type')).toEqual([
+        'login_attempt',
+        'resource_tagging',
+      ]);
+    });
 
-    expect(result.getAll('from_date')).toEqual(['custom', utcNow]);
-    expect(result.getAll('type')).toEqual([
-      'login_attempt',
-      'resource_tagging',
-    ]);
-  });
+    it('should return an instance of URLSearchParams when filters are empty', () => {
+      const filterValue = {};
 
-  it('should use a fresh URLSearchParams instance', () => {
-    const now = new Date();
-    const utcNow = fromZonedTime(now).toISOString();
+      const result = filterValueToSearchParams(filterValue);
 
-    const filterValue = {
-      from_date: ['custom', now],
-      type: ['login_attempt', 'resource_tagging'],
-    };
-
-    // apply two times to test if the function is using a fresh URLSearchParams instance
-    /*          */ filterValueToSearchParams(filterValue);
-    const result = filterValueToSearchParams(filterValue);
-
-    expect(result.getAll('from_date')).toEqual(['custom', utcNow]);
-    expect(result.getAll('type')).toEqual([
-      'login_attempt',
-      'resource_tagging',
-    ]);
-  });
-
-  it('should return an instance of URLSearchParams when filters are empty', () => {
-    const filterValue = {};
-
-    const result = filterValueToSearchParams(filterValue);
-
-    expect(result).toEqual(expect.any(URLSearchParams));
+      expect(result).toEqual(expect.any(URLSearchParams));
+    });
   });
 });
