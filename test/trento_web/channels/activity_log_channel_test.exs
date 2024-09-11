@@ -8,6 +8,8 @@ defmodule TrentoWeb.ActivityLogChannelTest do
              |> join(TrentoWeb.ActivityLogChannel, "activity_log:876")
 
     assert_push("al_users_pushed", %{users: _})
+    assert_push("al_users_pushed", %{users: _})
+    assert_push("al_users_pushed", %{users: _})
   end
 
   test "Unauthorized users cannot join the activity log channel" do

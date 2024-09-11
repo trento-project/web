@@ -91,3 +91,5 @@ config :trento, Trento.Infrastructure.SoftwareUpdates.MockSuma,
     # 448 matches to "test" fqdn
     448
   ]
+
+config :trento, :activity_log, refresh_interval: 1

@@ -6,6 +6,7 @@ defmodule TrentoWeb.ActivityLogChannel do
   require Logger
   use TrentoWeb, :channel
   alias Trento.Users
+  @refresh_interval Application.compile_env!(:trento, [:activity_log, :refresh_interval])
 
   @impl true
   def join(
@@ -36,7 +37,7 @@ defmodule TrentoWeb.ActivityLogChannel do
 
     users = ["system" | collapsed_usernames]
     push(socket, "al_users_pushed", %{users: users})
-    Process.send_after(self(), :after_join, 60_000)
+    Process.send_after(self(), :after_join, @refresh_interval)
     {:noreply, socket}
   end
 
