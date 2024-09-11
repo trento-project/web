@@ -46,6 +46,16 @@ const changeItemsPerPage = (searchParams) => (items) => {
   }
   return { first: items };
 };
+const applyDefaultItemsPerPage = (params) =>
+  'first' in params || 'last' in params
+    ? params
+    : { first: defaultItemsPerPage, ...params };
+
+const activityLogRequest = pipe(
+  searchParamsToAPIParams,
+  applyDefaultItemsPerPage,
+  getActivityLog
+);
 
 function ActivityLogPage() {
   const users = useSelector(getActivityLogUsers);
@@ -93,8 +103,8 @@ function ActivityLogPage() {
 
   const fetchActivityLog = () => {
     setLoading(true);
-    const params = searchParamsToAPIParams(searchParams);
-    getActivityLog(params)
+
+    activityLogRequest(searchParams)
       .then(({ data }) => {
         setActivityLogResponse({
           data: data?.data || [],
