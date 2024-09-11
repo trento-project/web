@@ -31,15 +31,15 @@ function Select({
   )}-selection-dropdown`;
 
   return (
-    <div className={classNames('flex-2 w-64', className)}>
+    <div className={classNames('flex-2', className)}>
       <Listbox disabled={disabled} value={value} onChange={onChange}>
         <div className="relative mt-1">
           <Listbox.Button
             className={classNames(
               dropdownSelector,
-              'relative w-full py-2 px-3 text-left bg-white rounded-lg cursor-default border border-gray-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-opacity-75 focus-visible:ring-white focus-visible:ring-offset-orange-300 focus-visible:ring-offset-2 focus-visible:border-indigo-500 sm:text-sm disabled:bg-gray-50 disabled:text-gray-400'
+              'relative w-full ml-5 py-2 px-3 text-left bg-white rounded-lg cursor-default border border-gray-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-opacity-75 focus-visible:ring-white focus-visible:ring-offset-orange-300 focus-visible:ring-offset-2 focus-visible:border-indigo-500 sm:text-sm disabled:bg-gray-50 disabled:text-gray-400'
             )}
-          >
+         >
             {renderOption(selectedOption)}
             <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
               <ChevronUpDownIcon
