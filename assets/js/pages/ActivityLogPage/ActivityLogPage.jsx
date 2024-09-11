@@ -12,14 +12,40 @@ import { getUserProfile } from '@state/selectors/user';
 import PageHeader from '@common/PageHeader';
 import ActivityLogOverview from '@common/ActivityLogOverview';
 import ComposedFilter from '@common/ComposedFilter';
+import {
+  PaginationPrevNext,
+  defaultItemsPerPageOptions,
+} from '@common/Pagination';
 
 import {
-  filterValueToSearchParams,
+  applyItemsPerPage,
+  setFilterValueToSearchParams,
   searchParamsToAPIParams,
   searchParamsToFilterValue,
+  getItemsPerPageFromSearchParams,
+  setPaginationToSearchParams,
 } from './searchParams';
 
 const emptyResponse = { data: [] };
+
+const defaultItemsPerPage = 20;
+const detectItemsPerPage = (number) =>
+  defaultItemsPerPageOptions.includes(number) ? number : defaultItemsPerPage;
+const changeItemsPerPage = (searchParams) => (items) => {
+  if (searchParams.has('after')) {
+    return {
+      first: items,
+      after: searchParams.get('after'),
+    };
+  }
+  if (searchParams.has('before')) {
+    return {
+      last: items,
+      before: searchParams.get('before'),
+    };
+  }
+  return { first: items };
+};
 
 function ActivityLogPage() {
   const users = useSelector(getActivityLogUsers);
@@ -60,6 +86,11 @@ function ActivityLogPage() {
     },
   ];
 
+  const itemsPerPage = pipe(
+    getItemsPerPageFromSearchParams,
+    detectItemsPerPage
+  )(searchParams);
+
   const fetchActivityLog = () => {
     setLoading(true);
     const params = searchParamsToAPIParams(searchParams);
@@ -90,7 +121,11 @@ function ActivityLogPage() {
             filters={filters}
             autoApply={false}
             value={searchParamsToFilterValue(searchParams)}
-            onChange={(p) => setSearchParams(filterValueToSearchParams(p))}
+            onChange={pipe(
+              setFilterValueToSearchParams,
+              applyItemsPerPage(itemsPerPage),
+              setSearchParams
+            )}
           />
         </div>
         <ActivityLogOverview
@@ -101,6 +136,30 @@ function ActivityLogPage() {
           onCloseActivityLogEntryDetails={() =>
             setActivityLogDetailModalOpen(false)
           }
+        />
+        <PaginationPrevNext
+          hasPrev={activityLogResponse.pagination?.has_previous_page}
+          hasNext={activityLogResponse.pagination?.has_next_page}
+          currentItemsPerPage={itemsPerPage}
+          onSelect={pipe(
+            (selection) =>
+              selection === 'prev'
+                ? {
+                    last: itemsPerPage,
+                    before: activityLogResponse.pagination?.start_cursor,
+                  }
+                : {
+                    first: itemsPerPage,
+                    after: activityLogResponse.pagination?.end_cursor,
+                  },
+            setPaginationToSearchParams(searchParams),
+            setSearchParams
+          )}
+          onChangeItemsPerPage={pipe(
+            changeItemsPerPage(searchParams),
+            setPaginationToSearchParams(searchParams),
+            setSearchParams
+          )}
         />
       </div>
     </>

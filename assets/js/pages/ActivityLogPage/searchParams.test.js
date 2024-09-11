@@ -2,6 +2,7 @@ import {
   filterValueToSearchParams,
   searchParamsToAPIParams,
   searchParamsToFilterValue,
+  setPaginationToSearchParams,
 } from './searchParams';
 
 describe('searchParams helpers', () => {
@@ -95,6 +96,49 @@ describe('searchParams helpers', () => {
       const result = filterValueToSearchParams(filterValue);
 
       expect(result).toEqual(expect.any(URLSearchParams));
+    });
+  });
+
+  describe('setPaginationToSearchParams', () => {
+    it('should set pagination on empty search params object', () => {
+      const sp = new URLSearchParams();
+      const pagination = { first: 20, after: 'sds' };
+
+      const newSp = setPaginationToSearchParams(sp)(pagination);
+
+      expect(newSp.get('first')).toEqual('20');
+      expect(newSp.get('after')).toEqual('sds');
+      expect([...newSp.keys()]).toEqual(['first', 'after']);
+    });
+
+    it('should override pagination if present', () => {
+      const sp = new URLSearchParams();
+      sp.set('last', '10');
+      sp.set('before', 'abc');
+      const pagination = { first: 20, after: 'sds' };
+
+      const newSp = setPaginationToSearchParams(sp)(pagination);
+
+      expect(newSp.get('first')).toEqual('20');
+      expect(newSp.get('after')).toEqual('sds');
+      expect([...newSp.keys()]).toEqual(['first', 'after']);
+    });
+
+    it('should preserve filters if present', () => {
+      const sp = new URLSearchParams();
+      sp.append('type', 'login_attempt');
+      sp.append('type', 'resource_tagging');
+      const pagination = { first: 20, after: 'sds' };
+
+      const newSp = setPaginationToSearchParams(sp)(pagination);
+
+      expect(newSp.get('first')).toEqual('20');
+      expect(newSp.get('after')).toEqual('sds');
+      expect(newSp.getAll('type')).toEqual([
+        'login_attempt',
+        'resource_tagging',
+      ]);
+      expect([...newSp.keys()]).toEqual(['first', 'after', 'type', 'type']);
     });
   });
 });

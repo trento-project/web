@@ -70,13 +70,13 @@ context('Activity Log page', () => {
         'eq',
         `${
           Cypress.config().baseUrl
-        }/activity_log?from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&to_date=custom&to_date=2024-08-13T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging`
+        }/activity_log?from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&to_date=custom&to_date=2024-08-13T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging&first=20`
       );
     });
 
-    it('should reset filonlyters', () => {
+    it('should reset filters', () => {
       cy.intercept({
-        url: '/api/v1/activity_log',
+        url: '/api/v1/activity_log?first=20',
       }).as('data');
 
       cy.visit(
@@ -96,6 +96,77 @@ context('Activity Log page', () => {
       );
 
       cy.wait('@data').its('response.statusCode').should('eq', 200);
+    });
+  });
+
+  describe('Pagination', () => {
+    it('should paginate data', () => {
+      cy.intercept({
+        url: `/api/v1/activity_log`,
+      }).as('firstPage');
+
+      cy.visit('/activity_log');
+
+      cy.wait('@firstPage').then(({ response }) => {
+        expect(response.body).to.have.property('pagination');
+        expect(response.body.pagination).to.have.property('end_cursor');
+        expect(response.body.pagination.end_cursor).not.to.be.undefined;
+
+        const after = response.body.pagination.end_cursor;
+
+        cy.contains('<').click();
+
+        cy.url().should('eq', `${Cypress.config().baseUrl}/activity_log`);
+
+        cy.intercept({
+          url: `/api/v1/activity_log?first=20&after=${after}`,
+        }).as('secondPage');
+        cy.contains('>').click();
+
+        cy.wait('@secondPage').its('response.statusCode').should('eq', 200);
+
+        cy.url().should(
+          'eq',
+          `${Cypress.config().baseUrl}/activity_log?first=20&after=${after}`
+        );
+      });
+    });
+
+    it('should paginate data with filters', () => {
+      cy.intercept({
+        url: `/api/v1/activity_log?type[]=login_attempt`,
+      }).as('firstPage');
+
+      cy.visit('/activity_log?type=login_attempt');
+
+      cy.wait('@firstPage').then(({ response }) => {
+        expect(response.body).to.have.property('pagination');
+        expect(response.body.pagination).to.have.property('end_cursor');
+        expect(response.body.pagination.end_cursor).not.to.be.undefined;
+
+        const after = response.body.pagination.end_cursor;
+
+        cy.contains('<').click();
+
+        cy.url().should(
+          'eq',
+          `${Cypress.config().baseUrl}/activity_log?type=login_attempt`
+        );
+
+        cy.intercept({
+          url: `/api/v1/activity_log?first=20&after=${after}&type[]=login_attempt`,
+        }).as('secondPage');
+        cy.contains('>').click();
+
+        cy.wait('@secondPage').its('response.statusCode').should('eq', 200);
+
+        cy.url().should(
+          'eq',
+          `${
+            Cypress.config().baseUrl
+          }/activity_log?first=20&after=${after}&type=login_attempt`
+        );
+      });
     });
   });
 });
