@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import TrentoLogo from '@static/trento-dark.svg';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { performSSOEnrollment } from '@state/user';
+import { performSSOEnrollment, performSAMLEnrollment } from '@state/user';
 import { getSingleSignOnLoginUrl } from '@lib/auth/config';
 import LoginSSO from '@pages/Login/LoginSSO';
 import { getUserProfile } from '@state/selectors/user';
 
-function OidcOauthCallback() {
+function SSOCallback() {
   const { search } = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -18,10 +18,18 @@ function OidcOauthCallback() {
     const params = new URLSearchParams(search);
     const code = params.get('code');
     const state = params.get('state');
+    const token = params.get('token');
+    const refreshToken = params.get('refresh_token');
 
-    setError(!code || !state);
-
-    dispatch(performSSOEnrollment({ state, code }));
+    if (code && state) {
+      // OIDC/OAUTH2 callback
+      dispatch(performSSOEnrollment({ state, code }));
+    } else if (token && refreshToken) {
+      // SAML callback
+      dispatch(performSAMLEnrollment({ token, refreshToken }));
+    } else {
+      setError(true);
+    }
   }, [search]);
 
   useEffect(() => {
@@ -68,4 +76,4 @@ function OidcOauthCallback() {
   );
 }
 
-export default OidcOauthCallback;
+export default SSOCallback;

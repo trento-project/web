@@ -9,6 +9,7 @@ import {
   USER_UPDATED,
   PERFORM_LOGIN,
   PERFORM_SSO_ENROLLMENT,
+  PERFORM_SAML_ENROLLMENT,
   USER_PASSWORD_CHANGE_REQUESTED_NOTIFICATION_ID,
 } from '@state/user';
 import { customNotify } from '@state/notifications';
@@ -98,6 +99,37 @@ export function* performSSOEnrollment({ payload: { code, state } }) {
   }
 }
 
+export function* performSAMLEnrollment({ payload: { token, refreshToken } }) {
+  yield put(setAuthInProgress());
+  try {
+    yield call(storeAccessToken, token);
+    yield call(storeRefreshToken, refreshToken);
+
+    const {
+      id,
+      username: profileUsername,
+      email,
+      fullname,
+      abilities,
+    } = yield call(profile, networkClient);
+    yield put(
+      setUser({
+        username: profileUsername,
+        id,
+        email,
+        fullname,
+        abilities,
+      })
+    );
+    yield put(setUserAsLogged());
+  } catch (error) {
+    yield put(
+      setAuthError({ message: error.message, code: error.response?.status })
+    );
+    yield call(clearCredentialsFromStore);
+  }
+}
+
 export function* clearUserAndLogout() {
   yield call(clearCredentialsFromStore);
   window.location.href = '/session/new';
@@ -134,4 +166,5 @@ export function* watchUserActions() {
   yield takeEvery(USER_UPDATED, userUpdated);
   yield takeEvery(PERFORM_LOGIN, performLogin);
   yield takeEvery(PERFORM_SSO_ENROLLMENT, performSSOEnrollment);
+  yield takeEvery(PERFORM_SAML_ENROLLMENT, performSAMLEnrollment);
 }
