@@ -1,5 +1,9 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 
+before(() => {
+  cy.loadScenario('healthy-27-node-SAP-cluster');
+});
+
 context('Activity Log page', () => {
   describe('Navigation', () => {
     it('should navigate to Activity Log page', () => {
@@ -136,6 +140,8 @@ context('Activity Log page', () => {
         expect(response.body).to.have.property('pagination');
         expect(response.body.pagination).to.have.property('end_cursor');
         expect(response.body.pagination.end_cursor).not.to.be.undefined;
+        expect(response.body.pagination).to.have.property('has_next_page');
+        expect(response.body.pagination.has_next_page).to.be.true;
 
         const after = response.body.pagination.end_cursor;
 
@@ -159,15 +165,17 @@ context('Activity Log page', () => {
 
     it('should paginate data with filters', () => {
       cy.intercept({
-        url: `/api/v1/activity_log?first=20&type[]=login_attempt`,
+        url: `/api/v1/activity_log?first=20&type[]=sles_subscriptions_updated`,
       }).as('firstPage');
 
-      cy.visit('/activity_log?type=login_attempt');
+      cy.visit('/activity_log?type=sles_subscriptions_updated');
 
       cy.wait('@firstPage').then(({ response }) => {
         expect(response.body).to.have.property('pagination');
         expect(response.body.pagination).to.have.property('end_cursor');
         expect(response.body.pagination.end_cursor).not.to.be.undefined;
+        expect(response.body.pagination).to.have.property('has_next_page');
+        expect(response.body.pagination.has_next_page).to.be.true;
 
         const after = response.body.pagination.end_cursor;
 
@@ -175,11 +183,13 @@ context('Activity Log page', () => {
 
         cy.url().should(
           'eq',
-          `${Cypress.config().baseUrl}/activity_log?type=login_attempt`
+          `${
+            Cypress.config().baseUrl
+          }/activity_log?type=sles_subscriptions_updated`
         );
 
         cy.intercept({
-          url: `/api/v1/activity_log?first=20&after=${after}&type[]=login_attempt`,
+          url: `/api/v1/activity_log?first=20&after=${after}&type[]=sles_subscriptions_updated`,
         }).as('secondPage');
         cy.contains('>').click();
 
@@ -189,7 +199,7 @@ context('Activity Log page', () => {
           'eq',
           `${
             Cypress.config().baseUrl
-          }/activity_log?first=20&after=${after}&type=login_attempt`
+          }/activity_log?first=20&after=${after}&type=sles_subscriptions_updated`
         );
       });
     });
@@ -287,18 +297,27 @@ context('Activity Log page', () => {
 
       cy.contains('>').click();
 
-      cy.wait('@secondPage').its('response.statusCode').should('eq', 200);
+      cy.wait('@firstPage').then(({ response: firstPageResponse }) => {
+        expect(firstPageResponse.body.pagination).to.have.property('first', 20);
+        expect(firstPageResponse.body.pagination).to.have.property(
+          'end_cursor'
+        );
+        expect(firstPageResponse.body.pagination).to.have.property(
+          'has_next_page'
+        );
+        expect(firstPageResponse.body.pagination.has_next_page).to.be.true;
 
-      cy.intercept({
-        url: `/api/v1/activity_log?last=20&before=*`,
-      }).as('firstPage-back');
+        cy.intercept({
+          url: `/api/v1/activity_log?last=20&before=*`,
+        }).as('firstPage-back');
 
-      cy.contains('<').click();
+        cy.contains('<').click();
 
-      cy.wait('@firstPage-back').then(({ response }) => {
-        expect(response.body.pagination).to.have.property('last', 20);
-        firstPageResponse.body.data.forEach((element, i) => {
-          expect(element.id).to.eq(response.body.data[i].id);
+        cy.wait('@firstPage-back').then(({ response }) => {
+          expect(response.body.pagination).to.have.property('last', 20);
+          firstPageResponse.body.data.forEach((element, i) => {
+            expect(element.id).to.eq(response.body.data[i].id);
+          });
         });
       });
     });
