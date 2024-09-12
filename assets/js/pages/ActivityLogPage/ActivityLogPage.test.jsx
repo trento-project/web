@@ -1,15 +1,11 @@
 import '@testing-library/jest-dom';
 
-<<<<<<< HEAD
-=======
-import MockAdapter from 'axios-mock-adapter';
-import { withDefaultState, renderWithRouter } from '@lib/test-utils';
-
->>>>>>> d9845ca54 (Refactors ActivityLogPage test)
 import { networkClient } from '@lib/network';
-import { renderWithRouter, withDefaultState } from '@lib/test-utils';
+import { renderWithRouter, withDefaultState, withState } from '@lib/test-utils';
 import { activityLogEntryFactory } from '@lib/test-utils/factories/activityLog';
+import { userFactory } from '@lib/test-utils/factories/users';
 import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import MockAdapter from 'axios-mock-adapter';
 import React, { act } from 'react';
 
@@ -62,5 +58,19 @@ describe('ActivityLogPage', () => {
       renderWithRouter(StatefulActivityLogPage)
     );
     expect(container.querySelectorAll('tbody > tr')).toHaveLength(5);
+  });
+
+  it('should render tracked activity log and the users filter with non-default/non-empty state', async () => {
+    const users = userFactory.buildList(5).map((user) => user.username);
+    axiosMock.onGet('/api/v1/activity_log');
+    const [StatefulActivityLogPage, _] = withState(<ActivityLogPage />, {
+      activityLog: { users },
+    });
+    const { container } = await act(() =>
+      renderWithRouter(StatefulActivityLogPage)
+    );
+
+    await userEvent.click(screen.getByTestId('filter-User'));
+    expect(container.querySelectorAll('ul > li')).toHaveLength(users.length);
   });
 });

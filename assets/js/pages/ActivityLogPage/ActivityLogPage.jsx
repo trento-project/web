@@ -1,19 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-
-import { map, pipe } from 'lodash/fp';
-
-import { getActivityLog } from '@lib/api/activityLogs';
-import { allowedActivities } from '@lib/model/activityLog';
-
-import { getUserProfile } from '@state/selectors/user';
-
-import PageHeader from '@common/PageHeader';
-import { useSelector } from 'react-redux';
 import ActivityLogOverview from '@common/ActivityLogOverview';
 import ComposedFilter from '@common/ComposedFilter';
+import PageHeader from '@common/PageHeader';
+import { getActivityLog } from '@lib/api/activityLogs';
+import { allowedActivities } from '@lib/model/activityLog';
 import { getActivityLogUsers } from '@state/selectors/activityLog';
+import { getUserProfile } from '@state/selectors/user';
+import { map, pipe } from 'lodash/fp';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useSearchParams } from 'react-router-dom';
 
 import {
   filterValueToSearchParams,
@@ -23,36 +18,6 @@ import {
 
 function ActivityLogPage() {
   const users = useSelector(getActivityLogUsers);
-  const filters = [
-    {
-      key: 'type',
-      type: 'select',
-      title: 'Resource type',
-      options: Object.entries(ACTIVITY_TYPES_CONFIG).map(([key, value]) => [
-        key,
-        value.label,
-      ]),
-    },
-    {
-      key: 'actor',
-      type: 'select',
-      title: 'User',
-      options: users,
-    },
-    {
-      key: 'to_date',
-      title: 'newer than',
-      type: 'date',
-      prefilled: true,
-    },
-    {
-      key: 'from_date',
-      title: 'older than',
-      type: 'date',
-      prefilled: true,
-    },
-  ];
-
   const [searchParams, setSearchParams] = useSearchParams();
   const [activityLog, setActivityLog] = useState([]);
   const [isLoading, setLoading] = useState(true);
@@ -69,6 +34,12 @@ function ActivityLogPage() {
         allowedActivities,
         map(([key, value]) => [key, value.label])
       )(abilities),
+    },
+    {
+      key: 'actor',
+      type: 'select',
+      title: 'User',
+      options: users,
     },
     {
       key: 'to_date',
