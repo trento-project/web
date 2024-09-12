@@ -145,6 +145,9 @@ config :trento, :oauth2,
 
 config :trento, :pow_assent,
   providers: [
+    saml_local: [
+      strategy: TrentoWeb.Auth.AssentSamlStrategy
+    ],
     oauth2_local: [
       client_id: "trento-web",
       client_secret: "ihfasdEaB5M5r44i4AbNulmLWjgejluX",

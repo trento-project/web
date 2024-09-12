@@ -256,6 +256,29 @@ defmodule TrentoWeb.SessionController do
     end
   end
 
+  def saml_callback(conn, params) do
+    assertion = Samly.get_active_assertion(conn)
+
+    conn
+    |> Conn.put_private(:pow_assent_session_params, %{})
+    |> PowAssentPlug.callback_upsert("saml_local", assertion, idp_redirect_uri("saml_local"))
+    |> case do
+      {:ok, conn} ->
+        render(conn, "logged.json",
+          token: conn.private[:api_access_token],
+          expiration: conn.private[:access_token_expiration],
+          refresh_token: conn.private[:api_refresh_token]
+        )
+
+      {:error, %{private: %{pow_assent_callback_error: {:user_not_allowed, _}}}} ->
+        {:error, :invalid_credentials}
+
+      error ->
+        Logger.error("error during sso callback execution: #{inspect(error)}")
+        error
+    end
+  end
+
   defp authenticate_trento_user(conn, credentials) do
     with {:ok, %{assigns: %{current_user: logged_user}} = conn} <-
            Pow.Plug.authenticate_user(conn, credentials),
