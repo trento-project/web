@@ -252,6 +252,8 @@ function Table({
                 pages={totalPages}
                 currentPage={currentPage}
                 itemsPerPageOptions={itemsPerPageOptions}
+                itemsTotal={filteredData.length}
+                itemsPresent={renderedData.length}
                 currentItemsPerPage={currentItemsPerPage}
                 onChangeItemsPerPage={(perPage) =>
                   setCurrentItemsPerPage(perPage)
