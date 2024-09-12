@@ -4,15 +4,15 @@ import 'intersection-observer';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import { withState, renderWithRouterMatch } from '@lib/test-utils';
-import OidcOauthCallaback from './OidcOauthCallback';
+import SSOCallback from './SSOCallback';
 
-describe('OidcOauthCallaback component', () => {
+describe('SSOCallback component', () => {
   beforeEach(() => {
     jest.resetModules();
   });
 
   it('should display loading state when authentication is happening', async () => {
-    const [StatefulOidCallback, store] = withState(<OidcOauthCallaback />, {
+    const [StatefulOidCallback, store] = withState(<SSOCallback />, {
       user: {},
     });
 
@@ -32,7 +32,7 @@ describe('OidcOauthCallaback component', () => {
   it('should display an error message if some search param is missing', async () => {
     const user = userEvent.setup();
 
-    const [StatefulOidCallback] = withState(<OidcOauthCallaback />, {
+    const [StatefulOidCallback] = withState(<SSOCallback />, {
       user: {},
     });
 
@@ -58,7 +58,7 @@ describe('OidcOauthCallaback component', () => {
   });
 
   it('should display an error message if authentication fails', async () => {
-    const [StatefulOidCallback] = withState(<OidcOauthCallaback />, {
+    const [StatefulOidCallback] = withState(<SSOCallback />, {
       user: {
         authError: true,
       },
@@ -79,7 +79,7 @@ describe('OidcOauthCallaback component', () => {
   });
 
   it('should navigate to home after user is logged in', () => {
-    const [StatefulOidCallback] = withState(<OidcOauthCallaback />, {
+    const [StatefulOidCallback] = withState(<SSOCallback />, {
       user: {
         loggedIn: true,
       },
