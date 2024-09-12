@@ -120,6 +120,25 @@ describe('Table component', () => {
     expect(onPageChange).toHaveBeenCalledWith(expectedPayload);
   });
 
+  it('should have the same horizontal padding for table header and rows', () => {
+    const data = tableDataFactory.buildList(10);
+
+    render(<Table config={tableConfig} data={data} />);
+
+    let pxClass;
+    screen
+      .getByRole('table')
+      .querySelector('th')
+      .classList.forEach((className) => {
+        className.match('px-') && (pxClass = className);
+      });
+
+    screen
+      .getByRole('table')
+      .querySelectorAll('tbody > tr > td')
+      .forEach((tableRow) => expect(tableRow).toHaveClass(pxClass));
+  });
+
   describe('filtering', () => {
     it('should filter by the chosen filter option with default filter', async () => {
       const data = tableDataFactory.buildList(10);
