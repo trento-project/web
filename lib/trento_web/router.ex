@@ -57,14 +57,18 @@ defmodule TrentoWeb.Router do
   scope "/" do
     pipe_through :browser
 
-    get "/auth/saml/callback", TrentoWeb.SessionController, :saml_callback
-
     get "/api/doc", OpenApiSpex.Plug.SwaggerUI,
       path: "/api/v1/openapi",
       urls: [
         %{url: "/api/v1/openapi", name: "Version 1"},
         %{url: "/api/v2/openapi", name: "Version 2"}
       ]
+  end
+
+  scope "/auth" do
+    pipe_through [:api]
+
+    get "/saml/enrollment", TrentoWeb.SessionController, :saml_callback
   end
 
   scope "/api", TrentoWeb do

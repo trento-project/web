@@ -3,7 +3,7 @@ defmodule TrentoWeb.Auth.AssentSamlStrategy do
   use TrentoWeb, :verified_routes
 
   @spec authorize_url(Keyword.t()) :: {:ok, %{url: binary()}} | {:error, term()}
-  def authorize_url(config) do
+  def authorize_url(_config) do
     idp_id = Application.fetch_env!(:trento, :saml)[:idp_id]
     {:ok, %{url: ~p"/sso/auth/signin/#{idp_id}"}}
   end
