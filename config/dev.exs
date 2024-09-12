@@ -171,6 +171,7 @@ config :trento, :pow_assent,
 
 config :trento, :saml,
   enabled: false,
+  callback_url: "/auth/saml_callback",
   idp_id: "saml"
 
 config :samly, Samly.Provider,

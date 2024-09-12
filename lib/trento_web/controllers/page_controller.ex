@@ -2,10 +2,6 @@ defmodule TrentoWeb.PageController do
   use TrentoWeb, :controller
 
   def index(conn, _params) do
-    assertion = Samly.get_active_assertion(conn)
-
-    IO.inspect(assertion)
-
     check_service_base_url = Application.fetch_env!(:trento, :checks_service)[:base_url]
     charts_enabled = Application.fetch_env!(:trento, Trento.Charts)[:enabled]
     deregistration_debounce = Application.fetch_env!(:trento, :deregistration_debounce)
@@ -50,13 +46,11 @@ defmodule TrentoWeb.PageController do
 
   defp sso_details_for_provider(_conn, :saml) do
     idp_id = Application.fetch_env!(:trento, :saml)[:idp_id]
-    full_callback_url = Application.fetch_env!(:trento, :saml)[:callback_url]
-
-    %URI{path: callback_url} =
-      URI.parse("http://localhost:4000/auth/saml/callback")
+    callback_url = Application.fetch_env!(:trento, :saml)[:callback_url]
+    enrollment_url = "/auth/saml/enrollment"
 
     {true, callback_url,
-     ~p"/sso/auth/signin/#{idp_id}?target_url=#{URI.encode_www_form(callback_url)}", ""}
+     ~p"/sso/auth/signin/#{idp_id}?target_url=#{URI.encode_www_form(enrollment_url)}", ""}
   end
 
   defp sso_details_for_provider(conn, provider) do
