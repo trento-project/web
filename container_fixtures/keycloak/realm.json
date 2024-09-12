@@ -42,7 +42,53 @@
         "http://localhost:4000/*"
       ],
       "webOrigins": ["http://localhost:4000"],
-      "protocol": "saml"
+      "protocol": "saml",
+      "protocolMappers": [
+        {
+          "name": "email",
+          "protocol": "saml",
+          "protocolMapper": "saml-user-property-mapper",
+          "consentRequired": false,
+          "config": {
+            "attribute.nameformat": "Basic",
+            "user.attribute": "email",
+            "attribute.name": "email"
+          }
+        },
+        {
+          "name": "firstName",
+          "protocol": "saml",
+          "protocolMapper": "saml-user-property-mapper",
+          "consentRequired": false,
+          "config": {
+            "attribute.nameformat": "Basic",
+            "user.attribute": "firstName",
+            "attribute.name": "firstName"
+          }
+        },
+        {
+          "name": "username",
+          "protocol": "saml",
+          "protocolMapper": "saml-user-property-mapper",
+          "consentRequired": false,
+          "config": {
+            "attribute.nameformat": "Basic",
+            "user.attribute": "username",
+            "attribute.name": "username"
+          }
+        },
+        {
+          "name": "lastName",
+          "protocol": "saml",
+          "protocolMapper": "saml-user-property-mapper",
+          "consentRequired": false,
+          "config": {
+            "attribute.nameformat": "Basic",
+            "user.attribute": "lastName",
+            "attribute.name": "lastName"
+          }
+        }
+      ]
     }
   ],
   "users": [
