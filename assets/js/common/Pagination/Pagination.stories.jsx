@@ -38,6 +38,8 @@ export default {
       currentPage={args.currentPage}
       currentItemsPerPage={args.currentItemsPerPage}
       itemsPerPageOptions={args.itemsPerPageOptions}
+      itemsPresent={1}
+      itemsTotal={1}
       onSelect={(value) => {
         action('onSelect')(value);
       }}
