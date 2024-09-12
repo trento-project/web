@@ -1,7 +1,12 @@
 import '@testing-library/jest-dom';
 
 import { networkClient } from '@lib/network';
-import { renderWithRouter, withDefaultState, withState } from '@lib/test-utils';
+import {
+  renderWithRouter,
+  withDefaultState,
+  withState,
+  defaultInitialState,
+} from '@lib/test-utils';
 import { activityLogEntryFactory } from '@lib/test-utils/factories/activityLog';
 import { userFactory } from '@lib/test-utils/factories/users';
 import { screen } from '@testing-library/react';
@@ -62,8 +67,11 @@ describe('ActivityLogPage', () => {
 
   it('should render tracked activity log and the users filter with non-default/non-empty state', async () => {
     const users = userFactory.buildList(5).map((user) => user.username);
-    axiosMock.onGet('/api/v1/activity_log');
+    axiosMock
+      .onGet('/api/v1/activity_log')
+      .reply(200, { data: activityLogEntryFactory.buildList(5) });
     const [StatefulActivityLogPage, _] = withState(<ActivityLogPage />, {
+      ...defaultInitialState,
       activityLog: { users },
     });
     const { container } = await act(() =>
@@ -71,6 +79,8 @@ describe('ActivityLogPage', () => {
     );
 
     await userEvent.click(screen.getByTestId('filter-User'));
-    expect(container.querySelectorAll('ul > li')).toHaveLength(users.length);
+    expect(container.querySelectorAll('ul > li[role="option"]')).toHaveLength(
+      users.length
+    );
   });
 });
