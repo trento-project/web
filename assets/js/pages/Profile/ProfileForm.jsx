@@ -83,9 +83,9 @@ function ProfileForm({
   return (
     <div>
       <div className="container max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 bg-white dark:bg-gray-800 rounded-lg">
-        <div className="grid grid-cols-6 gap-6">
-          <Label className="col-start-1 col-span-1">Full Name</Label>
-          <div className="col-start-2 col-span-3">
+        <div className="grid grid-cols-8 gap-6">
+          <Label className="col-start-1 col-span-2 pt-2">Full Name</Label>
+          <div className="col-start-3 col-span-4">
             <Input
               value={fullNameState}
               aria-label="fullname"
@@ -99,8 +99,8 @@ function ProfileForm({
             />
             {fullNameErrorState && errorMessage(fullNameErrorState)}
           </div>
-          <Label className="col-start-1 col-span-1">Email Address</Label>
-          <div className="col-start-2 col-span-3">
+          <Label className="col-start-1 col-span-2 pt-2">Email Address</Label>
+          <div className="col-start-3 col-span-4">
             <Input
               value={emailAddressState}
               aria-label="email"
@@ -114,14 +114,14 @@ function ProfileForm({
             />
             {emailAddressErrorState && errorMessage(emailAddressErrorState)}
           </div>
-          <Label className="col-start-1 col-span-1">Username</Label>
-          <div className="col-start-2 col-span-3">
+          <Label className="col-start-1 col-span-2 pt-2">Username</Label>
+          <div className="col-start-3 col-span-4">
             <Input value={username} aria-label="username" disabled />
           </div>
           {!singleSignOnEnabled && (
             <>
-              <Label className="col-start-1 col-span-1">Password</Label>
-              <div className="col-start-2 col-span-3">
+              <Label className="col-start-1 col-span-2 pt-2">Password</Label>
+              <div className="col-start-3 col-span-4">
                 <Button
                   onClick={togglePasswordModal}
                   type="primary-white"
@@ -132,13 +132,13 @@ function ProfileForm({
               </div>
 
               <Label
-                className="col-start-1 col-span-1"
+                className="col-start-1 col-span-2"
                 info="Setup a multi-factor TOTP authentication besides your password to increase security
               for your account."
               >
                 Authenticator App
               </Label>
-              <div className="col-start-2 col-span-3">
+              <div className="col-start-3 col-span-4">
                 <div className="inline-flex">
                   <Switch
                     selected={totpEnabled}
@@ -171,8 +171,8 @@ function ProfileForm({
             </>
           )}
 
-          <Label className="col-start-1 col-span-1">Permissions</Label>
-          <div className="col-start-2 col-span-3">
+          <Label className="col-start-1 col-span-2 pt-2">Permissions</Label>
+          <div className="col-start-3 col-span-4">
             <AbilitiesMultiSelect
               userAbilities={abilities}
               abilities={abilities}
