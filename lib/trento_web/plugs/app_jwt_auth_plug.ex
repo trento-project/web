@@ -42,6 +42,7 @@ defmodule TrentoWeb.Plugs.AppJWTAuthPlug do
     The generated credentials will be stored in private section of the Plug.Conn struct
   """
   def create(conn, user, _config) do
+    dbg(user)
     claims = %{"sub" => user.id}
     access_token = AccessToken.generate_access_token!(claims)
     refresh_token = RefreshToken.generate_refresh_token!(claims)
