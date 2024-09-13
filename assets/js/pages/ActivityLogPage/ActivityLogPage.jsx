@@ -1,3 +1,9 @@
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useSearchParams } from 'react-router-dom';
+
+import { map, pipe } from 'lodash/fp';
+
 import ActivityLogOverview from '@common/ActivityLogOverview';
 import ComposedFilter from '@common/ComposedFilter';
 import PageHeader from '@common/PageHeader';
@@ -5,10 +11,6 @@ import { getActivityLog } from '@lib/api/activityLogs';
 import { allowedActivities } from '@lib/model/activityLog';
 import { getActivityLogUsers } from '@state/selectors/activityLog';
 import { getUserProfile } from '@state/selectors/user';
-import { map, pipe } from 'lodash/fp';
-import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { useSearchParams } from 'react-router-dom';
 
 import {
   filterValueToSearchParams,

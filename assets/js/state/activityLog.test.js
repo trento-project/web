@@ -12,6 +12,7 @@ describe('activityLog reducer', () => {
       users,
     });
   });
+
   it('should set the users for activity log when setUsers is dispatched with non empty initial state', () => {
     const { username: username1 } = userFactory.build();
     const { username: username2 } = userFactory.build();

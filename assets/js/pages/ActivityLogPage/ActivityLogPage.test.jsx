@@ -1,4 +1,9 @@
+import React, { act } from 'react';
+import { screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import userEvent from '@testing-library/user-event';
+
+import MockAdapter from 'axios-mock-adapter';
 
 import { networkClient } from '@lib/network';
 import {
@@ -9,10 +14,6 @@ import {
 } from '@lib/test-utils';
 import { activityLogEntryFactory } from '@lib/test-utils/factories/activityLog';
 import { userFactory } from '@lib/test-utils/factories/users';
-import { screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import MockAdapter from 'axios-mock-adapter';
-import React, { act } from 'react';
 
 import ActivityLogPage from './ActivityLogPage';
 
