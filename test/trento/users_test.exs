@@ -129,7 +129,7 @@ defmodule Trento.UsersTest do
         Enum.sort_by([{username1, deleted_at1}, {username2, deleted_at2}], sorter_fn)
 
       sorted_usernames =
-        Enum.sort_by(Users.list_all_usernames_ts(), sorter_fn)
+        Enum.sort_by(Users.list_all_usernames(), sorter_fn)
 
       assert inserted_sorted_usernames == sorted_usernames
       assert length(sorted_usernames) == 2

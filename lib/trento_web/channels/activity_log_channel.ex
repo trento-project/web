@@ -32,7 +32,7 @@ defmodule TrentoWeb.ActivityLogChannel do
 
   @impl true
   def handle_info(:after_join, socket) do
-    all_usernames_ts = Users.list_all_usernames_ts()
+    all_usernames_ts = Users.list_all_usernames()
     collapsed_usernames = collapse_usernames(all_usernames_ts)
 
     users = ["system" | collapsed_usernames]
