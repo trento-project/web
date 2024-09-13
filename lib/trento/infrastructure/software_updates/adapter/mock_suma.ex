@@ -128,9 +128,9 @@ defmodule Trento.Infrastructure.SoftwareUpdates.MockSuma do
       {:ok,
        [
          %{
-           name: "test"
+           name: "vmdrbddev01"
          },
-         %{name: "test2"}
+         %{name: "vmdrbddev02"}
        ]}
 
   @impl true

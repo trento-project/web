@@ -2,6 +2,9 @@ defmodule TrentoWeb.V1.SUSEManagerController do
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
 
+  alias Trento.Hosts
+  alias Trento.Hosts.Projections.HostReadModel
+
   alias Trento.SoftwareUpdates
   alias Trento.SoftwareUpdates.Discovery
 
@@ -94,6 +97,16 @@ defmodule TrentoWeb.V1.SUSEManagerController do
 
   @spec errata_details(Plug.Conn.t(), any) :: Plug.Conn.t()
   def errata_details(conn, %{advisory_name: advisory_name}) do
+    hosts = Hosts.get_all_hosts()
+
+    registered_hosts =
+      Enum.flat_map(hosts, fn %HostReadModel{
+                                fully_qualified_domain_name: fqdn,
+                                hostname: hostname
+                              } ->
+        [fqdn, hostname]
+      end)
+
     with {:ok, errata_details} <- Discovery.get_errata_details(advisory_name),
          {:ok, cves} <- Discovery.get_cves(advisory_name),
          {:ok, fixes} <- Discovery.get_bugzilla_fixes(advisory_name),
@@ -104,7 +117,10 @@ defmodule TrentoWeb.V1.SUSEManagerController do
         cves: cves,
         fixes: fixes,
         affected_packages: affected_packages,
-        affected_systems: affected_systems
+        affected_systems:
+          Enum.filter(affected_systems, fn %{name: system} ->
+            Enum.member?(registered_hosts, system)
+          end)
       })
     end
   end
