@@ -222,7 +222,7 @@ function Table({
                 </tr>
               </thead>
               <tbody>
-                {data.length === 0 ? (
+                {renderedData.length === 0 ? (
                   <EmptyState
                     colSpan={columns.length}
                     emptyStateText={emptyStateText}
