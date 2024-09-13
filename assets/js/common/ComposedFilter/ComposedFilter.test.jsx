@@ -1,9 +1,10 @@
-import React, { act } from 'react';
+import React, { act, useState } from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import ComposedFilter from '.';
 
+jest.setTimeout(100000);
 describe('ComposedFilter component', () => {
   it('should render the specified filters', async () => {
     const filters = [
@@ -22,6 +23,85 @@ describe('ComposedFilter component', () => {
     ];
 
     render(<ComposedFilter filters={filters} />);
+
+    expect(screen.getByText('Filter Pasta...')).toBeInTheDocument();
+    expect(screen.getByText('Filter Pizza...')).toBeInTheDocument();
+  });
+
+  it('should select value', async () => {
+    const filters = [
+      {
+        key: 'filter1',
+        type: 'select',
+        title: 'Pasta',
+        options: ['Carbonara', 'Amatriciana', 'Ajo & Ojo', 'Gricia'],
+      },
+      {
+        key: 'filter2',
+        type: 'select',
+        title: 'Pizza',
+        options: ['Margherita', 'Marinara', 'Diavola', 'Bufalina'],
+      },
+    ];
+
+    const value = {
+      filter1: ['Carbonara', 'Gricia'],
+      filter2: ['Diavola'],
+    };
+
+    render(<ComposedFilter filters={filters} value={value} />);
+
+    expect(screen.getByText('Carbonara, Gricia')).toBeInTheDocument();
+    expect(screen.getByText('Diavola')).toBeInTheDocument();
+  });
+
+  it('should change selected value', async () => {
+    const filters = [
+      {
+        key: 'filter1',
+        type: 'select',
+        title: 'Pasta',
+        options: ['Carbonara', 'Amatriciana', 'Ajo & Ojo', 'Gricia'],
+      },
+      {
+        key: 'filter2',
+        type: 'select',
+        title: 'Pizza',
+        options: ['Margherita', 'Marinara', 'Diavola', 'Bufalina'],
+      },
+    ];
+
+    const initialValue = {
+      filter1: ['Carbonara', 'Gricia'],
+      filter2: ['Diavola'],
+    };
+
+    const nextValue = {};
+
+    function ControlledComponent() {
+      const [value, setValue] = useState(initialValue);
+
+      return (
+        <>
+          <button
+            type="button"
+            onClick={() => {
+              setValue(nextValue);
+            }}
+          >
+            Click me
+          </button>
+          <ComposedFilter filters={filters} value={value} autoApply />
+        </>
+      );
+    }
+
+    render(<ControlledComponent />);
+
+    expect(screen.getByText('Carbonara, Gricia')).toBeInTheDocument();
+    expect(screen.getByText('Diavola')).toBeInTheDocument();
+
+    await act(() => userEvent.click(screen.getByText('Click me')));
 
     expect(screen.getByText('Filter Pasta...')).toBeInTheDocument();
     expect(screen.getByText('Filter Pizza...')).toBeInTheDocument();

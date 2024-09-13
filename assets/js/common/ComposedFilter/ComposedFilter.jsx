@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Button from '@common/Button';
 import Filter from '@common/Filter';
 import DateFilter from '@common/DateFilter';
@@ -50,6 +50,10 @@ function ComposedFilter({
       setIsChanged(true);
     }
   };
+
+  useEffect(() => {
+    setValue(initialValue);
+  }, [JSON.stringify(initialValue)]);
 
   return (
     <>
