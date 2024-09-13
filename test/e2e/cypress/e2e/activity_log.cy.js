@@ -1,6 +1,20 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 
 context('Activity Log page', () => {
+  describe('Navigation', () => {
+    it('should reset querystring when reloading the page from navigation menu', () => {
+      cy.visit(
+        '/activity_log?from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&to_date=custom&to_date=2024-08-13T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging'
+      );
+
+      cy.contains('Login Attempt, Tag Added').should('be.visible');
+
+      cy.get('nav').contains('Activity Log').click();
+
+      cy.get('body').should('not.include.text', 'Login Attempt, Tag Added');
+      cy.url().should('eq', `${Cypress.config().baseUrl}/activity_log`);
+    });
+  });
   describe('Filtering', () => {
     it('should render without selected filters', () => {
       cy.intercept({
