@@ -6,6 +6,7 @@ import {
   setExecutionStarted,
 } from '@state/lastExecutions';
 import { userUpdated } from '@state/user';
+import { activityLogUsersPushed } from '@state/activityLog';
 
 import { watchSocketEvents } from './channels';
 
@@ -48,6 +49,7 @@ const channels = {
   'monitoring:databases': new MockChannel(),
   'monitoring:executions': new MockChannel(),
   [`users:${USER_ID}`]: new MockChannel(),
+  [`activity_log:${USER_ID}`]: new MockChannel(),
 };
 
 const mockSocket = {
@@ -124,5 +126,19 @@ describe('Channels saga', () => {
     await saga;
 
     expect(dispatched).toEqual([userUpdated({ email: 'new@email.com' })]);
+  });
+  it('should listen to specific activity log events', async () => {
+    const { saga, dispatched } = runWatchSocketEventsSaga(mockSocket);
+
+    channels[`activity_log:${USER_ID}`].emit('al_users_pushed', {
+      users: ['user1', 'user2', 'user3'],
+    });
+
+    closeSocket();
+    await saga;
+
+    expect(dispatched).toEqual([
+      activityLogUsersPushed({ users: ['user1', 'user2', 'user3'] }),
+    ]);
   });
 });

@@ -55,6 +55,7 @@ import {
 } from '@state/lastExecutions';
 
 import { userUpdated, userLocked, userDeleted } from '@state/user';
+import { activityLogUsersPushed } from '@state/activityLog';
 
 import { getUserProfile } from '@state/selectors/user';
 
@@ -236,6 +237,13 @@ const userEvents = [
   },
 ];
 
+const activityLogEvents = [
+  {
+    name: 'al_users_pushed',
+    action: activityLogUsersPushed,
+  },
+];
+
 const createEventChannel = (channel, events) =>
   eventChannel((emitter) => {
     events.forEach((event) => {
@@ -281,5 +289,11 @@ export function* watchSocketEvents(socket) {
     fork(watchChannelEvents, socket, 'monitoring:databases', databaseEvents),
     fork(watchChannelEvents, socket, 'monitoring:executions', executionEvents),
     fork(watchChannelEvents, socket, `users:${userID}`, userEvents),
+    fork(
+      watchChannelEvents,
+      socket,
+      `activity_log:${userID}`,
+      activityLogEvents
+    ),
   ]);
 }

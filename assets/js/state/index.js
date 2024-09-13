@@ -14,6 +14,7 @@ import settingsReducer from './settings';
 import userReducer from './user';
 import softwareUpdatesReducer from './softwareUpdates';
 import activityLogsSettingsReducer from './activityLogsSettings';
+import activityLogReducer from './activityLog';
 import rootSaga from './sagas';
 
 export const createStore = (router) => {
@@ -38,6 +39,7 @@ export const createStore = (router) => {
       user: userReducer,
       softwareUpdates: softwareUpdatesReducer,
       activityLogsSettings: activityLogsSettingsReducer,
+      activityLog: activityLogReducer,
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware().concat(sagaMiddleware),

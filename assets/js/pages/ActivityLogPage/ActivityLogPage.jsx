@@ -6,7 +6,7 @@ import { map, pipe } from 'lodash/fp';
 
 import { getActivityLog } from '@lib/api/activityLogs';
 import { allowedActivities } from '@lib/model/activityLog';
-
+import { getActivityLogUsers } from '@state/selectors/activityLog';
 import { getUserProfile } from '@state/selectors/user';
 
 import PageHeader from '@common/PageHeader';
@@ -20,6 +20,7 @@ import {
 } from './searchParams';
 
 function ActivityLogPage() {
+  const users = useSelector(getActivityLogUsers);
   const [searchParams, setSearchParams] = useSearchParams();
   const [activityLog, setActivityLog] = useState([]);
   const [isLoading, setLoading] = useState(true);
@@ -36,6 +37,12 @@ function ActivityLogPage() {
         allowedActivities,
         map(([key, value]) => [key, value.label])
       )(abilities),
+    },
+    {
+      key: 'actor',
+      type: 'select',
+      title: 'User',
+      options: users,
     },
     {
       key: 'to_date',
