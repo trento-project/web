@@ -62,8 +62,8 @@ context('SUSE Manager overviews', () => {
       cy.contains('Affected Packages').next().should('contain', 'kernel');
       cy.contains('Affected Systems')
         .next()
-        .should('contain', 'test')
-        .should('contain', 'test2');
+        .should('contain', 'vmdrbddev01')
+        .should('contain', 'vmdrbddev02');
 
       cy.clearSUMASettings();
     });

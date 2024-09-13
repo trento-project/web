@@ -182,6 +182,10 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
 
       affected_systems = build_list(10, :affected_system)
 
+      Enum.each(affected_systems, fn %{name: system} ->
+        insert(:host, hostname: system)
+      end)
+
       expect(Trento.SoftwareUpdates.Discovery.Mock, :get_affected_systems, 1, fn _ ->
         {:ok, affected_systems}
       end)
@@ -223,6 +227,58 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
         cves: ^cves,
         affected_packages: ^affected_packages,
         affected_systems: ^affected_systems
+      } = result
+    end
+
+    test "should filter out non-registered hosts from affected systems", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      insert_software_updates_settings()
+
+      advisory_name = Faker.Pokemon.name()
+
+      errata_details = build(:errata_details)
+
+      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_errata_details, 1, fn _ ->
+        {:ok, errata_details}
+      end)
+
+      cves = build_list(10, :cve)
+
+      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_cves, 1, fn _ ->
+        {:ok, cves}
+      end)
+
+      fixes = build(:bugzilla_fix)
+
+      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_bugzilla_fixes, 1, fn _ ->
+        {:ok, fixes}
+      end)
+
+      affected_packages = build_list(10, :affected_package)
+
+      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_affected_packages, 1, fn _ ->
+        {:ok, affected_packages}
+      end)
+
+      [%{name: first_affected_system} | _] = affected_systems = build_list(10, :affected_system)
+
+      insert(:host, fully_qualified_domain_name: first_affected_system)
+
+      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_affected_systems, 1, fn _ ->
+        {:ok, affected_systems}
+      end)
+
+      json =
+        conn
+        |> get("/api/v1/software_updates/errata_details/#{advisory_name}")
+        |> json_response(:ok)
+
+      result = assert_schema(json, "ErrataDetailsResponse", api_spec)
+
+      %{
+        affected_systems: [%{name: ^first_affected_system}]
       } = result
     end
 
