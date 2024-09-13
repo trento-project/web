@@ -4,6 +4,7 @@ import { noop } from 'lodash';
 import ReactPaginate from 'react-paginate';
 
 import Select from '@common/Select';
+import PageStats from './PageStats';
 
 const PREV_LABEL = '<';
 const NEXT_LABEL = '>';
@@ -37,23 +38,6 @@ const containerClassNames = 'flex items-center';
 
 const defaultItemsPerPageOptions = [10, 20, 50, 75, 100];
 const defaultItemsPerPage = 10;
-
-function ItemsOnPageStats({
-  currentItemsPerPage,
-  itemsPresent,
-  itemsTotal,
-  selectedPage,
-}) {
-  const itemsBase = (selectedPage - 1) * currentItemsPerPage;
-  const lowerBound = itemsBase + 1;
-  const upperBound = itemsBase + itemsPresent;
-
-  return (
-    <span className="mr-4 text-gray-600">
-      {lowerBound}–{upperBound} of {itemsTotal}
-    </span>
-  );
-}
 
 function ItemsPerPageSelector({
   itemsPerPageOptions = defaultItemsPerPageOptions,
@@ -141,41 +125,40 @@ function Pagination({
       className="flex justify-between p-2 bg-gray-50 width-full"
       data-testid="pagination"
     >
-      <ItemsPerPageSelector
-        itemsPerPageOptions={itemsPerPageOptions}
-        currentItemsPerPage={currentItemsPerPage}
-        onChange={onChangeItemsPerPage}
-      />
-
       <div className="flex flex-row items-center">
-        <ItemsOnPageStats
+        <ItemsPerPageSelector
+          itemsPerPageOptions={itemsPerPageOptions}
+          currentItemsPerPage={currentItemsPerPage}
+          onChange={onChangeItemsPerPage}
+        />
+        <PageStats
           selectedPage={selectedPage}
           itemsTotal={itemsTotal}
           currentItemsPerPage={currentItemsPerPage}
           itemsPresent={itemsPresent}
         />
-
-        {/* ReactPaginate paged are 0-based */}
-        <ReactPaginate
-          forcePage={selectedPage - 1}
-          pageRangeDisplayed={3}
-          marginPagesDisplayed={1}
-          pageCount={pages}
-          breakLabel="..."
-          renderOnZeroPageCount={null}
-          onPageActive={({ selected }) => onSelect(selected + 1)}
-          onPageChange={({ selected }) => onSelect(selected + 1)}
-          previousLabel={PREV_LABEL}
-          nextLabel={NEXT_LABEL}
-          containerClassName={containerClassNames}
-          pageLinkClassName={boxClassNames}
-          activeLinkClassName={activeLinkClassNames}
-          disabledLinkClassName={disabledLinkClassNames}
-          previousLinkClassName={leftBoxClassNames}
-          nextLinkClassName={rightBoxClassNames}
-          breakLinkClassName={boxClassNames}
-        />
       </div>
+
+      {/* ReactPaginate paged are 0-based */}
+      <ReactPaginate
+        forcePage={selectedPage - 1}
+        pageRangeDisplayed={3}
+        marginPagesDisplayed={1}
+        pageCount={pages}
+        breakLabel="..."
+        renderOnZeroPageCount={null}
+        onPageActive={({ selected }) => onSelect(selected + 1)}
+        onPageChange={({ selected }) => onSelect(selected + 1)}
+        previousLabel={PREV_LABEL}
+        nextLabel={NEXT_LABEL}
+        containerClassName={containerClassNames}
+        pageLinkClassName={boxClassNames}
+        activeLinkClassName={activeLinkClassNames}
+        disabledLinkClassName={disabledLinkClassNames}
+        previousLinkClassName={leftBoxClassNames}
+        nextLinkClassName={rightBoxClassNames}
+        breakLinkClassName={boxClassNames}
+      />
     </div>
   );
 }
