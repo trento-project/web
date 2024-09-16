@@ -20,9 +20,11 @@ context('Hosts Overview', () => {
         .invoke('attr', 'aria-current')
         .should('eq', 'page');
     });
+
     it('should show 10 of the 27 registered hosts', () => {
       cy.get('.tn-hostname').its('length').should('eq', 10);
     });
+
     it('should have 3 pages', () => {
       cy.get(`[data-testid="pagination"]`).as('pagination');
       cy.get(`@pagination`).contains(/^1$/).should('exist');
@@ -30,6 +32,7 @@ context('Hosts Overview', () => {
       cy.get(`@pagination`).contains(/^3$/).should('exist');
       cy.get(`@pagination`).contains(/^4$/).should('not.exist');
     });
+
     it('should show the ip addresses, provider and agent version data for the hosts in the 1st page', () => {
       cy.get('.container').eq(0).as('hostsTable');
       availableHosts1stPage.forEach((host, index) => {
@@ -65,6 +68,7 @@ context('Hosts Overview', () => {
           });
       });
     });
+
     it('should link to the correct host details page clicking in the host name', () => {
       cy.get('.container').eq(0).as('hostsTable');
       availableHosts1stPage.forEach((host, index) => {
@@ -85,6 +89,7 @@ context('Hosts Overview', () => {
           });
       });
     });
+
     it('should link to the correct cluster details page clicking in the cluster name', () => {
       cy.get('.container').eq(0).as('hostsTable');
       availableHosts1stPage.forEach((host, index) => {
@@ -112,6 +117,7 @@ context('Hosts Overview', () => {
           });
       });
     });
+
     it('should link to the correct sap system details page clicking in the sap system name', () => {
       cy.get('.container').eq(0).as('hostsTable');
       availableHosts1stPage.forEach((host, index) => {
@@ -162,6 +168,7 @@ context('Hosts Overview', () => {
         cy.get('svg.fill-yellow-500').its('length').should('eq', 2);
       });
     });
+
     describe('Health is changed based on saptune status', () => {
       const hostWithoutSap = 'vmdrbddev01';
       const hostWithSap = 'vmhdbprd01';
@@ -228,11 +235,13 @@ context('Hosts Overview', () => {
         });
       });
     });
+
     describe('Health is changed to critical when the heartbeat is not sent', () => {
       before(() => {
         cy.visit('/hosts');
         cy.task('stopAgentsHeartbeat');
       });
+
       it('should show health status of the entire cluster of 27 hosts with critical health', () => {
         cy.get('.tn-health-container .tn-health-critical', {
           timeout: 15000,

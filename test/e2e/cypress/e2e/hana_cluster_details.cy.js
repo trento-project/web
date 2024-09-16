@@ -125,6 +125,7 @@ context('HANA cluster details', () => {
         .contains(lastExecution.passing_count);
     });
 
+    // eslint-disable-next-line mocha/no-skipped-tests
     it.skip('should have a working link to the passing checks in the overview component', () => {
       cy.get('.tn-cluster-checks-overview ').contains('Passing').click();
       cy.url().should(
@@ -142,6 +143,7 @@ context('HANA cluster details', () => {
         .contains(lastExecution.warning_count);
     });
 
+    // eslint-disable-next-line mocha/no-skipped-tests
     it.skip('should have a working link to the warning checks in the overview component', () => {
       cy.get('.tn-cluster-checks-overview ').contains('Warning').click();
       cy.url().should(
@@ -159,6 +161,7 @@ context('HANA cluster details', () => {
         .contains(lastExecution.critical_count);
     });
 
+    // eslint-disable-next-line mocha/no-skipped-tests
     it.skip('should have a working link to the critical checks in the overview component', () => {
       cy.get('.tn-cluster-checks-overview ').contains('Critical').click();
       cy.url().should(
@@ -326,6 +329,7 @@ context('HANA cluster details', () => {
     });
   });
 
+  // eslint-disable-next-line mocha/no-skipped-tests
   describe.skip('Check Selection should allow to enable checks from the checks catalog', () => {
     it('should take me to the cluster settings when pressing the settings button', () => {
       cy.get('button').contains('Check Selection').click();
@@ -354,6 +358,7 @@ context('HANA cluster details', () => {
     });
   });
 
+  // eslint-disable-next-line mocha/no-skipped-tests
   describe.skip('Cluster with unknown provider', () => {
     before(() => {
       cy.loadScenario('cluster-unknown-provider');
@@ -375,6 +380,7 @@ context('HANA cluster details', () => {
     });
   });
 
+  // eslint-disable-next-line mocha/no-skipped-tests
   describe.skip('Cluster with kvm provider', () => {
     before(() => {
       cy.loadScenario('cluster-kvm-provider');
@@ -400,6 +406,7 @@ context('HANA cluster details', () => {
     });
   });
 
+  // eslint-disable-next-line mocha/no-skipped-tests
   describe.skip('Cluster with nutanix provider', () => {
     before(() => {
       cy.loadScenario('cluster-nutanix-provider');

@@ -357,6 +357,7 @@ describe('Users', () => {
     });
 
     // skipping this test by default, as it takes a long time.
+    // eslint-disable-next-line mocha/no-skipped-tests
     it.skip('should ask TOTP code during login and work if the code is new', () => {
       cy.get('input[data-testid="login-totp-code"]').clear();
       // eslint-disable-next-line cypress/no-unnecessary-waiting

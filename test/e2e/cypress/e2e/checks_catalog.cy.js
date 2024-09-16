@@ -44,6 +44,7 @@ context('Checks catalog', () => {
     it('should show 3 check groups in the catalog', () => {
       cy.get('div.check-group').should('have.length', 3);
     });
+
     it('should have only the first group expanded', () => {
       cy.get('div.check-row').should('have.length', 2);
     });
@@ -70,6 +71,7 @@ context('Checks catalog', () => {
         });
       }
     );
+
     it('should include the correct number of icons for each target type', () => {
       cy.get(`[data-testid="target-icon-cluster"]`).should(
         'have.length',

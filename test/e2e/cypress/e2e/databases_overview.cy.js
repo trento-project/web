@@ -148,6 +148,7 @@ context('Databases Overview', () => {
       before(() => {
         cy.addTagByColumnValue('HDQ', 'env1');
       });
+
       it('it should prevent a tag update when the user abilities are not compliant', () => {
         cy.get('@user').then((user) => {
           cy.createUserWithAbilities(user, []);
