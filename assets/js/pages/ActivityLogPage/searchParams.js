@@ -3,7 +3,7 @@
  */
 
 import { uniq } from 'lodash';
-import { pipe, map, reduce, defaultTo } from 'lodash/fp';
+import { pipe, map, reduce, defaultTo, omit } from 'lodash/fp';
 import { format as formatDate, toZonedTime } from 'date-fns-tz';
 
 const toUTC = (date) => formatDate(date, "yyyy-MM-dd'T'HH:mm:ss.000'Z'");
@@ -13,10 +13,27 @@ const omitUndefined = (obj) =>
     Object.entries(obj).filter(([_, v]) => typeof v !== 'undefined')
   );
 
+const paginationFields = ['after', 'before', 'first', 'last'];
+const scalarKeys = [...paginationFields];
+
 const searchParamsToEntries = (searchParams) =>
   pipe(Array.from, uniq, (keys) =>
-    keys.map((key) => [key, searchParams.getAll(key)])
+    keys.map((key) => [
+      key,
+      scalarKeys.includes(key)
+        ? searchParams.get(key)
+        : searchParams.getAll(key),
+    ])
   )(searchParams.keys());
+
+const entriesToSearchParams = (entries) =>
+  entries.reduce((acc, [k, v]) => {
+    const sp = acc || new URLSearchParams();
+    scalarKeys.includes(k)
+      ? sp.set(k, v)
+      : Array.from(v).forEach((value) => sp.append(k, value));
+    return sp;
+  }, null);
 
 /**
  * Convert a search params object to an API params object as expected by the API client
@@ -46,7 +63,7 @@ export const searchParamsToFilterValue = pipe(
     switch (k) {
       case 'from_date':
       case 'to_date':
-        return [k, [v[0], toZonedTime(new Date(v[1]))]];
+        return [k, [v[0], toZonedTime(v[1])]];
       default:
         return [k, v];
     }
@@ -70,10 +87,51 @@ export const filterValueToSearchParams = pipe(
         return [k, v];
     }
   }),
-  reduce((acc, [k, v]) => {
-    const sp = acc || new URLSearchParams();
-    Array.from(v).forEach((value) => sp.append(k, value));
-    return sp;
-  }, null),
+  entriesToSearchParams,
   defaultTo(new URLSearchParams())
 );
+
+export const structToSearchParams = pipe(
+  omitUndefined,
+  Object.entries,
+  entriesToSearchParams,
+  defaultTo(new URLSearchParams())
+);
+
+export const setPaginationToSearchParams =
+  (searchParams = new URLSearchParams()) =>
+  (pagination) => {
+    // eslint-disable-next-line no-unused-vars
+    const filters = pipe(
+      searchParamsToEntries,
+      Object.fromEntries,
+      omit(paginationFields)
+    )(searchParams);
+
+    const v = structToSearchParams({ ...pagination, ...filters });
+    return v;
+  };
+
+export const setFilterValueToSearchParams = (
+  filterValue,
+  searchParams = new URLSearchParams()
+) =>
+  pipe(
+    searchParamsToEntries,
+    reduce(
+      (acc, [k, v]) =>
+        paginationFields.includes(k) ? { ...acc, [k]: v } : acc,
+      {}
+    ),
+    (x) => ({ ...x, ...filterValue }),
+    filterValueToSearchParams
+  )(searchParams);
+
+export const getItemsPerPageFromSearchParams = (searchParams) =>
+  Number(searchParams.get('first') || searchParams.get('last'));
+
+export const applyItemsPerPage = (itemsPerPage) => (searchParams) => {
+  searchParams.set('first', itemsPerPage);
+
+  return searchParams;
+};

@@ -12,17 +12,55 @@ import { getUserProfile } from '@state/selectors/user';
 import PageHeader from '@common/PageHeader';
 import ActivityLogOverview from '@common/ActivityLogOverview';
 import ComposedFilter from '@common/ComposedFilter';
+import {
+  PaginationPrevNext,
+  defaultItemsPerPageOptions,
+} from '@common/Pagination';
 
 import {
-  filterValueToSearchParams,
+  applyItemsPerPage,
+  setFilterValueToSearchParams,
   searchParamsToAPIParams,
   searchParamsToFilterValue,
+  getItemsPerPageFromSearchParams,
+  setPaginationToSearchParams,
 } from './searchParams';
+
+const emptyResponse = { data: [] };
+
+const defaultItemsPerPage = 20;
+const detectItemsPerPage = (number) =>
+  defaultItemsPerPageOptions.includes(number) ? number : defaultItemsPerPage;
+const changeItemsPerPage = (searchParams) => (items) => {
+  if (searchParams.has('after')) {
+    return {
+      first: items,
+      after: searchParams.get('after'),
+    };
+  }
+  if (searchParams.has('before')) {
+    return {
+      last: items,
+      before: searchParams.get('before'),
+    };
+  }
+  return { first: items };
+};
+const applyDefaultItemsPerPage = (params) =>
+  'first' in params || 'last' in params
+    ? params
+    : { first: defaultItemsPerPage, ...params };
+
+const activityLogRequest = pipe(
+  searchParamsToAPIParams,
+  applyDefaultItemsPerPage,
+  getActivityLog
+);
 
 function ActivityLogPage() {
   const users = useSelector(getActivityLogUsers);
   const [searchParams, setSearchParams] = useSearchParams();
-  const [activityLog, setActivityLog] = useState([]);
+  const [activityLogResponse, setActivityLogResponse] = useState(emptyResponse);
   const [isLoading, setLoading] = useState(true);
   const [activityLogDetailModalOpen, setActivityLogDetailModalOpen] =
     useState(false);
@@ -58,14 +96,22 @@ function ActivityLogPage() {
     },
   ];
 
+  const itemsPerPage = pipe(
+    getItemsPerPageFromSearchParams,
+    detectItemsPerPage
+  )(searchParams);
+
   const fetchActivityLog = () => {
     setLoading(true);
-    const params = searchParamsToAPIParams(searchParams);
-    getActivityLog(params)
-      .then((response) => {
-        setActivityLog(response.data?.data ?? []);
+
+    activityLogRequest(searchParams)
+      .then(({ data }) => {
+        setActivityLogResponse({
+          data: data?.data || [],
+          pagination: data?.pagination,
+        });
       })
-      .catch(() => setActivityLog([]))
+      .catch(() => setActivityLogResponse(emptyResponse))
       .finally(() => {
         setLoading(false);
       });
@@ -85,17 +131,45 @@ function ActivityLogPage() {
             filters={filters}
             autoApply={false}
             value={searchParamsToFilterValue(searchParams)}
-            onChange={(p) => setSearchParams(filterValueToSearchParams(p))}
+            onChange={pipe(
+              setFilterValueToSearchParams,
+              applyItemsPerPage(itemsPerPage),
+              setSearchParams
+            )}
           />
         </div>
         <ActivityLogOverview
           activityLogDetailModalOpen={activityLogDetailModalOpen}
-          activityLog={activityLog}
+          activityLog={activityLogResponse.data}
           loading={isLoading}
           onActivityLogEntryClick={() => setActivityLogDetailModalOpen(true)}
           onCloseActivityLogEntryDetails={() =>
             setActivityLogDetailModalOpen(false)
           }
+        />
+        <PaginationPrevNext
+          hasPrev={activityLogResponse.pagination?.has_previous_page}
+          hasNext={activityLogResponse.pagination?.has_next_page}
+          currentItemsPerPage={itemsPerPage}
+          onSelect={pipe(
+            (selection) =>
+              selection === 'prev'
+                ? {
+                    last: itemsPerPage,
+                    before: activityLogResponse.pagination?.start_cursor,
+                  }
+                : {
+                    first: itemsPerPage,
+                    after: activityLogResponse.pagination?.end_cursor,
+                  },
+            setPaginationToSearchParams(searchParams),
+            setSearchParams
+          )}
+          onChangeItemsPerPage={pipe(
+            changeItemsPerPage(searchParams),
+            setPaginationToSearchParams(searchParams),
+            setSearchParams
+          )}
         />
       </div>
     </>
