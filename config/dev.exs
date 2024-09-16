@@ -179,7 +179,7 @@ config :samly, Samly.Provider,
   service_providers: [
     %{
       id: "trento-saml",
-      entity_id: "http://localhost:8081/realms/trento"
+      entity_id: "trento-web-saml"
       # certfile: "priv/cert/selfsigned.pem",
       # keyfile: "priv/cert/selfsigned_key.pem"
     }
@@ -190,7 +190,7 @@ config :samly, Samly.Provider,
       sp_id: "trento-saml",
       base_url: "http://localhost:4000/sso",
       # Get the metadata file running:
-      # wget -O priv/saml/metadata.xml http://localhost:8081/realms/trento/protoc/saml/descriptor
+      # wget -O priv/saml/metadata.xml http://localhost:8081/realms/trento/protocol/saml/descriptor
       metadata_file: "priv/saml/metadata.xml",
       sign_requests: false,
       sign_metadata: false,
