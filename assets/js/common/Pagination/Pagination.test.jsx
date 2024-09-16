@@ -335,7 +335,6 @@ describe('PaginationPrevNext component', () => {
     await act(() => user.click(screen.getByText(NEXT)));
     expect(onSelect).toHaveBeenCalledWith('next');
     expect(onSelect).toHaveBeenCalledTimes(1);
-<<<<<<< HEAD
     onSelect.mockClear();
 
     await act(() => user.click(screen.getByText(FIRST)));
@@ -346,17 +345,6 @@ describe('PaginationPrevNext component', () => {
     await act(() => user.click(screen.getByText(LAST)));
     expect(onSelect).toHaveBeenCalledWith('last');
     expect(onSelect).toHaveBeenCalledTimes(1);
-||||||| parent of 4ea5f3f97 (add first and last page button)
-=======
-
-    await act(() => user.click(screen.getByText('<<')));
-    expect(onSelect).toHaveBeenCalledWith('first');
-    expect(onSelect).toHaveBeenCalledTimes(1);
-
-    await act(() => user.click(screen.getByText('>>')));
-    expect(onSelect).toHaveBeenCalledWith('last');
-    expect(onSelect).toHaveBeenCalledTimes(1);
->>>>>>> 4ea5f3f97 (add first and last page button)
   });
 
   it('should disable prev button', async () => {
@@ -388,7 +376,6 @@ describe('PaginationPrevNext component', () => {
     expect(onSelect).toHaveBeenCalledWith('prev');
     expect(onSelect).toHaveBeenCalledTimes(1);
   });
-<<<<<<< HEAD
 
   it('should disable first button', async () => {
     const onSelect = jest.fn();
@@ -417,36 +404,4 @@ describe('PaginationPrevNext component', () => {
     expect(onSelect).toHaveBeenCalledWith('first');
     expect(onSelect).toHaveBeenCalledTimes(1);
   });
-||||||| parent of 4ea5f3f97 (add first and last page button)
-=======
-
-  it('should disable first button', async () => {
-    const onSelect = jest.fn();
-    const user = userEvent.setup();
-
-    render(<PaginationPrevNext hasPrev={false} onSelect={onSelect} />);
-
-    await act(() => user.click(screen.getByText('<<')));
-    expect(onSelect).not.toHaveBeenCalled();
-
-    await act(() => user.click(screen.getByText('>>')));
-    expect(onSelect).toHaveBeenCalledWith('last');
-    expect(onSelect).toHaveBeenCalledTimes(1);
-    onSelect.mockClear();
-  });
-
-  it('should disable last button', async () => {
-    const onSelect = jest.fn();
-    const user = userEvent.setup();
-
-    render(<PaginationPrevNext hasNext={false} onSelect={onSelect} />);
-
-    await act(() => user.click(screen.getByText('>>')));
-    expect(onSelect).not.toHaveBeenCalled();
-
-    await act(() => user.click(screen.getByText('<<')));
-    expect(onSelect).toHaveBeenCalledWith('first');
-    expect(onSelect).toHaveBeenCalledTimes(1);
-  });
->>>>>>> 4ea5f3f97 (add first and last page button)
 });
