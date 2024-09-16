@@ -30,8 +30,8 @@
     },
     {
       "id": "trento-web-saml",
-      "clientId": "http://localhost:8081/realms/trento",
-      "name": "Trento SAML authentication",
+      "clientId": "trento-web-saml",
+      "name": "trento-web-saml",
       "enabled": true,
       "publicClient": false,
       "clientAuthenticatorType": "client-secret",
