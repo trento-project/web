@@ -3,7 +3,7 @@
  */
 
 import { uniq } from 'lodash';
-import { pipe, map, reduce, defaultTo, omit } from 'lodash/fp';
+import { pipe, map, reduce, defaultTo, omit, filter } from 'lodash/fp';
 import { format as formatDate, toZonedTime } from 'date-fns-tz';
 
 const toUTC = (date) => formatDate(date, "yyyy-MM-dd'T'HH:mm:ss.000'Z'");
@@ -27,13 +27,14 @@ const searchParamsToEntries = (searchParams) =>
   )(searchParams.keys());
 
 const entriesToSearchParams = (entries) =>
-  entries.reduce((acc, [k, v]) => {
-    const sp = acc || new URLSearchParams();
-    scalarKeys.includes(k)
-      ? sp.set(k, v)
-      : Array.from(v).forEach((value) => sp.append(k, value));
-    return sp;
-  }, null);
+  entries.length
+    ? entries.reduce((sp, [k, v]) => {
+        scalarKeys.includes(k)
+          ? sp.set(k, v)
+          : Array.from(v).forEach((value) => sp.append(k, value));
+        return sp;
+      }, new URLSearchParams())
+    : new URLSearchParams();
 
 /**
  * Convert a search params object to an API params object as expected by the API client
@@ -135,3 +136,9 @@ export const applyItemsPerPage = (itemsPerPage) => (searchParams) => {
 
   return searchParams;
 };
+
+export const resetPaginationToSearchParams = pipe(
+  searchParamsToEntries,
+  filter(([k]) => !paginationFields.includes(k)),
+  entriesToSearchParams
+);
