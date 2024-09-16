@@ -5,8 +5,10 @@ import ReactPaginate from 'react-paginate';
 
 import Select from '@common/Select';
 
+const FIRST_LABEL = '<<';
 const PREV_LABEL = '<';
 const NEXT_LABEL = '>';
+const LAST_LABEL = '>>';
 
 const boxClassNames = classNames(
   'tn-page-item',
@@ -85,6 +87,18 @@ function PaginationPrevNext({
               leftBoxClassNames,
               hasPrev || disabledLinkClassNames
             )}
+            onClick={() => hasPrev && onSelect('first')}
+          >
+            {FIRST_LABEL}
+          </button>
+        </li>
+        <li>
+          <button
+            type="button"
+            className={classNames(
+              boxClassNames,
+              hasPrev || disabledLinkClassNames
+            )}
             onClick={() => hasPrev && onSelect('prev')}
           >
             {PREV_LABEL}
@@ -94,12 +108,24 @@ function PaginationPrevNext({
           <button
             type="button"
             className={classNames(
-              rightBoxClassNames,
+              boxClassNames,
               hasNext || disabledLinkClassNames
             )}
             onClick={() => hasNext && onSelect('next')}
           >
             {NEXT_LABEL}
+          </button>
+        </li>
+        <li>
+          <button
+            type="button"
+            className={classNames(
+              rightBoxClassNames,
+              hasNext || disabledLinkClassNames
+            )}
+            onClick={() => hasNext && onSelect('last')}
+          >
+            {LAST_LABEL}
           </button>
         </li>
       </ul>
