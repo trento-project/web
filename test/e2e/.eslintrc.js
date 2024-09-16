@@ -6,7 +6,11 @@ module.exports = {
     es2021: true,
     jquery: true,
   },
-  extends: ['eslint:recommended', 'plugin:cypress/recommended'],
+  extends: [
+    'eslint:recommended',
+    'plugin:cypress/recommended',
+    'plugin:mocha/recommended',
+  ],
   parserOptions: {
     ecmaFeatures: {
       jsx: true,
@@ -17,5 +21,8 @@ module.exports = {
   rules: {
     'no-console': 'error',
     'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+    'mocha/no-mocha-arrows': 0,
+    'mocha/no-setup-in-describe': 0,
+    'mocha/no-exclusive-tests': 'error',
   },
 };

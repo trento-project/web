@@ -1,10 +1,10 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 
-before(() => {
-  cy.loadScenario('healthy-27-node-SAP-cluster');
-});
-
 context('Activity Log page', () => {
+  before(() => {
+    cy.loadScenario('healthy-27-node-SAP-cluster');
+  });
+
   describe('Navigation', () => {
     it('should navigate to Activity Log page', () => {
       cy.visit('/');

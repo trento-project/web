@@ -243,13 +243,11 @@ context('SAP Systems Overview', () => {
   describe('SAP Systems Tagging', () => {
     before(() => {
       cy.removeTagsFromView();
+      cy.navigateToItem('SAP Systems');
+      cy.url().should('include', '/sap_systems');
     });
 
     availableSAPSystems.forEach(({ sid, tag }) => {
-      before(() => {
-        cy.navigateToItem('SAP Systems');
-        cy.url().should('include', '/sap_systems');
-      });
       describe(`Add tag '${tag}' to SAP System with sid: '${sid}'`, () => {
         it(`should tag SAP System '${sid}'`, () => {
           cy.addTagByColumnValue(sid, tag);

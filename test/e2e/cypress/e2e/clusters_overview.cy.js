@@ -28,10 +28,12 @@ context('Clusters Overview', () => {
         .its('length')
         .should('eq', availableClusters.length);
     });
+
     it('should have 1 pages', () => {
       cy.get(`[data-testid="pagination"]`).should('include.text', '1');
       cy.get(`[data-testid="pagination"]`).should('not.include.text', '2');
     });
+
     it('should show the expected clusters data', () => {
       cy.get('.container').eq(0).as('clustersTable');
       availableClusters.forEach((cluster, index) => {
@@ -63,6 +65,7 @@ context('Clusters Overview', () => {
           });
       });
     });
+
     describe('Unnamed cluster', () => {
       before(() => {
         cy.loadScenario('cluster-unnamed');
@@ -79,6 +82,7 @@ context('Clusters Overview', () => {
       });
     });
 
+    // eslint-disable-next-line mocha/no-skipped-tests
     describe.skip('Health status for each cluster is correct', () => {
       before(() => {
         cy.selectChecks(
@@ -183,49 +187,49 @@ context('Clusters Overview', () => {
       });
     });
   });
-});
 
-describe('Forbidden action', () => {
-  beforeEach(() => {
-    cy.deleteAllUsers();
-    cy.logout();
-    const user = createUserRequestFactory.build({
-      password,
-      password_confirmation: password,
-    });
-    cy.wrap(user).as('user');
-  });
-
-  const password = 'password';
-
-  describe('Tag operations', () => {
-    it('should prevent a tag update when the user abilities are not compliant', () => {
-      cy.get('@user').then((user) => {
-        cy.createUserWithAbilities(user, []);
-        cy.login(user.username, password);
+  describe('Forbidden action', () => {
+    beforeEach(() => {
+      cy.deleteAllUsers();
+      cy.logout();
+      const user = createUserRequestFactory.build({
+        password,
+        password_confirmation: password,
       });
-
-      cy.visit('/clusters');
-
-      cy.contains('span', 'Add Tag').should('have.class', 'opacity-50');
-      cy.get('[data-test-id="tag-env1"]').should('have.class', 'opacity-50');
+      cy.wrap(user).as('user');
     });
 
-    it('should allow a tag update when the user abilities are compliant', () => {
-      cy.get('@user').then((user) => {
-        cy.createUserWithAbilities(user, [
-          { name: 'all', resource: 'cluster_tags' },
-        ]);
-        cy.login(user.username, password);
+    const password = 'password';
+
+    describe('Tag operations', () => {
+      it('should prevent a tag update when the user abilities are not compliant', () => {
+        cy.get('@user').then((user) => {
+          cy.createUserWithAbilities(user, []);
+          cy.login(user.username, password);
+        });
+
+        cy.visit('/clusters');
+
+        cy.contains('span', 'Add Tag').should('have.class', 'opacity-50');
+        cy.get('[data-test-id="tag-env1"]').should('have.class', 'opacity-50');
       });
 
-      cy.visit('/clusters');
+      it('should allow a tag update when the user abilities are compliant', () => {
+        cy.get('@user').then((user) => {
+          cy.createUserWithAbilities(user, [
+            { name: 'all', resource: 'cluster_tags' },
+          ]);
+          cy.login(user.username, password);
+        });
 
-      cy.contains('span', 'Add Tag').should('not.have.class', 'opacity-50');
-      cy.get('[data-test-id="tag-env1"]').should(
-        'not.have.class',
-        'opacity-50'
-      );
+        cy.visit('/clusters');
+
+        cy.contains('span', 'Add Tag').should('not.have.class', 'opacity-50');
+        cy.get('[data-test-id="tag-env1"]').should(
+          'not.have.class',
+          'opacity-50'
+        );
+      });
     });
   });
 });
