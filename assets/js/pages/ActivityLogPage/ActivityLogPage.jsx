@@ -134,7 +134,7 @@ function ActivityLogPage() {
             value={searchParamsToFilterValue(searchParams)}
             onChange={pipe(
               setFilterValueToSearchParams,
-              resetPaginationToSearchParams(),
+              resetPaginationToSearchParams,
               applyItemsPerPage(itemsPerPage),
               setSearchParams
             )}
