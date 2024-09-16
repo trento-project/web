@@ -13,6 +13,8 @@ defmodule TrentoWeb.SessionControllerTest do
   alias Trento.Users
   alias Trento.Users.User
 
+  alias TrentoWeb.Auth.AssentSamlStrategy
+
   setup [:set_mox_from_context, :verify_on_exit!]
 
   setup do
@@ -635,6 +637,110 @@ defmodule TrentoWeb.SessionControllerTest do
       conn
       |> json_response(401)
       |> assert_schema("Unauthorized", api_spec)
+    end
+
+    test "should return the credentials when the saml callback flow is completed without errors and the user does not exist on trento",
+         %{conn: conn, api_spec: api_spec} do
+      expect(
+        Joken.CurrentTime.Mock,
+        :current_time,
+        6,
+        fn ->
+          1_671_715_992
+        end
+      )
+
+      Samly.State.init(Samly.State.ETS)
+
+      username = Faker.Internet.user_name()
+
+      not_on_or_after =
+        DateTime.utc_now()
+        |> DateTime.add(8, :hour)
+        |> DateTime.to_iso8601()
+
+      assertion = %Samly.Assertion{
+        subject: %{notonorafter: not_on_or_after},
+        attributes: %{
+          "username" => username,
+          "email" => Faker.Internet.email(),
+          "firstName" => Faker.Person.first_name(),
+          "lastName" => Faker.Person.last_name()
+        }
+      }
+
+      assertion_key = {"idp1", "name1"}
+
+      conn =
+        conn
+        |> Samly.State.put_assertion(assertion_key, assertion)
+        |> put_session("samly_assertion_key", assertion_key)
+
+      Application.put_env(:trento, :pow_assent,
+        user_identities_context: Trento.UserIdentities,
+        providers: [
+          test_provider: [strategy: AssentSamlStrategy]
+        ]
+      )
+
+      conn = get(conn, ~p"/api/session/test_provider/saml_callback")
+
+      conn
+      |> json_response(200)
+      |> assert_schema("Credentials", api_spec)
+
+      %User{} = Users.get_by(username: username)
+    end
+
+    test "should return unauthorized in saml callback flow when assertion is missing",
+         %{conn: conn, api_spec: api_spec} do
+      Application.put_env(:trento, :pow_assent,
+        user_identities_context: Trento.UserIdentities,
+        providers: [
+          test_provider: [strategy: AssentSamlStrategy]
+        ]
+      )
+
+      conn = get(conn, ~p"/api/session/test_provider/saml_callback")
+
+      conn
+      |> json_response(401)
+      |> assert_schema("Unauthorized", api_spec)
+    end
+
+    test "should return unauthorized in saml callback flow when user attributes are missing",
+         %{conn: conn, api_spec: api_spec} do
+      Samly.State.init(Samly.State.ETS)
+
+      not_on_or_after =
+        DateTime.utc_now()
+        |> DateTime.add(8, :hour)
+        |> DateTime.to_iso8601()
+
+      assertion = %Samly.Assertion{
+        subject: %{notonorafter: not_on_or_after},
+        attributes: %{}
+      }
+
+      assertion_key = {"idp1", "name1"}
+
+      conn =
+        conn
+        |> Samly.State.put_assertion(assertion_key, assertion)
+        |> put_session("samly_assertion_key", assertion_key)
+
+      Application.put_env(:trento, :pow_assent,
+        user_identities_context: Trento.UserIdentities,
+        providers: [
+          test_provider: [strategy: AssentSamlStrategy]
+        ]
+      )
+
+      conn = get(conn, ~p"/api/session/test_provider/saml_callback")
+
+      conn
+      |> json_response(422)
+      |> assert_schema("UnprocessableEntity", api_spec)
     end
   end
 end

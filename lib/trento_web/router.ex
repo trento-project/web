@@ -65,18 +65,13 @@ defmodule TrentoWeb.Router do
       ]
   end
 
-  scope "/auth" do
-    pipe_through [:api]
-
-    get "/saml/enrollment", TrentoWeb.SessionController, :saml_callback
-  end
-
   scope "/api", TrentoWeb do
     pipe_through [:api]
 
     post "/session", SessionController, :create, as: :login
     post "/session/refresh", SessionController, :refresh, as: :refresh
     post "/session/:provider/callback", SessionController, :callback
+    get "/session/:provider/saml_callback", SessionController, :saml_callback
   end
 
   scope "/feature-flags" do

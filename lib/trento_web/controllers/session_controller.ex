@@ -263,6 +263,7 @@ defmodule TrentoWeb.SessionController do
     security: [],
     responses: [
       unauthorized: Schema.Unauthorized.response(),
+      unprocessable_entity: Schema.UnprocessableEntity.response(),
       ok:
         {"User IDP credentials", "application/json",
          %OpenApiSpex.Schema{
@@ -285,25 +286,31 @@ defmodule TrentoWeb.SessionController do
          }}
     ]
 
-  def saml_callback(conn, _params) do
+  def saml_callback(conn, %{"provider" => saml_provider}) do
     assertion = Samly.get_active_assertion(conn)
-    callback_url = Application.fetch_env!(:trento, :saml)[:callback_url]
 
     conn
     |> Conn.put_private(:pow_assent_session_params, %{})
-    |> PowAssentPlug.callback_upsert("saml_local", assertion, "")
+    |> PowAssentPlug.callback_upsert(saml_provider, assertion, "")
     |> case do
       {:ok, conn} ->
-        redirect(conn,
-          to:
-            "#{callback_url}?token=#{conn.private[:api_access_token]}&refresh_token=#{conn.private[:api_refresh_token]}"
+        render(conn, "logged.json",
+          token: conn.private[:api_access_token],
+          expiration: conn.private[:access_token_expiration],
+          refresh_token: conn.private[:api_refresh_token]
         )
 
       {:error, %{private: %{pow_assent_callback_error: {:user_not_allowed, _}}}} ->
         {:error, :invalid_credentials}
 
+      {:error, %{private: %{pow_assent_callback_error: :user_not_authenticated}}} ->
+        {:error, :user_not_authenticated}
+
+      {:error, %{private: %{pow_assent_callback_error: :user_attributes_missing}}} ->
+        {:error, :user_attributes_missing}
+
       error ->
-        Logger.error("error during sso callback execution: #{inspect(error)}")
+        Logger.error("error during saml callback execution: #{inspect(error)}")
         error
     end
   end

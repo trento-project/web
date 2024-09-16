@@ -47,10 +47,10 @@ defmodule TrentoWeb.PageController do
   defp sso_details_for_provider(_conn, :saml) do
     idp_id = Application.fetch_env!(:trento, :saml)[:idp_id]
     callback_url = Application.fetch_env!(:trento, :saml)[:callback_url]
-    enrollment_url = "/auth/saml/enrollment"
+    login_url = ~p"/sso/auth/signin/#{idp_id}?target_url=#{URI.encode_www_form(callback_url)}"
+    enrollment_url = ~p"/api/session/saml_local/saml_callback"
 
-    {true, callback_url,
-     ~p"/sso/auth/signin/#{idp_id}?target_url=#{URI.encode_www_form(enrollment_url)}", ""}
+    {true, callback_url, login_url, enrollment_url}
   end
 
   defp sso_details_for_provider(conn, provider) do
