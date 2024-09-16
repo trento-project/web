@@ -280,7 +280,7 @@ context('Activity Log page', () => {
     });
   });
 
-  it.only('should navigate backward', () => {
+  it('should navigate backward', () => {
     cy.intercept({
       url: '/api/v1/activity_log?first=20',
     }).as('firstPage');
