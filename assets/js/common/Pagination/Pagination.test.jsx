@@ -389,7 +389,6 @@ describe('PaginationPrevNext component', () => {
     await act(() => user.click(screen.getByText(LAST)));
     expect(onSelect).toHaveBeenCalledWith('last');
     expect(onSelect).toHaveBeenCalledTimes(1);
-    onSelect.mockClear();
   });
 
   it('should disable last button', async () => {
