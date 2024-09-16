@@ -135,3 +135,16 @@ export const applyItemsPerPage = (itemsPerPage) => (searchParams) => {
 
   return searchParams;
 };
+
+export const resetPaginationToSearchParams =
+  (itemsPerPage) =>
+  (searchParams = new URLSearchParams()) => {
+    // eslint-disable-next-line no-unused-vars
+    const filters = pipe(
+      searchParamsToEntries,
+      Object.fromEntries,
+      omit(paginationFields)
+    )(searchParams);
+
+    return filterValueToSearchParams({ first: itemsPerPage, ...filters });
+  };

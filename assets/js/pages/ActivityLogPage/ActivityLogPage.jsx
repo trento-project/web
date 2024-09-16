@@ -24,6 +24,7 @@ import {
   searchParamsToFilterValue,
   getItemsPerPageFromSearchParams,
   setPaginationToSearchParams,
+  resetPaginationToSearchParams,
 } from './searchParams';
 
 const emptyResponse = { data: [] };
@@ -133,6 +134,7 @@ function ActivityLogPage() {
             value={searchParamsToFilterValue(searchParams)}
             onChange={pipe(
               setFilterValueToSearchParams,
+              resetPaginationToSearchParams(),
               applyItemsPerPage(itemsPerPage),
               setSearchParams
             )}

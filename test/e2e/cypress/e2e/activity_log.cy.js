@@ -204,6 +204,40 @@ context('Activity Log page', () => {
       });
     });
 
+    it('should reset pagination when filters are changed', () => {
+      cy.visit('/activity_log');
+
+      cy.intercept({
+        url: `/api/v1/activity_log?first=20`,
+      }).as('firstPage');
+
+      cy.wait('@firstPage').then(({ response }) => {
+        expect(response.body).to.have.property('pagination');
+        expect(response.body.pagination).to.have.property('end_cursor');
+        expect(response.body.pagination.end_cursor).not.to.be.undefined;
+        expect(response.body.pagination).to.have.property('has_next_page');
+        expect(response.body.pagination.has_next_page).to.be.true;
+
+        const after = response.body.pagination.end_cursor;
+
+        cy.contains('>').click();
+
+        cy.url().should(
+          'eq',
+          `${Cypress.config().baseUrl}/activity_log?first=20&after=${after}`
+        );
+      });
+
+      cy.contains('Filter Resource type').click();
+      cy.contains('Login Attempt').click();
+      cy.contains('Apply').click();
+
+      cy.url().should(
+        'eq',
+        `${Cypress.config().baseUrl}/activity_log?type=login_attempt&first=20`
+      );
+    });
+
     it('should select correct date filter when changing page', () => {
       cy.intercept({
         url: '/api/v1/activity_log?first=20&to_date=2024-08-14T10:21:00.000Z',
