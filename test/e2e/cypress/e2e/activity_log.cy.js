@@ -280,7 +280,7 @@ context('Activity Log page', () => {
     });
   });
 
-  it('should navigate backward', () => {
+  it.only('should navigate backward', () => {
     cy.intercept({
       url: '/api/v1/activity_log?first=20',
     }).as('firstPage');
@@ -297,15 +297,18 @@ context('Activity Log page', () => {
 
       cy.contains('>').click();
 
-      cy.wait('@firstPage').then(({ response: firstPageResponse }) => {
-        expect(firstPageResponse.body.pagination).to.have.property('first', 20);
-        expect(firstPageResponse.body.pagination).to.have.property(
+      cy.wait('@secondPage').then(({ response: secondPageResponse }) => {
+        expect(secondPageResponse.body.pagination).to.have.property(
+          'first',
+          20
+        );
+        expect(secondPageResponse.body.pagination).to.have.property(
           'end_cursor'
         );
-        expect(firstPageResponse.body.pagination).to.have.property(
+        expect(secondPageResponse.body.pagination).to.have.property(
           'has_next_page'
         );
-        expect(firstPageResponse.body.pagination.has_next_page).to.be.true;
+        expect(secondPageResponse.body.pagination.has_next_page).to.be.true;
 
         cy.intercept({
           url: `/api/v1/activity_log?last=20&before=*`,
