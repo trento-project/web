@@ -61,19 +61,22 @@ function ActivityLogOverview({
       {
         title: 'Time',
         key: 'time',
+        className: 'w-1/6',
       },
       {
         title: 'Message',
         key: 'message',
+        className: 'w-3/6',
       },
       {
         title: 'User',
         key: 'user',
+        className: 'w-1/12',
       },
       {
         title: 'Level',
         key: 'level',
-        className: 'text-center',
+        className: 'text-center w-1/12',
         render: (level) => (
           <Tooltip content={logLevelToLabel[level] ?? 'Unknown'} wrap={false}>
             <span aria-label={`log-level-${level}`}>
@@ -85,6 +88,7 @@ function ActivityLogOverview({
       {
         title: '',
         key: 'metadata',
+        className: 'w-3/6',
         render: (_metadata, logEntry) => (
           <div
             aria-label={`entry-${logEntry.id}`}
