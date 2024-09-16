@@ -81,6 +81,7 @@ function HostRelevantPatches({ hostName, onNavigate, patches }) {
             onChange={setDisplayedAdvisories}
             options={advisoryTypes}
             optionsName="options"
+            className="w-64"
             value={displayedAdvisories}
           />
           <Input
