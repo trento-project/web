@@ -15,13 +15,18 @@ defmodule TrentoWeb.V1.UsersControllerTest do
   describe "forbidden response" do
     test "should return not implemented on create endpoint when external idp integration is enabled",
          %{conn: conn} do
-      Application.put_env(:trento, :oidc, enabled: true)
+      Enum.each(
+        [:oidc, :oauth2, :saml],
+        fn sso_type ->
+          Application.put_env(:trento, sso_type, enabled: true)
 
-      res = post(conn, "/api/v1/users", %{})
+          res = post(conn, "/api/v1/users", %{})
 
-      json_response(res, 501)
+          json_response(res, 501)
 
-      Application.put_env(:trento, :oidc, enabled: false)
+          Application.put_env(:trento, sso_type, enabled: false)
+        end
+      )
     end
 
     test "should return forbidden on any controller action if the user does not have the right permission",
