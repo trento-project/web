@@ -4,6 +4,7 @@ import { noop } from 'lodash';
 import ReactPaginate from 'react-paginate';
 
 import Select from '@common/Select';
+import PageStats from './PageStats';
 
 const PREV_LABEL = '<';
 const NEXT_LABEL = '>';
@@ -48,7 +49,7 @@ function ItemsPerPageSelector({
       <div className="flex pl-3 items-center text-sm">
         <span className="pr-2 text-gray-600">Results per page</span>
         <Select
-          className="z-40"
+          className="z-40 w-20"
           optionsName=""
           options={itemsPerPageOptions}
           value={currentItemsPerPage}
@@ -113,6 +114,8 @@ function Pagination({
   onSelect,
   currentItemsPerPage = defaultItemsPerPage,
   itemsPerPageOptions = defaultItemsPerPageOptions,
+  itemsPresent,
+  itemsTotal,
   onChangeItemsPerPage = noop,
 }) {
   const selectedPage = Math.min(currentPage, pages);
@@ -122,11 +125,19 @@ function Pagination({
       className="flex justify-between p-2 bg-gray-50 width-full"
       data-testid="pagination"
     >
-      <ItemsPerPageSelector
-        itemsPerPageOptions={itemsPerPageOptions}
-        currentItemsPerPage={currentItemsPerPage}
-        onChange={onChangeItemsPerPage}
-      />
+      <div className="flex flex-row items-center">
+        <ItemsPerPageSelector
+          itemsPerPageOptions={itemsPerPageOptions}
+          currentItemsPerPage={currentItemsPerPage}
+          onChange={onChangeItemsPerPage}
+        />
+        <PageStats
+          selectedPage={selectedPage}
+          itemsTotal={itemsTotal}
+          currentItemsPerPage={currentItemsPerPage}
+          itemsPresent={itemsPresent}
+        />
+      </div>
 
       {/* ReactPaginate paged are 0-based */}
       <ReactPaginate

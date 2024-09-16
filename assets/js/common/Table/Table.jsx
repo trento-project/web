@@ -222,7 +222,7 @@ function Table({
                 </tr>
               </thead>
               <tbody>
-                {data.length === 0 ? (
+                {renderedData.length === 0 ? (
                   <EmptyState
                     colSpan={columns.length}
                     emptyStateText={emptyStateText}
@@ -252,6 +252,8 @@ function Table({
                 pages={totalPages}
                 currentPage={currentPage}
                 itemsPerPageOptions={itemsPerPageOptions}
+                itemsTotal={filteredData.length}
+                itemsPresent={renderedData.length}
                 currentItemsPerPage={currentItemsPerPage}
                 onChangeItemsPerPage={(perPage) =>
                   setCurrentItemsPerPage(perPage)
