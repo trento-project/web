@@ -1,4 +1,4 @@
-import { adminUser, plainUser } from '../fixtures/oidc-integration/users';
+import { adminUser, plainUser } from '../fixtures/sso-integration/users';
 
 const ssoType = Cypress.env('SSO_TYPE') || 'oidc';
 
@@ -19,7 +19,7 @@ const loginWithSSO = (username, password) => {
   });
 };
 
-describe('OIDC/OAUTH2 integration', () => {
+describe('SSO integration', () => {
   if (!Cypress.env('SSO_INTEGRATION_TESTS')) {
     return;
   }
