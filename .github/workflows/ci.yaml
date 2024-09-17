@@ -602,6 +602,17 @@ jobs:
               MIX_ENV: dev
               CYPRESS_SSO_INTEGRATION_TESTS: true
               CYPRESS_SSO_TYPE: oauth2
+          - test: saml
+            cypress_spec: |
+              cypress/e2e/sso_integration.cy.js
+            config_file_content: |
+              import Config
+
+              config :trento, :saml, enabled: true
+            env:
+              MIX_ENV: dev
+              CYPRESS_SSO_INTEGRATION_TESTS: true
+              CYPRESS_SSO_TYPE: saml
     env: ${{ matrix.env }}      
     steps:
       - name: Cancel Previous Runs
@@ -657,6 +668,11 @@ jobs:
         run: echo "${{ matrix.config_file_content }}" > config/dev.local.exs
       - name: Mix setup
         run: mix setup
+      - name: Download SAML metadata.xml
+        if: matrix.test == 'saml'
+        run: |
+          mkdir priv/saml
+          wget -O priv/saml/metadata.xml http://localhost:8081/realms/trento/protocol/saml/descriptor
       - name: Run trento detached
         run: mix phx.server &
       - name: Cypress run
