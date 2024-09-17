@@ -11,7 +11,7 @@ describe('SSOCallback component', () => {
     jest.resetModules();
   });
 
-  it('should display loading state when authentication is happening', async () => {
+  it('should perform a SSO enrollment and display loading state when authentication is happening', async () => {
     const [StatefulOidCallback, store] = withState(<SSOCallback />, {
       user: {},
     });
@@ -29,35 +29,27 @@ describe('SSOCallback component', () => {
     });
   });
 
-  it('should display an error message if some search param is missing', async () => {
-    const user = userEvent.setup();
-
-    const [StatefulOidCallback] = withState(<SSOCallback />, {
+  it('should perform a SAML enrollment and display loading state when authentication is happening', async () => {
+    const [StatefulOidCallback, store] = withState(<SSOCallback />, {
       user: {},
     });
 
     renderWithRouterMatch(StatefulOidCallback, {
-      path: 'auth/oidc_callback',
-      route: `/auth/oidc_callback?code=code`,
+      path: 'auth/saml_callback',
+      route: `/auth/saml_callback`,
     });
 
-    expect(screen.getByText('Login Failed')).toBeVisible();
+    expect(screen.getByText('Loading...')).toBeVisible();
 
-    expect(
-      screen.getByText('An error occurred while trying to Login', {
-        exact: false,
-      })
-    ).toBeVisible();
-
-    const loginButton = screen.getByRole('button', {
-      name: 'Login with Single Sign-on',
+    expect(store.getActions()).toContainEqual({
+      type: 'PERFORM_SAML_ENROLLMENT',
+      payload: {},
     });
-    user.click(loginButton);
-
-    expect(window.location.pathname).toBe('/auth/oidc_callback');
   });
 
   it('should display an error message if authentication fails', async () => {
+    const user = userEvent.setup();
+
     const [StatefulOidCallback] = withState(<SSOCallback />, {
       user: {
         authError: true,
@@ -76,6 +68,13 @@ describe('SSOCallback component', () => {
         exact: false,
       })
     ).toBeVisible();
+
+    const loginButton = screen.getByRole('button', {
+      name: 'Login with Single Sign-on',
+    });
+    user.click(loginButton);
+
+    expect(window.location.pathname).toBe('/auth/oidc_callback');
   });
 
   it('should navigate to home after user is logged in', () => {

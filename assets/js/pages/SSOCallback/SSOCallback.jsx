@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import TrentoLogo from '@static/trento-dark.svg';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,24 +11,19 @@ function SSOCallback() {
   const { search } = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [error, setError] = useState(null);
   const { authError, loggedIn } = useSelector(getUserProfile);
 
   useEffect(() => {
     const params = new URLSearchParams(search);
     const code = params.get('code');
     const state = params.get('state');
-    const token = params.get('token');
-    const refreshToken = params.get('refresh_token');
 
     if (code && state) {
       // OIDC/OAUTH2 callback
       dispatch(performSSOEnrollment({ state, code }));
-    } else if (token && refreshToken) {
-      // SAML callback
-      dispatch(performSAMLEnrollment({ token, refreshToken }));
     } else {
-      setError(true);
+      // SAML callback
+      dispatch(performSAMLEnrollment({}));
     }
   }, [search]);
 
@@ -38,7 +33,7 @@ function SSOCallback() {
     }
   }, [loggedIn]);
 
-  if (authError || error) {
+  if (authError) {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
@@ -53,7 +48,10 @@ function SSOCallback() {
         </div>
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
           <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-            <LoginSSO singleSignOnUrl={getSingleSignOnLoginUrl()} error />
+            <LoginSSO
+              singleSignOnUrl={getSingleSignOnLoginUrl()}
+              error={authError}
+            />
           </div>
         </div>
       </div>
