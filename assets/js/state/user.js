@@ -85,12 +85,7 @@ export const performSSOEnrollment = createAction(
   })
 );
 
-export const performSAMLEnrollment = createAction(
-  PERFORM_SAML_ENROLLMENT,
-  ({ token, refreshToken }) => ({
-    payload: { token, refreshToken },
-  })
-);
+export const performSAMLEnrollment = createAction(PERFORM_SAML_ENROLLMENT);
 
 export const userUpdated = createAction(USER_UPDATED);
 export const userLocked = createAction(USER_LOCKED);

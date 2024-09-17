@@ -22,6 +22,7 @@ import {
   clearUserAndLogout,
   checkUserPasswordChangeRequested,
   performSSOEnrollment,
+  performSAMLEnrollment,
 } from './user';
 
 const axiosMock = new MockAdapter(authClient);
@@ -270,6 +271,78 @@ describe('user login saga', () => {
           code: 'bad',
           state: 'bad',
         },
+      });
+
+      expect(dispatched).toContainEqual(setAuthInProgress());
+      expect(dispatched).toContainEqual(
+        setAuthError({
+          message: 'Request failed with status code 401',
+          code: 401,
+        })
+      );
+      expect(getAccessTokenFromStore()).toEqual(null);
+      expect(getRefreshTokenFromStore()).toEqual(null);
+    });
+
+    it('should perform SAML enrollment', async () => {
+      global.config.ssoEnrollmentUrl = '/api/session/saml_local/callback';
+
+      const { email, username, id, fullname, abilities } =
+        profileFactory.build();
+
+      axiosMock
+        .onGet('/api/session/saml_local/callback')
+        .reply(200, credentialResponse);
+
+      networkClientAxiosMock.onGet('/api/v1/profile').reply(200, {
+        username,
+        id,
+        email,
+        fullname,
+        abilities,
+      });
+
+      const dispatched = await recordSaga(
+        performSAMLEnrollment,
+        {
+          payload: {},
+        },
+        {
+          user: {
+            password_change_requested: true,
+          },
+        }
+      );
+
+      expect(dispatched).toContainEqual(setAuthInProgress());
+      expect(dispatched).toContainEqual(
+        setUser({
+          username,
+          id,
+          email,
+          fullname,
+          abilities,
+        })
+      );
+      expect(dispatched).toContainEqual(setUserAsLogged());
+
+      expect(getAccessTokenFromStore()).toEqual(
+        credentialResponse.access_token
+      );
+      expect(getRefreshTokenFromStore()).toEqual(
+        credentialResponse.refresh_token
+      );
+    });
+
+    it('should set the error when the SAML enrollment fails', async () => {
+      global.config.ssoEnrollmentUrl = '/api/session/saml_local/callback';
+
+      axiosMock.onGet('/api/session/saml_local/callback').reply(401, {
+        error: 'unauthorized',
+      });
+
+      const dispatched = await recordSaga(performSAMLEnrollment, {
+        payload: {},
       });
 
       expect(dispatched).toContainEqual(setAuthInProgress());

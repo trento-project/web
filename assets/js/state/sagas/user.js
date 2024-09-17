@@ -17,6 +17,7 @@ import { getUserProfile } from '@state/selectors/user';
 import {
   login,
   ssoEnrollment,
+  samlEnrollment,
   profile,
   storeAccessToken,
   storeRefreshToken,
@@ -65,12 +66,12 @@ export function* performLogin({ payload: { username, password, totpCode } }) {
   }
 }
 
-export function* performSSOEnrollment({ payload: { code, state } }) {
+function* completeSSOEnrollment(enrollmentFunc, payload) {
   yield put(setAuthInProgress());
   try {
     const {
       data: { access_token: accessToken, refresh_token: refreshToken },
-    } = yield call(ssoEnrollment, { code, session_state: state });
+    } = yield call(enrollmentFunc, payload);
     yield call(storeAccessToken, accessToken);
     yield call(storeRefreshToken, refreshToken);
 
@@ -99,35 +100,15 @@ export function* performSSOEnrollment({ payload: { code, state } }) {
   }
 }
 
-export function* performSAMLEnrollment({ payload: { token, refreshToken } }) {
-  yield put(setAuthInProgress());
-  try {
-    yield call(storeAccessToken, token);
-    yield call(storeRefreshToken, refreshToken);
+export function* performSSOEnrollment({ payload: { code, state } }) {
+  yield call(completeSSOEnrollment, ssoEnrollment, {
+    code,
+    session_state: state,
+  });
+}
 
-    const {
-      id,
-      username: profileUsername,
-      email,
-      fullname,
-      abilities,
-    } = yield call(profile, networkClient);
-    yield put(
-      setUser({
-        username: profileUsername,
-        id,
-        email,
-        fullname,
-        abilities,
-      })
-    );
-    yield put(setUserAsLogged());
-  } catch (error) {
-    yield put(
-      setAuthError({ message: error.message, code: error.response?.status })
-    );
-    yield call(clearCredentialsFromStore);
-  }
+export function* performSAMLEnrollment() {
+  yield call(completeSSOEnrollment, samlEnrollment, {});
 }
 
 export function* clearUserAndLogout() {
