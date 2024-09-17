@@ -109,23 +109,20 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
   end
 
   def get_activity_metadata(
-        action,
+        :cluster_checks_execution_request,
         %Plug.Conn{
           params: params
         }
-      )
-      when action in [
-             :cluster_checks_execution_request,
-             :host_checks_execution_request
-           ] do
-    action
-    |> case do
-      :cluster_checks_execution_request -> {:cluster_id, Map.get(params, :cluster_id)}
-      :host_checks_execution_request -> {:host_id, Map.get(params, :id)}
-    end
-    |> List.wrap()
-    |> Map.new()
-  end
+      ),
+      do: %{cluster_id: Map.get(params, :cluster_id)}
+
+  def get_activity_metadata(
+        :host_checks_execution_request,
+        %Plug.Conn{
+          params: params
+        }
+      ),
+      do: %{host_id: Map.get(params, :id)}
 
   def get_activity_metadata(_, _), do: %{}
 
