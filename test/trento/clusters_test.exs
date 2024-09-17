@@ -206,6 +206,23 @@ defmodule Trento.ClustersTest do
     end
   end
 
+  describe "retrieving a cluster by identifier" do
+    test "should not return a non existent cluster" do
+      assert {:error, :not_found} == Clusters.by_id(Faker.UUID.v4())
+    end
+
+    test "should return an existent cluster, whether it is registered or not" do
+      %{id: registered_cluster_id} = insert(:cluster)
+
+      %{id: deregistered_cluster_id} =
+        insert(:cluster, deregistered_at: Faker.DateTime.backward(1))
+
+      for cluster_id <- [registered_cluster_id, deregistered_cluster_id] do
+        assert {:ok, %ClusterReadModel{id: ^cluster_id}} = Clusters.by_id(cluster_id)
+      end
+    end
+  end
+
   describe "get clusters" do
     test "should not return soft deleted clusters" do
       cib_last_written = Date.to_string(Faker.Date.forward(0))
