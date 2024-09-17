@@ -73,6 +73,46 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
                  })
       end
     end
+
+    test "should extract component id when requesting checks execution", %{conn: conn} do
+      host_id = Faker.UUID.v4()
+      cluster_id = Faker.UUID.v4()
+
+      scenarios = [
+        %{
+          action: :cluster_checks_execution_request,
+          params: %{:cluster_id => cluster_id},
+          expected_metadata: %{:cluster_id => cluster_id}
+        },
+        %{
+          action: :host_checks_execution_request,
+          params: %{:id => host_id},
+          expected_metadata: %{:host_id => host_id}
+        },
+        %{
+          action: :host_checks_execution_request,
+          params: %{:foo => "bar"},
+          expected_metadata: %{:host_id => nil}
+        },
+        %{
+          action: :cluster_checks_execution_request,
+          params: %{:foo => "bar"},
+          expected_metadata: %{:cluster_id => nil}
+        }
+      ]
+
+      for %{
+            action: action,
+            params: params,
+            expected_metadata: expected_metadata
+          } <- scenarios do
+        assert expected_metadata ==
+                 PhoenixConnParser.get_activity_metadata(action, %Plug.Conn{
+                   conn
+                   | params: params
+                 })
+      end
+    end
   end
 
   defp assert_for_relevant_activity(assertion_function) do

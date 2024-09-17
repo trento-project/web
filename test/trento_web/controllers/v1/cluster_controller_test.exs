@@ -93,6 +93,24 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
              } == resp
     end
 
+    test "should return 422 when the selection is empty", %{conn: conn} do
+      %{id: cluster_id} = insert(:cluster, selected_checks: [])
+
+      resp =
+        conn
+        |> post("/api/v1/clusters/#{cluster_id}/checks/request_execution")
+        |> json_response(:unprocessable_entity)
+
+      assert %{
+               "errors" => [
+                 %{
+                   "title" => "Unprocessable Entity",
+                   "detail" => "No checks were selected for the target."
+                 }
+               ]
+             } == resp
+    end
+
     test "should return 500 if messaging returns an error", %{conn: conn} do
       expect(
         Trento.Infrastructure.Messaging.Adapter.Mock,

@@ -108,6 +108,22 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
     |> redact(:password_confirmation)
   end
 
+  def get_activity_metadata(
+        :cluster_checks_execution_request,
+        %Plug.Conn{
+          params: params
+        }
+      ),
+      do: %{cluster_id: Map.get(params, :cluster_id)}
+
+  def get_activity_metadata(
+        :host_checks_execution_request,
+        %Plug.Conn{
+          params: params
+        }
+      ),
+      do: %{host_id: Map.get(params, :id)}
+
   def get_activity_metadata(_, _), do: %{}
 
   defp redact(request_body, key) do

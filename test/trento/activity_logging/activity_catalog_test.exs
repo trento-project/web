@@ -24,6 +24,7 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
         :user_deletion,
         :profile_update,
         :cluster_checks_execution_request,
+        :host_checks_execution_request,
         :activity_log_settings_update
       ]
 

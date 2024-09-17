@@ -136,7 +136,7 @@ defmodule Trento.ClustersTest do
         :ok
       end)
 
-      assert :ok = Clusters.request_checks_execution(cluster_id)
+      assert {:error, :no_checks_selected} = Clusters.request_checks_execution(cluster_id)
     end
 
     test "should return an error if the checks execution start fails" do
