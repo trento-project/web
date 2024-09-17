@@ -35,6 +35,21 @@ defmodule Trento.DatabasesTest do
                }
              ] = Databases.get_all_databases()
     end
+
+    test "should not return a non existent database" do
+      assert {:error, :not_found} == Databases.by_id(Faker.UUID.v4())
+    end
+
+    test "should return an existent database, whether it is registered or not" do
+      %{id: registered_database_id} = insert(:database)
+
+      %{id: deregistered_database_id} =
+        insert(:database, deregistered_at: Faker.DateTime.backward(1))
+
+      for database_id <- [registered_database_id, deregistered_database_id] do
+        assert {:ok, %DatabaseReadModel{id: ^database_id}} = Databases.by_id(database_id)
+      end
+    end
   end
 
   describe "get_database_instances_by_host_id/1" do
