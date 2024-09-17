@@ -26,8 +26,7 @@ defmodule TrentoWeb.Auth.AssentSamlStrategyTest do
                   "email" => email,
                   "username" => username,
                   "email_verified" => true,
-                  "given_name" => first_name,
-                  "family_name" => last_name
+                  "name" => "#{first_name} #{last_name}"
                 },
                 token: %{}
               }} ==

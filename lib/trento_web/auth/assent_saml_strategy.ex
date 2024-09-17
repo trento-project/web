@@ -39,8 +39,7 @@ defmodule TrentoWeb.Auth.AssentSamlStrategy do
        "email" => email,
        "username" => username,
        "email_verified" => true,
-       "name" => first_name,
-       "family_name" => last_name
+       "name" => "#{first_name} #{last_name}"
      }}
   end
 
