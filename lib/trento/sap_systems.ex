@@ -16,6 +16,14 @@ defmodule Trento.SapSystems do
 
   alias Trento.Repo
 
+  @spec by_id(String.t()) :: {:ok, SapSystemReadModel.t()} | {:error, :not_found}
+  def by_id(id) do
+    case Repo.get(SapSystemReadModel, id) do
+      %SapSystemReadModel{} = sap_system -> {:ok, sap_system}
+      nil -> {:error, :not_found}
+    end
+  end
+
   @spec get_all_sap_systems :: [SapSystemReadModel.t()]
   def get_all_sap_systems do
     SapSystemReadModel

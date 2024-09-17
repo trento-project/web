@@ -51,6 +51,21 @@ defmodule Trento.SapSystemsTest do
                }
              ] = SapSystems.get_all_sap_systems()
     end
+
+    test "should not return a non existent sap system" do
+      assert {:error, :not_found} == SapSystems.by_id(Faker.UUID.v4())
+    end
+
+    test "should return an existent sap system, whether it is registered or not" do
+      %{id: registered_sap_system_id} = insert(:sap_system)
+
+      %{id: deregistered_sap_system_id} =
+        insert(:sap_system, deregistered_at: Faker.DateTime.backward(1))
+
+      for sap_system_id <- [registered_sap_system_id, deregistered_sap_system_id] do
+        assert {:ok, %SapSystemReadModel{id: ^sap_system_id}} = SapSystems.by_id(sap_system_id)
+      end
+    end
   end
 
   describe "get_application_instances_by_host_id/1" do
