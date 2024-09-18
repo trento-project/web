@@ -1,17 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import TrentoLogo from '@static/trento-dark.svg';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { performSSOEnrollment } from '@state/user';
+import { performSSOEnrollment, performSAMLEnrollment } from '@state/user';
 import { getSingleSignOnLoginUrl } from '@lib/auth/config';
 import LoginSSO from '@pages/Login/LoginSSO';
 import { getUserProfile } from '@state/selectors/user';
 
-function OidcOauthCallback() {
+function SSOCallback() {
   const { search } = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [error, setError] = useState(null);
   const { authError, loggedIn } = useSelector(getUserProfile);
 
   useEffect(() => {
@@ -19,9 +18,13 @@ function OidcOauthCallback() {
     const code = params.get('code');
     const state = params.get('state');
 
-    setError(!code || !state);
-
-    dispatch(performSSOEnrollment({ state, code }));
+    if (code && state) {
+      // OIDC/OAUTH2 callback
+      dispatch(performSSOEnrollment({ state, code }));
+    } else {
+      // SAML callback
+      dispatch(performSAMLEnrollment({}));
+    }
   }, [search]);
 
   useEffect(() => {
@@ -30,7 +33,7 @@ function OidcOauthCallback() {
     }
   }, [loggedIn]);
 
-  if (authError || error) {
+  if (authError) {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
@@ -45,7 +48,10 @@ function OidcOauthCallback() {
         </div>
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
           <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-            <LoginSSO singleSignOnUrl={getSingleSignOnLoginUrl()} error />
+            <LoginSSO
+              singleSignOnUrl={getSingleSignOnLoginUrl()}
+              error={authError}
+            />
           </div>
         </div>
       </div>
@@ -68,4 +74,4 @@ function OidcOauthCallback() {
   );
 }
 
-export default OidcOauthCallback;
+export default SSOCallback;

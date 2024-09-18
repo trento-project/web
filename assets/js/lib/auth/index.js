@@ -24,6 +24,14 @@ export const ssoEnrollment = (credentials) =>
       return response;
     });
 
+export const samlEnrollment = () =>
+  authClient.get(getFromConfig('ssoEnrollmentUrl')).then((response) => {
+    if (response.status !== 200) {
+      throw Error('unauthorized', { cause: response.status });
+    }
+    return response;
+  });
+
 export const refreshAccessToken = (refreshToken) =>
   authClient
     .post('/api/session/refresh', { refresh_token: refreshToken })

@@ -145,6 +145,9 @@ config :trento, :oauth2,
 
 config :trento, :pow_assent,
   providers: [
+    saml_local: [
+      strategy: TrentoWeb.Auth.AssentSamlStrategy
+    ],
     oauth2_local: [
       client_id: "trento-web",
       client_secret: "ihfasdEaB5M5r44i4AbNulmLWjgejluX",
@@ -164,6 +167,37 @@ config :trento, :pow_assent,
       # The default oidc ones, replicated just for the sake of docs
       authorization_params: [scope: "openid profile"]
     ]
+  ]
+
+config :trento, :saml,
+  enabled: false,
+  callback_url: "/auth/saml_callback",
+  idp_id: "saml"
+
+config :samly, Samly.Provider,
+  idp_id_from: :path_segment,
+  service_providers: [
+    %{
+      id: "trento-saml",
+      entity_id: "trento-web-saml"
+      # certfile: "priv/cert/selfsigned.pem",
+      # keyfile: "priv/cert/selfsigned_key.pem"
+    }
+  ],
+  identity_providers: [
+    %{
+      id: "saml",
+      sp_id: "trento-saml",
+      base_url: "http://localhost:4000/sso",
+      # Get the metadata file running:
+      # wget -O priv/saml/metadata.xml http://localhost:8081/realms/trento/protocol/saml/descriptor
+      metadata_file: "priv/saml/metadata.xml",
+      sign_requests: false,
+      sign_metadata: false,
+      signed_assertion_in_resp: false,
+      signed_envelopes_in_resp: false,
+      nameid_format: :persistent
+    }
   ]
 
 # Override with local dev.local.exs file

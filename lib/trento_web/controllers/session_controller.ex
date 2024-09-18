@@ -256,6 +256,65 @@ defmodule TrentoWeb.SessionController do
     end
   end
 
+  operation :saml_callback,
+    summary: "Platform external SAML IDP callback",
+    tags: ["Platform"],
+    description: "Authenticate against an external authentication provider using SAML",
+    security: [],
+    responses: [
+      unauthorized: Schema.Unauthorized.response(),
+      unprocessable_entity: Schema.UnprocessableEntity.response(),
+      ok:
+        {"User IDP credentials", "application/json",
+         %OpenApiSpex.Schema{
+           title: "UserIDPCredentials",
+           type: :object,
+           example: %{
+             access_token:
+               "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTU1NjY5MiwiaWF0IjoxNjcxNTQ5NDkyLCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwOGlxMmkxNnRlbHNycWE4MDAwMWM4IiwibmJmIjoxNjcxNTQ5NDkyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYtTrbVcCEO_UgIkHn6A",
+             refresh_token:
+               "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTU1NjY5MiwiaWF0IjoxNjcxNTQ5NDkyLCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwOGlxMmkxNnRlbHNycWE4MDAwMWM4IiwibmJmIjoxNjcxNTQ5NDkyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYtTrbVcCEO_UgIkHn6A"
+           },
+           properties: %{
+             access_token: %OpenApiSpex.Schema{
+               type: :string
+             },
+             refresh_token: %OpenApiSpex.Schema{
+               type: :string
+             }
+           }
+         }}
+    ]
+
+  def saml_callback(conn, %{"provider" => saml_provider}) do
+    assertion = Samly.get_active_assertion(conn)
+
+    conn
+    |> Conn.put_private(:pow_assent_session_params, %{})
+    |> PowAssentPlug.callback_upsert(saml_provider, assertion, "")
+    |> case do
+      {:ok, conn} ->
+        render(conn, "logged.json",
+          token: conn.private[:api_access_token],
+          expiration: conn.private[:access_token_expiration],
+          refresh_token: conn.private[:api_refresh_token]
+        )
+
+      {:error, %{private: %{pow_assent_callback_error: {:user_not_allowed, _}}}} ->
+        {:error, :invalid_credentials}
+
+      {:error, %{private: %{pow_assent_callback_error: :user_not_authenticated}}} ->
+        {:error, :user_not_authenticated}
+
+      {:error, %{private: %{pow_assent_callback_error: :user_attributes_missing}}} ->
+        {:error, :user_attributes_missing}
+
+      error ->
+        Logger.error("error during saml callback execution: #{inspect(error)}")
+        error
+    end
+  end
+
   defp authenticate_trento_user(conn, credentials) do
     with {:ok, %{assigns: %{current_user: logged_user}} = conn} <-
            Pow.Plug.authenticate_user(conn, credentials),

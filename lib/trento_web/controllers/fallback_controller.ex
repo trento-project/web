@@ -38,6 +38,13 @@ defmodule TrentoWeb.FallbackController do
     |> render(:"401", reason: "Invalid refresh token.")
   end
 
+  def call(conn, {:error, :user_not_authenticated}) do
+    conn
+    |> put_status(:unauthorized)
+    |> put_view(ErrorView)
+    |> render(:"401", reason: "User not authenticated.")
+  end
+
   def call(conn, {:error, :not_found}) do
     conn
     |> put_status(:not_found)
@@ -178,6 +185,13 @@ defmodule TrentoWeb.FallbackController do
     |> put_status(:unprocessable_entity)
     |> put_view(ErrorView)
     |> render(:"422", reason: "TOTP code missing.")
+  end
+
+  def call(conn, {:error, :user_attributes_missing}) do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> put_view(ErrorView)
+    |> render(:"422", reason: "Some mandatory SAML user attributes are missing")
   end
 
   def call(conn, {:error, :forbidden}) do

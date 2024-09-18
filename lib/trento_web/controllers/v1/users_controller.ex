@@ -182,12 +182,13 @@ defmodule TrentoWeb.V1.UsersController do
     put_resp_header(conn, "etag", Integer.to_string(lock_version))
   end
 
-  # when sso is enabled, we only allow abilities as parameter
+  # when sso is enabled, we only allow abilities and enabled as parameters
   defp clean_params_for_sso_integration(attrs, true), do: Map.take(attrs, [:abilities, :enabled])
   defp clean_params_for_sso_integration(attrs, _), do: attrs
 
   defp oidc_enabled?, do: Application.fetch_env!(:trento, :oidc)[:enabled]
   defp oauth2_enabled?, do: Application.fetch_env!(:trento, :oauth2)[:enabled]
+  defp saml_enabled?, do: Application.fetch_env!(:trento, :saml)[:enabled]
 
-  defp sso_enabled?, do: oidc_enabled?() or oauth2_enabled?()
+  defp sso_enabled?, do: oidc_enabled?() or oauth2_enabled?() or saml_enabled?()
 end

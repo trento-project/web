@@ -9,6 +9,7 @@ import {
   USER_UPDATED,
   PERFORM_LOGIN,
   PERFORM_SSO_ENROLLMENT,
+  PERFORM_SAML_ENROLLMENT,
   USER_PASSWORD_CHANGE_REQUESTED_NOTIFICATION_ID,
 } from '@state/user';
 import { customNotify } from '@state/notifications';
@@ -16,6 +17,7 @@ import { getUserProfile } from '@state/selectors/user';
 import {
   login,
   ssoEnrollment,
+  samlEnrollment,
   profile,
   storeAccessToken,
   storeRefreshToken,
@@ -64,12 +66,12 @@ export function* performLogin({ payload: { username, password, totpCode } }) {
   }
 }
 
-export function* performSSOEnrollment({ payload: { code, state } }) {
+function* completeSSOEnrollment(enrollmentFunc, payload) {
   yield put(setAuthInProgress());
   try {
     const {
       data: { access_token: accessToken, refresh_token: refreshToken },
-    } = yield call(ssoEnrollment, { code, session_state: state });
+    } = yield call(enrollmentFunc, payload);
     yield call(storeAccessToken, accessToken);
     yield call(storeRefreshToken, refreshToken);
 
@@ -96,6 +98,17 @@ export function* performSSOEnrollment({ payload: { code, state } }) {
     );
     yield call(clearCredentialsFromStore);
   }
+}
+
+export function* performSSOEnrollment({ payload: { code, state } }) {
+  yield call(completeSSOEnrollment, ssoEnrollment, {
+    code,
+    session_state: state,
+  });
+}
+
+export function* performSAMLEnrollment() {
+  yield call(completeSSOEnrollment, samlEnrollment, {});
 }
 
 export function* clearUserAndLogout() {
@@ -134,4 +147,5 @@ export function* watchUserActions() {
   yield takeEvery(USER_UPDATED, userUpdated);
   yield takeEvery(PERFORM_LOGIN, performLogin);
   yield takeEvery(PERFORM_SSO_ENROLLMENT, performSSOEnrollment);
+  yield takeEvery(PERFORM_SAML_ENROLLMENT, performSAMLEnrollment);
 }

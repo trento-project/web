@@ -118,7 +118,8 @@ defmodule Trento.MixProject do
       {:nimble_totp, "~> 1.0"},
       {:phoenix_view, "~> 2.0"},
       {:phoenix_html_helpers, "~> 1.0"},
-      {:pow_assent, "~> 0.4.18"}
+      {:pow_assent, "~> 0.4.18"},
+      {:samly, "~> 1.0"}
     ]
   end
 

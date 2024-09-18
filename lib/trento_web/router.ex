@@ -50,6 +50,10 @@ defmodule TrentoWeb.Router do
       do: TrentoWeb.Plugs.ChartsDisabledPlug
   end
 
+  scope "/sso" do
+    forward "/", Samly.Router
+  end
+
   scope "/" do
     pipe_through :browser
 
@@ -67,6 +71,7 @@ defmodule TrentoWeb.Router do
     post "/session", SessionController, :create, as: :login
     post "/session/refresh", SessionController, :refresh, as: :refresh
     post "/session/:provider/callback", SessionController, :callback
+    get "/session/:provider/saml_callback", SessionController, :saml_callback
   end
 
   scope "/feature-flags" do
