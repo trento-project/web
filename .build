@@ -392,6 +392,7 @@ Trento.Vault.html
 TrentoWeb.ActivityLogChannel.html
 TrentoWeb.Auth.AccessToken.html
 TrentoWeb.Auth.ApiKey.html
+TrentoWeb.Auth.AssentSamlStrategy.html
 TrentoWeb.Auth.RefreshToken.html
 TrentoWeb.ChannelCase.html
 TrentoWeb.ConnCase.html
@@ -489,8 +490,8 @@ dist/lato-latin-ext-300-normal-VPGGJKJL.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-F5C26F89.js
-dist/sidebar_items-B8F09B12.js
+dist/search_data-E12CDAC4.js
+dist/sidebar_items-912296EF.js
 environment_variables.html
 hack_on_the_trento.html
 index.html
