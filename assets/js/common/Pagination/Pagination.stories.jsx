@@ -31,13 +31,15 @@ export default {
       },
       defaultValue: [10],
     },
+    itemsTotal: {
+      control: {
+        type: 'number',
+      },
+    },
   },
   render: (args) => (
     <Pagination
-      pages={args.pages}
-      currentPage={args.currentPage}
-      currentItemsPerPage={args.currentItemsPerPage}
-      itemsPerPageOptions={args.itemsPerPageOptions}
+      {...args}
       onSelect={(value) => {
         action('onSelect')(value);
       }}
@@ -62,5 +64,11 @@ export const WithManyPages = {
     ...Default.args,
     pages: 99,
     currentPage: 20,
+  },
+};
+
+export const EmptyDataset = {
+  args: {
+    itemsTotal: 0,
   },
 };

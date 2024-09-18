@@ -7,6 +7,14 @@ import '@testing-library/jest-dom';
 import Pagination from '.';
 
 describe('Page stats', () => {
+  it('should not render when there are no items', () => {
+    render(<Pagination itemsTotal={0} />);
+
+    expect(
+      screen.queryByText('Showing', { exact: false })
+    ).not.toBeInTheDocument();
+  });
+
   it('should render', () => {
     render(
       <Pagination

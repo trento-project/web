@@ -6,6 +6,9 @@ function PageStats({
   itemsTotal = 1,
   selectedPage,
 }) {
+  if (itemsTotal === 0) {
+    return null;
+  }
   const itemsBase = (selectedPage - 1) * currentItemsPerPage;
   const lowerBound = itemsBase + 1;
   const upperBound = itemsBase + itemsPresent;
