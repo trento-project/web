@@ -249,6 +249,20 @@ defmodule TrentoWeb.V1.SettingsController do
     end
   end
 
+  operation :get_public_keys,
+    summary: "Get uploaded public keys",
+    tags: ["Platform"],
+    description: "Get uploaded public keys",
+    responses: [
+      ok: {"Uploaded public keys", "application/json", Schema.Platform.PublicKeys}
+    ]
+
+  @spec get_public_keys(Plug.Conn.t(), any) :: Plug.Conn.t()
+  def get_public_keys(conn, _) do
+    public_keys = Settings.get_public_keys()
+    render(conn, "public_keys.json", %{public_keys: public_keys})
+  end
+
   def get_policy_resource(conn) do
     case Phoenix.Controller.action_name(conn) do
       :update_api_key_settings -> Trento.Settings.ApiKeySettings
