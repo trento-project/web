@@ -87,5 +87,14 @@ defmodule Trento.Support.EventTest do
     test "event is not superseded" do
       assert TestEvent == TestEvent.supersede(nil)
     end
+
+    test "a superseded event is marked as legacy" do
+      assert true == TestLegacyEventV1.legacy?()
+      assert true == TestLegacyEventV2.legacy?()
+    end
+
+    test "a non-superseded event is not marked as legacy" do
+      refute function_exported?(TestEvent, :legacy?, 0)
+    end
   end
 end

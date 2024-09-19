@@ -265,5 +265,24 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
                  ActivityCatalog.detect_activity(%{event: event, metadata: %{}})
       end
     end
+
+    test "should differentiate between legacy and current domain events" do
+      legacy_event =
+        Trento.SapSystems.Events.DatabaseDeregistered.new!(%{
+          sap_system_id: Faker.UUID.v4(),
+          deregistered_at: Faker.DateTime.backward(1)
+        })
+
+      current_event =
+        Trento.Databases.Events.DatabaseDeregistered.new!(%{
+          sap_system_id: Faker.UUID.v4(),
+          deregistered_at: Faker.DateTime.backward(1)
+        })
+
+      assert {:error, :not_interesting} = ActivityCatalog.detect_activity(%{event: legacy_event})
+
+      assert {:ok, :database_deregistered} =
+               ActivityCatalog.detect_activity(%{event: current_event})
+    end
   end
 end
