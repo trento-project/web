@@ -1,5 +1,7 @@
 const NEXT = /^>$/;
 const PREV = /^<$/;
+const FIRST = /^<<$/;
+const LAST = /^>>$/;
 
 context('Activity Log page', () => {
   before(() => {
@@ -313,51 +315,107 @@ context('Activity Log page', () => {
 
       cy.get('button').contains('10').should('be.visible');
     });
-  });
 
-  it('should navigate backward', () => {
-    cy.intercept({
-      url: '/api/v1/activity_log?first=20',
-    }).as('firstPage');
-
-    cy.visit('/activity_log');
-
-    cy.wait('@firstPage').then(({ response: firstPageResponse }) => {
-      expect(firstPageResponse.body.pagination).to.have.property('first', 20);
-      expect(firstPageResponse.body.pagination).to.have.property('end_cursor');
-
+    it('should navigate backward', () => {
       cy.intercept({
-        url: `/api/v1/activity_log?first=20&after=*`,
-      }).as('secondPage');
+        url: '/api/v1/activity_log?first=20',
+      }).as('firstPage');
 
-      cy.contains(NEXT).click();
+      cy.visit('/activity_log');
 
-      cy.wait('@secondPage').then(({ response: secondPageResponse }) => {
-        expect(secondPageResponse.body.pagination).to.have.property(
-          'first',
-          20
-        );
-        expect(secondPageResponse.body.pagination).to.have.property(
+      cy.wait('@firstPage').then(({ response: firstPageResponse }) => {
+        expect(firstPageResponse.body.pagination).to.have.property('first', 20);
+        expect(firstPageResponse.body.pagination).to.have.property(
           'end_cursor'
         );
-        expect(secondPageResponse.body.pagination).to.have.property(
-          'has_next_page'
-        );
-        expect(secondPageResponse.body.pagination.has_next_page).to.be.true;
 
         cy.intercept({
-          url: `/api/v1/activity_log?last=20&before=*`,
-        }).as('firstPage-back');
+          url: `/api/v1/activity_log?first=20&after=*`,
+        }).as('secondPage');
 
-        cy.contains(PREV).click();
+        cy.contains(NEXT).click();
 
-        cy.wait('@firstPage-back').then(({ response }) => {
-          expect(response.body.pagination).to.have.property('last', 20);
-          firstPageResponse.body.data.forEach((element, i) => {
-            expect(element.id).to.eq(response.body.data[i].id);
+        cy.wait('@secondPage').then(({ response: secondPageResponse }) => {
+          expect(secondPageResponse.body.pagination).to.have.property(
+            'first',
+            20
+          );
+          expect(secondPageResponse.body.pagination).to.have.property(
+            'end_cursor'
+          );
+          expect(secondPageResponse.body.pagination).to.have.property(
+            'has_next_page'
+          );
+          expect(secondPageResponse.body.pagination.has_next_page).to.be.true;
+
+          cy.intercept({
+            url: `/api/v1/activity_log?last=20&before=*`,
+          }).as('firstPage-back');
+
+          cy.contains(PREV).click();
+
+          cy.wait('@firstPage-back').then(({ response }) => {
+            expect(response.body.pagination).to.have.property('last', 20);
+            firstPageResponse.body.data.forEach((element, i) => {
+              expect(element.id).to.eq(response.body.data[i].id);
+            });
           });
         });
       });
+    });
+
+    it('should go to first page', () => {
+      cy.intercept({
+        url: '/api/v1/activity_log?first=20&type[]=host_registered',
+      }).as('firstPage');
+
+      cy.intercept({
+        url: `/api/v1/activity_log?first=20&after=**&type[]=host_registered`,
+      }).as('secondPage');
+
+      cy.visit('/activity_log?type=host_registered');
+
+      cy.wait('@firstPage');
+
+      cy.contains(NEXT).click();
+
+      cy.wait('@secondPage');
+
+      cy.intercept({
+        url: `/api/v1/activity_log?first=20&type[]=host_registered`,
+      }).as('firstPage2');
+
+      cy.contains(FIRST).click();
+
+      cy.wait('@firstPage2');
+
+      cy.url().should(
+        'eq',
+        `${Cypress.config().baseUrl}/activity_log?first=20&type=host_registered`
+      );
+    });
+
+    it('should go to last page', () => {
+      cy.intercept({
+        url: '/api/v1/activity_log?first=20&type[]=host_registered',
+      }).as('firstPage');
+
+      cy.visit('/activity_log?type=host_registered');
+
+      cy.wait('@firstPage');
+
+      cy.intercept({
+        url: `/api/v1/activity_log?last=20&type[]=host_registered`,
+      }).as('lastPage');
+
+      cy.contains(LAST).click();
+
+      cy.wait('@lastPage');
+
+      cy.url().should(
+        'eq',
+        `${Cypress.config().baseUrl}/activity_log?last=20&type=host_registered`
+      );
     });
   });
 });

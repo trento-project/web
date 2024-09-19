@@ -154,16 +154,26 @@ function ActivityLogPage() {
           hasNext={activityLogResponse.pagination?.has_next_page}
           currentItemsPerPage={itemsPerPage}
           onSelect={pipe(
-            (selection) =>
-              selection === 'prev'
-                ? {
+            (selection) => {
+              switch (selection) {
+                case 'prev':
+                  return {
                     last: itemsPerPage,
                     before: activityLogResponse.pagination?.start_cursor,
-                  }
-                : {
+                  };
+                case 'next':
+                  return {
                     first: itemsPerPage,
                     after: activityLogResponse.pagination?.end_cursor,
-                  },
+                  };
+                case 'first':
+                  return { first: itemsPerPage };
+                case 'last':
+                  return { last: itemsPerPage };
+                default:
+                  return {};
+              }
+            },
             setPaginationToSearchParams(searchParams),
             setSearchParams
           )}
