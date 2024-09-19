@@ -6,6 +6,11 @@ defmodule Trento.ActivityLog.Logger.Parser.EventParser do
   def get_activity_actor(_, %{event: _}), do: "system"
   def get_activity_actor(_, _), do: nil
 
-  def get_activity_metadata(_, %{event: event}), do: event
+  def get_activity_metadata(_, %{event: event}),
+    do:
+      event
+      |> Map.from_struct()
+      |> Map.delete(:version)
+
   def get_activity_metadata(_, _), do: %{}
 end
