@@ -5,6 +5,11 @@ import '@testing-library/jest-dom';
 import { noop } from 'lodash';
 import Pagination, { PaginationPrevNext } from '.';
 
+const NEXT = /^>$/;
+const PREV = /^<$/;
+const FIRST = /^<<$/;
+const LAST = /^>>$/;
+
 describe('Pagination component', () => {
   it('should render', () => {
     render(
@@ -310,8 +315,10 @@ describe('PaginationPrevNext component', () => {
   it('should render', () => {
     render(<PaginationPrevNext hasNext onSelect={noop} />);
 
-    expect(screen.getByText('<')).toBeInTheDocument();
-    expect(screen.getByText('>')).toBeInTheDocument();
+    expect(screen.getByText(PREV)).toBeInTheDocument();
+    expect(screen.getByText(NEXT)).toBeInTheDocument();
+    expect(screen.getByText(LAST)).toBeInTheDocument();
+    expect(screen.getByText(FIRST)).toBeInTheDocument();
   });
 
   it('should call onSelect', async () => {
@@ -320,13 +327,23 @@ describe('PaginationPrevNext component', () => {
 
     render(<PaginationPrevNext onSelect={onSelect} />);
 
-    await act(() => user.click(screen.getByText('<')));
+    await act(() => user.click(screen.getByText(PREV)));
     expect(onSelect).toHaveBeenCalledWith('prev');
     expect(onSelect).toHaveBeenCalledTimes(1);
     onSelect.mockClear();
 
-    await act(() => user.click(screen.getByText('>')));
+    await act(() => user.click(screen.getByText(NEXT)));
     expect(onSelect).toHaveBeenCalledWith('next');
+    expect(onSelect).toHaveBeenCalledTimes(1);
+    onSelect.mockClear();
+
+    await act(() => user.click(screen.getByText(FIRST)));
+    expect(onSelect).toHaveBeenCalledWith('first');
+    expect(onSelect).toHaveBeenCalledTimes(1);
+    onSelect.mockClear();
+
+    await act(() => user.click(screen.getByText(LAST)));
+    expect(onSelect).toHaveBeenCalledWith('last');
     expect(onSelect).toHaveBeenCalledTimes(1);
   });
 
@@ -336,10 +353,10 @@ describe('PaginationPrevNext component', () => {
 
     render(<PaginationPrevNext hasPrev={false} onSelect={onSelect} />);
 
-    await act(() => user.click(screen.getByText('<')));
+    await act(() => user.click(screen.getByText(PREV)));
     expect(onSelect).not.toHaveBeenCalled();
 
-    await act(() => user.click(screen.getByText('>')));
+    await act(() => user.click(screen.getByText(NEXT)));
     expect(onSelect).toHaveBeenCalledWith('next');
     expect(onSelect).toHaveBeenCalledTimes(1);
     onSelect.mockClear();
@@ -351,12 +368,40 @@ describe('PaginationPrevNext component', () => {
 
     render(<PaginationPrevNext hasNext={false} onSelect={onSelect} />);
 
-    await act(() => user.click(screen.getByText('>')));
+    await act(() => user.click(screen.getByText(NEXT)));
     expect(onSelect).not.toHaveBeenCalled();
     onSelect.mockClear();
 
-    await act(() => user.click(screen.getByText('<')));
+    await act(() => user.click(screen.getByText(PREV)));
     expect(onSelect).toHaveBeenCalledWith('prev');
+    expect(onSelect).toHaveBeenCalledTimes(1);
+  });
+
+  it('should disable first button', async () => {
+    const onSelect = jest.fn();
+    const user = userEvent.setup();
+
+    render(<PaginationPrevNext hasPrev={false} onSelect={onSelect} />);
+
+    await act(() => user.click(screen.getByText(FIRST)));
+    expect(onSelect).not.toHaveBeenCalled();
+
+    await act(() => user.click(screen.getByText(LAST)));
+    expect(onSelect).toHaveBeenCalledWith('last');
+    expect(onSelect).toHaveBeenCalledTimes(1);
+  });
+
+  it('should disable last button', async () => {
+    const onSelect = jest.fn();
+    const user = userEvent.setup();
+
+    render(<PaginationPrevNext hasNext={false} onSelect={onSelect} />);
+
+    await act(() => user.click(screen.getByText(LAST)));
+    expect(onSelect).not.toHaveBeenCalled();
+
+    await act(() => user.click(screen.getByText(FIRST)));
+    expect(onSelect).toHaveBeenCalledWith('first');
     expect(onSelect).toHaveBeenCalledTimes(1);
   });
 });
