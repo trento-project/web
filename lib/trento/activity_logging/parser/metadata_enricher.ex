@@ -5,11 +5,6 @@ defmodule Trento.ActivityLog.Logger.Parser.MetadataEnricher do
 
   alias Trento.ActivityLog.ActivityCatalog
 
-  alias Trento.Clusters.Projections.ClusterReadModel
-  alias Trento.Databases.Projections.DatabaseReadModel
-  alias Trento.Hosts.Projections.HostReadModel
-  alias Trento.SapSystems.Projections.SapSystemReadModel
-
   alias Trento.{Clusters, Databases, Hosts, SapSystems}
 
   @spec enrich(activity :: ActivityCatalog.activity_type(), metadata :: map()) ::
@@ -37,7 +32,7 @@ defmodule Trento.ActivityLog.Logger.Parser.MetadataEnricher do
   defp maybe_enrich_with_hostname({activity, metadata}) do
     enriched_metadata =
       with {:ok, host_id} <- detect_enrichment(:host, {activity, metadata}),
-           {:ok, %HostReadModel{hostname: hostname}} <- Hosts.by_id(host_id) do
+           {:ok, %{hostname: hostname}} <- Hosts.by_id(host_id) do
         Map.put(metadata, :hostname, hostname)
       else
         _ -> metadata
@@ -49,7 +44,7 @@ defmodule Trento.ActivityLog.Logger.Parser.MetadataEnricher do
   defp maybe_enrich_with_cluster_name({activity, metadata}) do
     enriched_metadata =
       with {:ok, cluster_id} <- detect_enrichment(:cluster, {activity, metadata}),
-           {:ok, %ClusterReadModel{name: cluster_name}} <- Clusters.by_id(cluster_id) do
+           {:ok, %{name: cluster_name}} <- Clusters.by_id(cluster_id) do
         Map.put(metadata, :name, cluster_name)
       else
         _ -> metadata
@@ -61,7 +56,7 @@ defmodule Trento.ActivityLog.Logger.Parser.MetadataEnricher do
   defp maybe_enrich_with_database_sid({activity, metadata}) do
     enriched_metadata =
       with {:ok, database_id} <- detect_enrichment(:database, {activity, metadata}),
-           {:ok, %DatabaseReadModel{sid: sid}} <- Databases.by_id(database_id) do
+           {:ok, %{sid: sid}} <- Databases.by_id(database_id) do
         Map.put(metadata, :sid, sid)
       else
         _ -> metadata
@@ -73,7 +68,7 @@ defmodule Trento.ActivityLog.Logger.Parser.MetadataEnricher do
   defp maybe_enrich_with_sap_system_sid({activity, metadata}) do
     enriched_metadata =
       with {:ok, sap_system_id} <- detect_enrichment(:sap_system, {activity, metadata}),
-           {:ok, %SapSystemReadModel{sid: sid}} <- SapSystems.by_id(sap_system_id) do
+           {:ok, %{sid: sid}} <- SapSystems.by_id(sap_system_id) do
         Map.put(metadata, :sid, sid)
       else
         _ -> metadata
