@@ -94,7 +94,7 @@ defmodule Trento.Support.EventTest do
     end
 
     test "a non-superseded event is not marked as legacy" do
-      refute function_exported?(TestEvent, :legacy?, 0)
+      refute TestEvent.legacy?()
     end
   end
 end
