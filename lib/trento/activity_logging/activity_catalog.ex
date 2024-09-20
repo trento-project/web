@@ -107,7 +107,7 @@ defmodule Trento.ActivityLog.ActivityCatalog do
             false
         end)
         |> Enum.map(&Module.concat/1)
-        |> Enum.filter(&(not function_exported?(&1, :legacy, 0)))
+        |> Enum.filter(&(not &1.legacy?()))
         |> Map.new(fn event_module ->
           {event_module,
            {event_module

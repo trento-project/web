@@ -17,6 +17,7 @@ defmodule Trento.Support.Event do
 
       if is_nil(@superseded_by) do
         def supersede(_params), do: __MODULE__
+        def legacy?, do: false
       else
         def supersede(_params), do: @superseded_by.supersede(_params)
         def legacy?, do: true
