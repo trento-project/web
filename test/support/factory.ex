@@ -51,6 +51,7 @@ defmodule Trento.Factory do
 
   alias Trento.Databases.Events.{
     DatabaseDeregistered,
+    DatabaseHealthChanged,
     DatabaseInstanceDeregistered,
     DatabaseInstanceMarkedAbsent,
     DatabaseInstanceRegistered,
@@ -65,14 +66,22 @@ defmodule Trento.Factory do
   alias Trento.SapSystems.Events.{
     ApplicationInstanceDeregistered,
     ApplicationInstanceMarkedAbsent,
+    ApplicationInstanceMoved,
     ApplicationInstanceRegistered,
     SapSystemDeregistered,
+    SapSystemHealthChanged,
     SapSystemRegistered,
+    SapSystemRestored,
     SapSystemTombstoned
   }
 
   alias Trento.Clusters.Events.{
+    ChecksSelected,
+    ClusterChecksHealthChanged,
     ClusterDeregistered,
+    ClusterDetailsUpdated,
+    ClusterDiscoveredHealthChanged,
+    ClusterHealthChanged,
     ClusterRegistered,
     ClusterTombstoned,
     HostAddedToCluster,
@@ -242,6 +251,48 @@ defmodule Trento.Factory do
       details: build(:hana_cluster_details),
       health: Health.passing(),
       type: ClusterType.hana_scale_up()
+    }
+  end
+
+  def cluster_details_updated_event_factory do
+    %ClusterDetailsUpdated{
+      cluster_id: Faker.UUID.v4(),
+      name: Faker.StarWars.character(),
+      type: ClusterType.hana_scale_up(),
+      sid: Faker.StarWars.planet(),
+      additional_sids: [],
+      provider: Enum.random(Provider.values()),
+      resources_number: 8,
+      hosts_number: 2,
+      details: build(:hana_cluster_details)
+    }
+  end
+
+  def cluster_discovered_health_changed_event_factory do
+    %ClusterDiscoveredHealthChanged{
+      cluster_id: Faker.UUID.v4(),
+      discovered_health: Health.passing()
+    }
+  end
+
+  def cluster_health_changed_event_factory do
+    %ClusterHealthChanged{
+      cluster_id: Faker.UUID.v4(),
+      health: Health.passing()
+    }
+  end
+
+  def cluster_checks_selected_event_factory do
+    %ChecksSelected{
+      cluster_id: Faker.UUID.v4(),
+      checks: Enum.map(0..4, fn _ -> Faker.UUID.v4() end)
+    }
+  end
+
+  def cluster_checks_health_changed_event_factory do
+    %ClusterChecksHealthChanged{
+      cluster_id: Faker.UUID.v4(),
+      checks_health: Health.passing()
     }
   end
 
@@ -433,6 +484,13 @@ defmodule Trento.Factory do
     }
   end
 
+  def database_health_changed_event_factory do
+    %DatabaseHealthChanged{
+      database_id: Faker.UUID.v4(),
+      health: Health.passing()
+    }
+  end
+
   def sap_system_registered_event_factory do
     %SapSystemRegistered{
       sap_system_id: Faker.UUID.v4(),
@@ -446,11 +504,37 @@ defmodule Trento.Factory do
     }
   end
 
+  def sap_system_health_changed_event_factory do
+    %SapSystemHealthChanged{
+      sap_system_id: Faker.UUID.v4(),
+      health: Health.passing()
+    }
+  end
+
+  def application_instance_moved_event_factory do
+    %ApplicationInstanceMoved{
+      sap_system_id: Faker.UUID.v4(),
+      instance_number: "00",
+      old_host_id: Faker.UUID.v4(),
+      new_host_id: Faker.UUID.v4()
+    }
+  end
+
   def sap_system_deregistered_event_factory do
     SapSystemDeregistered.new!(%{
       sap_system_id: Faker.UUID.v4(),
       deregistered_at: DateTime.utc_now()
     })
+  end
+
+  def sap_system_restored_event_factory do
+    %SapSystemRestored{
+      sap_system_id: Faker.UUID.v4(),
+      tenant: Faker.Beer.hop(),
+      db_host: Faker.Internet.ip_v4_address(),
+      health: Health.passing(),
+      database_health: Health.passing()
+    }
   end
 
   def rollup_sap_system_command_factory do
