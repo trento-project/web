@@ -27,6 +27,14 @@ defmodule Trento.Clusters do
 
   alias Trento.Repo
 
+  @spec by_id(String.t()) :: {:ok, ClusterReadModel.t()} | {:error, :not_found}
+  def by_id(id) do
+    case Repo.get(ClusterReadModel, id) do
+      %ClusterReadModel{} = cluster -> {:ok, cluster}
+      nil -> {:error, :not_found}
+    end
+  end
+
   @spec select_checks(String.t(), [String.t()]) :: :ok | {:error, any}
   def select_checks(cluster_id, checks) do
     Logger.debug("Selecting checks, cluster: #{cluster_id}")

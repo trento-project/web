@@ -91,6 +91,23 @@ defmodule Trento.HostsTest do
     end
   end
 
+  describe "retrieving a host by identifier" do
+    test "should not return a non existent host" do
+      assert {:error, :not_found} == Hosts.by_id(Faker.UUID.v4())
+    end
+
+    test "should return an existent host, whether it is registered or not" do
+      %{id: registered_host_id} = insert(:host)
+
+      %{id: deregistered_host_id} =
+        insert(:host, deregistered_at: Faker.DateTime.backward(1))
+
+      for host_id <- [registered_host_id, deregistered_host_id] do
+        assert {:ok, %HostReadModel{id: ^host_id}} = Hosts.by_id(host_id)
+      end
+    end
+  end
+
   describe "Check Selection" do
     test "should dispatch command on Check Selection" do
       host_id = Faker.UUID.v4()

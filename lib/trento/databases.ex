@@ -16,6 +16,14 @@ defmodule Trento.Databases do
 
   alias Trento.Repo
 
+  @spec by_id(String.t()) :: {:ok, DatabaseReadModel.t()} | {:error, :not_found}
+  def by_id(id) do
+    case Repo.get(DatabaseReadModel, id) do
+      %DatabaseReadModel{} = database -> {:ok, database}
+      nil -> {:error, :not_found}
+    end
+  end
+
   @spec get_all_databases :: [DatabaseReadModel.t()]
   def get_all_databases do
     DatabaseReadModel
