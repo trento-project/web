@@ -15,7 +15,7 @@ defmodule Trento.ActivityLog.EventParser do
     {:host_checks_health_changed, build(:host_checks_health_changed)},
     {:host_checks_selected, build(:host_checks_selected)},
     {:software_updates_discovery_requested, build(:software_updates_discovery_requested_event)},
-    {:foo_bar, %{some: "event"}}
+    {:foo_bar, TestEvent.new!(%{data: "some event"})}
   ]
 
   @unrecognized_inputs [
@@ -51,7 +51,11 @@ defmodule Trento.ActivityLog.EventParser do
 
     test "should detect metadata for recognized input" do
       for {event_activity, event} <- @recognized_inputs do
-        assert event == EventParser.get_activity_metadata(event_activity, %{event: event})
+        extracted_metadata = EventParser.get_activity_metadata(event_activity, %{event: event})
+
+        trimmed_event = Map.reject(event, fn {k, _} -> k in [:version, :__struct__] end)
+
+        assert Map.equal?(extracted_metadata, trimmed_event)
       end
     end
   end

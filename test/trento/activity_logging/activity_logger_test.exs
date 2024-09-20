@@ -113,19 +113,23 @@ defmodule Trento.ActivityLog.ActivityLoggerTest do
     tagging_extraction_scenarios = [
       %{
         path_resource: "hosts",
-        expected_resource_type: "host"
+        expected_resource_type: "host",
+        expected_resource_name_key: "hostname"
       },
       %{
         path_resource: "clusters",
-        expected_resource_type: "cluster"
+        expected_resource_type: "cluster",
+        expected_resource_name_key: "name"
       },
       %{
         path_resource: "databases",
-        expected_resource_type: "database"
+        expected_resource_type: "database",
+        expected_resource_name_key: "sid"
       },
       %{
         path_resource: "sap_systems",
-        expected_resource_type: "sap_system"
+        expected_resource_type: "sap_system",
+        expected_resource_name_key: "sid"
       }
     ]
 
@@ -136,11 +140,18 @@ defmodule Trento.ActivityLog.ActivityLoggerTest do
         conn: conn,
         user: %{id: user_id, username: username}
       } do
-        %{path_resource: path_resource, expected_resource_type: expected_resource_type} =
-          @scenario
+        %{
+          path_resource: path_resource,
+          expected_resource_type: expected_resource_type,
+          expected_resource_name_key: expected_resource_name_key
+        } = @scenario
 
         resource_id = Faker.UUID.v4()
         tag = Faker.Lorem.word()
+
+        expected_resource_type
+        |> String.to_existing_atom()
+        |> insert(id: resource_id)
 
         conn
         |> with_token(user_id)
@@ -155,7 +166,8 @@ defmodule Trento.ActivityLog.ActivityLoggerTest do
                    metadata: %{
                      "resource_id" => ^resource_id,
                      "resource_type" => ^expected_resource_type,
-                     "added_tag" => ^tag
+                     "added_tag" => ^tag,
+                     ^expected_resource_name_key => _
                    }
                  }
                ] = Trento.Repo.all(ActivityLog)
@@ -169,13 +181,21 @@ defmodule Trento.ActivityLog.ActivityLoggerTest do
         conn: conn,
         user: %{id: user_id, username: username}
       } do
-        %{path_resource: path_resource, expected_resource_type: expected_resource_type} =
+        %{
+          path_resource: path_resource,
+          expected_resource_type: expected_resource_type,
+          expected_resource_name_key: expected_resource_name_key
+        } =
           @scenario
 
         %Tag{
           value: tag,
           resource_id: resource_id
         } = insert(:tag, resource_type: expected_resource_type)
+
+        expected_resource_type
+        |> String.to_existing_atom()
+        |> insert(id: resource_id)
 
         conn
         |> with_token(user_id)
@@ -190,7 +210,8 @@ defmodule Trento.ActivityLog.ActivityLoggerTest do
                    metadata: %{
                      "resource_id" => ^resource_id,
                      "resource_type" => ^expected_resource_type,
-                     "removed_tag" => ^tag
+                     "removed_tag" => ^tag,
+                     ^expected_resource_name_key => _
                    }
                  }
                ] = Trento.Repo.all(ActivityLog)
@@ -298,16 +319,30 @@ defmodule Trento.ActivityLog.ActivityLoggerTest do
       %{
         component_type: "clusters",
         factory_reference: :cluster,
+        factory_options: [id: Faker.UUID.v4(), name: Faker.Lorem.word()],
         expected_activity_type: "cluster_checks_execution_request",
-        expected_metadata_entry: "cluster_id"
+        expected_metadata: &__MODULE__.expected_cluster_checks_execution_metadata/1
       },
       %{
         component_type: "hosts",
         factory_reference: :host,
+        factory_options: [id: Faker.UUID.v4(), hostname: Faker.Lorem.word()],
         expected_activity_type: "host_checks_execution_request",
-        expected_metadata_entry: "host_id"
+        expected_metadata: &__MODULE__.expected_host_checks_execution_metadata/1
       }
     ]
+
+    def expected_host_checks_execution_metadata(%{id: host_id, hostname: hostname}),
+      do: %{
+        "host_id" => host_id,
+        "hostname" => hostname
+      }
+
+    def expected_cluster_checks_execution_metadata(%{id: cluster_id, name: cluster_name}),
+      do: %{
+        "cluster_id" => cluster_id,
+        "name" => cluster_name
+      }
 
     for %{component_type: component_type} = scenario <-
           successful_checks_execution_request_scenarios do
@@ -320,11 +355,12 @@ defmodule Trento.ActivityLog.ActivityLoggerTest do
         %{
           component_type: component_type,
           factory_reference: factory_reference,
+          factory_options: factory_options,
           expected_activity_type: expected_activity_type,
-          expected_metadata_entry: expected_metadata_entry
+          expected_metadata: expected_metadata_fn
         } = @scenario
 
-        %{id: component_id} = insert(factory_reference)
+        %{id: component_id} = inserted_component = insert(factory_reference, factory_options)
 
         conn
         |> with_token(user_id)
@@ -333,9 +369,7 @@ defmodule Trento.ActivityLog.ActivityLoggerTest do
 
         wait_for_tasks_completion()
 
-        expected_metadata = %{
-          expected_metadata_entry => component_id
-        }
+        expected_metadata = expected_metadata_fn.(inserted_component)
 
         assert [
                  %ActivityLog{
@@ -378,6 +412,7 @@ defmodule Trento.ActivityLog.ActivityLoggerTest do
     for {event, expected_activity_type} <- events do
       metadata =
         event
+        |> Map.reject(fn {k, _} -> k in [:version, :__struct__] end)
         |> Jason.encode!()
         |> Jason.decode!()
 
