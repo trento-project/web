@@ -139,6 +139,16 @@ describe('Table component', () => {
       .forEach((tableRow) => expect(tableRow).toHaveClass(pxClass));
   });
 
+  it('should have wrapper div classes with rounded and overflow hidden', () => {
+    const data = tableDataFactory.buildList(10);
+
+    render(<Table config={tableConfig} data={data} />);
+
+    const wrapperDiv = screen.getByRole('table').closest('div');
+
+    expect(wrapperDiv).toHaveClass(/rounded/, 'overflow-hidden');
+  });
+
   describe('filtering', () => {
     it('should filter by the chosen filter option with default filter', async () => {
       const data = tableDataFactory.buildList(10);
