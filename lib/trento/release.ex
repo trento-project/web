@@ -4,6 +4,8 @@ defmodule Trento.Release do
   installed.
   """
 
+  require Logger
+
   alias Mix.Tasks.Phx.Gen.Cert
 
   alias Trento.ActivityLog.Settings, as: ActivityLogSettings
@@ -147,7 +149,7 @@ defmodule Trento.Release do
     saml_dir = System.get_env("SAML_SP_DIR", "/etc/trento/trento-web/saml")
 
     certificates_settings =
-      Trento.Repo.get_by(SSOCertificatesSettings.base_query(), name: @saml_certificate_name)
+      Trento.Repo.one(SSOCertificatesSettings.base_query())
 
     {key_file, cert_file} =
       case certificates_settings do
@@ -176,7 +178,7 @@ defmodule Trento.Release do
     File.write!(Path.join([saml_dir, "cert", "saml_key.pem"]), key_file)
     File.write!(Path.join([saml_dir, "cert", "saml.pem"]), cert_file)
 
-    IO.puts(IO.ANSI.green() <> "Created certificate content:\n\n#{cert_file}")
+    Logger.info(IO.ANSI.green() <> "Created certificate content:\n\n#{cert_file}")
 
     # Create metadata.xml file
     case get_saml_metadata_file(System.get_env()) do
