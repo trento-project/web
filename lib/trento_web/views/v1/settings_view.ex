@@ -52,4 +52,12 @@ defmodule TrentoWeb.V1.SettingsView do
       ca_uploaded_at: ca_uploaded_at
     }
   end
+
+  def render("public_keys.json", %{public_keys: public_keys}) do
+    render_many(public_keys, __MODULE__, "public_key.json", as: :public_key)
+  end
+
+  def render("public_key.json", %{public_key: %{name: name, certificate_file: cert_file}}) do
+    %{name: name, content: cert_file}
+  end
 end

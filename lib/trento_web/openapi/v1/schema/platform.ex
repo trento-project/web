@@ -248,4 +248,25 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
       struct?: false
     )
   end
+
+  defmodule PublicKeys do
+    @moduledoc false
+
+    OpenApiSpex.schema(
+      %{
+        title: "PublicKeys",
+        description: "Uploaded public keys",
+        type: :array,
+        items: %Schema{
+          title: "PublicKey",
+          type: :object,
+          properties: %{
+            name: %Schema{type: :string, description: "Name"},
+            content: %Schema{type: :string, description: "Public key content"}
+          }
+        }
+      },
+      struct?: false
+    )
+  end
 end

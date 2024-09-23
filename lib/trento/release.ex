@@ -4,10 +4,17 @@ defmodule Trento.Release do
   installed.
   """
 
+  require Logger
+
+  alias Mix.Tasks.Phx.Gen.Cert
+
   alias Trento.ActivityLog.Settings, as: ActivityLogSettings
   alias Trento.Settings.ApiKeySettings
+  alias Trento.Settings.SSOCertificatesSettings
 
   @app :trento
+
+  @saml_certificate_name "Trento SAML SP"
 
   def init do
     migrate()
@@ -16,6 +23,7 @@ defmodule Trento.Release do
     init_admin_user()
     init_default_api_key()
     init_default_activity_log_retention_time()
+    maybe_init_saml(System.get_env("ENABLE_SAML", "false") == "true")
   end
 
   def migrate do
@@ -123,11 +131,108 @@ defmodule Trento.Release do
     )
   end
 
+  def maybe_init_saml(false), do: :ok
+
+  def maybe_init_saml(true) do
+    load_app()
+    Enum.each([:postgrex, :ecto, :httpoison], &Application.ensure_all_started/1)
+    Trento.Repo.start_link()
+    Trento.Vault.start_link()
+
+    trento_origin =
+      System.get_env("TRENTO_WEB_ORIGIN") ||
+        raise """
+        environment variable TRENTO_WEB_ORIGIN is missing.
+        For example: yourdomain.example.com
+        """
+
+    saml_dir = System.get_env("SAML_SP_DIR", "/etc/trento/trento-web/saml")
+
+    certificates_settings =
+      Trento.Repo.one(SSOCertificatesSettings.base_query())
+
+    {key_file, cert_file} =
+      case certificates_settings do
+        nil ->
+          {key, cert} =
+            create_certificates_content(
+              @saml_certificate_name,
+              [trento_origin]
+            )
+
+          %SSOCertificatesSettings{}
+          |> SSOCertificatesSettings.changeset(%{
+            name: @saml_certificate_name,
+            key_file: key,
+            certificate_file: cert
+          })
+          |> Trento.Repo.insert!()
+
+          {key, cert}
+
+        %SSOCertificatesSettings{key_file: key, certificate_file: cert} ->
+          {key, cert}
+      end
+
+    File.mkdir_p!(Path.join([saml_dir, "cert"]))
+    File.write!(Path.join([saml_dir, "cert", "saml_key.pem"]), key_file)
+    File.write!(Path.join([saml_dir, "cert", "saml.pem"]), cert_file)
+
+    Logger.info(IO.ANSI.green() <> "Created certificate content:\n\n#{cert_file}")
+
+    # Create metadata.xml file
+    case get_saml_metadata_file(System.get_env()) do
+      {:ok, content} ->
+        File.write!(Path.join([saml_dir, "metadata.xml"]), content)
+
+      {:error, :request_failure} ->
+        raise "Error querying the provided SAML_METADATA_URL endpoint"
+
+      {:error, :metadata_is_missing} ->
+        raise "One of SAML_METADATA_URL or SAML_METADATA_CONTENT must be provided"
+    end
+
+    :ok
+  end
+
   defp repos do
     Application.fetch_env!(@app, :ecto_repos)
   end
 
   defp load_app do
     Application.load(@app)
+  end
+
+  defp create_certificates_content(name, hostnames) do
+    {certificate, private_key} = Cert.certificate_and_key(2048, name, hostnames)
+
+    keyfile_content =
+      :public_key.pem_encode([:public_key.pem_entry_encode(:RSAPrivateKey, private_key)])
+
+    certfile_content = :public_key.pem_encode([{:Certificate, certificate, :not_encrypted}])
+
+    {keyfile_content, certfile_content}
+  end
+
+  defp get_saml_metadata_file(%{"SAML_METADATA_URL" => metadata_url}) when metadata_url != "" do
+    case HTTPoison.get(metadata_url) do
+      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
+        {:ok, body}
+
+      {:ok, _} ->
+        {:error, :request_failure}
+
+      {:error, _} ->
+        {:error, :request_failure}
+    end
+  end
+
+  defp get_saml_metadata_file(%{"SAML_METADATA_CONTENT" => metadata_content})
+       when metadata_content != "" do
+    {:ok, metadata_content}
+  end
+
+  defp get_saml_metadata_file(_) do
+    {:error, :metadata_is_missing}
   end
 end

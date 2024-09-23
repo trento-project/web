@@ -637,6 +637,27 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
     end
   end
 
+  describe "SSOCertificatesSettings" do
+    setup do
+      %{api_spec: ApiSpec.spec()}
+    end
+
+    test "should return uploaded certificates public content in the public_keys route", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      %{name: name, certificate_file: cert} = insert(:sso_certificates_settings)
+
+      resp =
+        conn
+        |> get("/api/public_keys")
+        |> json_response(200)
+        |> assert_schema("PublicKeys", api_spec)
+
+      assert [%{name: name, content: cert}] == resp
+    end
+  end
+
   describe "forbidden response" do
     test "should return forbidden if the user does not have the permission to update the api key",
          %{conn: conn, api_spec: api_spec} do

@@ -13,6 +13,7 @@ defmodule Trento.Settings do
   alias Trento.Settings.{
     ApiKeySettings,
     InstallationSettings,
+    SSOCertificatesSettings,
     SuseManagerSettings
   }
 
@@ -142,6 +143,13 @@ defmodule Trento.Settings do
     SoftwareUpdatesDiscovery.clear_software_updates_discoveries()
 
     :ok
+  end
+
+  # Certificates settings
+
+  @spec get_sso_certificates() :: [SSOCertificatesSettings.t()]
+  def get_sso_certificates do
+    Repo.one(SSOCertificatesSettings.base_query())
   end
 
   defp ensure_no_suse_manager_settings_configured do

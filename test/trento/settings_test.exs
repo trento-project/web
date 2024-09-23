@@ -626,4 +626,12 @@ defmodule Trento.SettingsTest do
       end)
     end
   end
+
+  describe "sso_certificates_settings" do
+    test "should return SSO certificates" do
+      certificates = insert(:sso_certificates_settings)
+
+      assert certificates == Settings.get_sso_certificates()
+    end
+  end
 end

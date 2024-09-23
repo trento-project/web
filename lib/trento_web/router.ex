@@ -85,6 +85,11 @@ defmodule TrentoWeb.Router do
     get "/readyz", HealthController, :ready
   end
 
+  scope "/api", TrentoWeb.V1 do
+    pipe_through [:api, :api_v1]
+    get "/public_keys", SettingsController, :get_public_keys
+  end
+
   scope "/api" do
     pipe_through [:api, :protected_api]
 
