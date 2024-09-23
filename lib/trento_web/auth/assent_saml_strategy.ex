@@ -18,7 +18,23 @@ defmodule TrentoWeb.Auth.AssentSamlStrategy do
   end
 
   def callback(_config, %{attributes: attributes}) do
-    case normalize(attributes) do
+    %{
+      username_field: username_field,
+      email_field: email_field,
+      first_name_field: first_name_field,
+      last_name_field: last_name_field
+    } = user_profile_attributes()
+
+    expected_attributes =
+      Map.new(attributes, fn
+        {^username_field, username} -> {:username, username}
+        {^email_field, email} -> {:email, email}
+        {^first_name_field, first_name} -> {:first_name, first_name}
+        {^last_name_field, last_name} -> {:last_name, last_name}
+        other -> other
+      end)
+
+    case normalize(expected_attributes) do
       {:ok, user} ->
         {:ok, %{user: user, token: %{}}}
 
@@ -28,10 +44,10 @@ defmodule TrentoWeb.Auth.AssentSamlStrategy do
   end
 
   defp normalize(%{
-         "username" => username,
-         "email" => email,
-         "firstName" => first_name,
-         "lastName" => last_name
+         username: username,
+         email: email,
+         first_name: first_name,
+         last_name: last_name
        }) do
     {:ok,
      %{
@@ -46,4 +62,7 @@ defmodule TrentoWeb.Auth.AssentSamlStrategy do
   defp normalize(%{}) do
     {:error, :user_attributes_missing}
   end
+
+  defp user_profile_attributes,
+    do: Application.fetch_env!(:trento, :saml)[:user_profile_attributes]
 end
