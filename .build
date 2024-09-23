@@ -359,6 +359,7 @@ Trento.Services.HealthService.html
 Trento.Settings.ApiKeySettings.html
 Trento.Settings.InstallationSettings.html
 Trento.Settings.Policy.html
+Trento.Settings.SSOCertificatesSettings.html
 Trento.Settings.SuseManagerSettings.html
 Trento.Settings.html
 Trento.SoftwareUpdates.Discovery.DiscoveryResult.html
@@ -491,8 +492,8 @@ dist/lato-latin-ext-300-normal-VPGGJKJL.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-77E6D46D.js
-dist/sidebar_items-93900C9A.js
+dist/search_data-0DDE5785.js
+dist/sidebar_items-F656A713.js
 environment_variables.html
 hack_on_the_trento.html
 index.html
