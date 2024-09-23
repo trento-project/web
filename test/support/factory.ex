@@ -119,11 +119,11 @@ defmodule Trento.Factory do
     DiscoveryEvent
   }
 
-  alias Trento.Settings.SuseManagerSettings
-
   alias Trento.Settings.{
     ApiKeySettings,
-    InstallationSettings
+    InstallationSettings,
+    SSOCertificatesSettings,
+    SuseManagerSettings
   }
 
   alias Trento.ActivityLog.ActivityLog, as: ActivityLogEntry
@@ -880,6 +880,15 @@ defmodule Trento.Factory do
       type: :installation_settings,
       installation_id: Faker.UUID.v4(),
       eula_accepted: true
+    }
+  end
+
+  def sso_certificates_settings_factory do
+    %SSOCertificatesSettings{
+      type: :sso_certificates_settings,
+      name: Faker.StarWars.planet(),
+      certificate_file: Faker.Lorem.paragraph(),
+      key_file: Faker.Lorem.paragraph()
     }
   end
 
