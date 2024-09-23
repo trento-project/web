@@ -252,7 +252,7 @@ if config_env() in [:prod, :demo] do
   end
 
   if enable_saml do
-    certificates_dir = System.get_env("SAML_SP_DIR", "/etc/trento/trento-web/saml")
+    saml_dir = System.get_env("SAML_SP_DIR", "/etc/trento/trento-web/saml")
 
     config :trento, :saml,
       enabled: true,
@@ -276,8 +276,8 @@ if config_env() in [:prod, :demo] do
             System.get_env("SAML_SP_ID") ||
               raise("environment variable SAML_SP_ID is missing"),
           entity_id: System.get_env("SAML_SP_ENTITY_ID", ""),
-          certfile: Path.join([certificates_dir, "cert", "saml.pem"]),
-          keyfile: Path.join([certificates_dir, "cert", "saml_key.pem"]),
+          certfile: Path.join([saml_dir, "cert", "saml.pem"]),
+          keyfile: Path.join([saml_dir, "cert", "saml_key.pem"]),
           contact_name: System.get_env("SAML_SP_CONTACT_NAME", "Trento SP Admin"),
           contact_email: System.get_env("SAML_SP_CONTACT_EMAIL", "admin@trento.suse.com"),
           org_name: System.get_env("SAML_SP_ORG_NAME", "Trento SP"),
@@ -290,7 +290,7 @@ if config_env() in [:prod, :demo] do
           id: System.get_env("SAML_IDP_ID"),
           sp_id: System.get_env("SAML_SP_ID"),
           base_url: "https://#{System.get_env("TRENTO_WEB_ORIGIN")}/sso",
-          metadata_file: Path.join([certificates_dir, "metadata.xml"]),
+          metadata_file: Path.join([saml_dir, "metadata.xml"]),
           sign_requests: System.get_env("SAML_SIGN_REQUESTS", "true") == "true",
           sign_metadata: System.get_env("SAML_SIGN_METADATA", "true") == "true",
           signed_assertion_in_resp: System.get_env("SAML_SIGNED_ASSERTION", "true") == "true",
