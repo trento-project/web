@@ -259,8 +259,8 @@ defmodule TrentoWeb.V1.SettingsController do
 
   @spec get_public_keys(Plug.Conn.t(), any) :: Plug.Conn.t()
   def get_public_keys(conn, _) do
-    public_keys = Settings.get_public_keys()
-    render(conn, "public_keys.json", %{public_keys: public_keys})
+    certificates = Settings.get_sso_certificates()
+    render(conn, "public_keys.json", %{public_keys: [certificates]})
   end
 
   def get_policy_resource(conn) do

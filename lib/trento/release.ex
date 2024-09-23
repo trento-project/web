@@ -8,7 +8,7 @@ defmodule Trento.Release do
 
   alias Trento.ActivityLog.Settings, as: ActivityLogSettings
   alias Trento.Settings.ApiKeySettings
-  alias Trento.Settings.CertificatesSettings
+  alias Trento.Settings.SSOCertificatesSettings
 
   @app :trento
 
@@ -147,7 +147,7 @@ defmodule Trento.Release do
     saml_dir = System.get_env("SAML_SP_DIR", "/etc/trento/trento-web/saml")
 
     certificates_settings =
-      Trento.Repo.get_by(CertificatesSettings.base_query(), name: @saml_certificate_name)
+      Trento.Repo.get_by(SSOCertificatesSettings.base_query(), name: @saml_certificate_name)
 
     {key_file, cert_file} =
       case certificates_settings do
@@ -158,8 +158,8 @@ defmodule Trento.Release do
               [trento_origin]
             )
 
-          %CertificatesSettings{}
-          |> CertificatesSettings.changeset(%{
+          %SSOCertificatesSettings{}
+          |> SSOCertificatesSettings.changeset(%{
             name: @saml_certificate_name,
             key_file: key,
             certificate_file: cert
@@ -168,7 +168,7 @@ defmodule Trento.Release do
 
           {key, cert}
 
-        %CertificatesSettings{key_file: key, certificate_file: cert} ->
+        %SSOCertificatesSettings{key_file: key, certificate_file: cert} ->
           {key, cert}
       end
 

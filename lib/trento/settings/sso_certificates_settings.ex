@@ -1,10 +1,10 @@
-defmodule Trento.Settings.CertificatesSettings do
+defmodule Trento.Settings.SSOCertificatesSettings do
   @moduledoc """
-  CertificatesSettings is the STI projection containing SSL certificates
+  SSOCertificatesSettings is the STI projection containing SSL certificates
   """
 
   use Ecto.Schema
-  use Trento.Support.Ecto.STI, sti_identifier: :certificates_settings
+  use Trento.Support.Ecto.STI, sti_identifier: :sso_certificates_settings
 
   import Ecto.Changeset
 
@@ -15,9 +15,9 @@ defmodule Trento.Settings.CertificatesSettings do
   @derive {Jason.Encoder, except: [:__meta__, :__struct__]}
   @primary_key {:id, :binary_id, autogenerate: true}
   schema "settings" do
-    field :name, :string, source: :certificates_settings_name
-    field :key_file, EncryptedBinary, source: :certificates_settings_key_file
-    field :certificate_file, EncryptedBinary, source: :certificates_settings_certificate_file
+    field :name, :string, source: :sso_certificates_settings_name
+    field :key_file, EncryptedBinary, source: :sso_certificates_settings_key_file
+    field :certificate_file, EncryptedBinary, source: :sso_certificates_settings_certificate_file
 
     timestamps(type: :utc_datetime_usec)
     sti_fields()
@@ -31,7 +31,6 @@ defmodule Trento.Settings.CertificatesSettings do
     # TODO: move suse_manager_settings.ex certificates function to some support module
     # |> validate_cert_and_key
     |> sti_changes()
-    |> unique_constraint(:name)
     |> unique_constraint(:type)
   end
 end
