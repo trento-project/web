@@ -65,15 +65,50 @@ defmodule Trento.ActivityLog do
   def list_activity_log(params, include_all_log_types? \\ false) do
     parsed_params = parse_params(params)
 
-    case ActivityLog
-         |> maybe_exclude_user_logs(include_all_log_types?)
-         |> Flop.validate_and_run(parsed_params, for: ActivityLog) do
-      {:ok, {activity_log_entries, meta}} ->
-        {:ok, activity_log_entries, meta}
+    ActivityLog
+    |> maybe_exclude_user_logs(include_all_log_types?)
+    |> maybe_search_by_metadata(params)
+    |> case do
+      {:ok, query} ->
+        case Flop.validate_and_run(query, parsed_params, for: ActivityLog) do
+          {:ok, {activity_log_entries, meta}} ->
+            {:ok, activity_log_entries, meta}
+
+          error ->
+            Logger.error("Activity log fetch error: #{inspect(error)}")
+            {:error, :activity_log_fetch_error}
+        end
 
       error ->
         Logger.error("Activity log fetch error: #{inspect(error)}")
         {:error, :activity_log_fetch_error}
+    end
+  end
+
+  defp maybe_search_by_metadata(query, params) do
+    case parse_metadata_query_string(params) do
+      {:ok, validated_query_string} ->
+        {:ok,
+         from(
+           q in query,
+           select: %{
+             id: q.id,
+             metadata: q.metadata,
+             md:
+               fragment(
+                 "jsonb_path_query(?, ?)",
+                 q.metadata,
+                 ^validated_query_string
+               ),
+             type: q.type,
+             actor: q.actor,
+             inserted_at: q.inserted_at,
+             updated_at: q.updated_at
+           }
+         )}
+
+      :error ->
+        {:error, :jsonpath_error}
     end
   end
 
@@ -121,6 +156,21 @@ defmodule Trento.ActivityLog do
       {k, v}, acc ->
         Map.put(acc, k, v)
     end)
+  end
+
+  def parse_metadata_query_string(query_params) do
+    maybe_metadata_search = query_params[:metadata]
+
+    case is_binary(maybe_metadata_search) do
+      true ->
+        case {:ok, :add_parser_here} do
+          {:ok, _} -> {:ok, maybe_metadata_search}
+          _ -> :error
+        end
+
+      _ ->
+        :error
+    end
   end
 
   defp log_error({:error, _} = error, message) do
