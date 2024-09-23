@@ -262,7 +262,7 @@ jobs:
       - name: Compile
         run: mix compile --warnings-as-errors
       - name: "Docker compose dependencies"
-        uses: isbang/compose-action@v2.0.1
+        uses: isbang/compose-action@v2.0.2
         with:
           compose-file: "./docker-compose.yaml"
           down-flags: "--volumes"
@@ -405,7 +405,7 @@ jobs:
       - name: Check Eslint and JS Code Format
         run: cd test/e2e && npm run lint && npm run format:check
       - name: "Docker compose dependencies"
-        uses: isbang/compose-action@v2.0.1
+        uses: isbang/compose-action@v2.0.2
         with:
           compose-file: "./docker-compose.yaml"
           down-flags: "--volumes"
@@ -512,7 +512,7 @@ jobs:
             test/e2e/node_modules
           key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: "Docker compose dependencies"
-        uses: isbang/compose-action@v2.0.1
+        uses: isbang/compose-action@v2.0.2
         with:
           compose-file: "./docker-compose.yaml"
           down-flags: "--volumes"
@@ -659,7 +659,7 @@ jobs:
             test/e2e/node_modules
           key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: "Docker compose dependencies"
-        uses: isbang/compose-action@v2.0.1
+        uses: isbang/compose-action@v2.0.2
         with:
           compose-file: "./docker-compose.yaml"
           compose-flags: "--profile idp"
