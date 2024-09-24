@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import Button from '@common/Button';
+import Input from '@common/Input';
 import Filter from '@common/Filter';
 import DateFilter from '@common/DateFilter';
 
 const renderFilter = (key, { type, ...filterProps }, value, onChange) => {
   switch (type) {
+    case 'text':
+      return <Input value={value} onChange={(e) => onChange(e.target.value)} />;
     case 'select':
       return (
         <Filter key={key} {...filterProps} value={value} onChange={onChange} />

@@ -139,6 +139,11 @@ function ActivityLogPage() {
 
   const filters = [
     {
+      key: 'search',
+      title: 'Search',
+      type: 'text',
+    },
+    {
       key: 'type',
       type: 'select',
       title: 'Type',

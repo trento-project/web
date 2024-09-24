@@ -6,7 +6,6 @@ defmodule Trento.ActivityLog do
   import Ecto.Query
 
   require Logger
-
   alias Trento.ActivityLog.RetentionTime
   require Trento.ActivityLog.RetentionPeriodUnit, as: RetentionPeriodUnit
   alias Trento.ActivityLog.ActivityLog
@@ -65,6 +64,11 @@ defmodule Trento.ActivityLog do
   def list_activity_log(params, include_all_log_types? \\ false) do
     parsed_params = parse_params(params)
 
+    f = Flop.validate!(parsed_params, for: ActivityLog)
+    q = Flop.query(ActivityLog, f, for: ActivityLog)
+    IO.puts("----->SQL:")
+    IO.inspect(Ecto.Adapters.SQL.to_sql(:all, Repo, q))
+
     case ActivityLog
          |> maybe_exclude_user_logs(include_all_log_types?)
          |> Flop.validate_and_run(parsed_params, for: ActivityLog) do
@@ -93,8 +97,8 @@ defmodule Trento.ActivityLog do
              iex> parse_params([{:from_date, "2021-01-31"}, {:to_date, "2021-01-01"}, last: 10])
        %{
           filters: [
-                     %{value: "2021-01-31", op: :<=, field: :inserted_at}, 
-                     %{value: "2021-01-01", op: :>=, field: :inserted_at}], 
+                     %{value: "2021-01-31", op: :<=, field: :inserted_at},
+                     %{value: "2021-01-01", op: :>=, field: :inserted_at}],
           last: 10
        }
        """ && false
@@ -112,6 +116,7 @@ defmodule Trento.ActivityLog do
       {:to_date, v} -> {:filters, %{field: :inserted_at, op: :>=, value: v}}
       {:actor, v} -> {:filters, %{field: :actor, op: :ilike_or, value: v}}
       {:type, v} -> {:filters, %{field: :type, op: :ilike_or, value: v}}
+      {:search, v} -> {:filters, %{field: :search, op: :==, value: v}}
       param -> param
     end)
     |> Enum.reduce(%{filters: []}, fn

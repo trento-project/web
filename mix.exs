@@ -26,7 +26,8 @@ defmodule Trento.MixProject do
         plt_add_apps: [:ex_unit, :mix]
         # check_plt: true,
         # ignore_warnings: "dialyzer_ignore.exs"
-      ]
+      ],
+      consolidate_protocols: false
     ]
   end
 

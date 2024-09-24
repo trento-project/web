@@ -9,7 +9,7 @@ defmodule Trento.ActivityLog.ActivityLog do
 
   @derive {
     Flop.Schema,
-    filterable: [:type, :actor, :inserted_at],
+    filterable: [:type, :actor, :inserted_at, :search],
     sortable: [:type, :actor, :inserted_at],
     max_limit: 100,
     default_limit: 25,
@@ -18,7 +18,16 @@ defmodule Trento.ActivityLog.ActivityLog do
       order_directions: [:desc]
     },
     pagination_types: [:first, :last],
-    default_pagination_type: :first
+    default_pagination_type: :first,
+    adapter_opts: [
+      custom_fields: [
+        search: [
+          filter: {Trento.ActivityLog.ActivityLog.SearchFilter, :search, []},
+          ecto_type: :string,
+          operators: [:==]
+        ]
+      ]
+    ]
   }
 
   @primary_key {:id, :binary_id, autogenerate: true}
