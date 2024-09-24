@@ -1,5 +1,14 @@
 import { has } from 'lodash';
-import { entries, filter, get, map, pipe } from 'lodash/fp';
+import {
+  defaultTo,
+  entries,
+  filter,
+  get,
+  map,
+  pipe,
+  uniq,
+  values,
+} from 'lodash/fp';
 import { isPermitted } from './users';
 
 export const LOGIN_ATTEMPT = 'login_attempt';
@@ -103,6 +112,20 @@ export const DATABASE_ROLL_UP_REQUESTED = 'database_roll_up_requested';
 export const DATABASE_TENANTS_UPDATED = 'database_tenants_updated';
 export const DATABASE_TOMBSTONED = 'database_tombstoned';
 
+export const resourceTypes = ['host', 'cluster', 'database', 'sap_system'];
+
+export const resourceTypesToNameKeyMap = {
+  host: 'hostname',
+  cluster: 'name',
+  database: 'sid',
+  sap_system: 'sid',
+};
+
+export const availableResourceNameKeys = pipe(
+  values,
+  uniq
+)(resourceTypesToNameKeyMap);
+
 const sumaSettingsResourceType = (_entry) => 'SUMA Settings';
 const userResourceType = (_entry) => 'User';
 const clusterResourceType = (_entry) => 'Cluster';
@@ -118,6 +141,17 @@ const taggingResourceType = (entry) =>
     sap_system: sapSystemResourceType(entry),
   })[entry.metadata?.resource_type] ?? 'Unable to determine resource type';
 
+export const resourceNameFromMetadata = (resourceType, metadata) =>
+  pipe(
+    get(resourceType),
+    defaultTo('unrecognized resource')
+  )({
+    host: metadata?.hostname,
+    cluster: metadata?.name,
+    database: metadata?.sid,
+    sap_system: metadata?.sid,
+  });
+
 const userManagement = ['all:all', 'all:users'];
 
 export const ACTIVITY_TYPES_CONFIG = {
@@ -131,13 +165,13 @@ export const ACTIVITY_TYPES_CONFIG = {
   [RESOURCE_TAGGING]: {
     label: 'Tag Added',
     message: ({ metadata }) =>
-      `Tag "${metadata.added_tag}" added to "${metadata.resource_id}"`,
+      `Tag "${metadata.added_tag}" added to ${taggingResourceType({ metadata })} "${resourceNameFromMetadata(metadata?.resource_type, metadata)}"`,
     resource: taggingResourceType,
   },
   [RESOURCE_UNTAGGING]: {
     label: 'Tag Removed',
     message: ({ metadata }) =>
-      `Tag "${metadata.removed_tag}" removed from "${metadata.resource_id}"`,
+      `Tag "${metadata.removed_tag}" removed from ${taggingResourceType({ metadata })} "${resourceNameFromMetadata(metadata?.resource_type, metadata)}"`,
     resource: taggingResourceType,
   },
   [API_KEY_GENERATION]: {
