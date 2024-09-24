@@ -1,36 +1,26 @@
-name:  Pull request environment cleanup
+name: Pull request environment cleanup
 
 on:
-  pull_request:
-    types:
-      - closed
+  delete:
+  workflow_dispatch:
+  repository_dispatch:
+    types: [start-ci, deploy-demo]
 
 env:
   MANTAINERS: "[\"cdimonaco\", \"dottorblaster\", \"nelsonkopliku\", \"arbulu89\", \"jagabomb\", \"emaksy\", \"gagandeepb\", \"balanza\", \"janvhs\"]"
   PR_ENV_LABEL: env
-  PR_NUMBER: "${{ github.event.pull_request.number }}"
+  PR_NUMBER: "${{ github.ref_name}}"
 
 jobs:
-  check_env_creation_privilege:
-    name: Check if the environment deletion criteria are met, store in the job output
-    runs-on: ubuntu-20.04
-    outputs:
-      create_env: ${{ steps.check.outputs.create_env }}
-    steps:
-      - id: check
-        run: echo "create_env=${{ contains(github.event.pull_request.labels.*.name, env.PR_ENV_LABEL) }}" >> "$GITHUB_OUTPUT"
-
   delete-pr-image:
-    needs: check_env_creation_privilege
     name: Build and push pull request container image
     runs-on: ubuntu-20.04
-    if: needs.check_env_creation_privilege.outputs.create_env == 'true'
     permissions:
       contents: read
       packages: write
     env:
       REGISTRY: ghcr.io
-      IMAGE_TAG: ${{ github.event.pull_request.number }}-env
+      IMAGE_TAG: ${{ github.ref_name }}-env
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.12.1
