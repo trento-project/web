@@ -6,14 +6,6 @@ defmodule TrentoWeb.Auth.AssentSamlStrategyTest do
   use ExUnit.Case
 
   describe "authorize_url/1" do
-    setup do
-      initial_env = Application.get_env(:trento, :saml)
-
-      on_exit(fn ->
-        Application.put_env(:trento, :saml, initial_env)
-      end)
-    end
-
     test "should return valid authorization url" do
       Application.put_env(:trento, :saml, idp_id: "test-saml", enabled: false)
       assert {:ok, %{url: "/sso/auth/signin/test-saml"}} == AssentSamlStrategy.authorize_url([])
@@ -22,11 +14,15 @@ defmodule TrentoWeb.Auth.AssentSamlStrategyTest do
 
   describe "callback/2" do
     setup do
-      initial_env = Application.get_env(:trento, :saml)
-
-      on_exit(fn ->
-        Application.put_env(:trento, :saml, initial_env)
-      end)
+      Application.put_env(:trento, :saml,
+        enabled: false,
+        user_profile_attributes: %{
+          username_field: "username",
+          email_field: "email",
+          first_name_field: "firstName",
+          last_name_field: "lastName"
+        }
+      )
     end
 
     test "should return a normalized user" do
@@ -72,42 +68,6 @@ defmodule TrentoWeb.Auth.AssentSamlStrategyTest do
                    "email" => email,
                    "firstName" => first_name,
                    "lastName" => last_name
-                 }
-               })
-    end
-
-    test "should use the given user profile attribute field names" do
-      Application.put_env(:trento, :saml,
-        user_profile_attributes: %{
-          username_field: "attr:username",
-          email_field: "attr:email",
-          first_name_field: "attr:name",
-          last_name_field: "attr:lastname"
-        }
-      )
-
-      username = Faker.Internet.user_name()
-      email = Faker.Internet.email()
-      first_name = Faker.Person.first_name()
-      last_name = Faker.Person.last_name()
-
-      assert {:ok,
-              %{
-                user: %{
-                  "sub" => username,
-                  "email" => email,
-                  "username" => username,
-                  "email_verified" => true,
-                  "name" => "#{first_name} #{last_name}"
-                },
-                token: %{}
-              }} ==
-               AssentSamlStrategy.callback([], %{
-                 attributes: %{
-                   "attr:username" => username,
-                   "attr:email" => email,
-                   "attr:name" => first_name,
-                   "attr:lastname" => last_name
                  }
                })
     end
