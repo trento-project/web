@@ -80,13 +80,15 @@ defmodule Trento.ActivityLog do
         end
 
       error ->
-        Logger.error("Activity log fetch error: #{inspect(error)}")
+        Logger.error("Activity log fetch error, metadata parse failure: #{inspect(error)}")
         {:error, :activity_log_fetch_error}
     end
   end
 
   defp maybe_search_by_metadata(query, params) do
-    case parse_metadata_query_string(params) do
+    maybe_metadata_search_string = params[:metadata]
+
+    case parse_metadata_query_string(maybe_metadata_search_string) do
       {:ok, validated_query_string} ->
         {:ok,
          from(
@@ -107,8 +109,11 @@ defmodule Trento.ActivityLog do
            }
          )}
 
+      :noop ->
+        {:ok, query}
+
       :error ->
-        {:error, :jsonpath_error}
+        {:ok, query}
     end
   end
 
@@ -158,17 +163,19 @@ defmodule Trento.ActivityLog do
     end)
   end
 
-  def parse_metadata_query_string(query_params) do
-    maybe_metadata_search = query_params[:metadata]
-
-    case is_binary(maybe_metadata_search) do
+  def parse_metadata_query_string(maybe_metadata_search) do
+    case is_binary(maybe_metadata_search) && maybe_metadata_search != "" do
       true ->
         case {:ok, :add_parser_here} do
           {:ok, _} -> {:ok, maybe_metadata_search}
           _ -> :error
         end
 
-      _ ->
+      false when is_nil(maybe_metadata_search) ->
+        :noop
+
+      false ->
+        Logger.error("Not a binary #{inspect(maybe_metadata_search)}")
         :error
     end
   end
