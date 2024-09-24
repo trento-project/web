@@ -16,6 +16,7 @@ import {
   PaginationPrevNext,
   defaultItemsPerPageOptions,
 } from '@common/Pagination';
+import Input from '@common/Input';
 
 import {
   applyItemsPerPage,
@@ -66,6 +67,7 @@ function ActivityLogPage() {
   const [activityLogDetailModalOpen, setActivityLogDetailModalOpen] =
     useState(false);
   const { abilities } = useSelector(getUserProfile);
+  const [metadataSearchString, setMetadataSearchString] = useState('$.** ? (@ == "cluster")');
 
   const filters = [
     {
@@ -128,6 +130,11 @@ function ActivityLogPage() {
       <div className="bg-white rounded-lg shadow">
         <div style={{ padding: '1rem' }} />
         <div className="flex items-center px-4 space-x-4 pb-4">
+          <Input 
+            value={metadataSearchString}
+            onChange={(e) => {searchParams.set('metadata', e.target.value); setMetadataSearchString(e.target.value); }}
+              
+           /> 
           <ComposedFilter
             filters={filters}
             autoApply={false}
