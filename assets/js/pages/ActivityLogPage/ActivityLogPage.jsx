@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { EOS_REFRESH } from 'eos-icons-react';
 
 import { map, pipe } from 'lodash/fp';
 
@@ -9,6 +10,7 @@ import { allowedActivities } from '@lib/model/activityLog';
 import { getActivityLogUsers } from '@state/selectors/activityLog';
 import { getUserProfile } from '@state/selectors/user';
 
+import Button from '@common/Button';
 import PageHeader from '@common/PageHeader';
 import ActivityLogOverview from '@common/ActivityLogOverview';
 import ComposedFilter from '@common/ComposedFilter';
@@ -127,7 +129,7 @@ function ActivityLogPage() {
       <PageHeader className="font-bold">Activity Log</PageHeader>
       <div className="bg-white rounded-lg shadow">
         <div style={{ padding: '1rem' }} />
-        <div className="flex items-center px-4 space-x-4 pb-4">
+        <div className="flex items-center px-4 space-x-2 pb-4">
           <ComposedFilter
             filters={filters}
             autoApply={false}
@@ -139,6 +141,15 @@ function ActivityLogPage() {
               setSearchParams
             )}
           />
+          <Button
+            type="primary-white"
+            className="w-28"
+            onClick={fetchActivityLog}
+            disabled={isLoading}
+          >
+            <EOS_REFRESH className="inline-block fill-jungle-green-500" />{' '}
+            Refresh
+          </Button>
         </div>
         <ActivityLogOverview
           activityLogDetailModalOpen={activityLogDetailModalOpen}

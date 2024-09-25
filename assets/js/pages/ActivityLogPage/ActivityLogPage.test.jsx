@@ -27,6 +27,14 @@ describe('ActivityLogPage', () => {
     expect(screen.getByText('No data available')).toBeVisible();
   });
 
+  it('should render filter actions', async () => {
+    const [StatefulActivityLogPage, _] = withDefaultState(<ActivityLogPage />);
+    await act(() => renderWithRouter(StatefulActivityLogPage));
+    expect(screen.getByText('Apply')).toBeVisible();
+    expect(screen.getByText('Reset')).toBeVisible();
+    expect(screen.getByText('Refresh')).toBeVisible();
+  });
+
   it.each`
     responseStatus | responseBody
     ${200}         | ${{ dataz: [] }}

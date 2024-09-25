@@ -129,6 +129,33 @@ context('Activity Log page', () => {
 
       cy.wait('@data').its('response.statusCode').should('eq', 200);
     });
+
+    it('should refresh content based on currently applied filters', () => {
+      cy.intercept({
+        url: '/api/v1/activity_log?first=20&from_date=2024-08-14T10:21:00.000Z&to_date=2024-08-13T10:21:00.000Z&type[]=login_attempt&type[]=resource_tagging',
+      }).as('initialDataLoad');
+
+      cy.visit(
+        '/activity_log?from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&to_date=custom&to_date=2024-08-13T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging'
+      );
+
+      cy.wait('@initialDataLoad');
+
+      cy.intercept({
+        url: '/api/v1/activity_log?first=20&from_date=2024-08-14T10:21:00.000Z&to_date=2024-08-13T10:21:00.000Z&type[]=login_attempt&type[]=resource_tagging',
+      }).as('refreshedDataLoad');
+      cy.contains('Refresh').click();
+
+      cy.wait('@refreshedDataLoad');
+
+      cy.intercept({
+        url: '/api/v1/activity_log?first=20',
+      }).as('refreshedDataLoadAfterReset');
+
+      cy.contains('Reset').click();
+
+      cy.wait('@refreshedDataLoadAfterReset');
+    });
   });
 
   describe('Pagination', () => {
