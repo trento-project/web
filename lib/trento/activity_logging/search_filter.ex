@@ -4,8 +4,19 @@ defmodule Trento.ActivityLog.ActivityLog.SearchFilter do
   def search(query, %Flop.Filter{value: value, op: op} = _flop_filter, _) do
     conditions =
       case op do
-        :== -> value |> String.split([" "], trim: true) |> Enum.map(&dynamic_expr/1) |> or_list()
-        _ -> false
+        :== ->
+          value |> String.split([" "], trim: true) |> Enum.map(&fixed_fields_query/1) |> or_list()
+
+        :ilike_or ->
+          value
+          |> String.split(["OR", "or", "|", "||"], trim: true)
+          |> Enum.map(fn v ->
+            v |> String.split([" "], trim: true) |> Enum.map(&all_fields_query/1) |> and_list()
+          end)
+          |> or_list()
+
+        _ ->
+          false
       end
 
     where(query, ^conditions)
@@ -19,7 +30,15 @@ defmodule Trento.ActivityLog.ActivityLog.SearchFilter do
     dynamic([r], ^expr or ^or_list(rest))
   end
 
-  defp dynamic_expr(value) do
+  defp and_list([]) do
+    dynamic([r], true)
+  end
+
+  defp and_list([expr | rest]) do
+    dynamic([r], ^expr and ^and_list(rest))
+  end
+
+  defp fixed_fields_query(value) do
     tenant = string_field(:tenant)
     name = string_field(:name)
     hostname = string_field(:hostname)
@@ -87,6 +106,17 @@ defmodule Trento.ActivityLog.ActivityLog.SearchFilter do
         "(? @> ?::jsonb)",
         ^field_expr,
         ^value
+      )
+    )
+  end
+
+  defp all_fields_query(value) when is_binary(value) do
+    dynamic(
+      [r],
+      fragment(
+        "jsonb_path_exists(?, '$.**[*] \\? (@ like_regex ? flag \"i\")')",
+        field(r, :metadata),
+        literal(^value)
       )
     )
   end

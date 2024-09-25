@@ -116,7 +116,7 @@ defmodule Trento.ActivityLog do
       {:to_date, v} -> {:filters, %{field: :inserted_at, op: :>=, value: v}}
       {:actor, v} -> {:filters, %{field: :actor, op: :ilike_or, value: v}}
       {:type, v} -> {:filters, %{field: :type, op: :ilike_or, value: v}}
-      {:search, v} -> {:filters, %{field: :search, op: :==, value: v}}
+      {:search, v} -> {:filters, %{field: :search, op: :ilike_or, value: v}}
       param -> param
     end)
     |> Enum.reduce(%{filters: []}, fn

@@ -24,7 +24,7 @@ defmodule Trento.ActivityLog.ActivityLog do
         search: [
           filter: {Trento.ActivityLog.ActivityLog.SearchFilter, :search, []},
           ecto_type: :string,
-          operators: [:==]
+          operators: [:==, :ilike_or]
         ]
       ]
     ]
