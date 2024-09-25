@@ -185,69 +185,49 @@ defmodule Trento.ActivityLog do
   end
 
   defp do_parse_metadata_query_string(query_string) do
-    Logger.warning(query_string)
-    starting_char = query_string |> String.trim() |> String.first()
+    query_words_list =
+      query_string
+      |> String.trim()
+      |> String.split()
 
-    case starting_char do
-      "$" ->
-        {:ok, query_string}
+    word_handler = fn
+      "AND" ->
+        "&&"
 
-      "|" ->
-        parsed_rest =
-          query_string
-          |> String.trim_leading("|")
-          |> String.split(",")
-          |> Enum.map(&String.trim/1)
+      "OR" ->
+        "||"
 
-        case(length(parsed_rest) > 0) do
-          true ->
-            splice_this =
-              Enum.map(parsed_rest, fn op_p -> "(@ #{op_p})" end) |> Enum.join(" || ")
+      <<"~"::binary, _rest::binary>> = regex ->
+        "(@ like_regex \"#{String.trim_leading(regex, "~")}\")"
 
-            {:ok, "$.** ? (#{splice_this})"}
+      qws ->
+        "(@ == \"#{qws}\")"
+    end
 
-          _ ->
-            {:error, :parse_failed_or}
+    case Enum.any?(query_words_list, fn qws -> qws == "OR" or qws == "AND" end) do
+      true ->
+        {:ok,
+         query_words_list
+         |> Enum.map(word_handler)
+         |> Enum.join(" ")
+         |> (&"$.** ? (#{&1})").()}
+
+      false ->
+        case length(query_words_list) do
+          1 ->
+            {:ok,
+             query_words_list
+             |> Enum.map(word_handler)
+             |> Enum.join("")
+             |> (&"$.** ? #{&1}").()}
+
+          len when len > 1 ->
+            {:ok,
+             query_words_list
+             |> Enum.map(word_handler)
+             |> Enum.join(" || ")
+             |> (&"$.** ? (#{&1})").()}
         end
-
-      "&" ->
-        parsed_rest =
-          query_string
-          |> String.trim_leading("&")
-          |> String.split(",")
-          |> Enum.map(&String.trim/1)
-
-        case(length(parsed_rest) > 0) do
-          true ->
-            splice_this =
-              Enum.map(parsed_rest, fn op_p -> "(@ #{op_p})" end) |> Enum.join(" || ")
-
-            {:ok, "$.** ? (#{splice_this})"}
-
-          _ ->
-            {:error, :parse_failed_and}
-        end
-
-      "=" ->
-        parsed_rest =
-          query_string
-          |> String.trim()
-          |> String.trim_leading("=")
-          |> String.trim()
-
-        {:ok, "$.** ? (@ == #{parsed_rest})"}
-
-      "~" ->
-        parsed_rest =
-          query_string
-          |> String.trim()
-          |> String.trim_leading("~")
-          |> String.trim()
-
-        {:ok, "$.** ? (@ like_regex #{parsed_rest})"} |> IO.inspect()
-
-      _ ->
-        {:error, :parse_failed}
     end
   end
 
