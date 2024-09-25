@@ -16,7 +16,6 @@ import {
   PaginationPrevNext,
   defaultItemsPerPageOptions,
 } from '@common/Pagination';
-import Input from '@common/Input';
 
 import {
   applyItemsPerPage,
@@ -67,9 +66,13 @@ function ActivityLogPage() {
   const [activityLogDetailModalOpen, setActivityLogDetailModalOpen] =
     useState(false);
   const { abilities } = useSelector(getUserProfile);
-  const [metadataSearchString, setMetadataSearchString] = useState('');
 
   const filters = [
+    {
+      key: 'metadata',
+      type: 'search_input',
+      title: 'Metadata',
+    },
     {
       key: 'type',
       type: 'select',
@@ -127,19 +130,9 @@ function ActivityLogPage() {
   return (
     <>
       <PageHeader className="font-bold">Activity Log</PageHeader>
-         <div >
-          <Input 
-            placeholder='Search by Metadata...'
-            value={metadataSearchString}
-            onChange={(e) => {searchParams.set('metadata', e.target.value); setMetadataSearchString(e.target.value); }}
-              
-           /> 
-          </div> 
       <div className="bg-white rounded-lg shadow">
         <div style={{ padding: '1rem' }} />
         <div className="flex items-center px-4 space-x-4 pb-4">
-          
-         
           <ComposedFilter
             filters={filters}
             autoApply={false}
