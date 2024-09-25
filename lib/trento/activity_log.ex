@@ -112,7 +112,7 @@ defmodule Trento.ActivityLog do
       :noop ->
         {:ok, query}
 
-      :error ->
+      _ ->
         {:ok, query}
     end
   end
@@ -166,9 +166,13 @@ defmodule Trento.ActivityLog do
   def parse_metadata_query_string(maybe_metadata_search) do
     case is_binary(maybe_metadata_search) && maybe_metadata_search != "" do
       true ->
-        case {:ok, :add_parser_here} do
-          {:ok, _} -> {:ok, maybe_metadata_search}
-          _ -> :error
+        case do_parse_metadata_query_string(maybe_metadata_search) do
+          {:ok, parsed_string} ->
+            {:ok, parsed_string}
+
+          error ->
+            Logger.warning("Metadata query parse failed #{inspect(error)}")
+            error
         end
 
       false when is_nil(maybe_metadata_search) ->
@@ -177,6 +181,73 @@ defmodule Trento.ActivityLog do
       false ->
         Logger.error("Not a binary #{inspect(maybe_metadata_search)}")
         :error
+    end
+  end
+
+  defp do_parse_metadata_query_string(query_string) do
+    Logger.warning(query_string)
+    starting_char = query_string |> String.trim() |> String.first()
+
+    case starting_char do
+      "$" ->
+        {:ok, query_string}
+
+      "|" ->
+        parsed_rest =
+          query_string
+          |> String.trim_leading("|")
+          |> String.split(",")
+          |> Enum.map(&String.trim/1)
+
+        case(length(parsed_rest) > 0) do
+          true ->
+            splice_this =
+              Enum.map(parsed_rest, fn op_p -> "(@ #{op_p})" end) |> Enum.join(" || ")
+
+            {:ok, "$.** ? (#{splice_this})"}
+
+          _ ->
+            {:error, :parse_failed_or}
+        end
+
+      "&" ->
+        parsed_rest =
+          query_string
+          |> String.trim_leading("&")
+          |> String.split(",")
+          |> Enum.map(&String.trim/1)
+
+        case(length(parsed_rest) > 0) do
+          true ->
+            splice_this =
+              Enum.map(parsed_rest, fn op_p -> "(@ #{op_p})" end) |> Enum.join(" || ")
+
+            {:ok, "$.** ? (#{splice_this})"}
+
+          _ ->
+            {:error, :parse_failed_and}
+        end
+
+      "=" ->
+        parsed_rest =
+          query_string
+          |> String.trim()
+          |> String.trim_leading("=")
+          |> String.trim()
+
+        {:ok, "$.** ? (@ == #{parsed_rest})"}
+
+      "~" ->
+        parsed_rest =
+          query_string
+          |> String.trim()
+          |> String.trim_leading("~")
+          |> String.trim()
+
+        {:ok, "$.** ? (@ like_regex #{parsed_rest})"} |> IO.inspect()
+
+      _ ->
+        {:error, :parse_failed}
     end
   end
 
