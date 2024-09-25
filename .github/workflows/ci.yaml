@@ -668,11 +668,6 @@ jobs:
         run: echo "${{ matrix.config_file_content }}" > config/dev.local.exs
       - name: Mix setup
         run: mix setup
-      - name: Download SAML metadata.xml
-        if: matrix.test == 'saml'
-        run: |
-          mkdir priv/saml
-          wget -O priv/saml/metadata.xml http://localhost:8081/realms/trento/protocol/saml/descriptor
       - name: Run trento detached
         run: mix phx.server &
       - name: Cypress run

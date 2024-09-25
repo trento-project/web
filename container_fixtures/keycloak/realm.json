@@ -39,10 +39,22 @@
       "adminUrl": "http://localhost:4000",
       "baseUrl": "http://localhost:4000",      
       "redirectUris": [
-        "http://localhost:4000/*"
+        "http://localhost:4000/sso/sp/consume/saml"
       ],
       "webOrigins": ["http://localhost:4000"],
       "protocol": "saml",
+      "attributes": {
+        "saml.assertion.signature": "true",
+        "client.secret.creation.time": "1726560417",
+        "x509.subjectdn": "(.*?)(?:$)",
+        "saml.server.signature": "true",
+        "saml.signing.certificate": "MIIDfDCCAmSgAwIBAgIJAMQAbkGPPYiKMA0GCSqGSIb3DQEBCwUAMEMxGjAYBgNVBAoMEVBob2VuaXggRnJhbWV3b3JrMSUwIwYDVQQDDBxTZWxmLXNpZ25lZCB0ZXN0IGNlcnRpZmljYXRlMB4XDTI0MDkxODAwMDAwMFoXDTI1MDkxODAwMDAwMFowQzEaMBgGA1UECgwRUGhvZW5peCBGcmFtZXdvcmsxJTAjBgNVBAMMHFNlbGYtc2lnbmVkIHRlc3QgY2VydGlmaWNhdGUwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDKCcuoW6XwqmboGO6FOgEfZy64uqL6mBarOct+fqPBQWogRJQLndB1qcTLLg6W6I5KTewfsjXDBEZLF9a/S/jXsCR5+zEPhYdeDKZMtpSsz8rwA464q52LPXdY23BH/WxlL27xWQjDvCx0dR1oC8OPg2TGMFcAlSoApUB/SViloPOELilBLvIIJqbsffjqfDwtNJ8V0idmmIlvnYFLxwWlZNAmSMP6TMPGPqEjyN1S/1ugzcR7w4frp4EQAM41hlJ/bkZ4rPzSgoEUpWxcnS0iTbuf1lWAFnhekoPhsbdWL1BrsB/pTTnMhi8yZ1oXlLAQLm3JhvpzeDCqHRlGK51rAgMBAAGjczBxMAwGA1UdEwEB/wQCMAAwDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAdBgNVHQ4EFgQUVJH4k736M5/FMSFXJL/d6poJ/hgwEwYDVR0RBAwwCoIIc3Auc2FtbHkwDQYJKoZIhvcNAQELBQADggEBACu51pfS7FjdX8OfdmglNceNBNaRCW/hoeElcLc7BjxCtz1/G4aJ3+iDK6nZ5R4vU/u3FdxHhB/Q5KiNydtG4yKn6kjA1W3fle4OEHDtrYysVTYzKVkXkxo6rp1owjAcA9jZDmEPuY0PI6EAdg+NNsMBJ0KS0jTpRui1sTaotZV92TxTZj6dwuFK75vEFpOSURBuK0zh5VXTAVauusCjka1UrUiib6y5L+J4yZKrgy/fR9M/2Oz/ywgTrHteg5fPGMyhavoGsiOBWlR6ZCI8d64+hQDU6hsi1L5v+npFZhPBFP0N4tlkvJTFDgqF3MLZgDH9mLWOX+G8qAcewGnjy20=",
+        "saml.signature.algorithm": "RSA_SHA256",
+        "saml.client.signature": "true",
+        "saml_name_id_format": "username",
+        "saml.server.signature.keyinfo.xmlSigKeyInfoKeyNameTransformer": "KEY_ID",
+        "saml_signature_canonicalization_method": "http://www.w3.org/2001/10/xml-exc-c14n#"
+      },
       "protocolMappers": [
         {
           "name": "email",
@@ -124,5 +136,22 @@
         }
       ]
     }
-  ]
+  ],
+  "components": {
+    "org.keycloak.keys.KeyProvider": [
+      {
+        "id": "d463a3db-84f2-417a-84a4-530fb515a666",
+        "name" : "trento",
+        "providerId" : "rsa",
+        "config" : {
+          "privateKey": ["-----BEGIN RSA PRIVATE KEY-----\nMIIEowIBAAKCAQEAygnLqFul8Kpm6BjuhToBH2cuuLqi+pgWqznLfn6jwUFqIESU\nC53QdanEyy4OluiOSk3sH7I1wwRGSxfWv0v417AkefsxD4WHXgymTLaUrM/K8AOO\nuKudiz13WNtwR/1sZS9u8VkIw7wsdHUdaAvDj4NkxjBXAJUqAKVAf0lYpaDzhC4p\nQS7yCCam7H346nw8LTSfFdInZpiJb52BS8cFpWTQJkjD+kzDxj6hI8jdUv9boM3E\ne8OH66eBEADONYZSf25GeKz80oKBFKVsXJ0tIk27n9ZVgBZ4XpKD4bG3Vi9Qa7Af\n6U05zIYvMmdaF5SwEC5tyYb6c3gwqh0ZRiudawIDAQABAoIBAH6rb41pkHt4Sraf\n0wOiX0vSBF/7W+1jZ2sI/EWdnouuuJvsgylZU3ZB70k34hvJSFTbz/v7XmubhXrV\nQmWDe0u3etcjnxnNLRbRNX6JRmOmj+S1RkkQB+Fhsy75vcbU4535BES6/pzBoNmP\nB9XQ8lZLGeaMLjAGVWQ8N1jWooaMaQfknFxciEMuwNGI/f+g/u/P72LvZZiH/J/e\ntjwFeIhtTN6mueLobsr6uAlIyM+jKzSzRYo8fIa9UPHzagYs9ufB8dNq6ZUJw50g\nr/0RvF5mcWiooDNUx2hu+qXdNZZlchGRTZOe14CnUeIDAu6rdy2lfMLzanylKFpD\nktvVHhECgYEA/GEk5L5aif82gfzg/n9z8mVFnpkOIWYQhqosLwNemtTPDkg2PGmp\naCyZJIQyvn6OXU9jYzN3LhcRycrjcIAi74Ko51WzuxLHK6/n78fui3iEzQHB/B15\nboSHUNcIo65k8Dg6Gh3M+/tNNfPMC6hUxDWCNWVrrTPAtPN99EvmFJMCgYEAzO/G\nXtc+6sMx8xQmOU9VB81vkhxdSy2sSHpFY+9nDKF7/8KmFiMTLrhfGI0QimBB5iOF\nBQUSgnHgwBP8Zrn5Tsi0Y+T1Ro8h9mflqM43FiVA4wJ5v9tDy9IdxYmZXGdeQ2w+\nDEsvBxlYtTNWKXjC0PaTDzllc/bOCYhnuXa0cskCgYBrAZlN7zOeLPpkdN7EqS91\nB+FT1Fs8Z/T70+015bzX8wDzckSkqrwsMjSgWfjV8fzUrVNbfTe78AYXxBFY4stt\nN737j8fLurN933B8pw2KTwgnj+Y6yhhxdnmVGgdMtyWPAJgJ+Lav5CYhiQPrsWx3\nYKSblSvpXPcJAfBWg1PDRwKBgFkNQAfqRH7C/yt/b/SrUmmnjXnSNX/7gsejyg9Y\n8lB8w2Mp8/3ek/FTUI9cjPl0Rm54tM6vm5FvZphQlvcUjQ79C9X0odhdTgbCsvsd\nULagzYdXhgwmfVlOHn2+AxQyHrXxjSzOZssQ6okim6g9v3oKC3EsIbe4YWOnEFt5\nB4RxAoGBAInFmy/3cn9uIUhhARTkX3uOycJKxwvVYvCtY/dTiPrVRD7YaCAV5ujM\nZvim9Nv6IOWvC8tIaNnBaDSyMtDPPtAW2ZZMCwdu0QWiapMqz5CJDluoMuMJe10Q\nJTmDAkQ9m1kfxY20s2WwlEy3+i4kdqsESfgLObR2sFUrzwBbOeXO\n-----END RSA PRIVATE KEY-----"],
+          "certificate" : ["-----BEGIN CERTIFICATE-----\nMIIDfDCCAmSgAwIBAgIJAMQAbkGPPYiKMA0GCSqGSIb3DQEBCwUAMEMxGjAYBgNV\nBAoMEVBob2VuaXggRnJhbWV3b3JrMSUwIwYDVQQDDBxTZWxmLXNpZ25lZCB0ZXN0\nIGNlcnRpZmljYXRlMB4XDTI0MDkxODAwMDAwMFoXDTI1MDkxODAwMDAwMFowQzEa\nMBgGA1UECgwRUGhvZW5peCBGcmFtZXdvcmsxJTAjBgNVBAMMHFNlbGYtc2lnbmVk\nIHRlc3QgY2VydGlmaWNhdGUwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIB\nAQDKCcuoW6XwqmboGO6FOgEfZy64uqL6mBarOct+fqPBQWogRJQLndB1qcTLLg6W\n6I5KTewfsjXDBEZLF9a/S/jXsCR5+zEPhYdeDKZMtpSsz8rwA464q52LPXdY23BH\n/WxlL27xWQjDvCx0dR1oC8OPg2TGMFcAlSoApUB/SViloPOELilBLvIIJqbsffjq\nfDwtNJ8V0idmmIlvnYFLxwWlZNAmSMP6TMPGPqEjyN1S/1ugzcR7w4frp4EQAM41\nhlJ/bkZ4rPzSgoEUpWxcnS0iTbuf1lWAFnhekoPhsbdWL1BrsB/pTTnMhi8yZ1oX\nlLAQLm3JhvpzeDCqHRlGK51rAgMBAAGjczBxMAwGA1UdEwEB/wQCMAAwDgYDVR0P\nAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAdBgNVHQ4E\nFgQUVJH4k736M5/FMSFXJL/d6poJ/hgwEwYDVR0RBAwwCoIIc3Auc2FtbHkwDQYJ\nKoZIhvcNAQELBQADggEBACu51pfS7FjdX8OfdmglNceNBNaRCW/hoeElcLc7BjxC\ntz1/G4aJ3+iDK6nZ5R4vU/u3FdxHhB/Q5KiNydtG4yKn6kjA1W3fle4OEHDtrYys\nVTYzKVkXkxo6rp1owjAcA9jZDmEPuY0PI6EAdg+NNsMBJ0KS0jTpRui1sTaotZV9\n2TxTZj6dwuFK75vEFpOSURBuK0zh5VXTAVauusCjka1UrUiib6y5L+J4yZKrgy/f\nR9M/2Oz/ywgTrHteg5fPGMyhavoGsiOBWlR6ZCI8d64+hQDU6hsi1L5v+npFZhPB\nFP0N4tlkvJTFDgqF3MLZgDH9mLWOX+G8qAcewGnjy20=\n-----END CERTIFICATE-----"],
+          "active" : [ "true" ],
+          "priority" : [ "200" ],
+          "enabled" : [ "true" ],
+          "algorithm" : [ "RS256" ]
+        }
+      }
+    ]
+  }
 }
