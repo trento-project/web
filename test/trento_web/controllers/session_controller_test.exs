@@ -638,6 +638,30 @@ defmodule TrentoWeb.SessionControllerTest do
       |> json_response(401)
       |> assert_schema("Unauthorized", api_spec)
     end
+  end
+
+  describe "saml_callback endpoint" do
+    setup %{conn: conn} = context do
+      Samly.State.init(Samly.State.ETS)
+
+      Application.put_env(:trento, :saml,
+        enabled: false,
+        user_profile_attributes: %{
+          username_field: "username",
+          email_field: "email",
+          first_name_field: "firstName",
+          last_name_field: "lastName"
+        }
+      )
+
+      conn =
+        conn
+        |> Plug.Conn.put_private(:plug_session, %{})
+        |> Plug.Conn.put_private(:plug_session_fetch, :done)
+        |> Pow.Plug.put_config(otp_app: :trento)
+
+      Map.put(context, :conn, conn)
+    end
 
     test "should return the credentials when the saml callback flow is completed without errors and the user does not exist on trento",
          %{conn: conn, api_spec: api_spec} do
@@ -649,8 +673,6 @@ defmodule TrentoWeb.SessionControllerTest do
           1_671_715_992
         end
       )
-
-      Samly.State.init(Samly.State.ETS)
 
       username = Faker.Internet.user_name()
 
@@ -710,8 +732,6 @@ defmodule TrentoWeb.SessionControllerTest do
 
     test "should return unauthorized in saml callback flow when user attributes are missing",
          %{conn: conn, api_spec: api_spec} do
-      Samly.State.init(Samly.State.ETS)
-
       not_on_or_after =
         DateTime.utc_now()
         |> DateTime.add(8, :hour)

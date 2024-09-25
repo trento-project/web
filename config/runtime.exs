@@ -259,7 +259,13 @@ if config_env() in [:prod, :demo] do
       callback_url: "/auth/saml_callback",
       idp_id:
         System.get_env("SAML_IDP_ID") ||
-          raise("environment variable SAML_IDP_ID is missing")
+          raise("environment variable SAML_IDP_ID is missing"),
+      user_profile_attributes: %{
+        username_field: System.get_env("SAML_USERNAME_ATTR_NAME", "username"),
+        email_field: System.get_env("SAML_EMAIL_ATTR_NAME", "email"),
+        first_name_field: System.get_env("SAML_FIRSTNAME_ATTR_NAME", "firstName"),
+        last_name_field: System.get_env("SAML_LASTNAME_ATTR_NAME", "lastName")
+      }
 
     config :trento, :pow_assent,
       providers: [

@@ -13,6 +13,18 @@ defmodule TrentoWeb.Auth.AssentSamlStrategyTest do
   end
 
   describe "callback/2" do
+    setup do
+      Application.put_env(:trento, :saml,
+        enabled: false,
+        user_profile_attributes: %{
+          username_field: "username",
+          email_field: "email",
+          first_name_field: "firstName",
+          last_name_field: "lastName"
+        }
+      )
+    end
+
     test "should return a normalized user" do
       username = Faker.Internet.user_name()
       email = Faker.Internet.email()
