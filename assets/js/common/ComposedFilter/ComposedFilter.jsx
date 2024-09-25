@@ -6,9 +6,14 @@ import Input from '@common/Input';
 
 const renderFilter = (key, { type, ...filterProps }, value, onChange) => {
   switch (type) {
-  case 'search_input':
+    case 'search_input':
       return (
-        <Input key={key} {...filterProps} value={value} onChange={(e) => onChange(e.target.value)} />
+        <Input
+          key={key}
+          {...filterProps}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+        />
       );
     case 'select':
       return (
