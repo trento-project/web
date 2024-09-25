@@ -1,5 +1,5 @@
-import { abilityFactory } from '@lib/test-utils/factories/users';
 import { difference } from 'lodash';
+import { abilityFactory } from '@lib/test-utils/factories/users';
 import {
   ACTIVITY_TYPES,
   allowedActivities,
@@ -8,6 +8,9 @@ import {
   USER_CREATION,
   USER_DELETION,
   USER_MODIFICATION,
+  availableResourceNameKeys,
+  resourceNameFromMetadata,
+  resourceTypes,
 } from './activityLog';
 
 const nonUserManagementActivities = difference(ACTIVITY_TYPES, [
@@ -46,4 +49,39 @@ describe('activityLog', () => {
         : expect(relevantActivities).toEqual(nonUserManagementActivities);
     }
   );
+
+  describe('resource name detection', () => {
+    it('should expose available resource name keys', () => {
+      expect(availableResourceNameKeys).toStrictEqual([
+        'hostname',
+        'name',
+        'sid',
+      ]);
+    });
+
+    it.each`
+      resourceType        | metadata                                    | expectedResourceName
+      ${'host'}           | ${{ foo: 'bar', hostname: 'an_hostname' }}  | ${'an_hostname'}
+      ${'cluster'}        | ${{ foo: 'bar', name: 'a_clustername' }}    | ${'a_clustername'}
+      ${'database'}       | ${{ foo: 'bar', sid: 'a_database_sid' }}    | ${'a_database_sid'}
+      ${'sap_system'}     | ${{ foo: 'bar', sid: 'an_sap_system_sid' }} | ${'an_sap_system_sid'}
+      ${'not_a_resource'} | ${{ foo: 'bar', sid: 'sid' }}               | ${'unrecognized resource'}
+    `(
+      'should extract correct resource name from metadata, when possible',
+      ({ resourceType, metadata, expectedResourceName }) => {
+        expect(resourceNameFromMetadata(resourceType, metadata)).toBe(
+          expectedResourceName
+        );
+      }
+    );
+
+    it.each(resourceTypes)(
+      'should gracefully handle missing resource names',
+      (resourceType) => {
+        expect(resourceNameFromMetadata(resourceType, { foo: 'bar' })).toBe(
+          'unrecognized resource'
+        );
+      }
+    );
+  });
 });
