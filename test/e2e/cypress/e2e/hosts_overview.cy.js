@@ -9,7 +9,7 @@ const availableHosts1stPage = availableHosts.slice(0, 10);
 
 context('Hosts Overview', () => {
   before(() => {
-    cy.loadScenario('healthy-27-node-SAP-cluster');
+    // cy.loadScenario('healthy-27-node-SAP-cluster');
     cy.visit('/hosts');
     cy.url().should('include', '/hosts');
   });
@@ -26,11 +26,18 @@ context('Hosts Overview', () => {
     });
 
     it('should have 3 pages', () => {
+      const NEXT = '[aria-label="next-page"]';
+
       cy.get(`[data-testid="pagination"]`).as('pagination');
-      cy.get(`@pagination`).contains(/^1$/).should('exist');
-      cy.get(`@pagination`).contains(/^2$/).should('exist');
-      cy.get(`@pagination`).contains(/^3$/).should('exist');
-      cy.get(`@pagination`).contains(/^4$/).should('not.exist');
+      cy.get(`@pagination`).contains('Showing 1–10 of 27').should('exist');
+
+      cy.get(NEXT).click();
+      cy.get(`@pagination`).contains('Showing 11–20 of 27').should('exist');
+
+      cy.get(NEXT).click();
+      cy.get(`@pagination`).contains('Showing 21–27 of 27').should('exist');
+
+      cy.get(NEXT).should('be.disabled');
     });
 
     it('should show the ip addresses, provider and agent version data for the hosts in the 1st page', () => {

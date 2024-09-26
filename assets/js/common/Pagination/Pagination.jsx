@@ -89,6 +89,7 @@ function Pagination({
         <li>
           <button
             type="button"
+            disabled={!hasPrev}
             aria-label="first-page"
             className={classNames(
               leftBoxClassNames,
@@ -107,6 +108,7 @@ function Pagination({
         <li>
           <button
             type="button"
+            disabled={!hasPrev}
             aria-label="prev-page"
             className={classNames(
               boxClassNames,
@@ -125,6 +127,7 @@ function Pagination({
         <li>
           <button
             type="button"
+            disabled={!hasNext}
             aria-label="next-page"
             className={classNames(
               boxClassNames,
@@ -143,6 +146,7 @@ function Pagination({
         <li>
           <button
             type="button"
+            disabled={!hasNext}
             aria-label="last-page"
             className={classNames(
               rightBoxClassNames,
