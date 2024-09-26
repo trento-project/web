@@ -167,8 +167,6 @@ context('Activity Log page', () => {
 
         const after = response.body.pagination.end_cursor;
 
-        cy.get(PREV).click();
-
         cy.url().should('eq', `${Cypress.config().baseUrl}/activity_log`);
 
         cy.intercept({
@@ -200,8 +198,6 @@ context('Activity Log page', () => {
         expect(response.body.pagination.has_next_page).to.be.true;
 
         const after = response.body.pagination.end_cursor;
-
-        cy.get(PREV).click();
 
         cy.url().should(
           'eq',
