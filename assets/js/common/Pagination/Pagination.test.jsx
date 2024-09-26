@@ -3,17 +3,17 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { noop } from 'lodash';
-import Pagination, { PaginationPrevNext } from '.';
+import Pagination, { PageNumberPagination } from '.';
 
-const NEXT = /^>$/;
-const PREV = /^<$/;
-const FIRST = /^<<$/;
-const LAST = /^>>$/;
+const NEXT = 'next-page';
+const PREV = 'prev-page';
+const FIRST = 'first-page';
+const LAST = 'last-page';
 
-describe('Pagination component', () => {
+describe('PageNumberPagination component', () => {
   it('should render', () => {
     render(
-      <Pagination
+      <PageNumberPagination
         pages={5}
         currentPage={1}
         currentItemsPerPage={10}
@@ -36,7 +36,7 @@ describe('Pagination component', () => {
 
     const onSelect = jest.fn();
     render(
-      <Pagination
+      <PageNumberPagination
         pages={5}
         currentPage={1}
         currentItemsPerPage={10}
@@ -63,7 +63,7 @@ describe('Pagination component', () => {
     const currentItemsPerPage = 10;
     const itemsPerPageOptions = [10, 20, 50];
     render(
-      <Pagination
+      <PageNumberPagination
         pages={5}
         currentPage={1}
         currentItemsPerPage={currentItemsPerPage}
@@ -104,7 +104,7 @@ describe('Pagination component', () => {
     'should always show first, last and current page ($pages, $currentPage)',
     ({ pages, currentPage }) => {
       render(
-        <Pagination
+        <PageNumberPagination
           pages={pages}
           currentPage={currentPage}
           currentItemsPerPage={10}
@@ -137,7 +137,7 @@ describe('Pagination component', () => {
       const onSelect = jest.fn();
 
       render(
-        <Pagination
+        <PageNumberPagination
           pages={pages}
           currentPage={currentPage}
           currentItemsPerPage={10}
@@ -163,7 +163,7 @@ describe('Pagination component', () => {
       const onSelect = jest.fn();
 
       render(
-        <Pagination
+        <PageNumberPagination
           pages={pages}
           currentPage={currentPage}
           currentItemsPerPage={10}
@@ -192,7 +192,7 @@ describe('Pagination component', () => {
       const onSelect = jest.fn();
 
       render(
-        <Pagination
+        <PageNumberPagination
           pages={pages}
           currentPage={currentPage}
           currentItemsPerPage={10}
@@ -218,7 +218,7 @@ describe('Pagination component', () => {
       const onSelect = jest.fn();
 
       render(
-        <Pagination
+        <PageNumberPagination
           pages={pages}
           currentPage={currentPage}
           currentItemsPerPage={10}
@@ -242,7 +242,7 @@ describe('Pagination component', () => {
     function ControlledComponent() {
       const [value, setValue] = useState(initialPage);
       return (
-        <Pagination
+        <PageNumberPagination
           pages={3}
           currentPage={value}
           currentItemsPerPage={10}
@@ -294,7 +294,7 @@ describe('Pagination component', () => {
     'should highlight the current page ($pages, $currentPage)',
     ({ pages, currentPage, selected }) => {
       render(
-        <Pagination
+        <PageNumberPagination
           pages={pages}
           currentPage={currentPage}
           currentItemsPerPage={10}
@@ -311,38 +311,38 @@ describe('Pagination component', () => {
   );
 });
 
-describe('PaginationPrevNext component', () => {
+describe('Pagination component', () => {
   it('should render', () => {
-    render(<PaginationPrevNext hasNext onSelect={noop} />);
+    render(<Pagination hasNext onSelect={noop} />);
 
-    expect(screen.getByText(PREV)).toBeInTheDocument();
-    expect(screen.getByText(NEXT)).toBeInTheDocument();
-    expect(screen.getByText(LAST)).toBeInTheDocument();
-    expect(screen.getByText(FIRST)).toBeInTheDocument();
+    expect(screen.getByLabelText(PREV)).toBeInTheDocument();
+    expect(screen.getByLabelText(NEXT)).toBeInTheDocument();
+    expect(screen.getByLabelText(LAST)).toBeInTheDocument();
+    expect(screen.getByLabelText(FIRST)).toBeInTheDocument();
   });
 
   it('should call onSelect', async () => {
     const onSelect = jest.fn();
     const user = userEvent.setup();
 
-    render(<PaginationPrevNext onSelect={onSelect} />);
+    render(<Pagination onSelect={onSelect} />);
 
-    await act(() => user.click(screen.getByText(PREV)));
+    await act(() => user.click(screen.getByLabelText(PREV)));
     expect(onSelect).toHaveBeenCalledWith('prev');
     expect(onSelect).toHaveBeenCalledTimes(1);
     onSelect.mockClear();
 
-    await act(() => user.click(screen.getByText(NEXT)));
+    await act(() => user.click(screen.getByLabelText(NEXT)));
     expect(onSelect).toHaveBeenCalledWith('next');
     expect(onSelect).toHaveBeenCalledTimes(1);
     onSelect.mockClear();
 
-    await act(() => user.click(screen.getByText(FIRST)));
+    await act(() => user.click(screen.getByLabelText(FIRST)));
     expect(onSelect).toHaveBeenCalledWith('first');
     expect(onSelect).toHaveBeenCalledTimes(1);
     onSelect.mockClear();
 
-    await act(() => user.click(screen.getByText(LAST)));
+    await act(() => user.click(screen.getByLabelText(LAST)));
     expect(onSelect).toHaveBeenCalledWith('last');
     expect(onSelect).toHaveBeenCalledTimes(1);
   });
@@ -351,12 +351,12 @@ describe('PaginationPrevNext component', () => {
     const onSelect = jest.fn();
     const user = userEvent.setup();
 
-    render(<PaginationPrevNext hasPrev={false} onSelect={onSelect} />);
+    render(<Pagination hasPrev={false} onSelect={onSelect} />);
 
-    await act(() => user.click(screen.getByText(PREV)));
+    await act(() => user.click(screen.getByLabelText(PREV)));
     expect(onSelect).not.toHaveBeenCalled();
 
-    await act(() => user.click(screen.getByText(NEXT)));
+    await act(() => user.click(screen.getByLabelText(NEXT)));
     expect(onSelect).toHaveBeenCalledWith('next');
     expect(onSelect).toHaveBeenCalledTimes(1);
     onSelect.mockClear();
@@ -366,13 +366,13 @@ describe('PaginationPrevNext component', () => {
     const onSelect = jest.fn();
     const user = userEvent.setup();
 
-    render(<PaginationPrevNext hasNext={false} onSelect={onSelect} />);
+    render(<Pagination hasNext={false} onSelect={onSelect} />);
 
-    await act(() => user.click(screen.getByText(NEXT)));
+    await act(() => user.click(screen.getByLabelText(NEXT)));
     expect(onSelect).not.toHaveBeenCalled();
     onSelect.mockClear();
 
-    await act(() => user.click(screen.getByText(PREV)));
+    await act(() => user.click(screen.getByLabelText(PREV)));
     expect(onSelect).toHaveBeenCalledWith('prev');
     expect(onSelect).toHaveBeenCalledTimes(1);
   });
@@ -381,12 +381,12 @@ describe('PaginationPrevNext component', () => {
     const onSelect = jest.fn();
     const user = userEvent.setup();
 
-    render(<PaginationPrevNext hasPrev={false} onSelect={onSelect} />);
+    render(<Pagination hasPrev={false} onSelect={onSelect} />);
 
-    await act(() => user.click(screen.getByText(FIRST)));
+    await act(() => user.click(screen.getByLabelText(FIRST)));
     expect(onSelect).not.toHaveBeenCalled();
 
-    await act(() => user.click(screen.getByText(LAST)));
+    await act(() => user.click(screen.getByLabelText(LAST)));
     expect(onSelect).toHaveBeenCalledWith('last');
     expect(onSelect).toHaveBeenCalledTimes(1);
   });
@@ -395,12 +395,12 @@ describe('PaginationPrevNext component', () => {
     const onSelect = jest.fn();
     const user = userEvent.setup();
 
-    render(<PaginationPrevNext hasNext={false} onSelect={onSelect} />);
+    render(<Pagination hasNext={false} onSelect={onSelect} />);
 
-    await act(() => user.click(screen.getByText(LAST)));
+    await act(() => user.click(screen.getByLabelText(LAST)));
     expect(onSelect).not.toHaveBeenCalled();
 
-    await act(() => user.click(screen.getByText(FIRST)));
+    await act(() => user.click(screen.getByLabelText(FIRST)));
     expect(onSelect).toHaveBeenCalledWith('first');
     expect(onSelect).toHaveBeenCalledTimes(1);
   });

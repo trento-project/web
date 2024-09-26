@@ -1,8 +1,15 @@
 import Pagination, {
-  PaginationPrevNext,
+  PageNumberPagination,
   defaultItemsPerPageOptions,
   defaultItemsPerPage,
 } from './Pagination';
 
+import PageStats from './PageStats';
+
 export default Pagination;
-export { PaginationPrevNext, defaultItemsPerPageOptions, defaultItemsPerPage };
+export {
+  PageNumberPagination,
+  PageStats,
+  defaultItemsPerPageOptions,
+  defaultItemsPerPage,
+};
