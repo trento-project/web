@@ -22,6 +22,11 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ChecksCatalog do
           remediation: %Schema{type: :string, description: "Check Remediation"},
           implementation: %Schema{type: :string, description: "Check Implementation"},
           labels: %Schema{type: :string, description: "Check Labels"},
+          premium: %Schema{
+            type: :boolean,
+            description: "Indicates whether the current check is a Premium check",
+            deprecated: true
+          },
           group: %Schema{
             type: :string,
             description: "Check Group, available when requiring a Flat Catalog"

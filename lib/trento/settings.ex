@@ -3,11 +3,8 @@ defmodule Trento.Settings do
   Provides a set of functions of settings related usecases.
   """
 
-  import Ecto.Query
-
   alias Trento.Repo
 
-  alias Trento.Hosts.Projections.SlesSubscriptionReadModel
   alias Trento.SoftwareUpdates.Discovery, as: SoftwareUpdatesDiscovery
 
   alias Trento.Settings.{
@@ -34,8 +31,6 @@ defmodule Trento.Settings do
           password: String.t() | nil,
           ca_cert: String.t() | nil
         }
-
-  @sles_identifier "SLES_SAP"
 
   @spec get_installation_id :: String.t()
   def get_installation_id do

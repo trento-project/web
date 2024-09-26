@@ -7,7 +7,8 @@ defmodule TrentoWeb.V1.SettingsView do
         }
       }) do
     %{
-      eula_accepted: eula_accepted
+      eula_accepted: eula_accepted,
+      premium_subscription: false
     }
   end
 
