@@ -5,7 +5,7 @@ const LAST = /^>>$/;
 
 context('Activity Log page', () => {
   before(() => {
-    // cy.loadScenario('healthy-27-node-SAP-cluster');
+    cy.loadScenario('healthy-27-node-SAP-cluster');
   });
 
   describe('Navigation', () => {
