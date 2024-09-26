@@ -1,14 +1,13 @@
 import React from 'react';
 
-import { noop } from 'lodash';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
-import Pagination from '.';
+import { PageStats } from '.';
 
 describe('Page stats', () => {
   it('should not render when there are no items', () => {
-    render(<Pagination itemsTotal={0} />);
+    render(<PageStats itemsTotal={0} />);
 
     expect(
       screen.queryByText('Showing', { exact: false })
@@ -17,30 +16,22 @@ describe('Page stats', () => {
 
   it('should render', () => {
     render(
-      <Pagination
-        pages={2}
-        currentPage={1}
-        currentItemsPerPage={10}
-        itemsPerPageOptions={[10, 20, 50]}
-        onSelect={noop}
-        onChangeItemsPerPage={noop}
+      <PageStats
+        selectedPage={1}
         itemsPresent={10}
         itemsTotal={13}
+        currentItemsPerPage={10}
       />
     );
 
     expect(screen.getByText('Showing 1–10 of 13')).toBeInTheDocument();
 
     render(
-      <Pagination
-        pages={2}
-        currentPage={2}
-        currentItemsPerPage={10}
-        itemsPerPageOptions={[10, 20, 50]}
-        onSelect={noop}
-        onChangeItemsPerPage={noop}
+      <PageStats
+        selectedPage={2}
         itemsPresent={3}
         itemsTotal={13}
+        currentItemsPerPage={10}
       />
     );
 

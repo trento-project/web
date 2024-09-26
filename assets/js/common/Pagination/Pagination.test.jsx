@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { noop } from 'lodash';
-import Pagination, { PageNumberPagination } from '.';
+import Pagination, { PageNumberPagination, PageStats } from '.';
 
 const NEXT = 'next-page';
 const PREV = 'prev-page';
@@ -319,6 +319,24 @@ describe('Pagination component', () => {
     expect(screen.getByLabelText(NEXT)).toBeInTheDocument();
     expect(screen.getByLabelText(LAST)).toBeInTheDocument();
     expect(screen.getByLabelText(FIRST)).toBeInTheDocument();
+  });
+
+  it('should render with PageStats', () => {
+    render(
+      <Pagination
+        hasNext
+        onSelect={noop}
+        pageStats={
+          <PageStats
+            selectedPage={1}
+            itemsPresent={10}
+            itemsTotal={13}
+            currentItemsPerPage={10}
+          />
+        }
+      />
+    );
+    expect(screen.queryByText('Showing', { exact: false })).toBeInTheDocument();
   });
 
   it('should call onSelect', async () => {
