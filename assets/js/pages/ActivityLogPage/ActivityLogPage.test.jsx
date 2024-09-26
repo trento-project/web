@@ -43,11 +43,6 @@ describe('ActivityLogPage', () => {
     ${200}         | ${{ foo: [] }}
     ${200}         | ${''}
     ${200}         | ${null}
-    ${404}         | ${[]}
-    ${404}         | ${{ data: [] }}
-    ${500}         | ${{ error: 'Internal Server Error' }}
-    ${503}         | ${null}
-    ${504}         | ${''}
   `(
     'should render empty activity log on responseStatus: `$responseStatus` and responseBody: `$responseBody`',
     async ({ responseStatus, responseBody }) => {
@@ -60,6 +55,28 @@ describe('ActivityLogPage', () => {
       await act(() => renderWithRouter(StatefulActivityLogPage));
 
       expect(screen.getByText('No data available')).toBeVisible();
+    }
+  );
+
+  it.each`
+    responseStatus | responseBody
+    ${404}         | ${[]}
+    ${404}         | ${{ data: [] }}
+    ${500}         | ${{ error: 'Internal Server Error' }}
+    ${503}         | ${null}
+    ${504}         | ${''}
+  `(
+    'should render error screen activity log on responseStatus: `$responseStatus` and responseBody: `$responseBody`',
+    async ({ responseStatus, responseBody }) => {
+      axiosMock
+        .onGet('/api/v1/activity_log')
+        .reply(responseStatus, responseBody);
+      const [StatefulActivityLogPage, _] = withDefaultState(
+        <ActivityLogPage />
+      );
+      await act(() => renderWithRouter(StatefulActivityLogPage));
+
+      expect(screen.getByText('Connection Error')).toBeVisible();
     }
   );
 
