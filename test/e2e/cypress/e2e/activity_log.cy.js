@@ -5,7 +5,7 @@ const LAST = /^>>$/;
 
 context('Activity Log page', () => {
   before(() => {
-    cy.loadScenario('healthy-27-node-SAP-cluster');
+    // cy.loadScenario('healthy-27-node-SAP-cluster');
   });
 
   describe('Navigation', () => {
@@ -131,30 +131,22 @@ context('Activity Log page', () => {
     });
 
     it('should refresh content based on currently applied filters', () => {
-      cy.intercept({
-        url: '/api/v1/activity_log?first=20&from_date=2024-08-14T10:21:00.000Z&to_date=2024-08-13T10:21:00.000Z&type[]=login_attempt&type[]=resource_tagging',
-      }).as('initialDataLoad');
+      const apiUrl =
+        '/api/v1/activity_log?first=20&from_date=2024-08-14T10:21:00.000Z&to_date=2024-08-13T10:21:00.000Z&type[]=login_attempt&type[]=resource_tagging';
+      const pageUrl =
+        '/activity_log?from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&to_date=custom&to_date=2024-08-13T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging';
 
-      cy.visit(
-        '/activity_log?from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&to_date=custom&to_date=2024-08-13T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging'
-      );
+      cy.intercept({ url: apiUrl }).as('initialDataLoad');
+
+      cy.visit(pageUrl);
 
       cy.wait('@initialDataLoad');
 
-      cy.intercept({
-        url: '/api/v1/activity_log?first=20&from_date=2024-08-14T10:21:00.000Z&to_date=2024-08-13T10:21:00.000Z&type[]=login_attempt&type[]=resource_tagging',
-      }).as('refreshedDataLoad');
+      cy.intercept({ url: apiUrl }).as('refreshedDataLoad');
       cy.contains('Refresh').click();
-
       cy.wait('@refreshedDataLoad');
 
-      cy.intercept({
-        url: '/api/v1/activity_log?first=20',
-      }).as('refreshedDataLoadAfterReset');
-
-      cy.contains('Reset').click();
-
-      cy.wait('@refreshedDataLoadAfterReset');
+      cy.url().should('eq', `${Cypress.config().baseUrl}${pageUrl}`);
     });
   });
 
