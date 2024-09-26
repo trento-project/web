@@ -1,4 +1,6 @@
 defmodule Trento.Postgrex.Jsonpath do
+  @moduledoc false
+
   @behaviour Postgrex.Extension
 
   @impl Postgrex.Extension

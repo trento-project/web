@@ -208,8 +208,7 @@ defmodule Trento.ActivityLog do
       true ->
         {:ok,
          query_words_list
-         |> Enum.map(word_handler)
-         |> Enum.join(" ")
+         |> Enum.map_join(" ", word_handler)
          |> (&"$.** ? (#{&1})").()}
 
       false ->
@@ -217,15 +216,13 @@ defmodule Trento.ActivityLog do
           1 ->
             {:ok,
              query_words_list
-             |> Enum.map(word_handler)
-             |> Enum.join("")
+             |> Enum.map_join("", word_handler)
              |> (&"$.** ? #{&1}").()}
 
           len when len > 1 ->
             {:ok,
              query_words_list
-             |> Enum.map(word_handler)
-             |> Enum.join(" || ")
+             |> Enum.map_join(" || ", word_handler)
              |> (&"$.** ? (#{&1})").()}
         end
     end
