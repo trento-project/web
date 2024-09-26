@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import { noop } from 'lodash';
 
 import { page, pages } from '@lib/lists';
-import Pagination from '@common/Pagination';
+import Pagination, { PageStats } from '@common/Pagination';
 import { TableFilters, createFilter } from './filters';
 import { defaultRowKey } from './defaultRowKey';
 import SortingIcon from './SortingIcon';
@@ -252,16 +252,38 @@ function Table({
             </table>
             {pagination && (
               <Pagination
-                pages={totalPages}
-                currentPage={currentPage}
-                itemsPerPageOptions={itemsPerPageOptions}
-                itemsTotal={filteredData.length}
-                itemsPresent={renderedData.length}
+                hasPrev={currentPage > 1}
+                hasNext={currentPage < totalPages}
                 currentItemsPerPage={currentItemsPerPage}
-                onChangeItemsPerPage={(perPage) =>
-                  setCurrentItemsPerPage(perPage)
+                onSelect={(selection) => {
+                  switch (selection) {
+                    case 'prev':
+                      setCurrentPage(currentPage - 1);
+                      break;
+                    case 'next':
+                      setCurrentPage(currentPage + 1);
+                      break;
+                    case 'first':
+                      setCurrentPage(1);
+                      break;
+                    case 'last':
+                      setCurrentPage(totalPages);
+                      break;
+                    default:
+                  }
+                }}
+                onChangeItemsPerPage={(perPage) => {
+                  setCurrentItemsPerPage(perPage);
+                  setCurrentPage(1);
+                }}
+                pageStats={
+                  <PageStats
+                    selectedPage={Math.min(currentPage, totalPages)}
+                    itemsPresent={renderedData.length}
+                    itemsTotal={filteredData.length}
+                    currentItemsPerPage={currentItemsPerPage}
+                  />
                 }
-                onSelect={(selectedPage) => setCurrentPage(selectedPage)}
               />
             )}
           </div>
