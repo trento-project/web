@@ -143,7 +143,7 @@ function ActivityLogPage() {
           />
           <Button
             type="primary-white"
-            className="w-28"
+            className="!w-28"
             onClick={fetchActivityLog}
             disabled={isLoading}
           >
