@@ -198,7 +198,7 @@ describe('Table component', () => {
       );
 
       const pages = screen.getByTestId('pagination');
-      const page2Button = within(pages).getByText('2');
+      const page2Button = within(pages).getByLabelText('next-page');
       fireEvent.click(page2Button);
 
       filterTable('Column3', 'value3');
@@ -220,7 +220,7 @@ describe('Table component', () => {
       expect(page1.querySelectorAll('tbody > tr')).toHaveLength(10);
 
       const pages = screen.getByTestId('pagination');
-      const page2Button = within(pages).getByText('2');
+      const page2Button = within(pages).getByLabelText('next-page');
       fireEvent.click(page2Button);
 
       const page2 = screen.getByRole('table');
