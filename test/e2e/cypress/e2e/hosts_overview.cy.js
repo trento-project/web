@@ -7,9 +7,11 @@ import {
 
 const availableHosts1stPage = availableHosts.slice(0, 10);
 
+const NEXT_PAGE_SELECTOR = '[aria-label="next-page"]';
+
 context('Hosts Overview', () => {
   before(() => {
-    // cy.loadScenario('healthy-27-node-SAP-cluster');
+    cy.loadScenario('healthy-27-node-SAP-cluster');
     cy.visit('/hosts');
     cy.url().should('include', '/hosts');
   });
@@ -26,21 +28,20 @@ context('Hosts Overview', () => {
     });
 
     it('should have 3 pages', () => {
-      const NEXT = '[aria-label="next-page"]';
-
       cy.get(`[data-testid="pagination"]`).as('pagination');
       cy.get(`@pagination`).contains('Showing 1–10 of 27').should('exist');
 
-      cy.get(NEXT).click();
+      cy.get(NEXT_PAGE_SELECTOR).click();
       cy.get(`@pagination`).contains('Showing 11–20 of 27').should('exist');
 
-      cy.get(NEXT).click();
+      cy.get(NEXT_PAGE_SELECTOR).click();
       cy.get(`@pagination`).contains('Showing 21–27 of 27').should('exist');
 
-      cy.get(NEXT).should('be.disabled');
+      cy.get(NEXT_PAGE_SELECTOR).should('be.disabled');
     });
 
     it('should show the ip addresses, provider and agent version data for the hosts in the 1st page', () => {
+      cy.reload();
       cy.get('.container').eq(0).as('hostsTable');
       availableHosts1stPage.forEach((host, index) => {
         cy.get('@hostsTable')
@@ -344,13 +345,8 @@ context('Hosts Overview', () => {
           cy.loadScenario(`sapsystem-${sapSystemHostToDeregister.sid}-restore`);
         });
 
-        beforeEach(() => {
-          cy.get(`[data-testid="pagination"]`).as('pagination');
-          cy.get(`@pagination`).contains(/^1$/).click();
-        });
-
         it('should remove the SAP system sid from hosts belonging the deregistered SAP system', () => {
-          cy.get(`@pagination`).contains(/^2$/).click();
+          cy.get(NEXT_PAGE_SELECTOR).click();
           cy.contains('a', sapSystemHostToDeregister.sid).should('exist');
           cy.deregisterHost(sapSystemHostToDeregister.id);
           cy.contains('a', sapSystemHostToDeregister.sid).should('not.exist');
