@@ -14,10 +14,7 @@ import Button from '@common/Button';
 import PageHeader from '@common/PageHeader';
 import ActivityLogOverview from '@common/ActivityLogOverview';
 import ComposedFilter from '@common/ComposedFilter';
-import {
-  PaginationPrevNext,
-  defaultItemsPerPageOptions,
-} from '@common/Pagination';
+import Pagination, { defaultItemsPerPageOptions } from '@common/Pagination';
 
 import {
   applyItemsPerPage,
@@ -160,7 +157,7 @@ function ActivityLogPage() {
             setActivityLogDetailModalOpen(false)
           }
         />
-        <PaginationPrevNext
+        <Pagination
           hasPrev={activityLogResponse.pagination?.has_previous_page}
           hasNext={activityLogResponse.pagination?.has_next_page}
           currentItemsPerPage={itemsPerPage}
