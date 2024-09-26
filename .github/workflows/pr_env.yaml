@@ -138,7 +138,7 @@ jobs:
 
   run-photofinish-demo-env:
     name: Use photofinish to push mock data to the pr environment
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-20.04
     needs: create_pr_environment
     env:
       TRENTO_PR_ENV_URL: "${{ github.event.pull_request.number }}.prenv.trento.suse.com"
