@@ -200,16 +200,14 @@ describe('Activity Log Overview', () => {
   );
 
   it('should call onActivityLogEntryClick when clicking on an entry in the table', async () => {
-    const onActivityLogEntryClick = jest.fn();
     const id = faker.string.uuid();
-    render(
-      <ActivityLogOverview
-        activityLog={[activityLogEntryFactory.build({ id })]}
-        onActivityLogEntryClick={onActivityLogEntryClick}
-      />
-    );
+    const entry = activityLogEntryFactory.build({ id });
+    render(<ActivityLogOverview activityLog={[entry]} />);
 
     await userEvent.click(screen.getByLabelText(`entry-${id}`));
-    expect(onActivityLogEntryClick).toHaveBeenCalled();
+
+    expect(screen.getByText('Activity Details')).toBeVisible();
+    expect(screen.getByText('ID')).toBeVisible();
+    expect(screen.getByText(id)).toBeVisible();
   });
 });

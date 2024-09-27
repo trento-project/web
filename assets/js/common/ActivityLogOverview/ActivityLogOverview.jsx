@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { noop } from 'lodash';
 import { format, toZonedTime } from 'date-fns-tz';
 
 import {
@@ -46,14 +45,10 @@ export const toRenderedEntry = (entry) => ({
   metadata: entry.metadata,
 });
 
-function ActivityLogOverview({
-  activityLog,
-  activityLogDetailModalOpen = false,
-  loading = false,
-  onActivityLogEntryClick = noop,
-  onCloseActivityLogEntryDetails = noop,
-}) {
+function ActivityLogOverview({ activityLog, loading = false }) {
   const [selectedEntry, setEntry] = useState({});
+  const [activityLogDetailModalOpen, setActivityLogDetailModalOpen] =
+    useState(false);
 
   const activityLogTableConfig = {
     usePadding: false,
@@ -96,7 +91,7 @@ function ActivityLogOverview({
             className="cursor-pointer w-full inline-block"
             onClick={() => {
               setEntry(logEntry);
-              onActivityLogEntryClick();
+              setActivityLogDetailModalOpen(true);
             }}
             onKeyDown={() => {}}
           >
@@ -112,7 +107,7 @@ function ActivityLogOverview({
       <ActivityLogDetailModal
         open={activityLogDetailModalOpen}
         entry={selectedEntry}
-        onClose={onCloseActivityLogEntryDetails}
+        onClose={() => setActivityLogDetailModalOpen(false)}
       />
       <Table
         config={activityLogTableConfig}
