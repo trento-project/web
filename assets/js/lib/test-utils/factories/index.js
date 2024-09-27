@@ -101,7 +101,6 @@ export const catalogCheckFactory = Factory.define(() => ({
   group: faker.animal.cat(),
   description: faker.lorem.paragraph(),
   remediation: faker.lorem.paragraph(),
-  premium: faker.datatype.boolean(),
   metadata: null,
   expectations: catalogExpectExpectationFactory.buildList(3),
 }));
@@ -113,7 +112,6 @@ export const catalogFactory = Factory.define(() => ({
 }));
 
 export const aboutFactory = Factory.define(() => ({
-  flavor: faker.animal.cat(),
   sles_subscriptions: faker.number.int(),
   version: faker.system.networkInterface(),
 }));

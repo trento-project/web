@@ -79,7 +79,6 @@ const prepareStateData = (checkExecutionStatus) => {
       catalogCheckFactory.build({
         id: checkID1,
         description: aCheckDescription,
-        premium: true,
         expectations: [
           catalogExpectExpectationFactory.build({
             name: expectationName1,
@@ -95,7 +94,6 @@ const prepareStateData = (checkExecutionStatus) => {
       catalogCheckFactory.build({
         id: checkID2,
         description: anotherCheckDescription,
-        premium: false,
         expectations: [
           catalogExpectExpectationFactory.build({
             name: expectationName4,
@@ -549,43 +547,5 @@ describe('ExecutionResults', () => {
     expect(screen.getByText(description).textContent).toBe(description);
     userEvent.click(screen.getByText(description));
     expect(screen.queryByText(remediation)).not.toBeInTheDocument();
-  });
-
-  it('should render PremiumPill if a check in catalog is premium', () => {
-    const {
-      clusterID,
-      clusterHosts,
-      loading,
-      catalog,
-      executionError,
-      executionStarted,
-      executionData,
-      checks,
-    } = prepareStateData('completed');
-
-    const target = clusterFactory.build({
-      id: clusterID,
-    });
-
-    renderWithRouter(
-      <ExecutionResults
-        targetID={clusterID}
-        targetType="cluster"
-        targetHosts={clusterHosts}
-        target={target}
-        catalogLoading={loading}
-        catalog={catalog}
-        executionLoading={loading}
-        executionStarted={executionStarted}
-        executionData={executionData}
-        executionError={executionError}
-        targetSelectedChecks={checks}
-      />
-    );
-
-    const checkID = screen.getByText(checks[0]);
-    const tableDataID = checkID.closest('div');
-    expect(tableDataID).toHaveTextContent('Premium');
-    expect(screen.getAllByText('Premium')).toHaveLength(1);
   });
 });

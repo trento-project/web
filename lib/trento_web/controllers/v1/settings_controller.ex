@@ -32,8 +32,7 @@ defmodule TrentoWeb.V1.SettingsController do
   def settings(conn, _) do
     render(conn, "settings.json",
       settings: %{
-        eula_accepted: false,
-        premium_subscription: Settings.premium?()
+        eula_accepted: false
       }
     )
   end

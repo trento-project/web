@@ -1,6 +1,5 @@
 import React from 'react';
 
-import PremiumPill from '@common/PremiumPill';
 import Accordion from '.';
 
 export default {
@@ -74,7 +73,6 @@ export const WithCustomHeader = {
           <p className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
             AAAA
           </p>
-          <PremiumPill className="ml-1" />
         </div>
         <div className="mt-2 sm:flex sm:justify-between">
           <div className="sm:flex">Accordion with custom header</div>

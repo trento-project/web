@@ -4,17 +4,10 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import classNames from 'classnames';
 
-import PremiumPill from '@common/PremiumPill';
 import Accordion from '@common/Accordion';
 import TargetIcon from '@common/TargetIcon';
 
-function CheckItem({
-  checkID,
-  premium = false,
-  targetType,
-  description,
-  remediation,
-}) {
+function CheckItem({ checkID, targetType, description, remediation }) {
   const hasTargetType = !!targetType;
 
   return (
@@ -45,7 +38,6 @@ function CheckItem({
                 <p className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                   {checkID}
                 </p>
-                {premium && <PremiumPill className="ml-1" />}
               </div>
               <div className="mt-2 sm:flex sm:justify-between">
                 <div className="sm:flex">

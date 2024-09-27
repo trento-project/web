@@ -16,10 +16,11 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
         properties: %{
           eula_accepted: %Schema{
             type: :boolean,
-            description: "Whether the user has accepted EULA (on a Premium installation)",
+            description: "Whether the user has accepted EULA",
             deprecated: true
           },
           premium_subscription: %Schema{
+            deprecated: true,
             type: :boolean,
             description: "Whether current installation is a Premium one"
           }
@@ -96,7 +97,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
           flavor: %Schema{
             type: :string,
             description: "Flavor of the current installation",
-            enum: ["Community", "Premium"]
+            enum: ["Community", "Premium"],
+            deprecated: true
           },
           version: %Schema{
             type: :string,

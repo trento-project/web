@@ -175,8 +175,7 @@ config :trento, Trento.Charts,
   host_data_fetcher: Trento.Infrastructure.Prometheus.PrometheusApi
 
 config :trento,
-  uuid_namespace: "fb92284e-aa5e-47f6-a883-bf9469e7a0dc",
-  flavor: System.get_env("FLAVOR", "Community")
+  uuid_namespace: "fb92284e-aa5e-47f6-a883-bf9469e7a0dc"
 
 config :fun_with_flags,
        :persistence,

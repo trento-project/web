@@ -19,7 +19,6 @@ const checkNames = [
   'Check Corosync token_retransmits_before_loss_const during runtime',
 ];
 const checkResults = ['passing', 'warning', 'critical', 'unknown'];
-const checkIsPremium = [true, false];
 const checkGroup = ['Corosync', 'SBD'];
 const checkDescription = [
   'Corosync `token` timeout is set to expected value\n',
@@ -188,7 +187,6 @@ const catalogData = {
           },
         ],
         group: checkGroup[0],
-        premium: checkIsPremium[1],
         id: checkID[0],
         name: checkNames[0],
         remediation: checkRemediation[1],
@@ -224,7 +222,6 @@ const catalogData = {
           },
         ],
         group: checkGroup[0],
-        premium: checkIsPremium[0],
         name: checkNames[1],
         remediation: checkRemediation[0],
         values: [
@@ -258,7 +255,6 @@ const catalogData = {
           },
         ],
         group: checkGroup[1],
-        premium: checkIsPremium[0],
         name: checkNames[2],
         remediation: checkRemediation[0],
         values: [
@@ -292,7 +288,6 @@ const catalogData = {
           },
         ],
         group: checkGroup[0],
-        premium: checkIsPremium[1],
         name: checkNames[3],
         remediation: checkRemediation[0],
 

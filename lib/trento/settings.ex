@@ -3,11 +3,8 @@ defmodule Trento.Settings do
   Provides a set of functions of settings related usecases.
   """
 
-  import Ecto.Query
-
   alias Trento.Repo
 
-  alias Trento.Hosts.Projections.SlesSubscriptionReadModel
   alias Trento.SoftwareUpdates.Discovery, as: SoftwareUpdatesDiscovery
 
   alias Trento.Settings.{
@@ -35,8 +32,6 @@ defmodule Trento.Settings do
           ca_cert: String.t() | nil
         }
 
-  @sles_identifier "SLES_SAP"
-
   @spec get_installation_id :: String.t()
   def get_installation_id do
     %InstallationSettings{installation_id: installation_id} =
@@ -44,27 +39,6 @@ defmodule Trento.Settings do
 
     installation_id
   end
-
-  def premium? do
-    flavor() == "Premium"
-  end
-
-  @spec premium_active? :: boolean
-  def premium_active? do
-    flavor() == "Premium" && has_premium_subscription?()
-  end
-
-  @spec has_premium_subscription? :: boolean
-  def has_premium_subscription? do
-    Repo.exists?(
-      from(s in SlesSubscriptionReadModel,
-        where: s.identifier == @sles_identifier
-      )
-    )
-  end
-
-  @spec flavor :: String.t()
-  def flavor, do: Application.get_env(:trento, :flavor)
 
   @spec create_api_key_settings(map()) :: {:ok, ApiKeySettings.t()} | {:error, any}
   def create_api_key_settings(settings) do

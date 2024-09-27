@@ -24,7 +24,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ChecksCatalog do
           labels: %Schema{type: :string, description: "Check Labels"},
           premium: %Schema{
             type: :boolean,
-            description: "Indicates whether the current check is a Premium check"
+            description: "Indicates whether the current check is a Premium check",
+            deprecated: true
           },
           group: %Schema{
             type: :string,
@@ -136,7 +137,6 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ChecksCatalog do
                       "---\n\n- name: \"{{ name }}.check\"\n  lineinfile:\n    path: /etc/corosync/corosync.conf\n    regexp: '^(\\s+){{ key_name }}:'\n    line: \"\\t{{ key_name }}: {{ expected[name] }}\"\n    insertafter: 'totem {'\n  register: config_updated\n  when:\n    - ansible_check_mode\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
                     labels: "generic",
                     name: "1.1.1",
-                    premium: false,
                     remediation:
                       "## Abstract\nThe value of the Corosync `token` timeout is not set as recommended.\n\n## Remediation\n\nAdjust the corosync `token` timeout as recommended on the best practices, and reload the corosync configuration\n\n1. Set the correct `token` timeout in the totem session in the corosync config file `/etc/corosync/corosync.conf`. This action must be repeated in all nodes of the cluster.\n   ```\n   [...]\n   totem { \n          token: <timeout value> \n         }\n   [...]\n   ```   \n2. Reload the corosync configuration:\n   `crm corosync reload`\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n"
                   },
@@ -147,7 +147,6 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ChecksCatalog do
                       "---\n\n- name: \"{{ name }}.check\"\n  shell: 'corosync-cmapctl | grep \"runtime.config.totem.token (u32) = \" | sed \"s/^.*= //\"'\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout != expected['1.1.1']\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
                     labels: "generic",
                     name: "1.1.1.runtime",
-                    premium: false,
                     remediation:
                       "## Abstract\nThe runtime value of the Corosync `token` timeout is not set as recommended.\n\n## Remediation\n\nAdjust the corosync `token` timeout as recommended on the best practices, and reload the corosync configuration\n\n\n1. Set the correct `token` timeout in the totem session in the corosync config file `/etc/corosync/corosync.conf`. This action must be repeated in all nodes of the cluster.\n   ```\n   [...]\n   totem { \n          token: <timeout value> \n         }\n   [...]\n   ```   \n2. Reload the corosync configuration:\n   `crm corosync reload`\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n"
                   }
@@ -163,7 +162,6 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ChecksCatalog do
                       "---\n\n- name: \"{{ name }}.check\"\n  command: 'crm_attribute -t crm_config -G -n stonith-enabled --quiet'\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout != expected[name]\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
                     labels: "generic",
                     name: "1.2.1",
-                    premium: false,
                     remediation:
                       "## Abstract\nFencing is mandatory to guarantee data integrity for your SAP Applications.\nRunning a HA Cluster without fencing is not supported and might cause data loss.\n\n## Remediation\nExecute the following command to enable it:\n```\ncrm configure property stonith-enabled=true\n```\n\n## References\n- https://documentation.suse.com/sle-ha/15-SP3/html/SLE-HA-all/cha-ha-fencing.html#sec-ha-fencing-recommend\n"
                   }
