@@ -2,19 +2,20 @@ import React from 'react';
 import classNames from 'classnames';
 import { noop } from 'lodash';
 import ReactPaginate from 'react-paginate';
+import {
+  EOS_KEYBOARD_ARROW_LEFT,
+  EOS_KEYBOARD_ARROW_RIGHT,
+  EOS_KEYBOARD_DOUBLE_ARROW_LEFT,
+  EOS_KEYBOARD_DOUBLE_ARROW_RIGHT,
+} from 'eos-icons-react';
 
 import Select from '@common/Select';
 import PageStats from './PageStats';
 
-const FIRST_LABEL = '<<';
-const PREV_LABEL = '<';
-const NEXT_LABEL = '>';
-const LAST_LABEL = '>>';
-
 const boxClassNames = classNames(
   'tn-page-item',
   'w-full',
-  'px-4',
+  'px-3',
   'py-2',
   'text-xs',
   'bg-white',
@@ -62,12 +63,13 @@ function ItemsPerPageSelector({
   );
 }
 
-function PaginationPrevNext({
+function Pagination({
   hasPrev = true,
   hasNext = true,
   onSelect,
   currentItemsPerPage = defaultItemsPerPage,
   itemsPerPageOptions = defaultItemsPerPageOptions,
+  pageStats = null,
   onChangeItemsPerPage = noop,
 }) {
   return (
@@ -75,58 +77,89 @@ function PaginationPrevNext({
       className="flex justify-between p-2 bg-gray-50 width-full"
       data-testid="pagination"
     >
-      <ItemsPerPageSelector
-        itemsPerPageOptions={itemsPerPageOptions}
-        currentItemsPerPage={currentItemsPerPage}
-        onChange={onChangeItemsPerPage}
-      />
+      <div className="flex flex-row items-center">
+        <ItemsPerPageSelector
+          itemsPerPageOptions={itemsPerPageOptions}
+          currentItemsPerPage={currentItemsPerPage}
+          onChange={onChangeItemsPerPage}
+        />
+        {pageStats}
+      </div>
       <ul className={containerClassNames}>
         <li>
           <button
             type="button"
+            disabled={!hasPrev}
+            aria-label="first-page"
             className={classNames(
               leftBoxClassNames,
               hasPrev || disabledLinkClassNames
             )}
             onClick={() => hasPrev && onSelect('first')}
           >
-            {FIRST_LABEL}
+            <EOS_KEYBOARD_DOUBLE_ARROW_LEFT
+              className={classNames({
+                'fill-gray-300': !hasPrev,
+                'fill-gray-500': hasPrev,
+              })}
+            />
           </button>
         </li>
         <li>
           <button
             type="button"
+            disabled={!hasPrev}
+            aria-label="prev-page"
             className={classNames(
               boxClassNames,
               hasPrev || disabledLinkClassNames
             )}
             onClick={() => hasPrev && onSelect('prev')}
           >
-            {PREV_LABEL}
+            <EOS_KEYBOARD_ARROW_LEFT
+              className={classNames({
+                'fill-gray-300': !hasPrev,
+                'fill-gray-500': hasPrev,
+              })}
+            />
           </button>
         </li>
         <li>
           <button
             type="button"
+            disabled={!hasNext}
+            aria-label="next-page"
             className={classNames(
               boxClassNames,
               hasNext || disabledLinkClassNames
             )}
             onClick={() => hasNext && onSelect('next')}
           >
-            {NEXT_LABEL}
+            <EOS_KEYBOARD_ARROW_RIGHT
+              className={classNames({
+                'fill-gray-300': !hasNext,
+                'fill-gray-500': hasNext,
+              })}
+            />
           </button>
         </li>
         <li>
           <button
             type="button"
+            disabled={!hasNext}
+            aria-label="last-page"
             className={classNames(
               rightBoxClassNames,
               hasNext || disabledLinkClassNames
             )}
             onClick={() => hasNext && onSelect('last')}
           >
-            {LAST_LABEL}
+            <EOS_KEYBOARD_DOUBLE_ARROW_RIGHT
+              className={classNames({
+                'fill-gray-300': !hasNext,
+                'fill-gray-500': hasNext,
+              })}
+            />
           </button>
         </li>
       </ul>
@@ -134,7 +167,7 @@ function PaginationPrevNext({
   );
 }
 
-function Pagination({
+function PageNumberPagination({
   pages,
   currentPage,
   onSelect,
@@ -175,8 +208,8 @@ function Pagination({
         renderOnZeroPageCount={null}
         onPageActive={({ selected }) => onSelect(selected + 1)}
         onPageChange={({ selected }) => onSelect(selected + 1)}
-        previousLabel={PREV_LABEL}
-        nextLabel={NEXT_LABEL}
+        previousLabel="<"
+        nextLabel=">"
         containerClassName={containerClassNames}
         pageLinkClassName={boxClassNames}
         activeLinkClassName={activeLinkClassNames}
@@ -191,4 +224,8 @@ function Pagination({
 
 export default Pagination;
 
-export { PaginationPrevNext, defaultItemsPerPageOptions, defaultItemsPerPage };
+export {
+  PageNumberPagination,
+  defaultItemsPerPageOptions,
+  defaultItemsPerPage,
+};

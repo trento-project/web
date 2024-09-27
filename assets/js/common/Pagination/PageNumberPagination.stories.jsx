@@ -1,14 +1,24 @@
 import React from 'react';
 import { action } from '@storybook/addon-actions';
 
-import { PaginationPrevNext } from '.';
+import { PageNumberPagination } from '.';
 
 export default {
-  title: 'Components/PaginationPrevNext',
-  component: PaginationPrevNext,
+  title: 'Components/PageNumberPagination',
+  component: PageNumberPagination,
   argTypes: {
-    hasPrev: { control: { type: 'boolean' }, defaultValue: true },
-    hasNext: { control: { type: 'boolean' }, defaultValue: true },
+    pages: {
+      control: {
+        type: 'number',
+      },
+      defaultValue: 5,
+    },
+    currentPage: {
+      control: {
+        type: 'number',
+      },
+      defaultValue: 1,
+    },
     currentItemsPerPage: {
       control: {
         type: 'number',
@@ -21,13 +31,15 @@ export default {
       },
       defaultValue: [10],
     },
+    itemsTotal: {
+      control: {
+        type: 'number',
+      },
+    },
   },
   render: (args) => (
-    <PaginationPrevNext
-      hasPrev={args.hasPrev}
-      hasNext={args.hasNext}
-      currentItemsPerPage={args.currentItemsPerPage}
-      itemsPerPageOptions={args.itemsPerPageOptions}
+    <PageNumberPagination
+      {...args}
       onSelect={(value) => {
         action('onSelect')(value);
       }}
@@ -40,7 +52,23 @@ export default {
 
 export const Default = {
   args: {
+    pages: 5,
+    currentPage: 1,
     currentItemsPerPage: 10,
     itemsPerPageOptions: [10, 20, 50],
+  },
+};
+
+export const WithManyPages = {
+  args: {
+    ...Default.args,
+    pages: 99,
+    currentPage: 20,
+  },
+};
+
+export const EmptyDataset = {
+  args: {
+    itemsTotal: 0,
   },
 };

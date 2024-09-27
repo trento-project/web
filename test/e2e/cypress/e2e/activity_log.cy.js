@@ -1,7 +1,7 @@
-const NEXT = /^>$/;
-const PREV = /^<$/;
-const FIRST = /^<<$/;
-const LAST = /^>>$/;
+const NEXT = '[aria-label="next-page"]';
+const PREV = '[aria-label="prev-page"]';
+const FIRST = '[aria-label="first-page"]';
+const LAST = '[aria-label="last-page"]';
 
 context('Activity Log page', () => {
   before(() => {
@@ -167,14 +167,12 @@ context('Activity Log page', () => {
 
         const after = response.body.pagination.end_cursor;
 
-        cy.contains(PREV).click();
-
         cy.url().should('eq', `${Cypress.config().baseUrl}/activity_log`);
 
         cy.intercept({
           url: `/api/v1/activity_log?first=20&after=${after}`,
         }).as('secondPage');
-        cy.contains(NEXT).click();
+        cy.get(NEXT).click();
 
         cy.wait('@secondPage').its('response.statusCode').should('eq', 200);
 
@@ -201,8 +199,6 @@ context('Activity Log page', () => {
 
         const after = response.body.pagination.end_cursor;
 
-        cy.contains(PREV).click();
-
         cy.url().should(
           'eq',
           `${
@@ -213,7 +209,7 @@ context('Activity Log page', () => {
         cy.intercept({
           url: `/api/v1/activity_log?first=20&after=${after}&type[]=sles_subscriptions_updated`,
         }).as('secondPage');
-        cy.contains(NEXT).click();
+        cy.get(NEXT).click();
 
         cy.wait('@secondPage').its('response.statusCode').should('eq', 200);
 
@@ -242,7 +238,7 @@ context('Activity Log page', () => {
 
         const after = response.body.pagination.end_cursor;
 
-        cy.contains(NEXT).click();
+        cy.get(NEXT).click();
 
         cy.url().should(
           'eq',
@@ -278,7 +274,7 @@ context('Activity Log page', () => {
           url: `/api/v1/activity_log?first=20&after=${after}&to_date=2024-08-14T10:21:00.000Z`,
         }).as('secondPage');
 
-        cy.contains(NEXT).click();
+        cy.get(NEXT).click();
 
         cy.wait('@secondPage').its('response.statusCode').should('eq', 200);
         cy.contains('08/14/2024 10:21:00 AM').should('be.visible');
@@ -326,7 +322,7 @@ context('Activity Log page', () => {
 
       cy.wait('@data10').its('response.body.pagination.first').should('eq', 10);
 
-      cy.contains(NEXT).click();
+      cy.get(NEXT).click();
 
       cy.wait('@data10-after')
         .its('response.body.pagination.first')
@@ -352,7 +348,7 @@ context('Activity Log page', () => {
           url: `/api/v1/activity_log?first=20&after=*`,
         }).as('secondPage');
 
-        cy.contains(NEXT).click();
+        cy.get(NEXT).click();
 
         cy.wait('@secondPage').then(({ response: secondPageResponse }) => {
           expect(secondPageResponse.body.pagination).to.have.property(
@@ -371,7 +367,7 @@ context('Activity Log page', () => {
             url: `/api/v1/activity_log?last=20&before=*`,
           }).as('firstPage-back');
 
-          cy.contains(PREV).click();
+          cy.get(PREV).click();
 
           cy.wait('@firstPage-back').then(({ response }) => {
             expect(response.body.pagination).to.have.property('last', 20);
@@ -396,7 +392,7 @@ context('Activity Log page', () => {
 
       cy.wait('@firstPage');
 
-      cy.contains(NEXT).click();
+      cy.get(NEXT).click();
 
       cy.wait('@secondPage');
 
@@ -404,7 +400,7 @@ context('Activity Log page', () => {
         url: `/api/v1/activity_log?first=20&type[]=host_registered`,
       }).as('firstPage2');
 
-      cy.contains(FIRST).click();
+      cy.get(FIRST).click();
 
       cy.wait('@firstPage2');
 
@@ -427,7 +423,7 @@ context('Activity Log page', () => {
         url: `/api/v1/activity_log?last=20&type[]=host_registered`,
       }).as('lastPage');
 
-      cy.contains(LAST).click();
+      cy.get(LAST).click();
 
       cy.wait('@lastPage');
 
