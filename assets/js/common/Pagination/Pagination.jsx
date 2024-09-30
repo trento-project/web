@@ -57,6 +57,7 @@ function ItemsPerPageSelector({
           options={itemsPerPageOptions}
           value={currentItemsPerPage}
           onChange={onChange}
+          optionsListPosition="top"
         />
       </div>
     )
@@ -70,11 +71,15 @@ function Pagination({
   currentItemsPerPage = defaultItemsPerPage,
   itemsPerPageOptions = defaultItemsPerPageOptions,
   pageStats = null,
+  className = '',
   onChangeItemsPerPage = noop,
 }) {
   return (
     <div
-      className="flex justify-between p-2 bg-gray-50 width-full"
+      className={classNames(
+        'flex justify-between p-2 bg-gray-50 width-full',
+        className
+      )}
       data-testid="pagination"
     >
       <div className="flex flex-row items-center">

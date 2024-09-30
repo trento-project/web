@@ -99,6 +99,7 @@ function MainView({
     <>
       <ActivityLogOverview activityLog={data} />
       <Pagination
+        className="rounded-b-lg"
         hasPrev={pagination?.has_previous_page}
         hasNext={pagination?.has_next_page}
         currentItemsPerPage={itemsPerPage}
