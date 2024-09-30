@@ -19,6 +19,7 @@ function Select({
   onChange = defaultOnChange,
   className,
   disabled = false,
+  optionsListPosition = '',
 }) {
   const enrichedOptions = options.map((option) => ({
     value: get(option, 'value', option),
@@ -54,7 +55,14 @@ function Select({
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <Listbox.Options className="absolute w-full py-1 mt-1 overflow-auto text-base bg-white rounded-md shadow-lg max-h-60 ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm z-40">
+            <Listbox.Options
+              className={classNames(
+                'absolute w-full py-1 mt-1 overflow-auto text-base bg-white rounded-md shadow-lg max-h-60 ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm z-40',
+                {
+                  'bottom-11': optionsListPosition === 'top',
+                }
+              )}
+            >
               {enrichedOptions.map((option) => (
                 <Listbox.Option
                   key={option.value}
