@@ -144,6 +144,7 @@ jobs:
         with:
           output: ./doc/swaggerui
           spec-file: openapi.json
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Publish to Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
