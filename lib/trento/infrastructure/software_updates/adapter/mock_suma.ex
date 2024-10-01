@@ -149,7 +149,14 @@ defmodule Trento.Infrastructure.SoftwareUpdates.MockSuma do
       {:ok,
        [
          %{
-           name: "kernel",
+           name: "elixir",
+           version: "6.9.7",
+           release: "2",
+           arch_label: "x86_64",
+           epoch: "0"
+         },
+         %{
+           name: "systemd",
            version: "6.9.7",
            release: "2",
            arch_label: "x86_64",

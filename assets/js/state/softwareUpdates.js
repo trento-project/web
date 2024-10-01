@@ -8,6 +8,7 @@ const initialState = {
 
 const initialHostState = {
   loading: false,
+  loadingPatches: false,
   errors: [],
 };
 
@@ -24,7 +25,7 @@ export const softwareUpdatesSlice = createSlice({
     startLoadingSoftwareUpdates: (state, { payload: { hostID } }) => {
       state.softwareUpdates = {
         ...state.softwareUpdates,
-        [hostID]: { ...initialHostState, loading: true },
+        [hostID]: { ...initialHostState, loading: true, loadingPatches: true },
       };
     },
     setSoftwareUpdates: (
@@ -70,6 +71,10 @@ export const softwareUpdatesSlice = createSlice({
           patches: packagePatches,
         };
       });
+
+      if (state.softwareUpdates[hostID]) {
+        state.softwareUpdates[hostID].loadingPatches = false;
+      }
 
       if (!isEmpty(packages)) {
         state.softwareUpdates[hostID].upgradable_packages = newPackages;

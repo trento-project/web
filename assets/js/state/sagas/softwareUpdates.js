@@ -1,5 +1,5 @@
-import { get, chunk } from 'lodash';
-import { all, put, call, takeEvery } from 'redux-saga/effects';
+import { get } from 'lodash';
+import { put, call, takeEvery } from 'redux-saga/effects';
 import {
   getSoftwareUpdates,
   getPatchesForPackages,
@@ -43,27 +43,21 @@ export function* fetchSoftwareUpdates({ payload: hostID }) {
   }
 }
 
-export function* fetchUpgradablePackagesPatches({
-  payload: { hostID, packageIDs },
-}) {
-  const chunks = chunk(packageIDs, 50);
-
-  const effects = chunks.map((packageIDsChunk) =>
-    call(getPatchesForPackages, packageIDsChunk)
-  );
-
+export function* fetchUpgradablePackagesPatches({ payload: { hostID } }) {
   try {
-    const responses = yield all(effects);
-    const patches = responses
-      .map(({ data: { patches: patchesForChunk } }) =>
-        patchesForChunk.map((patch) => ({
+    const {
+      data: { patches },
+    } = yield call(getPatchesForPackages, hostID);
+
+    yield put(
+      setPatchesForPackages({
+        hostID,
+        patches: patches.map((patch) => ({
           ...patch,
           package_id: Number(patch.package_id),
-        }))
-      )
-      .flat();
-
-    yield put(setPatchesForPackages({ hostID, patches }));
+        })),
+      })
+    );
     yield put(setSettingsConfigured());
   } catch (error) {
     const errorCode = get(error, ['response', 'status']);

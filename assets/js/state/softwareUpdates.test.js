@@ -18,7 +18,9 @@ describe('SoftwareUpdates reducer', () => {
     const action = startLoadingSoftwareUpdates({ hostID });
 
     const expectedState = {
-      softwareUpdates: { [hostID]: { loading: true, errors: [] } },
+      softwareUpdates: {
+        [hostID]: { loading: true, loadingPatches: true, errors: [] },
+      },
     };
 
     expect(softwareUpdatesReducer(initialState, action)).toEqual(expectedState);
@@ -34,6 +36,7 @@ describe('SoftwareUpdates reducer', () => {
           relevant_patches: [],
           upgradable_packages: [],
           loading: false,
+          loadingPatches: false,
           errors: [],
         },
         [host2]: {
@@ -64,6 +67,7 @@ describe('SoftwareUpdates reducer', () => {
             },
           ],
           loading: false,
+          loadingPatches: false,
           errors: [],
         },
       },
@@ -116,10 +120,12 @@ describe('SoftwareUpdates reducer', () => {
           relevant_patches: [],
           upgradable_packages: [],
           loading: false,
+          loadingPatches: false,
           errors: [],
         },
         [host2]: {
           ...newSoftwareUpdates,
+          loadingPatches: false,
           loading: false,
           errors: [],
         },
@@ -170,7 +176,7 @@ describe('SoftwareUpdates reducer', () => {
           errors: [],
           loading: false,
         },
-        [host2]: { errors: [], loading: false },
+        [host2]: { errors: [], loading: false, loadingPatches: false },
       },
     });
   });
@@ -230,7 +236,12 @@ describe('SoftwareUpdates reducer', () => {
 
     expect(actual).toEqual({
       softwareUpdates: {
-        [host1]: { ...initialState[host1], loading: false, errors },
+        [host1]: {
+          ...initialState[host1],
+          loading: false,
+          loadingPatches: false,
+          errors,
+        },
       },
     });
   });

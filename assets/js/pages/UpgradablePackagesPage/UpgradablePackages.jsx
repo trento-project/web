@@ -10,6 +10,7 @@ import { containsSubstring } from '@lib/filter';
 export default function UpgradablePackages({
   hostName,
   upgradablePackages,
+  patchesLoading,
   onPatchClick = noop,
   onLoad = noop,
 }) {
@@ -41,6 +42,7 @@ export default function UpgradablePackages({
         </div>
       </div>
       <UpgradablePackagesList
+        patchesLoading={patchesLoading}
         upgradablePackages={displayedPackages}
         onPatchClick={onPatchClick}
         onLoad={onLoad}

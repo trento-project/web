@@ -92,6 +92,22 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
     test "should return relevant patches grouped by package id", %{conn: conn, api_spec: api_spec} do
       insert_software_updates_settings()
 
+      relevant_patches = [
+        build(:relevant_patch, id: 4182),
+        build(:relevant_patch, id: 4174)
+      ]
+
+      upgradable_packages = [
+        build(:upgradable_package, name: "elixir"),
+        build(:upgradable_package, name: "systemd")
+      ]
+
+      %{host_id: host_id} =
+        insert(:software_updates_discovery_result,
+          relevant_patches: relevant_patches,
+          upgradable_packages: upgradable_packages
+        )
+
       expect(Trento.SoftwareUpdates.Discovery.Mock, :get_patches_for_package, 3, fn _ ->
         {:ok, build_list(10, :patch_for_package)}
       end)
@@ -103,9 +119,7 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
         ]
       } =
         conn
-        |> get(
-          "/api/v1/software_updates/packages?package_ids[]=#{Faker.UUID.v4()}&package_ids[]=#{Faker.UUID.v4()}"
-        )
+        |> get("/api/v1/software_updates/packages?host_id=#{host_id}")
         |> json_response(:ok)
         |> assert_schema("PatchesForPackagesResponse", api_spec)
     end
@@ -113,7 +127,23 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
     test "should return an empty list if every call errors", %{conn: conn, api_spec: api_spec} do
       insert_software_updates_settings()
 
-      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_patches_for_package, 3, fn _ ->
+      relevant_patches = [
+        build(:relevant_patch, id: 4182),
+        build(:relevant_patch, id: 4174)
+      ]
+
+      upgradable_packages = [
+        build(:upgradable_package, name: "elixir"),
+        build(:upgradable_package, name: "systemd")
+      ]
+
+      %{host_id: host_id} =
+        insert(:software_updates_discovery_result,
+          relevant_patches: relevant_patches,
+          upgradable_packages: upgradable_packages
+        )
+
+      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_affected_packages, 3, fn _ ->
         {:error, :error_getting_patches}
       end)
 
@@ -124,9 +154,7 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
         ]
       } =
         conn
-        |> get(
-          "/api/v1/software_updates/packages?package_ids[]=#{Faker.UUID.v4()}&package_ids[]=#{Faker.UUID.v4()}"
-        )
+        |> get("/api/v1/software_updates/packages?host_id=#{host_id}")
         |> json_response(:ok)
         |> assert_schema("PatchesForPackagesResponse", api_spec)
     end

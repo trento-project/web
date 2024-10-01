@@ -56,15 +56,10 @@ defmodule TrentoWeb.V1.SUSEManagerController do
     tags: ["Platform"],
     description: "Endpoint to fetch relevant patches covered by package upgrades in SUSE Manager",
     parameters: [
-      package_ids: [
+      host_id: [
         in: :query,
         required: true,
-        type: %OpenApiSpex.Schema{
-          type: :array,
-          items: %OpenApiSpex.Schema{
-            type: :string
-          }
-        }
+        type: %OpenApiSpex.Schema{type: :string, format: :uuid}
       ]
     ],
     responses: [
@@ -74,8 +69,8 @@ defmodule TrentoWeb.V1.SUSEManagerController do
     ]
 
   @spec patches_for_packages(Plug.Conn.t(), any) :: Plug.Conn.t()
-  def patches_for_packages(conn, %{package_ids: package_ids}) do
-    with {:ok, packages_patches} <- SoftwareUpdates.get_packages_patches(package_ids) do
+  def patches_for_packages(conn, %{host_id: host_id}) do
+    with {:ok, packages_patches} <- SoftwareUpdates.get_packages_patches(host_id) do
       render(conn, %{patches: packages_patches})
     end
   end
