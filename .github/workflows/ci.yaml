@@ -14,7 +14,7 @@ on:
 env:
   MIX_ENV: test
   NODE_VERSION: "20"
-  MANTAINERS: '["cdimonaco", "dottorblaster", "janvhs", "rtorrero", "nelsonkopliku", "arbulu89","jagabomb","emaksy","jamie-suse"]'
+  MANTAINERS: '["cdimonaco", "dottorblaster", "janvhs", "nelsonkopliku", "arbulu89","jagabomb","emaksy", "balanza", "gagandeepb"]'
   RG_TEST_LABEL: regression
   INTEGRATION_TEST_LABEL: integration
 
