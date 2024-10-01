@@ -37,6 +37,11 @@ export const getSoftwareUpdatesLoading = createSelector(
   (softwareUpdates) => get(softwareUpdates, ['loading'], false)
 );
 
+export const getPatchesLoading = createSelector(
+  [(state, id) => getSoftwareUpdatesForHost(id)(state)],
+  (softwareUpdates) => get(softwareUpdates, ['loadingPatches'], false)
+);
+
 export const getSoftwareUpdatesErrors = createSelector(
   [(state, id) => getSoftwareUpdatesForHost(id)(state)],
   (softwareUpdates) => get(softwareUpdates, ['errors'], [])

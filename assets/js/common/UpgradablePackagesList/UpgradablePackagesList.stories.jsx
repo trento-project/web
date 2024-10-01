@@ -16,12 +16,23 @@ export default {
       },
       description: 'List of upgradable packages',
     },
+    patchesLoading: {
+      description: 'Are patches loading?',
+    },
   },
 };
 
 export const Default = {
   args: {
     hostname: 'Example Host',
+    upgradablePackages: upgradablePackageFactory.buildList(4),
+  },
+};
+
+export const PatchesLoading = {
+  args: {
+    hostname: 'Example Host',
+    patchesLoading: true,
     upgradablePackages: upgradablePackageFactory.buildList(4),
   },
 };

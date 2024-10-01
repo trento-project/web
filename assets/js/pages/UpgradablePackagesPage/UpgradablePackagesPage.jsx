@@ -4,7 +4,10 @@ import { useSelector, useDispatch } from 'react-redux';
 import { get } from 'lodash';
 
 import { getHost } from '@state/selectors/host';
-import { getUpgradablePackages } from '@state/selectors/softwareUpdates';
+import {
+  getUpgradablePackages,
+  getPatchesLoading,
+} from '@state/selectors/softwareUpdates';
 import {
   fetchSoftwareUpdates,
   fetchUpgradablePackagesPatches,
@@ -30,6 +33,10 @@ function UpgradablePackagesPage() {
     getUpgradablePackages(state, hostID)
   );
 
+  const patchesLoading = useSelector((state) =>
+    getPatchesLoading(state, hostID)
+  );
+
   useEffect(() => {
     if (upgradablePackages.length > 0) {
       dispatch(fetchUpgradablePackagesPatches({ hostID }));
@@ -42,6 +49,7 @@ function UpgradablePackagesPage() {
       <UpgradablePackages
         hostName={hostname}
         upgradablePackages={upgradablePackages}
+        patchesLoading={patchesLoading}
         onPatchClick={(advisoryID) =>
           navigate(`/hosts/${hostID}/patches/${advisoryID}`)
         }
