@@ -1,39 +1,25 @@
 import React, { useState } from 'react';
 import { format, toZonedTime } from 'date-fns-tz';
 
-import {
-  EOS_BUG_REPORT_OUTLINED,
-  EOS_ERROR_OUTLINED,
-  EOS_INFO_OUTLINED,
-  EOS_KEYBOARD_ARROW_RIGHT_FILLED,
-  EOS_WARNING_OUTLINED,
-} from 'eos-icons-react';
+import { EOS_KEYBOARD_ARROW_RIGHT_FILLED } from 'eos-icons-react';
 import Table from '@common/Table';
-import Tooltip from '@common/Tooltip';
 
-import {
-  ACTIVITY_LOG_LEVELS,
-  LEVEL_DEBUG,
-  LEVEL_ERROR,
-  LEVEL_INFO,
-  LEVEL_WARNING,
-  toMessage,
-} from '@lib/model/activityLog';
+import { toMessage } from '@lib/model/activityLog';
 
 import ActivityLogDetailModal from '@common/ActivityLogDetailsModal';
 
-const logLevelToIcon = {
-  [LEVEL_DEBUG]: <EOS_BUG_REPORT_OUTLINED className="w-full" />,
-  [LEVEL_INFO]: <EOS_INFO_OUTLINED className="w-full" />,
-  [LEVEL_WARNING]: <EOS_WARNING_OUTLINED className="fill-yellow-500 w-full" />,
-  [LEVEL_ERROR]: <EOS_ERROR_OUTLINED className="fill-red-500 w-full" />,
-};
-const logLevelToLabel = {
-  [LEVEL_DEBUG]: 'Debug',
-  [LEVEL_INFO]: 'Info',
-  [LEVEL_WARNING]: 'Warning',
-  [LEVEL_ERROR]: 'Error',
-};
+// const logLevelToIcon = {
+//   [LEVEL_DEBUG]: <EOS_BUG_REPORT_OUTLINED className="w-full" />,
+//   [LEVEL_INFO]: <EOS_INFO_OUTLINED className="w-full" />,
+//   [LEVEL_WARNING]: <EOS_WARNING_OUTLINED className="fill-yellow-500 w-full" />,
+//   [LEVEL_ERROR]: <EOS_ERROR_OUTLINED className="fill-red-500 w-full" />,
+// };
+// const logLevelToLabel = {
+//   [LEVEL_DEBUG]: 'Debug',
+//   [LEVEL_INFO]: 'Info',
+//   [LEVEL_WARNING]: 'Warning',
+//   [LEVEL_ERROR]: 'Error',
+// };
 
 export const toRenderedEntry = (entry) => ({
   id: entry.id,
@@ -41,7 +27,7 @@ export const toRenderedEntry = (entry) => ({
   time: format(toZonedTime(entry.occurred_on), 'yyyy-MM-dd HH:mm:ss'),
   message: toMessage(entry),
   user: entry.actor,
-  level: ACTIVITY_LOG_LEVELS.includes(entry?.level) ? entry?.level : LEVEL_INFO,
+  // level: ACTIVITY_LOG_LEVELS.includes(entry?.level) ? entry?.level : LEVEL_INFO,
   metadata: entry.metadata,
 });
 
@@ -66,24 +52,24 @@ function ActivityLogOverview({ activityLog, loading = false }) {
       {
         title: 'User',
         key: 'user',
-        className: 'w-1/12',
+        className: 'w-2/12',
       },
-      {
-        title: 'Level',
-        key: 'level',
-        className: 'text-center w-1/12',
-        render: (level) => (
-          <Tooltip content={logLevelToLabel[level] ?? 'Unknown'} wrap={false}>
-            <span aria-label={`log-level-${level}`}>
-              {logLevelToIcon[level]}
-            </span>
-          </Tooltip>
-        ),
-      },
+      // {
+      //   title: 'Level',
+      //   key: 'level',
+      //   className: 'text-center w-1/12',
+      //   render: (level) => (
+      //     <Tooltip content={logLevelToLabel[level] ?? 'Unknown'} wrap={false}>
+      //       <span aria-label={`log-level-${level}`}>
+      //         {logLevelToIcon[level]}
+      //       </span>
+      //     </Tooltip>
+      //   ),
+      // },
       {
         title: '',
         key: 'metadata',
-        className: 'w-3/6',
+        className: 'w-1/12',
         render: (_metadata, logEntry) => (
           <div
             aria-label={`entry-${logEntry.id}`}

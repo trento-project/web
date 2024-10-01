@@ -35,13 +35,13 @@ describe('Activity Log Overview', () => {
     const entry = activityLogEntryFactory.build({
       type: activityType,
     });
-    const { actor, level } = entry;
+    const { actor } = entry;
     return {
       name: activityType,
       entry,
       expectedUser: actor,
       expectedMessage: toMessage(entry),
-      expectedLevel: level,
+      // expectedLevel: level,
     };
   });
 
