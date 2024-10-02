@@ -124,14 +124,17 @@ module.exports = {
 
   // Use this configuration option to add custom reporters to Jest
   reporters: [
-    "default",
-    ["jest-junit", {
-      addFileAttribute: "true",
-      ancestorSeparator: " › ",
-      classNameTemplate: "{classname}",
-      titleTemplate: "{title}", // outputname
-      includeConsoleOutput: true
-    }]
+    'default',
+    [
+      'jest-junit',
+      {
+        addFileAttribute: 'true',
+        ancestorSeparator: ' › ',
+        classNameTemplate: '{classname}',
+        titleTemplate: '{title}', // outputname
+        includeConsoleOutput: true,
+      },
+    ],
   ],
 
   // Automatically reset mock state before every test
