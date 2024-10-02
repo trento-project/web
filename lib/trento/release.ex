@@ -170,6 +170,12 @@ defmodule Trento.Release do
 
           {key, cert}
 
+        %SSOCertificatesSettings{key_file: :error, certificate_file: :error} ->
+          raise """
+          Error decrypting the SSO certificates.
+          The used SECRET_KEY_BASE value might be different for the one used during the encryption.
+          """
+
         %SSOCertificatesSettings{key_file: key, certificate_file: cert} ->
           {key, cert}
       end
