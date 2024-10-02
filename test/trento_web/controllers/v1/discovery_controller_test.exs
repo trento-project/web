@@ -59,7 +59,7 @@ defmodule TrentoWeb.V1.DiscoveryControllerTest do
 
       [discarded_event] = Discovery.get_discarded_discovery_events(1)
 
-      assert %DiscardedDiscoveryEvent{payload: ^body} =
+      assert %DiscardedDiscoveryEvent{payload: ^body, reason: "[:any_error]"} =
                discarded_event
     end
   end
