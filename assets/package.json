@@ -57,7 +57,7 @@
     "chartjs-plugin-zoom": "^2.0.1",
     "classnames": "^2.5.1",
     "copy-to-clipboard": "^3.3.3",
-    "date-fns": "^3.6.0",
+    "date-fns": "^4.1.0",
     "date-fns-tz": "^3.2.0",
     "eos-icons-react": "^2.4.0",
     "lodash": "^4.17.21",
