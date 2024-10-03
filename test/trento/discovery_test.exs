@@ -2,6 +2,8 @@ defmodule Trento.DiscoveryTest do
   use ExUnit.Case
   use Trento.DataCase
 
+  import Mox
+
   import Trento.Factory
 
   alias Trento.Discovery
@@ -120,5 +122,26 @@ defmodule Trento.DiscoveryTest do
     [
       %DiscardedDiscoveryEvent{payload: ^event}
     ] = discarded_events
+  end
+
+  test "should discard discovery events when the dispatch action fails" do
+    error = :any_error
+
+    event = %{
+      "agent_id" => Faker.UUID.v4(),
+      "discovery_type" => "host_discovery",
+      "payload" => build(:host_discovery_event)
+    }
+
+    expect(Trento.Commanded.Mock, :dispatch, fn _ ->
+      {:error, error}
+    end)
+
+    {:error, ^error} = Discovery.handle(event)
+
+    [discarded_event] = Trento.Repo.all(DiscardedDiscoveryEvent)
+
+    assert %DiscardedDiscoveryEvent{payload: ^event} =
+             discarded_event
   end
 end

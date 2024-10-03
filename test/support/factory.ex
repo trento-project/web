@@ -902,6 +902,20 @@ defmodule Trento.Factory do
     }
   end
 
+  def host_discovery_event_factory do
+    %{
+      "hostname" => Faker.StarWars.character(),
+      "ip_addresses" => [Faker.Internet.ip_v4_address()],
+      "agent_version" => Faker.App.semver(),
+      "cpu_count" => Enum.random(1..16),
+      "total_memory_mb" => Enum.random(1..128),
+      "socket_count" => Enum.random(1..16),
+      "os_version" => Faker.App.semver(),
+      "installation_source" => Enum.random(["community", "suse", "unknown"]),
+      "fully_qualified_domain_name" => Faker.Internet.domain_name()
+    }
+  end
+
   def software_updates_discovery_health_changed_event_factory do
     SoftwareUpdatesHealthChanged.new!(%{
       host_id: Faker.UUID.v4(),

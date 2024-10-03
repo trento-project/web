@@ -32,8 +32,9 @@ defmodule Trento.Discovery do
   @spec handle(map) :: :ok | {:error, any}
   def handle(event) do
     with {:ok, commands} <- do_handle(event),
-         {:ok, _} <- store_discovery_event(event) do
-      dispatch(commands)
+         {:ok, _} <- store_discovery_event(event),
+         :ok <- dispatch(commands) do
+      :ok
     else
       {:error, reason} = error ->
         Logger.error("Failed to handle discovery event: #{inspect(reason)}")

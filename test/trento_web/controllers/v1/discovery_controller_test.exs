@@ -1,6 +1,14 @@
 defmodule TrentoWeb.V1.DiscoveryControllerTest do
   use TrentoWeb.ConnCase, async: true
 
+  import Trento.DiscoveryFixturesHelper
+
+  import Mox
+
+  alias Trento.Discovery
+
+  alias Trento.Discovery.DiscardedDiscoveryEvent
+
   describe "discovery" do
     test "collect action should return an unprocessable entity error when the event is unknown",
          %{conn: conn} do
@@ -31,6 +39,28 @@ defmodule TrentoWeb.V1.DiscoveryControllerTest do
         "payload" => nil
       })
       |> json_response(202)
+    end
+
+    test "collect action discards application instance registrations when the associated database does not exists",
+         %{conn: conn} do
+      body =
+        load_discovery_event_fixture("sap_system_discovery_application")
+
+      expect(Trento.Commanded.Mock, :dispatch, fn _ ->
+        {:error, :any_error}
+      end)
+
+      %{status: status} =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> post("/api/v1/collect", body)
+
+      assert status != 202
+
+      [discarded_event] = Discovery.get_discarded_discovery_events(1)
+
+      assert %DiscardedDiscoveryEvent{payload: ^body, reason: "[:any_error]"} =
+               discarded_event
     end
   end
 end
