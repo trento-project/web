@@ -1,9 +1,13 @@
 # Flaky Tests Analysis
 
-## Tests Analysis
+Provides make targets to check for flaky tests across BE, FE and E2E suites. These make targets when invoked with appropriate params, return a mostly complete list of flaky tests, ordered by a computed measure of flakiness.
 
+## How it works
 
-### Execution 
+1. Run phase: Runs test suite repeatedly (e.g. 100 times), and collecting trace of each run in JUnit format.
+2. Analyze phase: Once there are JUnit files collected in one place, running the analyze-files target computes measures of flakiness over all executed tests and returns the top N (40 by default) tests.
+
+### Run phase
 
 ```
 # for running entire be, fe or e2e suite
@@ -23,7 +27,7 @@ The script parses the files and scores the failing tests according to their "fli
 We also save a raw log of the CLI output of `mix test`. This would be useful for searching through 
 and understanding the reasons/trace of failing/flaky tests.
 
-### Analysis & Results
+### Analyze phase
 
 First, we install python dependencies needed by the script file.
 There is a make target provided by this, as well as a requirements file should one choose to do so in a custom/different way.
