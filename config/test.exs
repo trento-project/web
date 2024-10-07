@@ -103,4 +103,4 @@ config :junit_formatter,
 
 config :trento,
        :flaky_tests_detection,
-       enabled?: System.get_env("WRITE_JUNIT") == "1" || false
+       enabled?: System.get_env("WRITE_JUNIT") == "1"

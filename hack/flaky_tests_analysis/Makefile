@@ -47,6 +47,6 @@ analyze-files:
 install-deps:
 	pip install -r ./requirements.txt
 
-alt-install-deps:
+nix-install-deps:
 	nix-shell -p 'with pkgs.python311Packages; [junitparser pandas numpy matplotlib seaborn]'
 
