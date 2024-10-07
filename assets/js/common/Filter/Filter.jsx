@@ -18,8 +18,15 @@ const getLabel = (value, placeholder) =>
  * @param {string} props.title Title of the filter. It will be displayed in the button when the filter is empty
  * @param {string|string[]} props.value Selected options. Default is an empty array
  * @param {function} props.onChange Function to call when the selected options change
+ * @param {boolean} props.truncateOptionsContent If true, the options will be truncated to fit the width of the filter select, otherwise the full value will be displayed. Default is true
  */
-function Filter({ options, title, value = [], onChange }) {
+function Filter({
+  options,
+  title,
+  value = [],
+  onChange,
+  truncateOptionsContent = true,
+}) {
   const ref = useRef();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
@@ -100,7 +107,14 @@ function Filter({ options, title, value = [], onChange }) {
           afterLeave={() => setQuery('')}
           show={open}
         >
-          <div className="absolute mt-1 w-full z-10 rounded-md bg-white shadow-lg">
+          <div
+            className={classNames(
+              'absolute mt-1 z-10 rounded-md bg-white shadow-lg',
+              {
+                'w-full': truncateOptionsContent,
+              }
+            )}
+          >
             <div className="ring-1 ring-black ring-opacity-5 rounded-md">
               <div className="pt-2 pb-1 px-2 flex justify-center">
                 <input
