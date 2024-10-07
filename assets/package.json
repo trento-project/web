@@ -10,7 +10,7 @@
     "@storybook/addon-interactions": "^8.2.6",
     "@storybook/addon-links": "^8.2.6",
     "@storybook/addon-webpack5-compiler-babel": "^3.0.3",
-    "@storybook/preview-api": "^8.3.4",
+    "@storybook/preview-api": "^8.3.5",
     "@storybook/react": "^8.2.6",
     "@storybook/react-webpack5": "^8.2.6",
     "@storybook/test": "^8.3.4",
