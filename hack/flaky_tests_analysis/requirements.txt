@@ -1,0 +1,1 @@
+flaky-tests-detection==1.3.0
