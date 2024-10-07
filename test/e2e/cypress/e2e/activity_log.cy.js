@@ -54,9 +54,7 @@ context('Activity Log page', () => {
       }).as('data');
       cy.visit('/activity_log');
 
-      cy.contains('Filter Resource type', { matchCase: false }).should(
-        'be.visible'
-      );
+      cy.contains('Filter Type', { matchCase: false }).should('be.visible');
       cy.contains('Filter older than', { matchCase: false }).should(
         'be.visible'
       );
@@ -92,7 +90,7 @@ context('Activity Log page', () => {
       cy.contains('Filter newer than').click();
       cy.get('input[type="datetime-local"]:first').type('2024-08-13T10:21');
 
-      cy.contains('Filter Resource type').click();
+      cy.contains('Filter Type').click();
       cy.contains('Login Attempt').click();
       cy.contains('Tag Added').click();
 
@@ -117,9 +115,7 @@ context('Activity Log page', () => {
 
       cy.contains('Reset').click();
 
-      cy.contains('Filter Resource type', { matchCase: false }).should(
-        'be.visible'
-      );
+      cy.contains('Filter Type', { matchCase: false }).should('be.visible');
       cy.contains('Filter older than', { matchCase: false }).should(
         'be.visible'
       );
@@ -246,7 +242,7 @@ context('Activity Log page', () => {
         );
       });
 
-      cy.contains('Filter Resource type').click();
+      cy.contains('Filter Type').click();
       cy.contains('Login Attempt').click();
       cy.contains('Apply').click();
 
