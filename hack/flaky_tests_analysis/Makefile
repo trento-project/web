@@ -42,11 +42,12 @@ gen-test-data-e2e:
 		done 
 
 analyze-files:
-	python check_flakes.py --junit-files=$(PATH-TO-JUNIT-FILES) --grouping-option=runs --window-size=$(WINDOW-SIZE) --window-count=$(WINDOW-COUNT) --top-n=$(TOP-N)
+	flaky --junit-files=$(PATH-TO-JUNIT-FILES) --grouping-option=runs --window-size=$(WINDOW-SIZE) --window-count=$(WINDOW-COUNT) --top-n=$(TOP-N)
+
+venv-create:
+	@python -m venv .venv --copies && \
+	echo "Please run: source .venv/bin/activate"
 
 install-deps:
-	pip install -r ./requirements.txt
-
-nix-install-deps:
-	nix-shell -p 'with pkgs.python311Packages; [junitparser pandas numpy matplotlib seaborn]'
+	.venv/bin/pip install -r ./requirements.txt
 
