@@ -1,16 +1,20 @@
 # Flaky Tests Analysis
 
-## Backend Tests Analysis
-
-###  Setup
-
-`mix test` along with some config that makes the test runner process write to a JUnit file for every run was set up. 
+## Tests Analysis
 
 
 ### Execution 
 
 ```
-❯ make N-TIMES=500 gen-test-data
+# for running entire be, fe or e2e suite
+❯ make N-TIMES=500 gen-test-data-be
+❯ make N-TIMES=500 gen-test-data-fe
+❯ make N-TIMES=500 gen-test-data-e2e
+
+# Run specific suite/grouping of be, fe or e2e tests
+❯ make RUN_ONLY=./test/trento/users_test.exs  N-TIMES=100 gen-test-data-be
+❯ make RUN_ONLY=generatePassword.test.js  N-TIMES=50 gen-test-data-fe
+❯ make RUN_ONLY=./cypress/e2e/about.cy.js N-TIMES=10 gen-test-data-e2e
 ```
 By default this will write to the `/tmp` directory. Approximate run time is 30 minutes per 100 test runs.
 
@@ -22,7 +26,7 @@ and understanding the reasons/trace of failing/flaky tests.
 ### Analysis & Results
 
 First, we install python dependencies needed by the script file.
-There is a make target provided by this, as well as a requirements file should once choose to do so in a custom/different way.
+There is a make target provided by this, as well as a requirements file should one choose to do so in a custom/different way.
 
 On non-Nix systems:
 ```
@@ -35,6 +39,7 @@ On Nix systems:
 ```
 
 ```
+# Here we analyze files generated from run of be tests, but the commands are same/similar for files from fe or e2e tests.
 ❯ make PATH-TO-JUNIT-FILES=/tmp analyze-files
 python check_flakes.py --junit-files=/tmp --grouping-option=runs --window-size=5 --window-count=100 --top-n=40
 
