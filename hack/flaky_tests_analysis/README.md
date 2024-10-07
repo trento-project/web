@@ -32,20 +32,18 @@ and understanding the reasons/trace of failing/flaky tests.
 First, we install python dependencies needed by the script file.
 There is a make target provided by this, as well as a requirements file should one choose to do so in a custom/different way.
 
-On non-Nix systems:
-```
-❯ make install-deps
-```
 
-On Nix systems:
 ```
-❯ make alt-install-deps
+❯ make venv-create
+❯ source .venv/bin/activate
+❯ make install-deps
+
 ```
 
 ```
 # Here we analyze files generated from run of be tests, but the commands are same/similar for files from fe or e2e tests.
 ❯ make PATH-TO-JUNIT-FILES=/tmp analyze-files
-python check_flakes.py --junit-files=/tmp --grouping-option=runs --window-size=5 --window-count=100 --top-n=40
+flaky --junit-files=/tmp --grouping-option=runs --window-size=5 --window-count=100 --top-n=40
 
 Top 40 flaky tests based on latest window exponential weighted moving average fliprate score
 Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify api key will be expired soon --- score: 0.1038
