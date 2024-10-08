@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 import { getAdvisoryErrata } from '@lib/api/softwareUpdates';
 import { logError } from '@lib/log';
+import * as history from '@lib/history';
 import BackButton from '@common/BackButton';
 import AdvisoryDetails from './AdvisoryDetails';
 
 function AdvisoryDetailsPage() {
+  const navigate = useNavigate();
   const [advisoryErrata, setAdvisoryErrata] = useState(undefined);
   const [isLoading, setIsLoading] = useState(true);
   const { hostID, advisoryID } = useParams();
@@ -22,10 +24,18 @@ function AdvisoryDetailsPage() {
 
   return (
     <>
-      <BackButton url={`/hosts/${hostID}`}>Back</BackButton>
-      {!isLoading ? (
+      <BackButton
+        onClick={() =>
+          history.length() < 3
+            ? navigate(`/hosts/${hostID}/patches`)
+            : navigate(-1)
+        }
+      >
+        Back
+      </BackButton>
+      {!isLoading && (
         <AdvisoryDetails advisoryName={advisoryID} errata={advisoryErrata} />
-      ) : null}
+      )}
     </>
   );
 }

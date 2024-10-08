@@ -37,9 +37,9 @@ function AdvisoryDetails({
   return (
     <div>
       <PageHeader className="flex h-auto items-center">
-        <h1 className="mr-2">
+        <div className="mr-2">
           Advisory Details: <span className="font-bold">{advisoryName}</span>
-        </h1>{' '}
+        </div>{' '}
         <AdvisoryIcon type={type} />
       </PageHeader>
       <div className="flex flex-col mb-4">
