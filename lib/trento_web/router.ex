@@ -10,7 +10,7 @@ defmodule TrentoWeb.Router do
     plug :accepts, ["html"]
     plug :fetch_session
     plug :fetch_live_flash
-    plug :put_root_layout, {TrentoWeb.LayoutView, :root}
+    plug :put_root_layout, {TrentoWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
   end
@@ -313,7 +313,7 @@ defmodule TrentoWeb.Router do
   end
 
   scope "/*path", TrentoWeb do
-    pipe_through [:browser]
+    pipe_through :browser
 
     get "/", PageController, :index
   end

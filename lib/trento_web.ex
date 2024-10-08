@@ -6,7 +6,6 @@ defmodule TrentoWeb do
   This can be used in your application as:
 
       use TrentoWeb, :controller
-      use TrentoWeb, :view
 
   The definitions below will be executed for every view,
   controller, etc, so keep them short and clean, focused
@@ -20,37 +19,39 @@ defmodule TrentoWeb do
 
   def controller do
     quote do
-      use Phoenix.Controller, namespace: TrentoWeb
+      use Phoenix.Controller,
+        namespace: TrentoWeb,
+        formats: [:html, :json],
+        layouts: [html: TrentoWeb.Layouts]
+
+      # what about layout ? layouts: [html: TrentoWeb.Layouts]
 
       import Plug.Conn
       import TrentoWeb.Gettext
 
       unquote(verified_routes())
-      alias TrentoWeb.Router.Helpers, as: Routes
     end
   end
 
-  def view do
+  def html do
     quote do
-      use Phoenix.View,
-        root: "lib/trento_web/templates",
-        namespace: TrentoWeb
+      use Phoenix.Component
 
       # Import convenience functions from controllers
       import Phoenix.Controller,
-        only: [get_flash: 1, get_flash: 2, view_module: 1, view_template: 1]
+        only: [get_csrf_token: 0, view_module: 1, view_template: 1]
 
-      # Include shared imports and aliases for views
-      unquote(view_helpers())
+      # Include general helpers for rendering HTML
+      unquote(html_helpers())
     end
   end
 
   def live_view do
     quote do
       use Phoenix.LiveView,
-        layout: {TrentoWeb.LayoutView, "live.html"}
+        layout: {TrentoWeb.Layouts, :live}
 
-      unquote(view_helpers())
+      unquote(html_helpers())
     end
   end
 
@@ -58,13 +59,13 @@ defmodule TrentoWeb do
     quote do
       use Phoenix.LiveComponent
 
-      unquote(view_helpers())
+      unquote(html_helpers())
     end
   end
 
   def router do
     quote do
-      use Phoenix.Router
+      use Phoenix.Router, helpers: false
 
       import Plug.Conn
       import Phoenix.Controller
@@ -79,34 +80,22 @@ defmodule TrentoWeb do
     end
   end
 
-  defp view_helpers do
-    quote do
-      # Use all HTML functionality (forms, tags, etc)
-      import Phoenix.HTML
-      import Phoenix.HTML.Form
-      use PhoenixHTMLHelpers
-
-      # Import LiveView and .heex helpers (live_render, live_patch, <.form>, etc)
-      # https://elixirforum.com/t/phoenix-liveview-0-18-and-live-flash/50841
-      import Phoenix.Component
-
-      # Import basic rendering functionality (render, render_layout, etc)
-      import Phoenix.View
-
-      import TrentoWeb.ErrorHelpers
-      import TrentoWeb.Gettext
-      alias TrentoWeb.Router.Helpers, as: Routes
-
-      unquote(verified_routes())
-    end
-  end
-
   def verified_routes do
     quote do
       use Phoenix.VerifiedRoutes,
         endpoint: TrentoWeb.Endpoint,
         router: TrentoWeb.Router,
         statics: TrentoWeb.static_paths()
+    end
+  end
+
+  defp html_helpers do
+    quote do
+      import Phoenix.HTML
+      import TrentoWeb.CoreComponents
+      import TrentoWeb.Gettext
+      alias Phoenix.LiveView.JS
+      unquote(verified_routes())
     end
   end
 

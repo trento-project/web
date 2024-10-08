@@ -13,7 +13,10 @@ config :trento,
 # Configures the endpoint
 config :trento, TrentoWeb.Endpoint,
   url: [host: "localhost"],
-  render_errors: [view: TrentoWeb.ErrorView, accepts: ~w(json)],
+  render_errors: [
+    formats: [json: TrentoWeb.ErrorJSON],
+    layout: false
+  ],
   pubsub_server: Trento.PubSub,
   live_view: [signing_salt: "4tNZ+tm7"]
 
