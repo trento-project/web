@@ -141,7 +141,7 @@ function ActivityLogPage() {
     {
       key: 'type',
       type: 'select',
-      title: 'Resource type',
+      title: 'Type',
       options: pipe(
         allowedActivities,
         map(([key, value]) => [key, value.label])

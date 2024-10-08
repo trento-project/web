@@ -34,8 +34,7 @@ export default {
 
     return (
       <Filter
-        title={args.title}
-        options={args.options}
+        {...args}
         value={value}
         onChange={(newValue) => {
           setValue(newValue);
@@ -85,5 +84,17 @@ export const WithLabel = {
       ['virginia-gricia', 'Virginia Gricia'],
     ],
     value: ['tony-kekw'],
+  },
+};
+
+export const WithLargeOptionContent = {
+  args: {
+    ...Default.args,
+    options: [
+      'Tony Kekw',
+      'Chad Carbonara',
+      'Chuck Amatriciana',
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+    ],
   },
 };

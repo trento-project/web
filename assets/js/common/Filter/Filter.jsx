@@ -100,7 +100,7 @@ function Filter({ options, title, value = [], onChange }) {
           afterLeave={() => setQuery('')}
           show={open}
         >
-          <div className="absolute mt-1 w-full z-10 rounded-md bg-white shadow-lg">
+          <div className="absolute mt-1 z-10 rounded-md bg-white shadow-lg min-w-full">
             <div className="ring-1 ring-black ring-opacity-5 rounded-md">
               <div className="pt-2 pb-1 px-2 flex justify-center">
                 <input
