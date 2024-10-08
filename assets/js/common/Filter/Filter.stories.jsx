@@ -28,12 +28,6 @@ export default {
       description: 'Function to call when the selected options change',
       control: { type: null },
     },
-    truncateOptionsContent: {
-      type: { name: 'boolean', required: false, defaultValue: true },
-      description:
-        'If true, the options content will be truncated to fit the width of the filter select, otherwise the full value will be displayed',
-      control: { type: 'boolean' },
-    },
   },
   render: (args) => {
     const [value, setValue] = useState(args.value);
@@ -93,7 +87,7 @@ export const WithLabel = {
   },
 };
 
-export const WithTruncatedOptions = {
+export const WithLargeOptionContent = {
   args: {
     ...Default.args,
     options: [
@@ -102,12 +96,5 @@ export const WithTruncatedOptions = {
       'Chuck Amatriciana',
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
     ],
-  },
-};
-
-export const WithFullOptionsContent = {
-  args: {
-    ...WithTruncatedOptions.args,
-    truncateOptionsContent: false,
   },
 };

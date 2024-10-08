@@ -146,7 +146,6 @@ function ActivityLogPage() {
         allowedActivities,
         map(([key, value]) => [key, value.label])
       )(abilities),
-      truncateOptionsContent: false,
     },
     {
       key: 'actor',
