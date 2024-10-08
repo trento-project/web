@@ -37,7 +37,7 @@ defmodule TrentoWeb.V1.DatabaseController do
   def list_databases(conn, _) do
     databases = Databases.get_all_databases()
 
-    render(conn, "databases.json", databases: databases)
+    render(conn, :databases, databases: databases)
   end
 
   operation :delete_database_instance,

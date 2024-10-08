@@ -10,7 +10,7 @@ defmodule TrentoWeb.PageController do
 
     {sso_enabled, callback_url, login_url, enrollment_url} = sso_details(conn)
 
-    render(conn, "index.html",
+    render(conn, :index,
       check_service_base_url: check_service_base_url,
       charts_enabled: charts_enabled,
       deregistration_debounce: deregistration_debounce,
@@ -19,7 +19,8 @@ defmodule TrentoWeb.PageController do
       sso_enabled: sso_enabled,
       sso_login_url: login_url,
       sso_callback_url: callback_url,
-      sso_enrollment_url: enrollment_url
+      sso_enrollment_url: enrollment_url,
+      layout: false
     )
   end
 

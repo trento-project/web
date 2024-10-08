@@ -4,7 +4,7 @@ defmodule TrentoWeb.Plugs.ExternalIdpGuardPlug do
   """
   @behaviour Plug
 
-  alias TrentoWeb.ErrorView
+  alias TrentoWeb.ErrorJSON
 
   import Plug.Conn
 
@@ -21,7 +21,7 @@ defmodule TrentoWeb.Plugs.ExternalIdpGuardPlug do
     |> resp(
       501,
       Jason.encode!(
-        ErrorView.render("501.json", %{
+        ErrorJSON.render("501.json", %{
           reason: "Endpoint disabled due an external IDP is enabled"
         })
       )

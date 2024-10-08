@@ -67,7 +67,7 @@ defmodule TrentoWeb.V1.ActivityLogController do
 
     with {:ok, activity_log_entries, meta} <-
            ActivityLog.list_activity_log(params, include_all_logs?) do
-      render(conn, "activity_log.json", %{
+      render(conn, :activity_log, %{
         activity_log: activity_log_entries,
         pagination: meta
       })

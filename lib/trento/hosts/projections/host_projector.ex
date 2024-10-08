@@ -8,7 +8,7 @@ defmodule Trento.Hosts.Projections.HostProjector do
     repo: Trento.Repo,
     name: "host_projector"
 
-  alias TrentoWeb.V1.HostView
+  alias TrentoWeb.V1.HostJSON
 
   alias Trento.Repo
 
@@ -265,7 +265,7 @@ defmodule Trento.Hosts.Projections.HostProjector do
     TrentoWeb.Endpoint.broadcast(
       "monitoring:hosts",
       "host_registered",
-      HostView.render("host_registered.json", host: host)
+      HostJSON.host_registered(%{host: host})
     )
   end
 
@@ -282,7 +282,7 @@ defmodule Trento.Hosts.Projections.HostProjector do
     TrentoWeb.Endpoint.broadcast(
       "monitoring:hosts",
       "host_restored",
-      HostView.render("host_restored.json", host: host)
+      HostJSON.host_restored(%{host: host})
     )
   end
 
@@ -340,7 +340,7 @@ defmodule Trento.Hosts.Projections.HostProjector do
     TrentoWeb.Endpoint.broadcast(
       "monitoring:hosts",
       "host_details_updated",
-      HostView.render("host_details_updated.json", host: host)
+      HostJSON.host_details_updated(%{host: host})
     )
   end
 
@@ -352,12 +352,12 @@ defmodule Trento.Hosts.Projections.HostProjector do
     TrentoWeb.Endpoint.broadcast(
       "monitoring:hosts",
       "heartbeat_succeded",
-      HostView.render("heartbeat_result.json",
+      HostJSON.heartbeat_result(%{
         host: %{
           id: id,
           hostname: hostname
         }
-      )
+      })
     )
   end
 
@@ -369,12 +369,12 @@ defmodule Trento.Hosts.Projections.HostProjector do
     TrentoWeb.Endpoint.broadcast(
       "monitoring:hosts",
       "heartbeat_failed",
-      HostView.render("heartbeat_result.json",
+      HostJSON.heartbeat_result(%{
         host: %{
           id: id,
           hostname: hostname
         }
-      )
+      })
     )
   end
 
@@ -396,10 +396,7 @@ defmodule Trento.Hosts.Projections.HostProjector do
         %{host: %HostReadModel{selected_checks: checks} = host}
       ) do
     message =
-      HostView.render(
-        "host_details_updated.json",
-        %{host: host}
-      )
+      HostJSON.host_details_updated(%{host: host})
 
     TrentoWeb.Endpoint.broadcast("monitoring:hosts", "host_details_updated", message)
   end
@@ -409,11 +406,7 @@ defmodule Trento.Hosts.Projections.HostProjector do
         _,
         %{host: %HostReadModel{} = host}
       ) do
-    message =
-      HostView.render(
-        "saptune_status_updated.json",
-        %{host: host}
-      )
+    message = HostJSON.saptune_status_updated(%{host: host})
 
     TrentoWeb.Endpoint.broadcast("monitoring:hosts", "saptune_status_updated", message)
   end
@@ -423,7 +416,7 @@ defmodule Trento.Hosts.Projections.HostProjector do
         _,
         %{host: %HostReadModel{} = host}
       ) do
-    message = HostView.render("host_health_changed.json", %{host: host})
+    message = HostJSON.host_health_changed(%{host: host})
 
     TrentoWeb.Endpoint.broadcast("monitoring:hosts", "host_health_changed", message)
   end

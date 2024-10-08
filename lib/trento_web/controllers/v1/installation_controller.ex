@@ -30,7 +30,7 @@ defmodule TrentoWeb.V1.InstallationController do
   @spec get_api_key(Plug.Conn.t(), any) :: Plug.Conn.t()
   def get_api_key(conn, _) do
     with {:ok, api_key_settings} <- Settings.get_api_key_settings() do
-      render(conn, "api_key.json", %{
+      render(conn, :api_key, %{
         api_key: AuthenticateAPIKeyPlug.generate_api_key!(api_key_settings)
       })
     end

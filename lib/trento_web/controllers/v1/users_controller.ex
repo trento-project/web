@@ -38,7 +38,7 @@ defmodule TrentoWeb.V1.UsersController do
 
   def index(conn, _params) do
     users = Users.list_users()
-    render(conn, "index.json", users: users)
+    render(conn, :index, users: users)
   end
 
   operation :create,
@@ -55,7 +55,7 @@ defmodule TrentoWeb.V1.UsersController do
       conn
       |> put_status(:created)
       |> attach_user_version_as_etag_header(user)
-      |> render("show.json", user: user)
+      |> render(:show, user: user)
     end
   end
 
@@ -87,7 +87,7 @@ defmodule TrentoWeb.V1.UsersController do
   def show(conn, %{id: id}) do
     with {:ok, user} <- Users.get_user(id),
          conn <- attach_user_version_as_etag_header(conn, user) do
-      render(conn, "show.json", user: user)
+      render(conn, :show, user: user)
     end
   end
 
@@ -136,7 +136,7 @@ defmodule TrentoWeb.V1.UsersController do
          {:ok, %User{} = user} <- Users.update_user(user, update_params),
          :ok <- broadcast_update_or_locked_user(user),
          conn <- attach_user_version_as_etag_header(conn, user) do
-      render(conn, "show.json", user: user)
+      render(conn, :show, user: user)
     end
   end
 

@@ -8,7 +8,7 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
     repo: Trento.Repo,
     name: "cluster_projector"
 
-  alias TrentoWeb.V2.ClusterView
+  alias TrentoWeb.V2.ClusterJSON
 
   alias Trento.Clusters.Events.{
     ChecksSelected,
@@ -158,7 +158,7 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
     TrentoWeb.Endpoint.broadcast(
       "monitoring:clusters",
       "cluster_registered",
-      ClusterView.render("cluster_registered.json", cluster: registered_cluster)
+      ClusterJSON.cluster_registered(%{cluster: registered_cluster})
     )
   end
 
@@ -168,7 +168,8 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
         _,
         _
       ) do
-    message = ClusterView.render("cluster_details_updated.json", data: updated_details)
+    message =
+      ClusterJSON.cluster_details_updated(%{data: updated_details})
 
     TrentoWeb.Endpoint.broadcast(
       "monitoring:clusters",
@@ -185,7 +186,7 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
   end
 
   def after_update(%ClusterHealthChanged{}, _, %{cluster: %ClusterReadModel{} = cluster}) do
-    message = ClusterView.render("cluster_health_changed.json", %{cluster: cluster})
+    message = ClusterJSON.cluster_health_changed(%{cluster: cluster})
 
     TrentoWeb.Endpoint.broadcast("monitoring:clusters", "cluster_health_changed", message)
   end
@@ -212,7 +213,7 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
     TrentoWeb.Endpoint.broadcast(
       "monitoring:clusters",
       "cluster_restored",
-      ClusterView.render("cluster_restored.json", cluster: restored_cluster)
+      ClusterJSON.cluster_restored(%{cluster: restored_cluster})
     )
   end
 

@@ -42,6 +42,6 @@ defmodule TrentoWeb.HealthController do
 
     conn
     |> put_status(if db_status == :pass, do: 200, else: 500)
-    |> render("health.json", health: %{database: db_status})
+    |> render(:health, health: %{database: db_status})
   end
 end

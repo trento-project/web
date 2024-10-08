@@ -22,6 +22,6 @@ defmodule TrentoWeb.V2.ClusterController do
   def list(conn, _) do
     clusters = Clusters.get_all_clusters()
 
-    render(conn, "clusters.json", clusters: clusters)
+    render(conn, :clusters, clusters: clusters)
   end
 end

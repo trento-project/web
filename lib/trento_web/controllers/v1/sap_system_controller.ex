@@ -37,7 +37,7 @@ defmodule TrentoWeb.V1.SapSystemController do
   def list(conn, _) do
     sap_systems = SapSystems.get_all_sap_systems()
 
-    render(conn, "sap_systems.json", sap_systems: sap_systems)
+    render(conn, :sap_systems, sap_systems: sap_systems)
   end
 
   operation :delete_application_instance,

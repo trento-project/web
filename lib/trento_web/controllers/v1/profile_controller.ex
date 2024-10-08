@@ -24,7 +24,7 @@ defmodule TrentoWeb.V1.ProfileController do
 
   def show(conn, _) do
     %User{} = user = Pow.Plug.current_user(conn)
-    render(conn, "profile.json", user: user)
+    render(conn, :profile, user: user)
   end
 
   operation :update,
@@ -43,7 +43,7 @@ defmodule TrentoWeb.V1.ProfileController do
     profile_params = OpenApiSpex.body_params(conn)
 
     with {:ok, %User{} = updated_user} <- Users.update_user_profile(user, profile_params) do
-      render(conn, "profile.json", user: updated_user)
+      render(conn, :profile, user: updated_user)
     end
   end
 
@@ -77,7 +77,7 @@ defmodule TrentoWeb.V1.ProfileController do
     %User{} = user = Pow.Plug.current_user(conn)
 
     with {:ok, enrollment_payload} <- Users.initiate_totp_enrollment(user) do
-      render(conn, "totp_enrollment_data.json", enrollment_payload: enrollment_payload)
+      render(conn, :totp_enrollment_data, enrollment_payload: enrollment_payload)
     end
   end
 
@@ -102,7 +102,7 @@ defmodule TrentoWeb.V1.ProfileController do
 
     with {:ok, %User{totp_enabled_at: totp_enabled_at}} <-
            Users.confirm_totp_enrollment(user, totp_code) do
-      render(conn, "totp_enrollment_completed.json", %{totp_enabled_at: totp_enabled_at})
+      render(conn, :totp_enrollment_completed, %{totp_enabled_at: totp_enabled_at})
     end
   end
 end

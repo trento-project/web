@@ -30,7 +30,7 @@ defmodule TrentoWeb.V1.SettingsController do
 
   @spec settings(Plug.Conn.t(), any) :: Plug.Conn.t()
   def settings(conn, _) do
-    render(conn, "settings.json",
+    render(conn, :settings,
       settings: %{
         eula_accepted: false
       }
@@ -69,7 +69,7 @@ defmodule TrentoWeb.V1.SettingsController do
           AuthenticateAPIKeyPlug.generate_api_key!(api_key_settings)
         )
 
-      render(conn, "api_key_settings.json", %{
+      render(conn, :api_key_settings, %{
         settings: settings_with_key
       })
     end
@@ -98,7 +98,7 @@ defmodule TrentoWeb.V1.SettingsController do
           AuthenticateAPIKeyPlug.generate_api_key!(updated_settings)
         )
 
-      render(conn, "api_key_settings.json", %{
+      render(conn, :api_key_settings, %{
         settings: api_key
       })
     end
@@ -125,7 +125,7 @@ defmodule TrentoWeb.V1.SettingsController do
 
     with {:ok, updated_settings} <-
            ActivityLog.change_retention_period(retention_period, retention_period_unit) do
-      render(conn, "activity_log_settings.json", %{
+      render(conn, :activity_log_settings, %{
         activity_log_settings: updated_settings
       })
     end
@@ -143,7 +143,7 @@ defmodule TrentoWeb.V1.SettingsController do
 
   def get_activity_log_settings(conn, _) do
     with {:ok, settings} <- ActivityLog.get_settings() do
-      render(conn, "activity_log_settings.json", %{
+      render(conn, :activity_log_settings, %{
         activity_log_settings: settings
       })
     end
@@ -162,7 +162,7 @@ defmodule TrentoWeb.V1.SettingsController do
   @spec get_suse_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
   def get_suse_manager_settings(conn, _) do
     with {:ok, settings} <- Settings.get_suse_manager_settings() do
-      render(conn, "suse_manager.json", %{settings: settings})
+      render(conn, :suse_manager, %{settings: settings})
     end
   end
 
@@ -186,7 +186,7 @@ defmodule TrentoWeb.V1.SettingsController do
     with {:ok, saved_settings} <- Settings.save_suse_manager_settings(settings_params) do
       conn
       |> put_status(:created)
-      |> render("suse_manager.json", %{settings: saved_settings})
+      |> render(:suse_manager, %{settings: saved_settings})
     end
   end
 
@@ -210,7 +210,7 @@ defmodule TrentoWeb.V1.SettingsController do
     with {:ok, saved_settings} <- Settings.change_suse_manager_settings(update_settings_paylod) do
       conn
       |> put_status(:ok)
-      |> render("suse_manager.json", %{settings: saved_settings})
+      |> render(:suse_manager, %{settings: saved_settings})
     end
   end
 
@@ -259,7 +259,7 @@ defmodule TrentoWeb.V1.SettingsController do
   @spec get_public_keys(Plug.Conn.t(), any) :: Plug.Conn.t()
   def get_public_keys(conn, _) do
     certificates = Settings.get_sso_certificates()
-    render(conn, "public_keys.json", %{public_keys: [certificates]})
+    render(conn, :public_keys, %{public_keys: [certificates]})
   end
 
   def get_policy_resource(conn) do

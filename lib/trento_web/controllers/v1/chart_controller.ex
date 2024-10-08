@@ -50,7 +50,7 @@ defmodule TrentoWeb.V1.ChartController do
 
   def host_cpu(conn, %{id: id, from: from, to: to}) do
     with {:ok, chart} <- Charts.host_cpu_chart(id, from, to) do
-      render(conn, "host_cpu_chart.json", chart: chart)
+      render(conn, :host_cpu_chart, chart: chart)
     end
   end
 
@@ -94,7 +94,7 @@ defmodule TrentoWeb.V1.ChartController do
 
   def host_memory(conn, %{id: id, from: from, to: to}) do
     with {:ok, chart} <- Charts.host_memory_chart(id, from, to) do
-      render(conn, "host_memory_chart.json", chart: chart)
+      render(conn, :host_memory_chart, chart: chart)
     end
   end
 end
