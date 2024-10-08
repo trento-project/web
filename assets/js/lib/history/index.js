@@ -1,2 +1,2 @@
 // HANDLE WITH CARE
-export const historyLength = (windowImpl = window) => windowImpl.history.length;
+export const length = ({ history } = window) => history.length;

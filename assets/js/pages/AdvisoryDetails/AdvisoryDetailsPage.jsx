@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 
 import { getAdvisoryErrata } from '@lib/api/softwareUpdates';
 import { logError } from '@lib/log';
-import { historyLength } from '@lib/history';
+import * as history from '@lib/history';
 import BackButton from '@common/BackButton';
 import AdvisoryDetails from './AdvisoryDetails';
 
@@ -25,13 +25,11 @@ function AdvisoryDetailsPage() {
   return (
     <>
       <BackButton
-        onClick={() => {
-          if (historyLength() < 3) {
-            navigate(`/hosts/${hostID}/patches`);
-          } else {
-            navigate(-1);
-          }
-        }}
+        onClick={() =>
+          history.length() < 3
+            ? navigate(`/hosts/${hostID}/patches`)
+            : navigate(-1)
+        }
       >
         Back
       </BackButton>
