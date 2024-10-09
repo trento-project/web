@@ -14,20 +14,19 @@ defmodule TrentoWeb.V1.ProfileJSON do
           inserted_at: created_at,
           updated_at: updated_at
         }
-      }) do
-    %{
-      id: id,
-      fullname: fullname,
-      username: username,
-      email: email,
-      abilities: Enum.map(abilities, &AbilityJSON.ability/1),
-      password_change_requested: password_change_requested_at != nil,
-      totp_enabled: totp_enabled_at != nil,
-      created_at: created_at,
-      idp_user: length(user_identities) > 0,
-      updated_at: updated_at
-    }
-  end
+      }),
+      do: %{
+        id: id,
+        fullname: fullname,
+        username: username,
+        email: email,
+        abilities: Enum.map(abilities, &AbilityJSON.ability/1),
+        password_change_requested: password_change_requested_at != nil,
+        totp_enabled: totp_enabled_at != nil,
+        created_at: created_at,
+        idp_user: length(user_identities) > 0,
+        updated_at: updated_at
+      }
 
   def totp_enrollment_completed(%{
         totp_enabled_at: totp_enabled_at

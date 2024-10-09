@@ -1,13 +1,12 @@
 defmodule TrentoWeb.V1.ActivityLogJSON do
-  def activity_log(%{activity_log: entries, pagination: meta}) do
-    %{
+  def activity_log(%{activity_log: entries, pagination: meta}),
+    do: %{
       data: Enum.map(entries, &activity_log_entry(%{activity_log_entry: &1})),
       pagination: pagination(%{pagination: meta})
     }
-  end
 
-  def activity_log_entry(%{activity_log_entry: entry}) do
-    %{
+  def activity_log_entry(%{activity_log_entry: entry}),
+    do: %{
       id: entry.id,
       type: entry.type,
       actor: entry.actor,
@@ -15,9 +14,8 @@ defmodule TrentoWeb.V1.ActivityLogJSON do
       # Time of occurrence approximated by time of insertion in DB.
       occurred_on: entry.inserted_at
     }
-  end
 
-  def pagination(%{pagination: pagination}) do
+  defp pagination(%{pagination: pagination}) do
     %{
       end_cursor: end_cursor,
       start_cursor: start_cursor,

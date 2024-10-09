@@ -6,6 +6,7 @@ defmodule TrentoWeb do
   This can be used in your application as:
 
       use TrentoWeb, :controller
+      use TrentoWeb, :html
 
   The definitions below will be executed for every view,
   controller, etc, so keep them short and clean, focused
