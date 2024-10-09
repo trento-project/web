@@ -139,6 +139,15 @@ function ActivityLogPage() {
 
   const filters = [
     {
+      key: 'search',
+      title: 'Search',
+      type: 'search_box',
+      placeholder: 'Filter by metadata (Coming soon)',
+      allowClear: true,
+      disabled: true,
+      className: 'col-span-8',
+    },
+    {
       key: 'type',
       type: 'select',
       title: 'Type',
@@ -146,24 +155,28 @@ function ActivityLogPage() {
         allowedActivities,
         map(([key, value]) => [key, value.label])
       )(abilities),
+      className: 'col-span-2',
     },
     {
       key: 'actor',
       type: 'select',
       title: 'User',
       options: users,
+      className: 'col-span-2',
     },
     {
       key: 'to_date',
       title: 'newer than',
       type: 'date',
       prefilled: true,
+      className: 'col-span-2',
     },
     {
       key: 'from_date',
       title: 'older than',
       type: 'date',
       prefilled: true,
+      className: 'col-span-2',
     },
   ];
 
@@ -198,9 +211,9 @@ function ActivityLogPage() {
     <>
       <PageHeader className="font-bold">Activity Log</PageHeader>
       <div className="bg-white rounded-lg shadow">
-        <div style={{ padding: '1rem' }} />
-        <div className="flex items-center px-4 space-x-2 pb-4">
+        <div className="p-4">
           <ComposedFilter
+            rows={2}
             filters={filters}
             autoApply={false}
             value={searchParamsToFilterValue(searchParams)}
@@ -210,15 +223,12 @@ function ActivityLogPage() {
               applyItemsPerPage(itemsPerPage),
               setSearchParams
             )}
-          />
-          <Button
-            type="primary-white"
-            className="!w-28"
-            onClick={fetchActivityLog}
           >
-            <EOS_REFRESH className="inline-block fill-jungle-green-500" />{' '}
-            Refresh
-          </Button>
+            <Button type="primary-white" onClick={fetchActivityLog}>
+              <EOS_REFRESH className="inline-block fill-jungle-green-500" />{' '}
+              Refresh
+            </Button>
+          </ComposedFilter>
         </div>
         <MainView
           request={activityLogRequest}
