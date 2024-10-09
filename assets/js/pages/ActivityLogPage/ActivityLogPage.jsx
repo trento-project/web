@@ -139,6 +139,15 @@ function ActivityLogPage() {
 
   const filters = [
     {
+      key: 'search',
+      title: 'Search',
+      type: 'search_box',
+      placeholder: 'Filter by metadata (Coming soon)',
+      allowClear: true,
+      disabled: true,
+      className: 'col-span-8',
+    },
+    {
       key: 'type',
       type: 'select',
       title: 'Type',
@@ -204,6 +213,7 @@ function ActivityLogPage() {
       <div className="bg-white rounded-lg shadow">
         <div className="p-4">
           <ComposedFilter
+            rows={2}
             filters={filters}
             autoApply={false}
             value={searchParamsToFilterValue(searchParams)}
