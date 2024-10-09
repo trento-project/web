@@ -57,7 +57,28 @@ defmodule TrentoWeb.V1.SUSEManagerJSON do
         to_package_id: to_package_id
       }
 
-  def patches_for_packages(%{patches: patches}), do: %{patches: patches}
+  def patches_for_packages(%{patches: patches}),
+    do: %{patches: Enum.map(patches, &package(%{package: &1}))}
+
+  def package(%{package: %{package_id: package_id, patches: patches}}),
+    do: %{package_id: package_id, patches: Enum.map(patches, &patch(%{patch: &1}))}
+
+  def patch(%{
+        patch: %{
+          date: date,
+          advisory_name: advisory_name,
+          advisory_type: advisory_type,
+          advisory_synopsis: advisory_synopsis,
+          update_date: update_date
+        }
+      }),
+      do: %{
+        issue_date: date,
+        advisory: advisory_name,
+        advisory_type: advisory_type,
+        synopsis: advisory_synopsis,
+        last_modified_date: update_date
+      }
 
   def errata_details(%{
         errata_details: errata_details = %{errataFrom: errataFrom},
