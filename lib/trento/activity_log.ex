@@ -65,15 +65,55 @@ defmodule Trento.ActivityLog do
   def list_activity_log(params, include_all_log_types? \\ false) do
     parsed_params = parse_params(params)
 
-    case ActivityLog
-         |> maybe_exclude_user_logs(include_all_log_types?)
-         |> Flop.validate_and_run(parsed_params, for: ActivityLog) do
-      {:ok, {activity_log_entries, meta}} ->
-        {:ok, activity_log_entries, meta}
+    ActivityLog
+    |> maybe_exclude_user_logs(include_all_log_types?)
+    |> maybe_search_by_metadata(params)
+    |> case do
+      {:ok, query} ->
+        case Flop.validate_and_run(query, parsed_params, for: ActivityLog) do
+          {:ok, {activity_log_entries, meta}} ->
+            {:ok, activity_log_entries, meta}
+
+          error ->
+            Logger.error("Activity log fetch error: #{inspect(error)}")
+            {:error, :activity_log_fetch_error}
+        end
 
       error ->
-        Logger.error("Activity log fetch error: #{inspect(error)}")
+        Logger.error("Activity log fetch error, metadata parse failure: #{inspect(error)}")
         {:error, :activity_log_fetch_error}
+    end
+  end
+
+  defp maybe_search_by_metadata(query, params) do
+    maybe_metadata_search_string = params[:metadata]
+
+    case parse_metadata_query_string(maybe_metadata_search_string) do
+      {:ok, validated_query_string} ->
+        {:ok,
+         from(
+           q in query,
+           select: %{
+             id: q.id,
+             metadata: q.metadata,
+             md:
+               fragment(
+                 "jsonb_path_query(?, ?)",
+                 q.metadata,
+                 ^validated_query_string
+               ),
+             type: q.type,
+             actor: q.actor,
+             inserted_at: q.inserted_at,
+             updated_at: q.updated_at
+           }
+         )}
+
+      :noop ->
+        {:ok, query}
+
+      _ ->
+        {:ok, query}
     end
   end
 
@@ -121,6 +161,71 @@ defmodule Trento.ActivityLog do
       {k, v}, acc ->
         Map.put(acc, k, v)
     end)
+  end
+
+  def parse_metadata_query_string(maybe_metadata_search) do
+    case is_binary(maybe_metadata_search) && maybe_metadata_search != "" do
+      true ->
+        case do_parse_metadata_query_string(maybe_metadata_search) do
+          {:ok, parsed_string} ->
+            {:ok, parsed_string}
+
+          error ->
+            Logger.warning("Metadata query parse failed #{inspect(error)}")
+            error
+        end
+
+      false when is_nil(maybe_metadata_search) ->
+        :noop
+
+      false ->
+        Logger.error("Not a binary #{inspect(maybe_metadata_search)}")
+        :error
+    end
+  end
+
+  defp do_parse_metadata_query_string(query_string) do
+    query_words_list =
+      query_string
+      |> String.trim()
+      |> String.split()
+
+    word_handler = fn
+      "AND" ->
+        "&&"
+
+      "OR" ->
+        "||"
+
+      <<"~"::binary, _rest::binary>> = regex ->
+        "(@ like_regex \"#{String.trim_leading(regex, "~")}\")"
+
+      qws ->
+        "(@ == \"#{qws}\")"
+    end
+
+    case Enum.any?(query_words_list, fn qws -> qws == "OR" or qws == "AND" end) do
+      true ->
+        {:ok,
+         query_words_list
+         |> Enum.map_join(" ", word_handler)
+         |> (&"$.** ? (#{&1})").()}
+
+      false ->
+        case length(query_words_list) do
+          1 ->
+            {:ok,
+             query_words_list
+             |> Enum.map_join("", word_handler)
+             |> (&"$.** ? #{&1}").()}
+
+          len when len > 1 ->
+            {:ok,
+             query_words_list
+             |> Enum.map_join(" || ", word_handler)
+             |> (&"$.** ? (#{&1})").()}
+        end
+    end
   end
 
   defp log_error({:error, _} = error, message) do

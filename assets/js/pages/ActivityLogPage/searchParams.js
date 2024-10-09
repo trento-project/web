@@ -14,7 +14,7 @@ const omitUndefined = (obj) =>
   );
 
 const paginationFields = ['after', 'before', 'first', 'last'];
-const scalarKeys = [...paginationFields];
+const scalarKeys = [...paginationFields, 'metadata'];
 
 const searchParamsToEntries = (searchParams) =>
   pipe(Array.from, uniq, (keys) =>

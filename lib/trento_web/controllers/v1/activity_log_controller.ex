@@ -53,6 +53,11 @@ defmodule TrentoWeb.V1.ActivityLogController do
         in: :query,
         schema: %OpenApiSpex.Schema{type: :array},
         required: false
+      ],
+      metadata: [
+        in: :query,
+        schema: %OpenApiSpex.Schema{type: :string},
+        required: false
       ]
     ],
     responses: [
