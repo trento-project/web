@@ -6,7 +6,7 @@ defmodule TrentoWeb.V1.PrometheusJSON do
 
   def targets(%{targets: targets}), do: Enum.map(targets, &target(%{target: &1}))
 
-  defp target(%{target: target}),
+  def target(%{target: target}),
     do: %{
       targets: ["#{List.first(target.ip_addresses, target.hostname)}:#{@node_exporter_port}"],
       labels: %{

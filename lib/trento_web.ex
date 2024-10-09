@@ -25,8 +25,6 @@ defmodule TrentoWeb do
         formats: [:html, :json],
         layouts: [html: TrentoWeb.Layouts]
 
-      # what about layout ? layouts: [html: TrentoWeb.Layouts]
-
       import Plug.Conn
       import TrentoWeb.Gettext
 
