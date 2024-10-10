@@ -39,8 +39,7 @@ defmodule TrentoWeb.V1.HostController do
   @spec list(Plug.Conn.t(), map) :: Plug.Conn.t()
   def list(conn, _) do
     hosts = Hosts.get_all_hosts()
-
-    render(conn, "hosts.json", hosts: hosts)
+    render(conn, :hosts, hosts: hosts)
   end
 
   operation :delete,

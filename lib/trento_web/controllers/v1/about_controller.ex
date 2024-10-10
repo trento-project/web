@@ -18,7 +18,7 @@ defmodule TrentoWeb.V1.AboutController do
 
   @spec info(Plug.Conn.t(), map) :: Plug.Conn.t()
   def info(conn, _) do
-    render(conn, "about.json",
+    render(conn, :about,
       about_info: %{
         version: @version,
         sles_subscriptions: Hosts.get_all_sles_subscriptions()

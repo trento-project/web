@@ -22,6 +22,6 @@ defmodule TrentoWeb.V1.HealthOverviewController do
   def overview(conn, _) do
     summary = HealthSummaryService.get_health_summary()
 
-    render(conn, "overview.json", health_infos: summary)
+    render(conn, :overview, health_infos: summary)
   end
 end

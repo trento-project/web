@@ -8,7 +8,7 @@ defmodule TrentoWeb.Plugs.ChartsDisabledPlug do
   """
   @behaviour Plug
 
-  alias TrentoWeb.ErrorView
+  alias TrentoWeb.ErrorJSON
 
   import Plug.Conn
 
@@ -23,7 +23,7 @@ defmodule TrentoWeb.Plugs.ChartsDisabledPlug do
     |> resp(
       501,
       Jason.encode!(
-        ErrorView.render("501.json", %{
+        ErrorJSON.render("501.json", %{
           reason: "Charts endpoints are disabled, check the documentation for further details"
         })
       )

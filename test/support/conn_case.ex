@@ -24,11 +24,12 @@ defmodule TrentoWeb.ConnCase do
   using do
     quote do
       # Import conveniences for testing with connections
+
+      @endpoint TrentoWeb.Endpoint
+      use TrentoWeb, :verified_routes
       import Plug.Conn
       import Phoenix.ConnTest
       import TrentoWeb.ConnCase
-
-      alias TrentoWeb.Router.Helpers, as: Routes
 
       # The default endpoint for testing
       @endpoint TrentoWeb.Endpoint

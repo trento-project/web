@@ -76,7 +76,7 @@ defmodule TrentoWeb.SessionController do
   def create(conn, credentials) do
     case authenticate_trento_user(conn, credentials) do
       {:ok, conn} ->
-        render(conn, "logged.json",
+        render(conn, :logged,
           token: conn.private[:api_access_token],
           expiration: conn.private[:access_token_expiration],
           refresh_token: conn.private[:api_refresh_token]
@@ -119,7 +119,7 @@ defmodule TrentoWeb.SessionController do
     request_user = Pow.Plug.current_user(conn)
     user = Repo.get_by!(User, id: request_user["user_id"])
 
-    render(conn, "me.json", user: user)
+    render(conn, :me, user: user)
   end
 
   operation :refresh,
@@ -167,7 +167,7 @@ defmodule TrentoWeb.SessionController do
   def refresh(conn, %{"refresh_token" => refresh_token}) do
     case AppJWTAuthPlug.renew(conn, refresh_token) do
       {:ok, conn} ->
-        render(conn, "refreshed.json",
+        render(conn, :refreshed,
           token: conn.private[:api_access_token],
           expiration: conn.private[:access_token_expiration]
         )
@@ -294,7 +294,7 @@ defmodule TrentoWeb.SessionController do
     |> PowAssentPlug.callback_upsert(saml_provider, assertion, "")
     |> case do
       {:ok, conn} ->
-        render(conn, "logged.json",
+        render(conn, :logged,
           token: conn.private[:api_access_token],
           expiration: conn.private[:access_token_expiration],
           refresh_token: conn.private[:api_refresh_token]

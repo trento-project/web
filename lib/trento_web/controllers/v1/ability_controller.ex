@@ -18,6 +18,6 @@ defmodule TrentoWeb.V1.AbilityController do
 
   def index(conn, _params) do
     abilities = Abilities.list_abilities()
-    render(conn, "index.json", abilities: abilities)
+    render(conn, :index, abilities: abilities)
   end
 end

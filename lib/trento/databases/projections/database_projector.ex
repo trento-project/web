@@ -13,7 +13,7 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
     DatabaseReadModel
   }
 
-  alias TrentoWeb.V1.DatabaseView
+  alias TrentoWeb.V1.DatabaseJSON
 
   alias Trento.Databases.Events.{
     DatabaseDeregistered,
@@ -261,7 +261,7 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
     TrentoWeb.Endpoint.broadcast(
       @databases_topic,
       "database_registered",
-      DatabaseView.render("database_registered.json", database: database)
+      DatabaseJSON.database_registered(%{database: database})
     )
   end
 
@@ -274,12 +274,12 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
     TrentoWeb.Endpoint.broadcast(
       @databases_topic,
       "database_health_changed",
-      DatabaseView.render("database_health_changed.json",
+      DatabaseJSON.database_health_changed(%{
         health: %{
           id: id,
           health: health
         }
-      )
+      })
     )
   end
 
@@ -298,13 +298,10 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
     TrentoWeb.Endpoint.broadcast(
       @databases_topic,
       "database_instance_registered",
-      DatabaseView.render(
-        "database_instance_with_sr_status.json",
-        %{
-          instance: instance,
-          database_instances: database_instances
-        }
-      )
+      DatabaseJSON.database_instance_with_sr_status(%{
+        instance: instance,
+        database_instances: database_instances
+      })
     )
   end
 
@@ -324,14 +321,14 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
     TrentoWeb.Endpoint.broadcast(
       @databases_topic,
       "database_instance_health_changed",
-      DatabaseView.render("database_instance_health_changed.json",
+      DatabaseJSON.database_instance_health_changed(%{
         instance: %{
           database_id: database_id,
           host_id: host_id,
           instance_number: instance_number,
           health: health
         }
-      )
+      })
     )
   end
 
@@ -352,7 +349,7 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
     TrentoWeb.Endpoint.broadcast(
       @databases_topic,
       "database_instance_system_replication_changed",
-      DatabaseView.render("database_instance_system_replication_changed.json",
+      DatabaseJSON.database_instance_system_replication_changed(%{
         instance: %{
           database_id: database_id,
           host_id: host_id,
@@ -360,7 +357,7 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
           system_replication: system_replication,
           system_replication_status: system_replication_status
         }
-      )
+      })
     )
   end
 
@@ -378,7 +375,7 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
     TrentoWeb.Endpoint.broadcast(
       @databases_topic,
       "database_instance_absent_at_changed",
-      DatabaseView.render("database_instance_absent_at_changed.json",
+      DatabaseJSON.database_instance_absent_at_changed(%{
         instance: %{
           instance_number: instance_number,
           host_id: host_id,
@@ -386,7 +383,7 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
           sid: sid,
           absent_at: absent_at
         }
-      )
+      })
     )
   end
 
@@ -403,7 +400,7 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
     TrentoWeb.Endpoint.broadcast(
       @databases_topic,
       "database_instance_absent_at_changed",
-      DatabaseView.render("database_instance_absent_at_changed.json",
+      DatabaseJSON.database_instance_absent_at_changed(%{
         instance: %{
           instance_number: instance_number,
           host_id: host_id,
@@ -411,7 +408,7 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
           sid: sid,
           absent_at: nil
         }
-      )
+      })
     )
   end
 
@@ -429,7 +426,7 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
     TrentoWeb.Endpoint.broadcast(
       @databases_topic,
       "database_restored",
-      DatabaseView.render("database_restored.json", database: database)
+      DatabaseJSON.database_restored(%{database: database})
     )
   end
 
@@ -448,10 +445,10 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
     TrentoWeb.Endpoint.broadcast(
       @databases_topic,
       "database_deregistered",
-      DatabaseView.render("database_deregistered.json",
+      DatabaseJSON.database_deregistered(%{
         id: database_id,
         sid: sid
-      )
+      })
     )
   end
 
@@ -472,12 +469,12 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
     TrentoWeb.Endpoint.broadcast(
       @databases_topic,
       "database_instance_deregistered",
-      DatabaseView.render("database_instance_deregistered.json",
+      DatabaseJSON.database_instance_deregistered(%{
         database_id: database_id,
         instance_number: instance_number,
         host_id: host_id,
         sid: sid
-      )
+      })
     )
   end
 
@@ -496,10 +493,7 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
     TrentoWeb.Endpoint.broadcast(
       @databases_topic,
       "database_tenants_updated",
-      DatabaseView.render("database_tenants_updated.json",
-        tenants: tenants,
-        database_id: database_id
-      )
+      DatabaseJSON.database_tenants_updated(%{tenants: tenants, database_id: database_id})
     )
   end
 

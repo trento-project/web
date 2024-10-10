@@ -21,8 +21,7 @@ defmodule TrentoWeb.V1.PrometheusController do
 
   def targets(conn, _) do
     targets = Prometheus.get_targets()
-
-    render(conn, "targets.json", targets: targets)
+    render(conn, :targets, targets: targets)
   end
 
   operation :exporters_status,
@@ -38,7 +37,7 @@ defmodule TrentoWeb.V1.PrometheusController do
 
   def exporters_status(conn, %{"id" => host_id}) do
     with {:ok, exporters_status} <- Prometheus.get_exporters_status(host_id) do
-      render(conn, "exporters_status.json", status: exporters_status)
+      render(conn, :exporters_status, status: exporters_status)
     end
   end
 end

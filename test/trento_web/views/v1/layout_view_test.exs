@@ -1,4 +1,4 @@
-defmodule TrentoWeb.V1.LayoutViewTest do
+defmodule TrentoWeb.V1.LayoutsTest do
   use TrentoWeb.ConnCase, async: true
 
   # When testing helpers, you may want to import Phoenix.HTML and
