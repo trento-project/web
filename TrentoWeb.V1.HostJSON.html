@@ -8,13 +8,13 @@
     <meta name="project" content="Trento Web v2.3.2">
 
 
-    <title>TrentoWeb.PageView — Trento Web v2.3.2</title>
+    <title>TrentoWeb.V1.HostJSON — Trento Web v2.3.2</title>
     <link rel="stylesheet" href="dist/html-elixir-F2VRIOKR.css" />
 
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-K7URE6B4.js"></script>
-    <script src="dist/sidebar_items-52AFC022.js"></script>
+    <script src="dist/sidebar_items-28B8D722.js"></script>
     <script src="docs_config.js"></script>
     <script async src="dist/html-YIPIRHGU.js"></script>
 
@@ -126,12 +126,12 @@ GUIDES
 <div id="top-content">
   <h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/views/page_view.ex#L1" title="View Source" class="icon-action" rel="help">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/host_json.ex#L1" title="View Source" class="icon-action" rel="help">
         <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         <span class="sr-only">View Source</span>
       </a>
 
-    <span translate="no">TrentoWeb.PageView</span> 
+    <span translate="no">TrentoWeb.V1.HostJSON</span> 
     <small class="app-vsn" translate="no">(Trento Web v2.3.2)</small>
 
   </h1>
@@ -153,17 +153,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#__resource__/0" data-no-tooltip translate="no">__resource__()</a>
-
-      </div>
-
-        <div class="summary-synopsis"><p>The resource name, as an atom, for this view</p></div>
-
-    </div>
-
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#index.html/1" data-no-tooltip translate="no">index.html(assigns)</a>
+        <a href="#broadcast_host/1" data-no-tooltip translate="no">broadcast_host(map)</a>
 
       </div>
 
@@ -171,23 +161,73 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#render/2" data-no-tooltip translate="no">render(template, assigns \\ %{})</a>
+        <a href="#heartbeat_result/1" data-no-tooltip translate="no">heartbeat_result(map)</a>
 
       </div>
-
-        <div class="summary-synopsis"><p>Renders the given template locally.</p></div>
 
     </div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#template_not_found/2" data-no-tooltip translate="no">template_not_found(template, assigns)</a>
+        <a href="#host/1" data-no-tooltip translate="no">host(map)</a>
 
       </div>
 
-        <div class="summary-synopsis"><p>Callback invoked when no template is found.
-By default it raises but can be customized
-to render a particular template.</p></div>
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#host_details_updated/1" data-no-tooltip translate="no">host_details_updated(map)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#host_health_changed/1" data-no-tooltip translate="no">host_health_changed(map)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#host_registered/1" data-no-tooltip translate="no">host_registered(map)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#host_restored/1" data-no-tooltip translate="no">host_restored(map)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#hosts/1" data-no-tooltip translate="no">hosts(map)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#saptune_status_updated/1" data-no-tooltip translate="no">saptune_status_updated(map)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#sles_subscription/1" data-no-tooltip translate="no">sles_subscription(arg1)</a>
+
+      </div>
 
     </div>
 
@@ -204,38 +244,16 @@ to render a particular template.</p></div>
       <span class="text">Functions</span>
     </h1>
     <div class="functions-list">
-<section class="detail" id="__resource__/0">
+<section class="detail" id="broadcast_host/1">
 
   <div class="detail-header">
-    <a href="#__resource__/0" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#broadcast_host/1" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">__resource__()</h1>
+    <h1 class="signature" translate="no">broadcast_host(map)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/views/page_view.ex#L2" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-<p>The resource name, as an atom, for this view</p>
-  </section>
-</section>
-<section class="detail" id="index.html/1">
-
-  <div class="detail-header">
-    <a href="#index.html/1" class="detail-link" data-no-tooltip title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">index.html(assigns)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/views/page_view.ex#L1" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/host_json.ex#L25" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -248,18 +266,16 @@ to render a particular template.</p></div>
 
   </section>
 </section>
-<section class="detail" id="render/2">
-
-    <span id="render/1"></span>
+<section class="detail" id="heartbeat_result/1">
 
   <div class="detail-header">
-    <a href="#render/2" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#heartbeat_result/1" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">render(template, assigns \\ %{})</h1>
+    <h1 class="signature" translate="no">heartbeat_result(map)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/views/page_view.ex#L2" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/host_json.ex#L51" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -269,19 +285,19 @@ to render a particular template.</p></div>
 
   <section class="docstring">
 
-<p>Renders the given template locally.</p>
+
   </section>
 </section>
-<section class="detail" id="template_not_found/2">
+<section class="detail" id="host/1">
 
   <div class="detail-header">
-    <a href="#template_not_found/2" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#host/1" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">template_not_found(template, assigns)</h1>
+    <h1 class="signature" translate="no">host(map)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/views/page_view.ex#L2" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/host_json.ex#L4" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -291,15 +307,161 @@ to render a particular template.</p></div>
 
   <section class="docstring">
 
-      <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> template_not_found(<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">no_return</a>()</pre>
+  </section>
+</section>
+<section class="detail" id="host_details_updated/1">
 
-      </div>
+  <div class="detail-header">
+    <a href="#host_details_updated/1" class="detail-link" data-no-tooltip title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">host_details_updated(map)</h1>
 
-<p>Callback invoked when no template is found.
-By default it raises but can be customized
-to render a particular template.</p>
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/host_json.ex#L31" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="host_health_changed/1">
+
+  <div class="detail-header">
+    <a href="#host_health_changed/1" class="detail-link" data-no-tooltip title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">host_health_changed(map)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/host_json.ex#L58" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="host_registered/1">
+
+  <div class="detail-header">
+    <a href="#host_registered/1" class="detail-link" data-no-tooltip title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">host_registered(map)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/host_json.ex#L41" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="host_restored/1">
+
+  <div class="detail-header">
+    <a href="#host_restored/1" class="detail-link" data-no-tooltip title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">host_restored(map)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/host_json.ex#L47" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="hosts/1">
+
+  <div class="detail-header">
+    <a href="#hosts/1" class="detail-link" data-no-tooltip title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">hosts(map)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/host_json.ex#L2" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="saptune_status_updated/1">
+
+  <div class="detail-header">
+    <a href="#saptune_status_updated/1" class="detail-link" data-no-tooltip title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">saptune_status_updated(map)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/host_json.ex#L53" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="sles_subscription/1">
+
+  <div class="detail-header">
+    <a href="#sles_subscription/1" class="detail-link" data-no-tooltip title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">sles_subscription(arg1)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/host_json.ex#L15" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
   </section>
 </section>
 

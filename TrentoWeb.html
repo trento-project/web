@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-K7URE6B4.js"></script>
-    <script src="dist/sidebar_items-52AFC022.js"></script>
+    <script src="dist/sidebar_items-28B8D722.js"></script>
     <script src="docs_config.js"></script>
     <script async src="dist/html-YIPIRHGU.js"></script>
 
@@ -140,7 +140,7 @@ GUIDES
     <section id="moduledoc">
 <p>The entrypoint for defining your web interface, such
 as controllers, views, channels and so on.</p><p>This can be used in your application as:</p><pre><code class="makeup elixir" translate="no"><span class="kn">use</span><span class="w"> </span><span class="nc">TrentoWeb</span><span class="p">,</span><span class="w"> </span><span class="ss">:controller</span><span class="w">
-</span><span class="kn">use</span><span class="w"> </span><span class="nc">TrentoWeb</span><span class="p">,</span><span class="w"> </span><span class="ss">:view</span></code></pre><p>The definitions below will be executed for every view,
+</span><span class="kn">use</span><span class="w"> </span><span class="nc">TrentoWeb</span><span class="p">,</span><span class="w"> </span><span class="ss">:html</span></code></pre><p>The definitions below will be executed for every view,
 controller, etc, so keep them short and clean, focused
 on imports, uses and aliases.</p><p>Do NOT define functions inside the quoted expressions
 below. Instead, define any helper function in modules
@@ -189,6 +189,14 @@ and import those modules here.</p>
 
     <div class="summary-row">
       <div class="summary-signature">
+        <a href="#html/0" data-no-tooltip translate="no">html()</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
         <a href="#live_component/0" data-no-tooltip translate="no">live_component()</a>
 
       </div>
@@ -227,14 +235,6 @@ and import those modules here.</p>
 
     </div>
 
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#view/0" data-no-tooltip translate="no">view()</a>
-
-      </div>
-
-    </div>
-
 </div>
 
   </section>
@@ -257,7 +257,7 @@ and import those modules here.</p>
     </a>
     <h1 class="signature" translate="no">__using__(which)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web.ex#L116" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web.ex#L104" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -304,6 +304,28 @@ and import those modules here.</p>
     <h1 class="signature" translate="no">controller()</h1>
 
       <a href="https://github.com/trento-project/web/blob/main/lib/trento_web.ex#L21" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="html/0">
+
+  <div class="detail-header">
+    <a href="#html/0" class="detail-link" data-no-tooltip title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">html()</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web.ex#L35" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -413,29 +435,7 @@ and import those modules here.</p>
     </a>
     <h1 class="signature" translate="no">verified_routes()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web.ex#L104" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-
-  </section>
-</section>
-<section class="detail" id="view/0">
-
-  <div class="detail-header">
-    <a href="#view/0" class="detail-link" data-no-tooltip title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">view()</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web.ex#L33" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web.ex#L82" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>

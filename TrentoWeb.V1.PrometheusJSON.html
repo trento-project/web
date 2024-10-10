@@ -8,13 +8,13 @@
     <meta name="project" content="Trento Web v2.3.2">
 
 
-    <title>TrentoWeb.V1.SUSEManagerView — Trento Web v2.3.2</title>
+    <title>TrentoWeb.V1.PrometheusJSON — Trento Web v2.3.2</title>
     <link rel="stylesheet" href="dist/html-elixir-F2VRIOKR.css" />
 
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-K7URE6B4.js"></script>
-    <script src="dist/sidebar_items-52AFC022.js"></script>
+    <script src="dist/sidebar_items-28B8D722.js"></script>
     <script src="docs_config.js"></script>
     <script async src="dist/html-YIPIRHGU.js"></script>
 
@@ -126,12 +126,12 @@ GUIDES
 <div id="top-content">
   <h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/views/v1/suse_manager_view.ex#L1" title="View Source" class="icon-action" rel="help">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/prometheus_json.ex#L1" title="View Source" class="icon-action" rel="help">
         <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         <span class="sr-only">View Source</span>
       </a>
 
-    <span translate="no">TrentoWeb.V1.SUSEManagerView</span> 
+    <span translate="no">TrentoWeb.V1.PrometheusJSON</span> 
     <small class="app-vsn" translate="no">(Trento Web v2.3.2)</small>
 
   </h1>
@@ -153,33 +153,25 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#__resource__/0" data-no-tooltip translate="no">__resource__()</a>
+        <a href="#exporters_status/1" data-no-tooltip translate="no">exporters_status(map)</a>
 
       </div>
-
-        <div class="summary-synopsis"><p>The resource name, as an atom, for this view</p></div>
 
     </div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#render/2" data-no-tooltip translate="no">render(template, assigns \\ %{})</a>
+        <a href="#target/1" data-no-tooltip translate="no">target(map)</a>
 
       </div>
-
-        <div class="summary-synopsis"><p>Renders the given template locally.</p></div>
 
     </div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#template_not_found/2" data-no-tooltip translate="no">template_not_found(template, assigns)</a>
+        <a href="#targets/1" data-no-tooltip translate="no">targets(map)</a>
 
       </div>
-
-        <div class="summary-synopsis"><p>Callback invoked when no template is found.
-By default it raises but can be customized
-to render a particular template.</p></div>
 
     </div>
 
@@ -196,16 +188,16 @@ to render a particular template.</p></div>
       <span class="text">Functions</span>
     </h1>
     <div class="functions-list">
-<section class="detail" id="__resource__/0">
+<section class="detail" id="exporters_status/1">
 
   <div class="detail-header">
-    <a href="#__resource__/0" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#exporters_status/1" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">__resource__()</h1>
+    <h1 class="signature" translate="no">exporters_status(map)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/views/v1/suse_manager_view.ex#L2" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/prometheus_json.ex#L5" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -215,21 +207,19 @@ to render a particular template.</p></div>
 
   <section class="docstring">
 
-<p>The resource name, as an atom, for this view</p>
+
   </section>
 </section>
-<section class="detail" id="render/2">
-
-    <span id="render/1"></span>
+<section class="detail" id="target/1">
 
   <div class="detail-header">
-    <a href="#render/2" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#target/1" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">render(template, assigns \\ %{})</h1>
+    <h1 class="signature" translate="no">target(map)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/views/v1/suse_manager_view.ex#L2" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/prometheus_json.ex#L9" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -239,19 +229,19 @@ to render a particular template.</p></div>
 
   <section class="docstring">
 
-<p>Renders the given template locally.</p>
+
   </section>
 </section>
-<section class="detail" id="template_not_found/2">
+<section class="detail" id="targets/1">
 
   <div class="detail-header">
-    <a href="#template_not_found/2" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#targets/1" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">template_not_found(template, assigns)</h1>
+    <h1 class="signature" translate="no">targets(map)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/views/v1/suse_manager_view.ex#L2" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/prometheus_json.ex#L7" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -261,15 +251,7 @@ to render a particular template.</p></div>
 
   <section class="docstring">
 
-      <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> template_not_found(<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">no_return</a>()</pre>
-
-      </div>
-
-<p>Callback invoked when no template is found.
-By default it raises but can be customized
-to render a particular template.</p>
   </section>
 </section>
 
