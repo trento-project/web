@@ -16,6 +16,8 @@ function Indicator({
   isError,
   onNavigate,
 }) {
+  const clickHandler = isError ? () => {} : onNavigate;
+
   return (
     <Tooltip isEnabled={isError} content={tooltip} wrap={false}>
       <div
@@ -23,12 +25,12 @@ function Indicator({
         tabIndex={0}
         className={classNames(
           'flex flex-row items-center border border-gray-200 p-2 rounded-md grow',
-          { 'cursor-pointer': !isError }
+          { 'cursor-default': isError }
         )}
-        onClick={onNavigate}
+        onClick={clickHandler}
         onKeyDown={({ code }) => {
           if (code === 'Enter') {
-            onNavigate();
+            clickHandler();
           }
         }}
       >
