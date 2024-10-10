@@ -1,15 +1,16 @@
 name:  Pull request environment
 
 on:
-  push:
-  workflow_dispatch:
-  repository_dispatch:
-    types: [start-ci, deploy-demo]
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - labeled
 
 env:
   MANTAINERS: "[\"cdimonaco\", \"dottorblaster\", \"nelsonkopliku\", \"arbulu89\", \"jagabomb\", \"emaksy\", \"gagandeepb\", \"balanza\", \"janvhs\"]"
   PR_ENV_LABEL: env
-  PR_NUMBER: "${{ github.ref_name }}"
+  PR_NUMBER: "${{ github.event.pull_request.number }}"
 
 jobs:
   check_env_creation_privilege:
@@ -19,7 +20,7 @@ jobs:
       create_env: ${{ steps.check.outputs.create_env }}
     steps:
       - id: check
-        run: echo "create_env=${{ contains(fromJson(env.MANTAINERS), github.event.sender.login) }}" >> "$GITHUB_OUTPUT"
+        run: echo "create_env=${{ contains(fromJson(env.MANTAINERS), github.event.sender.login) && contains(github.event.pull_request.labels.*.name, env.PR_ENV_LABEL) }}" >> "$GITHUB_OUTPUT"
 
   build-and-push-pr-image:
     needs: check_env_creation_privilege
@@ -32,7 +33,7 @@ jobs:
     env:
       REGISTRY: ghcr.io
       IMAGE_REPOSITORY: ghcr.io/${{ github.repository_owner }}/trento-web
-      IMAGE_TAG: ${{ github.ref_name }}-env
+      IMAGE_TAG: ${{ github.event.pull_request.number }}-env
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.12.1
@@ -68,8 +69,8 @@ jobs:
     runs-on: ubuntu-20.04
     needs: build-and-push-pr-image
     env:
-      PR_BASE_URL: ${{ github.ref_name }}.prenv.trento.suse.com
-      PR_NUMBER: ${{ github.ref_name }}
+      PR_BASE_URL: ${{ github.event.pull_request.number }}.prenv.trento.suse.com
+      PR_NUMBER: ${{ github.event.pull_request.number }}
     steps:
       - name: Checkout ansible repo
         uses: actions/checkout@v4
@@ -102,22 +103,22 @@ jobs:
                     server:
                       ansible_host: ${{ secrets.PR_ENV_MACHINE_IP }}
           options: |
-            --extra-vars "web_postgres_db='${{ github.ref_name }}db' \
-            web_postgres_event_store='${{ github.ref_name }}edb' \
-            wanda_postgres_db='${{ github.ref_name }}wandadb' \
-            web_postgres_user='${{ github.ref_name }}web' \
-            wanda_postgres_user='${{ github.ref_name }}wanda' \
-            web_container_name='${{ github.ref_name }}web' \
-            web_container_image='ghcr.io/trento-project/trento-web:${{ github.ref_name }}-env' \
+            --extra-vars "web_postgres_db='${{ env.PR_NUMBER }}db' \
+            web_postgres_event_store='${{ env.PR_NUMBER }}edb' \
+            wanda_postgres_db='${{ env.PR_NUMBER }}wandadb' \
+            web_postgres_user='${{ env.PR_NUMBER }}web' \
+            wanda_postgres_user='${{ env.PR_NUMBER }}wanda' \
+            web_container_name='${{ env.PR_NUMBER }}web' \
+            web_container_image='ghcr.io/trento-project/trento-web:${{ env.PR_NUMBER }}-env' \
             wanda_container_image='ghcr.io/trento-project/trento-wanda:demo' \
-            wanda_container_name='${{ github.ref_name }}wanda' \
-            docker_network_name='${{ github.ref_name }}net' \
-            nginx_vhost_filename='${{ github.ref_name }}' \
+            wanda_container_name='${{ env.PR_NUMBER }}wanda' \
+            docker_network_name='${{ env.PR_NUMBER }}net' \
+            nginx_vhost_filename='${{ env.PR_NUMBER }}' \
             trento_server_name='${{ env.PR_BASE_URL }}' \
             web_postgres_password='trento' \
             wanda_postgres_password='wanda' \
-            rabbitmq_vhost='${{ github.ref_name }}' \
-            rabbitmq_username='${{ github.ref_name }}rabbitusr' \
+            rabbitmq_vhost='${{ env.PR_NUMBER }}' \
+            rabbitmq_username='${{ env.PR_NUMBER }}rabbitusr' \
             rabbitmq_password='trento' \
             prometheus_url='http://localhost' \
             web_admin_password='adminpassword' \
@@ -126,8 +127,8 @@ jobs:
             force_recreate_wanda_container='true' \
             force_recreate_web_container='true' \
             force_pull_images='true' \
-            web_upstream_name='${{ github.ref_name }}web' \
-            wanda_upstream_name='${{ github.ref_name }}wanda' \
+            web_upstream_name='${{ env.PR_NUMBER }}web' \
+            wanda_upstream_name='${{ env.PR_NUMBER }}wanda' \
             trento_server_url='http://${{ env.PR_BASE_URL }}' \
             nginx_ssl_cert_as_base64='true' \
             nginx_ssl_key_as_base64='true' \
@@ -140,7 +141,7 @@ jobs:
     runs-on: ubuntu-20.04
     needs: create_pr_environment
     env:
-      TRENTO_PR_ENV_URL: "${{ github.ref_name }}.prenv.trento.suse.com"
+      TRENTO_PR_ENV_URL: "${{ github.event.pull_request.number }}.prenv.trento.suse.com"
     steps:
       - uses: actions/checkout@v4
         with:
@@ -157,8 +158,6 @@ jobs:
         run: chmod +x $(whereis photofinish | cut -d" " -f2)
       - name: Push data
         run: |
-          set -e
-          echo "Pushing data to https://$TRENTO_PR_ENV_URL/api/v1/collect"
           photofinish run healthy-27-node-SAP-cluster -u "https://$TRENTO_PR_ENV_URL/api/v1/collect"
           photofinish run hana-scale-out -u "https://$TRENTO_PR_ENV_URL/api/v1/collect"
           photofinish run hana-diskless-sbd -u "https://$TRENTO_PR_ENV_URL/api/v1/collect"
