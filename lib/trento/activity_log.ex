@@ -67,6 +67,7 @@ defmodule Trento.ActivityLog do
 
     case ActivityLog
          |> maybe_exclude_user_logs(include_all_log_types?)
+         |> maybe_search_by_metadata(params)
          |> Flop.validate_and_run(parsed_params, for: ActivityLog) do
       {:ok, {activity_log_entries, meta}} ->
         {:ok, activity_log_entries, meta}
@@ -81,6 +82,88 @@ defmodule Trento.ActivityLog do
 
   defp maybe_exclude_user_logs(ActivityLog = q, false = _include_all_log_types?) do
     from(l in q, where: l.type not in @user_management_log_types)
+  end
+
+  defp maybe_search_by_metadata(query, params) do
+    maybe_metadata_search_string = params[:search]
+
+    is_valid_search_string? =
+      maybe_metadata_search_string != nil &&
+        maybe_metadata_search_string != "" &&
+        String.match?(maybe_metadata_search_string, ~r/^[a-zA-Z0-9-_\*\s]+$/)
+
+    case is_valid_search_string? &&
+           parse_metadata_search_string(maybe_metadata_search_string) do
+      {:ok, parsed_search_object} ->
+        selector = parsed_search_object.selector
+        predicate = parsed_search_object.predicate
+        jsonb_path_query_string = "#{selector} #{predicate}"
+
+        from(q in query,
+          select: %{
+            id: q.id,
+            metadata: q.metadata,
+            metadata_search_match:
+              fragment(
+                "jsonb_path_query(?, ?)",
+                q.metadata,
+                ^jsonb_path_query_string
+              ),
+            type: q.type,
+            actor: q.actor,
+            inserted_at: q.inserted_at,
+            updated_at: q.updated_at
+          }
+        )
+
+      _ ->
+        query
+    end
+  end
+
+  defp parse_metadata_search_string(search_string) do
+    selector = get_search_selector(search_string)
+    predicate = get_search_predicate(search_string)
+
+    {:ok,
+     %{
+       selector: selector,
+       predicate: predicate
+     }}
+  end
+
+  defp get_search_selector(_), do: "$.**"
+
+  @search_regex "[a-zA-Z0-9_-]"
+  defp get_search_predicate(search_string) do
+    search_words = String.split(search_string, " ")
+    add_surrounding_brackets? = length(search_words) > 1
+
+    joined_string =
+      Enum.map_join(search_words, " || ", fn
+        word ->
+          case {String.starts_with?(word, "*"), String.ends_with?(word, "*")} do
+            {true, true} ->
+              "(@ like_regex \"^#{@search_regex}#{String.trim_trailing(word, "*")}#{@search_regex}*$\")"
+
+            {true, false} ->
+              "(@ like_regex \"^#{@search_regex}#{word}$\")"
+
+            {false, true} ->
+              "(@ starts with \"#{String.trim_trailing(word, "*")}\")"
+
+            {false, false} ->
+              "(@ == \"#{word}\")"
+          end
+      end)
+
+    case add_surrounding_brackets? do
+      true ->
+        "? (#{joined_string})"
+
+      _ ->
+        "? #{joined_string}"
+    end
   end
 
   # ''&& false' is a workaround until we reach OTP 27 that allows doc tag for private functions;
