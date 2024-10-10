@@ -34,10 +34,9 @@ defmodule TrentoWeb.V1.DatabaseJSON do
         database_instances: database_instances
       }),
       do:
-        add_system_replication_status(
-          database_instance(%{instance: instance}),
-          database_instances
-        )
+        %{instance: instance}
+        |> database_instance()
+        |> add_system_replication_status(database_instances)
 
   def database_registered(%{database: database}) do
     database
