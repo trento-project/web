@@ -142,9 +142,8 @@ function ActivityLogPage() {
       key: 'search',
       title: 'Search',
       type: 'search_box',
-      placeholder: 'Filter by metadata (Coming soon)',
+      placeholder: 'Filter by metadata',
       allowClear: true,
-      disabled: true,
       className: 'col-span-8',
     },
     {
