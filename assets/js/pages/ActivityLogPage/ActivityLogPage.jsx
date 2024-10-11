@@ -139,6 +139,11 @@ function ActivityLogPage() {
 
   const filters = [
     {
+      key: 'metadata',
+      type: 'search_input',
+      title: 'Metadata',
+    },
+    {
       key: 'type',
       type: 'select',
       title: 'Type',
