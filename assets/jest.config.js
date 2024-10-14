@@ -133,7 +133,7 @@ module.exports = {
         classNameTemplate: '{classname}',
         titleTemplate: '{title}', // outputname
         includeConsoleOutput: true,
-        outputDirectory: "/tmp"
+        outputDirectory: '/tmp',
       },
     ],
   ],
