@@ -94,27 +94,44 @@ defmodule Trento.ActivityLog do
 
     case is_valid_search_string? &&
            parse_metadata_search_string(maybe_metadata_search_string) do
-      {:ok, parsed_search_object} ->
-        selector = parsed_search_object.selector
-        predicate = parsed_search_object.predicate
-        jsonb_path_query_string = "#{selector} #{predicate}"
-
-        from(q in query,
+      {:ok, {a0}} ->
+        from q in query,
           select: %{
             id: q.id,
             metadata: q.metadata,
-            metadata_search_match:
-              fragment(
-                "jsonb_path_query(?, ?)",
-                q.metadata,
-                ^jsonb_path_query_string
-              ),
+            m0: fragment("jsonb_path_query(?, ?)", q.metadata, ^a0),
             type: q.type,
             actor: q.actor,
             inserted_at: q.inserted_at,
             updated_at: q.updated_at
           }
-        )
+
+      {:ok, {a0, a1}} ->
+        from q in query,
+          select: %{
+            id: q.id,
+            metadata: q.metadata,
+            m0: fragment("jsonb_path_query(?, ?)", q.metadata, ^a0),
+            m1: fragment("jsonb_path_query(?, ?)", q.metadata, ^a1),
+            type: q.type,
+            actor: q.actor,
+            inserted_at: q.inserted_at,
+            updated_at: q.updated_at
+          }
+
+      {:ok, {a0, a1, a2}} ->
+        from q in query,
+          select: %{
+            id: q.id,
+            metadata: q.metadata,
+            m0: fragment("jsonb_path_query(?, ?)", q.metadata, ^a0),
+            m1: fragment("jsonb_path_query(?, ?)", q.metadata, ^a1),
+            m2: fragment("jsonb_path_query(?, ?)", q.metadata, ^a2),
+            type: q.type,
+            actor: q.actor,
+            inserted_at: q.inserted_at,
+            updated_at: q.updated_at
+          }
 
       _ ->
         query
@@ -122,14 +139,24 @@ defmodule Trento.ActivityLog do
   end
 
   defp parse_metadata_search_string(search_string) do
-    selector = get_search_selector(search_string)
-    predicate = get_search_predicate(search_string)
+    and_fragments = String.split(search_string, "AND")
+    length_and_fragments = length(and_fragments)
 
-    {:ok,
-     %{
-       selector: selector,
-       predicate: predicate
-     }}
+    searches =
+      case length_and_fragments < 3 do
+        true ->
+          {:ok,
+           and_fragments
+           |> Enum.map(fn af ->
+             "#{get_search_selector(af)} #{get_search_predicate(af)}"
+           end)
+           |> List.to_tuple()}
+
+        _ ->
+          :error
+      end
+
+    searches
   end
 
   defp get_search_selector(_), do: "$.**"
