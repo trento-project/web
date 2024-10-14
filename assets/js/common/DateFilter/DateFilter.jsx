@@ -110,6 +110,7 @@ function DateTimeInput({ value, onChange }) {
  * @param {string} props.value - The selected id of the selected option. It accepted either a string or an array with the id as the first element.
  * @param {boolean} props.prefilled - Whether to include pre-configured options in the options list. Default is true.
  * @param {function} props.onChange - The callback function to be called when the value of the date filter changes. It will provide a couple with the selected id and the actual date.
+ * @param {string} props.className - CSS classes to be applied to the component.
  */
 function DateFilter({
   options = [],
@@ -117,6 +118,7 @@ function DateFilter({
   value,
   prefilled = true,
   onChange,
+  className,
 }) {
   const ref = useRef();
   const [open, setOpen] = useState(false);
@@ -132,8 +134,8 @@ function DateFilter({
   const text = renderOptionItem(selectedOption, `Filter ${title}...`);
 
   return (
-    <div className="flex-1 w-64 top-16" ref={ref}>
-      <div className="mt-1 relative">
+    <div className={className} ref={ref}>
+      <div className="relative">
         {selectedOption && (
           <button
             type="button"
