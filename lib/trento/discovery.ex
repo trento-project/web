@@ -36,11 +36,7 @@ defmodule Trento.Discovery do
          :ok <- dispatch(commands) do
       :ok
     else
-      {:error, reason} = error ->
-        Logger.error("Failed to handle discovery event: #{inspect(reason)}")
-        store_discarded_discovery_event(event, inspect(reason))
-
-        error
+      result -> handle_not_dispatched(event, result)
     end
   end
 
@@ -164,24 +160,47 @@ defmodule Trento.Discovery do
   defp do_handle(_),
     do: {:error, :unknown_discovery_type}
 
-  @spec dispatch(command | [command]) :: :ok | {:error, any}
+  @spec dispatch(command | [command]) :: :ok | {:error, any} | {:ignore, any}
   defp dispatch(commands) when is_list(commands) do
     Enum.reduce(commands, :ok, fn command, acc ->
-      case {commanded().dispatch(command), acc} do
-        {:ok, :ok} ->
-          :ok
-
-        {{:error, error}, :ok} ->
-          {:error, [error]}
-
-        {{:error, error}, {:error, errors}} ->
-          {:error, [error | errors]}
-      end
+      result = commanded().dispatch(command)
+      aggregate_dispatch_results(acc, result)
     end)
   end
 
   defp dispatch(command), do: commanded().dispatch(command)
 
+  defp aggregate_dispatch_results(:ok, :ok), do: :ok
+  defp aggregate_dispatch_results(:ok, {:ignore, reason}), do: {:ignore, [reason]}
+  defp aggregate_dispatch_results(:ok, {:error, reason}), do: {:error, [reason]}
+  defp aggregate_dispatch_results({:ignore, reasons}, :ok), do: {:ignore, reasons}
+
+  defp aggregate_dispatch_results({:ignore, reasons}, {:ignore, reason}),
+    do: {:ignore, [reason | reasons]}
+
+  defp aggregate_dispatch_results({:ignore, reasons}, {:error, reason}),
+    do: {:error, [reason | reasons]}
+
+  defp aggregate_dispatch_results({:error, reasons}, :ok), do: {:errors, reasons}
+
+  defp aggregate_dispatch_results({:error, reasons}, {:ignore, reason}),
+    do: {:error, [reason | reasons]}
+
+  defp aggregate_dispatch_results({:error, reasons}, {:error, reason}),
+    do: {:error, [reason | reasons]}
+
   defp commanded,
     do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]
+
+  defp handle_not_dispatched(event, {:ignore, reasons}) do
+    Logger.warning("Ignored discovery event: #{inspect(reasons)}")
+    store_discarded_discovery_event(event, inspect(reasons))
+    :ok
+  end
+
+  defp handle_not_dispatched(event, {:error, reasons} = error) do
+    Logger.error("Failed to handle discovery event: #{inspect(reasons)}")
+    store_discarded_discovery_event(event, inspect(reasons))
+    error
+  end
 end

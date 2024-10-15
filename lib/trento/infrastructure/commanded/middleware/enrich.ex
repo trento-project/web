@@ -26,6 +26,11 @@ defmodule Trento.Infrastructure.Commanded.Middleware.Enrich do
         pipeline
         |> respond({:error, reason})
         |> halt
+
+      {:ignore, reason} ->
+        pipeline
+        |> respond({:ignore, reason})
+        |> halt
     end
   end
 

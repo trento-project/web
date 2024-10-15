@@ -36,7 +36,7 @@ defimpl Trento.Infrastructure.Commanded.Middleware.Enrichable,
          }}
 
       nil ->
-        {:error, :database_not_registered}
+        {:ignore, :database_not_registered}
     end
   end
 end

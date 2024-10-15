@@ -41,13 +41,13 @@ defmodule TrentoWeb.V1.DiscoveryControllerTest do
       |> json_response(202)
     end
 
-    test "collect action discards application instance registrations when the associated database does not exists",
+    test "collect action discards and store events when the command fails",
          %{conn: conn} do
       body =
         load_discovery_event_fixture("sap_system_discovery_application")
 
       expect(Trento.Commanded.Mock, :dispatch, fn _ ->
-        {:error, :any_error}
+        {:error, :any_reason}
       end)
 
       %{status: status} =
@@ -59,7 +59,29 @@ defmodule TrentoWeb.V1.DiscoveryControllerTest do
 
       [discarded_event] = Discovery.get_discarded_discovery_events(1)
 
-      assert %DiscardedDiscoveryEvent{payload: ^body, reason: "[:any_error]"} =
+      assert %DiscardedDiscoveryEvent{payload: ^body, reason: "[:any_reason]"} =
+               discarded_event
+    end
+
+    test "collect action discards and store events when the command is not dispatched",
+         %{conn: conn} do
+      body =
+        load_discovery_event_fixture("sap_system_discovery_application")
+
+      expect(Trento.Commanded.Mock, :dispatch, fn _ ->
+        {:ignore, :any_reason}
+      end)
+
+      %{status: status} =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> post("/api/v1/collect", body)
+
+      assert status == 202
+
+      [discarded_event] = Discovery.get_discarded_discovery_events(1)
+
+      assert %DiscardedDiscoveryEvent{payload: ^body, reason: "[:any_reason]"} =
                discarded_event
     end
   end
