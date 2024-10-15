@@ -94,39 +94,12 @@ defmodule Trento.ActivityLog do
 
     case is_valid_search_string? &&
            parse_metadata_search_string(maybe_metadata_search_string) do
-      {:ok, {a0}} ->
+      parsed_query when is_binary(parsed_query) ->
         from q in query,
           select: %{
             id: q.id,
             metadata: q.metadata,
-            m0: fragment("jsonb_path_query(?, ?)", q.metadata, ^a0),
-            type: q.type,
-            actor: q.actor,
-            inserted_at: q.inserted_at,
-            updated_at: q.updated_at
-          }
-
-      {:ok, {a0, a1}} ->
-        from q in query,
-          select: %{
-            id: q.id,
-            metadata: q.metadata,
-            m0: fragment("jsonb_path_query(?, ?)", q.metadata, ^a0),
-            m1: fragment("jsonb_path_query(?, ?)", q.metadata, ^a1),
-            type: q.type,
-            actor: q.actor,
-            inserted_at: q.inserted_at,
-            updated_at: q.updated_at
-          }
-
-      {:ok, {a0, a1, a2}} ->
-        from q in query,
-          select: %{
-            id: q.id,
-            metadata: q.metadata,
-            m0: fragment("jsonb_path_query(?, ?)", q.metadata, ^a0),
-            m1: fragment("jsonb_path_query(?, ?)", q.metadata, ^a1),
-            m2: fragment("jsonb_path_query(?, ?)", q.metadata, ^a2),
+            m0: fragment("jsonb_path_query(?, ?)", q.metadata, ^parsed_query),
             type: q.type,
             actor: q.actor,
             inserted_at: q.inserted_at,
@@ -139,48 +112,46 @@ defmodule Trento.ActivityLog do
   end
 
   defp parse_metadata_search_string(search_string) do
-    and_fragments = String.split(search_string, "AND")
-    length_and_fragments = length(and_fragments)
-
-    searches =
-      case length_and_fragments < 3 do
-        true ->
-          {:ok,
-           and_fragments
-           |> Enum.map(fn af ->
-             "#{get_search_selector(af)} #{get_search_predicate(af)}"
-           end)
-           |> List.to_tuple()}
-
-        _ ->
-          :error
-      end
-
-    searches
+    "#{get_search_selector(search_string)} #{get_search_predicate(search_string)}"
   end
 
-  defp get_search_selector(_), do: "$.**"
+  defp get_search_selector(_), do: "$"
 
   @search_regex "[a-zA-Z0-9_-]"
   defp get_search_predicate(search_string) do
     search_words = String.split(search_string, " ")
     add_surrounding_brackets? = length(search_words) > 1
 
+    joiner =
+      case Enum.any?(search_words, fn word -> word == "AND" or word == "OR" end) do
+        true ->
+          " "
+
+        _ ->
+          " || "
+      end
+
     joined_string =
-      Enum.map_join(search_words, " || ", fn
+      Enum.map_join(search_words, joiner, fn
         word ->
           case {String.starts_with?(word, "*"), String.ends_with?(word, "*")} do
             {true, true} ->
-              "(@ like_regex \"^#{@search_regex}#{String.trim_trailing(word, "*")}#{@search_regex}*$\")"
+              "(@.** like_regex \"^#{@search_regex}#{String.trim_trailing(word, "*")}#{@search_regex}*$\")"
 
             {true, false} ->
-              "(@ like_regex \"^#{@search_regex}#{word}$\")"
+              "(@.** like_regex \"^#{@search_regex}#{word}$\")"
 
             {false, true} ->
-              "(@ starts with \"#{String.trim_trailing(word, "*")}\")"
+              "(@.** starts with \"#{String.trim_trailing(word, "*")}\")"
+
+            {false, false} when word == "AND" ->
+              "&&"
+
+            {false, false} when word == "OR" ->
+              "||"
 
             {false, false} ->
-              "(@ == \"#{word}\")"
+              "(@.** == \"#{word}\")"
           end
       end)
 
