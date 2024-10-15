@@ -35,7 +35,8 @@ export const softwareUpdatesSlice = createSlice({
       state.softwareUpdates = {
         ...state.softwareUpdates,
         [hostID]: {
-          ...initialHostState,
+          ...state.softwareUpdates[hostID],
+          loading: false,
           relevant_patches,
           upgradable_packages,
         },
