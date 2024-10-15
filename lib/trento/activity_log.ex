@@ -132,28 +132,7 @@ defmodule Trento.ActivityLog do
       end
 
     joined_string =
-      Enum.map_join(search_words, joiner, fn
-        word ->
-          case {String.starts_with?(word, "*"), String.ends_with?(word, "*")} do
-            {true, true} ->
-              "(@.** like_regex \"^#{@search_regex}#{String.trim_trailing(word, "*")}#{@search_regex}*$\")"
-
-            {true, false} ->
-              "(@.** like_regex \"^#{@search_regex}#{word}$\")"
-
-            {false, true} ->
-              "(@.** starts with \"#{String.trim_trailing(word, "*")}\")"
-
-            {false, false} when word == "AND" ->
-              "&&"
-
-            {false, false} when word == "OR" ->
-              "||"
-
-            {false, false} ->
-              "(@.** == \"#{word}\")"
-          end
-      end)
+      Enum.map_join(search_words, joiner, &word_handler/1)
 
     case add_surrounding_brackets? do
       true ->
@@ -161,6 +140,28 @@ defmodule Trento.ActivityLog do
 
       _ ->
         "? #{joined_string}"
+    end
+  end
+
+  defp word_handler(word) do
+    case {String.starts_with?(word, "*"), String.ends_with?(word, "*")} do
+      {true, true} ->
+        "(@.** like_regex \"^#{@search_regex}#{String.trim_trailing(word, "*")}#{@search_regex}*$\")"
+
+      {true, false} ->
+        "(@.** like_regex \"^#{@search_regex}#{word}$\")"
+
+      {false, true} ->
+        "(@.** starts with \"#{String.trim_trailing(word, "*")}\")"
+
+      {false, false} when word == "AND" ->
+        "&&"
+
+      {false, false} when word == "OR" ->
+        "||"
+
+      {false, false} ->
+        "(@.** == \"#{word}\")"
     end
   end
 
