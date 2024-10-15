@@ -164,7 +164,11 @@ function Table({
         'px-4 sm:px-8': usePadding,
       })}
     >
-      <div className="flex items-center px-4 space-x-4 pb-4">
+      <div
+        className={classNames('flex-row px-4 space-x-4', {
+          'pb-4': hasFilters,
+        })}
+      >
         <TableFilters
           config={config}
           data={data}

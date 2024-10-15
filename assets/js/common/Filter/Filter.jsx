@@ -18,8 +18,9 @@ const getLabel = (value, placeholder) =>
  * @param {string} props.title Title of the filter. It will be displayed in the button when the filter is empty
  * @param {string|string[]} props.value Selected options. Default is an empty array
  * @param {function} props.onChange Function to call when the selected options change
+ * @param {string} props.className Additional classes to apply to the filter
  */
-function Filter({ options, title, value = [], onChange }) {
+function Filter({ options, title, value = [], onChange, className }) {
   const ref = useRef();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
@@ -42,8 +43,8 @@ function Filter({ options, title, value = [], onChange }) {
   useOnClickOutside(ref, () => setOpen(false));
 
   return (
-    <div className="flex-1 w-64 top-16" ref={ref}>
-      <div className="mt-1 relative">
+    <div className={classNames('top-16', className)} ref={ref}>
+      <div className="relative">
         {parsedValue.length !== 0 && (
           <button
             type="button"
