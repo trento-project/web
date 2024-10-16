@@ -185,6 +185,8 @@ if config_env() in [:prod, :demo] do
     )
   end
 
+  config :assent, http_adapter: {Assent.HTTPAdapter.Httpc, [ssl: [cacerts: cacerts]]}
+
   config :trento, :oidc,
     enabled: enable_oidc,
     callback_url:

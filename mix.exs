@@ -36,7 +36,7 @@ defmodule Trento.MixProject do
   def application do
     [
       mod: {Trento.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :inets]
     ]
   end
 
