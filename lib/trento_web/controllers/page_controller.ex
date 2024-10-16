@@ -1,6 +1,8 @@
 defmodule TrentoWeb.PageController do
   use TrentoWeb, :controller
 
+  require Logger
+
   def index(conn, _params) do
     check_service_base_url = Application.fetch_env!(:trento, :checks_service)[:base_url]
     charts_enabled = Application.fetch_env!(:trento, Trento.Charts)[:enabled]
@@ -57,15 +59,19 @@ defmodule TrentoWeb.PageController do
   defp sso_details_for_provider(conn, provider) do
     full_callback_url = Application.fetch_env!(:trento, provider)[:callback_url]
     enrollment_provider = "#{provider}_local"
+    enrollment_url = ~p"/api/session/#{enrollment_provider}/callback"
 
     %URI{path: callback_url} =
       URI.parse(full_callback_url)
 
-    {:ok, login_url, _} =
-      PowAssent.Plug.authorize_url(conn, enrollment_provider, full_callback_url)
+    case PowAssent.Plug.authorize_url(conn, enrollment_provider, full_callback_url) do
+      {:ok, login_url, _} ->
+        {true, callback_url, login_url, enrollment_url}
 
-    enrollment_url = ~p"/api/session/#{enrollment_provider}/callback"
+      {:error, reason, _} ->
+        Logger.error("error getting SSO authorization url: #{inspect(reason)}")
 
-    {true, callback_url, login_url, enrollment_url}
+        {true, "", "", ""}
+    end
   end
 end
