@@ -53,7 +53,7 @@
     "@reduxjs/toolkit": "^2.2.2",
     "axios": "^1.7.7",
     "axios-auth-refresh": "^3.3.6",
-    "chart.js": "^4.4.4",
+    "chart.js": "^4.4.5",
     "chartjs-adapter-date-fns": "^3.0.0",
     "chartjs-plugin-zoom": "^2.0.1",
     "classnames": "^2.5.1",
