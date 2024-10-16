@@ -44,7 +44,6 @@ const renderFilter = (key, { type, ...filterProps }, value, onChange) => {
  * @param {Object} props.value - Key/value pairs of selected filters, where key is the filter key
  * @param {Function} props.onChange - Function to call when the composed value changes. If autoApply is true, this function is called on every filter change
  * @param {Boolean} props.autoApply - If true, onChange is called on every filter change; otherwise, an apply button is shown
- * @param {Number} props.rows - Number of rows to display the filters
  * @param {ReactNode} props.children - Additional elements to display after the filters
  */
 function ComposedFilter({
@@ -52,7 +51,6 @@ function ComposedFilter({
   onChange,
   value: initialValue = {},
   autoApply,
-  // rows = 1,
   children,
 }) {
   const [value, setValue] = useState(initialValue);
@@ -73,7 +71,6 @@ function ComposedFilter({
 
   return (
     <div className="grid grid-flow-col gap-4">
-      {/* <div className={`grid grid-rows-${rows} grid-flow-col gap-4`}> */}
       {filters
         .map(({ key, ...rest }) => [key, rest, value[key], onFilterChange(key)])
         .map((args) => renderFilter(...args))}

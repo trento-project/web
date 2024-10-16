@@ -212,7 +212,6 @@ function ActivityLogPage() {
       <div className="bg-white rounded-lg shadow">
         <div className="p-4">
           <ComposedFilter
-            rows={2}
             filters={filters}
             autoApply={false}
             value={searchParamsToFilterValue(searchParams)}
