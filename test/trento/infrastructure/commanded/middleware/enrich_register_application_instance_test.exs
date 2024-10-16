@@ -68,7 +68,7 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterApplicationIn
         health: :passing
       )
 
-    assert {:error, :database_not_registered} = Enrichable.enrich(command, %{})
+    assert {:error, :associated_database_not_found} = Enrichable.enrich(command, %{})
   end
 
   test "should return an error if the database was not found" do
@@ -85,6 +85,6 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterApplicationIn
         health: :passing
       )
 
-    assert {:error, :database_not_registered} = Enrichable.enrich(command, %{})
+    assert {:error, :associated_database_not_found} = Enrichable.enrich(command, %{})
   end
 end
