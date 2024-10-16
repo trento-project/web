@@ -1,10 +1,22 @@
 import React, { useEffect, useState } from 'react';
+import { EOS_SEARCH } from 'eos-icons-react';
 import Button from '@common/Button';
+import Input from '@common/Input';
 import Filter from '@common/Filter';
 import DateFilter from '@common/DateFilter';
 
 const renderFilter = (key, { type, ...filterProps }, value, onChange) => {
   switch (type) {
+    case 'search_box':
+      return (
+        <Input
+          key={key}
+          {...filterProps}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          prefix={<EOS_SEARCH size="l" />}
+        />
+      );
     case 'select':
       return (
         <Filter key={key} {...filterProps} value={value} onChange={onChange} />
