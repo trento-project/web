@@ -206,5 +206,26 @@ describe('Login component', () => {
       });
       expect(loginButton).toBeVisible();
     });
+
+    it('should display an error message is the SSO url is empty', async () => {
+      jest.spyOn(authConfig, 'isSingleSignOnEnabled').mockReturnValue(true);
+      jest.spyOn(authConfig, 'getSingleSignOnLoginUrl').mockReturnValue('');
+
+      const [StatefulLogin] = withState(<Login />, {
+        user: {
+          loggedIn: false,
+          authInProgress: false,
+        },
+      });
+
+      renderWithRouter(StatefulLogin);
+
+      await waitFor(() =>
+        screen.getByText(
+          `An error occurred while trying to access the Single Sign-On IDP host.`,
+          { exact: false }
+        )
+      );
+    });
   });
 });
