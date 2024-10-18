@@ -12,8 +12,13 @@ defimpl Trento.Infrastructure.Commanded.Middleware.Enrichable,
   alias Trento.Repo
   import Ecto.Query
 
+  require Logger
+
   @spec enrich(RegisterApplicationInstance.t(), map) :: {:ok, map} | {:error, any}
-  def enrich(%RegisterApplicationInstance{db_host: db_host, tenant: tenant} = command, _) do
+  def enrich(
+        %RegisterApplicationInstance{db_host: db_host, tenant: tenant, sid: sid} = command,
+        _
+      ) do
     query =
       from d in DatabaseReadModel,
         join: di in DatabaseInstanceReadModel,
@@ -36,7 +41,11 @@ defimpl Trento.Infrastructure.Commanded.Middleware.Enrichable,
          }}
 
       nil ->
-        {:error, :database_not_registered}
+        Logger.warning(
+          "database instance associated to application instance #{sid} not registered in Trento. Please make sure that Trento agent is running on database instances associated to this SAP system"
+        )
+
+        {:error, :associated_database_not_found}
     end
   end
 end

@@ -75,6 +75,12 @@ defmodule TrentoWeb.FallbackController do
     |> render(:"422", changeset: changeset)
   end
 
+  def call(conn, {:error, :associated_database_not_found}) do
+    conn
+    |> put_status(:accepted)
+    |> json(%{})
+  end
+
   def call(conn, {:error, {:validation, _} = reason}) do
     conn
     |> put_status(:unprocessable_entity)
