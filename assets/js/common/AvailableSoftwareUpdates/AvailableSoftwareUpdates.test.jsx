@@ -77,4 +77,46 @@ describe('AvailableSoftwareUpdates component', () => {
 
     expect(screen.getByRole('button', { name: 'Settings' })).toBeVisible();
   });
+
+  it('should navigate to a SUSE Manager view', async () => {
+    const user = userEvent.setup();
+    const relevantPatches = faker.number.int({ min: 1 });
+    const upgradablePackages = faker.number.int();
+    const navigateToPatches = jest.fn();
+
+    render(
+      <AvailableSoftwareUpdates
+        settingsConfigured
+        relevantPatches={relevantPatches}
+        upgradablePackages={upgradablePackages}
+        onNavigateToPatches={navigateToPatches}
+      />
+    );
+
+    const relevantPatchesBox = screen.getByText(relevantPatches);
+    await user.click(relevantPatchesBox);
+
+    expect(navigateToPatches).toHaveBeenCalled();
+  });
+
+  it('should not navigate to a SUSE Manager view when erroring', async () => {
+    const user = userEvent.setup();
+    const navigateToPatches = jest.fn();
+    const tooltip = faker.lorem.words({ min: 3, max: 5 });
+    const errorMessage = faker.person.jobType();
+
+    render(
+      <AvailableSoftwareUpdates
+        settingsConfigured
+        tooltip={tooltip}
+        errorMessage={errorMessage}
+        onNavigateToPatches={navigateToPatches}
+      />
+    );
+
+    const relevantPatchesBox = screen.getAllByText(errorMessage)[0];
+    await user.click(relevantPatchesBox);
+
+    expect(navigateToPatches).not.toHaveBeenCalled();
+  });
 });
