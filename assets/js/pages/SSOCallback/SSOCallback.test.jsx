@@ -4,6 +4,7 @@ import 'intersection-observer';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import { withState, renderWithRouterMatch } from '@lib/test-utils';
+import * as authConfig from '@lib/auth/config';
 import SSOCallback from './SSOCallback';
 
 describe('SSOCallback component', () => {
@@ -49,6 +50,10 @@ describe('SSOCallback component', () => {
 
   it('should display an error message if authentication fails', async () => {
     const user = userEvent.setup();
+
+    jest
+      .spyOn(authConfig, 'getSingleSignOnLoginUrl')
+      .mockReturnValue('http://idp-url');
 
     const [StatefulOidCallback] = withState(<SSOCallback />, {
       user: {
