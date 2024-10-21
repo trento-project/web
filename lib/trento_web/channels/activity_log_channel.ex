@@ -32,26 +32,13 @@ defmodule TrentoWeb.ActivityLogChannel do
 
   @impl true
   def handle_info(:after_join, socket) do
-    all_usernames_ts = Users.list_all_usernames()
-    collapsed_usernames = collapse_usernames(all_usernames_ts)
+    all_active_users = Enum.map(Users.list_users(), & &1.username)
 
-    users = ["system" | collapsed_usernames]
+    users = ["system" | all_active_users]
     push(socket, "al_users_pushed", %{users: users})
     Process.send_after(self(), :after_join, @refresh_interval)
     {:noreply, socket}
   end
 
   defp allowed?(user_id, current_user_id), do: String.to_integer(user_id) == current_user_id
-
-  defp collapse_usernames(usernames_ts) do
-    usernames_ts
-    |> Enum.map(fn
-      {username, nil} ->
-        username
-
-      {username, deleted_at} ->
-        String.trim_trailing(username, "__" <> DateTime.to_string(deleted_at))
-    end)
-    |> Enum.uniq()
-  end
 end
