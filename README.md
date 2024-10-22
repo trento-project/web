@@ -4,7 +4,8 @@
 [![Coverage Status](https://coveralls.io/repos/github/trento-project/web/badge.svg?branch=main)](https://coveralls.io/github/trento-project/web?branch=main)
 [![Documentation](https://img.shields.io/badge/documentation-grey.svg)](https://trento-project.io/web/)
 
-An open cloud-native web console aiming to improve the workday of SAP Applications administrators.
+_Trento_ is a bespoke, stand-alone web application, built by SUSE from the ground up, to facilitate SAP operations, proactively preventing infrastructural issues by diagnosing common configuration mistakes by validating systems against SUSE best practices.  
+It's meant to complement _[SUSE Linux Enterprise Server for SAP Applications](https://www.suse.com/products/sles-for-sap/)_ in helping IT organizations run mission-critical enterprise software.
 
 # Documentation
 
@@ -12,13 +13,13 @@ The documentation is available at [trento-project.io/web](https://trento-project
 
 Swagger UI is available at [trento-project.io/web/swaggerui](https://trento-project.io/web/swaggerui).
 
-# Overview of Trento
+# Overview
 
-**Trento** is a comprehensive cloud-native, distributed monitoring solution, and it consists of three main components:
+_Trento_ is a distributed system, and it consists of three main components:
 
-- [Agent](https://github.com/trento-project/agent): Single background **process that runs on each host in the target infrastructure**
-- [Wanda](https://github.com/trento-project/wanda): Responsible to **orchestrate _checks_ executions** on a target infrastructure among the installed Trento Agents.
-- [Web](https://github.com/trento-project/web) (current repository): The control plane of the Trento Platform, which works in conjunction with the Agents and Wanda to **discover, observe, monitor, and check** the target SAP infrastructure.
+- [Agent](https://github.com/trento-project/agent): The background **edge process** that runs on each host in the target infrastructure.
+- [Wanda](https://github.com/trento-project/wanda): The **_checks_ orchestrator**, executing assertions on a target infrastructure using the information collected by Trento Agents.
+- [Web](https://github.com/trento-project/web) (current repository): The **web UI** and **control plane**, which works in conjunction with the Agents and Wanda to **discover, observe, and validate** the target SAP infrastructure.
 
 ## Trento architecture
 
