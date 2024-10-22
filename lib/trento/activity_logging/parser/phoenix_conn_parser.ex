@@ -124,6 +124,11 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
       ),
       do: %{host_id: Map.get(params, :id)}
 
+  def get_activity_metadata(:user_deletion, %Plug.Conn{
+        params: params
+      }),
+      do: %{user_id: Map.get(params, :id)}
+
   def get_activity_metadata(_, _), do: %{}
 
   defp redact(request_body, key) do

@@ -5,7 +5,7 @@ defmodule Trento.ActivityLog.Logger.Parser.MetadataEnricher do
 
   alias Trento.ActivityLog.ActivityCatalog
 
-  alias Trento.{Clusters, Databases, Hosts, SapSystems}
+  alias Trento.{Clusters, Databases, Hosts, SapSystems, Users}
 
   @spec enrich(activity :: ActivityCatalog.activity_type(), metadata :: map()) ::
           {:ok, maybe_enriched_metadata :: map()}
@@ -27,6 +27,7 @@ defmodule Trento.ActivityLog.Logger.Parser.MetadataEnricher do
       |> maybe_enrich(:cluster, Clusters, :name)
       |> maybe_enrich(:database, Databases, :sid)
       |> maybe_enrich(:sap_system, SapSystems, :sid)
+      |> maybe_enrich(:user, Users, :username)
       |> elem(1)
 
   defp maybe_enrich({activity, metadata}, entity_reference, context_module, enriching_field) do
@@ -39,7 +40,7 @@ defmodule Trento.ActivityLog.Logger.Parser.MetadataEnricher do
         _ -> metadata
       end
 
-    {activity, enriched_metadata}
+    {activity, clean_metadata(enriched_metadata)}
   end
 
   defp detect_enrichment(
@@ -79,7 +80,15 @@ defmodule Trento.ActivityLog.Logger.Parser.MetadataEnricher do
   defp detect_enrichment(:cluster, {_, %{cluster_id: id}}), do: {:ok, id}
   defp detect_enrichment(:database, {_, %{database_id: id}}), do: {:ok, id}
   defp detect_enrichment(:sap_system, {_, %{sap_system_id: id}}), do: {:ok, id}
+  defp detect_enrichment(:user, {_, %{user_id: id}}), do: {:ok, id}
 
   defp detect_enrichment(_target_entity, {_activity, _metadata}),
     do: {:error, :no_enrichment_needed}
+
+  defp clean_metadata(%{username: username} = metadata) do
+    clean_username = username |> String.split("__") |> List.first()
+    Map.put(metadata, :username, clean_username)
+  end
+
+  defp clean_metadata(metadata), do: metadata
 end
