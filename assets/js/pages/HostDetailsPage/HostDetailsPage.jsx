@@ -42,11 +42,15 @@ const getSoftwareUpdatesErrorMessage = (errors) => {
       detail === 'No system ID was found on SUSE Manager for this host.'
   );
 
+  const connectionNotWorking = errors.some(
+    ({ detail }) => detail === 'Something went wrong.'
+  );
+
   if (hostNotFoundInSUMA) {
     return 'Host not found in SUSE Manager';
   }
 
-  if (errors.length) {
+  if (connectionNotWorking) {
     return 'Connection to SUMA not working';
   }
 
@@ -60,11 +64,15 @@ const getSoftwareUpdatesErrorTooltip = (errors) => {
       detail === 'No system ID was found on SUSE Manager for this host.'
   );
 
+  const connectionNotWorking = errors.some(
+    ({ detail }) => detail === 'Something went wrong.'
+  );
+
   if (hostNotFoundInSUMA) {
     return 'Contact your SUSE Manager admin to ensure the host is managed by SUSE Manager';
   }
 
-  if (errors.length) {
+  if (connectionNotWorking) {
     return 'Please review SUSE Manager settings';
   }
 
