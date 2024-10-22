@@ -40,7 +40,7 @@ defmodule Trento.ActivityLog.Logger.Parser.MetadataEnricher do
         _ -> metadata
       end
 
-    {activity, clean_metadata(enriched_metadata)}
+    {activity, enriched_metadata}
   end
 
   defp detect_enrichment(
@@ -84,11 +84,4 @@ defmodule Trento.ActivityLog.Logger.Parser.MetadataEnricher do
 
   defp detect_enrichment(_target_entity, {_activity, _metadata}),
     do: {:error, :no_enrichment_needed}
-
-  defp clean_metadata(%{username: username} = metadata) do
-    clean_username = username |> String.split("__") |> List.first()
-    Map.put(metadata, :username, clean_username)
-  end
-
-  defp clean_metadata(metadata), do: metadata
 end

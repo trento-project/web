@@ -15,7 +15,7 @@ defmodule Trento.Users do
 
   alias Trento.Users.User
 
-  @spec by_id(id :: integer) :: {:ok, User.t()} | {:error, :not_found}
+  @spec by_id(id :: non_neg_integer()) :: {:ok, User.t()} | {:error, :not_found}
   def by_id(id) do
     case Repo.get(User, id) do
       %User{} = user -> {:ok, user}
