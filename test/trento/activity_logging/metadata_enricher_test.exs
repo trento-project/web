@@ -203,6 +203,19 @@ defmodule Trento.ActivityLog.MetadataEnricherTest do
               }} =
                MetadataEnricher.enrich(:cluster_checks_execution_request, initial_metadata)
     end
+
+    test "should enrich user deletion request" do
+      %{id: user_id, username: username} = insert(:user, deleted_at: Faker.DateTime.backward(1))
+
+      initial_metadata = %{user_id: user_id}
+
+      assert {:ok,
+              %{
+                user_id: ^user_id,
+                username: ^username
+              }} =
+               MetadataEnricher.enrich(:user_deletion, initial_metadata)
+    end
   end
 
   describe "domain event activity log metadata enrichment" do
