@@ -9,6 +9,13 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterClusterHostTe
 
   alias Trento.Infrastructure.Commanded.Middleware.Enrichable
 
+  alias Trento.Clusters.Commands.RegisterClusterHost
+
+  alias Trento.Clusters.ValueObjects.{
+    HanaClusterDetails,
+    HanaClusterNode
+  }
+
   alias Trento.Clusters.ClusterEnrichmentData
   alias Trento.Repo
 
@@ -42,5 +49,93 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterClusterHostTe
     assert_broadcast "cluster_cib_last_written_updated",
                      %{cluster_id: ^cluster_id, cib_last_written: ^cib_last_written},
                      1000
+  end
+
+  describe "stripping irrelevant cluster node attributes" do
+    test "should strip irrelevant lpt attributes from hana-scale-up cluster nodes" do
+      %{name: first_node_name} =
+        node1 =
+        build(:hana_cluster_node,
+          attributes: %{"lpa_FOO_lpt" => "17465345", "relevant" => "foo"}
+        )
+
+      %{name: second_node_name} =
+        node2 =
+        build(:hana_cluster_node,
+          attributes: %{"lpa_BAR_lpt" => "30", "another_relevant" => "bar"}
+        )
+
+      initial_details =
+        build(:hana_cluster_details,
+          nodes: [
+            node1,
+            node2
+          ]
+        )
+
+      %{cluster_id: cluster_id} =
+        initial_command =
+        build(
+          :register_cluster_host,
+          details: initial_details,
+          type: :hana_scale_up
+        )
+
+      assert {:ok, enriched_command} = Enrichable.enrich(initial_command, %{})
+
+      expected_enriched_command = %RegisterClusterHost{
+        initial_command
+        | details: %HanaClusterDetails{
+            initial_details
+            | nodes: [
+                %HanaClusterNode{
+                  node1
+                  | attributes: %{"relevant" => "foo"}
+                },
+                %HanaClusterNode{
+                  node2
+                  | attributes: %{"another_relevant" => "bar"}
+                }
+              ]
+          }
+      }
+
+      assert expected_enriched_command == enriched_command
+
+      assert %ClusterEnrichmentData{
+               nodes_attributes: %{
+                 ^first_node_name => %{"lpa_FOO_lpt" => "17465345"},
+                 ^second_node_name => %{"lpa_BAR_lpt" => "30"}
+               }
+             } = Repo.get(ClusterEnrichmentData, cluster_id)
+    end
+
+    test "should not strip attributes from non hana-scale-up cluster nodes" do
+      initial_details =
+        build(:hana_cluster_details,
+          nodes: [
+            build(:hana_cluster_node,
+              attributes: %{"lpa_FOO_lpt" => "initial-timestamp", "relevant" => "foo"}
+            ),
+            build(:hana_cluster_node,
+              attributes: %{"lpa_BAR_lpt" => "30", "another_relevant" => "bar"}
+            )
+          ]
+        )
+
+      %{cluster_id: cluster_id} =
+        initial_command =
+        build(
+          :register_cluster_host,
+          details: initial_details,
+          type: :hana_scale_out
+        )
+
+      assert {:ok, ^initial_command} = Enrichable.enrich(initial_command, %{})
+
+      assert %ClusterEnrichmentData{
+               nodes_attributes: %{}
+             } = Repo.get(ClusterEnrichmentData, cluster_id)
+    end
   end
 end
