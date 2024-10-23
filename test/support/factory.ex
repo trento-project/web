@@ -351,7 +351,10 @@ defmodule Trento.Factory do
   def cluster_enrichment_data_factory do
     %ClusterEnrichmentData{
       cluster_id: Faker.UUID.v4(),
-      cib_last_written: Date.to_string(Faker.Date.forward(0))
+      cib_last_written: Date.to_string(Faker.Date.forward(0)),
+      nodes_attributes: %{
+        "foo" => "bar"
+      }
     }
   end
 
