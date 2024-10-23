@@ -99,7 +99,7 @@ function HostRelevantPatches({ hostName, onNavigate, patches }) {
             <Button
               className="w-max"
               type="primary-white"
-              disabled={displayedPatches?.length <= 0 || !csvURL}
+              disabled={patches.length <= 0 || !csvURL}
             >
               Download CSV
             </Button>
