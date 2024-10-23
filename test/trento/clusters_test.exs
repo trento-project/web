@@ -264,21 +264,91 @@ defmodule Trento.ClustersTest do
     end
   end
 
-  describe "update cib_last_written" do
-    test "should create a new enriched cluster entry" do
+  describe "data enrichment" do
+    test "should create a new cluster enrichment data entry" do
       cib_last_written = Date.to_string(Faker.Date.forward(0))
       cluster_id = Faker.UUID.v4()
 
-      {:ok, %ClusterEnrichmentData{cluster_id: ^cluster_id, cib_last_written: ^cib_last_written}} =
-        Clusters.update_cib_last_written(cluster_id, cib_last_written)
+      nodes_attributes = %{
+        "foo_host" => %{
+          "foo_attribute" => "foo_value"
+        },
+        "bar_host" => %{
+          "bar_attribute" => "bar_value"
+        }
+      }
+
+      assert {:ok,
+              %ClusterEnrichmentData{
+                cluster_id: ^cluster_id,
+                cib_last_written: ^cib_last_written,
+                nodes_attributes: ^nodes_attributes
+              }} =
+               Clusters.update_enrichment_data(cluster_id, %{
+                 cib_last_written: cib_last_written,
+                 nodes_attributes: nodes_attributes
+               })
     end
 
-    test "should update cib_last_written field properly" do
-      cluster = insert(:cluster)
-      cib_last_written = Date.to_string(Faker.Date.forward(0))
+    test "should properly update enrichment data" do
+      %{cluster_id: cluster_id} = insert(:cluster_enrichment_data)
 
-      {:ok, %ClusterEnrichmentData{cib_last_written: ^cib_last_written}} =
-        Clusters.update_cib_last_written(cluster.id, cib_last_written)
+      new_cib_last_written = Date.to_string(Faker.DateTime.forward(2))
+
+      new_nodes_attributes = %{
+        "foo_host" => %{
+          "foo_attribute" => "another_foo_value",
+          "another_attribute" => "another_value"
+        },
+        "bar_host" => %{
+          "bar_attribute" => "bar_value"
+        }
+      }
+
+      assert {:ok,
+              %ClusterEnrichmentData{
+                cib_last_written: ^new_cib_last_written,
+                nodes_attributes: ^new_nodes_attributes
+              }} =
+               Clusters.update_enrichment_data(cluster_id, %{
+                 cib_last_written: new_cib_last_written,
+                 nodes_attributes: new_nodes_attributes
+               })
+    end
+
+    test "should partially update enrichment data" do
+      %{
+        cluster_id: cluster_id,
+        cib_last_written: initial_cib_last_written
+      } = insert(:cluster_enrichment_data)
+
+      new_nodes_attributes = %{
+        "foo_host" => %{
+          "foo_attribute" => "another_foo_value",
+          "another_attribute" => "another_value"
+        }
+      }
+
+      assert {:ok,
+              %ClusterEnrichmentData{
+                cib_last_written: ^initial_cib_last_written,
+                nodes_attributes: ^new_nodes_attributes
+              }} =
+               Clusters.update_enrichment_data(cluster_id, %{
+                 nodes_attributes: new_nodes_attributes
+               })
+
+      new_cib_last_written = Date.to_string(Faker.DateTime.forward(2))
+      unchanged_nodes_attributes = new_nodes_attributes
+
+      assert {:ok,
+              %ClusterEnrichmentData{
+                cib_last_written: ^new_cib_last_written,
+                nodes_attributes: ^unchanged_nodes_attributes
+              }} =
+               Clusters.update_enrichment_data(cluster_id, %{
+                 cib_last_written: new_cib_last_written
+               })
     end
   end
 
