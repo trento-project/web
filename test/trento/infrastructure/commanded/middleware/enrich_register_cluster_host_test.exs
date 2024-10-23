@@ -53,16 +53,19 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterClusterHostTe
 
   describe "stripping irrelevant cluster node attributes" do
     test "should strip irrelevant lpt attributes from hana-scale-up cluster nodes" do
+      sid = String.upcase(Faker.Lorem.word())
+      lpa_attribute = "lpa_#{String.downcase(sid)}_lpt"
+
       %{name: first_node_name} =
         node1 =
         build(:hana_cluster_node,
-          attributes: %{"lpa_FOO_lpt" => "17465345", "relevant" => "foo"}
+          attributes: %{lpa_attribute => "17465345", "relevant" => "foo"}
         )
 
       %{name: second_node_name} =
         node2 =
         build(:hana_cluster_node,
-          attributes: %{"lpa_BAR_lpt" => "30", "another_relevant" => "bar"}
+          attributes: %{lpa_attribute => "30", "another_relevant" => "bar"}
         )
 
       initial_details =
@@ -78,7 +81,8 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterClusterHostTe
         build(
           :register_cluster_host,
           details: initial_details,
-          type: :hana_scale_up
+          type: :hana_scale_up,
+          sid: sid
         )
 
       assert {:ok, enriched_command} = Enrichable.enrich(initial_command, %{})
@@ -104,8 +108,8 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterClusterHostTe
 
       assert %ClusterEnrichmentData{
                nodes_attributes: %{
-                 ^first_node_name => %{"lpa_FOO_lpt" => "17465345"},
-                 ^second_node_name => %{"lpa_BAR_lpt" => "30"}
+                 ^first_node_name => %{^lpa_attribute => "17465345"},
+                 ^second_node_name => %{^lpa_attribute => "30"}
                }
              } = Repo.get(ClusterEnrichmentData, cluster_id)
     end
