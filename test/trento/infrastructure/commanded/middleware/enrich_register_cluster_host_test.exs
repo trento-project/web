@@ -107,9 +107,11 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterClusterHostTe
       assert expected_enriched_command == enriched_command
 
       assert %ClusterEnrichmentData{
-               nodes_attributes: %{
-                 ^first_node_name => %{^lpa_attribute => "17465345"},
-                 ^second_node_name => %{^lpa_attribute => "30"}
+               details: %{
+                 "nodes" => [
+                   %{"name" => ^first_node_name, "attributes" => %{^lpa_attribute => "17465345"}},
+                   %{"name" => ^second_node_name, "attributes" => %{^lpa_attribute => "30"}}
+                 ]
                }
              } = Repo.get(ClusterEnrichmentData, cluster_id)
     end
@@ -138,7 +140,7 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterClusterHostTe
       assert {:ok, ^initial_command} = Enrichable.enrich(initial_command, %{})
 
       assert %ClusterEnrichmentData{
-               nodes_attributes: %{}
+               details: %{}
              } = Repo.get(ClusterEnrichmentData, cluster_id)
     end
   end
