@@ -24,6 +24,51 @@ describe('HostDetailsPage', () => {
     axiosMock.onGet(/\/api\/v1\/hosts.*/gm).reply(200, {});
   });
 
+  it('Renders SUSE Manager unknown status', async () => {
+    const host = hostFactory.build();
+    const { id: hostID } = host;
+
+    const state = {
+      ...defaultInitialState,
+      hostsList: {
+        hosts: [host],
+      },
+      lastExecutions: { data: null, loading: false, errors: null },
+      softwareUpdates: {
+        settingsConfigured: true,
+        softwareUpdates: {
+          [hostID]: {
+            loading: false,
+            errors: [{ detail: 'Generic error' }],
+          },
+        },
+      },
+    };
+
+    const [StatefulHostDetails] = withState(<HostDetailsPage />, state);
+
+    await act(async () =>
+      renderWithRouterMatch(StatefulHostDetails, {
+        path: 'hosts/:hostID',
+        route: `/hosts/${hostID}`,
+      })
+    );
+
+    const relevantPatchesElement = screen
+      .getByText(/Relevant Patches/)
+      .closest('div');
+    const upgradablePackagesElement = screen
+      .getByText(/Upgradable Packages/)
+      .closest('div');
+
+    expect(relevantPatchesElement).toHaveTextContent(
+      'Relevant Patches Unknown'
+    );
+    expect(upgradablePackagesElement).toHaveTextContent(
+      'Upgradable Packages Unknown'
+    );
+  });
+
   it('Renders SUSE Manager error for host not found', async () => {
     const user = userEvent.setup();
 
@@ -95,7 +140,7 @@ describe('HostDetailsPage', () => {
         softwareUpdates: {
           [hostID]: {
             loading: false,
-            errors: [{ detail: 'Generic error' }],
+            errors: [{ detail: 'Something went wrong.' }],
           },
         },
       },
