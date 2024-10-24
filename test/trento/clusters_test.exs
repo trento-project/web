@@ -246,6 +246,55 @@ defmodule Trento.ClustersTest do
       [%ClusterReadModel{id: ^cluster_id, cib_last_written: ^cib_last_written}] =
         Clusters.get_all_clusters()
     end
+
+    test "should return clusters with enriched details" do
+      cluster_id = Faker.UUID.v4()
+
+      %{
+        name: node_name
+      } = node = build(:hana_cluster_node, attributes: %{foo_attribute: "foo_value"})
+
+      details = build(:hana_cluster_details, nodes: [node])
+
+      insert(:cluster_enrichment_data,
+        cluster_id: cluster_id,
+        details: %{
+          nodes: [
+            %{
+              name: node_name,
+              attributes: %{
+                bar_attribute: "bar_value"
+              }
+            }
+          ]
+        }
+      )
+
+      insert(:cluster, id: cluster_id, details: details)
+
+      expected_details =
+        %{
+          details
+          | nodes: [
+              %{
+                node
+                | attributes: %{
+                    "foo_attribute" => "foo_value",
+                    "bar_attribute" => "bar_value"
+                  }
+              }
+            ]
+        }
+        |> Jason.encode!()
+        |> Jason.decode!()
+
+      [
+        %ClusterReadModel{
+          id: ^cluster_id,
+          details: ^expected_details
+        }
+      ] = Clusters.get_all_clusters()
+    end
   end
 
   describe "get_cluster_id_by_host_id/1" do
@@ -269,7 +318,7 @@ defmodule Trento.ClustersTest do
       cib_last_written = Date.to_string(Faker.Date.forward(0))
       cluster_id = Faker.UUID.v4()
 
-      nodes_attributes = %{
+      details = %{
         "foo_host" => %{
           "foo_attribute" => "foo_value"
         },
@@ -282,11 +331,11 @@ defmodule Trento.ClustersTest do
               %ClusterEnrichmentData{
                 cluster_id: ^cluster_id,
                 cib_last_written: ^cib_last_written,
-                nodes_attributes: ^nodes_attributes
+                details: ^details
               }} =
                Clusters.update_enrichment_data(cluster_id, %{
                  cib_last_written: cib_last_written,
-                 nodes_attributes: nodes_attributes
+                 details: details
                })
     end
 
@@ -295,24 +344,32 @@ defmodule Trento.ClustersTest do
 
       new_cib_last_written = Date.to_string(Faker.DateTime.forward(2))
 
-      new_nodes_attributes = %{
-        "foo_host" => %{
-          "foo_attribute" => "another_foo_value",
-          "another_attribute" => "another_value"
-        },
-        "bar_host" => %{
-          "bar_attribute" => "bar_value"
-        }
+      new_details = %{
+        "nodes" => [
+          %{
+            "name" => "foo_host",
+            "attributes" => %{
+              "foo_attribute" => "another_foo_value",
+              "another_attribute" => "another_value"
+            }
+          },
+          %{
+            "name" => "bar_host",
+            "attributes" => %{
+              "bar_attribute" => "bar_value"
+            }
+          }
+        ]
       }
 
       assert {:ok,
               %ClusterEnrichmentData{
                 cib_last_written: ^new_cib_last_written,
-                nodes_attributes: ^new_nodes_attributes
+                details: ^new_details
               }} =
                Clusters.update_enrichment_data(cluster_id, %{
                  cib_last_written: new_cib_last_written,
-                 nodes_attributes: new_nodes_attributes
+                 details: new_details
                })
     end
 
@@ -322,29 +379,34 @@ defmodule Trento.ClustersTest do
         cib_last_written: initial_cib_last_written
       } = insert(:cluster_enrichment_data)
 
-      new_nodes_attributes = %{
-        "foo_host" => %{
-          "foo_attribute" => "another_foo_value",
-          "another_attribute" => "another_value"
-        }
+      new_details = %{
+        "nodes" => [
+          %{
+            "name" => "foo_host",
+            "attributes" => %{
+              "foo_attribute" => "another_foo_value",
+              "another_attribute" => "another_value"
+            }
+          }
+        ]
       }
 
       assert {:ok,
               %ClusterEnrichmentData{
                 cib_last_written: ^initial_cib_last_written,
-                nodes_attributes: ^new_nodes_attributes
+                details: ^new_details
               }} =
                Clusters.update_enrichment_data(cluster_id, %{
-                 nodes_attributes: new_nodes_attributes
+                 details: new_details
                })
 
       new_cib_last_written = Date.to_string(Faker.DateTime.forward(2))
-      unchanged_nodes_attributes = new_nodes_attributes
+      unchanged_details = new_details
 
       assert {:ok,
               %ClusterEnrichmentData{
                 cib_last_written: ^new_cib_last_written,
-                nodes_attributes: ^unchanged_nodes_attributes
+                details: ^unchanged_details
               }} =
                Clusters.update_enrichment_data(cluster_id, %{
                  cib_last_written: new_cib_last_written

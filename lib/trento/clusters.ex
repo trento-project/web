@@ -74,6 +74,7 @@ defmodule Trento.Clusters do
     )
     |> enrich_cluster_model_query()
     |> Repo.all()
+    |> Enum.map(&enrich_cluster_details/1)
   end
 
   @spec get_cluster_id_by_host_id(String.t()) :: String.t() | nil
@@ -141,7 +142,50 @@ defmodule Trento.Clusters do
   defp enrich_cluster_model_query(query) do
     query
     |> join(:left, [c], e in ClusterEnrichmentData, on: c.id == e.cluster_id)
-    |> select_merge([c, e], %{cib_last_written: e.cib_last_written})
+    |> select_merge([c, e], %{cib_last_written: e.cib_last_written, enriching_details: e.details})
+  end
+
+  defp enrich_cluster_details(
+         %ClusterReadModel{
+           type: ClusterType.hana_scale_up(),
+           details: initial_details,
+           enriching_details: enriching_details
+         } = cluster
+       )
+       when is_map(initial_details) and is_map(enriching_details) do
+    initial_nodes = Map.get(initial_details, "nodes", [])
+    enriching_nodes = Map.get(enriching_details, "nodes", [])
+
+    %ClusterReadModel{
+      cluster
+      | details: %{
+          initial_details
+          | "nodes" => enrich_hana_scale_up_nodes(initial_nodes, enriching_nodes)
+        }
+    }
+  end
+
+  defp enrich_cluster_details(cluster), do: cluster
+
+  defp enrich_hana_scale_up_nodes(initial_nodes, enriching_nodes) do
+    Enum.map(initial_nodes, fn %{
+                                 "name" => node_name,
+                                 "attributes" => initial_attributes
+                               } = node ->
+      enriching_attributes =
+        enriching_nodes
+        |> Enum.find(%{}, &(Map.get(&1, "name") == node_name))
+        |> Map.get("attributes", %{})
+
+      %{
+        node
+        | "attributes" =>
+            Map.merge(
+              initial_attributes,
+              enriching_attributes
+            )
+      }
+    end)
   end
 
   defp get_filesystem_type(cluster_id) do
