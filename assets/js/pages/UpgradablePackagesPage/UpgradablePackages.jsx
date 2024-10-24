@@ -96,7 +96,7 @@ export default function UpgradablePackages({
           />
           <a href={csvURL} download={`${hostName}-upgradable-packages.csv`}>
             <Button className="w-max" type="primary-white" disabled={!csvURL}>
-              download csv
+              Download csv
             </Button>
           </a>
         </div>
