@@ -108,13 +108,18 @@ defmodule Trento.ActivityLog.ActivityLoggerTest do
 
       wait_for_tasks_completion()
 
+      [entry] = Trento.Repo.all(ActivityLog)
+
       assert [
                %ActivityLog{
                  type: "user_deletion",
                  actor: ^admin_username,
-                 metadata: %{"username" => ^username, "user_id" => ^user_id}
+                 metadata: %{"user_id" => ^user_id}
                }
-             ] = Trento.Repo.all(ActivityLog)
+             ] = [entry]
+
+      # username is changed after soft deletion
+      assert String.starts_with?(entry.metadata["username"], username)
     end
   end
 

@@ -43,18 +43,6 @@ defmodule Trento.ActivityLog.Logger.Parser.MetadataEnricher do
     {activity, enriched_metadata}
   end
 
-  defp detect_enrichment(
-         _target_entity,
-         {activity,
-          %{
-            resource_id: resource_id,
-            resource_type: resource_type
-          }}
-       )
-       when activity in [:resource_tagging, :resource_untagging] and
-              resource_type in [:host, :cluster, :database, :sap_system],
-       do: {:ok, resource_id}
-
   defp detect_enrichment(:host, {:host_checks_execution_request, %{host_id: host_id}}),
     do: {:ok, host_id}
 
@@ -81,6 +69,16 @@ defmodule Trento.ActivityLog.Logger.Parser.MetadataEnricher do
   defp detect_enrichment(:database, {_, %{database_id: id}}), do: {:ok, id}
   defp detect_enrichment(:sap_system, {_, %{sap_system_id: id}}), do: {:ok, id}
   defp detect_enrichment(:user, {_, %{user_id: id}}), do: {:ok, id}
+
+  defp detect_enrichment(
+         target_entity,
+         {_,
+          %{
+            resource_id: resource_id,
+            resource_type: target_entity
+          }}
+       ),
+       do: {:ok, resource_id}
 
   defp detect_enrichment(_target_entity, {_activity, _metadata}),
     do: {:error, :no_enrichment_needed}
