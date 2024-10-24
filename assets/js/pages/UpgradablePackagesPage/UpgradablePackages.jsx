@@ -19,49 +19,57 @@ export default function UpgradablePackages({
   const [search, setSearch] = useState('');
 
   const enrichedPackages = upgradablePackages.map((packageDetails) => {
-      const { name, from_version, from_release, to_version, to_release, arch } =
-        packageDetails;
+    const { name, from_version, from_release, to_version, to_release, arch } =
+      packageDetails;
 
-      console.log(packageDetails)
+    return {
+      ...packageDetails,
+      installed_package: `${name}-${from_version}-${from_release}.${arch}`,
+      latest_package: `${name}-${to_version}-${to_release}.${arch}`,
+    };
+  });
 
-      return {
-        ...packageDetails,
-        installed_package: `${name}-${from_version}-${from_release}.${arch}`,
-        latest_package: `${name}-${to_version}-${to_release}.${arch}`,
-      };
-    });
-
-  const displayedPackages = enrichedPackages
-    .filter(
-      ({ name, patches }) =>
-        containsSubstring(name, search) ||
-        patches
-          .map(({ advisory }) => containsSubstring(advisory, search))
-          .includes(true)
-    );
+  const displayedPackages = enrichedPackages.filter(
+    ({ name, patches }) =>
+      containsSubstring(name, search) ||
+      patches
+        .map(({ advisory }) => containsSubstring(advisory, search))
+        .includes(true)
+  );
 
   const [csvURL, setCsvURL] = useState(null);
 
   useEffect(() => {
+    if (patchesLoading || !enrichedPackages.length) {
+      setCsvURL(null);
+      return noop;
+    }
+
+    const csvPackages = enrichedPackages.map((packageDetails) => {
+      const advisories = packageDetails.patches.map((it) => it.advisory);
+
+      return {
+        ...packageDetails,
+        patches: JSON.stringify(advisories),
+      };
+    });
+
     setCsvURL(
-      enrichedPackages.length > 0
-        ? URL.createObjectURL?.(
-            new File(
-              [
-                Papa.unparse(
-                  {
-                    fields: ['installed_package', 'latest_package', 'patches'],
-                    data: enrichedPackages,
-                    // TODO: Papa can not parse lists. Make a helper which JSON encodes the array beforehand (Python Pandas does it this way)
-                  },
-                  { header: true }
-                ),
-              ],
-              `${hostName}-patches.csv`,
-              { type: 'text/csv' }
-            )
-          )
-        : null
+      URL.createObjectURL?.(
+        new File(
+          [
+            Papa.unparse(
+              {
+                fields: ['installed_package', 'latest_package', 'patches'],
+                data: csvPackages,
+              },
+              { header: true }
+            ),
+          ],
+          `${hostName}-patches.csv`,
+          { type: 'text/csv' }
+        )
+      )
     );
 
     return () => {
@@ -69,7 +77,7 @@ export default function UpgradablePackages({
         URL.revokeObjectURL?.(csvURL);
       }
     };
-  }, [enrichedPackages]);
+  }, [enrichedPackages.length, patchesLoading]);
 
   return (
     <>
@@ -87,11 +95,7 @@ export default function UpgradablePackages({
             prefix={<EOS_SEARCH size="l" />}
           />
           <a href={csvURL} download={`${hostName}-upgradable-packages.csv`}>
-            <Button
-              className="w-max"
-              type="primary-white"
-              disabled={enrichedPackages.length <= 0 || !csvURL}
-            >
+            <Button className="w-max" type="primary-white" disabled={!csvURL}>
               download csv
             </Button>
           </a>
