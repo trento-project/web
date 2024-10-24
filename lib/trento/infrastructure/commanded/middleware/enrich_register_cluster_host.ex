@@ -26,7 +26,7 @@ defimpl Trento.Infrastructure.Commanded.Middleware.Enrichable,
 
     case Clusters.update_enrichment_data(cluster_id, %{
            cib_last_written: cib_last_written,
-           nodes_attributes: stripped_details
+           details: stripped_details
          }) do
       {:ok, cluster} ->
         TrentoWeb.Endpoint.broadcast(
@@ -56,7 +56,7 @@ defimpl Trento.Infrastructure.Commanded.Middleware.Enrichable,
       |> Enum.map(&strip_irrelevant_nodes_data(&1, sid))
       |> Enum.unzip()
 
-    {Map.new(ignored_nodes_attributes),
+    {%{nodes: ignored_nodes_attributes},
      %HanaClusterDetails{
        details
        | nodes: stripped_nodes
@@ -77,7 +77,7 @@ defimpl Trento.Infrastructure.Commanded.Middleware.Enrichable,
         node
         | attributes: retained_attributes
       },
-      {node_name, ignored_attributes}
+      %{name: node_name, attributes: ignored_attributes}
     }
   end
 end
