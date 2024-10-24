@@ -27,6 +27,8 @@ defmodule Trento.Users.User do
   @sequences ["01234567890", "abcdefghijklmnopqrstuvwxyz", "ABCDEFGHIJKLMNOPQRSTUVWXYZ"]
   @max_sequential_chars 3
 
+  @type t :: %__MODULE__{}
+
   schema "users" do
     pow_user_fields()
 

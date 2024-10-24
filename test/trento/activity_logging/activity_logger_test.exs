@@ -95,6 +95,34 @@ defmodule Trento.ActivityLog.ActivityLoggerTest do
     end
   end
 
+  describe "user management activity detection" do
+    test "should trace user deletion", %{
+      conn: conn,
+      user: %{id: admin_id, username: admin_username}
+    } do
+      %{id: user_id, username: username} = insert(:user)
+
+      conn
+      |> with_token(admin_id)
+      |> delete("/api/v1/users/#{user_id}")
+
+      wait_for_tasks_completion()
+
+      [entry] = Trento.Repo.all(ActivityLog)
+
+      assert [
+               %ActivityLog{
+                 type: "user_deletion",
+                 actor: ^admin_username,
+                 metadata: %{"user_id" => ^user_id}
+               }
+             ] = [entry]
+
+      # username is changed after soft deletion
+      assert String.starts_with?(entry.metadata["username"], username)
+    end
+  end
+
   describe "tagging/untagging activity detection" do
     defp tag_resource(conn, resource_id, resource_type, tag) do
       conn
