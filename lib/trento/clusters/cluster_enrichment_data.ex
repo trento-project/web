@@ -13,7 +13,7 @@ defmodule Trento.Clusters.ClusterEnrichmentData do
   @primary_key {:cluster_id, :binary_id, autogenerate: false}
   schema "clusters_enrichment_data" do
     field :cib_last_written, :string
-    field :nodes_attributes, :map, default: %{}
+    field :details, :map, default: %{}
 
     timestamps(type: :utc_datetime_usec)
   end
