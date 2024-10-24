@@ -35,6 +35,7 @@ defmodule Trento.Clusters.Projections.ClusterReadModel do
 
     # Virtually enriched fields
     field :cib_last_written, :string, virtual: true
+    field :enriching_details, :map, virtual: true, default: %{}
 
     field :deregistered_at, :utc_datetime_usec
 
