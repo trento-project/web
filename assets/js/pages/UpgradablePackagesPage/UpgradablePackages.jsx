@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { EOS_SEARCH } from 'eos-icons-react';
 import { noop } from 'lodash';
+import Papa from 'papaparse';
 
 import UpgradablePackagesList from '@common/UpgradablePackagesList';
 import PageHeader from '@common/PageHeader';
 import Input from '@common/Input';
+import Button from '@common/Button';
 import { containsSubstring } from '@lib/filter';
 
 export default function UpgradablePackages({
@@ -16,13 +18,58 @@ export default function UpgradablePackages({
 }) {
   const [search, setSearch] = useState('');
 
-  const displayedPackages = upgradablePackages.filter(
-    ({ name, patches }) =>
-      containsSubstring(name, search) ||
-      patches
-        .map(({ advisory }) => containsSubstring(advisory, search))
-        .includes(true)
-  );
+  const enrichedPackages = upgradablePackages.map((packageDetails) => {
+      const { name, from_version, from_release, to_version, to_release, arch } =
+        packageDetails;
+
+      console.log(packageDetails)
+
+      return {
+        ...packageDetails,
+        installed_package: `${name}-${from_version}-${from_release}.${arch}`,
+        latest_package: `${name}-${to_version}-${to_release}.${arch}`,
+      };
+    });
+
+  const displayedPackages = enrichedPackages
+    .filter(
+      ({ name, patches }) =>
+        containsSubstring(name, search) ||
+        patches
+          .map(({ advisory }) => containsSubstring(advisory, search))
+          .includes(true)
+    );
+
+  const [csvURL, setCsvURL] = useState(null);
+
+  useEffect(() => {
+    setCsvURL(
+      enrichedPackages.length > 0
+        ? URL.createObjectURL?.(
+            new File(
+              [
+                Papa.unparse(
+                  {
+                    fields: ['installed_package', 'latest_package', 'patches'],
+                    data: enrichedPackages,
+                    // TODO: Papa can not parse lists. Make a helper which JSON encodes the array beforehand (Python Pandas does it this way)
+                  },
+                  { header: true }
+                ),
+              ],
+              `${hostName}-patches.csv`,
+              { type: 'text/csv' }
+            )
+          )
+        : null
+    );
+
+    return () => {
+      if (csvURL) {
+        URL.revokeObjectURL?.(csvURL);
+      }
+    };
+  }, [enrichedPackages]);
 
   return (
     <>
@@ -39,6 +86,15 @@ export default function UpgradablePackages({
             placeholder="Search by Name or Patch"
             prefix={<EOS_SEARCH size="l" />}
           />
+          <a href={csvURL} download={`${hostName}-upgradable-packages.csv`}>
+            <Button
+              className="w-max"
+              type="primary-white"
+              disabled={enrichedPackages.length <= 0 || !csvURL}
+            >
+              download csv
+            </Button>
+          </a>
         </div>
       </div>
       <UpgradablePackagesList
