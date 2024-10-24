@@ -252,7 +252,7 @@ if config_env() in [:prod, :demo] do
   end
 
   if enable_saml do
-    saml_dir = System.get_env("SAML_SP_DIR", "/etc/trento/trento-web/saml")
+    saml_dir = System.get_env("SAML_SP_DIR", "/etc/trento/saml")
 
     config :trento, :saml,
       enabled: true,
