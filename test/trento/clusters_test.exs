@@ -412,6 +412,59 @@ defmodule Trento.ClustersTest do
                  cib_last_written: new_cib_last_written
                })
     end
+
+    test "shuld enrich a cluster read model with enrichment data" do
+      cluster_id = Faker.UUID.v4()
+      cib_last_written = Date.to_string(Faker.Date.forward(0))
+
+      %{
+        name: node_name
+      } = node = build(:hana_cluster_node, attributes: %{foo_attribute: "foo_value"})
+
+      details = build(:hana_cluster_details, nodes: [node])
+
+      insert(:cluster_enrichment_data,
+        cluster_id: cluster_id,
+        cib_last_written: cib_last_written,
+        details: %{
+          nodes: [
+            %{
+              name: node_name,
+              attributes: %{
+                bar_attribute: "bar_value"
+              }
+            }
+          ]
+        }
+      )
+
+      insert(:cluster, id: cluster_id, details: details)
+
+      expected_details =
+        %{
+          details
+          | nodes: [
+              %{
+                node
+                | attributes: %{
+                    "foo_attribute" => "foo_value",
+                    "bar_attribute" => "bar_value"
+                  }
+              }
+            ]
+        }
+        |> Jason.encode!()
+        |> Jason.decode!()
+
+      %ClusterReadModel{
+        id: ^cluster_id,
+        cib_last_written: ^cib_last_written,
+        details: ^expected_details
+      } =
+        ClusterReadModel
+        |> Repo.get(cluster_id)
+        |> Clusters.enrich_cluster_model()
+    end
   end
 
   describe "ASCS/ERS cluster checks execution" do

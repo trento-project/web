@@ -95,8 +95,12 @@ defmodule Trento.Clusters do
       nil ->
         cluster
 
-      enriched_data ->
-        %ClusterReadModel{cluster | cib_last_written: enriched_data.cib_last_written}
+      %{cib_last_written: cib_last_written, details: enriching_details} ->
+        enrich_cluster_details(%ClusterReadModel{
+          cluster
+          | cib_last_written: cib_last_written,
+            enriching_details: enriching_details
+        })
     end
   end
 
