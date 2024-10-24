@@ -246,6 +246,55 @@ defmodule Trento.ClustersTest do
       [%ClusterReadModel{id: ^cluster_id, cib_last_written: ^cib_last_written}] =
         Clusters.get_all_clusters()
     end
+
+    test "should return clusters with enriched details" do
+      cluster_id = Faker.UUID.v4()
+
+      %{
+        name: node_name
+      } = node = build(:hana_cluster_node, attributes: %{foo_attribute: "foo_value"})
+
+      details = build(:hana_cluster_details, nodes: [node])
+
+      insert(:cluster_enrichment_data,
+        cluster_id: cluster_id,
+        details: %{
+          nodes: [
+            %{
+              name: node_name,
+              attributes: %{
+                bar_attribute: "bar_value"
+              }
+            }
+          ]
+        }
+      )
+
+      insert(:cluster, id: cluster_id, details: details)
+
+      expected_details =
+        %{
+          details
+          | nodes: [
+              %{
+                node
+                | attributes: %{
+                    "foo_attribute" => "foo_value",
+                    "bar_attribute" => "bar_value"
+                  }
+              }
+            ]
+        }
+        |> Jason.encode!()
+        |> Jason.decode!()
+
+      [
+        %ClusterReadModel{
+          id: ^cluster_id,
+          details: ^expected_details
+        }
+      ] = Clusters.get_all_clusters()
+    end
   end
 
   describe "get_cluster_id_by_host_id/1" do
@@ -264,21 +313,157 @@ defmodule Trento.ClustersTest do
     end
   end
 
-  describe "update cib_last_written" do
-    test "should create a new enriched cluster entry" do
+  describe "data enrichment" do
+    test "should create a new cluster enrichment data entry" do
       cib_last_written = Date.to_string(Faker.Date.forward(0))
       cluster_id = Faker.UUID.v4()
 
-      {:ok, %ClusterEnrichmentData{cluster_id: ^cluster_id, cib_last_written: ^cib_last_written}} =
-        Clusters.update_cib_last_written(cluster_id, cib_last_written)
+      details = %{
+        "foo_host" => %{
+          "foo_attribute" => "foo_value"
+        },
+        "bar_host" => %{
+          "bar_attribute" => "bar_value"
+        }
+      }
+
+      assert {:ok,
+              %ClusterEnrichmentData{
+                cluster_id: ^cluster_id,
+                cib_last_written: ^cib_last_written,
+                details: ^details
+              }} =
+               Clusters.update_enrichment_data(cluster_id, %{
+                 cib_last_written: cib_last_written,
+                 details: details
+               })
     end
 
-    test "should update cib_last_written field properly" do
-      cluster = insert(:cluster)
+    test "should properly update enrichment data" do
+      %{cluster_id: cluster_id} = insert(:cluster_enrichment_data)
+
+      new_cib_last_written = Date.to_string(Faker.DateTime.forward(2))
+
+      new_details = %{
+        "nodes" => [
+          %{
+            "name" => "foo_host",
+            "attributes" => %{
+              "foo_attribute" => "another_foo_value",
+              "another_attribute" => "another_value"
+            }
+          },
+          %{
+            "name" => "bar_host",
+            "attributes" => %{
+              "bar_attribute" => "bar_value"
+            }
+          }
+        ]
+      }
+
+      assert {:ok,
+              %ClusterEnrichmentData{
+                cib_last_written: ^new_cib_last_written,
+                details: ^new_details
+              }} =
+               Clusters.update_enrichment_data(cluster_id, %{
+                 cib_last_written: new_cib_last_written,
+                 details: new_details
+               })
+    end
+
+    test "should partially update enrichment data" do
+      %{
+        cluster_id: cluster_id,
+        cib_last_written: initial_cib_last_written
+      } = insert(:cluster_enrichment_data)
+
+      new_details = %{
+        "nodes" => [
+          %{
+            "name" => "foo_host",
+            "attributes" => %{
+              "foo_attribute" => "another_foo_value",
+              "another_attribute" => "another_value"
+            }
+          }
+        ]
+      }
+
+      assert {:ok,
+              %ClusterEnrichmentData{
+                cib_last_written: ^initial_cib_last_written,
+                details: ^new_details
+              }} =
+               Clusters.update_enrichment_data(cluster_id, %{
+                 details: new_details
+               })
+
+      new_cib_last_written = Date.to_string(Faker.DateTime.forward(2))
+      unchanged_details = new_details
+
+      assert {:ok,
+              %ClusterEnrichmentData{
+                cib_last_written: ^new_cib_last_written,
+                details: ^unchanged_details
+              }} =
+               Clusters.update_enrichment_data(cluster_id, %{
+                 cib_last_written: new_cib_last_written
+               })
+    end
+
+    test "shuld enrich a cluster read model with enrichment data" do
+      cluster_id = Faker.UUID.v4()
       cib_last_written = Date.to_string(Faker.Date.forward(0))
 
-      {:ok, %ClusterEnrichmentData{cib_last_written: ^cib_last_written}} =
-        Clusters.update_cib_last_written(cluster.id, cib_last_written)
+      %{
+        name: node_name
+      } = node = build(:hana_cluster_node, attributes: %{foo_attribute: "foo_value"})
+
+      details = build(:hana_cluster_details, nodes: [node])
+
+      insert(:cluster_enrichment_data,
+        cluster_id: cluster_id,
+        cib_last_written: cib_last_written,
+        details: %{
+          nodes: [
+            %{
+              name: node_name,
+              attributes: %{
+                bar_attribute: "bar_value"
+              }
+            }
+          ]
+        }
+      )
+
+      insert(:cluster, id: cluster_id, details: details)
+
+      expected_details =
+        %{
+          details
+          | nodes: [
+              %{
+                node
+                | attributes: %{
+                    "foo_attribute" => "foo_value",
+                    "bar_attribute" => "bar_value"
+                  }
+              }
+            ]
+        }
+        |> Jason.encode!()
+        |> Jason.decode!()
+
+      %ClusterReadModel{
+        id: ^cluster_id,
+        cib_last_written: ^cib_last_written,
+        details: ^expected_details
+      } =
+        ClusterReadModel
+        |> Repo.get(cluster_id)
+        |> Clusters.enrich_cluster_model()
     end
   end
 

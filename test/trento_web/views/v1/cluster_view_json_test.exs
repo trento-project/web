@@ -3,6 +3,8 @@ defmodule TrentoWeb.V1.ClusterJSONTest do
 
   import Trento.Factory
 
+  require Trento.Clusters.Enums.ClusterType, as: ClusterType
+  alias Trento.Clusters.Enums.ClusterType
   alias TrentoWeb.V1.ClusterJSON
 
   describe "adapt to V1 version" do
@@ -49,6 +51,16 @@ defmodule TrentoWeb.V1.ClusterJSONTest do
       Enum.each(node.resources, fn resource ->
         refute Map.has_key?(resource, :managed)
       end)
+    end
+
+    test "should remove cluster detail enrichment virtual field" do
+      for type <- ClusterType.values() do
+        cluster = build(:cluster, type: type)
+        assert Map.has_key?(cluster, :enriching_details)
+
+        cluster_view = ClusterJSON.cluster(%{cluster: cluster})
+        refute Map.has_key?(cluster_view, :enriching_details)
+      end
     end
   end
 end
