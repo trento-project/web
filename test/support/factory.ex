@@ -220,7 +220,8 @@ defmodule Trento.Factory do
       details: build(:hana_cluster_details),
       type: ClusterType.hana_scale_up(),
       discovered_health: Health.passing(),
-      designated_controller: true
+      designated_controller: true,
+      cib_last_written: Date.to_string(Faker.Date.forward(0))
     }
   end
 
