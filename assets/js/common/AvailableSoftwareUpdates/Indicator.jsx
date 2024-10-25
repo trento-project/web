@@ -17,9 +17,10 @@ function Indicator({
   onNavigate,
 }) {
   const clickHandler = isError ? () => {} : onNavigate;
+  const tooltipEnabled = Boolean(isError && tooltip);
 
   return (
-    <Tooltip isEnabled={isError && tooltip} content={tooltip} wrap={false}>
+    <Tooltip isEnabled={tooltipEnabled} content={tooltip} wrap={false}>
       <div
         role="button"
         tabIndex={0}
