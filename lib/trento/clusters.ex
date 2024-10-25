@@ -11,6 +11,8 @@ defmodule Trento.Clusters do
   require Trento.Clusters.Enums.ClusterEnsaVersion, as: ClusterEnsaVersion
   require Trento.Clusters.Enums.HanaArchitectureType, as: HanaArchitectureType
 
+  alias Trento.Support.MapHelper
+
   alias Trento.Hosts.Projections.HostReadModel
 
   alias Trento.SapSystems.Projections.ApplicationInstanceReadModel
@@ -74,6 +76,16 @@ defmodule Trento.Clusters do
     )
     |> enrich_cluster_model_query()
     |> Repo.all()
+    |> Enum.map(fn %ClusterReadModel{
+                     details: details,
+                     enriching_details: enriching_details
+                   } = cluster ->
+      %ClusterReadModel{
+        cluster
+        | details: MapHelper.atomize_keys(details),
+          enriching_details: MapHelper.atomize_keys(enriching_details)
+      }
+    end)
     |> Enum.map(&enrich_cluster_details/1)
   end
 
@@ -90,7 +102,7 @@ defmodule Trento.Clusters do
   end
 
   @spec enrich_cluster_model(ClusterReadModel.t()) :: ClusterReadModel.t()
-  def enrich_cluster_model(%ClusterReadModel{id: id} = cluster) do
+  def enrich_cluster_model(%ClusterReadModel{id: id, details: details} = cluster) do
     case Repo.get(ClusterEnrichmentData, id) do
       nil ->
         cluster
@@ -99,7 +111,8 @@ defmodule Trento.Clusters do
         enrich_cluster_details(%ClusterReadModel{
           cluster
           | cib_last_written: cib_last_written,
-            enriching_details: enriching_details
+            details: MapHelper.atomize_keys(details),
+            enriching_details: MapHelper.atomize_keys(enriching_details)
         })
     end
   end
@@ -152,8 +165,8 @@ defmodule Trento.Clusters do
   defp enrich_cluster_details(
          %ClusterReadModel{
            type: ClusterType.hana_scale_up(),
-           details: %{"nodes" => initial_nodes} = initial_details,
-           enriching_details: %{"nodes" => enriching_nodes} = enriching_details
+           details: %{nodes: initial_nodes} = initial_details,
+           enriching_details: %{nodes: enriching_nodes} = enriching_details
          } = cluster
        )
        when is_map(initial_details) and is_map(enriching_details) do
@@ -161,7 +174,7 @@ defmodule Trento.Clusters do
       cluster
       | details: %{
           initial_details
-          | "nodes" => enrich_hana_scale_up_nodes(initial_nodes, enriching_nodes)
+          | nodes: enrich_hana_scale_up_nodes(initial_nodes, enriching_nodes)
         }
     }
   end
@@ -169,16 +182,16 @@ defmodule Trento.Clusters do
   defp enrich_cluster_details(cluster), do: cluster
 
   defp enrich_hana_scale_up_nodes(initial_nodes, enriching_nodes) do
-    Enum.map(initial_nodes, fn %{"name" => node_name, "attributes" => initial_attributes} = node ->
+    Enum.map(initial_nodes, fn %{name: node_name, attributes: initial_attributes} = node ->
       enriching_attributes =
         Enum.find_value(enriching_nodes, %{}, fn
-          %{"name" => ^node_name, "attributes" => enriching_attributes} -> enriching_attributes
+          %{name: ^node_name, attributes: enriching_attributes} -> enriching_attributes
           _ -> false
         end)
 
       %{
         node
-        | "attributes" =>
+        | attributes:
             Map.merge(
               initial_attributes,
               enriching_attributes
