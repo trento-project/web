@@ -51,15 +51,15 @@ defimpl Trento.Infrastructure.Commanded.Middleware.Enrichable,
          sid,
          %HanaClusterDetails{nodes: cluster_nodes} = details
        ) do
-    {stripped_nodes, ignored_nodes_attributes} =
+    {stripped_nodes, new_nodes} =
       cluster_nodes
       |> Enum.map(&strip_irrelevant_nodes_data(&1, sid))
       |> Enum.unzip()
 
-    {%{nodes: ignored_nodes_attributes},
+    {%{nodes: stripped_nodes},
      %HanaClusterDetails{
        details
-       | nodes: stripped_nodes
+       | nodes: new_nodes
      }}
   end
 
@@ -69,15 +69,15 @@ defimpl Trento.Infrastructure.Commanded.Middleware.Enrichable,
          %HanaClusterNode{name: node_name, attributes: attributes} = node,
          sid
        ) do
-    {ignored_attributes, retained_attributes} =
+    {stripped_attributes, new_attributes} =
       Map.split_with(attributes, fn {key, _value} -> key == "lpa_#{String.downcase(sid)}_lpt" end)
 
     {
+      %{name: node_name, attributes: stripped_attributes},
       %HanaClusterNode{
         node
-        | attributes: retained_attributes
-      },
-      %{name: node_name, attributes: ignored_attributes}
+        | attributes: new_attributes
+      }
     }
   end
 end

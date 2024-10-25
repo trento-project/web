@@ -413,7 +413,7 @@ defmodule Trento.ClustersTest do
                })
     end
 
-    test "shuld enrich a cluster read model with enrichment data" do
+    test "should enrich a cluster read model with enrichment data" do
       cluster_id = Faker.UUID.v4()
       cib_last_written = Date.to_string(Faker.Date.forward(0))
 
