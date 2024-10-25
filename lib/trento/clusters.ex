@@ -169,14 +169,12 @@ defmodule Trento.Clusters do
   defp enrich_cluster_details(cluster), do: cluster
 
   defp enrich_hana_scale_up_nodes(initial_nodes, enriching_nodes) do
-    Enum.map(initial_nodes, fn %{
-                                 "name" => node_name,
-                                 "attributes" => initial_attributes
-                               } = node ->
+    Enum.map(initial_nodes, fn %{"name" => node_name, "attributes" => initial_attributes} = node ->
       enriching_attributes =
-        enriching_nodes
-        |> Enum.find(%{}, &(Map.get(&1, "name") == node_name))
-        |> Map.get("attributes", %{})
+        Enum.find_value(enriching_nodes, %{}, fn
+          %{"name" => ^node_name, "attributes" => enriching_attributes} -> enriching_attributes
+          _ -> false
+        end)
 
       %{
         node
