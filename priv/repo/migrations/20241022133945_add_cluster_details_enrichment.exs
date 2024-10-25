@@ -3,7 +3,7 @@ defmodule Trento.Repo.Migrations.AddClusterDetailsEnrichment do
 
   def change do
     alter table(:clusters_enrichment_data) do
-      add :details, :map
+      add :details, :map, default: %{}
     end
   end
 end
