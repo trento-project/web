@@ -7,6 +7,8 @@ defmodule Trento.ClustersTest do
 
   import Trento.Factory
 
+  alias Trento.Support.MapHelper
+
   alias Trento.Clusters
 
   alias Trento.Clusters.ClusterEnrichmentData
@@ -279,14 +281,14 @@ defmodule Trento.ClustersTest do
               %{
                 node
                 | attributes: %{
-                    "foo_attribute" => "foo_value",
-                    "bar_attribute" => "bar_value"
+                    foo_attribute: "foo_value",
+                    bar_attribute: "bar_value"
                   }
               }
             ]
         }
-        |> Jason.encode!()
-        |> Jason.decode!()
+
+      expected_details = MapHelper.atomize_keys(expected_details)
 
       [
         %ClusterReadModel{
@@ -314,10 +316,7 @@ defmodule Trento.ClustersTest do
 
       insert(:cluster, id: cluster_id, details: details)
 
-      expected_details =
-        details
-        |> Jason.encode!()
-        |> Jason.decode!()
+      expected_details = MapHelper.atomize_keys(details)
 
       [
         %ClusterReadModel{
@@ -449,10 +448,14 @@ defmodule Trento.ClustersTest do
       cib_last_written = Date.to_string(Faker.Date.forward(0))
 
       %{
-        name: node_name
-      } = node = build(:hana_cluster_node, attributes: %{foo_attribute: "foo_value"})
+        name: node_name1
+      } = node1 = build(:hana_cluster_node, attributes: %{foo_attribute1: "foo_value1"})
 
-      details = build(:hana_cluster_details, nodes: [node])
+      %{
+        name: node_name2
+      } = node2 = build(:hana_cluster_node, attributes: %{foo_attribute2: "foo_value2"})
+
+      details = build(:hana_cluster_details, nodes: [node1, node2])
 
       insert(:cluster_enrichment_data,
         cluster_id: cluster_id,
@@ -460,9 +463,15 @@ defmodule Trento.ClustersTest do
         details: %{
           nodes: [
             %{
-              name: node_name,
+              name: node_name1,
               attributes: %{
-                bar_attribute: "bar_value"
+                bar_attribute1: "bar_value1"
+              }
+            },
+            %{
+              name: node_name2,
+              attributes: %{
+                bar_attribute2: "bar_value2"
               }
             }
           ]
@@ -476,16 +485,23 @@ defmodule Trento.ClustersTest do
           details
           | nodes: [
               %{
-                node
+                node1
                 | attributes: %{
-                    "foo_attribute" => "foo_value",
-                    "bar_attribute" => "bar_value"
+                    foo_attribute1: "foo_value1",
+                    bar_attribute1: "bar_value1"
+                  }
+              },
+              %{
+                node2
+                | attributes: %{
+                    foo_attribute2: "foo_value2",
+                    bar_attribute2: "bar_value2"
                   }
               }
             ]
         }
-        |> Jason.encode!()
-        |> Jason.decode!()
+
+      expected_details = MapHelper.atomize_keys(expected_details)
 
       %ClusterReadModel{
         id: ^cluster_id,
