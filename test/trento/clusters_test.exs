@@ -295,6 +295,37 @@ defmodule Trento.ClustersTest do
         }
       ] = Clusters.get_all_clusters()
     end
+
+    test "should properly merge clusters details when enriched details are missing" do
+      cluster_id = Faker.UUID.v4()
+
+      details =
+        build(:hana_cluster_details,
+          nodes: [
+            build(:hana_cluster_node, attributes: %{foo_attribute: "foo_value"}),
+            build(:hana_cluster_node, attributes: %{bar_attribute: "bar_value"})
+          ]
+        )
+
+      insert(:cluster_enrichment_data,
+        cluster_id: cluster_id,
+        details: %{}
+      )
+
+      insert(:cluster, id: cluster_id, details: details)
+
+      expected_details =
+        details
+        |> Jason.encode!()
+        |> Jason.decode!()
+
+      [
+        %ClusterReadModel{
+          id: ^cluster_id,
+          details: ^expected_details
+        }
+      ] = Clusters.get_all_clusters()
+    end
   end
 
   describe "get_cluster_id_by_host_id/1" do

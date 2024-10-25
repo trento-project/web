@@ -152,14 +152,11 @@ defmodule Trento.Clusters do
   defp enrich_cluster_details(
          %ClusterReadModel{
            type: ClusterType.hana_scale_up(),
-           details: initial_details,
-           enriching_details: enriching_details
+           details: %{"nodes" => initial_nodes} = initial_details,
+           enriching_details: %{"nodes" => enriching_nodes} = enriching_details
          } = cluster
        )
        when is_map(initial_details) and is_map(enriching_details) do
-    initial_nodes = Map.get(initial_details, "nodes", [])
-    enriching_nodes = Map.get(enriching_details, "nodes", [])
-
     %ClusterReadModel{
       cluster
       | details: %{
