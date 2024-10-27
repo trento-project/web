@@ -3,6 +3,8 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
   Cluster projector
   """
 
+  require Logger
+
   use Commanded.Projections.Ecto,
     application: Trento.Commanded,
     repo: Trento.Repo,
@@ -166,8 +168,12 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
   def after_update(
         %ClusterDetailsUpdated{} = updated_details,
         _,
-        _
+        %{cluster: cluster}
       ) do
+    # IO.inspect(updated_details, label: "updated_details")
+    # IO.inspect(cluster, label: "cluster")
+    Logger.warning("ClusterDetailsUpdated #{inspect(updated_details)} -------- #{inspect(cluster)}")
+
     message =
       ClusterJSON.cluster_details_updated(%{data: updated_details})
 

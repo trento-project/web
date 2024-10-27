@@ -768,7 +768,7 @@
               },
               {
                 "Name": "hana_hdd_version",
-                "Value": "2.00.057.00.1629894416"
+                "Value": "2.00.057.00.16298944145"
               },
               {
                 "Name": "hana_hdd_vhost",
@@ -776,7 +776,7 @@
               },
               {
                 "Name": "lpa_hdd_lpt",
-                "Value": "1643125026"
+                "Value": "1643125027"
               },
               {
                 "Name": "master-rsc_SAPHana_HDD_HDB10",

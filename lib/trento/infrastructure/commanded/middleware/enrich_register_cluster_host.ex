@@ -24,6 +24,7 @@ defimpl Trento.Infrastructure.Commanded.Middleware.Enrichable,
       ) do
     {stripped_details, new_details} = strip_irrelevant_details(type, sid, details)
 
+    # this is happening regardless of whether the sendin node is the designated controller
     case Clusters.update_enrichment_data(cluster_id, %{
            cib_last_written: cib_last_written,
            details: stripped_details

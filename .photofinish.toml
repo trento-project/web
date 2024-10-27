@@ -435,3 +435,9 @@ files = [
 files = [
     "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/9a3ec76a-dd4f-5013-9cf0-5eb4cf89898f_sap_system_discovery.json"
 ]
+
+[boo]
+
+files = [
+    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/13e8c25c-3180-5a9a-95c8-51ec38e50cfc_ha_cluster_discovery.json"
+]

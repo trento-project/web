@@ -599,7 +599,7 @@
           "Disabled": 0
         },
         "LastChange": {
-          "Time": "Tue Jan 25 15:37:06 2022"
+          "Time": "Tue Jan 25 15:37:07 2022"
         },
         "ClusterOptions": {
           "StonithEnabled": true
@@ -768,7 +768,7 @@
               },
               {
                 "Name": "hana_hdd_version",
-                "Value": "2.00.057.00.1629894416"
+                "Value": "2.00.057.00.1629894417"
               },
               {
                 "Name": "hana_hdd_vhost",
@@ -776,7 +776,7 @@
               },
               {
                 "Name": "lpa_hdd_lpt",
-                "Value": "1643125026"
+                "Value": "1643125029"
               },
               {
                 "Name": "master-rsc_SAPHana_HDD_HDB10",

@@ -58,6 +58,7 @@ import { userUpdated, userLocked, userDeleted } from '@state/user';
 import { activityLogUsersPushed } from '@state/activityLog';
 
 import { getUserProfile } from '@state/selectors/user';
+import { createAction } from '@reduxjs/toolkit';
 
 const CLOSE_CHANNEL_EVENT = 'close';
 
@@ -104,6 +105,10 @@ const clusterEvents = [
   {
     name: 'cluster_registered',
     action: clusterRegistered,
+  },
+  {
+    name: 'cluster_registered_dbg',
+    action: createAction("CLUSTER_REGISTERED_DBG"),
   },
   {
     name: 'cluster_details_updated',
