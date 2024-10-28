@@ -146,7 +146,7 @@ defmodule Trento.Release do
         For example: yourdomain.example.com
         """
 
-    saml_dir = System.get_env("SAML_SP_DIR", "/etc/trento/trento-web/saml")
+    saml_dir = System.get_env("SAML_SP_DIR", "/etc/trento/saml")
 
     certificates_settings =
       Trento.Repo.one(SSOCertificatesSettings.base_query())
