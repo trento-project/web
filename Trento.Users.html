@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-K7URE6B4.js"></script>
-    <script src="dist/sidebar_items-6B3CBE34.js"></script>
+    <script src="dist/sidebar_items-6CC311BC.js"></script>
     <script src="docs_config.js"></script>
     <script async src="dist/html-YIPIRHGU.js"></script>
 
@@ -162,6 +162,14 @@ GUIDES
       </div>
 
         <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/pow/1.0.38/Pow.Context.html#c:authenticate/1"><code class="inline">Pow.Context.authenticate/1</code></a>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#by_id/1" data-no-tooltip translate="no">by_id(id)</a>
+
+      </div>
 
     </div>
 
@@ -370,6 +378,35 @@ deleted and locked users</p></div>
 <p>Callback implementation for <a href="https://hexdocs.pm/pow/1.0.38/Pow.Context.html#c:authenticate/1"><code class="inline">Pow.Context.authenticate/1</code></a>.</p>
   </section>
 </section>
+<section class="detail" id="by_id/1">
+
+  <div class="detail-header">
+    <a href="#by_id/1" class="detail-link" data-no-tooltip title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">by_id(id)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L19" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> by_id(id :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>()) ::
+  {:ok, Trento.Users.User.t()} | {:error, :not_found}</pre>
+
+      </div>
+
+
+  </section>
+</section>
 <section class="detail" id="confirm_totp_enrollment/2">
 
   <div class="detail-header">
@@ -379,7 +416,7 @@ deleted and locked users</p></div>
     </a>
     <h1 class="signature" translate="no">confirm_totp_enrollment(user, totp_code)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L194" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L202" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -423,7 +460,7 @@ deleted and locked users</p></div>
     </a>
     <h1 class="signature" translate="no">create_user(attrs)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L51" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L59" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -467,7 +504,7 @@ deleted and locked users</p></div>
     </a>
     <h1 class="signature" translate="no">delete_user(user)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L130" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L138" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -489,7 +526,7 @@ deleted and locked users</p></div>
     </a>
     <h1 class="signature" translate="no">get_by(clauses)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L24" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L32" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -513,7 +550,7 @@ deleted and locked users</p>
     </a>
     <h1 class="signature" translate="no">get_user(id)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L40" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L48" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -535,7 +572,7 @@ deleted and locked users</p>
     </a>
     <h1 class="signature" translate="no">initiate_totp_enrollment(user)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L162" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L170" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -557,7 +594,7 @@ deleted and locked users</p>
     </a>
     <h1 class="signature" translate="no">list_users()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L32" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L40" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -579,7 +616,7 @@ deleted and locked users</p>
     </a>
     <h1 class="signature" translate="no">maybe_disable_totp(attrs)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L125" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L133" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -711,7 +748,7 @@ deleted and locked users</p>
     </a>
     <h1 class="signature" translate="no">reset_totp(user)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L154" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L162" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -755,7 +792,7 @@ deleted and locked users</p>
     </a>
     <h1 class="signature" translate="no">update_user(user, attrs)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L95" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L103" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -777,7 +814,7 @@ deleted and locked users</p>
     </a>
     <h1 class="signature" translate="no">update_user_profile(user, attrs)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L83" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L91" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -799,7 +836,7 @@ deleted and locked users</p>
     </a>
     <h1 class="signature" translate="no">validate_totp(user, totp_code)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L212" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L220" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
