@@ -7,6 +7,7 @@ defmodule Trento.Clusters.Events.ClusterDetailsUpdated do
 
   require Trento.Enums.Provider, as: Provider
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
+  require Trento.Clusters.Enums.HanaScenario, as: HanaScenario
 
   alias Trento.Clusters.ValueObjects.{
     AscsErsClusterDetails,
@@ -17,6 +18,7 @@ defmodule Trento.Clusters.Events.ClusterDetailsUpdated do
     field :cluster_id, Ecto.UUID
     field :name, :string
     field :type, Ecto.Enum, values: ClusterType.values()
+    field :hana_scenario, Ecto.Enum, values: HanaScenario.values()
     field :sid, :string
     field :additional_sids, {:array, :string}, default: []
     field :provider, Ecto.Enum, values: Provider.values()

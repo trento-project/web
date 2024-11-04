@@ -8,11 +8,14 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
   require Trento.Clusters.Enums.HanaArchitectureType, as: HanaArchitectureType
   require Trento.Enums.Health, as: Health
   require Trento.Clusters.Enums.AscsErsClusterRole, as: AscsErsClusterRole
+  require Trento.Clusters.Enums.HanaScenario, as: HanaScenario
 
   alias Trento.Clusters.Commands.{
     DeregisterClusterHost,
     RegisterClusterHost
   }
+
+  alias Trento.Clusters
 
   alias Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload
 
@@ -94,14 +97,16 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
          } = payload
        ) do
     cluster_details = parse_cluster_details(payload)
+    cluster_id = generate_cluster_id(id)
 
     RegisterClusterHost.new(%{
-      cluster_id: generate_cluster_id(id),
+      cluster_id: cluster_id,
       host_id: agent_id,
       name: name,
       sid: sid,
       additional_sids: additional_sids,
       type: cluster_type,
+      hana_scenario: parse_hana_scenario(cluster_type, cluster_id),
       designated_controller: designated_controller,
       resources_number: parse_resources_number(payload),
       hosts_number: parse_hosts_number(payload),
@@ -110,6 +115,58 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
       cib_last_written: parse_cib_last_written(payload),
       provider: provider
     })
+  end
+
+  def parse_hana_scenario(cluster_type, cluster_id) do
+    cluster_hosts = Clusters.get_all_cluster_database_instances_by_cluster_id(cluster_id)
+    host_databases = cluster_host_list(cluster_hosts)
+
+    case cluster_type do
+      :hana_scale_up -> validate_hana_scenario(host_databases)
+      _ -> HanaScenario.unknown()
+    end
+  end
+
+  defp cluster_host_list(hosts),
+    do:
+      Enum.map(hosts, fn host ->
+        Enum.map(host, fn item ->
+          %{agend_id: item.host_id, sid: item.sid, database_id: item.database_id}
+        end)
+      end)
+
+  defp validate_hana_scenario(host_databases) do
+    [first_host, second_host] = Enum.map(0..1, &Enum.at(host_databases, &1, []))
+
+    case {first_host, second_host} do
+      {[], _} ->
+        HanaScenario.unknown()
+
+      {_, []} ->
+        HanaScenario.unknown()
+
+      {[first], [second]} ->
+        if first.database_id == second.database_id do
+          HanaScenario.performance_optimized()
+        else
+          HanaScenario.unknown()
+        end
+
+      {first, second} ->
+        validate_database_id(first, second)
+    end
+  end
+
+  defp validate_database_id(first_host, second_host) do
+    first_ids = Enum.map(first_host, & &1.database_id)
+
+    second_ids = Enum.map(second_host, & &1.database_id)
+
+    if Enum.any?(first_ids, &(&1 in second_ids)) do
+      HanaScenario.cost_optimized()
+    else
+      HanaScenario.unknown()
+    end
   end
 
   defp parse_resources_number(%{

@@ -154,6 +154,11 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
             description: "Detected type of the cluster",
             enum: [:hana_scale_up, :hana_scale_out, :unknown]
           },
+          hana_scenario: %Schema{
+            type: :string,
+            description: "Detected hana scenario of the cluster",
+            enum: [:cost_optimized, :performance_optimized, :unknown]
+          },
           selected_checks: %Schema{
             title: "SelectedChecks",
             description: "A list of check ids selected for an execution on this cluster",

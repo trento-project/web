@@ -9,6 +9,7 @@ defmodule Trento.Clusters.Projections.ClusterReadModel do
 
   require Trento.Enums.Provider, as: Provider
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
+  require Trento.Clusters.Enums.HanaScenario, as: HanaScenario
   require Trento.Enums.Health, as: Health
 
   alias Trento.Tags.Tag
@@ -25,6 +26,7 @@ defmodule Trento.Clusters.Projections.ClusterReadModel do
     field :additional_sids, {:array, :string}, default: []
     field :provider, Ecto.Enum, values: Provider.values()
     field :type, Ecto.Enum, values: ClusterType.values()
+    field :hana_scenario, Ecto.Enum, values: HanaScenario.values()
     field :selected_checks, {:array, :string}, default: []
     field :health, Ecto.Enum, values: Health.values()
     field :resources_number, :integer

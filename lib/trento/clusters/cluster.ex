@@ -57,6 +57,7 @@ defmodule Trento.Clusters.Cluster do
   require Trento.Enums.Provider, as: Provider
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
   require Trento.Enums.Health, as: Health
+  require Trento.Clusters.Enums.HanaScenario, as: HanaScenario
 
   alias Commanded.Aggregate.Multi
 
@@ -114,6 +115,7 @@ defmodule Trento.Clusters.Cluster do
     field :cluster_id, Ecto.UUID
     field :name, :string
     field :type, Ecto.Enum, values: ClusterType.values()
+    field :hana_scenario, Ecto.Enum, values: HanaScenario.values()
     field :sid, :string
     field :additional_sids, {:array, :string}, default: []
     field :resources_number, :integer
@@ -149,6 +151,7 @@ defmodule Trento.Clusters.Cluster do
           host_id: host_id,
           name: name,
           type: type,
+          hana_scenario: hana_scenario,
           sid: sid,
           additional_sids: additional_sids,
           provider: provider,
@@ -164,6 +167,7 @@ defmodule Trento.Clusters.Cluster do
         cluster_id: cluster_id,
         name: name,
         type: type,
+        hana_scenario: hana_scenario,
         sid: sid,
         additional_sids: additional_sids,
         provider: provider,
@@ -184,6 +188,7 @@ defmodule Trento.Clusters.Cluster do
   def execute(%Cluster{cluster_id: nil}, %RegisterClusterHost{
         cluster_id: cluster_id,
         name: name,
+        hana_scenario: hana_scenario,
         host_id: host_id,
         designated_controller: false
       }) do
@@ -192,6 +197,7 @@ defmodule Trento.Clusters.Cluster do
         cluster_id: cluster_id,
         name: name,
         type: :unknown,
+        hana_scenario: hana_scenario,
         sid: nil,
         additional_sids: [],
         provider: :unknown,
@@ -343,6 +349,7 @@ defmodule Trento.Clusters.Cluster do
           cluster_id: cluster_id,
           name: name,
           type: type,
+          hana_scenario: hana_scenario,
           sid: sid,
           additional_sids: additional_sids,
           provider: provider,
@@ -357,6 +364,7 @@ defmodule Trento.Clusters.Cluster do
       | cluster_id: cluster_id,
         name: name,
         type: type,
+        hana_scenario: hana_scenario,
         sid: sid,
         additional_sids: additional_sids,
         provider: provider,
@@ -391,6 +399,7 @@ defmodule Trento.Clusters.Cluster do
         %ClusterDetailsUpdated{
           name: name,
           type: type,
+          hana_scenario: hana_scenario,
           sid: sid,
           additional_sids: additional_sids,
           provider: provider,
@@ -403,6 +412,7 @@ defmodule Trento.Clusters.Cluster do
       cluster
       | name: name,
         type: type,
+        hana_scenario: hana_scenario,
         sid: sid,
         additional_sids: additional_sids,
         provider: provider,
@@ -503,6 +513,7 @@ defmodule Trento.Clusters.Cluster do
          %Cluster{
            name: name,
            type: type,
+           hana_scenario: hana_scenario,
            sid: sid,
            additional_sids: additional_sids,
            provider: provider,
@@ -513,6 +524,7 @@ defmodule Trento.Clusters.Cluster do
          %RegisterClusterHost{
            name: name,
            type: type,
+           hana_scenario: hana_scenario,
            sid: sid,
            additional_sids: additional_sids,
            provider: provider,
@@ -530,6 +542,7 @@ defmodule Trento.Clusters.Cluster do
            cluster_id: cluster_id,
            name: name,
            type: type,
+           hana_scenario: hana_scenario,
            sid: sid,
            additional_sids: additional_sids,
            provider: provider,
@@ -542,6 +555,7 @@ defmodule Trento.Clusters.Cluster do
       cluster_id: cluster_id,
       name: name,
       type: type,
+      hana_scenario: hana_scenario,
       sid: sid,
       additional_sids: additional_sids,
       provider: provider,

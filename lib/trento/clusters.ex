@@ -11,8 +11,8 @@ defmodule Trento.Clusters do
   require Trento.Clusters.Enums.ClusterEnsaVersion, as: ClusterEnsaVersion
   require Trento.Clusters.Enums.HanaArchitectureType, as: HanaArchitectureType
 
+  alias Trento.Databases
   alias Trento.Hosts.Projections.HostReadModel
-
   alias Trento.SapSystems.Projections.ApplicationInstanceReadModel
 
   alias Trento.Clusters.Projections.ClusterReadModel
@@ -86,6 +86,23 @@ defmodule Trento.Clusters do
         select: c.id
 
     Repo.one(query)
+  end
+
+  def get_all_cluster_database_instances_by_cluster_id(cluster_id) do
+    hosts_id = get_all_hosts_id_by_cluster_id(cluster_id)
+
+    Enum.map(hosts_id, fn host_id ->
+      Databases.get_database_instances_by_host_id(host_id)
+    end)
+  end
+
+  def get_all_hosts_id_by_cluster_id(cluster_id) do
+    query =
+      from h in HostReadModel,
+        where: h.cluster_id == ^cluster_id,
+        select: h.id
+
+    Repo.all(query)
   end
 
   @spec enrich_cluster_model(ClusterReadModel.t()) :: ClusterReadModel.t()

@@ -3,6 +3,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
 
   require OpenApiSpex
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
+  require Trento.Clusters.Enums.HanaScenario, as: HanaScenario
   require Trento.Clusters.Enums.AscsErsClusterRole, as: AscsErsClusterRole
   require Trento.Clusters.Enums.HanaArchitectureType, as: HanaArchitectureType
 
@@ -301,6 +302,11 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
             type: :string,
             description: "Detected type of the cluster",
             enum: ClusterType.values()
+          },
+          hana_scenario: %Schema{
+            type: :string,
+            description: "Detected type of the hana scenario",
+            enum: HanaScenario.values()
           },
           selected_checks: %Schema{
             title: "SelectedChecks",

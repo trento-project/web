@@ -33,6 +33,7 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
       additional_sids: additional_sids,
       provider: provider,
       type: type,
+      hana_scenario: hana_scenario,
       resources_number: resources_number,
       hosts_number: hosts_number,
       details: details,
@@ -47,6 +48,7 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
           additional_sids: additional_sids,
           provider: provider,
           type: type,
+          hana_scenario: hana_scenario,
           resources_number: resources_number,
           hosts_number: hosts_number,
           details: details,
@@ -98,6 +100,7 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
       additional_sids: additional_sids,
       provider: provider,
       type: type,
+      hana_scenario: hana_scenario,
       resources_number: resources_number,
       hosts_number: hosts_number,
       details: details
@@ -112,6 +115,7 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
           additional_sids: additional_sids,
           provider: provider,
           type: type,
+          hana_scenario: hana_scenario,
           resources_number: resources_number,
           hosts_number: hosts_number,
           details: details
