@@ -261,6 +261,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 sid: "PRD",
                 additional_sids: [],
                 type: :hana_scale_up,
+                hana_scenario: :unknown,
                 hosts_number: 2,
                 resources_number: 8,
                 discovered_health: :passing,
@@ -511,6 +512,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 sid: "PRD",
                 additional_sids: [],
                 type: :hana_scale_up,
+                hana_scenario: :unknown,
                 hosts_number: 2,
                 resources_number: 8,
                 discovered_health: :passing,
@@ -639,6 +641,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 sid: nil,
                 additional_sids: ["NWP"],
                 type: :ascs_ers,
+                hana_scenario: :unknown,
                 hosts_number: 2,
                 resources_number: 9,
                 discovered_health: :passing,
@@ -767,6 +770,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 sid: nil,
                 additional_sids: ["NWP"],
                 type: :ascs_ers,
+                hana_scenario: :unknown,
                 hosts_number: 2,
                 resources_number: 9,
                 discovered_health: :passing,
@@ -845,6 +849,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 hosts_number: 2,
                 resources_number: 5,
                 discovered_health: :unknown,
+                hana_scenario: :unknown,
                 provider: Provider.azure()
               }
             ]} ==
@@ -1061,6 +1066,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 sid: nil,
                 additional_sids: ["NWP", "NWD"],
                 type: :ascs_ers,
+                hana_scenario: :unknown,
                 hosts_number: 2,
                 resources_number: 17,
                 discovered_health: :passing,
@@ -1403,7 +1409,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 resources_number: 7,
                 sid: "PRD",
                 additional_sids: [],
-                type: :hana_scale_up
+                type: :hana_scale_up,
+                hana_scenario: :unknown
               }
             ]} ==
              "ha_cluster_discovery_aws"
@@ -1572,6 +1579,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 resources_number: 9,
                 sid: "PRD",
                 additional_sids: [],
+                hana_scenario: :unknown,
                 type: :hana_scale_up
               }
             ]} ==
@@ -1819,6 +1827,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 sid: "PRD",
                 additional_sids: [],
                 type: :hana_scale_up,
+                hana_scenario: :unknown,
                 hosts_number: 2,
                 resources_number: 8,
                 discovered_health: :passing,
@@ -1955,6 +1964,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 sid: "PRD",
                 additional_sids: [],
                 type: :hana_scale_up,
+                hana_scenario: :unknown,
                 hosts_number: 2,
                 resources_number: 8,
                 discovered_health: :passing,
@@ -2002,6 +2012,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                   additional_sids: [],
                   provider: :kvm,
                   designated_controller: true,
+                  hana_scenario: :unknown,
                   resources_number: 15,
                   hosts_number: 6,
                   discovered_health: :passing,
@@ -2273,6 +2284,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                   type: :hana_scale_out,
                   sid: "PRD",
                   additional_sids: [],
+                  hana_scenario: :unknown,
                   provider: :azure,
                   designated_controller: false,
                   resources_number: 13,
@@ -2508,6 +2520,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                   host_id: "286808a7-01bf-420d-af50-10846a7d7868",
                   name: "hana_cluster",
                   type: :hana_scale_out,
+                  hana_scenario: :unknown,
                   sid: "PRD",
                   additional_sids: [],
                   provider: :kvm,
@@ -3030,6 +3043,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                   host_id: "6eabc497-6067-4de9-b583-e4c63334ff64",
                   hosts_number: 5,
                   name: "hacluster",
+                  hana_scenario: :unknown,
                   provider: :azure,
                   resources_number: 17,
                   sid: "PRD",
@@ -3164,6 +3178,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                    provider: :azure,
                    resources_number: 6,
                    sid: "HN9",
+                   hana_scenario: :unknown,
                    type: :hana_scale_up
                  }
                ]
@@ -3292,6 +3307,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                    discovered_health: :critical,
                    host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
                    hosts_number: 2,
+                   hana_scenario: :unknown,
                    name: "hana_cluster",
                    provider: :azure,
                    resources_number: 6,

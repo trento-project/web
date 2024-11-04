@@ -3,6 +3,8 @@ defmodule Trento.ClusterTest do
 
   import Trento.Factory
 
+  require Trento.Clusters.Enums.HanaScenario, as: HanaScenario
+
   alias Trento.Support.StructHelper
 
   alias Trento.Clusters.Commands.{
@@ -198,6 +200,7 @@ defmodule Trento.ClusterTest do
           sid: sid,
           additional_sids: [],
           type: :hana_scale_up,
+          hana_scenario: HanaScenario.unknown(),
           discovered_health: :passing,
           resources_number: 8,
           hosts_number: 2,
@@ -308,6 +311,7 @@ defmodule Trento.ClusterTest do
           hosts_number: 2,
           details: nil,
           type: :hana_scale_up,
+          hana_scenario: HanaScenario.unknown(),
           discovered_health: :passing,
           designated_controller: true
         }),
@@ -610,6 +614,7 @@ defmodule Trento.ClusterTest do
           additional_sids: cluster_registered_event.additional_sids,
           provider: cluster_registered_event.provider,
           type: cluster_registered_event.type,
+          hana_scenario: cluster_registered_event.hana_scenario,
           resources_number: cluster_registered_event.resources_number,
           hosts_number: cluster_registered_event.hosts_number,
           details: StructHelper.to_map(cluster_registered_event.details),
@@ -658,6 +663,7 @@ defmodule Trento.ClusterTest do
           sid: cluster_registered_event.sid,
           additional_sids: cluster_registered_event.additional_sids,
           type: cluster_registered_event.type,
+          hana_scenario: cluster_registered_event.hana_scenario,
           resources_number: cluster_registered_event.resources_number,
           hosts_number: cluster_registered_event.hosts_number,
           discovered_health: :passing,
@@ -706,6 +712,7 @@ defmodule Trento.ClusterTest do
           additional_sids: cluster_registered_event.additional_sids,
           provider: :azure,
           type: cluster_registered_event.type,
+          hana_scenario: cluster_registered_event.hana_scenario,
           resources_number: cluster_registered_event.resources_number,
           hosts_number: cluster_registered_event.hosts_number,
           details: StructHelper.to_map(cluster_registered_event.details),
@@ -757,6 +764,7 @@ defmodule Trento.ClusterTest do
             hosts_number: cluster_registered_event.hosts_number,
             details: cluster_registered_event.details,
             health: cluster_registered_event.health,
+            hana_scenario: cluster_registered_event.hana_scenario,
             hosts: [],
             selected_checks: [],
             discovered_health: Health.passing(),
@@ -945,6 +953,7 @@ defmodule Trento.ClusterTest do
             cluster_id: cluster_id,
             name: restoration_command.name,
             type: restoration_command.type,
+            hana_scenario: :unknown,
             sid: restoration_command.sid,
             additional_sids: restoration_command.additional_sids,
             provider: restoration_command.provider,

@@ -5,6 +5,7 @@ defmodule Trento.Factory do
 
   require Trento.Enums.Provider, as: Provider
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
+  require Trento.Clusters.Enums.HanaScenario, as: HanaScenario
   require Trento.Clusters.Enums.HanaArchitectureType, as: HanaArchitectureType
   require Trento.SapSystems.Enums.EnsaVersion, as: EnsaVersion
   require Trento.Enums.Health, as: Health
@@ -219,6 +220,7 @@ defmodule Trento.Factory do
       hosts_number: 2,
       details: build(:hana_cluster_details),
       type: ClusterType.hana_scale_up(),
+      hana_scenario: HanaScenario.unknown(),
       discovered_health: Health.passing(),
       designated_controller: true,
       cib_last_written: Date.to_string(Faker.Date.forward(0))
@@ -251,7 +253,8 @@ defmodule Trento.Factory do
       hosts_number: 2,
       details: build(:hana_cluster_details),
       health: Health.passing(),
-      type: ClusterType.hana_scale_up()
+      type: ClusterType.hana_scale_up(),
+      hana_scenario: HanaScenario.unknown()
     }
   end
 
@@ -344,6 +347,7 @@ defmodule Trento.Factory do
       additional_sids: [],
       provider: Enum.random(Provider.values()),
       type: ClusterType.hana_scale_up(),
+      hana_scenario: HanaScenario.unknown(),
       health: Health.passing(),
       selected_checks: Enum.map(0..4, fn _ -> Faker.StarWars.planet() end)
     }
