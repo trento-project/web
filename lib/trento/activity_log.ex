@@ -10,6 +10,7 @@ defmodule Trento.ActivityLog do
   alias Trento.ActivityLog.RetentionTime
   require Trento.ActivityLog.RetentionPeriodUnit, as: RetentionPeriodUnit
   alias Trento.ActivityLog.ActivityLog
+  alias Trento.ActivityLog.MetadataQueryParser
   alias Trento.ActivityLog.Settings
   alias Trento.Repo
 
@@ -87,81 +88,29 @@ defmodule Trento.ActivityLog do
   defp maybe_search_by_metadata(query, params) do
     maybe_metadata_search_string = params[:search]
 
-    is_valid_search_string? =
-      maybe_metadata_search_string != nil &&
-        maybe_metadata_search_string != "" &&
-        String.match?(maybe_metadata_search_string, ~r/^[a-zA-Z0-9-_\*\s]+$/)
+    case MetadataQueryParser.parse(maybe_metadata_search_string) do
+      {:ok, parsed_query_fragment} ->
+        jsonpath_expr = "$ ? #{parsed_query_fragment}"
 
-    case is_valid_search_string? &&
-           parse_metadata_search_string(maybe_metadata_search_string) do
-      parsed_query when is_binary(parsed_query) ->
         from q in query,
           select: %{
             id: q.id,
             metadata: q.metadata,
-            m0: fragment("jsonb_path_query(?, ?)", q.metadata, ^parsed_query),
+            m0: fragment("jsonb_path_query(?, ?)", q.metadata, ^jsonpath_expr),
             type: q.type,
             actor: q.actor,
             inserted_at: q.inserted_at,
             updated_at: q.updated_at
           }
 
-      _ ->
+      {:error, reason, trimmed_search_string} = error ->
+        if reason != :noop do
+          Logger.info(
+            "Metadata parse failure for search string \"#{trimmed_search_string}\": #{inspect(error)}"
+          )
+        end
+
         query
-    end
-  end
-
-  defp parse_metadata_search_string(search_string) do
-    "#{get_search_selector(search_string)} #{get_search_predicate(search_string)}"
-  end
-
-  defp get_search_selector(_), do: "$"
-
-  @search_regex "[a-zA-Z0-9_-]"
-  defp get_search_predicate(search_string) do
-    search_words = String.split(search_string, " ")
-    add_surrounding_brackets? = length(search_words) > 1
-
-    joiner =
-      case Enum.any?(search_words, fn word -> word == "AND" or word == "OR" end) do
-        true ->
-          " "
-
-        _ ->
-          " || "
-      end
-
-    joined_string =
-      Enum.map_join(search_words, joiner, &word_handler/1)
-
-    case add_surrounding_brackets? do
-      true ->
-        "? (#{joined_string})"
-
-      _ ->
-        "? #{joined_string}"
-    end
-  end
-
-  defp word_handler(word) do
-    case {String.starts_with?(word, "*"), String.ends_with?(word, "*")} do
-      {true, true} ->
-        "(@.** like_regex \"^#{@search_regex}#{String.trim_trailing(word, "*")}#{@search_regex}*$\")"
-
-      {true, false} ->
-        "(@.** like_regex \"^#{@search_regex}#{word}$\")"
-
-      {false, true} ->
-        "(@.** starts with \"#{String.trim_trailing(word, "*")}\")"
-
-      {false, false} when word == "AND" ->
-        "&&"
-
-      {false, false} when word == "OR" ->
-        "||"
-
-      {false, false} ->
-        "(@.** == \"#{word}\")"
     end
   end
 
