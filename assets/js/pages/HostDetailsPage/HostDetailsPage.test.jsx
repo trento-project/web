@@ -25,6 +25,8 @@ describe('HostDetailsPage', () => {
   });
 
   it('Renders SUSE Manager unknown status', async () => {
+    const user = userEvent.setup();
+
     const host = hostFactory.build();
     const { id: hostID } = host;
 
@@ -67,6 +69,11 @@ describe('HostDetailsPage', () => {
     expect(upgradablePackagesElement).toHaveTextContent(
       'Upgradable Packages Unknown'
     );
+
+    await user.hover(relevantPatchesElement);
+    expect(
+      screen.queryByText('Trento was not able to retrieve the requested data.')
+    ).toBeVisible();
   });
 
   it('Renders SUSE Manager error for host not found', async () => {
