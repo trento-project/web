@@ -370,6 +370,13 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
   def error({:error, :sap_system_not_registered}, _command_or_event, _context),
     do: {:skip, :continue_pending}
 
+  # Ignore error if deregistration command returns application_instance_not_registered error.
+  # This happens in deployments with legacy code where ApplicationInstanceMoved was not
+  # being handled and instances that were moved were still in the Process Manager state incorrectly.
+
+  def error({:error, :application_instance_not_registered}, _command_or_event, _context),
+    do: {:skip, :continue_pending}
+
   # Retry the rollup errors, stop the process on other errors
 
   def error({:error, :host_rolling_up}, _command_or_event, %{context: context}),
