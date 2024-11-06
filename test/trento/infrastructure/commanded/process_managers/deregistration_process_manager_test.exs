@@ -24,6 +24,7 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
 
   alias Trento.SapSystems.Events.{
     ApplicationInstanceDeregistered,
+    ApplicationInstanceMoved,
     ApplicationInstanceRegistered,
     SapSystemRolledUp
   }
@@ -156,6 +157,17 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
 
       assert {:stop, ^host_id} =
                DeregistrationProcessManager.interested?(%HostDeregistered{host_id: host_id})
+    end
+
+    test "should continue the process manager when ApplicationInstanceMoved arrives" do
+      old_host_id = UUID.uuid4()
+      new_host_id = UUID.uuid4()
+
+      assert {:continue, [^old_host_id, ^new_host_id]} =
+               DeregistrationProcessManager.interested?(%ApplicationInstanceMoved{
+                 old_host_id: old_host_id,
+                 new_host_id: new_host_id
+               })
     end
   end
 
@@ -348,6 +360,79 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
                    instance_number: ^database_instance_number
                  }
                ],
+               application_instances: [
+                 %Instance{
+                   sap_system_id: ^sap_system_id,
+                   instance_number: ^instance_number
+                 }
+               ]
+             } = state
+    end
+
+    test "should update state when ApplicationInstaceMoved event is received removing the instance from the old host" do
+      old_host_id = UUID.uuid4()
+      new_host_id = UUID.uuid4()
+      sap_system_id = UUID.uuid4()
+      instance_number = "00"
+
+      # Set identity to process manager instance
+      Process.put(:process_uuid, old_host_id)
+
+      initial_state = %DeregistrationProcessManager{
+        database_instances: [],
+        application_instances: [
+          %Instance{
+            sap_system_id: sap_system_id,
+            instance_number: instance_number
+          }
+        ]
+      }
+
+      events = [
+        %ApplicationInstanceMoved{
+          sap_system_id: sap_system_id,
+          instance_number: instance_number,
+          old_host_id: old_host_id,
+          new_host_id: new_host_id
+        }
+      ]
+
+      {commands, state} = reduce_events(events, initial_state)
+
+      assert [] == commands
+
+      assert %DeregistrationProcessManager{
+               database_instances: [],
+               application_instances: []
+             } = state
+    end
+
+    test "should update state when ApplicationInstaceMoved event is received adding the instance in the new host" do
+      old_host_id = UUID.uuid4()
+      new_host_id = UUID.uuid4()
+      sap_system_id = UUID.uuid4()
+      instance_number = "00"
+
+      initial_state = %DeregistrationProcessManager{
+        database_instances: [],
+        application_instances: []
+      }
+
+      events = [
+        %ApplicationInstanceMoved{
+          sap_system_id: sap_system_id,
+          instance_number: instance_number,
+          old_host_id: old_host_id,
+          new_host_id: new_host_id
+        }
+      ]
+
+      {commands, state} = reduce_events(events, initial_state)
+
+      assert [] == commands
+
+      assert %DeregistrationProcessManager{
+               database_instances: [],
                application_instances: [
                  %Instance{
                    sap_system_id: ^sap_system_id,

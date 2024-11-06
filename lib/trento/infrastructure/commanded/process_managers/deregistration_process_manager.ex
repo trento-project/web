@@ -52,6 +52,7 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
 
   alias Trento.SapSystems.Events.{
     ApplicationInstanceDeregistered,
+    ApplicationInstanceMoved,
     ApplicationInstanceRegistered,
     SapSystemRolledUp
   }
@@ -126,6 +127,10 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
   def interested?(%HostRemovedFromCluster{host_id: host_id}), do: {:continue, host_id}
   def interested?(%DatabaseInstanceDeregistered{host_id: host_id}), do: {:continue, host_id}
   def interested?(%ApplicationInstanceDeregistered{host_id: host_id}), do: {:continue, host_id}
+
+  def interested?(%ApplicationInstanceMoved{old_host_id: old_host_id, new_host_id: new_host_id}),
+    do: {:continue, [old_host_id, new_host_id]}
+
   # Stop the Process Manager
   def interested?(%HostDeregistered{host_id: host_id}), do: {:stop, host_id}
 
@@ -324,6 +329,38 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
             current_instance_number == instance_number
           end)
     }
+  end
+
+  def apply(
+        %DeregistrationProcessManager{application_instances: application_instances} = state,
+        %ApplicationInstanceMoved{
+          sap_system_id: sap_system_id,
+          instance_number: instance_number,
+          old_host_id: old_host_id
+        }
+      ) do
+    if Commanded.ProcessManagers.ProcessManager.identity() == old_host_id do
+      %DeregistrationProcessManager{
+        state
+        | application_instances:
+            Enum.reject(application_instances, fn %Instance{
+                                                    instance_number: current_instance_number
+                                                  } ->
+              current_instance_number == instance_number
+            end)
+      }
+    else
+      %DeregistrationProcessManager{
+        state
+        | application_instances: [
+            %Instance{
+              sap_system_id: sap_system_id,
+              instance_number: instance_number
+            }
+            | application_instances
+          ]
+      }
+    end
   end
 
   # Ignore error if deregistration command returns sap_system_not_registered error.
