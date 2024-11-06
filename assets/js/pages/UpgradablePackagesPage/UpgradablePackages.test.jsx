@@ -2,9 +2,11 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
+import { noop } from 'lodash';
+import { faker } from '@faker-js/faker';
+import { upgradablePackageFactory } from '@lib/test-utils/factories/upgradablePackage';
 
 import { renderWithRouter as render } from '@lib/test-utils';
-import { upgradablePackageFactory } from '@lib/test-utils/factories/upgradablePackage';
 
 import UpgradablePackages from './UpgradablePackages';
 
@@ -38,5 +40,95 @@ describe('UpgradablePackages', () => {
     const tableRows = container.querySelectorAll('tbody > tr');
 
     expect(tableRows.length).toBe(1);
+  });
+});
+
+describe('exports the packages in CSV format', () => {
+  beforeAll(() => {
+    const createObjectURL = jest.fn(({ name, size }) => ({
+      name,
+      size,
+    }));
+    const revokeObjectURL = jest.fn(() => noop());
+
+    window.URL = { createObjectURL, revokeObjectURL };
+  });
+
+  it('disables button if no packages are available', () => {
+    const hostName = faker.string.uuid();
+
+    const upgradablePackages = [];
+    const patchesLoading = false;
+
+    render(
+      <UpgradablePackages
+        hostName={hostName}
+        upgradablePackages={upgradablePackages}
+        patchesLoading={patchesLoading}
+      />
+    );
+
+    const csvButton = screen.getByText('Download CSV');
+
+    expect(csvButton).toBeDisabled();
+    expect(window.URL.createObjectURL).not.toHaveBeenCalled();
+    expect(window.URL.revokeObjectURL).not.toHaveBeenCalled();
+  });
+
+  it('Exports the packages in CSV format', () => {
+    const user = userEvent.setup();
+    const hostName = faker.string.uuid();
+    const upgradablePackage = [
+      upgradablePackageFactory.build({
+        name: 'elixir',
+        arch: 'x86_64',
+        to_package_id: 92348112636,
+        to_epoch: '0',
+        from_epoch: '0',
+        from_release: '3',
+        from_version: '1.15.7',
+        to_release: '1',
+        to_version: '1.16.2',
+        patches: [
+          {
+            issue_date: '2024-02-27',
+            last_modified_date: '2024-02-27',
+            synopsis: 'Recommended update for cloud-netconfig',
+            advisory_type: 'bugfix',
+            advisory: 'SUSE-15-SP4-2024-630',
+          },
+          {
+            issue_date: '2024-02-26',
+            last_modified_date: '2024-02-26',
+            synopsis: 'important: Security update for java-1_8_0-ibm',
+            advisory_type: 'security_advisory',
+            advisory: 'SUSE-15-SP4-2024-619',
+          },
+        ],
+      }),
+    ];
+    const patchesLoading = false;
+
+    render(
+      <UpgradablePackages
+        hostName={hostName}
+        upgradablePackages={upgradablePackage}
+        patchesLoading={patchesLoading}
+      />
+    );
+
+    const csvButton = screen.getByText('Download CSV');
+    user.click(csvButton);
+
+    expect(window.URL.createObjectURL).toHaveBeenCalledWith(new File([], ''));
+    expect(window.URL.createObjectURL).toHaveReturnedWith({
+      name: `${hostName}-patches.csv`,
+      size: 131,
+    });
+  });
+
+  afterAll(() => {
+    delete window.URL.createObjectURL;
+    delete window.URL.revokeObjectURL;
   });
 });
