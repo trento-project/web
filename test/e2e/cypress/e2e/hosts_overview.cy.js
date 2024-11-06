@@ -352,6 +352,34 @@ context('Hosts Overview', () => {
           cy.contains('a', sapSystemHostToDeregister.sid).should('not.exist');
         });
       });
+
+      describe('Movement of application instances on hosts', () => {
+        const sapSystemHostToDeregister = {
+          id: '7269ee51-5007-5849-aaa7-7c4a98b0c9ce',
+          sid: 'NWD',
+          hostname: 'vmnwdev01',
+        };
+
+        before(() => {
+          cy.visit('/hosts');
+          cy.url().should('include', '/hosts');
+          cy.loadScenario(`sapsystem-${sapSystemHostToDeregister.sid}-restore`);
+        });
+
+        after(() => {
+          cy.loadScenario(`sapsystem-${sapSystemHostToDeregister.sid}-restore`);
+        });
+
+        it('should not impact host deregistration', () => {
+          cy.loadScenario('sap-systems-overview-moved');
+          cy.get(NEXT_PAGE_SELECTOR).click();
+          cy.contains('a', sapSystemHostToDeregister.hostname).should('exist');
+          cy.deregisterHost(sapSystemHostToDeregister.id);
+          cy.contains('a', sapSystemHostToDeregister.hostname).should(
+            'not.exist'
+          );
+        });
+      });
     });
   });
 
