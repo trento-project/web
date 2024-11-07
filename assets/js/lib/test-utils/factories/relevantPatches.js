@@ -2,12 +2,7 @@ import { faker } from '@faker-js/faker';
 import { Factory } from 'fishery';
 
 export const advisoryType = ['security_advisory', 'bugfix', 'enhancement'];
-function generateCustomVersion() {
-  const major = faker.number.int({ min: 0, max: 10 });
-  const minor = faker.number.int({ min: 0, max: 20 });
-  const patch = faker.number.int({ min: 0, max: 30 });
-  return `${major}.${minor}.${patch}`;
-}
+
 export const relevantPatchFactory = Factory.define(({ sequence }) => ({
   advisory_name: `${faker.animal.cat()}${sequence}`,
   advisory_type: faker.helpers.arrayElement(advisoryType),
@@ -28,7 +23,7 @@ export const patchForPackageFactory = Factory.define(({ sequence }) => ({
 }));
 
 export const upgradablePackageFactory = Factory.define(() => ({
-  installed_package: `Package ${faker.animal.cat()}`,
-  latest_package: generateCustomVersion(),
+  installedPackage: `Package ${faker.animal.cat()}`,
+  latestPackage: faker.system.semver(),
   patches: [{ advisory: faker.animal.cat() }],
 }));
