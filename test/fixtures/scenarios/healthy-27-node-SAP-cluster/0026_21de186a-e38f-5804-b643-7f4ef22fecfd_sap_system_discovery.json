@@ -1,1 +1,5 @@
-{"payload":[],"discovery_type":"sap_system_discovery","agent_id":"21de186a-e38f-5804-b643-7f4ef22fecfd"}
+{
+  "payload": [],
+  "discovery_type": "sap_system_discovery",
+  "agent_id": "21de186a-e38f-5804-b643-7f4ef22fecfd"
+}

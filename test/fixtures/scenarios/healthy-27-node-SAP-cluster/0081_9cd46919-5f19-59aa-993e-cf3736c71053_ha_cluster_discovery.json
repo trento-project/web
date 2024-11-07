@@ -1,1 +1,713 @@
-{"payload":{"Cib":{"Configuration":{"Constraints":{"RscLocations":null},"CrmConfig":{"ClusterProperties":[{"Id":"cib-bootstrap-options-have-watchdog","Name":"have-watchdog","Value":"true"},{"Id":"cib-bootstrap-options-dc-version","Name":"dc-version","Value":"2.0.5+20201202.ba59be712-4.13.1-2.0.5+20201202.ba59be712"},{"Id":"cib-bootstrap-options-cluster-infrastructure","Name":"cluster-infrastructure","Value":"corosync"},{"Id":"cib-bootstrap-options-cluster-name","Name":"cluster-name","Value":"hana_cluster_3"},{"Id":"cib-bootstrap-options-stonith-enabled","Name":"stonith-enabled","Value":"true"},{"Id":"cib-bootstrap-options-stonith-timeout","Name":"stonith-timeout","Value":"24"},{"Id":"cib-bootstrap-options-maintenance-mode","Name":"maintenance-mode","Value":"false"},{"Id":"SAPHanaSR-hana_hdp_site_srHook_WDF","Name":"hana_hdp_site_srHook_WDF","Value":"SOK"}]},"Nodes":[{"Id":"1","InstanceAttributes":[{"Id":"nodes-1-lpa_hdp_lpt","Name":"lpa_hdp_lpt","Value":"1643125019"},{"Id":"nodes-1-hana_hdp_vhost","Name":"hana_hdp_vhost","Value":"vmhdbprd01"},{"Id":"nodes-1-hana_hdp_site","Name":"hana_hdp_site","Value":"NBG"},{"Id":"nodes-1-hana_hdp_op_mode","Name":"hana_hdp_op_mode","Value":"logreplay"},{"Id":"nodes-1-hana_hdp_srmode","Name":"hana_hdp_srmode","Value":"sync"},{"Id":"nodes-1-hana_hdp_remoteHost","Name":"hana_hdp_remoteHost","Value":"vmhdbprd02"}],"Uname":"vmhdbprd01"},{"Id":"2","InstanceAttributes":[{"Id":"nodes-2-lpa_hdp_lpt","Name":"lpa_hdp_lpt","Value":"30"},{"Id":"nodes-2-hana_hdp_op_mode","Name":"hana_hdp_op_mode","Value":"logreplay"},{"Id":"nodes-2-hana_hdp_vhost","Name":"hana_hdp_vhost","Value":"vmhdbprd02"},{"Id":"nodes-2-hana_hdp_remoteHost","Name":"hana_hdp_remoteHost","Value":"vmhdbprd01"},{"Id":"nodes-2-hana_hdp_site","Name":"hana_hdp_site","Value":"WDF"},{"Id":"nodes-2-hana_hdp_srmode","Name":"hana_hdp_srmode","Value":"sync"}],"Uname":"vmhdbprd02"}],"Resources":{"Clones":[{"Id":"cln_SAPHanaTopology_HDP_HDB10","MetaAttributes":[{"Id":"cln_SAPHanaTopology_HDP_HDB10-meta_attributes-clone-node-max","Name":"clone-node-max","Value":"1"},{"Id":"cln_SAPHanaTopology_HDP_HDB10-meta_attributes-interleave","Name":"interleave","Value":"true"}],"Primitive":{"Class":"ocf","Id":"rsc_SAPHanaTopology_HDP_HDB10","InstanceAttributes":[{"Id":"rsc_SAPHanaTopology_HDP_HDB10-instance_attributes-SID","Name":"SID","Value":"HDP"},{"Id":"rsc_SAPHanaTopology_HDP_HDB10-instance_attributes-InstanceNumber","Name":"InstanceNumber","Value":"10"}],"MetaAttributes":null,"Operations":[{"Id":"rsc_SAPHanaTopology_HDP_HDB10-monitor-10","Interval":"10","Name":"monitor","Role":"","Timeout":"600"},{"Id":"rsc_SAPHanaTopology_HDP_HDB10-start-0","Interval":"0","Name":"start","Role":"","Timeout":"600"},{"Id":"rsc_SAPHanaTopology_HDP_HDB10-stop-0","Interval":"0","Name":"stop","Role":"","Timeout":"300"}],"Provider":"suse","Type":"SAPHanaTopology"}}],"Groups":[{"Id":"g_ip_HDP_HDB10","Primitives":[{"Class":"ocf","Id":"rsc_ip_HDP_HDB10","InstanceAttributes":[{"Id":"rsc_ip_HDP_HDB10-instance_attributes-ip","Name":"ip","Value":"10.80.1.13"},{"Id":"rsc_ip_HDP_HDB10-instance_attributes-cidr_netmask","Name":"cidr_netmask","Value":"24"},{"Id":"rsc_ip_HDP_HDB10-instance_attributes-nic","Name":"nic","Value":"eth0"}],"MetaAttributes":null,"Operations":[{"Id":"rsc_ip_HDP_HDB10-start-0","Interval":"0","Name":"start","Role":"","Timeout":"20"},{"Id":"rsc_ip_HDP_HDB10-stop-0","Interval":"0","Name":"stop","Role":"","Timeout":"20"},{"Id":"rsc_ip_HDP_HDB10-monitor-10","Interval":"10","Name":"monitor","Role":"","Timeout":"20"}],"Provider":"heartbeat","Type":"IPaddr2"},{"Class":"ocf","Id":"rsc_socat_HDP_HDB10","InstanceAttributes":[{"Id":"rsc_socat_HDP_HDB10-instance_attributes-port","Name":"port","Value":"62510"}],"MetaAttributes":null,"Operations":[{"Id":"rsc_socat_HDP_HDB10-monitor-10","Interval":"10","Name":"monitor","Role":"","Timeout":"20"}],"Provider":"heartbeat","Type":"azure-lb"}]}],"Masters":[{"Id":"msl_SAPHana_HDP_HDB10","MetaAttributes":[{"Id":"msl_SAPHana_HDP_HDB10-meta_attributes-clone-max","Name":"clone-max","Value":"2"},{"Id":"msl_SAPHana_HDP_HDB10-meta_attributes-clone-node-max","Name":"clone-node-max","Value":"1"},{"Id":"msl_SAPHana_HDP_HDB10-meta_attributes-interleave","Name":"interleave","Value":"true"}],"Primitive":{"Class":"ocf","Id":"rsc_SAPHana_HDP_HDB10","InstanceAttributes":[{"Id":"rsc_SAPHana_HDP_HDB10-instance_attributes-SID","Name":"SID","Value":"HDP"},{"Id":"rsc_SAPHana_HDP_HDB10-instance_attributes-InstanceNumber","Name":"InstanceNumber","Value":"10"},{"Id":"rsc_SAPHana_HDP_HDB10-instance_attributes-PREFER_SITE_TAKEOVER","Name":"PREFER_SITE_TAKEOVER","Value":"True"},{"Id":"rsc_SAPHana_HDP_HDB10-instance_attributes-AUTOMATED_REGISTER","Name":"AUTOMATED_REGISTER","Value":"False"},{"Id":"rsc_SAPHana_HDP_HDB10-instance_attributes-DUPLICATE_PRIMARY_TIMEOUT","Name":"DUPLICATE_PRIMARY_TIMEOUT","Value":"7200"}],"MetaAttributes":null,"Operations":[{"Id":"rsc_SAPHana_HDP_HDB10-start-0","Interval":"0","Name":"start","Role":"","Timeout":"3600"},{"Id":"rsc_SAPHana_HDP_HDB10-stop-0","Interval":"0","Name":"stop","Role":"","Timeout":"3600"},{"Id":"rsc_SAPHana_HDP_HDB10-promote-0","Interval":"0","Name":"promote","Role":"","Timeout":"3600"},{"Id":"rsc_SAPHana_HDP_HDB10-monitor-60","Interval":"60","Name":"monitor","Role":"Master","Timeout":"700"},{"Id":"rsc_SAPHana_HDP_HDB10-monitor-61","Interval":"61","Name":"monitor","Role":"Slave","Timeout":"700"}],"Provider":"suse","Type":"SAPHana"}}],"Primitives":[{"Class":"stonith","Id":"stonith-sbd","InstanceAttributes":[{"Id":"stonith-sbd-instance_attributes-pcmk_delay_max","Name":"pcmk_delay_max","Value":"15"}],"MetaAttributes":null,"Operations":[{"Id":"stonith-sbd-monitor-15","Interval":"15","Name":"monitor","Role":"","Timeout":"15"}],"Provider":"","Type":"external/sbd"}]}}},"Crmmon":{"Clones":[{"Failed":false,"FailureIgnored":false,"Id":"msl_SAPHana_HDP_HDB10","Managed":true,"MultiState":true,"Resources":[{"Active":true,"Agent":"ocf::suse:SAPHana","Blocked":false,"Failed":false,"FailureIgnored":false,"Id":"rsc_SAPHana_HDP_HDB10","Managed":true,"Node":{"Cached":true,"Id":"1","Name":"vmhdbprd01"},"NodesRunningOn":1,"Orphaned":false,"Role":"Master"},{"Active":true,"Agent":"ocf::suse:SAPHana","Blocked":false,"Failed":false,"FailureIgnored":false,"Id":"rsc_SAPHana_HDP_HDB10","Managed":true,"Node":{"Cached":true,"Id":"2","Name":"vmhdbprd02"},"NodesRunningOn":1,"Orphaned":false,"Role":"Slave"}],"Unique":false},{"Failed":false,"FailureIgnored":false,"Id":"cln_SAPHanaTopology_HDP_HDB10","Managed":true,"MultiState":false,"Resources":[{"Active":true,"Agent":"ocf::suse:SAPHanaTopology","Blocked":false,"Failed":false,"FailureIgnored":false,"Id":"rsc_SAPHanaTopology_HDP_HDB10","Managed":true,"Node":{"Cached":true,"Id":"1","Name":"vmhdbprd01"},"NodesRunningOn":1,"Orphaned":false,"Role":"Started"},{"Active":true,"Agent":"ocf::suse:SAPHanaTopology","Blocked":false,"Failed":false,"FailureIgnored":false,"Id":"rsc_SAPHanaTopology_HDP_HDB10","Managed":true,"Node":{"Cached":true,"Id":"2","Name":"vmhdbprd02"},"NodesRunningOn":1,"Orphaned":false,"Role":"Started"}],"Unique":false}],"Groups":[{"Id":"g_ip_HDP_HDB10","Resources":[{"Active":true,"Agent":"ocf::heartbeat:IPaddr2","Blocked":false,"Failed":false,"FailureIgnored":false,"Id":"rsc_ip_HDP_HDB10","Managed":true,"Node":{"Cached":true,"Id":"1","Name":"vmhdbprd01"},"NodesRunningOn":1,"Orphaned":false,"Role":"Started"},{"Active":true,"Agent":"ocf::heartbeat:azure-lb","Blocked":false,"Failed":false,"FailureIgnored":false,"Id":"rsc_socat_HDP_HDB10","Managed":true,"Node":{"Cached":true,"Id":"1","Name":"vmhdbprd01"},"NodesRunningOn":1,"Orphaned":false,"Role":"Started"}]}],"NodeAttributes":{"Nodes":[{"Attributes":[{"Name":"hana_hdp_clone_state","Value":"PROMOTED"},{"Name":"hana_hdp_op_mode","Value":"logreplay"},{"Name":"hana_hdp_remoteHost","Value":"vmhdbprd02"},{"Name":"hana_hdp_roles","Value":"4:P:master1:master:worker:master"},{"Name":"hana_hdp_site","Value":"NBG"},{"Name":"hana_hdp_srmode","Value":"sync"},{"Name":"hana_hdp_sync_state","Value":"PRIM"},{"Name":"hana_hdp_version","Value":"2.00.057.00.1629894416"},{"Name":"hana_hdp_vhost","Value":"vmhdbprd01"},{"Name":"lpa_hdp_lpt","Value":"1643125019"},{"Name":"master-rsc_SAPHana_HDP_HDB10","Value":"150"}],"Name":"vmhdbprd01"},{"Attributes":[{"Name":"hana_hdp_clone_state","Value":"DEMOTED"},{"Name":"hana_hdp_op_mode","Value":"logreplay"},{"Name":"hana_hdp_remoteHost","Value":"vmhdbprd01"},{"Name":"hana_hdp_roles","Value":"4:S:master1:master:worker:master"},{"Name":"hana_hdp_site","Value":"WDF"},{"Name":"hana_hdp_srmode","Value":"sync"},{"Name":"hana_hdp_sync_state","Value":"SOK"},{"Name":"hana_hdp_version","Value":"2.00.057.00.1629894416"},{"Name":"hana_hdp_vhost","Value":"vmhdbprd02"},{"Name":"lpa_hdp_lpt","Value":"30"},{"Name":"master-rsc_SAPHana_HDP_HDB10","Value":"100"}],"Name":"vmhdbprd02"}]},"NodeHistory":{"Nodes":[{"Name":"vmhdbprd01","ResourceHistory":[{"FailCount":0,"MigrationThreshold":5000,"Name":"stonith-sbd"},{"FailCount":0,"MigrationThreshold":5000,"Name":"rsc_SAPHanaTopology_HDP_HDB10"},{"FailCount":0,"MigrationThreshold":5000,"Name":"rsc_socat_HDP_HDB10"},{"FailCount":0,"MigrationThreshold":5000,"Name":"rsc_ip_HDP_HDB10"},{"FailCount":0,"MigrationThreshold":5000,"Name":"rsc_SAPHana_HDP_HDB10"}]},{"Name":"vmhdbprd02","ResourceHistory":[{"FailCount":0,"MigrationThreshold":5000,"Name":"rsc_SAPHana_HDP_HDB10"},{"FailCount":0,"MigrationThreshold":5000,"Name":"rsc_SAPHanaTopology_HDP_HDB10"}]}]},"Nodes":[{"DC":true,"ExpectedUp":true,"Id":"1","Maintenance":false,"Name":"vmhdbprd01","Online":true,"Pending":false,"ResourcesRunning":5,"Shutdown":false,"Standby":false,"StandbyOnFail":false,"Type":"member","Unclean":false},{"DC":false,"ExpectedUp":true,"Id":"2","Maintenance":false,"Name":"vmhdbprd02","Online":true,"Pending":false,"ResourcesRunning":2,"Shutdown":false,"Standby":false,"StandbyOnFail":false,"Type":"member","Unclean":false}],"Resources":[{"Active":true,"Agent":"stonith:external/sbd","Blocked":false,"Failed":false,"FailureIgnored":false,"Id":"stonith-sbd","Managed":true,"Node":{"Cached":true,"Id":"1","Name":"vmhdbprd01"},"NodesRunningOn":1,"Orphaned":false,"Role":"Started"}],"Summary":{"ClusterOptions":{"StonithEnabled":true},"LastChange":{"Time":"Tue Jan 25 15:36:59 2022"},"Nodes":{"Number":2},"Resources":{"Blocked":0,"Disabled":0,"Number":7}},"Version":"2.0.5"},"DC":true,"Id":"9c832998801e28cd70ad77380e82a5c0","Name":"hana_cluster_3","Provider":"azure","SBD":{"Config":{"SBD_DELAY_START":"yes","SBD_DEVICE":"/dev/disk/by-id/scsi-SLIO-ORG_IBLOCK_8d286026-c3a6-4404-90ac-f2549b924e77","SBD_MOVE_TO_ROOT_CGROUP":"auto","SBD_OPTS":"","SBD_PACEMAKER":"yes","SBD_STARTMODE":"always","SBD_SYNC_RESOURCE_STARTUP":"no","SBD_TIMEOUT_ACTION":"flush,reboot","SBD_WATCHDOG_DEV":"/dev/watchdog","SBD_WATCHDOG_TIMEOUT":"5"},"Devices":[{"Device":"/dev/disk/by-id/scsi-SLIO-ORG_IBLOCK_8d286026-c3a6-4404-90ac-f2549b924e77","Dump":{"Header":"2.1","SectorSize":512,"Slots":255,"TimeoutAllocate":2,"TimeoutLoop":1,"TimeoutMsgwait":10,"TimeoutWatchdog":5,"Uuid":"a7a18c6b-7c8e-4bda-bb77-45e4b5dc8478"},"List":[{"Id":0,"Name":"vmhdbprd01","Status":"clear"},{"Id":1,"Name":"vmhdbprd02","Status":"clear"}],"Status":"healthy"},{"Device":"/dev/disk/by-id/scsi-SLIO-ORG_IBLOCK_8d286026-c3a6-4404-90ac-f2549b912345","Dump":{"Header":"2.1","SectorSize":512,"Slots":255,"TimeoutAllocate":2,"TimeoutLoop":1,"TimeoutMsgwait":10,"TimeoutWatchdog":5,"Uuid":"a7a18c6b-7c8e-4bda-bb77-45e4b5dc8478"},"List":[{"Id":0,"Name":"vmhdbprd01","Status":"clear"},{"Id":1,"Name":"vmhdbprd02","Status":"clear"}],"Status":"unhealthy"},{"Device":"/dev/disk/by-id/scsi-SLIO-ORG_IBLOCK_8d286026-c3a6-4404-90ac-f2549b954321","Dump":{"Header":"2.1","SectorSize":512,"Slots":255,"TimeoutAllocate":2,"TimeoutLoop":1,"TimeoutMsgwait":10,"TimeoutWatchdog":5,"Uuid":"a7a18c6b-7c8e-4bda-bb77-45e4b5dc8478"},"List":[{"Id":0,"Name":"vmhdbprd01","Status":"clear"},{"Id":1,"Name":"vmhdbprd02","Status":"clear"}],"Status":"unknown"}]}},"discovery_type":"ha_cluster_discovery","agent_id":"9cd46919-5f19-59aa-993e-cf3736c71053"}
+{
+  "payload": {
+    "Cib": {
+      "Configuration": {
+        "Constraints": { "RscLocations": null },
+        "CrmConfig": {
+          "ClusterProperties": [
+            {
+              "Id": "cib-bootstrap-options-have-watchdog",
+              "Name": "have-watchdog",
+              "Value": "true"
+            },
+            {
+              "Id": "cib-bootstrap-options-dc-version",
+              "Name": "dc-version",
+              "Value": "2.0.5+20201202.ba59be712-4.13.1-2.0.5+20201202.ba59be712"
+            },
+            {
+              "Id": "cib-bootstrap-options-cluster-infrastructure",
+              "Name": "cluster-infrastructure",
+              "Value": "corosync"
+            },
+            {
+              "Id": "cib-bootstrap-options-cluster-name",
+              "Name": "cluster-name",
+              "Value": "hana_cluster_3"
+            },
+            {
+              "Id": "cib-bootstrap-options-stonith-enabled",
+              "Name": "stonith-enabled",
+              "Value": "true"
+            },
+            {
+              "Id": "cib-bootstrap-options-stonith-timeout",
+              "Name": "stonith-timeout",
+              "Value": "24"
+            },
+            {
+              "Id": "cib-bootstrap-options-maintenance-mode",
+              "Name": "maintenance-mode",
+              "Value": "false"
+            },
+            {
+              "Id": "SAPHanaSR-hana_hdp_site_srHook_WDF",
+              "Name": "hana_hdp_site_srHook_WDF",
+              "Value": "SOK"
+            }
+          ]
+        },
+        "Nodes": [
+          {
+            "Id": "1",
+            "InstanceAttributes": [
+              {
+                "Id": "nodes-1-lpa_hdp_lpt",
+                "Name": "lpa_hdp_lpt",
+                "Value": "1643125019"
+              },
+              {
+                "Id": "nodes-1-hana_hdp_vhost",
+                "Name": "hana_hdp_vhost",
+                "Value": "vmhdbprd01"
+              },
+              {
+                "Id": "nodes-1-hana_hdp_site",
+                "Name": "hana_hdp_site",
+                "Value": "NBG"
+              },
+              {
+                "Id": "nodes-1-hana_hdp_op_mode",
+                "Name": "hana_hdp_op_mode",
+                "Value": "logreplay"
+              },
+              {
+                "Id": "nodes-1-hana_hdp_srmode",
+                "Name": "hana_hdp_srmode",
+                "Value": "sync"
+              },
+              {
+                "Id": "nodes-1-hana_hdp_remoteHost",
+                "Name": "hana_hdp_remoteHost",
+                "Value": "vmhdbprd02"
+              }
+            ],
+            "Uname": "vmhdbprd01"
+          },
+          {
+            "Id": "2",
+            "InstanceAttributes": [
+              {
+                "Id": "nodes-2-lpa_hdp_lpt",
+                "Name": "lpa_hdp_lpt",
+                "Value": "30"
+              },
+              {
+                "Id": "nodes-2-hana_hdp_op_mode",
+                "Name": "hana_hdp_op_mode",
+                "Value": "logreplay"
+              },
+              {
+                "Id": "nodes-2-hana_hdp_vhost",
+                "Name": "hana_hdp_vhost",
+                "Value": "vmhdbprd02"
+              },
+              {
+                "Id": "nodes-2-hana_hdp_remoteHost",
+                "Name": "hana_hdp_remoteHost",
+                "Value": "vmhdbprd01"
+              },
+              {
+                "Id": "nodes-2-hana_hdp_site",
+                "Name": "hana_hdp_site",
+                "Value": "WDF"
+              },
+              {
+                "Id": "nodes-2-hana_hdp_srmode",
+                "Name": "hana_hdp_srmode",
+                "Value": "sync"
+              }
+            ],
+            "Uname": "vmhdbprd02"
+          }
+        ],
+        "Resources": {
+          "Clones": [
+            {
+              "Id": "cln_SAPHanaTopology_HDP_HDB10",
+              "MetaAttributes": [
+                {
+                  "Id": "cln_SAPHanaTopology_HDP_HDB10-meta_attributes-clone-node-max",
+                  "Name": "clone-node-max",
+                  "Value": "1"
+                },
+                {
+                  "Id": "cln_SAPHanaTopology_HDP_HDB10-meta_attributes-interleave",
+                  "Name": "interleave",
+                  "Value": "true"
+                }
+              ],
+              "Primitive": {
+                "Class": "ocf",
+                "Id": "rsc_SAPHanaTopology_HDP_HDB10",
+                "InstanceAttributes": [
+                  {
+                    "Id": "rsc_SAPHanaTopology_HDP_HDB10-instance_attributes-SID",
+                    "Name": "SID",
+                    "Value": "HDP"
+                  },
+                  {
+                    "Id": "rsc_SAPHanaTopology_HDP_HDB10-instance_attributes-InstanceNumber",
+                    "Name": "InstanceNumber",
+                    "Value": "10"
+                  }
+                ],
+                "MetaAttributes": null,
+                "Operations": [
+                  {
+                    "Id": "rsc_SAPHanaTopology_HDP_HDB10-monitor-10",
+                    "Interval": "10",
+                    "Name": "monitor",
+                    "Role": "",
+                    "Timeout": "600"
+                  },
+                  {
+                    "Id": "rsc_SAPHanaTopology_HDP_HDB10-start-0",
+                    "Interval": "0",
+                    "Name": "start",
+                    "Role": "",
+                    "Timeout": "600"
+                  },
+                  {
+                    "Id": "rsc_SAPHanaTopology_HDP_HDB10-stop-0",
+                    "Interval": "0",
+                    "Name": "stop",
+                    "Role": "",
+                    "Timeout": "300"
+                  }
+                ],
+                "Provider": "suse",
+                "Type": "SAPHanaTopology"
+              }
+            }
+          ],
+          "Groups": [
+            {
+              "Id": "g_ip_HDP_HDB10",
+              "Primitives": [
+                {
+                  "Class": "ocf",
+                  "Id": "rsc_ip_HDP_HDB10",
+                  "InstanceAttributes": [
+                    {
+                      "Id": "rsc_ip_HDP_HDB10-instance_attributes-ip",
+                      "Name": "ip",
+                      "Value": "10.80.1.13"
+                    },
+                    {
+                      "Id": "rsc_ip_HDP_HDB10-instance_attributes-cidr_netmask",
+                      "Name": "cidr_netmask",
+                      "Value": "24"
+                    },
+                    {
+                      "Id": "rsc_ip_HDP_HDB10-instance_attributes-nic",
+                      "Name": "nic",
+                      "Value": "eth0"
+                    }
+                  ],
+                  "MetaAttributes": null,
+                  "Operations": [
+                    {
+                      "Id": "rsc_ip_HDP_HDB10-start-0",
+                      "Interval": "0",
+                      "Name": "start",
+                      "Role": "",
+                      "Timeout": "20"
+                    },
+                    {
+                      "Id": "rsc_ip_HDP_HDB10-stop-0",
+                      "Interval": "0",
+                      "Name": "stop",
+                      "Role": "",
+                      "Timeout": "20"
+                    },
+                    {
+                      "Id": "rsc_ip_HDP_HDB10-monitor-10",
+                      "Interval": "10",
+                      "Name": "monitor",
+                      "Role": "",
+                      "Timeout": "20"
+                    }
+                  ],
+                  "Provider": "heartbeat",
+                  "Type": "IPaddr2"
+                },
+                {
+                  "Class": "ocf",
+                  "Id": "rsc_socat_HDP_HDB10",
+                  "InstanceAttributes": [
+                    {
+                      "Id": "rsc_socat_HDP_HDB10-instance_attributes-port",
+                      "Name": "port",
+                      "Value": "62510"
+                    }
+                  ],
+                  "MetaAttributes": null,
+                  "Operations": [
+                    {
+                      "Id": "rsc_socat_HDP_HDB10-monitor-10",
+                      "Interval": "10",
+                      "Name": "monitor",
+                      "Role": "",
+                      "Timeout": "20"
+                    }
+                  ],
+                  "Provider": "heartbeat",
+                  "Type": "azure-lb"
+                }
+              ]
+            }
+          ],
+          "Masters": [
+            {
+              "Id": "msl_SAPHana_HDP_HDB10",
+              "MetaAttributes": [
+                {
+                  "Id": "msl_SAPHana_HDP_HDB10-meta_attributes-clone-max",
+                  "Name": "clone-max",
+                  "Value": "2"
+                },
+                {
+                  "Id": "msl_SAPHana_HDP_HDB10-meta_attributes-clone-node-max",
+                  "Name": "clone-node-max",
+                  "Value": "1"
+                },
+                {
+                  "Id": "msl_SAPHana_HDP_HDB10-meta_attributes-interleave",
+                  "Name": "interleave",
+                  "Value": "true"
+                }
+              ],
+              "Primitive": {
+                "Class": "ocf",
+                "Id": "rsc_SAPHana_HDP_HDB10",
+                "InstanceAttributes": [
+                  {
+                    "Id": "rsc_SAPHana_HDP_HDB10-instance_attributes-SID",
+                    "Name": "SID",
+                    "Value": "HDP"
+                  },
+                  {
+                    "Id": "rsc_SAPHana_HDP_HDB10-instance_attributes-InstanceNumber",
+                    "Name": "InstanceNumber",
+                    "Value": "10"
+                  },
+                  {
+                    "Id": "rsc_SAPHana_HDP_HDB10-instance_attributes-PREFER_SITE_TAKEOVER",
+                    "Name": "PREFER_SITE_TAKEOVER",
+                    "Value": "True"
+                  },
+                  {
+                    "Id": "rsc_SAPHana_HDP_HDB10-instance_attributes-AUTOMATED_REGISTER",
+                    "Name": "AUTOMATED_REGISTER",
+                    "Value": "False"
+                  },
+                  {
+                    "Id": "rsc_SAPHana_HDP_HDB10-instance_attributes-DUPLICATE_PRIMARY_TIMEOUT",
+                    "Name": "DUPLICATE_PRIMARY_TIMEOUT",
+                    "Value": "7200"
+                  }
+                ],
+                "MetaAttributes": null,
+                "Operations": [
+                  {
+                    "Id": "rsc_SAPHana_HDP_HDB10-start-0",
+                    "Interval": "0",
+                    "Name": "start",
+                    "Role": "",
+                    "Timeout": "3600"
+                  },
+                  {
+                    "Id": "rsc_SAPHana_HDP_HDB10-stop-0",
+                    "Interval": "0",
+                    "Name": "stop",
+                    "Role": "",
+                    "Timeout": "3600"
+                  },
+                  {
+                    "Id": "rsc_SAPHana_HDP_HDB10-promote-0",
+                    "Interval": "0",
+                    "Name": "promote",
+                    "Role": "",
+                    "Timeout": "3600"
+                  },
+                  {
+                    "Id": "rsc_SAPHana_HDP_HDB10-monitor-60",
+                    "Interval": "60",
+                    "Name": "monitor",
+                    "Role": "Master",
+                    "Timeout": "700"
+                  },
+                  {
+                    "Id": "rsc_SAPHana_HDP_HDB10-monitor-61",
+                    "Interval": "61",
+                    "Name": "monitor",
+                    "Role": "Slave",
+                    "Timeout": "700"
+                  }
+                ],
+                "Provider": "suse",
+                "Type": "SAPHana"
+              }
+            }
+          ],
+          "Primitives": [
+            {
+              "Class": "stonith",
+              "Id": "stonith-sbd",
+              "InstanceAttributes": [
+                {
+                  "Id": "stonith-sbd-instance_attributes-pcmk_delay_max",
+                  "Name": "pcmk_delay_max",
+                  "Value": "15"
+                }
+              ],
+              "MetaAttributes": null,
+              "Operations": [
+                {
+                  "Id": "stonith-sbd-monitor-15",
+                  "Interval": "15",
+                  "Name": "monitor",
+                  "Role": "",
+                  "Timeout": "15"
+                }
+              ],
+              "Provider": "",
+              "Type": "external/sbd"
+            }
+          ]
+        }
+      }
+    },
+    "Crmmon": {
+      "Clones": [
+        {
+          "Failed": false,
+          "FailureIgnored": false,
+          "Id": "msl_SAPHana_HDP_HDB10",
+          "Managed": true,
+          "MultiState": true,
+          "Resources": [
+            {
+              "Active": true,
+              "Agent": "ocf::suse:SAPHana",
+              "Blocked": false,
+              "Failed": false,
+              "FailureIgnored": false,
+              "Id": "rsc_SAPHana_HDP_HDB10",
+              "Managed": true,
+              "Node": { "Cached": true, "Id": "1", "Name": "vmhdbprd01" },
+              "NodesRunningOn": 1,
+              "Orphaned": false,
+              "Role": "Master"
+            },
+            {
+              "Active": true,
+              "Agent": "ocf::suse:SAPHana",
+              "Blocked": false,
+              "Failed": false,
+              "FailureIgnored": false,
+              "Id": "rsc_SAPHana_HDP_HDB10",
+              "Managed": true,
+              "Node": { "Cached": true, "Id": "2", "Name": "vmhdbprd02" },
+              "NodesRunningOn": 1,
+              "Orphaned": false,
+              "Role": "Slave"
+            }
+          ],
+          "Unique": false
+        },
+        {
+          "Failed": false,
+          "FailureIgnored": false,
+          "Id": "cln_SAPHanaTopology_HDP_HDB10",
+          "Managed": true,
+          "MultiState": false,
+          "Resources": [
+            {
+              "Active": true,
+              "Agent": "ocf::suse:SAPHanaTopology",
+              "Blocked": false,
+              "Failed": false,
+              "FailureIgnored": false,
+              "Id": "rsc_SAPHanaTopology_HDP_HDB10",
+              "Managed": true,
+              "Node": { "Cached": true, "Id": "1", "Name": "vmhdbprd01" },
+              "NodesRunningOn": 1,
+              "Orphaned": false,
+              "Role": "Started"
+            },
+            {
+              "Active": true,
+              "Agent": "ocf::suse:SAPHanaTopology",
+              "Blocked": false,
+              "Failed": false,
+              "FailureIgnored": false,
+              "Id": "rsc_SAPHanaTopology_HDP_HDB10",
+              "Managed": true,
+              "Node": { "Cached": true, "Id": "2", "Name": "vmhdbprd02" },
+              "NodesRunningOn": 1,
+              "Orphaned": false,
+              "Role": "Started"
+            }
+          ],
+          "Unique": false
+        }
+      ],
+      "Groups": [
+        {
+          "Id": "g_ip_HDP_HDB10",
+          "Resources": [
+            {
+              "Active": true,
+              "Agent": "ocf::heartbeat:IPaddr2",
+              "Blocked": false,
+              "Failed": false,
+              "FailureIgnored": false,
+              "Id": "rsc_ip_HDP_HDB10",
+              "Managed": true,
+              "Node": { "Cached": true, "Id": "1", "Name": "vmhdbprd01" },
+              "NodesRunningOn": 1,
+              "Orphaned": false,
+              "Role": "Started"
+            },
+            {
+              "Active": true,
+              "Agent": "ocf::heartbeat:azure-lb",
+              "Blocked": false,
+              "Failed": false,
+              "FailureIgnored": false,
+              "Id": "rsc_socat_HDP_HDB10",
+              "Managed": true,
+              "Node": { "Cached": true, "Id": "1", "Name": "vmhdbprd01" },
+              "NodesRunningOn": 1,
+              "Orphaned": false,
+              "Role": "Started"
+            }
+          ]
+        }
+      ],
+      "NodeAttributes": {
+        "Nodes": [
+          {
+            "Attributes": [
+              { "Name": "hana_hdp_clone_state", "Value": "PROMOTED" },
+              { "Name": "hana_hdp_op_mode", "Value": "logreplay" },
+              { "Name": "hana_hdp_remoteHost", "Value": "vmhdbprd02" },
+              {
+                "Name": "hana_hdp_roles",
+                "Value": "4:P:master1:master:worker:master"
+              },
+              { "Name": "hana_hdp_site", "Value": "NBG" },
+              { "Name": "hana_hdp_srmode", "Value": "sync" },
+              { "Name": "hana_hdp_sync_state", "Value": "PRIM" },
+              { "Name": "hana_hdp_version", "Value": "2.00.057.00.1629894416" },
+              { "Name": "hana_hdp_vhost", "Value": "vmhdbprd01" },
+              { "Name": "lpa_hdp_lpt", "Value": "1643125019" },
+              { "Name": "master-rsc_SAPHana_HDP_HDB10", "Value": "150" }
+            ],
+            "Name": "vmhdbprd01"
+          },
+          {
+            "Attributes": [
+              { "Name": "hana_hdp_clone_state", "Value": "DEMOTED" },
+              { "Name": "hana_hdp_op_mode", "Value": "logreplay" },
+              { "Name": "hana_hdp_remoteHost", "Value": "vmhdbprd01" },
+              {
+                "Name": "hana_hdp_roles",
+                "Value": "4:S:master1:master:worker:master"
+              },
+              { "Name": "hana_hdp_site", "Value": "WDF" },
+              { "Name": "hana_hdp_srmode", "Value": "sync" },
+              { "Name": "hana_hdp_sync_state", "Value": "SOK" },
+              { "Name": "hana_hdp_version", "Value": "2.00.057.00.1629894416" },
+              { "Name": "hana_hdp_vhost", "Value": "vmhdbprd02" },
+              { "Name": "lpa_hdp_lpt", "Value": "30" },
+              { "Name": "master-rsc_SAPHana_HDP_HDB10", "Value": "100" }
+            ],
+            "Name": "vmhdbprd02"
+          }
+        ]
+      },
+      "NodeHistory": {
+        "Nodes": [
+          {
+            "Name": "vmhdbprd01",
+            "ResourceHistory": [
+              {
+                "FailCount": 0,
+                "MigrationThreshold": 5000,
+                "Name": "stonith-sbd"
+              },
+              {
+                "FailCount": 0,
+                "MigrationThreshold": 5000,
+                "Name": "rsc_SAPHanaTopology_HDP_HDB10"
+              },
+              {
+                "FailCount": 0,
+                "MigrationThreshold": 5000,
+                "Name": "rsc_socat_HDP_HDB10"
+              },
+              {
+                "FailCount": 0,
+                "MigrationThreshold": 5000,
+                "Name": "rsc_ip_HDP_HDB10"
+              },
+              {
+                "FailCount": 0,
+                "MigrationThreshold": 5000,
+                "Name": "rsc_SAPHana_HDP_HDB10"
+              }
+            ]
+          },
+          {
+            "Name": "vmhdbprd02",
+            "ResourceHistory": [
+              {
+                "FailCount": 0,
+                "MigrationThreshold": 5000,
+                "Name": "rsc_SAPHana_HDP_HDB10"
+              },
+              {
+                "FailCount": 0,
+                "MigrationThreshold": 5000,
+                "Name": "rsc_SAPHanaTopology_HDP_HDB10"
+              }
+            ]
+          }
+        ]
+      },
+      "Nodes": [
+        {
+          "DC": true,
+          "ExpectedUp": true,
+          "Id": "1",
+          "Maintenance": false,
+          "Name": "vmhdbprd01",
+          "Online": true,
+          "Pending": false,
+          "ResourcesRunning": 5,
+          "Shutdown": false,
+          "Standby": false,
+          "StandbyOnFail": false,
+          "Type": "member",
+          "Unclean": false
+        },
+        {
+          "DC": false,
+          "ExpectedUp": true,
+          "Id": "2",
+          "Maintenance": false,
+          "Name": "vmhdbprd02",
+          "Online": true,
+          "Pending": false,
+          "ResourcesRunning": 2,
+          "Shutdown": false,
+          "Standby": false,
+          "StandbyOnFail": false,
+          "Type": "member",
+          "Unclean": false
+        }
+      ],
+      "Resources": [
+        {
+          "Active": true,
+          "Agent": "stonith:external/sbd",
+          "Blocked": false,
+          "Failed": false,
+          "FailureIgnored": false,
+          "Id": "stonith-sbd",
+          "Managed": true,
+          "Node": { "Cached": true, "Id": "1", "Name": "vmhdbprd01" },
+          "NodesRunningOn": 1,
+          "Orphaned": false,
+          "Role": "Started"
+        }
+      ],
+      "Summary": {
+        "ClusterOptions": { "StonithEnabled": true },
+        "LastChange": { "Time": "Tue Jan 25 15:36:59 2022" },
+        "Nodes": { "Number": 2 },
+        "Resources": { "Blocked": 0, "Disabled": 0, "Number": 7 }
+      },
+      "Version": "2.0.5"
+    },
+    "DC": true,
+    "Id": "9c832998801e28cd70ad77380e82a5c0",
+    "Name": "hana_cluster_3",
+    "Provider": "azure",
+    "SBD": {
+      "Config": {
+        "SBD_DELAY_START": "yes",
+        "SBD_DEVICE": "/dev/disk/by-id/scsi-SLIO-ORG_IBLOCK_8d286026-c3a6-4404-90ac-f2549b924e77",
+        "SBD_MOVE_TO_ROOT_CGROUP": "auto",
+        "SBD_OPTS": "",
+        "SBD_PACEMAKER": "yes",
+        "SBD_STARTMODE": "always",
+        "SBD_SYNC_RESOURCE_STARTUP": "no",
+        "SBD_TIMEOUT_ACTION": "flush,reboot",
+        "SBD_WATCHDOG_DEV": "/dev/watchdog",
+        "SBD_WATCHDOG_TIMEOUT": "5"
+      },
+      "Devices": [
+        {
+          "Device": "/dev/disk/by-id/scsi-SLIO-ORG_IBLOCK_8d286026-c3a6-4404-90ac-f2549b924e77",
+          "Dump": {
+            "Header": "2.1",
+            "SectorSize": 512,
+            "Slots": 255,
+            "TimeoutAllocate": 2,
+            "TimeoutLoop": 1,
+            "TimeoutMsgwait": 10,
+            "TimeoutWatchdog": 5,
+            "Uuid": "a7a18c6b-7c8e-4bda-bb77-45e4b5dc8478"
+          },
+          "List": [
+            { "Id": 0, "Name": "vmhdbprd01", "Status": "clear" },
+            { "Id": 1, "Name": "vmhdbprd02", "Status": "clear" }
+          ],
+          "Status": "healthy"
+        },
+        {
+          "Device": "/dev/disk/by-id/scsi-SLIO-ORG_IBLOCK_8d286026-c3a6-4404-90ac-f2549b912345",
+          "Dump": {
+            "Header": "2.1",
+            "SectorSize": 512,
+            "Slots": 255,
+            "TimeoutAllocate": 2,
+            "TimeoutLoop": 1,
+            "TimeoutMsgwait": 10,
+            "TimeoutWatchdog": 5,
+            "Uuid": "a7a18c6b-7c8e-4bda-bb77-45e4b5dc8478"
+          },
+          "List": [
+            { "Id": 0, "Name": "vmhdbprd01", "Status": "clear" },
+            { "Id": 1, "Name": "vmhdbprd02", "Status": "clear" }
+          ],
+          "Status": "unhealthy"
+        },
+        {
+          "Device": "/dev/disk/by-id/scsi-SLIO-ORG_IBLOCK_8d286026-c3a6-4404-90ac-f2549b954321",
+          "Dump": {
+            "Header": "2.1",
+            "SectorSize": 512,
+            "Slots": 255,
+            "TimeoutAllocate": 2,
+            "TimeoutLoop": 1,
+            "TimeoutMsgwait": 10,
+            "TimeoutWatchdog": 5,
+            "Uuid": "a7a18c6b-7c8e-4bda-bb77-45e4b5dc8478"
+          },
+          "List": [
+            { "Id": 0, "Name": "vmhdbprd01", "Status": "clear" },
+            { "Id": 1, "Name": "vmhdbprd02", "Status": "clear" }
+          ],
+          "Status": "unknown"
+        }
+      ]
+    }
+  },
+  "discovery_type": "ha_cluster_discovery",
+  "agent_id": "9cd46919-5f19-59aa-993e-cf3736c71053"
+}

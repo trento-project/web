@@ -1,1 +1,108 @@
-{"payload":{"Metadata":{"compute":{"azEnvironment":"AzurePublicCloud","isHostCompatibilityLayerVm":"false","location":"westeurope","name":"vmiscsi01","offer":"sles-sap-15-sp3-byos","osProfile":{"adminUsername":"cloudadmin","computerName":"vmiscsi01","disablePasswordAuthentication":"true"},"osType":"Linux","plan":{},"platformFaultDomain":"0","platformUpdateDomain":"0","provider":"Microsoft.Compute","publicKeys":[{"keyData":"ssh-no-see","path":"ssh-no-see"}],"publisher":"SUSE","resourceGroupName":"resourceGroupName","resourceId":"/subscriptions/00000000-0000-0000-0000-000000000000","securityProfile":{"secureBootEnabled":"false","virtualTpmEnabled":"false"},"sku":"gen2","storageProfile":{"dataDisks":[{"caching":"ReadWrite","createOption":"Empty","diskSizeGB":"10","image":{"uri":""},"lun":"0","managedDisk":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000","storageAccountType":"StandardSSD_LRS"},"name":"disk-iscsisrv01-Data01","vhd":{"uri":""},"writeAcceleratorEnabled":"false"}],"imageReference":{"offer":"sles-sap-15-sp3-byos","publisher":"SUSE","sku":"gen2","version":"latest"},"osDisk":{"caching":"ReadWrite","createOption":"FromImage","diffDiskSettings":{"option":""},"diskSizeGB":"30","encryptionSettings":{"enabled":"false"},"image":{"uri":""},"managedDisk":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000","storageAccountType":"Premium_LRS"},"name":"disk-iscsisrv01-Os","osType":"Linux","vhd":{"uri":""},"writeAcceleratorEnabled":"false"}},"subscriptionId":"00000000-0000-0000-0000-000000000000","tags":"fake-tags","tagsList":[{"name":"Cost Center","value":"00000000"},{"name":"Department","value":"EI"},{"name":"Environment","value":"Development"},{"name":"Finance Business Partner","value":"John Doe"},{"name":"General Ledger Code","value":"100000000"},{"name":"Group","value":"SAP Solutions"},{"name":"Owner","value":"John Doe"},{"name":"Stakeholder","value":"John Doe"},{"name":"workspace","value":"xxxxxxx"}],"version":"2021.12.19","vmId":"458cb0ec-254e-4f68-873a-2d26e1e40c26","vmSize":"Standard_DS1_v2"},"network":{"interface":[{"ipv4":{"ipAddress":[{"privateIpAddress":"10.100.1.4","publicIpAddress":"XX.XXX.XX.XXX"}],"subnet":[{"address":"10.100.1.0","prefix":"24"}]},"ipv6":{},"macAddress":"000D3A2AAABE"}]}},"Provider":"azure"},"discovery_type":"cloud_discovery","agent_id":"69f4dcbb-efa2-5a16-8bc8-01df7dbb7384"}
+{
+  "payload": {
+    "Metadata": {
+      "compute": {
+        "azEnvironment": "AzurePublicCloud",
+        "isHostCompatibilityLayerVm": "false",
+        "location": "westeurope",
+        "name": "vmiscsi01",
+        "offer": "sles-sap-15-sp3-byos",
+        "osProfile": {
+          "adminUsername": "cloudadmin",
+          "computerName": "vmiscsi01",
+          "disablePasswordAuthentication": "true"
+        },
+        "osType": "Linux",
+        "plan": {},
+        "platformFaultDomain": "0",
+        "platformUpdateDomain": "0",
+        "provider": "Microsoft.Compute",
+        "publicKeys": [{ "keyData": "ssh-no-see", "path": "ssh-no-see" }],
+        "publisher": "SUSE",
+        "resourceGroupName": "resourceGroupName",
+        "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000",
+        "securityProfile": {
+          "secureBootEnabled": "false",
+          "virtualTpmEnabled": "false"
+        },
+        "sku": "gen2",
+        "storageProfile": {
+          "dataDisks": [
+            {
+              "caching": "ReadWrite",
+              "createOption": "Empty",
+              "diskSizeGB": "10",
+              "image": { "uri": "" },
+              "lun": "0",
+              "managedDisk": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000000",
+                "storageAccountType": "StandardSSD_LRS"
+              },
+              "name": "disk-iscsisrv01-Data01",
+              "vhd": { "uri": "" },
+              "writeAcceleratorEnabled": "false"
+            }
+          ],
+          "imageReference": {
+            "offer": "sles-sap-15-sp3-byos",
+            "publisher": "SUSE",
+            "sku": "gen2",
+            "version": "latest"
+          },
+          "osDisk": {
+            "caching": "ReadWrite",
+            "createOption": "FromImage",
+            "diffDiskSettings": { "option": "" },
+            "diskSizeGB": "30",
+            "encryptionSettings": { "enabled": "false" },
+            "image": { "uri": "" },
+            "managedDisk": {
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000000",
+              "storageAccountType": "Premium_LRS"
+            },
+            "name": "disk-iscsisrv01-Os",
+            "osType": "Linux",
+            "vhd": { "uri": "" },
+            "writeAcceleratorEnabled": "false"
+          }
+        },
+        "subscriptionId": "00000000-0000-0000-0000-000000000000",
+        "tags": "fake-tags",
+        "tagsList": [
+          { "name": "Cost Center", "value": "00000000" },
+          { "name": "Department", "value": "EI" },
+          { "name": "Environment", "value": "Development" },
+          { "name": "Finance Business Partner", "value": "John Doe" },
+          { "name": "General Ledger Code", "value": "100000000" },
+          { "name": "Group", "value": "SAP Solutions" },
+          { "name": "Owner", "value": "John Doe" },
+          { "name": "Stakeholder", "value": "John Doe" },
+          { "name": "workspace", "value": "xxxxxxx" }
+        ],
+        "version": "2021.12.19",
+        "vmId": "458cb0ec-254e-4f68-873a-2d26e1e40c26",
+        "vmSize": "Standard_DS1_v2"
+      },
+      "network": {
+        "interface": [
+          {
+            "ipv4": {
+              "ipAddress": [
+                {
+                  "privateIpAddress": "10.100.1.4",
+                  "publicIpAddress": "XX.XXX.XX.XXX"
+                }
+              ],
+              "subnet": [{ "address": "10.100.1.0", "prefix": "24" }]
+            },
+            "ipv6": {},
+            "macAddress": "000D3A2AAABE"
+          }
+        ]
+      }
+    },
+    "Provider": "azure"
+  },
+  "discovery_type": "cloud_discovery",
+  "agent_id": "69f4dcbb-efa2-5a16-8bc8-01df7dbb7384"
+}

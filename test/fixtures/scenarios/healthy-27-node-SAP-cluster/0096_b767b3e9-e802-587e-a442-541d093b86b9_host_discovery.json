@@ -1,1 +1,20 @@
-{"payload":{"agent_version":"2.1.0","cpu_count":4,"fully_qualified_domain_name":"vmhdbprd02.l15cqsinwnpu5gfyrf1r5l51fe.ax.internal.cloudapp.net","hostname":"vmhdbprd02","ip_addresses":["127.0.0.1","::1","10.80.1.12","fe80::20d:3aff:fe21:f108"],"netmasks":["8","128","24","64"],"os_version":"15-SP3","socket_count":1,"total_memory_mb":32107},"discovery_type":"host_discovery","agent_id":"b767b3e9-e802-587e-a442-541d093b86b9"}
+{
+  "payload": {
+    "agent_version": "2.1.0",
+    "cpu_count": 4,
+    "fully_qualified_domain_name": "vmhdbprd02.l15cqsinwnpu5gfyrf1r5l51fe.ax.internal.cloudapp.net",
+    "hostname": "vmhdbprd02",
+    "ip_addresses": [
+      "127.0.0.1",
+      "::1",
+      "10.80.1.12",
+      "fe80::20d:3aff:fe21:f108"
+    ],
+    "netmasks": ["8", "128", "24", "64"],
+    "os_version": "15-SP3",
+    "socket_count": 1,
+    "total_memory_mb": 32107
+  },
+  "discovery_type": "host_discovery",
+  "agent_id": "b767b3e9-e802-587e-a442-541d093b86b9"
+}

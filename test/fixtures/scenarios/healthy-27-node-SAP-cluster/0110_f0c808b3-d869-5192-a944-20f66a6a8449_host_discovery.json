@@ -1,1 +1,20 @@
-{"payload":{"agent_version":"2.1.0","cpu_count":1,"fully_qualified_domain_name":"vmiscsi01.l15cqsinwnpu5gfyrf1r5l51fe.ax.internal.cloudapp.net","hostname":"vmiscsi01","ip_addresses":["127.0.0.1","::1","10.90.1.4","fe80::222:48ff:fe7f:d2f9"],"netmasks":["8","128","24","64"],"os_version":"15-SP3","socket_count":1,"total_memory_mb":3422},"discovery_type":"host_discovery","agent_id":"f0c808b3-d869-5192-a944-20f66a6a8449"}
+{
+  "payload": {
+    "agent_version": "2.1.0",
+    "cpu_count": 1,
+    "fully_qualified_domain_name": "vmiscsi01.l15cqsinwnpu5gfyrf1r5l51fe.ax.internal.cloudapp.net",
+    "hostname": "vmiscsi01",
+    "ip_addresses": [
+      "127.0.0.1",
+      "::1",
+      "10.90.1.4",
+      "fe80::222:48ff:fe7f:d2f9"
+    ],
+    "netmasks": ["8", "128", "24", "64"],
+    "os_version": "15-SP3",
+    "socket_count": 1,
+    "total_memory_mb": 3422
+  },
+  "discovery_type": "host_discovery",
+  "agent_id": "f0c808b3-d869-5192-a944-20f66a6a8449"
+}

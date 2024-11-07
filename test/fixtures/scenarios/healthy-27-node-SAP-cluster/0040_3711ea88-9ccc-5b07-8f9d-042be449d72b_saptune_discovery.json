@@ -1,1 +1,9 @@
-{"payload":{"package_version":"3.0.0","saptune_installed":true,"status":null},"discovery_type":"saptune_discovery","agent_id":"3711ea88-9ccc-5b07-8f9d-042be449d72b"}
+{
+  "payload": {
+    "package_version": "3.0.0",
+    "saptune_installed": true,
+    "status": null
+  },
+  "discovery_type": "saptune_discovery",
+  "agent_id": "3711ea88-9ccc-5b07-8f9d-042be449d72b"
+}
