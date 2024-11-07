@@ -122,7 +122,7 @@ describe('exports the packages in CSV format', () => {
 
     expect(window.URL.createObjectURL).toHaveBeenCalledWith(new File([], ''));
     expect(window.URL.createObjectURL).toHaveReturnedWith({
-      name: `${hostName}-patches.csv`,
+      name: `${hostName}-upgradable-packages.csv`,
       size: 131,
     });
   });

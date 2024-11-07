@@ -17,6 +17,8 @@ export default function UpgradablePackages({
   onLoad = noop,
 }) {
   const [search, setSearch] = useState('');
+  const [csvURL, setCsvURL] = useState(null);
+
   const enrichedPackages = upgradablePackages.map((packageDetails) => {
     const { name, from_version, from_release, to_version, to_release, arch } =
       packageDetails;
@@ -34,20 +36,21 @@ export default function UpgradablePackages({
         .map(({ advisory }) => containsSubstring(advisory, search))
         .includes(true)
   );
-  const [csvURL, setCsvURL] = useState(null);
 
   const hasPatches = (packages) =>
     packages.some((packageDetails) => !isEmpty(packageDetails.patches));
-  const createCsvPackages = (packages) =>
-    packages.map((packageDetails) => {
-      const advisories = packageDetails.patches.map((it) => it.advisory);
-      return {
-        ...packageDetails,
-        patches: advisories,
-      };
-    });
 
   useEffect(() => {
+    const packagesData = hasPatches(enrichedPackages)
+      ? enrichedPackages.map((packageDetails) => {
+          const advisories = packageDetails.patches.map((it) => it.advisory);
+          return {
+            ...packageDetails,
+            patches: advisories,
+          };
+        })
+      : [];
+
     setCsvURL(
       hasPatches(enrichedPackages)
         ? URL.createObjectURL?.(
@@ -56,14 +59,12 @@ export default function UpgradablePackages({
                 Papa.unparse(
                   {
                     fields: ['installed_package', 'latest_package', 'patches'],
-                    data: hasPatches(enrichedPackages)
-                      ? createCsvPackages(enrichedPackages)
-                      : [],
+                    data: packagesData,
                   },
                   { header: true }
                 ),
               ],
-              `${hostName}-patches.csv`,
+              `${hostName}-upgradable-packages.csv`,
               { type: 'text/csv' }
             )
           )
@@ -73,8 +74,6 @@ export default function UpgradablePackages({
     return () => {
       if (csvURL) {
         URL.revokeObjectURL(csvURL);
-      } else {
-        setCsvURL(null);
       }
     };
   }, [patchesLoading]);
