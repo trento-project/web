@@ -23,7 +23,7 @@ function UpgradablePackagesList({
   };
 
   const sortByLatestPackage = createStringSortingPredicate(
-    'latest_package',
+    'latestPackage',
     sortDirection
   );
 
@@ -33,12 +33,12 @@ function UpgradablePackagesList({
     columns: [
       {
         title: 'Installed Packages',
-        key: 'installed_package',
+        key: 'installedPackage',
         render: (content, _) => <div className="font-bold">{content}</div>,
       },
       {
         title: 'Latest Package',
-        key: 'latest_package',
+        key: 'latestPackage',
         sortable: true,
         sortDirection,
         handleClick: () => toggleSortDirection(),
@@ -46,7 +46,7 @@ function UpgradablePackagesList({
       },
       {
         title: 'Related Patches',
-        key: 'original_patches',
+        key: 'patches',
         render: (content, { to_package_id }) => {
           if (patchesLoading) {
             return (

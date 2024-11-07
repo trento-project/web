@@ -22,21 +22,33 @@ export default function UpgradablePackages({
     const { name, from_version, from_release, to_version, to_release, arch } =
       packageDetails;
     const patches = get(packageDetails, 'patches', []);
-    const advisories = patches.map(({ advisory }) => advisory).join(',');
+
     return {
       ...packageDetails,
-      installed_package: `${name}-${from_version}-${from_release}.${arch}`,
-      latest_package: `${name}-${to_version}-${to_release}.${arch}`,
-      patches: advisories,
-      original_patches: patches,
+      installedPackage: `${name}-${from_version}-${from_release}.${arch}`,
+      latestPackage: `${name}-${to_version}-${to_release}.${arch}`,
+      patches,
     };
   });
-  const displayedPackages = enrichedPackages.filter(
-    ({ name, original_patches }) =>
+
+  const filteredPackages = enrichedPackages.filter(
+    ({ name, patches }) =>
       containsSubstring(name, search) ||
-      original_patches
+      patches
         .map(({ advisory }) => containsSubstring(advisory, search))
         .includes(true)
+  );
+
+  const csvContent = enrichedPackages.map(
+    ({ installedPackage, latestPackage, patches }) => {
+      const advisories = patches.map(({ advisory }) => advisory).join(',');
+
+      return {
+        installed_package: installedPackage,
+        latest_package: latestPackage,
+        patches: advisories,
+      };
+    }
   );
 
   useEffect(() => {
@@ -53,7 +65,7 @@ export default function UpgradablePackages({
                 Papa.unparse(
                   {
                     fields: ['installed_package', 'latest_package', 'patches'],
-                    data: enrichedPackages,
+                    data: csvContent,
                   },
                   { header: true }
                 ),
@@ -96,7 +108,7 @@ export default function UpgradablePackages({
       </div>
       <UpgradablePackagesList
         patchesLoading={patchesLoading}
-        upgradablePackages={displayedPackages}
+        upgradablePackages={filteredPackages}
         onPatchClick={onPatchClick}
         onLoad={onLoad}
       />
