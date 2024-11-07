@@ -354,28 +354,39 @@ context('Hosts Overview', () => {
       });
 
       describe('Movement of application instances on hosts', () => {
-        const sapSystemHostToDeregister = {
-          id: '7269ee51-5007-5849-aaa7-7c4a98b0c9ce',
+        const sapSystemHostsToDeregister = {
           sid: 'NWD',
-          hostname: 'vmnwdev01',
+          movedHostId: 'fb2c6b8a-9915-5969-a6b7-8b5a42de1971',
+          initialHostId: '7269ee51-5007-5849-aaa7-7c4a98b0c9ce',
+          initialHostname: 'vmnwdev01',
         };
 
         before(() => {
           cy.visit('/hosts');
           cy.url().should('include', '/hosts');
-          cy.loadScenario(`sapsystem-${sapSystemHostToDeregister.sid}-restore`);
+          cy.loadScenario(
+            `sapsystem-${sapSystemHostsToDeregister.sid}-restore`
+          );
+          cy.loadScenario('sap-systems-overview-moved');
         });
 
         after(() => {
-          cy.loadScenario(`sapsystem-${sapSystemHostToDeregister.sid}-restore`);
+          cy.loadScenario(
+            `sapsystem-${sapSystemHostsToDeregister.sid}-restore`
+          );
         });
 
-        it('should not impact host deregistration', () => {
-          cy.loadScenario('sap-systems-overview-moved');
+        it('should associate instances to the correct host during deregistration', () => {
           cy.get(NEXT_PAGE_SELECTOR).click();
-          cy.contains('a', sapSystemHostToDeregister.hostname).should('exist');
-          cy.deregisterHost(sapSystemHostToDeregister.id);
-          cy.contains('a', sapSystemHostToDeregister.hostname).should(
+          cy.contains('a', sapSystemHostsToDeregister.sid).should('exist');
+          cy.deregisterHost(sapSystemHostsToDeregister.movedHostId);
+          cy.contains('a', sapSystemHostsToDeregister.sid).should('not.exist');
+        });
+
+        it('should complete host deregistration when all instances are moved out', () => {
+          cy.contains('a', sapSystemHostsToDeregister.hostname).should('exist');
+          cy.deregisterHost(sapSystemHostsToDeregister.initialHostId);
+          cy.contains('a', sapSystemHostsToDeregister.initialHostname).should(
             'not.exist'
           );
         });
