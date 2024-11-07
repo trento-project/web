@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { EOS_SEARCH } from 'eos-icons-react';
 import { noop } from 'lodash';
+import Papa from 'papaparse';
 
 import UpgradablePackagesList from '@common/UpgradablePackagesList';
 import PageHeader from '@common/PageHeader';
 import Input from '@common/Input';
+import Button from '@common/Button';
 import { containsSubstring } from '@lib/filter';
 
 export default function UpgradablePackages({
@@ -15,14 +17,78 @@ export default function UpgradablePackages({
   onLoad = noop,
 }) {
   const [search, setSearch] = useState('');
+  const [csvURL, setCsvURL] = useState(null);
+  const enrichedPackages = upgradablePackages.map((packageDetails) => {
+    const {
+      name,
+      from_version,
+      from_release,
+      to_version,
+      to_release,
+      arch,
+      patches = [],
+    } = packageDetails;
 
-  const displayedPackages = upgradablePackages.filter(
+    return {
+      ...packageDetails,
+      installedPackage: `${name}-${from_version}-${from_release}.${arch}`,
+      latestPackage: `${name}-${to_version}-${to_release}.${arch}`,
+      patches,
+    };
+  });
+
+  const filteredPackages = enrichedPackages.filter(
     ({ name, patches }) =>
       containsSubstring(name, search) ||
       patches
         .map(({ advisory }) => containsSubstring(advisory, search))
         .includes(true)
   );
+
+  const csvContent = enrichedPackages.map(
+    ({ installedPackage, latestPackage, patches }) => {
+      const advisories = patches.map(({ advisory }) => advisory).join(',');
+
+      return {
+        installed_package: installedPackage,
+        latest_package: latestPackage,
+        patches: advisories,
+      };
+    }
+  );
+
+  useEffect(() => {
+    // Ensure to revoke previous csvUrls
+    if (csvURL) {
+      URL.revokeObjectURL(csvURL);
+    }
+
+    setCsvURL(
+      enrichedPackages.length > 0
+        ? URL.createObjectURL?.(
+            new File(
+              [
+                Papa.unparse(
+                  {
+                    fields: ['installed_package', 'latest_package', 'patches'],
+                    data: csvContent,
+                  },
+                  { header: true }
+                ),
+              ],
+              `${hostName}-upgradable-packages.csv`,
+              { type: 'text/csv' }
+            )
+          )
+        : null
+    );
+
+    return () => {
+      if (csvURL) {
+        URL.revokeObjectURL(csvURL);
+      }
+    };
+  }, [enrichedPackages.length, patchesLoading]);
 
   return (
     <>
@@ -32,18 +98,23 @@ export default function UpgradablePackages({
             Upgradable packages: <span className="font-bold">{hostName}</span>
           </PageHeader>
         </div>
-        <div className="flex w-1/3 justify-end">
+        <div className="flex w-1/3 gap-2 justify-end">
           <Input
             className="flex"
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by Name or Patch"
             prefix={<EOS_SEARCH size="l" />}
           />
+          <a href={csvURL} download={`${hostName}-upgradable-packages.csv`}>
+            <Button className="w-max" type="primary-white" disabled={!csvURL}>
+              Download CSV
+            </Button>
+          </a>
         </div>
       </div>
       <UpgradablePackagesList
         patchesLoading={patchesLoading}
-        upgradablePackages={displayedPackages}
+        upgradablePackages={filteredPackages}
         onPatchClick={onPatchClick}
         onLoad={onLoad}
       />

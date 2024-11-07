@@ -21,3 +21,9 @@ export const patchForPackageFactory = Factory.define(({ sequence }) => ({
   update_date: faker.date.anytime().toString(),
   last_modified_date: faker.date.anytime().toString(),
 }));
+
+export const upgradablePackageFactory = Factory.define(() => ({
+  installedPackage: `Package ${faker.animal.cat()}`,
+  latestPackage: faker.system.semver(),
+  patches: [{ advisory: faker.animal.cat() }],
+}));

@@ -76,18 +76,13 @@ function UpgradablePackagesList({
     ],
   };
 
-  const data = upgradablePackages.map((packageDetails) => {
-    const { name, from_version, from_release, to_version, to_release, arch } =
-      packageDetails;
-
-    return {
-      ...packageDetails,
-      installedPackage: `${name}-${from_version}-${from_release}.${arch}`,
-      latestPackage: `${name}-${to_version}-${to_release}.${arch}`,
-    };
-  });
-
-  return <Table config={config} data={data} sortBy={sortByLatestPackage} />;
+  return (
+    <Table
+      config={config}
+      data={upgradablePackages}
+      sortBy={sortByLatestPackage}
+    />
+  );
 }
 
 export default UpgradablePackagesList;

@@ -10,7 +10,9 @@ describe('UpgradablePackagesList component', () => {
     const { patches } = upgradablePackage;
 
     const expectedInstalledPackage = `${upgradablePackage.name}-${upgradablePackage.from_version}-${upgradablePackage.from_release}.${upgradablePackage.arch}`;
+    upgradablePackage.installedPackage = expectedInstalledPackage;
     const expectedLatestPackage = `${upgradablePackage.name}-${upgradablePackage.to_version}-${upgradablePackage.to_release}.${upgradablePackage.arch}`;
+    upgradablePackage.latestPackage = expectedLatestPackage;
 
     render(<UpgradablePackagesList upgradablePackages={[upgradablePackage]} />);
 

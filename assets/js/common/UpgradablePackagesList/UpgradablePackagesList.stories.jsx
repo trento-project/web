@@ -1,4 +1,4 @@
-import { upgradablePackageFactory } from '@lib/test-utils/factories/upgradablePackage';
+import { upgradablePackageFactory } from '@lib/test-utils/factories/relevantPatches';
 import UpgradablePackagesList from './UpgradablePackagesList';
 
 export default {
@@ -9,6 +9,10 @@ export default {
       type: 'string',
       control: { type: 'text' },
       description: 'The name of the host',
+    },
+    onPatchClick: {
+      action: 'patch clicked',
+      description: 'Callback when patch is clicked',
     },
     upgradablePackages: {
       control: {
@@ -25,7 +29,8 @@ export default {
 export const Default = {
   args: {
     hostname: 'Example Host',
-    upgradablePackages: upgradablePackageFactory.buildList(4),
+    patchesLoading: false,
+    upgradablePackages: upgradablePackageFactory.buildList(2),
   },
 };
 
@@ -33,6 +38,6 @@ export const PatchesLoading = {
   args: {
     hostname: 'Example Host',
     patchesLoading: true,
-    upgradablePackages: upgradablePackageFactory.buildList(4),
+    upgradablePackages: upgradablePackageFactory.buildList(2),
   },
 };

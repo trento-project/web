@@ -18,3 +18,11 @@ export const Default = {
     upgradablePackages: upgradablePackageFactory.buildList(15),
   },
 };
+
+export const Empty = {
+  args: {
+    hostName: hostFactory.build().hostname,
+    upgradablePackages: [],
+    patchesLoading: false,
+  },
+};

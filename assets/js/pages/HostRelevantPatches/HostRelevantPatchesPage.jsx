@@ -26,29 +26,40 @@ function HostRelevantPatches({ hostName, onNavigate, patches }) {
 
   const [displayedPatches, setDisplayedPatches] = useState(patches);
 
-  const file =
-    window?.URL?.createObjectURL && displayedPatches?.length > 0
-      ? window.URL.createObjectURL(
-          new File(
-            [
-              Papa.unparse(
-                {
-                  fields: [
-                    'advisory_type',
-                    'advisory_name',
-                    'advisory_synopsis',
-                    'update_date',
-                  ],
-                  data: displayedPatches,
-                },
-                { header: true }
-              ),
-            ],
-            `${hostName}-patches.csv`,
-            { type: 'text/csv' }
+  const [csvURL, setCsvURL] = useState(null);
+
+  useEffect(() => {
+    setCsvURL(
+      patches.length > 0
+        ? URL.createObjectURL?.(
+            new File(
+              [
+                Papa.unparse(
+                  {
+                    fields: [
+                      'advisory_type',
+                      'advisory_name',
+                      'advisory_synopsis',
+                      'update_date',
+                    ],
+                    data: patches,
+                  },
+                  { header: true }
+                ),
+              ],
+              `${hostName}-patches.csv`,
+              { type: 'text/csv' }
+            )
           )
-        )
-      : null;
+        : null
+    );
+
+    return () => {
+      if (csvURL) {
+        URL.revokeObjectURL?.(csvURL);
+      }
+    };
+  }, [patches.length]);
 
   useEffect(() => {
     const filteredByAdvisoryType = filterPatchesByAdvisoryType(
@@ -60,12 +71,6 @@ function HostRelevantPatches({ hostName, onNavigate, patches }) {
         advisory_synopsis ? containsSubstring(advisory_synopsis, search) : false
     );
     setDisplayedPatches(searchResult);
-
-    return () => {
-      if (window?.URL?.revokeObjectURL && displayedPatches?.length > 0) {
-        window.URL.revokeObjectURL(file);
-      }
-    };
   }, [patches, displayedAdvisories, search]);
 
   return (
@@ -90,11 +95,11 @@ function HostRelevantPatches({ hostName, onNavigate, patches }) {
             placeholder="Search by Synopsis"
             prefix={<EOS_SEARCH size="l" />}
           />
-          <a href={file} download={`${hostName}-patches.csv`}>
+          <a href={csvURL} download={`${hostName}-patches.csv`}>
             <Button
               className="w-max"
               type="primary-white"
-              disabled={displayedPatches?.length <= 0}
+              disabled={patches.length <= 0 || !csvURL}
             >
               Download CSV
             </Button>
