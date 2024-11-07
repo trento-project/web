@@ -30,7 +30,7 @@ defmodule Trento.ActivityLog.MetadataQueryParser do
     numeric_op: @opts
   )
 
-  @search_regex "[a-zA-Z0-9_-]"
+  @search_regex "[a-zA-Z0-9_./:-]"
   @default_connector "||"
   def parse(search_string, capture_var \\ "@.**")
 
@@ -40,6 +40,9 @@ defmodule Trento.ActivityLog.MetadataQueryParser do
     case search_string_trimmed != "" && search_expr(search_string_trimmed) do
       {:ok, parsed_object, "" = _unconsumed_input, _, _, _} ->
         add_surrounding_parens? = length(parsed_object) > 1
+        numeric_capture_var = "@"
+
+        is_numeric_query? = numeric_query?(parsed_object)
 
         query_fragment =
           Enum.map_join(parsed_object, " ", fn
@@ -65,15 +68,21 @@ defmodule Trento.ActivityLog.MetadataQueryParser do
               "(#{capture_var} starts with \"#{alnum}\")"
 
             {:op_expr, [numeric_op: [op], numeric: numeric]} ->
-              "(#{capture_var} #{op} #{numeric})"
+              "(#{numeric_capture_var} #{op} #{numeric})"
           end)
 
-        case add_surrounding_parens? do
-          true ->
-            {:ok, "(#{query_fragment})"}
+        case {add_surrounding_parens?, is_numeric_query?} do
+          {true, true} ->
+            {:ok, "$.** ? (#{query_fragment})"}
 
-          false ->
-            {:ok, query_fragment}
+          {true, false} ->
+            {:ok, "$ ? (#{query_fragment})"}
+
+          {false, true} ->
+            {:ok, "$.** ? #{query_fragment}"}
+
+          {false, false} ->
+            {:ok, "$ ? #{query_fragment}"}
         end
 
       false ->
@@ -85,4 +94,10 @@ defmodule Trento.ActivityLog.MetadataQueryParser do
   end
 
   def parse(maybe_search_input, _), do: {:error, :noop, maybe_search_input}
+
+  defp numeric_query?(parsed_object),
+    do:
+      Enum.all?(parsed_object, fn {type, subtype} ->
+        elem(hd(subtype), 0) == :numeric_op or type == :boolean_connector
+      end)
 end

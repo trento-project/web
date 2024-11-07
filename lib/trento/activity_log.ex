@@ -89,9 +89,7 @@ defmodule Trento.ActivityLog do
     maybe_metadata_search_string = params[:search]
 
     case MetadataQueryParser.parse(maybe_metadata_search_string) do
-      {:ok, parsed_query_fragment} ->
-        jsonpath_expr = "$ ? #{parsed_query_fragment}"
-
+      {:ok, jsonpath_expr} ->
         from q in query,
           select: %{
             id: q.id,
