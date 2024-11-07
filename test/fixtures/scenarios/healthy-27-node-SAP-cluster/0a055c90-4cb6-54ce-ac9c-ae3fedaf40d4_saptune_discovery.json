@@ -1,9 +1,0 @@
-{
-  "discovery_type": "saptune_discovery",
-  "agent_id": "0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4",
-  "payload": {
-    "saptune_installed": false,
-    "package_version": "",
-    "status": null
-  } 
-}

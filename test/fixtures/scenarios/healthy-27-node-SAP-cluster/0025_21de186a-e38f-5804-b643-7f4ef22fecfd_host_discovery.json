@@ -1,0 +1,1 @@
+{"payload":{"agent_version":"2.1.0","cpu_count":2,"hostname":"vmdrbddev02","ip_addresses":["127.0.0.1","::1","10.100.1.32","fe80::6245:bdff:fe8d:95f1"],"netmasks":["8","128","24","64"],"os_version":"15-SP3","socket_count":1,"total_memory_mb":7951},"discovery_type":"host_discovery","agent_id":"21de186a-e38f-5804-b643-7f4ef22fecfd"}
