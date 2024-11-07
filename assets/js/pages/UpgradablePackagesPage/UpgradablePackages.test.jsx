@@ -90,22 +90,6 @@ describe('exports the packages in CSV format', () => {
         to_release: '1',
         to_version: '1.16.2',
         patches: ['SUSE-15-SP4-2024-630,SUSE-15-SP4-2024-619'],
-        original_patches: [
-          {
-            issue_date: '2024-02-27',
-            last_modified_date: '2024-02-27',
-            synopsis: 'Recommended update for cloud-netconfig',
-            advisory_type: 'bugfix',
-            advisory: 'SUSE-15-SP4-2024-630',
-          },
-          {
-            issue_date: '2024-02-26',
-            last_modified_date: '2024-02-26',
-            synopsis: 'important: Security update for java-1_8_0-ibm',
-            advisory_type: 'security_advisory',
-            advisory: 'SUSE-15-SP4-2024-619',
-          },
-        ],
       }),
     ];
     const patchesLoading = false;

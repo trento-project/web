@@ -52,7 +52,7 @@ export default function UpgradablePackages({
   );
 
   useEffect(() => {
-    // Ensure to revoke previous scvUrls
+    // Ensure to revoke previous csvUrls
     if (csvURL) {
       URL.revokeObjectURL(csvURL);
     }
