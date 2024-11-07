@@ -59,7 +59,7 @@ function HostRelevantPatches({ hostName, onNavigate, patches }) {
         URL.revokeObjectURL?.(csvURL);
       }
     };
-  }, [patches]);
+  }, [patches.length]);
 
   useEffect(() => {
     const filteredByAdvisoryType = filterPatchesByAdvisoryType(

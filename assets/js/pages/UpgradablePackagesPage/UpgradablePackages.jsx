@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { EOS_SEARCH } from 'eos-icons-react';
-import { noop, get } from 'lodash';
+import { noop } from 'lodash';
 import Papa from 'papaparse';
 
 import UpgradablePackagesList from '@common/UpgradablePackagesList';
@@ -19,9 +19,15 @@ export default function UpgradablePackages({
   const [search, setSearch] = useState('');
   const [csvURL, setCsvURL] = useState(null);
   const enrichedPackages = upgradablePackages.map((packageDetails) => {
-    const { name, from_version, from_release, to_version, to_release, arch } =
-      packageDetails;
-    const patches = get(packageDetails, 'patches', []);
+    const {
+      name,
+      from_version,
+      from_release,
+      to_version,
+      to_release,
+      arch,
+      patches = [],
+    } = packageDetails;
 
     return {
       ...packageDetails,

@@ -75,7 +75,7 @@ describe('exports the packages in CSV format', () => {
     expect(window.URL.revokeObjectURL).not.toHaveBeenCalled();
   });
 
-  it('Exports the packages in CSV format', () => {
+  it('exports the packages in CSV format', () => {
     const user = userEvent.setup();
     const hostName = faker.string.uuid();
     const upgradablePackage = [
