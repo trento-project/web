@@ -58,6 +58,7 @@ defmodule Mix.Tasks.DumpScenario do
     events = Discovery.get_current_discovery_events()
 
     Enum.map(events, fn %DiscoveryEvent{
+                          id: id,
                           agent_id: agent_id,
                           discovery_type: discovery_type,
                           payload: payload
@@ -72,8 +73,10 @@ defmodule Mix.Tasks.DumpScenario do
       scenario_path = Path.join(path, scenario_name)
       File.mkdir_p!(scenario_path)
 
+      index = id |> Integer.to_string() |> String.pad_leading(4, "0")
+
       scenario_path
-      |> Path.join("#{agent_id}_#{discovery_type}.json")
+      |> Path.join("#{index}_#{agent_id}_#{discovery_type}.json")
       |> File.write!(data)
     end)
   end
