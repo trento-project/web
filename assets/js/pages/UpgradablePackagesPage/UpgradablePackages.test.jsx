@@ -89,7 +89,8 @@ describe('exports the packages in CSV format', () => {
         from_version: '1.15.7',
         to_release: '1',
         to_version: '1.16.2',
-        patches: [
+        patches: ['SUSE-15-SP4-2024-630,SUSE-15-SP4-2024-619'],
+        original_patches: [
           {
             issue_date: '2024-02-27',
             last_modified_date: '2024-02-27',
@@ -123,7 +124,7 @@ describe('exports the packages in CSV format', () => {
     expect(window.URL.createObjectURL).toHaveBeenCalledWith(new File([], ''));
     expect(window.URL.createObjectURL).toHaveReturnedWith({
       name: `${hostName}-upgradable-packages.csv`,
-      size: 131,
+      size: 88,
     });
   });
 

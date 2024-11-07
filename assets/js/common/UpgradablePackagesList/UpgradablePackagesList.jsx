@@ -46,7 +46,7 @@ function UpgradablePackagesList({
       },
       {
         title: 'Related Patches',
-        key: 'patches',
+        key: 'original_patches',
         render: (content, { to_package_id }) => {
           if (patchesLoading) {
             return (

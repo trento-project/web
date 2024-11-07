@@ -11,7 +11,7 @@ export const upgradablePackageFactory = Factory.define(({ sequence }) => ({
   from_release: releaseVersionFactory(),
   from_version: faker.system.semver(),
   name: `${faker.word.noun()}${sequence}`,
-  patches: patchForPackageFactory.buildList(2),
+  original_patches: patchForPackageFactory.buildList(2),
   to_epoch: faker.date.anytime(),
   to_package_id: faker.number.int({ min: 2000, max: 5000 }),
   to_release: releaseVersionFactory(),

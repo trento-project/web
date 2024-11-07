@@ -7,7 +7,7 @@ import UpgradablePackagesList from './UpgradablePackagesList';
 describe('UpgradablePackagesList component', () => {
   it('should render the upgradable packages list', () => {
     const upgradablePackage = upgradablePackageFactory.build();
-    const { patches } = upgradablePackage;
+    const { original_patches } = upgradablePackage;
 
     const expectedInstalledPackage = `${upgradablePackage.name}-${upgradablePackage.from_version}-${upgradablePackage.from_release}.${upgradablePackage.arch}`;
     upgradablePackage.installed_package = expectedInstalledPackage;
@@ -18,7 +18,7 @@ describe('UpgradablePackagesList component', () => {
 
     expect(screen.getByText(expectedInstalledPackage)).toBeVisible();
     expect(screen.getByText(expectedLatestPackage)).toBeVisible();
-    patches.forEach(({ advisory }) => {
+    original_patches.forEach(({ advisory }) => {
       expect(screen.getByText(advisory)).toBeVisible();
     });
   });

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { EOS_SEARCH } from 'eos-icons-react';
-import { noop, isEmpty } from 'lodash';
+import { noop, get } from 'lodash';
 import Papa from 'papaparse';
 
 import UpgradablePackagesList from '@common/UpgradablePackagesList';
@@ -18,48 +18,42 @@ export default function UpgradablePackages({
 }) {
   const [search, setSearch] = useState('');
   const [csvURL, setCsvURL] = useState(null);
-
   const enrichedPackages = upgradablePackages.map((packageDetails) => {
     const { name, from_version, from_release, to_version, to_release, arch } =
       packageDetails;
-
+    const patches = get(packageDetails, 'patches', []);
+    const advisories = patches.map(({ advisory }) => advisory).join(',');
     return {
       ...packageDetails,
       installed_package: `${name}-${from_version}-${from_release}.${arch}`,
       latest_package: `${name}-${to_version}-${to_release}.${arch}`,
+      patches: advisories,
+      original_patches: patches,
     };
   });
   const displayedPackages = enrichedPackages.filter(
-    ({ name, patches }) =>
+    ({ name, original_patches }) =>
       containsSubstring(name, search) ||
-      patches
+      original_patches
         .map(({ advisory }) => containsSubstring(advisory, search))
         .includes(true)
   );
 
-  const hasPatches = (packages) =>
-    packages.some((packageDetails) => !isEmpty(packageDetails.patches));
-
   useEffect(() => {
-    const packagesData = hasPatches(enrichedPackages)
-      ? enrichedPackages.map((packageDetails) => {
-          const advisories = packageDetails.patches.map((it) => it.advisory);
-          return {
-            ...packageDetails,
-            patches: advisories,
-          };
-        })
-      : [];
+    // Ensure to revoke previous scvUrls
+    if (csvURL) {
+      URL.revokeObjectURL(csvURL);
+    }
 
     setCsvURL(
-      hasPatches(enrichedPackages)
+      enrichedPackages.length > 0
         ? URL.createObjectURL?.(
             new File(
               [
                 Papa.unparse(
                   {
                     fields: ['installed_package', 'latest_package', 'patches'],
-                    data: packagesData,
+                    data: enrichedPackages,
                   },
                   { header: true }
                 ),
@@ -76,7 +70,7 @@ export default function UpgradablePackages({
         URL.revokeObjectURL(csvURL);
       }
     };
-  }, [patchesLoading]);
+  }, [enrichedPackages.length, patchesLoading]);
 
   return (
     <>
