@@ -200,6 +200,16 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
     )
   end
 
+  def get_cert_der(ca_cert) do
+    ca_cert
+    |> :public_key.pem_decode()
+    |> Enum.map(&:public_key.pem_entry_decode/1)
+    |> Enum.map(&split_type_and_entry/1)
+    |> Enum.map(fn {ans1_type, ans1_entry} ->
+      :public_key.der_encode(ans1_type, ans1_entry)
+    end)
+  end
+
   defp request_options(auth, ca_cert),
     do: [hackney: [cookie: [auth]]] ++ ssl_options(ca_cert) ++ timeout_options()
 
@@ -208,20 +218,9 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
   defp ssl_options(nil), do: []
 
   defp ssl_options(ca_cert),
-    do: [ssl: [verify: :verify_peer, cacerts: [get_cert_der(ca_cert)]]]
+    do: [ssl: [verify: :verify_peer, cacerts: get_cert_der(ca_cert)]]
 
-  def get_cert_der(ca_cert) do
-    {cert_type, cert_entry} =
-      ca_cert
-      |> :public_key.pem_decode()
-      |> hd()
-      |> :public_key.pem_entry_decode()
-      |> split_type_and_entry()
-
-    :public_key.der_encode(cert_type, cert_entry)
-  end
-
-  def split_type_and_entry(ans1_entry) do
+  defp split_type_and_entry(ans1_entry) do
     ans1_type = elem(ans1_entry, 0)
     {ans1_type, ans1_entry}
   end
