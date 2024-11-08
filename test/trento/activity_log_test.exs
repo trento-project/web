@@ -352,7 +352,7 @@ defmodule Trento.ActivityLogTest do
       assert length(returned_results) == 3
 
       assert returned_results |> Enum.map(& &1.id) |> Enum.sort() ==
-               [expected_result1.id, expected_result2.id, expected_result3.id] |> Enum.sort()
+               Enum.sort([expected_result1.id, expected_result2.id, expected_result3.id])
     end
 
     test "Three keywords connected by AND" do
@@ -372,7 +372,7 @@ defmodule Trento.ActivityLogTest do
       _not_expected_result2 = insert(:activity_log_entry, metadata: %{"field2" => keyword2})
 
       _not_expected_result3 =
-        insert(:activity_log_entry, metadata: %{"field3" => keyword3, "field3" => keyword3})
+        insert(:activity_log_entry, metadata: %{"field3" => keyword3, "field4" => keyword3})
 
       insert_list(50, :activity_log_entry)
 
