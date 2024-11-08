@@ -1,4 +1,4 @@
-import { upgradablePackageFactory } from '@lib/test-utils/factories/relevantPatches';
+import { csvDataupgradablePackageFactory } from '@lib/test-utils/factories/relevantPatches';
 import UpgradablePackagesList from './UpgradablePackagesList';
 
 export default {
@@ -30,7 +30,7 @@ export const Default = {
   args: {
     hostname: 'Example Host',
     patchesLoading: false,
-    upgradablePackages: upgradablePackageFactory.buildList(2),
+    upgradablePackages: csvDataupgradablePackageFactory.buildList(2),
   },
 };
 
@@ -38,6 +38,6 @@ export const PatchesLoading = {
   args: {
     hostname: 'Example Host',
     patchesLoading: true,
-    upgradablePackages: upgradablePackageFactory.buildList(2),
+    upgradablePackages: csvDataupgradablePackageFactory.buildList(2),
   },
 };

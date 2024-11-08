@@ -57,6 +57,12 @@ export default function UpgradablePackages({
     }
   );
 
+  const sortCsvContent = (content) =>
+    content.length <= 1
+      ? content
+      : content.sort((packageA, packageB) =>
+          packageA.installed_package.localeCompare(packageB.installed_package)
+        );
   useEffect(() => {
     // Ensure to revoke previous csvUrls
     if (csvURL) {
@@ -71,7 +77,7 @@ export default function UpgradablePackages({
                 Papa.unparse(
                   {
                     fields: ['installed_package', 'latest_package', 'patches'],
-                    data: csvContent,
+                    data: sortCsvContent(csvContent),
                   },
                   { header: true }
                 ),
