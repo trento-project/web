@@ -204,8 +204,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
     ca_cert
     |> :public_key.pem_decode()
     |> Enum.map(&:public_key.pem_entry_decode/1)
-    |> Enum.map(&split_type_and_entry/1)
-    |> Enum.map(fn {asn1_type, asn1_entry} ->
+    |> Enum.map(fn {asn1_type, _, _, _} = asn1_entry ->
       :public_key.der_encode(asn1_type, asn1_entry)
     end)
   end
@@ -219,9 +218,4 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
 
   defp ssl_options(ca_cert),
     do: [ssl: [verify: :verify_peer, cacerts: get_cert_der(ca_cert)]]
-
-  defp split_type_and_entry(asn1_entry) do
-    asn1_type = elem(asn1_entry, 0)
-    {asn1_type, asn1_entry}
-  end
 end
