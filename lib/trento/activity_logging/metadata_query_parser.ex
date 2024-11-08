@@ -13,7 +13,7 @@ defmodule Trento.ActivityLog.MetadataQueryParser do
     op_expr <-  numeric_op numeric  / leading_star? alnum trailing_star?
     leading_star <- '*'
     trailing_star <- '*'
-    alnum <- [a-zA-Z0-9-_]+
+    alnum <- [a-zA-Z0-9-_./:]+
     numeric <- [0-9]+
     numeric_op <- ('==' / '>' / '<' / '!=')
     """,
