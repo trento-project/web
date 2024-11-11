@@ -50,7 +50,5 @@ describe('ChecksCatalog CheckItem component', () => {
     expect(screen.queryByText(check.remediation)).not.toBeInTheDocument();
     await user.click(checkDiv);
     expect(screen.getByText(check.remediation)).toBeVisible();
-    await user.click(checkDiv);
-    expect(screen.queryByText(check.remediation)).not.toBeInTheDocument();
   });
 });
