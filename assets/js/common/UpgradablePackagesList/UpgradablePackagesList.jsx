@@ -19,7 +19,6 @@ function UpgradablePackagesList({
     'latestPackage',
     sortBy
   );
-  console.log('sortByLatestPackage', sortByLatestPackage);
   useEffect(() => {
     setSortBy(sortDirection);
   }, [sortDirection]);

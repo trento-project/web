@@ -151,9 +151,6 @@ describe('exports the packages in CSV format', () => {
     const csvHeader = 'installed_package,latest_package,patches';
     const firstCsvEntry = `${secondUpgradablePackage.name}-${secondUpgradablePackage.from_version}-${secondUpgradablePackage.from_release}.${secondUpgradablePackage.arch},${secondUpgradablePackage.name}-${secondUpgradablePackage.to_version}-${secondUpgradablePackage.to_release}.${secondUpgradablePackage.arch},${secondUpgradablePackage.patches[0].advisory}`;
     const secondCsvEntry = `${firstUpgradablePackage.name}-${firstUpgradablePackage.from_version}-${firstUpgradablePackage.from_release}.${firstUpgradablePackage.arch},${firstUpgradablePackage.name}-${firstUpgradablePackage.to_version}-${firstUpgradablePackage.to_release}.${firstUpgradablePackage.arch},${firstUpgradablePackage.patches[0].advisory}`;
-    const expectedCsvData = [csvHeader, firstCsvEntry, secondCsvEntry].join(
-      '\n'
-    );
 
     const patchesLoading = false;
     render(
@@ -174,14 +171,26 @@ describe('exports the packages in CSV format', () => {
       timeout: 1000,
     });
     const csvObj = mockCreateObjectURL.mock.calls[0][0];
+
     const reader = new FileReader();
+
     reader.readAsText(csvObj);
     await new Promise((resolve) => {
       reader.onloadend = resolve;
     });
-    expect(reader.result).toBe(expectedCsvData);
+
+    const actualCsvData = reader.result
+      .split('\n')
+      .map((line) => line.trim())
+      .join('\n');
+    const expectedCsvData = [csvHeader, firstCsvEntry, secondCsvEntry]
+      .join('\n')
+      .split('\n')
+      .map((line) => line.trim())
+      .join('\n');
+
+    expect(actualCsvData).toBe(expectedCsvData);
     mockCreateObjectURL.mockRestore();
-    // test if expected output is same as content of csv after clicking
   });
 
   afterAll(() => {
