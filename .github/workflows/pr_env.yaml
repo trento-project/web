@@ -1,4 +1,4 @@
-name:  Pull request environment
+name: Pull request environment
 
 on:
   pull_request:
@@ -8,7 +8,7 @@ on:
       - labeled
 
 env:
-  MANTAINERS: "[\"cdimonaco\", \"dottorblaster\", \"nelsonkopliku\", \"arbulu89\", \"jagabomb\", \"emaksy\", \"gagandeepb\", \"balanza\", \"janvhs\"]"
+  MANTAINERS: '["cdimonaco", "dottorblaster", "nelsonkopliku", "arbulu89", "jagabomb", "emaksy", "gagandeepb", "balanza", "janvhs"]'
   PR_ENV_LABEL: env
   PR_NUMBER: "${{ github.event.pull_request.number }}"
 
@@ -150,7 +150,7 @@ jobs:
         uses: jaxxstorm/action-install-gh-release@v1.13.0
         with:
           repo: trento-project/photofinish
-          tag: v1.3.0
+          tag: v1.4.1
           cache: enable
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
