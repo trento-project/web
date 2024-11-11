@@ -134,7 +134,7 @@ jobs:
           path: terraform/deployments/aws/hana_ha_enabled
           workspace: "trentoe2e"
       - name: Install aws-delete-vpc
-        uses: jaxxstorm/action-install-gh-release@v1.12.0
+        uses: jaxxstorm/action-install-gh-release@v1.13.0
         with:
           repo: isovalent/aws-delete-vpc
           cache: enable
