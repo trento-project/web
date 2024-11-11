@@ -9,6 +9,19 @@ import Input from '@common/Input';
 import Button from '@common/Button';
 import { containsSubstring } from '@lib/filter';
 
+const sortCsvContent = (content, sortingDirection) => {
+  if (content.length <= 1) {
+    return content;
+  }
+
+  return content.sort((packageA, packageB) => {
+    const comparison = packageA.latest_package.localeCompare(
+      packageB.latest_package
+    );
+    return sortingDirection === 'asc' ? comparison : -comparison;
+  });
+};
+
 export default function UpgradablePackages({
   hostName,
   upgradablePackages,
@@ -64,19 +77,6 @@ export default function UpgradablePackages({
       };
     }
   );
-
-  const sortCsvContent = (content, sortingDirection) => {
-    if (content.length <= 1) {
-      return content;
-    }
-
-    return content.sort((packageA, packageB) => {
-      const comparison = packageA.latest_package.localeCompare(
-        packageB.latest_package
-      );
-      return sortingDirection === 'asc' ? comparison : -comparison;
-    });
-  };
 
   useEffect(() => {
     // Ensure to revoke previous csvUrls
