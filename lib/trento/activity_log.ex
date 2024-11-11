@@ -101,14 +101,16 @@ defmodule Trento.ActivityLog do
             updated_at: q.updated_at
           }
 
-      {:error, reason, trimmed_search_string} = error ->
-        if reason != :noop do
-          Logger.info(
-            "Metadata parse failure for search string \"#{trimmed_search_string}\": #{inspect(error)}"
-          )
-        end
-
+      {:error, :noop, _} ->
         query
+
+      {:error, _, trimmed_search_string} = error ->
+        Logger.info(
+          "Metadata parse failure for search string \"#{trimmed_search_string}\": #{inspect(error)}"
+        )
+
+        # search query parsing failed, no entries will be returned
+        from q in query, where: false
     end
   end
 
@@ -122,8 +124,8 @@ defmodule Trento.ActivityLog do
              iex> parse_params([{:from_date, "2021-01-31"}, {:to_date, "2021-01-01"}, last: 10])
        %{
           filters: [
-                     %{value: "2021-01-31", op: :<=, field: :inserted_at}, 
-                     %{value: "2021-01-01", op: :>=, field: :inserted_at}], 
+                     %{value: "2021-01-31", op: :<=, field: :inserted_at},
+                     %{value: "2021-01-01", op: :>=, field: :inserted_at}],
           last: 10
        }
        """ && false

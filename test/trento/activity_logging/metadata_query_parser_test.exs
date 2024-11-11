@@ -40,13 +40,20 @@ defmodule Trento.ActivityLog.MetadataQueryParserTest do
   ]
 
   @parse_fail_cases [
-    "",
-    "    ",
     "foo;;",
     "foo$",
     "foo;; SELECT 1;;",
-    ">42;;SELECT 1;;"
+    ">42;;SELECT 1;;",
+    "$!@#%#"
   ]
+
+  @noop_cases [
+    "",
+    "    ",
+    nil,
+    42
+  ]
+
   describe "Metadata query parsing into Jsonpath expressions" do
     test "Should parse successfully." do
       for {test_case, expected_parse} <- @parse_succeed_cases do
@@ -56,9 +63,16 @@ defmodule Trento.ActivityLog.MetadataQueryParserTest do
       end
     end
 
+    test "should recognize empty queries" do
+      for test_case <- @noop_cases do
+        assert {:error, :noop, _trimmed_search_string} = MetadataQueryParser.parse(test_case)
+      end
+    end
+
     test "Should not parse successfully" do
       for test_case <- @parse_fail_cases do
-        assert {:error, _reason, _trimmed_search_string} = MetadataQueryParser.parse(test_case)
+        assert {:error, reason, _trimmed_search_string} = MetadataQueryParser.parse(test_case)
+        refute reason == :noop
       end
     end
   end

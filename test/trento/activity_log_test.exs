@@ -411,5 +411,10 @@ defmodule Trento.ActivityLogTest do
       assert Enum.sort([expected_result1.id, expected_result2.id]) ==
                returned_results |> Enum.map(& &1.id) |> Enum.sort()
     end
+
+    test "malformed query yields empty result" do
+      insert_list(50, :activity_log_entry)
+      {:ok, [], _meta} = ActivityLog.list_activity_log(%{search: "@!$%"})
+    end
   end
 end
