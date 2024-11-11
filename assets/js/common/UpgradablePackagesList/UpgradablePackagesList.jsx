@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { noop } from 'lodash';
 
 import Button from '@common/Button';
@@ -11,21 +11,17 @@ function UpgradablePackagesList({
   upgradablePackages = upgradablePackagesDefault,
   patchesLoading,
   onPatchClick = noop,
+  sortDirection = 'asc',
+  toggleSortDirection = () => {},
 }) {
-  const [sortDirection, setSortDirection] = useState('asc');
-
-  const toggleSortDirection = () => {
-    if (sortDirection === 'asc') {
-      setSortDirection('desc');
-    } else {
-      setSortDirection('asc');
-    }
-  };
-
+  const [sortBy, setSortBy] = useState(sortDirection);
   const sortByLatestPackage = createStringSortingPredicate(
     'latestPackage',
-    sortDirection
+    sortBy
   );
+  useEffect(() => {
+    setSortBy(sortDirection);
+  }, [sortDirection]);
 
   const config = {
     pagination: true,
@@ -40,7 +36,7 @@ function UpgradablePackagesList({
         title: 'Latest Package',
         key: 'latestPackage',
         sortable: true,
-        sortDirection,
+        sortDirection: sortBy,
         handleClick: () => toggleSortDirection(),
         render: (content, _) => <div>{content}</div>,
       },

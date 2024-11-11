@@ -5,7 +5,6 @@ import '@testing-library/jest-dom';
 import { noop } from 'lodash';
 import { faker } from '@faker-js/faker';
 import { upgradablePackageFactory } from '@lib/test-utils/factories/upgradablePackage';
-
 import { renderWithRouter as render } from '@lib/test-utils';
 
 import UpgradablePackages from './UpgradablePackages';
