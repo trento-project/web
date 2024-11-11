@@ -18,6 +18,14 @@ export default function UpgradablePackages({
 }) {
   const [search, setSearch] = useState('');
   const [csvURL, setCsvURL] = useState(null);
+  const [sortDirection, setSortDirection] = useState('asc');
+
+  const toggleSortDirection = () => {
+    setSortDirection((prevDirection) =>
+      prevDirection === 'asc' ? 'desc' : 'asc'
+    );
+  };
+
   const enrichedPackages = upgradablePackages.map((packageDetails) => {
     const {
       name,
@@ -57,18 +65,24 @@ export default function UpgradablePackages({
     }
   );
 
-  const sortCsvContent = (content) =>
-    content.length <= 1
-      ? content
-      : content.sort((packageA, packageB) =>
-          packageA.installed_package.localeCompare(packageB.installed_package)
-        );
+  const sortCsvContent = (content, sortingDirection) => {
+    if (content.length <= 1) {
+      return content;
+    }
+
+    return content.sort((packageA, packageB) => {
+      const comparison = packageA.latest_package.localeCompare(
+        packageB.latest_package
+      );
+      return sortingDirection === 'asc' ? comparison : -comparison;
+    });
+  };
+
   useEffect(() => {
     // Ensure to revoke previous csvUrls
     if (csvURL) {
       URL.revokeObjectURL(csvURL);
     }
-
     setCsvURL(
       enrichedPackages.length > 0
         ? URL.createObjectURL?.(
@@ -77,7 +91,7 @@ export default function UpgradablePackages({
                 Papa.unparse(
                   {
                     fields: ['installed_package', 'latest_package', 'patches'],
-                    data: sortCsvContent(csvContent),
+                    data: sortCsvContent(csvContent, sortDirection),
                   },
                   { header: true }
                 ),
@@ -94,7 +108,7 @@ export default function UpgradablePackages({
         URL.revokeObjectURL(csvURL);
       }
     };
-  }, [enrichedPackages.length, patchesLoading]);
+  }, [enrichedPackages.length, patchesLoading, sortDirection]);
 
   return (
     <>
@@ -123,6 +137,8 @@ export default function UpgradablePackages({
         upgradablePackages={filteredPackages}
         onPatchClick={onPatchClick}
         onLoad={onLoad}
+        toggleSortDirection={toggleSortDirection}
+        sortDirection={sortDirection}
       />
     </>
   );
