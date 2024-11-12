@@ -2,7 +2,7 @@ defmodule Trento.MixProject do
   use Mix.Project
 
   @source_url "https://github.com/trento-project/web"
-  @version "2.3.2"
+  @version "2.4.0"
 
   def project do
     [
