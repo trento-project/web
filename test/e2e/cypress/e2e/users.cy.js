@@ -383,7 +383,7 @@ describe('Users', () => {
 
       cy.get('button.totp-selection-dropdown').click();
 
-      cy.get('li:contains("Disabled")').click();
+      cy.contains('div', 'Disabled').click();
       cy.contains('button', 'Save').click();
 
       cy.get('div').contains('User edited successfully');
@@ -398,7 +398,9 @@ describe('Users', () => {
 
       cy.get('button.totp-selection-dropdown').click();
 
-      cy.get('ul > li:nth-child(1)')
+      cy.get(
+        'div[role="listbox"][data-headlessui-state="open"] > div:nth-child(1)'
+      )
         .invoke('attr', 'aria-disabled')
         .should('eq', 'true');
     });
