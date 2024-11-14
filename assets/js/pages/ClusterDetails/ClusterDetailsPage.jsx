@@ -72,7 +72,6 @@ export function ClusterDetailsPage() {
   if (!cluster) {
     return <div>Loading...</div>;
   }
-
   const hasSelectedChecks = cluster.selected_checks.length > 0;
 
   switch (cluster.type) {
@@ -88,7 +87,6 @@ export function ClusterDetailsPage() {
           hosts={clusterHosts}
           clusterType={cluster.type}
           cibLastWritten={cluster.cib_last_written}
-          sid={cluster.sid}
           provider={cluster.provider}
           sapSystems={clusterSapSystems}
           details={cluster.details}

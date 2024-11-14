@@ -32,6 +32,9 @@ export const enrichNodes = (clusterNodes, hosts) =>
     ...hosts.find(({ hostname }) => hostname === node.name),
   }));
 
+const generateEnrichedSapSystem = (systems) =>
+  systems.map((system) => ({ id: system.id, sid: system.sid }));
+
 function HanaClusterDetails({
   clusterID,
   clusterName,
@@ -40,7 +43,6 @@ function HanaClusterDetails({
   hosts,
   clusterType,
   cibLastWritten,
-  sid,
   provider,
   sapSystems,
   details,
@@ -51,10 +53,8 @@ function HanaClusterDetails({
   navigate = () => {},
 }) {
   const enrichedNodes = enrichNodes(details?.nodes, hosts);
-  const enrichedSapSystem = {
-    sid,
-    ...sapSystems.find(({ sid: currentSid }) => currentSid === sid),
-  };
+  const enrichedSapSystems = generateEnrichedSapSystem(sapSystems);
+
   const unsitedNodes = enrichedNodes.filter(({ site }) => site === null);
 
   const {
@@ -150,14 +150,21 @@ function HanaClusterDetails({
               },
               {
                 title: 'SID',
-                content: enrichedSapSystem,
+                content: enrichedSapSystems,
                 render: (content) => (
-                  <SapSystemLink
-                    sapSystemId={content?.id}
-                    systemType="databases"
-                  >
-                    {content?.sid}
-                  </SapSystemLink>
+                  <div>
+                    {content.map((system, index) => (
+                      <span key={system.id}>
+                        <SapSystemLink
+                          sapSystemId={system.id}
+                          systemType="databases"
+                        >
+                          {system.sid}
+                        </SapSystemLink>
+                        {index < content.length - 1 && ', '}
+                      </span>
+                    ))}
+                  </div>
                 ),
               },
               {
@@ -170,6 +177,7 @@ function HanaClusterDetails({
                 render: (content) => (
                   <ClusterTypeLabel
                     clusterType={content}
+                    clusterScenario={details.hana_scenario}
                     architectureType={details.architecture_type}
                   />
                 ),
