@@ -8,6 +8,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
   require Trento.Clusters.Enums.HanaArchitectureType, as: HanaArchitectureType
   require Trento.Enums.Health, as: Health
   require Trento.Clusters.Enums.AscsErsClusterRole, as: AscsErsClusterRole
+  require Trento.Clusters.Enums.HanaScenario, as: HanaScenario
 
   alias Trento.Clusters.Commands.{
     DeregisterClusterHost,
@@ -136,6 +137,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
 
     %{
       architecture_type: HanaArchitectureType.classic(),
+      hana_scenario: parse_hana_scenario(crmmon, ClusterType.hana_scale_up()),
       system_replication_mode: parse_hana_scale_up_system_replication_mode(nodes, sid),
       system_replication_operation_mode:
         parse_hana_scale_up_system_replication_operation_mode(nodes, sid),
@@ -172,7 +174,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
       stopped_resources: parse_cluster_stopped_resources(crmmon),
       nodes: parse_cluster_nodes(payload, sid),
       sbd_devices: parse_sbd_devices(sbd),
-      sites: parse_hana_scale_out_sites(HanaArchitectureType.classic(), cib, sid)
+      sites: parse_hana_scale_out_sites(HanaArchitectureType.classic(), cib, sid),
+      hana_scenario: parse_hana_scenario(crmmon, ClusterType.hana_scale_out())
     }
   end
 
@@ -199,7 +202,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
       stopped_resources: parse_cluster_stopped_resources(crmmon),
       nodes: parse_cluster_nodes(payload, sid),
       sbd_devices: parse_sbd_devices(sbd),
-      sites: parse_hana_scale_out_sites(HanaArchitectureType.angi(), cib, sid)
+      sites: parse_hana_scale_out_sites(HanaArchitectureType.angi(), cib, sid),
+      hana_scenario: parse_hana_scenario(crmmon)
     }
   end
 
@@ -217,7 +221,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
       fencing_type: parse_cluster_fencing_type(crmmon, sbd),
       stopped_resources: parse_cluster_stopped_resources(crmmon),
       sbd_devices: parse_sbd_devices(sbd),
-      maintenance_mode: parse_maintenance_mode(cib)
+      maintenance_mode: parse_maintenance_mode(cib),
+      hana_scenario: parse_hana_scenario(crmmon)
     }
   end
 
@@ -483,7 +488,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
       %{
         name: secondary_site,
         state:
-          parse_hana_scale_out_status(architecture_type, cluster_properties, secondary_site, sid),
+          parse_hana_scale_out_status(
+            architecture_type,
+            cluster_properties,
+            secondary_site,
+            sid
+          ),
         sr_health_state:
           parse_crm_cluster_property(
             cluster_properties,
@@ -702,7 +712,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
     do_parse_hana_status(status, sync_state)
   end
 
-  defp parse_hana_scale_out_status(HanaArchitectureType.classic(), cluster_properties, site, sid) do
+  defp parse_hana_scale_out_status(
+         HanaArchitectureType.classic(),
+         cluster_properties,
+         site,
+         sid
+       ) do
     status =
       parse_crm_cluster_property(
         cluster_properties,
@@ -1011,4 +1026,29 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
 
   defp parse_hana_cluster_health(%{sr_health_state: _, secondary_sync_state: _}),
     do: Health.critical()
+
+  defp parse_hana_scenario(crmmon, cluster_type) do
+    case cluster_type do
+      ClusterType.hana_scale_up() -> validate_hana_scenario(crmmon)
+      _ -> HanaScenario.unknown()
+    end
+  end
+
+  defp parse_hana_scenario(_), do: HanaScenario.unknown()
+
+  defp validate_hana_scenario(crmmon) do
+    # clone_resources = Enum.map(crmmon.clones, fn clone -> clone.resources end)
+    resource = crmmon.resources
+
+    case extract_and_check_resource_id(resource) do
+      true -> HanaScenario.cost_optimized()
+      false -> HanaScenario.performance_optimized()
+    end
+  end
+
+  defp extract_and_check_resource_id(resource) do
+    Enum.any?(resource, fn
+      %{id: id} -> String.match?(id, ~r/rsc_SAP/)
+    end)
+  end
 end

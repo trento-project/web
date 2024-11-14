@@ -13,6 +13,7 @@ defmodule Trento.Clusters.ValueObjects.HanaClusterDetails do
   use Trento.Support.Type
 
   require Trento.Clusters.Enums.HanaArchitectureType, as: HanaArchitectureType
+  require Trento.Clusters.Enums.HanaScenario, as: HanaScenario
 
   alias Trento.Clusters.ValueObjects.{
     ClusterResource,
@@ -30,6 +31,7 @@ defmodule Trento.Clusters.ValueObjects.HanaClusterDetails do
     field :sr_health_state, :string
     field :fencing_type, :string
     field :maintenance_mode, :boolean
+    field :hana_scenario, Ecto.Enum, values: HanaScenario.values()
 
     embeds_many :stopped_resources, ClusterResource
     embeds_many :nodes, HanaClusterNode

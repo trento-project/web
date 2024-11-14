@@ -177,6 +177,28 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
   end
 
   defp parse_cluster_additional_sids(%{
+         "cluster_type" => ClusterType.hana_scale_up(),
+         "cib" => %{"configuration" => %{"resources" => %{"primitives" => primitives}}}
+       }) do
+    primitives
+    |> Enum.flat_map(fn
+      %{"type" => "SAPInstance", "instance_attributes" => attributes} ->
+        attributes
+
+      _ ->
+        []
+    end)
+    |> Enum.flat_map(fn
+      %{"name" => "InstanceName", "value" => value} when value != "" ->
+        value |> String.split("_") |> Enum.at(0) |> List.wrap()
+
+      _ ->
+        []
+    end)
+    |> Enum.uniq()
+  end
+
+  defp parse_cluster_additional_sids(%{
          "cib" => %{"configuration" => %{"resources" => %{"clones" => nil, "groups" => groups}}}
        }) do
     groups
@@ -199,6 +221,11 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
     end)
     |> Enum.uniq()
   end
+
+  defp parse_cluster_additional_sids(%{
+         "cib" => %{"configuration" => %{"resources" => %{"groups" => nil}}}
+       }),
+       do: []
 
   defp parse_cluster_additional_sids(_), do: []
 
