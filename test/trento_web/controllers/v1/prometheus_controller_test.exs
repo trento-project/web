@@ -44,6 +44,34 @@ defmodule TrentoWeb.V1.PrometheusControllerTest do
     } in response
   end
 
+  test "should return the expected targets when host have multiple IP address", %{
+    conn: conn
+  } do
+    ip1 = Faker.Internet.ip_v4_address()
+    ip2 = Faker.Internet.ip_v4_address()
+    %{id: id, hostname: hostname} = insert(:host, ip_addresses: [ip1, ip2])
+
+    response =
+      conn
+      |> get("/api/v1/prometheus/targets")
+      |> json_response(200)
+
+    assert [
+             %{
+               "labels" => %{
+                 "agentID" => "#{id}",
+                 "hostname" => "#{hostname}",
+                 "exporter_name" => "Node Exporter"
+               },
+               "targets" => [
+                 "#{ip1}:9100",
+                 "#{ip2}:9100",
+                 "#{hostname}:9100"
+               ]
+             }
+           ] == response
+  end
+
   test "should return the exporters status", %{conn: conn} do
     expect(Trento.Infrastructure.Prometheus.Mock, :get_exporters_status, fn _ ->
       {:ok, %{"Node Exporter" => :passing}}
