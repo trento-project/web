@@ -10,7 +10,8 @@ defmodule TrentoWeb.V1.PrometheusView do
 
   def render("target.json", %{target: target}) do
     %{
-      targets: ["#{List.first(target.ip_addresses, target.hostname)}:#{@node_exporter_port}"],
+      targets:
+        Enum.map(target.ip_addresses ++ [target.hostname], &"#{&1}:#{@node_exporter_port}"),
       labels: %{
         # TODO: in the future renaeme this label which also is used by node_exporter json
         agentID: "#{target.id}",
