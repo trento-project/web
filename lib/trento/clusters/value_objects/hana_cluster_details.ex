@@ -24,6 +24,7 @@ defmodule Trento.Clusters.ValueObjects.HanaClusterDetails do
 
   deftype do
     field :architecture_type, Ecto.Enum, values: HanaArchitectureType.values()
+    field :hana_scenario, Ecto.Enum, values: HanaScenario.values()
     field :system_replication_mode, :string
     field :system_replication_operation_mode, :string
     field :secondary_sync_state, :string
@@ -31,7 +32,6 @@ defmodule Trento.Clusters.ValueObjects.HanaClusterDetails do
     field :sr_health_state, :string
     field :fencing_type, :string
     field :maintenance_mode, :boolean
-    field :hana_scenario, Ecto.Enum, values: HanaScenario.values()
 
     embeds_many :stopped_resources, ClusterResource
     embeds_many :nodes, HanaClusterNode

@@ -1036,10 +1036,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
 
   defp parse_hana_scenario(_), do: HanaScenario.unknown()
 
-  defp validate_hana_scenario(crmmon) do
-    # clone_resources = Enum.map(crmmon.clones, fn clone -> clone.resources end)
-    resource = crmmon.resources
-
+  defp validate_hana_scenario(%{resources: resource}) do
     case extract_and_check_resource_id(resource) do
       true -> HanaScenario.cost_optimized()
       false -> HanaScenario.performance_optimized()
