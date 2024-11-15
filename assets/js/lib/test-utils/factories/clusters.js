@@ -20,6 +20,13 @@ const ascsErsRole = () => faker.helpers.arrayElement(['ascs', 'ers']);
 const hanaArchitectureTypeEnum = () =>
   faker.helpers.arrayElement(['classic', 'angi']);
 
+const hanaScenarioTypeEnum = () =>
+  faker.helpers.arrayElement([
+    'performance_optimized',
+    'cost_optimized',
+    'unknown',
+  ]);
+
 export const sbdDevicesFactory = Factory.define(() => ({
   device: faker.system.filePath(),
   status: faker.helpers.arrayElement(['healthy', 'unhealthy']),
@@ -76,6 +83,7 @@ export const hanaClusterDetailsFactory = Factory.define(() => {
     system_replication_operation_mode: 'logreplay',
     maintenance_mode: false,
     architecture_type: hanaArchitectureTypeEnum(),
+    hana_scenario: hanaScenarioTypeEnum(),
   };
 });
 

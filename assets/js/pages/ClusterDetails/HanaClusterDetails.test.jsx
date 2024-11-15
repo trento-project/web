@@ -171,9 +171,8 @@ describe('HanaClusterDetails component', () => {
         hosts={hosts}
         clusterType={clusterType}
         cibLastWritten={cibLastWritten}
-        sid={sid}
         provider={provider}
-        sapSystems={[]}
+        sapSystems={[{ sid }]}
         details={details}
         lastExecution={null}
         userAbilities={userAbilities}
@@ -468,10 +467,20 @@ describe('HanaClusterDetails component', () => {
 
   it.each([
     { arch: 'angi', tooltip: 'Angi architecture' },
-    { arch: 'classic', tooltip: 'Classic architecture' },
+    {
+      arch: 'classic',
+      tooltip: 'Classic architecture',
+      scenario: 'performance_optimized',
+    },
+    {
+      arch: 'classic',
+      tooltip: 'Classic architecture',
+      scenario: 'cost_optimized',
+    },
+    { arch: 'classic', tooltip: 'Classic architecture', scenario: 'unknown' },
   ])(
     'should show cluster type with $arch architecture',
-    async ({ arch, tooltip }) => {
+    async ({ arch, tooltip, scenario }) => {
       const user = userEvent.setup();
 
       const {
@@ -484,7 +493,7 @@ describe('HanaClusterDetails component', () => {
         details,
       } = clusterFactory.build({
         type: 'hana_scale_up',
-        details: { architecture_type: arch },
+        details: { architecture_type: arch, hana_scenario: scenario },
       });
 
       const hosts = hostFactory.buildList(2, { cluster_id: clusterID });
@@ -507,7 +516,7 @@ describe('HanaClusterDetails component', () => {
         />
       );
 
-      const icon = screen.getByText('HANA Scale Up').children.item(0);
+      const icon = screen.getByText(/HANA Scale Up/i).children.item(0);
       await user.hover(icon);
       expect(screen.getByText(tooltip, { exact: false })).toBeInTheDocument();
     }
