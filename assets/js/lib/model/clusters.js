@@ -33,8 +33,8 @@ export const getClusterTypeLabel = (type) =>
   clusterTypeLabels[type] || 'Unknown';
 
 const clusterTypeScenarioLabels = {
-  [HANA_SCALE_UP_PERFORMANCE_SCENARIO]: 'performance optimized',
-  [HANA_SCALE_UP_COST_OPT_SCENARIO]: 'cost optimized',
+  [HANA_SCALE_UP_PERFORMANCE_SCENARIO]: 'Perf. Opt.',
+  [HANA_SCALE_UP_COST_OPT_SCENARIO]: 'Cost Opt.',
 };
 
 export const getClusterTypeScenarioLabel = (type) =>

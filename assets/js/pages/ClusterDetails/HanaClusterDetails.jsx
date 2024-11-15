@@ -153,15 +153,14 @@ function HanaClusterDetails({
                 content: enrichedSapSystems,
                 render: (content) => (
                   <div>
-                    {content.map((system, index) => (
+                    {content.map((system) => (
                       <span key={system.id}>
                         <SapSystemLink
                           sapSystemId={system.id}
                           systemType="databases"
                         >
                           {system.sid}
-                        </SapSystemLink>
-                        {index < content.length - 1 && ', '}
+                        </SapSystemLink>{' '}
                       </span>
                     ))}
                   </div>
