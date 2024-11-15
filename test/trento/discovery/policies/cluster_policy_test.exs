@@ -284,7 +284,6 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 details: %HanaClusterDetails{
                   fencing_type: "external/sbd",
                   maintenance_mode: true,
-                  hana_scenario: HanaScenario.unknown(),
                   nodes: [
                     %HanaClusterNode{
                       attributes: %{

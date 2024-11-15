@@ -222,11 +222,6 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
     |> Enum.uniq()
   end
 
-  defp parse_cluster_additional_sids(%{
-         "cib" => %{"configuration" => %{"resources" => %{"groups" => nil}}}
-       }),
-       do: []
-
   defp parse_cluster_additional_sids(_), do: []
 
   defp maybe_validate_required_fields(cluster, %{"cluster_type" => ClusterType.hana_scale_up()}),

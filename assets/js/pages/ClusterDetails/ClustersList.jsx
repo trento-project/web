@@ -79,7 +79,7 @@ function ClustersList() {
             const sapSystemData = getSapSystemBySID(allInstances, singleSid);
 
             return [
-              index > 0 && ', ',
+              index > 0 && <br />,
               <SapSystemLink
                 key={`${id}-${singleSid}`}
                 systemType={sapSystemData?.type}

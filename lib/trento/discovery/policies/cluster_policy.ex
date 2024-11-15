@@ -1027,23 +1027,22 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
   defp parse_hana_cluster_health(%{sr_health_state: _, secondary_sync_state: _}),
     do: Health.critical()
 
-  defp parse_hana_scenario(crmmon, cluster_type) do
-    case cluster_type do
-      ClusterType.hana_scale_up() -> validate_hana_scenario(crmmon)
-      _ -> HanaScenario.unknown()
-    end
+  defp parse_hana_scenario(crmmon, ClusterType.hana_scale_up()) do
+    validate_hana_scenario(crmmon)
   end
+
+  defp parse_hana_scenario(_crmmon, _cluster_type), do: HanaScenario.unknown()
 
   defp parse_hana_scenario(_), do: HanaScenario.unknown()
 
   defp validate_hana_scenario(%{resources: resource}) do
-    case extract_and_check_resource_id(resource) do
+    case validate_resource_id_for_sap_system(resource) do
       true -> HanaScenario.cost_optimized()
       false -> HanaScenario.performance_optimized()
     end
   end
 
-  defp extract_and_check_resource_id(resource) do
+  defp validate_resource_id_for_sap_system(resource) do
     Enum.any?(resource, fn
       %{id: id} -> String.match?(id, ~r/rsc_SAP/)
     end)

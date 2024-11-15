@@ -123,7 +123,7 @@ function HostsList() {
             (instance, index) => {
               const instanceID = getInstanceID(instance);
               return [
-                index > 0 && ', ',
+                index > 0 && <br />,
                 <SapSystemLink
                   key={`${instanceID}-${instance?.id}`}
                   systemType={instance?.type}
