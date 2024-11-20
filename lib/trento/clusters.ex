@@ -27,6 +27,12 @@ defmodule Trento.Clusters do
 
   alias Trento.Repo
 
+  @checkable_clusters [
+    ClusterType.hana_scale_up(),
+    ClusterType.hana_scale_out(),
+    ClusterType.ascs_ers()
+  ]
+
   @spec by_id(String.t()) :: {:ok, ClusterReadModel.t()} | {:error, :not_found}
   def by_id(id) do
     case Repo.get(ClusterReadModel, id) do
@@ -104,9 +110,7 @@ defmodule Trento.Clusters do
     query =
       from(c in ClusterReadModel,
         select: c.id,
-        where:
-          (c.type == ^ClusterType.hana_scale_up() or
-             c.type == ^ClusterType.hana_scale_out()) and is_nil(c.deregistered_at)
+        where: c.type in @checkable_clusters and is_nil(c.deregistered_at)
       )
 
     query
