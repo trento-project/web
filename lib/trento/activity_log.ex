@@ -10,6 +10,7 @@ defmodule Trento.ActivityLog do
   alias Trento.ActivityLog.RetentionTime
   require Trento.ActivityLog.RetentionPeriodUnit, as: RetentionPeriodUnit
   alias Trento.ActivityLog.ActivityLog
+  alias Trento.ActivityLog.MetadataQueryParser
   alias Trento.ActivityLog.Settings
   alias Trento.Repo
 
@@ -67,6 +68,7 @@ defmodule Trento.ActivityLog do
 
     case ActivityLog
          |> maybe_exclude_user_logs(include_all_log_types?)
+         |> maybe_search_by_metadata(params)
          |> Flop.validate_and_run(parsed_params, for: ActivityLog) do
       {:ok, {activity_log_entries, meta}} ->
         {:ok, activity_log_entries, meta}
@@ -83,6 +85,35 @@ defmodule Trento.ActivityLog do
     from(l in q, where: l.type not in @user_management_log_types)
   end
 
+  defp maybe_search_by_metadata(query, params) do
+    maybe_metadata_search_string = params[:search]
+
+    case MetadataQueryParser.parse(maybe_metadata_search_string) do
+      {:ok, jsonpath_expr} ->
+        from q in query,
+          select: %{
+            id: q.id,
+            metadata: q.metadata,
+            m0: fragment("jsonb_path_query(?, ?)", q.metadata, ^jsonpath_expr),
+            type: q.type,
+            actor: q.actor,
+            inserted_at: q.inserted_at,
+            updated_at: q.updated_at
+          }
+
+      {:error, :noop, _} ->
+        query
+
+      {:error, _, trimmed_search_string} = error ->
+        Logger.info(
+          "Metadata parse failure for search string \"#{trimmed_search_string}\": #{inspect(error)}"
+        )
+
+        # search query parsing failed, no entries will be returned
+        from q in query, where: false
+    end
+  end
+
   # ''&& false' is a workaround until we reach OTP 27 that allows doc tag for private functions;
   # we get a compile warning without this with OTP 26
   @doc """
@@ -93,8 +124,8 @@ defmodule Trento.ActivityLog do
              iex> parse_params([{:from_date, "2021-01-31"}, {:to_date, "2021-01-01"}, last: 10])
        %{
           filters: [
-                     %{value: "2021-01-31", op: :<=, field: :inserted_at}, 
-                     %{value: "2021-01-01", op: :>=, field: :inserted_at}], 
+                     %{value: "2021-01-31", op: :<=, field: :inserted_at},
+                     %{value: "2021-01-01", op: :>=, field: :inserted_at}],
           last: 10
        }
        """ && false

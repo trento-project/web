@@ -327,4 +327,94 @@ defmodule Trento.ActivityLogTest do
                ActivityLog.list_activity_log(%{last: 5, before: end_cursor})
     end
   end
+
+  describe "Search by metadata tests" do
+    test "Single keyword" do
+      keyword = "Foo-4_2/:2.4"
+      expected_result = insert(:activity_log_entry, metadata: %{"somefield" => keyword})
+      insert_list(50, :activity_log_entry)
+      {:ok, returned_results, _meta} = ActivityLog.list_activity_log(%{search: keyword})
+      assert length(returned_results) == 1
+      assert hd(returned_results).id == expected_result.id
+    end
+
+    test "Three keywords default connector (OR)" do
+      keyword1 = "foo"
+      keyword2 = "bar"
+      keyword3 = "baaz"
+      expected_result1 = insert(:activity_log_entry, metadata: %{"field1" => keyword1})
+      expected_result2 = insert(:activity_log_entry, metadata: %{"field2" => keyword2})
+      expected_result3 = insert(:activity_log_entry, metadata: %{"field3" => keyword3})
+      insert_list(50, :activity_log_entry)
+
+      search_string = "#{keyword1} #{keyword3} #{keyword2}"
+      {:ok, returned_results, _meta} = ActivityLog.list_activity_log(%{search: search_string})
+      assert length(returned_results) == 3
+
+      assert returned_results |> Enum.map(& &1.id) |> Enum.sort() ==
+               Enum.sort([expected_result1.id, expected_result2.id, expected_result3.id])
+    end
+
+    test "Three keywords connected by AND" do
+      keyword1 = "foo"
+      keyword2 = "bar"
+      keyword3 = "baaz"
+
+      expected_result1 =
+        insert(:activity_log_entry,
+          metadata: %{
+            "field1" => keyword1,
+            "field3" => keyword3,
+            "field2" => %{"field4" => %{"field5" => keyword2}}
+          }
+        )
+
+      _not_expected_result2 = insert(:activity_log_entry, metadata: %{"field2" => keyword2})
+
+      _not_expected_result3 =
+        insert(:activity_log_entry, metadata: %{"field3" => keyword3, "field4" => keyword3})
+
+      insert_list(50, :activity_log_entry)
+
+      search_string = "#{keyword1} AND #{keyword3} AND #{keyword2}"
+      {:ok, returned_results, _meta} = ActivityLog.list_activity_log(%{search: search_string})
+      assert length(returned_results) == 1
+
+      assert hd(returned_results).id == expected_result1.id
+    end
+
+    test "Should return results in appropriate numeric range" do
+      keyword1 = 9
+      keyword2 = 10
+      keyword3 = 42
+
+      expected_result1 =
+        insert(:activity_log_entry,
+          metadata: %{
+            "field1" => keyword1,
+            "field3" => keyword3,
+            "field2" => %{"field4" => %{"field5" => keyword3}}
+          }
+        )
+
+      expected_result2 = insert(:activity_log_entry, metadata: %{"field2" => keyword2})
+
+      _not_expected_result3 =
+        insert(:activity_log_entry, metadata: %{"field3" => keyword3, "field4" => keyword3})
+
+      insert_list(50, :activity_log_entry)
+
+      search_string = ">8 AND <11"
+      {:ok, returned_results, _meta} = ActivityLog.list_activity_log(%{search: search_string})
+      assert length(returned_results) == 2
+
+      assert Enum.sort([expected_result1.id, expected_result2.id]) ==
+               returned_results |> Enum.map(& &1.id) |> Enum.sort()
+    end
+
+    test "malformed query yields empty result" do
+      insert_list(50, :activity_log_entry)
+      {:ok, [], _meta} = ActivityLog.list_activity_log(%{search: "@!$%"})
+    end
+  end
 end

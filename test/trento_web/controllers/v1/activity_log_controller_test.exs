@@ -247,5 +247,37 @@ defmodule TrentoWeb.V1.ActivityLogControllerTest do
       assert length(resp["data"]) == 25
       assert_schema(resp, "ActivityLog", api_spec)
     end
+
+    test "should search log entries by metadata", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      keyword = "Foo-4_2/:2.4"
+      insert_list(15, :activity_log_entry, metadata: %{"somefield" => keyword})
+      insert_list(50, :activity_log_entry)
+
+      resp =
+        conn
+        |> get("/api/v1/activity_log?first=10&search=#{keyword}")
+        |> json_response(200)
+
+      assert length(resp["data"]) == 10
+      assert_schema(resp, "ActivityLog", api_spec)
+    end
+
+    test "a malformed metadata search string yields an empty result set", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      insert_list(100, :activity_log_entry)
+
+      resp =
+        conn
+        |> get("/api/v1/activity_log?first=10&search=@#$%^&*")
+        |> json_response(200)
+
+      assert resp["data"] == []
+      assert_schema(resp, "ActivityLog", api_spec)
+    end
   end
 end
