@@ -55,7 +55,7 @@ export const advisoryErrataFactory = Factory.define(({ params }) => ({
     advisory_status: 'stable',
     vendor_advisory: faker.lorem.word(),
     type: faker.helpers.arrayElement(advisoryType),
-    product: faker.internet.userName(),
+    product: faker.internet.username(),
     errata_from: faker.lorem.word(),
     topic: faker.animal.cat(),
     description: faker.lorem.sentence(),

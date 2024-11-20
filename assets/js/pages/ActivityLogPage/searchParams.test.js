@@ -15,12 +15,14 @@ describe('searchParams helpers', () => {
       sp.append('from_date', nowUTC);
       sp.append('type', 'login_attempt');
       sp.append('type', 'resource_tagging');
+      sp.append('search', 'foo+bar');
 
       const result = searchParamsToAPIParams(sp);
 
       expect(result).toEqual({
         from_date: nowUTC,
         type: ['login_attempt', 'resource_tagging'],
+        search: 'foo+bar',
       });
     });
   });
@@ -35,12 +37,14 @@ describe('searchParams helpers', () => {
       sp.append('from_date', nowUTC);
       sp.append('type', 'login_attempt');
       sp.append('type', 'resource_tagging');
+      sp.append('search', 'foo+bar');
 
       const result = searchParamsToFilterValue(sp);
 
       expect(result).toEqual({
         from_date: ['custom', expect.any(Date)],
         type: ['login_attempt', 'resource_tagging'],
+        search: 'foo+bar',
       });
 
       expect(result.from_date[1].getTime()).toEqual(
@@ -58,6 +62,7 @@ describe('searchParams helpers', () => {
       const filterValue = {
         from_date: ['custom', now],
         type: ['login_attempt', 'resource_tagging'],
+        search: 'foo+bar',
       };
 
       const result = filterValueToSearchParams(filterValue);
@@ -67,6 +72,7 @@ describe('searchParams helpers', () => {
         'login_attempt',
         'resource_tagging',
       ]);
+      expect(result.get('search')).toEqual('foo+bar');
     });
 
     it('should use a fresh URLSearchParams instance', () => {
@@ -77,6 +83,7 @@ describe('searchParams helpers', () => {
       const filterValue = {
         from_date: ['custom', now],
         type: ['login_attempt', 'resource_tagging'],
+        search: 'foo+bar',
       };
 
       // apply two times to test if the function is using a fresh URLSearchParams instance
@@ -88,6 +95,7 @@ describe('searchParams helpers', () => {
         'login_attempt',
         'resource_tagging',
       ]);
+      expect(result.get('search')).toEqual('foo+bar');
     });
 
     it('should return an instance of URLSearchParams when filters are empty', () => {

@@ -4,6 +4,6 @@ import { Factory } from 'fishery';
 
 export const softwareUpdatesSettingsFactory = Factory.define(() => ({
   url: faker.internet.url(),
-  username: faker.internet.userName(),
+  username: faker.internet.username(),
   ca_uploaded_at: formatISO(faker.date.recent()),
 }));

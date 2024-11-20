@@ -11,7 +11,7 @@ export const abilityFactory = Factory.define(() => ({
 
 export const userFactory = Factory.define(() => ({
   id: faker.number.int(),
-  username: faker.internet.userName(),
+  username: faker.internet.username(),
   enabled: faker.datatype.boolean(),
   fullname: faker.internet.displayName(),
   email: faker.internet.email(),
@@ -24,7 +24,7 @@ export const userFactory = Factory.define(() => ({
 
 export const profileFactory = Factory.define(() => ({
   id: faker.number.int(),
-  username: faker.internet.userName(),
+  username: faker.internet.username(),
   fullname: faker.internet.displayName(),
   email: faker.internet.email(),
   abilities: abilityFactory.buildList(2),
@@ -47,7 +47,7 @@ export const createUserRequestFactory = Factory.define(() => {
   const password = 'password';
 
   return {
-    username: faker.internet.userName().toLowerCase(),
+    username: faker.internet.username().toLowerCase(),
     enabled: true,
     fullname: faker.internet.displayName(),
     email: faker.internet.email(),
