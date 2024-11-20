@@ -27,6 +27,18 @@ describe('ActivityLogPage', () => {
     expect(screen.getByText('No data available')).toBeVisible();
   });
 
+  it('should render filters', async () => {
+    const [StatefulActivityLogPage, _] = withDefaultState(<ActivityLogPage />);
+    await act(() => renderWithRouter(StatefulActivityLogPage));
+    expect(screen.getByText('Filter Type...')).toBeInTheDocument();
+    expect(screen.getByText('Filter User...')).toBeInTheDocument();
+    expect(screen.getByText('Filter newer than...')).toBeInTheDocument();
+    expect(screen.getByText('Filter older than...')).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText('Filter by metadata')
+    ).toBeInTheDocument();
+  });
+
   it('should render filter actions', async () => {
     const [StatefulActivityLogPage, _] = withDefaultState(<ActivityLogPage />);
     await act(() => renderWithRouter(StatefulActivityLogPage));
