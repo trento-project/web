@@ -75,7 +75,7 @@ export const activityLogEntryFactory = Factory.define(({ params }) => {
 
   return {
     id: faker.string.uuid(),
-    actor: faker.internet.userName(),
+    actor: faker.internet.username(),
     type: activityType,
     occurred_on: faker.date.anytime(),
     metadata,

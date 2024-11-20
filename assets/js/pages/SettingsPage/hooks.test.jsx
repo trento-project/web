@@ -54,7 +54,7 @@ describe('useSuseManagerSettings', () => {
 
     const newSettings = {
       url: faker.internet.url(),
-      username: faker.internet.userName(),
+      username: faker.internet.username(),
       password: faker.internet.password(),
     };
 
@@ -83,7 +83,7 @@ describe('useSuseManagerSettings', () => {
 
     const newSettings = {
       url: faker.internet.url(),
-      username: faker.internet.userName(),
+      username: faker.internet.username(),
       password: faker.internet.password(),
     };
 
@@ -112,7 +112,7 @@ describe('useSuseManagerSettings', () => {
 
     const newSettings = {
       url: faker.internet.url(),
-      username: faker.internet.userName(),
+      username: faker.internet.username(),
       password: faker.internet.password(),
     };
 
