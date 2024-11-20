@@ -89,3 +89,23 @@ export const WithDateFilter = {
     onChange: action('onChange'),
   },
 };
+
+export const WithSearchBox = {
+  args: {
+    filters: [
+      {
+        key: 'filter1',
+        type: 'select',
+        title: 'Pasta',
+        options: ['Carbonara', 'Amatriciana', 'Ajo & Ojo', 'Gricia'],
+      },
+      {
+        key: 'filter2',
+        type: 'search_box',
+        title: 'Search Query',
+        placeholder: 'Search...',
+      },
+    ],
+    onChange: action('onChange'),
+  },
+};
