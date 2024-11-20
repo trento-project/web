@@ -101,16 +101,16 @@ defmodule Trento.ActivityLog do
             updated_at: q.updated_at
           }
 
-      {:error, :noop, _} ->
-        query
+          {:error, :noop, _} ->
+            query
 
-      {:error, _, trimmed_search_string} = error ->
-        Logger.info(
-          "Metadata parse failure for search string \"#{trimmed_search_string}\": #{inspect(error)}"
-        )
+          {:error, _, trimmed_search_string} = error ->
+            Logger.info(
+              "Metadata parse failure for search string \"#{trimmed_search_string}\": #{inspect(error)}"
+            )
 
-        # search query parsing failed, no entries will be returned
-        from q in query, where: false
+            # search query parsing failed, no entries will be returned
+            from q in query, where: false
     end
   end
 

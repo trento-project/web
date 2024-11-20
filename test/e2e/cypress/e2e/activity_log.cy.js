@@ -35,7 +35,7 @@ context('Activity Log page', () => {
 
     it('should reset querystring when reloading the page from navigation menu', () => {
       cy.visit(
-        '/activity_log?from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&to_date=custom&to_date=2024-08-13T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging'
+        '/activity_log?search=foo+bar&from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&to_date=custom&to_date=2024-08-13T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging'
       );
 
       cy.contains('Login Attempt, Tag Added').should('be.visible');
@@ -62,21 +62,28 @@ context('Activity Log page', () => {
         'be.visible'
       );
 
+      cy.get('input[name="metadata-search"]')
+        .should('have.attr', 'placeholder', 'Filter by metadata')
+        .should('be.visible');
+
       cy.wait('@data').its('response.statusCode').should('eq', 200);
     });
 
     it('should render with selected filters from querystring', () => {
       cy.intercept({
-        url: '/api/v1/activity_log?first=20&from_date=2024-08-14T10:21:00.000Z&to_date=2024-08-13T10:21:00.000Z&type[]=login_attempt&type[]=resource_tagging',
+        url: '/api/v1/activity_log?first=20&search=foo+bar&from_date=2024-08-14T10:21:00.000Z&to_date=2024-08-13T10:21:00.000Z&type[]=login_attempt&type[]=resource_tagging',
       }).as('data');
 
       cy.visit(
-        '/activity_log?from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&to_date=custom&to_date=2024-08-13T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging'
+        '/activity_log?search=foo+bar&from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&to_date=custom&to_date=2024-08-13T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging'
       );
 
       cy.contains('Login Attempt, Tag Added').should('be.visible');
       cy.contains('08/14/2024 10:21:00 AM').should('be.visible');
       cy.contains('08/13/2024 10:21:00 AM').should('be.visible');
+      cy.get('input[name="metadata-search"]')
+        .should('have.value', 'foo bar')
+        .should('be.visible');
 
       cy.wait('@data').its('response.statusCode').should('eq', 200);
     });
@@ -94,13 +101,15 @@ context('Activity Log page', () => {
       cy.contains('Login Attempt').click();
       cy.contains('Tag Added').click();
 
+      cy.get('input[name="metadata-search"]').type('foo bar');
+
       cy.contains('Apply').click();
 
       cy.url().should(
         'eq',
         `${
           Cypress.config().baseUrl
-        }/activity_log?from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&to_date=custom&to_date=2024-08-13T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging&first=20`
+        }/activity_log?from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&to_date=custom&to_date=2024-08-13T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging&search=foo+bar&first=20`
       );
     });
 
@@ -110,7 +119,7 @@ context('Activity Log page', () => {
       }).as('data');
 
       cy.visit(
-        '/activity_log?from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging'
+        '/activity_log?from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging&search=foo+bar'
       );
 
       cy.contains('Reset').click();
@@ -122,15 +131,18 @@ context('Activity Log page', () => {
       cy.contains('Filter newer than', { matchCase: false }).should(
         'be.visible'
       );
+      cy.get('input[name="metadata-search"]')
+        .should('have.attr', 'placeholder', 'Filter by metadata')
+        .should('be.visible');
 
       cy.wait('@data').its('response.statusCode').should('eq', 200);
     });
 
     it('should refresh content based on currently applied filters', () => {
       const apiUrl =
-        '/api/v1/activity_log?first=20&from_date=2024-08-14T10:21:00.000Z&to_date=2024-08-13T10:21:00.000Z&type[]=login_attempt&type[]=resource_tagging';
+        '/api/v1/activity_log?first=20&from_date=2024-08-14T10:21:00.000Z&to_date=2024-08-13T10:21:00.000Z&type[]=login_attempt&type[]=resource_tagging&search=foo+bar';
       const pageUrl =
-        '/activity_log?from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&to_date=custom&to_date=2024-08-13T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging';
+        '/activity_log?from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&to_date=custom&to_date=2024-08-13T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging&search=foo+bar';
 
       cy.intercept({ url: apiUrl }).as('initialDataLoad');
 
@@ -181,10 +193,10 @@ context('Activity Log page', () => {
 
     it('should paginate data with filters', () => {
       cy.intercept({
-        url: `/api/v1/activity_log?first=20&type[]=sles_subscriptions_updated`,
+        url: `/api/v1/activity_log?first=20&type[]=sles_subscriptions_updated&search=x86_64`,
       }).as('firstPage');
 
-      cy.visit('/activity_log?type=sles_subscriptions_updated');
+      cy.visit('/activity_log?type=sles_subscriptions_updated&search=x86_64');
 
       cy.wait('@firstPage').then(({ response }) => {
         expect(response.body).to.have.property('pagination');
@@ -199,11 +211,11 @@ context('Activity Log page', () => {
           'eq',
           `${
             Cypress.config().baseUrl
-          }/activity_log?type=sles_subscriptions_updated`
+          }/activity_log?type=sles_subscriptions_updated&search=x86_64`
         );
 
         cy.intercept({
-          url: `/api/v1/activity_log?first=20&after=${after}&type[]=sles_subscriptions_updated`,
+          url: `/api/v1/activity_log?first=20&after=${after}&type[]=sles_subscriptions_updated&search=x86_64`,
         }).as('secondPage');
         cy.get(NEXT).click();
 
@@ -213,7 +225,7 @@ context('Activity Log page', () => {
           'eq',
           `${
             Cypress.config().baseUrl
-          }/activity_log?first=20&after=${after}&type=sles_subscriptions_updated`
+          }/activity_log?first=20&after=${after}&type=sles_subscriptions_updated&search=x86_64`
         );
       });
     });
