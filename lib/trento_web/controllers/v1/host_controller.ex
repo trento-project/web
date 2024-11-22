@@ -143,5 +143,25 @@ defmodule TrentoWeb.V1.HostController do
     end
   end
 
+  operation :list_selectable_checks,
+    summary: "List Selectable Checks for a Host",
+    tags: ["Checks"],
+    description: "List the Checks that can be selected for the host",
+    parameters: [
+      id: [
+        in: :path,
+        required: true,
+        type: %OpenApiSpex.Schema{type: :string, format: :uuid}
+      ]
+    ]
+
+  def list_selectable_checks(conn, %{id: host_id}) do
+    with {:ok, checks} <- Hosts.list_selectable_checks(host_id) do
+      conn
+      |> put_status(:ok)
+      |> json(checks)
+    end
+  end
+
   def get_policy_resource(_), do: Trento.Hosts.Projections.HostReadModel
 end

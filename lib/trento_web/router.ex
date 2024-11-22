@@ -113,9 +113,17 @@ defmodule TrentoWeb.Router do
       post "/clusters/:cluster_id/checks", ClusterController, :select_checks
       post "/hosts/:id/checks", HostController, :select_checks
 
+      get "/clusters/:cluster_id/available_checks",
+          ClusterController,
+          :list_selectable_checks
+
       post "/clusters/:cluster_id/checks/request_execution",
            ClusterController,
            :request_checks_execution
+
+      get "/hosts/:id/available_checks",
+          HostController,
+          :list_selectable_checks
 
       post "/hosts/:id/checks/request_execution",
            HostController,

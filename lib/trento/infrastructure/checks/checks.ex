@@ -29,6 +29,26 @@ defmodule Trento.Infrastructure.Checks do
 
   @supported_targets TargetType.values()
 
+  @spec list_selectable_checks(struct(), target_type()) ::
+          {:ok, [String.t()]} | {:error, :unable_to_decode_response | :unable_to_fetch_checks}
+  def list_selectable_checks(env, target_type) when target_type in @supported_targets do
+    env_query =
+      env
+      |> Map.from_struct()
+      |> Map.put(:target_type, target_type)
+
+    :get
+    |> HTTPoison.request(
+      "http://localhost:4001/api/v3/checks/catalog",
+      "",
+      [{"Content-type", "application/json"}],
+      params: env_query
+    )
+    |> decode_response
+  end
+
+  def list_selectable_checks(_, _), do: {:error, :target_not_supported}
+
   @spec request_execution(
           String.t(),
           String.t(),
@@ -89,6 +109,18 @@ defmodule Trento.Infrastructure.Checks do
   end
 
   def complete_execution(_, _, _, _), do: {:error, :target_not_supported}
+
+  defp decode_response({:ok, %HTTPoison.Response{status_code: 200, body: body}}) do
+    case Jason.decode(body, keys: :atoms) do
+      {:ok, %{items: checks}} ->
+        {:ok, checks}
+
+      _ ->
+        {:error, :unable_to_decode_response}
+    end
+  end
+
+  defp decode_response(_), do: {:error, :unable_to_fetch_checks}
 
   defp dispatch_completion_command(execution_id, command) do
     commanded().dispatch(command, correlation_id: execution_id)

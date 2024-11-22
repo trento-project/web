@@ -89,5 +89,25 @@ defmodule TrentoWeb.V1.ClusterController do
     end
   end
 
+  operation :list_selectable_checks,
+    summary: "List Selectable Checks for a Cluster",
+    tags: ["Checks"],
+    description: "List the Checks that can be selected for the cluster",
+    parameters: [
+      cluster_id: [
+        in: :path,
+        required: true,
+        type: %OpenApiSpex.Schema{type: :string, format: :uuid}
+      ]
+    ]
+
+  def list_selectable_checks(conn, %{cluster_id: cluster_id}) do
+    with {:ok, checks} <- Clusters.list_selectable_checks(cluster_id) do
+      conn
+      |> put_status(:ok)
+      |> json(checks)
+    end
+  end
+
   def get_policy_resource(_), do: Trento.Clusters.Projections.ClusterReadModel
 end

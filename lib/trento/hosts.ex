@@ -70,6 +70,21 @@ defmodule Trento.Hosts do
     end
   end
 
+  def list_selectable_checks(host_id) do
+    host_id
+    |> with_registered_host()
+    |> perform_operation(fn host ->
+      Logger.debug("Fetching selectable checks for host: #{host_id}")
+
+      host
+      |> build_env()
+      |> Checks.list_selectable_checks(:host)
+    end)
+    |> on_host_not_found(fn _ ->
+      Logger.error("Fetching selectable checks for a non-existing host: #{host_id}")
+    end)
+  end
+
   def request_hosts_checks_execution do
     query =
       from(h in HostReadModel,
@@ -101,22 +116,16 @@ defmodule Trento.Hosts do
 
   @spec request_checks_execution(String.t()) :: :ok | {:error, any}
   def request_checks_execution(host_id) do
-    query =
-      from(h in HostReadModel,
-        where: is_nil(h.deregistered_at) and h.id == ^host_id
-      )
+    host_id
+    |> with_registered_host()
+    |> perform_operation(fn host ->
+      Logger.debug("Requesting checks execution, host: #{host_id}")
 
-    case Repo.one(query) do
-      %HostReadModel{} = host ->
-        Logger.debug("Requesting checks execution, host: #{host_id}")
-
-        maybe_request_checks_execution(host)
-
-      nil ->
-        Logger.error("Requested checks execution for a non-existing host: #{host_id}")
-
-        {:error, :not_found}
-    end
+      maybe_request_checks_execution(host)
+    end)
+    |> on_host_not_found(fn _ ->
+      Logger.error("Requested checks execution for a non-existing host: #{host_id}")
+    end)
   end
 
   @spec deregister_host(Ecto.UUID.t(), DateService) ::
@@ -136,6 +145,26 @@ defmodule Trento.Hosts do
     end
   end
 
+  defp with_registered_host(host_id), do: by_host_id(host_id)
+
+  defp perform_operation({:ok, %HostReadModel{} = host}, operation), do: operation.(host)
+
+  defp perform_operation(failure, _), do: failure
+
+  defp on_host_not_found({:error, :not_found} = error, on_failure) do
+    on_failure.(error)
+    error
+  end
+
+  defp on_host_not_found(success, _), do: success
+
+  defp build_env(%HostReadModel{
+         provider: provider
+       }),
+       do: %Checks.HostExecutionEnv{
+         provider: provider
+       }
+
   @spec enrich_host_read_model_query(Ecto.Query.t()) :: Ecto.Query.t()
   defp enrich_host_read_model_query(query) do
     query
@@ -145,15 +174,16 @@ defmodule Trento.Hosts do
 
   defp maybe_request_checks_execution(%{selected_checks: []}), do: {:error, :no_checks_selected}
 
-  defp maybe_request_checks_execution(%{
-         id: host_id,
-         selected_checks: selected_checks,
-         provider: provider
-       }) do
+  defp maybe_request_checks_execution(
+         %{
+           id: host_id,
+           selected_checks: selected_checks
+         } = host
+       ) do
     Checks.request_execution(
       UUID.uuid4(),
       host_id,
-      %Checks.HostExecutionEnv{provider: provider},
+      build_env(host),
       [%{host_id: host_id}],
       selected_checks,
       :host

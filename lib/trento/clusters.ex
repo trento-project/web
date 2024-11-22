@@ -41,6 +41,21 @@ defmodule Trento.Clusters do
     end
   end
 
+  def list_selectable_checks(cluster_id) do
+    cluster_id
+    |> with_registered_cluster()
+    |> perform_operation(fn hosts_data, cluster ->
+      Logger.debug("Fetching selectable checks for cluster: #{cluster_id}")
+
+      cluster
+      |> build_env(hosts_data)
+      |> Checks.list_selectable_checks(:cluster)
+    end)
+    |> on_cluster_not_found(fn _ ->
+      Logger.error("Fetching selectable checks for a non-existing cluster: #{cluster_id}")
+    end)
+  end
+
   @spec select_checks(String.t(), [String.t()]) :: :ok | {:error, any}
   def select_checks(cluster_id, checks) do
     Logger.debug("Selecting checks, cluster: #{cluster_id}")
@@ -53,22 +68,16 @@ defmodule Trento.Clusters do
   @spec request_checks_execution(String.t()) ::
           :ok | {:error, any}
   def request_checks_execution(cluster_id) do
-    query =
-      from(c in ClusterReadModel,
-        where: is_nil(c.deregistered_at) and c.id == ^cluster_id
-      )
+    cluster_id
+    |> with_registered_cluster()
+    |> perform_operation(fn hosts_data, cluster ->
+      Logger.debug("Requesting checks execution, cluster: #{cluster_id}")
 
-    case Repo.one(query) do
-      %ClusterReadModel{} = cluster ->
-        Logger.debug("Requesting checks execution, cluster: #{cluster_id}")
-
-        maybe_request_checks_execution(cluster)
-
-      nil ->
-        Logger.error("Requested checks execution for a non-existing cluster: #{cluster_id}")
-
-        {:error, :not_found}
-    end
+      maybe_request_checks_execution(cluster, hosts_data)
+    end)
+    |> on_cluster_not_found(fn _ ->
+      Logger.error("Requested checks execution for a non-existing cluster: #{cluster_id}")
+    end)
   end
 
   @spec get_all_clusters :: [ClusterReadModel.t()]
@@ -148,16 +157,39 @@ defmodule Trento.Clusters do
     |> select_merge([c, e], %{cib_last_written: e.cib_last_written})
   end
 
-  defp get_filesystem_type(cluster_id) do
+  defp perform_operation({:ok, %ClusterReadModel{} = cluster}, operation),
+    do:
+      cluster
+      |> hosts_data()
+      |> operation.(cluster)
+
+  defp perform_operation(failure, _), do: failure
+
+  defp on_cluster_not_found({:error, :not_found} = error, on_failure) do
+    on_failure.(error)
+    error
+  end
+
+  defp on_cluster_not_found(success, _), do: success
+
+  defp with_registered_cluster(cluster_id) do
     query =
       from(c in ClusterReadModel,
-        where:
-          c.id == ^cluster_id and c.type == ^ClusterType.ascs_ers() and is_nil(c.deregistered_at)
+        where: is_nil(c.deregistered_at) and c.id == ^cluster_id
       )
 
+    case Repo.one(query) do
+      %ClusterReadModel{} = cluster ->
+        {:ok, cluster}
+
+      nil ->
+        {:error, :not_found}
+    end
+  end
+
+  defp get_filesystem_type(%ClusterReadModel{} = cluster) do
     filesystems_list =
-      query
-      |> Repo.one!()
+      cluster
       |> Map.get(:details, %{})
       |> Map.get("sap_systems", [])
       |> Enum.map(fn %{"filesystem_resource_based" => filesystem_resource_based} ->
@@ -172,81 +204,89 @@ defmodule Trento.Clusters do
     end
   end
 
-  defp maybe_request_checks_execution(%ClusterReadModel{selected_checks: []}),
-    do: {:error, :no_checks_selected}
-
-  defp maybe_request_checks_execution(%ClusterReadModel{
-         id: cluster_id,
-         provider: provider,
-         type: ClusterType.ascs_ers(),
-         additional_sids: cluster_sids,
-         selected_checks: selected_checks
-       }) do
-    hosts_data =
-      Repo.all(
-        from h in HostReadModel,
-          join: a in ApplicationInstanceReadModel,
-          on: h.id == a.host_id,
-          where:
-            h.cluster_id == ^cluster_id and is_nil(h.deregistered_at) and
-              a.sid in ^cluster_sids,
-          select: %{host_id: h.id, sap_system_id: a.sap_system_id}
-      )
-
+  defp build_env(
+         %ClusterReadModel{
+           provider: provider,
+           type: ClusterType.ascs_ers()
+         } = cluster,
+         hosts_data
+       ) do
     aggregated_ensa_version =
       hosts_data
       |> Enum.map(fn %{sap_system_id: sap_system_id} -> sap_system_id end)
       |> Enum.uniq()
       |> get_cluster_ensa_version()
 
-    env = %Checks.ClusterExecutionEnv{
+    %Checks.ClusterExecutionEnv{
       provider: provider,
       cluster_type: ClusterType.ascs_ers(),
       ensa_version: aggregated_ensa_version,
-      filesystem_type: get_filesystem_type(cluster_id)
+      filesystem_type: get_filesystem_type(cluster)
     }
-
-    Checks.request_execution(
-      UUID.uuid4(),
-      cluster_id,
-      env,
-      hosts_data,
-      selected_checks,
-      :cluster
-    )
   end
 
-  defp maybe_request_checks_execution(%ClusterReadModel{
-         id: cluster_id,
-         provider: provider,
-         type: cluster_type,
-         selected_checks: selected_checks,
-         details: details
-       }) do
-    hosts_data =
-      Repo.all(
-        from h in HostReadModel,
-          select: %{host_id: h.id},
-          where: h.cluster_id == ^cluster_id and is_nil(h.deregistered_at)
-      )
-
-    env = %Checks.ClusterExecutionEnv{
+  defp build_env(
+         %ClusterReadModel{
+           provider: provider,
+           type: cluster_type,
+           details: details
+         },
+         _
+       ) do
+    %Checks.ClusterExecutionEnv{
       provider: provider,
       cluster_type: cluster_type,
       architecture_type: parse_architecture_type(details)
     }
+  end
 
+  defp hosts_data(%ClusterReadModel{
+         id: cluster_id,
+         type: ClusterType.ascs_ers(),
+         additional_sids: cluster_sids
+       }) do
+    Repo.all(
+      from h in HostReadModel,
+        join: a in ApplicationInstanceReadModel,
+        on: h.id == a.host_id,
+        where:
+          h.cluster_id == ^cluster_id and is_nil(h.deregistered_at) and
+            a.sid in ^cluster_sids,
+        select: %{host_id: h.id, sap_system_id: a.sap_system_id}
+    )
+  end
+
+  defp hosts_data(%ClusterReadModel{
+         id: cluster_id
+       }) do
+    Repo.all(
+      from h in HostReadModel,
+        select: %{host_id: h.id},
+        where: h.cluster_id == ^cluster_id and is_nil(h.deregistered_at)
+    )
+  end
+
+  defp maybe_request_checks_execution(%ClusterReadModel{selected_checks: []}, _),
+    do: {:error, :no_checks_selected}
+
+  defp maybe_request_checks_execution(
+         %ClusterReadModel{
+           id: cluster_id,
+           selected_checks: selected_checks
+         } = cluster,
+         hosts_data
+       ) do
     Checks.request_execution(
       UUID.uuid4(),
       cluster_id,
-      env,
+      build_env(cluster, hosts_data),
       hosts_data,
       selected_checks,
       :cluster
     )
   end
 
-  defp maybe_request_checks_execution(error), do: error
+  defp maybe_request_checks_execution(error, _), do: error
 
   @spec get_cluster_ensa_version([String.t()]) :: ClusterEnsaVersion.t()
   defp get_cluster_ensa_version(sap_system_ids) do
