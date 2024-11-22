@@ -148,16 +148,9 @@ defmodule Trento.Clusters do
     |> select_merge([c, e], %{cib_last_written: e.cib_last_written})
   end
 
-  defp get_filesystem_type(cluster_id) do
-    query =
-      from(c in ClusterReadModel,
-        where:
-          c.id == ^cluster_id and c.type == ^ClusterType.ascs_ers() and is_nil(c.deregistered_at)
-      )
-
+  defp get_filesystem_type(%ClusterReadModel{} = cluster) do
     filesystems_list =
-      query
-      |> Repo.one!()
+      cluster
       |> Map.get(:details, %{})
       |> Map.get("sap_systems", [])
       |> Enum.map(fn %{"filesystem_resource_based" => filesystem_resource_based} ->
@@ -175,13 +168,15 @@ defmodule Trento.Clusters do
   defp maybe_request_checks_execution(%ClusterReadModel{selected_checks: []}),
     do: {:error, :no_checks_selected}
 
-  defp maybe_request_checks_execution(%ClusterReadModel{
-         id: cluster_id,
-         provider: provider,
-         type: ClusterType.ascs_ers(),
-         additional_sids: cluster_sids,
-         selected_checks: selected_checks
-       }) do
+  defp maybe_request_checks_execution(
+         %ClusterReadModel{
+           id: cluster_id,
+           provider: provider,
+           type: ClusterType.ascs_ers(),
+           additional_sids: cluster_sids,
+           selected_checks: selected_checks
+         } = cluster
+       ) do
     hosts_data =
       Repo.all(
         from h in HostReadModel,
@@ -203,7 +198,7 @@ defmodule Trento.Clusters do
       provider: provider,
       cluster_type: ClusterType.ascs_ers(),
       ensa_version: aggregated_ensa_version,
-      filesystem_type: get_filesystem_type(cluster_id)
+      filesystem_type: get_filesystem_type(cluster)
     }
 
     Checks.request_execution(
