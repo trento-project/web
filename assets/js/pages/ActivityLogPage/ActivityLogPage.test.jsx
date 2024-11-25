@@ -42,8 +42,8 @@ describe('ActivityLogPage', () => {
   it('should render filter actions', async () => {
     const [StatefulActivityLogPage, _] = withDefaultState(<ActivityLogPage />);
     await act(() => renderWithRouter(StatefulActivityLogPage));
-    expect(screen.getByText('Apply')).toBeVisible();
-    expect(screen.getByText('Reset')).toBeVisible();
+    expect(screen.getByText('Apply Filter')).toBeVisible();
+    expect(screen.getByText('Reset Filters')).toBeVisible();
     expect(screen.getByText('Refresh')).toBeVisible();
   });
 

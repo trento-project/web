@@ -103,7 +103,7 @@ context('Activity Log page', () => {
 
       cy.get('input[name="metadata-search"]').type('foo bar');
 
-      cy.contains('Apply').click();
+      cy.contains('Apply Filter').click();
 
       cy.url().should(
         'eq',
@@ -122,7 +122,7 @@ context('Activity Log page', () => {
         '/activity_log?from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging&search=foo+bar'
       );
 
-      cy.contains('Reset').click();
+      cy.contains('Reset Filters').click();
 
       cy.contains('Filter Type', { matchCase: false }).should('be.visible');
       cy.contains('Filter older than', { matchCase: false }).should(
@@ -256,7 +256,7 @@ context('Activity Log page', () => {
 
       cy.contains('Filter Type').click();
       cy.contains('Login Attempt').click();
-      cy.contains('Apply').click();
+      cy.contains('Apply Filter').click();
 
       cy.url().should(
         'eq',
