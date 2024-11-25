@@ -136,7 +136,7 @@ function ApiKeySettingsModal({
                 <Label>Key Expiration</Label>
               </div>
 
-              <div className="w-2/4 pt-1">
+              <div className="w-2/4">
                 <InputNumber
                   value={timeQuantity}
                   className="!h-8"
