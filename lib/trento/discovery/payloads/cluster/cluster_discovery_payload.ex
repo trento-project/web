@@ -179,7 +179,22 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
   defp parse_cluster_additional_sids(%{
          "cluster_type" => ClusterType.hana_scale_up(),
          "cib" => %{"configuration" => %{"resources" => %{"primitives" => primitives}}}
+       }),
+       do: primitives |> get_sapinstance_sids()
+
+  defp parse_cluster_additional_sids(%{
+         "cib" => %{"configuration" => %{"resources" => %{"clones" => nil, "groups" => groups}}}
        }) do
+    groups
+    |> Enum.flat_map(fn
+      %{"primitives" => primitives} -> primitives
+    end)
+    |> get_sapinstance_sids()
+  end
+
+  defp parse_cluster_additional_sids(_), do: []
+
+  defp get_sapinstance_sids(primitives) do
     primitives
     |> Enum.flat_map(fn
       %{"type" => "SAPInstance", "instance_attributes" => attributes} ->
@@ -197,32 +212,6 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
     end)
     |> Enum.uniq()
   end
-
-  defp parse_cluster_additional_sids(%{
-         "cib" => %{"configuration" => %{"resources" => %{"clones" => nil, "groups" => groups}}}
-       }) do
-    groups
-    |> Enum.flat_map(fn
-      %{"primitives" => primitives} -> primitives
-    end)
-    |> Enum.flat_map(fn
-      %{"type" => "SAPInstance", "instance_attributes" => attributes} ->
-        attributes
-
-      _ ->
-        []
-    end)
-    |> Enum.flat_map(fn
-      %{"name" => "InstanceName", "value" => value} when value != "" ->
-        value |> String.split("_") |> Enum.at(0) |> List.wrap()
-
-      _ ->
-        []
-    end)
-    |> Enum.uniq()
-  end
-
-  defp parse_cluster_additional_sids(_), do: []
 
   defp maybe_validate_required_fields(cluster, %{"cluster_type" => ClusterType.hana_scale_up()}),
     do: validate_required(cluster, @required_fields_hana)

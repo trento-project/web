@@ -42,6 +42,3 @@ npm-debug.log
 
 # Local dev.local.exs file
 config/dev.local.exs
-
-# ignore scenario
-/test/fixtures/scenarios/cost_optimised_sap_scenario

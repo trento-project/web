@@ -52,9 +52,7 @@ function ClusterTypeLabel({
 }) {
   const clusterTypeLabel = getClusterTypeLabel(clusterType);
   const clusterTypeScenarioLabel = getClusterTypeScenarioLabel(clusterScenario);
-  const combinedClusterTypeLabel = `${clusterTypeLabel}${
-    clusterScenario ? ` ${clusterTypeScenarioLabel}` : ''
-  }`;
+  const combinedClusterTypeLabel = `${clusterTypeLabel} ${clusterTypeScenarioLabel}`;
 
   return (
     <span className="group flex items-center relative">

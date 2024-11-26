@@ -10,15 +10,30 @@ import { ClusterDetailsPage } from './ClusterDetailsPage';
 
 describe('ClusterDetails ClusterDetailsPage component', () => {
   it.each([
-    { type: 'hana_scale_up', label: 'HANA Scale Up', scneario: 'unknown' },
-    { type: 'ascs_ers', label: 'ASCS/ERS' },
-    { type: 'unknwon', label: 'Unknown cluster type' },
+    {
+      type: 'hana_scale_up',
+      label: 'HANA Scale Up',
+      clusterTypeScenarioLabel: 'Perf. Opt.',
+      scenario: 'performance_optimized',
+    },
+    {
+      type: 'hana_scale_up',
+      label: 'HANA Scale Up',
+      clusterTypeScenarioLabel: 'Cost Opt.',
+      scenario: 'cost_optimized',
+    },
+    { type: 'ascs_ers', label: 'ASCS/ERS', clusterTypeScenarioLabel: '' },
+    {
+      type: 'unknwon',
+      label: 'Unknown cluster type',
+      clusterTypeScenarioLabel: '',
+    },
   ])(
     'should display the $type details based on cluster type',
-    ({ type, label, scneario }) => {
+    ({ type, label, clusterTypeScenarioLabel, scenario }) => {
       const cluster = clusterFactory.build({
         type,
-        details: { hana_scenario: scneario },
+        details: { hana_scenario: scenario },
       });
       const initialState = {
         clustersList: { clusters: [cluster] },
@@ -43,8 +58,11 @@ describe('ClusterDetails ClusterDetailsPage component', () => {
         path: 'clusters/:clusterID',
         route: `/clusters/${cluster.id}`,
       });
-
-      expect(screen.getByText(label)).toBeInTheDocument();
+      const clusterTypeLabel =
+        clusterTypeScenarioLabel.length === 0
+          ? label
+          : `${label} ${clusterTypeScenarioLabel}`;
+      expect(screen.getByText(clusterTypeLabel)).toBeInTheDocument();
     }
   );
 });

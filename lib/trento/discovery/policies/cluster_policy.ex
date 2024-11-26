@@ -129,6 +129,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
            sbd: sbd,
            cluster_type: ClusterType.hana_scale_up(),
            hana_architecture_type: HanaArchitectureType.classic(),
+           additional_sids: additional_sids,
            sid: sid,
            cib: cib
          } = payload
@@ -137,7 +138,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
 
     %{
       architecture_type: HanaArchitectureType.classic(),
-      hana_scenario: parse_hana_scenario(crmmon, ClusterType.hana_scale_up()),
+      hana_scenario: parse_hana_scenario(additional_sids),
       system_replication_mode: parse_hana_scale_up_system_replication_mode(nodes, sid),
       system_replication_operation_mode:
         parse_hana_scale_up_system_replication_operation_mode(nodes, sid),
@@ -159,11 +160,13 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
            sbd: sbd,
            cluster_type: ClusterType.hana_scale_out(),
            hana_architecture_type: HanaArchitectureType.classic(),
+           additional_sids: additional_sids,
            sid: sid
          } = payload
        ) do
     %{
       architecture_type: HanaArchitectureType.classic(),
+      hana_scenario: parse_hana_scenario(additional_sids),
       system_replication_mode: parse_hana_scale_out_system_replication_mode(cib, sid),
       system_replication_operation_mode:
         parse_hana_scale_out_system_replication_operation_mode(cib, sid),
@@ -174,8 +177,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
       stopped_resources: parse_cluster_stopped_resources(crmmon),
       nodes: parse_cluster_nodes(payload, sid),
       sbd_devices: parse_sbd_devices(sbd),
-      sites: parse_hana_scale_out_sites(HanaArchitectureType.classic(), cib, sid),
-      hana_scenario: parse_hana_scenario(crmmon, ClusterType.hana_scale_out())
+      sites: parse_hana_scale_out_sites(HanaArchitectureType.classic(), cib, sid)
     }
   end
 
@@ -187,11 +189,13 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
            cib: cib,
            sbd: sbd,
            hana_architecture_type: HanaArchitectureType.angi(),
+           additional_sids: additional_sids,
            sid: sid
          } = payload
        ) do
     %{
       architecture_type: HanaArchitectureType.angi(),
+      hana_scenario: parse_hana_scenario(additional_sids),
       system_replication_mode: parse_hana_angi_system_replication_mode(cib, sid),
       system_replication_operation_mode:
         parse_hana_angi_system_replication_operation_mode(cib, sid),
@@ -202,8 +206,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
       stopped_resources: parse_cluster_stopped_resources(crmmon),
       nodes: parse_cluster_nodes(payload, sid),
       sbd_devices: parse_sbd_devices(sbd),
-      sites: parse_hana_scale_out_sites(HanaArchitectureType.angi(), cib, sid),
-      hana_scenario: parse_hana_scenario(crmmon)
+      sites: parse_hana_scale_out_sites(HanaArchitectureType.angi(), cib, sid)
     }
   end
 
@@ -222,7 +225,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
       stopped_resources: parse_cluster_stopped_resources(crmmon),
       sbd_devices: parse_sbd_devices(sbd),
       maintenance_mode: parse_maintenance_mode(cib),
-      hana_scenario: parse_hana_scenario(crmmon)
+      hana_scenario: parse_hana_scenario(additional_sids)
     }
   end
 
@@ -1027,24 +1030,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
   defp parse_hana_cluster_health(%{sr_health_state: _, secondary_sync_state: _}),
     do: Health.critical()
 
-  defp parse_hana_scenario(crmmon, ClusterType.hana_scale_up()) do
-    validate_hana_scenario(crmmon)
-  end
+  defp parse_hana_scenario([]), do: HanaScenario.performance_optimized()
 
-  defp parse_hana_scenario(_crmmon, _cluster_type), do: HanaScenario.unknown()
-
-  defp parse_hana_scenario(_), do: HanaScenario.unknown()
-
-  defp validate_hana_scenario(%{resources: resource}) do
-    case validate_resource_id_for_sap_system(resource) do
-      true -> HanaScenario.cost_optimized()
-      false -> HanaScenario.performance_optimized()
-    end
-  end
-
-  defp validate_resource_id_for_sap_system(resource) do
-    Enum.any?(resource, fn
-      %{id: id} -> String.match?(id, ~r/rsc_SAP/)
-    end)
-  end
+  defp parse_hana_scenario(_), do: HanaScenario.cost_optimized()
 end

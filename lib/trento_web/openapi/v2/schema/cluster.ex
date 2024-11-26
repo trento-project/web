@@ -102,7 +102,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
           },
           hana_scenario: %Schema{
             type: :string,
-            description: "Detected hana scenario",
+            description: "Detected HANA scenario",
             enum: HanaScenario.values()
           },
           system_replication_mode: %Schema{type: :string, description: "System Replication Mode"},
