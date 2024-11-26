@@ -53,9 +53,8 @@ function HanaClusterDetails({
 }) {
   const enrichedNodes = enrichNodes(details?.nodes, hosts);
   const sidsList = [sid, ...additionalSids];
-
   const enrichedSapSystems = sidsList.map((sidItem) => ({
-    sidItem,
+    sid: sidItem,
     ...sapSystems.find(({ sid: currentSid }) => currentSid === sidItem),
   }));
 
@@ -155,17 +154,26 @@ function HanaClusterDetails({
               {
                 title: 'SID',
                 content: enrichedSapSystems,
-                render: (content) => (
-                  <div>
-                    {content.map(({ id, sid: sapSystemSid }) => (
-                      <span key={sapSystemSid}>
-                        <SapSystemLink sapSystemId={id} systemType="databases">
-                          {sapSystemSid}
-                        </SapSystemLink>{' '}
-                      </span>
-                    ))}
-                  </div>
-                ),
+                render: (content) =>
+                  content.every(
+                    (sapSystem) => sapSystem.id && sapSystem.sid
+                  ) ? (
+                    <div>
+                      {content.map(({ id, sid: sapSystemSid }) => (
+                        <span key={`${id}-${sapSystemSid}`}>
+                          <SapSystemLink
+                            key={id}
+                            sapSystemId={id}
+                            systemType="databases"
+                          >
+                            {sapSystemSid}
+                          </SapSystemLink>{' '}
+                        </span>
+                      ))}
+                    </div>
+                  ) : (
+                    <span>{sidsList.join(' ')}</span>
+                  ),
               },
               {
                 title: 'Fencing type',

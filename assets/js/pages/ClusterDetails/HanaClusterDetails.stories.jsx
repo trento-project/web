@@ -25,6 +25,7 @@ const {
   type: clusterType,
   selected_checks: selectedChecks,
   provider,
+  additional_sids,
   cib_last_written: cibLastWritten,
   details,
 } = clusterFactory.build({
@@ -108,7 +109,17 @@ const scaleOutHosts = scaleOutDetails.nodes.map(({ name }) =>
   hostFactory.build({ hostname: name })
 );
 
-const sapSystems = sapSystemFactory.buildList(1, { sid });
+const sapSystems = sapSystemFactory.buildList(1, {
+  sid,
+  hana_scenario: 'performance_optimized',
+});
+
+const additionalSids = additional_sids;
+
+const sapSystemList = [
+  sapSystemFactory.build({ sid, hana_scenario: 'cost_optimized' }),
+  sapSystemFactory.build({ sid: 'QAS', hana_scenario: 'cost_optimized' }),
+];
 
 const catalog = catalogFactory.build();
 
@@ -145,6 +156,7 @@ export const Hana = {
     clusterType,
     cibLastWritten,
     sid,
+    additionalSids,
     provider,
     sapSystems,
     details,
@@ -224,6 +236,33 @@ export const AngiArchitecture = {
     details: {
       ...Hana.args.details,
       architecture_type: 'angi',
+      hana_scenario: 'unknown',
+    },
+  },
+};
+
+export const AngiArchitecturePerformanceScenario = {
+  args: {
+    ...Hana.args,
+    additionalSids: [],
+    details: {
+      ...Hana.args.details,
+      architecture_type: 'angi',
+      hana_scenario: 'performance_optimized',
+    },
+  },
+};
+
+export const AngiArchitectureCostOptScenario = {
+  args: {
+    ...Hana.args,
+    sid,
+    additionalSids: ['DEV', 'QAS'],
+    sap_systems: sapSystemList,
+    details: {
+      ...Hana.args.details,
+      architecture_type: 'angi',
+      hana_scenario: 'cost_optimized',
     },
   },
 };

@@ -180,7 +180,7 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
          "cluster_type" => ClusterType.hana_scale_up(),
          "cib" => %{"configuration" => %{"resources" => %{"primitives" => primitives}}}
        }),
-       do: primitives |> get_sapinstance_sids()
+       do: get_sapinstance_sids(primitives)
 
   defp parse_cluster_additional_sids(%{
          "cib" => %{"configuration" => %{"resources" => %{"clones" => nil, "groups" => groups}}}

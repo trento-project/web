@@ -173,6 +173,7 @@ describe('HanaClusterDetails component', () => {
         cibLastWritten={cibLastWritten}
         provider={provider}
         sapSystems={[{ sid }]}
+        sid={sid}
         details={details}
         lastExecution={null}
         userAbilities={userAbilities}
@@ -180,7 +181,6 @@ describe('HanaClusterDetails component', () => {
     );
 
     const sidContainer = screen.getByText('SID').nextSibling;
-
     expect(sidContainer).toHaveTextContent(sid);
     expect(sidContainer.querySelector('a')).toBeNull();
   });
