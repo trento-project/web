@@ -25,6 +25,16 @@ describe('searchParams helpers', () => {
         search: 'foo+bar',
       });
     });
+
+    it('should ignore irrelevant entries', () => {
+      const sp = new URLSearchParams();
+      sp.append('search', 'foo+bar');
+      sp.append('refreshRate', '5000');
+
+      const result = searchParamsToAPIParams(sp);
+
+      expect(result).toEqual({ search: 'foo+bar' });
+    });
   });
 
   describe('searchParamsToFilterValue', () => {
