@@ -22,11 +22,17 @@ describe('ClusterDetails ClusterDetailsPage component', () => {
       clusterTypeScenarioLabel: 'Cost Opt.',
       scenario: 'cost_optimized',
     },
-    { type: 'ascs_ers', label: 'ASCS/ERS', clusterTypeScenarioLabel: '' },
+    {
+      type: 'ascs_ers',
+      label: 'ASCS/ERS',
+      clusterTypeScenarioLabel: '',
+      scenario: 'unknwon',
+    },
     {
       type: 'unknwon',
       label: 'Unknown cluster type',
       clusterTypeScenarioLabel: '',
+      scenario: 'unknwon',
     },
   ])(
     'should display the $type details based on cluster type',

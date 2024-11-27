@@ -224,8 +224,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
       fencing_type: parse_cluster_fencing_type(crmmon, sbd),
       stopped_resources: parse_cluster_stopped_resources(crmmon),
       sbd_devices: parse_sbd_devices(sbd),
-      maintenance_mode: parse_maintenance_mode(cib),
-      hana_scenario: parse_hana_scenario(additional_sids)
+      maintenance_mode: parse_maintenance_mode(cib)
     }
   end
 
