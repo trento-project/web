@@ -525,6 +525,173 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
              |> ClusterPolicy.handle(nil)
   end
 
+  test "should return the expected commands when a ha_cluster_discovery payload of type hana_scale_up with cost optimized scenario is handled" do
+    assert {:ok,
+            [
+              %RegisterClusterHost{
+                cib_last_written: "Mon Aug 26 14:52:19 2024",
+                cluster_id: "ee7ea205-d5cc-5bbd-a345-10cad2aae2d7",
+                designated_controller: true,
+                details: %HanaClusterDetails{
+                  fencing_type: "external/sbd",
+                  maintenance_mode: false,
+                  hana_scenario: HanaScenario.cost_optimized(),
+                  nodes: [
+                    %HanaClusterNode{
+                      attributes: %{
+                        "hana_hdq_clone_state" => "PROMOTED",
+                        "hana_hdq_op_mode" => "logreplay",
+                        "hana_hdq_remoteHost" => "node02",
+                        "hana_hdq_roles" => "4:P:master1:master:worker:master",
+                        "hana_hdq_site" => "PRIMARY_SITE_NAME",
+                        "hana_hdq_sra" => "-",
+                        "hana_hdq_srah" => "-",
+                        "hana_hdq_srmode" => "sync",
+                        "hana_hdq_sync_state" => "PRIM",
+                        "hana_hdq_version" => "2.00.057.00",
+                        "hana_hdq_vhost" => "node01",
+                        "lpa_hdq_lpt" => "1724683939",
+                        "maintenance" => "off",
+                        "master-rsc_SAPHana_HDQ_HDB10" => "150"
+                      },
+                      hana_status: "Primary",
+                      status: "Online",
+                      name: "node01",
+                      nameserver_actual_role: "master",
+                      indexserver_actual_role: "master",
+                      resources: [
+                        %ClusterResource{
+                          fail_count: 0,
+                          id: "stonith-sbd",
+                          role: "Started",
+                          status: "Active",
+                          type: "stonith:external/sbd",
+                          managed: true
+                        },
+                        %ClusterResource{
+                          fail_count: 0,
+                          id: "rsc_SAPHana_HDQ_HDB10",
+                          managed: true,
+                          role: "Master",
+                          status: "Active",
+                          type: "ocf::suse:SAPHana"
+                        },
+                        %ClusterResource{
+                          fail_count: 0,
+                          id: "rsc_SAPHanaTopology_HDQ_HDB10",
+                          managed: true,
+                          role: "Started",
+                          status: "Active",
+                          type: "ocf::suse:SAPHanaTopology"
+                        },
+                        %ClusterResource{
+                          fail_count: 0,
+                          id: "rsc_ip_HDQ_HDB10",
+                          managed: true,
+                          role: "Started",
+                          status: "Active",
+                          type: "ocf::heartbeat:IPaddr2"
+                        },
+                        %ClusterResource{
+                          fail_count: 0,
+                          id: "rsc_socat_HDQ_HDB10",
+                          managed: true,
+                          role: "Started",
+                          status: "Active",
+                          type: "ocf::heartbeat:azure-lb"
+                        }
+                      ],
+                      site: "PRIMARY_SITE_NAME",
+                      virtual_ip: "192.168.100.122"
+                    },
+                    %HanaClusterNode{
+                      attributes: %{
+                        "hana_hdq_clone_state" => "DEMOTED",
+                        "hana_hdq_op_mode" => "logreplay",
+                        "hana_hdq_remoteHost" => "node01",
+                        "hana_hdq_roles" => "4:S:master1:master:worker:master",
+                        "hana_hdq_site" => "SECONDARY_SITE_NAME",
+                        "hana_hdq_srah" => "-",
+                        "hana_hdq_srmode" => "sync",
+                        "hana_hdq_sync_state" => "SOK",
+                        "hana_hdq_version" => "2.00.057.00",
+                        "hana_hdq_vhost" => "node02",
+                        "lpa_hdq_lpt" => "30",
+                        "master-rsc_SAPHana_HDQ_HDB10" => "100"
+                      },
+                      hana_status: "Secondary",
+                      status: "Online",
+                      name: "node02",
+                      indexserver_actual_role: "master",
+                      nameserver_actual_role: "master",
+                      resources: [
+                        %ClusterResource{
+                          fail_count: 0,
+                          id: "rsc_SAP_QAS_HDB20",
+                          role: "Started",
+                          status: "Active",
+                          type: "ocf::heartbeat:SAPInstance",
+                          managed: true
+                        },
+                        %ClusterResource{
+                          fail_count: 0,
+                          id: "rsc_SAPHana_HDQ_HDB10",
+                          role: "Slave",
+                          status: "Active",
+                          type: "ocf::suse:SAPHana",
+                          managed: true
+                        },
+                        %ClusterResource{
+                          fail_count: 0,
+                          id: "rsc_SAPHanaTopology_HDQ_HDB10",
+                          role: "Started",
+                          status: "Active",
+                          type: "ocf::suse:SAPHanaTopology",
+                          managed: true
+                        }
+                      ],
+                      site: "SECONDARY_SITE_NAME",
+                      virtual_ip: nil
+                    }
+                  ],
+                  sites: [
+                    %HanaClusterSite{
+                      name: "PRIMARY_SITE_NAME",
+                      state: "Primary",
+                      sr_health_state: "4"
+                    },
+                    %HanaClusterSite{
+                      name: "SECONDARY_SITE_NAME",
+                      state: "Secondary",
+                      sr_health_state: "4"
+                    }
+                  ],
+                  sbd_devices: [
+                    %Trento.Clusters.ValueObjects.SbdDevice{device: "/dev/sdj", status: "healthy"}
+                  ],
+                  secondary_sync_state: "SOK",
+                  sr_health_state: "4",
+                  stopped_resources: [],
+                  system_replication_mode: "sync",
+                  system_replication_operation_mode: "logreplay",
+                  architecture_type: HanaArchitectureType.classic()
+                },
+                host_id: "2372b24f-3d7a-5d01-9b1a-a2c4c95c53d4",
+                name: "hana_cluster",
+                sid: "HDQ",
+                additional_sids: ["QAS"],
+                type: :hana_scale_up,
+                hosts_number: 2,
+                resources_number: 8,
+                discovered_health: :passing,
+                provider: Provider.azure()
+              }
+            ]} ==
+             "ha_cluster_discovery_hana_scale_up_cost_opt"
+             |> load_discovery_event_fixture()
+             |> ClusterPolicy.handle(nil)
+  end
+
   test "should return the expected commands when a ha_cluster_discovery payload of type ascs_ers is handled" do
     assert {:ok,
             [
