@@ -32,6 +32,14 @@ import {
   setPaginationToSearchParams,
   resetPaginationToSearchParams,
 } from './searchParams';
+import {
+  addRefreshRateToSearchParams,
+  detectRefreshRate,
+  refreshRateOptions,
+  refreshRateOptionsToLabel,
+  removeRefreshRateFromSearchParams,
+  resetAutorefresh,
+} from './autorefresh';
 
 const defaultItemsPerPage = 20;
 const detectItemsPerPage = (number) =>
@@ -131,39 +139,12 @@ function MainView({
   );
 }
 
-const second = 1 * 1000;
-const minute = 60 * second;
-
-const refreshRateOptions = [
-  'off',
-  5 * second,
-  10 * second,
-  30 * second,
-  1 * minute,
-  5 * minute,
-  30 * minute,
-];
-
-const refreshRateOptionsToLabel = {
-  off: `Off`,
-  [5 * second]: '5s',
-  [10 * second]: '10s',
-  [30 * second]: '30s',
-  [1 * minute]: '1m',
-  [5 * minute]: '5m',
-  [30 * minute]: '30m',
-};
-
-const detectRefreshRate = (number) =>
-  refreshRateOptions.includes(Number(number))
-    ? Number(number)
-    : refreshRateOptions[0];
-
-function RefreshIntervalSelection({ rate, onChange = noop }) {
+function RefreshIntervalSelection({ disabled = false, rate, onChange = noop }) {
   const [refreshRate, setRefreshRate] = pipe(detectRefreshRate, useState)(rate);
 
   return (
     <Select
+      disabled={disabled}
       optionsName="refresh-rate"
       options={refreshRateOptions}
       value={refreshRate}
@@ -187,6 +168,7 @@ function ActivityLogPage() {
   const [activityLogRequest, setActivityLogRequest] = useState(
     request.initial()
   );
+  const [isFirstPage, setIsFirstPage] = useState(true);
   const [autorefreshInterval, setAutorefreshInterval] = useState(null);
   const { abilities } = useSelector(getUserProfile);
 
@@ -238,6 +220,11 @@ function ActivityLogPage() {
     detectItemsPerPage
   )(searchParams);
 
+  const trackWhetherOnFirstPage = (response) => {
+    setIsFirstPage(!response?.pagination?.has_previous_page);
+    return response;
+  };
+
   const fetchActivityLog = () => {
     // defer the loading state to avoid flickering
     const tid = setTimeout(() => setActivityLogRequest(request.loading()), 500);
@@ -248,6 +235,7 @@ function ActivityLogPage() {
             data: data?.data || [],
             pagination: data?.pagination,
           }),
+          trackWhetherOnFirstPage,
           request.success,
           setActivityLogRequest
         )
@@ -256,36 +244,26 @@ function ActivityLogPage() {
       .finally(() => clearTimeout(tid));
   };
 
-  const removeRefreshRateFromSearchParams = pipe(() => {
-    searchParams.delete('refreshRate');
-    return searchParams;
-  }, setSearchParams);
+  const keepAutorefreshRate = (currentRate) => (params) =>
+    currentRate ? addRefreshRateToSearchParams(params, currentRate) : params;
 
-  const addRefreshRateToSearchParams = pipe((refreshRate) => {
-    searchParams.set('refreshRate', refreshRate);
-    return searchParams;
-  }, setSearchParams);
+  useEffect(() => fetchActivityLog(), [searchParams]);
 
-  const resetAutorefresh = () => {
-    const refreshRate = detectRefreshRate(searchParams.get('refreshRate'));
+  useEffect(() => {
+    if (!isFirstPage) return noop;
 
-    const interval =
-      refreshRate !== 'off' ? setInterval(fetchActivityLog, refreshRate) : null;
+    const { interval, cleanup } = resetAutorefresh(
+      autorefreshInterval,
+      fetchActivityLog,
+      searchParams.get('refreshRate')
+    );
 
     setAutorefreshInterval(interval);
 
-    return interval;
-  };
+    return cleanup;
+  }, [isFirstPage, searchParams]);
 
-  useEffect(() => {
-    clearInterval(autorefreshInterval);
-
-    fetchActivityLog();
-
-    const interval = resetAutorefresh();
-
-    return () => clearInterval(interval);
-  }, [searchParams]);
+  const currentRefreshRate = searchParams.get('refreshRate');
 
   return (
     <>
@@ -301,16 +279,23 @@ function ActivityLogPage() {
               setFilterValueToSearchParams,
               resetPaginationToSearchParams,
               applyItemsPerPage(itemsPerPage),
+              keepAutorefreshRate(currentRefreshRate),
               setSearchParams
             )}
           >
             <RefreshIntervalSelection
-              rate={searchParams.get('refreshRate')}
-              onChange={(newRefreshRate) =>
-                newRefreshRate === 'off'
-                  ? removeRefreshRateFromSearchParams()
-                  : addRefreshRateToSearchParams(newRefreshRate)
-              }
+              disabled={!isFirstPage}
+              rate={currentRefreshRate}
+              onChange={pipe(
+                (newRefreshRate) =>
+                  newRefreshRate === 'off'
+                    ? removeRefreshRateFromSearchParams(searchParams)
+                    : addRefreshRateToSearchParams(
+                        searchParams,
+                        newRefreshRate
+                      ),
+                setSearchParams
+              )}
             />
             <Button type="primary-white" onClick={fetchActivityLog}>
               <EOS_REFRESH className="inline-block fill-jungle-green-500" />{' '}

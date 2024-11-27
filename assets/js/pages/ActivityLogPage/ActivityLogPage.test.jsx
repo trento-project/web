@@ -39,12 +39,14 @@ describe('ActivityLogPage', () => {
     ).toBeInTheDocument();
   });
 
-  it('should render filter actions', async () => {
+  it('should render actions', async () => {
     const [StatefulActivityLogPage, _] = withDefaultState(<ActivityLogPage />);
     await act(() => renderWithRouter(StatefulActivityLogPage));
     expect(screen.getByText('Apply Filter')).toBeVisible();
     expect(screen.getByText('Reset Filters')).toBeVisible();
     expect(screen.getByText('Refresh')).toBeVisible();
+    // Autorefresh is off by default
+    expect(screen.getByText('Off')).toBeVisible();
   });
 
   it.each`
@@ -119,6 +121,34 @@ describe('ActivityLogPage', () => {
     await userEvent.click(screen.getByTestId('filter-User'));
     expect(container.querySelectorAll('ul > li[role="option"]')).toHaveLength(
       users.length
+    );
+  });
+
+  describe('Autorefresh', () => {
+    it.each`
+      isOnFirstPage | isEnabled
+      ${true}       | ${true}
+      ${false}      | ${false}
+    `(
+      'should enable selecting autorefresh rate only on first page',
+      async ({ isOnFirstPage, isEnabled }) => {
+        axiosMock.onGet('/api/v1/activity_log').reply(200, {
+          data: activityLogEntryFactory.buildList(10),
+          pagination: {
+            has_previous_page: !isOnFirstPage,
+          },
+        });
+        const [StatefulActivityLogPage, _] = withDefaultState(
+          <ActivityLogPage />
+        );
+        await act(() => renderWithRouter(StatefulActivityLogPage));
+
+        const autorefreshButton = screen.getByRole('button', { name: 'Off' });
+
+        isEnabled
+          ? expect(autorefreshButton).toBeEnabled()
+          : expect(autorefreshButton).toBeDisabled();
+      }
     );
   });
 });
