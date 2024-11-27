@@ -173,6 +173,23 @@ export const Hana = {
   },
 };
 
+export const HanaScaleUpCostOpt = {
+  args: {
+    ...Hana.args,
+    additionalSids: ['QAS', 'DEV'],
+    sapSystems: sapSystemList,
+    details: { ...Hana.args.details, hana_scenario: 'cost_optimized' },
+  },
+};
+
+export const HanaScaleUpCostOptWithoutEnrichedData = {
+  args: {
+    ...Hana.args,
+    additionalSids: ['QAS', 'DEV'],
+    details: { ...Hana.args.details, hana_scenario: 'cost_optimized' },
+  },
+};
+
 export const HanaScaleOut = {
   args: {
     ...Hana.args,

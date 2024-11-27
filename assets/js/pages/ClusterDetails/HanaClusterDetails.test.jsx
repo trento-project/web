@@ -466,7 +466,11 @@ describe('HanaClusterDetails component', () => {
   );
 
   it.each([
-    { arch: 'angi', tooltip: 'Angi architecture' },
+    {
+      arch: 'angi',
+      tooltip: 'Angi architecture',
+      scenario: 'performance_optimized',
+    },
     {
       arch: 'classic',
       tooltip: 'Classic architecture',
