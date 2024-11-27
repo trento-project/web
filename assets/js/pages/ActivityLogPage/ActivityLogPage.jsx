@@ -155,7 +155,7 @@ function ActivityLogPage() {
         allowedActivities,
         map(([key, value]) => [key, value.label])
       )(abilities),
-      className: 'col-span-2',
+      className: 'col-span-2 min-w-full max-w-44',
     },
     {
       key: 'actor',
