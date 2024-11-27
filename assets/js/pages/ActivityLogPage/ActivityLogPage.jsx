@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { noop } from 'lodash';
 import { useSearchParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { EOS_REFRESH } from 'eos-icons-react';
+import { EOS_REFRESH, EOS_UPDATE_FILLED } from 'eos-icons-react';
 
 import { map, pipe } from 'lodash/fp';
 
@@ -17,6 +18,7 @@ import ActivityLogOverview from '@common/ActivityLogOverview';
 import ComposedFilter from '@common/ComposedFilter';
 import Pagination, { defaultItemsPerPageOptions } from '@common/Pagination';
 import Spinner from '@common/Spinner';
+import Select, { createOptionRenderer } from '@common/Select';
 
 import ConnectionErrorAntenna from '@static/connection-error-antenna.svg';
 
@@ -129,12 +131,63 @@ function MainView({
   );
 }
 
+const second = 1 * 1000;
+const minute = 60 * second;
+
+const refreshRateOptions = [
+  'off',
+  5 * second,
+  10 * second,
+  30 * second,
+  1 * minute,
+  5 * minute,
+  30 * minute,
+];
+
+const refreshRateOptionsToLabel = {
+  off: `Off`,
+  [5 * second]: '5s',
+  [10 * second]: '10s',
+  [30 * second]: '30s',
+  [1 * minute]: '1m',
+  [5 * minute]: '5m',
+  [30 * minute]: '30m',
+};
+
+const detectRefreshRate = (number) =>
+  refreshRateOptions.includes(Number(number))
+    ? Number(number)
+    : refreshRateOptions[0];
+
+function RefreshIntervalSelection({ rate, onChange = noop }) {
+  const [refreshRate, setRefreshRate] = pipe(detectRefreshRate, useState)(rate);
+
+  return (
+    <Select
+      optionsName="refresh-rate"
+      options={refreshRateOptions}
+      value={refreshRate}
+      renderOption={createOptionRenderer(null, (value) => (
+        <span className="text-center block">
+          {refreshRateOptionsToLabel[value]}
+        </span>
+      ))}
+      onChange={(newRefreshRate) => {
+        setRefreshRate(newRefreshRate);
+        onChange(newRefreshRate);
+      }}
+      selectedItemPrefix={<EOS_UPDATE_FILLED className="absolute" />}
+    />
+  );
+}
+
 function ActivityLogPage() {
   const users = useSelector(getActivityLogUsers);
   const [searchParams, setSearchParams] = useSearchParams();
   const [activityLogRequest, setActivityLogRequest] = useState(
     request.initial()
   );
+  const [autorefreshInterval, setAutorefreshInterval] = useState(null);
   const { abilities } = useSelector(getUserProfile);
 
   const filters = [
@@ -203,8 +256,35 @@ function ActivityLogPage() {
       .finally(() => clearTimeout(tid));
   };
 
+  const removeRefreshRateFromSearchParams = pipe(() => {
+    searchParams.delete('refreshRate');
+    return searchParams;
+  }, setSearchParams);
+
+  const addRefreshRateToSearchParams = pipe((refreshRate) => {
+    searchParams.set('refreshRate', refreshRate);
+    return searchParams;
+  }, setSearchParams);
+
+  const resetAutorefresh = () => {
+    const refreshRate = detectRefreshRate(searchParams.get('refreshRate'));
+
+    const interval =
+      refreshRate !== 'off' ? setInterval(fetchActivityLog, refreshRate) : null;
+
+    setAutorefreshInterval(interval);
+
+    return interval;
+  };
+
   useEffect(() => {
+    clearInterval(autorefreshInterval);
+
     fetchActivityLog();
+
+    const interval = resetAutorefresh();
+
+    return () => clearInterval(interval);
   }, [searchParams]);
 
   return (
@@ -213,6 +293,7 @@ function ActivityLogPage() {
       <div className="bg-white rounded-lg shadow">
         <div className="p-4">
           <ComposedFilter
+            className="grid-rows-2"
             filters={filters}
             autoApply={false}
             value={searchParamsToFilterValue(searchParams)}
@@ -223,11 +304,15 @@ function ActivityLogPage() {
               setSearchParams
             )}
           >
-            <Button
-              className="col-span-2"
-              type="primary-white"
-              onClick={fetchActivityLog}
-            >
+            <RefreshIntervalSelection
+              rate={searchParams.get('refreshRate')}
+              onChange={(newRefreshRate) =>
+                newRefreshRate === 'off'
+                  ? removeRefreshRateFromSearchParams()
+                  : addRefreshRateToSearchParams(newRefreshRate)
+              }
+            />
+            <Button type="primary-white" onClick={fetchActivityLog}>
               <EOS_REFRESH className="inline-block fill-jungle-green-500" />{' '}
               Refresh
             </Button>
