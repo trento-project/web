@@ -33,7 +33,6 @@ export const enrichNodes = (clusterNodes, hosts) =>
   }));
 
 function HanaClusterDetails({
-  additionalSids = [],
   clusterID,
   clusterName,
   selectedChecks,
@@ -44,6 +43,7 @@ function HanaClusterDetails({
   provider,
   sapSystems,
   sid,
+  additionalSids,
   details,
   catalog,
   userAbilities,
@@ -52,8 +52,8 @@ function HanaClusterDetails({
   navigate = () => {},
 }) {
   const enrichedNodes = enrichNodes(details?.nodes, hosts);
-  const sortedSidList = [sid, ...additionalSids].sort();
-  const enrichedSapSystems = sortedSidList.map((sidItem) => ({
+  const clusterSids = [sid, ...additionalSids];
+  const enrichedSapSystems = clusterSids.map((sidItem) => ({
     sid: sidItem,
     ...sapSystems.find(({ sid: currentSid }) => currentSid === sidItem),
   }));
@@ -172,7 +172,7 @@ function HanaClusterDetails({
                       ))}
                     </div>
                   ) : (
-                    <span>{sortedSidList.join(' ')}</span>
+                    <span>{clusterSids.join(' ')}</span>
                   ),
               },
               {

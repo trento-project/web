@@ -79,7 +79,6 @@ export function ClusterDetailsPage() {
     case 'hana_scale_out':
       return (
         <HanaClusterDetails
-          additionalSids={cluster.additional_sids}
           clusterID={clusterID}
           userAbilities={abilities}
           clusterName={getClusterName(cluster)}
@@ -89,6 +88,7 @@ export function ClusterDetailsPage() {
           clusterType={cluster.type}
           cibLastWritten={cluster.cib_last_written}
           sid={cluster.sid}
+          additionalSids={cluster.additional_sids}
           provider={cluster.provider}
           sapSystems={clusterSapSystems}
           details={cluster.details}

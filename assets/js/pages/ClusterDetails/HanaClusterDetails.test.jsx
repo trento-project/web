@@ -95,6 +95,7 @@ describe('HanaClusterDetails component', () => {
           clusterType={clusterType}
           cibLastWritten={cibLastWritten}
           sid={sid}
+          additionalSids={[]}
           provider={provider}
           sapSystems={[]}
           details={details}
@@ -132,6 +133,7 @@ describe('HanaClusterDetails component', () => {
         clusterType={clusterType}
         cibLastWritten={cibLastWritten}
         sid={sid}
+        additionalSids={[]}
         provider={provider}
         sapSystems={sapSystems}
         details={details}
@@ -174,6 +176,7 @@ describe('HanaClusterDetails component', () => {
         provider={provider}
         sapSystems={[{ sid }]}
         sid={sid}
+        additionalSids={[]}
         details={details}
         lastExecution={null}
         userAbilities={userAbilities}
@@ -214,6 +217,7 @@ describe('HanaClusterDetails component', () => {
         clusterType={clusterType}
         cibLastWritten={cibLastWritten}
         sid={sid}
+        additionalSids={[]}
         provider={provider}
         sapSystems={[]}
         details={details}
@@ -255,6 +259,7 @@ describe('HanaClusterDetails component', () => {
         clusterType={clusterType}
         cibLastWritten={cibLastWritten}
         sid={sid}
+        additionalSids={[]}
         provider={provider}
         sapSystems={[]}
         details={details}
@@ -296,6 +301,7 @@ describe('HanaClusterDetails component', () => {
         clusterType={clusterType}
         cibLastWritten={cibLastWritten}
         sid={sid}
+        additionalSids={[]}
         provider={provider}
         sapSystems={[]}
         details={details}
@@ -338,6 +344,7 @@ describe('HanaClusterDetails component', () => {
         clusterType={clusterType}
         cibLastWritten={cibLastWritten}
         sid={sid}
+        additionalSids={[]}
         provider={provider}
         sapSystems={[]}
         details={updatedDetails}
@@ -380,6 +387,7 @@ describe('HanaClusterDetails component', () => {
         clusterType={clusterType}
         cibLastWritten={cibLastWritten}
         sid={sid}
+        additionalSids={[]}
         provider={provider}
         sapSystems={[]}
         details={details}
@@ -449,6 +457,7 @@ describe('HanaClusterDetails component', () => {
           clusterType={clusterType}
           cibLastWritten={cibLastWritten}
           sid={sid}
+          additionalSids={[]}
           provider={provider}
           sapSystems={[]}
           details={details}
@@ -470,21 +479,29 @@ describe('HanaClusterDetails component', () => {
       arch: 'angi',
       tooltip: 'Angi architecture',
       scenario: 'performance_optimized',
+      label: 'HANA Scale Up Perf. Opt.',
     },
     {
       arch: 'classic',
       tooltip: 'Classic architecture',
       scenario: 'performance_optimized',
+      label: 'HANA Scale Up Perf. Opt.',
     },
     {
       arch: 'classic',
       tooltip: 'Classic architecture',
       scenario: 'cost_optimized',
+      label: 'HANA Scale Up Cost Opt.',
     },
-    { arch: 'classic', tooltip: 'Classic architecture', scenario: 'unknown' },
+    {
+      arch: 'classic',
+      tooltip: 'Classic architecture',
+      scenario: 'unknown',
+      label: 'HANA Scale Up',
+    },
   ])(
     'should show cluster type with $arch architecture',
-    async ({ arch, tooltip, scenario }) => {
+    async ({ arch, tooltip, scenario, label }) => {
       const user = userEvent.setup();
 
       const {
@@ -512,6 +529,7 @@ describe('HanaClusterDetails component', () => {
           clusterType={clusterType}
           cibLastWritten={cibLastWritten}
           sid={sid}
+          additionalSids={[]}
           provider={provider}
           sapSystems={[]}
           details={details}
@@ -519,8 +537,7 @@ describe('HanaClusterDetails component', () => {
           userAbilities={userAbilities}
         />
       );
-
-      const icon = screen.getByText(/HANA Scale Up/i).children.item(0);
+      const icon = screen.getByText(label).children.item(0);
       await user.hover(icon);
       expect(screen.getByText(tooltip, { exact: false })).toBeInTheDocument();
     }
@@ -557,6 +574,7 @@ describe('HanaClusterDetails component', () => {
           clusterType={clusterType}
           cibLastWritten={cibLastWritten}
           sid={sid}
+          additionalSids={[]}
           provider={provider}
           sapSystems={[]}
           details={details}
@@ -603,6 +621,7 @@ describe('HanaClusterDetails component', () => {
           clusterType={clusterType}
           cibLastWritten={cibLastWritten}
           sid={sid}
+          additionalSids={[]}
           provider={provider}
           sapSystems={[]}
           details={details}

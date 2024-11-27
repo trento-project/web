@@ -45,11 +45,7 @@ const icons = {
   ),
 };
 
-function ClusterTypeLabel({
-  clusterType,
-  clusterScenario = '',
-  architectureType,
-}) {
+function ClusterTypeLabel({ clusterType, clusterScenario, architectureType }) {
   const clusterTypeLabel = getClusterTypeLabel(clusterType);
   const clusterTypeScenarioLabel = getClusterTypeScenarioLabel(clusterScenario);
   const combinedClusterTypeLabel = `${clusterTypeLabel} ${clusterTypeScenarioLabel}`;

@@ -12,31 +12,27 @@ describe('ClusterDetails ClusterDetailsPage component', () => {
   it.each([
     {
       type: 'hana_scale_up',
-      label: 'HANA Scale Up',
-      clusterTypeScenarioLabel: 'Perf. Opt.',
+      label: 'HANA Scale Up Perf. Opt.',
       scenario: 'performance_optimized',
     },
     {
       type: 'hana_scale_up',
-      label: 'HANA Scale Up',
-      clusterTypeScenarioLabel: 'Cost Opt.',
+      label: 'HANA Scale Up Cost Opt.',
       scenario: 'cost_optimized',
     },
     {
       type: 'ascs_ers',
       label: 'ASCS/ERS',
-      clusterTypeScenarioLabel: '',
       scenario: 'unknwon',
     },
     {
       type: 'unknwon',
       label: 'Unknown cluster type',
-      clusterTypeScenarioLabel: '',
       scenario: 'unknwon',
     },
   ])(
     'should display the $type details based on cluster type',
-    ({ type, label, clusterTypeScenarioLabel, scenario }) => {
+    ({ type, label, scenario }) => {
       const cluster = clusterFactory.build({
         type,
         details: { hana_scenario: scenario },
@@ -64,11 +60,8 @@ describe('ClusterDetails ClusterDetailsPage component', () => {
         path: 'clusters/:clusterID',
         route: `/clusters/${cluster.id}`,
       });
-      const clusterTypeLabel =
-        clusterTypeScenarioLabel.length === 0
-          ? label
-          : `${label} ${clusterTypeScenarioLabel}`;
-      expect(screen.getByText(clusterTypeLabel)).toBeInTheDocument();
+
+      expect(screen.getByText(label)).toBeInTheDocument();
     }
   );
 });

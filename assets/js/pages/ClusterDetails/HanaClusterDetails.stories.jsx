@@ -25,7 +25,7 @@ const {
   type: clusterType,
   selected_checks: selectedChecks,
   provider,
-  additional_sids,
+  additional_sids: additionalSids,
   cib_last_written: cibLastWritten,
   details,
 } = clusterFactory.build({
@@ -118,12 +118,10 @@ const sapSystems = sapSystemFactory.buildList(1, {
   hana_scenario: 'performance_optimized',
 });
 
-const additionalSids = additional_sids;
-
 const sapSystemList = [
-  sapSystemFactory.build({ sid, id: '123' }),
-  sapSystemFactory.build({ sid: 'QAS', id: '345' }),
-  sapSystemFactory.build({ sid: 'DEV', id: '678' }),
+  sapSystemFactory.build({ sid }),
+  sapSystemFactory.build({ sid: 'QAS' }),
+  sapSystemFactory.build({ sid: 'DEV' }),
 ];
 
 const catalog = catalogFactory.build();
