@@ -30,13 +30,17 @@ const {
   details,
 } = clusterFactory.build({
   type: 'hana_scale_up',
-  details: { architecture_type: 'classic' },
+  details: {
+    architecture_type: 'classic',
+    hana_scenario: 'performance_optimized',
+  },
 });
 
 const scaleOutSites = hanaClusterSiteFactory.buildList(2);
 
 const scaleOutDetails = hanaClusterDetailsFactory.build({
   architecture_type: 'classic',
+  hana_scenario: 'unknown',
   sites: scaleOutSites,
   nodes: [
     hanaClusterDetailsNodesFactory.build({
@@ -117,8 +121,9 @@ const sapSystems = sapSystemFactory.buildList(1, {
 const additionalSids = additional_sids;
 
 const sapSystemList = [
-  sapSystemFactory.build({ sid, hana_scenario: 'cost_optimized' }),
-  sapSystemFactory.build({ sid: 'QAS', hana_scenario: 'cost_optimized' }),
+  sapSystemFactory.build({ sid, id: '123' }),
+  sapSystemFactory.build({ sid: 'QAS', id: '345' }),
+  sapSystemFactory.build({ sid: 'DEV', id: '678' }),
 ];
 
 const catalog = catalogFactory.build();
@@ -173,6 +178,7 @@ export const HanaScaleOut = {
     ...Hana.args,
     hosts: scaleOutHosts,
     details: scaleOutDetails,
+    clusterType: 'hana_scale_out',
   },
 };
 
@@ -230,21 +236,9 @@ export const WithNoSBDDevices = {
   },
 };
 
-export const AngiArchitecture = {
-  args: {
-    ...Hana.args,
-    details: {
-      ...Hana.args.details,
-      architecture_type: 'angi',
-      hana_scenario: 'unknown',
-    },
-  },
-};
-
 export const AngiArchitecturePerformanceScenario = {
   args: {
     ...Hana.args,
-    additionalSids: [],
     details: {
       ...Hana.args.details,
       architecture_type: 'angi',
@@ -257,8 +251,22 @@ export const AngiArchitectureCostOptScenario = {
   args: {
     ...Hana.args,
     sid,
-    additionalSids: ['DEV', 'QAS'],
-    sap_systems: sapSystemList,
+    additionalSids: ['QAS', 'DEV'],
+    sapSystems: sapSystemList,
+    details: {
+      ...Hana.args.details,
+      architecture_type: 'angi',
+      hana_scenario: 'cost_optimized',
+    },
+  },
+};
+
+export const AngiArchitectureCostOptScenarioWithoutEnrichedData = {
+  args: {
+    ...Hana.args,
+    sid,
+    additionalSids: ['QAS1', 'DEV1'],
+    sapSystems: sapSystemList,
     details: {
       ...Hana.args.details,
       architecture_type: 'angi',
