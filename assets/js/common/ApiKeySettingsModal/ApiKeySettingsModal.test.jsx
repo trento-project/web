@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, act } from '@testing-library/react';
+import { render, screen, act, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { faker } from '@faker-js/faker';
 import {
@@ -91,9 +91,9 @@ describe('ApiKeySettingsModal', () => {
 
       await user.type(screen.getByRole('spinbutton'), '20');
 
-      await user.click(screen.getByRole('button', { name: 'months' }));
-
-      await user.click(screen.getByRole('button', { name: 'Generate' }));
+      await user.click(
+        await waitFor(() => screen.getByRole('button', { name: 'Generate' }))
+      );
 
       await user.click(screen.getByRole('button', { name: 'Generate' }));
 

@@ -301,7 +301,7 @@ describe('UserForm', () => {
 
     await user.click(screen.getByText('Disabled'));
 
-    expect(screen.getAllByText('Enabled')[1].closest('li')).toHaveAttribute(
+    expect(screen.getAllByText('Enabled')[1].closest('div')).toHaveAttribute(
       'aria-disabled',
       'true'
     );

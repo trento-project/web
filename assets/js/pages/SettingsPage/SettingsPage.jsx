@@ -131,31 +131,25 @@ function SettingsPage() {
                   Get your key here 👇 and use it to register your first agents,
                   or to add new ones.
                 </p>
-                <Transition
-                  show={Boolean(apiKey)}
-                  enter="transition duration-100 ease-out"
-                  enterFrom="transform opacity-0"
-                  enterTo="transform opacity-100"
-                  leave="transition duration-100 ease-out"
-                  leaveFrom="transform opacity-100"
-                  leaveTo="transform opacity-0"
-                >
-                  {hasApiKey ? (
-                    <div className="flex">
-                      <ApiKeyBox apiKey={apiKey} className="!w-11/12" />
-                      <CopyButton content={apiKey} />
-                    </div>
-                  ) : (
-                    <span>
-                      We were unable to provide you the API key you need 😱
-                      <br />
-                      Contact support for help!
-                    </span>
-                  )}
+                <Transition show={Boolean(apiKey)}>
+                  <div className="transition duration-100 ease-out data-[closed]:opacity-0">
+                    {hasApiKey ? (
+                      <div className="flex">
+                        <ApiKeyBox apiKey={apiKey} className="!w-11/12" />
+                        <CopyButton content={apiKey} />
+                      </div>
+                    ) : (
+                      <span>
+                        We were unable to provide you the API key you need 😱
+                        <br />
+                        Contact support for help!
+                      </span>
+                    )}
 
-                  {apiKey && (
-                    <ApiKeyExpireInfo apiKeyExpiration={apiKeyExpiration} />
-                  )}
+                    {apiKey && (
+                      <ApiKeyExpireInfo apiKeyExpiration={apiKeyExpiration} />
+                    )}
+                  </div>
                 </Transition>
               </div>
             </div>

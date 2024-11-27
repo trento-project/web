@@ -122,12 +122,12 @@ describe('ChecksCatalog ChecksCatalog component', () => {
       await user.click(screen.getByText(filter));
 
       expect(
-        screen.getByText(expectDisabled, { exact: false }).closest('li')
+        screen.getByText(expectDisabled, { exact: false }).closest('div')
       ).toHaveAttribute('aria-disabled', 'true');
 
       const expectItemEnabled = (itemExpectedEnabled) =>
         expect(
-          screen.getByText(itemExpectedEnabled).closest('li')
+          screen.getByText(itemExpectedEnabled).closest('div')
         ).not.toHaveAttribute('aria-disabled');
 
       if (expectEnabled) {

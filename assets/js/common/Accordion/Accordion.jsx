@@ -1,6 +1,11 @@
 import React, { isValidElement } from 'react';
 
-import { Disclosure, Transition } from '@headlessui/react';
+import {
+  Disclosure,
+  DisclosurePanel,
+  DisclosureButton,
+  Transition,
+} from '@headlessui/react';
 import { EOS_KEYBOARD_ARROW_DOWN } from 'eos-icons-react';
 
 import classNames from 'classnames';
@@ -16,7 +21,7 @@ function Accordion({
   children,
 }) {
   const disclosurePanel = (
-    <Disclosure.Panel aria-label="accordion-panel">{children}</Disclosure.Panel>
+    <DisclosurePanel aria-label="accordion-panel">{children}</DisclosurePanel>
   );
   const isHeaderAnElement = isValidElement(header);
   return (
@@ -31,7 +36,7 @@ function Accordion({
     >
       {({ open }) => (
         <>
-          <Disclosure.Button
+          <DisclosureButton
             aria-label="accordion-header"
             as="div"
             className={classNames(
@@ -58,18 +63,12 @@ function Accordion({
                 />
               </div>
             )}
-          </Disclosure.Button>
+          </DisclosureButton>
           {withTransition ? (
-            <Transition
-              aria-label="accordion-transition-panel"
-              enter="transition duration-100 ease-out"
-              enterFrom="transform opacity-0"
-              enterTo="transform opacity-100"
-              leave="transition duration-100 ease-out"
-              leaveFrom="transform opacity-100"
-              leaveTo="transform opacity-0"
-            >
-              {disclosurePanel}
+            <Transition aria-label="accordion-transition-panel">
+              <div className="transition opacity-100 duration-100 ease-out data-[closed]:opacity-0">
+                {disclosurePanel}
+              </div>
             </Transition>
           ) : (
             disclosurePanel
