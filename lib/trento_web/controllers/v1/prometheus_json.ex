@@ -1,19 +1,18 @@
 defmodule TrentoWeb.V1.PrometheusJSON do
-  @node_exporter_port 9100
-  @node_exporter_name "Node Exporter"
-
   def exporters_status(%{status: status}), do: status
 
-  def targets(%{targets: targets}), do: Enum.map(targets, &target(%{target: &1}))
+  def targets(%{targets: targets}), do: Enum.flat_map(targets, &target(%{target: &1}))
 
-  def target(%{target: target}),
-    do: %{
-      targets: ["#{List.first(target.ip_addresses, target.hostname)}:#{@node_exporter_port}"],
-      labels: %{
-        # TODO: in the future renaeme this label which also is used by node_exporter json
-        agentID: "#{target.id}",
-        hostname: "#{target.hostname}",
-        exporter_name: @node_exporter_name
+  def target(%{target: %{id: id, hostname: hostname, prometheus_targets: prometheus_targets}}) do
+    Enum.map(prometheus_targets, fn {exporter, target} ->
+      %{
+        targets: [target],
+        labels: %{
+          agentID: id,
+          hostname: hostname,
+          exporter_name: exporter
+        }
       }
-    }
+    end)
+  end
 end
