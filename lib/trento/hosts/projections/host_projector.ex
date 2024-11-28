@@ -39,7 +39,8 @@ defmodule Trento.Hosts.Projections.HostProjector do
       ip_addresses: ip_addresses,
       agent_version: agent_version,
       fully_qualified_domain_name: fully_qualified_domain_name,
-      heartbeat: heartbeat
+      heartbeat: heartbeat,
+      prometheus_targets: prometheus_targets
     },
     fn multi ->
       {addresses, netmasks} = parse_address_netmask(ip_addresses)
@@ -51,7 +52,8 @@ defmodule Trento.Hosts.Projections.HostProjector do
           netmasks: netmasks,
           agent_version: agent_version,
           fully_qualified_domain_name: fully_qualified_domain_name,
-          heartbeat: heartbeat
+          heartbeat: heartbeat,
+          prometheus_targets: prometheus_targets
         })
 
       Ecto.Multi.insert(multi, :host, changeset,
@@ -143,7 +145,8 @@ defmodule Trento.Hosts.Projections.HostProjector do
       hostname: hostname,
       ip_addresses: ip_addresses,
       fully_qualified_domain_name: fully_qualified_domain_name,
-      agent_version: agent_version
+      agent_version: agent_version,
+      prometheus_targets: prometheus_targets
     },
     fn multi ->
       {addresses, netmasks} = parse_address_netmask(ip_addresses)
@@ -156,7 +159,8 @@ defmodule Trento.Hosts.Projections.HostProjector do
           ip_addresses: addresses,
           netmasks: netmasks,
           fully_qualified_domain_name: fully_qualified_domain_name,
-          agent_version: agent_version
+          agent_version: agent_version,
+          prometheus_targets: prometheus_targets
         })
 
       Ecto.Multi.update(multi, :host, changeset)

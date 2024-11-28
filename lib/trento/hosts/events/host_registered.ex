@@ -15,6 +15,7 @@ defmodule Trento.Hosts.Events.HostRegistered do
     field :socket_count, :integer
     field :os_version, :string
     field :fully_qualified_domain_name, :string
+    field :prometheus_targets, :map
 
     field :installation_source, Ecto.Enum, values: [:community, :suse, :unknown]
 
@@ -25,4 +26,5 @@ defmodule Trento.Hosts.Events.HostRegistered do
   def upcast(params, _, 2), do: Map.put(params, "installation_source", :unknown)
   def upcast(params, _, 3), do: Map.put(params, "health", :unknown)
   def upcast(params, _, 4), do: Map.put(params, "fully_qualified_domain_name", nil)
+  def upcast(params, _, 5), do: Map.put(params, "prometheus_targets", %{})
 end
