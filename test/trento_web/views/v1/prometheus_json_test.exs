@@ -1,7 +1,5 @@
 defmodule TrentoWeb.V1.PrometheusJSONTest do
-  @moduledoc false
-
-  use TrentoWeb.ConnCase, async: true
+  use ExUnit.Case
 
   import Trento.Factory
 
