@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { get, zipWith } from 'lodash';
+import { get, zipWith, startCase } from 'lodash';
 import classNames from 'classnames';
 import {
   EOS_CLEAR_ALL,
@@ -105,7 +105,7 @@ function HostDetails({
         className="self-center ml-4 shadow"
         heartbeat={exporterStatus}
       >
-        {exporterName}
+        {startCase(exporterName)}
       </StatusPill>
     )
   );
