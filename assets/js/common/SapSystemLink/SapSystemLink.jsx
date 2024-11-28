@@ -7,7 +7,6 @@ import { Link } from 'react-router-dom';
 function SapSystemLink({ systemType, sapSystemId, children }) {
   return sapSystemId && systemType ? (
     <Link
-      key={sapSystemId}
       className="text-jungle-green-500 hover:opacity-75"
       to={`/${systemType}/${sapSystemId}`}
     >

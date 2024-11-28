@@ -25,13 +25,13 @@ const clusterTypeLabels = {
 export const getClusterTypeLabel = (type) =>
   clusterTypeLabels[type] || 'Unknown';
 
-const clusterTypeScenarioLabels = {
+const clusterScenarioLabels = {
   [PERFORMANCE_SCENARIO]: 'Perf. Opt.',
   [COST_OPT_SCENARIO]: 'Cost Opt.',
 };
 
-export const getClusterTypeScenarioLabel = (type) =>
-  clusterTypeScenarioLabels[type] || '';
+export const getClusterScenarioLabel = (type) =>
+  clusterScenarioLabels[type] || '';
 
 export const ANGI_ARCHITECTURE = 'angi';
 export const CLASSIC_ARCHITECTURE = 'classic';

@@ -154,26 +154,17 @@ function HanaClusterDetails({
               {
                 title: 'SID',
                 content: enrichedSapSystems,
-                render: (content) =>
-                  content.every(
-                    (sapSystem) => sapSystem.id && sapSystem.sid
-                  ) ? (
-                    <div>
-                      {content.map(({ id, sid: sapSystemSid }) => (
-                        <span key={`${id}-${sapSystemSid}`}>
-                          <SapSystemLink
-                            key={id}
-                            sapSystemId={id}
-                            systemType="databases"
-                          >
-                            {sapSystemSid}
-                          </SapSystemLink>{' '}
-                        </span>
-                      ))}
-                    </div>
-                  ) : (
-                    <span>{clusterSids.join(' ')}</span>
-                  ),
+                render: (content) => (
+                  <div>
+                    {content.map(({ id, sid: sapSystemSid }) => (
+                      <span key={sapSystemSid}>
+                        <SapSystemLink sapSystemId={id} systemType="databases">
+                          {sapSystemSid}
+                        </SapSystemLink>{' '}
+                      </span>
+                    ))}
+                  </div>
+                ),
               },
               {
                 title: 'Fencing type',

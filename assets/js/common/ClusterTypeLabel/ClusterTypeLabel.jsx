@@ -8,7 +8,7 @@ import {
   ANGI_ARCHITECTURE,
   CLASSIC_ARCHITECTURE,
   getClusterTypeLabel,
-  getClusterTypeScenarioLabel,
+  getClusterScenarioLabel,
 } from '@lib/model/clusters';
 
 const MIGRATION_URL =
@@ -47,13 +47,13 @@ const icons = {
 
 function ClusterTypeLabel({ clusterType, clusterScenario, architectureType }) {
   const clusterTypeLabel = getClusterTypeLabel(clusterType);
-  const clusterTypeScenarioLabel = getClusterTypeScenarioLabel(clusterScenario);
-  const combinedClusterTypeLabel = `${clusterTypeLabel} ${clusterTypeScenarioLabel}`;
+  const clusterScenarioLabel = getClusterScenarioLabel(clusterScenario);
+  const clusterLabel = `${clusterTypeLabel} ${clusterScenarioLabel}`;
 
   return (
     <span className="group flex items-center relative">
       {icons[architectureType]}
-      {combinedClusterTypeLabel}
+      {clusterLabel}
     </span>
   );
 }
