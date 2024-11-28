@@ -13,3 +13,14 @@ scrape_configs:
         labels:
           agentID: "240f96b1-8d26-53b7-9e99-ffb0f2e735bf"
           exporter_name: "Node Exporter"
+
+  - job_name: "http_sd_hosts"
+    honor_timestamps: true
+    scrape_interval: 30s
+    scrape_timeout: 30s
+    scheme: http
+    follow_redirects: true
+    http_sd_configs:
+      - follow_redirects: true
+        refresh_interval: 1m
+        url: http://host.docker.internal:4000/api/prometheus/targets
