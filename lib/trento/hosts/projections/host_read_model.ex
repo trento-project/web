@@ -32,6 +32,7 @@ defmodule Trento.Hosts.Projections.HostReadModel do
     field :provider, Ecto.Enum, values: Provider.values()
     field :provider_data, :map
     field :saptune_status, :map
+    field :prometheus_targets, :map
 
     has_many :tags, Tag, foreign_key: :resource_id
 
