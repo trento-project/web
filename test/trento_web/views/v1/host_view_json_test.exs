@@ -22,6 +22,7 @@ defmodule TrentoWeb.V1.HostJSONTest do
     rendered_host = HostJSON.host(%{host: host})
 
     refute Access.get(rendered_host, :fully_qualified_domain_name)
+    refute Access.get(rendered_host, :prometheus_targets)
     refute Access.get(rendered_host, :inserted_at)
   end
 

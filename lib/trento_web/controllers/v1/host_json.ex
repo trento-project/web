@@ -9,6 +9,7 @@ defmodule TrentoWeb.V1.HostJSON do
     |> Map.from_struct()
     |> Map.put(:sles_subscriptions, sles_subscriptions)
     |> Map.delete(:fully_qualified_domain_name)
+    |> Map.delete(:prometheus_targets)
     |> Map.delete(:__meta__)
   end
 

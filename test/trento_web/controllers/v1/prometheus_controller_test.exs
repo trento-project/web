@@ -24,26 +24,6 @@ defmodule TrentoWeb.V1.PrometheusControllerTest do
     assert_schema(response, "HttpSTDTargetList", api_spec)
   end
 
-  test "should return the expected targets when some host does not have any IP address", %{
-    conn: conn
-  } do
-    %{id: id, hostname: hostname} = insert(:host, ip_addresses: [])
-
-    response =
-      conn
-      |> get("/api/v1/prometheus/targets")
-      |> json_response(200)
-
-    %{
-      "targets" => ["#{hostname}:9100"],
-      "labels" => %{
-        "agentID" => "#{id}",
-        "hostname" => "#{hostname}",
-        "exporter_name" => "Node Exporter"
-      }
-    } in response
-  end
-
   test "should return the exporters status", %{conn: conn} do
     expect(Trento.Infrastructure.Prometheus.Mock, :get_exporters_status, fn _ ->
       {:ok, %{"Node Exporter" => :passing}}

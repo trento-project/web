@@ -50,6 +50,8 @@ services:
       - "--web.enable-admin-api"
     ports:
       - 9090:9090
+    extra_hosts:
+      - host.docker.internal:host-gateway
   postgres:
     image: postgres:15
     environment:

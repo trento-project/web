@@ -15,7 +15,7 @@ defmodule Trento.Hosts.Events.HostRegisteredTest do
       os_version = Faker.App.version()
 
       assert %HostRegistered{
-               version: 4,
+               version: 5,
                host_id: host_id,
                hostname: hostname,
                fully_qualified_domain_name: nil,
@@ -26,6 +26,7 @@ defmodule Trento.Hosts.Events.HostRegisteredTest do
                socket_count: socket_count,
                os_version: os_version,
                installation_source: :unknown,
+               prometheus_targets: nil,
                heartbeat: :unknown,
                health: :unknown
              } ==

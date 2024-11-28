@@ -163,6 +163,7 @@ defmodule Trento.Factory do
       os_version: Faker.App.semver(),
       fully_qualified_domain_name: Faker.Internet.domain_name(),
       installation_source: Enum.random([:community, :suse, :unknown]),
+      prometheus_targets: build(:host_prometheus_targets),
       heartbeat: :unknown
     }
   end
@@ -178,7 +179,8 @@ defmodule Trento.Factory do
       total_memory_mb: Enum.random(1..128),
       socket_count: Enum.random(1..16),
       os_version: Faker.App.semver(),
-      installation_source: Enum.random([:community, :suse, :unknown])
+      installation_source: Enum.random([:community, :suse, :unknown]),
+      prometheus_targets: build(:host_prometheus_targets)
     }
   end
 
@@ -197,7 +199,8 @@ defmodule Trento.Factory do
       provider_data: nil,
       deregistered_at: nil,
       selected_checks: Enum.map(0..4, fn _ -> Faker.StarWars.planet() end),
-      saptune_status: nil
+      saptune_status: nil,
+      prometheus_targets: build(:host_prometheus_targets)
     }
   end
 
@@ -868,7 +871,8 @@ defmodule Trento.Factory do
       socket_count: Enum.random(1..16),
       os_version: Faker.App.semver(),
       installation_source: Enum.random([:community, :suse, :unknown]),
-      fully_qualified_domain_name: Faker.Internet.domain_name()
+      fully_qualified_domain_name: Faker.Internet.domain_name(),
+      prometheus_targets: build(:host_prometheus_targets)
     })
   end
 
@@ -916,6 +920,12 @@ defmodule Trento.Factory do
       "os_version" => Faker.App.semver(),
       "installation_source" => Enum.random(["community", "suse", "unknown"]),
       "fully_qualified_domain_name" => Faker.Internet.domain_name()
+    }
+  end
+
+  def host_prometheus_targets_factory do
+    %{
+      "node_exporter" => "#{Faker.Internet.ip_v4_address()}:9100"
     }
   end
 

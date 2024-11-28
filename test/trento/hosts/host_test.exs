@@ -68,6 +68,7 @@ defmodule Trento.Hosts.HostTest do
       socket_count = Enum.random(1..16)
       os_version = Faker.App.version()
       installation_source = Enum.random([:community, :suse, :unknown])
+      prometheus_targets = build(:host_prometheus_targets)
 
       assert_events_and_state(
         [],
@@ -81,7 +82,8 @@ defmodule Trento.Hosts.HostTest do
           socket_count: socket_count,
           os_version: os_version,
           installation_source: installation_source,
-          fully_qualified_domain_name: nil
+          fully_qualified_domain_name: nil,
+          prometheus_targets: prometheus_targets
         }),
         %HostRegistered{
           host_id: host_id,
@@ -93,6 +95,7 @@ defmodule Trento.Hosts.HostTest do
           socket_count: socket_count,
           os_version: os_version,
           installation_source: installation_source,
+          prometheus_targets: prometheus_targets,
           heartbeat: :unknown
         },
         %Host{
@@ -106,6 +109,7 @@ defmodule Trento.Hosts.HostTest do
           socket_count: socket_count,
           os_version: os_version,
           installation_source: installation_source,
+          prometheus_targets: prometheus_targets,
           heartbeat: :unknown
         }
       )
@@ -122,6 +126,7 @@ defmodule Trento.Hosts.HostTest do
       socket_count = Enum.random(1..16)
       os_version = Faker.App.version()
       installation_source = Enum.random([:community, :suse, :unknown])
+      prometheus_targets = build(:host_prometheus_targets)
 
       assert_events_and_state(
         [],
@@ -135,7 +140,8 @@ defmodule Trento.Hosts.HostTest do
           total_memory_mb: total_memory_mb,
           socket_count: socket_count,
           os_version: os_version,
-          installation_source: installation_source
+          installation_source: installation_source,
+          prometheus_targets: prometheus_targets
         }),
         [
           %HostRegistered{
@@ -149,6 +155,7 @@ defmodule Trento.Hosts.HostTest do
             socket_count: socket_count,
             os_version: os_version,
             installation_source: installation_source,
+            prometheus_targets: prometheus_targets,
             heartbeat: :unknown
           },
           %SoftwareUpdatesDiscoveryRequested{
@@ -167,6 +174,7 @@ defmodule Trento.Hosts.HostTest do
           socket_count: socket_count,
           os_version: os_version,
           installation_source: installation_source,
+          prometheus_targets: prometheus_targets,
           heartbeat: :unknown
         }
       )
@@ -197,6 +205,7 @@ defmodule Trento.Hosts.HostTest do
         socket_count = Enum.random(1..16)
         os_version = Faker.App.version()
         installation_source = Enum.random([:community, :suse, :unknown])
+        prometheus_targets = build(:host_prometheus_targets)
 
         assert_events_and_state(
           build(:host_registered_event,
@@ -209,7 +218,8 @@ defmodule Trento.Hosts.HostTest do
             total_memory_mb: total_memory_mb,
             socket_count: socket_count,
             os_version: os_version,
-            installation_source: installation_source
+            installation_source: installation_source,
+            prometheus_targets: prometheus_targets
           ),
           RegisterHost.new!(%{
             host_id: host_id,
@@ -221,7 +231,8 @@ defmodule Trento.Hosts.HostTest do
             total_memory_mb: total_memory_mb,
             socket_count: socket_count,
             os_version: os_version,
-            installation_source: installation_source
+            installation_source: installation_source,
+            prometheus_targets: prometheus_targets
           }),
           [
             %HostDetailsUpdated{
@@ -234,7 +245,8 @@ defmodule Trento.Hosts.HostTest do
               total_memory_mb: total_memory_mb,
               socket_count: socket_count,
               os_version: os_version,
-              installation_source: installation_source
+              installation_source: installation_source,
+              prometheus_targets: prometheus_targets
             },
             %SoftwareUpdatesDiscoveryRequested{
               host_id: host_id,
@@ -252,6 +264,7 @@ defmodule Trento.Hosts.HostTest do
             socket_count: socket_count,
             os_version: os_version,
             installation_source: installation_source,
+            prometheus_targets: prometheus_targets,
             heartbeat: :unknown
           }
         )
@@ -273,6 +286,7 @@ defmodule Trento.Hosts.HostTest do
         socket_count = Enum.random(1..16)
         os_version = Faker.App.version()
         installation_source = Enum.random([:community, :suse, :unknown])
+        prometheus_targets = %{}
 
         initial_agent_version = Faker.Internet.slug()
         new_agent_version = Faker.StarWars.character()
@@ -288,7 +302,8 @@ defmodule Trento.Hosts.HostTest do
             total_memory_mb: total_memory_mb,
             socket_count: socket_count,
             os_version: os_version,
-            installation_source: installation_source
+            installation_source: installation_source,
+            prometheus_targets: prometheus_targets
           ),
           RegisterHost.new!(%{
             host_id: host_id,
@@ -300,7 +315,8 @@ defmodule Trento.Hosts.HostTest do
             total_memory_mb: total_memory_mb,
             socket_count: socket_count,
             os_version: os_version,
-            installation_source: installation_source
+            installation_source: installation_source,
+            prometheus_targets: prometheus_targets
           }),
           %HostDetailsUpdated{
             host_id: host_id,
@@ -312,7 +328,8 @@ defmodule Trento.Hosts.HostTest do
             total_memory_mb: total_memory_mb,
             socket_count: socket_count,
             os_version: os_version,
-            installation_source: installation_source
+            installation_source: installation_source,
+            prometheus_targets: prometheus_targets
           },
           %Host{
             host_id: host_id,
@@ -325,6 +342,7 @@ defmodule Trento.Hosts.HostTest do
             socket_count: socket_count,
             os_version: os_version,
             installation_source: installation_source,
+            prometheus_targets: prometheus_targets,
             heartbeat: :unknown
           }
         )
@@ -341,6 +359,7 @@ defmodule Trento.Hosts.HostTest do
       socket_count = Enum.random(1..16)
       os_version = Faker.App.version()
       installation_source = Enum.random([:community, :suse, :unknown])
+      prometheus_targets = build(:host_prometheus_targets)
 
       current_fully_qualified_domain_name = Faker.Internet.ip_v4_address()
       new_fully_qualified_domain_name = nil
@@ -356,7 +375,8 @@ defmodule Trento.Hosts.HostTest do
           total_memory_mb: total_memory_mb,
           socket_count: socket_count,
           os_version: os_version,
-          installation_source: installation_source
+          installation_source: installation_source,
+          prometheus_targets: prometheus_targets
         ),
         RegisterHost.new!(%{
           host_id: host_id,
@@ -368,7 +388,8 @@ defmodule Trento.Hosts.HostTest do
           total_memory_mb: total_memory_mb,
           socket_count: socket_count,
           os_version: os_version,
-          installation_source: installation_source
+          installation_source: installation_source,
+          prometheus_targets: prometheus_targets
         }),
         [
           %HostDetailsUpdated{
@@ -381,7 +402,8 @@ defmodule Trento.Hosts.HostTest do
             total_memory_mb: total_memory_mb,
             socket_count: socket_count,
             os_version: os_version,
-            installation_source: installation_source
+            installation_source: installation_source,
+            prometheus_targets: prometheus_targets
           },
           %SoftwareUpdatesDiscoveryCleared{
             host_id: host_id
@@ -398,6 +420,7 @@ defmodule Trento.Hosts.HostTest do
           socket_count: socket_count,
           os_version: os_version,
           installation_source: installation_source,
+          prometheus_targets: prometheus_targets,
           heartbeat: :unknown
         }
       )
@@ -413,6 +436,7 @@ defmodule Trento.Hosts.HostTest do
       new_socket_count = Enum.random(1..16)
       new_os_version = Faker.App.version()
       new_installation_source = Enum.random([:community, :suse, :unknown])
+      new_prometheus_targets = build(:host_prometheus_targets)
       fully_qualified_domain_name = Faker.Internet.domain_name()
 
       assert_events_and_state(
@@ -430,7 +454,8 @@ defmodule Trento.Hosts.HostTest do
           total_memory_mb: new_total_memory_mb,
           socket_count: new_socket_count,
           os_version: new_os_version,
-          installation_source: new_installation_source
+          installation_source: new_installation_source,
+          prometheus_targets: new_prometheus_targets
         }),
         %HostDetailsUpdated{
           host_id: host_id,
@@ -442,7 +467,8 @@ defmodule Trento.Hosts.HostTest do
           total_memory_mb: new_total_memory_mb,
           socket_count: new_socket_count,
           os_version: new_os_version,
-          installation_source: new_installation_source
+          installation_source: new_installation_source,
+          prometheus_targets: new_prometheus_targets
         },
         %Host{
           host_id: host_id,
@@ -455,6 +481,7 @@ defmodule Trento.Hosts.HostTest do
           socket_count: new_socket_count,
           os_version: new_os_version,
           installation_source: new_installation_source,
+          prometheus_targets: new_prometheus_targets,
           heartbeat: :unknown
         }
       )
@@ -475,7 +502,8 @@ defmodule Trento.Hosts.HostTest do
           total_memory_mb: host_registered_event.total_memory_mb,
           socket_count: host_registered_event.socket_count,
           os_version: host_registered_event.os_version,
-          installation_source: host_registered_event.installation_source
+          installation_source: host_registered_event.installation_source,
+          prometheus_targets: host_registered_event.prometheus_targets
         }),
         []
       )
@@ -1875,6 +1903,7 @@ defmodule Trento.Hosts.HostTest do
             socket_count: host_registered_event.socket_count,
             os_version: host_registered_event.os_version,
             installation_source: host_registered_event.installation_source,
+            prometheus_targets: host_registered_event.prometheus_targets,
             heartbeat: :unknown,
             rolling_up: false
           }
@@ -1994,7 +2023,8 @@ defmodule Trento.Hosts.HostTest do
           total_memory_mb: host_registered_event.total_memory_mb,
           socket_count: host_registered_event.socket_count,
           os_version: host_registered_event.os_version,
-          installation_source: host_registered_event.installation_source
+          installation_source: host_registered_event.installation_source,
+          prometheus_targets: host_registered_event.prometheus_targets
         )
 
       assert_events_and_state(
@@ -2042,7 +2072,8 @@ defmodule Trento.Hosts.HostTest do
             socket_count: restoration_command.socket_count,
             os_version: restoration_command.os_version,
             installation_source: restoration_command.installation_source,
-            fully_qualified_domain_name: restoration_command.fully_qualified_domain_name
+            fully_qualified_domain_name: restoration_command.fully_qualified_domain_name,
+            prometheus_targets: restoration_command.prometheus_targets
           }
         ],
         fn host ->
@@ -2074,7 +2105,8 @@ defmodule Trento.Hosts.HostTest do
           total_memory_mb: host_registered_event.total_memory_mb,
           socket_count: host_registered_event.socket_count,
           os_version: host_registered_event.os_version,
-          installation_source: host_registered_event.installation_source
+          installation_source: host_registered_event.installation_source,
+          prometheus_targets: host_registered_event.prometheus_targets
         )
 
       assert_events_and_state(
@@ -2141,7 +2173,8 @@ defmodule Trento.Hosts.HostTest do
               socket_count: restoration_command.socket_count,
               os_version: restoration_command.os_version,
               installation_source: restoration_command.installation_source,
-              fully_qualified_domain_name: restoration_command.fully_qualified_domain_name
+              fully_qualified_domain_name: restoration_command.fully_qualified_domain_name,
+              prometheus_targets: restoration_command.prometheus_targets
             },
             %SoftwareUpdatesDiscoveryRequested{
               host_id: host_id,
@@ -2201,7 +2234,8 @@ defmodule Trento.Hosts.HostTest do
               socket_count: restoration_command.socket_count,
               os_version: restoration_command.os_version,
               installation_source: restoration_command.installation_source,
-              fully_qualified_domain_name: restoration_command.fully_qualified_domain_name
+              fully_qualified_domain_name: restoration_command.fully_qualified_domain_name,
+              prometheus_targets: restoration_command.prometheus_targets
             }
           ],
           fn host ->

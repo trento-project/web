@@ -421,4 +421,31 @@ describe('HostDetails component', () => {
       expect(startExecutionButton).toBeEnabled();
     });
   });
+
+  describe('exporters', () => {
+    it.each([
+      {
+        state: 'passing',
+        label: 'running',
+      },
+      {
+        state: 'critical',
+        label: 'not running',
+      },
+    ])('should show exporters state as $state', ({ state, label }) => {
+      renderWithRouter(
+        <HostDetails
+          agentVersion="1.0.0"
+          userAbilities={userAbilities}
+          exportersStatus={{ node_exporter: state }}
+        />
+      );
+
+      expect(
+        screen.getByText(new RegExp(`Node Exporter:.*${label}`), {
+          exact: false,
+        })
+      ).toBeVisible();
+    });
+  });
 });

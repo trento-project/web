@@ -26,6 +26,7 @@ defmodule Trento.Hosts.Commands.RegisterHost do
     field :socket_count, :integer
     field :os_version, :string, default: "Unknown"
     field :fully_qualified_domain_name, :string
+    field :prometheus_targets, :map
 
     field :installation_source, Ecto.Enum, values: [:community, :suse, :unknown]
   end
