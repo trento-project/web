@@ -14,6 +14,8 @@ defmodule TrentoWeb.V1.PrometheusJSONTest do
       )
 
     host2 = build(:host, prometheus_targets: %{"exporter_3" => "10.0.0.2:9100"})
+    # old agent, testing for backward compatibility
+    host3 = build(:host, prometheus_targets: nil, ip_addresses: ["10.0.0.3", "10.0.0.2"])
 
     expected_targets = [
       %{
@@ -39,10 +41,18 @@ defmodule TrentoWeb.V1.PrometheusJSONTest do
           hostname: host2.hostname,
           exporter_name: "exporter_3"
         }
+      },
+      %{
+        targets: ["10.0.0.3:9100"],
+        labels: %{
+          agentID: host3.id,
+          hostname: host3.hostname,
+          exporter_name: "node_exporter"
+        }
       }
     ]
 
     assert expected_targets ==
-             PrometheusJSON.targets(%{targets: [host1, host2]})
+             PrometheusJSON.targets(%{targets: [host1, host2, host3]})
   end
 end

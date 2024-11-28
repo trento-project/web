@@ -129,7 +129,7 @@ defmodule Trento.Hosts.Host do
     field :socket_count, :integer
     field :os_version, :string
     field :provider, Ecto.Enum, values: Provider.values()
-    field :prometheus_targets, :map, default: %{}
+    field :prometheus_targets, :map
     field :installation_source, Ecto.Enum, values: [:community, :suse, :unknown]
     field :heartbeat, Ecto.Enum, values: [:passing, :critical, :unknown]
     field :checks_health, Ecto.Enum, values: Health.values(), default: Health.unknown()

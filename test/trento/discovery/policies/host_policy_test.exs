@@ -38,7 +38,7 @@ defmodule Trento.Discovery.Policies.HostPolicyTest do
                hostname: "suse",
                ip_addresses: ["10.1.1.4/16", "10.1.1.5/24", "10.1.1.6/32"],
                installation_source: :unknown,
-               prometheus_targets: %{}
+               prometheus_targets: nil
              }
            } =
              "host_discovery"
