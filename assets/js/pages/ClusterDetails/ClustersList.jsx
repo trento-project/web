@@ -74,20 +74,21 @@ function ClustersList() {
         filterFromParams: true,
         filter: (filter, key) => (element) =>
           element[key].some((sid) => filter.includes(sid)),
-        render: (_, { sid, id }) => {
-          const sidsArray = sid.map((singleSid, index) => {
+        render: (_, { sid }) => {
+          const sidsArray = sid.map((singleSid) => {
             const sapSystemData = getSapSystemBySID(allInstances, singleSid);
 
-            return [
-              index > 0 && ', ',
-              <SapSystemLink
-                key={`${id}-${singleSid}`}
-                systemType={sapSystemData?.type}
-                sapSystemId={getInstanceID(sapSystemData)}
-              >
-                {singleSid}
-              </SapSystemLink>,
-            ];
+            return (
+              <span key={singleSid}>
+                <SapSystemLink
+                  systemType={sapSystemData?.type}
+                  sapSystemId={getInstanceID(sapSystemData)}
+                >
+                  {singleSid}
+                </SapSystemLink>
+                <br />
+              </span>
+            );
           });
 
           return sidsArray;

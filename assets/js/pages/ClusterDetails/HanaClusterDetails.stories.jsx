@@ -25,17 +25,22 @@ const {
   type: clusterType,
   selected_checks: selectedChecks,
   provider,
+  additional_sids: additionalSids,
   cib_last_written: cibLastWritten,
   details,
 } = clusterFactory.build({
   type: 'hana_scale_up',
-  details: { architecture_type: 'classic' },
+  details: {
+    architecture_type: 'classic',
+    hana_scenario: 'performance_optimized',
+  },
 });
 
 const scaleOutSites = hanaClusterSiteFactory.buildList(2);
 
 const scaleOutDetails = hanaClusterDetailsFactory.build({
   architecture_type: 'classic',
+  hana_scenario: 'unknown',
   sites: scaleOutSites,
   nodes: [
     hanaClusterDetailsNodesFactory.build({
@@ -108,7 +113,16 @@ const scaleOutHosts = scaleOutDetails.nodes.map(({ name }) =>
   hostFactory.build({ hostname: name })
 );
 
-const sapSystems = sapSystemFactory.buildList(1, { sid });
+const sapSystems = sapSystemFactory.buildList(1, {
+  sid,
+  hana_scenario: 'performance_optimized',
+});
+
+const sapSystemList = [
+  sapSystemFactory.build({ sid }),
+  sapSystemFactory.build({ sid: 'QAS' }),
+  sapSystemFactory.build({ sid: 'DEV' }),
+];
 
 const catalog = catalogFactory.build();
 
@@ -145,6 +159,7 @@ export const Hana = {
     clusterType,
     cibLastWritten,
     sid,
+    additionalSids,
     provider,
     sapSystems,
     details,
@@ -156,11 +171,29 @@ export const Hana = {
   },
 };
 
+export const HanaScaleUpCostOpt = {
+  args: {
+    ...Hana.args,
+    additionalSids: ['QAS', 'DEV'],
+    sapSystems: sapSystemList,
+    details: { ...Hana.args.details, hana_scenario: 'cost_optimized' },
+  },
+};
+
+export const HanaScaleUpCostOptWithoutEnrichedData = {
+  args: {
+    ...Hana.args,
+    additionalSids: ['QAS', 'DEV'],
+    details: { ...Hana.args.details, hana_scenario: 'cost_optimized' },
+  },
+};
+
 export const HanaScaleOut = {
   args: {
     ...Hana.args,
     hosts: scaleOutHosts,
     details: scaleOutDetails,
+    clusterType: 'hana_scale_out',
   },
 };
 
@@ -218,12 +251,41 @@ export const WithNoSBDDevices = {
   },
 };
 
-export const AngiArchitecture = {
+export const AngiArchitecturePerformanceScenario = {
   args: {
     ...Hana.args,
     details: {
       ...Hana.args.details,
       architecture_type: 'angi',
+      hana_scenario: 'performance_optimized',
+    },
+  },
+};
+
+export const AngiArchitectureCostOptScenario = {
+  args: {
+    ...Hana.args,
+    sid,
+    additionalSids: ['QAS', 'DEV'],
+    sapSystems: sapSystemList,
+    details: {
+      ...Hana.args.details,
+      architecture_type: 'angi',
+      hana_scenario: 'cost_optimized',
+    },
+  },
+};
+
+export const AngiArchitectureCostOptScenarioWithoutEnrichedData = {
+  args: {
+    ...Hana.args,
+    sid,
+    additionalSids: ['QAS1', 'DEV1'],
+    sapSystems: sapSystemList,
+    details: {
+      ...Hana.args.details,
+      architecture_type: 'angi',
+      hana_scenario: 'cost_optimized',
     },
   },
 };

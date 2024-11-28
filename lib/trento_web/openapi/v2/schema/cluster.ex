@@ -5,6 +5,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
   require Trento.Clusters.Enums.AscsErsClusterRole, as: AscsErsClusterRole
   require Trento.Clusters.Enums.HanaArchitectureType, as: HanaArchitectureType
+  require Trento.Clusters.Enums.HanaScenario, as: HanaScenario
 
   alias OpenApiSpex.Schema
 
@@ -98,6 +99,11 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
             type: :string,
             description: "HANA architecture type.",
             enum: HanaArchitectureType.values()
+          },
+          hana_scenario: %Schema{
+            type: :string,
+            description: "HANA scenario type",
+            enum: HanaScenario.values()
           },
           system_replication_mode: %Schema{type: :string, description: "System Replication Mode"},
           system_replication_operation_mode: %Schema{

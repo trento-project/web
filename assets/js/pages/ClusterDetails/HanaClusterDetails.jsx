@@ -40,9 +40,10 @@ function HanaClusterDetails({
   hosts,
   clusterType,
   cibLastWritten,
-  sid,
   provider,
   sapSystems,
+  sid,
+  additionalSids,
   details,
   catalog,
   userAbilities,
@@ -51,10 +52,12 @@ function HanaClusterDetails({
   navigate = () => {},
 }) {
   const enrichedNodes = enrichNodes(details?.nodes, hosts);
-  const enrichedSapSystem = {
-    sid,
-    ...sapSystems.find(({ sid: currentSid }) => currentSid === sid),
-  };
+  const clusterSids = [sid, ...additionalSids];
+  const enrichedSapSystems = clusterSids.map((sidItem) => ({
+    sid: sidItem,
+    ...sapSystems.find(({ sid: currentSid }) => currentSid === sidItem),
+  }));
+
   const unsitedNodes = enrichedNodes.filter(({ site }) => site === null);
 
   const {
@@ -150,14 +153,17 @@ function HanaClusterDetails({
               },
               {
                 title: 'SID',
-                content: enrichedSapSystem,
+                content: enrichedSapSystems,
                 render: (content) => (
-                  <SapSystemLink
-                    sapSystemId={content?.id}
-                    systemType="databases"
-                  >
-                    {content?.sid}
-                  </SapSystemLink>
+                  <div>
+                    {content.map(({ id, sid: sapSystemSid }) => (
+                      <span key={sapSystemSid}>
+                        <SapSystemLink sapSystemId={id} systemType="databases">
+                          {sapSystemSid}
+                        </SapSystemLink>{' '}
+                      </span>
+                    ))}
+                  </div>
                 ),
               },
               {
@@ -170,6 +176,7 @@ function HanaClusterDetails({
                 render: (content) => (
                   <ClusterTypeLabel
                     clusterType={content}
+                    clusterScenario={details.hana_scenario}
                     architectureType={details.architecture_type}
                   />
                 ),

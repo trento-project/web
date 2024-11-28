@@ -11,6 +11,7 @@ defmodule Trento.Factory do
   require Trento.SoftwareUpdates.Enums.AdvisoryType, as: AdvisoryType
   require Trento.SoftwareUpdates.Enums.SoftwareUpdatesHealth, as: SoftwareUpdatesHealth
   require Trento.ActivityLog.RetentionPeriodUnit, as: RetentionPeriodUnit
+  require Trento.Clusters.Enums.HanaScenario, as: HanaScenario
 
   alias Faker.Random.Elixir, as: RandomElixir
 
@@ -547,6 +548,7 @@ defmodule Trento.Factory do
   def hana_cluster_details_factory do
     %HanaClusterDetails{
       architecture_type: HanaArchitectureType.classic(),
+      hana_scenario: HanaScenario.performance_optimized(),
       fencing_type: "external/sbd",
       maintenance_mode: false,
       nodes: build_list(1, :hana_cluster_node),

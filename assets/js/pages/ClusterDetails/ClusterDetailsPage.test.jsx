@@ -10,13 +10,33 @@ import { ClusterDetailsPage } from './ClusterDetailsPage';
 
 describe('ClusterDetails ClusterDetailsPage component', () => {
   it.each([
-    { type: 'hana_scale_up', label: 'HANA Scale Up' },
-    { type: 'ascs_ers', label: 'ASCS/ERS' },
-    { type: 'unknwon', label: 'Unknown cluster type' },
+    {
+      type: 'hana_scale_up',
+      label: 'HANA Scale Up Perf. Opt.',
+      scenario: 'performance_optimized',
+    },
+    {
+      type: 'hana_scale_up',
+      label: 'HANA Scale Up Cost Opt.',
+      scenario: 'cost_optimized',
+    },
+    {
+      type: 'ascs_ers',
+      label: 'ASCS/ERS',
+      scenario: 'unknwon',
+    },
+    {
+      type: 'unknwon',
+      label: 'Unknown cluster type',
+      scenario: 'unknwon',
+    },
   ])(
     'should display the $type details based on cluster type',
-    ({ type, label }) => {
-      const cluster = clusterFactory.build({ type });
+    ({ type, label, scenario }) => {
+      const cluster = clusterFactory.build({
+        type,
+        details: { hana_scenario: scenario },
+      });
       const initialState = {
         clustersList: { clusters: [cluster] },
         hostsList: { hosts: [] },

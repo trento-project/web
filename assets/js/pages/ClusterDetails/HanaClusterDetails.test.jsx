@@ -95,6 +95,7 @@ describe('HanaClusterDetails component', () => {
           clusterType={clusterType}
           cibLastWritten={cibLastWritten}
           sid={sid}
+          additionalSids={[]}
           provider={provider}
           sapSystems={[]}
           details={details}
@@ -132,6 +133,7 @@ describe('HanaClusterDetails component', () => {
         clusterType={clusterType}
         cibLastWritten={cibLastWritten}
         sid={sid}
+        additionalSids={[]}
         provider={provider}
         sapSystems={sapSystems}
         details={details}
@@ -171,9 +173,10 @@ describe('HanaClusterDetails component', () => {
         hosts={hosts}
         clusterType={clusterType}
         cibLastWritten={cibLastWritten}
-        sid={sid}
         provider={provider}
-        sapSystems={[]}
+        sapSystems={[{ sid }]}
+        sid={sid}
+        additionalSids={[]}
         details={details}
         lastExecution={null}
         userAbilities={userAbilities}
@@ -181,7 +184,6 @@ describe('HanaClusterDetails component', () => {
     );
 
     const sidContainer = screen.getByText('SID').nextSibling;
-
     expect(sidContainer).toHaveTextContent(sid);
     expect(sidContainer.querySelector('a')).toBeNull();
   });
@@ -215,6 +217,7 @@ describe('HanaClusterDetails component', () => {
         clusterType={clusterType}
         cibLastWritten={cibLastWritten}
         sid={sid}
+        additionalSids={[]}
         provider={provider}
         sapSystems={[]}
         details={details}
@@ -256,6 +259,7 @@ describe('HanaClusterDetails component', () => {
         clusterType={clusterType}
         cibLastWritten={cibLastWritten}
         sid={sid}
+        additionalSids={[]}
         provider={provider}
         sapSystems={[]}
         details={details}
@@ -297,6 +301,7 @@ describe('HanaClusterDetails component', () => {
         clusterType={clusterType}
         cibLastWritten={cibLastWritten}
         sid={sid}
+        additionalSids={[]}
         provider={provider}
         sapSystems={[]}
         details={details}
@@ -339,6 +344,7 @@ describe('HanaClusterDetails component', () => {
         clusterType={clusterType}
         cibLastWritten={cibLastWritten}
         sid={sid}
+        additionalSids={[]}
         provider={provider}
         sapSystems={[]}
         details={updatedDetails}
@@ -381,6 +387,7 @@ describe('HanaClusterDetails component', () => {
         clusterType={clusterType}
         cibLastWritten={cibLastWritten}
         sid={sid}
+        additionalSids={[]}
         provider={provider}
         sapSystems={[]}
         details={details}
@@ -450,6 +457,7 @@ describe('HanaClusterDetails component', () => {
           clusterType={clusterType}
           cibLastWritten={cibLastWritten}
           sid={sid}
+          additionalSids={[]}
           provider={provider}
           sapSystems={[]}
           details={details}
@@ -467,11 +475,33 @@ describe('HanaClusterDetails component', () => {
   );
 
   it.each([
-    { arch: 'angi', tooltip: 'Angi architecture' },
-    { arch: 'classic', tooltip: 'Classic architecture' },
+    {
+      arch: 'angi',
+      tooltip: 'Angi architecture',
+      scenario: 'performance_optimized',
+      label: 'HANA Scale Up Perf. Opt.',
+    },
+    {
+      arch: 'classic',
+      tooltip: 'Classic architecture',
+      scenario: 'performance_optimized',
+      label: 'HANA Scale Up Perf. Opt.',
+    },
+    {
+      arch: 'classic',
+      tooltip: 'Classic architecture',
+      scenario: 'cost_optimized',
+      label: 'HANA Scale Up Cost Opt.',
+    },
+    {
+      arch: 'classic',
+      tooltip: 'Classic architecture',
+      scenario: 'unknown',
+      label: 'HANA Scale Up',
+    },
   ])(
     'should show cluster type with $arch architecture',
-    async ({ arch, tooltip }) => {
+    async ({ arch, tooltip, scenario, label }) => {
       const user = userEvent.setup();
 
       const {
@@ -484,7 +514,7 @@ describe('HanaClusterDetails component', () => {
         details,
       } = clusterFactory.build({
         type: 'hana_scale_up',
-        details: { architecture_type: arch },
+        details: { architecture_type: arch, hana_scenario: scenario },
       });
 
       const hosts = hostFactory.buildList(2, { cluster_id: clusterID });
@@ -499,6 +529,7 @@ describe('HanaClusterDetails component', () => {
           clusterType={clusterType}
           cibLastWritten={cibLastWritten}
           sid={sid}
+          additionalSids={[]}
           provider={provider}
           sapSystems={[]}
           details={details}
@@ -506,8 +537,7 @@ describe('HanaClusterDetails component', () => {
           userAbilities={userAbilities}
         />
       );
-
-      const icon = screen.getByText('HANA Scale Up').children.item(0);
+      const icon = screen.getByText(label).children.item(0);
       await user.hover(icon);
       expect(screen.getByText(tooltip, { exact: false })).toBeInTheDocument();
     }
@@ -544,6 +574,7 @@ describe('HanaClusterDetails component', () => {
           clusterType={clusterType}
           cibLastWritten={cibLastWritten}
           sid={sid}
+          additionalSids={[]}
           provider={provider}
           sapSystems={[]}
           details={details}
@@ -590,6 +621,7 @@ describe('HanaClusterDetails component', () => {
           clusterType={clusterType}
           cibLastWritten={cibLastWritten}
           sid={sid}
+          additionalSids={[]}
           provider={provider}
           sapSystems={[]}
           details={details}

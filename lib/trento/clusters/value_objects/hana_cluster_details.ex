@@ -13,6 +13,7 @@ defmodule Trento.Clusters.ValueObjects.HanaClusterDetails do
   use Trento.Support.Type
 
   require Trento.Clusters.Enums.HanaArchitectureType, as: HanaArchitectureType
+  require Trento.Clusters.Enums.HanaScenario, as: HanaScenario
 
   alias Trento.Clusters.ValueObjects.{
     ClusterResource,
@@ -23,6 +24,7 @@ defmodule Trento.Clusters.ValueObjects.HanaClusterDetails do
 
   deftype do
     field :architecture_type, Ecto.Enum, values: HanaArchitectureType.values()
+    field :hana_scenario, Ecto.Enum, values: HanaScenario.values()
     field :system_replication_mode, :string
     field :system_replication_operation_mode, :string
     field :secondary_sync_state, :string
