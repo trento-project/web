@@ -138,7 +138,8 @@ defmodule Trento.Discovery.Policies.HostPolicy do
            socket_count: socket_count,
            os_version: os_version,
            installation_source: installation_source,
-           fully_qualified_domain_name: fqdn
+           fully_qualified_domain_name: fqdn,
+           prometheus_targets: prometheus_targets
          } = payload
        ),
        do:
@@ -152,7 +153,8 @@ defmodule Trento.Discovery.Policies.HostPolicy do
            socket_count: socket_count,
            os_version: os_version,
            installation_source: installation_source,
-           fully_qualified_domain_name: fqdn
+           fully_qualified_domain_name: fqdn,
+           prometheus_targets: prometheus_targets
          })
 
   defp build_ip_addresses(%{ip_addresses: ip_addresses, netmasks: nil}) do

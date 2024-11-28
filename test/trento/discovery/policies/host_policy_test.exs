@@ -37,7 +37,8 @@ defmodule Trento.Discovery.Policies.HostPolicyTest do
                host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
                hostname: "suse",
                ip_addresses: ["10.1.1.4/16", "10.1.1.5/24", "10.1.1.6/32"],
-               installation_source: :unknown
+               installation_source: :unknown,
+               prometheus_targets: %{}
              }
            } =
              "host_discovery"
@@ -72,6 +73,22 @@ defmodule Trento.Discovery.Policies.HostPolicyTest do
              |> load_discovery_event_fixture()
              |> pop_in(["payload", "netmasks"])
              |> elem(1)
+             |> HostPolicy.handle()
+  end
+
+  test "should return the expected commands when a host_discovery payload with prometheus_targets is handled" do
+    assert {
+             :ok,
+             %RegisterHost{
+               host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
+               prometheus_targets: %{
+                 "node_exporter" => "10.0.0.1:9100",
+                 "ha_cluster_exporter" => "10.0.0.1:9664"
+               }
+             }
+           } =
+             "host_discovery_with_prometheus_targets"
+             |> load_discovery_event_fixture()
              |> HostPolicy.handle()
   end
 
