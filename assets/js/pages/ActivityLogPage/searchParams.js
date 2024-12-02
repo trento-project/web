@@ -15,6 +15,7 @@ const omitUndefined = (obj) =>
 
 const paginationFields = ['after', 'before', 'first', 'last'];
 const scalarKeys = [...paginationFields, 'search'];
+const ignoreKeys = ['refreshRate'];
 
 const searchParamsToEntries = (searchParams) =>
   pipe(Array.from, uniq, (keys) =>
@@ -36,12 +37,19 @@ const entriesToSearchParams = (entries) =>
       }, new URLSearchParams())
     : new URLSearchParams();
 
+const ignoreIrrelevantEntries = pipe(
+  Object.fromEntries,
+  omit(ignoreKeys),
+  Object.entries
+);
+
 /**
  * Convert a search params object to an API params object as expected by the API client
  * Make the necessary transformations to the values before setting them in the search params
  */
 export const searchParamsToAPIParams = pipe(
   searchParamsToEntries,
+  ignoreIrrelevantEntries,
   map(([key, value]) => {
     switch (key) {
       case 'from_date':

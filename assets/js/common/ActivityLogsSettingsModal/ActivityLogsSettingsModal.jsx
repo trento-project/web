@@ -29,7 +29,7 @@ function TimeSpan({ time: initialTime, error = false, onChange = noop }) {
 
   return (
     <div className="flex items-center space-x-2">
-      <div className="w-1/4 pt-1">
+      <div className="w-1/4">
         <InputNumber
           value={time.value}
           className="!h-8"

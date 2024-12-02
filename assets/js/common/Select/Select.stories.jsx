@@ -139,3 +139,10 @@ export const Disabled = {
     disabled: true,
   },
 };
+
+export const WithSelectedItemPrefix = {
+  args: {
+    ...Default.args,
+    selectedItemPrefix: '👉 ',
+  },
+};

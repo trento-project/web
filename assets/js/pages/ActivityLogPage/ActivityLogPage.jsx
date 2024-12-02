@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { noop } from 'lodash';
 import { useSearchParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { EOS_REFRESH } from 'eos-icons-react';
+import { EOS_REFRESH, EOS_UPDATE_FILLED } from 'eos-icons-react';
 
 import { map, pipe } from 'lodash/fp';
 
@@ -17,6 +18,7 @@ import ActivityLogOverview from '@common/ActivityLogOverview';
 import ComposedFilter from '@common/ComposedFilter';
 import Pagination, { defaultItemsPerPageOptions } from '@common/Pagination';
 import Spinner from '@common/Spinner';
+import Select, { createOptionRenderer } from '@common/Select';
 
 import ConnectionErrorAntenna from '@static/connection-error-antenna.svg';
 
@@ -30,6 +32,14 @@ import {
   setPaginationToSearchParams,
   resetPaginationToSearchParams,
 } from './searchParams';
+import {
+  addRefreshRateToSearchParams,
+  detectRefreshRate,
+  refreshRateOptions,
+  refreshRateOptionsToLabel,
+  removeRefreshRateFromSearchParams,
+  resetAutorefresh,
+} from './autorefresh';
 
 const defaultItemsPerPage = 20;
 const detectItemsPerPage = (number) =>
@@ -129,12 +139,37 @@ function MainView({
   );
 }
 
+function RefreshIntervalSelection({ disabled = false, rate, onChange = noop }) {
+  const [refreshRate, setRefreshRate] = pipe(detectRefreshRate, useState)(rate);
+
+  return (
+    <Select
+      disabled={disabled}
+      optionsName="refresh-rate"
+      options={refreshRateOptions}
+      value={refreshRate}
+      renderOption={createOptionRenderer(null, (value) => (
+        <span className="text-center block">
+          {refreshRateOptionsToLabel[value]}
+        </span>
+      ))}
+      onChange={(newRefreshRate) => {
+        setRefreshRate(newRefreshRate);
+        onChange(newRefreshRate);
+      }}
+      selectedItemPrefix={<EOS_UPDATE_FILLED className="absolute" />}
+    />
+  );
+}
+
 function ActivityLogPage() {
   const users = useSelector(getActivityLogUsers);
   const [searchParams, setSearchParams] = useSearchParams();
   const [activityLogRequest, setActivityLogRequest] = useState(
     request.initial()
   );
+  const [isFirstPage, setIsFirstPage] = useState(true);
+  const [autorefreshInterval, setAutorefreshInterval] = useState(null);
   const { abilities } = useSelector(getUserProfile);
 
   const filters = [
@@ -185,6 +220,11 @@ function ActivityLogPage() {
     detectItemsPerPage
   )(searchParams);
 
+  const trackWhetherOnFirstPage = (response) => {
+    setIsFirstPage(!response?.pagination?.has_previous_page);
+    return response;
+  };
+
   const fetchActivityLog = () => {
     // defer the loading state to avoid flickering
     const tid = setTimeout(() => setActivityLogRequest(request.loading()), 500);
@@ -195,6 +235,7 @@ function ActivityLogPage() {
             data: data?.data || [],
             pagination: data?.pagination,
           }),
+          trackWhetherOnFirstPage,
           request.success,
           setActivityLogRequest
         )
@@ -203,9 +244,26 @@ function ActivityLogPage() {
       .finally(() => clearTimeout(tid));
   };
 
+  const keepAutorefreshRate = (currentRate) => (params) =>
+    currentRate ? addRefreshRateToSearchParams(params, currentRate) : params;
+
+  useEffect(() => fetchActivityLog(), [searchParams]);
+
   useEffect(() => {
-    fetchActivityLog();
-  }, [searchParams]);
+    if (!isFirstPage) return noop;
+
+    const { interval, cleanup } = resetAutorefresh(
+      autorefreshInterval,
+      fetchActivityLog,
+      searchParams.get('refreshRate')
+    );
+
+    setAutorefreshInterval(interval);
+
+    return cleanup;
+  }, [isFirstPage, searchParams]);
+
+  const currentRefreshRate = searchParams.get('refreshRate');
 
   return (
     <>
@@ -213,6 +271,7 @@ function ActivityLogPage() {
       <div className="bg-white rounded-lg shadow">
         <div className="p-4">
           <ComposedFilter
+            className="grid-rows-2"
             filters={filters}
             autoApply={false}
             value={searchParamsToFilterValue(searchParams)}
@@ -220,14 +279,25 @@ function ActivityLogPage() {
               setFilterValueToSearchParams,
               resetPaginationToSearchParams,
               applyItemsPerPage(itemsPerPage),
+              keepAutorefreshRate(currentRefreshRate),
               setSearchParams
             )}
           >
-            <Button
-              className="col-span-2"
-              type="primary-white"
-              onClick={fetchActivityLog}
-            >
+            <RefreshIntervalSelection
+              disabled={!isFirstPage}
+              rate={currentRefreshRate}
+              onChange={pipe(
+                (newRefreshRate) =>
+                  newRefreshRate === 'off'
+                    ? removeRefreshRateFromSearchParams(searchParams)
+                    : addRefreshRateToSearchParams(
+                        searchParams,
+                        newRefreshRate
+                      ),
+                setSearchParams
+              )}
+            />
+            <Button type="primary-white" onClick={fetchActivityLog}>
               <EOS_REFRESH className="inline-block fill-jungle-green-500" />{' '}
               Refresh
             </Button>
