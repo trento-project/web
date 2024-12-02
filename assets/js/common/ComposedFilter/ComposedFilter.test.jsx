@@ -245,7 +245,7 @@ describe('ComposedFilter component', () => {
     expect(mockOnChange).not.toHaveBeenCalled();
 
     // apply
-    await act(() => userEvent.click(screen.getByText('Apply Filter')));
+    await act(() => userEvent.click(screen.getByText('Apply Filters')));
 
     // after apply
     expect(mockOnChange).toHaveBeenCalledTimes(1);

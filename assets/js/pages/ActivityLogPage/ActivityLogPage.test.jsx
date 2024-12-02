@@ -42,7 +42,7 @@ describe('ActivityLogPage', () => {
   it('should render actions', async () => {
     const [StatefulActivityLogPage, _] = withDefaultState(<ActivityLogPage />);
     await act(() => renderWithRouter(StatefulActivityLogPage));
-    expect(screen.getByText('Apply Filter')).toBeVisible();
+    expect(screen.getByText('Apply Filters')).toBeVisible();
     expect(screen.getByText('Reset Filters')).toBeVisible();
     expect(screen.getByText('Refresh')).toBeVisible();
     // Autorefresh is off by default

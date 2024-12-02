@@ -103,7 +103,7 @@ context('Activity Log page', () => {
 
       cy.get('input[name="metadata-search"]').type('foo bar');
 
-      cy.contains('Apply Filter').click();
+      cy.contains('Apply Filters').click();
 
       cy.url().should(
         'eq',
@@ -256,7 +256,7 @@ context('Activity Log page', () => {
 
       cy.contains('Filter Type').click();
       cy.contains('Login Attempt').click();
-      cy.contains('Apply Filter').click();
+      cy.contains('Apply Filters').click();
 
       cy.url().should(
         'eq',

@@ -92,7 +92,7 @@ function ComposedFilter({
                 onChange(value);
               }}
             >
-              Apply Filter
+              Apply Filters
             </Button>
             <Button
               type="primary-white"
