@@ -55,7 +55,7 @@
     "axios-auth-refresh": "^3.3.6",
     "chart.js": "^4.4.6",
     "chartjs-adapter-date-fns": "^3.0.0",
-    "chartjs-plugin-zoom": "^2.0.1",
+    "chartjs-plugin-zoom": "^2.2.0",
     "classnames": "^2.5.1",
     "copy-to-clipboard": "^3.3.3",
     "date-fns": "^3.6.0",
