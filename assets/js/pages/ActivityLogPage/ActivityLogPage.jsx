@@ -142,6 +142,8 @@ function MainView({
 function RefreshIntervalSelection({ disabled = false, rate, onChange = noop }) {
   const [refreshRate, setRefreshRate] = pipe(detectRefreshRate, useState)(rate);
 
+  useEffect(() => pipe(detectRefreshRate, setRefreshRate)(rate), [rate]);
+
   return (
     <Select
       disabled={disabled}

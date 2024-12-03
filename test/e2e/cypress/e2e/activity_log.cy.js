@@ -35,14 +35,17 @@ context('Activity Log page', () => {
 
     it('should reset querystring when reloading the page from navigation menu', () => {
       cy.visit(
-        '/activity_log?search=foo+bar&from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&to_date=custom&to_date=2024-08-13T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging'
+        '/activity_log?search=foo+bar&from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&to_date=custom&to_date=2024-08-13T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging&refreshRate=5000'
       );
 
       cy.contains('Login Attempt, Tag Added').should('be.visible');
+      cy.contains('5s').should('be.visible');
 
       cy.get('nav').contains('Activity Log').click();
 
       cy.get('body').should('not.include.text', 'Login Attempt, Tag Added');
+      cy.get('body').should('not.include.text', '5s');
+
       cy.url().should('eq', `${Cypress.config().baseUrl}/activity_log`);
     });
   });
@@ -438,6 +441,192 @@ context('Activity Log page', () => {
       cy.url().should(
         'eq',
         `${Cypress.config().baseUrl}/activity_log?last=20&type=host_registered`
+      );
+    });
+  });
+
+  describe('Autorefresh', () => {
+    it('should have autorefresh turned off by default', () => {
+      cy.visit('/activity_log');
+
+      cy.contains('Off').should('be.visible');
+    });
+
+    it('should allow changing autorefresh interval only on first page', () => {
+      const firstPageApiUrl = `/api/v1/activity_log?first=20`;
+      const nextPageRegex = /\/api\/v1\/activity_log\?first=20&after=.*/;
+
+      cy.intercept(firstPageApiUrl).as('firstPage');
+      cy.visit('/activity_log');
+      cy.wait('@firstPage');
+      cy.contains('Off').should('be.enabled');
+
+      cy.intercept(nextPageRegex).as('secondPage');
+      cy.get(NEXT).click();
+      cy.wait('@secondPage');
+      cy.contains('Off').should('be.disabled');
+
+      cy.intercept(nextPageRegex).as('thirdPage');
+      cy.get(NEXT).click();
+      cy.wait('@thirdPage');
+      cy.contains('Off').should('be.disabled');
+
+      cy.intercept(firstPageApiUrl).as('backToFirstPage');
+      cy.get(FIRST).click();
+      cy.wait('@backToFirstPage');
+      cy.contains('Off').should('be.enabled');
+    });
+
+    it('should ignore refresh rate query string param in API call', () => {
+      cy.intercept(
+        '/api/v1/activity_log?first=20&search=foo+bar&from_date=2024-08-14T10:21:00.000Z&to_date=2024-08-13T10:21:00.000Z&type[]=login_attempt&type[]=resource_tagging'
+      );
+
+      cy.visit(
+        '/activity_log?search=foo+bar&from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&to_date=custom&to_date=2024-08-13T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging&refreshRate=5000'
+      );
+
+      cy.contains('5s').should('be.visible');
+    });
+
+    it('should ignore an invalid refresh rate in query string param', () => {
+      cy.visit(
+        '/activity_log?search=foo+bar&from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging&refreshRate=00Invalid'
+      );
+
+      cy.contains('Off').should('be.visible');
+    });
+
+    it('should not reset refresh rate when resetting filters', () => {
+      cy.visit(
+        '/activity_log?from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging&search=foo+bar&refreshRate=10000'
+      );
+
+      cy.contains('10s').should('be.visible');
+
+      cy.contains('Reset Filters').click();
+
+      cy.contains('10s').should('be.visible');
+      cy.url().should(
+        'eq',
+        `${Cypress.config().baseUrl}/activity_log?first=20&refreshRate=10000`
+      );
+    });
+
+    const allRefreshRates = ['Off', '5s', '10s', '30s', '1m', '5m', '30m'];
+
+    const changingRefreshRateScenarios = [
+      {
+        currentRefreshRate: 'Off',
+        newRefreshRate: '5s',
+        expectedRefreshRate: 5000,
+      },
+      {
+        currentRefreshRate: '5s',
+        newRefreshRate: '10s',
+        expectedRefreshRate: 10000,
+      },
+      {
+        currentRefreshRate: '10s',
+        newRefreshRate: '30s',
+        expectedRefreshRate: 30000,
+      },
+      {
+        currentRefreshRate: '30s',
+        newRefreshRate: '1m',
+        expectedRefreshRate: 60000,
+      },
+      {
+        currentRefreshRate: '1m',
+        newRefreshRate: '5m',
+        expectedRefreshRate: 300000,
+      },
+      {
+        currentRefreshRate: '5m',
+        newRefreshRate: '30m',
+        expectedRefreshRate: 1800000,
+      },
+      {
+        currentRefreshRate: '30m',
+        newRefreshRate: 'Off',
+        expectedRefreshRate: null,
+      },
+    ];
+
+    it('should change refresh rate', () => {
+      cy.intercept({
+        url: '/api/v1/activity_log?first=20',
+      }).as('data');
+
+      cy.visit('/activity_log');
+
+      changingRefreshRateScenarios.forEach(
+        ({ currentRefreshRate, newRefreshRate, expectedRefreshRate }) => {
+          cy.contains(currentRefreshRate).should('be.visible');
+
+          allRefreshRates
+            .filter((rate) => rate !== currentRefreshRate)
+            .forEach((hiddenRate) =>
+              cy.get('body').should('not.include.text', hiddenRate)
+            );
+
+          cy.contains(currentRefreshRate).click();
+          cy.contains(newRefreshRate).click();
+
+          if (expectedRefreshRate) {
+            cy.url().should(
+              'eq',
+              `${
+                Cypress.config().baseUrl
+              }/activity_log?refreshRate=${expectedRefreshRate}`
+            );
+          } else {
+            cy.url().should('eq', `${Cypress.config().baseUrl}/activity_log`);
+          }
+        }
+      );
+    });
+
+    it('should start autorefresh ticker', () => {
+      cy.clock();
+
+      cy.intercept('/api/v1/activity_log?first=20', cy.spy().as('data'));
+
+      cy.visit('/activity_log');
+
+      // First call on page load
+      cy.get('@data').should('have.been.calledOnce');
+
+      cy.contains('Off').click();
+      cy.contains('5s').click();
+      // Second call when changing refresh rate
+      cy.get('@data').should('have.been.calledTwice');
+
+      // third call after 5 seconds
+      cy.tick(5000);
+      cy.get('@data').should('have.been.calledThrice');
+
+      // plus 2 other calls after 10 seconds
+      cy.tick(5000 * 2);
+      cy.get('@data').its('callCount').should('equal', 5);
+    });
+
+    it(`should update querystring when filters are selected`, () => {
+      cy.visit(`/activity_log?refreshRate=5000`);
+
+      cy.contains('Filter Type').click();
+      cy.contains('Login Attempt').click();
+      cy.contains('Tag Added').click();
+
+      cy.get('input[name="metadata-search"]').type('foo bar');
+
+      cy.contains('Apply Filters').click();
+
+      cy.url().should(
+        'eq',
+        `${
+          Cypress.config().baseUrl
+        }/activity_log?refreshRate=5000&type=login_attempt&type=resource_tagging&search=foo+bar&first=20`
       );
     });
   });
