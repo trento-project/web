@@ -306,7 +306,7 @@ context('Activity Log page', () => {
       cy.wait('@data20').its('response.body.pagination.first').should('eq', 20);
 
       cy.get('button').contains('20').click();
-      cy.contains('50').click();
+      cy.get('[data-testid="pagination"]').contains('50').click();
 
       cy.wait('@data50').its('response.body.pagination.first').should('eq', 50);
     });
