@@ -234,7 +234,7 @@ context('HANA cluster details', () => {
     });
   });
 
-  describe('HANA cluster cost optimized details should be consistent with the state of the cluster', () => {
+  describe('HANA cluster details in a cost optimized scenario should be consistent with the state of the cluster', () => {
     before(() => {
       cy.visit(`/clusters/${availableHanaClusterCostOpt.id}`);
       cy.url().should('include', `/clusters/${availableHanaClusterCostOpt.id}`);
@@ -251,7 +251,7 @@ context('HANA cluster details', () => {
         .contains(availableHanaClusterCostOpt.provider);
     });
 
-    it('should validate all SIDs and their links', () => {
+    it('should have all cost optimized SID`s and correct database links', () => {
       cy.get('.tn-cluster-details')
         .contains('SID')
         .parent()
@@ -266,7 +266,7 @@ context('HANA cluster details', () => {
         });
     });
 
-    it(`should have cluster type ${availableHanaClusterCostOpt.clusterType}`, () => {
+    it(`should have cluster cost optimized type ${availableHanaClusterCostOpt.clusterType}`, () => {
       cy.get('.tn-cluster-details')
         .contains('Cluster type')
         .next()
