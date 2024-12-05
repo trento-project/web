@@ -5,7 +5,10 @@ defmodule TrentoWeb.ActivityLogChannel do
   """
   require Logger
   use TrentoWeb, :channel
+  alias Trento.Support.AbilitiesHelper
   alias Trento.Users
+  alias Trento.Users.User
+
   @refresh_interval Application.compile_env!(:trento, [:activity_log, :refresh_interval])
 
   @impl true
@@ -16,7 +19,7 @@ defmodule TrentoWeb.ActivityLogChannel do
       ) do
     if allowed?(user_id, current_user_id) do
       send(self(), :after_join)
-      {:ok, socket}
+      {:ok, assign(socket, :current_user, load_current_user(current_user_id))}
     else
       Logger.error(
         "Could not join activity_log channel, requested user id: #{user_id}, authenticated user id: #{current_user_id}"
@@ -31,14 +34,48 @@ defmodule TrentoWeb.ActivityLogChannel do
   end
 
   @impl true
-  def handle_info(:after_join, socket) do
-    all_active_users = Enum.map(Users.list_users(), & &1.username)
+  def handle_info(
+        :after_join,
+        %{assigns: %{current_user: %User{} = current_user}} = socket
+      ) do
+    all_accessible_users = detect_accessible_users(current_user)
 
-    users = ["system" | all_active_users]
+    users = ["system" | all_accessible_users]
     push(socket, "al_users_pushed", %{users: users})
     Process.send_after(self(), :after_join, @refresh_interval)
     {:noreply, socket}
   end
 
+  def handle_info(:after_join, socket), do: {:noreply, socket}
+
   defp allowed?(user_id, current_user_id), do: String.to_integer(user_id) == current_user_id
+
+  defp load_current_user(user_id) do
+    case Users.get_user(user_id) do
+      {:ok, user} -> user
+      _ -> nil
+    end
+  end
+
+  defp detect_accessible_users(%User{username: current_username} = current_user) do
+    if has_access_to_users?(current_user) do
+      Enum.map(Users.list_users(), & &1.username)
+    else
+      [current_username]
+    end
+  end
+
+  defp has_access_to_users?(%User{} = user),
+    do:
+      AbilitiesHelper.has_global_ability?(user) ||
+        AbilitiesHelper.user_has_any_ability?(user, [
+          %{
+            name: "all",
+            resource: "users"
+          },
+          %{
+            name: "activity_log",
+            resource: "users"
+          }
+        ])
 end
