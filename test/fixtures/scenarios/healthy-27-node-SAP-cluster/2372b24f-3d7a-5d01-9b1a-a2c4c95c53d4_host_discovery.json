@@ -1,0 +1,21 @@
+{  
+  "discovery_type": "host_discovery",
+  "agent_id": "2372b24f-3d7a-5d01-9b1a-a2c4c95c53d4",
+  "payload": {
+    "agent_version": "2.3.0",
+    "cpu_count": 4,
+    "fully_qualified_domain_name": "vmhdbcost02",
+    "hostname": "vmhdbcost02",
+    "installation_source": "Suse",
+    "ip_addresses": [
+      "127.0.0.1",
+      "::1",
+      "10.90.100.102",
+      "fe80::20d:3aff:fe27:c4f1"
+    ],
+    "netmasks": [8, 128, 24, 64],
+    "os_version": "15-SP4",
+    "socket_count": 1,
+    "total_memory_mb": 32097
+  }
+}
