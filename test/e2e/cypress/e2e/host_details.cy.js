@@ -11,7 +11,13 @@ context('Host Details', () => {
     cy.loadScenario('healthy-27-node-SAP-cluster');
     cy.task('startAgentHeartbeat', [selectedHost.agentId]);
     cy.visit('/hosts');
-
+    // Added the intercept as host fetching  takes time.
+    cy.intercept('GET', '/api/v1/hosts').as('getHosts');
+    cy.wait('@getHosts').its('response.statusCode').should('eq', 200);
+    // Simulate click to Show hosts from  11–20 of 29 as selectedHost is the 11th
+    cy.get(
+      ':nth-child(3) > .tn-page-item > [data-testid="eos-svg-component"]'
+    ).click();
     cy.get(`#host-${selectedHost.agentId} > a`).click();
     cy.url().should('include', `/hosts/${selectedHost.agentId}`);
   });
