@@ -142,7 +142,6 @@ context('Hosts Overview', () => {
             if (host.clusterId) {
               host.sapSystemSid.forEach((sid, counter) => {
                 cy.get('@hostRow').eq(i).should('contain', sid);
-                cy.get('@hostRow').eq(i);
                 cy.get('@hostRow')
                   .eq(i)
                   .within(() => {
