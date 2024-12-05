@@ -254,7 +254,7 @@ context('HANA cluster details', () => {
     it('should validate all SIDs and their links', () => {
       cy.get('.tn-cluster-details')
         .contains('SID')
-        .parent() // Move to the parent container that holds both SIDs
+        .parent()
         .within(() => {
           availableHanaClusterCostOpt.sid.forEach((sid, index) => {
             cy.contains(sid).should(
