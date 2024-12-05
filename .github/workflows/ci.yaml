@@ -900,7 +900,7 @@ jobs:
       - name: Start a local k8s cluster
         uses: jupyterhub/action-k3s-helm@v4
         with:
-          k3s-channel: latest
+          k3s-version: v1.31.2+k3s1
       - name: Add bitnami & jetstack(cert-manager) helm deps
         run: |
           helm repo add bitnami https://charts.bitnami.com/bitnami
