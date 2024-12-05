@@ -2,7 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { noop } from 'lodash';
 import { useSearchParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { EOS_REFRESH, EOS_UPDATE_FILLED } from 'eos-icons-react';
+import {
+  EOS_REFRESH,
+  EOS_UPDATE_FILLED,
+  EOS_INFO_OUTLINED,
+} from 'eos-icons-react';
 
 import { map, pipe } from 'lodash/fp';
 
@@ -23,6 +27,7 @@ import Select, { createOptionRenderer } from '@common/Select';
 import ConnectionErrorAntenna from '@static/connection-error-antenna.svg';
 
 import NotificationBox from '@common/NotificationBox';
+import Tooltip from '@common/Tooltip';
 import {
   applyItemsPerPage,
   setFilterValueToSearchParams,
@@ -174,6 +179,16 @@ function ActivityLogPage() {
   const [autorefreshInterval, setAutorefreshInterval] = useState(null);
   const { abilities } = useSelector(getUserProfile);
 
+  const searchInfo = (
+    <div className="text-center">
+      Filter by 1 or more keywords.
+      <br />
+      Refine filters by using &apos;AND&apos; & &apos;OR&apos;.
+      <br />
+      e.g: created OR login.
+    </div>
+  );
+
   const filters = [
     {
       key: 'search',
@@ -181,8 +196,12 @@ function ActivityLogPage() {
       type: 'search_box',
       name: 'metadata-search',
       placeholder: 'Filter by metadata',
-      allowClear: true,
       className: 'col-span-8',
+      suffix: (
+        <Tooltip content={searchInfo}>
+          <EOS_INFO_OUTLINED size="l" className="text-gray-200" />
+        </Tooltip>
+      ),
     },
     {
       key: 'type',
