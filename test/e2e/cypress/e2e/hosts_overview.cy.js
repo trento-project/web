@@ -186,6 +186,7 @@ context('Hosts Overview', () => {
 
     describe('Health is changed based on saptune status when host has SAP', () => {
       const hostWithoutSap = 'vmdrbddev01';
+
       before(() => {
         cy.visit('/hosts');
         cy.url().should('include', '/hosts');
@@ -214,6 +215,7 @@ context('Hosts Overview', () => {
 
     describe('Health is changed based on saptune status when host has not SAP', () => {
       const hostWithSap = 'vmhdbprd01';
+
       before(() => {
         cy.visit('/hosts');
         cy.url().should('include', '/hosts');
