@@ -2,7 +2,7 @@ import { createUserRequestFactory } from '@lib/test-utils/factories';
 
 context('Databases Overview', () => {
   before(() => {
-    cy.loadScenario('healthy-27-node-SAP-cluster');
+    cy.loadScenario('healthy-29-node-SAP-cluster');
     cy.visit('/databases');
     cy.url().should('include', '/databases');
   });
