@@ -197,9 +197,10 @@ function ActivityLogPage() {
       name: 'metadata-search',
       placeholder: 'Filter by metadata',
       className: 'col-span-8',
+      allowClear: true,
       suffix: (
         <Tooltip content={searchInfo}>
-          <EOS_INFO_OUTLINED size="l" />
+          <EOS_INFO_OUTLINED size="l" className="inline" />
         </Tooltip>
       ),
     },
