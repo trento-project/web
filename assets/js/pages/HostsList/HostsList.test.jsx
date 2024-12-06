@@ -72,10 +72,9 @@ describe('HostsLists component', () => {
             cluster
           );
           expect(table.querySelector('td:nth-child(6)')).toHaveTextContent(sid);
-          expect(table.querySelector('td:nth-child(6) > a')).toHaveAttribute(
-            'href',
-            `/${systemType}/${instanceID}`
-          );
+          expect(
+            table.querySelector('td:nth-child(6) > span a')
+          ).toHaveAttribute('href', `/${systemType}/${instanceID}`);
           expect(table.querySelector('td:nth-child(7)')).toHaveTextContent(
             version
           );

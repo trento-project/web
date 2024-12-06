@@ -1,0 +1,238 @@
+{ 
+  "discovery_type": "cloud_discovery",
+  "agent_id": "2372b24f-3d7a-5d01-9b1a-a2c4c95c53d4",
+  "payload": {
+    "Provider": "azure",
+    "Metadata": {
+      "compute": {
+        "azEnvironment": "AzurePublicCloud",
+        "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/vmhdbcost02",
+        "vmId": "4118c35a-3bdc-4ebf-a6c5-3945a35a9c6d",
+        "platformFaultDomain": "1",
+        "osType": "Linux",
+        "sku": "gen2",
+        "osProfile": {
+          "adminUsername": "cloudadmin",
+          "computerName": "vmhdbcost02",
+          "disablePasswordAuthentication": "true"
+        },
+        "tags": "fake-tags",
+        "version": "2023.02.05",
+        "location": "westeurope",
+        "provider": "Microsoft.Compute",
+        "subscriptionId": "00000000-0000-0000-0000-000000000000",
+        "offer": "sles-sap-15-sp4-byos",
+        "platformUpdateDomain": "0",
+        "plan": {},
+        "publisher": "SUSE",
+        "name": "vmhdbcost02",
+        "storageProfile": {
+          "imageReference": {
+            "sku": "gen2",
+            "publisher": "SUSE",
+            "version": "latest",
+            "offer": "sles-sap-15-sp4-byos"
+          },
+          "osDisk": {
+            "caching": "ReadWrite",
+            "createOption": "FromImage",
+            "diffDiskSettings": { "option": "" },
+            "diskSizeGB": "30",
+            "encryptionSettings": { "enabled": "false" },
+            "image": { "uri": "" },
+            "managedDisk": {
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000000/disk-vmhdbcost02-Os",
+              "storageAccountType": "Premium_LRS"
+            },
+            "name": "disk-vmhdbcost02-Os",
+            "osType": "Linux",
+            "vhd": { "uri": "" },
+            "writeAcceleratorEnabled": "false"
+          },
+          "dataDisks": [
+            {
+              "caching": "None",
+              "createOption": "Empty",
+              "diskSizeGB": "128",
+              "image": { "uri": "" },
+              "lun": "0",
+              "managedDisk": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000000/disk-vmhdbcost02-Data01",
+                "storageAccountType": "Premium_LRS"
+              },
+              "name": "disk-vmhdbcost02-Data01",
+              "vhd": { "uri": "" },
+              "writeAcceleratorEnabled": "false"
+            },
+            {
+              "caching": "None",
+              "createOption": "Empty",
+              "diskSizeGB": "128",
+              "image": { "uri": "" },
+              "lun": "1",
+              "managedDisk": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000000/disks/disk-vmhdbcost02-Data02",
+                "storageAccountType": "Premium_LRS"
+              },
+              "name": "disk-vmhdbcost02-Data02",
+              "vhd": { "uri": "" },
+              "writeAcceleratorEnabled": "false"
+            },
+            {
+              "caching": "None",
+              "createOption": "Empty",
+              "diskSizeGB": "128",
+              "image": { "uri": "" },
+              "lun": "2",
+              "managedDisk": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000000/disk-vmhdbcost02-Data03",
+                "storageAccountType": "Premium_LRS"
+              },
+              "name": "disk-vmhdbcost02-Data03",
+              "vhd": { "uri": "" },
+              "writeAcceleratorEnabled": "false"
+            },
+            {
+              "caching": "None",
+              "createOption": "Empty",
+              "diskSizeGB": "128",
+              "image": { "uri": "" },
+              "lun": "3",
+              "managedDisk": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000000/disk-vmhdbcost02-Data04",
+                "storageAccountType": "Premium_LRS"
+              },
+              "name": "disk-vmhdbcost02-Data04",
+              "vhd": { "uri": "" },
+              "writeAcceleratorEnabled": "false"
+            },
+            {
+              "caching": "None",
+              "createOption": "Empty",
+              "diskSizeGB": "64",
+              "image": { "uri": "" },
+              "lun": "4",
+              "managedDisk": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000000/disk-vmhdbcost02-Data05",
+                "storageAccountType": "Premium_LRS"
+              },
+              "name": "disk-vmhdbcost02-Data05",
+              "vhd": { "uri": "" },
+              "writeAcceleratorEnabled": "false"
+            },
+            {
+              "caching": "None",
+              "createOption": "Empty",
+              "diskSizeGB": "64",
+              "image": { "uri": "" },
+              "lun": "5",
+              "managedDisk": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000000/disk-vmhdbcost02-Data06",
+                "storageAccountType": "Premium_LRS"
+              },
+              "name": "disk-vmhdbcost02-Data06",
+              "vhd": { "uri": "" },
+              "writeAcceleratorEnabled": "false"
+            },
+            {
+              "caching": "None",
+              "createOption": "Empty",
+              "diskSizeGB": "128",
+              "image": { "uri": "" },
+              "lun": "6",
+              "managedDisk": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000000/disk-vmhdbcost02-Data07",
+                "storageAccountType": "Premium_LRS"
+              },
+              "name": "disk-vmhdbcost02-Data07",
+              "vhd": { "uri": "" },
+              "writeAcceleratorEnabled": "false"
+            }
+          ]
+
+        },
+        "isHostCompatibilityLayerVm": "false",
+
+        "publicKeys": [
+          {
+            "path": "ssh-no-see",
+            "keyData": "ssh-no-see"
+          }
+        ],
+
+        "resourceGroupName": "resourceGroupName",
+      
+        "securityProfile": {
+          "secureBootEnabled": "false",
+          "virtualTpmEnabled": "false"
+        },
+
+
+
+      
+        "tagsList": [
+          {
+            "name": "Cost Center",
+            "value": "00000000"
+          },
+          {
+            "name": "Department",
+            "value": "EI"
+          },
+          {
+            "name": "Environment",
+            "value": "Development"
+          },
+          {
+            "name": "Finance Business Partner",
+            "value": "John Doe"
+          },
+          {
+            "name": "General Ledger Code",
+            "value": "100000000"
+          },
+          {
+            "name": "Group",
+            "value": "SAP Solutions"
+          },
+          {
+            "name": "Owner",
+            "value": "John Doe"
+          },
+          {
+            "name": "Stakeholder",
+            "value": "John Doe"
+          },
+          {
+            "name": "workspace",
+            "value": "xxxxxxx"
+          }
+        ],
+
+        "vmSize": "Standard_E4s_v3"
+      },
+      "network": {
+        "interface": [
+          {
+            "ipv4": {
+              "ipAddress": [
+                {
+                  "privateIpAddress": "10.90.100.100",
+                  "publicIpAddress": "XX.XXX.XX.XXX"
+                }
+              ],
+              "subnet": [
+                {
+                  "prefix": "24",
+                  "address": "10.100.100.0"
+                }]
+            },
+            "ipv6": {},
+            "macAddress": "000D3A27C4F1"
+          }
+        ]
+      }
+    }
+
+  }
+}
