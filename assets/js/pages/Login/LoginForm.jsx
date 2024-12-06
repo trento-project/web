@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import classNames from 'classnames';
 
@@ -17,6 +17,8 @@ export default function LoginForm({
   totpCode,
   username,
 }) {
+  const [showPassword, setShowPassword] = useState(false);
+
   return (
     <form className="space-y-6" onSubmit={handleLoginSubmit}>
       {!totpCodeRequested ? (
@@ -58,7 +60,7 @@ export default function LoginForm({
             <div className="mt-1">
               <Input
                 id="password"
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 data-testid="login-password"
                 disabled={authInProgress}
                 value={password}
@@ -72,6 +74,22 @@ export default function LoginForm({
                   { 'disabled:opacity-50': authInProgress }
                 )}
               />
+            </div>
+            <div className="align-left pl-3">
+              <input
+                id="show-password"
+                type="checkbox"
+                checked={showPassword}
+                onChange={() => setShowPassword(!showPassword)}
+                className="inline"
+              />
+              <label
+                htmlFor="show-password"
+                className=" text-sm font-medium text-gray-700"
+              >
+                {' '}
+                Show password
+              </label>
             </div>
           </div>
         </>
