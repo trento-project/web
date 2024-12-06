@@ -2,7 +2,7 @@ import React from 'react';
 
 import RcInput from 'rc-input';
 
-import { EOS_CANCEL_OUTLINED } from 'eos-icons-react';
+import { EOS_CLOSE } from 'eos-icons-react';
 import classNames from 'classnames';
 
 function Input({
@@ -22,7 +22,7 @@ function Input({
   ...props
 }) {
   const hasPrefix = !!prefix;
-  const clearIcon = <EOS_CANCEL_OUTLINED className="inline" size="l" />;
+  const clearIcon = <EOS_CLOSE className="inline" size="l" />;
 
   return (
     <div className={className}>
