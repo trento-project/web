@@ -199,7 +199,7 @@ function ActivityLogPage() {
       className: 'col-span-8',
       suffix: (
         <Tooltip content={searchInfo}>
-          <EOS_INFO_OUTLINED size="l" className="text-gray-200" />
+          <EOS_INFO_OUTLINED size="l" />
         </Tooltip>
       ),
     },
