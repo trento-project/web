@@ -9,4 +9,7 @@ defmodule Trento.Support.AbilitiesHelper do
 
   def has_global_ability?(%User{} = user),
     do: user_has_ability?(user, %{name: "all", resource: "all"})
+
+  def user_has_any_ability?(%User{} = user, abilities),
+    do: Enum.any?(abilities, &user_has_ability?(user, &1))
 end
