@@ -5,7 +5,7 @@ defmodule TrentoWeb.ActivityLogChannel do
   """
   require Logger
   use TrentoWeb, :channel
-  alias Trento.Support.AbilitiesHelper
+  alias Trento.ActivityLog.Policy
   alias Trento.Users
   alias Trento.Users.User
 
@@ -58,24 +58,10 @@ defmodule TrentoWeb.ActivityLogChannel do
   end
 
   defp detect_accessible_users(%User{username: current_username} = current_user) do
-    if has_access_to_users?(current_user) do
+    if Policy.has_access_to_users?(current_user) do
       Enum.map(Users.list_users(), & &1.username)
     else
       [current_username]
     end
   end
-
-  defp has_access_to_users?(%User{} = user),
-    do:
-      AbilitiesHelper.has_global_ability?(user) ||
-        AbilitiesHelper.user_has_any_ability?(user, [
-          %{
-            name: "all",
-            resource: "users"
-          },
-          %{
-            name: "activity_log",
-            resource: "users"
-          }
-        ])
 end
