@@ -24,14 +24,17 @@ defmodule Trento.Support.Helpers.AbilitiesTestHelper do
       |> Pow.Plug.put_config(otp_app: :trento)
 
     # Default inject all:all abilities user
-    %{id: user_id} = insert(:user)
+    %{id: user_id} = admin_user = insert(:user)
     %{id: ability_id} = insert(:ability, name: "all", resource: "all")
     insert(:users_abilities, user_id: user_id, ability_id: ability_id)
 
     conn =
       Pow.Plug.assign_current_user(conn, %{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
 
-    {:ok, conn: put_req_header(conn, "accept", "application/json"), api_spec: api_spec}
+    {:ok,
+     conn: put_req_header(conn, "accept", "application/json"),
+     api_spec: api_spec,
+     admin_user: admin_user}
   end
 
   def clear_default_abilities(_) do
