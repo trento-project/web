@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import classNames from 'classnames';
 
-import Input from '@common/Input';
+import Input, { Password } from '@common/Input';
 
 export default function LoginForm({
   authError,
@@ -43,7 +43,7 @@ export default function LoginForm({
                 required
                 error={isUnauthorized}
                 className={classNames(
-                  'appearance-none px-3 py-2 text-inherit border-gray-300 shadow-sm focus:ring-jungle-green-500 focus:border-jungle-green-500 sm:text-sm',
+                  'appearance-none text-inherit border-gray-300 shadow-sm sm:text-sm',
                   { 'disabled:opacity-50': authInProgress }
                 )}
               />
@@ -58,38 +58,21 @@ export default function LoginForm({
               Password
             </label>
             <div className="mt-1">
-              <Input
-                id="password"
-                type={showPassword ? 'text' : 'password'}
-                data-testid="login-password"
-                disabled={authInProgress}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                name="password"
-                autoComplete="current-password"
-                required
-                error={isUnauthorized}
-                className={classNames(
-                  'appearance-none px-3 py-2 text-inherit border-gray-300 shadow-sm focus:ring-jungle-green-500 focus:border-jungle-green-500 sm:text-sm',
-                  { 'disabled:opacity-50': authInProgress }
-                )}
-              />
-            </div>
-            <div className="align-left pl-3">
-              <input
-                id="show-password"
-                type="checkbox"
-                checked={showPassword}
-                onChange={() => setShowPassword(!showPassword)}
-                className="inline"
-              />
-              <label
-                htmlFor="show-password"
-                className=" text-sm font-medium text-gray-700"
-              >
-                {' '}
-                Show password
-              </label>
+            <Password
+              id="password"
+              initialValue={password}
+              data-testid="login-password"
+              disabled={authInProgress}
+
+              name="password"
+              placeholder={null}
+              error={isUnauthorized}
+              onChange={(e) => setPassword(e.target.value)}
+              className={classNames(
+                'appearance-none text-inherit sm:text-sm',
+                { 'disabled:opacity-50': authInProgress }
+              )}
+            />
             </div>
           </div>
         </>
