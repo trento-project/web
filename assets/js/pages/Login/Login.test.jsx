@@ -47,10 +47,12 @@ describe('Login component', () => {
 
     await waitFor(() => screen.getByText('Invalid credentials'));
 
-    ['username', 'password'].forEach((id) => {
-      const element = screen.getByTestId(`login-${id}`);
-      expect(element).toHaveClass('border-red-500');
-    });
+    const username = screen.getByTestId(`login-username`);
+    expect(username).toHaveClass('border-red-500');
+
+    // rc-input wraps the input in a span if a suffix is provided
+    const password = screen.getByTestId(`login-password`).parentNode;
+    expect(password).toHaveClass('border-red-500');
   });
 
   it('should show a toast if an error occurs during the authentication and the error code is not 401', async () => {
