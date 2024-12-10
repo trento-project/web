@@ -1161,7 +1161,7 @@ defmodule Trento.Factory do
   def activity_log_entry_factory do
     %ActivityLogEntry{
       type: Faker.Pokemon.name(),
-      actor: Enum.random(["user", "system"]),
+      actor: Faker.Internet.user_name(),
       metadata: %{}
     }
   end

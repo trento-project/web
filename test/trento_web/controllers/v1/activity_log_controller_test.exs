@@ -280,4 +280,116 @@ defmodule TrentoWeb.V1.ActivityLogControllerTest do
       assert_schema(resp, "ActivityLog", api_spec)
     end
   end
+
+  describe "permission based access to users" do
+    scenarios = [
+      %{
+        name: "should not return redacted actors for user with all:all ability",
+        ability: %{
+          name: "all",
+          resource: "all"
+        },
+        should_redact_actors: false
+      },
+      %{
+        name: "should not return redacted actors for user with all:users ability",
+        ability: %{
+          name: "all",
+          resource: "users"
+        },
+        should_redact_actors: false
+      },
+      %{
+        name: "should not return redacted actors for user with activity_log:users ability",
+        ability: %{
+          name: "activity_log",
+          resource: "users"
+        },
+        should_redact_actors: false
+      },
+      %{
+        name: "should return redacted actors for user without required ability",
+        ability: %{
+          name: "foo",
+          resource: "bar"
+        },
+        should_redact_actors: true
+      }
+    ]
+
+    for %{name: scenario_name} = scenario <- scenarios do
+      @scenario scenario
+
+      test scenario_name, %{conn: conn, admin_user: admin_user} do
+        %{
+          ability: %{
+            name: ability_name,
+            resource: ability_resource
+          },
+          should_redact_actors: should_redact_actors
+        } = @scenario
+
+        with_admin? =
+          case {ability_name, ability_resource} do
+            {"all", "all"} -> true
+            _ -> false
+          end
+
+        %{id: user_id, username: username} =
+          if with_admin? do
+            admin_user
+          else
+            insert(:user)
+          end
+
+        if !with_admin? do
+          %{id: ability_id} =
+            insert(:ability, name: ability_name, resource: ability_resource)
+
+          insert(:users_abilities, user_id: user_id, ability_id: ability_id)
+        end
+
+        insert_list(10, :activity_log_entry)
+        insert_list(2, :activity_log_entry, actor: username)
+
+        conn =
+          Pow.Plug.assign_current_user(conn, %{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
+
+        data =
+          conn
+          |> get("/api/v1/activity_log")
+          |> json_response(200)
+          |> Map.get("data")
+
+        assert length(data) == 12
+
+        if should_redact_actors do
+          assert 2 == Enum.count(data, fn %{"actor" => actor} -> actor == username end)
+          assert 10 == Enum.count(data, fn %{"actor" => actor} -> actor == "••••••••" end)
+        else
+          refute Enum.any?(data, fn %{"actor" => actor} -> actor == "••••••••" end)
+        end
+      end
+    end
+
+    test "should forbid querying by actor other than self and system when user is not allowed", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      %{id: user_id} = insert(:user)
+
+      %{id: ability_id} =
+        insert(:ability, name: "foo", resource: "bar")
+
+      insert(:users_abilities, user_id: user_id, ability_id: ability_id)
+
+      conn =
+        Pow.Plug.assign_current_user(conn, %{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
+
+      conn
+      |> get("/api/v1/activity_log?actor[]=aktor")
+      |> json_response(:forbidden)
+      |> assert_schema("Forbidden", api_spec)
+    end
+  end
 end
