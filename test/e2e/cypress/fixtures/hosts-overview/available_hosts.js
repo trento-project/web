@@ -1,5 +1,23 @@
 export const availableHosts = [
   {
+    id: '1d809125-dd75-5367-98f8-6ed1d7597d08',
+    name: 'hana_node01',
+    ipAddresses: [],
+    provider: 'Nutanix',
+    clusterName: 'hana_cluster',
+    clusterId: '597a00db-5920-5033-b3b4-1dc98ca8718a',
+    agentVersion: '2.1.0+git.dev10230',
+  },
+  {
+    id: '596b4e91-a95c-50ae-abee-daabddb3d817',
+    name: 'hana_node02',
+    ipAddresses: [],
+    provider: 'Nutanix',
+    clusterName: 'hana_cluster',
+    clusterId: '597a00db-5920-5033-b3b4-1dc98ca8718a',
+    agentVersion: '2.1.0+git.dev10230',
+  },
+  {
     id: '240f96b1-8d26-53b7-9e99-ffb0f2e735bf',
     name: 'vmdrbddev01',
     ipAddresses: ['10.100.1.31/24', '10.100.1.33/24'],
