@@ -164,3 +164,19 @@ jobs:
           photofinish run multi-tenant -u "https://$TRENTO_PR_ENV_URL/api/v1/collect"
           photofinish run hana-scale-up-angi -u "https://$TRENTO_PR_ENV_URL/api/collect"
           photofinish run java-system -u "https://$TRENTO_PR_ENV_URL/api/collect"
+  comment_pr:
+    name: Comment on the PR with the environment URL
+    runs-on: ubuntu-20.04
+    needs: run-photofinish-demo-env
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+      - name: Comment on the PR
+        uses: actions/github-script@v7
+        env:
+          FQDN: prenv.trento.suse.com
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { onPrEnvCreated } = require('.github/scripts/pr_env.js')(github, context);
+            onPrEnvCreated(process.env.FQDN).catch(console.error);
