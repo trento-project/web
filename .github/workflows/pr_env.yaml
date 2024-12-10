@@ -2,10 +2,7 @@ name: Pull request environment
 
 on:
   pull_request:
-    types:
-      - opened
-      - synchronize
-      - labeled
+    types: [opened, synchronize, labeled]
 
 env:
   MANTAINERS: '["cdimonaco", "dottorblaster", "nelsonkopliku", "arbulu89", "jagabomb", "emaksy", "gagandeepb", "balanza", "janvhs"]'
@@ -13,154 +10,17 @@ env:
   PR_NUMBER: "${{ github.event.pull_request.number }}"
 
 jobs:
-  check_env_creation_privilege:
-    name: Check if the environment creation criteria are met, store in the job output
+  xxx:
+    name: Create the environment
     runs-on: ubuntu-20.04
-    outputs:
-      create_env: ${{ steps.check.outputs.create_env }}
     steps:
-      - id: check
-        run: echo "create_env=${{ contains(fromJson(env.MANTAINERS), github.event.sender.login) && contains(github.event.pull_request.labels.*.name, env.PR_ENV_LABEL) }}" >> "$GITHUB_OUTPUT"
+      - name: Checkout the code
+        uses: actions/checkout@v2
+      - name: Create the environment
+        uses: actions/github-script@v7
+        id: set-result
+        with:
+          script: |
+            const { onPrEnvCreated } = require('.github/pr_env.js')(github, context);
 
-  build-and-push-pr-image:
-    needs: check_env_creation_privilege
-    name: Build and push pull request container image
-    runs-on: ubuntu-20.04
-    if: needs.check_env_creation_privilege.outputs.create_env == 'true'
-    permissions:
-      contents: read
-      packages: write
-    env:
-      REGISTRY: ghcr.io
-      IMAGE_REPOSITORY: ghcr.io/${{ github.repository_owner }}/trento-web
-      IMAGE_TAG: ${{ github.event.pull_request.number }}-env
-    steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.12.1
-        with:
-          access_token: ${{ github.token }}
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: docker/setup-buildx-action@v3
-      - name: Log in to the Container registry
-        uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@8e5442c4ef9f78752691e2d8f8d19755c6f78e81
-        with:
-          images: ${{ env.IMAGE_REPOSITORY }}
-      - name: Build and push container image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: true
-          tags: ${{ env.IMAGE_REPOSITORY }}:${{ env.IMAGE_TAG }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-  create_pr_environment:
-    name: Create or update the pr environment
-    runs-on: ubuntu-20.04
-    needs: build-and-push-pr-image
-    env:
-      PR_BASE_URL: ${{ github.event.pull_request.number }}.prenv.trento.suse.com
-      PR_NUMBER: ${{ github.event.pull_request.number }}
-    steps:
-      - name: Checkout ansible repo
-        uses: actions/checkout@v4
-        with:
-          repository: trento-project/ansible
-          path: ansible
-      - name: Install galaxy deps
-        run: ansible-galaxy install -r ansible/requirements.yml
-      - name: Run playbook
-        uses: dawidd6/action-ansible-playbook@v2
-        with:
-          playbook: ansible/playbook.yml
-          key: ${{ secrets.SSH_PR_MACHINE_KEY }}
-          inventory: |
-            all:
-              vars:
-                ansible_user: ec2-user
-                ansible_python_interpreter: /usr/bin/python3
-              children:
-                trento-server:
-                  hosts:
-                    server:
-                      ansible_host: ${{ secrets.PR_ENV_MACHINE_IP }} 
-                postgres-hosts:
-                  hosts:
-                    server:
-                      ansible_host: ${{ secrets.PR_ENV_MACHINE_IP }}
-                rabbitmq-hosts:
-                  hosts:
-                    server:
-                      ansible_host: ${{ secrets.PR_ENV_MACHINE_IP }}
-          options: |
-            --extra-vars "web_postgres_db='${{ env.PR_NUMBER }}db' \
-            web_postgres_event_store='${{ env.PR_NUMBER }}edb' \
-            wanda_postgres_db='${{ env.PR_NUMBER }}wandadb' \
-            web_postgres_user='${{ env.PR_NUMBER }}web' \
-            wanda_postgres_user='${{ env.PR_NUMBER }}wanda' \
-            web_container_name='${{ env.PR_NUMBER }}web' \
-            web_container_image='ghcr.io/trento-project/trento-web:${{ env.PR_NUMBER }}-env' \
-            wanda_container_image='ghcr.io/trento-project/trento-wanda:demo' \
-            wanda_container_name='${{ env.PR_NUMBER }}wanda' \
-            docker_network_name='${{ env.PR_NUMBER }}net' \
-            nginx_vhost_filename='${{ env.PR_NUMBER }}' \
-            trento_server_name='${{ env.PR_BASE_URL }}' \
-            web_postgres_password='trento' \
-            wanda_postgres_password='wanda' \
-            rabbitmq_vhost='${{ env.PR_NUMBER }}' \
-            rabbitmq_username='${{ env.PR_NUMBER }}rabbitusr' \
-            rabbitmq_password='trento' \
-            prometheus_url='http://localhost' \
-            web_admin_password='adminpassword' \
-            enable_api_key='false' \
-            nginx_vhost_listen_port='443' \
-            force_recreate_wanda_container='true' \
-            force_recreate_web_container='true' \
-            force_pull_images='true' \
-            web_upstream_name='${{ env.PR_NUMBER }}web' \
-            wanda_upstream_name='${{ env.PR_NUMBER }}wanda' \
-            trento_server_url='http://${{ env.PR_BASE_URL }}' \
-            nginx_ssl_cert_as_base64='true' \
-            nginx_ssl_key_as_base64='true' \
-            nginx_ssl_cert='${{ secrets.PR_ENV_SSL_CERT }}' \
-            nginx_ssl_key='${{ secrets.PR_ENV_SSL_CERT_KEY }}' \
-            install_method='docker'"
-
-  run-photofinish-demo-env:
-    name: Use photofinish to push mock data to the pr environment
-    runs-on: ubuntu-20.04
-    needs: create_pr_environment
-    env:
-      TRENTO_PR_ENV_URL: "${{ github.event.pull_request.number }}.prenv.trento.suse.com"
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Install photofinish
-        uses: jaxxstorm/action-install-gh-release@v1.14.0
-        with:
-          repo: trento-project/photofinish
-          tag: v1.4.1
-          cache: enable
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Give executable permissions to photofinish
-        run: chmod +x $(whereis photofinish | cut -d" " -f2)
-      - name: Push data
-        run: |
-          photofinish run healthy-29-node-SAP-cluster -u "https://$TRENTO_PR_ENV_URL/api/v1/collect"
-          photofinish run hana-scale-out -u "https://$TRENTO_PR_ENV_URL/api/v1/collect"
-          photofinish run hana-diskless-sbd -u "https://$TRENTO_PR_ENV_URL/api/v1/collect"
-          photofinish run multi-tenant -u "https://$TRENTO_PR_ENV_URL/api/v1/collect"
-          photofinish run hana-scale-up-angi -u "https://$TRENTO_PR_ENV_URL/api/collect"
-          photofinish run java-system -u "https://$TRENTO_PR_ENV_URL/api/collect"
+            onPrEnvCreated("pippo.com");
