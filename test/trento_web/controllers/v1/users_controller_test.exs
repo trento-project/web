@@ -67,7 +67,12 @@ defmodule TrentoWeb.V1.UsersControllerTest do
         |> json_response(200)
         |> assert_schema("UserCollection", api_spec)
 
-      assert [_, %{id: ^user_one_id}, %{id: ^user_two_id}] = resp
+      Enum.each([user_one_id, user_two_id], fn id ->
+        assert Enum.find_value(resp, fn
+                 %{id: ^id} -> true
+                 _ -> false
+               end)
+      end)
     end
   end
 

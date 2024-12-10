@@ -42,6 +42,7 @@ defmodule Trento.Users do
     |> where([u], is_nil(u.deleted_at))
     |> preload(:abilities)
     |> preload(:user_identities)
+    |> order_by(asc: :id)
     |> Repo.all()
   end
 
