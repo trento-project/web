@@ -1,6 +1,6 @@
-[healthy-27-node-SAP-cluster]
+[healthy-29-node-SAP-cluster]
 
-directories = ["./test/fixtures/scenarios/healthy-27-node-SAP-cluster"]
+directories = ["./test/fixtures/scenarios/healthy-29-node-SAP-cluster"]
 
 [single-hana-single-app]
 
@@ -97,7 +97,7 @@ files = [
 [sap-systems-overview-GREEN]
 
 files = [
-    "./test/fixtures/scenarios//healthy-27-node-SAP-cluster/7269ee51-5007-5849-aaa7-7c4a98b0c9ce_sap_system_discovery.json",
+    "./test/fixtures/scenarios//healthy-29-node-SAP-cluster/7269ee51-5007-5849-aaa7-7c4a98b0c9ce_sap_system_discovery.json",
 ]
 
 [sap-systems-overview-GRAY]
@@ -133,7 +133,7 @@ files = [
 [sap-systems-overview-NWD-00-present]
 
 files = [
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/7269ee51-5007-5849-aaa7-7c4a98b0c9ce_sap_system_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/7269ee51-5007-5849-aaa7-7c4a98b0c9ce_sap_system_discovery.json",
 ]
 
 [sap-systems-overview-NWD-00-absent]
@@ -145,7 +145,7 @@ files = [
 [sap-systems-overview-NWD-01-present]
 
 files = [
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/9a3ec76a-dd4f-5013-9cf0-5eb4cf89898f_sap_system_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/9a3ec76a-dd4f-5013-9cf0-5eb4cf89898f_sap_system_discovery.json",
 ]
 
 [sap-systems-overview-NWD-01-absent]
@@ -157,7 +157,7 @@ files = [
 [sap-systems-overview-HDD-10-present]
 
 files = [
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/13e8c25c-3180-5a9a-95c8-51ec38e50cfc_sap_system_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/13e8c25c-3180-5a9a-95c8-51ec38e50cfc_sap_system_discovery.json",
 ]
 
 [sap-systems-overview-HDD-10-absent]
@@ -229,13 +229,13 @@ files = [
 [host-details-vmhdbprd01]
 
 files = [
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/9cd46919-5f19-59aa-993e-cf3736c71053_host_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/9cd46919-5f19-59aa-993e-cf3736c71053_host_discovery.json",
 ]
 
 [host-details-azure]
 
 files = [
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/9cd46919-5f19-59aa-993e-cf3736c71053_cloud_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/9cd46919-5f19-59aa-993e-cf3736c71053_cloud_discovery.json",
 ]
 
 [host-details-aws]
@@ -277,51 +277,51 @@ files = [
 [host-vmhdbdev01-restore]
 
 files = [
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/13e8c25c-3180-5a9a-95c8-51ec38e50cfc_host_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/13e8c25c-3180-5a9a-95c8-51ec38e50cfc_subscription_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/13e8c25c-3180-5a9a-95c8-51ec38e50cfc_cloud_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/13e8c25c-3180-5a9a-95c8-51ec38e50cfc_ha_cluster_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/13e8c25c-3180-5a9a-95c8-51ec38e50cfc_sap_system_discovery.json"
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/13e8c25c-3180-5a9a-95c8-51ec38e50cfc_host_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/13e8c25c-3180-5a9a-95c8-51ec38e50cfc_subscription_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/13e8c25c-3180-5a9a-95c8-51ec38e50cfc_cloud_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/13e8c25c-3180-5a9a-95c8-51ec38e50cfc_ha_cluster_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/13e8c25c-3180-5a9a-95c8-51ec38e50cfc_sap_system_discovery.json"
 ]
 
 [host-vmhdbprd02-restore]
 
 files = [
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/b767b3e9-e802-587e-a442-541d093b86b9_host_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/b767b3e9-e802-587e-a442-541d093b86b9_subscription_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/b767b3e9-e802-587e-a442-541d093b86b9_cloud_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/b767b3e9-e802-587e-a442-541d093b86b9_ha_cluster_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/b767b3e9-e802-587e-a442-541d093b86b9_sap_system_discovery.json"
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/b767b3e9-e802-587e-a442-541d093b86b9_host_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/b767b3e9-e802-587e-a442-541d093b86b9_subscription_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/b767b3e9-e802-587e-a442-541d093b86b9_cloud_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/b767b3e9-e802-587e-a442-541d093b86b9_ha_cluster_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/b767b3e9-e802-587e-a442-541d093b86b9_sap_system_discovery.json"
 ]
 
 [host-vmnwdev02-restore]
 
 files = [
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/fb2c6b8a-9915-5969-a6b7-8b5a42de1971_host_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/fb2c6b8a-9915-5969-a6b7-8b5a42de1971_subscription_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/fb2c6b8a-9915-5969-a6b7-8b5a42de1971_cloud_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/fb2c6b8a-9915-5969-a6b7-8b5a42de1971_ha_cluster_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/fb2c6b8a-9915-5969-a6b7-8b5a42de1971_sap_system_discovery.json"
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/fb2c6b8a-9915-5969-a6b7-8b5a42de1971_host_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/fb2c6b8a-9915-5969-a6b7-8b5a42de1971_subscription_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/fb2c6b8a-9915-5969-a6b7-8b5a42de1971_cloud_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/fb2c6b8a-9915-5969-a6b7-8b5a42de1971_ha_cluster_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/fb2c6b8a-9915-5969-a6b7-8b5a42de1971_sap_system_discovery.json"
 ]
 
 [host-vmhdbdev02-restore]
 
 files = [
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4_host_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4_subscription_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4_cloud_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4_ha_cluster_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4_sap_system_discovery.json" 
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4_host_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4_subscription_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4_cloud_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4_ha_cluster_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4_sap_system_discovery.json" 
 ]
 
 [host-vmhdbqas01-restore]
 
 files = [
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/99cf8a3a-48d6-57a4-b302-6e4482227ab6_host_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/99cf8a3a-48d6-57a4-b302-6e4482227ab6_subscription_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/99cf8a3a-48d6-57a4-b302-6e4482227ab6_cloud_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/99cf8a3a-48d6-57a4-b302-6e4482227ab6_ha_cluster_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/99cf8a3a-48d6-57a4-b302-6e4482227ab6_sap_system_discovery.json" 
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/99cf8a3a-48d6-57a4-b302-6e4482227ab6_host_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/99cf8a3a-48d6-57a4-b302-6e4482227ab6_subscription_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/99cf8a3a-48d6-57a4-b302-6e4482227ab6_cloud_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/99cf8a3a-48d6-57a4-b302-6e4482227ab6_ha_cluster_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/99cf8a3a-48d6-57a4-b302-6e4482227ab6_sap_system_discovery.json" 
 ]
 
 [host-vmdrbddev01-saptune-uninstalled]
@@ -375,41 +375,41 @@ files = [
 [sapsystem-NWD-restore]
 
 files = [
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/7269ee51-5007-5849-aaa7-7c4a98b0c9ce_cloud_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/7269ee51-5007-5849-aaa7-7c4a98b0c9ce_ha_cluster_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/7269ee51-5007-5849-aaa7-7c4a98b0c9ce_host_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/7269ee51-5007-5849-aaa7-7c4a98b0c9ce_sap_system_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/7269ee51-5007-5849-aaa7-7c4a98b0c9ce_subscription_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/fb2c6b8a-9915-5969-a6b7-8b5a42de1971_cloud_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/fb2c6b8a-9915-5969-a6b7-8b5a42de1971_ha_cluster_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/fb2c6b8a-9915-5969-a6b7-8b5a42de1971_host_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/fb2c6b8a-9915-5969-a6b7-8b5a42de1971_sap_system_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/fb2c6b8a-9915-5969-a6b7-8b5a42de1971_subscription_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/9a3ec76a-dd4f-5013-9cf0-5eb4cf89898f_cloud_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/9a3ec76a-dd4f-5013-9cf0-5eb4cf89898f_ha_cluster_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/9a3ec76a-dd4f-5013-9cf0-5eb4cf89898f_host_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/9a3ec76a-dd4f-5013-9cf0-5eb4cf89898f_sap_system_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/9a3ec76a-dd4f-5013-9cf0-5eb4cf89898f_subscription_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/1b0e9297-97dd-55d6-9874-8efde4d84c90_cloud_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/1b0e9297-97dd-55d6-9874-8efde4d84c90_ha_cluster_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/1b0e9297-97dd-55d6-9874-8efde4d84c90_host_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/1b0e9297-97dd-55d6-9874-8efde4d84c90_sap_system_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/1b0e9297-97dd-55d6-9874-8efde4d84c90_subscription_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/7269ee51-5007-5849-aaa7-7c4a98b0c9ce_cloud_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/7269ee51-5007-5849-aaa7-7c4a98b0c9ce_ha_cluster_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/7269ee51-5007-5849-aaa7-7c4a98b0c9ce_host_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/7269ee51-5007-5849-aaa7-7c4a98b0c9ce_sap_system_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/7269ee51-5007-5849-aaa7-7c4a98b0c9ce_subscription_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/fb2c6b8a-9915-5969-a6b7-8b5a42de1971_cloud_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/fb2c6b8a-9915-5969-a6b7-8b5a42de1971_ha_cluster_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/fb2c6b8a-9915-5969-a6b7-8b5a42de1971_host_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/fb2c6b8a-9915-5969-a6b7-8b5a42de1971_sap_system_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/fb2c6b8a-9915-5969-a6b7-8b5a42de1971_subscription_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/9a3ec76a-dd4f-5013-9cf0-5eb4cf89898f_cloud_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/9a3ec76a-dd4f-5013-9cf0-5eb4cf89898f_ha_cluster_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/9a3ec76a-dd4f-5013-9cf0-5eb4cf89898f_host_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/9a3ec76a-dd4f-5013-9cf0-5eb4cf89898f_sap_system_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/9a3ec76a-dd4f-5013-9cf0-5eb4cf89898f_subscription_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/1b0e9297-97dd-55d6-9874-8efde4d84c90_cloud_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/1b0e9297-97dd-55d6-9874-8efde4d84c90_ha_cluster_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/1b0e9297-97dd-55d6-9874-8efde4d84c90_host_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/1b0e9297-97dd-55d6-9874-8efde4d84c90_sap_system_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/1b0e9297-97dd-55d6-9874-8efde4d84c90_subscription_discovery.json",
 ]
 
 [cluster-hana_cluster_1-restore]
 
 files = [
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/13e8c25c-3180-5a9a-95c8-51ec38e50cfc_cloud_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/13e8c25c-3180-5a9a-95c8-51ec38e50cfc_ha_cluster_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/13e8c25c-3180-5a9a-95c8-51ec38e50cfc_host_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/13e8c25c-3180-5a9a-95c8-51ec38e50cfc_sap_system_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/13e8c25c-3180-5a9a-95c8-51ec38e50cfc_subscription_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4_cloud_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4_ha_cluster_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4_host_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4_sap_system_discovery.json",
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4_subscription_discovery.json",    
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/13e8c25c-3180-5a9a-95c8-51ec38e50cfc_cloud_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/13e8c25c-3180-5a9a-95c8-51ec38e50cfc_ha_cluster_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/13e8c25c-3180-5a9a-95c8-51ec38e50cfc_host_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/13e8c25c-3180-5a9a-95c8-51ec38e50cfc_sap_system_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/13e8c25c-3180-5a9a-95c8-51ec38e50cfc_subscription_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4_cloud_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4_ha_cluster_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4_host_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4_sap_system_discovery.json",
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4_subscription_discovery.json",    
 ]
 
 [sap-systems-overview-moved]
@@ -421,7 +421,7 @@ files = [
 [sap-systems-overview-revert-moved]
 
 files = [
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/7269ee51-5007-5849-aaa7-7c4a98b0c9ce_sap_system_discovery.json"
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/7269ee51-5007-5849-aaa7-7c4a98b0c9ce_sap_system_discovery.json"
 ]
 
 [sap-systems-overview-not-moved]
@@ -433,5 +433,5 @@ files = [
 [sap-systems-overview-revert-not-moved]
 
 files = [
-    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/9a3ec76a-dd4f-5013-9cf0-5eb4cf89898f_sap_system_discovery.json"
+    "./test/fixtures/scenarios/healthy-29-node-SAP-cluster/9a3ec76a-dd4f-5013-9cf0-5eb4cf89898f_sap_system_discovery.json"
 ]

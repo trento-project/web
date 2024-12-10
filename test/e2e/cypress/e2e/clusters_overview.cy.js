@@ -17,7 +17,7 @@ const clusterTags = {
 
 context('Clusters Overview', () => {
   before(() => {
-    cy.loadScenario('healthy-27-node-SAP-cluster');
+    cy.loadScenario('healthy-29-node-SAP-cluster');
     cy.visit('/clusters');
     cy.url().should('include', '/clusters');
   });
@@ -54,7 +54,9 @@ context('Clusters Overview', () => {
           .contains('th', 'SID')
           .invoke('index')
           .then((i) => {
-            cy.get('@clusterRow').eq(i).should('contain', cluster.sid);
+            cluster.sids.forEach((sid) => {
+              cy.get('@clusterRow').eq(i).should('contain', sid);
+            });
           });
 
         cy.get('@clustersTable')
