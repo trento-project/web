@@ -65,7 +65,7 @@ const defaultClassNames = {
       'relative w-full py-2 px-3 text-left rounded-lg cursor-default border border-gray-300 sm:text-sm'
     ),
   menu: () =>
-    'absolute w-full py-1 mt-1 overflow-auto text-base bg-white rounded-md shadow-lg max-h-60 ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm z-[1]',
+    'absolute w-full py-1 mt-1 overflow-auto text-base bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm z-[1]',
   option: ({ isFocused }) =>
     classNames(
       {
