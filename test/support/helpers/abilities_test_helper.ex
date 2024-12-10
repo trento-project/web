@@ -34,6 +34,11 @@ defmodule Trento.Support.Helpers.AbilitiesTestHelper do
     {:ok, conn: put_req_header(conn, "accept", "application/json"), api_spec: api_spec}
   end
 
+  def clear_default_abilities(_) do
+    delete_default_abilities()
+    {:ok, %{}}
+  end
+
   defp delete_default_abilities do
     Trento.Repo.delete_all(Trento.Abilities.Ability)
   end
