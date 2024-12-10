@@ -55,4 +55,29 @@ defmodule TrentoWeb.V1.ActivityLogJSONTest do
                  )
              })
   end
+
+  test "should render not redacted system activity as activity_log_entry.json" do
+    %ActivityLog{
+      id: id,
+      type: type,
+      actor: _system_actor,
+      metadata: metadata,
+      inserted_at: inserted_at
+    } = activity_log_entry = build(:activity_log_entry, actor: "system")
+
+    assert %{
+             id: ^id,
+             type: ^type,
+             actor: "system",
+             metadata: ^metadata,
+             occurred_on: ^inserted_at
+           } =
+             ActivityLogJSON.activity_log_entry(%{
+               activity_log_entry: activity_log_entry,
+               current_user:
+                 build(:user,
+                   abilities: build_list(1, :ability, name: "foo", resource: "bar")
+                 )
+             })
+  end
 end

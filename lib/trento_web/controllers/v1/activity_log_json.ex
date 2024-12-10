@@ -43,6 +43,8 @@ defmodule TrentoWeb.V1.ActivityLogJSON do
 
   defp maybe_redact_actor(actor, %User{username: actor}), do: actor
 
+  defp maybe_redact_actor("system" = actor, _), do: actor
+
   defp maybe_redact_actor(actor, user) do
     if Policy.has_access_to_users?(user) do
       actor
