@@ -221,7 +221,7 @@ export const availableHanaCluster = {
 export const availableHanaClusterCostOpt = {
   id: 'ee7ea205-d5cc-5bbd-a345-10cad2aae2d7',
   name: 'hana_cost_opt',
-  sid: ['HDC', 'QAS'],
+  sids: ['HDC', 'QAS'],
   systemID: [
     '35fce256-f5c8-5f96-bb58-022d6d2729e7',
     '57399859-155b-56f1-ae38-492283a8d758',

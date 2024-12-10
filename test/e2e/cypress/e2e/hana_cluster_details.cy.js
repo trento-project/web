@@ -256,7 +256,7 @@ context('HANA cluster details', () => {
         .contains('SID')
         .parent()
         .within(() => {
-          availableHanaClusterCostOpt.sid.forEach((sid, index) => {
+          availableHanaClusterCostOpt.sids.forEach((sid, index) => {
             cy.contains(sid).should(
               'have.attr',
               'href',
