@@ -1,4 +1,4 @@
-name:  Pull request environment cleanup
+name: Pull request environment cleanup
 
 on:
   pull_request:
@@ -6,7 +6,7 @@ on:
       - closed
 
 env:
-  MANTAINERS: "[\"cdimonaco\", \"dottorblaster\", \"nelsonkopliku\", \"arbulu89\", \"jagabomb\", \"emaksy\", \"gagandeepb\", \"balanza\", \"janvhs\"]"
+  MANTAINERS: '["cdimonaco", "dottorblaster", "nelsonkopliku", "arbulu89", "jagabomb", "emaksy", "gagandeepb", "balanza", "janvhs"]'
   PR_ENV_LABEL: env
   PR_NUMBER: "${{ github.event.pull_request.number }}"
 
@@ -19,6 +19,21 @@ jobs:
     steps:
       - id: check
         run: echo "create_env=${{ contains(github.event.pull_request.labels.*.name, env.PR_ENV_LABEL) }}" >> "$GITHUB_OUTPUT"
+
+  remove_pr_comment:
+    name: Comment on the pull request
+    runs-on: ubuntu-20.04
+    needs: check_env_creation_privilege
+    if: needs.check_env_creation_privilege.outputs.create_env == 'true'
+    steps:
+      - name: Comment on the pull request
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { onPrEnvClosed } = require('.github/scripts/pr_env.js')(github, context);
+
+            onPrEnvClosed().catch(console.error);
 
   delete-pr-image:
     needs: check_env_creation_privilege
