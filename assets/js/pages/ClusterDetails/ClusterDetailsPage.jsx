@@ -33,6 +33,7 @@ export function ClusterDetailsPage() {
   const provider = get(cluster, 'provider');
   const type = get(cluster, 'type');
   const architectureType = get(cluster, 'details.architecture_type');
+  const hanaScenario = get(cluster, 'details.hana_scenario');
 
   const catalog = useSelector(getCatalog());
 
@@ -50,6 +51,7 @@ export function ClusterDetailsPage() {
       provider,
       target_type: TARGET_CLUSTER,
       cluster_type: type,
+      hana_scenario: hanaScenario,
       ensa_version: ensaVersion,
       filesystem_type: filesystemType,
       architecture_type: architectureType,
