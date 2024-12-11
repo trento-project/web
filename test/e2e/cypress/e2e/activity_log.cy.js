@@ -305,7 +305,7 @@ context('Activity Log page', () => {
 
       cy.wait('@data20').its('response.body.pagination.first').should('eq', 20);
 
-      cy.get('button').contains('20').click();
+      cy.get('[data-testid="pagination"]').contains('20').click();
       cy.get('[data-testid="pagination"]').contains('50').click();
 
       cy.wait('@data50').its('response.body.pagination.first').should('eq', 50);
@@ -328,8 +328,8 @@ context('Activity Log page', () => {
 
       cy.wait('@data20').its('response.body.pagination.first').should('eq', 20);
 
-      cy.get('button').contains('20').click();
-      cy.get('span').contains('10').click();
+      cy.get('[data-testid="pagination"]').contains('20').click();
+      cy.get('[data-testid="pagination"]').contains('10').click();
 
       cy.wait('@data10').its('response.body.pagination.first').should('eq', 10);
 
