@@ -76,7 +76,6 @@ function HostDetails({
   slesSubscriptions,
   catalog,
   lastExecution,
-  suseManagerEnabled,
   relevantPatches,
   upgradablePackages,
   softwareUpdatesLoading,
@@ -246,20 +245,18 @@ function HostDetails({
           </div>
         </div>
 
-        {suseManagerEnabled && (
-          <AvailableSoftwareUpdates
-            className="mx-0 my-4"
-            settingsConfigured={softwareUpdatesSettingsSaved}
-            relevantPatches={relevantPatches}
-            upgradablePackages={upgradablePackages}
-            errorMessage={softwareUpdatesErrorMessage}
-            tooltip={softwareUpdatesTooltip}
-            loading={softwareUpdatesLoading}
-            onBackToSettings={() => navigate(`/settings`)}
-            onNavigateToPatches={() => navigate(`/hosts/${hostID}/patches`)}
-            onNavigateToPackages={() => navigate(`/hosts/${hostID}/packages`)}
-          />
-        )}
+        <AvailableSoftwareUpdates
+          className="mx-0 my-4"
+          settingsConfigured={softwareUpdatesSettingsSaved}
+          relevantPatches={relevantPatches}
+          upgradablePackages={upgradablePackages}
+          errorMessage={softwareUpdatesErrorMessage}
+          tooltip={softwareUpdatesTooltip}
+          loading={softwareUpdatesLoading}
+          onBackToSettings={() => navigate(`/settings`)}
+          onNavigateToPatches={() => navigate(`/hosts/${hostID}/patches`)}
+          onNavigateToPackages={() => navigate(`/hosts/${hostID}/packages`)}
+        />
         <ChartsFeatureWrapper chartsEnabled={chartsEnabled}>
           <div>
             <HostChart
