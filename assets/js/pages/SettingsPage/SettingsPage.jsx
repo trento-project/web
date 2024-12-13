@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Transition } from '@headlessui/react';
 import { format, isBefore, parseISO } from 'date-fns';
 import { EOS_INFO_OUTLINED } from 'eos-icons-react';
-import { getFromConfig } from '@lib/config';
 
 import DisabledGuard from '@common/DisabledGuard';
 import PageHeader from '@common/PageHeader';
