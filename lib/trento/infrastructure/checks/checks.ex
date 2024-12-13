@@ -109,14 +109,28 @@ defmodule Trento.Infrastructure.Checks do
   end
 
   defp build_env(%ClusterExecutionEnv{
-         cluster_type: cluster_type,
+         cluster_type: :hana_scale_up,
          provider: provider,
-         architecture_type: architecture_type
+         architecture_type: architecture_type,
+         hana_scenario: hana_scenario
        }) do
     %{
-      "cluster_type" => %{kind: {:string_value, Atom.to_string(cluster_type)}},
+      "cluster_type" => %{kind: {:string_value, Atom.to_string(ClusterType.hana_scale_up())}},
       "provider" => %{kind: {:string_value, Atom.to_string(provider)}},
-      "architecture_type" => %{kind: {:string_value, Atom.to_string(architecture_type)}}
+      "architecture_type" => %{kind: {:string_value, Atom.to_string(architecture_type)}},
+      "hana_scenario" => %{kind: {:string_value, Atom.to_string(hana_scenario)}}
+    }
+  end
+
+  defp build_env(%ClusterExecutionEnv{
+         cluster_type: :hana_scale_out,
+         architecture_type: architecture_type,
+         provider: provider
+       }) do
+    %{
+      "cluster_type" => %{kind: {:string_value, Atom.to_string(ClusterType.hana_scale_out())}},
+      "architecture_type" => %{kind: {:string_value, Atom.to_string(architecture_type)}},
+      "provider" => %{kind: {:string_value, Atom.to_string(provider)}}
     }
   end
 

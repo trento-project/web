@@ -24,6 +24,7 @@ defmodule Trento.ClustersTest do
   require Trento.Clusters.Enums.ClusterEnsaVersion, as: ClusterEnsaVersion
   require Trento.Clusters.Enums.FilesystemType, as: FilesystemType
   require Trento.Clusters.Enums.HanaArchitectureType, as: HanaArchitectureType
+  require Trento.Clusters.Enums.HanaScenario, as: HanaScenario
 
   require Trento.SapSystems.Enums.EnsaVersion, as: EnsaVersion
 
@@ -85,7 +86,7 @@ defmodule Trento.ClustersTest do
       assert :ok = Clusters.request_checks_execution(cluster_id)
     end
 
-    test "should start a checks execution on demand in a hana cluster if checks are selected" do
+    test "should start a checks execution on demand in a hana cluster performance opt scenario if checks are selected" do
       for architecture_type <- [HanaArchitectureType.angi(), HanaArchitectureType.classic()] do
         %{
           id: cluster_id,
@@ -94,7 +95,11 @@ defmodule Trento.ClustersTest do
         } =
           insert(:cluster,
             type: ClusterType.hana_scale_up(),
-            details: build(:hana_cluster_details, architecture_type: architecture_type)
+            details:
+              build(:hana_cluster_details,
+                architecture_type: architecture_type,
+                hana_scenario: HanaScenario.performance_optimized()
+              )
           )
 
         insert(:host, deregistered_at: DateTime.utc_now(), cluster_id: cluster_id)
@@ -109,6 +114,52 @@ defmodule Trento.ClustersTest do
                    "cluster_type" => %{kind: {:string_value, Atom.to_string(cluster_type)}},
                    "architecture_type" => %{
                      kind: {:string_value, Atom.to_string(architecture_type)}
+                   },
+                   "hana_scenario" => %{
+                     kind: {:string_value, Atom.to_string(HanaScenario.performance_optimized())}
+                   }
+                 }
+
+          assert message.target_type == "cluster"
+
+          :ok
+        end)
+
+        assert :ok = Clusters.request_checks_execution(cluster_id)
+      end
+    end
+
+    test "should start a checks execution on demand in a hana cluster cost opt scenario if checks are selected" do
+      for architecture_type <- [HanaArchitectureType.angi(), HanaArchitectureType.classic()] do
+        %{
+          id: cluster_id,
+          provider: provider,
+          type: cluster_type
+        } =
+          insert(:cluster,
+            type: ClusterType.hana_scale_up(),
+            details:
+              build(:hana_cluster_details,
+                architecture_type: architecture_type,
+                hana_scenario: HanaScenario.cost_optimized()
+              )
+          )
+
+        insert(:host, deregistered_at: DateTime.utc_now(), cluster_id: cluster_id)
+        insert_list(2, :host, cluster_id: cluster_id)
+
+        expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn "executions", message ->
+          assert message.group_id == cluster_id
+          assert length(message.targets) == 2
+
+          assert message.env == %{
+                   "provider" => %{kind: {:string_value, Atom.to_string(provider)}},
+                   "cluster_type" => %{kind: {:string_value, Atom.to_string(cluster_type)}},
+                   "architecture_type" => %{
+                     kind: {:string_value, Atom.to_string(architecture_type)}
+                   },
+                   "hana_scenario" => %{
+                     kind: {:string_value, Atom.to_string(HanaScenario.cost_optimized())}
                    }
                  }
 

@@ -34,7 +34,11 @@ const checkRemediation = [
 const groupID = '02acea9d-9658-4902-9806-0eef2bfbbf5d';
 const cloudProvider = 'azure';
 
-const { name: clusterName, type: clusterScenario, details: clusterDetails } = clusterFactory.build({
+const {
+  name: clusterName,
+  type: clusterScenario,
+  details: clusterDetails,
+} = clusterFactory.build({
   id: groupID,
   type: 'hana_scale_up',
   details: { hana_scenario: 'performance_optimized' },
