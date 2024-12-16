@@ -277,7 +277,6 @@ describe('HostDetails component', () => {
       renderWithRouter(
         <HostDetails
           agentVersion="2.0.0"
-          suseManagerEnabled
           softwareUpdatesSettingsSaved
           relevantPatches={relevantPatches}
           upgradablePackages={upgradablePackages}
@@ -307,7 +306,6 @@ describe('HostDetails component', () => {
       renderWithRouter(
         <HostDetails
           agentVersion="2.0.0"
-          suseManagerEnabled
           softwareUpdatesSettingsSaved
           softwareUpdatesErrorMessage="An error message"
           relevantPatches={relevantPatches}
@@ -334,7 +332,6 @@ describe('HostDetails component', () => {
       renderWithRouter(
         <HostDetails
           agentVersion="2.0.0"
-          suseManagerEnabled
           softwareUpdatesSettingsSaved
           softwareUpdatesLoading
           relevantPatches={relevantPatches}

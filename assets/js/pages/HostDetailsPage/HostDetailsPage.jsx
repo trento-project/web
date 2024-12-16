@@ -38,7 +38,6 @@ import {
 import HostDetails from './HostDetails';
 
 const chartsEnabled = getFromConfig('chartsEnabled');
-const suseManagerEnabled = getFromConfig('suseManagerEnabled');
 
 function HostDetailsPage() {
   const { hostID } = useParams();
@@ -133,7 +132,6 @@ function HostDetailsPage() {
       slesSubscriptions={host.sles_subscriptions}
       catalog={catalog}
       lastExecution={lastExecution}
-      suseManagerEnabled={suseManagerEnabled}
       relevantPatches={numRelevantPatches}
       upgradablePackages={numUpgradablePackages}
       softwareUpdatesSettingsSaved={settingsConfigured}

@@ -133,14 +133,12 @@ defmodule TrentoWeb.Router do
 
       get "/hosts/:id/exporters_status", PrometheusController, :exporters_status
 
-      if Application.compile_env!(:trento, :suse_manager_enabled) do
-        get "/hosts/:id/software_updates", SUSEManagerController, :software_updates
-        get "/software_updates/packages", SUSEManagerController, :patches_for_packages
+      get "/hosts/:id/software_updates", SUSEManagerController, :software_updates
+      get "/software_updates/packages", SUSEManagerController, :patches_for_packages
 
-        get "/software_updates/errata_details/:advisory_name",
-            SUSEManagerController,
-            :errata_details
-      end
+      get "/software_updates/errata_details/:advisory_name",
+          SUSEManagerController,
+          :errata_details
 
       post "/clusters/:id/tags", TagsController, :add_tag,
         assigns: %{resource_type: :cluster},
@@ -194,25 +192,23 @@ defmodule TrentoWeb.Router do
         put "/activity_log", SettingsController, :update_activity_log_settings
         get "/activity_log", SettingsController, :get_activity_log_settings
 
-        if Application.compile_env!(:trento, :suse_manager_enabled) do
-          scope "/suse_manager" do
-            get "/", SettingsController, :get_suse_manager_settings
-            post "/", SettingsController, :save_suse_manager_settings
-            patch "/", SettingsController, :update_suse_manager_settings
-            put "/", SettingsController, :update_suse_manager_settings
-            delete "/", SettingsController, :delete_suse_manager_settings
-            post "/test", SettingsController, :test_suse_manager_settings
-          end
+        scope "/suse_manager" do
+          get "/", SettingsController, :get_suse_manager_settings
+          post "/", SettingsController, :save_suse_manager_settings
+          patch "/", SettingsController, :update_suse_manager_settings
+          put "/", SettingsController, :update_suse_manager_settings
+          delete "/", SettingsController, :delete_suse_manager_settings
+          post "/test", SettingsController, :test_suse_manager_settings
+        end
 
-          # deprecated
-          scope "/suma_credentials" do
-            get "/", SettingsController, :get_suse_manager_settings
-            post "/", SettingsController, :save_suse_manager_settings
-            patch "/", SettingsController, :update_suse_manager_settings
-            put "/", SettingsController, :update_suse_manager_settings
-            delete "/", SettingsController, :delete_suse_manager_settings
-            post "/test", SettingsController, :test_suse_manager_settings
-          end
+        # deprecated
+        scope "/suma_credentials" do
+          get "/", SettingsController, :get_suse_manager_settings
+          post "/", SettingsController, :save_suse_manager_settings
+          patch "/", SettingsController, :update_suse_manager_settings
+          put "/", SettingsController, :update_suse_manager_settings
+          delete "/", SettingsController, :delete_suse_manager_settings
+          post "/test", SettingsController, :test_suse_manager_settings
         end
       end
 

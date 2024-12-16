@@ -201,8 +201,7 @@ config :trento, :jwt_authentication,
 
 config :trento,
   api_key_authentication_enabled: true,
-  jwt_authentication_enabled: true,
-  suse_manager_enabled: true
+  jwt_authentication_enabled: true
 
 config :trento, Trento.Vault,
   ciphers: [

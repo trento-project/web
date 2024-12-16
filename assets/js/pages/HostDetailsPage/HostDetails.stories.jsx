@@ -199,7 +199,6 @@ export const Default = {
         completed_at: faker.date.past().toISOString(),
       },
     },
-    suseManagerEnabled: false,
     relevantPatches: 0,
     upgradablePackages: 0,
     softwareUpdatesLoading: false,
@@ -285,10 +284,9 @@ export const HostSummaryWithTooltip = {
   },
 };
 
-export const WithSuseManager = {
+export const WithSotwareUpdates = {
   args: {
     ...Default.args,
-    suseManagerEnabled: true,
     softwareUpdatesSettingsSaved: true,
     softwareUpdatesLoading: false,
     relevantPatches: 123,
@@ -296,18 +294,16 @@ export const WithSuseManager = {
   },
 };
 
-export const SuseManagerLoading = {
+export const WithSoftwareUpdatesLoading = {
   args: {
     ...Default.args,
-    suseManagerEnabled: true,
     softwareUpdatesLoading: true,
   },
 };
 
-export const SuseManagerUnknown = {
+export const WithSoftwareUpdatesFailed = {
   args: {
     ...Default.args,
-    suseManagerEnabled: true,
     softwareUpdatesSettingsSaved: true,
     relevantPatches: undefined,
     upgradablePackages: undefined,

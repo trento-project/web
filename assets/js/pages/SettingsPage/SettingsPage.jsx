@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Transition } from '@headlessui/react';
 import { format, isBefore, parseISO } from 'date-fns';
 import { EOS_INFO_OUTLINED } from 'eos-icons-react';
-import { getFromConfig } from '@lib/config';
 
 import DisabledGuard from '@common/DisabledGuard';
 import PageHeader from '@common/PageHeader';
@@ -239,65 +238,64 @@ function SettingsPage() {
         />
       </section>
 
-      {getFromConfig('suseManagerEnabled') && (
-        <section>
-          <div className="py-4">
-            <SettingsLoader
-              sectionName="SUSE Manager"
-              status={calculateSettingsLoaderStatus(
-                suseManagerSettingsLoading,
-                suseManagerSettingsfetchError
-              )}
-              onRetry={() => fetchSuseManagerSettings()}
-            >
-              <SuseManagerConfig
-                userAbilities={abilities}
-                url={suseManagerSettings.url}
-                username={suseManagerSettings.username}
-                certUploadDate={suseManagerSettings.ca_uploaded_at}
-                onEditClick={() => {
-                  clearSuseManagerEntityErrors();
-                  setSuseManagerSettingsModalOpen(true);
-                }}
-                clearSettingsDialogOpen={clearingSoftwareUpdatesSettings}
-                onClearClick={() => setClearingSoftwareUpdatesSettings(true)}
-                onClearSettings={() => {
-                  deleteSuseManagerSettings();
-                  setClearingSoftwareUpdatesSettings(false);
-                }}
-                testConnectionEnabled={
-                  hasSoftwareUpdatesSettings && !suseManagerSettingsTesting
-                }
-                onTestConnection={() => testSuseManagerSettings()}
-                onCancel={() => {
-                  setClearingSoftwareUpdatesSettings(false);
-                }}
-              />
-            </SettingsLoader>
-            <SuseManagerSettingsModal
-              key={`${suseManagerSettings.url}-${suseManagerSettings.username}-${suseManagerSettings.ca_uploaded_at}-${suseManagerSettingsModalOpen}`}
-              open={suseManagerSettingsModalOpen}
-              errors={suseManagerSettingsEntityErrors}
-              loading={suseManagerSettingsLoading}
-              initialUsername={suseManagerSettings.username}
-              initialUrl={suseManagerSettings.url}
+      <section>
+        <div className="py-4">
+          <SettingsLoader
+            sectionName="SUSE Manager"
+            status={calculateSettingsLoaderStatus(
+              suseManagerSettingsLoading,
+              suseManagerSettingsfetchError
+            )}
+            onRetry={() => fetchSuseManagerSettings()}
+          >
+            <SuseManagerConfig
+              userAbilities={abilities}
+              url={suseManagerSettings.url}
+              username={suseManagerSettings.username}
               certUploadDate={suseManagerSettings.ca_uploaded_at}
-              onSave={(payload) => {
-                if (
-                  suseManagerSettings.username ||
-                  suseManagerSettings.url ||
-                  suseManagerSettings.ca_uploaded_at
-                ) {
-                  updateSuseManagerSettings(payload);
-                } else {
-                  saveSuseManagerSettings(payload);
-                }
+              onEditClick={() => {
+                clearSuseManagerEntityErrors();
+                setSuseManagerSettingsModalOpen(true);
               }}
-              onCancel={() => setSuseManagerSettingsModalOpen(false)}
+              clearSettingsDialogOpen={clearingSoftwareUpdatesSettings}
+              onClearClick={() => setClearingSoftwareUpdatesSettings(true)}
+              onClearSettings={() => {
+                deleteSuseManagerSettings();
+                setClearingSoftwareUpdatesSettings(false);
+              }}
+              testConnectionEnabled={
+                hasSoftwareUpdatesSettings && !suseManagerSettingsTesting
+              }
+              onTestConnection={() => testSuseManagerSettings()}
+              onCancel={() => {
+                setClearingSoftwareUpdatesSettings(false);
+              }}
             />
-          </div>
-        </section>
-      )}
+          </SettingsLoader>
+          <SuseManagerSettingsModal
+            key={`${suseManagerSettings.url}-${suseManagerSettings.username}-${suseManagerSettings.ca_uploaded_at}-${suseManagerSettingsModalOpen}`}
+            open={suseManagerSettingsModalOpen}
+            errors={suseManagerSettingsEntityErrors}
+            loading={suseManagerSettingsLoading}
+            initialUsername={suseManagerSettings.username}
+            initialUrl={suseManagerSettings.url}
+            certUploadDate={suseManagerSettings.ca_uploaded_at}
+            onSave={(payload) => {
+              if (
+                suseManagerSettings.username ||
+                suseManagerSettings.url ||
+                suseManagerSettings.ca_uploaded_at
+              ) {
+                updateSuseManagerSettings(payload);
+              } else {
+                saveSuseManagerSettings(payload);
+              }
+            }}
+            onCancel={() => setSuseManagerSettingsModalOpen(false)}
+          />
+        </div>
+      </section>
+
       <section>
         <SettingsLoader
           sectionName="Activity Logs"
