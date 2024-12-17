@@ -66,7 +66,6 @@ module.exports = {
   globals: {
     config: {
       checksServiceBaseUrl: '',
-      suseManagerEnabled: true,
       adminUsername: 'admin',
       ssoEnabled: false,
       ssoLoginUrl: 'http://localhost:4000/auth/oidc_callback',
