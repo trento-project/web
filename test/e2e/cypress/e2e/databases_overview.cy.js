@@ -3,6 +3,8 @@ import { createUserRequestFactory } from '@lib/test-utils/factories';
 context('Databases Overview', () => {
   before(() => {
     cy.loadScenario('healthy-29-node-SAP-cluster');
+    cy.loadScenario('healthy-29-node-SAP-cluster');
+
     cy.visit('/databases');
     cy.url().should('include', '/databases');
   });
@@ -59,12 +61,24 @@ context('Databases Overview', () => {
     });
 
     it('should not deregister database instances if the SAP system using the database is deregistered', () => {
-      cy.deregisterHost(nwqSystem.ascsInstance.id);
-      cy.contains(
-        'p',
-        `The SAP System ${nwqSystem.sid} has been deregistered.`
-      );
-      cy.get('.table-row-group > div.table-row').should('have.length', 9);
+      const collapsedTableRowsSelector = '.table-row-group > div.table-row';
+      cy.get(collapsedTableRowsSelector).then((collapsedTableRows) => {
+        const amountOfDatabaseInstances = collapsedTableRows.length;
+
+        cy.get(collapsedTableRowsSelector).should(
+          'have.length',
+          amountOfDatabaseInstances
+        );
+        cy.deregisterHost(nwqSystem.ascsInstance.id);
+        cy.contains(
+          'p',
+          `The SAP System ${nwqSystem.sid} has been deregistered.`
+        );
+        cy.get(collapsedTableRowsSelector).should(
+          'have.length',
+          amountOfDatabaseInstances
+        );
+      });
     });
   });
 

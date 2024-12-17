@@ -12,6 +12,7 @@ const NEXT_PAGE_SELECTOR = '[aria-label="next-page"]';
 context('Hosts Overview', () => {
   before(() => {
     cy.loadScenario('healthy-29-node-SAP-cluster');
+    cy.loadScenario('healthy-29-node-SAP-cluster');
     cy.visit('/hosts');
     cy.url().should('include', '/hosts');
   });

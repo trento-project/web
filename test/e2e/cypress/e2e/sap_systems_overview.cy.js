@@ -12,6 +12,7 @@ import {
 context('SAP Systems Overview', () => {
   before(() => {
     cy.loadScenario('healthy-29-node-SAP-cluster');
+    cy.loadScenario('healthy-29-node-SAP-cluster');
     cy.visit('/sap_systems');
     cy.url().should('include', '/sap_systems');
   });
