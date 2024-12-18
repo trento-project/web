@@ -123,7 +123,7 @@ jobs:
         id: prepare
         uses: bahmutov/gh-build-matrix@main
         with:
-          n: 4
+          n: 1
       - name: Print result 🖨
         run: echo '${{ steps.prepare.outputs.matrix }}'
 
