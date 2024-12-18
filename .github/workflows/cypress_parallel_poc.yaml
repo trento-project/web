@@ -121,7 +121,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        containers: [1]
+        containers: [1,2,3,4]
     env:
       MIX_ENV: dev
     steps:
@@ -199,7 +199,6 @@ jobs:
           cypress_db_port: 5432
           cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
         with:
-          spec: cypress/e2e/hosts_overview.cy.js
           working-directory: test/e2e
           wait-on-timeout: 30
           config: baseUrl=http://localhost:4000
