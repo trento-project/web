@@ -1,9 +1,9 @@
-name: Cypress Parallelization POC
+name: CI
 
 on:
+  workflow_dispatch:
   pull_request:
     types: [opened, synchronize]
-  workflow_dispatch:
 
 
 env:
@@ -118,10 +118,6 @@ jobs:
     name: End to end tests
     needs: [elixir-deps, npm-deps, npm-e2e-deps]
     runs-on: ubuntu-20.04
-    # strategy:
-    #   fail-fast: false
-    #   matrix: 
-    #     containers: [1]
     env:
       MIX_ENV: dev
     steps:
@@ -180,28 +176,23 @@ jobs:
       - name: Run trento detached
         run: mix phx.server &
       - name: Install photofinish
-        uses: jaxxstorm/action-install-gh-release@v1.13.0
+        uses: jaxxstorm/action-install-gh-release@v1.14.0
         with:
           repo: trento-project/photofinish
-          tag: v1.3.0
+          tag: v1.4.1
           cache: enable
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Give executable permissions to photofinish
         run: chmod +x $(whereis photofinish | cut -d" " -f2)
-      - name: Parallel cypress
+      - name: Cypress run
         uses: cypress-io/github-action@v6
         env:
-          # SPLIT: ${{ strategy.job-total }}
-          # SPLIT_INDEX: ${{ strategy.job-index }}
-          # DEBUG: cypress-split
           cypress_video: false
           cypress_db_host: postgres
           cypress_db_port: 5432
           cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
         with:
-          spec: cypress/e2e/hosts_overview.cy.js
-          n: 1
           working-directory: test/e2e
           wait-on-timeout: 30
           config: baseUrl=http://localhost:4000
@@ -209,5 +200,5 @@ jobs:
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: e2e-videos
+          name: e2e-screenshots
           path: test/e2e/cypress/screenshots/
