@@ -118,10 +118,10 @@ jobs:
     name: End to end tests
     needs: [elixir-deps, npm-deps, npm-e2e-deps]
     runs-on: ubuntu-20.04
-    strategy:
-      fail-fast: false
-      matrix: 
-        containers: [1]
+    # strategy:
+    #   fail-fast: false
+    #   matrix: 
+    #     containers: [1]
     env:
       MIX_ENV: dev
     steps:
