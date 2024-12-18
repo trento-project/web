@@ -114,26 +114,14 @@ jobs:
         if: steps.npm-e2e-cache.outputs.cache-hit != 'true'
         run: cd test/e2e && npm install
 
-  prepare:
-    runs-on: ubuntu-20.04
-    outputs:
-      matrix: ${{ steps.prepare.outputs.matrix }}
-    steps:
-      - name: Create matrix ⊹
-        id: prepare
-        uses: bahmutov/gh-build-matrix@main
-        with:
-          n: 1
-      - name: Print result 🖨
-        run: echo '${{ steps.prepare.outputs.matrix }}'
-
   test-e2e:
     name: End to end tests
-    needs: [elixir-deps, npm-deps, npm-e2e-deps, prepare]
+    needs: [elixir-deps, npm-deps, npm-e2e-deps]
     runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
-      matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+      matrix: 
+        containers: [1]
     env:
       MIX_ENV: dev
     steps:
@@ -221,5 +209,5 @@ jobs:
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: e2e-screenshots
-          path: test/e2e/cypress/screenshots/
+          name: e2e-videos
+          path: test/e2e/cypress/videos/

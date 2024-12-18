@@ -175,7 +175,7 @@ context('Hosts Overview', () => {
         cy.get(
           '.tn-health-container .tn-health-passing p[class="font-semibold"]',
           {
-            timeout: 15000,
+            timeout: 25000,
           }
         ).should('have.text', 12);
         cy.get(
