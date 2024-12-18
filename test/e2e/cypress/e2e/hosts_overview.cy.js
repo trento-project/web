@@ -177,8 +177,12 @@ context('Hosts Overview', () => {
             timeout: 15000,
           }
         ).should('have.text', 12);
-        cy.get('.tn-health-container .tn-health-warning').should('contain', 12);
-        cy.get('.tn-health-container .tn-health-critical').should('contain', 5);
+        cy.get(
+          '.tn-health-container .tn-health-warning p[class="font-semibold"]'
+        ).should('have.text', 12);
+        cy.get(
+          '.tn-health-container .tn-health-critical p[class="font-semibold"]'
+        ).should('have.text', 5);
       });
 
       it('should show the correct health on the hosts when the agents are sending the heartbeat', () => {
