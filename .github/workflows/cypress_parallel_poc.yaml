@@ -1,4 +1,4 @@
-name: CI
+name: Cypress Parallelization POC
 
 on:
   workflow_dispatch:
