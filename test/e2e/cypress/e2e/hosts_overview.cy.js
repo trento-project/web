@@ -279,9 +279,12 @@ context('Hosts Overview', () => {
       });
 
       it('should show health status of the entire cluster of 29 hosts with critical health', () => {
-        cy.get('.tn-health-container .tn-health-critical', {
-          timeout: 15000,
-        }).should('contain', 29);
+        cy.get(
+          '.tn-health-container .tn-health-critical p[class="font-semibold',
+          {
+            timeout: 20000,
+          }
+        ).should('have.text', 29);
       });
 
       it('should show a critical health on the hosts when the agents are not sending the heartbeat', () => {
