@@ -192,6 +192,8 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v6
         env:
+          SPLIT: ${{ strategy.job-total }}
+          SPLIT_INDEX: ${{ strategy.job-index }}
           cypress_video: false
           cypress_db_host: postgres
           cypress_db_port: 5432
