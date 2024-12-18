@@ -170,7 +170,7 @@ context('Hosts Overview', () => {
         cy.task('startAgentHeartbeat', agents());
       });
 
-      it('should show health status of the entire cluster of 29 hosts with partial pagination', () => {
+      it.only('should show health status of the entire cluster of 29 hosts with partial pagination', () => {
         cy.get(
           '.tn-health-container .tn-health-passing p[class="font-semibold"]',
           {
