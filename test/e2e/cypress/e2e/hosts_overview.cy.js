@@ -171,9 +171,12 @@ context('Hosts Overview', () => {
       });
 
       it('should show health status of the entire cluster of 29 hosts with partial pagination', () => {
-        cy.get('.tn-health-container .tn-health-passing', {
-          timeout: 15000,
-        }).should('contain', 12);
+        cy.get(
+          '.tn-health-container .tn-health-passing p[class="font-semibold"]',
+          {
+            timeout: 15000,
+          }
+        ).should('have.text', 12);
         cy.get('.tn-health-container .tn-health-warning').should('contain', 12);
         cy.get('.tn-health-container .tn-health-critical').should('contain', 5);
       });
