@@ -9,8 +9,8 @@ import {
   TARGET_CLUSTER,
 } from '@lib/model';
 import {
-  clusterTypes,
-  getClusterTypeLabel,
+  clusterTypesCatalog,
+  getClusterTypeLabelChecksCatalog,
   COST_OPT_SCENARIO,
   PERFORMANCE_SCENARIO,
   HANA_SCALE_UP_PERF_OPT,
@@ -35,7 +35,7 @@ const clusterTypeRenderer = createOptionRenderer(
   'All cluster types',
   (clusterType, disabled) => (
     <>
-      {getClusterTypeLabel(clusterType)}
+      {getClusterTypeLabelChecksCatalog(clusterType)}
 
       {disabled && (
         <Pill
@@ -126,7 +126,7 @@ function ChecksCatalog({
     },
     {
       optionsName: 'cluster-types',
-      options: clusterTypes.map((clusterType) => ({
+      options: clusterTypesCatalog.map((clusterType) => ({
         value: clusterType,
         disabled: !hasChecksForClusterType(completeCatalog, clusterType),
       })),
@@ -148,8 +148,6 @@ function ChecksCatalog({
     const { hanaScaleUpScenario } = onClusterTypeChange(selectedClusterType);
 
     setSelectedScaleUpScenario(hanaScaleUpScenario);
-
-    console.log('hanaScaleUpScenario', hanaScaleUpScenario);
     updateCatalog({
       selectedProvider,
       selectedTargetType,

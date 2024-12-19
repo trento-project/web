@@ -43,6 +43,7 @@ describe('ChecksCatalog ChecksCatalog component', () => {
       selectedClusterType: 'all',
       selectedProvider: 'all',
       selectedTargetType: 'all',
+      selectedScaleUpScenario: 'all',
     });
   });
 
@@ -72,6 +73,7 @@ describe('ChecksCatalog ChecksCatalog component', () => {
           metadata: {
             target_type: 'cluster',
             cluster_type: 'hana_scale_up',
+            hana_scenario: 'performance_optimized',
           },
         }),
         catalogCheckFactory.build({
@@ -151,6 +153,7 @@ describe('ChecksCatalog ChecksCatalog component', () => {
         metadata: {
           target_type: 'cluster',
           cluster_type: 'hana_scale_up',
+          hana_scenario: 'performance_optimized',
         },
       }),
       catalogCheckFactory.build({
@@ -179,21 +182,25 @@ describe('ChecksCatalog ChecksCatalog component', () => {
       selectedClusterType: 'all',
       selectedProvider: 'all',
       selectedTargetType: 'all',
+      selectedScaleUpScenario: 'all',
     });
     expect(mockUpdateCatalog).toHaveBeenNthCalledWith(2, {
       selectedClusterType: 'all',
       selectedProvider: 'aws',
       selectedTargetType: 'all',
+      selectedScaleUpScenario: 'all',
     });
     expect(mockUpdateCatalog).toHaveBeenNthCalledWith(3, {
       selectedClusterType: 'all',
       selectedProvider: 'aws',
       selectedTargetType: 'cluster',
+      selectedScaleUpScenario: 'all',
     });
     expect(mockUpdateCatalog).toHaveBeenNthCalledWith(4, {
       selectedClusterType: 'ascs_ers',
       selectedProvider: 'aws',
       selectedTargetType: 'cluster',
+      selectedScaleUpScenario: 'all',
     });
   });
 });
