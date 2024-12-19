@@ -48,6 +48,7 @@ function ClusterSettingsPage() {
 
   const { abilities } = useSelector(getUserProfile);
   const cluster = useSelector(getCluster(clusterID));
+
   const clusterHosts = useSelector((state) =>
     getClusterHosts(state, clusterID)
   );
@@ -78,6 +79,7 @@ function ClusterSettingsPage() {
 
   const provider = get(cluster, 'provider');
   const type = get(cluster, 'type');
+  const hanaScenario = get(cluster, 'details.hana_scenario');
   const architectureType = get(cluster, 'details.architecture_type');
 
   const refreshCatalog = () => {
@@ -85,6 +87,7 @@ function ClusterSettingsPage() {
       provider,
       target_type: TARGET_CLUSTER,
       cluster_type: type,
+      hana_scenario: hanaScenario,
       ensa_version: ensaVersion,
       filesystem_type: filesystemType,
       architecture_type: architectureType,
@@ -133,7 +136,8 @@ function ClusterSettingsPage() {
       />
       {catalogBanner[provider]}
       <ClusterInfoBox
-        haScenario={type}
+        clusterType={type}
+        scaleUpScenario={hanaScenario}
         provider={provider}
         architectureType={architectureType}
       />

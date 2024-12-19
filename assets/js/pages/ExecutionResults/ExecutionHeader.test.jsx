@@ -10,34 +10,47 @@ import ExecutionHeader from './ExecutionHeader';
 
 describe('Checks results ExecutionHeader Component', () => {
   describe('With target Cluster', () => {
-    it('should render a header with expected cluster information', () => {
-      const clusterID = faker.string.uuid();
-      const clusterName = faker.animal.bear();
-      const cloudProvider = 'azure';
-      const clusterScenario = 'hana_scale_up';
+    it.each([
+      {
+        hanaScenario: 'performance_optimized',
+        hanaScenarioLabel: 'HANA Scale Up Perf. Opt.',
+      },
+      {
+        hanaScenario: 'cost_optimized',
+        hanaScenarioLabel: 'HANA Scale Up Cost Opt.',
+      },
+    ])(
+      'should render a header with expected cluster information for correct scale up scenario',
+      ({ hanaScenario, hanaScenarioLabel }) => {
+        const clusterID = faker.string.uuid();
+        const clusterName = faker.animal.bear();
+        const cloudProvider = 'azure';
+        const clusterScenario = 'hana_scale_up';
 
-      const target = clusterFactory.build({
-        id: clusterID,
-        name: clusterName,
-        provider: cloudProvider,
-        type: clusterScenario,
-      });
+        const target = clusterFactory.build({
+          id: clusterID,
+          name: clusterName,
+          provider: cloudProvider,
+          type: clusterScenario,
+          details: { hana_scenario: hanaScenario },
+        });
 
-      renderWithRouter(
-        <ExecutionHeader
-          targetID={clusterID}
-          targetName={clusterName}
-          targetType="cluster"
-          target={target}
-        />
-      );
+        renderWithRouter(
+          <ExecutionHeader
+            targetID={clusterID}
+            targetName={clusterName}
+            targetType="cluster"
+            target={target}
+          />
+        );
 
-      expect(screen.getByText('Back to Cluster Details')).toBeTruthy();
-      expect(screen.getByText('Azure')).toBeTruthy();
-      expect(screen.getByText('HANA Scale Up')).toBeTruthy();
-      expect(screen.getByText('Checks Results for cluster')).toBeTruthy();
-      expect(screen.getByText(clusterName)).toBeTruthy();
-    });
+        expect(screen.getByText('Back to Cluster Details')).toBeTruthy();
+        expect(screen.getByText('Azure')).toBeTruthy();
+        expect(screen.getByText(hanaScenarioLabel)).toBeTruthy();
+        expect(screen.getByText('Checks Results for cluster')).toBeTruthy();
+        expect(screen.getByText(clusterName)).toBeTruthy();
+      }
+    );
 
     it('should render a header with a warning banner on an unknown provider detection', () => {
       const clusterID = faker.string.uuid();
@@ -50,6 +63,7 @@ describe('Checks results ExecutionHeader Component', () => {
         name: clusterName,
         provider: cloudProvider,
         type: clusterScenario,
+        details: { hana_scenario: 'performance_optimized' },
       });
 
       renderWithRouter(
@@ -62,7 +76,7 @@ describe('Checks results ExecutionHeader Component', () => {
       );
 
       expect(screen.getByText('Provider not recognized')).toBeTruthy();
-      expect(screen.getByText('HANA Scale Up')).toBeTruthy();
+      expect(screen.getByText('HANA Scale Up Perf. Opt.')).toBeTruthy();
       expect(screen.getByText('Checks Results for cluster')).toBeTruthy();
       expect(
         screen.getByText(

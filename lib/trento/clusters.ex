@@ -10,6 +10,7 @@ defmodule Trento.Clusters do
   require Trento.Clusters.Enums.FilesystemType, as: FilesystemType
   require Trento.Clusters.Enums.ClusterEnsaVersion, as: ClusterEnsaVersion
   require Trento.Clusters.Enums.HanaArchitectureType, as: HanaArchitectureType
+  require Trento.Clusters.Enums.HanaScenario, as: HanaScenario
 
   alias Trento.Hosts.Projections.HostReadModel
 
@@ -197,6 +198,37 @@ defmodule Trento.Clusters do
   defp maybe_request_checks_execution(%ClusterReadModel{
          id: cluster_id,
          provider: provider,
+         type: ClusterType.hana_scale_up(),
+         selected_checks: selected_checks,
+         details: details
+       }) do
+    hosts_data =
+      Repo.all(
+        from h in HostReadModel,
+          select: %{host_id: h.id},
+          where: h.cluster_id == ^cluster_id and is_nil(h.deregistered_at)
+      )
+
+    env = %Checks.ClusterExecutionEnv{
+      provider: provider,
+      cluster_type: ClusterType.hana_scale_up(),
+      architecture_type: parse_architecture_type(details),
+      hana_scenario: parse_hana_scenario(details)
+    }
+
+    Checks.request_execution(
+      UUID.uuid4(),
+      cluster_id,
+      env,
+      hosts_data,
+      selected_checks,
+      :cluster
+    )
+  end
+
+  defp maybe_request_checks_execution(%ClusterReadModel{
+         id: cluster_id,
+         provider: provider,
          type: cluster_type,
          selected_checks: selected_checks,
          details: details
@@ -264,4 +296,12 @@ defmodule Trento.Clusters do
     do: HanaArchitectureType.angi()
 
   defp parse_architecture_type(_), do: HanaArchitectureType.classic()
+
+  defp parse_hana_scenario(%{"hana_scenario" => "performance_optimized"}),
+    do: HanaScenario.performance_optimized()
+
+  defp parse_hana_scenario(%{"hana_scenario" => "cost_optimized"}),
+    do: HanaScenario.cost_optimized()
+
+  defp parse_hana_scenario(_), do: HanaScenario.unknown()
 end

@@ -8,13 +8,14 @@ import HostInfoBox from '@common/HostInfoBox';
 
 function TargetInfoBox({ targetType, target }) {
   const architectureType = get(target, 'details.architecture_type');
-
+  const hanaScaleUpScenario = get(target, 'details.hana_scenario');
   switch (targetType) {
     case TARGET_CLUSTER:
       return (
         <ClusterInfoBox
-          haScenario={target.type}
+          clusterType={target.type}
           provider={target.provider}
+          scaleUpScenario={hanaScaleUpScenario}
           architectureType={architectureType}
         />
       );

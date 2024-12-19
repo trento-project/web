@@ -10,62 +10,110 @@ import ClusterInfoBox from './ClusterInfoBox';
 describe('Cluster Info Box', () => {
   [
     {
-      haScenario: 'hana_scale_up',
-      haScenarioText: 'HANA Scale Up',
+      clusterType: 'hana_scale_up',
+      haScenarioText: 'HANA Scale Up Perf. Opt.',
+      scaleUpScenario: 'performance_optimized',
       provider: 'aws',
       providerText: 'AWS',
     },
     {
-      haScenario: 'hana_scale_out',
+      clusterType: 'hana_scale_up',
+      haScenarioText: 'HANA Scale Up Cost Opt.',
+      scaleUpScenario: 'cost_optimized',
+      provider: 'aws',
+      providerText: 'AWS',
+    },
+    {
+      clusterType: 'hana_scale_out',
       haScenarioText: 'HANA Scale Out',
+      scaleUpScenario: '',
       provider: 'aws',
       providerText: 'AWS',
     },
     {
-      haScenario: 'hana_scale_up',
+      clusterType: 'hana_scale_up',
       haScenarioText: 'HANA Scale Up',
+      scaleUpScenario: '',
       provider: 'azure',
       providerText: 'Azure',
     },
     {
-      haScenario: 'ascs_ers',
+      clusterType: 'hana_scale_up',
+      haScenarioText: 'HANA Scale Up Perf. Opt.',
+      scaleUpScenario: 'performance_optimized',
+      provider: 'azure',
+      providerText: 'Azure',
+    },
+    {
+      clusterType: 'hana_scale_up',
+      haScenarioText: 'HANA Scale Up Cost Opt.',
+      scaleUpScenario: 'cost_optimized',
+      provider: 'azure',
+      providerText: 'Azure',
+    },
+    {
+      clusterType: 'ascs_ers',
       haScenarioText: 'ASCS/ERS',
+      scaleUpScenario: '',
       provider: 'azure',
       providerText: 'Azure',
     },
     {
-      haScenario: '',
+      clusterType: '',
       haScenarioText: 'Unknown',
+      scaleUpScenario: '',
       provider: 'gcp',
       providerText: 'GCP',
     },
     {
-      haScenario: 'unknown',
+      clusterType: 'unknown',
       haScenarioText: 'Unknown',
+      scaleUpScenario: '',
       provider: 'kvm',
       providerText: 'On-premises / KVM',
     },
     {
-      haScenario: 'unknown',
+      clusterType: 'unknown',
       haScenarioText: 'Unknown',
+      scaleUpScenario: '',
       provider: 'vmware',
       providerText: 'VMware',
     },
     {
-      haScenario: 'hana_scale_up',
-      haScenarioText: 'HANA Scale Up',
+      clusterType: 'hana_scale_up',
+      haScenarioText: 'HANA Scale Up Perf. Opt.',
+      scaleUpScenario: 'performance_optimized',
       provider: 'nutanix',
       providerText: 'Nutanix',
     },
-  ].forEach(({ haScenario, haScenarioText, provider, providerText }) => {
-    it(`should display ${providerText} as the provider and HA Scenario: ${haScenarioText}`, () => {
-      const { getByText } = render(
-        <ClusterInfoBox haScenario={haScenario} provider={provider} />
-      );
-      expect(getByText(providerText)).toBeTruthy();
-      expect(getByText(haScenarioText)).toBeTruthy();
-    });
-  });
+    {
+      clusterType: 'hana_scale_up',
+      haScenarioText: 'HANA Scale Up Cost Opt.',
+      scaleUpScenario: 'cost_optimized',
+      provider: 'nutanix',
+      providerText: 'Nutanix',
+    },
+  ].forEach(
+    ({
+      clusterType,
+      scaleUpScenario,
+      haScenarioText,
+      provider,
+      providerText,
+    }) => {
+      it(`should display ${providerText} as the provider and HA Scenario: ${haScenarioText}`, () => {
+        const { getByText } = render(
+          <ClusterInfoBox
+            clusterType={clusterType}
+            scaleUpScenario={scaleUpScenario}
+            provider={provider}
+          />
+        );
+        expect(getByText(providerText)).toBeTruthy();
+        expect(getByText(haScenarioText)).toBeTruthy();
+      });
+    }
+  );
 
   it.each([
     { architectureType: 'classic', tooltip: 'Classic architecture' },
@@ -77,7 +125,7 @@ describe('Cluster Info Box', () => {
 
       renderWithRouter(
         <ClusterInfoBox
-          haScenario="hana_scale_up"
+          clusterType="hana_scale_up"
           provider="azure"
           architectureType={architectureType}
         />
@@ -91,7 +139,7 @@ describe('Cluster Info Box', () => {
   );
 
   it('should not display architecture type icon if architecture is unknown', () => {
-    render(<ClusterInfoBox haScenario="ascs_ers" provider="azure" />);
+    render(<ClusterInfoBox clusterType="ascs_ers" provider="azure" />);
     expect(screen.queryByTestId('eos-svg-component')).not.toBeInTheDocument();
   });
 });

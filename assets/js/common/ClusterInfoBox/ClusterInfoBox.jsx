@@ -4,7 +4,12 @@ import ListView from '@common/ListView';
 import ProviderLabel from '@common/ProviderLabel';
 import ClusterTypeLabel from '@common/ClusterTypeLabel';
 
-function ClusterInfoBox({ haScenario, provider, architectureType }) {
+function ClusterInfoBox({
+  clusterType,
+  provider,
+  architectureType,
+  scaleUpScenario,
+}) {
   return (
     <div className="tn-cluster-details w-full my-6 mr-4 bg-white shadow rounded-lg px-8 py-4">
       <ListView
@@ -14,10 +19,11 @@ function ClusterInfoBox({ haScenario, provider, architectureType }) {
         data={[
           {
             title: 'HA Scenario',
-            content: haScenario,
+            content: clusterType,
             render: (content) => (
               <ClusterTypeLabel
                 clusterType={content}
+                clusterScenario={scaleUpScenario}
                 architectureType={architectureType}
               />
             ),
