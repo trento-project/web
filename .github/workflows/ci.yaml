@@ -360,7 +360,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        containers: [1,2,3,4]
+        containers: [1,2,3,4,5,6,7,8]
     env:
       MIX_ENV: dev
     steps:
@@ -428,6 +428,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Give executable permissions to photofinish
         run: chmod +x $(whereis photofinish | cut -d" " -f2)
+      - name: Load main test scenario with photofinish
+        run: photofinish run --url "http://localhost:4000/api/collect" healthy-29-node-SAP-cluster
       - name: Cypress run
         uses: cypress-io/github-action@v6
         env:
