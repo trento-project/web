@@ -17,6 +17,7 @@ const plainPayload = (payload) =>
   pickBy(payload, (_, key) => key !== 'filteredCatalog');
 
 export function* updateCatalog({ payload }) {
+  console.log('saga ', payload);
   yield put(setCatalogLoading());
   try {
     const {

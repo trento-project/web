@@ -8,7 +8,14 @@ import {
   TARGET_HOST,
   TARGET_CLUSTER,
 } from '@lib/model';
-import { clusterTypes, getClusterTypeLabel } from '@lib/model/clusters';
+import {
+  clusterTypes,
+  getClusterTypeLabel,
+  COST_OPT_SCENARIO,
+  PERFORMANCE_SCENARIO,
+  HANA_SCALE_UP_PERF_OPT,
+  HANA_SCALE_UP_COST_OPT,
+} from '@lib/model/clusters';
 import { hasChecksForClusterType, hasChecksForTarget } from '@lib/model/checks';
 import Accordion from '@common/Accordion';
 import PageHeader from '@common/PageHeader';
@@ -29,6 +36,7 @@ const clusterTypeRenderer = createOptionRenderer(
   (clusterType, disabled) => (
     <>
       {getClusterTypeLabel(clusterType)}
+
       {disabled && (
         <Pill
           size="xs"
@@ -74,6 +82,29 @@ function ChecksCatalog({
   const [selectedProvider, setProviderSelected] = useState(OPTION_ALL);
   const [selectedTargetType, setSelectedTargetType] = useState(OPTION_ALL);
   const [selectedClusterType, setSelectedClusterType] = useState(OPTION_ALL);
+  const [selectedScaleUpScenario, setSelectedScaleUpScenario] =
+    useState(OPTION_ALL);
+
+  const onClusterTypeChange = (type) => {
+    if (!type) {
+      return {
+        hanaScaleUpScenario: OPTION_ALL,
+      };
+    }
+    if (type === HANA_SCALE_UP_PERF_OPT) {
+      return {
+        hanaScaleUpScenario: PERFORMANCE_SCENARIO,
+      };
+    }
+    if (type === HANA_SCALE_UP_COST_OPT) {
+      return {
+        hanaScaleUpScenario: COST_OPT_SCENARIO,
+      };
+    }
+    return {
+      hanaScaleUpScenario: OPTION_ALL,
+    };
+  };
 
   const onTargetTypeChange = (targetType) => {
     if (targetType !== TARGET_CLUSTER) {
@@ -114,17 +145,29 @@ function ChecksCatalog({
   ];
 
   useEffect(() => {
+    const { hanaScaleUpScenario } = onClusterTypeChange(selectedClusterType);
+
+    setSelectedScaleUpScenario(hanaScaleUpScenario);
+
+    console.log('hanaScaleUpScenario', hanaScaleUpScenario);
     updateCatalog({
       selectedProvider,
       selectedTargetType,
       selectedClusterType,
+      selectedScaleUpScenario,
     });
-  }, [selectedProvider, selectedTargetType, selectedClusterType]);
+  }, [
+    selectedProvider,
+    selectedTargetType,
+    selectedClusterType,
+    selectedScaleUpScenario,
+  ]);
 
   const clearFilters = () => {
     setProviderSelected(OPTION_ALL);
     setSelectedTargetType(OPTION_ALL);
     setSelectedClusterType(OPTION_ALL);
+    setSelectedScaleUpScenario(OPTION_ALL);
   };
 
   return (

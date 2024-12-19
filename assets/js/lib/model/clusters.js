@@ -7,7 +7,16 @@ export const ASCS_ERS = 'ascs_ers';
 export const COST_OPT_SCENARIO = 'cost_optimized';
 export const PERFORMANCE_SCENARIO = 'performance_optimized';
 
-export const clusterTypes = [HANA_SCALE_UP, HANA_SCALE_OUT, ASCS_ERS];
+// Hana scale up  with scenarios
+export const HANA_SCALE_UP_PERF_OPT = `${HANA_SCALE_UP}-${PERFORMANCE_SCENARIO}`;
+export const HANA_SCALE_UP_COST_OPT = `${HANA_SCALE_UP}-${COST_OPT_SCENARIO}`;
+
+export const clusterTypes = [
+  HANA_SCALE_UP_PERF_OPT,
+  HANA_SCALE_UP_COST_OPT,
+  HANA_SCALE_OUT,
+  ASCS_ERS,
+];
 export const hanaClusterScenarioTypes = [
   COST_OPT_SCENARIO,
   PERFORMANCE_SCENARIO,
@@ -17,7 +26,8 @@ export const isValidClusterType = (clusterType) =>
   clusterTypes.includes(clusterType);
 
 const clusterTypeLabels = {
-  [HANA_SCALE_UP]: 'HANA Scale Up',
+  [HANA_SCALE_UP_PERF_OPT]: 'HANA Scale Up Perf Opt',
+  [HANA_SCALE_UP_COST_OPT]: 'HANA Scale Up Cost Opt',
   [HANA_SCALE_OUT]: 'HANA Scale Out',
   [ASCS_ERS]: 'ASCS/ERS',
 };
