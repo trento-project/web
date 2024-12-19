@@ -17,6 +17,7 @@
  */
 // eslint-disable-next-line no-unused-vars
 
+const cypressSplit = require('cypress-split');
 const http = require('http');
 const webpack = require('@cypress/webpack-preprocessor');
 let heartbeatsIntervals = [];
@@ -24,9 +25,12 @@ let heartbeatsIntervals = [];
 module.exports = (on, config) => {
   // `on` is used to hook into various events Cypress emits
   // `config` is the resolved Cypress config
+  cypressSplit(on, config);
   on('task', {
     startAgentHeartbeat(agents) {
       const { web_api_host, web_api_port, heartbeat_interval } = config.env;
+      const sleep = (ms = 0) =>
+        new Promise((resolve) => setTimeout(resolve, ms));
       const heartbeat = (agentId) =>
         http
           .request({
@@ -37,13 +41,15 @@ module.exports = (on, config) => {
           })
           .end();
 
-      agents.forEach((agentId) => {
-        heartbeat(agentId);
-        let interval = setInterval(
-          () => heartbeat(agentId),
-          heartbeat_interval
-        );
-        heartbeatsIntervals.push(interval);
+      sleep(500).then(() => {
+        agents.forEach((agentId) => {
+          heartbeat(agentId);
+          let interval = setInterval(
+            () => heartbeat(agentId),
+            heartbeat_interval
+          );
+          heartbeatsIntervals.push(interval);
+        });
       });
       return null;
     },
