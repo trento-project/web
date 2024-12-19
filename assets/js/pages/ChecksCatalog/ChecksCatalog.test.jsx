@@ -72,8 +72,15 @@ describe('ChecksCatalog ChecksCatalog component', () => {
         catalogCheckFactory.build({
           metadata: {
             target_type: 'cluster',
-            cluster_type: 'hana_scale_up',
+            cluster_type: 'hana_scale_up-performance_optimized',
             hana_scenario: 'performance_optimized',
+          },
+        }),
+        catalogCheckFactory.build({
+          metadata: {
+            target_type: 'cluster',
+            cluster_type: 'hana_scale_up-cost_optimized',
+            hana_scenario: 'cost_optimized',
           },
         }),
         catalogCheckFactory.build({
@@ -91,7 +98,7 @@ describe('ChecksCatalog ChecksCatalog component', () => {
       initialTargetType: 'Clusters',
       filter: 'All cluster types',
       expectDisabled: 'HANA Scale Out',
-      expectAllEnabled: ['HANA Scale Up', 'ASCS/ERS'],
+      expectAllEnabled: ['HANA Scale Up Perf. Opt.', 'HANA Scale Up Cost Opt.','ASCS/ERS'],
     },
   ];
 
@@ -126,7 +133,7 @@ describe('ChecksCatalog ChecksCatalog component', () => {
       expect(
         screen.getByText(expectDisabled, { exact: false }).closest('div')
       ).toHaveAttribute('aria-disabled', 'true');
-
+      screen.debug(undefined,10000000000000000000000000000000000000000000000000000000)
       const expectItemEnabled = (itemExpectedEnabled) =>
         expect(
           screen.getByText(itemExpectedEnabled).closest('div')
