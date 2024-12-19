@@ -5,7 +5,7 @@ const LAST = '[aria-label="last-page"]';
 
 context('Activity Log page', () => {
   before(() => {
-    cy.loadScenario('healthy-29-node-SAP-cluster');
+    // cy.loadScenario('healthy-29-node-SAP-cluster');
   });
 
   describe('Navigation', () => {
