@@ -32,8 +32,6 @@ const buildUpdateCatalogAction = (selectedFilters) => {
     cluster_type: modifyHanaScaleUpClusterType(selectedFilters.cluster_type),
   };
 
-  console.log('selectedFilters', selectedFilters);
-
   const payload = {
     ...pickBy(modifiedSelectedFilters, isSomeFilter),
     ...(hasFilters ? { filteredCatalog: true } : {}),
