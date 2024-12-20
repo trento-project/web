@@ -170,18 +170,11 @@ context('Hosts Overview', () => {
       });
 
       it('should show health status of the entire cluster of 29 hosts with partial pagination', () => {
-        cy.get(
-          '.tn-health-container .tn-health-passing p[class="font-semibold"]',
-          {
-            timeout: 25000,
-          }
-        ).should('have.text', 12);
-        cy.get(
-          '.tn-health-container .tn-health-warning p[class="font-semibold"]'
-        ).should('have.text', 12);
-        cy.get(
-          '.tn-health-container .tn-health-critical p[class="font-semibold"]'
-        ).should('have.text', 5);
+        cy.get('.tn-health-container .tn-health-passing', {
+          timeout: 15000,
+        }).should('contain', 12);
+        cy.get('.tn-health-container .tn-health-warning').should('contain', 12);
+        cy.get('.tn-health-container .tn-health-critical').should('contain', 5);
       });
 
       it('should show the correct health on the hosts when the agents are sending the heartbeat', () => {
@@ -278,12 +271,9 @@ context('Hosts Overview', () => {
       });
 
       it('should show health status of the entire cluster of 29 hosts with critical health', () => {
-        cy.get(
-          '.tn-health-container .tn-health-critical p[class="font-semibold',
-          {
-            timeout: 20000,
-          }
-        ).should('have.text', 29);
+        cy.get('.tn-health-container .tn-health-critical', {
+          timeout: 15000,
+        }).should('have.text', 29);
       });
 
       it('should show a critical health on the hosts when the agents are not sending the heartbeat', () => {
