@@ -17,7 +17,6 @@ const clusterTags = {
 
 context('Clusters Overview', () => {
   before(() => {
-    cy.loadScenario('healthy-29-node-SAP-cluster'); //can be removed
     cy.visit('/clusters');
     cy.url().should('include', '/clusters');
   });

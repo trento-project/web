@@ -7,7 +7,6 @@ import {
 
 context('HANA database details', () => {
   before(() => {
-    cy.loadScenario('healthy-29-node-SAP-cluster'); //can be removed
     cy.visit(`/databases/${selectedDatabase.Id}`);
     cy.url().should('include', `/databases/${selectedDatabase.Id}`);
   });

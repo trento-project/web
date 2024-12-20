@@ -1,8 +1,4 @@
 context('SUSE Manager overviews', () => {
-  before(() => {
-    cy.loadScenario('healthy-29-node-SAP-cluster'); //can be removed
-  });
-
   describe('navigates and display SUSE Manager based infos', () => {
     it('host is found on SUSE Manager and has vulnerabilities', () => {
       cy.clearSUMASettings();

@@ -4,10 +4,6 @@ const FIRST = '[aria-label="first-page"]';
 const LAST = '[aria-label="last-page"]';
 
 context('Activity Log page', () => {
-  before(() => {
-    cy.loadScenario('healthy-29-node-SAP-cluster'); //can be removed
-  });
-
   describe('Navigation', () => {
     it('should navigate to Activity Log page', () => {
       cy.visit('/');
