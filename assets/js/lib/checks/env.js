@@ -1,4 +1,4 @@
-import { ASCS_ERS } from '@lib/model/clusters';
+import { ASCS_ERS, HANA_SCALE_UP } from '@lib/model/clusters';
 
 export const buildEnv = ({
   provider,
@@ -7,6 +7,7 @@ export const buildEnv = ({
   ensa_version,
   filesystem_type,
   architecture_type,
+  hana_scenario,
 }) => {
   switch (cluster_type) {
     case ASCS_ERS: {
@@ -16,6 +17,15 @@ export const buildEnv = ({
         cluster_type,
         ensa_version,
         filesystem_type,
+      };
+    }
+    case HANA_SCALE_UP: {
+      return {
+        provider,
+        target_type,
+        cluster_type,
+        architecture_type,
+        hana_scenario,
       };
     }
     default: {
