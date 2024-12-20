@@ -30,6 +30,7 @@ module.exports = (on, config) => {
       await getPhotofinishBinaryAndGiveExecutablePermissions();
     await runPhotofinishMainScenario(photofinishBinary);
   });
+  
   cypressSplit(on, config);
   on('task', {
     startAgentHeartbeat(agents) {
