@@ -43,6 +43,7 @@ describe('ChecksCatalog ChecksCatalog component', () => {
       selectedClusterType: 'all',
       selectedProvider: 'all',
       selectedTargetType: 'all',
+      selectedHanaScaleUpScenario: 'all',
     });
   });
 
@@ -72,6 +73,16 @@ describe('ChecksCatalog ChecksCatalog component', () => {
           metadata: {
             target_type: 'cluster',
             cluster_type: 'hana_scale_up',
+            hana_scenario: 'performance_optimized',
+            architecture_type: 'classic',
+          },
+        }),
+        catalogCheckFactory.build({
+          metadata: {
+            target_type: 'cluster',
+            cluster_type: 'hana_scale_up',
+            hana_scenario: 'cost_optimized',
+            architecture_type: 'classic',
           },
         }),
         catalogCheckFactory.build({
@@ -89,7 +100,11 @@ describe('ChecksCatalog ChecksCatalog component', () => {
       initialTargetType: 'Clusters',
       filter: 'All cluster types',
       expectDisabled: 'HANA Scale Out',
-      expectAllEnabled: ['HANA Scale Up', 'ASCS/ERS'],
+      expectAllEnabled: [
+        'HANA Scale Up Perf. Opt.',
+        'HANA Scale Up Cost Opt.',
+        'ASCS/ERS',
+      ],
     },
   ];
 
@@ -120,11 +135,9 @@ describe('ChecksCatalog ChecksCatalog component', () => {
       }
 
       await user.click(screen.getByText(filter));
-
       expect(
         screen.getByText(expectDisabled, { exact: false }).closest('div')
       ).toHaveAttribute('aria-disabled', 'true');
-
       const expectItemEnabled = (itemExpectedEnabled) =>
         expect(
           screen.getByText(itemExpectedEnabled).closest('div')
@@ -151,6 +164,14 @@ describe('ChecksCatalog ChecksCatalog component', () => {
         metadata: {
           target_type: 'cluster',
           cluster_type: 'hana_scale_up',
+          hana_scenario: 'performance_optimized',
+        },
+      }),
+      catalogCheckFactory.build({
+        metadata: {
+          target_type: 'cluster',
+          cluster_type: 'hana_scale_up',
+          hana_scenario: 'cost_optimized',
         },
       }),
       catalogCheckFactory.build({
@@ -179,21 +200,25 @@ describe('ChecksCatalog ChecksCatalog component', () => {
       selectedClusterType: 'all',
       selectedProvider: 'all',
       selectedTargetType: 'all',
+      selectedHanaScaleUpScenario: 'all',
     });
     expect(mockUpdateCatalog).toHaveBeenNthCalledWith(2, {
       selectedClusterType: 'all',
       selectedProvider: 'aws',
       selectedTargetType: 'all',
+      selectedHanaScaleUpScenario: 'all',
     });
     expect(mockUpdateCatalog).toHaveBeenNthCalledWith(3, {
       selectedClusterType: 'all',
       selectedProvider: 'aws',
       selectedTargetType: 'cluster',
+      selectedHanaScaleUpScenario: 'all',
     });
     expect(mockUpdateCatalog).toHaveBeenNthCalledWith(4, {
       selectedClusterType: 'ascs_ers',
       selectedProvider: 'aws',
       selectedTargetType: 'cluster',
+      selectedHanaScaleUpScenario: 'all',
     });
   });
 });
