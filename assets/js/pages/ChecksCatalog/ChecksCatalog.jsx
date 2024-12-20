@@ -154,12 +154,6 @@ function ChecksCatalog({
   ];
 
   useEffect(() => {
-    console.log('Selected Filters:', {
-      selectedProvider,
-      selectedTargetType,
-      selectedClusterType,
-      selectedHanaScaleUpScenario,
-    });
     updateCatalog({
       selectedProvider,
       selectedTargetType,
