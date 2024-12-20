@@ -1,6 +1,6 @@
 context('SUSE Manager overviews', () => {
   before(() => {
-    // cy.loadScenario('healthy-29-node-SAP-cluster');
+    cy.loadScenario('healthy-29-node-SAP-cluster'); //can be removed
   });
 
   describe('navigates and display SUSE Manager based infos', () => {
