@@ -87,13 +87,15 @@ function runCommand(command) {
 }
 
 async function getPhotofinishBinaryAndGiveExecutablePermissions() {
-  const photofinishBinary = runCommand('whereis photofinish | cut -d" " -f2');
-  runCommand(`chmod +x ${photofinishBinary}`);
+  const photofinishBinary = await runCommand(
+    'whereis photofinish | cut -d" " -f2'
+  );
+  await runCommand(`chmod +x ${photofinishBinary}`);
   return photofinishBinary;
 }
 
 async function runPhotofinishMainScenario(photofinishBinary) {
-  runCommand(
+  return runCommand(
     `cd ../.. && ${photofinishBinary} run --url "http://localhost:4000/api/collect" healthy-29-node-SAP-cluster`
   );
 }
