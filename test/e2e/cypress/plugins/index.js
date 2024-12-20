@@ -34,7 +34,7 @@ module.exports = (on, config) => {
   on('task', {
     startAgentHeartbeat(agents) {
       const { web_api_host, web_api_port, heartbeat_interval } = config.env;
-      // const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+      const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
       const heartbeat = (agentId) =>
         http
           .request({
@@ -45,16 +45,16 @@ module.exports = (on, config) => {
           })
           .end();
 
-      // sleep(500).then(() => {
-      agents.forEach((agentId) => {
-        heartbeat(agentId);
-        let interval = setInterval(
-          () => heartbeat(agentId),
-          heartbeat_interval
-        );
-        heartbeatsIntervals.push(interval);
+      sleep(500).then(() => {
+        agents.forEach((agentId) => {
+          heartbeat(agentId);
+          let interval = setInterval(
+            () => heartbeat(agentId),
+            heartbeat_interval
+          );
+          heartbeatsIntervals.push(interval);
+        });
       });
-      // });
       return null;
     },
   });
