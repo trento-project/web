@@ -59,24 +59,12 @@ context('Databases Overview', () => {
     });
 
     it('should not deregister database instances if the SAP system using the database is deregistered', () => {
-      const collapsedTableRowsSelector = '.table-row-group > div.table-row';
-      cy.get(collapsedTableRowsSelector).then((collapsedTableRows) => {
-        const amountOfDatabaseInstances = collapsedTableRows.length;
-
-        cy.get(collapsedTableRowsSelector).should(
-          'have.length',
-          amountOfDatabaseInstances
-        );
-        cy.deregisterHost(nwqSystem.ascsInstance.id);
-        cy.contains(
-          'p',
-          `The SAP System ${nwqSystem.sid} has been deregistered.`
-        );
-        cy.get(collapsedTableRowsSelector).should(
-          'have.length',
-          amountOfDatabaseInstances
-        );
-      });
+      cy.deregisterHost(nwqSystem.ascsInstance.id);
+      cy.contains(
+        'p',
+        `The SAP System ${nwqSystem.sid} has been deregistered.`
+      );
+      cy.get('.table-row-group > div.table-row').should('have.length', 9);
     });
   });
 
