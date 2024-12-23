@@ -114,13 +114,13 @@ Information about these variables' [environment_variables](./environment_variabl
 The Trento project includes a tool called [photofinish](https://github.com/trento-project/photofinish), which is used to load different scenarios for development and debugging purposes.
 
 ```
-photofinish run --url "http://localhost:4000/api/collect" healthy-29-node-SAP-cluster
+photofinish run --url "http://localhost:4000/api/collect" healthy-27-node-SAP-cluster
 ```
 
 It's possible to use Photofinish' docker image too:
 
 ```
-docker run -v "$PWD":/data --network host ghcr.io/trento-project/photofinish run healthy-29-node-SAP-cluster -u http://localhost:4000/api/collect
+docker run -v "$PWD":/data --network host ghcr.io/trento-project/photofinish run healthy-27-node-SAP-cluster -u http://localhost:4000/api/collect
 ```
 
 Several useful scenario fixtures are available in [./test/fixtures/scenarios](https://github.com/trento-project/web/tree/main/test/fixtures/scenarios), the same ones used in e2e tests.

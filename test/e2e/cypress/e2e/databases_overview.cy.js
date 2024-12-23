@@ -2,7 +2,7 @@ import { createUserRequestFactory } from '@lib/test-utils/factories';
 
 context('Databases Overview', () => {
   before(() => {
-    cy.loadScenario('healthy-29-node-SAP-cluster');
+    cy.loadScenario('healthy-27-node-SAP-cluster');
     cy.visit('/databases');
     cy.url().should('include', '/databases');
   });
@@ -64,7 +64,7 @@ context('Databases Overview', () => {
         'p',
         `The SAP System ${nwqSystem.sid} has been deregistered.`
       );
-      cy.get('.table-row-group > div.table-row').should('have.length', 9);
+      cy.get('.table-row-group > div.table-row').should('have.length', 6);
     });
   });
 
@@ -80,7 +80,7 @@ context('Databases Overview', () => {
     before(() => {
       cy.contains(hddDatabase.sid).should('exist');
 
-      cy.get('table.table-fixed > tbody > tr').eq(2).click();
+      cy.get('table.table-fixed > tbody > tr').eq(0).click();
     });
 
     it('should mark an instance as absent and restore it as present on received respective discovery messages', () => {
@@ -89,7 +89,7 @@ context('Databases Overview', () => {
       );
 
       cy.get('table.table-fixed > tbody > tr')
-        .eq(3)
+        .eq(1)
         .find('div.table-row-group')
         .eq(0)
         .find('div.table-row')
@@ -101,7 +101,7 @@ context('Databases Overview', () => {
       );
 
       cy.get('table.table-fixed > tbody > tr')
-        .eq(3)
+        .eq(1)
         .find('div.table-row-group')
         .eq(0)
         .find('div.table-row')
@@ -115,7 +115,7 @@ context('Databases Overview', () => {
       );
 
       cy.get('table.table-fixed > tbody > tr')
-        .eq(3)
+        .eq(1)
         .find('div.table-row-group')
         .eq(0)
         .find('div.table-row')
