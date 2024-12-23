@@ -18,6 +18,10 @@ directories = ["./test/fixtures/scenarios/hana-diskless-sbd"]
 
 directories = ["./test/fixtures/scenarios/hana-scale-up-angi"]
 
+[hana-scale-up-cost-opt]
+
+directories = ["./test/fixtures/scenarios/hana-scale-up-cost-opt"]
+
 [aws-landscape]
 
 directories = ["./test/fixtures/scenarios/aws-landscape"]
