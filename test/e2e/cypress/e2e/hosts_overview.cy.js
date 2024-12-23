@@ -11,7 +11,7 @@ const NEXT_PAGE_SELECTOR = '[aria-label="next-page"]';
 
 context('Hosts Overview', () => {
   before(() => {
-    cy.loadScenario('healthy-29-node-SAP-cluster');
+    cy.loadScenario('healthy-27-node-SAP-cluster');
     cy.visit('/hosts');
     cy.url().should('include', '/hosts');
   });
@@ -23,19 +23,19 @@ context('Hosts Overview', () => {
         .should('eq', 'page');
     });
 
-    it('should show 10 of the 29 registered hosts', () => {
+    it('should show 10 of the 27 registered hosts', () => {
       cy.get('.tn-hostname').its('length').should('eq', 10);
     });
 
     it('should have 3 pages', () => {
       cy.get(`[data-testid="pagination"]`).as('pagination');
-      cy.get(`@pagination`).contains('Showing 1–10 of 29').should('exist');
+      cy.get(`@pagination`).contains('Showing 1–10 of 27').should('exist');
 
       cy.get(NEXT_PAGE_SELECTOR).click();
-      cy.get(`@pagination`).contains('Showing 11–20 of 29').should('exist');
+      cy.get(`@pagination`).contains('Showing 11–20 of 27').should('exist');
 
       cy.get(NEXT_PAGE_SELECTOR).click();
-      cy.get(`@pagination`).contains('Showing 21–29 of 29').should('exist');
+      cy.get(`@pagination`).contains('Showing 21–27 of 27').should('exist');
 
       cy.get(NEXT_PAGE_SELECTOR).should('be.disabled');
     });
@@ -140,19 +140,13 @@ context('Hosts Overview', () => {
           .invoke('index')
           .then((i) => {
             if (host.clusterId) {
-              host.sapSystemSids.forEach((sid, counter) => {
-                cy.get('@hostRow').eq(i).should('contain', sid);
-                cy.get('@hostRow')
-                  .eq(i)
-                  .within(() => {
-                    cy.contains('a.text-jungle-green-500', sid).click();
-                  });
-                cy.location('pathname').should(
-                  'eq',
-                  `/databases/${host.sapSystemId[counter]}`
-                );
-                cy.go('back');
-              });
+              cy.get('@hostRow').eq(i).should('contain', host.sapSystemSid);
+              cy.get('@hostRow').eq(i).click();
+              cy.location('pathname').should(
+                'eq',
+                `/databases/${host.sapSystemId}`
+              );
+              cy.go('back');
             } else {
               cy.get('@hostRow').eq(i).find('a').should('not.exist');
             }
@@ -169,27 +163,23 @@ context('Hosts Overview', () => {
         cy.task('startAgentHeartbeat', agents());
       });
 
-      it('should show health status of the entire cluster of 29 hosts with partial pagination', () => {
+      it('should show health status of the entire cluster of 27 hosts with partial pagination', () => {
         cy.get('.tn-health-container .tn-health-passing', {
           timeout: 15000,
-        }).should('contain', 12);
+        }).should('contain', 11);
         cy.get('.tn-health-container .tn-health-warning').should('contain', 12);
-        cy.get('.tn-health-container .tn-health-critical').should('contain', 5);
+        cy.get('.tn-health-container .tn-health-critical').should('contain', 4);
       });
 
       it('should show the correct health on the hosts when the agents are sending the heartbeat', () => {
-        cy.get('svg.fill-jungle-green-500').its('length').should('eq', 7);
+        cy.get('svg.fill-jungle-green-500').its('length').should('eq', 8);
         cy.get('svg.fill-yellow-500').its('length').should('eq', 2);
       });
     });
 
-    describe('Health is changed based on saptune status when host has SAP', () => {
+    describe('Health is changed based on saptune status', () => {
       const hostWithoutSap = 'vmdrbddev01';
-
-      before(() => {
-        cy.visit('/hosts');
-        cy.url().should('include', '/hosts');
-      });
+      const hostWithSap = 'vmhdbprd01';
 
       it('should not change the health if saptune is not installed and a SAP workload is not running', () => {
         cy.loadScenario(`host-${hostWithoutSap}-saptune-uninstalled`);
@@ -209,16 +199,6 @@ context('Hosts Overview', () => {
             'fill-jungle-green-500'
           );
         });
-      });
-    });
-
-    describe('Health is changed based on saptune status when host has not SAP', () => {
-      const hostWithSap = 'vmhdbprd01';
-
-      before(() => {
-        cy.visit('/hosts');
-        cy.url().should('include', '/hosts');
-        cy.get(':nth-child(3) > .tn-page-item').click();
       });
 
       it('should change the health to warning if saptune is not installed', () => {
@@ -270,10 +250,10 @@ context('Hosts Overview', () => {
         cy.task('stopAgentsHeartbeat');
       });
 
-      it('should show health status of the entire cluster of 29 hosts with critical health', () => {
+      it('should show health status of the entire cluster of 27 hosts with critical health', () => {
         cy.get('.tn-health-container .tn-health-critical', {
           timeout: 15000,
-        }).should('contain', 29);
+        }).should('contain', 27);
       });
 
       it('should show a critical health on the hosts when the agents are not sending the heartbeat', () => {

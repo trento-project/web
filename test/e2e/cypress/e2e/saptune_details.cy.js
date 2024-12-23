@@ -16,7 +16,7 @@ describe('Saptune Details page', () => {
   const saptuneStagingStatusSelector = ':nth-child(11)';
 
   before(() => {
-    cy.loadScenario('healthy-29-node-SAP-cluster');
+    cy.loadScenario('healthy-27-node-SAP-cluster');
     cy.visit(`hosts/${hostID}/saptune`);
   });
 
