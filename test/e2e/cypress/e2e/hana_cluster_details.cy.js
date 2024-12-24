@@ -6,6 +6,7 @@ import {
 import { capitalize } from 'lodash';
 import {
   availableHanaCluster,
+  availableHanaClusterCostOpt,
   availableAngiCluster,
 } from '../fixtures/hana-cluster-details/available_hana_cluster';
 
@@ -229,6 +230,120 @@ context('HANA cluster details', () => {
           .contains(item.deviceName)
           .children()
           .contains(item.status);
+      });
+    });
+  });
+
+  describe('HANA cluster details in a cost optimized scenario should be consistent with the state of the cluster', () => {
+    before(() => {
+      cy.loadScenario('hana-scale-up-cost-opt');
+      cy.visit(`/clusters/${availableHanaClusterCostOpt.id}`);
+      cy.url().should('include', `/clusters/${availableHanaClusterCostOpt.id}`);
+    });
+
+    after(() => {
+      availableHanaClusterCostOpt.hosts.forEach(({ id }) => {
+        cy.deregisterHost(id);
+      });
+    });
+
+    it(`should have name ${availableHanaClusterCostOpt.name} in header`, () => {
+      cy.get('h1').contains(availableHanaClusterCostOpt.name);
+    });
+
+    it(`should have provider ${availableHanaClusterCostOpt.provider}`, () => {
+      cy.get('.tn-cluster-details')
+        .contains('Provider')
+        .next()
+        .contains(availableHanaClusterCostOpt.provider);
+    });
+
+    it('should have all cost optimized SID`s and correct database links', () => {
+      cy.get('.tn-cluster-details')
+        .contains('SID')
+        .parent()
+        .within(() => {
+          availableHanaClusterCostOpt.sids.forEach((sid, index) => {
+            cy.contains(sid).should(
+              'have.attr',
+              'href',
+              `/databases/${availableHanaClusterCostOpt.systemID[index]}`
+            );
+          });
+        });
+    });
+
+    it(`should have cluster cost optimized type ${availableHanaClusterCostOpt.clusterType}`, () => {
+      cy.get('.tn-cluster-details')
+        .contains('Cluster type')
+        .next()
+        .contains(availableHanaClusterCostOpt.clusterType);
+    });
+
+    it(`should have architecture type ${availableHanaClusterCostOpt.clusterType}`, () => {
+      cy.get('.tn-cluster-details')
+        .contains('Cluster type')
+        .next()
+        .find('svg')
+        .trigger('mouseover');
+
+      cy.contains('span', availableHanaClusterCostOpt.architectureType).should(
+        'exist'
+      );
+    });
+
+    it(`should have log replication mode ${availableHanaClusterCostOpt.hanaSystemReplicationMode}`, () => {
+      cy.get('.tn-cluster-details')
+        .contains('HANA log replication mode')
+        .next()
+        .contains(availableHanaClusterCostOpt.hanaSystemReplicationMode);
+    });
+
+    it(`should have fencing type ${availableHanaClusterCostOpt.fencingType}`, () => {
+      cy.get('.tn-cluster-details')
+        .contains('Fencing type')
+        .next()
+        .contains(availableHanaClusterCostOpt.fencingType);
+    });
+
+    it(`should have HANA secondary sync state ${availableHanaClusterCostOpt.hanaSecondarySyncState}`, () => {
+      cy.get('.tn-cluster-details')
+        .contains('HANA secondary sync state')
+        .next()
+        .contains(availableHanaClusterCostOpt.hanaSecondarySyncState);
+    });
+
+    it(`should have maintenance mode ${availableHanaClusterCostOpt.maintenanceMode}`, () => {
+      cy.get('.tn-cluster-details')
+        .contains('Cluster maintenance')
+        .next()
+        .contains('False');
+    });
+
+    it(`should have hana log operation mode ${availableHanaClusterCostOpt.hanaSystemReplicationOperationMode}`, () => {
+      cy.get('.tn-cluster-details')
+        .contains('HANA log operation mode')
+        .next()
+        .contains(
+          availableHanaClusterCostOpt.hanaSystemReplicationOperationMode
+        );
+    });
+
+    it(`should have cib last written ${availableHanaClusterCostOpt.cibLastWritten}`, () => {
+      cy.get('.tn-cluster-details')
+        .contains('CIB last written')
+        .next()
+        .contains(availableHanaClusterCostOpt.cibLastWritten);
+    });
+
+    it('should display both SID`s in the clusters overview page', () => {
+      cy.visit('/clusters');
+      cy.url().should('include', '/clusters');
+      cy.get('.container').eq(0).as('clustersTable');
+      cy.get('@clustersTable').find('tr').eq(7).find('td').eq(2).as('sidCell');
+
+      availableHanaClusterCostOpt.sids.forEach((sid) => {
+        cy.get('@sidCell').should('contain', sid);
       });
     });
   });

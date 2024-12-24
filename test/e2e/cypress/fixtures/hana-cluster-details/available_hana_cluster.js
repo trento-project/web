@@ -218,6 +218,36 @@ export const availableHanaCluster = {
   ],
 };
 
+export const availableHanaClusterCostOpt = {
+  id: 'ee7ea205-d5cc-5bbd-a345-10cad2aae2d7',
+  name: 'hana_cost_opt',
+  sids: ['HDC', 'QAS'],
+  systemID: [
+    '35fce256-f5c8-5f96-bb58-022d6d2729e7',
+    '57399859-155b-56f1-ae38-492283a8d758',
+  ],
+  clusterType: 'HANA Scale Up Cost Opt.',
+  architectureType: 'Classic',
+  provider: 'Azure',
+  hanaSystemReplicationMode: 'sync',
+  fencingType: 'external/sbd',
+  maintenanceMode: false,
+  hanaSecondarySyncState: 'SOK',
+  sapHanaSRHealthState: 4,
+  cibLastWritten: 'Mon Aug 26 14:52:19 2024',
+  hanaSystemReplicationOperationMode: 'logreplay',
+  hosts: [
+    {
+      id: '2372b24f-3d7a-5d01-9b1a-a2c4c95c53d4',
+    },
+    {
+      id: 'fa7a5602-232b-5389-96a6-f5f5de6ff9a2',
+    },
+  ],
+  sites: [],
+  sbd: [],
+};
+
 export const availableAngiCluster = {
   id: '69851bfe-5364-5ea8-93e1-cbe14268ccaf',
   name: 'hana_angi',
