@@ -17,7 +17,6 @@
  */
 
 const cypressSplit = require('cypress-split');
-const { exec } = require('child_process');
 const http = require('http');
 const webpack = require('@cypress/webpack-preprocessor');
 let heartbeatsIntervals = [];
