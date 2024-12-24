@@ -2,7 +2,7 @@ import { getValue } from '../support/common';
 
 describe('User account page', () => {
   before(() => {
-    cy.loadScenario('healthy-27-node-SAP-cluster');
+    cy.preloadTestData();
     cy.visit('/about');
     cy.url().should('include', '/about');
   });

@@ -85,6 +85,23 @@ Cypress.Commands.add('updateApiKeyExpiration', (apiKeyExpiration) => {
   });
 });
 
+Cypress.Commands.add('preloadTestData', () => {
+  cy.apiLogin().then(({ accessToken }) => {
+    cy.request({
+      url: '/api/v1/hosts',
+      method: 'GET',
+      auth: {
+        bearer: accessToken,
+      },
+    }).then(({ body }) => {
+      if (!body.length) {
+        cy.loadScenario('healthy-27-node-SAP-cluster');
+      }
+    });
+  });
+  cy.loadScenario('healthy-27-node-SAP-cluster');
+});
+
 Cypress.Commands.add('loadScenario', (scenario) => {
   const [projectRoot, photofinishBinary, webAPIHost, webAPIPort] = [
     Cypress.env('project_root'),
