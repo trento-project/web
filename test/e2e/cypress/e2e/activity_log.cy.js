@@ -4,6 +4,9 @@ const FIRST = '[aria-label="first-page"]';
 const LAST = '[aria-label="last-page"]';
 
 context('Activity Log page', () => {
+  before(() => {
+    cy.preloadTestData();
+  });
   describe('Navigation', () => {
     it('should navigate to Activity Log page', () => {
       cy.visit('/');

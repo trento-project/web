@@ -7,6 +7,7 @@ import {
 
 context('HANA database details', () => {
   before(() => {
+    cy.preloadTestData();
     cy.visit(`/databases/${selectedDatabase.Id}`);
     cy.url().should('include', `/databases/${selectedDatabase.Id}`);
   });

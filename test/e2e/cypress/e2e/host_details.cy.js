@@ -8,7 +8,7 @@ import { createUserRequestFactory } from '@lib/test-utils/factories';
 
 context('Host Details', () => {
   before(() => {
-    cy.loadScenario('healthy-27-node-SAP-cluster');
+    cy.preloadTestData();
     cy.task('startAgentHeartbeat', [selectedHost.agentId]);
     cy.visit('/hosts');
 

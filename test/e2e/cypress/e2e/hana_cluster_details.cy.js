@@ -21,6 +21,7 @@ context('HANA cluster details', () => {
   const catalog = catalogCheckFactory.buildList(5);
 
   before(() => {
+    cy.preloadTestData();
     cy.intercept(lastExecutionURL, {
       body: lastExecution,
     }).as('lastExecution');

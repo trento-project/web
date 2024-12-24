@@ -25,11 +25,6 @@ let heartbeatsIntervals = [];
 module.exports = (on, config) => {
   // `on` is used to hook into various events Cypress emits
   // `config` is the resolved Cypress config
-  on('before:run', async () => {
-    const photofinishBinary =
-      await getPhotofinishBinaryAndGiveExecutablePermissions();
-    await runPhotofinishMainScenario(photofinishBinary);
-  });
 
   cypressSplit(on, config);
   on('task', {
@@ -77,26 +72,3 @@ module.exports = (on, config) => {
 
   return config;
 };
-
-function runCommand(command) {
-  return new Promise((resolve, reject) => {
-    exec(command, (error, stdout, stderr) => {
-      if (error) reject(new Error(`Error: ${stderr || error.message}`));
-      else resolve(stdout.trim());
-    });
-  });
-}
-
-async function getPhotofinishBinaryAndGiveExecutablePermissions() {
-  const photofinishBinary = await runCommand(
-    'whereis photofinish | cut -d" " -f2'
-  );
-  await runCommand(`chmod +x ${photofinishBinary}`);
-  return photofinishBinary;
-}
-
-async function runPhotofinishMainScenario(photofinishBinary) {
-  return runCommand(
-    `cd ../.. && ${photofinishBinary} run --url "http://localhost:4000/api/collect" healthy-27-node-SAP-cluster`
-  );
-}

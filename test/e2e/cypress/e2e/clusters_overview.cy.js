@@ -17,6 +17,7 @@ const clusterTags = {
 
 context('Clusters Overview', () => {
   before(() => {
+    cy.preloadTestData();
     cy.visit('/clusters');
     cy.url().should('include', '/clusters');
   });

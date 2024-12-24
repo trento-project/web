@@ -2,6 +2,7 @@ import { getValue } from '../support/common';
 
 describe('User account page', () => {
   before(() => {
+    cy.preloadTestData();
     cy.visit('/about');
     cy.url().should('include', '/about');
   });

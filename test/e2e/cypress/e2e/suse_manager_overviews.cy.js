@@ -1,4 +1,7 @@
 context('SUSE Manager overviews', () => {
+  before(() => {
+    cy.preloadTestData();
+  });
   describe('navigates and display SUSE Manager based infos', () => {
     it('host is found on SUSE Manager and has vulnerabilities', () => {
       cy.clearSUMASettings();
