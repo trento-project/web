@@ -53,9 +53,7 @@ context('Clusters Overview', () => {
           .contains('th', 'SID')
           .invoke('index')
           .then((i) => {
-            cluster.sids.forEach((sid) => {
-              cy.get('@clusterRow').eq(i).should('contain', sid);
-            });
+            cy.get('@clusterRow').eq(i).should('contain', cluster.sid);
           });
 
         cy.get('@clustersTable')

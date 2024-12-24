@@ -97,6 +97,6 @@ async function getPhotofinishBinaryAndGiveExecutablePermissions() {
 
 async function runPhotofinishMainScenario(photofinishBinary) {
   return runCommand(
-    `cd ../.. && ${photofinishBinary} run --url "http://localhost:4000/api/collect" healthy-29-node-SAP-cluster`
+    `cd ../.. && ${photofinishBinary} run --url "http://localhost:4000/api/collect" healthy-27-node-SAP-cluster`
   );
 }
