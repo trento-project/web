@@ -164,6 +164,7 @@ jobs:
           photofinish run multi-tenant -u "https://$TRENTO_PR_ENV_URL/api/v1/collect"
           photofinish run hana-scale-up-angi -u "https://$TRENTO_PR_ENV_URL/api/collect"
           photofinish run java-system -u "https://$TRENTO_PR_ENV_URL/api/collect"
+          photofinish run hana-scale-up-cost-opt -u "https://$TRENTO_PR_ENV_URL/api/collect"
   comment_pr:
     name: Comment on the PR with the environment URL
     runs-on: ubuntu-20.04

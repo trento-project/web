@@ -1,0 +1,62 @@
+{
+    "discovery_type": "subscription_discovery",
+    "agent_id": "fa7a5602-232b-5389-96a6-f5f5de6ff9a2",
+    "payload": [
+        {
+            "arch": "x86_64",
+            "expires_at": "2025-03-01 07:00:20 UTC",
+            "identifier": "SLES_SAP",
+            "starts_at": "2021-10-18 06:23:46 UTC",
+            "status": "Registered",
+            "subscription_status": "ACTIVE",
+            "type": "internal",
+            "version": "15.4"
+        },
+        {
+            "arch": "x86_64",
+            "identifier": "sle-module-basesystem",
+            "status": "Registered",
+            "version": "15.4"
+        },
+        {
+            "arch": "x86_64",
+            "identifier": "sle-module-public-cloud",
+            "status": "Not Registered",
+            "version": "15.4"
+        },
+        {
+            "arch": "x86_64",
+            "identifier": "sle-module-server-applications",
+            "status": "Registered",
+            "version": "15.4"
+        },
+        {
+            "arch": "x86_64",
+            "identifier": "sle-module-desktop-applications",
+            "status": "Registered",
+            "version": "15.4"
+        },
+        {
+            "arch": "x86_64",
+            "expires_at": "2025-03-01 07:00:20 UTC",
+            "identifier": "sle-ha",
+            "starts_at": "2021-10-18 06:23:46 UTC",
+            "status": "Registered",
+            "subscription_status": "ACTIVE",
+            "type": "internal",
+            "version": "15.4"
+        },
+        {
+            "arch": "x86_64",
+            "identifier": "sle-module-sap-applications",
+            "status": "Registered",
+            "version": "15.4"
+        },
+        {
+            "arch": "x86_64",
+            "identifier": "sle-manager-tools",
+            "status": "Not Registered",
+            "version": "15"
+        }
+    ]
+}
