@@ -119,7 +119,7 @@ jobs:
         containers: [1,2,3,4]
         repeat: [1,2]
     concurrency:
-      group: cypress-run-${{ github.ref }}-${{ github.run_number }}
+      group: cypress-run-${{ github.ref }}-${{ matrix.containers }}-${{ matrix.repeat }}
       cancel-in-progress: true
     env:
       MIX_ENV: dev
