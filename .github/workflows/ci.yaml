@@ -451,7 +451,7 @@ jobs:
   test-e2e:
     name: E2E tests
     runs-on: ubuntu-22.04
-    needs: e2e-parallel  
+    needs: test-e2e-parallel  
     steps:
       - run: echo "E2E tests completed"
 
