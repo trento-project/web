@@ -2,8 +2,8 @@
 name: E2E Flaky Tests Detection
 
 on:
-  push:
-    branches: [main]
+  pull_request:
+    types: [opened, synchronize, labeled]
   workflow_dispatch:
 
 jobs:
