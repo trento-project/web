@@ -86,6 +86,13 @@ Cypress.Commands.add('updateApiKeyExpiration', (apiKeyExpiration) => {
 });
 
 Cypress.Commands.add('preloadTestData', () => {
+  cy.isTestDataLoaded().then((isLoaded) => {
+    if (!isLoaded) cy.loadScenario('healthy-27-node-SAP-cluster');
+  });
+  cy.loadScenario('healthy-27-node-SAP-cluster');
+});
+
+Cypress.Commands.add('isTestDataLoaded', () => {
   cy.apiLogin().then(({ accessToken }) => {
     cy.request({
       url: '/api/v1/hosts',
@@ -93,13 +100,8 @@ Cypress.Commands.add('preloadTestData', () => {
       auth: {
         bearer: accessToken,
       },
-    }).then(({ body }) => {
-      if (!body.length) {
-        cy.loadScenario('healthy-27-node-SAP-cluster');
-      }
-    });
+    }).then(({ body }) => body.length !== 0);
   });
-  cy.loadScenario('healthy-27-node-SAP-cluster');
 });
 
 Cypress.Commands.add('loadScenario', (scenario) => {
