@@ -449,7 +449,7 @@ jobs:
           path: test/e2e/cypress/screenshots/
 
   test-e2e:
-    name: E2E tests
+    name: End to end tests
     runs-on: ubuntu-22.04
     needs: test-e2e-parallel  
     steps:
