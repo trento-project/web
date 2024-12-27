@@ -452,6 +452,8 @@ jobs:
     name: E2E tests
     runs-on: ubuntu-22.04
     needs: e2e-parallel  
+    steps:
+      - run: echo "E2E tests completed"
 
   check-regression-label:
     name: Check if the regression test criteria are met, store in the job output
