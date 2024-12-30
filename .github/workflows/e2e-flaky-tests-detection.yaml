@@ -110,7 +110,7 @@ jobs:
         run: cd test/e2e && npm install
 
   test-e2e-parallel:
-    name: Cypress Run (Container ${{ matrix.containers }}, Repeat ${{ matrix.repeat }})
+    name: Cypress Run
     needs: [elixir-deps, npm-deps, npm-e2e-deps]
     runs-on: ubuntu-20.04
     strategy:
@@ -169,17 +169,6 @@ jobs:
           path: |
             test/e2e/node_modules
           key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
-      - name: Check Eslint and JS Code Format
-        run: cd test/e2e && npm run lint && npm run format:check
-      - name: "Docker compose dependencies"
-        uses: isbang/compose-action@v2.0.2
-        with:
-          compose-file: "./docker-compose.yaml"
-          down-flags: "--volumes"
-      - name: Mix setup
-        run: mix setup
-      - name: Run trento detached
-        run: mix phx.server &
       - name: Install photofinish
         uses: jaxxstorm/action-install-gh-release@v1.14.0
         with:
@@ -190,6 +179,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Give executable permissions to photofinish
         run: chmod +x $(whereis photofinish | cut -d" " -f2)
+      - name: Run makefile e2e-Tests
+        run: make N-TIMES=1 gen-test-data-e2e
+        working-directory: /hack/flaky_tests_analysis
       # - name: Cypress run
       #   uses: cypress-io/github-action@v6
       #   env:
