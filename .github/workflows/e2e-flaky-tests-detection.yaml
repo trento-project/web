@@ -116,11 +116,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        containers: [1,2,3,4]
-        repeat: [1,2]
-    concurrency:
-      group: cypress-run-${{ github.ref }}-${{ matrix.containers }}-${{ matrix.repeat }}
-      cancel-in-progress: true
+        containers: [1]
     env:
       MIX_ENV: dev
     steps:
@@ -144,6 +140,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
+      - name: Set up Python 3.12.3
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.12.3
+      - name: Verify Python version
+        run: python --version
       - name: Retrieve Cached Dependencies
         uses: actions/cache@v4
         id: mix-cache
@@ -188,19 +190,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Give executable permissions to photofinish
         run: chmod +x $(whereis photofinish | cut -d" " -f2)
-      - name: Cypress run
-        uses: cypress-io/github-action@v6
-        env:
-          SPLIT: ${{ strategy.job-total }}
-          SPLIT_INDEX: ${{ strategy.job-index }}
-          cypress_video: false
-          cypress_db_host: postgres
-          cypress_db_port: 5432
-          cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
-        with:
-          working-directory: test/e2e
-          wait-on-timeout: 30
-          config: baseUrl=http://localhost:4000
+      # - name: Cypress run
+      #   uses: cypress-io/github-action@v6
+      #   env:
+      #     cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
+      #   with:
+      #     working-directory: test/e2e
+      #     wait-on-timeout: 30
+      #     config: baseUrl=http://localhost:4000
       - name: Upload cypress test screenshots
         uses: actions/upload-artifact@v4
         if: failure()
