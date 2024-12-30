@@ -353,7 +353,7 @@ jobs:
         if: steps.npm-e2e-cache.outputs.cache-hit != 'true'
         run: cd test/e2e && npm install
 
-  test-e2e:
+  test-e2e-parallel:
     name: Parallel End to end tests
     needs: [elixir-deps, npm-deps, npm-e2e-deps]
     runs-on: ubuntu-20.04
@@ -447,6 +447,13 @@ jobs:
         with:
           name: e2e-screenshots
           path: test/e2e/cypress/screenshots/
+
+  test-e2e:
+    name: End to end tests
+    runs-on: ubuntu-22.04
+    needs: test-e2e-parallel  
+    steps:
+      - run: echo "E2E tests completed"
 
   check-regression-label:
     name: Check if the regression test criteria are met, store in the job output

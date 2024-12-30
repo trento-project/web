@@ -86,23 +86,31 @@ Cypress.Commands.add('updateApiKeyExpiration', (apiKeyExpiration) => {
 });
 
 Cypress.Commands.add('preloadTestData', () => {
-  cy.isTestDataLoaded().then((isLoaded) => {
+  /**
+   * Preload required test data.
+   * It must run photofinish scenario twice as the order of sent payloads is relevant
+   * and the tests require a fully loaded scenario which only happens when the
+   * scenario is sent in the second time.
+   */
+  isTestDataLoaded().then((isLoaded) => {
     if (!isLoaded) cy.loadScenario('healthy-27-node-SAP-cluster');
   });
   cy.loadScenario('healthy-27-node-SAP-cluster');
 });
 
-Cypress.Commands.add('isTestDataLoaded', () => {
-  cy.apiLogin().then(({ accessToken }) => {
-    cy.request({
-      url: '/api/v1/hosts',
-      method: 'GET',
-      auth: {
-        bearer: accessToken,
-      },
-    }).then(({ body }) => body.length !== 0);
+function isTestDataLoaded() {
+  return cy.apiLogin().then(({ accessToken }) => {
+    return cy
+      .request({
+        url: '/api/v1/hosts',
+        method: 'GET',
+        auth: {
+          bearer: accessToken,
+        },
+      })
+      .then((body) => body.length !== 0);
   });
-});
+}
 
 Cypress.Commands.add('loadScenario', (scenario) => {
   const [projectRoot, photofinishBinary, webAPIHost, webAPIPort] = [
