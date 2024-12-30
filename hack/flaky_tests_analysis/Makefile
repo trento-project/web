@@ -38,7 +38,14 @@ gen-test-data-fe:
 gen-test-data-e2e:
 	cd ../../test/e2e ; export ENV_TS=$(ENV_TS) ; for i in $$(seq 1 $(N-TIMES)) ; do \
 			echo "Run $$i of $(N-TIMES)" ;\
+			echo "Loading test environment..." ;\
+			(cd ../../ && docker-compose down -v > /dev/null 2>&1 && docker-compose up -d > /dev/null 2>&1 && mix setup > /dev/null 2>&1) ;\
+        	(cd ../../ && iex -S mix phx.server > /dev/null 2>&1 & echo $$!>../../mix.pid); \
+			(cd ../../test/e2e && npx wait-on http://localhost:4000 );\
+			echo "Environment Ready!" ;\
 			npx cypress run --reporter junit --reporter-options "mochaFile=$(PATH-TO-JUNIT-FILES)/trento-e2e-junit-[hash]-$(ENV_TS).xml" $(RUN_ONLY_E2E_OPTION);\
+			kill -9 $$(cat ../../mix.pid) ;\
+			rm -rf ../../mix.pid ;\
 		done 
 
 analyze-files:
