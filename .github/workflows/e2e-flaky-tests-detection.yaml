@@ -6,6 +6,11 @@ on:
     types: [opened, synchronize, labeled]
   workflow_dispatch:
 
+env:
+  MIX_ENV: test
+  NODE_VERSION: "20"
+  PYTHON_VERSION: "3.12.3"
+
 jobs:
   elixir-deps:
     name: Elixir ${{ matrix.mix_env }} dependencies
@@ -140,12 +145,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - name: Set up Python 3.12.3
+      - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.12.3
-      - name: Verify Python version
-        run: python --version
+          python-version: ${{ env.PYTHON_VERSION }}
       - name: Retrieve Cached Dependencies
         uses: actions/cache@v4
         id: mix-cache
