@@ -22,6 +22,7 @@ WRITE_JUNIT ?= 1
 CLI_LOG_PREFIX ?= Trento_Flaky_Test_Analysis_Log
 LOG_FILENAME="$(CLI_LOG_PREFIX)_$(shell date +%F_%T).txt"
 ENV_TS ?= "$(shell date +%F_%T)"
+ENV_TS_CI = "$(shell date +%F_%H-%M-%S)"
 
 gen-test-data-be:
 	cd ../../ ; touch $(LOG_FILENAME) ; for i in $$(seq 1 $(N-TIMES)) ;  do \
@@ -44,7 +45,7 @@ gen-test-data-e2e-ci:
 			(cd ../../test/e2e && npx wait-on http://localhost:4000 );\
 			echo "Environment Ready!" ;\
 			PHOTOFINISH_BINARY=$(shell whereis photofinish | cut -d" " -f2); \
-			npx cypress run --env cypress_photofinish_binary="$$PHOTOFINISH_BINARY" --reporter junit --reporter-options "mochaFile=$(PATH-TO-JUNIT-FILES)/trento-e2e-junit-[hash]-$(ENV_TS).xml" $(RUN_ONLY_E2E_OPTION) && \
+			npx cypress run --env cypress_photofinish_binary="$$PHOTOFINISH_BINARY" --reporter junit --reporter-options "mochaFile=$(PATH-TO-JUNIT-FILES)/trento-e2e-junit-[hash]-$(ENV_TS_CI).xml" $(RUN_ONLY_E2E_OPTION) && \
 			kill -9 $$(cat ../../mix.pid) ;\
 			rm -rf ../../mix.pid ;\
 		done 
