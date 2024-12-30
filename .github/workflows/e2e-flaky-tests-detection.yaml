@@ -184,7 +184,7 @@ jobs:
         run: chmod +x $(whereis photofinish | cut -d" " -f2)
       - name: Run makefile e2e-Tests
         run: make N-TIMES=1 gen-test-data-e2e
-        working-directory: /hack/flaky_tests_analysis
+        working-directory: hack/flaky_tests_analysis
       # - name: Cypress run
       #   uses: cypress-io/github-action@v6
       #   env:
