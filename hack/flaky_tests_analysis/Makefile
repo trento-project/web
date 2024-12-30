@@ -43,7 +43,8 @@ gen-test-data-e2e:
         	(cd ../../ && iex -S mix phx.server > /dev/null 2>&1 & echo $$!>../../mix.pid); \
 			(cd ../../test/e2e && npx wait-on http://localhost:4000 );\
 			echo "Environment Ready!" ;\
-			npx cypress run --reporter junit --reporter-options "mochaFile=$(PATH-TO-JUNIT-FILES)/trento-e2e-junit-[hash]-$(ENV_TS).xml" $(RUN_ONLY_E2E_OPTION);\
+			PHOTOFINISH_BINARY=$(shell whereis photofinish | cut -d" " -f2) ;\
+			npx cypress run --env cypress_photofinish_binary="$$PHOTOFINISH_BINARY" --reporter junit --reporter-options "mochaFile=$(PATH-TO-JUNIT-FILES)/trento-e2e-junit-[hash]-$(ENV_TS).xml" $(RUN_ONLY_E2E_OPTION) && \
 			kill -9 $$(cat ../../mix.pid) ;\
 			rm -rf ../../mix.pid ;\
 		done 
