@@ -11,6 +11,7 @@
   "devDependencies": {
     "cypress": "^13.2.0",
     "cypress-localstorage-commands": "^2.2.2",
+    "cypress-split": "^1.24.7",
     "eslint": "^8.15.0",
     "eslint-plugin-cypress": "^2.12.1",
     "eslint-plugin-mocha": "^10.5.0",

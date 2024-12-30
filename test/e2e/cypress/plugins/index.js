@@ -15,8 +15,8 @@
 /**
  * @type {Cypress.PluginConfig}
  */
-// eslint-disable-next-line no-unused-vars
 
+const cypressSplit = require('cypress-split');
 const http = require('http');
 const webpack = require('@cypress/webpack-preprocessor');
 let heartbeatsIntervals = [];
@@ -24,6 +24,8 @@ let heartbeatsIntervals = [];
 module.exports = (on, config) => {
   // `on` is used to hook into various events Cypress emits
   // `config` is the resolved Cypress config
+
+  cypressSplit(on, config);
   on('task', {
     startAgentHeartbeat(agents) {
       const { web_api_host, web_api_port, heartbeat_interval } = config.env;

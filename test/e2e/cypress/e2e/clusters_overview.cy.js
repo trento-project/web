@@ -17,7 +17,7 @@ const clusterTags = {
 
 context('Clusters Overview', () => {
   before(() => {
-    cy.loadScenario('healthy-27-node-SAP-cluster');
+    cy.preloadTestData();
     cy.visit('/clusters');
     cy.url().should('include', '/clusters');
   });
