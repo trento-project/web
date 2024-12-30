@@ -162,7 +162,7 @@ const isTestDataLoaded = () =>
           bearer: accessToken,
         },
       })
-      .then((body) => body.length !== 0)
+      .then(({ body }) => body.length !== 0)
   );
 
 Cypress.Commands.add('removeTagsFromView', () => {
