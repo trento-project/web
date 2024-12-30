@@ -35,7 +35,7 @@ gen-test-data-fe:
 		  JEST_JUNIT_OUTPUT_FILE="$(PATH-TO-JUNIT-FILES)/junit_FE_$(ENV_TS)_$$i.xml" npm test $(RUN_ONLY_FE_OPTION) --reporters=jest-junit;\
 		done 
 
-gen-test-data-e2e:
+gen-test-data-e2e-ci:
 	cd ../../test/e2e ; export ENV_TS=$(ENV_TS) ; for i in $$(seq 1 $(N-TIMES)) ; do \
 			echo "Run $$i of $(N-TIMES)" ;\
 			echo "Loading test environment..." ;\

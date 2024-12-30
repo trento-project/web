@@ -24,7 +24,6 @@ module.exports = defineConfig({
       return require('./cypress/plugins/index.js')(on, config);
     },
     testIsolation: false,
-    video: true,
     baseUrl: 'http://localhost:4000',
   },
 });

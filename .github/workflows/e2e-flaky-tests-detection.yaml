@@ -191,11 +191,11 @@ jobs:
           curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
           chmod +x /usr/local/bin/docker-compose
       - name: Run makefile e2e-Tests
-        run: make N-TIMES=2 gen-test-data-e2e
+        run: make N-TIMES=1 gen-test-data-e2e-ci
         working-directory: hack/flaky_tests_analysis
-      - name: Upload cypress test screenshots
+      - name: Upload cypress test junit reports
         uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: e2e-junit-reports-${{ matrix.containers }}
-          path: tmp/*.xml
+          path: /tmp/*.xml
