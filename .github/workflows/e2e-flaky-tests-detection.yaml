@@ -202,4 +202,4 @@ jobs:
         if: failure()
         with:
           name: e2e-screenshots
-          path: test/e2e/cypress/screenshots/
+          path: test/e2e/cypress/videos/
