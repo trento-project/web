@@ -98,20 +98,6 @@ Cypress.Commands.add('preloadTestData', () => {
   cy.loadScenario('healthy-27-node-SAP-cluster');
 });
 
-function isTestDataLoaded() {
-  return cy.apiLogin().then(({ accessToken }) => {
-    return cy
-      .request({
-        url: '/api/v1/hosts',
-        method: 'GET',
-        auth: {
-          bearer: accessToken,
-        },
-      })
-      .then((body) => body.length !== 0);
-  });
-}
-
 Cypress.Commands.add('loadScenario', (scenario) => {
   const [projectRoot, photofinishBinary, webAPIHost, webAPIPort] = [
     Cypress.env('project_root'),
@@ -165,6 +151,19 @@ Cypress.Commands.add('selectChecks', (clusterId, checks) => {
     });
   });
 });
+
+const isTestDataLoaded = () =>
+  cy.apiLogin().then(({ accessToken }) =>
+    cy
+      .request({
+        url: '/api/v1/hosts',
+        method: 'GET',
+        auth: {
+          bearer: accessToken,
+        },
+      })
+      .then((body) => body.length !== 0)
+  );
 
 Cypress.Commands.add('removeTagsFromView', () => {
   cy.get('body').then(($body) => {
