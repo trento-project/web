@@ -239,14 +239,17 @@ jobs:
           make install-deps
           echo "## Analysis Summary" >> $GITHUB_STEP_SUMMARY  # Add summary heading
           echo "Output of 'make analyze-files-ci':" >> $GITHUB_STEP_SUMMARY
-          make analyze-files-ci | tee >(tail -n 1 > analysis_output.txt)  # Capture last line
+          make analyze-files-ci | tail -n +2 | tee analysis_output.txt  # Skip the first line and write to file
+
           if [ -s analysis_output.txt ]; then  # Check if output file has content
             cat analysis_output.txt >> $GITHUB_STEP_SUMMARY
           else
             echo "No output from 'make analyze-files-ci'" >> $GITHUB_STEP_SUMMARY
           fi
         working-directory: hack/flaky_tests_analysis
-      - name: Delete artifacts
-        uses: geekyeggo/delete-artifact@v2
-        with:
-          name: e2e-junit-reports-*
+      - name: Delete Artifacts
+        run: |
+          for file in artifacts/e2e-junit-reports-*; do
+            echo "Deleting $file"
+            rm -f "$file"
+          done
