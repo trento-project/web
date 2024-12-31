@@ -10,7 +10,7 @@ env:
   MIX_ENV: test
   NODE_VERSION: "20"
   PYTHON_VERSION: "3.12.3"
-  NUM_CONTAINERS: 2
+  NUM_CONTAINERS: 100
 
 jobs:
   elixir-deps:
@@ -238,13 +238,12 @@ jobs:
           source .venv/bin/activate
           make install-deps
           echo "## Analysis Summary" >> $GITHUB_STEP_SUMMARY  # Add summary heading
-          echo "Output of 'make analyze-files-ci':" >> $GITHUB_STEP_SUMMARY
           make analyze-files-ci | tail -n +2 | tee analysis_output.txt  # Skip the first line and write to file
 
           if [ -s analysis_output.txt ]; then  # Check if output file has content
             cat analysis_output.txt >> $GITHUB_STEP_SUMMARY
           else
-            echo "No output from 'make analyze-files-ci'" >> $GITHUB_STEP_SUMMARY
+            echo "No flaky tests at all 🚀" >> $GITHUB_STEP_SUMMARY
           fi
         working-directory: hack/flaky_tests_analysis
       - name: Delete Artifacts
