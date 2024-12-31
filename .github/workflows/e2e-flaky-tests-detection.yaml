@@ -211,34 +211,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0        
-      - name: Download cypress test junit reports
+          fetch-depth: 0    
+      - name: Download JUnit reports artifacts
         uses: actions/download-artifact@v4
         with:
-          name: e2e-junit-reports-1       
-      - name: Extract downloaded zip junit reports
-        run: |
-          mkdir -p /tmp/e2e-junit-reports
-          for zip in /tmp/e2e-junit-reports-*.zip; do
-            unzip "$zip" -d /tmp/extracted-reports
-          done
-      - name: Resolve conflicts and put all junit files in the same folder
-        run: |
-          mkdir -p /tmp/final-junit-reports
-          COUNTER=1
-          for file in /tmp/extracted-reports/**/*.xml; do
-            BASENAME=$(basename "$file")
-            DEST="/tmp/final-junit-reports/$BASENAME"
-            if [ -f "$DEST" ]; then
-              mv "$file" "/tmp/final-junit-reports/${COUNTER}_$BASENAME"
-              COUNTER=$((COUNTER + 1))
-            else
-              mv "$file" "$DEST"
-            fi
-          done
-      - name: List all processed JUnit files
-        run: |
-          echo "Listing all JUnit XML files in /tmp/final-junit-reports:"
-          ls -l /tmp/final-junit-reports      
-
-
+          path: junit-reports
+          pattern: e2e-junit-reports-*
+          merge-multiple: true
+      - run: ls -R junit-reports
