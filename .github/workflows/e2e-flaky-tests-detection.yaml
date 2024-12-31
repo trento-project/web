@@ -215,7 +215,7 @@ jobs:
       - name: Download cypress test junit reports
         uses: actions/download-artifact@v4
         with:
-          name: e2e-junit-reports-*        
+          name: e2e-junit-reports-1       
       - name: Extract downloaded zip junit reports
         run: |
           mkdir -p /tmp/e2e-junit-reports
