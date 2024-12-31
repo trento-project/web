@@ -225,4 +225,5 @@ jobs:
           source .venv/bin/activate
           make install-deps
           make analyze-files
+        working-directory: hack/flaky_tests_analysis
 
