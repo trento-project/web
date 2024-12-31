@@ -117,17 +117,18 @@ jobs:
   generate-matrix:
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      matrix: ${{ steps.generate.outputs.matrix }}
     steps:
       - name: Generate Matrix
-        id: set-matrix
+        id: generate
         run: |
           echo '{"container": ['$(seq -s, 1 50)']}' > matrix.json
-          echo "::set-output name=matrix::$(cat matrix.json)"
+          echo "matrix=$(cat matrix.json)" >> $GITHUB_OUTPUT
+        shell: bash
 
   test-e2e:
     name: Cypress Run
-    needs: [elixir-deps, npm-deps, npm-e2e-deps]
+    needs: [elixir-deps, npm-deps, npm-e2e-deps, generate-matrix]
     runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
