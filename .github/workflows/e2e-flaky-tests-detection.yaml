@@ -232,15 +232,12 @@ jobs:
           pattern: e2e-junit-reports-*
           merge-multiple: true
       - run: ls -R junit-reports
-      - name: Prepare Analysis
+      - name: Analize
         run: |
           make venv-create
           source .venv/bin/activate
           make install-deps
-        working-directory: hack/flaky_tests_analysis
-      - name: Run Analysis
-        id: analysis 
-        run: make analyze-files-ci
+          make analyze-files-ci
         working-directory: hack/flaky_tests_analysis
       # - name: Run Analysis
       #   id: analysis 
