@@ -133,7 +133,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: 
-        container: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
+        container: ${{ fromJson(needs.generate-matrix.outputs.matrix).container }}
     env:
       MIX_ENV: dev
     steps:
