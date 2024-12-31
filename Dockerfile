@@ -1,8 +1,10 @@
-FROM opensuse/tumbleweed AS elixir-build
+FROM opensuse/leap:15.6 AS elixir-build
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
-RUN zypper -n in make gcc git-core elixir elixir-hex erlang-rebar3
+RUN zypper ar https://download.opensuse.org/repositories/devel:sap:trento:builddeps/15.6 buildeps
+RUN zypper -n --gpg-auto-import-keys ref
+RUN zypper -n in make gcc git-core elixir115 elixir-hex erlang26 erlang-rebar3
 COPY . /build
 WORKDIR /build
 ARG MIX_ENV=prod
@@ -24,10 +26,13 @@ ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 ARG MIX_ENV=prod
 ENV MIX_ENV=$MIX_ENV
+ENV MIX_HOME=/usr/bin
+ENV MIX_REBAR3=/usr/bin/rebar3
+ENV MIX_PATH=/usr/lib/elixir/lib/hex/ebin
 RUN mix phx.digest
 RUN mix release
 
-FROM opensuse/tumbleweed AS trento
+FROM opensuse/leap:15.6 AS trento
 LABEL org.opencontainers.image.source="https://github.com/trento-project/web"
 ARG MIX_ENV=prod
 ENV LANG en_US.UTF-8
