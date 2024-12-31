@@ -10,6 +10,7 @@ env:
   MIX_ENV: test
   NODE_VERSION: "20"
   PYTHON_VERSION: "3.12.3"
+  NUM_CONTAINERS: 2
 
 jobs:
   elixir-deps:
@@ -122,7 +123,7 @@ jobs:
       - name: Generate Matrix
         id: generate
         run: |
-          echo '{"container": ['$(seq -s, 1 2)']}' > matrix.json
+          echo "{\"container\": [$(seq -s, 1 $NUM_CONTAINERS)]}" > matrix.json
           echo "matrix=$(cat matrix.json)" >> $GITHUB_OUTPUT
         shell: bash
 
@@ -241,6 +242,11 @@ jobs:
         id: analysis 
         run: |
           echo "## E2E Flaky Tests Analysis Summary" >> $GITHUB_STEP_SUMMARY
-          make analyze-files-ci | tee -a $GITHUB_STEP_SUMMARY 
+          OUTPUT=$(make analyze-files-ci)
+          if [ -z "$OUTPUT" ]; then
+            echo "No flaky tests were detected during the analysis." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "$OUTPUT" | tee -a $GITHUB_STEP_SUMMARY
+          fi
         working-directory: hack/flaky_tests_analysis
 
