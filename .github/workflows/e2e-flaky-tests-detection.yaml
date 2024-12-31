@@ -113,6 +113,17 @@ jobs:
       - name: Install E2E NPM dependencies
         if: steps.npm-e2e-cache.outputs.cache-hit != 'true'
         run: cd test/e2e && npm install
+  
+  generate-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Generate Matrix
+        id: set-matrix
+        run: |
+          echo '{"container": ['$(seq -s, 1 50)']}' > matrix.json
+          echo "::set-output name=matrix::$(cat matrix.json)"
 
   test-e2e:
     name: Cypress Run
@@ -120,8 +131,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
-      matrix:
-        containers: [1]
+      matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
     env:
       MIX_ENV: dev
     steps:
