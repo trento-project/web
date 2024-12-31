@@ -224,6 +224,6 @@ jobs:
           make venv-create
           source .venv/bin/activate
           make install-deps
-          make analyze-files
+          make analyze-files-ci
         working-directory: hack/flaky_tests_analysis
 
