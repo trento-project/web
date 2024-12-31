@@ -215,7 +215,7 @@ jobs:
       - name: Download JUnit reports artifacts
         uses: actions/download-artifact@v4
         with:
-          path: junit-reports
+          path: /tmp/
           pattern: e2e-junit-reports-*
           merge-multiple: true
-      - run: ls -R junit-reports
+      - run: ls -R /tmp/
