@@ -122,7 +122,7 @@ jobs:
       - name: Generate Matrix
         id: generate
         run: |
-          echo '{"container": ['$(seq -s, 1 100)']}' > matrix.json
+          echo '{"container": ['$(seq -s, 1 2)']}' > matrix.json
           echo "matrix=$(cat matrix.json)" >> $GITHUB_OUTPUT
         shell: bash
 
@@ -132,7 +132,8 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
+      matrix: 
+        container: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
     env:
       MIX_ENV: dev
     steps:
@@ -207,7 +208,7 @@ jobs:
       - name: Upload cypress test junit reports
         uses: actions/upload-artifact@v4
         with:
-          name: e2e-junit-reports-${{ fromJson(needs.generate-matrix.outputs.matrix) }}
+          name: e2e-junit-reports-${{ matrix.container }}
           path: /tmp/*.xml
 
   flaky-tests-analysis:
