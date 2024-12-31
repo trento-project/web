@@ -237,17 +237,16 @@ jobs:
           make venv-create
           source .venv/bin/activate
           make install-deps
-          make analyze-files-ci
+          echo "## Analysis Summary" >> $GITHUB_STEP_SUMMARY  # Add summary heading
+          echo "Output of 'make analyze-files-ci':" >> $GITHUB_STEP_SUMMARY
+          make analyze-files-ci | tee >(tail -n 1 > analysis_output.txt)  # Capture last line
+          if [ -s analysis_output.txt ]; then  # Check if output file has content
+            cat analysis_output.txt >> $GITHUB_STEP_SUMMARY
+          else
+            echo "No output from 'make analyze-files-ci'" >> $GITHUB_STEP_SUMMARY
+          fi
         working-directory: hack/flaky_tests_analysis
-      # - name: Run Analysis
-      #   id: analysis 
-      #   run: |
-      #     echo "## E2E Flaky Tests Analysis Summary" >> $GITHUB_STEP_SUMMARY
-      #     OUTPUT=$(make analyze-files-ci)
-      #     if [ -z "$OUTPUT" ]; then
-      #       echo "No flaky tests were detected during the analysis." >> $GITHUB_STEP_SUMMARY
-      #     else
-      #       echo "$OUTPUT" | tee -a $GITHUB_STEP_SUMMARY
-      #     fi
-      #   working-directory: hack/flaky_tests_analysis
-
+      - name: Delete artifacts
+        uses: geekyeggo/delete-artifact@v2
+        with:
+          name: e2e-junit-reports-*
