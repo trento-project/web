@@ -10,7 +10,7 @@ env:
   MIX_ENV: test
   NODE_VERSION: "20"
   PYTHON_VERSION: "3.12.3"
-  NUM_CONTAINERS: 100
+  NUM_CONTAINERS: 50
 
 jobs:
   elixir-deps:
@@ -204,7 +204,7 @@ jobs:
           curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
           chmod +x /usr/local/bin/docker-compose
       - name: Run makefile e2e-Tests
-        run: make N-TIMES=1 gen-test-data-e2e-ci
+        run: make N-TIMES=2 gen-test-data-e2e-ci
         working-directory: hack/flaky_tests_analysis
       - name: Upload cypress test junit reports
         uses: actions/upload-artifact@v4
