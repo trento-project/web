@@ -1,6 +1,7 @@
 # Parameters for gen-test-data-* targets
 ## Read/write JUNIT files from this path
 PATH-TO-JUNIT-FILES ?= /tmp
+PATH-TO-JUNIT-FILES-CI ?= ../../junit-reports/
 N-TIMES ?= 10
 # RUN_ONLY is the specific file or path to run tests from.
 # Paths must be relative to repository root in case of mix tests. e.g. RUN_ONLY=./test/trento/hosts_test.exs
@@ -49,6 +50,9 @@ gen-test-data-e2e-ci:
 			kill -9 $$(cat ../../mix.pid) ;\
 			rm -rf ../../mix.pid ;\
 		done 
+
+analyze-files-ci:
+	flaky --junit-files=$(PATH-TO-JUNIT-FILES-CI) --grouping-option=runs --window-size=$(WINDOW-SIZE) --window-count=$(WINDOW-COUNT) --top-n=$(TOP-N)		
 
 analyze-files:
 	flaky --junit-files=$(PATH-TO-JUNIT-FILES) --grouping-option=runs --window-size=$(WINDOW-SIZE) --window-count=$(WINDOW-COUNT) --top-n=$(TOP-N)

@@ -215,7 +215,14 @@ jobs:
       - name: Download JUnit reports artifacts
         uses: actions/download-artifact@v4
         with:
-          path: /tmp/
+          path: junit-reports
           pattern: e2e-junit-reports-*
           merge-multiple: true
-      - run: ls -R /tmp/
+      - run: ls -R junit-reports
+      - name: Analyze
+        run: |
+          make venv-create
+          source .venv/bin/activate
+          make install-deps
+          make analyze-files
+
