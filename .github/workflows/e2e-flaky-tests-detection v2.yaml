@@ -10,7 +10,7 @@ env:
   MIX_ENV: test
   NODE_VERSION: "20"
   PYTHON_VERSION: "3.12.3"
-  NUM_CONTAINERS: 1
+  NUM_CONTAINERS: 100
 
 jobs:
   elixir-deps:
@@ -215,7 +215,6 @@ jobs:
           cypress_db_port: 5432
           cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
         with:
-          command: npx cypress run --spec cypress/e2e/users.cy.js
           working-directory: test/e2e
           wait-on-timeout: 30
           config: baseUrl=http://localhost:4000
@@ -244,13 +243,11 @@ jobs:
           path: junit-reports
           pattern: e2e-junit-reports-*
           merge-multiple: true
-      - run: ls -R junit-reports
       - name: Analize
         run: |
           make venv-create
           source .venv/bin/activate
           make install-deps
-          echo "## Analysis Summary" >> $GITHUB_STEP_SUMMARY
           make analyze-files-ci 2>&1 | tail -n +2 >> $GITHUB_STEP_SUMMARY
         working-directory: hack/flaky_tests_analysis
       - name: Delete Artifacts
