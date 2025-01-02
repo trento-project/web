@@ -216,6 +216,7 @@ jobs:
           cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
         with:
           spec: cypress/e2e/users.cy.js
+          publish-summary: false
           working-directory: test/e2e
           wait-on-timeout: 30
           config: baseUrl=http://localhost:4000
