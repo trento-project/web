@@ -207,6 +207,7 @@ jobs:
         run: chmod +x $(whereis photofinish | cut -d" " -f2)
       - name: Cypress run
         uses: cypress-io/github-action@v6
+        continue-on-error: true
         env:
           GENERATE_REPORTS: true
           cypress_video: false
