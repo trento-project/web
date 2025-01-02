@@ -1,15 +1,15 @@
 name: CI
 
 on:
-  # push:
-  #   branches: [main]
-  # pull_request:
-  #   types: [opened, synchronize, labeled]
-  # release:
-  #   types: [published]
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, labeled]
+  release:
+    types: [published]
   workflow_dispatch:
-  # repository_dispatch:
-  #   types: [start-ci, deploy-demo]
+  repository_dispatch:
+    types: [start-ci, deploy-demo]
 
 env:
   MIX_ENV: test

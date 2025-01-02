@@ -1,18 +1,38 @@
 
-name: E2E Flaky Tests Detection
+name: E2E Flaky Tests Analysis
 
 on:
-  pull_request:
-    types: [opened, synchronize, labeled]
+  schedule:
+    - cron: '0 3 * * 1' # Runs every monday at 3:00 AM UTC
   workflow_dispatch:
+    inputs:
+      num_containers:
+        description: "Number of containers to use (Max: 200)"
+        required: false
+        default: 100
 
 env:
   MIX_ENV: test
   NODE_VERSION: "20"
   PYTHON_VERSION: "3.12.3"
-  NUM_CONTAINERS: 3
 
 jobs:
+  calculate_num_containers:
+    name: Logic to set the number of containers
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Validate input and set NUM_CONTAINERS
+        run: |
+          NUM_CONTAINERS=${{ github.event.inputs.num_containers || env.NUM_CONTAINERS }}
+          if [ "$NUM_CONTAINERS" -gt 200 ]; then
+            echo "NUM_CONTAINERS exceeds the maximum limit of 200. Setting it to 200."
+            NUM_CONTAINERS=200
+          fi
+          echo "NUM_CONTAINERS=$NUM_CONTAINERS" >> $GITHUB_ENV
+
+      - name: Use NUM_CONTAINERS
+        run: echo "The number of containers is set to $NUM_CONTAINERS."
+
   elixir-deps:
     name: Elixir ${{ matrix.mix_env }} dependencies
     runs-on: ubuntu-20.04
