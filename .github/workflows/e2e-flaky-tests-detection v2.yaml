@@ -251,7 +251,7 @@ jobs:
           source .venv/bin/activate
           make install-deps
           echo "## Analysis Summary" >> $GITHUB_STEP_SUMMARY  # Add summary heading
-          make analyze-files-ci | tee -a $GITHUB_STEP_SUMMARY
+          flaky --junit-files=../../junit-reports/ --grouping-option=runs --window-size=5 --window-count=100 --top-n=40
         working-directory: hack/flaky_tests_analysis
       - name: Delete Artifacts
         uses: geekyeggo/delete-artifact@v5

@@ -52,7 +52,7 @@ gen-test-data-e2e-ci:
 		done 
 
 analyze-files-ci:
-	@flaky --junit-files=$(PATH-TO-JUNIT-FILES-CI) --grouping-option=runs --window-size=$(WINDOW-SIZE) --window-count=$(WINDOW-COUNT) --top-n=$(TOP-N)		
+	flaky --junit-files=$(PATH-TO-JUNIT-FILES-CI) --grouping-option=runs --window-size=$(WINDOW-SIZE) --window-count=$(WINDOW-COUNT) --top-n=$(TOP-N)		
 
 analyze-files:
 	flaky --junit-files=$(PATH-TO-JUNIT-FILES) --grouping-option=runs --window-size=$(WINDOW-SIZE) --window-count=$(WINDOW-COUNT) --top-n=$(TOP-N)
