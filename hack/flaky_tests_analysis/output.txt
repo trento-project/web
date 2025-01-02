@@ -1,1 +1,0 @@
-flaky --junit-files=/tmp --grouping-option=runs --window-size=5 --window-count=100 --top-n=40
