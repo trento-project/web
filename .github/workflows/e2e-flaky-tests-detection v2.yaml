@@ -208,12 +208,13 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v6
         env:
+          GENERATE_REPORTS: true
           cypress_video: false
           cypress_db_host: postgres
           cypress_db_port: 5432
           cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
         with:
-          command: GENERATE_REPORTS=true npx cypress run --spec cypress/e2e/users.cy.js
+          command: npx cypress run --spec cypress/e2e/users.cy.js
           working-directory: test/e2e
           wait-on-timeout: 30
           config: baseUrl=http://localhost:4000
