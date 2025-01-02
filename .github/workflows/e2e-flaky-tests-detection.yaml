@@ -215,7 +215,8 @@ jobs:
           cypress_db_port: 5432
           cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
         with:
-          publish-summary: false
+          spec: cypress/e2e/users.cy.js
+          # publish-summary: false
           working-directory: test/e2e
           wait-on-timeout: 30
           config: baseUrl=http://localhost:4000
