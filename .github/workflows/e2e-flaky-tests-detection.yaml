@@ -10,7 +10,7 @@ env:
   MIX_ENV: test
   NODE_VERSION: "20"
   PYTHON_VERSION: "3.12.3"
-  NUM_CONTAINERS: 1
+  NUM_CONTAINERS: 3
 
 jobs:
   elixir-deps:
@@ -215,7 +215,7 @@ jobs:
           cypress_db_port: 5432
           cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
         with:
-          spec: cypress/e2e/users.cy.js
+          publish-summary: false
           working-directory: test/e2e
           wait-on-timeout: 30
           config: baseUrl=http://localhost:4000
