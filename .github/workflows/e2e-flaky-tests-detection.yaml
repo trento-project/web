@@ -222,7 +222,6 @@ jobs:
           cypress_db_port: 5432
           cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
         with:
-          command: npx cypress run --spec cypress/e2e/users.cy.js || "Tests failed. Skipping failure annotations."
           publish-summary: false
           working-directory: test/e2e
           wait-on-timeout: 30
@@ -232,6 +231,10 @@ jobs:
         with:
           name: e2e-junit-reports-${{ matrix.container }}
           path: /tmp/*.xml
+      - name: Clear GitHub Actions annotations
+        if: always()
+        run: rm -rf $GITHUB_WORKSPACE/.github/annotations/*
+
 
   flaky-tests-analysis:
     name: Flaky Tests Analysis
