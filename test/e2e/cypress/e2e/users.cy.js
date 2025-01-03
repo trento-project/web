@@ -68,6 +68,11 @@ describe('Users', () => {
   });
 
   describe('Create user', () => {
+    // eslint-disable-next-line mocha/no-exclusive-tests
+    it.only('fake test to force failure', () => {
+      cy.get('h1').should('contain', 'Create User');
+    });
+
     it('should redirect to user creation form', () => {
       cy.contains('button', 'Create User').click();
       cy.get('h1').should('contain', 'Create User');
