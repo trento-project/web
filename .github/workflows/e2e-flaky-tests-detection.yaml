@@ -165,6 +165,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
+      - name: Skip Cypress Annotations
+        run: echo "::remove-matcher owner=cypress::"
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -216,6 +218,7 @@ jobs:
         uses: cypress-io/github-action@v6
         continue-on-error: true
         env:
+          spec: cypress/e2e/users.cy.js
           GENERATE_REPORTS: true
           cypress_video: false
           cypress_db_host: postgres
@@ -231,9 +234,6 @@ jobs:
         with:
           name: e2e-junit-reports-${{ matrix.container }}
           path: /tmp/*.xml
-      - name: Clear GitHub Actions annotations
-        if: always()
-        run: rm -rf $GITHUB_WORKSPACE/.github/annotations/*
 
 
   flaky-tests-analysis:
