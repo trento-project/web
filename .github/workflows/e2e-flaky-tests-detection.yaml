@@ -2,8 +2,6 @@
 name: E2E Flaky Tests Analysis
 
 on:
-  pull_request:
-    types: [opened, synchronize, labeled]
   schedule:
     - cron: '0 3 * * 1' # Runs every monday at 3:00 AM UTC
   workflow_dispatch:
@@ -222,13 +220,10 @@ jobs:
           cypress_db_port: 5432
           cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
         with:
-          spec: cypress/e2e/users.cy.js
           publish-summary: false
           working-directory: test/e2e
           wait-on-timeout: 30
           config: baseUrl=http://localhost:4000
-      - name: Skip Cypress Annotations
-        run: echo "::remove-matcher owner=cypress::"
       - name: Upload cypress test junit reports
         uses: actions/upload-artifact@v4
         with:
