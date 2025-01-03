@@ -218,13 +218,13 @@ jobs:
         uses: cypress-io/github-action@v6
         continue-on-error: true
         env:
-          spec: cypress/e2e/users.cy.js
           GENERATE_REPORTS: true
           cypress_video: false
           cypress_db_host: postgres
           cypress_db_port: 5432
           cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
         with:
+          spec: cypress/e2e/users.cy.js
           publish-summary: false
           working-directory: test/e2e
           wait-on-timeout: 30
