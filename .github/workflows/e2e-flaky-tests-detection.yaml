@@ -2,8 +2,6 @@
 name: E2E Flaky Tests Analysis
 
 on:
-  pull_request:
-    types: [opened, synchronize, labeled]
   schedule:
     - cron: '0 3 * * 1' # Runs every monday at 3:00 AM UTC
   workflow_dispatch:
@@ -12,14 +10,14 @@ on:
         description: "Number of containers to use (Max: 200) (Default: 100)"
         required: false
       spec_pattern:
-        description: "Pattern to match the spec files (Default: **)"
+        description: "Spec files pattern (Default: **/*.cy.js)"
         required: false
 
 env:
   MIX_ENV: test
   NODE_VERSION: "20"
   PYTHON_VERSION: "3.12.3"
-  DEFAULT_NUM_CONTAINERS: 1
+  DEFAULT_NUM_CONTAINERS: 100
 
 jobs:
   elixir-deps:
@@ -148,6 +146,7 @@ jobs:
         container: ${{ fromJson(needs.generate-matrix.outputs.matrix).container }}
     env:
       MIX_ENV: dev
+    timeout-minutes: 120
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.12.1
