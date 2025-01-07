@@ -11,7 +11,7 @@ on:
       num_containers:
         description: "Number of containers to use (Max: 200)"
         required: false
-        default: 2
+        default: 3
 
 env:
   MIX_ENV: test
