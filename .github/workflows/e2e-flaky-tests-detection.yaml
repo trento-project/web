@@ -9,7 +9,7 @@ on:
       num_containers:
         description: "Number of containers to use (Max: 200)"
         required: false
-        default: 100
+        default: 2
 
 env:
   MIX_ENV: test
@@ -210,16 +210,18 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Give executable permissions to photofinish
         run: chmod +x $(whereis photofinish | cut -d" " -f2)
+      - name: Set ENV_TS to get current Timestamp for JUnit reports
+        run: echo "ENV_TS=$(date +%F_%T | sed 's/:/-/g')" >> $GITHUB_ENV
       - name: Cypress run
         uses: cypress-io/github-action@v6
         continue-on-error: true
         env:
-          GENERATE_REPORTS: true
           cypress_video: false
           cypress_db_host: postgres
           cypress_db_port: 5432
           cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
         with:
+          command: npx cypress run --reporter junit --reporter-options "mochaFile=/tmp/trento-e2e-junit-[hash]-${{ env.ENV_TS }}.xml --spec cypress/e2e/users.cy.js"
           publish-summary: false
           working-directory: test/e2e
           wait-on-timeout: 30

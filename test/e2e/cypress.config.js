@@ -1,8 +1,5 @@
 const { defineConfig } = require('cypress');
 
-const generateTimestamp = () =>
-  new Date().toISOString().replace(/[:.]/g, '-').replace('T', '_');
-
 module.exports = defineConfig({
   viewportWidth: 1366,
   viewportHeight: 768,
@@ -29,12 +26,4 @@ module.exports = defineConfig({
     testIsolation: false,
     baseUrl: 'http://localhost:4000',
   },
-  reporter:
-    process.env.GENERATE_REPORTS === 'true' ? 'mocha-junit-reporter' : 'spec',
-  reporterOptions:
-    process.env.GENERATE_REPORTS === 'true'
-      ? {
-          mochaFile: `/tmp/trento-e2e-junit-[hash]-${generateTimestamp()}.xml`,
-        }
-      : {},
 });
