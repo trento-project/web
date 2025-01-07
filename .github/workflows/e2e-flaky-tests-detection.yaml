@@ -223,7 +223,7 @@ jobs:
           cypress_db_port: 5432
           cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
         with:
-          command: npx cypress run --reporter junit --reporter-options "mochaFile=/tmp/trento-e2e-junit-[hash]-${{ env.ENV_TS }}.xml" --spec cypress/e2e/users.cy.js
+          command: npx cypress run --reporter junit --reporter-options mochaFile=/tmp/trento-e2e-junit-[hash]-${{ env.ENV_TS }}.xml --spec cypress/e2e/users.cy.js
           publish-summary: false
           working-directory: test/e2e
           wait-on-timeout: 30
