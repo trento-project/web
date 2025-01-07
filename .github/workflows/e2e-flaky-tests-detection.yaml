@@ -11,7 +11,7 @@ on:
       num_containers:
         description: "Number of containers to use (Max: 200)"
         required: false
-        default: 3
+        default: 4
 
 env:
   MIX_ENV: test
@@ -127,6 +127,8 @@ jobs:
     outputs:
       matrix: ${{ steps.generate.outputs.matrix }}
     steps:
+      - name: Display the number of containers
+        run: echo "NUM_CONTAINERS is $NUM_CONTAINERS"
       - name: Generate Matrix
         id: generate
         run: |
