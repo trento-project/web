@@ -17,7 +17,7 @@ env:
   MIX_ENV: test
   NODE_VERSION: "20"
   PYTHON_VERSION: "3.12.3"
-  NUM_CONTAINERS: ${{ github.event.inputs.num_containers || 1 }}
+  NUM_CONTAINERS: ${{ github.event.inputs.num_containers }}
 
 jobs:
   elixir-deps:
