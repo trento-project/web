@@ -9,14 +9,14 @@ on:
   workflow_dispatch:
     inputs:
       num_containers:
-        description: "Number of containers to use (Max: 200)"
+        description: "Number of containers to use (Max: 200) (Default: 100)"
         required: false
-        default: 100
 
 env:
   MIX_ENV: test
   NODE_VERSION: "20"
   PYTHON_VERSION: "3.12.3"
+  DEFAULT_NUM_CONTAINERS: 4
 
 jobs:
   elixir-deps:
@@ -127,9 +127,7 @@ jobs:
       matrix: ${{ steps.generate.outputs.matrix }}
     steps:
       - name: Set environment variable for NUM_CONTAINERS
-        run: echo "NUM_CONTAINERS=${{ github.event.inputs.num_containers || 4 }}" >> $GITHUB_ENV
-      - name: Display the number of containers
-        run: echo "NUM_CONTAINERS is $NUM_CONTAINERS"
+        run: echo "NUM_CONTAINERS=${{ github.event.inputs.num_containers || env.DEFAULT_NUM_CONTAINERS }}" >> $GITHUB_ENV
       - name: Generate Matrix
         id: generate
         run: |
