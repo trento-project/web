@@ -250,7 +250,7 @@ jobs:
           path: junit-reports
           pattern: e2e-junit-reports-*
           merge-multiple: true
-      - name: Analize
+      - name: Analyze
         run: |
           make venv-create
           source .venv/bin/activate
