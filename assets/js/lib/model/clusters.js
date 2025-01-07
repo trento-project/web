@@ -7,7 +7,7 @@ export const ASCS_ERS = 'ascs_ers';
 export const COST_OPT_SCENARIO = 'cost_optimized';
 export const PERFORMANCE_SCENARIO = 'performance_optimized';
 
-// Hana scale up  with scenarios
+// Hana scale up  with scenario
 export const HANA_SCALE_UP_PERF_OPT = `${HANA_SCALE_UP}-${PERFORMANCE_SCENARIO}`;
 export const HANA_SCALE_UP_COST_OPT = `${HANA_SCALE_UP}-${COST_OPT_SCENARIO}`;
 

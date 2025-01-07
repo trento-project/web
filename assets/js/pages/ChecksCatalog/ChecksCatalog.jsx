@@ -111,11 +111,10 @@ function ChecksCatalog({
   };
 
   const onTargetTypeChange = (targetType) => {
+    setSelectedHanaScaleUpScenario(OPTION_ALL);
     if (targetType !== TARGET_CLUSTER) {
       setSelectedClusterType(OPTION_ALL);
-      setSelectedHanaScaleUpScenario(OPTION_ALL);
     }
-    setSelectedHanaScaleUpScenario(OPTION_ALL);
     setSelectedTargetType(targetType);
   };
 
