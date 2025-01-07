@@ -4,19 +4,20 @@ name: E2E Flaky Tests Analysis
 on:
   schedule:
     - cron: '0 3 * * 1' # Runs every monday at 3:00 AM UTC
-  pull_request:
-    types: [opened, synchronize, labeled]
   workflow_dispatch:
     inputs:
       num_containers:
         description: "Number of containers to use (Max: 200) (Default: 100)"
+        required: false
+      spec_pattern:
+        description: "Pattern to match the spec files (Default: **)"
         required: false
 
 env:
   MIX_ENV: test
   NODE_VERSION: "20"
   PYTHON_VERSION: "3.12.3"
-  DEFAULT_NUM_CONTAINERS: 4
+  DEFAULT_NUM_CONTAINERS: 1
 
 jobs:
   elixir-deps:
@@ -224,7 +225,7 @@ jobs:
           cypress_db_port: 5432
           cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
         with:
-          command: npx cypress run --reporter junit --reporter-options mochaFile=/tmp/trento-e2e-junit-[hash]-${{ env.ENV_TS }}.xml --spec cypress/e2e/users.cy.js
+          command: npx cypress run --reporter junit --reporter-options mochaFile=/tmp/trento-e2e-junit-[hash]-${{ env.ENV_TS }}.xml --spec ${{ github.event.inputs.spec_pattern || "**" }}
           publish-summary: false
           working-directory: test/e2e
           wait-on-timeout: 30
