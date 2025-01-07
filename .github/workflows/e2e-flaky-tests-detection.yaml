@@ -11,13 +11,12 @@ on:
       num_containers:
         description: "Number of containers to use (Max: 200)"
         required: false
-        default: 4
+        default: 100
 
 env:
   MIX_ENV: test
   NODE_VERSION: "20"
   PYTHON_VERSION: "3.12.3"
-  NUM_CONTAINERS: ${{ github.event.inputs.num_containers }}
 
 jobs:
   elixir-deps:
@@ -127,6 +126,8 @@ jobs:
     outputs:
       matrix: ${{ steps.generate.outputs.matrix }}
     steps:
+      - name: Set environment variable for NUM_CONTAINERS
+        run: echo "NUM_CONTAINERS=${{ github.event.inputs.num_containers || 4 }}" >> $GITHUB_ENV
       - name: Display the number of containers
         run: echo "NUM_CONTAINERS is $NUM_CONTAINERS"
       - name: Generate Matrix
