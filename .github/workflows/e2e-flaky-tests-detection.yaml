@@ -1,0 +1,270 @@
+
+name: E2E Flaky Tests Analysis
+
+on:
+  schedule:
+    - cron: '0 3 * * 1' # Runs every monday at 3:00 AM UTC
+  workflow_dispatch:
+    inputs:
+      num_containers:
+        description: "Number of containers to use (Max: 200) (Default: 100)"
+        required: false
+      spec_pattern:
+        description: "Spec files pattern (Default: **/*.cy.js)"
+        required: false
+
+env:
+  MIX_ENV: test
+  NODE_VERSION: "20"
+  PYTHON_VERSION: "3.12.3"
+  DEFAULT_NUM_CONTAINERS: 100
+
+jobs:
+  elixir-deps:
+    name: Elixir ${{ matrix.mix_env }} dependencies
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        include:
+          - mix_env: dev
+          - mix_env: test
+    env:
+      MIX_ENV: ${{ matrix.mix_env }}
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.12.1
+        with:
+          access_token: ${{ github.token }}
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup
+        id: setup-elixir
+        uses: erlef/setup-beam@v1
+        with:
+          version-file: .tool-versions
+          version-type: strict
+        env:
+          ImageOS: ubuntu20
+      - name: Retrieve Cached Dependencies
+        uses: actions/cache@v4
+        id: mix-cache
+        with:
+          path: |
+            deps
+            _build/${{ matrix.mix_env }}
+            priv/plts
+          key: ${{ runner.os }}-${{ steps.setup-elixir.outputs.otp-version }}-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}
+      - name: Install Dependencies
+        if: steps.mix-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p priv/plts
+          mix local.rebar --force
+          mix local.hex --force
+          mix deps.get
+          mix deps.compile --warnings-as-errors
+          mix dialyzer --plt
+
+  npm-deps:
+    name: Npm dependencies
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.12.1
+        with:
+          access_token: ${{ github.token }}
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Retrieve Cached Dependencies
+        uses: actions/cache@v4
+        id: npm-cache
+        with:
+          path: |
+            assets/node_modules
+          key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Install NPM dependencies
+        if: steps.npm-cache.outputs.cache-hit != 'true'
+        run: cd assets && npm install
+
+
+
+  npm-e2e-deps:
+    name: Npm E2E dependencies
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.12.1
+        with:
+          access_token: ${{ github.token }}
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Retrieve Cached Dependencies
+        uses: actions/cache@v4
+        id: npm-e2e-cache
+        with:
+          path: |
+            test/e2e/node_modules
+          key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Install E2E NPM dependencies
+        if: steps.npm-e2e-cache.outputs.cache-hit != 'true'
+        run: cd test/e2e && npm install
+  
+  generate-matrix:
+    runs-on: ubuntu-20.04
+    outputs:
+      matrix: ${{ steps.generate.outputs.matrix }}
+    steps:
+      - name: Set environment variable for NUM_CONTAINERS
+        run: echo "NUM_CONTAINERS=${{ github.event.inputs.num_containers || env.DEFAULT_NUM_CONTAINERS }}" >> $GITHUB_ENV
+      - name: Generate Matrix
+        id: generate
+        run: |
+          echo "{\"container\": [$(seq -s, 1 $NUM_CONTAINERS)]}" > matrix.json
+          echo "matrix=$(cat matrix.json)" >> $GITHUB_OUTPUT
+        shell: bash
+
+  test-e2e:
+    name: Cypress Run
+    needs: [elixir-deps, npm-deps, npm-e2e-deps, generate-matrix]
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+      matrix: 
+        container: ${{ fromJson(needs.generate-matrix.outputs.matrix).container }}
+    env:
+      MIX_ENV: dev
+    timeout-minutes: 120
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.12.1
+        with:
+          access_token: ${{ github.token }}
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup
+        id: setup-elixir
+        uses: erlef/setup-beam@v1
+        with:
+          version-file: .tool-versions
+          version-type: strict
+        env:
+          ImageOS: ubuntu20
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Retrieve Cached Dependencies
+        uses: actions/cache@v4
+        id: mix-cache
+        with:
+          path: |
+            deps
+            _build/dev
+            priv/plts
+          key: ${{ runner.os }}-${{ steps.setup-elixir.outputs.otp-version }}-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}
+      - name: Retrieve NPM Cached Dependencies
+        uses: actions/cache@v4
+        id: npm-cache
+        with:
+          path: |
+            assets/node_modules
+          key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
+
+      - name: Retrieve E2E NPM Cached Dependencies
+        uses: actions/cache@v4
+        id: npm-e2e-cache
+        with:
+          path: |
+            test/e2e/node_modules
+          key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
+      - name: "Docker compose dependencies"
+        uses: isbang/compose-action@v2.0.2
+        with:
+          compose-file: "./docker-compose.yaml"
+          down-flags: "--volumes"
+      - name: Mix setup
+        run: mix setup
+      - name: Run trento detached
+        run: mix phx.server &
+      - name: Install photofinish
+        uses: jaxxstorm/action-install-gh-release@v1.14.0
+        with:
+          repo: trento-project/photofinish
+          tag: v1.4.1
+          cache: enable
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Give executable permissions to photofinish
+        run: chmod +x $(whereis photofinish | cut -d" " -f2)
+      - name: Set ENV_TS to get current Timestamp for JUnit reports
+        run: echo "ENV_TS=$(date +%F_%T | sed 's/:/-/g')" >> $GITHUB_ENV
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
+        continue-on-error: true
+        env:
+          cypress_video: false
+          cypress_db_host: postgres
+          cypress_db_port: 5432
+          cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
+        with:
+          command: npx cypress run --reporter junit --reporter-options mochaFile=/tmp/trento-e2e-junit-[hash]-${{ env.ENV_TS }}.xml --spec ${{ github.event.inputs.spec_pattern || '**/*.cy.js' }}
+          publish-summary: false
+          working-directory: test/e2e
+          wait-on-timeout: 30
+          config: baseUrl=http://localhost:4000
+      - name: Upload cypress test junit reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-junit-reports-${{ matrix.container }}
+          path: /tmp/*.xml
+
+
+  flaky-tests-analysis:
+    name: Flaky Tests Analysis
+    needs: test-e2e
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.12.1
+        with:
+          access_token: ${{ github.token }}
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0    
+      - name: Download JUnit reports artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: junit-reports
+          pattern: e2e-junit-reports-*
+          merge-multiple: true
+      - name: Analyze
+        run: |
+          make venv-create
+          source .venv/bin/activate
+          make install-deps
+          make PATH-TO-JUNIT-FILES=../../junit-reports analyze-files 2>&1 | tail -n +2 >> $GITHUB_STEP_SUMMARY
+        working-directory: hack/flaky_tests_analysis
+      - name: Delete Artifacts
+        uses: geekyeggo/delete-artifact@v5
+        with:
+          name: e2e-junit-reports-*
