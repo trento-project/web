@@ -2,6 +2,9 @@ import { TOTP } from 'totp-generator';
 
 import { userFactory } from '@lib/test-utils/factories/users';
 
+import UsersPage from '../pageObject/users-po.js';
+import CreateUserPage from '../pageObject/create-user-po.js';
+
 const PASSWORD = 'password';
 const USER = userFactory.build({ username: 'e2etest' });
 
@@ -68,75 +71,73 @@ describe('Users', () => {
   });
 
   describe('Create user', () => {
+    let usersPage;
+    let createUserPage;
+
+    beforeEach(() => {
+      usersPage = new UsersPage();
+      createUserPage = new CreateUserPage();
+      usersPage.deleteAllUsers();
+      usersPage.visit();
+      usersPage.validateUrl();
+      usersPage.clickCreateUserButton();
+    });
+
     it('should redirect to user creation form', () => {
-      cy.contains('button', 'Create User').click();
-      cy.get('h1').should('contain', 'Create User');
+      createUserPage.pageTitleIsCorrectlyDisplayed('Create User');
     });
 
     it('should fail if required fields are missing', () => {
-      cy.contains('button', 'Create').click();
-      cy.get('p:contains("Required field")').should('have.length', 5);
+      createUserPage.clickSubmitUserCreationButton();
+      createUserPage.validateRequiredFieldsErrors();
     });
 
     it('should fail if email value is wrong', () => {
-      cy.get('input').each(($el) => cy.wrap($el).clear());
-
-      cy.get('input[placeholder="Enter full name"]').type(USER.fullname);
-      cy.get('input[placeholder="Enter email address"]').type('address');
-      cy.get('input[placeholder="Enter username"]').type(USER.username);
-
-      cy.contains('button', 'Generate Password').click();
-
-      cy.contains('button', 'Create').click();
-      cy.get('p:contains("Is not a valid email")').should('have.length', 1);
+      createUserPage.typeUserFullName();
+      createUserPage.typeUserEmail('invalid_email');
+      createUserPage.typeUserName();
+      createUserPage.clickGeneratePassword();
+      createUserPage.clickSubmitUserCreationButton();
+      createUserPage.invalidEmailErrorIsDisplayed();
     });
 
     it('should fail if password is weak', () => {
-      cy.get('input').each(($el) => cy.wrap($el).clear());
-
-      cy.get('input[placeholder="Enter full name"]').type(USER.fullname);
-      cy.get('input[placeholder="Enter email address"]').type(USER.email);
-      cy.get('input[placeholder="Enter username"]').type(USER.username);
-      cy.get('input[placeholder="Enter password"]').type('weak');
-      cy.get('input[placeholder="Re-enter password"]').type('weak');
-
-      cy.contains('button', 'Create').click();
-      cy.get('p:contains("Should be at least 8 character(s)")').should(
-        'have.length',
-        1
-      );
+      createUserPage.typeUserFullName();
+      createUserPage.typeUserEmail();
+      createUserPage.typeUserName();
+      createUserPage.typeUserPassword('weakpwd');
+      createUserPage.typeUserPasswordConfirmation('weakpwd');
+      createUserPage.clickSubmitUserCreationButton();
+      createUserPage.weakPasswordErrorIsDisplayed();
     });
 
     it('should create user properly', () => {
-      cy.get('input').each(($el) => cy.wrap($el).clear());
+      createUserPage.typeUserFullName();
+      createUserPage.typeUserEmail();
+      createUserPage.typeUserName();
+      createUserPage.typeUserPassword();
+      createUserPage.typeUserPasswordConfirmation();
+      createUserPage.clickSubmitUserCreationButton();
+      createUserPage.userCreatedSuccessfullyToasterIsDisplayed();
 
-      cy.get('input[placeholder="Enter full name"]').type(USER.fullname);
-      cy.get('input[placeholder="Enter email address"]').type(USER.email);
-      cy.get('input[placeholder="Enter username"]').type(USER.username);
-      cy.get('input[placeholder="Enter password"]').type(PASSWORD);
-      cy.get('input[placeholder="Re-enter password"]').type(PASSWORD);
-
-      cy.contains('button', 'Create').click();
-      cy.get('div').contains('User created successfully');
-
-      cy.get('h1').should('contain', 'Users');
-      cy.get('a').contains(USER.username);
-      cy.get('p').contains(USER.fullname);
+      usersPage.pageTitleIsCorrectlyDisplayed('Users');
+      usersPage.newUserIsDisplayed(
+        createUserPage.USER.username,
+        createUserPage.USER.email
+      );
     });
 
     it('should not allow creating the user with the same data', () => {
-      cy.contains('button', 'Create User').click();
-      cy.get('h1').should('contain', 'Create User');
-
-      cy.get('input[placeholder="Enter full name"]').type(USER.fullname);
-      cy.get('input[placeholder="Enter email address"]').type(USER.email);
-      cy.get('input[placeholder="Enter username"]').type(USER.username);
-
-      cy.contains('button', 'Generate Password').click();
-
-      cy.contains('button', 'Create').click();
-      cy.get('p').contains('Has already been taken');
-      cy.contains('button', 'Cancel').click();
+      createUserPage.apiCreateUser();
+      createUserPage.typeUserFullName();
+      createUserPage.typeUserEmail();
+      createUserPage.typeUserName();
+      createUserPage.typeUserPassword();
+      createUserPage.typeUserPasswordConfirmation();
+      createUserPage.clickSubmitUserCreationButton();
+      createUserPage.usernameAlreadyTakenErrorIsDisplayed();
+      createUserPage.clickCancelUserCreation();
+      usersPage.pageTitleIsCorrectlyDisplayed('Users');
     });
   });
 
