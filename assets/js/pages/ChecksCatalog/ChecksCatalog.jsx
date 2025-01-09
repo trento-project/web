@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
-import { get, groupBy } from 'lodash';
+import { get, groupBy, trim } from 'lodash';
 
 import {
   providers,
@@ -34,27 +34,21 @@ const providerOptionRenderer = createOptionRenderer(
 
 const clusterTypeRenderer = createOptionRenderer(
   'All cluster types',
-  ({ type, hanaScenario }, disabled) => {
-    const clusterTypeLabel = [
-      getClusterTypeLabel(type),
-      getClusterScenarioLabel(hanaScenario),
-    ]
-      .filter((label) => label !== null && label !== undefined && label !== '')
-      .join(' ');
-    return (
-      <>
-        {clusterTypeLabel}
-        {disabled && (
-          <Pill
-            size="xs"
-            className="absolute right-2 bg-green-100 text-green-800"
-          >
-            Coming Soon
-          </Pill>
-        )}
-      </>
-    );
-  }
+  ({ type, hanaScenario }, disabled) => (
+    <>
+      {trim(
+        `${getClusterTypeLabel(type)} ${getClusterScenarioLabel(hanaScenario)}`
+      )}
+      {disabled && (
+        <Pill
+          size="xs"
+          className="absolute right-2 bg-green-100 text-green-800"
+        >
+          Coming Soon
+        </Pill>
+      )}
+    </>
+  )
 );
 
 const targetTypeOptionRenderer = createOptionRenderer(
