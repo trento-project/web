@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
-import { groupBy } from 'lodash';
+import { get, groupBy } from 'lodash';
 
 import {
   providers,
@@ -9,15 +9,15 @@ import {
   TARGET_CLUSTER,
 } from '@lib/model';
 import {
-  clusterTypesCatalog,
-  getClusterTypeLabelChecksCatalog,
-  COST_OPT_SCENARIO,
-  HANA_SCALE_UP,
-  PERFORMANCE_SCENARIO,
-  HANA_SCALE_UP_PERF_OPT,
-  HANA_SCALE_UP_COST_OPT,
+  clusterCatalogFilters,
+  getClusterTypeLabel,
+  getClusterScenarioLabel,
 } from '@lib/model/clusters';
-import { hasChecksForClusterType, hasChecksForTarget } from '@lib/model/checks';
+import {
+  hasChecksForClusterType,
+  hasChecksForTarget,
+  hasChecksForHanaScenario,
+} from '@lib/model/checks';
 import Accordion from '@common/Accordion';
 import PageHeader from '@common/PageHeader';
 import Pill from '@common/Pill';
@@ -32,31 +32,29 @@ const providerOptionRenderer = createOptionRenderer(
   (provider) => <ProviderLabel provider={provider} />
 );
 
-const mapClusterType = (type) => {
-  switch (type) {
-    case HANA_SCALE_UP_PERF_OPT:
-    case HANA_SCALE_UP_COST_OPT:
-      return HANA_SCALE_UP;
-    default:
-      return type;
-  }
-};
-
 const clusterTypeRenderer = createOptionRenderer(
   'All cluster types',
-  (clusterType, disabled) => (
-    <>
-      {getClusterTypeLabelChecksCatalog(clusterType)}
-      {disabled && (
-        <Pill
-          size="xs"
-          className="absolute right-2 bg-green-100 text-green-800"
-        >
-          Coming Soon
-        </Pill>
-      )}
-    </>
-  )
+  ({ type, hanaScenario }, disabled) => {
+    const clusterTypeLabel = [
+      getClusterTypeLabel(type),
+      getClusterScenarioLabel(hanaScenario),
+    ]
+      .filter((label) => label !== null && label !== undefined && label !== '')
+      .join(' ');
+    return (
+      <>
+        {clusterTypeLabel}
+        {disabled && (
+          <Pill
+            size="xs"
+            className="absolute right-2 bg-green-100 text-green-800"
+          >
+            Coming Soon
+          </Pill>
+        )}
+      </>
+    );
+  }
 );
 
 const targetTypeOptionRenderer = createOptionRenderer(
@@ -92,26 +90,8 @@ function ChecksCatalog({
   const [selectedProvider, setProviderSelected] = useState(OPTION_ALL);
   const [selectedTargetType, setSelectedTargetType] = useState(OPTION_ALL);
   const [selectedClusterType, setSelectedClusterType] = useState(OPTION_ALL);
-  const [selectedHanaScaleUpScenario, setSelectedHanaScaleUpScenario] =
-    useState(OPTION_ALL);
-
-  const onClusterTypeChange = (type) => {
-    switch (type) {
-      case HANA_SCALE_UP_PERF_OPT:
-        setSelectedHanaScaleUpScenario(PERFORMANCE_SCENARIO);
-        break;
-      case HANA_SCALE_UP_COST_OPT:
-        setSelectedHanaScaleUpScenario(COST_OPT_SCENARIO);
-        break;
-      default:
-        setSelectedHanaScaleUpScenario(OPTION_ALL);
-    }
-
-    setSelectedClusterType(type);
-  };
 
   const onTargetTypeChange = (targetType) => {
-    setSelectedHanaScaleUpScenario(OPTION_ALL);
     if (targetType !== TARGET_CLUSTER) {
       setSelectedClusterType(OPTION_ALL);
     }
@@ -131,16 +111,16 @@ function ChecksCatalog({
     },
     {
       optionsName: 'cluster-types',
-      options: clusterTypesCatalog.map((clusterType) => ({
-        value: clusterType,
-        disabled: !hasChecksForClusterType(
-          completeCatalog,
-          mapClusterType(clusterType)
-        ),
+      options: clusterCatalogFilters.map(({ type, hanaScenario }) => ({
+        value: { type, hanaScenario },
+        key: `${type}_${hanaScenario}`,
+        disabled:
+          !hasChecksForClusterType(completeCatalog, type) ||
+          !hasChecksForHanaScenario(completeCatalog, hanaScenario),
       })),
       renderOption: clusterTypeRenderer,
       value: selectedClusterType,
-      onChange: onClusterTypeChange,
+      onChange: setSelectedClusterType,
       disabled: selectedTargetType !== TARGET_CLUSTER,
     },
     {
@@ -156,21 +136,19 @@ function ChecksCatalog({
     updateCatalog({
       selectedProvider,
       selectedTargetType,
-      selectedClusterType,
-      selectedHanaScaleUpScenario,
+      selectedClusterType: get(selectedClusterType, 'type', OPTION_ALL),
+      selectedHanaScenario: get(
+        selectedClusterType,
+        'hanaScenario',
+        OPTION_ALL
+      ),
     });
-  }, [
-    selectedProvider,
-    selectedTargetType,
-    selectedClusterType,
-    selectedHanaScaleUpScenario,
-  ]);
+  }, [selectedProvider, selectedTargetType, selectedClusterType]);
 
   const clearFilters = () => {
     setProviderSelected(OPTION_ALL);
     setSelectedTargetType(OPTION_ALL);
     setSelectedClusterType(OPTION_ALL);
-    setSelectedHanaScaleUpScenario(OPTION_ALL);
   };
 
   return (
