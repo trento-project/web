@@ -22,10 +22,14 @@ function Select({
   optionsListPosition = '',
   selectedItemPrefix = null,
 }) {
-  const enrichedOptions = options.map((option) => ({
-    value: get(option, 'value', option),
-    disabled: get(option, 'disabled', false),
-  }));
+  const enrichedOptions = options.map((option) => {
+    const optionValue = get(option, 'value', option);
+    return {
+      value: optionValue,
+      disabled: get(option, 'disabled', false),
+      key: get(option, 'key', optionValue),
+    };
+  });
   const selectedOption = find(enrichedOptions, { value });
   const dropdownSelector = `${optionsName.replace(
     /\s+/g,
@@ -71,7 +75,7 @@ function Select({
           >
             {enrichedOptions.map((option) => (
               <Listbox.Option
-                key={option.value}
+                key={option.key}
                 className={({ active, disabled: optionDisabled }) =>
                   classNames('cursor-default select-none relative py-2 px-3', {
                     'text-gray-400': optionDisabled,

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
-import { groupBy } from 'lodash';
+import { get, groupBy, trim } from 'lodash';
 
 import {
   providers,
@@ -8,8 +8,16 @@ import {
   TARGET_HOST,
   TARGET_CLUSTER,
 } from '@lib/model';
-import { clusterTypes, getClusterTypeLabel } from '@lib/model/clusters';
-import { hasChecksForClusterType, hasChecksForTarget } from '@lib/model/checks';
+import {
+  clusterCatalogFilters,
+  getClusterTypeLabel,
+  getClusterScenarioLabel,
+} from '@lib/model/clusters';
+import {
+  hasChecksForClusterType,
+  hasChecksForTarget,
+  hasChecksForHanaScenario,
+} from '@lib/model/checks';
 import Accordion from '@common/Accordion';
 import PageHeader from '@common/PageHeader';
 import Pill from '@common/Pill';
@@ -26,9 +34,11 @@ const providerOptionRenderer = createOptionRenderer(
 
 const clusterTypeRenderer = createOptionRenderer(
   'All cluster types',
-  (clusterType, disabled) => (
+  ({ type, hanaScenario }, disabled) => (
     <>
-      {getClusterTypeLabel(clusterType)}
+      {trim(
+        `${getClusterTypeLabel(type)} ${getClusterScenarioLabel(hanaScenario)}`
+      )}
       {disabled && (
         <Pill
           size="xs"
@@ -95,9 +105,12 @@ function ChecksCatalog({
     },
     {
       optionsName: 'cluster-types',
-      options: clusterTypes.map((clusterType) => ({
-        value: clusterType,
-        disabled: !hasChecksForClusterType(completeCatalog, clusterType),
+      options: clusterCatalogFilters.map(({ type, hanaScenario }) => ({
+        value: { type, hanaScenario },
+        key: `${type}_${hanaScenario}`,
+        disabled:
+          !hasChecksForClusterType(completeCatalog, type) ||
+          !hasChecksForHanaScenario(completeCatalog, hanaScenario),
       })),
       renderOption: clusterTypeRenderer,
       value: selectedClusterType,
@@ -117,7 +130,12 @@ function ChecksCatalog({
     updateCatalog({
       selectedProvider,
       selectedTargetType,
-      selectedClusterType,
+      selectedClusterType: get(selectedClusterType, 'type', OPTION_ALL),
+      selectedHanaScenario: get(
+        selectedClusterType,
+        'hanaScenario',
+        OPTION_ALL
+      ),
     });
   }, [selectedProvider, selectedTargetType, selectedClusterType]);
 
