@@ -3,7 +3,6 @@ import { TOTP } from 'totp-generator';
 import { userFactory } from '@lib/test-utils/factories/users';
 
 import UsersPage from '../pageObject/users-po.js';
-import CreateUserPage from '../pageObject/create-user-po.js';
 
 const PASSWORD = 'password';
 const USER = userFactory.build({ username: 'e2etest' });
@@ -72,11 +71,9 @@ describe('Users', () => {
 
   describe('Create user', () => {
     let usersPage;
-    let createUserPage;
 
     beforeEach(() => {
       usersPage = new UsersPage();
-      createUserPage = new CreateUserPage();
       usersPage.deleteAllUsers();
       usersPage.visit();
       usersPage.validateUrl();
@@ -84,59 +81,59 @@ describe('Users', () => {
     });
 
     it('should redirect to user creation form', () => {
-      createUserPage.pageTitleIsCorrectlyDisplayed('Create User');
+      usersPage.pageTitleIsCorrectlyDisplayed('Create User');
     });
 
     it('should fail if required fields are missing', () => {
-      createUserPage.clickSubmitUserCreationButton();
-      createUserPage.validateRequiredFieldsErrors();
+      usersPage.clickSubmitUserCreationButton();
+      usersPage.validateRequiredFieldsErrors();
     });
 
     it('should fail if email value is wrong', () => {
-      createUserPage.typeUserFullName();
-      createUserPage.typeUserEmail('invalid_email');
-      createUserPage.typeUserName();
-      createUserPage.clickGeneratePassword();
-      createUserPage.clickSubmitUserCreationButton();
-      createUserPage.invalidEmailErrorIsDisplayed();
+      usersPage.typeUserFullName();
+      usersPage.typeUserEmail('invalid_email');
+      usersPage.typeUserName();
+      usersPage.clickGeneratePassword();
+      usersPage.clickSubmitUserCreationButton();
+      usersPage.invalidEmailErrorIsDisplayed();
     });
 
     it('should fail if password is weak', () => {
-      createUserPage.typeUserFullName();
-      createUserPage.typeUserEmail();
-      createUserPage.typeUserName();
-      createUserPage.typeUserPassword('weakpwd');
-      createUserPage.typeUserPasswordConfirmation('weakpwd');
-      createUserPage.clickSubmitUserCreationButton();
-      createUserPage.weakPasswordErrorIsDisplayed();
+      usersPage.typeUserFullName();
+      usersPage.typeUserEmail();
+      usersPage.typeUserName();
+      usersPage.typeUserPassword('weakpwd');
+      usersPage.typeUserPasswordConfirmation('weakpwd');
+      usersPage.clickSubmitUserCreationButton();
+      usersPage.weakPasswordErrorIsDisplayed();
     });
 
     it('should create user properly', () => {
-      createUserPage.typeUserFullName();
-      createUserPage.typeUserEmail();
-      createUserPage.typeUserName();
-      createUserPage.typeUserPassword();
-      createUserPage.typeUserPasswordConfirmation();
-      createUserPage.clickSubmitUserCreationButton();
-      createUserPage.userCreatedSuccessfullyToasterIsDisplayed();
+      usersPage.typeUserFullName();
+      usersPage.typeUserEmail();
+      usersPage.typeUserName();
+      usersPage.typeUserPassword();
+      usersPage.typeUserPasswordConfirmation();
+      usersPage.clickSubmitUserCreationButton();
+      usersPage.userCreatedSuccessfullyToasterIsDisplayed();
 
       usersPage.pageTitleIsCorrectlyDisplayed('Users');
       usersPage.newUserIsDisplayed(
-        createUserPage.USER.username,
-        createUserPage.USER.email
+        usersPage.USER.username,
+        usersPage.USER.email
       );
     });
 
     it('should not allow creating the user with the same data', () => {
-      createUserPage.apiCreateUser();
-      createUserPage.typeUserFullName();
-      createUserPage.typeUserEmail();
-      createUserPage.typeUserName();
-      createUserPage.typeUserPassword();
-      createUserPage.typeUserPasswordConfirmation();
-      createUserPage.clickSubmitUserCreationButton();
-      createUserPage.usernameAlreadyTakenErrorIsDisplayed();
-      createUserPage.clickCancelUserCreation();
+      usersPage.apiCreateUser();
+      usersPage.typeUserFullName();
+      usersPage.typeUserEmail();
+      usersPage.typeUserName();
+      usersPage.typeUserPassword();
+      usersPage.typeUserPasswordConfirmation();
+      usersPage.clickSubmitUserCreationButton();
+      usersPage.usernameAlreadyTakenErrorIsDisplayed();
+      usersPage.clickCancelUserCreation();
       usersPage.pageTitleIsCorrectlyDisplayed('Users');
     });
   });
