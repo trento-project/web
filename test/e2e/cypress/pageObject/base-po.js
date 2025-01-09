@@ -9,6 +9,10 @@ export default class BasePage {
     cy.visit(url);
   }
 
+  refresh() {
+    return cy.reload();
+  }
+
   pageTitleIsCorrectlyDisplayed(title) {
     cy.get(this.pageTitle).should('contain', title);
   }

@@ -7,11 +7,6 @@ import UsersPage from '../pageObject/users-po.js';
 const PASSWORD = 'password';
 const USER = userFactory.build({ username: 'e2etest' });
 
-const getUserIdFromPath = () =>
-  cy.location().then(({ pathname }) => {
-    return pathname.split('/')[2];
-  });
-
 const patchUser = (id, payload) => {
   cy.apiLogin().then(({ accessToken }) =>
     cy
@@ -63,6 +58,8 @@ const expectLoginFails = (username, password, code = 401) => {
 };
 
 describe('Users', () => {
+  let usersPage;
+
   before(() => {
     cy.deleteAllUsers();
     cy.visit('/users');
@@ -70,8 +67,6 @@ describe('Users', () => {
   });
 
   describe('Create user', () => {
-    let usersPage;
-
     beforeEach(() => {
       usersPage = new UsersPage();
       usersPage.deleteAllUsers();
@@ -139,42 +134,47 @@ describe('Users', () => {
   });
 
   describe('Edit user', () => {
+    beforeEach(() => {
+      usersPage = new UsersPage();
+      usersPage.deleteAllUsers();
+      usersPage.visit();
+    });
+
     it('should not allow saving edited admin user', () => {
-      cy.contains('a', 'admin').click();
-      cy.contains('button', 'Save').should('be.disabled');
-      cy.contains('button', 'Cancel').click();
+      usersPage.clickAdminUserName();
+      usersPage.saveButtonIsDisabled();
     });
 
     it('should redirect to user edition form', () => {
-      cy.contains('a', USER.username).click();
-      cy.get('h1').should('contain', 'Edit User');
+      usersPage.apiCreateUser();
+      usersPage.refresh();
+      usersPage.clickUserName();
+      usersPage.pageTitleIsCorrectlyDisplayed('Edit User');
     });
 
     it('should show changed by other user warning', () => {
-      const { fullname: fullname1 } = userFactory.build();
-
-      getUserIdFromPath().then((id) => patchUser(id, { fullname: fullname1 }));
-
-      const { fullname: fullname2 } = userFactory.build();
-      cy.get('input[placeholder="Enter full name"]').clear();
-      cy.get('input[placeholder="Enter full name"]').type(fullname2);
-      cy.contains('button', 'Save').click();
-
-      cy.get('span').contains('Information has been updated by another user');
-      cy.reload();
-      cy.contains('Information has been updated by another user').should(
-        'not.exist'
-      );
+      usersPage.apiCreateUser();
+      usersPage.refresh();
+      usersPage.clickUserName();
+      usersPage.apiModifyUserFullName();
+      usersPage.typeUserFullName('modified_name');
+      usersPage.clickEditUserSaveButton();
+      usersPage.userAlreadyUpdatedWarningIsDisplayed();
+      usersPage.refresh();
+      usersPage.userAlreadyUpdatedWarningIsNotDisplayed();
     });
 
     it('should edit full name properly', () => {
+      usersPage.apiCreateUser();
+      usersPage.refresh();
+      usersPage.clickUserName();
       const { fullname } = userFactory.build();
-      cy.get('input[placeholder="Enter full name"]').clear();
-      cy.get('input[placeholder="Enter full name"]').type(fullname);
-      cy.contains('button', 'Save').click();
-      cy.get('div').contains('User edited successfully');
-      cy.get('h1').should('contain', 'Users');
-      cy.get('p').contains(fullname);
+      usersPage.typeUserFullName(fullname);
+      usersPage.clickEditUserSaveButton();
+      usersPage.userdEditedSuccessfullyToasterIsDisplayed();
+      usersPage.userAlreadyUpdatedWarningIsNotDisplayed();
+      usersPage.pageTitleIsCorrectlyDisplayed('Users');
+      usersPage.userWithModifiedNameIsDisplayed(fullname);
     });
   });
 
