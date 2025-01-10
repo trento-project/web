@@ -3,14 +3,27 @@ export default class BasePage {
     this.DEFAULT_USERNAME = Cypress.env('login_user');
     this.DEFAULT_PASSWORD = Cypress.env('login_password');
     this.pageTitle = 'h1';
+    this.userDropdownMenuButton = 'header button[id*="menu"]';
+    this.userDropdownProfileButton = 'a:contains("Profile")';
+    this.accessForbiddenMessage =
+      'div:contains("Access to this page is forbidden")';
+    this.passwordChangeToaster =
+      'p:contains("Password change is recommended.")';
+    this.navigation = {
+      navigationItems: 'nav a',
+    };
   }
 
   visit(url = '/') {
     cy.visit(url);
   }
 
+  validateUrl() {
+    cy.url().should('eq', `${Cypress.config().baseUrl}/`);
+  }
+
   refresh() {
-    return cy.reload();
+    cy.reload();
   }
 
   pageTitleIsCorrectlyDisplayed(title) {
@@ -18,7 +31,7 @@ export default class BasePage {
   }
 
   clickButton(buttonText) {
-    return cy.contains('button', buttonText).click();
+    cy.contains('button', buttonText).click();
   }
 
   apiLogin(username = this.DEFAULT_USERNAME, password = this.DEFAULT_PASSWORD) {
@@ -26,10 +39,7 @@ export default class BasePage {
       .request({
         method: 'POST',
         url: '/api/session',
-        body: {
-          username,
-          password,
-        },
+        body: { username, password },
       })
       .then((response) => {
         const { access_token: accessToken, refresh_token: refreshToken } =
@@ -38,33 +48,66 @@ export default class BasePage {
       });
   }
 
+  login(username = this.DEFAULT_USERNAME, password = this.DEFAULT_PASSWORD) {
+    cy.session([username, password], () => {
+      this.apiLogin(username, password).then(
+        ({ accessToken, refreshToken }) => {
+          window.localStorage.setItem('access_token', accessToken);
+          window.localStorage.setItem('refresh_token', refreshToken);
+        }
+      );
+    });
+  }
+
+  logout() {
+    Cypress.session.clearAllSavedSessions();
+  }
+
   deleteUser(id, accessToken) {
     return cy.request({
       url: `/api/v1/users/${id}`,
       method: 'DELETE',
       auth: { bearer: accessToken },
-      body: {},
     });
   }
 
   deleteAllUsers() {
-    return this.apiLogin().then(({ accessToken }) =>
-      cy
-        .request({
-          url: '/api/v1/users',
-          method: 'GET',
-          auth: { bearer: accessToken },
-          body: {},
-        })
-        .then(({ body: users }) => {
-          users.forEach(({ id }) => {
-            const isAdminUser = id === 1;
-            if (isAdminUser) {
-              return;
-            }
-            this.deleteUser(id, accessToken);
-          });
-        })
-    );
+    return this.apiLogin().then(({ accessToken }) => {
+      cy.request({
+        url: '/api/v1/users',
+        method: 'GET',
+        auth: { bearer: accessToken },
+      }).then(({ body: users }) => {
+        users.forEach(({ id }) => {
+          if (id !== 1) this.deleteUser(id, accessToken);
+        });
+      });
+    });
+  }
+
+  clickUserDropdownMenuButton() {
+    cy.get(this.userDropdownMenuButton).click();
+  }
+
+  clickUserDropdownProfileButton() {
+    cy.get(this.userDropdownProfileButton).click();
+  }
+
+  userDropdownMenuButtonHasTheExpectedText(username) {
+    cy.get(this.userDropdownMenuButton).should('have.text', username);
+  }
+
+  validateItemNotPresentInNavigationMenu(itemName) {
+    cy.get(this.navigation.navigationItems).each(($element) => {
+      cy.wrap($element).should('not.include.text', itemName);
+    });
+  }
+
+  accessForbiddenMessageIsDisplayed() {
+    cy.get(this.accessForbiddenMessage).should('be.visible');
+  }
+
+  passwordChangeToasterIsDisplayed() {
+    cy.get(this.passwordChangeToaster).should('be.visible');
   }
 }

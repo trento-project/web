@@ -5,40 +5,49 @@ export default class UsersPage extends BasePage {
   constructor() {
     super();
     this.url = '/users';
-    this.createUserButton = 'button[class*="green"]';
-
-    this.adminUserName = 'tbody tr:nth-child(1) a';
-
-    this.newUserName = 'tbody tr:nth-child(2) a';
-    this.newUserEmail = 'tbody tr:nth-child(2) p';
-    this.usersTableRows = 'tbody tr';
-
     this.PASSWORD = 'password';
     this.USER = userFactory.build({ username: 'e2etest' });
 
-    this.form = {
-      requiredFieldsErrors: 'p[class*="text-red"]',
-      usernameAlreadyTakenError: 'Has already been taken',
-      fullNameInputField: 'input[aria-label="fullname"]',
-      emailInputField: 'input[aria-label="email"]',
-      userNameInputField: 'input[aria-label="username"]',
-      passwordInputField: 'input[aria-label="password"]',
-      passwordConfirmationInputField:
-        'input[aria-label="password-confirmation"]',
-      generatePasswordButton: 'div[class*="grid"] button[class*="green"]',
-      submitUserCreationButton: 'Create',
-      cancelUserCreationButton: 'Cancel',
-      saveEditUserButton: 'button:contains("Save")',
-    };
-    this.userHasBeenAlreadyUpdatedWarning =
+    this.createUserButton = 'button[class*="green"]';
+    this.adminUserName = 'tbody tr:nth-child(1) a';
+    this.newUserName = 'tbody tr:nth-child(2) a';
+    this.newUserEmail = 'tbody tr:nth-child(2) p';
+    this.usersTableRows = 'tbody tr';
+    this.changePasswordButton = 'button:contains("Change Password")';
+    this.userAlreadyUpdatedWarning =
       'p:contains("Information has been updated by another user")';
-    this.userCreatedSuccesfullyToaster = 'User created successfully';
-    this.userEditedSuccesfullyToaster =
+    this.userCreatedSuccessfullyToaster = 'User created successfully';
+    this.userEditedSuccessfullyToaster =
       'div:contains("User edited successfully")';
+
+    this.requiredFieldsErrors = 'p[class*="text-red"]';
+    this.usernameAlreadyTakenError = 'Has already been taken';
+    this.fullNameInputField = 'input[aria-label="fullname"]';
+    this.emailInputField = 'input[aria-label="email"]';
+    this.userNameInputField = 'input[aria-label="username"]';
+    this.passwordInputField = 'input[aria-label="password"]';
+    this.passwordConfirmationInputField =
+      'input[aria-label="password-confirmation"]';
+    this.generatePasswordButton = 'div[class*="grid"] button[class*="green"]';
+    this.submitUserCreationButton = 'Create';
+    this.cancelUserCreationButton = 'Cancel';
+    this.saveChangesButton = 'button:contains("Save")';
+  }
+
+  visit(url = this.url) {
+    return cy.visit(url);
+  }
+
+  validateUrl(url = this.url) {
+    return cy.url().should('include', url);
+  }
+
+  getUserIdFromPath() {
+    return cy.location().then(({ pathname }) => pathname.split('/')[2]);
   }
 
   apiCreateUser() {
-    this.apiLogin().then(({ accessToken }) => {
+    return this.apiLogin().then(({ accessToken }) => {
       const body = {
         fullname: this.USER.fullname,
         email: this.USER.email,
@@ -52,19 +61,18 @@ export default class UsersPage extends BasePage {
         url: '/api/v1/users',
         method: 'POST',
         auth: { bearer: accessToken },
-        body: body,
+        body,
       });
     });
   }
 
   patchUser(id, payload) {
-    this.apiLogin().then(({ accessToken }) =>
+    return this.apiLogin().then(({ accessToken }) =>
       cy
         .request({
           url: `/api/v1/users/${id}`,
           method: 'GET',
           auth: { bearer: accessToken },
-          body: {},
         })
         .then(({ headers: { etag } }) => {
           cy.request({
@@ -79,92 +87,75 @@ export default class UsersPage extends BasePage {
   }
 
   apiModifyUserFullName() {
-    this.getUserIdFromPath().then((id) => {
-      this.patchUser(id, { fullname: 'some_random_string' });
-    });
-  }
-
-  visit() {
-    return cy.visit(this.url);
-  }
-
-  getUserIdFromPath() {
-    return cy.location().then(({ pathname }) => {
-      return pathname.split('/')[2];
-    });
-  }
-
-  validateUrl() {
-    return cy.url().should('include', this.url);
+    return this.getUserIdFromPath().then((id) =>
+      this.patchUser(id, { fullname: 'some_random_string' })
+    );
   }
 
   clickCreateUserButton() {
     return cy.get(this.createUserButton).click();
   }
 
-  clickUserName() {
-    return cy.contains(this.USER.username).click();
-  }
-
   clickGeneratePassword() {
-    return cy.get(this.form.generatePasswordButton).click();
+    return cy.get(this.generatePasswordButton).click();
   }
 
   clickSubmitUserCreationButton() {
-    return this.clickButton(this.form.submitUserCreationButton);
+    return this.clickButton(this.submitUserCreationButton);
   }
 
   clickCancelUserCreation() {
-    return this.clickButton(this.form.cancelUserCreationButton);
+    return this.clickButton(this.cancelUserCreationButton);
   }
 
   typeUserFullName(userFullName = this.USER.fullname) {
-    return cy.get(this.form.fullNameInputField).clear().type(userFullName);
+    return cy.get(this.fullNameInputField).clear().type(userFullName);
   }
 
   typeUserEmail(emailAddress = this.USER.email) {
-    return cy.get(this.form.emailInputField).type(emailAddress);
+    return cy.get(this.emailInputField).type(emailAddress);
   }
 
   typeUserName() {
-    return cy.get(this.form.userNameInputField).type(this.USER.username);
+    return cy.get(this.userNameInputField).type(this.USER.username);
   }
 
   typeUserPassword(password = this.PASSWORD) {
-    return cy.get(this.form.passwordInputField).type(password);
+    return cy.get(this.passwordInputField).type(password);
   }
 
   typeUserPasswordConfirmation(password = this.PASSWORD) {
-    return cy.get(this.form.passwordConfirmationInputField).type(password);
+    return cy.get(this.passwordConfirmationInputField).type(password);
   }
 
   validateRequiredFieldsErrors() {
-    return cy.get(this.form.requiredFieldsErrors).should('have.length', 5);
+    return cy.get(this.requiredFieldsErrors).should('have.length', 5);
   }
 
   invalidEmailErrorIsDisplayed() {
     return cy
-      .contains(this.form.requiredFieldsErrors, 'Is not a valid email')
+      .contains(this.requiredFieldsErrors, 'Is not a valid email')
       .should('have.length', 1);
   }
 
   weakPasswordErrorIsDisplayed() {
     return cy
-      .contains(
-        this.form.requiredFieldsErrors,
-        'Should be at least 8 character(s)'
-      )
+      .contains(this.requiredFieldsErrors, 'Should be at least 8 character(s)')
       .should('have.length', 1);
   }
 
-  userCreatedSuccessfullyToasterIsDisplayed() {
-    return cy.contains(this.userCreatedSuccesfullyToaster).should('be.visible');
+  usernameAlreadyTakenErrorIsDisplayed() {
+    return cy.contains(this.usernameAlreadyTakenError).should('be.visible');
   }
 
-  usernameAlreadyTakenErrorIsDisplayed() {
+  userCreatedSuccessfullyToasterIsDisplayed() {
     return cy
-      .contains(this.form.usernameAlreadyTakenError)
+      .contains(this.userCreatedSuccessfullyToaster)
       .should('be.visible');
+  }
+
+  userWithModifiedNameIsDisplayed(username) {
+    return cy.get(`p:contains("${username}")`).should('be.visible');
   }
 
   newUserIsDisplayed(username, email) {
@@ -173,31 +164,39 @@ export default class UsersPage extends BasePage {
     cy.get(this.newUserEmail).contains(email);
   }
 
+  clickEditUserSaveButton() {
+    return cy.get(this.saveChangesButton).click();
+  }
+
   clickAdminUserName() {
     return cy.get(this.adminUserName).click();
   }
 
   saveButtonIsDisabled() {
-    return cy.get(this.form.saveEditUserButton).should('be.disabled');
-  }
-
-  clickEditUserSaveButton() {
-    return cy.get(this.form.saveEditUserButton).click();
+    return cy.get(this.saveChangesButton).should('be.disabled');
   }
 
   userAlreadyUpdatedWarningIsDisplayed() {
-    return cy.get(this.userHasBeenAlreadyUpdatedWarning).should('be.visible');
+    return cy.get(this.userAlreadyUpdatedWarning).should('be.visible');
   }
 
   userAlreadyUpdatedWarningIsNotDisplayed() {
-    return cy.get(this.userHasBeenAlreadyUpdatedWarning).should('not.exist');
+    return cy.get(this.userAlreadyUpdatedWarning).should('not.exist');
   }
 
-  userdEditedSuccessfullyToasterIsDisplayed() {
-    return cy.get(this.userEditedSuccesfullyToaster).should('be.visible');
+  userEditedSuccessfullyToasterIsDisplayed() {
+    return cy.get(this.userEditedSuccessfullyToaster).should('be.visible');
   }
 
-  userWithModifiedNameIsDisplayed(username) {
-    return cy.get(`p:contains("${username}")`).should('be.visible');
+  changePasswordButtonIsDisabled() {
+    return cy.get(this.changePasswordButton).should('be.disabled');
+  }
+
+  emailInputFieldHasExpectedValue(email = this.USER.email) {
+    return cy.get(this.emailInputField).should('have.value', email);
+  }
+
+  usernameInputFieldHasExpectedValue(username = this.USER.username) {
+    return cy.get(this.userNameInputField).should('have.value', username);
   }
 }

@@ -3,6 +3,7 @@ import { TOTP } from 'totp-generator';
 import { userFactory } from '@lib/test-utils/factories/users';
 
 import UsersPage from '../pageObject/users-po.js';
+import BasePage from '../pageObject/base-po.js';
 
 const PASSWORD = 'password';
 const USER = userFactory.build({ username: 'e2etest' });
@@ -59,12 +60,6 @@ const expectLoginFails = (username, password, code = 401) => {
 
 describe('Users', () => {
   let usersPage;
-
-  before(() => {
-    cy.deleteAllUsers();
-    cy.visit('/users');
-    cy.url().should('include', '/users');
-  });
 
   describe('Create user', () => {
     beforeEach(() => {
@@ -179,49 +174,60 @@ describe('Users', () => {
   });
 
   describe('Admin user profile', () => {
+    let basePage;
+
+    beforeEach(() => {
+      basePage = new BasePage();
+      usersPage = new UsersPage();
+      usersPage.visit();
+    });
+
     it('should not allow editing admin user profile', () => {
-      cy.contains('span', 'admin', { exact: true }).click();
-      cy.contains('a', 'Profile').click();
-      cy.contains('button', 'Save').should('be.disabled');
-      cy.contains('button', 'Change Password').should('be.disabled');
+      basePage.clickUserDropdownMenuButton();
+      basePage.clickUserDropdownProfileButton();
+      usersPage.saveButtonIsDisabled();
+      usersPage.changePasswordButtonIsDisabled();
     });
   });
 
   describe('User profile', () => {
-    before(() => {
-      cy.logout();
+    let basePage;
+    let usersPage;
+
+    beforeEach(() => {
+      basePage = new BasePage();
+      usersPage = new UsersPage();
+      basePage.logout();
+      basePage.deleteAllUsers();
+      usersPage.apiCreateUser();
+      basePage.login(usersPage.USER.username, usersPage.PASSWORD);
+      basePage.visit();
     });
 
     it('should login with the new user', () => {
-      cy.login(USER.username, PASSWORD);
-      cy.visit('/');
-      cy.url().should('include', '/');
-      cy.get('button').contains(USER.username);
+      basePage.validateUrl();
+      basePage.userDropdownMenuButtonHasTheExpectedText(
+        usersPage.USER.username
+      );
     });
 
     it('should not see Users entry in the sidebar', () => {
-      cy.contains('Users').should('not.exist');
+      basePage.validateItemNotPresentInNavigationMenu();
     });
 
     it('should get a forbidden messages for user related pages', () => {
-      cy.visit('/users');
-      cy.get('div').contains('Access to this page is forbidden');
+      usersPage.visit();
+      basePage.accessForbiddenMessageIsDisplayed();
     });
 
     it('should see password change suggestion toast', () => {
-      cy.get('p').contains('Password change is recommended.');
+      basePage.passwordChangeToasterIsDisplayed();
     });
 
     it('should have a proper user data in the profile view', () => {
-      cy.contains('a', 'Profile').click();
-      cy.get('input[placeholder="Enter email address"]').should(
-        'have.value',
-        USER.email
-      );
-      cy.get('input[aria-label="username"]').should(
-        'have.value',
-        USER.username
-      );
+      basePage.clickUserDropdownProfileButton();
+      usersPage.emailInputFieldHasExpectedValue();
+      usersPage.usernameInputFieldHasExpectedValue();
     });
 
     it('should edit full name properly from the profile view', () => {
