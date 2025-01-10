@@ -40,12 +40,14 @@ function ChecksCatalogPage() {
         selectedProvider,
         selectedTargetType,
         selectedClusterType,
+        selectedHanaScenario,
       }) =>
         dispatch(
           buildUpdateCatalogAction({
             provider: selectedProvider,
             target_type: selectedTargetType,
             cluster_type: selectedClusterType,
+            hana_scenario: selectedHanaScenario,
           })
         )
       }

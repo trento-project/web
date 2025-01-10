@@ -8,22 +8,22 @@ export const COST_OPT_SCENARIO = 'cost_optimized';
 export const PERFORMANCE_SCENARIO = 'performance_optimized';
 
 export const clusterTypes = [HANA_SCALE_UP, HANA_SCALE_OUT, ASCS_ERS];
-export const hanaClusterScenarioTypes = [
-  COST_OPT_SCENARIO,
-  PERFORMANCE_SCENARIO,
-];
-
-export const isValidClusterType = (clusterType) =>
-  clusterTypes.includes(clusterType);
 
 const clusterTypeLabels = {
   [HANA_SCALE_UP]: 'HANA Scale Up',
   [HANA_SCALE_OUT]: 'HANA Scale Out',
   [ASCS_ERS]: 'ASCS/ERS',
 };
+export const isValidClusterType = (clusterType) =>
+  clusterTypes.includes(clusterType);
 
 export const getClusterTypeLabel = (type) =>
   clusterTypeLabels[type] || 'Unknown';
+
+export const hanaClusterScenarioTypes = [
+  COST_OPT_SCENARIO,
+  PERFORMANCE_SCENARIO,
+];
 
 const clusterScenarioLabels = {
   [PERFORMANCE_SCENARIO]: 'Perf. Opt.',
@@ -32,6 +32,13 @@ const clusterScenarioLabels = {
 
 export const getClusterScenarioLabel = (type) =>
   clusterScenarioLabels[type] || '';
+
+export const clusterCatalogFilters = [
+  { type: HANA_SCALE_UP, hanaScenario: PERFORMANCE_SCENARIO },
+  { type: HANA_SCALE_UP, hanaScenario: COST_OPT_SCENARIO },
+  { type: HANA_SCALE_OUT, hanaScenario: null },
+  { type: ASCS_ERS, hanaScenario: null },
+];
 
 export const ANGI_ARCHITECTURE = 'angi';
 export const CLASSIC_ARCHITECTURE = 'classic';

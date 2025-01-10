@@ -43,6 +43,7 @@ describe('ChecksCatalog ChecksCatalog component', () => {
       selectedClusterType: 'all',
       selectedProvider: 'all',
       selectedTargetType: 'all',
+      selectedHanaScenario: 'all',
     });
   });
 
@@ -72,6 +73,16 @@ describe('ChecksCatalog ChecksCatalog component', () => {
           metadata: {
             target_type: 'cluster',
             cluster_type: 'hana_scale_up',
+            hana_scenario: 'performance_optimized',
+            architecture_type: 'classic',
+          },
+        }),
+        catalogCheckFactory.build({
+          metadata: {
+            target_type: 'cluster',
+            cluster_type: 'hana_scale_up',
+            hana_scenario: 'cost_optimized',
+            architecture_type: 'classic',
           },
         }),
         catalogCheckFactory.build({
@@ -89,7 +100,11 @@ describe('ChecksCatalog ChecksCatalog component', () => {
       initialTargetType: 'Clusters',
       filter: 'All cluster types',
       expectDisabled: 'HANA Scale Out',
-      expectAllEnabled: ['HANA Scale Up', 'ASCS/ERS'],
+      expectAllEnabled: [
+        'HANA Scale Up Perf. Opt.',
+        'HANA Scale Up Cost Opt.',
+        'ASCS/ERS',
+      ],
     },
   ];
 
@@ -120,11 +135,9 @@ describe('ChecksCatalog ChecksCatalog component', () => {
       }
 
       await user.click(screen.getByText(filter));
-
       expect(
         screen.getByText(expectDisabled, { exact: false }).closest('div')
       ).toHaveAttribute('aria-disabled', 'true');
-
       const expectItemEnabled = (itemExpectedEnabled) =>
         expect(
           screen.getByText(itemExpectedEnabled).closest('div')
@@ -151,6 +164,20 @@ describe('ChecksCatalog ChecksCatalog component', () => {
         metadata: {
           target_type: 'cluster',
           cluster_type: 'hana_scale_up',
+          hana_scenario: 'performance_optimized',
+        },
+      }),
+      catalogCheckFactory.build({
+        metadata: {
+          target_type: 'cluster',
+          cluster_type: 'hana_scale_up',
+          hana_scenario: 'cost_optimized',
+        },
+      }),
+      catalogCheckFactory.build({
+        metadata: {
+          target_type: 'cluster',
+          cluster_type: 'hana_scale_out',
         },
       }),
       catalogCheckFactory.build({
@@ -174,24 +201,56 @@ describe('ChecksCatalog ChecksCatalog component', () => {
     await user.click(screen.getByText('Clusters'));
 
     await user.click(screen.getByText('All cluster types'));
+    await user.click(screen.getByText('HANA Scale Up Perf. Opt.'));
+
+    await user.click(screen.getAllByText('HANA Scale Up Perf. Opt.')[0]);
+    await user.click(screen.getByText('HANA Scale Up Cost Opt.'));
+
+    await user.click(screen.getAllByText('HANA Scale Up Cost Opt.')[0]);
+    await user.click(screen.getByText('HANA Scale Out'));
+
+    await user.click(screen.getAllByText('HANA Scale Out')[0]);
     await user.click(screen.getByText('ASCS/ERS'));
+
     expect(mockUpdateCatalog).toHaveBeenNthCalledWith(1, {
       selectedClusterType: 'all',
+      selectedHanaScenario: 'all',
       selectedProvider: 'all',
       selectedTargetType: 'all',
     });
     expect(mockUpdateCatalog).toHaveBeenNthCalledWith(2, {
       selectedClusterType: 'all',
+      selectedHanaScenario: 'all',
       selectedProvider: 'aws',
       selectedTargetType: 'all',
     });
     expect(mockUpdateCatalog).toHaveBeenNthCalledWith(3, {
       selectedClusterType: 'all',
+      selectedHanaScenario: 'all',
       selectedProvider: 'aws',
       selectedTargetType: 'cluster',
     });
     expect(mockUpdateCatalog).toHaveBeenNthCalledWith(4, {
+      selectedClusterType: 'hana_scale_up',
+      selectedHanaScenario: 'performance_optimized',
+      selectedProvider: 'aws',
+      selectedTargetType: 'cluster',
+    });
+    expect(mockUpdateCatalog).toHaveBeenNthCalledWith(5, {
+      selectedClusterType: 'hana_scale_up',
+      selectedHanaScenario: 'cost_optimized',
+      selectedProvider: 'aws',
+      selectedTargetType: 'cluster',
+    });
+    expect(mockUpdateCatalog).toHaveBeenNthCalledWith(6, {
+      selectedClusterType: 'hana_scale_out',
+      selectedHanaScenario: null,
+      selectedProvider: 'aws',
+      selectedTargetType: 'cluster',
+    });
+    expect(mockUpdateCatalog).toHaveBeenNthCalledWith(7, {
       selectedClusterType: 'ascs_ers',
+      selectedHanaScenario: null,
       selectedProvider: 'aws',
       selectedTargetType: 'cluster',
     });

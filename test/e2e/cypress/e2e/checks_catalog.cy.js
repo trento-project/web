@@ -128,10 +128,27 @@ context('Checks catalog', () => {
           },
           {
             dropdown: 'cluster-types-selection-dropdown',
-            option: 'HANA Scale Up',
+            option: 'HANA Scale Up Perf. Opt.',
           },
         ],
-        expectedRequest: `${checksCatalogURL}?provider=aws&target_type=cluster&cluster_type=hana_scale_up`,
+        expectedRequest: `${checksCatalogURL}?provider=aws&target_type=cluster&cluster_type=hana_scale_up&hana_scenario=performance_optimized`,
+      },
+      {
+        selectedFilters: [
+          {
+            dropdown: 'providers-selection-dropdown',
+            option: 'AWS',
+          },
+          {
+            dropdown: 'targets-selection-dropdown',
+            option: 'Clusters',
+          },
+          {
+            dropdown: 'cluster-types-selection-dropdown',
+            option: 'HANA Scale Up Cost Opt.',
+          },
+        ],
+        expectedRequest: `${checksCatalogURL}?provider=aws&target_type=cluster&cluster_type=hana_scale_up&hana_scenario=cost_optimized`,
       },
     ];
 
