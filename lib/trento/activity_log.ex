@@ -66,6 +66,7 @@ defmodule Trento.ActivityLog do
             m0: fragment("jsonb_path_query(?, ?)", q.metadata, ^jsonpath_expr),
             type: q.type,
             actor: q.actor,
+            severity: q.severity,
             inserted_at: q.inserted_at,
             updated_at: q.updated_at
           }
@@ -108,11 +109,32 @@ defmodule Trento.ActivityLog do
   defp parse_params(query_params) do
     query_params
     |> Enum.map(fn
-      {:from_date, v} -> {:filters, %{field: :inserted_at, op: :<=, value: v}}
-      {:to_date, v} -> {:filters, %{field: :inserted_at, op: :>=, value: v}}
-      {:actor, v} -> {:filters, %{field: :actor, op: :ilike_or, value: v}}
-      {:type, v} -> {:filters, %{field: :type, op: :ilike_or, value: v}}
-      param -> param
+      {:from_date, v} ->
+        {:filters, %{field: :inserted_at, op: :<=, value: v}}
+
+      {:to_date, v} ->
+        {:filters, %{field: :inserted_at, op: :>=, value: v}}
+
+      {:actor, v} ->
+        {:filters, %{field: :actor, op: :ilike_or, value: v}}
+
+      {:type, v} ->
+        {:filters, %{field: :type, op: :ilike_or, value: v}}
+
+      {:severity, v} ->
+        {:filters,
+         %{
+           field: :severity,
+           op: :>=,
+           value:
+             v
+             |> Enum.map(&String.to_existing_atom/1)
+             |> Enum.map(&ActivityLog.severity_level_to_integer/1)
+             |> Enum.min()
+         }}
+
+      param ->
+        param
     end)
     |> Enum.reduce(%{filters: []}, fn
       {:filters, filter}, acc ->
