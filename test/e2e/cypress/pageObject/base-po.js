@@ -7,8 +7,7 @@ export default class BasePage {
     this.userDropdownProfileButton = 'a:contains("Profile")';
     this.accessForbiddenMessage =
       'div:contains("Access to this page is forbidden")';
-    this.passwordChangeToaster =
-      'p:contains("Password change is recommended.")';
+
     this.navigation = {
       navigationItems: 'nav a',
     };
@@ -105,9 +104,5 @@ export default class BasePage {
 
   accessForbiddenMessageIsDisplayed() {
     cy.get(this.accessForbiddenMessage).should('be.visible');
-  }
-
-  passwordChangeToasterIsDisplayed() {
-    cy.get(this.passwordChangeToaster).should('be.visible');
   }
 }

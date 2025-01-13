@@ -19,15 +19,21 @@ export default class UsersPage extends BasePage {
     this.userCreatedSuccessfullyToaster = 'User created successfully';
     this.userEditedSuccessfullyToaster =
       'div:contains("User edited successfully")';
+    this.profileChangesSavedToaster = 'div:contains("Profile changes saved!")';
+    this.passwordChangeToaster =
+      'p:contains("Password change is recommended.")';
 
     this.requiredFieldsErrors = 'p[class*="text-red"]';
     this.usernameAlreadyTakenError = 'Has already been taken';
     this.fullNameInputField = 'input[aria-label="fullname"]';
     this.emailInputField = 'input[aria-label="email"]';
     this.userNameInputField = 'input[aria-label="username"]';
+    this.currentPasswordInputField = 'input[aria-label="current_password"]';
     this.passwordInputField = 'input[aria-label="password"]';
     this.passwordConfirmationInputField =
-      'input[aria-label="password-confirmation"]';
+      'input[aria-label^="password"][aria-label*="confirmation"]';
+    this.saveNewPasswordButton = 'div[id*="panel"] button:contains("Save")';
+    this.invalidPasswordErrorLabel = 'p:contains("Is invalid")';
     this.generatePasswordButton = 'div[class*="grid"] button[class*="green"]';
     this.submitUserCreationButton = 'Create';
     this.cancelUserCreationButton = 'Cancel';
@@ -96,6 +102,14 @@ export default class UsersPage extends BasePage {
     return cy.get(this.createUserButton).click();
   }
 
+  clickSaveNewPasswordButton() {
+    return cy.get(this.saveNewPasswordButton).click();
+  }
+
+  invalidCurrentPasswordErrorIsDisplayed() {
+    return cy.get(this.invalidPasswordErrorLabel).should('be.visible');
+  }
+
   clickGeneratePassword() {
     return cy.get(this.generatePasswordButton).click();
   }
@@ -118,6 +132,10 @@ export default class UsersPage extends BasePage {
 
   typeUserName() {
     return cy.get(this.userNameInputField).type(this.USER.username);
+  }
+
+  typeCurrentPassword(currentPassword = this.PASSWORD) {
+    return cy.get(this.currentPasswordInputField).type(currentPassword);
   }
 
   typeUserPassword(password = this.PASSWORD) {
@@ -152,6 +170,14 @@ export default class UsersPage extends BasePage {
     return cy
       .contains(this.userCreatedSuccessfullyToaster)
       .should('be.visible');
+  }
+
+  passwordChangeToasterIsDisplayed() {
+    cy.get(this.passwordChangeToaster).should('be.visible');
+  }
+
+  passwordChangeToasterIsNotDisplayed() {
+    cy.get(this.passwordChangeToaster).should('not.exist');
   }
 
   userWithModifiedNameIsDisplayed(username) {
@@ -192,11 +218,19 @@ export default class UsersPage extends BasePage {
     return cy.get(this.changePasswordButton).should('be.disabled');
   }
 
+  clickChangePasswordButton() {
+    return cy.get(this.changePasswordButton).click();
+  }
+
   emailInputFieldHasExpectedValue(email = this.USER.email) {
     return cy.get(this.emailInputField).should('have.value', email);
   }
 
   usernameInputFieldHasExpectedValue(username = this.USER.username) {
     return cy.get(this.userNameInputField).should('have.value', username);
+  }
+
+  profileChangesSavedToasterIsDisplayed() {
+    return cy.get(this.profileChangesSavedToaster).should('be.visible');
   }
 }

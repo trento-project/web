@@ -232,32 +232,31 @@ describe('Users', () => {
 
     it('should edit full name properly from the profile view', () => {
       const { fullname } = userFactory.build();
-      cy.get('input[placeholder="Enter full name"]').clear();
-      cy.get('input[placeholder="Enter full name"]').type(fullname);
-      cy.contains('button', 'Save').click();
-      cy.get('div').contains('Profile changes saved!');
+      basePage.clickUserDropdownProfileButton();
+      usersPage.typeUserFullName(fullname);
+      usersPage.clickEditUserSaveButton();
+      usersPage.profileChangesSavedToasterIsDisplayed();
     });
 
     it('should fail editing user password if current password is wrong', () => {
-      cy.contains('button', 'Change Password').click();
-      cy.get('input').eq(4).type('wrong');
-      cy.get('input').eq(5).type(PASSWORD);
-      cy.get('input').eq(6).type(PASSWORD);
-      cy.get('button:contains("Save")').eq(1).click();
-      cy.get('p').contains('Is invalid');
+      basePage.clickUserDropdownProfileButton();
+      usersPage.clickChangePasswordButton();
+      usersPage.typeCurrentPassword('wrong');
+      usersPage.typeUserPassword();
+      usersPage.typeUserPasswordConfirmation();
+      usersPage.clickSaveNewPasswordButton();
+      usersPage.invalidCurrentPasswordErrorIsDisplayed();
     });
 
     it('should edit the user password', () => {
-      cy.get('input').eq(4).clear();
-      cy.get('input').eq(5).clear();
-      cy.get('input').eq(6).clear();
-
-      cy.get('input').eq(4).type(PASSWORD);
-      cy.get('input').eq(5).type(PASSWORD);
-      cy.get('input').eq(6).type(PASSWORD);
-      cy.get('button:contains("Save")').eq(1).click();
-      cy.get('div').contains('Profile changes saved!');
-      cy.contains('Password change is recommended.').should('not.exist');
+      basePage.clickUserDropdownProfileButton();
+      usersPage.clickChangePasswordButton();
+      usersPage.typeCurrentPassword();
+      usersPage.typeUserPassword();
+      usersPage.typeUserPasswordConfirmation();
+      usersPage.clickSaveNewPasswordButton();
+      usersPage.profileChangesSavedToasterIsDisplayed();
+      usersPage.passwordChangeToasterIsNotDisplayed();
     });
 
     it('should see Users entry in sidebar when the all:users ability is given', () => {
