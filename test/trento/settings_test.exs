@@ -1,5 +1,6 @@
 defmodule Trento.SettingsTest do
   use ExUnit.Case
+  alias Trento.Settings.ActivityLogSettings
   use Trento.DataCase
   use Trento.CommandedCase
   use Trento.TaskCase
@@ -8,6 +9,10 @@ defmodule Trento.SettingsTest do
   import Mox
 
   import Trento.Factory
+
+  require Trento.ActivityLog.RetentionPeriodUnit, as: RetentionPeriodUnit
+
+  alias Trento.ActivityLog.RetentionTime
 
   alias Trento.Settings
 
@@ -612,6 +617,168 @@ defmodule Trento.SettingsTest do
         assert :ok == Settings.clear_suse_manager_settings()
         assert {:error, :settings_not_configured} == Settings.get_suse_manager_settings()
       end)
+    end
+  end
+
+  describe "activity log settings" do
+    test "should return an error when settings are not available" do
+      assert {:error, :activity_log_settings_not_configured} ==
+               Settings.get_activity_log_settings()
+    end
+
+    test "should return activity log settings" do
+      %{
+        retention_time: %{
+          value: value,
+          unit: unit
+        }
+      } = insert(:activity_log_settings)
+
+      assert {:ok,
+              %ActivityLogSettings{
+                retention_time: %RetentionTime{
+                  value: ^value,
+                  unit: ^unit
+                }
+              }} = Settings.get_activity_log_settings()
+    end
+
+    test "should not be able to change retention time if no activity log settings were previously saved" do
+      assert {:error, :activity_log_settings_not_configured} ==
+               Settings.change_activity_log_retention_period(42, RetentionPeriodUnit.day())
+    end
+
+    test "should not accept invalid retention periods" do
+      insert(:activity_log_settings)
+
+      validation_scenarios = [
+        %{
+          invalid_retention_periods: [-1, 0],
+          expected_errors: [
+            value:
+              {"must be greater than %{number}",
+               [validation: :number, kind: :greater_than, number: 0]}
+          ]
+        },
+        %{
+          invalid_retention_periods: [nil, "", "  "],
+          expected_errors: [value: {"can't be blank", [validation: :required]}]
+        }
+      ]
+
+      for %{
+            invalid_retention_periods: invalid_retention_periods,
+            expected_errors: expected_errors
+          } <- validation_scenarios do
+        Enum.each(invalid_retention_periods, fn invalid_retention_period ->
+          unit = Faker.Util.pick(RetentionPeriodUnit.values())
+
+          assert {:error,
+                  %{
+                    valid?: false,
+                    changes: %{retention_time: %{errors: ^expected_errors}}
+                  }} =
+                   Settings.change_activity_log_retention_period(
+                     invalid_retention_period,
+                     unit
+                   )
+        end)
+      end
+    end
+
+    test "should not accept unsupported retention period units" do
+      insert(:activity_log_settings)
+
+      for unit <- [:foo, :bar, :baz] do
+        assert {:error,
+                %{
+                  valid?: false,
+                  changes: %{
+                    retention_time: %{
+                      errors: [
+                        unit: {"is invalid", _}
+                      ]
+                    }
+                  }
+                }} = Settings.change_activity_log_retention_period(42, unit)
+      end
+    end
+
+    scenarios = [
+      %{
+        name: "days",
+        value: 1,
+        unit: RetentionPeriodUnit.day()
+      },
+      %{
+        name: "weeks",
+        value: 3,
+        unit: RetentionPeriodUnit.week()
+      },
+      %{
+        name: "months",
+        value: 5,
+        unit: RetentionPeriodUnit.month()
+      },
+      %{
+        name: "years",
+        value: 7,
+        unit: RetentionPeriodUnit.year()
+      }
+    ]
+
+    for %{name: name} = scenario <- scenarios do
+      @scenario scenario
+
+      test "should successfully change retention periods #{name}" do
+        insert(:activity_log_settings,
+          retention_time: %{
+            value: 92,
+            unit: RetentionPeriodUnit.year()
+          }
+        )
+
+        %{
+          value: value,
+          unit: unit
+        } = @scenario
+
+        assert {:ok,
+                %ActivityLogSettings{
+                  retention_time: %RetentionTime{
+                    value: ^value,
+                    unit: ^unit
+                  }
+                }} =
+                 Settings.change_activity_log_retention_period(
+                   value,
+                   unit
+                 )
+      end
+    end
+
+    test "should successfully handle unchanging retention periods" do
+      initial_retention_period = 42
+      initial_retention_period_unit = RetentionPeriodUnit.day()
+
+      insert(:activity_log_settings,
+        retention_time: %{
+          value: initial_retention_period,
+          unit: initial_retention_period_unit
+        }
+      )
+
+      assert {:ok,
+              %ActivityLogSettings{
+                retention_time: %RetentionTime{
+                  value: ^initial_retention_period,
+                  unit: ^initial_retention_period_unit
+                }
+              }} =
+               Settings.change_activity_log_retention_period(
+                 initial_retention_period,
+                 initial_retention_period_unit
+               )
     end
   end
 
