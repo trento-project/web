@@ -12,7 +12,7 @@ import { map, pipe } from 'lodash/fp';
 
 import { getActivityLog } from '@lib/api/activityLogs';
 import * as request from '@lib/api/request';
-import { allowedActivities } from '@lib/model/activityLog';
+import { allowedActivities, ACTIVITY_LOG_LEVELS } from '@lib/model/activityLog';
 import { getActivityLogUsers } from '@state/selectors/activityLog';
 import { getUserProfile } from '@state/selectors/user';
 
@@ -212,6 +212,13 @@ function ActivityLogPage() {
         allowedActivities,
         map(([key, value]) => [key, value.label])
       )(abilities),
+      className: 'col-span-2 min-w-full max-w-44',
+    },
+    {
+      key: 'severity',
+      type: 'select',
+      title: 'Severity',
+      options: ACTIVITY_LOG_LEVELS,
       className: 'col-span-2 min-w-full max-w-44',
     },
     {
