@@ -102,6 +102,18 @@ export default class BasePage {
     });
   }
 
+  validateItemPresentInNavigationMenu(navigationMenuItem) {
+    cy.get(this.navigation.navigationItems).then(($elements) => {
+      const itemFound = Array.from($elements).some((element) =>
+        element.innerText.includes(navigationMenuItem)
+      );
+      expect(
+        itemFound,
+        `"${navigationMenuItem}" navigation item should be present`
+      ).to.be.true;
+    });
+  }
+
   accessForbiddenMessageIsDisplayed() {
     cy.get(this.accessForbiddenMessage).should('be.visible');
   }

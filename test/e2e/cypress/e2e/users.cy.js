@@ -212,7 +212,7 @@ describe('Users', () => {
     });
 
     it('should not see Users entry in the sidebar', () => {
-      basePage.validateItemNotPresentInNavigationMenu();
+      basePage.validateItemNotPresentInNavigationMenu('Users');
     });
 
     it('should get a forbidden messages for user related pages', () => {
@@ -260,12 +260,8 @@ describe('Users', () => {
     });
 
     it('should see Users entry in sidebar when the all:users ability is given', () => {
-      getProfile(USER.username, PASSWORD).then(({ id }) => {
-        patchUser(id, {
-          abilities: [{ id: 2, name: 'all', resource: 'users', label: 'test' }],
-        });
-      });
-      cy.contains('Users');
+      usersPage.apiApplyAllUsersPermission();
+      usersPage.validateItemPresentInNavigationMenu('Users');
     });
   });
 

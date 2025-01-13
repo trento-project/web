@@ -52,6 +52,29 @@ export default class UsersPage extends BasePage {
     return cy.location().then(({ pathname }) => pathname.split('/')[2]);
   }
 
+  getProfile(username = this.USER.username, password = this.PASSWORD) {
+    return this.apiLogin(username, password).then(({ accessToken }) => {
+      return cy
+        .request({
+          url: '/api/v1/profile',
+          method: 'GET',
+          auth: { bearer: accessToken },
+          body: {},
+        })
+        .then(({ body: profile }) => {
+          return profile;
+        });
+    });
+  }
+
+  apiApplyAllUsersPermission() {
+    this.getProfile().then(({ id }) => {
+      this.patchUser(id, {
+        abilities: [{ id: 2, name: 'all', resource: 'users', label: 'test' }],
+      });
+    });
+  }
+
   apiCreateUser() {
     return this.apiLogin().then(({ accessToken }) => {
       const body = {
