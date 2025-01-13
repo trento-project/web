@@ -37,6 +37,6 @@
 })
 |> Trento.Repo.insert!(on_conflict: :nothing)
 
-Trento.Repo.insert!(Trento.ActivityLog.Settings.with_default_retention_time(),
+Trento.Repo.insert!(Trento.Settings.ActivityLogSettings.with_default_retention_time(),
   on_conflict: :nothing
 )

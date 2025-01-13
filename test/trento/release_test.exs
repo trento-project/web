@@ -10,8 +10,11 @@ defmodule Trento.ReleaseTest do
   alias Trento.Release
 
   alias Trento.ActivityLog.RetentionTime
-  alias Trento.ActivityLog.Settings, as: ActivityLogSettings
-  alias Trento.Settings.SSOCertificatesSettings
+
+  alias Trento.Settings.{
+    ActivityLogSettings,
+    SSOCertificatesSettings
+  }
 
   describe "Activity Log settings initiation" do
     test "should init default activity log retention time" do
