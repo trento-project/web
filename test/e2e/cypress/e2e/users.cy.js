@@ -262,38 +262,32 @@ describe('Users', () => {
   });
 
   describe('TOTP authentication', () => {
-    before(() => {
-      cy.logout();
-      cy.login(USER.username, PASSWORD);
-      cy.visit('/profile');
-      cy.url().should('include', '/profile');
+    beforeEach(() => {
+      basePage = new BasePage();
+      usersPage = new UsersPage();
+      basePage.logout();
+      basePage.deleteAllUsers();
+      usersPage.apiCreateUser();
+      basePage.login(usersPage.USER.username, usersPage.PASSWORD);
+      basePage.visit();
+      basePage.clickUserDropdownProfileButton();
+      basePage.validateUrl('/profile');
     });
 
     it('should display TOTP enrollment failure if the given code is invalid', () => {
-      cy.get('button[role="switch"]').click();
-      cy.get('div').should('contain', 'Your new TOTP secret is');
-
-      cy.get('input[placeholder="TOTP code"]').type('invalid');
-      cy.contains('button', 'Verify').click();
-
-      cy.get('p').contains('Totp code not valid for the enrollment procedure.');
+      usersPage.clickAuthenticatorAppSwitch();
+      usersPage.newTotpCodeIssuedMessageIsDisplayed();
+      usersPage.typeTotpCode('invalid');
+      usersPage.clickVerifyTotpButton();
+      usersPage.totpEnrollmentErrorIsDisplayed();
     });
 
     it('should complete TOTP enrollment properly', () => {
-      cy.get('input[placeholder="TOTP code"]').clear();
-      cy.contains('Your new TOTP secret is')
-        .next()
-        .invoke('text')
-        .as('totpSecret');
-
-      cy.get('@totpSecret').then((totpSecret) => {
-        cy.wrap(TOTP.generate(totpSecret)).then(({ otp }) => {
-          cy.get('input[placeholder="TOTP code"]').type(otp);
-        });
-      });
-
-      cy.contains('button', 'Verify').click();
-      cy.get('button[role="switch"]').should('be.enabled');
+      usersPage.clickAuthenticatorAppSwitch();
+      usersPage.typeTotpCode();
+      usersPage.clickVerifyTotpButton();
+      usersPage.authenticatorAppSwitchIsEnabled();
+      usersPage.totpEnabledToasterIsDisplayed();
     });
 
     it('should fail to login if TOTP code is not given', () => {

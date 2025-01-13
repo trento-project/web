@@ -17,8 +17,8 @@ export default class BasePage {
     cy.visit(url);
   }
 
-  validateUrl() {
-    cy.url().should('eq', `${Cypress.config().baseUrl}/`);
+  validateUrl(url = '/') {
+    cy.url().should('eq', `${Cypress.config().baseUrl}${url}`);
   }
 
   refresh() {

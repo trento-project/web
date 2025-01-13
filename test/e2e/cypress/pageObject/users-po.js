@@ -1,5 +1,6 @@
 import BasePage from './base-po.js';
 import { userFactory } from '@lib/test-utils/factories/users';
+import { TOTP } from 'totp-generator';
 
 export default class UsersPage extends BasePage {
   constructor() {
@@ -22,6 +23,7 @@ export default class UsersPage extends BasePage {
     this.profileChangesSavedToaster = 'div:contains("Profile changes saved!")';
     this.passwordChangeToaster =
       'p:contains("Password change is recommended.")';
+    this.totpEnabledToaster = 'div:contains("TOTP Enabled")';
 
     this.requiredFieldsErrors = 'p[class*="text-red"]';
     this.usernameAlreadyTakenError = 'Has already been taken';
@@ -38,6 +40,13 @@ export default class UsersPage extends BasePage {
     this.submitUserCreationButton = 'Create';
     this.cancelUserCreationButton = 'Cancel';
     this.saveChangesButton = 'button:contains("Save")';
+    this.authenticatorAppSwitch = 'button[role="switch"]';
+    this.newTotpCodeIssuedMessage = 'div:contains("Your new TOTP secret is:")';
+    this.totpCode = `${this.newTotpCodeIssuedMessage} + div[class*="bold"]`;
+    this.newTotpCodeInputField = 'input[placeholder="TOTP code"]';
+    this.verifyTotpButton = 'button:contains("Verify")';
+    this.totpEnrollmentErrorLabel =
+      'p:contains("Totp code not valid for the enrollment procedure.")';
   }
 
   visit(url = this.url) {
@@ -127,6 +136,10 @@ export default class UsersPage extends BasePage {
 
   clickSaveNewPasswordButton() {
     return cy.get(this.saveNewPasswordButton).click();
+  }
+
+  clickAuthenticatorAppSwitch() {
+    return cy.get(this.authenticatorAppSwitch).click();
   }
 
   invalidCurrentPasswordErrorIsDisplayed() {
@@ -259,5 +272,38 @@ export default class UsersPage extends BasePage {
 
   profileChangesSavedToasterIsDisplayed() {
     return cy.get(this.profileChangesSavedToaster).should('be.visible');
+  }
+
+  newTotpCodeIssuedMessageIsDisplayed() {
+    return cy.get(this.newTotpCodeIssuedMessage).should('be.visible');
+  }
+
+  typeTotpCode(code) {
+    if (code) {
+      cy.get(this.newTotpCodeInputField).type(code);
+    } else {
+      cy.get(this.totpCode).then((element) => {
+        const totpSecret = element.text();
+        cy.wrap(TOTP.generate(totpSecret)).then(({ otp }) => {
+          cy.get(this.newTotpCodeInputField).type(otp);
+        });
+      });
+    }
+  }
+
+  clickVerifyTotpButton() {
+    return cy.get(this.verifyTotpButton).click();
+  }
+
+  totpEnrollmentErrorIsDisplayed() {
+    return cy.get(this.totpEnrollmentErrorLabel).should('be.visible');
+  }
+
+  authenticatorAppSwitchIsEnabled() {
+    return cy.get(this.authenticatorAppSwitch).should('be.enabled');
+  }
+
+  totpEnabledToasterIsDisplayed() {
+    return cy.get(this.totpEnabledToaster).should('be.visible');
   }
 }
