@@ -1,6 +1,6 @@
-defmodule Trento.ActivityLog.Settings do
+defmodule Trento.Settings.ActivityLogSettings do
   @moduledoc """
-  ActivityLog Settings is the STI projection of activity log related settings
+  ActivityLogSettings is the STI projection of activity log related settings
   """
 
   use Ecto.Schema
@@ -36,6 +36,6 @@ defmodule Trento.ActivityLog.Settings do
   end
 
   def with_default_retention_time do
-    changeset(%Settings{}, %{retention_time: RetentionTime.default()})
+    changeset(%ActivityLogSettings{}, %{retention_time: RetentionTime.default()})
   end
 end
