@@ -58,9 +58,10 @@ const expectLoginFails = (username, password, code = 401) => {
   });
 };
 
-describe('Users', () => {
-  let usersPage;
+let usersPage;
+let basePage;
 
+describe('Users', () => {
   describe('Create user', () => {
     beforeEach(() => {
       usersPage = new UsersPage();
@@ -143,14 +144,14 @@ describe('Users', () => {
     it('should redirect to user edition form', () => {
       usersPage.apiCreateUser();
       usersPage.refresh();
-      usersPage.clickUserName();
+      usersPage.clickAdminUserName();
       usersPage.pageTitleIsCorrectlyDisplayed('Edit User');
     });
 
     it('should show changed by other user warning', () => {
       usersPage.apiCreateUser();
       usersPage.refresh();
-      usersPage.clickUserName();
+      usersPage.clickNewUser();
       usersPage.apiModifyUserFullName();
       usersPage.typeUserFullName('modified_name');
       usersPage.clickEditUserSaveButton();
@@ -162,11 +163,11 @@ describe('Users', () => {
     it('should edit full name properly', () => {
       usersPage.apiCreateUser();
       usersPage.refresh();
-      usersPage.clickUserName();
+      usersPage.clickNewUser();
       const { fullname } = userFactory.build();
       usersPage.typeUserFullName(fullname);
       usersPage.clickEditUserSaveButton();
-      usersPage.userdEditedSuccessfullyToasterIsDisplayed();
+      usersPage.userEditedSuccessfullyToasterIsDisplayed();
       usersPage.userAlreadyUpdatedWarningIsNotDisplayed();
       usersPage.pageTitleIsCorrectlyDisplayed('Users');
       usersPage.userWithModifiedNameIsDisplayed(fullname);
@@ -174,8 +175,6 @@ describe('Users', () => {
   });
 
   describe('Admin user profile', () => {
-    let basePage;
-
     beforeEach(() => {
       basePage = new BasePage();
       usersPage = new UsersPage();
@@ -191,9 +190,6 @@ describe('Users', () => {
   });
 
   describe('User profile', () => {
-    let basePage;
-    let usersPage;
-
     beforeEach(() => {
       basePage = new BasePage();
       usersPage = new UsersPage();
@@ -221,7 +217,7 @@ describe('Users', () => {
     });
 
     it('should see password change suggestion toast', () => {
-      basePage.passwordChangeToasterIsDisplayed();
+      usersPage.passwordChangeToasterIsDisplayed();
     });
 
     it('should have a proper user data in the profile view', () => {

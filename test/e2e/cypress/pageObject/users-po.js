@@ -213,6 +213,10 @@ export default class UsersPage extends BasePage {
     cy.get(this.newUserEmail).contains(email);
   }
 
+  clickNewUser() {
+    return cy.get(this.newUserName).click();
+  }
+
   clickEditUserSaveButton() {
     return cy.get(this.saveChangesButton).click();
   }
