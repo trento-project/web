@@ -47,241 +47,161 @@ defmodule Trento.ActivityLog.ActivityLog do
   def severity_level_to_integer(:error), do: 17
   def severity_level_to_integer(:critical), do: 21
 
+  @severity_level_mapping %{
+    "login_attempt" => %{type: :key, key: :reason, condition: :key_exists},
+    "user_creation" => :info,
+    "user_modification" => :info,
+    "user_deletion" => :warning,
+    "profile_update" => :info,
+    "resource_tagging" => :info,
+    "resource_untagging" => :info,
+    "api_key_generation" => :info,
+    "saving_suma_settings" => :info,
+    "changing_suma_settings" => :info,
+    "clearing_suma_settings" => :warning,
+    "cluster_checks_execution_request" => :info,
+    "activity_log_settings_update" => :debug,
+    "heartbeat_succeeded" => :debug,
+    "heartbeat_failed" => :warning,
+    "host_checks_health_changed" => %{
+      type: :kv,
+      key_suffix: "health",
+      values: %{"critical" => :critical, "unknown" => :warning, "*" => :info},
+      condition: :map_value_to_severity
+    },
+    "host_checks_selected" => :info,
+    "host_deregistered" => :warning,
+    "host_deregistration_requested" => :debug,
+    "host_details_updated" => :info,
+    "host_health_changed" => :info,
+    "host_registered" => :info,
+    "host_restored" => :info,
+    "host_rolled_up" => :debug,
+    "host_rollup_requested" => :debug,
+    "host_saptune_health_changed" => %{
+      type: :kv,
+      key_suffix: "health",
+      values: %{"critical" => :critical, "unknown" => :warning, "*" => :info},
+      condition: :map_value_to_severity
+    },
+    "host_tombstoned" => :debug,
+    "provider_updated" => :debug,
+    "saptune_status_updated" => :info,
+    "sles_subscriptions_updated" => :debug,
+    "software_updates_discovery_cleared" => :debug,
+    "software_updates_discovery_requested" => :debug,
+    "software_updates_health_changed" => %{
+      type: :kv,
+      key_suffix: "health",
+      values: %{"critical" => :critical, "unknown" => :warning, "*" => :info},
+      condition: :map_value_to_severity
+    },
+    "checks_selected" => :warning,
+    "cluster_checks_health_changed" => %{
+      type: :kv,
+      key_suffix: "health",
+      values: %{"critical" => :critical, "unknown" => :warning, "*" => :info},
+      condition: :map_value_to_severity
+    },
+    "cluster_deregistered" => :warning,
+    "cluster_details_updated" => :debug,
+    "cluster_discovered_health_changed" => %{
+      type: :kv,
+      key_suffix: "health",
+      values: %{"critical" => :critical, "unknown" => :warning, "*" => :info},
+      condition: :map_value_to_severity
+    },
+    "cluster_health_changed" => %{
+      type: :kv,
+      key_suffix: "health",
+      values: %{"critical" => :critical, "unknown" => :warning, "*" => :info},
+      condition: :map_value_to_severity
+    },
+    "cluster_registered" => :info,
+    "cluster_restored" => :info,
+    "cluster_rolled_up" => :debug,
+    "cluster_rollup_requested" => :debug,
+    "cluster_tombstoned" => :debug,
+    "host_added_to_cluster" => :debug,
+    "host_removed_from_cluster" => :debug,
+    "application_instance_deregistered" => :warning,
+    "application_instance_health_changed" => %{
+      type: :kv,
+      key_suffix: "health",
+      values: %{"critical" => :critical, "unknown" => :warning, "*" => :info},
+      condition: :map_value_to_severity
+    },
+    "application_instance_marked_absent" => :warning,
+    "application_instance_marked_present" => :info,
+    "application_instance_moved" => :info,
+    "application_instance_registered" => :info,
+    "sap_system_database_health_changed" => %{
+      type: :kv,
+      key_suffix: "health",
+      values: %{"critical" => :critical, "unknown" => :warning, "*" => :info},
+      condition: :map_value_to_severity
+    },
+    "sap_system_deregistered" => :warning,
+    "sap_system_restored" => :debug,
+    "sap_system_rolled_up" => :debug,
+    "sap_system_rollup_requested" => :debug,
+    "sap_system_tombstoned" => :debug,
+    "sap_system_updated" => :info,
+    "database_deregistered" => :warning,
+    "database_health_changed" => :info,
+    "database_instance_deregistered" => :warning,
+    "database_instance_health_changed" => :info,
+    "database_instance_marked_absent" => :warning,
+    "database_instance_marked_present" => :info,
+    "database_instance_registered" => :info,
+    "database_instance_system_replication_changed" => %{
+      type: :kv,
+      key_suffix: "health",
+      values: %{"critical" => :critical, "unknown" => :warning, "*" => :info},
+      condition: :map_value_to_severity
+    },
+    "database_registered" => :info,
+    "database_restored" => :info,
+    "database_rolled_up" => :debug,
+    "database_rollup_requested" => :info,
+    "database_tenants_updated" => :info,
+    "database_tombstoned" => :debug
+  }
   defp map_severity_level(activity_type, metadata) do
-    level =
-      case {activity_type, metadata} do
-        {"login_attempt", %{"reason" => _}} ->
-          :warning
-
-        {"login_attempt", %{}} ->
-          :info
-
-        {"user_creation", _} ->
-          :info
-
-        {"user_modification", _} ->
-          :info
-
-        {"user_deletion", _} ->
-          :warning
-
-        {"profile_update", _} ->
-          :info
-
-        {"resource_tagging", %{resource_type: _resource_type}} ->
-          :info
-
-        {"resource_untagging", _} ->
-          :info
-
-        {"api_key_generation", _} ->
-          :info
-
-        {"saving_suma_settings", _} ->
-          :info
-
-        {"changing_suma_settings", _} ->
-          :info
-
-        {"clearing_suma_settings", _} ->
-          :warning
-
-        {"cluster_checks_execution_request", _} ->
-          :info
-
-        {"activity_log_settings_update", _} ->
-          :debug
-
-        {"heartbeat_succeeded", _} ->
-          :debug
-
-        {"heartbeat_failed", _} ->
-          :warning
-
-        {"host_checks_health_changed", %{"health" => health}} ->
-          map_health_to_severity_level(health)
-
-        {"host_checks_selected", _} ->
-          :info
-
-        {"host_deregistered", _} ->
-          :warning
-
-        {"host_deregistration_requested", _} ->
-          :debug
-
-        {"host_details_updated", _} ->
-          :info
-
-        {"host_health_changed", _} ->
-          :info
-
-        {"host_registered", _} ->
-          :info
-
-        {"host_restored", _} ->
-          :info
-
-        {"host_rolled_up", _} ->
-          :debug
-
-        {"host_rollup_requested", _} ->
-          :debug
-
-        {"host_saptune_health_changed", %{"health" => health}} ->
-          map_health_to_severity_level(health)
-
-        {"host_tombstoned", _} ->
-          :debug
-
-        {"provider_updated", _} ->
-          :debug
-
-        {"saptune_status_updated", _} ->
-          :info
-
-        {"sles_subscriptions_updated", _} ->
-          :debug
-
-        {"software_updates_discovery_cleared", _} ->
-          :debug
-
-        {"software_updates_discovery_requested", _} ->
-          :debug
-
-        {"software_updates_health_changed", %{"health" => health}} ->
-          map_health_to_severity_level(health)
-
-        {"checks_selected", _} ->
-          :warning
-
-        {"cluster_checks_health_changed", %{"health" => health}} ->
-          map_health_to_severity_level(health)
-
-        {"cluster_deregistered", _} ->
-          :warning
-
-        {"cluster_details_updated", _} ->
-          :debug
-
-        {"cluster_discovered_health_changed", %{"health" => health}} ->
-          map_health_to_severity_level(health)
-
-        {"cluster_health_changed", %{"health" => health}} ->
-          map_health_to_severity_level(health)
-
-        {"cluster_registered", _} ->
-          :info
-
-        {"cluster_restored", _} ->
-          :info
-
-        {"cluster_rolled_up", _} ->
-          :debug
-
-        {"cluster_rollup_requested", _} ->
-          :debug
-
-        {"cluster_tombstoned", _} ->
-          :debug
-
-        {"host_added_to_cluster", _} ->
-          :debug
-
-        {"host_removed_from_cluster", _} ->
-          :debug
-
-        {"application_instance_deregistered", _} ->
-          :warning
-
-        {"application_instance_health_changed", %{"health" => health}} ->
-          map_health_to_severity_level(health)
-
-        {"application_instance_marked_absent", _} ->
-          :warning
-
-        {"application_instance_marked_present", _} ->
-          :info
-
-        {"application_instance_moved", _} ->
-          :info
-
-        {"application_instance_registered", _} ->
-          :info
-
-        {"sap_system_database_health_changed", %{"health" => health}} ->
-          map_health_to_severity_level(health)
-
-        {"sap_system_deregistered", _} ->
-          :warning
-
-        {"sap_system_restored", _} ->
-          :info
-
-        {"sap_system_rolled_up", _} ->
-          :debug
-
-        {"sap_system_rollup_requested", _} ->
-          :debug
-
-        {"sap_system_tombstoned", _} ->
-          :debug
-
-        {"sap_system_updated", _} ->
-          :info
-
-        {"database_deregistered", _} ->
-          :warning
-
-        #
-        {"database_health_changed", _} ->
-          :info
-
-        {"database_instance_deregistered", _} ->
-          :warning
-
-        # 
-        {"database_instance_health_changed", _} ->
-          :info
-
-        {"database_instance_marked_absent", _} ->
-          :warning
-
-        {"database_instance_marked_present", _} ->
-          :info
-
-        {"database_instance_registered", _} ->
-          :info
-
-        {"database_instance_system_replication_changed", %{"health" => health}} ->
-          map_health_to_severity_level(health)
-
-        {"database_registered", _} ->
-          :info
-
-        {"database_restored", _} ->
-          :info
-
-        {"database_rolled_up", _} ->
-          :debug
-
-        {"database_rollup_requested", _} ->
-          :info
-
-        {"database_tenants_updated", _} ->
-          :info
-
-        {"database_tombstoned", _} ->
-          :debug
-
-        _ ->
-          :warning
-      end
-
-    severity_level_to_integer(level)
+    case @severity_level_mapping[activity_type] do
+      level when is_atom(level) ->
+        severity_level_to_integer(level)
+
+      condition when is_map(condition) ->
+        condition |> map_metadata_to_severity_level(metadata) |> severity_level_to_integer()
+    end
   end
 
-  defp map_health_to_severity_level("critical"), do: :critical
-  defp map_health_to_severity_level(""), do: :warning
-  defp map_health_to_severity_level(_), do: :info
+  defp map_metadata_to_severity_level(mapping, metadata) do
+    keys = Map.keys(metadata)
+    condition = mapping.condition
+
+    case condition do
+      :map_value_to_severity ->
+        health_key_suffix = mapping.key_suffix
+
+        health_key =
+          Enum.find(keys, fn e -> String.ends_with?(e, health_key_suffix) end)
+
+        health_value = String.downcase(metadata[health_key])
+        severity_default = Map.get(mapping.values, "*")
+        Map.get(mapping.values, health_value, severity_default)
+
+      :key_exists ->
+        key = mapping.key
+
+        case key in keys do
+          true ->
+            :warning
+
+          false ->
+            :info
+        end
+    end
+  end
 end
