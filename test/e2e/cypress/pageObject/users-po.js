@@ -47,6 +47,7 @@ export default class UsersPage extends BasePage {
     this.verifyTotpButton = 'button:contains("Verify")';
     this.totpEnrollmentErrorLabel =
       'p:contains("Totp code not valid for the enrollment procedure.")';
+    this.confirmDisableTotpButton = 'button:contains("Disable")';
   }
 
   visit(url = this.url) {
@@ -305,5 +306,34 @@ export default class UsersPage extends BasePage {
 
   totpEnabledToasterIsDisplayed() {
     return cy.get(this.totpEnabledToaster).should('be.visible');
+  }
+
+  assertSessionStatusCode(username, password, expectedStatusCode = 401) {
+    cy.request({
+      method: 'POST',
+      url: '/api/session',
+      body: {
+        username,
+        password,
+      },
+      failOnStatusCode: false,
+    }).then((response) => {
+      expect(
+        response.status,
+        'Session endpoint has the expected status code'
+      ).to.eq(expectedStatusCode);
+    });
+  }
+
+  loginFailsIfOtpNotProvided() {
+    return this.assertSessionStatusCode(this.USER.username, this.PASSWORD, 422);
+  }
+
+  assertLoginWorks() {
+    return this.assertSessionStatusCode(this.USER.username, this.PASSWORD, 200);
+  }
+
+  clickDisableTotpButton() {
+    return cy.get(this.confirmDisableTotpButton).click();
   }
 }

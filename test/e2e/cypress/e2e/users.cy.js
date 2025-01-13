@@ -291,13 +291,19 @@ describe('Users', () => {
     });
 
     it('should fail to login if TOTP code is not given', () => {
-      expectLoginFails(USER.username, PASSWORD, 422);
+      usersPage.clickAuthenticatorAppSwitch();
+      usersPage.typeTotpCode();
+      usersPage.clickVerifyTotpButton();
+      usersPage.loginFailsIfOtpNotProvided();
     });
 
-    it('should disable TOTP authentication', () => {
-      cy.get('button[role="switch"]').click();
-      cy.contains('button', 'Disable').click();
-      cy.apiLogin(USER.username, PASSWORD);
+    it('should disable TOTP authentication and check login works without TOTP', () => {
+      usersPage.clickAuthenticatorAppSwitch();
+      usersPage.typeTotpCode();
+      usersPage.clickVerifyTotpButton();
+      usersPage.clickAuthenticatorAppSwitch();
+      usersPage.clickDisableTotpButton();
+      usersPage.assertLoginWorks();
     });
 
     it('should reconfigure TOTP authentication with a new secret', () => {
