@@ -281,13 +281,15 @@ export default class UsersPage extends BasePage {
 
   typeTotpCode(code) {
     if (code) {
-      cy.get(this.newTotpCodeInputField).type(code);
+      return cy.get(this.newTotpCodeInputField).type(code);
     } else {
-      cy.get(this.totpCode).then((element) => {
+      return cy.get(this.totpCode).then((element) => {
         const totpSecret = element.text();
-        cy.wrap(TOTP.generate(totpSecret)).then(({ otp }) => {
-          cy.get(this.newTotpCodeInputField).type(otp);
-        });
+        const { otp } = TOTP.generate(totpSecret, { period: 30 });
+        return cy
+          .get(this.newTotpCodeInputField)
+          .type(otp)
+          .then(() => totpSecret);
       });
     }
   }

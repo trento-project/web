@@ -11,6 +11,7 @@ export default class BasePage {
     this.navigation = {
       navigationItems: 'nav a',
     };
+    this.signOutButton = 'button:contains("Sign out")';
   }
 
   visit(url = '/') {
@@ -23,6 +24,11 @@ export default class BasePage {
 
   refresh() {
     cy.reload();
+  }
+
+  clickSignOutButton() {
+    this.clickUserDropdownMenuButton();
+    return cy.get(this.signOutButton).click();
   }
 
   pageTitleIsCorrectlyDisplayed(title) {
@@ -59,6 +65,8 @@ export default class BasePage {
   }
 
   logout() {
+    window.localStorage.removeItem('access_token');
+    window.localStorage.removeItem('refresh_token');
     Cypress.session.clearAllSavedSessions();
   }
 

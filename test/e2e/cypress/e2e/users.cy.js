@@ -4,6 +4,7 @@ import { userFactory } from '@lib/test-utils/factories/users';
 
 import UsersPage from '../pageObject/users-po.js';
 import BasePage from '../pageObject/base-po.js';
+import LoginPage from '../pageObject/login-po.js';
 
 const PASSWORD = 'password';
 const USER = userFactory.build({ username: 'e2etest' });
@@ -60,6 +61,7 @@ const expectLoginFails = (username, password, code = 401) => {
 
 let usersPage;
 let basePage;
+let loginPage;
 
 describe('Users', () => {
   describe('Create user', () => {
@@ -265,6 +267,7 @@ describe('Users', () => {
     beforeEach(() => {
       basePage = new BasePage();
       usersPage = new UsersPage();
+      loginPage = new LoginPage();
       basePage.logout();
       basePage.deleteAllUsers();
       usersPage.apiCreateUser();
@@ -306,67 +309,31 @@ describe('Users', () => {
       usersPage.assertLoginWorks();
     });
 
-    it('should reconfigure TOTP authentication with a new secret', () => {
-      cy.get('button[role="switch"]').click();
-      cy.contains('Your new TOTP secret is')
-        .next()
-        .invoke('text')
-        .as('totpSecret');
-
-      cy.get('@totpSecret').then((totpSecret) => {
-        cy.wrap(TOTP.generate(totpSecret)).then(({ otp }) => {
-          cy.get('input[placeholder="TOTP code"]').type(otp);
+    it('should reconfigure TOTP and test different login cases', () => {
+      usersPage.clickAuthenticatorAppSwitch();
+      usersPage.typeTotpCode();
+      usersPage.clickVerifyTotpButton();
+      usersPage.clickAuthenticatorAppSwitch();
+      usersPage.clickDisableTotpButton();
+      usersPage.clickAuthenticatorAppSwitch();
+      usersPage.typeTotpCode().then((totpSecret) => {
+        usersPage.clickVerifyTotpButton();
+        usersPage.authenticatorAppSwitchIsEnabled();
+        usersPage.clickSignOutButton();
+        loginPage.login(usersPage.USER.username, usersPage.PASSWORD);
+        loginPage.typeTotpCode('invalid');
+        loginPage.clickSubmitLoginButton();
+        cy.get('p').contains('Invalid credentials');
+        loginPage.typeTotpCode(totpSecret);
+        loginPage.clickSubmitLoginButton();
+        cy.get('p').contains('Invalid credentials');
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(30000).then(() => {
+          loginPage.typeTotpCode(totpSecret);
+          loginPage.clickSubmitLoginButton();
+          //TODO: Add verification for login succesful
         });
-
-        Cypress.env('totp_secret', totpSecret);
       });
-
-      cy.contains('button', 'Verify').click();
-      cy.get('button[role="switch"]').should('be.enabled');
-    });
-
-    it('should ask TOTP code during login and fail if given code is invalid', () => {
-      cy.logout();
-      cy.visit('/');
-      cy.get('input[data-testid="login-username"]').type(USER.username);
-      cy.get('input[data-testid="login-password"]').type(PASSWORD);
-      cy.contains('button', 'Login').click();
-
-      cy.get('label').should('contain', 'TOTP code');
-
-      cy.get('input[data-testid="login-totp-code"]').type('invalid');
-      cy.contains('button', 'Login').click();
-
-      cy.get('p').contains('Invalid credentials');
-    });
-
-    it('should fail login in if the code is already used', () => {
-      cy.get('input[data-testid="login-totp-code"]').clear();
-
-      cy.wrap(TOTP.generate(Cypress.env('totp_secret'))).then(({ otp }) => {
-        cy.get('input[data-testid="login-totp-code"]').type(otp);
-      });
-
-      cy.contains('button', 'Login').click();
-      cy.get('p').contains('Invalid credentials');
-    });
-
-    // skipping this test by default, as it takes a long time.
-    // eslint-disable-next-line mocha/no-skipped-tests
-    it.skip('should ask TOTP code during login and work if the code is new', () => {
-      cy.get('input[data-testid="login-totp-code"]').clear();
-      // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(30000)
-        .then(() => TOTP.generate(Cypress.env('totp_secret')))
-        .as('otpCode');
-
-      cy.get('@otpCode').then(({ otp }) => {
-        cy.get('input[data-testid="login-totp-code"]').type(otp);
-      });
-
-      cy.contains('button', 'Login').click();
-
-      cy.get('h1').should('contain', 'At a glance');
     });
 
     it('should be disabled by admin user', () => {
