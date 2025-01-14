@@ -1162,6 +1162,7 @@ defmodule Trento.Factory do
     %ActivityLogEntry{
       type: Faker.Pokemon.name(),
       actor: Faker.Internet.user_name(),
+      severity: ActivityLogEntry.severity_level_to_integer(:info),
       metadata: %{}
     }
   end

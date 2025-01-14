@@ -400,6 +400,7 @@ defmodule Trento.ActivityLog.ActivityLoggerTest do
                  %ActivityLog{
                    type: ^expected_activity_type,
                    actor: ^username,
+                   severity: ActivityLog.severity_level_to_integer(:info),
                    metadata: ^expected_metadata
                  }
                ] = Trento.Repo.all(ActivityLog)
@@ -427,7 +428,12 @@ defmodule Trento.ActivityLog.ActivityLoggerTest do
     ]
 
     Enum.each(events, fn {event, _} ->
-      assert :ok == ActivityLogger.log_activity(%{event: event, metadata: %{}})
+      assert :ok ==
+               ActivityLogger.log_activity(%{
+                 event: event,
+                 severity: ActivityLog.severity_level_to_integer(:info),
+                 metadata: %{}
+               })
     end)
 
     activity_log = Trento.Repo.all(ActivityLog)

@@ -70,6 +70,7 @@ defmodule Trento.ActivityLog.ActivityLog do
       condition: :map_value_to_severity
     },
     "host_checks_selected" => :info,
+    "host_checks_execution_request" => :info,
     "host_deregistered" => :warning,
     "host_deregistration_requested" => :debug,
     "host_details_updated" => :info,
@@ -186,11 +187,14 @@ defmodule Trento.ActivityLog.ActivityLog do
         health_key_suffix = mapping.key_suffix
 
         health_key =
-          Enum.find(keys, fn e -> String.ends_with?(e, health_key_suffix) end)
+          keys
+          |> Enum.map(&Atom.to_string/1)
+          |> Enum.find(fn e -> String.ends_with?(e, health_key_suffix) end)
 
-        health_value = String.downcase(metadata[health_key])
+        health_value = metadata[String.to_existing_atom(health_key)]
+        health_value_downcased = health_value |> Atom.to_string() |> String.downcase()
         severity_default = Map.get(mapping.values, "*")
-        Map.get(mapping.values, health_value, severity_default)
+        Map.get(mapping.values, health_value_downcased, severity_default)
 
       :key_exists ->
         key = mapping.key
