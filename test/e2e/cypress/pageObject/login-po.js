@@ -9,6 +9,7 @@ export default class LoginPage extends BasePage {
     this.passwordInputField = 'input[autocomplete="current-password"]';
     this.submitLoginButton = 'button[type="submit"]';
     this.totpCodeInput = '#totp-code';
+    this.invalidCredentialsError = 'p:contains("Invalid credentials")';
   }
 
   visit(url = '/') {
@@ -21,6 +22,14 @@ export default class LoginPage extends BasePage {
     return this.clickSubmitLoginButton();
   }
 
+  sleep(seconds) {
+    return new Promise((resolve) => setTimeout(resolve, seconds * 1000));
+  }
+
+  invalidCredentialsErrorIsDisplayed() {
+    return cy.get(this.invalidCredentialsError).should('be.visible');
+  }
+
   clickSubmitLoginButton() {
     return cy.get(this.submitLoginButton).click();
   }
@@ -29,9 +38,19 @@ export default class LoginPage extends BasePage {
     if (totpSecret === 'invalid')
       return cy.get(this.totpCodeInput).type(totpSecret);
     else {
-      const { otp, expires } = TOTP.generate(totpSecret, { period: 30 });
-      cy.log(expires);
+      const { otp } = TOTP.generate(totpSecret);
       return cy.get(this.totpCodeInput).clear().type(otp);
     }
+  }
+
+  typeAlreadyUsedCode(totpSecret) {
+    return this.typeTotpCode(totpSecret);
+  }
+
+  waitForNewTotpCodeAndTypeIt(totpSecret) {
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(30000).then(() => {
+      this.typeTotpCode(totpSecret);
+    });
   }
 }

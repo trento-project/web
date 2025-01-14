@@ -39,6 +39,11 @@ export default class BasePage {
     cy.contains('button', buttonText).click();
   }
 
+  selectFromDropdown(selector, choice) {
+    cy.get(selector).click();
+    return cy.get(`${selector} + div div:contains("${choice}")`).click();
+  }
+
   apiLogin(username = this.DEFAULT_USERNAME, password = this.DEFAULT_PASSWORD) {
     return cy
       .request({

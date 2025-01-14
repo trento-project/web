@@ -48,6 +48,8 @@ export default class UsersPage extends BasePage {
     this.totpEnrollmentErrorLabel =
       'p:contains("Totp code not valid for the enrollment procedure.")';
     this.confirmDisableTotpButton = 'button:contains("Disable")';
+    this.editUserTotpDropdown = 'button.totp-selection-dropdown';
+    this.enableUserTotpOption = `${this.editUserTotpDropdown}  + div div:contains("Enabled")`;
   }
 
   visit(url = this.url) {
@@ -56,6 +58,10 @@ export default class UsersPage extends BasePage {
 
   validateUrl(url = this.url) {
     return cy.url().should('include', url);
+  }
+
+  selectFromTotpDropdown(choice) {
+    return this.selectFromDropdown(this.editUserTotpDropdown, choice);
   }
 
   getUserIdFromPath() {
@@ -285,7 +291,7 @@ export default class UsersPage extends BasePage {
     } else {
       return cy.get(this.totpCode).then((element) => {
         const totpSecret = element.text();
-        const { otp } = TOTP.generate(totpSecret, { period: 30 });
+        const { otp } = TOTP.generate(totpSecret);
         return cy
           .get(this.newTotpCodeInputField)
           .type(otp)
@@ -337,5 +343,16 @@ export default class UsersPage extends BasePage {
 
   clickDisableTotpButton() {
     return cy.get(this.confirmDisableTotpButton).click();
+  }
+
+  clickTotpDropdown() {
+    return cy.get(this.editUserTotpDropdown).click();
+  }
+
+  enableTotpOptionIsDisabled() {
+    return cy
+      .get(this.enableUserTotpOption)
+      .invoke('attr', 'aria-disabled')
+      .should('eq', 'true');
   }
 }

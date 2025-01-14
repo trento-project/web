@@ -5,6 +5,7 @@ import { userFactory } from '@lib/test-utils/factories/users';
 import UsersPage from '../pageObject/users-po.js';
 import BasePage from '../pageObject/base-po.js';
 import LoginPage from '../pageObject/login-po.js';
+import DashboardPage from '../pageObject/dashboard-po.js';
 
 const PASSWORD = 'password';
 const USER = userFactory.build({ username: 'e2etest' });
@@ -62,6 +63,7 @@ const expectLoginFails = (username, password, code = 401) => {
 let usersPage;
 let basePage;
 let loginPage;
+let dashboardPage;
 
 describe('Users', () => {
   describe('Create user', () => {
@@ -268,6 +270,7 @@ describe('Users', () => {
       basePage = new BasePage();
       usersPage = new UsersPage();
       loginPage = new LoginPage();
+      dashboardPage = new DashboardPage();
       basePage.logout();
       basePage.deleteAllUsers();
       usersPage.apiCreateUser();
@@ -309,7 +312,7 @@ describe('Users', () => {
       usersPage.assertLoginWorks();
     });
 
-    it('should reconfigure TOTP and test different login cases', () => {
+    it('should reconfigure TOTP and validate login cases', () => {
       usersPage.clickAuthenticatorAppSwitch();
       usersPage.typeTotpCode();
       usersPage.clickVerifyTotpButton();
@@ -321,50 +324,40 @@ describe('Users', () => {
         usersPage.authenticatorAppSwitchIsEnabled();
         usersPage.clickSignOutButton();
         loginPage.login(usersPage.USER.username, usersPage.PASSWORD);
-        loginPage.typeTotpCode('invalid');
+        loginPage.typeTotpCode('invalidCode');
         loginPage.clickSubmitLoginButton();
-        cy.get('p').contains('Invalid credentials');
-        loginPage.typeTotpCode(totpSecret);
+        loginPage.invalidCredentialsErrorIsDisplayed();
+        loginPage.typeAlreadyUsedCode(totpSecret);
         loginPage.clickSubmitLoginButton();
-        cy.get('p').contains('Invalid credentials');
-        // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(30000).then(() => {
-          loginPage.typeTotpCode(totpSecret);
-          loginPage.clickSubmitLoginButton();
-          //TODO: Add verification for login succesful
-        });
+        loginPage.invalidCredentialsErrorIsDisplayed();
+        loginPage.waitForNewTotpCodeAndTypeIt(totpSecret);
+        loginPage.clickSubmitLoginButton();
+        dashboardPage.dashboardPageIsDisplayed();
       });
     });
 
     it('should be disabled by admin user', () => {
-      cy.logout();
-      cy.login();
-      cy.visit('/users');
-      cy.contains('a', USER.username).click();
-      cy.get('h1').should('contain', 'Edit User');
-
-      cy.get('button.totp-selection-dropdown').click();
-
-      cy.contains('div', 'Disabled').click();
-      cy.contains('button', 'Save').click();
-
-      cy.get('div').contains('User edited successfully');
-      cy.get('h1').should('contain', 'Users');
-
-      cy.apiLogin(USER.username, PASSWORD);
+      usersPage.clickAuthenticatorAppSwitch();
+      usersPage.typeTotpCode();
+      usersPage.clickVerifyTotpButton();
+      usersPage.clickSignOutButton();
+      usersPage.login();
+      usersPage.visit();
+      usersPage.clickNewUser();
+      usersPage.selectFromTotpDropdown('Disabled');
+      usersPage.clickEditUserSaveButton();
+      usersPage.userEditedSuccessfullyToasterIsDisplayed();
+      usersPage.pageTitleIsCorrectlyDisplayed('Users');
+      usersPage.assertLoginWorks();
     });
 
     it('should not be enabled by admin user', () => {
-      cy.contains('a', USER.username).click();
-      cy.get('h1').should('contain', 'Edit User');
-
-      cy.get('button.totp-selection-dropdown').click();
-
-      cy.get(
-        'div[role="listbox"][data-headlessui-state="open"] > div:nth-child(1)'
-      )
-        .invoke('attr', 'aria-disabled')
-        .should('eq', 'true');
+      usersPage.clickSignOutButton();
+      usersPage.login();
+      usersPage.visit();
+      usersPage.clickNewUser();
+      usersPage.clickTotpDropdown();
+      usersPage.enableTotpOptionIsDisabled();
     });
   });
 
