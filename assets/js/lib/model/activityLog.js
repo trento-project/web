@@ -581,12 +581,10 @@ export const LEVEL_DEBUG = 'debug';
 export const LEVEL_INFO = 'info';
 export const LEVEL_WARNING = 'warning';
 export const LEVEL_ERROR = 'error';
-export const LEVEL_CRITICAL = 'critical';
 
 export const ACTIVITY_LOG_LEVELS = [
   LEVEL_DEBUG,
   LEVEL_INFO,
   LEVEL_WARNING,
   LEVEL_ERROR,
-  LEVEL_CRITICAL
 ];
