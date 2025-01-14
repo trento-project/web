@@ -1,6 +1,5 @@
 defmodule Trento.SettingsTest do
   use ExUnit.Case
-  alias Trento.Settings.ActivityLogSettings
   use Trento.DataCase
   use Trento.CommandedCase
   use Trento.TaskCase
@@ -17,6 +16,7 @@ defmodule Trento.SettingsTest do
   alias Trento.Settings
 
   alias Trento.Settings.{
+    ActivityLogSettings,
     ApiKeySettings,
     InstallationSettings,
     SuseManagerSettings
