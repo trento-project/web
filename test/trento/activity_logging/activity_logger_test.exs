@@ -395,12 +395,13 @@ defmodule Trento.ActivityLog.ActivityLoggerTest do
         wait_for_tasks_completion()
 
         expected_metadata = expected_metadata_fn.(inserted_component)
+        severity = ActivityLog.severity_level_to_integer(:info)
 
         assert [
                  %ActivityLog{
                    type: ^expected_activity_type,
                    actor: ^username,
-                   severity: ActivityLog.severity_level_to_integer(:info),
+                   severity: ^severity,
                    metadata: ^expected_metadata
                  }
                ] = Trento.Repo.all(ActivityLog)
@@ -431,7 +432,6 @@ defmodule Trento.ActivityLog.ActivityLoggerTest do
       assert :ok ==
                ActivityLogger.log_activity(%{
                  event: event,
-                 severity: ActivityLog.severity_level_to_integer(:info),
                  metadata: %{}
                })
     end)
