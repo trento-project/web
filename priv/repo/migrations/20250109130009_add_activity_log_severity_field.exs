@@ -5,5 +5,7 @@ defmodule Trento.Repo.Migrations.AddActivityLogSeverityField do
     alter(table(:activity_logs)) do
       add :severity, :integer
     end
+
+    create index(:activity_logs, [:severity])
   end
 end
