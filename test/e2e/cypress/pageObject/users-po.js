@@ -9,10 +9,14 @@ export default class UsersPage extends BasePage {
     this.PASSWORD = 'password';
     this.USER = userFactory.build({ username: 'e2etest' });
 
-    this.createUserButton = 'button[class*="green"]';
+    this.createUserButton = 'button:contains("Create User")';
     this.adminUserName = 'tbody tr:nth-child(1) a';
     this.newUserName = 'tbody tr:nth-child(2) a';
     this.newUserEmail = 'tbody tr:nth-child(2) p';
+    this.newUserDeleteButton =
+      'tbody tr:nth-child(2) td button:contains("Delete")';
+    this.confirmDeleteUserButton =
+      'div[id*="dialog-panel"]  button:contains("Delete")';
     this.usersTableRows = 'tbody tr';
     this.changePasswordButton = 'button:contains("Change Password")';
     this.userAlreadyUpdatedWarning =
@@ -24,6 +28,8 @@ export default class UsersPage extends BasePage {
     this.passwordChangeToaster =
       'p:contains("Password change is recommended.")';
     this.totpEnabledToaster = 'div:contains("TOTP Enabled")';
+    this.userDeletedSuccesfullyToaster =
+      'div:contains("User deleted successfully")';
 
     this.requiredFieldsErrors = 'p[class*="text-red"]';
     this.usernameAlreadyTakenError = 'Has already been taken';
@@ -68,6 +74,22 @@ export default class UsersPage extends BasePage {
     return cy.location().then(({ pathname }) => pathname.split('/')[2]);
   }
 
+  deletedUserNameIsNotDisplayed() {
+    return cy.get(this.newUserName).should('not.exist');
+  }
+
+  clickNewUserDeleteButton() {
+    return cy.get(this.newUserDeleteButton).click();
+  }
+
+  clickConfirmDeleteUserButton() {
+    return cy.get(this.confirmDeleteUserButton).click();
+  }
+
+  userDeletedSuccesfullyToasterIsDisplayed() {
+    return cy.get(this.userDeletedSuccesfullyToaster).should('be.visible');
+  }
+
   getProfile(username = this.USER.username, password = this.PASSWORD) {
     return this.apiLogin(username, password).then(({ accessToken }) => {
       return cy
@@ -80,6 +102,12 @@ export default class UsersPage extends BasePage {
         .then(({ body: profile }) => {
           return profile;
         });
+    });
+  }
+
+  apiDisableUser() {
+    this.getProfile().then(({ id }) => {
+      this.patchUser(id, { enabled: false });
     });
   }
 
@@ -314,31 +342,6 @@ export default class UsersPage extends BasePage {
 
   totpEnabledToasterIsDisplayed() {
     return cy.get(this.totpEnabledToaster).should('be.visible');
-  }
-
-  assertSessionStatusCode(username, password, expectedStatusCode = 401) {
-    cy.request({
-      method: 'POST',
-      url: '/api/session',
-      body: {
-        username,
-        password,
-      },
-      failOnStatusCode: false,
-    }).then((response) => {
-      expect(
-        response.status,
-        'Session endpoint has the expected status code'
-      ).to.eq(expectedStatusCode);
-    });
-  }
-
-  loginFailsIfOtpNotProvided() {
-    return this.assertSessionStatusCode(this.USER.username, this.PASSWORD, 422);
-  }
-
-  assertLoginWorks() {
-    return this.assertSessionStatusCode(this.USER.username, this.PASSWORD, 200);
   }
 
   clickDisableTotpButton() {

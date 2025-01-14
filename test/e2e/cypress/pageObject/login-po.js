@@ -10,10 +10,44 @@ export default class LoginPage extends BasePage {
     this.submitLoginButton = 'button[type="submit"]';
     this.totpCodeInput = '#totp-code';
     this.invalidCredentialsError = 'p:contains("Invalid credentials")';
+    this.loginToTrentoTitle = 'h2:contains("Login to Trento")';
   }
 
   visit(url = '/') {
     cy.visit(url);
+  }
+
+  assertSessionStatusCode(username, password, expectedStatusCode = 401) {
+    cy.request({
+      method: 'POST',
+      url: '/api/session',
+      body: {
+        username,
+        password,
+      },
+      failOnStatusCode: false,
+    }).then((response) => {
+      expect(
+        response.status,
+        'Session endpoint has the expected status code'
+      ).to.eq(expectedStatusCode);
+    });
+  }
+
+  loginFailsIfOtpNotProvided(username, password) {
+    return this.assertSessionStatusCode(username, password, 422);
+  }
+
+  loginShouldFail(username, password) {
+    return this.assertSessionStatusCode(username, password, 401);
+  }
+
+  assertLoginWorks(username, password) {
+    return this.assertSessionStatusCode(username, password, 200);
+  }
+
+  loginPageIsDisplayed() {
+    return cy.get(this.loginToTrentoTitle).should('be.visible');
   }
 
   login(username, password) {

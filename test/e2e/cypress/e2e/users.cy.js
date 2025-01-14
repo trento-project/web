@@ -1,64 +1,9 @@
-import { TOTP } from 'totp-generator';
-
 import { userFactory } from '@lib/test-utils/factories/users';
 
 import UsersPage from '../pageObject/users-po.js';
 import BasePage from '../pageObject/base-po.js';
 import LoginPage from '../pageObject/login-po.js';
 import DashboardPage from '../pageObject/dashboard-po.js';
-
-const PASSWORD = 'password';
-const USER = userFactory.build({ username: 'e2etest' });
-
-const patchUser = (id, payload) => {
-  cy.apiLogin().then(({ accessToken }) =>
-    cy
-      .request({
-        url: `/api/v1/users/${id}`,
-        method: 'GET',
-        auth: { bearer: accessToken },
-        body: {},
-      })
-      .then(({ headers: { etag } }) => {
-        cy.request({
-          url: `/api/v1/users/${id}`,
-          method: 'PATCH',
-          auth: { bearer: accessToken },
-          body: payload,
-          headers: { 'if-match': etag },
-        });
-      })
-  );
-};
-
-const getProfile = (username, password) => {
-  return cy.apiLogin(username, password).then(({ accessToken }) => {
-    return cy
-      .request({
-        url: '/api/v1/profile',
-        method: 'GET',
-        auth: { bearer: accessToken },
-        body: {},
-      })
-      .then(({ body: profile }) => {
-        return profile;
-      });
-  });
-};
-
-const expectLoginFails = (username, password, code = 401) => {
-  cy.request({
-    method: 'POST',
-    url: '/api/session',
-    body: {
-      username,
-      password,
-    },
-    failOnStatusCode: false,
-  }).then((response) => {
-    expect(response.status).to.eq(code);
-  });
-};
 
 let usersPage;
 let basePage;
@@ -300,7 +245,10 @@ describe('Users', () => {
       usersPage.clickAuthenticatorAppSwitch();
       usersPage.typeTotpCode();
       usersPage.clickVerifyTotpButton();
-      usersPage.loginFailsIfOtpNotProvided();
+      loginPage.loginFailsIfOtpNotProvided(
+        usersPage.USER.username,
+        usersPage.PASSWORD
+      );
     });
 
     it('should disable TOTP authentication and check login works without TOTP', () => {
@@ -309,7 +257,7 @@ describe('Users', () => {
       usersPage.clickVerifyTotpButton();
       usersPage.clickAuthenticatorAppSwitch();
       usersPage.clickDisableTotpButton();
-      usersPage.assertLoginWorks();
+      loginPage.assertLoginWorks(usersPage.USER.username, usersPage.PASSWORD);
     });
 
     it('should reconfigure TOTP and validate login cases', () => {
@@ -348,7 +296,7 @@ describe('Users', () => {
       usersPage.clickEditUserSaveButton();
       usersPage.userEditedSuccessfullyToasterIsDisplayed();
       usersPage.pageTitleIsCorrectlyDisplayed('Users');
-      usersPage.assertLoginWorks();
+      loginPage.assertLoginWorks(usersPage.USER.username, usersPage.PASSWORD);
     });
 
     it('should not be enabled by admin user', () => {
@@ -362,59 +310,64 @@ describe('Users', () => {
   });
 
   describe('Lock user', () => {
-    before(() => {
-      cy.logout();
-      cy.login(USER.username, PASSWORD);
-      cy.visit('/profile');
-      cy.get('h1').should('contain', 'Profile');
+    beforeEach(() => {
+      usersPage = new UsersPage();
+      loginPage = new LoginPage();
+      usersPage.logout();
+      usersPage.deleteAllUsers();
+      usersPage.apiCreateUser();
+      usersPage.login(usersPage.USER.username, usersPage.PASSWORD);
+      usersPage.visit('/profile');
+      usersPage.pageTitleIsCorrectlyDisplayed('Profile');
+      usersPage.apiDisableUser();
     });
 
     it('should logout the user when an admin disables the user', () => {
-      getProfile(USER.username, PASSWORD).then(({ id }) => {
-        patchUser(id, { enabled: false });
-      });
-      cy.get('h2').should('contain', 'Login to Trento');
+      loginPage.loginPageIsDisplayed();
     });
 
     it('should not be able to login with locked user', () => {
-      expectLoginFails(USER.username, PASSWORD);
+      loginPage.loginShouldFail(usersPage.USER.username, usersPage.PASSWORD);
     });
   });
 
   describe('Delete user', () => {
-    before(() => {
-      cy.logout();
-      cy.login();
-      cy.visit('/users');
+    beforeEach(() => {
+      usersPage = new UsersPage();
+      loginPage = new LoginPage();
+      usersPage.logout();
+      usersPage.deleteAllUsers();
+      usersPage.apiCreateUser();
+      usersPage.login();
+      usersPage.visit();
+      usersPage.clickNewUserDeleteButton();
+      usersPage.clickConfirmDeleteUserButton();
     });
 
     it('should delete the user properly', () => {
-      cy.get('button:contains("Delete")').eq(1).click();
-
-      cy.get('button:contains("Delete")').eq(2).click();
-      cy.contains(USER.username).should('not.exist');
+      usersPage.userDeletedSuccesfullyToasterIsDisplayed();
+      usersPage.deletedUserNameIsNotDisplayed();
     });
 
     it('should be able to create a new user with deleted user username and email', () => {
-      cy.contains('button', 'Create User').click();
-      cy.get('h1').should('contain', 'Create User');
+      usersPage.clickCreateUserButton();
+      usersPage.typeUserFullName();
+      usersPage.typeUserEmail();
+      usersPage.typeUserName();
+      usersPage.typeUserPassword();
+      usersPage.typeUserPasswordConfirmation();
+      usersPage.clickSubmitUserCreationButton();
+      usersPage.userCreatedSuccessfullyToasterIsDisplayed();
 
-      cy.get('input[placeholder="Enter full name"]').type(USER.fullname);
-      cy.get('input[placeholder="Enter email address"]').type(USER.email);
-      cy.get('input[placeholder="Enter username"]').type(USER.username);
-
-      cy.contains('button', 'Generate Password').click();
-
-      cy.contains('button', 'Create').click();
-      cy.get('div').contains('User created successfully');
-
-      cy.get('h1').should('contain', 'Users');
-      cy.get('a').contains(USER.username);
-      cy.get('p').contains(USER.fullname);
+      usersPage.pageTitleIsCorrectlyDisplayed('Users');
+      usersPage.newUserIsDisplayed(
+        usersPage.USER.username,
+        usersPage.USER.email
+      );
     });
 
     it('should not be able to login with deleted user', () => {
-      expectLoginFails(USER.username, PASSWORD);
+      loginPage.loginShouldFail(usersPage.USER.username, usersPage.PASSWORD);
     });
   });
 });
