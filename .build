@@ -23,7 +23,6 @@ Trento.ActivityLog.Parser.ActivityParser.html
 Trento.ActivityLog.Policy.html
 Trento.ActivityLog.RetentionPeriodUnit.html
 Trento.ActivityLog.RetentionTime.html
-Trento.ActivityLog.Settings.html
 Trento.ActivityLog.html
 Trento.AggregateCase.html
 Trento.Charts.ChartTimeSeries.html
@@ -358,6 +357,7 @@ Trento.SapSystems.Services.HealthSummaryService.html
 Trento.SapSystems.html
 Trento.Scheduler.html
 Trento.Services.HealthService.html
+Trento.Settings.ActivityLogSettings.html
 Trento.Settings.ApiKeySettings.html
 Trento.Settings.InstallationSettings.html
 Trento.Settings.Policy.html
@@ -493,8 +493,8 @@ dist/lato-latin-ext-300-normal-VPGGJKJL.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-A8A2A9BF.js
-dist/sidebar_items-4EF369B7.js
+dist/search_data-E305883C.js
+dist/sidebar_items-064FB490.js
 environment_variables.html
 hack_on_the_trento.html
 index.html

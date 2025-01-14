@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-K7URE6B4.js"></script>
-    <script src="dist/sidebar_items-4EF369B7.js"></script>
+    <script src="dist/sidebar_items-064FB490.js"></script>
     <script src="docs_config.js"></script>
     <script async src="dist/html-YIPIRHGU.js"></script>
 
@@ -179,6 +179,14 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
+        <a href="#change_activity_log_retention_period/2" data-no-tooltip translate="no">change_activity_log_retention_period(value, unit)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
         <a href="#change_suse_manager_settings/2" data-no-tooltip translate="no">change_suse_manager_settings(settings_submission, date_service \\ DateService)</a>
 
       </div>
@@ -196,6 +204,14 @@ GUIDES
     <div class="summary-row">
       <div class="summary-signature">
         <a href="#create_api_key_settings/1" data-no-tooltip translate="no">create_api_key_settings(settings)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#get_activity_log_settings/0" data-no-tooltip translate="no">get_activity_log_settings()</a>
 
       </div>
 
@@ -271,7 +287,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">suse_manager_settings_change_submission()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L28" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L31" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -304,7 +320,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">suse_manager_settings_save_submission()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L21" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L24" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -340,6 +356,39 @@ GUIDES
       <span class="text">Functions</span>
     </h1>
     <div class="functions-list">
+<section class="detail" id="change_activity_log_retention_period/2">
+
+  <div class="detail-header">
+    <a href="#change_activity_log_retention_period/2" class="detail-link" data-no-tooltip title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">change_activity_log_retention_period(value, unit)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L139" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> change_activity_log_retention_period(
+  <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">integer</a>(),
+  <a href="Trento.ActivityLog.RetentionPeriodUnit.html#t:t/0">Trento.ActivityLog.RetentionPeriodUnit.t</a>()
+) ::
+  {:ok, <a href="Trento.Settings.ActivityLogSettings.html#t:t/0">Trento.Settings.ActivityLogSettings.t</a>()}
+  | {:error, :activity_log_settings_not_configured}</pre>
+
+      </div>
+
+
+  </section>
+</section>
 <section class="detail" id="change_suse_manager_settings/2">
 
     <span id="change_suse_manager_settings/1"></span>
@@ -351,7 +400,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">change_suse_manager_settings(settings_submission, date_service \\ DateService)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L105" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L108" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -385,7 +434,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">clear_suse_manager_settings()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L114" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L117" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -413,7 +462,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">create_api_key_settings(settings)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L44" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L47" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -433,6 +482,36 @@ GUIDES
 
   </section>
 </section>
+<section class="detail" id="get_activity_log_settings/0">
+
+  <div class="detail-header">
+    <a href="#get_activity_log_settings/0" class="detail-link" data-no-tooltip title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">get_activity_log_settings()</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L129" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> get_activity_log_settings() ::
+  {:ok, <a href="Trento.Settings.ActivityLogSettings.html#t:t/0">Trento.Settings.ActivityLogSettings.t</a>()}
+  | {:error, :activity_log_settings_not_configured}</pre>
+
+      </div>
+
+
+  </section>
+</section>
 <section class="detail" id="get_api_key_settings/0">
 
   <div class="detail-header">
@@ -442,7 +521,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">get_api_key_settings()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L51" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L54" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -471,7 +550,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">get_installation_id()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L36" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L39" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -499,7 +578,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">get_sso_certificates()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L125" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L160" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -527,7 +606,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">get_suse_manager_settings()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L79" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L82" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -559,7 +638,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">save_suse_manager_settings(settings_submission, date_service \\ DateService)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L93" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L96" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -590,7 +669,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">update_api_key_settings(expiration)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L59" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L62" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
