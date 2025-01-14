@@ -8,6 +8,7 @@ defmodule Trento.Settings do
   alias Trento.SoftwareUpdates.Discovery, as: SoftwareUpdatesDiscovery
 
   alias Trento.Settings.{
+    ActivityLogSettings,
     ApiKeySettings,
     InstallationSettings,
     SSOCertificatesSettings,
@@ -15,6 +16,8 @@ defmodule Trento.Settings do
   }
 
   alias Trento.Support.DateService
+
+  require Trento.ActivityLog.RetentionPeriodUnit, as: RetentionPeriodUnit
 
   require Logger
 
@@ -117,6 +120,38 @@ defmodule Trento.Settings do
     SoftwareUpdatesDiscovery.clear_software_updates_discoveries()
 
     :ok
+  end
+
+  # Activity log settings
+
+  @spec get_activity_log_settings() ::
+          {:ok, ActivityLogSettings.t()} | {:error, :activity_log_settings_not_configured}
+  def get_activity_log_settings do
+    case Repo.one(ActivityLogSettings.base_query()) do
+      %ActivityLogSettings{} = settings -> {:ok, settings}
+      nil -> {:error, :activity_log_settings_not_configured}
+    end
+  end
+
+  @spec change_activity_log_retention_period(integer(), RetentionPeriodUnit.t()) ::
+          {:ok, ActivityLogSettings.t()}
+          | {:error, :activity_log_settings_not_configured}
+  def change_activity_log_retention_period(value, unit) do
+    case get_activity_log_settings() do
+      {:ok, settings} ->
+        settings
+        |> ActivityLogSettings.changeset(%{
+          retention_time: %{
+            value: value,
+            unit: unit
+          }
+        })
+        |> Repo.update()
+        |> log_error("Error while updating activity log retention period")
+
+      error ->
+        error
+    end
   end
 
   # Certificates settings

@@ -2,7 +2,6 @@ defmodule TrentoWeb.V1.SettingsController do
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
 
-  alias Trento.ActivityLog
   alias Trento.Settings
   alias Trento.SoftwareUpdates
   alias TrentoWeb.OpenApi.V1.Schema
@@ -124,7 +123,7 @@ defmodule TrentoWeb.V1.SettingsController do
       OpenApiSpex.body_params(conn)
 
     with {:ok, updated_settings} <-
-           ActivityLog.change_retention_period(retention_period, retention_period_unit) do
+           Settings.change_activity_log_retention_period(retention_period, retention_period_unit) do
       render(conn, :activity_log_settings, %{
         activity_log_settings: updated_settings
       })
@@ -142,10 +141,9 @@ defmodule TrentoWeb.V1.SettingsController do
     ]
 
   def get_activity_log_settings(conn, _) do
-    with {:ok, settings} <- ActivityLog.get_settings() do
-      render(conn, :activity_log_settings, %{
-        activity_log_settings: settings
-      })
+    case Settings.get_activity_log_settings() do
+      {:ok, settings} -> render(conn, :activity_log_settings, %{activity_log_settings: settings})
+      {:error, :activity_log_settings_not_configured} -> {:error, :not_found}
     end
   end
 

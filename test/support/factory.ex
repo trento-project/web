@@ -130,6 +130,7 @@ defmodule Trento.Factory do
   }
 
   alias Trento.Settings.{
+    ActivityLogSettings,
     ApiKeySettings,
     InstallationSettings,
     SSOCertificatesSettings,
@@ -138,7 +139,6 @@ defmodule Trento.Factory do
 
   alias Trento.ActivityLog.ActivityLog, as: ActivityLogEntry
   alias Trento.ActivityLog.RetentionTime
-  alias Trento.ActivityLog.Settings, as: ActivityLogSettings
 
   alias Trento.Abilities.{
     Ability,
