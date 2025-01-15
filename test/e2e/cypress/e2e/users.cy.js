@@ -269,20 +269,20 @@ describe('Users', () => {
 
     it('should reconfigure TOTP and validate login cases', () => {
       usersPage.clickAuthenticatorAppSwitch();
-      usersPage.typeTotpCode();
+      usersPage.typeUserTotpCode();
       usersPage.clickVerifyTotpButton();
       usersPage.clickAuthenticatorAppSwitch();
       usersPage.clickDisableTotpButton();
       usersPage.clickAuthenticatorAppSwitch();
-      usersPage.typeTotpCode().then((totpSecret) => {
+      usersPage.typeUserTotpCode().then((totpSecret) => {
         usersPage.clickVerifyTotpButton();
         usersPage.authenticatorAppSwitchIsEnabled();
         usersPage.clickSignOutButton();
         loginPage.login(usersPage.USER.username, usersPage.PASSWORD);
-        loginPage.typeTotpCode('invalidCode');
+        loginPage.typeInvalidUserTotpCode();
         loginPage.clickSubmitLoginButton();
         loginPage.invalidCredentialsErrorIsDisplayed();
-        loginPage.typeAlreadyUsedCode(totpSecret);
+        loginPage.typeAlreadyUsedTotpCode(totpSecret);
         loginPage.clickSubmitLoginButton();
         loginPage.invalidCredentialsErrorIsDisplayed();
         loginPage.waitForNewTotpCodeAndTypeIt(totpSecret);

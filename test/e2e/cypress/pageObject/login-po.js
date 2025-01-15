@@ -1,5 +1,3 @@
-import { TOTP } from 'totp-generator';
-
 import BasePage from './base-po.js';
 
 export default class LoginPage extends BasePage {
@@ -66,21 +64,19 @@ export default class LoginPage extends BasePage {
     return cy.get(this.submitLoginButton).click();
   }
 
-  typeTotpCode(totpSecret) {
-    if (totpSecret === 'invalid') {
-      return cy.get(this.totpCodeInput).type(totpSecret);
-    } else {
-      const { otp } = TOTP.generate(totpSecret);
-      return cy.get(this.totpCodeInput).clear().type(otp);
-    }
+  typeLoginTotpCode(totpSecret) {
+    this.typeTotpCode(totpSecret, this.totpCodeInput);
   }
 
-  typeAlreadyUsedCode(totpSecret) {
-    return this.typeTotpCode(totpSecret);
+  typeAlreadyUsedTotpCode(totpSecret) {
+    return this.typeLoginTotpCode(totpSecret);
+  }
+  typeInvalidUserTotpCode() {
+    return cy.get(this.totpCodeInput).clear().type('invalid');
   }
 
   waitForNewTotpCodeAndTypeIt(totpSecret) {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    return cy.wait(30000).then(() => this.typeTotpCode(totpSecret));
+    return cy.wait(30000).then(() => this.typeLoginTotpCode(totpSecret));
   }
 }

@@ -1,3 +1,5 @@
+import { TOTP } from 'totp-generator';
+
 export default class BasePage {
   constructor() {
     this.DEFAULT_USERNAME = Cypress.env('login_user');
@@ -40,6 +42,16 @@ export default class BasePage {
 
   userDropdownMenuButtonHasTheExpectedText(username) {
     return cy.get(this.userDropdownMenuButton).should('have.text', username);
+  }
+
+  typeTotpCode(totpSecret, inputField) {
+    const { otp } = TOTP.generate(totpSecret);
+    cy.log(otp);
+    return cy
+      .get(inputField)
+      .clear()
+      .type(otp)
+      .then(() => totpSecret);
   }
 
   apiLogin(username = this.DEFAULT_USERNAME, password = this.DEFAULT_PASSWORD) {

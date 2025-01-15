@@ -1,6 +1,5 @@
 import BasePage from './base-po.js';
 import { userFactory } from '@lib/test-utils/factories/users';
-import { TOTP } from 'totp-generator';
 
 export default class UsersPage extends BasePage {
   constructor() {
@@ -34,7 +33,7 @@ export default class UsersPage extends BasePage {
     this.saveChangesButton = 'button:contains("Save")';
     this.authenticatorAppSwitch = 'button[role="switch"]';
     this.newTotpCodeIssuedMessage = 'div:contains("Your new TOTP secret is:")';
-    this.totpCode = `${this.newTotpCodeIssuedMessage} + div[class*="bold"]`;
+    this.totpSecret = `${this.newTotpCodeIssuedMessage} + div[class*="bold"]`;
     this.newTotpCodeInputField = 'input[placeholder="TOTP code"]';
     this.verifyTotpButton = 'button:contains("Verify")';
     this.confirmDisableTotpButton = 'button:contains("Disable")';
@@ -159,19 +158,14 @@ export default class UsersPage extends BasePage {
     return this.selectFromDropdown(this.editUserTotpDropdown, choice);
   }
 
-  typeTotpCode(code) {
-    if (code) {
-      return cy.get(this.newTotpCodeInputField).type(code);
-    } else {
-      return cy.get(this.totpCode).then((element) => {
-        const totpSecret = element.text();
-        const { otp } = TOTP.generate(totpSecret);
-        return cy
-          .get(this.newTotpCodeInputField)
-          .type(otp)
-          .then(() => totpSecret);
-      });
-    }
+  getTotpSecret() {
+    return cy.get(this.totpSecret).then((element) => element.text());
+  }
+
+  typeUserTotpCode() {
+    return this.getTotpSecret().then((totpSecret) =>
+      this.typeTotpCode(totpSecret, this.newTotpCodeInputField)
+    );
   }
 
   apiGetProfileInfo(username = this.USER.username, password = this.PASSWORD) {
