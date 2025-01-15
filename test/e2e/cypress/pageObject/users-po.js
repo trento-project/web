@@ -9,6 +9,7 @@ export default class UsersPage extends BasePage {
     this.PASSWORD = 'password';
     this.USER = userFactory.build({ username: 'e2etest' });
 
+    // UI Element Selectors
     this.createUserButton = 'button:contains("Create User")';
     this.adminUserName = 'tbody tr:nth-child(1) a';
     this.newUserName = 'tbody tr:nth-child(2) a:nth-child(1)';
@@ -19,6 +20,28 @@ export default class UsersPage extends BasePage {
       'div[id*="dialog-panel"]  button:contains("Delete")';
     this.usersTableRows = 'tbody tr';
     this.changePasswordButton = 'button:contains("Change Password")';
+    this.fullNameInputField = 'input[aria-label="fullname"]';
+    this.emailInputField = 'input[aria-label="email"]';
+    this.userNameInputField = 'input[aria-label="username"]';
+    this.currentPasswordInputField = 'input[aria-label="current_password"]';
+    this.passwordInputField = 'input[aria-label="password"]';
+    this.passwordConfirmationInputField =
+      'input[aria-label^="password"][aria-label*="confirmation"]';
+    this.saveNewPasswordButton = 'div[id*="panel"] button:contains("Save")';
+    this.generatePasswordButton = 'div[class*="grid"] button[class*="green"]';
+    this.submitUserCreationButton = 'button:contains("Create")';
+    this.cancelUserCreationButton = 'button:contains("Cancel")';
+    this.saveChangesButton = 'button:contains("Save")';
+    this.authenticatorAppSwitch = 'button[role="switch"]';
+    this.newTotpCodeIssuedMessage = 'div:contains("Your new TOTP secret is:")';
+    this.totpCode = `${this.newTotpCodeIssuedMessage} + div[class*="bold"]`;
+    this.newTotpCodeInputField = 'input[placeholder="TOTP code"]';
+    this.verifyTotpButton = 'button:contains("Verify")';
+    this.confirmDisableTotpButton = 'button:contains("Disable")';
+    this.editUserTotpDropdown = 'button.totp-selection-dropdown';
+    this.enableUserTotpOption = `${this.editUserTotpDropdown} + div div:contains("Enabled")`;
+
+    // Toaster Messages
     this.userAlreadyUpdatedWarning =
       'p:contains("Information has been updated by another user")';
     this.userCreatedSuccessfullyToaster =
@@ -32,31 +55,12 @@ export default class UsersPage extends BasePage {
     this.userDeletedSuccesfullyToaster =
       'div:contains("User deleted successfully")';
 
+    // Error Messages
     this.requiredFieldsErrors = 'p[class*="text-red"]';
-    this.usernameAlreadyTakenError = 'Has already been taken';
-    this.fullNameInputField = 'input[aria-label="fullname"]';
-    this.emailInputField = 'input[aria-label="email"]';
-    this.userNameInputField = 'input[aria-label="username"]';
-    this.currentPasswordInputField = 'input[aria-label="current_password"]';
-    this.passwordInputField = 'input[aria-label="password"]';
-    this.passwordConfirmationInputField =
-      'input[aria-label^="password"][aria-label*="confirmation"]';
-    this.saveNewPasswordButton = 'div[id*="panel"] button:contains("Save")';
+    this.usernameAlreadyTakenError = 'p:contains("Has already been taken")';
     this.invalidPasswordErrorLabel = 'p:contains("Is invalid")';
-    this.generatePasswordButton = 'div[class*="grid"] button[class*="green"]';
-    this.submitUserCreationButton = 'button:contains("Create")';
-    this.cancelUserCreationButton = 'button:contains("Cancel")';
-    this.saveChangesButton = 'button:contains("Save")';
-    this.authenticatorAppSwitch = 'button[role="switch"]';
-    this.newTotpCodeIssuedMessage = 'div:contains("Your new TOTP secret is:")';
-    this.totpCode = `${this.newTotpCodeIssuedMessage} + div[class*="bold"]`;
-    this.newTotpCodeInputField = 'input[placeholder="TOTP code"]';
-    this.verifyTotpButton = 'button:contains("Verify")';
     this.totpEnrollmentErrorLabel =
       'p:contains("Totp code not valid for the enrollment procedure.")';
-    this.confirmDisableTotpButton = 'button:contains("Disable")';
-    this.editUserTotpDropdown = 'button.totp-selection-dropdown';
-    this.enableUserTotpOption = `${this.editUserTotpDropdown} + div div:contains("Enabled")`;
   }
 
   visit(url = this.url) {
@@ -67,16 +71,8 @@ export default class UsersPage extends BasePage {
     return cy.url().should('include', url);
   }
 
-  selectFromTotpDropdown(choice) {
-    return this.selectFromDropdown(this.editUserTotpDropdown, choice);
-  }
-
-  getUserIdFromPath() {
-    return cy.location().then(({ pathname }) => pathname.split('/')[2]);
-  }
-
-  deletedUserNameIsNotDisplayed() {
-    return cy.get(this.newUserName).should('not.exist');
+  clickCreateUserButton() {
+    return cy.get(this.createUserButton).click();
   }
 
   clickNewUserDeleteButton() {
@@ -87,8 +83,95 @@ export default class UsersPage extends BasePage {
     return cy.get(this.confirmDeleteUserButton).click();
   }
 
-  userDeletedSuccesfullyToasterIsDisplayed() {
-    return cy.get(this.userDeletedSuccesfullyToaster).should('be.visible');
+  clickSaveNewPasswordButton() {
+    return cy.get(this.saveNewPasswordButton).click();
+  }
+
+  clickAuthenticatorAppSwitch() {
+    return cy.get(this.authenticatorAppSwitch).click();
+  }
+
+  clickGeneratePassword() {
+    return cy.get(this.generatePasswordButton).click();
+  }
+
+  clickSubmitUserCreationButton() {
+    return cy.get(this.submitUserCreationButton).click();
+  }
+
+  clickCancelUserCreation() {
+    return cy.get(this.cancelUserCreationButton).click();
+  }
+
+  clickNewUser() {
+    return cy.get(this.newUserName).click();
+  }
+
+  clickEditUserSaveButton() {
+    return cy.get(this.saveChangesButton).click();
+  }
+
+  clickAdminUserName() {
+    return cy.get(this.adminUserName).click();
+  }
+
+  clickChangePasswordButton() {
+    return cy.get(this.changePasswordButton).click();
+  }
+
+  clickVerifyTotpButton() {
+    return cy.get(this.verifyTotpButton).click();
+  }
+
+  clickDisableTotpButton() {
+    return cy.get(this.confirmDisableTotpButton).click();
+  }
+
+  clickTotpDropdown() {
+    return cy.get(this.editUserTotpDropdown).click();
+  }
+
+  typeUserFullName(userFullName = this.USER.fullname) {
+    return cy.get(this.fullNameInputField).clear().type(userFullName);
+  }
+
+  typeUserEmail(emailAddress = this.USER.email) {
+    return cy.get(this.emailInputField).type(emailAddress);
+  }
+
+  typeUserName() {
+    return cy.get(this.userNameInputField).type(this.USER.username);
+  }
+
+  typeCurrentPassword(currentPassword = this.PASSWORD) {
+    return cy.get(this.currentPasswordInputField).type(currentPassword);
+  }
+
+  typeUserPassword(password = this.PASSWORD) {
+    return cy.get(this.passwordInputField).type(password);
+  }
+
+  typeUserPasswordConfirmation(password = this.PASSWORD) {
+    return cy.get(this.passwordConfirmationInputField).type(password);
+  }
+
+  selectFromTotpDropdown(choice) {
+    return this.selectFromDropdown(this.editUserTotpDropdown, choice);
+  }
+
+  typeTotpCode(code) {
+    if (code) {
+      return cy.get(this.newTotpCodeInputField).type(code);
+    } else {
+      return cy.get(this.totpCode).then((element) => {
+        const totpSecret = element.text();
+        const { otp } = TOTP.generate(totpSecret);
+        return cy
+          .get(this.newTotpCodeInputField)
+          .type(otp)
+          .then(() => totpSecret);
+      });
+    }
   }
 
   apiGetProfileInfo(username = this.USER.username, password = this.PASSWORD) {
@@ -166,56 +249,20 @@ export default class UsersPage extends BasePage {
     );
   }
 
-  clickCreateUserButton() {
-    return cy.get(this.createUserButton).click();
+  getUserIdFromPath() {
+    return cy.location().then(({ pathname }) => pathname.split('/')[2]);
   }
 
-  clickSaveNewPasswordButton() {
-    return cy.get(this.saveNewPasswordButton).click();
+  deletedUserNameIsNotDisplayed() {
+    return cy.get(this.newUserName).should('not.exist');
   }
 
-  clickAuthenticatorAppSwitch() {
-    return cy.get(this.authenticatorAppSwitch).click();
+  userDeletedSuccesfullyToasterIsDisplayed() {
+    return cy.get(this.userDeletedSuccesfullyToaster).should('be.visible');
   }
 
   invalidCurrentPasswordErrorIsDisplayed() {
     return cy.get(this.invalidPasswordErrorLabel).should('be.visible');
-  }
-
-  clickGeneratePassword() {
-    return cy.get(this.generatePasswordButton).click();
-  }
-
-  clickSubmitUserCreationButton() {
-    return cy.get(this.submitUserCreationButton).click();
-  }
-
-  clickCancelUserCreation() {
-    return cy.get(this.cancelUserCreationButton).click();
-  }
-
-  typeUserFullName(userFullName = this.USER.fullname) {
-    return cy.get(this.fullNameInputField).clear().type(userFullName);
-  }
-
-  typeUserEmail(emailAddress = this.USER.email) {
-    return cy.get(this.emailInputField).type(emailAddress);
-  }
-
-  typeUserName() {
-    return cy.get(this.userNameInputField).type(this.USER.username);
-  }
-
-  typeCurrentPassword(currentPassword = this.PASSWORD) {
-    return cy.get(this.currentPasswordInputField).type(currentPassword);
-  }
-
-  typeUserPassword(password = this.PASSWORD) {
-    return cy.get(this.passwordInputField).type(password);
-  }
-
-  typeUserPasswordConfirmation(password = this.PASSWORD) {
-    return cy.get(this.passwordConfirmationInputField).type(password);
   }
 
   validateRequiredFieldsErrors() {
@@ -235,7 +282,7 @@ export default class UsersPage extends BasePage {
   }
 
   usernameAlreadyTakenErrorIsDisplayed() {
-    return cy.contains(this.usernameAlreadyTakenError).should('be.visible');
+    return cy.get(this.usernameAlreadyTakenError).should('be.visible');
   }
 
   userCreatedSuccessfullyToasterIsDisplayed() {
@@ -260,18 +307,6 @@ export default class UsersPage extends BasePage {
     return cy.get(this.newUserEmail).contains(email);
   }
 
-  clickNewUser() {
-    return cy.get(this.newUserName).click();
-  }
-
-  clickEditUserSaveButton() {
-    return cy.get(this.saveChangesButton).click();
-  }
-
-  clickAdminUserName() {
-    return cy.get(this.adminUserName).click();
-  }
-
   saveButtonIsDisabled() {
     return cy.get(this.saveChangesButton).should('be.disabled');
   }
@@ -292,10 +327,6 @@ export default class UsersPage extends BasePage {
     return cy.get(this.changePasswordButton).should('be.disabled');
   }
 
-  clickChangePasswordButton() {
-    return cy.get(this.changePasswordButton).click();
-  }
-
   emailInputFieldHasExpectedValue(email = this.USER.email) {
     return cy.get(this.emailInputField).should('have.value', email);
   }
@@ -312,25 +343,6 @@ export default class UsersPage extends BasePage {
     return cy.get(this.newTotpCodeIssuedMessage).should('be.visible');
   }
 
-  typeTotpCode(code) {
-    if (code) {
-      return cy.get(this.newTotpCodeInputField).type(code);
-    } else {
-      return cy.get(this.totpCode).then((element) => {
-        const totpSecret = element.text();
-        const { otp } = TOTP.generate(totpSecret);
-        return cy
-          .get(this.newTotpCodeInputField)
-          .type(otp)
-          .then(() => totpSecret);
-      });
-    }
-  }
-
-  clickVerifyTotpButton() {
-    return cy.get(this.verifyTotpButton).click();
-  }
-
   totpEnrollmentErrorIsDisplayed() {
     return cy.get(this.totpEnrollmentErrorLabel).should('be.visible');
   }
@@ -341,14 +353,6 @@ export default class UsersPage extends BasePage {
 
   totpEnabledToasterIsDisplayed() {
     return cy.get(this.totpEnabledToaster).should('be.visible');
-  }
-
-  clickDisableTotpButton() {
-    return cy.get(this.confirmDisableTotpButton).click();
-  }
-
-  clickTotpDropdown() {
-    return cy.get(this.editUserTotpDropdown).click();
   }
 
   enableTotpOptionIsDisabled() {

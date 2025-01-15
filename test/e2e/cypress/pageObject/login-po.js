@@ -13,25 +13,23 @@ export default class LoginPage extends BasePage {
     this.loginToTrentoTitle = 'h2:contains("Login to Trento")';
   }
 
-  visit(url = '/') {
-    cy.visit(url);
-  }
-
   assertSessionStatusCode(username, password, expectedStatusCode = 401) {
-    cy.request({
-      method: 'POST',
-      url: '/api/session',
-      body: {
-        username,
-        password,
-      },
-      failOnStatusCode: false,
-    }).then((response) => {
-      expect(
-        response.status,
-        'Session endpoint has the expected status code'
-      ).to.eq(expectedStatusCode);
-    });
+    return cy
+      .request({
+        method: 'POST',
+        url: '/api/session',
+        body: {
+          username,
+          password,
+        },
+        failOnStatusCode: false,
+      })
+      .then((response) => {
+        expect(
+          response.status,
+          'Session endpoint has the expected status code'
+        ).to.eq(expectedStatusCode);
+      });
   }
 
   loginFailsIfOtpNotProvided(username, password) {
@@ -69,9 +67,9 @@ export default class LoginPage extends BasePage {
   }
 
   typeTotpCode(totpSecret) {
-    if (totpSecret === 'invalid')
+    if (totpSecret === 'invalid') {
       return cy.get(this.totpCodeInput).type(totpSecret);
-    else {
+    } else {
       const { otp } = TOTP.generate(totpSecret);
       return cy.get(this.totpCodeInput).clear().type(otp);
     }
@@ -83,8 +81,6 @@ export default class LoginPage extends BasePage {
 
   waitForNewTotpCodeAndTypeIt(totpSecret) {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(30000).then(() => {
-      this.typeTotpCode(totpSecret);
-    });
+    return cy.wait(30000).then(() => this.typeTotpCode(totpSecret));
   }
 }
