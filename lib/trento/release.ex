@@ -8,9 +8,11 @@ defmodule Trento.Release do
 
   alias Mix.Tasks.Phx.Gen.Cert
 
-  alias Trento.ActivityLog.Settings, as: ActivityLogSettings
-  alias Trento.Settings.ApiKeySettings
-  alias Trento.Settings.SSOCertificatesSettings
+  alias Trento.Settings.{
+    ActivityLogSettings,
+    ApiKeySettings,
+    SSOCertificatesSettings
+  }
 
   @app :trento
 
