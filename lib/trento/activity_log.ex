@@ -10,6 +10,7 @@ defmodule Trento.ActivityLog do
   alias Trento.ActivityLog.ActivityLog
   alias Trento.ActivityLog.MetadataQueryParser
   alias Trento.ActivityLog.RetentionTime
+  alias Trento.ActivityLog.SeverityLevel
   alias Trento.Repo
   alias Trento.Settings
 
@@ -129,7 +130,7 @@ defmodule Trento.ActivityLog do
            value:
              v
              |> Enum.map(&String.to_existing_atom/1)
-             |> Enum.map(&ActivityLog.severity_level_to_integer/1)
+             |> Enum.map(&SeverityLevel.severity_level_to_integer/1)
              |> Enum.min()
          }}
 

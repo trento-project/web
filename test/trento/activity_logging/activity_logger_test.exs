@@ -11,7 +11,7 @@ defmodule Trento.ActivityLog.ActivityLoggerTest do
 
   alias Trento.Abilities.Ability
 
-  alias Trento.ActivityLog.{ActivityLog, ActivityLogger}
+  alias Trento.ActivityLog.{ActivityLog, ActivityLogger, SeverityLevel}
   alias Trento.Tags.Tag
 
   alias TrentoWeb.Auth.AccessToken
@@ -395,7 +395,7 @@ defmodule Trento.ActivityLog.ActivityLoggerTest do
         wait_for_tasks_completion()
 
         expected_metadata = expected_metadata_fn.(inserted_component)
-        severity = ActivityLog.severity_level_to_integer(:info)
+        severity = SeverityLevel.severity_level_to_integer(:info)
 
         assert [
                  %ActivityLog{
