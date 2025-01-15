@@ -235,14 +235,14 @@ describe('Users', () => {
     it('should display TOTP enrollment failure if the given code is invalid', () => {
       usersPage.clickAuthenticatorAppSwitch();
       usersPage.newTotpCodeIssuedMessageIsDisplayed();
-      usersPage.typeTotpCode('invalid');
+      usersPage.typeInvalidUserTotpCode();
       usersPage.clickVerifyTotpButton();
       usersPage.totpEnrollmentErrorIsDisplayed();
     });
 
     it('should complete TOTP enrollment properly', () => {
       usersPage.clickAuthenticatorAppSwitch();
-      usersPage.typeTotpCode();
+      usersPage.typeUserTotpCode();
       usersPage.clickVerifyTotpButton();
       usersPage.authenticatorAppSwitchIsEnabled();
       usersPage.totpEnabledToasterIsDisplayed();
@@ -250,7 +250,7 @@ describe('Users', () => {
 
     it('should fail to login if TOTP code is not given', () => {
       usersPage.clickAuthenticatorAppSwitch();
-      usersPage.typeTotpCode();
+      usersPage.typeUserTotpCode();
       usersPage.clickVerifyTotpButton();
       loginPage.loginFailsIfOtpNotProvided(
         usersPage.USER.username,
@@ -260,7 +260,7 @@ describe('Users', () => {
 
     it('should disable TOTP authentication and check login works without TOTP', () => {
       usersPage.clickAuthenticatorAppSwitch();
-      usersPage.typeTotpCode();
+      usersPage.typeUserTotpCode();
       usersPage.clickVerifyTotpButton();
       usersPage.clickAuthenticatorAppSwitch();
       usersPage.clickDisableTotpButton();
@@ -279,7 +279,7 @@ describe('Users', () => {
         usersPage.authenticatorAppSwitchIsEnabled();
         usersPage.clickSignOutButton();
         loginPage.login(usersPage.USER.username, usersPage.PASSWORD);
-        loginPage.typeInvalidUserTotpCode();
+        loginPage.typeInvalidLoginTotpCode();
         loginPage.clickSubmitLoginButton();
         loginPage.invalidCredentialsErrorIsDisplayed();
         loginPage.typeAlreadyUsedTotpCode(totpSecret);
@@ -293,7 +293,7 @@ describe('Users', () => {
 
     it('should be disabled by admin user', () => {
       usersPage.clickAuthenticatorAppSwitch();
-      usersPage.typeTotpCode();
+      usersPage.typeUserTotpCode();
       usersPage.clickVerifyTotpButton();
       usersPage.clickSignOutButton();
       usersPage.apiLoginAndCreateSession();

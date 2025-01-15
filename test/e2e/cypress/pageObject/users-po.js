@@ -168,6 +168,10 @@ export default class UsersPage extends BasePage {
     );
   }
 
+  typeInvalidUserTotpCode() {
+    return cy.get(this.newTotpCodeInputField).clear().type('invalid');
+  }
+
   apiGetProfileInfo(username = this.USER.username, password = this.PASSWORD) {
     return this.apiLogin(username, password).then(({ accessToken }) => {
       return cy

@@ -46,7 +46,6 @@ export default class BasePage {
 
   typeTotpCode(totpSecret, inputField) {
     const { otp } = TOTP.generate(totpSecret);
-    cy.log(otp);
     return cy
       .get(inputField)
       .clear()

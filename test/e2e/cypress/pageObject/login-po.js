@@ -71,7 +71,8 @@ export default class LoginPage extends BasePage {
   typeAlreadyUsedTotpCode(totpSecret) {
     return this.typeLoginTotpCode(totpSecret);
   }
-  typeInvalidUserTotpCode() {
+
+  typeInvalidLoginTotpCode() {
     return cy.get(this.totpCodeInput).clear().type('invalid');
   }
 
