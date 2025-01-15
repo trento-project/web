@@ -14,6 +14,7 @@ describe('Users', () => {
   describe('Create user', () => {
     beforeEach(() => {
       usersPage = new UsersPage();
+      basePage = new BasePage();
       usersPage.apiDeleteAllUsers();
       usersPage.visit();
       usersPage.validateUrl();
@@ -143,7 +144,7 @@ describe('Users', () => {
       basePage = new BasePage();
       usersPage = new UsersPage();
       basePage.logout();
-      basePage.apiDeleteAllUsers();
+      usersPage.apiDeleteAllUsers();
       usersPage.apiCreateUser();
       basePage.apiLoginAndCreateSession(
         usersPage.USER.username,
@@ -220,7 +221,7 @@ describe('Users', () => {
       loginPage = new LoginPage();
       dashboardPage = new DashboardPage();
       basePage.logout();
-      basePage.apiDeleteAllUsers();
+      usersPage.apiDeleteAllUsers();
       usersPage.apiCreateUser();
       basePage.apiLoginAndCreateSession(
         usersPage.USER.username,
