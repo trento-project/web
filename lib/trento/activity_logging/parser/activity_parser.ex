@@ -64,7 +64,7 @@ defmodule Trento.ActivityLog.Parser.ActivityParser do
   defp map_severity_level(activity_type, metadata) do
     case SeverityLevel.severity_level_mapping()[activity_type] do
       nil ->
-        # unmapped acitivity type found
+        # unmapped activity type found
         SeverityLevel.severity_level_to_integer(:warning)
 
       level when is_atom(level) ->
