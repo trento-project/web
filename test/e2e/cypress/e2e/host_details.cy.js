@@ -482,7 +482,7 @@ context('Host Details', () => {
     });
 
     beforeEach(() => {
-      cy.apiDeleteAllUsers();
+      cy.deleteAllUsers();
       cy.logout();
       const user = createUserRequestFactory.build({
         password,
