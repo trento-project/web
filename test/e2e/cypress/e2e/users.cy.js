@@ -14,7 +14,7 @@ describe('Users', () => {
   describe('Create user', () => {
     beforeEach(() => {
       usersPage = new UsersPage();
-      usersPage.deleteAllUsers();
+      usersPage.apiDeleteAllUsers();
       usersPage.visit();
       usersPage.validateUrl();
       usersPage.clickCreateUserButton();
@@ -81,7 +81,7 @@ describe('Users', () => {
   describe('Edit user', () => {
     beforeEach(() => {
       usersPage = new UsersPage();
-      usersPage.deleteAllUsers();
+      usersPage.apiDeleteAllUsers();
       usersPage.visit();
     });
 
@@ -143,9 +143,12 @@ describe('Users', () => {
       basePage = new BasePage();
       usersPage = new UsersPage();
       basePage.logout();
-      basePage.deleteAllUsers();
+      basePage.apiDeleteAllUsers();
       usersPage.apiCreateUser();
-      basePage.login(usersPage.USER.username, usersPage.PASSWORD);
+      basePage.apiLoginAndCreateSession(
+        usersPage.USER.username,
+        usersPage.PASSWORD
+      );
       basePage.visit();
     });
 
@@ -217,9 +220,12 @@ describe('Users', () => {
       loginPage = new LoginPage();
       dashboardPage = new DashboardPage();
       basePage.logout();
-      basePage.deleteAllUsers();
+      basePage.apiDeleteAllUsers();
       usersPage.apiCreateUser();
-      basePage.login(usersPage.USER.username, usersPage.PASSWORD);
+      basePage.apiLoginAndCreateSession(
+        usersPage.USER.username,
+        usersPage.PASSWORD
+      );
       basePage.visit();
       basePage.clickUserDropdownProfileButton();
       basePage.validateUrl('/profile');
@@ -257,7 +263,7 @@ describe('Users', () => {
       usersPage.clickVerifyTotpButton();
       usersPage.clickAuthenticatorAppSwitch();
       usersPage.clickDisableTotpButton();
-      loginPage.assertLoginWorks(usersPage.USER.username, usersPage.PASSWORD);
+      loginPage.loginShouldSucceed(usersPage.USER.username, usersPage.PASSWORD);
     });
 
     it('should reconfigure TOTP and validate login cases', () => {
@@ -289,19 +295,19 @@ describe('Users', () => {
       usersPage.typeTotpCode();
       usersPage.clickVerifyTotpButton();
       usersPage.clickSignOutButton();
-      usersPage.login();
+      usersPage.apiLoginAndCreateSession();
       usersPage.visit();
       usersPage.clickNewUser();
       usersPage.selectFromTotpDropdown('Disabled');
       usersPage.clickEditUserSaveButton();
       usersPage.userEditedSuccessfullyToasterIsDisplayed();
       usersPage.pageTitleIsCorrectlyDisplayed('Users');
-      loginPage.assertLoginWorks(usersPage.USER.username, usersPage.PASSWORD);
+      loginPage.loginShouldSucceed(usersPage.USER.username, usersPage.PASSWORD);
     });
 
     it('should not be enabled by admin user', () => {
       usersPage.clickSignOutButton();
-      usersPage.login();
+      usersPage.apiLoginAndCreateSession();
       usersPage.visit();
       usersPage.clickNewUser();
       usersPage.clickTotpDropdown();
@@ -314,9 +320,12 @@ describe('Users', () => {
       usersPage = new UsersPage();
       loginPage = new LoginPage();
       usersPage.logout();
-      usersPage.deleteAllUsers();
+      usersPage.apiDeleteAllUsers();
       usersPage.apiCreateUser();
-      usersPage.login(usersPage.USER.username, usersPage.PASSWORD);
+      usersPage.apiLoginAndCreateSession(
+        usersPage.USER.username,
+        usersPage.PASSWORD
+      );
       usersPage.visit('/profile');
       usersPage.pageTitleIsCorrectlyDisplayed('Profile');
       usersPage.apiDisableUser();
@@ -336,9 +345,9 @@ describe('Users', () => {
       usersPage = new UsersPage();
       loginPage = new LoginPage();
       usersPage.logout();
-      usersPage.deleteAllUsers();
+      usersPage.apiDeleteAllUsers();
       usersPage.apiCreateUser();
-      usersPage.login();
+      usersPage.apiLoginAndCreateSession();
       usersPage.visit();
       usersPage.clickNewUserDeleteButton();
       usersPage.clickConfirmDeleteUserButton();

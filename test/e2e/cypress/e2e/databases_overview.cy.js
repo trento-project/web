@@ -135,7 +135,7 @@ context('Databases Overview', () => {
     const password = 'password';
 
     beforeEach(() => {
-      cy.deleteAllUsers();
+      cy.apiDeleteAllUsers();
       cy.logout();
       const user = createUserRequestFactory.build({
         password,

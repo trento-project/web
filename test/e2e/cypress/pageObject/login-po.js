@@ -42,7 +42,7 @@ export default class LoginPage extends BasePage {
     return this.assertSessionStatusCode(username, password, 401);
   }
 
-  assertLoginWorks(username, password) {
+  loginShouldSucceed(username, password) {
     return this.assertSessionStatusCode(username, password, 200);
   }
 

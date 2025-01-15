@@ -7,7 +7,6 @@ export default class BasePage {
     this.userDropdownProfileButton = 'a:contains("Profile")';
     this.accessForbiddenMessage =
       'div:contains("Access to this page is forbidden")';
-
     this.navigation = {
       navigationItems: 'nav a',
     };
@@ -15,15 +14,15 @@ export default class BasePage {
   }
 
   visit(url = '/') {
-    cy.visit(url);
+    return cy.visit(url);
   }
 
   validateUrl(url = '/') {
-    cy.url().should('eq', `${Cypress.config().baseUrl}${url}`);
+    return cy.url().should('eq', `${Cypress.config().baseUrl}${url}`);
   }
 
   refresh() {
-    cy.reload();
+    return cy.reload();
   }
 
   clickSignOutButton() {
@@ -31,17 +30,16 @@ export default class BasePage {
     return cy.get(this.signOutButton).click();
   }
 
-  pageTitleIsCorrectlyDisplayed(title) {
-    cy.get(this.pageTitle).should('contain', title);
+  clickUserDropdownMenuButton() {
+    return cy.get(this.userDropdownMenuButton).click();
   }
 
-  clickButton(buttonText) {
-    cy.contains('button', buttonText).click();
+  clickUserDropdownProfileButton() {
+    return cy.get(this.userDropdownProfileButton).click();
   }
 
-  selectFromDropdown(selector, choice) {
-    cy.get(selector).click();
-    return cy.get(`${selector} + div div:contains("${choice}")`).click();
+  userDropdownMenuButtonHasTheExpectedText(username) {
+    return cy.get(this.userDropdownMenuButton).should('have.text', username);
   }
 
   apiLogin(username = this.DEFAULT_USERNAME, password = this.DEFAULT_PASSWORD) {
@@ -58,8 +56,11 @@ export default class BasePage {
       });
   }
 
-  login(username = this.DEFAULT_USERNAME, password = this.DEFAULT_PASSWORD) {
-    cy.session([username, password], () => {
+  apiLoginAndCreateSession(
+    username = this.DEFAULT_USERNAME,
+    password = this.DEFAULT_PASSWORD
+  ) {
+    return cy.session([username, password], () => {
       this.apiLogin(username, password).then(
         ({ accessToken, refreshToken }) => {
           window.localStorage.setItem('access_token', accessToken);
@@ -75,7 +76,7 @@ export default class BasePage {
     Cypress.session.clearAllSavedSessions();
   }
 
-  deleteUser(id, accessToken) {
+  apiDeleteUser(id, accessToken) {
     return cy.request({
       url: `/api/v1/users/${id}`,
       method: 'DELETE',
@@ -83,7 +84,7 @@ export default class BasePage {
     });
   }
 
-  deleteAllUsers() {
+  apiDeleteAllUsers() {
     return this.apiLogin().then(({ accessToken }) => {
       cy.request({
         url: '/api/v1/users',
@@ -91,32 +92,28 @@ export default class BasePage {
         auth: { bearer: accessToken },
       }).then(({ body: users }) => {
         users.forEach(({ id }) => {
-          if (id !== 1) this.deleteUser(id, accessToken);
+          if (id !== 1) this.apiDeleteUser(id, accessToken);
         });
       });
     });
   }
 
-  clickUserDropdownMenuButton() {
-    cy.get(this.userDropdownMenuButton).click();
+  pageTitleIsCorrectlyDisplayed(title) {
+    return cy.get(this.pageTitle).should('contain', title);
   }
 
-  clickUserDropdownProfileButton() {
-    cy.get(this.userDropdownProfileButton).click();
-  }
-
-  userDropdownMenuButtonHasTheExpectedText(username) {
-    cy.get(this.userDropdownMenuButton).should('have.text', username);
+  accessForbiddenMessageIsDisplayed() {
+    return cy.get(this.accessForbiddenMessage).should('be.visible');
   }
 
   validateItemNotPresentInNavigationMenu(itemName) {
-    cy.get(this.navigation.navigationItems).each(($element) => {
+    return cy.get(this.navigation.navigationItems).each(($element) => {
       cy.wrap($element).should('not.include.text', itemName);
     });
   }
 
   validateItemPresentInNavigationMenu(navigationMenuItem) {
-    cy.get(this.navigation.navigationItems).then(($elements) => {
+    return cy.get(this.navigation.navigationItems).then(($elements) => {
       const itemFound = Array.from($elements).some((element) =>
         element.innerText.includes(navigationMenuItem)
       );
@@ -127,7 +124,8 @@ export default class BasePage {
     });
   }
 
-  accessForbiddenMessageIsDisplayed() {
-    cy.get(this.accessForbiddenMessage).should('be.visible');
+  selectFromDropdown(selector, choice) {
+    cy.get(selector).click();
+    return cy.get(`${selector} + div div:contains("${choice}")`).click();
   }
 }
