@@ -10,6 +10,7 @@ defmodule Trento.ActivityLog.Parser.ActivityParser do
   @type activity_log :: %{
           type: String.t(),
           actor: String.t(),
+          severity: non_neg_integer(),
           metadata: map()
         }
 
