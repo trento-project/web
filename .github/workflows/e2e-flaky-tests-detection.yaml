@@ -236,6 +236,11 @@ jobs:
         with:
           name: e2e-junit-reports-${{ matrix.container }}
           path: /tmp/*.xml
+      - name: Upload cypress Screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-screenshots-${{ matrix.container }}
+          path: test/e2e/cypress/screenshots/
 
 
   flaky-tests-analysis:
