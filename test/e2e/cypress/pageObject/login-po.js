@@ -1,83 +1,83 @@
-import BasePage from './base-po.js';
+export * from './base-po.js';
+import * as basePage from './base-po.js';
 
-export default class LoginPage extends BasePage {
-  constructor() {
-    super();
-    this.usernameInputField = 'input[autocomplete="username"]';
-    this.passwordInputField = 'input[autocomplete="current-password"]';
-    this.submitLoginButton = 'button[type="submit"]';
-    this.totpCodeInput = '#totp-code';
-    this.invalidCredentialsError = 'p:contains("Invalid credentials")';
-    this.loginToTrentoTitle = 'h2:contains("Login to Trento")';
-  }
+const usernameInputField = 'input[autocomplete="username"]';
+const passwordInputField = 'input[autocomplete="current-password"]';
+const submitLoginButton = 'button[type="submit"]';
+const totpCodeInput = '#totp-code';
+const invalidCredentialsError = 'p:contains("Invalid credentials")';
+const loginToTrentoTitle = 'h2:contains("Login to Trento")';
 
-  assertSessionStatusCode(username, password, expectedStatusCode = 401) {
-    return cy
-      .request({
-        method: 'POST',
-        url: '/api/session',
-        body: {
-          username,
-          password,
-        },
-        failOnStatusCode: false,
-      })
-      .then((response) => {
-        expect(
-          response.status,
-          'Session endpoint has the expected status code'
-        ).to.eq(expectedStatusCode);
-      });
-  }
+export const assertSessionStatusCode = (
+  username,
+  password,
+  expectedStatusCode = 401
+) => {
+  return cy
+    .request({
+      method: 'POST',
+      url: '/api/session',
+      body: {
+        username,
+        password,
+      },
+      failOnStatusCode: false,
+    })
+    .then((response) => {
+      expect(
+        response.status,
+        'Session endpoint has the expected status code'
+      ).to.eq(expectedStatusCode);
+    });
+};
 
-  loginFailsIfOtpNotProvided(username, password) {
-    return this.assertSessionStatusCode(username, password, 422);
-  }
+export const loginFailsIfOtpNotProvided = (username, password) => {
+  return assertSessionStatusCode(username, password, 422);
+};
 
-  loginShouldFail(username, password) {
-    return this.assertSessionStatusCode(username, password, 401);
-  }
+export const loginShouldFail = (username, password) => {
+  return assertSessionStatusCode(username, password, 401);
+};
 
-  loginShouldSucceed(username, password) {
-    return this.assertSessionStatusCode(username, password, 200);
-  }
+export const loginShouldSucceed = (username, password) => {
+  return assertSessionStatusCode(username, password, 200);
+};
 
-  loginPageIsDisplayed() {
-    return cy.get(this.loginToTrentoTitle).should('be.visible');
-  }
+export const loginPageIsDisplayed = () => {
+  return cy.get(loginToTrentoTitle).should('be.visible');
+};
 
-  login(username, password) {
-    cy.get(this.usernameInputField).type(username);
-    cy.get(this.passwordInputField).type(password);
-    return this.clickSubmitLoginButton();
-  }
+export const login = (username, password) => {
+  cy.get(usernameInputField).type(username);
+  cy.get(passwordInputField).type(password);
+  return clickSubmitLoginButton();
+};
 
-  sleep(seconds) {
-    return new Promise((resolve) => setTimeout(resolve, seconds * 1000));
-  }
+export const sleep = (seconds) => {
+  return new Promise((resolve) => setTimeout(resolve, seconds * 1000));
+};
 
-  invalidCredentialsErrorIsDisplayed() {
-    return cy.get(this.invalidCredentialsError).should('be.visible');
-  }
+export const invalidCredentialsErrorIsDisplayed = () => {
+  return cy.get(invalidCredentialsError).should('be.visible');
+};
 
-  clickSubmitLoginButton() {
-    return cy.get(this.submitLoginButton).click();
-  }
+export const clickSubmitLoginButton = () => {
+  return cy.get(submitLoginButton).click();
+};
 
-  typeLoginTotpCode(totpSecret) {
-    this.typeTotpCode(totpSecret, this.totpCodeInput);
-  }
+export const typeLoginTotpCode = (totpSecret) => {
+  basePage.typeTotpCode(totpSecret, totpCodeInput);
+};
 
-  typeAlreadyUsedTotpCode(totpSecret) {
-    return this.typeLoginTotpCode(totpSecret);
-  }
+export const typeAlreadyUsedTotpCode = (totpSecret) => {
+  return typeLoginTotpCode(totpSecret);
+};
 
-  typeInvalidLoginTotpCode() {
-    return cy.get(this.totpCodeInput).clear().type('invalid');
-  }
+export const typeInvalidLoginTotpCode = () => {
+  return cy.get(totpCodeInput).clear().type('invalid');
+};
 
-  waitForNewTotpCodeAndTypeIt(totpSecret) {
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    return cy.wait(30000).then(() => this.typeLoginTotpCode(totpSecret));
-  }
-}
+export const waitForNewTotpCodeAndTypeIt = (totpSecret) => {
+  // eslint-disable-next-line cypress/no-unnecessary-waiting
+  return cy.wait(30000).then(() => typeLoginTotpCode(totpSecret));
+};

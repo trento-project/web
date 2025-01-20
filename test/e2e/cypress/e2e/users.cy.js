@@ -1,20 +1,13 @@
 import { userFactory } from '@lib/test-utils/factories/users';
 
-import UsersPage from '../pageObject/users-po.js';
-import BasePage from '../pageObject/base-po.js';
-import LoginPage from '../pageObject/login-po.js';
-import DashboardPage from '../pageObject/dashboard-po.js';
-
-let usersPage;
-let basePage;
-let loginPage;
-let dashboardPage;
+import * as usersPage from '../pageObject/users-po.js';
+import * as basePage from '../pageObject/base-po.js';
+import * as loginPage from '../pageObject/login-po.js';
+import * as dashboardPage from '../pageObject/dashboard-po.js';
 
 describe('Users', () => {
   describe('Create user', () => {
     beforeEach(() => {
-      usersPage = new UsersPage();
-      basePage = new BasePage();
       usersPage.apiDeleteAllUsers();
       usersPage.visit();
       usersPage.validateUrl();
@@ -81,7 +74,6 @@ describe('Users', () => {
 
   describe('Edit user', () => {
     beforeEach(() => {
-      usersPage = new UsersPage();
       usersPage.apiDeleteAllUsers();
       usersPage.visit();
     });
@@ -126,8 +118,6 @@ describe('Users', () => {
 
   describe('Admin user profile', () => {
     beforeEach(() => {
-      basePage = new BasePage();
-      usersPage = new UsersPage();
       usersPage.visit();
     });
 
@@ -141,8 +131,6 @@ describe('Users', () => {
 
   describe('User profile', () => {
     beforeEach(() => {
-      basePage = new BasePage();
-      usersPage = new UsersPage();
       basePage.logout();
       usersPage.apiDeleteAllUsers();
       usersPage.apiCreateUser();
@@ -216,10 +204,6 @@ describe('Users', () => {
 
   describe('TOTP authentication', () => {
     beforeEach(() => {
-      basePage = new BasePage();
-      usersPage = new UsersPage();
-      loginPage = new LoginPage();
-      dashboardPage = new DashboardPage();
       basePage.logout();
       usersPage.apiDeleteAllUsers();
       usersPage.apiCreateUser();
@@ -318,8 +302,6 @@ describe('Users', () => {
 
   describe('Lock user', () => {
     beforeEach(() => {
-      usersPage = new UsersPage();
-      loginPage = new LoginPage();
       usersPage.logout();
       usersPage.apiDeleteAllUsers();
       usersPage.apiCreateUser();
@@ -343,8 +325,6 @@ describe('Users', () => {
 
   describe('Delete user', () => {
     beforeEach(() => {
-      usersPage = new UsersPage();
-      loginPage = new LoginPage();
       usersPage.logout();
       usersPage.apiDeleteAllUsers();
       usersPage.apiCreateUser();

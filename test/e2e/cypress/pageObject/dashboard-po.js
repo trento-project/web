@@ -1,11 +1,6 @@
-import BasePage from './base-po.js';
+export * from './base-po.js';
+import * as basePage from './base-po.js';
 
-export default class DashboardPage extends BasePage {
-  constructor() {
-    super();
-  }
-
-  dashboardPageIsDisplayed() {
-    this.pageTitleIsCorrectlyDisplayed('At a glance');
-  }
-}
+export const dashboardPageIsDisplayed = () => {
+  basePage.pageTitleIsCorrectlyDisplayed('At a glance');
+};
