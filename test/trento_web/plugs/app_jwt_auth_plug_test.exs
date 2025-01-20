@@ -14,6 +14,7 @@ defmodule TrentoWeb.Plugs.AppJWTAuthPlugTest do
   alias TrentoWeb.Plugs.AppJWTAuthPlug
 
   import Mox
+  import Trento.Factory
 
   @pow_config [otp_app: :trento]
 
@@ -132,9 +133,9 @@ defmodule TrentoWeb.Plugs.AppJWTAuthPlugTest do
 
   describe "create/3" do
     test "should add to the conn the access/refresh token pair and the expiration", %{conn: conn} do
-      user = %{id: 1}
+      %{id: user_id} = user = insert(:user_with_abilities)
 
-      assert {res_conn, ^user} = AppJWTAuthPlug.create(conn, user, @pow_config)
+      assert {res_conn, %{id: ^user_id}} = AppJWTAuthPlug.create(conn, user, @pow_config)
 
       assert %{
                private: %{
@@ -148,17 +149,28 @@ defmodule TrentoWeb.Plugs.AppJWTAuthPlugTest do
 
   describe "fetch/2" do
     test "should fetch a user when the jwt is valid", %{conn: conn} do
-      jwt = AccessToken.generate_access_token!(%{"sub" => 1})
+      jwt =
+        AccessToken.generate_access_token!(%{
+          "sub" => 1,
+          "abilities" => [%{name: "foo", resource: "bar"}]
+        })
 
       conn = Plug.Conn.put_req_header(conn, "authorization", "Bearer " <> jwt)
 
       assert {res_conn,
               %{
                 "access_token" => ^jwt,
-                "user_id" => 1
+                "user_id" => 1,
+                "abilities" => [%{"name" => "foo", "resource" => "bar"}]
               }} = AppJWTAuthPlug.fetch(conn, @pow_config)
 
-      assert %{private: %{api_access_token: ^jwt, user_id: 1}} = res_conn
+      assert %{
+               private: %{
+                 api_access_token: ^jwt,
+                 user_id: 1,
+                 abilities: [%{"name" => "foo", "resource" => "bar"}]
+               }
+             } = res_conn
     end
 
     test "should not fetch a user when the jwt signature is invalid", %{conn: conn} do

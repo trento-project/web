@@ -25,12 +25,21 @@ defmodule TrentoWeb.Plugs.AppJWTAuthPlug do
   def fetch(conn, _config) do
     with {:ok, jwt_token} <- read_token(conn),
          {:ok, claims} <- validate_access_token(jwt_token) do
+      sub = claims["sub"]
+      abilities = claims["abilities"]
+
       conn =
         conn
         |> Conn.put_private(:api_access_token, jwt_token)
-        |> Conn.put_private(:user_id, claims["sub"])
+        |> Conn.put_private(:user_id, sub)
+        |> Conn.put_private(:abilities, abilities)
 
-      {conn, %{"access_token" => jwt_token, "user_id" => claims["sub"]}}
+      {conn,
+       %{
+         "access_token" => jwt_token,
+         "user_id" => sub,
+         "abilities" => abilities
+       }}
     else
       _ -> {conn, nil}
     end
@@ -42,7 +51,13 @@ defmodule TrentoWeb.Plugs.AppJWTAuthPlug do
     The generated credentials will be stored in private section of the Plug.Conn struct
   """
   def create(conn, user, _config) do
-    claims = %{"sub" => user.id}
+    {:ok, user} = Users.get_user(user.id)
+
+    claims = %{
+      "sub" => user.id,
+      "abilities" => Enum.map(user.abilities, &%{name: &1.name, resource: &1.resource})
+    }
+
     access_token = AccessToken.generate_access_token!(claims)
     refresh_token = RefreshToken.generate_refresh_token!(claims)
 

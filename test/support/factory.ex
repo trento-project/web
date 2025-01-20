@@ -1199,6 +1199,17 @@ defmodule Trento.Factory do
     }
   end
 
+  def user_with_abilities_factory do
+    user = build(:user)
+    ability = build(:ability)
+    build(:users_abilities, user_id: user.id, ability_id: ability.id)
+
+    %User{
+      user
+      | abilities: [ability]
+    }
+  end
+
   def user_identity_factory do
     %UserIdentity{
       user_id: 1,
