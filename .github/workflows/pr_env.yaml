@@ -8,8 +8,6 @@ on:
       - labeled
 
 env:
-  MANTAINERS: '["cdimonaco", "dottorblaster", "nelsonkopliku", "arbulu89", "jagabomb", "emaksy", "gagandeepb", "balanza", "janvhs"]'
-  PR_ENV_LABEL: env
   PR_NUMBER: "${{ github.event.pull_request.number }}"
 
 jobs:
@@ -20,7 +18,7 @@ jobs:
       create_env: ${{ steps.check.outputs.create_env }}
     steps:
       - id: check
-        run: echo "create_env=${{ contains(fromJson(env.MANTAINERS), github.event.sender.login) && contains(github.event.pull_request.labels.*.name, env.PR_ENV_LABEL) }}" >> "$GITHUB_OUTPUT"
+        run: echo "create_env=${{ contains(fromJson(vars.PR_ENV_ALLOW_LIST), github.event.sender.login) && contains(github.event.pull_request.labels.*.name, vars.PR_ENV_LABEL) }}" >> "$GITHUB_OUTPUT"
 
   build-and-push-pr-image:
     needs: check_env_creation_privilege
