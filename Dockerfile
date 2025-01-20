@@ -1,4 +1,4 @@
-FROM opensuse/leap:15.6 AS elixir-build
+FROM registry.suse.com/bci/bci-base:15.6 AS elixir-build
 ENV LANG=en_US.UTF-8
 ENV LANGUAGE=en_US:en
 ENV LC_ALL=en_US.UTF-8
@@ -32,14 +32,14 @@ ENV MIX_PATH=/usr/lib/elixir/lib/hex/ebin
 RUN mix phx.digest
 RUN mix release
 
-FROM opensuse/leap:15.6
+FROM registry.suse.com/bci/bci-base:15.6
 LABEL org.opencontainers.image.source="https://github.com/trento-project/web"
 ARG MIX_ENV=prod
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US:en
-ENV LC_ALL en_US.UTF-8
-# tar is required by kubectl cp
-RUN zypper -n in tar
+ENV LANG=en_US.UTF-8
+ENV LANGUAGE=en_US:en
+ENV LC_ALL=en_US.UTF-8
+# Erlang runtime dependencies
+RUN zypper -n in libsystemd0 libopenssl1_1
 WORKDIR /app
 COPY --from=release /build/_build/$MIX_ENV/rel/trento .
 EXPOSE 4000/tcp

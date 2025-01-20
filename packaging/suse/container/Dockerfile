@@ -33,8 +33,8 @@ LABEL org.opencontainers.image.source="https://github.com/trento-project/web"
 ENV LANG=en_US.UTF-8
 ENV LANGUAGE=en_US:en
 ENV LC_ALL=en_US.UTF-8
-# tar is required by kubectl cp
-RUN zypper -n in tar
+# Erlang runtime dependencies
+RUN zypper -n in libsystemd0 libopenssl1_1
 WORKDIR /app
 COPY --from=release /build/web/_build/prod/rel/trento .
 EXPOSE 4000/tcp
