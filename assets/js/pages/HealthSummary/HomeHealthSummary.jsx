@@ -176,7 +176,9 @@ function HomeHealthSummary({ sapSystemsHealth, loading }) {
 
         <Table
           config={healthSummaryTableConfig}
-          data={normalizedSummaryData}        />
+          data={normalizedSummaryData}
+          roundedTop={false}
+        />
       </div>
     </div>
   );

@@ -72,6 +72,7 @@ function Table({
   emptyStateText = 'No data available',
   header = null,
   rowKey = defaultRowKey,
+  roundedTop = true,
 }) {
   const {
     columns,
@@ -189,7 +190,7 @@ function Table({
             className={classNames(
               'min-w-fit shadow overflow-hidden rounded-b-lg',
               {
-                'rounded-t-lg': !hasFilters,
+                'rounded-t-lg': !hasFilters && roundedTop,
               }
             )}
           >
