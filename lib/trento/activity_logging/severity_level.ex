@@ -123,14 +123,62 @@ defmodule Trento.ActivityLog.SeverityLevel do
     "database_tombstoned" => :debug
   }
 
-  def severity_level_mapping do
-    @severity_level_mapping
-  end
-
   def severity_level_to_integer(:debug), do: 5
   def severity_level_to_integer(:info), do: 9
   def severity_level_to_integer(:warning), do: 13
   def severity_level_to_integer(:error), do: 17
   def severity_level_to_integer(:critical), do: 21
   def severity_level_to_integer(_), do: 13
+
+  def map_severity_level(
+        activity_type,
+        metadata,
+        severity_level_mapping \\ @severity_level_mapping
+      )
+
+  def map_severity_level(activity_type, metadata, severity_level_mapping) do
+    case severity_level_mapping[activity_type] do
+      nil ->
+        # unmapped activity type found
+        :warning
+
+      level when is_atom(level) ->
+        level
+
+      condition when is_map(condition) ->
+        condition
+        |> map_metadata_to_severity_level(metadata)
+    end
+  end
+
+  defp map_metadata_to_severity_level(mapping, metadata) do
+    keys = Map.keys(metadata)
+    condition = mapping.condition
+
+    case condition do
+      :map_value_to_severity ->
+        health_key_suffix = mapping.key_suffix
+
+        health_key =
+          keys
+          |> Enum.map(&Atom.to_string/1)
+          |> Enum.find(fn e -> String.ends_with?(e, health_key_suffix) end)
+
+        health_value = metadata[String.to_existing_atom(health_key)]
+        health_value_downcased = health_value |> Atom.to_string() |> String.downcase()
+        severity_default = Map.get(mapping.values, "*")
+        Map.get(mapping.values, health_value_downcased, severity_default)
+
+      :key_exists ->
+        key = mapping.key
+
+        case key in keys do
+          true ->
+            :warning
+
+          false ->
+            :info
+        end
+    end
+  end
 end
