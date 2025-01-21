@@ -4,11 +4,13 @@ defmodule Trento.ActivityLog.Parser.ActivityParser do
   """
 
   alias Trento.ActivityLog.ActivityCatalog
+  alias Trento.ActivityLog.SeverityLevel
   alias Trento.ActivityLog.Logger.Parser.{EventParser, MetadataEnricher, PhoenixConnParser}
 
   @type activity_log :: %{
           type: String.t(),
           actor: String.t(),
+          severity: non_neg_integer(),
           metadata: map()
         }
 
@@ -19,10 +21,18 @@ defmodule Trento.ActivityLog.Parser.ActivityParser do
          {:ok, actor} <- get_activity_info(:actor, activity, activity_context),
          {:ok, metadata} <- get_activity_info(:metadata, activity, activity_context),
          {:ok, enriched_metadata} <- MetadataEnricher.enrich(activity, metadata) do
+      activity_type = Atom.to_string(activity)
+
+      severity =
+        activity_type
+        |> SeverityLevel.map_severity_level(enriched_metadata)
+        |> SeverityLevel.severity_level_to_integer()
+
       {:ok,
        %{
-         type: Atom.to_string(activity),
+         type: activity_type,
          actor: actor,
+         severity: severity,
          metadata: enriched_metadata
        }}
     else

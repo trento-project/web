@@ -139,6 +139,7 @@ defmodule Trento.Factory do
 
   alias Trento.ActivityLog.ActivityLog, as: ActivityLogEntry
   alias Trento.ActivityLog.RetentionTime
+  alias Trento.ActivityLog.SeverityLevel
 
   alias Trento.Abilities.{
     Ability,
@@ -1162,6 +1163,7 @@ defmodule Trento.Factory do
     %ActivityLogEntry{
       type: Faker.Pokemon.name(),
       actor: Faker.Internet.user_name(),
+      severity: SeverityLevel.severity_level_to_integer(:info),
       metadata: %{}
     }
   end

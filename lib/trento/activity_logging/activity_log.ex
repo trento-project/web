@@ -9,7 +9,7 @@ defmodule Trento.ActivityLog.ActivityLog do
 
   @derive {
     Flop.Schema,
-    filterable: [:type, :actor, :inserted_at],
+    filterable: [:type, :actor, :severity, :inserted_at],
     sortable: [:type, :actor, :inserted_at],
     max_limit: 100,
     default_limit: 25,
@@ -26,13 +26,17 @@ defmodule Trento.ActivityLog.ActivityLog do
     field :type, :string
     field :actor, :string
     field :metadata, :map
+    field :severity, :integer
 
     timestamps(type: :utc_datetime_usec)
   end
 
+  @severity_min 1
+  @severity_max 24
   def changeset(activity_log, attrs) do
     activity_log
     |> cast(attrs, __MODULE__.__schema__(:fields))
-    |> validate_required([:type, :actor, :metadata])
+    |> validate_required([:type, :actor, :metadata, :severity])
+    |> validate_inclusion(:severity, @severity_min..@severity_max)
   end
 end

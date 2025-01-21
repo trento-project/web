@@ -108,11 +108,20 @@ defmodule Trento.ActivityLog do
   defp parse_params(query_params) do
     query_params
     |> Enum.map(fn
-      {:from_date, v} -> {:filters, %{field: :inserted_at, op: :<=, value: v}}
-      {:to_date, v} -> {:filters, %{field: :inserted_at, op: :>=, value: v}}
-      {:actor, v} -> {:filters, %{field: :actor, op: :ilike_or, value: v}}
-      {:type, v} -> {:filters, %{field: :type, op: :ilike_or, value: v}}
-      param -> param
+      {:from_date, v} ->
+        {:filters, %{field: :inserted_at, op: :<=, value: v}}
+
+      {:to_date, v} ->
+        {:filters, %{field: :inserted_at, op: :>=, value: v}}
+
+      {:actor, v} ->
+        {:filters, %{field: :actor, op: :ilike_or, value: v}}
+
+      {:type, v} ->
+        {:filters, %{field: :type, op: :ilike_or, value: v}}
+
+      param ->
+        param
     end)
     |> Enum.reduce(%{filters: []}, fn
       {:filters, filter}, acc ->

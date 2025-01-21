@@ -427,7 +427,11 @@ defmodule Trento.ActivityLog.ActivityLoggerTest do
     ]
 
     Enum.each(events, fn {event, _} ->
-      assert :ok == ActivityLogger.log_activity(%{event: event, metadata: %{}})
+      assert :ok ==
+               ActivityLogger.log_activity(%{
+                 event: event,
+                 metadata: %{}
+               })
     end)
 
     activity_log = Trento.Repo.all(ActivityLog)
