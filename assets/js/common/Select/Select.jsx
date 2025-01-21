@@ -11,7 +11,8 @@ export const OPTION_ALL = 'all';
 const defaultOnChange = () => {};
 const defaultRenderOption = (item) => item.value;
 
-const deepCompareSelection=(optionValue, value) => isEqual(optionValue, value);
+const deepCompareSelection = (optionValue, value) =>
+  isEqual(optionValue, value);
 
 function Select({
   optionsName,
