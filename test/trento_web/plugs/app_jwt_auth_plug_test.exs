@@ -136,7 +136,13 @@ defmodule TrentoWeb.Plugs.AppJWTAuthPlugTest do
       %{id: user_id, abilities: [%{name: name, resource: resource} | _]} =
         user = insert(:user_with_abilities)
 
-      assert {res_conn, %{id: ^user_id}} = AppJWTAuthPlug.create(conn, user, @pow_config)
+      assert {
+               res_conn,
+               %{
+                 id: ^user_id,
+                 abilities: [%{name: ^name, resource: ^resource}]
+               }
+             } = AppJWTAuthPlug.create(conn, user, @pow_config)
 
       assert %{
                private: %{
