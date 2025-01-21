@@ -29,7 +29,6 @@ defmodule TrentoWeb.Plugs.AppJWTAuthPlug do
         conn
         |> Conn.put_private(:api_access_token, jwt_token)
         |> Conn.put_private(:user_id, sub)
-        |> Conn.put_private(:abilities, abilities)
 
       {conn,
        %{

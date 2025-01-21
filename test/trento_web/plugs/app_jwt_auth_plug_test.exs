@@ -167,8 +167,7 @@ defmodule TrentoWeb.Plugs.AppJWTAuthPlugTest do
       assert %{
                private: %{
                  api_access_token: ^jwt,
-                 user_id: 1,
-                 abilities: [%{"name" => "foo", "resource" => "bar"}]
+                 user_id: 1
                }
              } = res_conn
     end
