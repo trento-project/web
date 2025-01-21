@@ -49,16 +49,7 @@ defmodule TrentoWeb.Plugs.AppJWTAuthPlug do
   def create(conn, user, _config) do
     {:ok, user} = Users.get_user(user.id)
 
-    default_claims = %{
-      "sub" => user.id
-    }
-
-    access_token_claims =
-      Map.put(
-        default_claims,
-        "abilities",
-        Enum.map(user.abilities, &%{name: &1.name, resource: &1.resource})
-      )
+    {default_claims, access_token_claims} = token_claims(user)
 
     access_token = AccessToken.generate_access_token!(access_token_claims)
     refresh_token = RefreshToken.generate_refresh_token!(default_claims)
@@ -119,7 +110,9 @@ defmodule TrentoWeb.Plugs.AppJWTAuthPlug do
 
   defp attach_refresh_token_to_conn(conn, user) do
     if user_allowed_to_renew?(user) do
-      new_access_token = AccessToken.generate_access_token!(%{"sub" => user.id})
+      {_, access_token_claims} = token_claims(user)
+
+      new_access_token = AccessToken.generate_access_token!(access_token_claims)
 
       conn =
         conn
@@ -137,4 +130,19 @@ defmodule TrentoWeb.Plugs.AppJWTAuthPlug do
        do: false
 
   defp user_allowed_to_renew?(%User{}), do: true
+
+  defp token_claims(%{id: id, abilities: abilities}) do
+    default_claims = %{
+      "sub" => id
+    }
+
+    access_token_claims =
+      Map.put(
+        default_claims,
+        "abilities",
+        Enum.map(abilities, &%{name: &1.name, resource: &1.resource})
+      )
+
+    {default_claims, access_token_claims}
+  end
 end
