@@ -10,7 +10,6 @@ defmodule Trento.ActivityLog do
   alias Trento.ActivityLog.ActivityLog
   alias Trento.ActivityLog.MetadataQueryParser
   alias Trento.ActivityLog.RetentionTime
-  alias Trento.ActivityLog.SeverityLevel
   alias Trento.Repo
   alias Trento.Settings
 
@@ -67,7 +66,6 @@ defmodule Trento.ActivityLog do
             m0: fragment("jsonb_path_query(?, ?)", q.metadata, ^jsonpath_expr),
             type: q.type,
             actor: q.actor,
-            severity: q.severity,
             inserted_at: q.inserted_at,
             updated_at: q.updated_at
           }
@@ -121,18 +119,6 @@ defmodule Trento.ActivityLog do
 
       {:type, v} ->
         {:filters, %{field: :type, op: :ilike_or, value: v}}
-
-      {:severity, v} ->
-        {:filters,
-         %{
-           field: :severity,
-           op: :>=,
-           value:
-             v
-             |> Enum.map(&String.to_existing_atom/1)
-             |> Enum.map(&SeverityLevel.severity_level_to_integer/1)
-             |> Enum.min()
-         }}
 
       param ->
         param
