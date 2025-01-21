@@ -163,15 +163,21 @@ function HomeHealthSummary({ sapSystemsHealth, loading }) {
   ) : (
     <div data-testid="home-health-summary">
       <PageHeader className="font-bold">At a glance</PageHeader>
-      <hr className="my-3" />
-      <h5 className="text-xl">Global Health</h5>
+      <div className="bg-white rounded-lg shadow">
+        <div className="px-4 py-2">
+          <h5 className="text-xl">Global Health</h5>
 
-      <HealthSummary
-        {...counters}
-        onFilterChange={onFiltersChange}
-        activeFilters={activeFilters}
-      />
-      <Table config={healthSummaryTableConfig} data={normalizedSummaryData} />
+          <HealthSummary
+            {...counters}
+            onFilterChange={onFiltersChange}
+            activeFilters={activeFilters}
+          />
+        </div>
+
+        <Table
+          config={healthSummaryTableConfig}
+          data={normalizedSummaryData}        />
+      </div>
     </div>
   );
 }
