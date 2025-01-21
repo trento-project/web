@@ -146,8 +146,7 @@ defmodule Trento.ActivityLog.SeverityLevel do
         level
 
       condition when is_map(condition) ->
-        condition
-        |> map_metadata_to_severity_level(metadata)
+        map_metadata_to_severity_level(condition, metadata)
     end
   end
 
