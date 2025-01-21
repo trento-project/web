@@ -49,13 +49,19 @@ defmodule TrentoWeb.Plugs.AppJWTAuthPlug do
   def create(conn, user, _config) do
     {:ok, user} = Users.get_user(user.id)
 
-    claims = %{
-      "sub" => user.id,
-      "abilities" => Enum.map(user.abilities, &%{name: &1.name, resource: &1.resource})
+    default_claims = %{
+      "sub" => user.id
     }
 
-    access_token = AccessToken.generate_access_token!(claims)
-    refresh_token = RefreshToken.generate_refresh_token!(claims)
+    access_token_claims =
+      Map.put(
+        default_claims,
+        "abilities",
+        Enum.map(user.abilities, &%{name: &1.name, resource: &1.resource})
+      )
+
+    access_token = AccessToken.generate_access_token!(access_token_claims)
+    refresh_token = RefreshToken.generate_refresh_token!(default_claims)
 
     conn =
       conn
