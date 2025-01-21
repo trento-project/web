@@ -26,7 +26,7 @@ defmodule Trento.ActivityLog.SeverityLevelTest do
       severity =
         SeverityLevel.map_severity_level(unknown_activity_type, metadata, @severity_level_mapping)
 
-      assert severity == :warning
+      assert severity == :info
     end
 
     test "should map explicitly mapped activity types correctly" do

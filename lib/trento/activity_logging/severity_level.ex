@@ -140,7 +140,7 @@ defmodule Trento.ActivityLog.SeverityLevel do
     case severity_level_mapping[activity_type] do
       nil ->
         # unmapped activity type found
-        :warning
+        :info
 
       level when is_atom(level) ->
         level
