@@ -11,7 +11,7 @@ defmodule Trento.ActivityLog.ActivityLoggerTest do
 
   alias Trento.Abilities.Ability
 
-  alias Trento.ActivityLog.{ActivityLog, ActivityLogger, SeverityLevel}
+  alias Trento.ActivityLog.{ActivityLog, ActivityLogger}
   alias Trento.Tags.Tag
 
   alias TrentoWeb.Auth.AccessToken
