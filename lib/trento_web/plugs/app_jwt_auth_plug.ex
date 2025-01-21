@@ -24,10 +24,7 @@ defmodule TrentoWeb.Plugs.AppJWTAuthPlug do
   """
   def fetch(conn, _config) do
     with {:ok, jwt_token} <- read_token(conn),
-         {:ok, claims} <- validate_access_token(jwt_token) do
-      sub = claims["sub"]
-      abilities = claims["abilities"]
-
+         {:ok, %{"sub" => sub, "abilities" => abilities}} <- validate_access_token(jwt_token) do
       conn =
         conn
         |> Conn.put_private(:api_access_token, jwt_token)
