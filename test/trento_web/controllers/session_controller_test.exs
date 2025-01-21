@@ -204,7 +204,8 @@ defmodule TrentoWeb.SessionControllerTest do
         end
       )
 
-      good_jwt = TrentoWeb.Auth.AccessToken.generate_access_token!(%{"sub" => user.id})
+      good_jwt =
+        TrentoWeb.Auth.AccessToken.generate_access_token!(%{"sub" => user.id, "abilities" => []})
 
       resp =
         conn

@@ -24,13 +24,18 @@ defmodule TrentoWeb.Plugs.AppJWTAuthPlug do
   """
   def fetch(conn, _config) do
     with {:ok, jwt_token} <- read_token(conn),
-         {:ok, claims} <- validate_access_token(jwt_token) do
+         {:ok, %{"sub" => sub, "abilities" => abilities}} <- validate_access_token(jwt_token) do
       conn =
         conn
         |> Conn.put_private(:api_access_token, jwt_token)
-        |> Conn.put_private(:user_id, claims["sub"])
+        |> Conn.put_private(:user_id, sub)
 
-      {conn, %{"access_token" => jwt_token, "user_id" => claims["sub"]}}
+      {conn,
+       %{
+         "access_token" => jwt_token,
+         "user_id" => sub,
+         "abilities" => abilities
+       }}
     else
       _ -> {conn, nil}
     end
@@ -42,9 +47,12 @@ defmodule TrentoWeb.Plugs.AppJWTAuthPlug do
     The generated credentials will be stored in private section of the Plug.Conn struct
   """
   def create(conn, user, _config) do
-    claims = %{"sub" => user.id}
-    access_token = AccessToken.generate_access_token!(claims)
-    refresh_token = RefreshToken.generate_refresh_token!(claims)
+    {:ok, user} = Users.get_user(user.id)
+
+    {default_claims, access_token_claims} = token_claims(user)
+
+    access_token = AccessToken.generate_access_token!(access_token_claims)
+    refresh_token = RefreshToken.generate_refresh_token!(default_claims)
 
     conn =
       conn
@@ -102,7 +110,9 @@ defmodule TrentoWeb.Plugs.AppJWTAuthPlug do
 
   defp attach_refresh_token_to_conn(conn, user) do
     if user_allowed_to_renew?(user) do
-      new_access_token = AccessToken.generate_access_token!(%{"sub" => user.id})
+      {_, access_token_claims} = token_claims(user)
+
+      new_access_token = AccessToken.generate_access_token!(access_token_claims)
 
       conn =
         conn
@@ -120,4 +130,19 @@ defmodule TrentoWeb.Plugs.AppJWTAuthPlug do
        do: false
 
   defp user_allowed_to_renew?(%User{}), do: true
+
+  defp token_claims(%{id: id, abilities: abilities}) do
+    default_claims = %{
+      "sub" => id
+    }
+
+    access_token_claims =
+      Map.put(
+        default_claims,
+        "abilities",
+        Enum.map(abilities, &%{name: &1.name, resource: &1.resource})
+      )
+
+    {default_claims, access_token_claims}
+  end
 end
