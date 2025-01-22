@@ -107,7 +107,7 @@ defmodule Trento.ActivityLog.SeverityLevelTest do
       assert severity == :info
     end
 
-    test "should may conditional key suffix types with no metadata correctly" do
+    test "should map conditional key suffix types with no metadata correctly" do
       activity_type = "activity_type_6"
       metadata = %{}
 
