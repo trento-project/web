@@ -263,7 +263,7 @@ jobs:
       - name: Compile
         run: mix compile --warnings-as-errors
       - name: "Docker compose dependencies"
-        uses: isbang/compose-action@v2.0.2
+        uses: isbang/compose-action@v2.1.0
         with:
           compose-file: "./docker-compose.yaml"
           down-flags: "--volumes"
@@ -319,7 +319,7 @@ jobs:
         run: npm run build
         working-directory: assets
       - name: Publish to Chromatic
-        uses: chromaui/action@v11.22.2
+        uses: chromaui/action@v11.25.0
         with:
           workingDir: assets
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
@@ -410,7 +410,7 @@ jobs:
       - name: Check Eslint and JS Code Format
         run: cd test/e2e && npm run lint && npm run format:check
       - name: "Docker compose dependencies"
-        uses: isbang/compose-action@v2.0.2
+        uses: isbang/compose-action@v2.1.0
         with:
           compose-file: "./docker-compose.yaml"
           down-flags: "--volumes"
@@ -526,7 +526,7 @@ jobs:
             test/e2e/node_modules
           key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: "Docker compose dependencies"
-        uses: isbang/compose-action@v2.0.2
+        uses: isbang/compose-action@v2.1.0
         with:
           compose-file: "./docker-compose.yaml"
           down-flags: "--volumes"
@@ -673,7 +673,7 @@ jobs:
             test/e2e/node_modules
           key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: "Docker compose dependencies"
-        uses: isbang/compose-action@v2.0.2
+        uses: isbang/compose-action@v2.1.0
         with:
           compose-file: "./docker-compose.yaml"
           compose-flags: "--profile idp"
