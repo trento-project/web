@@ -158,15 +158,21 @@ defmodule Trento.ActivityLog.SeverityLevel do
       :map_value_to_severity ->
         health_key_suffix = mapping.key_suffix
 
-        health_key =
+        maybe_health_key =
           keys
           |> Enum.map(&Atom.to_string/1)
           |> Enum.find(fn e -> String.ends_with?(e, health_key_suffix) end)
 
-        health_value = metadata[String.to_existing_atom(health_key)]
-        health_value_downcased = health_value |> Atom.to_string() |> String.downcase()
-        severity_default = Map.get(mapping.values, "*")
-        Map.get(mapping.values, health_value_downcased, severity_default)
+        case maybe_health_key do
+          nil ->
+            :info
+
+          health_key when is_binary(health_key) ->
+            health_value = metadata[String.to_existing_atom(health_key)]
+            health_value_downcased = health_value |> Atom.to_string() |> String.downcase()
+            severity_default = Map.get(mapping.values, "*")
+            Map.get(mapping.values, health_value_downcased, severity_default)
+        end
 
       :key_exists ->
         key = mapping.key
