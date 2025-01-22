@@ -46,12 +46,6 @@ describe('Checks catalog', () => {
     });
   });
 
-  beforeEach(() => {
-    checksCatalogPage.interceptChecksCatalogEndpoint();
-    checksCatalogPage.visit();
-    checksCatalogPage.waitForChecksCatalogRequest();
-  });
-
   describe('Filtering', () => {
     it('expected query is issued for AWS provider', () => {
       const expectedEndpointUrl = 'provider=aws';
