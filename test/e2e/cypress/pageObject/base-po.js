@@ -133,7 +133,59 @@ export const validateItemPresentInNavigationMenu = (navigationMenuItem) => {
   });
 };
 
+export const waitForRequest = (requestAlias) => cy.wait(`@${requestAlias}`);
+
+export const requestHasExpectedUrl = (url, requestAlias) => {
+  return waitForRequest(requestAlias).then(({ request }) => {
+    expect(request.url.includes(url), `${request.url} should include ${url}`).to
+      .be.true;
+  });
+};
+
 export const selectFromDropdown = (selector, choice) => {
   cy.get(selector).click();
   return cy.get(`${selector} + div div:contains("${choice}")`).click();
 };
+
+export const preloadTestData = () => {
+  /**
+   * Preload required test data.
+   * It must run photofinish scenario twice as the order of sent payloads is relevant
+   * and the tests require a fully loaded scenario which only happens when the
+   * scenario is sent in the second time.
+   */
+  isTestDataLoaded().then((isLoaded) => {
+    if (!isLoaded) cy.loadScenario('healthy-27-node-SAP-cluster');
+  });
+  loadScenario('healthy-27-node-SAP-cluster');
+};
+
+const loadScenario = (scenario) => {
+  const [projectRoot, photofinishBinary, webAPIHost, webAPIPort] = [
+    Cypress.env('project_root'),
+    Cypress.env('photofinish_binary'),
+    Cypress.env('web_api_host'),
+    Cypress.env('web_api_port'),
+  ];
+  if (photofinishBinary) {
+    cy.log(`Loading scenario "${scenario}"...`);
+    cy.exec(
+      `cd ${projectRoot} && ${photofinishBinary} run --url "http://${webAPIHost}:${webAPIPort}/api/collect" ${scenario}`
+    );
+  } else {
+    cy.log(`Photofinish is not used.`);
+  }
+};
+
+const isTestDataLoaded = () =>
+  apiLogin().then(({ accessToken }) =>
+    cy
+      .request({
+        url: '/api/v1/hosts',
+        method: 'GET',
+        auth: {
+          bearer: accessToken,
+        },
+      })
+      .then(({ body }) => body.length !== 0)
+  );
