@@ -76,8 +76,9 @@ defmodule Trento.MixProject do
       {:fun_with_flags_ui, "~> 0.8.0"},
       {:gettext, "~> 0.18"},
       {:gen_smtp, "~> 1.2.0"},
-      # project has been archived by its github maintainer
-      {:gen_rmq, "~> 4.0"},
+      # see: https://github.com/pma/amqp/issues/231#issuecomment-2445049446
+      {:ranch, "~> 1.8.0", override: true},
+      {:gen_rmq, github: "cdimonaco/gen_rmq", ref: "v5.0.0"},
       {:httpoison, "~> 2.0"},
       {:jason, "~> 1.2"},
       {:junit_formatter, "~> 3.4", only: [:test]},
