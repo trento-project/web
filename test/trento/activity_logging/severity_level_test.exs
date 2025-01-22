@@ -16,7 +16,17 @@ defmodule Trento.ActivityLog.SeverityLevelTest do
       },
       condition: :map_value_to_severity
     },
-    "activity_type_5" => %{type: :key, key: :reason, condition: :key_exists}
+    "activity_type_5" => %{type: :key, key: :reason, condition: :key_exists},
+    "activity_type_6" => %{
+      type: :kv,
+      key_suffix: "some_health_suffix",
+      values: %{
+        "critical" => :critical,
+        "unknown" => :warning,
+        "*" => :debug
+      },
+      condition: :map_value_to_severity
+    }
   }
   describe "map_severity_level/3" do
     test "should map unmapped activity type to info" do
@@ -89,6 +99,16 @@ defmodule Trento.ActivityLog.SeverityLevelTest do
     test "should map key exists activity types appropriately in the info case" do
       activity_type = "activity_type_5"
 
+      metadata = %{}
+
+      severity =
+        SeverityLevel.map_severity_level(activity_type, metadata, @severity_level_mapping)
+
+      assert severity == :info
+    end
+
+    test "should may conditional key suffix types with no metadata correctly" do
+      activity_type = "activity_type_6"
       metadata = %{}
 
       severity =
