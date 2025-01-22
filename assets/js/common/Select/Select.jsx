@@ -4,12 +4,15 @@ import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 
 import classNames from 'classnames';
-import { find, get } from 'lodash';
+import { find, get, isEqual } from 'lodash';
 
 export const OPTION_ALL = 'all';
 
 const defaultOnChange = () => {};
 const defaultRenderOption = (item) => item.value;
+
+const deepCompareSelection = (optionValue, value) =>
+  isEqual(optionValue, value);
 
 function Select({
   optionsName,
@@ -42,6 +45,7 @@ function Select({
       disabled={disabled}
       value={value}
       onChange={onChange}
+      by={deepCompareSelection}
     >
       <div className="relative">
         <Listbox.Button
