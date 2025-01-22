@@ -101,7 +101,6 @@ context('Checks catalog', () => {
           {
             dropdown: 'providers-selection-dropdown',
             option: 'AWS',
-            selectedIcon: selectedIconSelector,
           },
         ],
         expectedRequest: `${checksCatalogURL}?provider=aws`,
@@ -111,12 +110,10 @@ context('Checks catalog', () => {
           {
             dropdown: 'providers-selection-dropdown',
             option: 'AWS',
-            selectedIcon: selectedIconSelector,
           },
           {
             dropdown: 'targets-selection-dropdown',
             option: 'Clusters',
-            selectedIcon: selectedIconSelector,
           },
         ],
         expectedRequest: `${checksCatalogURL}?provider=aws&target_type=cluster`,
@@ -126,17 +123,14 @@ context('Checks catalog', () => {
           {
             dropdown: 'providers-selection-dropdown',
             option: 'AWS',
-            selectedIcon: selectedIconSelector,
           },
           {
             dropdown: 'targets-selection-dropdown',
             option: 'Clusters',
-            selectedIcon: selectedIconSelector,
           },
           {
             dropdown: 'cluster-types-selection-dropdown',
             option: 'HANA Scale Up Perf. Opt.',
-            selectedIcon: selectedIconSelector,
           },
         ],
         expectedRequest: `${checksCatalogURL}?provider=aws&target_type=cluster&cluster_type=hana_scale_up&hana_scenario=performance_optimized`,
@@ -146,17 +140,14 @@ context('Checks catalog', () => {
           {
             dropdown: 'providers-selection-dropdown',
             option: 'AWS',
-            selectedIcon: selectedIconSelector,
           },
           {
             dropdown: 'targets-selection-dropdown',
             option: 'Clusters',
-            selectedIcon: selectedIconSelector,
           },
           {
             dropdown: 'cluster-types-selection-dropdown',
             option: 'HANA Scale Up Cost Opt.',
-            selectedIcon: selectedIconSelector,
           },
         ],
         expectedRequest: `${checksCatalogURL}?provider=aws&target_type=cluster&cluster_type=hana_scale_up&hana_scenario=cost_optimized`,
@@ -168,10 +159,10 @@ context('Checks catalog', () => {
         cy.intercept(expectedRequest, {
           body: { items: catalog },
         }).as('request');
-        selectedFilters.forEach(({ dropdown, option, selectedIcon }) => {
+        selectedFilters.forEach(({ dropdown, option }) => {
           cy.get(`.${dropdown}`).click();
           // test if the selected item has the green SVG icon rendered which shows the current selection
-          cy.get(selectedIcon).should('be.visible');
+          cy.get(selectedIconSelector).should('be.visible');
           cy.get(`.${dropdown}`).get('span').contains(option).click();
         });
         cy.wait('@request');
