@@ -23,22 +23,28 @@ function HealthIcon({
   size = 'l',
   isLink = false,
 }) {
+  const passingIcon = () =>
+    isLink ? EOS_CHECK_CIRCLE_FILLED : EOS_CHECK_CIRCLE_OUTLINED;
+  const PassingIcon = passingIcon();
+
+  const warningIcon = () =>
+    isLink ? EOS_WARNING_FILLED : EOS_WARNING_OUTLINED;
+  const WarningIcon = warningIcon();
+
+  const criticalIcon = () => (isLink ? EOS_ERROR_FILLED : EOS_ERROR_OUTLINED);
+  const CriticalIcon = criticalIcon();
+
+  const absentIcon = () => (isLink ? EOS_INFO_FILLED : EOS_INFO_OUTLINED);
+  const AbsentIcon = absentIcon();
+
   const hoverOpacityClass = {
     'hover:opacity-75': hoverOpacity,
     'hover:opacity-100': !hoverOpacity,
   };
   switch (health) {
     case 'passing':
-      return isLink ? (
-        <EOS_CHECK_CIRCLE_FILLED
-          size={size}
-          className={classNames(
-            hoverOpacityClass,
-            computedIconCssClass('fill-jungle-green-500', centered)
-          )}
-        />
-      ) : (
-        <EOS_CHECK_CIRCLE_OUTLINED
+      return (
+        <PassingIcon
           size={size}
           className={classNames(
             hoverOpacityClass,
@@ -47,16 +53,8 @@ function HealthIcon({
         />
       );
     case 'warning':
-      return isLink ? (
-        <EOS_WARNING_FILLED
-          size={size}
-          className={classNames(
-            hoverOpacityClass,
-            computedIconCssClass('fill-yellow-500', centered)
-          )}
-        />
-      ) : (
-        <EOS_WARNING_OUTLINED
+      return (
+        <WarningIcon
           size={size}
           className={classNames(
             hoverOpacityClass,
@@ -65,16 +63,8 @@ function HealthIcon({
         />
       );
     case 'critical':
-      return isLink ? (
-        <EOS_ERROR_FILLED
-          size={size}
-          className={classNames(
-            hoverOpacityClass,
-            computedIconCssClass('fill-red-500', centered)
-          )}
-        />
-      ) : (
-        <EOS_ERROR_OUTLINED
+      return (
+        <CriticalIcon
           size={size}
           className={classNames(
             hoverOpacityClass,
@@ -83,16 +73,8 @@ function HealthIcon({
         />
       );
     case 'absent':
-      return isLink ? (
-        <EOS_INFO_FILLED
-          size={size}
-          className={classNames(
-            hoverOpacityClass,
-            computedIconCssClass('fill-black', centered)
-          )}
-        />
-      ) : (
-        <EOS_INFO_OUTLINED
+      return (
+        <AbsentIcon
           size={size}
           className={classNames(
             hoverOpacityClass,
