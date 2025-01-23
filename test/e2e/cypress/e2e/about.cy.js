@@ -1,47 +1,28 @@
-import { getValue } from '../support/common';
+import * as aboutPage from '../pageObject/about-po.js';
 
 describe('User account page', () => {
   before(() => {
-    cy.preloadTestData();
-    cy.visit('/about');
-    cy.url().should('include', '/about');
+    aboutPage.preloadTestData();
+  });
+
+  beforeEach(() => {
+    aboutPage.visit();
+    aboutPage.validateUrl('/about');
   });
 
   it('should have the correct page title', () => {
-    cy.get('h2.text-5xl').should('contain', 'About Trento Console');
+    aboutPage.pageTitleIsDisplayed();
   });
 
   it('should show the correct server version', () => {
-    cy.get('div')
-      .contains('Server version')
-      .next()
-      .then(($sv) => {
-        if (Cypress.env('version')) {
-          expect($sv).to.contain(Cypress.env('version'));
-        } else {
-          cy.exec(`cd ${Cypress.env('project_root')} && mix version`)
-            .then(({ stdout: out_version }) => {
-              return out_version;
-            })
-            .then((version) => {
-              expect($sv.text()).to.contain(version);
-            });
-        }
-      });
+    aboutPage.expectedServerVersionIsDisplayed();
   });
 
   it('should show the github project link', () => {
-    cy.get('div')
-      .contains('GitHub repository')
-      .next()
-      .should('contain', 'https://github.com/trento-project/web');
+    aboutPage.expectedGithubUrlIsDisplayed();
   });
 
   it('should display number of SLES subscriptions found', () => {
-    const subscriptions = getValue('subscriptions');
-    cy.get('div')
-      .contains('SLES for SAP subscriptions')
-      .next()
-      .should('contain', subscriptions + ' found');
+    aboutPage.expectedSlesForSapSubscriptionsAreDisplayed();
   });
 });
