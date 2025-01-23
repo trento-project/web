@@ -7,7 +7,7 @@ import { groupBy } from 'lodash';
 const url = '/catalog';
 const checksCatalogEndpointAlias = 'checksCatalogRequest';
 
-//Selectors
+// Selectors
 const checkGroups = 'div.check-group';
 const groupNames = '.check-group > div > div > h3';
 const checkRows = '.check-row';
@@ -26,7 +26,7 @@ const dropdownSelectedIcon =
 const networkErrorLabel = 'p:contains("Network Error")';
 const tryAgainButton = 'button:contains("Try again")';
 
-//Test Data
+// Test Data
 const checksCatalogURL = '**/api/v3/checks/catalog';
 
 const clusterChecksGroup = 'Group 1';
@@ -57,28 +57,29 @@ const group3 = catalogCheckFactory.buildList(group3Checks, {
 });
 const catalog = [...group1, ...group2, ...group3];
 
+const selectFromCatalogDropdown = (dropdownElementSelector, choice) => {
+  cy.get(dropdownElementSelector).click();
+  cy.get(dropdownSelectedIcon).should('be.visible');
+  return cy
+    .get(`${dropdownElementSelector} + div div:contains("${choice}")`)
+    .click();
+};
+
 export const visit = (_url = url) => {
   return basePage.visit(_url);
-};
-
-export const expectedCheckGroupsAreDisplayed = () => {
-  return cy.get(checkGroups).should('have.length', 3);
-};
-
-export const onlyFirstGroupIsExpanded = () => {
-  return cy.get(checkGroups).first().find(checkRows).should('have.length', 2);
 };
 
 export const interceptChecksCatalogEndpoint = (forceError = false) => {
   let interceptArgument;
   if (forceError) {
     interceptArgument = { forceNetworkError: true };
-  } else interceptArgument = { body: { items: catalog } };
+  } else {
+    interceptArgument = { body: { items: catalog } };
+  }
 
-  cy.intercept(`${checksCatalogURL}**`, interceptArgument).as(
-    checksCatalogEndpointAlias
-  );
-  return checksCatalogEndpointAlias;
+  return cy
+    .intercept(`${checksCatalogURL}**`, interceptArgument)
+    .as(checksCatalogEndpointAlias);
 };
 
 export const interceptChecksCatalogEndpointWithError = () => {
@@ -89,11 +90,17 @@ export const getCheckGroupsNames = () => {
   return Object.entries(groupBy(catalog, 'group')).map(([group]) => group);
 };
 
-export const expectedcheckGroupssAreIncluded = () => {
+export const expectedCheckGroupsAreDisplayed = () => {
+  return cy.get(checkGroups).should('have.length', 3);
+};
+
+export const onlyFirstCheckGroupIsExpanded = () => {
+  return cy.get(checkGroups).first().find(checkRows).should('have.length', 2);
+};
+
+export const expectedCheckGroupsAreIncluded = () => {
   const groups = getCheckGroupsNames();
-  return groups.forEach(([group]) =>
-    cy.get(groupNames).should('contain', group)
-  );
+  return groups.forEach((group) => cy.get(groupNames).should('contain', group));
 };
 
 export const eachGroupShouldBeExpanded = () => {
@@ -118,42 +125,8 @@ export const expandAllGroups = () => {
   });
 };
 
-export const eachGroupHasExpectedCheckIds = () => {
-  expandAllGroups();
-  const catalogIds = catalog.map((item) => item.id);
-
-  return catalogIds.forEach((id) => {
-    cy.get(`p:contains("${id}")`).should('be.visible');
-  });
-};
-
-export const expectedTargetTypeClusterIconsAreDisplayed = () => {
-  return cy.get(clusterTargetTypeIcon).should('have.length', group1Checks);
-};
-
-export const expectedTargetTypeHostIconsAreDisplayed = () => {
-  return cy.get(hostTargetTypeIcon).should('have.length', group2Checks);
-};
-
-export const checkPanelIsNotVisible = () => {
-  return cy.get(checkPanels).should('not.exist');
-};
-
 export const clickFirstCheckRow = () => {
   return cy.get(checkRows).first().click();
-};
-
-export const checkPanelHasTheExpectedText = () => {
-  return cy
-    .get(checkPanels)
-    .first()
-    .should('have.text', catalog[0].remediation);
-};
-
-const selectFromCatalogDropdown = (selector, choice) => {
-  cy.get(selector).click();
-  cy.get(dropdownSelectedIcon).should('be.visible');
-  cy.get(`${selector} + div div:contains("${choice}")`).click();
 };
 
 export const selectFromProvidersDropdown = (choice) => {
@@ -174,15 +147,38 @@ export const selectFromClusterTypesSelectionDropdown = (choice) => {
 export const waitForChecksCatalogRequest = () => {
   return basePage.waitForRequest(checksCatalogEndpointAlias);
 };
-
-export const checksCatalogRequestsHasExpectedUrl = (url) => {
-  return basePage.requestHasExpectedUrl(url, checksCatalogEndpointAlias);
-};
-
 export const networkErrorLabelIsDisplayed = () => {
   return cy.get(networkErrorLabel).should('be.visible');
 };
 
 export const tryAgainButtonIsDisplayed = () => {
   return cy.get(tryAgainButton).should('be.visible');
+};
+
+export const checkPanelHasTheExpectedText = () => {
+  return cy
+    .get(checkPanels)
+    .first()
+    .should('have.text', catalog[0].remediation);
+};
+
+export const eachGroupHasExpectedCheckIds = () => {
+  expandAllGroups();
+  const catalogIds = catalog.map((item) => item.id);
+
+  return catalogIds.forEach((id) => {
+    cy.get(`p:contains("${id}")`).should('be.visible');
+  });
+};
+
+export const expectedTargetTypeClusterIconsAreDisplayed = () => {
+  return cy.get(clusterTargetTypeIcon).should('have.length', group1Checks);
+};
+
+export const expectedTargetTypeHostIconsAreDisplayed = () => {
+  return cy.get(hostTargetTypeIcon).should('have.length', group2Checks);
+};
+
+export const checkPanelIsNotVisible = () => {
+  return cy.get(checkPanels).should('not.exist');
 };

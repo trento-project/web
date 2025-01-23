@@ -14,7 +14,7 @@ describe('Checks catalog', () => {
     });
 
     it('should have only the first group expanded', () => {
-      checksCatalogPage.onlyFirstGroupIsExpanded();
+      checksCatalogPage.onlyFirstCheckGroupIsExpanded();
     });
   });
 
@@ -48,28 +48,28 @@ describe('Checks catalog', () => {
 
   describe('Filtering', () => {
     it('expected query is issued for AWS provider', () => {
-      const expectedEndpointUrl = 'provider=aws';
+      const expectedRequestQuery = 'provider=aws';
 
       checksCatalogPage
         .selectFromProvidersDropdown('AWS')
         .then((endpointUrl) =>
-          expect(endpointUrl).to.include(expectedEndpointUrl)
+          expect(endpointUrl).to.include(expectedRequestQuery)
         );
     });
 
     it('expected query is issued for AWS provider & Cluster Target Type', () => {
-      const expectedEndpointUrl = 'provider=aws&target_type=cluster';
+      const expectedRequestQuery = 'provider=aws&target_type=cluster';
 
       checksCatalogPage.selectFromProvidersDropdown('AWS');
       checksCatalogPage
         .selectFromTargetsSelectionDropdown('Clusters')
         .then((endpointUrl) =>
-          expect(endpointUrl).to.include(expectedEndpointUrl)
+          expect(endpointUrl).to.include(expectedRequestQuery)
         );
     });
 
     it('expected query is issued for AWS provider & Cluster Target Type & HANA Scale Up Perf. Opt.', () => {
-      const expectedEndpointUrl =
+      const expectedRequestQuery =
         'provider=aws&target_type=cluster&cluster_type=hana_scale_up&hana_scenario=performance_optimized';
 
       checksCatalogPage.selectFromProvidersDropdown('AWS');
@@ -77,12 +77,12 @@ describe('Checks catalog', () => {
       checksCatalogPage
         .selectFromClusterTypesSelectionDropdown('HANA Scale Up Perf. Opt.')
         .then((endpointUrl) =>
-          expect(endpointUrl).to.include(expectedEndpointUrl)
+          expect(endpointUrl).to.include(expectedRequestQuery)
         );
     });
 
     it('expected query is issued for AWS provider & Cluster Target Type & HANA Scale Up Cost Opt.', () => {
-      const expectedEndpointUrl =
+      const expectedRequestQuery =
         'provider=aws&target_type=cluster&cluster_type=hana_scale_up&hana_scenario=cost_optimized';
 
       checksCatalogPage.selectFromProvidersDropdown('AWS');
@@ -90,7 +90,7 @@ describe('Checks catalog', () => {
       checksCatalogPage
         .selectFromClusterTypesSelectionDropdown('HANA Scale Up Cost Opt.')
         .then((endpointUrl) =>
-          expect(endpointUrl).to.include(expectedEndpointUrl)
+          expect(endpointUrl).to.include(expectedRequestQuery)
         );
     });
   });

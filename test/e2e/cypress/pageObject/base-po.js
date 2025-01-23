@@ -2,6 +2,7 @@ import { TOTP } from 'totp-generator';
 
 const DEFAULT_USERNAME = Cypress.env('login_user');
 const DEFAULT_PASSWORD = Cypress.env('login_password');
+
 const pageTitle = 'h1';
 const userDropdownMenuButton = 'header button[id*="menu"]';
 const userDropdownProfileButton = 'a:contains("Profile")';
@@ -134,13 +135,6 @@ export const validateItemPresentInNavigationMenu = (navigationMenuItem) => {
 };
 
 export const waitForRequest = (requestAlias) => cy.wait(`@${requestAlias}`);
-
-export const requestHasExpectedUrl = (url, requestAlias) => {
-  return waitForRequest(requestAlias).then(({ request }) => {
-    expect(request.url.includes(url), `${request.url} should include ${url}`).to
-      .be.true;
-  });
-};
 
 export const selectFromDropdown = (selector, choice) => {
   cy.get(selector).click();

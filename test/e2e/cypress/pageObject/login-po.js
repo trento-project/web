@@ -53,10 +53,6 @@ export const login = (username, password) => {
   return clickSubmitLoginButton();
 };
 
-export const sleep = (seconds) => {
-  return new Promise((resolve) => setTimeout(resolve, seconds * 1000));
-};
-
 export const invalidCredentialsErrorIsDisplayed = () => {
   return cy.get(invalidCredentialsError).should('be.visible');
 };
