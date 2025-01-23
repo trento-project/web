@@ -153,7 +153,7 @@ export const selectFromTotpDropdown = (choice) => {
   return basePage.selectFromDropdown(editUserTotpDropdown, choice);
 };
 
-export const getTotpSecret = () => {
+const getTotpSecret = () => {
   return cy.get(totpSecret).then((element) => element.text());
 };
 
@@ -241,7 +241,7 @@ export const apiPatchUser = (id, payload) => {
 
 export const apiModifyUserFullName = () => {
   return getUserIdFromPath().then((id) =>
-    apiPatchUser(id, { fullname: 'some_random_string' })
+    apiPatchUser(id, { fullname: 'new_name' })
   );
 };
 
