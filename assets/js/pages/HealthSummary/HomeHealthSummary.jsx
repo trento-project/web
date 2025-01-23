@@ -32,7 +32,7 @@ const healthSummaryTableConfig = {
       className: 'text-center w-1/6',
       render: (content, item) => (
         <Link to={`/sap_systems/${item.id}`}>
-          <HealthIcon health={content} centered />
+          <HealthIcon health={content} centered isLink />
         </Link>
       ),
     },
@@ -45,7 +45,7 @@ const healthSummaryTableConfig = {
 
         return item?.applicationClusterId ? (
           <Link to={linkToCluster}>
-            <HealthIcon health={content} centered />
+            <HealthIcon health={content} centered isLink />
           </Link>
         ) : (
           <HealthIcon health={content} centered hoverOpacity={false} />
@@ -60,7 +60,7 @@ const healthSummaryTableConfig = {
         const linkToDatabase = `/databases/${item.databaseId}`;
         return (
           <Link to={linkToDatabase}>
-            <HealthIcon health={content} centered />
+            <HealthIcon health={content} centered isLink />
           </Link>
         );
       },
@@ -74,7 +74,7 @@ const healthSummaryTableConfig = {
 
         return item?.databaseClusterId ? (
           <Link to={linkToCluster}>
-            <HealthIcon health={content} centered />
+            <HealthIcon health={content} centered isLink />
           </Link>
         ) : (
           <HealthIcon health={content} centered hoverOpacity={false} />
@@ -89,7 +89,7 @@ const healthSummaryTableConfig = {
         const linkToHosts = `/hosts?sid=${item.sid}&sid=${item.databaseSid}`;
         return (
           <Link to={linkToHosts}>
-            <HealthIcon health={content} centered />
+            <HealthIcon health={content} centered isLink />
           </Link>
         );
       },
