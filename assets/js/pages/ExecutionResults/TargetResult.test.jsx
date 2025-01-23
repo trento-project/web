@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { act } from 'react';
 import { render, screen } from '@testing-library/react';
 
-import { act } from 'react-dom/test-utils';
 import userEvent from '@testing-library/user-event';
 
 import { faker } from '@faker-js/faker';

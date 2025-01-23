@@ -1,7 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { render, screen } from '@testing-library/react';
-import React from 'react';
-import { act } from 'react-dom/test-utils';
+import React, { act } from 'react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import NotificationBox from './NotificationBox';
