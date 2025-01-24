@@ -3,10 +3,14 @@ import { computedIconCssClass } from '@lib/icon';
 
 import {
   EOS_CHECK_CIRCLE_OUTLINED,
+  EOS_CHECK_CIRCLE_FILLED,
   EOS_ERROR_OUTLINED,
   EOS_WARNING_OUTLINED,
   EOS_LENS_FILLED,
   EOS_INFO_OUTLINED,
+  EOS_ERROR_FILLED,
+  EOS_WARNING_FILLED,
+  EOS_INFO_FILLED,
 } from 'eos-icons-react';
 
 import Spinner from '@common/Spinner';
@@ -17,7 +21,22 @@ function HealthIcon({
   centered = false,
   hoverOpacity = true,
   size = 'l',
+  isLink = false,
 }) {
+  const passingIcon = () =>
+    isLink ? EOS_CHECK_CIRCLE_FILLED : EOS_CHECK_CIRCLE_OUTLINED;
+  const PassingIcon = passingIcon();
+
+  const warningIcon = () =>
+    isLink ? EOS_WARNING_FILLED : EOS_WARNING_OUTLINED;
+  const WarningIcon = warningIcon();
+
+  const criticalIcon = () => (isLink ? EOS_ERROR_FILLED : EOS_ERROR_OUTLINED);
+  const CriticalIcon = criticalIcon();
+
+  const absentIcon = () => (isLink ? EOS_INFO_FILLED : EOS_INFO_OUTLINED);
+  const AbsentIcon = absentIcon();
+
   const hoverOpacityClass = {
     'hover:opacity-75': hoverOpacity,
     'hover:opacity-100': !hoverOpacity,
@@ -25,7 +44,7 @@ function HealthIcon({
   switch (health) {
     case 'passing':
       return (
-        <EOS_CHECK_CIRCLE_OUTLINED
+        <PassingIcon
           size={size}
           className={classNames(
             hoverOpacityClass,
@@ -35,7 +54,7 @@ function HealthIcon({
       );
     case 'warning':
       return (
-        <EOS_WARNING_OUTLINED
+        <WarningIcon
           size={size}
           className={classNames(
             hoverOpacityClass,
@@ -45,7 +64,7 @@ function HealthIcon({
       );
     case 'critical':
       return (
-        <EOS_ERROR_OUTLINED
+        <CriticalIcon
           size={size}
           className={classNames(
             hoverOpacityClass,
@@ -55,7 +74,7 @@ function HealthIcon({
       );
     case 'absent':
       return (
-        <EOS_INFO_OUTLINED
+        <AbsentIcon
           size={size}
           className={classNames(
             hoverOpacityClass,

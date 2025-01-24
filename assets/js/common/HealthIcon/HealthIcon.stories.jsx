@@ -4,32 +4,37 @@ import HealthIcon from '.';
 export default {
   title: 'Components/HealthIcon',
   component: HealthIcon,
+  argTypes: {
+    isLink: {
+      control: 'boolean',
+    },
+  },
 };
 
-export function Passing() {
-  return <HealthIcon health="passing" />;
-}
+export const Passing = {
+  args: { health: 'passing', isLink: false },
+};
 
-export function Warning() {
-  return <HealthIcon health="warning" />;
-}
+export const Warning = {
+  args: { health: 'warning', isLink: false },
+};
 
-export function Critical() {
-  return <HealthIcon health="critical" />;
-}
+export const Critical = {
+  args: { health: 'critical', isLink: false },
+};
 
 export function Pending() {
   return <HealthIcon health="pending" />;
 }
 
-export function Absent() {
-  return <HealthIcon health="absent" />;
-}
+export const Absent = {
+  args: { health: 'absent', isLink: false },
+};
 
 export function Default() {
   return <HealthIcon health="unknown" />;
 }
 
-export function ExtraLarge() {
-  return <HealthIcon health="passing" size="xl" />;
-}
+export const ExtraLarge = {
+  args: { health: 'passing', size: 'xl', isLink: false },
+};
