@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react';
 
+import { EOS_SETTINGS_OUTLINED } from 'eos-icons-react';
 import { Switch } from '@headlessui/react';
 
 import classNames from 'classnames';
@@ -11,8 +12,10 @@ function ChecksSelectionItem({
   checkID,
   name,
   description,
+  customizable = false,
   selected,
   onChange = () => {},
+  onCustomize = () => {},
 }) {
   return (
     <li>
@@ -31,6 +34,18 @@ function ChecksSelectionItem({
               </ReactMarkdown>
             </div>
             <Switch.Group as="div" className="flex items-center">
+              {customizable && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    onCustomize(checkID);
+                  }}
+                  aria-label="customize-check"
+                  className="inline mr-4"
+                >
+                  <EOS_SETTINGS_OUTLINED className="fill-jungle-green-500" />
+                </button>
+              )}
               <Switch
                 checked={selected}
                 className={classNames(

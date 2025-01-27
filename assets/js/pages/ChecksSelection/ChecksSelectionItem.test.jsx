@@ -8,7 +8,7 @@ import { catalogCheckFactory } from '@lib/test-utils/factories';
 
 import ChecksSelectionItem from './ChecksSelectionItem';
 
-describe('ClusterDetails ChecksSelectionItem component', () => {
+describe('ChecksSelectionItem component', () => {
   it('should show check with selected state', () => {
     const check = catalogCheckFactory.build();
 
@@ -62,5 +62,56 @@ describe('ClusterDetails ChecksSelectionItem component', () => {
 
     await user.click(screen.getByRole('switch'));
     expect(onChangeMock).toBeCalled();
+  });
+});
+
+describe('Checks Customizability', () => {
+  it.each`
+    customizable
+    ${true}
+    ${false}
+  `('should show check customization call to action', ({ customizable }) => {
+    const check = catalogCheckFactory.build({ customizable });
+
+    render(
+      <ChecksSelectionItem
+        key={check.id}
+        checkID={check.id}
+        name={check.name}
+        description={check.description}
+        selected
+        customizable={check.customizable}
+      />
+    );
+
+    const customizationCallToAction =
+      screen.queryByLabelText('customize-check');
+
+    if (customizable) {
+      expect(customizationCallToAction).toBeVisible();
+    } else {
+      expect(customizationCallToAction).toBeNull();
+    }
+  });
+
+  it('should run the onCustomize function when the customize button is clicked', async () => {
+    const user = userEvent.setup();
+    const check = catalogCheckFactory.build({ customizable: true });
+    const onCustomize = jest.fn();
+
+    render(
+      <ChecksSelectionItem
+        key={check.id}
+        checkID={check.id}
+        name={check.name}
+        description={check.description}
+        selected
+        customizable={check.customizable}
+        onCustomize={onCustomize}
+      />
+    );
+
+    await user.click(screen.getByLabelText('customize-check'));
+    expect(onCustomize).toHaveBeenCalledWith(check.id);
   });
 });
