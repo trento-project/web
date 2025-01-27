@@ -10,6 +10,7 @@ const accessForbiddenMessage =
   'div:contains("Access to this page is forbidden")';
 const navigation = {
   navigationItems: 'nav a',
+  activityLog: 'a:contains("Activity Log")',
 };
 const signOutButton = 'button:contains("Sign out")';
 
@@ -23,6 +24,16 @@ export const validateUrl = (url = '/') => {
 
 export const refresh = () => {
   return cy.reload();
+};
+
+export const clickActivityLogNavigationItem = () => {
+  return cy.get(navigation.activityLog).click();
+};
+
+export const clickActivityLogNavigationItem5Times = () => {
+  for (let i = 0; i < 5; i++) {
+    clickActivityLogNavigationItem();
+  }
 };
 
 export const clickSignOutButton = () => {

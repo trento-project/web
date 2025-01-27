@@ -1,51 +1,41 @@
+import * as activityLogPage from '../pageObject/activity-log-po.js';
+import * as basePage from '../pageObject/base-po.js';
+
 const NEXT = '[aria-label="next-page"]';
 const PREV = '[aria-label="prev-page"]';
 const FIRST = '[aria-label="first-page"]';
 const LAST = '[aria-label="last-page"]';
 
 context('Activity Log page', () => {
-  before(() => {
-    cy.preloadTestData();
+  beforeEach(() => {
+    // activityLogPage.preloadTestData();
   });
+
   describe('Navigation', () => {
     it('should navigate to Activity Log page', () => {
-      cy.visit('/');
-
-      cy.get('nav').contains('Activity Log').click();
-
-      cy.url().should('eq', `${Cypress.config().baseUrl}/activity_log`);
-      cy.get('h1').contains('Activity Log').should('be.visible');
+      basePage.visit();
+      basePage.clickActivityLogNavigationItem();
+      activityLogPage.validateUrl('/activity_log');
+      activityLogPage.pageTitleIsCorrectlyDisplayed('Activity Log');
     });
 
     it('should not load the page twice', () => {
-      cy.visit('/');
-
-      cy.intercept({
-        url: '/api/v1/activity_log*',
-      }).as('data');
-
-      for (let i = 0; i < 5; i++) {
-        cy.get('nav').contains('Activity Log').click();
-      }
-
-      cy.wait('@data');
-      cy.get('@data.all').should('have.length', 1);
+      activityLogPage.interceptActivityLogEndpoint();
+      basePage.visit();
+      basePage.clickActivityLogNavigationItem5Times();
+      activityLogPage.activityLogEndpointIsCalledOnlyOnce();
     });
 
     it('should reset querystring when reloading the page from navigation menu', () => {
-      cy.visit(
-        '/activity_log?search=foo+bar&from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&to_date=custom&to_date=2024-08-13T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging&refreshRate=5000'
+      activityLogPage.visitWithQueryString();
+      activityLogPage.refreshRateFilterHasTheExpectedValue('5s');
+      activityLogPage.filteredActionsAreTheExpectedOnes(
+        'Login Attempt, Tag Added'
       );
-
-      cy.contains('Login Attempt, Tag Added').should('be.visible');
-      cy.contains('5s').should('be.visible');
-
-      cy.get('nav').contains('Activity Log').click();
-
-      cy.get('body').should('not.include.text', 'Login Attempt, Tag Added');
-      cy.get('body').should('not.include.text', '5s');
-
-      cy.url().should('eq', `${Cypress.config().baseUrl}/activity_log`);
+      basePage.clickActivityLogNavigationItem();
+      activityLogPage.refreshRateFilterHasTheExpectedValue('Off');
+      activityLogPage.filteredActionsAreTheExpectedOnes('Filter Type...');
+      activityLogPage.validateUrl('/activity_log');
     });
   });
 
