@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { act } from 'react';
 import { screen } from '@testing-library/react';
 
 import { faker } from '@faker-js/faker';
@@ -6,7 +6,6 @@ import { renderWithRouter } from '@lib/test-utils';
 
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
-import { act } from 'react-dom/test-utils';
 import { cloudProviderEnum, resultEnum } from '@lib/test-utils/factories';
 import CheckDetailHeader from './CheckDetailHeader';
 

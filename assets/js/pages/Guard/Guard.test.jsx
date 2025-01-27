@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { act } from 'react';
 
 import { screen, waitFor } from '@testing-library/react';
 import 'intersection-observer';
 import '@testing-library/jest-dom';
-import { act } from 'react-dom/test-utils';
+
 import { Route, Routes } from 'react-router-dom';
 import { renderWithRouter, withState } from '@lib/test-utils';
 import Guard from './Guard';
