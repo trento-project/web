@@ -95,6 +95,18 @@ export const catalogExpectEnumExpectationFactory = Factory.define(
   })
 );
 
+export const catalogConditionFactory = Factory.define(() => ({
+  value: faker.lorem.word(),
+  expression: faker.lorem.sentence(),
+}));
+
+export const catalogValueFactory = Factory.define(() => ({
+  name: faker.string.uuid(),
+  default: faker.lorem.word(),
+  customizable: faker.datatype.boolean(),
+  conditions: catalogConditionFactory.buildList(2),
+}));
+
 export const catalogCheckFactory = Factory.define(() => ({
   id: faker.string.uuid(),
   name: faker.animal.cat(),
@@ -102,7 +114,9 @@ export const catalogCheckFactory = Factory.define(() => ({
   description: faker.lorem.paragraph(),
   remediation: faker.lorem.paragraph(),
   metadata: null,
+  values: catalogValueFactory.buildList(3),
   expectations: catalogExpectExpectationFactory.buildList(3),
+  customizable: faker.datatype.boolean(),
 }));
 
 export const catalogFactory = Factory.define(() => ({

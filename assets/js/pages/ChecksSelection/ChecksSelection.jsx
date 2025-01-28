@@ -85,8 +85,12 @@ function ChecksSelection({
                 name={check.name}
                 description={check.description}
                 selected={check.selected}
+                customizable={check.customizable}
                 onChange={() => {
                   onChange(toggle(check.id, selectedChecks));
+                }}
+                onCustomize={() => {
+                  alert('Coming Soon!');
                 }}
               />
             ))}
