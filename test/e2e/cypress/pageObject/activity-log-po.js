@@ -20,6 +20,8 @@ const applyFiltersButton = 'button:contains("Apply Filters")';
 const resetFiltersButton = 'button:contains("Reset Filters")';
 const refreshButton = 'button:contains("Refresh")';
 
+const nextPageButton = '[aria-label="next-page"]';
+
 export const visit = (queryString = '') => {
   return basePage.visit(`/activity_log${queryString}`);
 };
@@ -129,7 +131,7 @@ export const typeMetadataFilter = (searchValue) => {
 };
 
 export const waitForActivityLogRequest = () => {
-  return cy.wait(`@${activityLogEndpointAlias}`);
+  return basePage.waitForRequest(activityLogEndpointAlias);
 };
 
 export const activityLogRequestHasExpectedStatusCode = (statusCode) => {
@@ -137,4 +139,16 @@ export const activityLogRequestHasExpectedStatusCode = (statusCode) => {
     activityLogEndpointAlias,
     statusCode
   );
+};
+
+export const paginationPropertiesAreTheExpected = (response) => {
+  expect(response.body).to.have.property('pagination');
+  expect(response.body.pagination).to.have.property('end_cursor');
+  expect(response.body.pagination.end_cursor).not.to.be.undefined;
+  expect(response.body.pagination).to.have.property('has_next_page');
+  expect(response.body.pagination.has_next_page).to.be.true;
+};
+
+export const clickNextPageButton = () => {
+  return cy.get(nextPageButton).click();
 };

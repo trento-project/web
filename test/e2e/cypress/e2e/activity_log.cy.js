@@ -7,7 +7,7 @@ const FIRST = '[aria-label="first-page"]';
 const LAST = '[aria-label="last-page"]';
 
 context('Activity Log page', () => {
-  before(() => activityLogPage.preloadTestData());
+  // before(() => activityLogPage.preloadTestData());
 
   beforeEach(() => {
     activityLogPage.interceptActivityLogEndpoint();
@@ -115,73 +115,30 @@ context('Activity Log page', () => {
 
   describe('Pagination', () => {
     it('should paginate data', () => {
-      cy.intercept({
-        url: `/api/v1/activity_log?first=20`,
-      }).as('firstPage');
-
-      cy.visit('/activity_log');
-
-      cy.wait('@firstPage').then(({ response }) => {
-        expect(response.body).to.have.property('pagination');
-        expect(response.body.pagination).to.have.property('end_cursor');
-        expect(response.body.pagination.end_cursor).not.to.be.undefined;
-        expect(response.body.pagination).to.have.property('has_next_page');
-        expect(response.body.pagination.has_next_page).to.be.true;
-
-        const after = response.body.pagination.end_cursor;
-
-        cy.url().should('eq', `${Cypress.config().baseUrl}/activity_log`);
-
-        cy.intercept({
-          url: `/api/v1/activity_log?first=20&after=${after}`,
-        }).as('secondPage');
-        cy.get(NEXT).click();
-
-        cy.wait('@secondPage').its('response.statusCode').should('eq', 200);
-
-        cy.url().should(
-          'eq',
-          `${Cypress.config().baseUrl}/activity_log?first=20&after=${after}`
-        );
+      activityLogPage.visit();
+      activityLogPage.waitForActivityLogRequest().then(({ response }) => {
+        activityLogPage.paginationPropertiesAreTheExpected(response);
+        activityLogPage.validateUrl('/activity_log');
+        activityLogPage.interceptActivityLogEndpoint();
+        activityLogPage.clickNextPageButton();
+        activityLogPage.activityLogRequestHasExpectedStatusCode(200);
+        const expectedUrl = `/activity_log?first=20&after=${response.body.pagination.end_cursor}`;
+        activityLogPage.validateUrl(expectedUrl);
       });
     });
 
     it('should paginate data with filters', () => {
-      cy.intercept({
-        url: `/api/v1/activity_log?first=20&type[]=sles_subscriptions_updated&search=x86_64`,
-      }).as('firstPage');
-
-      cy.visit('/activity_log?type=sles_subscriptions_updated&search=x86_64');
-
-      cy.wait('@firstPage').then(({ response }) => {
-        expect(response.body).to.have.property('pagination');
-        expect(response.body.pagination).to.have.property('end_cursor');
-        expect(response.body.pagination.end_cursor).not.to.be.undefined;
-        expect(response.body.pagination).to.have.property('has_next_page');
-        expect(response.body.pagination.has_next_page).to.be.true;
-
-        const after = response.body.pagination.end_cursor;
-
-        cy.url().should(
-          'eq',
-          `${
-            Cypress.config().baseUrl
-          }/activity_log?type=sles_subscriptions_updated&search=x86_64`
-        );
-
-        cy.intercept({
-          url: `/api/v1/activity_log?first=20&after=${after}&type[]=sles_subscriptions_updated&search=x86_64`,
-        }).as('secondPage');
-        cy.get(NEXT).click();
-
-        cy.wait('@secondPage').its('response.statusCode').should('eq', 200);
-
-        cy.url().should(
-          'eq',
-          `${
-            Cypress.config().baseUrl
-          }/activity_log?first=20&after=${after}&type=sles_subscriptions_updated&search=x86_64`
-        );
+      const queryString = '?type=sles_subscriptions_updated&search=x86_64';
+      activityLogPage.visit(queryString);
+      activityLogPage.waitForActivityLogRequest().then(({ response }) => {
+        activityLogPage.paginationPropertiesAreTheExpected(response);
+        let expectedUrl = `/activity_log?type=sles_subscriptions_updated&search=x86_64`;
+        activityLogPage.validateUrl(expectedUrl);
+        activityLogPage.interceptActivityLogEndpoint();
+        activityLogPage.clickNextPageButton();
+        activityLogPage.activityLogRequestHasExpectedStatusCode(200);
+        expectedUrl = `/activity_log?first=20&after=${response.body.pagination.end_cursor}&type=sles_subscriptions_updated&search=x86_64`;
+        activityLogPage.validateUrl(expectedUrl);
       });
     });
 
