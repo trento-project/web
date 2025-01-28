@@ -53,6 +53,16 @@ export const userDropdownMenuButtonHasTheExpectedText = (username) => {
   return cy.get(userDropdownMenuButton).should('have.text', username);
 };
 
+export const validateResponseStatusCode = (
+  endpointAlias,
+  expectedStatusCode
+) => {
+  return cy
+    .wait(`@${endpointAlias}`)
+    .its('response.statusCode')
+    .should('eq', expectedStatusCode);
+};
+
 export const typeTotpCode = (totpSecret, inputField) => {
   const { otp } = TOTP.generate(totpSecret);
   return cy

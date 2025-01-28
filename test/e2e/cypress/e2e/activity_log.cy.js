@@ -7,146 +7,109 @@ const FIRST = '[aria-label="first-page"]';
 const LAST = '[aria-label="last-page"]';
 
 context('Activity Log page', () => {
+  before(() => activityLogPage.preloadTestData());
+
   beforeEach(() => {
-    // activityLogPage.preloadTestData();
+    activityLogPage.interceptActivityLogEndpoint();
+    basePage.visit();
   });
 
   describe('Navigation', () => {
     it('should navigate to Activity Log page', () => {
-      basePage.visit();
       basePage.clickActivityLogNavigationItem();
       activityLogPage.validateUrl('/activity_log');
       activityLogPage.pageTitleIsCorrectlyDisplayed('Activity Log');
     });
 
     it('should not load the page twice', () => {
-      activityLogPage.interceptActivityLogEndpoint();
-      basePage.visit();
       basePage.clickActivityLogNavigationItem5Times();
       activityLogPage.activityLogEndpointIsCalledOnlyOnce();
     });
 
     it('should reset querystring when reloading the page from navigation menu', () => {
-      activityLogPage.visitWithQueryString();
+      const queryString =
+        '?search=foo+bar&from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&to_date=custom&to_date=2024-08-13T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging&refreshRate=5000';
+      activityLogPage.visit(queryString);
       activityLogPage.refreshRateFilterHasTheExpectedValue('5s');
       activityLogPage.filteredActionsAreTheExpectedOnes(
         'Login Attempt, Tag Added'
       );
       basePage.clickActivityLogNavigationItem();
       activityLogPage.refreshRateFilterHasTheExpectedValue('Off');
-      activityLogPage.filteredActionsAreTheExpectedOnes('Filter Type...');
+      activityLogPage.filterTypeHasNothingSelected();
       activityLogPage.validateUrl('/activity_log');
     });
   });
 
   describe('Filtering', () => {
     it('should render without selected filters', () => {
-      cy.intercept({
-        url: '/api/v1/activity_log?first=20',
-      }).as('data');
-      cy.visit('/activity_log');
-
-      cy.contains('Filter Type', { matchCase: false }).should('be.visible');
-      cy.contains('Filter older than', { matchCase: false }).should(
-        'be.visible'
-      );
-      cy.contains('Filter newer than', { matchCase: false }).should(
-        'be.visible'
-      );
-
-      cy.get('input[name="metadata-search"]')
-        .should('have.attr', 'placeholder', 'Filter by metadata')
-        .should('be.visible');
-
-      cy.wait('@data').its('response.statusCode').should('eq', 200);
+      activityLogPage.visit();
+      activityLogPage.filterTypeHasNothingSelected();
+      activityLogPage.filterOlderThanHasNothingSelected();
+      activityLogPage.filterNewerThanHasNothingSelected();
+      activityLogPage.metadataSearchHasTheExpectedPlaceholder();
+      activityLogPage.activityLogRequestHasExpectedStatusCode(200);
     });
 
     it('should render with selected filters from querystring', () => {
-      cy.intercept({
-        url: '/api/v1/activity_log?first=20&search=foo+bar&from_date=2024-08-14T10:21:00.000Z&to_date=2024-08-13T10:21:00.000Z&type[]=login_attempt&type[]=resource_tagging',
-      }).as('data');
-
-      cy.visit(
-        '/activity_log?search=foo+bar&from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&to_date=custom&to_date=2024-08-13T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging'
+      const queryString =
+        '?search=foo+bar&from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&to_date=custom&to_date=2024-08-13T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging';
+      activityLogPage.visit(queryString);
+      activityLogPage.filteredActionsAreTheExpectedOnes(
+        'Login Attempt, Tag Added'
       );
-
-      cy.contains('Login Attempt, Tag Added').should('be.visible');
-      cy.contains('08/14/2024 10:21:00 AM').should('be.visible');
-      cy.contains('08/13/2024 10:21:00 AM').should('be.visible');
-      cy.get('input[name="metadata-search"]')
-        .should('have.value', 'foo bar')
-        .should('be.visible');
-
-      cy.wait('@data').its('response.statusCode').should('eq', 200);
+      activityLogPage.filterNewerThanHasTheExpectedValue(
+        '08/13/2024 10:21:00 AM'
+      );
+      activityLogPage.filterOlderThanHasTheExpectedValue(
+        '08/14/2024 10:21:00 AM'
+      );
+      activityLogPage.metadataSearchHasTheExpectedValue('foo bar');
+      activityLogPage.activityLogRequestHasExpectedStatusCode(200);
     });
 
     it('should update querystring when filters are selected', () => {
-      cy.visit('/activity_log');
+      activityLogPage.visit();
 
-      cy.contains('Filter older than').click();
-      cy.get('input[type="datetime-local"]:first').type('2024-08-14T10:21');
+      activityLogPage.clickFilterOlderThanButton();
+      activityLogPage.typeFilterOlderThanInputField('2024-08-14T10:21');
 
-      cy.contains('Filter newer than').click();
-      cy.get('input[type="datetime-local"]:first').type('2024-08-13T10:21');
+      activityLogPage.clickFilterNewerThanButton();
+      activityLogPage.typeFilterNewerThanInputField('2024-08-13T10:21');
 
-      cy.contains('Filter Type').click();
-      cy.contains('Login Attempt').click();
-      cy.contains('Tag Added').click();
+      activityLogPage.clickFilterTypeButton();
+      activityLogPage.selectFilterTypeOption('Login Attempt');
+      activityLogPage.selectFilterTypeOption('Tag Added');
 
-      cy.get('input[name="metadata-search"]').type('foo bar');
+      activityLogPage.typeMetadataFilter('foo bar');
+      activityLogPage.clickApplyFiltersButton();
 
-      cy.contains('Apply Filters').click();
-
-      cy.url().should(
-        'eq',
-        `${
-          Cypress.config().baseUrl
-        }/activity_log?from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&to_date=custom&to_date=2024-08-13T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging&search=foo+bar&first=20`
-      );
+      const expectedUrl =
+        '/activity_log?from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&to_date=custom&to_date=2024-08-13T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging&search=foo+bar&first=20';
+      activityLogPage.validateUrl(expectedUrl);
     });
 
     it('should reset filters', () => {
-      cy.intercept({
-        url: '/api/v1/activity_log?first=20',
-      }).as('data');
-
-      cy.visit(
-        '/activity_log?from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging&search=foo+bar'
-      );
-
-      cy.contains('Reset Filters').click();
-
-      cy.contains('Filter Type', { matchCase: false }).should('be.visible');
-      cy.contains('Filter older than', { matchCase: false }).should(
-        'be.visible'
-      );
-      cy.contains('Filter newer than', { matchCase: false }).should(
-        'be.visible'
-      );
-      cy.get('input[name="metadata-search"]')
-        .should('have.attr', 'placeholder', 'Filter by metadata')
-        .should('be.visible');
-
-      cy.wait('@data').its('response.statusCode').should('eq', 200);
+      const queryString =
+        '?from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging&search=foo+bar';
+      activityLogPage.visit(queryString);
+      activityLogPage.clickResetFiltersButton();
+      activityLogPage.filterTypeHasNothingSelected();
+      activityLogPage.filterOlderThanHasNothingSelected();
+      activityLogPage.filterNewerThanHasNothingSelected();
+      activityLogPage.metadataSearchHasTheExpectedPlaceholder();
+      activityLogPage.activityLogRequestHasExpectedStatusCode(200);
     });
 
     it('should refresh content based on currently applied filters', () => {
-      const apiUrl =
-        '/api/v1/activity_log?first=20&from_date=2024-08-14T10:21:00.000Z&to_date=2024-08-13T10:21:00.000Z&type[]=login_attempt&type[]=resource_tagging&search=foo+bar';
-      const pageUrl =
-        '/activity_log?from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&to_date=custom&to_date=2024-08-13T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging&search=foo+bar';
-
-      cy.intercept({ url: apiUrl }).as('initialDataLoad');
-
-      cy.visit(pageUrl);
-
-      cy.wait('@initialDataLoad');
-
-      cy.intercept({ url: apiUrl }).as('refreshedDataLoad');
-      cy.contains('Refresh').click();
-      cy.wait('@refreshedDataLoad');
-
-      cy.url().should('eq', `${Cypress.config().baseUrl}${pageUrl}`);
+      const queryString =
+        '?from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&to_date=custom&to_date=2024-08-13T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging&search=foo+bar';
+      activityLogPage.visit(queryString);
+      activityLogPage.waitForActivityLogRequest();
+      activityLogPage.interceptActivityLogEndpoint();
+      activityLogPage.clickRefreshButton();
+      activityLogPage.waitForActivityLogRequest();
+      activityLogPage.validateUrl(`/activity_log${queryString}`);
     });
   });
 
