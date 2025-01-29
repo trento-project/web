@@ -21,9 +21,29 @@ const resetFiltersButton = 'button:contains("Reset Filters")';
 const refreshButton = 'button:contains("Refresh")';
 
 const nextPageButton = '[aria-label="next-page"]';
+const previousPageButton = '[aria-label="prev-page"]';
+const firstPageButton = '[aria-label="first-page"]';
+const lastPageButton = '[aria-label="last-page"]';
+
+const selectPaginationButton =
+  'div[class*="flex justify-between"] button[aria-haspopup="listbox"]';
+
+const autoRefreshIntervalButton = 'button[class*="refresh-rate"]';
 
 export const visit = (queryString = '') => {
   return basePage.visit(`/activity_log${queryString}`);
+};
+
+export const autoRefreshIntervalButtonHasTheExpectedValue = (refreshRate) => {
+  return cy.get(autoRefreshIntervalButton).should('have.text', refreshRate);
+};
+
+export const autoRefreshButtonIsEnabled = () => {
+  return cy.get(autoRefreshIntervalButton).should('be.enabled');
+};
+
+export const autoRefreshIntervalButtonIsDisabled = () => {
+  return cy.get(autoRefreshIntervalButton).should('be.disabled');
 };
 
 export const clickFilterTypeButton = () => {
@@ -92,11 +112,16 @@ export const filterOlderThanHasTheExpectedValue = (filterValue) => {
 };
 
 export const filterNewerThanHasTheExpectedValue = (filterValue) => {
+  let expectedValue;
+  isUriComponentDate(filterValue)
+    ? (expectedValue = formatDate(filterValue))
+    : (expectedValue = filterValue);
+
   return cy
     .get(filteringElements)
     .eq(2)
     .find('span span')
-    .should('have.text', filterValue);
+    .should('have.text', expectedValue);
 };
 
 export const filterNewerThanHasNothingSelected = () => {
@@ -147,8 +172,74 @@ export const paginationPropertiesAreTheExpected = (response) => {
   expect(response.body.pagination.end_cursor).not.to.be.undefined;
   expect(response.body.pagination).to.have.property('has_next_page');
   expect(response.body.pagination.has_next_page).to.be.true;
+  expect(response.body.pagination).to.have.property('first', 20);
 };
 
 export const clickNextPageButton = () => {
   return cy.get(nextPageButton).click();
+};
+
+export const clickPreviousPageButton = () => {
+  return cy.get(previousPageButton).click();
+};
+
+export const clickFirstPageButton = () => {
+  return cy.get(firstPageButton).click();
+};
+
+export const clickLastPageButton = () => {
+  return cy.get(lastPageButton).click();
+};
+
+export const formatDate = (encodedDate) => {
+  const decodedDate = decodeURIComponent(encodedDate);
+  const date = new Date(decodedDate);
+  const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(date.getUTCDate()).padStart(2, '0');
+  const year = date.getUTCFullYear();
+
+  let hours = date.getUTCHours();
+  const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+  const seconds = String(date.getUTCSeconds()).padStart(2, '0');
+
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  hours = hours % 12 || 12;
+
+  return `${month}/${day}/${year} ${hours}:${minutes}:${seconds} ${ampm}`;
+};
+
+const isUriComponentDate = (encodedDate) => {
+  const regex = /^\d{4}-\d{2}-\d{2}T\d{2}%3A\d{2}%3A\d{2}\.\d{3}Z$/;
+  return regex.test(encodedDate);
+};
+
+export const validateResponsePagination = (amountOfItems) => {
+  return basePage
+    .waitForRequest(activityLogEndpointAlias)
+    .its('response.body.pagination.first')
+    .should('eq', amountOfItems);
+};
+
+export const selectPagination = (amountOfItems) => {
+  cy.get(selectPaginationButton).click();
+  return cy.get(`span:contains("${amountOfItems}")`).first().click();
+};
+
+export const selectPaginationButtonHasTheExpectedValue = (pagination) => {
+  return cy.get(selectPaginationButton).should('have.text', pagination);
+};
+
+export const responseMatchesFirstPageContent = (expectedResponse) => {
+  waitForActivityLogRequest().then(({ response }) => {
+    expect(response.body.pagination).to.have.property('last', 20);
+    expectedResponse.body.data.forEach((element, i) => {
+      expect(element.id).to.eq(response.body.data[i].id);
+    });
+  });
+};
+
+export const apiCallDoesNotContainRefreshRate = (refreshRate) => {
+  return waitForActivityLogRequest().then(({ response }) => {
+    expect(response.url).to.not.contain(refreshRate);
+  });
 };
