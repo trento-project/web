@@ -99,6 +99,7 @@ function HostSettingsPage() {
         catalogError={catalogError}
         loading={catalogLoading}
         selectedChecks={selection}
+        userAbilities={abilities}
         onUpdateCatalog={refreshCatalog}
         onChange={setSelection}
       />

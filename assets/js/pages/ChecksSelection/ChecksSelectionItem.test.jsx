@@ -66,33 +66,50 @@ describe('ChecksSelectionItem component', () => {
 });
 
 describe('Checks Customizability', () => {
+  const fooBarAbility = { name: 'foo', resource: 'bar' };
+  const allAbility = { name: 'all', resource: 'all' };
+  const checkCustomizationAbility = {
+    name: 'all',
+    resource: 'check_customization',
+  };
+
   it.each`
-    customizable
-    ${true}
-    ${false}
-  `('should show check customization call to action', ({ customizable }) => {
-    const check = catalogCheckFactory.build({ customizable });
+    customizable | abilities                                     | expectedCallToAction
+    ${true}      | ${[]}                                         | ${false}
+    ${true}      | ${[fooBarAbility]}                            | ${false}
+    ${true}      | ${[allAbility, fooBarAbility]}                | ${true}
+    ${true}      | ${[checkCustomizationAbility, fooBarAbility]} | ${true}
+    ${false}     | ${[]}                                         | ${false}
+    ${false}     | ${[allAbility]}                               | ${false}
+    ${false}     | ${[checkCustomizationAbility]}                | ${false}
+    ${false}     | ${[fooBarAbility]}                            | ${false}
+  `(
+    'should show check customization call to action',
+    ({ customizable, abilities, expectedCallToAction }) => {
+      const check = catalogCheckFactory.build({ customizable });
 
-    render(
-      <ChecksSelectionItem
-        key={check.id}
-        checkID={check.id}
-        name={check.name}
-        description={check.description}
-        selected
-        customizable={check.customizable}
-      />
-    );
+      render(
+        <ChecksSelectionItem
+          key={check.id}
+          checkID={check.id}
+          name={check.name}
+          description={check.description}
+          selected
+          userAbilities={abilities}
+          customizable={check.customizable}
+        />
+      );
 
-    const customizationCallToAction =
-      screen.queryByLabelText('customize-check');
+      const customizationCallToAction =
+        screen.queryByLabelText('customize-check');
 
-    if (customizable) {
-      expect(customizationCallToAction).toBeVisible();
-    } else {
-      expect(customizationCallToAction).toBeNull();
+      if (expectedCallToAction) {
+        expect(customizationCallToAction).toBeVisible();
+      } else {
+        expect(customizationCallToAction).toBeNull();
+      }
     }
-  });
+  );
 
   it('should run the onCustomize function when the customize button is clicked', async () => {
     const user = userEvent.setup();
@@ -106,6 +123,7 @@ describe('Checks Customizability', () => {
         name={check.name}
         description={check.description}
         selected
+        userAbilities={[checkCustomizationAbility]}
         customizable={check.customizable}
         onCustomize={onCustomize}
       />

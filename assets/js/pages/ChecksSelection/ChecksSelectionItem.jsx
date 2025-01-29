@@ -8,12 +8,22 @@ import classNames from 'classnames';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
+import { isPermitted } from '@lib/model/users';
+
+const defaultAbilities = [];
+
+const CUSTOMIZATION_ALLOWED_FOR = ['all:all', 'all:check_customization'];
+
+const isCustomizable = (abilities, customizable) =>
+  isPermitted(abilities, CUSTOMIZATION_ALLOWED_FOR) && customizable;
+
 function ChecksSelectionItem({
   checkID,
   name,
   description,
   customizable = false,
   selected,
+  userAbilities = defaultAbilities,
   onChange = () => {},
   onCustomize = () => {},
 }) {
@@ -34,7 +44,7 @@ function ChecksSelectionItem({
               </ReactMarkdown>
             </div>
             <Switch.Group as="div" className="flex items-center">
-              {customizable && (
+              {isCustomizable(userAbilities, customizable) && (
                 <button
                   type="button"
                   onClick={() => {
