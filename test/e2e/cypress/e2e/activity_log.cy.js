@@ -276,76 +276,21 @@ context('Activity Log page', () => {
       activityLogPage.validateUrl(expectedUrl);
     });
 
-    const allRefreshRates = ['Off', '5s', '10s', '30s', '1m', '5m', '30m'];
-
-    const changingRefreshRateScenarios = [
-      {
-        currentRefreshRate: 'Off',
-        newRefreshRate: '5s',
-        expectedRefreshRate: 5000,
-      },
-      {
-        currentRefreshRate: '5s',
-        newRefreshRate: '10s',
-        expectedRefreshRate: 10000,
-      },
-      {
-        currentRefreshRate: '10s',
-        newRefreshRate: '30s',
-        expectedRefreshRate: 30000,
-      },
-      {
-        currentRefreshRate: '30s',
-        newRefreshRate: '1m',
-        expectedRefreshRate: 60000,
-      },
-      {
-        currentRefreshRate: '1m',
-        newRefreshRate: '5m',
-        expectedRefreshRate: 300000,
-      },
-      {
-        currentRefreshRate: '5m',
-        newRefreshRate: '30m',
-        expectedRefreshRate: 1800000,
-      },
-      {
-        currentRefreshRate: '30m',
-        newRefreshRate: 'Off',
-        expectedRefreshRate: null,
-      },
-    ];
-
     it('should change refresh rate', () => {
-      cy.intercept({
-        url: '/api/v1/activity_log?first=20',
-      }).as('data');
-
-      cy.visit('/activity_log');
-
+      activityLogPage.visit();
+      activityLogPage.expectedRefreshRatesAreAvailable();
+      const changingRefreshRateScenarios =
+        activityLogPage.buildChangingRefreshRateScenarios();
       changingRefreshRateScenarios.forEach(
         ({ currentRefreshRate, newRefreshRate, expectedRefreshRate }) => {
-          cy.contains(currentRefreshRate).should('be.visible');
-
-          allRefreshRates
-            .filter((rate) => rate !== currentRefreshRate)
-            .forEach((hiddenRate) =>
-              cy.get('body').should('not.include.text', hiddenRate)
-            );
-
-          cy.contains(currentRefreshRate).click();
-          cy.contains(newRefreshRate).click();
-
-          if (expectedRefreshRate) {
-            cy.url().should(
-              'eq',
-              `${
-                Cypress.config().baseUrl
-              }/activity_log?refreshRate=${expectedRefreshRate}`
-            );
-          } else {
-            cy.url().should('eq', `${Cypress.config().baseUrl}/activity_log`);
-          }
+          activityLogPage.autoRefreshIntervalButtonHasTheExpectedValue(
+            currentRefreshRate
+          );
+          activityLogPage.selectRefreshRate(newRefreshRate);
+          const expectedUrl = `/activity_log${
+            expectedRefreshRate ? `?refreshRate=${expectedRefreshRate}` : ''
+          }`;
+          activityLogPage.validateUrl(expectedUrl);
         }
       );
     });
@@ -375,22 +320,15 @@ context('Activity Log page', () => {
     });
 
     it(`should update querystring when filters are selected`, () => {
-      cy.visit(`/activity_log?refreshRate=5000`);
-
-      cy.contains('Filter Type').click();
-      cy.contains('Login Attempt').click();
-      cy.contains('Tag Added').click();
-
-      cy.get('input[name="metadata-search"]').type('foo bar');
-
-      cy.contains('Apply Filters').click();
-
-      cy.url().should(
-        'eq',
-        `${
-          Cypress.config().baseUrl
-        }/activity_log?refreshRate=5000&type=login_attempt&type=resource_tagging&search=foo+bar&first=20`
-      );
+      activityLogPage.visit('?refreshRate=5000');
+      activityLogPage.clickFilterTypeButton();
+      activityLogPage.selectFilterTypeOption('Login Attempt');
+      activityLogPage.selectFilterTypeOption('Tag Added');
+      activityLogPage.typeMetadataFilter('foo bar');
+      activityLogPage.clickApplyFiltersButton();
+      const expectedUrl =
+        '/activity_log?refreshRate=5000&type=login_attempt&type=resource_tagging&search=foo+bar&first=20';
+      activityLogPage.validateUrl(expectedUrl);
     });
   });
 });

@@ -29,6 +29,18 @@ const selectPaginationButton =
   'div[class*="flex justify-between"] button[aria-haspopup="listbox"]';
 
 const autoRefreshIntervalButton = 'button[class*="refresh-rate"]';
+const availableRefreshRates = 'button[class*="refresh-rate"] + div div';
+
+//Test data
+export const expectedRefreshRates = [
+  'Off',
+  '5s',
+  '10s',
+  '30s',
+  '1m',
+  '5m',
+  '30m',
+];
 
 export const visit = (queryString = '') => {
   return basePage.visit(`/activity_log${queryString}`);
@@ -36,6 +48,10 @@ export const visit = (queryString = '') => {
 
 export const autoRefreshIntervalButtonHasTheExpectedValue = (refreshRate) => {
   return cy.get(autoRefreshIntervalButton).should('have.text', refreshRate);
+};
+
+export const clickAutoRefreshRateButton = () => {
+  return cy.get(autoRefreshIntervalButton).click();
 };
 
 export const autoRefreshButtonIsEnabled = () => {
@@ -241,5 +257,36 @@ export const responseMatchesFirstPageContent = (expectedResponse) => {
 export const apiCallDoesNotContainRefreshRate = (refreshRate) => {
   return waitForActivityLogRequest().then(({ response }) => {
     expect(response.url).to.not.contain(refreshRate);
+  });
+};
+
+export const expectedRefreshRatesAreAvailable = () => {
+  clickAutoRefreshRateButton();
+  cy.get(availableRefreshRates).each(($element, index) =>
+    expect(expectedRefreshRates[index]).to.eq($element.text())
+  );
+  return clickAutoRefreshRateButton();
+};
+
+export const selectRefreshRate = (refreshRate) => {
+  cy.get(autoRefreshIntervalButton).click();
+  return cy.contains(refreshRate).click();
+};
+
+export const buildChangingRefreshRateScenarios = () => {
+  const timeUnits = { s: 1000, m: 60000 };
+  return expectedRefreshRates.map((current, index) => {
+    const next =
+      expectedRefreshRates[(index + 1) % expectedRefreshRates.length];
+    const expectedRefreshRate =
+      next === expectedRefreshRates[0]
+        ? null
+        : parseInt(next) * timeUnits[next.slice(-1)];
+
+    return {
+      currentRefreshRate: current,
+      newRefreshRate: next,
+      expectedRefreshRate,
+    };
   });
 };
