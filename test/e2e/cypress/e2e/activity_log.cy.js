@@ -2,23 +2,19 @@ import * as activityLogPage from '../pageObject/activity-log-po.js';
 import * as basePage from '../pageObject/base-po.js';
 
 context('Activity Log page', () => {
-  before(() => {
-    activityLogPage.preloadTestData();
-  });
-
-  beforeEach(() => {
-    activityLogPage.interceptActivityLogEndpoint();
-    basePage.visit();
-  });
+  before(() => activityLogPage.preloadTestData());
+  beforeEach(() => activityLogPage.interceptActivityLogEndpoint());
 
   describe('Navigation', () => {
     it('should navigate to Activity Log page', () => {
+      basePage.visit();
       basePage.clickActivityLogNavigationItem();
       activityLogPage.validateUrl('/activity_log');
       activityLogPage.pageTitleIsCorrectlyDisplayed('Activity Log');
     });
 
     it('should not load the page twice', () => {
+      basePage.visit();
       basePage.clickActivityLogNavigationItem5Times();
       activityLogPage.activityLogEndpointIsCalledOnlyOnce();
     });
