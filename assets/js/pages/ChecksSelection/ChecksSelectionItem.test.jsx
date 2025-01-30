@@ -8,7 +8,7 @@ import { catalogCheckFactory } from '@lib/test-utils/factories';
 
 import ChecksSelectionItem from './ChecksSelectionItem';
 
-describe('ClusterDetails ChecksSelectionItem component', () => {
+describe('ChecksSelectionItem component', () => {
   it('should show check with selected state', () => {
     const check = catalogCheckFactory.build();
 
@@ -62,5 +62,74 @@ describe('ClusterDetails ChecksSelectionItem component', () => {
 
     await user.click(screen.getByRole('switch'));
     expect(onChangeMock).toBeCalled();
+  });
+});
+
+describe('Checks Customizability', () => {
+  const fooBarAbility = { name: 'foo', resource: 'bar' };
+  const allAbility = { name: 'all', resource: 'all' };
+  const checkCustomizationAbility = {
+    name: 'all',
+    resource: 'check_customization',
+  };
+
+  it.each`
+    customizable | abilities                                     | expectedCallToAction
+    ${true}      | ${[]}                                         | ${false}
+    ${true}      | ${[fooBarAbility]}                            | ${false}
+    ${true}      | ${[allAbility, fooBarAbility]}                | ${true}
+    ${true}      | ${[checkCustomizationAbility, fooBarAbility]} | ${true}
+    ${false}     | ${[]}                                         | ${false}
+    ${false}     | ${[allAbility]}                               | ${false}
+    ${false}     | ${[checkCustomizationAbility]}                | ${false}
+    ${false}     | ${[fooBarAbility]}                            | ${false}
+  `(
+    'should show check customization call to action',
+    ({ customizable, abilities, expectedCallToAction }) => {
+      const check = catalogCheckFactory.build({ customizable });
+
+      render(
+        <ChecksSelectionItem
+          key={check.id}
+          checkID={check.id}
+          name={check.name}
+          description={check.description}
+          selected
+          userAbilities={abilities}
+          customizable={check.customizable}
+        />
+      );
+
+      const customizationCallToAction =
+        screen.queryByLabelText('customize-check');
+
+      if (expectedCallToAction) {
+        expect(customizationCallToAction).toBeVisible();
+      } else {
+        expect(customizationCallToAction).toBeNull();
+      }
+    }
+  );
+
+  it('should run the onCustomize function when the customize button is clicked', async () => {
+    const user = userEvent.setup();
+    const check = catalogCheckFactory.build({ customizable: true });
+    const onCustomize = jest.fn();
+
+    render(
+      <ChecksSelectionItem
+        key={check.id}
+        checkID={check.id}
+        name={check.name}
+        description={check.description}
+        selected
+        userAbilities={[checkCustomizationAbility]}
+        customizable={check.customizable}
+        onCustomize={onCustomize}
+      />
+    );
+
+    await user.click(screen.getByLabelText('customize-check'));
+    expect(onCustomize).toHaveBeenCalledWith(check.id);
   });
 });

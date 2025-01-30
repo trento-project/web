@@ -1,18 +1,31 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react';
 
+import { EOS_SETTINGS_OUTLINED } from 'eos-icons-react';
 import { Switch } from '@headlessui/react';
 
 import classNames from 'classnames';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
+import { isPermitted } from '@lib/model/users';
+
+const defaultAbilities = [];
+
+const CUSTOMIZATION_ALLOWED_FOR = ['all:all', 'all:check_customization'];
+
+const isCustomizable = (abilities, customizable) =>
+  isPermitted(abilities, CUSTOMIZATION_ALLOWED_FOR) && customizable;
+
 function ChecksSelectionItem({
   checkID,
   name,
   description,
+  customizable = false,
   selected,
+  userAbilities = defaultAbilities,
   onChange = () => {},
+  onCustomize = () => {},
 }) {
   return (
     <li>
@@ -31,6 +44,18 @@ function ChecksSelectionItem({
               </ReactMarkdown>
             </div>
             <Switch.Group as="div" className="flex items-center">
+              {isCustomizable(userAbilities, customizable) && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    onCustomize(checkID);
+                  }}
+                  aria-label="customize-check"
+                  className="inline mr-4"
+                >
+                  <EOS_SETTINGS_OUTLINED className="fill-jungle-green-500" />
+                </button>
+              )}
               <Switch
                 checked={selected}
                 className={classNames(

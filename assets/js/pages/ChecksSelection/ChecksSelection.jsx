@@ -26,12 +26,14 @@ const getGroupSelectedState = (checks, selectedChecks) => {
 };
 
 const defaultSelectedChecks = [];
+const defaultAbilities = [];
 
 function ChecksSelection({
   catalog,
   selectedChecks = defaultSelectedChecks,
   loading = false,
   catalogError,
+  userAbilities = defaultAbilities,
   onUpdateCatalog,
   onChange,
 }) {
@@ -85,8 +87,13 @@ function ChecksSelection({
                 name={check.name}
                 description={check.description}
                 selected={check.selected}
+                userAbilities={userAbilities}
+                customizable={check.customizable}
                 onChange={() => {
                   onChange(toggle(check.id, selectedChecks));
+                }}
+                onCustomize={() => {
+                  alert('Coming Soon!');
                 }}
               />
             ))}

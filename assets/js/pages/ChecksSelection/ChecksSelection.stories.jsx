@@ -54,6 +54,10 @@ export default {
         type: { summary: 'string' },
       },
     },
+    userAbilities: {
+      control: 'array',
+      description: 'Current user abilities',
+    },
     onUpdateCatalog: {
       action: 'Update catalog',
       description: 'Gets called to refresh the catalog.',
@@ -69,6 +73,7 @@ export default {
 export const Default = {
   args: {
     catalog,
+    userAbilities: [{ name: 'all', resource: 'check_customization' }],
   },
 };
 
