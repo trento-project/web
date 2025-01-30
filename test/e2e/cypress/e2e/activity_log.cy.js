@@ -2,7 +2,9 @@ import * as activityLogPage from '../pageObject/activity-log-po.js';
 import * as basePage from '../pageObject/base-po.js';
 
 context('Activity Log page', () => {
-  // before(() => activityLogPage.preloadTestData());
+  before(() => {
+    activityLogPage.preloadTestData();
+  });
 
   beforeEach(() => {
     activityLogPage.interceptActivityLogEndpoint();
@@ -296,27 +298,15 @@ context('Activity Log page', () => {
     });
 
     it('should start autorefresh ticker', () => {
-      cy.clock();
-
-      cy.intercept('/api/v1/activity_log?first=20', cy.spy().as('data'));
-
-      cy.visit('/activity_log');
-
-      // First call on page load
-      cy.get('@data').should('have.been.calledOnce');
-
-      cy.contains('Off').click();
-      cy.contains('5s').click();
-      // Second call when changing refresh rate
-      cy.get('@data').should('have.been.calledTwice');
-
-      // third call after 5 seconds
-      cy.tick(5000);
-      cy.get('@data').should('have.been.calledThrice');
-
-      // plus 2 other calls after 10 seconds
-      cy.tick(5000 * 2);
-      cy.get('@data').its('callCount').should('equal', 5);
+      activityLogPage.spyActivityLogRequest();
+      activityLogPage.visit();
+      activityLogPage.expectedAggregateAmountOfRequests(1);
+      activityLogPage.selectRefreshRate('5s');
+      activityLogPage.expectedAggregateAmountOfRequests(2);
+      activityLogPage.advanceTimeBy(5);
+      activityLogPage.expectedAggregateAmountOfRequests(3);
+      activityLogPage.advanceTimeBy(10);
+      activityLogPage.expectedAggregateAmountOfRequests(5);
     });
 
     it(`should update querystring when filters are selected`, () => {

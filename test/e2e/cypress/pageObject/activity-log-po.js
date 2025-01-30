@@ -186,7 +186,6 @@ export const paginationPropertiesAreTheExpected = (response) => {
   expect(response.body).to.have.property('pagination');
   expect(response.body.pagination).to.have.property('end_cursor');
   expect(response.body.pagination.end_cursor).not.to.be.undefined;
-  expect(response.body.pagination).to.have.property('has_next_page');
   expect(response.body.pagination.has_next_page).to.be.true;
   expect(response.body.pagination).to.have.property('first', 20);
 };
@@ -289,4 +288,20 @@ export const buildChangingRefreshRateScenarios = () => {
       expectedRefreshRate,
     };
   });
+};
+
+export const spyActivityLogRequest = () => {
+  cy.clock();
+  return cy.intercept(
+    '/api/v1/activity_log*',
+    cy.spy().as(activityLogEndpointAlias)
+  );
+};
+
+export const expectedAggregateAmountOfRequests = (amount) => {
+  return cy.get('@activityLogRequest').its('callCount').should('equal', amount);
+};
+
+export const advanceTimeBy = (timeInSeconds) => {
+  return cy.tick(timeInSeconds * 1000);
 };
