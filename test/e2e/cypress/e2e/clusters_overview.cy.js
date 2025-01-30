@@ -6,6 +6,7 @@ import {
   unhealthyClusterScenario,
 } from '../fixtures/clusters-overview/available_clusters';
 
+
 const clusterIdByName = (clusterName) =>
   availableClusters.find(({ name }) => name === clusterName).id;
 
