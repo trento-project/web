@@ -45,30 +45,32 @@ context('Activity Log page', () => {
     });
 
     it('should render with selected filters from querystring', () => {
-      const queryString =
-        '?search=foo+bar&from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&to_date=custom&to_date=2024-08-13T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging';
+      const toDate = '2024-08-13T10%3A21%3A00.000Z';
+      const fromDate = '2024-08-14T10%3A21%3A00.000Z';
+
+      const queryString = `?search=foo+bar&from_date=custom&from_date=${fromDate}&to_date=custom&to_date=${toDate}&type=login_attempt&type=resource_tagging`;
       activityLogPage.visit(queryString);
       activityLogPage.filteredActionsAreTheExpectedOnes(
         'Login Attempt, Tag Added'
       );
-      activityLogPage.filterNewerThanHasTheExpectedValue(
-        '08/13/2024 10:21:00 AM'
-      );
-      activityLogPage.filterOlderThanHasTheExpectedValue(
-        '08/14/2024 10:21:00 AM'
-      );
+      activityLogPage.filterNewerThanHasTheExpectedValue(toDate);
+      activityLogPage.filterOlderThanHasTheExpectedValue(fromDate);
+
       activityLogPage.metadataSearchHasTheExpectedValue('foo bar');
       activityLogPage.activityLogRequestHasExpectedStatusCode(200);
     });
 
     it('should update querystring when filters are selected', () => {
+      const toDate = '2024-08-13T10:21';
+      const fromDate = '2024-08-14T10:21';
+
       activityLogPage.visit();
 
       activityLogPage.clickFilterOlderThanButton();
-      activityLogPage.typeFilterOlderThanInputField('2024-08-14T10:21');
+      activityLogPage.typeFilterOlderThanInputField(fromDate);
 
       activityLogPage.clickFilterNewerThanButton();
-      activityLogPage.typeFilterNewerThanInputField('2024-08-13T10:21');
+      activityLogPage.typeFilterNewerThanInputField(toDate);
 
       activityLogPage.clickFilterTypeButton();
       activityLogPage.selectFilterTypeOption('Login Attempt');
@@ -77,8 +79,12 @@ context('Activity Log page', () => {
       activityLogPage.typeMetadataFilter('foo bar');
       activityLogPage.clickApplyFiltersButton();
 
-      const expectedUrl =
-        '/activity_log?from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&to_date=custom&to_date=2024-08-13T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging&search=foo+bar&first=20';
+      const toDateQueryString =
+        activityLogPage.formatEncodedDateForQueryString(toDate);
+      const fromDateQueryString =
+        activityLogPage.formatEncodedDateForQueryString(fromDate);
+
+      const expectedUrl = `/activity_log?from_date=custom&from_date=${fromDateQueryString}&to_date=custom&to_date=${toDateQueryString}&type=login_attempt&type=resource_tagging&search=foo+bar&first=20`;
       activityLogPage.validateUrl(expectedUrl);
     });
 
@@ -99,7 +105,6 @@ context('Activity Log page', () => {
         '?from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&to_date=custom&to_date=2024-08-13T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging&search=foo+bar';
       activityLogPage.visit(queryString);
       activityLogPage.waitForActivityLogRequest();
-      activityLogPage.interceptActivityLogEndpoint();
       activityLogPage.clickRefreshButton();
       activityLogPage.waitForActivityLogRequest();
       activityLogPage.validateUrl(`/activity_log${queryString}`);
@@ -112,7 +117,6 @@ context('Activity Log page', () => {
       activityLogPage.waitForActivityLogRequest().then(({ response }) => {
         activityLogPage.paginationPropertiesAreTheExpected(response);
         activityLogPage.validateUrl('/activity_log');
-        activityLogPage.interceptActivityLogEndpoint();
         activityLogPage.clickNextPageButton();
         activityLogPage.activityLogRequestHasExpectedStatusCode(200);
         const expectedUrl = `/activity_log?first=20&after=${response.body.pagination.end_cursor}`;

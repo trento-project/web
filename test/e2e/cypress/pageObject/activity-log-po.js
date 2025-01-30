@@ -107,7 +107,7 @@ export const interceptActivityLogEndpoint = () => {
 };
 
 export const activityLogEndpointIsCalledOnlyOnce = () => {
-  cy.wait(`@${activityLogEndpointAlias}`);
+  waitForActivityLogRequest();
   return cy.get(`@${activityLogEndpointAlias}.all`).should('have.length', 1);
 };
 
@@ -120,17 +120,21 @@ export const filteredActionsAreTheExpectedOnes = (filteredActions) => {
 };
 
 export const filterOlderThanHasTheExpectedValue = (filterValue) => {
+  let expectedValue;
+  isUriComponentDate(filterValue)
+    ? (expectedValue = formatEncodedDate(filterValue))
+    : (expectedValue = filterValue);
   return cy
     .get(filteringElements)
     .eq(3)
     .find('span span')
-    .should('have.text', filterValue);
+    .should('have.text', expectedValue);
 };
 
 export const filterNewerThanHasTheExpectedValue = (filterValue) => {
   let expectedValue;
   isUriComponentDate(filterValue)
-    ? (expectedValue = formatDate(filterValue))
+    ? (expectedValue = formatEncodedDate(filterValue))
     : (expectedValue = filterValue);
 
   return cy
@@ -206,20 +210,17 @@ export const clickLastPageButton = () => {
   return cy.get(lastPageButton).click();
 };
 
-export const formatDate = (encodedDate) => {
+export const formatEncodedDate = (encodedDate) => {
   const decodedDate = decodeURIComponent(encodedDate);
   const date = new Date(decodedDate);
   const month = String(date.getUTCMonth() + 1).padStart(2, '0');
   const day = String(date.getUTCDate()).padStart(2, '0');
   const year = date.getUTCFullYear();
-
   let hours = date.getUTCHours();
   const minutes = String(date.getUTCMinutes()).padStart(2, '0');
   const seconds = String(date.getUTCSeconds()).padStart(2, '0');
-
   const ampm = hours >= 12 ? 'PM' : 'AM';
   hours = hours % 12 || 12;
-
   return `${month}/${day}/${year} ${hours}:${minutes}:${seconds} ${ampm}`;
 };
 
@@ -304,4 +305,15 @@ export const expectedAggregateAmountOfRequests = (amount) => {
 
 export const advanceTimeBy = (timeInSeconds) => {
   return cy.tick(timeInSeconds * 1000);
+};
+
+export const formatEncodedDateForQueryString = (dateString) => {
+  const [datePart, timePart] = dateString.split('T');
+  const newDateString = `${datePart}T00:00:00.000Z`;
+  const date = new Date(newDateString);
+  const [hours, minutes] = timePart.split(':');
+  const year = date.getUTCFullYear();
+  const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(date.getUTCDate()).padStart(2, '0');
+  return `${year}-${month}-${day}T${hours}%3A${minutes}%3A00.000Z`;
 };
