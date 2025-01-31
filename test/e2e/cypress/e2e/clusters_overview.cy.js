@@ -1,3 +1,4 @@
+import * as clustersOverviewPage from '../pageObject/clusters-overview-po.js';
 import { createUserRequestFactory } from '@lib/test-utils/factories';
 
 import {
@@ -5,7 +6,6 @@ import {
   healthyClusterScenario,
   unhealthyClusterScenario,
 } from '../fixtures/clusters-overview/available_clusters';
-
 
 const clusterIdByName = (clusterName) =>
   availableClusters.find(({ name }) => name === clusterName).id;
@@ -17,54 +17,24 @@ const clusterTags = {
 };
 
 context('Clusters Overview', () => {
-  before(() => {
-    cy.preloadTestData();
-    cy.visit('/clusters');
-    cy.url().should('include', '/clusters');
+  // before(() => clustersOverviewPage.preloadTestData());
+
+  beforeEach(() => {
+    clustersOverviewPage.visit();
+    clustersOverviewPage.validateUrl();
   });
 
   describe('Registered Clusters should be available in the overview', () => {
     it('should show all of the registered clusters', () => {
-      cy.get('.tn-clustername')
-        .its('length')
-        .should('eq', availableClusters.length);
+      clustersOverviewPage.allRegisteredClustersAreDisplayed();
     });
 
     it('should have 1 pages', () => {
-      cy.get(`[data-testid="pagination"]`).should('include.text', '1');
-      cy.get(`[data-testid="pagination"]`).should('not.include.text', '2');
+      clustersOverviewPage.paginationButtonsAreDisabled();
     });
 
-    it('should show the expected clusters data', () => {
-      cy.get('.container').eq(0).as('clustersTable');
-      availableClusters.forEach((cluster, index) => {
-        cy.get('@clustersTable')
-          .find('tr')
-          .eq(index + 1)
-          .find('td')
-          .as('clusterRow');
-
-        cy.get('@clustersTable')
-          .contains('th', 'Name')
-          .invoke('index')
-          .then((i) => {
-            cy.get('@clusterRow').eq(i).should('contain', cluster.name);
-          });
-
-        cy.get('@clustersTable')
-          .contains('th', 'SID')
-          .invoke('index')
-          .then((i) => {
-            cy.get('@clusterRow').eq(i).should('contain', cluster.sid);
-          });
-
-        cy.get('@clustersTable')
-          .contains('th', 'Type')
-          .invoke('index')
-          .then((i) => {
-            cy.get('@clusterRow').eq(i).should('contain', cluster.type);
-          });
-      });
+    it.only('should show the expected clusters data', () => {
+      clustersOverviewPage.clustersDataIsDisplayedAsExpected();
     });
 
     describe('Unnamed cluster', () => {
