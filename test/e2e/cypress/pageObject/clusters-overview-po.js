@@ -38,12 +38,12 @@ export const paginationButtonsAreDisabled = () => {
 };
 
 export const clustersDataIsDisplayedAsExpected = () => {
-  interceptClustersEndpoint();
-  waitForClustersEndpoint();
-  cy.get(tableRows).each(($row, index) => {
-    const cluster = availableClusters[index];
-    cy.wrap($row).find('td').eq(1).should('have.text', cluster.name);
-    cy.wrap($row).find('td').eq(2).should('have.text', cluster.sid);
-    cy.wrap($row).find('td').eq(5).should('have.text', cluster.type);
+  return waitForClustersEndpoint().then(() => {
+    return cy.get(tableRows).each(($row, index) => {
+      const cluster = availableClusters[index];
+      cy.wrap($row).find('td').eq(1).should('have.text', cluster.name);
+      cy.wrap($row).find('td').eq(2).should('have.text', cluster.sid);
+      return cy.wrap($row).find('td').eq(5).should('have.text', cluster.type);
+    });
   });
 };

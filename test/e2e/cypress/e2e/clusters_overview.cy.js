@@ -17,9 +17,10 @@ const clusterTags = {
 };
 
 context('Clusters Overview', () => {
-  // before(() => clustersOverviewPage.preloadTestData());
+  before(() => clustersOverviewPage.preloadTestData());
 
   beforeEach(() => {
+    clustersOverviewPage.interceptClustersEndpoint();
     clustersOverviewPage.visit();
     clustersOverviewPage.validateUrl();
   });
@@ -33,7 +34,7 @@ context('Clusters Overview', () => {
       clustersOverviewPage.paginationButtonsAreDisabled();
     });
 
-    it.only('should show the expected clusters data', () => {
+    it('should show the expected clusters data', () => {
       clustersOverviewPage.clustersDataIsDisplayedAsExpected();
     });
 
