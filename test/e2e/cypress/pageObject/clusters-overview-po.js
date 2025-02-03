@@ -18,8 +18,16 @@ const paginationNavigationButtons = 'div[class*="bg-gray-50"] ul button';
 const tableRows = 'tbody tr';
 const rowCells = 'td';
 const addTagButtons = 'span span:contains("Add Tag")';
+const removeEnv1TagButton = 'span span:contains("env1") span';
 
 //Test data
+const password = 'password';
+
+const user = createUserRequestFactory.build({
+  password,
+  password_confirmation: password,
+});
+
 export const hanaCluster1 = {
   name: 'hana_cluster_1',
   hosts: [
@@ -204,8 +212,8 @@ const apiSetTag = (clusterName, tag) => {
 
 export const apiSetTagsHanaCluster1 = () => {
   const tagsForCluster1 = taggingRules
-    .filter(([cluster]) => cluster === 'hana_cluster_1') // Filter for hana_cluster_1
-    .map(([, tag]) => tag); // Extract the tag
+    .filter(([cluster]) => cluster === 'hana_cluster_1')
+    .map(([, tag]) => tag);
   tagsForCluster1.forEach((tag) => apiSetTag('hana_cluster_1', tag));
 };
 
@@ -217,4 +225,36 @@ export const hanaCluster1TagsAreDisplayed = () => {
         .get(`span span:contains("${clusterTags[hanaCluster1.name]}")`)
         .should('be.visible')
     );
+};
+
+export const createUserWithoutAbilities = () => {
+  return basePage.createUserWithAbilities(user, []);
+};
+
+export const createUserWithClusterTagsAbilities = () => {
+  return basePage.createUserWithAbilities(user, [
+    { name: 'all', resource: 'cluster_tags' },
+  ]);
+};
+
+export const loginWithoutTagAbilities = () =>
+  basePage.apiLoginAndCreateSession(user.username, password);
+
+export const loginWithTagAbilities = () =>
+  basePage.apiLoginAndCreateSession(user.username, password);
+
+export const addTagButtonsAreDisabled = () => {
+  cy.get(addTagButtons).should('have.class', 'opacity-50');
+};
+
+export const addTagButtonsAreNotsDisabled = () => {
+  cy.get(addTagButtons).should('not.have.class', 'opacity-50');
+};
+
+export const removeTagButtonIsDisabled = () => {
+  cy.get(removeEnv1TagButton).should('have.class', 'opacity-50');
+};
+
+export const removeTagButtonIsEnabled = () => {
+  cy.get(removeEnv1TagButton).should('not.have.class', 'opacity-50');
 };

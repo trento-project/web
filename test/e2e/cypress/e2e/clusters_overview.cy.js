@@ -1,5 +1,4 @@
 import * as clustersOverviewPage from '../pageObject/clusters-overview-po.js';
-import { createUserRequestFactory } from '@lib/test-utils/factories';
 
 import {
   availableClusters,
@@ -9,12 +8,6 @@ import {
 
 const clusterIdByName = (clusterName) =>
   availableClusters.find(({ name }) => name === clusterName).id;
-
-const clusterTags = {
-  hana_cluster_1: 'env1',
-  hana_cluster_2: 'env2',
-  hana_cluster_3: 'env3',
-};
 
 context('Clusters Overview', () => {
   before(() => clustersOverviewPage.preloadTestData());
@@ -138,47 +131,31 @@ context('Clusters Overview', () => {
   });
 
   describe('Forbidden action', () => {
-    beforeEach(() => {
-      cy.deleteAllUsers();
-      cy.logout();
-      const user = createUserRequestFactory.build({
-        password,
-        password_confirmation: password,
-      });
-      cy.wrap(user).as('user');
-    });
-
-    const password = 'password';
-
     describe('Tag operations', () => {
+      beforeEach(() => {
+        clustersOverviewPage.apiSetTagsHanaCluster1();
+        clustersOverviewPage.apiDeleteAllUsers();
+      });
+
       it('should prevent a tag update when the user abilities are not compliant', () => {
-        cy.get('@user').then((user) => {
-          cy.createUserWithAbilities(user, []);
-          cy.login(user.username, password);
-        });
-
-        cy.visit('/clusters');
-
-        cy.contains('span', 'Add Tag').should('have.class', 'opacity-50');
-        cy.get('[data-test-id="tag-env1"]').should('have.class', 'opacity-50');
+        clustersOverviewPage.logout();
+        clustersOverviewPage.createUserWithoutAbilities();
+        clustersOverviewPage.loginWithoutTagAbilities();
+        clustersOverviewPage.visit();
+        clustersOverviewPage.addTagButtonsAreDisabled();
+        clustersOverviewPage.removeTagButtonIsDisabled();
       });
 
       it('should allow a tag update when the user abilities are compliant', () => {
-        cy.get('@user').then((user) => {
-          cy.createUserWithAbilities(user, [
-            { name: 'all', resource: 'cluster_tags' },
-          ]);
-          cy.login(user.username, password);
-        });
-
-        cy.visit('/clusters');
-
-        cy.contains('span', 'Add Tag').should('not.have.class', 'opacity-50');
-        cy.get('[data-test-id="tag-env1"]').should(
-          'not.have.class',
-          'opacity-50'
-        );
+        clustersOverviewPage.logout();
+        clustersOverviewPage.createUserWithClusterTagsAbilities();
+        clustersOverviewPage.loginWithTagAbilities();
+        clustersOverviewPage.visit();
+        clustersOverviewPage.addTagButtonsAreNotsDisabled();
+        clustersOverviewPage.removeTagButtonIsEnabled();
       });
+
+      after(() => clustersOverviewPage.apiRemoveAllTags());
     });
   });
 });
