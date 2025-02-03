@@ -171,6 +171,9 @@ defmodule Trento.Discovery do
         {:ok, :ok} ->
           :ok
 
+        {:ok, {:error, errors}} ->
+          {:error, errors}
+
         {{:error, error}, :ok} ->
           {:error, [error]}
 

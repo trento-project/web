@@ -6,6 +6,8 @@ defmodule Trento.DiscoveryTest do
 
   import Trento.Factory
 
+  import Trento.DiscoveryFixturesHelper
+
   alias Trento.Discovery
 
   alias Trento.Discovery.{
@@ -138,6 +140,33 @@ defmodule Trento.DiscoveryTest do
     end)
 
     {:error, ^error} = Discovery.handle(event)
+
+    [discarded_event] = Trento.Repo.all(DiscardedDiscoveryEvent)
+
+    assert %DiscardedDiscoveryEvent{payload: ^event} =
+             discarded_event
+  end
+
+  test "should continue accumulating discovery events if the first command fails" do
+    error = :any_error
+
+    sap_discovery_payload_entry =
+      "sap_system_discovery_application"
+      |> load_discovery_event_fixture()
+      |> Map.get("payload")
+      |> Enum.at(0)
+
+    event = %{
+      "agent_id" => Faker.UUID.v4(),
+      "discovery_type" => "sap_system_discovery",
+      "payload" => [sap_discovery_payload_entry, sap_discovery_payload_entry]
+    }
+
+    Trento.Commanded.Mock
+    |> expect(:dispatch, 1, fn _ -> {:error, error} end)
+    |> expect(:dispatch, 1, fn _ -> :ok end)
+
+    {:error, [^error]} = Discovery.handle(event)
 
     [discarded_event] = Trento.Repo.all(DiscardedDiscoveryEvent)
 
