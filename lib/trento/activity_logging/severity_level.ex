@@ -109,12 +109,7 @@ defmodule Trento.ActivityLog.SeverityLevel do
     "database_instance_marked_absent" => :warning,
     "database_instance_marked_present" => :info,
     "database_instance_registered" => :info,
-    "database_instance_system_replication_changed" => %{
-      type: :kv,
-      key_suffix: "health",
-      values: %{"critical" => :critical, "unknown" => :warning, "*" => :info},
-      condition: :map_value_to_severity
-    },
+    "database_instance_system_replication_changed" => :warning,
     "database_registered" => :info,
     "database_restored" => :info,
     "database_rolled_up" => :debug,
