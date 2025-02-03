@@ -170,12 +170,12 @@ export const preloadTestData = () => {
    * scenario is sent in the second time.
    */
   isTestDataLoaded().then((isLoaded) => {
-    if (!isLoaded) cy.loadScenario('healthy-27-node-SAP-cluster');
+    if (!isLoaded) loadScenario('healthy-27-node-SAP-cluster');
   });
   loadScenario('healthy-27-node-SAP-cluster');
 };
 
-const loadScenario = (scenario) => {
+export const loadScenario = (scenario) => {
   const [projectRoot, photofinishBinary, webAPIHost, webAPIPort] = [
     Cypress.env('project_root'),
     Cypress.env('photofinish_binary'),

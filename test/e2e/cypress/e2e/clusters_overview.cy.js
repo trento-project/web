@@ -39,19 +39,13 @@ context('Clusters Overview', () => {
     });
 
     describe('Unnamed cluster', () => {
-      before(() => {
-        cy.loadScenario('cluster-unnamed');
-      });
-
-      // Restore cluster name
-      after(() => {
-        cy.loadScenario('cluster-4-SOK');
-      });
+      before(() => clustersOverviewPage.loadScenario('cluster-unnamed'));
 
       it('Unnamed clusters should use the ID as details page link', () => {
-        const clusterID = clusterIdByName('hana_cluster_1');
-        cy.get(`a:contains(${clusterID})`).should('be.visible');
+        clustersOverviewPage.clusterNameLinkIsDisplayedAsId('hana_cluster_1');
       });
+
+      after(() => clustersOverviewPage.restoreClusterName());
     });
 
     // eslint-disable-next-line mocha/no-skipped-tests
@@ -111,53 +105,36 @@ context('Clusters Overview', () => {
   });
 
   describe('Clusters Tagging', () => {
-    before(() => {
-      cy.removeTagsFromView();
+    beforeEach(() => {
+      clustersOverviewPage.restoreClusterName();
+      clustersOverviewPage.apiRemoveAllTags();
     });
-    const clustersByMatchingPattern = (pattern) => (clusterName) =>
-      clusterName.includes(pattern);
-    const taggingRules = [
-      ['hana_cluster_1', clusterTags.hana_cluster_1],
-      ['hana_cluster_2', clusterTags.hana_cluster_2],
-      ['hana_cluster_3', clusterTags.hana_cluster_3],
-    ];
 
-    taggingRules.forEach(([pattern, tag]) => {
-      describe(`Add tag '${tag}' to all clusters with '${pattern}' in the cluster name`, () => {
-        availableClusters
-          .map(({ name }) => name)
-          .filter(clustersByMatchingPattern(pattern))
-          .forEach((clusterName) => {
-            it(`should tag cluster '${clusterName}'`, () => {
-              cy.addTagByColumnValue(clusterName, tag);
-            });
-          });
-      });
+    it('should tag each cluster with the corresponding tag', () => {
+      clustersOverviewPage.setClusterTags();
+      clustersOverviewPage.eachClusterTagsIsCorrectlyDisplayed();
     });
+
+    after(() => clustersOverviewPage.apiRemoveAllTags());
   });
 
   describe('Deregistration', () => {
-    const hanaCluster1 = {
-      name: 'hana_cluster_1',
-      hosts: [
-        '13e8c25c-3180-5a9a-95c8-51ec38e50cfc',
-        '0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4',
-      ],
-    };
-
-    it(`should not display '${hanaCluster1.name}' after deregistering all its nodes`, () => {
-      cy.deregisterHost(hanaCluster1.hosts[0]);
-      cy.deregisterHost(hanaCluster1.hosts[1]);
-      cy.contains(hanaCluster1.name).should('not.exist');
+    before(() => {
+      clustersOverviewPage.apiSetTagsHanaCluster1();
+      clustersOverviewPage.deregisterAllClusterHosts();
     });
 
-    it(`should show cluster ${hanaCluster1.name} after registering it again with the previous tags`, () => {
-      cy.loadScenario(`cluster-${hanaCluster1.name}-restore`);
-      cy.contains(hanaCluster1.name).should('exist');
-      cy.contains('tr', hanaCluster1.name).within(() => {
-        cy.contains(clusterTags[hanaCluster1.name]).should('exist');
-      });
+    it(`should not display '${clustersOverviewPage.hanaCluster1.name}' after deregistering all its nodes`, () => {
+      clustersOverviewPage.clusterIsNotDisplayedWhenNodesAreDeregistered();
     });
+
+    it(`should show cluster '${clustersOverviewPage.hanaCluster1.name}' after registering it again with the previous tags`, () => {
+      clustersOverviewPage.restoreClusterHosts();
+      clustersOverviewPage.clusterNameIsDisplayed();
+      clustersOverviewPage.hanaCluster1TagsAreDisplayed();
+    });
+
+    after(() => clustersOverviewPage.apiRemoveAllTags());
   });
 
   describe('Forbidden action', () => {
