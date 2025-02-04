@@ -292,25 +292,14 @@ defmodule Trento.SoftwareUpdates.Discovery do
   defp handle_discovery_result(%DiscoveryResult{
          relevant_patches: relevant_patches,
          upgradable_packages: upgradable_packages
-       }) do
-    {
-      :ok,
-      keys_to_atoms(relevant_patches),
-      keys_to_atoms(upgradable_packages)
-    }
-  end
+       }),
+       do: {:ok, relevant_patches, upgradable_packages}
 
   defp failure_reason_to_atom("system_id_not_found"), do: :system_id_not_found
   defp failure_reason_to_atom("error_getting_patches"), do: :error_getting_patches
   defp failure_reason_to_atom("error_getting_packages"), do: :error_getting_packages
   defp failure_reason_to_atom("max_login_retries_reached"), do: :max_login_retries_reached
   defp failure_reason_to_atom(_), do: :unknown_discovery_error
-
-  defp keys_to_atoms(discovered_result_list),
-    do:
-      discovered_result_list
-      |> Jason.encode!()
-      |> Jason.decode!(keys: :atoms)
 
   defp adapter, do: Application.fetch_env!(:trento, __MODULE__)[:adapter]
 
