@@ -7,13 +7,6 @@ defmodule Trento.Clusters.Projections.ClusterProjectorTest do
 
   import Trento.Factory
 
-  alias Trento.Clusters.ValueObjects.{
-    ClusterResource,
-    HanaClusterDetails,
-    HanaClusterNode,
-    SbdDevice
-  }
-
   alias Trento.Clusters.Events.{
     ClusterDeregistered,
     ClusterDetailsUpdated,
@@ -67,16 +60,16 @@ defmodule Trento.Clusters.Projections.ClusterProjectorTest do
       "cluster_registered",
       %{
         cib_last_written: nil,
-        details: %HanaClusterDetails{
+        details: %{
           architecture_type: :classic,
           fencing_type: "external/sbd",
           nodes: [
-            %HanaClusterNode{
+            %{
               attributes: _,
               hana_status: "Secondary",
               name: _,
               resources: [
-                %ClusterResource{
+                %{
                   fail_count: _,
                   id: _,
                   role: "Started",
@@ -89,12 +82,12 @@ defmodule Trento.Clusters.Projections.ClusterProjectorTest do
             }
           ],
           sbd_devices: [
-            %SbdDevice{device: "/dev/vdc", status: "healthy"}
+            %{device: "/dev/vdc", status: "healthy"}
           ],
           secondary_sync_state: "SOK",
           sr_health_state: "4",
           stopped_resources: [
-            %ClusterResource{
+            %{
               fail_count: _,
               id: _,
               role: "Stopped",
@@ -154,16 +147,16 @@ defmodule Trento.Clusters.Projections.ClusterProjectorTest do
     assert_broadcast(
       "cluster_details_updated",
       %{
-        details: %HanaClusterDetails{
+        details: %{
           architecture_type: :classic,
           fencing_type: "external/sbd",
           nodes: [
-            %HanaClusterNode{
+            %{
               attributes: _,
               hana_status: "Secondary",
               name: _,
               resources: [
-                %ClusterResource{
+                %{
                   fail_count: _,
                   id: _,
                   role: "Started",
@@ -176,12 +169,12 @@ defmodule Trento.Clusters.Projections.ClusterProjectorTest do
             }
           ],
           sbd_devices: [
-            %SbdDevice{device: "/dev/vdc", status: "healthy"}
+            %{device: "/dev/vdc", status: "healthy"}
           ],
           secondary_sync_state: "SOK",
           sr_health_state: "4",
           stopped_resources: [
-            %ClusterResource{
+            %{
               fail_count: _,
               id: _,
               role: "Stopped",
@@ -241,6 +234,7 @@ defmodule Trento.Clusters.Projections.ClusterProjectorTest do
       ClusterReadModel
       |> Repo.get!(event.cluster_id)
       |> Repo.preload([:tags])
+      |> StructHelper.to_atomized_map()
 
     assert nil == cluster_projection.deregistered_at
 
