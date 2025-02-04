@@ -9,7 +9,6 @@ defmodule TrentoWeb.V1.ClusterJSON do
     cluster
     |> StructHelper.to_atomized_map()
     |> Map.delete(:deregistered_at)
-    |> Map.delete(:__meta__)
     |> adapt_v1()
   end
 

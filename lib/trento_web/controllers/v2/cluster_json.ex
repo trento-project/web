@@ -7,7 +7,6 @@ defmodule TrentoWeb.V2.ClusterJSON do
     cluster
     |> StructHelper.to_atomized_map()
     |> Map.delete(:deregistered_at)
-    |> Map.delete(:__meta__)
   end
 
   def cluster_registered(%{cluster: cluster}), do: Map.delete(cluster(%{cluster: cluster}), :tags)
