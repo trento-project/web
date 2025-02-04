@@ -2,6 +2,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
   @moduledoc false
 
   require OpenApiSpex
+  require Trento.SoftwareUpdates.Enums.AdvisoryType, as: AdvisoryType
+
   alias OpenApiSpex.Schema
 
   defmodule UpgradablePackage do
@@ -44,7 +46,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
           advisory_type: %Schema{
             type: :string,
             description: "Advisory's type",
-            enum: [:security_advisory, :bugfix, :enhancement]
+            enum: AdvisoryType.values()
           },
           date: %Schema{type: :string, description: "Advisory's date"},
           update_date: %Schema{type: :string, description: "Advisory's update date"}

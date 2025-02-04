@@ -6,6 +6,8 @@ defmodule Trento.SoftwareUpdates.Discovery.DiscoveryResult do
   use Ecto.Schema
   import Ecto.Changeset
 
+  require Trento.SoftwareUpdates.Enums.AdvisoryType, as: AdvisoryType
+
   @type t :: %__MODULE__{}
 
   @fields ~w(host_id system_id failure_reason)a
@@ -22,7 +24,7 @@ defmodule Trento.SoftwareUpdates.Discovery.DiscoveryResult do
       field :advisory_name, :string
       field :advisory_status, :string
       field :advisory_synopsis, :string
-      field :advisory_type, Ecto.Enum, values: [:security_advisory, :bugfix, :enhancement]
+      field :advisory_type, Ecto.Enum, values: AdvisoryType.values()
       field :date, :date
       field :update_date, :date
     end
