@@ -125,33 +125,6 @@ Cypress.Commands.add('clickOutside', () => {
   return cy.get('body').click(0, 0); //0,0 here are the x and y coordinates
 });
 
-Cypress.Commands.add('selectChecks', (clusterId, checks) => {
-  const [webAPIHost, webAPIPort] = [
-    Cypress.env('web_api_host'),
-    Cypress.env('web_api_port'),
-  ];
-  const checksBody = JSON.stringify({
-    checks: checks,
-  });
-
-  const headers = {
-    'Content-Type': 'application/json;charset=UTF-8',
-  };
-
-  cy.apiLogin().then(({ accessToken }) => {
-    const url = `http://${webAPIHost}:${webAPIPort}/api/clusters/${clusterId}/checks`;
-    cy.request({
-      method: 'POST',
-      url: url,
-      body: checksBody,
-      headers: headers,
-      auth: {
-        bearer: accessToken,
-      },
-    });
-  });
-});
-
 const isTestDataLoaded = () =>
   cy.apiLogin().then(({ accessToken }) =>
     cy
@@ -196,29 +169,6 @@ Cypress.Commands.add('resetFilterSelection', (filterName) => {
         cy.get(resetButton).click();
       }
     });
-});
-
-Cypress.Commands.add('requestChecksExecution', (clusterId) => {
-  const [webAPIHost, webAPIPort] = [
-    Cypress.env('web_api_host'),
-    Cypress.env('web_api_port'),
-  ];
-
-  const headers = {
-    'Content-Type': 'application/json;charset=UTF-8',
-  };
-
-  cy.apiLogin().then(({ accessToken }) => {
-    const url = `http://${webAPIHost}:${webAPIPort}/api/clusters/${clusterId}/checks/request_execution`;
-    cy.request({
-      method: 'POST',
-      url: url,
-      headers: headers,
-      auth: {
-        bearer: accessToken,
-      },
-    });
-  });
 });
 
 Cypress.Commands.add('deregisterHost', (hostId) => {
