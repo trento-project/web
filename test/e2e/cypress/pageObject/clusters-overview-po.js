@@ -21,6 +21,9 @@ const addTagButtons = 'span span:contains("Add Tag")';
 const removeEnv1TagButton = 'span span:contains("env1") span';
 
 //Test data
+export const healthyClusterName = healthyClusterScenario.clusterName;
+export const unhealthyClusterName = unhealthyClusterScenario.clusterName;
+
 const password = 'password';
 
 const user = createUserRequestFactory.build({
@@ -257,4 +260,99 @@ export const removeTagButtonIsDisabled = () => {
 
 export const removeTagButtonIsEnabled = () => {
   cy.get(removeEnv1TagButton).should('not.have.class', 'opacity-50');
+};
+
+const selectChecks = (clusterId, checks) => {
+  const [webAPIHost, webAPIPort] = [
+    Cypress.env('web_api_host'),
+    Cypress.env('web_api_port'),
+  ];
+  const checksBody = JSON.stringify({
+    checks: checks,
+  });
+
+  const headers = {
+    'Content-Type': 'application/json;charset=UTF-8',
+  };
+
+  basePage.apiLogin().then(({ accessToken }) => {
+    const url = `http://${webAPIHost}:${webAPIPort}/api/clusters/${clusterId}/checks`;
+    cy.request({
+      method: 'POST',
+      url: url,
+      body: checksBody,
+      headers: headers,
+      auth: {
+        bearer: accessToken,
+      },
+    });
+  });
+};
+
+const requestChecksExecution = (clusterId) => {
+  const [webAPIHost, webAPIPort] = [
+    Cypress.env('web_api_host'),
+    Cypress.env('web_api_port'),
+  ];
+
+  const headers = {
+    'Content-Type': 'application/json;charset=UTF-8',
+  };
+
+  basePage.apiLogin().then(({ accessToken }) => {
+    const url = `http://${webAPIHost}:${webAPIPort}/api/clusters/${clusterId}/checks/request_execution`;
+    cy.request({
+      method: 'POST',
+      url: url,
+      headers: headers,
+      auth: {
+        bearer: accessToken,
+      },
+    });
+  });
+};
+
+export const selectChecksForHealthyCluster = () =>
+  selectChecks(
+    clusterIdByName(healthyClusterScenario.clusterName),
+    healthyClusterScenario.checks
+  );
+
+export const requestChecksForHealthyCluster = () =>
+  requestChecksExecution(clusterIdByName(healthyClusterScenario.clusterName));
+
+export const selectChecksForUnhealthyCluster = () =>
+  selectChecks(
+    clusterIdByName(unhealthyClusterScenario.clusterName),
+    healthyClusterScenario.checks
+  );
+
+export const requestChecksForUnhealthyCluster = () =>
+  requestChecksExecution(clusterIdByName(unhealthyClusterScenario.clusterName));
+
+export const removeHealthyClusterChecks = () =>
+  selectChecks(clusterIdByName(healthyClusterScenario.clusterName), []);
+
+export const removeUnhealthyClusterChecks = () =>
+  selectChecks(clusterIdByName(unhealthyClusterScenario.clusterName), []);
+
+export const healthyClusterNameDisplaysHealthyState = () =>
+  clusterHealthIconHasExpectedClass(
+    healthyClusterScenario.clusterName,
+    'fill-jungle-green-500'
+  );
+
+export const unhealthyClusterNameDisplaysUnhealthyState = () =>
+  clusterHealthIconHasExpectedClass(
+    unhealthyClusterScenario.clusterName,
+    'fill-red-500'
+  );
+
+export const clusterHealthIconHasExpectedClass = (clusterName, className) => {
+  return cy
+    .get(`td:contains("${clusterName}")`)
+    .parents('tr')
+    .within(() =>
+      cy.get('td').eq(0).find('svg').should('have.class', className)
+    );
 };

@@ -1,14 +1,5 @@
 import * as clustersOverviewPage from '../pageObject/clusters-overview-po.js';
 
-import {
-  availableClusters,
-  healthyClusterScenario,
-  unhealthyClusterScenario,
-} from '../fixtures/clusters-overview/available_clusters';
-
-const clusterIdByName = (clusterName) =>
-  availableClusters.find(({ name }) => name === clusterName).id;
-
 context('Clusters Overview', () => {
   before(() => clustersOverviewPage.preloadTestData());
 
@@ -44,55 +35,26 @@ context('Clusters Overview', () => {
     // eslint-disable-next-line mocha/no-skipped-tests
     describe.skip('Health status for each cluster is correct', () => {
       before(() => {
-        cy.selectChecks(
-          clusterIdByName(healthyClusterScenario.clusterName),
-          healthyClusterScenario.checks
-        );
+        clustersOverviewPage.selectChecksForHealthyCluster();
         // wip: set expected results
-        cy.requestChecksExecution(
-          clusterIdByName(healthyClusterScenario.clusterName)
-        );
+        clustersOverviewPage.requestChecksForHealthyCluster();
 
-        cy.selectChecks(
-          clusterIdByName(unhealthyClusterScenario.clusterName),
-          healthyClusterScenario.checks
-        );
+        clustersOverviewPage.selectChecksForUnhealthyCluster();
         // wip: set expected results
-        cy.requestChecksExecution(
-          clusterIdByName(unhealthyClusterScenario.clusterName)
-        );
+        clustersOverviewPage.requestChecksForUnhealthyCluster();
       });
 
       after(() => {
-        cy.selectChecks(
-          clusterIdByName(healthyClusterScenario.clusterName),
-          []
-        );
-
-        cy.selectChecks(
-          clusterIdByName(unhealthyClusterScenario.clusterName),
-          []
-        );
+        clustersOverviewPage.removeHealthyClusterChecks();
+        clustersOverviewPage.removeUnhealthyClusterChecks();
       });
 
-      it(`should have ${healthyClusterScenario.clusterName} displaying healthy state`, () => {
-        cy.get('td')
-          .contains(healthyClusterScenario.clusterName)
-          .parent()
-          .parent()
-          .prev()
-          .get('div > svg')
-          .should('have.class', 'fill-jungle-green-500');
+      it(`should have ${clustersOverviewPage.healthyClusterName} displaying healthy state`, () => {
+        clustersOverviewPage.healthyClusterNameDisplaysHealthyState();
       });
 
-      it(`should have ${unhealthyClusterScenario.clusterName} displaying unhealthy state`, () => {
-        cy.get('td')
-          .contains(unhealthyClusterScenario.clusterName)
-          .parent()
-          .parent()
-          .prev()
-          .get('div > svg')
-          .should('have.class', 'fill-red-500');
+      it(`should have ${clustersOverviewPage.unhealthyClusterName} displaying unhealthy state`, () => {
+        clustersOverviewPage.unhealthyClusterNameDisplaysUnhealthyState();
       });
     });
   });
