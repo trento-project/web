@@ -13,8 +13,7 @@ const groupNames = '.check-group > div > div > h3';
 const checkRows = '.check-row';
 const checkPanels = '.check-panel';
 
-const clusterTargetTypeIcon = '[data-testid="target-icon-cluster"]';
-const hostTargetTypeIcon = '[data-testid="target-icon-host"]';
+const targetIcon = 'div[aria-label="accordion-panel"] span span:nth-child(1)';
 
 const providersSelectionDropdown = 'button.providers-selection-dropdown';
 const targetsSelectionDropdown = 'button.targets-selection-dropdown';
@@ -65,9 +64,7 @@ const selectFromCatalogDropdown = (dropdownElementSelector, choice) => {
     .click();
 };
 
-export const visit = (_url = url) => {
-  return basePage.visit(_url);
-};
+export const visit = () => basePage.visit(url);
 
 export const interceptChecksCatalogEndpoint = (forceError = false) => {
   let interceptArgument;
@@ -172,11 +169,16 @@ export const eachGroupHasExpectedCheckIds = () => {
 };
 
 export const expectedTargetTypeClusterIconsAreDisplayed = () => {
-  return cy.get(clusterTargetTypeIcon).should('have.length', group1Checks);
+  return cy
+    .get(`h3:contains("${clusterChecksGroup}")`)
+    .parents(checkGroups)
+    .within(() => cy.get(targetIcon).should('have.length', group1Checks));
 };
 
 export const expectedTargetTypeHostIconsAreDisplayed = () => {
-  return cy.get(hostTargetTypeIcon).should('have.length', group2Checks);
+  cy.get(`h3:contains("${hostChecksGroup}")`)
+    .parents(checkGroups)
+    .within(() => cy.get(targetIcon).should('have.length', group2Checks));
 };
 
 export const checkPanelIsNotVisible = () => {
