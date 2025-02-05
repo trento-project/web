@@ -55,3 +55,29 @@ export const catalogFactory = Factory.define(() => ({
   catalog: catalogCheckFactory.build(),
   error: null,
 }));
+
+export const customizedValueFactory = Factory.define(() => ({
+  name: faker.string.uuid(),
+  customizable: true,
+  current_value: faker.lorem.word(),
+  custom_value: faker.lorem.word(),
+}));
+
+export const nonCustomizedValueFactory = Factory.define(() => ({
+  name: faker.string.uuid(),
+  customizable: faker.datatype.boolean(),
+  current_value: faker.lorem.word(),
+}));
+
+export const selectableCheckFactory = Factory.define(() => ({
+  id: faker.string.uuid(),
+  name: faker.animal.cat(),
+  group: faker.animal.dog(),
+  description: faker.lorem.paragraph(),
+  values: [
+    ...customizedValueFactory.buildList(3),
+    ...nonCustomizedValueFactory.buildList(3),
+  ],
+  customizable: faker.datatype.boolean(),
+  customized: faker.datatype.boolean(),
+}));
