@@ -55,21 +55,64 @@ export const visit = () => basePage.visit(url);
 
 export const validateUrl = () => basePage.validateUrl(url);
 
-export const interceptClustersEndpoint = () => {
+export const interceptClustersEndpoint = () =>
   cy.intercept(clustersEndpoint).as(clustersEndpointAlias);
+
+export const waitForClustersEndpoint = () =>
+  basePage.waitForRequest(clustersEndpointAlias);
+
+// UI Interactions
+
+export const setClusterTags = () => {
+  taggingRules.forEach(([clusterName, tag]) => {
+    addTagByColumnValue(clusterName, tag);
+  });
 };
 
-export const waitForClustersEndpoint = () => {
-  return basePage.waitForRequest(clustersEndpointAlias);
+const addTagByColumnValue = (columnValue, tagValue) => {
+  cy.get(`td:contains(${columnValue})`)
+    .parents('tr')
+    .within(() => {
+      cy.get(addTagButtons).type(`${tagValue}{enter}`);
+    });
 };
 
-export const allRegisteredClustersAreDisplayed = () => {
+// Validations
+
+export const hanaCluster1TagsAreDisplayed = () => {
+  return cy
+    .get(`tr:contains("${hanaCluster1.name}")`)
+    .within(() =>
+      cy
+        .get(`span span:contains("${clusterTags[hanaCluster1.name]}")`)
+        .should('be.visible')
+    );
+};
+
+export const addTagButtonsAreDisabled = () =>
+  cy.get(addTagButtons).should('have.class', 'opacity-50');
+
+export const addTagButtonsAreNotsDisabled = () =>
+  cy.get(addTagButtons).should('not.have.class', 'opacity-50');
+
+export const removeTagButtonIsDisabled = () =>
+  cy.get(removeEnv1TagButton).should('have.class', 'opacity-50');
+
+export const removeTagButtonIsEnabled = () =>
+  cy.get(removeEnv1TagButton).should('not.have.class', 'opacity-50');
+
+export const clusterNameLinkIsDisplayedAsId = (clusterName) => {
+  const clusterID = clusterIdByName(clusterName);
+  return waitForClustersEndpoint().then(() =>
+    cy.get(tableRows).eq(8).find(rowCells).eq(1).should('have.text', clusterID)
+  );
+};
+
+export const allRegisteredClustersAreDisplayed = () =>
   cy.get(clusterNames).its('length').should('eq', availableClusters.length);
-};
 
-export const paginationButtonsAreDisabled = () => {
+export const paginationButtonsAreDisabled = () =>
   cy.get(paginationNavigationButtons).should('be.disabled');
-};
 
 export const clustersDataIsDisplayedAsExpected = () => {
   return waitForClustersEndpoint().then(() => {
@@ -82,22 +125,51 @@ export const clustersDataIsDisplayedAsExpected = () => {
   });
 };
 
-export const restoreClusterName = () => basePage.loadScenario('cluster-4-SOK');
+export const healthyClusterNameDisplaysHealthyState = () =>
+  clusterHealthIconHasExpectedClass(
+    healthyClusterScenario.clusterName,
+    'fill-jungle-green-500'
+  );
+
+export const unhealthyClusterNameDisplaysUnhealthyState = () =>
+  clusterHealthIconHasExpectedClass(
+    unhealthyClusterScenario.clusterName,
+    'fill-red-500'
+  );
+
+export const clusterHealthIconHasExpectedClass = (clusterName, className) => {
+  return cy
+    .get(`td:contains("${clusterName}")`)
+    .parents('tr')
+    .within(() =>
+      cy.get('td').eq(0).find('svg').should('have.class', className)
+    );
+};
+
+export const eachClusterTagsIsCorrectlyDisplayed = () => {
+  return taggingRules.forEach(([tag]) =>
+    cy.get(`span span:contains(${tag})`).should('be.visible')
+  );
+};
+
+export const clusterIsNotDisplayedWhenNodesAreDeregistered = () =>
+  cy.get(`span span:contains("${hanaCluster1.name}")`).should('not.exist');
+
+export const clusterNameIsDisplayed = () => {
+  cy.get(`span span:contains("${hanaCluster1.name}")`).should('be.visible');
+};
+
+// Helpers
 
 const clusterIdByName = (clusterName) =>
   availableClusters.find(({ name }) => name === clusterName).id;
 
-export const clusterNameLinkIsDisplayedAsId = (clusterName) => {
-  const clusterID = clusterIdByName(clusterName);
-  return waitForClustersEndpoint().then(() =>
-    cy.get(tableRows).eq(8).find(rowCells).eq(1).should('have.text', clusterID)
-  );
-};
+// API Interactions
 
 export const apiRemoveTagByClusterId = (clusterId, tagId) => {
   return basePage.apiLogin().then(({ accessToken }) =>
     cy.request({
-      url: `api/v1/clusters/${clusterId}/tags/${tagId}`,
+      url: `/api/v1/clusters/${clusterId}/tags/${tagId}`,
       method: 'DELETE',
       auth: { bearer: accessToken },
     })
@@ -140,42 +212,12 @@ const getClusterTags = (jsonData) => {
   return clusterTags;
 };
 
-const addTagByColumnValue = (columnValue, tagValue) => {
-  cy.get(`td:contains(${columnValue})`)
-    .parents('tr')
-    .within(() => {
-      cy.get(addTagButtons).type(`${tagValue}{enter}`);
-    });
-};
-
-export const setClusterTags = () => {
-  taggingRules.forEach(([clusterName, tag]) => {
-    addTagByColumnValue(clusterName, tag);
-  });
-};
-
-export const eachClusterTagsIsCorrectlyDisplayed = () => {
-  taggingRules.forEach(([tag]) =>
-    cy.get(`span span:contains(${tag})`).should('be.visible')
-  );
-};
-
 export const deregisterHost = (hostId) => {
-  const [webAPIHost, webAPIPort] = [
-    Cypress.env('web_api_host'),
-    Cypress.env('web_api_port'),
-  ];
-
-  const headers = {
-    'Content-Type': 'application/json;charset=UTF-8',
-  };
-
   return basePage.apiLogin().then(({ accessToken }) => {
-    const url = `http://${webAPIHost}:${webAPIPort}/api/v1/hosts/${hostId}`;
+    const url = `/api/v1/hosts/${hostId}`;
     cy.request({
       method: 'DELETE',
       url: url,
-      headers: headers,
       auth: {
         bearer: accessToken,
       },
@@ -190,22 +232,11 @@ export const deregisterAllClusterHosts = () => {
 export const restoreClusterHosts = () =>
   basePage.loadScenario(`cluster-${hanaCluster1.name}-restore`);
 
-export const clusterIsNotDisplayedWhenNodesAreDeregistered = () =>
-  cy.get(`span span:contains("${hanaCluster1.name}")`).should('not.exist');
-
-export const clusterNameIsDisplayed = () => {
-  cy.get(`span span:contains("${hanaCluster1.name}")`).should('be.visible');
-};
-
 const apiSetTag = (clusterName, tag) => {
-  const [webAPIHost, webAPIPort] = [
-    Cypress.env('web_api_host'),
-    Cypress.env('web_api_port'),
-  ];
   const clusterID = clusterIdByName(clusterName);
   return basePage.apiLogin().then(({ accessToken }) =>
     cy.request({
-      url: `http://${webAPIHost}:${webAPIPort}/api/v1/clusters/${clusterID}/tags/`,
+      url: `/api/v1/clusters/${clusterID}/tags/`,
       method: 'POST',
       auth: { bearer: accessToken },
       body: { value: tag },
@@ -218,16 +249,6 @@ export const apiSetTagsHanaCluster1 = () => {
     .filter(([cluster]) => cluster === 'hana_cluster_1')
     .map(([, tag]) => tag);
   tagsForCluster1.forEach((tag) => apiSetTag('hana_cluster_1', tag));
-};
-
-export const hanaCluster1TagsAreDisplayed = () => {
-  return cy
-    .get(`tr:contains("${hanaCluster1.name}")`)
-    .within(() =>
-      cy
-        .get(`span span:contains("${clusterTags[hanaCluster1.name]}")`)
-        .should('be.visible')
-    );
 };
 
 export const createUserWithoutAbilities = () => {
@@ -246,27 +267,7 @@ export const loginWithoutTagAbilities = () =>
 export const loginWithTagAbilities = () =>
   basePage.apiLoginAndCreateSession(user.username, password);
 
-export const addTagButtonsAreDisabled = () => {
-  cy.get(addTagButtons).should('have.class', 'opacity-50');
-};
-
-export const addTagButtonsAreNotsDisabled = () => {
-  cy.get(addTagButtons).should('not.have.class', 'opacity-50');
-};
-
-export const removeTagButtonIsDisabled = () => {
-  cy.get(removeEnv1TagButton).should('have.class', 'opacity-50');
-};
-
-export const removeTagButtonIsEnabled = () => {
-  cy.get(removeEnv1TagButton).should('not.have.class', 'opacity-50');
-};
-
 const selectChecks = (clusterId, checks) => {
-  const [webAPIHost, webAPIPort] = [
-    Cypress.env('web_api_host'),
-    Cypress.env('web_api_port'),
-  ];
   const checksBody = JSON.stringify({
     checks: checks,
   });
@@ -275,8 +276,8 @@ const selectChecks = (clusterId, checks) => {
     'Content-Type': 'application/json;charset=UTF-8',
   };
 
-  basePage.apiLogin().then(({ accessToken }) => {
-    const url = `http://${webAPIHost}:${webAPIPort}/api/clusters/${clusterId}/checks`;
+  return basePage.apiLogin().then(({ accessToken }) => {
+    const url = `/api/clusters/${clusterId}/checks`;
     cy.request({
       method: 'POST',
       url: url,
@@ -290,21 +291,11 @@ const selectChecks = (clusterId, checks) => {
 };
 
 const requestChecksExecution = (clusterId) => {
-  const [webAPIHost, webAPIPort] = [
-    Cypress.env('web_api_host'),
-    Cypress.env('web_api_port'),
-  ];
-
-  const headers = {
-    'Content-Type': 'application/json;charset=UTF-8',
-  };
-
-  basePage.apiLogin().then(({ accessToken }) => {
-    const url = `http://${webAPIHost}:${webAPIPort}/api/clusters/${clusterId}/checks/request_execution`;
+  return basePage.apiLogin().then(({ accessToken }) => {
+    const url = `/api/clusters/${clusterId}/checks/request_execution`;
     cy.request({
       method: 'POST',
       url: url,
-      headers: headers,
       auth: {
         bearer: accessToken,
       },
@@ -336,23 +327,4 @@ export const removeHealthyClusterChecks = () =>
 export const removeUnhealthyClusterChecks = () =>
   selectChecks(clusterIdByName(unhealthyClusterScenario.clusterName), []);
 
-export const healthyClusterNameDisplaysHealthyState = () =>
-  clusterHealthIconHasExpectedClass(
-    healthyClusterScenario.clusterName,
-    'fill-jungle-green-500'
-  );
-
-export const unhealthyClusterNameDisplaysUnhealthyState = () =>
-  clusterHealthIconHasExpectedClass(
-    unhealthyClusterScenario.clusterName,
-    'fill-red-500'
-  );
-
-export const clusterHealthIconHasExpectedClass = (clusterName, className) => {
-  return cy
-    .get(`td:contains("${clusterName}")`)
-    .parents('tr')
-    .within(() =>
-      cy.get('td').eq(0).find('svg').should('have.class', className)
-    );
-};
+export const restoreClusterName = () => basePage.loadScenario('cluster-4-SOK');
