@@ -92,7 +92,7 @@ export const hanaCluster1TagsAreDisplayed = () => {
 export const addTagButtonsAreDisabled = () =>
   cy.get(addTagButtons).should('have.class', 'opacity-50');
 
-export const addTagButtonsAreNotsDisabled = () =>
+export const addTagButtonsAreNotDisabled = () =>
   cy.get(addTagButtons).should('not.have.class', 'opacity-50');
 
 export const removeTagButtonIsDisabled = () =>

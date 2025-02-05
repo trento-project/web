@@ -33,7 +33,7 @@ context('Clusters Overview', () => {
     });
 
     // eslint-disable-next-line mocha/no-skipped-tests
-    describe('Health status for each cluster is correct', () => {
+    describe.skip('Health status for each cluster is correct', () => {
       before(() => {
         clustersOverviewPage.selectChecksForHealthyCluster();
         // wip: set expected results
@@ -69,12 +69,11 @@ context('Clusters Overview', () => {
       clustersOverviewPage.setClusterTags();
       clustersOverviewPage.eachClusterTagsIsCorrectlyDisplayed();
     });
-
-    after(() => clustersOverviewPage.apiRemoveAllTags());
   });
 
   describe('Deregistration', () => {
     before(() => {
+      clustersOverviewPage.apiRemoveAllTags();
       clustersOverviewPage.apiSetTagsHanaCluster1();
       clustersOverviewPage.deregisterAllClusterHosts();
     });
@@ -88,19 +87,18 @@ context('Clusters Overview', () => {
       clustersOverviewPage.clusterNameIsDisplayed();
       clustersOverviewPage.hanaCluster1TagsAreDisplayed();
     });
-
-    after(() => clustersOverviewPage.apiRemoveAllTags());
   });
 
   describe('Forbidden action', () => {
     describe('Tag operations', () => {
       beforeEach(() => {
+        clustersOverviewPage.apiRemoveAllTags();
         clustersOverviewPage.apiSetTagsHanaCluster1();
         clustersOverviewPage.apiDeleteAllUsers();
+        clustersOverviewPage.logout();
       });
 
       it('should prevent a tag update when the user abilities are not compliant', () => {
-        clustersOverviewPage.logout();
         clustersOverviewPage.createUserWithoutAbilities();
         clustersOverviewPage.loginWithoutTagAbilities();
         clustersOverviewPage.visit();
@@ -109,15 +107,12 @@ context('Clusters Overview', () => {
       });
 
       it('should allow a tag update when the user abilities are compliant', () => {
-        clustersOverviewPage.logout();
         clustersOverviewPage.createUserWithClusterTagsAbilities();
         clustersOverviewPage.loginWithTagAbilities();
         clustersOverviewPage.visit();
-        clustersOverviewPage.addTagButtonsAreNotsDisabled();
+        clustersOverviewPage.addTagButtonsAreNotDisabled();
         clustersOverviewPage.removeTagButtonIsEnabled();
       });
-
-      after(() => clustersOverviewPage.apiRemoveAllTags());
     });
   });
 });
