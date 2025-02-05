@@ -15,25 +15,24 @@ defmodule TrentoWeb.V1.ClusterJSONTest do
 
     test "should remove HANA cluster V2 fields" do
       nodes =
-        Enum.map(
-          build_list(1, :hana_cluster_node, %{
-            nameserver_actual_role: "master",
-            indexserver_actual_role: "master",
-            status: "Online",
-            resources: build_list(1, :cluster_resource)
-          }),
-          &Map.from_struct(&1)
-        )
+        build_list(1, :hana_cluster_node, %{
+          nameserver_actual_role: "master",
+          indexserver_actual_role: "master",
+          status: "Online",
+          resources: build_list(1, :cluster_resource)
+        })
 
-      details =
-        :hana_cluster_details
-        |> build(nodes: nodes)
-        |> Map.from_struct()
+      details = build(:hana_cluster_details, nodes: nodes)
 
       cluster = build(:cluster, type: :hana_scale_up, details: details)
 
-      %{details: %{nodes: [node]} = details} =
-        ClusterJSON.cluster(%{cluster: cluster})
+      %{
+        details:
+          %{
+            nodes: [%{resources: resources} = node],
+            stopped_resources: stopped_resources
+          } = details
+      } = ClusterJSON.cluster(%{cluster: cluster})
 
       refute Access.get(details, :sites)
       refute Access.get(details, :maintenance_mode)
@@ -43,11 +42,11 @@ defmodule TrentoWeb.V1.ClusterJSONTest do
       refute Access.get(node, :indexserver_actual_role)
       refute Access.get(node, :status)
 
-      Enum.each(details.stopped_resources, fn stopped_resource ->
+      Enum.each(stopped_resources, fn stopped_resource ->
         refute Map.has_key?(stopped_resource, :managed)
       end)
 
-      Enum.each(node.resources, fn resource ->
+      Enum.each(resources, fn resource ->
         refute Map.has_key?(resource, :managed)
       end)
     end
