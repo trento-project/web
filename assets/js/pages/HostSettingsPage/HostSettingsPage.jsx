@@ -7,9 +7,7 @@ import LoadingBox from '@common/LoadingBox';
 import { TARGET_HOST } from '@lib/model';
 
 import { hostChecksSelected } from '@state/checksSelection';
-import { updateCatalog } from '@state/catalog';
 import { hostExecutionRequested } from '@state/lastExecutions';
-import { getCatalog } from '@state/selectors/catalog';
 import { getHost, getHostSelectedChecks } from '@state/selectors/host';
 import { isSaving } from '@state/selectors/checksSelection';
 import { getUserProfile } from '@state/selectors/user';
@@ -18,7 +16,7 @@ import BackButton from '@common/BackButton';
 import HostInfoBox from '@common/HostInfoBox';
 import PageHeader from '@common/PageHeader';
 
-import ChecksSelection from '@pages/ChecksSelection';
+import ChecksSelection, { useChecksSelection } from '@pages/ChecksSelection';
 import ChecksSelectionHeader from '@pages/ChecksSelection/ChecksSelectionHeader';
 
 function HostSettingsPage() {
@@ -33,10 +31,11 @@ function HostSettingsPage() {
   );
 
   const {
-    data: catalog,
-    error: catalogError,
-    loading: catalogLoading,
-  } = useSelector(getCatalog());
+    fetchChecksSelection,
+    checksSelection,
+    checksSelectionLoading,
+    checksSelectionFetchError,
+  } = useChecksSelection();
 
   const saving = useSelector(isSaving(TARGET_HOST, hostID));
 
@@ -49,13 +48,11 @@ function HostSettingsPage() {
   }
   const { hostname: hostName, provider, agent_version: agentVersion } = host;
 
-  const refreshCatalog = () =>
-    dispatch(
-      updateCatalog({
-        provider: host.provider,
-        target_type: TARGET_HOST,
-      })
-    );
+  const refreshChecksSelection = () =>
+    fetchChecksSelection(hostID, {
+      provider: host.provider,
+      target_type: TARGET_HOST,
+    });
 
   const saveSelection = (newSelection, targetID, targetName) => {
     dispatch(
@@ -95,12 +92,12 @@ function HostSettingsPage() {
       />
       <HostInfoBox provider={provider} agentVersion={agentVersion} />
       <ChecksSelection
-        catalog={catalog}
-        catalogError={catalogError}
-        loading={catalogLoading}
+        catalog={checksSelection}
+        catalogError={checksSelectionFetchError}
+        loading={checksSelectionLoading}
         selectedChecks={selection}
         userAbilities={abilities}
-        onUpdateCatalog={refreshCatalog}
+        onUpdateCatalog={refreshChecksSelection}
         onChange={setSelection}
       />
     </>
