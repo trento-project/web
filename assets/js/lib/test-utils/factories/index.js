@@ -1,8 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { Factory } from 'fishery';
 
-import { EXPECT, EXPECT_ENUM, EXPECT_SAME } from '@lib/model';
-
 export * from './executions';
 export * from './hosts';
 export * from './sapSystems';
@@ -11,6 +9,7 @@ export * from './databases';
 export * from './relevantPatches';
 export * from './advisoryErrata';
 export * from './users';
+export * from './checks';
 
 export const randomObjectFactory = Factory.define(({ transientParams }) => {
   const depth = transientParams.depth || 2;
@@ -69,60 +68,6 @@ export const healthSummaryFactory = Factory.define(() => ({
   sapsystem_health: healthEnum(),
   sid: generateSid(),
   tenant: generateSid(),
-}));
-
-export const catalogExpectExpectationFactory = Factory.define(
-  ({ sequence }) => ({
-    name: `${faker.lorem.word()}_${sequence}`,
-    type: EXPECT,
-    expression: faker.lorem.sentence(),
-  })
-);
-
-export const catalogExpectSameExpectationFactory = Factory.define(
-  ({ sequence }) => ({
-    name: `${faker.lorem.word()}_${sequence}`,
-    type: EXPECT_SAME,
-    expression: faker.lorem.sentence(),
-  })
-);
-
-export const catalogExpectEnumExpectationFactory = Factory.define(
-  ({ sequence }) => ({
-    name: `${faker.lorem.word()}_${sequence}`,
-    type: EXPECT_ENUM,
-    expression: faker.lorem.sentence(),
-  })
-);
-
-export const catalogConditionFactory = Factory.define(() => ({
-  value: faker.lorem.word(),
-  expression: faker.lorem.sentence(),
-}));
-
-export const catalogValueFactory = Factory.define(() => ({
-  name: faker.string.uuid(),
-  default: faker.lorem.word(),
-  customizable: faker.datatype.boolean(),
-  conditions: catalogConditionFactory.buildList(2),
-}));
-
-export const catalogCheckFactory = Factory.define(() => ({
-  id: faker.string.uuid(),
-  name: faker.animal.cat(),
-  group: faker.animal.cat(),
-  description: faker.lorem.paragraph(),
-  remediation: faker.lorem.paragraph(),
-  metadata: null,
-  values: catalogValueFactory.buildList(3),
-  expectations: catalogExpectExpectationFactory.buildList(3),
-  customizable: faker.datatype.boolean(),
-}));
-
-export const catalogFactory = Factory.define(() => ({
-  loading: faker.datatype.boolean(),
-  catalog: catalogCheckFactory.build(),
-  error: null,
 }));
 
 export const aboutFactory = Factory.define(() => ({
