@@ -19,7 +19,9 @@ defmodule Trento.SoftwareUpdates.Discovery.DiscoveryResult do
     field :system_id, :string
     field :failure_reason, :string
 
-    embeds_many :relevant_patches, RelevantPatches, primary_key: false do
+    embeds_many :relevant_patches, RelevantPatch, primary_key: false do
+      @derive Jason.Encoder
+
       field :id, :integer, primary_key: true
       field :advisory_name, :string
       field :advisory_status, :string
@@ -30,6 +32,8 @@ defmodule Trento.SoftwareUpdates.Discovery.DiscoveryResult do
     end
 
     embeds_many :upgradable_packages, UpgradablePackage, primary_key: false do
+      @derive Jason.Encoder
+
       field :arch, :string
       field :from_epoch, :string
       field :from_release, :string

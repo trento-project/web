@@ -184,7 +184,9 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
         {:ok, %HTTPoison.Response{status_code: 200, body: Jason.encode!(suma_response_body)}}
       end)
 
-      assert {:ok, ^upgradable_packages} =
+      expected_upgradable_packages = Enum.map(upgradable_packages, &Map.from_struct/1)
+
+      assert {:ok, ^expected_upgradable_packages} =
                Suma.get_upgradable_packages(system_id)
     end
 

@@ -147,6 +147,12 @@ defmodule Trento.Factory do
   }
 
   alias Trento.SoftwareUpdates.Discovery.DiscoveryResult
+
+  alias Trento.SoftwareUpdates.Discovery.DiscoveryResult.{
+    RelevantPatch,
+    UpgradablePackage
+  }
+
   alias Trento.UserIdentities.UserIdentity
   alias Trento.Users.User
 
@@ -1014,7 +1020,7 @@ defmodule Trento.Factory do
   end
 
   def relevant_patch_factory do
-    %{
+    %RelevantPatch{
       date: Faker.Date.backward(30),
       advisory_name: String.downcase(Faker.Pokemon.name()),
       advisory_type: Faker.Util.pick(AdvisoryType.values()),
@@ -1028,7 +1034,7 @@ defmodule Trento.Factory do
   def upgradable_package_factory do
     package_name = Faker.Pokemon.name()
 
-    %{
+    %UpgradablePackage{
       name: String.downcase(package_name),
       arch: Faker.Util.pick(["x86_64", "i586", "aarch64"]),
       from_version: Faker.App.version(),
@@ -1066,8 +1072,8 @@ defmodule Trento.Factory do
     %DiscoveryResult{
       host_id: Faker.UUID.v4(),
       system_id: nil,
-      relevant_patches: nil,
-      upgradable_packages: nil,
+      relevant_patches: [],
+      upgradable_packages: [],
       failure_reason:
         Faker.Util.pick([
           "system_id_not_found",
