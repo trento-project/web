@@ -14,10 +14,7 @@ defmodule TrentoWeb.V2.ClusterJSONTest do
   end
 
   test "should render maintenance_mode field" do
-    details =
-      :hana_cluster_details
-      |> build()
-      |> Map.from_struct()
+    details = build(:hana_cluster_details)
 
     cluster = build(:cluster, details: details)
 
