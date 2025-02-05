@@ -7,6 +7,7 @@ import Button from '@common/Button';
 import Input from '@common/Input';
 import Label from '@common/Label';
 import ProviderLabel from '@common/ProviderLabel';
+import Tooltip from '@common/Tooltip';
 
 function CustomCheckModal({
   open = false,
@@ -18,12 +19,12 @@ function CustomCheckModal({
   onClose = noop,
   onSave = noop,
 }) {
-  const checkTitle = `Check: ${selectedCheckID}`;
   const [checked, setChecked] = useState(isChecked);
   const [customValues, setCustomValues] = useState({});
 
   const checkBoxWarningText =
     'Trento & SUSE cannot be held liable for damages if system is unable to function due to custom check value.';
+  const checkTitle = `Check: ${selectedCheckID}`;
 
   const handleCustomValueInput = (name, value) => {
     setCustomValues((previousValues) => ({
@@ -38,6 +39,21 @@ function CustomCheckModal({
       customValues: values,
     };
     return payload;
+  };
+  const renderLabelWithTooltip = (name) => {
+    const labelContent = (
+      <Label className="block truncate max-w-[200px] sm:max-w-[250px] md:max-w-[300px]">
+        {name}:
+      </Label>
+    );
+
+    return name?.length > 25 ? (
+      <Tooltip zIndex="50" content={name}>
+        {labelContent}
+      </Tooltip>
+    ) : (
+      labelContent
+    );
   };
 
   return (
@@ -72,11 +88,11 @@ function CustomCheckModal({
           key={`${value?.name}_${value?.default}`}
           className="flex items-center space-x-2 mb-8"
         >
-          <div className="w-1/3 min-w-[150px]">
-            <Label className="block break-words">
-              {value?.name}: (Default: {value?.default})
-            </Label>
+          <div className="flex-col w-1/3 min-w-[200px]">
+            {renderLabelWithTooltip(value?.name)}
+            <Label>(Default: {value?.default})</Label>
           </div>
+
           <Input
             className="w-full"
             onChange={(inputEvent) =>
@@ -89,7 +105,7 @@ function CustomCheckModal({
       ))}
 
       <div className="flex items-center space-x-2 mb-8">
-        <div className="w-1/3 min-w-[150px]">
+        <div className="w-1/3 min-w-[200px]">
           <Label>Provider</Label>
         </div>
 
