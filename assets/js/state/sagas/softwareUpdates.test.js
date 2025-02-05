@@ -46,7 +46,7 @@ describe('Software Updates saga', () => {
             from_release: '150400.7.25.1',
             to_epoch: ' ',
             arch: 'x86_64',
-            to_package_id: 37454,
+            to_package_id: '37454',
             from_version: '1.1.1l',
             to_version: '1.1.1l',
             from_arch: 'x86_64',

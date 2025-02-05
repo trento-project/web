@@ -52,10 +52,7 @@ export function* fetchUpgradablePackagesPatches({ payload: { hostID } }) {
     yield put(
       setPatchesForPackages({
         hostID,
-        patches: patches.map((patch) => ({
-          ...patch,
-          package_id: Number(patch.package_id),
-        })),
+        patches,
       })
     );
     yield put(setSettingsConfigured());

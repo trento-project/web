@@ -81,7 +81,7 @@ describe('exports the packages in CSV format', () => {
       upgradablePackageFactory.build({
         name: 'elixir',
         arch: 'x86_64',
-        to_package_id: 92348112636,
+        to_package_id: '92348112636',
         to_epoch: '0',
         from_epoch: '0',
         from_release: '3',
