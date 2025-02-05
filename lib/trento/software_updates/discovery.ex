@@ -166,8 +166,8 @@ defmodule Trento.SoftwareUpdates.Discovery do
     |> DiscoveryResult.changeset(%{
       host_id: host_id,
       system_id: nil,
-      relevant_patches: nil,
-      upgradable_packages: nil,
+      relevant_patches: [],
+      upgradable_packages: [],
       failure_reason: Atom.to_string(reason)
     })
     |> finalize_discovery(host_id, SoftwareUpdatesHealth.unknown())
