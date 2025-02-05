@@ -1043,7 +1043,7 @@ defmodule Trento.Factory do
       to_version: Faker.App.version(),
       to_release: "#{RandomElixir.random_between(0, 100)}",
       to_epoch: "#{RandomElixir.random_between(0, 50)}",
-      to_package_id: "#{RandomElixir.random_between(0, 1000)}"
+      to_package_id: RandomElixir.random_between(0, 1000)
     }
   end
 

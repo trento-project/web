@@ -78,19 +78,17 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
     test "should return an aggregated list of packages and related patches" do
       insert_software_updates_settings()
 
-      [first_package_id, second_package_id] =
-        [Faker.UUID.v4(), Faker.UUID.v4()]
-
       [%{advisory_name: first_patch_name}, %{advisory_name: second_patch_name}] =
         relevant_patches = [
           build(:relevant_patch, id: 4182),
           build(:relevant_patch, id: 4174)
         ]
 
-      upgradable_packages = [
-        build(:upgradable_package, name: "elixir", to_package_id: first_package_id),
-        build(:upgradable_package, name: "systemd", to_package_id: second_package_id)
-      ]
+      [%{to_package_id: first_package_id}, %{to_package_id: second_package_id}] =
+        upgradable_packages = [
+          build(:upgradable_package, name: "elixir"),
+          build(:upgradable_package, name: "systemd")
+        ]
 
       affected_packages = [
         build(:affected_package, name: "elixir"),

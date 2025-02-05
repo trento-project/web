@@ -40,7 +40,7 @@ defmodule Trento.SoftwareUpdates.Discovery.DiscoveryResult do
       field :from_version, :string
       field :name, :string
       field :to_epoch, :string
-      field :to_package_id, :string
+      field :to_package_id, :integer
       field :to_release, :string
       field :to_version, :string
     end

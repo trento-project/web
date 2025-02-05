@@ -59,7 +59,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.MockSuma do
            to_version: "1.16.2",
            to_release: "1",
            to_epoch: "0",
-           to_package_id: "92348112636"
+           to_package_id: 92_348_112_636
          },
          %{
            name: "systemd",
@@ -70,7 +70,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.MockSuma do
            to_version: "255",
            to_release: "1",
            to_epoch: "0",
-           to_package_id: "8912349843"
+           to_package_id: 8_912_349_843
          }
        ]}
 
