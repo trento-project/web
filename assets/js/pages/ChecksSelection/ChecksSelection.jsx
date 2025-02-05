@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { without, uniq, groupBy } from 'lodash';
 
 import { toggle } from '@lib/lists';
 
+import CustomCheckModal from '@common/CustomCheckModal';
 import CatalogContainer from '@pages/ChecksCatalog/CatalogContainer';
 import ChecksSelectionGroup, {
   NONE_CHECKED,
@@ -36,7 +37,12 @@ function ChecksSelection({
   userAbilities = defaultAbilities,
   onUpdateCatalog,
   onChange,
+  provider,
+  saveCustomCheck = () => {},
 }) {
+  const [isCustomCheckModalOpen, setIsCustomCheckModalOpen] = useState(false);
+  const [selectedCheck, setSelectedCheck] = useState(null);
+
   const groupedChecks = Object.entries(groupBy(catalog, 'group')).map(
     ([group, checks]) => {
       const groupChecks = checks.map((check) => ({
@@ -94,12 +100,26 @@ function ChecksSelection({
                   onChange(toggle(check.id, selectedChecks));
                 }}
                 onCustomize={() => {
-                  alert('Coming Soon!');
+                  setSelectedCheck(check);
+                  setIsCustomCheckModalOpen(true);
                 }}
               />
             ))}
           </ChecksSelectionGroup>
         ))}
+        <CustomCheckModal
+          open={isCustomCheckModalOpen}
+          selectedCheckID={selectedCheck?.id}
+          selectedCheckValues={selectedCheck?.values}
+          selectedCheckDescription={selectedCheck?.description}
+          selectedCheck={selectedCheck}
+          provider={provider}
+          onClose={() => {
+            setIsCustomCheckModalOpen(false);
+            setSelectedCheck(null);
+          }}
+          onSave={saveCustomCheck}
+        />
       </div>
     </CatalogContainer>
   );
