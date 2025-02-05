@@ -35,18 +35,18 @@ context('Clusters Overview', () => {
     // eslint-disable-next-line mocha/no-skipped-tests
     describe.skip('Health status for each cluster is correct', () => {
       before(() => {
-        clustersOverviewPage.selectChecksForHealthyCluster();
+        clustersOverviewPage.apiSelectChecksForHealthyCluster();
         // wip: set expected results
-        clustersOverviewPage.requestChecksForHealthyCluster();
+        clustersOverviewPage.apiRequestChecksForHealthyCluster();
 
-        clustersOverviewPage.selectChecksForUnhealthyCluster();
+        clustersOverviewPage.apiSelectChecksForUnhealthyCluster();
         // wip: set expected results
-        clustersOverviewPage.requestChecksForUnhealthyCluster();
+        clustersOverviewPage.apiRequestChecksForUnhealthyCluster();
       });
 
       after(() => {
-        clustersOverviewPage.removeHealthyClusterChecks();
-        clustersOverviewPage.removeUnhealthyClusterChecks();
+        clustersOverviewPage.apiRemoveHealthyClusterChecks();
+        clustersOverviewPage.apiRemoveUnhealthyClusterChecks();
       });
 
       it(`should have ${clustersOverviewPage.healthyClusterName} displaying healthy state`, () => {
@@ -75,7 +75,7 @@ context('Clusters Overview', () => {
     before(() => {
       clustersOverviewPage.apiRemoveAllTags();
       clustersOverviewPage.apiSetTagsHanaCluster1();
-      clustersOverviewPage.deregisterAllClusterHosts();
+      clustersOverviewPage.apiDeregisterAllClusterHosts();
     });
 
     it(`should not display '${clustersOverviewPage.hanaCluster1.name}' after deregistering all its nodes`, () => {
@@ -83,7 +83,7 @@ context('Clusters Overview', () => {
     });
 
     it(`should show cluster '${clustersOverviewPage.hanaCluster1.name}' after registering it again with the previous tags`, () => {
-      clustersOverviewPage.restoreClusterHosts();
+      clustersOverviewPage.apiRestoreClusterHosts();
       clustersOverviewPage.clusterNameIsDisplayed();
       clustersOverviewPage.hanaCluster1TagsAreDisplayed();
     });
@@ -99,7 +99,7 @@ context('Clusters Overview', () => {
       });
 
       it('should prevent a tag update when the user abilities are not compliant', () => {
-        clustersOverviewPage.createUserWithoutAbilities();
+        clustersOverviewPage.apiCreateUserWithoutAbilities();
         clustersOverviewPage.loginWithoutTagAbilities();
         clustersOverviewPage.visit();
         clustersOverviewPage.addTagButtonsAreDisabled();
@@ -107,7 +107,7 @@ context('Clusters Overview', () => {
       });
 
       it('should allow a tag update when the user abilities are compliant', () => {
-        clustersOverviewPage.createUserWithClusterTagsAbilities();
+        clustersOverviewPage.apiCreateUserWithClusterTagsAbilities();
         clustersOverviewPage.loginWithTagAbilities();
         clustersOverviewPage.visit();
         clustersOverviewPage.addTagButtonsAreNotDisabled();

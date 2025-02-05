@@ -109,7 +109,7 @@ export const clusterNameLinkIsDisplayedAsId = (clusterName) => {
 };
 
 export const allRegisteredClustersAreDisplayed = () =>
-  cy.get(clusterNames).its('length').should('eq', availableClusters.length);
+  cy.get(clusterNames).should('have.length', availableClusters.length);
 
 export const paginationButtonsAreDisabled = () =>
   cy.get(paginationNavigationButtons).should('be.disabled');
@@ -212,7 +212,7 @@ const getClusterTags = (jsonData) => {
   return clusterTags;
 };
 
-export const deregisterHost = (hostId) => {
+const apiDeregisterHost = (hostId) => {
   return basePage.apiLogin().then(({ accessToken }) => {
     const url = `/api/v1/hosts/${hostId}`;
     cy.request({
@@ -225,11 +225,10 @@ export const deregisterHost = (hostId) => {
   });
 };
 
-export const deregisterAllClusterHosts = () => {
-  hanaCluster1.hosts.forEach((hostId) => deregisterHost(hostId));
-};
+export const apiDeregisterAllClusterHosts = () =>
+  hanaCluster1.hosts.forEach((hostId) => apiDeregisterHost(hostId));
 
-export const restoreClusterHosts = () =>
+export const apiRestoreClusterHosts = () =>
   basePage.loadScenario(`cluster-${hanaCluster1.name}-restore`);
 
 const apiSetTag = (clusterName, tag) => {
@@ -248,18 +247,16 @@ export const apiSetTagsHanaCluster1 = () => {
   const tagsForCluster1 = taggingRules
     .filter(([cluster]) => cluster === 'hana_cluster_1')
     .map(([, tag]) => tag);
-  tagsForCluster1.forEach((tag) => apiSetTag('hana_cluster_1', tag));
+  return tagsForCluster1.forEach((tag) => apiSetTag('hana_cluster_1', tag));
 };
 
-export const createUserWithoutAbilities = () => {
-  return basePage.createUserWithAbilities(user, []);
-};
+export const apiCreateUserWithoutAbilities = () =>
+  basePage.createUserWithAbilities(user, []);
 
-export const createUserWithClusterTagsAbilities = () => {
-  return basePage.createUserWithAbilities(user, [
+export const apiCreateUserWithClusterTagsAbilities = () =>
+  basePage.createUserWithAbilities(user, [
     { name: 'all', resource: 'cluster_tags' },
   ]);
-};
 
 export const loginWithoutTagAbilities = () =>
   basePage.apiLoginAndCreateSession(user.username, password);
@@ -267,7 +264,7 @@ export const loginWithoutTagAbilities = () =>
 export const loginWithTagAbilities = () =>
   basePage.apiLoginAndCreateSession(user.username, password);
 
-const selectChecks = (clusterId, checks) => {
+const apiSelectChecks = (clusterId, checks) => {
   const checksBody = JSON.stringify({
     checks: checks,
   });
@@ -290,7 +287,7 @@ const selectChecks = (clusterId, checks) => {
   });
 };
 
-const requestChecksExecution = (clusterId) => {
+const apiRequestChecksExecution = (clusterId) => {
   return basePage.apiLogin().then(({ accessToken }) => {
     const url = `/api/clusters/${clusterId}/checks/request_execution`;
     cy.request({
@@ -303,28 +300,32 @@ const requestChecksExecution = (clusterId) => {
   });
 };
 
-export const selectChecksForHealthyCluster = () =>
-  selectChecks(
+export const apiSelectChecksForHealthyCluster = () =>
+  apiSelectChecks(
     clusterIdByName(healthyClusterScenario.clusterName),
     healthyClusterScenario.checks
   );
 
-export const requestChecksForHealthyCluster = () =>
-  requestChecksExecution(clusterIdByName(healthyClusterScenario.clusterName));
+export const apiRequestChecksForHealthyCluster = () =>
+  apiRequestChecksExecution(
+    clusterIdByName(healthyClusterScenario.clusterName)
+  );
 
-export const selectChecksForUnhealthyCluster = () =>
-  selectChecks(
+export const apiSelectChecksForUnhealthyCluster = () =>
+  apiSelectChecks(
     clusterIdByName(unhealthyClusterScenario.clusterName),
     healthyClusterScenario.checks
   );
 
-export const requestChecksForUnhealthyCluster = () =>
-  requestChecksExecution(clusterIdByName(unhealthyClusterScenario.clusterName));
+export const apiRequestChecksForUnhealthyCluster = () =>
+  apiRequestChecksExecution(
+    clusterIdByName(unhealthyClusterScenario.clusterName)
+  );
 
-export const removeHealthyClusterChecks = () =>
-  selectChecks(clusterIdByName(healthyClusterScenario.clusterName), []);
+export const apiRemoveHealthyClusterChecks = () =>
+  apiSelectChecks(clusterIdByName(healthyClusterScenario.clusterName), []);
 
-export const removeUnhealthyClusterChecks = () =>
-  selectChecks(clusterIdByName(unhealthyClusterScenario.clusterName), []);
+export const apiRemoveUnhealthyClusterChecks = () =>
+  apiSelectChecks(clusterIdByName(unhealthyClusterScenario.clusterName), []);
 
 export const restoreClusterName = () => basePage.loadScenario('cluster-4-SOK');
