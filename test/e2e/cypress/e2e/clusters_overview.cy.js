@@ -1,7 +1,7 @@
 import * as clustersOverviewPage from '../pageObject/clusters-overview-po.js';
 
 context('Clusters Overview', () => {
-  // before(() => clustersOverviewPage.preloadTestData());
+  before(() => clustersOverviewPage.preloadTestData());
 
   beforeEach(() => {
     clustersOverviewPage.interceptClustersEndpoint();
