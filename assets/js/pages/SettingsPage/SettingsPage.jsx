@@ -4,6 +4,8 @@ import { Transition } from '@headlessui/react';
 import { format, isBefore, parseISO } from 'date-fns';
 import { EOS_INFO_OUTLINED } from 'eos-icons-react';
 
+import { SUMA_PRODUCT_LABEL_SHORT } from '@lib/model/suse_manager';
+
 import DisabledGuard from '@common/DisabledGuard';
 import PageHeader from '@common/PageHeader';
 import Button from '@common/Button';
@@ -241,7 +243,7 @@ function SettingsPage() {
       <section>
         <div className="py-4">
           <SettingsLoader
-            sectionName="SUSE Manager"
+            sectionName={SUMA_PRODUCT_LABEL_SHORT}
             status={calculateSettingsLoaderStatus(
               suseManagerSettingsLoading,
               suseManagerSettingsfetchError

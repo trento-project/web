@@ -3,6 +3,11 @@ import classNames from 'classnames';
 import { noop } from 'lodash';
 import { EOS_SETTINGS } from 'eos-icons-react';
 
+import {
+  SUMA_PRODUCT_LABEL,
+  SUMA_PRODUCT_LABEL_SHORT,
+} from '@lib/model/suse_manager';
+
 import Button from '@common/Button';
 
 function SumaNotConfigured({ className, onBackToSettings = noop }) {
@@ -19,8 +24,8 @@ function SumaNotConfigured({ className, onBackToSettings = noop }) {
         <p className="font-bold text-2xl">Available Software Updates</p>
 
         <p>
-          SUSE Manager is not configured. Go to Settings to add your SUSE
-          Manager connection credentials.
+          {SUMA_PRODUCT_LABEL} is not configured. Go to Settings to add your{' '}
+          {SUMA_PRODUCT_LABEL_SHORT} connection credentials.
         </p>
       </div>
 

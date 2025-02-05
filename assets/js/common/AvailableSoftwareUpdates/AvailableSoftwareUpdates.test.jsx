@@ -71,7 +71,7 @@ describe('AvailableSoftwareUpdates component', () => {
 
     expect(
       screen.getByText(
-        'SUSE Manager is not configured. Go to Settings to add your SUSE Manager connection credentials.'
+        'SUSE Multi-Linux Manager is not configured. Go to Settings to add your SUSE Manager connection credentials.'
       )
     ).toBeVisible();
 

@@ -20,7 +20,9 @@ describe('SuseManagerClearSettingsModal', () => {
       );
     });
 
-    expect(screen.getByText('Clear SUSE Manager Settings')).toBeInTheDocument();
+    expect(
+      screen.getByText('Clear SUSE Multi-Linux Manager Settings')
+    ).toBeInTheDocument();
 
     await user.click(screen.getByText('Clear Settings'));
     expect(onClearSettings).toHaveBeenCalled();
@@ -40,7 +42,9 @@ describe('SuseManagerClearSettingsModal', () => {
       );
     });
 
-    expect(screen.getByText('Clear SUSE Manager Settings')).toBeInTheDocument();
+    expect(
+      screen.getByText('Clear SUSE Multi-Linux Manager Settings')
+    ).toBeInTheDocument();
 
     await user.click(screen.getByText('Cancel'));
     expect(onCancel).toHaveBeenCalled();
