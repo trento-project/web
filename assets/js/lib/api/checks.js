@@ -20,6 +20,12 @@ export const getCatalog = (env) =>
     params: env,
   });
 
+export const getChecksSelection = (groupID, env) =>
+  networkClient.get(`/api/v1/checks/groups/${groupID}/catalog`, {
+    ...defaultConfig,
+    params: env,
+  });
+
 export const triggerClusterChecksExecution = (clusterID) =>
   networkClient.post(`/clusters/${clusterID}/checks/request_execution`);
 
