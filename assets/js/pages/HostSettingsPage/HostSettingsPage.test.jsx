@@ -29,7 +29,7 @@ describe('HostSettingsPage component', () => {
 
     const [StatefulHostSettingsPage] = withState(<HostSettingsPage />, state);
 
-    await act(() => {
+    await act(async () => {
       renderWithRouterMatch(StatefulHostSettingsPage, {
         path: 'hosts/:hostID/settings',
         route: `/hosts/${faker.string.uuid()}/settings`,
@@ -68,7 +68,7 @@ describe('HostSettingsPage component', () => {
       .onGet(`/api/v1/checks/groups/${hostID}/catalog`)
       .reply(200, { items: selectableChecks });
 
-    await act(() => {
+    await act(async () => {
       renderWithRouterMatch(StatefulHostSettingsPage, {
         path: 'hosts/:hostID/settings',
         route: `/hosts/${hostID}/settings`,
@@ -100,7 +100,7 @@ describe('HostSettingsPage component', () => {
 
     const [StatefulHostSettingsPage] = withState(<HostSettingsPage />, state);
 
-    await act(() => {
+    await act(async () => {
       renderWithRouterMatch(StatefulHostSettingsPage, {
         path: 'hosts/:hostID/settings',
         route: `/hosts/${hostID}/settings`,
@@ -123,7 +123,7 @@ describe('HostSettingsPage component', () => {
     const { id: hostID } = hosts[1];
     const [StatefulHostSettingsPage] = withState(<HostSettingsPage />, state);
 
-    await act(() => {
+    await act(async () => {
       renderWithRouterMatch(StatefulHostSettingsPage, {
         path: 'hosts/:hostID/settings',
         route: `/hosts/${hostID}/settings`,

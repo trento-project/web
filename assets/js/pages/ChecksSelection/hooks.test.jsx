@@ -17,7 +17,7 @@ describe('useChecksSelection', () => {
     let hookResult;
     const [hookWrapper, _] = hookWrapperWithState();
 
-    await act(() => {
+    await act(async () => {
       const { result } = renderHook(() => useChecksSelection(), {
         wrapper: hookWrapper,
       });
@@ -41,7 +41,7 @@ describe('useChecksSelection', () => {
 
       const groupId = faker.string.uuid();
 
-      await act(() => {
+      await act(async () => {
         const { result } = renderHook(() => useChecksSelection(), {
           wrapper: hookWrapper,
         });
@@ -52,7 +52,7 @@ describe('useChecksSelection', () => {
         .onGet(`/api/v1/checks/groups/${groupId}/catalog`)
         .reply(statusCode);
 
-      await act(() => {
+      await act(async () => {
         hookResult.current.fetchChecksSelection(groupId);
       });
 
@@ -72,7 +72,7 @@ describe('useChecksSelection', () => {
 
     const checksSelection = selectableCheckFactory.buildList(3);
 
-    await act(() => {
+    await act(async () => {
       const { result } = renderHook(() => useChecksSelection(), {
         wrapper: hookWrapper,
       });
@@ -83,7 +83,7 @@ describe('useChecksSelection', () => {
       .onGet(`/api/v1/checks/groups/${groupId}/catalog`)
       .reply(200, { items: checksSelection });
 
-    await act(() => {
+    await act(async () => {
       hookResult.current.fetchChecksSelection(groupId);
     });
 

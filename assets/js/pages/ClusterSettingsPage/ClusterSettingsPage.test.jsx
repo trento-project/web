@@ -44,7 +44,7 @@ describe('ClusterDetails ClusterSettings component', () => {
       .onGet(`/api/v1/checks/groups/${clusterID}/catalog`)
       .reply(200, { items: selectableChecks });
 
-    await act(() => {
+    await act(async () => {
       renderWithRouterMatch(StatefulClusterSettings, {
         path: 'clusters/:clusterID/settings',
         route: `/clusters/${clusterID}/settings`,
@@ -77,7 +77,7 @@ describe('ClusterDetails ClusterSettings component', () => {
       .onGet(`/api/v1/checks/groups/${clusterID}/catalog`)
       .reply(200, { items: selectableChecks });
 
-    await act(() => {
+    await act(async () => {
       renderWithRouterMatch(StatefulChecksSettings, {
         path: 'clusters/:clusterID/settings',
         route: `/clusters/${clusterID}/settings`,
@@ -123,7 +123,7 @@ describe('ClusterDetails ClusterSettings component', () => {
         user: { abilities: [{ name: 'all', resource: 'all' }] },
       });
 
-      await act(() => {
+      await act(async () => {
         renderWithRouterMatch(StatefulClusterSettings, {
           path: 'clusters/:clusterID/settings',
           route: `/clusters/${clusterID}/settings`,
