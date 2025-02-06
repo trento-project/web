@@ -3,6 +3,11 @@ import { capitalize, noop } from 'lodash';
 import { format } from 'date-fns';
 import { EOS_LOCK_OUTLINED } from 'eos-icons-react';
 
+import {
+  SUMA_PRODUCT_LABEL,
+  SUMA_PRODUCT_LABEL_SHORT,
+} from '@lib/model/suse_manager';
+
 import Button from '@common/Button';
 import Modal from '@common/Modal';
 import Input, { Password, Textarea } from '@common/Input';
@@ -53,10 +58,14 @@ function SuseManagerSettingsModal({
   const [editingPassword, setEditingPassword] = useState(!settingsExist);
 
   return (
-    <Modal title="Enter SUSE Manager Settings" open={open} onClose={onCancel}>
+    <Modal
+      title={`Enter ${SUMA_PRODUCT_LABEL} Settings`}
+      open={open}
+      onClose={onCancel}
+    >
       <div className="grid grid-cols-6 my-5 gap-6">
         <Label className="col-span-2" required>
-          SUSE Manager URL
+          {SUMA_PRODUCT_LABEL_SHORT} URL
         </Label>
         <div className="col-span-4">
           <Input
@@ -129,7 +138,7 @@ function SuseManagerSettingsModal({
           <Input
             value={username}
             name="suma-username-input"
-            placeholder="Enter a SUSE Manager username"
+            placeholder={`Enter a ${SUMA_PRODUCT_LABEL_SHORT} username`}
             error={hasError('username', errors)}
             onChange={({ target: { value } }) => {
               setUsername(value);
@@ -153,7 +162,7 @@ function SuseManagerSettingsModal({
             <Password
               initialValue={password}
               name="suma-password-input"
-              placeholder="Enter a SUSE Manager password"
+              placeholder={`Enter a ${SUMA_PRODUCT_LABEL_SHORT} password`}
               error={hasError('password', errors)}
               onChange={({ target: { value } }) => {
                 setPassword(value);

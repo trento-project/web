@@ -89,6 +89,7 @@ function ChecksSelection({
                 selected={check.selected}
                 userAbilities={userAbilities}
                 customizable={check.customizable}
+                customized={check.customized}
                 onChange={() => {
                   onChange(toggle(check.id, selectedChecks));
                 }}

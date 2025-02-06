@@ -1,7 +1,10 @@
 import React from 'react';
 
-import { screen } from '@testing-library/react';
+import { act, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
+
+import { networkClient } from '@lib/network';
+import MockAdapter from 'axios-mock-adapter';
 
 import { faker } from '@faker-js/faker';
 import {
@@ -9,22 +12,26 @@ import {
   defaultInitialState,
   renderWithRouterMatch,
 } from '@lib/test-utils';
-import { catalogCheckFactory, clusterFactory } from '@lib/test-utils/factories';
+import {
+  clusterFactory,
+  selectableCheckFactory,
+} from '@lib/test-utils/factories';
 
 import { UNKNOWN_PROVIDER } from '@lib/model';
 
 import ClusterSettingsPage from '.';
 
+const axiosMock = new MockAdapter(networkClient);
+
 describe('ClusterDetails ClusterSettings component', () => {
   it('should render the cluster info box and the catalog container', async () => {
     const group = faker.animal.cat();
-    const catalog = catalogCheckFactory.buildList(2, { group });
+    const selectableChecks = selectableCheckFactory.buildList(2, { group });
 
     const [StatefulClusterSettings, state] = withState(
       <ClusterSettingsPage />,
       {
         ...defaultInitialState,
-        catalog: { loading: false, data: catalog, error: null },
         user: { abilities: [] },
       }
     );
@@ -33,9 +40,15 @@ describe('ClusterDetails ClusterSettings component', () => {
       clusters: [, , , { id: clusterID }],
     } = state.getState().clustersList;
 
-    renderWithRouterMatch(StatefulClusterSettings, {
-      path: 'clusters/:clusterID/settings',
-      route: `/clusters/${clusterID}/settings`,
+    axiosMock
+      .onGet(`/api/v1/checks/groups/${clusterID}/catalog`)
+      .reply(200, { items: selectableChecks });
+
+    await act(async () => {
+      renderWithRouterMatch(StatefulClusterSettings, {
+        path: 'clusters/:clusterID/settings',
+        route: `/clusters/${clusterID}/settings`,
+      });
     });
 
     expect(screen.getByText('Provider')).toBeVisible();
@@ -46,14 +59,13 @@ describe('ClusterDetails ClusterSettings component', () => {
 
   it('given unknown provider, should render the warning banner', async () => {
     const group = faker.animal.cat();
-    const catalog = catalogCheckFactory.buildList(2, { group });
+    const selectableChecks = selectableCheckFactory.buildList(2, { group });
     const clusters = clusterFactory.buildList(1, {
       provider: UNKNOWN_PROVIDER,
     });
 
     const state = {
       ...defaultInitialState,
-      catalog: { loading: false, data: catalog, error: null },
       clustersList: { clusters },
       user: { abilities: [] },
     };
@@ -61,9 +73,15 @@ describe('ClusterDetails ClusterSettings component', () => {
 
     const [StatefulChecksSettings] = withState(<ClusterSettingsPage />, state);
 
-    renderWithRouterMatch(StatefulChecksSettings, {
-      path: 'clusters/:clusterID/settings',
-      route: `/clusters/${clusterID}/settings`,
+    axiosMock
+      .onGet(`/api/v1/checks/groups/${clusterID}/catalog`)
+      .reply(200, { items: selectableChecks });
+
+    await act(async () => {
+      renderWithRouterMatch(StatefulChecksSettings, {
+        path: 'clusters/:clusterID/settings',
+        route: `/clusters/${clusterID}/settings`,
+      });
     });
 
     expect(screen.getByText('Provider')).toBeVisible();
@@ -97,7 +115,7 @@ describe('ClusterDetails ClusterSettings component', () => {
 
   it.each(suggestionScenarios)(
     'should suggest to the user to start an execution when the selection is not empty',
-    ({ cluster, suggestionExpectation }) => {
+    async ({ cluster, suggestionExpectation }) => {
       const { id: clusterID } = cluster;
       const [StatefulClusterSettings] = withState(<ClusterSettingsPage />, {
         ...defaultInitialState,
@@ -105,9 +123,11 @@ describe('ClusterDetails ClusterSettings component', () => {
         user: { abilities: [{ name: 'all', resource: 'all' }] },
       });
 
-      renderWithRouterMatch(StatefulClusterSettings, {
-        path: 'clusters/:clusterID/settings',
-        route: `/clusters/${clusterID}/settings`,
+      await act(async () => {
+        renderWithRouterMatch(StatefulClusterSettings, {
+          path: 'clusters/:clusterID/settings',
+          route: `/clusters/${clusterID}/settings`,
+        });
       });
 
       suggestionExpectation(

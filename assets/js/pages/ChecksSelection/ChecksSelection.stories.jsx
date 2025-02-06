@@ -1,17 +1,17 @@
-import { catalogCheckFactory } from '@lib/test-utils/factories';
+import { selectableCheckFactory } from '@lib/test-utils/factories';
 
 import ChecksSelection from './ChecksSelection';
 
 const catalog = [
-  catalogCheckFactory.build({ group: 'Corosync' }),
-  catalogCheckFactory.build({ group: 'Corosync' }),
-  catalogCheckFactory.build({ group: 'Corosync' }),
-  catalogCheckFactory.build({ group: 'Corosync' }),
-  catalogCheckFactory.build({ group: 'Corosync' }),
-  catalogCheckFactory.build({ group: 'SBD' }),
-  catalogCheckFactory.build({ group: 'SBD' }),
-  catalogCheckFactory.build({ group: 'Miscellaneous' }),
-  catalogCheckFactory.build({ group: 'Miscellaneous' }),
+  selectableCheckFactory.build({ group: 'Corosync', customized: true }),
+  selectableCheckFactory.build({ group: 'Corosync' }),
+  selectableCheckFactory.build({ group: 'Corosync' }),
+  selectableCheckFactory.build({ group: 'Corosync' }),
+  selectableCheckFactory.build({ group: 'Corosync' }),
+  selectableCheckFactory.build({ group: 'SBD' }),
+  selectableCheckFactory.build({ group: 'SBD' }),
+  selectableCheckFactory.build({ group: 'Miscellaneous' }),
+  selectableCheckFactory.build({ group: 'Miscellaneous' }),
 ];
 
 const selectedChecks = [

@@ -170,10 +170,10 @@ describe('HostDetailsPage', () => {
       .closest('div');
 
     expect(relevantPatchesElement).toHaveTextContent(
-      'Relevant Patches Connection to SUMA not working'
+      'Relevant Patches Connection to SUSE Manager not working'
     );
     expect(upgradablePackagesElement).toHaveTextContent(
-      'Upgradable Packages Connection to SUMA not working'
+      'Upgradable Packages Connection to SUSE Manager not working'
     );
 
     await user.hover(relevantPatchesElement);

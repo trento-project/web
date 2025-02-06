@@ -1,8 +1,11 @@
+import { SUMA_PRODUCT_LABEL_SHORT } from '@lib/model/suse_manager';
+
 export const getSoftwareUpdatesErrorMessage = (errors) => {
   const hostNotFoundInSUMA = errors.some(
     ({ detail }) =>
       detail === 'The requested resource cannot be found.' ||
-      detail === 'No system ID was found on SUSE Manager for this host.'
+      detail ===
+        `No system ID was found on ${SUMA_PRODUCT_LABEL_SHORT} for this host.`
   );
 
   const connectionNotWorking = errors.some(
@@ -10,11 +13,11 @@ export const getSoftwareUpdatesErrorMessage = (errors) => {
   );
 
   if (hostNotFoundInSUMA) {
-    return 'Host not found in SUSE Manager';
+    return `Host not found in ${SUMA_PRODUCT_LABEL_SHORT}`;
   }
 
   if (connectionNotWorking) {
-    return 'Connection to SUMA not working';
+    return `Connection to ${SUMA_PRODUCT_LABEL_SHORT} not working`;
   }
 
   return 'Unknown';
@@ -24,7 +27,8 @@ export const getSoftwareUpdatesErrorTooltip = (errors) => {
   const hostNotFoundInSUMA = errors.some(
     ({ detail }) =>
       detail === 'The requested resource cannot be found.' ||
-      detail === 'No system ID was found on SUSE Manager for this host.'
+      detail ===
+        `No system ID was found on ${SUMA_PRODUCT_LABEL_SHORT} for this host.`
   );
 
   const connectionNotWorking = errors.some(
@@ -32,11 +36,11 @@ export const getSoftwareUpdatesErrorTooltip = (errors) => {
   );
 
   if (hostNotFoundInSUMA) {
-    return 'Contact your SUSE Manager admin to ensure the host is managed by SUSE Manager';
+    return `Contact your ${SUMA_PRODUCT_LABEL_SHORT} admin to ensure the host is managed by ${SUMA_PRODUCT_LABEL_SHORT}`;
   }
 
   if (connectionNotWorking) {
-    return 'Please review SUSE Manager settings';
+    return `Please review ${SUMA_PRODUCT_LABEL_SHORT} settings`;
   }
 
   if (errors.length) {
