@@ -3,7 +3,7 @@ import { without, uniq, groupBy } from 'lodash';
 
 import { toggle } from '@lib/lists';
 
-import CustomCheckModal from '@common/CustomCheckModal';
+import CheckCustomizationModal from '@common/CheckCustomizationModal';
 import CatalogContainer from '@pages/ChecksCatalog/CatalogContainer';
 import ChecksSelectionGroup, {
   NONE_CHECKED,
@@ -40,7 +40,8 @@ function ChecksSelection({
   provider,
   saveCustomCheck = () => {},
 }) {
-  const [isCustomCheckModalOpen, setIsCustomCheckModalOpen] = useState(false);
+  const [isCheckCustomizationModalOpen, setIsCheckCustomizationModalOpen] =
+    useState(false);
   const [selectedCheck, setSelectedCheck] = useState(null);
 
   const groupedChecks = Object.entries(groupBy(catalog, 'group')).map(
@@ -101,21 +102,22 @@ function ChecksSelection({
                 }}
                 onCustomize={() => {
                   setSelectedCheck(check);
-                  setIsCustomCheckModalOpen(true);
+                  setIsCheckCustomizationModalOpen(true);
                 }}
               />
             ))}
           </ChecksSelectionGroup>
         ))}
-        <CustomCheckModal
-          open={isCustomCheckModalOpen}
-          selectedCheckID={selectedCheck?.id}
-          selectedCheckValues={selectedCheck?.values}
-          selectedCheckDescription={selectedCheck?.description}
+        <CheckCustomizationModal
+          open={isCheckCustomizationModalOpen}
+          id={selectedCheck?.id}
+          values={selectedCheck?.values}
+          description={selectedCheck?.description}
+          customized={selectedCheck?.customized}
           selectedCheck={selectedCheck}
           provider={provider}
           onClose={() => {
-            setIsCustomCheckModalOpen(false);
+            setIsCheckCustomizationModalOpen(false);
             setSelectedCheck(null);
           }}
           onSave={saveCustomCheck}

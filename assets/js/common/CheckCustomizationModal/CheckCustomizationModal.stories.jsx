@@ -1,26 +1,46 @@
 import React from 'react';
 import { useArgs } from '@storybook/preview-api';
-import CustomCheckModal from '.';
+import CheckCustomizationModal from '.';
 
 const singleValue = [
-  { name: 'ValueName1', default: 'value1', conditions: [], customizable: true },
+  {
+    name: 'ValueName1',
+    current_value: 'value1',
+    conditions: [],
+    customizable: true,
+  },
 ];
 const multipleValues = [
-  { name: 'ValueName1', default: 'value1', conditions: [], customizable: true },
-  { name: 'ValueName2', default: 'value2', conditions: [], customizable: true },
+  {
+    name: 'ValueName1',
+    current_value: 'value1',
+    conditions: [],
+    customizable: true,
+  },
+  {
+    name: 'ValueName2',
+    current_value: 'value2',
+    conditions: [],
+    customizable: true,
+  },
   {
     name: 'A very very very long name with to many characters',
-    default: 'value3',
+    current_value: 'value3',
     conditions: [],
     customizable: true,
   },
 ];
 
 const partialCustomizableValues = [
-  { name: 'ValueName1', default: 'value1', conditions: [], customizable: true },
+  {
+    name: 'ValueName1',
+    current_value: 'value1',
+    conditions: [],
+    customizable: true,
+  },
   {
     name: 'ValueName2',
-    default: 'value2',
+    current_value: 'value2',
     conditions: [],
     customizable: false,
   },
@@ -35,24 +55,28 @@ const defaultCheck = {
 const defaultProvider = 'aws';
 
 export default {
-  title: 'Components/CustomCheckModal',
-  component: CustomCheckModal,
+  title: 'Components/CheckCustomizationModal',
+  component: CheckCustomizationModal,
   argTypes: {
     open: {
       description: 'Opens the modal',
       control: 'boolean',
     },
-    selectedCheckID: {
+    id: {
       description: 'Selected Check ID',
       control: 'text',
     },
-    selectedCheckValues: {
+    values: {
       description: 'Values provided by the selected check',
       control: 'array',
     },
-    selectedCheckDescription: {
+    description: {
       description: 'Check Description provided by the selected check',
       control: 'string',
+    },
+    customized: {
+      description: 'Enables the input fields for check customization',
+      control: 'boolean',
     },
     provider: {
       description: 'Cloud or on-premises provider',
@@ -64,16 +88,12 @@ export default {
     onSave: {
       description: 'Saves the customized checks values',
     },
-    isChecked: {
-      description: 'Enables the input fields for check customization',
-      control: 'boolean',
-    },
   },
   args: {
     open: false,
-    selectedCheckID: defaultCheck.id,
-    selectedCheckValues: defaultCheck.values,
-    selectedCheckDescription: defaultCheck.description,
+    id: defaultCheck.id,
+    values: defaultCheck.values,
+    description: defaultCheck.description,
     provider: defaultProvider,
   },
 };
@@ -85,9 +105,9 @@ export function SingleValue(args) {
   return (
     <>
       <button type="button" onClick={() => handleClose()}>
-        Toggle CustomCheckModal
+        Toggle CheckCustomizationModal
       </button>
-      <CustomCheckModal {...args} onClose={handleClose} />
+      <CheckCustomizationModal {...args} onClose={handleClose} />
     </>
   );
 }
@@ -99,11 +119,11 @@ export function MultipleValues(args) {
   return (
     <>
       <button type="button" onClick={() => handleClose()}>
-        Toggle CustomCheckModal
+        Toggle CheckCustomizationModal
       </button>
-      <CustomCheckModal
+      <CheckCustomizationModal
         {...args}
-        selectedCheckValues={multipleValues}
+        values={multipleValues}
         onClose={handleClose}
       />
     </>
@@ -117,12 +137,12 @@ export function PartialNonCustomizableValues(args) {
   return (
     <>
       <button type="button" onClick={() => handleClose()}>
-        Toggle CustomCheckModal
+        Toggle CheckCustomizationModal
       </button>
-      <CustomCheckModal
+      <CheckCustomizationModal
         {...args}
         isChecked
-        selectedCheckValues={partialCustomizableValues}
+        values={partialCustomizableValues}
         onClose={handleClose}
       />
     </>
