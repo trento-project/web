@@ -364,6 +364,8 @@ Trento.Settings.Policy.html
 Trento.Settings.SSOCertificatesSettings.html
 Trento.Settings.SuseManagerSettings.html
 Trento.Settings.html
+Trento.SoftwareUpdates.Discovery.DiscoveryResult.RelevantPatch.html
+Trento.SoftwareUpdates.Discovery.DiscoveryResult.UpgradablePackage.html
 Trento.SoftwareUpdates.Discovery.DiscoveryResult.html
 Trento.SoftwareUpdates.Discovery.Gen.html
 Trento.SoftwareUpdates.Discovery.html
@@ -493,8 +495,8 @@ dist/lato-latin-ext-300-normal-VPGGJKJL.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-FA351E2A.js
-dist/sidebar_items-20AE1964.js
+dist/search_data-ECC2EDFF.js
+dist/sidebar_items-487E60EB.js
 environment_variables.html
 hack_on_the_trento.html
 index.html
