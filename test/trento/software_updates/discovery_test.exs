@@ -104,8 +104,8 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
           assert %DiscoveryResult{
                    host_id: ^host_id,
                    system_id: nil,
-                   relevant_patches: nil,
-                   upgradable_packages: nil,
+                   relevant_patches: [],
+                   upgradable_packages: [],
                    failure_reason: ^stored_failure
                  } = Trento.Repo.get(DiscoveryResult, host_id)
         end
@@ -139,32 +139,32 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
       scenarios = [
         %{
           discovered_relevant_patches: [
-            %{advisory_type: AdvisoryType.security_advisory()},
-            %{advisory_type: AdvisoryType.security_advisory()},
-            %{advisory_type: AdvisoryType.bugfix()},
-            %{advisory_type: AdvisoryType.enhancement()}
+            build(:relevant_patch, advisory_type: AdvisoryType.security_advisory()),
+            build(:relevant_patch, advisory_type: AdvisoryType.security_advisory()),
+            build(:relevant_patch, advisory_type: AdvisoryType.bugfix()),
+            build(:relevant_patch, advisory_type: AdvisoryType.enhancement())
           ],
           discovered_upgradable_packages: build_list(3, :upgradable_package),
           expected_health: SoftwareUpdatesHealth.critical()
         },
         %{
           discovered_relevant_patches: [
-            %{advisory_type: AdvisoryType.bugfix()},
-            %{advisory_type: AdvisoryType.enhancement()}
+            build(:relevant_patch, advisory_type: AdvisoryType.bugfix()),
+            build(:relevant_patch, advisory_type: AdvisoryType.enhancement())
           ],
           discovered_upgradable_packages: build_list(3, :upgradable_package),
           expected_health: SoftwareUpdatesHealth.warning()
         },
         %{
           discovered_relevant_patches: [
-            %{advisory_type: AdvisoryType.enhancement()}
+            build(:relevant_patch, advisory_type: AdvisoryType.enhancement())
           ],
           discovered_upgradable_packages: [],
           expected_health: SoftwareUpdatesHealth.warning()
         },
         %{
           discovered_relevant_patches: [
-            %{advisory_type: AdvisoryType.bugfix()}
+            build(:relevant_patch, advisory_type: AdvisoryType.bugfix())
           ],
           discovered_upgradable_packages: build_list(3, :upgradable_package),
           expected_health: SoftwareUpdatesHealth.warning()
@@ -186,6 +186,12 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
         fully_qualified_domain_name = Faker.Internet.domain_name()
         system_id = 100
 
+        map_discovered_relevant_patches =
+          Enum.map(discovered_relevant_patches, &Map.from_struct/1)
+
+        map_discovered_upgradable_packages =
+          Enum.map(discovered_upgradable_packages, &Map.from_struct/1)
+
         expect(
           SoftwareUpdatesDiscoveryMock,
           :get_system_id,
@@ -195,13 +201,13 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
         expect(
           SoftwareUpdatesDiscoveryMock,
           :get_relevant_patches,
-          fn ^system_id -> {:ok, discovered_relevant_patches} end
+          fn ^system_id -> {:ok, map_discovered_relevant_patches} end
         )
 
         expect(
           SoftwareUpdatesDiscoveryMock,
           :get_upgradable_packages,
-          fn ^system_id -> {:ok, discovered_upgradable_packages} end
+          fn ^system_id -> {:ok, map_discovered_upgradable_packages} end
         )
 
         expect(
@@ -215,21 +221,17 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
           end
         )
 
-        {:ok, ^host_id, ^system_id, ^discovered_relevant_patches, ^discovered_upgradable_packages} =
+        {:ok, ^host_id, ^system_id, ^map_discovered_relevant_patches,
+         ^map_discovered_upgradable_packages} =
           Discovery.discover_host_software_updates(host_id, fully_qualified_domain_name)
-
-        stored_discovered_relevant_patches = to_stored_representation(discovered_relevant_patches)
-
-        stored_discovered_upgradable_packages =
-          to_stored_representation(discovered_upgradable_packages)
 
         stored_system_id = "#{system_id}"
 
         assert %DiscoveryResult{
                  host_id: ^host_id,
                  system_id: ^stored_system_id,
-                 relevant_patches: ^stored_discovered_relevant_patches,
-                 upgradable_packages: ^stored_discovered_upgradable_packages,
+                 relevant_patches: ^discovered_relevant_patches,
+                 upgradable_packages: ^discovered_upgradable_packages,
                  failure_reason: nil
                } = Trento.Repo.get(DiscoveryResult, host_id)
       end
@@ -498,7 +500,7 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
         end
       )
 
-      upgradable_packages = build_list(3, :upgradable_package)
+      upgradable_packages = 3 |> build_list(:upgradable_package) |> Enum.map(&Map.from_struct/1)
 
       expect(
         SoftwareUpdatesDiscoveryMock,
@@ -804,7 +806,7 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
     expect(
       SoftwareUpdatesDiscoveryMock,
       :get_upgradable_packages,
-      fn _ -> {:ok, build_list(3, :upgradable_package)} end
+      fn _ -> {:ok, 3 |> build_list(:upgradable_package) |> Enum.map(&Map.from_struct/1)} end
     )
 
     expect(
@@ -836,15 +838,9 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
     assert %DiscoveryResult{
              host_id: ^host_id,
              system_id: nil,
-             relevant_patches: nil,
-             upgradable_packages: nil,
+             relevant_patches: [],
+             upgradable_packages: [],
              failure_reason: ^stored_failure
            } = Trento.Repo.get(DiscoveryResult, host_id)
-  end
-
-  defp to_stored_representation(map_with_atoms) do
-    map_with_atoms
-    |> Jason.encode!()
-    |> Jason.decode!()
   end
 end
