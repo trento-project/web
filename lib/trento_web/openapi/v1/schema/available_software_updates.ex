@@ -2,6 +2,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
   @moduledoc false
 
   require OpenApiSpex
+  require Trento.SoftwareUpdates.Enums.AdvisoryType, as: AdvisoryType
+
   alias OpenApiSpex.Schema
 
   defmodule UpgradablePackage do
@@ -19,7 +21,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
           from_version: %Schema{type: :string, description: "From version"},
           name: %Schema{type: :string, description: "Upgradable package name"},
           to_epoch: %Schema{type: :string, description: "To epoch"},
-          to_package_id: %Schema{type: :string, description: "To package id"},
+          to_package_id: %Schema{type: :integer, description: "To package id"},
           to_release: %Schema{type: :string, description: "To release"},
           to_version: %Schema{type: :string, description: "To version"}
         }
@@ -44,7 +46,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
           advisory_type: %Schema{
             type: :string,
             description: "Advisory's type",
-            enum: [:security_advisory, :bugfix, :enhancement]
+            enum: AdvisoryType.values()
           },
           date: %Schema{type: :string, description: "Advisory's date"},
           update_date: %Schema{type: :string, description: "Advisory's update date"}
@@ -63,7 +65,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
         type: :object,
         additionalProperties: false,
         properties: %{
-          package_id: %Schema{type: :string, description: ""},
+          package_id: %Schema{type: :integer, description: "To package id"},
           patches: %Schema{
             type: :array,
             additionalProperties: false,

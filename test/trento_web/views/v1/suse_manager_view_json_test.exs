@@ -10,7 +10,12 @@ defmodule TrentoWeb.V1.SUSEManagerJSONTest do
       relevant_patches = build_list(10, :relevant_patch)
       upgradable_packages = build_list(10, :upgradable_package)
 
-      assert %{relevant_patches: relevant_patches, upgradable_packages: upgradable_packages} ==
+      expected_software_updates = %{
+        relevant_patches: Enum.map(relevant_patches, &Map.from_struct/1),
+        upgradable_packages: Enum.map(upgradable_packages, &Map.from_struct/1)
+      }
+
+      assert expected_software_updates ==
                SUSEManagerJSON.software_updates(%{
                  relevant_patches: relevant_patches,
                  upgradable_packages: upgradable_packages
