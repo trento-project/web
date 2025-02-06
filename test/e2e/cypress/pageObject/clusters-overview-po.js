@@ -178,7 +178,7 @@ export const apiRemoveTagByClusterId = (clusterId, tagId) => {
 
 const apiGetClusters = () => {
   return basePage.apiLogin().then(({ accessToken }) => {
-    const url = '/api/v2/clusters/';
+    const url = '/api/v2/clusters';
     return cy
       .request({
         method: 'GET',
@@ -235,7 +235,7 @@ const apiSetTag = (clusterName, tag) => {
   const clusterID = clusterIdByName(clusterName);
   return basePage.apiLogin().then(({ accessToken }) =>
     cy.request({
-      url: `/api/v1/clusters/${clusterID}/tags/`,
+      url: `/api/v1/clusters/${clusterID}/tags`,
       method: 'POST',
       auth: { bearer: accessToken },
       body: { value: tag },
