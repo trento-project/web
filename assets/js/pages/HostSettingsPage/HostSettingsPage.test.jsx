@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { screen } from '@testing-library/react';
+import { act, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 import { faker } from '@faker-js/faker';
@@ -9,12 +9,18 @@ import {
   defaultInitialState,
   renderWithRouterMatch,
 } from '@lib/test-utils';
-import { catalogCheckFactory, hostFactory } from '@lib/test-utils/factories';
+
+import { networkClient } from '@lib/network';
+import MockAdapter from 'axios-mock-adapter';
+
+import { hostFactory, selectableCheckFactory } from '@lib/test-utils/factories';
 
 import HostSettingsPage from './HostSettingsPage';
 
+const axiosMock = new MockAdapter(networkClient);
+
 describe('HostSettingsPage component', () => {
-  it('should render a loading box', () => {
+  it('should render a loading box', async () => {
     const state = {
       ...defaultInitialState,
       hostsList: { hosts: [] },
@@ -23,9 +29,11 @@ describe('HostSettingsPage component', () => {
 
     const [StatefulHostSettingsPage] = withState(<HostSettingsPage />, state);
 
-    renderWithRouterMatch(StatefulHostSettingsPage, {
-      path: 'hosts/:hostID/settings',
-      route: `/hosts/${faker.string.uuid()}/settings`,
+    await act(async () => {
+      renderWithRouterMatch(StatefulHostSettingsPage, {
+        path: 'hosts/:hostID/settings',
+        route: `/hosts/${faker.string.uuid()}/settings`,
+      });
     });
 
     expect(screen.getByText('Loading...')).toBeVisible();
@@ -36,20 +44,19 @@ describe('HostSettingsPage component', () => {
     ).not.toBeTruthy();
   });
 
-  it('should render the host checks selection', () => {
+  it('should render the host checks selection', async () => {
     const group0 = faker.animal.cat();
     const group1 = faker.animal.dog();
     const group2 = faker.lorem.word();
-    const catalog = [
-      ...catalogCheckFactory.buildList(2, { group: group0 }),
-      ...catalogCheckFactory.buildList(2, { group: group1 }),
-      ...catalogCheckFactory.buildList(2, { group: group2 }),
+    const selectableChecks = [
+      ...selectableCheckFactory.buildList(2, { group: group0 }),
+      ...selectableCheckFactory.buildList(2, { group: group1 }),
+      ...selectableCheckFactory.buildList(2, { group: group2 }),
     ];
     const hosts = hostFactory.buildList(3, { provider: 'azure' });
 
     const state = {
       ...defaultInitialState,
-      catalog: { ...defaultInitialState.catalog, data: catalog },
       hostsList: { hosts },
       user: { abilities: [] },
     };
@@ -57,9 +64,15 @@ describe('HostSettingsPage component', () => {
 
     const [StatefulHostSettingsPage] = withState(<HostSettingsPage />, state);
 
-    renderWithRouterMatch(StatefulHostSettingsPage, {
-      path: 'hosts/:hostID/settings',
-      route: `/hosts/${hostID}/settings`,
+    axiosMock
+      .onGet(`/api/v1/checks/groups/${hostID}/catalog`)
+      .reply(200, { items: selectableChecks });
+
+    await act(async () => {
+      renderWithRouterMatch(StatefulHostSettingsPage, {
+        path: 'hosts/:hostID/settings',
+        route: `/hosts/${hostID}/settings`,
+      });
     });
 
     expect(screen.getByText('Provider')).toBeVisible();
@@ -73,7 +86,7 @@ describe('HostSettingsPage component', () => {
     expect(screen.getByText('Save Checks Selection')).toBeVisible();
   });
 
-  it('should render HostSettingsPage with a disabled start execution button, as no checks are selected', () => {
+  it('should render HostSettingsPage with a disabled start execution button, as no checks are selected', async () => {
     const hosts = hostFactory.buildList(2, {
       provider: 'azure',
       selected_checks: [],
@@ -87,15 +100,17 @@ describe('HostSettingsPage component', () => {
 
     const [StatefulHostSettingsPage] = withState(<HostSettingsPage />, state);
 
-    renderWithRouterMatch(StatefulHostSettingsPage, {
-      path: 'hosts/:hostID/settings',
-      route: `/hosts/${hostID}/settings`,
+    await act(async () => {
+      renderWithRouterMatch(StatefulHostSettingsPage, {
+        path: 'hosts/:hostID/settings',
+        route: `/hosts/${hostID}/settings`,
+      });
     });
     const startExecutionButton = screen.getByText('Start Execution');
     expect(startExecutionButton).toBeDisabled();
   });
 
-  it('should render HostSettingsPage with an enabled start execution button, as checks are selected', () => {
+  it('should render HostSettingsPage with an enabled start execution button, as checks are selected', async () => {
     const hosts = hostFactory.buildList(2, {
       provider: 'azure',
       selected_checks: [faker.animal.bear(), faker.animal.bear()],
@@ -108,9 +123,11 @@ describe('HostSettingsPage component', () => {
     const { id: hostID } = hosts[1];
     const [StatefulHostSettingsPage] = withState(<HostSettingsPage />, state);
 
-    renderWithRouterMatch(StatefulHostSettingsPage, {
-      path: 'hosts/:hostID/settings',
-      route: `/hosts/${hostID}/settings`,
+    await act(async () => {
+      renderWithRouterMatch(StatefulHostSettingsPage, {
+        path: 'hosts/:hostID/settings',
+        route: `/hosts/${hostID}/settings`,
+      });
     });
     const startExecutionButton = screen.getByText('Start Execution');
     expect(startExecutionButton).toBeEnabled();

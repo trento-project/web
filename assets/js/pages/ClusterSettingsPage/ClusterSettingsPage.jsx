@@ -12,8 +12,6 @@ import {
   getFilesystemType,
   getEnsaVersion,
 } from '@state/selectors/cluster';
-import { updateCatalog } from '@state/catalog';
-import { getCatalog } from '@state/selectors/catalog';
 import { isSaving } from '@state/selectors/checksSelection';
 import { getUserProfile } from '@state/selectors/user';
 import { executionRequested } from '@state/lastExecutions';
@@ -27,7 +25,7 @@ import LoadingBox from '@common/LoadingBox';
 import PageHeader from '@common/PageHeader';
 import Banner from '@common/Banners/Banner';
 
-import ChecksSelection from '@pages/ChecksSelection';
+import ChecksSelection, { useChecksSelection } from '@pages/ChecksSelection';
 import ChecksSelectionHeader from '@pages/ChecksSelection/ChecksSelectionHeader';
 
 const catalogBanner = {
@@ -62,10 +60,11 @@ function ClusterSettingsPage() {
   );
 
   const {
-    data: catalog,
-    error: catalogError,
-    loading: catalogLoading,
-  } = useSelector(getCatalog());
+    fetchChecksSelection,
+    checksSelection,
+    checksSelectionLoading,
+    checksSelectionFetchError,
+  } = useChecksSelection();
 
   const saving = useSelector(isSaving(TARGET_CLUSTER, clusterID));
 
@@ -82,7 +81,7 @@ function ClusterSettingsPage() {
   const hanaScenario = get(cluster, 'details.hana_scenario');
   const architectureType = get(cluster, 'details.architecture_type');
 
-  const refreshCatalog = () => {
+  const refreshChecksSelection = () => {
     const env = buildEnv({
       provider,
       target_type: TARGET_CLUSTER,
@@ -93,7 +92,7 @@ function ClusterSettingsPage() {
       architecture_type: architectureType,
     });
 
-    dispatch(updateCatalog(env));
+    fetchChecksSelection(clusterID, env);
   };
 
   const saveSelection = (newSelection, targetID, targetName) =>
@@ -142,12 +141,12 @@ function ClusterSettingsPage() {
         architectureType={architectureType}
       />
       <ChecksSelection
-        catalog={catalog}
-        catalogError={catalogError}
-        loading={catalogLoading}
+        catalog={checksSelection}
+        catalogError={checksSelectionFetchError}
+        loading={checksSelectionLoading}
         selectedChecks={selection}
         userAbilities={abilities}
-        onUpdateCatalog={refreshCatalog}
+        onUpdateCatalog={refreshChecksSelection}
         onChange={setSelection}
       />
     </>
