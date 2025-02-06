@@ -9,17 +9,40 @@ import Label from '@common/Label';
 import ProviderLabel from '@common/ProviderLabel';
 import Tooltip from '@common/Tooltip';
 
+const buildCustomCheckPayload = (checkID, values) => {
+  const payload = {
+    checksID: checkID,
+    customValues: values,
+  };
+  return payload;
+};
+const renderLabelWithTooltip = (name) => {
+  const labelContent = (
+    <Label className="block truncate max-w-[200px] sm:max-w-[250px] md:max-w-[300px]">
+      {name}:
+    </Label>
+  );
+
+  return name?.length > 25 ? (
+    <Tooltip zIndex="50" content={name}>
+      {labelContent}
+    </Tooltip>
+  ) : (
+    labelContent
+  );
+};
+
 function CustomCheckModal({
   open = false,
   selectedCheckID,
   selectedCheckValues,
   selectedCheckDescription,
   provider = 'Unknown',
-  isChecked = false,
+  customized = false,
   onClose = noop,
   onSave = noop,
 }) {
-  const [checked, setChecked] = useState(isChecked);
+  const [checked, setChecked] = useState(customized);
   const [customValues, setCustomValues] = useState({});
 
   const checkBoxWarningText =
@@ -33,28 +56,7 @@ function CustomCheckModal({
     }));
   };
 
-  const buildCustomCheckPayload = (checkID, values) => {
-    const payload = {
-      checksID: checkID,
-      customValues: values,
-    };
-    return payload;
-  };
-  const renderLabelWithTooltip = (name) => {
-    const labelContent = (
-      <Label className="block truncate max-w-[200px] sm:max-w-[250px] md:max-w-[300px]">
-        {name}:
-      </Label>
-    );
-
-    return name?.length > 25 ? (
-      <Tooltip zIndex="50" content={name}>
-        {labelContent}
-      </Tooltip>
-    ) : (
-      labelContent
-    );
-  };
+  const canCustomize = customized || checked;
 
   return (
     <Modal
@@ -72,37 +74,43 @@ function CustomCheckModal({
       </p>
 
       <div className="flex items-center border border-yellow-400 bg-yellow-50 p-4 rounded-md text-yellow-600 mb-4">
-        <Input
-          type="checkbox"
-          checked={checked}
-          onChange={() => setChecked((prev) => !prev)}
-        />
+        {!customized && (
+          <Input
+            type="checkbox"
+            checked={checked}
+            onChange={() => setChecked((prev) => !prev)}
+          />
+        )}
         <EOS_WARNING_OUTLINED
           size="xxl"
           className="centered fill-yellow-500 ml-4 mr-4"
         />
         <span className="font-semibold">{checkBoxWarningText}</span>
       </div>
-      {selectedCheckValues?.map((value) => (
-        <div
-          key={`${value?.name}_${value?.default}`}
-          className="flex items-center space-x-2 mb-8"
-        >
-          <div className="flex-col w-1/3 min-w-[200px]">
-            {renderLabelWithTooltip(value?.name)}
-            <Label>(Default: {value?.default})</Label>
-          </div>
+      {selectedCheckValues
+        ?.filter(({ customizable }) => customizable)
+        .map((value) => (
+          <div
+            key={`${value?.name}_${value?.current_value}`}
+            className="flex items-center space-x-2 mb-8"
+          >
+            <div className="flex-col w-1/3 min-w-[200px]">
+              {renderLabelWithTooltip(value?.name)}
+              <Label>(Default: {value?.current_value})</Label>
+            </div>
 
-          <Input
-            className="w-full"
-            onChange={(inputEvent) =>
-              handleCustomValueInput(value?.name, inputEvent.target.value)
-            }
-            placeholder="Value from Wanda"
-            disabled={!checked || !value?.customizable}
-          />
-        </div>
-      ))}
+            <Input
+              className="w-full"
+              onChange={(inputEvent) =>
+                handleCustomValueInput(value?.name, inputEvent.target.value)
+              }
+              initialValue={value?.custom_value || value?.current_value}
+              ini
+              placeholder="Value from Wanda"
+              disabled={!canCustomize}
+            />
+          </div>
+        ))}
 
       <div className="flex items-center space-x-2 mb-8">
         <div className="w-1/3 min-w-[200px]">
@@ -123,11 +131,11 @@ function CustomCheckModal({
           <Button
             type="default-fit"
             className="w-1/2"
-            disabled={!checked}
+            disabled={!canCustomize}
             onClick={() => {
+              onSave(buildCustomCheckPayload(selectedCheckID, customValues));
               setCustomValues({});
               setChecked(false);
-              onSave(buildCustomCheckPayload(selectedCheckID, customValues));
               onClose();
             }}
           >
@@ -139,9 +147,9 @@ function CustomCheckModal({
             type="primary-white"
             className="w-1/2"
             onClick={() => {
-              onClose();
               setCustomValues({});
               setChecked(false);
+              onClose();
             }}
           >
             Close

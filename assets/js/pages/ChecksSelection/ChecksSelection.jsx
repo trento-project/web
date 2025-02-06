@@ -112,6 +112,7 @@ function ChecksSelection({
           selectedCheckID={selectedCheck?.id}
           selectedCheckValues={selectedCheck?.values}
           selectedCheckDescription={selectedCheck?.description}
+          customized={selectedCheck?.customized}
           selectedCheck={selectedCheck}
           provider={provider}
           onClose={() => {
