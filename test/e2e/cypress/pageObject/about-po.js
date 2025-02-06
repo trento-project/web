@@ -9,9 +9,7 @@ const githubRepositoryLabel = 'div:contains("GitHub repository") + div a';
 const amountOfSlesForSapSubscriptionsLabel =
   'div:contains("SLES for SAP subscriptions") + div span';
 
-export const visit = (_url = url) => {
-  return basePage.visit(_url);
-};
+export const visit = () => basePage.visit(url);
 
 export const pageTitleIsDisplayed = () => {
   return cy.get(pageTitle).should('have.text', 'About Trento Console');

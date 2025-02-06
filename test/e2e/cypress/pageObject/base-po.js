@@ -102,8 +102,10 @@ export const apiLoginAndCreateSession = (
 };
 
 export const logout = () => {
-  window.localStorage.removeItem('access_token');
-  window.localStorage.removeItem('refresh_token');
+  cy.window().then((win) => {
+    win.localStorage.removeItem('access_token');
+    win.localStorage.removeItem('refresh_token');
+  });
   Cypress.session.clearAllSavedSessions();
 };
 
@@ -170,12 +172,12 @@ export const preloadTestData = () => {
    * scenario is sent in the second time.
    */
   isTestDataLoaded().then((isLoaded) => {
-    if (!isLoaded) cy.loadScenario('healthy-27-node-SAP-cluster');
+    if (!isLoaded) loadScenario('healthy-27-node-SAP-cluster');
   });
   loadScenario('healthy-27-node-SAP-cluster');
 };
 
-const loadScenario = (scenario) => {
+export const loadScenario = (scenario) => {
   const [projectRoot, photofinishBinary, webAPIHost, webAPIPort] = [
     Cypress.env('project_root'),
     Cypress.env('photofinish_binary'),
@@ -203,4 +205,30 @@ const isTestDataLoaded = () =>
         },
       })
       .then(({ body }) => body.length !== 0)
+  );
+
+export const createUserWithAbilities = (payload, abilities) =>
+  apiLogin().then(({ accessToken }) =>
+    cy
+      .request({
+        url: '/api/v1/abilities',
+        method: 'GET',
+        auth: { bearer: accessToken },
+        body: {},
+      })
+      .then(({ body }) => {
+        const abilitiesWithID = abilities.map((ability) => ({
+          ...body.find(
+            ({ name, resource }) =>
+              ability.name === name && ability.resource === resource
+          ),
+        }));
+
+        cy.request({
+          url: '/api/v1/users',
+          method: 'POST',
+          auth: { bearer: accessToken },
+          body: { ...payload, abilities: abilitiesWithID },
+        });
+      })
   );
