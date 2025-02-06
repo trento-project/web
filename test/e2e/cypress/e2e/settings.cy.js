@@ -834,7 +834,7 @@ context('Settings page', () => {
         .and('be.enabled');
       // SUSE Manager config settings button
       cy.contains('button', 'Test Connection').should('be.enabled');
-      cy.contains('h2', 'SUSE Manager Config')
+      cy.contains('h2', 'SUSE Multi-Linux Manager Config')
         .next()
         .contains('button', 'Edit Settings')
         .should('be.enabled');
@@ -857,7 +857,7 @@ context('Settings page', () => {
       cy.contains('button', 'Generate Key').should('be.disabled');
       // SUSE Manager config settings button
       cy.contains('button', 'Test Connection').should('be.enabled');
-      cy.contains('h2', 'SUSE Manager Config')
+      cy.contains('h2', 'SUSE Multi-Linux Manager Config')
         .next()
         .contains('button', 'Edit Settings')
         .should('be.disabled');
