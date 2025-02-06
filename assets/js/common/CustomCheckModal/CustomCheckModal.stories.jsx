@@ -8,6 +8,12 @@ const singleValue = [
 const multipleValues = [
   { name: 'ValueName1', default: 'value1', conditions: [], customizable: true },
   { name: 'ValueName2', default: 'value2', conditions: [], customizable: true },
+  {
+    name: 'A very very very long name with to many characters',
+    default: 'value3',
+    conditions: [],
+    customizable: true,
+  },
 ];
 
 const partialCustomizableValues = [

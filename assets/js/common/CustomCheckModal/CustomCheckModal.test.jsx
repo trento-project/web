@@ -146,7 +146,6 @@ describe('CustomCheckModal', () => {
     });
     const warningBannerCheckbox = screen.getByRole('checkbox');
     await user.click(warningBannerCheckbox);
-    screen.debug(undefined, 10000000000000000000000000000);
     expect(warningBannerCheckbox).toBeChecked();
     const inputElements = screen.getAllByRole('textbox');
     expect(inputElements.length).toBe(3);
