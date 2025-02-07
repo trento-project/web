@@ -8,6 +8,7 @@ import Input from '@common/Input';
 import Label from '@common/Label';
 import ProviderLabel from '@common/ProviderLabel';
 import Tooltip from '@common/Tooltip';
+import { UNKNOWN_PROVIDER } from '@lib/model';
 
 const checkBoxWarningText =
   'Trento & SUSE cannot be held liable for damages if system is unable to function due to custom check value.';
@@ -41,7 +42,7 @@ function CheckCustomizationModal({
   id,
   values,
   description,
-  provider = 'Unknown',
+  provider = UNKNOWN_PROVIDER,
   customized = false,
   onClose = noop,
   onSave = noop,

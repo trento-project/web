@@ -2,25 +2,33 @@ import React from 'react';
 import { render, screen, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
-import { catalogValueFactory } from '@lib/test-utils/factories';
+import {
+  selectableCheckFactory,
+  nonCustomizedValueFactory,
+} from '@lib/test-utils/factories';
 import CheckCustomizationModal from './CheckCustomizationModal';
 
 const mockOnClose = jest.fn();
 const mockOnSave = jest.fn();
 
-const expectedCheckModalValues = {
-  open: true,
+const check = selectableCheckFactory.build({
   id: '123',
+  description: 'Check Description',
   values: [
-    catalogValueFactory.build({
+    nonCustomizedValueFactory.build({
       name: 'CheckValueName',
-      default: '10',
-      current_value: true,
+      customizable: true,
+      current_value: '10 ',
     }),
   ],
-  description: 'Check Description',
-  provider: 'aws',
   customized: false,
+  customizable: false,
+});
+
+const expectedCheckModalValues = {
+  ...check,
+  open: true,
+  provider: 'aws',
   onClose: mockOnClose,
   onSave: mockOnSave,
 };
@@ -55,7 +63,7 @@ describe('CheckCustomizationModal', () => {
 
   it('renders the modal  with a single customizable values', async () => {
     const user = userEvent.setup();
-    const customCheckValue = '123';
+    const customCheckValue = '999';
     const { onSave } = expectedCheckModalValues;
 
     await act(async () => {
@@ -74,7 +82,7 @@ describe('CheckCustomizationModal', () => {
     await user.click(screen.getByText('Save'));
     expect(onSave).toHaveBeenCalledWith({
       checksID: '123',
-      customValues: { CheckValueName: '123' },
+      customValues: { CheckValueName: '999' },
     });
   });
 
@@ -83,7 +91,8 @@ describe('CheckCustomizationModal', () => {
     const { onSave } = expectedCheckModalValues;
     const customCheckValue = ['123', '456', '789'];
     const customCheckNames = ['abc', 'def', 'xxx'];
-    const checkValues = catalogValueFactory
+
+    const checkValues = nonCustomizedValueFactory
       .buildList(3)
       .map((value, index) => ({
         ...value,
@@ -129,17 +138,20 @@ describe('CheckCustomizationModal', () => {
     const { onSave } = expectedCheckModalValues;
     const customCheckValue = ['123', '456'];
     const customCheckNames = ['abc', 'def'];
-    const customizableValues = [true, false];
-    const checkValues = catalogValueFactory
-      .buildList(2)
-      .map((value, index) => ({
-        ...value,
-        customizable: customizableValues[index],
-        name: customCheckNames[index],
-      }));
+
+    const checkValueList = [
+      nonCustomizedValueFactory.build({
+        name: customCheckNames[0],
+        customizable: true,
+      }),
+      nonCustomizedValueFactory.build({
+        name: customCheckNames[1],
+        customizable: false,
+      }),
+    ];
     const checkWithMultipleValues = {
       ...expectedCheckModalValues,
-      values: checkValues,
+      values: checkValueList,
     };
 
     await act(async () => {

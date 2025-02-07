@@ -1,12 +1,10 @@
 import React from 'react';
-import { useArgs } from '@storybook/preview-api';
 import CheckCustomizationModal from '.';
 
 const singleValue = [
   {
     name: 'ValueName1',
     current_value: 'value1',
-    conditions: [],
     customizable: true,
   },
 ];
@@ -14,19 +12,16 @@ const multipleValues = [
   {
     name: 'ValueName1',
     current_value: 'value1',
-    conditions: [],
     customizable: true,
   },
   {
     name: 'ValueName2',
     current_value: 'value2',
-    conditions: [],
     customizable: true,
   },
   {
     name: 'A very very very long name with to many characters',
     current_value: 'value3',
-    conditions: [],
     customizable: true,
   },
 ];
@@ -35,13 +30,11 @@ const partialCustomizableValues = [
   {
     name: 'ValueName1',
     current_value: 'value1',
-    conditions: [],
     customizable: true,
   },
   {
     name: 'ValueName2',
     current_value: 'value2',
-    conditions: [],
     customizable: false,
   },
 ];
@@ -63,19 +56,19 @@ export default {
       control: 'boolean',
     },
     id: {
-      description: 'Selected Check ID',
+      description: 'Check ID',
       control: 'text',
     },
     values: {
-      description: 'Values provided by the selected check',
+      description: 'Check values',
       control: 'array',
     },
     description: {
-      description: 'Check Description provided by the selected check',
+      description: 'Check description',
       control: 'string',
     },
     customized: {
-      description: 'Enables the input fields for check customization',
+      description: 'Describes if the check was customized',
       control: 'boolean',
     },
     provider: {
@@ -86,7 +79,7 @@ export default {
       description: 'Closes the modal',
     },
     onSave: {
-      description: 'Saves the customized checks values',
+      description: 'Saves the customized checks values and closes the modal',
     },
   },
   args: {
@@ -99,52 +92,19 @@ export default {
 };
 
 export function SingleValue(args) {
-  const [{ open }, updateArgs] = useArgs();
-  const handleClose = () => updateArgs({ open: !open });
-
-  return (
-    <>
-      <button type="button" onClick={() => handleClose()}>
-        Toggle CheckCustomizationModal
-      </button>
-      <CheckCustomizationModal {...args} onClose={handleClose} />
-    </>
-  );
+  return <CheckCustomizationModal {...args} />;
 }
 
 export function MultipleValues(args) {
-  const [{ open }, updateArgs] = useArgs();
-  const handleClose = () => updateArgs({ open: !open });
-
-  return (
-    <>
-      <button type="button" onClick={() => handleClose()}>
-        Toggle CheckCustomizationModal
-      </button>
-      <CheckCustomizationModal
-        {...args}
-        values={multipleValues}
-        onClose={handleClose}
-      />
-    </>
-  );
+  return <CheckCustomizationModal {...args} values={multipleValues} />;
 }
 
 export function PartialNonCustomizableValues(args) {
-  const [{ open }, updateArgs] = useArgs();
-  const handleClose = () => updateArgs({ open: !open });
-
   return (
-    <>
-      <button type="button" onClick={() => handleClose()}>
-        Toggle CheckCustomizationModal
-      </button>
-      <CheckCustomizationModal
-        {...args}
-        isChecked
-        values={partialCustomizableValues}
-        onClose={handleClose}
-      />
-    </>
+    <CheckCustomizationModal
+      {...args}
+      isChecked
+      values={partialCustomizableValues}
+    />
   );
 }
