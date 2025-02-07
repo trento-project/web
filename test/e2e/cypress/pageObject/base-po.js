@@ -232,3 +232,35 @@ export const createUserWithAbilities = (payload, abilities) =>
         });
       })
   );
+
+export const apiDeregisterHost = (hostId) => {
+  return isHostRegistered(hostId).then((isRegistered) => {
+    if (isRegistered) {
+      return apiLogin().then(({ accessToken }) => {
+        const url = `/api/v1/hosts/${hostId}`;
+        return cy.request({
+          method: 'DELETE',
+          url: url,
+          auth: {
+            bearer: accessToken,
+          },
+        });
+      });
+    } else return;
+  });
+};
+
+export const isHostRegistered = (hostId) => {
+  return apiLogin()
+    .then(({ accessToken }) => {
+      const url = '/api/v1/hosts/';
+      cy.request({
+        method: 'GET',
+        url: url,
+        auth: {
+          bearer: accessToken,
+        },
+      });
+    })
+    .then(({ body }) => body.some((host) => host.id === hostId));
+};

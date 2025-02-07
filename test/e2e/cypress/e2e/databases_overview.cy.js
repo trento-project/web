@@ -1,10 +1,16 @@
+import * as databasesOverviewPage from '../pageObject/databases-overview-po';
+
 import { createUserRequestFactory } from '@lib/test-utils/factories';
 
 context('Databases Overview', () => {
   before(() => {
-    cy.preloadTestData();
-    cy.visit('/databases');
-    cy.url().should('include', '/databases');
+    databasesOverviewPage.preloadTestData();
+    databasesOverviewPage.visit();
+    databasesOverviewPage.validateUrl('/databases');
+  });
+
+  beforeEach(() => {
+    databasesOverviewPage.restoreHdqDatabasePrimaryInstance();
   });
 
   describe('Deregistration', () => {
@@ -24,47 +30,29 @@ context('Databases Overview', () => {
       ],
     };
 
-    const nwqSystem = {
-      sid: 'NWQ',
-      ascsInstance: {
-        id: '25677e37-fd33-5005-896c-9275b1284534',
-      },
-    };
-
-    it(`should not display DB ${hdqDatabase.sid} after deregistering the primary instance`, () => {
-      cy.deregisterHost(hdqDatabase.instances[0].id);
-      cy.contains(hdqDatabase.sid).should('not.exist');
+    it(`should not display DB ${databasesOverviewPage.hdqDatabase.sid} after deregistering the primary instance`, () => {
+      databasesOverviewPage.deregisterHdqDatabasePrimaryInstance();
+      databasesOverviewPage.hdqDatabaseIsNotDisplayed();
     });
 
     it(`should display DB ${hdqDatabase.sid} again after restoring the primary instance`, () => {
-      cy.loadScenario(`host-${hdqDatabase.instances[0].name}-restore`);
-      cy.contains('tr', hdqDatabase.sid).should('exist').click();
+      databasesOverviewPage.hdqDatabaseIsDisplayed();
     });
 
     it(`should include both instances in DB ${hdqDatabase.sid} after restoring the primary instance`, () => {
-      cy.contains('div', hdqDatabase.instances[0].name).should('exist');
-      cy.contains('div', hdqDatabase.instances[1].name).should('exist');
+      databasesOverviewPage.clickHdqDatabaseRow();
+      databasesOverviewPage.bothDatabaseInstancesAreDisplayed();
     });
 
     it('should show the ACTIVE pill in the right host', () => {
-      hdqDatabase.instances.forEach((instance) => {
-        cy.contains('div.table-row', instance.name).within(() => {
-          if (instance.state === 'ACTIVE') {
-            cy.contains('ACTIVE').should('exist');
-          } else {
-            cy.contains('ACTIVE').should('not.exist');
-          }
-        });
-      });
+      databasesOverviewPage.clickHdqDatabaseRow();
+      databasesOverviewPage.activePillIsDisplayedInTheRightHost();
     });
 
     it('should not deregister database instances if the SAP system using the database is deregistered', () => {
-      cy.deregisterHost(nwqSystem.ascsInstance.id);
-      cy.contains(
-        'p',
-        `The SAP System ${nwqSystem.sid} has been deregistered.`
-      );
-      cy.get('.table-row-group > div.table-row').should('have.length', 6);
+      databasesOverviewPage.deregisterNwqSystemAscsInstance();
+      databasesOverviewPage.deletedSapSystemToasterIsDisplayed();
+      databasesOverviewPage.databaseInstancesAreStillTheSame();
     });
   });
 

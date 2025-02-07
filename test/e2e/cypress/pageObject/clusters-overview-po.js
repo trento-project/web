@@ -212,21 +212,8 @@ const getClusterTags = (jsonData) => {
   return clusterTags;
 };
 
-const apiDeregisterHost = (hostId) => {
-  return basePage.apiLogin().then(({ accessToken }) => {
-    const url = `/api/v1/hosts/${hostId}`;
-    cy.request({
-      method: 'DELETE',
-      url: url,
-      auth: {
-        bearer: accessToken,
-      },
-    });
-  });
-};
-
 export const apiDeregisterAllClusterHosts = () =>
-  hanaCluster1.hosts.forEach((hostId) => apiDeregisterHost(hostId));
+  hanaCluster1.hosts.forEach((hostId) => basePage.apiDeregisterHost(hostId));
 
 export const apiRestoreClusterHosts = () =>
   basePage.loadScenario(`cluster-${hanaCluster1.name}-restore`);
