@@ -125,7 +125,8 @@ context('Activity Log page', () => {
     });
 
     it('should paginate data with filters', () => {
-      const queryString = '?type=sles_subscriptions_updated&search=x86_64&severity=debug';
+      const queryString =
+        '?type=sles_subscriptions_updated&search=x86_64&severity=debug';
       activityLogPage.visit(queryString);
       activityLogPage.waitForActivityLogRequest().then(({ response }) => {
         activityLogPage.paginationPropertiesAreTheExpected(response);
