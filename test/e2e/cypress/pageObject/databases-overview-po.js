@@ -51,6 +51,8 @@ const cleanUpButtonModal =
 
 const cleanUpButtons = 'button:contains("Clean up")';
 
+const activePill = 'span:contains("ACTIVE")';
+
 const getCleanUpButtonByIdAndInstanceIndex = (id, index) =>
   `tbody tr:contains("${id}") + tr div[class="table-row-group"] div[class*="table-row border-b"]:nth-child(${
     index + 1
@@ -75,13 +77,12 @@ export const bothDatabaseInstancesAreDisplayed = () => {
 };
 
 export const activePillIsDisplayedInTheRightHost = () => {
-  hdqDatabase.instances.forEach((instance) => {
-    cy.get(`div.table-row:contains("${instance.name}")`).within(() => {
-      if (instance.state === 'ACTIVE') {
-        cy.contains('ACTIVE').should('exist');
-      } else {
-        cy.contains('ACTIVE').should('not.exist');
-      }
+  return hdqDatabase.instances.forEach((instance) => {
+    return cy.get(`div.table-row:contains("${instance.name}")`).within(() => {
+      const isHostActive = instance.state === 'ACTIVE';
+      return cy
+        .get(activePill)
+        .should(isHostActive ? 'be.visible' : 'not.exist');
     });
   });
 };
