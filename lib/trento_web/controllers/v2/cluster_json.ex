@@ -19,7 +19,6 @@ defmodule TrentoWeb.V2.ClusterJSON do
     data
     |> Map.from_struct()
     |> Map.delete(:cluster_id)
-    |> Map.delete(:hosts)
     |> Map.put(:id, data.cluster_id)
   end
 
