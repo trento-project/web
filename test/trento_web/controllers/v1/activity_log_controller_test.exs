@@ -279,6 +279,53 @@ defmodule TrentoWeb.V1.ActivityLogControllerTest do
       assert resp["data"] == []
       assert_schema(resp, "ActivityLog", api_spec)
     end
+
+    test "should return info and above severity level entries by default",
+         %{
+           conn: conn,
+           api_spec: api_spec
+         } do
+      _inserted_records = insert_list(4, :activity_log_entry, %{severity: 5})
+      _inserted_records = insert_list(4, :activity_log_entry, %{severity: 9})
+      _inserted_records = insert_list(4, :activity_log_entry, %{severity: 13})
+      _inserted_records = insert_list(4, :activity_log_entry, %{severity: 17})
+      _inserted_records = insert_list(4, :activity_log_entry, %{severity: 21})
+
+      resp =
+        conn
+        |> get("/api/v1/activity_log")
+        |> json_response(200)
+
+      severity_levels =
+        resp["data"] |> Enum.map(fn entry -> entry["severity"] end) |> Enum.uniq() |> Enum.sort()
+
+      assert severity_levels == Enum.sort(["info", "warning", "error", "critical"])
+      refute Enum.member?(severity_levels, "debug")
+      assert_schema(resp, "ActivityLog", api_spec)
+    end
+
+    test "should return error and above severity level entries with appropriate query params",
+         %{
+           conn: conn,
+           api_spec: api_spec
+         } do
+      _inserted_records = insert_list(4, :activity_log_entry, %{severity: 5})
+      _inserted_records = insert_list(4, :activity_log_entry, %{severity: 9})
+      _inserted_records = insert_list(4, :activity_log_entry, %{severity: 13})
+      _inserted_records = insert_list(4, :activity_log_entry, %{severity: 17})
+      _inserted_records = insert_list(4, :activity_log_entry, %{severity: 21})
+
+      resp =
+        conn
+        |> get("/api/v1/activity_log?severity[]=error")
+        |> json_response(200)
+
+      severity_levels =
+        resp["data"] |> Enum.map(fn entry -> entry["severity"] end) |> Enum.uniq() |> Enum.sort()
+
+      assert severity_levels == Enum.sort(["error", "critical"])
+      assert_schema(resp, "ActivityLog", api_spec)
+    end
   end
 
   describe "permission based access to users" do
