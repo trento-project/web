@@ -109,7 +109,7 @@ function CheckCustomizationModal({
               onChange={(inputEvent) =>
                 handleCustomValueInput(value?.name, inputEvent.target.value)
               }
-              placeholder={value?.current_value}
+              initialValue={value?.custom_value || value?.current_value}
               disabled={!canCustomize}
             />
           </div>

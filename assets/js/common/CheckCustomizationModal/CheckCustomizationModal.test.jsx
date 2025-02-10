@@ -75,6 +75,7 @@ describe('CheckCustomizationModal', () => {
     await user.click(warningBannerCheckbox);
     expect(warningBannerCheckbox).toBeChecked();
     const inputElements = screen.getAllByRole('textbox');
+    await user.clear(inputElements[0]); // clear the current value
     expect(inputElements[0]).toBeEnabled(); // first customizable check values
     expect(inputElements[1]).toBeDisabled(); // Provider is always disabled
     await user.type(inputElements[0], customCheckValue);
@@ -118,8 +119,11 @@ describe('CheckCustomizationModal', () => {
     expect(inputElements[2]).toBeEnabled(); // third customizable check values
     expect(inputElements[3]).toBeDisabled(); // Provider is always disabled
 
+    await user.clear(inputElements[0]); // user clears the current initial value
     await user.type(inputElements[0], customCheckValue[0]);
+    await user.clear(inputElements[1]);
     await user.type(inputElements[1], customCheckValue[1]);
+    await user.clear(inputElements[2]);
     await user.type(inputElements[2], customCheckValue[2]);
 
     await user.click(screen.getByText('Save'));
@@ -167,6 +171,7 @@ describe('CheckCustomizationModal', () => {
     expect(inputElements[0]).toBeEnabled(); // first customizable check values
     expect(inputElements[1]).toBeDisabled(); // Provider is always disabled
 
+    await user.clear(inputElements[0]); // user clears the current initial value
     await user.type(inputElements[0], customCheckValue[0]);
 
     await user.click(screen.getByText('Save'));
