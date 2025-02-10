@@ -6,6 +6,7 @@ defmodule TrentoWeb.V2.ClusterJSON do
     |> Map.from_struct()
     |> Map.delete(:deregistered_at)
     |> Map.delete(:hosts)
+    |> Map.delete(:__meta__)
     |> adapt_details()
   end
 
