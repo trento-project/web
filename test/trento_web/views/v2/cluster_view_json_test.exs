@@ -16,7 +16,7 @@ defmodule TrentoWeb.V2.ClusterJSONTest do
   test "should render maintenance_mode field" do
     details = build(:hana_cluster_details)
 
-    cluster = build(:cluster, details: details)
+    cluster = insert(:cluster, [details: details], returning: true)
 
     assert %{details: %{maintenance_mode: false}} =
              ClusterJSON.cluster(%{cluster: cluster})

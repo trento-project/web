@@ -1,13 +1,11 @@
 defmodule TrentoWeb.V1.ClusterJSON do
-  alias Trento.Support.StructHelper
-
   def clusters(%{clusters: clusters}) do
     Enum.map(clusters, &cluster(%{cluster: &1}))
   end
 
   def cluster(%{cluster: cluster}) do
     cluster
-    |> StructHelper.to_atomized_map()
+    |> Map.from_struct()
     |> Map.delete(:deregistered_at)
     |> Map.delete(:hosts)
     |> adapt_v1()

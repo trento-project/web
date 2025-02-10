@@ -7,7 +7,12 @@ defmodule TrentoWeb.V1.ClusterJSONTest do
 
   describe "adapt to V1 version" do
     test "should remove the ascs/ers cluster type" do
-      cluster = build(:cluster, type: :ascs_ers, details: build(:ascs_ers_cluster_details))
+      cluster =
+        insert(
+          :cluster,
+          [type: :ascs_ers, details: build(:ascs_ers_cluster_details)],
+          returning: true
+        )
 
       assert %{type: :unknown, details: nil} =
                ClusterJSON.cluster(%{cluster: cluster})
@@ -24,20 +29,20 @@ defmodule TrentoWeb.V1.ClusterJSONTest do
 
       details = build(:hana_cluster_details, nodes: nodes)
 
-      cluster = build(:cluster, type: :hana_scale_up, details: details)
+      cluster = insert(:cluster, [type: :hana_scale_up, details: details], returning: true)
 
       %{
         details:
           %{
             nodes: [%{resources: resources} = node],
             stopped_resources: stopped_resources
-          } = details
+          } = updated_details
       } = ClusterJSON.cluster(%{cluster: cluster})
 
-      refute Access.get(details, :sites)
-      refute Access.get(details, :maintenance_mode)
-      refute Access.get(details, :architecture_type)
-      refute Access.get(details, :hana_scenario)
+      refute Access.get(updated_details, :sites)
+      refute Access.get(updated_details, :maintenance_mode)
+      refute Access.get(updated_details, :architecture_type)
+      refute Access.get(updated_details, :hana_scenario)
       refute Access.get(node, :nameserver_actual_role)
       refute Access.get(node, :indexserver_actual_role)
       refute Access.get(node, :status)
