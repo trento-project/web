@@ -1,7 +1,5 @@
 import * as databasesOverviewPage from '../pageObject/databases-overview-po';
 
-import { createUserRequestFactory } from '@lib/test-utils/factories';
-
 context('Databases Overview', () => {
   before(() => {
     databasesOverviewPage.preloadTestData();
@@ -14,32 +12,16 @@ context('Databases Overview', () => {
   });
 
   describe('Deregistration', () => {
-    const hdqDatabase = {
-      sid: 'HDQ',
-      instances: [
-        {
-          name: 'vmhdbqas01',
-          id: '99cf8a3a-48d6-57a4-b302-6e4482227ab6',
-          state: '',
-        },
-        {
-          name: 'vmhdbqas02',
-          id: 'e0c182db-32ff-55c6-a9eb-2b82dd21bc8b',
-          state: 'ACTIVE',
-        },
-      ],
-    };
-
     it(`should not display DB ${databasesOverviewPage.hdqDatabase.sid} after deregistering the primary instance`, () => {
       databasesOverviewPage.deregisterHdqDatabasePrimaryInstance();
       databasesOverviewPage.hdqDatabaseIsNotDisplayed();
     });
 
-    it(`should display DB ${hdqDatabase.sid} again after restoring the primary instance`, () => {
+    it(`should display DB ${databasesOverviewPage.hdqDatabase.sid} again after restoring the primary instance`, () => {
       databasesOverviewPage.hdqDatabaseIsDisplayed();
     });
 
-    it(`should include both instances in DB ${hdqDatabase.sid} after restoring the primary instance`, () => {
+    it(`should include both instances in DB ${databasesOverviewPage.hdqDatabase.sid} after restoring the primary instance`, () => {
       databasesOverviewPage.clickHdqDatabaseRow();
       databasesOverviewPage.bothDatabaseInstancesAreDisplayed();
     });
@@ -57,142 +39,74 @@ context('Databases Overview', () => {
   });
 
   describe('Instance deregistration', () => {
-    const hddDatabase = {
-      sid: 'HDD',
-      instance: {
-        instanceNumber: '10',
-        row: 1,
-      },
-    };
-
     before(() => {
-      cy.contains(hddDatabase.sid).should('exist');
+      databasesOverviewPage.clickHddDatabaseRow();
+    });
 
-      cy.get('table.table-fixed > tbody > tr').eq(0).click();
+    beforeEach(() => {
+      databasesOverviewPage.markHddDatabaseAsAbsent();
     });
 
     it('should mark an instance as absent and restore it as present on received respective discovery messages', () => {
-      cy.loadScenario(
-        `sap-systems-overview-${hddDatabase.sid}-${hddDatabase.instance.instanceNumber}-absent`
-      );
-
-      cy.get('table.table-fixed > tbody > tr')
-        .eq(1)
-        .find('div.table-row-group')
-        .eq(0)
-        .find('div.table-row')
-        .eq(hddDatabase.instance.row)
-        .contains('Clean up', { timeout: 15000 });
-
-      cy.loadScenario(
-        `sap-systems-overview-${hddDatabase.sid}-${hddDatabase.instance.instanceNumber}-present`
-      );
-
-      cy.get('table.table-fixed > tbody > tr')
-        .eq(1)
-        .find('div.table-row-group')
-        .eq(0)
-        .find('div.table-row')
-        .eq(hddDatabase.instance.row)
-        .should('not.contain', 'Clean up');
+      databasesOverviewPage.cleanUpButtonIsDisplayed();
+      databasesOverviewPage.markHddDatabaseAsPresent();
+      databasesOverviewPage.cleanUpButtonIsNotDisplayed();
     });
 
     it('should deregister the database after deregistering an absent primary', () => {
-      cy.loadScenario(
-        `sap-systems-overview-${hddDatabase.sid}-${hddDatabase.instance.instanceNumber}-absent`
-      );
-
-      cy.get('table.table-fixed > tbody > tr')
-        .eq(1)
-        .find('div.table-row-group')
-        .eq(0)
-        .find('div.table-row')
-        .eq(hddDatabase.instance.row)
-        .contains('Clean up', { timeout: 15000 })
-        .click();
-
-      cy.get('#headlessui-portal-root').as('modal');
-
-      cy.get('@modal').contains('button', 'Clean up').click();
-
-      cy.contains(hddDatabase.sid).should('not.exist');
+      databasesOverviewPage.clickCleanUpButton();
+      databasesOverviewPage.clickModalCleanUpButton();
+      databasesOverviewPage.hddDatabaseIsNotDisplayed();
     });
   });
 
   describe('Forbidden actions', () => {
-    const password = 'password';
-
     beforeEach(() => {
-      cy.deleteAllUsers();
-      cy.logout();
-      const user = createUserRequestFactory.build({
-        password,
-        password_confirmation: password,
-      });
-      cy.wrap(user).as('user');
+      databasesOverviewPage.apiDeleteAllUsers();
+      databasesOverviewPage.logout();
     });
 
     describe('Tag creation', () => {
       before(() => {
-        cy.addTagByColumnValue('HDQ', 'env1');
+        databasesOverviewPage.apiRemoveAllTags();
+        databasesOverviewPage.addTagByColumnValue('HDQ', 'env1');
       });
 
       it('it should prevent a tag update when the user abilities are not compliant', () => {
-        cy.get('@user').then((user) => {
-          cy.createUserWithAbilities(user, []);
-          cy.login(user.username, password);
-        });
-
-        cy.visit('/databases');
-
-        cy.contains('span', 'Add Tag').should('have.class', 'opacity-50');
-        cy.get('[data-test-id="tag-env1"]').should('have.class', 'opacity-50');
+        databasesOverviewPage.apiCreateUserWithoutAbilities();
+        databasesOverviewPage.loginWithoutTagAbilities();
+        databasesOverviewPage.visit();
+        databasesOverviewPage.addTagButtonsAreDisabled();
+        databasesOverviewPage.removeTagButtonIsDisabled();
       });
 
       it('it should allow a tag update when the user abilities are compliant', () => {
-        cy.get('@user').then((user) => {
-          cy.createUserWithAbilities(user, [
-            { name: 'all', resource: 'database_tags' },
-          ]);
-          cy.login(user.username, password);
-        });
-
-        cy.visit('/databases');
-
-        cy.contains('span', 'Add Tag').should('not.have.class', 'opacity-50');
-        cy.get('[data-test-id="tag-env1"]').should(
-          'not.have.class',
-          'opacity-50'
-        );
+        databasesOverviewPage.apiCreateUserWithDatabaseTagsAbilities();
+        databasesOverviewPage.loginWithTagAbilities();
+        databasesOverviewPage.visit();
+        databasesOverviewPage.addTagButtonsAreNotDisabled();
+        databasesOverviewPage.removeTagButtonIsEnabled();
       });
     });
 
     describe('Database instance clean up', () => {
       before(() => {
-        cy.loadScenario('sap-systems-overview-HDD-10-present');
-        cy.loadScenario('sap-systems-overview-HDD-10-absent');
+        databasesOverviewPage.markHddDatabaseAsPresent();
+        databasesOverviewPage.markHddDatabaseAsAbsent();
       });
 
       it('should forbid database instance cleanup', () => {
-        cy.get('@user').then((user) => {
-          cy.createUserWithAbilities(user, []);
-          cy.login(user.username, password);
-        });
-        cy.visit('/databases');
-
-        cy.contains('button', 'Clean up').should('be.disabled');
+        databasesOverviewPage.apiCreateUserWithoutAbilities();
+        databasesOverviewPage.loginWithoutTagAbilities();
+        databasesOverviewPage.visit();
+        databasesOverviewPage.cleanUpButtonIsDisabled();
       });
 
       it('should allow database instance clean up', () => {
-        cy.get('@user').then((user) => {
-          cy.createUserWithAbilities(user, [
-            { name: 'cleanup', resource: 'database_instance' },
-          ]);
-          cy.login(user.username, password);
-        });
-        cy.visit('/databases');
-
-        cy.contains('button', 'Clean up').should('be.enabled');
+        databasesOverviewPage.apiCreateUserWithDatabaseTagsAbilities();
+        databasesOverviewPage.loginWithTagAbilities();
+        databasesOverviewPage.visit();
+        databasesOverviewPage.cleanUpButtonIsEnabled();
       });
     });
   });

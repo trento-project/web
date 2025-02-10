@@ -1,4 +1,5 @@
 import { TOTP } from 'totp-generator';
+import { createUserRequestFactory } from '@lib/test-utils/factories';
 
 const DEFAULT_USERNAME = Cypress.env('login_user');
 const DEFAULT_PASSWORD = Cypress.env('login_password');
@@ -13,6 +14,17 @@ const navigation = {
   activityLog: 'a:contains("Activity Log")',
 };
 const signOutButton = 'button:contains("Sign out")';
+const removeEnv1TagButton = 'span span:contains("env1") span';
+export const addTagButtons = 'span span:contains("Add Tag")';
+
+// Test data
+
+const password = 'password';
+
+const user = createUserRequestFactory.build({
+  password,
+  password_confirmation: password,
+});
 
 export const visit = (url = '/') => {
   return cy.visit(url);
@@ -207,8 +219,8 @@ const isTestDataLoaded = () =>
       .then(({ body }) => body.length !== 0)
   );
 
-export const createUserWithAbilities = (payload, abilities) =>
-  apiLogin().then(({ accessToken }) =>
+export const createUserWithAbilities = (abilities) => {
+  return apiLogin().then(({ accessToken }) =>
     cy
       .request({
         url: '/api/v1/abilities',
@@ -228,10 +240,11 @@ export const createUserWithAbilities = (payload, abilities) =>
           url: '/api/v1/users',
           method: 'POST',
           auth: { bearer: accessToken },
-          body: { ...payload, abilities: abilitiesWithID },
+          body: { ...user, abilities: abilitiesWithID },
         });
       })
   );
+};
 
 export const apiDeregisterHost = (hostId) => {
   return isHostRegistered(hostId).then((isRegistered) => {
@@ -263,4 +276,44 @@ export const isHostRegistered = (hostId) => {
       });
     })
     .then(({ body }) => body.some((host) => host.id === hostId));
+};
+
+export const addTagByColumnValue = (columnValue, tagValue) => {
+  cy.get(`td:contains(${columnValue})`)
+    .parents('tr')
+    .within(() => {
+      cy.get(addTagButtons).type(`${tagValue}{enter}`);
+    });
+};
+
+export const loginWithoutTagAbilities = () =>
+  apiLoginAndCreateSession(user.username, password);
+
+export const loginWithTagAbilities = () =>
+  apiLoginAndCreateSession(user.username, password);
+
+export const apiCreateUserWithoutAbilities = () => createUserWithAbilities([]);
+
+export const addTagButtonsAreDisabled = () =>
+  cy.get(addTagButtons).should('have.class', 'opacity-50');
+
+export const addTagButtonsAreNotDisabled = () =>
+  cy.get(addTagButtons).should('not.have.class', 'opacity-50');
+
+export const removeTagButtonIsDisabled = () =>
+  cy.get(removeEnv1TagButton).should('have.class', 'opacity-50');
+
+export const removeTagButtonIsEnabled = () =>
+  cy.get(removeEnv1TagButton).should('not.have.class', 'opacity-50');
+
+export const getResourceTags = (jsonData) => {
+  const resourceTags = {};
+
+  jsonData.forEach((database) => {
+    if (database.tags && database.tags.length > 0) {
+      resourceTags[database.id] = database.tags.map((tag) => tag.value);
+    }
+  });
+
+  return resourceTags;
 };

@@ -1,7 +1,6 @@
 export * from './base-po.js';
 import * as basePage from './base-po.js';
 
-import { createUserRequestFactory } from '@lib/test-utils/factories';
 import {
   availableClusters,
   healthyClusterScenario,
@@ -17,19 +16,10 @@ const clusterNames = '.tn-clustername';
 const paginationNavigationButtons = 'div[class*="bg-gray-50"] ul button';
 const tableRows = 'tbody tr';
 const rowCells = 'td';
-const addTagButtons = 'span span:contains("Add Tag")';
-const removeEnv1TagButton = 'span span:contains("env1") span';
 
 //Test data
 export const healthyClusterName = healthyClusterScenario.clusterName;
 export const unhealthyClusterName = unhealthyClusterScenario.clusterName;
-
-const password = 'password';
-
-const user = createUserRequestFactory.build({
-  password,
-  password_confirmation: password,
-});
 
 export const hanaCluster1 = {
   name: 'hana_cluster_1',
@@ -65,16 +55,8 @@ export const waitForClustersEndpoint = () =>
 
 export const setClusterTags = () => {
   taggingRules.forEach(([clusterName, tag]) => {
-    addTagByColumnValue(clusterName, tag);
+    basePage.addTagByColumnValue(clusterName, tag);
   });
-};
-
-const addTagByColumnValue = (columnValue, tagValue) => {
-  cy.get(`td:contains(${columnValue})`)
-    .parents('tr')
-    .within(() => {
-      cy.get(addTagButtons).type(`${tagValue}{enter}`);
-    });
 };
 
 // Validations
@@ -88,18 +70,6 @@ export const hanaCluster1TagsAreDisplayed = () => {
         .should('be.visible')
     );
 };
-
-export const addTagButtonsAreDisabled = () =>
-  cy.get(addTagButtons).should('have.class', 'opacity-50');
-
-export const addTagButtonsAreNotDisabled = () =>
-  cy.get(addTagButtons).should('not.have.class', 'opacity-50');
-
-export const removeTagButtonIsDisabled = () =>
-  cy.get(removeEnv1TagButton).should('have.class', 'opacity-50');
-
-export const removeTagButtonIsEnabled = () =>
-  cy.get(removeEnv1TagButton).should('not.have.class', 'opacity-50');
 
 export const clusterNameLinkIsDisplayedAsId = (clusterName) => {
   const clusterID = clusterIdByName(clusterName);
@@ -237,20 +207,6 @@ export const apiSetTagsHanaCluster1 = () => {
   return tagsForCluster1.forEach((tag) => apiSetTag('hana_cluster_1', tag));
 };
 
-export const apiCreateUserWithoutAbilities = () =>
-  basePage.createUserWithAbilities(user, []);
-
-export const apiCreateUserWithClusterTagsAbilities = () =>
-  basePage.createUserWithAbilities(user, [
-    { name: 'all', resource: 'cluster_tags' },
-  ]);
-
-export const loginWithoutTagAbilities = () =>
-  basePage.apiLoginAndCreateSession(user.username, password);
-
-export const loginWithTagAbilities = () =>
-  basePage.apiLoginAndCreateSession(user.username, password);
-
 const apiSelectChecks = (clusterId, checks) => {
   const checksBody = JSON.stringify({
     checks: checks,
@@ -316,3 +272,6 @@ export const apiRemoveUnhealthyClusterChecks = () =>
   apiSelectChecks(clusterIdByName(unhealthyClusterScenario.clusterName), []);
 
 export const restoreClusterName = () => basePage.loadScenario('cluster-4-SOK');
+
+export const apiCreateUserWithClusterTagsAbilities = () =>
+  basePage.createUserWithAbilities([{ name: 'all', resource: 'cluster_tags' }]);
