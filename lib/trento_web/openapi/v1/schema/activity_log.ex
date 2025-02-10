@@ -27,6 +27,10 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ActivityLog do
               type: :string,
               description: "Actor causing an Activity Log entry. E.g. System or a specific user."
             },
+            severity: %Schema{
+              type: :string,
+              description: "Severity level of an Activity Log entry. E.g. info, warning etc."
+            },
             metadata: %Schema{
               type: :object
             },
