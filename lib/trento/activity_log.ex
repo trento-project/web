@@ -131,8 +131,8 @@ defmodule Trento.ActivityLog do
            op: :>=,
            value:
              v
-             |> (&String.to_existing_atom/1).()
-             |> (&SeverityLevel.severity_level_to_integer/1).()
+             |> String.to_existing_atom()
+             |> SeverityLevel.severity_level_to_integer()
          }}
 
       param ->
