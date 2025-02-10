@@ -108,7 +108,7 @@ context('Clusters Overview', () => {
 
       it('should allow a tag update when the user abilities are compliant', () => {
         clustersOverviewPage.apiCreateUserWithClusterTagsAbilities();
-        clustersOverviewPage.loginWithTagAbilities();
+        clustersOverviewPage.loginWithAbilities();
         clustersOverviewPage.visit();
         clustersOverviewPage.addTagButtonsAreNotDisabled();
         clustersOverviewPage.removeTagButtonIsEnabled();

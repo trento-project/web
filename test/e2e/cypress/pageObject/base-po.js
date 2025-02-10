@@ -307,7 +307,7 @@ export const isHostRegistered = (hostId) => {
 export const loginWithoutAbilities = () =>
   apiLoginAndCreateSession(user.username, password);
 
-export const loginWithTagAbilities = () =>
+export const loginWithAbilities = () =>
   apiLoginAndCreateSession(user.username, password);
 
 export const apiCreateUserWithoutAbilities = () => createUserWithAbilities([]);

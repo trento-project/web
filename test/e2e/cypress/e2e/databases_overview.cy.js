@@ -82,7 +82,7 @@ context('Databases Overview', () => {
 
       it('it should allow a tag update when the user abilities are compliant', () => {
         databasesOverviewPage.apiCreateUserWithDatabaseTagsAbilities();
-        databasesOverviewPage.loginWithTagAbilities();
+        databasesOverviewPage.loginWithAbilities();
         databasesOverviewPage.visit();
         databasesOverviewPage.addTagButtonsAreNotDisabled();
         databasesOverviewPage.removeTagButtonIsEnabled();
@@ -104,7 +104,7 @@ context('Databases Overview', () => {
 
       it('should allow database instance clean up', () => {
         databasesOverviewPage.apiCreateUserWithCleanupAbilities();
-        databasesOverviewPage.loginWithTagAbilities();
+        databasesOverviewPage.loginWithAbilities();
         databasesOverviewPage.visit();
         databasesOverviewPage.cleanUpButtonIsEnabled();
       });
