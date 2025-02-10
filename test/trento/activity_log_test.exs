@@ -161,6 +161,47 @@ defmodule Trento.ActivityLogTest do
     end
   end
 
+  describe "Filtering by severity levels" do
+    test "should return all entries severity level entries when no param provided" do
+      _inserted_records = insert_list(4, :activity_log_entry, %{severity: 5})
+      _inserted_records = insert_list(4, :activity_log_entry, %{severity: 9})
+      _inserted_records = insert_list(4, :activity_log_entry, %{severity: 13})
+      _inserted_records = insert_list(4, :activity_log_entry, %{severity: 17})
+      _inserted_records = insert_list(4, :activity_log_entry, %{severity: 21})
+
+      {:ok, entries, _} = ActivityLog.list_activity_log(%{})
+
+      severity_levels =
+        entries
+        |> Enum.map(fn entry -> entry.severity end)
+        |> Enum.uniq()
+        |> Enum.map(&ActivityLog.map_severity_integer_to_text/1)
+        |> Enum.sort()
+
+      assert severity_levels == Enum.sort(["debug", "info", "warning", "error", "critical"])
+    end
+
+    test "should return error and above severity level entries when queried with appropriate param" do
+      _inserted_records = insert_list(4, :activity_log_entry, %{severity: 5})
+      _inserted_records = insert_list(4, :activity_log_entry, %{severity: 9})
+      _inserted_records = insert_list(4, :activity_log_entry, %{severity: 13})
+      _inserted_records = insert_list(4, :activity_log_entry, %{severity: 17})
+      _inserted_records = insert_list(4, :activity_log_entry, %{severity: 21})
+
+      assert {:ok, entries, _} = ActivityLog.list_activity_log(%{severity: "error"})
+
+      severity_levels =
+        entries
+        |> Enum.map(fn entry -> entry.severity end)
+        |> Enum.uniq()
+        |> Enum.map(&ActivityLog.map_severity_integer_to_text/1)
+        |> Enum.sort()
+
+      assert severity_levels == Enum.sort(["error", "critical"])
+      assert length(entries) == 8
+    end
+  end
+
   describe "Search by metadata tests" do
     test "Single keyword" do
       keyword = "Foo-4_2/:2.4"
