@@ -136,7 +136,7 @@ const clusterIdByName = (clusterName) =>
 
 // API Interactions
 
-export const apiRemoveTagByClusterId = (clusterId, tagId) => {
+const apiRemoveTagByClusterId = (clusterId, tagId) => {
   return basePage.apiLogin().then(({ accessToken }) =>
     cy.request({
       url: `/api/v1/clusters/${clusterId}/tags/${tagId}`,
@@ -161,7 +161,7 @@ const apiGetClusters = () => {
   });
 };
 
-export const apiRemoveAllTags = () => {
+export const apiRemoveAllClusterTags = () => {
   apiGetClusters().then((response) => {
     const clusterTags = getClusterTags(response.body);
     Object.entries(clusterTags).forEach(([clusterId, tags]) => {

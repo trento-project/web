@@ -68,7 +68,7 @@ context('Databases Overview', () => {
 
     describe('Tag creation', () => {
       before(() => {
-        databasesOverviewPage.apiRemoveAllTags();
+        databasesOverviewPage.apiRemoveAllDatabaseTags();
         databasesOverviewPage.addTagByColumnValue('HDQ', 'env1');
       });
 

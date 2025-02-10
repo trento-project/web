@@ -34,6 +34,7 @@ const hddDatabase = {
 };
 
 // Selectors
+
 const hdqDatabaseCell = `tr:contains("${hdqDatabase.sid}")`;
 
 const hddDatabaseCell = `tr:contains("${hddDatabase.sid}")`;
@@ -50,26 +51,20 @@ const cleanUpButtonModal =
 
 const cleanUpButtons = 'button:contains("Clean up")';
 
+const getCleanUpButtonByIdAndInstanceIndex = (id, index) =>
+  `tbody tr:contains("${id}") + tr div[class="table-row-group"] div[class*="table-row border-b"]:nth-child(${
+    index + 1
+  }) span:contains("Clean up")`;
+
 export const visit = () => basePage.visit('/databases');
 
-export const deregisterHdqDatabasePrimaryInstance = () =>
-  basePage.apiDeregisterHost(hdqDatabase.instances[0].id);
-
-export const deregisterNwqSystemAscsInstance = () =>
-  basePage.apiDeregisterHost(nwqSystem.ascsInstance.id);
-
-export const restoreHdqDatabasePrimaryInstance = () =>
-  basePage.loadScenario(`host-${hdqDatabase.instances[0].name}-restore`);
+// UI Validations
 
 export const hdqDatabaseIsNotDisplayed = () =>
   cy.get(hdqDatabaseCell).should('not.exist');
 
 export const hdqDatabaseIsDisplayed = () =>
   cy.get(hdqDatabaseCell).should('be.visible');
-
-export const clickHdqDatabaseRow = () => cy.get(hdqDatabaseCell).click();
-
-export const clickHddDatabaseRow = () => cy.get(hddDatabaseCell).click();
 
 export const hddDatabaseIsNotDisplayed = () =>
   cy.get(hddDatabaseCell).should('not.exist');
@@ -97,22 +92,11 @@ export const deletedSapSystemToasterIsDisplayed = () =>
 export const databaseInstancesAreStillTheSame = () =>
   cy.get(tableGroupRows).should('have.length', 6);
 
-export const markHddDatabaseAsAbsent = () => {
-  basePage.loadScenario(
-    `sap-systems-overview-${hddDatabase.sid}-${hddDatabase.instance.instanceNumber}-absent`
-  );
-};
+export const cleanUpButtonIsEnabled = () =>
+  cy.get(cleanUpButtons).should('be.enabled');
 
-export const markHddDatabaseAsPresent = () => {
-  basePage.loadScenario(
-    `sap-systems-overview-${hddDatabase.sid}-${hddDatabase.instance.instanceNumber}-present`
-  );
-};
-
-const getCleanUpButtonByIdAndInstanceIndex = (id, index) =>
-  `tbody tr:contains("${id}") + tr div[class="table-row-group"] div[class*="table-row border-b"]:nth-child(${
-    index + 1
-  }) span:contains("Clean up")`;
+export const cleanUpButtonIsDisabled = () =>
+  cy.get(cleanUpButtons).should('be.disabled');
 
 export const cleanUpButtonIsDisplayed = () => {
   const cleanUpButtonSelector = getCleanUpButtonByIdAndInstanceIndex(
@@ -132,6 +116,12 @@ export const cleanUpButtonIsNotDisplayed = () => {
   return cy.get(cleanUpButtonSelector).should('not.exist', { timeout: 15000 });
 };
 
+// UI Interactions
+
+export const clickHdqDatabaseRow = () => cy.get(hdqDatabaseCell).click();
+
+export const clickHddDatabaseRow = () => cy.get(hddDatabaseCell).click();
+
 export const clickCleanUpButton = () => {
   const cleanUpButtonSelector = getCleanUpButtonByIdAndInstanceIndex(
     hddDatabase.sid,
@@ -142,6 +132,29 @@ export const clickCleanUpButton = () => {
 
 export const clickModalCleanUpButton = () => cy.get(cleanUpButtonModal).click();
 
+// API Interactions
+
+export const deregisterHdqDatabasePrimaryInstance = () =>
+  basePage.apiDeregisterHost(hdqDatabase.instances[0].id);
+
+export const deregisterNwqSystemAscsInstance = () =>
+  basePage.apiDeregisterHost(nwqSystem.ascsInstance.id);
+
+export const restoreHdqDatabasePrimaryInstance = () =>
+  basePage.loadScenario(`host-${hdqDatabase.instances[0].name}-restore`);
+
+export const markHddDatabaseAsAbsent = () => {
+  basePage.loadScenario(
+    `sap-systems-overview-${hddDatabase.sid}-${hddDatabase.instance.instanceNumber}-absent`
+  );
+};
+
+export const markHddDatabaseAsPresent = () => {
+  basePage.loadScenario(
+    `sap-systems-overview-${hddDatabase.sid}-${hddDatabase.instance.instanceNumber}-present`
+  );
+};
+
 export const apiCreateUserWithDatabaseTagsAbilities = () =>
   basePage.createUserWithAbilities([
     { name: 'all', resource: 'database_tags' },
@@ -151,22 +164,6 @@ export const apiCreateUserWithCleanupAbilities = () =>
   basePage.createUserWithAbilities([
     { name: 'cleanup', resource: 'database_instance' },
   ]);
-
-export const cleanUpButtonIsEnabled = () =>
-  cy.get(cleanUpButtons).should('be.enabled');
-
-export const cleanUpButtonIsDisabled = () =>
-  cy.get(cleanUpButtons).should('be.disabled');
-
-export const apiRemoveTagByDatabaseId = (databaseId, tagId) => {
-  return basePage.apiLogin().then(({ accessToken }) =>
-    cy.request({
-      url: `/api/v1/databases/${databaseId}/tags/${tagId}`,
-      method: 'DELETE',
-      auth: { bearer: accessToken },
-    })
-  );
-};
 
 const apiGetDatabases = () => {
   return basePage.apiLogin().then(({ accessToken }) => {
@@ -183,7 +180,7 @@ const apiGetDatabases = () => {
   });
 };
 
-export const apiRemoveAllTags = () => {
+export const apiRemoveAllDatabaseTags = () => {
   apiGetDatabases().then((response) => {
     const databaseTags = basePage.getResourceTags(response.body);
     Object.entries(databaseTags).forEach(([databaseId, tags]) => {
@@ -191,4 +188,14 @@ export const apiRemoveAllTags = () => {
     });
   });
   return basePage.refresh();
+};
+
+const apiRemoveTagByDatabaseId = (databaseId, tagId) => {
+  return basePage.apiLogin().then(({ accessToken }) =>
+    cy.request({
+      url: `/api/v1/databases/${databaseId}/tags/${tagId}`,
+      method: 'DELETE',
+      auth: { bearer: accessToken },
+    })
+  );
 };

@@ -38,6 +38,16 @@ export const refresh = () => {
   return cy.reload();
 };
 
+// UI Interactions
+export const addTagByColumnValue = (columnValue, tagValue) => {
+  return cy
+    .get(`td:contains(${columnValue})`)
+    .parents('tr')
+    .within(() => {
+      cy.get(addTagButtons).type(`${tagValue}{enter}`);
+    });
+};
+
 export const clickActivityLogNavigationItem = () => {
   return cy.get(navigation.activityLog).click();
 };
@@ -61,9 +71,60 @@ export const clickUserDropdownProfileButton = () => {
   return cy.get(userDropdownProfileButton).click();
 };
 
+export const typeTotpCode = (totpSecret, inputField) => {
+  const { otp } = TOTP.generate(totpSecret);
+  return cy
+    .get(inputField)
+    .clear()
+    .type(otp)
+    .then(() => totpSecret);
+};
+
+// UI Validations
+
 export const userDropdownMenuButtonHasTheExpectedText = (username) => {
   return cy.get(userDropdownMenuButton).should('have.text', username);
 };
+
+export const pageTitleIsCorrectlyDisplayed = (title) => {
+  return cy.get(pageTitle).should('contain', title);
+};
+
+export const accessForbiddenMessageIsDisplayed = () => {
+  return cy.get(accessForbiddenMessage).should('be.visible');
+};
+
+export const validateItemNotPresentInNavigationMenu = (itemName) => {
+  return cy.get(navigation.navigationItems).each(($element) => {
+    cy.wrap($element).should('not.include.text', itemName);
+  });
+};
+
+export const validateItemPresentInNavigationMenu = (navigationMenuItem) => {
+  return cy.get(navigation.navigationItems).then(($elements) => {
+    const itemFound = Array.from($elements).some((element) =>
+      element.innerText.includes(navigationMenuItem)
+    );
+    expect(
+      itemFound,
+      `"${navigationMenuItem}" navigation item should be present`
+    ).to.be.true;
+  });
+};
+
+export const addTagButtonsAreDisabled = () =>
+  cy.get(addTagButtons).should('have.class', 'opacity-50');
+
+export const addTagButtonsAreNotDisabled = () =>
+  cy.get(addTagButtons).should('not.have.class', 'opacity-50');
+
+export const removeTagButtonIsDisabled = () =>
+  cy.get(removeEnv1TagButton).should('have.class', 'opacity-50');
+
+export const removeTagButtonIsEnabled = () =>
+  cy.get(removeEnv1TagButton).should('not.have.class', 'opacity-50');
+
+// API Interactions & Validations
 
 export const validateResponseStatusCode = (
   endpointAlias,
@@ -73,15 +134,6 @@ export const validateResponseStatusCode = (
     .wait(`@${endpointAlias}`)
     .its('response.statusCode')
     .should('eq', expectedStatusCode);
-};
-
-export const typeTotpCode = (totpSecret, inputField) => {
-  const { otp } = TOTP.generate(totpSecret);
-  return cy
-    .get(inputField)
-    .clear()
-    .type(otp)
-    .then(() => totpSecret);
 };
 
 export const apiLogin = (
@@ -140,32 +192,6 @@ export const apiDeleteAllUsers = () => {
         if (id !== 1) apiDeleteUser(id, accessToken);
       });
     });
-  });
-};
-
-export const pageTitleIsCorrectlyDisplayed = (title) => {
-  return cy.get(pageTitle).should('contain', title);
-};
-
-export const accessForbiddenMessageIsDisplayed = () => {
-  return cy.get(accessForbiddenMessage).should('be.visible');
-};
-
-export const validateItemNotPresentInNavigationMenu = (itemName) => {
-  return cy.get(navigation.navigationItems).each(($element) => {
-    cy.wrap($element).should('not.include.text', itemName);
-  });
-};
-
-export const validateItemPresentInNavigationMenu = (navigationMenuItem) => {
-  return cy.get(navigation.navigationItems).then(($elements) => {
-    const itemFound = Array.from($elements).some((element) =>
-      element.innerText.includes(navigationMenuItem)
-    );
-    expect(
-      itemFound,
-      `"${navigationMenuItem}" navigation item should be present`
-    ).to.be.true;
   });
 };
 
@@ -278,14 +304,6 @@ export const isHostRegistered = (hostId) => {
     .then(({ body }) => body.some((host) => host.id === hostId));
 };
 
-export const addTagByColumnValue = (columnValue, tagValue) => {
-  cy.get(`td:contains(${columnValue})`)
-    .parents('tr')
-    .within(() => {
-      cy.get(addTagButtons).type(`${tagValue}{enter}`);
-    });
-};
-
 export const loginWithoutAbilities = () =>
   apiLoginAndCreateSession(user.username, password);
 
@@ -294,26 +312,12 @@ export const loginWithTagAbilities = () =>
 
 export const apiCreateUserWithoutAbilities = () => createUserWithAbilities([]);
 
-export const addTagButtonsAreDisabled = () =>
-  cy.get(addTagButtons).should('have.class', 'opacity-50');
-
-export const addTagButtonsAreNotDisabled = () =>
-  cy.get(addTagButtons).should('not.have.class', 'opacity-50');
-
-export const removeTagButtonIsDisabled = () =>
-  cy.get(removeEnv1TagButton).should('have.class', 'opacity-50');
-
-export const removeTagButtonIsEnabled = () =>
-  cy.get(removeEnv1TagButton).should('not.have.class', 'opacity-50');
-
-export const getResourceTags = (jsonData) => {
+export const getResourceTags = (resourceResponse) => {
   const resourceTags = {};
-
-  jsonData.forEach((database) => {
-    if (database.tags && database.tags.length > 0) {
-      resourceTags[database.id] = database.tags.map((tag) => tag.value);
+  resourceResponse.forEach((resourceItem) => {
+    if (resourceItem.tags && resourceItem.tags.length > 0) {
+      resourceTags[resourceItem.id] = resourceItem.tags.map((tag) => tag.value);
     }
   });
-
   return resourceTags;
 };

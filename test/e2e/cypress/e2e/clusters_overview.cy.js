@@ -62,7 +62,7 @@ context('Clusters Overview', () => {
   describe('Clusters Tagging', () => {
     beforeEach(() => {
       clustersOverviewPage.restoreClusterName();
-      clustersOverviewPage.apiRemoveAllTags();
+      clustersOverviewPage.apiRemoveAllClusterTags();
     });
 
     it('should tag each cluster with the corresponding tag', () => {
@@ -73,7 +73,7 @@ context('Clusters Overview', () => {
 
   describe('Deregistration', () => {
     before(() => {
-      clustersOverviewPage.apiRemoveAllTags();
+      clustersOverviewPage.apiRemoveAllClusterTags();
       clustersOverviewPage.apiSetTagsHanaCluster1();
       clustersOverviewPage.apiDeregisterAllClusterHosts();
     });
@@ -92,7 +92,7 @@ context('Clusters Overview', () => {
   describe('Forbidden action', () => {
     describe('Tag operations', () => {
       beforeEach(() => {
-        clustersOverviewPage.apiRemoveAllTags();
+        clustersOverviewPage.apiRemoveAllClusterTags();
         clustersOverviewPage.apiSetTagsHanaCluster1();
         clustersOverviewPage.apiDeleteAllUsers();
         clustersOverviewPage.logout();
