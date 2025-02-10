@@ -20,6 +20,7 @@ defmodule Trento.Factory do
     AscsErsClusterNode,
     AscsErsClusterSapSystem,
     ClusterResource,
+    ClusterResourceParent,
     HanaClusterDetails,
     HanaClusterNode,
     HanaClusterSite,
@@ -645,7 +646,16 @@ defmodule Trento.Factory do
       role: Faker.Beer.hop(),
       status: Faker.Pokemon.name(),
       fail_count: Enum.random(0..100),
-      managed: Enum.random([false, true])
+      managed: Enum.random([false, true]),
+      parent: build(:cluster_resource_parent)
+    }
+  end
+
+  def cluster_resource_parent_factory do
+    %ClusterResourceParent{
+      id: Faker.UUID.v4(),
+      managed: Enum.random([false, true]),
+      multi_state: Enum.random([false, true])
     }
   end
 

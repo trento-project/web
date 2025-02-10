@@ -17,6 +17,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
 
   alias Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload
 
+  alias Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.{
+    CrmmonClone,
+    CrmmonGroup,
+    CrmmonResource
+  }
+
   @uuid_namespace Application.compile_env!(:trento, :uuid_namespace)
 
   # If hana_<sid>_glob_srmode or hana_<sid>_glob_op_mode attributes are not present
@@ -643,14 +649,15 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
       _ ->
         false
     end)
-    |> Enum.map(fn %{id: id, agent: type, role: role} = resource ->
+    |> Enum.map(fn %{id: id, agent: type, role: role, parent: parent} = resource ->
       %{
         id: id,
         type: type,
         role: role,
         status: parse_resource_status(resource),
         fail_count: parse_fail_count(node_name, id, crmmon),
-        managed: parse_managed(resource)
+        managed: parse_managed(resource),
+        parent: parent
       }
     end)
   end
@@ -793,11 +800,34 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
          groups: groups,
          clones: clones
        }) do
-    Enum.concat(
-      resources,
-      Enum.flat_map(clones, &Map.get(&1, :resources, [])) ++
-        Enum.flat_map(groups, &Map.get(&1, :resources, []))
-    )
+    enriched_resources = enrich_parent(resources)
+    enriched_clones = enrich_parent(clones)
+    enriched_groups = enrich_parent(groups)
+
+    Enum.concat([enriched_resources, enriched_clones, enriched_groups])
+  end
+
+  defp enrich_parent(resource_group) do
+    Enum.flat_map(resource_group, fn
+      %CrmmonClone{id: id, managed: managed, multi_state: multi_state, resources: resources} ->
+        Enum.map(resources, fn resource ->
+          put_parent(resource, %{id: id, managed: managed, multi_state: multi_state})
+        end)
+
+      %CrmmonGroup{id: id, resources: resources} ->
+        Enum.map(resources, fn resource ->
+          put_parent(resource, %{id: id, managed: nil, multi_state: nil})
+        end)
+
+      %CrmmonResource{} = resource ->
+        [put_parent(resource, nil)]
+    end)
+  end
+
+  defp put_parent(resource, parent) do
+    resource
+    |> Map.from_struct()
+    |> Map.put(:parent, parent)
   end
 
   defp parse_resource_status(%{active: true}), do: "Active"

@@ -60,6 +60,6 @@ defmodule TrentoWeb.V1.ClusterJSON do
   end
 
   defp adapt_resources(resources) do
-    Enum.map(resources, &Map.drop(&1, [:managed]))
+    Enum.map(resources, &Map.drop(&1, [:managed, :parent]))
   end
 end

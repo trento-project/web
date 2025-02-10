@@ -44,10 +44,12 @@ defmodule TrentoWeb.V1.ClusterJSONTest do
 
       Enum.each(stopped_resources, fn stopped_resource ->
         refute Map.has_key?(stopped_resource, :managed)
+        refute Map.has_key?(stopped_resource, :parent)
       end)
 
       Enum.each(resources, fn resource ->
         refute Map.has_key?(resource, :managed)
+        refute Map.has_key?(resource, :parent)
       end)
     end
   end
