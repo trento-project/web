@@ -317,7 +317,7 @@ defmodule TrentoWeb.V1.ActivityLogControllerTest do
 
       resp =
         conn
-        |> get("/api/v1/activity_log?severity[]=error")
+        |> get("/api/v1/activity_log?severity=error")
         |> json_response(200)
 
       severity_levels =

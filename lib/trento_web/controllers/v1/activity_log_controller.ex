@@ -63,8 +63,9 @@ defmodule TrentoWeb.V1.ActivityLogController do
       severity: [
         in: :query,
         schema: %OpenApiSpex.Schema{
-          type: :array,
-          default: ["info", "warning", "error", "critical"]
+          type: :string,
+          enum: ["debug", "info", "warning", "error", "critical"],
+          default: "info"
         },
         required: false
       ]

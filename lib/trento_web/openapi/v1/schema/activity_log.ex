@@ -29,6 +29,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ActivityLog do
             },
             severity: %Schema{
               type: :string,
+              enum: [:debug, :info, :warning, :error, :critical],
               description: "Severity level of an Activity Log entry. E.g. info, warning etc."
             },
             metadata: %Schema{
