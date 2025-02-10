@@ -232,7 +232,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
         database_instances =
         build_list(
           2,
-          :database_instance_without_host,
+          :database_instance,
           database_id: database_sap_system_id
         )
 
@@ -243,7 +243,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
         application_instances =
         build_list(
           2,
-          :application_instance_without_host
+          :application_instance
         )
 
       assert {:ok,
@@ -275,7 +275,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
 
     test "should not deregister any instance if the discovered instances did not change" do
       application_instance =
-        build(:application_instance_without_host,
+        build(:application_instance,
           features: "ABAP|GATEWAY|ICMAN|IGS",
           host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
           instance_number: "02",
@@ -302,12 +302,12 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
 
     test "should deregister all instances if the discovered instances is an empty list" do
       application_instance =
-        build(:application_instance_without_host,
+        build(:application_instance,
           instance_number: "02"
         )
 
       database_instance =
-        build(:database_instance_without_host,
+        build(:database_instance,
           instance_number: "10"
         )
 
@@ -327,12 +327,12 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
 
     test "should deregister all instances if the discovered instances contains an empty list inside a regular payload" do
       application_instance =
-        build(:application_instance_without_host,
+        build(:application_instance,
           instance_number: "02"
         )
 
       database_instance =
-        build(:database_instance_without_host,
+        build(:database_instance,
           instance_number: "10"
         )
 

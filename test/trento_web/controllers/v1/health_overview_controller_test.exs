@@ -29,7 +29,7 @@ defmodule TrentoWeb.V1.HealthOverviewControllerTest do
     } = insert(:sap_system, database_id: database_id, health: Health.critical())
 
     insert(
-      :database_instance_without_host,
+      :database_instance,
       database_id: database_id,
       sid: "HDD",
       host_id: host_1_id,
@@ -37,7 +37,7 @@ defmodule TrentoWeb.V1.HealthOverviewControllerTest do
     )
 
     insert(
-      :application_instance_without_host,
+      :application_instance,
       sap_system_id: sap_system_id,
       sid: sid,
       host_id: host_1_id,

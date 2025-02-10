@@ -225,7 +225,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
       instance_number: instance_number,
       host_id: host_id,
       sid: sid
-    } = insert(:application_instance_without_host)
+    } = insert(:application_instance)
 
     absent_at = DateTime.utc_now()
 
@@ -257,7 +257,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
       instance_number: instance_number,
       host_id: host_id,
       sid: sid
-    } = insert(:application_instance_without_host, absent_at: DateTime.utc_now())
+    } = insert(:application_instance, absent_at: DateTime.utc_now())
 
     marked_present_event = %ApplicationInstanceMarkedPresent{
       instance_number: instance_number,
@@ -310,13 +310,13 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
       insert(:sap_system, deregistered_at: DateTime.utc_now(), database_id: database_id)
 
     database_instance =
-      insert(:database_instance_without_host, database_id: database_id)
+      insert(:database_instance, database_id: database_id)
       |> Map.from_struct()
       |> Map.delete(:__meta__)
       |> Map.delete(:host)
 
     application_instance =
-      insert(:application_instance_without_host, sap_system_id: sap_system_id)
+      insert(:application_instance, sap_system_id: sap_system_id)
       |> Map.from_struct()
       |> Map.delete(:__meta__)
       |> Map.delete(:host)

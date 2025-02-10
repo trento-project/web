@@ -29,13 +29,13 @@ defmodule Trento.SapSystemsTest do
 
       application_instances =
         Enum.sort_by(
-          insert_list(5, :application_instance_without_host, sap_system_id: sap_system_id),
+          insert_list(5, :application_instance, sap_system_id: sap_system_id),
           &{&1.instance_number, &1.host_id}
         )
 
       database_instances =
         Enum.sort_by(
-          insert_list(5, :database_instance_without_host, database_id: database_id),
+          insert_list(5, :database_instance, database_id: database_id),
           &{&1.instance_number, &1.host_id}
         )
 
@@ -75,8 +75,8 @@ defmodule Trento.SapSystemsTest do
 
     test "should return all the instances with the matching host_id" do
       host_id = UUID.uuid4()
-      insert_list(10, :application_instance_without_host, host_id: host_id)
-      insert_list(10, :application_instance_without_host)
+      insert_list(10, :application_instance, host_id: host_id)
+      insert_list(10, :application_instance)
 
       application_instances = SapSystems.get_application_instances_by_host_id(host_id)
 
@@ -123,7 +123,7 @@ defmodule Trento.SapSystemsTest do
 
     test "should not delete a not absent application instance" do
       %{sap_system_id: sap_system_id, host_id: host_id, instance_number: instance_number} =
-        insert(:application_instance_without_host, absent_at: nil)
+        insert(:application_instance, absent_at: nil)
 
       assert {:error, :instance_present} =
                SapSystems.deregister_application_instance(

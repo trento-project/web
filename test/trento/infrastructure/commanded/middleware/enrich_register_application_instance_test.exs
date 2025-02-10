@@ -10,11 +10,9 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterApplicationIn
   test "should return an enriched command if the database was found by the ip and tenant" do
     [%{name: tenant_name}, _] = tenants = build_list(2, :tenant)
 
+    %{id: host_id, ip_addresses: [ip]} = insert(:host)
     %{id: database_id, health: health} = insert(:database, tenants: tenants)
-
-    %{
-      host: %{ip_addresses: [ip]}
-    } = insert(:database_instance, database_id: database_id)
+    insert(:database_instance, database_id: database_id, host_id: host_id)
 
     command =
       build(
@@ -49,7 +47,7 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterApplicationIn
     %{
       host: %{ip_addresses: [ip]}
     } =
-      insert(:database_instance_without_host,
+      insert(:database_instance,
         database_id: database_id,
         host_id: deregistered_host.id,
         database_id: database_id,

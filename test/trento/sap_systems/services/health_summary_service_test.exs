@@ -31,13 +31,13 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
       } = insert(:sap_system, database_id: database_id)
 
       insert(
-        :database_instance_without_host,
+        :database_instance,
         database_id: database_id,
         host_id: a_host_id
       )
 
       insert(
-        :application_instance_without_host,
+        :application_instance,
         sap_system_id: sap_system_id,
         sid: sid,
         host_id: a_host_id
