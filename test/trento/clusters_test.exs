@@ -477,10 +477,10 @@ defmodule Trento.ClustersTest do
 
       Enum.map(
         hosts,
-        fn h ->
+        fn %{id: host_id} ->
           insert(:application_instance_without_host,
             sap_system_id: sap_system_id,
-            host: h,
+            host_id: host_id,
             sid: sid
           )
         end
@@ -527,10 +527,10 @@ defmodule Trento.ClustersTest do
 
       Enum.map(
         hosts,
-        fn h ->
+        fn %{id: host_id} ->
           insert(:application_instance_without_host,
             sap_system_id: sap_system_id,
-            host: h,
+            host_id: host_id,
             sid: sid
           )
         end
@@ -579,10 +579,10 @@ defmodule Trento.ClustersTest do
 
       Enum.map(
         hosts,
-        fn h ->
+        fn %{id: host_id} ->
           insert(:application_instance_without_host,
             sap_system_id: sap_system_id,
-            host: h,
+            host_id: host_id,
             sid: sid
           )
         end
@@ -642,7 +642,7 @@ defmodule Trento.ClustersTest do
 
       insert(:application_instance_without_host,
         sap_system_id: sap_system_id_1,
-        host: host_1,
+        host_id: host_1.id,
         sid: sid_1
       )
 
@@ -650,7 +650,7 @@ defmodule Trento.ClustersTest do
 
       insert(:application_instance_without_host,
         sap_system_id: sap_system_id_2,
-        host: host_2,
+        host_id: host_2.id,
         sid: sid_2
       )
 
@@ -658,14 +658,14 @@ defmodule Trento.ClustersTest do
 
       insert(:application_instance_without_host,
         sap_system_id: other_cluster_sap_system_id,
-        host: host_with_other_cluster_id
+        host_id: host_with_other_cluster_id.id
       )
 
       host_with_other_sid = insert(:host, cluster_id: cluster_id)
 
       insert(:application_instance_without_host,
         sap_system_id: sap_system_id_1,
-        host: host_with_other_sid,
+        host_id: host_with_other_sid.id,
         sid: other_sid
       )
 
@@ -723,7 +723,7 @@ defmodule Trento.ClustersTest do
 
       insert(:application_instance_without_host,
         sap_system_id: sap_system_id_1,
-        host: host_1,
+        host_id: host_1.id,
         sid: sid_1
       )
 
@@ -731,7 +731,7 @@ defmodule Trento.ClustersTest do
 
       insert(:application_instance_without_host,
         sap_system_id: sap_system_id_2,
-        host: host_2,
+        host_id: host_2.id,
         sid: sid_2
       )
 
@@ -739,14 +739,14 @@ defmodule Trento.ClustersTest do
 
       insert(:application_instance_without_host,
         sap_system_id: other_cluster_sap_system_id,
-        host: host_with_other_cluster_id
+        host_id: host_with_other_cluster_id.id
       )
 
       host_with_other_sid = insert(:host, cluster_id: cluster_id)
 
       insert(:application_instance_without_host,
         sap_system_id: sap_system_id_1,
-        host: host_with_other_sid,
+        host_id: host_with_other_sid.id,
         sid: other_sid
       )
 
@@ -804,7 +804,7 @@ defmodule Trento.ClustersTest do
 
       insert(:application_instance_without_host,
         sap_system_id: sap_system_id_1,
-        host: host_1,
+        host_id: host_1.id,
         sid: sid_1
       )
 
@@ -812,7 +812,7 @@ defmodule Trento.ClustersTest do
 
       insert(:application_instance_without_host,
         sap_system_id: sap_system_id_2,
-        host: host_2,
+        host_id: host_2.id,
         sid: sid_2
       )
 
@@ -820,14 +820,14 @@ defmodule Trento.ClustersTest do
 
       insert(:application_instance_without_host,
         sap_system_id: other_cluster_sap_system_id,
-        host: host_with_other_cluster_id
+        host_id: host_with_other_cluster_id.id
       )
 
       host_with_other_sid = insert(:host, cluster_id: cluster_id)
 
       insert(:application_instance_without_host,
         sap_system_id: sap_system_id_1,
-        host: host_with_other_sid,
+        host_id: host_with_other_sid.id,
         sid: other_sid
       )
 

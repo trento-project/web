@@ -723,7 +723,7 @@ defmodule Trento.Factory do
 
   def application_instance_factory do
     host = build(:host)
-    build(:application_instance_without_host, host_id: host.id, host: host)
+    build(:application_instance_without_host, host_id: host.id)
   end
 
   def sap_system_instance_factory do

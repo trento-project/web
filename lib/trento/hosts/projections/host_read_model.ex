@@ -10,7 +10,10 @@ defmodule Trento.Hosts.Projections.HostReadModel do
   require Trento.Enums.Health, as: Health
   require Trento.Enums.Provider, as: Provider
 
+  alias Trento.Clusters.Projections.ClusterReadModel
+  alias Trento.Databases.Projections.DatabaseInstanceReadModel
   alias Trento.Hosts.Projections.SlesSubscriptionReadModel
+  alias Trento.SapSystems.Projections.ApplicationInstanceReadModel
   alias Trento.Tags.Tag
 
   defdelegate authorize(action, user, params), to: Trento.Hosts.Policy
@@ -25,7 +28,6 @@ defmodule Trento.Hosts.Projections.HostReadModel do
     field :netmasks, {:array, :integer}
     field :agent_version, :string
     field :fully_qualified_domain_name, :string
-    field :cluster_id, Ecto.UUID
     field :heartbeat, Ecto.Enum, values: [:critical, :passing, :unknown]
     field :health, Ecto.Enum, values: Health.values(), default: Health.unknown()
     field :selected_checks, {:array, :string}, default: []
@@ -40,6 +42,20 @@ defmodule Trento.Hosts.Projections.HostReadModel do
       references: :id,
       foreign_key: :host_id,
       preload_order: [desc: :identifier]
+
+    belongs_to :cluster, ClusterReadModel,
+      references: :id,
+      foreign_key: :cluster_id,
+      type: Ecto.UUID,
+      where: [deregistered_at: nil]
+
+    has_many :database_instances, DatabaseInstanceReadModel,
+      references: :id,
+      foreign_key: :host_id
+
+    has_many :application_instances, ApplicationInstanceReadModel,
+      references: :id,
+      foreign_key: :host_id
 
     field :last_heartbeat_timestamp, :utc_datetime_usec, virtual: true
 

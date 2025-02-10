@@ -11,6 +11,8 @@ defmodule Trento.Clusters.Projections.ClusterReadModel do
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
   require Trento.Enums.Health, as: Health
 
+  alias Trento.Hosts.Projections.HostReadModel
+
   alias Trento.Tags.Tag
 
   defdelegate authorize(action, user, params), to: Trento.Clusters.Policy
@@ -32,6 +34,11 @@ defmodule Trento.Clusters.Projections.ClusterReadModel do
     field :details, :map
 
     has_many :tags, Tag, foreign_key: :resource_id
+
+    has_many :hosts, HostReadModel,
+      references: :id,
+      foreign_key: :cluster_id,
+      where: [deregistered_at: nil]
 
     # Virtually enriched fields
     field :cib_last_written, :string, virtual: true
