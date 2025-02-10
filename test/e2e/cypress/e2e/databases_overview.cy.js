@@ -12,6 +12,11 @@ context('Databases Overview', () => {
   });
 
   describe('Deregistration', () => {
+    beforeEach(() => {
+      databasesOverviewPage.refresh();
+      databasesOverviewPage.clickHdqDatabaseRow();
+    });
+
     it(`should not display DB ${databasesOverviewPage.hdqDatabase.sid} after deregistering the primary instance`, () => {
       databasesOverviewPage.deregisterHdqDatabasePrimaryInstance();
       databasesOverviewPage.hdqDatabaseIsNotDisplayed();
@@ -22,12 +27,10 @@ context('Databases Overview', () => {
     });
 
     it(`should include both instances in DB ${databasesOverviewPage.hdqDatabase.sid} after restoring the primary instance`, () => {
-      databasesOverviewPage.clickHdqDatabaseRow();
       databasesOverviewPage.bothDatabaseInstancesAreDisplayed();
     });
 
     it('should show the ACTIVE pill in the right host', () => {
-      databasesOverviewPage.clickHdqDatabaseRow();
       databasesOverviewPage.activePillIsDisplayedInTheRightHost();
     });
 
