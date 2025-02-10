@@ -11,6 +11,8 @@ defmodule Trento.Clusters.ValueObjects.ClusterResource do
 
   use Trento.Support.Type
 
+  alias Trento.Clusters.ValueObjects.ClusterResourceParent
+
   deftype do
     field :id, :string
     field :type, :string
@@ -18,5 +20,7 @@ defmodule Trento.Clusters.ValueObjects.ClusterResource do
     field :status, :string
     field :fail_count, :integer
     field :managed, :boolean
+
+    embeds_one :parent, ClusterResourceParent
   end
 end

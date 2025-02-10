@@ -20,6 +20,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
     AscsErsClusterNode,
     AscsErsClusterSapSystem,
     ClusterResource,
+    ClusterResourceParent,
     HanaClusterDetails,
     HanaClusterNode,
     HanaClusterSite,
@@ -63,7 +64,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "stonith:external/sbd",
-                          managed: true
+                          managed: true,
+                          parent: nil
                         },
                         %ClusterResource{
                           fail_count: 2,
@@ -71,7 +73,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "ocf::heartbeat:IPaddr2",
-                          managed: true
+                          managed: true,
+                          parent: nil
                         },
                         %ClusterResource{
                           fail_count: 1_000_000,
@@ -79,7 +82,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Master",
                           status: "Active",
                           type: "ocf::suse:SAPHana",
-                          managed: true
+                          managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "msl_SAPHana_PRD_HDB00",
+                            managed: true,
+                            multi_state: true
+                          }
                         },
                         %ClusterResource{
                           fail_count: 0,
@@ -87,7 +95,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "ocf::suse:SAPHanaTopology",
-                          managed: true
+                          managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "cln_SAPHanaTopology_PRD_HDB00",
+                            managed: true,
+                            multi_state: false
+                          }
                         },
                         %ClusterResource{
                           fail_count: nil,
@@ -95,7 +108,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "ocf::heartbeat:Filesystem",
-                          managed: true
+                          managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "c-clusterfs",
+                            managed: true,
+                            multi_state: false
+                          }
                         },
                         %ClusterResource{
                           fail_count: nil,
@@ -103,7 +121,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "ocf::heartbeat:IPaddr2",
-                          managed: true
+                          managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "grp_HA1_ASCS00",
+                            managed: nil,
+                            multi_state: nil
+                          }
                         },
                         %ClusterResource{
                           fail_count: nil,
@@ -111,7 +134,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "ocf::heartbeat:Filesystem",
-                          managed: true
+                          managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "grp_HA1_ASCS00",
+                            managed: nil,
+                            multi_state: nil
+                          }
                         },
                         %ClusterResource{
                           fail_count: nil,
@@ -119,7 +147,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "ocf::heartbeat:SAPInstance",
-                          managed: true
+                          managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "grp_HA1_ASCS00",
+                            managed: nil,
+                            multi_state: nil
+                          }
                         }
                       ],
                       site: "PRIMARY_SITE_NAME",
@@ -151,7 +184,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "ocf::heartbeat:Dummy",
-                          managed: true
+                          managed: true,
+                          parent: nil
                         },
                         %ClusterResource{
                           fail_count: 300,
@@ -159,7 +193,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Slave",
                           status: "Active",
                           type: "ocf::suse:SAPHana",
-                          managed: true
+                          managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "msl_SAPHana_PRD_HDB00",
+                            managed: true,
+                            multi_state: true
+                          }
                         },
                         %ClusterResource{
                           fail_count: 0,
@@ -167,7 +206,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "ocf::suse:SAPHanaTopology",
-                          managed: true
+                          managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "cln_SAPHanaTopology_PRD_HDB00",
+                            managed: true,
+                            multi_state: false
+                          }
                         },
                         %ClusterResource{
                           fail_count: nil,
@@ -175,7 +219,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "ocf::heartbeat:Filesystem",
-                          managed: true
+                          managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "c-clusterfs",
+                            managed: true,
+                            multi_state: false
+                          }
                         },
                         %ClusterResource{
                           fail_count: nil,
@@ -183,7 +232,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "ocf::heartbeat:IPaddr2",
-                          managed: true
+                          managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "grp_HA1_ERS10",
+                            managed: nil,
+                            multi_state: nil
+                          }
                         },
                         %ClusterResource{
                           fail_count: nil,
@@ -191,7 +245,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "ocf::heartbeat:Filesystem",
-                          managed: true
+                          managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "grp_HA1_ERS10",
+                            managed: nil,
+                            multi_state: nil
+                          }
                         },
                         %ClusterResource{
                           fail_count: nil,
@@ -199,7 +258,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "ocf::heartbeat:SAPInstance",
-                          managed: true
+                          managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "grp_HA1_ERS10",
+                            managed: nil,
+                            multi_state: nil
+                          }
                         }
                       ],
                       site: "SECONDARY_SITE_NAME",
@@ -236,21 +300,24 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       id: "test-stop",
                       role: "Stopped",
                       status: nil,
-                      type: "ocf::heartbeat:Dummy"
+                      type: "ocf::heartbeat:Dummy",
+                      parent: nil
                     },
                     %ClusterResource{
                       fail_count: nil,
                       id: "clusterfs",
                       role: "Stopped",
                       status: nil,
-                      type: "ocf::heartbeat:Filesystem"
+                      type: "ocf::heartbeat:Filesystem",
+                      parent: nil
                     },
                     %ClusterResource{
                       fail_count: nil,
                       id: "clusterfs",
                       role: "Stopped",
                       status: nil,
-                      type: "ocf::heartbeat:Filesystem"
+                      type: "ocf::heartbeat:Filesystem",
+                      parent: nil
                     }
                   ],
                   system_replication_mode: "sync",
@@ -311,7 +378,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "stonith:external/sbd",
-                          managed: true
+                          managed: true,
+                          parent: nil
                         },
                         %ClusterResource{
                           fail_count: 2,
@@ -319,7 +387,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "ocf::heartbeat:IPaddr2",
-                          managed: true
+                          managed: true,
+                          parent: nil
                         },
                         %ClusterResource{
                           fail_count: 1_000_000,
@@ -327,7 +396,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Master",
                           status: "Active",
                           type: "ocf::suse:SAPHana",
-                          managed: true
+                          managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "msl_SAPHana_PRD_HDB00",
+                            managed: true,
+                            multi_state: true
+                          }
                         },
                         %ClusterResource{
                           fail_count: 0,
@@ -335,7 +409,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "ocf::suse:SAPHanaTopology",
-                          managed: true
+                          managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "cln_SAPHanaTopology_PRD_HDB00",
+                            managed: true,
+                            multi_state: false
+                          }
                         },
                         %ClusterResource{
                           fail_count: nil,
@@ -343,7 +422,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "ocf::heartbeat:Filesystem",
-                          managed: true
+                          managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "c-clusterfs",
+                            managed: true,
+                            multi_state: false
+                          }
                         },
                         %ClusterResource{
                           fail_count: nil,
@@ -351,7 +435,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "ocf::heartbeat:IPaddr2",
-                          managed: true
+                          managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "grp_HA1_ASCS00",
+                            managed: nil,
+                            multi_state: nil
+                          }
                         },
                         %ClusterResource{
                           fail_count: nil,
@@ -359,7 +448,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "ocf::heartbeat:Filesystem",
-                          managed: true
+                          managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "grp_HA1_ASCS00",
+                            managed: nil,
+                            multi_state: nil
+                          }
                         },
                         %ClusterResource{
                           fail_count: nil,
@@ -367,7 +461,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "ocf::heartbeat:SAPInstance",
-                          managed: true
+                          managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "grp_HA1_ASCS00",
+                            managed: nil,
+                            multi_state: nil
+                          }
                         }
                       ],
                       site: "PRIMARY_SITE_NAME",
@@ -399,7 +498,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "ocf::heartbeat:Dummy",
-                          managed: true
+                          managed: true,
+                          parent: nil
                         },
                         %ClusterResource{
                           fail_count: 300,
@@ -407,7 +507,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Slave",
                           status: "Active",
                           type: "ocf::suse:SAPHana",
-                          managed: true
+                          managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "msl_SAPHana_PRD_HDB00",
+                            managed: true,
+                            multi_state: true
+                          }
                         },
                         %ClusterResource{
                           fail_count: 0,
@@ -415,7 +520,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "ocf::suse:SAPHanaTopology",
-                          managed: true
+                          managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "cln_SAPHanaTopology_PRD_HDB00",
+                            managed: true,
+                            multi_state: false
+                          }
                         },
                         %ClusterResource{
                           fail_count: nil,
@@ -423,7 +533,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "ocf::heartbeat:Filesystem",
-                          managed: true
+                          managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "c-clusterfs",
+                            managed: true,
+                            multi_state: false
+                          }
                         },
                         %ClusterResource{
                           fail_count: nil,
@@ -431,7 +546,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "ocf::heartbeat:IPaddr2",
-                          managed: true
+                          managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "grp_HA1_ERS10",
+                            managed: nil,
+                            multi_state: nil
+                          }
                         },
                         %ClusterResource{
                           fail_count: nil,
@@ -439,7 +559,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "ocf::heartbeat:Filesystem",
-                          managed: true
+                          managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "grp_HA1_ERS10",
+                            managed: nil,
+                            multi_state: nil
+                          }
                         },
                         %ClusterResource{
                           fail_count: nil,
@@ -447,7 +572,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "ocf::heartbeat:SAPInstance",
-                          managed: true
+                          managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "grp_HA1_ERS10",
+                            managed: nil,
+                            multi_state: nil
+                          }
                         }
                       ],
                       site: "SECONDARY_SITE_NAME",
@@ -485,7 +615,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       role: "Stopped",
                       status: nil,
                       type: "ocf::heartbeat:Dummy",
-                      managed: nil
+                      managed: nil,
+                      parent: nil
                     },
                     %ClusterResource{
                       fail_count: nil,
@@ -493,7 +624,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       role: "Stopped",
                       status: nil,
                       type: "ocf::heartbeat:Filesystem",
-                      managed: nil
+                      managed: nil,
+                      parent: nil
                     },
                     %ClusterResource{
                       fail_count: nil,
@@ -501,7 +633,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       role: "Stopped",
                       status: nil,
                       type: "ocf::heartbeat:Filesystem",
-                      managed: nil
+                      managed: nil,
+                      parent: nil
                     }
                   ],
                   system_replication_mode: "sync",
@@ -566,12 +699,18 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "stonith:external/sbd",
-                          managed: true
+                          managed: true,
+                          parent: nil
                         },
                         %ClusterResource{
                           fail_count: 0,
                           id: "rsc_SAPHana_HDQ_HDB10",
                           managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "msl_SAPHana_HDQ_HDB10",
+                            managed: true,
+                            multi_state: true
+                          },
                           role: "Master",
                           status: "Active",
                           type: "ocf::suse:SAPHana"
@@ -580,6 +719,11 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           fail_count: 0,
                           id: "rsc_SAPHanaTopology_HDQ_HDB10",
                           managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "cln_SAPHanaTopology_HDQ_HDB10",
+                            managed: true,
+                            multi_state: false
+                          },
                           role: "Started",
                           status: "Active",
                           type: "ocf::suse:SAPHanaTopology"
@@ -588,6 +732,11 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           fail_count: 0,
                           id: "rsc_ip_HDQ_HDB10",
                           managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "g_ip_HDQ_HDB10",
+                            managed: nil,
+                            multi_state: nil
+                          },
                           role: "Started",
                           status: "Active",
                           type: "ocf::heartbeat:IPaddr2"
@@ -596,6 +745,11 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           fail_count: 0,
                           id: "rsc_socat_HDQ_HDB10",
                           managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "g_ip_HDQ_HDB10",
+                            managed: nil,
+                            multi_state: nil
+                          },
                           role: "Started",
                           status: "Active",
                           type: "ocf::heartbeat:azure-lb"
@@ -631,7 +785,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "ocf::heartbeat:SAPInstance",
-                          managed: true
+                          managed: true,
+                          parent: nil
                         },
                         %ClusterResource{
                           fail_count: 0,
@@ -639,7 +794,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Slave",
                           status: "Active",
                           type: "ocf::suse:SAPHana",
-                          managed: true
+                          managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "msl_SAPHana_HDQ_HDB10",
+                            managed: true,
+                            multi_state: true
+                          }
                         },
                         %ClusterResource{
                           fail_count: 0,
@@ -647,7 +807,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "ocf::suse:SAPHanaTopology",
-                          managed: true
+                          managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "cln_SAPHanaTopology_HDQ_HDB10",
+                            managed: true,
+                            multi_state: false
+                          }
                         }
                       ],
                       site: "SECONDARY_SITE_NAME",
@@ -722,7 +887,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               role: "Started",
                               status: "Active",
                               fail_count: 0,
-                              managed: true
+                              managed: true,
+                              parent: %ClusterResourceParent{
+                                id: "grp_NWP_ASCS00",
+                                managed: nil,
+                                multi_state: nil
+                              }
                             },
                             %ClusterResource{
                               id: "rsc_fs_NWP_ASCS00",
@@ -730,7 +900,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               role: "Started",
                               status: "Active",
                               fail_count: 0,
-                              managed: true
+                              managed: true,
+                              parent: %ClusterResourceParent{
+                                id: "grp_NWP_ASCS00",
+                                managed: nil,
+                                multi_state: nil
+                              }
                             },
                             %ClusterResource{
                               id: "rsc_sap_NWP_ASCS00",
@@ -738,7 +913,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               role: "Started",
                               status: "Active",
                               fail_count: 0,
-                              managed: true
+                              managed: true,
+                              parent: %ClusterResourceParent{
+                                id: "grp_NWP_ASCS00",
+                                managed: nil,
+                                multi_state: nil
+                              }
                             },
                             %ClusterResource{
                               id: "rsc_socat_NWP_ASCS00",
@@ -746,7 +926,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               role: "Started",
                               status: "Active",
                               fail_count: 0,
-                              managed: true
+                              managed: true,
+                              parent: %ClusterResourceParent{
+                                id: "grp_NWP_ASCS00",
+                                managed: nil,
+                                multi_state: nil
+                              }
                             }
                           ]
                         },
@@ -764,7 +949,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               role: "Started",
                               status: "Active",
                               fail_count: 0,
-                              managed: true
+                              managed: true,
+                              parent: %ClusterResourceParent{
+                                id: "grp_NWP_ERS10",
+                                managed: nil,
+                                multi_state: nil
+                              }
                             },
                             %ClusterResource{
                               id: "rsc_fs_NWP_ERS10",
@@ -772,7 +962,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               role: "Started",
                               status: "Active",
                               fail_count: 0,
-                              managed: true
+                              managed: true,
+                              parent: %ClusterResourceParent{
+                                id: "grp_NWP_ERS10",
+                                managed: nil,
+                                multi_state: nil
+                              }
                             },
                             %ClusterResource{
                               id: "rsc_sap_NWP_ERS10",
@@ -780,7 +975,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               role: "Started",
                               status: "Active",
                               fail_count: 0,
-                              managed: true
+                              managed: true,
+                              parent: %ClusterResourceParent{
+                                id: "grp_NWP_ERS10",
+                                managed: nil,
+                                multi_state: nil
+                              }
                             },
                             %ClusterResource{
                               id: "rsc_socat_NWP_ERS10",
@@ -788,7 +988,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               role: "Started",
                               status: "Active",
                               fail_count: 0,
-                              managed: true
+                              managed: true,
+                              parent: %ClusterResourceParent{
+                                id: "grp_NWP_ERS10",
+                                managed: nil,
+                                multi_state: nil
+                              }
                             }
                           ]
                         }
@@ -850,7 +1055,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               role: "Started",
                               status: "Active",
                               fail_count: 0,
-                              managed: true
+                              managed: true,
+                              parent: %ClusterResourceParent{
+                                id: "grp_NWP_ASCS00",
+                                managed: nil,
+                                multi_state: nil
+                              }
                             },
                             %ClusterResource{
                               id: "rsc_fs_NWP_ASCS00",
@@ -858,7 +1068,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               role: "Started",
                               status: "Active",
                               fail_count: 0,
-                              managed: true
+                              managed: true,
+                              parent: %ClusterResourceParent{
+                                id: "grp_NWP_ASCS00",
+                                managed: nil,
+                                multi_state: nil
+                              }
                             },
                             %ClusterResource{
                               id: "rsc_sap_NWP_ASCS00",
@@ -866,7 +1081,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               role: "Started",
                               status: "Active",
                               fail_count: 0,
-                              managed: true
+                              managed: true,
+                              parent: %ClusterResourceParent{
+                                id: "grp_NWP_ASCS00",
+                                managed: nil,
+                                multi_state: nil
+                              }
                             },
                             %ClusterResource{
                               id: "rsc_socat_NWP_ASCS00",
@@ -874,7 +1094,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               role: "Started",
                               status: "Active",
                               fail_count: 0,
-                              managed: true
+                              managed: true,
+                              parent: %ClusterResourceParent{
+                                id: "grp_NWP_ASCS00",
+                                managed: nil,
+                                multi_state: nil
+                              }
                             }
                           ]
                         },
@@ -892,7 +1117,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               role: "Started",
                               status: "Active",
                               fail_count: 0,
-                              managed: true
+                              managed: true,
+                              parent: %ClusterResourceParent{
+                                id: "grp_NWP_ERS10",
+                                managed: nil,
+                                multi_state: nil
+                              }
                             },
                             %ClusterResource{
                               id: "rsc_fs_NWP_ERS10",
@@ -900,7 +1130,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               role: "Started",
                               status: "Active",
                               fail_count: 0,
-                              managed: true
+                              managed: true,
+                              parent: %ClusterResourceParent{
+                                id: "grp_NWP_ERS10",
+                                managed: nil,
+                                multi_state: nil
+                              }
                             },
                             %ClusterResource{
                               id: "rsc_sap_NWP_ERS10",
@@ -908,7 +1143,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               role: "Started",
                               status: "Active",
                               fail_count: 0,
-                              managed: true
+                              managed: true,
+                              parent: %ClusterResourceParent{
+                                id: "grp_NWP_ERS10",
+                                managed: nil,
+                                multi_state: nil
+                              }
                             },
                             %ClusterResource{
                               id: "rsc_socat_NWP_ERS10",
@@ -916,7 +1156,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               role: "Started",
                               status: "Active",
                               fail_count: 0,
-                              managed: true
+                              managed: true,
+                              parent: %ClusterResourceParent{
+                                id: "grp_NWP_ERS10",
+                                managed: nil,
+                                multi_state: nil
+                              }
                             }
                           ]
                         }
@@ -1053,7 +1298,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               role: "Started",
                               status: "Active",
                               fail_count: 0,
-                              managed: true
+                              managed: true,
+                              parent: %ClusterResourceParent{
+                                id: "grp_NWP_ASCS00",
+                                managed: nil,
+                                multi_state: nil
+                              }
                             },
                             %ClusterResource{
                               id: "rsc_fs_NWP_ASCS00",
@@ -1061,7 +1311,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               role: "Started",
                               status: "Active",
                               fail_count: 0,
-                              managed: true
+                              managed: true,
+                              parent: %ClusterResourceParent{
+                                id: "grp_NWP_ASCS00",
+                                managed: nil,
+                                multi_state: nil
+                              }
                             },
                             %ClusterResource{
                               id: "rsc_sap_NWP_ASCS00",
@@ -1069,7 +1324,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               role: "Started",
                               status: "Active",
                               fail_count: 0,
-                              managed: true
+                              managed: true,
+                              parent: %ClusterResourceParent{
+                                id: "grp_NWP_ASCS00",
+                                managed: nil,
+                                multi_state: nil
+                              }
                             },
                             %ClusterResource{
                               id: "rsc_socat_NWP_ASCS00",
@@ -1077,7 +1337,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               role: "Started",
                               status: "Active",
                               fail_count: 0,
-                              managed: true
+                              managed: true,
+                              parent: %ClusterResourceParent{
+                                id: "grp_NWP_ASCS00",
+                                managed: nil,
+                                multi_state: nil
+                              }
                             }
                           ]
                         },
@@ -1095,7 +1360,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               role: "Started",
                               status: "Active",
                               fail_count: 0,
-                              managed: true
+                              managed: true,
+                              parent: %ClusterResourceParent{
+                                id: "grp_NWP_ERS10",
+                                managed: nil,
+                                multi_state: nil
+                              }
                             },
                             %ClusterResource{
                               id: "rsc_fs_NWP_ERS10",
@@ -1103,7 +1373,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               role: "Started",
                               status: "Active",
                               fail_count: 0,
-                              managed: true
+                              managed: true,
+                              parent: %ClusterResourceParent{
+                                id: "grp_NWP_ERS10",
+                                managed: nil,
+                                multi_state: nil
+                              }
                             },
                             %ClusterResource{
                               id: "rsc_sap_NWP_ERS10",
@@ -1111,7 +1386,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               role: "Started",
                               status: "Active",
                               fail_count: 0,
-                              managed: true
+                              managed: true,
+                              parent: %ClusterResourceParent{
+                                id: "grp_NWP_ERS10",
+                                managed: nil,
+                                multi_state: nil
+                              }
                             },
                             %ClusterResource{
                               id: "rsc_socat_NWP_ERS10",
@@ -1119,7 +1399,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               role: "Started",
                               status: "Active",
                               fail_count: 0,
-                              managed: true
+                              managed: true,
+                              parent: %ClusterResourceParent{
+                                id: "grp_NWP_ERS10",
+                                managed: nil,
+                                multi_state: nil
+                              }
                             }
                           ]
                         }
@@ -1144,7 +1429,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               role: "Started",
                               status: "Active",
                               fail_count: 0,
-                              managed: true
+                              managed: true,
+                              parent: %ClusterResourceParent{
+                                id: "grp_NWD_ASCS01",
+                                managed: nil,
+                                multi_state: nil
+                              }
                             },
                             %ClusterResource{
                               id: "rsc_fs_NWD_ASCS01",
@@ -1152,7 +1442,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               role: "Started",
                               status: "Active",
                               fail_count: 0,
-                              managed: true
+                              managed: true,
+                              parent: %ClusterResourceParent{
+                                id: "grp_NWD_ASCS01",
+                                managed: nil,
+                                multi_state: nil
+                              }
                             },
                             %ClusterResource{
                               id: "rsc_sap_NWD_ASCS01",
@@ -1160,7 +1455,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               role: "Started",
                               status: "Active",
                               fail_count: 0,
-                              managed: true
+                              managed: true,
+                              parent: %ClusterResourceParent{
+                                id: "grp_NWD_ASCS01",
+                                managed: nil,
+                                multi_state: nil
+                              }
                             },
                             %ClusterResource{
                               id: "rsc_socat_NWD_ASCS01",
@@ -1168,7 +1468,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               role: "Started",
                               status: "Active",
                               fail_count: 0,
-                              managed: true
+                              managed: true,
+                              parent: %ClusterResourceParent{
+                                id: "grp_NWD_ASCS01",
+                                managed: nil,
+                                multi_state: nil
+                              }
                             }
                           ]
                         },
@@ -1186,7 +1491,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               role: "Started",
                               status: "Active",
                               fail_count: 0,
-                              managed: true
+                              managed: true,
+                              parent: %ClusterResourceParent{
+                                id: "grp_NWD_ERS11",
+                                managed: nil,
+                                multi_state: nil
+                              }
                             },
                             %ClusterResource{
                               id: "rsc_fs_NWD_ERS11",
@@ -1194,7 +1504,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               role: "Started",
                               status: "Active",
                               fail_count: 0,
-                              managed: true
+                              managed: true,
+                              parent: %ClusterResourceParent{
+                                id: "grp_NWD_ERS11",
+                                managed: nil,
+                                multi_state: nil
+                              }
                             },
                             %ClusterResource{
                               id: "rsc_sap_NWD_ERS11",
@@ -1202,7 +1517,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               role: "Started",
                               status: "Active",
                               fail_count: 0,
-                              managed: true
+                              managed: true,
+                              parent: %ClusterResourceParent{
+                                id: "grp_NWD_ERS11",
+                                managed: nil,
+                                multi_state: nil
+                              }
                             },
                             %ClusterResource{
                               id: "rsc_socat_NWD_ERS11",
@@ -1210,7 +1530,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               role: "Started",
                               status: "Active",
                               fail_count: 0,
-                              managed: true
+                              managed: true,
+                              parent: %ClusterResourceParent{
+                                id: "grp_NWD_ERS11",
+                                managed: nil,
+                                multi_state: nil
+                              }
                             }
                           ]
                         }
@@ -1472,6 +1797,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           fail_count: 0,
                           id: "rsc_aws_stonith_PRD_HDB00",
                           managed: true,
+                          parent: nil,
                           role: "Started",
                           status: "Active",
                           type: "stonith:external/ec2"
@@ -1480,6 +1806,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           fail_count: 0,
                           id: "rsc_ip_PRD_HDB00",
                           managed: true,
+                          parent: nil,
                           role: "Started",
                           status: "Active",
                           type: "ocf::suse:aws-vpc-move-ip"
@@ -1488,6 +1815,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           fail_count: 0,
                           id: "rsc_exporter_PRD_HDB00",
                           managed: true,
+                          parent: nil,
                           role: "Started",
                           status: "Active",
                           type: "systemd:prometheus-hanadb_exporter@PRD_HDB00"
@@ -1496,6 +1824,11 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           fail_count: 0,
                           id: "rsc_SAPHana_PRD_HDB00",
                           managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "msl_SAPHana_PRD_HDB00",
+                            managed: true,
+                            multi_state: true
+                          },
                           role: "Master",
                           status: "Active",
                           type: "ocf::suse:SAPHana"
@@ -1504,6 +1837,11 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           fail_count: 0,
                           id: "rsc_SAPHanaTopology_PRD_HDB00",
                           managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "cln_SAPHanaTopology_PRD_HDB00",
+                            managed: true,
+                            multi_state: false
+                          },
                           role: "Started",
                           status: "Active",
                           type: "ocf::suse:SAPHanaTopology"
@@ -1536,6 +1874,11 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           fail_count: 0,
                           id: "rsc_SAPHana_PRD_HDB00",
                           managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "msl_SAPHana_PRD_HDB00",
+                            managed: true,
+                            multi_state: true
+                          },
                           role: "Slave",
                           status: "Active",
                           type: "ocf::suse:SAPHana"
@@ -1544,6 +1887,11 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           fail_count: 0,
                           id: "rsc_SAPHanaTopology_PRD_HDB00",
                           managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "cln_SAPHanaTopology_PRD_HDB00",
+                            managed: true,
+                            multi_state: false
+                          },
                           role: "Started",
                           status: "Active",
                           type: "ocf::suse:SAPHanaTopology"
@@ -1619,7 +1967,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "ocf::suse:SAPHanaTopology",
-                          managed: true
+                          managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "cln_SAPHanaTopology_PRD_HDB00",
+                            managed: true,
+                            multi_state: false
+                          }
                         },
                         %ClusterResource{
                           fail_count: 0,
@@ -1627,7 +1980,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "ocf::heartbeat:IPaddr2",
-                          managed: true
+                          managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "g_ip_PRD_HDB00",
+                            managed: nil,
+                            multi_state: nil
+                          }
                         },
                         %ClusterResource{
                           fail_count: 0,
@@ -1635,7 +1993,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "ocf::heartbeat:anything",
-                          managed: true
+                          managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "g_ip_PRD_HDB00",
+                            managed: nil,
+                            multi_state: nil
+                          }
                         }
                       ],
                       site: "Site1",
@@ -1667,7 +2030,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Slave",
                           status: "Active",
                           type: "ocf::suse:SAPHana",
-                          managed: true
+                          managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "msl_SAPHana_PRD_HDB00",
+                            managed: true,
+                            multi_state: true
+                          }
                         },
                         %ClusterResource{
                           fail_count: 0,
@@ -1675,7 +2043,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "ocf::suse:SAPHanaTopology",
-                          managed: true
+                          managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "cln_SAPHanaTopology_PRD_HDB00",
+                            managed: true,
+                            multi_state: false
+                          }
                         }
                       ],
                       site: "Site2",
@@ -1704,7 +2077,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       role: "Stopped",
                       status: nil,
                       type: "stonith:fence_gce",
-                      managed: nil
+                      managed: nil,
+                      parent: nil
                     },
                     %ClusterResource{
                       fail_count: nil,
@@ -1712,7 +2086,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       role: "Stopped",
                       status: nil,
                       type: "systemd:prometheus-hanadb_exporter@PRD_HDB00",
-                      managed: nil
+                      managed: nil,
+                      parent: nil
                     },
                     %ClusterResource{
                       fail_count: nil,
@@ -1720,7 +2095,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       role: "Stopped",
                       status: nil,
                       type: "stonith:fence_gce",
-                      managed: nil
+                      managed: nil,
+                      parent: nil
                     },
                     %ClusterResource{
                       fail_count: nil,
@@ -1728,7 +2104,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       role: "Stopped",
                       status: nil,
                       type: "ocf::suse:SAPHana",
-                      managed: nil
+                      managed: nil,
+                      parent: nil
                     }
                   ],
                   system_replication_mode: "sync",
@@ -1789,7 +2166,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "stonith:external/sbd",
-                          managed: true
+                          managed: true,
+                          parent: nil
                         },
                         %ClusterResource{
                           fail_count: 2,
@@ -1797,7 +2175,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "ocf::heartbeat:IPaddr2",
-                          managed: true
+                          managed: true,
+                          parent: nil
                         },
                         %ClusterResource{
                           fail_count: 1_000_000,
@@ -1805,7 +2184,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Master",
                           status: "Active",
                           type: "ocf::suse:SAPHana",
-                          managed: true
+                          managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "msl_SAPHana_PRD_HDB00",
+                            managed: true,
+                            multi_state: true
+                          }
                         },
                         %ClusterResource{
                           fail_count: 0,
@@ -1813,7 +2197,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "ocf::suse:SAPHanaTopology",
-                          managed: true
+                          managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "cln_SAPHanaTopology_PRD_HDB00",
+                            managed: true,
+                            multi_state: false
+                          }
                         },
                         %ClusterResource{
                           fail_count: nil,
@@ -1821,7 +2210,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "ocf::heartbeat:Filesystem",
-                          managed: true
+                          managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "c-clusterfs",
+                            managed: true,
+                            multi_state: false
+                          }
                         },
                         %ClusterResource{
                           fail_count: nil,
@@ -1829,7 +2223,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "ocf::heartbeat:IPaddr2",
-                          managed: true
+                          managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "grp_HA1_ASCS00",
+                            managed: nil,
+                            multi_state: nil
+                          }
                         },
                         %ClusterResource{
                           fail_count: nil,
@@ -1837,7 +2236,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "ocf::heartbeat:Filesystem",
-                          managed: true
+                          managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "grp_HA1_ASCS00",
+                            managed: nil,
+                            multi_state: nil
+                          }
                         },
                         %ClusterResource{
                           fail_count: nil,
@@ -1845,7 +2249,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "ocf::heartbeat:SAPInstance",
-                          managed: true
+                          managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "grp_HA1_ASCS00",
+                            managed: nil,
+                            multi_state: nil
+                          }
                         }
                       ],
                       site: "PRIMARY_SITE_NAME",
@@ -1877,7 +2286,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "ocf::heartbeat:Dummy",
-                          managed: true
+                          managed: true,
+                          parent: nil
                         },
                         %ClusterResource{
                           fail_count: 300,
@@ -1885,7 +2295,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Slave",
                           status: "Active",
                           type: "ocf::suse:SAPHana",
-                          managed: true
+                          managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "msl_SAPHana_PRD_HDB00",
+                            managed: true,
+                            multi_state: true
+                          }
                         },
                         %ClusterResource{
                           fail_count: 0,
@@ -1893,7 +2308,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "ocf::suse:SAPHanaTopology",
-                          managed: true
+                          managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "cln_SAPHanaTopology_PRD_HDB00",
+                            managed: true,
+                            multi_state: false
+                          }
                         },
                         %ClusterResource{
                           fail_count: nil,
@@ -1901,7 +2321,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "ocf::heartbeat:Filesystem",
-                          managed: true
+                          managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "c-clusterfs",
+                            managed: true,
+                            multi_state: false
+                          }
                         },
                         %ClusterResource{
                           fail_count: nil,
@@ -1909,7 +2334,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "ocf::heartbeat:IPaddr2",
-                          managed: true
+                          managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "grp_HA1_ERS10",
+                            managed: nil,
+                            multi_state: nil
+                          }
                         },
                         %ClusterResource{
                           fail_count: nil,
@@ -1917,7 +2347,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "ocf::heartbeat:Filesystem",
-                          managed: true
+                          managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "grp_HA1_ERS10",
+                            managed: nil,
+                            multi_state: nil
+                          }
                         },
                         %ClusterResource{
                           fail_count: nil,
@@ -1925,7 +2360,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "ocf::heartbeat:SAPInstance",
-                          managed: true
+                          managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "grp_HA1_ERS10",
+                            managed: nil,
+                            multi_state: nil
+                          }
                         }
                       ],
                       site: "SECONDARY_SITE_NAME",
@@ -1963,7 +2403,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       role: "Stopped",
                       status: nil,
                       type: "ocf::heartbeat:Dummy",
-                      managed: nil
+                      managed: nil,
+                      parent: nil
                     },
                     %ClusterResource{
                       fail_count: nil,
@@ -1971,7 +2412,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       role: "Stopped",
                       status: nil,
                       type: "ocf::heartbeat:Filesystem",
-                      managed: nil
+                      managed: nil,
+                      parent: nil
                     },
                     %ClusterResource{
                       fail_count: nil,
@@ -1979,7 +2421,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       role: "Stopped",
                       status: nil,
                       type: "ocf::heartbeat:Filesystem",
-                      managed: nil
+                      managed: nil,
+                      parent: nil
                     }
                   ],
                   system_replication_mode: "sync",
@@ -2041,7 +2484,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "ocf::heartbeat:IPaddr2",
-                          managed: true
+                          managed: true,
+                          parent: nil
                         },
                         %ClusterResource{
                           fail_count: 1_000_000,
@@ -2049,7 +2493,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Master",
                           status: "Active",
                           type: "ocf::suse:SAPHana",
-                          managed: true
+                          managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "msl_SAPHana_PRD_HDB00",
+                            managed: true,
+                            multi_state: true
+                          }
                         },
                         %ClusterResource{
                           fail_count: 0,
@@ -2057,7 +2506,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "ocf::suse:SAPHanaTopology",
-                          managed: true
+                          managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "cln_SAPHanaTopology_PRD_HDB00",
+                            managed: true,
+                            multi_state: false
+                          }
                         }
                       ],
                       site: "PRIMARY_SITE_NAME",
@@ -2089,7 +2543,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Slave",
                           status: "Active",
                           type: "ocf::suse:SAPHana",
-                          managed: true
+                          managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "msl_SAPHana_PRD_HDB00",
+                            managed: true,
+                            multi_state: true
+                          }
                         },
                         %ClusterResource{
                           fail_count: 0,
@@ -2097,7 +2556,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           role: "Started",
                           status: "Active",
                           type: "ocf::suse:SAPHanaTopology",
-                          managed: true
+                          managed: true,
+                          parent: %ClusterResourceParent{
+                            id: "cln_SAPHanaTopology_PRD_HDB00",
+                            managed: true,
+                            multi_state: false
+                          }
                         }
                       ],
                       site: "SECONDARY_SITE_NAME",
@@ -2213,7 +2677,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             role: "Started",
                             status: "Active",
                             fail_count: 0,
-                            managed: true
+                            managed: true,
+                            parent: nil
                           },
                           %ClusterResource{
                             id: "rsc_ip_PRD_HDB00",
@@ -2221,7 +2686,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             role: "Started",
                             status: "Active",
                             fail_count: 0,
-                            managed: true
+                            managed: true,
+                            parent: nil
                           },
                           %ClusterResource{
                             id: "rsc_exporter_PRD_HDB00",
@@ -2229,7 +2695,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             role: "Started",
                             status: "Active",
                             fail_count: 0,
-                            managed: true
+                            managed: true,
+                            parent: nil
                           },
                           %ClusterResource{
                             id: "rsc_SAPHanaController_PRD_HDB00",
@@ -2237,7 +2704,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             role: "Master",
                             status: "Active",
                             fail_count: 0,
-                            managed: true
+                            managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "msl_SAPHanaController_PRD_HDB00",
+                              managed: true,
+                              multi_state: true
+                            }
                           },
                           %ClusterResource{
                             id: "rsc_SAPHanaTopology_PRD_HDB00",
@@ -2245,7 +2717,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             role: "Started",
                             status: "Active",
                             fail_count: 0,
-                            managed: true
+                            managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "cln_SAPHanaTopology_PRD_HDB00",
+                              managed: true,
+                              multi_state: false
+                            }
                           }
                         ]
                       },
@@ -2271,7 +2748,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             role: "Slave",
                             status: "Active",
                             fail_count: 0,
-                            managed: true
+                            managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "msl_SAPHanaController_PRD_HDB00",
+                              managed: true,
+                              multi_state: true
+                            }
                           },
                           %ClusterResource{
                             id: "rsc_SAPHanaTopology_PRD_HDB00",
@@ -2279,7 +2761,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             role: "Started",
                             status: "Active",
                             fail_count: 0,
-                            managed: true
+                            managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "cln_SAPHanaTopology_PRD_HDB00",
+                              managed: true,
+                              multi_state: false
+                            }
                           }
                         ]
                       },
@@ -2305,7 +2792,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             role: "Slave",
                             status: "Active",
                             fail_count: 0,
-                            managed: true
+                            managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "msl_SAPHanaController_PRD_HDB00",
+                              managed: true,
+                              multi_state: true
+                            }
                           },
                           %ClusterResource{
                             id: "rsc_SAPHanaTopology_PRD_HDB00",
@@ -2313,7 +2805,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             role: "Started",
                             status: "Active",
                             fail_count: 0,
-                            managed: true
+                            managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "cln_SAPHanaTopology_PRD_HDB00",
+                              managed: true,
+                              multi_state: false
+                            }
                           }
                         ]
                       },
@@ -2339,7 +2836,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             role: "Slave",
                             status: "Active",
                             fail_count: 0,
-                            managed: true
+                            managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "msl_SAPHanaController_PRD_HDB00",
+                              managed: true,
+                              multi_state: true
+                            }
                           },
                           %ClusterResource{
                             id: "rsc_SAPHanaTopology_PRD_HDB00",
@@ -2347,7 +2849,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             role: "Started",
                             status: "Active",
                             fail_count: 0,
-                            managed: true
+                            managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "cln_SAPHanaTopology_PRD_HDB00",
+                              managed: true,
+                              multi_state: false
+                            }
                           }
                         ]
                       },
@@ -2373,7 +2880,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             role: "Slave",
                             status: "Active",
                             fail_count: 0,
-                            managed: true
+                            managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "msl_SAPHanaController_PRD_HDB00",
+                              managed: true,
+                              multi_state: true
+                            }
                           },
                           %ClusterResource{
                             id: "rsc_SAPHanaTopology_PRD_HDB00",
@@ -2381,7 +2893,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             role: "Started",
                             status: "Active",
                             fail_count: 0,
-                            managed: true
+                            managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "cln_SAPHanaTopology_PRD_HDB00",
+                              managed: true,
+                              multi_state: false
+                            }
                           }
                         ]
                       },
@@ -2407,7 +2924,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             role: "Slave",
                             status: "Active",
                             fail_count: 0,
-                            managed: true
+                            managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "msl_SAPHanaController_PRD_HDB00",
+                              managed: true,
+                              multi_state: true
+                            }
                           },
                           %ClusterResource{
                             id: "rsc_SAPHanaTopology_PRD_HDB00",
@@ -2415,7 +2937,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             role: "Started",
                             status: "Active",
                             fail_count: 0,
-                            managed: true
+                            managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "cln_SAPHanaTopology_PRD_HDB00",
+                              managed: true,
+                              multi_state: false
+                            }
                           }
                         ]
                       }
@@ -2470,7 +2997,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         role: "Stopped",
                         status: nil,
                         fail_count: nil,
-                        managed: nil
+                        managed: nil,
+                        parent: nil
                       },
                       %ClusterResource{
                         id: "rsc_SAPHanaCon_PRD_HDB00",
@@ -2478,7 +3006,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         role: "Stopped",
                         status: nil,
                         fail_count: nil,
-                        managed: nil
+                        managed: nil,
+                        parent: nil
                       }
                     ],
                     nodes: [
@@ -2505,7 +3034,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             role: "Started",
                             status: "Active",
                             fail_count: 0,
-                            managed: true
+                            managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "cln_SAPHanaTop_PRD_HDB00",
+                              managed: true,
+                              multi_state: false
+                            }
                           },
                           %ClusterResource{
                             id: "rsc_SAPHanaCon_PRD_HDB00",
@@ -2513,7 +3047,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             role: "Slave",
                             status: "Active",
                             fail_count: 0,
-                            managed: true
+                            managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "msl_SAPHanaCon_PRD_HDB00",
+                              managed: true,
+                              multi_state: true
+                            }
                           }
                         ]
                       },
@@ -2540,7 +3079,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             role: "Started",
                             status: "Active",
                             fail_count: 0,
-                            managed: true
+                            managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "cln_SAPHanaTop_PRD_HDB00",
+                              managed: true,
+                              multi_state: false
+                            }
                           },
                           %ClusterResource{
                             id: "rsc_SAPHanaCon_PRD_HDB00",
@@ -2548,7 +3092,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             role: "Slave",
                             status: "Active",
                             fail_count: 0,
-                            managed: true
+                            managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "msl_SAPHanaCon_PRD_HDB00",
+                              managed: true,
+                              multi_state: true
+                            }
                           }
                         ]
                       },
@@ -2575,7 +3124,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             role: "Started",
                             status: "Active",
                             fail_count: 0,
-                            managed: true
+                            managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "cln_SAPHanaTop_PRD_HDB00",
+                              managed: true,
+                              multi_state: false
+                            }
                           },
                           %ClusterResource{
                             id: "rsc_SAPHanaCon_PRD_HDB00",
@@ -2583,7 +3137,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             role: "Master",
                             status: "Active",
                             fail_count: 0,
-                            managed: true
+                            managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "msl_SAPHanaCon_PRD_HDB00",
+                              managed: true,
+                              multi_state: true
+                            }
                           },
                           %ClusterResource{
                             id: "rsc_ip_PRD_HDB00",
@@ -2591,7 +3150,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             role: "Started",
                             status: "Active",
                             fail_count: 0,
-                            managed: true
+                            managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "g_ip_PRD_HDB00",
+                              managed: nil,
+                              multi_state: nil
+                            }
                           },
                           %ClusterResource{
                             id: "rsc_nc_PRD_HDB00",
@@ -2599,7 +3163,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             role: "Started",
                             status: "Active",
                             fail_count: 0,
-                            managed: true
+                            managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "g_ip_PRD_HDB00",
+                              managed: nil,
+                              multi_state: nil
+                            }
                           }
                         ]
                       },
@@ -2626,7 +3195,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             role: "Started",
                             status: "Active",
                             fail_count: 0,
-                            managed: true
+                            managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "cln_SAPHanaTop_PRD_HDB00",
+                              managed: true,
+                              multi_state: false
+                            }
                           },
                           %ClusterResource{
                             id: "rsc_SAPHanaCon_PRD_HDB00",
@@ -2634,7 +3208,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             role: "Slave",
                             status: "Active",
                             fail_count: 0,
-                            managed: true
+                            managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "msl_SAPHanaCon_PRD_HDB00",
+                              managed: true,
+                              multi_state: true
+                            }
                           }
                         ]
                       },
@@ -2652,7 +3231,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             role: "Started",
                             status: "Active",
                             fail_count: 0,
-                            managed: true
+                            managed: true,
+                            parent: nil
                           }
                         ]
                       }
@@ -2725,7 +3305,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             role: "Started",
                             status: "Active",
                             fail_count: 0,
-                            managed: true
+                            managed: true,
+                            parent: nil
                           },
                           %ClusterResource{
                             id: "rsc_ip_PRD_HDB00",
@@ -2733,7 +3314,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             role: "Started",
                             status: "Active",
                             fail_count: 0,
-                            managed: true
+                            managed: true,
+                            parent: nil
                           },
                           %ClusterResource{
                             id: "rsc_exporter_PRD_HDB00",
@@ -2741,7 +3323,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             role: "Started",
                             status: "Active",
                             fail_count: 0,
-                            managed: true
+                            managed: true,
+                            parent: nil
                           },
                           %ClusterResource{
                             id: "rsc_SAPHanaController_PRD_HDB00",
@@ -2749,7 +3332,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             role: "Master",
                             status: "Active",
                             fail_count: 0,
-                            managed: true
+                            managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "msl_SAPHanaController_PRD_HDB00",
+                              managed: true,
+                              multi_state: true
+                            }
                           },
                           %ClusterResource{
                             id: "rsc_SAPHanaTopology_PRD_HDB00",
@@ -2757,7 +3345,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             role: "Started",
                             status: "Active",
                             fail_count: 0,
-                            managed: true
+                            managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "cln_SAPHanaTopology_PRD_HDB00",
+                              managed: true,
+                              multi_state: false
+                            }
                           }
                         ]
                       },
@@ -2783,7 +3376,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             role: "Slave",
                             status: "Active",
                             fail_count: 0,
-                            managed: true
+                            managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "msl_SAPHanaController_PRD_HDB00",
+                              managed: true,
+                              multi_state: true
+                            }
                           },
                           %ClusterResource{
                             id: "rsc_SAPHanaTopology_PRD_HDB00",
@@ -2791,7 +3389,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             role: "Started",
                             status: "Active",
                             fail_count: 0,
-                            managed: true
+                            managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "cln_SAPHanaTopology_PRD_HDB00",
+                              managed: true,
+                              multi_state: false
+                            }
                           }
                         ]
                       },
@@ -2817,7 +3420,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             role: "Slave",
                             status: "Active",
                             fail_count: 0,
-                            managed: true
+                            managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "msl_SAPHanaController_PRD_HDB00",
+                              managed: true,
+                              multi_state: true
+                            }
                           },
                           %ClusterResource{
                             id: "rsc_SAPHanaTopology_PRD_HDB00",
@@ -2825,7 +3433,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             role: "Started",
                             status: "Active",
                             fail_count: 0,
-                            managed: true
+                            managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "cln_SAPHanaTopology_PRD_HDB00",
+                              managed: true,
+                              multi_state: false
+                            }
                           }
                         ]
                       },
@@ -2851,7 +3464,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             role: "Slave",
                             status: "Active",
                             fail_count: 0,
-                            managed: true
+                            managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "msl_SAPHanaController_PRD_HDB00",
+                              managed: true,
+                              multi_state: true
+                            }
                           },
                           %ClusterResource{
                             id: "rsc_SAPHanaTopology_PRD_HDB00",
@@ -2859,7 +3477,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             role: "Started",
                             status: "Active",
                             fail_count: 0,
-                            managed: true
+                            managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "cln_SAPHanaTopology_PRD_HDB00",
+                              managed: true,
+                              multi_state: false
+                            }
                           }
                         ]
                       },
@@ -2885,7 +3508,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             role: "Slave",
                             status: "Active",
                             fail_count: 0,
-                            managed: true
+                            managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "msl_SAPHanaController_PRD_HDB00",
+                              managed: true,
+                              multi_state: true
+                            }
                           },
                           %ClusterResource{
                             id: "rsc_SAPHanaTopology_PRD_HDB00",
@@ -2893,7 +3521,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             role: "Started",
                             status: "Active",
                             fail_count: 0,
-                            managed: true
+                            managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "cln_SAPHanaTopology_PRD_HDB00",
+                              managed: true,
+                              multi_state: false
+                            }
                           }
                         ]
                       },
@@ -2919,7 +3552,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             role: "Slave",
                             status: "Active",
                             fail_count: 0,
-                            managed: true
+                            managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "msl_SAPHanaController_PRD_HDB00",
+                              managed: true,
+                              multi_state: true
+                            }
                           },
                           %ClusterResource{
                             id: "rsc_SAPHanaTopology_PRD_HDB00",
@@ -2927,7 +3565,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             role: "Started",
                             status: "Active",
                             fail_count: 0,
-                            managed: true
+                            managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "cln_SAPHanaTopology_PRD_HDB00",
+                              managed: true,
+                              multi_state: false
+                            }
                           }
                         ]
                       }
@@ -2990,6 +3633,11 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             fail_count: 0,
                             id: "fs_PRD_HDB01_fscheck",
                             managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "cln_fs_PRD_HDB01_fscheck",
+                              managed: true,
+                              multi_state: false
+                            },
                             role: "Started",
                             status: "Active",
                             type: "ocf::heartbeat:Filesystem"
@@ -2998,6 +3646,11 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             fail_count: 0,
                             id: "rsc_SAPHanaTopology_PRD_HDB01",
                             managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "cln_SAPHanaTopology_PRD_HDB01",
+                              managed: true,
+                              multi_state: false
+                            },
                             role: "Started",
                             status: "Active",
                             type: "ocf::suse:SAPHanaTopology"
@@ -3008,7 +3661,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             role: "Master",
                             status: "Active",
                             fail_count: 0,
-                            managed: true
+                            managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "msl_SAPHana_PRD_HDB01",
+                              managed: true,
+                              multi_state: true
+                            }
                           },
                           %ClusterResource{
                             id: "rsc_ip_PRD_HDB01",
@@ -3016,7 +3674,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             role: "Started",
                             status: "Active",
                             fail_count: 0,
-                            managed: true
+                            managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "g_ip_PRD_HDB01",
+                              managed: nil,
+                              multi_state: nil
+                            }
                           },
                           %ClusterResource{
                             id: "rsc_nc_PRD_HDB01",
@@ -3024,7 +3687,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             role: "Started",
                             status: "Active",
                             fail_count: 0,
-                            managed: true
+                            managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "g_ip_PRD_HDB01",
+                              managed: nil,
+                              multi_state: nil
+                            }
                           }
                         ],
                         site: "HANA_S1",
@@ -3048,6 +3716,11 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             fail_count: 0,
                             id: "fs_PRD_HDB01_fscheck",
                             managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "cln_fs_PRD_HDB01_fscheck",
+                              managed: true,
+                              multi_state: false
+                            },
                             role: "Started",
                             status: "Active",
                             type: "ocf::heartbeat:Filesystem"
@@ -3056,6 +3729,11 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             fail_count: 0,
                             id: "rsc_SAPHanaTopology_PRD_HDB01",
                             managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "cln_SAPHanaTopology_PRD_HDB01",
+                              managed: true,
+                              multi_state: false
+                            },
                             role: "Started",
                             status: "Active",
                             type: "ocf::suse:SAPHanaTopology"
@@ -3066,7 +3744,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             role: "Slave",
                             status: "Active",
                             fail_count: 0,
-                            managed: true
+                            managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "msl_SAPHana_PRD_HDB01",
+                              managed: true,
+                              multi_state: true
+                            }
                           }
                         ],
                         site: "HANA_S1",
@@ -3090,6 +3773,11 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             fail_count: 0,
                             id: "fs_PRD_HDB01_fscheck",
                             managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "cln_fs_PRD_HDB01_fscheck",
+                              managed: true,
+                              multi_state: false
+                            },
                             role: "Started",
                             status: "Active",
                             type: "ocf::heartbeat:Filesystem"
@@ -3098,6 +3786,11 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             fail_count: 0,
                             id: "rsc_SAPHanaTopology_PRD_HDB01",
                             managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "cln_SAPHanaTopology_PRD_HDB01",
+                              managed: true,
+                              multi_state: false
+                            },
                             role: "Started",
                             status: "Active",
                             type: "ocf::suse:SAPHanaTopology"
@@ -3108,7 +3801,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             role: "Slave",
                             status: "Active",
                             fail_count: 0,
-                            managed: true
+                            managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "msl_SAPHana_PRD_HDB01",
+                              managed: true,
+                              multi_state: true
+                            }
                           }
                         ],
                         site: "HANA_S2",
@@ -3132,6 +3830,11 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             fail_count: 0,
                             id: "fs_PRD_HDB01_fscheck",
                             managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "cln_fs_PRD_HDB01_fscheck",
+                              managed: true,
+                              multi_state: false
+                            },
                             role: "Started",
                             status: "Active",
                             type: "ocf::heartbeat:Filesystem"
@@ -3140,6 +3843,11 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             fail_count: 0,
                             id: "rsc_SAPHanaTopology_PRD_HDB01",
                             managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "cln_SAPHanaTopology_PRD_HDB01",
+                              managed: true,
+                              multi_state: false
+                            },
                             role: "Started",
                             status: "Active",
                             type: "ocf::suse:SAPHanaTopology"
@@ -3150,7 +3858,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             role: "Slave",
                             status: "Active",
                             fail_count: 0,
-                            managed: true
+                            managed: true,
+                            parent: %ClusterResourceParent{
+                              id: "msl_SAPHana_PRD_HDB01",
+                              managed: true,
+                              multi_state: true
+                            }
                           }
                         ],
                         site: "HANA_S2",
@@ -3180,7 +3893,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         role: "Stopped",
                         status: nil,
                         fail_count: nil,
-                        managed: nil
+                        managed: nil,
+                        parent: nil
                       },
                       %ClusterResource{
                         id: "rsc_SAPHanaTopology_PRD_HDB01",
@@ -3188,7 +3902,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         role: "Stopped",
                         status: nil,
                         fail_count: nil,
-                        managed: nil
+                        managed: nil,
+                        parent: nil
                       },
                       %ClusterResource{
                         id: "rsc_SAPHana_PRD_HDB01",
@@ -3196,7 +3911,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         role: "Stopped",
                         status: nil,
                         fail_count: nil,
-                        managed: nil
+                        managed: nil,
+                        parent: nil
                       }
                     ],
                     system_replication_mode: "sync",
@@ -3257,7 +3973,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                              role: "Started",
                              status: "Active",
                              fail_count: 0,
-                             managed: true
+                             managed: true,
+                             parent: nil
                            },
                            %ClusterResource{
                              id: "rsc_ip_HN9_HDB09",
@@ -3265,7 +3982,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                              role: "Started",
                              status: "Active",
                              fail_count: 0,
-                             managed: true
+                             managed: true,
+                             parent: nil
                            },
                            %ClusterResource{
                              id: "rsc_SAPHanaTop_HN9_HDB09",
@@ -3273,7 +3991,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                              role: "Started",
                              status: "Active",
                              fail_count: 0,
-                             managed: true
+                             managed: true,
+                             parent: %ClusterResourceParent{
+                               id: "cln_SAPHanaTop_HN9_HDB09",
+                               managed: true,
+                               multi_state: false
+                             }
                            },
                            %ClusterResource{
                              id: "rsc_SAPHanaCon_HN9_HDB09",
@@ -3281,7 +4004,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                              role: "Master",
                              status: "Active",
                              fail_count: 0,
-                             managed: true
+                             managed: true,
+                             parent: %ClusterResourceParent{
+                               id: "mst_SAPHanacon_HN9_HDB09",
+                               managed: true,
+                               multi_state: true
+                             }
                            }
                          ],
                          site: "WDF",
@@ -3307,6 +4035,11 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                              fail_count: 0,
                              id: "rsc_SAPHanaTop_HN9_HDB09",
                              managed: true,
+                             parent: %ClusterResourceParent{
+                               id: "cln_SAPHanaTop_HN9_HDB09",
+                               managed: true,
+                               multi_state: false
+                             },
                              role: "Started",
                              status: "Active",
                              type: "ocf::suse:SAPHanaTopology"
@@ -3315,6 +4048,11 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                              fail_count: 0,
                              id: "rsc_SAPHanaCon_HN9_HDB09",
                              managed: true,
+                             parent: %ClusterResourceParent{
+                               id: "mst_SAPHanacon_HN9_HDB09",
+                               managed: true,
+                               multi_state: true
+                             },
                              role: "Slave",
                              status: "Active",
                              type: "ocf::suse:SAPHanaController"
@@ -3386,6 +4124,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                              fail_count: 0,
                              id: "stonith-sbd",
                              managed: true,
+                             parent: nil,
                              role: "Started",
                              status: "Active",
                              type: "stonith:external/sbd"
@@ -3394,6 +4133,11 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                              fail_count: 0,
                              id: "rsc_SAPHanaTop_HN9_HDB09",
                              managed: true,
+                             parent: %ClusterResourceParent{
+                               id: "cln_SAPHanaTop_HN9_HDB09",
+                               managed: true,
+                               multi_state: false
+                             },
                              role: "Started",
                              status: "Active",
                              type: "ocf::suse:SAPHanaTopology"
@@ -3425,12 +4169,18 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                              role: "Started",
                              status: "Active",
                              fail_count: 0,
-                             managed: true
+                             managed: true,
+                             parent: nil
                            },
                            %ClusterResource{
                              fail_count: 0,
                              id: "rsc_SAPHanaTop_HN9_HDB09",
                              managed: true,
+                             parent: %ClusterResourceParent{
+                               id: "cln_SAPHanaTop_HN9_HDB09",
+                               managed: true,
+                               multi_state: false
+                             },
                              role: "Started",
                              status: "Active",
                              type: "ocf::suse:SAPHanaTopology"
@@ -3441,7 +4191,12 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                              role: "Master",
                              status: "Active",
                              fail_count: 0,
-                             managed: true
+                             managed: true,
+                             parent: %ClusterResourceParent{
+                               id: "mst_SAPHanacon_HN9_HDB09",
+                               managed: true,
+                               multi_state: true
+                             }
                            }
                          ],
                          site: "ROT",
@@ -3463,7 +4218,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                          role: "Stopped",
                          status: nil,
                          fail_count: nil,
-                         managed: nil
+                         managed: nil,
+                         parent: nil
                        }
                      ],
                      system_replication_mode: "sync",
