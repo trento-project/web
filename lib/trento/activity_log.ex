@@ -49,6 +49,8 @@ defmodule Trento.ActivityLog do
     end
   end
 
+  defdelegate map_severity_integer_to_text(int), to: Trento.ActivityLog.SeverityLevel
+
   defp maybe_exclude_user_logs(ActivityLog = q, true = _include_all_log_types?), do: q
 
   defp maybe_exclude_user_logs(ActivityLog = q, false = _include_all_log_types?) do

@@ -118,6 +118,12 @@ defmodule Trento.ActivityLog.SeverityLevel do
     "database_tombstoned" => :debug
   }
 
+  def map_severity_integer_to_text(n) when n >= 5 and n <= 8, do: "debug"
+  def map_severity_integer_to_text(n) when n >= 9 and n <= 12, do: "info"
+  def map_severity_integer_to_text(n) when n >= 13 and n <= 16, do: "warning"
+  def map_severity_integer_to_text(n) when n >= 17 and n <= 20, do: "error"
+  def map_severity_integer_to_text(n) when n >= 21 and n <= 24, do: "critical"
+
   def severity_level_to_integer(:debug), do: 5
   def severity_level_to_integer(:info), do: 9
   def severity_level_to_integer(:warning), do: 13

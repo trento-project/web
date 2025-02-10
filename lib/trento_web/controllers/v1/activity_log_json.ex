@@ -1,5 +1,6 @@
 defmodule TrentoWeb.V1.ActivityLogJSON do
   alias Trento.ActivityLog.Policy
+  alias Trento.ActivityLog
   alias Trento.Users.User
 
   def activity_log(%{activity_log: entries, pagination: meta, current_user: user}),
@@ -14,7 +15,7 @@ defmodule TrentoWeb.V1.ActivityLogJSON do
       type: entry.type,
       actor: maybe_redact_actor(entry.actor, user),
       metadata: entry.metadata,
-      severity: map_severity_integer_to_text(entry.severity),
+      severity: ActivityLog.map_severity_integer_to_text(entry.severity),
       # Time of occurrence approximated by time of insertion in DB.
       occurred_on: entry.inserted_at
     }
@@ -41,12 +42,6 @@ defmodule TrentoWeb.V1.ActivityLogJSON do
       has_previous_page: has_previous_page
     }
   end
-
-  defp map_severity_integer_to_text(n) when n >= 5 and n <= 8, do: "debug"
-  defp map_severity_integer_to_text(n) when n >= 9 and n <= 12, do: "info"
-  defp map_severity_integer_to_text(n) when n >= 13 and n <= 16, do: "warning"
-  defp map_severity_integer_to_text(n) when n >= 17 and n <= 20, do: "error"
-  defp map_severity_integer_to_text(n) when n >= 21 and n <= 24, do: "critical"
 
   defp maybe_redact_actor(actor, %User{username: actor}), do: actor
 
