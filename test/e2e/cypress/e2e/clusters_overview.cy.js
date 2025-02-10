@@ -100,7 +100,7 @@ context('Clusters Overview', () => {
 
       it('should prevent a tag update when the user abilities are not compliant', () => {
         clustersOverviewPage.apiCreateUserWithoutAbilities();
-        clustersOverviewPage.loginWithoutTagAbilities();
+        clustersOverviewPage.loginWithoutAbilities();
         clustersOverviewPage.visit();
         clustersOverviewPage.addTagButtonsAreDisabled();
         clustersOverviewPage.removeTagButtonIsDisabled();

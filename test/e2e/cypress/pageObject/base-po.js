@@ -286,7 +286,7 @@ export const addTagByColumnValue = (columnValue, tagValue) => {
     });
 };
 
-export const loginWithoutTagAbilities = () =>
+export const loginWithoutAbilities = () =>
   apiLoginAndCreateSession(user.username, password);
 
 export const loginWithTagAbilities = () =>

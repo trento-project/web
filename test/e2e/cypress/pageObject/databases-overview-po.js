@@ -147,6 +147,11 @@ export const apiCreateUserWithDatabaseTagsAbilities = () =>
     { name: 'all', resource: 'database_tags' },
   ]);
 
+export const apiCreateUserWithCleanupAbilities = () =>
+  basePage.createUserWithAbilities([
+    { name: 'cleanup', resource: 'database_instance' },
+  ]);
+
 export const cleanUpButtonIsEnabled = () =>
   cy.get(cleanUpButtons).should('be.enabled');
 
