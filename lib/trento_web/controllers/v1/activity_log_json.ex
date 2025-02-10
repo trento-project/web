@@ -1,6 +1,6 @@
 defmodule TrentoWeb.V1.ActivityLogJSON do
-  alias Trento.ActivityLog.Policy
   alias Trento.ActivityLog
+  alias Trento.ActivityLog.Policy
   alias Trento.Users.User
 
   def activity_log(%{activity_log: entries, pagination: meta, current_user: user}),
