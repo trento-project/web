@@ -15,20 +15,32 @@ defmodule TrentoWeb.V1.ActivityLogJSONTest do
       inserted_at: inserted_at
     } = activity_log_entry = build(:activity_log_entry)
 
+    json_entry =
+      ActivityLogJSON.activity_log_entry(%{
+        activity_log_entry: activity_log_entry,
+        current_user:
+          build(:user,
+            abilities: build_list(1, :ability, name: "activity_log", resource: "users")
+          )
+      })
+
     assert %{
              id: ^id,
              type: ^type,
              actor: ^actor,
              metadata: ^metadata,
              occurred_on: ^inserted_at
-           } =
-             ActivityLogJSON.activity_log_entry(%{
-               activity_log_entry: activity_log_entry,
-               current_user:
-                 build(:user,
-                   abilities: build_list(1, :ability, name: "activity_log", resource: "users")
-                 )
-             })
+           } = json_entry
+
+    assert Enum.sort(Map.keys(json_entry)) ==
+             Enum.sort([
+               :actor,
+               :id,
+               :metadata,
+               :occurred_on,
+               :severity,
+               :type
+             ])
   end
 
   test "should render redacted activity_log_entry.json" do

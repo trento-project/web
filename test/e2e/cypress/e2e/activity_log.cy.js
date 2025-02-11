@@ -125,15 +125,16 @@ context('Activity Log page', () => {
     });
 
     it('should paginate data with filters', () => {
-      const queryString = '?type=sles_subscriptions_updated&search=x86_64';
+      const queryString =
+        '?type=sles_subscriptions_updated&search=x86_64&severity=debug';
       activityLogPage.visit(queryString);
       activityLogPage.waitForActivityLogRequest().then(({ response }) => {
         activityLogPage.paginationPropertiesAreTheExpected(response);
-        let expectedUrl = `/activity_log?type=sles_subscriptions_updated&search=x86_64`;
+        let expectedUrl = `/activity_log?type=sles_subscriptions_updated&search=x86_64&severity=debug`;
         activityLogPage.validateUrl(expectedUrl);
         activityLogPage.clickNextPageButton();
         activityLogPage.activityLogRequestHasExpectedStatusCode(200);
-        expectedUrl = `/activity_log?first=20&after=${response.body.pagination.end_cursor}&type=sles_subscriptions_updated&search=x86_64`;
+        expectedUrl = `/activity_log?first=20&after=${response.body.pagination.end_cursor}&type=sles_subscriptions_updated&search=x86_64&severity=debug`;
         activityLogPage.validateUrl(expectedUrl);
       });
     });
