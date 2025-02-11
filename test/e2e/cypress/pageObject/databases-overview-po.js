@@ -39,8 +39,8 @@ const hdqDatabaseCell = `tr:contains("${hdqDatabase.sid}")`;
 
 const hddDatabaseCell = `tr:contains("${hddDatabase.sid}")`;
 
-const databaseInstace1 = `a:contains("${hdqDatabase.instances[0].name}")`;
-const databaseInstace2 = `a:contains("${hdqDatabase.instances[1].name}")`;
+const databaseInstance1 = `a:contains("${hdqDatabase.instances[0].name}")`;
+const databaseInstance2 = `a:contains("${hdqDatabase.instances[1].name}")`;
 
 const deletedSapSystemToaster = `p:contains("The SAP System ${nwqSystem.sid} has been deregistered.")`;
 
@@ -72,17 +72,15 @@ export const hddDatabaseIsNotDisplayed = () =>
   cy.get(hddDatabaseCell).should('not.exist');
 
 export const bothDatabaseInstancesAreDisplayed = () => {
-  cy.get(databaseInstace1).should('be.visible');
-  return cy.get(databaseInstace2).should('be.visible');
+  cy.get(databaseInstance1).should('be.visible');
+  return cy.get(databaseInstance2).should('be.visible');
 };
 
 export const activePillIsDisplayedInTheRightHost = () => {
-  return hdqDatabase.instances.forEach((instance) => {
-    return cy.get(`div.table-row:contains("${instance.name}")`).within(() => {
+  return cy.wrap(hdqDatabase.instances).each((instance) => {
+    cy.get(`div.table-row:contains("${instance.name}")`).within(() => {
       const isHostActive = instance.state === 'ACTIVE';
-      return cy
-        .get(activePill)
-        .should(isHostActive ? 'be.visible' : 'not.exist');
+      cy.get(activePill).should(isHostActive ? 'be.visible' : 'not.exist');
     });
   });
 };
