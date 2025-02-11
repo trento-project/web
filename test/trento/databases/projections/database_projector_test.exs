@@ -181,7 +181,7 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
       host_id: host_id
     } =
       insert(
-        :database_instance_without_host,
+        :database_instance,
         system_replication: "Secondary",
         system_replication_status: ""
       )
@@ -228,7 +228,7 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
       host_id: host_id
     } =
       insert(
-        :database_instance_without_host,
+        :database_instance,
         system_replication: "Secondary",
         system_replication_status: ""
       )
@@ -271,7 +271,7 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
       host_id: host_id
     } =
       insert(
-        :database_instance_without_host,
+        :database_instance,
         system_replication: "Secondary",
         system_replication_status: ""
       )
@@ -301,7 +301,7 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
       instance_number: instance_number,
       host_id: host_id,
       sid: sid
-    } = insert(:database_instance_without_host)
+    } = insert(:database_instance)
 
     absent_at = DateTime.utc_now()
 
@@ -333,7 +333,7 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
       instance_number: instance_number,
       host_id: host_id,
       sid: sid
-    } = insert(:database_instance_without_host, absent_at: DateTime.utc_now())
+    } = insert(:database_instance, absent_at: DateTime.utc_now())
 
     event = %DatabaseInstanceMarkedPresent{
       instance_number: instance_number,
@@ -429,7 +429,7 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
       )
 
     database_instances =
-      insert(:database_instance_without_host, database_id: database_id)
+      insert(:database_instance, database_id: database_id)
       |> Map.from_struct()
       |> Map.delete(:__meta__)
       |> Map.delete(:host)

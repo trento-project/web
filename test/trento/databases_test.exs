@@ -24,7 +24,7 @@ defmodule Trento.DatabasesTest do
 
       database_instances =
         Enum.sort_by(
-          insert_list(5, :database_instance_without_host, database_id: database_id),
+          insert_list(5, :database_instance, database_id: database_id),
           & &1.host_id
         )
 
@@ -59,8 +59,8 @@ defmodule Trento.DatabasesTest do
 
     test "should return all the instances with the matching host_id" do
       host_id = UUID.uuid4()
-      insert_list(10, :database_instance_without_host, host_id: host_id)
-      insert_list(10, :database_instance_without_host)
+      insert_list(10, :database_instance, host_id: host_id)
+      insert_list(10, :database_instance)
 
       database_instances = Databases.get_database_instances_by_host_id(host_id)
 
@@ -107,7 +107,7 @@ defmodule Trento.DatabasesTest do
 
     test "should not delete a present database instance" do
       %{database_id: database_id, host_id: host_id, instance_number: instance_number} =
-        insert(:database_instance_without_host, absent_at: nil)
+        insert(:database_instance, absent_at: nil)
 
       assert {:error, :instance_present} =
                Databases.deregister_database_instance(

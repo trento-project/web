@@ -15,13 +15,13 @@ defmodule TrentoWeb.V1.HealthOverviewJSONTest do
       db_cluster_id = UUID.uuid4()
 
       application_instances =
-        build_list(1, :application_instance_without_host,
+        build_list(1, :application_instance,
           sap_system_id: sap_system_id,
           host: build(:host, cluster_id: nil)
         ) ++
           build_list(
             2,
-            :application_instance_without_host,
+            :application_instance,
             sap_system_id: sap_system_id,
             host: build(:host, cluster_id: app_cluster_id)
           )
@@ -31,7 +31,7 @@ defmodule TrentoWeb.V1.HealthOverviewJSONTest do
       database_instances =
         build_list(
           2,
-          :database_instance_without_host,
+          :database_instance,
           database_id: database_id,
           host: build(:host, cluster_id: db_cluster_id)
         )
@@ -81,7 +81,7 @@ defmodule TrentoWeb.V1.HealthOverviewJSONTest do
       application_instances =
         build_list(
           2,
-          :application_instance_without_host,
+          :application_instance,
           sap_system_id: sap_system_id,
           host: build(:host, cluster_id: nil)
         )
@@ -91,7 +91,7 @@ defmodule TrentoWeb.V1.HealthOverviewJSONTest do
       database_instances =
         build_list(
           2,
-          :database_instance_without_host,
+          :database_instance,
           database_id: database_id,
           host: build(:host, cluster_id: nil)
         )

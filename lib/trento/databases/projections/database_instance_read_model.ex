@@ -24,15 +24,16 @@ defmodule Trento.Databases.Projections.DatabaseInstanceReadModel do
     field :http_port, :integer
     field :https_port, :integer
     field :start_priority, :string
-    field :host_id, Ecto.UUID, primary_key: true
     field :system_replication, :string, default: ""
     field :system_replication_status, :string, default: ""
     field :health, Ecto.Enum, values: Health.values()
     field :absent_at, :utc_datetime_usec
 
-    has_one :host, HostReadModel,
-      references: :host_id,
-      foreign_key: :id,
+    belongs_to :host, HostReadModel,
+      references: :id,
+      foreign_key: :host_id,
+      primary_key: true,
+      type: Ecto.UUID,
       where: [deregistered_at: nil]
 
     timestamps(type: :utc_datetime_usec)
