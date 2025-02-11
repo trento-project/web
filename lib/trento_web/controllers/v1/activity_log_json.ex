@@ -1,4 +1,5 @@
 defmodule TrentoWeb.V1.ActivityLogJSON do
+  alias Trento.ActivityLog
   alias Trento.ActivityLog.Policy
   alias Trento.Users.User
 
@@ -14,6 +15,7 @@ defmodule TrentoWeb.V1.ActivityLogJSON do
       type: entry.type,
       actor: maybe_redact_actor(entry.actor, user),
       metadata: entry.metadata,
+      severity: ActivityLog.map_severity_integer_to_text(entry.severity),
       # Time of occurrence approximated by time of insertion in DB.
       occurred_on: entry.inserted_at
     }

@@ -10,6 +10,7 @@ defmodule Trento.ActivityLog do
   alias Trento.ActivityLog.ActivityLog
   alias Trento.ActivityLog.MetadataQueryParser
   alias Trento.ActivityLog.RetentionTime
+  alias Trento.ActivityLog.SeverityLevel
   alias Trento.Repo
   alias Trento.Settings
 
@@ -48,6 +49,8 @@ defmodule Trento.ActivityLog do
     end
   end
 
+  defdelegate map_severity_integer_to_text(int), to: Trento.ActivityLog.SeverityLevel
+
   defp maybe_exclude_user_logs(ActivityLog = q, true = _include_all_log_types?), do: q
 
   defp maybe_exclude_user_logs(ActivityLog = q, false = _include_all_log_types?) do
@@ -66,6 +69,7 @@ defmodule Trento.ActivityLog do
             m0: fragment("jsonb_path_query(?, ?)", q.metadata, ^jsonpath_expr),
             type: q.type,
             actor: q.actor,
+            severity: q.severity,
             inserted_at: q.inserted_at,
             updated_at: q.updated_at
           }
@@ -119,6 +123,17 @@ defmodule Trento.ActivityLog do
 
       {:type, v} ->
         {:filters, %{field: :type, op: :ilike_or, value: v}}
+
+      {:severity, v} ->
+        {:filters,
+         %{
+           field: :severity,
+           op: :>=,
+           value:
+             v
+             |> String.to_existing_atom()
+             |> SeverityLevel.severity_level_to_integer()
+         }}
 
       param ->
         param
