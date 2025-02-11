@@ -690,7 +690,7 @@ defmodule Trento.Factory do
     }
   end
 
-  def database_instance_without_host_factory do
+  def database_instance_factory do
     %DatabaseInstanceReadModel{
       database_id: Faker.UUID.v4(),
       sid: Faker.UUID.v4(),
@@ -704,12 +704,7 @@ defmodule Trento.Factory do
     }
   end
 
-  def database_instance_factory do
-    host = build(:host)
-    build(:database_instance_without_host, host_id: host.id, host: host)
-  end
-
-  def application_instance_without_host_factory do
+  def application_instance_factory do
     %ApplicationInstanceReadModel{
       sap_system_id: Faker.UUID.v4(),
       sid: Faker.UUID.v4(),
@@ -719,11 +714,6 @@ defmodule Trento.Factory do
       health: Health.unknown(),
       absent_at: nil
     }
-  end
-
-  def application_instance_factory do
-    host = build(:host)
-    build(:application_instance_without_host, host_id: host.id, host: host)
   end
 
   def sap_system_instance_factory do

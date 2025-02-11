@@ -10,6 +10,9 @@ defmodule TrentoWeb.V1.HostJSON do
     |> Map.put(:sles_subscriptions, sles_subscriptions)
     |> Map.delete(:fully_qualified_domain_name)
     |> Map.delete(:prometheus_targets)
+    |> Map.delete(:cluster)
+    |> Map.delete(:application_instances)
+    |> Map.delete(:database_instances)
     |> Map.delete(:__meta__)
   end
 
@@ -26,6 +29,9 @@ defmodule TrentoWeb.V1.HostJSON do
   def broadcast_host(%{host: host}) do
     host
     |> Map.from_struct()
+    |> Map.delete(:cluster)
+    |> Map.delete(:application_instances)
+    |> Map.delete(:database_instances)
     |> Map.delete(:__meta__)
   end
 
