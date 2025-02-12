@@ -17,6 +17,9 @@ defmodule Trento.Clusters.Projections.ClusterReadModel do
 
   defdelegate authorize(action, user, params), to: Trento.Clusters.Policy
 
+  defdelegate authorize_operation(action, application_instance, params),
+    to: Trento.Operations.ClusterPolicy
+
   @type t :: %__MODULE__{}
 
   @derive {Jason.Encoder, except: [:__meta__, :__struct__]}
