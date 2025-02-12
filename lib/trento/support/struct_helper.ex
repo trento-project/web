@@ -6,7 +6,7 @@ defmodule Trento.Support.StructHelper do
   Converts struct to map.
   Saniteize struct fields by removing __meta__ and Ecto.Association.NotLoaded.t() fields.
   """
-  @spec to_map(struct | [struct]) :: map
+  @spec to_map(map | [map] | struct | [struct]) :: map | [map]
   def to_map(structs) when is_list(structs) do
     Enum.map(structs, &to_map/1)
   end
@@ -18,15 +18,17 @@ defmodule Trento.Support.StructHelper do
   def to_map(struct) when is_struct(struct) do
     struct
     |> Map.from_struct()
+    |> to_map()
+  end
+
+  def to_map(map) when is_map(map) do
+    map
     |> Enum.reject(fn
       {:__meta__, _} -> true
       {_, %Ecto.Association.NotLoaded{}} -> true
       _ -> false
     end)
-    |> Enum.map(fn
-      {k, v} -> {Atom.to_string(k), to_map(v)}
-    end)
-    |> Map.new()
+    |> Map.new(fn {k, v} -> {stringify_key(k), to_map(v)} end)
   end
 
   def to_map(value) when is_boolean(value), do: value
@@ -64,6 +66,11 @@ defmodule Trento.Support.StructHelper do
   end
 
   def to_atomized_map(value), do: value
+
+  defp stringify_key(key) when is_atom(key), do: Atom.to_string(key)
+  defp stringify_key(key), do: key
+
+  defp atomize_key(key) when is_atom(key), do: key
 
   defp atomize_key(key) do
     String.to_existing_atom(key)
