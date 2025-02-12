@@ -187,7 +187,8 @@ function Layout() {
                 <a
                   href="https://www.trento-project.io/docs/"
                   target="_blank"
-                  className="block max-w-60 text-jungle-green-500 font-bold bg-jungle-green-100 py-2 px-4 rounded-md hover:opacity-75" rel="noreferrer"
+                  className="block max-w-60 text-jungle-green-500 font-bold bg-jungle-green-100 py-2 px-4 rounded-md hover:opacity-75"
+                  rel="noreferrer"
                 >
                   Read more in Trento docs
                 </a>
