@@ -13,6 +13,9 @@ defmodule Trento.Databases.Projections.DatabaseInstanceReadModel do
 
   alias Trento.Hosts.Projections.HostReadModel
 
+  defdelegate authorize_operation(action, application_instance, params),
+    to: Trento.Operations.DatabaseInstancePolicy
+
   @derive {Jason.Encoder, except: [:__meta__, :__struct__]}
   @primary_key false
   schema "database_instances" do
