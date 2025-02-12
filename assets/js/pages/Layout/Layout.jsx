@@ -134,7 +134,7 @@ function Layout() {
               )}
             </button>
           </div>
-          <div className="bg-white h-full dark:bg-gray-700">
+          <div className="relative bg-white h-full pb-24 dark:bg-gray-700">
             <div className="flex items-center justify-center pt-6">
               <img
                 className={classNames('h-auto transition-scale duration-100', {
@@ -179,6 +179,12 @@ function Layout() {
                   </ForbiddenGuard>
                 ))}
               </div>
+	  	<div className={classNames('absolute bottom-24 left-4', {
+			hidden: isCollapsed,
+		})}
+	  >
+	  	<a href="https://www.trento-project.io/docs/" target="_blank" className="block max-w-60 text-jungle-green-500 font-bold bg-jungle-green-100 py-2 px-4 rounded-md hover:opacity-75">Read more in Trento docs</a>
+	  </div>
             </nav>
           </div>
         </div>
