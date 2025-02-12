@@ -35,18 +35,18 @@ defmodule Trento.Operations.HostPolicy do
     # Get SAPHana or SapHanaController master resource id
     cluster_resource_id = get_saptune_operation_resource_id(cluster)
 
-    databases_maintenance_authroized =
+    databases_maintenance_authorized =
       database_instances
-      |> Enum.map(fn database_instancec ->
-        %DatabaseInstanceReadModel{database_instancec | host: host}
+      |> Enum.map(fn database_instances ->
+        %DatabaseInstanceReadModel{database_instances | host: host}
       end)
-      |> Enum.all?(fn database_instancec ->
-        DatabaseInstanceReadModel.authorize_operation(:maintenance, database_instancec, %{
+      |> Enum.all?(fn database_instances ->
+        DatabaseInstanceReadModel.authorize_operation(:maintenance, database_instances, %{
           cluster_resource_id: cluster_resource_id
         })
       end)
 
-    Enum.all?([applications_maintenance_authorized, databases_maintenance_authroized])
+    Enum.all?([applications_maintenance_authorized, databases_maintenance_authorized])
   end
 
   def authorize_operation(_, _, _), do: false
