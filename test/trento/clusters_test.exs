@@ -866,11 +866,24 @@ defmodule Trento.ClustersTest do
   end
 
   describe "resource_managed?/2" do
-    test "should return the managed state of a resource" do
+    test "should return the managed state of a resource in HANA cluster" do
       %{id: cluster_resource_id, managed: managed} = cluster_resource = build(:cluster_resource)
       nodes = build_list(1, :hana_cluster_node, resources: [cluster_resource])
       cluster_details = build(:hana_cluster_details, maintenance_mode: false, nodes: nodes)
-      cluster = build(:cluster, details: cluster_details)
+      cluster = build(:cluster, type: ClusterType.hana_scale_up(), details: cluster_details)
+
+      assert managed == Clusters.resource_managed?(cluster, cluster_resource_id)
+    end
+
+    test "should return the managed state of a resource in ASCS/ERS cluster" do
+      %{id: cluster_resource_id, managed: managed} = cluster_resource = build(:cluster_resource)
+      nodes = build_list(1, :hana_cluster_node, resources: [cluster_resource])
+      sap_systems = build_list(1, :ascs_ers_cluster_sap_system, nodes: nodes)
+
+      cluster_details =
+        build(:ascs_ers_cluster_details, maintenance_mode: false, sap_systems: sap_systems)
+
+      cluster = build(:cluster, type: ClusterType.ascs_ers(), details: cluster_details)
 
       assert managed == Clusters.resource_managed?(cluster, cluster_resource_id)
     end
@@ -880,7 +893,7 @@ defmodule Trento.ClustersTest do
       cluster_resource = build(:cluster_resource, managed: not managed, parent: parent)
       nodes = build_list(1, :hana_cluster_node, resources: [cluster_resource])
       cluster_details = build(:hana_cluster_details, maintenance_mode: false, nodes: nodes)
-      cluster = build(:cluster, details: cluster_details)
+      cluster = build(:cluster, type: ClusterType.hana_scale_up(), details: cluster_details)
 
       assert managed == Clusters.resource_managed?(cluster, cluster_resource_id)
     end
@@ -889,6 +902,12 @@ defmodule Trento.ClustersTest do
       cluster = build(:cluster, details: build(:hana_cluster_details))
 
       refute Clusters.resource_managed?(cluster, "unknown")
+    end
+
+    test "should return false in a unhandled cluster type" do
+      cluster = build(:cluster, type: ClusterType.unknown())
+
+      refute Clusters.resource_managed?(cluster, nil)
     end
   end
 end
