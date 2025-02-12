@@ -1,4 +1,5 @@
 import { TOTP } from 'totp-generator';
+import { createUserRequestFactory } from '@lib/test-utils/factories';
 
 const DEFAULT_USERNAME = Cypress.env('login_user');
 const DEFAULT_PASSWORD = Cypress.env('login_password');
@@ -13,6 +14,17 @@ const navigation = {
   activityLog: 'a:contains("Activity Log")',
 };
 const signOutButton = 'button:contains("Sign out")';
+const removeEnv1TagButton = 'span span:contains("env1") span';
+export const addTagButtons = 'span span:contains("Add Tag")';
+
+// Test data
+
+const password = 'password';
+
+const user = createUserRequestFactory.build({
+  password,
+  password_confirmation: password,
+});
 
 export const visit = (url = '/') => {
   return cy.visit(url);
@@ -24,6 +36,16 @@ export const validateUrl = (url = '/') => {
 
 export const refresh = () => {
   return cy.reload();
+};
+
+// UI Interactions
+export const addTagByColumnValue = (columnValue, tagValue) => {
+  return cy
+    .get(`td:contains(${columnValue})`)
+    .parents('tr')
+    .within(() => {
+      cy.get(addTagButtons).type(`${tagValue}{enter}`);
+    });
 };
 
 export const clickActivityLogNavigationItem = () => {
@@ -49,9 +71,60 @@ export const clickUserDropdownProfileButton = () => {
   return cy.get(userDropdownProfileButton).click();
 };
 
+export const typeTotpCode = (totpSecret, inputField) => {
+  const { otp } = TOTP.generate(totpSecret);
+  return cy
+    .get(inputField)
+    .clear()
+    .type(otp)
+    .then(() => totpSecret);
+};
+
+// UI Validations
+
 export const userDropdownMenuButtonHasTheExpectedText = (username) => {
   return cy.get(userDropdownMenuButton).should('have.text', username);
 };
+
+export const pageTitleIsCorrectlyDisplayed = (title) => {
+  return cy.get(pageTitle).should('contain', title);
+};
+
+export const accessForbiddenMessageIsDisplayed = () => {
+  return cy.get(accessForbiddenMessage).should('be.visible');
+};
+
+export const validateItemNotPresentInNavigationMenu = (itemName) => {
+  return cy.get(navigation.navigationItems).each(($element) => {
+    cy.wrap($element).should('not.include.text', itemName);
+  });
+};
+
+export const validateItemPresentInNavigationMenu = (navigationMenuItem) => {
+  return cy.get(navigation.navigationItems).then(($elements) => {
+    const itemFound = Array.from($elements).some((element) =>
+      element.innerText.includes(navigationMenuItem)
+    );
+    expect(
+      itemFound,
+      `"${navigationMenuItem}" navigation item should be present`
+    ).to.be.true;
+  });
+};
+
+export const addTagButtonsAreDisabled = () =>
+  cy.get(addTagButtons).should('have.class', 'opacity-50');
+
+export const addTagButtonsAreNotDisabled = () =>
+  cy.get(addTagButtons).should('not.have.class', 'opacity-50');
+
+export const removeTagButtonIsDisabled = () =>
+  cy.get(removeEnv1TagButton).should('have.class', 'opacity-50');
+
+export const removeTagButtonIsEnabled = () =>
+  cy.get(removeEnv1TagButton).should('not.have.class', 'opacity-50');
+
+// API Interactions & Validations
 
 export const validateResponseStatusCode = (
   endpointAlias,
@@ -61,15 +134,6 @@ export const validateResponseStatusCode = (
     .wait(`@${endpointAlias}`)
     .its('response.statusCode')
     .should('eq', expectedStatusCode);
-};
-
-export const typeTotpCode = (totpSecret, inputField) => {
-  const { otp } = TOTP.generate(totpSecret);
-  return cy
-    .get(inputField)
-    .clear()
-    .type(otp)
-    .then(() => totpSecret);
 };
 
 export const apiLogin = (
@@ -131,32 +195,6 @@ export const apiDeleteAllUsers = () => {
   });
 };
 
-export const pageTitleIsCorrectlyDisplayed = (title) => {
-  return cy.get(pageTitle).should('contain', title);
-};
-
-export const accessForbiddenMessageIsDisplayed = () => {
-  return cy.get(accessForbiddenMessage).should('be.visible');
-};
-
-export const validateItemNotPresentInNavigationMenu = (itemName) => {
-  return cy.get(navigation.navigationItems).each(($element) => {
-    cy.wrap($element).should('not.include.text', itemName);
-  });
-};
-
-export const validateItemPresentInNavigationMenu = (navigationMenuItem) => {
-  return cy.get(navigation.navigationItems).then(($elements) => {
-    const itemFound = Array.from($elements).some((element) =>
-      element.innerText.includes(navigationMenuItem)
-    );
-    expect(
-      itemFound,
-      `"${navigationMenuItem}" navigation item should be present`
-    ).to.be.true;
-  });
-};
-
 export const waitForRequest = (requestAlias) => cy.wait(`@${requestAlias}`);
 
 export const selectFromDropdown = (selector, choice) => {
@@ -207,8 +245,8 @@ const isTestDataLoaded = () =>
       .then(({ body }) => body.length !== 0)
   );
 
-export const createUserWithAbilities = (payload, abilities) =>
-  apiLogin().then(({ accessToken }) =>
+export const createUserWithAbilities = (abilities) => {
+  return apiLogin().then(({ accessToken }) =>
     cy
       .request({
         url: '/api/v1/abilities',
@@ -228,7 +266,58 @@ export const createUserWithAbilities = (payload, abilities) =>
           url: '/api/v1/users',
           method: 'POST',
           auth: { bearer: accessToken },
-          body: { ...payload, abilities: abilitiesWithID },
+          body: { ...user, abilities: abilitiesWithID },
         });
       })
   );
+};
+
+export const apiDeregisterHost = (hostId) => {
+  return isHostRegistered(hostId).then((isRegistered) => {
+    if (isRegistered) {
+      return apiLogin().then(({ accessToken }) => {
+        const url = `/api/v1/hosts/${hostId}`;
+        return cy.request({
+          method: 'DELETE',
+          url: url,
+          auth: {
+            bearer: accessToken,
+          },
+        });
+      });
+    } else return;
+  });
+};
+
+export const isHostRegistered = (hostId) => {
+  return apiLogin()
+    .then(({ accessToken }) => {
+      const url = '/api/v1/hosts/';
+      cy.request({
+        method: 'GET',
+        url: url,
+        auth: {
+          bearer: accessToken,
+        },
+      });
+    })
+    .then(({ body }) => body.some((host) => host.id === hostId));
+};
+
+export const loginWithoutAbilities = () =>
+  apiLoginAndCreateSession(user.username, password);
+
+export const loginWithAbilities = () =>
+  apiLoginAndCreateSession(user.username, password);
+
+export const apiCreateUserWithoutAbilities = () => createUserWithAbilities([]);
+
+export const getResourceTags = (resourceResponse) => {
+  const resourceTags = {};
+  resourceResponse.forEach((resourceItem) => {
+    if (resourceItem.tags && resourceItem.tags.length > 0) {
+      resourceTags[resourceItem.id] = resourceItem.tags.map((tag) => tag.value);
+    }
+  });
+  return resourceTags;
+};

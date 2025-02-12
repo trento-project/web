@@ -62,7 +62,7 @@ context('Clusters Overview', () => {
   describe('Clusters Tagging', () => {
     beforeEach(() => {
       clustersOverviewPage.restoreClusterName();
-      clustersOverviewPage.apiRemoveAllTags();
+      clustersOverviewPage.apiRemoveAllClusterTags();
     });
 
     it('should tag each cluster with the corresponding tag', () => {
@@ -73,7 +73,7 @@ context('Clusters Overview', () => {
 
   describe('Deregistration', () => {
     before(() => {
-      clustersOverviewPage.apiRemoveAllTags();
+      clustersOverviewPage.apiRemoveAllClusterTags();
       clustersOverviewPage.apiSetTagsHanaCluster1();
       clustersOverviewPage.apiDeregisterAllClusterHosts();
     });
@@ -92,7 +92,7 @@ context('Clusters Overview', () => {
   describe('Forbidden action', () => {
     describe('Tag operations', () => {
       beforeEach(() => {
-        clustersOverviewPage.apiRemoveAllTags();
+        clustersOverviewPage.apiRemoveAllClusterTags();
         clustersOverviewPage.apiSetTagsHanaCluster1();
         clustersOverviewPage.apiDeleteAllUsers();
         clustersOverviewPage.logout();
@@ -100,7 +100,7 @@ context('Clusters Overview', () => {
 
       it('should prevent a tag update when the user abilities are not compliant', () => {
         clustersOverviewPage.apiCreateUserWithoutAbilities();
-        clustersOverviewPage.loginWithoutTagAbilities();
+        clustersOverviewPage.loginWithoutAbilities();
         clustersOverviewPage.visit();
         clustersOverviewPage.addTagButtonsAreDisabled();
         clustersOverviewPage.removeTagButtonIsDisabled();
@@ -108,7 +108,7 @@ context('Clusters Overview', () => {
 
       it('should allow a tag update when the user abilities are compliant', () => {
         clustersOverviewPage.apiCreateUserWithClusterTagsAbilities();
-        clustersOverviewPage.loginWithTagAbilities();
+        clustersOverviewPage.loginWithAbilities();
         clustersOverviewPage.visit();
         clustersOverviewPage.addTagButtonsAreNotDisabled();
         clustersOverviewPage.removeTagButtonIsEnabled();
