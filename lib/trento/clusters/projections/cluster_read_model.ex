@@ -31,7 +31,7 @@ defmodule Trento.Clusters.Projections.ClusterReadModel do
     field :health, Ecto.Enum, values: Health.values()
     field :resources_number, :integer
     field :hosts_number, :integer
-    field :details, :map
+    field :details, Trento.Support.Ecto.Payload, keys_as_atoms: true
 
     has_many :tags, Tag, foreign_key: :resource_id
 

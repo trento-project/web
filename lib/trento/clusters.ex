@@ -262,8 +262,8 @@ defmodule Trento.Clusters do
     filesystems_list =
       cluster
       |> Map.get(:details, %{})
-      |> Map.get("sap_systems", [])
-      |> Enum.map(fn %{"filesystem_resource_based" => filesystem_resource_based} ->
+      |> Map.get(:sap_systems, [])
+      |> Enum.map(fn %{filesystem_resource_based: filesystem_resource_based} ->
         filesystem_resource_based
       end)
       |> Enum.uniq()
@@ -292,15 +292,15 @@ defmodule Trento.Clusters do
     end
   end
 
-  defp parse_architecture_type(%{"architecture_type" => "angi"}),
+  defp parse_architecture_type(%{architecture_type: "angi"}),
     do: HanaArchitectureType.angi()
 
   defp parse_architecture_type(_), do: HanaArchitectureType.classic()
 
-  defp parse_hana_scenario(%{"hana_scenario" => "performance_optimized"}),
+  defp parse_hana_scenario(%{hana_scenario: "performance_optimized"}),
     do: HanaScenario.performance_optimized()
 
-  defp parse_hana_scenario(%{"hana_scenario" => "cost_optimized"}),
+  defp parse_hana_scenario(%{hana_scenario: "cost_optimized"}),
     do: HanaScenario.cost_optimized()
 
   defp parse_hana_scenario(_), do: HanaScenario.unknown()
