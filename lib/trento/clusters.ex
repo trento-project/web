@@ -139,6 +139,33 @@ defmodule Trento.Clusters do
     |> Repo.insert_or_update()
   end
 
+  @spec maintenance?(ClusterReadModel.t()) :: boolean()
+  def maintenance?(%ClusterReadModel{details: %{maintenance_mode: maintenance_mode}}) do
+    maintenance_mode
+  end
+
+  @spec resource_managed?(ClusterReadModel.t(), String.t()) :: boolean()
+  def resource_managed?(%ClusterReadModel{details: details}, resource_id) do
+    do_resource_maintenance?(details, resource_id)
+  end
+
+  # ASCS/ERS cluster type
+  defp do_resource_maintenance?(%{sap_systems: sap_systems}, resource_id) do
+    Enum.any?(sap_systems, &do_resource_maintenance?(&1, resource_id))
+  end
+
+  # HANA cluster type or specific ASCS/ERS system
+  defp do_resource_maintenance?(%{nodes: nodes}, resource_id) do
+    Enum.any?(nodes, fn %{resources: resources} ->
+      Enum.find_value(resources, false, fn %{parent: parent} = resource ->
+        managed?(resource, resource_id) or managed?(parent, resource_id)
+      end)
+    end)
+  end
+
+  defp managed?(%{id: resource_id, managed: managed}, resource_id), do: managed
+  defp managed?(_, _), do: false
+
   defp commanded,
     do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]
 
