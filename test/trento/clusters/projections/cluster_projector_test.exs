@@ -51,7 +51,7 @@ defmodule Trento.Clusters.Projections.ClusterProjectorTest do
     assert event.type == cluster_projection.type
     assert event.resources_number == cluster_projection.resources_number
     assert event.hosts_number == cluster_projection.hosts_number
-    assert StructHelper.to_map(event.details) == cluster_projection.details
+    assert StructHelper.to_map(event.details) == StructHelper.to_map(cluster_projection.details)
     assert event.health == cluster_projection.health
 
     cluster_id = event.cluster_id
@@ -142,7 +142,7 @@ defmodule Trento.Clusters.Projections.ClusterProjectorTest do
     assert event.type == cluster_projection.type
     assert event.resources_number == cluster_projection.resources_number
     assert event.hosts_number == cluster_projection.hosts_number
-    assert StructHelper.to_map(event.details) == cluster_projection.details
+    assert StructHelper.to_map(event.details) == StructHelper.to_map(cluster_projection.details)
 
     assert_broadcast(
       "cluster_details_updated",
@@ -234,7 +234,6 @@ defmodule Trento.Clusters.Projections.ClusterProjectorTest do
       ClusterReadModel
       |> Repo.get!(event.cluster_id)
       |> Repo.preload([:tags])
-      |> StructHelper.to_atomized_map()
 
     assert nil == cluster_projection.deregistered_at
 
