@@ -179,12 +179,19 @@ function Layout() {
                   </ForbiddenGuard>
                 ))}
               </div>
-	  	<div className={classNames('absolute bottom-24 left-4', {
-			hidden: isCollapsed,
-		})}
-	  >
-	  	<a href="https://www.trento-project.io/docs/" target="_blank" className="block max-w-60 text-jungle-green-500 font-bold bg-jungle-green-100 py-2 px-4 rounded-md hover:opacity-75">Read more in Trento docs</a>
-	  </div>
+              <div
+                className={classNames('absolute bottom-24 left-4', {
+                  hidden: isCollapsed,
+                })}
+              >
+                <a
+                  href="https://www.trento-project.io/docs/"
+                  target="_blank"
+                  className="block max-w-60 text-jungle-green-500 font-bold bg-jungle-green-100 py-2 px-4 rounded-md hover:opacity-75"
+                >
+                  Read more in Trento docs
+                </a>
+              </div>
             </nav>
           </div>
         </div>
