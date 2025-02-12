@@ -19,7 +19,7 @@ function Modal({ children, open, onClose, title, className }) {
           <DialogPanel
             transition
             className={classNames(
-              'space-y-4 rounded-lg w-full max-w-7xl shadow-lg bg-white p-12 duration-300 ease-out data-[closed]:scale-95 data-[closed]:opacity-0',
+              'space-y-4 rounded-lg w-full max-w-7xl shadow-lg bg-white p-6 duration-300 ease-out data-[closed]:scale-95 data-[closed]:opacity-0',
               className
             )}
           >
