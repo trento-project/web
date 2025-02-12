@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-K7URE6B4.js"></script>
-    <script src="dist/sidebar_items-5F67D491.js"></script>
+    <script src="dist/sidebar_items-27EA353E.js"></script>
     <script src="docs_config.js"></script>
     <script async src="dist/html-YIPIRHGU.js"></script>
 
@@ -138,7 +138,7 @@ GUIDES
 
 
     <section id="moduledoc">
-<p>Ecto Type that represents a JSONB payload that contains an array or a map.</p>
+<p>Ecto Type that represents a JSONB payload that contains an array or a map.</p><p>Opts:</p><ul><li>keys_as_atoms (boolean): Converts map keys to existing atoms</li></ul>
     </section>
 
 </div>
@@ -157,61 +157,51 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#cast/1" data-no-tooltip translate="no">cast(data)</a>
+        <a href="#cast/2" data-no-tooltip translate="no">cast(data, arg2)</a>
 
       </div>
 
-        <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/ecto/3.11.2/Ecto.Type.html#c:cast/1"><code class="inline">Ecto.Type.cast/1</code></a>.</p></div>
+        <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/ecto/3.11.2/Ecto.ParameterizedType.html#c:cast/2"><code class="inline">Ecto.ParameterizedType.cast/2</code></a>.</p></div>
 
     </div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#dump/1" data-no-tooltip translate="no">dump(data)</a>
+        <a href="#dump/3" data-no-tooltip translate="no">dump(data, arg2, arg3)</a>
 
       </div>
 
-        <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/ecto/3.11.2/Ecto.Type.html#c:dump/1"><code class="inline">Ecto.Type.dump/1</code></a>.</p></div>
+        <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/ecto/3.11.2/Ecto.ParameterizedType.html#c:dump/3"><code class="inline">Ecto.ParameterizedType.dump/3</code></a>.</p></div>
 
     </div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#embed_as/1" data-no-tooltip translate="no">embed_as(_)</a>
+        <a href="#init/1" data-no-tooltip translate="no">init(opts)</a>
 
       </div>
 
-        <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/ecto/3.11.2/Ecto.Type.html#c:embed_as/1"><code class="inline">Ecto.Type.embed_as/1</code></a>.</p></div>
+        <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/ecto/3.11.2/Ecto.ParameterizedType.html#c:init/1"><code class="inline">Ecto.ParameterizedType.init/1</code></a>.</p></div>
 
     </div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#equal?/2" data-no-tooltip translate="no">equal?(term1, term2)</a>
+        <a href="#load/3" data-no-tooltip translate="no">load(data, arg2, arg3)</a>
 
       </div>
 
-        <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/ecto/3.11.2/Ecto.Type.html#c:equal?/2"><code class="inline">Ecto.Type.equal?/2</code></a>.</p></div>
+        <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/ecto/3.11.2/Ecto.ParameterizedType.html#c:load/3"><code class="inline">Ecto.ParameterizedType.load/3</code></a>.</p></div>
 
     </div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#load/1" data-no-tooltip translate="no">load(data)</a>
+        <a href="#type/1" data-no-tooltip translate="no">type(params)</a>
 
       </div>
 
-        <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/ecto/3.11.2/Ecto.Type.html#c:load/1"><code class="inline">Ecto.Type.load/1</code></a>.</p></div>
-
-    </div>
-
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#type/0" data-no-tooltip translate="no">type()</a>
-
-      </div>
-
-        <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/ecto/3.11.2/Ecto.Type.html#c:type/0"><code class="inline">Ecto.Type.type/0</code></a>.</p></div>
+        <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/ecto/3.11.2/Ecto.ParameterizedType.html#c:type/1"><code class="inline">Ecto.ParameterizedType.type/1</code></a>.</p></div>
 
     </div>
 
@@ -228,16 +218,16 @@ GUIDES
       <span class="text">Functions</span>
     </h1>
     <div class="functions-list">
-<section class="detail" id="cast/1">
+<section class="detail" id="cast/2">
 
   <div class="detail-header">
-    <a href="#cast/1" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#cast/2" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">cast(data)</h1>
+    <h1 class="signature" translate="no">cast(data, arg2)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/support/ecto/payload.ex#L10" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/support/ecto/payload.ex#L26" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -247,19 +237,19 @@ GUIDES
 
   <section class="docstring">
 
-<p>Callback implementation for <a href="https://hexdocs.pm/ecto/3.11.2/Ecto.Type.html#c:cast/1"><code class="inline">Ecto.Type.cast/1</code></a>.</p>
+<p>Callback implementation for <a href="https://hexdocs.pm/ecto/3.11.2/Ecto.ParameterizedType.html#c:cast/2"><code class="inline">Ecto.ParameterizedType.cast/2</code></a>.</p>
   </section>
 </section>
-<section class="detail" id="dump/1">
+<section class="detail" id="dump/3">
 
   <div class="detail-header">
-    <a href="#dump/1" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#dump/3" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">dump(data)</h1>
+    <h1 class="signature" translate="no">dump(data, arg2, arg3)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/support/ecto/payload.ex#L25" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/support/ecto/payload.ex#L49" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -269,19 +259,19 @@ GUIDES
 
   <section class="docstring">
 
-<p>Callback implementation for <a href="https://hexdocs.pm/ecto/3.11.2/Ecto.Type.html#c:dump/1"><code class="inline">Ecto.Type.dump/1</code></a>.</p>
+<p>Callback implementation for <a href="https://hexdocs.pm/ecto/3.11.2/Ecto.ParameterizedType.html#c:dump/3"><code class="inline">Ecto.ParameterizedType.dump/3</code></a>.</p>
   </section>
 </section>
-<section class="detail" id="embed_as/1">
+<section class="detail" id="init/1">
 
   <div class="detail-header">
-    <a href="#embed_as/1" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#init/1" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">embed_as(_)</h1>
+    <h1 class="signature" translate="no">init(opts)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/support/ecto/payload.ex#L6" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/support/ecto/payload.ex#L15" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -291,19 +281,19 @@ GUIDES
 
   <section class="docstring">
 
-<p>Callback implementation for <a href="https://hexdocs.pm/ecto/3.11.2/Ecto.Type.html#c:embed_as/1"><code class="inline">Ecto.Type.embed_as/1</code></a>.</p>
+<p>Callback implementation for <a href="https://hexdocs.pm/ecto/3.11.2/Ecto.ParameterizedType.html#c:init/1"><code class="inline">Ecto.ParameterizedType.init/1</code></a>.</p>
   </section>
 </section>
-<section class="detail" id="equal?/2">
+<section class="detail" id="load/3">
 
   <div class="detail-header">
-    <a href="#equal?/2" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#load/3" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">equal?(term1, term2)</h1>
+    <h1 class="signature" translate="no">load(data, arg2, arg3)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/support/ecto/payload.ex#L6" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/support/ecto/payload.ex#L37" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -313,19 +303,19 @@ GUIDES
 
   <section class="docstring">
 
-<p>Callback implementation for <a href="https://hexdocs.pm/ecto/3.11.2/Ecto.Type.html#c:equal?/2"><code class="inline">Ecto.Type.equal?/2</code></a>.</p>
+<p>Callback implementation for <a href="https://hexdocs.pm/ecto/3.11.2/Ecto.ParameterizedType.html#c:load/3"><code class="inline">Ecto.ParameterizedType.load/3</code></a>.</p>
   </section>
 </section>
-<section class="detail" id="load/1">
+<section class="detail" id="type/1">
 
   <div class="detail-header">
-    <a href="#load/1" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#type/1" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">load(data)</h1>
+    <h1 class="signature" translate="no">type(params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/support/ecto/payload.ex#L19" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/support/ecto/payload.ex#L13" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -335,29 +325,7 @@ GUIDES
 
   <section class="docstring">
 
-<p>Callback implementation for <a href="https://hexdocs.pm/ecto/3.11.2/Ecto.Type.html#c:load/1"><code class="inline">Ecto.Type.load/1</code></a>.</p>
-  </section>
-</section>
-<section class="detail" id="type/0">
-
-  <div class="detail-header">
-    <a href="#type/0" class="detail-link" data-no-tooltip title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">type()</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/support/ecto/payload.ex#L7" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-<p>Callback implementation for <a href="https://hexdocs.pm/ecto/3.11.2/Ecto.Type.html#c:type/0"><code class="inline">Ecto.Type.type/0</code></a>.</p>
+<p>Callback implementation for <a href="https://hexdocs.pm/ecto/3.11.2/Ecto.ParameterizedType.html#c:type/1"><code class="inline">Ecto.ParameterizedType.type/1</code></a>.</p>
   </section>
 </section>
 
