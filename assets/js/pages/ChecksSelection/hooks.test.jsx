@@ -48,9 +48,7 @@ describe('useChecksSelection', () => {
         hookResult = result;
       });
 
-      axiosMock
-        .onGet(`/api/v1/checks/groups/${groupId}/catalog`)
-        .reply(statusCode);
+      axiosMock.onGet(`/api/v1/groups/${groupId}/checks`).reply(statusCode);
 
       await act(async () => {
         hookResult.current.fetchChecksSelection(groupId);
@@ -80,7 +78,7 @@ describe('useChecksSelection', () => {
     });
 
     axiosMock
-      .onGet(`/api/v1/checks/groups/${groupId}/catalog`)
+      .onGet(`/api/v1/groups/${groupId}/checks`)
       .reply(200, { items: checksSelection });
 
     await act(async () => {

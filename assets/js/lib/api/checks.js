@@ -21,7 +21,7 @@ export const getCatalog = (env) =>
   });
 
 export const getChecksSelection = (groupID, env) =>
-  networkClient.get(`/api/v1/checks/groups/${groupID}/catalog`, {
+  networkClient.get(`/api/v1/groups/${groupID}/checks`, {
     ...defaultConfig,
     params: env,
   });
