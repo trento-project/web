@@ -76,6 +76,12 @@ export const visitAvailableHanaClusterCostOpt = () => {
   return basePage.waitForRequest(catalogEndpointAlias);
 };
 
+export const visitHanaAngiCluster = () => {
+  visit(availableAngiCluster.id);
+  basePage.waitForRequest(lastExecutionEndpointAlias);
+  return basePage.waitForRequest(catalogEndpointAlias);
+};
+
 const validateUrl = (path = '') => basePage.validateUrl(`${url}${path}`);
 
 export const validateAvailableHanaClusterUrl = () =>
@@ -89,10 +95,20 @@ export const expectedClusterNameIsDisplayedInHeader = () => {
 };
 
 const getPropertyFromClusterType = (clusterType, property) => {
-  if (clusterType === 'hana') return availableHanaCluster[property];
-  else if (clusterType === 'hanaCostOpt')
-    return availableHanaClusterCostOpt[property];
-  else if (clusterType === 'angi') return availableAngiCluster[property];
+  const clusterMap = {
+    hana: availableHanaCluster,
+    hanaCostOpt: availableHanaClusterCostOpt,
+    angi: availableAngiCluster,
+  };
+
+  const cluster = clusterMap[clusterType];
+
+  if (!cluster) {
+    const customValueToCheck = clusterType;
+    return customValueToCheck;
+  }
+
+  return cluster[property];
 };
 
 export const expectedProviderIsDisplayed = (clusterType) => {
@@ -331,6 +347,9 @@ export const criticalChecksUrlIsTheExpected = () =>
 export const availableHanaClusterCostOpHeaderIsDisplayed = () =>
   basePage.pageTitleIsCorrectlyDisplayed(availableHanaClusterCostOpt.name);
 
+export const availableHanaAngiHeaderIsDisplayed = () =>
+  basePage.pageTitleIsCorrectlyDisplayed(availableAngiCluster.name);
+
 export const bothHanaCostOptSidsAreDisplayed = () => {
   return cy.wrap(availableHanaClusterCostOpt.sids).each((sid) => {
     cy.get(`td:contains("${availableHanaClusterCostOpt.name}") + td`).should(
@@ -338,4 +357,26 @@ export const bothHanaCostOptSidsAreDisplayed = () => {
       sid
     );
   });
+};
+
+export const hanaAngiClusterSitesAreDisplayed = () => {
+  return cy.wrap(availableAngiCluster.sites).each((site) => {
+    cy.get(`.tn-site-details-${site.name} h3 + span`).should(
+      'have.text',
+      site.state
+    );
+  });
+};
+
+export const hanaAngiSitesHaveExpectedStateAfterFailover = () => {
+  const site1 = availableAngiCluster.sites[0];
+  const site2 = availableAngiCluster.sites[1];
+  cy.get(`.tn-site-details-${site1.name} h3 + span`).should(
+    'have.text',
+    'Failed'
+  );
+  cy.get(`.tn-site-details-${site2.name} h3 + span`).should(
+    'have.text',
+    site1.state
+  );
 };

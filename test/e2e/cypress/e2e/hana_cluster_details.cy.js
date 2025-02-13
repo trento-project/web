@@ -1,10 +1,7 @@
 import * as hanaClusterDetailsPage from '../pageObject/hana-cluster-details-po';
 
 import { createUserRequestFactory } from '@lib/test-utils/factories';
-import {
-  availableHanaCluster,
-  availableAngiCluster,
-} from '../fixtures/hana-cluster-details/available_hana_cluster';
+import { availableHanaCluster } from '../fixtures/hana-cluster-details/available_hana_cluster';
 
 context('HANA cluster details', () => {
   before(() => {
@@ -207,97 +204,74 @@ context('HANA cluster details', () => {
 
   describe('Angi architecture', () => {
     before(() => {
-      cy.loadScenario('hana-scale-up-angi');
-      cy.visit(`/clusters/${availableAngiCluster.id}`);
+      hanaClusterDetailsPage.loadScenario('hana-scale-up-angi');
     });
 
-    after(() => {
-      availableAngiCluster.hosts.forEach(({ id }) => {
-        cy.deregisterHost(id);
-      });
+    beforeEach(() => {
+      hanaClusterDetailsPage.visitHanaAngiCluster();
+    });
+
+    // after(() => {
+    //   availableAngiCluster.hosts.forEach(({ id }) => {
+    //     cy.deregisterHost(id);
+    //   });
+    // });
+
+    it('should have expected name in header', () => {
+      hanaClusterDetailsPage.availableHanaAngiHeaderIsDisplayed();
+    });
+
+    it('should have the expected provider', () => {
+      hanaClusterDetailsPage.expectedProviderIsDisplayed('angi');
+    });
+
+    it('should have all cost optimized SID`s and correct database links', () => {
+      hanaClusterDetailsPage.hasExpectedSidAndHrefAttribute('angi');
+    });
+
+    it('should have expected cluster cost optimized type', () => {
+      hanaClusterDetailsPage.hasExpectedClusterType('angi');
+    });
+
+    it('should have expected architecture type', () => {
+      hanaClusterDetailsPage.mouseOverArchitectureInfo();
+      hanaClusterDetailsPage.architectureTooltipIsDisplayed('angi');
+    });
+
+    it('should have expected log replication mode', () => {
+      hanaClusterDetailsPage.expectedReplicationModeIsDisplayed('angi');
+    });
+
+    it('should have expected fencing type', () => {
+      hanaClusterDetailsPage.expectedFencingTypeIsDisplayed('angi');
+    });
+
+    it('should have expected HANA secondary sync state', () => {
+      hanaClusterDetailsPage.expectedHanaSecondarySyncStateIsDisplayed('angi');
+    });
+
+    it('should have expected maintenance mode', () => {
+      hanaClusterDetailsPage.expectedMaintenanceModeIsDisplayed('angi');
+    });
+
+    it('should have expected hana log operation mode', () => {
+      hanaClusterDetailsPage.expectedHanaLogOperationModeIsDisplayed('angi');
+    });
+
+    it('should have expected cib last written', () => {
+      hanaClusterDetailsPage.expectedCibLastWrittenValueIsDisplayed('angi');
     });
 
     it('should discover and display properly Angi architecture HANA scale up cluster', () => {
-      cy.get('h1').contains(availableAngiCluster.name);
-
-      cy.get('.tn-cluster-details')
-        .contains('Provider')
-        .next()
-        .contains(availableAngiCluster.provider);
-
-      cy.get('.tn-cluster-details')
-        .contains('SID')
-        .next()
-        .contains(availableAngiCluster.sid)
-        .should(
-          'have.attr',
-          'href',
-          `/databases/${availableAngiCluster.systemID}`
-        );
-
-      cy.get('.tn-cluster-details')
-        .contains('Cluster type')
-        .next()
-        .contains(availableAngiCluster.clusterType);
-
-      cy.get('.tn-cluster-details')
-        .contains('Cluster type')
-        .next()
-        .find('svg')
-        .trigger('mouseover');
-
-      cy.contains('span', availableAngiCluster.architectureType).should(
-        'exist'
-      );
-
-      cy.get('.tn-cluster-details')
-        .contains('HANA log replication mode')
-        .next()
-        .contains(availableAngiCluster.hanaSystemReplicationMode);
-
-      cy.get('.tn-cluster-details')
-        .contains('Fencing type')
-        .next()
-        .contains(availableAngiCluster.fencingType);
-
-      cy.get('.tn-cluster-details')
-        .contains('HANA secondary sync state')
-        .next()
-        .contains(availableAngiCluster.hanaSecondarySyncState);
-
-      cy.get('.tn-cluster-details')
-        .contains('Cluster maintenance')
-        .next()
-        .contains('False');
-
-      cy.get('.tn-cluster-details')
-        .contains('HANA log operation mode')
-        .next()
-        .contains(availableAngiCluster.hanaSystemReplicationOperationMode);
-
-      cy.get('.tn-cluster-details')
-        .contains('CIB last written')
-        .next()
-        .contains(availableAngiCluster.cibLastWritten);
-
-      const site1 = availableAngiCluster.sites[0];
-      const site2 = availableAngiCluster.sites[1];
-      cy.get(`.tn-site-details-${site1.name}`).contains(site1.state);
-      cy.get(`.tn-site-details-${site2.name}`).contains(site2.state);
+      hanaClusterDetailsPage.hanaAngiClusterSitesAreDisplayed();
     });
 
     it('should discover a Angi cluster with failover', () => {
-      cy.loadScenario('cluster-hana-scale-up-angi-failover');
-
-      cy.get('.tn-cluster-details')
-        .contains('HANA secondary sync state')
-        .next()
-        .contains('SFAIL');
-
-      const site1 = availableAngiCluster.sites[0];
-      const site2 = availableAngiCluster.sites[1];
-      cy.get(`.tn-site-details-${site1.name}`).contains('Failed');
-      cy.get(`.tn-site-details-${site2.name}`).contains(site1.state);
+      hanaClusterDetailsPage.loadScenario(
+        'cluster-hana-scale-up-angi-failover'
+      );
+      hanaClusterDetailsPage.expectedHanaSecondarySyncStateIsDisplayed('SFAIL');
+      hanaClusterDetailsPage.hanaAngiSitesHaveExpectedStateAfterFailover();
     });
   });
 
