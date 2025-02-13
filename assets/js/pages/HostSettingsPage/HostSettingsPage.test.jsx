@@ -65,7 +65,7 @@ describe('HostSettingsPage component', () => {
     const [StatefulHostSettingsPage] = withState(<HostSettingsPage />, state);
 
     axiosMock
-      .onGet(`/api/v1/checks/groups/${hostID}/catalog`)
+      .onGet(`/api/v1/groups/${hostID}/checks`)
       .reply(200, { items: selectableChecks });
 
     await act(async () => {
