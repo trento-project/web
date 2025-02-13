@@ -41,7 +41,7 @@ describe('ClusterDetails ClusterSettings component', () => {
     } = state.getState().clustersList;
 
     axiosMock
-      .onGet(`/api/v1/checks/groups/${clusterID}/catalog`)
+      .onGet(`/api/v1/groups/${clusterID}/checks`)
       .reply(200, { items: selectableChecks });
 
     await act(async () => {
@@ -74,7 +74,7 @@ describe('ClusterDetails ClusterSettings component', () => {
     const [StatefulChecksSettings] = withState(<ClusterSettingsPage />, state);
 
     axiosMock
-      .onGet(`/api/v1/checks/groups/${clusterID}/catalog`)
+      .onGet(`/api/v1/groups/${clusterID}/checks`)
       .reply(200, { items: selectableChecks });
 
     await act(async () => {
