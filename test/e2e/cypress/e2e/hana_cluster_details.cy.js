@@ -3,13 +3,14 @@ import * as hanaClusterDetailsPage from '../pageObject/hana-cluster-details-po';
 import { createUserRequestFactory } from '@lib/test-utils/factories';
 import {
   availableHanaCluster,
-  availableHanaClusterCostOpt,
   availableAngiCluster,
 } from '../fixtures/hana-cluster-details/available_hana_cluster';
 
 context('HANA cluster details', () => {
   before(() => {
     hanaClusterDetailsPage.preloadTestData();
+  });
+  beforeEach(() => {
     hanaClusterDetailsPage.visitAvailableHanaCluster();
     hanaClusterDetailsPage.validateAvailableHanaClusterUrl();
   });
@@ -20,44 +21,44 @@ context('HANA cluster details', () => {
     });
 
     it(`should have expected provider`, () => {
-      hanaClusterDetailsPage.expectedProviderIsDisplayed();
+      hanaClusterDetailsPage.expectedProviderIsDisplayed('hana');
     });
 
     it('should have sid expected SID and href attribute', () => {
-      hanaClusterDetailsPage.hasExpectedSidAndHrefAttribute();
+      hanaClusterDetailsPage.hasExpectedSidAndHrefAttribute('hana');
     });
 
     it('should have the expected cluster type', () => {
-      hanaClusterDetailsPage.hasExpectedClusterType();
+      hanaClusterDetailsPage.hasExpectedClusterType('hana');
     });
 
     it('should have expected architecture type', () => {
       hanaClusterDetailsPage.mouseOverArchitectureInfo();
-      hanaClusterDetailsPage.architectureTooltipIsDisplayed();
+      hanaClusterDetailsPage.architectureTooltipIsDisplayed('hana');
     });
 
     it('should have expected log replication mode', () => {
-      hanaClusterDetailsPage.expectedReplicationModeIsDisplayed();
+      hanaClusterDetailsPage.expectedReplicationModeIsDisplayed('hana');
     });
 
     it('should have expected fencing type', () => {
-      hanaClusterDetailsPage.expectedFencingTypeIsDisplayed();
+      hanaClusterDetailsPage.expectedFencingTypeIsDisplayed('hana');
     });
 
     it('should have expected HANA secondary sync state', () => {
-      hanaClusterDetailsPage.expectedHanaSecondarySyncStateIsDisplayed();
+      hanaClusterDetailsPage.expectedHanaSecondarySyncStateIsDisplayed('hana');
     });
 
     it('should have expected maintenance mode', () => {
-      hanaClusterDetailsPage.expectedMaintenanceModeIsDisplayed();
+      hanaClusterDetailsPage.expectedMaintenanceModeIsDisplayed('hana');
     });
 
     it('should have expected hana log operation mode', () => {
-      hanaClusterDetailsPage.expectedHanaLogOperationModeIsDisplayed();
+      hanaClusterDetailsPage.expectedHanaLogOperationModeIsDisplayed('hana');
     });
 
     it('should have expected cib last written value', () => {
-      hanaClusterDetailsPage.expectedCibLastWrittenValueIsDisplayed();
+      hanaClusterDetailsPage.expectedCibLastWrittenValueIsDisplayed('hana');
     });
 
     it('should have the check overview component with passing checks', () => {
@@ -65,13 +66,9 @@ context('HANA cluster details', () => {
     });
 
     // eslint-disable-next-line mocha/no-skipped-tests
-    it.skip('should have a working link to the passing checks in the overview component', () => {
-      cy.get('.tn-cluster-checks-overview ').contains('Passing').click();
-      cy.url().should(
-        'include',
-        `/clusters/${availableHanaCluster.id}/checks/results?health=passing`
-      );
-      cy.go('back');
+    it('should have a working link to the passing checks in the overview component', () => {
+      hanaClusterDetailsPage.clickPassingChecksButton();
+      hanaClusterDetailsPage.passingChecksUrlIsTheExpected();
     });
 
     it('should have the check overview component with warning checks', () => {
@@ -79,13 +76,9 @@ context('HANA cluster details', () => {
     });
 
     // eslint-disable-next-line mocha/no-skipped-tests
-    it.skip('should have a working link to the warning checks in the overview component', () => {
-      cy.get('.tn-cluster-checks-overview ').contains('Warning').click();
-      cy.url().should(
-        'include',
-        `/clusters/${availableHanaCluster.id}/checks/results?health=warning`
-      );
-      cy.go('back');
+    it('should have a working link to the warning checks in the overview component', () => {
+      hanaClusterDetailsPage.clickWarningChecksButton();
+      hanaClusterDetailsPage.warningChecksUrlIsTheExpected();
     });
 
     it('should have the check overview component with critical checks', () => {
@@ -93,13 +86,9 @@ context('HANA cluster details', () => {
     });
 
     // eslint-disable-next-line mocha/no-skipped-tests
-    it.skip('should have a working link to the critical checks in the overview component', () => {
-      cy.get('.tn-cluster-checks-overview ').contains('Critical').click();
-      cy.url().should(
-        'include',
-        `/clusters/${availableHanaCluster.id}/checks/results?health=critical`
-      );
-      cy.go('back');
+    it('should have a working link to the critical checks in the overview component', () => {
+      hanaClusterDetailsPage.clickCriticalChecksButton();
+      hanaClusterDetailsPage.criticalChecksUrlIsTheExpected();
     });
   });
 
@@ -145,115 +134,74 @@ context('HANA cluster details', () => {
 
   describe('HANA cluster details in a cost optimized scenario should be consistent with the state of the cluster', () => {
     before(() => {
-      cy.loadScenario('hana-scale-up-cost-opt');
-      cy.visit(`/clusters/${availableHanaClusterCostOpt.id}`);
-      cy.url().should('include', `/clusters/${availableHanaClusterCostOpt.id}`);
+      hanaClusterDetailsPage.loadScenario('hana-scale-up-cost-opt');
     });
 
-    after(() => {
-      availableHanaClusterCostOpt.hosts.forEach(({ id }) => {
-        cy.deregisterHost(id);
-      });
+    beforeEach(() => {
+      hanaClusterDetailsPage.visitAvailableHanaClusterCostOpt();
+      hanaClusterDetailsPage.validateAvailableHanaClusterCostOptUrl();
     });
 
-    it(`should have name ${availableHanaClusterCostOpt.name} in header`, () => {
-      cy.get('h1').contains(availableHanaClusterCostOpt.name);
+    // after(() => {
+    //   availableHanaClusterCostOpt.hosts.forEach(({ id }) => {
+    //     cy.deregisterHost(id);
+    //   });
+    // });
+
+    it('should have expected name in header', () => {
+      hanaClusterDetailsPage.availableHanaClusterCostOpHeaderIsDisplayed();
     });
 
-    it(`should have provider ${availableHanaClusterCostOpt.provider}`, () => {
-      cy.get('.tn-cluster-details')
-        .contains('Provider')
-        .next()
-        .contains(availableHanaClusterCostOpt.provider);
+    it('should have the expected provider', () => {
+      hanaClusterDetailsPage.expectedProviderIsDisplayed('hanaCostOpt');
     });
 
     it('should have all cost optimized SID`s and correct database links', () => {
-      cy.get('.tn-cluster-details')
-        .contains('SID')
-        .parent()
-        .within(() => {
-          availableHanaClusterCostOpt.sids.forEach((sid, index) => {
-            cy.contains(sid).should(
-              'have.attr',
-              'href',
-              `/databases/${availableHanaClusterCostOpt.systemID[index]}`
-            );
-          });
-        });
+      hanaClusterDetailsPage.hasExpectedSidsAndHrefAttributes();
     });
 
-    it(`should have cluster cost optimized type ${availableHanaClusterCostOpt.clusterType}`, () => {
-      cy.get('.tn-cluster-details')
-        .contains('Cluster type')
-        .next()
-        .contains(availableHanaClusterCostOpt.clusterType);
+    it('should have expected cluster cost optimized type', () => {
+      hanaClusterDetailsPage.hasExpectedClusterType('hanaCostOpt');
     });
 
-    it(`should have architecture type ${availableHanaClusterCostOpt.clusterType}`, () => {
-      cy.get('.tn-cluster-details')
-        .contains('Cluster type')
-        .next()
-        .find('svg')
-        .trigger('mouseover');
+    it('should have expected architecture type', () => {
+      hanaClusterDetailsPage.mouseOverArchitectureInfo();
+      hanaClusterDetailsPage.architectureTooltipIsDisplayed('hanaCostOpt');
+    });
 
-      cy.contains('span', availableHanaClusterCostOpt.architectureType).should(
-        'exist'
+    it('should have expected log replication mode', () => {
+      hanaClusterDetailsPage.expectedReplicationModeIsDisplayed('hanaCostOpt');
+    });
+
+    it('should have expected fencing type', () => {
+      hanaClusterDetailsPage.expectedFencingTypeIsDisplayed('hanaCostOpt');
+    });
+
+    it('should have expected HANA secondary sync state', () => {
+      hanaClusterDetailsPage.expectedHanaSecondarySyncStateIsDisplayed(
+        'hanaCostOpt'
       );
     });
 
-    it(`should have log replication mode ${availableHanaClusterCostOpt.hanaSystemReplicationMode}`, () => {
-      cy.get('.tn-cluster-details')
-        .contains('HANA log replication mode')
-        .next()
-        .contains(availableHanaClusterCostOpt.hanaSystemReplicationMode);
+    it('should have expected maintenance mode', () => {
+      hanaClusterDetailsPage.expectedMaintenanceModeIsDisplayed('hanaCostOpt');
     });
 
-    it(`should have fencing type ${availableHanaClusterCostOpt.fencingType}`, () => {
-      cy.get('.tn-cluster-details')
-        .contains('Fencing type')
-        .next()
-        .contains(availableHanaClusterCostOpt.fencingType);
+    it('should have expected hana log operation mode', () => {
+      hanaClusterDetailsPage.expectedHanaLogOperationModeIsDisplayed(
+        'hanaCostOpt'
+      );
     });
 
-    it(`should have HANA secondary sync state ${availableHanaClusterCostOpt.hanaSecondarySyncState}`, () => {
-      cy.get('.tn-cluster-details')
-        .contains('HANA secondary sync state')
-        .next()
-        .contains(availableHanaClusterCostOpt.hanaSecondarySyncState);
+    it('should have expected cib last written', () => {
+      hanaClusterDetailsPage.expectedCibLastWrittenValueIsDisplayed(
+        'hanaCostOpt'
+      );
     });
 
-    it(`should have maintenance mode ${availableHanaClusterCostOpt.maintenanceMode}`, () => {
-      cy.get('.tn-cluster-details')
-        .contains('Cluster maintenance')
-        .next()
-        .contains('False');
-    });
-
-    it(`should have hana log operation mode ${availableHanaClusterCostOpt.hanaSystemReplicationOperationMode}`, () => {
-      cy.get('.tn-cluster-details')
-        .contains('HANA log operation mode')
-        .next()
-        .contains(
-          availableHanaClusterCostOpt.hanaSystemReplicationOperationMode
-        );
-    });
-
-    it(`should have cib last written ${availableHanaClusterCostOpt.cibLastWritten}`, () => {
-      cy.get('.tn-cluster-details')
-        .contains('CIB last written')
-        .next()
-        .contains(availableHanaClusterCostOpt.cibLastWritten);
-    });
-
-    it('should display both SID`s in the clusters overview page', () => {
-      cy.visit('/clusters');
-      cy.url().should('include', '/clusters');
-      cy.get('.container').eq(0).as('clustersTable');
-      cy.get('@clustersTable').find('tr').eq(7).find('td').eq(2).as('sidCell');
-
-      availableHanaClusterCostOpt.sids.forEach((sid) => {
-        cy.get('@sidCell').should('contain', sid);
-      });
+    it(`should display both SID's in the clusters overview page`, () => {
+      hanaClusterDetailsPage.visit();
+      hanaClusterDetailsPage.bothHanaCostOptSidsAreDisplayed();
     });
   });
 

@@ -30,11 +30,10 @@ const catalog = catalogCheckFactory.buildList(5);
 
 // Selectors
 const providerLabel = 'div[class*="text-lg"]:contains("Provider") + div';
-const availableHanaClusterSid = `div[class*="text-lg"]:contains("SID") + div a:contains("${availableHanaCluster.sid}")`;
-const clusterType = 'div[class*="text-lg"]:contains("Cluster type") + div';
+const clusterSid = `div[class*="text-lg"]:contains("SID") + div a`;
+const clusterTypeLabel = 'div[class*="text-lg"]:contains("Cluster type") + div';
 const architectureInfoLabel =
   'div[class*="text-lg"]:contains("Cluster type") + div svg';
-const architectureTooltip = `span:contains("${availableHanaCluster.architectureType}")`;
 const logReplicationModeLabel =
   'div[class*="text-lg"]:contains("HANA log replication") + div';
 const fencingTypeLabel = 'div[class*="text-lg"]:contains("Fencing type") + div';
@@ -47,6 +46,10 @@ const hanaLogOperationModeLabel =
 
 const cibLastWrittenLabel =
   'div[class*="text-lg"]:contains("CIB last written") + div';
+
+const passingChecksButton = 'div[role="button"]:contains("Passing")';
+const warningChecksButton = 'div[role="button"]:contains("Warning")';
+const criticalChecksButton = 'div[role="button"]:contains("Critical")';
 
 const passingChecksValue =
   'div[class*="flex w-full"]:contains("Passing") + div';
@@ -67,32 +70,59 @@ export const visitAvailableHanaCluster = () => {
   return basePage.waitForRequest(catalogEndpointAlias);
 };
 
-const validateUrl = (clusterId = '') =>
-  basePage.validateUrl(`${url}/${clusterId}`);
+export const visitAvailableHanaClusterCostOpt = () => {
+  visit(availableHanaClusterCostOpt.id);
+  basePage.waitForRequest(lastExecutionEndpointAlias);
+  return basePage.waitForRequest(catalogEndpointAlias);
+};
+
+const validateUrl = (path = '') => basePage.validateUrl(`${url}${path}`);
 
 export const validateAvailableHanaClusterUrl = () =>
-  validateUrl(availableHanaCluster.id);
+  validateUrl(`/${availableHanaCluster.id}`);
+
+export const validateAvailableHanaClusterCostOptUrl = () =>
+  validateUrl(`/${availableHanaClusterCostOpt.id}`);
 
 export const expectedClusterNameIsDisplayedInHeader = () => {
   basePage.pageTitleIsCorrectlyDisplayed(availableHanaCluster.name);
 };
 
-export const expectedProviderIsDisplayed = () => {
-  return cy
-    .get(providerLabel)
-    .should('have.text', availableHanaCluster.provider);
+const getPropertyFromClusterType = (clusterType, property) => {
+  if (clusterType === 'hana') return availableHanaCluster[property];
+  else if (clusterType === 'hanaCostOpt')
+    return availableHanaClusterCostOpt[property];
+  else if (clusterType === 'angi') return availableAngiCluster[property];
 };
 
-export const hasExpectedSidAndHrefAttribute = () => {
-  return cy
-    .get(availableHanaClusterSid)
-    .should('have.attr', 'href', `/databases/${availableHanaCluster.systemID}`);
+export const expectedProviderIsDisplayed = (clusterType) => {
+  const provider = getPropertyFromClusterType(clusterType, 'provider');
+  cy.get(providerLabel).should('have.text', provider);
 };
 
-export const hasExpectedClusterType = () => {
+export const hasExpectedSidAndHrefAttribute = (clusterType) => {
+  const systemId = getPropertyFromClusterType(clusterType, 'systemID');
   return cy
-    .get(clusterType)
-    .should('contain', availableHanaCluster.clusterType);
+    .get(clusterSid)
+    .should('have.attr', 'href', `/databases/${systemId}`);
+};
+
+export const hasExpectedSidsAndHrefAttributes = () => {
+  cy.get(clusterSid).each((sid, index) => {
+    cy.wrap(sid).should(
+      'have.attr',
+      'href',
+      `/databases/${availableHanaClusterCostOpt.systemID[index]}`
+    );
+  });
+};
+
+export const hasExpectedClusterType = (clusterType) => {
+  const clusterTypeProperty = getPropertyFromClusterType(
+    clusterType,
+    'clusterType'
+  );
+  return cy.get(clusterTypeLabel).should('contain', clusterTypeProperty);
 };
 
 // API
@@ -116,43 +146,65 @@ const interceptCatalogRequest = () => {
 export const mouseOverArchitectureInfo = () =>
   cy.get(architectureInfoLabel).trigger('mouseover');
 
-export const architectureTooltipIsDisplayed = () =>
-  cy.get(architectureTooltip).should('be.visible');
+export const architectureTooltipIsDisplayed = (clusterType) => {
+  const architectureType = getPropertyFromClusterType(
+    clusterType,
+    'architectureType'
+  );
+  const architectureTypeLabel = `span:contains("${architectureType}")`;
+  cy.get(architectureTypeLabel).should('be.visible');
+};
 
-export const expectedReplicationModeIsDisplayed = () =>
-  cy
-    .get(logReplicationModeLabel)
-    .should('have.text', availableHanaCluster.hanaSystemReplicationMode);
+export const expectedReplicationModeIsDisplayed = (clusterType) => {
+  const replicationMode = getPropertyFromClusterType(
+    clusterType,
+    'hanaSystemReplicationMode'
+  );
+  cy.get(logReplicationModeLabel).should('have.text', replicationMode);
+};
 
-export const expectedFencingTypeIsDisplayed = () =>
-  cy
-    .get(fencingTypeLabel)
-    .should('have.text', availableHanaCluster.fencingType);
+export const expectedFencingTypeIsDisplayed = (clusterType) => {
+  const fencingType = getPropertyFromClusterType(clusterType, 'fencingType');
+  cy.get(fencingTypeLabel).should('have.text', fencingType);
+};
 
-export const expectedHanaSecondarySyncStateIsDisplayed = () =>
-  cy
-    .get(hanaSecondarySyncStateLabel)
-    .should('contain', availableHanaCluster.hanaSecondarySyncState);
+export const expectedHanaSecondarySyncStateIsDisplayed = (clusterType) => {
+  const hanaSecondarySyncState = getPropertyFromClusterType(
+    clusterType,
+    'hanaSecondarySyncState'
+  );
+  cy.get(hanaSecondarySyncStateLabel).should('contain', hanaSecondarySyncState);
+};
 
-export const expectedMaintenanceModeIsDisplayed = () => {
+export const expectedMaintenanceModeIsDisplayed = (clusterType) => {
+  const maintenanceMode = getPropertyFromClusterType(
+    clusterType,
+    'maintenanceMode'
+  );
   cy.get(maintenanceModeLabel).should(
     'have.text',
-    capitalize(availableHanaCluster.maintenanceMode.toString())
+    capitalize(maintenanceMode.toString())
   );
 };
 
-export const expectedHanaLogOperationModeIsDisplayed = () =>
-  cy
-    .get(hanaLogOperationModeLabel)
-    .should(
-      'have.text',
-      availableHanaCluster.hanaSystemReplicationOperationMode
-    );
+export const expectedHanaLogOperationModeIsDisplayed = (clusterType) => {
+  const hanaSystemReplicationOperationMode = getPropertyFromClusterType(
+    clusterType,
+    'hanaSystemReplicationOperationMode'
+  );
+  cy.get(hanaLogOperationModeLabel).should(
+    'have.text',
+    hanaSystemReplicationOperationMode
+  );
+};
 
-export const expectedCibLastWrittenValueIsDisplayed = () =>
-  cy
-    .get(cibLastWrittenLabel)
-    .should('have.text', availableHanaCluster.cibLastWritten);
+export const expectedCibLastWrittenValueIsDisplayed = (clusterType) => {
+  const cibLastWritten = getPropertyFromClusterType(
+    clusterType,
+    'cibLastWritten'
+  );
+  cy.get(cibLastWrittenLabel).should('have.text', cibLastWritten);
+};
 
 export const expectedPassingChecksCountIsDisplayed = () =>
   cy.get(passingChecksValue).should('have.text', lastExecution.passing_count);
@@ -255,5 +307,35 @@ export const sbdClusterHasExpectedNameAndStatus = () => {
       .contains(item.deviceName)
       .children()
       .contains(item.status);
+  });
+};
+
+export const clickPassingChecksButton = () =>
+  cy.get(passingChecksButton).click();
+
+export const clickWarningChecksButton = () =>
+  cy.get(warningChecksButton).click();
+
+export const clickCriticalChecksButton = () =>
+  cy.get(criticalChecksButton).click();
+
+export const passingChecksUrlIsTheExpected = () =>
+  validateUrl(`/${availableHanaCluster.id}/executions/last?health=passing`);
+
+export const warningChecksUrlIsTheExpected = () =>
+  validateUrl(`/${availableHanaCluster.id}/executions/last?health=warning`);
+
+export const criticalChecksUrlIsTheExpected = () =>
+  validateUrl(`/${availableHanaCluster.id}/executions/last?health=critical`);
+
+export const availableHanaClusterCostOpHeaderIsDisplayed = () =>
+  basePage.pageTitleIsCorrectlyDisplayed(availableHanaClusterCostOpt.name);
+
+export const bothHanaCostOptSidsAreDisplayed = () => {
+  return cy.wrap(availableHanaClusterCostOpt.sids).each((sid) => {
+    cy.get(`td:contains("${availableHanaClusterCostOpt.name}") + td`).should(
+      'contain',
+      sid
+    );
   });
 };
