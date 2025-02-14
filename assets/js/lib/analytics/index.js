@@ -5,6 +5,7 @@ import { getFromConfig } from '@lib/config/config';
 const analyticsEnabled = getFromConfig('analyticsEnabled');
 const analyticsKey = getFromConfig('analyticsKey');
 const analyticsUrl = getFromConfig('analyticsUrl');
+const installationID = getFromConfig('installationID');
 
 if (analyticsEnabled) {
   posthog.init(analyticsKey, {
@@ -17,5 +18,5 @@ export const capture = (event, payload) => {
   if (!analyticsEnabled) {
     return;
   }
-  posthog.capture(event, { ...payload });
+  posthog.capture(event, { ...payload, installationID });
 };

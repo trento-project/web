@@ -8,6 +8,7 @@ defmodule TrentoWeb.PageController do
     charts_enabled = Application.fetch_env!(:trento, Trento.Charts)[:enabled]
     deregistration_debounce = Application.fetch_env!(:trento, :deregistration_debounce)
     admin_username = Application.fetch_env!(:trento, :admin_user)
+    installation_id = Settings.get_installation_id()
     analytics_enabled = Application.fetch_env!(:trento, :analytics)[:enabled]
     analytics_key = Application.fetch_env!(:trento, :analytics)[:analytics_key]
     analytics_url = Application.fetch_env!(:trento, :analytics)[:analytics_url]
@@ -19,6 +20,7 @@ defmodule TrentoWeb.PageController do
       charts_enabled: charts_enabled,
       deregistration_debounce: deregistration_debounce,
       admin_username: admin_username,
+      installation_id: installation_id,
       analytics_enabled: analytics_enabled,
       analytics_url: analytics_url,
       analytics_key: analytics_key,
