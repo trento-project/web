@@ -1,11 +1,10 @@
 import * as hanaClusterDetailsPage from '../pageObject/hana-cluster-details-po';
 
-import { createUserRequestFactory } from '@lib/test-utils/factories';
 import { availableHanaCluster } from '../fixtures/hana-cluster-details/available_hana_cluster';
 
 context('HANA cluster details', () => {
   before(() => {
-    hanaClusterDetailsPage.preloadTestData();
+    // hanaClusterDetailsPage.preloadTestData();
   });
   beforeEach(() => {
     hanaClusterDetailsPage.visitAvailableHanaCluster();
@@ -342,13 +341,15 @@ context('HANA cluster details', () => {
 
   describe('Cluster with vmware provider', () => {
     before(() => {
-      cy.loadScenario('cluster-vmware-provider');
-      cy.visit(`/clusters/${availableHanaCluster.id}`);
+      hanaClusterDetailsPage.loadScenario('cluster-vmware-provider');
+      hanaClusterDetailsPage.interceptGroupChecksEndpoint();
+      hanaClusterDetailsPage.visitAvailableHanaCluster();
     });
 
     it(`should recognize the provider as vmware`, () => {
-      cy.contains('button', 'Check Selection').click();
-      cy.contains('VMware');
+      hanaClusterDetailsPage.clickCheckSelectionButton();
+      hanaClusterDetailsPage.waitForGroupChecksEndpoint();
+      hanaClusterDetailsPage.expectedProviderIsDisplayed('VMware');
     });
   });
 
@@ -367,114 +368,67 @@ context('HANA cluster details', () => {
   });
 
   describe('Deregistration', () => {
-    const hostToDeregister = {
-      name: 'vmhdbprd02',
-      id: 'b767b3e9-e802-587e-a442-541d093b86b9',
-      sid: 'WDF',
-    };
-
-    before(() => {
-      cy.visit(`/clusters/${availableHanaCluster.id}`);
-      cy.url().should('include', `/clusters/${availableHanaCluster.id}`);
+    beforeEach(() => {
+      hanaClusterDetailsPage.visitAvailableHanaCluster();
     });
 
-    it(`should not include a working link to ${hostToDeregister.name} in the list of sites`, () => {
-      cy.deregisterHost(hostToDeregister.id);
-      cy.get(`.tn-site-details-${hostToDeregister.sid}`)
-        .contains('a', hostToDeregister.name)
-        .should('not.exist');
+    it('should not include a working link to the deregistered host in the list of sites', () => {
+      hanaClusterDetailsPage.linkToDeregisteredHostIsAvailable();
+      hanaClusterDetailsPage.apiDeregisterWdfHost();
+      hanaClusterDetailsPage.linkToDeregisteredHostIsNotAvailable();
     });
 
-    it(`should show host ${hostToDeregister.name} again with a working link after restoring it`, () => {
-      cy.loadScenario(`host-${hostToDeregister.name}-restore`);
-      cy.get(`.tn-site-details-${hostToDeregister.sid}`)
-        .contains('a', hostToDeregister.name)
-        .should('exist');
+    it(`should show host again with a working link after restoring it`, () => {
+      hanaClusterDetailsPage.apiRestoreWdfHost();
+      hanaClusterDetailsPage.linkToDeregisteredHostIsAvailable();
     });
   });
 
   describe('Forbidden actions', () => {
-    const password = 'password';
-
     beforeEach(() => {
-      cy.deleteAllUsers();
-      cy.logout();
-      const user = createUserRequestFactory.build({
-        password,
-        password_confirmation: password,
-      });
-      cy.wrap(user).as('user');
+      hanaClusterDetailsPage.apiDeleteAllUsers();
+      hanaClusterDetailsPage.logout();
     });
 
     describe('Check Execution', () => {
       it('should forbid check execution when the correct user abilities are missing in details and settings', () => {
-        cy.get('@user').then((user) => {
-          cy.createUserWithAbilities(user, []);
-          cy.login(user.username, password);
-        });
-
-        cy.visit(`/clusters/${availableHanaCluster.id}/settings`);
-
-        cy.contains('button', 'Start Execution').should('be.disabled');
-
-        cy.contains('button', 'Start Execution').click({ force: true });
-
-        cy.contains('span', 'You are not authorized for this action').should(
-          'be.visible'
-        );
-
-        cy.visit(`/clusters/${availableHanaCluster.id}`);
-
-        cy.contains('button', 'Start Execution').should('be.disabled');
-
-        cy.contains('button', 'Start Execution').click({ force: true });
-
-        cy.contains('span', 'You are not authorized for this action').should(
-          'be.visible'
-        );
+        hanaClusterDetailsPage.apiCreateUserWithoutAbilities();
+        hanaClusterDetailsPage.loginWithoutAbilities();
+        hanaClusterDetailsPage.visitAvailableHanaCluster();
+        hanaClusterDetailsPage.startExecutionButtonIsDisabled();
+        hanaClusterDetailsPage.clickStartExecutionButton();
+        hanaClusterDetailsPage.notAuthorizedTooltipIsDisplayed();
+        hanaClusterDetailsPage.clickCheckSelectionButton();
+        hanaClusterDetailsPage.startExecutionButtonIsDisabled();
+        hanaClusterDetailsPage.clickStartExecutionButton();
+        hanaClusterDetailsPage.notAuthorizedTooltipIsDisplayed();
       });
 
       it('should enable check execution button when the correct user abilities are present', () => {
-        cy.get('@user').then((user) => {
-          cy.createUserWithAbilities(user, [
-            { name: 'all', resource: 'cluster_checks_execution' },
-          ]);
-          cy.login(user.username, password);
-        });
-
-        cy.visit(`/clusters/${availableHanaCluster.id}/settings`);
-
-        cy.contains('button', 'Start Execution').trigger('mouseover', {
-          force: true,
-        });
-
-        cy.contains('span', 'You are not authorized for this action').should(
-          'not.exist'
-        );
+        hanaClusterDetailsPage.apiCreateUserWithChecksAbility();
+        hanaClusterDetailsPage.loginWithAbilities();
+        hanaClusterDetailsPage.visitAvailableHanaCluster();
+        hanaClusterDetailsPage.clickCheckSelectionButton();
+        hanaClusterDetailsPage.mouseOverStartExecutionButton();
+        hanaClusterDetailsPage.notAuthorizedTooltipIsNotDisplayed();
       });
     });
 
     describe('Check Selection', () => {
       it('should forbid check selection saving', () => {
-        cy.get('@user').then((user) => {
-          cy.createUserWithAbilities(user, []);
-          cy.login(user.username, password);
-        });
-        cy.visit(`/clusters/${availableHanaCluster.id}/settings`);
-
-        cy.contains('button', 'Save Checks Selection').should('be.disabled');
+        hanaClusterDetailsPage.apiCreateUserWithoutAbilities();
+        hanaClusterDetailsPage.loginWithoutAbilities();
+        hanaClusterDetailsPage.visitAvailableHanaCluster();
+        hanaClusterDetailsPage.clickCheckSelectionButton();
+        hanaClusterDetailsPage.saveChecksSelectionButtonIsDisabled();
       });
 
       it('should allow check selection saving', () => {
-        cy.get('@user').then((user) => {
-          cy.createUserWithAbilities(user, [
-            { name: 'all', resource: 'cluster_checks_selection' },
-          ]);
-          cy.login(user.username, password);
-        });
-        cy.visit(`/clusters/${availableHanaCluster.id}/settings`);
-
-        cy.contains('button', 'Save Checks Selection').should('be.enabled');
+        hanaClusterDetailsPage.apiCreateUserWithChecksSelectionAbility();
+        hanaClusterDetailsPage.loginWithAbilities();
+        hanaClusterDetailsPage.visitAvailableHanaCluster();
+        hanaClusterDetailsPage.clickCheckSelectionButton();
+        hanaClusterDetailsPage.saveChecksSelectionButtonIsDisplayed();
       });
     });
   });

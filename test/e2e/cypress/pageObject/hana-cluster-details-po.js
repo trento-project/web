@@ -26,6 +26,12 @@ const lastExecution = checksExecutionCompletedFactory.build({
   critical_count: 1,
 });
 
+const hostToDeregister = {
+  name: 'vmhdbprd02',
+  id: 'b767b3e9-e802-587e-a442-541d093b86b9',
+  sid: 'WDF',
+};
+
 const catalog = catalogCheckFactory.buildList(5);
 
 // Selectors
@@ -57,6 +63,12 @@ const warningChecksValue =
   'div[class*="flex w-full"]:contains("Warning") + div';
 const criticalChecksValue =
   'div[class*="flex w-full"]:contains("Critical") + div';
+
+const checkSelectionButton = 'button:contains("Check Selection")';
+
+// Checks
+const startExecutionButton = 'button:contains("Start Execution")';
+const saveChecksSelectionButton = 'button:contains("Save Checks Selection")';
 
 export const visit = (clusterId = '') => {
   basePage.visit(`${url}/${clusterId}`);
@@ -158,6 +170,13 @@ const interceptCatalogRequest = () => {
     catalogEndpointAlias
   );
 };
+
+export const interceptGroupChecksEndpoint = () => {
+  cy.intercept('GET', '/api/v1/groups/*/**').as('checks');
+};
+
+export const waitForGroupChecksEndpoint = () =>
+  basePage.waitForRequest('checks');
 
 export const mouseOverArchitectureInfo = () =>
   cy.get(architectureInfoLabel).trigger('mouseover');
@@ -380,3 +399,71 @@ export const hanaAngiSitesHaveExpectedStateAfterFailover = () => {
     site1.state
   );
 };
+
+export const clickCheckSelectionButton = () =>
+  cy.get(checkSelectionButton).click();
+
+export const apiDeregisterWdfHost = () =>
+  basePage.apiDeregisterHost(hostToDeregister.id);
+
+export const linkToDeregisteredHostIsNotAvailable = () => {
+  cy.get(
+    `div[class*="tn-site-details-${hostToDeregister.sid}"] tbody td span:contains("${hostToDeregister.name}")`
+  ).should('not.have.attr', 'href');
+};
+
+export const linkToDeregisteredHostIsAvailable = () => {
+  cy.get(
+    `div[class*="tn-site-details-${hostToDeregister.sid}"] tbody td a:contains("${hostToDeregister.name}")`
+  ).should('have.attr', 'href');
+};
+
+export const apiRestoreWdfHost = () => {
+  basePage.loadScenario(`host-${hostToDeregister.name}-restore`);
+};
+
+export const startExecutionButtonIsDisabled = () =>
+  cy.get(startExecutionButton).should('be.disabled');
+
+export const notAuthorizedTooltipIsDisplayed = () => {
+  cy.get('span:contains("You are not authorized for this action")').should(
+    'be.visible'
+  );
+};
+
+export const notAuthorizedTooltipIsNotDisplayed = () => {
+  cy.get('span:contains("You are not authorized for this action")').should(
+    'not.exist'
+  );
+};
+
+export const clickStartExecutionButton = () => {
+  cy.get(startExecutionButton).click({ force: true });
+};
+
+export const mouseOverStartExecutionButton = () =>
+  cy.get(startExecutionButton).trigger('mouseover', { force: true });
+
+export const apiCreateUserWithChecksExecutionAbility = () => {
+  basePage.createUserWithAbilities([
+    {
+      name: 'all',
+      resource: 'cluster_checks_execution',
+    },
+  ]);
+};
+
+export const apiCreateUserWithChecksSelectionAbility = () => {
+  basePage.createUserWithAbilities([
+    {
+      name: 'all',
+      resource: 'cluster_checks_selection',
+    },
+  ]);
+};
+
+export const saveChecksSelectionButtonIsDisabled = () =>
+  cy.get(saveChecksSelectionButton).should('be.disabled');
+
+export const saveChecksSelectionButtonIsDisplayed = () =>
+  cy.get(saveChecksSelectionButton).should('be.visible');
