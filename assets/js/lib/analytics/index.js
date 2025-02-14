@@ -9,5 +9,13 @@ const analyticsUrl = getFromConfig('analyticsUrl');
 if (analyticsEnabled) {
   posthog.init(analyticsKey, {
     api_host: analyticsUrl,
+    capture_pageview: false,
   });
 }
+
+export const capture = (event, payload) => {
+  if (!analyticsEnabled) {
+    return;
+  }
+  posthog.capture(event, { ...payload });
+};
