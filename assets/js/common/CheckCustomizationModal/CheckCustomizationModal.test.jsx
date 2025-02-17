@@ -20,6 +20,11 @@ const check = selectableCheckFactory.build({
       customizable: true,
       current_value: '10 ',
     }),
+    nonCustomizedValueFactory.build({
+      name: 'CheckBooleanValueName',
+      customizable: true,
+      current_value: true,
+    }),
   ],
   customized: false,
   customizable: false,
@@ -33,8 +38,23 @@ const expectedCheckModalValues = {
   onSave: mockOnSave,
 };
 
+const expectedBooleanCheckModalValues = {
+  ...check,
+  values: [
+    nonCustomizedValueFactory.build({
+      name: 'CheckBooleanValueName',
+      customizable: true,
+      current_value: true,
+    }),
+  ],
+  open: true,
+  provider: 'aws',
+  onClose: mockOnClose,
+  onSave: mockOnSave,
+};
+
 describe('CheckCustomizationModal', () => {
-  it('renders modal with correct title, description, warning, disabled input field and a disabled save button', async () => {
+  it('renders modal with correct title, description, warning, disabled input fields and a disabled save button', async () => {
     const expectedModalTitle = `Check: ${expectedCheckModalValues.id}`;
     const expectedWarningBannerText =
       'Trento & SUSE cannot be held liable for damages if system is unable to function due to custom check value.';
@@ -52,9 +72,12 @@ describe('CheckCustomizationModal', () => {
     const warningBannerCheckbox = screen.getByRole('checkbox');
     expect(warningBannerCheckbox).not.toBeChecked();
     expect(screen.getByText('Save')).toBeDisabled();
-
     const inputElements = screen.getAllByRole('textbox'); // All modal inputs
     expect(inputElements[0]).toBeDisabled(); // Customizable check value
+    const radioInputs = screen.getAllByRole('radio'); // Get all radio buttons for the boolean check value
+    expect(radioInputs).toHaveLength(2); // Only true and false input
+    expect(radioInputs.find((input) => input.value === 'true')).toBeDisabled(); // Validate if the true radio button is disabled
+    expect(radioInputs.find((input) => input.value === 'false')).toBeDisabled(); // Validate if the false radio button is disabled
     expect(inputElements[1]).toBeDisabled(); // Provider is always disabled
 
     await user.click(screen.getByText('Close'));
@@ -84,6 +107,36 @@ describe('CheckCustomizationModal', () => {
     expect(onSave).toHaveBeenCalledWith({
       checksID: '123',
       customValues: { CheckValueName: '999' },
+    });
+  });
+
+  it('renders the modal  with a single boolean customizable values', async () => {
+    const user = userEvent.setup();
+    const { onSave } = expectedCheckModalValues;
+
+    await act(async () => {
+      render(<CheckCustomizationModal {...expectedBooleanCheckModalValues} />);
+    });
+
+    const warningBannerCheckbox = screen.getByRole('checkbox');
+    expect(warningBannerCheckbox).not.toBeChecked();
+    await user.click(warningBannerCheckbox);
+    expect(warningBannerCheckbox).toBeChecked();
+
+    const radioInputs = screen.getAllByRole('radio'); // Get all radio buttons for the boolean check value
+    expect(radioInputs).toHaveLength(2); // Only true and false input
+    expect(radioInputs.find((input) => input.value === 'true')).toBeEnabled(); // Validate if the true radio button is enabled
+    expect(radioInputs.find((input) => input.value === 'false')).toBeEnabled(); // Validate if the false radio button is enabled
+
+    const falseRadioInput = radioInputs.find(
+      (input) => input.value === 'false'
+    );
+    await user.click(falseRadioInput);
+
+    await user.click(screen.getByText('Save'));
+    expect(onSave).toHaveBeenCalledWith({
+      checksID: '123',
+      customValues: { CheckBooleanValueName: false },
     });
   });
 
