@@ -225,8 +225,7 @@ function ActivityLogPage() {
       )(abilities),
       className: 'col-span-1',
     },
-    
-    
+
     {
       key: 'severity',
       type: 'select',
