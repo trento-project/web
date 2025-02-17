@@ -9,5 +9,8 @@ config :swoosh, local: false
 config :trento, Trento.SoftwareUpdates.Discovery,
   adapter: Trento.Infrastructure.SoftwareUpdates.Suma
 
+config :trento,
+  operations_enabled: false
+
 # Do not print debug messages in production
 # config :logger, level: :info
