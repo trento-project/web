@@ -4,12 +4,12 @@ import { noop, isBoolean, toNumber } from 'lodash';
 import Modal from '@common/Modal';
 import Button from '@common/Button';
 
+
 import Label from '@common/Label';
 import ProviderLabel from '@common/ProviderLabel';
 import Tooltip from '@common/Tooltip';
 import Input from '@common/Input';
 
-import CheckableWarningMessage from '@common/CheckableWarningMessage';
 import { UNKNOWN_PROVIDER } from '@lib/model';
 
 import CheckCustomizationBooleanInput from './CheckCustomizationBooleanInput';
@@ -42,7 +42,9 @@ const renderLabelWithTooltip = (name) => {
   );
 };
 const valueWasCustomized = (value) =>
-  value?.custom_value ?? value?.current_value;
+  value?.custom_value || value?.current_value;
+
+const inputIsBool = (value) => value === true || value === false;
 
 function CheckCustomizationModal({
   open = false,
@@ -93,7 +95,7 @@ function CheckCustomizationModal({
       {values
         ?.filter(({ customizable }) => customizable)
         .map((value) =>
-          isBoolean(valueWasCustomized(value)) ? (
+          inputIsBool(valueWasCustomized(value)) ? (
             <CheckCustomizationBooleanInput
               key={value?.name}
               name={value?.name}
