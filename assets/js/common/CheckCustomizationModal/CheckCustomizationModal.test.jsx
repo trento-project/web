@@ -17,17 +17,7 @@ const check = selectableCheckFactory.build({
   description: 'Check Description',
   values: [
     nonCustomizedValueFactory.build({
-      name: 'CheckIntValueName',
-      customizable: true,
-      current_value: 10,
-    }),
-    nonCustomizedValueFactory.build({
-      name: 'CheckStringValueName',
-      customizable: true,
-      current_value: 'stringValue',
-    }),
-    nonCustomizedValueFactory.build({
-      name: 'CheckBoolValueName',
+      name: 'CheckValueName',
       customizable: true,
       current_value: true,
     }),
@@ -42,7 +32,6 @@ const checkCustomizationModalProps = {
   provider: 'aws',
   onClose: mockOnClose,
   onSave: mockOnSave,
-  onReset: mockOnReset
 };
 
 describe('CheckCustomizationModal', () => {
