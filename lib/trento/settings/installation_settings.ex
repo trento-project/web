@@ -13,7 +13,6 @@ defmodule Trento.Settings.InstallationSettings do
   @derive {Jason.Encoder, except: [:__meta__, :__struct__]}
   @primary_key {:id, :binary_id, autogenerate: true}
   schema "settings" do
-    # field :eula_accepted, :boolean, source: :installation_settings_eula_accepted
     field :installation_id, :binary_id, source: :installation_settings_installation_id
 
     timestamps(type: :utc_datetime_usec)
@@ -23,7 +22,7 @@ defmodule Trento.Settings.InstallationSettings do
   @spec changeset(t() | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()
   def changeset(system_settings, attrs) do
     system_settings
-    |> cast(attrs, [:installation_id, :eula_accepted])
+    |> cast(attrs, [:installation_id])
     |> validate_required(:installation_id)
     |> sti_changes()
     |> unique_constraint(:type)
