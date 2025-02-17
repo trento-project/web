@@ -68,6 +68,13 @@ defmodule TrentoWeb.FallbackController do
     |> render(:"404")
   end
 
+  def call(conn, {:error, :operation_not_found}) do
+    conn
+    |> put_status(:not_found)
+    |> put_view(json: ErrorJSON)
+    |> render(:"404", reason: "Operation not found.")
+  end
+
   def call(conn, {:error, %Ecto.Changeset{} = changeset}) do
     conn
     |> put_status(:unprocessable_entity)
