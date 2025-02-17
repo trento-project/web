@@ -209,7 +209,7 @@ context('HANA cluster details', () => {
     });
 
     after(() => {
-      hanaClusterDetailsPage.deregisterHanaClusterCostOptHosts();
+      hanaClusterDetailsPage.deregisterAngiClusterCostOptHosts();
     });
 
     it('should have expected name in header', () => {

@@ -472,3 +472,9 @@ export const deregisterHanaClusterCostOptHosts = () => {
     cy.deregisterHost(id);
   });
 };
+
+export const deregisterAngiClusterCostOptHosts = () => {
+  availableAngiCluster.hosts.forEach(({ id }) => {
+    cy.deregisterHost(id);
+  });
+};
