@@ -2,16 +2,24 @@ defmodule TrentoWeb.V1.HostController do
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
 
+  require Logger
+
+  alias Trento.Repo
+
   alias Trento.{
     Heartbeats,
     Hosts
   }
 
+  alias Trento.Hosts.Projections.HostReadModel
+
   alias TrentoWeb.OpenApi.V1.Schema
 
   alias TrentoWeb.OpenApi.V1.Schema.{
     BadRequest,
+    Forbidden,
     NotFound,
+    OperationParams,
     UnprocessableEntity
   }
 
@@ -25,6 +33,16 @@ defmodule TrentoWeb.V1.HostController do
     fallback: TrentoWeb.FallbackController
 
   plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
+
+  plug TrentoWeb.Plugs.OperationsPolicyPlug,
+       [
+         policy: Trento.Operations.HostPolicy,
+         resource: &__MODULE__.get_operation_host/1,
+         operation: &__MODULE__.get_operation/1,
+         assigns_to: :host
+       ]
+       when action == :request_operation
+
   action_fallback TrentoWeb.FallbackController
 
   operation :list,
@@ -131,7 +149,7 @@ defmodule TrentoWeb.V1.HostController do
     ],
     responses: [
       accepted: "The Command has been accepted and the Requested Host execution is scheduled",
-      not_found: Schema.NotFound.response(),
+      not_found: NotFound.response(),
       unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
     ]
 
@@ -143,5 +161,57 @@ defmodule TrentoWeb.V1.HostController do
     end
   end
 
-  def get_policy_resource(_), do: Trento.Hosts.Projections.HostReadModel
+  operation :request_operation,
+    summary: "Request operation for a Host",
+    tags: ["Operations"],
+    description: "Request operation for a Host",
+    parameters: [
+      id: [
+        in: :path,
+        required: true,
+        type: %OpenApiSpex.Schema{type: :string, format: :uuid}
+      ],
+      operation: [
+        in: :path,
+        required: true,
+        type: %OpenApiSpex.Schema{type: :string}
+      ]
+    ],
+    request_body: {"Params", "application/json", OperationParams},
+    responses: [
+      accepted: "The operation has been authorized and requested",
+      not_found: NotFound.response(),
+      forbidden: Forbidden.response(),
+      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
+    ]
+
+  def request_operation(%{assigns: %{host: host}} = conn, %{
+        operation: "saptune_solution_apply"
+      }) do
+    %{solution: solution} = OpenApiSpex.body_params(conn)
+    %{id: host_id} = host
+
+    Logger.info(
+      "Operation authorized. Send real saptune_solution_apply with #{solution} to #{host_id}"
+    )
+
+    # Request operation, get operation id when created and return in json
+
+    conn
+    |> put_status(:accepted)
+    |> json(%{operation_id: UUID.uuid4()})
+  end
+
+  def get_policy_resource(_), do: HostReadModel
+
+  def get_operation_host(%{params: %{id: id}}) do
+    HostReadModel
+    |> Repo.get(id)
+    |> Repo.preload([:cluster, :application_instances, :database_instances])
+  end
+
+  def get_operation(%{params: %{operation: "saptune_solution_apply"}}),
+    do: :saptune_solution_apply
+
+  def get_operation(_), do: nil
 end
