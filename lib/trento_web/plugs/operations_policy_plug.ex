@@ -5,11 +5,11 @@ defmodule TrentoWeb.Plugs.OperationsPolicyPlug do
 
   Options:
   - policy: Operations policy implementing Trento.Operations.PolicyBehaviour
-  - resource: Function returning the resource to be authorized. If it returns `nil` {:error, :not_found} is falled back
-  - operation: Function returning the operation to authorize. If it returns `nil` {:error, :operation_not_found} is falled back
+  - resource: Function returning the resource to be authorized. If it returns `nil` {:error, :not_found} is fallen back
+  - operation: Function returning the operation to authorize. If it returns `nil` {:error, :operation_not_found} is fallen back
   - params: Function returning the operation params. It returns an empty map by default.
   - assigns_to: Atom defining where the authorized resource is assigned in the conn once the plug finishes successfully.
-    It is available at `%{assings: %{authorized_resource: resource}}`. `authorized_resource` by default
+    It is available at `%{assigns: %{authorized_resource: resource}}`. `authorized_resource` by default
 
   The plug can be used like:
   ```
