@@ -310,6 +310,11 @@ Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor.html
 Trento.Infrastructure.SoftwareUpdates.Suma.html
 Trento.Infrastructure.SoftwareUpdates.SumaApi.html
 Trento.MessagingCase.html
+Trento.Operations.ApplicationInstancePolicy.html
+Trento.Operations.ClusterPolicy.html
+Trento.Operations.DatabaseInstancePolicy.html
+Trento.Operations.HostPolicy.html
+Trento.Operations.PolicyBehaviour.html
 Trento.ProjectorTestHelper.html
 Trento.Release.html
 Trento.Repo.html
@@ -496,8 +501,8 @@ dist/lato-latin-ext-300-normal-VPGGJKJL.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-D09CB8A3.js
-dist/sidebar_items-27EA353E.js
+dist/search_data-FAB36ED5.js
+dist/sidebar_items-C310AABE.js
 environment_variables.html
 hack_on_the_trento.html
 index.html
