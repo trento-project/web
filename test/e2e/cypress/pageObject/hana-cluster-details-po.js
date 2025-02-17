@@ -7,7 +7,6 @@ import { capitalize } from 'lodash';
 import {
   checksExecutionCompletedFactory,
   catalogCheckFactory,
-  createUserRequestFactory,
 } from '@lib/test-utils/factories';
 
 const url = '/clusters';
@@ -467,3 +466,9 @@ export const saveChecksSelectionButtonIsDisabled = () =>
 
 export const saveChecksSelectionButtonIsDisplayed = () =>
   cy.get(saveChecksSelectionButton).should('be.visible');
+
+export const deregisterHanaClusterCostOptHosts = () => {
+  availableHanaClusterCostOpt.hosts.forEach(({ id }) => {
+    cy.deregisterHost(id);
+  });
+};

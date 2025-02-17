@@ -4,7 +4,7 @@ import { availableHanaCluster } from '../fixtures/hana-cluster-details/available
 
 context('HANA cluster details', () => {
   before(() => {
-    // hanaClusterDetailsPage.preloadTestData();
+    hanaClusterDetailsPage.preloadTestData();
   });
   beforeEach(() => {
     hanaClusterDetailsPage.visitAvailableHanaCluster();
@@ -138,11 +138,9 @@ context('HANA cluster details', () => {
       hanaClusterDetailsPage.validateAvailableHanaClusterCostOptUrl();
     });
 
-    // after(() => {
-    //   availableHanaClusterCostOpt.hosts.forEach(({ id }) => {
-    //     cy.deregisterHost(id);
-    //   });
-    // });
+    after(() => {
+      hanaClusterDetailsPage.deregisterHanaClusterCostOptHosts();
+    });
 
     it('should have expected name in header', () => {
       hanaClusterDetailsPage.availableHanaClusterCostOpHeaderIsDisplayed();
@@ -210,11 +208,9 @@ context('HANA cluster details', () => {
       hanaClusterDetailsPage.visitHanaAngiCluster();
     });
 
-    // after(() => {
-    //   availableAngiCluster.hosts.forEach(({ id }) => {
-    //     cy.deregisterHost(id);
-    //   });
-    // });
+    after(() => {
+      hanaClusterDetailsPage.deregisterHanaClusterCostOptHosts();
+    });
 
     it('should have expected name in header', () => {
       hanaClusterDetailsPage.availableHanaAngiHeaderIsDisplayed();
@@ -405,7 +401,7 @@ context('HANA cluster details', () => {
       });
 
       it('should enable check execution button when the correct user abilities are present', () => {
-        hanaClusterDetailsPage.apiCreateUserWithChecksAbility();
+        hanaClusterDetailsPage.apiCreateUserWithChecksExecutionAbility();
         hanaClusterDetailsPage.loginWithAbilities();
         hanaClusterDetailsPage.visitAvailableHanaCluster();
         hanaClusterDetailsPage.clickCheckSelectionButton();
