@@ -13,6 +13,9 @@ defmodule Trento.SapSystems.Projections.ApplicationInstanceReadModel do
 
   alias Trento.Hosts.Projections.HostReadModel
 
+  defdelegate authorize_operation(action, application_instance, params),
+    to: Trento.Operations.ApplicationInstancePolicy
+
   @derive {Jason.Encoder, except: [:__meta__, :__struct__]}
   @primary_key false
   schema "application_instances" do
