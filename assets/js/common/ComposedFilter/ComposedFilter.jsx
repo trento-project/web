@@ -93,31 +93,31 @@ function ComposedFilter({
         {!autoApply && (
           <>
             {children && (
-                <div className="grid grid-cols-subgrid grid-flow-col col-span-2 gap-2">
-                  {children}
-                </div>
-              )}
-                <div className="grid grid-cols-subgrid grid-flow-col col-span-2 gap-2">
-                  <Button
-                    disabled={!isChanged}
-                    onClick={() => {
-                      setIsChanged(false);
-                      onChange(value);
-                    }}
-                  >
-                    Apply Filter
-                  </Button>
-                  <Button
-                    type="primary-white"
-                    onClick={() => {
-                      setValue({});
-                      setIsChanged(false);
-                      onChange({});
-                    }}
-                  >
-                    Clear Filters
-                  </Button>
-                </div>
+              <div className="grid grid-cols-subgrid grid-flow-col col-span-2 gap-2">
+                {children}
+              </div>
+            )}
+            <div className="grid grid-cols-subgrid grid-flow-col col-span-2 gap-2">
+              <Button
+                disabled={!isChanged}
+                onClick={() => {
+                  setIsChanged(false);
+                  onChange(value);
+                }}
+              >
+                Apply Filter
+              </Button>
+              <Button
+                type="primary-white"
+                onClick={() => {
+                  setValue({});
+                  setIsChanged(false);
+                  onChange({});
+                }}
+              >
+                Clear Filters
+              </Button>
+            </div>
             <div />
           </>
         )}
