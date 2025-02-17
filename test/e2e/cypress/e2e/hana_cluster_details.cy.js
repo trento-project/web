@@ -1,22 +1,25 @@
 import * as hanaClusterDetailsPage from '../pageObject/hana-cluster-details-po';
 
-import { availableHanaCluster } from '../fixtures/hana-cluster-details/available_hana_cluster';
-
 context('HANA cluster details', () => {
   before(() => {
     hanaClusterDetailsPage.preloadTestData();
   });
+
   beforeEach(() => {
-    hanaClusterDetailsPage.visitAvailableHanaCluster();
-    hanaClusterDetailsPage.validateAvailableHanaClusterUrl();
+    hanaClusterDetailsPage.interceptCatalogRequest();
+    hanaClusterDetailsPage.interceptLastExecutionRequest();
   });
 
   describe('HANA cluster details should be consistent with the state of the cluster', () => {
-    it('should have name expected cluster name in header', () => {
+    beforeEach(() => {
+      hanaClusterDetailsPage.visitAvailableHanaCluster();
+    });
+
+    it('should have expected cluster name in header', () => {
       hanaClusterDetailsPage.expectedClusterNameIsDisplayedInHeader();
     });
 
-    it(`should have expected provider`, () => {
+    it('should have expected provider', () => {
       hanaClusterDetailsPage.expectedProviderIsDisplayed('hana');
     });
 
@@ -61,7 +64,6 @@ context('HANA cluster details', () => {
       hanaClusterDetailsPage.expectedPassingChecksCountIsDisplayed();
     });
 
-    // eslint-disable-next-line mocha/no-skipped-tests
     it('should have a working link to the passing checks in the overview component', () => {
       hanaClusterDetailsPage.clickPassingChecksButton();
       hanaClusterDetailsPage.passingChecksUrlIsTheExpected();
@@ -71,7 +73,6 @@ context('HANA cluster details', () => {
       hanaClusterDetailsPage.expectedWarningChecksCountIsDisplayed();
     });
 
-    // eslint-disable-next-line mocha/no-skipped-tests
     it('should have a working link to the warning checks in the overview component', () => {
       hanaClusterDetailsPage.clickWarningChecksButton();
       hanaClusterDetailsPage.warningChecksUrlIsTheExpected();
@@ -81,7 +82,6 @@ context('HANA cluster details', () => {
       hanaClusterDetailsPage.expectedCriticalChecksCountIsDisplayed();
     });
 
-    // eslint-disable-next-line mocha/no-skipped-tests
     it('should have a working link to the critical checks in the overview component', () => {
       hanaClusterDetailsPage.clickCriticalChecksButton();
       hanaClusterDetailsPage.criticalChecksUrlIsTheExpected();
@@ -89,6 +89,11 @@ context('HANA cluster details', () => {
   });
 
   describe('Cluster sites should have the expected hosts', () => {
+    beforeEach(() => {
+      hanaClusterDetailsPage.visitAvailableHanaCluster();
+      hanaClusterDetailsPage.validateAvailableHanaClusterUrl();
+    });
+
     it('should have expected site name', () => {
       hanaClusterDetailsPage.expectedSiteNamesAreDisplayed();
     });
@@ -123,6 +128,10 @@ context('HANA cluster details', () => {
   });
 
   describe('Cluster SBD should have the expected devices with the correct status', () => {
+    beforeEach(() => {
+      hanaClusterDetailsPage.visitAvailableHanaCluster();
+    });
+
     it('should have SBD expected device name & status', () => {
       hanaClusterDetailsPage.sbdClusterHasExpectedNameAndStatus();
     });
@@ -303,7 +312,7 @@ context('HANA cluster details', () => {
   describe.skip('Cluster with unknown provider', () => {
     before(() => {
       cy.loadScenario('cluster-unknown-provider');
-      cy.visit(`/clusters/${availableHanaCluster.id}`);
+      cy.visit(`/clusters/${hanaClusterDetailsPage.availableHanaCluster.id}`);
     });
 
     it(`should show a warning message in the check selection view`, () => {
@@ -314,7 +323,9 @@ context('HANA cluster details', () => {
     });
 
     it(`should show a warning message in the checks results view`, () => {
-      cy.visit(`/clusters/${availableHanaCluster.id}/checks/results`);
+      cy.visit(
+        `/clusters/${hanaClusterDetailsPage.availableHanaCluster.id}/checks/results`
+      );
       cy.get('[data-testid="warning-banner"]').contains(
         'The following results are valid for on-premise bare metal platforms.'
       );
@@ -325,7 +336,7 @@ context('HANA cluster details', () => {
   describe.skip('Cluster with kvm provider', () => {
     before(() => {
       cy.loadScenario('cluster-kvm-provider');
-      cy.visit(`/clusters/${availableHanaCluster.id}`);
+      cy.visit(`/clusters/${hanaClusterDetailsPage.availableHanaCluster.id}`);
     });
 
     it(`should show the default catalog`, () => {
@@ -336,13 +347,13 @@ context('HANA cluster details', () => {
   });
 
   describe('Cluster with vmware provider', () => {
-    before(() => {
+    beforeEach(() => {
       hanaClusterDetailsPage.loadScenario('cluster-vmware-provider');
       hanaClusterDetailsPage.interceptGroupChecksEndpoint();
       hanaClusterDetailsPage.visitAvailableHanaCluster();
     });
 
-    it(`should recognize the provider as vmware`, () => {
+    it('should recognize the provider as vmware', () => {
       hanaClusterDetailsPage.clickCheckSelectionButton();
       hanaClusterDetailsPage.waitForGroupChecksEndpoint();
       hanaClusterDetailsPage.expectedProviderIsDisplayed('VMware');
@@ -353,7 +364,7 @@ context('HANA cluster details', () => {
   describe.skip('Cluster with nutanix provider', () => {
     before(() => {
       cy.loadScenario('cluster-nutanix-provider');
-      cy.visit(`/clusters/${availableHanaCluster.id}`);
+      cy.visit(`/clusters/${hanaClusterDetailsPage.availableHanaCluster.id}`);
     });
 
     it(`should show the default catalog`, () => {

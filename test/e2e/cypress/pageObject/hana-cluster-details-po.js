@@ -9,14 +9,13 @@ import {
   catalogCheckFactory,
 } from '@lib/test-utils/factories';
 
-const url = '/clusters';
-const catalogEndpointAlias = 'catalog';
-const lastExecutionEndpointAlias = 'lastExecution';
 import {
   availableHanaCluster,
   availableHanaClusterCostOpt,
   availableAngiCluster,
 } from '../fixtures/hana-cluster-details/available_hana_cluster';
+
+export { availableHanaCluster } from '../fixtures/hana-cluster-details/available_hana_cluster';
 
 const lastExecution = checksExecutionCompletedFactory.build({
   group_id: availableHanaCluster.id,
@@ -32,6 +31,12 @@ const hostToDeregister = {
 };
 
 const catalog = catalogCheckFactory.buildList(5);
+
+//Attributes
+
+const url = '/clusters';
+const catalogEndpointAlias = 'catalog';
+const lastExecutionEndpointAlias = 'lastExecution';
 
 // Selectors
 const providerLabel = 'div[class*="text-lg"]:contains("Provider") + div';
@@ -65,33 +70,27 @@ const criticalChecksValue =
 
 const checkSelectionButton = 'button:contains("Check Selection")';
 
-// Checks
 const startExecutionButton = 'button:contains("Start Execution")';
 const saveChecksSelectionButton = 'button:contains("Save Checks Selection")';
 
 export const visit = (clusterId = '') => {
   basePage.visit(`${url}/${clusterId}`);
+  if (clusterId !== '') {
+    basePage.waitForRequest(lastExecutionEndpointAlias);
+    return basePage.waitForRequest(catalogEndpointAlias);
+  }
 };
 
-export const visitAvailableHanaCluster = () => {
-  interceptCatalogRequest();
-  interceptLastExecutionRequest();
-  visit(availableHanaCluster.id);
-  basePage.waitForRequest(lastExecutionEndpointAlias);
-  return basePage.waitForRequest(catalogEndpointAlias);
-};
+export const visitAvailableHanaCluster = () => visit(availableHanaCluster.id);
 
-export const visitAvailableHanaClusterCostOpt = () => {
+export const visitAvailableHanaClusterCostOpt = () =>
   visit(availableHanaClusterCostOpt.id);
-  basePage.waitForRequest(lastExecutionEndpointAlias);
-  return basePage.waitForRequest(catalogEndpointAlias);
-};
 
-export const visitHanaAngiCluster = () => {
-  visit(availableAngiCluster.id);
-  basePage.waitForRequest(lastExecutionEndpointAlias);
-  return basePage.waitForRequest(catalogEndpointAlias);
-};
+export const visitHanaAngiCluster = () => visit(availableAngiCluster.id);
+
+// UI Interactions
+// UI Validations
+// API
 
 const validateUrl = (path = '') => basePage.validateUrl(`${url}${path}`);
 
@@ -153,7 +152,7 @@ export const hasExpectedClusterType = (clusterType) => {
 };
 
 // API
-const interceptLastExecutionRequest = () => {
+export const interceptLastExecutionRequest = () => {
   const lastExecutionURL = `**/api/v2/checks/groups/**/executions/last`;
 
   return cy
@@ -163,7 +162,7 @@ const interceptLastExecutionRequest = () => {
     .as(lastExecutionEndpointAlias);
 };
 
-const interceptCatalogRequest = () => {
+export const interceptCatalogRequest = () => {
   const catalogURL = `**/api/v3/checks/catalog*`;
   cy.intercept(catalogURL, { body: { items: catalog } }).as(
     catalogEndpointAlias
@@ -469,12 +468,12 @@ export const saveChecksSelectionButtonIsDisplayed = () =>
 
 export const deregisterHanaClusterCostOptHosts = () => {
   availableHanaClusterCostOpt.hosts.forEach(({ id }) => {
-    cy.deregisterHost(id);
+    basePage.apiDeregisterHost(id);
   });
 };
 
 export const deregisterAngiClusterCostOptHosts = () => {
   availableAngiCluster.hosts.forEach(({ id }) => {
-    cy.deregisterHost(id);
+    basePage.apiDeregisterHost(id);
   });
 };
