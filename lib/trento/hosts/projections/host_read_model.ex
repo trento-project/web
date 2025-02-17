@@ -18,6 +18,9 @@ defmodule Trento.Hosts.Projections.HostReadModel do
 
   defdelegate authorize(action, user, params), to: Trento.Hosts.Policy
 
+  defdelegate authorize_operation(action, host, params),
+    to: Trento.Operations.HostPolicy
+
   @type t :: %__MODULE__{}
 
   @derive {Jason.Encoder, except: [:__meta__, :__struct__]}
