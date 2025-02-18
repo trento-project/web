@@ -40,7 +40,7 @@ const lastExecutionEndpointAlias = 'lastExecution';
 // Selectors
 
 const providerLabel = 'div[class*="text-lg"]:contains("Provider") + div';
-const clusterSid = `div[class*="text-lg"]:contains("SID") + div a`;
+const clusterSid = 'div[class*="text-lg"]:contains("SID") + div a';
 const clusterTypeLabel = 'div[class*="text-lg"]:contains("Cluster type") + div';
 const architectureInfoLabel =
   'div[class*="text-lg"]:contains("Cluster type") + div svg';
@@ -68,8 +68,10 @@ const warningChecksValue =
 const criticalChecksValue =
   'div[class*="flex w-full"]:contains("Critical") + div';
 
-const checkSelectionButton = 'button:contains("Check Selection")';
+const actionNotAuthorizedTooltip =
+  'span:contains("You are not authorized for this action")';
 
+const checkSelectionButton = 'button:contains("Check Selection")';
 const startExecutionButton = 'button:contains("Start Execution")';
 const saveChecksSelectionButton = 'button:contains("Save Checks Selection")';
 
@@ -364,15 +366,11 @@ export const startExecutionButtonIsDisabled = () =>
   cy.get(startExecutionButton).should('be.disabled');
 
 export const notAuthorizedTooltipIsDisplayed = () => {
-  cy.get('span:contains("You are not authorized for this action")').should(
-    'be.visible'
-  );
+  cy.get(actionNotAuthorizedTooltip).should('be.visible');
 };
 
 export const notAuthorizedTooltipIsNotDisplayed = () => {
-  cy.get('span:contains("You are not authorized for this action")').should(
-    'not.exist'
-  );
+  cy.get(actionNotAuthorizedTooltip).should('not.exist');
 };
 
 // API
@@ -384,7 +382,7 @@ export const interceptLastExecutionRequest = () => {
 };
 
 export const interceptCatalogRequest = () => {
-  const catalogURL = `**/api/v3/checks/catalog*`;
+  const catalogURL = '/api/v3/checks/catalog*';
   cy.intercept(catalogURL, { body: { items: catalog } }).as(
     catalogEndpointAlias
   );
