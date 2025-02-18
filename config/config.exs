@@ -203,6 +203,11 @@ config :trento,
   api_key_authentication_enabled: true,
   jwt_authentication_enabled: true
 
+config :trento, :analytics,
+  enabled: false,
+  analytics_key: "",
+  analytics_url: ""
+
 config :trento, Trento.Vault,
   ciphers: [
     default: {

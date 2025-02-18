@@ -50,6 +50,7 @@ import {
 } from '@lib/auth/config';
 import { networkClient } from '@lib/network';
 import { TARGET_CLUSTER, TARGET_HOST } from '@lib/model';
+import PostHogPageView from '@lib/analytics/pageview';
 
 import { createStore } from './state';
 
@@ -148,6 +149,7 @@ function RoutesWrapper() {
     <>
       <Toaster position="top-right" containerStyle={{ top: 50, zIndex: 99 }} />
       <Outlet />
+      <PostHogPageView />
     </>
   );
 }
