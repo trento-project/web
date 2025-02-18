@@ -17,7 +17,17 @@ const check = selectableCheckFactory.build({
   description: 'Check Description',
   values: [
     nonCustomizedValueFactory.build({
-      name: 'CheckValueName',
+      name: 'CheckIntValueName',
+      customizable: true,
+      current_value: 10,
+    }),
+    nonCustomizedValueFactory.build({
+      name: 'CheckStringValueName',
+      customizable: true,
+      current_value: 'stringValue',
+    }),
+    nonCustomizedValueFactory.build({
+      name: 'CheckBoolValueName',
       customizable: true,
       current_value: true,
     }),
