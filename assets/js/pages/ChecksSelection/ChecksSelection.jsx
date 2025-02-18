@@ -4,6 +4,7 @@ import { without, uniq, groupBy } from 'lodash';
 import { toggle } from '@lib/lists';
 
 import CheckCustomizationModal from '@common/CheckCustomizationModal';
+import ResetCheckCustomizationModal from '@common/ResetCheckCustomizationModal';
 import CatalogContainer from '@pages/ChecksCatalog/CatalogContainer';
 import ChecksSelectionGroup, {
   NONE_CHECKED,
@@ -41,6 +42,8 @@ function ChecksSelection({
   saveCustomCheck = () => {},
 }) {
   const [isCheckCustomizationModalOpen, setIsCheckCustomizationModalOpen] =
+    useState(false);
+  const [isResetConfirmationModalOpen, setResetConfirmationModalOpen] =
     useState(false);
   const [selectedCheck, setSelectedCheck] = useState(null);
 
@@ -80,6 +83,18 @@ function ChecksSelection({
       loading={loading}
     >
       <div className="pb-4">
+        <ResetCheckCustomizationModal
+          key={selectedCheck?.id}
+          checkId={selectedCheck?.id}
+          open={!!isResetConfirmationModalOpen}
+          onReset={() => {
+            setResetConfirmationModalOpen(false);
+          }}
+          onCancel={() => {
+            setResetConfirmationModalOpen(false);
+            setSelectedCheck(null);
+          }}
+        />
         {groupedChecks?.map(({ group, checks, groupSelected }) => (
           <ChecksSelectionGroup
             key={group}
@@ -103,6 +118,10 @@ function ChecksSelection({
                 onCustomize={() => {
                   setSelectedCheck(check);
                   setIsCheckCustomizationModalOpen(true);
+                }}
+                onResetCustomization={() => {
+                  setSelectedCheck(check);
+                  setResetConfirmationModalOpen(true);
                 }}
               />
             ))}

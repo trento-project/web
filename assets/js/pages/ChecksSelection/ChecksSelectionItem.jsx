@@ -1,7 +1,8 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react';
+import { noop } from 'lodash';
 
-import { EOS_SETTINGS_OUTLINED } from 'eos-icons-react';
+import { EOS_RESTART_ALT, EOS_SETTINGS_OUTLINED } from 'eos-icons-react';
 import { Switch } from '@headlessui/react';
 
 import classNames from 'classnames';
@@ -15,8 +16,11 @@ const defaultAbilities = [];
 
 const CUSTOMIZATION_ALLOWED_FOR = ['all:all', 'all:check_customization'];
 
-const isCustomizable = (abilities, customizable) =>
+const canCustomize = (abilities, customizable) =>
   isPermitted(abilities, CUSTOMIZATION_ALLOWED_FOR) && customizable;
+
+const canReset = (abilities, customizable, customized) =>
+  canCustomize(abilities, customizable) && customized;
 
 function ChecksSelectionItem({
   checkID,
@@ -26,8 +30,9 @@ function ChecksSelectionItem({
   customized = false,
   selected,
   userAbilities = defaultAbilities,
-  onChange = () => {},
-  onCustomize = () => {},
+  onChange = noop,
+  onCustomize = noop,
+  onResetCustomization = noop,
 }) {
   return (
     <li>
@@ -54,7 +59,19 @@ function ChecksSelectionItem({
               </ReactMarkdown>
             </div>
             <Switch.Group as="div" className="flex items-center">
-              {isCustomizable(userAbilities, customizable) && (
+              {canReset(userAbilities, customizable, customized) && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    onResetCustomization(checkID);
+                  }}
+                  aria-label="reset-check-customization"
+                  className="inline mr-2"
+                >
+                  <EOS_RESTART_ALT className="fill-jungle-green-500" />
+                </button>
+              )}
+              {canCustomize(userAbilities, customizable) && (
                 <button
                   type="button"
                   onClick={() => {
