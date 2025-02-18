@@ -92,19 +92,26 @@ describe('Checks Customizability', () => {
   };
 
   it.each`
-    customizable | abilities                                     | expectedCallToAction
-    ${true}      | ${[]}                                         | ${false}
-    ${true}      | ${[fooBarAbility]}                            | ${false}
-    ${true}      | ${[allAbility, fooBarAbility]}                | ${true}
-    ${true}      | ${[checkCustomizationAbility, fooBarAbility]} | ${true}
-    ${false}     | ${[]}                                         | ${false}
-    ${false}     | ${[allAbility]}                               | ${false}
-    ${false}     | ${[checkCustomizationAbility]}                | ${false}
-    ${false}     | ${[fooBarAbility]}                            | ${false}
+    customizable | customized | abilities                                     | expectedCustomizationCTA | expectedResetCustomizationCTA
+    ${true}      | ${true}    | ${[]}                                         | ${false}                 | ${false}
+    ${true}      | ${true}    | ${[fooBarAbility]}                            | ${false}                 | ${false}
+    ${true}      | ${true}    | ${[allAbility, fooBarAbility]}                | ${true}                  | ${true}
+    ${true}      | ${true}    | ${[checkCustomizationAbility, fooBarAbility]} | ${true}                  | ${true}
+    ${false}     | ${false}   | ${[]}                                         | ${false}                 | ${false}
+    ${false}     | ${false}   | ${[allAbility]}                               | ${false}                 | ${false}
+    ${false}     | ${false}   | ${[checkCustomizationAbility]}                | ${false}                 | ${false}
+    ${false}     | ${false}   | ${[fooBarAbility]}                            | ${false}                 | ${false}
+    ${true}      | ${false}   | ${[checkCustomizationAbility]}                | ${true}                  | ${false}
   `(
     'should show check customization call to action',
-    ({ customizable, abilities, expectedCallToAction }) => {
-      const check = selectableCheckFactory.build({ customizable });
+    ({
+      customizable,
+      customized,
+      abilities,
+      expectedCustomizationCTA,
+      expectedResetCustomizationCTA,
+    }) => {
+      const check = selectableCheckFactory.build({ customizable, customized });
 
       render(
         <ChecksSelectionItem
@@ -115,16 +122,27 @@ describe('Checks Customizability', () => {
           selected
           userAbilities={abilities}
           customizable={check.customizable}
+          customized={check.customized}
         />
       );
 
       const customizationCallToAction =
         screen.queryByLabelText('customize-check');
 
-      if (expectedCallToAction) {
+      if (expectedCustomizationCTA) {
         expect(customizationCallToAction).toBeVisible();
       } else {
         expect(customizationCallToAction).toBeNull();
+      }
+
+      const resetCustomizationCallToAction = screen.queryByLabelText(
+        'reset-check-customization'
+      );
+
+      if (expectedResetCustomizationCTA) {
+        expect(resetCustomizationCallToAction).toBeVisible();
+      } else {
+        expect(resetCustomizationCallToAction).toBeNull();
       }
     }
   );
@@ -149,5 +167,29 @@ describe('Checks Customizability', () => {
 
     await user.click(screen.getByLabelText('customize-check'));
     expect(onCustomize).toHaveBeenCalledWith(check.id);
+  });
+
+  it('should run the onResetCustomization function when the reset button is clicked', async () => {
+    const user = userEvent.setup();
+    const check = selectableCheckFactory.build({
+      customizable: true,
+      customized: true,
+    });
+    const onResetCustomization = jest.fn();
+
+    render(
+      <ChecksSelectionItem
+        checkID={check.id}
+        name={check.name}
+        description={check.description}
+        userAbilities={[checkCustomizationAbility]}
+        customizable={check.customizable}
+        customized={check.customized}
+        onResetCustomization={onResetCustomization}
+      />
+    );
+
+    await user.click(screen.getByLabelText('reset-check-customization'));
+    expect(onResetCustomization).toHaveBeenCalledWith(check.id);
   });
 });
