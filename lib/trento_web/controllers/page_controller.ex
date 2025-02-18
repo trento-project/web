@@ -1,11 +1,17 @@
 defmodule TrentoWeb.PageController do
   use TrentoWeb, :controller
 
+  alias Trento.Settings
+
   def index(conn, _params) do
     check_service_base_url = Application.fetch_env!(:trento, :checks_service)[:base_url]
     charts_enabled = Application.fetch_env!(:trento, Trento.Charts)[:enabled]
     deregistration_debounce = Application.fetch_env!(:trento, :deregistration_debounce)
     admin_username = Application.fetch_env!(:trento, :admin_user)
+    installation_id = Settings.get_installation_id()
+    analytics_enabled = Application.fetch_env!(:trento, :analytics)[:enabled]
+    analytics_key = Application.fetch_env!(:trento, :analytics)[:analytics_key]
+    analytics_url = Application.fetch_env!(:trento, :analytics)[:analytics_url]
 
     {sso_enabled, callback_url, login_url, enrollment_url} = sso_details(conn)
 
@@ -14,6 +20,10 @@ defmodule TrentoWeb.PageController do
       charts_enabled: charts_enabled,
       deregistration_debounce: deregistration_debounce,
       admin_username: admin_username,
+      installation_id: installation_id,
+      analytics_enabled: analytics_enabled,
+      analytics_url: analytics_url,
+      analytics_key: analytics_key,
       sso_enabled: sso_enabled,
       sso_login_url: login_url,
       sso_callback_url: callback_url,
