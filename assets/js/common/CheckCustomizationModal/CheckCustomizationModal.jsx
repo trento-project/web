@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { noop } from 'lodash';
+import { noop, isBoolean, toNumber } from 'lodash';
 
 import Modal from '@common/Modal';
 import Button from '@common/Button';
@@ -44,8 +44,6 @@ const renderLabelWithTooltip = (name) => {
 const valueWasCustomized = (value) =>
   value?.custom_value || value?.current_value;
 
-const inputIsBool = (value) => value === true || value === false;
-
 function CheckCustomizationModal({
   open = false,
   id,
@@ -72,7 +70,7 @@ function CheckCustomizationModal({
   const handleCustomValueInput = (name, value) => {
     setCustomValues((previousValues) => ({
       ...previousValues,
-      [name]: value,
+      [name]: isBoolean(value) ? value : toNumber(value) || value,
     }));
   };
   return (
@@ -95,7 +93,7 @@ function CheckCustomizationModal({
       {values
         ?.filter(({ customizable }) => customizable)
         .map((value) =>
-          inputIsBool(valueWasCustomized(value)) ? (
+          isBoolean(valueWasCustomized(value)) ? (
             <CheckCustomizationBooleanInput
               key={value?.name}
               name={value?.name}
