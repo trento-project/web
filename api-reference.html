@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-K7URE6B4.js"></script>
-    <script src="dist/sidebar_items-C310AABE.js"></script>
+    <script src="dist/sidebar_items-DEDD8A66.js"></script>
     <script src="docs_config.js"></script>
     <script async src="dist/html-YIPIRHGU.js"></script>
 
@@ -3997,6 +3997,16 @@ tests that require setting up a connection.</p></div>
 
     <div class="summary-synopsis"><p>LoadUserPlug loads the stateless user from jwt from the database.
 The current user is replaced with the stateful user for subsequent plugs</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="TrentoWeb.Plugs.OperationsPolicyPlug.html" translate="no">TrentoWeb.Plugs.OperationsPolicyPlug</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>This plug is responsible for authorizing operations. It falls back to <code class="inline">{:error, :forbidden}</code> if
+the resource is not authorized.</p></div>
 
 </div>
 <div class="summary-row">

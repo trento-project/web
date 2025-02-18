@@ -439,6 +439,7 @@ TrentoWeb.Plugs.AuthenticateAPIKeyPlug.html
 TrentoWeb.Plugs.ChartsDisabledPlug.html
 TrentoWeb.Plugs.ExternalIdpGuardPlug.html
 TrentoWeb.Plugs.LoadUserPlug.html
+TrentoWeb.Plugs.OperationsPolicyPlug.html
 TrentoWeb.Router.html
 TrentoWeb.SessionController.html
 TrentoWeb.SessionJSON.html
@@ -501,8 +502,8 @@ dist/lato-latin-ext-300-normal-VPGGJKJL.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-FAB36ED5.js
-dist/sidebar_items-C310AABE.js
+dist/search_data-C73CD235.js
+dist/sidebar_items-DEDD8A66.js
 environment_variables.html
 hack_on_the_trento.html
 index.html
