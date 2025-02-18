@@ -170,7 +170,7 @@ describe('useChecksSelection', () => {
     expect(store.getActions()).toEqual([
       {
         type: 'NOTIFICATION',
-        payload: { text: `Customization resetted!`, icon: '✅' },
+        payload: { text: `Customization was reset!`, icon: '✅' },
       },
     ]);
   });

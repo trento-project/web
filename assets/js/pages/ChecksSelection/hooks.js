@@ -39,7 +39,7 @@ export const useChecksSelection = () => {
       pipe(
         map(markMatchingCheckAsNotCustomized(checkId)),
         setChecksSelection,
-        () => ({ text: `Customization resetted!`, icon: '✅' }),
+        () => ({ text: `Customization was reset!`, icon: '✅' }),
         notify,
         dispatch
       )(checksSelection);
