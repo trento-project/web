@@ -25,6 +25,10 @@ export default {
   title: 'Patterns/ChecksSelection',
   component: ChecksSelection,
   argTypes: {
+    groupID: {
+      type: 'string',
+      description: 'The ID of the group to which the selection refers to.',
+    },
     catalog: {
       control: 'object',
       description: 'Catalog data',
