@@ -311,8 +311,8 @@ context('HANA cluster details', () => {
   // eslint-disable-next-line mocha/no-skipped-tests
   describe.skip('Cluster with unknown provider', () => {
     before(() => {
-      cy.loadScenario('cluster-unknown-provider');
-      cy.visit(`/clusters/${hanaClusterDetailsPage.availableHanaCluster.id}`);
+      hanaClusterDetailsPage.loadScenario('cluster-unknown-provider');
+      hanaClusterDetailsPage.visitAvailableHanaCluster();
     });
 
     it(`should show a warning message in the check selection view`, () => {
@@ -335,8 +335,8 @@ context('HANA cluster details', () => {
   // eslint-disable-next-line mocha/no-skipped-tests
   describe.skip('Cluster with kvm provider', () => {
     before(() => {
-      cy.loadScenario('cluster-kvm-provider');
-      cy.visit(`/clusters/${hanaClusterDetailsPage.availableHanaCluster.id}`);
+      hanaClusterDetailsPage.loadScenario('cluster-kvm-provider');
+      hanaClusterDetailsPage.visitAvailableHanaCluster();
     });
 
     it(`should show the default catalog`, () => {
@@ -349,13 +349,11 @@ context('HANA cluster details', () => {
   describe('Cluster with vmware provider', () => {
     beforeEach(() => {
       hanaClusterDetailsPage.loadScenario('cluster-vmware-provider');
-      hanaClusterDetailsPage.interceptGroupChecksEndpoint();
       hanaClusterDetailsPage.visitAvailableHanaCluster();
     });
 
     it('should recognize the provider as vmware', () => {
       hanaClusterDetailsPage.clickCheckSelectionButton();
-      hanaClusterDetailsPage.waitForGroupChecksEndpoint();
       hanaClusterDetailsPage.expectedProviderIsDisplayed('VMware');
     });
   });
@@ -363,8 +361,8 @@ context('HANA cluster details', () => {
   // eslint-disable-next-line mocha/no-skipped-tests
   describe.skip('Cluster with nutanix provider', () => {
     before(() => {
-      cy.loadScenario('cluster-nutanix-provider');
-      cy.visit(`/clusters/${hanaClusterDetailsPage.availableHanaCluster.id}`);
+      hanaClusterDetailsPage.loadScenario('cluster-nutanix-provider');
+      hanaClusterDetailsPage.visitAvailableHanaCluster();
     });
 
     it(`should show the default catalog`, () => {

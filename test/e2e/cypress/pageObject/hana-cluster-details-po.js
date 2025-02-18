@@ -4,6 +4,7 @@ import * as basePage from './base-po.js';
 import { capitalize } from 'lodash';
 
 // Test data
+
 import {
   checksExecutionCompletedFactory,
   catalogCheckFactory,
@@ -14,8 +15,6 @@ import {
   availableHanaClusterCostOpt,
   availableAngiCluster,
 } from '../fixtures/hana-cluster-details/available_hana_cluster';
-
-export { availableHanaCluster } from '../fixtures/hana-cluster-details/available_hana_cluster';
 
 const lastExecution = checksExecutionCompletedFactory.build({
   group_id: availableHanaCluster.id,
@@ -39,6 +38,7 @@ const catalogEndpointAlias = 'catalog';
 const lastExecutionEndpointAlias = 'lastExecution';
 
 // Selectors
+
 const providerLabel = 'div[class*="text-lg"]:contains("Provider") + div';
 const clusterSid = `div[class*="text-lg"]:contains("SID") + div a`;
 const clusterTypeLabel = 'div[class*="text-lg"]:contains("Cluster type") + div';
@@ -73,11 +73,13 @@ const checkSelectionButton = 'button:contains("Check Selection")';
 const startExecutionButton = 'button:contains("Start Execution")';
 const saveChecksSelectionButton = 'button:contains("Save Checks Selection")';
 
+// UI Interactions
+
 export const visit = (clusterId = '') => {
   basePage.visit(`${url}/${clusterId}`);
   if (clusterId !== '') {
     basePage.waitForRequest(lastExecutionEndpointAlias);
-    return basePage.waitForRequest(catalogEndpointAlias);
+    basePage.waitForRequest(catalogEndpointAlias);
   }
 };
 
@@ -88,10 +90,28 @@ export const visitAvailableHanaClusterCostOpt = () =>
 
 export const visitHanaAngiCluster = () => visit(availableAngiCluster.id);
 
-// UI Interactions
-// UI Validations
-// API
+export const clickStartExecutionButton = () =>
+  cy.get(startExecutionButton).click({ force: true });
 
+export const mouseOverArchitectureInfo = () =>
+  cy.get(architectureInfoLabel).trigger('mouseover');
+
+export const mouseOverStartExecutionButton = () =>
+  cy.get(startExecutionButton).trigger('mouseover', { force: true });
+
+export const clickPassingChecksButton = () =>
+  cy.get(passingChecksButton).click();
+
+export const clickWarningChecksButton = () =>
+  cy.get(warningChecksButton).click();
+
+export const clickCriticalChecksButton = () =>
+  cy.get(criticalChecksButton).click();
+
+export const clickCheckSelectionButton = () =>
+  cy.get(checkSelectionButton).click();
+
+// UI Validations
 const validateUrl = (path = '') => basePage.validateUrl(`${url}${path}`);
 
 export const validateAvailableHanaClusterUrl = () =>
@@ -100,26 +120,8 @@ export const validateAvailableHanaClusterUrl = () =>
 export const validateAvailableHanaClusterCostOptUrl = () =>
   validateUrl(`/${availableHanaClusterCostOpt.id}`);
 
-export const expectedClusterNameIsDisplayedInHeader = () => {
+export const expectedClusterNameIsDisplayedInHeader = () =>
   basePage.pageTitleIsCorrectlyDisplayed(availableHanaCluster.name);
-};
-
-const getPropertyFromClusterType = (clusterType, property) => {
-  const clusterMap = {
-    hana: availableHanaCluster,
-    hanaCostOpt: availableHanaClusterCostOpt,
-    angi: availableAngiCluster,
-  };
-
-  const cluster = clusterMap[clusterType];
-
-  if (!cluster) {
-    const customValueToCheck = clusterType;
-    return customValueToCheck;
-  }
-
-  return cluster[property];
-};
 
 export const expectedProviderIsDisplayed = (clusterType) => {
   const provider = getPropertyFromClusterType(clusterType, 'provider');
@@ -128,12 +130,10 @@ export const expectedProviderIsDisplayed = (clusterType) => {
 
 export const hasExpectedSidAndHrefAttribute = (clusterType) => {
   const systemId = getPropertyFromClusterType(clusterType, 'systemID');
-  return cy
-    .get(clusterSid)
-    .should('have.attr', 'href', `/databases/${systemId}`);
+  cy.get(clusterSid).should('have.attr', 'href', `/databases/${systemId}`);
 };
 
-export const hasExpectedSidsAndHrefAttributes = () => {
+export const hasExpectedSidsAndHrefAttributes = () =>
   cy.get(clusterSid).each((sid, index) => {
     cy.wrap(sid).should(
       'have.attr',
@@ -141,43 +141,14 @@ export const hasExpectedSidsAndHrefAttributes = () => {
       `/databases/${availableHanaClusterCostOpt.systemID[index]}`
     );
   });
-};
 
 export const hasExpectedClusterType = (clusterType) => {
   const clusterTypeProperty = getPropertyFromClusterType(
     clusterType,
     'clusterType'
   );
-  return cy.get(clusterTypeLabel).should('contain', clusterTypeProperty);
+  cy.get(clusterTypeLabel).should('contain', clusterTypeProperty);
 };
-
-// API
-export const interceptLastExecutionRequest = () => {
-  const lastExecutionURL = `**/api/v2/checks/groups/**/executions/last`;
-
-  return cy
-    .intercept(lastExecutionURL, {
-      body: lastExecution,
-    })
-    .as(lastExecutionEndpointAlias);
-};
-
-export const interceptCatalogRequest = () => {
-  const catalogURL = `**/api/v3/checks/catalog*`;
-  cy.intercept(catalogURL, { body: { items: catalog } }).as(
-    catalogEndpointAlias
-  );
-};
-
-export const interceptGroupChecksEndpoint = () => {
-  cy.intercept('GET', '/api/v1/groups/*/**').as('checks');
-};
-
-export const waitForGroupChecksEndpoint = () =>
-  basePage.waitForRequest('checks');
-
-export const mouseOverArchitectureInfo = () =>
-  cy.get(architectureInfoLabel).trigger('mouseover');
 
 export const architectureTooltipIsDisplayed = (clusterType) => {
   const architectureType = getPropertyFromClusterType(
@@ -248,13 +219,6 @@ export const expectedWarningChecksCountIsDisplayed = () =>
 export const expectedCriticalChecksCountIsDisplayed = () =>
   cy.get(criticalChecksValue).should('have.text', lastExecution.critical_count);
 
-export const allExpectedIPsAreDisplayed = () => {
-  const ips = getHostsProperty('ips');
-  cy.wrap(ips).each(({ siteName, ip }) => {
-    cy.get(`.tn-site-details-${siteName} tbody td`).eq(3).should('contain', ip);
-  });
-};
-
 export const allExpectedVirtualIPsAreDisplayed = () => {
   const virtualIps = getHostsProperty('virtualIps');
   cy.wrap(virtualIps).each(({ siteName, virtualIp }) => {
@@ -292,26 +256,15 @@ export const allExpectedStatusesAreDisplayed = () => {
   });
 };
 
-const getHostsProperty = (property) => {
-  const result = [];
-  availableHanaCluster.sites.forEach((site) => {
-    site.hosts.forEach((host) => {
-      const isPropertyArray = Array.isArray(host[property]);
-      if (isPropertyArray) {
-        host[property].forEach((value) => {
-          const propertySingular = property.slice(0, -1);
-          result.push({ siteName: site.name, [propertySingular]: value });
-        });
-      } else {
-        result.push({ siteName: site.name, [property]: host[property] });
-      }
-    });
+export const allExpectedIPsAreDisplayed = () => {
+  const ips = getHostsProperty('ips');
+  cy.wrap(ips).each(({ siteName, ip }) => {
+    cy.get(`.tn-site-details-${siteName} tbody td`).eq(3).should('contain', ip);
   });
-  return result;
 };
 
 export const expectedSiteStatesAreDisplayed = () => {
-  return cy.wrap(availableHanaCluster.sites).each((site) => {
+  cy.wrap(availableHanaCluster.sites).each((site) => {
     cy.get(`.tn-site-details-${site.name} h3 + span`).should(
       'have.text',
       site.state
@@ -320,13 +273,13 @@ export const expectedSiteStatesAreDisplayed = () => {
 };
 
 export const expectedSiteNamesAreDisplayed = () => {
-  return cy.wrap(availableHanaCluster.sites).each((site) => {
+  cy.wrap(availableHanaCluster.sites).each((site) => {
     cy.get(`.tn-site-details-${site.name} h3`).should('have.text', site.name);
   });
 };
 
 export const expectedSrHealthStatesAreDisplayed = () => {
-  return cy.wrap(availableHanaCluster.sites).each((site) => {
+  cy.wrap(availableHanaCluster.sites).each((site) => {
     cy.get(`.tn-site-details-${site.name} svg`).should(
       'have.class',
       site.srHealthState
@@ -342,15 +295,6 @@ export const sbdClusterHasExpectedNameAndStatus = () => {
       .contains(item.status);
   });
 };
-
-export const clickPassingChecksButton = () =>
-  cy.get(passingChecksButton).click();
-
-export const clickWarningChecksButton = () =>
-  cy.get(warningChecksButton).click();
-
-export const clickCriticalChecksButton = () =>
-  cy.get(criticalChecksButton).click();
 
 export const passingChecksUrlIsTheExpected = () =>
   validateUrl(`/${availableHanaCluster.id}/executions/last?health=passing`);
@@ -368,7 +312,7 @@ export const availableHanaAngiHeaderIsDisplayed = () =>
   basePage.pageTitleIsCorrectlyDisplayed(availableAngiCluster.name);
 
 export const bothHanaCostOptSidsAreDisplayed = () => {
-  return cy.wrap(availableHanaClusterCostOpt.sids).each((sid) => {
+  cy.wrap(availableHanaClusterCostOpt.sids).each((sid) => {
     cy.get(`td:contains("${availableHanaClusterCostOpt.name}") + td`).should(
       'contain',
       sid
@@ -376,8 +320,14 @@ export const bothHanaCostOptSidsAreDisplayed = () => {
   });
 };
 
+export const saveChecksSelectionButtonIsDisabled = () =>
+  cy.get(saveChecksSelectionButton).should('be.disabled');
+
+export const saveChecksSelectionButtonIsDisplayed = () =>
+  cy.get(saveChecksSelectionButton).should('be.visible');
+
 export const hanaAngiClusterSitesAreDisplayed = () => {
-  return cy.wrap(availableAngiCluster.sites).each((site) => {
+  cy.wrap(availableAngiCluster.sites).each((site) => {
     cy.get(`.tn-site-details-${site.name} h3 + span`).should(
       'have.text',
       site.state
@@ -398,12 +348,6 @@ export const hanaAngiSitesHaveExpectedStateAfterFailover = () => {
   );
 };
 
-export const clickCheckSelectionButton = () =>
-  cy.get(checkSelectionButton).click();
-
-export const apiDeregisterWdfHost = () =>
-  basePage.apiDeregisterHost(hostToDeregister.id);
-
 export const linkToDeregisteredHostIsNotAvailable = () => {
   cy.get(
     `div[class*="tn-site-details-${hostToDeregister.sid}"] tbody td span:contains("${hostToDeregister.name}")`
@@ -414,10 +358,6 @@ export const linkToDeregisteredHostIsAvailable = () => {
   cy.get(
     `div[class*="tn-site-details-${hostToDeregister.sid}"] tbody td a:contains("${hostToDeregister.name}")`
   ).should('have.attr', 'href');
-};
-
-export const apiRestoreWdfHost = () => {
-  basePage.loadScenario(`host-${hostToDeregister.name}-restore`);
 };
 
 export const startExecutionButtonIsDisabled = () =>
@@ -435,12 +375,26 @@ export const notAuthorizedTooltipIsNotDisplayed = () => {
   );
 };
 
-export const clickStartExecutionButton = () => {
-  cy.get(startExecutionButton).click({ force: true });
+// API
+export const interceptLastExecutionRequest = () => {
+  const lastExecutionURL = '/api/v2/checks/groups/**/executions/last';
+  cy.intercept(lastExecutionURL, {
+    body: lastExecution,
+  }).as(lastExecutionEndpointAlias);
 };
 
-export const mouseOverStartExecutionButton = () =>
-  cy.get(startExecutionButton).trigger('mouseover', { force: true });
+export const interceptCatalogRequest = () => {
+  const catalogURL = `**/api/v3/checks/catalog*`;
+  cy.intercept(catalogURL, { body: { items: catalog } }).as(
+    catalogEndpointAlias
+  );
+};
+
+export const apiDeregisterWdfHost = () =>
+  basePage.apiDeregisterHost(hostToDeregister.id);
+
+export const apiRestoreWdfHost = () =>
+  basePage.loadScenario(`host-${hostToDeregister.name}-restore`);
 
 export const apiCreateUserWithChecksExecutionAbility = () => {
   basePage.createUserWithAbilities([
@@ -460,20 +414,46 @@ export const apiCreateUserWithChecksSelectionAbility = () => {
   ]);
 };
 
-export const saveChecksSelectionButtonIsDisabled = () =>
-  cy.get(saveChecksSelectionButton).should('be.disabled');
+export const deregisterHanaClusterCostOptHosts = () =>
+  availableHanaClusterCostOpt.hosts.forEach(({ id }) =>
+    basePage.apiDeregisterHost(id)
+  );
 
-export const saveChecksSelectionButtonIsDisplayed = () =>
-  cy.get(saveChecksSelectionButton).should('be.visible');
+export const deregisterAngiClusterCostOptHosts = () =>
+  availableAngiCluster.hosts.forEach(({ id }) =>
+    basePage.apiDeregisterHost(id)
+  );
 
-export const deregisterHanaClusterCostOptHosts = () => {
-  availableHanaClusterCostOpt.hosts.forEach(({ id }) => {
-    basePage.apiDeregisterHost(id);
+// Helpers
+
+const getHostsProperty = (property) => {
+  const result = [];
+  availableHanaCluster.sites.forEach((site) => {
+    site.hosts.forEach((host) => {
+      const isPropertyArray = Array.isArray(host[property]);
+      if (isPropertyArray) {
+        host[property].forEach((value) => {
+          const propertySingular = property.slice(0, -1);
+          result.push({ siteName: site.name, [propertySingular]: value });
+        });
+      } else {
+        result.push({ siteName: site.name, [property]: host[property] });
+      }
+    });
   });
+  return result;
 };
 
-export const deregisterAngiClusterCostOptHosts = () => {
-  availableAngiCluster.hosts.forEach(({ id }) => {
-    basePage.apiDeregisterHost(id);
-  });
+const getPropertyFromClusterType = (clusterType, property) => {
+  const clusterMap = {
+    hana: availableHanaCluster,
+    hanaCostOpt: availableHanaClusterCostOpt,
+    angi: availableAngiCluster,
+  };
+  const cluster = clusterMap[clusterType];
+  if (!cluster) {
+    const customValueToCheck = clusterType;
+    return customValueToCheck;
+  }
+  return cluster[property];
 };
