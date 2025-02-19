@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import CheckableWarningMessage from '.';
 
 export default {
@@ -31,35 +31,13 @@ export default {
 };
 
 export function Default(args) {
-  const [warningChecked, setWarningChecked] = useState(false);
-  return (
-    <CheckableWarningMessage
-      {...args}
-      checked={warningChecked}
-      setChecked={setWarningChecked}
-    />
-  );
+  return <CheckableWarningMessage {...args} />;
 }
 
 export function Checked(args) {
-  const [checked, setChecked] = useState(true);
-  return (
-    <CheckableWarningMessage
-      {...args}
-      checked={checked}
-      setChecked={setChecked}
-    />
-  );
+  return <CheckableWarningMessage {...args} checked />;
 }
 
 export function WithoutCheckbox(args) {
-  const [checked, setChecked] = useState(true);
-  return (
-    <CheckableWarningMessage
-      {...args}
-      checked={checked}
-      setChecked={setChecked}
-      hideCheckbox
-    />
-  );
+  return <CheckableWarningMessage {...args} hideCheckbox />;
 }
