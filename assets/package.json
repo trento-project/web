@@ -48,6 +48,7 @@
     "tailwindcss": "^3.4.16"
   },
   "dependencies": {
+    "@date-fns/utc": "^2.1.0",
     "@headlessui/react": "^2.2.0",
     "@heroicons/react": "^2.2.0",
     "@reduxjs/toolkit": "^2.2.2",

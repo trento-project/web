@@ -2,7 +2,12 @@ import React, { act } from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
+import { format } from 'date-fns';
 import DateFilter from '.';
+
+function as_localtime_str(utc_timestamp) {
+  return format(new Date(utc_timestamp), "yyyy-MM-dd'T'HH:mm:ss");
+}
 
 describe('DateFilter component', () => {
   it('should render with pre-configured options', async () => {
@@ -137,14 +142,15 @@ describe('DateFilter component', () => {
 
     expect(mockOnChange).toHaveBeenCalledWith([
       'custom',
-      new Date('2024-08-14T10:21'),
+      new Date(Date.UTC(2024, 8 - 1, 14, 10, 21)),
     ]);
   });
 
   it.each`
-    value                              | expected
-    ${new Date('2024-08-14T15:21:00')} | ${'08/14/2024 03:21:00 PM'}
-    ${'2021-01-24T05:50:23'}           | ${'01/24/2021 05:50:23 AM'}
+    value                                                     | expected
+    ${new Date(Date.UTC(2024, 8 - 1, 14, 15, 21))}            | ${'08/14/2024 03:21:00 PM'}
+    ${as_localtime_str(Date.UTC(2021, 1 - 1, 24, 5, 50, 23))} | ${'01/24/2021 05:50:23 AM'}
+    ${'2021-01-24T05:50:23.000Z'}                             | ${'01/24/2021 05:50:23 AM'}
   `('should render the custom date ($value)', async ({ value, expected }) => {
     const mockOnChange = jest.fn();
 
