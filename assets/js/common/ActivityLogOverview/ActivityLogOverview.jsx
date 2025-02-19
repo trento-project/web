@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { format, toZonedTime } from 'date-fns-tz';
+import { format } from 'date-fns';
+import { utc } from '@date-fns/utc';
 
 import { EOS_KEYBOARD_ARROW_RIGHT_FILLED } from 'eos-icons-react';
 import Table from '@common/Table';
@@ -24,7 +25,7 @@ import ActivityLogDetailModal from '@common/ActivityLogDetailsModal';
 export const toRenderedEntry = (entry) => ({
   id: entry.id,
   type: entry.type,
-  time: format(toZonedTime(entry.occurred_on), 'yyyy-MM-dd HH:mm:ss'),
+  time: format(new Date(entry.occurred_on), 'yyyy-MM-dd HH:mm:ss', { in: utc }),
   message: toMessage(entry),
   user: entry.actor,
   // level: ACTIVITY_LOG_LEVELS.includes(entry?.level) ? entry?.level : LEVEL_INFO,
