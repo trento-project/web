@@ -1,25 +1,32 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import CheckableWarningMessage from './CheckableWarningMessage';
 
 const warningMessage = 'A default warning test';
+
 describe('CheckableWarningMessage', () => {
-  it('should render a clickable checkbox, svg warning icon, warning text.', () => {
+  it('should render a clickable checkbox, svg warning icon, warning text.', async () => {
+    const user = userEvent.setup();
     const mockSetChecked = jest.fn();
+
     render(
       <CheckableWarningMessage
         warningText={warningMessage}
         checked={false}
-        setChecked={mockSetChecked}
+        onChecked={mockSetChecked}
       />
     );
+
     const checkbox = screen.getByRole('checkbox');
     expect(checkbox).toBeInTheDocument();
     expect(screen.getByText(warningMessage)).toBeInTheDocument();
+
     const icon = screen.getByTestId('eos-svg-component');
     expect(icon).toBeInTheDocument();
-    fireEvent.click(checkbox);
+
+    await user.click(checkbox);
     expect(mockSetChecked).toHaveBeenCalled();
   });
 
@@ -31,6 +38,7 @@ describe('CheckableWarningMessage', () => {
         checked={false}
       />
     );
+
     expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
   });
 });

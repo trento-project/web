@@ -17,9 +17,9 @@ export default {
       description: 'Text displayed inside the warning message',
       control: 'text',
     },
-    setChecked: {
+    onChecked: {
       description: 'Function to toggle the checkbox state',
-      action: 'setChecked',
+      action: 'onChecked',
     },
   },
   args: {
