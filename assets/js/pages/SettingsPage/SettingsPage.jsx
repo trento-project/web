@@ -38,6 +38,8 @@ import {
   useSuseManagerSettings,
 } from '@pages/SettingsPage/hooks';
 
+import AnalyticsConfig from '@common/AnalyticsConfig';
+
 const apiKeySettingsPermittedFor = ['all:api_key_settings'];
 
 function ApiKeyExpireInfo({ apiKeyExpiration }) {
@@ -329,6 +331,10 @@ function SettingsPage() {
             dispatch(setEditingActivityLogsSettings(false));
           }}
         />
+      </section>
+
+      <section>
+        <AnalyticsConfig />
       </section>
     </>
   );
