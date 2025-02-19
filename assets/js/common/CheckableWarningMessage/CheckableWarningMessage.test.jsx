@@ -5,7 +5,7 @@ import CheckableWarningMessage from './CheckableWarningMessage';
 
 const warningMessage = 'A default warning test';
 describe('CheckableWarningMessage', () => {
-  it('should render warning text and the checkbox if hideCheckbox is false', () => {
+  it('should render a clickable checkbox, svg warning icon, warning text.', () => {
     const mockSetChecked = jest.fn();
     render(
       <CheckableWarningMessage
