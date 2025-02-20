@@ -96,11 +96,23 @@ unless IEx.started?() do
     ]
 end
 
-config :trento, Trento.Infrastructure.Checks.AMQP.Consumer,
-  connection: "amqp://trento:trento@localhost:5673"
-
-config :trento, Trento.Infrastructure.Messaging.Adapter.AMQP.Publisher,
-  connection: "amqp://trento:trento@localhost:5673"
+config :trento, Trento.Infrastructure.Messaging.Adapter.AMQP,
+  checks: [
+    consumer: [
+      connection: "amqp://trento:trento@localhost:5673"
+    ],
+    publisher: [
+      connection: "amqp://trento:trento@localhost:5673"
+    ]
+  ],
+  operations: [
+    consumer: [
+      connection: "amqp://trento:trento@localhost:5673"
+    ],
+    publisher: [
+      connection: "amqp://trento:trento@localhost:5673"
+    ]
+  ]
 
 config :trento, Trento.Infrastructure.Prometheus,
   adapter: Trento.Infrastructure.Prometheus.MockPrometheusApi
