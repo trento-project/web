@@ -40,17 +40,17 @@ defmodule TrentoWeb.Plugs.OperationsPolicyPlug do
   import Plug.Conn
 
   @spec init() :: %{
-          operation: fun(),
-          params: map(),
           policy: module(),
+          operation: fun(),
           resource: fun(),
+          params: fun(),
           assigns_to: atom()
         }
   def init(opts \\ []) do
     policy = Keyword.get(opts, :policy)
     operation = Keyword.get(opts, :operation)
     resource = Keyword.get(opts, :resource)
-    params = Keyword.get(opts, :params, &get_params/1)
+    params = Keyword.get(opts, :params, &__MODULE__.get_params/1)
     assigns_to = Keyword.get(opts, :assigns_to, :authorized_resource)
 
     if is_nil(policy), do: raise(ArgumentError, "#{inspect(__MODULE__)} :policy option required")
@@ -92,7 +92,7 @@ defmodule TrentoWeb.Plugs.OperationsPolicyPlug do
     end
   end
 
-  defp get_params(_), do: %{}
+  def get_params(_), do: %{}
 
   defp handle_resource(conn, %{resource: resource_fun}) do
     case resource_fun.(conn) do
