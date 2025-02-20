@@ -65,6 +65,7 @@ function ClusterSettingsPage() {
     checksSelection,
     checksSelectionLoading,
     checksSelectionFetchError,
+    saveChecksCustomization,
   } = useChecksSelection();
 
   const saving = useSelector(isSaving(TARGET_CLUSTER, clusterID));
@@ -112,13 +113,30 @@ function ClusterSettingsPage() {
   const saveCustomCheck = (values) => {
     // ToDo for later when we hook up frontend and backend.
     const { checksID, customValues } = values;
+  //   {
+  //     "expected_token_timeout": 50001,
+  //     "boolean_value": false
+  //   }
+  //   %{
+  //     name: "numeric_value",
+  //     value: 42
+  //   },
+  //   %{
+  //     name: "customizable_string_value",
+  //     value: "new_value"
+  //   }
+
+  const transformed = Object.entries(customValues).map(([key, itemValue]) => ({
+    name: key,
+    value: itemValue
+  }));
     const payload = {
-      checkID: checksID,
-      groupID: clusterID,
-      customCheckValues: customValues,
+      check_id: checksID,
+      group_id: clusterID,
+      custom_values: transformed,
     };
-    // dispatch payload in future pr
-    return payload;
+    console.log('Payload: ', payload);
+    dispatch(saveChecksCustomization(payload));
   };
 
   return (
@@ -163,7 +181,7 @@ function ClusterSettingsPage() {
         onUpdateCatalog={refreshChecksSelection}
         onChange={setSelection}
         provider={provider}
-        saveCustomCheck={saveCustomCheck}
+        saveCustomization={saveCustomCheck}
         onResetCheckCustomization={resetChecksCustomization}
       />
     </>
