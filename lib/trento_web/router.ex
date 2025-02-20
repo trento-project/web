@@ -134,6 +134,7 @@ defmodule TrentoWeb.Router do
       get "/hosts/:id/exporters_status", PrometheusController, :exporters_status
 
       get "/hosts/:id/software_updates", SUSEManagerController, :software_updates
+
       get "/software_updates/packages", SUSEManagerController, :patches_for_packages
 
       get "/software_updates/errata_details/:advisory_name",
@@ -171,6 +172,10 @@ defmodule TrentoWeb.Router do
       delete "/databases/:id/hosts/:host_id/instances/:instance_number",
              DatabaseController,
              :delete_database_instance
+
+      if Application.compile_env!(:trento, :operations_enabled) do
+        post "/hosts/:id/operations/:operation", HostController, :request_operation
+      end
 
       resources "/users", UsersController, except: [:new, :edit]
 

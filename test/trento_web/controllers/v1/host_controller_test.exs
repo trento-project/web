@@ -1,6 +1,8 @@
 defmodule TrentoWeb.V1.HostControllerTest do
   use TrentoWeb.ConnCase, async: true
 
+  require Trento.Enums.Health, as: Health
+
   import OpenApiSpex.TestAssertions
   import Mox
   import Trento.Factory
@@ -356,6 +358,81 @@ defmodule TrentoWeb.V1.HostControllerTest do
       conn
       |> delete("/api/v1/hosts/#{host_id}")
       |> response(204)
+    end
+  end
+
+  describe "request operation" do
+    test "should fallback to not found if the resource is not found", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      conn
+      |> post("/api/v1/hosts/#{UUID.uuid4()}/operations/saptune_solution_apply")
+      |> json_response(:not_found)
+      |> assert_schema("NotFound", api_spec)
+    end
+
+    test "should fallback to operation not found if the operation is not found", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      %{id: host_id} = insert(:host)
+
+      conn
+      |> post("/api/v1/hosts/#{host_id}/operations/unknown")
+      |> json_response(:not_found)
+      |> assert_schema("NotFound", api_spec)
+    end
+
+    test "should forbid saptune solution apply if conditions are unmet", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      %{id: host_id} = insert(:host)
+      insert(:application_instance, host_id: host_id, health: Health.passing())
+
+      conn
+      |> post("/api/v1/hosts/#{host_id}/operations/saptune_solution_apply")
+      |> json_response(:forbidden)
+      |> assert_schema("Forbidden", api_spec)
+    end
+
+    test "should respond with 500 if saptune solution apply does not receive needed params", %{
+      conn: conn
+    } do
+      %{id: host_id} = insert(:host)
+
+      resp =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> post("/api/v1/hosts/#{host_id}/operations/saptune_solution_apply", %{})
+        |> json_response(:unprocessable_entity)
+
+      assert %{
+               "errors" => [
+                 %{
+                   "detail" => "Failed to cast value to one of: no schemas validate",
+                   "source" => %{"pointer" => "/"},
+                   "title" => "Invalid value"
+                 },
+                 %{
+                   "detail" => "Missing field: solution",
+                   "source" => %{"pointer" => "/solution"},
+                   "title" => "Invalid value"
+                 }
+               ]
+             } == resp
+    end
+
+    test "should request saptune solution apply operation", %{conn: conn} do
+      %{id: host_id} = insert(:host)
+
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> post("/api/v1/hosts/#{host_id}/operations/saptune_solution_apply", %{
+        "solution" => "HANA"
+      })
+      |> json_response(:accepted)
     end
   end
 
