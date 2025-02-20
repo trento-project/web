@@ -9,7 +9,7 @@ defmodule Trento.MessagingCase do
     Mox.stub(
       Trento.Infrastructure.Messaging.Adapter.Mock,
       :publish,
-      fn _, _ ->
+      fn _, _, _ ->
         :ok
       end
     )

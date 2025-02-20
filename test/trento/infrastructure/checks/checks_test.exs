@@ -15,6 +15,8 @@ defmodule Trento.Infrastructure.Checks.ChecksTest do
     Target
   }
 
+  alias Trento.Infrastructure.Checks.AMQP.Publisher
+
   require Trento.Enums.Health, as: Health
 
   describe "Cluster Checks Execution" do
@@ -35,7 +37,9 @@ defmodule Trento.Infrastructure.Checks.ChecksTest do
         %{host_id: "agent_2"}
       ]
 
-      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn "executions", event ->
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn Publisher,
+                                                                        "executions",
+                                                                        event ->
         assert %ExecutionRequested{
                  execution_id: ^execution_id,
                  group_id: ^group_id,
@@ -99,7 +103,9 @@ defmodule Trento.Infrastructure.Checks.ChecksTest do
 
       selected_checks = ["check_1", "check_2"]
 
-      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn "executions", event ->
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn Publisher,
+                                                                        "executions",
+                                                                        event ->
         assert %ExecutionRequested{
                  execution_id: ^execution_id,
                  group_id: ^group_id,
