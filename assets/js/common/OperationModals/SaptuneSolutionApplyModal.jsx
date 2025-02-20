@@ -8,7 +8,7 @@ const NOT_SELECTED = 'Select a saptune solution';
 const solutions = [
   {
     value: NOT_SELECTED,
-    key: NOT_SELECTED,
+    key: 'not_selected',
     available: () => true,
   },
   {

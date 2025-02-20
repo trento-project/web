@@ -1,5 +1,6 @@
 import React from 'react';
 import { EOS_WARNING_OUTLINED } from 'eos-icons-react';
+import { noop } from 'lodash';
 
 import Modal from '@common/Modal';
 import Button from '@common/Button';
@@ -12,9 +13,9 @@ function OperationModal({
   applyDisabled = true,
   checked = false,
   isOpen = false,
-  onChecked,
-  onRequest,
-  onCancel,
+  onChecked = noop,
+  onRequest = noop,
+  onCancel = noop,
   children,
 }) {
   return (

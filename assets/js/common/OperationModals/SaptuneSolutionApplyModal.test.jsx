@@ -2,13 +2,12 @@ import React from 'react';
 import { act, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
-import { noop } from 'lodash';
 import SaptuneSolutionApplyModal from './SaptuneSolutionApplyModal';
 
 describe('SaptuneSolutionApplyModal', () => {
   it('should show correct title and description', async () => {
     await act(async () => {
-      render(<SaptuneSolutionApplyModal isOpen onCancel={noop} />);
+      render(<SaptuneSolutionApplyModal isOpen />);
     });
 
     expect(screen.getByText('Apply Saptune Solution')).toBeInTheDocument();
@@ -19,7 +18,7 @@ describe('SaptuneSolutionApplyModal', () => {
 
   it('should forbid choosing and applying solution until accepting the checkbox', async () => {
     await act(async () => {
-      render(<SaptuneSolutionApplyModal isOpen onCancel={noop} />);
+      render(<SaptuneSolutionApplyModal isOpen />);
     });
 
     expect(screen.getByText('Apply')).toBeDisabled();
@@ -35,7 +34,6 @@ describe('SaptuneSolutionApplyModal', () => {
         <SaptuneSolutionApplyModal
           isOpen
           isHanaRunning
-          onCancel={noop}
           onRequest={mockOnRequest}
         />
       );
@@ -59,14 +57,7 @@ describe('SaptuneSolutionApplyModal', () => {
     const user = userEvent.setup();
 
     await act(async () => {
-      render(
-        <SaptuneSolutionApplyModal
-          isOpen
-          isAppRunning
-          onCancel={noop}
-          onRequest={noop}
-        />
-      );
+      render(<SaptuneSolutionApplyModal isOpen isAppRunning />);
     });
 
     await user.click(screen.getByRole('checkbox'));
@@ -80,15 +71,7 @@ describe('SaptuneSolutionApplyModal', () => {
     const user = userEvent.setup();
 
     await act(async () => {
-      render(
-        <SaptuneSolutionApplyModal
-          isOpen
-          isHanaRunning
-          isAppRunning
-          onCancel={noop}
-          onRequest={noop}
-        />
-      );
+      render(<SaptuneSolutionApplyModal isOpen isHanaRunning isAppRunning />);
     });
 
     await user.click(screen.getByRole('checkbox'));
