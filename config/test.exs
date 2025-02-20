@@ -51,25 +51,51 @@ config :trento,
   api_key_authentication_enabled: false,
   jwt_authentication_enabled: false
 
-config :trento, Trento.Infrastructure.Checks.AMQP.Consumer,
-  processor: GenRMQ.Processor.Mock,
-  queue: "trento.test.checks.results",
-  exchange: "trento.test.checks",
-  routing_key: "results",
-  prefetch_count: "10",
-  connection: "amqp://trento:trento@localhost:5673",
-  queue_options: [
-    durable: false,
-    auto_delete: true
+config :trento, Trento.Infrastructure.Messaging.Adapter.AMQP,
+  checks: [
+    consumer: [
+      queue: "trento.test.checks.results",
+      exchange: "trento.test.checks",
+      routing_key: "results",
+      prefetch_count: "10",
+      connection: "amqp://trento:trento@localhost:5673",
+      queue_options: [
+        durable: false,
+        auto_delete: true
+      ],
+      deadletter_queue_options: [
+        durable: false,
+        auto_delete: true
+      ]
+    ],
+    publisher: [
+      exchange: "trento.test.checks",
+      connection: "amqp://trento:trento@localhost:5673"
+    ],
+    processor: GenRMQ.Processor.Mock
   ],
-  deadletter_queue_options: [
-    durable: false,
-    auto_delete: true
+  operations: [
+    consumer: [
+      queue: "trento.test.operations.results",
+      exchange: "trento.test.operations",
+      routing_key: "results",
+      prefetch_count: "10",
+      connection: "amqp://trento:trento@localhost:5673",
+      queue_options: [
+        durable: false,
+        auto_delete: true
+      ],
+      deadletter_queue_options: [
+        durable: false,
+        auto_delete: true
+      ]
+    ],
+    publisher: [
+      exchange: "trento.test.operations",
+      connection: "amqp://trento:trento@localhost:5673"
+    ],
+    processor: GenRMQ.Processor.Mock
   ]
-
-config :trento, Trento.Infrastructure.Messaging.Adapter.AMQP.Publisher,
-  exchange: "trento.test.checks",
-  connection: "amqp://trento:trento@localhost:5673"
 
 config :trento, Trento.Scheduler,
   jobs: [
