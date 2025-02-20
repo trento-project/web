@@ -2,7 +2,6 @@ import React from 'react';
 import { act, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
-import { map } from 'lodash';
 import ActionsButton from './ActionsButton';
 
 const mockOnClick = jest.fn();
@@ -43,9 +42,9 @@ describe('ActionsButton', () => {
 
   it('should show disabled action', async () => {
     const user = userEvent.setup();
-    const disabledActions = map(testActions, (action, index) =>
-      index === 0 ? { ...action, disabled: true } : action
-    );
+    const disabledActions = Object.assign([], testActions, {
+      0: { ...testActions[0], disabled: true },
+    });
 
     await act(async () => {
       render(<ActionsButton actions={disabledActions} />);
@@ -59,9 +58,9 @@ describe('ActionsButton', () => {
 
   it('should show running action with disabled entries', async () => {
     const user = userEvent.setup();
-    const runningActions = map(testActions, (action, index) =>
-      index === 0 ? { ...action, running: true } : action
-    );
+    const runningActions = Object.assign([], testActions, {
+      0: { ...testActions[0], running: true },
+    });
 
     await act(async () => {
       render(<ActionsButton actions={runningActions} />);

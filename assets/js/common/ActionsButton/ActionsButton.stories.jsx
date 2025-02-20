@@ -1,5 +1,5 @@
 import React from 'react';
-import { map, noop } from 'lodash';
+import { noop } from 'lodash';
 
 import ActionsButton from './ActionsButton';
 
@@ -37,9 +37,9 @@ export function Default(args) {
 export function Disabled({ actions }) {
   return (
     <ActionsButton
-      actions={map(actions, (action, index) =>
-        index === 0 ? { ...action, disabled: true } : action
-      )}
+      actions={Object.assign([], actions, {
+        0: { ...actions[0], disabled: true },
+      })}
     />
   );
 }
@@ -47,9 +47,9 @@ export function Disabled({ actions }) {
 export function Running({ actions }) {
   return (
     <ActionsButton
-      actions={map(actions, (action, index) =>
-        index === 0 ? { ...action, running: true } : action
-      )}
+      actions={Object.assign([], actions, {
+        0: { ...actions[0], running: true },
+      })}
     />
   );
 }
