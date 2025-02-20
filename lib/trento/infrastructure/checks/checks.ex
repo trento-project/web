@@ -9,6 +9,8 @@ defmodule Trento.Infrastructure.Checks do
   alias Trento.Enums.Health
   alias Trento.Infrastructure.Messaging
 
+  alias Trento.Infrastructure.Checks.AMQP.Publisher
+
   alias Trento.Checks.V1.{
     ExecutionRequested,
     Target
@@ -54,7 +56,7 @@ defmodule Trento.Infrastructure.Checks do
       target_type: TargetType.to_string(target_type)
     }
 
-    case Messaging.publish("executions", execution_requested) do
+    case Messaging.publish(Publisher, "executions", execution_requested) do
       :ok ->
         :ok
 
