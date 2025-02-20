@@ -12,12 +12,7 @@ function CheckableWarningMessage({
   return (
     <div className="flex items-center border border-yellow-400 bg-yellow-50 p-4 rounded-md text-yellow-600 mb-4">
       {!hideCheckbox && (
-        <Input
-          type="checkbox"
-          checked={checked}
-          onChange={() => onChecked((prev) => !prev)}
-          className="w-5 h-5 border-2 border-yellow-400 rounded-md focus:ring-yellow-400"
-        />
+        <Input type="checkbox" checked={checked} onChange={onChecked} />
       )}
       <EOS_WARNING_OUTLINED
         size="l"

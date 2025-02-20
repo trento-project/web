@@ -80,7 +80,7 @@ function CheckCustomizationModal({
         hideCheckbox={customized}
         warningText={checkBoxWarningText}
         checked={checked}
-        onChecked={setChecked}
+        onChecked={() => setChecked((prev) => !prev)}
       />
       {values
         ?.filter(({ customizable }) => customizable)
