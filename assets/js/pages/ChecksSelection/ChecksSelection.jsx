@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { without, uniq, groupBy, noop } from 'lodash';
+import { without, uniq, groupBy, noop } from 'lodash';
 
 import { toggle } from '@lib/lists';
 
@@ -40,8 +41,8 @@ function ChecksSelection({
   onUpdateCatalog,
   onChange,
   provider,
-  saveCustomCheck = () => {},
-  onResetCheckCustomization = noop,
+  saveCustomization = noop,
+  onResetCheckCustomization = noop
 }) {
   const [isCheckCustomizationModalOpen, setIsCheckCustomizationModalOpen] =
     useState(false);
@@ -142,7 +143,7 @@ function ChecksSelection({
             setIsCheckCustomizationModalOpen(false);
             setSelectedCheck(null);
           }}
-          onSave={saveCustomCheck}
+          onSave={saveCustomization}
         />
       </div>
     </CatalogContainer>
