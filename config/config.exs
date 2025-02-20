@@ -201,7 +201,8 @@ config :trento, :jwt_authentication,
 
 config :trento,
   api_key_authentication_enabled: true,
-  jwt_authentication_enabled: true
+  jwt_authentication_enabled: true,
+  operations_enabled: true
 
 config :trento, :analytics,
   enabled: false,
