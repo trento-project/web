@@ -20,6 +20,8 @@ defmodule Trento.ClustersTest do
     Target
   }
 
+  alias Trento.Infrastructure.Checks.AMQP.Publisher
+
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
   require Trento.Clusters.Enums.ClusterEnsaVersion, as: ClusterEnsaVersion
   require Trento.Clusters.Enums.FilesystemType, as: FilesystemType
@@ -65,7 +67,9 @@ defmodule Trento.ClustersTest do
         sid: sid
       )
 
-      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn "executions", message ->
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn Publisher,
+                                                                        "executions",
+                                                                        message ->
         assert message.group_id == cluster_id
         assert length(message.targets) == 2
 
@@ -105,7 +109,9 @@ defmodule Trento.ClustersTest do
         insert(:host, deregistered_at: DateTime.utc_now(), cluster_id: cluster_id)
         insert_list(2, :host, cluster_id: cluster_id)
 
-        expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn "executions", message ->
+        expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn Publisher,
+                                                                          "executions",
+                                                                          message ->
           assert message.group_id == cluster_id
           assert length(message.targets) == 2
 
@@ -148,7 +154,9 @@ defmodule Trento.ClustersTest do
         insert(:host, deregistered_at: DateTime.utc_now(), cluster_id: cluster_id)
         insert_list(2, :host, cluster_id: cluster_id)
 
-        expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn "executions", message ->
+        expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn Publisher,
+                                                                          "executions",
+                                                                          message ->
           assert message.group_id == cluster_id
           assert length(message.targets) == 2
 
@@ -173,7 +181,7 @@ defmodule Trento.ClustersTest do
     end
 
     test "should not start checks execution if the cluster is not registered" do
-      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 0, fn _, _ ->
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 0, fn Publisher, _, _ ->
         :ok
       end)
 
@@ -183,7 +191,7 @@ defmodule Trento.ClustersTest do
     test "should not start checks execution if no checks are selected" do
       %{id: cluster_id} = insert(:cluster, selected_checks: [])
 
-      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 0, fn _, _ ->
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 0, fn Publisher, _, _ ->
         :ok
       end)
 
@@ -193,7 +201,7 @@ defmodule Trento.ClustersTest do
     test "should return an error if the checks execution start fails" do
       %{id: cluster_id} = insert(:cluster)
 
-      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn _, _ ->
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn Publisher, _, _ ->
         {:error, :amqp_error}
       end)
 
@@ -284,7 +292,8 @@ defmodule Trento.ClustersTest do
         )
 
       # An execution should be requested for the registered hana scale up cluster
-      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 1, fn "executions",
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 1, fn Publisher,
+                                                                           "executions",
                                                                            %ExecutionRequested{
                                                                              group_id:
                                                                                ^registered_hana_scale_up_id,
@@ -305,7 +314,8 @@ defmodule Trento.ClustersTest do
       end)
 
       # An execution should be requested for the registered hana scale out cluster
-      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 1, fn "executions",
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 1, fn Publisher,
+                                                                           "executions",
                                                                            %ExecutionRequested{
                                                                              group_id:
                                                                                ^registered_hana_scale_out_id,
@@ -326,7 +336,8 @@ defmodule Trento.ClustersTest do
       end)
 
       # An execution should be requested for the registered ASCS/ERS cluster
-      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 1, fn "executions",
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 1, fn Publisher,
+                                                                           "executions",
                                                                            %ExecutionRequested{
                                                                              group_id:
                                                                                ^registered_ascs_ers_cluster_id,
@@ -347,7 +358,8 @@ defmodule Trento.ClustersTest do
       end)
 
       # No execution should be requested for the deregistered cluster
-      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 0, fn "executions",
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 0, fn Publisher,
+                                                                           "executions",
                                                                            %ExecutionRequested{
                                                                              group_id:
                                                                                ^deregistred_cluster_id,
@@ -368,7 +380,8 @@ defmodule Trento.ClustersTest do
       end)
 
       # No execution should be requested for the unknown cluster
-      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 0, fn "executions",
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 0, fn Publisher,
+                                                                           "executions",
                                                                            %ExecutionRequested{
                                                                              group_id:
                                                                                ^unknown_registered_cluster_id
@@ -486,7 +499,9 @@ defmodule Trento.ClustersTest do
         end
       )
 
-      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn "executions", message ->
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn Publisher,
+                                                                        "executions",
+                                                                        message ->
         assert message.group_id == cluster_id
         assert length(message.targets) == 2
 
@@ -536,7 +551,9 @@ defmodule Trento.ClustersTest do
         end
       )
 
-      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn "executions", message ->
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn Publisher,
+                                                                        "executions",
+                                                                        message ->
         assert message.group_id == cluster_id
         assert length(message.targets) == 2
 
@@ -588,7 +605,9 @@ defmodule Trento.ClustersTest do
         end
       )
 
-      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn "executions", message ->
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn Publisher,
+                                                                        "executions",
+                                                                        message ->
         assert message.group_id == cluster_id
         assert length(message.targets) == 2
 
@@ -669,7 +688,9 @@ defmodule Trento.ClustersTest do
         sid: other_sid
       )
 
-      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn "executions", message ->
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn Publisher,
+                                                                        "executions",
+                                                                        message ->
         assert message.group_id == cluster_id
         assert length(message.targets) == 2
 
@@ -750,7 +771,9 @@ defmodule Trento.ClustersTest do
         sid: other_sid
       )
 
-      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn "executions", message ->
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn Publisher,
+                                                                        "executions",
+                                                                        message ->
         assert message.group_id == cluster_id
         assert length(message.targets) == 2
 
@@ -831,7 +854,9 @@ defmodule Trento.ClustersTest do
         sid: other_sid
       )
 
-      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn "executions", message ->
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn Publisher,
+                                                                        "executions",
+                                                                        message ->
         assert message.group_id == cluster_id
         assert length(message.targets) == 2
 
