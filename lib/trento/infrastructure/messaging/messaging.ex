@@ -3,9 +3,9 @@ defmodule Trento.Infrastructure.Messaging do
   Publishes messages to the message bus
   """
 
-  @spec publish(String.t(), any()) :: :ok | {:error, any}
-  def publish(topic, message) do
-    adapter().publish(topic, message)
+  @spec publish(module(), String.t(), any()) :: :ok | {:error, any}
+  def publish(publisher, topic, message) do
+    adapter().publish(publisher, topic, message)
   end
 
   defp adapter,
