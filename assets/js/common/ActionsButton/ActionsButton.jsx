@@ -36,7 +36,7 @@ function ActionsButton({ actions }) {
         className="w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 px-3 py-3 focus:outline-none"
       >
         {actions.map(({ value, running, disabled, onClick }) => (
-          <div key={value}>
+          <Fragment key={value}>
             <MenuItem>
               <button
                 type="button"
@@ -52,13 +52,13 @@ function ActionsButton({ actions }) {
                 disabled={disabled || someRunning}
               >
                 {running && (
-                  <EOS_LOADING_ANIMATED className="inline-block fill-jungle-green-500 pr-1" />
+                  <EOS_LOADING_ANIMATED className="inline-block fill-jungle-green-500 mr-1" />
                 )}
                 {value}
               </button>
             </MenuItem>
             <MenuSeparator className="my-1" />
-          </div>
+          </Fragment>
         ))}
       </MenuItems>
     </Menu>
