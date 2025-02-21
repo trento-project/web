@@ -46,6 +46,7 @@ function CheckCustomizationModal({
   customized = false,
   onClose = noop,
   onSave = noop,
+  onReset = noop,
 }) {
   const [checked, setChecked] = useState(customized);
   const [customValues, setCustomValues] = useState({});
@@ -119,29 +120,28 @@ function CheckCustomizationModal({
         </div>
       </div>
 
-      <div className="flex flex-row w-80">
-        <div className="flex flex-row w-24 mt-3 rounded-md">
-          <Button
-            type="default-fit"
-            className="w-1/2"
-            disabled={!canCustomize}
-            onClick={() => {
-              onSave(buildCustomCheckPayload(id, customValues));
-              resetStateAndClose();
-            }}
-          >
-            Save
-          </Button>
-        </div>
-        <div className="flex flex-row w-24 mt-3 rounded-md">
-          <Button
-            type="primary-white"
-            className="w-1/2"
-            onClick={resetStateAndClose}
-          >
-            Close
-          </Button>
-        </div>
+      <div className="flex w-80 flex-row space-x-2">
+        <Button
+          type="default-fit"
+          className="w-1/2"
+          disabled={!canCustomize}
+          onClick={() => {
+            onSave(buildCustomCheckPayload(id, customValues));
+            resetStateAndClose();
+          }}
+        >
+          Save
+        </Button>
+        <Button type="primary-white-fit" className="w-1/2" onClick={onReset}>
+          Reset Check
+        </Button>
+        <Button
+          type="primary-white-fit"
+          className="w-1/2"
+          onClick={resetStateAndClose}
+        >
+          Close
+        </Button>
       </div>
     </Modal>
   );

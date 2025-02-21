@@ -1,4 +1,4 @@
-import React from 'react';
+import { action } from '@storybook/addon-actions';
 import CheckCustomizationModal from '.';
 
 const singleValue = [
@@ -76,35 +76,44 @@ export default {
       control: 'text',
     },
     onClose: {
+      type: 'function',
       description: 'Closes the modal',
     },
     onSave: {
+      type: 'function',
       description: 'Saves the customized checks values and closes the modal',
     },
+    onReset: {
+      type: 'function',
+      description: 'Resets the customized checks values and closes the modal',
+    },
   },
+};
+
+export const SingleValue = {
   args: {
     open: false,
     id: defaultCheck.id,
     values: defaultCheck.values,
     description: defaultCheck.description,
     provider: defaultProvider,
+    onClose: action('onClose'),
+    onSave: action('onSave'),
+    onReset: action('onReset'),
   },
 };
 
-export function SingleValue(args) {
-  return <CheckCustomizationModal {...args} />;
-}
+export const MultipleValues = {
+  args: {
+    ...SingleValue.args,
+    values: multipleValues,
+  },
+};
 
-export function MultipleValues(args) {
-  return <CheckCustomizationModal {...args} values={multipleValues} />;
-}
-
-export function PartialNonCustomizableValues(args) {
-  return (
-    <CheckCustomizationModal
-      {...args}
-      isChecked
-      values={partialCustomizableValues}
-    />
-  );
-}
+export const PartialNonCustomizableValues = {
+  args: {
+    ...SingleValue.args,
+    isChecked: true,
+    values: partialCustomizableValues,
+  },
+};
