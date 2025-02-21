@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { without, uniq, groupBy } from 'lodash';
+import { without, uniq, groupBy, noop } from 'lodash';
 
 import { toggle } from '@lib/lists';
 
@@ -31,6 +31,7 @@ const defaultSelectedChecks = [];
 const defaultAbilities = [];
 
 function ChecksSelection({
+  groupID,
   catalog,
   selectedChecks = defaultSelectedChecks,
   loading = false,
@@ -40,6 +41,7 @@ function ChecksSelection({
   onChange,
   provider,
   saveCustomCheck = () => {},
+  onResetCheckCustomization = noop,
 }) {
   const [isCheckCustomizationModalOpen, setIsCheckCustomizationModalOpen] =
     useState(false);
@@ -88,6 +90,7 @@ function ChecksSelection({
           checkId={selectedCheck?.id}
           open={!!isResetConfirmationModalOpen}
           onReset={() => {
+            onResetCheckCustomization(groupID, selectedCheck?.id);
             setResetConfirmationModalOpen(false);
           }}
           onCancel={() => {
