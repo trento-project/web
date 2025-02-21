@@ -8,6 +8,14 @@ const singleValue = [
     customizable: true,
   },
 ];
+const singeBooleanValue = [
+  {
+    name: 'ValueName1',
+    current_value: true,
+    customizable: true,
+  },
+];
+
 const multipleValues = [
   {
     name: 'ValueName1',
@@ -37,14 +45,6 @@ const multipleValues = [
   },
 ];
 
-const singeBooleanValue = [
-  {
-    name: 'ValueName1',
-    current_value: true,
-    customizable: true,
-  },
-];
-
 const partialCustomizableValues = [
   {
     name: 'ValueName1',
@@ -63,7 +63,7 @@ const partialCustomizableValues = [
   },
 
   {
-    name: 'ValueName3',
+    name: 'ValueName4',
     current_value: false,
     customizable: false,
   },
@@ -139,7 +139,6 @@ export const SingleBooleanValue = {
     values: singeBooleanValue,
   },
 };
-
 
 export const MultipleValues = {
   args: {

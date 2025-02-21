@@ -42,21 +42,7 @@ const checkCustomizationModalProps = {
   provider: 'aws',
   onClose: mockOnClose,
   onSave: mockOnSave,
-};
-
-const expectedBooleanCheckModalValues = {
-  ...check,
-  values: [
-    nonCustomizedValueFactory.build({
-      name: 'CheckBooleanValueName',
-      customizable: true,
-      current_value: true,
-    }),
-  ],
-  open: true,
-  provider: 'aws',
-  onClose: mockOnClose,
-  onSave: mockOnSave,
+  onReset: mockOnReset,
 };
 
 describe('CheckCustomizationModal', () => {
@@ -93,8 +79,9 @@ describe('CheckCustomizationModal', () => {
 
   it('renders the modal  with multiple customizable values', async () => {
     const user = userEvent.setup();
-    const customCheckValue = '999';
-    const { onSave } = expectedCheckModalValues;
+    const customCheckValue = ['999', 'veryImportantValue', false];
+    const expectedCheckValues = [999, 'veryImportantValue', false];
+    const { onSave } = checkCustomizationModalProps;
 
     await act(async () => {
       render(<CheckCustomizationModal {...checkCustomizationModalProps} />);
