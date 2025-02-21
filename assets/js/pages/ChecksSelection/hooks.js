@@ -5,7 +5,11 @@ import { pipe, map } from 'lodash/fp';
 
 import { notify } from '@state/notifications';
 
-import { getChecksSelection, resetCheckCustomization, saveCheckCustomization } from '@lib/api/checks';
+import {
+  getChecksSelection,
+  resetCheckCustomization,
+  saveCheckCustomization,
+} from '@lib/api/checks';
 
 const markMatchingCheckAsNotCustomized = (checkId) => (check) => ({
   ...check,
@@ -17,7 +21,6 @@ export const useChecksSelection = () => {
   const [loading, setLoading] = useState(false);
   const [checksSelection, setChecksSelection] = useState([]);
   const [fetchError, setFetchError] = useState(null);
-  const dispatch = useDispatch();
 
   const fetchChecksSelection = async (groupId, env) => {
     setLoading(true);
@@ -83,6 +86,6 @@ export const useChecksSelection = () => {
     checksSelection,
     fetchChecksSelection,
     resetChecksCustomization,
-    saveChecksCustomization
+    saveChecksCustomization,
   };
 };
