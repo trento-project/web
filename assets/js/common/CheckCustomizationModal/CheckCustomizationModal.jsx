@@ -57,6 +57,8 @@ function CheckCustomizationModal({
   const [checked, setChecked] = useState(customized);
   const [customValues, setCustomValues] = useState({});
   const canCustomize = customized || checked;
+  const userCustomizedValues =
+    Object.keys(customValues).length === 0 || !canCustomize;
 
   const checkTitle = `Check: ${id}`;
 
@@ -134,7 +136,7 @@ function CheckCustomizationModal({
           <Button
             type="default-fit"
             className="w-1/2"
-            disabled={!canCustomize}
+            disabled={userCustomizedValues}
             onClick={() => {
               onSave(buildCustomCheckPayload(id, customValues));
               resetStateAndClose();
