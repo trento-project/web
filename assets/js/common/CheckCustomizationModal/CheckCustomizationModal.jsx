@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { noop } from 'lodash';
-import { EOS_WARNING_OUTLINED } from 'eos-icons-react';
 
 import Modal from '@common/Modal';
 import Button from '@common/Button';
@@ -8,6 +7,7 @@ import Input from '@common/Input';
 import Label from '@common/Label';
 import ProviderLabel from '@common/ProviderLabel';
 import Tooltip from '@common/Tooltip';
+import CheckableWarningMessage from '@common/CheckableWarningMessage';
 import { UNKNOWN_PROVIDER } from '@lib/model';
 
 const checkBoxWarningText =
@@ -76,22 +76,12 @@ function CheckCustomizationModal({
       <p className="text-gray-500 text-sm font-normal tracking-wide pb-2">
         {description}
       </p>
-
-      <div className="flex items-center border border-yellow-400 bg-yellow-50 p-4 rounded-md text-yellow-600 mb-4">
-        {!customized && (
-          <Input
-            type="checkbox"
-            checked={checked}
-            onChange={() => setChecked((prev) => !prev)}
-          />
-        )}
-
-        <EOS_WARNING_OUTLINED
-          size="xxl"
-          className="centered fill-yellow-500 ml-4 mr-4"
-        />
-        <span className="font-semibold">{checkBoxWarningText}</span>
-      </div>
+      <CheckableWarningMessage
+        hideCheckbox={customized}
+        warningText={checkBoxWarningText}
+        checked={checked}
+        onChecked={() => setChecked((prev) => !prev)}
+      />
       {values
         ?.filter(({ customizable }) => customizable)
         .map((value) => (
