@@ -42,7 +42,7 @@ const renderLabelWithTooltip = (name) => {
   );
 };
 const valueWasCustomized = (value) =>
-  value?.custom_value || value?.current_value;
+  value?.custom_value ?? value?.current_value;
 
 function CheckCustomizationModal({
   open = false,
