@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { noop, isBoolean, toNumber } from 'lodash';
-import { EOS_WARNING_OUTLINED } from 'eos-icons-react';
 
 import Modal from '@common/Modal';
 import Button from '@common/Button';
@@ -10,6 +9,7 @@ import Label from '@common/Label';
 import ProviderLabel from '@common/ProviderLabel';
 import Tooltip from '@common/Tooltip';
 import Input from '@common/Input';
+import CheckableWarningMessage from '@common/CheckableWarningMessage'
 
 import { UNKNOWN_PROVIDER } from '@lib/model';
 
