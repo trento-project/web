@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { without, uniq, groupBy, noop } from 'lodash';
-import { without, uniq, groupBy, noop } from 'lodash';
 
 import { toggle } from '@lib/lists';
 
@@ -42,7 +41,7 @@ function ChecksSelection({
   onChange,
   provider,
   saveCustomization = noop,
-  onResetCheckCustomization = noop
+  onResetCheckCustomization = noop,
 }) {
   const [isCheckCustomizationModalOpen, setIsCheckCustomizationModalOpen] =
     useState(false);
