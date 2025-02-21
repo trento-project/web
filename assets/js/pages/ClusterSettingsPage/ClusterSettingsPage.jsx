@@ -110,33 +110,14 @@ function ClusterSettingsPage() {
     dispatch(executionRequested(clusterID, clusterHosts, selectedChecks));
   };
 
-  const saveCustomCheck = (values) => {
-    // ToDo for later when we hook up frontend and backend.
-    const { checksID, customValues } = values;
-  //   {
-  //     "expected_token_timeout": 50001,
-  //     "boolean_value": false
-  //   }
-  //   %{
-  //     name: "numeric_value",
-  //     value: 42
-  //   },
-  //   %{
-  //     name: "customizable_string_value",
-  //     value: "new_value"
-  //   }
-
-  const transformed = Object.entries(customValues).map(([key, itemValue]) => ({
-    name: key,
-    value: itemValue
-  }));
-    const payload = {
-      check_id: checksID,
-      group_id: clusterID,
-      custom_values: transformed,
-    };
-    console.log('Payload: ', payload);
-    dispatch(saveChecksCustomization(payload));
+  const saveCustomCheck = ({ checksID, customValues }) => {
+    dispatch(
+      saveChecksCustomization({
+        checkID: checksID,
+        groupID: clusterID,
+        customValues,
+      })
+    );
   };
 
   return (

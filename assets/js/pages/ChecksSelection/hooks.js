@@ -55,6 +55,11 @@ export const useChecksSelection = () => {
 
   const saveChecksCustomization = async (payload) => {
     try {
+      if (!payload?.customValues || payload.customValues.length === 0) {
+        console.log('Empty  custom values');
+        throw new Error('Custom values cannot be empty.');
+      }
+
       await saveCheckCustomization(payload);
       dispatch(
         notify({

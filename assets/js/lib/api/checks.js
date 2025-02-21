@@ -39,14 +39,12 @@ export const triggerHostChecksExecution = (hostID) =>
   networkClient.post(`/hosts/${hostID}/checks/request_execution`);
 
 export const saveCheckCustomization = (values) => {
-  const { check_id, group_id } = values;
-  console.log(defaultConfig);
-  console.log('saveCheckCustomization', values);
+  const { checkID, groupID, customValues } = values;
+  const customValuesPayload = { values: customValues };
+
   return networkClient.post(
-    `/api/v1/groups/${group_id}/checks/${check_id}/customization`,
-    {
-      values: values.custom_values, // make sure the body contains the custom values
-    },
-    defaultConfig,
+    `/api/v1/groups/${groupID}/checks/${checkID}/customization`,
+    customValuesPayload,
+    defaultConfig
   );
 };
