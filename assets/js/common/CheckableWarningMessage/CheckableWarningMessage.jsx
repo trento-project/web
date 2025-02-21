@@ -10,7 +10,7 @@ function CheckableWarningMessage({
   onChecked = noop,
 }) {
   return (
-    <div className="flex items-center border border-yellow-400 bg-yellow-50 p-4 rounded-md text-yellow-600 mb-4">
+    <div className="flex items-center border border-yellow-400 bg-yellow-50 p-4 rounded-md text-yellow-600 mb-4 text-sm font-normal">
       {!hideCheckbox && (
         <Input type="checkbox" checked={checked} onChange={onChecked} />
       )}
