@@ -156,17 +156,35 @@ config :trento, Trento.Scheduler,
 config :trento, Trento.Infrastructure.Messaging,
   adapter: Trento.Infrastructure.Messaging.Adapter.AMQP
 
-config :trento, Trento.Infrastructure.Checks.AMQP.Consumer,
-  processor: Trento.Infrastructure.Checks.AMQP.Processor,
-  queue: "trento.checks.results",
-  exchange: "trento.checks",
-  routing_key: "results",
-  prefetch_count: "10",
-  connection: "amqp://guest:guest@localhost:5672"
-
-config :trento, Trento.Infrastructure.Messaging.Adapter.AMQP.Publisher,
-  exchange: "trento.checks",
-  connection: "amqp://guest:guest@localhost:5672"
+config :trento, Trento.Infrastructure.Messaging.Adapter.AMQP,
+  checks: [
+    consumer: [
+      queue: "trento.checks.results",
+      exchange: "trento.checks",
+      routing_key: "results",
+      prefetch_count: "10",
+      connection: "amqp://guest:guest@localhost:5672"
+    ],
+    publisher: [
+      exchange: "trento.checks",
+      connection: "amqp://guest:guest@localhost:5672"
+    ],
+    processor: Trento.Infrastructure.Checks.AMQP.Processor
+  ],
+  operations: [
+    consumer: [
+      queue: "trento.operations.results",
+      exchange: "trento.operations",
+      routing_key: "results",
+      prefetch_count: "10",
+      connection: "amqp://guest:guest@localhost:5672"
+    ],
+    publisher: [
+      exchange: "trento.operations",
+      connection: "amqp://guest:guest@localhost:5672"
+    ],
+    processor: Trento.Infrastructure.Operations.AMQP.Processor
+  ]
 
 config :trento, Trento.Infrastructure.Prometheus,
   adapter: Trento.Infrastructure.Prometheus.PrometheusApi

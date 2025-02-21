@@ -21,6 +21,8 @@ defmodule Trento.HostsTest do
     Target
   }
 
+  alias Trento.Infrastructure.Checks.AMQP.Publisher
+
   require Logger
 
   @moduletag :integration
@@ -150,7 +152,9 @@ defmodule Trento.HostsTest do
     test "should start an execution" do
       %{id: host_id, provider: provider} = insert(:host)
 
-      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn "executions", message ->
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn Publisher,
+                                                                        "executions",
+                                                                        message ->
         assert message.group_id == host_id
         assert length(message.targets) == 1
 
@@ -170,7 +174,7 @@ defmodule Trento.HostsTest do
       %{id: deregistered_host} = insert(:host, deregistered_at: DateTime.utc_now())
 
       for deregistered_host_id <- [deregistered_host, Faker.UUID.v4()] do
-        expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 0, fn _, _ ->
+        expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 0, fn Publisher, _, _ ->
           :ok
         end)
 
@@ -181,7 +185,7 @@ defmodule Trento.HostsTest do
     test "should not start an execution with an empty selection" do
       %{id: host_id} = insert(:host, selected_checks: [])
 
-      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 0, fn _, _ ->
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 0, fn Publisher, _, _ ->
         :ok
       end)
 
@@ -191,7 +195,7 @@ defmodule Trento.HostsTest do
     test "should return an error on message publishing failure" do
       %{id: host_id} = insert(:host)
 
-      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn _, _ ->
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn Publisher, _, _ ->
         {:error, :amqp_error}
       end)
 
@@ -208,7 +212,8 @@ defmodule Trento.HostsTest do
           deregistered_at: DateTime.utc_now()
         )
 
-      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 1, fn "executions",
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 1, fn Publisher,
+                                                                           "executions",
                                                                            %ExecutionRequested{
                                                                              group_id: ^host_id1,
                                                                              targets: [
@@ -222,7 +227,8 @@ defmodule Trento.HostsTest do
         :ok
       end)
 
-      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 0, fn "executions",
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 0, fn Publisher,
+                                                                           "executions",
                                                                            %ExecutionRequested{
                                                                              group_id: ^host_id2,
                                                                              targets: [

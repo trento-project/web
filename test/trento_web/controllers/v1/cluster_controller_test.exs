@@ -8,6 +8,8 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
 
   alias TrentoWeb.OpenApi.V1.ApiSpec
 
+  alias Trento.Infrastructure.Checks.AMQP.Publisher
+
   setup [:set_mox_from_context, :verify_on_exit!]
 
   setup :setup_api_spec_v1
@@ -65,7 +67,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
       expect(
         Trento.Infrastructure.Messaging.Adapter.Mock,
         :publish,
-        fn _, _ ->
+        fn Publisher, _, _ ->
           :ok
         end
       )
@@ -115,7 +117,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
       expect(
         Trento.Infrastructure.Messaging.Adapter.Mock,
         :publish,
-        fn _, _ ->
+        fn Publisher, _, _ ->
           {:error, :amqp_error}
         end
       )
