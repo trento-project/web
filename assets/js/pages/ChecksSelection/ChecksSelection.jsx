@@ -92,11 +92,9 @@ function ChecksSelection({
           onReset={() => {
             onResetCheckCustomization(groupID, selectedCheck?.id);
             setResetConfirmationModalOpen(false);
+            setIsCheckCustomizationModalOpen(false);
           }}
-          onCancel={() => {
-            setResetConfirmationModalOpen(false);
-            setSelectedCheck(null);
-          }}
+          onCancel={() => setResetConfirmationModalOpen(false)}
         />
         {groupedChecks?.map(({ group, checks, groupSelected }) => (
           <ChecksSelectionGroup
@@ -138,11 +136,9 @@ function ChecksSelection({
           customized={selectedCheck?.customized}
           selectedCheck={selectedCheck}
           provider={provider}
-          onClose={() => {
-            setIsCheckCustomizationModalOpen(false);
-            setSelectedCheck(null);
-          }}
+          onClose={() => setIsCheckCustomizationModalOpen(false)}
           onSave={saveCustomCheck}
+          onReset={() => setResetConfirmationModalOpen(true)}
         />
       </div>
     </CatalogContainer>

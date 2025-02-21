@@ -1,8 +1,10 @@
-import { networkClient } from '@lib/network';
-import MockAdapter from 'axios-mock-adapter';
-import { faker } from '@faker-js/faker';
 import { act, renderHook } from '@testing-library/react';
+import { faker } from '@faker-js/faker';
+import MockAdapter from 'axios-mock-adapter';
+import { every, has } from 'lodash';
 import { hookWrapperWithState } from '@lib/test-utils';
+
+import { networkClient } from '@lib/network';
 import { selectableCheckFactory } from '@lib/test-utils/factories';
 import { useChecksSelection } from './hooks';
 
@@ -159,9 +161,11 @@ describe('useChecksSelection', () => {
 
     const updatedChecksSelection = hookResult.current.checksSelection;
 
-    updatedChecksSelection.forEach(({ id, customized }) => {
+    const doesNotHaveCustomValue = (value) => !has(value, 'custom_value');
+    updatedChecksSelection.forEach(({ id, customized, values }) => {
       if (id === checkId) {
         expect(customized).toBe(false);
+        expect(every(values, doesNotHaveCustomValue)).toBe(true);
       } else {
         expect(customized).toBe(true);
       }

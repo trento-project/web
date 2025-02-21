@@ -10,6 +10,7 @@ import CheckCustomizationModal from './CheckCustomizationModal';
 
 const mockOnClose = jest.fn();
 const mockOnSave = jest.fn();
+const mockOnReset = jest.fn();
 
 const check = selectableCheckFactory.build({
   id: '123',
@@ -25,28 +26,29 @@ const check = selectableCheckFactory.build({
   customizable: false,
 });
 
-const expectedCheckModalValues = {
+const checkCustomizationModalProps = {
   ...check,
   open: true,
   provider: 'aws',
   onClose: mockOnClose,
   onSave: mockOnSave,
+  onReset: mockOnReset,
 };
 
 describe('CheckCustomizationModal', () => {
   it('renders modal with correct title, description, warning, disabled input field and a disabled save button', async () => {
-    const expectedModalTitle = `Check: ${expectedCheckModalValues.id}`;
+    const expectedModalTitle = `Check: ${checkCustomizationModalProps.id}`;
     const expectedWarningBannerText =
       'Trento & SUSE cannot be held liable for damages if system is unable to function due to custom check value.';
     const user = userEvent.setup();
 
     await act(async () => {
-      render(<CheckCustomizationModal {...expectedCheckModalValues} />);
+      render(<CheckCustomizationModal {...checkCustomizationModalProps} />);
     });
 
     expect(screen.getByText(expectedModalTitle)).toBeInTheDocument();
     expect(
-      screen.getByText(expectedCheckModalValues.description)
+      screen.getByText(checkCustomizationModalProps.description)
     ).toBeInTheDocument();
     expect(screen.getByText(expectedWarningBannerText)).toBeInTheDocument();
     const warningBannerCheckbox = screen.getByRole('checkbox');
@@ -64,10 +66,10 @@ describe('CheckCustomizationModal', () => {
   it('renders the modal  with a single customizable values', async () => {
     const user = userEvent.setup();
     const customCheckValue = '999';
-    const { onSave } = expectedCheckModalValues;
+    const { onSave } = checkCustomizationModalProps;
 
     await act(async () => {
-      render(<CheckCustomizationModal {...expectedCheckModalValues} />);
+      render(<CheckCustomizationModal {...checkCustomizationModalProps} />);
     });
 
     const warningBannerCheckbox = screen.getByRole('checkbox');
@@ -89,7 +91,7 @@ describe('CheckCustomizationModal', () => {
 
   it('renders the modal with multiple customizable values', async () => {
     const user = userEvent.setup();
-    const { onSave } = expectedCheckModalValues;
+    const { onSave } = checkCustomizationModalProps;
     const customCheckValue = ['123', '456', '789'];
     const customCheckNames = ['abc', 'def', 'xxx'];
 
@@ -101,7 +103,7 @@ describe('CheckCustomizationModal', () => {
         name: customCheckNames[index],
       }));
     const checkWithMultipleValues = {
-      ...expectedCheckModalValues,
+      ...checkCustomizationModalProps,
       values: checkValues,
     };
 
@@ -139,7 +141,7 @@ describe('CheckCustomizationModal', () => {
 
   it('renders the modal with partial customizable values', async () => {
     const user = userEvent.setup();
-    const { onSave } = expectedCheckModalValues;
+    const { onSave } = checkCustomizationModalProps;
     const customCheckValue = ['123', '456'];
     const customCheckNames = ['abc', 'def'];
 
@@ -154,7 +156,7 @@ describe('CheckCustomizationModal', () => {
       }),
     ];
     const checkWithMultipleValues = {
-      ...expectedCheckModalValues,
+      ...checkCustomizationModalProps,
       values: checkValueList,
     };
 
@@ -179,5 +181,17 @@ describe('CheckCustomizationModal', () => {
       checksID: '123',
       customValues: { [customCheckNames[0]]: customCheckValue[0] },
     });
+  });
+
+  it('should call onReset when reset button is clicked', async () => {
+    const user = userEvent.setup();
+    const { onReset } = checkCustomizationModalProps;
+
+    await act(async () => {
+      render(<CheckCustomizationModal {...checkCustomizationModalProps} />);
+    });
+
+    await user.click(screen.getByText('Reset Check'));
+    expect(onReset).toHaveBeenCalled();
   });
 });

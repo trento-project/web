@@ -1,3 +1,4 @@
+import { faker } from '@faker-js/faker';
 import { selectableCheckFactory } from '@lib/test-utils/factories';
 
 import ChecksSelection from './ChecksSelection';
@@ -76,6 +77,7 @@ export default {
 
 export const Default = {
   args: {
+    groupID: faker.string.uuid(),
     catalog,
     userAbilities: [{ name: 'all', resource: 'check_customization' }],
   },
