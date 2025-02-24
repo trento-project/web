@@ -1,446 +1,281 @@
-import {
-  checksExecutionCompletedFactory,
-  catalogCheckFactory,
-  createUserRequestFactory,
-} from '@lib/test-utils/factories';
-import { capitalize } from 'lodash';
-import {
-  availableHanaCluster,
-  availableHanaClusterCostOpt,
-  availableAngiCluster,
-} from '../fixtures/hana-cluster-details/available_hana_cluster';
+import * as hanaClusterDetailsPage from '../pageObject/hana-cluster-details-po';
 
 context('HANA cluster details', () => {
-  const lastExecutionURL = `**/api/v2/checks/groups/**/executions/last`;
-  const lastExecution = checksExecutionCompletedFactory.build({
-    group_id: availableHanaCluster.id,
-    passing_count: 5,
-    warning_count: 3,
-    critical_count: 1,
-  });
-  const catalogURL = `**/api/v3/checks/catalog*`;
-  const catalog = catalogCheckFactory.buildList(5);
-
   before(() => {
-    cy.preloadTestData();
-    cy.intercept(lastExecutionURL, {
-      body: lastExecution,
-    }).as('lastExecution');
-    cy.intercept(catalogURL, { body: { items: catalog } }).as('catalog');
-    cy.visit(`/clusters/${availableHanaCluster.id}`);
-    cy.url().should('include', `/clusters/${availableHanaCluster.id}`);
-    cy.wait('@lastExecution');
-    cy.wait('@catalog');
+    hanaClusterDetailsPage.preloadTestData();
+  });
+
+  beforeEach(() => {
+    hanaClusterDetailsPage.interceptCatalogRequest();
+    hanaClusterDetailsPage.interceptLastExecutionRequest();
   });
 
   describe('HANA cluster details should be consistent with the state of the cluster', () => {
-    it(`should have name ${availableHanaCluster.name} in header`, () => {
-      cy.get('h1').contains(availableHanaCluster.name);
+    beforeEach(() => {
+      hanaClusterDetailsPage.visitAvailableHanaCluster();
     });
 
-    it(`should have provider ${availableHanaCluster.provider}`, () => {
-      cy.get('.tn-cluster-details')
-        .contains('Provider')
-        .next()
-        .contains(availableHanaCluster.provider);
+    it('should have expected cluster name in header', () => {
+      hanaClusterDetailsPage.expectedClusterNameIsDisplayedInHeader();
     });
 
-    it(`should have sid ${availableHanaCluster.sid}`, () => {
-      cy.get('.tn-cluster-details')
-        .contains('SID')
-        .next()
-        .contains(availableHanaCluster.sid)
-        .should(
-          'have.attr',
-          'href',
-          `/databases/${availableHanaCluster.systemID}`
-        );
+    it('should have expected provider', () => {
+      hanaClusterDetailsPage.expectedProviderIsDisplayed('hana');
     });
 
-    it(`should have cluster type ${availableHanaCluster.clusterType}`, () => {
-      cy.get('.tn-cluster-details')
-        .contains('Cluster type')
-        .next()
-        .contains(availableHanaCluster.clusterType);
+    it('should have sid expected SID and href attribute', () => {
+      hanaClusterDetailsPage.hasExpectedSidAndHrefAttribute('hana');
     });
 
-    it(`should have architecture type ${availableHanaCluster.clusterType}`, () => {
-      cy.get('.tn-cluster-details')
-        .contains('Cluster type')
-        .next()
-        .find('svg')
-        .trigger('mouseover');
-
-      cy.contains('span', availableHanaCluster.architectureType).should(
-        'exist'
-      );
+    it('should have the expected cluster type', () => {
+      hanaClusterDetailsPage.hasExpectedClusterType('hana');
     });
 
-    it(`should have log replication mode ${availableHanaCluster.hanaSystemReplicationMode}`, () => {
-      cy.get('.tn-cluster-details')
-        .contains('HANA log replication mode')
-        .next()
-        .contains(availableHanaCluster.hanaSystemReplicationMode);
+    it('should have expected architecture type', () => {
+      hanaClusterDetailsPage.mouseOverArchitectureInfo();
+      hanaClusterDetailsPage.architectureTooltipIsDisplayed('hana');
     });
 
-    it(`should have fencing type ${availableHanaCluster.fencingType}`, () => {
-      cy.get('.tn-cluster-details')
-        .contains('Fencing type')
-        .next()
-        .contains(availableHanaCluster.fencingType);
+    it('should have expected log replication mode', () => {
+      hanaClusterDetailsPage.expectedReplicationModeIsDisplayed('hana');
     });
 
-    it(`should have HANA secondary sync state ${availableHanaCluster.hanaSecondarySyncState}`, () => {
-      cy.get('.tn-cluster-details')
-        .contains('HANA secondary sync state')
-        .next()
-        .contains(availableHanaCluster.hanaSecondarySyncState);
+    it('should have expected fencing type', () => {
+      hanaClusterDetailsPage.expectedFencingTypeIsDisplayed('hana');
     });
 
-    it(`should have maintenance mode ${availableHanaCluster.maintenanceMode}`, () => {
-      cy.get('.tn-cluster-details')
-        .contains('Cluster maintenance')
-        .next()
-        .contains('False');
+    it('should have expected HANA secondary sync state', () => {
+      hanaClusterDetailsPage.expectedHanaSecondarySyncStateIsDisplayed('hana');
     });
 
-    it(`should have hana log operation mode ${availableHanaCluster.hanaSystemReplicationOperationMode}`, () => {
-      cy.get('.tn-cluster-details')
-        .contains('HANA log operation mode')
-        .next()
-        .contains(availableHanaCluster.hanaSystemReplicationOperationMode);
+    it('should have expected maintenance mode', () => {
+      hanaClusterDetailsPage.expectedMaintenanceModeIsDisplayed('hana');
     });
 
-    it(`should have cib last written ${availableHanaCluster.cibLastWritten}`, () => {
-      cy.get('.tn-cluster-details')
-        .contains('CIB last written')
-        .next()
-        .contains(availableHanaCluster.cibLastWritten);
+    it('should have expected hana log operation mode', () => {
+      hanaClusterDetailsPage.expectedHanaLogOperationModeIsDisplayed('hana');
+    });
+
+    it('should have expected cib last written value', () => {
+      hanaClusterDetailsPage.expectedCibLastWrittenValueIsDisplayed('hana');
     });
 
     it('should have the check overview component with passing checks', () => {
-      cy.get('.tn-cluster-checks-overview ')
-        .contains('Passing')
-        .parent()
-        .next()
-        .contains(lastExecution.passing_count);
+      hanaClusterDetailsPage.expectedPassingChecksCountIsDisplayed();
     });
 
-    // eslint-disable-next-line mocha/no-skipped-tests
-    it.skip('should have a working link to the passing checks in the overview component', () => {
-      cy.get('.tn-cluster-checks-overview ').contains('Passing').click();
-      cy.url().should(
-        'include',
-        `/clusters/${availableHanaCluster.id}/checks/results?health=passing`
-      );
-      cy.go('back');
+    it('should have a working link to the passing checks in the overview component', () => {
+      hanaClusterDetailsPage.clickPassingChecksButton();
+      hanaClusterDetailsPage.passingChecksUrlIsTheExpected();
     });
 
     it('should have the check overview component with warning checks', () => {
-      cy.get('.tn-cluster-checks-overview ')
-        .contains('Warning')
-        .parent()
-        .next()
-        .contains(lastExecution.warning_count);
+      hanaClusterDetailsPage.expectedWarningChecksCountIsDisplayed();
     });
 
-    // eslint-disable-next-line mocha/no-skipped-tests
-    it.skip('should have a working link to the warning checks in the overview component', () => {
-      cy.get('.tn-cluster-checks-overview ').contains('Warning').click();
-      cy.url().should(
-        'include',
-        `/clusters/${availableHanaCluster.id}/checks/results?health=warning`
-      );
-      cy.go('back');
+    it('should have a working link to the warning checks in the overview component', () => {
+      hanaClusterDetailsPage.clickWarningChecksButton();
+      hanaClusterDetailsPage.warningChecksUrlIsTheExpected();
     });
 
     it('should have the check overview component with critical checks', () => {
-      cy.get('.tn-cluster-checks-overview ')
-        .contains('Critical')
-        .parent()
-        .next()
-        .contains(lastExecution.critical_count);
+      hanaClusterDetailsPage.expectedCriticalChecksCountIsDisplayed();
     });
 
-    // eslint-disable-next-line mocha/no-skipped-tests
-    it.skip('should have a working link to the critical checks in the overview component', () => {
-      cy.get('.tn-cluster-checks-overview ').contains('Critical').click();
-      cy.url().should(
-        'include',
-        `/clusters/${availableHanaCluster.id}/checks/results?health=critical`
-      );
-      cy.go('back');
+    it('should have a working link to the critical checks in the overview component', () => {
+      hanaClusterDetailsPage.clickCriticalChecksButton();
+      hanaClusterDetailsPage.criticalChecksUrlIsTheExpected();
     });
   });
 
   describe('Cluster sites should have the expected hosts', () => {
-    availableHanaCluster.sites.forEach((site) => {
-      it(`should have ${site.name}`, () => {
-        cy.get(`.tn-site-details-${site.name}`).contains(site.name);
-      });
-      it(`should have ${site.state} state in site ${site.name}`, () => {
-        cy.get(`.tn-site-details-${site.name}`).contains(site.state);
-      });
-      it(`should have correct SR health state in site ${site.name}`, () => {
-        cy.get(`.tn-site-details-${site.name}`)
-          .find('svg')
-          .eq(0)
-          .should('have.class', site.srHealthState);
-      });
+    beforeEach(() => {
+      hanaClusterDetailsPage.visitAvailableHanaCluster();
+      hanaClusterDetailsPage.validateAvailableHanaClusterUrl();
+    });
 
-      site.hosts.forEach((host) => {
-        it(`${host.hostname} should have the expected IP addresses`, () => {
-          host.ips.forEach((ip) => {
-            cy.get(`.tn-site-details-${site.name}`).contains(ip);
-          });
-        });
+    it('should have expected site name', () => {
+      hanaClusterDetailsPage.expectedSiteNamesAreDisplayed();
+    });
 
-        it(`${host.hostname} should have the expected virtual IP addresses`, () => {
-          host.virtualIps.forEach((ip) => {
-            cy.get(`.tn-site-details-${site.name}`).contains(ip);
-          });
-        });
+    it('should have expected site state', () => {
+      hanaClusterDetailsPage.expectedSiteStatesAreDisplayed();
+    });
 
-        it(`${host.hostname} should have the expected indexserver role`, () => {
-          cy.get(`.tn-site-details-${site.name}`).contains(
-            capitalize(host.indexserver_actual_role)
-          );
-        });
+    it('should have expected SR health state', () => {
+      hanaClusterDetailsPage.expectedSrHealthStatesAreDisplayed();
+    });
 
-        it(`${host.hostname} should have the expected nameserver role`, () => {
-          cy.get(`.tn-site-details-${site.name}`).contains(
-            capitalize(host.nameserver_actual_role)
-          );
-        });
+    it('hosts should have the expected IP addresses', () => {
+      hanaClusterDetailsPage.allExpectedIPsAreDisplayed();
+    });
 
-        it(`${host.hostname} should have the expected status`, () => {
-          cy.get(`.tn-site-details-${site.name}`)
-            .find('svg')
-            .eq(1)
-            .should('have.class', host.status);
-        });
-      });
+    it('hosts should have the expected virtual IP addresses', () => {
+      hanaClusterDetailsPage.allExpectedVirtualIPsAreDisplayed();
+    });
+
+    it('hosts should have the expected indexserver role', () => {
+      hanaClusterDetailsPage.allExpectedIndexServerRolesAreDisplayed();
+    });
+
+    it('hosts should have the expected nameserver role', () => {
+      hanaClusterDetailsPage.allExpectedNameServerRolesAreDisplayed();
+    });
+
+    it('host should have the expected status', () => {
+      hanaClusterDetailsPage.allExpectedStatusesAreDisplayed();
     });
   });
 
   describe('Cluster SBD should have the expected devices with the correct status', () => {
-    availableHanaCluster.sbd.forEach((item) => {
-      it(`should have SBD device name "${item.deviceName}" and status "${item.status}"`, () => {
-        cy.get('.tn-sbd-details')
-          .contains(item.deviceName)
-          .children()
-          .contains(item.status);
-      });
+    beforeEach(() => {
+      hanaClusterDetailsPage.visitAvailableHanaCluster();
+    });
+
+    it('should have SBD expected device name & status', () => {
+      hanaClusterDetailsPage.sbdClusterHasExpectedNameAndStatus();
     });
   });
 
   describe('HANA cluster details in a cost optimized scenario should be consistent with the state of the cluster', () => {
     before(() => {
-      cy.loadScenario('hana-scale-up-cost-opt');
-      cy.visit(`/clusters/${availableHanaClusterCostOpt.id}`);
-      cy.url().should('include', `/clusters/${availableHanaClusterCostOpt.id}`);
+      hanaClusterDetailsPage.loadScenario('hana-scale-up-cost-opt');
+    });
+
+    beforeEach(() => {
+      hanaClusterDetailsPage.visitAvailableHanaClusterCostOpt();
+      hanaClusterDetailsPage.validateAvailableHanaClusterCostOptUrl();
     });
 
     after(() => {
-      availableHanaClusterCostOpt.hosts.forEach(({ id }) => {
-        cy.deregisterHost(id);
-      });
+      hanaClusterDetailsPage.deregisterHanaClusterCostOptHosts();
     });
 
-    it(`should have name ${availableHanaClusterCostOpt.name} in header`, () => {
-      cy.get('h1').contains(availableHanaClusterCostOpt.name);
+    it('should have expected name in header', () => {
+      hanaClusterDetailsPage.availableHanaClusterCostOpHeaderIsDisplayed();
     });
 
-    it(`should have provider ${availableHanaClusterCostOpt.provider}`, () => {
-      cy.get('.tn-cluster-details')
-        .contains('Provider')
-        .next()
-        .contains(availableHanaClusterCostOpt.provider);
+    it('should have the expected provider', () => {
+      hanaClusterDetailsPage.expectedProviderIsDisplayed('hanaCostOpt');
     });
 
     it('should have all cost optimized SID`s and correct database links', () => {
-      cy.get('.tn-cluster-details')
-        .contains('SID')
-        .parent()
-        .within(() => {
-          availableHanaClusterCostOpt.sids.forEach((sid, index) => {
-            cy.contains(sid).should(
-              'have.attr',
-              'href',
-              `/databases/${availableHanaClusterCostOpt.systemID[index]}`
-            );
-          });
-        });
+      hanaClusterDetailsPage.hasExpectedSidsAndHrefAttributes();
     });
 
-    it(`should have cluster cost optimized type ${availableHanaClusterCostOpt.clusterType}`, () => {
-      cy.get('.tn-cluster-details')
-        .contains('Cluster type')
-        .next()
-        .contains(availableHanaClusterCostOpt.clusterType);
+    it('should have expected cluster cost optimized type', () => {
+      hanaClusterDetailsPage.hasExpectedClusterType('hanaCostOpt');
     });
 
-    it(`should have architecture type ${availableHanaClusterCostOpt.clusterType}`, () => {
-      cy.get('.tn-cluster-details')
-        .contains('Cluster type')
-        .next()
-        .find('svg')
-        .trigger('mouseover');
+    it('should have expected architecture type', () => {
+      hanaClusterDetailsPage.mouseOverArchitectureInfo();
+      hanaClusterDetailsPage.architectureTooltipIsDisplayed('hanaCostOpt');
+    });
 
-      cy.contains('span', availableHanaClusterCostOpt.architectureType).should(
-        'exist'
+    it('should have expected log replication mode', () => {
+      hanaClusterDetailsPage.expectedReplicationModeIsDisplayed('hanaCostOpt');
+    });
+
+    it('should have expected fencing type', () => {
+      hanaClusterDetailsPage.expectedFencingTypeIsDisplayed('hanaCostOpt');
+    });
+
+    it('should have expected HANA secondary sync state', () => {
+      hanaClusterDetailsPage.expectedHanaSecondarySyncStateIsDisplayed(
+        'hanaCostOpt'
       );
     });
 
-    it(`should have log replication mode ${availableHanaClusterCostOpt.hanaSystemReplicationMode}`, () => {
-      cy.get('.tn-cluster-details')
-        .contains('HANA log replication mode')
-        .next()
-        .contains(availableHanaClusterCostOpt.hanaSystemReplicationMode);
+    it('should have expected maintenance mode', () => {
+      hanaClusterDetailsPage.expectedMaintenanceModeIsDisplayed('hanaCostOpt');
     });
 
-    it(`should have fencing type ${availableHanaClusterCostOpt.fencingType}`, () => {
-      cy.get('.tn-cluster-details')
-        .contains('Fencing type')
-        .next()
-        .contains(availableHanaClusterCostOpt.fencingType);
+    it('should have expected hana log operation mode', () => {
+      hanaClusterDetailsPage.expectedHanaLogOperationModeIsDisplayed(
+        'hanaCostOpt'
+      );
     });
 
-    it(`should have HANA secondary sync state ${availableHanaClusterCostOpt.hanaSecondarySyncState}`, () => {
-      cy.get('.tn-cluster-details')
-        .contains('HANA secondary sync state')
-        .next()
-        .contains(availableHanaClusterCostOpt.hanaSecondarySyncState);
+    it('should have expected cib last written', () => {
+      hanaClusterDetailsPage.expectedCibLastWrittenValueIsDisplayed(
+        'hanaCostOpt'
+      );
     });
 
-    it(`should have maintenance mode ${availableHanaClusterCostOpt.maintenanceMode}`, () => {
-      cy.get('.tn-cluster-details')
-        .contains('Cluster maintenance')
-        .next()
-        .contains('False');
-    });
-
-    it(`should have hana log operation mode ${availableHanaClusterCostOpt.hanaSystemReplicationOperationMode}`, () => {
-      cy.get('.tn-cluster-details')
-        .contains('HANA log operation mode')
-        .next()
-        .contains(
-          availableHanaClusterCostOpt.hanaSystemReplicationOperationMode
-        );
-    });
-
-    it(`should have cib last written ${availableHanaClusterCostOpt.cibLastWritten}`, () => {
-      cy.get('.tn-cluster-details')
-        .contains('CIB last written')
-        .next()
-        .contains(availableHanaClusterCostOpt.cibLastWritten);
-    });
-
-    it('should display both SID`s in the clusters overview page', () => {
-      cy.visit('/clusters');
-      cy.url().should('include', '/clusters');
-      cy.get('.container').eq(0).as('clustersTable');
-      cy.get('@clustersTable').find('tr').eq(7).find('td').eq(2).as('sidCell');
-
-      availableHanaClusterCostOpt.sids.forEach((sid) => {
-        cy.get('@sidCell').should('contain', sid);
-      });
+    it(`should display both SID's in the clusters overview page`, () => {
+      hanaClusterDetailsPage.visit();
+      hanaClusterDetailsPage.bothHanaCostOptSidsAreDisplayed();
     });
   });
 
   describe('Angi architecture', () => {
     before(() => {
-      cy.loadScenario('hana-scale-up-angi');
-      cy.visit(`/clusters/${availableAngiCluster.id}`);
+      hanaClusterDetailsPage.loadScenario('hana-scale-up-angi');
+    });
+
+    beforeEach(() => {
+      hanaClusterDetailsPage.visitHanaAngiCluster();
     });
 
     after(() => {
-      availableAngiCluster.hosts.forEach(({ id }) => {
-        cy.deregisterHost(id);
-      });
+      hanaClusterDetailsPage.deregisterAngiClusterCostOptHosts();
+    });
+
+    it('should have expected name in header', () => {
+      hanaClusterDetailsPage.availableHanaAngiHeaderIsDisplayed();
+    });
+
+    it('should have the expected provider', () => {
+      hanaClusterDetailsPage.expectedProviderIsDisplayed('angi');
+    });
+
+    it('should have all cost optimized SID`s and correct database links', () => {
+      hanaClusterDetailsPage.hasExpectedSidAndHrefAttribute('angi');
+    });
+
+    it('should have expected cluster cost optimized type', () => {
+      hanaClusterDetailsPage.hasExpectedClusterType('angi');
+    });
+
+    it('should have expected architecture type', () => {
+      hanaClusterDetailsPage.mouseOverArchitectureInfo();
+      hanaClusterDetailsPage.architectureTooltipIsDisplayed('angi');
+    });
+
+    it('should have expected log replication mode', () => {
+      hanaClusterDetailsPage.expectedReplicationModeIsDisplayed('angi');
+    });
+
+    it('should have expected fencing type', () => {
+      hanaClusterDetailsPage.expectedFencingTypeIsDisplayed('angi');
+    });
+
+    it('should have expected HANA secondary sync state', () => {
+      hanaClusterDetailsPage.expectedHanaSecondarySyncStateIsDisplayed('angi');
+    });
+
+    it('should have expected maintenance mode', () => {
+      hanaClusterDetailsPage.expectedMaintenanceModeIsDisplayed('angi');
+    });
+
+    it('should have expected hana log operation mode', () => {
+      hanaClusterDetailsPage.expectedHanaLogOperationModeIsDisplayed('angi');
+    });
+
+    it('should have expected cib last written', () => {
+      hanaClusterDetailsPage.expectedCibLastWrittenValueIsDisplayed('angi');
     });
 
     it('should discover and display properly Angi architecture HANA scale up cluster', () => {
-      cy.get('h1').contains(availableAngiCluster.name);
-
-      cy.get('.tn-cluster-details')
-        .contains('Provider')
-        .next()
-        .contains(availableAngiCluster.provider);
-
-      cy.get('.tn-cluster-details')
-        .contains('SID')
-        .next()
-        .contains(availableAngiCluster.sid)
-        .should(
-          'have.attr',
-          'href',
-          `/databases/${availableAngiCluster.systemID}`
-        );
-
-      cy.get('.tn-cluster-details')
-        .contains('Cluster type')
-        .next()
-        .contains(availableAngiCluster.clusterType);
-
-      cy.get('.tn-cluster-details')
-        .contains('Cluster type')
-        .next()
-        .find('svg')
-        .trigger('mouseover');
-
-      cy.contains('span', availableAngiCluster.architectureType).should(
-        'exist'
-      );
-
-      cy.get('.tn-cluster-details')
-        .contains('HANA log replication mode')
-        .next()
-        .contains(availableAngiCluster.hanaSystemReplicationMode);
-
-      cy.get('.tn-cluster-details')
-        .contains('Fencing type')
-        .next()
-        .contains(availableAngiCluster.fencingType);
-
-      cy.get('.tn-cluster-details')
-        .contains('HANA secondary sync state')
-        .next()
-        .contains(availableAngiCluster.hanaSecondarySyncState);
-
-      cy.get('.tn-cluster-details')
-        .contains('Cluster maintenance')
-        .next()
-        .contains('False');
-
-      cy.get('.tn-cluster-details')
-        .contains('HANA log operation mode')
-        .next()
-        .contains(availableAngiCluster.hanaSystemReplicationOperationMode);
-
-      cy.get('.tn-cluster-details')
-        .contains('CIB last written')
-        .next()
-        .contains(availableAngiCluster.cibLastWritten);
-
-      const site1 = availableAngiCluster.sites[0];
-      const site2 = availableAngiCluster.sites[1];
-      cy.get(`.tn-site-details-${site1.name}`).contains(site1.state);
-      cy.get(`.tn-site-details-${site2.name}`).contains(site2.state);
+      hanaClusterDetailsPage.hanaAngiClusterSitesAreDisplayed();
     });
 
     it('should discover a Angi cluster with failover', () => {
-      cy.loadScenario('cluster-hana-scale-up-angi-failover');
-
-      cy.get('.tn-cluster-details')
-        .contains('HANA secondary sync state')
-        .next()
-        .contains('SFAIL');
-
-      const site1 = availableAngiCluster.sites[0];
-      const site2 = availableAngiCluster.sites[1];
-      cy.get(`.tn-site-details-${site1.name}`).contains('Failed');
-      cy.get(`.tn-site-details-${site2.name}`).contains(site1.state);
+      hanaClusterDetailsPage.loadScenario(
+        'cluster-hana-scale-up-angi-failover'
+      );
+      hanaClusterDetailsPage.expectedHanaSecondarySyncStateIsDisplayed('SFAIL');
+      hanaClusterDetailsPage.hanaAngiSitesHaveExpectedStateAfterFailover();
     });
   });
 
@@ -476,8 +311,8 @@ context('HANA cluster details', () => {
   // eslint-disable-next-line mocha/no-skipped-tests
   describe.skip('Cluster with unknown provider', () => {
     before(() => {
-      cy.loadScenario('cluster-unknown-provider');
-      cy.visit(`/clusters/${availableHanaCluster.id}`);
+      hanaClusterDetailsPage.loadScenario('cluster-unknown-provider');
+      hanaClusterDetailsPage.visitAvailableHanaCluster();
     });
 
     it(`should show a warning message in the check selection view`, () => {
@@ -488,7 +323,9 @@ context('HANA cluster details', () => {
     });
 
     it(`should show a warning message in the checks results view`, () => {
-      cy.visit(`/clusters/${availableHanaCluster.id}/checks/results`);
+      cy.visit(
+        `/clusters/${hanaClusterDetailsPage.availableHanaCluster.id}/checks/results`
+      );
       cy.get('[data-testid="warning-banner"]').contains(
         'The following results are valid for on-premise bare metal platforms.'
       );
@@ -498,8 +335,8 @@ context('HANA cluster details', () => {
   // eslint-disable-next-line mocha/no-skipped-tests
   describe.skip('Cluster with kvm provider', () => {
     before(() => {
-      cy.loadScenario('cluster-kvm-provider');
-      cy.visit(`/clusters/${availableHanaCluster.id}`);
+      hanaClusterDetailsPage.loadScenario('cluster-kvm-provider');
+      hanaClusterDetailsPage.visitAvailableHanaCluster();
     });
 
     it(`should show the default catalog`, () => {
@@ -510,22 +347,22 @@ context('HANA cluster details', () => {
   });
 
   describe('Cluster with vmware provider', () => {
-    before(() => {
-      cy.loadScenario('cluster-vmware-provider');
-      cy.visit(`/clusters/${availableHanaCluster.id}`);
+    beforeEach(() => {
+      hanaClusterDetailsPage.loadScenario('cluster-vmware-provider');
+      hanaClusterDetailsPage.visitAvailableHanaCluster();
     });
 
-    it(`should recognize the provider as vmware`, () => {
-      cy.contains('button', 'Check Selection').click();
-      cy.contains('VMware');
+    it('should recognize the provider as vmware', () => {
+      hanaClusterDetailsPage.clickCheckSelectionButton();
+      hanaClusterDetailsPage.expectedProviderIsDisplayed('VMware');
     });
   });
 
   // eslint-disable-next-line mocha/no-skipped-tests
   describe.skip('Cluster with nutanix provider', () => {
     before(() => {
-      cy.loadScenario('cluster-nutanix-provider');
-      cy.visit(`/clusters/${availableHanaCluster.id}`);
+      hanaClusterDetailsPage.loadScenario('cluster-nutanix-provider');
+      hanaClusterDetailsPage.visitAvailableHanaCluster();
     });
 
     it(`should show the default catalog`, () => {
@@ -536,114 +373,67 @@ context('HANA cluster details', () => {
   });
 
   describe('Deregistration', () => {
-    const hostToDeregister = {
-      name: 'vmhdbprd02',
-      id: 'b767b3e9-e802-587e-a442-541d093b86b9',
-      sid: 'WDF',
-    };
-
-    before(() => {
-      cy.visit(`/clusters/${availableHanaCluster.id}`);
-      cy.url().should('include', `/clusters/${availableHanaCluster.id}`);
+    beforeEach(() => {
+      hanaClusterDetailsPage.visitAvailableHanaCluster();
     });
 
-    it(`should not include a working link to ${hostToDeregister.name} in the list of sites`, () => {
-      cy.deregisterHost(hostToDeregister.id);
-      cy.get(`.tn-site-details-${hostToDeregister.sid}`)
-        .contains('a', hostToDeregister.name)
-        .should('not.exist');
+    it('should not include a working link to the deregistered host in the list of sites', () => {
+      hanaClusterDetailsPage.linkToDeregisteredHostIsAvailable();
+      hanaClusterDetailsPage.apiDeregisterWdfHost();
+      hanaClusterDetailsPage.linkToDeregisteredHostIsNotAvailable();
     });
 
-    it(`should show host ${hostToDeregister.name} again with a working link after restoring it`, () => {
-      cy.loadScenario(`host-${hostToDeregister.name}-restore`);
-      cy.get(`.tn-site-details-${hostToDeregister.sid}`)
-        .contains('a', hostToDeregister.name)
-        .should('exist');
+    it(`should show host again with a working link after restoring it`, () => {
+      hanaClusterDetailsPage.apiRestoreWdfHost();
+      hanaClusterDetailsPage.linkToDeregisteredHostIsAvailable();
     });
   });
 
   describe('Forbidden actions', () => {
-    const password = 'password';
-
     beforeEach(() => {
-      cy.deleteAllUsers();
-      cy.logout();
-      const user = createUserRequestFactory.build({
-        password,
-        password_confirmation: password,
-      });
-      cy.wrap(user).as('user');
+      hanaClusterDetailsPage.apiDeleteAllUsers();
+      hanaClusterDetailsPage.logout();
     });
 
     describe('Check Execution', () => {
       it('should forbid check execution when the correct user abilities are missing in details and settings', () => {
-        cy.get('@user').then((user) => {
-          cy.createUserWithAbilities(user, []);
-          cy.login(user.username, password);
-        });
-
-        cy.visit(`/clusters/${availableHanaCluster.id}/settings`);
-
-        cy.contains('button', 'Start Execution').should('be.disabled');
-
-        cy.contains('button', 'Start Execution').click({ force: true });
-
-        cy.contains('span', 'You are not authorized for this action').should(
-          'be.visible'
-        );
-
-        cy.visit(`/clusters/${availableHanaCluster.id}`);
-
-        cy.contains('button', 'Start Execution').should('be.disabled');
-
-        cy.contains('button', 'Start Execution').click({ force: true });
-
-        cy.contains('span', 'You are not authorized for this action').should(
-          'be.visible'
-        );
+        hanaClusterDetailsPage.apiCreateUserWithoutAbilities();
+        hanaClusterDetailsPage.loginWithoutAbilities();
+        hanaClusterDetailsPage.visitAvailableHanaCluster();
+        hanaClusterDetailsPage.startExecutionButtonIsDisabled();
+        hanaClusterDetailsPage.clickStartExecutionButton();
+        hanaClusterDetailsPage.notAuthorizedTooltipIsDisplayed();
+        hanaClusterDetailsPage.clickCheckSelectionButton();
+        hanaClusterDetailsPage.startExecutionButtonIsDisabled();
+        hanaClusterDetailsPage.clickStartExecutionButton();
+        hanaClusterDetailsPage.notAuthorizedTooltipIsDisplayed();
       });
 
       it('should enable check execution button when the correct user abilities are present', () => {
-        cy.get('@user').then((user) => {
-          cy.createUserWithAbilities(user, [
-            { name: 'all', resource: 'cluster_checks_execution' },
-          ]);
-          cy.login(user.username, password);
-        });
-
-        cy.visit(`/clusters/${availableHanaCluster.id}/settings`);
-
-        cy.contains('button', 'Start Execution').trigger('mouseover', {
-          force: true,
-        });
-
-        cy.contains('span', 'You are not authorized for this action').should(
-          'not.exist'
-        );
+        hanaClusterDetailsPage.apiCreateUserWithChecksExecutionAbility();
+        hanaClusterDetailsPage.loginWithAbilities();
+        hanaClusterDetailsPage.visitAvailableHanaCluster();
+        hanaClusterDetailsPage.clickCheckSelectionButton();
+        hanaClusterDetailsPage.mouseOverStartExecutionButton();
+        hanaClusterDetailsPage.notAuthorizedTooltipIsNotDisplayed();
       });
     });
 
     describe('Check Selection', () => {
       it('should forbid check selection saving', () => {
-        cy.get('@user').then((user) => {
-          cy.createUserWithAbilities(user, []);
-          cy.login(user.username, password);
-        });
-        cy.visit(`/clusters/${availableHanaCluster.id}/settings`);
-
-        cy.contains('button', 'Save Checks Selection').should('be.disabled');
+        hanaClusterDetailsPage.apiCreateUserWithoutAbilities();
+        hanaClusterDetailsPage.loginWithoutAbilities();
+        hanaClusterDetailsPage.visitAvailableHanaCluster();
+        hanaClusterDetailsPage.clickCheckSelectionButton();
+        hanaClusterDetailsPage.saveChecksSelectionButtonIsDisabled();
       });
 
       it('should allow check selection saving', () => {
-        cy.get('@user').then((user) => {
-          cy.createUserWithAbilities(user, [
-            { name: 'all', resource: 'cluster_checks_selection' },
-          ]);
-          cy.login(user.username, password);
-        });
-        cy.visit(`/clusters/${availableHanaCluster.id}/settings`);
-
-        cy.contains('button', 'Save Checks Selection').should('be.enabled');
+        hanaClusterDetailsPage.apiCreateUserWithChecksSelectionAbility();
+        hanaClusterDetailsPage.loginWithAbilities();
+        hanaClusterDetailsPage.visitAvailableHanaCluster();
+        hanaClusterDetailsPage.clickCheckSelectionButton();
+        hanaClusterDetailsPage.saveChecksSelectionButtonIsDisplayed();
       });
     });
   });

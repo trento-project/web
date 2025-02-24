@@ -167,15 +167,13 @@ export const apiCreateUserWithCleanupAbilities = () =>
 const apiGetDatabases = () => {
   return basePage.apiLogin().then(({ accessToken }) => {
     const url = '/api/v1/databases';
-    return cy
-      .request({
-        method: 'GET',
-        url: url,
-        auth: {
-          bearer: accessToken,
-        },
-      })
-      .then((response) => response);
+    return cy.request({
+      method: 'GET',
+      url: url,
+      auth: {
+        bearer: accessToken,
+      },
+    });
   });
 };
 
