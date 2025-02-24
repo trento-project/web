@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { noop } from 'lodash';
-import { EOS_WARNING_OUTLINED } from 'eos-icons-react';
 
 import Modal from '@common/Modal';
 import Button from '@common/Button';
@@ -8,6 +7,7 @@ import Input from '@common/Input';
 import Label from '@common/Label';
 import ProviderLabel from '@common/ProviderLabel';
 import Tooltip from '@common/Tooltip';
+import CheckableWarningMessage from '@common/CheckableWarningMessage';
 import { UNKNOWN_PROVIDER } from '@lib/model';
 
 const checkBoxWarningText =
@@ -46,6 +46,7 @@ function CheckCustomizationModal({
   customized = false,
   onClose = noop,
   onSave = noop,
+  onReset = noop,
 }) {
   const [checked, setChecked] = useState(customized);
   const [customValues, setCustomValues] = useState({});
@@ -76,22 +77,12 @@ function CheckCustomizationModal({
       <p className="text-gray-500 text-sm font-normal tracking-wide pb-2">
         {description}
       </p>
-
-      <div className="flex items-center border border-yellow-400 bg-yellow-50 p-4 rounded-md text-yellow-600 mb-4">
-        {!customized && (
-          <Input
-            type="checkbox"
-            checked={checked}
-            onChange={() => setChecked((prev) => !prev)}
-          />
-        )}
-
-        <EOS_WARNING_OUTLINED
-          size="xxl"
-          className="centered fill-yellow-500 ml-4 mr-4"
-        />
-        <span className="font-semibold">{checkBoxWarningText}</span>
-      </div>
+      <CheckableWarningMessage
+        hideCheckbox={customized}
+        warningText={checkBoxWarningText}
+        checked={checked}
+        onChecked={() => setChecked((prev) => !prev)}
+      />
       {values
         ?.filter(({ customizable }) => customizable)
         .map((value) => (
@@ -129,29 +120,28 @@ function CheckCustomizationModal({
         </div>
       </div>
 
-      <div className="flex flex-row w-80">
-        <div className="flex flex-row w-24 mt-3 rounded-md">
-          <Button
-            type="default-fit"
-            className="w-1/2"
-            disabled={!canCustomize}
-            onClick={() => {
-              onSave(buildCustomCheckPayload(id, customValues));
-              resetStateAndClose();
-            }}
-          >
-            Save
-          </Button>
-        </div>
-        <div className="flex flex-row w-24 mt-3 rounded-md">
-          <Button
-            type="primary-white"
-            className="w-1/2"
-            onClick={resetStateAndClose}
-          >
-            Close
-          </Button>
-        </div>
+      <div className="flex w-80 flex-row space-x-2">
+        <Button
+          type="default-fit"
+          className="w-1/2"
+          disabled={!canCustomize}
+          onClick={() => {
+            onSave(buildCustomCheckPayload(id, customValues));
+            resetStateAndClose();
+          }}
+        >
+          Save
+        </Button>
+        <Button type="primary-white-fit" className="w-1/2" onClick={onReset}>
+          Reset Check
+        </Button>
+        <Button
+          type="primary-white-fit"
+          className="w-1/2"
+          onClick={resetStateAndClose}
+        >
+          Close
+        </Button>
       </div>
     </Modal>
   );

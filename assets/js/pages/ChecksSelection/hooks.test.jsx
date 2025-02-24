@@ -1,8 +1,10 @@
-import { networkClient } from '@lib/network';
-import MockAdapter from 'axios-mock-adapter';
-import { faker } from '@faker-js/faker';
 import { act, renderHook } from '@testing-library/react';
+import { faker } from '@faker-js/faker';
+import MockAdapter from 'axios-mock-adapter';
+import { every, has } from 'lodash';
 import { hookWrapperWithState } from '@lib/test-utils';
+
+import { networkClient } from '@lib/network';
 import { selectableCheckFactory } from '@lib/test-utils/factories';
 import { useChecksSelection } from './hooks';
 
@@ -88,5 +90,92 @@ describe('useChecksSelection', () => {
     expect(hookResult.current.checksSelectionLoading).toBe(false);
     expect(hookResult.current.checksSelection).toEqual(checksSelection);
     expect(hookResult.current.checksSelectionFetchError).toEqual(null);
+  });
+
+  it.each([400, 404, 500, 503])(
+    'should handle failures while resetting check customization',
+    async (statusCode) => {
+      let hookResult;
+      const [hookWrapper, store] = hookWrapperWithState();
+
+      const checksSelection = selectableCheckFactory.buildList(3, {
+        customized: true,
+      });
+      const groupId = faker.string.uuid();
+      const checkId = checksSelection[0].id;
+
+      await act(async () => {
+        const { result } = renderHook(() => useChecksSelection(), {
+          wrapper: hookWrapper,
+        });
+        hookResult = result;
+      });
+
+      axiosMock
+        .onDelete(`/api/v1/groups/${groupId}/checks/${checkId}/customization`)
+        .reply(statusCode);
+
+      await act(async () => {
+        hookResult.current.resetChecksCustomization(groupId, checkId);
+      });
+
+      const updatedChecksSelection = hookResult.current.checksSelection;
+
+      updatedChecksSelection.forEach(({ customized }) =>
+        expect(customized).toBe(true)
+      );
+
+      expect(store.getActions()).toEqual([
+        {
+          type: 'NOTIFICATION',
+          payload: { text: `Unable to reset customization`, icon: '❌' },
+        },
+      ]);
+    }
+  );
+
+  it('should successfully reset check customization', async () => {
+    let hookResult;
+    const [hookWrapper, store] = hookWrapperWithState();
+
+    const checksSelection = selectableCheckFactory.buildList(3, {
+      customized: true,
+    });
+    const groupId = faker.string.uuid();
+    const checkId = checksSelection[0].id;
+
+    await act(async () => {
+      const { result } = renderHook(() => useChecksSelection(), {
+        wrapper: hookWrapper,
+      });
+      hookResult = result;
+    });
+
+    axiosMock
+      .onDelete(`/api/v1/groups/${groupId}/checks/${checkId}/customization`)
+      .reply(204);
+
+    await act(async () => {
+      hookResult.current.resetChecksCustomization(groupId, checkId);
+    });
+
+    const updatedChecksSelection = hookResult.current.checksSelection;
+
+    const doesNotHaveCustomValue = (value) => !has(value, 'custom_value');
+    updatedChecksSelection.forEach(({ id, customized, values }) => {
+      if (id === checkId) {
+        expect(customized).toBe(false);
+        expect(every(values, doesNotHaveCustomValue)).toBe(true);
+      } else {
+        expect(customized).toBe(true);
+      }
+    });
+
+    expect(store.getActions()).toEqual([
+      {
+        type: 'NOTIFICATION',
+        payload: { text: `Customization was reset!`, icon: '✅' },
+      },
+    ]);
   });
 });

@@ -4,9 +4,6 @@
 
 import { uniq } from 'lodash';
 import { pipe, map, reduce, defaultTo, omit, filter } from 'lodash/fp';
-import { format as formatDate, toZonedTime } from 'date-fns-tz';
-
-const toUTC = (date) => formatDate(date, "yyyy-MM-dd'T'HH:mm:ss.000'Z'");
 
 const omitUndefined = (obj) =>
   Object.fromEntries(
@@ -54,7 +51,7 @@ export const searchParamsToAPIParams = pipe(
     switch (key) {
       case 'from_date':
       case 'to_date':
-        return [key, new Date(value[1]).toISOString()];
+        return [key, value[1]];
       default:
         return [key, value];
     }
@@ -72,7 +69,7 @@ export const searchParamsToFilterValue = pipe(
     switch (k) {
       case 'from_date':
       case 'to_date':
-        return [k, [v[0], toZonedTime(v[1])]];
+        return [k, [v[0], new Date(v[1])]];
       default:
         return [k, v];
     }
@@ -91,7 +88,7 @@ export const filterValueToSearchParams = pipe(
     switch (k) {
       case 'from_date':
       case 'to_date':
-        return [k, [v[0], toUTC(new Date(v[1]))]];
+        return [k, [v[0], new Date(v[1]).toISOString()]];
       default:
         return [k, v];
     }

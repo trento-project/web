@@ -32,6 +32,7 @@ function HostSettingsPage() {
 
   const {
     fetchChecksSelection,
+    resetChecksCustomization,
     checksSelection,
     checksSelectionLoading,
     checksSelectionFetchError,
@@ -104,6 +105,7 @@ function HostSettingsPage() {
       />
       <HostInfoBox provider={provider} agentVersion={agentVersion} />
       <ChecksSelection
+        groupID={hostID}
         catalog={checksSelection}
         catalogError={checksSelectionFetchError}
         loading={checksSelectionLoading}
@@ -113,6 +115,7 @@ function HostSettingsPage() {
         onChange={setSelection}
         provider={provider}
         saveCustomCheck={saveCustomCheck}
+        onResetCheckCustomization={resetChecksCustomization}
       />
     </>
   );

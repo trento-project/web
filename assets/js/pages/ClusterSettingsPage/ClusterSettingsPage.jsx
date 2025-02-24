@@ -61,6 +61,7 @@ function ClusterSettingsPage() {
 
   const {
     fetchChecksSelection,
+    resetChecksCustomization,
     checksSelection,
     checksSelectionLoading,
     checksSelectionFetchError,
@@ -153,6 +154,7 @@ function ClusterSettingsPage() {
         architectureType={architectureType}
       />
       <ChecksSelection
+        groupID={clusterID}
         catalog={checksSelection}
         catalogError={checksSelectionFetchError}
         loading={checksSelectionLoading}
@@ -162,6 +164,7 @@ function ClusterSettingsPage() {
         onChange={setSelection}
         provider={provider}
         saveCustomCheck={saveCustomCheck}
+        onResetCheckCustomization={resetChecksCustomization}
       />
     </>
   );

@@ -26,6 +26,12 @@ export const getChecksSelection = (groupID, env) =>
     params: env,
   });
 
+export const resetCheckCustomization = (groupID, checkID) =>
+  networkClient.delete(
+    `/api/v1/groups/${groupID}/checks/${checkID}/customization`,
+    defaultConfig
+  );
+
 export const triggerClusterChecksExecution = (clusterID) =>
   networkClient.post(`/clusters/${clusterID}/checks/request_execution`);
 

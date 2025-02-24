@@ -1,7 +1,8 @@
 import React, { Fragment, useState, useRef } from 'react';
 import classNames from 'classnames';
 import { Transition } from '@headlessui/react';
-import { format as formatDate } from 'date-fns-tz';
+import { utc } from '@date-fns/utc';
+import { format, parseISO } from 'date-fns';
 
 import useOnClickOutside from '@hooks/useOnClickOutside';
 import { EOS_CLOSE, EOS_CHECK } from 'eos-icons-react';
@@ -17,7 +18,9 @@ const preconfiguredOptions = {
 };
 
 const toHumanDate = (date) =>
-  date && date instanceof Date && formatDate(date, 'MM/dd/yyyy hh:mm:ss a');
+  date &&
+  date instanceof Date &&
+  format(date, 'MM/dd/yyyy hh:mm:ss a', { in: utc });
 
 const renderOptionItem = (option, placeholder) => {
   if (!option || !Array.isArray(option)) {
@@ -73,13 +76,17 @@ function Tick() {
 }
 
 function DateTimeInput({ value, onChange }) {
-  const dateToValue = (date) => formatDate(date, "yyyy-MM-dd'T'HH:mm:ss.SSS");
+  const dateToValue = (date) =>
+    format(date, "yyyy-MM-dd'T'HH:mm:ss.SSS", { in: utc });
 
   return (
     <Input
       value={value && dateToValue(value)}
       onChange={(e) => {
-        onChange(new Date(`${e.target.value}`));
+        // `parseISO handles "normalization" (missing seconds or
+        // milliseconds in the string) and returns UTCDate, we then
+        // convert it to normal Date.
+        onChange(new Date(parseISO(`${e.target.value}`, { in: utc })));
       }}
       type="datetime-local"
     />
