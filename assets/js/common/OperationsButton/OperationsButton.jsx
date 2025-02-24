@@ -12,9 +12,9 @@ import { EOS_MORE_VERT, EOS_LOADING_ANIMATED } from 'eos-icons-react';
 
 import Button from '@common/Button';
 
-function ActionsButton({ actions }) {
+function OperationsButton({ operations }) {
   const ref = useRef(null);
-  const someRunning = some(actions, { running: true });
+  const someRunning = some(operations, { running: true });
 
   return (
     <Menu>
@@ -26,7 +26,7 @@ function ActionsButton({ actions }) {
             size="small"
           >
             <EOS_MORE_VERT className="inline-block fill-jungle-green-500" />{' '}
-            Actions
+            Operations
           </Button>
         </div>
       </MenuButton>
@@ -35,7 +35,7 @@ function ActionsButton({ actions }) {
         as="div"
         className="w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 px-3 py-3 focus:outline-none"
       >
-        {actions.map(({ value, running, disabled, onClick }) => (
+        {operations.map(({ value, running, disabled, onClick }) => (
           <Fragment key={value}>
             <MenuItem>
               <button
@@ -65,4 +65,4 @@ function ActionsButton({ actions }) {
   );
 }
 
-export default ActionsButton;
+export default OperationsButton;
