@@ -188,7 +188,7 @@ defmodule Trento.ActivityLogTest do
       _inserted_records = insert_list(4, :activity_log_entry, %{severity: 17})
       _inserted_records = insert_list(4, :activity_log_entry, %{severity: 21})
 
-      assert {:ok, entries, _} = ActivityLog.list_activity_log(%{severity: "error"})
+      assert {:ok, entries, _} = ActivityLog.list_activity_log(%{severity: ["error"]})
 
       severity_levels =
         entries
