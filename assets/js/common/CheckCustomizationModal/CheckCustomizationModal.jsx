@@ -132,7 +132,12 @@ function CheckCustomizationModal({
         >
           Save
         </Button>
-        <Button type="primary-white-fit" className="w-1/2" onClick={onReset}>
+        <Button
+          type="primary-white-fit"
+          className="w-1/2"
+          onClick={onReset}
+          disabled={!customized}
+        >
           Reset Check
         </Button>
         <Button
