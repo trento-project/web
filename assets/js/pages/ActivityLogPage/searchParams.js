@@ -14,7 +14,7 @@ const omitUndefined = (obj) =>
   );
 
 const paginationFields = ['after', 'before', 'first', 'last'];
-const scalarKeys = [...paginationFields, 'search', 'severity'];
+const scalarKeys = [...paginationFields, 'search'];
 const ignoreKeys = ['refreshRate'];
 
 const searchParamsToEntries = (searchParams) =>
