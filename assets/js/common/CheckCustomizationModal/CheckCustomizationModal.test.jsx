@@ -183,12 +183,22 @@ describe('CheckCustomizationModal', () => {
     });
   });
 
+  it('should disable reset customization button if check is not customized', async () => {
+    await act(async () => {
+      render(<CheckCustomizationModal open customized={false} />);
+    });
+
+    expect(screen.getByText('Reset Check')).toBeDisabled();
+  });
+
   it('should call onReset when reset button is clicked', async () => {
     const user = userEvent.setup();
     const { onReset } = checkCustomizationModalProps;
 
     await act(async () => {
-      render(<CheckCustomizationModal {...checkCustomizationModalProps} />);
+      render(
+        <CheckCustomizationModal {...checkCustomizationModalProps} customized />
+      );
     });
 
     await user.click(screen.getByText('Reset Check'));
