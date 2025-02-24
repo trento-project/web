@@ -1,89 +1,74 @@
-import { healthMap } from '../fixtures/sap-system-details/selected_system';
+import * as hanaDbDetailsPage from '../pageObject/hana-database-details-po';
 
-import {
-  selectedDatabase,
-  attachedHosts,
-} from '../fixtures/hana-database-details/selected_database';
+import { attachedHosts } from '../fixtures/hana-database-details/selected_database';
 
 context('HANA database details', () => {
   before(() => {
-    cy.preloadTestData();
-    cy.visit(`/databases/${selectedDatabase.Id}`);
-    cy.url().should('include', `/databases/${selectedDatabase.Id}`);
+    hanaDbDetailsPage.preloadTestData();
+  });
+  beforeEach(() => {
+    hanaDbDetailsPage.visitDatabase();
   });
 
   describe('HANA database details page is available', () => {
-    it(`should display the "${selectedDatabase.Sid}" database details page`, () => {
-      cy.get('h1').should('contain', 'HANA Database Details');
-      cy.get('div')
-        .contains('Name')
-        .next()
-        .should('contain', selectedDatabase.Sid);
-      cy.get('div')
-        .contains('Type')
-        .next()
-        .should('contain', selectedDatabase.Type);
+    it('should display database id in page header', () => {
+      hanaDbDetailsPage.validatePageUrl();
+    });
+
+    it('should display the expected SID in database details page', () => {
+      hanaDbDetailsPage.pageTitleIsCorrectlyDisplayed('HANA Database Details');
+      hanaDbDetailsPage.databaseHasExpectedName();
+      hanaDbDetailsPage.databaseHasExpectedType();
     });
 
     it(`should display "Not found" page when HANA database doesn't exist`, () => {
-      cy.visit(`/databases/other`, { failOnStatusCode: false });
-      cy.url().should('include', `/databases/other`);
-      cy.get('div').should('contain', 'Not Found');
+      hanaDbDetailsPage.visitNonExistentDatabase();
+      hanaDbDetailsPage.validateNonExistentDatabaseUrl();
+      hanaDbDetailsPage.pageNotFoundLabelIsDisplayed();
     });
   });
 
   describe('The database layout shows all the running instances', () => {
-    before(() => {
-      cy.visit(`/databases/${selectedDatabase.Id}`);
-      cy.url().should('include', `/databases/${selectedDatabase.Id}`);
+    beforeEach(() => {
+      hanaDbDetailsPage.visitDatabase();
     });
 
     after(() => {
-      // Restore instance health
-      cy.loadScenario('hana-database-detail-GREEN');
+      hanaDbDetailsPage.restoreDatabaseInstanceHealth();
     });
 
-    selectedDatabase.Hosts.forEach((instance, index) => {
-      it(`should show hostname "${instance.Hostname}" with the correct values`, () => {
-        cy.get('table.table-fixed')
-          .eq(0)
-          .find('tr')
-          .eq(index + 1)
-          .find('td')
-          .as('tableCell');
-        cy.get('@tableCell').eq(0).should('contain', instance.Hostname);
-        cy.get('@tableCell').eq(1).should('contain', instance.Instance);
-        instance.Features.split('|').forEach((feature) => {
-          cy.get('@tableCell').eq(2).should('contain', feature);
-        });
-        cy.get('@tableCell').eq(3).should('contain', instance.HttpPort);
-        cy.get('@tableCell').eq(4).should('contain', instance.HttpsPort);
-        cy.get('@tableCell').eq(5).should('contain', instance.StartPriority);
-        cy.get('@tableCell').eq(6).should('contain', instance.Status);
-        cy.get('@tableCell')
-          .eq(6)
-          .find('svg')
-          .should('have.class', healthMap[instance.Status]);
-      });
+    it(`should show each hostname with the expected values`, () => {
+      hanaDbDetailsPage.eachHostNameHasExpectedValues();
     });
 
-    Object.entries(healthMap).forEach(([state, health]) => {
-      it(`should show ${state} badge in instance when SAPControl-${state.toUpperCase()} state is received`, () => {
-        cy.loadScenario(`hana-database-detail-${state.toUpperCase()}`);
-        // using row 1 as the changed instance is the 3rd in order based on instance_number
-        cy.get('table.table-fixed')
-          .eq(0)
-          .find('tr')
-          .eq(1)
-          .find('td')
-          .as('tableCell');
-        cy.get('@tableCell').eq(6).should('contain', `${state}`);
-        cy.get('@tableCell').eq(6).find('svg').should('have.class', health);
-      });
+    it('should show Green badge in instance when SAPControl-GREEN state is received', () => {
+      hanaDbDetailsPage.loadScenario('hana-database-detail-GREEN');
+      hanaDbDetailsPage.hostHasStatus('Green');
+      hanaDbDetailsPage.hostHasClass('Green');
     });
-    /* This test is commented because there is not any option to remove added database instances or
-    resetting the database afterwards, and it affects the rest of the test suite.
-    it(`should show a new instance when an event with a new SAP instance is received`, () => {
+
+    it('should show Red badge in instance when SAPControl-RED state is received', () => {
+      hanaDbDetailsPage.loadScenario('hana-database-detail-RED');
+      hanaDbDetailsPage.hostHasStatus('Red');
+      hanaDbDetailsPage.hostHasClass('Red');
+    });
+
+    it('should show Yellow badge in instance when SAPControl-YELLOW state is received', () => {
+      hanaDbDetailsPage.loadScenario('hana-database-detail-YELLOW');
+      hanaDbDetailsPage.hostHasStatus('Yellow');
+      hanaDbDetailsPage.hostHasClass('Yellow');
+    });
+
+    it('should show Gray badge in instance when SAPControl-GRAY state is received', () => {
+      hanaDbDetailsPage.loadScenario('hana-database-detail-GRAY');
+      hanaDbDetailsPage.hostHasStatus('Gray');
+      hanaDbDetailsPage.hostHasClass('Gray');
+    });
+
+    /* This test is skipped because there is not any option to remove added database instances or
+    resetting the database afterwards, and it affects the rest of the test suite.*/
+    // eslint-disable-next-line mocha/no-skipped-tests
+    it.skip(`should show a new instance when an event with a new SAP instance is received`, () => {
       cy.loadScenario(`hana-database-detail-NEW`);
       cy.get('table.table-fixed').eq(0).find('tr').should('have.length', 4);
       cy.get('table.table-fixed')
@@ -95,7 +80,6 @@ context('HANA database details', () => {
       cy.get('@tableCell').eq(0).should('contain', 'vmhdbdev02');
       cy.get('@tableCell').eq(1).should('contain', '11');
     });
-    */
   });
 
   describe('The hosts table shows the attached hosts to this HANA database', () => {
