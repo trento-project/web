@@ -69,60 +69,32 @@ context('HANA database details', () => {
     resetting the database afterwards, and it affects the rest of the test suite.*/
     // eslint-disable-next-line mocha/no-skipped-tests
     it.skip(`should show a new instance when an event with a new SAP instance is received`, () => {
-      cy.loadScenario(`hana-database-detail-NEW`);
-      cy.get('table.table-fixed').eq(0).find('tr').should('have.length', 4);
-      cy.get('table.table-fixed')
-        .eq(0)
-        .find('tr')
-        .eq(-1)
-        .find('td')
-        .as('tableCell');
-      cy.get('@tableCell').eq(0).should('contain', 'vmhdbdev02');
-      cy.get('@tableCell').eq(1).should('contain', '11');
+      hanaDbDetailsPage.tableHasExpectedAmountOfRows(2);
+      hanaDbDetailsPage.loadNewSapInstance();
+      hanaDbDetailsPage.tableHasExpectedAmountOfRows(3);
+      hanaDbDetailsPage.newInstanceIsDisplayed();
     });
   });
 
   describe('The hosts table shows the attached hosts to this HANA database', () => {
-    attachedHosts.forEach((host, index) => {
-      it(`should show ${host.Name} with the data`, () => {
-        cy.get('table.table-fixed')
-          .eq(1)
-          .find('tr')
-          .eq(index + 1)
-          .find('td')
-          .as('tableCell');
-        cy.get('@tableCell').eq(0).should('contain', host.Name);
-        host.Addresses.forEach((address) => {
-          cy.get('@tableCell').eq(1).should('contain', address);
-        });
-        cy.get('@tableCell').eq(2).should('contain', host.Provider);
-        cy.get('@tableCell').eq(3).should('contain', host.Cluster);
-        cy.get('@tableCell').eq(4).should('contain', host.Version);
-      });
+    it('should display each attached host expected data', () => {
+      hanaDbDetailsPage.eachAttachedHostHasExpectedValues();
+    });
 
-      it(`should have a correct link to the ${host.Name} host`, () => {
-        cy.get('table.table-fixed')
-          .eq(1)
-          .find('tr')
-          .eq(index + 1)
-          .find('td')
-          .as('tableCell');
-        cy.get('@tableCell').eq(0).find('a').click();
-        cy.location('pathname').should('eq', `/hosts/${host.AgentId}`);
-        cy.go('back');
-      });
+    it(`should have a correct link to each host`, () => {
+      hanaDbDetailsPage.eachAttachedHostHasExpectedWorkingLink();
     });
   });
 
   describe('Deregistration', () => {
     it(`should not include host ${attachedHosts[0].Name} in the list of hosts`, () => {
-      cy.deregisterHost(attachedHosts[0].AgentId);
-      cy.contains(attachedHosts[0].Name).should('not.exist');
+      hanaDbDetailsPage.deregisterFirstAttachedHost();
+      hanaDbDetailsPage.deregisteredHostIsNotDisplayed();
     });
 
     it(`should include host ${attachedHosts[0].Name} again in the list of hosts after restoring it`, () => {
-      cy.loadScenario(`host-${attachedHosts[0].Name}-restore`);
-      cy.contains(attachedHosts[0].Name).should('exist');
+      hanaDbDetailsPage.restoreFirstAttachedHost();
+      hanaDbDetailsPage.deregisteredHostIsDisplayed();
     });
   });
 });

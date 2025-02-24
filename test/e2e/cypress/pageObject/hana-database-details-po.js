@@ -122,7 +122,99 @@ export const eachHostNameHasExpectedValues = () => {
   });
 };
 
-function getHostAttribute(hostname, attribute) {
+const getHostAttribute = (hostname, attribute) => {
   const host = selectedDatabase.Hosts.find((h) => h.Hostname === hostname);
   return host ? host[attribute] : undefined;
-}
+};
+
+const getAttachedHostAttribute = (hostname, attribute) => {
+  const host = attachedHosts.find((h) => h.Name === hostname);
+  return host ? host[attribute] : undefined;
+};
+
+const hostHostHasExpectedAddresses = (hostName) => {
+  const expectedAddresses = getAttachedHostAttribute(
+    hostName,
+    'Addresses'
+  ).join('');
+  cy.get(
+    `div[class="mt-8"]:contains("Hosts") td:contains("${hostName}") + td`
+  ).should('have.text', expectedAddresses);
+};
+
+const hostHasExpectedProvider = (hostName) => {
+  const expectedProviderValue = getAttachedHostAttribute(hostName, 'Provider');
+  cy.get(
+    `div[class="mt-8"]:contains("Hosts") td:contains("${hostName}") + td + td`
+  ).should('have.text', expectedProviderValue);
+};
+
+const hostHasExpectedClusterValue = (hostName) => {
+  const expectedCluster = getAttachedHostAttribute(hostName, 'Cluster');
+  cy.get(
+    `div[class="mt-8"]:contains("Hosts") td:contains("${hostName}") + td + td + td`
+  ).should('contain', expectedCluster);
+};
+
+const hostHasExpectedVersion = (hostName) => {
+  const expectedVersion = getAttachedHostAttribute(hostName, 'Version');
+  cy.get(
+    `div[class="mt-8"]:contains("Hosts") td:contains("${hostName}") + td + td + td + td`
+  ).should('have.text', expectedVersion);
+};
+
+const hostHasExpectedWorkingLink = (host) => {
+  const hostNameSelector = `div[class="mt-8"]:contains("Hosts") td:contains("${host.Name}") a`;
+  const expectedHref = `/hosts/${host.AgentId}`;
+  cy.get(hostNameSelector).should('have.attr', 'href', expectedHref);
+  cy.get(hostNameSelector).click();
+  basePage.validateUrl(expectedHref);
+  cy.go('back');
+};
+
+export const eachAttachedHostHasExpectedValues = () => {
+  attachedHosts.forEach((host) => {
+    hostHostHasExpectedAddresses(host.Name);
+    hostHasExpectedProvider(host.Name);
+    hostHasExpectedClusterValue(host.Name);
+    hostHasExpectedVersion(host.Name);
+  });
+};
+
+export const eachAttachedHostHasExpectedWorkingLink = () => {
+  attachedHosts.forEach((host) => hostHasExpectedWorkingLink(host));
+};
+
+export const deregisterFirstAttachedHost = () =>
+  basePage.apiDeregisterHost(attachedHosts[0].AgentId);
+
+export const restoreFirstAttachedHost = () =>
+  basePage.loadScenario(`host-${attachedHosts[0].Name}-restore`);
+
+export const deregisteredHostIsNotDisplayed = () => {
+  cy.get(
+    `div[class="mt-8"]:contains("Hosts") td:contains("${attachedHosts[0].Name}")`
+  ).should('not.exist');
+};
+
+export const deregisteredHostIsDisplayed = () => {
+  cy.get(
+    `div[class="mt-8"]:contains("Hosts") td:contains("${attachedHosts[0].Name}")`
+  ).should('be.visible');
+};
+
+export const loadNewSapInstance = () =>
+  basePage.loadScenario(`hana-database-detail-NEW`);
+
+export const newInstanceIsDisplayed = () => {
+  const newInstanceSelector = `div[class="mt-16"]:contains("Layout") td:contains("${selectedDatabase.Hosts[0].Hostname}")`;
+  cy.get(newInstanceSelector).eq(1).should('be.visible');
+  cy.get(`${newInstanceSelector} + td`).eq(1).should('have.text', 11);
+};
+
+export const tableHasExpectedAmountOfRows = (expectedAmountOfRows) => {
+  cy.get('div[class="mt-16"]:contains("Layout") tbody tr').should(
+    'have.length',
+    expectedAmountOfRows
+  );
+};
