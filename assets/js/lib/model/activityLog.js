@@ -607,14 +607,12 @@ export const allowedActivities = (abilities) =>
 export const LEVEL_DEBUG = 'debug';
 export const LEVEL_INFO = 'info';
 export const LEVEL_WARNING = 'warning';
-export const LEVEL_ERROR = 'error';
 export const LEVEL_CRITICAL = 'critical';
 
 export const ACTIVITY_LOG_LEVELS = [
   LEVEL_DEBUG,
   LEVEL_INFO,
   LEVEL_WARNING,
-  LEVEL_ERROR,
   LEVEL_CRITICAL,
 ];
 
@@ -622,6 +620,5 @@ export const logLevelToLabel = {
   [LEVEL_DEBUG]: 'Debug',
   [LEVEL_INFO]: 'Info',
   [LEVEL_WARNING]: 'Warning',
-  [LEVEL_ERROR]: 'Error',
   [LEVEL_CRITICAL]: 'Critical',
 };

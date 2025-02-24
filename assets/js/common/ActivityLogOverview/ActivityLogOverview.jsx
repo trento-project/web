@@ -17,7 +17,6 @@ import {
   LEVEL_DEBUG,
   LEVEL_INFO,
   LEVEL_WARNING,
-  LEVEL_ERROR,
   LEVEL_CRITICAL,
   logLevelToLabel,
 } from '@lib/model/activityLog';
@@ -28,7 +27,6 @@ const logLevelToIcon = {
   [LEVEL_DEBUG]: <EOS_BUG_REPORT_OUTLINED className="w-full" />,
   [LEVEL_INFO]: <EOS_INFO_OUTLINED className="w-full" />,
   [LEVEL_WARNING]: <EOS_WARNING_OUTLINED className="fill-yellow-500 w-full" />,
-  [LEVEL_ERROR]: <EOS_ERROR_OUTLINED className="fill-red-500 w-full" />,
   [LEVEL_CRITICAL]: <EOS_ERROR_OUTLINED className="fill-red-500 w-full" />,
 };
 
