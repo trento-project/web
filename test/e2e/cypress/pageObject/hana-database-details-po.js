@@ -14,11 +14,17 @@ const url = '/databases';
 // Selectors
 const databaseNameLabel =
   'div[class*="grid-flow-row"]:contains("Name") div span';
-
 const databaseTypeLabel =
   'div[class*="grid-flow-row"]:contains("Type") div span';
-
 const pageNotFoundLabel = 'div:contains("Not Found")';
+const attachedHostsTableRows = 'div[class="mt-16"]:contains("Layout") tbody tr';
+const newRegisteredHost = `div[class="mt-8"]:contains("Hosts") td:contains("${attachedHosts[0].Name}")`;
+const layoutTableHostNameCell = (hostName) =>
+  `div[class="mt-16"]:contains("Layout") td:contains("${hostName}")`;
+const hostsTableHostNameCell = (hostName) =>
+  `div[class="mt-8"]:contains("Hosts") td:contains("${hostName}")`;
+
+//UI Interactions
 
 export const visitDatabase = () =>
   basePage.visit(`${url}/${selectedDatabase.Id}`);
@@ -42,72 +48,75 @@ export const databaseHasExpectedType = () =>
 export const pageNotFoundLabelIsDisplayed = () =>
   cy.get(pageNotFoundLabel).should('be.visible');
 
-export const restoreDatabaseInstanceHealth = () =>
-  basePage.loadScenario('hana-database-detail-GREEN');
-
 const hostNameHasExpectedInstanceNumber = (hostName) => {
   const instanceNumber = getHostAttribute(hostName, 'Instance');
-  cy.get(
-    `div[class="mt-16"]:contains("Layout") td:contains("${hostName}") + td`
-  ).should('have.text', instanceNumber);
+  const hostNameCellSelector = layoutTableHostNameCell(hostName);
+  cy.get(hostNameCellSelector).next().should('have.text', instanceNumber);
 };
 
 const hostNameHasExpectedFeatures = (hostName) => {
   const features = getHostAttribute(hostName, 'Features');
   const formattedFeatures = features.replace(/\|/g, '');
-  cy.get(
-    `div[class="mt-16"]:contains("Layout") td:contains("${hostName}") + td + td`
-  ).should('have.text', formattedFeatures);
+  const hostNameCellSelector = layoutTableHostNameCell(hostName);
+  cy.get(hostNameCellSelector)
+    .nextAll()
+    .eq(1)
+    .should('have.text', formattedFeatures);
 };
 
 const hostHasExpectedHttpPort = (hostName) => {
   const httpPort = getHostAttribute(hostName, 'HttpPort');
-  cy.get(
-    `div[class="mt-16"]:contains("Layout") td:contains("${hostName}") + td + td + td`
-  ).should('have.text', httpPort);
+  const hostNameCellSelector = layoutTableHostNameCell(hostName);
+  cy.get(hostNameCellSelector).nextAll().eq(2).should('have.text', httpPort);
 };
 
 const hostHasExpectedHttpsPort = (hostName) => {
   const httpsPort = getHostAttribute(hostName, 'HttpsPort');
-  cy.get(
-    `div[class="mt-16"]:contains("Layout") td:contains("${hostName}") + td + td + td + td`
-  ).should('have.text', httpsPort);
+  const hostNameCellSelector = layoutTableHostNameCell(hostName);
+  cy.get(hostNameCellSelector).nextAll().eq(3).should('have.text', httpsPort);
 };
 
 const hostHasExpectedStartPriority = (hostName) => {
   const startPriority = getHostAttribute(hostName, 'StartPriority');
-  cy.get(
-    `div[class="mt-16"]:contains("Layout") td:contains("${hostName}") + td + td + td + td + td`
-  ).should('have.text', startPriority);
-};
-
-const hostHasExpectedStatus = (hostName) => {
-  const status = getHostAttribute(hostName, 'Status');
-  cy.get(
-    `div[class="mt-16"]:contains("Layout") td:contains("${hostName}") + td + td + td + td + td + td`
-  ).should('have.text', `SAPControl: ${status}`);
+  const hostNameCellSelector = layoutTableHostNameCell(hostName);
+  cy.get(hostNameCellSelector)
+    .nextAll()
+    .eq(4)
+    .should('have.text', startPriority);
 };
 
 const hostStatusHasExpectedClass = (hostName) => {
   const status = getHostAttribute(hostName, 'Status');
-  cy.get(
-    `div[class="mt-16"]:contains("Layout") td:contains("${hostName}") + td + td + td + td + td + td svg`
-  ).should('have.class', healthMap[status]);
+  validateHostClass(hostName, status);
+};
+
+const validateHostClass = (hostName, status) => {
+  const hostNameCellSelector = layoutTableHostNameCell(hostName);
+  cy.get(hostNameCellSelector)
+    .nextAll()
+    .eq(5)
+    .find('svg')
+    .should('have.class', healthMap[status]);
+};
+
+const validateHostStatus = (hostName, status) => {
+  const hostNameCellSelector = layoutTableHostNameCell(hostName);
+  cy.get(hostNameCellSelector)
+    .nextAll()
+    .eq(5)
+    .should('have.text', `SAPControl: ${status}`);
+};
+
+const hostHasExpectedStatus = (hostName) => {
+  const status = getHostAttribute(hostName, 'Status');
+  validateHostStatus(hostName, status);
 };
 
 export const hostHasStatus = (status) =>
-  cy
-    .get(
-      `div[class="mt-16"]:contains("Layout") td:contains("${selectedDatabase.Hosts[0].Hostname}") + td + td + td + td + td + td`
-    )
-    .should('have.text', `SAPControl: ${status}`);
+  validateHostStatus(selectedDatabase.Hosts[0].Hostname, status);
 
 export const hostHasClass = (status) =>
-  cy
-    .get(
-      `div[class="mt-16"]:contains("Layout") td:contains("${selectedDatabase.Hosts[0].Hostname}") + td + td + td + td + td + td svg`
-    )
-    .should('have.class', healthMap[status]);
+  validateHostClass(selectedDatabase.Hosts[0].Hostname, status);
 
 export const eachHostNameHasExpectedValues = () => {
   selectedDatabase.Hosts.forEach((host) => {
@@ -133,38 +142,44 @@ const getAttachedHostAttribute = (hostname, attribute) => {
 };
 
 const hostHostHasExpectedAddresses = (hostName) => {
+  const hostNameCellSelector = hostsTableHostNameCell(hostName);
   const expectedAddresses = getAttachedHostAttribute(
     hostName,
     'Addresses'
   ).join('');
-  cy.get(
-    `div[class="mt-8"]:contains("Hosts") td:contains("${hostName}") + td`
-  ).should('have.text', expectedAddresses);
+  cy.get(hostNameCellSelector).next().should('have.text', expectedAddresses);
 };
 
 const hostHasExpectedProvider = (hostName) => {
+  const hostNameCellSelector = hostsTableHostNameCell(hostName);
   const expectedProviderValue = getAttachedHostAttribute(hostName, 'Provider');
-  cy.get(
-    `div[class="mt-8"]:contains("Hosts") td:contains("${hostName}") + td + td`
-  ).should('have.text', expectedProviderValue);
+  cy.get(hostNameCellSelector)
+    .nextAll()
+    .eq(1)
+    .should('have.text', expectedProviderValue);
 };
 
 const hostHasExpectedClusterValue = (hostName) => {
+  const hostNameCellSelector = hostsTableHostNameCell(hostName);
   const expectedCluster = getAttachedHostAttribute(hostName, 'Cluster');
-  cy.get(
-    `div[class="mt-8"]:contains("Hosts") td:contains("${hostName}") + td + td + td`
-  ).should('contain', expectedCluster);
+  cy.get(hostNameCellSelector)
+    .nextAll()
+    .eq(2)
+    .should('contain', expectedCluster);
 };
 
 const hostHasExpectedVersion = (hostName) => {
+  const hostNameCellSelector = hostsTableHostNameCell(hostName);
   const expectedVersion = getAttachedHostAttribute(hostName, 'Version');
-  cy.get(
-    `div[class="mt-8"]:contains("Hosts") td:contains("${hostName}") + td + td + td + td`
-  ).should('have.text', expectedVersion);
+  cy.get(hostNameCellSelector)
+    .nextAll()
+    .eq(3)
+    .should('have.text', expectedVersion);
 };
 
 const hostHasExpectedWorkingLink = (host) => {
-  const hostNameSelector = `div[class="mt-8"]:contains("Hosts") td:contains("${host.Name}") a`;
+  const hostNameCellSelector = hostsTableHostNameCell(host.Name);
+  const hostNameSelector = `${hostNameCellSelector} a`;
   const expectedHref = `/hosts/${host.AgentId}`;
   cy.get(hostNameSelector).should('have.attr', 'href', expectedHref);
   cy.get(hostNameSelector).click();
@@ -181,30 +196,8 @@ export const eachAttachedHostHasExpectedValues = () => {
   });
 };
 
-export const eachAttachedHostHasExpectedWorkingLink = () => {
+export const eachAttachedHostHasExpectedWorkingLink = () =>
   attachedHosts.forEach((host) => hostHasExpectedWorkingLink(host));
-};
-
-export const deregisterFirstAttachedHost = () =>
-  basePage.apiDeregisterHost(attachedHosts[0].AgentId);
-
-export const restoreFirstAttachedHost = () =>
-  basePage.loadScenario(`host-${attachedHosts[0].Name}-restore`);
-
-export const deregisteredHostIsNotDisplayed = () => {
-  cy.get(
-    `div[class="mt-8"]:contains("Hosts") td:contains("${attachedHosts[0].Name}")`
-  ).should('not.exist');
-};
-
-export const deregisteredHostIsDisplayed = () => {
-  cy.get(
-    `div[class="mt-8"]:contains("Hosts") td:contains("${attachedHosts[0].Name}")`
-  ).should('be.visible');
-};
-
-export const loadNewSapInstance = () =>
-  basePage.loadScenario(`hana-database-detail-NEW`);
 
 export const newInstanceIsDisplayed = () => {
   const newInstanceSelector = `div[class="mt-16"]:contains("Layout") td:contains("${selectedDatabase.Hosts[0].Hostname}")`;
@@ -212,9 +205,25 @@ export const newInstanceIsDisplayed = () => {
   cy.get(`${newInstanceSelector} + td`).eq(1).should('have.text', 11);
 };
 
-export const tableHasExpectedAmountOfRows = (expectedAmountOfRows) => {
-  cy.get('div[class="mt-16"]:contains("Layout") tbody tr').should(
-    'have.length',
-    expectedAmountOfRows
-  );
-};
+export const tableHasExpectedAmountOfRows = (expectedAmountOfRows) =>
+  cy.get(attachedHostsTableRows).should('have.length', expectedAmountOfRows);
+
+export const deregisteredHostIsNotDisplayed = () =>
+  cy.get(newRegisteredHost).should('not.exist');
+
+export const deregisteredHostIsDisplayed = () =>
+  cy.get(newRegisteredHost).should('be.visible');
+
+// API
+
+export const loadNewSapInstance = () =>
+  basePage.loadScenario(`hana-database-detail-NEW`);
+
+export const deregisterFirstAttachedHost = () =>
+  basePage.apiDeregisterHost(attachedHosts[0].AgentId);
+
+export const restoreFirstAttachedHost = () =>
+  basePage.loadScenario(`host-${attachedHosts[0].Name}-restore`);
+
+export const restoreDatabaseInstanceHealth = () =>
+  basePage.loadScenario('hana-database-detail-GREEN');
