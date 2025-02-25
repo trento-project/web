@@ -13,6 +13,10 @@ export default {
         type: 'text',
       },
     },
+    errors: {
+      description: 'Authorization errors as string',
+      control: 'array',
+    },
     isOpen: {
       description: 'Modal is open',
       control: 'boolean',
@@ -23,6 +27,7 @@ export default {
   },
   args: {
     operation: 'My operation',
+    errors: ['Authorization error 1', 'Authorization error 2'],
     isOpen: true,
   },
 };
@@ -30,16 +35,7 @@ export default {
 export function Default(args) {
   return (
     <OperationForbiddenModal {...args}>
-      My operation forbidden description
+      My operation forbidden additional information
     </OperationForbiddenModal>
-  );
-}
-
-export function WithMarkdown(args) {
-  return (
-    <OperationForbiddenModal {...args} operation="With markdown">{`
-The **OperationForbiddenModal** renders markdown. A list for example:
-- Value 1
-- Value 2`}</OperationForbiddenModal>
   );
 }

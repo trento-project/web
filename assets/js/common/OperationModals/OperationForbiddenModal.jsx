@@ -1,7 +1,5 @@
 import React from 'react';
 import { noop } from 'lodash';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
 
 import Modal from '@common/Modal';
 import Button from '@common/Button';
@@ -9,6 +7,7 @@ import Banner from '@common/Banners/Banner';
 
 function OperationForbiddenModal({
   operation,
+  errors,
   isOpen = false,
   onCancel = noop,
   children,
@@ -23,9 +22,15 @@ function OperationForbiddenModal({
       <Banner type="error">
         Unable to run {operation} operation. Some of the conditions are not met.
       </Banner>
-      <ReactMarkdown className="markdown text-sm" remarkPlugins={[remarkGfm]}>
-        {children}
-      </ReactMarkdown>
+      <p className="text-sm mb-1">Some of the next conditions are not met:</p>
+      <ul className="list-disc list-inside space-y-1 mb-1">
+        {errors.map((error) => (
+          <li key={error} className="text-sm">
+            {error}
+          </li>
+        ))}
+      </ul>
+      <p className="text-sm mb-1">{children}</p>
       <div className="flex justify-start gap-2 mt-4">
         <Button
           type="primary-white-fit"
