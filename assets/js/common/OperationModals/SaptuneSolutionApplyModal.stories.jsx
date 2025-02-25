@@ -15,7 +15,7 @@ export default {
       control: 'boolean',
     },
     isOpen: {
-      description: 'Model is open',
+      description: 'Modal is open',
       control: 'boolean',
     },
     onRequest: {
