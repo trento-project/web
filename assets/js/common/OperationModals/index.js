@@ -1,3 +1,4 @@
 import SaptuneSolutionApplyModal from './SaptuneSolutionApplyModal';
+import OperationForbiddenModal from './OperationForbiddenModal';
 
-export { SaptuneSolutionApplyModal };
+export { SaptuneSolutionApplyModal, OperationForbiddenModal };
