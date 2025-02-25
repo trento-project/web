@@ -8,6 +8,14 @@ const singleValue = [
     customizable: true,
   },
 ];
+const singeBooleanValue = [
+  {
+    name: 'ValueName1',
+    current_value: true,
+    customizable: true,
+  },
+];
+
 const multipleValues = [
   {
     name: 'ValueName1',
@@ -24,7 +32,19 @@ const multipleValues = [
     current_value: 'value3',
     customizable: true,
   },
+
+  {
+    name: 'ValueName4',
+    current_value: true,
+    customizable: true,
+  },
+  {
+    name: 'ValueName5',
+    current_value: false,
+    customizable: true,
+  },
 ];
+
 
 const partialCustomizableValues = [
   {
@@ -35,6 +55,17 @@ const partialCustomizableValues = [
   {
     name: 'ValueName2',
     current_value: 'value2',
+    customizable: false,
+  },
+  {
+    name: 'ValueName3',
+    current_value: true,
+    customizable: true,
+  },
+
+  {
+    name: 'ValueName4',
+    current_value: false,
     customizable: false,
   },
 ];
@@ -102,6 +133,14 @@ export const SingleValue = {
     onReset: action('onReset'),
   },
 };
+
+export const SingleBooleanValue = {
+  args: {
+    ...SingleValue.args,
+    values: singeBooleanValue,
+  },
+};
+
 
 export const MultipleValues = {
   args: {
