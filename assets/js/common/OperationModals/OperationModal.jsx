@@ -17,6 +17,8 @@ function OperationModal({
   onCancel = noop,
   children,
 }) {
+  const warningMessage = `Trento & SUSE cannot be held liable for damages if system is unable to
+          function due applying ${operationText}`;
   return (
     <Modal
       className="!w-3/4 !max-w-3xl"
@@ -28,8 +30,7 @@ function OperationModal({
         {description}
       </p>
       <CheckableWarningMessage checked={checked} onChecked={onChecked}>
-        <span className="font-semibold">{`Trento & SUSE cannot be held liable for damages if system is unable to
-          function due applying ${operationText}.`}</span>
+        <span className="font-semibold">{warningMessage}</span>
       </CheckableWarningMessage>
       {children}
       <div className="flex justify-start gap-2 mt-4">
