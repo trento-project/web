@@ -5,6 +5,9 @@ import '@testing-library/jest-dom';
 import CheckableWarningMessage from './CheckableWarningMessage';
 
 const warningMessage = 'A default warning test';
+const warningMessageSpan = (
+  <span className="font-semibold">{warningMessage}</span>
+);
 
 describe('CheckableWarningMessage', () => {
   it('should render a clickable checkbox, svg warning icon, warning text.', async () => {
@@ -12,11 +15,9 @@ describe('CheckableWarningMessage', () => {
     const mockSetChecked = jest.fn();
 
     render(
-      <CheckableWarningMessage
-        warningText={warningMessage}
-        checked={false}
-        onChecked={mockSetChecked}
-      />
+      <CheckableWarningMessage checked={false} onChecked={mockSetChecked}>
+        {warningMessageSpan}
+      </CheckableWarningMessage>
     );
 
     const checkbox = screen.getByRole('checkbox');
@@ -32,11 +33,9 @@ describe('CheckableWarningMessage', () => {
 
   it('should not render checkbox if hideCheckbox is true', () => {
     render(
-      <CheckableWarningMessage
-        hideCheckbox
-        warningText={warningMessage}
-        checked={false}
-      />
+      <CheckableWarningMessage hideCheckbox checked={false}>
+        {warningMessageSpan}
+      </CheckableWarningMessage>
     );
 
     expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();

@@ -13,20 +13,24 @@ export default {
       description: 'Checkbox state',
       control: 'boolean',
     },
-    warningText: {
-      description: 'Text displayed inside the warning message',
-      control: 'text',
-    },
     onChecked: {
       description: 'Function to toggle the checkbox state',
       action: 'onChecked',
+    },
+    children: {
+      description: 'Content displayed inside the warning message',
+      control: 'text',
     },
   },
   args: {
     hideCheckbox: false,
     checked: false,
-    warningText:
-      'Trento & SUSE cannot be held liable for damages if system is unable to function due to custom check value.',
+    children: (
+      <span className="font-semibold">
+        Trento & SUSE cannot be held liable for damages if system is unable to
+        function due to custom check value.
+      </span>
+    ),
   },
 };
 
