@@ -245,7 +245,7 @@ describe('ComposedFilter component', () => {
     expect(mockOnChange).not.toHaveBeenCalled();
 
     // apply
-    await act(() => userEvent.click(screen.getByText('Apply Filters')));
+    await act(() => userEvent.click(screen.getByText('Apply Filter')));
 
     // after apply
     expect(mockOnChange).toHaveBeenCalledTimes(1);
@@ -300,7 +300,7 @@ describe('ComposedFilter component', () => {
       )
     );
 
-    await act(() => userEvent.click(screen.getByText('Reset Filters')));
+    await act(() => userEvent.click(screen.getByText('Clear Filters')));
 
     expect(mockOnChange).toHaveBeenCalledTimes(1);
     expect(mockOnChange).toHaveBeenCalledWith({});

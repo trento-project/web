@@ -12,7 +12,11 @@ import { map, pipe } from 'lodash/fp';
 
 import { getActivityLog } from '@lib/api/activityLogs';
 import * as request from '@lib/api/request';
-import { allowedActivities } from '@lib/model/activityLog';
+import {
+  allowedActivities,
+  ACTIVITY_LOG_LEVELS,
+  logLevelToLabel,
+} from '@lib/model/activityLog';
 import { getActivityLogUsers } from '@state/selectors/activityLog';
 import { getUserProfile } from '@state/selectors/user';
 
@@ -196,13 +200,20 @@ function ActivityLogPage() {
       type: 'search_box',
       name: 'metadata-search',
       placeholder: 'Filter by metadata',
-      className: 'col-span-8',
+      className: 'col-span-5',
       allowClear: true,
       suffix: (
         <Tooltip content={searchInfo}>
           <EOS_INFO_OUTLINED size="l" className="inline" />
         </Tooltip>
       ),
+    },
+    {
+      key: 'actor',
+      type: 'select',
+      title: 'User',
+      options: users,
+      className: 'col-span-1',
     },
     {
       key: 'type',
@@ -212,28 +223,32 @@ function ActivityLogPage() {
         allowedActivities,
         map(([key, value]) => [key, value.label])
       )(abilities),
-      className: 'col-span-2 min-w-full max-w-44',
+      className: 'col-span-1',
     },
+
     {
-      key: 'actor',
+      key: 'severity',
       type: 'select',
-      title: 'User',
-      options: users,
-      className: 'col-span-2',
+      title: 'Severity',
+      options: ACTIVITY_LOG_LEVELS.map((level) => [
+        level,
+        logLevelToLabel[level],
+      ]),
+      className: 'col-span-1',
     },
     {
       key: 'to_date',
       title: 'newer than',
       type: 'date',
       prefilled: true,
-      className: 'col-span-2',
+      className: 'col-span-1',
     },
     {
       key: 'from_date',
       title: 'older than',
       type: 'date',
       prefilled: true,
-      className: 'col-span-2',
+      className: 'col-span-1',
     },
   ];
 
