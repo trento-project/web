@@ -23,7 +23,10 @@ defmodule Trento.Hosts do
     SelectHostChecks
   }
 
-  alias Trento.Infrastructure.Checks
+  alias Trento.Infrastructure.{
+    Checks,
+    Operations
+  }
 
   alias Trento.Repo
 
@@ -135,6 +138,18 @@ defmodule Trento.Hosts do
       host -> {:ok, host}
     end
   end
+
+  @spec request_operation(atom(), String.t(), map()) :: :ok | {:error, any}
+  def request_operation(:saptune_solution_apply, host_id, params) do
+    Operations.request_operation(
+      UUID.uuid4(),
+      host_id,
+      "saptuneapplysolution@v1",
+      [%{agent_id: host_id, arguments: params}]
+    )
+  end
+
+  def request_operation(_, _, _), do: {:error, :operation_not_found}
 
   @spec enrich_host_read_model_query(Ecto.Query.t()) :: Ecto.Query.t()
   defp enrich_host_read_model_query(query) do
