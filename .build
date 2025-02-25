@@ -275,6 +275,7 @@ Trento.Hosts.html
 Trento.Infrastructure.Alerting.Alerting.html
 Trento.Infrastructure.Checks.AMQP.Consumer.html
 Trento.Infrastructure.Checks.AMQP.Processor.html
+Trento.Infrastructure.Checks.AMQP.Publisher.html
 Trento.Infrastructure.Checks.ClusterExecutionEnv.html
 Trento.Infrastructure.Checks.HostExecutionEnv.html
 Trento.Infrastructure.Checks.TargetType.html
@@ -293,9 +294,13 @@ Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessManager.Ins
 Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessManager.html
 Trento.Infrastructure.Commanded.RollUp.Queries.html
 Trento.Infrastructure.Commanded.RollUp.RollUp.html
+Trento.Infrastructure.Messaging.Adapter.AMQP.Consumer.html
 Trento.Infrastructure.Messaging.Adapter.AMQP.Publisher.html
 Trento.Infrastructure.Messaging.Adapter.AMQP.html
 Trento.Infrastructure.Messaging.html
+Trento.Infrastructure.Operations.AMQP.Consumer.html
+Trento.Infrastructure.Operations.AMQP.Processor.html
+Trento.Infrastructure.Operations.AMQP.Publisher.html
 Trento.Infrastructure.Prometheus.ChartIntegration.html
 Trento.Infrastructure.Prometheus.Gen.html
 Trento.Infrastructure.Prometheus.MockPrometheusApi.html
@@ -502,8 +507,8 @@ dist/lato-latin-ext-300-normal-VPGGJKJL.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-D254F32F.js
-dist/sidebar_items-8CB4E925.js
+dist/search_data-DDC5CCB7.js
+dist/sidebar_items-A3902606.js
 environment_variables.html
 hack_on_the_trento.html
 index.html
