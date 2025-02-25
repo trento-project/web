@@ -79,10 +79,11 @@ function CheckCustomizationModal({
       </p>
       <CheckableWarningMessage
         hideCheckbox={customized}
-        warningText={checkBoxWarningText}
         checked={checked}
         onChecked={() => setChecked((prev) => !prev)}
-      />
+      >
+        {checkBoxWarningText}
+      </CheckableWarningMessage>
       {values
         ?.filter(({ customizable }) => customizable)
         .map((value) => (

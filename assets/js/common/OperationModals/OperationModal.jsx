@@ -27,12 +27,10 @@ function OperationModal({
       <p className="text-gray-500 text-sm font-normal tracking-wide pb-3">
         {description}
       </p>
-      <CheckableWarningMessage
-        warningText={`Trento & SUSE cannot be held liable for damages if system is unable to
-          function due applying ${operationText}.`}
-        checked={checked}
-        onChecked={onChecked}
-      />
+      <CheckableWarningMessage checked={checked} onChecked={onChecked}>
+        Trento & SUSE cannot be held liable for damages if system is unable to
+        function due applying {operationText}
+      </CheckableWarningMessage>
       {children}
       <div className="flex justify-start gap-2 mt-4">
         <Button
