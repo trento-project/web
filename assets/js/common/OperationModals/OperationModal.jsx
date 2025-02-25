@@ -30,7 +30,7 @@ function OperationModal({
         {description}
       </p>
       <CheckableWarningMessage checked={checked} onChecked={onChecked}>
-        <span className="font-semibold">{warningMessage}</span>
+        {warningMessage}
       </CheckableWarningMessage>
       {children}
       <div className="flex justify-start gap-2 mt-4">

@@ -82,7 +82,7 @@ function CheckCustomizationModal({
         checked={checked}
         onChecked={() => setChecked((prev) => !prev)}
       >
-        <span className="font-semibold">{checkBoxWarningText}</span>
+        {checkBoxWarningText}
       </CheckableWarningMessage>
       {values
         ?.filter(({ customizable }) => customizable)

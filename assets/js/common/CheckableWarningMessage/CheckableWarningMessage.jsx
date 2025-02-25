@@ -18,7 +18,7 @@ function CheckableWarningMessage({
         size="l"
         className="centered fill-yellow-500 ml-4 mr-4"
       />
-      {children}
+      <span className="font-semibold">{children}</span>
     </div>
   );
 }

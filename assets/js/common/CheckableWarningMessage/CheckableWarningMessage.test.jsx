@@ -5,9 +5,6 @@ import '@testing-library/jest-dom';
 import CheckableWarningMessage from './CheckableWarningMessage';
 
 const warningMessage = 'A default warning test';
-const warningMessageSpan = (
-  <span className="font-semibold">{warningMessage}</span>
-);
 
 describe('CheckableWarningMessage', () => {
   it('should render a clickable checkbox, svg warning icon, warning text.', async () => {
@@ -16,7 +13,7 @@ describe('CheckableWarningMessage', () => {
 
     render(
       <CheckableWarningMessage checked={false} onChecked={mockSetChecked}>
-        {warningMessageSpan}
+        {warningMessage}
       </CheckableWarningMessage>
     );
 
@@ -34,7 +31,7 @@ describe('CheckableWarningMessage', () => {
   it('should not render checkbox if hideCheckbox is true', () => {
     render(
       <CheckableWarningMessage hideCheckbox checked={false}>
-        {warningMessageSpan}
+        {warningMessage}
       </CheckableWarningMessage>
     );
 

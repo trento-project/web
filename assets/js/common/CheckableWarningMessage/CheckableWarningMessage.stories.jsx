@@ -25,12 +25,8 @@ export default {
   args: {
     hideCheckbox: false,
     checked: false,
-    children: (
-      <span className="font-semibold">
-        Trento & SUSE cannot be held liable for damages if system is unable to
-        function due to custom check value.
-      </span>
-    ),
+    children:
+      'Trento & SUSE cannot be held liable for damages if system is unable to function due to custom check value.',
   },
 };
 
