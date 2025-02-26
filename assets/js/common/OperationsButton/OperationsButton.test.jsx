@@ -2,10 +2,10 @@ import React from 'react';
 import { act, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
-import ActionsButton from './ActionsButton';
+import OperationsButton from './OperationsButton';
 
 const mockOnClick = jest.fn();
-const testActions = [
+const testOperations = [
   {
     value: 'Operation 1',
     running: false,
@@ -20,17 +20,17 @@ const testActions = [
   },
 ];
 
-describe('ActionsButton', () => {
-  it('should show correct actions', async () => {
+describe('OperationsButton', () => {
+  it('should show correct operations', async () => {
     const user = userEvent.setup();
 
     await act(async () => {
-      render(<ActionsButton actions={testActions} />);
+      render(<OperationsButton operations={testOperations} />);
     });
 
-    expect(screen.getByText('Actions')).toBeInTheDocument();
+    expect(screen.getByText('Operations')).toBeInTheDocument();
 
-    await user.click(screen.getByText('Actions'));
+    await user.click(screen.getByText('Operations'));
 
     expect(screen.getByText('Operation 1')).toBeInTheDocument();
     expect(screen.getByText('Operation 2')).toBeInTheDocument();
@@ -40,33 +40,33 @@ describe('ActionsButton', () => {
     expect(mockOnClick).toBeCalled();
   });
 
-  it('should show disabled action', async () => {
+  it('should show disabled operation', async () => {
     const user = userEvent.setup();
-    const disabledActions = Object.assign([], testActions, {
-      0: { ...testActions[0], disabled: true },
+    const disabledOperations = Object.assign([], testOperations, {
+      0: { ...testOperations[0], disabled: true },
     });
 
     await act(async () => {
-      render(<ActionsButton actions={disabledActions} />);
+      render(<OperationsButton operations={disabledOperations} />);
     });
 
-    await user.click(screen.getByText('Actions'));
+    await user.click(screen.getByText('Operations'));
 
     expect(screen.getByText('Operation 1')).toBeDisabled();
     expect(screen.getByText('Operation 2')).toBeEnabled();
   });
 
-  it('should show running action with disabled entries', async () => {
+  it('should show running operation with disabled entries', async () => {
     const user = userEvent.setup();
-    const runningActions = Object.assign([], testActions, {
-      0: { ...testActions[0], running: true },
+    const runningOperations = Object.assign([], testOperations, {
+      0: { ...testOperations[0], running: true },
     });
 
     await act(async () => {
-      render(<ActionsButton actions={runningActions} />);
+      render(<OperationsButton operations={runningOperations} />);
     });
 
-    await user.click(screen.getByText('Actions'));
+    await user.click(screen.getByText('Operations'));
 
     expect(screen.getByText('Operation 1')).toBeDisabled();
     expect(screen.getByText('Operation 2')).toBeDisabled();
