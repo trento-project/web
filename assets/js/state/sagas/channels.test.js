@@ -7,6 +7,7 @@ import {
 } from '@state/lastExecutions';
 import { userUpdated } from '@state/user';
 import { activityLogUsersPushed } from '@state/activityLog';
+import { operationCompleted } from '@state/runningOperations';
 
 import { watchSocketEvents } from './channels';
 
@@ -48,6 +49,7 @@ const channels = {
   'monitoring:sap_systems': new MockChannel(),
   'monitoring:databases': new MockChannel(),
   'monitoring:executions': new MockChannel(),
+  'monitoring:operations': new MockChannel(),
   [`users:${USER_ID}`]: new MockChannel(),
   [`activity_log:${USER_ID}`]: new MockChannel(),
 };
@@ -127,6 +129,7 @@ describe('Channels saga', () => {
 
     expect(dispatched).toEqual([userUpdated({ email: 'new@email.com' })]);
   });
+
   it('should listen to specific activity log events', async () => {
     const { saga, dispatched } = runWatchSocketEventsSaga(mockSocket);
 
@@ -139,6 +142,29 @@ describe('Channels saga', () => {
 
     expect(dispatched).toEqual([
       activityLogUsersPushed({ users: ['user1', 'user2', 'user3'] }),
+    ]);
+  });
+
+  it('should listen and transform operation_completed event', async () => {
+    const { saga, dispatched } = runWatchSocketEventsSaga(mockSocket);
+
+    channels['monitoring:operations'].emit('operation_completed', {
+      operation_id: 'operation_id',
+      group_id: 'group_id',
+      operation_type: 'operation',
+      result: 'result',
+    });
+
+    closeSocket();
+    await saga;
+
+    expect(dispatched).toEqual([
+      operationCompleted({
+        operationID: 'operation_id',
+        groupID: 'group_id',
+        operation: 'operation',
+        result: 'result',
+      }),
     ]);
   });
 });
