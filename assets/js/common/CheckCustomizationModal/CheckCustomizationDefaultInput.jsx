@@ -1,5 +1,4 @@
 import React from 'react';
-import Label from '@common/Label';
 import Input from '@common/Input';
 
 function CheckCustomizationDefaultInput({
@@ -16,8 +15,7 @@ function CheckCustomizationDefaultInput({
       className="flex items-center space-x-2 mb-8"
     >
       <div className="flex-col w-1/3 min-w-[200px]">
-        {renderLabelWithTooltip(name)}
-        <Label>(Default: {defaultCheckValue})</Label>
+        {renderLabelWithTooltip(name, defaultCheckValue)}
       </div>
 
       <Input

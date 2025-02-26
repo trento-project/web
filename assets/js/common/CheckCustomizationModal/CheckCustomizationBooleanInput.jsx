@@ -1,11 +1,5 @@
 import React, { useState } from 'react';
 
-const isDefaultValue = (defaultCheckValue, customCheckValue) =>
-  customCheckValue === undefined || defaultCheckValue === customCheckValue;
-
-const renderDefaultLabel = (isDefault) =>
-  isDefault ? <span className="pl-2">(Default)</span> : null;
-
 const inputOptions = [
   { label: 'True', radioValue: true },
   { label: 'False', radioValue: false },
@@ -14,7 +8,6 @@ const inputOptions = [
 function CheckCustomizationBooleanInput({
   name,
   defaultCheckValue,
-  customCheckValue,
   currentValue = '',
   inputIsLocked,
   handleInput = () => {},
@@ -27,14 +20,13 @@ function CheckCustomizationBooleanInput({
     setSelectedValue(newValue);
     handleInput(name, newValue);
   };
-
   return (
     <div
       key={`${name}_${currentValue}`}
       className="flex items-center space-x-2 mb-8"
     >
       <div className="flex-col w-1/3 min-w-[200px]">
-        {renderLabelWithTooltip(name)}
+        {renderLabelWithTooltip(name, defaultCheckValue)}
       </div>
       <div className="w-full space-x-4">
         {inputOptions.map(({ label, radioValue }) => (
@@ -49,11 +41,7 @@ function CheckCustomizationBooleanInput({
               onChange={handleChange}
               disabled={inputIsLocked}
             />{' '}
-            {label}{' '}
-            {renderDefaultLabel(
-              isDefaultValue(defaultCheckValue, customCheckValue) &&
-                defaultCheckValue === radioValue
-            )}
+            {label}
           </label>
         ))}
       </div>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { noop, isBoolean, toNumber } from 'lodash';
+import { noop, isBoolean, toNumber, capitalize } from 'lodash';
 
 import Modal from '@common/Modal';
 import Button from '@common/Button';
@@ -26,11 +26,17 @@ const buildCustomCheckPayload = (checkID, values) => {
   return payload;
 };
 
-const renderLabelWithTooltip = (name) => {
+const renderLabelWithTooltip = (name, defaultCheckValue) => {
+  const formatDefaultValue = (value) =>
+    typeof value === 'boolean' ? capitalize(String(value)) : value;
+
   const labelContent = (
-    <Label className="block truncate max-w-[200px] sm:max-w-[250px] md:max-w-[300px]">
-      {name}:
-    </Label>
+    <>
+      <Label className="block truncate max-w-[200px] sm:max-w-[250px] md:max-w-[300px]">
+        {name}:
+      </Label>
+      <Label>(Default: {formatDefaultValue(defaultCheckValue)})</Label>
+    </>
   );
 
   return name?.length > 25 ? (
@@ -100,7 +106,6 @@ function CheckCustomizationModal({
               key={value?.name}
               name={value?.name}
               defaultCheckValue={value?.current_value}
-              customCheckValue={value?.custom_value}
               currentValue={valueWasCustomized(value)}
               inputIsLocked={!canCustomize}
               handleInput={handleCustomValueInput}
