@@ -17,8 +17,8 @@ const filterNewerThanInputField = `${filterNewerThanButton} + div input`;
 
 const filterTypeButton = 'button:contains("Filter Type")';
 
-const applyFiltersButton = 'button:contains("Apply Filters")';
-const resetFiltersButton = 'button:contains("Reset Filters")';
+const applyFiltersButton = 'button:contains("Apply Filter")';
+const resetFiltersButton = 'button:contains("Clear Filters")';
 const refreshButton = 'button:contains("Refresh")';
 
 const nextPageButton = '[aria-label="next-page"]';
