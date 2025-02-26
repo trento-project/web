@@ -45,7 +45,6 @@ const multipleValues = [
   },
 ];
 
-
 const partialCustomizableValues = [
   {
     name: 'ValueName1',
@@ -140,7 +139,6 @@ export const SingleBooleanValue = {
     values: singeBooleanValue,
   },
 };
-
 
 export const MultipleValues = {
   args: {

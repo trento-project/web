@@ -42,6 +42,7 @@ const checkCustomizationModalProps = {
   provider: 'aws',
   onClose: mockOnClose,
   onSave: mockOnSave,
+  onReset: mockOnReset
 };
 
 describe('CheckCustomizationModal', () => {

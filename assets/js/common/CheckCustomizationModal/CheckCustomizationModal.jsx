@@ -4,12 +4,11 @@ import { noop, isBoolean, toNumber } from 'lodash';
 import Modal from '@common/Modal';
 import Button from '@common/Button';
 
-
 import Label from '@common/Label';
 import ProviderLabel from '@common/ProviderLabel';
 import Tooltip from '@common/Tooltip';
 import Input from '@common/Input';
-import CheckableWarningMessage from '@common/CheckableWarningMessage'
+import CheckableWarningMessage from '@common/CheckableWarningMessage';
 
 import { UNKNOWN_PROVIDER } from '@lib/model';
 

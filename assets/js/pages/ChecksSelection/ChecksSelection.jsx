@@ -40,7 +40,7 @@ function ChecksSelection({
   onUpdateCatalog,
   onChange,
   provider,
-  saveCustomization = noop,
+  saveCustomCheck = noop,
   onResetCheckCustomization = noop,
 }) {
   const [isCheckCustomizationModalOpen, setIsCheckCustomizationModalOpen] =

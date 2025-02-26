@@ -162,7 +162,7 @@ function ClusterSettingsPage() {
         onUpdateCatalog={refreshChecksSelection}
         onChange={setSelection}
         provider={provider}
-        saveCustomization={saveCustomCheck}
+        saveCustomCheck={saveCustomCheck}
         onResetCheckCustomization={resetChecksCustomization}
       />
     </>
