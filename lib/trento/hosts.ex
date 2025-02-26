@@ -139,14 +139,19 @@ defmodule Trento.Hosts do
     end
   end
 
-  @spec request_operation(atom(), String.t(), map()) :: :ok | {:error, any}
+  @spec request_operation(atom(), String.t(), map()) :: {:ok, String.t()} | {:error, any}
   def request_operation(:saptune_solution_apply, host_id, params) do
-    Operations.request_operation(
-      UUID.uuid4(),
-      host_id,
-      "saptuneapplysolution@v1",
-      [%{agent_id: host_id, arguments: params}]
-    )
+    operation_id = UUID.uuid4()
+
+    with :ok <-
+           Operations.request_operation(
+             operation_id,
+             host_id,
+             "saptuneapplysolution@v1",
+             [%{agent_id: host_id, arguments: params}]
+           ) do
+      {:ok, operation_id}
+    end
   end
 
   def request_operation(_, _, _), do: {:error, :operation_not_found}

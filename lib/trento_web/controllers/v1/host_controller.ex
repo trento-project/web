@@ -19,6 +19,7 @@ defmodule TrentoWeb.V1.HostController do
     BadRequest,
     Forbidden,
     NotFound,
+    OperationAccepted,
     OperationParams,
     UnprocessableEntity
   }
@@ -179,7 +180,7 @@ defmodule TrentoWeb.V1.HostController do
     ],
     request_body: {"Params", "application/json", OperationParams},
     responses: [
-      accepted: "The operation has been authorized and requested",
+      accepted: OperationAccepted.response(),
       not_found: NotFound.response(),
       forbidden: Forbidden.response(),
       unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
@@ -191,10 +192,11 @@ defmodule TrentoWeb.V1.HostController do
     %{solution: solution} = OpenApiSpex.body_params(conn)
     %{id: host_id} = host
 
-    with :ok <- Hosts.request_operation(:saptune_solution_apply, host_id, %{solution: solution}) do
+    with {:ok, operation_id} <-
+           Hosts.request_operation(:saptune_solution_apply, host_id, %{solution: solution}) do
       conn
       |> put_status(:accepted)
-      |> json(%{})
+      |> json(%{operation_id: operation_id})
     end
   end
 

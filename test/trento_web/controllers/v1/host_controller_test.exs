@@ -456,7 +456,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
              } = resp
     end
 
-    test "should request saptune solution apply operation", %{conn: conn} do
+    test "should request saptune solution apply operation", %{conn: conn, api_spec: api_spec} do
       %{id: host_id} = insert(:host)
 
       expect(
@@ -473,6 +473,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
         "solution" => "HANA"
       })
       |> json_response(:accepted)
+      |> assert_schema("OperationAccepted", api_spec)
     end
   end
 

@@ -286,7 +286,7 @@ defmodule Trento.HostsTest do
         end
       )
 
-      assert :ok =
+      assert {:ok, _} =
                Hosts.request_operation(:saptune_solution_apply, host_id, %{solution: "HANA"})
     end
 
