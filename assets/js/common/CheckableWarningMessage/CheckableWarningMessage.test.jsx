@@ -12,11 +12,9 @@ describe('CheckableWarningMessage', () => {
     const mockSetChecked = jest.fn();
 
     render(
-      <CheckableWarningMessage
-        warningText={warningMessage}
-        checked={false}
-        onChecked={mockSetChecked}
-      />
+      <CheckableWarningMessage checked={false} onChecked={mockSetChecked}>
+        {warningMessage}
+      </CheckableWarningMessage>
     );
 
     const checkbox = screen.getByRole('checkbox');
@@ -32,11 +30,9 @@ describe('CheckableWarningMessage', () => {
 
   it('should not render checkbox if hideCheckbox is true', () => {
     render(
-      <CheckableWarningMessage
-        hideCheckbox
-        warningText={warningMessage}
-        checked={false}
-      />
+      <CheckableWarningMessage hideCheckbox checked={false}>
+        {warningMessage}
+      </CheckableWarningMessage>
     );
 
     expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
