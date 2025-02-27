@@ -14,10 +14,9 @@ context('Activity Log page', () => {
     });
 
     it('should not load the page twice', () => {
-      activityLogPage.spyActivityLogRequest();
       basePage.visit();
       basePage.clickActivityLogNavigationItem5Times();
-      activityLogPage.expectedAggregateAmountOfRequests(1);
+      activityLogPage.activityLogEndpointIsCalledOnlyOnce();
     });
 
     it('should reset querystring when reloading the page from navigation menu', () => {
