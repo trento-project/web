@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
-import { noop, isBoolean, toNumber } from 'lodash';
+import { noop, isBoolean, toNumber, isEmpty } from 'lodash';
 
 import Modal from '@common/Modal';
 import Button from '@common/Button';
-
 import Label from '@common/Label';
 import ProviderLabel from '@common/ProviderLabel';
-
 import Input from '@common/Input';
 
 import CheckableWarningMessage from '@common/CheckableWarningMessage';
@@ -27,6 +25,14 @@ const buildCustomCheckPayload = (checkID, values) => {
 
 const appliedValue = (value) => value?.custom_value ?? value?.current_value;
 
+const whichInputType = (value) => {
+  if (isBoolean(value)) {
+    return 'boolean';
+  }
+
+  return 'default';
+};
+
 function CheckCustomizationModal({
   open = false,
   id,
@@ -41,7 +47,7 @@ function CheckCustomizationModal({
   const [checked, setChecked] = useState(customized);
   const [customValues, setCustomValues] = useState({});
   const canCustomize = customized || checked;
-  const canSave = Object.keys(customValues).length === 0 || !canCustomize;
+  const canSave = !isEmpty(customValues) && canCustomize;
 
   const checkTitle = `Check: ${id}`;
 
@@ -57,6 +63,7 @@ function CheckCustomizationModal({
       [name]: isBoolean(value) ? value : toNumber(value) || value,
     }));
   };
+
   return (
     <Modal
       className="!w-3/4 !max-w-3xl"
@@ -84,7 +91,7 @@ function CheckCustomizationModal({
             currentValue={appliedValue(value)}
             inputIsLocked={!canCustomize}
             handleInput={handleCustomValueInput}
-            inputTypeBool={isBoolean(appliedValue(value))}
+            inputType={whichInputType(appliedValue(value))}
           />
         ))}
 
@@ -106,7 +113,7 @@ function CheckCustomizationModal({
         <Button
           type="default-fit"
           className="w-1/2"
-          disabled={canSave}
+          disabled={!canSave}
           onClick={() => {
             onSave(buildCustomCheckPayload(id, customValues));
             resetStateAndClose();

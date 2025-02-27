@@ -32,7 +32,7 @@ function CheckCustomizationInput({
   defaultCheckValue,
   currentValue = '',
   inputIsLocked,
-  inputTypeBool,
+  inputType,
   handleInput = noop,
 }) {
   const [selectedValue, setSelectedValue] = useState(currentValue);
@@ -47,6 +47,41 @@ function CheckCustomizationInput({
     handleInput(name, inputEvent.target.value);
   };
 
+  const renderInput = (type) => {
+    switch (type) {
+      case 'boolean':
+        return (
+          <>
+            {inputOptions.map(({ label, radioValue }) => (
+              <label key={label} className="inline-flex items-center">
+                <Input
+                  type="radio"
+                  name={name}
+                  value={String(radioValue)}
+                  checked={selectedValue === radioValue}
+                  onChange={handleBooleanChange}
+                  disabled={inputIsLocked}
+                  className="w-full mr-1"
+                />
+                {label}
+              </label>
+            ))}
+          </>
+        );
+
+      default:
+        return (
+          <Input
+            name={name}
+            onChange={handleDefaultChange}
+            initialValue={currentValue}
+            disabled={inputIsLocked}
+            className="w-full mr-1"
+          />
+        );
+    }
+  };
+
   return (
     <div
       key={`${name}_${currentValue}`}
@@ -55,32 +90,7 @@ function CheckCustomizationInput({
       <div className="flex-col w-1/3 min-w-[200px]">
         {renderLabel(name, defaultCheckValue)}
       </div>
-      {inputTypeBool ? (
-        <div className="w-full space-x-4">
-          {inputOptions.map(({ label, radioValue }) => (
-            <label key={label} className="inline-flex items-center">
-              <Input
-                type="radio"
-                name={name}
-                value={String(radioValue)}
-                checked={selectedValue === radioValue}
-                onChange={handleBooleanChange}
-                disabled={inputIsLocked}
-                className="w-full"
-              />
-              {label}
-            </label>
-          ))}
-        </div>
-      ) : (
-        <Input
-          name={name}
-          onChange={handleDefaultChange}
-          initialValue={currentValue}
-          disabled={inputIsLocked}
-          className="w-full"
-        />
-      )}
+      <div className="w-full space-x-4">{renderInput(inputType)}</div>
     </div>
   );
 }
