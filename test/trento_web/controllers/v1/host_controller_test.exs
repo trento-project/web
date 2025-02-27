@@ -11,6 +11,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
   alias Trento.Hosts.Commands.RequestHostDeregistration
 
   alias Trento.Infrastructure.Checks.AMQP.Publisher
+  alias Trento.Infrastructure.Operations.AMQP.Publisher, as: OperationsPublisher
 
   setup [:set_mox_from_context, :verify_on_exit!]
 
@@ -426,8 +427,45 @@ defmodule TrentoWeb.V1.HostControllerTest do
              } == resp
     end
 
-    test "should request saptune solution apply operation", %{conn: conn} do
+    test "should respond with 500 on messaging error", %{conn: conn} do
       %{id: host_id} = insert(:host)
+
+      expect(
+        Trento.Infrastructure.Messaging.Adapter.Mock,
+        :publish,
+        fn OperationsPublisher, _, _ ->
+          {:error, :amqp_error}
+        end
+      )
+
+      resp =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> post("/api/v1/hosts/#{host_id}/operations/saptune_solution_apply", %{
+          "solution" => "HANA"
+        })
+        |> json_response(:internal_server_error)
+
+      assert %{
+               "errors" => [
+                 %{
+                   "detail" => "Something went wrong.",
+                   "title" => "Internal Server Error"
+                 }
+               ]
+             } = resp
+    end
+
+    test "should request saptune solution apply operation", %{conn: conn, api_spec: api_spec} do
+      %{id: host_id} = insert(:host)
+
+      expect(
+        Trento.Infrastructure.Messaging.Adapter.Mock,
+        :publish,
+        fn OperationsPublisher, _, _ ->
+          :ok
+        end
+      )
 
       conn
       |> put_req_header("content-type", "application/json")
@@ -435,6 +473,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
         "solution" => "HANA"
       })
       |> json_response(:accepted)
+      |> assert_schema("OperationAccepted", api_spec)
     end
   end
 
