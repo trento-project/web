@@ -301,6 +301,7 @@ Trento.Infrastructure.Messaging.html
 Trento.Infrastructure.Operations.AMQP.Consumer.html
 Trento.Infrastructure.Operations.AMQP.Processor.html
 Trento.Infrastructure.Operations.AMQP.Publisher.html
+Trento.Infrastructure.Operations.html
 Trento.Infrastructure.Prometheus.ChartIntegration.html
 Trento.Infrastructure.Prometheus.Gen.html
 Trento.Infrastructure.Prometheus.MockPrometheusApi.html
@@ -396,6 +397,7 @@ Trento.Support.Helpers.AbilitiesTestHelper.html
 Trento.Support.IntermediateEvent.html
 Trento.Support.JsonbSerializer.html
 Trento.Support.ListHelper.html
+Trento.Support.Protobuf.html
 Trento.Support.StructHelper.html
 Trento.Support.Type.html
 Trento.Tags.Policy.html
@@ -507,8 +509,8 @@ dist/lato-latin-ext-300-normal-VPGGJKJL.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-DDC5CCB7.js
-dist/sidebar_items-A3902606.js
+dist/search_data-E561219A.js
+dist/sidebar_items-6D27A52D.js
 environment_variables.html
 hack_on_the_trento.html
 index.html
