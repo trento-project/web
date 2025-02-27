@@ -19,6 +19,7 @@ defmodule TrentoWeb.V1.HostController do
     BadRequest,
     Forbidden,
     NotFound,
+    OperationAccepted,
     OperationParams,
     UnprocessableEntity
   }
@@ -179,7 +180,7 @@ defmodule TrentoWeb.V1.HostController do
     ],
     request_body: {"Params", "application/json", OperationParams},
     responses: [
-      accepted: "The operation has been authorized and requested",
+      accepted: OperationAccepted.response(),
       not_found: NotFound.response(),
       forbidden: Forbidden.response(),
       unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
@@ -191,15 +192,12 @@ defmodule TrentoWeb.V1.HostController do
     %{solution: solution} = OpenApiSpex.body_params(conn)
     %{id: host_id} = host
 
-    Logger.info(
-      "Operation authorized. Send real saptune_solution_apply with #{solution} to #{host_id}"
-    )
-
-    # Request operation, get operation id when created and return in json
-
-    conn
-    |> put_status(:accepted)
-    |> json(%{operation_id: UUID.uuid4()})
+    with {:ok, operation_id} <-
+           Hosts.request_operation(:saptune_solution_apply, host_id, %{solution: solution}) do
+      conn
+      |> put_status(:accepted)
+      |> json(%{operation_id: operation_id})
+    end
   end
 
   def get_policy_resource(_), do: HostReadModel

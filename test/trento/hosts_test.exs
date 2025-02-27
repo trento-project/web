@@ -21,7 +21,15 @@ defmodule Trento.HostsTest do
     Target
   }
 
+  alias Trento.Operations.V1.{
+    OperationRequested,
+    OperationTarget
+  }
+
   alias Trento.Infrastructure.Checks.AMQP.Publisher
+  alias Trento.Infrastructure.Operations.AMQP.Publisher, as: OperationsPublisher
+
+  alias Google.Protobuf.Value, as: ProtobufValue
 
   require Logger
 
@@ -159,7 +167,7 @@ defmodule Trento.HostsTest do
         assert length(message.targets) == 1
 
         assert message.env == %{
-                 "provider" => %{kind: {:string_value, Atom.to_string(provider)}}
+                 "provider" => %ProtobufValue{kind: {:string_value, Atom.to_string(provider)}}
                }
 
         assert message.target_type == "host"
@@ -253,6 +261,39 @@ defmodule Trento.HostsTest do
 
       assert capture_log(fn -> Hosts.request_hosts_checks_execution() end) =~
                expected_logger_message
+    end
+  end
+
+  describe "request operation" do
+    test "should request saptune_solution_apply operation" do
+      host_id = UUID.uuid4()
+
+      expect(
+        Trento.Infrastructure.Messaging.Adapter.Mock,
+        :publish,
+        1,
+        fn OperationsPublisher,
+           "requests",
+           %OperationRequested{
+             group_id: ^host_id,
+             operation_type: "saptuneapplysolution@v1",
+             targets: [
+               %OperationTarget{
+                 agent_id: ^host_id,
+                 arguments: %{"solution" => %ProtobufValue{kind: {:string_value, "HANA"}}}
+               }
+             ]
+           } ->
+          :ok
+        end
+      )
+
+      assert {:ok, _} =
+               Hosts.request_operation(:saptune_solution_apply, host_id, %{solution: "HANA"})
+    end
+
+    test "should return operation_not_found if the given operation does not exist" do
+      assert {:error, :operation_not_found} = Hosts.request_operation(:unknown, UUID.uuid4(), %{})
     end
   end
 end

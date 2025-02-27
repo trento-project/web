@@ -54,6 +54,8 @@ import {
   updateLastExecution,
 } from '@state/lastExecutions';
 
+import { operationCompleted } from '@state/runningOperations';
+
 import { userUpdated, userLocked, userDeleted } from '@state/user';
 import { activityLogUsersPushed } from '@state/activityLog';
 
@@ -222,6 +224,19 @@ const executionEvents = [
   },
 ];
 
+const operationEvents = [
+  {
+    name: 'operation_completed',
+    action: operationCompleted,
+    transform: ({
+      operation_id: operationID,
+      group_id: groupID,
+      operation_type: operation,
+      result,
+    }) => ({ operationID, groupID, operation, result }),
+  },
+];
+
 const userEvents = [
   {
     name: 'user_updated',
@@ -288,6 +303,7 @@ export function* watchSocketEvents(socket) {
     fork(watchChannelEvents, socket, 'monitoring:sap_systems', sapSystemEvents),
     fork(watchChannelEvents, socket, 'monitoring:databases', databaseEvents),
     fork(watchChannelEvents, socket, 'monitoring:executions', executionEvents),
+    fork(watchChannelEvents, socket, 'monitoring:operations', operationEvents),
     fork(watchChannelEvents, socket, `users:${userID}`, userEvents),
     fork(
       watchChannelEvents,

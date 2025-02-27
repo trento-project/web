@@ -22,6 +22,8 @@ defmodule Trento.ClustersTest do
 
   alias Trento.Infrastructure.Checks.AMQP.Publisher
 
+  alias Google.Protobuf.Value, as: ProtobufValue
+
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
   require Trento.Clusters.Enums.ClusterEnsaVersion, as: ClusterEnsaVersion
   require Trento.Clusters.Enums.FilesystemType, as: FilesystemType
@@ -74,10 +76,14 @@ defmodule Trento.ClustersTest do
         assert length(message.targets) == 2
 
         assert message.env == %{
-                 "provider" => %{kind: {:string_value, Atom.to_string(provider)}},
-                 "cluster_type" => %{kind: {:string_value, Atom.to_string(cluster_type)}},
-                 "ensa_version" => %{kind: {:string_value, Atom.to_string(ensa_version)}},
-                 "filesystem_type" => %{
+                 "provider" => %ProtobufValue{kind: {:string_value, Atom.to_string(provider)}},
+                 "cluster_type" => %ProtobufValue{
+                   kind: {:string_value, Atom.to_string(cluster_type)}
+                 },
+                 "ensa_version" => %ProtobufValue{
+                   kind: {:string_value, Atom.to_string(ensa_version)}
+                 },
+                 "filesystem_type" => %ProtobufValue{
                    kind: {:string_value, Atom.to_string(FilesystemType.resource_managed())}
                  }
                }
@@ -116,12 +122,14 @@ defmodule Trento.ClustersTest do
           assert length(message.targets) == 2
 
           assert message.env == %{
-                   "provider" => %{kind: {:string_value, Atom.to_string(provider)}},
-                   "cluster_type" => %{kind: {:string_value, Atom.to_string(cluster_type)}},
-                   "architecture_type" => %{
+                   "provider" => %ProtobufValue{kind: {:string_value, Atom.to_string(provider)}},
+                   "cluster_type" => %ProtobufValue{
+                     kind: {:string_value, Atom.to_string(cluster_type)}
+                   },
+                   "architecture_type" => %ProtobufValue{
                      kind: {:string_value, Atom.to_string(architecture_type)}
                    },
-                   "hana_scenario" => %{
+                   "hana_scenario" => %ProtobufValue{
                      kind: {:string_value, Atom.to_string(HanaScenario.performance_optimized())}
                    }
                  }
@@ -161,12 +169,14 @@ defmodule Trento.ClustersTest do
           assert length(message.targets) == 2
 
           assert message.env == %{
-                   "provider" => %{kind: {:string_value, Atom.to_string(provider)}},
-                   "cluster_type" => %{kind: {:string_value, Atom.to_string(cluster_type)}},
-                   "architecture_type" => %{
+                   "provider" => %ProtobufValue{kind: {:string_value, Atom.to_string(provider)}},
+                   "cluster_type" => %ProtobufValue{
+                     kind: {:string_value, Atom.to_string(cluster_type)}
+                   },
+                   "architecture_type" => %ProtobufValue{
                      kind: {:string_value, Atom.to_string(architecture_type)}
                    },
-                   "hana_scenario" => %{
+                   "hana_scenario" => %ProtobufValue{
                      kind: {:string_value, Atom.to_string(HanaScenario.cost_optimized())}
                    }
                  }
@@ -506,10 +516,14 @@ defmodule Trento.ClustersTest do
         assert length(message.targets) == 2
 
         assert message.env == %{
-                 "provider" => %{kind: {:string_value, Atom.to_string(provider)}},
-                 "cluster_type" => %{kind: {:string_value, Atom.to_string(cluster_type)}},
-                 "filesystem_type" => %{kind: {:string_value, Atom.to_string(:resource_managed)}},
-                 "ensa_version" => %{
+                 "provider" => %ProtobufValue{kind: {:string_value, Atom.to_string(provider)}},
+                 "cluster_type" => %ProtobufValue{
+                   kind: {:string_value, Atom.to_string(cluster_type)}
+                 },
+                 "filesystem_type" => %ProtobufValue{
+                   kind: {:string_value, Atom.to_string(:resource_managed)}
+                 },
+                 "ensa_version" => %ProtobufValue{
                    kind: {:string_value, Atom.to_string(ClusterEnsaVersion.ensa1())}
                  }
                }
@@ -558,10 +572,14 @@ defmodule Trento.ClustersTest do
         assert length(message.targets) == 2
 
         assert message.env == %{
-                 "provider" => %{kind: {:string_value, Atom.to_string(provider)}},
-                 "cluster_type" => %{kind: {:string_value, Atom.to_string(cluster_type)}},
-                 "filesystem_type" => %{kind: {:string_value, Atom.to_string(:simple_mount)}},
-                 "ensa_version" => %{
+                 "provider" => %ProtobufValue{kind: {:string_value, Atom.to_string(provider)}},
+                 "cluster_type" => %ProtobufValue{
+                   kind: {:string_value, Atom.to_string(cluster_type)}
+                 },
+                 "filesystem_type" => %ProtobufValue{
+                   kind: {:string_value, Atom.to_string(:simple_mount)}
+                 },
+                 "ensa_version" => %ProtobufValue{
                    kind: {:string_value, Atom.to_string(ClusterEnsaVersion.ensa2())}
                  }
                }
@@ -612,10 +630,14 @@ defmodule Trento.ClustersTest do
         assert length(message.targets) == 2
 
         assert message.env == %{
-                 "provider" => %{kind: {:string_value, Atom.to_string(provider)}},
-                 "cluster_type" => %{kind: {:string_value, Atom.to_string(cluster_type)}},
-                 "filesystem_type" => %{kind: {:string_value, Atom.to_string(:mixed_fs_types)}},
-                 "ensa_version" => %{
+                 "provider" => %ProtobufValue{kind: {:string_value, Atom.to_string(provider)}},
+                 "cluster_type" => %ProtobufValue{
+                   kind: {:string_value, Atom.to_string(cluster_type)}
+                 },
+                 "filesystem_type" => %ProtobufValue{
+                   kind: {:string_value, Atom.to_string(:mixed_fs_types)}
+                 },
+                 "ensa_version" => %ProtobufValue{
                    kind: {:string_value, Atom.to_string(ClusterEnsaVersion.ensa2())}
                  }
                }
@@ -695,10 +717,14 @@ defmodule Trento.ClustersTest do
         assert length(message.targets) == 2
 
         assert message.env == %{
-                 "provider" => %{kind: {:string_value, Atom.to_string(provider)}},
-                 "cluster_type" => %{kind: {:string_value, Atom.to_string(cluster_type)}},
-                 "filesystem_type" => %{kind: {:string_value, Atom.to_string(:simple_mount)}},
-                 "ensa_version" => %{
+                 "provider" => %ProtobufValue{kind: {:string_value, Atom.to_string(provider)}},
+                 "cluster_type" => %ProtobufValue{
+                   kind: {:string_value, Atom.to_string(cluster_type)}
+                 },
+                 "filesystem_type" => %ProtobufValue{
+                   kind: {:string_value, Atom.to_string(:simple_mount)}
+                 },
+                 "ensa_version" => %ProtobufValue{
                    kind: {:string_value, Atom.to_string(ClusterEnsaVersion.ensa1())}
                  }
                }
@@ -778,10 +804,14 @@ defmodule Trento.ClustersTest do
         assert length(message.targets) == 2
 
         assert message.env == %{
-                 "provider" => %{kind: {:string_value, Atom.to_string(provider)}},
-                 "cluster_type" => %{kind: {:string_value, Atom.to_string(cluster_type)}},
-                 "filesystem_type" => %{kind: {:string_value, Atom.to_string(:simple_mount)}},
-                 "ensa_version" => %{
+                 "provider" => %ProtobufValue{kind: {:string_value, Atom.to_string(provider)}},
+                 "cluster_type" => %ProtobufValue{
+                   kind: {:string_value, Atom.to_string(cluster_type)}
+                 },
+                 "filesystem_type" => %ProtobufValue{
+                   kind: {:string_value, Atom.to_string(:simple_mount)}
+                 },
+                 "ensa_version" => %ProtobufValue{
                    kind: {:string_value, Atom.to_string(ClusterEnsaVersion.ensa2())}
                  }
                }
@@ -861,10 +891,14 @@ defmodule Trento.ClustersTest do
         assert length(message.targets) == 2
 
         assert message.env == %{
-                 "provider" => %{kind: {:string_value, Atom.to_string(provider)}},
-                 "cluster_type" => %{kind: {:string_value, Atom.to_string(cluster_type)}},
-                 "filesystem_type" => %{kind: {:string_value, Atom.to_string(:simple_mount)}},
-                 "ensa_version" => %{
+                 "provider" => %ProtobufValue{kind: {:string_value, Atom.to_string(provider)}},
+                 "cluster_type" => %ProtobufValue{
+                   kind: {:string_value, Atom.to_string(cluster_type)}
+                 },
+                 "filesystem_type" => %ProtobufValue{
+                   kind: {:string_value, Atom.to_string(:simple_mount)}
+                 },
+                 "ensa_version" => %ProtobufValue{
                    kind: {:string_value, Atom.to_string(ClusterEnsaVersion.mixed_versions())}
                  }
                }
