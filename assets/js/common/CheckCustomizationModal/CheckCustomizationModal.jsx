@@ -1,19 +1,18 @@
 import React, { useState } from 'react';
-import { noop, isBoolean, toNumber, capitalize } from 'lodash';
+import { noop, isBoolean, toNumber } from 'lodash';
 
 import Modal from '@common/Modal';
 import Button from '@common/Button';
 
 import Label from '@common/Label';
 import ProviderLabel from '@common/ProviderLabel';
-import Tooltip from '@common/Tooltip';
+
 import Input from '@common/Input';
 
 import CheckableWarningMessage from '@common/CheckableWarningMessage';
 import { UNKNOWN_PROVIDER } from '@lib/model';
 
-import CheckCustomizationBooleanInput from './CheckCustomizationBooleanInput';
-import CheckCustomizationDefaultInput from './CheckCustomizationDefaultInput';
+import CheckCustomizationInput from './CheckCustomizationInput';
 
 const checkBoxWarningText =
   'Trento & SUSE cannot be held liable for damages if system is unable to function due to custom check value.';
@@ -26,29 +25,7 @@ const buildCustomCheckPayload = (checkID, values) => {
   return payload;
 };
 
-const renderLabelWithTooltip = (name, defaultCheckValue) => {
-  const formatDefaultValue = (value) =>
-    typeof value === 'boolean' ? capitalize(String(value)) : value;
-
-  const labelContent = (
-    <>
-      <Label className="block truncate max-w-[200px] sm:max-w-[250px] md:max-w-[300px]">
-        {name}:
-      </Label>
-      <Label>(Default: {formatDefaultValue(defaultCheckValue)})</Label>
-    </>
-  );
-
-  return name?.length > 25 ? (
-    <Tooltip zIndex="50" content={name}>
-      {labelContent}
-    </Tooltip>
-  ) : (
-    labelContent
-  );
-};
-const valueWasCustomized = (value) =>
-  value?.custom_value ?? value?.current_value;
+const appliedValue = (value) => value?.custom_value ?? value?.current_value;
 
 function CheckCustomizationModal({
   open = false,
@@ -64,8 +41,7 @@ function CheckCustomizationModal({
   const [checked, setChecked] = useState(customized);
   const [customValues, setCustomValues] = useState({});
   const canCustomize = customized || checked;
-  const userCustomizedValues =
-    Object.keys(customValues).length === 0 || !canCustomize;
+  const canSave = Object.keys(customValues).length === 0 || !canCustomize;
 
   const checkTitle = `Check: ${id}`;
 
@@ -100,29 +76,17 @@ function CheckCustomizationModal({
       </CheckableWarningMessage>
       {values
         ?.filter(({ customizable }) => customizable)
-        .map((value) =>
-          isBoolean(valueWasCustomized(value)) ? (
-            <CheckCustomizationBooleanInput
-              key={value?.name}
-              name={value?.name}
-              defaultCheckValue={value?.current_value}
-              currentValue={valueWasCustomized(value)}
-              inputIsLocked={!canCustomize}
-              handleInput={handleCustomValueInput}
-              renderLabelWithTooltip={renderLabelWithTooltip}
-            />
-          ) : (
-            <CheckCustomizationDefaultInput
-              key={value?.name}
-              name={value?.name}
-              defaultCheckValue={value?.current_value}
-              currentValue={valueWasCustomized(value)}
-              inputIsLocked={!canCustomize}
-              handleInput={handleCustomValueInput}
-              renderLabelWithTooltip={renderLabelWithTooltip}
-            />
-          )
-        )}
+        .map((value) => (
+          <CheckCustomizationInput
+            key={value?.name}
+            name={value?.name}
+            defaultCheckValue={value?.current_value}
+            currentValue={appliedValue(value)}
+            inputIsLocked={!canCustomize}
+            handleInput={handleCustomValueInput}
+            inputTypeBool={isBoolean(appliedValue(value))}
+          />
+        ))}
 
       <div className="flex items-center space-x-2 mb-8">
         <div className="w-1/3 min-w-[200px]">
@@ -142,7 +106,7 @@ function CheckCustomizationModal({
         <Button
           type="default-fit"
           className="w-1/2"
-          disabled={userCustomizedValues}
+          disabled={canSave}
           onClick={() => {
             onSave(buildCustomCheckPayload(id, customValues));
             resetStateAndClose();
