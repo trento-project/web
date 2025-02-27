@@ -1,20 +1,18 @@
+import * as homePage from '../pageObject/home-po.js';
+
 context('Homepage', () => {
-  before(() => {
-    cy.preloadTestData();
-    cy.visit('/');
-    cy.url().should('include', '/');
+  before(() => homePage.preloadTestData());
+
+  beforeEach(() => {
+    homePage.visit();
+    homePage.validateUrl();
   });
 
   describe('Deregistration', () => {
-    const sapSystemNwp = {
-      sid: 'NWP',
-      hostId: '9cd46919-5f19-59aa-993e-cf3736c71053',
-    };
-
-    it(`should not display SAP System ${sapSystemNwp.sid} after it is deregistered`, () => {
-      cy.contains(sapSystemNwp.sid).should('exist');
-      cy.deregisterHost(sapSystemNwp.hostId);
-      cy.contains(sapSystemNwp.sid).should('not.exist');
+    it('should not display SAP System NWP after it is deregistered', () => {
+      homePage.nwpSystemShouldBeDisplayed();
+      homePage.apiDeregisterSapSystemNwpHost();
+      homePage.nwpSystemShouldNotBeDisplayed();
     });
   });
 });
