@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { get, zipWith, startCase } from 'lodash';
+import { get, zipWith, startCase, some } from 'lodash';
 import classNames from 'classnames';
 import {
   EOS_CLEAR_ALL,
@@ -8,6 +8,8 @@ import {
 } from 'eos-icons-react';
 
 import { agentVersionWarning } from '@lib/agent';
+import { SAPTUNE_SOLUTION_APPLY } from '@lib/operations';
+import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
 
 import BackButton from '@common/BackButton';
 import Button from '@common/Button';
@@ -19,6 +21,8 @@ import Banner from '@common/Banners/Banner';
 import ChartsFeatureWrapper from '@common/ChartsFeatureWrapper';
 import AvailableSoftwareUpdates from '@common/AvailableSoftwareUpdates';
 import DisabledGuard from '@common/DisabledGuard';
+import OperationsButton from '@common/OperationsButton';
+import { SaptuneSolutionApplyModal } from '@common/OperationModals';
 
 import { subHours } from 'date-fns';
 
@@ -83,11 +87,16 @@ function HostDetails({
   softwareUpdatesErrorMessage,
   softwareUpdatesTooltip,
   userAbilities,
+  operationsEnabled = false,
+  runningOperation = {},
   cleanUpHost,
   requestHostChecksExecution,
+  requestOperation,
   navigate,
 }) {
   const [cleanUpModalOpen, setCleanUpModalOpen] = useState(false);
+  const [saptuneSolutionApplyModalOpen, setSaptuneSolutionApplyModalOpen] =
+    useState(false);
 
   const versionWarningMessage = agentVersionWarning(agentVersion);
 
@@ -117,6 +126,8 @@ function HostDetails({
   const lastExecutionLoading = get(lastExecution, 'loading');
   const lastExecutionError = get(lastExecution, 'error');
 
+  const runningOperationName = get(runningOperation, 'operation', null);
+
   const timeNow = new Date();
 
   return (
@@ -132,6 +143,20 @@ function HostDetails({
           setCleanUpModalOpen(false);
         }}
       />
+      {operationsEnabled && (
+        <SaptuneSolutionApplyModal
+          isHanaRunning={some(sapInstances, { type: DATABASE_TYPE })}
+          isAppRunning={some(sapInstances, { type: APPLICATION_TYPE })}
+          isOpen={!!saptuneSolutionApplyModalOpen}
+          onRequest={(solution) => {
+            setSaptuneSolutionApplyModalOpen(false);
+            requestOperation(SAPTUNE_SOLUTION_APPLY, { solution });
+          }}
+          onCancel={() => {
+            setSaptuneSolutionApplyModalOpen(false);
+          }}
+        />
+      )}
       <div>
         <BackButton url="/hosts">Back to Hosts</BackButton>
         <div className="flex flex-wrap">
@@ -142,6 +167,21 @@ function HostDetails({
           </div>
           <div className="flex w-1/2 justify-end">
             <div className="flex w-fit whitespace-nowrap">
+              {operationsEnabled && (
+                <OperationsButton
+                  operations={[
+                    {
+                      value: 'Apply Saptune Solution',
+                      running: runningOperationName === SAPTUNE_SOLUTION_APPLY,
+                      disabled:
+                        !sapPresent || get(saptuneStatus, 'enabled_solution'),
+                      onClick: () => {
+                        setSaptuneSolutionApplyModalOpen(true);
+                      },
+                    },
+                  ]}
+                />
+              )}
               {deregisterable && (
                 <CleanUpButton
                   cleaning={deregistering}
