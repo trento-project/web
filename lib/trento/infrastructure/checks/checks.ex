@@ -97,50 +97,62 @@ defmodule Trento.Infrastructure.Checks do
   end
 
   defp build_env(%ClusterExecutionEnv{
-         cluster_type: :ascs_ers,
+         cluster_type: ClusterType.ascs_ers(),
          ensa_version: ensa_version,
          provider: provider,
          filesystem_type: filesystem_type
        }) do
-    %{
-      "cluster_type" => %{kind: {:string_value, Atom.to_string(ClusterType.ascs_ers())}},
-      "ensa_version" => %{kind: {:string_value, Atom.to_string(ensa_version)}},
-      "provider" => %{kind: {:string_value, Atom.to_string(provider)}},
-      "filesystem_type" => %{kind: {:string_value, Atom.to_string(filesystem_type)}}
-    }
+    build_protobuf_env(%{
+      cluster_type: ClusterType.ascs_ers(),
+      ensa_version: ensa_version,
+      provider: provider,
+      filesystem_type: filesystem_type
+    })
   end
 
   defp build_env(%ClusterExecutionEnv{
-         cluster_type: :hana_scale_up,
+         cluster_type: ClusterType.hana_scale_up(),
          provider: provider,
          architecture_type: architecture_type,
          hana_scenario: hana_scenario
        }) do
-    %{
-      "cluster_type" => %{kind: {:string_value, Atom.to_string(ClusterType.hana_scale_up())}},
-      "provider" => %{kind: {:string_value, Atom.to_string(provider)}},
-      "architecture_type" => %{kind: {:string_value, Atom.to_string(architecture_type)}},
-      "hana_scenario" => %{kind: {:string_value, Atom.to_string(hana_scenario)}}
-    }
+    build_protobuf_env(%{
+      cluster_type: ClusterType.hana_scale_up(),
+      provider: provider,
+      architecture_type: architecture_type,
+      hana_scenario: hana_scenario
+    })
   end
 
   defp build_env(%ClusterExecutionEnv{
-         cluster_type: :hana_scale_out,
+         cluster_type: ClusterType.hana_scale_out(),
          architecture_type: architecture_type,
          provider: provider
        }) do
-    %{
-      "cluster_type" => %{kind: {:string_value, Atom.to_string(ClusterType.hana_scale_out())}},
-      "architecture_type" => %{kind: {:string_value, Atom.to_string(architecture_type)}},
-      "provider" => %{kind: {:string_value, Atom.to_string(provider)}}
-    }
+    build_protobuf_env(%{
+      cluster_type: ClusterType.hana_scale_out(),
+      architecture_type: architecture_type,
+      provider: provider
+    })
   end
 
   defp build_env(%HostExecutionEnv{provider: provider}) do
-    %{
-      "provider" => %{kind: {:string_value, Atom.to_string(provider)}}
-    }
+    build_protobuf_env(%{
+      provider: provider
+    })
   end
+
+  defp build_protobuf_env(env) do
+    %{fields: protobuf_env} =
+      env
+      |> Enum.into(%{}, fn {key, value} -> {key, map_value(value)} end)
+      |> Google.Protobuf.from_map()
+
+    protobuf_env
+  end
+
+  defp map_value(value) when is_atom(value), do: Atom.to_string(value)
+  defp map_value(value), do: value
 
   defp commanded,
     do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]

@@ -28,7 +28,7 @@ defmodule Trento.Infrastructure.Operations do
       operation_type: operation,
       targets:
         Enum.map(targets, fn %{agent_id: agent_id, arguments: arguments} ->
-          %OperationTarget{agent_id: agent_id, arguments: map_value(arguments)}
+          %OperationTarget{agent_id: agent_id, arguments: map_arguments(arguments)}
         end)
     }
 
@@ -43,16 +43,8 @@ defmodule Trento.Infrastructure.Operations do
     end
   end
 
-  defp map_value(map) when is_map(map) do
-    Enum.into(map, %{}, fn {key, value} -> {map_key(key), map_value(value)} end)
+  defp map_arguments(arguments) do
+    %{fields: protobuf_arguments} = Google.Protobuf.from_map(arguments)
+    protobuf_arguments
   end
-
-  defp map_value(value) when is_number(value), do: %{kind: {:number_value, value}}
-  defp map_value(value) when is_boolean(value), do: %{kind: {:bool_value, value}}
-  defp map_value(value) when is_nil(value), do: %{kind: {:null_value}}
-  defp map_value(value) when is_atom(value), do: %{kind: {:string_value, Atom.to_string(value)}}
-  defp map_value(value), do: %{kind: {:string_value, value}}
-
-  defp map_key(key) when is_atom(key), do: Atom.to_string(key)
-  defp map_key(key), do: key
 end
