@@ -2,6 +2,7 @@ import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { faker } from '@faker-js/faker';
 import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
+import { SAPTUNE_SOLUTION_APPLY } from '@lib/operations';
 
 import {
   clusterFactory,
@@ -142,6 +143,15 @@ export default {
       control: 'array',
       description: 'Current user abilities',
     },
+    operationsEnabled: {
+      control: { type: 'boolean' },
+      description:
+        'Operations framework enabled. Remove once it is ready to release',
+    },
+    runningOperation: {
+      control: 'object',
+      description: 'Currently running operation data',
+    },
     cleanUpHost: {
       action: 'Deregister host',
       description: 'Deregister host',
@@ -149,6 +159,10 @@ export default {
     requestHostChecksExecution: {
       action: 'Request host execution',
       description: 'Request checks execution',
+    },
+    requestOperation: {
+      action: 'Request operation',
+      description: 'Request operation',
     },
     navigate: {
       description: 'Navigate function',
@@ -206,6 +220,8 @@ export const Default = {
     selectedChecks: [],
     slesSubscriptions: host.sles_subscriptions,
     userAbilities: [{ name: 'all', resource: 'all' }],
+    operationsEnabled: true,
+    runningOperations: {},
   },
 };
 
@@ -309,5 +325,22 @@ export const WithSoftwareUpdatesFailed = {
     upgradablePackages: undefined,
     softwareUpdatesErrorMessage: 'Connection to SUMA not working',
     softwareUpdatesTooltip: 'Please review SUSE Manager settings',
+  },
+};
+
+export const WithRunningOperation = {
+  args: {
+    ...Default.args,
+    runningOperation: { operation: SAPTUNE_SOLUTION_APPLY },
+  },
+};
+
+export const WithDisabledOperation = {
+  args: {
+    ...Default.args,
+    saptuneStatus: {
+      package_version: '3.0.0',
+      enabled_solution: 'HANA',
+    },
   },
 };
