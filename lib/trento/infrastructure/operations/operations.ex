@@ -12,6 +12,8 @@ defmodule Trento.Infrastructure.Operations do
 
   alias Trento.Infrastructure.Operations.AMQP.Publisher
 
+  alias Trento.Support.Protobuf
+
   require Logger
 
   @type operation_target :: %{
@@ -28,7 +30,7 @@ defmodule Trento.Infrastructure.Operations do
       operation_type: operation,
       targets:
         Enum.map(targets, fn %{agent_id: agent_id, arguments: arguments} ->
-          %OperationTarget{agent_id: agent_id, arguments: map_arguments(arguments)}
+          %OperationTarget{agent_id: agent_id, arguments: Protobuf.from_map(arguments)}
         end)
     }
 
@@ -41,10 +43,5 @@ defmodule Trento.Infrastructure.Operations do
 
         error
     end
-  end
-
-  defp map_arguments(arguments) do
-    %{fields: protobuf_arguments} = Google.Protobuf.from_map(arguments)
-    protobuf_arguments
   end
 end

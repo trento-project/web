@@ -29,6 +29,8 @@ defmodule Trento.HostsTest do
   alias Trento.Infrastructure.Checks.AMQP.Publisher
   alias Trento.Infrastructure.Operations.AMQP.Publisher, as: OperationsPublisher
 
+  alias Google.Protobuf.Value, as: ProtobufValue
+
   require Logger
 
   @moduletag :integration
@@ -165,7 +167,7 @@ defmodule Trento.HostsTest do
         assert length(message.targets) == 1
 
         assert message.env == %{
-                 "provider" => %{kind: {:string_value, Atom.to_string(provider)}}
+                 "provider" => %ProtobufValue{kind: {:string_value, Atom.to_string(provider)}}
                }
 
         assert message.target_type == "host"
@@ -278,7 +280,7 @@ defmodule Trento.HostsTest do
              targets: [
                %OperationTarget{
                  agent_id: ^host_id,
-                 arguments: %{"solution" => %{kind: {:string_value, "HANA"}}}
+                 arguments: %{"solution" => %ProtobufValue{kind: {:string_value, "HANA"}}}
                }
              ]
            } ->

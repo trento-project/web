@@ -21,6 +21,8 @@ defmodule Trento.Infrastructure.Checks do
     HostExecutionEnv
   }
 
+  alias Trento.Support.Protobuf
+
   require Logger
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
   require Trento.Infrastructure.Checks.TargetType, as: TargetType
@@ -102,7 +104,7 @@ defmodule Trento.Infrastructure.Checks do
          provider: provider,
          filesystem_type: filesystem_type
        }) do
-    build_protobuf_env(%{
+    Protobuf.from_map(%{
       cluster_type: ClusterType.ascs_ers(),
       ensa_version: ensa_version,
       provider: provider,
@@ -116,7 +118,7 @@ defmodule Trento.Infrastructure.Checks do
          architecture_type: architecture_type,
          hana_scenario: hana_scenario
        }) do
-    build_protobuf_env(%{
+    Protobuf.from_map(%{
       cluster_type: ClusterType.hana_scale_up(),
       provider: provider,
       architecture_type: architecture_type,
@@ -129,7 +131,7 @@ defmodule Trento.Infrastructure.Checks do
          architecture_type: architecture_type,
          provider: provider
        }) do
-    build_protobuf_env(%{
+    Protobuf.from_map(%{
       cluster_type: ClusterType.hana_scale_out(),
       architecture_type: architecture_type,
       provider: provider
@@ -137,22 +139,10 @@ defmodule Trento.Infrastructure.Checks do
   end
 
   defp build_env(%HostExecutionEnv{provider: provider}) do
-    build_protobuf_env(%{
+    Protobuf.from_map(%{
       provider: provider
     })
   end
-
-  defp build_protobuf_env(env) do
-    %{fields: protobuf_env} =
-      env
-      |> Enum.into(%{}, fn {key, value} -> {key, map_value(value)} end)
-      |> Google.Protobuf.from_map()
-
-    protobuf_env
-  end
-
-  defp map_value(value) when is_atom(value), do: Atom.to_string(value)
-  defp map_value(value), do: value
 
   defp commanded,
     do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]

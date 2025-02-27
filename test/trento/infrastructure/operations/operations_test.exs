@@ -61,7 +61,7 @@ defmodule Trento.Infrastructure.Operations.OperationsTest do
                      arguments: %{
                        "integer" => %{kind: {:number_value, 10}},
                        "boolean" => %{kind: {:bool_value, true}},
-                       "nil" => %{kind: {:null_value}}
+                       "nil" => %{kind: {:null_value, :NULL_VALUE}}
                      }
                    }
                  ]
