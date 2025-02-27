@@ -12,6 +12,7 @@ defmodule TrentoWeb.PageController do
     analytics_enabled = Application.fetch_env!(:trento, :analytics)[:enabled]
     analytics_key = Application.fetch_env!(:trento, :analytics)[:analytics_key]
     analytics_url = Application.fetch_env!(:trento, :analytics)[:analytics_url]
+    operations_enabled = Application.fetch_env!(:trento, :operations_enabled)
 
     {sso_enabled, callback_url, login_url, enrollment_url} = sso_details(conn)
 
@@ -28,6 +29,7 @@ defmodule TrentoWeb.PageController do
       sso_login_url: login_url,
       sso_callback_url: callback_url,
       sso_enrollment_url: enrollment_url,
+      operations_enabled: operations_enabled,
       layout: false
     )
   end
