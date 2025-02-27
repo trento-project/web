@@ -55,6 +55,8 @@ export const clickActivityLogNavigationItem = () => {
 export const clickActivityLogNavigationItem5Times = () => {
   for (let i = 0; i < 5; i++) {
     clickActivityLogNavigationItem();
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(200);
   }
 };
 
