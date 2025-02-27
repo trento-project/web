@@ -143,14 +143,14 @@ defmodule Trento.Hosts do
   def request_operation(:saptune_solution_apply, host_id, params) do
     operation_id = UUID.uuid4()
 
-    with :ok <-
-           Operations.request_operation(
-             operation_id,
-             host_id,
-             "saptuneapplysolution@v1",
-             [%{agent_id: host_id, arguments: params}]
-           ) do
-      {:ok, operation_id}
+    case Operations.request_operation(
+           operation_id,
+           host_id,
+           "saptuneapplysolution@v1",
+           [%{agent_id: host_id, arguments: params}]
+         ) do
+      :ok -> {:ok, operation_id}
+      error -> error
     end
   end
 
