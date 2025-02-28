@@ -40,6 +40,7 @@ const checkCustomizationModalProps = {
   ...check,
   open: true,
   provider: 'aws',
+  groupID: '123456789',
   onClose: mockOnClose,
   onSave: mockOnSave,
   onReset: mockOnReset,
@@ -112,12 +113,13 @@ describe('CheckCustomizationModal', () => {
 
     await user.click(screen.getByText('Save'));
     expect(onSave).toHaveBeenCalledWith({
-      checksID: '123',
-      customValues: {
-        CheckIntValueName: expectedCheckValues[0],
-        CheckStringValueName: expectedCheckValues[1],
-        CheckBoolValueName: expectedCheckValues[2],
-      },
+      checkID: '123',
+      customValues: [
+        { name: 'CheckIntValueName', value: expectedCheckValues[0] },
+        { name: 'CheckStringValueName', value: expectedCheckValues[1] },
+        { name: 'CheckBoolValueName', value: expectedCheckValues[2] },
+      ],
+      groupID: '123456789',
     });
   });
 
@@ -161,8 +163,11 @@ describe('CheckCustomizationModal', () => {
 
     await user.click(screen.getByText('Save'));
     expect(onSave).toHaveBeenCalledWith({
-      checksID: '123',
-      customValues: { [customCheckNames[0]]: expectedCustomCheckValue },
+      checkID: '123',
+      customValues: [
+        { name: customCheckNames[0], value: expectedCustomCheckValue },
+      ],
+      groupID: '123456789',
     });
   });
 

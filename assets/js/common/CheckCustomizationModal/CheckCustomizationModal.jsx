@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { noop, isBoolean, toNumber, isEmpty } from 'lodash';
+import { noop, isBoolean, toNumber, isEmpty, map } from 'lodash';
 
 import Modal from '@common/Modal';
 import Button from '@common/Button';
@@ -15,9 +15,10 @@ import CheckCustomizationInput from './CheckCustomizationInput';
 const checkBoxWarningText =
   'Trento & SUSE cannot be held liable for damages if system is unable to function due to custom check value.';
 
-const buildCustomCheckPayload = (checksID, values) => ({
-  checksID,
-  customValues: Object.entries(values).map(([name, value]) => ({
+const buildCustomCheckPayload = (checkID, groupID, values) => ({
+  checkID,
+  groupID,
+  customValues: map(values, (value, name) => ({
     name,
     value,
   })),
@@ -35,6 +36,7 @@ const detectType = (value) => {
 function CheckCustomizationModal({
   open = false,
   id,
+  groupID,
   values,
   description,
   provider = UNKNOWN_PROVIDER,
@@ -49,7 +51,6 @@ function CheckCustomizationModal({
   const canSave = !isEmpty(customValues) && canCustomize;
 
   const checkTitle = `Check: ${id}`;
-
   const resetStateAndClose = () => {
     setCustomValues({});
     setChecked(false);
@@ -115,7 +116,7 @@ function CheckCustomizationModal({
           disabled={!canSave}
           onClick={() => {
             resetStateAndClose();
-            onSave(buildCustomCheckPayload(id, customValues));
+            onSave(buildCustomCheckPayload(id, groupID, customValues));
           }}
         >
           Save

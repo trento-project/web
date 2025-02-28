@@ -26,16 +26,12 @@ export const getChecksSelection = (groupID, env) =>
     params: env,
   });
 
-export const saveCheckCustomization = (values) => {
-  const { checkID, groupID, customValues } = values;
-  const customValuesPayload = { values: customValues };
-
-  return networkClient.post(
+export const saveCheckCustomization = ({ checkID, groupID, customValues }) =>
+  networkClient.post(
     `/api/v1/groups/${groupID}/checks/${checkID}/customization`,
-    customValuesPayload,
+    { values: customValues },
     defaultConfig
   );
-};
 
 export const resetCheckCustomization = (groupID, checkID) =>
   networkClient.delete(

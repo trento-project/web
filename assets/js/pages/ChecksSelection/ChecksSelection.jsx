@@ -129,6 +129,7 @@ function ChecksSelection({
         <CheckCustomizationModal
           open={isCheckCustomizationModalOpen}
           id={selectedCheck?.id}
+          groupID={groupID}
           values={selectedCheck?.values}
           description={selectedCheck?.description}
           customized={selectedCheck?.customized}

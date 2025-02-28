@@ -26,7 +26,6 @@ const saveValuesCustomizations = (check, customValues) => ({
   values: check.values.map((value, index) => ({
     ...value,
     custom_value: customValues[index].value,
-    customized: true,
   })),
 });
 
