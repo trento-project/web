@@ -64,7 +64,7 @@ defmodule TrentoWeb.V1.ActivityLogController do
         in: :query,
         schema: %OpenApiSpex.Schema{
           type: :array,
-          default: ["info"]
+          default: ["debug", "info", "warning", "critical"]
         },
         required: false
       ]
