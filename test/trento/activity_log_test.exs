@@ -181,14 +181,15 @@ defmodule Trento.ActivityLogTest do
       assert severity_levels == Enum.sort(["debug", "info", "warning", "error", "critical"])
     end
 
-    test "should return error and above severity level entries when queried with appropriate param" do
+    test "should return warning and above severity level entries when queried with appropriate param" do
       _inserted_records = insert_list(4, :activity_log_entry, %{severity: 5})
       _inserted_records = insert_list(4, :activity_log_entry, %{severity: 9})
       _inserted_records = insert_list(4, :activity_log_entry, %{severity: 13})
       _inserted_records = insert_list(4, :activity_log_entry, %{severity: 17})
       _inserted_records = insert_list(4, :activity_log_entry, %{severity: 21})
 
-      assert {:ok, entries, _} = ActivityLog.list_activity_log(%{severity: ["error"]})
+      assert {:ok, entries, _} =
+               ActivityLog.list_activity_log(%{severity: ["warning", "critical"]})
 
       severity_levels =
         entries
@@ -197,7 +198,7 @@ defmodule Trento.ActivityLogTest do
         |> Enum.map(&ActivityLog.map_severity_integer_to_text/1)
         |> Enum.sort()
 
-      assert severity_levels == Enum.sort(["error", "critical"])
+      assert severity_levels == Enum.sort(["warning", "critical"])
       assert length(entries) == 8
     end
   end
