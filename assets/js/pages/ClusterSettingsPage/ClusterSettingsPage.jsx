@@ -110,16 +110,6 @@ function ClusterSettingsPage() {
     dispatch(executionRequested(clusterID, clusterHosts, selectedChecks));
   };
 
-  const saveCustomCheck = ({ checksID, customValues }) => {
-    dispatch(
-      saveChecksCustomization({
-        checkID: checksID,
-        groupID: clusterID,
-        customValues,
-      })
-    );
-  };
-
   return (
     <>
       <ChecksSelectionHeader
@@ -162,7 +152,7 @@ function ClusterSettingsPage() {
         onUpdateCatalog={refreshChecksSelection}
         onChange={setSelection}
         provider={provider}
-        saveCustomCheck={saveCustomCheck}
+        saveCustomCheck={saveChecksCustomization}
         onResetCheckCustomization={resetChecksCustomization}
       />
     </>
