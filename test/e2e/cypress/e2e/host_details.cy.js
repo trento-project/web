@@ -1,3 +1,5 @@
+import * as hostDetailsPage from '../pageObject/host-details-po';
+
 import { selectedHost } from '../fixtures/host-details/selected_host';
 import {
   saptuneDetailsData,
@@ -8,223 +10,115 @@ import { createUserRequestFactory } from '@lib/test-utils/factories';
 
 context('Host Details', () => {
   before(() => {
-    cy.preloadTestData();
-    cy.task('startAgentHeartbeat', [selectedHost.agentId]);
-    cy.visit('/hosts');
-
-    cy.get(`#host-${selectedHost.agentId} > a`).click();
-    cy.url().should('include', `/hosts/${selectedHost.agentId}`);
+    // hostDetailsPage.preloadTestData();
+    hostDetailsPage.startAgentHeartbeat();
   });
 
   after(() => {
-    cy.task('stopAgentsHeartbeat');
+    hostDetailsPage.stopAgentsHeartbeat();
+  });
+
+  describe('Navigation to the selected host', () => {
+    it('should navigate to the selected host', () => {
+      hostDetailsPage.visit();
+      hostDetailsPage.clickSelectedHost();
+      hostDetailsPage.validateSelectedHostUrl();
+    });
   });
 
   describe('Detailed view for a specific host should be available', () => {
+    beforeEach(() => {
+      hostDetailsPage.visitSelectedHost();
+    });
+
     it('should highlight the hosts sidebar entry', () => {
-      cy.get('.tn-menu-item[href="/hosts"]')
-        .invoke('attr', 'aria-current')
-        .should('eq', 'page');
+      hostDetailsPage.hostNavigationItemIsHighlighted();
     });
 
     it('should show the correct cluster', () => {
-      cy.get('div')
-        .contains(/Cluster$/)
-        .next()
-        .should('contain', selectedHost.clusterName);
+      hostDetailsPage.clusterNameHasExpectedValue();
     });
 
     it('should show the correct agent version', () => {
-      cy.get('div')
-        .contains(/Agent Version$/)
-        .next()
-        .should('contain', selectedHost.agentVersion);
+      hostDetailsPage.agentVersionHasExpectedValue();
     });
 
     it('should show the correct IP addresses', () => {
-      cy.get('div')
-        .contains(/IP Addresses$/)
-        .next()
-        .should('contain', selectedHost.ipAddresses);
+      hostDetailsPage.ipAddressesHasExpectedValue();
     });
   });
 
   describe('Cluster details for this host should be displayed', () => {
     it(`should show a link to the cluster details view for ${selectedHost.clusterName}`, () => {
-      cy.get('.text-jungle-green-500 > .truncate')
-        .should('contain', selectedHost.clusterName)
-        .click();
-
-      cy.location('pathname').should(
-        'eq',
-        `/clusters/${selectedHost.clusterId}`
-      );
-      cy.go('back');
+      hostDetailsPage.visitSelectedHost();
+      hostDetailsPage.clickClusterNameLabel();
+      hostDetailsPage.validateUrl(`/clusters/${selectedHost.clusterId}`);
     });
   });
 
   describe('Cloud details for this host should be displayed', () => {
+    beforeEach(() => {
+      hostDetailsPage.visitSelectedHost();
+    });
+
     // Restore host provider data
     after(() => {
       cy.loadScenario('host-details-azure');
     });
 
-    it(`should show Azure cloud details correctly`, () => {
-      cy.contains('div.rounded-lg', 'Provider').as('providerDetailsBox');
-
-      cy.get('@providerDetailsBox')
-        .contains(/^Provider$/)
-        .next()
-        .should('contain', selectedHost.azureCloudDetails.provider);
-      cy.get('@providerDetailsBox')
-        .contains('VM Name')
-        .next()
-        .should('contain', selectedHost.azureCloudDetails.vmName);
-      cy.get('@providerDetailsBox')
-        .contains('Resource group')
-        .next()
-        .should('contain', selectedHost.azureCloudDetails.resourceGroup);
-      cy.get('@providerDetailsBox')
-        .contains('Location')
-        .next()
-        .should('contain', selectedHost.azureCloudDetails.location);
-      cy.get('@providerDetailsBox')
-        .contains('VM Size')
-        .next()
-        .should('contain', selectedHost.azureCloudDetails.vmSize);
-      cy.get('@providerDetailsBox')
-        .contains('Data disk number')
-        .next()
-        .should('contain', selectedHost.azureCloudDetails.dataDiskNumber);
-      cy.get('@providerDetailsBox')
-        .contains('Offer')
-        .next()
-        .should('contain', selectedHost.azureCloudDetails.offer);
-      cy.get('@providerDetailsBox')
-        .contains('SKU')
-        .next()
-        .should('contain', selectedHost.azureCloudDetails.sku);
+    it('should show Azure cloud details correctly', () => {
+      hostDetailsPage.expectedProviderIsDisplayed('azure');
+      hostDetailsPage.expectedVmNameIsDisplayed('azure');
+      hostDetailsPage.expectedResourceGroupIsDisplayed('azure');
+      hostDetailsPage.expectedLocationIsDisplayed('azure');
+      hostDetailsPage.expectedVmSizeIsDisplayed('azure');
+      hostDetailsPage.expectedDataDiskNumberIsDisplayed('azure');
+      hostDetailsPage.expectedOfferIsDisplayed('azure');
+      hostDetailsPage.expectedSkuIsDisplayed('azure');
     });
 
-    it(`should show AWS cloud details correctly`, () => {
-      cy.loadScenario('host-details-aws');
-
-      cy.contains('div.rounded-lg', 'Provider').as('providerDetailsBox');
-
-      cy.get('@providerDetailsBox').should(
-        'contain',
-        selectedHost.awsCloudDetails.provider
-      );
-
-      cy.get('@providerDetailsBox')
-        .contains(/^Provider$/)
-        .next()
-        .should('contain', selectedHost.awsCloudDetails.provider);
-      cy.get('@providerDetailsBox')
-        .contains('Instance ID')
-        .next()
-        .should('contain', selectedHost.awsCloudDetails.instanceId);
-      cy.get('@providerDetailsBox')
-        .contains('Account ID')
-        .next()
-        .should('contain', selectedHost.awsCloudDetails.accountId);
-      cy.get('@providerDetailsBox')
-        .contains('Region')
-        .next()
-        .should('contain', selectedHost.awsCloudDetails.region);
-      cy.get('@providerDetailsBox')
-        .contains('Instance type')
-        .next()
-        .should('contain', selectedHost.awsCloudDetails.instanceType);
-      cy.get('@providerDetailsBox')
-        .contains('Data disk number')
-        .next()
-        .should('contain', selectedHost.awsCloudDetails.dataDiskNumber);
-      cy.get('@providerDetailsBox')
-        .contains('AMI ID')
-        .next()
-        .should('contain', selectedHost.awsCloudDetails.amiId);
-      cy.get('@providerDetailsBox')
-        .contains('VPC ID')
-        .next()
-        .should('contain', selectedHost.awsCloudDetails.vpcId);
+    it('should show AWS cloud details correctly', () => {
+      hostDetailsPage.loadScenario('host-details-aws');
+      hostDetailsPage.expectedProviderIsDisplayed('aws');
+      hostDetailsPage.expectedInstanceIdIsDisplayed('aws');
+      hostDetailsPage.expectedAccountIdIsDisplayed('aws');
+      hostDetailsPage.expectedRegionIsDisplayed('aws');
+      hostDetailsPage.expectedInstanceTypeIsDisplayed('aws');
+      hostDetailsPage.expectedDataDiskNumberIsDisplayed('aws');
+      hostDetailsPage.expectedAmiIdIsDisplayed('aws');
+      hostDetailsPage.expectedVpcIdIsDisplayed('aws');
     });
 
-    it(`should show GCP cloud details correctly`, () => {
-      cy.loadScenario('host-details-gcp');
-
-      cy.contains('div.rounded-lg', 'Provider').as('providerDetailsBox');
-
-      cy.get('@providerDetailsBox').should(
-        'contain',
-        selectedHost.gcpCloudDetails.provider
-      );
-
-      cy.get('@providerDetailsBox')
-        .contains(/^Provider$/)
-        .next()
-        .should('contain', selectedHost.gcpCloudDetails.provider);
-      cy.get('@providerDetailsBox')
-        .contains('Instance name')
-        .next()
-        .should('contain', selectedHost.gcpCloudDetails.instanceName);
-      cy.get('@providerDetailsBox')
-        .contains('Project ID')
-        .next()
-        .should('contain', selectedHost.gcpCloudDetails.projectId);
-      cy.get('@providerDetailsBox')
-        .contains('Zone')
-        .next()
-        .should('contain', selectedHost.gcpCloudDetails.zone);
-      cy.get('@providerDetailsBox')
-        .contains('Machine type')
-        .next()
-        .should('contain', selectedHost.gcpCloudDetails.machineType);
-      cy.get('@providerDetailsBox')
-        .contains('Disk number')
-        .next()
-        .should('contain', selectedHost.gcpCloudDetails.diskNumber);
-      cy.get('@providerDetailsBox')
-        .contains('Image')
-        .next()
-        .should('contain', selectedHost.gcpCloudDetails.image);
-      cy.get('@providerDetailsBox')
-        .contains('Network')
-        .next()
-        .should('contain', selectedHost.gcpCloudDetails.network);
+    it('should show GCP cloud details correctly', () => {
+      hostDetailsPage.loadScenario('host-details-gcp');
+      hostDetailsPage.expectedProviderIsDisplayed('gcp');
+      hostDetailsPage.expectedInstanceNameIsDisplayed('gcp');
+      hostDetailsPage.expectedProjectIdIsDisplayed('gcp');
+      hostDetailsPage.expectedZoneIsDisplayed('gcp');
+      hostDetailsPage.expectedMachineTypeIsDisplayed('gcp');
+      hostDetailsPage.expectedDiskNumberIsDisplayed('gcp');
+      hostDetailsPage.expectedImageIsDisplayed('gcp');
+      hostDetailsPage.expectedNetworkIsDisplayed('gcp');
     });
 
     it(`should show KVM cloud details correctly`, () => {
-      cy.loadScenario('host-details-kvm');
-
-      cy.get('div')
-        .contains(/^Provider$/)
-        .next()
-        .should('contain', selectedHost.kvmCloudDetails.provider);
+      hostDetailsPage.loadScenario('host-details-kvm');
+      hostDetailsPage.expectedProviderIsDisplayed('kvm');
     });
 
     it(`should show vmware cloud details correctly`, () => {
-      cy.loadScenario('host-details-vmware');
-
-      cy.get('div')
-        .contains(/^Provider$/)
-        .next()
-        .should('contain', selectedHost.vmwareCloudDetails.provider);
+      hostDetailsPage.loadScenario('host-details-vmware');
+      hostDetailsPage.expectedProviderIsDisplayed('vmware');
     });
 
     it(`should show Nutanix cloud details correctly`, () => {
-      cy.loadScenario('host-details-nutanix');
-
-      cy.get('div')
-        .contains(/^Provider$/)
-        .next()
-        .should('contain', selectedHost.nutanixCloudDetails.provider);
+      hostDetailsPage.loadScenario('host-details-nutanix');
+      hostDetailsPage.expectedProviderIsDisplayed('nutanix');
     });
 
     it(`should display provider not recognized message`, () => {
-      cy.loadScenario('host-details-unknown');
-
-      cy.get('div').should('contain', 'Provider not recognized');
+      hostDetailsPage.loadScenario('host-details-unknown');
+      hostDetailsPage.notRecognizedProviderIsDisplayed();
     });
   });
 
