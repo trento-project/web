@@ -25,7 +25,7 @@ const buildCustomCheckPayload = (checkID, values) => {
 
 const appliedValue = (value) => value?.custom_value ?? value?.current_value;
 
-const whichInputType = (value) => {
+const detectType = (value) => {
   if (isBoolean(value)) {
     return 'boolean';
   }
@@ -91,7 +91,7 @@ function CheckCustomizationModal({
             currentValue={appliedValue(value)}
             inputIsLocked={!canCustomize}
             handleInput={handleCustomValueInput}
-            inputType={whichInputType(appliedValue(value))}
+            inputType={detectType(appliedValue(value))}
           />
         ))}
 
