@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
-import { noop } from 'lodash';
+import { noop, isBoolean, toNumber, isEmpty } from 'lodash';
 
 import Modal from '@common/Modal';
 import Button from '@common/Button';
-import Input from '@common/Input';
 import Label from '@common/Label';
 import ProviderLabel from '@common/ProviderLabel';
-import Tooltip from '@common/Tooltip';
+import Input from '@common/Input';
+
 import CheckableWarningMessage from '@common/CheckableWarningMessage';
 import { UNKNOWN_PROVIDER } from '@lib/model';
+
+import CheckCustomizationInput from './CheckCustomizationInput';
 
 const checkBoxWarningText =
   'Trento & SUSE cannot be held liable for damages if system is unable to function due to custom check value.';
@@ -21,20 +23,14 @@ const buildCustomCheckPayload = (checkID, values) => {
   return payload;
 };
 
-const renderLabelWithTooltip = (name) => {
-  const labelContent = (
-    <Label className="block truncate max-w-[200px] sm:max-w-[250px] md:max-w-[300px]">
-      {name}:
-    </Label>
-  );
+const appliedValue = (value) => value?.custom_value ?? value?.current_value;
 
-  return name?.length > 25 ? (
-    <Tooltip zIndex="50" content={name}>
-      {labelContent}
-    </Tooltip>
-  ) : (
-    labelContent
-  );
+const detectType = (value) => {
+  if (isBoolean(value)) {
+    return 'boolean';
+  }
+
+  return 'default';
 };
 
 function CheckCustomizationModal({
@@ -51,6 +47,7 @@ function CheckCustomizationModal({
   const [checked, setChecked] = useState(customized);
   const [customValues, setCustomValues] = useState({});
   const canCustomize = customized || checked;
+  const canSave = !isEmpty(customValues) && canCustomize;
 
   const checkTitle = `Check: ${id}`;
 
@@ -63,7 +60,7 @@ function CheckCustomizationModal({
   const handleCustomValueInput = (name, value) => {
     setCustomValues((previousValues) => ({
       ...previousValues,
-      [name]: value,
+      [name]: isBoolean(value) ? value : toNumber(value) || value,
     }));
   };
 
@@ -87,24 +84,15 @@ function CheckCustomizationModal({
       {values
         ?.filter(({ customizable }) => customizable)
         .map((value) => (
-          <div
-            key={`${value?.name}_${value?.current_value}`}
-            className="flex items-center space-x-2 mb-8"
-          >
-            <div className="flex-col w-1/3 min-w-[200px]">
-              {renderLabelWithTooltip(value?.name)}
-              <Label>(Default: {value?.current_value})</Label>
-            </div>
-
-            <Input
-              className="w-full"
-              onChange={(inputEvent) =>
-                handleCustomValueInput(value?.name, inputEvent.target.value)
-              }
-              initialValue={value?.custom_value || value?.current_value}
-              disabled={!canCustomize}
-            />
-          </div>
+          <CheckCustomizationInput
+            key={value?.name}
+            name={value?.name}
+            defaultCheckValue={value?.current_value}
+            currentValue={appliedValue(value)}
+            inputIsLocked={!canCustomize}
+            handleInput={handleCustomValueInput}
+            inputType={detectType(appliedValue(value))}
+          />
         ))}
 
       <div className="flex items-center space-x-2 mb-8">
@@ -125,7 +113,7 @@ function CheckCustomizationModal({
         <Button
           type="default-fit"
           className="w-1/2"
-          disabled={!canCustomize}
+          disabled={!canSave}
           onClick={() => {
             onSave(buildCustomCheckPayload(id, customValues));
             resetStateAndClose();
