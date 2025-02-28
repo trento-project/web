@@ -65,6 +65,7 @@ function ClusterSettingsPage() {
     checksSelection,
     checksSelectionLoading,
     checksSelectionFetchError,
+    saveChecksCustomization,
   } = useChecksSelection();
 
   const saving = useSelector(isSaving(TARGET_CLUSTER, clusterID));
@@ -109,16 +110,14 @@ function ClusterSettingsPage() {
     dispatch(executionRequested(clusterID, clusterHosts, selectedChecks));
   };
 
-  const saveCustomCheck = (values) => {
-    // ToDo for later when we hook up frontend and backend.
-    const { checksID, customValues } = values;
-    const payload = {
-      checkID: checksID,
-      groupID: clusterID,
-      customCheckValues: customValues,
-    };
-    // dispatch payload in future pr
-    return payload;
+  const saveCustomCheck = ({ checksID, customValues }) => {
+    dispatch(
+      saveChecksCustomization({
+        checkID: checksID,
+        groupID: clusterID,
+        customValues,
+      })
+    );
   };
 
   return (

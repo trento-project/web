@@ -27,20 +27,19 @@ const getGroupSelectedState = (checks, selectedChecks) => {
   return NONE_CHECKED;
 };
 
-const defaultSelectedChecks = [];
 const defaultAbilities = [];
 
 function ChecksSelection({
   groupID,
   catalog,
-  selectedChecks = defaultSelectedChecks,
+  selectedChecks = [],
   loading = false,
   catalogError,
   userAbilities = defaultAbilities,
   onUpdateCatalog,
   onChange,
   provider,
-  saveCustomCheck = () => {},
+  saveCustomCheck = noop,
   onResetCheckCustomization = noop,
 }) {
   const [isCheckCustomizationModalOpen, setIsCheckCustomizationModalOpen] =
@@ -76,7 +75,6 @@ function ChecksSelection({
       onChange(uniq([...selectedChecks, ...groupChecks]));
     }
   };
-
   return (
     <CatalogContainer
       onRefresh={onUpdateCatalog}
@@ -134,7 +132,6 @@ function ChecksSelection({
           values={selectedCheck?.values}
           description={selectedCheck?.description}
           customized={selectedCheck?.customized}
-          selectedCheck={selectedCheck}
           provider={provider}
           onClose={() => setIsCheckCustomizationModalOpen(false)}
           onSave={saveCustomCheck}
