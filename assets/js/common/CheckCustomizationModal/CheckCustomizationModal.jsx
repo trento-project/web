@@ -15,14 +15,13 @@ import CheckCustomizationInput from './CheckCustomizationInput';
 const checkBoxWarningText =
   'Trento & SUSE cannot be held liable for damages if system is unable to function due to custom check value.';
 
-const buildCustomCheckPayload = (checkID, values) => {
-  const payload = {
-    checksID: checkID,
-    customValues: values,
-  };
-  return payload;
-};
-
+const buildCustomCheckPayload = (checksID, values) => ({
+  checksID,
+  customValues: Object.entries(values).map(([name, value]) => ({
+    name,
+    value,
+  })),
+});
 const appliedValue = (value) => value?.custom_value ?? value?.current_value;
 
 const detectType = (value) => {
@@ -115,8 +114,8 @@ function CheckCustomizationModal({
           className="w-1/2"
           disabled={!canSave}
           onClick={() => {
-            onSave(buildCustomCheckPayload(id, customValues));
             resetStateAndClose();
+            onSave(buildCustomCheckPayload(id, customValues));
           }}
         >
           Save
