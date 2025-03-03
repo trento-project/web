@@ -132,7 +132,7 @@ function Filter({ options, title, value = [], onChange, className }) {
                   >
                     {(() => {
                       switch (true) {
-                        case (typeof icon !== 'undefined' && icon.length > 0):
+                        case typeof icon !== 'undefined' && icon.length > 0:
                           return (
                             <div className="flex items-center">
                               <span className="flex items-center">
@@ -142,9 +142,13 @@ function Filter({ options, title, value = [], onChange, className }) {
                           );
                         default:
                           return (
-                            <div className="flex items-center"> <span className="ml-3 block font-normal truncate">{label}</span></div>
+                            <div className="flex items-center">
+                              {' '}
+                              <span className="ml-3 block font-normal truncate">
+                                {label}
+                              </span>
+                            </div>
                           );
-
                       }
                     })()}
                     {hasOne(parsedValue, [key]) && (
