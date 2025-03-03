@@ -23,7 +23,7 @@ import {
 
 import ActivityLogDetailModal from '@common/ActivityLogDetailsModal';
 
-const logLevelToIcon = {
+export const logLevelToIcon = {
   [LEVEL_DEBUG]: <EOS_BUG_REPORT_OUTLINED className="w-full" />,
   [LEVEL_INFO]: <EOS_INFO_OUTLINED className="w-full" />,
   [LEVEL_WARNING]: <EOS_WARNING_OUTLINED className="fill-yellow-500 w-full" />,

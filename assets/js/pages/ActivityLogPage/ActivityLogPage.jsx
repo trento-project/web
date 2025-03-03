@@ -22,7 +22,7 @@ import { getUserProfile } from '@state/selectors/user';
 
 import Button from '@common/Button';
 import PageHeader from '@common/PageHeader';
-import ActivityLogOverview from '@common/ActivityLogOverview';
+import ActivityLogOverview, { logLevelToIcon } from '@common/ActivityLogOverview';
 import ComposedFilter from '@common/ComposedFilter';
 import Pagination, { defaultItemsPerPageOptions } from '@common/Pagination';
 import Spinner from '@common/Spinner';
@@ -233,6 +233,7 @@ function ActivityLogPage() {
       options: ACTIVITY_LOG_LEVELS.map((level) => [
         level,
         logLevelToLabel[level],
+        logLevelToIcon[level]
       ]),
       className: 'col-span-1',
     },

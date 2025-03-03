@@ -27,7 +27,7 @@ function Filter({ options, title, value = [], onChange, className }) {
 
   const labeledOptions = options
     .filter((option) => option !== undefined && option !== null)
-    .map((option) => (typeof option === 'string' ? [option, option] : option));
+    .map((option) => (typeof option === 'string' ? [option, option, ''] : option));
 
   const filteredOptions = labeledOptions.filter((option) =>
     option[0].toLowerCase().includes(query.toLowerCase())
@@ -119,7 +119,7 @@ function Filter({ options, title, value = [], onChange, className }) {
                 aria-labelledby="listbox-label"
                 className="max-h-56 py-2 text-base overflow-auto focus:outline-none sm:text-sm"
               >
-                {filteredOptions.map(([key, label], index) => (
+                {filteredOptions.map(([key, label, icon], index) => (
                   <li
                     key={index}
                     role="option"
@@ -128,11 +128,10 @@ function Filter({ options, title, value = [], onChange, className }) {
                     className="text-gray-900 cursor-default select-none hover:bg-jungle-green-500 hover:text-white relative py-2 pl-3 pr-9"
                     onClick={() => onChange(toggle(key, parsedValue))}
                   >
-                    <div className="flex items-center">
-                      <span className="ml-3 block font-normal truncate">
-                        {label}
-                      </span>
-                    </div>
+                  {(() => {
+                    switch (icon) {
+                      case '': return <div className="flex items-center">{label}</div>;
+                      default: return <div className="flex items-center"><span className="flex items-center">{icon} {label}</span></div>; }})()}
                     {hasOne(parsedValue, [key]) && (
                       <span className="absolute inset-y-0 right-0 flex items-center pr-4">
                         <EOS_CHECK size="m" />
