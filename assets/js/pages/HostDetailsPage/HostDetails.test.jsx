@@ -1,5 +1,5 @@
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import 'intersection-observer';
 import '@testing-library/jest-dom';
@@ -8,8 +8,14 @@ import { networkClient } from '@lib/network';
 import MockAdapter from 'axios-mock-adapter';
 
 import { renderWithRouter } from '@lib/test-utils';
-import { hostFactory, saptuneStatusFactory } from '@lib/test-utils/factories';
+import {
+  hostFactory,
+  saptuneStatusFactory,
+  databaseInstanceFactory,
+} from '@lib/test-utils/factories';
 import { TUNING_VALUES } from '@pages/SaptuneDetails/SaptuneDetails.test';
+import { DATABASE_TYPE } from '@lib/model/sapSystems';
+import { SAPTUNE_SOLUTION_APPLY } from '@lib/operations';
 
 import HostDetails from './HostDetails';
 
@@ -378,6 +384,107 @@ describe('HostDetails component', () => {
       expect(
         screen.getByText('No check results available.')
       ).toBeInTheDocument();
+    });
+  });
+
+  describe('operations', () => {
+    it('should run Saptune apply operation when clicking apply button in modal', async () => {
+      const user = userEvent.setup({ delay: null });
+      const mockRequestSolution = jest.fn();
+      const saptuneStatus = saptuneStatusFactory.build({
+        enabled_solution: null,
+      });
+      const sapInstances = databaseInstanceFactory
+        .buildList(1)
+        .map((instance) => ({ ...instance, type: DATABASE_TYPE }));
+
+      renderWithRouter(
+        <HostDetails
+          agentVersion="2.0.0"
+          userAbilities={userAbilities}
+          operationsEnabled
+          requestOperation={mockRequestSolution}
+          sapInstances={sapInstances}
+          saptuneStatus={saptuneStatus}
+        />
+      );
+
+      const operationsButton = screen.getByRole('button', {
+        name: 'Operations',
+      });
+      await user.click(operationsButton);
+
+      const menuItem = screen.getByRole('menuitem', {
+        name: 'Apply Saptune Solution',
+      });
+      expect(menuItem).toBeEnabled();
+      await user.click(menuItem);
+
+      await user.click(screen.getByRole('checkbox'));
+      expect(screen.getByText('Apply')).toBeDisabled();
+
+      await user.click(
+        screen.getByRole('button', { name: 'Select a saptune solution' })
+      );
+
+      expect(screen.getByText('HANA')).toBeInTheDocument();
+
+      await user.click(screen.getByText('HANA'));
+      await user.click(screen.getByText('Apply'));
+
+      expect(mockRequestSolution).toHaveBeenCalledWith(SAPTUNE_SOLUTION_APPLY, {
+        solution: 'HANA',
+      });
+    });
+
+    it('should show Saptune apply operation running', async () => {
+      const user = userEvent.setup();
+
+      renderWithRouter(
+        <HostDetails
+          agentVersion="2.0.0"
+          userAbilities={userAbilities}
+          operationsEnabled
+          runningOperation={{ operation: SAPTUNE_SOLUTION_APPLY }}
+        />
+      );
+
+      const operationsButton = screen.getByRole('button', {
+        name: 'Operations',
+      });
+      await user.click(operationsButton);
+
+      const menuItem = screen.getByRole('menuitem', {
+        name: 'Apply Saptune Solution',
+      });
+      expect(menuItem).toBeDisabled();
+
+      const { getByTestId } = within(menuItem);
+
+      expect(getByTestId('eos-svg-component')).toBeInTheDocument();
+    });
+
+    it('should show Saptune apply operation disabled', async () => {
+      const user = userEvent.setup();
+
+      renderWithRouter(
+        <HostDetails
+          agentVersion="2.0.0"
+          userAbilities={userAbilities}
+          operationsEnabled
+        />
+      );
+
+      const operationsButton = screen.getByRole('button', {
+        name: 'Operations',
+      });
+      await user.click(operationsButton);
+
+      expect(
+        screen.getByRole('menuitem', {
+          name: 'Apply Saptune Solution',
+        })
+      ).toBeDisabled();
     });
   });
 

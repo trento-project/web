@@ -19,6 +19,7 @@ import {
   getSoftwareUpdatesStats,
   getSoftwareUpdatesErrors,
 } from '@state/selectors/softwareUpdates';
+import { getRunningOperation } from '@state/selectors/runningOperations';
 
 import { getHost, getHostSelectedChecks } from '@state/selectors/host';
 import { isSaving } from '@state/selectors/checksSelection';
@@ -27,6 +28,7 @@ import {
   updateLastExecution,
   hostExecutionRequested,
 } from '@state/lastExecutions';
+import { operationRequested } from '@state/runningOperations';
 
 import { deregisterHost } from '@state/hosts';
 import { fetchSoftwareUpdates } from '@state/softwareUpdates';
@@ -38,6 +40,7 @@ import {
 import HostDetails from './HostDetails';
 
 const chartsEnabled = getFromConfig('chartsEnabled');
+const operationsEnabled = getFromConfig('operationsEnabled');
 
 function HostDetailsPage() {
   const { hostID } = useParams();
@@ -83,6 +86,8 @@ function HostDetailsPage() {
   const softwareUpdatesTooltip = getSoftwareUpdatesErrorTooltip(
     softwareUpdatesErrors
   );
+
+  const runningOperation = useSelector(getRunningOperation(hostID));
 
   const getExportersStatus = async () => {
     const { data } = await networkClient.get(
@@ -139,12 +144,17 @@ function HostDetailsPage() {
       softwareUpdatesErrorMessage={softwareUpdatesErrorMessage}
       softwareUpdatesTooltip={softwareUpdatesTooltip}
       userAbilities={abilities}
+      operationsEnabled={operationsEnabled}
+      runningOperation={runningOperation}
       cleanUpHost={() => {
         dispatch(deregisterHost({ id: hostID, hostname: host.hostname }));
       }}
       requestHostChecksExecution={() => {
         dispatch(hostExecutionRequested(host, hostSelectedChecks, navigate));
       }}
+      requestOperation={(operation, params) =>
+        dispatch(operationRequested({ groupID: hostID, operation, params }))
+      }
       navigate={navigate}
     />
   );
