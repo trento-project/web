@@ -26,7 +26,7 @@ export const getChecksSelection = (groupID, env) =>
     params: env,
   });
 
-export const saveCheckCustomization = ({ checkID, groupID, customValues }) =>
+export const saveCheckCustomization = (checkID, groupID, customValues) =>
   networkClient.post(
     `/api/v1/groups/${groupID}/checks/${checkID}/customization`,
     { values: customValues },
