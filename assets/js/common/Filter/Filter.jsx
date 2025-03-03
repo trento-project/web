@@ -135,8 +135,11 @@ function Filter({ options, title, value = [], onChange, className }) {
                         case icon instanceof Object === true:
                           return (
                             <div className="flex items-center">
-                              <span className="flex items-center">
-                                {icon} {label}
+                              <span>
+                                {icon} 
+                              </span>
+                              <span>
+                                {label}
                               </span>
                             </div>
                           );
