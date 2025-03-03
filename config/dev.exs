@@ -96,21 +96,28 @@ unless IEx.started?() do
     ]
 end
 
+amqp_connection =
+  if System.get_env("USE_LOCAL_RABBIT_TLS") do
+    "amqps://trento:trento@localhost:5671?certfile=container_fixtures/rabbitmq/certs/client_web.trento.local_certificate.pem&keyfile=container_fixtures/rabbitmq/certs/client_web.trento.local_key.pem&verify=verify_peer&cacertfile=container_fixtures/rabbitmq/certs/ca_certificate.pem"
+  else
+    "amqp://trento:trento@localhost:5673"
+  end
+
 config :trento, Trento.Infrastructure.Messaging.Adapter.AMQP,
   checks: [
     consumer: [
-      connection: "amqp://trento:trento@localhost:5673"
+      connection: amqp_connection
     ],
     publisher: [
-      connection: "amqp://trento:trento@localhost:5673"
+      connection: amqp_connection
     ]
   ],
   operations: [
     consumer: [
-      connection: "amqp://trento:trento@localhost:5673"
+      connection: amqp_connection
     ],
     publisher: [
-      connection: "amqp://trento:trento@localhost:5673"
+      connection: amqp_connection
     ]
   ]
 
