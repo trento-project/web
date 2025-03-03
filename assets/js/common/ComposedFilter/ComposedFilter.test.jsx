@@ -300,7 +300,7 @@ describe('ComposedFilter component', () => {
       )
     );
 
-    await act(() => userEvent.click(screen.getByText('Clear Filters')));
+    await act(() => userEvent.click(screen.getByText('Reset Filters')));
 
     expect(mockOnChange).toHaveBeenCalledTimes(1);
     expect(mockOnChange).toHaveBeenCalledWith({});
