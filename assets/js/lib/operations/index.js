@@ -10,7 +10,7 @@ const OPERATION_LABELS = {
   [SAPTUNE_SOLUTION_APPLY]: 'Apply Saptune solution',
 };
 
-const OPERATIONS_INTERNAL_MAP = {
+const OPERATION_INTERNAL_NAMES = {
   'saptuneapplysolution@v1': SAPTUNE_SOLUTION_APPLY,
 };
 
@@ -26,7 +26,7 @@ export const getOperationLabel = (operation) =>
   get(OPERATION_LABELS, operation, 'unknown');
 
 export const getOperationInternalName = (operation) =>
-  get(OPERATIONS_INTERNAL_MAP, operation, 'unknown');
+  get(OPERATION_INTERNAL_NAMES, operation, 'unknown');
 
 export const getOperationResourceType = (operation) =>
   get(OPERATION_RESOURCE_TYPES, operation, 'unknown');
