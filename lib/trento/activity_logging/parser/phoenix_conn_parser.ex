@@ -129,6 +129,22 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
       }),
       do: %{user_id: Map.get(params, :id)}
 
+  def get_activity_metadata(
+        :operation_requested,
+        %Plug.Conn{
+          params: params,
+          body_params: body_params,
+          resp_body: resp_body
+        }
+      ) do
+    %{
+      resource_id: Map.get(params, :id),
+      operation: Map.get(params, :operation),
+      operation_id: resp_body |> Jason.decode!() |> Map.get("operation_id"),
+      params: body_params
+    }
+  end
+
   def get_activity_metadata(_, _), do: %{}
 
   defp redact(request_body, key) do

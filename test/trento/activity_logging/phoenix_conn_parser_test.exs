@@ -113,6 +113,26 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
                  })
       end
     end
+
+    test "should extract operation metadata from requested operation", %{conn: conn} do
+      resource_id = Faker.UUID.v4()
+      operation_id = Faker.UUID.v4()
+      operation = Faker.Cat.name()
+      params = %{"key" => "value"}
+
+      assert %{
+               :resource_id => resource_id,
+               :operation => operation,
+               :operation_id => operation_id,
+               :params => params
+             } ==
+               PhoenixConnParser.get_activity_metadata(:operation_requested, %Plug.Conn{
+                 conn
+                 | params: %{id: resource_id, operation: operation},
+                   body_params: params,
+                   resp_body: Jason.encode!(%{operation_id: operation_id})
+               })
+    end
   end
 
   defp assert_for_relevant_activity(assertion_function) do
