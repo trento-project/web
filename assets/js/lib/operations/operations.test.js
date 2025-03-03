@@ -4,9 +4,11 @@ import { requestHostOperation } from '@lib/api/operations';
 
 import {
   getOperationLabel,
+  getOperationInternalName,
   getOperationResourceType,
   getOperationRequestFunc,
   operationSucceeded,
+  operationRunning,
 } from '.';
 
 describe('operations', () => {
@@ -22,6 +24,22 @@ describe('operations', () => {
   ])(`should return the operation $operation label`, ({ operation, label }) => {
     expect(getOperationLabel(operation)).toBe(label);
   });
+
+  it.each([
+    {
+      operation: 'unknown',
+      name: 'unknown',
+    },
+    {
+      operation: 'saptuneapplysolution@v1',
+      name: 'saptune_solution_apply',
+    },
+  ])(
+    `should return the operation $operation internal name`,
+    ({ operation, name }) => {
+      expect(getOperationInternalName(operation)).toBe(name);
+    }
+  );
 
   it.each([
     {
@@ -59,5 +77,10 @@ describe('operations', () => {
     expect(operationSucceeded('UPDATED')).toBeTruthy();
     expect(operationSucceeded('NOT_UPDATED')).toBeTruthy();
     expect(operationSucceeded('FAILED')).toBeFalsy();
+  });
+
+  it('should check if an operation is running', () => {
+    expect(operationRunning({ status: 'running' })).toBeTruthy();
+    expect(operationRunning({ status: 'completed' })).toBeFalsy();
   });
 });
