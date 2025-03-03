@@ -1,5 +1,5 @@
 import React from 'react';
-import { act, screen, within } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import 'intersection-observer';
 import '@testing-library/jest-dom';
@@ -389,8 +389,11 @@ describe('HostDetails component', () => {
 
   describe('operations', () => {
     it('should run Saptune apply operation when clicking apply button in modal', async () => {
-      const user = userEvent.setup();
+      const user = userEvent.setup({ delay: null });
       const mockRequestSolution = jest.fn();
+      const saptuneStatus = saptuneStatusFactory.build({
+        enabled_solution: null,
+      });
       const sapInstances = databaseInstanceFactory
         .buildList(1)
         .map((instance) => ({ ...instance, type: DATABASE_TYPE }));
@@ -402,6 +405,7 @@ describe('HostDetails component', () => {
           operationsEnabled
           requestOperation={mockRequestSolution}
           sapInstances={sapInstances}
+          saptuneStatus={saptuneStatus}
         />
       );
 
@@ -413,28 +417,24 @@ describe('HostDetails component', () => {
       const menuItem = screen.getByRole('menuitem', {
         name: 'Apply Saptune Solution',
       });
+      expect(menuItem).toBeEnabled();
       await user.click(menuItem);
 
-      const selectSolution = screen.getByText('Select a saptune solution');
-      expect(selectSolution).toBeDisabled();
+      await user.click(screen.getByRole('checkbox'));
+      expect(screen.getByText('Apply')).toBeDisabled();
 
-      const checkbox = screen.getByRole('checkbox');
-      await user.click(checkbox);
-
-      const selectSolutionEnabled = screen.getByText(
-        'Select a saptune solution'
+      await user.click(
+        screen.getByRole('button', { name: 'Select a saptune solution' })
       );
-      expect(selectSolutionEnabled).toBeEnabled();
 
-      await user.click(selectSolutionEnabled);
+      expect(screen.getByText('HANA')).toBeInTheDocument();
 
-      const hanaSolution = screen.getByRole('option', { name: 'HANA'});
-      await user.click(hanaSolution);
+      await user.click(screen.getByText('HANA'));
+      await user.click(screen.getByText('Apply'));
 
-      const apply = screen.getByRole('button', { name: 'Apply' });
-      await user.click(apply);
-
-      expect(mockRequestSolution).toHaveBeenCalledWith({ solution: 'HANA' });
+      expect(mockRequestSolution).toHaveBeenCalledWith(SAPTUNE_SOLUTION_APPLY, {
+        solution: 'HANA',
+      });
     });
 
     it('should show Saptune apply operation running', async () => {
