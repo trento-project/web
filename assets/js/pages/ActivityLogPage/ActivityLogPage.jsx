@@ -314,6 +314,7 @@ function ActivityLogPage() {
             className="grid-rows-2"
             filters={filters}
             autoApply={false}
+            resetValue={{severity: ["info", "warning", "critical"]}}
             value={searchParamsToFilterValue(searchParams)}
             onChange={pipe(
               setFilterValueToSearchParams,

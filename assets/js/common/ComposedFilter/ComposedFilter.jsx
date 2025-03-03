@@ -53,6 +53,7 @@ function ComposedFilter({
   filters = [],
   onChange,
   value: initialValue = {},
+  resetValue = {},
   autoApply,
   children,
 }) {
@@ -110,12 +111,12 @@ function ComposedFilter({
               <Button
                 type="primary-white"
                 onClick={() => {
-                  setValue({});
+                  setValue(resetValue);
                   setIsChanged(false);
-                  onChange({});
+                  onChange(resetValue);
                 }}
               >
-                Clear Filters
+                Reset Filters
               </Button>
             </div>
             <div />
