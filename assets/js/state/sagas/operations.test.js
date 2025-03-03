@@ -21,7 +21,7 @@ const axiosMock = new MockAdapter(networkClient);
 const hostOperationRequestURL = (hostID, operation) =>
   `/hosts/${hostID}/operations/${operation}`;
 
-const getOperationsURL = () => `/api/v1/operations/executions`;
+const getOperationExecutionsURL = () => `/api/v1/operations/executions`;
 
 describe('operations saga', () => {
   beforeEach(() => {
@@ -136,7 +136,7 @@ describe('operations saga', () => {
       const groupID = faker.string.uuid();
       const operation = 'saptuneapplysolution@v1';
 
-      axiosMock.onGet(getOperationsURL(groupID)).reply(200, {
+      axiosMock.onGet(getOperationExecutionsURL(groupID)).reply(200, {
         items: [{ operation, status: 'running' }],
         total_count: 1,
       });
@@ -154,7 +154,7 @@ describe('operations saga', () => {
       const groupID = faker.string.uuid();
       const operation = faker.lorem.word();
 
-      axiosMock.onGet(getOperationsURL(groupID)).reply(200, {
+      axiosMock.onGet(getOperationExecutionsURL(groupID)).reply(200, {
         items: [{ operation, status: 'completed' }],
         total_count: 1,
       });
@@ -169,7 +169,7 @@ describe('operations saga', () => {
     it('should not update running operations state for a group when there is not any operation', async () => {
       const groupID = faker.string.uuid();
 
-      axiosMock.onGet(getOperationsURL(groupID)).reply(200, {
+      axiosMock.onGet(getOperationExecutionsURL(groupID)).reply(200, {
         items: [],
         total_count: 0,
       });
@@ -184,7 +184,7 @@ describe('operations saga', () => {
     it('should not update running operations state for a group when the api call fails', async () => {
       const groupID = faker.string.uuid();
 
-      axiosMock.onGet(getOperationsURL(groupID)).reply(400, {});
+      axiosMock.onGet(getOperationExecutionsURL(groupID)).reply(400, {});
 
       const dispatched = await recordSaga(updateRunningOperation, {
         payload: { groupID },
