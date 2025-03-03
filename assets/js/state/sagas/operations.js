@@ -9,7 +9,7 @@ import {
   operationRunning,
   operationSucceeded,
 } from '@lib/operations';
-import { getOperations } from '@lib/api/operations';
+import { getOperationExecutions } from '@lib/api/operations';
 import { notify } from '@state/notifications';
 import {
   OPERATION_COMPLETED,
@@ -92,7 +92,10 @@ export function* updateRunningOperation({ payload }) {
   try {
     const {
       data: { items: operations, total_count: totalCount },
-    } = yield call(getOperations, { group_id: groupID, items_per_page: 1 });
+    } = yield call(getOperationExecutions, {
+      group_id: groupID,
+      items_per_page: 1,
+    });
     if (totalCount === 1 && operationRunning(operations[0])) {
       const operation = getOperationInternalName(operations[0].operation);
       yield put(setRunningOperation({ groupID, operation }));
