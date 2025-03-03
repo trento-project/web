@@ -131,12 +131,8 @@ function Filter({ options, title, value = [], onChange, className }) {
                     onClick={() => onChange(toggle(key, parsedValue))}
                   >
                     {(() => {
-                      switch (icon) {
-                        case '':
-                          return (
-                            <div className="flex items-center">{label}</div>
-                          );
-                        default:
+                      switch (true) {
+                        case (typeof icon !== 'undefined' && icon.length > 0):
                           return (
                             <div className="flex items-center">
                               <span className="flex items-center">
@@ -144,6 +140,11 @@ function Filter({ options, title, value = [], onChange, className }) {
                               </span>
                             </div>
                           );
+                        default:
+                          return (
+                            <div className="flex items-center"> <span className="ml-3 block font-normal truncate">{label}</span></div>
+                          );
+
                       }
                     })()}
                     {hasOne(parsedValue, [key]) && (
