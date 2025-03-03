@@ -65,8 +65,14 @@ services:
       - pg_data:/var/lib/postgresql/data
       - ./container_fixtures/keycloak/init_keycloak_db.sh:/docker-entrypoint-initdb.d/init_keycloak_db.sh
   rabbitmq:
+    volumes:
+      - ./container_fixtures/rabbitmq/certs/ca_certificate.pem:/etc/ssl/certs/ca_certificate.pem
+      - ./container_fixtures/rabbitmq/certs/server_rabbit.trento.local_key.pem:/var/lib/rabbitmq/server_rabbit.trento.local_key.pem
+      - ./container_fixtures/rabbitmq/certs/server_rabbit.trento.local_certificate.pem:/var/lib/rabbitmq/server_rabbit.trento.local_certificate.pem
+      - ./container_fixtures/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
     image: rabbitmq:3.12.6-management-alpine
     ports:
+      - 5671:5671
       - 5673:5672
       - 15673:15672
     environment:
