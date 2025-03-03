@@ -19,6 +19,7 @@ import {
   EOS_KEYBOARD_DOUBLE_ARROW_RIGHT,
   EOS_SUPERVISED_USER_CIRCLE_OUTLINED,
   EOS_ASSIGNMENT,
+  EOS_MENU_BOOK,
 } from 'eos-icons-react';
 
 import TrentoLogo from '@static/trento-logo-stacked.svg';
@@ -179,18 +180,20 @@ function Layout() {
                   </ForbiddenGuard>
                 ))}
               </div>
-              <div
-                className={classNames('absolute bottom-24 left-4', {
-                  hidden: isCollapsed,
-                })}
-              >
+              <div className="absolute bottom-24 left-4">
                 <a
                   href="https://www.trento-project.io/docs/"
                   target="_blank"
-                  className="block max-w-60 text-jungle-green-500 font-bold bg-jungle-green-100 py-2 px-4 rounded-md hover:opacity-75"
+                  className={classNames(
+                    'block max-w-60 text-jungle-green-500 font-bold bg-jungle-green-100 py-2 rounded-md hover:opacity-75',
+                    {
+                      'px-2': isCollapsed,
+                      'px-4': !isCollapsed,
+                    }
+                  )}
                   rel="noreferrer"
                 >
-                  Read more in Trento docs
+                  {isCollapsed ? <EOS_MENU_BOOK /> : 'Read more in Trento docs'}
                 </a>
               </div>
             </nav>
