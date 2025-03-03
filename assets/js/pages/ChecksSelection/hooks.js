@@ -67,10 +67,13 @@ export const useChecksSelection = () => {
     }
   };
 
-  const saveChecksCustomization = async (payload) => {
-    const { checkID, customValues } = payload;
+  const saveChecksCustomization = async ({
+    checkID,
+    groupID,
+    customValues,
+  }) => {
     try {
-      await saveCheckCustomization(payload);
+      await saveCheckCustomization(checkID, groupID, customValues);
       pipe(
         map(saveCheck(checkID, customValues)),
         setChecksSelection,

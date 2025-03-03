@@ -92,6 +92,101 @@ describe('useChecksSelection', () => {
     expect(hookResult.current.checksSelectionFetchError).toEqual(null);
   });
 
+  it('should successfully save check customization', async () => {
+    let hookResult;
+    const [hookWrapper, store] = hookWrapperWithState();
+    const customValues = { name: 'checkValueName', value: '222' };
+    const checksSelection = [
+      selectableCheckFactory.build({
+        values: [{ name: customValues.name, current_value: '123' }],
+        customized: false,
+      }),
+      selectableCheckFactory.build({ customized: false }),
+    ];
+    const groupID = faker.string.uuid();
+    const checkID = checksSelection[0].id;
+
+    await act(async () => {
+      const { result } = renderHook(() => useChecksSelection(), {
+        wrapper: hookWrapper,
+      });
+      hookResult = result;
+    });
+    axiosMock
+      .onPost(`/api/v1/groups/${groupID}/checks/${checkID}/customization`)
+      .reply(204);
+
+    await act(async () => {
+      hookResult.current.saveChecksCustomization({
+        groupID,
+        checkID,
+        customValues,
+      });
+    });
+    const updatedChecksSelection = hookResult.current.checksSelection;
+
+    updatedChecksSelection.forEach(({ id, customized, values }) => {
+      if (id === checkID) {
+        expect(customized).toBe(true);
+        expect(values[0].name).toBe(customValues.name);
+        expect(values[0].custom_value).toBe(customValues.value);
+      } else {
+        expect(customized).toBe(false);
+      }
+    });
+    expect(store.getActions()).toEqual([
+      {
+        type: 'NOTIFICATION',
+        payload: { text: `Check was customized successfully`, icon: '✅' },
+      },
+    ]);
+  });
+
+  it.each([400, 404, 500, 503])(
+    'should handle failures while saving check customization',
+    async (statusCode) => {
+      let hookResult;
+      const [hookWrapper, store] = hookWrapperWithState();
+
+      const checksSelection = selectableCheckFactory.buildList(3);
+
+      const groupId = faker.string.uuid();
+      const checkId = checksSelection[0].id;
+
+      await act(async () => {
+        const { result } = renderHook(() => useChecksSelection(), {
+          wrapper: hookWrapper,
+        });
+        hookResult = result;
+      });
+
+      axiosMock
+        .onPost(`/api/v1/groups/${groupId}/checks/${checkId}/customization`)
+        .reply(statusCode);
+
+      await act(async () => {
+        hookResult.current.saveChecksCustomization({
+          checkID: checkId,
+          groupID: groupId,
+          customValues: {},
+        });
+      });
+
+      const updatedChecksSelection = hookResult.current.checksSelection;
+
+      updatedChecksSelection.forEach(({ customized }) =>
+        expect(customized).toBe(false)
+      );
+
+      expect(store.getActions()).toEqual([
+        {
+          type: 'NOTIFICATION',
+          payload: { text: `Failed to customize check`, icon: '❌' },
+        },
+      ]);
+    }
+  );
+
   it.each([400, 404, 500, 503])(
     'should handle failures while resetting check customization',
     async (statusCode) => {
