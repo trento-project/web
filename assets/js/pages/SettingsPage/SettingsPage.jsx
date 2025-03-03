@@ -39,6 +39,7 @@ import {
 } from '@pages/SettingsPage/hooks';
 
 import AnalyticsConfig from '@common/AnalyticsConfig';
+import AnalyticsSettingsModal from '@common/AnalyticsSettingsModal';
 
 const apiKeySettingsPermittedFor = ['all:api_key_settings'];
 
@@ -112,6 +113,8 @@ function SettingsPage() {
   const activityLogsValidationErrors = useSelector(
     getActivityLogsSettingsErrors
   );
+
+  const [analyticsModalOpen, setAnalyticsModalOpen] = useState(false);
 
   const hasApiKey = Boolean(apiKey);
 
@@ -334,7 +337,13 @@ function SettingsPage() {
       </section>
 
       <section>
-        <AnalyticsConfig />
+        <AnalyticsConfig onEditClick={() => setAnalyticsModalOpen(true)} />
+        <AnalyticsSettingsModal
+          open={analyticsModalOpen}
+          onCancel={() => {
+            setAnalyticsModalOpen(false);
+          }}
+        />
       </section>
     </>
   );

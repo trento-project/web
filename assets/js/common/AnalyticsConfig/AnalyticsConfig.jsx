@@ -1,9 +1,10 @@
 import React from 'react';
+import { noop } from 'lodash';
 import { getFromConfig } from '@lib/config/config';
 
 import Button from '@common/Button';
 
-function AnalyticsConfig() {
+function AnalyticsConfig({ onEditClick = noop }) {
   analyticsEnabled = getFromConfig('analyticsEnabled');
   if (!analyticsEnabled) {
     return;
@@ -14,13 +15,13 @@ function AnalyticsConfig() {
         <div>
           <h2 className="text-2xl font-bold inline-block">Analytics Config</h2>
           <span className="float-right">
-            <Button type="primary-white-fit" size="small">
+            <Button type="primary-white-fit" size="small" onClick={onEditClick}>
               Edit Settings
             </Button>
           </span>
         </div>
         <p className="mt-3 mb-3 text-gray-500">
-          Collect user data for improving the application.
+          Collect anonymous metrics to help improve the application.
         </p>
 
         <div className="grid grid-cols-6 mt-5 items-center">
