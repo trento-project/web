@@ -343,9 +343,14 @@ function SettingsPage() {
       </section>
 
       <section>
-        <AnalyticsConfig onEditClick={() => setAnalyticsModalOpen(true)} />
+        <AnalyticsConfig
+          analyticsOptin={analyticsSettings.analytics_optin}
+          onEditClick={() => setAnalyticsModalOpen(true)}
+        />
         <AnalyticsSettingsModal
+          key={`${JSON.stringify(analyticsSettings)}-${analyticsModalOpen}`}
           open={analyticsModalOpen}
+          initialAnalyticsOptin={analyticsSettings.analytics_optin}
           onSave={(payload) => saveAnalyticsSettings(payload)}
           onCancel={() => {
             setAnalyticsModalOpen(false);

@@ -4,7 +4,7 @@ import { getFromConfig } from '@lib/config/config';
 
 import Button from '@common/Button';
 
-function AnalyticsConfig({ onEditClick = noop }) {
+function AnalyticsConfig({ onEditClick = noop, analyticsOptin }) {
   analyticsEnabled = getFromConfig('analyticsEnabled');
   if (!analyticsEnabled) {
     return;
@@ -30,7 +30,7 @@ function AnalyticsConfig({ onEditClick = noop }) {
             aria-label="retention-time"
             className="col-span-2 text-gray-500 mb-3 pr-12"
           >
-            {analyticsEnabled ? 'Enabled' : 'Disabled'}
+            {analyticsOptin ? 'Enabled' : 'Disabled'}
           </div>
         </div>
       </div>

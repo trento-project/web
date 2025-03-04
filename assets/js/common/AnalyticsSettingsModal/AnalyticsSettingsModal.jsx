@@ -10,8 +10,9 @@ function AnalyticsSettingsModal({
   open = false,
   onCancel = noop,
   onSave = noop,
+  initialAnalyticsOptin,
 }) {
-  const [checked, setChecked] = useState(true);
+  const [analyticsOptin, setAnalyticsOptin] = useState(initialAnalyticsOptin);
   return (
     <Modal
       title="Enter Analytics Opt-in Settings"
@@ -26,9 +27,9 @@ function AnalyticsSettingsModal({
         <div className="col-span-4">
           <Input
             type="checkbox"
-            checked={checked}
+            checked={analyticsOptin}
             className="w-min inline mr-2"
-            onChange={(prev) => setChecked(!checked)}
+            onChange={() => setAnalyticsOptin(!analyticsOptin)}
           />
           Allow the collection of{' '}
           <a
@@ -43,7 +44,16 @@ function AnalyticsSettingsModal({
       </div>
 
       <div className="flex flex-row w-80 space-x-2">
-        <Button onClick={onSave}>Save Settings</Button>
+        <Button
+          onClick={() => {
+            const payload = {
+              analytics_optin: analyticsOptin,
+            };
+            onSave(payload);
+          }}
+        >
+          Save Settings
+        </Button>
         <Button type="primary-white" onClick={onCancel}>
           Cancel
         </Button>
