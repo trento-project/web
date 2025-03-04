@@ -92,7 +92,6 @@ const completedExecution = {
         ],
         result: checkResults[0],
       },
-
       {
         agents_check_results: [
           {
@@ -110,12 +109,12 @@ const completedExecution = {
           },
         ],
         check_id: checkID[1],
+        customized: true,
         expectation_results: [
           { name: checkNames[1], result: true, type: 'expect' },
         ],
         result: checkResults[1],
       },
-
       {
         agents_check_results: [
           {
