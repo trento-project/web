@@ -1,5 +1,4 @@
-import { faker } from '@faker-js/faker';
-
+import { executionValueFactory } from '@lib/test-utils/factories';
 import ExpectedValues from './ExpectedValues';
 
 export default {
@@ -11,8 +10,8 @@ export const Default = {
   args: {
     isTargetHost: true,
     expectedValues: [
-      { name: faker.animal.bear(), value: faker.number.int() },
-      { name: faker.animal.bear(), value: faker.number.int() },
+      executionValueFactory.build({ customized: true }),
+      executionValueFactory.build({ customized: false }),
     ],
     isError: false,
   },

@@ -14,6 +14,7 @@ const expectationReturnTypeEnum = () =>
 export const executionValueFactory = Factory.define(() => ({
   name: `value_${faker.string.uuid()}`,
   value: faker.number.int(),
+  customized: faker.datatype.boolean(),
 }));
 
 export const executionExpectationEvaluationFactory = Factory.define(

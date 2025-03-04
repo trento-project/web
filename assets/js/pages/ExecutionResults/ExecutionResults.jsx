@@ -6,6 +6,7 @@ import Accordion from '@common/Accordion';
 import HealthIcon from '@common/HealthIcon';
 import Modal from '@common/Modal';
 import Table from '@common/Table';
+import ModifiedCheckPill from '@common/ModifiedCheckPill';
 
 import {
   getCatalogCategoryList,
@@ -37,7 +38,7 @@ const resultsTableConfig = {
       key: 'checkID',
       fontSize: 'text-base',
       className: 'bg-gray-50 border-b w-1/6 h-auto',
-      render: (checkID, { onClick }) => (
+      render: (checkID, { customized, onClick }) => (
         <div className="flex whitespace-nowrap text-jungle-green-500 justify-between">
           <span
             className="inline-flex leading-5"
@@ -49,6 +50,7 @@ const resultsTableConfig = {
           >
             {checkID}
           </span>
+          <ModifiedCheckPill customized={customized} />
         </div>
       ),
     },
@@ -140,10 +142,12 @@ function ExecutionResults({
       ({
         check_id: checkID,
         result,
+        customized,
         expectation_results: expectationResults,
         agents_check_results: agentsCheckResults,
       }) => ({
         checkID,
+        customized,
         targetID,
         targetName,
         targetType,

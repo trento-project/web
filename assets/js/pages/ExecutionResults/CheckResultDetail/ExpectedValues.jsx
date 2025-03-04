@@ -1,6 +1,7 @@
 import React from 'react';
 
 import ListView from '@common/ListView';
+import ModifiedCheckPill from '@common/ModifiedCheckPill';
 
 function ExpectedValues({
   isTargetHost = true,
@@ -27,9 +28,16 @@ function ExpectedValues({
           className="mt-3 text-sm"
           titleClassName="text-sm"
           orientation="horizontal"
-          data={expectedValues.map(({ name, value }) => ({
+          data={expectedValues.map(({ name, value, customized }) => ({
             title: name,
-            content: value,
+            content: (
+              <>
+                <span className="align-middle">
+                  {typeof value !== 'string' ? JSON.stringify(value) : value}
+                </span>
+                <ModifiedCheckPill className="ml-2" customized={customized} />
+              </>
+            ),
           }))}
         />
       )}

@@ -8,7 +8,7 @@ import { Switch } from '@headlessui/react';
 import classNames from 'classnames';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import Pill from '@common/Pill';
+import ModifiedCheckPill from '@common/ModifiedCheckPill';
 
 import { isPermitted } from '@lib/model/users';
 
@@ -43,14 +43,7 @@ function ChecksSelectionItem({
             <p className="ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
               {checkID}
             </p>
-            {customized && (
-              <Pill
-                className="bg-white text-jungle-green-500 border border-jungle-green-500 ml-2"
-                size="xs"
-              >
-                MODIFIED
-              </Pill>
-            )}
+            <ModifiedCheckPill customized={customized} className="ml-2" />
           </div>
           <div className="mt-2 sm:flex sm:justify-between">
             <div className="sm:flex">
