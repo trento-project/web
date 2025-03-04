@@ -24,6 +24,8 @@ defmodule Trento.SettingsTest do
 
   alias Trento.Hosts.Commands.CompleteSoftwareUpdatesDiscovery
 
+  setup :verify_on_exit!
+
   setup do
     Application.put_env(:trento, :flavor, "Premium")
     insert(:sles_subscription, identifier: "SLES_SAP")
