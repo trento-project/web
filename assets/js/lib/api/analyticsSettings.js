@@ -1,3 +1,6 @@
-export const getSettings = async () => await { analytics_optin: false };
+import { networkClient } from '@lib/network';
 
-export const saveSettings = async (settings) => await settings;
+export const getSettings = async () => networkClient.get(`/settings/analytics`);
+
+export const saveSettings = async (settings) =>
+  networkClient.post(`/settings/analytics`, settings);
