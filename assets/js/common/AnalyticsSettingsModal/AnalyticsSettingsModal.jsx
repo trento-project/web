@@ -7,18 +7,20 @@ import Label from '@common/Label';
 import Input from '@common/Input';
 
 function AnalyticsSettingsModal({
-  open=false,
-  onCancel=noop,
-  onSave=noop
+  open = false,
+  onCancel = noop,
+  onSave = noop,
 }) {
   const [checked, setChecked] = useState(true);
   return (
     <Modal
-      title="Analytics Settings"
+      title="Enter Analytics Opt-in Settings"
       open={open}
       onClose={onCancel}
     >
-      <div className="text-gray-500">Here you can configure your analytics settings.</div>
+      <div className="text-gray-500">
+        Here you can configure your analytics collection preference.
+      </div>
       <div className="grid grid-cols-6 my-5 gap-6">
         <Label className="col-span-2">Collect Analytics</Label>
         <div className="col-span-4">
@@ -41,13 +43,11 @@ function AnalyticsSettingsModal({
       </div>
 
       <div className="flex flex-row w-80 space-x-2">
-              <Button onClick={onSave}>
-                Save Settings
-              </Button>
-              <Button type="primary-white" onClick={onCancel}>
-                Cancel
-              </Button>
-            </div>
+        <Button onClick={onSave}>Save Settings</Button>
+        <Button type="primary-white" onClick={onCancel}>
+          Cancel
+        </Button>
+      </div>
     </Modal>
   );
 }

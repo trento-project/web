@@ -40,6 +40,7 @@ import {
 
 import AnalyticsConfig from '@common/AnalyticsConfig';
 import AnalyticsSettingsModal from '@common/AnalyticsSettingsModal';
+import { useAnalyticsSettings } from '@state/analyticsSettings';
 
 const apiKeySettingsPermittedFor = ['all:api_key_settings'];
 
@@ -115,6 +116,11 @@ function SettingsPage() {
   );
 
   const [analyticsModalOpen, setAnalyticsModalOpen] = useState(false);
+  const { saveAnalyticsSettings, analyticsSettings } = useAnalyticsSettings();
+
+  useEffect(() => {
+    setAnalyticsModalOpen(false);
+  }, [analyticsSettings]);
 
   const hasApiKey = Boolean(apiKey);
 
@@ -340,6 +346,7 @@ function SettingsPage() {
         <AnalyticsConfig onEditClick={() => setAnalyticsModalOpen(true)} />
         <AnalyticsSettingsModal
           open={analyticsModalOpen}
+          onSave={(payload) => saveAnalyticsSettings(payload)}
           onCancel={() => {
             setAnalyticsModalOpen(false);
           }}
