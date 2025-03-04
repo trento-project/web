@@ -30,6 +30,8 @@ defmodule Trento.SettingsTest do
     on_exit(fn -> Application.put_env(:trento, :flavor, "Community") end)
   end
 
+  setup :verify_on_exit!
+
   describe "installation_settings" do
     # TODO: remove InstallationSettings since premium does not exist anymore?
     test "should not create a new InstallationSettings if is already present" do
