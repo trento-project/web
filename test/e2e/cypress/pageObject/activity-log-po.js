@@ -18,7 +18,7 @@ const filterNewerThanInputField = `${filterNewerThanButton} + div input`;
 const filterTypeButton = 'button:contains("Filter Type")';
 
 const applyFiltersButton = 'button:contains("Apply Filter")';
-const resetFiltersButton = 'button:contains("Clear Filters")';
+const resetFiltersButton = 'button:contains("Reset Filters")';
 const refreshButton = 'button:contains("Refresh")';
 
 const nextPageButton = '[aria-label="next-page"]';
@@ -73,7 +73,7 @@ export const waitForActivityLogRequest = () => {
 // UI Interactions
 
 export const clickFilterTypeButton = () => {
-  return cy.get(filterTypeButton).click();
+  return cy.get(filterTypeButton).click({force: true});
 };
 
 export const clickAutoRefreshRateButton = () => {
@@ -89,7 +89,7 @@ export const clickFilterOlderThanButton = () => {
 };
 
 export const clickRefreshButton = () => {
-  return cy.get(refreshButton).click();
+  return cy.get(refreshButton).click({force: true});
 };
 
 export const clickApplyFiltersButton = () => {
@@ -159,7 +159,7 @@ export const autoRefreshIntervalButtonIsDisabled = () => {
 export const filteredActionsAreTheExpectedOnes = (filteredActions) => {
   return cy
     .get(filteringElements)
-    .eq(0)
+    .eq(1)
     .find('span span')
     .should('have.text', filteredActions);
 };
@@ -172,7 +172,7 @@ export const filterNewerThanHasTheExpectedValue = (filterValue) => {
 
   return cy
     .get(filteringElements)
-    .eq(2)
+    .eq(3)
     .find('span span')
     .should('have.text', expectedValue);
 };
@@ -184,7 +184,7 @@ export const filterOlderThanHasTheExpectedValue = (filterValue) => {
     : (expectedValue = filterValue);
   return cy
     .get(filteringElements)
-    .eq(3)
+    .eq(4)
     .find('span span')
     .should('have.text', expectedValue);
 };
