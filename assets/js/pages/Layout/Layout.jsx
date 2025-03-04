@@ -185,7 +185,7 @@ function Layout() {
                   href="https://www.trento-project.io/docs/"
                   target="_blank"
                   className={classNames(
-                    'block max-w-60 text-jungle-green-500 font-bold bg-jungle-green-100 py-2 rounded-md hover:opacity-75',
+                    'flex gap-2 items-center text-jungle-green-500 font-bold bg-jungle-green-100 py-2 rounded-md hover:opacity-75',
                     {
                       'px-2': isCollapsed,
                       'px-4': !isCollapsed,
@@ -193,7 +193,8 @@ function Layout() {
                   )}
                   rel="noreferrer"
                 >
-                  {isCollapsed ? <EOS_MENU_BOOK /> : 'Read more in Trento docs'}
+                  <EOS_MENU_BOOK />
+                  {!isCollapsed ? <span>Read the Trento docs</span>: null}
                 </a>
               </div>
             </nav>
