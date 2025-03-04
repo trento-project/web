@@ -1,8 +1,8 @@
 defmodule Trento.ActivityLog.QueueEventParserTest do
   @moduledoc false
 
-  use TrentoWeb.ConnCase, async: false
-  use Plug.Test
+  use ExUnit.Case, async: true
+  use Trento.DataCase, async: true
 
   import Trento.Factory
 

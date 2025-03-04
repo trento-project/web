@@ -473,7 +473,7 @@ defmodule Trento.ActivityLog.ActivityLoggerTest do
 
     assert Enum.count(activity_log) == length(events)
 
-    for {event, expected_activity_type} <- events do
+    for {_event, expected_activity_type} <- events do
       assert %ActivityLog{
                type: ^expected_activity_type,
                actor: "system"
