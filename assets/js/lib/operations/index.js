@@ -10,6 +10,10 @@ const OPERATION_LABELS = {
   [SAPTUNE_SOLUTION_APPLY]: 'Apply Saptune solution',
 };
 
+const OPERATION_INTERNAL_NAMES = {
+  'saptuneapplysolution@v1': SAPTUNE_SOLUTION_APPLY,
+};
+
 const OPERATION_RESOURCE_TYPES = {
   [SAPTUNE_SOLUTION_APPLY]: HOST_OPERATION,
 };
@@ -21,6 +25,9 @@ const OPERATION_REQUEST_FUNCS = {
 export const getOperationLabel = (operation) =>
   get(OPERATION_LABELS, operation, 'unknown');
 
+export const getOperationInternalName = (operation) =>
+  get(OPERATION_INTERNAL_NAMES, operation, 'unknown');
+
 export const getOperationResourceType = (operation) =>
   get(OPERATION_RESOURCE_TYPES, operation, 'unknown');
 
@@ -29,3 +36,5 @@ export const getOperationRequestFunc = (resourceType) =>
 
 export const operationSucceeded = (result) =>
   ['UPDATED', 'NOT_UPDATED'].includes(result);
+
+export const operationRunning = ({ status }) => status === 'running';

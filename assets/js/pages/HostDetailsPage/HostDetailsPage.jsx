@@ -28,7 +28,10 @@ import {
   updateLastExecution,
   hostExecutionRequested,
 } from '@state/lastExecutions';
-import { operationRequested } from '@state/runningOperations';
+import {
+  operationRequested,
+  updateRunningOperation,
+} from '@state/runningOperations';
 
 import { deregisterHost } from '@state/hosts';
 import { fetchSoftwareUpdates } from '@state/softwareUpdates';
@@ -109,6 +112,7 @@ function HostDetailsPage() {
     getExportersStatus();
     refreshCatalog();
     dispatch(updateLastExecution(hostID));
+    operationsEnabled && dispatch(updateRunningOperation(hostID));
   }, []);
 
   if (!host) {
