@@ -22,7 +22,7 @@ env:
 jobs:
   elixir-deps:
     name: Elixir ${{ matrix.mix_env }} dependencies
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
         include:
@@ -45,8 +45,6 @@ jobs:
         with:
           version-file: .tool-versions
           version-type: strict
-        env:
-          ImageOS: ubuntu20
       - name: Retrieve Cached Dependencies
         uses: actions/cache@v4
         id: mix-cache
@@ -68,7 +66,7 @@ jobs:
 
   npm-deps:
     name: Npm dependencies
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.12.1
@@ -97,7 +95,7 @@ jobs:
 
   npm-e2e-deps:
     name: Npm E2E dependencies
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.12.1
@@ -123,7 +121,7 @@ jobs:
         run: cd test/e2e && npm install
   
   generate-matrix:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     outputs:
       matrix: ${{ steps.generate.outputs.matrix }}
     steps:
@@ -139,7 +137,7 @@ jobs:
   test-e2e:
     name: Cypress Run
     needs: [elixir-deps, npm-deps, npm-e2e-deps, generate-matrix]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix: 
@@ -162,8 +160,6 @@ jobs:
         with:
           version-file: .tool-versions
           version-type: strict
-        env:
-          ImageOS: ubuntu20
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -241,7 +237,7 @@ jobs:
   flaky-tests-analysis:
     name: Flaky Tests Analysis
     needs: test-e2e
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.12.1
