@@ -194,7 +194,7 @@ function Layout() {
                   rel="noreferrer"
                 >
                   <EOS_MENU_BOOK />
-                  {!isCollapsed ? <span>Read the Trento docs</span>: null}
+                  {!isCollapsed ? <span>Read the Trento docs</span> : null}
                 </a>
               </div>
             </nav>
