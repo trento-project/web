@@ -12,6 +12,10 @@ defmodule Trento.Infrastructure.Operations.AMQP.Processor do
     OperationStarted
   }
 
+  alias Trento.Infrastructure.Operations
+
+  alias Trento.ActivityLog.ActivityLogger
+
   require Logger
 
   def process(%GenRMQ.Message{payload: payload} = message) do
@@ -19,11 +23,19 @@ defmodule Trento.Infrastructure.Operations.AMQP.Processor do
 
     case Contracts.from_event(payload) do
       {:ok, event} ->
-        handle(event)
+        event
+        |> log_activity()
+        |> handle()
 
       {:error, reason} ->
         {:error, reason}
     end
+  end
+
+  defp log_activity(event) do
+    ActivityLogger.log_activity(%{queue_event: event})
+
+    event
   end
 
   defp handle(%OperationStarted{
@@ -34,7 +46,7 @@ defmodule Trento.Infrastructure.Operations.AMQP.Processor do
     TrentoWeb.Endpoint.broadcast("monitoring:operations", "operation_started", %{
       operation_id: operation_id,
       group_id: group_id,
-      operation_type: map_operation_type(operation_type)
+      operation_type: Operations.map_operation_type(operation_type)
     })
   end
 
@@ -47,7 +59,7 @@ defmodule Trento.Infrastructure.Operations.AMQP.Processor do
     TrentoWeb.Endpoint.broadcast("monitoring:operations", "operation_completed", %{
       operation_id: operation_id,
       group_id: group_id,
-      operation_type: map_operation_type(operation_type),
+      operation_type: Operations.map_operation_type(operation_type),
       result: result
     })
   end
@@ -55,7 +67,4 @@ defmodule Trento.Infrastructure.Operations.AMQP.Processor do
   defp handle(event) do
     Logger.debug("Handle event: #{inspect(event)}")
   end
-
-  defp map_operation_type("saptuneapplysolution@v1"), do: :saptune_solution_apply
-  defp map_operation_type(_), do: :unknown
 end
