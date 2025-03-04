@@ -157,6 +157,8 @@ defmodule Trento.Factory do
   alias Trento.UserIdentities.UserIdentity
   alias Trento.Users.User
 
+  alias Trento.Operations.V1.OperationCompleted
+
   use ExMachina.Ecto, repo: Trento.Repo
 
   def host_registered_event_factory do
@@ -1222,6 +1224,15 @@ defmodule Trento.Factory do
       user_id: 1,
       uid: Faker.UUID.v4(),
       provider: Faker.Pokemon.name()
+    }
+  end
+
+  def operation_completed_v1_factory do
+    %OperationCompleted{
+      operation_id: Faker.UUID.v4(),
+      group_id: Faker.UUID.v4(),
+      operation_type: Faker.Pokemon.name(),
+      result: Enum.random([:UPDATED, :NOT_UPDATED, :FAILED])
     }
   end
 end

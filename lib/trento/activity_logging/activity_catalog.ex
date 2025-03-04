@@ -5,10 +5,14 @@ defmodule Trento.ActivityLog.ActivityCatalog do
 
   alias Phoenix.Controller
 
+  alias Trento.Operations.V1.OperationCompleted
+
   @type activity_type :: atom()
   @type connection_activity :: {controller :: module(), action :: atom()}
   @type domain_event_activity :: event_module :: module()
-  @type logged_activity :: connection_activity() | domain_event_activity()
+  @type queue_event_activity :: event_module :: module()
+  @type logged_activity ::
+          connection_activity() | domain_event_activity() | queue_event_activity()
 
   @spec supported_activities() :: [activity_type()]
   def supported_activities, do: Enum.map(activity_catalog(), &to_activity_type/1)
@@ -19,17 +23,26 @@ defmodule Trento.ActivityLog.ActivityCatalog do
   @spec domain_event_activities() :: [activity_type()]
   def domain_event_activities, do: Enum.map(get_domain_events_activities(), &to_activity_type/1)
 
+  @spec queue_event_activities() :: [activity_type()]
+  def queue_event_activities, do: Enum.map(get_queue_events_activities(), &to_activity_type/1)
+
   @spec detect_activity_category(activity_type()) ::
-          :connection_activity | :domain_event_activity | :unsupported_activity
+          :connection_activity
+          | :domain_event_activity
+          | :queue_event_activity
+          | :unsupported_activity
   def detect_activity_category(activity) do
-    case {activity in connection_activities(), activity in domain_event_activities()} do
-      {true, false} ->
+    cond do
+      activity in connection_activities() ->
         :connection_activity
 
-      {false, true} ->
+      activity in domain_event_activities() ->
         :domain_event_activity
 
-      _ ->
+      activity in queue_event_activities() ->
+        :queue_event_activity
+
+      true ->
         :unsupported_activity
     end
   end
@@ -46,8 +59,11 @@ defmodule Trento.ActivityLog.ActivityCatalog do
 
   defp to_activity_type({_, {activity_type, _}}), do: activity_type
 
-  defp activity_catalog,
-    do: Map.merge(get_connection_activities(), get_domain_events_activities())
+  defp activity_catalog do
+    get_connection_activities()
+    |> Map.merge(get_domain_events_activities())
+    |> Map.merge(get_queue_events_activities())
+  end
 
   @spec get_activity_type(logged_activity()) :: activity_type() | nil
   defp get_activity_type(activity) do
@@ -67,6 +83,8 @@ defmodule Trento.ActivityLog.ActivityCatalog do
   end
 
   defp extract_activity(%{event: %event_module{}}), do: event_module
+
+  defp extract_activity(%{queue_event: %event_module{}}), do: event_module
 
   defp extract_activity(_), do: nil
 
@@ -145,6 +163,12 @@ defmodule Trento.ActivityLog.ActivityCatalog do
       {TrentoWeb.V1.SettingsController, :update_activity_log_settings} =>
         {:activity_log_settings_update, 200},
       {TrentoWeb.V1.HostController, :request_operation} => {:operation_requested, 202}
+    }
+  end
+
+  defp get_queue_events_activities do
+    %{
+      OperationCompleted => {:operation_completed, :always}
     }
   end
 end

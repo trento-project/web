@@ -115,6 +115,7 @@ export const DATABASE_TOMBSTONED = 'database_tombstoned';
 
 // Operations
 export const OPERATION_REQUESTED = 'operation_requested';
+export const OPERATION_COMPLETED = 'operation_completed';
 
 export const resourceTypes = ['host', 'cluster', 'database', 'sap_system'];
 
@@ -565,6 +566,12 @@ export const ACTIVITY_TYPES_CONFIG = {
     label: 'Operation Requested',
     message: ({ metadata }) =>
       `Operation ${getOperationLabel(metadata.operation)} requested`,
+    resource: operationResourceType,
+  },
+  [OPERATION_COMPLETED]: {
+    label: 'Operation Completed',
+    message: ({ metadata }) =>
+      `Operation ${getOperationLabel(metadata.operation)} completed`,
     resource: operationResourceType,
   },
 };

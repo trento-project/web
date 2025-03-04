@@ -112,6 +112,20 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
         assert event_module in events_activities_catalog
       end
     end
+
+    test "should expose queue event related activities" do
+      queue_events = [
+        :operation_completed
+      ]
+
+      queue_activity_catalog = ActivityCatalog.queue_event_activities()
+
+      assert length(queue_events) == length(queue_activity_catalog)
+
+      for queue_event <- queue_events do
+        assert queue_event in queue_activity_catalog
+      end
+    end
   end
 
   describe "activity detection" do
@@ -290,6 +304,17 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
 
       assert {:ok, :database_deregistered} =
                ActivityCatalog.detect_activity(%{event: current_event})
+    end
+
+    test "should detect activity from queue events" do
+      events = [
+        {build(:operation_completed_v1), :operation_completed}
+      ]
+
+      for {event, expected_activity_type} <- events do
+        assert {:ok, expected_activity_type} ==
+                 ActivityCatalog.detect_activity(%{queue_event: event, metadata: %{}})
+      end
     end
   end
 end

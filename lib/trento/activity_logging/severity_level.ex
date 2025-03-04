@@ -116,7 +116,13 @@ defmodule Trento.ActivityLog.SeverityLevel do
     "database_rollup_requested" => :info,
     "database_tenants_updated" => :info,
     "database_tombstoned" => :debug,
-    "operation_requested" => :info
+    "operation_requested" => :info,
+    "operation_completed" => %{
+      type: :kv,
+      key_suffix: "result",
+      values: %{"UPDATED" => :info, "NOT_UPDATED" => :info, "*" => :critical},
+      condition: :map_value_to_severity
+    }
   }
 
   def map_severity_integer_to_text(n) when n >= 5 and n <= 8, do: "debug"
