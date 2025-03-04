@@ -1,7 +1,5 @@
 import * as hanaDbDetailsPage from '../pageObject/hana-database-details-po';
 
-import { attachedHosts } from '../fixtures/hana-database-details/selected_database';
-
 context('HANA database details', () => {
   before(() => {
     hanaDbDetailsPage.preloadTestData();
@@ -87,12 +85,12 @@ context('HANA database details', () => {
   });
 
   describe('Deregistration', () => {
-    it(`should not include host ${attachedHosts[0].Name} in the list of hosts`, () => {
+    it('should not include deregistered host in the list of hosts', () => {
       hanaDbDetailsPage.deregisterFirstAttachedHost();
       hanaDbDetailsPage.deregisteredHostIsNotDisplayed();
     });
 
-    it(`should include host ${attachedHosts[0].Name} again in the list of hosts after restoring it`, () => {
+    it('should include restored host again in the list of hosts after restoring it', () => {
       hanaDbDetailsPage.restoreFirstAttachedHost();
       hanaDbDetailsPage.deregisteredHostIsDisplayed();
     });
