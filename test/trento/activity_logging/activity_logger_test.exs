@@ -453,4 +453,32 @@ defmodule Trento.ActivityLog.ActivityLoggerTest do
                Enum.find(activity_log, &(&1.type == expected_activity_type))
     end
   end
+
+  test "queue event activity logging" do
+    operation_completed = build(:operation_completed_v1)
+
+    events = [
+      {operation_completed, "operation_completed"}
+    ]
+
+    Enum.each(events, fn {event, _} ->
+      assert :ok ==
+               ActivityLogger.log_activity(%{
+                 queue_event: event,
+                 metadata: %{}
+               })
+    end)
+
+    activity_log = Trento.Repo.all(ActivityLog)
+
+    assert Enum.count(activity_log) == length(events)
+
+    for {event, expected_activity_type} <- events do
+      assert %ActivityLog{
+               type: ^expected_activity_type,
+               actor: "system"
+             } =
+               Enum.find(activity_log, &(&1.type == expected_activity_type))
+    end
+  end
 end
