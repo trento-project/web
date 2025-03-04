@@ -5,17 +5,41 @@ import { pipe, map, omit } from 'lodash/fp';
 
 import { notify } from '@state/notifications';
 
-import { getChecksSelection, resetCheckCustomization } from '@lib/api/checks';
+import {
+  getChecksSelection,
+  resetCheckCustomization,
+  saveCheckCustomization,
+} from '@lib/api/checks';
 
 const markCheckAsNotCustomized = (check) => ({
   ...check,
   customized: false,
 });
 
+const markCheckAsCustomized = (check) => ({
+  ...check,
+  customized: true,
+});
+
+const saveValuesCustomizations = (check, customValues) => ({
+  ...check,
+  values: check.values.map((value, index) => ({
+    ...value,
+    custom_value: customValues[index].value,
+  })),
+});
+
 const resetValuesCustomizations = (check) => ({
   ...check,
   values: map(omit('custom_value'))(check.values),
 });
+
+const saveCheck = (checkID, customValues) => (check) =>
+  check.id === checkID
+    ? pipe(markCheckAsCustomized, (c) =>
+        saveValuesCustomizations(c, customValues)
+      )(check)
+    : check;
 
 const resetCheck = (checkId) => (check) =>
   check.id === checkId
@@ -40,6 +64,29 @@ export const useChecksSelection = () => {
       setFetchError(error.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const saveChecksCustomization = async ({
+    checkID,
+    groupID,
+    customValues,
+  }) => {
+    try {
+      await saveCheckCustomization(checkID, groupID, customValues);
+      pipe(
+        map(saveCheck(checkID, customValues)),
+        setChecksSelection,
+        () => ({ text: `Check was customized successfully`, icon: '✅' }),
+        notify,
+        dispatch
+      )(checksSelection);
+    } catch (error) {
+      pipe(
+        () => ({ text: `Failed to customize check`, icon: '❌' }),
+        notify,
+        dispatch
+      )();
     }
   };
 
@@ -68,5 +115,6 @@ export const useChecksSelection = () => {
     checksSelection,
     fetchChecksSelection,
     resetChecksCustomization,
+    saveChecksCustomization,
   };
 };
