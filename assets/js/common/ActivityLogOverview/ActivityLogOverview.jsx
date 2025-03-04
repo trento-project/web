@@ -2,25 +2,33 @@ import React, { useState } from 'react';
 import { format } from 'date-fns';
 import { utc } from '@date-fns/utc';
 
-import { EOS_KEYBOARD_ARROW_RIGHT_FILLED } from 'eos-icons-react';
+import {
+  EOS_KEYBOARD_ARROW_RIGHT_FILLED,
+  EOS_BUG_REPORT_OUTLINED,
+  EOS_INFO_OUTLINED,
+  EOS_WARNING_OUTLINED,
+  EOS_ERROR_OUTLINED,
+} from 'eos-icons-react';
 import Table from '@common/Table';
+import Tooltip from '@common/Tooltip';
 
-import { toMessage } from '@lib/model/activityLog';
+import {
+  toMessage,
+  LEVEL_DEBUG,
+  LEVEL_INFO,
+  LEVEL_WARNING,
+  LEVEL_CRITICAL,
+  logLevelToLabel,
+} from '@lib/model/activityLog';
 
 import ActivityLogDetailModal from '@common/ActivityLogDetailsModal';
 
-// const logLevelToIcon = {
-//   [LEVEL_DEBUG]: <EOS_BUG_REPORT_OUTLINED className="w-full" />,
-//   [LEVEL_INFO]: <EOS_INFO_OUTLINED className="w-full" />,
-//   [LEVEL_WARNING]: <EOS_WARNING_OUTLINED className="fill-yellow-500 w-full" />,
-//   [LEVEL_ERROR]: <EOS_ERROR_OUTLINED className="fill-red-500 w-full" />,
-// };
-// const logLevelToLabel = {
-//   [LEVEL_DEBUG]: 'Debug',
-//   [LEVEL_INFO]: 'Info',
-//   [LEVEL_WARNING]: 'Warning',
-//   [LEVEL_ERROR]: 'Error',
-// };
+export const logLevelToIcon = {
+  [LEVEL_DEBUG]: <EOS_BUG_REPORT_OUTLINED className="w-auto" />,
+  [LEVEL_INFO]: <EOS_INFO_OUTLINED className="w-auto" />,
+  [LEVEL_WARNING]: <EOS_WARNING_OUTLINED className="fill-yellow-500 w-auto" />,
+  [LEVEL_CRITICAL]: <EOS_ERROR_OUTLINED className="fill-red-500 w-auto" />,
+};
 
 export const toRenderedEntry = (entry) => ({
   id: entry.id,
@@ -28,7 +36,7 @@ export const toRenderedEntry = (entry) => ({
   time: format(new Date(entry.occurred_on), 'yyyy-MM-dd HH:mm:ss', { in: utc }),
   message: toMessage(entry),
   user: entry.actor,
-  // level: ACTIVITY_LOG_LEVELS.includes(entry?.level) ? entry?.level : LEVEL_INFO,
+  severity: entry.severity ? logLevelToLabel[entry.severity] : LEVEL_INFO,
   metadata: entry.metadata,
 });
 
@@ -55,18 +63,18 @@ function ActivityLogOverview({ activityLog, loading = false }) {
         key: 'user',
         className: 'w-2/12',
       },
-      // {
-      //   title: 'Level',
-      //   key: 'level',
-      //   className: 'text-center w-1/12',
-      //   render: (level) => (
-      //     <Tooltip content={logLevelToLabel[level] ?? 'Unknown'} wrap={false}>
-      //       <span aria-label={`log-level-${level}`}>
-      //         {logLevelToIcon[level]}
-      //       </span>
-      //     </Tooltip>
-      //   ),
-      // },
+      {
+        title: 'Severity',
+        key: 'severity',
+        className: 'text-center w-1/12',
+        render: (label) => (
+          <Tooltip content={label} wrap={false}>
+            <span aria-label={`log-level-${label.toLowerCase()}`}>
+              {logLevelToIcon[label.toLowerCase()]}
+            </span>
+          </Tooltip>
+        ),
+      },
       {
         title: '',
         key: 'metadata',

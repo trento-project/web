@@ -128,11 +128,11 @@ defmodule Trento.ActivityLog do
         {:filters,
          %{
            field: :severity,
-           op: :>=,
+           op: :in,
            value:
              v
-             |> String.to_existing_atom()
-             |> SeverityLevel.severity_level_to_integer()
+             |> Enum.map(&String.to_existing_atom/1)
+             |> Enum.map(&SeverityLevel.severity_level_to_integer/1)
          }}
 
       param ->
