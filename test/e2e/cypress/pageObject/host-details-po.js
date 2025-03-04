@@ -1,6 +1,8 @@
 export * from './base-po.js';
 import * as basePage from './base-po.js';
 
+import { capitalize } from 'lodash';
+
 // Test Data
 import { selectedHost } from '../fixtures/host-details/selected_host';
 import {
@@ -227,6 +229,33 @@ export const expectedNetworkIsDisplayed = (cloudProvider) => {
 
 export const notRecognizedProviderIsDisplayed = () =>
   cy.get(notRecognizedProviderLabel).should('be.visible');
+
+const _processAttributeName = (attributeHeaderName) => {
+  const splittedAttribute = attributeHeaderName.toLowerCase().split(' ');
+  if (splittedAttribute.length === 2)
+    return splittedAttribute[0] + capitalize(splittedAttribute[1]);
+  else return attributeHeaderName.toLowerCase();
+};
+
+export const expectedFieldValueIsDisplayed = (headerName) => {
+  const attributeName = _processAttributeName(headerName);
+  const expectedValue = selectedHost.sapInstance[attributeName];
+  const tableHeaderSelector = `div[class="mt-8"]:contains("SAP instances") th:contains("${headerName}")`;
+  const tableCellSelector =
+    'div[class="mt-8"]:contains("SAP instances") tbody td';
+  cy.get(tableHeaderSelector)
+    .invoke('index')
+    .then((i) => {
+      const isPropertyArray = Array.isArray(expectedValue);
+      if (isPropertyArray) {
+        cy.wrap(expectedValue).each((value) => {
+          cy.get(tableCellSelector).eq(i).should('contain', value);
+        });
+      } else {
+        cy.get(tableCellSelector).eq(i).should('have.text', expectedValue);
+      }
+    });
+};
 
 // API
 export const loadAwsHostDetails = () =>

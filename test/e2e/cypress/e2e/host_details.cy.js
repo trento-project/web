@@ -101,85 +101,43 @@ context('Host Details', () => {
       hostDetailsPage.expectedNetworkIsDisplayed('gcp');
     });
 
-    it(`should show KVM cloud details correctly`, () => {
+    it('should show KVM cloud details correctly', () => {
       hostDetailsPage.loadScenario('host-details-kvm');
       hostDetailsPage.expectedProviderIsDisplayed('kvm');
     });
 
-    it(`should show vmware cloud details correctly`, () => {
+    it('should show vmware cloud details correctly', () => {
       hostDetailsPage.loadScenario('host-details-vmware');
       hostDetailsPage.expectedProviderIsDisplayed('vmware');
     });
 
-    it(`should show Nutanix cloud details correctly`, () => {
+    it('should show Nutanix cloud details correctly', () => {
       hostDetailsPage.loadScenario('host-details-nutanix');
       hostDetailsPage.expectedProviderIsDisplayed('nutanix');
     });
 
-    it(`should display provider not recognized message`, () => {
+    it('should display provider not recognized message', () => {
       hostDetailsPage.loadScenario('host-details-unknown');
       hostDetailsPage.notRecognizedProviderIsDisplayed();
     });
   });
 
   describe('SAP instances for this host should be displayed', () => {
-    it(`should show SAP instance with ID ${selectedHost.sapInstance.id} data`, () => {
-      cy.get('.container').eq(0).as('sapInstanceTable');
-      cy.get('@sapInstanceTable')
-        .find('tr')
-        .eq(1)
-        .find('td')
-        .as('sapInstanceRow');
+    beforeEach(() => {
+      hostDetailsPage.visitSelectedHost();
+    });
 
-      cy.get('@sapInstanceTable')
-        .contains('th', 'ID')
-        .invoke('index')
-        .then((i) => {
-          cy.get('@sapInstanceRow')
-            .eq(i)
-            .should('contain', selectedHost.sapInstance.id);
-        });
-
-      cy.get('@sapInstanceTable')
-        .contains('th', 'SID')
-        .invoke('index')
-        .then((i) => {
-          cy.get('@sapInstanceRow')
-            .eq(i)
-            .should('contain', selectedHost.sapInstance.sid);
-        });
-
-      cy.get('@sapInstanceTable')
-        .contains('th', 'Type')
-        .invoke('index')
-        .then((i) => {
-          cy.get('@sapInstanceRow')
-            .eq(i)
-            .should('contain', selectedHost.sapInstance.type);
-        });
-
-      cy.get('@sapInstanceTable')
-        .contains('th', 'Features')
-        .invoke('index')
-        .then((i) => {
-          selectedHost.sapInstance.features.forEach((feature) => {
-            cy.get('@sapInstanceRow').eq(i).should('contain', feature);
-          });
-        });
-
-      cy.get('@sapInstanceTable')
-        .contains('th', 'Instance Number')
-        .invoke('index')
-        .then((i) => {
-          cy.get('@sapInstanceRow')
-            .eq(i)
-            .should('contain', selectedHost.sapInstance.instanceNumber);
-        });
+    it('should show SAP instance data', () => {
+      hostDetailsPage.expectedFieldValueIsDisplayed('ID');
+      hostDetailsPage.expectedFieldValueIsDisplayed('SID');
+      hostDetailsPage.expectedFieldValueIsDisplayed('Type');
+      hostDetailsPage.expectedFieldValueIsDisplayed('Instance Number');
+      hostDetailsPage.expectedFieldValueIsDisplayed('Features');
     });
   });
 
   describe('SLES subscriptions details for this host should be displayed', () => {
-    it(`should show the SLES subscriptions details correctly`, () => {
+    it('should show the SLES subscriptions details correctly', () => {
       cy.get('.container').eq(1).as('slesSubscriptionsTable');
       selectedHost.slesSubscriptions.forEach((subscription, index) => {
         cy.get('@slesSubscriptionsTable')
