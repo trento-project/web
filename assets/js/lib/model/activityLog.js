@@ -9,6 +9,7 @@ import {
   uniq,
   values,
 } from 'lodash/fp';
+import { getOperationLabel, getOperationResourceType } from '@lib/operations';
 import { isPermitted } from './users';
 
 export const LOGIN_ATTEMPT = 'login_attempt';
@@ -112,6 +113,9 @@ export const DATABASE_ROLL_UP_REQUESTED = 'database_roll_up_requested';
 export const DATABASE_TENANTS_UPDATED = 'database_tenants_updated';
 export const DATABASE_TOMBSTONED = 'database_tombstoned';
 
+// Operations
+export const OPERATION_REQUESTED = 'operation_requested';
+
 export const resourceTypes = ['host', 'cluster', 'database', 'sap_system'];
 
 export const resourceTypesToNameKeyMap = {
@@ -140,6 +144,15 @@ const taggingResourceType = (entry) =>
     database: databaseResourceType(entry),
     sap_system: sapSystemResourceType(entry),
   })[entry.metadata?.resource_type] ?? 'Unable to determine resource type';
+
+const operationResourceType = (entry) =>
+  ({
+    host: hostResourceType(entry),
+    cluster: clusterResourceType(entry),
+    database: databaseResourceType(entry),
+    sap_system: sapSystemResourceType(entry),
+  })[getOperationResourceType(entry.metadata?.operation)] ??
+  'Unable to determine operation type';
 
 export const resourceNameFromMetadata = (resourceType, metadata) =>
   pipe(
@@ -546,6 +559,13 @@ export const ACTIVITY_TYPES_CONFIG = {
     label: 'Database Tombstoned',
     message: (_entry) => `Database was tombstoned`,
     resource: databaseResourceType,
+  },
+  // Operations
+  [OPERATION_REQUESTED]: {
+    label: 'Operation Requested',
+    message: ({ metadata }) =>
+      `Operation ${getOperationLabel(metadata.operation)} requested`,
+    resource: operationResourceType,
   },
 };
 

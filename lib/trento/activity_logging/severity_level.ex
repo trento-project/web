@@ -115,7 +115,8 @@ defmodule Trento.ActivityLog.SeverityLevel do
     "database_rolled_up" => :debug,
     "database_rollup_requested" => :info,
     "database_tenants_updated" => :info,
-    "database_tombstoned" => :debug
+    "database_tombstoned" => :debug,
+    "operation_requested" => :info
   }
 
   def map_severity_integer_to_text(n) when n >= 5 and n <= 8, do: "debug"

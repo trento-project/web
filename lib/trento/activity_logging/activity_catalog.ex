@@ -143,7 +143,8 @@ defmodule Trento.ActivityLog.ActivityCatalog do
       {TrentoWeb.V1.HostController, :request_checks_execution} =>
         {:host_checks_execution_request, 202},
       {TrentoWeb.V1.SettingsController, :update_activity_log_settings} =>
-        {:activity_log_settings_update, 200}
+        {:activity_log_settings_update, 200},
+      {TrentoWeb.V1.HostController, :request_operation} => {:operation_requested, 202}
     }
   end
 end
