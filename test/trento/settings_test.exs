@@ -24,13 +24,13 @@ defmodule Trento.SettingsTest do
 
   alias Trento.Hosts.Commands.CompleteSoftwareUpdatesDiscovery
 
+  setup :verify_on_exit!
+
   setup do
     Application.put_env(:trento, :flavor, "Premium")
     insert(:sles_subscription, identifier: "SLES_SAP")
     on_exit(fn -> Application.put_env(:trento, :flavor, "Community") end)
   end
-
-  setup :verify_on_exit!
 
   describe "installation_settings" do
     # TODO: remove InstallationSettings since premium does not exist anymore?
