@@ -11,6 +11,22 @@ import useOnClickOutside from '@hooks/useOnClickOutside';
 const getLabel = (value, placeholder) =>
   value.length === 0 ? placeholder : value.join(', ');
 
+function Label({ icon, label }) {
+  if (icon instanceof Object) {
+    return (
+      <div className="flex items-center">
+        <span>{icon}</span>
+        <span>{label}</span>
+      </div>
+    );
+  }
+  return (
+    <div className="flex items-center">
+      <span className="ml-3 block font-normal truncate">{label}</span>
+    </div>
+  );
+}
+
 /**
  * Filter component
  *
@@ -130,26 +146,7 @@ function Filter({ options, title, value = [], onChange, className }) {
                     className="text-gray-900 cursor-default select-none hover:bg-jungle-green-500 hover:text-white relative py-2 pl-3 pr-9"
                     onClick={() => onChange(toggle(key, parsedValue))}
                   >
-                    {(() => {
-                      switch (true) {
-                        case icon instanceof Object === true:
-                          return (
-                            <div className="flex items-center">
-                              <span>{icon}</span>
-                              <span>{label}</span>
-                            </div>
-                          );
-                        default:
-                          return (
-                            <div className="flex items-center">
-                              {' '}
-                              <span className="ml-3 block font-normal truncate">
-                                {label}
-                              </span>
-                            </div>
-                          );
-                      }
-                    })()}
+                    <Label icon={icon} label={label} />
                     {hasOne(parsedValue, [key]) && (
                       <span className="absolute inset-y-0 right-0 flex items-center pr-4">
                         <EOS_CHECK size="m" />

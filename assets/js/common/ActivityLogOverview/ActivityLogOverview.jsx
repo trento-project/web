@@ -35,7 +35,7 @@ export const toRenderedEntry = (entry) => ({
   time: format(toZonedTime(entry.occurred_on), 'yyyy-MM-dd HH:mm:ss'),
   message: toMessage(entry),
   user: entry.actor,
-  severity: entry.severity,
+  severity: entry.severity ? logLevelToLabel[entry.severity] : LEVEL_INFO,
   metadata: entry.metadata,
 });
 
@@ -66,10 +66,10 @@ function ActivityLogOverview({ activityLog, loading = false }) {
         title: 'Severity',
         key: 'severity',
         className: 'text-center w-1/12',
-        render: (level) => (
-          <Tooltip content={logLevelToLabel[level] ?? 'Unknown'} wrap={false}>
-            <span aria-label={`log-level-${level}`}>
-              {logLevelToIcon[level]}
+        render: (label) => (
+          <Tooltip content={label} wrap={false}>
+            <span aria-label={`log-level-${label.toLowerCase()}`}>
+              {logLevelToIcon[label.toLowerCase()]}
             </span>
           </Tooltip>
         ),
