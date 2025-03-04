@@ -9,7 +9,7 @@ import {
   uniq,
   values,
 } from 'lodash/fp';
-import { getOperationResourceType } from '@lib/operations';
+import { getOperationLabel, getOperationResourceType } from '@lib/operations';
 import { isPermitted } from './users';
 
 export const LOGIN_ATTEMPT = 'login_attempt';
@@ -563,7 +563,8 @@ export const ACTIVITY_TYPES_CONFIG = {
   // Operations
   [OPERATION_REQUESTED]: {
     label: 'Operation Requested',
-    message: ({ metadata }) => `Operation "${metadata.operation}" requested`,
+    message: ({ metadata }) =>
+      `Operation ${getOperationLabel(metadata.operation)} requested`,
     resource: operationResourceType,
   },
 };
