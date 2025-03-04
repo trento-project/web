@@ -1,7 +1,7 @@
 import * as activityLogPage from '../pageObject/activity-log-po.js';
 import * as basePage from '../pageObject/base-po.js';
 
-const defaultSeverity = "severity=info&severity=warning&severity=critical";
+const defaultSeverity = 'severity=info&severity=warning&severity=critical';
 
 context('Activity Log page', () => {
   before(() => activityLogPage.preloadTestData());
@@ -91,8 +91,7 @@ context('Activity Log page', () => {
     });
 
     it('should reset filters', () => {
-      const queryString =
-        `?${defaultSeverity}&from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging&search=foo+bar`;
+      const queryString = `?${defaultSeverity}&from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging&search=foo+bar`;
       activityLogPage.visit(queryString);
       activityLogPage.clickResetFiltersButton();
       activityLogPage.filterTypeHasNothingSelected();
@@ -103,8 +102,7 @@ context('Activity Log page', () => {
     });
 
     it('should refresh content based on currently applied filters', () => {
-      const queryString =
-        `?${defaultSeverity}&from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&to_date=custom&to_date=2024-08-13T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging&search=foo+bar`;
+      const queryString = `?${defaultSeverity}&from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&to_date=custom&to_date=2024-08-13T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging&search=foo+bar`;
       activityLogPage.visit(queryString);
       activityLogPage.waitForActivityLogRequest();
       activityLogPage.clickRefreshButton();
@@ -319,8 +317,7 @@ context('Activity Log page', () => {
       activityLogPage.selectFilterTypeOption('Tag Added');
       activityLogPage.typeMetadataFilter('foo bar');
       activityLogPage.clickApplyFiltersButton();
-      const expectedUrl =
-        `/activity_log?${defaultSeverity}&refreshRate=5000&type=login_attempt&type=resource_tagging&search=foo+bar&first=20`;
+      const expectedUrl = `/activity_log?${defaultSeverity}&refreshRate=5000&type=login_attempt&type=resource_tagging&search=foo+bar&first=20`;
       activityLogPage.validateUrl(expectedUrl);
     });
   });

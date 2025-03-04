@@ -73,7 +73,7 @@ export const waitForActivityLogRequest = () => {
 // UI Interactions
 
 export const clickFilterTypeButton = () => {
-  return cy.get(filterTypeButton).click({force: true});
+  return cy.get(filterTypeButton).click({ force: true });
 };
 
 export const clickAutoRefreshRateButton = () => {
@@ -89,7 +89,7 @@ export const clickFilterOlderThanButton = () => {
 };
 
 export const clickRefreshButton = () => {
-  return cy.get(refreshButton).click({force: true});
+  return cy.get(refreshButton).click({ force: true });
 };
 
 export const clickApplyFiltersButton = () => {
