@@ -14,7 +14,7 @@ const getLabel = (value, placeholder) =>
 function Label({ icon, label }) {
   if (icon instanceof Object) {
     return (
-      <div className="flex items-center">
+      <div className="flex items-center gap-1">
         <span>{icon}</span>
         <span>{label}</span>
       </div>
