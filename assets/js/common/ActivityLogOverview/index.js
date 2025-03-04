@@ -1,6 +1,4 @@
-import ActivityLogOverview, {
-  logLevelToIcon as logLevelsMappedToIcons,
-} from './ActivityLogOverview';
+import ActivityLogOverview, { logLevelToIcon } from './ActivityLogOverview';
 
-export const logLevelToIcon = logLevelsMappedToIcons;
+export { logLevelToIcon };
 export default ActivityLogOverview;
