@@ -185,7 +185,7 @@ function Layout() {
                   href="https://www.trento-project.io/docs/"
                   target="_blank"
                   className={classNames(
-                    'flex gap-2 items-center jungle-green-800 font-bold bg-jungle-green-100 py-2 rounded-md hover:opacity-75',
+                    'flex gap-2 items-center text-jungle-green-800 font-bold bg-jungle-green-100 py-2 rounded-md hover:opacity-75',
                     {
                       'px-2': isCollapsed,
                       'px-4': !isCollapsed,
