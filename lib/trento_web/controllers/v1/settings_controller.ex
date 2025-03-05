@@ -164,6 +164,28 @@ defmodule TrentoWeb.V1.SettingsController do
    end
   end
 
+  operation :update_analytics_settings,
+    summary: "Updates the Analytics settings",
+    tags: ["Platform"],
+    request_body:
+      {"AnalyticsSettings", "application/json", Schema.Platform.AnalyticsSettings},
+    responses: [
+      ok:
+        {"Analytics settings updated successfully", "application/json",
+          Schema.Platform.AnalyticsSettings},
+      unprocessable_entity: Schema.UnprocessableEntity.response()
+    ]
+
+  def update_analytics_settings(conn, _) do
+    %{analytics_optin: analytics_optin} = OpenApiSpex.body_params(conn)
+
+    with {:ok, updated_settings} <- Settings.change_analytics_optin(analytics_optin) do
+      render(conn, :analytics_settings, %{
+        settings: updated_settings
+      })
+    end
+  end
+
   operation :get_suse_manager_settings,
     summary: "Gets the Suse manager Settings",
     tags: ["Platform"],

@@ -194,6 +194,7 @@ defmodule TrentoWeb.Router do
 
         # Analytics Settings
         get "/analytics", SettingsController, :get_analytics_settings
+        post "/analytics", SettingsController, :update_analytics_settings
 
         scope "/suse_manager" do
           get "/", SettingsController, :get_suse_manager_settings
