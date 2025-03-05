@@ -10,7 +10,7 @@ import { createUserRequestFactory } from '@lib/test-utils/factories';
 
 context('Host Details', () => {
   before(() => {
-    hostDetailsPage.preloadTestData();
+    // hostDetailsPage.preloadTestData();
     hostDetailsPage.startAgentHeartbeat();
   });
 

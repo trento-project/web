@@ -235,7 +235,7 @@ const _processAttributeName = (attributeHeaderName) => {
   if (splittedAttribute.length === 2)
     return splittedAttribute[0] + capitalize(splittedAttribute[1]);
   else if (attributeHeaderName === 'Identifier') return 'id';
-  return attributeHeaderName.toLowerCase();
+  else return splittedAttribute;
 };
 
 const _getTableHeaders = (tableName) => {
@@ -255,63 +255,63 @@ export const slesSubscriptionsTableDisplaysExpectedData = () =>
 export const sapSystemsTableDisplaysExpectedData = () =>
   _genericTableValidation('SAP instances', selectedHost);
 
-const _getExpectedValuesObject = (tableName) => {
+const _getExpectedValuesObjectName = (tableName) => {
   if (tableName === 'SAP instances') return 'sapInstance';
   else if (tableName === 'SLES subscription details')
     return 'slesSubscriptions';
 };
 
-const _getAmountOfRows = (object) => {
-  if (Array.isArray(object)) return object.length;
-  else return 1;
+const _getArrayOfExpectedValues = (tableName, expectationsObject) => {
+  const expectedValuesObjectName = _getExpectedValuesObjectName(tableName);
+  const expectedValuesObject = expectationsObject[expectedValuesObjectName];
+  if (
+    Array.isArray(expectedValuesObject) === false &&
+    typeof expectedValuesObject === 'object'
+  )
+    return [expectedValuesObject];
+  else return expectedValuesObject;
 };
 
 const _genericTableValidation = (tableName, expectationsObject) => {
-  const expectedValuesObject = _getExpectedValuesObject(tableName);
-  const amountOfRows = _getAmountOfRows(
-    expectationsObject[expectedValuesObject]
+  const expectedValuesArray = _getArrayOfExpectedValues(
+    tableName,
+    expectationsObject
   );
-  const tableRowSelector = `div[class*="mt-"]:contains("${tableName}") tbody tr`;
-
-  for (let rowIndex = 0; rowIndex < amountOfRows; rowIndex++) {
+  expectedValuesArray.forEach((rowExpectedValues, rowIndex) => {
     _getTableHeaders(tableName).then((headers) => {
       headers.forEach((header) => {
         const attributeName = _processAttributeName(header);
-        let expectedValue;
-
-        if (Array.isArray(expectationsObject[expectedValuesObject]))
-          expectedValue =
-            expectationsObject[expectedValuesObject][rowIndex][attributeName];
-        else
-          expectedValue =
-            expectationsObject[expectedValuesObject][attributeName];
-
-        cy.log(expectationsObject, expectedValuesObject, attributeName);
-
-        const tableHeaderSelector = `div[class*="mt-"]:contains("${tableName}") th:contains("${header}")`;
-        cy.get(tableHeaderSelector)
-          .invoke('index')
-          .then((i) => {
-            const isPropertyArray = Array.isArray(expectedValue);
-            if (isPropertyArray) {
-              cy.wrap(expectedValue).each((value) => {
-                cy.get(tableRowSelector)
-                  .eq(rowIndex)
-                  .find('td')
-                  .eq(i)
-                  .should('contain', value);
-              });
-            } else {
-              cy.get(tableRowSelector)
-                .eq(rowIndex)
-                .find('td')
-                .eq(i)
-                .should('have.text', expectedValue);
-            }
-          });
+        let expectedValue = rowExpectedValues[attributeName];
+        _validateCell(tableName, header, rowIndex, expectedValue);
       });
     });
-  }
+  });
+};
+
+const _validateCell = (tableName, header, rowIndex, expectedValue) => {
+  const tableHeaderSelector = `div[class*="mt-"]:contains("${tableName}") th:contains("${header}")`;
+  const tableRowSelector = `div[class*="mt-"]:contains("${tableName}") tbody tr`;
+
+  cy.get(tableHeaderSelector)
+    .invoke('index')
+    .then((i) => {
+      const isPropertyArray = Array.isArray(expectedValue);
+      if (isPropertyArray) {
+        cy.wrap(expectedValue).each((value) => {
+          cy.get(tableRowSelector)
+            .eq(rowIndex)
+            .find('td')
+            .eq(i)
+            .should('contain', value);
+        });
+      } else {
+        cy.get(tableRowSelector)
+          .eq(rowIndex)
+          .find('td')
+          .eq(i)
+          .should('have.text', expectedValue);
+      }
+    });
 };
 
 // API
