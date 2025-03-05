@@ -19,6 +19,7 @@ Trento.ActivityLog.ActivityLogger.html
 Trento.ActivityLog.Logger.Parser.EventParser.html
 Trento.ActivityLog.Logger.Parser.MetadataEnricher.html
 Trento.ActivityLog.Logger.Parser.PhoenixConnParser.html
+Trento.ActivityLog.Logger.Parser.QueueEventParser.html
 Trento.ActivityLog.Parser.ActivityParser.html
 Trento.ActivityLog.Policy.html
 Trento.ActivityLog.RetentionPeriodUnit.html
@@ -509,8 +510,8 @@ dist/lato-latin-ext-300-normal-VPGGJKJL.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-E561219A.js
-dist/sidebar_items-6D27A52D.js
+dist/search_data-99D70851.js
+dist/sidebar_items-FA3A3E77.js
 environment_variables.html
 hack_on_the_trento.html
 index.html

@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-K7URE6B4.js"></script>
-    <script src="dist/sidebar_items-6D27A52D.js"></script>
+    <script src="dist/sidebar_items-FA3A3E77.js"></script>
     <script src="docs_config.js"></script>
     <script async src="dist/html-YIPIRHGU.js"></script>
 
@@ -187,6 +187,14 @@ GUIDES
 
     </div>
 
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:queue_event_activity/0" data-no-tooltip translate="no">queue_event_activity()</a>
+
+      </div>
+
+    </div>
+
 </div>
 <div class="summary-functions summary">
   <h2>
@@ -227,6 +235,14 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
+        <a href="#queue_event_activities/0" data-no-tooltip translate="no">queue_event_activities()</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
         <a href="#supported_activities/0" data-no-tooltip translate="no">supported_activities()</a>
 
       </div>
@@ -255,7 +271,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">activity_type()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/activity_catalog.ex#L8" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/activity_catalog.ex#L10" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -283,7 +299,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">connection_activity()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/activity_catalog.ex#L9" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/activity_catalog.ex#L11" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -311,7 +327,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">domain_event_activity()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/activity_catalog.ex#L10" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/activity_catalog.ex#L12" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -339,7 +355,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">logged_activity()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/activity_catalog.ex#L11" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/activity_catalog.ex#L14" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -351,7 +367,36 @@ GUIDES
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@type</span> logged_activity() :: <a href="#t:connection_activity/0">connection_activity</a>() | <a href="#t:domain_event_activity/0">domain_event_activity</a>()</pre>
+          <pre translate="no"><span class="attribute">@type</span> logged_activity() ::
+  <a href="#t:connection_activity/0">connection_activity</a>() | <a href="#t:domain_event_activity/0">domain_event_activity</a>() | <a href="#t:queue_event_activity/0">queue_event_activity</a>()</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="t:queue_event_activity/0">
+
+  <div class="detail-header">
+    <a href="#t:queue_event_activity/0" class="detail-link" data-no-tooltip title="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature" translate="no">queue_event_activity()</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/activity_catalog.ex#L13" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> queue_event_activity() :: event_module :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">module</a>()</pre>
 
       </div>
 
@@ -379,7 +424,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">connection_activities()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/activity_catalog.ex#L17" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/activity_catalog.ex#L21" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -407,7 +452,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">detect_activity(activity_context)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/activity_catalog.ex#L38" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/activity_catalog.ex#L51" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -435,7 +480,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">detect_activity_category(activity)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/activity_catalog.ex#L24" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/activity_catalog.ex#L34" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -448,7 +493,10 @@ GUIDES
       <div class="specs">
 
           <pre translate="no"><span class="attribute">@spec</span> detect_activity_category(<a href="#t:activity_type/0">activity_type</a>()) ::
-  :connection_activity | :domain_event_activity | :unsupported_activity</pre>
+  :connection_activity
+  | :domain_event_activity
+  | :queue_event_activity
+  | :unsupported_activity</pre>
 
       </div>
 
@@ -464,7 +512,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">domain_event_activities()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/activity_catalog.ex#L20" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/activity_catalog.ex#L24" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -483,6 +531,34 @@ GUIDES
 
   </section>
 </section>
+<section class="detail" id="queue_event_activities/0">
+
+  <div class="detail-header">
+    <a href="#queue_event_activities/0" class="detail-link" data-no-tooltip title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">queue_event_activities()</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/activity_catalog.ex#L27" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> queue_event_activities() :: [<a href="#t:activity_type/0">activity_type</a>()]</pre>
+
+      </div>
+
+
+  </section>
+</section>
 <section class="detail" id="supported_activities/0">
 
   <div class="detail-header">
@@ -492,7 +568,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">supported_activities()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/activity_catalog.ex#L14" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/activity_logging/activity_catalog.ex#L18" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
