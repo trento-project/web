@@ -159,7 +159,7 @@ defmodule TrentoWeb.V1.SettingsController do
 
   def get_analytics_settings(conn, _) do
    case Settings.get_analytics_settings() do
-   {:ok, settings} -> render(conn, :analytics_settings, %{analytics_settings: settings})
+   {:ok, settings} -> render(conn, :analytics_settings, %{settings: settings})
    {:error, :analytics_settings_not_configured} -> {:error, :not_found}
    end
   end

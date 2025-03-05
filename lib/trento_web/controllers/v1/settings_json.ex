@@ -33,7 +33,7 @@ defmodule TrentoWeb.V1.SettingsJSON do
       }
 
   def analytics_settings(%{
-      analytics_settings: %{
+      settings: %{
         analytics_optin: analytics_optin
       }
     }),
