@@ -19,6 +19,7 @@ import {
   EOS_KEYBOARD_DOUBLE_ARROW_RIGHT,
   EOS_SUPERVISED_USER_CIRCLE_OUTLINED,
   EOS_ASSIGNMENT,
+  EOS_MENU_BOOK,
 } from 'eos-icons-react';
 
 import TrentoLogo from '@static/trento-logo-stacked.svg';
@@ -134,7 +135,7 @@ function Layout() {
               )}
             </button>
           </div>
-          <div className="bg-white h-full dark:bg-gray-700">
+          <div className="relative bg-white h-full pb-24 dark:bg-gray-700">
             <div className="flex items-center justify-center pt-6">
               <img
                 className={classNames('h-auto transition-scale duration-100', {
@@ -178,6 +179,23 @@ function Layout() {
                     </NavLink>
                   </ForbiddenGuard>
                 ))}
+              </div>
+              <div className="absolute bottom-24 left-4">
+                <a
+                  href="https://www.trento-project.io/docs/"
+                  target="_blank"
+                  className={classNames(
+                    'flex gap-2 items-center text-green-800 font-bold bg-jungle-green-100 py-2 rounded-md hover:opacity-75',
+                    {
+                      'px-2': isCollapsed,
+                      'px-4': !isCollapsed,
+                    }
+                  )}
+                  rel="noreferrer"
+                >
+                  <EOS_MENU_BOOK className="fill-green-800" />
+                  {!isCollapsed ? <span>Read the Trento docs</span> : null}
+                </a>
               </div>
             </nav>
           </div>
