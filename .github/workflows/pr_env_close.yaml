@@ -84,6 +84,8 @@ jobs:
       - name: Add pipx_bin to path
         if: ${{ env.ACT }}
         run: echo '/opt/pipx_bin' >> $GITHUB_PATH
+      - name: Install ansible-core
+        run: sudo pipx install --force ansible-core==2.16.3
       - name: Install galaxy deps
         run: ansible-galaxy install -r ansible/requirements.yml
       - name: Run playbook
