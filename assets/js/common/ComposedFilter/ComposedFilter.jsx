@@ -53,6 +53,7 @@ function ComposedFilter({
   filters = [],
   onChange,
   value: initialValue = {},
+  resetValue = {},
   autoApply,
   children,
 }) {
@@ -73,40 +74,55 @@ function ComposedFilter({
   }, [JSON.stringify(initialValue)]);
 
   return (
-    <div className={classNames('grid grid-flow-col gap-4', className)}>
-      {filters
-        .map(({ key, ...rest }) => [key, rest, value[key], onFilterChange(key)])
-        .map((args) => renderFilter(...args))}
-      {!autoApply && (
-        <>
-          {children && (
-            <div className="grid grid-rows-subgrid gap-4 grid-flow-col grid-cols-2">
-              {children}
+    <div className="grid grid-flow-col grid-cols-2 gap-2">
+      <div
+        className={classNames(
+          'grid grid-cols-subgrid grid-flow-col gap-2 grid-cols-5 col-span-5',
+          className
+        )}
+      >
+        {filters
+          .map(({ key, ...rest }) => [
+            key,
+            rest,
+            value[key],
+            onFilterChange(key),
+          ])
+          .map((args) => renderFilter(...args))}
+      </div>
+      <div className="grid grid-cols-subgrid grid-flow-col gap-2 grid-rows-2 grid-cols-2 col-span-2">
+        {!autoApply && (
+          <>
+            {children && (
+              <div className="grid grid-cols-subgrid grid-flow-col col-span-2 gap-2">
+                {children}
+              </div>
+            )}
+            <div className="grid grid-cols-subgrid grid-flow-col col-span-2 gap-2">
+              <Button
+                disabled={!isChanged}
+                onClick={() => {
+                  setIsChanged(false);
+                  onChange(value);
+                }}
+              >
+                Apply Filter
+              </Button>
+              <Button
+                type="primary-white"
+                onClick={() => {
+                  setValue(resetValue);
+                  setIsChanged(false);
+                  onChange(resetValue);
+                }}
+              >
+                Reset Filters
+              </Button>
             </div>
-          )}
-          <div className="grid grid-rows-subgrid gap-4 grid-flow-col grid-cols-2">
-            <Button
-              disabled={!isChanged}
-              onClick={() => {
-                setIsChanged(false);
-                onChange(value);
-              }}
-            >
-              Apply Filters
-            </Button>
-            <Button
-              type="primary-white"
-              onClick={() => {
-                setValue({});
-                setIsChanged(false);
-                onChange({});
-              }}
-            >
-              Reset Filters
-            </Button>
-          </div>
-        </>
-      )}
+            <div />
+          </>
+        )}
+      </div>
     </div>
   );
 }

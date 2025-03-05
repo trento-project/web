@@ -280,7 +280,7 @@ defmodule TrentoWeb.V1.ActivityLogControllerTest do
       assert_schema(resp, "ActivityLog", api_spec)
     end
 
-    test "should return info and above severity level entries by default",
+    test "should return debug and above severity level entries by default",
          %{
            conn: conn,
            api_spec: api_spec
@@ -299,12 +299,11 @@ defmodule TrentoWeb.V1.ActivityLogControllerTest do
       severity_levels =
         resp["data"] |> Enum.map(fn entry -> entry["severity"] end) |> Enum.uniq() |> Enum.sort()
 
-      assert severity_levels == Enum.sort(["info", "warning", "error", "critical"])
-      refute Enum.member?(severity_levels, "debug")
+      assert severity_levels == Enum.sort(["debug", "info", "warning", "critical"])
       assert_schema(resp, "ActivityLog", api_spec)
     end
 
-    test "should return error and above severity level entries with appropriate query params",
+    test "should return critical severity level entries with appropriate query params",
          %{
            conn: conn,
            api_spec: api_spec
@@ -317,13 +316,13 @@ defmodule TrentoWeb.V1.ActivityLogControllerTest do
 
       resp =
         conn
-        |> get("/api/v1/activity_log?severity=error")
+        |> get("/api/v1/activity_log?severity[]=critical")
         |> json_response(200)
 
       severity_levels =
         resp["data"] |> Enum.map(fn entry -> entry["severity"] end) |> Enum.uniq() |> Enum.sort()
 
-      assert severity_levels == Enum.sort(["error", "critical"])
+      assert severity_levels == Enum.sort(["critical"])
       assert_schema(resp, "ActivityLog", api_spec)
     end
   end

@@ -10,13 +10,23 @@ import ListView from '@common/ListView';
 import { toResource, toLabel } from '@lib/model/activityLog';
 import classNames from 'classnames';
 
-const keys = ['id', 'type', 'resource', 'user', 'message', 'time', 'metadata'];
+const keys = [
+  'id',
+  'type',
+  'resource',
+  'user',
+  'severity',
+  'message',
+  'time',
+  'metadata',
+];
 
 const keyToLabel = {
   id: 'ID',
   type: 'Activity Type',
   resource: 'Resource',
   user: 'User',
+  severity: 'Severity',
   time: 'Created at',
   message: 'Message',
   metadata: 'Data',
