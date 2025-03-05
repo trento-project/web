@@ -231,10 +231,7 @@ export const notRecognizedProviderIsDisplayed = () =>
   cy.get(notRecognizedProviderLabel).should('be.visible');
 
 const _processAttributeName = (attributeHeaderName) => {
-  const splittedAttribute = attributeHeaderName
-    .replace(/_/g, ' ')
-    .toLowerCase()
-    .split(' ');
+  const splittedAttribute = attributeHeaderName.toLowerCase().split(' ');
   if (splittedAttribute.length === 2)
     return splittedAttribute[0] + capitalize(splittedAttribute[1]);
   else if (attributeHeaderName === 'Identifier') return 'id';
