@@ -85,7 +85,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
   end
 
   defmodule AnalyticsSettings do
-   @moduledoc false
+    @moduledoc false
 
     OpenApiSpex.schema(
       %{
@@ -98,7 +98,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
             type: :boolean
           }
         },
-        required: [:analytics_optin],
+        required: [:analytics_optin]
       },
       struct?: false
     )

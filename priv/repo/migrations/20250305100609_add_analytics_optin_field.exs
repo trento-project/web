@@ -5,6 +5,5 @@ defmodule Trento.Repo.Migrations.AddAnalyticsOptinField do
     alter(table(:settings)) do
       add :analytics_optin, :boolean, default: false
     end
-  
   end
 end

@@ -33,13 +33,13 @@ defmodule TrentoWeb.V1.SettingsJSON do
       }
 
   def analytics_settings(%{
-      settings: %{
+        settings: %{
+          analytics_optin: analytics_optin
+        }
+      }),
+      do: %{
         analytics_optin: analytics_optin
       }
-    }),
-    do: %{
-      analytics_optin: analytics_optin
-    }
 
   def suse_manager(%{
         settings: %{

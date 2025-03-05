@@ -160,7 +160,7 @@ defmodule Trento.Settings do
   @spec get_analytics_settings() ::
           {:ok, AnalyticsSettings.t()} | {:error, :analytics_settings_not_configured}
   def get_analytics_settings do
-   settings = Repo.one(AnalyticsSettings.base_query())
+    settings = Repo.one(AnalyticsSettings.base_query())
 
     if settings do
       {:ok, settings}
@@ -170,8 +170,8 @@ defmodule Trento.Settings do
   end
 
   @spec change_analytics_optin(boolean()) ::
-    {:ok, AnalyticsSettings.t()}
-    | {:error, :analytics_settings_not_configured}
+          {:ok, AnalyticsSettings.t()}
+          | {:error, :analytics_settings_not_configured}
   def change_analytics_optin(value) do
     case get_analytics_settings() do
       {:ok, settings} ->
@@ -182,10 +182,10 @@ defmodule Trento.Settings do
         |> Repo.update()
         |> log_error("Error while updating analytics optin value")
 
-        error ->
-          error
-      end
+      error ->
+        error
     end
+  end
 
   # Certificates settings
 

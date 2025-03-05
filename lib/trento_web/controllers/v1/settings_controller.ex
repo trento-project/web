@@ -148,31 +148,30 @@ defmodule TrentoWeb.V1.SettingsController do
   end
 
   operation :get_analytics_settings,
-   summary: "Fetches the Analytics settings",
-   tags: ["Platform"],
-   responses: [
-    ok:
-    {"Analytics settings fetched successfully", "application/json",
-     Schema.Platform.AnalyticsSettings},
-    not_found: Schema.NotFound.response()
-   ]
+    summary: "Fetches the Analytics settings",
+    tags: ["Platform"],
+    responses: [
+      ok:
+        {"Analytics settings fetched successfully", "application/json",
+         Schema.Platform.AnalyticsSettings},
+      not_found: Schema.NotFound.response()
+    ]
 
   def get_analytics_settings(conn, _) do
-   case Settings.get_analytics_settings() do
-   {:ok, settings} -> render(conn, :analytics_settings, %{settings: settings})
-   {:error, :analytics_settings_not_configured} -> {:error, :not_found}
-   end
+    case Settings.get_analytics_settings() do
+      {:ok, settings} -> render(conn, :analytics_settings, %{settings: settings})
+      {:error, :analytics_settings_not_configured} -> {:error, :not_found}
+    end
   end
 
   operation :update_analytics_settings,
     summary: "Updates the Analytics settings",
     tags: ["Platform"],
-    request_body:
-      {"AnalyticsSettings", "application/json", Schema.Platform.AnalyticsSettings},
+    request_body: {"AnalyticsSettings", "application/json", Schema.Platform.AnalyticsSettings},
     responses: [
       ok:
         {"Analytics settings updated successfully", "application/json",
-          Schema.Platform.AnalyticsSettings},
+         Schema.Platform.AnalyticsSettings},
       unprocessable_entity: Schema.UnprocessableEntity.response()
     ]
 
