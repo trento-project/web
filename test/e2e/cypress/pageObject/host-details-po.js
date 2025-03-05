@@ -19,7 +19,10 @@ const clusterNameLabel = 'div:contains("Cluster") div span a span';
 const agentVersionLabel =
   'div[class*="flow-row"]:contains("Agent Version") span';
 const ipAddressesLabel = 'div[class*="flow-row"]:contains("IP Addresses") span';
-
+const agentRunningLabel = 'span:contains("Agent:running")';
+const agentRunningBadge = `${agentRunningLabel} svg`;
+const nodeExporterLabel = 'span:contains("Node Exporter:running")';
+const nodeExporterBadge = `${nodeExporterLabel} svg`;
 const providerDetailsBox = 'div[class="mt-16"]:contains("Provider details")';
 const notRecognizedProviderLabel = 'div:contains("Provider not recognized")';
 const providerDetails = {
@@ -246,6 +249,24 @@ const _getTableHeaders = (tableName) => {
         header.textContent.trim()
       );
       return cy.wrap(headerTexts);
+    });
+};
+
+export const agentStatusIsCorrectlyDisplayed = () => {
+  cy.get(agentRunningLabel).should('be.visible');
+  cy.get(agentRunningBadge)
+    .invoke('attr', 'class')
+    .then((classAttr) => {
+      expect(classAttr).to.contain('jungle-green');
+    });
+};
+
+export const nodeExporterStatusIsCorrectlyDisplayed = () => {
+  cy.get(nodeExporterLabel).should('be.visible');
+  cy.get(nodeExporterBadge)
+    .invoke('attr', 'class')
+    .then((classAttr) => {
+      expect(classAttr).to.contain('jungle-green');
     });
 };
 

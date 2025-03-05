@@ -133,9 +133,7 @@ context('Host Details', () => {
   });
 
   describe('SLES subscriptions details for this host should be displayed', () => {
-    beforeEach(() => {
-      hostDetailsPage.visitSelectedHost();
-    });
+    beforeEach(() => hostDetailsPage.visitSelectedHost());
 
     it('should show the SLES subscriptions details correctly', () => {
       hostDetailsPage.slesSubscriptionsTableDisplaysExpectedData();
@@ -143,16 +141,18 @@ context('Host Details', () => {
   });
 
   describe("Trento agent status should be 'running'", () => {
+    beforeEach(() => hostDetailsPage.visitSelectedHost());
+
     it("should show the status as 'running'", () => {
-      cy.get('span').should('contain.text', 'Agent:running');
-      cy.get('span').find('svg').should('exist');
+      hostDetailsPage.agentStatusIsCorrectlyDisplayed();
     });
   });
 
   describe("Node exporter status should be 'running'", () => {
+    beforeEach(() => hostDetailsPage.visitSelectedHost());
+
     it("should show the status as 'running'", () => {
-      cy.get('span').should('contain.text', 'Node Exporter:running');
-      cy.get('span').find('svg').should('exist');
+      hostDetailsPage.nodeExporterStatusIsCorrectlyDisplayed();
     });
   });
 
