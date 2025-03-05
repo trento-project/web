@@ -10,7 +10,7 @@ import { createUserRequestFactory } from '@lib/test-utils/factories';
 
 context('Host Details', () => {
   before(() => {
-    // hostDetailsPage.preloadTestData();
+    hostDetailsPage.preloadTestData();
     hostDetailsPage.startAgentHeartbeat();
   });
 
@@ -128,96 +128,17 @@ context('Host Details', () => {
     });
 
     it('should show SAP instance data', () => {
-      hostDetailsPage.expectedFieldValueIsDisplayed('ID');
-      hostDetailsPage.expectedFieldValueIsDisplayed('SID');
-      hostDetailsPage.expectedFieldValueIsDisplayed('Type');
-      hostDetailsPage.expectedFieldValueIsDisplayed('Instance Number');
-      hostDetailsPage.expectedFieldValueIsDisplayed('Features');
+      hostDetailsPage.sapSystemsTableDisplaysExpectedData();
     });
   });
 
   describe('SLES subscriptions details for this host should be displayed', () => {
+    beforeEach(() => {
+      hostDetailsPage.visitSelectedHost();
+    });
+
     it('should show the SLES subscriptions details correctly', () => {
-      cy.get('.container').eq(1).as('slesSubscriptionsTable');
-      selectedHost.slesSubscriptions.forEach((subscription, index) => {
-        cy.get('@slesSubscriptionsTable')
-          .find('tr')
-          .eq(index + 1)
-          .find('td')
-          .as('slesSubscriptionsRow');
-
-        cy.get('@slesSubscriptionsTable')
-          .contains('th', 'Identifier')
-          .invoke('index')
-          .then((i) => {
-            cy.get('@slesSubscriptionsRow')
-              .eq(i)
-              .should('contain', subscription.id);
-          });
-
-        cy.get('@slesSubscriptionsTable')
-          .contains('th', 'Arch')
-          .invoke('index')
-          .then((i) => {
-            cy.get('@slesSubscriptionsRow')
-              .eq(i)
-              .should('contain', subscription.arch);
-          });
-
-        cy.get('@slesSubscriptionsTable')
-          .contains('th', 'version')
-          .invoke('index')
-          .then((i) => {
-            cy.get('@slesSubscriptionsRow')
-              .eq(i)
-              .should('contain', subscription.version);
-          });
-
-        cy.get('@slesSubscriptionsTable')
-          .contains('th', 'type')
-          .invoke('index')
-          .then((i) => {
-            cy.get('@slesSubscriptionsRow')
-              .eq(i)
-              .should('contain', subscription.type);
-          });
-
-        cy.get('@slesSubscriptionsTable')
-          .contains('th', 'Status')
-          .invoke('index')
-          .then((i) => {
-            cy.get('@slesSubscriptionsRow')
-              .eq(i)
-              .should('contain', subscription.status);
-          });
-
-        cy.get('@slesSubscriptionsTable')
-          .contains('th', 'Subscription status')
-          .invoke('index')
-          .then((i) => {
-            cy.get('@slesSubscriptionsRow')
-              .eq(i)
-              .should('contain', subscription.subscriptionStatus);
-          });
-
-        cy.get('@slesSubscriptionsTable')
-          .contains('th', 'starts_at')
-          .invoke('index')
-          .then((i) => {
-            cy.get('@slesSubscriptionsRow')
-              .eq(i)
-              .should('contain', subscription.startsAt);
-          });
-
-        cy.get('@slesSubscriptionsTable')
-          .contains('th', 'Expires at')
-          .invoke('index')
-          .then((i) => {
-            cy.get('@slesSubscriptionsRow')
-              .eq(i)
-              .should('contain', subscription.expiresAt);
-          });
-      });
+      hostDetailsPage.slesSubscriptionsTableDisplaysExpectedData();
     });
   });
 

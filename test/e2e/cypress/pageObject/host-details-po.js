@@ -1,7 +1,7 @@
 export * from './base-po.js';
 import * as basePage from './base-po.js';
 
-import { capitalize } from 'lodash';
+import { capitalize, head } from 'lodash';
 
 // Test Data
 import { selectedHost } from '../fixtures/host-details/selected_host';
@@ -231,30 +231,90 @@ export const notRecognizedProviderIsDisplayed = () =>
   cy.get(notRecognizedProviderLabel).should('be.visible');
 
 const _processAttributeName = (attributeHeaderName) => {
-  const splittedAttribute = attributeHeaderName.toLowerCase().split(' ');
+  const splittedAttribute = attributeHeaderName
+    .replace(/_/g, ' ')
+    .toLowerCase()
+    .split(' ');
   if (splittedAttribute.length === 2)
     return splittedAttribute[0] + capitalize(splittedAttribute[1]);
-  else return attributeHeaderName.toLowerCase();
+  else if (attributeHeaderName === 'Identifier') return 'id';
+  return attributeHeaderName.toLowerCase();
 };
 
-export const expectedFieldValueIsDisplayed = (headerName) => {
-  const attributeName = _processAttributeName(headerName);
-  const expectedValue = selectedHost.sapInstance[attributeName];
-  const tableHeaderSelector = `div[class="mt-8"]:contains("SAP instances") th:contains("${headerName}")`;
-  const tableCellSelector =
-    'div[class="mt-8"]:contains("SAP instances") tbody td';
-  cy.get(tableHeaderSelector)
-    .invoke('index')
-    .then((i) => {
-      const isPropertyArray = Array.isArray(expectedValue);
-      if (isPropertyArray) {
-        cy.wrap(expectedValue).each((value) => {
-          cy.get(tableCellSelector).eq(i).should('contain', value);
-        });
-      } else {
-        cy.get(tableCellSelector).eq(i).should('have.text', expectedValue);
-      }
+const _getTableHeaders = (tableName) => {
+  return cy
+    .get(`div[class*="mt-"]:contains("${tableName}") th`)
+    .then((headers) => {
+      const headerTexts = [...headers].map((header) =>
+        header.textContent.trim()
+      );
+      return cy.wrap(headerTexts);
     });
+};
+
+export const slesSubscriptionsTableDisplaysExpectedData = () =>
+  _genericTableValidation('SLES subscription details', selectedHost);
+
+export const sapSystemsTableDisplaysExpectedData = () =>
+  _genericTableValidation('SAP instances', selectedHost);
+
+const _getExpectedValuesObject = (tableName) => {
+  if (tableName === 'SAP instances') return 'sapInstance';
+  else if (tableName === 'SLES subscription details')
+    return 'slesSubscriptions';
+};
+
+const _getAmountOfRows = (object) => {
+  if (Array.isArray(object)) return object.length;
+  else return 1;
+};
+
+const _genericTableValidation = (tableName, expectationsObject) => {
+  const expectedValuesObject = _getExpectedValuesObject(tableName);
+  const amountOfRows = _getAmountOfRows(
+    expectationsObject[expectedValuesObject]
+  );
+  const tableRowSelector = `div[class*="mt-"]:contains("${tableName}") tbody tr`;
+
+  for (let rowIndex = 0; rowIndex < amountOfRows; rowIndex++) {
+    _getTableHeaders(tableName).then((headers) => {
+      headers.forEach((header) => {
+        const attributeName = _processAttributeName(header);
+        let expectedValue;
+
+        if (Array.isArray(expectationsObject[expectedValuesObject]))
+          expectedValue =
+            expectationsObject[expectedValuesObject][rowIndex][attributeName];
+        else
+          expectedValue =
+            expectationsObject[expectedValuesObject][attributeName];
+
+        cy.log(expectationsObject, expectedValuesObject, attributeName);
+
+        const tableHeaderSelector = `div[class*="mt-"]:contains("${tableName}") th:contains("${header}")`;
+        cy.get(tableHeaderSelector)
+          .invoke('index')
+          .then((i) => {
+            const isPropertyArray = Array.isArray(expectedValue);
+            if (isPropertyArray) {
+              cy.wrap(expectedValue).each((value) => {
+                cy.get(tableRowSelector)
+                  .eq(rowIndex)
+                  .find('td')
+                  .eq(i)
+                  .should('contain', value);
+              });
+            } else {
+              cy.get(tableRowSelector)
+                .eq(rowIndex)
+                .find('td')
+                .eq(i)
+                .should('have.text', expectedValue);
+            }
+          });
+      });
+    });
+  }
 };
 
 // API
