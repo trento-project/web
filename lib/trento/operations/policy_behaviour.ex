@@ -27,5 +27,5 @@ defmodule Trento.Operations.PolicyBehaviour do
                 | HostReadModel.t()
                 | SapSystemReadModel.t(),
               params :: map
-            ) :: boolean()
+            ) :: :ok | {:error, [String.t()]}
 end
