@@ -9,6 +9,7 @@ defmodule Trento.Settings do
 
   alias Trento.Settings.{
     ActivityLogSettings,
+    AnalyticsSettings,
     ApiKeySettings,
     InstallationSettings,
     SSOCertificatesSettings,
@@ -151,6 +152,20 @@ defmodule Trento.Settings do
 
       error ->
         error
+    end
+  end
+
+  # Analytics settings
+
+  @spec get_analytics_settings() ::
+          {:ok, AnalyticsSettings.t()} | {:error, :analytics_settings_not_configured}
+  def get_analytics_settings do
+   settings = Repo.one(AnalyticsSettings.base_query())
+
+    if settings do
+      {:ok, settings}
+    else
+      {:error, :settings_not_configured}
     end
   end
 

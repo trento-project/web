@@ -147,6 +147,23 @@ defmodule TrentoWeb.V1.SettingsController do
     end
   end
 
+  operation :get_analytics_settings,
+   summary: "Fetches the Analytics settings",
+   tags: ["Platform"],
+   responses: [
+    ok:
+    {"Analytics settings fetched successfully", "application/json",
+     Schema.Platform.AnalyticsSettings},
+    not_found: Schema.NotFound.response()
+   ]
+
+  def get_analytics_settings(conn, _) do
+   case Settings.get_analytics_settings() do
+   {:ok, settings} -> render(conn, :analytics_settings, %{analytics_settings: settings})
+   {:error, :analytics_settings_not_configured} -> {:error, :not_found}
+   end
+  end
+
   operation :get_suse_manager_settings,
     summary: "Gets the Suse manager Settings",
     tags: ["Platform"],

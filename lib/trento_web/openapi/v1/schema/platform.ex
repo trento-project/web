@@ -84,6 +84,26 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
     )
   end
 
+  defmodule AnalyticsSettings do
+   @moduledoc false
+
+    OpenApiSpex.schema(
+      %{
+        title: "AnalyticsSettings",
+        description: "Settings for Analytics",
+        type: :object,
+        additionalProperties: false,
+        properties: %{
+          analytics_optin: %Schema{
+            type: :boolean
+          }
+        },
+        required: [:analytics_optin],
+      },
+      struct?: false
+    )
+  end
+
   defmodule GeneralInformation do
     @moduledoc false
 
