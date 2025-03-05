@@ -214,6 +214,13 @@ defmodule TrentoWeb.FallbackController do
     |> render(:"403")
   end
 
+  def call(conn, {:error, :forbidden, errors}) do
+    conn
+    |> put_status(:forbidden)
+    |> put_view(json: ErrorJSON)
+    |> render(:"403", errors: errors)
+  end
+
   def call(conn, {:error, :stale_entry}) do
     conn
     |> put_status(:precondition_failed)
