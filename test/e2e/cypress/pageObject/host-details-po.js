@@ -230,6 +230,22 @@ export const expectedNetworkIsDisplayed = (cloudProvider) => {
   );
 };
 
+export const validateNotInstalledSaptune = () => {
+  cy.get('div h1:contains("Saptune Summary")').should('be.visible');
+
+  cy.get('div:contains("Package") + div span div span').should(
+    'have.text',
+    'Not installed'
+  );
+  cy.get('div:contains("Configured Version") + div span').then(
+    (configuredVersionElement) =>
+      cy.wrap(configuredVersionElement).should('have.text', '-')
+  );
+  cy.get('div:contains("Tuning") + div span span').then((tuningElement) =>
+    cy.wrap(tuningElement).should('have.text', '-')
+  );
+};
+
 export const notRecognizedProviderIsDisplayed = () =>
   cy.get(notRecognizedProviderLabel).should('be.visible');
 
@@ -336,6 +352,11 @@ const _validateCell = (tableName, header, rowIndex, expectedValue) => {
 };
 
 // API
+export const loadSaptuneScenario = (state) => {
+  const { hostName } = selectedHost;
+  basePage.loadScenario(`host-${hostName}-saptune-${state}`);
+};
+
 export const loadAwsHostDetails = () =>
   basePage.loadScenario('host-details-aws');
 export const startAgentHeartbeat = () =>

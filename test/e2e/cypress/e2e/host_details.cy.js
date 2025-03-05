@@ -156,7 +156,9 @@ context('Host Details', () => {
     });
   });
 
-  describe('Saptune Summary for this host should be displayed', () => {
+  describe.only('Saptune Summary for this host should be displayed', () => {
+    beforeEach(() => hostDetailsPage.visitSelectedHost());
+
     const { hostName } = selectedHost;
     const saptuneSummarySelector = '.pt-8';
 
@@ -182,6 +184,11 @@ context('Host Details', () => {
         data: saptuneDetailsData,
       },
     ];
+
+    it('should show not installed status', () => {
+      hostDetailsPage.loadSaptuneScenario('uninstalled');
+      hostDetailsPage.validateNotInstalledSaptune();
+    });
 
     scenarios.forEach(({ data, description, name }) => {
       it(description, () => {
