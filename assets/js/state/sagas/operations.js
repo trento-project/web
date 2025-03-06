@@ -91,13 +91,16 @@ export function* updateRunningOperation({ payload }) {
 
   try {
     const {
-      data: { items: operations, total_count: totalCount },
+      data: {
+        items: [operationItem],
+        total_count: totalCount,
+      },
     } = yield call(getOperationExecutions, {
       group_id: groupID,
       items_per_page: 1,
     });
-    if (totalCount === 1 && operationRunning(operations[0])) {
-      const operation = getOperationInternalName(operations[0].operation);
+    if (totalCount === 1 && operationRunning(operationItem)) {
+      const operation = getOperationInternalName(operationItem.operation);
       yield put(setRunningOperation({ groupID, operation }));
     }
   } catch {
