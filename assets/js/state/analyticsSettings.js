@@ -4,14 +4,20 @@ import { saveSettings, getSettings } from '@lib/api/analyticsSettings';
 export const useAnalyticsSettings = () => {
   const [loading, setLoading] = useState(false);
   const [settings, setSettings] = useState({});
+  const [fetchError, setFetchError] = useState(false);
+  const [entityErrors, setEntityErrors] = useState([]);
 
   const fetchAnalyticsSettings = async () => {
     setLoading(true);
+    setFetchError(false);
     try {
       const { data } = await getSettings();
       setSettings(data);
-    } catch (error) {
+    } catch ({ response: { status } }) {
       // Handle the error
+      setSettings({});
+      status !== '404';
+      setFetchError(true);
     } finally {
       setLoading(false);
     }
@@ -23,8 +29,13 @@ export const useAnalyticsSettings = () => {
       // Save the new settings
       const { data } = await saveSettings(newSettings);
       setSettings(data);
-    } catch (error) {
+    } catch ({
+      response: {
+        data: { errors },
+      },
+    }) {
       // Handle the error
+      setEntityErrors(errors || []);
     } finally {
       setLoading(false);
     }
@@ -38,6 +49,8 @@ export const useAnalyticsSettings = () => {
     saveAnalyticsSettings,
     fetchAnalyticsSettings,
     analyticsSettingsLoading: loading,
+    analyticsSettingsFetchError: fetchError,
+    analyticsSettingsEntityErrors: entityErrors,
     analyticsSettings: settings,
   };
 };
