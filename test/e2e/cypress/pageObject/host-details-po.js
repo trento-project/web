@@ -1,7 +1,7 @@
 export * from './base-po.js';
 import * as basePage from './base-po.js';
 
-import { capitalize, head } from 'lodash';
+import { capitalize } from 'lodash';
 
 // Test Data
 import { selectedHost } from '../fixtures/host-details/selected_host';
@@ -25,6 +25,13 @@ const nodeExporterLabel = 'span:contains("Node Exporter:running")';
 const nodeExporterBadge = `${nodeExporterLabel} svg`;
 const providerDetailsBox = 'div[class="mt-16"]:contains("Provider details")';
 const notRecognizedProviderLabel = 'div:contains("Provider not recognized")';
+const saptuneSummaryLabel = 'div h1:contains("Saptune Summary")';
+const saptuneInstallationStatus =
+  'div[class="font-bold"]:contains("Package") + div span span';
+const saptuneConfiguredVersion =
+  'div:contains("Configured Version") + div span';
+const saptuneTuningLabel = 'div:contains("Tuning") + div span span';
+
 const providerDetails = {
   provider: `${providerDetailsBox} div[class*="flow-row"]:contains("Provider") span`,
   vmName: `${providerDetailsBox} div[class*="flow-row"]:contains("VM Name") span`,
@@ -230,19 +237,27 @@ export const expectedNetworkIsDisplayed = (cloudProvider) => {
   );
 };
 
-export const validateNotInstalledSaptune = () => {
-  cy.get('div h1:contains("Saptune Summary")').should('be.visible');
-
-  cy.get('div:contains("Package") + div span div span').should(
-    'have.text',
-    'Not installed'
+export const validateSaptuneStatus = (installationStatus) => {
+  let installationData;
+  if (installationStatus === 'uninstalled') {
+    installationData = {
+      packageVersion: 'Not installed',
+      configuredVersion: '-',
+      tuningStatus: '-',
+    };
+  } else if (installationStatus === 'unsupported') {
+    installationData = saptuneDetailsDataUnsupportedVersion;
+  } else if (installationStatus === 'compliant') {
+    installationData = saptuneDetailsData;
+  }
+  const { packageVersion, configuredVersion, tuningStatus } = installationData;
+  cy.get(saptuneSummaryLabel).should('be.visible');
+  cy.get(saptuneInstallationStatus).should('have.text', packageVersion);
+  cy.get(saptuneConfiguredVersion).then((configuredVersionElement) =>
+    cy.wrap(configuredVersionElement).should('have.text', configuredVersion)
   );
-  cy.get('div:contains("Configured Version") + div span').then(
-    (configuredVersionElement) =>
-      cy.wrap(configuredVersionElement).should('have.text', '-')
-  );
-  cy.get('div:contains("Tuning") + div span span').then((tuningElement) =>
-    cy.wrap(tuningElement).should('have.text', '-')
+  cy.get(saptuneTuningLabel).then((tuningElement) =>
+    cy.wrap(tuningElement).should('have.text', tuningStatus)
   );
 };
 

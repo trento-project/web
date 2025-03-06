@@ -1,10 +1,6 @@
 import * as hostDetailsPage from '../pageObject/host-details-po';
 
 import { selectedHost } from '../fixtures/host-details/selected_host';
-import {
-  saptuneDetailsData,
-  saptuneDetailsDataUnsupportedVersion,
-} from '../fixtures/saptune-details/saptune_details_data';
 
 import { createUserRequestFactory } from '@lib/test-utils/factories';
 
@@ -156,61 +152,22 @@ context('Host Details', () => {
     });
   });
 
-  describe.only('Saptune Summary for this host should be displayed', () => {
+  describe('Saptune Summary for this host should be displayed', () => {
     beforeEach(() => hostDetailsPage.visitSelectedHost());
-
-    const { hostName } = selectedHost;
-    const saptuneSummarySelector = '.pt-8';
-
-    const scenarios = [
-      {
-        description: 'should show not installed status',
-        name: 'saptune-uninstalled',
-        data: {
-          packageVersion: 'Not installed',
-          configuredVersion: '-',
-          tuningStatus: '-',
-        },
-      },
-      {
-        description: 'should show version is not supported status',
-        name: 'saptune-unsupported',
-        data: saptuneDetailsDataUnsupportedVersion,
-      },
-      {
-        description:
-          'should show package version, configured version and tuning status',
-        name: 'saptune-compliant',
-        data: saptuneDetailsData,
-      },
-    ];
 
     it('should show not installed status', () => {
       hostDetailsPage.loadSaptuneScenario('uninstalled');
-      hostDetailsPage.validateNotInstalledSaptune();
+      hostDetailsPage.validateSaptuneStatus('uninstalled');
     });
 
-    scenarios.forEach(({ data, description, name }) => {
-      it(description, () => {
-        const { configuredVersion, packageVersion, tuningStatus } = data;
-        cy.loadScenario(`host-${hostName}-${name}`);
-        cy.get(saptuneSummarySelector).should('contain', 'Saptune Summary');
+    it('should show saptune unsupported status', () => {
+      hostDetailsPage.loadSaptuneScenario('unsupported');
+      hostDetailsPage.validateSaptuneStatus('unsupported');
+    });
 
-        cy.get(saptuneSummarySelector)
-          .contains('Package')
-          .next()
-          .should('contain', packageVersion);
-
-        cy.get(saptuneSummarySelector)
-          .contains('Configured Version')
-          .next()
-          .should('contain', configuredVersion);
-
-        cy.get(saptuneSummarySelector)
-          .contains('Tuning')
-          .next()
-          .should('contain', tuningStatus);
-      });
+    it('should show saptune compliant status', () => {
+      hostDetailsPage.loadSaptuneScenario('compliant');
+      hostDetailsPage.validateSaptuneStatus('compliant');
     });
   });
 
