@@ -41,6 +41,7 @@ const cleanedUpHost = `#host-${selectedHost.agentId}`;
 const startExecutionButton = 'button:contains("Start Execution")';
 const notAuthorizedMessage =
   'span:contains("You are not authorized for this action")';
+const saveChecksSelectionButton = 'button:contains("Save Checks Selection")';
 
 const providerDetails = {
   provider: `${providerDetailsBox} div[class*="flow-row"]:contains("Provider") span`,
@@ -361,6 +362,12 @@ export const notAuthorizedMessageIsDisplayed = () => {
   cy.get(notAuthorizedMessage).should('be.visible');
 };
 
+export const saveChecksSelectionButtonIsDisabled = () =>
+  cy.get(saveChecksSelectionButton).should('be.disabled');
+
+export const saveChecksSelectionButtonIsEnabled = () =>
+  cy.get(saveChecksSelectionButton).should('be.enabled');
+
 const _getExpectedValuesObjectName = (tableName) => {
   if (tableName === 'SAP instances') return 'sapInstance';
   else if (tableName === 'SLES subscription details')
@@ -441,5 +448,13 @@ export const apiCreateUserWithHostChecksExecutionAbilities = () =>
     {
       name: 'all',
       resource: 'host_checks_execution',
+    },
+  ]);
+
+export const apiCreateUserWithChecksSelectionAbilities = () =>
+  basePage.createUserWithAbilities([
+    {
+      name: 'all',
+      resource: 'host_checks_selection',
     },
   ]);

@@ -232,25 +232,17 @@ context('Host Details', () => {
 
     describe('Check Selection', () => {
       it('should forbid check selection saving', () => {
-        cy.get('@user').then((user) => {
-          cy.createUserWithAbilities(user, []);
-          cy.login(user.username, password);
-        });
-        cy.visit(`/hosts/${selectedHost.agentId}/settings`);
-
-        cy.contains('button', 'Save Checks Selection').should('be.disabled');
+        hostDetailsPage.apiCreateUserWithoutAbilities();
+        hostDetailsPage.loginWithoutAbilities();
+        hostDetailsPage.visitHostSettings();
+        hostDetailsPage.saveChecksSelectionButtonIsDisabled();
       });
 
       it('should allow check selection saving', () => {
-        cy.get('@user').then((user) => {
-          cy.createUserWithAbilities(user, [
-            { name: 'all', resource: 'host_checks_selection' },
-          ]);
-          cy.login(user.username, password);
-        });
-        cy.visit(`/hosts/${selectedHost.agentId}/settings`);
-
-        cy.contains('button', 'Save Checks Selection').should('be.enabled');
+        hostDetailsPage.apiCreateUserWithChecksSelectionAbilities();
+        hostDetailsPage.loginWithAbilities();
+        hostDetailsPage.visitHostSettings();
+        hostDetailsPage.saveChecksSelectionButtonIsEnabled();
       });
     });
 
