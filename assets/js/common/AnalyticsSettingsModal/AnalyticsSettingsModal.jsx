@@ -5,6 +5,7 @@ import Modal from '@common/Modal';
 import Button from '@common/Button';
 import Label from '@common/Label';
 import Input from '@common/Input';
+import { initPosthog } from '@lib/analytics';
 
 function AnalyticsSettingsModal({
   open = false,
@@ -49,7 +50,12 @@ function AnalyticsSettingsModal({
             const payload = {
               analytics_optin: analyticsOptin,
             };
-            onSave(payload);
+            onSave(payload).then(() => {
+              if (payload.analytics_optin) {
+                //Starts Posthog if user opts in
+                initPosthog();
+              }
+            });
           }}
         >
           Save Settings

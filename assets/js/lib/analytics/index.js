@@ -15,16 +15,20 @@ if (analyticsEnabled) {
     getSettings().then(({ data }) => {
       if (data.analytics_optin) {
         //Load the Analytics library
-        posthog.init(analyticsKey, {
-          api_host: analyticsUrl,
-          capture_pageview: false,
-        });
+        initPosthog();
       }
     });
   } catch (error) {
     console.log('Error fetching analytics settings', error);
   }
 }
+
+export const initPosthog = () => {
+  posthog.init(analyticsKey, {
+    api_host: analyticsUrl,
+    capture_pageview: false,
+  });
+};
 
 export const capture = (event, payload) => {
   if (!analyticsEnabled) {
