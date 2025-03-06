@@ -15,6 +15,7 @@ describe('AbilitiesMultiSelect Component', () => {
       'all:checks_selection',
       'all:checks_execution',
       'cleanup:all',
+      'operation:all',
     ];
     const abilities = [
       { id: 1, name: 'all', resource: 'host_checks_selection' },
@@ -31,6 +32,7 @@ describe('AbilitiesMultiSelect Component', () => {
       { id: 12, name: 'all', resource: 'api_key_settings' },
       { id: 13, name: 'all', resource: 'suma_settings' },
       { id: 14, name: 'all', resource: 'activity_logs_settings' },
+      { id: 15, name: 'saptune_solution_apply', resource: 'host' },
     ];
 
     render(
@@ -38,6 +40,7 @@ describe('AbilitiesMultiSelect Component', () => {
         abilities={abilities}
         userAbilities={[]}
         setAbilities={noop}
+        operationsEnabled
       />
     );
 
@@ -59,6 +62,8 @@ describe('AbilitiesMultiSelect Component', () => {
     await user.click(screen.getByText('all:tags'));
     await user.click(screen.getByLabelText('permissions'));
     await user.click(screen.getByText('all:settings'));
+    await user.click(screen.getByLabelText('permissions'));
+    await user.click(screen.getByText('operation:all'));
     await user.click(screen.getByLabelText('permissions'));
 
     expect(screen.getByText('No options')).toBeVisible();
@@ -92,23 +97,30 @@ describe('AbilitiesMultiSelect Component', () => {
           { id: 1, name: 'all', resource: 'all' },
           { id: 2, name: 'all', resource: 'host_checks_selection' },
           { id: 3, name: 'all', resource: 'cluster_checks_selection' },
+          { id: 4, name: 'saptune_solution_apply', resource: 'host' },
         ]}
         userAbilities={[
           { id: 1, name: 'all', resource: 'all' },
           { id: 2, name: 'all', resource: 'host_checks_selection' },
           { id: 3, name: 'all', resource: 'cluster_checks_selection' },
+          { id: 4, name: 'saptune_solution_apply', resource: 'host' },
         ]}
         setAbilities={noop}
+        operationsEnabled
       />
     );
 
     screen.getByText('all:checks_selection');
     screen.getByText('all:all');
+    screen.getByText('operation:all');
     expect(
       screen.queryByText('all:host_checks_selection')
     ).not.toBeInTheDocument();
     expect(
       screen.queryByText('all:cluster_checks_selection')
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText('saptune_solution_apply:host')
     ).not.toBeInTheDocument();
 
     await user.click(screen.getByLabelText('permissions'));
