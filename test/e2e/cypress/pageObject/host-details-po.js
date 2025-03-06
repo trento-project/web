@@ -2,6 +2,7 @@ export * from './base-po.js';
 import * as basePage from './base-po.js';
 
 import { capitalize } from 'lodash';
+import { createUserRequestFactory } from '@lib/test-utils/factories';
 
 // Test Data
 import { selectedHost } from '../fixtures/host-details/selected_host';
@@ -37,6 +38,10 @@ const cleanUpModalConfirmationButton = `${cleanUpModal} ${cleanUpUnhealthyHostBu
 const cleanUpModalTitle = `${cleanUpModal} h2:contains("Clean up data discovered by agent on host ${selectedHost.hostName}")`;
 const heartbeatFailingToaster = `p:contains("The host ${selectedHost.hostName} heartbeat is failing.")`;
 const cleanedUpHost = `#host-${selectedHost.agentId}`;
+const startExecutionButton = 'button:contains("Start Execution")';
+const notAuthorizedMessage =
+  'span:contains("You are not authorized for this action")';
+
 const providerDetails = {
   provider: `${providerDetailsBox} div[class*="flow-row"]:contains("Provider") span`,
   vmName: `${providerDetailsBox} div[class*="flow-row"]:contains("VM Name") span`,
@@ -66,6 +71,9 @@ export const visit = (selectedHost = '') =>
   basePage.visit(`/${url}/${selectedHost}`);
 
 export const visitSelectedHost = () => visit(selectedHost.agentId);
+
+export const visitHostSettings = () =>
+  visit(`${selectedHost.agentId}/settings`);
 
 export const clickSelectedHost = () =>
   cy.get(`#host-${selectedHost.agentId}`).click();
@@ -338,6 +346,21 @@ export const cleanedUpHostIsNotDisplayed = () => {
   cy.get(cleanedUpHost).should('not.exist');
 };
 
+export const startExecutionButtonIsDisabled = () =>
+  cy.get(startExecutionButton).should('be.disabled');
+
+export const notAuthorizedMessageIsNotDisplayed = () => {
+  cy.get(startExecutionButton).trigger('mouseover', {
+    force: true,
+  });
+  cy.get(notAuthorizedMessage).should('not.exist');
+};
+
+export const notAuthorizedMessageIsDisplayed = () => {
+  cy.get(startExecutionButton).click({ force: true });
+  cy.get(notAuthorizedMessage).should('be.visible');
+};
+
 const _getExpectedValuesObjectName = (tableName) => {
   if (tableName === 'SAP instances') return 'sapInstance';
   else if (tableName === 'SLES subscription details')
@@ -408,4 +431,15 @@ export const loadAwsHostDetails = () =>
 export const startAgentHeartbeat = () =>
   cy.task('startAgentHeartbeat', [selectedHost.agentId]);
 
+export const restoreHost = () =>
+  basePage.loadScenario(`host-details-${selectedHost.hostName}`);
+
 export const stopAgentsHeartbeat = () => cy.task('stopAgentsHeartbeat');
+
+export const apiCreateUserWithHostChecksExecutionAbilities = () =>
+  basePage.createUserWithAbilities([
+    {
+      name: 'all',
+      resource: 'host_checks_execution',
+    },
+  ]);

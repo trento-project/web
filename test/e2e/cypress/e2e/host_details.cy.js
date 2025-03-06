@@ -2,11 +2,9 @@ import * as hostDetailsPage from '../pageObject/host-details-po';
 
 import { selectedHost } from '../fixtures/host-details/selected_host';
 
-import { createUserRequestFactory } from '@lib/test-utils/factories';
-
 context('Host Details', () => {
   before(() => {
-    hostDetailsPage.preloadTestData();
+    // hostDetailsPage.preloadTestData();
     hostDetailsPage.startAgentHeartbeat();
   });
 
@@ -201,65 +199,34 @@ context('Host Details', () => {
   });
 
   describe('Forbidden actions', () => {
-    const password = 'password';
-
-    before(() => {
-      cy.loadScenario(`host-details-${selectedHost.hostName}`);
-    });
+    before(() => hostDetailsPage.restoreHost());
 
     beforeEach(() => {
-      cy.deleteAllUsers();
-      cy.logout();
-      const user = createUserRequestFactory.build({
-        password,
-        password_confirmation: password,
-      });
-      cy.wrap(user).as('user');
+      hostDetailsPage.apiDeleteAllUsers();
+      hostDetailsPage.logout();
     });
 
     describe('Check Execution', () => {
       it('should forbid check execution when the correct user abilities are not present in both settings and details', () => {
-        cy.get('@user').then((user) => {
-          cy.createUserWithAbilities(user, []);
-          cy.login(user.username, password);
-        });
-        cy.visit(`/hosts/${selectedHost.agentId}/settings`);
+        hostDetailsPage.apiCreateUserWithoutAbilities();
+        hostDetailsPage.loginWithoutAbilities();
 
-        cy.contains('button', 'Start Execution').should('be.disabled');
+        hostDetailsPage.visitHostSettings();
+        hostDetailsPage.startExecutionButtonIsDisabled();
+        hostDetailsPage.notAuthorizedMessageIsDisplayed();
 
-        cy.contains('button', 'Start Execution').click({ force: true });
-
-        cy.contains('span', 'You are not authorized for this action').should(
-          'be.visible'
-        );
-        cy.visit(`/hosts/${selectedHost.agentId}`);
-
-        cy.contains('button', 'Start Execution').should('be.disabled');
-
-        cy.contains('button', 'Start Execution').click({ force: true });
-
-        cy.contains('span', 'You are not authorized for this action').should(
-          'be.visible'
-        );
+        hostDetailsPage.visitSelectedHost();
+        hostDetailsPage.startExecutionButtonIsDisabled();
+        hostDetailsPage.notAuthorizedMessageIsDisplayed();
       });
 
       it('should enable check execution button when the correct user abilities are present', () => {
-        cy.get('@user').then((user) => {
-          cy.createUserWithAbilities(user, [
-            { name: 'all', resource: 'host_checks_execution' },
-          ]);
-          cy.login(user.username, password);
-        });
+        hostDetailsPage.apiCreateUserWithHostChecksExecutionAbilities();
+        hostDetailsPage.loginWithAbilities();
 
-        cy.visit(`/hosts/${selectedHost.agentId}/settings`);
-
-        cy.contains('button', 'Start Execution').trigger('mouseover', {
-          force: true,
-        });
-
-        cy.contains('span', 'You are not authorized for this action').should(
-          'not.exist'
-        );
+        hostDetailsPage.visitHostSettings();
+        hostDetailsPage.startExecutionButtonIsDisabled();
+        hostDetailsPage.notAuthorizedMessageIsNotDisplayed();
       });
     });
 
