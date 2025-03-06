@@ -10,22 +10,30 @@ const testOperations = [
     value: 'Operation 1',
     running: false,
     disabled: false,
+    permitted: ['foo:resource'],
     onClick: mockOnClick,
   },
   {
     value: 'Operation 2',
     running: false,
     disabled: false,
+    permitted: ['bar:resource'],
     onClick: mockOnClick,
   },
 ];
+const userAbilities = [{ name: 'all', resource: 'all' }];
 
 describe('OperationsButton', () => {
   it('should show correct operations', async () => {
     const user = userEvent.setup();
 
     await act(async () => {
-      render(<OperationsButton operations={testOperations} />);
+      render(
+        <OperationsButton
+          operations={testOperations}
+          userAbilities={userAbilities}
+        />
+      );
     });
 
     expect(screen.getByText('Operations')).toBeInTheDocument();
@@ -47,7 +55,12 @@ describe('OperationsButton', () => {
     });
 
     await act(async () => {
-      render(<OperationsButton operations={disabledOperations} />);
+      render(
+        <OperationsButton
+          operations={disabledOperations}
+          userAbilities={userAbilities}
+        />
+      );
     });
 
     await user.click(screen.getByText('Operations'));
@@ -63,7 +76,12 @@ describe('OperationsButton', () => {
     });
 
     await act(async () => {
-      render(<OperationsButton operations={runningOperations} />);
+      render(
+        <OperationsButton
+          operations={runningOperations}
+          userAbilities={userAbilities}
+        />
+      );
     });
 
     await user.click(screen.getByText('Operations'));
@@ -75,5 +93,23 @@ describe('OperationsButton', () => {
       .getByRole('menuitem', { name: 'Operation 1' })
       .querySelector("[data-testid='eos-svg-component']");
     expect(svgEl).toBeInTheDocument();
+  });
+
+  it('should forbid operation is the user does not have the correct abilities', async () => {
+    const user = userEvent.setup();
+
+    await act(async () => {
+      render(
+        <OperationsButton
+          operations={testOperations}
+          userAbilities={[{ name: 'foo', resource: 'resource' }]}
+        />
+      );
+    });
+
+    await user.click(screen.getByText('Operations'));
+
+    expect(screen.getByText('Operation 1')).toBeEnabled();
+    expect(screen.getByText('Operation 2')).toBeDisabled();
   });
 });
