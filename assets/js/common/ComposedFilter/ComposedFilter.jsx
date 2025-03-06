@@ -119,7 +119,6 @@ function ComposedFilter({
                 Reset Filters
               </Button>
             </div>
-            <div />
           </>
         )}
       </div>
