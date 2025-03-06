@@ -4,7 +4,7 @@ import { selectedHost } from '../fixtures/host-details/selected_host';
 
 context('Host Details', () => {
   before(() => {
-    // hostDetailsPage.preloadTestData();
+    hostDetailsPage.preloadTestData();
     hostDetailsPage.startAgentHeartbeat();
   });
 
@@ -55,9 +55,8 @@ context('Host Details', () => {
       hostDetailsPage.visitSelectedHost();
     });
 
-    // Restore host provider data
     after(() => {
-      cy.loadScenario('host-details-azure');
+      hostDetailsPage.restoreHost('azure');
     });
 
     it('should show Azure cloud details correctly', () => {
@@ -153,7 +152,7 @@ context('Host Details', () => {
   describe('Saptune Summary for this host should be displayed', () => {
     beforeEach(() => hostDetailsPage.visitSelectedHost());
 
-    it('should show not installed status', () => {
+    it('should show saptune not installed status', () => {
       hostDetailsPage.loadSaptuneScenario('uninstalled');
       hostDetailsPage.validateSaptuneStatus('uninstalled');
     });
@@ -248,25 +247,19 @@ context('Host Details', () => {
 
     describe('Clean up', () => {
       it('should forbid host clean up', () => {
-        cy.get('@user').then((user) => {
-          cy.createUserWithAbilities(user, []);
-          cy.login(user.username, password);
-        });
-        cy.visit(`/hosts/${selectedHost.agentId}`);
-
-        cy.contains('button', 'Clean up').should('be.disabled');
+        hostDetailsPage.stopAgentsHeartbeat();
+        hostDetailsPage.apiCreateUserWithoutAbilities();
+        hostDetailsPage.loginWithoutAbilities();
+        hostDetailsPage.visitSelectedHost();
+        hostDetailsPage.cleanUpUnhealthyHostButtonIsDisabled();
       });
 
       it('should allow host clean up', () => {
-        cy.get('@user').then((user) => {
-          cy.createUserWithAbilities(user, [
-            { name: 'cleanup', resource: 'host' },
-          ]);
-          cy.login(user.username, password);
-        });
-        cy.visit(`/hosts/${selectedHost.agentId}`);
-
-        cy.contains('button', 'Clean up').should('be.enabled');
+        hostDetailsPage.stopAgentsHeartbeat();
+        hostDetailsPage.apiCreateUserWithHostCleanupAbilities();
+        hostDetailsPage.loginWithAbilities();
+        hostDetailsPage.visitSelectedHost();
+        hostDetailsPage.cleanUpUnhealthyHostButtonIsEnabled();
       });
     });
   });

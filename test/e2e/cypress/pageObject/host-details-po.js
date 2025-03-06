@@ -2,7 +2,6 @@ export * from './base-po.js';
 import * as basePage from './base-po.js';
 
 import { capitalize } from 'lodash';
-import { createUserRequestFactory } from '@lib/test-utils/factories';
 
 // Test Data
 import { selectedHost } from '../fixtures/host-details/selected_host';
@@ -80,6 +79,12 @@ export const clickSelectedHost = () =>
   cy.get(`#host-${selectedHost.agentId}`).click();
 
 export const clickClusterNameLabel = () => cy.get(clusterNameLabel).click();
+
+export const clickCleanUpUnhealthyHostButton = () =>
+  cy.get(cleanUpUnhealthyHostButton, { timeout: 15000 }).click();
+
+export const clickCleanUpConfirmationButton = () =>
+  cy.get(cleanUpModalConfirmationButton).click();
 
 //Validations
 export const validateSelectedHostUrl = () =>
@@ -327,17 +332,17 @@ export const heartbeatFailingToasterIsDisplayed = () =>
 export const cleanUpUnhealthyHostButtonIsDisplayed = () =>
   cy.get(cleanUpUnhealthyHostButton, { timeout: 15000 }).should('be.visible');
 
+export const cleanUpUnhealthyHostButtonIsDisabled = () =>
+  cy.get(cleanUpUnhealthyHostButton, { timeout: 15000 }).should('be.disabled');
+
+export const cleanUpUnhealthyHostButtonIsEnabled = () =>
+  cy.get(cleanUpUnhealthyHostButton, { timeout: 15000 }).should('be.enabled');
+
 export const cleanUpUnhealthyHostButtonNotVisible = () =>
   cy.get(cleanUpUnhealthyHostButton).should('not.exist');
 
-export const clickCleanUpUnhealthyHostButton = () =>
-  cy.get(cleanUpUnhealthyHostButton, { timeout: 15000 }).click();
-
 export const cleanUpModalTitleIsDisplayed = () =>
   cy.get(cleanUpModalTitle).should('be.visible');
-
-export const clickCleanUpConfirmationButton = () =>
-  cy.get(cleanUpModalConfirmationButton).click();
 
 export const cleanuUpModalIsNotDisplayed = () => {
   cy.get(cleanUpModal).should('not.exist');
@@ -456,5 +461,13 @@ export const apiCreateUserWithChecksSelectionAbilities = () =>
     {
       name: 'all',
       resource: 'host_checks_selection',
+    },
+  ]);
+
+export const apiCreateUserWithHostCleanupAbilities = () =>
+  basePage.createUserWithAbilities([
+    {
+      name: 'cleanup',
+      resource: 'host',
     },
   ]);
