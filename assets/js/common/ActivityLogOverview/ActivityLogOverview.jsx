@@ -24,10 +24,14 @@ import {
 import ActivityLogDetailModal from '@common/ActivityLogDetailsModal';
 
 export const logLevelToIcon = {
-  [LEVEL_DEBUG]: <EOS_BUG_REPORT_OUTLINED className="w-auto" />,
-  [LEVEL_INFO]: <EOS_INFO_OUTLINED className="w-auto" />,
-  [LEVEL_WARNING]: <EOS_WARNING_OUTLINED className="fill-yellow-500 w-auto" />,
-  [LEVEL_CRITICAL]: <EOS_ERROR_OUTLINED className="fill-red-500 w-auto" />,
+  [LEVEL_DEBUG]: <EOS_BUG_REPORT_OUTLINED className="w-auto mx-auto" />,
+  [LEVEL_INFO]: <EOS_INFO_OUTLINED className="w-auto mx-auto" />,
+  [LEVEL_WARNING]: (
+    <EOS_WARNING_OUTLINED className="fill-yellow-500 w-auto mx-auto" />
+  ),
+  [LEVEL_CRITICAL]: (
+    <EOS_ERROR_OUTLINED className="fill-red-500 w-auto mx-auto" />
+  ),
 };
 
 export const toRenderedEntry = (entry) => ({
