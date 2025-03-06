@@ -111,5 +111,10 @@ describe('OperationsButton', () => {
 
     expect(screen.getByText('Operation 1')).toBeEnabled();
     expect(screen.getByText('Operation 2')).toBeDisabled();
+
+    await user.hover(screen.getByText('Operation 2'));
+    expect(
+      screen.queryByText('You are not authorized for this action')
+    ).toBeInTheDocument();
   });
 });
