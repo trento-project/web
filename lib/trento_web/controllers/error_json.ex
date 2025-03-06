@@ -32,6 +32,29 @@ defmodule TrentoWeb.ErrorJSON do
     }
   end
 
+  def render("403.json", %{errors: errors}) do
+    %{
+      errors:
+        Enum.map(errors, fn error ->
+          %{
+            title: "Forbidden",
+            detail: error
+          }
+        end)
+    }
+  end
+
+  def render("403.json", _) do
+    %{
+      errors: [
+        %{
+          title: "Forbidden",
+          detail: "You can't perform the operation or access the resource."
+        }
+      ]
+    }
+  end
+
   def render("404.json", %{reason: reason}) do
     %{
       errors: [
@@ -104,17 +127,6 @@ defmodule TrentoWeb.ErrorJSON do
         %{
           title: "Not implemented",
           detail: reason
-        }
-      ]
-    }
-  end
-
-  def render("403.json", _) do
-    %{
-      errors: [
-        %{
-          title: "Forbidden",
-          detail: "You can't perform the operation or access the resource."
         }
       ]
     }

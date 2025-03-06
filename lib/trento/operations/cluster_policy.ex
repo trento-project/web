@@ -14,21 +14,33 @@ defmodule Trento.Operations.ClusterPolicy do
   # - cluster resource is not managed
   def authorize_operation(
         :maintenance,
-        %ClusterReadModel{} = cluster,
+        %ClusterReadModel{name: name} = cluster,
         %{cluster_resource_id: nil}
-      ),
-      do: Clusters.maintenance?(cluster)
+      ) do
+    if Clusters.maintenance?(cluster) do
+      :ok
+    else
+      {:error, ["Cluster #{name} operating this host is not in maintenance mode"]}
+    end
+  end
 
   def authorize_operation(
         :maintenance,
-        %ClusterReadModel{} = cluster,
+        %ClusterReadModel{name: name} = cluster,
         %{cluster_resource_id: cluster_resource_id}
       ) do
-    Enum.any?([
-      Clusters.maintenance?(cluster),
-      not Clusters.resource_managed?(cluster, cluster_resource_id)
-    ])
+    if Enum.any?([
+         Clusters.maintenance?(cluster),
+         not Clusters.resource_managed?(cluster, cluster_resource_id)
+       ]) do
+      :ok
+    else
+      {:error,
+       [
+         "Cluster #{name} or resource #{cluster_resource_id} operating this host are not in maintenance mode"
+       ]}
+    end
   end
 
-  def authorize_operation(_, _, _), do: false
+  def authorize_operation(_, _, _), do: {:error, ["Unknown operation"]}
 end

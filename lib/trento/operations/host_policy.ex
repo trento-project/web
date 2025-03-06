@@ -5,6 +5,8 @@ defmodule Trento.Operations.HostPolicy do
 
   @behaviour Trento.Operations.PolicyBehaviour
 
+  alias Trento.Support.OperationsHelper
+
   alias Trento.Clusters.Projections.ClusterReadModel
   alias Trento.Databases.Projections.DatabaseInstanceReadModel
   alias Trento.Hosts.Projections.HostReadModel
@@ -26,7 +28,7 @@ defmodule Trento.Operations.HostPolicy do
       |> Enum.map(fn application_instance ->
         %ApplicationInstanceReadModel{application_instance | host: host}
       end)
-      |> Enum.all?(fn application_instance ->
+      |> OperationsHelper.reduce_operation_authorizations(:ok, fn application_instance ->
         ApplicationInstanceReadModel.authorize_operation(:maintenance, application_instance, %{
           cluster_resource_id: nil
         })
@@ -35,21 +37,21 @@ defmodule Trento.Operations.HostPolicy do
     # Get SAPHana or SapHanaController master resource id
     cluster_resource_id = get_saptune_operation_resource_id(cluster)
 
-    databases_maintenance_authorized =
-      database_instances
-      |> Enum.map(fn database_instances ->
-        %DatabaseInstanceReadModel{database_instances | host: host}
-      end)
-      |> Enum.all?(fn database_instances ->
+    database_instances
+    |> Enum.map(fn database_instances ->
+      %DatabaseInstanceReadModel{database_instances | host: host}
+    end)
+    |> OperationsHelper.reduce_operation_authorizations(
+      applications_maintenance_authorized,
+      fn database_instances ->
         DatabaseInstanceReadModel.authorize_operation(:maintenance, database_instances, %{
           cluster_resource_id: cluster_resource_id
         })
-      end)
-
-    Enum.all?([applications_maintenance_authorized, databases_maintenance_authorized])
+      end
+    )
   end
 
-  def authorize_operation(_, _, _), do: false
+  def authorize_operation(_, _, _), do: {:error, ["Unknown operation"]}
 
   defp get_saptune_operation_resource_id(%ClusterReadModel{
          details: %{nodes: nodes}

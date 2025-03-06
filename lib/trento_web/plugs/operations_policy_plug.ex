@@ -115,10 +115,9 @@ defmodule TrentoWeb.Plugs.OperationsPolicyPlug do
   end
 
   defp handle_permission(policy, operation, resource, params) do
-    if policy.authorize_operation(operation, resource, params) do
-      :ok
-    else
-      {:error, :forbidden}
+    case policy.authorize_operation(operation, resource, params) do
+      :ok -> :ok
+      {:error, errors} -> {:error, :forbidden, errors}
     end
   end
 end
