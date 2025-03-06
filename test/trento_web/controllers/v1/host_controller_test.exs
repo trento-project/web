@@ -456,6 +456,34 @@ defmodule TrentoWeb.V1.HostControllerTest do
              } = resp
     end
 
+    test "should perform saptune solution apply operation when the user has saptune_solution_apply:host ability",
+         %{
+           conn: conn
+         } do
+      %{id: host_id} = insert(:host)
+
+      %{id: user_id} = insert(:user)
+
+      %{id: ability_id} = insert(:ability, name: "saptune_solution_apply", resource: "host")
+      insert(:users_abilities, user_id: user_id, ability_id: ability_id)
+
+      expect(
+        Trento.Infrastructure.Messaging.Adapter.Mock,
+        :publish,
+        fn OperationsPublisher, _, _ ->
+          :ok
+        end
+      )
+
+      conn
+      |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
+      |> put_req_header("content-type", "application/json")
+      |> post("/api/v1/hosts/#{host_id}/operations/saptune_solution_apply", %{
+        "solution" => "HANA"
+      })
+      |> json_response(:accepted)
+    end
+
     test "should request saptune solution apply operation", %{conn: conn, api_spec: api_spec} do
       %{id: host_id} = insert(:host)
 
@@ -492,7 +520,8 @@ defmodule TrentoWeb.V1.HostControllerTest do
         [
           post(conn, "/api/v1/hosts/#{host_id}/checks", %{}),
           post(conn, "/api/v1/hosts/#{host_id}/checks/request_execution", %{}),
-          delete(conn, "/api/v1/hosts/#{host_id}")
+          delete(conn, "/api/v1/hosts/#{host_id}"),
+          post(conn, "/api/v1/hosts/#{host_id}/operations/saptune_solution_apply", %{})
         ],
         fn conn ->
           conn
