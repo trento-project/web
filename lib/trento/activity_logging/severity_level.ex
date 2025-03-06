@@ -120,7 +120,7 @@ defmodule Trento.ActivityLog.SeverityLevel do
     "operation_completed" => %{
       type: :kv,
       key_suffix: "result",
-      values: %{"UPDATED" => :info, "NOT_UPDATED" => :info, "*" => :critical},
+      values: %{"updated" => :info, "not_updated" => :info, "*" => :critical},
       condition: :map_value_to_severity
     }
   }
