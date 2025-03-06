@@ -21,7 +21,7 @@ env:
 jobs:
   elixir-deps:
     name: Elixir ${{ matrix.mix_env }} dependencies
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
         include:
@@ -44,8 +44,6 @@ jobs:
         with:
           version-file: .tool-versions
           version-type: strict
-        env:
-          ImageOS: ubuntu20
       - name: Retrieve Cached Dependencies
         uses: actions/cache@v4
         id: mix-cache
@@ -67,7 +65,7 @@ jobs:
 
   npm-deps:
     name: Npm dependencies
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.12.1
@@ -94,7 +92,7 @@ jobs:
 
   codespell:
     name: Check common misspellings
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     defaults:
       run:
         shell: bash
@@ -116,7 +114,7 @@ jobs:
 
   generate-docs:
     name: Generate project documentation
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     if: github.event_name == 'push' && github.ref_name == 'main'
     steps:
       - uses: actions/checkout@v4
@@ -154,7 +152,7 @@ jobs:
   static-code-analysis:
     name: Static Code Analysis
     needs: [elixir-deps, npm-deps]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.12.1
@@ -170,8 +168,6 @@ jobs:
         with:
           version-file: .tool-versions
           version-type: strict
-        env:
-          ImageOS: ubuntu20
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -208,7 +204,7 @@ jobs:
   test-fe:
     name: Run FE tests
     needs: npm-deps
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.12.1
@@ -235,7 +231,7 @@ jobs:
   test:
     name: Test
     needs: [elixir-deps]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.12.1
@@ -275,7 +271,7 @@ jobs:
   chromatic:
     name: Chromatic deployment
     needs: [elixir-deps, npm-deps]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     if: github.event_name != 'repository_dispatch' && github.secret_source != 'None'
     steps:
       - name: Cancel Previous Runs
@@ -328,7 +324,7 @@ jobs:
 
   npm-e2e-deps:
     name: Npm E2E dependencies
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.12.1
@@ -356,7 +352,7 @@ jobs:
   test-e2e-parallel:
     name: Parallel End to end tests
     needs: [elixir-deps, npm-deps, npm-e2e-deps]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
@@ -378,8 +374,6 @@ jobs:
         with:
           version-file: .tool-versions
           version-type: strict
-        env:
-          ImageOS: ubuntu20
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -422,7 +416,7 @@ jobs:
         uses: jaxxstorm/action-install-gh-release@v1.14.0
         with:
           repo: trento-project/photofinish
-          tag: v1.4.1
+          tag: v1.4.2
           cache: enable
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -496,8 +490,6 @@ jobs:
         with:
           version-file: .tool-versions
           version-type: strict
-        env:
-          ImageOS: ubuntu20
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -552,7 +544,7 @@ jobs:
         uses: jaxxstorm/action-install-gh-release@v1.14.0
         with:
           repo: trento-project/photofinish
-          tag: v1.4.1
+          tag: v1.4.2
           cache: enable
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -643,8 +635,6 @@ jobs:
         with:
           version-file: .tool-versions
           version-type: strict
-        env:
-          ImageOS: ubuntu20
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -704,7 +694,7 @@ jobs:
 
   target-branch-deps:
     name: Rebuild target branch dependencies
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     env:
       BRANCH_NAME: ${{ github.event.pull_request.base.ref || github.ref_name }}
     steps:
@@ -748,7 +738,7 @@ jobs:
   api-bc-check:
     name: API bc check
     needs: [elixir-deps, target-branch-deps]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
         include:
@@ -956,7 +946,7 @@ jobs:
 
   run-photofinish-demo-env:
     name: Use photofinish to push mock data to the demo environment
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     if: |
       vars.DEPLOY_DEMO == 'true' &&
         (
@@ -977,7 +967,7 @@ jobs:
         uses: jaxxstorm/action-install-gh-release@v1.14.0
         with:
           repo: trento-project/photofinish
-          tag: v1.4.1
+          tag: v1.4.2
           cache: enable
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -995,7 +985,7 @@ jobs:
 
   obs-commit-image:
     name: Commit to OBS to generate container image
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     if: github.event_name == 'release' || (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch'
     needs: [static-code-analysis, test, test-fe, test-e2e]
     container:
@@ -1067,7 +1057,7 @@ jobs:
   obs-commit-rpm:
     name: Commit to OBS to generate RPM package
     needs: [static-code-analysis, test, test-fe, test-e2e]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     if: github.ref == 'refs/heads/main' || github.event_name == 'release'
     container:
       image: ghcr.io/trento-project/continuous-delivery:main
