@@ -31,7 +31,12 @@ const saptuneInstallationStatus =
 const saptuneConfiguredVersion =
   'div:contains("Configured Version") + div span';
 const saptuneTuningLabel = 'div:contains("Tuning") + div span span';
-
+const cleanUpUnhealthyHostButton = 'button:contains("Clean up")';
+const cleanUpModal = '#headlessui-portal-root';
+const cleanUpModalConfirmationButton = `${cleanUpModal} ${cleanUpUnhealthyHostButton}`;
+const cleanUpModalTitle = `${cleanUpModal} h2:contains("Clean up data discovered by agent on host ${selectedHost.hostName}")`;
+const heartbeatFailingToaster = `p:contains("The host ${selectedHost.hostName} heartbeat is failing.")`;
+const cleanedUpHost = `#host-${selectedHost.agentId}`;
 const providerDetails = {
   provider: `${providerDetailsBox} div[class*="flow-row"]:contains("Provider") span`,
   vmName: `${providerDetailsBox} div[class*="flow-row"]:contains("VM Name") span`,
@@ -306,6 +311,32 @@ export const slesSubscriptionsTableDisplaysExpectedData = () =>
 
 export const sapSystemsTableDisplaysExpectedData = () =>
   _genericTableValidation('SAP instances', selectedHost);
+
+export const heartbeatFailingToasterIsDisplayed = () =>
+  cy.get(heartbeatFailingToaster, { timeout: 15000 }).should('be.visible');
+
+export const cleanUpUnhealthyHostButtonIsDisplayed = () =>
+  cy.get(cleanUpUnhealthyHostButton, { timeout: 15000 }).should('be.visible');
+
+export const cleanUpUnhealthyHostButtonNotVisible = () =>
+  cy.get(cleanUpUnhealthyHostButton).should('not.exist');
+
+export const clickCleanUpUnhealthyHostButton = () =>
+  cy.get(cleanUpUnhealthyHostButton, { timeout: 15000 }).click();
+
+export const cleanUpModalTitleIsDisplayed = () =>
+  cy.get(cleanUpModalTitle).should('be.visible');
+
+export const clickCleanUpConfirmationButton = () =>
+  cy.get(cleanUpModalConfirmationButton).click();
+
+export const cleanuUpModalIsNotDisplayed = () => {
+  cy.get(cleanUpModal).should('not.exist');
+};
+
+export const cleanedUpHostIsNotDisplayed = () => {
+  cy.get(cleanedUpHost).should('not.exist');
+};
 
 const _getExpectedValuesObjectName = (tableName) => {
   if (tableName === 'SAP instances') return 'sapInstance';
