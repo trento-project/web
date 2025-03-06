@@ -169,12 +169,14 @@ function HostDetails({
             <div className="flex w-fit whitespace-nowrap">
               {operationsEnabled && (
                 <OperationsButton
+                  userAbilities={userAbilities}
                   operations={[
                     {
                       value: 'Apply Saptune Solution',
                       running: runningOperationName === SAPTUNE_SOLUTION_APPLY,
                       disabled:
                         !sapPresent || get(saptuneStatus, 'enabled_solution'),
+                      permitted: ['saptune_solution_apply:host'],
                       onClick: () => {
                         setSaptuneSolutionApplyModalOpen(true);
                       },

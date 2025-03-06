@@ -524,6 +524,58 @@ describe('HostDetails component', () => {
       const startExecutionButton = screen.getByText('Start Execution');
       expect(startExecutionButton).toBeEnabled();
     });
+
+    it('should disable Saptune apply operation button when the user abilities are not compatible', async () => {
+      const user = userEvent.setup();
+
+      renderWithRouter(
+        <HostDetails
+          agentVersion="2.0.0"
+          userAbilities={[]}
+          operationsEnabled
+        />
+      );
+
+      const operationsButton = screen.getByRole('button', {
+        name: 'Operations',
+      });
+      await user.click(operationsButton);
+
+      const menuButton = screen.getByRole('menuitem', {
+        name: 'Apply Saptune Solution',
+      });
+
+      expect(menuButton).toBeDisabled();
+
+      await user.hover(menuButton);
+      expect(
+        screen.queryByText('You are not authorized for this action')
+      ).toBeInTheDocument();
+    });
+
+    it('should enable Saptune apply operation button when the user abilities are compatible', async () => {
+      const user = userEvent.setup();
+
+      renderWithRouter(
+        <HostDetails
+          agentVersion="2.0.0"
+          userAbilities={[{ name: 'saptune_solution_apply', resource: 'host' }]}
+          operationsEnabled
+        />
+      );
+
+      await user.click(
+        screen.getByRole('button', {
+          name: 'Operations',
+        })
+      );
+
+      expect(
+        screen.getByRole('menuitem', {
+          name: 'Apply Saptune Solution',
+        })
+      ).Enabled();
+    });
   });
 
   describe('exporters', () => {
