@@ -1,4 +1,4 @@
-import * as aboutPage from '../pageObject/about-po.js';
+import * as aboutPage from '../pageObject/about_po';
 
 describe('User account page', () => {
   before(() => {

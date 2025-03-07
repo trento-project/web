@@ -1,4 +1,4 @@
-import * as hanaClusterDetailsPage from '../pageObject/hana-cluster-details-po';
+import * as hanaClusterDetailsPage from '../pageObject/hana_cluster_details_po';
 
 context('HANA cluster details', () => {
   before(() => {

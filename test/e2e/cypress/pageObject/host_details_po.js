@@ -1,14 +1,14 @@
-export * from './base-po.js';
-import * as basePage from './base-po.js';
+export * from './base_po';
+import * as basePage from './base_po';
 
 import { capitalize } from 'lodash';
 
 // Test Data
-import { selectedHost } from '../fixtures/host-details/selected_host';
+import { selectedHost } from '../fixtures/host-details/selected_host.js';
 import {
   saptuneDetailsData,
   saptuneDetailsDataUnsupportedVersion,
-} from '../fixtures/saptune-details/saptune_details_data';
+} from '../fixtures/saptune-details/saptune_details_data.js';
 
 const url = '/hosts';
 

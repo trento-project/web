@@ -1,4 +1,4 @@
-import * as clustersOverviewPage from '../pageObject/clusters-overview-po.js';
+import * as clustersOverviewPage from '../pageObject/clusters_overview_po';
 
 context('Clusters Overview', () => {
   before(() => clustersOverviewPage.preloadTestData());

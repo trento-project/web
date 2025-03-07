@@ -1,6 +1,6 @@
-export * from './base-po.js';
-import * as basePage from './base-po.js';
-import { getValue } from '../support/common';
+export * from './base_po';
+import * as basePage from './base_po';
+import { getValue } from '../support/common.js';
 
 const url = '/about';
 const pageTitle = 'h2';
@@ -16,7 +16,7 @@ export const pageTitleIsDisplayed = () => {
 };
 
 export const expectedServerVersionIsDisplayed = () => {
-  const { version } = require('./../../package.json');
+  const { version } = require('../../package.json');
   return cy.get(versionLabel).should('have.text', version);
 };
 

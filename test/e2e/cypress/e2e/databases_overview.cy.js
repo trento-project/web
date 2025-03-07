@@ -1,4 +1,4 @@
-import * as databasesOverviewPage from '../pageObject/databases-overview-po';
+import * as databasesOverviewPage from '../pageObject/databases_overview_po';
 
 context('Databases Overview', () => {
   before(() => {

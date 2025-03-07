@@ -1,4 +1,4 @@
-import * as hanaDbDetailsPage from '../pageObject/hana-database-details-po';
+import * as hanaDbDetailsPage from '../pageObject/hana_database_details_po';
 
 context('HANA database details', () => {
   before(() => {

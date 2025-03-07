@@ -1,4 +1,4 @@
-import * as hostDetailsPage from '../pageObject/host-details-po';
+import * as hostDetailsPage from '../pageObject/host_details_po';
 
 import { selectedHost } from '../fixtures/host-details/selected_host';
 

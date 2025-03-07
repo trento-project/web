@@ -1,4 +1,4 @@
-import * as homePage from '../pageObject/home-po.js';
+import * as homePage from '../pageObject/home_po';
 
 context('Homepage', () => {
   before(() => homePage.preloadTestData());
