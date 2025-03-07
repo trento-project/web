@@ -10,10 +10,7 @@ context('Host Details', () => {
   before(() => {
     cy.preloadTestData();
     cy.task('startAgentHeartbeat', [selectedHost.agentId]);
-    cy.visit('/hosts');
-
-    cy.get(`#host-${selectedHost.agentId} > a`).click();
-    cy.url().should('include', `/hosts/${selectedHost.agentId}`);
+    cy.visit(`/hosts/${selectedHost.agentId}`);
   });
 
   after(() => {
