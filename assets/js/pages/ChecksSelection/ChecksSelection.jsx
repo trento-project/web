@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { without, uniq, groupBy, noop } from 'lodash';
+import { pipe } from 'lodash/fp';
 
 import { toggle } from '@lib/lists';
 
@@ -12,6 +13,7 @@ import ChecksSelectionGroup, {
   ALL_CHECKED,
   allSelected,
 } from './ChecksSelectionGroup';
+import { READY } from './hooks';
 import ChecksSelectionItem from './ChecksSelectionItem';
 
 const isSelected = (selectedChecks, checkID) =>
@@ -27,26 +29,34 @@ const getGroupSelectedState = (checks, selectedChecks) => {
   return NONE_CHECKED;
 };
 
-const defaultAbilities = [];
+const defaultEmptyArray = [];
 
 function ChecksSelection({
   groupID,
-  catalog,
-  selectedChecks = [],
+  catalog = defaultEmptyArray,
+  selectedChecks = defaultEmptyArray,
   loading = false,
   catalogError,
-  userAbilities = defaultAbilities,
-  onUpdateCatalog,
+  userAbilities = defaultEmptyArray,
+  onUpdateCatalog = noop,
   onChange,
   provider,
-  saveCustomCheck = noop,
+  onSaveCheckCustomization = noop,
   onResetCheckCustomization = noop,
+  customizationStatus,
 }) {
-  const [isCheckCustomizationModalOpen, setIsCheckCustomizationModalOpen] =
-    useState(false);
-  const [isResetConfirmationModalOpen, setResetConfirmationModalOpen] =
-    useState(false);
-  const [selectedCheck, setSelectedCheck] = useState(null);
+  const [customizationModalOpen, setCustomizationModalOpen] = useState(false);
+  const [resetModalOpen, setResetModalOpen] = useState(false);
+  const [checkBeingCustomized, setCheckBeingCustomized] = useState(null);
+  const [savingStatus, setSavingStatus] = useState(customizationStatus);
+
+  const openCustomizationModal = () => setCustomizationModalOpen(true);
+  const closeCustomizationModal = () => {
+    setCustomizationModalOpen(false);
+    setSavingStatus(READY);
+  };
+  const openResetModal = () => setResetModalOpen(true);
+  const closeResetModal = () => setResetModalOpen(false);
 
   const groupedChecks = Object.entries(groupBy(catalog, 'group')).map(
     ([group, checks]) => {
@@ -67,6 +77,12 @@ function ChecksSelection({
     onUpdateCatalog();
   }, []);
 
+  useEffect(pipe(closeCustomizationModal, closeResetModal), [catalog]);
+
+  useEffect(() => {
+    setSavingStatus(customizationStatus);
+  }, [customizationStatus]);
+
   const onCheckSelectionGroupChange = (checks, groupSelected) => {
     const groupChecks = checks.map((check) => check.id);
     if (allSelected(groupSelected)) {
@@ -75,6 +91,7 @@ function ChecksSelection({
       onChange(uniq([...selectedChecks, ...groupChecks]));
     }
   };
+
   return (
     <CatalogContainer
       onRefresh={onUpdateCatalog}
@@ -83,17 +100,6 @@ function ChecksSelection({
       loading={loading}
     >
       <div className="pb-4">
-        <ResetCheckCustomizationModal
-          key={selectedCheck?.id}
-          checkId={selectedCheck?.id}
-          open={!!isResetConfirmationModalOpen}
-          onReset={() => {
-            onResetCheckCustomization(groupID, selectedCheck?.id);
-            setResetConfirmationModalOpen(false);
-            setIsCheckCustomizationModalOpen(false);
-          }}
-          onCancel={() => setResetConfirmationModalOpen(false)}
-        />
         {groupedChecks?.map(({ group, checks, groupSelected }) => (
           <ChecksSelectionGroup
             key={group}
@@ -114,29 +120,38 @@ function ChecksSelection({
                 onChange={() => {
                   onChange(toggle(check.id, selectedChecks));
                 }}
-                onCustomize={() => {
-                  setSelectedCheck(check);
-                  setIsCheckCustomizationModalOpen(true);
-                }}
-                onResetCustomization={() => {
-                  setSelectedCheck(check);
-                  setResetConfirmationModalOpen(true);
-                }}
+                onCustomize={() =>
+                  pipe(setCheckBeingCustomized, openCustomizationModal)(check)
+                }
+                onResetCustomization={() =>
+                  pipe(setCheckBeingCustomized, openResetModal)(check)
+                }
               />
             ))}
           </ChecksSelectionGroup>
         ))}
+        <ResetCheckCustomizationModal
+          open={resetModalOpen}
+          checkId={checkBeingCustomized?.id}
+          onReset={pipe(
+            () => onResetCheckCustomization(groupID, checkBeingCustomized?.id),
+            closeResetModal,
+            closeCustomizationModal
+          )}
+          onCancel={closeResetModal}
+        />
         <CheckCustomizationModal
-          open={isCheckCustomizationModalOpen}
-          id={selectedCheck?.id}
+          open={customizationModalOpen}
+          id={checkBeingCustomized?.id}
           groupID={groupID}
-          values={selectedCheck?.values}
-          description={selectedCheck?.description}
-          customized={selectedCheck?.customized}
+          values={checkBeingCustomized?.values}
+          description={checkBeingCustomized?.description}
+          customized={checkBeingCustomized?.customized}
           provider={provider}
-          onClose={() => setIsCheckCustomizationModalOpen(false)}
-          onSave={saveCustomCheck}
-          onReset={() => setResetConfirmationModalOpen(true)}
+          onSave={onSaveCheckCustomization}
+          onReset={openResetModal}
+          onClose={closeCustomizationModal}
+          customizationStatus={savingStatus}
         />
       </div>
     </CatalogContainer>

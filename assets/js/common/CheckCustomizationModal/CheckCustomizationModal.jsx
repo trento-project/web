@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { noop, isBoolean, toNumber, isEmpty, map } from 'lodash';
+import React, { useEffect, useState } from 'react';
+import { noop, isBoolean, toNumber, isEmpty } from 'lodash';
+import { pipe, map, entries } from 'lodash/fp';
 
 import Modal from '@common/Modal';
 import Button from '@common/Button';
@@ -10,19 +11,18 @@ import Input from '@common/Input';
 import CheckableWarningMessage from '@common/CheckableWarningMessage';
 import { UNKNOWN_PROVIDER } from '@lib/model';
 
+import {
+  isOngoing,
+  isFailed,
+  isGenericFailure,
+  isInvalidValues,
+} from '@pages/ChecksSelection/hooks';
+
 import CheckCustomizationInput from './CheckCustomizationInput';
 
 const checkBoxWarningText =
   'Trento & SUSE cannot be held liable for damages if system is unable to function due to custom check value.';
 
-const buildCustomCheckPayload = (checkID, groupID, values) => ({
-  checkID,
-  groupID,
-  customValues: map(values, (value, name) => ({
-    name,
-    value,
-  })),
-});
 const appliedValue = (value) => value?.custom_value ?? value?.current_value;
 
 const detectType = (value) => {
@@ -44,11 +44,13 @@ function CheckCustomizationModal({
   onClose = noop,
   onSave = noop,
   onReset = noop,
+  customizationStatus,
 }) {
   const [checked, setChecked] = useState(customized);
   const [customValues, setCustomValues] = useState({});
   const canCustomize = customized || checked;
-  const canSave = !isEmpty(customValues) && canCustomize;
+  const canSave =
+    !isEmpty(customValues) && canCustomize && !isOngoing(customizationStatus);
 
   const checkTitle = `Check: ${id}`;
   const resetStateAndClose = () => {
@@ -63,6 +65,10 @@ function CheckCustomizationModal({
       [name]: isBoolean(value) ? value : toNumber(value) || value,
     }));
   };
+
+  useEffect(() => {
+    setChecked(customized);
+  }, [customized]);
 
   return (
     <Modal
@@ -95,7 +101,7 @@ function CheckCustomizationModal({
           />
         ))}
 
-      <div className="flex items-center space-x-2 mb-8">
+      <div className="flex items-center space-x-2 mb-5">
         <div className="w-1/3 min-w-[200px]">
           <Label>Provider</Label>
         </div>
@@ -108,16 +114,32 @@ function CheckCustomizationModal({
           </div>
         </div>
       </div>
+      {isFailed(customizationStatus) && (
+        <div
+          data-testid="error-message"
+          className="flex flex-row space-x-2 mb-2"
+        >
+          <p className="text-red-500 mt-1">
+            {isInvalidValues(customizationStatus) &&
+              'Some of the values are invalid. Please correct them and try again'}
+            {isGenericFailure(customizationStatus) &&
+              'An error occurred while saving custom values'}
+          </p>
+        </div>
+      )}
 
       <div className="flex w-80 flex-row space-x-2">
         <Button
           type="default-fit"
           className="w-1/2"
           disabled={!canSave}
-          onClick={() => {
-            resetStateAndClose();
-            onSave(buildCustomCheckPayload(id, groupID, customValues));
-          }}
+          onClick={() =>
+            pipe(
+              entries,
+              map(([name, value]) => ({ name, value })),
+              (payload) => onSave(id, groupID, payload)
+            )(customValues)
+          }
         >
           Save
         </Button>
