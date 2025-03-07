@@ -166,7 +166,7 @@ describe('Checks Customizability', () => {
     );
 
     await user.click(screen.getByLabelText('customize-check'));
-    expect(onCustomize).toHaveBeenCalledWith(check.id);
+    expect(onCustomize).toHaveBeenCalled();
   });
 
   it('should run the onResetCustomization function when the reset button is clicked', async () => {
@@ -190,6 +190,6 @@ describe('Checks Customizability', () => {
     );
 
     await user.click(screen.getByLabelText('reset-check-customization'));
-    expect(onResetCustomization).toHaveBeenCalledWith(check.id);
+    expect(onResetCustomization).toHaveBeenCalled();
   });
 });

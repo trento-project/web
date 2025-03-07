@@ -2,6 +2,7 @@ import { faker } from '@faker-js/faker';
 import { selectableCheckFactory } from '@lib/test-utils/factories';
 
 import ChecksSelection from './ChecksSelection';
+import { CUSTOMIZATION_STATUSES } from './hooks';
 
 const catalog = [
   selectableCheckFactory.build({ group: 'Corosync', customized: true }),
@@ -29,6 +30,10 @@ export default {
     groupID: {
       type: 'string',
       description: 'The ID of the group to which the selection refers to.',
+    },
+    provider: {
+      type: 'string',
+      description: 'Provider of the current checkable target',
     },
     catalog: {
       control: 'object',
@@ -72,6 +77,22 @@ export default {
       description:
         'Gets called when the selection changes. Used to propagate the new selected checks by the user.',
     },
+    onSaveCheckCustomization: {
+      action: 'Save check customization',
+      description: 'Gets called when the user saves a customization.',
+    },
+    onResetCheckCustomization: {
+      action: 'Reset check customization',
+      description: 'Gets called when the user resets a customization.',
+    },
+    customizationStatus: {
+      type: 'enum',
+      description: 'Current customization status',
+      options: CUSTOMIZATION_STATUSES,
+      control: {
+        type: 'radio',
+      },
+    },
   },
 };
 
@@ -80,6 +101,7 @@ export const Default = {
     groupID: faker.string.uuid(),
     catalog,
     userAbilities: [{ name: 'all', resource: 'check_customization' }],
+    provider: 'aws',
   },
 };
 

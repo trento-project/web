@@ -61,10 +61,12 @@ function ClusterSettingsPage() {
 
   const {
     fetchChecksSelection,
-    resetChecksCustomization,
     checksSelection,
     checksSelectionLoading,
     checksSelectionFetchError,
+    saveChecksCustomization,
+    resetChecksCustomization,
+    customizationStatus,
   } = useChecksSelection();
 
   const saving = useSelector(isSaving(TARGET_CLUSTER, clusterID));
@@ -109,18 +111,6 @@ function ClusterSettingsPage() {
     dispatch(executionRequested(clusterID, clusterHosts, selectedChecks));
   };
 
-  const saveCustomCheck = (values) => {
-    // ToDo for later when we hook up frontend and backend.
-    const { checksID, customValues } = values;
-    const payload = {
-      checkID: checksID,
-      groupID: clusterID,
-      customCheckValues: customValues,
-    };
-    // dispatch payload in future pr
-    return payload;
-  };
-
   return (
     <>
       <ChecksSelectionHeader
@@ -163,7 +153,8 @@ function ClusterSettingsPage() {
         onUpdateCatalog={refreshChecksSelection}
         onChange={setSelection}
         provider={provider}
-        saveCustomCheck={saveCustomCheck}
+        onSaveCheckCustomization={saveChecksCustomization}
+        customizationStatus={customizationStatus}
         onResetCheckCustomization={resetChecksCustomization}
       />
     </>

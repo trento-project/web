@@ -89,6 +89,10 @@ export default {
       description: 'Check ID',
       control: 'text',
     },
+    groupID: {
+      description: 'Target ID',
+      control: 'text',
+    },
     values: {
       description: 'Check values',
       control: 'array',

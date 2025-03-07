@@ -32,10 +32,12 @@ function HostSettingsPage() {
 
   const {
     fetchChecksSelection,
-    resetChecksCustomization,
     checksSelection,
     checksSelectionLoading,
     checksSelectionFetchError,
+    saveChecksCustomization,
+    resetChecksCustomization,
+    customizationStatus,
   } = useChecksSelection();
 
   const saving = useSelector(isSaving(TARGET_HOST, hostID));
@@ -63,18 +65,6 @@ function HostSettingsPage() {
         checks: newSelection,
       })
     );
-  };
-
-  const saveCustomCheck = (values) => {
-    // ToDo for later when we hook up frontend and backend.
-    const { checksID, customValues } = values;
-    const payload = {
-      checkID: checksID,
-      groupID: hostID,
-      customCheckValues: customValues,
-    };
-    // dispatch payload in future pr
-    return payload;
   };
 
   const requestChecksExecution = () => {
@@ -114,7 +104,8 @@ function HostSettingsPage() {
         onUpdateCatalog={refreshChecksSelection}
         onChange={setSelection}
         provider={provider}
-        saveCustomCheck={saveCustomCheck}
+        onSaveCheckCustomization={saveChecksCustomization}
+        customizationStatus={customizationStatus}
         onResetCheckCustomization={resetChecksCustomization}
       />
     </>

@@ -6,6 +6,14 @@ import {
   selectableCheckFactory,
   nonCustomizedValueFactory,
 } from '@lib/test-utils/factories';
+
+import {
+  READY,
+  ONGOING,
+  INVALID_VALUES,
+  GENERIC_FAILURE,
+} from '@pages/ChecksSelection/hooks';
+
 import CheckCustomizationModal from './CheckCustomizationModal';
 
 const mockOnClose = jest.fn();
@@ -40,9 +48,11 @@ const checkCustomizationModalProps = {
   ...check,
   open: true,
   provider: 'aws',
+  groupID: '123456789',
   onClose: mockOnClose,
   onSave: mockOnSave,
   onReset: mockOnReset,
+  customizationStatus: READY,
 };
 
 describe('CheckCustomizationModal', () => {
@@ -77,7 +87,7 @@ describe('CheckCustomizationModal', () => {
     expect(mockOnClose).toHaveBeenCalled();
   });
 
-  it('renders the modal  with multiple customizable values', async () => {
+  it('renders the modal with multiple customizable values', async () => {
     const user = userEvent.setup();
     const customCheckValue = ['999', 'veryImportantValue', false];
     const expectedCheckValues = [999, 'veryImportantValue', false];
@@ -111,14 +121,11 @@ describe('CheckCustomizationModal', () => {
     expect(inputElements[2]).toBeDisabled(); // Provider is always disabled
 
     await user.click(screen.getByText('Save'));
-    expect(onSave).toHaveBeenCalledWith({
-      checksID: '123',
-      customValues: {
-        CheckIntValueName: expectedCheckValues[0],
-        CheckStringValueName: expectedCheckValues[1],
-        CheckBoolValueName: expectedCheckValues[2],
-      },
-    });
+    expect(onSave).toHaveBeenCalledWith('123', '123456789', [
+      { name: 'CheckIntValueName', value: expectedCheckValues[0] },
+      { name: 'CheckStringValueName', value: expectedCheckValues[1] },
+      { name: 'CheckBoolValueName', value: expectedCheckValues[2] },
+    ]);
   });
 
   it('renders the modal with partial customizable values', async () => {
@@ -160,10 +167,9 @@ describe('CheckCustomizationModal', () => {
     await user.type(inputElements[0], customCheckValue[0]);
 
     await user.click(screen.getByText('Save'));
-    expect(onSave).toHaveBeenCalledWith({
-      checksID: '123',
-      customValues: { [customCheckNames[0]]: expectedCustomCheckValue },
-    });
+    expect(onSave).toHaveBeenCalledWith('123', '123456789', [
+      { name: customCheckNames[0], value: expectedCustomCheckValue },
+    ]);
   });
 
   it('should disable reset customization button if check is not customized', async () => {
@@ -186,5 +192,42 @@ describe('CheckCustomizationModal', () => {
 
     await user.click(screen.getByText('Reset Check'));
     expect(onReset).toHaveBeenCalled();
+  });
+
+  it.each`
+    customizationStatus | expectedMessage
+    ${READY}            | ${null}
+    ${ONGOING}          | ${null}
+    ${INVALID_VALUES}   | ${'Some of the values are invalid. Please correct them and try again'}
+    ${GENERIC_FAILURE}  | ${'An error occurred while saving custom values'}
+  `(
+    'should show error message when customization status is failed',
+    async ({ customizationStatus, expectedMessage }) => {
+      await act(async () => {
+        render(
+          <CheckCustomizationModal
+            {...checkCustomizationModalProps}
+            customizationStatus={customizationStatus}
+          />
+        );
+      });
+
+      expectedMessage
+        ? expect(screen.getByText(expectedMessage)).toBeVisible()
+        : expect(screen.queryByTestId('error-message')).toBeNull();
+    }
+  );
+
+  it('should not allow saving customization while another one is ongoing', async () => {
+    await act(async () => {
+      render(
+        <CheckCustomizationModal
+          {...checkCustomizationModalProps}
+          customizationStatus={ONGOING}
+        />
+      );
+    });
+
+    expect(screen.getByText('Save')).toBeDisabled();
   });
 });

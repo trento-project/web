@@ -55,9 +55,7 @@ function ChecksSelectionItem({
               {canReset(userAbilities, customizable, customized) && (
                 <button
                   type="button"
-                  onClick={() => {
-                    onResetCustomization(checkID);
-                  }}
+                  onClick={onResetCustomization}
                   aria-label="reset-check-customization"
                   className="inline mr-2"
                 >
@@ -67,9 +65,7 @@ function ChecksSelectionItem({
               {canCustomize(userAbilities, customizable) && (
                 <button
                   type="button"
-                  onClick={() => {
-                    onCustomize(checkID);
-                  }}
+                  onClick={onCustomize}
                   aria-label="customize-check"
                   className="inline mr-4"
                 >

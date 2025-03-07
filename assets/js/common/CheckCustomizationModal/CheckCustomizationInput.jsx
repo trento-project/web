@@ -85,7 +85,7 @@ function CheckCustomizationInput({
   return (
     <div
       key={`${name}_${currentValue}`}
-      className="flex items-center space-x-2 mb-8"
+      className="flex items-center space-x-2 mb-5"
     >
       <div className="flex-col w-1/3 min-w-[200px]">
         {renderLabel(name, defaultCheckValue)}
