@@ -61,11 +61,12 @@ function ClusterSettingsPage() {
 
   const {
     fetchChecksSelection,
-    resetChecksCustomization,
     checksSelection,
     checksSelectionLoading,
     checksSelectionFetchError,
     saveChecksCustomization,
+    resetChecksCustomization,
+    customizationStatus,
   } = useChecksSelection();
 
   const saving = useSelector(isSaving(TARGET_CLUSTER, clusterID));
@@ -152,7 +153,8 @@ function ClusterSettingsPage() {
         onUpdateCatalog={refreshChecksSelection}
         onChange={setSelection}
         provider={provider}
-        saveCustomCheck={saveChecksCustomization}
+        onSaveCheckCustomization={saveChecksCustomization}
+        customizationStatus={customizationStatus}
         onResetCheckCustomization={resetChecksCustomization}
       />
     </>
