@@ -1,5 +1,5 @@
-export * from './base-po.js';
-import * as basePage from './base-po.js';
+export * from './base_po.js';
+import * as basePage from './base_po.js';
 
 const usernameInputField = 'input[autocomplete="username"]';
 const passwordInputField = 'input[autocomplete="current-password"]';

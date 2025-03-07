@@ -1,9 +1,9 @@
 import { userFactory } from '@lib/test-utils/factories/users';
 
-import * as usersPage from '../pageObject/users-po.js';
-import * as basePage from '../pageObject/base-po.js';
-import * as loginPage from '../pageObject/login-po.js';
-import * as dashboardPage from '../pageObject/dashboard-po.js';
+import * as usersPage from '../pageObject/users_po';
+import * as basePage from '../pageObject/base_po';
+import * as loginPage from '../pageObject/login_po';
+import * as dashboardPage from '../pageObject/dashboard_po';
 
 describe('Users', () => {
   describe('Create user', () => {

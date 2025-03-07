@@ -1,11 +1,11 @@
-export * from './base-po.js';
-import * as basePage from './base-po.js';
+export * from './base_po.js';
+import * as basePage from './base_po.js';
 
 import {
   availableClusters,
   healthyClusterScenario,
   unhealthyClusterScenario,
-} from '../fixtures/clusters-overview/available_clusters';
+} from '../fixtures/clusters-overview/available_clusters.js';
 
 const url = '/clusters';
 const clustersEndpoint = '/api/v2/clusters';

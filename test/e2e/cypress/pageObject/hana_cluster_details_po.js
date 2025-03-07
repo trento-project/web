@@ -1,5 +1,5 @@
-export * from './base-po.js';
-import * as basePage from './base-po.js';
+export * from './base_po.js';
+import * as basePage from './base_po.js';
 
 import { capitalize } from 'lodash';
 
@@ -14,7 +14,7 @@ import {
   availableHanaCluster,
   availableHanaClusterCostOpt,
   availableAngiCluster,
-} from '../fixtures/hana-cluster-details/available_hana_cluster';
+} from '../fixtures/hana-cluster-details/available_hana_cluster.js';
 
 const lastExecution = checksExecutionCompletedFactory.build({
   group_id: availableHanaCluster.id,

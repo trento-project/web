@@ -1,5 +1,5 @@
-import * as activityLogPage from '../pageObject/activity-log-po.js';
-import * as basePage from '../pageObject/base-po.js';
+import * as activityLogPage from '../pageObject/activity_log_po';
+import * as basePage from '../pageObject/base_po';
 
 const defaultSeverity = 'severity=info&severity=warning&severity=critical';
 

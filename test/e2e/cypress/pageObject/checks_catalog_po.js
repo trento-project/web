@@ -1,5 +1,5 @@
-export * from './base-po.js';
-import * as basePage from './base-po.js';
+export * from './base_po';
+import * as basePage from './base_po';
 
 import { catalogCheckFactory } from '@lib/test-utils/factories';
 import { groupBy } from 'lodash';

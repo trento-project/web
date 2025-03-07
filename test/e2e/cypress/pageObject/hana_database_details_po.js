@@ -1,13 +1,13 @@
-export * from './base-po.js';
-import * as basePage from './base-po.js';
+export * from './base_po';
+import * as basePage from './base_po';
 
 // Test Data
 import {
   selectedDatabase,
   attachedHosts,
-} from '../fixtures/hana-database-details/selected_database';
+} from '../fixtures/hana-database-details/selected_database.js';
 
-import { healthMap } from '../fixtures/sap-system-details/selected_system';
+import { healthMap } from '../fixtures/sap-system-details/selected_system.js';
 
 const url = '/databases';
 

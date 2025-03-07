@@ -32,7 +32,7 @@ export const subscriptionsTableConfiguration = {
       key: 'subscription_status',
     },
     {
-      title: 'starts_at',
+      title: 'starts at',
       key: 'starts_at',
     },
     {

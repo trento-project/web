@@ -1,4 +1,4 @@
-import * as checksCatalogPage from '../pageObject/checks-catalog-po.js';
+import * as checksCatalogPage from '../pageObject/checks_catalog_po';
 
 describe('Checks catalog', () => {
   beforeEach(() => {
