@@ -275,6 +275,7 @@ describe('Users', () => {
 
       cy.wait('@totpEnrollment');
       usersPage.typeUserTotpCode().then((totpSecret) => {
+        cy.wait(1000);
         usersPage.clickVerifyTotpButton();
         cy.wait(1000);
         cy.wait('@profile');
@@ -293,6 +294,7 @@ describe('Users', () => {
         loginPage.invalidCredentialsErrorIsDisplayed();
         loginPage.waitForNewTotpCodeAndTypeIt(totpSecret);
         cy.intercept('api/v1/hosts').as('hosts');
+        cy.wait(1000);
         loginPage.clickSubmitLoginButton();
         cy.wait('@hosts');
         dashboardPage.dashboardPageIsDisplayed();
