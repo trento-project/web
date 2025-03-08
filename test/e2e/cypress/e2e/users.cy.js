@@ -253,25 +253,37 @@ describe('Users', () => {
 
     // eslint-disable-next-line mocha/no-exclusive-tests
     it.only('should reconfigure TOTP and validate login cases', () => {
+      cy.intercept('/api/v1/profile/totp_enrollment').as('totpEnrollment');
       usersPage.clickAuthenticatorAppSwitch();
+      cy.wait('@totpEnrollment');
       usersPage.typeUserTotpCode();
       usersPage.clickVerifyTotpButton();
+      cy.wait('@totpEnrollment');
       usersPage.clickAuthenticatorAppSwitch();
       usersPage.clickDisableTotpButton();
+      cy.wait('@totpEnrollment');
       usersPage.clickAuthenticatorAppSwitch();
+      cy.wait('@totpEnrollment');
+
       usersPage.typeUserTotpCode().then((totpSecret) => {
         usersPage.clickVerifyTotpButton();
+        cy.wait('@totpEnrollment');
         usersPage.authenticatorAppSwitchIsEnabled();
         usersPage.clickSignOutButton();
+        cy.intercept('/api/session').as('session');
         loginPage.login(usersPage.USER.username, usersPage.PASSWORD);
+        cy.wait('@session');
         loginPage.typeInvalidLoginTotpCode();
         loginPage.clickSubmitLoginButton();
+        cy.wait('@session');
         loginPage.invalidCredentialsErrorIsDisplayed();
         loginPage.typeAlreadyUsedTotpCode(totpSecret);
         loginPage.clickSubmitLoginButton();
+        cy.wait('@session');
         loginPage.invalidCredentialsErrorIsDisplayed();
         loginPage.waitForNewTotpCodeAndTypeIt(totpSecret);
         loginPage.clickSubmitLoginButton();
+        cy.wait('@session');
         dashboardPage.dashboardPageIsDisplayed();
       });
     });

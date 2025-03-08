@@ -75,5 +75,5 @@ export const typeInvalidLoginTotpCode = () => {
 
 export const waitForNewTotpCodeAndTypeIt = (totpSecret) => {
   // eslint-disable-next-line cypress/no-unnecessary-waiting
-  return cy.wait(30000).then(() => typeLoginTotpCode(totpSecret));
+  return cy.wait(31000).then(() => typeLoginTotpCode(totpSecret));
 };
