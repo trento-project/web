@@ -38,6 +38,10 @@ import {
   useSuseManagerSettings,
 } from '@pages/SettingsPage/hooks';
 
+import AnalyticsConfig from '@common/AnalyticsConfig';
+import AnalyticsSettingsModal from '@common/AnalyticsSettingsModal';
+import { useAnalyticsSettings } from '@state/analyticsSettings';
+
 const apiKeySettingsPermittedFor = ['all:api_key_settings'];
 
 function ApiKeyExpireInfo({ apiKeyExpiration }) {
@@ -110,6 +114,18 @@ function SettingsPage() {
   const activityLogsValidationErrors = useSelector(
     getActivityLogsSettingsErrors
   );
+
+  const [analyticsModalOpen, setAnalyticsModalOpen] = useState(false);
+  const {
+    saveAnalyticsSettings,
+    analyticsSettings,
+    analyticsSettingsLoading,
+    analyticsSettingsFetchError,
+  } = useAnalyticsSettings();
+
+  useEffect(() => {
+    setAnalyticsModalOpen(false);
+  }, [analyticsSettings]);
 
   const hasApiKey = Boolean(apiKey);
 
@@ -327,6 +343,31 @@ function SettingsPage() {
           onCancel={() => {
             dispatch(setActivityLogsSettingsErrors([]));
             dispatch(setEditingActivityLogsSettings(false));
+          }}
+        />
+      </section>
+
+      <section>
+        <SettingsLoader
+          sectionName="Analytics"
+          status={calculateSettingsLoaderStatus(
+            analyticsSettingsLoading,
+            analyticsSettingsFetchError
+          )}
+          onRetry={() => fetchAnalyticsSettings()}
+        >
+          <AnalyticsConfig
+            analyticsOptin={analyticsSettings.analytics_optin}
+            onEditClick={() => setAnalyticsModalOpen(true)}
+          />
+        </SettingsLoader>
+        <AnalyticsSettingsModal
+          key={`${JSON.stringify(analyticsSettings)}-${analyticsModalOpen}`}
+          open={analyticsModalOpen}
+          initialAnalyticsOptin={analyticsSettings.analytics_optin}
+          onSave={(payload) => saveAnalyticsSettings(payload)}
+          onCancel={() => {
+            setAnalyticsModalOpen(false);
           }}
         />
       </section>
