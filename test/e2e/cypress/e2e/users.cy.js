@@ -256,18 +256,19 @@ describe('Users', () => {
       cy.intercept('/api/v1/profile/totp_enrollment').as('totpEnrollment');
       usersPage.clickAuthenticatorAppSwitch();
       cy.wait('@totpEnrollment');
-      usersPage.typeUserTotpCode();
-      usersPage.clickVerifyTotpButton();
+      usersPage
+        .typeUserTotpCode()
+        .then(() => usersPage.clickVerifyTotpButton());
       cy.wait('@totpEnrollment');
       usersPage.clickAuthenticatorAppSwitch();
       usersPage.clickDisableTotpButton();
       cy.wait('@totpEnrollment');
       usersPage.clickAuthenticatorAppSwitch();
       cy.wait('@totpEnrollment');
-
       usersPage.typeUserTotpCode().then((totpSecret) => {
+        cy.intercept('api/v1/profile').as('profile');
         usersPage.clickVerifyTotpButton();
-        cy.wait('@totpEnrollment');
+        cy.wait('@profile');
         usersPage.authenticatorAppSwitchIsEnabled();
         usersPage.clickSignOutButton();
         cy.intercept('/api/session').as('session');
@@ -282,8 +283,9 @@ describe('Users', () => {
         cy.wait('@session');
         loginPage.invalidCredentialsErrorIsDisplayed();
         loginPage.waitForNewTotpCodeAndTypeIt(totpSecret);
+        cy.intercept('api/v1/hosts').as('hosts');
         loginPage.clickSubmitLoginButton();
-        cy.wait('@session');
+        cy.wait('@hosts');
         dashboardPage.dashboardPageIsDisplayed();
       });
     });
