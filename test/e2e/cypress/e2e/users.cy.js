@@ -1,3 +1,4 @@
+/* eslint-disable cypress/no-unnecessary-waiting */
 import { userFactory } from '@lib/test-utils/factories/users';
 
 import * as usersPage from '../pageObject/users_po';
@@ -254,20 +255,28 @@ describe('Users', () => {
     // eslint-disable-next-line mocha/no-exclusive-tests
     it.only('should reconfigure TOTP and validate login cases', () => {
       cy.intercept('/api/v1/profile/totp_enrollment').as('totpEnrollment');
+      cy.intercept('/api/v1/profile').as('profile');
       usersPage.clickAuthenticatorAppSwitch();
+      cy.wait(1000);
       cy.wait('@totpEnrollment');
       usersPage
         .typeUserTotpCode()
         .then(() => usersPage.clickVerifyTotpButton());
+      cy.wait(1000);
       cy.wait('@totpEnrollment');
       usersPage.clickAuthenticatorAppSwitch();
+      cy.wait(1000);
       usersPage.clickDisableTotpButton();
+      cy.wait(1000);
       cy.wait('@totpEnrollment');
+      cy.wait('@profile');
       usersPage.clickAuthenticatorAppSwitch();
+      cy.wait(1000);
+
       cy.wait('@totpEnrollment');
       usersPage.typeUserTotpCode().then((totpSecret) => {
-        cy.intercept('api/v1/profile').as('profile');
         usersPage.clickVerifyTotpButton();
+        cy.wait(1000);
         cy.wait('@profile');
         usersPage.authenticatorAppSwitchIsEnabled();
         usersPage.clickSignOutButton();
