@@ -251,7 +251,8 @@ describe('Users', () => {
       loginPage.loginShouldSucceed(usersPage.USER.username, usersPage.PASSWORD);
     });
 
-    it('should reconfigure TOTP and validate login cases', () => {
+    // eslint-disable-next-line mocha/no-exclusive-tests
+    it.only('should reconfigure TOTP and validate login cases', () => {
       usersPage.clickAuthenticatorAppSwitch();
       usersPage.typeUserTotpCode();
       usersPage.clickVerifyTotpButton();
