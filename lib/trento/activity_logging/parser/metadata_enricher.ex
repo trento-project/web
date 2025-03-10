@@ -86,7 +86,7 @@ defmodule Trento.ActivityLog.Logger.Parser.MetadataEnricher do
        when activity in [:resource_tagging, :resource_untagging],
        do: {:ok, resource_id}
 
-  defp detect_enrichment(:host, {_, %{resource_id: id, operation: "saptune_solution_apply"}}),
+  defp detect_enrichment(:host, {_, %{resource_id: id, operation: :saptune_solution_apply}}),
     do: {:ok, id}
 
   defp detect_enrichment(_target_entity, {_activity, _metadata}),

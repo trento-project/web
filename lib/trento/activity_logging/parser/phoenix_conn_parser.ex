@@ -139,7 +139,7 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
       ) do
     %{
       resource_id: Map.get(params, :id),
-      operation: Map.get(params, :operation),
+      operation: params |> Map.get(:operation) |> String.to_existing_atom(),
       operation_id: resp_body |> Jason.decode!() |> Map.get("operation_id"),
       params: body_params
     }

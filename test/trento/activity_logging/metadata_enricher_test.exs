@@ -224,7 +224,7 @@ defmodule Trento.ActivityLog.MetadataEnricherTest do
 
       initial_metadata = %{
         resource_id: host_id,
-        operation: "saptune_solution_apply"
+        operation: :saptune_solution_apply
       }
 
       assert {:ok, %{hostname: ^hostname}} =
@@ -236,7 +236,7 @@ defmodule Trento.ActivityLog.MetadataEnricherTest do
 
       initial_metadata = %{
         resource_id: host_id,
-        operation: "saptune_solution_apply"
+        operation: :saptune_solution_apply
       }
 
       assert {:ok, %{hostname: ^hostname}} =
