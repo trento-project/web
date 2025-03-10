@@ -257,26 +257,26 @@ describe('Users', () => {
       cy.intercept('/api/v1/profile/totp_enrollment').as('totpEnrollment');
       cy.intercept('/api/v1/profile').as('profile');
       usersPage.clickAuthenticatorAppSwitch();
-      cy.wait(1000);
+      cy.wait(500);
       cy.wait('@totpEnrollment');
       usersPage
         .typeUserTotpCode()
         .then(() => usersPage.clickVerifyTotpButton());
-      cy.wait(1000);
+      cy.wait(500);
       cy.wait('@totpEnrollment');
       usersPage.clickAuthenticatorAppSwitch();
-      cy.wait(1000);
+      cy.wait(500);
       usersPage.clickDisableTotpButton();
-      cy.wait(1000);
+      cy.wait(500);
       cy.wait('@totpEnrollment');
       cy.wait('@profile');
       usersPage.clickAuthenticatorAppSwitch();
-      cy.wait(1000);
-
+      cy.wait(500);
       cy.wait('@totpEnrollment');
       usersPage.typeUserTotpCode().then((totpSecret) => {
+        cy.wait(500);
         usersPage.clickVerifyTotpButton();
-        cy.wait(1000);
+        cy.wait(500);
         cy.wait('@profile');
         usersPage.authenticatorAppSwitchIsEnabled();
         usersPage.clickSignOutButton();
