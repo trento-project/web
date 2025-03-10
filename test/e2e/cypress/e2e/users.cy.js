@@ -1,4 +1,3 @@
-/* eslint-disable cypress/no-unnecessary-waiting */
 import { userFactory } from '@lib/test-utils/factories/users';
 
 import * as usersPage from '../pageObject/users_po';
@@ -254,50 +253,26 @@ describe('Users', () => {
 
     // eslint-disable-next-line mocha/no-exclusive-tests
     it.only('should reconfigure TOTP and validate login cases', () => {
-      cy.intercept('/api/v1/profile/totp_enrollment').as('totpEnrollment');
-      cy.intercept('/api/v1/profile').as('profile');
-      cy.intercept('/api/v1/hosts').as('hosts');
       usersPage.clickAuthenticatorAppSwitch();
-      cy.wait(1000);
-      cy.wait('@totpEnrollment');
-      usersPage
-        .typeUserTotpCode()
-        .then(() => usersPage.clickVerifyTotpButton());
-      cy.wait(1000);
-      cy.wait('@totpEnrollment');
+      usersPage.typeUserTotpCode();
+      usersPage.clickVerifyTotpButton();
       usersPage.clickAuthenticatorAppSwitch();
-      cy.wait(1000);
       usersPage.clickDisableTotpButton();
-      cy.wait(1000);
-      cy.wait('@totpEnrollment');
-      cy.wait('@profile');
       usersPage.clickAuthenticatorAppSwitch();
-      cy.wait(1000);
-      cy.wait('@totpEnrollment');
       usersPage.typeUserTotpCode().then((totpSecret) => {
-        cy.wait(1000);
-        usersPage.clickVerifyTotpButton().then(() => {
-          cy.wait(1000);
-          cy.wait('@profile');
-          usersPage.authenticatorAppSwitchIsEnabled();
-        });
+        usersPage.clickVerifyTotpButton();
+        usersPage.authenticatorAppSwitchIsEnabled();
         usersPage.clickSignOutButton();
-        cy.intercept('/api/session').as('session');
         loginPage.login(usersPage.USER.username, usersPage.PASSWORD);
-        cy.wait('@session');
         loginPage.typeInvalidLoginTotpCode();
         loginPage.clickSubmitLoginButton();
-        cy.wait('@session');
         loginPage.invalidCredentialsErrorIsDisplayed();
         loginPage.typeAlreadyUsedTotpCode(totpSecret);
         loginPage.clickSubmitLoginButton();
-        cy.wait('@session');
         loginPage.invalidCredentialsErrorIsDisplayed();
-        loginPage.waitForNewTotpCodeAndTypeIt(totpSecret).then(() => {
-          loginPage.clickSubmitLoginButton();
-          cy.wait('@hosts');
-          dashboardPage.dashboardPageIsDisplayed();
-        });
+        loginPage.waitForNewTotpCodeAndTypeIt(totpSecret);
+        loginPage.clickSubmitLoginButton();
+        dashboardPage.dashboardPageIsDisplayed();
       });
     });
 
