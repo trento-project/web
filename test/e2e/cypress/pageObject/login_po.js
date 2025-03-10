@@ -74,6 +74,12 @@ export const typeInvalidLoginTotpCode = () => {
 };
 
 export const waitForNewTotpCodeAndTypeIt = (totpSecret) => {
+  const currentTime = Date.now();
+  const totpDuration = 30000;
+  const expirationTime = Math.ceil(currentTime / totpDuration) * totpDuration;
+  const remainingTimeInSeconds = Math.floor(expirationTime - currentTime);
   // eslint-disable-next-line cypress/no-unnecessary-waiting
-  return cy.wait(31000).then(() => typeLoginTotpCode(totpSecret));
+  return cy
+    .wait(remainingTimeInSeconds)
+    .then(() => typeLoginTotpCode(totpSecret));
 };
