@@ -5,9 +5,9 @@ import { getFromConfig } from '@lib/config/config';
 import Button from '@common/Button';
 
 function AnalyticsConfig({ onEditClick = noop, analyticsOptin }) {
-  analyticsEnabled = getFromConfig('analyticsEnabled');
+  const analyticsEnabled = getFromConfig('analyticsEnabled');
   if (!analyticsEnabled) {
-    return;
+    return null;
   }
   return (
     <div className="pt-4">

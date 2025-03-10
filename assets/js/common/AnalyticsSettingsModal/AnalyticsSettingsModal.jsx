@@ -34,8 +34,9 @@ function AnalyticsSettingsModal({
           />
           Allow the collection of{' '}
           <a
-            href="#"
+            href="https://www.trento-project.io/docs/"
             target="_blank"
+            rel="noreferrer"
             className="text-jungle-green-500 hover:opacity-75"
           >
             anonymous metrics
@@ -52,7 +53,7 @@ function AnalyticsSettingsModal({
             };
             onSave(payload).then(() => {
               if (payload.opt_in) {
-                //Starts Posthog if user opts in
+                // Starts Posthog if user opts in
                 initPosthog();
               }
             });
