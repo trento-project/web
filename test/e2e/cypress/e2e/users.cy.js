@@ -275,10 +275,11 @@ describe('Users', () => {
       cy.wait('@totpEnrollment');
       usersPage.typeUserTotpCode().then((totpSecret) => {
         cy.wait(1000);
-        usersPage.clickVerifyTotpButton();
-        cy.wait(1000);
-        cy.wait('@profile');
-        usersPage.authenticatorAppSwitchIsEnabled();
+        usersPage.clickVerifyTotpButton().then(() => {
+          cy.wait(1000);
+          cy.wait('@profile');
+          usersPage.authenticatorAppSwitchIsEnabled();
+        });
         usersPage.clickSignOutButton();
         cy.intercept('/api/session').as('session');
         loginPage.login(usersPage.USER.username, usersPage.PASSWORD);
