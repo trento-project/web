@@ -253,12 +253,14 @@ describe('Users', () => {
 
     // eslint-disable-next-line mocha/no-exclusive-tests
     it.only('should reconfigure TOTP and validate login cases', () => {
+      cy.intercept('/api/v1/profile/totp_enrollment').as('totpEnrollment');
       usersPage.clickAuthenticatorAppSwitch();
       usersPage.typeUserTotpCode();
       usersPage.clickVerifyTotpButton();
       usersPage.clickAuthenticatorAppSwitch();
       usersPage.clickDisableTotpButton();
       usersPage.clickAuthenticatorAppSwitch();
+      cy.wait('@totpEnrollment');
       usersPage.typeUserTotpCode().then((totpSecret) => {
         usersPage.clickVerifyTotpButton();
         usersPage.authenticatorAppSwitchIsEnabled();
