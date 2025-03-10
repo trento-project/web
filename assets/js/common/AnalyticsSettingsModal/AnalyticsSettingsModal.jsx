@@ -48,10 +48,10 @@ function AnalyticsSettingsModal({
         <Button
           onClick={() => {
             const payload = {
-              analytics_optin: analyticsOptin,
+              opt_in: analyticsOptin,
             };
             onSave(payload).then(() => {
-              if (payload.analytics_optin) {
+              if (payload.opt_in) {
                 //Starts Posthog if user opts in
                 initPosthog();
               }

@@ -16,8 +16,7 @@ export const useAnalyticsSettings = () => {
     } catch ({ response: { status } }) {
       // Handle the error
       setSettings({});
-      status !== '404';
-      setFetchError(true);
+      if (status !== 404) setFetchError(true);
     } finally {
       setLoading(false);
     }
@@ -25,6 +24,7 @@ export const useAnalyticsSettings = () => {
 
   const saveAnalyticsSettings = async (newSettings) => {
     setLoading(true);
+    setEntityErrors([]);
     try {
       // Save the new settings
       const { data } = await saveSettings(newSettings);

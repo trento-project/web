@@ -13,7 +13,7 @@ if (analyticsEnabled) {
   try {
     //Fetch Analytics settings from the API
     getSettings().then(({ data }) => {
-      if (data.analytics_optin) {
+      if (data.opt_in) {
         //Load the Analytics library
         initPosthog();
       }

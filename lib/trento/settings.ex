@@ -160,27 +160,33 @@ defmodule Trento.Settings do
   @spec get_analytics_settings() ::
           {:ok, AnalyticsSettings.t()} | {:error, :analytics_settings_not_configured}
   def get_analytics_settings do
-    settings = Repo.one(AnalyticsSettings.base_query())
-
-    if settings do
-      {:ok, settings}
-    else
-      {:error, :settings_not_configured}
+    case Repo.one(AnalyticsSettings.base_query()) do
+      %AnalyticsSettings{} = settings -> {:ok, settings}
+      nil -> {:error, :analytics_settings_not_configured}
     end
   end
 
-  @spec change_analytics_optin(boolean()) ::
+  @spec change_analytics_opt_in(boolean()) ::
           {:ok, AnalyticsSettings.t()}
           | {:error, :analytics_settings_not_configured}
-  def change_analytics_optin(value) do
-    case get_analytics_settings() do
-      {:ok, settings} ->
+  def change_analytics_opt_in(value) do
+    case Repo.one(AnalyticsSettings.base_query()) do
+      %AnalyticsSettings{} = settings ->
+        {:ok, settings}
+
         settings
         |> AnalyticsSettings.changeset(%{
-          analytics_optin: value
+          opt_in: value
         })
         |> Repo.update()
-        |> log_error("Error while updating analytics optin value")
+        |> log_error("Error while updating analytics opt-in value")
+
+      nil ->
+        %AnalyticsSettings{}
+        |> AnalyticsSettings.changeset(%{
+          opt_in: value
+        })
+        |> Repo.insert()
 
       error ->
         error

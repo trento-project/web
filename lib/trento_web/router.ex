@@ -193,8 +193,10 @@ defmodule TrentoWeb.Router do
         get "/activity_log", SettingsController, :get_activity_log_settings
 
         # Analytics Settings
-        get "/analytics", SettingsController, :get_analytics_settings
-        post "/analytics", SettingsController, :update_analytics_settings
+        if Application.compile_env!(:trento, :analytics)[:enabled] do
+          get "/analytics", SettingsController, :get_analytics_settings
+          post "/analytics", SettingsController, :update_analytics_settings
+        end
 
         scope "/suse_manager" do
           get "/", SettingsController, :get_suse_manager_settings

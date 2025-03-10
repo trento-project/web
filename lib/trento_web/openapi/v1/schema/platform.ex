@@ -94,11 +94,33 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
         type: :object,
         additionalProperties: false,
         properties: %{
-          analytics_optin: %Schema{
-            type: :boolean
+          opt_in: %Schema{
+            type: :boolean,
+            description: "Whether platform analytics recollection is enabled"
           }
         },
-        required: [:analytics_optin]
+        required: [:opt_in]
+      },
+      struct?: false
+    )
+  end
+
+  defmodule AnalyticsSettingsUpdateRequest do
+    @moduledoc false
+
+    OpenApiSpex.schema(
+      %{
+        title: "AnalyticsSettingsUpdateRequest",
+        description: "Request body for analyrics settings update",
+        type: :object,
+        additionalProperties: false,
+        properties: %{
+          opt_in: %Schema{
+            type: :boolean,
+            description: "Whether platform analytics recollection is enabled"
+          }
+        },
+        required: [:opt_in]
       },
       struct?: false
     )

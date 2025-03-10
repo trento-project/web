@@ -117,6 +117,7 @@ function SettingsPage() {
 
   const [analyticsModalOpen, setAnalyticsModalOpen] = useState(false);
   const {
+    fetchAnalyticsSettings,
     saveAnalyticsSettings,
     analyticsSettings,
     analyticsSettingsLoading,
@@ -357,14 +358,14 @@ function SettingsPage() {
           onRetry={() => fetchAnalyticsSettings()}
         >
           <AnalyticsConfig
-            analyticsOptin={analyticsSettings.analytics_optin}
+            analyticsOptin={analyticsSettings.opt_in}
             onEditClick={() => setAnalyticsModalOpen(true)}
           />
         </SettingsLoader>
         <AnalyticsSettingsModal
           key={`${JSON.stringify(analyticsSettings)}-${analyticsModalOpen}`}
           open={analyticsModalOpen}
-          initialAnalyticsOptin={analyticsSettings.analytics_optin}
+          initialAnalyticsOptin={analyticsSettings.opt_in}
           onSave={(payload) => saveAnalyticsSettings(payload)}
           onCancel={() => {
             setAnalyticsModalOpen(false);

@@ -167,7 +167,9 @@ defmodule TrentoWeb.V1.SettingsController do
   operation :update_analytics_settings,
     summary: "Updates the Analytics settings",
     tags: ["Platform"],
-    request_body: {"AnalyticsSettings", "application/json", Schema.Platform.AnalyticsSettings},
+    request_body:
+      {"AnalyticsSettingsUpdateRequest", "application/json",
+       Schema.Platform.AnalyticsSettingsUpdateRequest},
     responses: [
       ok:
         {"Analytics settings updated successfully", "application/json",
@@ -176,9 +178,9 @@ defmodule TrentoWeb.V1.SettingsController do
     ]
 
   def update_analytics_settings(conn, _) do
-    %{analytics_optin: analytics_optin} = OpenApiSpex.body_params(conn)
+    %{opt_in: opt_in} = OpenApiSpex.body_params(conn)
 
-    with {:ok, updated_settings} <- Settings.change_analytics_optin(analytics_optin) do
+    with {:ok, updated_settings} <- Settings.change_analytics_opt_in(opt_in) do
       render(conn, :analytics_settings, %{
         settings: updated_settings
       })
