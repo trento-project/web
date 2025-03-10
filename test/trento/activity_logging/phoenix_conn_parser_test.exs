@@ -117,12 +117,12 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
     test "should extract operation metadata from requested operation", %{conn: conn} do
       resource_id = Faker.UUID.v4()
       operation_id = Faker.UUID.v4()
-      operation = Faker.Cat.name()
+      operation = "saptune_solution_apply"
       params = %{"key" => "value"}
 
       assert %{
                :resource_id => resource_id,
-               :operation => operation,
+               :operation => :saptune_solution_apply,
                :operation_id => operation_id,
                :params => params
              } ==

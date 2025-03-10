@@ -12,7 +12,11 @@ defmodule Trento.ActivityLog.Logger.Parser.MetadataEnricher do
   def enrich(activity, metadata) do
     case ActivityCatalog.detect_activity_category(activity) do
       supported_activities
-      when supported_activities in [:connection_activity, :domain_event_activity] ->
+      when supported_activities in [
+             :connection_activity,
+             :domain_event_activity,
+             :queue_event_activity
+           ] ->
         {:ok, enrich_metadata(activity, metadata)}
 
       _ ->
@@ -81,6 +85,9 @@ defmodule Trento.ActivityLog.Logger.Parser.MetadataEnricher do
        )
        when activity in [:resource_tagging, :resource_untagging],
        do: {:ok, resource_id}
+
+  defp detect_enrichment(:host, {_, %{resource_id: id, operation: :saptune_solution_apply}}),
+    do: {:ok, id}
 
   defp detect_enrichment(_target_entity, {_activity, _metadata}),
     do: {:error, :no_enrichment_needed}
