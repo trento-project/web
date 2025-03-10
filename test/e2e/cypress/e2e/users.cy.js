@@ -256,6 +256,7 @@ describe('Users', () => {
     it.only('should reconfigure TOTP and validate login cases', () => {
       cy.intercept('/api/v1/profile/totp_enrollment').as('totpEnrollment');
       cy.intercept('/api/v1/profile').as('profile');
+      cy.intercept('/api/v1/hosts').as('hosts');
       usersPage.clickAuthenticatorAppSwitch();
       cy.wait(1000);
       cy.wait('@totpEnrollment');
@@ -292,11 +293,11 @@ describe('Users', () => {
         loginPage.clickSubmitLoginButton();
         cy.wait('@session');
         loginPage.invalidCredentialsErrorIsDisplayed();
-        loginPage.waitForNewTotpCodeAndTypeIt(totpSecret);
-        cy.intercept('api/v1/hosts').as('hosts');
-        loginPage.clickSubmitLoginButton();
-        cy.wait('@hosts');
-        dashboardPage.dashboardPageIsDisplayed();
+        loginPage.waitForNewTotpCodeAndTypeIt(totpSecret).then(() => {
+          loginPage.clickSubmitLoginButton();
+          cy.wait('@hosts');
+          dashboardPage.dashboardPageIsDisplayed();
+        });
       });
     });
 
