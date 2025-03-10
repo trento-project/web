@@ -252,29 +252,29 @@ describe('Users', () => {
     });
 
     // eslint-disable-next-line mocha/no-exclusive-tests
-    it.only('should reconfigure TOTP and validate login cases', () => {
-      cy.intercept('/api/v1/profile/totp_enrollment').as('totpEnrollment');
+    it.only('should configure TOTP and validate login cases, then disable it', () => {
       usersPage.clickAuthenticatorAppSwitch();
-      usersPage.typeUserTotpCode();
-      usersPage.clickVerifyTotpButton();
-      usersPage.clickAuthenticatorAppSwitch();
-      usersPage.clickDisableTotpButton();
-      usersPage.clickAuthenticatorAppSwitch();
-      cy.wait('@totpEnrollment');
-      usersPage.typeUserTotpCode().then((totpSecret) => {
-        usersPage.clickVerifyTotpButton();
-        usersPage.authenticatorAppSwitchIsEnabled();
-        usersPage.clickSignOutButton();
-        loginPage.login(usersPage.USER.username, usersPage.PASSWORD);
-        loginPage.typeInvalidLoginTotpCode();
-        loginPage.clickSubmitLoginButton();
-        loginPage.invalidCredentialsErrorIsDisplayed();
-        loginPage.typeAlreadyUsedTotpCode(totpSecret);
-        loginPage.clickSubmitLoginButton();
-        loginPage.invalidCredentialsErrorIsDisplayed();
-        loginPage.waitForNewTotpCodeAndTypeIt(totpSecret);
-        loginPage.clickSubmitLoginButton();
-        dashboardPage.dashboardPageIsDisplayed();
+      usersPage.getTotpSecret().then((totpSecret) => {
+        usersPage.typeUserTotpCode(totpSecret).then((code) => {
+          usersPage.clickVerifyTotpButton();
+          usersPage.authenticatorAppSwitchIsEnabled();
+          usersPage.clickSignOutButton();
+          loginPage.login(usersPage.USER.username, usersPage.PASSWORD);
+          loginPage.typeInvalidLoginTotpCode();
+          loginPage.clickSubmitLoginButton();
+          loginPage.invalidCredentialsErrorIsDisplayed();
+          loginPage.typeAlreadyUsedTotpCode(code);
+          loginPage.clickSubmitLoginButton();
+          loginPage.invalidCredentialsErrorIsDisplayed();
+          loginPage.typeLoginTotpCode(totpSecret);
+          loginPage.clickSubmitLoginButton();
+          dashboardPage.dashboardPageIsDisplayed();
+          usersPage.visit('/profile');
+          usersPage.clickAuthenticatorAppSwitch();
+          usersPage.clickDisableTotpButton();
+          usersPage.clickAuthenticatorAppSwitch();
+          usersPage.newIssuedTotpSecretIsDifferent();
+        });
       });
     });
 

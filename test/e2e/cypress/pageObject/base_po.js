@@ -71,21 +71,24 @@ export const clickUserDropdownProfileButton = () => {
   return cy.get(userDropdownProfileButton).click();
 };
 
-export const typeTotpCode = (totpSecret, inputField, valid = true) => {
+export const typeNextGeneratedTotpCode = (
+  totpSecret,
+  inputField,
+  forceNext = false
+) => {
   const currentTime = Date.now();
   const totpDuration = 30000;
   const expirationTime = Math.ceil(currentTime / totpDuration) * totpDuration;
   const remainingTime = Math.floor(expirationTime - currentTime);
-  const invalidOtp = TOTP.generate(totpSecret);
-  cy.wait(remainingTime).then(() => {
-    const validOtp = TOTP.generate(totpSecret);
-    cy.log(invalidOtp, validOtp);
-    const otp = valid ? validOtp.otp : invalidOtp.otp;
+  const timeToWait =
+    forceNext === false && remainingTime > 10000 ? 0 : remainingTime;
+  return cy.wait(timeToWait).then(() => {
+    const { otp } = TOTP.generate(totpSecret);
     return cy
       .get(inputField)
       .clear()
       .type(otp)
-      .then(() => totpSecret);
+      .then(() => otp);
   });
 };
 

@@ -61,12 +61,11 @@ export const clickSubmitLoginButton = () => {
   return cy.get(submitLoginButton).click();
 };
 
-export const typeLoginTotpCode = (totpSecret) => {
-  basePage.typeTotpCode(totpSecret, totpCodeInput);
-};
+export const typeLoginTotpCode = (totpSecret) =>
+  basePage.typeNextGeneratedTotpCode(totpSecret, totpCodeInput, true);
 
-export const typeAlreadyUsedTotpCode = (totpSecret) => {
-  return basePage.typeTotpCode(totpSecret, totpCodeInput, false);
+export const typeAlreadyUsedTotpCode = (code) => {
+  cy.get(totpCodeInput).clear().type(code);
 };
 
 export const typeInvalidLoginTotpCode = () => {

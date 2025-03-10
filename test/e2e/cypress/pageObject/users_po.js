@@ -153,15 +153,12 @@ export const selectFromTotpDropdown = (choice) => {
   return basePage.selectFromDropdown(editUserTotpDropdown, choice);
 };
 
-const getTotpSecret = () => {
+export const getTotpSecret = () => {
   return cy.get(totpSecret).then((element) => element.text());
 };
 
-export const typeUserTotpCode = () => {
-  return getTotpSecret().then((totpSecret) =>
-    basePage.typeTotpCode(totpSecret, newTotpCodeInputField)
-  );
-};
+export const typeUserTotpCode = (totpSecret) =>
+  basePage.typeNextGeneratedTotpCode(totpSecret, newTotpCodeInputField);
 
 export const typeInvalidUserTotpCode = () => {
   return cy.get(newTotpCodeInputField).clear().type('invalid');
@@ -358,4 +355,13 @@ export const enableTotpOptionIsDisabled = () => {
     .get(enableUserTotpOption)
     .invoke('attr', 'aria-disabled')
     .should('eq', 'true');
+};
+
+export const newIssuedTotpSecretIsDifferent = (originalTotpSecret) => {
+  getTotpSecret().then((newTotpSecret) => {
+    expect(
+      newTotpSecret === originalTotpSecret,
+      'New issued TOTP secret is different'
+    ).to.be.false;
+  });
 };
