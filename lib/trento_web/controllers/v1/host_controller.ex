@@ -202,7 +202,7 @@ defmodule TrentoWeb.V1.HostController do
 
   def get_policy_resource(%{
         private: %{phoenix_action: :request_operation},
-        params: %{"operation" => operation}
+        path_params: %{"operation" => operation}
       }),
       do: %{operation: operation}
 
