@@ -160,6 +160,12 @@ export const getTotpSecret = () => {
 export const typeUserTotpCode = (totpSecret) =>
   basePage.typeNextGeneratedTotpCode(totpSecret, newTotpCodeInputField);
 
+export const getSecretAndTypeTotpCode = () => {
+  getTotpSecret().then((totpSecret) => {
+    typeUserTotpCode(totpSecret);
+  });
+};
+
 export const typeInvalidUserTotpCode = () => {
   return cy.get(newTotpCodeInputField).clear().type('invalid');
 };

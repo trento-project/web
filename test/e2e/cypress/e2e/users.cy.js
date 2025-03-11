@@ -226,7 +226,7 @@ describe('Users', () => {
 
     it('should complete TOTP enrollment properly', () => {
       usersPage.clickAuthenticatorAppSwitch();
-      usersPage.typeUserTotpCode();
+      usersPage.getSecretAndTypeTotpCode();
       usersPage.clickVerifyTotpButton();
       usersPage.authenticatorAppSwitchIsEnabled();
       usersPage.totpEnabledToasterIsDisplayed();
@@ -234,7 +234,7 @@ describe('Users', () => {
 
     it('should fail to login if TOTP code is not given', () => {
       usersPage.clickAuthenticatorAppSwitch();
-      usersPage.typeUserTotpCode();
+      usersPage.getSecretAndTypeTotpCode();
       usersPage.clickVerifyTotpButton();
       loginPage.loginFailsIfOtpNotProvided(
         usersPage.USER.username,
@@ -244,15 +244,14 @@ describe('Users', () => {
 
     it('should disable TOTP authentication and check login works without TOTP', () => {
       usersPage.clickAuthenticatorAppSwitch();
-      usersPage.typeUserTotpCode();
+      usersPage.getSecretAndTypeTotpCode();
       usersPage.clickVerifyTotpButton();
       usersPage.clickAuthenticatorAppSwitch();
       usersPage.clickDisableTotpButton();
       loginPage.loginShouldSucceed(usersPage.USER.username, usersPage.PASSWORD);
     });
 
-    // eslint-disable-next-line mocha/no-exclusive-tests
-    it.only('should configure TOTP and validate login cases, then disable it', () => {
+    it('should configure TOTP and validate login cases, then disable it', () => {
       usersPage.clickAuthenticatorAppSwitch();
       usersPage.getTotpSecret().then((totpSecret) => {
         usersPage.typeUserTotpCode(totpSecret).then((code) => {
@@ -280,7 +279,7 @@ describe('Users', () => {
 
     it('should be disabled by admin user', () => {
       usersPage.clickAuthenticatorAppSwitch();
-      usersPage.typeUserTotpCode();
+      usersPage.getSecretAndTypeTotpCode();
       usersPage.clickVerifyTotpButton();
       usersPage.clickSignOutButton();
       usersPage.apiLoginAndCreateSession();
