@@ -35,7 +35,8 @@ const newTotpCodeIssuedMessage = 'div:contains("Your new TOTP secret is:")';
 const totpSecret = `${newTotpCodeIssuedMessage} + div[class*="bold"]`;
 const newTotpCodeInputField = 'input[placeholder="TOTP code"]';
 const verifyTotpButton = 'button:contains("Verify")';
-const confirmDisableTotpButton = 'button:contains("Disable")';
+const confirmDisableTotpButton =
+  'div[id*="headlessui-dialog-panel"] button:contains("Disable")';
 const editUserTotpDropdown = 'button.totp-selection-dropdown';
 const enableUserTotpOption = `${editUserTotpDropdown} + div div:contains("Enabled")`;
 
