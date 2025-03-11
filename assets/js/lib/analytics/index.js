@@ -1,7 +1,7 @@
 import posthog from 'posthog-js';
 
 import { getFromConfig } from '@lib/config/config';
-import { getSettings } from '@lib/api/analyticsSettings';
+import axios from 'axios';
 import { logError } from '@lib/log';
 
 const analyticsEnabled = getFromConfig('analyticsEnabled');
@@ -27,7 +27,8 @@ export const capture = (event, payload) => {
 if (analyticsEnabled) {
   try {
     // Fetch Analytics settings from the API
-    getSettings().then(({ data }) => {
+    const networkClient = axios.create();
+    networkClient.get(`/api/analytics`).then(({ data }) => {
       if (data.opt_in) {
         // Load the Analytics library
         initPosthog();

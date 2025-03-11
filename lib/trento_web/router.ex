@@ -88,6 +88,11 @@ defmodule TrentoWeb.Router do
   scope "/api", TrentoWeb.V1 do
     pipe_through [:api, :api_v1]
     get "/public_keys", SettingsController, :get_public_keys
+
+    # Analytics Settings
+    if Application.compile_env!(:trento, :analytics)[:enabled] do
+      get "/analytics", SettingsController, :get_analytics_settings
+    end
   end
 
   scope "/api" do

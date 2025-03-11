@@ -1,13 +1,18 @@
 import { useEffect, useState } from 'react';
 import { saveSettings, getSettings } from '@lib/api/analyticsSettings';
+import { getFromConfig } from '@lib/config/config';
 
 export const useAnalyticsSettings = () => {
   const [loading, setLoading] = useState(false);
   const [settings, setSettings] = useState({});
   const [fetchError, setFetchError] = useState(false);
   const [entityErrors, setEntityErrors] = useState([]);
+  const analyticsEnabled = getFromConfig('analyticsEnabled');
 
   const fetchAnalyticsSettings = async () => {
+    if (!analyticsEnabled) {
+      return
+    }
     setLoading(true);
     setFetchError(false);
     try {
