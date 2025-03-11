@@ -95,7 +95,7 @@ describe('OperationsButton', () => {
     expect(svgEl).toBeInTheDocument();
   });
 
-  it('should forbid operation is the user does not have the correct abilities', async () => {
+  it('should forbid operation if the user does not have the correct abilities', async () => {
     const user = userEvent.setup();
 
     await act(async () => {
