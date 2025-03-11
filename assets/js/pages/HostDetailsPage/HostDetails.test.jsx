@@ -1,5 +1,5 @@
 import React from 'react';
-import { screen, within } from '@testing-library/react';
+import { act, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import 'intersection-observer';
 import '@testing-library/jest-dom';
@@ -523,6 +523,71 @@ describe('HostDetails component', () => {
 
       const startExecutionButton = screen.getByText('Start Execution');
       expect(startExecutionButton).toBeEnabled();
+    });
+
+    it('should disable Saptune apply operation button when the user abilities are not compatible', async () => {
+      const user = userEvent.setup();
+      const saptuneStatus = saptuneStatusFactory.build({
+        enabled_solution: null,
+      });
+      const sapInstances = databaseInstanceFactory
+        .buildList(1)
+        .map((instance) => ({ ...instance, type: DATABASE_TYPE }));
+
+      await act(async () => {
+        renderWithRouter(
+          <HostDetails
+            agentVersion="2.0.0"
+            userAbilities={[{ name: 'all', resource: 'another_resource' }]}
+            operationsEnabled
+            sapInstances={sapInstances}
+            saptuneStatus={saptuneStatus}
+          />
+        );
+      });
+
+      const operationsButton = screen.getByRole('button', {
+        name: 'Operations',
+      });
+      await user.click(operationsButton);
+
+      const menuButton = screen.getByRole('menuitem', {
+        name: 'Apply Saptune Solution',
+      });
+
+      expect(menuButton).toBeDisabled();
+    });
+
+    it('should enable Saptune apply operation button when the user abilities are compatible', async () => {
+      const user = userEvent.setup();
+      const saptuneStatus = saptuneStatusFactory.build({
+        enabled_solution: null,
+      });
+      const sapInstances = databaseInstanceFactory
+        .buildList(1)
+        .map((instance) => ({ ...instance, type: DATABASE_TYPE }));
+
+      renderWithRouter(
+        <HostDetails
+          agentVersion="2.0.0"
+          userAbilities={[{ name: 'saptune_solution_apply', resource: 'host' }]}
+          operationsEnabled
+          sapInstances={sapInstances}
+          saptuneStatus={saptuneStatus}
+        />
+      );
+
+      await user.click(
+        screen.getByRole('button', {
+          name: 'Operations',
+        })
+      );
+
+      expect(
+        screen.getByRole('menuitem', {
+          name: 'Apply Saptune Solution',
+        })
+      ).toBeEnabled();
     });
   });
 

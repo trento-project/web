@@ -344,3 +344,10 @@ export const WithDisabledOperation = {
     },
   },
 };
+
+export const WithForbiddenOperation = {
+  args: {
+    ...Default.args,
+    userAbilities: [],
+  },
+};

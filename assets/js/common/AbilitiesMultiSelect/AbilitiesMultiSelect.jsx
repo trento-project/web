@@ -1,5 +1,6 @@
 import React from 'react';
 import { assign, find } from 'lodash';
+import { getFromConfig } from '@lib/config';
 
 import MultiSelect from '@common/MultiSelect';
 
@@ -48,9 +49,14 @@ const groupedAbilities = [
       'all:activity_logs_settings',
     ],
   },
+  {
+    ability: 'operation:all',
+    tooltip: 'Permits running operations in all resources',
+    groupAbilities: ['saptune_solution_apply:host'],
+  },
 ];
 
-const mapAbilities = (abilities) =>
+const mapAbilities = (abilities, operationsEnabled) =>
   abilities.reduce((acc, { id, name, resource, label }) => {
     const valueLabel = `${name}:${resource}`;
     const groupedAbility = find(groupedAbilities, ({ groupAbilities }) =>
@@ -59,6 +65,11 @@ const mapAbilities = (abilities) =>
 
     if (!groupedAbility) {
       return acc.concat({ value: id, label: valueLabel, tooltip: label });
+    }
+
+    // remove operations abilities by now
+    if (!operationsEnabled && groupedAbility.ability === 'operation:all') {
+      return acc;
     }
 
     const currentOption = find(acc, { label: groupedAbility.ability });
@@ -82,14 +93,15 @@ function AbilitiesMultiSelect({
   userAbilities,
   placeholder,
   setAbilities,
+  operationsEnabled = getFromConfig('operationsEnabled'),
   ...props
 }) {
   return (
     <MultiSelect
       aria-label="permissions"
       placeholder={placeholder}
-      values={mapAbilities(userAbilities)}
-      options={mapAbilities(abilities)}
+      values={mapAbilities(userAbilities, operationsEnabled)}
+      options={mapAbilities(abilities, operationsEnabled)}
       onChange={(values) => setAbilities(unmapAbilities(values))}
       getOptionValue={(option) => option.value.toString()}
       {...props}

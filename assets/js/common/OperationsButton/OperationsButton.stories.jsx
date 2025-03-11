@@ -1,4 +1,3 @@
-import React from 'react';
 import { noop } from 'lodash';
 
 import OperationsButton from './OperationsButton';
@@ -11,45 +10,56 @@ export default {
       description: 'Operations to be displayed in the operations button menu',
       control: 'array',
     },
+    userAbilities: {
+      control: 'array',
+      description: 'Current user abilities',
+    },
   },
+};
+
+export const Default = {
   args: {
     operations: [
       {
         value: 'Operation 1',
         running: false,
         disabled: false,
+        permitted: ['foo:resource'],
         onClick: noop,
       },
       {
         value: 'Operation 2',
         running: false,
         disabled: false,
+        permitted: ['bar:resource'],
         onClick: noop,
       },
     ],
+    userAbilities: [{ name: 'all', resource: 'all' }],
   },
 };
 
-export function Default(args) {
-  return <OperationsButton {...args} />;
-}
+export const Disabled = {
+  args: {
+    ...Default.args,
+    operations: Object.assign([], Default.args.operations, {
+      0: { ...Default.args.operations[0], disabled: true },
+    }),
+  },
+};
 
-export function Disabled({ operations }) {
-  return (
-    <OperationsButton
-      operations={Object.assign([], operations, {
-        0: { ...operations[0], disabled: true },
-      })}
-    />
-  );
-}
+export const Running = {
+  args: {
+    ...Default.args,
+    operations: Object.assign([], Default.args.operations, {
+      0: { ...Default.args.operations[0], running: true },
+    }),
+  },
+};
 
-export function Running({ operations }) {
-  return (
-    <OperationsButton
-      operations={Object.assign([], operations, {
-        0: { ...operations[0], running: true },
-      })}
-    />
-  );
-}
+export const Forbidden = {
+  args: {
+    ...Default.args,
+    userAbilities: [{ name: 'foo', resource: 'resource' }],
+  },
+};
