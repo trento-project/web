@@ -251,8 +251,7 @@ describe('Users', () => {
       loginPage.loginShouldSucceed(usersPage.USER.username, usersPage.PASSWORD);
     });
 
-    // eslint-disable-next-line mocha/no-exclusive-tests
-    it.only('should configure TOTP and validate login cases, then disable it', () => {
+    it('should configure TOTP and validate login cases, then disable it', () => {
       usersPage.clickAuthenticatorAppSwitch();
       usersPage.getTotpSecret().then((totpSecret) => {
         usersPage.typeUserTotpCode(totpSecret).then((code) => {
