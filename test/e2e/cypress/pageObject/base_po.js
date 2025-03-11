@@ -112,17 +112,8 @@ export const validateItemNotPresentInNavigationMenu = (itemName) => {
   });
 };
 
-export const validateItemPresentInNavigationMenu = (navigationMenuItem) => {
-  return cy.get(navigation.navigationItems).then(($elements) => {
-    const itemFound = Array.from($elements).some((element) =>
-      element.innerText.includes(navigationMenuItem)
-    );
-    expect(
-      itemFound,
-      `"${navigationMenuItem}" navigation item should be present`
-    ).to.be.true;
-  });
-};
+export const validateItemPresentInNavigationMenu = (navigationMenuItem) =>
+  cy.get(`a:contains("${navigationMenuItem}")`).should('be.visible');
 
 export const addTagButtonsAreDisabled = () =>
   cy.get(addTagButtons).should('have.class', 'opacity-50');
