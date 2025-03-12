@@ -9,9 +9,10 @@ const userDropdownMenuButton = 'header button[id*="menu"]';
 const userDropdownProfileButton = 'a:contains("Profile")';
 const accessForbiddenMessage =
   'div:contains("Access to this page is forbidden")';
-const navigation = {
+export const navigation = {
   navigationItems: 'nav a',
   activityLog: 'a:contains("Activity Log")',
+  hosts: 'a:contains("Hosts")',
 };
 const signOutButton = 'button:contains("Sign out")';
 const removeEnv1TagButton = 'span span:contains("env1") span';

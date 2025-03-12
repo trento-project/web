@@ -1,3 +1,5 @@
+import * as hostsOverviewPage from '../pageObject/hosts_overview_po';
+
 import { createUserRequestFactory } from '@lib/test-utils/factories';
 
 import {
@@ -10,148 +12,47 @@ const availableHosts1stPage = availableHosts.slice(0, 10);
 const NEXT_PAGE_SELECTOR = '[aria-label="next-page"]';
 
 context('Hosts Overview', () => {
-  before(() => {
-    cy.preloadTestData();
-    cy.visit('/hosts');
-    cy.url().should('include', '/hosts');
+  beforeEach(() => {
+    // hostsOverviewPage.preloadTestData();
+    hostsOverviewPage.visit();
+  });
+
+  it('should have expected url', () => {
+    hostsOverviewPage.validateUrl();
   });
 
   describe('Registered Hosts are shown in the list', () => {
     it('should highlight the hosts sidebar entry', () => {
-      cy.get('.tn-menu-item[href="/hosts"]')
-        .invoke('attr', 'aria-current')
-        .should('eq', 'page');
+      hostsOverviewPage.hostsIsHighglightedInSidebar();
     });
 
     it('should show 10 of the 27 registered hosts', () => {
-      cy.get('.tn-hostname').its('length').should('eq', 10);
+      hostsOverviewPage.tenHostsAreListed();
     });
 
     it('should have 3 pages', () => {
-      cy.get(`[data-testid="pagination"]`).as('pagination');
-      cy.get(`@pagination`).contains('Showing 1–10 of 27').should('exist');
-
-      cy.get(NEXT_PAGE_SELECTOR).click();
-      cy.get(`@pagination`).contains('Showing 11–20 of 27').should('exist');
-
-      cy.get(NEXT_PAGE_SELECTOR).click();
-      cy.get(`@pagination`).contains('Showing 21–27 of 27').should('exist');
-
-      cy.get(NEXT_PAGE_SELECTOR).should('be.disabled');
+      hostsOverviewPage.expectedPaginationIsDisplayed('Showing 1–10 of 27');
+      hostsOverviewPage.clickNextPageButton();
+      hostsOverviewPage.expectedPaginationIsDisplayed('Showing 11–20 of 27');
+      hostsOverviewPage.clickNextPageButton();
+      hostsOverviewPage.expectedPaginationIsDisplayed('Showing 21–27 of 27');
+      hostsOverviewPage.nextPageButtonIsDisabled();
     });
 
     it('should show the ip addresses, provider and agent version data for the hosts in the 1st page', () => {
-      cy.reload();
-      cy.get('.container').eq(0).as('hostsTable');
-      availableHosts1stPage.forEach((host, index) => {
-        cy.get('@hostsTable')
-          .find('tr')
-          .eq(index + 1)
-          .find('td')
-          .as('hostRow');
-
-        cy.get('@hostsTable')
-          .contains('th', 'IP')
-          .invoke('index')
-          .then((i) => {
-            host.ipAddresses.forEach((ipAddress) => {
-              cy.get('@hostRow').eq(i).should('contain', ipAddress);
-            });
-          });
-
-        cy.get('@hostsTable')
-          .contains('th', 'Provider')
-          .invoke('index')
-          .then((i) => {
-            cy.get('@hostRow').eq(i).should('contain', host.provider);
-          });
-
-        cy.get('@hostsTable')
-          .contains('th', 'Agent version')
-          .invoke('index')
-          .then((i) => {
-            cy.get('@hostRow')
-              .eq(i)
-              .should('contain', host.agentVersion.slice(0, 15));
-          });
-      });
+      hostsOverviewPage.hostsTableContentsAreTheExpected();
     });
 
     it('should link to the correct host details page clicking in the host name', () => {
-      cy.get('.container').eq(0).as('hostsTable');
-      availableHosts1stPage.forEach((host, index) => {
-        cy.get('@hostsTable')
-          .find('tr')
-          .eq(index + 1)
-          .find('td')
-          .as('hostRow');
-
-        cy.get('@hostsTable')
-          .contains('th', 'Hostname')
-          .invoke('index')
-          .then((i) => {
-            cy.get('@hostRow').eq(i).should('contain', host.name);
-            cy.get('@hostRow').eq(i).click();
-            cy.location('pathname').should('eq', `/hosts/${host.id}`);
-            cy.go('back');
-          });
-      });
+      hostsOverviewPage.everyLinkGoesToExpectedHostDetailsPage();
     });
 
     it('should link to the correct cluster details page clicking in the cluster name', () => {
-      cy.get('.container').eq(0).as('hostsTable');
-      availableHosts1stPage.forEach((host, index) => {
-        cy.get('@hostsTable')
-          .find('tr')
-          .eq(index + 1)
-          .find('td')
-          .as('hostRow');
-
-        cy.get('@hostsTable')
-          .contains('th', 'Cluster')
-          .invoke('index')
-          .then((i) => {
-            if (host.clusterId) {
-              cy.get('@hostRow').eq(i).should('contain', host.clusterName);
-              cy.get('@hostRow').eq(i).click();
-              cy.location('pathname').should(
-                'eq',
-                `/clusters/${host.clusterId}`
-              );
-              cy.go('back');
-            } else {
-              cy.get('@hostRow').eq(i).find('a').should('not.exist');
-            }
-          });
-      });
+      hostsOverviewPage.everyClusterLinkGoesToExpectedClusterDetailsPage();
     });
 
     it('should link to the correct sap system details page clicking in the sap system name', () => {
-      cy.get('.container').eq(0).as('hostsTable');
-      availableHosts1stPage.forEach((host, index) => {
-        cy.get('@hostsTable')
-          .find('tr')
-          .eq(index + 1)
-          .find('td')
-          .as('hostRow');
-
-        cy.get('@hostsTable')
-          .contains('th', 'SID')
-          .invoke('index')
-          .then((i) => {
-            if (host.clusterId) {
-              cy.get('@hostRow').eq(i).should('contain', host.sapSystemSid);
-              cy.get('@hostRow').eq(i).click();
-              cy.location('pathname').should(
-                'eq',
-                `/databases/${host.sapSystemId}`
-              );
-              cy.go('back');
-            } else {
-              cy.get('@hostRow').eq(i).find('a').should('not.exist');
-            }
-          });
-      });
+      hostsOverviewPage.everySapSystemLinkGoesToExpectedSapSystemDetailsPage();
     });
   });
 
