@@ -120,7 +120,7 @@ describe('useChecksSelection', () => {
 
     const checksSelection = [
       selectableCheckFactory.build({
-        values: [{ name: customValue.name, current_value: '123' }],
+        values: [{ name: customValue.name, default_value: '123' }],
         customized: false,
       }),
       selectableCheckFactory.build({ customized: false }),

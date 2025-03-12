@@ -59,14 +59,14 @@ export const catalogFactory = Factory.define(() => ({
 export const customizedValueFactory = Factory.define(() => ({
   name: faker.string.uuid(),
   customizable: true,
-  current_value: faker.lorem.word(),
+  default_value: faker.lorem.word(),
   custom_value: faker.lorem.word(),
 }));
 
 export const nonCustomizedValueFactory = Factory.define(() => ({
   name: faker.string.uuid(),
   customizable: faker.datatype.boolean(),
-  current_value: faker.lorem.word(),
+  default_value: faker.lorem.word(),
 }));
 
 export const selectableCheckFactory = Factory.define(() => ({

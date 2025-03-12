@@ -23,7 +23,7 @@ import CheckCustomizationInput from './CheckCustomizationInput';
 const checkBoxWarningText =
   'Trento & SUSE cannot be held liable for damages if system is unable to function due to custom check value.';
 
-const appliedValue = (value) => value?.custom_value ?? value?.current_value;
+const appliedValue = (value) => value?.custom_value ?? value?.default_value;
 
 const detectType = (value) => {
   if (isBoolean(value)) {
@@ -93,7 +93,7 @@ function CheckCustomizationModal({
           <CheckCustomizationInput
             key={value?.name}
             name={value?.name}
-            defaultCheckValue={value?.current_value}
+            defaultCheckValue={value?.default_value}
             currentValue={appliedValue(value)}
             inputIsLocked={!canCustomize}
             handleInput={handleCustomValueInput}
