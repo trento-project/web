@@ -71,17 +71,28 @@ export const clickUserDropdownProfileButton = () => {
   return cy.get(userDropdownProfileButton).click();
 };
 
+const _getTotpWaitTime = (forceNext) => {
+  const currentTime = Date.now();
+  const totpDuration = 30000;
+  const minimumRemainingTimeToReuse = 10000;
+  const expirationTime = Math.ceil(currentTime / totpDuration) * totpDuration;
+  const remainingTime = Math.floor(expirationTime - currentTime);
+
+  const totpWaitingTime =
+    forceNext === false && remainingTime > minimumRemainingTimeToReuse
+      ? 0
+      : remainingTime;
+
+  return totpWaitingTime;
+};
+
 export const typeNextGeneratedTotpCode = (
   totpSecret,
   inputField,
   forceNext = false
 ) => {
-  const currentTime = Date.now();
-  const totpDuration = 30000;
-  const expirationTime = Math.ceil(currentTime / totpDuration) * totpDuration;
-  const remainingTime = Math.floor(expirationTime - currentTime);
-  const timeToWait =
-    forceNext === false && remainingTime > 10000 ? 0 : remainingTime;
+  const timeToWait = _getTotpWaitTime(forceNext);
+
   return cy.wait(timeToWait).then(() => {
     const { otp } = TOTP.generate(totpSecret);
     return cy
