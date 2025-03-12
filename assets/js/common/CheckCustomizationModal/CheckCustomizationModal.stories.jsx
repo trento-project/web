@@ -4,14 +4,14 @@ import CheckCustomizationModal from '.';
 const singleValue = [
   {
     name: 'ValueName1',
-    current_value: 'value1',
+    default_value: 'value1',
     customizable: true,
   },
 ];
 const singeBooleanValue = [
   {
     name: 'ValueName1',
-    current_value: true,
+    default_value: true,
     customizable: true,
   },
 ];
@@ -19,28 +19,28 @@ const singeBooleanValue = [
 const multipleValues = [
   {
     name: 'ValueName1',
-    current_value: 'value1',
+    default_value: 'value1',
     customizable: true,
   },
   {
     name: 'ValueName2',
-    current_value: 'value2',
+    default_value: 'value2',
     customizable: true,
   },
   {
     name: 'A very very very long name with to many characters',
-    current_value: 'value3',
+    default_value: 'value3',
     customizable: true,
   },
 
   {
     name: 'ValueName4',
-    current_value: true,
+    default_value: true,
     customizable: true,
   },
   {
     name: 'ValueName5',
-    current_value: false,
+    default_value: false,
     customizable: true,
   },
 ];
@@ -48,23 +48,23 @@ const multipleValues = [
 const partialCustomizableValues = [
   {
     name: 'ValueName1',
-    current_value: 'value1',
+    default_value: 'value1',
     customizable: true,
   },
   {
     name: 'ValueName2',
-    current_value: 'value2',
+    default_value: 'value2',
     customizable: false,
   },
   {
     name: 'ValueName3',
-    current_value: true,
+    default_value: true,
     customizable: true,
   },
 
   {
     name: 'ValueName4',
-    current_value: false,
+    default_value: false,
     customizable: false,
   },
 ];
