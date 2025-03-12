@@ -28,6 +28,8 @@ const initialState = {};
 
 const initialOperationState = {
   operation: null,
+  forbidden: false,
+  errors: [],
 };
 
 export const runningOperationsSlice = createSlice({
@@ -38,6 +40,16 @@ export const runningOperationsSlice = createSlice({
       const { groupID } = payload;
 
       delete state[groupID];
+    },
+    setForbiddenOperation: (state, { payload }) => {
+      const { groupID, operation, errors } = payload;
+
+      state[groupID] = {
+        ...initialOperationState,
+        operation,
+        forbidden: true,
+        errors,
+      };
     },
     setRunningOperation: (state, { payload }) => {
       const { groupID, operation } = payload;
@@ -50,7 +62,10 @@ export const runningOperationsSlice = createSlice({
   },
 });
 
-export const { removeRunningOperation, setRunningOperation } =
-  runningOperationsSlice.actions;
+export const {
+  removeRunningOperation,
+  setForbiddenOperation,
+  setRunningOperation,
+} = runningOperationsSlice.actions;
 
 export default runningOperationsSlice.reducer;

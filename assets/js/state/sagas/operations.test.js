@@ -4,10 +4,11 @@ import { faker } from '@faker-js/faker';
 import { recordSaga } from '@lib/test-utils';
 import { networkClient } from '@lib/network';
 
-import { SAPTUNE_SOLUTION_APPLY } from '@lib/operations';
+import { SAPTUNE_SOLUTION_APPLY, getOperationLabel } from '@lib/operations';
 import {
   removeRunningOperation,
   setRunningOperation,
+  setForbiddenOperation,
 } from '@state/runningOperations';
 import { notify } from '@state/notifications';
 
@@ -23,6 +24,9 @@ const hostOperationRequestURL = (hostID, operation) =>
 
 const getOperationExecutionsURL = () => `/api/v1/operations/executions`;
 
+const KNOWN_OPERATION = SAPTUNE_SOLUTION_APPLY;
+const KNOWN_OPERATION_LABEL = getOperationLabel(SAPTUNE_SOLUTION_APPLY);
+
 describe('operations saga', () => {
   beforeEach(() => {
     axiosMock.reset();
@@ -37,58 +41,89 @@ describe('operations saga', () => {
   describe('request operation', () => {
     it('should request an operation', async () => {
       const groupID = faker.string.uuid();
-      const operation = faker.lorem.word();
+      const operation = KNOWN_OPERATION;
       const hostname = faker.internet.displayName();
 
-      axiosMock.onGet(hostOperationRequestURL(groupID)).reply(202, {});
+      axiosMock
+        .onPost(hostOperationRequestURL(groupID, operation))
+        .reply(202, {});
 
       const dispatched = await recordSaga(
         requestOperation,
         {
           payload: { groupID, operation },
         },
-        { hostsList: [{ id: groupID, hostname }] }
+        { hostsList: { hosts: [{ id: groupID, hostname }] } }
       );
 
-      expect(dispatched).toContainEqual(
+      expect(dispatched).toEqual([
         setRunningOperation({ groupID, operation }),
         notify({
-          text: `Operation ${operation} requested for ${hostname}`,
+          text: `Operation ${KNOWN_OPERATION_LABEL} requested for ${hostname}`,
           icon: '⚙️',
-        })
-      );
+        }),
+      ]);
     });
 
     it('should fail requesting an operation if the api request fails', async () => {
       const groupID = faker.string.uuid();
-      const operation = faker.lorem.word();
+      const operation = KNOWN_OPERATION;
       const hostname = faker.internet.displayName();
 
-      axiosMock.onGet(hostOperationRequestURL(groupID)).reply(404, {});
+      axiosMock
+        .onPost(hostOperationRequestURL(groupID, operation))
+        .reply(404, {});
 
       const dispatched = await recordSaga(
         requestOperation,
         {
           payload: { groupID, operation },
         },
-        { hostsList: [{ id: groupID, hostname }] }
+        { hostsList: { hosts: [{ id: groupID, hostname }] } }
       );
 
-      expect(dispatched).toContainEqual(
+      expect(dispatched).toEqual([
         setRunningOperation({ groupID, operation }),
         removeRunningOperation({ groupID }),
         notify({
-          text: `Operation ${operation} request for ${hostname} failed`,
+          text: `Operation ${KNOWN_OPERATION_LABEL} request for ${hostname} failed`,
           icon: '❌',
-        })
+        }),
+      ]);
+    });
+
+    it('should fail requesting an operation if the api request is forbidden', async () => {
+      const groupID = faker.string.uuid();
+      const operation = KNOWN_OPERATION;
+      const hostname = faker.internet.displayName();
+
+      axiosMock
+        .onPost(hostOperationRequestURL(groupID, operation))
+        .reply(403, { errors: [{ detail: 'error1' }, { detail: 'error2' }] });
+
+      const dispatched = await recordSaga(
+        requestOperation,
+        {
+          payload: { groupID, operation },
+        },
+        { hostsList: { hosts: [{ id: groupID, hostname }] } }
       );
+
+      expect(dispatched).toEqual([
+        setRunningOperation({ groupID, operation }),
+        setForbiddenOperation({
+          groupID,
+          operation,
+          errors: ['error1', 'error2'],
+        }),
+      ]);
     });
   });
 
   describe('complete operation', () => {
     it('should complete successfully an operation', async () => {
       const groupID = faker.string.uuid();
-      const operation = faker.lorem.word();
+      const operation = KNOWN_OPERATION;
       const hostname = faker.internet.displayName();
 
       const dispatched = await recordSaga(
@@ -96,21 +131,21 @@ describe('operations saga', () => {
         {
           payload: { groupID, operation, result: 'UPDATED' },
         },
-        { hostsList: [{ id: groupID, hostname }] }
+        { hostsList: { hosts: [{ id: groupID, hostname }] } }
       );
 
-      expect(dispatched).toContainEqual(
+      expect(dispatched).toEqual([
         removeRunningOperation({ groupID }),
         notify({
-          text: `Operation ${operation} succeeded for ${hostname}`,
+          text: `Operation ${KNOWN_OPERATION_LABEL} succeeded for ${hostname}`,
           icon: '✅',
-        })
-      );
+        }),
+      ]);
     });
 
     it('should complete an operation with a failed result', async () => {
       const groupID = faker.string.uuid();
-      const operation = faker.lorem.word();
+      const operation = KNOWN_OPERATION;
       const hostname = faker.internet.displayName();
 
       const dispatched = await recordSaga(
@@ -118,16 +153,16 @@ describe('operations saga', () => {
         {
           payload: { groupID, operation, result: 'FAILED' },
         },
-        { hostsList: [{ id: groupID, hostname }] }
+        { hostsList: { hosts: [{ id: groupID, hostname }] } }
       );
 
-      expect(dispatched).toContainEqual(
+      expect(dispatched).toEqual([
         removeRunningOperation({ groupID }),
         notify({
-          text: `Operation ${operation} failed for ${hostname}`,
+          text: `Operation ${KNOWN_OPERATION_LABEL} failed for ${hostname}`,
           icon: '❌',
-        })
-      );
+        }),
+      ]);
     });
   });
 
@@ -145,14 +180,14 @@ describe('operations saga', () => {
         payload: { groupID },
       });
 
-      expect(dispatched).toContainEqual(
-        setRunningOperation({ groupID, operation: SAPTUNE_SOLUTION_APPLY })
-      );
+      expect(dispatched).toEqual([
+        setRunningOperation({ groupID, operation: SAPTUNE_SOLUTION_APPLY }),
+      ]);
     });
 
     it('should not update running operations state for a group when the operation is completed', async () => {
       const groupID = faker.string.uuid();
-      const operation = faker.lorem.word();
+      const operation = KNOWN_OPERATION;
 
       axiosMock.onGet(getOperationExecutionsURL(groupID)).reply(200, {
         items: [{ operation, status: 'completed' }],

@@ -3,6 +3,7 @@ import { faker } from '@faker-js/faker';
 import runningOperationsReducer, {
   removeRunningOperation,
   setRunningOperation,
+  setForbiddenOperation,
 } from './runningOperations';
 
 describe('runningOperations reducer', () => {
@@ -22,10 +23,28 @@ describe('runningOperations reducer', () => {
     const operation = faker.lorem.word();
     const initialState = {};
     const expectedState = {
-      [groupID]: { operation },
+      [groupID]: { operation, forbidden: false, errors: [] },
     };
 
     const action = setRunningOperation({ groupID, operation });
+
+    expect(runningOperationsReducer(initialState, action)).toEqual(
+      expectedState
+    );
+  });
+
+  it('should set an operation as forbidden', () => {
+    const groupID = faker.string.uuid();
+    const operation = faker.lorem.word();
+    const errors = ['error1', 'error2'];
+    const initialState = {
+      [groupID]: { operation, forbidden: false, errors: [] },
+    };
+    const expectedState = {
+      [groupID]: { operation, forbidden: true, errors },
+    };
+
+    const action = setForbiddenOperation({ groupID, operation, errors });
 
     expect(runningOperationsReducer(initialState, action)).toEqual(
       expectedState
