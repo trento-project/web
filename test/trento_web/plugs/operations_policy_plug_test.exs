@@ -2,13 +2,16 @@ defmodule TrentoWeb.Plugs.OperationsPolicyPlugTest do
   use TrentoWeb.ConnCase, async: true
   use Plug.Test
 
+  import OpenApiSpex.TestAssertions
+
+  alias TrentoWeb.OpenApi.V1.ApiSpec
   alias TrentoWeb.Plugs.OperationsPolicyPlug
 
   defmodule TestPolicy do
     @behaviour Trento.Operations.PolicyBehaviour
 
-    def authorize_operation(:authorized, _, _), do: true
-    def authorize_operation(:forbidden, _, _), do: false
+    def authorize_operation(:authorized, _, _), do: :ok
+    def authorize_operation(:forbidden, _, _), do: {:error, ["error1", "error2"]}
   end
 
   setup %{conn: conn} do
@@ -50,6 +53,8 @@ defmodule TrentoWeb.Plugs.OperationsPolicyPlugTest do
   end
 
   test "should forbid operation if the resourcec is not authorized", %{conn: conn} do
+    api_spec = ApiSpec.spec()
+
     opts = [
       policy: TestPolicy,
       operation: fn _ -> :forbidden end,
@@ -59,14 +64,22 @@ defmodule TrentoWeb.Plugs.OperationsPolicyPlugTest do
     init_opts = OperationsPolicyPlug.init(opts)
     conn = OperationsPolicyPlug.call(conn, init_opts)
 
+    resp = json_response(conn, 403)
+
     assert %{
              "errors" => [
                %{
-                 "detail" => "You can't perform the operation or access the resource.",
+                 "detail" => "error1",
+                 "title" => "Forbidden"
+               },
+               %{
+                 "detail" => "error2",
                  "title" => "Forbidden"
                }
              ]
-           } == json_response(conn, 403)
+           } == resp
+
+    assert_schema(resp, "Forbidden", api_spec)
   end
 
   test "should authorize operation", %{conn: conn} do
