@@ -8,7 +8,11 @@ import {
 } from 'eos-icons-react';
 
 import { agentVersionWarning } from '@lib/agent';
-import { SAPTUNE_SOLUTION_APPLY } from '@lib/operations';
+import {
+  SAPTUNE_SOLUTION_APPLY,
+  getOperationLabel,
+  getOperationForbiddenMessage,
+} from '@lib/operations';
 import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
 
 import BackButton from '@common/BackButton';
@@ -22,7 +26,10 @@ import ChartsFeatureWrapper from '@common/ChartsFeatureWrapper';
 import AvailableSoftwareUpdates from '@common/AvailableSoftwareUpdates';
 import DisabledGuard from '@common/DisabledGuard';
 import OperationsButton from '@common/OperationsButton';
-import { SaptuneSolutionApplyModal } from '@common/OperationModals';
+import {
+  SaptuneSolutionApplyModal,
+  OperationForbiddenModal,
+} from '@common/OperationModals';
 
 import { subHours } from 'date-fns';
 
@@ -92,6 +99,7 @@ function HostDetails({
   cleanUpHost,
   requestHostChecksExecution,
   requestOperation,
+  cleanForbiddenOperation,
   navigate,
 }) {
   const [cleanUpModalOpen, setCleanUpModalOpen] = useState(false);
@@ -127,6 +135,8 @@ function HostDetails({
   const lastExecutionError = get(lastExecution, 'error');
 
   const runningOperationName = get(runningOperation, 'operation', null);
+  const operationForbidden = get(runningOperation, 'forbidden', false);
+  const operationForbiddenErrors = get(runningOperation, 'errors', []);
 
   const timeNow = new Date();
 
@@ -144,18 +154,28 @@ function HostDetails({
         }}
       />
       {operationsEnabled && (
-        <SaptuneSolutionApplyModal
-          isHanaRunning={some(sapInstances, { type: DATABASE_TYPE })}
-          isAppRunning={some(sapInstances, { type: APPLICATION_TYPE })}
-          isOpen={!!saptuneSolutionApplyModalOpen}
-          onRequest={(solution) => {
-            setSaptuneSolutionApplyModalOpen(false);
-            requestOperation(SAPTUNE_SOLUTION_APPLY, { solution });
-          }}
-          onCancel={() => {
-            setSaptuneSolutionApplyModalOpen(false);
-          }}
-        />
+        <>
+          <OperationForbiddenModal
+            operation={getOperationLabel(runningOperationName)}
+            isOpen={operationForbidden}
+            onCancel={() => cleanForbiddenOperation()}
+            errors={operationForbiddenErrors}
+          >
+            {getOperationForbiddenMessage(runningOperationName)}
+          </OperationForbiddenModal>
+          <SaptuneSolutionApplyModal
+            isHanaRunning={some(sapInstances, { type: DATABASE_TYPE })}
+            isAppRunning={some(sapInstances, { type: APPLICATION_TYPE })}
+            isOpen={!!saptuneSolutionApplyModalOpen}
+            onRequest={(solution) => {
+              setSaptuneSolutionApplyModalOpen(false);
+              requestOperation(SAPTUNE_SOLUTION_APPLY, { solution });
+            }}
+            onCancel={() => {
+              setSaptuneSolutionApplyModalOpen(false);
+            }}
+          />
+        </>
       )}
       <div>
         <BackButton url="/hosts">Back to Hosts</BackButton>

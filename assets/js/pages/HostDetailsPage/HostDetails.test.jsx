@@ -486,6 +486,40 @@ describe('HostDetails component', () => {
         })
       ).toBeDisabled();
     });
+
+    it('should show Saptune apply operation forbidden message', async () => {
+      const user = userEvent.setup();
+      const mockCleanForbiddenOperation = jest.fn();
+
+      renderWithRouter(
+        <HostDetails
+          agentVersion="2.0.0"
+          userAbilities={userAbilities}
+          operationsEnabled
+          runningOperation={{
+            operation: SAPTUNE_SOLUTION_APPLY,
+            forbidden: true,
+            errors: ['error1', 'error2'],
+          }}
+          cleanForbiddenOperation={mockCleanForbiddenOperation}
+        />
+      );
+
+      expect(screen.getByText('Operation Forbidden')).toBeInTheDocument();
+      expect(
+        screen.getByText('Unable to run Apply Saptune Solution operation', {
+          exact: false,
+        })
+      ).toBeInTheDocument();
+      expect(screen.getByText('error1')).toBeInTheDocument();
+      expect(screen.getByText('error2')).toBeInTheDocument();
+
+      const closeButton = screen.getByRole('button', {
+        name: 'Close',
+      });
+      await user.click(closeButton);
+      expect(mockCleanForbiddenOperation).toHaveBeenCalled();
+    });
   });
 
   describe('forbidden actions', () => {
