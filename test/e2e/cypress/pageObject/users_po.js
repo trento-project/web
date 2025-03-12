@@ -35,7 +35,8 @@ const newTotpCodeIssuedMessage = 'div:contains("Your new TOTP secret is:")';
 const totpSecret = `${newTotpCodeIssuedMessage} + div[class*="bold"]`;
 const newTotpCodeInputField = 'input[placeholder="TOTP code"]';
 const verifyTotpButton = 'button:contains("Verify")';
-const confirmDisableTotpButton = 'button:contains("Disable")';
+const confirmDisableTotpButton =
+  'div[id*="headlessui-dialog-panel"] button:contains("Disable")';
 const editUserTotpDropdown = 'button.totp-selection-dropdown';
 const enableUserTotpOption = `${editUserTotpDropdown} + div div:contains("Enabled")`;
 
@@ -153,14 +154,17 @@ export const selectFromTotpDropdown = (choice) => {
   return basePage.selectFromDropdown(editUserTotpDropdown, choice);
 };
 
-const getTotpSecret = () => {
+export const getTotpSecret = () => {
   return cy.get(totpSecret).then((element) => element.text());
 };
 
-export const typeUserTotpCode = () => {
-  return getTotpSecret().then((totpSecret) =>
-    basePage.typeTotpCode(totpSecret, newTotpCodeInputField)
-  );
+export const typeUserTotpCode = (totpSecret) =>
+  basePage.typeNextGeneratedTotpCode(totpSecret, newTotpCodeInputField);
+
+export const getSecretAndTypeTotpCode = () => {
+  getTotpSecret().then((totpSecret) => {
+    typeUserTotpCode(totpSecret);
+  });
 };
 
 export const typeInvalidUserTotpCode = () => {
@@ -358,4 +362,13 @@ export const enableTotpOptionIsDisabled = () => {
     .get(enableUserTotpOption)
     .invoke('attr', 'aria-disabled')
     .should('eq', 'true');
+};
+
+export const newIssuedTotpSecretIsDifferent = (originalTotpSecret) => {
+  getTotpSecret().then((newTotpSecret) => {
+    expect(
+      newTotpSecret === originalTotpSecret,
+      'New issued TOTP secret is different'
+    ).to.be.false;
+  });
 };

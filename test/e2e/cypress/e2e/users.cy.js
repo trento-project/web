@@ -226,7 +226,7 @@ describe('Users', () => {
 
     it('should complete TOTP enrollment properly', () => {
       usersPage.clickAuthenticatorAppSwitch();
-      usersPage.typeUserTotpCode();
+      usersPage.getSecretAndTypeTotpCode();
       usersPage.clickVerifyTotpButton();
       usersPage.authenticatorAppSwitchIsEnabled();
       usersPage.totpEnabledToasterIsDisplayed();
@@ -234,7 +234,7 @@ describe('Users', () => {
 
     it('should fail to login if TOTP code is not given', () => {
       usersPage.clickAuthenticatorAppSwitch();
-      usersPage.typeUserTotpCode();
+      usersPage.getSecretAndTypeTotpCode();
       usersPage.clickVerifyTotpButton();
       loginPage.loginFailsIfOtpNotProvided(
         usersPage.USER.username,
@@ -244,40 +244,42 @@ describe('Users', () => {
 
     it('should disable TOTP authentication and check login works without TOTP', () => {
       usersPage.clickAuthenticatorAppSwitch();
-      usersPage.typeUserTotpCode();
+      usersPage.getSecretAndTypeTotpCode();
       usersPage.clickVerifyTotpButton();
       usersPage.clickAuthenticatorAppSwitch();
       usersPage.clickDisableTotpButton();
       loginPage.loginShouldSucceed(usersPage.USER.username, usersPage.PASSWORD);
     });
 
-    it('should reconfigure TOTP and validate login cases', () => {
+    it('should configure TOTP and validate login cases, then disable it', () => {
       usersPage.clickAuthenticatorAppSwitch();
-      usersPage.typeUserTotpCode();
-      usersPage.clickVerifyTotpButton();
-      usersPage.clickAuthenticatorAppSwitch();
-      usersPage.clickDisableTotpButton();
-      usersPage.clickAuthenticatorAppSwitch();
-      usersPage.typeUserTotpCode().then((totpSecret) => {
-        usersPage.clickVerifyTotpButton();
-        usersPage.authenticatorAppSwitchIsEnabled();
-        usersPage.clickSignOutButton();
-        loginPage.login(usersPage.USER.username, usersPage.PASSWORD);
-        loginPage.typeInvalidLoginTotpCode();
-        loginPage.clickSubmitLoginButton();
-        loginPage.invalidCredentialsErrorIsDisplayed();
-        loginPage.typeAlreadyUsedTotpCode(totpSecret);
-        loginPage.clickSubmitLoginButton();
-        loginPage.invalidCredentialsErrorIsDisplayed();
-        loginPage.waitForNewTotpCodeAndTypeIt(totpSecret);
-        loginPage.clickSubmitLoginButton();
-        dashboardPage.dashboardPageIsDisplayed();
+      usersPage.getTotpSecret().then((totpSecret) => {
+        usersPage.typeUserTotpCode(totpSecret).then((code) => {
+          usersPage.clickVerifyTotpButton();
+          usersPage.authenticatorAppSwitchIsEnabled();
+          usersPage.clickSignOutButton();
+          loginPage.login(usersPage.USER.username, usersPage.PASSWORD);
+          loginPage.typeInvalidLoginTotpCode();
+          loginPage.clickSubmitLoginButton();
+          loginPage.invalidCredentialsErrorIsDisplayed();
+          loginPage.typeAlreadyUsedTotpCode(code);
+          loginPage.clickSubmitLoginButton();
+          loginPage.invalidCredentialsErrorIsDisplayed();
+          loginPage.typeLoginTotpCode(totpSecret);
+          loginPage.clickSubmitLoginButton();
+          dashboardPage.dashboardPageIsDisplayed();
+          usersPage.visit('/profile');
+          usersPage.clickAuthenticatorAppSwitch();
+          usersPage.clickDisableTotpButton();
+          usersPage.clickAuthenticatorAppSwitch();
+          usersPage.newIssuedTotpSecretIsDifferent();
+        });
       });
     });
 
     it('should be disabled by admin user', () => {
       usersPage.clickAuthenticatorAppSwitch();
-      usersPage.typeUserTotpCode();
+      usersPage.getSecretAndTypeTotpCode();
       usersPage.clickVerifyTotpButton();
       usersPage.clickSignOutButton();
       usersPage.apiLoginAndCreateSession();

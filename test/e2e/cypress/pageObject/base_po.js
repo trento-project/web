@@ -71,13 +71,36 @@ export const clickUserDropdownProfileButton = () => {
   return cy.get(userDropdownProfileButton).click();
 };
 
-export const typeTotpCode = (totpSecret, inputField) => {
-  const { otp } = TOTP.generate(totpSecret);
-  return cy
-    .get(inputField)
-    .clear()
-    .type(otp)
-    .then(() => totpSecret);
+const _getTotpWaitTime = (forceNext) => {
+  const currentTime = Date.now();
+  const totpDuration = 30000;
+  const minimumRemainingTimeToReuse = 10000;
+  const expirationTime = Math.ceil(currentTime / totpDuration) * totpDuration;
+  const remainingTime = Math.floor(expirationTime - currentTime);
+
+  const totpWaitingTime =
+    forceNext === false && remainingTime > minimumRemainingTimeToReuse
+      ? 0
+      : remainingTime;
+
+  return totpWaitingTime;
+};
+
+export const typeNextGeneratedTotpCode = (
+  totpSecret,
+  inputField,
+  forceNext = false
+) => {
+  const timeToWait = _getTotpWaitTime(forceNext);
+
+  return cy.wait(timeToWait).then(() => {
+    const { otp } = TOTP.generate(totpSecret);
+    return cy
+      .get(inputField)
+      .clear()
+      .type(otp)
+      .then(() => otp);
+  });
 };
 
 // UI Validations
@@ -100,17 +123,8 @@ export const validateItemNotPresentInNavigationMenu = (itemName) => {
   });
 };
 
-export const validateItemPresentInNavigationMenu = (navigationMenuItem) => {
-  return cy.get(navigation.navigationItems).then(($elements) => {
-    const itemFound = Array.from($elements).some((element) =>
-      element.innerText.includes(navigationMenuItem)
-    );
-    expect(
-      itemFound,
-      `"${navigationMenuItem}" navigation item should be present`
-    ).to.be.true;
-  });
-};
+export const validateItemPresentInNavigationMenu = (navigationMenuItem) =>
+  cy.get(`a:contains("${navigationMenuItem}")`).should('be.visible');
 
 export const addTagButtonsAreDisabled = () =>
   cy.get(addTagButtons).should('have.class', 'opacity-50');

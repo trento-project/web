@@ -61,12 +61,11 @@ export const clickSubmitLoginButton = () => {
   return cy.get(submitLoginButton).click();
 };
 
-export const typeLoginTotpCode = (totpSecret) => {
-  basePage.typeTotpCode(totpSecret, totpCodeInput);
-};
+export const typeLoginTotpCode = (totpSecret) =>
+  basePage.typeNextGeneratedTotpCode(totpSecret, totpCodeInput, true);
 
-export const typeAlreadyUsedTotpCode = (totpSecret) => {
-  return typeLoginTotpCode(totpSecret);
+export const typeAlreadyUsedTotpCode = (code) => {
+  cy.get(totpCodeInput).clear().type(code);
 };
 
 export const typeInvalidLoginTotpCode = () => {
@@ -74,6 +73,5 @@ export const typeInvalidLoginTotpCode = () => {
 };
 
 export const waitForNewTotpCodeAndTypeIt = (totpSecret) => {
-  // eslint-disable-next-line cypress/no-unnecessary-waiting
-  return cy.wait(30000).then(() => typeLoginTotpCode(totpSecret));
+  typeLoginTotpCode(totpSecret);
 };
