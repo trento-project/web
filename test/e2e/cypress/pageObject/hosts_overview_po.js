@@ -31,6 +31,9 @@ const warningHostBadge = 'svg.fill-yellow-500';
 const criticalHostBadge = 'svg.fill-red-500';
 const hostToDeregisterCleanupButton = `tr:contains("${hostToDeregister}") td:contains("Clean up")`;
 const cleanupButtons = 'tbody tr button:contains("Clean up")';
+const heartbeatFailingToaster = `p:contains("The host ${hostToDeregister} heartbeat is failing.")`;
+const deregisterHostModalTitle = `div:contains("Clean up data discovered by agent on host ${hostToDeregister}")`;
+const cleanupConfirmationButton = `${deregisterHostModalTitle} button:contains("Clean up")`;
 
 // UI Interactions
 
@@ -39,6 +42,11 @@ export const visit = () => basePage.visit(url);
 export const validateUrl = () => basePage.validateUrl(url);
 
 export const clickNextPageButton = () => cy.get(nextPageSelector).click();
+
+export const addTagToHost = () => {
+  const host = _getHostToDeregisterData(hostToDeregister);
+  basePage.addTagByColumnValue(host.name, host.tag);
+};
 
 // UI Validations
 
@@ -141,6 +149,9 @@ export const cleanupButtonIsNotDisplayedForHostSendingHeartbeat = () => {
   cy.get(hostToDeregisterCleanupButton, { timeout: 15000 }).should('not.exist');
 };
 
+export const clickCleanupOnHostToDeregister = () =>
+  cy.get(hostToDeregisterCleanupButton).click();
+
 export const cleanupButtonIsDisplayedForHostSendingHeartbeat = () =>
   cy.get(hostToDeregisterCleanupButton).should('be.visible');
 
@@ -151,7 +162,20 @@ export const expectedAmountOfCleanupButtonsIsDisplayed = (amount) =>
     })
     .should('have.length', amount);
 
-// API)
+export const heartbeatFailingToasterIsDisplayed = () =>
+  cy.get(heartbeatFailingToaster, { timeout: 15000 }).should('be.visible');
+
+export const deregisterModalTitleIsDisplayed = () =>
+  cy.get(deregisterHostModalTitle).should('be.visible');
+
+export const clickCleanupConfirmationButton = () =>
+  cy.get(cleanupConfirmationButton).click();
+
+export const deregisteredHostIsNotVisible = () => {
+  const host = _getHostToDeregisterData();
+  cy.get(`#host-${host.id}`).should('not.exist');
+};
+// API
 
 // Table Validation
 

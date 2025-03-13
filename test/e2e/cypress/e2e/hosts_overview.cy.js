@@ -146,36 +146,18 @@ context('Hosts Overview', () => {
     });
 
     describe('Clean-up button should deregister a host', () => {
-      before(() => {
-        cy.visit('/hosts');
-        cy.url().should('include', '/hosts');
-        cy.task('stopAgentsHeartbeat');
-        // cy.addTagByColumnValue(hostToDeregister.name, hostToDeregister.tag);
+      beforeEach(() => {
+        hostsOverviewPage.startAgentHeartbeat();
+        // hostsOverviewPage.addTagToHost();
       });
 
-      it('should allow to deregister a host after clean up confirmation', () => {
-        // cy.contains(
-        //   `The host ${hostToDeregister.name} heartbeat is failing`
-        // ).should('exist');
-
-        // cy.contains('tr', hostToDeregister.name).within(() => {
-        //   cy.get('td:nth-child(9)')
-        //     .contains('Clean up', { timeout: 15000 })
-        //     .click();
-        // });
-
-        cy.get('#headlessui-portal-root').as('modal');
-
-        // cy.get('@modal')
-        //   .find('.w-full')
-        //   .should(
-        //     'contain.text',
-        //     `Clean up data discovered by agent on host ${hostToDeregister.name}`
-        //   );
-
-        // cy.get('@modal').contains('button', 'Clean up').click();
-
-        // cy.get(`#host-${hostToDeregister.id}`).should('not.exist');
+      it.only('should allow to deregister a host after clean up confirmation', () => {
+        hostsOverviewPage.stopAgentsHeartbeat();
+        hostsOverviewPage.heartbeatFailingToasterIsDisplayed();
+        hostsOverviewPage.clickCleanupOnHostToDeregister();
+        hostsOverviewPage.deregisterModalTitleIsDisplayed();
+        hostsOverviewPage.clickCleanupConfirmationButton();
+        hostsOverviewPage.deregisteredHostIsNotVisible();
       });
 
       describe('Restoration', () => {
