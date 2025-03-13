@@ -158,7 +158,7 @@ function HostDetails({
           <OperationForbiddenModal
             operation={getOperationLabel(runningOperationName)}
             isOpen={operationForbidden}
-            onCancel={() => cleanForbiddenOperation()}
+            onCancel={cleanForbiddenOperation}
             errors={operationForbiddenErrors}
           >
             {getOperationForbiddenMessage(runningOperationName)}
