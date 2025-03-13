@@ -40,3 +40,10 @@
 Trento.Repo.insert!(Trento.Settings.ActivityLogSettings.with_default_retention_time(),
   on_conflict: :nothing
 )
+
+# Analytics STI
+%Trento.Settings.AnalyticsSettings{}
+|> Trento.Settings.AnalyticsSettings.changeset(%{
+  optin: false
+})
+|> Trento.Repo.insert!(on_conflict: :nothing)

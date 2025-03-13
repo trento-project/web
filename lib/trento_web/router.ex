@@ -88,6 +88,11 @@ defmodule TrentoWeb.Router do
   scope "/api", TrentoWeb.V1 do
     pipe_through [:api, :api_v1]
     get "/public_keys", SettingsController, :get_public_keys
+
+    # Analytics Settings
+    if Application.compile_env!(:trento, :analytics)[:enabled] do
+      get "/analytics", SettingsController, :get_analytics_settings
+    end
   end
 
   scope "/api" do
@@ -196,6 +201,12 @@ defmodule TrentoWeb.Router do
         # Activity Log Settings
         put "/activity_log", SettingsController, :update_activity_log_settings
         get "/activity_log", SettingsController, :get_activity_log_settings
+
+        # Analytics Settings
+        if Application.compile_env!(:trento, :analytics)[:enabled] do
+          get "/analytics", SettingsController, :get_analytics_settings
+          post "/analytics", SettingsController, :update_analytics_settings
+        end
 
         scope "/suse_manager" do
           get "/", SettingsController, :get_suse_manager_settings

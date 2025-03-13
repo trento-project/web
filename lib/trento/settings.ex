@@ -9,6 +9,7 @@ defmodule Trento.Settings do
 
   alias Trento.Settings.{
     ActivityLogSettings,
+    AnalyticsSettings,
     ApiKeySettings,
     InstallationSettings,
     SSOCertificatesSettings,
@@ -148,6 +149,35 @@ defmodule Trento.Settings do
         })
         |> Repo.update()
         |> log_error("Error while updating activity log retention period")
+
+      error ->
+        error
+    end
+  end
+
+  # Analytics settings
+
+  @spec get_analytics_settings() ::
+          {:ok, AnalyticsSettings.t()} | {:error, :analytics_settings_not_configured}
+  def get_analytics_settings do
+    case Repo.one(AnalyticsSettings.base_query()) do
+      %AnalyticsSettings{} = settings -> {:ok, settings}
+      nil -> {:error, :analytics_settings_not_configured}
+    end
+  end
+
+  @spec change_analytics_opt_in(boolean()) ::
+          {:ok, AnalyticsSettings.t()}
+          | {:error, :analytics_settings_not_configured}
+  def change_analytics_opt_in(value) do
+    case Repo.one(AnalyticsSettings.base_query()) do
+      %AnalyticsSettings{} = settings ->
+        settings
+        |> AnalyticsSettings.changeset(%{
+          opt_in: value
+        })
+        |> Repo.insert(conflict_target: :id, on_conflict: {:replace, [:opt_in]})
+        |> log_error("Error while updating analytics opt-in value")
 
       error ->
         error

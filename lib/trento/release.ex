@@ -10,6 +10,7 @@ defmodule Trento.Release do
 
   alias Trento.Settings.{
     ActivityLogSettings,
+    AnalyticsSettings,
     ApiKeySettings,
     SSOCertificatesSettings
   }
@@ -24,6 +25,7 @@ defmodule Trento.Release do
     migrate_event_store()
     init_admin_user()
     init_default_api_key()
+    init_default_analytics_opt_in()
     init_default_activity_log_retention_time()
     maybe_init_saml(System.get_env("ENABLE_SAML", "false") == "true")
   end
@@ -117,6 +119,22 @@ defmodule Trento.Release do
       |> ApiKeySettings.changeset(%{
         jti: UUID.uuid4(),
         created_at: DateTime.utc_now()
+      })
+      |> Trento.Repo.insert!()
+    end
+  end
+
+  def init_default_analytics_opt_in do
+    load_app()
+    Enum.each([:postgrex, :ecto], &Application.ensure_all_started/1)
+    Trento.Repo.start_link()
+
+    analytics_settings = Trento.Repo.one(AnalyticsSettings.base_query())
+
+    unless analytics_settings do
+      %AnalyticsSettings{}
+      |> AnalyticsSettings.changeset(%{
+        opt_in: false
       })
       |> Trento.Repo.insert!()
     end
