@@ -111,7 +111,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
     OpenApiSpex.schema(
       %{
         title: "AnalyticsSettingsUpdateRequest",
-        description: "Request body for analyrics settings update",
+        description: "Request body for analytics settings update",
         type: :object,
         additionalProperties: false,
         properties: %{

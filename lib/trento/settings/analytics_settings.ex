@@ -14,6 +14,8 @@ defmodule Trento.Settings.AnalyticsSettings do
   @primary_key {:id, :binary_id, autogenerate: true}
   schema "settings" do
     field :opt_in, :boolean, source: :analytics_settings_opt_in, default: false
+
+    timestamps(type: :utc_datetime_usec)
     sti_fields()
   end
 

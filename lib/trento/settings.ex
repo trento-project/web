@@ -172,21 +172,12 @@ defmodule Trento.Settings do
   def change_analytics_opt_in(value) do
     case Repo.one(AnalyticsSettings.base_query()) do
       %AnalyticsSettings{} = settings ->
-        {:ok, settings}
-
         settings
         |> AnalyticsSettings.changeset(%{
           opt_in: value
         })
-        |> Repo.update()
+        |> Repo.insert(conflict_target: :id, on_conflict: {:replace, [:opt_in]})
         |> log_error("Error while updating analytics opt-in value")
-
-      nil ->
-        %AnalyticsSettings{}
-        |> AnalyticsSettings.changeset(%{
-          opt_in: value
-        })
-        |> Repo.insert()
 
       error ->
         error
