@@ -4,21 +4,7 @@ import * as basePage from './base_po';
 import { capitalize } from 'lodash';
 
 // Test data
-const saptuneScenarios = [
-  {
-    scenario: 'not-compliant',
-    icon: 'fill-red-500',
-  },
-  {
-    scenario: 'not-tuned',
-    icon: 'fill-yellow-500',
-  },
-  {
-    scenario: 'compliant',
-    icon: 'fill-jungle-green-500',
-  },
-];
-
+const hostToDeregister = 'vmhdbdev01';
 const hostWithoutSap = 'vmdrbddev01';
 const hostWithSap = 'vmhdbprd01';
 
@@ -43,6 +29,8 @@ const hostsWithPassing = 'p:contains("Passing") + p';
 const passingHostBadge = 'svg.fill-jungle-green-500';
 const warningHostBadge = 'svg.fill-yellow-500';
 const criticalHostBadge = 'svg.fill-red-500';
+const hostToDeregisterCleanupButton = `tr:contains("${hostToDeregister}") td:contains("Clean up")`;
+const cleanupButtons = 'tbody tr button:contains("Clean up")';
 
 // UI Interactions
 
@@ -149,6 +137,22 @@ export const hostWithSaptuneNotTunedHasExpectedStatus = () =>
 export const hostWithSaptuneCompliantHasExpectedStatus = () =>
   _hostHasExpectedStatus(hostWithSap, 'fill-jungle-green-500');
 
+export const cleanupButtonIsNotDisplayedForHostSendingHeartbeat = () => {
+  cy.get(hostToDeregisterCleanupButton, { timeout: 15000 }).should('not.exist');
+};
+
+export const cleanupButtonIsDisplayedForHostSendingHeartbeat = () =>
+  cy.get(hostToDeregisterCleanupButton).should('be.visible');
+
+export const expectedAmountOfCleanupButtonsIsDisplayed = (amount) =>
+  cy
+    .get(cleanupButtons, {
+      timeout: 15000,
+    })
+    .should('have.length', amount);
+
+// API)
+
 // Table Validation
 
 export const hostsTableContentsAreTheExpected = () => {
@@ -207,7 +211,25 @@ const _validateCell = (header, rowIndex, expectedValue) => {
     });
 };
 
+// Helpers
+
+const _getHostToDeregisterData = () => {
+  const foundHost = availableHosts.find(
+    (host) => host.name === hostToDeregister
+  );
+  return {
+    name: foundHost.name,
+    id: foundHost.id,
+    tag: 'tag1',
+  };
+};
+
 // API
+export const startAgentHeartbeat = () => {
+  const hostToDeregister = _getHostToDeregisterData();
+  cy.task('startAgentHeartbeat', [hostToDeregister.id]);
+};
+
 export const startAgentsHeartbeat = () =>
   cy.task('startAgentHeartbeat', agents());
 
