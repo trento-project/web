@@ -10,8 +10,8 @@ defmodule Trento.Release do
 
   alias Trento.Settings.{
     ActivityLogSettings,
-    ApiKeySettings,
     AnalyticsSettings,
+    ApiKeySettings,
     SSOCertificatesSettings
   }
 
@@ -134,7 +134,7 @@ defmodule Trento.Release do
     unless analytics_settings do
       %AnalyticsSettings{}
       |> AnalyticsSettings.changeset(%{
-        optin: false
+        opt_in: false
       })
       |> Trento.Repo.insert!()
     end

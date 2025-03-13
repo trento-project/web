@@ -11,7 +11,7 @@ export const useAnalyticsSettings = () => {
 
   const fetchAnalyticsSettings = async () => {
     if (!analyticsEnabled) {
-      return
+      return;
     }
     setLoading(true);
     setFetchError(false);
