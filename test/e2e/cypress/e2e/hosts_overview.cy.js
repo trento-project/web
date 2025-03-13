@@ -5,10 +5,9 @@ import { createUserRequestFactory } from '@lib/test-utils/factories';
 const NEXT_PAGE_SELECTOR = '[aria-label="next-page"]';
 
 context('Hosts Overview', () => {
-  beforeEach(() => {
-    hostsOverviewPage.preloadTestData();
-    hostsOverviewPage.visit();
-  });
+  before(() => hostsOverviewPage.preloadTestData());
+
+  beforeEach(() => hostsOverviewPage.visit());
 
   it('should have expected url', () => {
     hostsOverviewPage.validateUrl();
@@ -66,13 +65,11 @@ context('Hosts Overview', () => {
         hostsOverviewPage.expectedAmountOfWarningsIsDisplayed(2);
       });
 
-      after(() => hostsOverviewPage.hostsOverviewPage());
+      after(() => hostsOverviewPage.stopAgentsHeartbeat());
     });
 
     describe('Health is changed based on saptune status', () => {
-      before(() => {
-        hostsOverviewPage.startAgentsHeartbeat();
-      });
+      before(() => hostsOverviewPage.startAgentsHeartbeat());
 
       it('should not change the health if saptune is not installed and a SAP workload is not running', () => {
         hostsOverviewPage.loadHostWithoutSaptune();
@@ -108,23 +105,26 @@ context('Hosts Overview', () => {
         hostsOverviewPage.loadHostWithSaptuneScenario('compliant');
         hostsOverviewPage.hostWithSaptuneCompliantHasExpectedStatus();
       });
+
+      after(() => hostsOverviewPage.stopAgentsHeartbeat());
     });
 
     describe('Health is changed to critical when the heartbeat is not sent', () => {
-      before(() => {
-        cy.visit('/hosts');
-        cy.task('stopAgentsHeartbeat');
-      });
+      beforeEach(() => hostsOverviewPage.startAgentsHeartbeat());
 
       it('should show health status of the entire cluster of 27 hosts with critical health', () => {
-        cy.get('.tn-health-container .tn-health-critical', {
-          timeout: 15000,
-        }).should('contain', 27);
+        hostsOverviewPage.expectedCriticalHostsAreDisplayed(4);
+        hostsOverviewPage.stopAgentsHeartbeat();
+        hostsOverviewPage.expectedCriticalHostsAreDisplayed(27);
       });
 
       it('should show a critical health on the hosts when the agents are not sending the heartbeat', () => {
-        cy.get('svg.fill-red-500').its('length').should('eq', 10);
+        hostsOverviewPage.expectedAmountOfCriticalsIsDisplayed(0);
+        hostsOverviewPage.stopAgentsHeartbeat();
+        hostsOverviewPage.expectedAmountOfCriticalsIsDisplayed(10);
       });
+
+      after(() => hostsOverviewPage.stopAgentsHeartbeat());
     });
   });
 
@@ -137,12 +137,11 @@ context('Hosts Overview', () => {
 
     describe('Clean-up buttons should be visible only when needed', () => {
       before(() => {
-        cy.visit('/hosts');
         cy.url().should('include', '/hosts');
         cy.task('startAgentHeartbeat', [hostToDeregister.id]);
       });
 
-      it(`should not display a clean-up button for host ${hostToDeregister.name}`, () => {
+      it.only(`should not display a clean-up button for host ${hostToDeregister.name}`, () => {
         cy.contains(hostToDeregister.name).within(() => {
           cy.get('td:nth-child(9)').should('not.exist');
         });

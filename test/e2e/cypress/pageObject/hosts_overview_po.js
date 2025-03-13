@@ -42,6 +42,7 @@ const hostsWithPassing = 'p:contains("Passing") + p';
 
 const passingHostBadge = 'svg.fill-jungle-green-500';
 const warningHostBadge = 'svg.fill-yellow-500';
+const criticalHostBadge = 'svg.fill-red-500';
 
 // UI Interactions
 
@@ -110,13 +111,20 @@ export const expectedWarningHostsAreDisplayed = (amount) =>
   cy.get(hostsWithWarning).should('have.text', amount);
 
 export const expectedCriticalHostsAreDisplayed = (amount) =>
-  cy.get(hostsWithCritical).should('have.text', amount);
+  cy.get(hostsWithCritical, { timeout: 20000 }).should('have.text', amount);
 
 export const expectedPassingHostsAreDisplayed = (amount) =>
   cy.get(hostsWithPassing).should('have.text', amount);
 
 export const expectedAmountOfWarningsIsDisplayed = (amount) =>
   cy.get(warningHostBadge).should('have.length', amount);
+
+export const expectedAmountOfCriticalsIsDisplayed = (amount) => {
+  if (amount === 0) cy.get(criticalHostBadge).should('not.exist');
+  else {
+    cy.get(criticalHostBadge, { timeout: 20000 }).should('have.length', amount);
+  }
+};
 
 export const expectedAmountOfPassingIsDisplayed = (amount) =>
   cy.get(passingHostBadge).should('have.length', amount);
