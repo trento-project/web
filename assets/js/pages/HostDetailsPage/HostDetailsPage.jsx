@@ -31,6 +31,7 @@ import {
 import {
   operationRequested,
   updateRunningOperation,
+  removeRunningOperation,
 } from '@state/runningOperations';
 
 import { deregisterHost } from '@state/hosts';
@@ -158,6 +159,9 @@ function HostDetailsPage() {
       }}
       requestOperation={(operation, params) =>
         dispatch(operationRequested({ groupID: hostID, operation, params }))
+      }
+      cleanForbiddenOperation={() =>
+        dispatch(removeRunningOperation({ groupID: hostID }))
       }
       navigate={navigate}
     />

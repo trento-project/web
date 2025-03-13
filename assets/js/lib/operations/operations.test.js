@@ -2,11 +2,14 @@ import { noop } from 'lodash';
 
 import { requestHostOperation } from '@lib/api/operations';
 
+import { SAPTUNE_SOLUTION_APPLY_FORBIDDEN_MSG } from './ForbiddenMessages';
+
 import {
   getOperationLabel,
   getOperationInternalName,
   getOperationResourceType,
   getOperationRequestFunc,
+  getOperationForbiddenMessage,
   operationSucceeded,
   operationRunning,
 } from '.';
@@ -70,6 +73,22 @@ describe('operations', () => {
     `should return the operation $operation request function`,
     ({ operation, func }) => {
       expect(getOperationRequestFunc(operation)).toBe(func);
+    }
+  );
+
+  it.each([
+    {
+      operation: 'unknown',
+      message: null,
+    },
+    {
+      operation: 'saptune_solution_apply',
+      message: SAPTUNE_SOLUTION_APPLY_FORBIDDEN_MSG,
+    },
+  ])(
+    `should return the operation $operation forbidden message`,
+    ({ operation, message }) => {
+      expect(getOperationForbiddenMessage(operation)).toBe(message);
     }
   );
 

@@ -1,4 +1,5 @@
 import { call, put, select, takeEvery } from 'redux-saga/effects';
+import { map } from 'lodash';
 
 import {
   HOST_OPERATION,
@@ -16,6 +17,7 @@ import {
   OPERATION_REQUESTED,
   UPDATE_RUNNING_OPERATION,
   removeRunningOperation,
+  setForbiddenOperation,
   setRunningOperation,
 } from '@state/runningOperations';
 import { getHost } from '@state/selectors/host';
@@ -48,7 +50,13 @@ export function* requestOperation({ payload }) {
         icon: '⚙️',
       })
     );
-  } catch {
+  } catch ({ response: { status, data } }) {
+    if (status === 403) {
+      const errors = map(data.errors, 'detail');
+      yield put(setForbiddenOperation({ groupID, operation, errors }));
+      return;
+    }
+
     yield put(removeRunningOperation({ groupID }));
     yield put(
       notify({
@@ -79,7 +87,7 @@ export function* completeOperation({ payload }) {
   } else {
     yield put(
       notify({
-        text: `Operation ${operationName} failed for  ${resourceName}`,
+        text: `Operation ${operationName} failed for ${resourceName}`,
         icon: '❌',
       })
     );
