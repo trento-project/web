@@ -2,18 +2,11 @@ import * as hostsOverviewPage from '../pageObject/hosts_overview_po';
 
 import { createUserRequestFactory } from '@lib/test-utils/factories';
 
-import {
-  availableHosts,
-  agents,
-} from '../fixtures/hosts-overview/available_hosts';
-
-const availableHosts1stPage = availableHosts.slice(0, 10);
-
 const NEXT_PAGE_SELECTOR = '[aria-label="next-page"]';
 
 context('Hosts Overview', () => {
   beforeEach(() => {
-    // hostsOverviewPage.preloadTestData();
+    hostsOverviewPage.preloadTestData();
     hostsOverviewPage.visit();
   });
 
@@ -59,89 +52,61 @@ context('Hosts Overview', () => {
   describe('Health Detection', () => {
     describe('Health Container shows the health overview of the deployed landscape', () => {
       before(() => {
-        cy.visit('/hosts');
-        cy.url().should('include', '/hosts');
-        cy.task('startAgentHeartbeat', agents());
+        hostsOverviewPage.startAgentsHeartbeat();
       });
 
       it('should show health status of the entire cluster of 27 hosts with partial pagination', () => {
-        cy.get('.tn-health-container .tn-health-passing', {
-          timeout: 15000,
-        }).should('contain', 11);
-        cy.get('.tn-health-container .tn-health-warning').should('contain', 12);
-        cy.get('.tn-health-container .tn-health-critical').should('contain', 4);
+        hostsOverviewPage.expectedPassingHostsAreDisplayed(11);
+        hostsOverviewPage.expectedWarningHostsAreDisplayed(12);
+        hostsOverviewPage.expectedCriticalHostsAreDisplayed(4);
       });
 
       it('should show the correct health on the hosts when the agents are sending the heartbeat', () => {
-        cy.get('svg.fill-jungle-green-500').its('length').should('eq', 8);
-        cy.get('svg.fill-yellow-500').its('length').should('eq', 2);
+        hostsOverviewPage.expectedAmountOfPassingIsDisplayed(8);
+        hostsOverviewPage.expectedAmountOfWarningsIsDisplayed(2);
       });
+
+      after(() => hostsOverviewPage.hostsOverviewPage());
     });
 
     describe('Health is changed based on saptune status', () => {
-      const hostWithoutSap = 'vmdrbddev01';
-      const hostWithSap = 'vmhdbprd01';
+      before(() => {
+        hostsOverviewPage.startAgentsHeartbeat();
+      });
 
       it('should not change the health if saptune is not installed and a SAP workload is not running', () => {
-        cy.loadScenario(`host-${hostWithoutSap}-saptune-uninstalled`);
-        cy.contains('tr', hostWithoutSap).within(() => {
-          cy.get('td:nth-child(1) svg').should(
-            'have.class',
-            'fill-jungle-green-500'
-          );
-        });
+        hostsOverviewPage.loadHostWithoutSaptune();
+        hostsOverviewPage.hostWithSapHasExpectedStatus();
       });
 
       it('should not change the health if saptune is installed and a SAP workload is not running', () => {
-        cy.loadScenario(`host-${hostWithoutSap}-saptune-not-tuned`);
-        cy.contains('tr', hostWithoutSap).within(() => {
-          cy.get('td:nth-child(1) svg').should(
-            'have.class',
-            'fill-jungle-green-500'
-          );
-        });
+        hostsOverviewPage.loadHostWithSaptuneNotTuned();
+        hostsOverviewPage.hostWithSapHasExpectedStatus();
       });
 
       it('should change the health to warning if saptune is not installed', () => {
-        cy.loadScenario(`host-${hostWithSap}-saptune-uninstalled`);
-        cy.contains('tr', hostWithSap).within(() => {
-          cy.get('td:nth-child(1) svg').should('have.class', 'fill-yellow-500');
-        });
+        hostsOverviewPage.loadHostWithSapWithoutSaptune();
+        hostsOverviewPage.hostWithoutSapHasExpectedStatus();
       });
 
       it('should change the health to warning if saptune version is unsupported', () => {
-        cy.loadScenario(`host-${hostWithSap}-saptune-unsupported`);
-        cy.contains('tr', hostWithSap).within(() => {
-          cy.get('td:nth-child(1) svg').should('have.class', 'fill-yellow-500');
-        });
+        hostsOverviewPage.loadHostWithSapWithSaptuneUnsupported();
+        hostsOverviewPage.hostWithoutSapHasExpectedStatus();
       });
 
-      [
-        {
-          state: 'not compliant',
-          scenario: 'not-compliant',
-          health: 'critical',
-          icon: 'fill-red-500',
-        },
-        {
-          state: 'not tuned',
-          scenario: 'not-tuned',
-          health: 'warning',
-          icon: 'fill-yellow-500',
-        },
-        {
-          state: 'compliant',
-          scenario: 'compliant',
-          health: 'passing',
-          icon: 'fill-jungle-green-500',
-        },
-      ].forEach(({ state, scenario, health, icon }) => {
-        it(`should change the health to ${health} if saptune tuning state is ${state}`, () => {
-          cy.loadScenario(`host-${hostWithSap}-saptune-${scenario}`);
-          cy.contains('tr', hostWithSap).within(() => {
-            cy.get('td:nth-child(1) svg').should('have.class', icon);
-          });
-        });
+      it('should change health to not compliant when saptune is not compliant', () => {
+        hostsOverviewPage.loadHostWithSaptuneScenario('not-compliant');
+        hostsOverviewPage.hostWithSaptuneNotCompliantHasExpectedStatus();
+      });
+
+      it('should change health to not tuned when saptune is not tuned', () => {
+        hostsOverviewPage.loadHostWithSaptuneScenario('not-tuned');
+        hostsOverviewPage.hostWithSaptuneNotTunedHasExpectedStatus();
+      });
+
+      it('should change health to compliant when saptune is compliant', () => {
+        hostsOverviewPage.loadHostWithSaptuneScenario('compliant');
+        hostsOverviewPage.hostWithSaptuneCompliantHasExpectedStatus();
       });
     });
 

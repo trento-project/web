@@ -304,6 +304,8 @@ export const apiDeregisterHost = (hostId) => {
   });
 };
 
+export const stopAgentsHeartbeat = () => cy.task('stopAgentsHeartbeat');
+
 export const isHostRegistered = (hostId) => {
   return apiLogin()
     .then(({ accessToken }) => {

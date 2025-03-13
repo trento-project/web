@@ -4,6 +4,24 @@ import * as basePage from './base_po';
 import { capitalize } from 'lodash';
 
 // Test data
+const saptuneScenarios = [
+  {
+    scenario: 'not-compliant',
+    icon: 'fill-red-500',
+  },
+  {
+    scenario: 'not-tuned',
+    icon: 'fill-yellow-500',
+  },
+  {
+    scenario: 'compliant',
+    icon: 'fill-jungle-green-500',
+  },
+];
+
+const hostWithoutSap = 'vmdrbddev01';
+const hostWithSap = 'vmhdbprd01';
+
 import {
   availableHosts,
   agents,
@@ -17,6 +35,13 @@ const hostNameCell = '.tn-hostname';
 const currentPaginationDetails =
   'div[data-testid="pagination"] span:contains("Showing")';
 const nextPageSelector = '[aria-label="next-page"]';
+
+const hostsWithWarning = 'p:contains("Warning") + p';
+const hostsWithCritical = 'p:contains("Critical") + p';
+const hostsWithPassing = 'p:contains("Passing") + p';
+
+const passingHostBadge = 'svg.fill-jungle-green-500';
+const warningHostBadge = 'svg.fill-yellow-500';
 
 // UI Interactions
 
@@ -81,6 +106,41 @@ export const everySapSystemLinkGoesToExpectedSapSystemDetailsPage = () => {
   });
 };
 
+export const expectedWarningHostsAreDisplayed = (amount) =>
+  cy.get(hostsWithWarning).should('have.text', amount);
+
+export const expectedCriticalHostsAreDisplayed = (amount) =>
+  cy.get(hostsWithCritical).should('have.text', amount);
+
+export const expectedPassingHostsAreDisplayed = (amount) =>
+  cy.get(hostsWithPassing).should('have.text', amount);
+
+export const expectedAmountOfWarningsIsDisplayed = (amount) =>
+  cy.get(warningHostBadge).should('have.length', amount);
+
+export const expectedAmountOfPassingIsDisplayed = (amount) =>
+  cy.get(passingHostBadge).should('have.length', amount);
+
+const _hostHasExpectedStatus = (host, status) =>
+  cy
+    .get(`tr:contains("${host}") td:nth-child(1) svg`)
+    .should('have.class', status);
+
+export const hostWithSapHasExpectedStatus = () =>
+  _hostHasExpectedStatus(hostWithoutSap, 'fill-jungle-green-500');
+
+export const hostWithoutSapHasExpectedStatus = () =>
+  _hostHasExpectedStatus(hostWithSap, 'fill-yellow-500');
+
+export const hostWithSaptuneNotCompliantHasExpectedStatus = () =>
+  _hostHasExpectedStatus(hostWithSap, 'fill-red-500');
+
+export const hostWithSaptuneNotTunedHasExpectedStatus = () =>
+  _hostHasExpectedStatus(hostWithSap, 'fill-yellow-500');
+
+export const hostWithSaptuneCompliantHasExpectedStatus = () =>
+  _hostHasExpectedStatus(hostWithSap, 'fill-jungle-green-500');
+
 // Table Validation
 
 export const hostsTableContentsAreTheExpected = () => {
@@ -138,3 +198,22 @@ const _validateCell = (header, rowIndex, expectedValue) => {
       }
     });
 };
+
+// API
+export const startAgentsHeartbeat = () =>
+  cy.task('startAgentHeartbeat', agents());
+
+export const loadHostWithoutSaptune = () =>
+  basePage.loadScenario(`host-${hostWithoutSap}-saptune-uninstalled`);
+
+export const loadHostWithSaptuneNotTuned = () =>
+  basePage.loadScenario(`host-${hostWithoutSap}-saptune-not-tuned`);
+
+export const loadHostWithSapWithoutSaptune = () =>
+  basePage.loadScenario(`host-${hostWithSap}-saptune-uninstalled`);
+
+export const loadHostWithSapWithSaptuneUnsupported = () =>
+  basePage.loadScenario(`host-${hostWithSap}-saptune-unsupported`);
+
+export const loadHostWithSaptuneScenario = (scenario) =>
+  basePage.loadScenario(`host-${hostWithSap}-saptune-${scenario}`);
