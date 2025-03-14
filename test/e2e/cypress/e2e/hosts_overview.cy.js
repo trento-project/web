@@ -2,8 +2,6 @@ import * as hostsOverviewPage from '../pageObject/hosts_overview_po';
 
 import { createUserRequestFactory } from '@lib/test-utils/factories';
 
-const NEXT_PAGE_SELECTOR = '[aria-label="next-page"]';
-
 context('Hosts Overview', () => {
   before(() => hostsOverviewPage.preloadTestData());
 
@@ -147,85 +145,54 @@ context('Hosts Overview', () => {
 
     describe('Clean-up button should deregister a host', () => {
       beforeEach(() => {
+        hostsOverviewPage.apiRestoreCleanedUpHost();
+        hostsOverviewPage.apiDeleteAllHostsTags();
+        hostsOverviewPage.addTagToHost();
         hostsOverviewPage.startAgentHeartbeat();
-        // hostsOverviewPage.addTagToHost();
-      });
-
-      it.only('should allow to deregister a host after clean up confirmation', () => {
         hostsOverviewPage.stopAgentsHeartbeat();
         hostsOverviewPage.heartbeatFailingToasterIsDisplayed();
+      });
+
+      it('should allow to deregister a host after clean up confirmation & restore it', () => {
         hostsOverviewPage.clickCleanupOnHostToDeregister();
         hostsOverviewPage.deregisterModalTitleIsDisplayed();
         hostsOverviewPage.clickCleanupConfirmationButton();
         hostsOverviewPage.deregisteredHostIsNotVisible();
-      });
-
-      describe('Restoration', () => {
-        // it(`should show host ${hostToDeregister.name} registered again after restoring the host with the tag`, () => {
-        //   cy.loadScenario(`host-${hostToDeregister.name}-restore`);
-        //   cy.contains(hostToDeregister.name).should('exist');
-        //   cy.contains('tr', hostToDeregister.name).within(() => {
-        //     cy.contains(hostToDeregister.tag).should('exist');
-        //   });
-        // });
+        hostsOverviewPage.apiRestoreCleanedUpHost();
+        hostsOverviewPage.restoredHostIsDisplayed();
+        hostsOverviewPage.tagOfRestoredHostIsDisplayed();
       });
 
       describe('Deregistration of hosts should update remaining hosts data', () => {
-        const sapSystemHostToDeregister = {
-          id: '7269ee51-5007-5849-aaa7-7c4a98b0c9ce',
-          sid: 'NWD',
-        };
-
-        before(() => {
-          cy.visit('/hosts');
-          cy.url().should('include', '/hosts');
-          cy.loadScenario(`sapsystem-${sapSystemHostToDeregister.sid}-restore`);
-        });
+        beforeEach(() => hostsOverviewPage.restoreSapSystem());
 
         it('should remove the SAP system sid from hosts belonging the deregistered SAP system', () => {
-          cy.get(NEXT_PAGE_SELECTOR).click();
-          cy.contains('a', sapSystemHostToDeregister.sid).should('exist');
-          cy.deregisterHost(sapSystemHostToDeregister.id);
-          cy.contains('a', sapSystemHostToDeregister.sid).should('not.exist');
+          hostsOverviewPage.clickNextPageButton();
+          hostsOverviewPage.sapSystemHasExpectedAmountOfHosts(4);
+          hostsOverviewPage.apiDeregisterSapSystemHost();
+          hostsOverviewPage.deregisteredSapSystemIsNotDisplayed();
         });
       });
 
       describe('Movement of application instances on hosts', () => {
-        const sapSystemHostsToDeregister = {
-          sid: 'NWD',
-          movedHostId: 'fb2c6b8a-9915-5969-a6b7-8b5a42de1971',
-          initialHostId: '7269ee51-5007-5849-aaa7-7c4a98b0c9ce',
-          initialHostname: 'vmnwdev01',
-        };
-
-        before(() => {
-          cy.visit('/hosts');
-          cy.url().should('include', '/hosts');
-          cy.loadScenario(
-            `sapsystem-${sapSystemHostsToDeregister.sid}-restore`
-          );
-          cy.loadScenario('sap-systems-overview-moved');
+        beforeEach(() => {
+          hostsOverviewPage.loadSapSystemsOverviewMovedScenario();
+          hostsOverviewPage.clickNextPageButton();
+          hostsOverviewPage.sapSystemHasExpectedAmountOfHosts(3);
         });
 
-        after(() => {
-          cy.loadScenario(
-            `sapsystem-${sapSystemHostsToDeregister.sid}-restore`
-          );
-        });
+        after(() => hostsOverviewPage.restoreSapSystem());
 
         it('should associate instances to the correct host during deregistration', () => {
-          cy.get(NEXT_PAGE_SELECTOR).click();
-          cy.contains('a', sapSystemHostsToDeregister.sid).should('exist');
-          cy.deregisterHost(sapSystemHostsToDeregister.movedHostId);
-          cy.contains('a', sapSystemHostsToDeregister.sid).should('not.exist');
+          hostsOverviewPage.apiDeregisterMovedHost();
+          hostsOverviewPage.deregisteredSapSystemIsNotDisplayed();
         });
 
         it('should complete host deregistration when all instances are moved out', () => {
-          cy.contains('a', sapSystemHostsToDeregister.hostname).should('exist');
-          cy.deregisterHost(sapSystemHostsToDeregister.initialHostId);
-          cy.contains('a', sapSystemHostsToDeregister.initialHostname).should(
-            'not.exist'
-          );
+          hostsOverviewPage.apiDeregisterMovedHost();
+          hostsOverviewPage.initialHostNameIsDisplayed();
+          hostsOverviewPage.apiDeregisterInitialHostId();
+          hostsOverviewPage.initialHostNameIsNotDisplayed();
         });
       });
     });

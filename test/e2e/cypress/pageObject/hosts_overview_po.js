@@ -4,6 +4,18 @@ import * as basePage from './base_po';
 import { capitalize } from 'lodash';
 
 // Test data
+const sapSystemHostToDeregister = {
+  id: '7269ee51-5007-5849-aaa7-7c4a98b0c9ce',
+  sid: 'NWD',
+};
+
+const sapSystemHostsToDeregister = {
+  sid: 'NWD',
+  movedHostId: 'fb2c6b8a-9915-5969-a6b7-8b5a42de1971',
+  initialHostId: '7269ee51-5007-5849-aaa7-7c4a98b0c9ce',
+  initialHostname: 'vmnwdev01',
+};
+
 const hostToDeregister = 'vmhdbdev01';
 const hostWithoutSap = 'vmdrbddev01';
 const hostWithSap = 'vmhdbprd01';
@@ -34,6 +46,8 @@ const cleanupButtons = 'tbody tr button:contains("Clean up")';
 const heartbeatFailingToaster = `p:contains("The host ${hostToDeregister} heartbeat is failing.")`;
 const deregisterHostModalTitle = `div:contains("Clean up data discovered by agent on host ${hostToDeregister}")`;
 const cleanupConfirmationButton = `${deregisterHostModalTitle} button:contains("Clean up")`;
+const sapSystemToDeregister = `a:contains("${sapSystemHostToDeregister.sid}")`;
+const initialHostName = `a:contains("${sapSystemHostsToDeregister.initialHostname}")`;
 
 // UI Interactions
 
@@ -146,7 +160,7 @@ export const hostWithSaptuneCompliantHasExpectedStatus = () =>
   _hostHasExpectedStatus(hostWithSap, 'fill-jungle-green-500');
 
 export const cleanupButtonIsNotDisplayedForHostSendingHeartbeat = () => {
-  cy.get(hostToDeregisterCleanupButton, { timeout: 15000 }).should('not.exist');
+  cy.get(hostToDeregisterCleanupButton, { timeout: 20000 }).should('not.exist');
 };
 
 export const clickCleanupOnHostToDeregister = () =>
@@ -158,12 +172,12 @@ export const cleanupButtonIsDisplayedForHostSendingHeartbeat = () =>
 export const expectedAmountOfCleanupButtonsIsDisplayed = (amount) =>
   cy
     .get(cleanupButtons, {
-      timeout: 15000,
+      timeout: 20000,
     })
     .should('have.length', amount);
 
 export const heartbeatFailingToasterIsDisplayed = () =>
-  cy.get(heartbeatFailingToaster, { timeout: 15000 }).should('be.visible');
+  cy.get(heartbeatFailingToaster, { timeout: 20000 }).should('be.visible');
 
 export const deregisterModalTitleIsDisplayed = () =>
   cy.get(deregisterHostModalTitle).should('be.visible');
@@ -175,6 +189,31 @@ export const deregisteredHostIsNotVisible = () => {
   const host = _getHostToDeregisterData();
   cy.get(`#host-${host.id}`).should('not.exist');
 };
+
+export const restoredHostIsDisplayed = () => {
+  const host = _getHostToDeregisterData();
+  cy.get(`#host-${host.id}`, { timeout: 20000 }).should('be.visible');
+};
+
+export const tagOfRestoredHostIsDisplayed = () => {
+  const host = _getHostToDeregisterData();
+  cy.get(`tr:contains("${host.name}") td:contains("${host.tag}")`).should(
+    'be.visible'
+  );
+};
+
+export const sapSystemHasExpectedAmountOfHosts = (expectedHosts) =>
+  cy.get(sapSystemToDeregister).should('have.length', expectedHosts);
+
+export const deregisteredSapSystemIsNotDisplayed = () =>
+  cy.get(sapSystemToDeregister).should('not.exist');
+
+export const initialHostNameIsDisplayed = () =>
+  cy.get(initialHostName).should('be.visible');
+
+export const initialHostNameIsNotDisplayed = () =>
+  cy.get(initialHostName).should('not.exist');
+
 // API
 
 // Table Validation
@@ -271,3 +310,74 @@ export const loadHostWithSapWithSaptuneUnsupported = () =>
 
 export const loadHostWithSaptuneScenario = (scenario) =>
   basePage.loadScenario(`host-${hostWithSap}-saptune-${scenario}`);
+
+export const apiRestoreCleanedUpHost = () =>
+  basePage.loadScenario(`host-${hostToDeregister}-restore`);
+
+export const apiDeregisterHost = () => {
+  const { id } = _getHostToDeregisterData();
+  basePage.apiDeregisterHost(id);
+};
+
+const apiRemoveTagByHostId = (hostId, tagId) => {
+  return basePage.apiLogin().then(({ accessToken }) =>
+    cy.request({
+      url: `/api/v1/hosts/${hostId}/tags/${tagId}`,
+      method: 'DELETE',
+      auth: { bearer: accessToken },
+    })
+  );
+};
+
+export const apiDeleteAllHostsTags = () => {
+  apiGetHosts().then((response) => {
+    const clusterTags = getHostTags(response.body);
+    Object.entries(clusterTags).forEach(([clusterId, tags]) => {
+      tags.forEach((tag) => apiRemoveTagByHostId(clusterId, tag));
+    });
+  });
+  return basePage.refresh();
+};
+
+const apiGetHosts = () => {
+  return basePage.apiLogin().then(({ accessToken }) => {
+    const url = '/api/v1/hosts';
+    return cy
+      .request({
+        method: 'GET',
+        url: url,
+        auth: {
+          bearer: accessToken,
+        },
+      })
+      .then((response) => response);
+  });
+};
+
+const getHostTags = (jsonData) => {
+  const clusterTags = {};
+  jsonData.forEach((cluster) => {
+    if (cluster.tags && cluster.tags.length > 0) {
+      clusterTags[cluster.id] = cluster.tags.map((tag) => tag.value);
+    }
+  });
+
+  return clusterTags;
+};
+
+export const restoreSapSystem = () =>
+  basePage.loadScenario(`sapsystem-${sapSystemHostToDeregister.sid}-restore`);
+
+export const apiDeregisterSapSystemHost = () =>
+  basePage.apiDeregisterHost(sapSystemHostToDeregister.id);
+
+export const loadSapSystemsOverviewMovedScenario = () => {
+  restoreSapSystem();
+  basePage.loadScenario('sap-systems-overview-moved');
+};
+
+export const apiDeregisterMovedHost = () =>
+  basePage.apiDeregisterHost(sapSystemHostsToDeregister.movedHostId);
+
+export const apiDeregisterInitialHostId = () =>
+  basePage.apiDeregisterHost(sapSystemHostsToDeregister.initialHostId);
