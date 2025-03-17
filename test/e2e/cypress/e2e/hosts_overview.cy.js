@@ -1,7 +1,5 @@
 import * as hostsOverviewPage from '../pageObject/hosts_overview_po';
 
-import { createUserRequestFactory } from '@lib/test-utils/factories';
-
 context('Hosts Overview', () => {
   before(() => hostsOverviewPage.preloadTestData());
 
@@ -199,70 +197,44 @@ context('Hosts Overview', () => {
   });
 
   describe('Forbidden actions', () => {
-    const password = 'password';
-
     beforeEach(() => {
-      cy.deleteAllUsers();
-      cy.logout();
-      const user = createUserRequestFactory.build({
-        password,
-        password_confirmation: password,
-      });
-      cy.wrap(user).as('user');
+      hostsOverviewPage.apiDeleteAllHostsTags();
+      hostsOverviewPage.apiSetTag();
+      hostsOverviewPage.apiDeleteAllUsers();
+      hostsOverviewPage.logout();
     });
 
     describe('Tag creation', () => {
       it('it should prevent a tag update when the user abilities are not compliant', () => {
-        cy.get('@user').then((user) => {
-          cy.createUserWithAbilities(user, []);
-          cy.login(user.username, password);
-        });
-
-        cy.visit('/hosts');
-
-        cy.contains('span', 'Add Tag').should('have.class', 'opacity-50');
-        cy.get('[data-test-id="tag-tag1"]').should('have.class', 'opacity-50');
+        hostsOverviewPage.apiCreateUserWithoutAbilities();
+        hostsOverviewPage.loginWithoutAbilities();
+        hostsOverviewPage.visit();
+        hostsOverviewPage.addTagButtonIsDisabled();
+        hostsOverviewPage.removeTag1ButtonIsDisabled();
       });
 
       it('it should allow a tag update when the user abilities are compliant', () => {
-        cy.get('@user').then((user) => {
-          cy.createUserWithAbilities(user, [
-            { name: 'all', resource: 'host_tags' },
-          ]);
-          cy.login(user.username, password);
-        });
-
-        cy.visit('/hosts');
-
-        cy.contains('span', 'Add Tag').should('not.have.class', 'opacity-50');
-        cy.get('[data-test-id="tag-tag1"]').should(
-          'not.have.class',
-          'opacity-50'
-        );
+        hostsOverviewPage.apiCreateUserWithHostTagsAbility();
+        hostsOverviewPage.loginWithAbilities();
+        hostsOverviewPage.visit();
+        hostsOverviewPage.addTagButtonIsEnabled();
+        hostsOverviewPage.removeTag1ButtonIsEnabled();
       });
     });
 
     describe('Clean up', () => {
       it('should forbid host clean up', () => {
-        cy.get('@user').then((user) => {
-          cy.createUserWithAbilities(user, []);
-          cy.login(user.username, password);
-        });
-        cy.visit(`/hosts`);
-
-        cy.contains('button', 'Clean up').should('be.disabled');
+        hostsOverviewPage.apiCreateUserWithoutAbilities();
+        hostsOverviewPage.loginWithoutAbilities();
+        hostsOverviewPage.visit();
+        hostsOverviewPage.cleanupButtonsAreDisabled();
       });
 
       it('should allow host clean up', () => {
-        cy.get('@user').then((user) => {
-          cy.createUserWithAbilities(user, [
-            { name: 'cleanup', resource: 'host' },
-          ]);
-          cy.login(user.username, password);
-        });
-        cy.visit(`/hosts`);
-
-        cy.contains('button', 'Clean up').should('be.enabled');
+        hostsOverviewPage.apiCreateUserWithHostCleanupAbility();
+        hostsOverviewPage.loginWithAbilities();
+        hostsOverviewPage.visit();
+        hostsOverviewPage.cleanupButtonsAreEnabled();
       });
     });
   });

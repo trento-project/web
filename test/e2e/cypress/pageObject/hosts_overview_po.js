@@ -48,6 +48,9 @@ const deregisterHostModalTitle = `div:contains("Clean up data discovered by agen
 const cleanupConfirmationButton = `${deregisterHostModalTitle} button:contains("Clean up")`;
 const sapSystemToDeregister = `a:contains("${sapSystemHostToDeregister.sid}")`;
 const initialHostName = `a:contains("${sapSystemHostsToDeregister.initialHostname}")`;
+const addTagButton = 'span:contains("Add Tag")';
+const removeTag1Button =
+  'span[class*="leading-5"]:contains("tag1") span[aria-hidden="true"]';
 
 // UI Interactions
 
@@ -213,6 +216,24 @@ export const initialHostNameIsDisplayed = () =>
 
 export const initialHostNameIsNotDisplayed = () =>
   cy.get(initialHostName).should('not.exist');
+
+export const addTagButtonIsDisabled = () =>
+  cy.get(addTagButton).should('have.class', 'opacity-50');
+
+export const removeTag1ButtonIsDisabled = () =>
+  cy.get(removeTag1Button).should('have.class', 'opacity-50');
+
+export const addTagButtonIsEnabled = () =>
+  cy.get(addTagButton).should('not.have.class', 'opacity-50');
+
+export const removeTag1ButtonIsEnabled = () =>
+  cy.get(removeTag1Button).should('not.have.class', 'opacity-50');
+
+export const cleanupButtonsAreDisabled = () =>
+  cy.get(cleanupButtons).should('be.disabled');
+
+export const cleanupButtonsAreEnabled = () =>
+  cy.get(cleanupButtons).should('not.be.disabled');
 
 // API
 
@@ -381,3 +402,22 @@ export const apiDeregisterMovedHost = () =>
 
 export const apiDeregisterInitialHostId = () =>
   basePage.apiDeregisterHost(sapSystemHostsToDeregister.initialHostId);
+
+export const apiSetTag = () => {
+  const host = _getHostToDeregisterData(hostToDeregister);
+  return basePage.apiLogin().then(({ accessToken }) =>
+    cy.request({
+      url: `/api/v1/hosts/${host.id}/tags`,
+      method: 'POST',
+      auth: { bearer: accessToken },
+      body: { value: host.tag },
+    })
+  );
+};
+
+export const apiCreateUserWithHostTagsAbility = () => {
+  basePage.createUserWithAbilities([{ name: 'all', resource: 'host_tags' }]);
+};
+
+export const apiCreateUserWithHostCleanupAbility = () =>
+  basePage.createUserWithAbilities([{ name: 'cleanup', resource: 'host' }]);
