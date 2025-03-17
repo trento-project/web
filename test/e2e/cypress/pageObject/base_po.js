@@ -338,3 +338,14 @@ export const getResourceTags = (resourceResponse) => {
   });
   return resourceTags;
 };
+
+export const apiSetTag = (resource, resourceId, tag) => {
+  return apiLogin().then(({ accessToken }) =>
+    cy.request({
+      url: `/api/v1/${resource}/${resourceId}/tags`,
+      method: 'POST',
+      auth: { bearer: accessToken },
+      body: { value: tag },
+    })
+  );
+};

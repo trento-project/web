@@ -28,7 +28,6 @@ import {
 const url = '/hosts';
 
 // Selectors
-
 const hostNameCell = '.tn-hostname';
 const currentPaginationDetails =
   'div[data-testid="pagination"] span:contains("Showing")';
@@ -51,6 +50,7 @@ const initialHostName = `a:contains("${sapSystemHostsToDeregister.initialHostnam
 const addTagButton = 'span:contains("Add Tag")';
 const removeTag1Button =
   'span[class*="leading-5"]:contains("tag1") span[aria-hidden="true"]';
+const sidTableHeader = 'thead th:contains("SID")';
 
 // UI Interactions
 
@@ -64,6 +64,12 @@ export const addTagToHost = () => {
   const host = _getHostToDeregisterData(hostToDeregister);
   basePage.addTagByColumnValue(host.name, host.tag);
 };
+
+export const clickCleanupOnHostToDeregister = () =>
+  cy.get(hostToDeregisterCleanupButton).click();
+
+export const clickCleanupConfirmationButton = () =>
+  cy.get(cleanupConfirmationButton).click();
 
 // UI Validations
 
@@ -107,7 +113,7 @@ export const everyClusterLinkGoesToExpectedClusterDetailsPage = () => {
 
 export const everySapSystemLinkGoesToExpectedSapSystemDetailsPage = () => {
   availableHosts.slice(0, 10).forEach((host, index) => {
-    cy.get('thead th:contains("SID")')
+    cy.get(sidTableHeader)
       .invoke('index')
       .then((i) => {
         if (host.sapSystemSid !== '') {
@@ -166,9 +172,6 @@ export const cleanupButtonIsNotDisplayedForHostSendingHeartbeat = () => {
   cy.get(hostToDeregisterCleanupButton, { timeout: 20000 }).should('not.exist');
 };
 
-export const clickCleanupOnHostToDeregister = () =>
-  cy.get(hostToDeregisterCleanupButton).click();
-
 export const cleanupButtonIsDisplayedForHostSendingHeartbeat = () =>
   cy.get(hostToDeregisterCleanupButton).should('be.visible');
 
@@ -184,9 +187,6 @@ export const heartbeatFailingToasterIsDisplayed = () =>
 
 export const deregisterModalTitleIsDisplayed = () =>
   cy.get(deregisterHostModalTitle).should('be.visible');
-
-export const clickCleanupConfirmationButton = () =>
-  cy.get(cleanupConfirmationButton).click();
 
 export const deregisteredHostIsNotVisible = () => {
   const host = _getHostToDeregisterData();
@@ -234,8 +234,6 @@ export const cleanupButtonsAreDisabled = () =>
 
 export const cleanupButtonsAreEnabled = () =>
   cy.get(cleanupButtons).should('not.be.disabled');
-
-// API
 
 // Table Validation
 
@@ -352,8 +350,8 @@ const apiRemoveTagByHostId = (hostId, tagId) => {
 
 export const apiDeleteAllHostsTags = () => {
   apiGetHosts().then((response) => {
-    const clusterTags = getHostTags(response.body);
-    Object.entries(clusterTags).forEach(([clusterId, tags]) => {
+    const hostsTags = getHostTags(response.body);
+    Object.entries(hostsTags).forEach(([clusterId, tags]) => {
       tags.forEach((tag) => apiRemoveTagByHostId(clusterId, tag));
     });
   });
@@ -405,14 +403,7 @@ export const apiDeregisterInitialHostId = () =>
 
 export const apiSetTag = () => {
   const host = _getHostToDeregisterData(hostToDeregister);
-  return basePage.apiLogin().then(({ accessToken }) =>
-    cy.request({
-      url: `/api/v1/hosts/${host.id}/tags`,
-      method: 'POST',
-      auth: { bearer: accessToken },
-      body: { value: host.tag },
-    })
-  );
+  return basePage.apiSetTag('hosts', host.id, host.tag);
 };
 
 export const apiCreateUserWithHostTagsAbility = () => {
