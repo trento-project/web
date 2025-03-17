@@ -51,10 +51,16 @@ const addTagButton = 'span:contains("Add Tag")';
 const removeTag1Button =
   'span[class*="leading-5"]:contains("tag1") span[aria-hidden="true"]';
 const sidTableHeader = 'thead th:contains("SID")';
+const clusterTableHeader = 'thead th:contains("Cluster")';
+const tableRow = 'tbody tr';
 
 // UI Interactions
 
-export const visit = () => basePage.visit(url);
+export const visit = () => {
+  cy.intercept('/api/v2/clusters').as('clustersEndpoint');
+  basePage.visit(url);
+  cy.wait('@clustersEndpoint');
+};
 
 export const validateUrl = () => basePage.validateUrl(url);
 
@@ -99,15 +105,11 @@ export const everyLinkGoesToExpectedHostDetailsPage = () => {
 
 export const everyClusterLinkGoesToExpectedClusterDetailsPage = () => {
   availableHosts.slice(0, 10).forEach((host, index) => {
-    cy.get('thead th:contains("Cluster")')
+    cy.get(clusterTableHeader)
       .invoke('index')
       .then((i) => {
-        if (host.clusterId !== '') {
-          cy.intercept('/api/v2/checks/groups/*/executions/last').as(
-            'checkExecutions'
-          );
-          cy.get('tbody tr').eq(index).find('td').eq(i).click();
-          cy.wait('@checkExecutions', { timeout: 10000 });
+        if (host.clusterId) {
+          cy.get(tableRow).eq(index).find('td').eq(i).click();
           basePage.validateUrl(`/clusters/${host.clusterId}`);
           cy.go('back');
         }
@@ -120,7 +122,7 @@ export const everySapSystemLinkGoesToExpectedSapSystemDetailsPage = () => {
     cy.get(sidTableHeader)
       .invoke('index')
       .then((i) => {
-        if (host.sapSystemSid !== '') {
+        if (host.sapSystemSid) {
           cy.get(`td:contains("${host.sapSystemSid}")`).should('be.visible');
           cy.get('tbody tr').eq(index).find('td').eq(i).click();
           basePage.validateUrl(`/databases/${host.sapSystemId}`);
