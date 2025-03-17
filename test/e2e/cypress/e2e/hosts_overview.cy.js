@@ -126,7 +126,7 @@ context('Hosts Overview', () => {
 
   describe('Deregistration', () => {
     describe('Clean-up buttons should be visible only when needed', () => {
-      it('should not display a clean-up button when hearbeat is sent', () => {
+      it('should not display a clean-up button when heartbeat is sent', () => {
         hostsOverviewPage.cleanupButtonIsDisplayedForHostSendingHeartbeat();
         hostsOverviewPage.startAgentHeartbeat();
         hostsOverviewPage.cleanupButtonIsNotDisplayedForHostSendingHeartbeat();
