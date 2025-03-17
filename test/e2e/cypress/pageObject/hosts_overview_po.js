@@ -103,7 +103,11 @@ export const everyClusterLinkGoesToExpectedClusterDetailsPage = () => {
       .invoke('index')
       .then((i) => {
         if (host.clusterId !== '') {
+          cy.intercept('/api/v2/checks/groups/*/executions/last').as(
+            'checkExecutions'
+          );
           cy.get('tbody tr').eq(index).find('td').eq(i).click();
+          cy.wait('@checkExecutions', { timeout: 10000 });
           basePage.validateUrl(`/clusters/${host.clusterId}`);
           cy.go('back');
         }
