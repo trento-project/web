@@ -272,7 +272,7 @@ describe('Users', () => {
           usersPage.clickAuthenticatorAppSwitch();
           usersPage.clickDisableTotpButton();
           usersPage.clickAuthenticatorAppSwitch();
-          usersPage.newIssuedTotpSecretIsDifferent();
+          usersPage.newIssuedTotpSecretIsDifferent(totpSecret);
         });
       });
     });
