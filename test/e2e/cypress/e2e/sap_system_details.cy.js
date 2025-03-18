@@ -1,11 +1,7 @@
 import * as sapSystemDetailsPage from '../pageObject/sap_system_details_po';
 
-import { createUserRequestFactory } from '@lib/test-utils/factories';
-
-import { selectedSystem } from '../fixtures/sap-system-details/selected_system';
-
 context('SAP system details', () => {
-  // before(() => sapSystemDetailsPage.preloadTestData());
+  before(() => sapSystemDetailsPage.preloadTestData());
 
   describe('SAP system details page is available', () => {
     beforeEach(() => sapSystemDetailsPage.visit());
@@ -88,43 +84,26 @@ context('SAP system details', () => {
   });
 
   describe('Forbidden actions', () => {
-    const password = 'password';
-
     beforeEach(() => {
-      cy.deleteAllUsers();
-      cy.logout();
-      const user = createUserRequestFactory.build({
-        password,
-        password_confirmation: password,
-      });
-      cy.wrap(user).as('user');
+      sapSystemDetailsPage.apiDeleteAllUsers();
+      sapSystemDetailsPage.logout();
     });
 
     describe('Application instance clean up', () => {
-      before(() => {
-        cy.loadScenario(`sap-systems-overview-NWD-00-absent`);
-      });
+      before(() => sapSystemDetailsPage.loadAbsentHostScenario());
 
       it('should forbid application instance cleanup', () => {
-        cy.get('@user').then((user) => {
-          cy.createUserWithAbilities(user, []);
-          cy.login(user.username, password);
-        });
-        cy.visit(`/sap_systems/${selectedSystem.Id}`);
-
-        cy.contains('button', 'Clean up').should('be.disabled');
+        sapSystemDetailsPage.apiCreateUserWithoutAbilities();
+        sapSystemDetailsPage.loginWithoutAbilities();
+        sapSystemDetailsPage.visit();
+        sapSystemDetailsPage.cleanUpButtonIsDisabled();
       });
 
       it('should allow application instance clenaup', () => {
-        cy.get('@user').then((user) => {
-          cy.createUserWithAbilities(user, [
-            { name: 'cleanup', resource: 'application_instance' },
-          ]);
-          cy.login(user.username, password);
-        });
-        cy.visit(`/sap_systems/${selectedSystem.Id}`);
-
-        cy.contains('button', 'Clean up').should('be.enabled');
+        sapSystemDetailsPage.apiCreateUserWithApplicationCleanupAbility();
+        sapSystemDetailsPage.loginWithAbilities();
+        sapSystemDetailsPage.visit();
+        sapSystemDetailsPage.cleanUpButtonIsEnabled();
       });
     });
   });

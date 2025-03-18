@@ -24,6 +24,7 @@ const thirdRowStatusCellSelector =
   'div:contains("Layout") table tbody tr:eq(2) td:eq(6)';
 const hostToDeregisterName = `td a:contains("${hostToDeregister.name}")`;
 const hostToDeregisterFeatures = `td:contains("${hostToDeregister.features}")`;
+const cleanUpButton = 'button:contains("Clean up")';
 
 // UI Interactions
 
@@ -117,6 +118,12 @@ export const hostToDeregisterIsNotDisplayed = () => {
   cy.get(hostToDeregisterFeatures).should('not.exist');
 };
 
+export const cleanUpButtonIsEnabled = () =>
+  cy.get(cleanUpButton).should('be.enabled');
+
+export const cleanUpButtonIsDisabled = () =>
+  cy.get(cleanUpButton).should('be.disabled');
+
 // API
 
 export const restoreInstanceHealth = () =>
@@ -127,3 +134,12 @@ export const apiDeregisterHost = () =>
 
 export const restoreDeregisteredHost = () =>
   basePage.loadScenario(`host-${hostToDeregister.name}-restore`);
+
+export const loadAbsentHostScenario = () =>
+  basePage.loadScenario('sap-systems-overview-NWD-00-absent');
+
+export const apiCreateUserWithApplicationCleanupAbility = () => {
+  basePage.createUserWithAbilities([
+    { name: 'cleanup', resource: 'application_instance' },
+  ]);
+};
