@@ -9,6 +9,12 @@ import {
   healthMap,
 } from '../fixtures/sap-system-details/selected_system';
 
+const hostToDeregister = {
+  name: 'vmnwdev02',
+  id: 'fb2c6b8a-9915-5969-a6b7-8b5a42de1971',
+  features: 'ENQREP',
+};
+
 // Selectors
 
 const sapSystemName = 'div[class="font-bold"]:contains("Name") + div span';
@@ -16,6 +22,8 @@ const sapSystemType = 'div[class="font-bold"]:contains("Type") + div span';
 const notFoundLabel = 'div:contains("Not Found")';
 const thirdRowStatusCellSelector =
   'div:contains("Layout") table tbody tr:eq(2) td:eq(6)';
+const hostToDeregisterName = `td a:contains("${hostToDeregister.name}")`;
+const hostToDeregisterFeatures = `td:contains("${hostToDeregister.features}")`;
 
 // UI Interactions
 
@@ -100,7 +108,22 @@ export const eachHostHasTheExpectedData = () => {
   });
 };
 
+export const hostToDeregisterIsDisplayed = () => {
+  cy.get(hostToDeregisterName).should('be.visible');
+  cy.get(hostToDeregisterFeatures).should('be.visible');
+};
+export const hostToDeregisterIsNotDisplayed = () => {
+  cy.get(hostToDeregisterName).should('not.exist');
+  cy.get(hostToDeregisterFeatures).should('not.exist');
+};
+
 // API
 
 export const restoreInstanceHealth = () =>
   basePage.loadScenario('sap-system-detail-GREEN');
+
+export const apiDeregisterHost = () =>
+  basePage.apiDeregisterHost(hostToDeregister.id);
+
+export const restoreDeregisteredHost = () =>
+  basePage.loadScenario(`host-${hostToDeregister.name}-restore`);

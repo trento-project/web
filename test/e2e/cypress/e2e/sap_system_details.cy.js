@@ -5,7 +5,7 @@ import { createUserRequestFactory } from '@lib/test-utils/factories';
 import { selectedSystem } from '../fixtures/sap-system-details/selected_system';
 
 context('SAP system details', () => {
-  before(() => sapSystemDetailsPage.preloadTestData());
+  // before(() => sapSystemDetailsPage.preloadTestData());
 
   describe('SAP system details page is available', () => {
     beforeEach(() => sapSystemDetailsPage.visit());
@@ -70,22 +70,20 @@ context('SAP system details', () => {
   });
 
   describe('Deregistration', () => {
-    const hostToDeregister = {
-      name: 'vmnwdev02',
-      id: 'fb2c6b8a-9915-5969-a6b7-8b5a42de1971',
-      features: 'ENQREP',
-    };
-
-    it(`should not include ${hostToDeregister.name} in the list of hosts`, () => {
-      cy.deregisterHost(hostToDeregister.id);
-      cy.contains(hostToDeregister.name).should('not.exist');
-      cy.contains(hostToDeregister.features).should('not.exist');
+    beforeEach(() => {
+      sapSystemDetailsPage.restoreDeregisteredHost();
+      sapSystemDetailsPage.visit();
+      sapSystemDetailsPage.hostToDeregisterIsDisplayed();
+      sapSystemDetailsPage.apiDeregisterHost();
     });
 
-    it(`should include ${hostToDeregister.name} again in the list of hosts`, () => {
-      cy.loadScenario(`host-${hostToDeregister.name}-restore`);
-      cy.contains(hostToDeregister.name).should('exist');
-      cy.contains(hostToDeregister.features).should('exist');
+    it('should not include deregistered host in the list', () => {
+      sapSystemDetailsPage.hostToDeregisterIsNotDisplayed();
+    });
+
+    it('should include restored host again in the list', () => {
+      sapSystemDetailsPage.restoreDeregisteredHost();
+      sapSystemDetailsPage.hostToDeregisterIsDisplayed();
     });
   });
 
