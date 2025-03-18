@@ -39,7 +39,7 @@ context('SAP system details', () => {
     /* This test is skipped because there is not any option to remove added SAP instances or
     resetting the database afterwards, and it affects the rest of the test suite.*/
     // eslint-disable-next-line mocha/no-skipped-tests
-    it('should show a new instance when an event with a new SAP instance is received', () => {
+    it.skip('should show a new instance when an event with a new SAP instance is received', () => {
       sapSystemDetailsPage.loadNewSapSystem();
       sapSystemDetailsPage.newSapSystemIsDisplayed();
     });
