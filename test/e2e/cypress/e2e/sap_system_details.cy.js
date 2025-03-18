@@ -39,17 +39,9 @@ context('SAP system details', () => {
     /* This test is skipped because there is not any option to remove added SAP instances or
     resetting the database afterwards, and it affects the rest of the test suite.*/
     // eslint-disable-next-line mocha/no-skipped-tests
-    it.skip(`should show a new instance when an event with a new SAP instance is received`, () => {
-      cy.loadScenario(`sap-system-detail-NEW`);
-      cy.get('table.table-fixed').eq(0).find('tr').should('have.length', 6);
-      cy.get('table.table-fixed')
-        .eq(0)
-        .find('tr')
-        .eq(-1)
-        .find('td')
-        .as('tableCell');
-      cy.get('@tableCell').eq(0).should('contain', 'sapnwdaas1');
-      cy.get('@tableCell').eq(1).should('contain', '99');
+    it('should show a new instance when an event with a new SAP instance is received', () => {
+      sapSystemDetailsPage.loadNewSapSystem();
+      sapSystemDetailsPage.newSapSystemIsDisplayed();
     });
   });
 

@@ -21,10 +21,11 @@ const sapSystemName = 'div[class="font-bold"]:contains("Name") + div span';
 const sapSystemType = 'div[class="font-bold"]:contains("Type") + div span';
 const notFoundLabel = 'div:contains("Not Found")';
 const thirdRowStatusCellSelector =
-  'div:contains("Layout") table tbody tr:eq(2) td:eq(6)';
+  'div[class="mt-16"]:contains("Layout") table tbody tr:eq(2) td:eq(6)';
 const hostToDeregisterName = `td a:contains("${hostToDeregister.name}")`;
 const hostToDeregisterFeatures = `td:contains("${hostToDeregister.features}")`;
 const cleanUpButton = 'button:contains("Clean up")';
+const sapSystemsRows = 'div[class="mt-16"]:contains("Layout") table tbody tr';
 
 // UI Interactions
 
@@ -55,7 +56,7 @@ export const layoutTableShowsExpectedData = () => {
     const keys = Object.keys(instance);
 
     for (let i = 0; i < keys.length; i++) {
-      const tableCellSelector = `div:contains("Layout") table tbody tr:eq(${index}) td:eq(${i})`;
+      const tableCellSelector = `div[class="mt-16"]:contains("Layout") table tbody tr:eq(${index}) td:eq(${i})`;
       const key = keys[i];
       const rawExpectedValue = instance[key];
       const expectedValue = _getFormattedExpectedValue(key, rawExpectedValue);
@@ -124,6 +125,12 @@ export const cleanUpButtonIsEnabled = () =>
 export const cleanUpButtonIsDisabled = () =>
   cy.get(cleanUpButton).should('be.disabled');
 
+export const newSapSystemIsDisplayed = () => {
+  cy.get(sapSystemsRows).should('have.length', 5);
+  cy.get('div:contains("sapnwdaas1")').should('be.visible');
+  cy.get('div:contains("99")').should('be.visible');
+};
+
 // API
 
 export const restoreInstanceHealth = () =>
@@ -143,3 +150,6 @@ export const apiCreateUserWithApplicationCleanupAbility = () => {
     { name: 'cleanup', resource: 'application_instance' },
   ]);
 };
+
+export const loadNewSapSystem = () =>
+  basePage.loadScenario('sap-system-detail-NEW');
