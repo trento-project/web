@@ -78,7 +78,7 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
     end)
   end
 
-  # The cluster manages a HANA system when it manages a SAPHanaTopoligy resource
+  # The cluster manages a HANA system when it manages a SAPHanaTopology resource
   # and other SAPHana for Scale up or SAPHanaController for Scale Out.
   defp parse_hana_cluster_type(%{"crmmon" => %{"clones" => clones}}) when not is_nil(clones) do
     has_sap_hana_topology =
