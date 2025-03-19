@@ -10,6 +10,7 @@ defmodule Trento.Settings.Policy do
 
   import Trento.Support.AbilitiesHelper
   alias Trento.ActivityLog.Settings, as: ActivityLogSettings
+  alias Trento.Settings.AlertingSettings
   alias Trento.Settings.ApiKeySettings
   alias Trento.Settings.SuseManagerSettings
 
@@ -30,6 +31,10 @@ defmodule Trento.Settings.Policy do
     has_global_ability?(user) or has_suma_settings_change_ability?(user)
   end
 
+  def authorize(:set_alerting_settings, %User{} = user, AlertingSettings) do
+    has_global_ability?(user) or has_alerting_settings_resource_ability?(user)
+  end
+
   def authorize(_, _, _), do: true
 
   defp has_api_key_settings_change_ability?(user),
@@ -40,4 +45,7 @@ defmodule Trento.Settings.Policy do
 
   defp has_suma_settings_change_ability?(user),
     do: user_has_ability?(user, %{name: "all", resource: "suma_settings"})
+
+  defp has_alerting_settings_resource_ability?(user),
+    do: user_has_ability?(user, %{name: "all", resource: "alerting_settings"})
 end

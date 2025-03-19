@@ -29,7 +29,10 @@ defmodule Trento.Settings.AlertingSettings do
     field :smtp_server, :string, source: :alerting_smtp_server
     field :smtp_port, :integer, source: :alerting_smtp_port
     field :smtp_username, :string, source: :alerting_smtp_username
-    field :smtp_password, Trento.Support.Ecto.EncryptedBinary, source: :alerting_smtp_password
+
+    field :smtp_password, Trento.Support.Ecto.EncryptedBinary,
+      source: :alerting_smtp_password,
+      redact: true
 
     timestamps(type: :utc_datetime_usec)
     sti_fields()
@@ -78,7 +81,7 @@ defmodule Trento.Settings.AlertingSettings do
     end
   end
 
-  @spec set_alerting_settings(alerting_setting_submission) :: {:ok, t()} | {:error, any}
+  @spec set_alerting_settings(alerting_setting_submission) :: {:ok, t()} | {:error, Changeset.t()}
   def set_alerting_settings(alerting_settings) do
     %__MODULE__{}
     |> changeset(alerting_settings)
