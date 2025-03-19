@@ -32,6 +32,15 @@ defmodule TrentoWeb.V1.SettingsJSON do
         }
       }
 
+  def analytics_settings(%{
+        settings: %{
+          opt_in: opt_in
+        }
+      }),
+      do: %{
+        opt_in: opt_in
+      }
+
   def suse_manager(%{
         settings: %{
           url: url,

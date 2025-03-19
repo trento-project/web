@@ -84,6 +84,48 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
     )
   end
 
+  defmodule AnalyticsSettings do
+    @moduledoc false
+
+    OpenApiSpex.schema(
+      %{
+        title: "AnalyticsSettings",
+        description: "Settings for Analytics",
+        type: :object,
+        additionalProperties: false,
+        properties: %{
+          opt_in: %Schema{
+            type: :boolean,
+            description: "Whether platform analytics recollection is enabled"
+          }
+        },
+        required: [:opt_in]
+      },
+      struct?: false
+    )
+  end
+
+  defmodule AnalyticsSettingsUpdateRequest do
+    @moduledoc false
+
+    OpenApiSpex.schema(
+      %{
+        title: "AnalyticsSettingsUpdateRequest",
+        description: "Request body for analytics settings update",
+        type: :object,
+        additionalProperties: false,
+        properties: %{
+          opt_in: %Schema{
+            type: :boolean,
+            description: "Whether platform analytics recollection is enabled"
+          }
+        },
+        required: [:opt_in]
+      },
+      struct?: false
+    )
+  end
+
   defmodule GeneralInformation do
     @moduledoc false
 
