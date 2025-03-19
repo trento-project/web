@@ -78,6 +78,56 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
     end)
   end
 
+  # The cluster manages a HANA system when it manages a SAPHanaTopoligy resource
+  # and other SAPHana for Scale up or SAPHanaController for Scale Out.
+  defp parse_hana_cluster_type(%{"crmmon" => %{"clones" => clones}}) when not is_nil(clones) do
+    has_sap_hana_topology =
+      Enum.any?(clones, fn %{"resources" => resources} ->
+        Enum.any?(resources, fn %{"agent" => agent} -> agent == "ocf::suse:SAPHanaTopology" end)
+      end)
+
+    has_sap_hana =
+      Enum.any?(clones, fn %{"resources" => resources} ->
+        Enum.any?(resources, fn %{"agent" => agent} -> agent == "ocf::suse:SAPHana" end)
+      end)
+
+    has_sap_hana_controller =
+      Enum.any?(clones, fn %{"resources" => resources} ->
+        Enum.any?(resources, fn %{"agent" => agent} ->
+          agent == "ocf::suse:SAPHanaController"
+        end)
+      end)
+
+    do_detect_cluster_type(has_sap_hana_topology, has_sap_hana, has_sap_hana_controller)
+  end
+
+  defp parse_hana_cluster_type(_), do: ClusterType.unknown()
+
+  # The cluster manages a ASCS/ERS system when it manages an even number of
+  # SAPInstance resources that are not managing HANA (HDB) databases.
+  defp parse_ascs_ers_cluster_type(%{"crmmon" => %{"groups" => groups}})
+       when not is_nil(groups) do
+    sap_instance_count =
+      Enum.count(groups, fn %{"resources" => resources} ->
+        Enum.any?(resources, fn %{"id" => id, "agent" => agent} ->
+          agent == "ocf::heartbeat:SAPInstance" && not String.contains?(id, "HDB")
+        end)
+      end)
+
+    do_detect_cluster_type(sap_instance_count)
+  end
+
+  defp parse_ascs_ers_cluster_type(_), do: ClusterType.unknown()
+
+  defp do_detect_cluster_type(true, true, _), do: ClusterType.hana_scale_up()
+  defp do_detect_cluster_type(true, _, true), do: ClusterType.hana_scale_out()
+  defp do_detect_cluster_type(_, _, _), do: ClusterType.unknown()
+
+  defp do_detect_cluster_type(count) when count >= 2 and rem(count, 2) == 0,
+    do: ClusterType.ascs_ers()
+
+  defp do_detect_cluster_type(_), do: ClusterType.unknown()
+
   defp enrich_cluster_and_hana_architecture_types(
          attrs,
          _,
@@ -124,61 +174,6 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
   defp enrich_cluster_and_hana_architecture_types(attrs, _, _, _) do
     Map.put(attrs, "cluster_type", ClusterType.unknown())
   end
-
-  # The cluster manages a ASCS/ERS system when it manages an even number of
-  # SAPInstance resources that are not managing HANA (HDB) databases.
-  defp parse_ascs_ers_cluster_type(%{"crmmon" => %{"groups" => nil}}),
-    do: ClusterType.unknown()
-
-  defp parse_ascs_ers_cluster_type(%{"crmmon" => %{"groups" => groups}}) do
-    sap_instance_count =
-      Enum.count(groups, fn %{"resources" => resources} ->
-        Enum.any?(resources, fn %{"id" => id, "agent" => agent} ->
-          agent == "ocf::heartbeat:SAPInstance" && not String.contains?(id, "HDB")
-        end)
-      end)
-
-    do_detect_cluster_type(sap_instance_count)
-  end
-
-  defp parse_ascs_ers_cluster_type(_), do: ClusterType.unknown()
-
-  # The cluster manages a HANA system when it manages a SAPHanaTopoligy resource
-  # and other SAPHana for Scale up or SAPHanaController for Scale Out.
-  defp parse_hana_cluster_type(%{"crmmon" => %{"clones" => nil}}),
-    do: ClusterType.unknown()
-
-  defp parse_hana_cluster_type(%{"crmmon" => %{"clones" => clones}}) do
-    has_sap_hana_topology =
-      Enum.any?(clones, fn %{"resources" => resources} ->
-        Enum.any?(resources, fn %{"agent" => agent} -> agent == "ocf::suse:SAPHanaTopology" end)
-      end)
-
-    has_sap_hana =
-      Enum.any?(clones, fn %{"resources" => resources} ->
-        Enum.any?(resources, fn %{"agent" => agent} -> agent == "ocf::suse:SAPHana" end)
-      end)
-
-    has_sap_hana_controller =
-      Enum.any?(clones, fn %{"resources" => resources} ->
-        Enum.any?(resources, fn %{"agent" => agent} ->
-          agent == "ocf::suse:SAPHanaController"
-        end)
-      end)
-
-    do_detect_cluster_type(has_sap_hana_topology, has_sap_hana, has_sap_hana_controller)
-  end
-
-  defp parse_hana_cluster_type(_), do: ClusterType.unknown()
-
-  defp do_detect_cluster_type(true, true, _), do: ClusterType.hana_scale_up()
-  defp do_detect_cluster_type(true, _, true), do: ClusterType.hana_scale_out()
-  defp do_detect_cluster_type(_, _, _), do: ClusterType.unknown()
-
-  defp do_detect_cluster_type(count) when count >= 2 and rem(count, 2) == 0,
-    do: ClusterType.ascs_ers()
-
-  defp do_detect_cluster_type(_), do: ClusterType.unknown()
 
   defp enrich_cluster_sid(%{"cluster_type" => ClusterType.unknown()} = attrs) do
     attrs
