@@ -19,6 +19,8 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
     SbdDiscoveryPayload
   }
 
+  alias Trento.Support.ListHelper
+
   deftype do
     field :dc, :boolean
 
@@ -41,9 +43,16 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
   def changeset(cluster, attrs) do
     glob_topology = parse_hana_glob_topology(attrs)
 
+    hana_type = parse_hana_cluster_type(attrs)
+    ascs_ers_type = parse_ascs_ers_cluster_type(attrs)
+
     enriched_attributes =
       attrs
-      |> enrich_cluster_and_hana_architecture_types(glob_topology)
+      |> enrich_cluster_and_hana_architecture_types(
+        hana_type,
+        ascs_ers_type,
+        glob_topology
+      )
       |> enrich_cluster_sid
 
     cluster
@@ -69,39 +78,77 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
     end)
   end
 
-  defp enrich_cluster_and_hana_architecture_types(attrs, "ScaleUp") do
+  defp enrich_cluster_and_hana_architecture_types(
+         attrs,
+         _,
+         ClusterType.unknown(),
+         "ScaleUp"
+       ) do
     attrs
     |> Map.put("cluster_type", ClusterType.hana_scale_up())
     |> Map.put("hana_architecture_type", HanaArchitectureType.angi())
   end
 
-  defp enrich_cluster_and_hana_architecture_types(attrs, "ScaleOut") do
+  defp enrich_cluster_and_hana_architecture_types(
+         attrs,
+         _,
+         ClusterType.unknown(),
+         "ScaleOut"
+       ) do
     attrs
     |> Map.put("cluster_type", ClusterType.hana_scale_out())
     |> Map.put("hana_architecture_type", HanaArchitectureType.angi())
   end
 
-  defp enrich_cluster_and_hana_architecture_types(attrs, nil) do
+  defp enrich_cluster_and_hana_architecture_types(attrs, hana_type, ClusterType.unknown(), _)
+       when hana_type in [ClusterType.hana_scale_up(), ClusterType.hana_scale_out()] do
     attrs
-    |> Map.put("cluster_type", parse_cluster_type(attrs))
-    |> maybe_put_hana_classic_architecture
+    |> Map.put("cluster_type", hana_type)
+    |> Map.put("hana_architecture_type", HanaArchitectureType.classic())
   end
 
-  defp parse_cluster_type(%{"crmmon" => %{"clones" => nil, "groups" => nil}}),
+  defp enrich_cluster_and_hana_architecture_types(
+         attrs,
+         ClusterType.unknown(),
+         ClusterType.ascs_ers(),
+         _
+       ) do
+    Map.put(attrs, "cluster_type", ClusterType.ascs_ers())
+  end
+
+  defp enrich_cluster_and_hana_architecture_types(attrs, hana_type, ClusterType.ascs_ers(), _)
+       when hana_type in [ClusterType.hana_scale_up(), ClusterType.hana_scale_out()] do
+    Map.put(attrs, "cluster_type", ClusterType.hana_ascs_ers())
+  end
+
+  defp enrich_cluster_and_hana_architecture_types(attrs, _, _, _) do
+    Map.put(attrs, "cluster_type", ClusterType.unknown())
+  end
+
+  # The cluster manages a ASCS/ERS system when it manages an even number of
+  # SAPInstance resources that are not managing HANA (HDB) databases.
+  defp parse_ascs_ers_cluster_type(%{"crmmon" => %{"groups" => nil}}),
     do: ClusterType.unknown()
 
-  defp parse_cluster_type(%{"crmmon" => %{"clones" => nil, "groups" => groups}}) do
+  defp parse_ascs_ers_cluster_type(%{"crmmon" => %{"groups" => groups}}) do
     sap_instance_count =
       Enum.count(groups, fn %{"resources" => resources} ->
-        Enum.any?(resources, fn %{"agent" => agent} ->
-          agent == "ocf::heartbeat:SAPInstance"
+        Enum.any?(resources, fn %{"id" => id, "agent" => agent} ->
+          agent == "ocf::heartbeat:SAPInstance" && not String.contains?(id, "HDB")
         end)
       end)
 
     do_detect_cluster_type(sap_instance_count)
   end
 
-  defp parse_cluster_type(%{"crmmon" => %{"clones" => clones}}) do
+  defp parse_ascs_ers_cluster_type(_), do: ClusterType.unknown()
+
+  # The cluster manages a HANA system when it manages a SAPHanaTopoligy resource
+  # and other SAPHana for Scale up or SAPHanaController for Scale Out.
+  defp parse_hana_cluster_type(%{"crmmon" => %{"clones" => nil}}),
+    do: ClusterType.unknown()
+
+  defp parse_hana_cluster_type(%{"crmmon" => %{"clones" => clones}}) do
     has_sap_hana_topology =
       Enum.any?(clones, fn %{"resources" => resources} ->
         Enum.any?(resources, fn %{"agent" => agent} -> agent == "ocf::suse:SAPHanaTopology" end)
@@ -122,7 +169,7 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
     do_detect_cluster_type(has_sap_hana_topology, has_sap_hana, has_sap_hana_controller)
   end
 
-  defp parse_cluster_type(_), do: ClusterType.unknown()
+  defp parse_hana_cluster_type(_), do: ClusterType.unknown()
 
   defp do_detect_cluster_type(true, true, _), do: ClusterType.hana_scale_up()
   defp do_detect_cluster_type(true, _, true), do: ClusterType.hana_scale_out()
@@ -132,12 +179,6 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
     do: ClusterType.ascs_ers()
 
   defp do_detect_cluster_type(_), do: ClusterType.unknown()
-
-  defp maybe_put_hana_classic_architecture(%{"cluster_type" => type} = attrs)
-       when type in [ClusterType.hana_scale_up(), ClusterType.hana_scale_out()],
-       do: Map.put(attrs, "hana_architecture_type", HanaArchitectureType.classic())
-
-  defp maybe_put_hana_classic_architecture(attrs), do: attrs
 
   defp enrich_cluster_sid(%{"cluster_type" => ClusterType.unknown()} = attrs) do
     attrs
@@ -177,22 +218,18 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
   end
 
   defp parse_cluster_additional_sids(%{
-         "cluster_type" => ClusterType.hana_scale_up(),
-         "cib" => %{"configuration" => %{"resources" => %{"primitives" => primitives}}}
-       }),
-       do: get_sapinstance_sids(primitives)
-
-  defp parse_cluster_additional_sids(%{
-         "cib" => %{"configuration" => %{"resources" => %{"clones" => nil, "groups" => groups}}}
+         "cib" => %{
+           "configuration" => %{"resources" => %{"groups" => groups, "primitives" => primitives}}
+         }
        }) do
     groups
+    |> ListHelper.to_list()
     |> Enum.flat_map(fn
       %{"primitives" => primitives} -> primitives
     end)
+    |> Enum.concat(ListHelper.to_list(primitives))
     |> get_sapinstance_sids()
   end
-
-  defp parse_cluster_additional_sids(_), do: []
 
   defp get_sapinstance_sids(primitives) do
     primitives
