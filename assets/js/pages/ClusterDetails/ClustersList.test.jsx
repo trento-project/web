@@ -1,5 +1,5 @@
 import React from 'react';
-import { screen, waitFor } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import 'intersection-observer';
 import '@testing-library/jest-dom';
 import { clusterFactory } from '@lib/test-utils/factories';
@@ -150,8 +150,8 @@ describe('ClustersList component', () => {
 
         options.forEach(async (option) => {
           filterTable(filter, option);
-          screen.getByRole('table');
-          const table = await waitFor(() =>
+          const table = screen.getByRole('table');
+          await waitFor(() =>
             expect(table.querySelectorAll('tbody > tr')).toHaveLength(
               expectedRows
             )
@@ -211,6 +211,36 @@ describe('ClustersList component', () => {
       expect(window.location.search).toEqual(
         `?health=${health}&name=${name}&sid=${sid}&type=${type}&tags=${tag}`
       );
+    });
+  });
+
+  describe('cluster type', () => {
+    it('should add not supported tooltip to HANA+ASCS/ERS cluster types', async () => {
+      const state = {
+        ...cleanInitialState,
+        clustersList: {
+          clusters: clusterFactory.buildList(1, {
+            type: 'hana_ascs_ers',
+            sid: 'HA1',
+            additional_sids: ['NWP'],
+          }),
+        },
+      };
+
+      const [StatefulClustersList] = withState(<ClustersList />, state);
+
+      renderWithRouter(StatefulClustersList);
+
+      const typeLabel = screen.getByText('HANA+ASCS/ERS');
+      expect(typeLabel).toBeInTheDocument();
+      // Cannot user userEvent, as other tests in suite are using fireEvent in the
+      // filterTable function, and it messes up everything
+      fireEvent.mouseOver(typeLabel);
+      expect(
+        screen.getByText(
+          'Cluster managing HANA and ASCS/ERS together is not supported by Trento'
+        )
+      ).toBeInTheDocument();
     });
   });
 });

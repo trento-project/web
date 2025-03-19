@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 
 import { post, del } from '@lib/network';
-import { getClusterTypeLabel } from '@lib/model/clusters';
+import { HANA_ASCS_ERS, getClusterTypeLabel } from '@lib/model/clusters';
 
 import { addTagToCluster, removeTagFromCluster } from '@state/clusters';
 import { getAllSAPInstances } from '@state/selectors/sapSystem';
@@ -15,6 +15,7 @@ import PageHeader from '@common/PageHeader';
 import SapSystemLink from '@common/SapSystemLink';
 import Table from '@common/Table';
 import Tags from '@common/Tags';
+import Tooltip from '@common/Tooltip';
 
 import { ExecutionIcon } from '@pages/ClusterDetails';
 import { getCounters } from '@pages/HealthSummary/summarySelection';
@@ -108,9 +109,16 @@ function ClustersList() {
         filter: true,
         filterFromParams: true,
         render: (content, item) => (
-          <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 truncate">
-            {getClusterTypeLabel(item.type)}
-          </span>
+          <Tooltip
+            content="Cluster managing HANA and ASCS/ERS together is not supported by Trento"
+            place="bottom"
+            className="whitespace-pre"
+            isEnabled={item.type === HANA_ASCS_ERS}
+          >
+            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 truncate">
+              {getClusterTypeLabel(item.type)}
+            </span>
+          </Tooltip>
         ),
       },
       {

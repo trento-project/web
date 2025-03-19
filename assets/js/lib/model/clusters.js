@@ -2,6 +2,7 @@
 export const HANA_SCALE_UP = 'hana_scale_up';
 export const HANA_SCALE_OUT = 'hana_scale_out';
 export const ASCS_ERS = 'ascs_ers';
+export const HANA_ASCS_ERS = 'hana_ascs_ers';
 
 // Hana scale up scenarios
 export const COST_OPT_SCENARIO = 'cost_optimized';
@@ -13,6 +14,7 @@ const clusterTypeLabels = {
   [HANA_SCALE_UP]: 'HANA Scale Up',
   [HANA_SCALE_OUT]: 'HANA Scale Out',
   [ASCS_ERS]: 'ASCS/ERS',
+  [HANA_ASCS_ERS]: 'HANA+ASCS/ERS',
 };
 export const isValidClusterType = (clusterType) =>
   clusterTypes.includes(clusterType);
