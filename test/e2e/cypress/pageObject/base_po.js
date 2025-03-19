@@ -9,9 +9,10 @@ const userDropdownMenuButton = 'header button[id*="menu"]';
 const userDropdownProfileButton = 'a:contains("Profile")';
 const accessForbiddenMessage =
   'div:contains("Access to this page is forbidden")';
-const navigation = {
+export const navigation = {
   navigationItems: 'nav a',
   activityLog: 'a:contains("Activity Log")',
+  hosts: 'a:contains("Hosts")',
 };
 const signOutButton = 'button:contains("Sign out")';
 const removeEnv1TagButton = 'span span:contains("env1") span';
@@ -303,6 +304,8 @@ export const apiDeregisterHost = (hostId) => {
   });
 };
 
+export const stopAgentsHeartbeat = () => cy.task('stopAgentsHeartbeat');
+
 export const isHostRegistered = (hostId) => {
   return apiLogin()
     .then(({ accessToken }) => {
@@ -334,4 +337,15 @@ export const getResourceTags = (resourceResponse) => {
     }
   });
   return resourceTags;
+};
+
+export const apiSetTag = (resource, resourceId, tag) => {
+  return apiLogin().then(({ accessToken }) =>
+    cy.request({
+      url: `/api/v1/${resource}/${resourceId}/tags`,
+      method: 'POST',
+      auth: { bearer: accessToken },
+      body: { value: tag },
+    })
+  );
 };

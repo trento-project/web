@@ -190,14 +190,7 @@ export const apiRestoreClusterHosts = () =>
 
 const apiSetTag = (clusterName, tag) => {
   const clusterID = clusterIdByName(clusterName);
-  return basePage.apiLogin().then(({ accessToken }) =>
-    cy.request({
-      url: `/api/v1/clusters/${clusterID}/tags`,
-      method: 'POST',
-      auth: { bearer: accessToken },
-      body: { value: tag },
-    })
-  );
+  return basePage.apiSetTag('clusters', clusterID, tag);
 };
 
 export const apiSetTagsHanaCluster1 = () => {

@@ -1,464 +1,240 @@
-import { createUserRequestFactory } from '@lib/test-utils/factories';
-
-import {
-  availableHosts,
-  agents,
-} from '../fixtures/hosts-overview/available_hosts';
-
-const availableHosts1stPage = availableHosts.slice(0, 10);
-
-const NEXT_PAGE_SELECTOR = '[aria-label="next-page"]';
+import * as hostsOverviewPage from '../pageObject/hosts_overview_po';
 
 context('Hosts Overview', () => {
-  before(() => {
-    cy.preloadTestData();
-    cy.visit('/hosts');
-    cy.url().should('include', '/hosts');
+  before(() => hostsOverviewPage.preloadTestData());
+
+  beforeEach(() => hostsOverviewPage.visit());
+
+  it('should have expected url', () => {
+    hostsOverviewPage.validateUrl();
   });
 
   describe('Registered Hosts are shown in the list', () => {
     it('should highlight the hosts sidebar entry', () => {
-      cy.get('.tn-menu-item[href="/hosts"]')
-        .invoke('attr', 'aria-current')
-        .should('eq', 'page');
+      hostsOverviewPage.hostsIsHighglightedInSidebar();
     });
 
     it('should show 10 of the 27 registered hosts', () => {
-      cy.get('.tn-hostname').its('length').should('eq', 10);
+      hostsOverviewPage.tenHostsAreListed();
     });
 
     it('should have 3 pages', () => {
-      cy.get(`[data-testid="pagination"]`).as('pagination');
-      cy.get(`@pagination`).contains('Showing 1–10 of 27').should('exist');
-
-      cy.get(NEXT_PAGE_SELECTOR).click();
-      cy.get(`@pagination`).contains('Showing 11–20 of 27').should('exist');
-
-      cy.get(NEXT_PAGE_SELECTOR).click();
-      cy.get(`@pagination`).contains('Showing 21–27 of 27').should('exist');
-
-      cy.get(NEXT_PAGE_SELECTOR).should('be.disabled');
+      hostsOverviewPage.expectedPaginationIsDisplayed('Showing 1–10 of 27');
+      hostsOverviewPage.clickNextPageButton();
+      hostsOverviewPage.expectedPaginationIsDisplayed('Showing 11–20 of 27');
+      hostsOverviewPage.clickNextPageButton();
+      hostsOverviewPage.expectedPaginationIsDisplayed('Showing 21–27 of 27');
+      hostsOverviewPage.nextPageButtonIsDisabled();
     });
 
     it('should show the ip addresses, provider and agent version data for the hosts in the 1st page', () => {
-      cy.reload();
-      cy.get('.container').eq(0).as('hostsTable');
-      availableHosts1stPage.forEach((host, index) => {
-        cy.get('@hostsTable')
-          .find('tr')
-          .eq(index + 1)
-          .find('td')
-          .as('hostRow');
-
-        cy.get('@hostsTable')
-          .contains('th', 'IP')
-          .invoke('index')
-          .then((i) => {
-            host.ipAddresses.forEach((ipAddress) => {
-              cy.get('@hostRow').eq(i).should('contain', ipAddress);
-            });
-          });
-
-        cy.get('@hostsTable')
-          .contains('th', 'Provider')
-          .invoke('index')
-          .then((i) => {
-            cy.get('@hostRow').eq(i).should('contain', host.provider);
-          });
-
-        cy.get('@hostsTable')
-          .contains('th', 'Agent version')
-          .invoke('index')
-          .then((i) => {
-            cy.get('@hostRow')
-              .eq(i)
-              .should('contain', host.agentVersion.slice(0, 15));
-          });
-      });
+      hostsOverviewPage.hostsTableContentsAreTheExpected();
     });
 
     it('should link to the correct host details page clicking in the host name', () => {
-      cy.get('.container').eq(0).as('hostsTable');
-      availableHosts1stPage.forEach((host, index) => {
-        cy.get('@hostsTable')
-          .find('tr')
-          .eq(index + 1)
-          .find('td')
-          .as('hostRow');
-
-        cy.get('@hostsTable')
-          .contains('th', 'Hostname')
-          .invoke('index')
-          .then((i) => {
-            cy.get('@hostRow').eq(i).should('contain', host.name);
-            cy.get('@hostRow').eq(i).click();
-            cy.location('pathname').should('eq', `/hosts/${host.id}`);
-            cy.go('back');
-          });
-      });
+      hostsOverviewPage.everyLinkGoesToExpectedHostDetailsPage();
     });
 
     it('should link to the correct cluster details page clicking in the cluster name', () => {
-      cy.get('.container').eq(0).as('hostsTable');
-      availableHosts1stPage.forEach((host, index) => {
-        cy.get('@hostsTable')
-          .find('tr')
-          .eq(index + 1)
-          .find('td')
-          .as('hostRow');
-
-        cy.get('@hostsTable')
-          .contains('th', 'Cluster')
-          .invoke('index')
-          .then((i) => {
-            if (host.clusterId) {
-              cy.get('@hostRow').eq(i).should('contain', host.clusterName);
-              cy.get('@hostRow').eq(i).click();
-              cy.location('pathname').should(
-                'eq',
-                `/clusters/${host.clusterId}`
-              );
-              cy.go('back');
-            } else {
-              cy.get('@hostRow').eq(i).find('a').should('not.exist');
-            }
-          });
-      });
+      hostsOverviewPage.everyClusterLinkGoesToExpectedClusterDetailsPage();
     });
 
     it('should link to the correct sap system details page clicking in the sap system name', () => {
-      cy.get('.container').eq(0).as('hostsTable');
-      availableHosts1stPage.forEach((host, index) => {
-        cy.get('@hostsTable')
-          .find('tr')
-          .eq(index + 1)
-          .find('td')
-          .as('hostRow');
-
-        cy.get('@hostsTable')
-          .contains('th', 'SID')
-          .invoke('index')
-          .then((i) => {
-            if (host.clusterId) {
-              cy.get('@hostRow').eq(i).should('contain', host.sapSystemSid);
-              cy.get('@hostRow').eq(i).click();
-              cy.location('pathname').should(
-                'eq',
-                `/databases/${host.sapSystemId}`
-              );
-              cy.go('back');
-            } else {
-              cy.get('@hostRow').eq(i).find('a').should('not.exist');
-            }
-          });
-      });
+      hostsOverviewPage.everySapSystemLinkGoesToExpectedSapSystemDetailsPage();
     });
   });
 
   describe('Health Detection', () => {
     describe('Health Container shows the health overview of the deployed landscape', () => {
       before(() => {
-        cy.visit('/hosts');
-        cy.url().should('include', '/hosts');
-        cy.task('startAgentHeartbeat', agents());
+        hostsOverviewPage.startAgentsHeartbeat();
       });
 
       it('should show health status of the entire cluster of 27 hosts with partial pagination', () => {
-        cy.get('.tn-health-container .tn-health-passing', {
-          timeout: 15000,
-        }).should('contain', 11);
-        cy.get('.tn-health-container .tn-health-warning').should('contain', 12);
-        cy.get('.tn-health-container .tn-health-critical').should('contain', 4);
+        hostsOverviewPage.expectedPassingHostsAreDisplayed(11);
+        hostsOverviewPage.expectedWarningHostsAreDisplayed(12);
+        hostsOverviewPage.expectedCriticalHostsAreDisplayed(4);
       });
 
       it('should show the correct health on the hosts when the agents are sending the heartbeat', () => {
-        cy.get('svg.fill-jungle-green-500').its('length').should('eq', 8);
-        cy.get('svg.fill-yellow-500').its('length').should('eq', 2);
+        hostsOverviewPage.expectedAmountOfPassingIsDisplayed(8);
+        hostsOverviewPage.expectedAmountOfWarningsIsDisplayed(2);
       });
+
+      after(() => hostsOverviewPage.stopAgentsHeartbeat());
     });
 
     describe('Health is changed based on saptune status', () => {
-      const hostWithoutSap = 'vmdrbddev01';
-      const hostWithSap = 'vmhdbprd01';
+      before(() => hostsOverviewPage.startAgentsHeartbeat());
 
       it('should not change the health if saptune is not installed and a SAP workload is not running', () => {
-        cy.loadScenario(`host-${hostWithoutSap}-saptune-uninstalled`);
-        cy.contains('tr', hostWithoutSap).within(() => {
-          cy.get('td:nth-child(1) svg').should(
-            'have.class',
-            'fill-jungle-green-500'
-          );
-        });
+        hostsOverviewPage.loadHostWithoutSaptune();
+        hostsOverviewPage.hostWithSapHasExpectedStatus();
       });
 
       it('should not change the health if saptune is installed and a SAP workload is not running', () => {
-        cy.loadScenario(`host-${hostWithoutSap}-saptune-not-tuned`);
-        cy.contains('tr', hostWithoutSap).within(() => {
-          cy.get('td:nth-child(1) svg').should(
-            'have.class',
-            'fill-jungle-green-500'
-          );
-        });
+        hostsOverviewPage.loadHostWithSaptuneNotTuned();
+        hostsOverviewPage.hostWithSapHasExpectedStatus();
       });
 
       it('should change the health to warning if saptune is not installed', () => {
-        cy.loadScenario(`host-${hostWithSap}-saptune-uninstalled`);
-        cy.contains('tr', hostWithSap).within(() => {
-          cy.get('td:nth-child(1) svg').should('have.class', 'fill-yellow-500');
-        });
+        hostsOverviewPage.loadHostWithSapWithoutSaptune();
+        hostsOverviewPage.hostWithoutSapHasExpectedStatus();
       });
 
       it('should change the health to warning if saptune version is unsupported', () => {
-        cy.loadScenario(`host-${hostWithSap}-saptune-unsupported`);
-        cy.contains('tr', hostWithSap).within(() => {
-          cy.get('td:nth-child(1) svg').should('have.class', 'fill-yellow-500');
-        });
+        hostsOverviewPage.loadHostWithSapWithSaptuneUnsupported();
+        hostsOverviewPage.hostWithoutSapHasExpectedStatus();
       });
 
-      [
-        {
-          state: 'not compliant',
-          scenario: 'not-compliant',
-          health: 'critical',
-          icon: 'fill-red-500',
-        },
-        {
-          state: 'not tuned',
-          scenario: 'not-tuned',
-          health: 'warning',
-          icon: 'fill-yellow-500',
-        },
-        {
-          state: 'compliant',
-          scenario: 'compliant',
-          health: 'passing',
-          icon: 'fill-jungle-green-500',
-        },
-      ].forEach(({ state, scenario, health, icon }) => {
-        it(`should change the health to ${health} if saptune tuning state is ${state}`, () => {
-          cy.loadScenario(`host-${hostWithSap}-saptune-${scenario}`);
-          cy.contains('tr', hostWithSap).within(() => {
-            cy.get('td:nth-child(1) svg').should('have.class', icon);
-          });
-        });
+      it('should change health to not compliant when saptune is not compliant', () => {
+        hostsOverviewPage.loadHostWithSaptuneScenario('not-compliant');
+        hostsOverviewPage.hostWithSaptuneNotCompliantHasExpectedStatus();
       });
+
+      it('should change health to not tuned when saptune is not tuned', () => {
+        hostsOverviewPage.loadHostWithSaptuneScenario('not-tuned');
+        hostsOverviewPage.hostWithSaptuneNotTunedHasExpectedStatus();
+      });
+
+      it('should change health to compliant when saptune is compliant', () => {
+        hostsOverviewPage.loadHostWithSaptuneScenario('compliant');
+        hostsOverviewPage.hostWithSaptuneCompliantHasExpectedStatus();
+      });
+
+      after(() => hostsOverviewPage.stopAgentsHeartbeat());
     });
 
     describe('Health is changed to critical when the heartbeat is not sent', () => {
-      before(() => {
-        cy.visit('/hosts');
-        cy.task('stopAgentsHeartbeat');
-      });
+      beforeEach(() => hostsOverviewPage.startAgentsHeartbeat());
 
       it('should show health status of the entire cluster of 27 hosts with critical health', () => {
-        cy.get('.tn-health-container .tn-health-critical', {
-          timeout: 15000,
-        }).should('contain', 27);
+        hostsOverviewPage.expectedCriticalHostsAreDisplayed(4);
+        hostsOverviewPage.stopAgentsHeartbeat();
+        hostsOverviewPage.expectedCriticalHostsAreDisplayed(27);
       });
 
       it('should show a critical health on the hosts when the agents are not sending the heartbeat', () => {
-        cy.get('svg.fill-red-500').its('length').should('eq', 10);
+        hostsOverviewPage.expectedAmountOfCriticalsIsDisplayed(0);
+        hostsOverviewPage.stopAgentsHeartbeat();
+        hostsOverviewPage.expectedAmountOfCriticalsIsDisplayed(10);
       });
+
+      after(() => hostsOverviewPage.stopAgentsHeartbeat());
     });
   });
 
   describe('Deregistration', () => {
-    const hostToDeregister = {
-      name: 'vmhdbdev01',
-      id: '13e8c25c-3180-5a9a-95c8-51ec38e50cfc',
-      tag: 'tag1',
-    };
-
     describe('Clean-up buttons should be visible only when needed', () => {
-      before(() => {
-        cy.visit('/hosts');
-        cy.url().should('include', '/hosts');
-        cy.task('startAgentHeartbeat', [hostToDeregister.id]);
-      });
-
-      it(`should not display a clean-up button for host ${hostToDeregister.name}`, () => {
-        cy.contains(hostToDeregister.name).within(() => {
-          cy.get('td:nth-child(9)').should('not.exist');
-        });
+      it('should not display a clean-up button when heartbeat is sent', () => {
+        hostsOverviewPage.cleanupButtonIsDisplayedForHostSendingHeartbeat();
+        hostsOverviewPage.startAgentHeartbeat();
+        hostsOverviewPage.cleanupButtonIsNotDisplayedForHostSendingHeartbeat();
       });
 
       it('should show all other cleanup buttons', () => {
-        cy.get('tbody tr')
-          .find('button')
-          .should('have.length', 9)
-          .contains('Clean up');
+        hostsOverviewPage.expectedAmountOfCleanupButtonsIsDisplayed(10);
+        hostsOverviewPage.startAgentHeartbeat();
+        hostsOverviewPage.expectedAmountOfCleanupButtonsIsDisplayed(9);
       });
+
+      afterEach(() => hostsOverviewPage.stopAgentsHeartbeat());
     });
 
     describe('Clean-up button should deregister a host', () => {
-      before(() => {
-        cy.visit('/hosts');
-        cy.url().should('include', '/hosts');
-        cy.task('stopAgentsHeartbeat');
-        cy.addTagByColumnValue(hostToDeregister.name, hostToDeregister.tag);
+      beforeEach(() => {
+        hostsOverviewPage.apiRestoreCleanedUpHost();
+        hostsOverviewPage.apiDeleteAllHostsTags();
+        hostsOverviewPage.addTagToHost();
+        hostsOverviewPage.startAgentHeartbeat();
+        hostsOverviewPage.stopAgentsHeartbeat();
+        hostsOverviewPage.heartbeatFailingToasterIsDisplayed();
       });
 
-      it('should allow to deregister a host after clean up confirmation', () => {
-        cy.contains(
-          `The host ${hostToDeregister.name} heartbeat is failing`
-        ).should('exist');
-
-        cy.contains('tr', hostToDeregister.name).within(() => {
-          cy.get('td:nth-child(9)')
-            .contains('Clean up', { timeout: 15000 })
-            .click();
-        });
-
-        cy.get('#headlessui-portal-root').as('modal');
-
-        cy.get('@modal')
-          .find('.w-full')
-          .should(
-            'contain.text',
-            `Clean up data discovered by agent on host ${hostToDeregister.name}`
-          );
-
-        cy.get('@modal').contains('button', 'Clean up').click();
-
-        cy.get(`#host-${hostToDeregister.id}`).should('not.exist');
-      });
-
-      describe('Restoration', () => {
-        it(`should show host ${hostToDeregister.name} registered again after restoring the host with the tag`, () => {
-          cy.loadScenario(`host-${hostToDeregister.name}-restore`);
-          cy.contains(hostToDeregister.name).should('exist');
-          cy.contains('tr', hostToDeregister.name).within(() => {
-            cy.contains(hostToDeregister.tag).should('exist');
-          });
-        });
+      it('should allow to deregister a host after clean up confirmation & restore it', () => {
+        hostsOverviewPage.clickCleanupOnHostToDeregister();
+        hostsOverviewPage.deregisterModalTitleIsDisplayed();
+        hostsOverviewPage.clickCleanupConfirmationButton();
+        hostsOverviewPage.deregisteredHostIsNotVisible();
+        hostsOverviewPage.apiRestoreCleanedUpHost();
+        hostsOverviewPage.restoredHostIsDisplayed();
+        hostsOverviewPage.tagOfRestoredHostIsDisplayed();
       });
 
       describe('Deregistration of hosts should update remaining hosts data', () => {
-        const sapSystemHostToDeregister = {
-          id: '7269ee51-5007-5849-aaa7-7c4a98b0c9ce',
-          sid: 'NWD',
-        };
-
-        before(() => {
-          cy.visit('/hosts');
-          cy.url().should('include', '/hosts');
-          cy.loadScenario(`sapsystem-${sapSystemHostToDeregister.sid}-restore`);
-        });
+        beforeEach(() => hostsOverviewPage.restoreSapSystem());
 
         it('should remove the SAP system sid from hosts belonging the deregistered SAP system', () => {
-          cy.get(NEXT_PAGE_SELECTOR).click();
-          cy.contains('a', sapSystemHostToDeregister.sid).should('exist');
-          cy.deregisterHost(sapSystemHostToDeregister.id);
-          cy.contains('a', sapSystemHostToDeregister.sid).should('not.exist');
+          hostsOverviewPage.clickNextPageButton();
+          hostsOverviewPage.sapSystemHasExpectedAmountOfHosts(4);
+          hostsOverviewPage.apiDeregisterSapSystemHost();
+          hostsOverviewPage.deregisteredSapSystemIsNotDisplayed();
         });
       });
 
       describe('Movement of application instances on hosts', () => {
-        const sapSystemHostsToDeregister = {
-          sid: 'NWD',
-          movedHostId: 'fb2c6b8a-9915-5969-a6b7-8b5a42de1971',
-          initialHostId: '7269ee51-5007-5849-aaa7-7c4a98b0c9ce',
-          initialHostname: 'vmnwdev01',
-        };
-
-        before(() => {
-          cy.visit('/hosts');
-          cy.url().should('include', '/hosts');
-          cy.loadScenario(
-            `sapsystem-${sapSystemHostsToDeregister.sid}-restore`
-          );
-          cy.loadScenario('sap-systems-overview-moved');
+        beforeEach(() => {
+          hostsOverviewPage.loadSapSystemsOverviewMovedScenario();
+          hostsOverviewPage.clickNextPageButton();
+          hostsOverviewPage.sapSystemHasExpectedAmountOfHosts(3);
         });
 
-        after(() => {
-          cy.loadScenario(
-            `sapsystem-${sapSystemHostsToDeregister.sid}-restore`
-          );
-        });
+        after(() => hostsOverviewPage.restoreSapSystem());
 
         it('should associate instances to the correct host during deregistration', () => {
-          cy.get(NEXT_PAGE_SELECTOR).click();
-          cy.contains('a', sapSystemHostsToDeregister.sid).should('exist');
-          cy.deregisterHost(sapSystemHostsToDeregister.movedHostId);
-          cy.contains('a', sapSystemHostsToDeregister.sid).should('not.exist');
+          hostsOverviewPage.apiDeregisterMovedHost();
+          hostsOverviewPage.deregisteredSapSystemIsNotDisplayed();
         });
 
         it('should complete host deregistration when all instances are moved out', () => {
-          cy.contains('a', sapSystemHostsToDeregister.hostname).should('exist');
-          cy.deregisterHost(sapSystemHostsToDeregister.initialHostId);
-          cy.contains('a', sapSystemHostsToDeregister.initialHostname).should(
-            'not.exist'
-          );
+          hostsOverviewPage.apiDeregisterMovedHost();
+          hostsOverviewPage.initialHostNameIsDisplayed();
+          hostsOverviewPage.apiDeregisterInitialHostId();
+          hostsOverviewPage.initialHostNameIsNotDisplayed();
         });
       });
     });
   });
 
   describe('Forbidden actions', () => {
-    const password = 'password';
-
     beforeEach(() => {
-      cy.deleteAllUsers();
-      cy.logout();
-      const user = createUserRequestFactory.build({
-        password,
-        password_confirmation: password,
-      });
-      cy.wrap(user).as('user');
+      hostsOverviewPage.apiDeleteAllHostsTags();
+      hostsOverviewPage.apiSetTag();
+      hostsOverviewPage.apiDeleteAllUsers();
+      hostsOverviewPage.logout();
     });
 
     describe('Tag creation', () => {
       it('it should prevent a tag update when the user abilities are not compliant', () => {
-        cy.get('@user').then((user) => {
-          cy.createUserWithAbilities(user, []);
-          cy.login(user.username, password);
-        });
-
-        cy.visit('/hosts');
-
-        cy.contains('span', 'Add Tag').should('have.class', 'opacity-50');
-        cy.get('[data-test-id="tag-tag1"]').should('have.class', 'opacity-50');
+        hostsOverviewPage.apiCreateUserWithoutAbilities();
+        hostsOverviewPage.loginWithoutAbilities();
+        hostsOverviewPage.visit();
+        hostsOverviewPage.addTagButtonIsDisabled();
+        hostsOverviewPage.removeTag1ButtonIsDisabled();
       });
 
       it('it should allow a tag update when the user abilities are compliant', () => {
-        cy.get('@user').then((user) => {
-          cy.createUserWithAbilities(user, [
-            { name: 'all', resource: 'host_tags' },
-          ]);
-          cy.login(user.username, password);
-        });
-
-        cy.visit('/hosts');
-
-        cy.contains('span', 'Add Tag').should('not.have.class', 'opacity-50');
-        cy.get('[data-test-id="tag-tag1"]').should(
-          'not.have.class',
-          'opacity-50'
-        );
+        hostsOverviewPage.apiCreateUserWithHostTagsAbility();
+        hostsOverviewPage.loginWithAbilities();
+        hostsOverviewPage.visit();
+        hostsOverviewPage.addTagButtonIsEnabled();
+        hostsOverviewPage.removeTag1ButtonIsEnabled();
       });
     });
 
     describe('Clean up', () => {
       it('should forbid host clean up', () => {
-        cy.get('@user').then((user) => {
-          cy.createUserWithAbilities(user, []);
-          cy.login(user.username, password);
-        });
-        cy.visit(`/hosts`);
-
-        cy.contains('button', 'Clean up').should('be.disabled');
+        hostsOverviewPage.apiCreateUserWithoutAbilities();
+        hostsOverviewPage.loginWithoutAbilities();
+        hostsOverviewPage.visit();
+        hostsOverviewPage.cleanupButtonsAreDisabled();
       });
 
       it('should allow host clean up', () => {
-        cy.get('@user').then((user) => {
-          cy.createUserWithAbilities(user, [
-            { name: 'cleanup', resource: 'host' },
-          ]);
-          cy.login(user.username, password);
-        });
-        cy.visit(`/hosts`);
-
-        cy.contains('button', 'Clean up').should('be.enabled');
+        hostsOverviewPage.apiCreateUserWithHostCleanupAbility();
+        hostsOverviewPage.loginWithAbilities();
+        hostsOverviewPage.visit();
+        hostsOverviewPage.cleanupButtonsAreEnabled();
       });
     });
   });

@@ -440,13 +440,12 @@ export const loadSaptuneScenario = (state) => {
 
 export const loadAwsHostDetails = () =>
   basePage.loadScenario('host-details-aws');
+
 export const startAgentHeartbeat = () =>
   cy.task('startAgentHeartbeat', [selectedHost.agentId]);
 
 export const restoreHost = () =>
   basePage.loadScenario(`host-details-${selectedHost.hostName}`);
-
-export const stopAgentsHeartbeat = () => cy.task('stopAgentsHeartbeat');
 
 export const apiCreateUserWithHostChecksExecutionAbilities = () =>
   basePage.createUserWithAbilities([

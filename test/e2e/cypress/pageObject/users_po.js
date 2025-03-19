@@ -366,9 +366,6 @@ export const enableTotpOptionIsDisabled = () => {
 
 export const newIssuedTotpSecretIsDifferent = (originalTotpSecret) => {
   getTotpSecret().then((newTotpSecret) => {
-    expect(
-      newTotpSecret === originalTotpSecret,
-      'New issued TOTP secret is different'
-    ).to.be.false;
+    cy.wrap(newTotpSecret).should('not.equal', originalTotpSecret);
   });
 };
