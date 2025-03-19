@@ -228,11 +228,6 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
       %{"primitives" => primitives} -> primitives
     end)
     |> Enum.concat(ListHelper.to_list(primitives))
-    |> get_sapinstance_sids()
-  end
-
-  defp get_sapinstance_sids(primitives) do
-    primitives
     |> Enum.flat_map(fn
       %{"type" => "SAPInstance", "instance_attributes" => attributes} ->
         attributes
