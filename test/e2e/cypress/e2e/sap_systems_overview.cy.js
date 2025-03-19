@@ -1,3 +1,5 @@
+import * as sapSystemsOverviewPage from '../pageObject/sap_systems_overview_po';
+
 import { createUserRequestFactory } from '@lib/test-utils/factories';
 
 import {
@@ -10,60 +12,34 @@ import {
 } from '../fixtures/sap-systems-overview/available_sap_systems';
 
 context('SAP Systems Overview', () => {
-  before(() => {
-    cy.preloadTestData();
-    cy.visit('/sap_systems');
-    cy.url().should('include', '/sap_systems');
+  before(() => sapSystemsOverviewPage.preloadTestData());
+
+  beforeEach(() => sapSystemsOverviewPage.visit());
+
+  it('should have expected url', () => {
+    sapSystemsOverviewPage.validateUrl();
   });
 
   describe('Registered SAP Systems should be available in the overview', () => {
     describe('Discovered SID are the expected ones', () => {
-      availableSAPSystems.forEach(({ sid: sid }) => {
-        it(`should have a sid named ${sid}`, () => {
-          cy.get('td').contains(sid);
-        });
+      it('should have every expected sid name', () => {
+        sapSystemsOverviewPage.expectedSidsAreDisplayed();
       });
     });
 
     describe('System healths are the expected ones', () => {
-      availableSAPSystems.forEach(({ sid: sid, health: health }, index) => {
-        it(`should have a health ${health} for sid ${sid}`, () => {
-          const healthClasses = healthMap[health];
-          cy.get('.table-fixed')
-            .eq(0)
-            .find('tr')
-            .filter(':visible')
-            .eq(index + 1)
-            .find('td')
-            .as('tableCell');
-          cy.get('@tableCell')
-            .eq(0)
-            .get('svg')
-            .should('have.class', healthClasses);
-        });
+      it('should have expected health per system', () => {
+        sapSystemsOverviewPage.eachSystemHasExpectedHealth();
       });
     });
 
     describe('Links to the details page are the expected ones', () => {
-      before(() => {
-        cy.navigateToItem('SAP Systems');
-        cy.url().should('include', '/sap_systems');
-      });
-
-      availableSAPSystems.forEach(({ sid: sid, id: id }) => {
-        it(`should have a link to the SAP System with id: ${id}`, () => {
-          cy.get('td').contains(sid).click();
-          cy.location('pathname').should('eq', `/sap_systems/${id}`);
-          cy.go('back');
-        });
+      it('should have a working link to each SAP System', () => {
+        sapSystemsOverviewPage.eachSystemHasItsExpectedWorkingLink();
       });
     });
 
     describe('Attached databases are the expected ones', () => {
-      before(() => {
-        cy.navigateToItem('SAP Systems');
-        cy.url().should('include', '/sap_systems');
-      });
       availableSAPSystems.forEach(
         ({ sid: sid, attachedDatabase: attachedDatabase, type: type }) => {
           it(`should show the expected attached database details`, () => {
