@@ -1,4 +1,6 @@
 defmodule TrentoWeb.V2.ClusterJSON do
+  alias Trento.Clusters.ValueObjects.SapInstance
+
   def clusters(%{clusters: clusters}), do: Enum.map(clusters, &cluster(%{cluster: &1}))
 
   def cluster(%{cluster: cluster}) do
@@ -8,6 +10,7 @@ defmodule TrentoWeb.V2.ClusterJSON do
     |> Map.delete(:hosts)
     |> Map.delete(:__meta__)
     |> adapt_details()
+    |> adapt_sids()
   end
 
   def cluster_registered(%{cluster: cluster}), do: Map.delete(cluster(%{cluster: cluster}), :tags)
@@ -74,5 +77,12 @@ defmodule TrentoWeb.V2.ClusterJSON do
 
   defp adapt_resources(resources) do
     Enum.map(resources, &Map.drop(&1, [:parent]))
+  end
+
+  defp adapt_sids(%{sap_instances: sap_instances} = cluster) do
+    cluster
+    |> Map.put(:sid, SapInstance.get_hana_instance_sid(sap_instances))
+    |> Map.put(:additional_sids, SapInstance.get_sap_instance_sids(sap_instances))
+    |> Map.delete(:sap_instances)
   end
 end

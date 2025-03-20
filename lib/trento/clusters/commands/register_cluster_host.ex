@@ -29,8 +29,6 @@ defmodule Trento.Clusters.Commands.RegisterClusterHost do
     field :host_id, Ecto.UUID
     field :name, :string
     field :type, Ecto.Enum, values: ClusterType.values()
-    field :sid, :string
-    field :additional_sids, {:array, :string}
     field :provider, Ecto.Enum, values: Provider.values()
     field :designated_controller, :boolean
     field :resources_number, :integer

@@ -115,8 +115,6 @@ defmodule Trento.Clusters.Cluster do
     field :cluster_id, Ecto.UUID
     field :name, :string
     field :type, Ecto.Enum, values: ClusterType.values()
-    field :sid, :string
-    field :additional_sids, {:array, :string}, default: []
     field :resources_number, :integer
     field :hosts_number, :integer
     field :provider, Ecto.Enum, values: Provider.values()
@@ -152,9 +150,7 @@ defmodule Trento.Clusters.Cluster do
           host_id: host_id,
           name: name,
           type: type,
-          sid: sid,
           sap_instances: sap_instances,
-          additional_sids: additional_sids,
           provider: provider,
           resources_number: resources_number,
           hosts_number: hosts_number,
@@ -168,9 +164,7 @@ defmodule Trento.Clusters.Cluster do
         cluster_id: cluster_id,
         name: name,
         type: type,
-        sid: sid,
         sap_instances: sap_instances,
-        additional_sids: additional_sids,
         provider: provider,
         resources_number: resources_number,
         hosts_number: hosts_number,
@@ -197,8 +191,7 @@ defmodule Trento.Clusters.Cluster do
         cluster_id: cluster_id,
         name: name,
         type: :unknown,
-        sid: nil,
-        additional_sids: [],
+        sap_instances: [],
         provider: :unknown,
         resources_number: nil,
         hosts_number: nil,
@@ -348,9 +341,7 @@ defmodule Trento.Clusters.Cluster do
           cluster_id: cluster_id,
           name: name,
           type: type,
-          sid: sid,
           sap_instances: sap_instances,
-          additional_sids: additional_sids,
           provider: provider,
           resources_number: resources_number,
           hosts_number: hosts_number,
@@ -363,9 +354,7 @@ defmodule Trento.Clusters.Cluster do
       | cluster_id: cluster_id,
         name: name,
         type: type,
-        sid: sid,
         sap_instances: sap_instances,
-        additional_sids: additional_sids,
         provider: provider,
         resources_number: resources_number,
         hosts_number: hosts_number,
@@ -398,9 +387,7 @@ defmodule Trento.Clusters.Cluster do
         %ClusterDetailsUpdated{
           name: name,
           type: type,
-          sid: sid,
           sap_instances: sap_instances,
-          additional_sids: additional_sids,
           provider: provider,
           resources_number: resources_number,
           hosts_number: hosts_number,
@@ -411,9 +398,7 @@ defmodule Trento.Clusters.Cluster do
       cluster
       | name: name,
         type: type,
-        sid: sid,
         sap_instances: sap_instances,
-        additional_sids: additional_sids,
         provider: provider,
         resources_number: resources_number,
         hosts_number: hosts_number,
@@ -512,9 +497,7 @@ defmodule Trento.Clusters.Cluster do
          %Cluster{
            name: name,
            type: type,
-           sid: sid,
            sap_instances: sap_instances,
-           additional_sids: additional_sids,
            provider: provider,
            resources_number: resources_number,
            hosts_number: hosts_number,
@@ -523,9 +506,7 @@ defmodule Trento.Clusters.Cluster do
          %RegisterClusterHost{
            name: name,
            type: type,
-           sid: sid,
            sap_instances: sap_instances,
-           additional_sids: additional_sids,
            provider: provider,
            resources_number: resources_number,
            hosts_number: hosts_number,
@@ -541,9 +522,7 @@ defmodule Trento.Clusters.Cluster do
            cluster_id: cluster_id,
            name: name,
            type: type,
-           sid: sid,
            sap_instances: sap_instances,
-           additional_sids: additional_sids,
            provider: provider,
            resources_number: resources_number,
            hosts_number: hosts_number,
@@ -554,9 +533,7 @@ defmodule Trento.Clusters.Cluster do
       cluster_id: cluster_id,
       name: name,
       type: type,
-      sid: sid,
       sap_instances: sap_instances,
-      additional_sids: additional_sids,
       provider: provider,
       resources_number: resources_number,
       hosts_number: hosts_number,

@@ -28,8 +28,6 @@ defmodule Trento.Clusters.Projections.ClusterReadModel do
   @primary_key {:id, :binary_id, autogenerate: false}
   schema "clusters" do
     field :name, :string, default: ""
-    field :sid, :string
-    field :additional_sids, {:array, :string}, default: []
     field :provider, Ecto.Enum, values: Provider.values()
     field :type, Ecto.Enum, values: ClusterType.values()
     field :selected_checks, {:array, :string}, default: []

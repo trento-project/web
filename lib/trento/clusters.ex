@@ -205,10 +205,12 @@ defmodule Trento.Clusters do
            id: cluster_id,
            provider: provider,
            type: ClusterType.ascs_ers(),
-           additional_sids: cluster_sids,
+           sap_instances: sap_instances,
            selected_checks: selected_checks
          } = cluster
        ) do
+    sap_instance_sids = SapInstance.get_sap_instance_sids(sap_instances)
+
     hosts_data =
       Repo.all(
         from h in HostReadModel,
@@ -216,7 +218,7 @@ defmodule Trento.Clusters do
           on: h.id == a.host_id,
           where:
             h.cluster_id == ^cluster_id and is_nil(h.deregistered_at) and
-              a.sid in ^cluster_sids,
+              a.sid in ^sap_instance_sids,
           select: %{host_id: h.id, sap_system_id: a.sap_system_id}
       )
 

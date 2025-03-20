@@ -4,8 +4,7 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
   """
 
   @required_fields [:dc, :provider, :id, :cluster_type]
-  @required_fields_hana [:sid, :hana_architecture_type]
-  @required_fields_ascs_ers [:additional_sids]
+  @required_fields_hana [:hana_architecture_type]
 
   use Trento.Support.Type
 
@@ -19,8 +18,6 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
     SbdDiscoveryPayload
   }
 
-  alias Trento.Support.ListHelper
-
   deftype do
     field :dc, :boolean
 
@@ -32,8 +29,6 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
     field :name, :string
     field :cluster_type, Ecto.Enum, values: ClusterType.values()
     field :hana_architecture_type, Ecto.Enum, values: HanaArchitectureType.values()
-    field :sid, :string
-    field :additional_sids, {:array, :string}
 
     embeds_one :cib, CibDiscoveryPayload
     embeds_one :sbd, SbdDiscoveryPayload
@@ -47,13 +42,12 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
     ascs_ers_type = parse_ascs_ers_cluster_type(attrs)
 
     enriched_attributes =
-      attrs
-      |> enrich_cluster_and_hana_architecture_types(
+      enrich_cluster_and_hana_architecture_types(
+        attrs,
         hana_type,
         ascs_ers_type,
         glob_topology
       )
-      |> enrich_cluster_sid
 
     cluster
     |> cast(enriched_attributes, fields())
@@ -175,79 +169,11 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
     Map.put(attrs, "cluster_type", ClusterType.unknown())
   end
 
-  defp enrich_cluster_sid(%{"cluster_type" => ClusterType.unknown()} = attrs) do
-    attrs
-    |> Map.put("sid", nil)
-    |> Map.put("additional_sids", [])
-  end
-
-  defp enrich_cluster_sid(attrs) do
-    attrs
-    |> Map.put("sid", parse_cluster_sid(attrs))
-    |> Map.put("additional_sids", parse_cluster_additional_sids(attrs))
-  end
-
-  defp parse_cluster_sid(%{
-         "cib" => %{"configuration" => %{"resources" => %{"clones" => nil}}}
-       }),
-       do: nil
-
-  defp parse_cluster_sid(%{
-         "cib" => %{"configuration" => %{"resources" => %{"clones" => clones}}}
-       }) do
-    clones
-    |> Enum.find_value([], fn
-      %{"primitive" => %{"type" => "SAPHanaTopology", "instance_attributes" => attributes}} ->
-        attributes
-
-      _ ->
-        nil
-    end)
-    |> Enum.find_value(nil, fn
-      %{"name" => "SID", "value" => value} when value != "" ->
-        value
-
-      _ ->
-        nil
-    end)
-  end
-
-  defp parse_cluster_additional_sids(%{
-         "cib" => %{
-           "configuration" => %{"resources" => %{"groups" => groups, "primitives" => primitives}}
-         }
-       }) do
-    groups
-    |> ListHelper.to_list()
-    |> Enum.flat_map(fn
-      %{"primitives" => primitives} -> primitives
-    end)
-    |> Enum.concat(ListHelper.to_list(primitives))
-    |> Enum.flat_map(fn
-      %{"type" => "SAPInstance", "instance_attributes" => attributes} ->
-        attributes
-
-      _ ->
-        []
-    end)
-    |> Enum.flat_map(fn
-      %{"name" => "InstanceName", "value" => value} when value != "" ->
-        value |> String.split("_") |> Enum.at(0) |> List.wrap()
-
-      _ ->
-        []
-    end)
-    |> Enum.uniq()
-  end
-
   defp maybe_validate_required_fields(cluster, %{"cluster_type" => ClusterType.hana_scale_up()}),
     do: validate_required(cluster, @required_fields_hana)
 
   defp maybe_validate_required_fields(cluster, %{"cluster_type" => ClusterType.hana_scale_out()}),
     do: validate_required(cluster, @required_fields_hana)
-
-  defp maybe_validate_required_fields(cluster, %{"cluster_type" => ClusterType.ascs_ers()}),
-    do: validate_required(cluster, @required_fields_ascs_ers)
 
   defp maybe_validate_required_fields(cluster, _),
     do: cluster
