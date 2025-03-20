@@ -10,6 +10,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
 
   require Trento.Clusters.Enums.HanaArchitectureType, as: HanaArchitectureType
   require Trento.Clusters.Enums.HanaScenario, as: HanaScenario
+  require Trento.Clusters.Enums.SapInstanceResourceType, as: SapInstanceResourceType
 
   alias Trento.Discovery.Policies.ClusterPolicy
 
@@ -24,6 +25,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
     HanaClusterDetails,
     HanaClusterNode,
     HanaClusterSite,
+    SapInstance,
     SbdDevice
   }
 
@@ -249,8 +251,15 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 },
                 host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
                 name: "hana_cluster",
-                sid: "PRD",
-                additional_sids: [],
+                sap_instances: [
+                  %SapInstance{
+                    name: "HDB00",
+                    sid: "PRD",
+                    instance_number: "00",
+                    hostname: nil,
+                    resource_type: SapInstanceResourceType.sap_hana_topology()
+                  }
+                ],
                 type: :hana_scale_up,
                 hosts_number: 2,
                 resources_number: 8,
@@ -488,8 +497,15 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 },
                 host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
                 name: "hana_cluster",
-                sid: "PRD",
-                additional_sids: [],
+                sap_instances: [
+                  %SapInstance{
+                    name: "HDB00",
+                    sid: "PRD",
+                    instance_number: "00",
+                    hostname: nil,
+                    resource_type: SapInstanceResourceType.sap_hana_topology()
+                  }
+                ],
                 type: :hana_scale_up,
                 hosts_number: 2,
                 resources_number: 8,
@@ -687,8 +703,22 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 },
                 host_id: "2372b24f-3d7a-5d01-9b1a-a2c4c95c53d4",
                 name: "hana_cluster",
-                sid: "HDQ",
-                additional_sids: ["QAS"],
+                sap_instances: [
+                  %SapInstance{
+                    name: "HDB10",
+                    sid: "HDQ",
+                    instance_number: "10",
+                    hostname: nil,
+                    resource_type: SapInstanceResourceType.sap_hana_topology()
+                  },
+                  %SapInstance{
+                    name: "HDB20",
+                    sid: "QAS",
+                    instance_number: "20",
+                    hostname: "node02",
+                    resource_type: SapInstanceResourceType.sap_instance()
+                  }
+                ],
                 type: :hana_scale_up,
                 hosts_number: 2,
                 resources_number: 8,
@@ -855,8 +885,22 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 },
                 host_id: "4b30a6af-4b52-5bda-bccb-f2248a12c992",
                 name: "netweaver_cluster",
-                sid: nil,
-                additional_sids: ["NWP"],
+                sap_instances: [
+                  %SapInstance{
+                    name: "ASCS00",
+                    sid: "NWP",
+                    instance_number: "00",
+                    hostname: "sapnwpas",
+                    resource_type: SapInstanceResourceType.sap_instance()
+                  },
+                  %SapInstance{
+                    name: "ERS10",
+                    sid: "NWP",
+                    instance_number: "10",
+                    hostname: "sapnwper",
+                    resource_type: SapInstanceResourceType.sap_instance()
+                  }
+                ],
                 type: :ascs_ers,
                 hosts_number: 2,
                 resources_number: 9,
@@ -1023,8 +1067,22 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 },
                 host_id: "4b30a6af-4b52-5bda-bccb-f2248a12c992",
                 name: "netweaver_cluster",
-                sid: nil,
-                additional_sids: ["NWP"],
+                sap_instances: [
+                  %SapInstance{
+                    name: "ASCS00",
+                    sid: "NWP",
+                    instance_number: "00",
+                    hostname: "sapnwpas",
+                    resource_type: SapInstanceResourceType.sap_instance()
+                  },
+                  %SapInstance{
+                    name: "ERS10",
+                    sid: "NWP",
+                    instance_number: "10",
+                    hostname: "sapnwper",
+                    resource_type: SapInstanceResourceType.sap_instance()
+                  }
+                ],
                 type: :ascs_ers,
                 hosts_number: 2,
                 resources_number: 9,
@@ -1098,8 +1156,15 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 details: nil,
                 host_id: "4b30a6af-4b52-5bda-bccb-f2248a12c992",
                 name: "netweaver_cluster",
-                sid: nil,
-                additional_sids: [],
+                sap_instances: [
+                  %SapInstance{
+                    name: "ASCS00",
+                    sid: "NWP",
+                    instance_number: "00",
+                    hostname: "sapnwpas",
+                    resource_type: SapInstanceResourceType.sap_instance()
+                  }
+                ],
                 type: :unknown,
                 hosts_number: 2,
                 resources_number: 5,
@@ -1397,8 +1462,36 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 },
                 host_id: "4b30a6af-4b52-5bda-bccb-f2248a12c992",
                 name: "netweaver_cluster",
-                sid: nil,
-                additional_sids: ["NWP", "NWD"],
+                sap_instances: [
+                  %SapInstance{
+                    name: "ASCS00",
+                    sid: "NWP",
+                    instance_number: "00",
+                    hostname: "sapnwpas",
+                    resource_type: SapInstanceResourceType.sap_instance()
+                  },
+                  %SapInstance{
+                    name: "ERS10",
+                    sid: "NWP",
+                    instance_number: "10",
+                    hostname: "sapnwper",
+                    resource_type: SapInstanceResourceType.sap_instance()
+                  },
+                  %SapInstance{
+                    name: "ASCS01",
+                    sid: "NWD",
+                    instance_number: "01",
+                    hostname: "sapnwpas",
+                    resource_type: SapInstanceResourceType.sap_instance()
+                  },
+                  %SapInstance{
+                    name: "ERS11",
+                    sid: "NWD",
+                    instance_number: "11",
+                    hostname: "sapnwper",
+                    resource_type: SapInstanceResourceType.sap_instance()
+                  }
+                ],
                 type: :ascs_ers,
                 hosts_number: 2,
                 resources_number: 17,
@@ -1764,8 +1857,15 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 name: "hana_cluster",
                 provider: Provider.aws(),
                 resources_number: 7,
-                sid: "PRD",
-                additional_sids: [],
+                sap_instances: [
+                  %SapInstance{
+                    name: "HDB00",
+                    sid: "PRD",
+                    instance_number: "00",
+                    hostname: nil,
+                    resource_type: SapInstanceResourceType.sap_hana_topology()
+                  }
+                ],
                 type: :hana_scale_up
               }
             ]} ==
@@ -1963,8 +2063,15 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 name: "hana_cluster",
                 provider: Provider.gcp(),
                 resources_number: 9,
-                sid: "PRD",
-                additional_sids: [],
+                sap_instances: [
+                  %SapInstance{
+                    name: "HDB00",
+                    sid: "PRD",
+                    instance_number: "00",
+                    hostname: nil,
+                    resource_type: SapInstanceResourceType.sap_hana_topology()
+                  }
+                ],
                 type: :hana_scale_up
               }
             ]} ==
@@ -2198,8 +2305,15 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 },
                 host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
                 name: nil,
-                sid: "PRD",
-                additional_sids: [],
+                sap_instances: [
+                  %SapInstance{
+                    name: "HDB00",
+                    sid: "PRD",
+                    instance_number: "00",
+                    hostname: nil,
+                    resource_type: SapInstanceResourceType.sap_hana_topology()
+                  }
+                ],
                 type: :hana_scale_up,
                 hosts_number: 2,
                 resources_number: 8,
@@ -2356,8 +2470,15 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 },
                 host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
                 name: "hana_cluster",
-                sid: "PRD",
-                additional_sids: [],
+                sap_instances: [
+                  %SapInstance{
+                    name: "HDB00",
+                    sid: "PRD",
+                    instance_number: "00",
+                    hostname: nil,
+                    resource_type: SapInstanceResourceType.sap_hana_topology()
+                  }
+                ],
                 type: :hana_scale_up,
                 hosts_number: 2,
                 resources_number: 8,
@@ -2402,8 +2523,15 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                   host_id: "286808a7-01bf-420d-af50-10846a7d7868",
                   name: "hana_cluster",
                   type: :hana_scale_out,
-                  sid: "PRD",
-                  additional_sids: [],
+                  sap_instances: [
+                    %SapInstance{
+                      name: "HDB00",
+                      sid: "PRD",
+                      instance_number: "00",
+                      hostname: nil,
+                      resource_type: SapInstanceResourceType.sap_hana_topology()
+                    }
+                  ],
                   provider: :kvm,
                   designated_controller: true,
                   resources_number: 15,
@@ -2739,8 +2867,15 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                   host_id: "9abb22d6-716a-4321-bb1e-175f179e7bb6",
                   name: "hana_cluster",
                   type: :hana_scale_out,
-                  sid: "PRD",
-                  additional_sids: [],
+                  sap_instances: [
+                    %SapInstance{
+                      name: "HDB00",
+                      sid: "PRD",
+                      instance_number: "00",
+                      hostname: nil,
+                      resource_type: SapInstanceResourceType.sap_hana_topology()
+                    }
+                  ],
                   provider: :azure,
                   designated_controller: false,
                   resources_number: 13,
@@ -3030,8 +3165,15 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                   host_id: "286808a7-01bf-420d-af50-10846a7d7868",
                   name: "hana_cluster",
                   type: :hana_scale_out,
-                  sid: "PRD",
-                  additional_sids: [],
+                  sap_instances: [
+                    %SapInstance{
+                      name: "HDB00",
+                      sid: "PRD",
+                      instance_number: "00",
+                      hostname: nil,
+                      resource_type: SapInstanceResourceType.sap_hana_topology()
+                    }
+                  ],
                   provider: :kvm,
                   designated_controller: true,
                   resources_number: 15,
@@ -3363,7 +3505,6 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
       assert {:ok,
               [
                 %RegisterClusterHost{
-                  additional_sids: [],
                   cib_last_written: "Mon Apr 22 15:55:13 2024",
                   cluster_id: "9ee907e0-0edc-50f8-9b4d-e26d0bc3810a",
                   designated_controller: true,
@@ -3692,7 +3833,15 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                   name: "hacluster",
                   provider: :azure,
                   resources_number: 17,
-                  sid: "PRD",
+                  sap_instances: [
+                    %SapInstance{
+                      name: "HDB04",
+                      sid: "PRD",
+                      instance_number: "04",
+                      hostname: nil,
+                      resource_type: SapInstanceResourceType.sap_hana_topology()
+                    }
+                  ],
                   type: :hana_scale_out
                 }
               ]} ==
@@ -3708,7 +3857,6 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                :ok,
                [
                  %RegisterClusterHost{
-                   additional_sids: [],
                    cib_last_written: "Mon Jun 10 13:03:57 2024",
                    cluster_id: "34a94290-2236-5e4d-8def-05beb32d14d4",
                    designated_controller: true,
@@ -3846,7 +3994,15 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                    name: "hana_cluster",
                    provider: :azure,
                    resources_number: 6,
-                   sid: "HN9",
+                   sap_instances: [
+                     %SapInstance{
+                       name: "HDB09",
+                       sid: "HN9",
+                       instance_number: "09",
+                       hostname: nil,
+                       resource_type: SapInstanceResourceType.sap_hana_topology()
+                     }
+                   ],
                    type: :hana_scale_up
                  }
                ]
@@ -3861,7 +4017,6 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                :ok,
                [
                  %RegisterClusterHost{
-                   additional_sids: [],
                    cib_last_written: "Mon Jun 10 13:06:54 2024",
                    cluster_id: "34a94290-2236-5e4d-8def-05beb32d14d4",
                    designated_controller: true,
@@ -3997,7 +4152,15 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                    name: "hana_cluster",
                    provider: :azure,
                    resources_number: 6,
-                   sid: "HN9",
+                   sap_instances: [
+                     %SapInstance{
+                       name: "HDB09",
+                       sid: "HN9",
+                       instance_number: "09",
+                       hostname: nil,
+                       resource_type: SapInstanceResourceType.sap_hana_topology()
+                     }
+                   ],
                    type: :hana_scale_up
                  }
                ]
@@ -4014,7 +4177,6 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                :ok,
                [
                  %RegisterClusterHost{
-                   additional_sids: ["NWP"],
                    cib_last_written: "Fri Oct 18 11:48:22 2019",
                    cluster_id: "34a94290-2236-5e4d-8def-05beb32d14d4",
                    designated_controller: true,
@@ -4025,7 +4187,29 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                    name: "hana_cluster",
                    provider: :azure,
                    resources_number: 14,
-                   sid: "PRD",
+                   sap_instances: [
+                     %SapInstance{
+                       name: "HDB00",
+                       sid: "PRD",
+                       instance_number: "00",
+                       hostname: nil,
+                       resource_type: SapInstanceResourceType.sap_hana_topology()
+                     },
+                     %SapInstance{
+                       name: "ASCS00",
+                       sid: "NWP",
+                       instance_number: "00",
+                       hostname: "sapnwpas",
+                       resource_type: SapInstanceResourceType.sap_instance()
+                     },
+                     %SapInstance{
+                       name: "ERS10",
+                       sid: "NWP",
+                       instance_number: "10",
+                       hostname: "sapnwper",
+                       resource_type: SapInstanceResourceType.sap_instance()
+                     }
+                   ],
                    type: :hana_ascs_ers
                  }
                ]

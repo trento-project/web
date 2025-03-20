@@ -22,6 +22,7 @@ defmodule TrentoWeb.V2.ClusterJSON do
     |> Map.from_struct()
     |> Map.delete(:cluster_id)
     |> Map.put(:id, data.cluster_id)
+    |> adapt_sids()
   end
 
   def cluster_health_changed(%{cluster: %{id: id, name: name, health: health}}),

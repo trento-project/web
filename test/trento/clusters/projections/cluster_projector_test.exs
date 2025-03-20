@@ -45,8 +45,7 @@ defmodule Trento.Clusters.Projections.ClusterProjectorTest do
 
     assert event.cluster_id == cluster_projection.id
     assert event.name == cluster_projection.name
-    assert event.sid == cluster_projection.sid
-    assert event.additional_sids == cluster_projection.additional_sids
+    assert event.sap_instances == cluster_projection.sap_instances
     assert event.provider == cluster_projection.provider
     assert event.type == cluster_projection.type
     assert event.resources_number == cluster_projection.resources_number
@@ -104,8 +103,9 @@ defmodule Trento.Clusters.Projections.ClusterProjectorTest do
         name: _,
         provider: _,
         resources_number: 8,
-        selected_checks: [],
         sid: _,
+        additional_sids: _,
+        selected_checks: [],
         type: :hana_scale_up
       },
       1000
@@ -118,7 +118,7 @@ defmodule Trento.Clusters.Projections.ClusterProjectorTest do
     event = %ClusterDetailsUpdated{
       cluster_id: cluster_id,
       name: Faker.StarWars.character(),
-      sid: Faker.StarWars.planet(),
+      sap_instances: build_list(2, :clustered_sap_instance),
       provider: :gcp,
       type: :hana_scale_up,
       resources_number: 8,
@@ -136,8 +136,7 @@ defmodule Trento.Clusters.Projections.ClusterProjectorTest do
 
     assert event.cluster_id == cluster_projection.id
     assert event.name == cluster_projection.name
-    assert event.sid == cluster_projection.sid
-    assert event.additional_sids == cluster_projection.additional_sids
+    assert event.sap_instances == cluster_projection.sap_instances
     assert event.provider == cluster_projection.provider
     assert event.type == cluster_projection.type
     assert event.resources_number == cluster_projection.resources_number
@@ -191,6 +190,7 @@ defmodule Trento.Clusters.Projections.ClusterProjectorTest do
         provider: _,
         resources_number: 8,
         sid: _,
+        additional_sids: _,
         type: :hana_scale_up
       },
       1000

@@ -46,8 +46,7 @@ defmodule Trento.ClusterTest do
       host_id = Faker.UUID.v4()
       name = Faker.StarWars.character()
       type = :hana_scale_up
-      sid = Faker.StarWars.planet()
-      additional_sids = ["HA1", "HA2"]
+      sap_instances = build_list(2, :clustered_sap_instance)
 
       assert_events_and_state(
         [],
@@ -55,8 +54,7 @@ defmodule Trento.ClusterTest do
           cluster_id: cluster_id,
           host_id: host_id,
           name: name,
-          sid: sid,
-          additional_sids: additional_sids,
+          sap_instances: Enum.map(sap_instances, &Map.from_struct/1),
           provider: :azure,
           type: type,
           details: nil,
@@ -67,8 +65,7 @@ defmodule Trento.ClusterTest do
           %ClusterRegistered{
             cluster_id: cluster_id,
             name: name,
-            sid: sid,
-            additional_sids: additional_sids,
+            sap_instances: sap_instances,
             provider: :azure,
             type: type,
             health: :passing,
@@ -82,8 +79,7 @@ defmodule Trento.ClusterTest do
         %Cluster{
           cluster_id: cluster_id,
           name: name,
-          sid: sid,
-          additional_sids: additional_sids,
+          sap_instances: sap_instances,
           type: type,
           provider: :azure,
           hosts: [host_id],
@@ -113,8 +109,7 @@ defmodule Trento.ClusterTest do
           %ClusterRegistered{
             cluster_id: cluster_id,
             name: name,
-            sid: nil,
-            additional_sids: [],
+            sap_instances: [],
             provider: :unknown,
             type: :unknown,
             health: :unknown,
@@ -128,7 +123,7 @@ defmodule Trento.ClusterTest do
         %Cluster{
           cluster_id: cluster_id,
           name: name,
-          sid: nil,
+          sap_instances: [],
           type: :unknown,
           provider: :unknown,
           hosts: [host_id],
@@ -142,7 +137,7 @@ defmodule Trento.ClusterTest do
       cluster_id = Faker.UUID.v4()
       host_id = Faker.UUID.v4()
       name = Faker.StarWars.character()
-      sid = Faker.StarWars.planet()
+      sap_instances = build_list(2, :clustered_sap_instance)
 
       assert_events_and_state(
         [
@@ -153,7 +148,7 @@ defmodule Trento.ClusterTest do
           cluster_id: cluster_id,
           host_id: host_id,
           name: name,
-          sid: sid,
+          sap_instances: Enum.map(sap_instances, &Map.from_struct/1),
           type: :hana_scale_up,
           discovered_health: :unknown,
           designated_controller: false,
@@ -177,7 +172,7 @@ defmodule Trento.ClusterTest do
       cluster_id = Faker.UUID.v4()
       host_id = Faker.UUID.v4()
       name = Faker.StarWars.character()
-      sid = Faker.StarWars.planet()
+      sap_instances = build_list(2, :clustered_sap_instance)
 
       assert_events_and_state(
         [
@@ -185,7 +180,7 @@ defmodule Trento.ClusterTest do
             :cluster_registered_event,
             cluster_id: cluster_id,
             provider: :azure,
-            sid: sid,
+            sap_instances: sap_instances,
             name: name,
             details: nil
           ),
@@ -195,8 +190,7 @@ defmodule Trento.ClusterTest do
           cluster_id: cluster_id,
           host_id: host_id,
           name: name,
-          sid: sid,
-          additional_sids: [],
+          sap_instances: Enum.map(sap_instances, &Map.from_struct/1),
           type: :hana_scale_up,
           discovered_health: :passing,
           resources_number: 8,
@@ -224,7 +218,7 @@ defmodule Trento.ClusterTest do
       cluster_id = Faker.UUID.v4()
       host_id = Faker.UUID.v4()
       new_name = Faker.StarWars.character()
-      new_sid = Faker.StarWars.planet()
+      new_sap_instances = build_list(2, :clustered_sap_instance)
 
       initial_events = [
         build(:cluster_registered_event, cluster_id: cluster_id),
@@ -242,8 +236,7 @@ defmodule Trento.ClusterTest do
           cluster_id: cluster_id,
           host_id: host_id,
           name: new_name,
-          sid: new_sid,
-          additional_sids: [],
+          sap_instances: Enum.map(new_sap_instances, &Map.from_struct/1),
           provider: :gcp,
           type: :hana_scale_up,
           resources_number: 2,
@@ -255,8 +248,7 @@ defmodule Trento.ClusterTest do
         %ClusterDetailsUpdated{
           cluster_id: cluster_id,
           name: new_name,
-          sid: new_sid,
-          additional_sids: [],
+          sap_instances: new_sap_instances,
           provider: :gcp,
           type: :hana_scale_up,
           resources_number: 2,
@@ -267,8 +259,7 @@ defmodule Trento.ClusterTest do
           %Cluster{
             cluster_id: ^cluster_id,
             name: ^new_name,
-            sid: ^new_sid,
-            additional_sids: [],
+            sap_instances: ^new_sap_instances,
             provider: :gcp,
             resources_number: 2,
             hosts_number: 1,
@@ -281,14 +272,14 @@ defmodule Trento.ClusterTest do
     test "should not update cluster details if the details did not change" do
       cluster_id = Faker.UUID.v4()
       name = Faker.StarWars.character()
-      sid = Faker.StarWars.planet()
+      sap_instances = build_list(2, :clustered_sap_instance)
       host_id = Faker.UUID.v4()
 
       initial_events = [
         build(:cluster_registered_event,
           cluster_id: cluster_id,
           name: name,
-          sid: sid,
+          sap_instances: sap_instances,
           details: nil,
           provider: :azure
         ),
@@ -301,8 +292,7 @@ defmodule Trento.ClusterTest do
           cluster_id: cluster_id,
           host_id: host_id,
           name: name,
-          sid: sid,
-          additional_sids: [],
+          sap_instances: Enum.map(sap_instances, &Map.from_struct/1),
           provider: :azure,
           resources_number: 8,
           hosts_number: 2,
@@ -315,7 +305,7 @@ defmodule Trento.ClusterTest do
         fn cluster ->
           assert %Cluster{
                    name: ^name,
-                   sid: ^sid,
+                   sap_instances: ^sap_instances,
                    provider: :azure,
                    type: :hana_scale_up
                  } = cluster
@@ -353,7 +343,7 @@ defmodule Trento.ClusterTest do
       cluster_id = Faker.UUID.v4()
       host_id = Faker.UUID.v4()
       name = Faker.StarWars.character()
-      sid = Faker.StarWars.planet()
+      sap_instances = build_list(2, :clustered_sap_instance)
 
       assert_events_and_state(
         [
@@ -361,7 +351,7 @@ defmodule Trento.ClusterTest do
             :cluster_registered_event,
             cluster_id: cluster_id,
             name: name,
-            sid: sid,
+            sap_instances: sap_instances,
             details: nil,
             provider: :azure
           ),
@@ -377,7 +367,7 @@ defmodule Trento.ClusterTest do
             host_id: host_id,
             cluster_id: cluster_id,
             name: name,
-            sid: sid,
+            sap_instances: sap_instances,
             details: nil,
             discovered_health: :passing,
             provider: :azure
@@ -606,8 +596,7 @@ defmodule Trento.ClusterTest do
           cluster_id: cluster_registered_event.cluster_id,
           host_id: host_added_to_cluster_event.host_id,
           name: cluster_registered_event.name,
-          sid: cluster_registered_event.sid,
-          additional_sids: cluster_registered_event.additional_sids,
+          sap_instances: Enum.map(cluster_registered_event.sap_instances, &Map.from_struct/1),
           provider: cluster_registered_event.provider,
           type: cluster_registered_event.type,
           resources_number: cluster_registered_event.resources_number,
@@ -655,8 +644,7 @@ defmodule Trento.ClusterTest do
           cluster_id: cluster_registered_event.cluster_id,
           host_id: host_added_to_cluster_event.host_id,
           name: cluster_registered_event.name,
-          sid: cluster_registered_event.sid,
-          additional_sids: cluster_registered_event.additional_sids,
+          sap_instances: Enum.map(cluster_registered_event.sap_instances, &Map.from_struct/1),
           type: cluster_registered_event.type,
           resources_number: cluster_registered_event.resources_number,
           hosts_number: cluster_registered_event.hosts_number,
@@ -702,8 +690,7 @@ defmodule Trento.ClusterTest do
           cluster_id: cluster_registered_event.cluster_id,
           host_id: host_added_to_cluster_event.host_id,
           name: cluster_registered_event.name,
-          sid: cluster_registered_event.sid,
-          additional_sids: cluster_registered_event.additional_sids,
+          sap_instances: Enum.map(cluster_registered_event.sap_instances, &Map.from_struct/1),
           provider: :azure,
           type: cluster_registered_event.type,
           resources_number: cluster_registered_event.resources_number,
@@ -750,8 +737,7 @@ defmodule Trento.ClusterTest do
             cluster_id: cluster_id,
             name: cluster_registered_event.name,
             type: cluster_registered_event.type,
-            sid: cluster_registered_event.sid,
-            additional_sids: cluster_registered_event.additional_sids,
+            sap_instances: cluster_registered_event.sap_instances,
             provider: cluster_registered_event.provider,
             resources_number: cluster_registered_event.resources_number,
             hosts_number: cluster_registered_event.hosts_number,
@@ -781,8 +767,7 @@ defmodule Trento.ClusterTest do
               cluster_id: cluster_id,
               name: cluster_registered_event.name,
               type: cluster_registered_event.type,
-              sid: cluster_registered_event.sid,
-              additional_sids: cluster_registered_event.additional_sids,
+              sap_instances: cluster_registered_event.sap_instances,
               provider: cluster_registered_event.provider,
               resources_number: cluster_registered_event.resources_number,
               hosts_number: cluster_registered_event.hosts_number,
@@ -800,7 +785,7 @@ defmodule Trento.ClusterTest do
           refute cluster.rolling_up
           assert cluster.name == cluster_registered_event.name
           assert cluster.type == cluster_registered_event.type
-          assert cluster.sid == cluster_registered_event.sid
+          assert cluster.sap_instances == cluster_registered_event.sap_instances
           assert cluster.provider == cluster_registered_event.provider
           assert cluster.resources_number == cluster_registered_event.resources_number
           assert cluster.hosts_number == cluster_registered_event.hosts_number
@@ -815,6 +800,7 @@ defmodule Trento.ClusterTest do
 
     test "should not accept commands if a cluster is in rolling up state" do
       cluster_id = Faker.UUID.v4()
+      sap_instances = build_list(2, :clustered_sap_instance)
 
       events = [
         build(:cluster_registered_event, cluster_id: cluster_id),
@@ -829,7 +815,7 @@ defmodule Trento.ClusterTest do
           cluster_id: cluster_id,
           host_id: Faker.UUID.v4(),
           name: Faker.StarWars.character(),
-          sid: Faker.StarWars.planet(),
+          sap_instances: Enum.map(sap_instances, &Map.from_struct/1),
           discovered_health: :unknown,
           type: :hana_scale_up,
           designated_controller: false,
@@ -945,8 +931,7 @@ defmodule Trento.ClusterTest do
             cluster_id: cluster_id,
             name: restoration_command.name,
             type: restoration_command.type,
-            sid: restoration_command.sid,
-            additional_sids: restoration_command.additional_sids,
+            sap_instances: restoration_command.sap_instances,
             provider: restoration_command.provider,
             resources_number: restoration_command.resources_number,
             hosts_number: restoration_command.hosts_number,
@@ -1110,8 +1095,7 @@ defmodule Trento.ClusterTest do
         fn cluster ->
           assert cluster.name == cluster_registered_event.name
           assert cluster.type == cluster_registered_event.type
-          assert cluster.sid == cluster_registered_event.sid
-          assert cluster.additional_sids == cluster_registered_event.additional_sids
+          assert cluster.sap_instances == cluster_registered_event.sap_instances
           assert cluster.provider == cluster_registered_event.provider
           assert cluster.resources_number == cluster_registered_event.resources_number
           assert cluster.hosts_number == cluster_registered_event.hosts_number

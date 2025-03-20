@@ -12,6 +12,7 @@ defmodule Trento.Factory do
   require Trento.SoftwareUpdates.Enums.SoftwareUpdatesHealth, as: SoftwareUpdatesHealth
   require Trento.ActivityLog.RetentionPeriodUnit, as: RetentionPeriodUnit
   require Trento.Clusters.Enums.HanaScenario, as: HanaScenario
+  require Trento.Clusters.Enums.SapInstanceResourceType, as: SapInstanceResourceType
 
   alias Faker.Random.Elixir, as: RandomElixir
 
@@ -24,6 +25,7 @@ defmodule Trento.Factory do
     HanaClusterDetails,
     HanaClusterNode,
     HanaClusterSite,
+    SapInstance,
     SbdDevice
   }
 
@@ -226,8 +228,7 @@ defmodule Trento.Factory do
       cluster_id: Faker.UUID.v4(),
       host_id: Faker.UUID.v4(),
       name: Faker.StarWars.character(),
-      sid: Faker.StarWars.planet(),
-      additional_sids: [],
+      sap_instances: build_list(1, :clustered_sap_instance),
       provider: Enum.random(Provider.values()),
       resources_number: 8,
       hosts_number: 2,
@@ -236,6 +237,18 @@ defmodule Trento.Factory do
       discovered_health: Health.passing(),
       designated_controller: true,
       cib_last_written: Date.to_string(Faker.Date.forward(0))
+    }
+  end
+
+  def clustered_sap_instance_factory do
+    instance_number = "00"
+
+    %SapInstance{
+      name: "#{Faker.StarWars.planet()}#{instance_number}",
+      sid: Faker.StarWars.planet(),
+      instance_number: instance_number,
+      hostname: Faker.StarWars.character(),
+      resource_type: Enum.random(SapInstanceResourceType.values())
     }
   end
 
@@ -258,8 +271,7 @@ defmodule Trento.Factory do
     %ClusterRegistered{
       cluster_id: Faker.UUID.v4(),
       name: Faker.StarWars.character(),
-      sid: Faker.StarWars.planet(),
-      additional_sids: [],
+      sap_instances: build_list(1, :clustered_sap_instance),
       provider: Enum.random(Provider.values()),
       resources_number: 8,
       hosts_number: 2,
@@ -274,8 +286,7 @@ defmodule Trento.Factory do
       cluster_id: Faker.UUID.v4(),
       name: Faker.StarWars.character(),
       type: ClusterType.hana_scale_up(),
-      sid: Faker.StarWars.planet(),
-      additional_sids: [],
+      sap_instances: build_list(1, :clustered_sap_instance),
       provider: Enum.random(Provider.values()),
       resources_number: 8,
       hosts_number: 2,
@@ -354,8 +365,7 @@ defmodule Trento.Factory do
     %ClusterReadModel{
       id: Faker.UUID.v4(),
       name: Faker.StarWars.character(),
-      sid: Faker.StarWars.planet(),
-      additional_sids: [],
+      sap_instances: build_list(1, :clustered_sap_instance),
       provider: Enum.random(Provider.values()),
       type: ClusterType.hana_scale_up(),
       health: Health.passing(),
@@ -769,7 +779,8 @@ defmodule Trento.Factory do
       health: Health.passing(),
       ensa_version: EnsaVersion.ensa1(),
       database_id: Faker.UUID.v4(),
-      database_health: Health.passing()
+      database_health: Health.passing(),
+      clustered: false
     })
   end
 

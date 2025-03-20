@@ -143,7 +143,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
       all_primitives
       |> parse_resource_by_type("SAPInstance", "InstanceName")
       |> Enum.map(fn intstance_name ->
-        instance_data = intstance_name |> String.split("_")
+        instance_data = String.split(intstance_name, "_")
         instance_name = Enum.at(instance_data, 1)
 
         %{
