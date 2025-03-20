@@ -41,7 +41,7 @@ defmodule Trento.SapSystems.Commands.RegisterApplicationInstance do
     field :db_host, :string
     field :tenant, :string
     field :host_id, Ecto.UUID
-    field :cluster_id, Ecto.UUID
+    field :clustered, :boolean
     field :instance_number, :string
     field :instance_hostname, :string
     field :features, :string
