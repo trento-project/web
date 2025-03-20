@@ -7,6 +7,8 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterClusterHostTe
 
   import Trento.Factory
 
+  require Trento.Clusters.Enums.SapInstanceResourceType, as: SapInstanceResourceType
+
   alias Trento.Infrastructure.Commanded.Middleware.Enrichable
 
   alias Trento.Clusters.Commands.RegisterClusterHost
@@ -79,7 +81,11 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterClusterHostTe
           :register_cluster_host,
           details: initial_details,
           type: :hana_scale_up,
-          sid: sid
+          sap_instances:
+            build_list(1, :clustered_sap_instance,
+              sid: sid,
+              resource_type: SapInstanceResourceType.sap_hana_topology()
+            )
         )
 
       assert {:ok, enriched_command} = Enrichable.enrich(initial_command, %{})

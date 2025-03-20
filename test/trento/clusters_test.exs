@@ -29,6 +29,7 @@ defmodule Trento.ClustersTest do
   require Trento.Clusters.Enums.FilesystemType, as: FilesystemType
   require Trento.Clusters.Enums.HanaArchitectureType, as: HanaArchitectureType
   require Trento.Clusters.Enums.HanaScenario, as: HanaScenario
+  require Trento.Clusters.Enums.SapInstanceResourceType, as: SapInstanceResourceType
 
   require Trento.SapSystems.Enums.EnsaVersion, as: EnsaVersion
 
@@ -38,7 +39,11 @@ defmodule Trento.ClustersTest do
 
   describe "checks execution with wanda adapter" do
     test "should start a checks execution on demand in a ascs_ers cluster if checks are selected" do
-      sid = "prd"
+      [%{sid: sid}] =
+        sap_instances =
+        build_list(1, :clustered_sap_instance,
+          resource_type: SapInstanceResourceType.sap_instance()
+        )
 
       details =
         build(:ascs_ers_cluster_details,
@@ -50,7 +55,12 @@ defmodule Trento.ClustersTest do
         id: cluster_id,
         provider: provider,
         type: cluster_type
-      } = insert(:cluster, type: ClusterType.ascs_ers(), additional_sids: [sid], details: details)
+      } =
+        insert(:cluster,
+          type: ClusterType.ascs_ers(),
+          sap_instances: sap_instances,
+          details: details
+        )
 
       insert(:host, deregistered_at: DateTime.utc_now(), cluster_id: cluster_id)
       [%{id: host_id_1}, %{id: host_id_2}] = insert_list(2, :host, cluster_id: cluster_id)
@@ -249,11 +259,17 @@ defmodule Trento.ClustersTest do
       %SapSystemReadModel{id: sap_system_id, sid: sid} =
         insert(:sap_system, ensa_version: EnsaVersion.ensa1())
 
+      sap_instances =
+        build_list(1, :clustered_sap_instance,
+          sid: sid,
+          resource_type: SapInstanceResourceType.sap_instance()
+        )
+
       %{id: registered_ascs_ers_cluster_id} =
         insert(:cluster,
           type: ClusterType.ascs_ers(),
           selected_checks: checks,
-          additional_sids: [sid],
+          sap_instances: sap_instances,
           details:
             build(:ascs_ers_cluster_details,
               sap_systems:
@@ -484,10 +500,16 @@ defmodule Trento.ClustersTest do
       %SapSystemReadModel{id: sap_system_id, sid: sid} =
         insert(:sap_system, ensa_version: EnsaVersion.ensa1())
 
+      sap_instances =
+        build_list(1, :clustered_sap_instance,
+          sid: sid,
+          resource_type: SapInstanceResourceType.sap_instance()
+        )
+
       %{id: cluster_id, provider: provider, type: cluster_type} =
         insert(:cluster,
           type: :ascs_ers,
-          additional_sids: [sid],
+          sap_instances: sap_instances,
           details:
             build(:ascs_ers_cluster_details,
               sap_systems:
@@ -540,10 +562,16 @@ defmodule Trento.ClustersTest do
       %SapSystemReadModel{id: sap_system_id, sid: sid} =
         insert(:sap_system, ensa_version: EnsaVersion.ensa2())
 
+      sap_instances =
+        build_list(1, :clustered_sap_instance,
+          sid: sid,
+          resource_type: SapInstanceResourceType.sap_instance()
+        )
+
       %{id: cluster_id, provider: provider, type: cluster_type} =
         insert(:cluster,
           type: :ascs_ers,
-          additional_sids: [sid],
+          sap_instances: sap_instances,
           details:
             build(:ascs_ers_cluster_details,
               sap_systems:
@@ -596,10 +624,16 @@ defmodule Trento.ClustersTest do
       %SapSystemReadModel{id: sap_system_id, sid: sid} =
         insert(:sap_system, ensa_version: EnsaVersion.ensa2())
 
+      sap_instances =
+        build_list(1, :clustered_sap_instance,
+          sid: sid,
+          resource_type: SapInstanceResourceType.sap_instance()
+        )
+
       %{id: cluster_id, provider: provider, type: cluster_type} =
         insert(:cluster,
           type: :ascs_ers,
-          additional_sids: [sid],
+          sap_instances: sap_instances,
           details:
             build(:ascs_ers_cluster_details,
               sap_systems: [
@@ -666,10 +700,21 @@ defmodule Trento.ClustersTest do
 
       insert(:sap_system, sid: other_sid, ensa_version: EnsaVersion.ensa2())
 
+      sap_instances = [
+        build(:clustered_sap_instance,
+          sid: sid_1,
+          resource_type: SapInstanceResourceType.sap_instance()
+        ),
+        build(:clustered_sap_instance,
+          sid: sid_2,
+          resource_type: SapInstanceResourceType.sap_instance()
+        )
+      ]
+
       %ClusterReadModel{id: cluster_id, provider: provider, type: cluster_type} =
         insert(:cluster,
           type: ClusterType.ascs_ers(),
-          additional_sids: [sid_1, sid_2],
+          sap_instances: sap_instances,
           details:
             build(:ascs_ers_cluster_details,
               sap_systems: [
@@ -753,10 +798,21 @@ defmodule Trento.ClustersTest do
 
       insert(:sap_system, sid: other_sid, ensa_version: EnsaVersion.ensa1())
 
+      sap_instances = [
+        build(:clustered_sap_instance,
+          sid: sid_1,
+          resource_type: SapInstanceResourceType.sap_instance()
+        ),
+        build(:clustered_sap_instance,
+          sid: sid_2,
+          resource_type: SapInstanceResourceType.sap_instance()
+        )
+      ]
+
       %ClusterReadModel{id: cluster_id, provider: provider, type: cluster_type} =
         insert(:cluster,
           type: ClusterType.ascs_ers(),
-          additional_sids: [sid_1, sid_2],
+          sap_instances: sap_instances,
           details:
             build(:ascs_ers_cluster_details,
               sap_systems: [
@@ -840,10 +896,21 @@ defmodule Trento.ClustersTest do
 
       insert(:sap_system, sid: other_sid, ensa_version: EnsaVersion.ensa1())
 
+      sap_instances = [
+        build(:clustered_sap_instance,
+          sid: sid_1,
+          resource_type: SapInstanceResourceType.sap_instance()
+        ),
+        build(:clustered_sap_instance,
+          sid: sid_2,
+          resource_type: SapInstanceResourceType.sap_instance()
+        )
+      ]
+
       %ClusterReadModel{id: cluster_id, provider: provider, type: cluster_type} =
         insert(:cluster,
           type: ClusterType.ascs_ers(),
-          additional_sids: [sid_1, sid_2],
+          sap_instances: sap_instances,
           details:
             build(:ascs_ers_cluster_details,
               sap_systems: [

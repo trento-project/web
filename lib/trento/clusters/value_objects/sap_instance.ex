@@ -18,7 +18,7 @@ defmodule Trento.Clusters.ValueObjects.SapInstance do
 
   @spec get_hana_instance_sid([__MODULE__.t()]) :: String.t() | nil
   def get_hana_instance_sid(sap_instances) do
-    Enum.find_value(sap_instances, nil, fn %{resource_type: resource_type, sid: sid} ->
+    Enum.find_value(sap_instances, "", fn %{resource_type: resource_type, sid: sid} ->
       if resource_type == SapInstanceResourceType.sap_hana_topology() do
         sid
       else
