@@ -22,6 +22,8 @@ defmodule Trento.Clusters do
 
   alias Trento.Clusters.Commands.SelectChecks
 
+  alias Trento.Clusters.ValueObjects.SapInstance
+
   alias Trento.SapSystems.Projections.SapSystemReadModel
 
   alias Trento.Infrastructure.Checks
@@ -159,6 +161,21 @@ defmodule Trento.Clusters do
 
   def resource_managed?(_, _), do: false
 
+  @spec get_sap_instances_by_host_id(String.t()) :: [SapInstance.t()]
+  def get_sap_instances_by_host_id(host_id) do
+    query =
+      from c in ClusterReadModel,
+        join: h in HostReadModel,
+        on: h.cluster_id == c.id,
+        where: h.id == ^host_id,
+        select: c.sap_instances
+
+    case Repo.one(query) do
+      nil -> []
+      sap_instances -> sap_instances
+    end
+  end
+
   defp has_resource_managed?(%{nodes: nodes}, resource_id) do
     Enum.any?(nodes, fn %{resources: resources} ->
       Enum.find_value(resources, false, fn %{parent: parent} = resource ->
@@ -188,10 +205,12 @@ defmodule Trento.Clusters do
            id: cluster_id,
            provider: provider,
            type: ClusterType.ascs_ers(),
-           additional_sids: cluster_sids,
+           sap_instances: sap_instances,
            selected_checks: selected_checks
          } = cluster
        ) do
+    sap_instance_sids = SapInstance.get_sap_instance_sids(sap_instances)
+
     hosts_data =
       Repo.all(
         from h in HostReadModel,
@@ -199,7 +218,7 @@ defmodule Trento.Clusters do
           on: h.id == a.host_id,
           where:
             h.cluster_id == ^cluster_id and is_nil(h.deregistered_at) and
-              a.sid in ^cluster_sids,
+              a.sid in ^sap_instance_sids,
           select: %{host_id: h.id, sap_system_id: a.sap_system_id}
       )
 

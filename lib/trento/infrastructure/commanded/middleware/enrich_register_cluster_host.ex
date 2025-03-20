@@ -11,13 +11,15 @@ defimpl Trento.Infrastructure.Commanded.Middleware.Enrichable,
 
   alias Trento.Clusters
 
+  alias Trento.Clusters.ValueObjects.SapInstance
+
   @spec enrich(RegisterClusterHost.t(), map) :: {:ok, map} | {:error, any}
   def enrich(
         %RegisterClusterHost{
           cluster_id: cluster_id,
           cib_last_written: cib_last_written,
           type: type,
-          sid: sid,
+          sap_instances: sap_instances,
           details: details
         } = command,
         _
@@ -33,6 +35,8 @@ defimpl Trento.Infrastructure.Commanded.Middleware.Enrichable,
       error ->
         error
     end
+
+    sid = SapInstance.get_hana_instance_sid(sap_instances)
 
     {:ok,
      %RegisterClusterHost{

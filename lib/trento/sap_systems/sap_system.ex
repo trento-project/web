@@ -535,7 +535,7 @@ defmodule Trento.SapSystems.SapSystem do
            start_priority: start_priority,
            host_id: host_id,
            health: health,
-           cluster_id: cluster_id
+           clustered: clustered
          }
        ) do
     moving_instance =
@@ -554,7 +554,7 @@ defmodule Trento.SapSystems.SapSystem do
       instance_in_same_host? ->
         nil
 
-      cluster_id != nil and moving_instance != nil ->
+      clustered and moving_instance != nil ->
         %ApplicationInstanceMoved{
           sap_system_id: sap_system_id,
           instance_number: instance_number,
