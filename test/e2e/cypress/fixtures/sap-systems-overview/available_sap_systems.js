@@ -10,7 +10,7 @@ export const healthMap = {
   GRAY: 'fill-gray-500',
 };
 
-export const isHanaInstace = (instance) => instance.systemReplication != '';
+export const isHanaInstance = (instance) => instance.systemReplication != '';
 export const isHanaSecondary = (instance) =>
   instance.systemReplication == HANASystemReplicationModes.Secondary;
 export const isHanaPrimary = (instance) =>
