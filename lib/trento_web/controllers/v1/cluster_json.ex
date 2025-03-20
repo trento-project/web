@@ -1,19 +1,18 @@
 defmodule TrentoWeb.V1.ClusterJSON do
+  alias TrentoWeb.V2
+
   def clusters(%{clusters: clusters}) do
     Enum.map(clusters, &cluster(%{cluster: &1}))
   end
 
   def cluster(%{cluster: cluster}) do
-    cluster
-    |> Map.from_struct()
-    |> Map.delete(:deregistered_at)
-    |> Map.delete(:hosts)
-    |> Map.delete(:__meta__)
+    %{cluster: cluster}
+    |> V2.ClusterJSON.cluster()
     |> adapt_v1()
   end
 
   def cluster_registered(%{cluster: cluster}) do
-    Map.delete(TrentoWeb.V1.ClusterJSON.cluster(%{cluster: cluster}), :tags)
+    Map.delete(cluster(%{cluster: cluster}), :tags)
   end
 
   def cluster_details_updated(%{data: data}) do

@@ -24,6 +24,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
     CrmmonResource
   }
 
+  alias Trento.Clusters.ValueObjects.SapInstance
+
   @uuid_namespace Application.compile_env!(:trento, :uuid_namespace)
 
   # If hana_<sid>_glob_srmode or hana_<sid>_glob_op_mode attributes are not present
@@ -96,20 +98,17 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
            name: name,
            dc: designated_controller,
            provider: provider,
-           cluster_type: cluster_type,
-           sid: sid,
-           additional_sids: additional_sids
+           cluster_type: cluster_type
          } = payload
        ) do
-    cluster_details = parse_cluster_details(payload)
+    sap_instances = get_sap_instances(payload)
+    cluster_details = parse_cluster_details(payload, sap_instances)
 
     RegisterClusterHost.new(%{
       cluster_id: generate_cluster_id(id),
       host_id: agent_id,
       name: name,
-      sid: sid,
-      sap_instances: get_sap_instances(payload),
-      additional_sids: additional_sids,
+      sap_instances: sap_instances,
       type: cluster_type,
       designated_controller: designated_controller,
       resources_number: parse_resources_number(payload),
@@ -119,6 +118,44 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
       cib_last_written: parse_cib_last_written(payload),
       provider: provider
     })
+  end
+
+  defp get_sap_instances(%{
+         cib: %{configuration: %{resources: resources}}
+       }) do
+    all_primitives = extract_cluster_primitives_from_cib(resources)
+
+    hana_instance_sids = parse_resource_by_type(all_primitives, "SAPHanaTopology", "SID")
+
+    hana_instances =
+      all_primitives
+      |> parse_resource_by_type("SAPHanaTopology", "InstanceNumber")
+      |> Enum.zip_with(hana_instance_sids, fn instance_number, sid ->
+        %{
+          name: "HDB#{instance_number}",
+          sid: sid,
+          instance_number: instance_number,
+          resource_type: SapInstanceResourceType.sap_hana_topology()
+        }
+      end)
+
+    sap_instances =
+      all_primitives
+      |> parse_resource_by_type("SAPInstance", "InstanceName")
+      |> Enum.map(fn intstance_name ->
+        instance_data = intstance_name |> String.split("_")
+        instance_name = Enum.at(instance_data, 1)
+
+        %{
+          name: instance_name,
+          sid: Enum.at(instance_data, 0),
+          instance_number: String.slice(instance_name, -2, 2),
+          hostname: Enum.at(instance_data, 2),
+          resource_type: SapInstanceResourceType.sap_instance()
+        }
+      end)
+
+    Enum.concat(hana_instances, sap_instances)
   end
 
   defp parse_resources_number(%{
@@ -137,27 +174,28 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
            sbd: sbd,
            cluster_type: ClusterType.hana_scale_up(),
            hana_architecture_type: HanaArchitectureType.classic(),
-           additional_sids: additional_sids,
-           sid: sid,
            cib: cib
-         } = payload
+         } = payload,
+         sap_instances
        ) do
-    nodes = parse_cluster_nodes(payload, sid)
+    hana_sid = SapInstance.get_hana_instance_sid(sap_instances)
+    sap_instance_sids = SapInstance.get_sap_instance_sids(sap_instances)
+    nodes = parse_cluster_nodes(payload, hana_sid)
 
     %{
       architecture_type: HanaArchitectureType.classic(),
-      hana_scenario: parse_hana_scenario(additional_sids),
-      system_replication_mode: parse_hana_scale_up_system_replication_mode(nodes, sid),
+      hana_scenario: parse_hana_scenario(sap_instance_sids),
+      system_replication_mode: parse_hana_scale_up_system_replication_mode(nodes, hana_sid),
       system_replication_operation_mode:
-        parse_hana_scale_up_system_replication_operation_mode(nodes, sid),
-      secondary_sync_state: parse_hana_scale_up_secondary_sync_state(nodes, sid),
-      sr_health_state: parse_hana_scale_up_sr_health_state(nodes, sid),
+        parse_hana_scale_up_system_replication_operation_mode(nodes, hana_sid),
+      secondary_sync_state: parse_hana_scale_up_secondary_sync_state(nodes, hana_sid),
+      sr_health_state: parse_hana_scale_up_sr_health_state(nodes, hana_sid),
       fencing_type: parse_cluster_fencing_type(crmmon, sbd),
       maintenance_mode: parse_maintenance_mode(cib),
       stopped_resources: parse_cluster_stopped_resources(crmmon),
       nodes: nodes,
       sbd_devices: parse_sbd_devices(sbd),
-      sites: parse_hana_scale_up_sites(nodes, sid)
+      sites: parse_hana_scale_up_sites(nodes, hana_sid)
     }
   end
 
@@ -167,25 +205,27 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
            cib: cib,
            sbd: sbd,
            cluster_type: ClusterType.hana_scale_out(),
-           hana_architecture_type: HanaArchitectureType.classic(),
-           additional_sids: additional_sids,
-           sid: sid
-         } = payload
+           hana_architecture_type: HanaArchitectureType.classic()
+         } = payload,
+         sap_instances
        ) do
+    hana_sid = SapInstance.get_hana_instance_sid(sap_instances)
+    sap_instance_sids = SapInstance.get_sap_instance_sids(sap_instances)
+
     %{
       architecture_type: HanaArchitectureType.classic(),
-      hana_scenario: parse_hana_scenario(additional_sids),
-      system_replication_mode: parse_hana_scale_out_system_replication_mode(cib, sid),
+      hana_scenario: parse_hana_scenario(sap_instance_sids),
+      system_replication_mode: parse_hana_scale_out_system_replication_mode(cib, hana_sid),
       system_replication_operation_mode:
-        parse_hana_scale_out_system_replication_operation_mode(cib, sid),
-      secondary_sync_state: parse_hana_scale_out_secondary_sync_state(cib, sid),
-      sr_health_state: parse_hana_scale_out_sr_health_state(cib, sid),
+        parse_hana_scale_out_system_replication_operation_mode(cib, hana_sid),
+      secondary_sync_state: parse_hana_scale_out_secondary_sync_state(cib, hana_sid),
+      sr_health_state: parse_hana_scale_out_sr_health_state(cib, hana_sid),
       fencing_type: parse_cluster_fencing_type(crmmon, sbd),
       maintenance_mode: parse_maintenance_mode(cib),
       stopped_resources: parse_cluster_stopped_resources(crmmon),
-      nodes: parse_cluster_nodes(payload, sid),
+      nodes: parse_cluster_nodes(payload, hana_sid),
       sbd_devices: parse_sbd_devices(sbd),
-      sites: parse_hana_scale_out_sites(HanaArchitectureType.classic(), cib, sid)
+      sites: parse_hana_scale_out_sites(HanaArchitectureType.classic(), cib, hana_sid)
     }
   end
 
@@ -196,25 +236,27 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
            crmmon: crmmon,
            cib: cib,
            sbd: sbd,
-           hana_architecture_type: HanaArchitectureType.angi(),
-           additional_sids: additional_sids,
-           sid: sid
-         } = payload
+           hana_architecture_type: HanaArchitectureType.angi()
+         } = payload,
+         sap_instances
        ) do
+    hana_sid = SapInstance.get_hana_instance_sid(sap_instances)
+    sap_instance_sids = SapInstance.get_sap_instance_sids(sap_instances)
+
     %{
       architecture_type: HanaArchitectureType.angi(),
-      hana_scenario: parse_hana_scenario(additional_sids),
-      system_replication_mode: parse_hana_angi_system_replication_mode(cib, sid),
+      hana_scenario: parse_hana_scenario(sap_instance_sids),
+      system_replication_mode: parse_hana_angi_system_replication_mode(cib, hana_sid),
       system_replication_operation_mode:
-        parse_hana_angi_system_replication_operation_mode(cib, sid),
-      secondary_sync_state: parse_hana_angi_secondary_sync_state(cib, sid),
-      sr_health_state: parse_hana_scale_out_sr_health_state(cib, sid),
+        parse_hana_angi_system_replication_operation_mode(cib, hana_sid),
+      secondary_sync_state: parse_hana_angi_secondary_sync_state(cib, hana_sid),
+      sr_health_state: parse_hana_scale_out_sr_health_state(cib, hana_sid),
       fencing_type: parse_cluster_fencing_type(crmmon, sbd),
       maintenance_mode: parse_maintenance_mode(cib),
       stopped_resources: parse_cluster_stopped_resources(crmmon),
-      nodes: parse_cluster_nodes(payload, sid),
+      nodes: parse_cluster_nodes(payload, hana_sid),
       sbd_devices: parse_sbd_devices(sbd),
-      sites: parse_hana_scale_out_sites(HanaArchitectureType.angi(), cib, sid)
+      sites: parse_hana_scale_out_sites(HanaArchitectureType.angi(), cib, hana_sid)
     }
   end
 
@@ -223,12 +265,14 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
            crmmon: crmmon,
            sbd: sbd,
            cluster_type: ClusterType.ascs_ers(),
-           additional_sids: additional_sids,
            cib: cib
-         } = payload
+         } = payload,
+         sap_instances
        ) do
+    sap_instance_sids = SapInstance.get_sap_instance_sids(sap_instances)
+
     %{
-      sap_systems: Enum.map(additional_sids, &parse_ascs_ers_cluster_sap_system(payload, &1)),
+      sap_systems: Enum.map(sap_instance_sids, &parse_ascs_ers_cluster_sap_system(payload, &1)),
       fencing_type: parse_cluster_fencing_type(crmmon, sbd),
       stopped_resources: parse_cluster_stopped_resources(crmmon),
       sbd_devices: parse_sbd_devices(sbd),
@@ -236,7 +280,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
     }
   end
 
-  defp parse_cluster_details(_) do
+  defp parse_cluster_details(_, _) do
     nil
   end
 
@@ -1064,42 +1108,4 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
   defp parse_hana_scenario([]), do: HanaScenario.performance_optimized()
 
   defp parse_hana_scenario(_), do: HanaScenario.cost_optimized()
-
-  defp get_sap_instances(%{
-         cib: %{configuration: %{resources: resources}}
-       }) do
-    all_primitives = extract_cluster_primitives_from_cib(resources)
-
-    hana_instance_sids = parse_resource_by_type(all_primitives, "SAPHanaTopology", "SID")
-
-    hana_instances =
-      all_primitives
-      |> parse_resource_by_type("SAPHanaTopology", "InstanceNumber")
-      |> Enum.zip_with(hana_instance_sids, fn instance_number, sid ->
-        %{
-          name: "HDB#{instance_number}",
-          sid: sid,
-          instance_number: instance_number,
-          resource_type: SapInstanceResourceType.sap_hana_topology()
-        }
-      end)
-
-    sap_instances =
-      all_primitives
-      |> parse_resource_by_type("SAPInstance", "InstanceName")
-      |> Enum.map(fn intstance_name ->
-        instance_data = intstance_name |> String.split("_")
-        instance_name = Enum.at(instance_data, 1)
-
-        %{
-          name: instance_name,
-          sid: Enum.at(instance_data, 0),
-          instance_number: String.slice(instance_name, -2, 2),
-          hostname: Enum.at(instance_data, 2),
-          resource_type: SapInstanceResourceType.sap_instance()
-        }
-      end)
-
-    Enum.concat(hana_instances, sap_instances)
-  end
 end

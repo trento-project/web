@@ -19,8 +19,6 @@ defmodule Trento.Clusters.Events.ClusterRegistered do
     field :cluster_id, Ecto.UUID
     field :name, :string
     field :type, Ecto.Enum, values: ClusterType.values()
-    field :sid, :string
-    field :additional_sids, {:array, :string}, default: []
     field :provider, Ecto.Enum, values: Provider.values()
     field :resources_number, :integer
     field :hosts_number, :integer
