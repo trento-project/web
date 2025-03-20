@@ -350,4 +350,19 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
                |> SapSystemPolicy.handle([application_instance, database_instance], nil)
     end
   end
+
+  describe "validation" do
+    test "should fail if an application instance payload does not have a dbname entry in the profile" do
+      assert {:error, {:validation, [%{Profile: %{"dbs/hdb/dbname": ["can't be blank"]}}]}} =
+               "sap_system_discovery_application"
+               |> load_discovery_event_fixture()
+               |> update_in(
+                 ["payload"],
+                 &Enum.map(&1, fn sap_system ->
+                   sap_system |> pop_in(["Profile", "dbs/hdb/dbname"]) |> elem(1)
+                 end)
+               )
+               |> SapSystemPolicy.handle([], nil)
+    end
+  end
 end

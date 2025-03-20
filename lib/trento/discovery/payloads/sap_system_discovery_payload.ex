@@ -36,7 +36,9 @@ defmodule Trento.Discovery.Payloads.SapSystemDiscoveryPayload do
     sap_system
     |> cast(modified_attrs, fields())
     |> cast_embed(:Profile,
-      with: fn profile, attrs -> Profile.changeset(profile, attrs, parse_system_type(attrs)) end,
+      with: fn profile, profile_attrs ->
+        Profile.changeset(profile, profile_attrs, parse_system_type(modified_attrs))
+      end,
       required: true
     )
     |> cast_embed(:Databases)
