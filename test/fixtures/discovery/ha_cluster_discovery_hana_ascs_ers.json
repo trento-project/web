@@ -383,6 +383,254 @@
                   "Operations": null
                 }
               ]
+            },
+            {
+              "Id": "grp_NWP_ASCS00",
+              "Primitives": [
+                {
+                  "Id": "rsc_ip_NWP_ASCS00",
+                  "Type": "IPaddr2",
+                  "Class": "ocf",
+                  "Provider": "heartbeat",
+                  "Operations": [
+                    {
+                      "Id": "rsc_ip_NWP_ASCS00-monitor-10s",
+                      "Name": "monitor",
+                      "Role": "",
+                      "Timeout": "20s",
+                      "Interval": "10s"
+                    }
+                  ],
+                  "MetaAttributes": null,
+                  "InstanceAttributes": [
+                    {
+                      "Id": "rsc_ip_NWP_ASCS00-instance_attributes-ip",
+                      "Name": "ip",
+                      "Value": "10.80.1.25"
+                    }
+                  ]
+                },
+                {
+                  "Id": "rsc_fs_NWP_ASCS00",
+                  "Type": "Filesystem",
+                  "Class": "ocf",
+                  "Provider": "heartbeat",
+                  "Operations": [
+                    {
+                      "Id": "rsc_fs_NWP_ASCS00-start-0",
+                      "Name": "start",
+                      "Role": "",
+                      "Timeout": "60s",
+                      "Interval": "0"
+                    },
+                    {
+                      "Id": "rsc_fs_NWP_ASCS00-stop-0",
+                      "Name": "stop",
+                      "Role": "",
+                      "Timeout": "60s",
+                      "Interval": "0"
+                    },
+                    {
+                      "Id": "rsc_fs_NWP_ASCS00-monitor-20s",
+                      "Name": "monitor",
+                      "Role": "",
+                      "Timeout": "40s",
+                      "Interval": "20s"
+                    }
+                  ],
+                  "MetaAttributes": null,
+                  "InstanceAttributes": [
+                    {
+                      "Id": "rsc_fs_NWP_ASCS00-instance_attributes-device",
+                      "Name": "device",
+                      "Value": "10.80.1.33:/NWP/ASCS"
+                    },
+                    {
+                      "Id": "rsc_fs_NWP_ASCS00-instance_attributes-directory",
+                      "Name": "directory",
+                      "Value": "/usr/sap/NWP/ASCS00"
+                    },
+                    {
+                      "Id": "rsc_fs_NWP_ASCS00-instance_attributes-fstype",
+                      "Name": "fstype",
+                      "Value": "nfs4"
+                    }
+                  ]
+                },
+                {
+                  "Id": "rsc_sap_NWP_ASCS00",
+                  "Type": "SAPInstance",
+                  "Class": "ocf",
+                  "Provider": "heartbeat",
+                  "Operations": [
+                    {
+                      "Id": "rsc_sap_NWP_ASCS00-operations-monitor-120",
+                      "Name": "monitor",
+                      "Role": "",
+                      "Timeout": "60",
+                      "Interval": "120"
+                    }
+                  ],
+                  "MetaAttributes": [
+                    {
+                      "Id": "rsc_sap_NWP_ASCS00-meta_attributes-resource-stickiness",
+                      "Name": "resource-stickiness",
+                      "Value": "5000"
+                    },
+                    {
+                      "Id": "rsc_sap_NWP_ASCS00-meta_attributes-failure-timeout",
+                      "Name": "failure-timeout",
+                      "Value": "60"
+                    },
+                    {
+                      "Id": "rsc_sap_NWP_ASCS00-meta_attributes-migration-threshold",
+                      "Name": "migration-threshold",
+                      "Value": "1"
+                    },
+                    {
+                      "Id": "rsc_sap_NWP_ASCS00-meta_attributes-priority",
+                      "Name": "priority",
+                      "Value": "10"
+                    }
+                  ],
+                  "InstanceAttributes": [
+                    {
+                      "Id": "rsc_sap_NWP_ASCS00-instance_attributes-InstanceName",
+                      "Name": "InstanceName",
+                      "Value": "NWP_ASCS00_sapnwpas"
+                    },
+                    {
+                      "Id": "rsc_sap_NWP_ASCS00-instance_attributes-START_PROFILE",
+                      "Name": "START_PROFILE",
+                      "Value": "/sapmnt/NWP/profile/NWP_ASCS00_sapnwpas"
+                    },
+                    {
+                      "Id": "rsc_sap_NWP_ASCS00-instance_attributes-AUTOMATIC_RECOVER",
+                      "Name": "AUTOMATIC_RECOVER",
+                      "Value": "false"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "Id": "grp_NWP_ERS10",
+              "Primitives": [
+                {
+                  "Id": "rsc_ip_NWP_ERS10",
+                  "Type": "IPaddr2",
+                  "Class": "ocf",
+                  "Provider": "heartbeat",
+                  "Operations": [
+                    {
+                      "Id": "rsc_ip_NWP_ERS10-monitor-10s",
+                      "Name": "monitor",
+                      "Role": "",
+                      "Timeout": "20s",
+                      "Interval": "10s"
+                    }
+                  ],
+                  "MetaAttributes": null,
+                  "InstanceAttributes": [
+                    {
+                      "Id": "rsc_ip_NWP_ERS10-instance_attributes-ip",
+                      "Name": "ip",
+                      "Value": "10.80.1.26"
+                    }
+                  ]
+                },
+                {
+                  "Id": "rsc_fs_NWP_ERS10",
+                  "Type": "Filesystem",
+                  "Class": "ocf",
+                  "Provider": "heartbeat",
+                  "Operations": [
+                    {
+                      "Id": "rsc_fs_NWP_ERS10-start-0",
+                      "Name": "start",
+                      "Role": "",
+                      "Timeout": "60s",
+                      "Interval": "0"
+                    },
+                    {
+                      "Id": "rsc_fs_NWP_ERS10-stop-0",
+                      "Name": "stop",
+                      "Role": "",
+                      "Timeout": "60s",
+                      "Interval": "0"
+                    },
+                    {
+                      "Id": "rsc_fs_NWP_ERS10-monitor-20s",
+                      "Name": "monitor",
+                      "Role": "",
+                      "Timeout": "40s",
+                      "Interval": "20s"
+                    }
+                  ],
+                  "MetaAttributes": null,
+                  "InstanceAttributes": [
+                    {
+                      "Id": "rsc_fs_NWP_ERS10-instance_attributes-device",
+                      "Name": "device",
+                      "Value": "10.80.1.33:/NWP/ERS"
+                    },
+                    {
+                      "Id": "rsc_fs_NWP_ERS10-instance_attributes-directory",
+                      "Name": "directory",
+                      "Value": "/usr/sap/NWP/ERS10"
+                    },
+                    {
+                      "Id": "rsc_fs_NWP_ERS10-instance_attributes-fstype",
+                      "Name": "fstype",
+                      "Value": "nfs4"
+                    }
+                  ]
+                },
+                {
+                  "Id": "rsc_sap_NWP_ERS10",
+                  "Type": "SAPInstance",
+                  "Class": "ocf",
+                  "Provider": "heartbeat",
+                  "Operations": [
+                    {
+                      "Id": "rsc_sap_NWP_ERS10-operations-monitor-120",
+                      "Name": "monitor",
+                      "Role": "",
+                      "Timeout": "60",
+                      "Interval": "120"
+                    }
+                  ],
+                  "MetaAttributes": [
+                    {
+                      "Id": "rsc_sap_NWP_ERS10-meta_attributes-priority",
+                      "Name": "priority",
+                      "Value": "1000"
+                    }
+                  ],
+                  "InstanceAttributes": [
+                    {
+                      "Id": "rsc_sap_NWP_ERS10-instance_attributes-InstanceName",
+                      "Name": "InstanceName",
+                      "Value": "NWP_ERS10_sapnwper"
+                    },
+                    {
+                      "Id": "rsc_sap_NWP_ERS10-instance_attributes-START_PROFILE",
+                      "Name": "START_PROFILE",
+                      "Value": "/sapmnt/NWP/profile/NWP_ERS10_sapnwper"
+                    },
+                    {
+                      "Id": "rsc_sap_NWP_ERS10-instance_attributes-AUTOMATIC_RECOVER",
+                      "Name": "AUTOMATIC_RECOVER",
+                      "Value": "false"
+                    },
+                    {
+                      "Id": "rsc_sap_NWP_ERS10-instance_attributes-IS_ERS",
+                      "Name": "IS_ERS",
+                      "Value": "true"
+                    }
+                  ]
+                }
+              ]
             }
           ]
         },
@@ -430,7 +678,7 @@
           "Time": "Fri Oct 18 11:48:22 2019"
         },
         "Resources": {
-          "Number": 8,
+          "Number": 14,
           "Disabled": 1,
           "Blocked": 0
         },
@@ -442,7 +690,7 @@
         {
           "Name": "node01",
           "Id": "1084783375",
-          "Online": false,
+          "Online": true,
           "Standby": false,
           "StandbyOnFail": false,
           "Maintenance": false,
@@ -456,96 +704,6 @@
         },
         {
           "Name": "node02",
-          "Id": "1084783376",
-          "Online": true,
-          "Standby": false,
-          "StandbyOnFail": false,
-          "Maintenance": false,
-          "Pending": false,
-          "Unclean": true,
-          "Shutdown": false,
-          "ExpectedUp": true,
-          "DC": false,
-          "ResourcesRunning": 5,
-          "Type": "member"
-        },
-        {
-          "Name": "node03",
-          "Id": "1084783376",
-          "Online": true,
-          "Standby": true,
-          "StandbyOnFail": false,
-          "Maintenance": false,
-          "Pending": false,
-          "Unclean": false,
-          "Shutdown": false,
-          "ExpectedUp": true,
-          "DC": false,
-          "ResourcesRunning": 5,
-          "Type": "member"
-        },
-        {
-          "Name": "node04",
-          "Id": "1084783376",
-          "Online": true,
-          "Standby": false,
-          "StandbyOnFail": false,
-          "Maintenance": true,
-          "Pending": false,
-          "Unclean": false,
-          "Shutdown": false,
-          "ExpectedUp": true,
-          "DC": false,
-          "ResourcesRunning": 5,
-          "Type": "member"
-        },
-        {
-          "Name": "node05",
-          "Id": "1084783376",
-          "Online": true,
-          "Standby": false,
-          "StandbyOnFail": false,
-          "Maintenance": false,
-          "Pending": false,
-          "Unclean": false,
-          "Shutdown": true,
-          "ExpectedUp": true,
-          "DC": false,
-          "ResourcesRunning": 5,
-          "Type": "member"
-        },
-        {
-          "Name": "node06",
-          "Id": "1084783376",
-          "Online": true,
-          "Standby": false,
-          "StandbyOnFail": false,
-          "Maintenance": false,
-          "Pending": true,
-          "Unclean": false,
-          "Shutdown": false,
-          "ExpectedUp": true,
-          "DC": false,
-          "ResourcesRunning": 5,
-          "Type": "member"
-        },
-        {
-          "Name": "node07",
-          "Id": "1084783376",
-          "Online": true,
-          "Standby": false,
-          "StandbyOnFail": true,
-          "Maintenance": false,
-          "Pending": false,
-          "Unclean": false,
-          "Shutdown": false,
-          "ExpectedUp": true,
-          "DC": false,
-          "ResourcesRunning": 5,
-          "Type": "member"
-        },
-        {
-          "Name": "node08",
           "Id": "1084783376",
           "Online": true,
           "Standby": false,
@@ -942,7 +1100,120 @@
           ]
         }
       ],
-      "Groups": null
+      "Groups": [
+        {
+          "Id": "grp_NWP_ASCS00",
+          "Resources": [
+            {
+              "Id": "rsc_ip_NWP_ASCS00",
+              "Agent": "ocf::heartbeat:IPaddr2",
+              "Role": "Started",
+              "Active": true,
+              "Orphaned": false,
+              "Blocked": false,
+              "Managed": true,
+              "Failed": false,
+              "FailureIgnored": false,
+              "NodesRunningOn": 1,
+              "Node": {
+                "Name": "node01",
+                "Id": "1084783375",
+                "Cached": false
+              }
+            },
+            {
+              "Id": "rsc_fs_NWP_ASCS00",
+              "Agent": "ocf::heartbeat:Filesystem",
+              "Role": "Started",
+              "Active": true,
+              "Orphaned": false,
+              "Blocked": false,
+              "Managed": true,
+              "Failed": false,
+              "FailureIgnored": false,
+              "NodesRunningOn": 1,
+              "Node": {
+                "Name": "node01",
+                "Id": "1084783375",
+                "Cached": false
+              }
+            },
+            {
+              "Id": "rsc_sap_NWP_ASCS00",
+              "Agent": "ocf::heartbeat:SAPInstance",
+              "Role": "Started",
+              "Active": true,
+              "Orphaned": false,
+              "Blocked": false,
+              "Managed": true,
+              "Failed": false,
+              "FailureIgnored": false,
+              "NodesRunningOn": 1,
+              "Node": {
+                "Name": "node01",
+                "Id": "1084783375",
+                "Cached": false
+              }
+            }
+          ]
+        },
+        {
+          "Id": "grp_NWP_ERS10",
+          "Resources": [
+            {
+              "Id": "rsc_ip_NWP_ERS10",
+              "Agent": "ocf::heartbeat:IPaddr2",
+              "Role": "Started",
+              "Active": true,
+              "Orphaned": false,
+              "Blocked": false,
+              "Managed": true,
+              "Failed": false,
+              "FailureIgnored": false,
+              "NodesRunningOn": 1,
+              "Node": {
+                "Name": "node02",
+                "Id": "1084783376",
+                "Cached": false
+              }
+            },
+            {
+              "Id": "rsc_fs_NWP_ERS10",
+              "Agent": "ocf::heartbeat:Filesystem",
+              "Role": "Started",
+              "Active": true,
+              "Orphaned": false,
+              "Blocked": false,
+              "Managed": true,
+              "Failed": false,
+              "FailureIgnored": false,
+              "NodesRunningOn": 1,
+              "Node": {
+                "Name": "node02",
+                "Id": "1084783376",
+                "Cached": false
+              }
+            },
+            {
+              "Id": "rsc_sap_NWP_ERS10",
+              "Agent": "ocf::heartbeat:SAPInstance",
+              "Role": "Started",
+              "Active": true,
+              "Orphaned": false,
+              "Blocked": false,
+              "Managed": true,
+              "Failed": false,
+              "FailureIgnored": false,
+              "NodesRunningOn": 1,
+              "Node": {
+                "Name": "node02",
+                "Id": "1084783376",
+                "Cached": false
+              }
+            }
+          ]
+        }
+      ]
     },
     "SBD": {
       "Devices": [

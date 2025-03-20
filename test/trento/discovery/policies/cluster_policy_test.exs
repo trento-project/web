@@ -114,45 +114,6 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             managed: true,
                             multi_state: false
                           }
-                        },
-                        %ClusterResource{
-                          fail_count: nil,
-                          id: "rsc_ip_HA1_ASCS00",
-                          role: "Started",
-                          status: "Active",
-                          type: "ocf::heartbeat:IPaddr2",
-                          managed: true,
-                          parent: %ClusterResourceParent{
-                            id: "grp_HA1_ASCS00",
-                            managed: nil,
-                            multi_state: nil
-                          }
-                        },
-                        %ClusterResource{
-                          fail_count: nil,
-                          id: "rsc_fs_HA1_ASCS00",
-                          role: "Started",
-                          status: "Active",
-                          type: "ocf::heartbeat:Filesystem",
-                          managed: true,
-                          parent: %ClusterResourceParent{
-                            id: "grp_HA1_ASCS00",
-                            managed: nil,
-                            multi_state: nil
-                          }
-                        },
-                        %ClusterResource{
-                          fail_count: nil,
-                          id: "rsc_sap_HA1_ASCS00",
-                          role: "Started",
-                          status: "Active",
-                          type: "ocf::heartbeat:SAPInstance",
-                          managed: true,
-                          parent: %ClusterResourceParent{
-                            id: "grp_HA1_ASCS00",
-                            managed: nil,
-                            multi_state: nil
-                          }
                         }
                       ],
                       site: "PRIMARY_SITE_NAME",
@@ -224,45 +185,6 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             id: "c-clusterfs",
                             managed: true,
                             multi_state: false
-                          }
-                        },
-                        %ClusterResource{
-                          fail_count: nil,
-                          id: "rsc_ip_HA1_ERS10",
-                          role: "Started",
-                          status: "Active",
-                          type: "ocf::heartbeat:IPaddr2",
-                          managed: true,
-                          parent: %ClusterResourceParent{
-                            id: "grp_HA1_ERS10",
-                            managed: nil,
-                            multi_state: nil
-                          }
-                        },
-                        %ClusterResource{
-                          fail_count: nil,
-                          id: "rsc_fs_HA1_ERS10",
-                          role: "Started",
-                          status: "Active",
-                          type: "ocf::heartbeat:Filesystem",
-                          managed: true,
-                          parent: %ClusterResourceParent{
-                            id: "grp_HA1_ERS10",
-                            managed: nil,
-                            multi_state: nil
-                          }
-                        },
-                        %ClusterResource{
-                          fail_count: nil,
-                          id: "rsc_sap_HA1_ERS10",
-                          role: "Started",
-                          status: "Active",
-                          type: "ocf::heartbeat:SAPInstance",
-                          managed: true,
-                          parent: %ClusterResourceParent{
-                            id: "grp_HA1_ERS10",
-                            managed: nil,
-                            multi_state: nil
                           }
                         }
                       ],
@@ -428,45 +350,6 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             managed: true,
                             multi_state: false
                           }
-                        },
-                        %ClusterResource{
-                          fail_count: nil,
-                          id: "rsc_ip_HA1_ASCS00",
-                          role: "Started",
-                          status: "Active",
-                          type: "ocf::heartbeat:IPaddr2",
-                          managed: true,
-                          parent: %ClusterResourceParent{
-                            id: "grp_HA1_ASCS00",
-                            managed: nil,
-                            multi_state: nil
-                          }
-                        },
-                        %ClusterResource{
-                          fail_count: nil,
-                          id: "rsc_fs_HA1_ASCS00",
-                          role: "Started",
-                          status: "Active",
-                          type: "ocf::heartbeat:Filesystem",
-                          managed: true,
-                          parent: %ClusterResourceParent{
-                            id: "grp_HA1_ASCS00",
-                            managed: nil,
-                            multi_state: nil
-                          }
-                        },
-                        %ClusterResource{
-                          fail_count: nil,
-                          id: "rsc_sap_HA1_ASCS00",
-                          role: "Started",
-                          status: "Active",
-                          type: "ocf::heartbeat:SAPInstance",
-                          managed: true,
-                          parent: %ClusterResourceParent{
-                            id: "grp_HA1_ASCS00",
-                            managed: nil,
-                            multi_state: nil
-                          }
                         }
                       ],
                       site: "PRIMARY_SITE_NAME",
@@ -538,45 +421,6 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             id: "c-clusterfs",
                             managed: true,
                             multi_state: false
-                          }
-                        },
-                        %ClusterResource{
-                          fail_count: nil,
-                          id: "rsc_ip_HA1_ERS10",
-                          role: "Started",
-                          status: "Active",
-                          type: "ocf::heartbeat:IPaddr2",
-                          managed: true,
-                          parent: %ClusterResourceParent{
-                            id: "grp_HA1_ERS10",
-                            managed: nil,
-                            multi_state: nil
-                          }
-                        },
-                        %ClusterResource{
-                          fail_count: nil,
-                          id: "rsc_fs_HA1_ERS10",
-                          role: "Started",
-                          status: "Active",
-                          type: "ocf::heartbeat:Filesystem",
-                          managed: true,
-                          parent: %ClusterResourceParent{
-                            id: "grp_HA1_ERS10",
-                            managed: nil,
-                            multi_state: nil
-                          }
-                        },
-                        %ClusterResource{
-                          fail_count: nil,
-                          id: "rsc_sap_HA1_ERS10",
-                          role: "Started",
-                          status: "Active",
-                          type: "ocf::heartbeat:SAPInstance",
-                          managed: true,
-                          parent: %ClusterResourceParent{
-                            id: "grp_HA1_ERS10",
-                            managed: nil,
-                            multi_state: nil
                           }
                         }
                       ],
@@ -2216,45 +2060,6 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             managed: true,
                             multi_state: false
                           }
-                        },
-                        %ClusterResource{
-                          fail_count: nil,
-                          id: "rsc_ip_HA1_ASCS00",
-                          role: "Started",
-                          status: "Active",
-                          type: "ocf::heartbeat:IPaddr2",
-                          managed: true,
-                          parent: %ClusterResourceParent{
-                            id: "grp_HA1_ASCS00",
-                            managed: nil,
-                            multi_state: nil
-                          }
-                        },
-                        %ClusterResource{
-                          fail_count: nil,
-                          id: "rsc_fs_HA1_ASCS00",
-                          role: "Started",
-                          status: "Active",
-                          type: "ocf::heartbeat:Filesystem",
-                          managed: true,
-                          parent: %ClusterResourceParent{
-                            id: "grp_HA1_ASCS00",
-                            managed: nil,
-                            multi_state: nil
-                          }
-                        },
-                        %ClusterResource{
-                          fail_count: nil,
-                          id: "rsc_sap_HA1_ASCS00",
-                          role: "Started",
-                          status: "Active",
-                          type: "ocf::heartbeat:SAPInstance",
-                          managed: true,
-                          parent: %ClusterResourceParent{
-                            id: "grp_HA1_ASCS00",
-                            managed: nil,
-                            multi_state: nil
-                          }
                         }
                       ],
                       site: "PRIMARY_SITE_NAME",
@@ -2326,45 +2131,6 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             id: "c-clusterfs",
                             managed: true,
                             multi_state: false
-                          }
-                        },
-                        %ClusterResource{
-                          fail_count: nil,
-                          id: "rsc_ip_HA1_ERS10",
-                          role: "Started",
-                          status: "Active",
-                          type: "ocf::heartbeat:IPaddr2",
-                          managed: true,
-                          parent: %ClusterResourceParent{
-                            id: "grp_HA1_ERS10",
-                            managed: nil,
-                            multi_state: nil
-                          }
-                        },
-                        %ClusterResource{
-                          fail_count: nil,
-                          id: "rsc_fs_HA1_ERS10",
-                          role: "Started",
-                          status: "Active",
-                          type: "ocf::heartbeat:Filesystem",
-                          managed: true,
-                          parent: %ClusterResourceParent{
-                            id: "grp_HA1_ERS10",
-                            managed: nil,
-                            multi_state: nil
-                          }
-                        },
-                        %ClusterResource{
-                          fail_count: nil,
-                          id: "rsc_sap_HA1_ERS10",
-                          role: "Started",
-                          status: "Active",
-                          type: "ocf::heartbeat:SAPInstance",
-                          managed: true,
-                          parent: %ClusterResourceParent{
-                            id: "grp_HA1_ERS10",
-                            managed: nil,
-                            multi_state: nil
                           }
                         }
                       ],
@@ -4237,6 +4003,34 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                ]
              } ==
                "ha_cluster_discovery_angi_hana_scale_up_failover"
+               |> load_discovery_event_fixture()
+               |> ClusterPolicy.handle(nil)
+    end
+  end
+
+  describe "HANA and ASCS/ERS cluster" do
+    test "should discover a cluster with HANA and ASCS/ERS types" do
+      assert {
+               :ok,
+               [
+                 %RegisterClusterHost{
+                   additional_sids: ["NWP"],
+                   cib_last_written: "Fri Oct 18 11:48:22 2019",
+                   cluster_id: "34a94290-2236-5e4d-8def-05beb32d14d4",
+                   designated_controller: true,
+                   details: nil,
+                   discovered_health: :unknown,
+                   host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
+                   hosts_number: 2,
+                   name: "hana_cluster",
+                   provider: :azure,
+                   resources_number: 14,
+                   sid: "PRD",
+                   type: :hana_ascs_ers
+                 }
+               ]
+             } ==
+               "ha_cluster_discovery_hana_ascs_ers"
                |> load_discovery_event_fixture()
                |> ClusterPolicy.handle(nil)
     end
