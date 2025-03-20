@@ -12,7 +12,7 @@ import {
 } from '../fixtures/sap-systems-overview/available_sap_systems';
 
 context('SAP Systems Overview', () => {
-  before(() => sapSystemsOverviewPage.preloadTestData());
+  // before(() => sapSystemsOverviewPage.preloadTestData());
 
   beforeEach(() => sapSystemsOverviewPage.visit());
 
@@ -40,107 +40,22 @@ context('SAP Systems Overview', () => {
     });
 
     describe('Attached databases are the expected ones', () => {
-      availableSAPSystems.forEach(
-        ({ sid: sid, attachedDatabase: attachedDatabase, type: type }) => {
-          it(`should show the expected attached database details`, () => {
-            cy.get('td')
-              .contains(sid)
-              .parent('td')
-              .parent('tr')
-              .within(() => {
-                cy.get('td').eq(2).contains(attachedDatabase.sid);
-                cy.get('td').eq(3).contains(attachedDatabase.tenant);
-                cy.get('td').eq(4).contains(type);
-                cy.get('td').eq(5).contains(attachedDatabase.dbAddress);
-              });
-          });
-          it(`should have a link to the attached HANA database with id: ${attachedDatabase.id}`, () => {
-            cy.contains(attachedDatabase.sid).click();
-            cy.location('pathname').should(
-              'eq',
-              `/databases/${attachedDatabase.id}`
-            );
-            cy.go('back');
-          });
-        }
-      );
+      it('should show the expected attached database details', () => {
+        sapSystemsOverviewPage.eachAttachedDatabaseDetailsAreTheExpected();
+      });
+
+      it('should have a working link to each attached HANA database', () => {
+        sapSystemsOverviewPage.eachSystemHasItsDatabaseWorkingLink();
+      });
     });
 
     describe('Instances are the expected ones', () => {
-      before(() => {
-        cy.navigateToItem('SAP Systems');
-        cy.url().should('include', '/sap_systems');
+      it.only('should show the expected instances details', () => {
+        sapSystemsOverviewPage.eachInstanceDetailsAreTheExpected();
       });
 
-      availableSAPSystems.forEach(({ instances: instances }, index) => {
-        it(`should show the expected instances details`, () => {
-          cy.get('table.table-fixed > tbody > tr')
-            .filter(':visible')
-            .eq(index)
-            .click();
-          cy.get('table.table-fixed > tbody > tr')
-            .filter(':visible')
-            .eq(index)
-            .next()
-            .find('div.table-row-group > div.table-row')
-            .each((row, instanceIndex) => {
-              cy.wrap(row).within(() => {
-                const healthClasses =
-                  healthMap[instances[instanceIndex].health];
-                cy.get('div.table-cell')
-                  .eq(0)
-                  .get('svg')
-                  .should('have.class', healthClasses);
-                cy.get('div.table-cell')
-                  .eq(1)
-                  .should('contain', instances[instanceIndex].instanceNumber);
-                instances[instanceIndex].features
-                  .split('|')
-                  .forEach((feature) => {
-                    cy.get('div.table-cell').eq(2).should('contain', feature);
-                  });
-                let columnIndex = 3; // the difference starts at column 3
-                if (isHanaInstace(instances[instanceIndex])) {
-                  cy.get('div.table-cell')
-                    .eq(columnIndex)
-                    .should(
-                      'contain',
-                      instances[instanceIndex].systemReplication
-                    );
-
-                  columnIndex = columnIndex + 1;
-                }
-                if (isHanaPrimary(instances[instanceIndex])) {
-                  cy.get('div.table-cell')
-                    .eq(columnIndex)
-                    .should(
-                      'not.contain',
-                      instances[instanceIndex].systemReplicationStatus
-                    );
-                }
-                if (isHanaSecondary(instances[instanceIndex])) {
-                  cy.get('div')
-                    .eq(columnIndex)
-                    .should(
-                      'contain',
-                      instances[instanceIndex].systemReplicationStatus
-                    );
-                }
-                cy.get('div')
-                  .eq(columnIndex + 1)
-                  .should('contain', instances[instanceIndex].clusterName);
-                cy.get('div')
-                  .eq(columnIndex + 2)
-                  .should('contain', instances[instanceIndex].hostname);
-              });
-            });
-          // close the collapsible
-          cy.get('table.table-fixed > tbody > tr')
-            .filter(':visible')
-            .eq(index)
-            .click();
-        });
-        it(`should have a link to known type clusters`, () => {
+      it('should have a link to known type clusters', () => {
+        availableSAPSystems.forEach(({ instances: instances }, index) => {
           cy.get('table.table-fixed > tbody > tr')
             .filter(':visible')
             .eq(index)
@@ -165,7 +80,10 @@ context('SAP Systems Overview', () => {
               cy.go('back');
             });
         });
-        it(`should have a link to the hosts`, () => {
+      });
+
+      it('should have a link to the hosts', () => {
+        availableSAPSystems.forEach(({ instances: instances }, index) => {
           cy.get('table.table-fixed > tbody > tr')
             .filter(':visible')
             .eq(index)
