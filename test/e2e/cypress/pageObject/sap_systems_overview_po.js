@@ -84,6 +84,12 @@ export const eachInstanceDetailsAreTheExpected = () => {
     cy.get(tableRow).click();
 
     instances.forEach((instance, instanceIndex) => {
+      let currentIndex = 3;
+      const isHana = isHanaInstance(instance);
+
+      // If is hana instance index must be increased to skip table headers
+      instanceIndex = isHana ? instanceIndex + 1 : instanceIndex;
+
       const expandedTableRowCells = `${tableRow} + tr div[class="table-row border-b"]:eq(${
         instanceIndex + 1
       }) div[class*="cell"]`;
@@ -91,8 +97,6 @@ export const eachInstanceDetailsAreTheExpected = () => {
       const healthBadgeSelector = `${expandedTableRowCells}:eq(0) svg`;
       const instanceNumberSelector = `${expandedTableRowCells}:eq(1)`;
       const featuresSelector = `${expandedTableRowCells}:eq(2)`;
-      const clusterNameSelector = `${expandedTableRowCells}:eq(3)`;
-      const hostnameSelector = `${expandedTableRowCells}:eq(4)`;
 
       const healthBadgeExpectedClass = healthMap[instance.health];
       cy.get(healthBadgeSelector).should(
@@ -108,6 +112,22 @@ export const eachInstanceDetailsAreTheExpected = () => {
 
       const expectedFeatures = instance.features.replaceAll('|', '');
       cy.get(featuresSelector).should('have.text', expectedFeatures);
+      let offset = 0;
+      if (isHana) {
+        offset = 1;
+
+        let expectedValue = '';
+        if (isHanaPrimary(instance)) expectedValue = `HANA Primary`;
+        else if (isHanaSecondary(instance)) expectedValue = `HANA Secondary`;
+
+        cy.get(`${expandedTableRowCells}:eq(${currentIndex})`).should(
+          'contain',
+          expectedValue
+        );
+      }
+
+      const clusterNameSelector = `${expandedTableRowCells}:eq(${3 + offset})`;
+      const hostnameSelector = `${expandedTableRowCells}:eq(${4 + offset})`;
 
       const clusterNameExpected =
         instance.clusterName === '' ? 'not available' : instance.clusterName;
