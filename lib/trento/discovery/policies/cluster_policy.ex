@@ -9,6 +9,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
   require Trento.Enums.Health, as: Health
   require Trento.Clusters.Enums.AscsErsClusterRole, as: AscsErsClusterRole
   require Trento.Clusters.Enums.HanaScenario, as: HanaScenario
+  require Trento.Clusters.Enums.SapInstanceResourceType, as: SapInstanceResourceType
 
   alias Trento.Clusters.Commands.{
     DeregisterClusterHost,
@@ -107,6 +108,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
       host_id: agent_id,
       name: name,
       sid: sid,
+      sap_instances: get_sap_instances(payload),
       additional_sids: additional_sids,
       type: cluster_type,
       designated_controller: designated_controller,
@@ -669,7 +671,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
        }) do
     Enum.concat(
       primitives,
-      Enum.flat_map(clones, &Map.get(&1, :primitives, [])) ++
+      Enum.flat_map(clones, &(&1 |> Map.get(:primitive, []) |> List.wrap())) ++
         Enum.flat_map(groups, &Map.get(&1, :primitives, []))
     )
   end
@@ -1062,4 +1064,42 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
   defp parse_hana_scenario([]), do: HanaScenario.performance_optimized()
 
   defp parse_hana_scenario(_), do: HanaScenario.cost_optimized()
+
+  defp get_sap_instances(%{
+         cib: %{configuration: %{resources: resources}}
+       }) do
+    all_primitives = extract_cluster_primitives_from_cib(resources)
+
+    hana_instance_sids = parse_resource_by_type(all_primitives, "SAPHanaTopology", "SID")
+
+    hana_instances =
+      all_primitives
+      |> parse_resource_by_type("SAPHanaTopology", "InstanceNumber")
+      |> Enum.zip_with(hana_instance_sids, fn instance_number, sid ->
+        %{
+          name: "HDB#{instance_number}",
+          sid: sid,
+          instance_number: instance_number,
+          resource_type: SapInstanceResourceType.sap_hana_topology()
+        }
+      end)
+
+    sap_instances =
+      all_primitives
+      |> parse_resource_by_type("SAPInstance", "InstanceName")
+      |> Enum.map(fn intstance_name ->
+        instance_data = intstance_name |> String.split("_")
+        instance_name = Enum.at(instance_data, 1)
+
+        %{
+          name: instance_name,
+          sid: Enum.at(instance_data, 0),
+          instance_number: String.slice(instance_name, -2, 2),
+          hostname: Enum.at(instance_data, 2),
+          resource_type: SapInstanceResourceType.sap_instance()
+        }
+      end)
+
+    Enum.concat(hana_instances, sap_instances)
+  end
 end

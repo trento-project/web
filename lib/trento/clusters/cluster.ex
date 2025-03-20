@@ -66,7 +66,8 @@ defmodule Trento.Clusters.Cluster do
 
   alias Trento.Clusters.ValueObjects.{
     AscsErsClusterDetails,
-    HanaClusterDetails
+    HanaClusterDetails,
+    SapInstance
   }
 
   alias Trento.Clusters.Commands.{
@@ -136,6 +137,8 @@ defmodule Trento.Clusters.Cluster do
         ascs_ers: [module: AscsErsClusterDetails, identify_by_fields: [:sap_systems]]
       ],
       on_replace: :update
+
+    embeds_many :sap_instances, SapInstance
   end
 
   def execute(%Cluster{rolling_up: true}, _), do: {:error, :cluster_rolling_up}
@@ -150,6 +153,7 @@ defmodule Trento.Clusters.Cluster do
           name: name,
           type: type,
           sid: sid,
+          sap_instances: sap_instances,
           additional_sids: additional_sids,
           provider: provider,
           resources_number: resources_number,
@@ -165,6 +169,7 @@ defmodule Trento.Clusters.Cluster do
         name: name,
         type: type,
         sid: sid,
+        sap_instances: sap_instances,
         additional_sids: additional_sids,
         provider: provider,
         resources_number: resources_number,
@@ -344,6 +349,7 @@ defmodule Trento.Clusters.Cluster do
           name: name,
           type: type,
           sid: sid,
+          sap_instances: sap_instances,
           additional_sids: additional_sids,
           provider: provider,
           resources_number: resources_number,
@@ -358,6 +364,7 @@ defmodule Trento.Clusters.Cluster do
         name: name,
         type: type,
         sid: sid,
+        sap_instances: sap_instances,
         additional_sids: additional_sids,
         provider: provider,
         resources_number: resources_number,
@@ -392,6 +399,7 @@ defmodule Trento.Clusters.Cluster do
           name: name,
           type: type,
           sid: sid,
+          sap_instances: sap_instances,
           additional_sids: additional_sids,
           provider: provider,
           resources_number: resources_number,
@@ -404,6 +412,7 @@ defmodule Trento.Clusters.Cluster do
       | name: name,
         type: type,
         sid: sid,
+        sap_instances: sap_instances,
         additional_sids: additional_sids,
         provider: provider,
         resources_number: resources_number,
@@ -504,6 +513,7 @@ defmodule Trento.Clusters.Cluster do
            name: name,
            type: type,
            sid: sid,
+           sap_instances: sap_instances,
            additional_sids: additional_sids,
            provider: provider,
            resources_number: resources_number,
@@ -514,6 +524,7 @@ defmodule Trento.Clusters.Cluster do
            name: name,
            type: type,
            sid: sid,
+           sap_instances: sap_instances,
            additional_sids: additional_sids,
            provider: provider,
            resources_number: resources_number,
@@ -531,6 +542,7 @@ defmodule Trento.Clusters.Cluster do
            name: name,
            type: type,
            sid: sid,
+           sap_instances: sap_instances,
            additional_sids: additional_sids,
            provider: provider,
            resources_number: resources_number,
@@ -543,6 +555,7 @@ defmodule Trento.Clusters.Cluster do
       name: name,
       type: type,
       sid: sid,
+      sap_instances: sap_instances,
       additional_sids: additional_sids,
       provider: provider,
       resources_number: resources_number,

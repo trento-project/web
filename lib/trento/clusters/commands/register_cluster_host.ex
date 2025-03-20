@@ -20,7 +20,8 @@ defmodule Trento.Clusters.Commands.RegisterClusterHost do
 
   alias Trento.Clusters.ValueObjects.{
     AscsErsClusterDetails,
-    HanaClusterDetails
+    HanaClusterDetails,
+    SapInstance
   }
 
   defcommand do
@@ -46,5 +47,7 @@ defmodule Trento.Clusters.Commands.RegisterClusterHost do
         ascs_ers: [module: AscsErsClusterDetails, identify_by_fields: [:sap_systems]]
       ],
       on_replace: :update
+
+    embeds_many :sap_instances, SapInstance
   end
 end
