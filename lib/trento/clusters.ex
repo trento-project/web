@@ -22,6 +22,8 @@ defmodule Trento.Clusters do
 
   alias Trento.Clusters.Commands.SelectChecks
 
+  alias Trento.Clusters.ValueObjects.SapInstance
+
   alias Trento.SapSystems.Projections.SapSystemReadModel
 
   alias Trento.Infrastructure.Checks
@@ -158,6 +160,21 @@ defmodule Trento.Clusters do
   end
 
   def resource_managed?(_, _), do: false
+
+  @spec get_sap_instances_by_host_id(String.t()) :: [SapInstance.t()]
+  def get_sap_instances_by_host_id(host_id) do
+    query =
+      from c in ClusterReadModel,
+        join: h in HostReadModel,
+        on: h.cluster_id == c.id,
+        where: h.id == ^host_id,
+        select: c.sap_instances
+
+    case Repo.one(query) do
+      nil -> []
+      sap_instances -> sap_instances
+    end
+  end
 
   defp has_resource_managed?(%{nodes: nodes}, resource_id) do
     Enum.any?(nodes, fn %{resources: resources} ->
