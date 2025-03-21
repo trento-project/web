@@ -166,11 +166,41 @@ export const eachSapSystemHasWorkingLinkToKnownTypeCluster = () => {
 
       if (isHana) {
         cy.get(clusterNameSelector).click();
-        cy.log(instance.clusterID);
         validateUrl(`/clusters/${instance.clusterID}`);
         cy.go('back');
       }
       cy.get(tableRow).click();
+    });
+  });
+};
+
+export const eachInstanceHasItsHostWorkingLink = () => {
+  availableSAPSystems.forEach(({ instances }, instanceIndex) => {
+    const tableRow = `tbody tr[class*="cursor"]:eq(${instanceIndex})`;
+
+    instances.forEach((instance, rowIndex) => {
+      cy.get(tableRow).click();
+      const isHana = isHanaInstance(instance);
+
+      // If is HANA instance index must be increased to skip instances table headers
+      let isHanaInstancesHeader = false;
+      if (!isHanaInstancesHeader && isHana) {
+        rowIndex = isHana ? rowIndex + 1 : rowIndex;
+        isHanaInstancesHeader = true;
+      }
+
+      const expandedTableRowCells = `${tableRow} + tr div[class*="row border"]:eq(${
+        rowIndex + 1
+      }) div[class*="cell"]`;
+
+      const columnIndexOffset = isHana ? 1 : 0;
+      const hostnameSelector = `${expandedTableRowCells}:eq(${
+        4 + columnIndexOffset
+      }) a`;
+
+      cy.get(hostnameSelector).click();
+      validateUrl(`/hosts/${instance.hostID}`);
+      cy.go('back');
     });
   });
 };
