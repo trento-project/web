@@ -56,28 +56,7 @@ context('SAP Systems Overview', () => {
       });
 
       it('should have a link to the hosts', () => {
-        availableSAPSystems.forEach(({ instances: instances }, index) => {
-          cy.get('table.table-fixed > tbody > tr')
-            .filter(':visible')
-            .eq(index)
-            .click();
-          cy.get('table.table-fixed > tbody > tr')
-            .filter(':visible')
-            .eq(index)
-            .next()
-            .find('div.table-row-group > div.table-row')
-            .each((row, instanceIndex) => {
-              cy.wrap(row)
-                .get('div.table-cell')
-                .contains(instances[instanceIndex].hostname)
-                .click({ force: true });
-              cy.location('pathname').should(
-                'eq',
-                `/hosts/${instances[instanceIndex].hostID}`
-              );
-              cy.go('back');
-            });
-        });
+        sapSystemsOverviewPage.eachInstanceHasItsHostWorkingLink();
       });
     });
 
