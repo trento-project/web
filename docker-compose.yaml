@@ -21,7 +21,7 @@ services:
     volumes:
       - ./container_fixtures/keycloak/realm.json:/opt/keycloak/data/import/realm.json:ro
   node_exporter:
-    image: prom/node-exporter:v1.7.0
+    image: docker.io/prom/node-exporter:v1.7.0
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
@@ -32,7 +32,7 @@ services:
       - "--path.sysfs=/host/sys"
       - "--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)"
   prometheus:
-    image: prom/prometheus:v2.48.1
+    image: docker.io/prom/prometheus:v2.48.1
     user: "0:0"
     volumes:
       - ./prometheus-dev-config.yml:/etc/prometheus/prometheus.yml
@@ -53,7 +53,7 @@ services:
     extra_hosts:
       - host.docker.internal:host-gateway
   postgres:
-    image: postgres:15
+    image: docker.io/library/postgres:15
     command: -c 'max_connections=200'
     environment:
       POSTGRES_USER: postgres
@@ -70,7 +70,7 @@ services:
       - ./container_fixtures/rabbitmq/certs/server_rabbit.trento.local_key.pem:/var/lib/rabbitmq/server_rabbit.trento.local_key.pem
       - ./container_fixtures/rabbitmq/certs/server_rabbit.trento.local_certificate.pem:/var/lib/rabbitmq/server_rabbit.trento.local_certificate.pem
       - ./container_fixtures/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
-    image: rabbitmq:3.12.6-management-alpine
+    image: docker.io/rabbitmq:3.12.6-management-alpine
     ports:
       - 5671:5671
       - 5673:5672
