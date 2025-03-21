@@ -5,14 +5,11 @@ import { createUserRequestFactory } from '@lib/test-utils/factories';
 import {
   availableSAPSystems,
   availableJavaSystem,
-  isHanaInstace,
-  isHanaPrimary,
-  isHanaSecondary,
   healthMap,
 } from '../fixtures/sap-systems-overview/available_sap_systems';
 
 context('SAP Systems Overview', () => {
-  // before(() => sapSystemsOverviewPage.preloadTestData());
+  before(() => sapSystemsOverviewPage.preloadTestData());
 
   beforeEach(() => sapSystemsOverviewPage.visit());
 
@@ -50,36 +47,12 @@ context('SAP Systems Overview', () => {
     });
 
     describe('Instances are the expected ones', () => {
-      it.only('should show the expected instances details', () => {
+      it('should show the expected instances details', () => {
         sapSystemsOverviewPage.eachInstanceDetailsAreTheExpected();
       });
 
       it('should have a link to known type clusters', () => {
-        availableSAPSystems.forEach(({ instances: instances }, index) => {
-          cy.get('table.table-fixed > tbody > tr')
-            .filter(':visible')
-            .eq(index)
-            .click();
-          cy.get('table.table-fixed > tbody > tr')
-            .filter(':visible')
-            .eq(index)
-            .next()
-            .find('div.table-row-group > div.table-row')
-            .each((row, instanceIndex) => {
-              if (!isHanaInstace(instances[instanceIndex])) {
-                return;
-              }
-              cy.wrap(row)
-                .get('div.table-cell')
-                .contains(instances[instanceIndex].clusterName)
-                .click({ force: true });
-              cy.location('pathname').should(
-                'eq',
-                `/clusters/${instances[instanceIndex].clusterID}`
-              );
-              cy.go('back');
-            });
-        });
+        sapSystemsOverviewPage.eachSapSystemHasWorkingLinkToKnownTypeCluster();
       });
 
       it('should have a link to the hosts', () => {
