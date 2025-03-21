@@ -8,15 +8,15 @@ import {
   availableSAPSystems,
   availableJavaSystem,
   isHanaInstance,
-  isHanaPrimary,
-  isHanaSecondary,
   healthMap,
 } from '../fixtures/sap-systems-overview/available_sap_systems';
+
 // Selectors
 
 // UI Interactions
 export const visit = () => {
   cy.intercept('/api/v1/databases').as('databasesRequest');
+  cy.intercept('/api/v1/sap_systems').as('sapSystemsRequest');
   basePage.visit(url);
   cy.wait('@databasesRequest');
 };
@@ -79,24 +79,35 @@ export const eachSystemHasItsDatabaseWorkingLink = () => {
 };
 
 export const eachInstanceDetailsAreTheExpected = () => {
-  availableSAPSystems.forEach(({ instances }, index) => {
-    const tableRow = `tbody tr[class*="cursor"]:eq(${index})`;
+  availableSAPSystems.forEach(({ instances }, instanceIndex) => {
+    const tableRow = `tbody tr[class*="cursor"]:eq(${instanceIndex})`;
     cy.get(tableRow).click();
 
-    instances.forEach((instance, instanceIndex) => {
-      let currentIndex = 3;
+    instances.forEach((instance, rowIndex) => {
       const isHana = isHanaInstance(instance);
 
-      // If is hana instance index must be increased to skip table headers
-      instanceIndex = isHana ? instanceIndex + 1 : instanceIndex;
+      // If is HANA instance index must be increased to skip instances table headers
+      let isHanaInstancesHeader = false;
+      if (!isHanaInstancesHeader && isHana) {
+        rowIndex = isHana ? rowIndex + 1 : rowIndex;
+        isHanaInstancesHeader = true;
+      }
 
-      const expandedTableRowCells = `${tableRow} + tr div[class="table-row border-b"]:eq(${
-        instanceIndex + 1
+      const expandedTableRowCells = `${tableRow} + tr div[class*="row border"]:eq(${
+        rowIndex + 1
       }) div[class*="cell"]`;
 
+      const columnIndexOffset = isHana ? 1 : 0;
       const healthBadgeSelector = `${expandedTableRowCells}:eq(0) svg`;
       const instanceNumberSelector = `${expandedTableRowCells}:eq(1)`;
       const featuresSelector = `${expandedTableRowCells}:eq(2)`;
+      const hanaInstanceSelector = `${expandedTableRowCells}:eq(3)`;
+      const clusterNameSelector = `${expandedTableRowCells}:eq(${
+        3 + columnIndexOffset
+      })`;
+      const hostnameSelector = `${expandedTableRowCells}:eq(${
+        4 + columnIndexOffset
+      })`;
 
       const healthBadgeExpectedClass = healthMap[instance.health];
       cy.get(healthBadgeSelector).should(
@@ -112,22 +123,11 @@ export const eachInstanceDetailsAreTheExpected = () => {
 
       const expectedFeatures = instance.features.replaceAll('|', '');
       cy.get(featuresSelector).should('have.text', expectedFeatures);
-      let offset = 0;
+
       if (isHana) {
-        offset = 1;
-
-        let expectedValue = '';
-        if (isHanaPrimary(instance)) expectedValue = `HANA Primary`;
-        else if (isHanaSecondary(instance)) expectedValue = `HANA Secondary`;
-
-        cy.get(`${expandedTableRowCells}:eq(${currentIndex})`).should(
-          'contain',
-          expectedValue
-        );
+        const expectedValue = `${instance.systemReplication} ${instance.systemReplicationStatus}`;
+        cy.get(hanaInstanceSelector).should('have.text', expectedValue);
       }
-
-      const clusterNameSelector = `${expandedTableRowCells}:eq(${3 + offset})`;
-      const hostnameSelector = `${expandedTableRowCells}:eq(${4 + offset})`;
 
       const clusterNameExpected =
         instance.clusterName === '' ? 'not available' : instance.clusterName;
@@ -137,6 +137,41 @@ export const eachInstanceDetailsAreTheExpected = () => {
       cy.get(hostnameSelector).should('have.text', hostnameExpected);
     });
     cy.get(tableRow).click();
+  });
+};
+
+export const eachSapSystemHasWorkingLinkToKnownTypeCluster = () => {
+  availableSAPSystems.forEach(({ instances }, instanceIndex) => {
+    const tableRow = `tbody tr[class*="cursor"]:eq(${instanceIndex})`;
+    cy.get(tableRow).click();
+
+    instances.forEach((instance, rowIndex) => {
+      const isHana = isHanaInstance(instance);
+
+      // If is HANA instance index must be increased to skip instances table headers
+      let isHanaInstancesHeader = false;
+      if (!isHanaInstancesHeader && isHana) {
+        rowIndex = isHana ? rowIndex + 1 : rowIndex;
+        isHanaInstancesHeader = true;
+      }
+
+      const expandedTableRowCells = `${tableRow} + tr div[class*="row border"]:eq(${
+        rowIndex + 1
+      }) div[class*="cell"]`;
+
+      const columnIndexOffset = isHana ? 1 : 0;
+      const clusterNameSelector = `${expandedTableRowCells}:eq(${
+        3 + columnIndexOffset
+      })`;
+
+      if (isHana) {
+        cy.get(clusterNameSelector).click();
+        cy.log(instance.clusterID);
+        validateUrl(`/clusters/${instance.clusterID}`);
+        cy.go('back');
+      }
+      cy.get(tableRow).click();
+    });
   });
 };
 // API
