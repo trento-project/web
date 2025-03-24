@@ -2,14 +2,10 @@ import * as sapSystemsOverviewPage from '../pageObject/sap_systems_overview_po';
 
 import { createUserRequestFactory } from '@lib/test-utils/factories';
 
-import {
-  availableSAPSystems,
-  availableJavaSystem,
-  healthMap,
-} from '../fixtures/sap-systems-overview/available_sap_systems';
+import { healthMap } from '../fixtures/sap-systems-overview/available_sap_systems';
 
 context('SAP Systems Overview', () => {
-  before(() => sapSystemsOverviewPage.preloadTestData());
+  // before(() => sapSystemsOverviewPage.preloadTestData());
 
   beforeEach(() => sapSystemsOverviewPage.visit());
 
@@ -61,43 +57,25 @@ context('SAP Systems Overview', () => {
     });
 
     describe('JAVA system discovery', () => {
-      before(() => {
-        cy.loadScenario('multi-tenant');
-        cy.loadScenario('java-system');
-        cy.visit('/sap_systems');
-        cy.url().should('include', '/sap_systems');
+      beforeEach(() => {
+        sapSystemsOverviewPage.tableDisplaysExpectedAmountOfSystems(3);
+        sapSystemsOverviewPage.loadJavaScenario();
       });
 
-      after(() => {
-        availableJavaSystem.instances.forEach(({ hostID }) => {
-          cy.deregisterHost(hostID);
-        });
-      });
+      after(() => sapSystemsOverviewPage.apiDeregisterJavaSystems());
 
-      it(`should discover a JAVA system`, () => {
-        cy.get('td')
-          .contains(availableJavaSystem.sid)
-          .parent('td')
-          .parent('tr')
-          .within(() => {
-            cy.get('td').eq(4).contains(availableJavaSystem.type);
-          });
+      it('should discover a JAVA system', () => {
+        sapSystemsOverviewPage.javaSystemIsDiscoveredCorrectly();
       });
     });
   });
 
   describe('SAP Systems Tagging', () => {
-    before(() => {
-      cy.removeTagsFromView();
-      cy.navigateToItem('SAP Systems');
-      cy.url().should('include', '/sap_systems');
-    });
+    before(() => sapSystemsOverviewPage.apiRemoveAllSapSystemsTags());
 
-    availableSAPSystems.forEach(({ sid, tag }) => {
-      describe(`Add tag '${tag}' to SAP System with sid: '${sid}'`, () => {
-        it(`should tag SAP System '${sid}'`, () => {
-          cy.addTagByColumnValue(sid, tag);
-        });
+    describe('Add tag to SAP System', () => {
+      it('should tag SAP System', () => {
+        sapSystemsOverviewPage.tagSapSystems();
       });
     });
   });

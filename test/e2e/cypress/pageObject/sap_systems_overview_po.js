@@ -21,6 +21,12 @@ export const visit = () => {
   cy.wait('@databasesRequest');
 };
 
+export const tagSapSystems = () => {
+  availableSAPSystems.forEach(({ sid, tag }) => {
+    basePage.addTagByColumnValue(sid, tag);
+  });
+};
+
 // UI Validations
 
 export const validateUrl = (_url = url) => basePage.validateUrl(_url);
@@ -204,6 +210,72 @@ export const eachInstanceHasItsHostWorkingLink = () => {
     });
   });
 };
-// API
 
+export const javaSystemIsDiscoveredCorrectly = () => {
+  const javaSystemRowSelector = `tbody tr:contains('${availableJavaSystem.sid}')`;
+  cy.get(javaSystemRowSelector).should('be.visible');
+  const javaSystemTypeSelector = `${javaSystemRowSelector} td:eq(4)`;
+  cy.get(javaSystemTypeSelector).should('have.text', availableJavaSystem.type);
+  tableDisplaysExpectedAmountOfSystems(4);
+};
+
+export const tableDisplaysExpectedAmountOfSystems = (systemsAmount) =>
+  cy.get('tbody tr[class*="pointer"]').should('have.length', systemsAmount);
+
+// API
+export const apiRemoveAllSapSystemsTags = () => {
+  apiGetSapSystems().then((response) => {
+    const sapSystemTags = getSapSystemTags(response.body);
+    Object.entries(sapSystemTags).forEach(([clusterId, tags]) => {
+      tags.forEach((tag) => apiRemoveTagBySapSystemId(clusterId, tag));
+    });
+  });
+  return basePage.refresh();
+};
+
+const apiRemoveTagBySapSystemId = (systemId, tagId) => {
+  return basePage.apiLogin().then(({ accessToken }) =>
+    cy.request({
+      url: `/api/v1/sap_systems/${systemId}/tags/${tagId}`,
+      method: 'DELETE',
+      auth: { bearer: accessToken },
+    })
+  );
+};
+
+const apiGetSapSystems = () => {
+  return basePage.apiLogin().then(({ accessToken }) => {
+    const url = '/api/v1/sap_systems';
+    return cy
+      .request({
+        method: 'GET',
+        url: url,
+        auth: {
+          bearer: accessToken,
+        },
+      })
+      .then((response) => response);
+  });
+};
+
+const getSapSystemTags = (jsonData) => {
+  const clusterTags = {};
+  jsonData.forEach((cluster) => {
+    if (cluster.tags && cluster.tags.length > 0) {
+      clusterTags[cluster.id] = cluster.tags.map((tag) => tag.value);
+    }
+  });
+
+  return clusterTags;
+};
+
+export const loadJavaScenario = () => {
+  basePage.loadScenario('multi-tenant');
+  basePage.loadScenario('java-system');
+};
+
+export const apiDeregisterJavaSystems = () =>
+  availableJavaSystem.instances.forEach(({ hostID }) => {
+    basePage.apiDeregisterHost(hostID);
+  });
 // Helpers
