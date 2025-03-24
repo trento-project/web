@@ -217,14 +217,16 @@ export const selectFromDropdown = (selector, choice) => {
   return cy.get(`${selector} + div div:contains("${choice}")`).click();
 };
 
-export const preloadTestData = () => {
+export const preloadTestData = ({
+  isDataLoadedFunc = isTestDataLoaded,
+} = {}) => {
   /**
    * Preload required test data.
    * It must run photofinish scenario twice as the order of sent payloads is relevant
    * and the tests require a fully loaded scenario which only happens when the
    * scenario is sent in the second time.
    */
-  isTestDataLoaded().then((isLoaded) => {
+  isDataLoadedFunc().then((isLoaded) => {
     if (!isLoaded) loadScenario('healthy-27-node-SAP-cluster');
   });
   loadScenario('healthy-27-node-SAP-cluster');
