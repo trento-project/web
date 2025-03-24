@@ -12,6 +12,7 @@ import {
 } from '../fixtures/sap-systems-overview/available_sap_systems';
 
 // Selectors
+const sapSystemsTableRows = 'tbody tr[class*="pointer"]';
 
 // UI Interactions
 export const visit = () => {
@@ -220,8 +221,24 @@ export const javaSystemIsDiscoveredCorrectly = () => {
 };
 
 export const tableDisplaysExpectedAmountOfSystems = (systemsAmount) =>
-  cy.get('tbody tr[class*="pointer"]').should('have.length', systemsAmount);
+  cy.get(sapSystemsTableRows).should('have.length', systemsAmount);
 
+export const eachInstanceHasItsHealthStatusCorrectlyUpdated = () => {
+  const sapSystemsFirstRow = `${sapSystemsTableRows}:eq(0)`;
+  cy.get(sapSystemsFirstRow).click();
+
+  Object.entries(healthMap).forEach(([state, health], index) => {
+    basePage.loadScenario(`sap-systems-overview-${state}`);
+
+    const sapSystemInstanceHealthBadge = `${sapSystemsFirstRow} td:eq(0) svg`;
+    cy.get(sapSystemInstanceHealthBadge).should('have.class', health);
+
+    const appLayerInstanceHealthBadge = `${sapSystemsFirstRow} + tr td div[class*="row border"]:eq(${
+      index + 1
+    }) div[class*="cell"]:eq(0) svg`;
+    cy.get(appLayerInstanceHealthBadge).should('have.class', health);
+  });
+};
 // API
 export const apiRemoveAllSapSystemsTags = () => {
   apiGetSapSystems().then((response) => {
