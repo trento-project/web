@@ -102,7 +102,9 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
          } = payload
        ) do
     sap_instances = get_sap_instances(payload)
-    cluster_details = parse_cluster_details(payload, sap_instances)
+    hana_sid = SapInstance.get_hana_instance_sid(sap_instances)
+    sap_instance_sids = SapInstance.get_sap_instance_sids(sap_instances)
+    cluster_details = parse_cluster_details(payload, hana_sid, sap_instance_sids)
 
     RegisterClusterHost.new(%{
       cluster_id: generate_cluster_id(id),
@@ -176,10 +178,9 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
            hana_architecture_type: HanaArchitectureType.classic(),
            cib: cib
          } = payload,
-         sap_instances
+         hana_sid,
+         sap_instance_sids
        ) do
-    hana_sid = SapInstance.get_hana_instance_sid(sap_instances)
-    sap_instance_sids = SapInstance.get_sap_instance_sids(sap_instances)
     nodes = parse_cluster_nodes(payload, hana_sid)
 
     %{
@@ -207,11 +208,9 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
            cluster_type: ClusterType.hana_scale_out(),
            hana_architecture_type: HanaArchitectureType.classic()
          } = payload,
-         sap_instances
+         hana_sid,
+         sap_instance_sids
        ) do
-    hana_sid = SapInstance.get_hana_instance_sid(sap_instances)
-    sap_instance_sids = SapInstance.get_sap_instance_sids(sap_instances)
-
     %{
       architecture_type: HanaArchitectureType.classic(),
       hana_scenario: parse_hana_scenario(sap_instance_sids),
@@ -238,11 +237,9 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
            sbd: sbd,
            hana_architecture_type: HanaArchitectureType.angi()
          } = payload,
-         sap_instances
+         hana_sid,
+         sap_instance_sids
        ) do
-    hana_sid = SapInstance.get_hana_instance_sid(sap_instances)
-    sap_instance_sids = SapInstance.get_sap_instance_sids(sap_instances)
-
     %{
       architecture_type: HanaArchitectureType.angi(),
       hana_scenario: parse_hana_scenario(sap_instance_sids),
@@ -267,10 +264,9 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
            cluster_type: ClusterType.ascs_ers(),
            cib: cib
          } = payload,
-         sap_instances
+         _,
+         sap_instance_sids
        ) do
-    sap_instance_sids = SapInstance.get_sap_instance_sids(sap_instances)
-
     %{
       sap_systems: Enum.map(sap_instance_sids, &parse_ascs_ers_cluster_sap_system(payload, &1)),
       fencing_type: parse_cluster_fencing_type(crmmon, sbd),
@@ -280,7 +276,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
     }
   end
 
-  defp parse_cluster_details(_, _) do
+  defp parse_cluster_details(_, _, _) do
     nil
   end
 
