@@ -228,6 +228,8 @@ export const preloadTestData = () => {
     if (!isLoaded) loadScenario('healthy-27-node-SAP-cluster');
   });
   loadScenario('healthy-27-node-SAP-cluster');
+  if (Cypress.env('cypress_is_regression'))
+    loadScenario('healthy-27-node-SAP-cluster');
 };
 
 export const loadScenario = (scenario) => {
