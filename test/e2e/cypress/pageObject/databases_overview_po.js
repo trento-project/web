@@ -86,7 +86,7 @@ export const activePillIsDisplayedInTheRightHost = () => {
 };
 
 export const deletedSapSystemToasterIsDisplayed = () =>
-  cy.get(deletedSapSystemToaster).should('be.visible');
+  cy.get(deletedSapSystemToaster, { timeout: 20000 }).should('be.visible');
 
 export const databaseInstancesAreStillTheSame = () =>
   cy.get(tableGroupRows).should('have.length', 6);

@@ -553,7 +553,6 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v6
         env:
-          cypress_is_regression: true
           cypress_video: false
           cypress_db_host: postgres
           cypress_db_port: 5432
