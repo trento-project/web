@@ -5,7 +5,7 @@ import { createUserRequestFactory } from '@lib/test-utils/factories';
 import { healthMap } from '../fixtures/sap-systems-overview/available_sap_systems';
 
 context('SAP Systems Overview', () => {
-  // before(() => sapSystemsOverviewPage.preloadTestData());
+  before(() => sapSystemsOverviewPage.preloadTestData());
 
   beforeEach(() => sapSystemsOverviewPage.visit());
 
@@ -81,40 +81,8 @@ context('SAP Systems Overview', () => {
   });
 
   describe('Health states are updated', () => {
-    Object.entries(healthMap).forEach(([state, health], index) => {
-      it(`should have ${state} health in SAP system and instance ${
-        index + 1
-      } when SAPControl-${state} state is received`, () => {
-        cy.loadScenario(`sap-systems-overview-${state}`);
-
-        cy.get('table.table-fixed > tbody > tr')
-          .filter(':visible')
-          .eq(0)
-          .click();
-
-        cy.get('table.table-fixed > tbody > tr')
-          .filter(':visible')
-          .eq(0)
-          .find('td')
-          .eq(0)
-          .get('svg')
-          .should('have.class', health);
-        cy.get('table.table-fixed > tbody > tr')
-          .filter(':visible')
-          .eq(index)
-          .next()
-          .get('div.table-row-group > div.table-row')
-          .eq(index)
-          .get('div.table-cell')
-          .eq(0)
-          .get('svg')
-          .should('have.class', health);
-
-        cy.get('table.table-fixed > tbody > tr')
-          .filter(':visible')
-          .eq(0)
-          .click();
-      });
+    it('should have expected health in SAP system and instance when a different state is received', () => {
+      sapSystemsOverviewPage.eachInstanceHasItsHealthStatusCorrectlyUpdated();
     });
 
     it(`should have RED health in SAP system when HANA instance with SAPControl-RED state is received`, () => {
