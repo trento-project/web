@@ -1036,4 +1036,20 @@ defmodule Trento.ClustersTest do
       refute Clusters.resource_managed?(cluster, nil)
     end
   end
+
+  describe "get_sap_instances_by_host_id/1" do
+    test "should return cluster SAP instances when the cluster is registered" do
+      %{id: cluster_id, sap_instances: sap_instances} = insert(:cluster)
+      %{id: host_id} = insert(:host, cluster_id: cluster_id)
+
+      assert sap_instances == Clusters.get_sap_instances_by_host_id(host_id)
+    end
+
+    test "should return an empty list if host or cluster are not found" do
+      %{id: host_id} = insert(:host)
+
+      assert [] == Clusters.get_sap_instances_by_host_id(host_id)
+      assert [] == Clusters.get_sap_instances_by_host_id(UUID.uuid4())
+    end
+  end
 end
