@@ -133,6 +133,22 @@ export const clickModalCleanUpButton = () => cy.get(cleanUpButtonModal).click();
 
 // API Interactions
 
+export const preloadTestData = () =>
+  basePage.preloadTestData({ isDataLoadedFunc: isTestDataLoaded });
+
+const isTestDataLoaded = () =>
+  basePage.apiLogin().then(({ accessToken }) =>
+    cy
+      .request({
+        url: '/api/v1/sap_systems',
+        method: 'GET',
+        auth: {
+          bearer: accessToken,
+        },
+      })
+      .then(({ body }) => body.length !== 0)
+  );
+
 export const deregisterHdqDatabasePrimaryInstance = () =>
   basePage.apiDeregisterHost(hdqDatabase.instances[0].id);
 
