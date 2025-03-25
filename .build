@@ -45,6 +45,7 @@ Trento.Clusters.Enums.ClusterType.html
 Trento.Clusters.Enums.FilesystemType.html
 Trento.Clusters.Enums.HanaArchitectureType.html
 Trento.Clusters.Enums.HanaScenario.html
+Trento.Clusters.Enums.SapInstanceResourceType.html
 Trento.Clusters.Events.ChecksSelected.html
 Trento.Clusters.Events.ClusterChecksHealthChanged.html
 Trento.Clusters.Events.ClusterDeregistered.html
@@ -72,6 +73,7 @@ Trento.Clusters.ValueObjects.HanaClusterDetails.html
 Trento.Clusters.ValueObjects.HanaClusterNode.html
 Trento.Clusters.ValueObjects.HanaClusterSite.html
 Trento.Clusters.ValueObjects.HostExecution.html
+Trento.Clusters.ValueObjects.SapInstance.html
 Trento.Clusters.ValueObjects.SbdDevice.html
 Trento.Clusters.html
 Trento.Commanded.html
@@ -511,8 +513,8 @@ dist/lato-latin-ext-300-normal-VPGGJKJL.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-B8ECC6C2.js
-dist/sidebar_items-0DA95769.js
+dist/search_data-49794C1E.js
+dist/sidebar_items-32D6D131.js
 environment_variables.html
 hack_on_the_trento.html
 index.html
