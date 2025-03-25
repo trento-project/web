@@ -11,8 +11,7 @@ defmodule Trento.Domain.Events.ClusterRegistered do
 
   alias Trento.Clusters.ValueObjects.{
     AscsErsClusterDetails,
-    HanaClusterDetails,
-    SapInstance
+    HanaClusterDetails
   }
 
   defevent superseded_by: Trento.Clusters.Events.ClusterRegistered do
@@ -35,7 +34,5 @@ defmodule Trento.Domain.Events.ClusterRegistered do
         ascs_ers: [module: AscsErsClusterDetails, identify_by_fields: [:sap_systems]]
       ],
       on_replace: :update
-
-    embeds_many :sap_instances, SapInstance
   end
 end
