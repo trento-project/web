@@ -11,8 +11,57 @@ import {
   healthMap,
 } from '../fixtures/sap-systems-overview/available_sap_systems';
 
+const nwdSystem = {
+  sid: 'NWD',
+  id: '67b247e4-ab5b-5094-993a-a4fd70d0e8d1',
+  hostId: '9a3ec76a-dd4f-5013-9cf0-5eb4cf89898f',
+  instanceNumber: '02',
+  hostname: 'vmnwdev01',
+  messageserverInstance: {
+    instanceNumber: '00',
+    row: 0,
+  },
+  appInstance: {
+    instanceNumber: '01',
+    row: 1,
+  },
+};
+
+const sapSystemNwp = {
+  sid: 'NWP',
+  hanaPrimary: {
+    name: 'vmhdbprd01',
+    id: '9cd46919-5f19-59aa-993e-cf3736c71053',
+  },
+};
+
+const sapSystemNwq = {
+  sid: 'NWQ',
+  messageserverInstance: {
+    name: 'vmnwqas01',
+    id: '25677e37-fd33-5005-896c-9275b1284534',
+  },
+};
+
+const sapSystemNwd = {
+  sid: 'NWD',
+  applicationInstances: [
+    {
+      name: 'vmnwdev03',
+      id: '9a3ec76a-dd4f-5013-9cf0-5eb4cf89898f',
+    },
+    {
+      name: 'vmnwdev04',
+      id: '1b0e9297-97dd-55d6-9874-8efde4d84c90',
+    },
+  ],
+};
+
 // Selectors
 const sapSystemsTableRows = 'tbody tr[class*="pointer"]';
+const firstSystemApplicationLayerRows =
+  'tbody tr[class*="cursor"]:eq(0) + tr td div[class*="row-group"]:eq(0) div[class*="row border"]';
+const cleanUpButton = 'td:contains("Clean up")';
 
 // UI Interactions
 export const visit = () => {
@@ -28,9 +77,18 @@ export const tagSapSystems = () => {
   });
 };
 
+export const clickSystemToRemove = () =>
+  cy.get(`${sapSystemsTableRows}:eq(0)`).click();
+
 // UI Validations
 
 export const validateUrl = (_url = url) => basePage.validateUrl(_url);
+
+export const systemApplicationLayerRowsAreTheExpected = (amount) =>
+  cy.get(firstSystemApplicationLayerRows).should('have.length', amount);
+
+export const movedSystemIsNotDisplayed = () =>
+  cy.get(`td:contains('${nwdSystem.hostname}')`).should('not.exist');
 
 export const expectedSidsAreDisplayed = () => {
   availableSAPSystems.forEach(({ sid: sid }) => {
@@ -73,6 +131,32 @@ export const eachAttachedDatabaseDetailsAreTheExpected = () => {
     }
   );
 };
+
+export const nwdSystemIsDisplayed = () =>
+  cy
+    .get(`td:contains('${sapSystemNwd.sid}')`, { timeout: 15000 })
+    .should('be.visible');
+
+export const nwdSystemIsNotDisplayed = () =>
+  cy
+    .get(`td:contains('${sapSystemNwd.sid}')`, { timeout: 15000 })
+    .should('not.exist');
+
+export const nwpSystemIsDisplayed = () =>
+  cy.get(`td:contains('${sapSystemNwp.sid}')`).should('be.visible');
+
+export const nwqSystemIsNotDisplayed = () =>
+  cy
+    .get(`td:contains('${sapSystemNwq.sid}')`, { timeout: 15000 })
+    .should('not.exist');
+
+export const nwqSystemIsDisplayed = () =>
+  cy.get(`td:contains('${sapSystemNwq.sid}')`).should('be.visible');
+
+export const nwpSystemIsNotDisplayed = () =>
+  cy
+    .get(`td:contains('${sapSystemNwp.sid}')`, { timeout: 15000 })
+    .should('not.exist');
 
 export const eachSystemHasItsDatabaseWorkingLink = () => {
   availableSAPSystems.forEach(
@@ -259,7 +343,24 @@ export const sapDiagnosticsAgentDiscoveryVisualizationIsSkipped = () => {
   basePage.loadScenario('sap-systems-overview-DAA');
   cy.get('table[class*="table-fixed"]').should('not.contain', 'DAA');
 };
+
+export const systemToRemoveIsVisible = () =>
+  cy.get(`td:contains('${nwdSystem.sid}')`).should('be.visible');
+
+export const cleanUpButtonIsNotDisplayed = () =>
+  cy.get(cleanUpButton).should('not.exist');
+
+export const cleanUpButtonIsDisplayed = () =>
+  cy.get(cleanUpButton).should('be.visible');
 // API
+export const deregisterInstance = () => {
+  apiDeregisterInstance(
+    nwdSystem.id,
+    nwdSystem.hostId,
+    nwdSystem.instanceNumber
+  );
+};
+
 export const apiRemoveAllSapSystemsTags = () => {
   apiGetSapSystems().then((response) => {
     const sapSystemTags = getSapSystemTags(response.body);
@@ -315,4 +416,54 @@ export const apiDeregisterJavaSystems = () =>
   availableJavaSystem.instances.forEach(({ hostID }) => {
     basePage.apiDeregisterHost(hostID);
   });
+
+export const revertNotMovedScenario = () =>
+  basePage.loadScenario('sap-systems-overview-revert-not-moved');
+
+export const revertMovedScenario = () =>
+  basePage.loadScenario('sap-systems-overview-revert-moved');
+
+export const loadNotMovedScenario = () =>
+  basePage.loadScenario('sap-systems-overview-not-moved');
+
+export const loadMovedScenario = () =>
+  basePage.loadScenario('sap-systems-overview-moved');
+
+const apiDeregisterInstance = (sapSystemdId, hostId, instanceNumber) => {
+  const [webAPIHost, webAPIPort] = [
+    Cypress.env('web_api_host'),
+    Cypress.env('web_api_port'),
+  ];
+
+  const headers = {
+    'Content-Type': 'application/json;charset=UTF-8',
+  };
+
+  basePage.apiLogin().then(({ accessToken }) => {
+    const url = `http://${webAPIHost}:${webAPIPort}/api/v1/sap_systems/${sapSystemdId}/hosts/${hostId}/instances/${instanceNumber}`;
+    cy.request({
+      method: 'DELETE',
+      url: url,
+      headers: headers,
+      auth: {
+        bearer: accessToken,
+      },
+    });
+  });
+};
+
+export const apiDeregisterNwpHost = () =>
+  basePage.apiDeregisterHost(sapSystemNwp.hanaPrimary.id);
+
+export const apiDeregisterNwqHost = () =>
+  basePage.apiDeregisterHost(sapSystemNwq.messageserverInstance.id);
+
+export const apiDeregisterNwdInstances = () => {
+  basePage.apiDeregisterHost(sapSystemNwd.applicationInstances[0].id);
+  basePage.apiDeregisterHost(sapSystemNwd.applicationInstances[1].id);
+};
+
+export const restoreNwdHost = () =>
+  basePage.loadScenario(`sapsystem-${sapSystemNwd.sid}-restore`);
+
 // Helpers
