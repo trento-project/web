@@ -13,6 +13,8 @@ defmodule Trento.Clusters.Projections.ClusterReadModel do
 
   alias Trento.Hosts.Projections.HostReadModel
 
+  alias Trento.Clusters.ValueObjects.SapInstance
+
   alias Trento.Tags.Tag
 
   defdelegate authorize(action, user, params), to: Trento.Clusters.Policy
@@ -26,8 +28,6 @@ defmodule Trento.Clusters.Projections.ClusterReadModel do
   @primary_key {:id, :binary_id, autogenerate: false}
   schema "clusters" do
     field :name, :string, default: ""
-    field :sid, :string
-    field :additional_sids, {:array, :string}, default: []
     field :provider, Ecto.Enum, values: Provider.values()
     field :type, Ecto.Enum, values: ClusterType.values()
     field :selected_checks, {:array, :string}, default: []
@@ -43,6 +43,8 @@ defmodule Trento.Clusters.Projections.ClusterReadModel do
       foreign_key: :cluster_id,
       where: [deregistered_at: nil]
 
+    embeds_many :sap_instances, SapInstance, on_replace: :delete
+
     # Virtually enriched fields
     field :cib_last_written, :string, virtual: true
 
@@ -53,6 +55,8 @@ defmodule Trento.Clusters.Projections.ClusterReadModel do
 
   @spec changeset(t() | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()
   def changeset(cluster, attrs) do
-    cast(cluster, attrs, __MODULE__.__schema__(:fields))
+    cluster
+    |> cast(attrs, __MODULE__.__schema__(:fields) -- [:sap_instances])
+    |> cast_embed(:sap_instances)
   end
 end

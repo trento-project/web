@@ -76,7 +76,8 @@ defmodule Trento.SapSystems.SapSystemTest do
           host_id: host_id,
           health: :passing,
           ensa_version: ensa_version,
-          database_health: :passing
+          database_health: :passing,
+          clustered: false
         }),
         [
           %ApplicationInstanceRegistered{
@@ -162,7 +163,8 @@ defmodule Trento.SapSystems.SapSystemTest do
           host_id: host_id,
           health: :passing,
           ensa_version: ensa_version,
-          database_health: :passing
+          database_health: :passing,
+          clustered: false
         }),
         [
           %ApplicationInstanceRegistered{
@@ -223,7 +225,6 @@ defmodule Trento.SapSystems.SapSystemTest do
       https_port = 443
       start_priority = "0.9"
       ensa_version = EnsaVersion.ensa1()
-      cluster_id = Faker.UUID.v4()
 
       initial_events = [
         build(:application_instance_registered_event,
@@ -267,7 +268,7 @@ defmodule Trento.SapSystems.SapSystemTest do
           host_id: new_host_id,
           health: :passing,
           ensa_version: ensa_version,
-          cluster_id: cluster_id,
+          clustered: true,
           database_health: :passing
         }),
         [
@@ -306,7 +307,6 @@ defmodule Trento.SapSystems.SapSystemTest do
       https_port = 443
       start_priority = "0.9"
       ensa_version = EnsaVersion.ensa1()
-      cluster_id = Faker.UUID.v4()
 
       initial_events = [
         build(:application_instance_registered_event,
@@ -352,7 +352,7 @@ defmodule Trento.SapSystems.SapSystemTest do
           host_id: message_server_host_id,
           health: :passing,
           ensa_version: ensa_version,
-          cluster_id: cluster_id,
+          cluster_id: true,
           database_health: :passing
         }),
         []
@@ -415,7 +415,7 @@ defmodule Trento.SapSystems.SapSystemTest do
           host_id: new_host_id,
           health: :passing,
           ensa_version: ensa_version,
-          cluster_id: nil,
+          clustered: false,
           database_health: :passing
         }),
         [
@@ -503,7 +503,8 @@ defmodule Trento.SapSystems.SapSystemTest do
           host_id: old_host_id,
           health: :passing,
           ensa_version: ensa_version,
-          database_health: :passing
+          database_health: :passing,
+          clustered: false
         }),
         [],
         fn state ->
@@ -707,7 +708,8 @@ defmodule Trento.SapSystems.SapSystemTest do
           host_id: host_id,
           health: :passing,
           ensa_version: ensa_version,
-          database_health: :passing
+          database_health: :passing,
+          clustered: false
         }),
         [
           %ApplicationInstanceRegistered{

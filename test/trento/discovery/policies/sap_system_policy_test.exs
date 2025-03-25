@@ -39,7 +39,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
             ]} =
              "sap_system_discovery_database_multi_tenant"
              |> load_discovery_event_fixture()
-             |> SapSystemPolicy.handle([], nil)
+             |> SapSystemPolicy.handle([], [])
   end
 
   test "should return the expected commands when a sap_system payload of type database is handled" do
@@ -59,7 +59,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
             ]} =
              "sap_system_discovery_database"
              |> load_discovery_event_fixture()
-             |> SapSystemPolicy.handle([], nil)
+             |> SapSystemPolicy.handle([], [])
   end
 
   test "should return the expected commands when a sap_system payload of type database is handled in the event of a stopped instance" do
@@ -79,11 +79,15 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
             ]} =
              "sap_system_discovery_database_stopped_instance"
              |> load_discovery_event_fixture()
-             |> SapSystemPolicy.handle([], nil)
+             |> SapSystemPolicy.handle([], [])
   end
 
-  test "should return the expected commands when a sap_system payload of type application is handled and the host is part of a cluster" do
-    %{id: cluster_id} = insert(:cluster)
+  test "should return the expected commands when a sap_system payload of type application is handled and the sap instance is part of a cluster" do
+    %{id: cluster_id, sap_instances: sap_instances} =
+      insert(:cluster,
+        sap_instances: build_list(1, :clustered_sap_instance, sid: "HA1", instance_number: "02")
+      )
+
     %{id: host_id} = insert(:host, cluster_id: cluster_id)
 
     assert {:ok,
@@ -97,14 +101,43 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
                 sid: "HA1",
                 tenant: "PRD",
                 health: :passing,
-                cluster_id: ^cluster_id,
+                clustered: true,
                 ensa_version: EnsaVersion.no_ensa()
               }
             ]} =
              "sap_system_discovery_application"
              |> load_discovery_event_fixture()
              |> Map.put("agent_id", host_id)
-             |> SapSystemPolicy.handle([], cluster_id)
+             |> SapSystemPolicy.handle([], sap_instances)
+  end
+
+  test "should return the expected commands when a sap_system payload of type application is handled and the sap instance is not part of a cluster" do
+    %{id: cluster_id, sap_instances: sap_instances} =
+      insert(:cluster,
+        sap_instances: build_list(1, :clustered_sap_instance, sid: "HA2", instance_number: "01")
+      )
+
+    %{id: host_id} = insert(:host, cluster_id: cluster_id)
+
+    assert {:ok,
+            [
+              %RegisterApplicationInstance{
+                db_host: "10.74.1.12",
+                features: "ABAP|GATEWAY|ICMAN|IGS",
+                host_id: ^host_id,
+                instance_number: "02",
+                sap_system_id: nil,
+                sid: "HA1",
+                tenant: "PRD",
+                health: :passing,
+                clustered: false,
+                ensa_version: EnsaVersion.no_ensa()
+              }
+            ]} =
+             "sap_system_discovery_application"
+             |> load_discovery_event_fixture()
+             |> Map.put("agent_id", host_id)
+             |> SapSystemPolicy.handle([], sap_instances)
   end
 
   test "should return the expected commands when a sap_system payload of type application is handled" do
@@ -124,7 +157,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
             ]} =
              "sap_system_discovery_application"
              |> load_discovery_event_fixture()
-             |> SapSystemPolicy.handle([], nil)
+             |> SapSystemPolicy.handle([], [])
   end
 
   test "should return the expected commands when a sap_system payload of type application and diagnostics is handled" do
@@ -143,11 +176,15 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
             ]} =
              "sap_system_discovery_application_diagnostics"
              |> load_discovery_event_fixture()
-             |> SapSystemPolicy.handle([], nil)
+             |> SapSystemPolicy.handle([], [])
   end
 
   test "should return the expected commands when a sap_system payload of type application and diagnostics is handled and the host is part of a cluster" do
-    %{id: cluster_id} = insert(:cluster)
+    %{id: cluster_id, sap_instances: sap_instances} =
+      insert(:cluster,
+        sap_instances: build_list(1, :clustered_sap_instance, sid: "HA1", instance_number: "02")
+      )
+
     %{id: host_id} = insert(:host, cluster_id: cluster_id)
 
     assert {:ok,
@@ -161,13 +198,13 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
                 sid: "HA1",
                 tenant: "PRD",
                 health: :passing,
-                cluster_id: ^cluster_id
+                clustered: true
               }
             ]} =
              "sap_system_discovery_application_diagnostics"
              |> load_discovery_event_fixture()
              |> Map.put("agent_id", host_id)
-             |> SapSystemPolicy.handle([], cluster_id)
+             |> SapSystemPolicy.handle([], sap_instances)
   end
 
   test "should return the expected commands when a sap_system payload of type application with ensa version is handled" do
@@ -209,7 +246,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
                      )
                    end)
                  )
-                 |> SapSystemPolicy.handle([], nil)
+                 |> SapSystemPolicy.handle([], [])
       end
     )
   end
@@ -218,7 +255,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
     assert {:ok, []} =
              "sap_system_discovery_empty"
              |> load_discovery_event_fixture()
-             |> SapSystemPolicy.handle([], nil)
+             |> SapSystemPolicy.handle([], [])
   end
 
   describe "delta deregistration" do
@@ -270,7 +307,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
               ]} =
                "sap_system_discovery_database"
                |> load_discovery_event_fixture()
-               |> SapSystemPolicy.handle(database_instances ++ application_instances, nil)
+               |> SapSystemPolicy.handle(database_instances ++ application_instances, [])
     end
 
     test "should not deregister any instance if the discovered instances did not change" do
@@ -297,7 +334,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
               ]} =
                "sap_system_discovery_application"
                |> load_discovery_event_fixture()
-               |> SapSystemPolicy.handle([application_instance], nil)
+               |> SapSystemPolicy.handle([application_instance], [])
     end
 
     test "should deregister all instances if the discovered instances is an empty list" do
@@ -322,7 +359,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
               ]} =
                "sap_system_discovery_empty"
                |> load_discovery_event_fixture()
-               |> SapSystemPolicy.handle([application_instance, database_instance], nil)
+               |> SapSystemPolicy.handle([application_instance, database_instance], [])
     end
 
     test "should deregister all instances if the discovered instances contains an empty list inside a regular payload" do
@@ -347,7 +384,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
               ]} =
                "sap_system_discovery_empty_application_instances"
                |> load_discovery_event_fixture()
-               |> SapSystemPolicy.handle([application_instance, database_instance], nil)
+               |> SapSystemPolicy.handle([application_instance, database_instance], [])
     end
   end
 

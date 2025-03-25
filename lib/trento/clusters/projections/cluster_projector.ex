@@ -29,8 +29,7 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
     %ClusterRegistered{
       cluster_id: id,
       name: name,
-      sid: sid,
-      additional_sids: additional_sids,
+      sap_instances: sap_instances,
       provider: provider,
       type: type,
       resources_number: resources_number,
@@ -43,8 +42,7 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
         ClusterReadModel.changeset(%ClusterReadModel{}, %{
           id: id,
           name: name,
-          sid: sid,
-          additional_sids: additional_sids,
+          sap_instances: Enum.map(sap_instances, &Map.from_struct/1),
           provider: provider,
           type: type,
           resources_number: resources_number,
@@ -94,8 +92,7 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
     %ClusterDetailsUpdated{
       cluster_id: id,
       name: name,
-      sid: sid,
-      additional_sids: additional_sids,
+      sap_instances: sap_instances,
       provider: provider,
       type: type,
       resources_number: resources_number,
@@ -108,8 +105,7 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
         |> Repo.get!(id)
         |> ClusterReadModel.changeset(%{
           name: name,
-          sid: sid,
-          additional_sids: additional_sids,
+          sap_instances: Enum.map(sap_instances, &Map.from_struct/1),
           provider: provider,
           type: type,
           resources_number: resources_number,

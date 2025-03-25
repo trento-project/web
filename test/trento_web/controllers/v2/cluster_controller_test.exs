@@ -5,6 +5,8 @@ defmodule TrentoWeb.V2.ClusterControllerTest do
   import Mox
   import Trento.Factory
 
+  require Trento.Clusters.Enums.SapInstanceResourceType, as: SapInstanceResourceType
+
   alias TrentoWeb.OpenApi.V2.ApiSpec
 
   setup [:set_mox_from_context, :verify_on_exit!]
@@ -23,6 +25,10 @@ defmodule TrentoWeb.V2.ClusterControllerTest do
 
     test "should be compliant with Hana Cluster details schema", %{conn: conn} do
       insert(:cluster,
+        sap_instances:
+          build_list(1, :clustered_sap_instance,
+            resource_type: SapInstanceResourceType.sap_hana_topology()
+          ),
         details:
           build(:hana_cluster_details,
             nodes: build_list(1, :hana_cluster_node)

@@ -152,12 +152,12 @@ defmodule Trento.Discovery do
   defp do_handle(%{"discovery_type" => "sap_system_discovery", "agent_id" => agent_id} = event) do
     current_application_instances = SapSystems.get_application_instances_by_host_id(agent_id)
     current_database_instances = Databases.get_database_instances_by_host_id(agent_id)
-    cluster_id = Trento.Clusters.get_cluster_id_by_host_id(agent_id)
+    cluster_sap_instances = Trento.Clusters.get_sap_instances_by_host_id(agent_id)
 
     SapSystemPolicy.handle(
       event,
       current_application_instances ++ current_database_instances,
-      cluster_id
+      cluster_sap_instances
     )
   end
 

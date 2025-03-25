@@ -28,6 +28,8 @@ defmodule Trento.Discovery.Policies.SapSystemPolicy do
     SystemReplication
   }
 
+  alias Trento.Clusters.ValueObjects.SapInstance
+
   @uuid_namespace Application.compile_env!(:trento, :uuid_namespace)
 
   @unknown_type 0
@@ -38,7 +40,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicy do
   @spec handle(
           map,
           [ApplicationInstanceReadModel.t() | DatabaseInstanceReadModel.t()],
-          String.t()
+          [SapInstance.t()]
         ) ::
           {:ok,
            [
@@ -53,13 +55,13 @@ defmodule Trento.Discovery.Policies.SapSystemPolicy do
           "payload" => payload
         },
         current_instances,
-        cluster_id
+        sap_instances
       ) do
     with {:ok, sap_systems} <- SapSystemDiscoveryPayload.new(payload),
          {:ok, register_instance_commands} <-
            sap_systems
            |> Enum.flat_map(fn sap_system ->
-             build_register_instances_commands(sap_system, agent_id, cluster_id)
+             build_register_instances_commands(sap_system, agent_id, sap_instances)
            end)
            |> Enum.reduce_while(
              {:ok, []},
@@ -131,14 +133,21 @@ defmodule Trento.Discovery.Policies.SapSystemPolicy do
            }
          },
          host_id,
-         cluster_id
+         sap_instances
        ) do
     Enum.map(instances, fn instance ->
+      instance_number = parse_instance_number(instance)
+
+      clustered =
+        Enum.any?(sap_instances, fn %{instance_number: inst_number, sid: inst_sid} ->
+          inst_number == instance_number && inst_sid == sid
+        end)
+
       RegisterApplicationInstance.new(%{
         sid: sid,
         tenant: tenant,
         db_host: db_host,
-        instance_number: parse_instance_number(instance),
+        instance_number: instance_number,
         instance_hostname: parse_instance_hostname(instance),
         features: parse_features(instance),
         http_port: parse_http_port(instance),
@@ -147,7 +156,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicy do
         host_id: host_id,
         health: parse_dispstatus(instance),
         ensa_version: parse_ensa_version(instance),
-        cluster_id: cluster_id
+        clustered: clustered
       })
     end)
   end
@@ -159,8 +168,12 @@ defmodule Trento.Discovery.Policies.SapSystemPolicy do
        ),
        do: []
 
-  defp build_register_instances_commands(%SapSystemDiscoveryPayload{Type: @unknown_type}, _, _),
-    do: []
+  defp build_register_instances_commands(
+         %SapSystemDiscoveryPayload{Type: @unknown_type},
+         _,
+         _
+       ),
+       do: []
 
   defp build_deregister_instances_commands(current_instances) do
     Enum.map(current_instances, fn
