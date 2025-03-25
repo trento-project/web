@@ -16,7 +16,7 @@ defmodule Trento.Clusters.ValueObjects.SapInstance do
     field :resource_type, Ecto.Enum, values: SapInstanceResourceType.values()
   end
 
-  @spec get_hana_instance_sid([__MODULE__.t()]) :: String.t() | nil
+  @spec get_hana_instance_sid([__MODULE__.t()]) :: String.t()
   def get_hana_instance_sid(sap_instances) do
     Enum.find_value(sap_instances, "", fn %{resource_type: resource_type, sid: sid} ->
       if resource_type == SapInstanceResourceType.sap_hana_topology() do
