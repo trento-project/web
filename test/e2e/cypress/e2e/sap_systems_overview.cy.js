@@ -3,7 +3,7 @@ import * as sapSystemsOverviewPage from '../pageObject/sap_systems_overview_po';
 import { createUserRequestFactory } from '@lib/test-utils/factories';
 
 context('SAP Systems Overview', () => {
-  // before(() => sapSystemsOverviewPage.preloadTestData());
+  before(() => sapSystemsOverviewPage.preloadTestData());
 
   beforeEach(() => sapSystemsOverviewPage.visit());
 
@@ -95,109 +95,57 @@ context('SAP Systems Overview', () => {
   });
 
   describe('Move application instance', () => {
-    const nwdSystem = {
-      sid: 'NWD',
-      id: '67b247e4-ab5b-5094-993a-a4fd70d0e8d1',
-      hostId: '9a3ec76a-dd4f-5013-9cf0-5eb4cf89898f',
-      instanceNumber: '02',
-      hostname: 'vmnwdev01',
-    };
-
-    before(() => {
-      cy.contains(nwdSystem.sid).should('exist');
-
-      cy.get('table.table-fixed > tbody > tr').eq(0).click();
-    });
-
-    after(() => {
-      cy.loadScenario('sap-systems-overview-revert-not-moved');
-      cy.get('table.table-fixed ').contains('Clean up', { timeout: 15000 });
-      cy.deregisterInstance(
-        nwdSystem.id,
-        nwdSystem.hostId,
-        nwdSystem.instanceNumber
-      );
+    beforeEach(() => {
+      sapSystemsOverviewPage.revertMovedScenario();
+      sapSystemsOverviewPage.systemToRemoveIsVisible();
+      sapSystemsOverviewPage.clickSystemToRemove();
     });
 
     it('should move a clustered application instance', () => {
-      cy.loadScenario('sap-systems-overview-moved');
-
-      cy.get('table.table-fixed > tbody > tr')
-        .eq(1)
-        .find('div.table-row-group')
-        .eq(0)
-        .find('div.table-row')
-        .its('length')
-        .should('eq', 4);
-
-      cy.contains(nwdSystem.hostname).should('not.exist');
-
-      cy.loadScenario('sap-systems-overview-revert-moved');
+      sapSystemsOverviewPage.loadMovedScenario();
+      sapSystemsOverviewPage.systemApplicationLayerRowsAreTheExpected(4);
+      sapSystemsOverviewPage.movedSystemIsNotDisplayed();
     });
 
     it('should register a new instance with an already existing instance number, when the application instance is not clustered', () => {
-      cy.loadScenario('sap-systems-overview-not-moved');
-
-      cy.get('table.table-fixed > tbody > tr')
-        .eq(1)
-        .find('div.table-row-group')
-        .eq(0)
-        .find('div.table-row')
-        .its('length')
-        .should('eq', 5);
+      sapSystemsOverviewPage.cleanUpButtonIsNotDisplayed();
+      sapSystemsOverviewPage.loadNotMovedScenario();
+      sapSystemsOverviewPage.systemApplicationLayerRowsAreTheExpected(5);
+      sapSystemsOverviewPage.revertNotMovedScenario();
+      sapSystemsOverviewPage.cleanUpButtonIsDisplayed();
+      sapSystemsOverviewPage.deregisterInstance();
     });
   });
 
   describe('Deregistration', () => {
-    const sapSystemNwp = {
-      sid: 'NWP',
-      hanaPrimary: {
-        name: 'vmhdbprd01',
-        id: '9cd46919-5f19-59aa-993e-cf3736c71053',
-      },
-    };
-
-    const sapSystemNwq = {
-      sid: 'NWQ',
-      messageserverInstance: {
-        name: 'vmnwqas01',
-        id: '25677e37-fd33-5005-896c-9275b1284534',
-      },
-    };
-
-    const sapSystemNwd = {
-      sid: 'NWD',
-      applicationInstances: [
-        {
-          name: 'vmnwdev03',
-          id: '9a3ec76a-dd4f-5013-9cf0-5eb4cf89898f',
-        },
-        {
-          name: 'vmnwdev04',
-          id: '1b0e9297-97dd-55d6-9874-8efde4d84c90',
-        },
-      ],
-    };
-
-    it(`should not display SAP System ${sapSystemNwp.sid} after deregistering the primary instance`, () => {
-      cy.deregisterHost(sapSystemNwp.hanaPrimary.id);
-      cy.contains(sapSystemNwp.sid).should('not.exist');
+    it('should not display SAP System after deregistering the primary instance', () => {
+      sapSystemsOverviewPage.nwpSystemIsDisplayed();
+      sapSystemsOverviewPage.apiDeregisterNwpHost();
+      sapSystemsOverviewPage.nwpSystemIsNotDisplayed();
     });
 
-    it(`should not display SAP System ${sapSystemNwq.sid} after deregistering the instance running the messageserver`, () => {
-      cy.deregisterHost(sapSystemNwq.messageserverInstance.id);
-      cy.contains(sapSystemNwq.sid).should('not.exist');
+    it('should not display SAP System after deregistering the instance running the messageserver', () => {
+      sapSystemsOverviewPage.nwqSystemIsDisplayed();
+      sapSystemsOverviewPage.apiDeregisterNwqHost();
+      sapSystemsOverviewPage.nwqSystemIsNotDisplayed();
     });
 
-    it(`should not display SAP System ${sapSystemNwd.sid} after deregistering both application instances`, () => {
-      cy.deregisterHost(sapSystemNwd.applicationInstances[0].id);
-      cy.deregisterHost(sapSystemNwd.applicationInstances[1].id);
-      cy.contains(sapSystemNwd.sid).should('not.exist');
+    it('should not display SAP System ${sapSystemNwd.sid} after deregistering both application instances', () => {
+      sapSystemsOverviewPage.nwdSystemIsDisplayed();
+      sapSystemsOverviewPage.apiDeregisterNwdInstances();
+      sapSystemsOverviewPage.nwdSystemIsNotDisplayed();
     });
 
-    it(`should show host ${sapSystemNwd.sid} registered again after restoring it`, () => {
-      cy.loadScenario(`sapsystem-${sapSystemNwd.sid}-restore`);
-      cy.contains(sapSystemNwd.sid).should('exist');
+    describe('Restore deregistered host', () => {
+      beforeEach(() => {
+        sapSystemsOverviewPage.restoreNwdHost();
+        sapSystemsOverviewPage.apiDeregisterNwdInstances();
+      });
+
+      it('should show host registered again after restoring it', () => {
+        sapSystemsOverviewPage.restoreNwdHost();
+        sapSystemsOverviewPage.nwdSystemIsDisplayed();
+      });
     });
   });
 

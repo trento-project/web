@@ -194,31 +194,7 @@ Cypress.Commands.add('deregisterHost', (hostId) => {
   });
 });
 
-Cypress.Commands.add(
-  'deregisterInstance',
-  (sapSystemdId, hostId, instanceNumber) => {
-    const [webAPIHost, webAPIPort] = [
-      Cypress.env('web_api_host'),
-      Cypress.env('web_api_port'),
-    ];
 
-    const headers = {
-      'Content-Type': 'application/json;charset=UTF-8',
-    };
-
-    cy.apiLogin().then(({ accessToken }) => {
-      const url = `http://${webAPIHost}:${webAPIPort}/api/v1/sap_systems/${sapSystemdId}/hosts/${hostId}/instances/${instanceNumber}`;
-      cy.request({
-        method: 'DELETE',
-        url: url,
-        headers: headers,
-        auth: {
-          bearer: accessToken,
-        },
-      });
-    });
-  }
-);
 
 Cypress.Commands.add(
   'saveSUMASettings',
