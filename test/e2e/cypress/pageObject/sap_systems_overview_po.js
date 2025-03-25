@@ -239,6 +239,26 @@ export const eachInstanceHasItsHealthStatusCorrectlyUpdated = () => {
     cy.get(appLayerInstanceHealthBadge).should('have.class', health);
   });
 };
+
+export const sapSystemHealthChangesToRedAsExpected = () => {
+  basePage.loadScenario('sap-systems-overview-hana-RED');
+  const healthClass = healthMap['RED'];
+
+  const sapSystemsFirstRow = `${sapSystemsTableRows}:eq(0)`;
+  cy.get(sapSystemsFirstRow).click();
+
+  const sapSystemInstanceHealthBadge = `${sapSystemsFirstRow} td:eq(0) svg`;
+  cy.get(sapSystemInstanceHealthBadge).should('have.class', healthClass);
+
+  const appLayerInstanceHealthBadge =
+    'tr td div[class*="flex bg-white"] div[class*="row"] div[class*="cell"] svg:eq(5)';
+  cy.get(appLayerInstanceHealthBadge).should('have.class', healthClass);
+};
+
+export const sapDiagnosticsAgentDiscoveryVisualizationIsSkipped = () => {
+  basePage.loadScenario('sap-systems-overview-DAA');
+  cy.get('table[class*="table-fixed"]').should('not.contain', 'DAA');
+};
 // API
 export const apiRemoveAllSapSystemsTags = () => {
   apiGetSapSystems().then((response) => {
