@@ -2,10 +2,8 @@ import * as sapSystemsOverviewPage from '../pageObject/sap_systems_overview_po';
 
 import { createUserRequestFactory } from '@lib/test-utils/factories';
 
-import { healthMap } from '../fixtures/sap-systems-overview/available_sap_systems';
-
 context('SAP Systems Overview', () => {
-  before(() => sapSystemsOverviewPage.preloadTestData());
+  // before(() => sapSystemsOverviewPage.preloadTestData());
 
   beforeEach(() => sapSystemsOverviewPage.visit());
 
@@ -85,39 +83,14 @@ context('SAP Systems Overview', () => {
       sapSystemsOverviewPage.eachInstanceHasItsHealthStatusCorrectlyUpdated();
     });
 
-    it(`should have RED health in SAP system when HANA instance with SAPControl-RED state is received`, () => {
-      cy.loadScenario(`sap-systems-overview-hana-RED`);
-
-      const healthClasses = healthMap['RED'];
-
-      cy.get('table.table-fixed > tbody > tr')
-        .filter(':visible')
-        .eq(0)
-        .find('td')
-        .eq(0)
-        .get('svg')
-        .should('have.class', healthClasses);
-
-      cy.get('table.table-fixed > tbody > tr').filter(':visible').eq(0).click();
-      cy.get('table.table-fixed > tbody > tr')
-        .filter(':visible')
-        .eq(0)
-        .next()
-        .get('div.table-row-group > div.table-row')
-        .eq(5)
-        .get('div.table-cell')
-        .eq(0)
-        .get('svg')
-        .should('have.class', healthClasses);
-
-      cy.get('table.table-fixed > tbody > tr').filter(':visible').eq(0).click();
+    it('should have RED health in SAP system when HANA instance with SAPControl-RED state is received', () => {
+      sapSystemsOverviewPage.sapSystemHealthChangesToRedAsExpected();
     });
   });
 
   describe('SAP diagnostics agent', () => {
-    it(`should skip SAP diagnostics agent discovery visualization`, () => {
-      cy.loadScenario('sap-systems-overview-DAA');
-      cy.get('table.table-fixed').should('not.contain', 'DAA');
+    it('should skip SAP diagnostics agent discovery visualization', () => {
+      sapSystemsOverviewPage.sapDiagnosticsAgentDiscoveryVisualizationIsSkipped();
     });
   });
 
