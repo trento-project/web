@@ -63,6 +63,17 @@ const firstSystemApplicationLayerRows =
   'tbody tr[class*="cursor"]:eq(0) + tr td div[class*="row-group"]:eq(0) div[class*="row border"]';
 const cleanUpButton = 'td:contains("Clean up")';
 
+const nwdInstance01CleanUpButton = `tbody tr[class*="pointer"]:eq(0) + tr td div[class*="row border"]:eq(${
+  nwdSystem.appInstance.row + 1
+}) div[class*="cell"]:contains('Clean up')`;
+
+const nwdInstance00CleanUpButton = `tbody tr[class*="pointer"]:eq(0) + tr td div[class*="row border"]:eq(${
+  nwdSystem.messageserverInstance.row + 1
+}) div[class*="cell"]:contains('Clean up')`;
+
+const modalCleanupConfirmationButton =
+  'div[id*="headlessui-dialog-panel"] button:contains("Clean up")';
+
 // UI Interactions
 export const visit = () => {
   cy.intercept('/api/v1/databases').as('databasesRequest');
@@ -80,7 +91,24 @@ export const tagSapSystems = () => {
 export const clickSystemToRemove = () =>
   cy.get(`${sapSystemsTableRows}:eq(0)`).click();
 
+export const clickNwdSystem = () =>
+  cy.get(`tr:contains('${nwdSystem.sid}')`).click();
+
 // UI Validations
+export const clickNwdInstance01CleanUpButton = () =>
+  cy.get(nwdInstance01CleanUpButton).click();
+
+export const clickNwdInstance00CleanUpButton = () =>
+  cy.get(nwdInstance00CleanUpButton).click();
+
+export const clickCleanupModalConfirmationButton = () =>
+  cy.get(modalCleanupConfirmationButton).click();
+
+export const nwdInstance01CleanUpButtonIsVisible = () =>
+  cy.get(nwdInstance01CleanUpButton).should('be.visible');
+
+export const nwdInstance01CleanUpButtonIsNotVisible = () =>
+  cy.get(nwdInstance01CleanUpButton).should('not.exist');
 
 export const validateUrl = (_url = url) => basePage.validateUrl(_url);
 
@@ -344,8 +372,11 @@ export const sapDiagnosticsAgentDiscoveryVisualizationIsSkipped = () => {
   cy.get('table[class*="table-fixed"]').should('not.contain', 'DAA');
 };
 
-export const systemToRemoveIsVisible = () =>
+export const systemNwdIsVisible = () =>
   cy.get(`td:contains('${nwdSystem.sid}')`).should('be.visible');
+
+export const systemNwdIsNotDisplayed = () =>
+  cy.get(`td:contains('${nwdSystem.sid}')`).should('not.exist');
 
 export const cleanUpButtonIsNotDisplayed = () =>
   cy.get(cleanUpButton).should('not.exist');
@@ -466,4 +497,18 @@ export const apiDeregisterNwdInstances = () => {
 export const restoreNwdHost = () =>
   basePage.loadScenario(`sapsystem-${sapSystemNwd.sid}-restore`);
 
+export const loadAbsentInstanceScenario = () =>
+  basePage.loadScenario(
+    `sap-systems-overview-${nwdSystem.sid}-${nwdSystem.appInstance.instanceNumber}-absent`
+  );
+
+export const loadPresentInstanceScenario = () =>
+  basePage.loadScenario(
+    `sap-systems-overview-${nwdSystem.sid}-${nwdSystem.appInstance.instanceNumber}-present`
+  );
+
+export const loadAbsentMessageServerInstance = () =>
+  basePage.loadScenario(
+    `sap-systems-overview-${nwdSystem.sid}-${nwdSystem.messageserverInstance.instanceNumber}-absent`
+  );
 // Helpers
