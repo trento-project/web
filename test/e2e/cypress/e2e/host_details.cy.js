@@ -82,6 +82,11 @@ context('Host Details', () => {
       hostDetailsPage.expectedVpcIdIsDisplayed('aws');
     });
 
+    it('should show AWS cloud details correctly when no metadata are available', () => {
+      hostDetailsPage.loadScenario('host-details-aws-no-metadata');
+      hostDetailsPage.expectedProviderIsDisplayed('aws');
+    });
+
     it('should show GCP cloud details correctly', () => {
       hostDetailsPage.loadScenario('host-details-gcp');
       hostDetailsPage.expectedProviderIsDisplayed('gcp');

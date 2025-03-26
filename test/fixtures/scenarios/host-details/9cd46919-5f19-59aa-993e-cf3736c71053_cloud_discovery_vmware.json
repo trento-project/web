@@ -3,6 +3,6 @@
   "agent_id": "9cd46919-5f19-59aa-993e-cf3736c71053",
   "payload": {
     "Provider": "vmware",
-    "Metadata": {}
+    "Metadata": null
   }
 }

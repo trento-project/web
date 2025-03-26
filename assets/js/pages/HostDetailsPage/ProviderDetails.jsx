@@ -4,6 +4,31 @@ import Pill from '@common/Pill';
 import ListView from '@common/ListView';
 import ProviderLabel from '@common/ProviderLabel';
 
+const awsMetadataRenderSpec = (provider_data) => {
+  if (!provider_data) {
+    return [];
+  }
+
+  return [
+    { title: 'Instance type', content: provider_data?.instance_type },
+    { title: 'Instance ID', content: provider_data?.instance_id },
+    {
+      title: 'Data disk number',
+      content: provider_data?.data_disk_number,
+    },
+    {
+      title: 'Account ID',
+      content: provider_data?.account_id,
+    },
+    { title: 'AMI ID', content: provider_data?.ami_id },
+    {
+      title: 'Region',
+      content: `${provider_data?.region} (${provider_data?.availability_zone})`,
+    },
+    { title: 'VPC ID', content: provider_data?.vpc_id },
+  ];
+};
+
 function ProviderDetails({ provider, provider_data }) {
   const data = {
     azure: [
@@ -32,22 +57,7 @@ function ProviderDetails({ provider, provider_data }) {
         content: provider,
         render: (content) => <ProviderLabel provider={content} />,
       },
-      { title: 'Instance type', content: provider_data?.instance_type },
-      { title: 'Instance ID', content: provider_data?.instance_id },
-      {
-        title: 'Data disk number',
-        content: provider_data?.data_disk_number,
-      },
-      {
-        title: 'Account ID',
-        content: provider_data?.account_id,
-      },
-      { title: 'AMI ID', content: provider_data?.ami_id },
-      {
-        title: 'Region',
-        content: `${provider_data?.region} (${provider_data?.availability_zone})`,
-      },
-      { title: 'VPC ID', content: provider_data?.vpc_id },
+      ...awsMetadataRenderSpec(provider_data),
     ],
     gcp: [
       {
