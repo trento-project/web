@@ -1,7 +1,5 @@
 import * as sapSystemsOverviewPage from '../pageObject/sap_systems_overview_po';
 
-import { createUserRequestFactory } from '@lib/test-utils/factories';
-
 context('SAP Systems Overview', () => {
   before(() => sapSystemsOverviewPage.preloadTestData());
 
@@ -183,20 +181,12 @@ context('SAP Systems Overview', () => {
   });
 
   describe('Forbidden actions', () => {
-    const password = 'password';
-
     before(() => sapSystemsOverviewPage.restoreNwdHost());
 
     beforeEach(() => {
       sapSystemsOverviewPage.apiDeleteAllUsers();
       sapSystemsOverviewPage.apiRemoveAllSapSystemsTags();
       sapSystemsOverviewPage.apiSetTagNwdSystem();
-      sapSystemsOverviewPage.logout();
-      const user = createUserRequestFactory.build({
-        password,
-        password_confirmation: password,
-      });
-      cy.wrap(user).as('user');
     });
 
     describe('Tag creation', () => {
