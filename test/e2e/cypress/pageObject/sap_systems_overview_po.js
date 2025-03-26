@@ -74,7 +74,8 @@ const addTagButton = 'span:contains("Add Tag")';
 const existentEnv3Tag = '[data-test-id="tag-env3"]';
 const instancesRowsSelector =
   'tr[class*="cursor"] + tr div[class*="row-group"] div[class*="row border"]';
-
+const hanaClusterLinks = 'div[class*="cell"] a span:contains("hana")';
+const instanceHostLinks = 'div[class*="cell"] a[href*="/host"]';
 // UI Interactions
 export const visit = () => {
   cy.intercept('/api/v1/databases').as('databasesRequest');
@@ -245,71 +246,27 @@ export const instanceDataIsTheExpected = () => {
   });
 };
 
-const getAllInstances = () =>
-  availableSAPSystems.flatMap((system) => system.instances);
-
-export const eachSapSystemHasWorkingLinkToKnownTypeCluster = () => {
-  availableSAPSystems.forEach(({ instances }, instanceIndex) => {
-    const tableRow = `tbody tr[class*="cursor"]:eq(${instanceIndex})`;
-    cy.get(tableRow).click();
-
-    instances.forEach((instance, rowIndex) => {
-      const isHana = isHanaInstance(instance);
-
-      // If is HANA instance index must be increased to skip instances table headers
-      let isHanaInstancesHeader = false;
-      if (!isHanaInstancesHeader && isHana) {
-        rowIndex = isHana ? rowIndex + 1 : rowIndex;
-        isHanaInstancesHeader = true;
-      }
-
-      const expandedTableRowCells = `${tableRow} + tr div[class*="row border"]:eq(${
-        rowIndex + 1
-      }) div[class*="cell"]`;
-
-      const columnIndexOffset = isHana ? 1 : 0;
-      const clusterNameSelector = `${expandedTableRowCells}:eq(${
-        3 + columnIndexOffset
-      })`;
-
-      if (isHana) {
-        cy.get(clusterNameSelector).click();
-        validateUrl(`/clusters/${instance.clusterID}`);
-        cy.go('back');
-      }
-      cy.get(tableRow).click();
-    });
+export const eachHanaInstanceHasItsClusterWorkingLink = () => {
+  const instancesData = getAllInstances();
+  const hanaInstances = instancesData.filter(
+    (instance) => instance.clusterID !== ''
+  );
+  hanaInstances.forEach((hanaInstance, index) => {
+    cy.get(`${hanaClusterLinks}:eq(${index})`).click({ force: true });
+    validateUrl(`/clusters/${hanaInstance.clusterID}`);
+    cy.go('back');
   });
 };
 
-export const eachInstanceHasItsHostWorkingLink = () => {
-  availableSAPSystems.forEach(({ instances }, instanceIndex) => {
-    const tableRow = `tbody tr[class*="cursor"]:eq(${instanceIndex})`;
+const getAllInstances = () =>
+  availableSAPSystems.flatMap((system) => system.instances);
 
-    instances.forEach((instance, rowIndex) => {
-      cy.get(tableRow).click();
-      const isHana = isHanaInstance(instance);
-
-      // If is HANA instance index must be increased to skip instances table headers
-      let isHanaInstancesHeader = false;
-      if (!isHanaInstancesHeader && isHana) {
-        rowIndex = isHana ? rowIndex + 1 : rowIndex;
-        isHanaInstancesHeader = true;
-      }
-
-      const expandedTableRowCells = `${tableRow} + tr div[class*="row border"]:eq(${
-        rowIndex + 1
-      }) div[class*="cell"]`;
-
-      const columnIndexOffset = isHana ? 1 : 0;
-      const hostnameSelector = `${expandedTableRowCells}:eq(${
-        4 + columnIndexOffset
-      }) a`;
-
-      cy.get(hostnameSelector).click();
-      validateUrl(`/hosts/${instance.hostID}`);
-      cy.go('back');
-    });
+export const eachInstanceHasItsHostWorkingLinkg = () => {
+  const instancesData = getAllInstances();
+  instancesData.forEach((instance, rowIndex) => {
+    cy.get(`${instanceHostLinks}:eq(${rowIndex})`).click({ force: true });
+    validateUrl(`/hosts/${instance.hostID}`);
+    cy.go('back');
   });
 };
 

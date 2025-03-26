@@ -39,16 +39,16 @@ context('SAP Systems Overview', () => {
     });
 
     describe('Instances are the expected ones', () => {
-      it.only('should show the expected instances details', () => {
+      it('should show the expected instances details', () => {
         sapSystemsOverviewPage.instanceDataIsTheExpected();
       });
 
       it('should have a link to known type clusters', () => {
-        sapSystemsOverviewPage.eachSapSystemHasWorkingLinkToKnownTypeCluster();
+        sapSystemsOverviewPage.eachHanaInstanceHasItsClusterWorkingLink();
       });
 
       it('should have a link to the hosts', () => {
-        sapSystemsOverviewPage.eachInstanceHasItsHostWorkingLink();
+        sapSystemsOverviewPage.eachInstanceHasItsHostWorkingLinkg();
       });
     });
 
