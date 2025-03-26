@@ -3,7 +3,7 @@ import * as sapSystemsOverviewPage from '../pageObject/sap_systems_overview_po';
 import { createUserRequestFactory } from '@lib/test-utils/factories';
 
 context('SAP Systems Overview', () => {
-  before(() => sapSystemsOverviewPage.preloadTestData());
+  // before(() => sapSystemsOverviewPage.preloadTestData());
 
   beforeEach(() => sapSystemsOverviewPage.visit());
 
@@ -189,6 +189,8 @@ context('SAP Systems Overview', () => {
 
     beforeEach(() => {
       sapSystemsOverviewPage.apiDeleteAllUsers();
+      sapSystemsOverviewPage.apiRemoveAllSapSystemsTags();
+      sapSystemsOverviewPage.apiSetTagNwdSystem();
       sapSystemsOverviewPage.logout();
       const user = createUserRequestFactory.build({
         password,
@@ -199,32 +201,19 @@ context('SAP Systems Overview', () => {
 
     describe('Tag creation', () => {
       it('it should prevent a tag update when the user abilities are not compliant', () => {
-        cy.get('@user').then((user) => {
-          cy.createUserWithAbilities(user, []);
-          cy.login(user.username, password);
-        });
-
-        cy.visit('/sap_systems');
-
-        cy.contains('span', 'Add Tag').should('have.class', 'opacity-50');
-        cy.get('[data-test-id="tag-env3"]').should('have.class', 'opacity-50');
+        sapSystemsOverviewPage.apiCreateUserWithoutAbilities();
+        sapSystemsOverviewPage.loginWithoutAbilities();
+        sapSystemsOverviewPage.visit();
+        sapSystemsOverviewPage.addTagButtonIsDisabled();
+        sapSystemsOverviewPage.existentTagCannotBeModified();
       });
 
       it('it should allow a tag update when the user abilities are compliant', () => {
-        cy.get('@user').then((user) => {
-          cy.createUserWithAbilities(user, [
-            { name: 'all', resource: 'sap_system_tags' },
-          ]);
-          cy.login(user.username, password);
-        });
-
-        cy.visit('/sap_systems');
-
-        cy.contains('span', 'Add Tag').should('not.have.class', 'opacity-50');
-        cy.get('[data-test-id="tag-env3"]').should(
-          'not.have.class',
-          'opacity-50'
-        );
+        sapSystemsOverviewPage.apiCreateUserWithSapSystemTagsAbility();
+        sapSystemsOverviewPage.loginWithAbilities();
+        sapSystemsOverviewPage.visit();
+        sapSystemsOverviewPage.addTagButtonIsEnabled();
+        sapSystemsOverviewPage.existentTagCanBeModified();
       });
     });
 

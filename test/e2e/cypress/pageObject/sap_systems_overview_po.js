@@ -70,6 +70,8 @@ const nwdInstance00CleanUpButton = `tbody tr[class*="pointer"]:eq(0) + tr td div
 }) div[class*="cell"]:contains('Clean up')`;
 const modalCleanupConfirmationButton =
   'div[id*="headlessui-dialog-panel"] button:contains("Clean up")';
+const addTagButton = 'span:contains("Add Tag")';
+const existentEnv3Tag = '[data-test-id="tag-env3"]';
 
 // UI Interactions
 export const visit = () => {
@@ -381,6 +383,19 @@ export const cleanUpButtonIsNotDisplayed = () =>
 
 export const cleanUpButtonIsDisplayed = () =>
   cy.get(cleanUpButton).should('be.visible');
+
+export const existentTagCannotBeModified = () =>
+  cy.get(existentEnv3Tag).should('have.class', 'opacity-50');
+
+export const addTagButtonIsDisabled = () =>
+  cy.get(addTagButton).should('have.class', 'opacity-50');
+
+export const existentTagCanBeModified = () =>
+  cy.get(existentEnv3Tag).should('not.have.class', 'opacity-50');
+
+export const addTagButtonIsEnabled = () =>
+  cy.get(addTagButton).should('not.have.class', 'opacity-50');
+
 // API
 export const deregisterInstance = () => {
   apiDeregisterInstance(
@@ -509,4 +524,19 @@ export const loadAbsentMessageServerInstance = () =>
   basePage.loadScenario(
     `sap-systems-overview-${nwdSystem.sid}-${nwdSystem.messageserverInstance.instanceNumber}-absent`
   );
+
+export const apiSetTagNwdSystem = () => apiSetTag(nwdSystem.sid, 'env3');
+
+const apiSetTag = (systemSid, tag) => {
+  const systemId = systemIdBySid(systemSid);
+  return basePage.apiSetTag('sap_systems', systemId, tag);
+};
+
+const systemIdBySid = (systemName) =>
+  availableSAPSystems.find(({ sid }) => sid === systemName).id;
+
+export const apiCreateUserWithSapSystemTagsAbility = () =>
+  basePage.createUserWithAbilities([
+    { name: 'all', resource: 'sap_system_tags' },
+  ]);
 // Helpers
