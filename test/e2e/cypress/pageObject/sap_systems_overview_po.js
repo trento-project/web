@@ -70,8 +70,6 @@ const nwdInstance00CleanUpButton = `tbody tr[class*="pointer"]:eq(0) + tr td div
 }) div[class*="cell"]:contains('Clean up')`;
 const modalCleanupConfirmationButton =
   'div[id*="headlessui-dialog-panel"] button:contains("Clean up")';
-const systemsGreenHealthBadges =
-  'tr[class*="pointer"] td div svg[class*="green"]';
 
 // UI Interactions
 export const visit = () => {
@@ -352,12 +350,6 @@ export const eachInstanceHasItsHealthStatusCorrectlyUpdated = () => {
 };
 
 export const sapSystemHealthChangesToRedAsExpected = () => {
-  cy.get(systemsGreenHealthBadges).then((greenHealthBadges) => {
-    const amountOfGreenHealthBadges = greenHealthBadges.length;
-    cy.log(amountOfGreenHealthBadges);
-    if (amountOfGreenHealthBadges < 3)
-      basePage.loadScenario('healthy-27-node-SAP-cluster');
-  });
   basePage.loadScenario('sap-systems-overview-hana-RED');
 
   const healthClass = healthMap['RED'];

@@ -79,6 +79,8 @@ context('SAP Systems Overview', () => {
   });
 
   describe('Health states are updated', () => {
+    beforeEach(() => sapSystemsOverviewPage.restoreNwdHost());
+
     it('should have expected health in SAP system and instance when a different state is received', () => {
       sapSystemsOverviewPage.eachInstanceHasItsHealthStatusCorrectlyUpdated();
     });
@@ -183,13 +185,11 @@ context('SAP Systems Overview', () => {
   describe('Forbidden actions', () => {
     const password = 'password';
 
-    before(() => {
-      cy.loadScenario('sapsystem-NWD-restore');
-    });
+    before(() => sapSystemsOverviewPage.restoreNwdHost());
 
     beforeEach(() => {
-      cy.deleteAllUsers();
-      cy.logout();
+      sapSystemsOverviewPage.apiDeleteAllUsers();
+      sapSystemsOverviewPage.logout();
       const user = createUserRequestFactory.build({
         password,
         password_confirmation: password,
