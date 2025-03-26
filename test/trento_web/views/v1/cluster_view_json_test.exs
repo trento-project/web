@@ -43,6 +43,7 @@ defmodule TrentoWeb.V1.ClusterJSONTest do
       refute Access.get(updated_details, :maintenance_mode)
       refute Access.get(updated_details, :architecture_type)
       refute Access.get(updated_details, :hana_scenario)
+      refute Access.get(updated_details, :sap_instances)
       refute Access.get(node, :nameserver_actual_role)
       refute Access.get(node, :indexserver_actual_role)
       refute Access.get(node, :status)
