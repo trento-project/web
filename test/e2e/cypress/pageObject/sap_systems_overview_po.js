@@ -72,6 +72,8 @@ const modalCleanupConfirmationButton =
   'div[id*="headlessui-dialog-panel"] button:contains("Clean up")';
 const addTagButton = 'span:contains("Add Tag")';
 const existentEnv3Tag = '[data-test-id="tag-env3"]';
+const instancesRowsSelector =
+  'tr[class*="cursor"] + tr div[class*="row-group"] div[class*="row border"]';
 
 // UI Interactions
 export const visit = () => {
@@ -196,67 +198,55 @@ export const eachSystemHasItsDatabaseWorkingLink = () => {
   );
 };
 
-export const eachInstanceDetailsAreTheExpected = () => {
-  availableSAPSystems.forEach(({ instances }, instanceIndex) => {
-    const tableRow = `tbody tr[class*="cursor"]:eq(${instanceIndex})`;
-    cy.get(tableRow).click();
+const validateInstanceRowData = (instance, rowIndex) => {
+  const currentRow = `${instancesRowsSelector}:eq(${rowIndex})`;
 
-    instances.forEach((instance, rowIndex) => {
-      const isHana = isHanaInstance(instance);
+  const isHana = isHanaInstance(instance);
 
-      // If is HANA instance index must be increased to skip instances table headers
-      let isHanaInstancesHeader = false;
-      if (!isHanaInstancesHeader && isHana) {
-        rowIndex = isHana ? rowIndex + 1 : rowIndex;
-        isHanaInstancesHeader = true;
-      }
+  const columnIndexOffset = isHana ? 1 : 0;
 
-      const expandedTableRowCells = `${tableRow} + tr div[class*="row border"]:eq(${
-        rowIndex + 1
-      }) div[class*="cell"]`;
+  const healthBadgeSelector = `${currentRow} div[class*="cell"]:eq(0) svg`;
+  const instanceNumberSelector = `${currentRow} div[class*="cell"]:eq(1)`;
+  const featuresSelector = `${currentRow} div[class*="cell"]:eq(2)`;
+  const hanaInstanceSelector = `${currentRow} div[class*="cell"]:eq(3)`;
+  const clusterNameSelector = `${currentRow} div[class*="cell"]:eq(${
+    3 + columnIndexOffset
+  })`;
+  const hostnameSelector = `${currentRow} div[class*="cell"]:eq(${
+    4 + columnIndexOffset
+  })`;
 
-      const columnIndexOffset = isHana ? 1 : 0;
-      const healthBadgeSelector = `${expandedTableRowCells}:eq(0) svg`;
-      const instanceNumberSelector = `${expandedTableRowCells}:eq(1)`;
-      const featuresSelector = `${expandedTableRowCells}:eq(2)`;
-      const hanaInstanceSelector = `${expandedTableRowCells}:eq(3)`;
-      const clusterNameSelector = `${expandedTableRowCells}:eq(${
-        3 + columnIndexOffset
-      })`;
-      const hostnameSelector = `${expandedTableRowCells}:eq(${
-        4 + columnIndexOffset
-      })`;
+  const healthBadgeExpectedClass = healthMap[instance.health];
+  cy.get(healthBadgeSelector).should('have.class', healthBadgeExpectedClass);
 
-      const healthBadgeExpectedClass = healthMap[instance.health];
-      cy.get(healthBadgeSelector).should(
-        'have.class',
-        healthBadgeExpectedClass
-      );
+  const expectedInstanceNumber = instance.instanceNumber;
+  cy.get(instanceNumberSelector).should('have.text', expectedInstanceNumber);
 
-      const expectedInstanceNumber = instance.instanceNumber;
-      cy.get(instanceNumberSelector).should(
-        'have.text',
-        expectedInstanceNumber
-      );
+  const expectedFeatures = instance.features.replaceAll('|', '');
+  cy.get(featuresSelector).should('have.text', expectedFeatures);
 
-      const expectedFeatures = instance.features.replaceAll('|', '');
-      cy.get(featuresSelector).should('have.text', expectedFeatures);
+  if (isHana) {
+    const expectedValue = `${instance.systemReplication} ${instance.systemReplicationStatus}`;
+    cy.get(hanaInstanceSelector).should('have.text', expectedValue);
+  }
 
-      if (isHana) {
-        const expectedValue = `${instance.systemReplication} ${instance.systemReplicationStatus}`;
-        cy.get(hanaInstanceSelector).should('have.text', expectedValue);
-      }
+  const clusterNameExpected =
+    instance.clusterName === '' ? 'not available' : instance.clusterName;
+  cy.get(clusterNameSelector).should('have.text', clusterNameExpected);
 
-      const clusterNameExpected =
-        instance.clusterName === '' ? 'not available' : instance.clusterName;
-      cy.get(clusterNameSelector).should('have.text', clusterNameExpected);
+  const hostnameExpected = instance.hostname;
+  cy.get(hostnameSelector).should('have.text', hostnameExpected);
+};
 
-      const hostnameExpected = instance.hostname;
-      cy.get(hostnameSelector).should('have.text', hostnameExpected);
-    });
-    cy.get(tableRow).click();
+export const instanceDataIsTheExpected = () => {
+  const instancesData = getAllInstances();
+  instancesData.forEach((instance, rowIndex) => {
+    validateInstanceRowData(instance, rowIndex);
   });
 };
+
+const getAllInstances = () =>
+  availableSAPSystems.flatMap((system) => system.instances);
 
 export const eachSapSystemHasWorkingLinkToKnownTypeCluster = () => {
   availableSAPSystems.forEach(({ instances }, instanceIndex) => {

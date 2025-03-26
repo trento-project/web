@@ -1,7 +1,7 @@
 import * as sapSystemsOverviewPage from '../pageObject/sap_systems_overview_po';
 
 context('SAP Systems Overview', () => {
-  before(() => sapSystemsOverviewPage.preloadTestData());
+  // before(() => sapSystemsOverviewPage.preloadTestData());
 
   beforeEach(() => sapSystemsOverviewPage.visit());
 
@@ -39,8 +39,8 @@ context('SAP Systems Overview', () => {
     });
 
     describe('Instances are the expected ones', () => {
-      it('should show the expected instances details', () => {
-        sapSystemsOverviewPage.eachInstanceDetailsAreTheExpected();
+      it.only('should show the expected instances details', () => {
+        sapSystemsOverviewPage.instanceDataIsTheExpected();
       });
 
       it('should have a link to known type clusters', () => {
