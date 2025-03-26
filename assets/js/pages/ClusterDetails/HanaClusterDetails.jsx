@@ -42,8 +42,7 @@ function HanaClusterDetails({
   cibLastWritten,
   provider,
   sapSystems,
-  sid,
-  additionalSids,
+  clusterSids,
   details,
   catalog,
   userAbilities,
@@ -52,7 +51,6 @@ function HanaClusterDetails({
   navigate = () => {},
 }) {
   const enrichedNodes = enrichNodes(details?.nodes, hosts);
-  const clusterSids = [sid, ...additionalSids];
   const enrichedSapSystems = clusterSids.map((sidItem) => ({
     sid: sidItem,
     ...sapSystems.find(({ sid: currentSid }) => currentSid === sidItem),

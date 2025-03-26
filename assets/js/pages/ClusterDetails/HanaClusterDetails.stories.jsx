@@ -21,11 +21,10 @@ const userAbilities = [{ name: 'all', resource: 'all' }];
 const {
   id: clusterID,
   name: clusterName,
-  sid,
   type: clusterType,
   selected_checks: selectedChecks,
   provider,
-  additional_sids: additionalSids,
+  sap_instances: [{ sid }],
   cib_last_written: cibLastWritten,
   details,
 } = clusterFactory.build({
@@ -158,8 +157,7 @@ export const Hana = {
     hosts,
     clusterType,
     cibLastWritten,
-    sid,
-    additionalSids,
+    clusterSids: [sid],
     provider,
     sapSystems,
     details,
@@ -174,7 +172,7 @@ export const Hana = {
 export const HanaScaleUpCostOpt = {
   args: {
     ...Hana.args,
-    additionalSids: ['QAS', 'DEV'],
+    clusterSids: [sid, 'QAS', 'DEV'],
     sapSystems: sapSystemList,
     details: { ...Hana.args.details, hana_scenario: 'cost_optimized' },
   },
@@ -183,7 +181,7 @@ export const HanaScaleUpCostOpt = {
 export const HanaScaleUpCostOptWithoutEnrichedData = {
   args: {
     ...Hana.args,
-    additionalSids: ['QAS', 'DEV'],
+    clusterSids: [sid, 'QAS', 'DEV'],
     details: { ...Hana.args.details, hana_scenario: 'cost_optimized' },
   },
 };
@@ -265,8 +263,7 @@ export const AngiArchitecturePerformanceScenario = {
 export const AngiArchitectureCostOptScenario = {
   args: {
     ...Hana.args,
-    sid,
-    additionalSids: ['QAS', 'DEV'],
+    clusterSids: [sid, 'QAS', 'DEV'],
     sapSystems: sapSystemList,
     details: {
       ...Hana.args.details,
@@ -279,8 +276,7 @@ export const AngiArchitectureCostOptScenario = {
 export const AngiArchitectureCostOptScenarioWithoutEnrichedData = {
   args: {
     ...Hana.args,
-    sid,
-    additionalSids: ['QAS1', 'DEV1'],
+    clusterSids: [sid, 'QAS1', 'DEV1'],
     sapSystems: sapSystemList,
     details: {
       ...Hana.args.details,
