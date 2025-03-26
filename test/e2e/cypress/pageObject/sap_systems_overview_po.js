@@ -61,7 +61,7 @@ const sapSystemNwd = {
 const sapSystemsTableRows = 'tbody tr[class*="pointer"]';
 const firstSystemApplicationLayerRows =
   'tbody tr[class*="cursor"]:eq(0) + tr td div[class*="row-group"]:eq(0) div[class*="row border"]';
-const cleanUpButton = 'td:contains("Clean up")';
+const cleanUpButton = 'button:contains("Clean up")';
 const nwdInstance01CleanUpButton = `tbody tr[class*="pointer"]:eq(0) + tr td div[class*="row border"]:eq(${
   nwdSystem.appInstance.row + 1
 }) div[class*="cell"]:contains('Clean up')`;
@@ -384,6 +384,12 @@ export const cleanUpButtonIsNotDisplayed = () =>
 export const cleanUpButtonIsDisplayed = () =>
   cy.get(cleanUpButton).should('be.visible');
 
+export const cleanupButonIsDisabled = () =>
+  cy.get(cleanUpButton).should('be.disabled');
+
+export const cleanupButonIsEnabled = () =>
+  cy.get(cleanUpButton).should('be.enabled');
+
 export const existentTagCannotBeModified = () =>
   cy.get(existentEnv3Tag).should('have.class', 'opacity-50');
 
@@ -538,5 +544,25 @@ const systemIdBySid = (systemName) =>
 export const apiCreateUserWithSapSystemTagsAbility = () =>
   basePage.createUserWithAbilities([
     { name: 'all', resource: 'sap_system_tags' },
+  ]);
+
+export const loadAppCleanupPermissionsScenario = () => {
+  basePage.loadScenario('sap-systems-overview-NWD-00-absent');
+  basePage.loadScenario('sap-systems-overview-HDD-10-present');
+};
+
+export const loadDatabaseCleanupPermissionsScenario = () => {
+  basePage.loadScenario('sap-systems-overview-NWD-00-present');
+  basePage.loadScenario('sap-systems-overview-HDD-10-absent');
+};
+
+export const apiCreateUserWithAppInstanceCleanupAbility = () =>
+  basePage.createUserWithAbilities([
+    { name: 'cleanup', resource: 'application_instance' },
+  ]);
+
+export const apiCreateUserWithDatabaseCleanupAbility = () =>
+  basePage.createUserWithAbilities([
+    { name: 'cleanup', resource: 'database_instance' },
   ]);
 // Helpers
