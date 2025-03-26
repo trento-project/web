@@ -3,7 +3,11 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 
 import { post, del } from '@lib/network';
-import { HANA_ASCS_ERS, getClusterTypeLabel } from '@lib/model/clusters';
+import {
+  HANA_ASCS_ERS,
+  getClusterTypeLabel,
+  getClusterSids,
+} from '@lib/model/clusters';
 
 import { addTagToCluster, removeTagFromCluster } from '@state/clusters';
 import { getAllSAPInstances } from '@state/selectors/sapSystem';
@@ -158,7 +162,7 @@ function ClustersList() {
     health: cluster.health,
     name: cluster.name,
     id: cluster.id,
-    sid: (cluster.sid ? [cluster.sid] : []).concat(cluster.additional_sids),
+    sid: getClusterSids(cluster),
     type: cluster.type,
     hosts_number: cluster.hosts_number,
     resources_number: cluster.resources_number,
