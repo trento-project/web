@@ -15,7 +15,6 @@ env:
   MIX_ENV: test
   NODE_VERSION: "20"
   MANTAINERS: '["cdimonaco", "dottorblaster", "janvhs", "nelsonkopliku", "arbulu89","jagabomb","emaksy", "balanza", "gagandeepb"]'
-  INTEGRATION_TEST_LABEL: integration
 
 jobs:
   elixir-deps:
@@ -558,20 +557,10 @@ jobs:
           name: regression-${{ matrix.test }}-e2e-screenshots
           path: test/e2e/cypress/screenshots/
 
-  check-integration-tests-label:
-    name: Check if the integration test criteria are met, store in the job output
-    runs-on: ubuntu-22.04
-    outputs:
-      run_integration_test: ${{ steps.check.outputs.run_integration_test }}
-    steps:
-      - id: check
-        run: echo "run_integration_test=${{ contains(fromJson(env.MANTAINERS), github.event.sender.login) && contains(github.event.pull_request.labels.*.name, env.INTEGRATION_TEST_LABEL) }}" >> "$GITHUB_OUTPUT"
-
   integration-test-e2e:
     name: Integration tests
-    needs: [check-integration-tests-label, elixir-deps, npm-deps, npm-e2e-deps]
+    needs: [elixir-deps, npm-deps, npm-e2e-deps]
     runs-on: ubuntu-22.04
-    if: needs.check-integration-tests-label.outputs.run_integration_test == 'true'
     strategy:
       matrix:
         include:
