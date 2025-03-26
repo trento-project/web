@@ -62,17 +62,16 @@ const sapSystemsTableRows = 'tbody tr[class*="pointer"]';
 const firstSystemApplicationLayerRows =
   'tbody tr[class*="cursor"]:eq(0) + tr td div[class*="row-group"]:eq(0) div[class*="row border"]';
 const cleanUpButton = 'td:contains("Clean up")';
-
 const nwdInstance01CleanUpButton = `tbody tr[class*="pointer"]:eq(0) + tr td div[class*="row border"]:eq(${
   nwdSystem.appInstance.row + 1
 }) div[class*="cell"]:contains('Clean up')`;
-
 const nwdInstance00CleanUpButton = `tbody tr[class*="pointer"]:eq(0) + tr td div[class*="row border"]:eq(${
   nwdSystem.messageserverInstance.row + 1
 }) div[class*="cell"]:contains('Clean up')`;
-
 const modalCleanupConfirmationButton =
   'div[id*="headlessui-dialog-panel"] button:contains("Clean up")';
+const systemsGreenHealthBadges =
+  'tr[class*="pointer"] td div svg[class*="green"]';
 
 // UI Interactions
 export const visit = () => {
@@ -353,7 +352,14 @@ export const eachInstanceHasItsHealthStatusCorrectlyUpdated = () => {
 };
 
 export const sapSystemHealthChangesToRedAsExpected = () => {
+  cy.get(systemsGreenHealthBadges).then((greenHealthBadges) => {
+    const amountOfGreenHealthBadges = greenHealthBadges.length;
+    cy.log(amountOfGreenHealthBadges);
+    if (amountOfGreenHealthBadges < 3)
+      basePage.loadScenario('healthy-27-node-SAP-cluster');
+  });
   basePage.loadScenario('sap-systems-overview-hana-RED');
+
   const healthClass = healthMap['RED'];
 
   const sapSystemsFirstRow = `${sapSystemsTableRows}:eq(0)`;
