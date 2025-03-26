@@ -3,7 +3,7 @@ import * as sapSystemsOverviewPage from '../pageObject/sap_systems_overview_po';
 import { createUserRequestFactory } from '@lib/test-utils/factories';
 
 context('SAP Systems Overview', () => {
-  // before(() => sapSystemsOverviewPage.preloadTestData());
+  before(() => sapSystemsOverviewPage.preloadTestData());
 
   beforeEach(() => sapSystemsOverviewPage.visit());
 
@@ -218,60 +218,42 @@ context('SAP Systems Overview', () => {
     });
 
     describe('Application instance clean up', () => {
-      before(() => {
-        cy.loadScenario('sap-systems-overview-NWD-00-absent');
-        cy.loadScenario('sap-systems-overview-HDD-10-present');
-      });
+      beforeEach(() =>
+        sapSystemsOverviewPage.loadAppCleanupPermissionsScenario()
+      );
 
       it('should forbid application instance cleanup', () => {
-        cy.get('@user').then((user) => {
-          cy.createUserWithAbilities(user, []);
-          cy.login(user.username, password);
-        });
-        cy.visit('/sap_systems');
-
-        cy.contains('button', 'Clean up').should('be.disabled');
+        sapSystemsOverviewPage.apiCreateUserWithoutAbilities();
+        sapSystemsOverviewPage.loginWithoutAbilities();
+        sapSystemsOverviewPage.visit();
+        sapSystemsOverviewPage.cleanupButonIsDisabled();
       });
 
       it('should allow application instance clenaup', () => {
-        cy.get('@user').then((user) => {
-          cy.createUserWithAbilities(user, [
-            { name: 'cleanup', resource: 'application_instance' },
-          ]);
-          cy.login(user.username, password);
-        });
-        cy.visit('/sap_systems');
-
-        cy.contains('button', 'Clean up').should('be.enabled');
+        sapSystemsOverviewPage.apiCreateUserWithAppInstanceCleanupAbility();
+        sapSystemsOverviewPage.loginWithAbilities();
+        sapSystemsOverviewPage.visit();
+        sapSystemsOverviewPage.cleanupButonIsEnabled();
       });
     });
 
     describe('Database instance clean up', () => {
       before(() => {
-        cy.loadScenario('sap-systems-overview-NWD-00-present');
-        cy.loadScenario('sap-systems-overview-HDD-10-absent');
+        sapSystemsOverviewPage.loadDatabaseCleanupPermissionsScenario();
       });
 
       it('should forbid database instance cleanup', () => {
-        cy.get('@user').then((user) => {
-          cy.createUserWithAbilities(user, []);
-          cy.login(user.username, password);
-        });
-        cy.visit('/sap_systems');
-
-        cy.contains('button', 'Clean up').should('be.disabled');
+        sapSystemsOverviewPage.apiCreateUserWithoutAbilities();
+        sapSystemsOverviewPage.loginWithoutAbilities();
+        sapSystemsOverviewPage.visit();
+        sapSystemsOverviewPage.cleanupButonIsDisabled();
       });
 
       it('should allow database instance clean up', () => {
-        cy.get('@user').then((user) => {
-          cy.createUserWithAbilities(user, [
-            { name: 'cleanup', resource: 'database_instance' },
-          ]);
-          cy.login(user.username, password);
-        });
-        cy.visit('/sap_systems');
-
-        cy.contains('button', 'Clean up').should('be.enabled');
+        sapSystemsOverviewPage.apiCreateUserWithDatabaseCleanupAbility();
+        sapSystemsOverviewPage.loginWithAbilities();
+        sapSystemsOverviewPage.visit();
+        sapSystemsOverviewPage.cleanupButonIsEnabled();
       });
     });
   });
