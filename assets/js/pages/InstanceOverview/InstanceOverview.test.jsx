@@ -2,7 +2,11 @@ import React from 'react';
 import { screen, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
-import { databaseInstanceFactory } from '@lib/test-utils/factories';
+import {
+  clusterFactory,
+  clusteredSapInstanceFactory,
+  databaseInstanceFactory,
+} from '@lib/test-utils/factories';
 import { renderWithRouter } from '@lib/test-utils';
 import { faker } from '@faker-js/faker';
 import { DATABASE_TYPE, APPLICATION_TYPE } from '@lib/model/sapSystems';
@@ -129,5 +133,43 @@ describe('InstanceOverview', () => {
     expect(
       screen.queryByText('You are not authorized for this action')
     ).toBeVisible();
+  });
+
+  it('should show cluster link if the instance is clustered', () => {
+    const instance = databaseInstanceFactory.build();
+    const cluster = clusterFactory.build({
+      sap_instances: clusteredSapInstanceFactory.buildList(1, {
+        instance_number: instance.instance_number,
+        sid: instance.sid,
+      }),
+    });
+
+    const instanceWithCluster = { ...instance, host: { cluster } };
+
+    renderWithRouter(
+      <InstanceOverview
+        instanceType={DATABASE_TYPE}
+        instance={instanceWithCluster}
+        userAbilities={[]}
+      />
+    );
+
+    expect(screen.queryByText(cluster.name)).toBeVisible();
+  });
+
+  it('should not show instance cluster link if the instance is not clustered', () => {
+    const instanceWithoutCluster = databaseInstanceFactory.build({
+      host: { cluster: clusterFactory.build() },
+    });
+
+    renderWithRouter(
+      <InstanceOverview
+        instanceType={DATABASE_TYPE}
+        instance={instanceWithoutCluster}
+        userAbilities={[]}
+      />
+    );
+
+    expect(screen.queryByText('not available')).toBeVisible();
   });
 });

@@ -121,6 +121,11 @@ export const ascsErsClusterDetailsFactory = Factory.define(({ params }) => {
   };
 });
 
+export const clusteredSapInstanceFactory = Factory.define(() => ({
+  sid: generateSid(),
+  instance_number: faker.number.int({ min: 10, max: 99 }).toString(),
+}));
+
 export const clusterFactory = Factory.define(({ sequence, params }) => {
   const { type = 'hana_scale_up' } = params;
 
@@ -138,8 +143,7 @@ export const clusterFactory = Factory.define(({ sequence, params }) => {
   return {
     id: faker.string.uuid(),
     name: `${faker.person.firstName()}_${sequence}`,
-    sid: generateSid(),
-    additional_sids: [],
+    sap_instances: clusteredSapInstanceFactory.buildList(1),
     hosts_number: faker.number.int(),
     resources_number: faker.number.int(),
     type: clusterTypeEnum(),
