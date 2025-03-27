@@ -131,9 +131,9 @@ context('SAP Systems Overview', () => {
     });
 
     it('should not display SAP System ${sapSystemNwd.sid} after deregistering both application instances', () => {
-      sapSystemsOverviewPage.nwdSystemIsDisplayed();
+      sapSystemsOverviewPage.sapSystemNwdIsDisplayed();
       sapSystemsOverviewPage.apiDeregisterNwdInstances();
-      sapSystemsOverviewPage.nwdSystemIsNotDisplayed();
+      sapSystemsOverviewPage.sapSystemNwdIsNotDisplayed();
     });
 
     describe('Restore deregistered host', () => {
@@ -144,7 +144,7 @@ context('SAP Systems Overview', () => {
 
       it('should show host registered again after restoring it', () => {
         sapSystemsOverviewPage.restoreNwdHost();
-        sapSystemsOverviewPage.nwdSystemIsDisplayed();
+        sapSystemsOverviewPage.sapSystemNwdIsDisplayed();
       });
     });
   });
@@ -152,8 +152,8 @@ context('SAP Systems Overview', () => {
   describe('Instance deregistration', () => {
     beforeEach(() => {
       sapSystemsOverviewPage.restoreNwdHost();
-      sapSystemsOverviewPage.nwdSystemIsDisplayed();
-      sapSystemsOverviewPage.clickNwdSystem();
+      sapSystemsOverviewPage.sapSystemNwdIsDisplayed();
+      sapSystemsOverviewPage.clickNwdSapSystem();
     });
 
     it('should mark an instance as absent and restore it as present on received respective discovery messages', () => {

@@ -11,7 +11,7 @@ import {
   healthMap,
 } from '../fixtures/sap-systems-overview/available_sap_systems';
 
-const nwdSystem = {
+const sapSystemNwd = {
   sid: 'NWD',
   id: '67b247e4-ab5b-5094-993a-a4fd70d0e8d1',
   hostId: '9a3ec76a-dd4f-5013-9cf0-5eb4cf89898f',
@@ -25,6 +25,16 @@ const nwdSystem = {
     instanceNumber: '01',
     row: 1,
   },
+  applicationInstances: [
+    {
+      name: 'vmnwdev03',
+      id: '9a3ec76a-dd4f-5013-9cf0-5eb4cf89898f',
+    },
+    {
+      name: 'vmnwdev04',
+      id: '1b0e9297-97dd-55d6-9874-8efde4d84c90',
+    },
+  ],
 };
 
 const sapSystemNwp = {
@@ -43,30 +53,16 @@ const sapSystemNwq = {
   },
 };
 
-const sapSystemNwd = {
-  sid: 'NWD',
-  applicationInstances: [
-    {
-      name: 'vmnwdev03',
-      id: '9a3ec76a-dd4f-5013-9cf0-5eb4cf89898f',
-    },
-    {
-      name: 'vmnwdev04',
-      id: '1b0e9297-97dd-55d6-9874-8efde4d84c90',
-    },
-  ],
-};
-
 // Selectors
 const sapSystemsTableRows = 'tbody tr[class*="pointer"]';
 const firstSystemApplicationLayerRows =
   'tbody tr[class*="cursor"]:eq(0) + tr td div[class*="row-group"]:eq(0) div[class*="row border"]';
 const cleanUpButton = 'button:contains("Clean up")';
 const nwdInstance01CleanUpButton = `tbody tr[class*="pointer"]:eq(0) + tr td div[class*="row border"]:eq(${
-  nwdSystem.appInstance.row + 1
+  sapSystemNwd.appInstance.row + 1
 }) div[class*="cell"]:contains('Clean up')`;
 const nwdInstance00CleanUpButton = `tbody tr[class*="pointer"]:eq(0) + tr td div[class*="row border"]:eq(${
-  nwdSystem.messageserverInstance.row + 1
+  sapSystemNwd.messageserverInstance.row + 1
 }) div[class*="cell"]:contains('Clean up')`;
 const modalCleanUpConfirmationButton =
   'div[id*="headlessui-dialog-panel"] button:contains("Clean up")';
@@ -93,8 +89,8 @@ export const tagSapSystems = () => {
 export const clickSystemToRemove = () =>
   cy.get(`${sapSystemsTableRows}:eq(0)`).click();
 
-export const clickNwdSystem = () =>
-  cy.get(`tr:contains('${nwdSystem.sid}')`).click();
+export const clickNwdSapSystem = () =>
+  cy.get(`tr:contains('${sapSystemNwd.sid}')`).click();
 
 // UI Validations
 export const clickNwdInstance01CleanUpButton = () =>
@@ -118,7 +114,7 @@ export const systemApplicationLayerRowsAreTheExpected = (amount) =>
   cy.get(firstSystemApplicationLayerRows).should('have.length', amount);
 
 export const movedSystemIsNotDisplayed = () =>
-  cy.get(`td:contains('${nwdSystem.hostname}')`).should('not.exist');
+  cy.get(`td:contains('${sapSystemNwd.hostname}')`).should('not.exist');
 
 export const expectedSidsAreDisplayed = () => {
   availableSAPSystems.forEach(({ sid: sid }) => {
@@ -162,12 +158,12 @@ export const eachAttachedDatabaseDetailsAreTheExpected = () => {
   );
 };
 
-export const nwdSystemIsDisplayed = () =>
+export const sapSystemNwdIsDisplayed = () =>
   cy
     .get(`td:contains('${sapSystemNwd.sid}')`, { timeout: 15000 })
     .should('be.visible');
 
-export const nwdSystemIsNotDisplayed = () =>
+export const sapSystemNwdIsNotDisplayed = () =>
   cy
     .get(`td:contains('${sapSystemNwd.sid}')`, { timeout: 15000 })
     .should('not.exist');
@@ -320,10 +316,10 @@ export const sapDiagnosticsAgentDiscoveryVisualizationIsSkipped = () => {
 };
 
 export const systemNwdIsVisible = () =>
-  cy.get(`td:contains('${nwdSystem.sid}')`).should('be.visible');
+  cy.get(`td:contains('${sapSystemNwd.sid}')`).should('be.visible');
 
 export const systemNwdIsNotDisplayed = () =>
-  cy.get(`td:contains('${nwdSystem.sid}')`).should('not.exist');
+  cy.get(`td:contains('${sapSystemNwd.sid}')`).should('not.exist');
 
 export const cleanUpButtonIsNotDisplayed = () =>
   cy.get(cleanUpButton).should('not.exist');
@@ -352,9 +348,9 @@ export const addTagButtonIsEnabled = () =>
 // API
 export const deregisterInstance = () => {
   apiDeregisterInstance(
-    nwdSystem.id,
-    nwdSystem.hostId,
-    nwdSystem.instanceNumber
+    sapSystemNwd.id,
+    sapSystemNwd.hostId,
+    sapSystemNwd.instanceNumber
   );
 };
 
@@ -465,20 +461,20 @@ export const restoreNwdHost = () =>
 
 export const loadAbsentInstanceScenario = () =>
   basePage.loadScenario(
-    `sap-systems-overview-${nwdSystem.sid}-${nwdSystem.appInstance.instanceNumber}-absent`
+    `sap-systems-overview-${sapSystemNwd.sid}-${sapSystemNwd.appInstance.instanceNumber}-absent`
   );
 
 export const loadPresentInstanceScenario = () =>
   basePage.loadScenario(
-    `sap-systems-overview-${nwdSystem.sid}-${nwdSystem.appInstance.instanceNumber}-present`
+    `sap-systems-overview-${sapSystemNwd.sid}-${sapSystemNwd.appInstance.instanceNumber}-present`
   );
 
 export const loadAbsentMessageServerInstance = () =>
   basePage.loadScenario(
-    `sap-systems-overview-${nwdSystem.sid}-${nwdSystem.messageserverInstance.instanceNumber}-absent`
+    `sap-systems-overview-${sapSystemNwd.sid}-${sapSystemNwd.messageserverInstance.instanceNumber}-absent`
   );
 
-export const apiSetTagNwdSystem = () => apiSetTag(nwdSystem.sid, 'env3');
+export const apiSetTagNwdSystem = () => apiSetTag(sapSystemNwd.sid, 'env3');
 
 const apiSetTag = (systemSid, tag) => {
   const systemId = systemIdBySid(systemSid);
