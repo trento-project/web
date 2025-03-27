@@ -51,6 +51,8 @@ const sapSystemNwq = {
   },
 };
 
+const instancesData = availableSAPSystems.flatMap((system) => system.instances);
+
 // Selectors
 const sapSystemsTableRows = 'tbody tr[class*="pointer"]';
 const firstSystemApplicationLayerRows =
@@ -86,7 +88,6 @@ export const clickSystemToRemove = () =>
 export const clickNwdSapSystem = () =>
   cy.get(`tr:contains('${sapSystemNwd.sid}')`).click();
 
-// UI Validations
 export const clickNwdInstance01CleanUpButton = () =>
   cy.get(nwdInstance01CleanUpButton).click();
 
@@ -96,6 +97,10 @@ export const clickNwdInstance00CleanUpButton = () =>
 export const clickCleanUpModalConfirmationButton = () =>
   cy.get(modalCleanUpConfirmationButton).click();
 
+const clickAllRows = () =>
+  cy.get(sapSystemsTableRows).each((row) => cy.wrap(row).click());
+
+// UI Validations
 export const nwdInstance01CleanUpButtonIsVisible = () =>
   cy.get(nwdInstance01CleanUpButton).should('be.visible');
 
@@ -230,31 +235,28 @@ const validateInstanceRowData = (instance, rowIndex) => {
 };
 
 export const instanceDataIsTheExpected = () => {
-  const instancesData = getAllInstances();
+  clickAllRows();
   instancesData.forEach((instance, rowIndex) => {
     validateInstanceRowData(instance, rowIndex);
   });
 };
 
 export const eachHanaInstanceHasItsClusterWorkingLink = () => {
-  const instancesData = getAllInstances();
   const hanaInstances = instancesData.filter(
     (instance) => instance.clusterID !== ''
   );
   hanaInstances.forEach((hanaInstance, index) => {
-    cy.get(`${hanaClusterLinks}:eq(${index})`).click({ force: true });
+    clickAllRows();
+    cy.get(`${hanaClusterLinks}:eq(${index})`).click();
     validateUrl(`/clusters/${hanaInstance.clusterID}`);
     cy.go('back');
   });
 };
 
-const getAllInstances = () =>
-  availableSAPSystems.flatMap((system) => system.instances);
-
 export const eachInstanceHasItsHostWorkingLinkg = () => {
-  const instancesData = getAllInstances();
   instancesData.forEach((instance, rowIndex) => {
-    cy.get(`${instanceHostLinks}:eq(${rowIndex})`).click({ force: true });
+    clickAllRows();
+    cy.get(`${instanceHostLinks}:eq(${rowIndex})`).click();
     validateUrl(`/hosts/${instance.hostID}`);
     cy.go('back');
   });
