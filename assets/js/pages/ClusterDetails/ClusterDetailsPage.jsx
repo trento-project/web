@@ -17,6 +17,7 @@ import { updateCatalog } from '@state/catalog';
 import { executionRequested, updateLastExecution } from '@state/lastExecutions';
 import { buildEnv } from '@lib/checks';
 import { TARGET_CLUSTER } from '@lib/model';
+import { getClusterSids } from '@lib/model/clusters';
 
 import AscsErsClusterDetails from './AscsErsClusterDetails';
 import HanaClusterDetails from './HanaClusterDetails';
@@ -89,8 +90,7 @@ export function ClusterDetailsPage() {
           hosts={clusterHosts}
           clusterType={cluster.type}
           cibLastWritten={cluster.cib_last_written}
-          sid={cluster.sid}
-          additionalSids={cluster.additional_sids}
+          clusterSids={getClusterSids(cluster)}
           provider={cluster.provider}
           sapSystems={clusterSapSystems}
           details={cluster.details}

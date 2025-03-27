@@ -81,9 +81,14 @@ defmodule TrentoWeb.V2.ClusterJSON do
   end
 
   defp adapt_sids(%{sap_instances: sap_instances} = cluster) do
+    adapted_sap_instances =
+      Enum.map(sap_instances, fn %{sid: sid, instance_number: instance_number} ->
+        %{sid: sid, instance_number: instance_number}
+      end)
+
     cluster
     |> Map.put(:sid, SapInstance.get_hana_instance_sid(sap_instances))
     |> Map.put(:additional_sids, SapInstance.get_sap_instance_sids(sap_instances))
-    |> Map.delete(:sap_instances)
+    |> Map.put(:sap_instances, adapted_sap_instances)
   end
 end

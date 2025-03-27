@@ -78,7 +78,7 @@ describe('HanaClusterDetails component', () => {
         clusterName,
         cib_last_written: cibLastWritten,
         type: clusterType,
-        sid,
+        sap_instances: [{ sid }],
         provider,
         details,
       } = hanaCluster;
@@ -94,8 +94,7 @@ describe('HanaClusterDetails component', () => {
           hosts={hosts}
           clusterType={clusterType}
           cibLastWritten={cibLastWritten}
-          sid={sid}
-          additionalSids={[]}
+          clusterSids={[sid]}
           provider={provider}
           sapSystems={[]}
           details={details}
@@ -114,7 +113,7 @@ describe('HanaClusterDetails component', () => {
       clusterName,
       cib_last_written: cibLastWritten,
       type: clusterType,
-      sid,
+      sap_instances: [{ sid }],
       provider,
       details,
     } = clusterFactory.build();
@@ -132,8 +131,7 @@ describe('HanaClusterDetails component', () => {
         hosts={hosts}
         clusterType={clusterType}
         cibLastWritten={cibLastWritten}
-        sid={sid}
-        additionalSids={[]}
+        clusterSids={[sid]}
         provider={provider}
         sapSystems={sapSystems}
         details={details}
@@ -157,7 +155,7 @@ describe('HanaClusterDetails component', () => {
       clusterName,
       cib_last_written: cibLastWritten,
       type: clusterType,
-      sid,
+      sap_instances: [{ sid }],
       provider,
       details,
     } = clusterFactory.build();
@@ -175,8 +173,7 @@ describe('HanaClusterDetails component', () => {
         cibLastWritten={cibLastWritten}
         provider={provider}
         sapSystems={[{ sid }]}
-        sid={sid}
-        additionalSids={[]}
+        clusterSids={[sid]}
         details={details}
         lastExecution={null}
         userAbilities={userAbilities}
@@ -194,7 +191,7 @@ describe('HanaClusterDetails component', () => {
       clusterName,
       cib_last_written: cibLastWritten,
       type: clusterType,
-      sid,
+      sap_instances: [{ sid }],
       provider,
       details,
     } = clusterFactory.build();
@@ -216,8 +213,7 @@ describe('HanaClusterDetails component', () => {
         hosts={[host]}
         clusterType={clusterType}
         cibLastWritten={cibLastWritten}
-        sid={sid}
-        additionalSids={[]}
+        clusterSids={[sid]}
         provider={provider}
         sapSystems={[]}
         details={details}
@@ -242,7 +238,7 @@ describe('HanaClusterDetails component', () => {
       clusterName,
       cib_last_written: cibLastWritten,
       type: clusterType,
-      sid,
+      sap_instances: [{ sid }],
       provider,
       details,
     } = clusterFactory.build({ details: { maintenance_mode: true } });
@@ -258,8 +254,7 @@ describe('HanaClusterDetails component', () => {
         hosts={hosts}
         clusterType={clusterType}
         cibLastWritten={cibLastWritten}
-        sid={sid}
-        additionalSids={[]}
+        clusterSids={[sid]}
         provider={provider}
         sapSystems={[]}
         details={details}
@@ -280,7 +275,7 @@ describe('HanaClusterDetails component', () => {
       clusterName,
       cib_last_written: cibLastWritten,
       type: clusterType,
-      sid,
+      sap_instances: [{ sid }],
       provider,
       details,
     } = clusterFactory.build();
@@ -300,8 +295,7 @@ describe('HanaClusterDetails component', () => {
         hosts={hosts}
         clusterType={clusterType}
         cibLastWritten={cibLastWritten}
-        sid={sid}
-        additionalSids={[]}
+        clusterSids={[sid]}
         provider={provider}
         sapSystems={[]}
         details={details}
@@ -321,7 +315,7 @@ describe('HanaClusterDetails component', () => {
       clusterName,
       cib_last_written: cibLastWritten,
       type: clusterType,
-      sid,
+      sap_instances: [{ sid }],
       provider,
       details,
     } = clusterFactory.build();
@@ -343,8 +337,7 @@ describe('HanaClusterDetails component', () => {
         hosts={hosts}
         clusterType={clusterType}
         cibLastWritten={cibLastWritten}
-        sid={sid}
-        additionalSids={[]}
+        clusterSids={[sid]}
         provider={provider}
         sapSystems={[]}
         details={updatedDetails}
@@ -366,7 +359,7 @@ describe('HanaClusterDetails component', () => {
       clusterName,
       cib_last_written: cibLastWritten,
       type: clusterType,
-      sid,
+      sap_instances: [{ sid }],
       provider,
       details,
     } = clusterFactory.build();
@@ -386,8 +379,7 @@ describe('HanaClusterDetails component', () => {
         hosts={hosts}
         clusterType={clusterType}
         cibLastWritten={cibLastWritten}
-        sid={sid}
-        additionalSids={[]}
+        clusterSids={[sid]}
         provider={provider}
         sapSystems={[]}
         details={details}
@@ -440,7 +432,7 @@ describe('HanaClusterDetails component', () => {
         clusterName,
         cib_last_written: cibLastWritten,
         type: clusterType,
-        sid,
+        sap_instances: [{ sid }],
         provider,
         details,
       } = clusterFactory.build();
@@ -456,8 +448,7 @@ describe('HanaClusterDetails component', () => {
           hosts={hosts}
           clusterType={clusterType}
           cibLastWritten={cibLastWritten}
-          sid={sid}
-          additionalSids={[]}
+          clusterSids={[sid]}
           provider={provider}
           sapSystems={[]}
           details={details}
@@ -509,7 +500,7 @@ describe('HanaClusterDetails component', () => {
         clusterName,
         cib_last_written: cibLastWritten,
         type: clusterType,
-        sid,
+        sap_instances: [{ sid }],
         provider,
         details,
       } = clusterFactory.build({
@@ -528,8 +519,7 @@ describe('HanaClusterDetails component', () => {
           hosts={hosts}
           clusterType={clusterType}
           cibLastWritten={cibLastWritten}
-          sid={sid}
-          additionalSids={[]}
+          clusterSids={[sid]}
           provider={provider}
           sapSystems={[]}
           details={details}
@@ -557,7 +547,7 @@ describe('HanaClusterDetails component', () => {
         clusterName,
         cib_last_written: cibLastWritten,
         type: clusterType,
-        sid,
+        sap_instances: [{ sid }],
         provider,
         details,
       } = clusterFactory.build();
@@ -573,8 +563,7 @@ describe('HanaClusterDetails component', () => {
           hosts={hosts}
           clusterType={clusterType}
           cibLastWritten={cibLastWritten}
-          sid={sid}
-          additionalSids={[]}
+          clusterSids={[sid]}
           provider={provider}
           sapSystems={[]}
           details={details}
@@ -604,7 +593,7 @@ describe('HanaClusterDetails component', () => {
         clusterName,
         cib_last_written: cibLastWritten,
         type: clusterType,
-        sid,
+        sap_instances: [{ sid }],
         provider,
         details,
       } = clusterFactory.build();
@@ -620,8 +609,7 @@ describe('HanaClusterDetails component', () => {
           hosts={hosts}
           clusterType={clusterType}
           cibLastWritten={cibLastWritten}
-          sid={sid}
-          additionalSids={[]}
+          clusterSids={[sid]}
           provider={provider}
           sapSystems={[]}
           details={details}

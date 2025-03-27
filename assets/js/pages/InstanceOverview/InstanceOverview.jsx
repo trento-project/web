@@ -1,5 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
+import { get, some } from 'lodash';
 
 import { DATABASE_TYPE } from '@lib/model/sapSystems';
 
@@ -16,6 +17,7 @@ function InstanceOverview({
   instanceType,
   instance,
   instance: {
+    sid,
     health,
     system_replication: systemReplication,
     system_replication_status: systemReplicationStatus,
@@ -30,6 +32,10 @@ function InstanceOverview({
   cleanUpPermittedFor,
   onCleanUpClick,
 }) {
+  const hostname = get(host, 'hostname', '');
+  const cluster = get(host, 'cluster', null);
+  const sapInstances = get(host, 'cluster.sap_instances', []);
+
   const isDatabase = DATABASE_TYPE === instanceType;
   const rowClasses = classNames(
     { 'bg-gray-100': absentAt },
@@ -61,8 +67,8 @@ function InstanceOverview({
         </div>
       )}
       <div className="table-cell p-2">
-        {host?.cluster ? (
-          <ClusterLink cluster={host.cluster} />
+        {some(sapInstances, { sid, instance_number: instanceNumber }) ? (
+          <ClusterLink cluster={cluster} />
         ) : (
           <p className="text-gray-500 dark:text-gray-300 text-sm">
             not available
@@ -70,7 +76,7 @@ function InstanceOverview({
         )}
       </div>
       <div className="table-cell p-2">
-        <HostLink hostId={hostID}>{host && host.hostname}</HostLink>
+        <HostLink hostId={hostID}>{hostname}</HostLink>
       </div>
       {absentAt && (
         <div className="table-cell p-2">

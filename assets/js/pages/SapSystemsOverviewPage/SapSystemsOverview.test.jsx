@@ -7,6 +7,7 @@ import userEvent from '@testing-library/user-event';
 
 import {
   clusterFactory,
+  clusteredSapInstanceFactory,
   hostFactory,
   sapSystemApplicationInstanceFactory,
   sapSystemFactory,
@@ -189,6 +190,7 @@ describe('SapSystemsOverviews component', () => {
       const enrichedApplicationInstances = applicationInstances.map(
         (instance) => {
           const host = hostFactory.build({ id: instance.host_id });
+          const { sid, instance_number } = instance;
           return {
             ...instance,
             host: {
@@ -196,6 +198,10 @@ describe('SapSystemsOverviews component', () => {
               cluster: clusterFactory.build({
                 id: host.cluster_id,
                 type: 'hana_scale_up',
+                sap_instances: clusteredSapInstanceFactory.buildList(1, {
+                  sid,
+                  instance_number,
+                }),
               }),
             },
           };
@@ -204,6 +210,7 @@ describe('SapSystemsOverviews component', () => {
 
       const enrichedDatabaseInstances = databaseInstances.map((instance) => {
         const host = hostFactory.build({ id: instance.host_id });
+        const { sid, instance_number } = instance;
 
         return {
           ...instance,
@@ -212,6 +219,10 @@ describe('SapSystemsOverviews component', () => {
             cluster: clusterFactory.build({
               id: host.cluster_id,
               type: 'hana_scale_up',
+              sap_instances: clusteredSapInstanceFactory.buildList(1, {
+                sid,
+                instance_number,
+              }),
             }),
           },
         };

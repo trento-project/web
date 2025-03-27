@@ -296,11 +296,30 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
         properties: %{
           id: %Schema{type: :string, description: "Cluster ID", format: :uuid},
           name: %Schema{type: :string, description: "Cluster name"},
-          sid: %Schema{type: :string, description: "SID"},
+          sid: %Schema{
+            type: :string,
+            description: "SID. Deprecated: use sap_instances instead",
+            deprecated: true
+          },
           additional_sids: %Schema{
             type: :array,
             items: %Schema{type: :string},
-            description: "Additionally discovered SIDs, such as ASCS/ERS cluster SIDs"
+            description:
+              "Additionally discovered SIDs, such as ASCS/ERS cluster SIDs. Deprecated: use sap_instances instead",
+            deprecated: true
+          },
+          sap_instances: %Schema{
+            description: "Cluster SAP instances with their SID and additional information",
+            type: :array,
+            items: %Schema{
+              type: :object,
+              properties: %{
+                sid: %Schema{type: :string, description: "SAP instance SID"},
+                instance_number: %Schema{type: :string, description: "SAP instance number"}
+              },
+              additionalProperties: false,
+              required: [:sid, :instance_number]
+            }
           },
           provider: Provider.SupportedProviders,
           type: %Schema{

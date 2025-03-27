@@ -1,3 +1,5 @@
+import { map, uniq } from 'lodash';
+
 // Cluster types
 export const HANA_SCALE_UP = 'hana_scale_up';
 export const HANA_SCALE_OUT = 'hana_scale_out';
@@ -48,3 +50,6 @@ export const CLASSIC_ARCHITECTURE = 'classic';
 export const FS_TYPE_RESOURCE_MANAGED = 'resource_managed';
 export const FS_TYPE_SIMPLE_MOUNT = 'simple_mount';
 export const FS_TYPE_MIXED = 'mixed_fs_types';
+
+export const getClusterSids = ({ sap_instances: sapInstances }) =>
+  uniq(map(sapInstances, 'sid'));

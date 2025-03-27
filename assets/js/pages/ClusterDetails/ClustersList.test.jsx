@@ -2,7 +2,10 @@ import React from 'react';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import 'intersection-observer';
 import '@testing-library/jest-dom';
-import { clusterFactory } from '@lib/test-utils/factories';
+import {
+  clusterFactory,
+  clusteredSapInstanceFactory,
+} from '@lib/test-utils/factories';
 import { filterTable, clearFilter } from '@common/Table/Table.test';
 import { renderWithRouter, withState } from '@lib/test-utils';
 
@@ -92,17 +95,26 @@ describe('ClustersList component', () => {
       },
       {
         filter: 'SID',
-        options: ['PRD', 'QAS', 'HA1', 'HA2'],
+        options: ['PRD', 'QAS', 'HA1'],
         state: {
           ...cleanInitialState,
           clustersList: {
             clusters: [].concat(
               clusterFactory.buildList(4),
-              clusterFactory.buildList(2, { sid: 'PRD' }),
-              clusterFactory.buildList(2, { sid: 'QAS' }),
               clusterFactory.buildList(2, {
-                sid: null,
-                additional_sids: ['HA1', 'HA2'],
+                sap_instances: clusteredSapInstanceFactory.buildList(2, {
+                  sid: 'PRD',
+                }),
+              }),
+              clusterFactory.buildList(2, {
+                sap_instances: clusteredSapInstanceFactory.buildList(2, {
+                  sid: 'QAS',
+                }),
+              }),
+              clusterFactory.buildList(2, {
+                sap_instances: clusteredSapInstanceFactory.buildList(2, {
+                  sid: 'HA1',
+                }),
               })
             ),
           },
@@ -167,8 +179,10 @@ describe('ClustersList component', () => {
         ...cleanInitialState,
         clustersList: {
           clusters: clusterFactory.buildList(1, {
-            sid: null,
-            additional_sids: ['HA1', 'HA2'],
+            sap_instances: [
+              clusteredSapInstanceFactory.build({ sid: 'HA1' }),
+              clusteredSapInstanceFactory.build({ sid: 'HA2' }),
+            ],
           }),
         },
       };
@@ -183,7 +197,9 @@ describe('ClustersList component', () => {
 
     it('should put the filters values in the query string when filters are selected', () => {
       const tag = 'Tag1';
+      const sap_instance = clusteredSapInstanceFactory.build();
       const clusters = clusterFactory.buildList(1, {
+        sap_instances: [sap_instance],
         tags: [{ value: tag }],
       });
       const state = {
@@ -193,7 +209,12 @@ describe('ClustersList component', () => {
         },
       };
 
-      const { health, name, sid, type } = clusters[0];
+      const {
+        health,
+        name,
+        sap_instances: [{ sid }],
+        type,
+      } = clusters[0];
 
       const [StatefulClustersList] = withState(<ClustersList />, state);
       renderWithRouter(StatefulClustersList);
@@ -221,8 +242,6 @@ describe('ClustersList component', () => {
         clustersList: {
           clusters: clusterFactory.buildList(1, {
             type: 'hana_ascs_ers',
-            sid: 'HA1',
-            additional_sids: ['NWP'],
           }),
         },
       };

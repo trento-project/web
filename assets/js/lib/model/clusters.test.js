@@ -1,4 +1,13 @@
-import { getClusterTypeLabel, isValidClusterType } from './clusters';
+import {
+  clusterFactory,
+  clusteredSapInstanceFactory,
+} from '@lib/test-utils/factories';
+
+import {
+  getClusterTypeLabel,
+  isValidClusterType,
+  getClusterSids,
+} from './clusters';
 
 describe('clusters', () => {
   it('should check if a cluster type is valid', () => {
@@ -19,5 +28,15 @@ describe('clusters', () => {
     });
 
     expect(getClusterTypeLabel('other')).toBe('Unknown');
+  });
+
+  it('should get SAP instances SIDs from cluster', () => {
+    const instance1 = clusteredSapInstanceFactory.build();
+    const instance2 = clusteredSapInstanceFactory.build();
+    const instance3 = clusteredSapInstanceFactory.build({ sid: instance1.sid });
+    const cluster = clusterFactory.build({
+      sap_instances: [instance1, instance2, instance3],
+    });
+    expect(getClusterSids(cluster)).toEqual([instance1.sid, instance2.sid]);
   });
 });
