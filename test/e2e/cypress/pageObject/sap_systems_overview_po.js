@@ -68,7 +68,7 @@ const nwdInstance01CleanUpButton = `tbody tr[class*="pointer"]:eq(0) + tr td div
 const nwdInstance00CleanUpButton = `tbody tr[class*="pointer"]:eq(0) + tr td div[class*="row border"]:eq(${
   nwdSystem.messageserverInstance.row + 1
 }) div[class*="cell"]:contains('Clean up')`;
-const modalCleanupConfirmationButton =
+const modalCleanUpConfirmationButton =
   'div[id*="headlessui-dialog-panel"] button:contains("Clean up")';
 const addTagButton = 'span:contains("Add Tag")';
 const existentEnv3Tag = '[data-test-id="tag-env3"]';
@@ -76,10 +76,10 @@ const instancesRowsSelector =
   'tr[class*="cursor"] + tr div[class*="row-group"] div[class*="row border"]';
 const hanaClusterLinks = 'div[class*="cell"] a span:contains("hana")';
 const instanceHostLinks = 'div[class*="cell"] a[href*="/host"]';
+
 // UI Interactions
 export const visit = () => {
   cy.intercept('/api/v1/databases').as('databasesRequest');
-  cy.intercept('/api/v1/sap_systems').as('sapSystemsRequest');
   basePage.visit(url);
   cy.wait('@databasesRequest');
 };
@@ -103,8 +103,8 @@ export const clickNwdInstance01CleanUpButton = () =>
 export const clickNwdInstance00CleanUpButton = () =>
   cy.get(nwdInstance00CleanUpButton).click();
 
-export const clickCleanupModalConfirmationButton = () =>
-  cy.get(modalCleanupConfirmationButton).click();
+export const clickCleanUpModalConfirmationButton = () =>
+  cy.get(modalCleanUpConfirmationButton).click();
 
 export const nwdInstance01CleanUpButtonIsVisible = () =>
   cy.get(nwdInstance01CleanUpButton).should('be.visible');
@@ -331,10 +331,10 @@ export const cleanUpButtonIsNotDisplayed = () =>
 export const cleanUpButtonIsDisplayed = () =>
   cy.get(cleanUpButton).should('be.visible');
 
-export const cleanupButonIsDisabled = () =>
+export const cleanUpButonIsDisabled = () =>
   cy.get(cleanUpButton).should('be.disabled');
 
-export const cleanupButonIsEnabled = () =>
+export const cleanUpButonIsEnabled = () =>
   cy.get(cleanUpButton).should('be.enabled');
 
 export const existentTagCannotBeModified = () =>
@@ -493,23 +493,22 @@ export const apiCreateUserWithSapSystemTagsAbility = () =>
     { name: 'all', resource: 'sap_system_tags' },
   ]);
 
-export const loadAppCleanupPermissionsScenario = () => {
+export const loadAppCleanUpPermissionsScenario = () => {
   basePage.loadScenario('sap-systems-overview-NWD-00-absent');
   basePage.loadScenario('sap-systems-overview-HDD-10-present');
 };
 
-export const loadDatabaseCleanupPermissionsScenario = () => {
+export const loadDatabaseCleanUpPermissionsScenario = () => {
   basePage.loadScenario('sap-systems-overview-NWD-00-present');
   basePage.loadScenario('sap-systems-overview-HDD-10-absent');
 };
 
-export const apiCreateUserWithAppInstanceCleanupAbility = () =>
+export const apiCreateUserWithAppInstanceCleanUpAbility = () =>
   basePage.createUserWithAbilities([
     { name: 'cleanup', resource: 'application_instance' },
   ]);
 
-export const apiCreateUserWithDatabaseCleanupAbility = () =>
+export const apiCreateUserWithDatabaseCleanUpAbility = () =>
   basePage.createUserWithAbilities([
     { name: 'cleanup', resource: 'database_instance' },
   ]);
-// Helpers

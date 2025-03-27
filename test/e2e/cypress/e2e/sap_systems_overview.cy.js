@@ -167,7 +167,7 @@ context('SAP Systems Overview', () => {
       sapSystemsOverviewPage.systemApplicationLayerRowsAreTheExpected(4);
       sapSystemsOverviewPage.loadAbsentInstanceScenario();
       sapSystemsOverviewPage.clickNwdInstance01CleanUpButton();
-      sapSystemsOverviewPage.clickCleanupModalConfirmationButton();
+      sapSystemsOverviewPage.clickCleanUpModalConfirmationButton();
       sapSystemsOverviewPage.systemApplicationLayerRowsAreTheExpected(3);
     });
 
@@ -175,7 +175,7 @@ context('SAP Systems Overview', () => {
       sapSystemsOverviewPage.systemNwdIsVisible();
       sapSystemsOverviewPage.loadAbsentMessageServerInstance();
       sapSystemsOverviewPage.clickNwdInstance00CleanUpButton();
-      sapSystemsOverviewPage.clickCleanupModalConfirmationButton();
+      sapSystemsOverviewPage.clickCleanUpModalConfirmationButton();
       sapSystemsOverviewPage.systemNwdIsNotDisplayed();
     });
   });
@@ -184,9 +184,10 @@ context('SAP Systems Overview', () => {
     before(() => sapSystemsOverviewPage.restoreNwdHost());
 
     beforeEach(() => {
-      sapSystemsOverviewPage.apiDeleteAllUsers();
       sapSystemsOverviewPage.apiRemoveAllSapSystemsTags();
       sapSystemsOverviewPage.apiSetTagNwdSystem();
+      sapSystemsOverviewPage.apiDeleteAllUsers();
+      sapSystemsOverviewPage.logout();
     });
 
     describe('Tag creation', () => {
@@ -209,41 +210,42 @@ context('SAP Systems Overview', () => {
 
     describe('Application instance clean up', () => {
       beforeEach(() =>
-        sapSystemsOverviewPage.loadAppCleanupPermissionsScenario()
+        sapSystemsOverviewPage.loadAppCleanUpPermissionsScenario()
       );
 
-      it('should forbid application instance cleanup', () => {
+      it('should forbid application instance clean up', () => {
         sapSystemsOverviewPage.apiCreateUserWithoutAbilities();
         sapSystemsOverviewPage.loginWithoutAbilities();
         sapSystemsOverviewPage.visit();
-        sapSystemsOverviewPage.cleanupButonIsDisabled();
+        sapSystemsOverviewPage.cleanUpButonIsDisabled();
       });
 
-      it('should allow application instance clenaup', () => {
-        sapSystemsOverviewPage.apiCreateUserWithAppInstanceCleanupAbility();
+      it('should allow application instance clean up', () => {
+        sapSystemsOverviewPage.apiCreateUserWithAppInstanceCleanUpAbility();
         sapSystemsOverviewPage.loginWithAbilities();
         sapSystemsOverviewPage.visit();
-        sapSystemsOverviewPage.cleanupButonIsEnabled();
+        sapSystemsOverviewPage.cleanUpButonIsEnabled();
       });
     });
 
     describe('Database instance clean up', () => {
       before(() => {
-        sapSystemsOverviewPage.loadDatabaseCleanupPermissionsScenario();
+        sapSystemsOverviewPage.loadDatabaseCleanUpPermissionsScenario();
       });
 
-      it('should forbid database instance cleanup', () => {
+      it('should forbid database instance cleanUp', () => {
         sapSystemsOverviewPage.apiCreateUserWithoutAbilities();
         sapSystemsOverviewPage.loginWithoutAbilities();
+
         sapSystemsOverviewPage.visit();
-        sapSystemsOverviewPage.cleanupButonIsDisabled();
+        sapSystemsOverviewPage.cleanUpButonIsDisabled();
       });
 
       it('should allow database instance clean up', () => {
-        sapSystemsOverviewPage.apiCreateUserWithDatabaseCleanupAbility();
+        sapSystemsOverviewPage.apiCreateUserWithDatabaseCleanUpAbility();
         sapSystemsOverviewPage.loginWithAbilities();
         sapSystemsOverviewPage.visit();
-        sapSystemsOverviewPage.cleanupButonIsEnabled();
+        sapSystemsOverviewPage.cleanUpButonIsEnabled();
       });
     });
   });
