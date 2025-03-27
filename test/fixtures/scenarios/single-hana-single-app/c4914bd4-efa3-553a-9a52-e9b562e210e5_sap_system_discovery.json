@@ -20,7 +20,10 @@
       "Id": "e058aaacf42f039937c4a43bf3df350b",
       "Instances": [
         {
-          "HdbnsutilSRstate": { "mode": "none", "online": "true" },
+          "HdbnsutilSRstate": {
+            "mode": "none",
+            "online": "true"
+          },
           "Host": "trento-hana01",
           "HostConfiguration": {
             "failoverActualGroup": "default",
@@ -52,7 +55,8 @@
                 "httpPort": 50013,
                 "httpsPort": 50014,
                 "instanceNr": 0,
-                "startPriority": "0.3"
+                "startPriority": "0.3",
+                "runningLocally": true
               }
             ],
             "Processes": [
@@ -210,7 +214,9 @@
               }
             ]
           },
-          "SystemReplication": { "local_site_id": "0" },
+          "SystemReplication": {
+            "local_site_id": "0"
+          },
           "Type": 1
         }
       ],

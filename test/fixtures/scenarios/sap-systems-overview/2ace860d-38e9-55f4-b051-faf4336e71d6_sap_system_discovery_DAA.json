@@ -21,7 +21,8 @@
                 "httpPort": 59813,
                 "dispstatus": "SAPControl-GREEN",
                 "instanceNr": 98,
-                "startPriority": "3"
+                "startPriority": "3",
+                "runningLocally": true
               }
             ],
             "Processes": [
