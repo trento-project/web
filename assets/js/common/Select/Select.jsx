@@ -41,7 +41,7 @@ function Select({
 
   return (
     <Listbox
-      className={classNames('flex-2', className)}
+      className={classNames('flex-1', className)}
       disabled={disabled}
       value={value}
       onChange={onChange}
