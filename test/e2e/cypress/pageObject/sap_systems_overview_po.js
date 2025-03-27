@@ -19,11 +19,9 @@ const sapSystemNwd = {
   hostname: 'vmnwdev01',
   messageserverInstance: {
     instanceNumber: '00',
-    row: 0,
   },
   appInstance: {
     instanceNumber: '01',
-    row: 1,
   },
   applicationInstances: [
     {
@@ -58,12 +56,8 @@ const sapSystemsTableRows = 'tbody tr[class*="pointer"]';
 const firstSystemApplicationLayerRows =
   'tbody tr[class*="cursor"]:eq(0) + tr td div[class*="row-group"]:eq(0) div[class*="row border"]';
 const cleanUpButton = 'button:contains("Clean up")';
-const nwdInstance01CleanUpButton = `tbody tr[class*="pointer"]:eq(0) + tr td div[class*="row border"]:eq(${
-  sapSystemNwd.appInstance.row + 1
-}) div[class*="cell"]:contains('Clean up')`;
-const nwdInstance00CleanUpButton = `tbody tr[class*="pointer"]:eq(0) + tr td div[class*="row border"]:eq(${
-  sapSystemNwd.messageserverInstance.row + 1
-}) div[class*="cell"]:contains('Clean up')`;
+const nwdInstance01CleanUpButton = `tbody tr[class*="pointer"]:eq(0) + tr td div[class*="row-group"]:eq(0) div[class*="row border"]:eq(1) div[class*="cell"]:contains('Clean up')`;
+const nwdInstance00CleanUpButton = `tbody tr[class*="pointer"]:eq(0) + tr td div[class*="row-group"]:eq(0) div[class*="row border"]:eq(0) div[class*="cell"]:contains('Clean up')`;
 const modalCleanUpConfirmationButton =
   'div[id*="headlessui-dialog-panel"] button:contains("Clean up")';
 const addTagButton = 'span:contains("Add Tag")';
