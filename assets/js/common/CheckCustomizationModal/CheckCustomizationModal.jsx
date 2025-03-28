@@ -133,13 +133,14 @@ function CheckCustomizationModal({
           type="default-fit"
           className="w-1/2"
           disabled={!canSave}
-          onClick={() =>
+          onClick={() => {
             pipe(
               entries,
               map(([name, value]) => ({ name, value })),
               (payload) => onSave(id, groupID, payload)
-            )(customValues)
-          }
+            )(customValues);
+            setCustomValues({});
+          }}
         >
           Save
         </Button>
