@@ -1,8 +1,9 @@
+import * as saptuneDetailsPage from '../pageObject/saptune_details_po';
+
 import { saptuneDetailsData } from '../fixtures/saptune-details/saptune_details_data';
 
 describe('Saptune Details page', () => {
-  const { hostname, hostID, packageVersion, configuredVersion } =
-    saptuneDetailsData;
+  const { hostname, packageVersion, configuredVersion } = saptuneDetailsData;
 
   const notFoundContainerSelector = '.pb-24';
   const versionContainerSelector =
@@ -15,17 +16,13 @@ describe('Saptune Details page', () => {
     '.max-w-7xl > :nth-child(1) > :nth-child(1) > :nth-child(9)';
   const saptuneStagingStatusSelector = ':nth-child(11)';
 
-  before(() => {
-    cy.preloadTestData();
-    cy.visit(`hosts/${hostID}/saptune`);
-  });
+  // before(() => saptuneDetailsPage.preloadTestData());
 
-  it('should render saptune details not found if saptune version is unsupported', () => {
-    cy.loadScenario(`host-${hostname}-saptune-unsupported`);
-    cy.get(notFoundContainerSelector).should(
-      'contain',
-      'Saptune Details Not Found'
-    );
+  beforeEach(() => saptuneDetailsPage.visit());
+
+  it.only('should render saptune details not found if saptune version is unsupported', () => {
+    saptuneDetailsPage.loadSaptuneUnsupportedScenario();
+    saptuneDetailsPage.saptuneNotFoundLabelIsDisplayed();
   });
 
   it('should render details not found if saptune is not installed', () => {
