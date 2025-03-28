@@ -134,7 +134,6 @@ defmodule Trento.MixProject do
   defp aliases do
     [
       start: [
-        "cmd docker-compose up -d",
         "deps.get",
         "ecto.create",
         "ecto.migrate",
