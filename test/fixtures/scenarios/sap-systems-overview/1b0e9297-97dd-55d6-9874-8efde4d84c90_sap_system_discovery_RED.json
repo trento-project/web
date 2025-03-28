@@ -55,7 +55,8 @@
                 "httpsPort": 50014,
                 "dispstatus": "SAPControl-GRAY",
                 "instanceNr": 0,
-                "startPriority": "1"
+                "startPriority": "1",
+                "runningLocally": false
               },
               {
                 "features": "ENQREP",
@@ -64,7 +65,8 @@
                 "httpsPort": 51014,
                 "dispstatus": "SAPControl-GREEN",
                 "instanceNr": 10,
-                "startPriority": "0.5"
+                "startPriority": "0.5",
+                "runningLocally": false
               },
               {
                 "features": "ABAP|GATEWAY|ICMAN|IGS",
@@ -73,7 +75,8 @@
                 "httpsPort": 50114,
                 "dispstatus": "SAPControl-YELLOW",
                 "instanceNr": 1,
-                "startPriority": "3"
+                "startPriority": "3",
+                "runningLocally": false
               },
               {
                 "features": "ABAP|GATEWAY|ICMAN|IGS",
@@ -82,7 +85,8 @@
                 "httpsPort": 50216,
                 "dispstatus": "SAPControl-RED",
                 "instanceNr": 2,
-                "startPriority": "5"
+                "startPriority": "5",
+                "runningLocally": true
               }
             ],
             "Processes": [

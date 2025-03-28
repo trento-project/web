@@ -66,7 +66,8 @@
                 "httpPort": 55613,
                 "httpsPort": 55614,
                 "instanceNr": 56,
-                "startPriority": "0.3"
+                "startPriority": "0.3",
+                "runningLocally": true
               }
             ],
             "Processes": [

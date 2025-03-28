@@ -41,7 +41,8 @@
                 "httpsPort": 51014,
                 "dispstatus": "SAPControl-YELLOW",
                 "instanceNr": 10,
-                "startPriority": "0.3"
+                "startPriority": "0.3",
+                "runningLocally": true
               }
             ],
             "Processes": [

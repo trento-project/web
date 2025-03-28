@@ -258,6 +258,30 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
              |> SapSystemPolicy.handle([], [])
   end
 
+  test "should parse runningLocally if it is not sent in the payload" do
+    assert {:ok,
+            [
+              %RegisterApplicationInstance{
+                features: "ABAP|GATEWAY|ICMAN|IGS",
+                instance_number: "02"
+              }
+            ]} =
+             "sap_system_discovery_application"
+             |> load_discovery_event_fixture()
+             |> pop_in([
+               "payload",
+               Access.all(),
+               "Instances",
+               Access.all(),
+               "SAPControl",
+               "Instances",
+               Access.all(),
+               "runningLocally"
+             ])
+             |> elem(1)
+             |> SapSystemPolicy.handle([], [])
+  end
+
   describe "delta deregistration" do
     test "should deregister the old instances and register the new ones" do
       database_sap_system_id = UUID.uuid4()
