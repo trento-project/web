@@ -33,6 +33,9 @@ import {
   getActivityLogsSettingsErrors,
 } from '@state/selectors/activityLogsSettings';
 
+import AlertingSettingsConfig from '@common/AlertingSettingsConfig';
+import AlertingSettingsModal from '@common/AlertingSettingsModal';
+
 import {
   useApiKeySettings,
   useSuseManagerSettings,
@@ -112,6 +115,10 @@ function SettingsPage() {
   );
 
   const hasApiKey = Boolean(apiKey);
+
+  const [alertingSettings, _setAlertingSettings] = useState({});
+  const [_alertingSettingsModalOpen, setAlertingSettingsModalOpen] =
+    useState(false);
 
   return (
     <>
@@ -299,36 +306,45 @@ function SettingsPage() {
       </section>
 
       <section>
-        <SettingsLoader
-          sectionName="Activity Logs"
-          status={calculateSettingsLoaderStatus(
-            activityLogsSettingsLoading,
-            activityLogsSettingsNetworkError
-          )}
-          onRetry={() => dispatch(fetchActivityLogsSettings())}
-        >
-          <ActivityLogsConfig
-            userAbilities={abilities}
-            retentionTime={activityLogsSettings.retention_time}
-            onEditClick={() => dispatch(setEditingActivityLogsSettings(true))}
+        <div className="pb-4">
+          <SettingsLoader
+            sectionName="Activity Logs"
+            status={calculateSettingsLoaderStatus(
+              activityLogsSettingsLoading,
+              activityLogsSettingsNetworkError
+            )}
+            onRetry={() => dispatch(fetchActivityLogsSettings())}
+          >
+            <ActivityLogsConfig
+              userAbilities={abilities}
+              retentionTime={activityLogsSettings.retention_time}
+              onEditClick={() => dispatch(setEditingActivityLogsSettings(true))}
+            />
+          </SettingsLoader>
+          <ActivityLogsSettingsModal
+            key={`${JSON.stringify(
+              activityLogsSettings
+            )}-${editingActivityLogsSettings}`}
+            open={editingActivityLogsSettings}
+            errors={activityLogsValidationErrors}
+            loading={activityLogsSettingsLoading}
+            initialRetentionTime={activityLogsSettings.retention_time}
+            onSave={(payload) => {
+              dispatch(updateActivityLogsSettings(payload));
+            }}
+            onCancel={() => {
+              dispatch(setActivityLogsSettingsErrors([]));
+              dispatch(setEditingActivityLogsSettings(false));
+            }}
           />
-        </SettingsLoader>
-        <ActivityLogsSettingsModal
-          key={`${JSON.stringify(
-            activityLogsSettings
-          )}-${editingActivityLogsSettings}`}
-          open={editingActivityLogsSettings}
-          errors={activityLogsValidationErrors}
-          loading={activityLogsSettingsLoading}
-          initialRetentionTime={activityLogsSettings.retention_time}
-          onSave={(payload) => {
-            dispatch(updateActivityLogsSettings(payload));
-          }}
-          onCancel={() => {
-            dispatch(setActivityLogsSettingsErrors([]));
-            dispatch(setEditingActivityLogsSettings(false));
-          }}
-        />
+        </div>
+      </section>
+
+      <section>
+        <div className="pb-4">
+          <AlertingSettingsConfig />
+          <AlertingSettingsModal />
+        </div>
       </section>
     </>
   );

@@ -20,13 +20,6 @@ const axiosMock = new MockAdapter(networkClient);
 
 const defaultInitialState = {
   ...defaultInitialStateBase,
-  softwareUpdatesSettings: {
-    settings: {
-      url: undefined,
-      username: undefined,
-      ca_uploaded_at: undefined,
-    },
-  },
   activityLogsSettings: {
     settings: {
       retention_time: { value: 1, unit: 'day' },
@@ -85,7 +78,9 @@ describe('Settings Page', () => {
         ...defaultInitialState,
       });
 
-      renderWithRouter(StatefulSettings);
+      await act(async () => {
+        renderWithRouter(StatefulSettings);
+      });
 
       expect(
         screen.getByText('Loading SUSE Manager Settings...')
