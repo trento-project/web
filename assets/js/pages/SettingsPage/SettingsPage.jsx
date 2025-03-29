@@ -33,9 +33,13 @@ import {
   getActivityLogsSettingsErrors,
 } from '@state/selectors/activityLogsSettings';
 
+import AlertingSettingsConfig from '@common/AlertingSettingsConfig';
+import AlertingSettingsModal from '@common/AlertingSettingsModal';
+
 import {
   useApiKeySettings,
   useSuseManagerSettings,
+  useAlertingSettings,
 } from '@pages/SettingsPage/hooks';
 
 const apiKeySettingsPermittedFor = ['all:api_key_settings'];
@@ -112,6 +116,22 @@ function SettingsPage() {
   );
 
   const hasApiKey = Boolean(apiKey);
+
+  const {
+    settings: alertingSettings,
+    fetchLoading: alertingFetchLoading,
+    fetchError: alertingFetchError,
+    submitLoading: alertingSubmitLoading,
+    submitErrors: alertingSubmitErrors,
+    fetch: fetchAlertingSettings,
+    submit: submitAlertingSettings,
+    clearSubmitErrors: clearAlertingSubmitErrors
+  } = useAlertingSettings();
+
+  const [alertingSettingsModalOpen, setAlertingSettingsModalOpen] = useState(false);
+  useEffect(() => {
+    setAlertingSettingsModalOpen(false);
+  }, [alertingSettings]);
 
   return (
     <>
@@ -299,36 +319,68 @@ function SettingsPage() {
       </section>
 
       <section>
-        <SettingsLoader
-          sectionName="Activity Logs"
-          status={calculateSettingsLoaderStatus(
-            activityLogsSettingsLoading,
-            activityLogsSettingsNetworkError
-          )}
-          onRetry={() => dispatch(fetchActivityLogsSettings())}
-        >
-          <ActivityLogsConfig
-            userAbilities={abilities}
-            retentionTime={activityLogsSettings.retention_time}
-            onEditClick={() => dispatch(setEditingActivityLogsSettings(true))}
+        <div className="pb-4">
+          <SettingsLoader
+            sectionName="Activity Logs"
+            status={calculateSettingsLoaderStatus(
+              activityLogsSettingsLoading,
+              activityLogsSettingsNetworkError
+            )}
+            onRetry={() => dispatch(fetchActivityLogsSettings())}
+          >
+            <ActivityLogsConfig
+              userAbilities={abilities}
+              retentionTime={activityLogsSettings.retention_time}
+              onEditClick={() => dispatch(setEditingActivityLogsSettings(true))}
+            />
+          </SettingsLoader>
+          <ActivityLogsSettingsModal
+            key={`${JSON.stringify(
+              activityLogsSettings
+            )}-${editingActivityLogsSettings}`}
+            open={editingActivityLogsSettings}
+            errors={activityLogsValidationErrors}
+            loading={activityLogsSettingsLoading}
+            initialRetentionTime={activityLogsSettings.retention_time}
+            onSave={(payload) => {
+              dispatch(updateActivityLogsSettings(payload));
+            }}
+            onCancel={() => {
+              dispatch(setActivityLogsSettingsErrors([]));
+              dispatch(setEditingActivityLogsSettings(false));
+            }}
           />
-        </SettingsLoader>
-        <ActivityLogsSettingsModal
-          key={`${JSON.stringify(
-            activityLogsSettings
-          )}-${editingActivityLogsSettings}`}
-          open={editingActivityLogsSettings}
-          errors={activityLogsValidationErrors}
-          loading={activityLogsSettingsLoading}
-          initialRetentionTime={activityLogsSettings.retention_time}
-          onSave={(payload) => {
-            dispatch(updateActivityLogsSettings(payload));
-          }}
-          onCancel={() => {
-            dispatch(setActivityLogsSettingsErrors([]));
-            dispatch(setEditingActivityLogsSettings(false));
-          }}
-        />
+        </div>
+      </section>
+
+      <section>
+        <div className="pb-4">
+          <SettingsLoader
+            sectionName="Alerting Settings"
+            status={calculateSettingsLoaderStatus(
+              alertingFetchLoading,
+              alertingFetchError
+            )}
+            onRetry={() => fetchAlertingSettings()}
+          >
+            <AlertingSettingsConfig
+              settings={alertingSettings}
+              userAbilities={abilities}
+              onEditClick={() => {
+                clearAlertingSubmitErrors()
+                setAlertingSettingsModalOpen(true);
+              }}
+            />
+          </SettingsLoader>
+
+          <AlertingSettingsModal
+            key={`alertingmodal-${Object.values(alertingSettings).join("-")}`}
+            previousSettings={alertingSettings}
+            open={alertingSettingsModalOpen}
+            onSave={submitAlertingSettings}
+            onCancel={() => setAlertingSettingsModalOpen(false)}
+          />
+        </div>
       </section>
     </>
   );
