@@ -139,8 +139,12 @@ defmodule Trento.Discovery.Policies.SapSystemPolicy do
       instance_number = parse_instance_number(instance)
 
       clustered =
-        Enum.any?(sap_instances, fn %{instance_number: inst_number, sid: inst_sid} ->
-          inst_number == instance_number && inst_sid == sid
+        Enum.any?(sap_instances, fn %{
+                                      instance_number: inst_number,
+                                      sid: inst_sid,
+                                      mounted: mounted
+                                    } ->
+          inst_number == instance_number && inst_sid == sid && mounted
         end)
 
       RegisterApplicationInstance.new(%{
