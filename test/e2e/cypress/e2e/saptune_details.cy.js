@@ -1,113 +1,43 @@
 import * as saptuneDetailsPage from '../pageObject/saptune_details_po';
 
-import { saptuneDetailsData } from '../fixtures/saptune-details/saptune_details_data';
-
 describe('Saptune Details page', () => {
-  const { hostname, packageVersion, configuredVersion } = saptuneDetailsData;
+  before(() => {
+    saptuneDetailsPage.preloadTestData();
+    saptuneDetailsPage.visit();
+  });
 
-  const notFoundContainerSelector = '.pb-24';
-  const versionContainerSelector =
-    '.max-w-7xl > :nth-child(1) > :nth-child(1) > :nth-child(3)';
-  const saptuneServiceStatusSelector =
-    '.max-w-7xl > :nth-child(1) > :nth-child(1) > :nth-child(5)';
-  const saptuneTuningSolutionsSelector =
-    '.max-w-7xl > :nth-child(1) > :nth-child(1) > :nth-child(7)';
-  const saptuneTuningNotesSelector =
-    '.max-w-7xl > :nth-child(1) > :nth-child(1) > :nth-child(9)';
-  const saptuneStagingStatusSelector = ':nth-child(11)';
-
-  // before(() => saptuneDetailsPage.preloadTestData());
-
-  beforeEach(() => saptuneDetailsPage.visit());
-
-  it.only('should render saptune details not found if saptune version is unsupported', () => {
+  it('should render saptune details not found if saptune version is unsupported', () => {
     saptuneDetailsPage.loadSaptuneUnsupportedScenario();
     saptuneDetailsPage.saptuneNotFoundLabelIsDisplayed();
   });
 
   it('should render details not found if saptune is not installed', () => {
-    cy.loadScenario(`host-${hostname}-saptune-uninstalled`);
-    cy.get(notFoundContainerSelector).should(
-      'contain',
-      'Saptune Details Not Found'
-    );
+    saptuneDetailsPage.loadSaptuneUninstalledScenario();
+    saptuneDetailsPage.saptuneNotFoundLabelIsDisplayed();
   });
 
   it('should render versions list view when saptune is not tuning correctly', () => {
-    cy.loadScenario(`host-${hostname}-saptune-not-tuned`);
-
-    cy.get(versionContainerSelector)
-      .contains('Package')
-      .next()
-      .should('contain', packageVersion);
-
-    cy.get(versionContainerSelector)
-      .contains('Configured Version')
-      .next()
-      .should('contain', configuredVersion);
-
-    cy.get(versionContainerSelector)
-      .contains('Tuning')
-      .next()
-      .should('contain', 'No tuning');
+    saptuneDetailsPage.loadSaptuneNotTunedScenario();
+    saptuneDetailsPage.hasExpectedPackageVersion();
+    saptuneDetailsPage.hasExpectedConfiguredVersion();
+    saptuneDetailsPage.hasExpectedTuning();
   });
 
   it('should render each part of saptune services status with correct content', () => {
-    cy.loadScenario(`host-${hostname}-saptune-service-status-passing`);
-    const { saptuneServiceStatus, sapconfServiceStatus, tunedServiceStatus } =
-      saptuneDetailsData;
-    cy.get(saptuneServiceStatusSelector)
-      .contains('saptune.service')
-      .next()
-      .should('contain', saptuneServiceStatus);
-    cy.get(saptuneServiceStatusSelector)
-      .contains('sapconf.service')
-      .next()
-      .should('contain', sapconfServiceStatus);
-    cy.get(saptuneServiceStatusSelector)
-      .contains('tuned.service')
-      .next()
-      .should('contain', tunedServiceStatus);
+    saptuneDetailsPage.loadSaptunePassingScenario();
+    saptuneDetailsPage.hasExpectedServiceStatus();
+    saptuneDetailsPage.hasExpectedSapConf();
+    saptuneDetailsPage.hasExpectedTunedService();
   });
 
   it('should render correctly a tuned system', () => {
-    cy.loadScenario(`host-${hostname}-saptune-compliant`);
-    const {
-      appliedNotes,
-      appliedSolutions,
-      enabledNotes,
-      enabledSolutions,
-      stagingState,
-      stagingNotes,
-      stagingSolution,
-    } = saptuneDetailsData;
-    cy.get(saptuneTuningSolutionsSelector)
-      .contains('Enabled Solution')
-      .next()
-      .should('contain', enabledSolutions);
-    cy.get(saptuneTuningSolutionsSelector)
-      .contains('Applied Solution')
-      .next()
-      .should('contain', appliedSolutions);
-    cy.get(saptuneTuningNotesSelector)
-      .contains('Enabled Notes')
-      .next()
-      .should('contain', enabledNotes);
-    cy.get(saptuneTuningNotesSelector)
-      .contains('Applied Notes')
-      .next()
-      .should('contain', appliedNotes);
-    cy.get(saptuneStagingStatusSelector)
-      .contains('Staging')
-      .next()
-      .should('contain', stagingState);
-    cy.get(saptuneStagingStatusSelector)
-      .contains('Staged Notes')
-      .next()
-      .should('contain', stagingNotes);
-    cy.get(saptuneStagingStatusSelector)
-      .contains('Staged Solutions')
-      .next()
-      .should('contain', stagingSolution);
+    saptuneDetailsPage.loadSaptuneCompliantScenario();
+    saptuneDetailsPage.hasExpectedEnabledSolution();
+    saptuneDetailsPage.hasExpectedAppliedSolution();
+    saptuneDetailsPage.hasExpectedEnabledNotes();
+    saptuneDetailsPage.hasExpectedAppliedNotes();
+    saptuneDetailsPage.hasExpectedStagingState();
+    saptuneDetailsPage.hasExpectedStagingNotes();
+    saptuneDetailsPage.hasExpectedStagingSolution();
   });
 });
