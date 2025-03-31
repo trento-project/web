@@ -234,7 +234,7 @@ defmodule Trento.Discovery.Payloads.SapSystemDiscoveryPayload do
       :dispstatus,
       :instanceNr,
       :startPriority,
-      :runningLocally
+      :currentInstance
     ]
 
     use Trento.Support.Type
@@ -255,7 +255,7 @@ defmodule Trento.Discovery.Payloads.SapSystemDiscoveryPayload do
 
       field :instanceNr, :integer
       field :startPriority, :string
-      field :runningLocally, :boolean
+      field :currentInstance, :boolean
     end
 
     def changeset(instance, attrs, hostname, instance_number) do
@@ -266,17 +266,17 @@ defmodule Trento.Discovery.Payloads.SapSystemDiscoveryPayload do
       |> validate_required_fields(@required_fields)
     end
 
-    defp enrich_current_instance(%{"runningLocally" => _} = attrs, _, _), do: attrs
+    defp enrich_current_instance(%{"currentInstance" => _} = attrs, _, _), do: attrs
 
-    # Keep backward compatibility for older agents that don't send runningLocally
+    # Keep backward compatibility for older agents that don't send currentInstance
     defp enrich_current_instance(
            %{"hostname" => hostname, "instanceNr" => instance_number} = attrs,
            hostname,
            instance_number
          ),
-         do: Map.put(attrs, "runningLocally", true)
+         do: Map.put(attrs, "currentInstance", true)
 
-    defp enrich_current_instance(attrs, _, _), do: Map.put(attrs, "runningLocally", false)
+    defp enrich_current_instance(attrs, _, _), do: Map.put(attrs, "currentInstance", false)
   end
 
   defmodule SapControlProcess do

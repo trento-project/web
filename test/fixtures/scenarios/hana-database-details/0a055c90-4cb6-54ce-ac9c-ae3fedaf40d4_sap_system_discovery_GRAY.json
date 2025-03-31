@@ -42,7 +42,7 @@
                 "dispstatus": "SAPControl-GRAY",
                 "instanceNr": 10,
                 "startPriority": "0.3",
-                "runningLocally": true
+                "currentInstance": true
               }
             ],
             "Processes": [

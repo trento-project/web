@@ -41,7 +41,7 @@
                 "dispstatus": "SAPControl-GREEN",
                 "instanceNr": 0,
                 "startPriority": "0.3",
-                "runningLocally": true
+                "currentInstance": true
               }
             ],
             "Processes": [

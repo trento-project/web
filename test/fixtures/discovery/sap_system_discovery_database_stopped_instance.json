@@ -38,7 +38,7 @@
                 "startPriority": "0.3",
                 "features": "HDB|HDB_WORKER",
                 "dispstatus": "SAPControl-GRAY",
-                "runningLocally": true
+                "currentInstance": true
               }
             ],
             "Properties": [

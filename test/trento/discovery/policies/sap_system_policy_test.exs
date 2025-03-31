@@ -258,7 +258,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
              |> SapSystemPolicy.handle([], [])
   end
 
-  test "should parse runningLocally if it is not sent in the payload" do
+  test "should parse currentInstance if it is not sent in the payload" do
     assert {:ok,
             [
               %RegisterApplicationInstance{
@@ -276,7 +276,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
                "SAPControl",
                "Instances",
                Access.all(),
-               "runningLocally"
+               "currentInstance"
              ])
              |> elem(1)
              |> SapSystemPolicy.handle([], [])

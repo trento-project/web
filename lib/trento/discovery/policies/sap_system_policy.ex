@@ -213,7 +213,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicy do
          key
        ) do
     Enum.find_value(instances, fn
-      %{runningLocally: true} = current_instance -> Map.get(current_instance, key)
+      %{currentInstance: true} = current_instance -> Map.get(current_instance, key)
       _ -> nil
     end)
   end
