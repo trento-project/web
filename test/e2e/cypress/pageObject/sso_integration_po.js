@@ -66,7 +66,7 @@ export const clickLoginWithSsoButton = () => cy.get(loginWithSsoButton).click();
 // UI Validations
 
 export const loginPageHasExpectedTitle = (expectedPageTitle) =>
-  cy.get('h2').contains(expectedPageTitle);
+  cy.get('h2').should('have.text', expectedPageTitle);
 
 export const adminUsernameIsListedInUsersTable = () =>
   cy.get(usersListAdminUser).should('be.visible');
