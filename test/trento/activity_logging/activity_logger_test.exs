@@ -456,9 +456,13 @@ defmodule Trento.ActivityLog.ActivityLoggerTest do
 
   test "queue event activity logging" do
     operation_completed = build(:operation_completed_v1)
+    check_customization_applied = build(:check_customization_applied_v1)
+    check_customization_reset = build(:check_customization_reset_v1)
 
     events = [
-      {operation_completed, "operation_completed"}
+      {operation_completed, "operation_completed"},
+      {check_customization_applied, "check_customization_applied"},
+      {check_customization_reset, "check_customization_reset"}
     ]
 
     Enum.each(events, fn {event, _} ->
