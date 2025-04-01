@@ -1254,7 +1254,7 @@ defmodule Trento.Factory do
     %CheckCustomizationApplied{
       check_id: Faker.UUID.v4(),
       group_id: Faker.UUID.v4(),
-      target_type: Enum.random([:host, :cluster]),
+      target_type: Enum.random(["host", "cluster"]),
       custom_values: [
         %{
           name: Faker.Pokemon.name(),
@@ -1268,7 +1268,7 @@ defmodule Trento.Factory do
     %CheckCustomizationReset{
       check_id: Faker.UUID.v4(),
       group_id: Faker.UUID.v4(),
-      target_type: Enum.random([:host, :cluster])
+      target_type: Enum.random(["host", "cluster"])
     }
   end
 end

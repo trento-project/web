@@ -48,8 +48,79 @@ defmodule Trento.ActivityLog.QueueEventParserTest do
     end
   end
 
-  test "should return a nil actor in unknown event" do
-    assert nil == QueueEventParser.get_activity_actor(:unknown, %{})
+  describe "checks customization" do
+    test "should get correct actor" do
+      messages =
+        [
+          {:check_customization_applied, build(:check_customization_applied_v1)},
+          {:check_customization_reset, build(:check_customization_reset_v1)}
+        ]
+
+      for {activity, message} <- messages do
+        assert "system" == QueueEventParser.get_activity_actor(activity, message)
+      end
+    end
+
+    test "should get correct metadata" do
+      check_id = Faker.UUID.v4()
+      group_id = Faker.UUID.v4()
+      target_type = "host"
+
+      check_customization_applied =
+        build(:check_customization_applied_v1,
+          check_id: check_id,
+          group_id: group_id,
+          target_type: target_type,
+          custom_values: [
+            %{name: "value_1", value: {:string_value, "string_value"}},
+            %{name: "value_2", value: {:int_value, 1}},
+            %{name: "value_3", value: {:bool_value, true}}
+          ]
+        )
+
+      check_customization_reset =
+        build(:check_customization_reset_v1,
+          check_id: check_id,
+          group_id: group_id,
+          target_type: target_type
+        )
+
+      messages =
+        [
+          %{
+            activity: :check_customization_applied,
+            message: check_customization_applied,
+            expected_metadata: %{
+              check_id: check_id,
+              group_id: group_id,
+              target_type: target_type,
+              custom_values: [
+                %{name: "value_1", value: "string_value"},
+                %{name: "value_2", value: 1},
+                %{name: "value_3", value: true}
+              ]
+            }
+          },
+          %{
+            activity: :check_customization_reset,
+            message: check_customization_reset,
+            expected_metadata: %{
+              check_id: check_id,
+              group_id: group_id,
+              target_type: target_type
+            }
+          }
+        ]
+
+      for %{activity: activity, message: message, expected_metadata: expected_metadata} <-
+            messages do
+        assert expected_metadata == QueueEventParser.get_activity_metadata(activity, message)
+      end
+    end
+  end
+
+  test "should return 'system' by default" do
+    assert "system" == QueueEventParser.get_activity_actor(:unknown, %{})
   end
 
   test "should return empty metadata in unknown event" do
