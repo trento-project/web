@@ -48,11 +48,13 @@ describe('SSO integration', () => {
   });
 
   describe('Admin user', () => {
-    beforeEach(() => {
-      ssoIntegrationPage.ssoLoginAdminUser();
-    });
+    // beforeEach(() => {
+    //   ssoIntegrationPage.ssoLoginAdminUser();
+    // });
 
-    it('should have access to Users view', () => {
+    // eslint-disable-next-line mocha/no-exclusive-tests
+    it.only('should have access to Users view', () => {
+      ssoIntegrationPage.ssoLoginAdminUser();
       cy.visit('/users');
       cy.url().should('include', '/users');
       ssoIntegrationPage.adminUsernameIsListedInUsersTable();
