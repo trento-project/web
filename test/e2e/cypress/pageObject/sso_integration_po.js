@@ -25,7 +25,8 @@ const adminUser = {
 const fullNameInputField = 'label:contains("Full Name") + div input';
 const emailAddressInputField = 'label:contains("Email Address") + div input';
 const usernameInputField = 'label:contains("Username") + div input';
-const permissionsInputField = 'label:contains("Permissions") + div input';
+const permissionsInputField =
+  'label:contains("Permissions") + div span div div:eq(0)';
 const usernameMenu = `button[class*="group"] span span:contains("${plainUser.username}")`;
 const usersListPlainUser = `a:contains("${plainUser.username}")`;
 const usersListAdminUser = `a:contains("${adminUser.username}")`;
