@@ -34,25 +34,23 @@ describe('SSO integration', () => {
     });
 
     it('should have a read only profile view and empty list of permissions', () => {
-      cy.visit('/profile');
-      cy.get('input').eq(0).should('have.value', plainUser.fullname);
-      cy.get('input').eq(1).should('have.value', plainUser.email);
-      cy.get('input').eq(2).should('have.value', plainUser.username);
+      ssoIntegrationPage.visit('/profile');
+      ssoIntegrationPage.plainUserFullNameIsDisplayed();
+      ssoIntegrationPage.plainUserEmailIsDisplayed();
+      ssoIntegrationPage.plainUserUsernameIsDisplayed();
     });
 
     it('should be able to logout and login without a new authentication request', () => {
-      cy.get('span').contains(plainUser.username).click();
-      cy.get('button').contains('Sign out').click();
-      cy.get('button').contains('Login with Single Sign-on').click();
-      cy.get('h2').contains('Loading...');
-      cy.get('h1').contains('At a glance');
+      ssoIntegrationPage.clickUsernameMenu();
+      ssoIntegrationPage.clickSignOutButton();
+      ssoIntegrationPage.clickLoginWithSsoButton();
+      ssoIntegrationPage.loginPageHasExpectedTitle('Loading ...');
+      ssoIntegrationPage.pageTitleIsCorrectlyDisplayed('At a glance');
     });
   });
 
   describe('Admin user', () => {
-    beforeEach(() => {
-      ssoIntegrationPage.ssoLoginAdminUser();
-    });
+    beforeEach(() => ssoIntegrationPage.ssoLoginAdminUser());
 
     it('should have access to Users view', () => {
       usersPage.visit();
