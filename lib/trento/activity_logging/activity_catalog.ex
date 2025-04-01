@@ -5,6 +5,11 @@ defmodule Trento.ActivityLog.ActivityCatalog do
 
   alias Phoenix.Controller
 
+  alias Trento.Checks.V1.{
+    CheckCustomizationApplied,
+    CheckCustomizationReset
+  }
+
   alias Trento.Operations.V1.OperationCompleted
 
   @type activity_type :: atom()
@@ -168,7 +173,9 @@ defmodule Trento.ActivityLog.ActivityCatalog do
 
   defp get_queue_events_activities do
     %{
-      OperationCompleted => {:operation_completed, :always}
+      OperationCompleted => {:operation_completed, :always},
+      CheckCustomizationApplied => {:check_customization_applied, :always},
+      CheckCustomizationReset => {:check_customization_reset, :always}
     }
   end
 end
