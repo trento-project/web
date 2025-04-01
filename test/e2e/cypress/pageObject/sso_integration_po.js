@@ -31,6 +31,7 @@ const usernameMenu = `button[class*="group"] span span:contains("${plainUser.use
 const usersListPlainUser = `a:contains("${plainUser.username}")`;
 const usersListAdminUser = `a:contains("${adminUser.username}")`;
 const loginWithSsoButton = 'button:contains("Login with Single Sign-on")';
+const signOutButton = 'button:contains("Sign out")';
 
 // UI Interactions
 
@@ -62,6 +63,8 @@ const loginWithSSO = (username, password) => {
 export const clickUsernameMenu = () => cy.get(usernameMenu).click();
 
 export const clickLoginWithSsoButton = () => cy.get(loginWithSsoButton).click();
+
+export const clickSignOutButton = () => cy.get(signOutButton).click();
 
 // UI Validations
 
