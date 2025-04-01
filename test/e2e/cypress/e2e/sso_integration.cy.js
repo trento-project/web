@@ -1,5 +1,18 @@
 import * as ssoIntegrationPage from '../pageObject/sso_integration_po';
+const plainUser = {
+  username: 'trentoidp',
+  password: 'password',
+  fullname: 'Trento IDP user Of Monk',
+  email: 'trentoidp@trento.suse.com',
+};
 
+const adminUser = {
+  username: 'admin',
+  password: 'admin',
+  fullname: 'Trento Admin',
+  email: 'admin@trento.suse.com',
+  permissions: 'all:all',
+};
 describe('SSO integration', () => {
   if (!Cypress.env('SSO_INTEGRATION_TESTS')) {
     return;
@@ -10,7 +23,7 @@ describe('SSO integration', () => {
     cy.clearAllCookies();
   });
 
-  beforeEach(() => ssoIntegrationPage.visit());
+  // beforeEach(() => ssoIntegrationPage.visit());
 
   it('should display Single Sign-on login page', () => {
     ssoIntegrationPage.loginPageHasExpectedTitle('Login to Trento');
@@ -48,25 +61,16 @@ describe('SSO integration', () => {
   });
 
   describe('Admin user', () => {
-    // beforeEach(() => {
-    //   ssoIntegrationPage.ssoLoginAdminUser();
-    // });
+    beforeEach(() => {
+      ssoIntegrationPage.ssoLoginAdminUser();
+    });
 
     // eslint-disable-next-line mocha/no-exclusive-tests
     it.only('should have access to Users view', () => {
-      ssoIntegrationPage.ssoLoginAdminUser();
       cy.visit('/users');
       cy.url().should('include', '/users');
-      ssoIntegrationPage.adminUsernameIsListedInUsersTable();
-      const plainUser = {
-        username: 'trentoidp',
-        password: 'password',
-        fullname: 'Trento IDP user Of Monk',
-        email: 'trentoidp@trento.suse.com',
-      };
       cy.get('a').contains(plainUser.username);
-
-      // ssoIntegrationPage.plainUsernameIsListedInUsersTable();
+      cy.get('a').contains(adminUser.username);
     });
 
     it('should not have user creation button', () => {
