@@ -118,7 +118,8 @@ config :trento, Trento.Infrastructure.Messaging.Adapter.AMQP,
         durable: false,
         auto_delete: true
       ]
-    ]
+    ],
+    processor: GenRMQ.Processor.Mock
   ]
 
 config :trento, Trento.Scheduler,
