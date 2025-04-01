@@ -42,9 +42,10 @@ describe('SSO integration', () => {
 
     it('should be able to logout and login without a new authentication request', () => {
       cy.get('span').contains(plainUser.username).click();
+      cy.get('button').contains('Sign out').click();
       cy.get('button').contains('Login with Single Sign-on').click();
       // ssoIntegrationPage.clickSignOutButton();
-      ssoIntegrationPage.clickLoginWithSsoButton();
+      // ssoIntegrationPage.clickLoginWithSsoButton();
       ssoIntegrationPage.loginPageHasExpectedTitle('Loading ...');
       ssoIntegrationPage.pageTitleIsCorrectlyDisplayed('At a glance');
     });
