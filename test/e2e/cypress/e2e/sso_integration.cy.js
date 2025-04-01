@@ -13,12 +13,12 @@ describe('SSO integration', () => {
   beforeEach(() => ssoIntegrationPage.visit());
 
   it('should display Single Sign-on login page', () => {
-    ssoIntegrationPage.loginPageHasExpectedTitle();
+    ssoIntegrationPage.loginPageHasExpectedTitle('Login to Trento');
   });
 
   it('should redirect to external IDP login page when login button is clicked', () => {
     ssoIntegrationPage.clickLoginWithSsoButton();
-    cy.url().should('contain', '/realms/trento');
+    ssoIntegrationPage.shouldRedirectToIdpUrl();
   });
 
   it('should login properly once authentication is completed', () => {

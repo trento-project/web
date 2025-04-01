@@ -65,6 +65,9 @@ export const clickLoginWithSsoButton = () => cy.get(loginWithSsoButton).click();
 
 // UI Validations
 
+export const shouldRedirectToIdpUrl = () =>
+  cy.url().should('have.text', `${Cypress.env('idp_url')}/realms/trento`);
+
 export const loginPageHasExpectedTitle = (expectedPageTitle) =>
   cy.get('h2').should('have.text', expectedPageTitle);
 
