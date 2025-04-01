@@ -184,6 +184,16 @@ config :trento, Trento.Infrastructure.Messaging.Adapter.AMQP,
       connection: "amqp://guest:guest@localhost:5672"
     ],
     processor: Trento.Infrastructure.Operations.AMQP.Processor
+  ],
+  catalog: [
+    consumer: [
+      queue: "trento.catalog.checks_customization",
+      exchange: "trento.catalog",
+      routing_key: "customizations",
+      prefetch_count: "10",
+      connection: "amqp://guest:guest@localhost:5672"
+    ],
+    processor: Trento.Infrastructure.Catalog.AMQP.Processor
   ]
 
 config :trento, Trento.Infrastructure.Prometheus,
