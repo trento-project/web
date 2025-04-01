@@ -100,6 +100,7 @@ export const saptuneStatusFactory = Factory.define(() => {
     tuning_state: saptuneTuningStateEnum(),
   };
 });
+
 export const hostFactory = Factory.define(({ params, sequence }) => {
   const id = params.id || faker.string.uuid();
 
@@ -129,3 +130,14 @@ export const hostFactory = Factory.define(({ params, sequence }) => {
     saptune_status: saptuneStatusFactory.build(),
   };
 });
+
+export const awsMetadataFactory = Factory.define(() => ({
+  account_id: faker.string.uuid(),
+  ami_id: `ami-${faker.string.uuid()}`,
+  availability_zone: 'eu-west-1a',
+  data_disk_number: 1,
+  instance_id: 'i-44444',
+  instance_type: 't3.micro',
+  region: 'eu-west-1',
+  vpc_id: 'vpc-99999',
+}));

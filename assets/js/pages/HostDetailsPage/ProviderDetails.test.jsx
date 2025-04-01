@@ -2,6 +2,8 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
+import { awsMetadataFactory } from '@lib/test-utils/factories';
+
 import { AWS_PROVIDER } from '@lib/model';
 import ProviderDetails from './ProviderDetails';
 
@@ -84,16 +86,7 @@ describe('Provider Details', () => {
     ];
 
     it('should render with AWS metadata', () => {
-      const awsMetadata = {
-        account_id: '123456',
-        ami_id: 'ami-67890',
-        availability_zone: 'eu-west-1a',
-        data_disk_number: 1,
-        instance_id: 'i-44444',
-        instance_type: 't3.micro',
-        region: 'eu-west-1',
-        vpc_id: 'vpc-99999',
-      };
+      const awsMetadata = awsMetadataFactory.build();
 
       render(
         <ProviderDetails provider={AWS_PROVIDER} provider_data={awsMetadata} />
@@ -117,7 +110,7 @@ describe('Provider Details', () => {
       expect(screen.getByText('AWS')).toBeVisible();
 
       metadataLabels.forEach(({ _, label }) => {
-        expect(screen.queryByText(label)).toBeNull();
+        expect(screen.queryByText(label)).not.toBeInTheDocument();
       });
     });
   });
