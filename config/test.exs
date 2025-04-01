@@ -102,6 +102,24 @@ config :trento, Trento.Infrastructure.Messaging.Adapter.AMQP,
       connection: amqp_connection
     ],
     processor: GenRMQ.Processor.Mock
+  ],
+  catalog: [
+    consumer: [
+      queue: "trento.test.catalog.checks_customization",
+      exchange: "trento.test.catalog",
+      routing_key: "customizations",
+      prefetch_count: "10",
+      connection: amqp_connection,
+      queue_options: [
+        durable: false,
+        auto_delete: true
+      ],
+      deadletter_queue_options: [
+        durable: false,
+        auto_delete: true
+      ]
+    ],
+    processor: GenRMQ.Processor.Mock
   ]
 
 config :trento, Trento.Scheduler,

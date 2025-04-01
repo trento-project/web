@@ -11,7 +11,11 @@ import {
   availableResourceNameKeys,
   resourceNameFromMetadata,
   resourceTypes,
+  taggingResourceType,
+  operationResourceType,
+  checkCustomizationResourceType,
 } from './activityLog';
+import { SAPTUNE_SOLUTION_APPLY } from '../operations';
 
 const nonUserManagementActivities = difference(ACTIVITY_TYPES, [
   LOGIN_ATTEMPT,
@@ -83,5 +87,131 @@ describe('activityLog', () => {
         );
       }
     );
+  });
+
+  describe('resource type resolution', () => {
+    it('should fallback to default resolution when unable to determine resource type', () => {
+      [
+        {
+          metadata: {},
+        },
+        {
+          metadata: null,
+        },
+        {
+          metadata: undefined,
+        },
+        {},
+      ].forEach((entry) => {
+        expect(taggingResourceType(entry)).toBe(
+          'Unable to determine resource type'
+        );
+        expect(operationResourceType(entry)).toBe(
+          'Unable to determine operation type'
+        );
+        expect(checkCustomizationResourceType(entry)).toBe(
+          'Unable to determine target type'
+        );
+      });
+    });
+
+    it('should resolve tagging resource types', () => {
+      const scenarios = [
+        {
+          entry: {
+            metadata: {
+              resource_type: 'host',
+            },
+          },
+          expected: 'Host',
+        },
+        {
+          entry: {
+            metadata: {
+              resource_type: 'cluster',
+            },
+          },
+          expected: 'Cluster',
+        },
+        {
+          entry: {
+            metadata: {
+              resource_type: 'database',
+            },
+          },
+          expected: 'Database',
+        },
+        {
+          entry: {
+            metadata: {
+              resource_type: 'sap_system',
+            },
+          },
+          expected: 'SAP System',
+        },
+      ];
+
+      scenarios.forEach(({ entry, expected }) => {
+        expect(taggingResourceType(entry)).toBe(expected);
+      });
+    });
+
+    it('should resolve operation resource types', () => {
+      const scenarios = [
+        {
+          entry: {
+            metadata: {
+              operation: SAPTUNE_SOLUTION_APPLY,
+            },
+          },
+          expected: 'Host',
+        },
+      ];
+
+      scenarios.forEach(({ entry, expected }) => {
+        expect(operationResourceType(entry)).toBe(expected);
+      });
+    });
+
+    it('should resolve checks customization resource types', () => {
+      const scenarios = [
+        {
+          entry: {
+            metadata: {
+              target_type: 'host',
+            },
+          },
+          expected: 'Host',
+        },
+        {
+          entry: {
+            metadata: {
+              target_type: 'cluster',
+            },
+          },
+          expected: 'Cluster',
+        },
+        {
+          entry: {
+            metadata: {
+              target_type: 'database',
+            },
+          },
+          expected: 'Database',
+        },
+        {
+          entry: {
+            metadata: {
+              target_type: 'sap_system',
+            },
+          },
+          expected: 'SAP System',
+        },
+      ];
+
+      scenarios.forEach(({ entry, expected }) => {
+        expect(checkCustomizationResourceType(entry)).toBe(expected);
+      });
+    });
   });
 });

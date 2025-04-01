@@ -122,7 +122,9 @@ defmodule Trento.ActivityLog.SeverityLevel do
       key_suffix: "result",
       values: %{"updated" => :info, "not_updated" => :info, "*" => :critical},
       condition: :map_value_to_severity
-    }
+    },
+    "check_customization_applied" => :info,
+    "check_customization_reset" => :info
   }
 
   def map_severity_integer_to_text(n) when n >= 5 and n <= 8, do: "debug"

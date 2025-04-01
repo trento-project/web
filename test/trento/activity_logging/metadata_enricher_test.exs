@@ -244,6 +244,110 @@ defmodule Trento.ActivityLog.MetadataEnricherTest do
     end
   end
 
+  describe "enriching checks customization activities" do
+    test "should enrich check_customization_applied" do
+      check_id = Faker.UUID.v4()
+      %{id: host_id, hostname: hostname} = insert(:host)
+      %{id: cluster_id, name: cluster_name} = insert(:cluster)
+
+      target_scenarios = [
+        %{
+          target_type: "host",
+          group_id: host_id,
+          expected_enrichment: %{
+            hostname: hostname
+          }
+        },
+        %{
+          target_type: "cluster",
+          group_id: cluster_id,
+          expected_enrichment: %{
+            name: cluster_name
+          }
+        }
+      ]
+
+      for %{
+            target_type: target_type,
+            group_id: group_id,
+            expected_enrichment: expected_enrichment
+          } <- target_scenarios do
+        initial_metadata = %{
+          check_id: check_id,
+          group_id: group_id,
+          target_type: target_type,
+          custom_values: [
+            %{
+              name: "foo",
+              value: "bar"
+            }
+          ]
+        }
+
+        expected_enrichment =
+          Map.merge(expected_enrichment, %{
+            check_id: check_id,
+            group_id: group_id,
+            target_type: target_type,
+            custom_values: [
+              %{
+                name: "foo",
+                value: "bar"
+              }
+            ]
+          })
+
+        assert {:ok, expected_enrichment} ==
+                 MetadataEnricher.enrich(:check_customization_applied, initial_metadata)
+      end
+    end
+
+    test "should enrich check_customization_reset" do
+      check_id = Faker.UUID.v4()
+      %{id: host_id, hostname: hostname} = insert(:host)
+      %{id: cluster_id, name: cluster_name} = insert(:cluster)
+
+      target_scenarios = [
+        %{
+          target_type: "host",
+          group_id: host_id,
+          expected_enrichment: %{
+            hostname: hostname
+          }
+        },
+        %{
+          target_type: "cluster",
+          group_id: cluster_id,
+          expected_enrichment: %{
+            name: cluster_name
+          }
+        }
+      ]
+
+      for %{
+            target_type: target_type,
+            group_id: group_id,
+            expected_enrichment: expected_enrichment
+          } <- target_scenarios do
+        initial_metadata = %{
+          check_id: check_id,
+          group_id: group_id,
+          target_type: target_type
+        }
+
+        expected_enrichment =
+          Map.merge(expected_enrichment, %{
+            check_id: check_id,
+            group_id: group_id,
+            target_type: target_type
+          })
+
+        assert {:ok, expected_enrichment} ==
+                 MetadataEnricher.enrich(:check_customization_reset, initial_metadata)
+      end
+    end
+  end
+
   describe "domain event activity log metadata enrichment" do
     test "should not enrich domain events related metadata already having required info" do
       not_enrichable_events = [

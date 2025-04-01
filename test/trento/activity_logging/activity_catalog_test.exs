@@ -115,7 +115,9 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
 
     test "should expose queue event related activities" do
       queue_events = [
-        :operation_completed
+        :operation_completed,
+        :check_customization_applied,
+        :check_customization_reset
       ]
 
       queue_activity_catalog = ActivityCatalog.queue_event_activities()
@@ -308,7 +310,9 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
 
     test "should detect activity from queue events" do
       events = [
-        {build(:operation_completed_v1), :operation_completed}
+        {build(:operation_completed_v1), :operation_completed},
+        {build(:check_customization_applied_v1), :check_customization_applied},
+        {build(:check_customization_reset_v1), :check_customization_reset}
       ]
 
       for {event, expected_activity_type} <- events do

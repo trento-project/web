@@ -3,6 +3,11 @@ defmodule Trento.ActivityLog.Logger.Parser.QueueEventParser do
   Queue event activity parser
   """
 
+  alias Trento.Checks.V1.{
+    CheckCustomizationApplied,
+    CheckCustomizationReset
+  }
+
   alias Trento.Operations.V1.OperationCompleted
 
   alias Trento.Infrastructure.Operations
@@ -16,7 +21,7 @@ defmodule Trento.ActivityLog.Logger.Parser.QueueEventParser do
     end
   end
 
-  def get_activity_actor(_, _), do: nil
+  def get_activity_actor(_, _), do: "system"
 
   def get_activity_metadata(
         :operation_completed,
@@ -32,6 +37,41 @@ defmodule Trento.ActivityLog.Logger.Parser.QueueEventParser do
       operation: Operations.map_operation_type(operation_type),
       operation_id: operation_id,
       result: result
+    }
+  end
+
+  def get_activity_metadata(
+        :check_customization_applied,
+        %CheckCustomizationApplied{
+          check_id: check_id,
+          group_id: group_id,
+          target_type: target_type,
+          custom_values: custom_values
+        }
+      ) do
+    %{
+      check_id: check_id,
+      group_id: group_id,
+      target_type: target_type,
+      custom_values:
+        Enum.map(custom_values, fn %{name: name, value: {_, value}} ->
+          %{name: name, value: value}
+        end)
+    }
+  end
+
+  def get_activity_metadata(
+        :check_customization_reset,
+        %CheckCustomizationReset{
+          check_id: check_id,
+          group_id: group_id,
+          target_type: target_type
+        }
+      ) do
+    %{
+      check_id: check_id,
+      group_id: group_id,
+      target_type: target_type
     }
   end
 

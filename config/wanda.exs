@@ -25,4 +25,9 @@ config :trento, Trento.Infrastructure.Messaging.Adapter.AMQP,
     publisher: [
       connection: amqp_connection
     ]
+  ],
+  catalog: [
+    consumer: [
+      connection: amqp_connection
+    ]
   ]

@@ -161,6 +161,8 @@ defmodule Trento.Factory do
 
   alias Trento.Operations.V1.OperationCompleted
 
+  alias Trento.Checks.V1.{CheckCustomizationApplied, CheckCustomizationReset}
+
   use ExMachina.Ecto, repo: Trento.Repo
 
   def host_registered_event_factory do
@@ -1245,6 +1247,28 @@ defmodule Trento.Factory do
       group_id: Faker.UUID.v4(),
       operation_type: Faker.Pokemon.name(),
       result: Enum.random([:UPDATED, :NOT_UPDATED, :FAILED])
+    }
+  end
+
+  def check_customization_applied_v1_factory do
+    %CheckCustomizationApplied{
+      check_id: Faker.UUID.v4(),
+      group_id: Faker.UUID.v4(),
+      target_type: Enum.random(["host", "cluster"]),
+      custom_values: [
+        %{
+          name: Faker.Pokemon.name(),
+          value: {:string_value, Faker.Pokemon.name()}
+        }
+      ]
+    }
+  end
+
+  def check_customization_reset_v1_factory do
+    %CheckCustomizationReset{
+      check_id: Faker.UUID.v4(),
+      group_id: Faker.UUID.v4(),
+      target_type: Enum.random(["host", "cluster"])
     }
   end
 end
