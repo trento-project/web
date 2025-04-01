@@ -89,6 +89,19 @@ defmodule Trento.ActivityLog.Logger.Parser.MetadataEnricher do
   defp detect_enrichment(:host, {_, %{resource_id: id, operation: :saptune_solution_apply}}),
     do: {:ok, id}
 
+  defp detect_enrichment(
+         target_entity,
+         {activity,
+          %{
+            target_type: target_type,
+            group_id: id
+          }}
+       )
+       when activity in [:check_customization_applied, :check_customization_reset] and
+              target_entity in [:host, :cluster] and
+              target_type in ["host", "cluster"],
+       do: {:ok, id}
+
   defp detect_enrichment(_target_entity, {_activity, _metadata}),
     do: {:error, :no_enrichment_needed}
 
