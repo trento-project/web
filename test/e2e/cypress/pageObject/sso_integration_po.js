@@ -27,7 +27,7 @@ const emailAddressInputField = 'label:contains("Email Address") + div input';
 const usernameInputField = 'label:contains("Username") + div input';
 const permissionsInputField =
   'label:contains("Permissions") + div span div div:eq(0)';
-const usernameMenu = `span:contains("${plainUser.username}")`;
+const usernameMenu = `span[class="flex items-center"]:contains("${plainUser.username}")`;
 const usersListPlainUser = `a:contains("${plainUser.username}")`;
 const usersListAdminUser = `a:contains("${adminUser.username}")`;
 const loginWithSsoButton = 'button:contains("Login with Single Sign-on")';
