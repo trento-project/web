@@ -141,19 +141,35 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
         }
       end)
 
+    filesystem_resources = parse_resource_by_type(all_primitives, "Filesystem", "directory")
+    sapstartsrv_resources = parse_resource_by_type(all_primitives, "SAPStartSrv", "InstanceName")
+    mounting_resources = Enum.concat(filesystem_resources, sapstartsrv_resources)
+
     sap_instances =
       all_primitives
       |> parse_resource_by_type("SAPInstance", "InstanceName")
-      |> Enum.map(fn intstance_name ->
-        instance_data = String.split(intstance_name, "_")
-        instance_name = Enum.at(instance_data, 1)
+      |> Enum.map(fn instance_name ->
+        # InstanceName follows sid_name_hostname format. Example: PRD_ASCS00_nwpas01
+        instance_data = String.split(instance_name, "_")
+        sid = Enum.at(instance_data, 0)
+        name = Enum.at(instance_data, 1)
+
+        # Check if the current instance is mounted with Filesystem or SAPStartSrv resources
+        # Filesystem must have a "directory" attribute with `/usr/sap/sid/name` value
+        # SAPStartSrv must have a "InstanceName" attributed with `sid_name_hostname` format
+        mounted =
+          Enum.any?(mounting_resources, fn value ->
+            value == "/usr/sap/#{sid}/#{name}" or
+              value == instance_name
+          end)
 
         %{
-          name: instance_name,
-          sid: Enum.at(instance_data, 0),
-          instance_number: String.slice(instance_name, -2, 2),
+          name: name,
+          sid: sid,
+          instance_number: String.slice(name, -2, 2),
           hostname: Enum.at(instance_data, 2),
-          resource_type: SapInstanceResourceType.sap_instance()
+          resource_type: SapInstanceResourceType.sap_instance(),
+          mounted: mounted
         }
       end)
 

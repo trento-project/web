@@ -14,6 +14,7 @@ defmodule Trento.Clusters.ValueObjects.SapInstance do
     field :instance_number, :string
     field :hostname, :string
     field :resource_type, Ecto.Enum, values: SapInstanceResourceType.values()
+    field :mounted, :boolean
   end
 
   @spec get_hana_instance_sid([__MODULE__.t()]) :: String.t()

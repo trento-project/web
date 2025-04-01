@@ -140,6 +140,40 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
              |> SapSystemPolicy.handle([], sap_instances)
   end
 
+  test "should return the expected commands when a sap_system payload of type application is handled and a sap instance is not mounted" do
+    %{id: cluster_id, sap_instances: sap_instances} =
+      insert(:cluster,
+        sap_instances:
+          build_list(1, :clustered_sap_instance,
+            sid: "HA1",
+            instance_number: "02",
+            mounted: false
+          )
+      )
+
+    %{id: host_id} = insert(:host, cluster_id: cluster_id)
+
+    assert {:ok,
+            [
+              %RegisterApplicationInstance{
+                db_host: "10.74.1.12",
+                features: "ABAP|GATEWAY|ICMAN|IGS",
+                host_id: ^host_id,
+                instance_number: "02",
+                sap_system_id: nil,
+                sid: "HA1",
+                tenant: "PRD",
+                health: :passing,
+                clustered: false,
+                ensa_version: EnsaVersion.no_ensa()
+              }
+            ]} =
+             "sap_system_discovery_application"
+             |> load_discovery_event_fixture()
+             |> Map.put("agent_id", host_id)
+             |> SapSystemPolicy.handle([], sap_instances)
+  end
+
   test "should return the expected commands when a sap_system payload of type application is handled" do
     assert {:ok,
             [

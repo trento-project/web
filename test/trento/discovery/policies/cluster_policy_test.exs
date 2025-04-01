@@ -716,7 +716,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     sid: "QAS",
                     instance_number: "20",
                     hostname: "node02",
-                    resource_type: SapInstanceResourceType.sap_instance()
+                    resource_type: SapInstanceResourceType.sap_instance(),
+                    mounted: false
                   }
                 ],
                 type: :hana_scale_up,
@@ -891,14 +892,16 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     sid: "NWP",
                     instance_number: "00",
                     hostname: "sapnwpas",
-                    resource_type: SapInstanceResourceType.sap_instance()
+                    resource_type: SapInstanceResourceType.sap_instance(),
+                    mounted: true
                   },
                   %SapInstance{
                     name: "ERS10",
                     sid: "NWP",
                     instance_number: "10",
                     hostname: "sapnwper",
-                    resource_type: SapInstanceResourceType.sap_instance()
+                    resource_type: SapInstanceResourceType.sap_instance(),
+                    mounted: true
                   }
                 ],
                 type: :ascs_ers,
@@ -1073,14 +1076,16 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     sid: "NWP",
                     instance_number: "00",
                     hostname: "sapnwpas",
-                    resource_type: SapInstanceResourceType.sap_instance()
+                    resource_type: SapInstanceResourceType.sap_instance(),
+                    mounted: true
                   },
                   %SapInstance{
                     name: "ERS10",
                     sid: "NWP",
                     instance_number: "10",
                     hostname: "sapnwper",
-                    resource_type: SapInstanceResourceType.sap_instance()
+                    resource_type: SapInstanceResourceType.sap_instance(),
+                    mounted: true
                   }
                 ],
                 type: :ascs_ers,
@@ -1162,7 +1167,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     sid: "NWP",
                     instance_number: "00",
                     hostname: "sapnwpas",
-                    resource_type: SapInstanceResourceType.sap_instance()
+                    resource_type: SapInstanceResourceType.sap_instance(),
+                    mounted: true
                   }
                 ],
                 type: :unknown,
@@ -1468,28 +1474,32 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     sid: "NWP",
                     instance_number: "00",
                     hostname: "sapnwpas",
-                    resource_type: SapInstanceResourceType.sap_instance()
+                    resource_type: SapInstanceResourceType.sap_instance(),
+                    mounted: true
                   },
                   %SapInstance{
                     name: "ERS10",
                     sid: "NWP",
                     instance_number: "10",
                     hostname: "sapnwper",
-                    resource_type: SapInstanceResourceType.sap_instance()
+                    resource_type: SapInstanceResourceType.sap_instance(),
+                    mounted: true
                   },
                   %SapInstance{
                     name: "ASCS01",
                     sid: "NWD",
                     instance_number: "01",
                     hostname: "sapnwpas",
-                    resource_type: SapInstanceResourceType.sap_instance()
+                    resource_type: SapInstanceResourceType.sap_instance(),
+                    mounted: true
                   },
                   %SapInstance{
                     name: "ERS11",
                     sid: "NWD",
                     instance_number: "11",
                     hostname: "sapnwper",
-                    resource_type: SapInstanceResourceType.sap_instance()
+                    resource_type: SapInstanceResourceType.sap_instance(),
+                    mounted: true
                   }
                 ],
                 type: :ascs_ers,
@@ -1552,6 +1562,64 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                group_1,
                group_2
              ])
+             |> ClusterPolicy.handle(nil)
+  end
+
+  test "should return the expected commands when simple mount configured cluster payload is received" do
+    assert {:ok,
+            [
+              %RegisterClusterHost{
+                sap_instances: [
+                  %SapInstance{
+                    name: "ASCS00",
+                    sid: "NWP",
+                    instance_number: "00",
+                    hostname: "sapnwpas",
+                    resource_type: SapInstanceResourceType.sap_instance(),
+                    mounted: true
+                  },
+                  %SapInstance{
+                    name: "ERS10",
+                    sid: "NWP",
+                    instance_number: "10",
+                    hostname: "sapnwper",
+                    resource_type: SapInstanceResourceType.sap_instance(),
+                    mounted: true
+                  }
+                ]
+              }
+            ]} =
+             "ha_cluster_discovery_ascs_ers_simple_mount"
+             |> load_discovery_event_fixture()
+             |> ClusterPolicy.handle(nil)
+  end
+
+  test "should return the expected commands when ERS is not mounted in a filesystem" do
+    assert {:ok,
+            [
+              %RegisterClusterHost{
+                sap_instances: [
+                  %SapInstance{
+                    name: "ASCS00",
+                    sid: "NWP",
+                    instance_number: "00",
+                    hostname: "sapnwpas",
+                    resource_type: SapInstanceResourceType.sap_instance(),
+                    mounted: true
+                  },
+                  %SapInstance{
+                    name: "ERS10",
+                    sid: "NWP",
+                    instance_number: "10",
+                    hostname: "sapnwper",
+                    resource_type: SapInstanceResourceType.sap_instance(),
+                    mounted: false
+                  }
+                ]
+              }
+            ]} =
+             "ha_cluster_discovery_ascs_ers_unmounted"
+             |> load_discovery_event_fixture()
              |> ClusterPolicy.handle(nil)
   end
 
@@ -4200,14 +4268,16 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                        sid: "NWP",
                        instance_number: "00",
                        hostname: "sapnwpas",
-                       resource_type: SapInstanceResourceType.sap_instance()
+                       resource_type: SapInstanceResourceType.sap_instance(),
+                       mounted: true
                      },
                      %SapInstance{
                        name: "ERS10",
                        sid: "NWP",
                        instance_number: "10",
                        hostname: "sapnwper",
-                       resource_type: SapInstanceResourceType.sap_instance()
+                       resource_type: SapInstanceResourceType.sap_instance(),
+                       mounted: true
                      }
                    ],
                    type: :hana_ascs_ers
