@@ -44,8 +44,8 @@ describe('SSO integration', () => {
       ssoIntegrationPage.clickUsernameMenu();
       ssoIntegrationPage.clickSignOutButton();
       ssoIntegrationPage.clickLoginWithSsoButton();
-      cy.get('h2').should('have.text', 'Loading...');
-      cy.get('h1').should('have.text', 'At a glance');
+      ssoIntegrationPage.loadingMessageIsDisplayed();
+      ssoIntegrationPage.pageTitleIsCorrectlyDisplayed('At a glance');
     });
   });
 

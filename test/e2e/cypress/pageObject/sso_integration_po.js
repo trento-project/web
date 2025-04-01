@@ -74,6 +74,9 @@ export const shouldRedirectToIdpUrl = () =>
 export const loginPageHasExpectedTitle = (expectedPageTitle) =>
   cy.get('h2').should('have.text', expectedPageTitle);
 
+export const loadingMessageIsDisplayed = () =>
+  cy.get('h2').should('have.text', 'Loading...');
+
 export const adminUsernameIsListedInUsersTable = () =>
   cy.get(usersListAdminUser).should('be.visible');
 
