@@ -117,6 +117,10 @@ export const DATABASE_TOMBSTONED = 'database_tombstoned';
 export const OPERATION_REQUESTED = 'operation_requested';
 export const OPERATION_COMPLETED = 'operation_completed';
 
+// Check Customization
+const CHECK_CUSTOMIZATION_APPLIED = 'check_customization_applied';
+const CHECK_CUSTOMIZATION_RESET = 'check_customization_reset';
+
 export const resourceTypes = ['host', 'cluster', 'database', 'sap_system'];
 
 export const resourceTypesToNameKeyMap = {
@@ -138,22 +142,36 @@ const hostResourceType = (_entry) => 'Host';
 const sapSystemResourceType = (_entry) => 'SAP System';
 const databaseResourceType = (_entry) => 'Database';
 
-const taggingResourceType = (entry) =>
-  ({
-    host: hostResourceType(entry),
-    cluster: clusterResourceType(entry),
-    database: databaseResourceType(entry),
-    sap_system: sapSystemResourceType(entry),
-  })[entry.metadata?.resource_type] ?? 'Unable to determine resource type';
+const resourceTypeMapping = (entry) => ({
+  host: hostResourceType(entry),
+  cluster: clusterResourceType(entry),
+  database: databaseResourceType(entry),
+  sap_system: sapSystemResourceType(entry),
+});
 
-const operationResourceType = (entry) =>
-  ({
-    host: hostResourceType(entry),
-    cluster: clusterResourceType(entry),
-    database: databaseResourceType(entry),
-    sap_system: sapSystemResourceType(entry),
-  })[getOperationResourceType(entry.metadata?.operation)] ??
-  'Unable to determine operation type';
+const resolveResourceType = (entry, key, defaultValue) =>
+  pipe(resourceTypeMapping, get(key), defaultTo(defaultValue))(entry);
+
+export const taggingResourceType = (entry) =>
+  resolveResourceType(
+    entry,
+    entry.metadata?.resource_type,
+    'Unable to determine resource type'
+  );
+
+export const operationResourceType = (entry) =>
+  resolveResourceType(
+    entry,
+    getOperationResourceType(entry.metadata?.operation),
+    'Unable to determine operation type'
+  );
+
+export const checkCustomizationResourceType = (entry) =>
+  resolveResourceType(
+    entry,
+    entry.metadata?.target_type,
+    'Unable to determine target type'
+  );
 
 export const resourceNameFromMetadata = (resourceType, metadata) =>
   pipe(
@@ -573,6 +591,18 @@ export const ACTIVITY_TYPES_CONFIG = {
     message: ({ metadata }) =>
       `Operation ${getOperationLabel(metadata.operation)} completed`,
     resource: operationResourceType,
+  },
+  // Check Customization
+  [CHECK_CUSTOMIZATION_APPLIED]: {
+    label: 'Check was customized',
+    message: ({ metadata }) => `Check ${metadata.check_id} was customized`,
+    resource: checkCustomizationResourceType,
+  },
+  [CHECK_CUSTOMIZATION_RESET]: {
+    label: 'Check customization was reset',
+    message: ({ metadata }) =>
+      `Customization for check ${metadata.check_id} was reset`,
+    resource: checkCustomizationResourceType,
   },
 };
 
