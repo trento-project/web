@@ -58,7 +58,15 @@ describe('SSO integration', () => {
       cy.visit('/users');
       cy.url().should('include', '/users');
       ssoIntegrationPage.adminUsernameIsListedInUsersTable();
-      ssoIntegrationPage.plainUsernameIsListedInUsersTable();
+      const plainUser = {
+        username: 'trentoidp',
+        password: 'password',
+        fullname: 'Trento IDP user Of Monk',
+        email: 'trentoidp@trento.suse.com',
+      };
+      cy.get('a').contains(plainUser.username);
+
+      // ssoIntegrationPage.plainUsernameIsListedInUsersTable();
     });
 
     it('should not have user creation button', () => {
