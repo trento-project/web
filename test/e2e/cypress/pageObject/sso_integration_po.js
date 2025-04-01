@@ -1,5 +1,5 @@
 export * from './base_po';
-// import * as basePage from './base_po';
+import * as basePage from './base_po';
 
 // Test data
 
@@ -30,6 +30,7 @@ const permissionsInputField =
 const usernameMenu = `button[class*="group"] span span:contains("${plainUser.username}")`;
 const usersListPlainUser = `a:contains("${plainUser.username}")`;
 const usersListAdminUser = `a:contains("${adminUser.username}")`;
+const loginWithSsoButton = 'button:contains("Login with Single Sign-on")';
 
 // UI Interactions
 
@@ -60,7 +61,12 @@ const loginWithSSO = (username, password) => {
 
 export const clickUsernameMenu = () => cy.get(usernameMenu).click();
 
+export const clickLoginWithSsoButton = () => cy.get(loginWithSsoButton).click();
+
 // UI Validations
+
+export const loginPageHasExpectedTitle = (expectedPageTitle) =>
+  cy.get('h2').contains(expectedPageTitle);
 
 export const adminUsernameIsListedInUsersTable = () =>
   cy.get(usersListAdminUser).should('be.visible');
