@@ -11,24 +11,21 @@ describe('SSO integration', () => {
   before(() => {
     cy.clearAllLocalStorage();
     cy.clearAllCookies();
+    ssoIntegrationPage.visit();
   });
 
   it('should display Single Sign-on login page', () => {
-    cy.visit('/');
-    cy.get('h2').contains('Login to Trento');
-    cy.get('button').contains('Login with Single Sign-on');
+    ssoIntegrationPage.loginPageHasExpectedTitle();
   });
 
   it('should redirect to external IDP login page when login button is clicked', () => {
-    cy.get('button').contains('Login with Single Sign-on').click();
-    cy.origin(Cypress.env('idp_url'), () => {
-      cy.url().should('contain', '/realms/trento');
-    });
+    ssoIntegrationPage.clickLoginWithSsoButton();
+    ssoIntegrationPage.shouldRedirectToIdpUrl();
   });
 
   it('should login properly once authentication is completed', () => {
     ssoIntegrationPage.ssoLoginPlainUser();
-    cy.get('span').contains(plainUser.username);
+    ssoIntegrationPage.plainUsernameIsDisplayed();
   });
 
   describe('Plain user', () => {
