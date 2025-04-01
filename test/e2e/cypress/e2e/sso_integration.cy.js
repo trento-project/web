@@ -43,9 +43,9 @@ describe('SSO integration', () => {
     it('should be able to logout and login without a new authentication request', () => {
       ssoIntegrationPage.clickUsernameMenu();
       ssoIntegrationPage.clickSignOutButton();
-      cy.get('button').contains('Login with Single Sign-on').click();
-      cy.get('h2').contains('Loading...');
-      cy.get('h1').contains('At a glance');
+      ssoIntegrationPage.clickLoginWithSsoButton();
+      cy.get('h2').should('have.text', 'Loading...');
+      cy.get('h1').should('have.text', 'At a glance');
     });
   });
 
