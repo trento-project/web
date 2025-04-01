@@ -89,7 +89,7 @@ export const adminUserUsernameIsDisplayed = () =>
   expectedUsernameIsDisplayed(adminUser.username);
 
 export const adminUserPermissionsAreDisplayed = () =>
-  cy.get(permissionsInputField).contains(adminUser.permissions);
+  cy.get(permissionsInputField).should('have.text', adminUser.permissions);
 
 const expectedFullNameIsDisplayed = (fullname) =>
   cy.get(fullNameInputField).should('have.value', fullname);
