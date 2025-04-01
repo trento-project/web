@@ -15,7 +15,7 @@ describe('SSO integration', () => {
   });
 
   it('should display Single Sign-on login page', () => {
-    ssoIntegrationPage.loginPageHasExpectedTitle();
+    ssoIntegrationPage.loginPageHasExpectedTitle('Login to Trento');
   });
 
   it('should redirect to external IDP login page when login button is clicked', () => {
