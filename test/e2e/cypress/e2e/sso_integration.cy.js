@@ -44,10 +44,8 @@ describe('SSO integration', () => {
       cy.get('span').contains(plainUser.username).click();
       cy.get('button').contains('Sign out').click();
       cy.get('button').contains('Login with Single Sign-on').click();
-      // ssoIntegrationPage.clickSignOutButton();
-      // ssoIntegrationPage.clickLoginWithSsoButton();
-      ssoIntegrationPage.loginPageHasExpectedTitle('Loading ...');
-      ssoIntegrationPage.pageTitleIsCorrectlyDisplayed('At a glance');
+      cy.get('h2').contains('Loading...');
+      cy.get('h1').contains('At a glance');
     });
   });
 
