@@ -1,18 +1,7 @@
-import * as ssoIntegrationPage from '../pageObject/sso_integration_po';
-const plainUser = {
-  username: 'trentoidp',
-  password: 'password',
-  fullname: 'Trento IDP user Of Monk',
-  email: 'trentoidp@trento.suse.com',
-};
+import * as ssoIntegrationPage from '../pageObject/sso_integration_po.js';
 
-const adminUser = {
-  username: 'admin',
-  password: 'admin',
-  fullname: 'Trento Admin',
-  email: 'admin@trento.suse.com',
-  permissions: 'all:all',
-};
+import { adminUser, plainUser } from '../fixtures/sso-integration/users';
+
 describe('SSO integration', () => {
   if (!Cypress.env('SSO_INTEGRATION_TESTS')) {
     return;
@@ -23,20 +12,22 @@ describe('SSO integration', () => {
     cy.clearAllCookies();
   });
 
-  // beforeEach(() => ssoIntegrationPage.visit());
-
   it('should display Single Sign-on login page', () => {
-    ssoIntegrationPage.loginPageHasExpectedTitle('Login to Trento');
+    cy.visit('/');
+    cy.get('h2').contains('Login to Trento');
+    cy.get('button').contains('Login with Single Sign-on');
   });
 
   it('should redirect to external IDP login page when login button is clicked', () => {
-    ssoIntegrationPage.clickLoginWithSsoButton();
-    ssoIntegrationPage.shouldRedirectToIdpUrl();
+    cy.get('button').contains('Login with Single Sign-on').click();
+    cy.origin(Cypress.env('idp_url'), () => {
+      cy.url().should('contain', '/realms/trento');
+    });
   });
 
   it('should login properly once authentication is completed', () => {
     ssoIntegrationPage.ssoLoginPlainUser();
-    ssoIntegrationPage.plainUsernameIsDisplayed();
+    cy.get('span').contains(plainUser.username);
   });
 
   describe('Plain user', () => {
@@ -46,13 +37,13 @@ describe('SSO integration', () => {
 
     it('should have a read only profile view and empty list of permissions', () => {
       cy.visit('/profile');
-      ssoIntegrationPage.plainUserFullNameIsDisplayed();
-      ssoIntegrationPage.plainUserEmailIsDisplayed();
-      ssoIntegrationPage.plainUserUsernameIsDisplayed();
+      cy.get('input').eq(0).should('have.value', plainUser.fullname);
+      cy.get('input').eq(1).should('have.value', plainUser.email);
+      cy.get('input').eq(2).should('have.value', plainUser.username);
     });
 
     it('should be able to logout and login without a new authentication request', () => {
-      ssoIntegrationPage.clickUsernameMenu();
+      cy.get('span').contains(plainUser.username).click();
       cy.get('button').contains('Sign out').click();
       cy.get('button').contains('Login with Single Sign-on').click();
       cy.get('h2').contains('Loading...');
@@ -65,12 +56,12 @@ describe('SSO integration', () => {
       ssoIntegrationPage.ssoLoginAdminUser();
     });
 
-    // eslint-disable-next-line mocha/no-exclusive-tests
-    it.only('should have access to Users view', () => {
+    it('should have access to Users view', () => {
       cy.visit('/users');
       cy.url().should('include', '/users');
       cy.get('a').contains(plainUser.username);
       cy.get('a').contains(adminUser.username);
+      cy.get('a').contains('test');
     });
 
     it('should not have user creation button', () => {
@@ -79,14 +70,14 @@ describe('SSO integration', () => {
 
     it('should have the ability to update user permissions and status', () => {
       cy.visit('/users');
-      ssoIntegrationPage.clickListedPlainUser();
+      cy.get('a').contains(plainUser.username).click();
       cy.get('div').contains('Default').click({ force: true });
       cy.get('div').contains('all:users').click();
       cy.get('div').contains('Enabled').click();
       cy.get('div').contains('Disabled').click();
       cy.get('button').contains('Save').click();
 
-      ssoIntegrationPage.clickListedPlainUser();
+      cy.get('a').contains(plainUser.username).click();
       cy.get('div').contains('all:users').parent().find('svg').click();
       cy.get('div').contains('Disabled').click();
       cy.get('div').contains('Enabled').click();
@@ -95,10 +86,10 @@ describe('SSO integration', () => {
 
     it('should have a read only profile view and all:all permissions', () => {
       cy.visit('/profile');
-      ssoIntegrationPage.adminUserFullNameIsDisplayed();
-      ssoIntegrationPage.adminUserEmailIsDisplayed();
-      ssoIntegrationPage.adminUserUsernameIsDisplayed();
-      ssoIntegrationPage.adminUserPermissionsAreDisplayed();
+      cy.get('input').eq(0).should('have.value', adminUser.fullname);
+      cy.get('input').eq(1).should('have.value', adminUser.email);
+      cy.get('input').eq(2).should('have.value', adminUser.username);
+      cy.get('div').contains(adminUser.permissions);
     });
   });
 });
