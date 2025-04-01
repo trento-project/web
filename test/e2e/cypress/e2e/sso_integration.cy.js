@@ -41,7 +41,7 @@ describe('SSO integration', () => {
     });
 
     it('should be able to logout and login without a new authentication request', () => {
-      ssoIntegrationPage.clickUsernameMenu();
+      cy.get('span').contains(plainUser.username).click();
       ssoIntegrationPage.clickSignOutButton();
       ssoIntegrationPage.clickLoginWithSsoButton();
       ssoIntegrationPage.loginPageHasExpectedTitle('Loading ...');
