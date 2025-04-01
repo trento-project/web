@@ -1,4 +1,5 @@
-import * as ssoIntegrationPage from '../pageObject/sso_integration_po.js';
+import * as ssoIntegrationPage from '../pageObject/sso_integration_po';
+import * as usersPage from '../pageObject/users_po';
 
 import { adminUser, plainUser } from '../fixtures/sso-integration/users';
 
@@ -57,11 +58,10 @@ describe('SSO integration', () => {
     });
 
     it('should have access to Users view', () => {
-      cy.visit('/users');
-      cy.url().should('include', '/users');
-      cy.get('a').contains(plainUser.username);
-      cy.get('a').contains(adminUser.username);
-      cy.get('a').contains('test');
+      usersPage.visit();
+      usersPage.validateUrl();
+      ssoIntegrationPage.adminUsernameIsListedInUsersTable();
+      ssoIntegrationPage.plainUsernameIsListedInUsersTable();
     });
 
     it('should not have user creation button', () => {
