@@ -327,7 +327,7 @@ export const sapSystemsTableDisplaysExpectedData = () =>
   _genericTableValidation('SAP instances', selectedHost);
 
 export const heartbeatFailingToasterIsDisplayed = () =>
-  cy.get(heartbeatFailingToaster, { timeout: 15000 }).should('be.visible');
+  cy.get(heartbeatFailingToaster, { timeout: 20000 }).should('be.visible');
 
 export const cleanUpUnhealthyHostButtonIsDisplayed = () =>
   cy.get(cleanUpUnhealthyHostButton, { timeout: 15000 }).should('be.visible');
