@@ -66,7 +66,9 @@ describe('SSO integration', () => {
     it('should have the ability to update user permissions and status', () => {
       usersPage.visit();
       ssoIntegrationPage.clickPlainUserInList();
-      cy.get('div[class*="rounded"]:contains("Default")').click();
+      cy.get(
+        'label:contains("Permissions") + div[class*="rounded"]:contains("Default")'
+      ).click();
       cy.get('div[class*="t-container"]:contains("all:users")').click();
       ssoIntegrationPage.selectFromDropdown(
         'button.status-selection-dropdown',
@@ -90,9 +92,6 @@ describe('SSO integration', () => {
       ssoIntegrationPage.adminUserEmailIsDisplayed();
       ssoIntegrationPage.adminUserUsernameIsDisplayed();
       ssoIntegrationPage.adminUserPermissionsAreDisplayed();
-      cy.get('input').eq(1).should('have.value', adminUser.email);
-      cy.get('input').eq(2).should('have.value', adminUser.username);
-      cy.get('div').contains(adminUser.permissions);
     });
   });
 });
