@@ -1,5 +1,6 @@
-import * as ssoIntegrationPage from '../pageObject/sso_integration_po';
 import * as usersPage from '../pageObject/users_po';
+import * as loginPage from '../pageObject/login_po';
+import * as dashboardPage from '../pageObject/dashboard_po';
 
 describe('SSO integration', () => {
   if (!Cypress.env('SSO_INTEGRATION_TESTS')) {
@@ -7,80 +8,76 @@ describe('SSO integration', () => {
   }
 
   before(() => {
-    cy.clearAllLocalStorage();
-    cy.clearAllCookies();
-    ssoIntegrationPage.visit();
+    loginPage.cleanBrowserData();
+    loginPage.visit();
   });
 
   it('should display Single Sign-on login page', () => {
-    ssoIntegrationPage.loginPageHasExpectedTitle('Login to Trento');
+    loginPage.loginPageIsDisplayed();
   });
 
   it('should redirect to external IDP login page when login button is clicked', () => {
-    ssoIntegrationPage.clickLoginWithSsoButton();
-    ssoIntegrationPage.shouldRedirectToIdpUrl();
+    loginPage.clickLoginWithSsoButton();
+    loginPage.shouldRedirectToIdpUrl();
   });
 
   it('should login properly once authentication is completed', () => {
-    ssoIntegrationPage.ssoLoginPlainUser();
-    ssoIntegrationPage.plainUsernameIsDisplayed();
+    loginPage.ssoLoginPlainUser();
+    loginPage.plainUsernameIsDisplayed();
   });
 
   describe('Plain user', () => {
-    beforeEach(() => {
-      ssoIntegrationPage.ssoLoginPlainUser();
-    });
+    beforeEach(() => loginPage.ssoLoginPlainUser());
 
     it('should have a read only profile view and empty list of permissions', () => {
-      ssoIntegrationPage.visit('/profile');
-      ssoIntegrationPage.plainUserFullNameIsDisplayed();
-      ssoIntegrationPage.plainUserEmailIsDisplayed();
-      ssoIntegrationPage.plainUserUsernameIsDisplayed();
+      usersPage.visit('/profile');
+      usersPage.plainUserFullNameIsDisplayed();
+      usersPage.plainUserEmailIsDisplayed();
+      usersPage.plainUserUsernameIsDisplayed();
     });
 
     it('should be able to logout and login without a new authentication request', () => {
-      ssoIntegrationPage.clickUsernameMenu();
-      ssoIntegrationPage.clickSignOutButton();
-      ssoIntegrationPage.clickLoginWithSsoButton();
-      ssoIntegrationPage.loadingMessageIsDisplayed();
-      ssoIntegrationPage.pageTitleIsCorrectlyDisplayed('At a glance');
+      usersPage.clickSignOutButton();
+      loginPage.clickLoginWithSsoButton();
+      dashboardPage.loadingMessageIsDisplayed();
+      dashboardPage.dashboardPageIsDisplayed();
     });
   });
 
   describe('Admin user', () => {
-    beforeEach(() => ssoIntegrationPage.ssoLoginAdminUser());
+    beforeEach(() => loginPage.ssoLoginAdminUser());
 
     it('should have access to Users view', () => {
       usersPage.visit();
       usersPage.validateUrl();
-      ssoIntegrationPage.adminUsernameIsListedInUsersTable();
-      ssoIntegrationPage.plainUsernameIsListedInUsersTable();
+      usersPage.adminUsernameIsListedInUsersTable();
+      usersPage.plainUsernameIsListedInUsersTable();
     });
 
     it('should not have user creation button', () => {
-      ssoIntegrationPage.createUserButtonIsNotDisplayed();
+      usersPage.createUserButtonIsNotDisplayed();
     });
 
     it('should have the ability to update user permissions and status', () => {
       usersPage.visit();
-      ssoIntegrationPage.clickPlainUserInList();
-      ssoIntegrationPage.clickPermissionsDropdown();
-      ssoIntegrationPage.selectPermission('all:users');
-      ssoIntegrationPage.selectDisabledStatus();
-      ssoIntegrationPage.clickSaveUserButton();
+      usersPage.clickPlainUserInList();
+      usersPage.clickPermissionsDropdown();
+      usersPage.selectPermission('all:users');
+      usersPage.selectDisabledStatus();
+      usersPage.clickSaveUserButton();
 
-      ssoIntegrationPage.clickPlainUserInList();
-      ssoIntegrationPage.clickRemovePermissionButton();
-      ssoIntegrationPage.selectEnabledStatus();
-      ssoIntegrationPage.clickSaveUserButton();
+      usersPage.clickPlainUserInList();
+      usersPage.clickRemovePermissionButton();
+      usersPage.selectEnabledStatus();
+      usersPage.clickSaveUserButton();
     });
 
     it('should have a read only profile view and all:all permissions', () => {
       cy.visit('/profile');
-      ssoIntegrationPage.adminUserFullNameIsDisplayed();
-      ssoIntegrationPage.adminUserEmailIsDisplayed();
-      ssoIntegrationPage.adminUserUsernameIsDisplayed();
-      ssoIntegrationPage.adminUserPermissionsAreDisplayed();
+      usersPage.adminUserFullNameIsDisplayed();
+      usersPage.adminUserEmailIsDisplayed();
+      usersPage.adminUserUsernameIsDisplayed();
+      usersPage.adminUserPermissionsAreDisplayed();
     });
   });
 });
