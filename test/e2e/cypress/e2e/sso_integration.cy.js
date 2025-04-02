@@ -60,12 +60,13 @@ describe('SSO integration', () => {
     });
 
     it('should not have user creation button', () => {
-      cy.get('button:contains("Create User")').should('not.exist');
+      ssoIntegrationPage.createUserButtonIsNotDisplayed();
     });
 
     it('should have the ability to update user permissions and status', () => {
-      cy.get('a').contains(plainUser.username).click();
-      cy.get('div').contains('Default').click({ force: true });
+      usersPage.visit();
+      ssoIntegrationPage.clickPlainUserInList();
+      cy.get('div:contains("Default")').click({ force: true });
       cy.get('div').contains('all:users').click();
       cy.get('div').contains('Enabled').click();
       cy.get('div').contains('Disabled').click();
