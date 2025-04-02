@@ -66,7 +66,7 @@ describe('SSO integration', () => {
     it('should have the ability to update user permissions and status', () => {
       usersPage.visit();
       ssoIntegrationPage.clickPlainUserInList();
-      cy.get('div[aria-label*="Remove"] svg').click();
+      cy.get('div[class*="rounded"]:contains("Default")').click();
       cy.get('div[class*="t-container"]:contains("all:users")').click();
       ssoIntegrationPage.selectFromDropdown(
         'button.status-selection-dropdown',
