@@ -60,11 +60,10 @@ describe('SSO integration', () => {
     });
 
     it('should not have user creation button', () => {
-      cy.get('button').contains('Create User').should('not.exist');
+      cy.get('button:contains("Create User")').should('not.exist');
     });
 
     it('should have the ability to update user permissions and status', () => {
-      cy.visit('/users');
       cy.get('a').contains(plainUser.username).click();
       cy.get('div').contains('Default').click({ force: true });
       cy.get('div').contains('all:users').click();
