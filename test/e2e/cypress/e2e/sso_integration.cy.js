@@ -66,9 +66,7 @@ describe('SSO integration', () => {
     it('should have the ability to update user permissions and status', () => {
       usersPage.visit();
       ssoIntegrationPage.clickPlainUserInList();
-      cy.get(
-        'label:contains("Permissions") + div[class*="rounded"]:contains("Default")'
-      ).click();
+      cy.get('label:contains("Permissions") + div').click();
       cy.get('div[class*="t-container"]:contains("all:users")').click();
       ssoIntegrationPage.selectFromDropdown(
         'button.status-selection-dropdown',
