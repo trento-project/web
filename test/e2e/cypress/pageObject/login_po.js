@@ -49,10 +49,8 @@ const _loginWithSSO = (username, password) => {
       cy.get('[id="password"]').type(password);
       cy.get('input').contains('Sign In').click();
     });
-
     cy.url().should('contain', `/auth/${ssoType}_callback`);
-    cy.get('h2').contains('Loading...');
-    cy.get('h1').contains('At a glance');
+    cy.get('h1:contains("At a glance")').should('be.visible');
   });
 };
 
