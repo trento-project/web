@@ -41,7 +41,8 @@
                 "httpsPort": 12345,
                 "dispstatus": "SAPControl-GRAY",
                 "instanceNr": 11,
-                "startPriority": "0.3"
+                "startPriority": "0.3",
+                "currentInstance": true
               }
             ],
             "Processes": [

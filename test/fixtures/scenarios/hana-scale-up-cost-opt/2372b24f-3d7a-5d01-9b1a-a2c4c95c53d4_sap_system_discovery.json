@@ -277,7 +277,8 @@
                 "httpPort": 52013,
                 "httpsPort": 52014,
                 "instanceNr": 20,
-                "startPriority": "0.3"
+                "startPriority": "0.3",
+                "currentInstance": true
               }
             ],
             "Processes": [

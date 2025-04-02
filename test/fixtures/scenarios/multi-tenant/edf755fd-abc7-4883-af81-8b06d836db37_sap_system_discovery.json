@@ -19,7 +19,8 @@
                 "httpPort": 50113,
                 "httpsPort": 50114,
                 "instanceNr": 1,
-                "startPriority": "1"
+                "startPriority": "1",
+                "currentInstance": true
               },
               {
                 "dispstatus": "SAPControl-GREEN",
@@ -28,7 +29,8 @@
                 "httpPort": 50013,
                 "httpsPort": 50014,
                 "instanceNr": 0,
-                "startPriority": "3"
+                "startPriority": "3",
+                "currentInstance": false
               }
             ],
             "Processes": [
@@ -151,7 +153,8 @@
                 "httpPort": 50113,
                 "httpsPort": 50114,
                 "instanceNr": 1,
-                "startPriority": "1"
+                "startPriority": "1",
+                "currentInstance": false
               },
               {
                 "dispstatus": "SAPControl-GREEN",
@@ -160,7 +163,8 @@
                 "httpPort": 50013,
                 "httpsPort": 50014,
                 "instanceNr": 0,
-                "startPriority": "3"
+                "startPriority": "3",
+                "currentInstance": true
               }
             ],
             "Processes": [

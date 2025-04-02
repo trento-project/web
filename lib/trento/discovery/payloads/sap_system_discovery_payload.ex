@@ -233,14 +233,13 @@ defmodule Trento.Discovery.Payloads.SapSystemDiscoveryPayload do
       :httpPort,
       :dispstatus,
       :instanceNr,
-      :startPriority
+      :startPriority,
+      :currentInstance
     ]
 
     use Trento.Support.Type
 
     deftype do
-      # current_instance is a custom field to make data extraction easier
-      field :current_instance, :boolean, default: false
       field :features, :string
       field :hostname, :string
       field :httpPort, :integer
@@ -256,6 +255,7 @@ defmodule Trento.Discovery.Payloads.SapSystemDiscoveryPayload do
 
       field :instanceNr, :integer
       field :startPriority, :string
+      field :currentInstance, :boolean
     end
 
     def changeset(instance, attrs, hostname, instance_number) do
@@ -266,15 +266,17 @@ defmodule Trento.Discovery.Payloads.SapSystemDiscoveryPayload do
       |> validate_required_fields(@required_fields)
     end
 
+    defp enrich_current_instance(%{"currentInstance" => _} = attrs, _, _), do: attrs
+
+    # Keep backward compatibility for older agents that don't send currentInstance
     defp enrich_current_instance(
-           %{"hostname" => current_hostname, "instanceNr" => current_instance_number} = attrs,
+           %{"hostname" => hostname, "instanceNr" => instance_number} = attrs,
            hostname,
            instance_number
-         )
-         when hostname == current_hostname and instance_number == current_instance_number,
-         do: Map.put(attrs, "current_instance", true)
+         ),
+         do: Map.put(attrs, "currentInstance", true)
 
-    defp enrich_current_instance(attrs, _, _), do: attrs
+    defp enrich_current_instance(attrs, _, _), do: Map.put(attrs, "currentInstance", false)
   end
 
   defmodule SapControlProcess do
