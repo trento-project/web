@@ -68,20 +68,28 @@ describe('SSO integration', () => {
       ssoIntegrationPage.clickPlainUserInList();
       cy.get('div').contains('Default').click({ force: true });
       cy.get('div[class*="t-container"]:contains("all:users")').click();
-      cy.get('div:contains("Enabled")').click();
-      cy.get('div:contains("Disabled")').click();
+      ssoIntegrationPage.selectFromDropdown(
+        'button.status-selection-dropdown',
+        'Disabled'
+      );
+
       cy.get('button:contains("Save")').click();
 
       ssoIntegrationPage.clickPlainUserInList();
       cy.get('div[aria-label*="Remove"] svg').click();
-      cy.get('div:contains("Disabled")').click();
-      cy.get('div:contains("Enabled")').click();
+      ssoIntegrationPage.selectFromDropdown(
+        'button.status-selection-dropdown',
+        'Enabled'
+      );
       cy.get('button:contains("Save")').click();
     });
 
     it('should have a read only profile view and all:all permissions', () => {
       cy.visit('/profile');
-      cy.get('input').eq(0).should('have.value', adminUser.fullname);
+      ssoIntegrationPage.adminUserFullNameIsDisplayed();
+      ssoIntegrationPage.adminUserEmailIsDisplayed();
+      ssoIntegrationPage.adminUserUsernameIsDisplayed();
+      ssoIntegrationPage.adminUserPermissionsAreDisplayed();
       cy.get('input').eq(1).should('have.value', adminUser.email);
       cy.get('input').eq(2).should('have.value', adminUser.username);
       cy.get('div').contains(adminUser.permissions);
