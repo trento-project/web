@@ -67,16 +67,16 @@ describe('SSO integration', () => {
       usersPage.visit();
       ssoIntegrationPage.clickPlainUserInList();
       cy.get('div').contains('Default').click({ force: true });
-      cy.get('div[class*="container"]:contains("all:users")').click();
-      cy.get('div').contains('Enabled').click();
-      cy.get('div').contains('Disabled').click();
-      cy.get('button').contains('Save').click();
+      cy.get('div[class*="t-container"]:contains("all:users")').click();
+      cy.get('div:contains("Enabled")').click();
+      cy.get('div:contains("Disabled")').click();
+      cy.get('button:contains("Save")').click();
 
-      cy.get('a').contains(plainUser.username).click();
-      cy.get('div').contains('all:users').parent().find('svg').click();
-      cy.get('div').contains('Disabled').click();
-      cy.get('div').contains('Enabled').click();
-      cy.get('button').contains('Save').click();
+      ssoIntegrationPage.clickPlainUserInList();
+      cy.get('div[aria-label*="Remove"] svg').click();
+      cy.get('div:contains("Disabled")').click();
+      cy.get('div:contains("Enabled")').click();
+      cy.get('button:contains("Save")').click();
     });
 
     it('should have a read only profile view and all:all permissions', () => {
