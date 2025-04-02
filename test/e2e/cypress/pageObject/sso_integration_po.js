@@ -32,6 +32,7 @@ const usersListPlainUser = `a:contains("${plainUser.username}")`;
 const usersListAdminUser = `a:contains("${adminUser.username}")`;
 const loginWithSsoButton = 'button:contains("Login with Single Sign-on")';
 const signOutButton = 'button:contains("Sign out")';
+const createUserButton = 'button:contains("Create User")';
 
 // UI Interactions
 
@@ -66,7 +67,11 @@ export const clickLoginWithSsoButton = () => cy.get(loginWithSsoButton).click();
 
 export const clickSignOutButton = () => cy.get(signOutButton).click();
 
+export const clickPlainUserInList = () => cy.get(usersListPlainUser).click();
+
 // UI Validations
+export const createUserButtonIsNotDisplayed = () =>
+  cy.get(createUserButton).should('not.exist');
 
 export const shouldRedirectToIdpUrl = () =>
   cy.url().should('contain', '/realms/trento');
