@@ -18,7 +18,7 @@ env:
 
 jobs:
   elixir-deps-wanda:
-    name: Elixir ${{ matrix.mix_env }} dependencies
+    name: Elixir Wanda ${{ matrix.mix_env }} dependencies
     runs-on: ubuntu-24.04
     strategy:
       matrix:
@@ -427,7 +427,7 @@ jobs:
       - name: "Docker compose dependencies"
         uses: isbang/compose-action@v2.1.0
         with:
-          compose-file: "wanda/docker-compose.yaml"
+          compose-file: "${{ github.workspace }}/wanda/docker-compose.yaml"
           down-flags: "--volumes"
       - name: Checkout checks repository for wanda checks
         uses: actions/checkout@v4
@@ -439,6 +439,7 @@ jobs:
           sparse-checkout-cone-mode: false
       - name: Move checks to wanda
         run: |
+          mkdir -p wanda/priv/catalog/
           mv checks/checks/* wanda/priv/catalog/
       - name: Mix setup Wanda
         run: |
