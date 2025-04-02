@@ -33,6 +33,10 @@ const usersListAdminUser = `a:contains("${adminUser.username}")`;
 const loginWithSsoButton = 'button:contains("Login with Single Sign-on")';
 const signOutButton = 'button:contains("Sign out")';
 const createUserButton = 'button:contains("Create User")';
+const statusDropdown = 'button.status-selection-dropdown';
+const permissionsDropdown = 'label:contains("Permissions") + div';
+const saveUserButton = 'button:contains("Save")';
+const removePermissionButton = 'div[aria-label*="Remove"] svg';
 
 // UI Interactions
 
@@ -61,6 +65,8 @@ const loginWithSSO = (username, password) => {
   });
 };
 
+export const clickRemovePermissionButton = () =>
+  cy.get(removePermissionButton).click();
 export const clickUsernameMenu = () => cy.get(usernameMenu).click();
 
 export const clickLoginWithSsoButton = () => cy.get(loginWithSsoButton).click();
@@ -68,6 +74,20 @@ export const clickLoginWithSsoButton = () => cy.get(loginWithSsoButton).click();
 export const clickSignOutButton = () => cy.get(signOutButton).click();
 
 export const clickPlainUserInList = () => cy.get(usersListPlainUser).click();
+
+export const clickSaveUserButton = () => cy.get(saveUserButton).click();
+
+export const selectPermission = (permission) =>
+  cy.get(`span:contains("${permission}")`).click();
+
+export const clickPermissionsDropdown = () =>
+  cy.get(permissionsDropdown).click();
+
+export const selectDisabledStatus = () =>
+  basePage.selectFromDropdown(statusDropdown, 'Disabled');
+
+export const selectEnabledStatus = () =>
+  basePage.selectFromDropdown(statusDropdown, 'Disabled');
 
 // UI Validations
 export const createUserButtonIsNotDisplayed = () =>

@@ -1,8 +1,6 @@
 import * as ssoIntegrationPage from '../pageObject/sso_integration_po';
 import * as usersPage from '../pageObject/users_po';
 
-import { adminUser, plainUser } from '../fixtures/sso-integration/users';
-
 describe('SSO integration', () => {
   if (!Cypress.env('SSO_INTEGRATION_TESTS')) {
     return;
@@ -66,22 +64,15 @@ describe('SSO integration', () => {
     it('should have the ability to update user permissions and status', () => {
       usersPage.visit();
       ssoIntegrationPage.clickPlainUserInList();
-      cy.get('label:contains("Permissions") + div').click();
-      cy.get('div[class*="t-container"]:contains("all:users")').click();
-      ssoIntegrationPage.selectFromDropdown(
-        'button.status-selection-dropdown',
-        'Disabled'
-      );
-
-      cy.get('button:contains("Save")').click();
+      ssoIntegrationPage.clickPermissionsDropdown();
+      ssoIntegrationPage.selectPermission('all:users');
+      ssoIntegrationPage.selectDisabledStatus();
+      ssoIntegrationPage.clickSaveUserButton();
 
       ssoIntegrationPage.clickPlainUserInList();
-      cy.get('div[aria-label*="Remove"] svg').click();
-      ssoIntegrationPage.selectFromDropdown(
-        'button.status-selection-dropdown',
-        'Enabled'
-      );
-      cy.get('button:contains("Save")').click();
+      ssoIntegrationPage.clickRemovePermissionButton();
+      ssoIntegrationPage.selectEnabledStatus();
+      ssoIntegrationPage.clickSaveUserButton();
     });
 
     it('should have a read only profile view and all:all permissions', () => {
