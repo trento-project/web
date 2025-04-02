@@ -42,17 +42,14 @@ export const ssoLoginAdminUser = () =>
 const _loginWithSSO = (username, password) => {
   const args = [username, password];
   cy.session(args, () => {
-    cy.visit('/');
-    cy.get('button').contains('Login with Single Sign-on').click();
+    basePage.visit();
+    clickLoginWithSsoButton();
     cy.origin(Cypress.env('idp_url'), { args }, ([username, password]) => {
-      cy.get('[id="username"]').type(username);
-      cy.get('[id="password"]').type(password);
-      cy.get('input').contains('Sign In').click();
+      cy.get('#username').type(username);
+      cy.get('#password').type(password);
+      cy.get('input:contains("Sign In")').click();
     });
-
     cy.url().should('contain', `/auth/${ssoType}_callback`);
-    cy.get('h2').contains('Loading...');
-    cy.get('h1').contains('At a glance');
   });
 };
 

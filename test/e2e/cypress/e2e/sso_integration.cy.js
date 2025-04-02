@@ -73,7 +73,7 @@ describe('SSO integration', () => {
     });
 
     it('should have a read only profile view and all:all permissions', () => {
-      cy.visit('/profile');
+      usersPage.visit('/profile');
       usersPage.adminUserFullNameIsDisplayed();
       usersPage.adminUserEmailIsDisplayed();
       usersPage.adminUserUsernameIsDisplayed();
