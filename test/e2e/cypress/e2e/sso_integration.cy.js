@@ -67,7 +67,7 @@ describe('SSO integration', () => {
       usersPage.visit();
       ssoIntegrationPage.clickPlainUserInList();
       cy.get('div').contains('Default').click({ force: true });
-      cy.get('div').contains('all:users').click();
+      cy.get('div[class*="container"]:contains("all:users")').click();
       cy.get('div').contains('Enabled').click();
       cy.get('div').contains('Disabled').click();
       cy.get('button').contains('Save').click();
