@@ -55,6 +55,7 @@ defmodule Trento.SapSystems.SapSystemTest do
         build(:application_instance_registered_event,
           sap_system_id: sap_system_id,
           sid: sid,
+          tenant: nil,
           features: "MESSAGESERVER",
           instance_number: "00"
         )
@@ -83,6 +84,7 @@ defmodule Trento.SapSystems.SapSystemTest do
           %ApplicationInstanceRegistered{
             sap_system_id: sap_system_id,
             sid: sid,
+            tenant: tenant,
             instance_number: "10",
             instance_hostname: instance_hostname,
             features: "ABAP",
@@ -105,6 +107,7 @@ defmodule Trento.SapSystems.SapSystemTest do
         fn state ->
           assert %SapSystem{
                    sid: ^sid,
+                   tenant: ^tenant,
                    ensa_version: ^ensa_version,
                    database_health: :passing,
                    instances: [
@@ -142,6 +145,7 @@ defmodule Trento.SapSystems.SapSystemTest do
         build(:application_instance_registered_event,
           sap_system_id: sap_system_id,
           sid: sid,
+          tenant: nil,
           features: "MESSAGESERVER",
           instance_number: "00"
         )
@@ -170,6 +174,7 @@ defmodule Trento.SapSystems.SapSystemTest do
           %ApplicationInstanceRegistered{
             sap_system_id: sap_system_id,
             sid: sid,
+            tenant: tenant,
             instance_number: "10",
             instance_hostname: instance_hostname,
             features: java_system_type,
@@ -192,6 +197,7 @@ defmodule Trento.SapSystems.SapSystemTest do
         fn state ->
           assert %SapSystem{
                    sid: ^sid,
+                   tenant: ^tenant,
                    ensa_version: ^ensa_version,
                    database_health: :passing,
                    instances: [
@@ -230,11 +236,13 @@ defmodule Trento.SapSystems.SapSystemTest do
         build(:application_instance_registered_event,
           sap_system_id: sap_system_id,
           sid: sid,
+          tenant: nil,
           features: "MESSAGESERVER"
         ),
         build(:application_instance_registered_event,
           sap_system_id: sap_system_id,
           sid: sid,
+          tenant: tenant,
           features: "ABAP",
           instance_number: instance_number,
           instance_hostname: instance_hostname,
@@ -312,6 +320,7 @@ defmodule Trento.SapSystems.SapSystemTest do
         build(:application_instance_registered_event,
           sap_system_id: sap_system_id,
           sid: sid,
+          tenant: nil,
           features: "MESSAGESERVER",
           host_id: message_server_host_id,
           instance_number: instance_number
@@ -319,6 +328,7 @@ defmodule Trento.SapSystems.SapSystemTest do
         build(:application_instance_registered_event,
           sap_system_id: sap_system_id,
           sid: sid,
+          tenant: tenant,
           features: "ABAP",
           instance_number: instance_number,
           instance_hostname: instance_hostname,
@@ -377,11 +387,13 @@ defmodule Trento.SapSystems.SapSystemTest do
         build(:application_instance_registered_event,
           sap_system_id: sap_system_id,
           sid: sid,
+          tenant: nil,
           features: "MESSAGESERVER"
         ),
         build(:application_instance_registered_event,
           sap_system_id: sap_system_id,
           sid: sid,
+          tenant: tenant,
           features: "ABAP",
           instance_number: instance_number,
           instance_hostname: instance_hostname,
@@ -422,6 +434,7 @@ defmodule Trento.SapSystems.SapSystemTest do
           %ApplicationInstanceRegistered{
             sap_system_id: sap_system_id,
             sid: sid,
+            tenant: tenant,
             instance_number: instance_number,
             instance_hostname: instance_hostname,
             features: "ABAP",
@@ -465,11 +478,13 @@ defmodule Trento.SapSystems.SapSystemTest do
         build(:application_instance_registered_event,
           sap_system_id: sap_system_id,
           sid: sid,
+          tenant: tenant,
           features: "MESSAGESERVER"
         ),
         build(:application_instance_registered_event,
           sap_system_id: sap_system_id,
           sid: sid,
+          tenant: tenant,
           features: "ABAP",
           instance_number: instance_number,
           instance_hostname: instance_hostname,
@@ -533,6 +548,7 @@ defmodule Trento.SapSystems.SapSystemTest do
         build(:application_instance_registered_event,
           sap_system_id: sap_system_id,
           sid: sid,
+          tenant: nil,
           features: "MESSAGESERVER",
           instance_number: instance_number,
           host_id: host_id
@@ -540,6 +556,7 @@ defmodule Trento.SapSystems.SapSystemTest do
         build(:application_instance_registered_event,
           sap_system_id: sap_system_id,
           sid: sid,
+          tenant: Faker.Beer.style(),
           features: "ABAP"
         ),
         build(
@@ -586,11 +603,13 @@ defmodule Trento.SapSystems.SapSystemTest do
         build(:application_instance_registered_event,
           sap_system_id: sap_system_id,
           sid: sid,
+          tenant: nil,
           features: "MESSAGESERVER"
         ),
         build(:application_instance_registered_event,
           sap_system_id: sap_system_id,
           sid: sid,
+          tenant: Faker.Beer.style(),
           features: "ABAP",
           instance_number: instance_number,
           host_id: host_id
@@ -687,6 +706,7 @@ defmodule Trento.SapSystems.SapSystemTest do
         build(:application_instance_registered_event,
           sap_system_id: sap_system_id,
           sid: sid,
+          tenant: tenant,
           features: "ABAP",
           instance_number: "10"
         )
@@ -698,7 +718,7 @@ defmodule Trento.SapSystems.SapSystemTest do
           sap_system_id: sap_system_id,
           sid: sid,
           db_host: db_host,
-          tenant: tenant,
+          tenant: nil,
           instance_number: "00",
           instance_hostname: instance_hostname,
           features: "MESSAGESERVER",
@@ -715,6 +735,7 @@ defmodule Trento.SapSystems.SapSystemTest do
           %ApplicationInstanceRegistered{
             sap_system_id: sap_system_id,
             sid: sid,
+            tenant: nil,
             instance_number: "00",
             instance_hostname: instance_hostname,
             features: "MESSAGESERVER",
@@ -737,6 +758,7 @@ defmodule Trento.SapSystems.SapSystemTest do
         fn state ->
           assert %SapSystem{
                    sid: ^sid,
+                   tenant: ^tenant,
                    instances: [
                      %Instance{
                        sid: ^sid,
@@ -790,6 +812,7 @@ defmodule Trento.SapSystems.SapSystemTest do
           %ApplicationInstanceRegistered{
             sap_system_id: sap_system_id,
             sid: sid,
+            tenant: tenant,
             instance_number: "00",
             instance_hostname: instance_hostname,
             features: "ABAP",
@@ -803,6 +826,7 @@ defmodule Trento.SapSystems.SapSystemTest do
         fn state ->
           assert %SapSystem{
                    sid: nil,
+                   tenant: ^tenant,
                    instances: [
                      %Instance{
                        sid: ^sid,
@@ -821,7 +845,6 @@ defmodule Trento.SapSystems.SapSystemTest do
       sap_system_id = Faker.UUID.v4()
       sid = Faker.StarWars.planet()
       db_host = Faker.Internet.ip_v4_address()
-      tenant = Faker.Beer.style()
       instance_hostname = Faker.Airports.iata()
       http_port = 80
       https_port = 443
@@ -837,7 +860,7 @@ defmodule Trento.SapSystems.SapSystemTest do
           sap_system_id: sap_system_id,
           sid: sid,
           db_host: db_host,
-          tenant: tenant,
+          tenant: nil,
           instance_number: "00",
           instance_hostname: instance_hostname,
           features: "MESSAGESERVER",
@@ -853,6 +876,7 @@ defmodule Trento.SapSystems.SapSystemTest do
           %ApplicationInstanceRegistered{
             sap_system_id: sap_system_id,
             sid: sid,
+            tenant: nil,
             instance_number: "00",
             instance_hostname: instance_hostname,
             features: "MESSAGESERVER",
@@ -866,6 +890,7 @@ defmodule Trento.SapSystems.SapSystemTest do
         fn state ->
           assert %SapSystem{
                    sid: nil,
+                   tenant: nil,
                    instances: [
                      %Instance{
                        sid: ^sid,
@@ -885,8 +910,12 @@ defmodule Trento.SapSystems.SapSystemTest do
       sid = Faker.StarWars.planet()
 
       initial_events = [
-        build(:application_instance_registered_event, sap_system_id: sap_system_id, sid: sid),
-        build(:sap_system_registered_event, sap_system_id: sap_system_id, sid: sid)
+        build(:application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          tenant: nil
+        ),
+        build(:sap_system_registered_event, sap_system_id: sap_system_id, sid: sid, tenant: nil)
       ]
 
       new_instance_db_host = Faker.Internet.ip_v4_address()
@@ -912,6 +941,7 @@ defmodule Trento.SapSystems.SapSystemTest do
           :application_instance_registered_event,
           sap_system_id: sap_system_id,
           sid: sid,
+          tenant: new_instance_tenant,
           instance_number: new_instance_number,
           features: new_instance_features,
           host_id: new_instance_host_id,
@@ -920,6 +950,7 @@ defmodule Trento.SapSystems.SapSystemTest do
         fn state ->
           assert %SapSystem{
                    sid: ^sid,
+                   tenant: ^new_instance_tenant,
                    instances: [
                      %Instance{
                        sid: ^sid,
@@ -980,7 +1011,8 @@ defmodule Trento.SapSystems.SapSystemTest do
           sap_system_id: sap_system_id,
           sid: sid,
           features: "ABAP",
-          instance_number: "10"
+          instance_number: "10",
+          tenant: tenant
         )
       ]
 
@@ -990,7 +1022,7 @@ defmodule Trento.SapSystems.SapSystemTest do
           :register_application_instance_command,
           sap_system_id: sap_system_id,
           sid: sid,
-          tenant: tenant,
+          tenant: nil,
           db_host: db_host,
           instance_number: instance_number,
           features: features,
@@ -1003,6 +1035,7 @@ defmodule Trento.SapSystems.SapSystemTest do
             :application_instance_registered_event,
             sap_system_id: sap_system_id,
             sid: sid,
+            tenant: nil,
             instance_number: instance_number,
             features: features,
             host_id: host_id,
@@ -1118,7 +1151,7 @@ defmodule Trento.SapSystems.SapSystemTest do
             :register_application_instance_command,
             sap_system_id: sap_system_id,
             sid: application_instance_registered_event.sid,
-            tenant: sap_system_registered_event.tenant,
+            tenant: nil,
             db_host: sap_system_registered_event.db_host,
             instance_number: application_instance_registered_event.instance_number,
             features: application_instance_registered_event.features,
@@ -1142,6 +1175,7 @@ defmodule Trento.SapSystems.SapSystemTest do
             :application_instance_registered_event,
             sap_system_id: sap_system_id,
             sid: application_instance_registered_event.sid,
+            tenant: sap_system_registered_event.tenant,
             instance_number: new_instance_number,
             features: new_instance_features,
             host_id: new_instance_host_id,
@@ -1231,7 +1265,7 @@ defmodule Trento.SapSystems.SapSystemTest do
 
       initial_events = [
         application_instance_registered_event,
-        %{ensa_version: ensa_version} =
+        %{tenant: tenant, ensa_version: ensa_version} =
           build(:sap_system_registered_event, sap_system_id: sap_system_id, sid: sid)
       ]
 
@@ -1243,6 +1277,7 @@ defmodule Trento.SapSystems.SapSystemTest do
           snapshot: %SapSystem{
             sap_system_id: sap_system_id,
             sid: sid,
+            tenant: tenant,
             health: :passing,
             database_health: :passing,
             ensa_version: ensa_version,
@@ -1448,6 +1483,7 @@ defmodule Trento.SapSystems.SapSystemTest do
       deregistered_at = DateTime.utc_now()
 
       application_sid = fake_sid()
+      tenant = Faker.Beer.style()
 
       message_server_host_id = UUID.uuid4()
       message_server_instance_number = "00"
@@ -1461,7 +1497,8 @@ defmodule Trento.SapSystems.SapSystemTest do
           features: "MESSAGESERVER|ENQUE",
           host_id: message_server_host_id,
           instance_number: message_server_instance_number,
-          sid: application_sid
+          sid: application_sid,
+          tenant: nil
         ),
         build(
           :application_instance_registered_event,
@@ -1469,12 +1506,14 @@ defmodule Trento.SapSystems.SapSystemTest do
           features: "ABAP|GATEWAY|ICMAN|IGS",
           host_id: abap_host_id,
           instance_number: abap_instance_number,
-          sid: application_sid
+          sid: application_sid,
+          tenant: tenant
         ),
         build(
           :sap_system_registered_event,
           sap_system_id: sap_system_id,
-          sid: application_sid
+          sid: application_sid,
+          tenant: tenant
         ),
         build(:sap_system_deregistered_event,
           sap_system_id: sap_system_id,
@@ -1504,6 +1543,7 @@ defmodule Trento.SapSystems.SapSystemTest do
           %ApplicationInstanceRegistered{
             sap_system_id: sap_system_id,
             sid: application_sid,
+            tenant: command.tenant,
             host_id: command.host_id,
             instance_number: command.instance_number,
             instance_hostname: command.instance_hostname,
@@ -1530,6 +1570,7 @@ defmodule Trento.SapSystems.SapSystemTest do
       deregistered_at = DateTime.utc_now()
 
       application_sid = fake_sid()
+      tenant = Faker.Beer.style()
 
       message_server_host_id = UUID.uuid4()
       message_server_instance_number = "00"
@@ -1543,7 +1584,8 @@ defmodule Trento.SapSystems.SapSystemTest do
           features: "MESSAGESERVER|ENQUE",
           host_id: message_server_host_id,
           instance_number: message_server_instance_number,
-          sid: application_sid
+          sid: application_sid,
+          tenant: nil
         ),
         build(
           :application_instance_registered_event,
@@ -1551,12 +1593,14 @@ defmodule Trento.SapSystems.SapSystemTest do
           features: "ABAP|GATEWAY|ICMAN|IGS",
           host_id: abap_host_id,
           instance_number: abap_instance_number,
-          sid: application_sid
+          sid: application_sid,
+          tenant: tenant
         ),
         build(
           :sap_system_registered_event,
           sap_system_id: sap_system_id,
-          sid: application_sid
+          sid: application_sid,
+          tenant: tenant
         ),
         build(:sap_system_deregistered_event,
           sap_system_id: sap_system_id,
@@ -1575,6 +1619,7 @@ defmodule Trento.SapSystems.SapSystemTest do
           :register_application_instance_command,
           sap_system_id: sap_system_id,
           sid: application_sid,
+          tenant: nil,
           db_host: database_host_id,
           features: "MESSAGESERVER",
           database_health: :critical
@@ -1587,6 +1632,7 @@ defmodule Trento.SapSystems.SapSystemTest do
           %ApplicationInstanceRegistered{
             sap_system_id: sap_system_id,
             sid: application_sid,
+            tenant: nil,
             host_id: command.host_id,
             instance_number: command.instance_number,
             instance_hostname: command.instance_hostname,
@@ -1598,7 +1644,7 @@ defmodule Trento.SapSystems.SapSystemTest do
           },
           %SapSystemRestored{
             sap_system_id: sap_system_id,
-            tenant: command.tenant,
+            tenant: tenant,
             db_host: command.db_host,
             health: command.health,
             database_health: command.database_health

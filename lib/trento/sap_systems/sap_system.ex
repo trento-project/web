@@ -85,7 +85,7 @@ defmodule Trento.SapSystems.SapSystem do
     field :sid, :string, default: nil
     field :health, Ecto.Enum, values: Health.values()
     field :database_health, Ecto.Enum, values: Health.values()
-    # field :tenant, :string
+    field :tenant, :string
     field :ensa_version, Ecto.Enum, values: EnsaVersion.values(), default: EnsaVersion.no_ensa()
     field :rolling_up, :boolean, default: false
     field :deregistered_at, :utc_datetime_usec, default: nil
@@ -279,6 +279,7 @@ defmodule Trento.SapSystems.SapSystem do
         %ApplicationInstanceRegistered{
           sap_system_id: sap_system_id,
           sid: sid,
+          tenant: tenant,
           instance_number: instance_number,
           features: features,
           host_id: host_id,
@@ -288,6 +289,7 @@ defmodule Trento.SapSystems.SapSystem do
     %SapSystem{
       sap_system
       | sap_system_id: sap_system_id,
+        tenant: tenant,
         instances: [
           %Instance{
             sid: sid,
@@ -302,9 +304,10 @@ defmodule Trento.SapSystems.SapSystem do
   end
 
   def apply(
-        %SapSystem{instances: instances} = sap_system,
+        %SapSystem{tenant: tenant, instances: instances} = sap_system,
         %ApplicationInstanceRegistered{
           sid: sid,
+          tenant: new_tenant,
           instance_number: instance_number,
           features: features,
           host_id: host_id,
@@ -323,7 +326,7 @@ defmodule Trento.SapSystems.SapSystem do
       | instances
     ]
 
-    %SapSystem{sap_system | instances: instances}
+    %SapSystem{sap_system | tenant: tenant || new_tenant, instances: instances}
   end
 
   def apply(
@@ -372,9 +375,12 @@ defmodule Trento.SapSystems.SapSystem do
     %SapSystem{sap_system | instances: instances}
   end
 
+  # Update tenant field on SapSystemRegistered for old scenarios
+  # where the tenant was not stored in the aggregate
   def apply(%SapSystem{} = sap_system, %SapSystemRegistered{
         sap_system_id: sap_system_id,
         sid: sid,
+        tenant: tenant,
         health: health,
         database_health: database_health,
         ensa_version: ensa_version
@@ -383,6 +389,7 @@ defmodule Trento.SapSystems.SapSystem do
       sap_system
       | sap_system_id: sap_system_id,
         sid: sid,
+        tenant: tenant,
         health: health,
         database_health: database_health,
         ensa_version: ensa_version
@@ -498,6 +505,7 @@ defmodule Trento.SapSystems.SapSystem do
          %RegisterApplicationInstance{
            sap_system_id: sap_system_id,
            sid: sid,
+           tenant: tenant,
            instance_number: instance_number,
            instance_hostname: instance_hostname,
            features: features,
@@ -511,6 +519,7 @@ defmodule Trento.SapSystems.SapSystem do
     %ApplicationInstanceRegistered{
       sap_system_id: sap_system_id,
       sid: sid,
+      tenant: tenant,
       instance_number: instance_number,
       instance_hostname: instance_hostname,
       features: features,
@@ -527,6 +536,7 @@ defmodule Trento.SapSystems.SapSystem do
          %RegisterApplicationInstance{
            sap_system_id: sap_system_id,
            sid: sid,
+           tenant: tenant,
            instance_number: instance_number,
            instance_hostname: instance_hostname,
            features: features,
@@ -566,6 +576,7 @@ defmodule Trento.SapSystems.SapSystem do
         %ApplicationInstanceRegistered{
           sap_system_id: sap_system_id,
           sid: sid,
+          tenant: tenant,
           instance_number: instance_number,
           instance_hostname: instance_hostname,
           features: features,
@@ -629,10 +640,9 @@ defmodule Trento.SapSystems.SapSystem do
 
   # Restore a SAP system when the all the requires instances are registered
   defp maybe_emit_sap_system_restored_event(
-         %SapSystem{instances: instances},
+         %SapSystem{tenant: tenant, instances: instances},
          %RegisterApplicationInstance{
            sap_system_id: sap_system_id,
-           tenant: tenant,
            db_host: db_host,
            health: health,
            database_health: database_health
@@ -671,11 +681,10 @@ defmodule Trento.SapSystems.SapSystem do
   end
 
   defp maybe_emit_sap_system_registered_or_updated_event(
-         %SapSystem{sid: nil, instances: instances},
+         %SapSystem{sid: nil, tenant: tenant, instances: instances},
          %RegisterApplicationInstance{
            sap_system_id: sap_system_id,
            sid: sid,
-           tenant: tenant,
            db_host: db_host,
            health: health,
            ensa_version: ensa_version,
