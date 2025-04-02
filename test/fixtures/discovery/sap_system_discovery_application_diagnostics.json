@@ -7,6 +7,7 @@
       "SID": "HA1",
       "Type": 2,
       "DBAddress": "10.74.1.12",
+      "Tenant": "PRD",
       "Profile": {
         "SAPDBHOST": "10.74.1.12",
         "gw/acl_mode": "1",
@@ -251,6 +252,7 @@
       "SID": "DAA",
       "Type": 3,
       "DBAddress": "",
+      "Tenant": "",
       "Profile": {},
       "Databases": null,
       "Instances": [
