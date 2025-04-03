@@ -31,34 +31,36 @@ jobs:
         uses: styfle/cancel-workflow-action@0.12.1
         with:
           access_token: ${{ github.token }}
-      - name: Checkout
+      - name: Checkout Wanda Repository
         uses: actions/checkout@v4
         with:
-          repository: trento-project/wanda 
-          fetch-depth: 0
+          repository: trento-project/wanda
+          path: wanda
       - name: Setup
         id: setup-elixir-wanda
         uses: erlef/setup-beam@v1
         with:
-          version-file: .tool-versions
+          version-file: wanda/.tool-versions
           version-type: strict
       - name: Retrieve Cached Dependencies
         uses: actions/cache@v4
         id: mix-cache-wanda
         with:
           path: |
-            deps
-            _build/${{ matrix.mix_env }}
-            priv/plts
-          key: ${{ runner.os }}-${{ steps.setup-elixir-wanda.outputs.otp-version }}-${{ steps.setup-elixir-wanda.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}
+            wanda/deps
+            wanda/_build/${{ matrix.mix_env }}
+            wanda/priv/plts
+          key: ${{ runner.os }}-${{ steps.setup-elixir-wanda.outputs.otp-version }}-${{ steps.setup-elixir-wanda.outputs.elixir-version }}-${{ hashFiles('wanda/mix.lock') }}
       - name: Install Dependencies
         if: steps.mix-cache-wanda.outputs.cache-hit != 'true'
         run: |
+          cd wanda
           mkdir -p priv/plts
           mix local.rebar --force
           mix local.hex --force
           mix deps.get
           mix deps.compile --warnings-as-errors
+
   elixir-deps:
     name: Elixir ${{ matrix.mix_env }} dependencies
     runs-on: ubuntu-24.04
@@ -424,11 +426,16 @@ jobs:
             wanda/_build/dev  
             wanda/priv/plts  
           key: ${{ runner.os }}-${{ steps.setup-elixir-wanda.outputs.otp-version }}-${{ steps.setup-elixir-wanda.outputs.elixir-version }}-${{ hashFiles('wanda/mix.lock') }}
-      - name: "Docker compose dependencies"
+      - name: DEBUG
+        run: |
+          pwd
+          ls -all
+      - name: "Docker compose wanda dependencies"
         uses: isbang/compose-action@v2.1.0
         with:
-          compose-file: "${{ github.workspace }}/wanda/docker-compose.yaml"
-          down-flags: "--volumes"
+          compose-file: "docker-compose.yaml" 
+          cwd: "/home/runner/work/web/web/wanda"
+          down-flags: "-v"
       - name: Checkout checks repository for wanda checks
         uses: actions/checkout@v4
         with:
