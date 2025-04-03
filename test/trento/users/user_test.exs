@@ -47,5 +47,12 @@ defmodule Trento.Users.UsersTest do
       assert changeset.errors[:totp_enabled_at] ==
                {"is invalid", [validation: :inclusion, enum: [nil]]}
     end
+
+    test "changeset/2 validates analytics_enabled_at field is cast properly" do
+      changeset =
+        User.profile_update_changeset(%User{}, %{"analytics_enabled_at" => DateTime.utc_now()})
+
+      assert changeset.changes[:analytics_enabled_at]
+    end
   end
 end

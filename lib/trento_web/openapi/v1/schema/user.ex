@@ -201,11 +201,6 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
             description: "User new password, should be the same as password field",
             nullable: false
           },
-          analytics_enabled: %Schema{
-            type: :boolean,
-            description: "Whether user analytics collection is enabled",
-            nullable: false
-          },
           abilities: AbilityCollection
         },
         required: [:fullname, :email, :enabled, :password, :password_confirmation, :username]
@@ -243,11 +238,6 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
             nullable: false
           },
           abilities: AbilityCollection,
-          analytics_enabled: %Schema{
-            type: :boolean,
-            description: "Whether user analytics collection is enabled",
-            nullable: false
-          },
           totp_disabled: %Schema{
             type: :boolean,
             description:
