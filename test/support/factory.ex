@@ -466,6 +466,7 @@ defmodule Trento.Factory do
     %ApplicationInstanceRegistered{
       sap_system_id: Faker.UUID.v4(),
       sid: Faker.UUID.v4(),
+      tenant: Faker.Beer.style(),
       instance_number: "00",
       instance_hostname: "an-instance-name",
       features: Faker.Pokemon.name(),
