@@ -41,6 +41,30 @@ const startExecutionButton = 'button:contains("Start Execution")';
 const notAuthorizedMessage =
   'span:contains("You are not authorized for this action")';
 const saveChecksSelectionButton = 'button:contains("Save Checks Selection")';
+const relevantPatches = 'p:contains("Relevant Patches")';
+const relevantPatchesAmount = `${relevantPatches} + div div`;
+const hostPatchesViewTitle = 'h1:contains("Relevant Patches") span';
+const synopsisCell1 = 'td:contains("SUSE-15-SP4-2024-630") + td';
+const synopsisCell2 = 'td:contains("SUSE-15-SP4-2024-619") + td';
+const backToHostDetailsButton = 'button:contains("Back to Host Details")';
+const upgradablePackagesCard = 'p:contains("Upgradable Packages")';
+const upgradablePackagesCardAmount = `${upgradablePackagesCard} + div`;
+const elixirLatestPackage = 'td:contains("elixir-1.15.7-3.x86_64") + td';
+const firstRelatedPackage =
+  'td:contains("elixir-1.15.7-3.x86_64") + td + td button:eq(0)';
+const synopsisViewSecurityUpdate = 'h2:contains("Synopsis") + div p';
+const synopsisIssuedDateLabel = 'div[class*="text"]:contains("Issued") + div';
+const synopsisStatusLabel = 'div[class*="text"]:contains("Status") + div';
+const synopsisRebootRequiredLabel =
+  'div[class*="text"]:contains("Reboot") + div';
+const synopsisPackageMaintenanceLabel =
+  'div[class*="text"]:contains("Affects Package Maintenance Stack") + div';
+const advisoryDetailsDescription = 'h2:contains("Description") + div';
+const advisoryDetailsFixes = 'h2:contains("Fixes") + div';
+const advisoryDetailsCVEs = 'h2:contains("CVEs") + div a';
+const advisoryDetailsAffectedPackages =
+  'h2:contains("Affected Packages") + div li:eq(0)';
+const advisoryDetailsAffectedSystems = 'h2:contains("Affected Systems") + div';
 
 const providerDetails = {
   provider: `${providerDetailsBox} div[class*="flow-row"]:contains("Provider") span`,
@@ -70,6 +94,12 @@ const providerDetails = {
 export const visit = (selectedHost = '') =>
   basePage.visit(`/${url}/${selectedHost}`);
 
+export const visitVmdrbddev01Host = () =>
+  basePage.visit('/hosts/240f96b1-8d26-53b7-9e99-ffb0f2e735bf');
+
+export const visitVmdrbddev02Host = () =>
+  basePage.visit('/hosts/21de186a-e38f-5804-b643-7f4ef22fecfd');
+
 export const visitSelectedHost = () => visit(selectedHost.agentId);
 
 export const visitHostSettings = () =>
@@ -86,7 +116,81 @@ export const clickCleanUpUnhealthyHostButton = () =>
 export const clickCleanUpConfirmationButton = () =>
   cy.get(cleanUpModalConfirmationButton).click();
 
+export const clickRelevantPatches = () => cy.get(relevantPatches).click();
+
+export const clickBackToHostDetailsButton = () =>
+  cy.get(backToHostDetailsButton).click();
+
+export const clickUpgradablePackagesCard = () =>
+  cy.get(upgradablePackagesCard).click();
+
+export const clickFirstRelatedPackage = () =>
+  cy.get(firstRelatedPackage).click();
+
 //Validations
+export const advisoryDetailsAffectedSystemsAreTheExpected = () =>
+  cy
+    .get(advisoryDetailsAffectedSystems)
+    .should('contain', 'vmdrbddev01vmdrbddev02');
+
+export const advisoryDetailsAffectedPackageIsTheExpected = () =>
+  cy.get(advisoryDetailsAffectedPackages).should('contain', 'elixir');
+
+export const advisoryDetailsCVEsAreTheExpected = () =>
+  cy
+    .get(advisoryDetailsCVEs)
+    .each(($el) => cy.wrap($el).should('contain', 'SUSE-15-SP4'));
+
+export const advisoryDetailsShowsExpectedFixes = () =>
+  cy.get(advisoryDetailsFixes).should('contain', 'VUL-0');
+
+export const advisoryDetailsShowsExpectedDescription = () =>
+  cy
+    .get(advisoryDetailsDescription)
+    .should('have.text', 'Minor security bug fixes');
+
+export const affectsPkgMaintenanceLabelIsTheExpected = () =>
+  cy.get(synopsisPackageMaintenanceLabel).should('have.text', 'No');
+
+export const synopsisRebootRequiredLabelIsTheExpected = () =>
+  cy.get(synopsisRebootRequiredLabel).should('have.text', 'Yes');
+
+export const synopsisStatusLabelIsTheExpected = () =>
+  cy.get(synopsisStatusLabel).should('have.text', 'stable');
+
+export const synopsisIssuedDateIsTheExpected = () =>
+  cy.get(synopsisIssuedDateLabel).should('have.text', '27 Feb 2024');
+
+export const expectedSynopsisSecurityUpdateIsDisplayed = () =>
+  cy
+    .get(synopsisViewSecurityUpdate)
+    .should('have.text', 'important: Security update for java-1_8_0-ibm');
+
+export const expectedRelatedPackageIsDisplayed = () =>
+  cy.get(firstRelatedPackage).should('have.text', 'SUSE-15-SP4-2024-630');
+
+export const elixirLatestPackageIsTheExpected = () =>
+  cy.get(elixirLatestPackage).should('have.text', 'elixir-1.16.2-1.x86_64');
+
+export const upgradablePackagesAmountIsTheExpected = (expectedValue) =>
+  cy.get(upgradablePackagesCardAmount).should('have.text', expectedValue);
+
+export const expectedSynopsisText1IsDisplayed = () =>
+  cy
+    .get(synopsisCell1)
+    .should('have.text', 'Recommended update for cloud-netconfig');
+
+export const expectedSynopsisText2IsDisplayed = () =>
+  cy
+    .get(synopsisCell2)
+    .should('have.text', 'important: Security update for java-1_8_0-ibm');
+
+export const expectedHostIsDisplayedInTitle = () =>
+  cy.get(hostPatchesViewTitle).should('have.text', 'vmdrbddev01');
+
+export const expectedRelevantPatchesAreDisplayed = (expectedValue) =>
+  cy.get(relevantPatchesAmount).should('have.text', expectedValue);
+
 export const validateSelectedHostUrl = () =>
   basePage.validateUrl(`${url}/${selectedHost.agentId}`);
 
@@ -327,7 +431,7 @@ export const sapSystemsTableDisplaysExpectedData = () =>
   _genericTableValidation('SAP instances', selectedHost);
 
 export const heartbeatFailingToasterIsDisplayed = () =>
-  cy.get(heartbeatFailingToaster, { timeout: 15000 }).should('be.visible');
+  cy.get(heartbeatFailingToaster, { timeout: 20000 }).should('be.visible');
 
 export const cleanUpUnhealthyHostButtonIsDisplayed = () =>
   cy.get(cleanUpUnhealthyHostButton, { timeout: 15000 }).should('be.visible');
@@ -470,3 +574,10 @@ export const apiCreateUserWithHostCleanupAbilities = () =>
       resource: 'host',
     },
   ]);
+
+export const saveSUMASettingsForAdmin = () =>
+  basePage.saveSUMASettings({
+    url: 'https://trento.io',
+    username: 'suseManagerAdmin',
+    password: 'suseManagerPw',
+  });

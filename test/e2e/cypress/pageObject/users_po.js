@@ -3,6 +3,7 @@ import * as basePage from './base_po.js';
 
 import { userFactory } from '@lib/test-utils/factories/users';
 
+// Test data
 const url = '/users';
 export const PASSWORD = 'password';
 export const USER = userFactory.build({ username: 'e2etest' });
@@ -39,6 +40,13 @@ const confirmDisableTotpButton =
   'div[id*="headlessui-dialog-panel"] button:contains("Disable")';
 const editUserTotpDropdown = 'button.totp-selection-dropdown';
 const enableUserTotpOption = `${editUserTotpDropdown} + div div:contains("Enabled")`;
+const usersListAdminUser = `a:contains("${basePage.adminUser.username}")`;
+const usersListPlainUser = `a:contains("${basePage.plainUser.username}")`;
+const permissionsDropdown = 'label:contains("Permissions") + div';
+const statusDropdown = 'button.status-selection-dropdown';
+const removePermissionButton = 'div[aria-label*="Remove"] svg';
+const permissionsInputField =
+  'label:contains("Permissions") + div span div div:eq(0)';
 
 // Toaster Messages
 const userAlreadyUpdatedWarning =
@@ -60,117 +68,235 @@ const invalidPasswordErrorLabel = 'p:contains("Is invalid")';
 const totpEnrollmentErrorLabel =
   'p:contains("Totp code not valid for the enrollment procedure.")';
 
+// UI Interactions
+
 export const visit = (_url = url) => cy.visit(_url);
 
-export const validateUrl = (_url = url) => {
-  return cy.url().should('include', _url);
-};
+export const validateUrl = (_url = url) => cy.url().should('include', _url);
 
-export const clickCreateUserButton = () => {
-  return cy.get(createUserButton).click();
-};
+export const clickCreateUserButton = () => cy.get(createUserButton).click();
 
-export const clickNewUserDeleteButton = () => {
-  return cy.get(newUserDeleteButton).click();
-};
+export const clickNewUserDeleteButton = () =>
+  cy.get(newUserDeleteButton).click();
 
-export const clickConfirmDeleteUserButton = () => {
-  return cy.get(confirmDeleteUserButton).click();
-};
+export const clickConfirmDeleteUserButton = () =>
+  cy.get(confirmDeleteUserButton).click();
 
-export const clickSaveNewPasswordButton = () => {
-  return cy.get(saveNewPasswordButton).click();
-};
+export const clickSaveNewPasswordButton = () =>
+  cy.get(saveNewPasswordButton).click();
 
-export const clickAuthenticatorAppSwitch = () => {
-  return cy.get(authenticatorAppSwitch).click();
-};
+export const clickAuthenticatorAppSwitch = () =>
+  cy.get(authenticatorAppSwitch).click();
 
-export const clickGeneratePassword = () => {
-  return cy.get(generatePasswordButton).click();
-};
+export const clickGeneratePassword = () =>
+  cy.get(generatePasswordButton).click();
 
-export const clickSubmitUserCreationButton = () => {
-  return cy.get(submitUserCreationButton).click();
-};
+export const clickSubmitUserCreationButton = () =>
+  cy.get(submitUserCreationButton).click();
 
-export const clickCancelUserCreation = () => {
-  return cy.get(cancelUserCreationButton).click();
-};
+export const clickCancelUserCreation = () =>
+  cy.get(cancelUserCreationButton).click();
 
-export const clickNewUser = () => {
-  return cy.get(newUserName).click();
-};
+export const clickNewUser = () => cy.get(newUserName).click();
 
-export const clickEditUserSaveButton = () => {
-  return cy.get(saveChangesButton).click();
-};
+export const clickEditUserSaveButton = () => cy.get(saveChangesButton).click();
 
-export const clickAdminUserName = () => {
-  return cy.get(adminUserName).click();
-};
+export const clickSaveUserButton = () => cy.get(saveChangesButton).click();
 
-export const clickChangePasswordButton = () => {
-  return cy.get(changePasswordButton).click();
-};
+export const clickAdminUserName = () => cy.get(adminUserName).click();
 
-export const clickVerifyTotpButton = () => {
-  return cy.get(verifyTotpButton).click();
-};
+export const clickChangePasswordButton = () =>
+  cy.get(changePasswordButton).click();
 
-export const clickDisableTotpButton = () => {
-  return cy.get(confirmDisableTotpButton).click();
-};
+export const clickVerifyTotpButton = () => cy.get(verifyTotpButton).click();
 
-export const clickTotpDropdown = () => {
-  return cy.get(editUserTotpDropdown).click();
-};
+export const clickDisableTotpButton = () =>
+  cy.get(confirmDisableTotpButton).click();
 
-export const typeUserFullName = (userFullName = USER.fullname) => {
-  return cy.get(fullNameInputField).clear().type(userFullName);
-};
+export const clickTotpDropdown = () => cy.get(editUserTotpDropdown).click();
 
-export const typeUserEmail = (emailAddress = USER.email) => {
-  return cy.get(emailInputField).type(emailAddress);
-};
+export const typeUserFullName = (userFullName = USER.fullname) =>
+  cy.get(fullNameInputField).clear().type(userFullName);
 
-export const typeUserName = () => {
-  return cy.get(userNameInputField).type(USER.username);
-};
+export const typeUserEmail = (emailAddress = USER.email) =>
+  cy.get(emailInputField).type(emailAddress);
 
-export const typeCurrentPassword = (currentPassword = PASSWORD) => {
-  return cy.get(currentPasswordInputField).type(currentPassword);
-};
+export const typeUserName = () =>
+  cy.get(userNameInputField).type(USER.username);
 
-export const typeUserPassword = (password = PASSWORD) => {
-  return cy.get(passwordInputField).type(password);
-};
+export const typeCurrentPassword = (currentPassword = PASSWORD) =>
+  cy.get(currentPasswordInputField).type(currentPassword);
 
-export const typeUserPasswordConfirmation = (password = PASSWORD) => {
-  return cy.get(passwordConfirmationInputField).type(password);
-};
+export const typeUserPassword = (password = PASSWORD) =>
+  cy.get(passwordInputField).type(password);
 
-export const selectFromTotpDropdown = (choice) => {
-  return basePage.selectFromDropdown(editUserTotpDropdown, choice);
-};
+export const typeUserPasswordConfirmation = (password = PASSWORD) =>
+  cy.get(passwordConfirmationInputField).type(password);
 
-export const getTotpSecret = () => {
-  return cy.get(totpSecret).then((element) => element.text());
-};
+export const selectFromTotpDropdown = (choice) =>
+  basePage.selectFromDropdown(editUserTotpDropdown, choice);
+
+export const getTotpSecret = () =>
+  cy.get(totpSecret).then((element) => element.text());
 
 export const typeUserTotpCode = (totpSecret) =>
   basePage.typeNextGeneratedTotpCode(totpSecret, newTotpCodeInputField);
 
-export const getSecretAndTypeTotpCode = () => {
+export const getSecretAndTypeTotpCode = () =>
   getTotpSecret().then((totpSecret) => {
     typeUserTotpCode(totpSecret);
   });
+
+export const typeInvalidUserTotpCode = () =>
+  cy.get(newTotpCodeInputField).clear().type('invalid');
+
+export const clickPlainUserInList = () => cy.get(usersListPlainUser).click();
+
+export const clickPermissionsDropdown = () =>
+  cy.get(permissionsDropdown).click();
+
+export const selectPermission = (permission) =>
+  cy.get(`span:contains("${permission}")`).click();
+
+export const clickRemovePermissionButton = () =>
+  cy.get(removePermissionButton).click();
+
+// UI Validations
+
+export const deletedUserNameIsNotDisplayed = () =>
+  cy.get(newUserName).should('not.exist');
+
+export const userDeletedSuccesfullyToasterIsDisplayed = () =>
+  cy.get(userDeletedSuccesfullyToaster).should('be.visible');
+
+export const invalidCurrentPasswordErrorIsDisplayed = () =>
+  cy.get(invalidPasswordErrorLabel).should('be.visible');
+
+export const validateRequiredFieldsErrors = () =>
+  cy.get(requiredFieldsErrors).should('have.length', 5);
+
+export const invalidEmailErrorIsDisplayed = () =>
+  cy
+    .contains(requiredFieldsErrors, 'Is not a valid email')
+    .should('have.length', 1);
+
+export const weakPasswordErrorIsDisplayed = () =>
+  cy
+    .contains(requiredFieldsErrors, 'Should be at least 8 character(s)')
+    .should('have.length', 1);
+
+export const usernameAlreadyTakenErrorIsDisplayed = () =>
+  cy.get(usernameAlreadyTakenError).should('be.visible');
+
+export const userCreatedSuccessfullyToasterIsDisplayed = () =>
+  cy.get(userCreatedSuccessfullyToaster).should('be.visible');
+
+export const passwordChangeToasterIsDisplayed = () =>
+  cy.get(passwordChangeToaster).should('be.visible');
+
+export const passwordChangeToasterIsNotDisplayed = () =>
+  cy.get(passwordChangeToaster).should('not.exist');
+
+export const userWithModifiedNameIsDisplayed = (username) =>
+  cy.get(`p:contains("${username}")`).should('be.visible');
+
+export const newUserIsDisplayed = (username, email) => {
+  cy.get(usersTableRows).should('have.length', 2);
+  cy.get(newUserName).contains(username);
+  return cy.get(newUserEmail).contains(email);
 };
 
-export const typeInvalidUserTotpCode = () => {
-  return cy.get(newTotpCodeInputField).clear().type('invalid');
+export const saveButtonIsDisabled = () =>
+  cy.get(saveChangesButton).should('be.disabled');
+
+export const userAlreadyUpdatedWarningIsDisplayed = () =>
+  cy.get(userAlreadyUpdatedWarning).should('be.visible');
+
+export const userAlreadyUpdatedWarningIsNotDisplayed = () =>
+  cy.get(userAlreadyUpdatedWarning).should('not.exist');
+
+export const userEditedSuccessfullyToasterIsDisplayed = () =>
+  cy.get(userEditedSuccessfullyToaster).should('be.visible');
+
+export const changePasswordButtonIsDisabled = () =>
+  cy.get(changePasswordButton).should('be.disabled');
+
+export const emailInputFieldHasExpectedValue = (email = USER.email) =>
+  cy.get(emailInputField).should('have.value', email);
+
+export const usernameInputFieldHasExpectedValue = (username = USER.username) =>
+  cy.get(userNameInputField).should('have.value', username);
+
+export const profileChangesSavedToasterIsDisplayed = () =>
+  cy.get(profileChangesSavedToaster).should('be.visible');
+
+export const newTotpCodeIssuedMessageIsDisplayed = () =>
+  cy.get(newTotpCodeIssuedMessage).should('be.visible');
+
+export const totpEnrollmentErrorIsDisplayed = () =>
+  cy.get(totpEnrollmentErrorLabel).should('be.visible');
+
+export const authenticatorAppSwitchIsEnabled = () =>
+  cy.get(authenticatorAppSwitch).should('be.enabled');
+
+export const totpEnabledToasterIsDisplayed = () =>
+  cy.get(totpEnabledToaster).should('be.visible');
+
+export const enableTotpOptionIsDisabled = () => {
+  return cy
+    .get(enableUserTotpOption)
+    .invoke('attr', 'aria-disabled')
+    .should('eq', 'true');
 };
 
+export const newIssuedTotpSecretIsDifferent = (originalTotpSecret) => {
+  getTotpSecret().then((newTotpSecret) => {
+    cy.wrap(newTotpSecret).should('not.equal', originalTotpSecret);
+  });
+};
+
+export const plainUserFullNameIsDisplayed = () =>
+  _expectedFullNameIsDisplayed(basePage.plainUser.fullname);
+
+export const adminUserFullNameIsDisplayed = () =>
+  _expectedFullNameIsDisplayed(basePage.adminUser.fullname);
+
+const _expectedFullNameIsDisplayed = (fullname) =>
+  cy.get(fullNameInputField).should('have.value', fullname);
+
+export const plainUserEmailIsDisplayed = () =>
+  emailInputFieldHasExpectedValue(basePage.plainUser.email);
+
+export const adminUserEmailIsDisplayed = () =>
+  emailInputFieldHasExpectedValue(basePage.adminUser.email);
+
+export const plainUserUsernameIsDisplayed = () =>
+  usernameInputFieldHasExpectedValue(basePage.plainUser.username);
+
+export const adminUserUsernameIsDisplayed = () =>
+  usernameInputFieldHasExpectedValue(basePage.adminUser.username);
+
+export const adminUsernameIsListedInUsersTable = () =>
+  cy.get(usersListAdminUser).should('be.visible');
+
+export const plainUsernameIsListedInUsersTable = () =>
+  cy.get(usersListPlainUser).should('be.visible');
+
+export const createUserButtonIsNotDisplayed = () =>
+  cy.get(createUserButton).should('not.exist');
+
+export const selectDisabledStatus = () =>
+  basePage.selectFromDropdown(statusDropdown, 'Disabled');
+
+export const selectEnabledStatus = () =>
+  basePage.selectFromDropdown(statusDropdown, 'Disabled');
+
+export const adminUserPermissionsAreDisplayed = () =>
+  cy
+    .get(permissionsInputField)
+    .should('have.text', basePage.adminUser.permissions);
+
+// API
 export const apiGetProfileInfo = (
   username = USER.username,
   password = PASSWORD
@@ -189,19 +315,17 @@ export const apiGetProfileInfo = (
   });
 };
 
-export const apiDisableUser = () => {
-  return apiGetProfileInfo().then(({ id }) => {
+export const apiDisableUser = () =>
+  apiGetProfileInfo().then(({ id }) => {
     apiPatchUser(id, { enabled: false });
   });
-};
 
-export const apiApplyAllUsersPermission = () => {
-  return apiGetProfileInfo().then(({ id }) => {
+export const apiApplyAllUsersPermission = () =>
+  apiGetProfileInfo().then(({ id }) => {
     apiPatchUser(id, {
       abilities: [{ id: 2, name: 'all', resource: 'users', label: 'test' }],
     });
   });
-};
 
 export const apiCreateUser = () => {
   return basePage.apiLogin().then(({ accessToken }) => {
@@ -243,129 +367,8 @@ export const apiPatchUser = (id, payload) => {
   );
 };
 
-export const apiModifyUserFullName = () => {
-  return getUserIdFromPath().then((id) =>
-    apiPatchUser(id, { fullname: 'new_name' })
-  );
-};
+export const apiModifyUserFullName = () =>
+  _getUserIdFromPath().then((id) => apiPatchUser(id, { fullname: 'new_name' }));
 
-export const getUserIdFromPath = () => {
-  return cy.location().then(({ pathname }) => pathname.split('/')[2]);
-};
-
-export const deletedUserNameIsNotDisplayed = () => {
-  return cy.get(newUserName).should('not.exist');
-};
-
-export const userDeletedSuccesfullyToasterIsDisplayed = () => {
-  return cy.get(userDeletedSuccesfullyToaster).should('be.visible');
-};
-
-export const invalidCurrentPasswordErrorIsDisplayed = () => {
-  return cy.get(invalidPasswordErrorLabel).should('be.visible');
-};
-
-export const validateRequiredFieldsErrors = () => {
-  return cy.get(requiredFieldsErrors).should('have.length', 5);
-};
-
-export const invalidEmailErrorIsDisplayed = () => {
-  return cy
-    .contains(requiredFieldsErrors, 'Is not a valid email')
-    .should('have.length', 1);
-};
-
-export const weakPasswordErrorIsDisplayed = () => {
-  return cy
-    .contains(requiredFieldsErrors, 'Should be at least 8 character(s)')
-    .should('have.length', 1);
-};
-
-export const usernameAlreadyTakenErrorIsDisplayed = () => {
-  return cy.get(usernameAlreadyTakenError).should('be.visible');
-};
-
-export const userCreatedSuccessfullyToasterIsDisplayed = () => {
-  return cy.get(userCreatedSuccessfullyToaster).should('be.visible');
-};
-
-export const passwordChangeToasterIsDisplayed = () => {
-  return cy.get(passwordChangeToaster).should('be.visible');
-};
-
-export const passwordChangeToasterIsNotDisplayed = () => {
-  return cy.get(passwordChangeToaster).should('not.exist');
-};
-
-export const userWithModifiedNameIsDisplayed = (username) => {
-  return cy.get(`p:contains("${username}")`).should('be.visible');
-};
-
-export const newUserIsDisplayed = (username, email) => {
-  cy.get(usersTableRows).should('have.length', 2);
-  cy.get(newUserName).contains(username);
-  return cy.get(newUserEmail).contains(email);
-};
-
-export const saveButtonIsDisabled = () => {
-  return cy.get(saveChangesButton).should('be.disabled');
-};
-
-export const userAlreadyUpdatedWarningIsDisplayed = () => {
-  return cy.get(userAlreadyUpdatedWarning).should('be.visible');
-};
-
-export const userAlreadyUpdatedWarningIsNotDisplayed = () => {
-  return cy.get(userAlreadyUpdatedWarning).should('not.exist');
-};
-
-export const userEditedSuccessfullyToasterIsDisplayed = () => {
-  return cy.get(userEditedSuccessfullyToaster).should('be.visible');
-};
-
-export const changePasswordButtonIsDisabled = () => {
-  return cy.get(changePasswordButton).should('be.disabled');
-};
-
-export const emailInputFieldHasExpectedValue = (email = USER.email) => {
-  return cy.get(emailInputField).should('have.value', email);
-};
-
-export const usernameInputFieldHasExpectedValue = (
-  username = USER.username
-) => {
-  return cy.get(userNameInputField).should('have.value', username);
-};
-
-export const profileChangesSavedToasterIsDisplayed = () => {
-  return cy.get(profileChangesSavedToaster).should('be.visible');
-};
-
-export const newTotpCodeIssuedMessageIsDisplayed = () => {
-  return cy.get(newTotpCodeIssuedMessage).should('be.visible');
-};
-
-export const totpEnrollmentErrorIsDisplayed = () => {
-  return cy.get(totpEnrollmentErrorLabel).should('be.visible');
-};
-
-export const authenticatorAppSwitchIsEnabled = () => {
-  return cy.get(authenticatorAppSwitch).should('be.enabled');
-};
-
-export const totpEnabledToasterIsDisplayed = () => {
-  return cy.get(totpEnabledToaster).should('be.visible');
-};
-
-export const enableTotpOptionIsDisabled = () => {
-  return cy
-    .get(enableUserTotpOption)
-    .invoke('attr', 'aria-disabled')
-    .should('eq', 'true');
-};
-
-export const newIssuedTotpSecretIsDifferent = (originalTotpSecret) => {
-  getTotpSecret().then((newTotpSecret) => {
-    cy.wrap(newTotpSecret).should('not.equal', originalTotpSecret);
-  });
-};
+const _getUserIdFromPath = () =>
+  cy.location().then(({ pathname }) => pathname.split('/')[2]);

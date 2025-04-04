@@ -1,9 +1,33 @@
 import { TOTP } from 'totp-generator';
 import { createUserRequestFactory } from '@lib/test-utils/factories';
 
+// Test data
 const DEFAULT_USERNAME = Cypress.env('login_user');
 const DEFAULT_PASSWORD = Cypress.env('login_password');
 
+export const plainUser = {
+  username: 'trentoidp',
+  password: 'password',
+  fullname: 'Trento IDP user Of Monk',
+  email: 'trentoidp@trento.suse.com',
+};
+
+export const adminUser = {
+  username: 'admin',
+  password: 'admin',
+  fullname: 'Trento Admin',
+  email: 'admin@trento.suse.com',
+  permissions: 'all:all',
+};
+
+const password = 'password';
+
+const user = createUserRequestFactory.build({
+  password,
+  password_confirmation: password,
+});
+
+// Selectors
 const pageTitle = 'h1';
 const userDropdownMenuButton = 'header button[id*="menu"]';
 const userDropdownProfileButton = 'a:contains("Profile")';
@@ -17,29 +41,18 @@ export const navigation = {
 const signOutButton = 'button:contains("Sign out")';
 const removeEnv1TagButton = 'span span:contains("env1") span';
 export const addTagButtons = 'span span:contains("Add Tag")';
-
-// Test data
-
-const password = 'password';
-
-const user = createUserRequestFactory.build({
-  password,
-  password_confirmation: password,
-});
-
-export const visit = (url = '/') => {
-  return cy.visit(url);
-};
-
-export const validateUrl = (url = '/') => {
-  return cy.url().should('eq', `${Cypress.config().baseUrl}${url}`);
-};
-
-export const refresh = () => {
-  return cy.reload();
-};
+const usernameMenu = `span[class="flex items-center"]:contains("${plainUser.username}")`;
 
 // UI Interactions
+export const visit = (url = '/') => cy.visit(url);
+
+export const clickUsernameMenu = () => cy.get(usernameMenu).click();
+
+export const validateUrl = (url = '/') =>
+  cy.url().should('eq', `${Cypress.config().baseUrl}${url}`);
+
+export const refresh = () => cy.reload();
+
 export const addTagByColumnValue = (columnValue, tagValue) => {
   return cy
     .get(`td:contains(${columnValue})`)
@@ -49,9 +62,8 @@ export const addTagByColumnValue = (columnValue, tagValue) => {
     });
 };
 
-export const clickActivityLogNavigationItem = () => {
-  return cy.get(navigation.activityLog).click();
-};
+export const clickActivityLogNavigationItem = () =>
+  cy.get(navigation.activityLog).click();
 
 export const clickActivityLogNavigationItem5Times = () => {
   for (let i = 0; i < 5; i++) {
@@ -64,13 +76,11 @@ export const clickSignOutButton = () => {
   return cy.get(signOutButton).click();
 };
 
-export const clickUserDropdownMenuButton = () => {
-  return cy.get(userDropdownMenuButton).click();
-};
+export const clickUserDropdownMenuButton = () =>
+  cy.get(userDropdownMenuButton).click();
 
-export const clickUserDropdownProfileButton = () => {
-  return cy.get(userDropdownProfileButton).click();
-};
+export const clickUserDropdownProfileButton = () =>
+  cy.get(userDropdownProfileButton).click();
 
 const _getTotpWaitTime = (forceNext) => {
   const currentTime = Date.now();
@@ -104,19 +114,27 @@ export const typeNextGeneratedTotpCode = (
   });
 };
 
+export const selectFromDropdown = (selector, choice) => {
+  cy.get(selector).click();
+  return cy.get(`${selector} + div div:contains("${choice}")`).click();
+};
+
 // UI Validations
 
-export const userDropdownMenuButtonHasTheExpectedText = (username) => {
-  return cy.get(userDropdownMenuButton).should('have.text', username);
-};
+export const shouldRedirectToIdpUrl = () =>
+  cy.url().should('contain', '/realms/trento');
 
-export const pageTitleIsCorrectlyDisplayed = (title) => {
-  return cy.get(pageTitle).should('contain', title);
-};
+export const plainUsernameIsDisplayed = () =>
+  cy.get(usernameMenu).should('be.visible');
 
-export const accessForbiddenMessageIsDisplayed = () => {
-  return cy.get(accessForbiddenMessage).should('be.visible');
-};
+export const userDropdownMenuButtonHasTheExpectedText = (username) =>
+  cy.get(userDropdownMenuButton).should('have.text', username);
+
+export const pageTitleIsCorrectlyDisplayed = (title) =>
+  cy.get(pageTitle).should('contain', title);
+
+export const accessForbiddenMessageIsDisplayed = () =>
+  cy.get(accessForbiddenMessage).should('be.visible');
 
 export const validateItemNotPresentInNavigationMenu = (itemName) => {
   return cy.get(navigation.navigationItems).each(($element) => {
@@ -211,11 +229,6 @@ export const apiDeleteAllUsers = () => {
 };
 
 export const waitForRequest = (requestAlias) => cy.wait(`@${requestAlias}`);
-
-export const selectFromDropdown = (selector, choice) => {
-  cy.get(selector).click();
-  return cy.get(`${selector} + div div:contains("${choice}")`).click();
-};
 
 export const preloadTestData = ({
   isDataLoadedFunc = isTestDataLoaded,
@@ -351,3 +364,31 @@ export const apiSetTag = (resource, resourceId, tag) => {
     })
   );
 };
+
+export const saveSUMASettings = ({ url, username, password, ca_cert }) =>
+  apiLogin().then(({ accessToken }) =>
+    cy.request({
+      url: '/api/v1/settings/suse_manager',
+      method: 'POST',
+      auth: {
+        bearer: accessToken,
+      },
+      body: {
+        url,
+        username,
+        password,
+        ...(ca_cert && { ca_cert }),
+      },
+    })
+  );
+
+export const clearSUMASettings = () =>
+  apiLogin().then(({ accessToken }) =>
+    cy.request({
+      url: '/api/v1/settings/suse_manager',
+      method: 'DELETE',
+      auth: {
+        bearer: accessToken,
+      },
+    })
+  );
