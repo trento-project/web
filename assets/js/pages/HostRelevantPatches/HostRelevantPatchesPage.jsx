@@ -86,11 +86,11 @@ function HostRelevantPatches({ hostName, onNavigate, patches }) {
             onChange={setDisplayedAdvisories}
             options={advisoryTypes}
             optionsName="options"
-            className="w-64"
+            className="min-w-36 max-w-fit"
             value={displayedAdvisories}
           />
           <Input
-            className="w-1/4"
+            className="max-w-1/4 flex-1"
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by Synopsis"
             prefix={<EOS_SEARCH size="l" />}
