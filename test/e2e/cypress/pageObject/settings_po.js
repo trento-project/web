@@ -24,6 +24,8 @@ const modalGeneratedApiKey = ':nth-child(1) > .w-full > code';
 const modalCopyApiKeyButton = '.flex-col > :nth-child(1) > button';
 const modalExpirationDateLabel = '.flex-col > :nth-child(2) > .text-gray-600';
 const modalCloseButton = 'button:contains("Close")';
+const expiredApiKeyToaster =
+  'p:contains("API Key has expired. Go to Settings to issue a new key")';
 
 // UI Interactions
 
@@ -44,6 +46,9 @@ export const clickGenerateApiKeyConfirmationButton = () =>
   cy.get(confirmationGenerateApiKeyButton).click();
 
 // UI Validations
+export const expiredApiKeyToasterIsDisplayed = () =>
+  cy.get(expiredApiKeyToaster, { timeout: 15000 }).should('be.visible');
+
 export const modalExpirationDateLabelIsDisplayed = () =>
   cy.get(modalExpirationDateLabel).should('contain', 'Key will expire');
 
@@ -63,6 +68,9 @@ export const copyToClipboardButtonIsDisplayed = () =>
   cy.get(copyToClipboardButton).should('be.visible');
 
 // API
+export const setExpiredApiKey = () =>
+  updateApiKeyExpiration(subDays(new Date(), 1));
+
 export const updateApiKeyExpiration = (apiKeyExpiration) => {
   basePage.apiLogin().then(({ accessToken }) => {
     cy.request({

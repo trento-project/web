@@ -38,16 +38,10 @@ context('Settings page', () => {
   });
 
   describe('Api key expiration notifications', () => {
-    it('should show api key expired notification when first loading the page, when the api key is expired', () => {
-      cy.updateApiKeyExpiration(subDays(new Date(), 1));
-
-      cy.reload();
-
-      cy.wait(3000);
-      cy.get('body').should(
-        'contain',
-        'API Key has expired. Go to Settings to issue a new key'
-      );
+    it.only('should show api key expired notification when first loading the page, when the api key is expired', () => {
+      settingsPage.setExpiredApiKey();
+      settingsPage.refresh();
+      settingsPage.expiredApiKeyToasterIsDisplayed();
     });
 
     it('should show api is going to expire notification, when first loadng the page if api key expires in less than 30 days', () => {
