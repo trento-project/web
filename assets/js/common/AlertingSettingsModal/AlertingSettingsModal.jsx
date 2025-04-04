@@ -5,26 +5,52 @@ import Button from '@common/Button';
 import Label from '@common/Label';
 import Modal from '@common/Modal';
 import Input, { Password } from '@common/Input';
+import Switch from '@common/Switch';
 
 import { hasError, getError } from '@lib/api/validationErrors';
 
 export default function AlertingSettingsModal({
-  settings={},
+  previousSettings={},
   open=false,
-  loading=false,
-  errors=[],
+  onSave=noop,
   onCancel=noop,
 }) {
-  const {
-    alertingEnabled,
-    smtpServer,
-    smtpPort,
-    smtpUsername,
-    senderEmail,
-    recipientEmail,
-  } = settings
-  const previouslySet = !isEmpty(settings)
-  const [editingPassword, setEditingPassword] = useState(!previouslySet);
+  const [alertingEnabled, setAlertingEnabled] = useState(Boolean(previousSettings.alertingEnabled));
+  const [smtpServer, setSmtpServer] = useState(previousSettings.smtpServer);
+  const [smtpPort, setSmtpPort] = useState(previousSettings.smtpPort);
+  const [smtpUsername, setSmtpUsername] = useState(previousSettings.smtpUsername);
+  const [senderEmail, setSenderEmail] = useState(previousSettings.senderEmail);
+  const [recipientEmail, setRecipientEmail] = useState(previousSettings.recipientEmail);
+
+  const [editingPassword, setEditingPassword] = useState(isEmpty(previousSettings));
+  const [smtpPassword, setSmtpPassword] = useState('')
+  const [errors, setErrors] = useState([]);
+  const [loading, setLoading] = useState(false)
+
+  function clearErrors() {
+    setErrors([])
+  }
+
+  function onSubmit(e) {
+    e.preventDefault()
+    setLoading(true)
+    try {
+      const settingsPayload = {
+        enabled: alertingEnabled,
+        smtp_server: smtpServer,
+        smtp_port: smtpPort,
+        smtp_username: smtpUsername,
+        sender_email: senderEmail,
+        recipient_email: recipientEmail,
+        ...(editingPassword && { smtp_password: smtpPassword }),
+      }
+      onSave(settingsPayload)
+    } catch ({ response: { data: saveErrors }}) {
+      setErrors(saveErrors)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <Modal
@@ -32,220 +58,202 @@ export default function AlertingSettingsModal({
       open={open}
       onClose={onCancel}
     >
-      <div className="grid grid-cols-6 my-5 gap-6">
-        <Label className="col-span-2" htmlFor="alerting-enabled-input">
-          Send Email Alerts
-        </Label>
-        <div className="col-span-4">
-          <input
-            id="alerting-enabled-input"
-            name="alerting-enabled-input"
-            type="checkbox"
-            checked={alertingEnabled}
-            /* error={hasError('smtpServer', errors)} */
-            /* onChange={({ target: { value } }) => { */
-            /*   setUrl(value); */
-            /*   onClearErrors(); */
-            /* }} */
-          />
-        </div>
-
-        <Label className="col-span-2" htmlFor="smtp-server-input" required>
-          SMTP Server
-        </Label>
-        <div className="col-span-4">
-          <Input
-            id="smtp-server-input"
-            name="smtp-server-input"
-            value={smtpServer}
-            placeholder="Enter a URL"
-            error={hasError('smtpServer', errors)}
-            /* onChange={({ target: { value } }) => { */
-            /*   setUrl(value); */
-            /*   onClearErrors(); */
-            /* }} */
-          />
-          {hasError('smtpServer', errors) && (
-            <p
-              aria-label="smtp-server-input-error"
-              role="alert"
-              className="text-red-500 mt-1"
-            >
-              {capitalize(getError('smtpServer', errors))}
-            </p>
-          )}
-        </div>
-
-        <Label className="col-span-2" htmlFor="smtp-port-input" required>
-          SMTP Port
-        </Label>
-        <div className="col-span-4">
-          <Input
-            id="smtp-port-input"
-            name="smtp-port-input"
-            value={smtpPort}
-            placeholder={587}
-            error={hasError('smtpPort', errors)}
-            /* onChange={({ target: { value } }) => { */
-            /*   setUsername(value); */
-            /*   onClearErrors(); */
-            /* }} */
-          />
-          {hasError('smtpPort', errors) && (
-            <p
-              aria-label="smtp-port-input-error"
-              role="alert"
-              className="text-red-500 mt-1"
-            >
-              {capitalize(getError('smtpPort', errors))}
-            </p>
-          )}
-        </div>
-
-        <Label className="col-span-2" htmlFor="smtp-username-input" required>
-          SMTP Username
-        </Label>
-        <div className="col-span-4">
-          <Input
-            id="smtp-username-input"
-            name="smtp-username-input"
-            value={smtpUsername}
-            placeholder="Enter SMTP Username"
-            error={hasError('smtpUsername', errors)}
-            /* onChange={({ target: { value } }) => { */
-            /*   setUsername(value); */
-            /*   onClearErrors(); */
-            /* }} */
-          />
-          {hasError('smtpUsername', errors) && (
-            <p
-              aria-label="smtp-username-input-error"
-              role="alert"
-              className="text-red-500 mt-1"
-            >
-              {capitalize(getError('smtpUsername', errors))}
-            </p>
-          )}
-        </div>
-
-        <Label className="col-span-2" id="smtp-password-label" htmlFor="smtp-password-input" required>
-          SMTP Password
-        </Label>
-        {editingPassword ? (
+      <form onSubmit={onSubmit}>
+        <div className="grid grid-cols-6 my-5 gap-6">
+          <Label className="col-span-2" htmlFor="alerting-enabled-input">
+            Send Email Alerts
+          </Label>
           <div className="col-span-4">
-            <Password
-              aria-labelledby="smtp-password-label"
-              name="smtp-password-input"
-              placeholder="Enter SMTP Password"
-              error={hasError('smtpPassword', errors)}
-              /* onChange={({ target: { value } }) => { */
-              /*   setPassword(value); */
-              /*   onClearErrors(); */
-              /* }} */
+            <Switch
+              id="alerting-enabled-input"
+              name="alerting-enabled-input"
+              selected={alertingEnabled}
+              onChange={(value) => {
+                setAlertingEnabled(value);
+                clearErrors();
+              }}
             />
-            {hasError('smtpPassword', errors) && (
+          </div>
+
+          <Label className="col-span-2" htmlFor="smtp-server-input" required>
+            SMTP Server
+          </Label>
+          <div className="col-span-4">
+            <Input
+              id="smtp-server-input"
+              name="smtp-server-input"
+              value={smtpServer}
+              placeholder="Enter a URL"
+              error={hasError('smtp_server', errors)}
+              onChange={({ target: { value } }) => {
+                setSmtpServer(value);
+                clearErrors();
+              }}
+            />
+            {hasError('smtp_server', errors) && (
               <p
-                aria-label="smtp-password-input-error"
+                aria-label="smtp-server-input-error"
+                role="alert"
                 className="text-red-500 mt-1"
               >
-                {capitalize(getError('smtpPassword', errors))}
+                {capitalize(getError('smtp_server', errors))}
               </p>
             )}
           </div>
-        ) : (
-         <div className="col-span-4 border border-gray-200 p-5 rounded-md">
-           <p
-             aria-labelledby="smtp-password-label"
-             className="inline align-sub leading-10"
-           >
-              •••••
-           </p>
-            <Button
-              className="float-right"
-              type="danger"
-              onClick={() => setEditingPassword(true)}
-            >
-              Remove
-            </Button>
+
+          <Label className="col-span-2" htmlFor="smtp-port-input" required>
+            SMTP Port
+          </Label>
+          <div className="col-span-4">
+            <Input
+              id="smtp-port-input"
+              name="smtp-port-input"
+              value={smtpPort}
+              placeholder={587}
+              error={hasError('smtp_port', errors)}
+              onChange={({ target: { value } }) => {
+                setSmtpPort(value);
+                clearErrors();
+              }}
+            />
+            {hasError('smtp_port', errors) && (
+              <p
+                aria-label="smtp-port-input-error"
+                role="alert"
+                className="text-red-500 mt-1"
+              >
+                {capitalize(getError('smtp_port', errors))}
+              </p>
+            )}
           </div>
-        )}
 
-        <Label className="col-span-2" htmlFor="sender-email-input" required>
-          Alert Sender
-        </Label>
-        <div className="col-span-4">
-          <Input
-            id="sender-email-input"
-            name="sender-email-input"
-            value={senderEmail}
-            placeholder="Enter an email address"
-            error={hasError('senderEmail', errors)}
-            /* onChange={({ target: { value } }) => { */
-            /*   setUsername(value); */
-            /*   onClearErrors(); */
-            /* }} */
-          />
-          {hasError('senderEmail', errors) && (
-            <p
-              aria-label="sender-email-input-error"
-              role="alert"
-              className="text-red-500 mt-1"
-            >
-              {capitalize(getError('senderEmail', errors))}
-            </p>
+          <Label className="col-span-2" htmlFor="smtp-username-input" required>
+            SMTP Username
+          </Label>
+          <div className="col-span-4">
+            <Input
+              id="smtp-username-input"
+              name="smtp-username-input"
+              value={smtpUsername}
+              placeholder="Enter SMTP Username"
+              error={hasError('smtp_username', errors)}
+              onChange={({ target: { value } }) => {
+                setSmtpUsername(value);
+                clearErrors();
+              }}
+            />
+            {hasError('smtp_username', errors) && (
+              <p
+                aria-label="smtp-username-input-error"
+                role="alert"
+                className="text-red-500 mt-1"
+              >
+                {capitalize(getError('smtp_username', errors))}
+              </p>
+            )}
+          </div>
+
+          <Label className="col-span-2" id="smtp-password-label" htmlFor="smtp-password-input" required>
+            SMTP Password
+          </Label>
+          {editingPassword ? (
+            <div className="col-span-4">
+              <Password
+                aria-labelledby="smtp-password-label"
+                name="smtp-password-input"
+                placeholder="Enter SMTP Password"
+                value={smtpPassword}
+                error={hasError('smtp_password', errors)}
+                onChange={({ target: { value } }) => {
+                  setSmtpPassword(value);
+                  clearErrors();
+                }}
+              />
+              {hasError('smtp_password', errors) && (
+                <p
+                  aria-label="smtp-password-input-error"
+                  className="text-red-500 mt-1"
+                >
+                  {capitalize(getError('smtp_password', errors))}
+                </p>
+              )}
+            </div>
+          ) : (
+           <div className="col-span-4 border border-gray-200 p-5 rounded-md">
+             <p
+               aria-labelledby="smtp-password-label"
+               className="inline align-sub leading-10"
+             >
+                •••••
+             </p>
+              <Button
+                className="float-right"
+                type="danger"
+                onClick={() => setEditingPassword(true)}
+              >
+                Remove
+              </Button>
+            </div>
           )}
+
+          <Label className="col-span-2" htmlFor="sender-email-input" required>
+            Alert Sender
+          </Label>
+          <div className="col-span-4">
+            <Input
+              id="sender-email-input"
+              name="sender-email-input"
+              value={senderEmail}
+              placeholder="Enter an email address"
+              error={hasError('sender_email', errors)}
+              onChange={({ target: { value } }) => {
+                setSenderEmail(value);
+                clearErrors();
+              }}
+            />
+            {hasError('sender_email', errors) && (
+              <p
+                aria-label="sender-email-input-error"
+                role="alert"
+                className="text-red-500 mt-1"
+              >
+                {capitalize(getError('sender_email', errors))}
+              </p>
+            )}
+          </div>
+
+          <Label className="col-span-2" htmlFor="recipient-email-input" required>
+            Alert Recipient
+          </Label>
+          <div className="col-span-4">
+            <Input
+              id="recipient-email-input"
+              name="recipient-email-input"
+              value={recipientEmail}
+              placeholder="Enter an email address"
+              error={hasError('recipient_email', errors)}
+              onChange={({ target: { value } }) => {
+                setRecipientEmail(value);
+                clearErrors();
+              }}
+            />
+            {hasError('recipient_email', errors) && (
+              <p
+                aria-label="recipient-email-input-error"
+                role="alert"
+                className="text-red-500 mt-1"
+              >
+                {capitalize(getError('recipient_email', errors))}
+              </p>
+            )}
+          </div>
         </div>
 
-        <Label className="col-span-2" htmlFor="recipient-email-input" required>
-          Alert Recipient
-        </Label>
-        <div className="col-span-4">
-          <Input
-            id="recipient-email-input"
-            name="recipient-email-input"
-            value={recipientEmail}
-            placeholder="Enter an email address"
-            error={hasError('recipientEmail', errors)}
-            /* onChange={({ target: { value } }) => { */
-            /*   setUsername(value); */
-            /*   onClearErrors(); */
-            /* }} */
-          />
-          {hasError('recipientEmail', errors) && (
-            <p
-              aria-label="recipient-email-input-error"
-              role="alert"
-              className="text-red-500 mt-1"
-            >
-              {capitalize(getError('recipientEmail', errors))}
-            </p>
-          )}
+        <div className="flex flex-row w-80 space-x-2">
+          <Button isSubmitButton disabled={loading}>Save Settings</Button>
+          <Button type="primary-white" onClick={onCancel}>Cancel</Button>
         </div>
-      </div>
-
-      <div className="flex flex-row w-80 space-x-2">
-        <Button
-          disabled={loading}
-          onClick={() => {
-            // const payload = {
-            //   url,
-            //   username,
-            //   ...getCertificatePayload(
-            //     certUploadDate,
-            //     editingCertificate,
-            //     certificate
-            //   ),
-            //   ...(editingPassword && { password }),
-            // };
-            // onSave(payload);
-          }}
-        >
-          Save Settings
-        </Button>
-        <Button type="primary-white" onClick={onCancel}>
-          Cancel
-        </Button>
-      </div>
+      </form>
     </Modal>
   );
 };

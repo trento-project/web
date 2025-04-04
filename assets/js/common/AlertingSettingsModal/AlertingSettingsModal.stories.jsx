@@ -1,3 +1,6 @@
+import { fireEvent } from '@testing-library/react';
+import { userEvent, within } from '@storybook/test';
+
 import AlertingSettingsModal from './AlertingSettingsModal';
 
 export default {
@@ -12,7 +15,7 @@ export default {
     },
   },
   argTypes: {
-    settings: {
+    previousSettings: {
       description: 'Alerting settings that could be configured',
       control: {
         type: 'object',
@@ -27,21 +30,13 @@ export default {
       },
     },
 
-    loading: {
-      description: 'Whether the settings are loading or submitting',
-      type: 'boolean',
-      control: {
-        type: 'boolean',
-      },
-    },
-
-    errors: {
-      description: 'OpenAPI errors coming from backend validation',
-      type: "object",
+    onSave: {
+      description: 'Callback that would run on submit',
+      control: {type: 'function'},
     },
 
     onCancel: {
-      description: 'Callback when the Cancel button is clicked',
+      description: 'Callback that would run on Cancel button clicked',
       control: { type: 'function' },
     },
   },
@@ -57,7 +52,7 @@ export const Default = {
 
 export const WithPreviousSettings = {
   args: {
-    settings: {
+    previousSettings: {
       alertingEnabled: true,
       smtpServer: "smtp.testdomain.com",
       smtpPort: 587,
@@ -69,9 +64,27 @@ export const WithPreviousSettings = {
   }
 };
 
+export const WithPreviousSettingsAndEditablePassword = {
+  args: {
+    previousSettings: {
+      alertingEnabled: true,
+      smtpServer: "smtp.testdomain.com",
+      smtpPort: 587,
+      smtpUsername: "testuser",
+      senderEmail: "admin@testdomain.com",
+      recipientEmail: "trentousers@testdomain.com",
+    },
+    open: true,
+  },
+  play: async ({ canvasElement}) => {
+    const canvas = within(canvasElement.parentElement);
+    await userEvent.click(canvas.getByRole('button', {name: "Remove"}))
+  },
+}
+
 export const WithErrors = {
   args: {
-    settings: {
+    previousSettings: {
       alertingEnabled: true,
       smtpServer: "localhost",
       smtpPort: 70000,
@@ -79,53 +92,81 @@ export const WithErrors = {
       senderEmail: "wrong_email.com",
       recipientEmail: "mailey.com",
     },
-    open: true,
-    errors: [
-      {
-        detail: "error from backend",
-        source: { pointer: '/smtpServer' },
-        title: 'Invalid value',
-      },
-      {
-        detail: "error from backend",
-        source: { pointer: '/smtpPort' },
-        title: 'Invalid value',
-      },
-      {
-        detail: "error from backend",
-        source: { pointer: '/smtpUsername' },
-        title: 'Invalid value',
-      },
-      {
-        detail: "error from backend",
-        source: { pointer: '/smtpPassword' },
-        title: 'Invalid value',
-      },
-      {
-        detail: "error from backend",
-        source: { pointer: '/senderEmail' },
-        title: 'Invalid value',
-      },
-      {
-        detail: "error from backend",
-        source: { pointer: '/recipientEmail' },
-        title: 'Invalid value',
-      },
-    ],
-  }
-};
+    // onSave: make_fake_return_errors_on_save({
+    //   smtpServerError: "Error from backend",
+    //   smtpPortError: "Error from backend",
+    //   smtpUsernameError: "Error from backend",
+    //   smttPasswordError: "Error from backend",
+    //   senderEmailError: "Error from backend",
+    //   recipientEmailError: "Error from backend",
+    // }),
+    onSave: (_settings) => {
+      const errors = [
+        {
+          detail: "error from backend",
+          source: { pointer: '/smtp_server' },
+          title: 'Invalid value',
+        },
+        {
+          detail: "error from backend",
+          source: { pointer: '/smtp_port' },
+          title: 'Invalid value',
+        },
+        {
+          detail: "error from backend",
+          source: { pointer: '/smtp_username' },
+          title: 'Invalid value',
+        },
+        {
+          detail: "error from backend",
+          source: { pointer: '/smtp_password' },
+          title: 'Invalid value',
+        },
+        {
+          detail: "error from backend",
+          source: { pointer: '/sender_email' },
+          title: 'Invalid value',
+        },
+        {
+          detail: "error from backend",
+          source: { pointer: '/recipient_email' },
+          title: 'Invalid value',
+        },
+      ]
 
-export const Loading = {
-  args: {
-    settings: {
-      alertingEnabled: true,
-      smtpServer: "smtp.testdomain.com",
-      smptPort: 587,
-      smtpUsername: "testuser",
-      senderEmail: "admin@testdomain.com",
-      recipientEmail: "trentousers@testdomain.com",
+      throw {
+        response: {
+          data: errors
+        }
+      }
     },
     open: true,
-    loading: true,
-  }
+  },
+  play: async ({ context, canvasElement }) => {
+    const canvas = within(canvasElement.parentElement);
+
+    await WithPreviousSettingsAndEditablePassword.play(context)
+    // XXX: For some reason, this doesn't work, fallback to fireEvent.
+    // userEvent.click(canvas.getByRole('button', {name: "Save Settings"}));
+    fireEvent.click(canvas.getByRole('button', {name: "Save Settings"}));
+  },
 };
+
+// TODO: try long-sleep equivalent
+// export const WithLoading = {
+//   args: {
+//     previousSettings: {
+//       alertingEnabled: true,
+//       smtpServer: "smtp.testdomain.com",
+//       smtpPort: 587,
+//       smtpUsername: "testuser",
+//       senderEmail: "admin@testdomain.com",
+//       recipientEmail: "trentousers@testdomain.com",
+//     },
+//     onSave: {},
+//     open: true,
+//   },
+//   play: async ({ canvasElement}) => {
+//     const canvas = within(canvasElement.parentElement);
+//   },
+// }

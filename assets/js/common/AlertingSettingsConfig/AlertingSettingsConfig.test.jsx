@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { faker } from '@faker-js/faker';
@@ -34,21 +34,23 @@ describe('AlertingSettingsConfig', () => {
   });
 
   it('renders all visual props supplied as arugments', () => {
+    const alertingEnabled = true;
     const smtpServer = faker.internet.url();
     const smtpPort = faker.number.int({ max: 60000 });
     const smtpUsername = faker.animal.cow();
     const senderEmail = faker.internet.email();
     const recipientEmail = faker.internet.email();
-    const enabled = true;
 
     render(
       <AlertingSettingsConfig
-        smtpServer={smtpServer}
-        smtpPort={smtpPort}
-        smtpUsername={smtpUsername}
-        senderEmail={senderEmail}
-        recipientEmail={recipientEmail}
-        alertingEnabled={enabled}
+        settings={{
+          alertingEnabled,
+          smtpServer,
+          smtpPort,
+          smtpUsername,
+          senderEmail,
+          recipientEmail,
+        }}
       />
     );
 
@@ -88,8 +90,9 @@ describe('AlertingSettingsConfig', () => {
     ).toBeVisible();
   });
 
-  it('allows editing when user has sufficient abilities and calls correct handler', () => {
+  it('allows editing when user has sufficient abilities and calls correct handler', async () => {
     const onEditClick = jest.fn();
+    const user = userEvent.setup()
 
     render(
       <AlertingSettingsConfig
@@ -100,7 +103,7 @@ describe('AlertingSettingsConfig', () => {
 
     expect(screen.getByLabelText('alerting-edit-button')).toBeEnabled();
 
-    fireEvent.click(screen.getByLabelText('alerting-edit-button'));
+    await user.click(screen.getByLabelText('alerting-edit-button'));
     expect(onEditClick).toHaveBeenCalledTimes(1);
   });
 });

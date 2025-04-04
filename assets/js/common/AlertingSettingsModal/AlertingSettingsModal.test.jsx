@@ -7,13 +7,58 @@ import { capitalize } from 'lodash';
 
 import AlertingSettingsModal from './AlertingSettingsModal';
 
+function construct_error_message(pointer, errorDetails) {
+  return {
+    detail: errorDetails,
+    source: { pointer: `/${pointer}`},
+    title: 'Invalid value',
+  }
+};
+
+function make_fake_return_errors_on_save({
+  smtpServerError,
+  smtpPortError,
+  smtpUsernameError,
+  smtpPasswordError,
+  senderEmailError,
+  recipientEmailError
+}) {
+  return (_settings) => {
+    var errors = []
+    smtpServerError && errors.push(
+      construct_error_message("smtp_server", smtpServerError)
+    )
+    smtpPortError && errors.push(
+      construct_error_message("smtp_port", smtpPortError)
+    )
+    smtpUsernameError && errors.push(
+      construct_error_message("smtp_username", smtpUsernameError)
+    )
+    smtpPasswordError && errors.push(
+      construct_error_message("smtp_password", smtpPasswordError)
+    )
+    senderEmailError && errors.push(
+      construct_error_message("sender_email", senderEmailError)
+    )
+    recipientEmailError && errors.push(
+      construct_error_message("recipient_email", recipientEmailError)
+    )
+
+    throw {
+      response: {
+        data: errors
+      }
+    }
+  }
+};
+
 describe("AlertingSettingsModal", () => {
   it("renders correctly when opened with no arguments passed", async () => {
     await act(() => {
       render(<AlertingSettingsModal open />)
     });
 
-    const alertingEnabled = screen.getByRole('checkbox', {name: "Send Email Alerts"})
+    const alertingEnabled = screen.getByRole('switch', {name: "Send Email Alerts"})
     expect(alertingEnabled).not.toBeChecked()
 
     const smtpServer = screen.getByRole('textbox', {name: "SMTP Server *"})
@@ -49,7 +94,8 @@ describe("AlertingSettingsModal", () => {
 
     await act(() => {
       render(<AlertingSettingsModal
-               settings={{
+               previousSettings={{
+                 alertingEnabled: true,
                  smtpServer: smtpServer,
                  smtpPort: smtpPort,
                  smtpUsername: smtpUsername,
@@ -59,6 +105,7 @@ describe("AlertingSettingsModal", () => {
                open />)
     });
 
+    expect(screen.getByRole('switch', {name: "Send Email Alerts"})).toBeChecked()
     expect(screen.getByRole('textbox', {name: "SMTP Server *"})).toHaveDisplayValue(smtpServer)
     expect(screen.getByRole('textbox', {name: "SMTP Port *"})).toHaveDisplayValue(smtpPort.toString())
     expect(screen.getByRole('textbox', {name: "SMTP Username *"})).toHaveDisplayValue(smtpUsername)
@@ -67,50 +114,115 @@ describe("AlertingSettingsModal", () => {
     expect(screen.getByRole('textbox', {name: "Alert Recipient *"})).toHaveDisplayValue(recipientEmail)
   })
 
-  it.skip("TODO calls save handler correctly when supplying fresh settings", async () => {});
+  it("calls save handler correctly when supplying fresh settings", async () => {
+    const smtpServer = faker.internet.domainName();
+    const smtpPort = faker.number.int({min: 1, max: 65535});
+    const smtpUsername = faker.internet.username();
+    const smtpPassword = faker.internet.password()
+    const senderEmail = faker.internet.email();
+    const recipientEmail = faker.internet.email();
 
-  it.skip("TODO calls save handler with what changed", async () => {});
+    const user = userEvent.setup();
+    const onSave = jest.fn()
+
+    render(<AlertingSettingsModal open onSave={onSave} />);
+
+    await user.click(screen.getByRole("switch", "Email Alerts"));
+    await user.type(screen.getByRole('textbox', {name: "SMTP Server *"}), smtpServer);
+    await user.type(screen.getByRole('textbox', {name: "SMTP Port *"}), smtpPort.toString());
+    await user.type(screen.getByRole('textbox', {name: "SMTP Username *"}), smtpUsername);
+    await user.type(screen.getByLabelText(/^SMTP Password/), smtpPassword);
+    await user.type(screen.getByRole('textbox', {name: "Alert Sender *"}), senderEmail);
+    await user.type(screen.getByRole('textbox', {name: "Alert Recipient *"}), recipientEmail);
+    await user.click(screen.getByRole("button", {name: "Save Settings"}))
+
+    expect(onSave).toBeCalledWith({
+      enabled: true,
+      smtp_server: smtpServer,
+      smtp_port: smtpPort.toString(),
+      smtp_username: smtpUsername,
+      smtp_password: smtpPassword,
+      sender_email: senderEmail,
+      recipient_email: recipientEmail,
+    })
+  });
+
+  it("does not supply password to save handler by default when previous settings", async () => {
+    const smtpServer = faker.internet.domainName()
+    const smtpPort = faker.number.int({min: 1, max: 65535})
+    const smtpUsername = faker.internet.username()
+    const senderEmail = faker.internet.email()
+    const recipientEmail = faker.internet.email()
+
+    const user = userEvent.setup();
+    const onSave = jest.fn()
+
+    render(
+      <AlertingSettingsModal
+        previousSettings={{
+          alertingEnabled: true,
+          smtpServer: smtpServer,
+          smtpPort: smtpPort,
+          smtpUsername: smtpUsername,
+          senderEmail: senderEmail,
+          recipientEmail: recipientEmail,
+        }}
+        open
+        onSave={onSave}
+      />
+    )
+    await user.click(screen.getByRole("button", {name: "Save Settings"}))
+
+    expect(onSave).toBeCalledTimes(1)
+    expect(onSave.mock.calls[0][0]).not.toHaveProperty("password")
+  });
 
   it("renders errors correctly", async () => {
-    const smtpServerDetails = faker.lorem.words()
-    const smtpPortDetails = faker.lorem.words()
-    const smtpUsernameDetails = faker.lorem.words()
-    const senderEmailDetails = faker.lorem.words()
-    const recipientEmailDetails = faker.lorem.words()
+    const smtpServerError = faker.lorem.words()
+    const smtpPortError = faker.lorem.words()
+    const smtpUsernameError = faker.lorem.words()
+    const senderEmailError = faker.lorem.words()
+    const recipientEmailError = faker.lorem.words()
 
-    function _construct_error_message(pointer, errorDetails) {
-      return {
-        detail: errorDetails,
-        source: { pointer: `/${pointer}`},
-        title: 'Invalid value',
-      }
-    };
+    onSaveFake = make_fake_return_errors_on_save({
+      smtpServerError,
+      smtpPortError,
+      smtpUsernameError,
+      senderEmailError,
+      recipientEmailError
+    })
 
-    const errors = [
-      _construct_error_message("smtpServer", smtpServerDetails),
-      _construct_error_message("smtpPort", smtpPortDetails),
-      _construct_error_message("smtpUsername", smtpUsernameDetails),
-      _construct_error_message("senderEmail", senderEmailDetails),
-      _construct_error_message("recipientEmail", recipientEmailDetails),
-    ]
+    const user = userEvent.setup()
 
-    await act(() => {
-      render(<AlertingSettingsModal
-               settings={{
-                 smtpServer: faker.internet.domainName(),
-                 smtpPort: faker.number.int({min: 1, max: 65535}),
-                 smtpUsername: faker.internet.username(),
-                 senderEmail: faker.internet.email(),
-                 recipientEmail: faker.internet.email(),
-               }}
-               errors={errors}
-               open />)
-    });
+    render(
+      <AlertingSettingsModal
+        open
+        previousSettings={{
+          smtpServer: faker.internet.domainName(),
+          smtpPort: faker.number.int({min: 1, max: 65535}),
+          smtpUsername: faker.internet.username(),
+          senderEmail: faker.internet.email(),
+          recipientEmail: faker.internet.email(),
+        }}
+        onSave={onSaveFake}
+      />
+    );
+    await user.click(screen.getByRole('button', {name: "Save Settings"}));
 
-    expect(screen.getByRole('alert', {name: "smtp-server-input-error"})).toHaveTextContent(capitalize(smtpServerDetails))
-    expect(screen.getByRole('alert', {name: "smtp-port-input-error"})).toHaveTextContent(capitalize(smtpPortDetails))
-    expect(screen.getByRole('alert', {name: "smtp-username-input-error"})).toHaveTextContent(capitalize(smtpUsernameDetails))
-    expect(screen.getByRole('alert', {name: "sender-email-input-error"})).toHaveTextContent(capitalize(senderEmailDetails))
-    expect(screen.getByRole('alert', {name: "recipient-email-input-error"})).toHaveTextContent(capitalize(recipientEmailDetails))
+    expect(screen.getByRole('alert', {name: "smtp-server-input-error"})).toHaveTextContent(
+      capitalize(smtpServerError)
+    )
+    expect(screen.getByRole('alert', {name: "smtp-port-input-error"})).toHaveTextContent(
+      capitalize(smtpPortError)
+    )
+    expect(screen.getByRole('alert', {name: "smtp-username-input-error"})).toHaveTextContent(capitalize(
+      smtpUsernameError)
+    )
+    expect(screen.getByRole('alert', {name: "sender-email-input-error"})).toHaveTextContent(
+      capitalize(senderEmailError)
+    )
+    expect(screen.getByRole('alert', {name: "recipient-email-input-error"})).toHaveTextContent(capitalize(
+      recipientEmailError)
+    )
   });
 });
