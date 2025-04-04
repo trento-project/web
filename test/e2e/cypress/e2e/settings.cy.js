@@ -1,3 +1,5 @@
+import * as settingsPage from '../pageObject/settings_po';
+
 /* eslint-disable cypress/no-unnecessary-waiting */
 import { subDays, addDays } from 'date-fns';
 import {
@@ -8,48 +10,30 @@ import {
 import { createUserRequestFactory } from '@lib/test-utils/factories';
 
 context('Settings page', () => {
-  before(() => {
-    cy.visit('/settings');
-  });
+  beforeEach(() => settingsPage.visit());
 
-  after(() => {
-    cy.updateApiKeyExpiration(null);
-  });
+  after(() => settingsPage.updateApiKeyExpiration(null));
 
   describe('Api key display', () => {
     it('should display the api key with the copy button', () => {
-      cy.updateApiKeyExpiration(null);
-
-      cy.reload();
-
-      cy.get('body').should('contain', 'Key will never expire');
-      cy.get('code').should('not.be.empty');
-      cy.get('[aria-label="copy to clipboard"]').should('be.visible');
+      settingsPage.updateApiKeyExpiration(null);
+      settingsPage.refresh();
+      settingsPage.keyExpirationLabelIsDisplayed();
+      settingsPage.apiKeyCodeIsNotEmpty();
+      settingsPage.copyToClipboardButtonIsDisplayed();
     });
   });
 
   describe('Api Key generation', () => {
     it('should generate a new api key', () => {
-      cy.get('button').contains('Generate Key').click();
-      cy.get('.rc-input-number-input').as('quantityInput');
-      cy.get('.generate-api-key').as('generateButton');
-
-      cy.get('@quantityInput').type('2');
-      cy.get('@generateButton').click();
-
-      cy.get('.generate-api-confirmation').as('confirmationGenerateButton');
-      cy.get('@confirmationGenerateButton').click();
-
-      cy.get(':nth-child(1) > .w-full > code').as('generatedApiKey');
-      cy.get('@generatedApiKey').should('not.be.empty');
-
-      cy.get('.flex-col > :nth-child(1) > button').as('copyApiKey');
-      cy.get('@copyApiKey').should('be.visible');
-
-      cy.get('.flex-col > :nth-child(2) > .text-gray-600').as('expirationDate');
-
-      cy.get('@expirationDate').should('contain', 'Key will expire');
-      cy.get('button').contains('Close').click();
+      settingsPage.clickGenerateApiKeyButton();
+      settingsPage.setApiKeyExpiration(2);
+      settingsPage.clickGenerateApiKeyButtonFromModal();
+      settingsPage.clickGenerateApiKeyConfirmationButton();
+      settingsPage.modalShowsNewGeneratedApiKey();
+      settingsPage.modalCopyApiKeyButtonIsDisplayed();
+      settingsPage.modalExpirationDateLabelIsDisplayed();
+      settingsPage.clickModalCloseButton();
     });
   });
 
