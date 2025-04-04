@@ -104,6 +104,11 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
             description: "Password change is requested",
             nullable: false
           },
+          analytics_enabled: %Schema{
+            type: :boolean,
+            description: "Whether user analytics collection is enabled",
+            nullable: false
+          },
           totp_enabled: %Schema{
             type: :boolean,
             description: "TOTP is enabled",
@@ -154,6 +159,11 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
           password_confirmation: %Schema{
             type: :string,
             description: "User new password, should be the same as password field",
+            nullable: false
+          },
+          analytics_enabled: %Schema{
+            type: :boolean,
+            description: "Whether user analytics collection is enabled",
             nullable: false
           }
         }
@@ -298,6 +308,11 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
             format: :"date-time",
             description: "Date of user last update",
             nullable: true
+          },
+          analytics_enabled: %Schema{
+            type: :boolean,
+            description: "Whether user analytics collection is enabled",
+            nullable: false
           },
           totp_enabled_at: %OpenApiSpex.Schema{
             type: :string,

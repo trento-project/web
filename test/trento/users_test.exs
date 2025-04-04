@@ -94,6 +94,26 @@ defmodule Trento.UsersTest do
 
       assert user.password_change_requested_at == nil
     end
+
+    test "update user profile sets analytics enabled value with current time" do
+      user = insert(:user)
+
+      assert {:ok,
+              %User{
+                analytics_enabled_at: analytics_enabled_at
+              }} =
+               Users.update_user_profile(user, %{analytics_enabled: true})
+
+      refute analytics_enabled_at == nil
+
+      assert {:ok,
+              %User{
+                analytics_enabled_at: analytics_enabled_at
+              }} =
+               Users.update_user_profile(user, %{analytics_enabled: false})
+
+      assert analytics_enabled_at == nil
+    end
   end
 
   describe "users" do

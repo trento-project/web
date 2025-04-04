@@ -93,7 +93,10 @@ defmodule Trento.Users do
     if username == admin_username() do
       {:error, :forbidden}
     else
-      updated_attrs = maybe_set_password_change_requested_at(attrs, true)
+      updated_attrs =
+        attrs
+        |> maybe_set_password_change_requested_at(true)
+        |> maybe_enable_analytics()
 
       user
       |> User.profile_update_changeset(updated_attrs)
@@ -249,6 +252,14 @@ defmodule Trento.Users do
   end
 
   defp maybe_set_password_change_requested_at(attrs, _), do: attrs
+
+  defp maybe_enable_analytics(%{analytics_enabled: true} = attrs) do
+    Map.put(attrs, :analytics_enabled_at, DateTime.utc_now())
+  end
+
+  defp maybe_enable_analytics(attrs) do
+    Map.put(attrs, :analytics_enabled_at, nil)
+  end
 
   defp insert_abilities_multi(multi, []), do: multi
 

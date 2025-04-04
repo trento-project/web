@@ -42,5 +42,22 @@ defmodule TrentoWeb.V1.UsersJSONTest do
                idp_user: false
              } = UsersJSON.user(%{user: user})
     end
+
+    test "should correctly render a user when the user has no analytics preference" do
+      user = build(:user, abilities: [], user_identities: [], analytics_enabled_at: nil)
+
+      assert %{
+               analytics_enabled: false
+             } = UsersJSON.user(%{user: user})
+    end
+
+    test "should correctly render a user when the user has an analytics preference" do
+      user =
+        build(:user, abilities: [], user_identities: [], analytics_enabled_at: DateTime.utc_now())
+
+      assert %{
+               analytics_enabled: true
+             } = UsersJSON.user(%{user: user})
+    end
   end
 end
