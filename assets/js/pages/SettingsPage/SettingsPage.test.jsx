@@ -39,6 +39,7 @@ describe('Settings Page', () => {
     });
   });
 
+
   describe('API Key Section', () => {
     it('should render the api key with copy button', async () => {
       const [StatefulSettings] = withState(<SettingsPage />, {
@@ -104,10 +105,13 @@ describe('Settings Page', () => {
       expect(screen.getByText('CA Certificate')).toBeVisible();
       expect(screen.getByText('-')).toBeVisible();
 
-      expect(screen.getByText('Username')).toBeVisible();
-      expect(screen.getByText('Password')).toBeVisible();
+      const sumaUsername = screen.getByLabelText('suma-username')
+      expect(sumaUsername).toBeVisible();
+      expect(sumaUsername).toHaveTextContent(".....");
 
-      expect(screen.queryAllByText('.....')).toHaveLength(2);
+      const sumaPassword = screen.getByLabelText('suma-password')
+      expect(sumaPassword).toBeVisible();
+      expect(sumaPassword).toHaveTextContent(".....");
     });
 
     it('should render SUSE Manager Config Section with configured settings', async () => {
@@ -133,11 +137,13 @@ describe('Settings Page', () => {
         screen.getByText(format(ca_uploaded_at, "'Uploaded:' dd MMM y"))
       ).toBeVisible();
 
-      expect(screen.getByText('Username')).toBeVisible();
-      expect(screen.getByText(username)).toBeVisible();
+      const sumaUsername = screen.getByLabelText('suma-username')
+      expect(sumaUsername).toBeVisible();
+      expect(sumaUsername).toHaveTextContent(username);
 
-      expect(screen.getByText('Password')).toBeVisible();
-      expect(screen.getByText('•••••')).toBeVisible();
+      const sumaPassword = screen.getByLabelText('suma-password')
+      expect(sumaPassword).toBeVisible();
+      expect(sumaPassword).toHaveTextContent("•••••");
     });
   });
 

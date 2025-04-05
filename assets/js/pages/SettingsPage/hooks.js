@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
-import { logError } from '@lib/log';
+import { isEmpty } from 'lodash';
 import { useDispatch } from 'react-redux';
+
 import { dismissNotification, notify } from '@state/notifications';
 import { API_KEY_EXPIRATION_NOTIFICATION_ID } from '@state/sagas/settings';
+
+import { logError } from '@lib/log';
 import { get, patch } from '@lib/network';
 import {
   getSettings,
@@ -11,6 +14,11 @@ import {
   clearSettings,
   testConnection,
 } from '@lib/api/suseManagerSettings';
+import {
+  getSettings as getAlertingSettings,
+  saveSettings as saveAlertingSettings,
+  updateSettings as updateAlertingSettings,
+} from '@lib/api/alertingSettings';
 
 export const useSuseManagerSettings = () => {
   const dispatch = useDispatch();
@@ -160,5 +168,59 @@ export const useApiKeySettings = () => {
     apiKeyExpiration,
     saveApiKeySettings,
     fetchApiKeySettings,
+  };
+};
+
+export const useAlertingSettings = () => {
+  const [settings, setSettings] = useState({})
+  const [loading, setLoading] = useState(false);
+  const [fetchError, setFetchError] = useState(false)
+
+  async function fetch() {
+    setLoading(true);
+    setFetchError(false);
+
+    try {
+      const { data } = await getAlertingSettings();
+      setSettings({
+        alertingEnabled: data.enabled,
+        smtpServer: data.smtp_server,
+        smtpPort: data.smtp_port,
+        smtpUsername: data.smtp_username,
+        senderEmail: data.sender_email,
+        recipientEmail: data.recipient_email,
+      });
+    } catch ({ response: { status } }) {
+      setSettings({});
+      if (status !== 404) setFetchError(true);
+    } finally {
+      setLoading(false)
+    }
+  };
+
+  async function submit(newSettings) {
+    setLoading(true)
+    // TODO: Allow partial updates
+    // const action = isEmpty(settings) ? saveAlertingSettings : updateAlertingSettings
+    const action = saveAlertingSettings
+
+    try {
+      const { data } = await action(newSettings);
+      setSettings(data);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetch()
+  }, [])
+
+  return {
+    settings,
+    loading,
+    fetchError,
+    fetch,
+    submit,
   };
 };

@@ -39,6 +39,7 @@ import AlertingSettingsModal from '@common/AlertingSettingsModal';
 import {
   useApiKeySettings,
   useSuseManagerSettings,
+  useAlertingSettings,
 } from '@pages/SettingsPage/hooks';
 
 const apiKeySettingsPermittedFor = ['all:api_key_settings'];
@@ -116,9 +117,18 @@ function SettingsPage() {
 
   const hasApiKey = Boolean(apiKey);
 
-  const [alertingSettings, _setAlertingSettings] = useState({});
-  const [_alertingSettingsModalOpen, setAlertingSettingsModalOpen] =
-    useState(false);
+  const {
+    settings: alertingSettings,
+    loading: alertingLoading,
+    fetchError: alertingFetchError,
+    fetch: fetchAlertingSettings,
+    submit: submitAlertingSettings,
+  } = useAlertingSettings();
+
+  const [alertingSettingsModalOpen, setAlertingSettingsModalOpen] = useState(false);
+  useEffect(() => {
+    setAlertingSettingsModalOpen(false);
+  }, [alertingSettings]);
 
   return (
     <>
@@ -342,8 +352,30 @@ function SettingsPage() {
 
       <section>
         <div className="pb-4">
-          <AlertingSettingsConfig />
-          <AlertingSettingsModal />
+          <SettingsLoader
+            sectionName="Alerting Settings"
+            staatus={calculateSettingsLoaderStatus(
+              alertingLoading,
+              alertingFetchError
+            )}
+            onRetry={() => fetchAlertingSettings()}
+          >
+            <AlertingSettingsConfig
+              settings={alertingSettings}
+              userAbilities={abilities}
+              onEditClick={() => {
+                setAlertingSettingsModalOpen(true);
+              }}
+            />
+          </SettingsLoader>
+
+          <AlertingSettingsModal
+            key={`alertingmodal-${Object.values(alertingSettings).join("-")}`}
+            previousSettings={alertingSettings}
+            open={alertingSettingsModalOpen}
+            onSave={submitAlertingSettings}
+            onCancel={() => setAlertingSettingsModalOpen(false)}
+          />
         </div>
       </section>
     </>
