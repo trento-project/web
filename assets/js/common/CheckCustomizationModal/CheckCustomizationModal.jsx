@@ -21,7 +21,7 @@ import {
 import CheckCustomizationInput from './CheckCustomizationInput';
 
 const checkBoxWarningText =
-  'Trento & SUSE cannot be held liable for damages if system is unable to function due to custom check value.';
+  'Trento and SUSE are not responsible for cluster operation failure due to deviation from Best Practices.';
 
 const appliedValue = (value) => value?.custom_value ?? value?.default_value;
 

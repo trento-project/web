@@ -123,7 +123,7 @@ defmodule Trento.ActivityLog.SeverityLevel do
       values: %{"updated" => :info, "not_updated" => :info, "*" => :critical},
       condition: :map_value_to_severity
     },
-    "check_customization_applied" => :info,
+    "check_customization_applied" => :warning,
     "check_customization_reset" => :info
   }
 
