@@ -9,20 +9,6 @@ import {
 } from '../fixtures/suma_credentials/certificates';
 import { createUserRequestFactory } from '@lib/test-utils/factories';
 
-// Test data
-const url = '/settings';
-
-const sumaSettings = {
-  URL_INPUT: 'suma-url-input',
-  CA_CERT_INPUT: 'suma-cacert-input',
-  USERNAME_INPUT: 'suma-username-input',
-  PASSWORD_INPUT: 'suma-password-input',
-
-  sumaUrl: 'https://valid',
-  sumaUsername: 'admin',
-  sumaPassword: 'adminpassword',
-};
-
 // Selectors
 const keyExpirationLabel = 'div[class*="mt-1"]';
 const apiKeyCode = 'code';
@@ -40,11 +26,145 @@ const expiredApiKeyToaster =
   'p:contains("API Key has expired. Go to Settings to issue a new key")';
 const closeToExpireApiKeyToaster = 'p:contains("API Key expires in 9 days")';
 
+// SUMA selectors
+
+const sumaUrlLabel = '[aria-label="suma-url"]';
+const sumaCertUploadDateLabel = '[aria-label="suma-cacert-upload-date"]';
+const sumaUsernameLabel = '[aria-label="suma-username"]';
+const sumaPasswordLabel = '[aria-label="suma-password"]';
+const sumaEditSettingsButton =
+  'h2:contains("Linux Manager") + span button:contains("Edit Settings")';
+
+const sumaSettingsModal = {
+  urlInput: 'label:contains("URL") + div input',
+  caCertInput: 'label:contains("Certificate") + div textarea',
+  removeCaCertButton: `[aria-label="remove-suma-cacert"]`,
+  usernameInput: 'label:contains("Username") + div input',
+  passwordInput: 'label:contains("Password") + div input',
+  removePasswordButton: `[aria-label="remove-suma-password"]`,
+  cancelButton: 'button:contains("Cancel")',
+  saveButton: 'button:contains("Save Settings")',
+};
+
+// Test data
+const url = '/settings';
+
+const sumaUrl = 'https://valid';
+const sumaUsername = 'admin';
+const sumaPassword = 'adminpassword';
+
+const savingValidationScenarios = [
+  {
+    selector: 'missing fields',
+    values: [],
+    expectedErrors: [
+      { selector: sumaSettingsModal.urlInput, error: 'Missing field: url' },
+      { selector: sumaSettingsModal.caCertInput, error: null },
+      {
+        selector: sumaSettingsModal.usernameInput,
+        error: 'Missing field: username',
+      },
+      {
+        selector: sumaSettingsModal.passwordInput,
+        error: 'Missing field: password',
+      },
+    ],
+  },
+  {
+    selector: 'blank fields',
+    values: [
+      { selector: sumaSettingsModal.urlInput, value: ' ' },
+      { selector: sumaSettingsModal.caCertInput, value: ' ' },
+      { selector: sumaSettingsModal.usernameInput, value: ' ' },
+      { selector: sumaSettingsModal.passwordInput, value: ' ' },
+    ],
+    expectedErrors: [
+      { selector: sumaSettingsModal.urlInput, error: "Can't be blank" },
+      { selector: sumaSettingsModal.caCertInput, error: "Can't be blank" },
+      { selector: sumaSettingsModal.usernameInput, error: "Can't be blank" },
+      { selector: sumaSettingsModal.passwordInput, error: "Can't be blank" },
+    ],
+  },
+  {
+    selector: 'invalid url and certificate',
+    values: [
+      { selector: sumaSettingsModal.urlInput, value: 'invalid' },
+      { selector: sumaSettingsModal.caCertInput, value: 'foobar' },
+      { selector: sumaSettingsModal.usernameInput, value: 'admin' },
+      { selector: sumaSettingsModal.passwordInput, value: 'adminpassword' },
+    ],
+    expectedErrors: [
+      {
+        selector: sumaSettingsModal.urlInput,
+        error: 'Can only be an https url',
+      },
+      {
+        selector: sumaSettingsModal.caCertInput,
+        error: 'Unable to parse x.509 certificate',
+      },
+    ],
+  },
+  {
+    selector: 'http url and invalid certificate',
+    values: [
+      { selector: sumaSettingsModal.urlInput, value: 'http://invalid' },
+      {
+        selector: sumaSettingsModal.caCertInput,
+        value: '-----BEGIN CERTIFICATE-----\nfoobar\n-----END CERTIFICATE-----',
+      },
+      { selector: sumaSettingsModal.usernameInput, value: 'admin' },
+      { selector: sumaSettingsModal.passwordInput, value: 'adminpassword' },
+    ],
+    expectedErrors: [
+      {
+        selector: sumaSettingsModal.urlInput,
+        error: 'Can only be an https url',
+      },
+      {
+        selector: sumaSettingsModal.caCertInput,
+        error: 'Unable to parse x.509 certificate',
+      },
+    ],
+  },
+  {
+    selector: 'expired certificate',
+    values: [
+      { selector: sumaSettingsModal.urlInput, value: 'http://invalid' },
+      {
+        selector: sumaSettingsModal.caCertInput,
+        value: expiredCertificate,
+      },
+      { selector: sumaSettingsModal.usernameInput, value: 'admin' },
+      { selector: sumaSettingsModal.passwordInput, value: 'adminpassword' },
+    ],
+    expectedErrors: [
+      {
+        selector: sumaSettingsModal.urlInput,
+        error: 'Can only be an https url',
+      },
+      {
+        selector: sumaSettingsModal.caCertInput,
+        error: 'The x.509 certificate is not valid',
+      },
+    ],
+  },
+];
+
 // UI Interactions
 
-export const visit = () => cy.visit(url);
+export const visit = () => {
+  cy.intercept('/api/v1/settings/suse_manager').as('settingsEndpoint');
+  cy.visit(url);
+};
 
-export const clickModalCloseButton = () => cy.get(modalCloseButton).click();
+export const clickSumaSettingsModaSaveButton = () =>
+  cy.get(sumaSettingsModal.saveButton).click();
+
+export const clickSumaEditSettingsButton = () =>
+  cy.get(sumaEditSettingsButton).click();
+
+export const clickModalCancelButton = () =>
+  cy.get(sumaSettingsModal.cancelButton).click();
 
 export const clickGenerateApiKeyButton = () =>
   cy.get(generateApiKeyButton).click();
@@ -58,7 +178,63 @@ export const clickGenerateApiKeyButtonFromModal = () =>
 export const clickGenerateApiKeyConfirmationButton = () =>
   cy.get(confirmationGenerateApiKeyButton).click();
 
+export const clickModalCloseButton = () => cy.get(modalCloseButton).click();
+
+export const expectedSavingValidationsAreDisplayed = () => {
+  savingValidationScenarios.forEach(({ values, expectedErrors }) => {
+    clickSumaEditSettingsButton();
+    values.forEach(({ selector, value }) =>
+      cy.get(selector).type(value, { delay: 0 })
+    );
+
+    clickSumaSettingsModaSaveButton();
+    basePage.waitForRequest('settingsEndpoint');
+
+    expectedErrors.forEach(({ selector, error }) => {
+      const errorMessageSelector = `${selector.split('+')[0]} + div p`;
+      error
+        ? cy.get(errorMessageSelector).should('have.text', error)
+        : cy.get(errorMessageSelector).should('not.exist');
+    });
+    clickModalCancelButton();
+    sumaUrlHasExpectedValue('https://');
+    sumaCaCertUploadDateHasExpectedValue('-');
+    sumaUsernameHasExpectedValue('.....');
+    sumaPasswordHasExpectedValue('.....');
+  });
+};
+
 // UI Validations
+export const sumaRemovePasswordButtonIsNotDisplayed = () =>
+  cy.get(sumaSettingsModal.removePasswordButton).should('not.exist');
+
+export const sumaPasswordInputIsEmpty = () =>
+  cy.get(sumaSettingsModal.passwordInput).should('have.value', '');
+
+export const sumaUsernameInputIsEmpty = () =>
+  cy.get(sumaSettingsModal.usernameInput).should('have.value', '');
+
+export const sumaRemoveCaCertButtonIsNotDisplayed = () =>
+  cy.get(sumaSettingsModal.removeCaCertButton).should('not.exist');
+
+export const sumaCaCertIsEmpty = () =>
+  cy.get(sumaSettingsModal.caCertInput).should('have.value', '');
+
+export const sumaUrlInputIsEmpty = () =>
+  cy.get(sumaSettingsModal.urlInput).should('have.value', '');
+
+export const sumaUsernameHasExpectedValue = (expectedValue) =>
+  cy.get(sumaUsernameLabel).should('have.text', expectedValue);
+
+export const sumaPasswordHasExpectedValue = (expectedValue) =>
+  cy.get(sumaPasswordLabel).should('have.text', expectedValue);
+
+export const sumaUrlHasExpectedValue = (expectedValue) =>
+  cy.get(sumaUrlLabel).should('contain', expectedValue);
+
+export const sumaCaCertUploadDateHasExpectedValue = (expectedValue) =>
+  cy.get(sumaCertUploadDateLabel).should('have.text', expectedValue);
+
 export const expiredApiKeyToasterIsDisplayed = () =>
   cy.get(expiredApiKeyToaster, { timeout: 15000 }).should('be.visible');
 
