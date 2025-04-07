@@ -53,126 +53,6 @@ const sumaUrl = 'https://valid';
 const sumaUsername = 'admin';
 const sumaPassword = 'adminpassword';
 
-const savingValidationScenarios = [
-  {
-    selector: 'missing fields',
-    values: [],
-    expectedErrors: [
-      { selector: sumaSettingsModal.urlInput, error: 'Missing field: url' },
-      { selector: sumaSettingsModal.caCertInput, error: null },
-      {
-        selector: sumaSettingsModal.usernameInput,
-        error: 'Missing field: username',
-      },
-      {
-        selector: sumaSettingsModal.passwordInput,
-        error: 'Missing field: password',
-      },
-    ],
-  },
-  {
-    selector: 'blank fields',
-    values: [
-      { selector: sumaSettingsModal.urlInput, value: ' ' },
-      { selector: sumaSettingsModal.caCertInput, value: ' ' },
-      { selector: sumaSettingsModal.usernameInput, value: ' ' },
-      { selector: sumaSettingsModal.passwordInput, value: ' ' },
-    ],
-    expectedErrors: [
-      { selector: sumaSettingsModal.urlInput, error: "Can't be blank" },
-      { selector: sumaSettingsModal.caCertInput, error: "Can't be blank" },
-      { selector: sumaSettingsModal.usernameInput, error: "Can't be blank" },
-      { selector: sumaSettingsModal.passwordInput, error: "Can't be blank" },
-    ],
-  },
-  {
-    selector: 'invalid url and certificate',
-    values: [
-      { selector: sumaSettingsModal.urlInput, value: 'invalid' },
-      { selector: sumaSettingsModal.caCertInput, value: 'foobar' },
-      { selector: sumaSettingsModal.usernameInput, value: 'admin' },
-      { selector: sumaSettingsModal.passwordInput, value: 'adminpassword' },
-    ],
-    expectedErrors: [
-      {
-        selector: sumaSettingsModal.urlInput,
-        error: 'Can only be an https url',
-      },
-      {
-        selector: sumaSettingsModal.caCertInput,
-        error: 'Unable to parse x.509 certificate',
-      },
-    ],
-  },
-  {
-    selector: 'http url and invalid certificate',
-    values: [
-      { selector: sumaSettingsModal.urlInput, value: 'http://invalid' },
-      {
-        selector: sumaSettingsModal.caCertInput,
-        value: '-----BEGIN CERTIFICATE-----\nfoobar\n-----END CERTIFICATE-----',
-      },
-      { selector: sumaSettingsModal.usernameInput, value: 'admin' },
-      { selector: sumaSettingsModal.passwordInput, value: 'adminpassword' },
-    ],
-    expectedErrors: [
-      {
-        selector: sumaSettingsModal.urlInput,
-        error: 'Can only be an https url',
-      },
-      {
-        selector: sumaSettingsModal.caCertInput,
-        error: 'Unable to parse x.509 certificate',
-      },
-    ],
-  },
-  {
-    selector: 'expired certificate',
-    values: [
-      { selector: sumaSettingsModal.urlInput, value: 'http://invalid' },
-      {
-        selector: sumaSettingsModal.caCertInput,
-        value: expiredCertificate,
-      },
-      { selector: sumaSettingsModal.usernameInput, value: 'admin' },
-      { selector: sumaSettingsModal.passwordInput, value: 'adminpassword' },
-    ],
-    expectedErrors: [
-      {
-        selector: sumaSettingsModal.urlInput,
-        error: 'Can only be an https url',
-      },
-      {
-        selector: sumaSettingsModal.caCertInput,
-        error: 'The x.509 certificate is not valid',
-      },
-    ],
-  },
-];
-
-const defaultInputValues = [
-  { selector: sumaSettingsModal.urlInput, value: sumaUrl },
-  { selector: sumaSettingsModal.usernameInput, value: sumaUsername },
-  { selector: sumaSettingsModal.passwordInput, value: sumaPassword },
-];
-
-const savingScenarios = [
-  {
-    values: defaultInputValues,
-    expectCertUploadDate: false,
-  },
-  {
-    values: [
-      ...defaultInputValues,
-      {
-        selector: sumaSettingsModal.caCertInput,
-        value: validCertificate,
-      },
-    ],
-    expectCertUploadDate: true,
-  },
-];
-
 // UI Interactions
 
 export const visit = () => {
@@ -180,7 +60,7 @@ export const visit = () => {
   cy.visit(url);
 };
 
-export const clickSumaSettingsModaSaveButton = () =>
+export const clickSumaSettingsModalSaveButton = () =>
   cy.get(sumaSettingsModal.saveButton).click();
 
 export const clickSumaEditSettingsButton = () =>
@@ -203,14 +83,113 @@ export const clickGenerateApiKeyConfirmationButton = () =>
 
 export const clickModalCloseButton = () => cy.get(modalCloseButton).click();
 
+// UI Validations
 export const expectedSavingValidationsAreDisplayed = () => {
+  const savingValidationScenarios = [
+    {
+      selector: 'missing fields',
+      values: [],
+      expectedErrors: [
+        { selector: sumaSettingsModal.urlInput, error: 'Missing field: url' },
+        { selector: sumaSettingsModal.caCertInput, error: null },
+        {
+          selector: sumaSettingsModal.usernameInput,
+          error: 'Missing field: username',
+        },
+        {
+          selector: sumaSettingsModal.passwordInput,
+          error: 'Missing field: password',
+        },
+      ],
+    },
+    {
+      selector: 'blank fields',
+      values: [
+        { selector: sumaSettingsModal.urlInput, value: ' ' },
+        { selector: sumaSettingsModal.caCertInput, value: ' ' },
+        { selector: sumaSettingsModal.usernameInput, value: ' ' },
+        { selector: sumaSettingsModal.passwordInput, value: ' ' },
+      ],
+      expectedErrors: [
+        { selector: sumaSettingsModal.urlInput, error: "Can't be blank" },
+        { selector: sumaSettingsModal.caCertInput, error: "Can't be blank" },
+        { selector: sumaSettingsModal.usernameInput, error: "Can't be blank" },
+        { selector: sumaSettingsModal.passwordInput, error: "Can't be blank" },
+      ],
+    },
+    {
+      selector: 'invalid url and certificate',
+      values: [
+        { selector: sumaSettingsModal.urlInput, value: 'invalid' },
+        { selector: sumaSettingsModal.caCertInput, value: 'foobar' },
+        { selector: sumaSettingsModal.usernameInput, value: 'admin' },
+        { selector: sumaSettingsModal.passwordInput, value: 'adminpassword' },
+      ],
+      expectedErrors: [
+        {
+          selector: sumaSettingsModal.urlInput,
+          error: 'Can only be an https url',
+        },
+        {
+          selector: sumaSettingsModal.caCertInput,
+          error: 'Unable to parse x.509 certificate',
+        },
+      ],
+    },
+    {
+      selector: 'http url and invalid certificate',
+      values: [
+        { selector: sumaSettingsModal.urlInput, value: 'http://invalid' },
+        {
+          selector: sumaSettingsModal.caCertInput,
+          value:
+            '-----BEGIN CERTIFICATE-----\nfoobar\n-----END CERTIFICATE-----',
+        },
+        { selector: sumaSettingsModal.usernameInput, value: 'admin' },
+        { selector: sumaSettingsModal.passwordInput, value: 'adminpassword' },
+      ],
+      expectedErrors: [
+        {
+          selector: sumaSettingsModal.urlInput,
+          error: 'Can only be an https url',
+        },
+        {
+          selector: sumaSettingsModal.caCertInput,
+          error: 'Unable to parse x.509 certificate',
+        },
+      ],
+    },
+    {
+      selector: 'expired certificate',
+      values: [
+        { selector: sumaSettingsModal.urlInput, value: 'http://invalid' },
+        {
+          selector: sumaSettingsModal.caCertInput,
+          value: expiredCertificate,
+        },
+        { selector: sumaSettingsModal.usernameInput, value: 'admin' },
+        { selector: sumaSettingsModal.passwordInput, value: 'adminpassword' },
+      ],
+      expectedErrors: [
+        {
+          selector: sumaSettingsModal.urlInput,
+          error: 'Can only be an https url',
+        },
+        {
+          selector: sumaSettingsModal.caCertInput,
+          error: 'The x.509 certificate is not valid',
+        },
+      ],
+    },
+  ];
+
   savingValidationScenarios.forEach(({ values, expectedErrors }) => {
     clickSumaEditSettingsButton();
     values.forEach(({ selector, value }) =>
       cy.get(selector).type(value, { delay: 0 })
     );
 
-    clickSumaSettingsModaSaveButton();
+    clickSumaSettingsModalSaveButton();
     basePage.waitForRequest('settingsEndpoint');
 
     expectedErrors.forEach(({ selector, error }) => {
@@ -227,14 +206,37 @@ export const expectedSavingValidationsAreDisplayed = () => {
   });
 };
 
-export const eachSaveSettinsScenarioWorksAsExpected = () => {
+export const eachSaveSettingsScenarioWorkAsExpected = () => {
+  const defaultInputValues = [
+    { selector: sumaSettingsModal.urlInput, value: sumaUrl },
+    { selector: sumaSettingsModal.usernameInput, value: sumaUsername },
+    { selector: sumaSettingsModal.passwordInput, value: sumaPassword },
+  ];
+
+  const savingScenarios = [
+    {
+      values: defaultInputValues,
+      expectCertUploadDate: false,
+    },
+    {
+      values: [
+        ...defaultInputValues,
+        {
+          selector: sumaSettingsModal.caCertInput,
+          value: validCertificate,
+        },
+      ],
+      expectCertUploadDate: true,
+    },
+  ];
+
   savingScenarios.forEach(({ values, expectCertUploadDate }) => {
     clickSumaEditSettingsButton();
     values.forEach(({ selector, value }) =>
       cy.get(selector).type(value, { delay: 0 })
     );
 
-    clickSumaSettingsModaSaveButton();
+    clickSumaSettingsModalSaveButton();
     basePage.waitForRequest('settingsEndpoint');
 
     sumaUrlHasExpectedValue(sumaUrl);
@@ -250,9 +252,50 @@ export const eachSaveSettinsScenarioWorksAsExpected = () => {
   });
 };
 
-// UI Validations
+export const editFormIsDisplayedAsExpected = () => {
+  const baseInitialSettings = {
+    url: sumaUrl,
+    username: sumaUsername,
+    password: sumaPassword,
+  };
+
+  const initialEditFormScenarios = [
+    {
+      name: 'without cert',
+      settings: baseInitialSettings,
+    },
+    {
+      name: 'with certificate',
+      settings: { ...baseInitialSettings, ca_cert: validCertificate },
+    },
+  ];
+
+  initialEditFormScenarios.forEach(({ settings }) => {
+    basePage.saveSUMASettings(settings);
+    basePage.refresh();
+    clickSumaEditSettingsButton();
+    const { url, username, ca_cert } = settings;
+    sumaUrlHasExpectedValue(url);
+    if (ca_cert) {
+      cy.get(sumaSettingsModal.caCertInput).should('not.exist');
+      _sumaRemoveCaCertButtonIsDisplayed();
+    } else {
+      sumaCaCertIsEmpty();
+      sumaRemoveCaCertButtonIsNotDisplayed();
+    }
+    cy.get(sumaSettingsModal.usernameInput).should('have.value', username);
+    cy.get(sumaSettingsModal.passwordInput).should('not.exist');
+    removePasswordButtonIsDisplayed();
+    clickModalCancelButton();
+    basePage.clearSUMASettings();
+  });
+};
+
 export const sumaRemovePasswordButtonIsNotDisplayed = () =>
   cy.get(sumaSettingsModal.removePasswordButton).should('not.exist');
+
+const removePasswordButtonIsDisplayed = () =>
+  cy.get(sumaSettingsModal.removePasswordButton).should('be.visible');
 
 export const sumaPasswordInputIsEmpty = () =>
   cy.get(sumaSettingsModal.passwordInput).should('have.value', '');
@@ -262,6 +305,9 @@ export const sumaUsernameInputIsEmpty = () =>
 
 export const sumaRemoveCaCertButtonIsNotDisplayed = () =>
   cy.get(sumaSettingsModal.removeCaCertButton).should('not.exist');
+
+const _sumaRemoveCaCertButtonIsDisplayed = () =>
+  cy.get(sumaSettingsModal.removeCaCertButton).should('be.visible');
 
 export const sumaCaCertIsEmpty = () =>
   cy.get(sumaSettingsModal.caCertInput).should('have.value', '');
@@ -276,7 +322,7 @@ export const sumaPasswordHasExpectedValue = (expectedValue) =>
   cy.get(sumaPasswordLabel).should('have.text', expectedValue);
 
 export const sumaUrlHasExpectedValue = (expectedValue) =>
-  cy.get(sumaUrlLabel).should('contain', expectedValue);
+  cy.get(sumaUrlLabel).should('have.text', expectedValue);
 
 export const sumaCaCertUploadDateHasExpectedValue = (expectedValue) => {
   const specificSelector = expectedValue === '-' ? '' : ' div div div';

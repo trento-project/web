@@ -8,7 +8,10 @@ import {
 import { createUserRequestFactory } from '@lib/test-utils/factories';
 
 context('Settings page', () => {
-  beforeEach(() => settingsPage.visit());
+  beforeEach(() => {
+    settingsPage.visit();
+    settingsPage.waitForRequest('settingsEndpoint');
+  });
 
   after(() => settingsPage.updateApiKeyExpiration(null));
 
@@ -84,8 +87,6 @@ context('Settings page', () => {
       });
 
       describe('Saving Settings Validation', () => {
-        beforeEach(() => settingsPage.waitForRequest('settingsEndpoint'));
-
         it('should show validation errors on invalid input', () => {
           settingsPage.expectedSavingValidationsAreDisplayed();
         });
@@ -93,7 +94,7 @@ context('Settings page', () => {
 
       describe('Successfully Saving Settings', () => {
         it('should save settings', () => {
-          settingsPage.eachSaveSettinsScenarioWorksAsExpected();
+          settingsPage.eachSaveSettingsScenarioWorkAsExpected();
         });
       });
     });
@@ -105,43 +106,8 @@ context('Settings page', () => {
         password: sumaPassword,
       };
 
-      const initialEditFormScenarios = [
-        {
-          name: 'without cert',
-          settings: baseInitialSettings,
-        },
-        {
-          name: 'with certificate',
-          settings: { ...baseInitialSettings, ca_cert: validCertificate },
-        },
-      ];
-
-      initialEditFormScenarios.forEach(({ name, settings }) => {
-        it(`should show settings edit form. Scenario: ${name}`, () => {
-          cy.saveSUMASettings(settings);
-          cy.reload();
-          cy.intercept('GET', '/api/v1/settings/suse_manager').as(
-            'getSettings'
-          );
-          cy.wait('@getSettings');
-
-          const { url, username, ca_cert } = settings;
-          cy.get('button').contains('Edit Settings').click();
-
-          cy.get(`[name="${URL_INPUT}"]`).should('have.value', url);
-          if (ca_cert) {
-            cy.get(`[name="${CA_CERT_INPUT}"]`).should('not.exist');
-            cy.get(`[aria-label="remove-suma-cacert"]`).should('exist');
-          } else {
-            cy.get(`[name="${CA_CERT_INPUT}"]`).should('have.value', '');
-            cy.get(`[aria-label="remove-suma-cacert"]`).should('not.exist');
-          }
-          cy.get(`[name="${USERNAME_INPUT}"]`).should('have.value', username);
-          cy.get(`[name="${PASSWORD_INPUT}"]`).should('not.exist');
-          cy.get(`[aria-label="remove-suma-password"]`).should('exist');
-          cy.get('button').contains('Cancel').click();
-          cy.clearSUMASettings();
-        });
+      it('should show settings edit form', () => {
+        settingsPage.editFormIsDisplayedAsExpected();
       });
 
       describe('Changing Settings Validation', () => {
