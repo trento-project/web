@@ -251,12 +251,12 @@ export const ACTIVITY_TYPES_CONFIG = {
     allowedTo: userManagement,
   },
   [CLUSTER_CHECKS_EXECUTION_REQUEST]: {
-    label: 'Checks Execution Requested',
+    label: 'Cluster Checks Execution Requested',
     message: (_entry) => `Checks execution requested for cluster`,
     resource: clusterResourceType,
   },
   [HOST_CHECKS_EXECUTION_REQUEST]: {
-    label: 'Checks Execution Requested',
+    label: 'Host Checks Execution Requested',
     message: (_entry) => `Checks execution requested for host`,
     resource: hostResourceType,
   },
