@@ -59,7 +59,7 @@ describe('CheckCustomizationModal', () => {
   it('renders modal with correct title, description, warning, disabled input fields and a disabled save button', async () => {
     const expectedModalTitle = `Check: ${checkCustomizationModalProps.id}`;
     const expectedWarningBannerText =
-      'Trento & SUSE cannot be held liable for damages if system is unable to function due to custom check value.';
+      'Trento and SUSE are not responsible for cluster operation failure due to deviation from Best Practices.';
     const user = userEvent.setup();
 
     await act(async () => {
