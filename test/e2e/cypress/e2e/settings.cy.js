@@ -92,58 +92,8 @@ context('Settings page', () => {
       });
 
       describe('Successfully Saving Settings', () => {
-        const defaultInputValues = [
-          { name: URL_INPUT, value: sumaUrl },
-          { name: USERNAME_INPUT, value: sumaUsername },
-          { name: PASSWORD_INPUT, value: sumaPassword },
-        ];
-
-        const savingScenarios = [
-          {
-            name: 'without certificate',
-            values: defaultInputValues,
-            expectCertUploadDate: false,
-          },
-          {
-            name: 'with certificate',
-            values: [
-              ...defaultInputValues,
-              {
-                name: CA_CERT_INPUT,
-                value: validCertificate,
-              },
-            ],
-            expectCertUploadDate: true,
-          },
-        ];
-
-        savingScenarios.forEach(({ name, values, expectCertUploadDate }) => {
-          it(`should save settings ${name}`, () => {
-            cy.get('button').contains('Edit Settings').click();
-            values.forEach(({ name, value }) => {
-              cy.get(`[name="${name}"]`).type(value, { delay: 0 });
-            });
-
-            cy.intercept('POST', '/api/v1/settings/suse_manager').as(
-              'saveSettings'
-            );
-            cy.get('button').contains('Save Settings').click();
-            cy.wait('@saveSettings');
-
-            cy.get('[aria-label="suma-url"]').should('contain', sumaUrl);
-            cy.get('[aria-label="suma-cacert-upload-date"]').should(
-              'contain',
-              expectCertUploadDate ? 'Certificate Uploaded' : '-'
-            );
-            cy.get('[aria-label="suma-username"]').should(
-              'contain',
-              sumaUsername
-            );
-            cy.get('[aria-label="suma-password"]').should('contain', '•••••');
-
-            cy.clearSUMASettings();
-            cy.reload();
-          });
+        it('should save settings', () => {
+          settingsPage.eachSaveSettinsScenarioWorksAsExpected();
         });
       });
     });

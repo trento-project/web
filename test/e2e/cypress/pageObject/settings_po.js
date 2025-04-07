@@ -150,6 +150,29 @@ const savingValidationScenarios = [
   },
 ];
 
+const defaultInputValues = [
+  { selector: sumaSettingsModal.urlInput, value: sumaUrl },
+  { selector: sumaSettingsModal.usernameInput, value: sumaUsername },
+  { selector: sumaSettingsModal.passwordInput, value: sumaPassword },
+];
+
+const savingScenarios = [
+  {
+    values: defaultInputValues,
+    expectCertUploadDate: false,
+  },
+  {
+    values: [
+      ...defaultInputValues,
+      {
+        selector: sumaSettingsModal.caCertInput,
+        value: validCertificate,
+      },
+    ],
+    expectCertUploadDate: true,
+  },
+];
+
 // UI Interactions
 
 export const visit = () => {
@@ -204,6 +227,29 @@ export const expectedSavingValidationsAreDisplayed = () => {
   });
 };
 
+export const eachSaveSettinsScenarioWorksAsExpected = () => {
+  savingScenarios.forEach(({ values, expectCertUploadDate }) => {
+    clickSumaEditSettingsButton();
+    values.forEach(({ selector, value }) =>
+      cy.get(selector).type(value, { delay: 0 })
+    );
+
+    clickSumaSettingsModaSaveButton();
+    basePage.waitForRequest('settingsEndpoint');
+
+    sumaUrlHasExpectedValue(sumaUrl);
+    const expectedCaCertDate = expectCertUploadDate
+      ? 'Certificate Uploaded'
+      : '-';
+    sumaCaCertUploadDateHasExpectedValue(expectedCaCertDate);
+    sumaUsernameHasExpectedValue(sumaUsername);
+    sumaPasswordHasExpectedValue('•••••');
+
+    basePage.clearSUMASettings();
+    basePage.refresh();
+  });
+};
+
 // UI Validations
 export const sumaRemovePasswordButtonIsNotDisplayed = () =>
   cy.get(sumaSettingsModal.removePasswordButton).should('not.exist');
@@ -232,8 +278,11 @@ export const sumaPasswordHasExpectedValue = (expectedValue) =>
 export const sumaUrlHasExpectedValue = (expectedValue) =>
   cy.get(sumaUrlLabel).should('contain', expectedValue);
 
-export const sumaCaCertUploadDateHasExpectedValue = (expectedValue) =>
-  cy.get(sumaCertUploadDateLabel).should('have.text', expectedValue);
+export const sumaCaCertUploadDateHasExpectedValue = (expectedValue) => {
+  const specificSelector = expectedValue === '-' ? '' : ' div div div';
+  const selector = `${sumaCertUploadDateLabel}${specificSelector}`;
+  cy.get(selector).first().should('have.text', expectedValue);
+};
 
 export const expiredApiKeyToasterIsDisplayed = () =>
   cy.get(expiredApiKeyToaster, { timeout: 15000 }).should('be.visible');
