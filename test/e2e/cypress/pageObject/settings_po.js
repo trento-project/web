@@ -11,6 +11,18 @@ import { createUserRequestFactory } from '@lib/test-utils/factories';
 
 // Test data
 const url = '/settings';
+
+const sumaSettings = {
+  URL_INPUT: 'suma-url-input',
+  CA_CERT_INPUT: 'suma-cacert-input',
+  USERNAME_INPUT: 'suma-username-input',
+  PASSWORD_INPUT: 'suma-password-input',
+
+  sumaUrl: 'https://valid',
+  sumaUsername: 'admin',
+  sumaPassword: 'adminpassword',
+};
+
 // Selectors
 const keyExpirationLabel = 'div[class*="mt-1"]';
 const apiKeyCode = 'code';
@@ -26,6 +38,7 @@ const modalExpirationDateLabel = '.flex-col > :nth-child(2) > .text-gray-600';
 const modalCloseButton = 'button:contains("Close")';
 const expiredApiKeyToaster =
   'p:contains("API Key has expired. Go to Settings to issue a new key")';
+const closeToExpireApiKeyToaster = 'p:contains("API Key expires in 9 days")';
 
 // UI Interactions
 
@@ -49,6 +62,9 @@ export const clickGenerateApiKeyConfirmationButton = () =>
 export const expiredApiKeyToasterIsDisplayed = () =>
   cy.get(expiredApiKeyToaster, { timeout: 15000 }).should('be.visible');
 
+export const closeToExpireApiKeyToasterIsDisplayed = () =>
+  cy.get(closeToExpireApiKeyToaster, { timeout: 15000 }).should('be.visible');
+
 export const modalExpirationDateLabelIsDisplayed = () =>
   cy.get(modalExpirationDateLabel).should('contain', 'Key will expire');
 
@@ -70,6 +86,9 @@ export const copyToClipboardButtonIsDisplayed = () =>
 // API
 export const setExpiredApiKey = () =>
   updateApiKeyExpiration(subDays(new Date(), 1));
+
+export const setCloseToExpireApiKey = () =>
+  updateApiKeyExpiration(addDays(new Date(), 10));
 
 export const updateApiKeyExpiration = (apiKeyExpiration) => {
   basePage.apiLogin().then(({ accessToken }) => {

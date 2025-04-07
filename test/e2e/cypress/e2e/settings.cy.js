@@ -1,7 +1,5 @@
 import * as settingsPage from '../pageObject/settings_po';
 
-/* eslint-disable cypress/no-unnecessary-waiting */
-import { subDays, addDays } from 'date-fns';
 import {
   validCertificate,
   anotherValidCertificate,
@@ -38,19 +36,16 @@ context('Settings page', () => {
   });
 
   describe('Api key expiration notifications', () => {
-    it.only('should show api key expired notification when first loading the page, when the api key is expired', () => {
+    it('should show api key expired notification when first loading the page, when the api key is expired', () => {
       settingsPage.setExpiredApiKey();
       settingsPage.refresh();
       settingsPage.expiredApiKeyToasterIsDisplayed();
     });
 
     it('should show api is going to expire notification, when first loadng the page if api key expires in less than 30 days', () => {
-      cy.updateApiKeyExpiration(addDays(new Date(), 10));
-
-      cy.reload();
-
-      cy.wait(3000);
-      cy.get('body').should('contain', 'API Key expires in 9 days');
+      settingsPage.setCloseToExpireApiKey();
+      settingsPage.refresh();
+      settingsPage.closeToExpireApiKeyToasterIsDisplayed();
     });
   });
 
@@ -64,9 +59,9 @@ context('Settings page', () => {
     const sumaUsername = 'admin';
     const sumaPassword = 'adminpassword';
 
-    before(() => {
-      cy.clearSUMASettings();
-      cy.reload();
+    beforeEach(() => {
+      settingsPage.clearSUMASettings();
+      settingsPage.reload();
     });
 
     it('should show empty settings', () => {
