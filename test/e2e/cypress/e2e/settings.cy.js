@@ -129,36 +129,31 @@ context('Settings page', () => {
       });
 
       it('should succeed even though settings do not exist', () => {
-        cy.clearSUMASettings();
-        cy.reload();
+        settingsPage.clearSUMASettings();
+        settingsPage.refresh();
+        settingsPage.waitForRequest('settingsEndpoint');
 
-        cy.intercept('GET', '/api/v1/settings/suse_manager').as('getSettings');
-        cy.wait('@getSettings');
+        settingsPage.sumaUrlHasExpectedValue('https://');
+        settingsPage.sumaCaCertUploadDateHasExpectedValue('-');
+        settingsPage.sumaUsernameHasExpectedValue('.....');
+        settingsPage.sumaPasswordHasExpectedValue('.....');
 
-        cy.get('[aria-label="suma-url"]').should('have.text', 'https://');
-        cy.get('[aria-label="suma-cacert-upload-date"]').should('contain', '-');
-        cy.get('[aria-label="suma-username"]').should('contain', '.....');
-        cy.get('[aria-label="suma-password"]').should('contain', '.....');
+        settingsPage.clearSumaSettings();
+        settingsPage.waitForRequest('settingsEndpoint');
 
-        cy.intercept('DELETE', '/api/v1/settings/suse_manager').as(
-          'deleteSUMASettings'
-        );
-        cy.get('[aria-label="clear-suma-settings"]').click();
-        cy.get('[aria-label="confirm-clear-suma-settings"]').click();
-        cy.wait('@deleteSUMASettings');
-
-        cy.get('[aria-label="suma-url"]').should('have.text', 'https://');
-        cy.get('[aria-label="suma-cacert-upload-date"]').should('contain', '-');
-        cy.get('[aria-label="suma-username"]').should('contain', '.....');
-        cy.get('[aria-label="suma-password"]').should('contain', '.....');
+        settingsPage.sumaUrlHasExpectedValue('https://');
+        settingsPage.sumaCaCertUploadDateHasExpectedValue('-');
+        settingsPage.sumaUsernameHasExpectedValue('.....');
+        settingsPage.sumaPasswordHasExpectedValue('.....');
       });
     });
 
     describe('Testing Connection', () => {
       it('should be disabled when there are no settings', () => {
-        cy.clearSUMASettings();
-        cy.reload();
-        cy.get('[aria-label="test-suma-connection"]').should('be.disabled');
+        settingsPage.clearSUMASettings();
+        settingsPage.refresh();
+        settingsPage.waitForRequest('settingsEndpoint');
+        settingsPage.sumaConnectionButtonIsDisabled();
       });
 
       describe('Testing against saved settings', () => {

@@ -36,6 +36,7 @@ const sumaEditSettingsButton =
   'h2:contains("Linux Manager") + span button:contains("Edit Settings")';
 const clearSumaSettingsButton = '[aria-label="clear-suma-settings"]';
 const confirmClearSumaSettings = '[aria-label="confirm-clear-suma-settings"]';
+const testSumaConnectionButton = '[aria-label="test-suma-connection"]';
 
 const sumaSettingsModal = {
   urlInput: 'label:contains("URL") + div input',
@@ -97,6 +98,9 @@ export const clickGenerateApiKeyConfirmationButton = () =>
 export const clickModalCloseButton = () => cy.get(modalCloseButton).click();
 
 // UI Validations
+export const sumaConnectionButtonIsDisabled = () =>
+  cy.get(testSumaConnectionButton).should('be.disabled');
+
 export const expectedSavingValidationsAreDisplayed = () => {
   const savingValidationScenarios = [
     {
