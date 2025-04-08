@@ -1,10 +1,6 @@
 import * as settingsPage from '../pageObject/settings_po';
 
-import {
-  validCertificate,
-  anotherValidCertificate,
-  expiredCertificate,
-} from '../fixtures/suma_credentials/certificates';
+import { validCertificate } from '../fixtures/suma_credentials/certificates';
 import { createUserRequestFactory } from '@lib/test-utils/factories';
 
 context('Settings page', () => {
@@ -100,12 +96,6 @@ context('Settings page', () => {
     });
 
     describe('Changing Settings', () => {
-      const baseInitialSettings = {
-        url: sumaUrl,
-        username: sumaUsername,
-        password: sumaPassword,
-      };
-
       it('should show settings edit form', () => {
         settingsPage.editFormIsDisplayedAsExpected();
       });
@@ -117,116 +107,8 @@ context('Settings page', () => {
       });
 
       describe('Successfully Changing Settings', () => {
-        const newUrl = 'https://new-valid-url';
-        const newUsername = 'newuser';
-        const newPassword = 'newpassword';
-
-        const changingSettingsScenarios = [
-          {
-            name: 'no changes applied',
-            withInitialCert: true,
-            newValues: [],
-            expectNewUrl: false,
-            expectNewUsername: false,
-            expectCertUploadDate: true,
-          },
-          {
-            name: 'changing url, username and password',
-            withInitialCert: false,
-            changeInitialPassword: true,
-            newValues: [
-              { name: URL_INPUT, value: newUrl },
-              { name: USERNAME_INPUT, value: newUsername },
-              { name: PASSWORD_INPUT, value: newPassword },
-            ],
-            expectNewUrl: true,
-            expectNewUsername: true,
-            expectCertUploadDate: false,
-          },
-          {
-            name: 'changing certificate',
-            withInitialCert: true,
-            changeInitialPassword: true,
-            changeInitialCaCert: true,
-            newValues: [
-              { name: URL_INPUT, value: newUrl },
-              { name: USERNAME_INPUT, value: newUsername },
-              { name: PASSWORD_INPUT, value: newPassword },
-              {
-                name: CA_CERT_INPUT,
-                value: anotherValidCertificate,
-              },
-            ],
-            expectNewUrl: true,
-            expectNewUsername: true,
-            expectCertUploadDate: true,
-          },
-          {
-            name: 'removing certificate',
-            withInitialCert: true,
-            changeInitialCaCert: true,
-            expectNewUrl: false,
-            expectNewUsername: false,
-            expectCertUploadDate: false,
-          },
-        ];
-
-        changingSettingsScenarios.forEach((scenario) => {
-          const {
-            name,
-            withInitialCert = false,
-            changeInitialPassword = false,
-            changeInitialCaCert = false,
-            newValues = [],
-            expectNewUrl = false,
-            expectNewUsername = false,
-            expectCertUploadDate = false,
-          } = scenario;
-
-          const initialSettings = {
-            ...baseInitialSettings,
-            ...(withInitialCert && { ca_cert: validCertificate }),
-          };
-
-          it(`should change settings: ${name}`, () => {
-            cy.saveSUMASettings(initialSettings);
-            cy.reload();
-            cy.intercept('GET', '/api/v1/settings/suse_manager').as(
-              'getSettings'
-            );
-            cy.wait('@getSettings');
-
-            cy.get('button').contains('Edit Settings').click();
-
-            changeInitialCaCert &&
-              cy.get(`[aria-label="remove-suma-cacert"]`).click();
-            changeInitialPassword &&
-              cy.get(`[aria-label="remove-suma-password"]`).click();
-
-            newValues.forEach(({ name, value }) => {
-              cy.get(`[name="${name}"]`).clear().type(value, { delay: 0 });
-            });
-            cy.intercept('PATCH', '/api/v1/settings/suse_manager').as(
-              'changeSettings'
-            );
-            cy.get('button').contains('Save Settings').click();
-            cy.wait('@changeSettings');
-
-            cy.get('[aria-label="suma-url"]').should(
-              'contain',
-              expectNewUrl ? newUrl : baseInitialSettings.url
-            );
-            cy.get('[aria-label="suma-cacert-upload-date"]').should(
-              'contain',
-              expectCertUploadDate ? 'Certificate Uploaded' : '-'
-            );
-            cy.get('[aria-label="suma-username"]').should(
-              'contain',
-              expectNewUsername ? newUsername : baseInitialSettings.username
-            );
-            cy.get('[aria-label="suma-password"]').should('contain', '•••••');
-            cy.clearSUMASettings();
-          });
+        it('should change settings', () => {
+          settingsPage.sumaSettingsAreCorrectlyChanged();
         });
       });
     });

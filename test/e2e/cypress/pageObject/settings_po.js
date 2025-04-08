@@ -392,6 +392,109 @@ export const changingSettingsValidationsWorkAsExpected = () => {
   );
 };
 
+export const sumaSettingsAreCorrectlyChanged = () => {
+  const newUrl = 'https://new-valid-url';
+  const newUsername = 'newuser';
+  const newPassword = 'newpassword';
+
+  const changingSettingsScenarios = [
+    {
+      name: 'no changes applied',
+      withInitialCert: true,
+      newValues: [],
+      expectNewUrl: false,
+      expectNewUsername: false,
+      expectCertUploadDate: true,
+    },
+    {
+      name: 'changing url, username and password',
+      withInitialCert: false,
+      changeInitialPassword: true,
+      newValues: [
+        { selector: sumaSettingsModal.urlInput, value: newUrl },
+        { selector: sumaSettingsModal.usernameInput, value: newUsername },
+        { selector: sumaSettingsModal.passwordInput, value: newPassword },
+      ],
+      expectNewUrl: true,
+      expectNewUsername: true,
+      expectCertUploadDate: false,
+    },
+    {
+      name: 'changing certificate',
+      withInitialCert: true,
+      changeInitialPassword: true,
+      changeInitialCaCert: true,
+      newValues: [
+        { selector: sumaSettingsModal.urlInput, value: newUrl },
+        { selector: sumaSettingsModal.usernameInput, value: newUsername },
+        { selector: sumaSettingsModal.passwordInput, value: newPassword },
+        {
+          selector: sumaSettingsModal.caCertInput,
+          value: anotherValidCertificate,
+        },
+      ],
+      expectNewUrl: true,
+      expectNewUsername: true,
+      expectCertUploadDate: true,
+    },
+    {
+      name: 'removing certificate',
+      withInitialCert: true,
+      changeInitialCaCert: true,
+      expectNewUrl: false,
+      expectNewUsername: false,
+      expectCertUploadDate: false,
+    },
+  ];
+
+  changingSettingsScenarios.forEach((scenario) => {
+    const {
+      withInitialCert = false,
+      changeInitialPassword = false,
+      changeInitialCaCert = false,
+      newValues = [],
+      expectNewUrl = false,
+      expectNewUsername = false,
+      expectCertUploadDate = false,
+    } = scenario;
+
+    const initialSettings = {
+      ...baseInitialSettings,
+      ...(withInitialCert && { ca_cert: validCertificate }),
+    };
+    basePage.saveSUMASettings(initialSettings);
+    basePage.refresh();
+    basePage.waitForRequest('settingsEndpoint');
+
+    clickSumaEditSettingsButton();
+
+    if (changeInitialCaCert) _clickRemoveSumaCaCertButton();
+    if (changeInitialPassword) _clickRemovePasswordButton();
+
+    newValues.forEach(({ selector, value }) =>
+      cy.get(selector).clear().type(value, { delay: 0 })
+    );
+
+    clickSumaSettingsModalSaveButton();
+    basePage.waitForRequest('settingsEndpoint');
+
+    const expectedUrl = expectNewUrl ? newUrl : baseInitialSettings.url;
+    sumaUrlHasExpectedValue(expectedUrl);
+
+    const expectedCaCertDate = expectCertUploadDate
+      ? 'Certificate Uploaded'
+      : '-';
+    sumaCaCertUploadDateHasExpectedValue(expectedCaCertDate);
+
+    const expectedUsername = expectNewUsername
+      ? newUsername
+      : baseInitialSettings.username;
+    sumaUsernameHasExpectedValue(expectedUsername);
+    sumaPasswordHasExpectedValue('•••••');
+    basePage.clearSUMASettings();
+  });
+};
+
 export const sumaRemovePasswordButtonIsNotDisplayed = () =>
   cy.get(sumaSettingsModal.removePasswordButton).should('not.exist');
 
