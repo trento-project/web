@@ -49,6 +49,15 @@ const sumaSettingsModal = {
   saveButton: 'button:contains("Save Settings")',
 };
 
+const retentionTime = '[aria-label="retention-time"]';
+const activityLogsContainer =
+  'div[class*="container"]:contains("Activity Logs")';
+const editActivityLogsSettingsButton = `${activityLogsContainer} button:contains("Edit Settings")`;
+const activityLogSettingsModal = 'div[id*="headlessui-dialog-panel"]';
+const activityLogSettingsSaveButton = `${activityLogSettingsModal} button:contains("Save Settings")`;
+const activityLogSettingsCancelButton = `${activityLogSettingsModal} button:contains("Cancel")`;
+const retentionTimeInput = 'input[role="spinbutton"]';
+
 // Test data
 const url = '/settings';
 
@@ -65,9 +74,33 @@ const baseInitialSettings = {
 // UI Interactions
 
 export const visit = () => {
+  cy.intercept(
+    'PUT',
+    '/api/v1/settings/activity_log',
+    cy.spy().as('changeSettingsEndpoint')
+  );
+  cy.intercept('/api/v1/settings/activity_log').as(
+    'activityLogSettingsEndpoint'
+  );
   cy.intercept('/api/v1/settings/suse_manager').as('settingsEndpoint');
   basePage.visit(url);
 };
+
+export const getCurrentRetentionTime = () =>
+  cy.get(retentionTime).invoke('text');
+
+export const clickActivityLogSettingsCancelButton = () =>
+  cy.get(activityLogSettingsCancelButton).click();
+
+export const typeRetentionTime = (amount) =>
+  cy.get(retentionTimeInput).clear().type(amount);
+
+export const clickActivityLogSettingsSaveButton = () => {
+  cy.get(activityLogSettingsSaveButton).click();
+};
+
+export const clickEditActivityLogSettingsButton = () =>
+  cy.get(editActivityLogsSettingsButton).click();
 
 export const clearSumaSettings = () => {
   cy.get(clearSumaSettingsButton).click();
@@ -101,7 +134,17 @@ export const interceptTestSUMASettingsRequest = (expectedStatusCode) =>
   cy.intercept('/api/v1/settings/suse_manager/test', {
     statusCode: expectedStatusCode,
   });
+
 // UI Validations
+export const changeSettingsEndpointIsNotCalled = () =>
+  cy.get('@changeSettingsEndpoint').should('not.have.been.called');
+
+export const activityLogSettingsModalIsNotDisplayed = () =>
+  cy.get(activityLogSettingsModal).should('not.exist');
+
+export const retentionTimeIsTheExpected = (expectedValue) =>
+  cy.get(retentionTime).should('have.text', expectedValue);
+
 export const showExpectedToasterAfterTestingSUMA = (expectedToasterMessage) => {
   cy.get(`p:contains("Connection ${expectedToasterMessage}!")`).should(
     'be.visible'
