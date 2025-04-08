@@ -124,6 +124,23 @@ describe('ProfileForm', () => {
     ).toBe('true');
   });
 
+  it('should set analytics checkbox when analyticsEnabled is true', async () => {
+    const { username, fullname, email, abilities } = profileFactory.build();
+
+    render(
+      <ProfileForm
+        fullName={fullname}
+        emailAddress={email}
+        username={username}
+        abilities={abilities}
+        analyticsEnabled
+      />
+    );
+
+    expect(screen.getByRole('checkbox')).toBeVisible();
+    expect(screen.getByRole('checkbox').checked).toBe(true);
+  });
+
   it('should not set the authenticator app switch when totpEnabled is false', async () => {
     const { username, fullname, email, abilities } = profileFactory.build();
 
