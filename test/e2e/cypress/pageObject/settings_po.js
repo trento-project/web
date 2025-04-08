@@ -34,6 +34,8 @@ const sumaUsernameLabel = '[aria-label="suma-username"]';
 const sumaPasswordLabel = '[aria-label="suma-password"]';
 const sumaEditSettingsButton =
   'h2:contains("Linux Manager") + span button:contains("Edit Settings")';
+const clearSumaSettingsButton = '[aria-label="clear-suma-settings"]';
+const confirmClearSumaSettings = '[aria-label="confirm-clear-suma-settings"]';
 
 const sumaSettingsModal = {
   urlInput: 'label:contains("URL") + div input',
@@ -64,6 +66,11 @@ const baseInitialSettings = {
 export const visit = () => {
   cy.intercept('/api/v1/settings/suse_manager').as('settingsEndpoint');
   basePage.visit(url);
+};
+
+export const clearSumaSettings = () => {
+  cy.get(clearSumaSettingsButton).click();
+  cy.get(confirmClearSumaSettings).click();
 };
 
 export const clickSumaSettingsModalSaveButton = () =>
@@ -525,16 +532,20 @@ export const sumaCaCertIsEmpty = () =>
 export const sumaUrlInputIsEmpty = () =>
   cy.get(sumaSettingsModal.urlInput).should('have.value', '');
 
-export const sumaUsernameHasExpectedValue = (expectedValue) =>
-  cy.get(sumaUsernameLabel).should('have.text', expectedValue);
+export const sumaUsernameHasExpectedValue = (
+  expectedValue = baseInitialSettings.username
+) => cy.get(sumaUsernameLabel).should('have.text', expectedValue);
 
 export const sumaPasswordHasExpectedValue = (expectedValue) =>
   cy.get(sumaPasswordLabel).should('have.text', expectedValue);
 
-export const sumaUrlHasExpectedValue = (expectedValue) =>
-  cy.get(sumaUrlLabel).should('have.text', expectedValue);
+export const sumaUrlHasExpectedValue = (
+  expectedValue = baseInitialSettings.url
+) => cy.get(sumaUrlLabel).should('have.text', expectedValue);
 
-export const sumaCaCertUploadDateHasExpectedValue = (expectedValue) => {
+export const sumaCaCertUploadDateHasExpectedValue = (
+  expectedValue = 'Certificate Uploaded'
+) => {
   const specificSelector = expectedValue === '-' ? '' : ' div div div';
   const selector = `${sumaCertUploadDateLabel}${specificSelector}`;
   cy.get(selector).first().should('have.text', expectedValue);
@@ -565,6 +576,14 @@ export const copyToClipboardButtonIsDisplayed = () =>
   cy.get(copyToClipboardButton).should('be.visible');
 
 // API
+export const saveDefaultSUMAsettings = () => {
+  const defaultSumaSettings = {
+    ...baseInitialSettings,
+    ca_cert: validCertificate,
+  };
+  basePage.saveSUMASettings(defaultSumaSettings);
+};
+
 export const setExpiredApiKey = () =>
   updateApiKeyExpiration(subDays(new Date(), 1));
 

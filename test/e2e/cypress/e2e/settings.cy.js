@@ -49,11 +49,6 @@ context('Settings page', () => {
   });
 
   describe('Suse Manager Settings Management', () => {
-    const URL_INPUT = 'suma-url-input';
-    const CA_CERT_INPUT = 'suma-cacert-input';
-    const USERNAME_INPUT = 'suma-username-input';
-    const PASSWORD_INPUT = 'suma-password-input';
-
     const sumaUrl = 'https://valid';
     const sumaUsername = 'admin';
     const sumaPassword = 'adminpassword';
@@ -115,35 +110,22 @@ context('Settings page', () => {
 
     describe('Clearing Settings', () => {
       it('should clear existing settings', () => {
-        cy.saveSUMASettings({
-          url: sumaUrl,
-          username: sumaUsername,
-          password: sumaPassword,
-          ca_cert: validCertificate,
-        });
-        cy.reload();
-        cy.intercept('GET', '/api/v1/settings/suse_manager').as('getSettings');
-        cy.wait('@getSettings');
+        settingsPage.saveDefaultSUMAsettings();
+        settingsPage.refresh();
+        settingsPage.waitForRequest('settingsEndpoint');
 
-        cy.get('[aria-label="suma-url"]').should('contain', sumaUrl);
-        cy.get('[aria-label="suma-cacert-upload-date"]').should(
-          'contain',
-          'Certificate Uploaded'
-        );
-        cy.get('[aria-label="suma-username"]').should('contain', sumaUsername);
-        cy.get('[aria-label="suma-password"]').should('contain', '•••••');
+        settingsPage.sumaUrlHasExpectedValue();
+        settingsPage.sumaCaCertUploadDateHasExpectedValue();
+        settingsPage.sumaUsernameHasExpectedValue();
+        settingsPage.sumaPasswordHasExpectedValue('•••••');
 
-        cy.intercept('DELETE', '/api/v1/settings/suse_manager').as(
-          'deleteSUMASettings'
-        );
-        cy.get('[aria-label="clear-suma-settings"]').click();
-        cy.get('[aria-label="confirm-clear-suma-settings"]').click();
-        cy.wait('@deleteSUMASettings');
+        settingsPage.clearSumaSettings();
+        settingsPage.waitForRequest('settingsEndpoint');
 
-        cy.get('[aria-label="suma-url"]').should('have.text', 'https://');
-        cy.get('[aria-label="suma-cacert-upload-date"]').should('contain', '-');
-        cy.get('[aria-label="suma-username"]').should('contain', '.....');
-        cy.get('[aria-label="suma-password"]').should('contain', '.....');
+        settingsPage.sumaUrlHasExpectedValue('https://');
+        settingsPage.sumaCaCertUploadDateHasExpectedValue('-');
+        settingsPage.sumaUsernameHasExpectedValue('.....');
+        settingsPage.sumaPasswordHasExpectedValue('.....');
       });
 
       it('should succeed even though settings do not exist', () => {
