@@ -18,6 +18,8 @@ defmodule Trento.Infrastructure.Catalog.AMQP.ProcessorTest do
 
   alias Trento.Repo
 
+  import Trento.Factory
+
   defp assert_entry_has_been_logged(amount) do
     assert amount ==
              ActivityLog
@@ -37,13 +39,18 @@ defmodule Trento.Infrastructure.Catalog.AMQP.ProcessorTest do
       group_id = UUID.uuid4()
       target_type = Faker.Lorem.word()
 
+      %{id: user_id} = insert(:user)
+
       check_customization_applied =
-        Contracts.to_event(%CheckCustomizationApplied{
-          check_id: check_id,
-          group_id: group_id,
-          target_type: target_type,
-          custom_values: []
-        })
+        Contracts.to_event(
+          %CheckCustomizationApplied{
+            check_id: check_id,
+            group_id: group_id,
+            target_type: target_type,
+            custom_values: []
+          },
+          additional_attributes: %{"user_id" => {:ce_integer, user_id}}
+        )
 
       assert :ok =
                %{}
@@ -58,12 +65,17 @@ defmodule Trento.Infrastructure.Catalog.AMQP.ProcessorTest do
       group_id = UUID.uuid4()
       target_type = Faker.Lorem.word()
 
+      %{id: user_id} = insert(:user)
+
       check_customization_reset =
-        Contracts.to_event(%CheckCustomizationReset{
-          check_id: check_id,
-          group_id: group_id,
-          target_type: target_type
-        })
+        Contracts.to_event(
+          %CheckCustomizationReset{
+            check_id: check_id,
+            group_id: group_id,
+            target_type: target_type
+          },
+          additional_attributes: %{"user_id" => {:ce_integer, user_id}}
+        )
 
       assert :ok =
                %{}
