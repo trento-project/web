@@ -135,7 +135,7 @@ const modalDescrition = '.mt-2 > .text-gray-500';
 const modalWarningText = '.border-yellow-400 > .font-semibold';
 const modalWarningCheckbox = '.border-yellow-400 > div > .rc-input';
 const modalWarningCheckboxLabel =
-  'Trento & SUSE cannot be held liable for damages if system is unable to function due to custom check value.';
+  'Trento and SUSE are not responsible for cluster operation failure due to deviation from Best Practices.';
 const modalValueDefault = '.flex-col > .font-bold';
 const modalValueCurrentValue = '.space-x-4 > div.w-full > .rc-input';
 const modalProvider = ':nth-child(4) > .w-1\\/3';
