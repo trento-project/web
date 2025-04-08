@@ -3,6 +3,9 @@ defmodule Trento.ActivityLog.Logger.Parser.QueueEventParser do
   Queue event activity parser
   """
 
+  alias Trento.Users
+  alias Trento.Users.User
+
   alias Trento.Checks.V1.{
     CheckCustomizationApplied,
     CheckCustomizationReset
@@ -14,10 +17,25 @@ defmodule Trento.ActivityLog.Logger.Parser.QueueEventParser do
 
   alias Trento.ActivityLog
 
-  def get_activity_actor(:operation_completed, %OperationCompleted{operation_id: operation_id}) do
+  def get_activity_actor(
+        :operation_completed,
+        %{
+          queue_event: %OperationCompleted{operation_id: operation_id}
+        }
+      ) do
     case ActivityLog.list_activity_log(%{type: "operation_requested", search: operation_id}) do
       {:ok, [%{actor: actor}], _meta} -> actor
       _ -> "system"
+    end
+  end
+
+  def get_activity_actor(activity, %{metadata: %{user_id: user_id}}) when is_integer(user_id) do
+    case Users.by_id(user_id) do
+      {:ok, %User{username: username}} ->
+        username
+
+      {:error, _} = error ->
+        get_activity_actor(activity, error)
     end
   end
 
@@ -25,11 +43,13 @@ defmodule Trento.ActivityLog.Logger.Parser.QueueEventParser do
 
   def get_activity_metadata(
         :operation_completed,
-        %OperationCompleted{
-          operation_id: operation_id,
-          group_id: group_id,
-          operation_type: operation_type,
-          result: result
+        %{
+          queue_event: %OperationCompleted{
+            operation_id: operation_id,
+            group_id: group_id,
+            operation_type: operation_type,
+            result: result
+          }
         }
       ) do
     %{
@@ -42,11 +62,13 @@ defmodule Trento.ActivityLog.Logger.Parser.QueueEventParser do
 
   def get_activity_metadata(
         :check_customization_applied,
-        %CheckCustomizationApplied{
-          check_id: check_id,
-          group_id: group_id,
-          target_type: target_type,
-          custom_values: custom_values
+        %{
+          queue_event: %CheckCustomizationApplied{
+            check_id: check_id,
+            group_id: group_id,
+            target_type: target_type,
+            custom_values: custom_values
+          }
         }
       ) do
     %{
@@ -62,10 +84,12 @@ defmodule Trento.ActivityLog.Logger.Parser.QueueEventParser do
 
   def get_activity_metadata(
         :check_customization_reset,
-        %CheckCustomizationReset{
-          check_id: check_id,
-          group_id: group_id,
-          target_type: target_type
+        %{
+          queue_event: %CheckCustomizationReset{
+            check_id: check_id,
+            group_id: group_id,
+            target_type: target_type
+          }
         }
       ) do
     %{

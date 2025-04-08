@@ -19,14 +19,18 @@ defmodule Trento.ActivityLog.QueueEventParserTest do
         )
 
       assert actor ==
-               QueueEventParser.get_activity_actor(:operation_completed, operation_completed)
+               QueueEventParser.get_activity_actor(:operation_completed, %{
+                 queue_event: operation_completed
+               })
     end
 
     test "should get default system actor if operation requested is not logged" do
       operation_completed = build(:operation_completed_v1)
 
       assert "system" ==
-               QueueEventParser.get_activity_actor(:operation_completed, operation_completed)
+               QueueEventParser.get_activity_actor(:operation_completed, %{
+                 queue_event: operation_completed
+               })
     end
 
     test "should get operation completed metadata" do
@@ -44,12 +48,16 @@ defmodule Trento.ActivityLog.QueueEventParserTest do
                operation: :saptune_solution_apply,
                result: result
              } ==
-               QueueEventParser.get_activity_metadata(:operation_completed, operation_completed)
+               QueueEventParser.get_activity_metadata(:operation_completed, %{
+                 queue_event: operation_completed
+               })
     end
   end
 
   describe "checks customization" do
     test "should get correct actor" do
+      %{id: user_id, username: username} = insert(:user)
+
       messages =
         [
           {:check_customization_applied, build(:check_customization_applied_v1)},
@@ -57,7 +65,19 @@ defmodule Trento.ActivityLog.QueueEventParserTest do
         ]
 
       for {activity, message} <- messages do
-        assert "system" == QueueEventParser.get_activity_actor(activity, message)
+        assert "system" == QueueEventParser.get_activity_actor(activity, %{queue_event: message})
+
+        assert "system" ==
+                 QueueEventParser.get_activity_actor(activity, %{
+                   queue_event: message,
+                   metadata: %{}
+                 })
+
+        assert username ==
+                 QueueEventParser.get_activity_actor(activity, %{
+                   queue_event: message,
+                   metadata: %{user_id: user_id}
+                 })
       end
     end
 
@@ -114,7 +134,8 @@ defmodule Trento.ActivityLog.QueueEventParserTest do
 
       for %{activity: activity, message: message, expected_metadata: expected_metadata} <-
             messages do
-        assert expected_metadata == QueueEventParser.get_activity_metadata(activity, message)
+        assert expected_metadata ==
+                 QueueEventParser.get_activity_metadata(activity, %{queue_event: message})
       end
     end
   end

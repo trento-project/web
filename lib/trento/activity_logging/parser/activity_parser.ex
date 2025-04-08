@@ -74,9 +74,9 @@ defmodule Trento.ActivityLog.Parser.ActivityParser do
   defp parse_domain_event_activity_info(:metadata, activity, activity_context),
     do: EventParser.get_activity_metadata(activity, activity_context)
 
-  defp parse_queue_event_activity_info(:actor, activity, %{queue_event: activity_context}),
+  defp parse_queue_event_activity_info(:actor, activity, activity_context),
     do: QueueEventParser.get_activity_actor(activity, activity_context)
 
-  defp parse_queue_event_activity_info(:metadata, activity, %{queue_event: activity_context}),
+  defp parse_queue_event_activity_info(:metadata, activity, activity_context),
     do: QueueEventParser.get_activity_metadata(activity, activity_context)
 end
