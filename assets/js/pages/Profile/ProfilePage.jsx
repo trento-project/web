@@ -141,6 +141,7 @@ function ProfilePage() {
     email,
     username,
     abilities,
+    analytics_enabled: analyticsEnabled,
     totp_enabled: totpEnabled,
   } = userState;
   const isDefaultAdmin = isAdmin(userState);
@@ -153,6 +154,7 @@ function ProfilePage() {
         emailAddress={email}
         username={username}
         abilities={abilities}
+        analyticsEnabled={analyticsEnabled}
         totpEnabled={totpEnabled}
         totpSecret={totpEnrollmentSecret}
         totpQrData={totpEnrollmentQrData}
