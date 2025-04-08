@@ -105,8 +105,9 @@ defmodule Trento.Users.User do
   end
 
   @spec with_polished_username(%__MODULE__{}) :: %__MODULE__{}
-  def with_polished_username(%__MODULE__{username: username, deleted_at: deleted_at} = user)
-      when deleted_at != nil do
+  def with_polished_username(%__MODULE__{deleted_at: nil} = user), do: user
+
+  def with_polished_username(%__MODULE__{username: username, deleted_at: deleted_at} = user) do
     # If the user is deleted, we append the deletion date to the username
     # It's a implementation detail that we don't want to expose to the user
     # See Trento.Users context for more information
@@ -115,8 +116,6 @@ defmodule Trento.Users.User do
       | username: String.trim_trailing(username, "__" <> DateTime.to_string(deleted_at))
     }
   end
-
-  def with_polished_username(user), do: user
 
   # When the user has user identities associated, means that the user comes from an external IDP
   # the password is not set in the user schema, so it should be skipped in updates.
