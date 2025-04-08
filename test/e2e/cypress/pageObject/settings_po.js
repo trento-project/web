@@ -7,7 +7,19 @@ import {
   anotherValidCertificate,
   expiredCertificate,
 } from '../fixtures/suma_credentials/certificates';
-import { createUserRequestFactory } from '@lib/test-utils/factories';
+
+// Test data
+const url = '/settings';
+
+const sumaUrl = 'https://valid';
+const sumaUsername = 'admin';
+const sumaPassword = 'adminpassword';
+
+const baseInitialSettings = {
+  url: sumaUrl,
+  username: sumaUsername,
+  password: sumaPassword,
+};
 
 // Selectors
 const keyExpirationLabel = 'div[class*="mt-1"]';
@@ -58,19 +70,6 @@ const activityLogSettingsSaveButton = `${activityLogSettingsModal} button:contai
 const activityLogSettingsCancelButton = `${activityLogSettingsModal} button:contains("Cancel")`;
 const retentionTimeInput = 'input[role="spinbutton"]';
 
-// Test data
-const url = '/settings';
-
-const sumaUrl = 'https://valid';
-const sumaUsername = 'admin';
-const sumaPassword = 'adminpassword';
-
-const baseInitialSettings = {
-  url: sumaUrl,
-  username: sumaUsername,
-  password: sumaPassword,
-};
-
 // UI Interactions
 
 export const visit = () => {
@@ -119,6 +118,9 @@ export const clickModalCancelButton = () =>
 export const clickGenerateApiKeyButton = () =>
   cy.get(generateApiKeyButton).click();
 
+export const clickGenerateApiKeyIsEnabled = () =>
+  cy.get(generateApiKeyButton).should('be.visible').and('be.enabled');
+
 export const setApiKeyExpiration = (amount) =>
   cy.get(apiKeyExpirationInput).type(amount);
 
@@ -135,7 +137,22 @@ export const interceptTestSUMASettingsRequest = (expectedStatusCode) =>
     statusCode: expectedStatusCode,
   });
 
+export const clickSumaConnectionTestButton = () =>
+  cy.get(testSumaConnectionButton).click();
+
 // UI Validations
+export const activityLogsEditButtonIsEnabled = () =>
+  cy.get(editActivityLogsSettingsButton).should('be.enabled');
+
+export const sumaClearSettingsButtonIsEnabled = () =>
+  cy.get(clearSumaSettingsButton).should('be.enabled');
+
+export const sumaEditSettingsButtonIsEnabled = () =>
+  cy.get(sumaEditSettingsButton).should('be.enabled');
+
+export const sumaConnectionTestButtonIsEnabled = () =>
+  cy.get(testSumaConnectionButton).should('be.enabled');
+
 export const changeSettingsEndpointIsNotCalled = () =>
   cy.get('@changeSettingsEndpoint').should('not.have.been.called');
 
@@ -153,9 +170,6 @@ export const showExpectedToasterAfterTestingSUMA = (expectedToasterMessage) => {
 
 export const sumaConnectionButtonIsDisabled = () =>
   cy.get(testSumaConnectionButton).should('be.disabled');
-
-export const clickSumaConnectionTestButton = () =>
-  cy.get(testSumaConnectionButton).click();
 
 export const expectedSavingValidationsAreDisplayed = () => {
   const savingValidationScenarios = [
@@ -664,3 +678,10 @@ export const updateApiKeyExpiration = (apiKeyExpiration) => {
     });
   });
 };
+
+export const createUserWithSettingsAbilities = () =>
+  basePage.createUserWithAbilities([
+    { name: 'all', resource: 'activity_logs_settings' },
+    { name: 'all', resource: 'api_key_settings' },
+    { name: 'all', resource: 'suma_settings' },
+  ]);
