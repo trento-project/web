@@ -1,6 +1,5 @@
 import * as settingsPage from '../pageObject/settings_po';
 
-import { validCertificate } from '../fixtures/suma_credentials/certificates';
 import { createUserRequestFactory } from '@lib/test-utils/factories';
 
 context('Settings page', () => {
@@ -49,10 +48,6 @@ context('Settings page', () => {
   });
 
   describe('Suse Manager Settings Management', () => {
-    const sumaUrl = 'https://valid';
-    const sumaUsername = 'admin';
-    const sumaPassword = 'adminpassword';
-
     beforeEach(() => {
       settingsPage.clearSUMASettings();
       settingsPage.refresh();
@@ -157,35 +152,21 @@ context('Settings page', () => {
       });
 
       describe('Testing against saved settings', () => {
-        before(() => {
-          cy.saveSUMASettings({
-            url: sumaUrl,
-            username: sumaUsername,
-            password: sumaPassword,
-            ca_cert: validCertificate,
-          });
-          cy.reload();
-          cy.get('[aria-label="test-suma-connection"]').should('be.enabled');
+        beforeEach(() => {
+          settingsPage.saveDefaultSUMAsettings();
+          settingsPage.refresh();
         });
 
         it('should succeed', () => {
-          cy.intercept('POST', '/api/v1/settings/suse_manager/test', {
-            statusCode: 200,
-          }).as('testConnection');
-
-          cy.get('[aria-label="test-suma-connection"]').click();
-          cy.wait('@testConnection');
-          cy.get('body').should('contain', 'Connection succeeded!');
+          settingsPage.interceptTestSUMASettingsRequest(200);
+          settingsPage.clickSumaConnectionTestButton();
+          settingsPage.showExpectedToasterAfterTestingSUMA('succeeded');
         });
 
         it('should fail', () => {
-          cy.intercept('POST', '/api/v1/settings/suse_manager/test', {
-            statusCode: 422,
-          }).as('testConnection');
-
-          cy.get('[aria-label="test-suma-connection"]').click();
-          cy.wait('@testConnection');
-          cy.get('body').should('contain', 'Connection failed!');
+          settingsPage.interceptTestSUMASettingsRequest(422);
+          settingsPage.clickSumaConnectionTestButton();
+          settingsPage.showExpectedToasterAfterTestingSUMA('failed');
         });
       });
     });

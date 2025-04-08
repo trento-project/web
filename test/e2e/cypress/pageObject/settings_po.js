@@ -97,9 +97,22 @@ export const clickGenerateApiKeyConfirmationButton = () =>
 
 export const clickModalCloseButton = () => cy.get(modalCloseButton).click();
 
+export const interceptTestSUMASettingsRequest = (expectedStatusCode) =>
+  cy.intercept('/api/v1/settings/suse_manager/test', {
+    statusCode: expectedStatusCode,
+  });
 // UI Validations
+export const showExpectedToasterAfterTestingSUMA = (expectedToasterMessage) => {
+  cy.get(`p:contains("Connection ${expectedToasterMessage}!")`).should(
+    'be.visible'
+  );
+};
+
 export const sumaConnectionButtonIsDisabled = () =>
   cy.get(testSumaConnectionButton).should('be.disabled');
+
+export const clickSumaConnectionTestButton = () =>
+  cy.get(testSumaConnectionButton).click();
 
 export const expectedSavingValidationsAreDisplayed = () => {
   const savingValidationScenarios = [
