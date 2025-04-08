@@ -1,5 +1,4 @@
 import * as checksSelectionPage from '../pageObject/checks_customization_po';
-// import {interceptLastExecutionRequest} from '../pageObject/hana_cluster_details_po';
 
 context('Checks customization', () => {
   before(() => {

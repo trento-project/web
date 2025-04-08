@@ -11,7 +11,7 @@ module.exports = defineConfig({
     db_host: 'localhost',
     db_port: 5432,
     project_root: '../..',
-    photofinish_binary: './photofinish',
+    photofinish_binary: 'photofinish',
     login_user: 'admin',
     login_password: 'adminpassword',
     destination_environment: 'dev',
