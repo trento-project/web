@@ -7,6 +7,8 @@ defmodule Trento.ActivityLog.QueueEventParserTest do
   import Trento.Factory
 
   alias Trento.ActivityLog.Logger.Parser.QueueEventParser
+  alias Trento.Users
+  alias Trento.Users.User
 
   describe "operation completed" do
     test "should get actor if operation requested is logged" do
@@ -56,7 +58,11 @@ defmodule Trento.ActivityLog.QueueEventParserTest do
 
   describe "checks customization" do
     test "should get correct actor" do
-      %{id: user_id, username: username} = insert(:user)
+      %{id: active_user_id, username: active_username} = insert(:user)
+
+      %{id: deleted_user_id, username: original_username} = user = insert(:user)
+
+      {:ok, %User{username: deleted_username}} = Users.delete_user(user)
 
       messages =
         [
@@ -73,10 +79,18 @@ defmodule Trento.ActivityLog.QueueEventParserTest do
                    metadata: %{}
                  })
 
-        assert username ==
+        assert active_username ==
                  QueueEventParser.get_activity_actor(activity, %{
                    queue_event: message,
-                   metadata: %{user_id: user_id}
+                   metadata: %{user_id: active_user_id}
+                 })
+
+        refute original_username == deleted_username
+
+        assert original_username ==
+                 QueueEventParser.get_activity_actor(activity, %{
+                   queue_event: message,
+                   metadata: %{user_id: deleted_user_id}
                  })
       end
     end

@@ -31,8 +31,8 @@ defmodule Trento.ActivityLog.Logger.Parser.QueueEventParser do
 
   def get_activity_actor(activity, %{metadata: %{user_id: user_id}}) when is_integer(user_id) do
     case Users.by_id(user_id) do
-      {:ok, %User{username: username}} ->
-        username
+      {:ok, %User{} = user} ->
+        User.with_polished_username(user).username
 
       {:error, _} = error ->
         get_activity_actor(activity, error)
