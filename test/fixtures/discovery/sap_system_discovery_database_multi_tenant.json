@@ -4,6 +4,7 @@
   "payload": [
     {
       "DBAddress": "",
+      "Tenant": "",
       "Databases": [
         {
           "Active": "yes",
