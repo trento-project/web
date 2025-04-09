@@ -366,21 +366,23 @@ export const apiSetTag = (resource, resourceId, tag) => {
 };
 
 export const saveSUMASettings = ({ url, username, password, ca_cert }) =>
-  apiLogin().then(({ accessToken }) =>
-    cy.request({
-      url: '/api/v1/settings/suse_manager',
-      method: 'POST',
-      auth: {
-        bearer: accessToken,
-      },
-      body: {
-        url,
-        username,
-        password,
-        ...(ca_cert && { ca_cert }),
-      },
-    })
-  );
+  clearSUMASettings().then(() => {
+    apiLogin().then(({ accessToken }) =>
+      cy.request({
+        url: '/api/v1/settings/suse_manager',
+        method: 'POST',
+        auth: {
+          bearer: accessToken,
+        },
+        body: {
+          url,
+          username,
+          password,
+          ...(ca_cert && { ca_cert }),
+        },
+      })
+    );
+  });
 
 export const clearSUMASettings = () =>
   apiLogin().then(({ accessToken }) =>

@@ -205,7 +205,6 @@ context('Settings page', () => {
 
   describe('Forbidden actions', () => {
     beforeEach(() => {
-      settingsPage.clearSUMASettings();
       settingsPage.saveDefaultSUMAsettings();
       settingsPage.apiDeleteAllUsers();
       settingsPage.logout();
