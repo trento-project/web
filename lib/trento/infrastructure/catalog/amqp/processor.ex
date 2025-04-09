@@ -14,12 +14,17 @@ defmodule Trento.Infrastructure.Catalog.AMQP.Processor do
   def process(%GenRMQ.Message{payload: payload} = message) do
     Logger.debug("Received message: #{inspect(message)}")
 
-    case Contracts.from_event(payload) do
-      {:ok, event} ->
-        ActivityLogger.log_activity(%{queue_event: event})
-
-      {:error, reason} ->
-        {:error, reason}
+    with {:ok, event} <- Contracts.from_event(payload),
+         {:ok, attributes} <- Contracts.attributes_from_event(payload) do
+      ActivityLogger.log_activity(%{
+        queue_event: event,
+        metadata: %{
+          user_id:
+            attributes
+            |> Map.get("user_id", {:ce_integer, nil})
+            |> elem(1)
+        }
+      })
     end
   end
 end

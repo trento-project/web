@@ -7,6 +7,8 @@ defmodule Trento.ActivityLog.Logger.Parser.MetadataEnricher do
 
   alias Trento.{Clusters, Databases, Hosts, SapSystems, Users}
 
+  alias Trento.Users.User
+
   @spec enrich(activity :: ActivityCatalog.activity_type(), metadata :: map()) ::
           {:ok, maybe_enriched_metadata :: map()}
   def enrich(activity, metadata) do
@@ -105,16 +107,7 @@ defmodule Trento.ActivityLog.Logger.Parser.MetadataEnricher do
   defp detect_enrichment(_target_entity, {_activity, _metadata}),
     do: {:error, :no_enrichment_needed}
 
-  defp polish_entity(%{username: username, deleted_at: deleted_at} = entity)
-       when deleted_at != nil do
-    # If the user is deleted, we append the deletion date to the username
-    # It's a implementation detail that we don't want to expose to the user
-    # See Trento.Users context for more information
-    clean_username =
-      String.trim_trailing(username, "__" <> DateTime.to_string(deleted_at))
-
-    Map.put(entity, :username, clean_username)
-  end
+  defp polish_entity(%User{} = user), do: User.with_polished_username(user)
 
   defp polish_entity(entity), do: entity
 end
