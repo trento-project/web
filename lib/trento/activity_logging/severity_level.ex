@@ -28,7 +28,17 @@ defmodule Trento.ActivityLog.SeverityLevel do
     "host_deregistered" => :warning,
     "host_deregistration_requested" => :debug,
     "host_details_updated" => :info,
-    "host_health_changed" => :info,
+    "host_health_changed" => %{
+      type: :kv,
+      key_suffix: "health",
+      values: %{
+        "critical" => :critical,
+        "warning" => :warning,
+        "unknown" => :warning,
+        "*" => :info
+      },
+      condition: :map_value_to_severity
+    },
     "host_registered" => :info,
     "host_restored" => :info,
     "host_rolled_up" => :debug,
@@ -93,7 +103,12 @@ defmodule Trento.ActivityLog.SeverityLevel do
     "sap_system_database_health_changed" => %{
       type: :kv,
       key_suffix: "health",
-      values: %{"critical" => :critical, "unknown" => :warning, "*" => :info},
+      values: %{
+        "critical" => :critical,
+        "warning" => :warning,
+        "unknown" => :warning,
+        "*" => :info
+      },
       condition: :map_value_to_severity
     },
     "sap_system_deregistered" => :warning,
@@ -103,9 +118,29 @@ defmodule Trento.ActivityLog.SeverityLevel do
     "sap_system_tombstoned" => :debug,
     "sap_system_updated" => :info,
     "database_deregistered" => :warning,
-    "database_health_changed" => :info,
+    "database_health_changed" => %{
+      type: :kv,
+      key_suffix: "health",
+      values: %{
+        "critical" => :critical,
+        "warning" => :warning,
+        "unknown" => :warning,
+        "*" => :info
+      },
+      condition: :map_value_to_severity
+    },
     "database_instance_deregistered" => :warning,
-    "database_instance_health_changed" => :info,
+    "database_instance_health_changed" => %{
+      type: :kv,
+      key_suffix: "health",
+      values: %{
+        "critical" => :critical,
+        "warning" => :warning,
+        "unknown" => :warning,
+        "*" => :info
+      },
+      condition: :map_value_to_severity
+    },
     "database_instance_marked_absent" => :warning,
     "database_instance_marked_present" => :info,
     "database_instance_registered" => :info,
