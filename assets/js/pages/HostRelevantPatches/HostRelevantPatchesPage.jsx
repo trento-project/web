@@ -75,13 +75,13 @@ function HostRelevantPatches({ hostName, onNavigate, patches }) {
 
   return (
     <>
-      <div className="flex flex-wrap">
-        <div className="flex w-1/2 overflow-ellipsis break-words">
+      <div className="flex flex-wrap space-x-4">
+        <div className="flex h-auto overflow-ellipsis break-words">
           <PageHeader>
             Relevant Patches: <span className="font-bold">{hostName}</span>
           </PageHeader>
         </div>
-        <div className="flex w-1/2 gap-2 justify-end">
+        <div className="flex flex-1 items-center space-x-2 justify-end">
           <Select
             onChange={setDisplayedAdvisories}
             options={advisoryTypes}
@@ -90,7 +90,7 @@ function HostRelevantPatches({ hostName, onNavigate, patches }) {
             value={displayedAdvisories}
           />
           <Input
-            className="max-w-1/4 flex-1"
+            className="flex flex-1 min-w-36 lg:max-w-96"
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by Synopsis"
             prefix={<EOS_SEARCH size="l" />}
