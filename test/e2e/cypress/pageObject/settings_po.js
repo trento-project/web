@@ -357,11 +357,11 @@ export const eachSaveSettingsScenarioWorkAsExpected = () => {
 export const editFormIsDisplayedAsExpected = () => {
   const initialEditFormScenarios = [
     {
-      selector: 'without cert',
+      scenario: 'without cert',
       settings: baseInitialSettings,
     },
     {
-      selector: 'with certificate',
+      scenario: 'with certificate',
       settings: { ...baseInitialSettings, ca_cert: validCertificate },
     },
   ];
