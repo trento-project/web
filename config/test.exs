@@ -120,6 +120,12 @@ config :trento, Trento.Infrastructure.Messaging.Adapter.AMQP,
       ]
     ],
     processor: GenRMQ.Processor.Mock
+  ],
+  discoveries: [
+    publisher: [
+      exchange: "trento.test.discoveries",
+      connection: amqp_connection
+    ]
   ]
 
 config :trento, Trento.Scheduler,
