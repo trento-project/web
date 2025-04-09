@@ -22,6 +22,12 @@ defmodule Trento.Discovery do
 
   alias Trento.{Clusters, Databases, SapSystems}
 
+  alias Trento.Infrastructure.Messaging
+
+  alias Trento.Discovery.AMQP.Publisher
+
+  alias Trento.Discoveries.V1.DiscoveryRequested
+
   @type command :: struct
 
   @doc """
@@ -104,6 +110,12 @@ defmodule Trento.Discovery do
     discarded_events_number
   end
 
+  @doc """
+  Request saptune discovery in host
+  """
+  @spec request_saptune_discovery(String.t()) :: :ok | {:error, any}
+  def request_saptune_discovery(host_id), do: request_discovery("saptune_discovery", [host_id])
+
   @spec store_discovery_event(map) :: {:ok, DiscoveryEvent.t()} | {:error, any}
   defp store_discovery_event(%{
          "agent_id" => agent_id,
@@ -184,6 +196,25 @@ defmodule Trento.Discovery do
   end
 
   defp dispatch(command), do: commanded().dispatch(command)
+
+  @spec request_discovery(String.t(), [String.t()]) ::
+          :ok | {:error, any}
+  defp request_discovery(discovery_type, targets) do
+    discovery_requested = %DiscoveryRequested{
+      discovery_type: discovery_type,
+      targets: targets
+    }
+
+    case Messaging.publish(Publisher, "agents", discovery_requested) do
+      :ok ->
+        :ok
+
+      {:error, reason} = error ->
+        Logger.error("Failed to publish discovery requested message: #{inspect(reason)}")
+
+        error
+    end
+  end
 
   defp commanded,
     do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]
