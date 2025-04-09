@@ -206,6 +206,7 @@ context('Settings page', () => {
   describe('Forbidden actions', () => {
     beforeEach(() => {
       settingsPage.clearSUMASettings();
+      settingsPage.saveDefaultSUMAsettings();
       settingsPage.apiDeleteAllUsers();
       settingsPage.logout();
     });
@@ -227,7 +228,7 @@ context('Settings page', () => {
       settingsPage.loginWithAbilities();
       settingsPage.visit();
       settingsPage.generateApiKeyButtonIsDisabled();
-      settingsPage.sumaConnectionTestButtonIsDisabled();
+      settingsPage.sumaConnectionTestButtonIsEnabled();
       settingsPage.sumaEditSettingsButtonIsDisabled();
       settingsPage.sumaClearSettingsButtonIsDisabled();
       settingsPage.activityLogsEditButtonIsDisabled();

@@ -168,9 +168,6 @@ export const sumaEditSettingsButtonIsDisabled = () =>
 export const sumaConnectionTestButtonIsEnabled = () =>
   cy.get(testSumaConnectionButton).should('be.enabled');
 
-export const sumaConnectionTestButtonIsDisabled = () =>
-  cy.get(testSumaConnectionButton).should('be.disabled');
-
 export const changeSettingsEndpointIsNotCalled = () =>
   cy.get('@changeSettingsEndpoint').should('not.have.been.called');
 
