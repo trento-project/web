@@ -120,7 +120,7 @@ export default function UpgradablePackages({
         </div>
         <div className="flex flex-1 items-center space-x-2 justify-end">
           <Input
-            className="flex flex-1 lg:max-w-96"
+            className="flex flex-1 min-w-36 lg:max-w-96"
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by Name or Patch"
             prefix={<EOS_SEARCH size="l" />}
