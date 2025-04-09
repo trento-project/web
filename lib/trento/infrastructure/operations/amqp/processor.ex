@@ -16,6 +16,8 @@ defmodule Trento.Infrastructure.Operations.AMQP.Processor do
 
   alias Trento.ActivityLog.ActivityLogger
 
+  alias Trento.Discovery
+
   require Logger
 
   def process(%GenRMQ.Message{payload: payload} = message) do
@@ -56,15 +58,25 @@ defmodule Trento.Infrastructure.Operations.AMQP.Processor do
          operation_type: operation_type,
          result: result
        }) do
+    mapped_operation_type = Operations.map_operation_type(operation_type)
+
     TrentoWeb.Endpoint.broadcast("monitoring:operations", "operation_completed", %{
       operation_id: operation_id,
       group_id: group_id,
-      operation_type: Operations.map_operation_type(operation_type),
+      operation_type: mapped_operation_type,
       result: result
     })
+
+    maybe_request_discovery(mapped_operation_type, result, group_id)
   end
 
   defp handle(event) do
-    Logger.debug("Handle event: #{inspect(event)}")
+    Logger.debug("Unknown event: #{inspect(event)}")
   end
+
+  defp maybe_request_discovery(:saptune_solution_apply, :UPDATED, group_id) do
+    Discovery.request_saptune_discovery(group_id)
+  end
+
+  defp maybe_request_discovery(_, _, _), do: :ok
 end
