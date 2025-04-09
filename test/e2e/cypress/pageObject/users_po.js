@@ -200,7 +200,10 @@ export const passwordChangeToasterIsNotDisplayed = () =>
 export const userWithModifiedNameIsDisplayed = (username) =>
   cy.get(`p:contains("${username}")`).should('be.visible');
 
-export const newUserIsDisplayed = (username, email) => {
+export const newUserIsDisplayed = (
+  username = USER.username,
+  email = USER.email
+) => {
   cy.get(usersTableRows).should('have.length', 2);
   cy.get(newUserName).contains(username);
   return cy.get(newUserEmail).contains(email);
@@ -372,3 +375,10 @@ export const apiModifyUserFullName = () =>
 
 const _getUserIdFromPath = () =>
   cy.location().then(({ pathname }) => pathname.split('/')[2]);
+
+export const apiLoginAndCreateSession = (
+  username = USER.username,
+  password = PASSWORD
+) => {
+  basePage.apiLoginAndCreateSession(username, password);
+};
