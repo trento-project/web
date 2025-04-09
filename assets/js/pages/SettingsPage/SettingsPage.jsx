@@ -119,10 +119,13 @@ function SettingsPage() {
 
   const {
     settings: alertingSettings,
-    loading: alertingLoading,
+    fetchLoading: alertingFetchLoading,
     fetchError: alertingFetchError,
+    submitLoading: alertingSubmitLoading,
+    submitErrors: alertingSubmitErrors,
     fetch: fetchAlertingSettings,
     submit: submitAlertingSettings,
+    clearSubmitErrors: clearAlertingSubmitErrors
   } = useAlertingSettings();
 
   const [alertingSettingsModalOpen, setAlertingSettingsModalOpen] = useState(false);
@@ -354,8 +357,8 @@ function SettingsPage() {
         <div className="pb-4">
           <SettingsLoader
             sectionName="Alerting Settings"
-            staatus={calculateSettingsLoaderStatus(
-              alertingLoading,
+            status={calculateSettingsLoaderStatus(
+              alertingFetchLoading,
               alertingFetchError
             )}
             onRetry={() => fetchAlertingSettings()}
@@ -364,6 +367,7 @@ function SettingsPage() {
               settings={alertingSettings}
               userAbilities={abilities}
               onEditClick={() => {
+                clearAlertingSubmitErrors()
                 setAlertingSettingsModalOpen(true);
               }}
             />

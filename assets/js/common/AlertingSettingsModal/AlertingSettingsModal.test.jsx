@@ -7,51 +7,6 @@ import { capitalize } from 'lodash';
 
 import AlertingSettingsModal from './AlertingSettingsModal';
 
-function construct_error_message(pointer, errorDetails) {
-  return {
-    detail: errorDetails,
-    source: { pointer: `/${pointer}`},
-    title: 'Invalid value',
-  }
-};
-
-function make_fake_return_errors_on_save({
-  smtpServerError,
-  smtpPortError,
-  smtpUsernameError,
-  smtpPasswordError,
-  senderEmailError,
-  recipientEmailError
-}) {
-  return (_settings) => {
-    var errors = []
-    smtpServerError && errors.push(
-      construct_error_message("smtp_server", smtpServerError)
-    )
-    smtpPortError && errors.push(
-      construct_error_message("smtp_port", smtpPortError)
-    )
-    smtpUsernameError && errors.push(
-      construct_error_message("smtp_username", smtpUsernameError)
-    )
-    smtpPasswordError && errors.push(
-      construct_error_message("smtp_password", smtpPasswordError)
-    )
-    senderEmailError && errors.push(
-      construct_error_message("sender_email", senderEmailError)
-    )
-    recipientEmailError && errors.push(
-      construct_error_message("recipient_email", recipientEmailError)
-    )
-
-    throw {
-      response: {
-        data: errors
-      }
-    }
-  }
-};
-
 describe("AlertingSettingsModal", () => {
   it("renders correctly when opened with no arguments passed", async () => {
     await act(() => {
@@ -114,7 +69,7 @@ describe("AlertingSettingsModal", () => {
     expect(screen.getByRole('textbox', {name: "Alert Recipient *"})).toHaveDisplayValue(recipientEmail)
   })
 
-  it("calls save handler correctly when supplying fresh settings", async () => {
+  it("calls onSave handler correctly when supplying fresh settings", async () => {
     const smtpServer = faker.internet.domainName();
     const smtpPort = faker.number.int({min: 1, max: 65535});
     const smtpUsername = faker.internet.username();
@@ -137,17 +92,17 @@ describe("AlertingSettingsModal", () => {
     await user.click(screen.getByRole("button", {name: "Save Settings"}))
 
     expect(onSave).toBeCalledWith({
-      enabled: true,
-      smtp_server: smtpServer,
-      smtp_port: smtpPort.toString(),
-      smtp_username: smtpUsername,
-      smtp_password: smtpPassword,
-      sender_email: senderEmail,
-      recipient_email: recipientEmail,
+      alertingEnabled: true,
+      smtpServer: smtpServer,
+      smtpPort: smtpPort,
+      smtpUsername: smtpUsername,
+      smtpPassword: smtpPassword,
+      senderEmail: senderEmail,
+      recipientEmail: recipientEmail,
     })
   });
 
-  it("does not supply password to save handler by default when previous settings", async () => {
+  it("does not supply password to onSave handler by default when previous settings", async () => {
     const smtpServer = faker.internet.domainName()
     const smtpPort = faker.number.int({min: 1, max: 65535})
     const smtpUsername = faker.internet.username()
@@ -173,24 +128,32 @@ describe("AlertingSettingsModal", () => {
     )
     await user.click(screen.getByRole("button", {name: "Save Settings"}))
 
-    expect(onSave).toBeCalledTimes(1)
-    expect(onSave.mock.calls[0][0]).not.toHaveProperty("password")
+    expect(onSave).toBeCalledWith({
+      alertingEnabled: true,
+      smtpServer: smtpServer,
+      smtpPort: smtpPort,
+      smtpUsername: smtpUsername,
+      // No `smtpPassword'
+      senderEmail: senderEmail,
+      recipientEmail: recipientEmail,
+    })
   });
 
   it("renders errors correctly", async () => {
+    function construct_error_message(pointer, errorDetails) {
+      return {
+        detail: errorDetails,
+        source: { pointer: `/${pointer}`},
+        title: 'Invalid value',
+      }
+    };
+
     const smtpServerError = faker.lorem.words()
     const smtpPortError = faker.lorem.words()
     const smtpUsernameError = faker.lorem.words()
+    const smtpPasswordError = faker.lorem.words()
     const senderEmailError = faker.lorem.words()
     const recipientEmailError = faker.lorem.words()
-
-    onSaveFake = make_fake_return_errors_on_save({
-      smtpServerError,
-      smtpPortError,
-      smtpUsernameError,
-      senderEmailError,
-      recipientEmailError
-    })
 
     const user = userEvent.setup()
 
@@ -204,10 +167,17 @@ describe("AlertingSettingsModal", () => {
           senderEmail: faker.internet.email(),
           recipientEmail: faker.internet.email(),
         }}
-        onSave={onSaveFake}
+        errors={[
+          construct_error_message("smtp_server", smtpServerError),
+          construct_error_message("smtp_port", smtpPortError),
+          construct_error_message("smtp_username", smtpUsernameError),
+          construct_error_message("smtp_password", smtpPasswordError),
+          construct_error_message("sender_email", senderEmailError),
+          construct_error_message("recipient_email", recipientEmailError)
+        ]}
       />
     );
-    await user.click(screen.getByRole('button', {name: "Save Settings"}));
+    await user.click(screen.getByRole('button', {name: "Remove"}));
 
     expect(screen.getByRole('alert', {name: "smtp-server-input-error"})).toHaveTextContent(
       capitalize(smtpServerError)
@@ -217,6 +187,9 @@ describe("AlertingSettingsModal", () => {
     )
     expect(screen.getByRole('alert', {name: "smtp-username-input-error"})).toHaveTextContent(capitalize(
       smtpUsernameError)
+    )
+    expect(screen.getByRole('alert', {name: "smtp-password-input-error"})).toHaveTextContent(capitalize(
+      smtpPasswordError)
     )
     expect(screen.getByRole('alert', {name: "sender-email-input-error"})).toHaveTextContent(
       capitalize(senderEmailError)

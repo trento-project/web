@@ -11,7 +11,9 @@ import { hasError, getError } from '@lib/api/validationErrors';
 
 export default function AlertingSettingsModal({
   previousSettings={},
+  errors=[],
   open=false,
+  loading=false,
   onSave=noop,
   onCancel=noop,
 }) {
@@ -24,33 +26,20 @@ export default function AlertingSettingsModal({
 
   const [editingPassword, setEditingPassword] = useState(isEmpty(previousSettings));
   const [smtpPassword, setSmtpPassword] = useState('')
-  const [errors, setErrors] = useState([]);
-  const [loading, setLoading] = useState(false)
-
-  function clearErrors() {
-    setErrors([])
-  }
 
   function onSubmit(e) {
     e.preventDefault()
-    setLoading(true)
-    try {
-      const settingsPayload = {
-        enabled: alertingEnabled,
-        smtp_server: smtpServer,
-        smtp_port: smtpPort,
-        smtp_username: smtpUsername,
-        sender_email: senderEmail,
-        recipient_email: recipientEmail,
-        ...(editingPassword && { smtp_password: smtpPassword }),
-      }
-      onSave(settingsPayload)
-    } catch ({ response: { data: saveErrors }}) {
-      setErrors(saveErrors)
-    } finally {
-      setLoading(false)
+    const settingsPayload = {
+      alertingEnabled,
+      smtpServer,
+      smtpPort,
+      smtpUsername,
+      senderEmail,
+      recipientEmail,
+      ...(editingPassword && { smtpPassword }),
     }
-  }
+    onSave(settingsPayload)
+   }
 
   return (
     <Modal
@@ -70,7 +59,6 @@ export default function AlertingSettingsModal({
               selected={alertingEnabled}
               onChange={(value) => {
                 setAlertingEnabled(value);
-                clearErrors();
               }}
             />
           </div>
@@ -87,7 +75,6 @@ export default function AlertingSettingsModal({
               error={hasError('smtp_server', errors)}
               onChange={({ target: { value } }) => {
                 setSmtpServer(value);
-                clearErrors();
               }}
             />
             {hasError('smtp_server', errors) && (
@@ -112,8 +99,7 @@ export default function AlertingSettingsModal({
               placeholder={587}
               error={hasError('smtp_port', errors)}
               onChange={({ target: { value } }) => {
-                setSmtpPort(value);
-                clearErrors();
+                setSmtpPort(Number(value));
               }}
             />
             {hasError('smtp_port', errors) && (
@@ -139,7 +125,6 @@ export default function AlertingSettingsModal({
               error={hasError('smtp_username', errors)}
               onChange={({ target: { value } }) => {
                 setSmtpUsername(value);
-                clearErrors();
               }}
             />
             {hasError('smtp_username', errors) && (
@@ -166,12 +151,12 @@ export default function AlertingSettingsModal({
                 error={hasError('smtp_password', errors)}
                 onChange={({ target: { value } }) => {
                   setSmtpPassword(value);
-                  clearErrors();
                 }}
               />
               {hasError('smtp_password', errors) && (
                 <p
                   aria-label="smtp-password-input-error"
+                  role="alert"
                   className="text-red-500 mt-1"
                 >
                   {capitalize(getError('smtp_password', errors))}
@@ -208,7 +193,6 @@ export default function AlertingSettingsModal({
               error={hasError('sender_email', errors)}
               onChange={({ target: { value } }) => {
                 setSenderEmail(value);
-                clearErrors();
               }}
             />
             {hasError('sender_email', errors) && (
@@ -234,7 +218,6 @@ export default function AlertingSettingsModal({
               error={hasError('recipient_email', errors)}
               onChange={({ target: { value } }) => {
                 setRecipientEmail(value);
-                clearErrors();
               }}
             />
             {hasError('recipient_email', errors) && (

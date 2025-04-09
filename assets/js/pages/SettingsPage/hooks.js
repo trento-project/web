@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { isEmpty } from 'lodash';
+import { isEmpty, omitBy, isNil } from 'lodash';
 import { useDispatch } from 'react-redux';
 
 import { dismissNotification, notify } from '@state/notifications';
@@ -173,42 +173,69 @@ export const useApiKeySettings = () => {
 
 export const useAlertingSettings = () => {
   const [settings, setSettings] = useState({})
-  const [loading, setLoading] = useState(false);
+  const [fetchLoading, setFetchLoading] = useState(false);
   const [fetchError, setFetchError] = useState(false)
+  const [submitErrors, setSubmitErrors] = useState([]);
+  const [submitLoading, setSubmitLoading] = useState(false)
+
+  function fromApiSettings(data) {
+    return {
+      alertingEnabled: data.enabled,
+      smtpServer: data.smtp_server,
+      smtpPort: data.smtp_port,
+      smtpUsername: data.smtp_username,
+      senderEmail: data.sender_email,
+      recipientEmail: data.recipient_email,
+    };
+  }
+
+  function toApiSettings(settings) {
+    var data = {
+      enabled: settings.alertingEnabled,
+      smtp_server: settings.smtpServer,
+      smtp_port: settings.smtpPort,
+      smtp_username: settings.smtpUsername,
+      smtp_password: settings.smtpPassword,
+      sender_email: settings.senderEmail,
+      recipient_email: settings.recipientEmail,
+    }
+
+    return omitBy(data, isNil)
+  }
+
+  function clearSubmitErrors() {
+    setSubmitErrors([]);
+  };
 
   async function fetch() {
-    setLoading(true);
+    setFetchLoading(true);
     setFetchError(false);
 
     try {
       const { data } = await getAlertingSettings();
-      setSettings({
-        alertingEnabled: data.enabled,
-        smtpServer: data.smtp_server,
-        smtpPort: data.smtp_port,
-        smtpUsername: data.smtp_username,
-        senderEmail: data.sender_email,
-        recipientEmail: data.recipient_email,
-      });
+      setSettings(fromApiSettings(data));
     } catch ({ response: { status } }) {
       setSettings({});
       if (status !== 404) setFetchError(true);
     } finally {
-      setLoading(false)
+      setFetchLoading(false)
     }
   };
 
   async function submit(newSettings) {
-    setLoading(true)
-    // TODO: Allow partial updates
-    // const action = isEmpty(settings) ? saveAlertingSettings : updateAlertingSettings
-    const action = saveAlertingSettings
+    setSubmitLoading(true)
+    clearSubmitErrors([])
+    const action = isEmpty(settings) ? saveAlertingSettings : updateAlertingSettings
 
     try {
-      const { data } = await action(newSettings);
-      setSettings(data);
+      const { data } = await action(
+        toApiSettings(newSettings)
+      );
+      setSettings(fromApiSettings(data));
+    } catch ({ response: { data: errors }}) {
+      setSubmitErrors(errors)
     } finally {
-      setLoading(false);
+      setFetchLoading(false);
     }
   };
 
@@ -218,9 +245,12 @@ export const useAlertingSettings = () => {
 
   return {
     settings,
-    loading,
+    fetchLoading,
     fetchError,
+    submitLoading,
+    submitErrors,
     fetch,
     submit,
+    clearSubmitErrors,
   };
 };
