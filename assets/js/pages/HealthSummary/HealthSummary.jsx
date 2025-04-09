@@ -18,7 +18,7 @@ function HealthSummary({
     <div
       className={classNames(
         className,
-        'tn-health-container flex flex-row justify-between'
+        'tn-health-container flex flex-row justify-between space-x-4'
       )}
     >
       <HealthSummaryBox
@@ -34,7 +34,6 @@ function HealthSummary({
         onClick={onFilterChange}
       />
       <HealthSummaryBox
-        style={{ marginRight: 0 }}
         health="critical"
         selected={activeFilters.critical}
         onClick={onFilterChange}
