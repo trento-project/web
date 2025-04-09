@@ -30,4 +30,9 @@ config :trento, Trento.Infrastructure.Messaging.Adapter.AMQP,
     consumer: [
       connection: amqp_connection
     ]
+  ],
+  discoveries: [
+    publisher: [
+      connection: amqp_connection
+    ]
   ]
