@@ -21,7 +21,7 @@ defmodule Trento.Infrastructure.Catalog.AMQP.Processor do
         metadata: %{
           user_id:
             attributes
-            |> Map.get("user_id")
+            |> Map.get("user_id", {:ce_integer, nil})
             |> elem(1)
         }
       })

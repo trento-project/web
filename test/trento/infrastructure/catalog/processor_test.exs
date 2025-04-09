@@ -84,5 +84,19 @@ defmodule Trento.Infrastructure.Catalog.AMQP.ProcessorTest do
 
       assert_entry_has_been_logged(1)
     end
+
+    test "should gracefully handle missing user information" do
+      check_customization_applied =
+        :check_customization_applied_v1
+        |> build()
+        |> Contracts.to_event(additional_attributes: %{})
+
+      assert :ok =
+               %{}
+               |> Message.create(check_customization_applied, nil)
+               |> Processor.process()
+
+      assert_entry_has_been_logged(1)
+    end
   end
 end
