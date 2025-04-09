@@ -118,8 +118,14 @@ export const clickModalCancelButton = () =>
 export const clickGenerateApiKeyButton = () =>
   cy.get(generateApiKeyButton).click();
 
-export const clickGenerateApiKeyIsEnabled = () =>
+export const generateApiKeyButtonIsEnabled = () =>
   cy.get(generateApiKeyButton).should('be.visible').and('be.enabled');
+
+export const generateApiKeyButtonIsDisabled = () => {
+  cy.get(generateApiKeyButton)
+    .should('have.class', 'opacity-50')
+    .and('be.disabled');
+};
 
 export const setApiKeyExpiration = (amount) =>
   cy.get(apiKeyExpirationInput).type(amount);
@@ -144,14 +150,26 @@ export const clickSumaConnectionTestButton = () =>
 export const activityLogsEditButtonIsEnabled = () =>
   cy.get(editActivityLogsSettingsButton).should('be.enabled');
 
+export const activityLogsEditButtonIsDisabled = () =>
+  cy.get(editActivityLogsSettingsButton).should('be.disabled');
+
 export const sumaClearSettingsButtonIsEnabled = () =>
   cy.get(clearSumaSettingsButton).should('be.enabled');
+
+export const sumaClearSettingsButtonIsDisabled = () =>
+  cy.get(clearSumaSettingsButton).should('be.disabled');
 
 export const sumaEditSettingsButtonIsEnabled = () =>
   cy.get(sumaEditSettingsButton).should('be.enabled');
 
+export const sumaEditSettingsButtonIsDisabled = () =>
+  cy.get(sumaEditSettingsButton).should('be.disabled');
+
 export const sumaConnectionTestButtonIsEnabled = () =>
   cy.get(testSumaConnectionButton).should('be.enabled');
+
+export const sumaConnectionTestButtonIsDisabled = () =>
+  cy.get(testSumaConnectionButton).should('be.disabled');
 
 export const changeSettingsEndpointIsNotCalled = () =>
   cy.get('@changeSettingsEndpoint').should('not.have.been.called');
@@ -679,7 +697,7 @@ export const updateApiKeyExpiration = (apiKeyExpiration) => {
   });
 };
 
-export const createUserWithSettingsAbilities = () =>
+export const apiCreateUserWithSettingsAbilities = () =>
   basePage.createUserWithAbilities([
     { name: 'all', resource: 'activity_logs_settings' },
     { name: 'all', resource: 'api_key_settings' },

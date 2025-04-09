@@ -205,15 +205,17 @@ context('Settings page', () => {
 
   describe('Forbidden actions', () => {
     beforeEach(() => {
+      settingsPage.clearSUMASettings();
       settingsPage.apiDeleteAllUsers();
       settingsPage.logout();
     });
 
     it('should enable settings buttons if the user has the correct abilities', () => {
-      settingsPage.createUserWithSettingsAbilities();
+      settingsPage.saveDefaultSUMAsettings();
+      settingsPage.apiCreateUserWithSettingsAbilities();
       settingsPage.loginWithAbilities();
       settingsPage.visit();
-      settingsPage.clickGenerateApiKeyIsEnabled();
+      settingsPage.generateApiKeyButtonIsEnabled();
       settingsPage.sumaConnectionTestButtonIsEnabled();
       settingsPage.sumaEditSettingsButtonIsEnabled();
       settingsPage.sumaClearSettingsButtonIsEnabled();
@@ -224,21 +226,11 @@ context('Settings page', () => {
       settingsPage.apiCreateUserWithoutAbilities();
       settingsPage.loginWithAbilities();
       settingsPage.visit();
-      // API Key settings button
-      cy.contains('button', 'Generate Key').should('have.class', 'opacity-50');
-      cy.contains('button', 'Generate Key').should('be.disabled');
-      // SUSE Manager config settings button
-      cy.contains('button', 'Test Connection').should('be.enabled');
-      cy.contains('h2', 'SUSE Multi-Linux Manager Config')
-        .next()
-        .contains('button', 'Edit Settings')
-        .should('be.disabled');
-      cy.contains('button', 'Clear Settings').should('be.disabled');
-      // Activity Logs settings button
-      cy.contains('h2', 'Activity Logs')
-        .next()
-        .contains('button', 'Edit Settings')
-        .should('be.disabled');
+      settingsPage.generateApiKeyButtonIsDisabled();
+      settingsPage.sumaConnectionTestButtonIsDisabled();
+      settingsPage.sumaEditSettingsButtonIsDisabled();
+      settingsPage.sumaClearSettingsButtonIsDisabled();
+      settingsPage.activityLogsEditButtonIsDisabled();
     });
   });
 });
