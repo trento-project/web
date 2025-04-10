@@ -118,7 +118,7 @@ export default function UpgradablePackages({
             Upgradable packages: <span className="font-bold">{hostName}</span>
           </PageHeader>
         </div>
-        <div className="flex flex-1 items-center space-x-2 justify-end">
+        <div className="flex flex-1 items-center space-x-2 lg:justify-end">
           <Input
             className="flex flex-1 min-w-36 lg:max-w-96"
             onChange={(e) => setSearch(e.target.value)}

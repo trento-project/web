@@ -81,7 +81,7 @@ function HostRelevantPatches({ hostName, onNavigate, patches }) {
             Relevant Patches: <span className="font-bold">{hostName}</span>
           </PageHeader>
         </div>
-        <div className="flex flex-1 items-center space-x-2 justify-end">
+        <div className="flex flex-1 items-center space-x-2 lg:justify-end">
           <Select
             onChange={setDisplayedAdvisories}
             options={advisoryTypes}
