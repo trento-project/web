@@ -271,4 +271,39 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
       struct?: false
     )
   end
+
+  defmodule AlertingSettings do
+    @moduledoc false
+
+    OpenApiSpex.schema(
+      %{
+        title: "AlertingSettings",
+        description: "Settings for the alerting sub-system",
+        type: :object,
+        properties: %{
+          enabled: %Schema{type: :boolean},
+          sender_email: %Schema{type: :string},
+          recipient_email: %Schema{type: :string},
+          smtp_server: %Schema{type: :string},
+          smtp_port: %Schema{
+            title: "Port",
+            anyOf: [%Schema{type: :integer}, %Schema{type: :string}],
+            example: 587
+          },
+          smtp_username: %Schema{type: :string},
+          smtp_password: %Schema{type: :string, format: :password, writeOnly: true}
+        },
+        required: [
+          :enabled,
+          :sender_email,
+          :recipient_email,
+          :smtp_server,
+          :smtp_port,
+          :smtp_username,
+          :smtp_password
+        ]
+      },
+      struct?: false
+    )
+  end
 end
