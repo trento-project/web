@@ -54,7 +54,7 @@ export const SOFTWARE_UPDATES_HEALTH_CHANGED =
   'software_updates_health_changed';
 
 // Cluster events
-export const CHECKS_SELECTED = 'checks_selected';
+export const CLUSTER_CHECKS_SELECTED = 'cluster_checks_selected';
 export const CLUSTER_CHECKS_HEALTH_CHANGED = 'cluster_checks_health_changed';
 export const CLUSTER_DEREGISTERED = 'cluster_deregistered';
 export const CLUSTER_DETAILS_UPDATED = 'cluster_details_updated';
@@ -367,7 +367,7 @@ export const ACTIVITY_TYPES_CONFIG = {
     resource: hostResourceType,
   },
   // Cluster events
-  [CHECKS_SELECTED]: {
+  [CLUSTER_CHECKS_SELECTED]: {
     label: 'Cluster Checks Selected',
     message: (_entry) => `Checks were selected for cluster`,
     resource: clusterResourceType,
