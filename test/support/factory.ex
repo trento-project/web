@@ -372,7 +372,8 @@ defmodule Trento.Factory do
       provider: Enum.random(Provider.values()),
       type: ClusterType.hana_scale_up(),
       health: Health.passing(),
-      selected_checks: Enum.map(0..4, fn _ -> Faker.StarWars.planet() end)
+      selected_checks: Enum.map(0..4, fn _ -> Faker.StarWars.planet() end),
+      details: %{}
     }
   end
 
