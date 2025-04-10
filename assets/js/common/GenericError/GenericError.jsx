@@ -11,7 +11,7 @@ function GenericError({ message = undefined }) {
               Sorry
             </h1>
             <p className="font-light font-sans text-center lg:text-left text-lg mt-8 text-gray-700">
-              An error occoured
+              An error occurred
             </p>
             <p className="font-light font-mono text-center lg:text-left text-lg text-gray-500">
               {message ?? 'No further information is known at this point'}
