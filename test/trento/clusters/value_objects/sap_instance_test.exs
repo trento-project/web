@@ -34,15 +34,22 @@ defmodule Trento.Clusters.ValueObjects.SapInstanceTest do
 
   describe "get_sap_instance_sids/1" do
     test "should return SAP instance sids" do
-      %{sid: sid_1} =
-        instance_1 =
-        build(:clustered_sap_instance, resource_type: SapInstanceResourceType.sap_instance())
+      sid_1 = Faker.Lorem.word()
+      sid_2 = Faker.StarWars.planet()
+
+      instance_1 =
+        build(:clustered_sap_instance,
+          sid: sid_1,
+          resource_type: SapInstanceResourceType.sap_instance()
+        )
 
       sap_instances = [
         instance_1,
         build(:clustered_sap_instance, resource_type: SapInstanceResourceType.sap_hana_topology()),
-        %{sid: sid_2} =
-          build(:clustered_sap_instance, resource_type: SapInstanceResourceType.sap_instance()),
+        build(:clustered_sap_instance,
+          sid: sid_2,
+          resource_type: SapInstanceResourceType.sap_instance()
+        ),
         build(:clustered_sap_instance,
           sid: sid_1,
           resource_type: SapInstanceResourceType.sap_instance()
