@@ -372,7 +372,7 @@ defmodule Trento.ActivityLog.MetadataEnricherTest do
         {:heartbeat_succeeded, build(:heartbeat_succeded, host_id: host_id)},
         {:heartbeat_failed, build(:heartbeat_failed, host_id: host_id)},
         {:host_checks_health_changed, build(:host_checks_health_changed, host_id: host_id)},
-        {:host_checks_selected, build(:host_checks_selected, host_id: host_id)},
+        {:host_checks_selected, build(:host_checks_selected_event, host_id: host_id)},
         {:host_health_changed, build(:host_health_changed_event, host_id: host_id)},
         {:saptune_status_updated, build(:saptune_status_updated_event, host_id: host_id)},
         {:software_updates_discovery_requested,
@@ -394,7 +394,7 @@ defmodule Trento.ActivityLog.MetadataEnricherTest do
       enrichable_events = [
         {:cluster_checks_health_changed,
          build(:cluster_checks_health_changed_event, cluster_id: cluster_id)},
-        {:checks_selected, build(:cluster_checks_selected_event, cluster_id: cluster_id)},
+        {:cluster_checks_selected, build(:cluster_checks_selected_event, cluster_id: cluster_id)},
         {:cluster_discovered_health_changed,
          build(:cluster_discovered_health_changed_event, cluster_id: cluster_id)},
         {:cluster_health_changed, build(:cluster_health_changed_event, cluster_id: cluster_id)}
