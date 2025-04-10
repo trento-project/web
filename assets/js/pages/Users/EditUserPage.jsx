@@ -10,12 +10,15 @@ import { isAdmin } from '@lib/model/users';
 import { isSingleSignOnEnabled } from '@lib/auth/config';
 
 import { editUser, getUser } from '@lib/api/users';
+import { getAnalyticsEnabledConfig } from '@lib/analytics';
 
 import { fetchAbilities } from './CreateUserPage';
 import UserForm from './UserForm';
 
 const SUCCESS_EDIT_MESSAGE = 'User edited successfully';
 const UNEXPECTED_ERROR_MESSAGE = 'Unexpected error occurred, refresh the page';
+
+const analyticsEnabledConfig = getAnalyticsEnabledConfig();
 
 function EditUserPage() {
   const { userID } = useParams();
@@ -93,6 +96,7 @@ function EditUserPage() {
     created_at: createdAt,
     updated_at: updatedAt,
     totp_enabled_at: totpEnabledAt,
+    analytics_enabled: analyticsEnabled,
   } = userState;
 
   return (
@@ -119,6 +123,8 @@ function EditUserPage() {
         createdAt={createdAt}
         updatedAt={updatedAt}
         totpEnabledAt={totpEnabledAt}
+        analyticsEnabledConfig={analyticsEnabledConfig}
+        analyticsEnabled={analyticsEnabled}
         saveEnabled={!isAdmin(userState)}
         saving={savingState}
         errors={errorsState}

@@ -33,6 +33,8 @@ function UserForm({
   createdAt = '',
   updatedAt = '',
   totpEnabledAt = '',
+  analyticsEnabledConfig = false,
+  analyticsEnabled,
   errors = defaultErrors,
   saving = false,
   saveEnabled = true,
@@ -54,6 +56,7 @@ function UserForm({
   const [confirmPasswordErrorState, setConfirmPasswordError] = useState(null);
   const [statusState, setStatus] = useState(status);
   const [totpState, setTotpState] = useState(Boolean(totpEnabledAt));
+  const [analyticsState, setAnalyticsState] = useState(analyticsEnabled);
   const [selectedAbilities, setAbilities] = useState(
     userAbilities.map(({ id }) => id)
   );
@@ -287,6 +290,25 @@ function UserForm({
                   }}
                 />
               </div>
+              {analyticsEnabledConfig && (
+                <Label className="col-start-1 col-span-2 sm:pt-2">
+                  Analytics Opt-in
+                </Label>
+              )}
+              {analyticsEnabledConfig && (
+                <span className="col-start-3 col-span-4">
+                  <Select
+                    disabled
+                    className="w-full"
+                    optionsName="analytics"
+                    options={['Enabled', 'Disabled']}
+                    value={analyticsState ? 'Enabled' : 'Disabled'}
+                    onChange={(value) => {
+                      setAnalyticsState(value === 'Enabled');
+                    }}
+                  />
+                </span>
+              )}
               <Label className="col-start-1 col-span-2">Created</Label>
               <span className="col-start-3 col-span-4">
                 {format(parseISO(createdAt), 'PPpp')}
