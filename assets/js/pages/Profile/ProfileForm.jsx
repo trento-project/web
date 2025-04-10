@@ -11,6 +11,7 @@ import ProfilePasswordChangeForm from '@pages/Profile/ProfilePasswordChangeForm'
 import TotpEnrollementBox from '@pages/Profile/TotpEnrollmentBox';
 
 import { REQUIRED_FIELD_TEXT, errorMessage } from '@lib/forms';
+import { getAnalyticsEnabledConfig } from '@lib/analytics';
 
 function ProfileForm({
   fullName = '',
@@ -20,6 +21,7 @@ function ProfileForm({
   totpSecret = '',
   totpQrData = '',
   abilities = [],
+  analyticsEnabled = false,
   errors,
   loading,
   disableForm,
@@ -38,6 +40,9 @@ function ProfileForm({
   const [emailAddressState, setEmailAddress] = useState(emailAddress);
   const [emailAddressErrorState, setEmailAddressError] = useState(null);
   const [totpDisableModalOpen, setTotpDisableModalOpen] = useState(false);
+  const [analyticsEnabledState, setAnalyticsState] = useState(analyticsEnabled);
+
+  const analyticsEnabledConfig = getAnalyticsEnabledConfig();
 
   const validateRequired = () => {
     let error = false;
@@ -62,6 +67,7 @@ function ProfileForm({
     const user = {
       fullname: fullNameState,
       email: emailAddressState,
+      analytics_enabled: analyticsEnabledState,
     };
 
     onSave(user);
@@ -180,6 +186,38 @@ function ProfileForm({
               disabled
             />
           </div>
+          {analyticsEnabledConfig && (
+            <Label className="col-start-1 col-span-2 pt-2">
+              Analytics Opt-in
+            </Label>
+          )}
+          {analyticsEnabledConfig && (
+            <div className="col-start-3 col-span-4">
+              <div className="pt-2">
+                <div className="flex items-center">
+                  <Input
+                    className="mr-2"
+                    type="checkbox"
+                    role="checkbox"
+                    checked={analyticsEnabledState}
+                    onChange={() => setAnalyticsState(!analyticsEnabledState)}
+                  />
+                  <p>
+                    Allow the collection of{' '}
+                    <a
+                      href="https://trento-project.io/docs"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-jungle-green-500 hover:opacity-75"
+                    >
+                      anonymous metrics
+                    </a>{' '}
+                    to help improve Trento.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
         {!singleSignOnEnabled && (
           <div className="flex flex-row w-80 space-x-2 mt-5">
