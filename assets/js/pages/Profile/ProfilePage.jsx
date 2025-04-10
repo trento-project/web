@@ -17,6 +17,7 @@ import {
   USER_PASSWORD_CHANGE_REQUESTED_NOTIFICATION_ID,
 } from '@state/user';
 import { dismissNotification } from '@state/notifications';
+import { optinCapturing } from '@lib/analytics';
 
 function ProfilePage() {
   const [errorsState, setErrors] = useState([]);
@@ -113,6 +114,7 @@ function ProfilePage() {
         setUser(updatedUser);
         dispatch(setUserInState(updatedUser));
         setPasswordModalOpen(false);
+        optinCapturing(updatedUser.analytics_enabled);
         if (!updatedUser.password_change_requested) {
           dispatch(
             dismissNotification(USER_PASSWORD_CHANGE_REQUESTED_NOTIFICATION_ID)
