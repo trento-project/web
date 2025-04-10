@@ -12,6 +12,11 @@ defmodule Trento.ActivityLog.ActivityCatalog do
 
   alias Trento.Operations.V1.OperationCompleted
 
+  @excluded_events [
+    Trento.Hosts.Events.HostChecksSelected,
+    Trento.Clusters.Events.ChecksSelected
+  ]
+
   @type activity_type :: atom()
   @type connection_activity :: {controller :: module(), action :: atom()}
   @type domain_event_activity :: event_module :: module()
@@ -130,7 +135,7 @@ defmodule Trento.ActivityLog.ActivityCatalog do
             false
         end)
         |> Enum.map(&Module.concat/1)
-        |> Enum.filter(&(not &1.legacy?()))
+        |> Enum.filter(&(not &1.legacy?() and &1 not in @excluded_events))
         |> Map.new(fn event_module ->
           {event_module,
            {event_module
@@ -163,8 +168,10 @@ defmodule Trento.ActivityLog.ActivityCatalog do
       {TrentoWeb.V1.ProfileController, :update} => {:profile_update, 200},
       {TrentoWeb.V1.ClusterController, :request_checks_execution} =>
         {:cluster_checks_execution_request, 202},
+      {TrentoWeb.V1.ClusterController, :select_checks} => {:cluster_checks_selected, 202},
       {TrentoWeb.V1.HostController, :request_checks_execution} =>
         {:host_checks_execution_request, 202},
+      {TrentoWeb.V1.HostController, :select_checks} => {:host_checks_selected, 202},
       {TrentoWeb.V1.SettingsController, :update_activity_log_settings} =>
         {:activity_log_settings_update, 200},
       {TrentoWeb.V1.HostController, :request_operation} => {:operation_requested, 202}
