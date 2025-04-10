@@ -65,6 +65,6 @@ describe('Advisory Details Page', () => {
       });
     });
 
-    expect(screen.getByText("Sorry")).toBeVisible();
+    expect(screen.getByText('Sorry')).toBeVisible();
   });
 });
