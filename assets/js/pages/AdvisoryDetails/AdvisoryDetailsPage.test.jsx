@@ -41,4 +41,30 @@ describe('Advisory Details Page', () => {
 
     expect(screen.getByText(advisoryName)).toBeVisible();
   });
+
+  it('should render errors', async () => {
+    const axiosMock = new MockAdapter(networkClient);
+
+    const hostID = faker.string.uuid();
+    const advisoryName = faker.string.uuid();
+    const errata = advisoryErrataFactory.build();
+
+    axiosMock
+      .onGet(`/api/v1/software_updates/errata_details/${advisoryName}`)
+      .reply(422, errata);
+
+    const [StatefulPage] = withState(
+      <AdvisoryDetailsPage />,
+      defaultInitialState
+    );
+
+    await act(async () => {
+      renderWithRouterMatch(StatefulPage, {
+        path: 'hosts/:hostID/patches/:advisoryID',
+        route: `/hosts/${hostID}/patches/${advisoryName}`,
+      });
+    });
+
+    expect(screen.getByText("Sorry")).toBeVisible();
+  });
 });
