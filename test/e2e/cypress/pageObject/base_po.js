@@ -275,7 +275,7 @@ const isTestDataLoaded = () =>
       .then(({ body }) => body.length !== 0)
   );
 
-export const createUserWithAbilities = (abilities) => {
+export const apiCreateUserWithAbilities = (abilities) => {
   return apiLogin().then(({ accessToken }) =>
     cy
       .request({
@@ -342,7 +342,8 @@ export const loginWithoutAbilities = () =>
 export const loginWithAbilities = () =>
   apiLoginAndCreateSession(user.username, password);
 
-export const apiCreateUserWithoutAbilities = () => createUserWithAbilities([]);
+export const apiCreateUserWithoutAbilities = () =>
+  apiCreateUserWithAbilities([]);
 
 export const getResourceTags = (resourceResponse) => {
   const resourceTags = {};

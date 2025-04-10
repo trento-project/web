@@ -4,7 +4,6 @@ import * as basePage from './base_po.js';
 import { capitalize } from 'lodash';
 
 // Test data
-
 import {
   checksExecutionCompletedFactory,
   catalogCheckFactory,
@@ -395,7 +394,7 @@ export const apiRestoreWdfHost = () =>
   basePage.loadScenario(`host-${hostToDeregister.name}-restore`);
 
 export const apiCreateUserWithChecksExecutionAbility = () => {
-  basePage.createUserWithAbilities([
+  basePage.apiCreateUserWithAbilities([
     {
       name: 'all',
       resource: 'cluster_checks_execution',
@@ -404,7 +403,7 @@ export const apiCreateUserWithChecksExecutionAbility = () => {
 };
 
 export const apiCreateUserWithChecksSelectionAbility = () => {
-  basePage.createUserWithAbilities([
+  basePage.apiCreateUserWithAbilities([
     {
       name: 'all',
       resource: 'cluster_checks_selection',

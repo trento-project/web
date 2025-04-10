@@ -146,6 +146,12 @@ export const interceptTestSUMASettingsRequest = (expectedStatusCode) =>
 export const clickSumaConnectionTestButton = () =>
   cy.get(testSumaConnectionButton).click();
 
+const _clickRemovePasswordButton = () =>
+  cy.get(sumaSettingsModal.removePasswordButton).click();
+
+const _clickRemoveSumaCaCertButton = () =>
+  cy.get(sumaSettingsModal.removeCaCertButton).click();
+
 // UI Validations
 export const activityLogsEditButtonIsEnabled = () =>
   cy.get(editActivityLogsSettingsButton).should('be.enabled');
@@ -597,12 +603,6 @@ export const sumaRemovePasswordButtonIsNotDisplayed = () =>
 const _removePasswordButtonIsDisplayed = () =>
   cy.get(sumaSettingsModal.removePasswordButton).should('be.visible');
 
-const _clickRemovePasswordButton = () =>
-  cy.get(sumaSettingsModal.removePasswordButton).click();
-
-const _clickRemoveSumaCaCertButton = () =>
-  cy.get(sumaSettingsModal.removeCaCertButton).click();
-
 export const sumaPasswordInputIsEmpty = () =>
   cy.get(sumaSettingsModal.passwordInput).should('have.value', '');
 
@@ -695,7 +695,7 @@ export const updateApiKeyExpiration = (apiKeyExpiration) => {
 };
 
 export const apiCreateUserWithSettingsAbilities = () =>
-  basePage.createUserWithAbilities([
+  basePage.apiCreateUserWithAbilities([
     { name: 'all', resource: 'activity_logs_settings' },
     { name: 'all', resource: 'api_key_settings' },
     { name: 'all', resource: 'suma_settings' },

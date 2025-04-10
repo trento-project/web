@@ -74,7 +74,7 @@ context('Clusters Overview', () => {
   describe('Deregistration', () => {
     before(() => {
       clustersOverviewPage.apiRemoveAllClusterTags();
-      clustersOverviewPage.apiSetTagsHanaCluster1();
+      clustersOverviewPage._apiSetTagsHanaCluster1();
       clustersOverviewPage.apiDeregisterAllClusterHosts();
     });
 
@@ -93,7 +93,7 @@ context('Clusters Overview', () => {
     describe('Tag operations', () => {
       beforeEach(() => {
         clustersOverviewPage.apiRemoveAllClusterTags();
-        clustersOverviewPage.apiSetTagsHanaCluster1();
+        clustersOverviewPage._apiSetTagsHanaCluster1();
         clustersOverviewPage.apiDeleteAllUsers();
         clustersOverviewPage.logout();
       });
