@@ -110,6 +110,11 @@ if config_env() in [:prod, :demo] do
       consumer: [
         connection: amqp_url
       ]
+    ],
+    discoveries: [
+      publisher: [
+        connection: amqp_url
+      ]
     ]
 
   config :trento, :checks_service, base_url: System.get_env("CHECKS_SERVICE_BASE_URL") || ""

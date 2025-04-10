@@ -194,6 +194,12 @@ config :trento, Trento.Infrastructure.Messaging.Adapter.AMQP,
       connection: "amqp://guest:guest@localhost:5672"
     ],
     processor: Trento.Infrastructure.Catalog.AMQP.Processor
+  ],
+  discoveries: [
+    publisher: [
+      exchange: "trento.discoveries",
+      connection: "amqp://guest:guest@localhost:5672"
+    ]
   ]
 
 config :trento, Trento.Infrastructure.Prometheus,

@@ -15,6 +15,10 @@ defmodule Trento.DiscoveryTest do
     DiscoveryEvent
   }
 
+  alias Trento.Discovery.AMQP.Publisher
+
+  alias Trento.Discoveries.V1.DiscoveryRequested
+
   test "should retrieve the current set of discovery events" do
     agent_id_1 = Faker.UUID.v4()
     agent_id_2 = Faker.UUID.v4()
@@ -172,5 +176,45 @@ defmodule Trento.DiscoveryTest do
 
     assert %DiscardedDiscoveryEvent{payload: ^event} =
              discarded_event
+  end
+
+  describe "request discovery" do
+    test "should request saptune discovery" do
+      %{id: host_id} = build(:host)
+
+      discovery_requested = %DiscoveryRequested{
+        discovery_type: "saptune_discovery",
+        targets: [host_id]
+      }
+
+      expect(
+        Trento.Infrastructure.Messaging.Adapter.Mock,
+        :publish,
+        fn Publisher, "agents", ^discovery_requested ->
+          :ok
+        end
+      )
+
+      assert :ok == Discovery.request_saptune_discovery(host_id)
+    end
+
+    test "should handle publishing error on saptune discovery request" do
+      %{id: host_id} = build(:host)
+
+      discovery_requested = %DiscoveryRequested{
+        discovery_type: "saptune_discovery",
+        targets: [host_id]
+      }
+
+      expect(
+        Trento.Infrastructure.Messaging.Adapter.Mock,
+        :publish,
+        fn Publisher, "agents", ^discovery_requested ->
+          {:error, "error"}
+        end
+      )
+
+      assert {:error, "error"} == Discovery.request_saptune_discovery(host_id)
+    end
   end
 end
