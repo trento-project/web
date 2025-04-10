@@ -981,15 +981,24 @@ defmodule Trento.ClustersTest do
     test "should publish proper targets for an ascs_ers cluster when additional non clustered application instances are found on the same hosts" do
       sap_system_id = Faker.UUID.v4()
       sid = "ASD"
+      instance_number_1 = "00"
+      instance_number_2 = "01"
 
       %{id: cluster_id} =
         insert(:cluster,
           type: :ascs_ers,
-          sap_instances:
-            build_list(1, :clustered_sap_instance,
+          sap_instances: [
+            build(:clustered_sap_instance,
               sid: sid,
-              resource_type: SapInstanceResourceType.sap_instance()
+              resource_type: SapInstanceResourceType.sap_instance(),
+              instance_number: instance_number_1
+            ),
+            build(:clustered_sap_instance,
+              sid: sid,
+              resource_type: SapInstanceResourceType.sap_instance(),
+              instance_number: instance_number_2
             )
+          ]
         )
 
       insert(:host, deregistered_at: DateTime.utc_now(), cluster_id: cluster_id)
@@ -997,12 +1006,16 @@ defmodule Trento.ClustersTest do
 
       Enum.each(
         hosts,
-        &Enum.each(1..2, fn _ ->
+        &Enum.each(1..2, fn it ->
           insert(:application_instance,
             sap_system_id: sap_system_id,
             host_id: &1.id,
             sid: sid,
-            instance_number: Faker.UUID.v4()
+            instance_number:
+              case it do
+                1 -> instance_number_1
+                2 -> Faker.Lorem.word()
+              end
           )
         end)
       )

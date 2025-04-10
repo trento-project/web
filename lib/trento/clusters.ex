@@ -211,6 +211,11 @@ defmodule Trento.Clusters do
        ) do
     sap_instance_sids = SapInstance.get_sap_instance_sids(sap_instances)
 
+    clustered_sap_instances =
+      sap_instances
+      |> Enum.map(& &1.instance_number)
+      |> Enum.uniq()
+
     hosts_data =
       Repo.all(
         from h in HostReadModel,
@@ -218,9 +223,8 @@ defmodule Trento.Clusters do
           on: h.id == a.host_id,
           where:
             h.cluster_id == ^cluster_id and is_nil(h.deregistered_at) and
-              a.sid in ^sap_instance_sids,
-          select: %{host_id: h.id, sap_system_id: a.sap_system_id},
-          distinct: true
+              a.sid in ^sap_instance_sids and a.instance_number in ^clustered_sap_instances,
+          select: %{host_id: h.id, sap_system_id: a.sap_system_id}
       )
 
     aggregated_ensa_version =
