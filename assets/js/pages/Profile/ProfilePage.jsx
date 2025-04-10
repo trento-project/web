@@ -17,6 +17,9 @@ import {
   USER_PASSWORD_CHANGE_REQUESTED_NOTIFICATION_ID,
 } from '@state/user';
 import { dismissNotification } from '@state/notifications';
+import { getAnalyticsEnabledConfig, optinCapturing } from '@lib/analytics';
+
+const analyticsEnabledConfig = getAnalyticsEnabledConfig();
 
 function ProfilePage() {
   const [errorsState, setErrors] = useState([]);
@@ -113,6 +116,7 @@ function ProfilePage() {
         setUser(updatedUser);
         dispatch(setUserInState(updatedUser));
         setPasswordModalOpen(false);
+        optinCapturing(updatedUser.analytics_enabled);
         if (!updatedUser.password_change_requested) {
           dispatch(
             dismissNotification(USER_PASSWORD_CHANGE_REQUESTED_NOTIFICATION_ID)
@@ -154,6 +158,7 @@ function ProfilePage() {
         emailAddress={email}
         username={username}
         abilities={abilities}
+        analyticsEnabledConfig={analyticsEnabledConfig}
         analyticsEnabled={analyticsEnabled}
         totpEnabled={totpEnabled}
         totpSecret={totpEnrollmentSecret}
