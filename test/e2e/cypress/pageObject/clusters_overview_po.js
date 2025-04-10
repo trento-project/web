@@ -191,7 +191,7 @@ const _apiSetTag = (clusterName, tag) => {
   return basePage.apiSetTag('clusters', clusterID, tag);
 };
 
-export const _apiSetTagsHanaCluster1 = () => {
+export const apiSetTagsHanaCluster1 = () => {
   const tagsForCluster1 = taggingRules
     .filter(([cluster]) => cluster === 'hana_cluster_1')
     .map(([, tag]) => tag);
