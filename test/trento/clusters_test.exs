@@ -977,6 +977,46 @@ defmodule Trento.ClustersTest do
 
       assert :ok = Clusters.request_checks_execution(cluster_id)
     end
+
+    test "should publish proper targets for an ascs_ers cluster when additional non clustered application instances are found on the same hosts" do
+      sap_system_id = Faker.UUID.v4()
+      sid = "ASD"
+
+      %{id: cluster_id} =
+        insert(:cluster,
+          type: :ascs_ers,
+          sap_instances:
+            build_list(1, :clustered_sap_instance,
+              sid: sid,
+              resource_type: SapInstanceResourceType.sap_instance()
+            )
+        )
+
+      insert(:host, deregistered_at: DateTime.utc_now(), cluster_id: cluster_id)
+      hosts = insert_list(2, :host, cluster_id: cluster_id)
+
+      Enum.each(
+        hosts,
+        &Enum.each(1..2, fn _ ->
+          insert(:application_instance,
+            sap_system_id: sap_system_id,
+            host_id: &1.id,
+            sid: sid,
+            instance_number: Faker.UUID.v4()
+          )
+        end)
+      )
+
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn Publisher,
+                                                                        "executions",
+                                                                        message ->
+        assert length(message.targets) == 2
+
+        :ok
+      end)
+
+      assert :ok = Clusters.request_checks_execution(cluster_id)
+    end
   end
 
   describe "maintenance?/1" do

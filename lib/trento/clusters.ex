@@ -219,7 +219,8 @@ defmodule Trento.Clusters do
           where:
             h.cluster_id == ^cluster_id and is_nil(h.deregistered_at) and
               a.sid in ^sap_instance_sids,
-          select: %{host_id: h.id, sap_system_id: a.sap_system_id}
+          select: %{host_id: h.id, sap_system_id: a.sap_system_id},
+          distinct: true
       )
 
     aggregated_ensa_version =
