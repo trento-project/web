@@ -109,7 +109,53 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
         assert expected_metadata ==
                  PhoenixConnParser.get_activity_metadata(action, %Plug.Conn{
                    conn
-                   | params: params
+                   | params: params,
+                     body_params: %{}
+                 })
+      end
+    end
+
+    test "should extract component id when applying a checks selection", %{conn: conn} do
+      host_id = Faker.UUID.v4()
+      cluster_id = Faker.UUID.v4()
+
+      checks = ["foo", "bar"]
+
+      scenarios = [
+        %{
+          action: :cluster_checks_selected,
+          params: %{:cluster_id => cluster_id},
+          expected_metadata: %{:cluster_id => cluster_id, checks: checks}
+        },
+        %{
+          action: :host_checks_selected,
+          params: %{:id => host_id},
+          expected_metadata: %{:host_id => host_id, checks: checks}
+        },
+        %{
+          action: :host_checks_selected,
+          params: %{:foo => "bar"},
+          expected_metadata: %{:host_id => nil, checks: checks}
+        },
+        %{
+          action: :cluster_checks_selected,
+          params: %{:foo => "bar"},
+          expected_metadata: %{:cluster_id => nil, checks: checks}
+        }
+      ]
+
+      for %{
+            action: action,
+            params: params,
+            expected_metadata: expected_metadata
+          } <- scenarios do
+        assert expected_metadata ==
+                 PhoenixConnParser.get_activity_metadata(action, %Plug.Conn{
+                   conn
+                   | params: params,
+                     body_params: %{
+                       checks: checks
+                     }
                  })
       end
     end
