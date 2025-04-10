@@ -23,7 +23,7 @@ defmodule Trento.ActivityLog.SeverityLevel do
       values: %{"critical" => :critical, "unknown" => :warning, "*" => :info},
       condition: :map_value_to_severity
     },
-    "host_checks_selected" => :info,
+    "host_checks_selected" => :warning,
     "host_checks_execution_request" => :info,
     "host_deregistered" => :warning,
     "host_deregistration_requested" => :debug,
@@ -61,7 +61,7 @@ defmodule Trento.ActivityLog.SeverityLevel do
       values: %{"critical" => :critical, "unknown" => :warning, "*" => :info},
       condition: :map_value_to_severity
     },
-    "checks_selected" => :warning,
+    "cluster_checks_selected" => :warning,
     "cluster_checks_health_changed" => %{
       type: :kv,
       key_suffix: "health",

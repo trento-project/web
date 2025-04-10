@@ -13,7 +13,7 @@ defmodule Trento.ActivityLog.EventParser do
     {:heartbeat_succeeded, build(:heartbeat_succeded)},
     {:heartbeat_failed, build(:heartbeat_failed)},
     {:host_checks_health_changed, build(:host_checks_health_changed)},
-    {:host_checks_selected, build(:host_checks_selected)},
+    {:host_checks_selected, build(:host_checks_selected_event)},
     {:software_updates_discovery_requested, build(:software_updates_discovery_requested_event)},
     {:foo_bar, TestEvent.new!(%{data: "some event"})}
   ]

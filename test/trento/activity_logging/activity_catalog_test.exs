@@ -23,7 +23,9 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
         :user_modification,
         :user_deletion,
         :profile_update,
+        :cluster_checks_selected,
         :cluster_checks_execution_request,
+        :host_checks_selected,
         :host_checks_execution_request,
         :activity_log_settings_update,
         :operation_requested
@@ -54,7 +56,6 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
         :software_updates_health_changed,
         :software_updates_discovery_requested,
         :heartbeat_succeeded,
-        :host_checks_selected,
         :sles_subscriptions_updated,
         :host_checks_health_changed,
         :host_deregistration_requested,
@@ -71,7 +72,6 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
         :cluster_restored,
         :cluster_discovered_health_changed,
         :host_removed_from_cluster,
-        :checks_selected,
         :cluster_details_updated,
         :database_deregistered,
         :database_tombstoned,
@@ -219,8 +219,26 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
         not_interesting_statuses: [400, 401, 403, 404, 500]
       },
       %{
+        activity: :cluster_checks_selected,
+        connection_info: {TrentoWeb.V1.ClusterController, :select_checks},
+        interesting_statuses: 202,
+        not_interesting_statuses: [400, 401, 403, 404, 500]
+      },
+      %{
         activity: :cluster_checks_execution_request,
         connection_info: {TrentoWeb.V1.ClusterController, :request_checks_execution},
+        interesting_statuses: 202,
+        not_interesting_statuses: [400, 401, 403, 404, 500]
+      },
+      %{
+        activity: :host_checks_selected,
+        connection_info: {TrentoWeb.V1.HostController, :select_checks},
+        interesting_statuses: 202,
+        not_interesting_statuses: [400, 401, 403, 404, 500]
+      },
+      %{
+        activity: :host_checks_execution_request,
+        connection_info: {TrentoWeb.V1.HostController, :request_checks_execution},
         interesting_statuses: 202,
         not_interesting_statuses: [400, 401, 403, 404, 500]
       },
@@ -278,7 +296,6 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
         {build(:heartbeat_succeded), :heartbeat_succeeded},
         {build(:heartbeat_failed), :heartbeat_failed},
         {build(:host_checks_health_changed), :host_checks_health_changed},
-        {build(:host_checks_selected), :host_checks_selected},
         {build(:software_updates_discovery_requested_event),
          :software_updates_discovery_requested}
       ]
@@ -306,6 +323,18 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
 
       assert {:ok, :database_deregistered} =
                ActivityCatalog.detect_activity(%{event: current_event})
+    end
+
+    test "should ignore specific domain events" do
+      excluded_events = [
+        :host_checks_selected_event,
+        :cluster_checks_selected_event
+      ]
+
+      for excluded_event <- excluded_events do
+        assert {:error, :not_interesting} =
+                 ActivityCatalog.detect_activity(%{event: build(excluded_event)})
+      end
     end
 
     test "should detect activity from queue events" do
