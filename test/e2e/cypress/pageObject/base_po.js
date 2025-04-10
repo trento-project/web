@@ -275,7 +275,7 @@ const isTestDataLoaded = () =>
       .then(({ body }) => body.length !== 0)
   );
 
-export const createUserWithAbilities = (abilities) => {
+export const apiCreateUserWithAbilities = (abilities) => {
   return apiLogin().then(({ accessToken }) =>
     cy
       .request({
@@ -342,7 +342,8 @@ export const loginWithoutAbilities = () =>
 export const loginWithAbilities = () =>
   apiLoginAndCreateSession(user.username, password);
 
-export const apiCreateUserWithoutAbilities = () => createUserWithAbilities([]);
+export const apiCreateUserWithoutAbilities = () =>
+  apiCreateUserWithAbilities([]);
 
 export const getResourceTags = (resourceResponse) => {
   const resourceTags = {};
@@ -366,21 +367,23 @@ export const apiSetTag = (resource, resourceId, tag) => {
 };
 
 export const saveSUMASettings = ({ url, username, password, ca_cert }) =>
-  apiLogin().then(({ accessToken }) =>
-    cy.request({
-      url: '/api/v1/settings/suse_manager',
-      method: 'POST',
-      auth: {
-        bearer: accessToken,
-      },
-      body: {
-        url,
-        username,
-        password,
-        ...(ca_cert && { ca_cert }),
-      },
-    })
-  );
+  clearSUMASettings().then(() => {
+    apiLogin().then(({ accessToken }) =>
+      cy.request({
+        url: '/api/v1/settings/suse_manager',
+        method: 'POST',
+        auth: {
+          bearer: accessToken,
+        },
+        body: {
+          url,
+          username,
+          password,
+          ...(ca_cert && { ca_cert }),
+        },
+      })
+    );
+  });
 
 export const clearSUMASettings = () =>
   apiLogin().then(({ accessToken }) =>

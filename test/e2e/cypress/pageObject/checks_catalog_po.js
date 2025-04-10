@@ -79,21 +79,17 @@ export const interceptChecksCatalogEndpoint = (forceError = false) => {
     .as(checksCatalogEndpointAlias);
 };
 
-export const interceptChecksCatalogEndpointWithError = () => {
-  return interceptChecksCatalogEndpoint(true);
-};
+export const interceptChecksCatalogEndpointWithError = () =>
+  interceptChecksCatalogEndpoint(true);
 
-export const getCheckGroupsNames = () => {
-  return Object.entries(groupBy(catalog, 'group')).map(([group]) => group);
-};
+export const getCheckGroupsNames = () =>
+  Object.entries(groupBy(catalog, 'group')).map(([group]) => group);
 
-export const expectedCheckGroupsAreDisplayed = () => {
-  return cy.get(checkGroups).should('have.length', 3);
-};
+export const expectedCheckGroupsAreDisplayed = () =>
+  cy.get(checkGroups).should('have.length', 3);
 
-export const onlyFirstCheckGroupIsExpanded = () => {
-  return cy.get(checkGroups).first().find(checkRows).should('have.length', 2);
-};
+export const onlyFirstCheckGroupIsExpanded = () =>
+  cy.get(checkGroups).first().find(checkRows).should('have.length', 2);
 
 export const expectedCheckGroupsAreIncluded = () => {
   const groups = getCheckGroupsNames();
@@ -122,9 +118,7 @@ export const expandAllGroups = () => {
   });
 };
 
-export const clickFirstCheckRow = () => {
-  return cy.get(checkRows).first().click();
-};
+export const clickFirstCheckRow = () => cy.get(checkRows).first().click();
 
 export const selectFromProvidersDropdown = (choice) => {
   selectFromCatalogDropdown(providersSelectionDropdown, choice);
@@ -181,6 +175,5 @@ export const expectedTargetTypeHostIconsAreDisplayed = () => {
     .within(() => cy.get(targetIcon).should('have.length', group2Checks));
 };
 
-export const checkPanelIsNotVisible = () => {
-  return cy.get(checkPanels).should('not.exist');
-};
+export const checkPanelIsNotVisible = () =>
+  cy.get(checkPanels).should('not.exist');

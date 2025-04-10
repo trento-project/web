@@ -481,7 +481,7 @@ const systemIdBySid = (systemName) =>
   availableSAPSystems.find(({ sid }) => sid === systemName).id;
 
 export const apiCreateUserWithSapSystemTagsAbility = () =>
-  basePage.createUserWithAbilities([
+  basePage.apiCreateUserWithAbilities([
     { name: 'all', resource: 'sap_system_tags' },
   ]);
 
@@ -496,11 +496,11 @@ export const loadDatabaseCleanUpPermissionsScenario = () => {
 };
 
 export const apiCreateUserWithAppInstanceCleanUpAbility = () =>
-  basePage.createUserWithAbilities([
+  basePage.apiCreateUserWithAbilities([
     { name: 'cleanup', resource: 'application_instance' },
   ]);
 
 export const apiCreateUserWithDatabaseCleanUpAbility = () =>
-  basePage.createUserWithAbilities([
+  basePage.apiCreateUserWithAbilities([
     { name: 'cleanup', resource: 'database_instance' },
   ]);

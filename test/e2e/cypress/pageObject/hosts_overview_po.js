@@ -300,7 +300,6 @@ const _validateCell = (header, rowIndex, expectedValue) => {
 };
 
 // Helpers
-
 const _getHostToDeregisterData = () => {
   const foundHost = availableHosts.find(
     (host) => host.name === hostToDeregister
@@ -413,8 +412,8 @@ export const apiSetTag = () => {
 };
 
 export const apiCreateUserWithHostTagsAbility = () => {
-  basePage.createUserWithAbilities([{ name: 'all', resource: 'host_tags' }]);
+  basePage.apiCreateUserWithAbilities([{ name: 'all', resource: 'host_tags' }]);
 };
 
 export const apiCreateUserWithHostCleanupAbility = () =>
-  basePage.createUserWithAbilities([{ name: 'cleanup', resource: 'host' }]);
+  basePage.apiCreateUserWithAbilities([{ name: 'cleanup', resource: 'host' }]);

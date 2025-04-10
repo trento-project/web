@@ -1,5 +1,3 @@
-import { userFactory } from '@lib/test-utils/factories/users';
-
 import * as usersPage from '../pageObject/users_po';
 import * as basePage from '../pageObject/base_po';
 import * as loginPage from '../pageObject/login_po';
@@ -52,10 +50,7 @@ describe('Users', () => {
       usersPage.userCreatedSuccessfullyToasterIsDisplayed();
 
       usersPage.pageTitleIsCorrectlyDisplayed('Users');
-      usersPage.newUserIsDisplayed(
-        usersPage.USER.username,
-        usersPage.USER.email
-      );
+      usersPage.newUserIsDisplayed();
     });
 
     it('should not allow creating the user with the same data', () => {
@@ -106,7 +101,7 @@ describe('Users', () => {
       usersPage.apiCreateUser();
       usersPage.refresh();
       usersPage.clickNewUser();
-      const { fullname } = userFactory.build();
+      const fullname = 'test';
       usersPage.typeUserFullName(fullname);
       usersPage.clickEditUserSaveButton();
       usersPage.userEditedSuccessfullyToasterIsDisplayed();
@@ -134,10 +129,7 @@ describe('Users', () => {
       basePage.logout();
       usersPage.apiDeleteAllUsers();
       usersPage.apiCreateUser();
-      basePage.apiLoginAndCreateSession(
-        usersPage.USER.username,
-        usersPage.PASSWORD
-      );
+      usersPage.apiLoginAndCreateSession();
       basePage.visit();
     });
 
@@ -168,9 +160,8 @@ describe('Users', () => {
     });
 
     it('should edit full name properly from the profile view', () => {
-      const { fullname } = userFactory.build();
       basePage.clickUserDropdownProfileButton();
-      usersPage.typeUserFullName(fullname);
+      usersPage.typeUserFullName('new_name');
       usersPage.clickEditUserSaveButton();
       usersPage.profileChangesSavedToasterIsDisplayed();
     });
@@ -207,10 +198,7 @@ describe('Users', () => {
       basePage.logout();
       usersPage.apiDeleteAllUsers();
       usersPage.apiCreateUser();
-      basePage.apiLoginAndCreateSession(
-        usersPage.USER.username,
-        usersPage.PASSWORD
-      );
+      usersPage.apiLoginAndCreateSession();
       basePage.visit();
       basePage.clickUserDropdownProfileButton();
       basePage.validateUrl('/profile');
@@ -282,7 +270,7 @@ describe('Users', () => {
       usersPage.getSecretAndTypeTotpCode();
       usersPage.clickVerifyTotpButton();
       usersPage.clickSignOutButton();
-      usersPage.apiLoginAndCreateSession();
+      basePage.apiLoginAndCreateSession();
       usersPage.visit();
       usersPage.clickNewUser();
       usersPage.selectFromTotpDropdown('Disabled');
@@ -294,7 +282,7 @@ describe('Users', () => {
 
     it('should not be enabled by admin user', () => {
       usersPage.clickSignOutButton();
-      usersPage.apiLoginAndCreateSession();
+      basePage.apiLoginAndCreateSession();
       usersPage.visit();
       usersPage.clickNewUser();
       usersPage.clickTotpDropdown();
@@ -307,10 +295,7 @@ describe('Users', () => {
       usersPage.logout();
       usersPage.apiDeleteAllUsers();
       usersPage.apiCreateUser();
-      usersPage.apiLoginAndCreateSession(
-        usersPage.USER.username,
-        usersPage.PASSWORD
-      );
+      usersPage.apiLoginAndCreateSession();
       usersPage.visit('/profile');
       usersPage.pageTitleIsCorrectlyDisplayed('Profile');
       usersPage.apiDisableUser();
@@ -330,7 +315,7 @@ describe('Users', () => {
       usersPage.logout();
       usersPage.apiDeleteAllUsers();
       usersPage.apiCreateUser();
-      usersPage.apiLoginAndCreateSession();
+      basePage.apiLoginAndCreateSession();
       usersPage.visit();
       usersPage.clickNewUserDeleteButton();
       usersPage.clickConfirmDeleteUserButton();
@@ -352,10 +337,7 @@ describe('Users', () => {
       usersPage.userCreatedSuccessfullyToasterIsDisplayed();
 
       usersPage.pageTitleIsCorrectlyDisplayed('Users');
-      usersPage.newUserIsDisplayed(
-        usersPage.USER.username,
-        usersPage.USER.email
-      );
+      usersPage.newUserIsDisplayed();
     });
 
     it('should not be able to login with deleted user', () => {

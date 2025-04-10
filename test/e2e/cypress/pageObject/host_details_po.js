@@ -552,7 +552,7 @@ export const restoreHost = () =>
   basePage.loadScenario(`host-details-${selectedHost.hostName}`);
 
 export const apiCreateUserWithHostChecksExecutionAbilities = () =>
-  basePage.createUserWithAbilities([
+  basePage.apiCreateUserWithAbilities([
     {
       name: 'all',
       resource: 'host_checks_execution',
@@ -560,7 +560,7 @@ export const apiCreateUserWithHostChecksExecutionAbilities = () =>
   ]);
 
 export const apiCreateUserWithChecksSelectionAbilities = () =>
-  basePage.createUserWithAbilities([
+  basePage.apiCreateUserWithAbilities([
     {
       name: 'all',
       resource: 'host_checks_selection',
@@ -568,7 +568,7 @@ export const apiCreateUserWithChecksSelectionAbilities = () =>
   ]);
 
 export const apiCreateUserWithHostCleanupAbilities = () =>
-  basePage.createUserWithAbilities([
+  basePage.apiCreateUserWithAbilities([
     {
       name: 'cleanup',
       resource: 'host',

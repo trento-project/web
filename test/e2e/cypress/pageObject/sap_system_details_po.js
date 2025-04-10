@@ -146,7 +146,7 @@ export const loadAbsentHostScenario = () =>
   basePage.loadScenario('sap-systems-overview-NWD-00-absent');
 
 export const apiCreateUserWithApplicationCleanupAbility = () => {
-  basePage.createUserWithAbilities([
+  basePage.apiCreateUserWithAbilities([
     { name: 'cleanup', resource: 'application_instance' },
   ]);
 };

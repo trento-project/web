@@ -16,7 +16,7 @@
 // import 'cypress-localstorage-commands';
 
 // Import commands.js using ES2015 syntax:
-import './commands';
+import { apiLoginAndCreateSession } from '../pageObject/base_po';
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
@@ -26,6 +26,6 @@ import './commands';
 before(() => {
   Cypress.session.clearAllSavedSessions();
   if (!Cypress.env('SSO_INTEGRATION_TESTS')) {
-    cy.login();
+    apiLoginAndCreateSession();
   }
 });

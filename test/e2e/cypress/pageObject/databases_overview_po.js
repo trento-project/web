@@ -132,7 +132,6 @@ export const clickCleanUpButton = () => {
 export const clickModalCleanUpButton = () => cy.get(cleanUpButtonModal).click();
 
 // API Interactions
-
 export const preloadTestData = () =>
   basePage.preloadTestData({ isDataLoadedFunc: isTestDataLoaded });
 
@@ -171,12 +170,12 @@ export const markHddDatabaseAsPresent = () => {
 };
 
 export const apiCreateUserWithDatabaseTagsAbilities = () =>
-  basePage.createUserWithAbilities([
+  basePage.apiCreateUserWithAbilities([
     { name: 'all', resource: 'database_tags' },
   ]);
 
 export const apiCreateUserWithCleanupAbilities = () =>
-  basePage.createUserWithAbilities([
+  basePage.apiCreateUserWithAbilities([
     { name: 'cleanup', resource: 'database_instance' },
   ]);
 
