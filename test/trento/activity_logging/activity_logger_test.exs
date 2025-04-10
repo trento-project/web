@@ -3,6 +3,7 @@ defmodule Trento.ActivityLog.ActivityLoggerTest do
 
   use TrentoWeb.ConnCase, async: true
   use Trento.MessagingCase
+  use Trento.CommandedCase
   use Plug.Test
 
   import Trento.Factory
@@ -301,6 +302,101 @@ defmodule Trento.ActivityLog.ActivityLoggerTest do
     end
   end
 
+  describe "checks selection request activity detection" do
+    defp select_checks(conn, component_id, component_type, checks) do
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> post("/api/v1/#{component_type}/#{component_id}/checks", %{
+        "checks" => checks
+      })
+    end
+
+    @tag mocked_commanded: false
+    test "should not log a checks selection because of a non existent resource",
+         %{conn: conn, user: %{id: user_id}} do
+      for component_type <- ["clusters", "hosts"] do
+        conn
+        |> with_token(user_id)
+        |> select_checks(Faker.UUID.v4(), component_type, ["foo", "bar"])
+        |> json_response(404)
+
+        wait_for_tasks_completion()
+
+        assert [] = Trento.Repo.all(ActivityLog)
+      end
+    end
+
+    successful_checks_selection_scenarios = [
+      %{
+        component_type: "clusters",
+        factory_reference: :cluster,
+        factory_options: [id: Faker.UUID.v4(), name: Faker.Lorem.word()],
+        checks_selection: [],
+        expected_activity_type: "cluster_checks_selected",
+        expected_metadata: &__MODULE__.expected_cluster_checks_selection_metadata/2
+      },
+      %{
+        component_type: "hosts",
+        factory_reference: :host,
+        factory_options: [id: Faker.UUID.v4(), hostname: Faker.Lorem.word()],
+        checks_selection: ["foo", "bar"],
+        expected_activity_type: "host_checks_selected",
+        expected_metadata: &__MODULE__.expected_host_checks_selection_metadata/2
+      }
+    ]
+
+    def expected_host_checks_selection_metadata(%{id: host_id, hostname: hostname}, checks),
+      do: %{
+        "host_id" => host_id,
+        "hostname" => hostname,
+        "checks" => checks
+      }
+
+    def expected_cluster_checks_selection_metadata(%{id: cluster_id, name: cluster_name}, checks),
+      do: %{
+        "cluster_id" => cluster_id,
+        "name" => cluster_name,
+        "checks" => checks
+      }
+
+    for %{component_type: component_type} = scenario <- successful_checks_selection_scenarios do
+      @scenario scenario
+
+      test "should log a successful checks selection for #{component_type}", %{
+        conn: conn,
+        user: %{id: user_id, username: username}
+      } do
+        %{
+          component_type: component_type,
+          factory_reference: factory_reference,
+          factory_options: factory_options,
+          expected_activity_type: expected_activity_type,
+          expected_metadata: expected_metadata_fn,
+          checks_selection: checks_selection
+        } = @scenario
+
+        %{id: component_id} = inserted_component = insert(factory_reference, factory_options)
+
+        conn
+        |> with_token(user_id)
+        |> select_checks(component_id, component_type, checks_selection)
+        |> json_response(202)
+
+        wait_for_tasks_completion()
+
+        expected_metadata = expected_metadata_fn.(inserted_component, checks_selection)
+
+        assert [
+                 %ActivityLog{
+                   type: ^expected_activity_type,
+                   actor: ^username,
+                   metadata: ^expected_metadata
+                 }
+               ] = Trento.Repo.all(ActivityLog)
+      end
+    end
+  end
+
   describe "checks execution request activity detection" do
     defp request_checks_execution(conn, component_id, component_type) do
       conn
@@ -412,7 +508,6 @@ defmodule Trento.ActivityLog.ActivityLoggerTest do
     heartbeat_failed_event = build(:heartbeat_failed)
     host_registered_event = build(:host_registered_event)
     host_checks_health_changed_event = build(:host_checks_health_changed)
-    host_checks_selected_event = build(:host_checks_selected)
 
     software_updates_discovery_requested_event =
       build(:software_updates_discovery_requested_event)
@@ -422,7 +517,6 @@ defmodule Trento.ActivityLog.ActivityLoggerTest do
       {heartbeat_succeeded_event, "heartbeat_succeeded"},
       {heartbeat_failed_event, "heartbeat_failed"},
       {host_checks_health_changed_event, "host_checks_health_changed"},
-      {host_checks_selected_event, "host_checks_selected"},
       {software_updates_discovery_requested_event, "software_updates_discovery_requested"}
     ]
 
