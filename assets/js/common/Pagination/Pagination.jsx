@@ -49,7 +49,7 @@ function ItemsPerPageSelector({
       <div className="flex pl-3 items-center text-sm">
         <span className="pr-2 text-gray-600">Results per page</span>
         <Select
-          className="w-20"
+          className="min-w-20 max-w-fit"
           optionsName=""
           options={itemsPerPageOptions}
           value={currentItemsPerPage}

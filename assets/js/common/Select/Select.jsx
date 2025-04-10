@@ -41,7 +41,7 @@ function Select({
 
   return (
     <Listbox
-      className={classNames('flex-2', className)}
+      className={classNames('flex-1', className)}
       disabled={disabled}
       value={value}
       onChange={onChange}
@@ -51,7 +51,7 @@ function Select({
         <Listbox.Button
           className={classNames(
             dropdownSelector,
-            'relative w-full py-2 px-3 text-left bg-white rounded cursor-default border border-gray-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-opacity-75 focus-visible:ring-white focus-visible:ring-offset-orange-300 focus-visible:ring-offset-2 focus-visible:border-indigo-500 sm:text-sm disabled:bg-gray-50 disabled:text-gray-400 h-full'
+            'relative w-full py-2 pl-3 pr-7 text-left bg-white rounded cursor-default border border-gray-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-opacity-75 focus-visible:ring-white focus-visible:ring-offset-orange-300 focus-visible:ring-offset-2 focus-visible:border-indigo-500 sm:text-sm disabled:bg-gray-50 disabled:text-gray-400 h-full'
           )}
         >
           {selectedItemPrefix}
@@ -94,7 +94,7 @@ function Select({
                   <>
                     <span
                       className={classNames('block', 'truncate', {
-                        'font-medium': isSelected,
+                        'font-medium pr-5': isSelected,
                         'font-normal': !isSelected,
                       })}
                     >

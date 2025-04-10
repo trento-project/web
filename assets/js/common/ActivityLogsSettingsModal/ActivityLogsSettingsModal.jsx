@@ -45,7 +45,7 @@ function TimeSpan({ time: initialTime, error = false, onChange = noop }) {
       </div>
       <div className="flex w-1/4">
         <Select
-          className="w-64"
+          className="min-w-24 max-w-fit"
           optionsName=""
           options={timeUnitOptions}
           value={time.unit || defaultTimeUnit}
