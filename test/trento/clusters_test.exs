@@ -1002,22 +1002,34 @@ defmodule Trento.ClustersTest do
         )
 
       insert(:host, deregistered_at: DateTime.utc_now(), cluster_id: cluster_id)
-      hosts = insert_list(2, :host, cluster_id: cluster_id)
+      [%{id: host_id1}, %{id: host_id2}] = insert_list(2, :host, cluster_id: cluster_id)
 
-      Enum.each(
-        hosts,
-        &Enum.each(1..2, fn it ->
-          insert(:application_instance,
-            sap_system_id: sap_system_id,
-            host_id: &1.id,
-            sid: sid,
-            instance_number:
-              case it do
-                1 -> instance_number_1
-                2 -> Faker.Lorem.word()
-              end
-          )
-        end)
+      insert(:application_instance,
+        sap_system_id: sap_system_id,
+        host_id: host_id1,
+        sid: sid,
+        instance_number: instance_number_1
+      )
+
+      insert(:application_instance,
+        sap_system_id: sap_system_id,
+        host_id: host_id1,
+        sid: sid,
+        instance_number: "02"
+      )
+
+      insert(:application_instance,
+        sap_system_id: sap_system_id,
+        host_id: host_id2,
+        sid: sid,
+        instance_number: instance_number_2
+      )
+
+      insert(:application_instance,
+        sap_system_id: sap_system_id,
+        host_id: host_id2,
+        sid: sid,
+        instance_number: "03"
       )
 
       expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn Publisher,
