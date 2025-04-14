@@ -1,4 +1,4 @@
-defmodule Trento.Discovery.AMQP.Publisher do
+defmodule Trento.Infrastructure.Discovery.AMQP.Publisher do
   @moduledoc """
   AMQP discovery publisher
   """

@@ -15,7 +15,7 @@ defmodule Trento.DiscoveryTest do
     DiscoveryEvent
   }
 
-  alias Trento.Discovery.AMQP.Publisher
+  alias Trento.Infrastructure.Discovery.AMQP.Publisher
 
   alias Trento.Discoveries.V1.DiscoveryRequested
 

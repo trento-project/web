@@ -22,9 +22,8 @@ defmodule Trento.Discovery do
 
   alias Trento.{Clusters, Databases, SapSystems}
 
+  alias Trento.Infrastructure.Discovery.AMQP.Publisher
   alias Trento.Infrastructure.Messaging
-
-  alias Trento.Discovery.AMQP.Publisher
 
   alias Trento.Discoveries.V1.DiscoveryRequested
 

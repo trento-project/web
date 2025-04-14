@@ -5,6 +5,7 @@ defmodule Trento.Infrastructure.Operations.AMQP.ProcessorTest do
 
   import Mox
 
+  alias Trento.Infrastructure.Discovery.AMQP.Publisher
   alias Trento.Infrastructure.Operations.AMQP.Processor
 
   alias Trento.Operations.V1.{
@@ -17,8 +18,6 @@ defmodule Trento.Infrastructure.Operations.AMQP.ProcessorTest do
   alias Trento.Contracts
 
   alias Trento.Repo
-
-  alias Trento.Discovery.AMQP.Publisher
 
   alias Trento.Discoveries.V1.DiscoveryRequested
 

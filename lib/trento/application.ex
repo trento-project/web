@@ -27,7 +27,7 @@ defmodule Trento.Application do
         Trento.Infrastructure.Operations.AMQP.Publisher,
         Trento.Infrastructure.Operations.AMQP.Consumer,
         Trento.Infrastructure.Catalog.AMQP.Consumer,
-        Trento.Discovery.AMQP.Publisher,
+        Trento.Infrastructure.Discovery.AMQP.Publisher,
         Trento.Vault,
         Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuth,
         {Task.Supervisor, name: Trento.TasksSupervisor},
