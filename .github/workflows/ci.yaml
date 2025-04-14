@@ -919,6 +919,9 @@ jobs:
             --set trento-wanda.image.pullPolicy=Always \
             --set trento-wanda.image.repository="${IMAGE_REPOSITORY}/trento-wanda" \
             --set trento-wanda.image.tag="demo" \
+            --set trento-wanda.checks.image.pullPolicy=Always \
+            --set trento-wanda.checks.image.repository="${IMAGE_REPOSITORY}/checks" \
+            --set trento-wanda.checks.image.tag="rolling" \
             --set trento-web.trentoWebOrigin="${TRENTO_WEB_ORIGIN}" \
             -f ../../hack/cert-manager/override-values.yaml
 
