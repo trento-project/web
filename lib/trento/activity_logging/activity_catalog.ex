@@ -135,7 +135,7 @@ defmodule Trento.ActivityLog.ActivityCatalog do
             false
         end)
         |> Enum.map(&Module.concat/1)
-        |> Enum.filter(&(not &1.legacy?() and &1 not in @excluded_events))
+        |> Enum.reject(&(&1.legacy?() or &1 in @excluded_events))
         |> Map.new(fn event_module ->
           {event_module,
            {event_module
