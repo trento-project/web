@@ -8,70 +8,42 @@ defmodule Trento.Infrastructure.Alerting.AlertingTest do
   import Swoosh.TestAssertions
 
   import Trento.Factory
+  import Trento.Support.Helpers.AlertingSettingsHelper
 
   alias Trento.Infrastructure.Alerting.Alerting
 
   @moduletag :integration
 
-  @some_sender "some.sender@email.com"
-  @some_recipient "some.recipient@email.com"
+  setup :restore_alerting_app_env
 
-  describe "Enabling/Disabling Alerting Feature" do
-    setup do
-      on_exit(fn ->
-        Application.put_env(:trento, :alerting,
-          enabled: true,
-          sender: @some_sender,
-          recipient: @some_recipient
-        )
-      end)
+  describe "When alerting is disabled or not configured" do
+    test "no email is sent and error is returned when alerting is not configured" do
+      nil_alerting_app_env()
+
+      host_id = Faker.UUID.v4()
+
+      result = Alerting.notify_critical_host_health(host_id)
+
+      assert_no_email_sent()
+      assert :ok = result
     end
 
-    test "No email should be sent when alerting is disabled" do
+    test "no email should be sent when alerting is disabled" do
       Application.put_env(:trento, :alerting, enabled: false)
       host_id = Faker.UUID.v4()
 
-      Alerting.notify_critical_host_health(host_id)
+      result = Alerting.notify_critical_host_health(host_id)
 
       assert_no_email_sent()
-    end
-
-    test "An error should be raised when alerting is enabled but no recipient was provided" do
-      Application.put_env(:trento, :alerting,
-        enabled: true,
-        sender: @some_sender
-        # no recipient set
-      )
-
-      sap_system_id = Faker.UUID.v4()
-      insert(:sap_system, id: sap_system_id)
-
-      assert_raise ArgumentError,
-                   ~r/Unexpected tuple format, {"Trento Admin", nil} cannot be formatted into a Recipient./,
-                   fn -> Alerting.notify_critical_sap_system_health(sap_system_id) end
-
-      assert_no_email_sent()
-    end
-
-    test "An error should be raised when alerting is enabled but no sender was provided" do
-      Application.put_env(:trento, :alerting,
-        enabled: true,
-        # no sender set
-        recipient: @some_recipient
-      )
-
-      sap_system_id = Faker.UUID.v4()
-      insert(:sap_system, id: sap_system_id)
-
-      assert_raise ArgumentError,
-                   ~r/Unexpected tuple format, {"Trento Alerts", nil} cannot be formatted into a Recipient./,
-                   fn -> Alerting.notify_critical_sap_system_health(sap_system_id) end
-
-      assert_no_email_sent()
+      assert :ok = result
     end
   end
 
   describe "Alerting the configured recipient about crucial facts with email notifications" do
+    setup do
+      Application.put_env(:trento, :alerting, enabled: true)
+    end
+
     test "Notify api key will be expired soon" do
       insert(:api_key_settings, expire_at: DateTime.add(DateTime.utc_now(), 28, :day))
 
@@ -131,29 +103,17 @@ defmodule Trento.Infrastructure.Alerting.AlertingTest do
 
   describe "Alerting errors" do
     setup do
-      on_exit(fn ->
-        Application.put_env(:trento, :alerting,
-          enabled: true,
-          sender: @some_sender,
-          recipient: @some_recipient
-        )
-
-        Application.put_env(:trento, Trento.Mailer, adapter: Swoosh.Adapters.Test)
-      end)
+      on_exit(fn -> Application.put_env(:trento, Trento.Mailer, adapter: Swoosh.Adapters.Test) end)
     end
 
     test "should be caught if SMTP server is wrongly set up" do
       relay_ip_address = Faker.Internet.ip_v4_address()
 
+      Application.put_env(:trento, :alerting, enabled: true)
+
       Application.put_env(:trento, Trento.Mailer,
         adapter: Swoosh.Adapters.SMTP,
         relay: "smtp://#{relay_ip_address}"
-      )
-
-      Application.put_env(:trento, :alerting,
-        enabled: true,
-        sender: @some_sender,
-        recipient: @some_recipient
       )
 
       host_id = Faker.UUID.v4()

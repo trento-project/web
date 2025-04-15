@@ -22,7 +22,7 @@ defmodule TrentoWeb.V1.SettingsJSONTest do
   end
 
   describe "Alerting Settings template/view" do
-    @alerting_allowed_fields ~w(enabled sender_email recipient_email smtp_server smtp_port smtp_username)a
+    @alerting_allowed_fields ~w(enabled sender_email recipient_email smtp_server smtp_port smtp_username enforced_from_env)a
 
     test "filters only correct fields" do
       settings = build(:alerting_settings)

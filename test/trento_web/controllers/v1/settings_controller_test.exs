@@ -642,7 +642,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
   end
 
   describe "AlertingSettings" do
-    @alerting_settings_get_fields ~w(enabled sender_email recipient_email smtp_server smtp_port smtp_username)a
+    @alerting_settings_get_fields ~w(enabled sender_email recipient_email smtp_server smtp_port smtp_username enforced_from_env)a
     @alerting_settings_set_fields ~w(enabled sender_email recipient_email smtp_server smtp_port smtp_username smtp_password)a
 
     test "should successfully return settings", %{conn: conn, api_spec: api_spec} do
@@ -679,13 +679,13 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       api_spec: api_spec
     } do
       settings = build(:alerting_settings)
-      set_params = Map.take(settings, @alerting_settings_set_fields)
+      create_params = Map.take(settings, @alerting_settings_set_fields)
       exp_params = Map.take(settings, @alerting_settings_get_fields)
 
       resp =
         conn
         |> put_req_header("content-type", "application/json")
-        |> post(~p"/api/v1/settings/alerting", set_params)
+        |> post(~p"/api/v1/settings/alerting", create_params)
         |> json_response(:ok)
         |> assert_response_schema("AlertingSettings", api_spec)
 
@@ -761,29 +761,22 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       conn: conn,
       api_spec: api_spec
     } do
-      %{
-        sender_email: sender_email,
-        recipient_email: recipient_email,
-        smtp_server: smtp_server,
-        smtp_port: smtp_port,
-        smtp_username: smtp_username
-      } = insert(:alerting_settings, enabled: true)
+      inserted_settings = insert(:alerting_settings, enabled: true)
+      update_params = %{enabled: false}
+
+      exp_params =
+        inserted_settings
+        |> Map.take(@alerting_settings_get_fields)
+        |> Map.merge(update_params)
 
       resp =
         conn
         |> put_req_header("content-type", "application/json")
-        |> patch(~p"/api/v1/settings/alerting", %{enabled: false})
+        |> patch(~p"/api/v1/settings/alerting", update_params)
         |> json_response(:ok)
         |> assert_response_schema("AlertingSettings", api_spec)
 
-      assert %{
-               enabled: false,
-               sender_email: sender_email,
-               recipient_email: recipient_email,
-               smtp_server: smtp_server,
-               smtp_port: smtp_port,
-               smtp_username: smtp_username
-             } == resp
+      assert exp_params == resp
     end
 
     test "should fail to update settings if validation (changeset) fails", %{

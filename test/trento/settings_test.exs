@@ -8,6 +8,7 @@ defmodule Trento.SettingsTest do
   import Mox
 
   import Trento.Factory
+  import Trento.Support.Helpers.AlertingSettingsHelper
 
   require Trento.ActivityLog.RetentionPeriodUnit, as: RetentionPeriodUnit
 
@@ -24,6 +25,9 @@ defmodule Trento.SettingsTest do
   }
 
   alias Trento.Hosts.Commands.CompleteSoftwareUpdatesDiscovery
+
+  @alerting_create_fields ~w(enabled sender_email recipient_email smtp_server smtp_port smtp_username smtp_password)a
+  @alerting_update_fields ~w(enabled sender_email recipient_email smtp_server smtp_port smtp_username)a
 
   setup :verify_on_exit!
 
@@ -793,9 +797,37 @@ defmodule Trento.SettingsTest do
     end
   end
 
-  describe "Alerting settings" do
-    @create_fields ~w(enabled sender_email recipient_email smtp_server smtp_port smtp_username smtp_password)a
-    @update_fields ~w(enabled sender_email recipient_email smtp_server smtp_port smtp_username)a
+  describe "Alerting settings enforcement check" do
+    setup :restore_alerting_app_env
+
+    test "returns FALSE if no explicit configuration via env" do
+      nil_alerting_app_env()
+      assert Settings.alerting_settings_enforced_from_env?() == false
+    end
+
+    for {key, value, subkey} <- [
+          {:enabled, false, :alerting},
+          {:sender, "sender@trento.com", :alerting},
+          {:recipient, "recipient@trento.com", :alerting},
+          {:relay, "test.com", Trento.Mailer},
+          {:port, 587, Trento.Mailer},
+          {:username, "testuser", Trento.Mailer},
+          {:password, "testpass}", Trento.Mailer}
+        ] do
+      test "returns TRUE if `#{key}` is configured via env" do
+        Application.put_env(:trento, unquote(subkey), [{unquote(key), unquote(value)}])
+        assert Settings.alerting_settings_enforced_from_env?() == true
+      end
+    end
+  end
+
+  describe "Alerting settings from DB" do
+    setup :restore_alerting_app_env
+
+    setup do
+      nil_alerting_app_env()
+      :ok
+    end
 
     test "return error when settings are not configured" do
       assert {:error, :alerting_settings_not_configured} ==
@@ -820,7 +852,7 @@ defmodule Trento.SettingsTest do
       now = DateTime.utc_now()
 
       {:ok, saved_settings} =
-        Settings.create_alerting_settings(Map.take(settings, @create_fields))
+        Settings.create_alerting_settings(Map.take(settings, @alerting_create_fields))
 
       assert saved_settings.id != nil
 
@@ -878,7 +910,7 @@ defmodule Trento.SettingsTest do
         create_params =
           :alerting_settings
           |> build([{field_name, field_value}])
-          |> Map.take(@create_fields)
+          |> Map.take(@alerting_create_fields)
 
         assert {:error, changeset} = Settings.create_alerting_settings(create_params)
         assert %{field_name => [expected_error]} == errors_on(changeset)
@@ -891,7 +923,7 @@ defmodule Trento.SettingsTest do
       create_params =
         :alerting_settings
         |> build()
-        |> Map.take(@create_fields)
+        |> Map.take(@alerting_create_fields)
 
       assert {:error, changeset} = Settings.create_alerting_settings(create_params)
 
@@ -917,7 +949,7 @@ defmodule Trento.SettingsTest do
         smtp_username: upd_smtp_username
       } = update_settings = build(:alerting_settings)
 
-      update_params = Map.take(update_settings, @update_fields)
+      update_params = Map.take(update_settings, @alerting_update_fields)
 
       {:ok, updated_settings} = Settings.update_alerting_settings(update_params)
 
@@ -949,7 +981,7 @@ defmodule Trento.SettingsTest do
         update_params =
           :alerting_settings
           |> build([{field_name, field_value}])
-          |> Map.take(@create_fields)
+          |> Map.take(@alerting_create_fields)
 
         assert {:error, changeset} = Settings.create_alerting_settings(update_params)
         assert %{field_name => [expected_error]} == errors_on(changeset)

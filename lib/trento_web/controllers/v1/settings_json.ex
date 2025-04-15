@@ -58,7 +58,8 @@ defmodule TrentoWeb.V1.SettingsJSON do
           recipient_email: recipient_email,
           smtp_server: smtp_server,
           smtp_port: smtp_port,
-          smtp_username: smtp_username
+          smtp_username: smtp_username,
+          enforced_from_env: enforced_from_env
         }
       }),
       do: %{
@@ -67,6 +68,7 @@ defmodule TrentoWeb.V1.SettingsJSON do
         recipient_email: recipient_email,
         smtp_server: smtp_server,
         smtp_port: smtp_port,
-        smtp_username: smtp_username
+        smtp_username: smtp_username,
+        enforced_from_env: enforced_from_env
       }
 end

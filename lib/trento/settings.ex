@@ -54,6 +54,16 @@ defmodule Trento.Settings do
           optional(:smtp_password) => String.t()
         }
 
+  @alerting_settings_default_env %{
+    enabled: false,
+    sender: "alerts@trento-project.io",
+    recipient: "admin@trento-project.io",
+    relay: "",
+    port: 587,
+    username: "",
+    password: ""
+  }
+
   @spec get_installation_id :: String.t()
   def get_installation_id do
     %InstallationSettings{installation_id: installation_id} =
@@ -182,33 +192,94 @@ defmodule Trento.Settings do
 
   # Alerting Settings
 
+  @spec alerting_settings_enforced_from_env? :: boolean()
+  def alerting_settings_enforced_from_env? do
+    alerting_raw_app_env()
+    |> Enum.map(fn {_key, val} -> val != nil end)
+    |> Enum.any?()
+  end
+
   @spec get_alerting_settings ::
           {:ok, AlertingSettings.t()} | {:error, :alerting_settings_not_configured}
   def get_alerting_settings do
-    case Repo.one(AlertingSettings.base_query()) do
-      %AlertingSettings{} = settings -> {:ok, settings}
-      nil -> {:error, :alerting_settings_not_configured}
+    if alerting_settings_enforced_from_env?() do
+      get_alerting_settings_from_app_env()
+    else
+      get_alerting_settings_from_db()
     end
   end
 
   @spec create_alerting_settings(alerting_setting_set_t()) ::
           {:ok, AlertingSettings.t()}
+          | {:error, :alerting_settings_enforced}
           | {:error, Ecto.Changeset.t()}
   def create_alerting_settings(alerting_settings) do
-    %AlertingSettings{}
-    |> AlertingSettings.changeset(alerting_settings)
-    |> Repo.insert(returning: true)
+    if alerting_settings_enforced_from_env?() do
+      {:error, :alerting_settings_enforced}
+    else
+      %AlertingSettings{}
+      |> AlertingSettings.changeset(alerting_settings)
+      |> Repo.insert(returning: true)
+    end
   end
 
   @spec update_alerting_settings(alerting_setting_update_t()) ::
           {:ok, AlertingSettings.t()}
+          | {:error, :alerting_settings_enforced}
           | {:error, :alerting_settings_not_configured}
           | {:error, Ecto.Changeset.t()}
   def update_alerting_settings(alerting_settings) do
-    with {:ok, current_settings} <- get_alerting_settings() do
-      current_settings
-      |> AlertingSettings.changeset(alerting_settings)
-      |> Repo.update()
+    if alerting_settings_enforced_from_env?() do
+      {:error, :alerting_settings_enforced}
+    else
+      with {:ok, current_settings} <- get_alerting_settings() do
+        current_settings
+        |> AlertingSettings.changeset(alerting_settings)
+        |> Repo.update()
+      end
+    end
+  end
+
+  @spec alerting_raw_app_env :: Keyword.t()
+  defp alerting_raw_app_env do
+    Application.get_env(:trento, Trento.Mailer)
+    |> Keyword.take([:relay, :port, :username, :password])
+    |> Enum.concat(Application.get_env(:trento, :alerting))
+  end
+
+  defp get_alerting_settings_from_app_env do
+    explicitly_set =
+      alerting_raw_app_env()
+      |> Enum.filter(fn {_key, value} -> value != nil end)
+      |> Map.new()
+
+    %{
+      enabled: enabled,
+      sender: sender,
+      recipient: recipient,
+      relay: relay,
+      port: port,
+      username: username,
+      password: password
+    } = Map.merge(@alerting_settings_default_env, explicitly_set)
+
+    settings = %Trento.Settings.AlertingSettings{
+      enabled: enabled,
+      sender_email: sender,
+      recipient_email: recipient,
+      smtp_server: relay,
+      smtp_port: port,
+      smtp_username: username,
+      smtp_password: password
+    }
+
+    {:ok, settings}
+  end
+
+  defp get_alerting_settings_from_db do
+    case Repo.one(AlertingSettings.base_query()) do
+      %AlertingSettings{} = settings -> {:ok, settings}
+      nil -> {:error, :alerting_settings_not_configured}
     end
   end
 
