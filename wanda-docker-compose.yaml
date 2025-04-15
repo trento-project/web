@@ -14,7 +14,7 @@ services:
   wanda:
     image: ghcr.io/trento-project/trento-wanda:demo
     environment:
-      DATABASE_URL: ecto://postgres:postgres@postgres/postgres
+      DATABASE_URL: ecto://wanda_user:wanda_pass@postgres/wanda_db
       SECRET_KEY_BASE: s2ZdE+3+ke1USHEJ5O45KT364KiXPYaB9cJPdH3p60t8yT0nkLexLBNw8TFSzC7k
       AMQP_URL: amqp://trento:trento@rabbitmq:5672
       ACCESS_TOKEN_ENC_SECRET: s2ZdE+3+ke1USHEJ5O45KT364KiXPYaB9cJPdH3p60t8yT0nkLexLBNw8TFSzC7k
