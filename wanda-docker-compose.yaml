@@ -26,4 +26,5 @@ services:
     ports:
       - 4001:4000
     entrypoint: /bin/sh -c "/app/bin/wanda eval 'Wanda.Release.init()' && /app/bin/wanda start"
-    volumes_from: [checks]
+    volumes_from: 
+        - checks
