@@ -25,5 +25,6 @@ module.exports = defineConfig({
     },
     testIsolation: false,
     baseUrl: 'http://localhost:4000',
+    wandaUrl: 'http://localhost:4001',
   },
 });
