@@ -912,7 +912,7 @@ defmodule Trento.Factory do
     })
   end
 
-  def host_checks_selected_factory do
+  def host_checks_selected_event_factory do
     %HostChecksSelected{
       host_id: Faker.UUID.v4(),
       checks: Enum.map(0..4, fn _ -> Faker.UUID.v4() end)
