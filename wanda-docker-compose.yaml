@@ -5,10 +5,12 @@ services:
   postgres:
     volumes:
       - ./container_fixtures/postgres/init_wanda_db.sh:/docker-entrypoint-initdb.d/init_wanda_db.sh:ro
+
   checks: 
       image: ghcr.io/trento-project/checks:rolling
       volumes: 
         - /usr/share/trento/checks
+
   wanda:
     image: ghcr.io/trento-project/trento-wanda:demo
     environment:
@@ -24,5 +26,4 @@ services:
     ports:
       - 4001:4000
     entrypoint: /bin/sh -c "/app/bin/wanda eval 'Wanda.Release.init()' && /app/bin/wanda start"
-    volumes_from: 
-      - checks
+    volumes_from: [checks]
