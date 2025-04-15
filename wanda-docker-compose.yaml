@@ -8,8 +8,8 @@ services:
 
   checks: 
       image: ghcr.io/trento-project/checks:rolling
-      volumes: 
-        - /usr/share/trento/checks
+      volumes:
+        - trento-checks:/usr/share/trento/checks
 
   wanda:
     image: ghcr.io/trento-project/trento-wanda:demo
@@ -26,5 +26,8 @@ services:
     ports:
       - 4001:4000
     entrypoint: /bin/sh -c "/app/bin/wanda eval 'Wanda.Release.init()' && /app/bin/wanda start"
-    volumes_from: 
-        - checks
+    volumes:
+      - trento-checks:/usr/share/trento/checks
+
+volumes:
+  trento-checks:
