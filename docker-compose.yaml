@@ -2,6 +2,7 @@ version: "3"
 volumes:
   pg_data:
   prometheus_data:
+  trento-checks:
 services:
   keycloak:
     profiles: [idp]
@@ -64,6 +65,7 @@ services:
     volumes:
       - pg_data:/var/lib/postgresql/data
       - ./container_fixtures/keycloak/init_keycloak_db.sh:/docker-entrypoint-initdb.d/init_keycloak_db.sh
+      - ./container_fixtures/postgres/init_wanda_db.sh:/docker-entrypoint-initdb.d/init_wanda_db.sh:ro
   rabbitmq:
     volumes:
       - ./container_fixtures/rabbitmq/certs/ca_certificate.pem:/etc/ssl/certs/ca_certificate.pem
@@ -78,3 +80,28 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: trento
       RABBITMQ_DEFAULT_PASS: trento
+
+  checks: 
+    profiles: [wanda]
+    image: ghcr.io/trento-project/checks:rolling
+    volumes:
+      - trento-checks:/usr/share/trento/checks
+
+  wanda:
+    profiles: [wanda]
+    image: ghcr.io/trento-project/trento-wanda:demo
+    environment:
+      DATABASE_URL: ecto://postgres:postgres@postgres/wanda_db
+      SECRET_KEY_BASE: s2ZdE+3+ke1USHEJ5O45KT364KiXPYaB9cJPdH3p60t8yT0nkLexLBNw8TFSzC7k
+      AMQP_URL: amqp://trento:trento@rabbitmq:5672
+      ACCESS_TOKEN_ENC_SECRET: s2ZdE+3+ke1USHEJ5O45KT364KiXPYaB9cJPdH3p60t8yT0nkLexLBNw8TFSzC7k
+      CORS_ORIGIN: "http://localhost:4000"
+    depends_on:
+      - postgres
+      - rabbitmq
+      - checks
+    ports:
+      - 4001:4000
+    entrypoint: /bin/sh -c "/app/bin/wanda eval 'Wanda.Release.init()' && /app/bin/wanda start"
+    volumes:
+      - trento-checks:/usr/share/trento/checks

@@ -404,9 +404,8 @@ jobs:
       - name: "Docker compose dependencies"
         uses: isbang/compose-action@v2.1.0
         with:
-          compose-file: |
-            ./docker-compose.yaml
-            ./wanda-docker-compose.yaml
+          compose-file: "./docker-compose.yaml"
+          compose-flags: "--profile wanda"
           down-flags: "--volumes"
       - name: Mix setup
         run: mix setup
