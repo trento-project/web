@@ -310,7 +310,7 @@ defmodule TrentoWeb.V1.SettingsController do
     description: "Update persisted settings for alerting in Trento",
     tags: ["Platform"],
     request_body:
-      {"Request body for upadting alerting settings", "application/json",
+      {"Request body for updating alerting settings", "application/json",
        Schema.Platform.UpdateAlertingSettings},
     responses: [
       ok:

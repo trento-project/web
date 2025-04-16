@@ -37,7 +37,7 @@ defmodule Trento.Settings.AlertingSettingsTest do
     Application.put_env(:trento, Trento.Mailer,
       relay: nil,
       port: nil,
-      uesrname: nil,
+      username: nil,
       password: nil
     )
   end
@@ -75,7 +75,7 @@ defmodule Trento.Settings.AlertingSettingsTest do
                AlertingSettings.get_alerting_settings()
     end
 
-    test "return previously inserted data correcly on get" do
+    test "return previously inserted data correctly on get" do
       inserted_settings = insert(:alerting_settings, [], returning: true)
       {:ok, read_settings} = AlertingSettings.get_alerting_settings()
       assert inserted_settings === read_settings

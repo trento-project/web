@@ -302,7 +302,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
           :smtp_port,
           :smtp_username,
           :smtp_password
-          # `open_api_spex` has a bug with reaquired readOnly fields:
+          # `open_api_spex` has a bug with required readOnly fields:
           # https://github.com/open-api-spex/open_api_spex/issues/662
           # :enforced_from_env,
         ]
