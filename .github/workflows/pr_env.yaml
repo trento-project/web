@@ -112,6 +112,7 @@ jobs:
             web_container_image='ghcr.io/trento-project/trento-web:${{ env.PR_NUMBER }}-env' \
             wanda_container_image='ghcr.io/trento-project/trento-wanda:demo' \
             wanda_container_name='${{ env.PR_NUMBER }}wanda' \
+            checks_container_name='${{ env.PR_NUMBER }}checks' \
             docker_network_name='${{ env.PR_NUMBER }}net' \
             nginx_vhost_filename='${{ env.PR_NUMBER }}' \
             trento_server_name='${{ env.PR_BASE_URL }}' \
