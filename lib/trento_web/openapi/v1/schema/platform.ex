@@ -292,7 +292,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
           },
           smtp_username: %Schema{type: :string},
           smtp_password: %Schema{type: :string, format: :password, writeOnly: true},
-          enforced_from_env: %Schema{type: :boolean, readOnly: true},
+          enforced_from_env: %Schema{type: :boolean, readOnly: true}
         },
         required: [
           :enabled,
@@ -301,7 +301,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
           :smtp_server,
           :smtp_port,
           :smtp_username,
-          :smtp_password,
+          :smtp_password
           # `open_api_spex` has a bug with reaquired readOnly fields:
           # https://github.com/open-api-spex/open_api_spex/issues/662
           # :enforced_from_env,
@@ -330,7 +330,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
             example: 587
           },
           smtp_username: %Schema{type: :string},
-          smtp_password: %Schema{type: :string, format: :password},
+          smtp_password: %Schema{type: :string, format: :password}
         }
       },
       struct?: false

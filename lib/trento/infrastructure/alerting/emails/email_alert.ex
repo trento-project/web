@@ -5,7 +5,7 @@ defmodule Trento.Infrastructure.Alerting.Emails.EmailAlert do
 
   use Phoenix.Swoosh, view: Trento.Infrastructure.Alerting.Emails.EmailView
 
-  def api_key_expired([sender: sender, recipient: recipient]) do
+  def api_key_expired(sender: sender, recipient: recipient) do
     new()
     |> from({"Trento Alerts", sender})
     |> to({"Trento Admin", recipient})
@@ -15,7 +15,7 @@ defmodule Trento.Infrastructure.Alerting.Emails.EmailAlert do
     })
   end
 
-  def api_key_will_expire(days, [sender: sender, recipient: recipient]) do
+  def api_key_will_expire(days, sender: sender, recipient: recipient) do
     new()
     |> from({"Trento Alerts", sender})
     |> to({"Trento Admin", recipient})
@@ -26,7 +26,7 @@ defmodule Trento.Infrastructure.Alerting.Emails.EmailAlert do
     })
   end
 
-  def alert(component, identified_by, identifier, reason, [sender: sender, recipient: recipient]) do
+  def alert(component, identified_by, identifier, reason, sender: sender, recipient: recipient) do
     new()
     |> from({"Trento Alerts", sender})
     |> to({"Trento Admin", recipient})
