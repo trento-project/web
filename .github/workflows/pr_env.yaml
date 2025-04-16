@@ -74,7 +74,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: trento-project/ansible
-          ref: deploy-checks-in-docker-mode
           path: ansible
       - name: Install ansible-core
         run: sudo pipx install --force ansible-core==2.16.3
