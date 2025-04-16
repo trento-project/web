@@ -27,7 +27,7 @@ defmodule Trento.Settings.AlertingSettingsTest do
     end)
   end
 
-  defp nil_app_env() do
+  defp nil_app_env do
     Application.put_env(:trento, :alerting,
       enabled: nil,
       sender: nil,
@@ -94,7 +94,7 @@ defmodule Trento.Settings.AlertingSettingsTest do
     end
 
     test "return error when trying to save with wrong port value" do
-      settings = build(:alerting_settings, smtp_port: 70000)
+      settings = build(:alerting_settings, smtp_port: 70_000)
 
       assert {:error,
               %Ecto.Changeset{

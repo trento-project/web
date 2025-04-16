@@ -134,11 +134,11 @@ defmodule Trento.Factory do
 
   alias Trento.Settings.{
     ActivityLogSettings,
+    AlertingSettings,
     ApiKeySettings,
     InstallationSettings,
     SSOCertificatesSettings,
-    SuseManagerSettings,
-    AlertingSettings
+    SuseManagerSettings
   }
 
   alias Trento.ActivityLog.ActivityLog, as: ActivityLogEntry
@@ -1198,7 +1198,7 @@ defmodule Trento.Factory do
       sender_email: Faker.Internet.email(),
       recipient_email: Faker.Internet.email(),
       smtp_server: Faker.Internet.domain_name(),
-      smtp_port: Faker.random_between(0, 65353),
+      smtp_port: Faker.random_between(0, 65_353),
       smtp_username: Faker.Pokemon.name(),
       smtp_password: Faker.Pokemon.name()
     }

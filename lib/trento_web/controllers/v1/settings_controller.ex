@@ -332,6 +332,7 @@ defmodule TrentoWeb.V1.SettingsController do
     end
   end
 
+  # credo:disable-for-next-line
   def get_policy_resource(conn) do
     case Phoenix.Controller.action_name(conn) do
       :update_api_key_settings -> Trento.Settings.ApiKeySettings

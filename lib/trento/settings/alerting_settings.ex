@@ -78,7 +78,9 @@ defmodule Trento.Settings.AlertingSettings do
   @spec set_alerting_settings(alerting_setting_set_t()) ::
           {:ok, t()} | {:error, :alerting_settings_enforced} | {:error, Changeset.t()}
   def set_alerting_settings(alerting_settings) do
-    if not enforced_from_env?() do
+    if enforced_from_env?() do
+      {:error, :alerting_settings_enforced}
+    else
       chset = save_changeset(%__MODULE__{}, alerting_settings)
 
       Repo.insert(
@@ -87,8 +89,6 @@ defmodule Trento.Settings.AlertingSettings do
         conflict_target: :type,
         returning: true
       )
-    else
-      {:error, :alerting_settings_enforced}
     end
   end
 
@@ -98,7 +98,9 @@ defmodule Trento.Settings.AlertingSettings do
           | {:error, :alerting_settings_not_configured}
           | {:error, Changeset.t()}
   def update_alerting_settings(alerting_settings) do
-    if not enforced_from_env?() do
+    if enforced_from_env?() do
+      {:error, :alerting_settings_enforced}
+    else
       changes =
         update_changeset(%__MODULE__{}, alerting_settings)
         |> Map.fetch!(:changes)
@@ -118,8 +120,6 @@ defmodule Trento.Settings.AlertingSettings do
         _exc ->
           {:error, :alerting_settings_not_configured}
       end
-    else
-      {:error, :alerting_settings_enforced}
     end
   end
 
@@ -132,7 +132,7 @@ defmodule Trento.Settings.AlertingSettings do
     |> validate_format(:recipient_email, ~r/@/, message: "Invalid e-mail address.")
     |> validate_number(:smtp_port,
       greater_than: 0,
-      less_than_or_equal_to: 65535,
+      less_than_or_equal_to: 65_535,
       message: "Invalid port number."
     )
   end
@@ -187,12 +187,10 @@ defmodule Trento.Settings.AlertingSettings do
   end
 
   @spec get_from_app_env :: {:ok, t()}
-  defp get_from_app_env() do
+  defp get_from_app_env do
     explicitly_set =
-      Enum.filter(
-        raw_alerting_app_env(),
-        fn {_key, value} -> value != nil end
-      )
+      raw_alerting_app_env()
+      |> Enum.filter(fn {_key, value} -> value != nil end)
       |> Map.new()
 
     %{
@@ -219,7 +217,7 @@ defmodule Trento.Settings.AlertingSettings do
   end
 
   @spec get_from_db :: {:ok, t()} | {:error, :alerting_settings_not_configured}
-  defp get_from_db() do
+  defp get_from_db do
     settings = Repo.one(base_query())
 
     if settings do
