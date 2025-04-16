@@ -24,7 +24,7 @@ context('Checks customization', () => {
       checksSelectionPage.corosyncCategoryClick();
       checksSelectionPage.openCustomizationModalFirstCheck();
 
-      // validate if inital check customization modal has the correct values
+      // validate if initial check customization modal has the correct values
       checksSelectionPage.validateFirstCheckId();
       checksSelectionPage.validateFirstCheckDescription();
       checksSelectionPage.modalWarningCheckBoxShouldNotBeChecked();
@@ -59,7 +59,7 @@ context('Checks customization', () => {
       checksSelectionPage.checkCustomizationResetToastIsShown();
       checksSelectionPage.customizedCheckShouldNotHaveModifiedPill();
       checksSelectionPage.resetIconShouldNotExistInOverview();
-      // Great check was customized and reseted correctly
+      // Great check was customized and reset correctly
     });
 
     it('should customize check values in the check customization modal and reset check in checks category overview', () => {
