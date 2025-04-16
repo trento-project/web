@@ -7,8 +7,6 @@ context('Checks customization', () => {
 
   beforeEach(() => {
     checksSelectionPage.resetAllChecks();
-    checksSelectionPage.interceptCatalogRequest();
-    checksSelectionPage.interceptLastExecutionRequest();
   });
 
   after(() => {
@@ -21,8 +19,8 @@ context('Checks customization', () => {
       checksSelectionPage.clickOnCheckSelectionButton();
     });
 
-    it('should customize and reset a check successfully', () => {
-      // User opens check customization for Corosync Checks
+    it('should customize and reset a check through the modal successfully', () => {
+      // User opens check customization for corosync checks
       checksSelectionPage.corosyncCategoryClick();
       checksSelectionPage.openCustomizationModalFirstCheck();
 
@@ -47,8 +45,7 @@ context('Checks customization', () => {
       checksSelectionPage.userInputCustomCheckValue();
       checksSelectionPage.modalSaveButtonShouldBeEnabled();
       checksSelectionPage.userClickModalSaveButton();
-      checksSelectionPage.checkCustomizationToastIsShown();
-      // check customization modal should close
+      checksSelectionPage.checkCustomizationSuccessToastIsShown();
 
       // Validate check was modified
       checksSelectionPage.customizedCheckShouldHaveModifiedPill();
@@ -56,6 +53,7 @@ context('Checks customization', () => {
       checksSelectionPage.validateCustomizedValue();
       // Reset check in the modal
       checksSelectionPage.userClickResetModalButton();
+      checksSelectionPage.validateResetWarningText();
       checksSelectionPage.userClickResetButton();
       // Validate if check was reset in overview
       checksSelectionPage.checkCustomizationResetToastIsShown();
@@ -72,8 +70,9 @@ context('Checks customization', () => {
       checksSelectionPage.userClickOnWarningCheckbox();
       checksSelectionPage.userInputCustomCheckValue();
       checksSelectionPage.userClickModalSaveButton();
+      checksSelectionPage.checkCustomizationSuccessToastIsShown();
       // user resets check in overview
-      checksSelectionPage.userResetCustomizedCheck();
+      checksSelectionPage.userClickResetCustomizedCheck();
       checksSelectionPage.userClickResetButton();
       // validate if check was reset
       checksSelectionPage.checkCustomizationResetToastIsShown();
@@ -87,23 +86,22 @@ context('Checks customization', () => {
       checksSelectionPage.openCustomizationModalSecondCheck();
 
       // User interact with modal
+      checksSelectionPage.validateSecondCheckId();
       checksSelectionPage.userClickOnWarningCheckbox();
       checksSelectionPage.modalWarningCheckBoxShouldBeChecked();
       checksSelectionPage.userInputInvalidCheckValue();
       checksSelectionPage.modalSaveButtonShouldBeEnabled();
       checksSelectionPage.userClickModalSaveButton();
-
-      // check that the modal is still open
       checksSelectionPage.userInputValidationErrorShouldBeDisplayed();
       checksSelectionPage.checkCustomizationErrorToastIsShown();
-      checksSelectionPage.modalSaveButtonShouldBeEnabled();
+      checksSelectionPage.modalSaveButtonShouldBeDisabled();
       checksSelectionPage.modalResetCheckButtonShouldBeDisabled();
       checksSelectionPage.modalCloseButtonShouldBeEnabled();
 
       checksSelectionPage.userInputCustomCheckValue();
       checksSelectionPage.modalSaveButtonShouldBeEnabled();
       checksSelectionPage.userClickModalSaveButton();
-      checksSelectionPage.checkCustomizationToastIsShown();
+      checksSelectionPage.checkCustomizationSuccessToastIsShown();
       checksSelectionPage.customizedCheckShouldHaveModifiedPill();
     });
 
@@ -118,15 +116,12 @@ context('Checks customization', () => {
       checksSelectionPage.userInputInvalidCheckValue();
       checksSelectionPage.modalSaveButtonShouldBeEnabled();
       checksSelectionPage.userClickModalSaveButton();
-      // Check if input was validated
       checksSelectionPage.userInputValidationErrorShouldBeDisplayed();
       checksSelectionPage.checkCustomizationErrorToastIsShown();
       checksSelectionPage.modalSaveButtonShouldBeDisabled();
       checksSelectionPage.modalResetCheckButtonShouldBeDisabled();
-
       // User closes modal
       checksSelectionPage.userClickCloseButton();
-
       // Check that the overview does not show any modified elements
       checksSelectionPage.secondCustomizedCheckShouldNotHaveModifiedPill();
       checksSelectionPage.resetIconShouldNotExistInOverview();
