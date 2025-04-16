@@ -130,4 +130,5 @@ jobs:
             rabbitmq_password='trento' \
             rabbitmq_username='${{ env.PR_NUMBER }}rabbitusr' \
             remove_wanda_container_image='false' \
+            remove_checks_container_image='false' \
             install_method='docker'"

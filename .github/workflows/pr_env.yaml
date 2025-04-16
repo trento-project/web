@@ -127,6 +127,7 @@ jobs:
             nginx_vhost_listen_port='443' \
             force_recreate_wanda_container='true' \
             force_recreate_web_container='true' \
+            force_recreate_checks_container='true' \
             force_pull_images='true' \
             web_upstream_name='${{ env.PR_NUMBER }}web' \
             wanda_upstream_name='${{ env.PR_NUMBER }}wanda' \
