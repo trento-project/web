@@ -198,7 +198,7 @@ defmodule Trento.Settings do
 
   @spec set_alerting_settings(alerting_setting_set_t()) ::
           {:ok, AlertingSettings.t()}
-          | {:error, Changeset.t()}
+          | {:error, Ecto.Changeset.t()}
   def set_alerting_settings(alerting_settings) do
     chset = AlertingSettings.save_changeset(%AlertingSettings{}, alerting_settings)
 
@@ -212,9 +212,8 @@ defmodule Trento.Settings do
 
   @spec update_alerting_settings(alerting_setting_update_t()) ::
           {:ok, AlertingSettings.t()}
-          | {:error, :alerting_settings_enforced}
           | {:error, :alerting_settings_not_configured}
-          | {:error, Changeset.t()}
+          | {:error, Ecto.Changeset.t()}
   def update_alerting_settings(alerting_settings) do
     changes =
       AlertingSettings.update_changeset(%AlertingSettings{}, alerting_settings)
