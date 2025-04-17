@@ -2,14 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
 import { getAdvisoryErrata } from '@lib/api/softwareUpdates';
-import { logError } from '@lib/log';
 import * as history from '@lib/history';
 import BackButton from '@common/BackButton';
+import GenericError from '@common/GenericError';
 import AdvisoryDetails from './AdvisoryDetails';
 
 function AdvisoryDetailsPage() {
   const navigate = useNavigate();
   const [advisoryErrata, setAdvisoryErrata] = useState(undefined);
+  const [error, setError] = useState(undefined);
   const [isLoading, setIsLoading] = useState(true);
   const { hostID, advisoryID } = useParams();
 
@@ -17,9 +18,13 @@ function AdvisoryDetailsPage() {
     getAdvisoryErrata(advisoryID)
       .then((errata) => {
         setAdvisoryErrata(errata.data);
-        setIsLoading(false);
       })
-      .catch((e) => logError(e));
+      .catch((e) => {
+        setError(e.message);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   }, []);
 
   return (
@@ -33,9 +38,10 @@ function AdvisoryDetailsPage() {
       >
         Back
       </BackButton>
-      {!isLoading && (
+      {!isLoading && !error && (
         <AdvisoryDetails advisoryName={advisoryID} errata={advisoryErrata} />
       )}
+      {!isLoading && error && <GenericError message={error} />}
     </>
   );
 }
