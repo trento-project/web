@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
-import { logError } from '@lib/log';
+import { isEmpty, omitBy, isNil } from 'lodash';
 import { useDispatch } from 'react-redux';
+
 import { dismissNotification, notify } from '@state/notifications';
 import { API_KEY_EXPIRATION_NOTIFICATION_ID } from '@state/sagas/settings';
+
+import { logError } from '@lib/log';
 import { get, patch } from '@lib/network';
 import {
   getSettings,
@@ -11,6 +14,11 @@ import {
   clearSettings,
   testConnection,
 } from '@lib/api/suseManagerSettings';
+import {
+  getSettings as getAlertingSettings,
+  saveSettings as saveAlertingSettings,
+  updateSettings as updateAlertingSettings,
+} from '@lib/api/alertingSettings';
 
 export const useSuseManagerSettings = () => {
   const dispatch = useDispatch();
@@ -160,5 +168,89 @@ export const useApiKeySettings = () => {
     apiKeyExpiration,
     saveApiKeySettings,
     fetchApiKeySettings,
+  };
+};
+
+export const useAlertingSettings = () => {
+  const [settings, setSettings] = useState({})
+  const [fetchLoading, setFetchLoading] = useState(false);
+  const [fetchError, setFetchError] = useState(false)
+  const [submitErrors, setSubmitErrors] = useState([]);
+  const [submitLoading, setSubmitLoading] = useState(false)
+
+  function fromApiSettings(data) {
+    return {
+      alertingEnabled: data.enabled,
+      smtpServer: data.smtp_server,
+      smtpPort: data.smtp_port,
+      smtpUsername: data.smtp_username,
+      senderEmail: data.sender_email,
+      recipientEmail: data.recipient_email,
+    };
+  }
+
+  function toApiSettings(settings) {
+    var data = {
+      enabled: settings.alertingEnabled,
+      smtp_server: settings.smtpServer,
+      smtp_port: settings.smtpPort,
+      smtp_username: settings.smtpUsername,
+      smtp_password: settings.smtpPassword,
+      sender_email: settings.senderEmail,
+      recipient_email: settings.recipientEmail,
+    }
+
+    return omitBy(data, isNil)
+  }
+
+  function clearSubmitErrors() {
+    setSubmitErrors([]);
+  };
+
+  async function fetch() {
+    setFetchLoading(true);
+    setFetchError(false);
+
+    try {
+      const { data } = await getAlertingSettings();
+      setSettings(fromApiSettings(data));
+    } catch ({ response: { status } }) {
+      setSettings({});
+      if (status !== 404) setFetchError(true);
+    } finally {
+      setFetchLoading(false)
+    }
+  };
+
+  async function submit(newSettings) {
+    setSubmitLoading(true)
+    clearSubmitErrors([])
+    const action = isEmpty(settings) ? saveAlertingSettings : updateAlertingSettings
+
+    try {
+      const { data } = await action(
+        toApiSettings(newSettings)
+      );
+      setSettings(fromApiSettings(data));
+    } catch ({ response: { data: errors }}) {
+      setSubmitErrors(errors)
+    } finally {
+      setFetchLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetch()
+  }, [])
+
+  return {
+    settings,
+    fetchLoading,
+    fetchError,
+    submitLoading,
+    submitErrors,
+    fetch,
+    submit,
+    clearSubmitErrors,
   };
 };

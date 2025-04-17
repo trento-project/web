@@ -153,19 +153,19 @@ if config_env() in [:prod, :demo] do
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
 
   config :trento, :alerting,
-    enabled: System.get_env("ENABLE_ALERTING", "false") == "true",
-    sender: System.get_env("ALERT_SENDER", "alerts@trento-project.io"),
-    recipient: System.get_env("ALERT_RECIPIENT", "admin@trento-project.io")
+    enabled: System.get_env("ENABLE_ALERTING"),
+    sender: System.get_env("ALERT_SENDER"),
+    recipient: System.get_env("ALERT_RECIPIENT")
 
   :ok = :public_key.cacerts_load()
   [_ | _] = cacerts = :public_key.cacerts_get()
 
   config :trento, Trento.Mailer,
     adapter: Swoosh.Adapters.SMTP,
-    relay: System.get_env("SMTP_SERVER") || "",
-    port: System.get_env("SMTP_PORT") || "",
-    username: System.get_env("SMTP_USER") || "",
-    password: System.get_env("SMTP_PASSWORD") || "",
+    relay: System.get_env("SMTP_SERVER"),
+    port: System.get_env("SMTP_PORT"),
+    username: System.get_env("SMTP_USER"),
+    password: System.get_env("SMTP_PASSWORD"),
     auth: :always,
     ssl: false,
     tls: :if_available,
