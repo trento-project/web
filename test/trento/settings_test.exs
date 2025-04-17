@@ -17,6 +17,7 @@ defmodule Trento.SettingsTest do
 
   alias Trento.Settings.{
     ActivityLogSettings,
+    AlertingSettings,
     ApiKeySettings,
     InstallationSettings,
     SuseManagerSettings
@@ -789,6 +790,141 @@ defmodule Trento.SettingsTest do
       certificates = insert(:sso_certificates_settings)
 
       assert certificates == Settings.get_sso_certificates()
+    end
+  end
+
+  describe "Alerting settings from DB" do
+    test "return correct error on get when they are not configured" do
+      assert {:error, :alerting_settings_not_configured} ==
+               Settings.get_alerting_settings()
+    end
+
+    test "return previously inserted data correctly on get" do
+      inserted_settings = insert(:alerting_settings, [], returning: true)
+      {:ok, read_settings} = Settings.get_alerting_settings()
+      assert inserted_settings === read_settings
+    end
+
+    for field_name <- [:sender_email, :recipient_email] do
+      test "returns error when trying to save with wrong email address for field #{field_name}" do
+        settings = build(:alerting_settings, [{unquote(field_name), "not-a-mail-address"}])
+
+        assert {:error,
+                %Ecto.Changeset{
+                  errors: [{unquote(field_name), {"Invalid e-mail address.", _}}]
+                }} = Settings.set_alerting_settings(Map.from_struct(settings))
+      end
+    end
+
+    test "return error when trying to save with wrong port value" do
+      settings = build(:alerting_settings, smtp_port: 70_000)
+
+      assert {:error,
+              %Ecto.Changeset{
+                errors: [smtp_port: {"Invalid port number.", _}]
+              }} = Settings.set_alerting_settings(Map.from_struct(settings))
+    end
+
+    test "successfully set when called with correct input" do
+      %AlertingSettings{
+        sender_email: sender_email,
+        recipient_email: recipient_email,
+        smtp_server: smtp_server,
+        smtp_port: smtp_port,
+        smtp_username: smtp_username,
+        smtp_password: smtp_password
+      } = settings = build(:alerting_settings)
+
+      now = DateTime.utc_now()
+
+      {:ok, saved_settings} = Settings.set_alerting_settings(Map.from_struct(settings))
+
+      assert saved_settings.id != nil
+
+      assert %AlertingSettings{
+               type: :alerting_settings,
+               enabled: true,
+               sender_email: ^sender_email,
+               recipient_email: ^recipient_email,
+               smtp_server: ^smtp_server,
+               smtp_port: ^smtp_port,
+               smtp_username: ^smtp_username,
+               smtp_password: ^smtp_password
+             } = saved_settings
+
+      assert saved_settings.inserted_at > now
+      assert saved_settings.inserted_at == saved_settings.updated_at
+    end
+
+    test "can be overridden" do
+      %AlertingSettings{
+        sender_email: sender_email,
+        recipient_email: recipient_email,
+        smtp_server: smtp_server,
+        smtp_username: smtp_username,
+        smtp_password: smtp_password
+      } = settings = build(:alerting_settings, smtp_port: 1000)
+
+      {:ok, %AlertingSettings{id: pk, inserted_at: inserted_at_orig, updated_at: updated_at_orig}} =
+        Settings.set_alerting_settings(Map.from_struct(settings))
+
+      settings_modified = %{settings | smtp_port: 1001}
+
+      {status, res_struct} =
+        Settings.set_alerting_settings(Map.from_struct(settings_modified))
+
+      assert status == :ok
+
+      assert %AlertingSettings{
+               type: :alerting_settings,
+               id: ^pk,
+               enabled: true,
+               sender_email: ^sender_email,
+               recipient_email: ^recipient_email,
+               smtp_server: ^smtp_server,
+               smtp_port: 1001,
+               smtp_username: ^smtp_username,
+               smtp_password: ^smtp_password,
+               inserted_at: inserted_at_new,
+               updated_at: updated_at_new
+             } = res_struct
+
+      assert inserted_at_new == inserted_at_orig
+      assert updated_at_new > updated_at_orig
+    end
+
+    test "successfully updated when called with correct input" do
+      %AlertingSettings{
+        id: ins_id,
+        smtp_password: ins_smtp_password,
+        inserted_at: ins_inserted_at,
+        updated_at: ins_updated_at
+      } = insert(:alerting_settings, [], returning: true)
+
+      %AlertingSettings{
+        enabled: upd_enabled,
+        sender_email: upd_sender_email,
+        recipient_email: upd_recipient_email,
+        smtp_server: upd_smtp_server,
+        smtp_port: upd_smtp_port,
+        smtp_username: upd_smtp_username
+      } = update = build(:alerting_settings, smtp_password: nil)
+
+      {:ok, updated_settings} = Settings.update_alerting_settings(Map.from_struct(update))
+
+      assert %AlertingSettings{
+               id: ^ins_id,
+               smtp_password: ^ins_smtp_password,
+               inserted_at: ^ins_inserted_at,
+               enabled: ^upd_enabled,
+               sender_email: ^upd_sender_email,
+               recipient_email: ^upd_recipient_email,
+               smtp_server: ^upd_smtp_server,
+               smtp_port: ^upd_smtp_port,
+               smtp_username: ^upd_smtp_username
+             } = updated_settings
+
+      assert ins_updated_at < updated_settings.updated_at
     end
   end
 end
