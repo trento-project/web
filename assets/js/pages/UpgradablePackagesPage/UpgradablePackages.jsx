@@ -112,15 +112,15 @@ export default function UpgradablePackages({
 
   return (
     <>
-      <div className="flex flex-wrap">
-        <div className="flex w-2/3 h-auto overflow-ellipsis break-words">
+      <div className="flex flex-wrap space-x-4">
+        <div className="flex h-auto overflow-ellipsis break-words">
           <PageHeader>
             Upgradable packages: <span className="font-bold">{hostName}</span>
           </PageHeader>
         </div>
-        <div className="flex w-1/3 gap-2 justify-end">
+        <div className="flex flex-1 items-center space-x-2 lg:justify-end">
           <Input
-            className="flex"
+            className="flex flex-1 min-w-36 lg:max-w-96"
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by Name or Patch"
             prefix={<EOS_SEARCH size="l" />}
