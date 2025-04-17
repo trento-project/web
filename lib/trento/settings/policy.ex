@@ -34,7 +34,8 @@ defmodule Trento.Settings.Policy do
     has_global_ability?(user) or has_suma_settings_change_ability?(user)
   end
 
-  def authorize(:set_alerting_settings, %User{} = user, AlertingSettings) do
+  def authorize(action, %User{} = user, AlertingSettings)
+      when action in [:set_alerting_settings, :update_alerting_settings] do
     has_global_ability?(user) or has_alerting_settings_resource_ability?(user)
   end
 
