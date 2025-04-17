@@ -3,12 +3,14 @@ defmodule Trento.Settings do
   Provides a set of functions of settings related usecases.
   """
 
-  alias Trento.Repo
+  import Ecto.Query, only: [from: 2]
 
+  alias Trento.Repo
   alias Trento.SoftwareUpdates.Discovery, as: SoftwareUpdatesDiscovery
 
   alias Trento.Settings.{
     ActivityLogSettings,
+    AlertingSettings,
     ApiKeySettings,
     InstallationSettings,
     SSOCertificatesSettings,
@@ -18,7 +20,6 @@ defmodule Trento.Settings do
   alias Trento.Support.DateService
 
   require Trento.ActivityLog.RetentionPeriodUnit, as: RetentionPeriodUnit
-
   require Logger
 
   @type suse_manager_settings_save_submission :: %{
@@ -33,6 +34,26 @@ defmodule Trento.Settings do
           username: String.t() | nil,
           password: String.t() | nil,
           ca_cert: String.t() | nil
+        }
+
+  @type alerting_setting_set_t :: %{
+          enabled: boolean,
+          sender_email: String.t(),
+          recipient_email: String.t(),
+          smtp_server: String.t(),
+          smtp_port: String.t() | integer,
+          smtp_username: String.t(),
+          smtp_password: String.t()
+        }
+
+  @type alerting_setting_update_t :: %{
+          enabled: boolean | nil,
+          sender_email: String.t() | nil,
+          recipient_email: String.t() | nil,
+          smtp_server: String.t() | nil,
+          smtp_port: String.t() | integer | nil,
+          smtp_username: String.t() | nil,
+          smtp_password: String.t() | nil
         }
 
   @spec get_installation_id :: String.t()
@@ -161,16 +182,62 @@ defmodule Trento.Settings do
     Repo.one(SSOCertificatesSettings.base_query())
   end
 
-  defp ensure_no_suse_manager_settings_configured do
-    case Repo.one(SuseManagerSettings.base_query()) do
-      nil ->
-        {:ok, :settings_not_configured, nil}
+  # Alerting Settings
 
-      %SuseManagerSettings{} ->
-        Logger.error("Error: software updates settings already configured")
-        {:error, :settings_already_configured}
+  @spec get_alerting_settings ::
+          {:ok, AlertingSettings.t()} | {:error, :alerting_settings_not_configured}
+  def get_alerting_settings do
+    settings = Repo.one(AlertingSettings.base_query())
+
+    if settings do
+      {:ok, settings}
+    else
+      {:error, :alerting_settings_not_configured}
     end
   end
+
+  @spec set_alerting_settings(alerting_setting_set_t()) ::
+          {:ok, AlertingSettings.t()}
+          | {:error, Changeset.t()}
+  def set_alerting_settings(alerting_settings) do
+    chset = AlertingSettings.save_changeset(%AlertingSettings{}, alerting_settings)
+
+    Repo.insert(
+      chset,
+      on_conflict: {:replace_all_except, [:id, :inserted_at]},
+      conflict_target: :type,
+      returning: true
+    )
+  end
+
+  @spec update_alerting_settings(alerting_setting_update_t()) ::
+          {:ok, AlertingSettings.t()}
+          | {:error, :alerting_settings_enforced}
+          | {:error, :alerting_settings_not_configured}
+          | {:error, Changeset.t()}
+  def update_alerting_settings(alerting_settings) do
+    changes =
+      AlertingSettings.update_changeset(%AlertingSettings{}, alerting_settings)
+      |> Map.fetch!(:changes)
+      |> Map.put(:updated_at, DateTime.utc_now())
+      |> Map.to_list()
+
+    query =
+      from s in AlertingSettings,
+        where: [type: :alerting_settings],
+        update: [set: ^changes],
+        select: s
+
+    try do
+      {_count, [settings]} = Repo.update_all(query, [])
+      {:ok, settings}
+    rescue
+      _exc ->
+        {:error, :alerting_settings_not_configured}
+    end
+  end
+
+  # Private helpers
 
   defp save_or_update_suse_manager_settings(settings, settings_submission, date_service) do
     result =
@@ -198,6 +265,17 @@ defmodule Trento.Settings do
 
       {:error, _} = error ->
         error
+    end
+  end
+
+  defp ensure_no_suse_manager_settings_configured do
+    case Repo.one(SuseManagerSettings.base_query()) do
+      nil ->
+        {:ok, :settings_not_configured, nil}
+
+      %SuseManagerSettings{} ->
+        Logger.error("Error: software updates settings already configured")
+        {:error, :settings_already_configured}
     end
   end
 
