@@ -27,7 +27,7 @@ defmodule Trento.Settings.AlertingSettings do
     sti_fields()
   end
 
-  @spec save_changeset(t(), map()) :: Changeset.t()
+  @spec save_changeset(t(), map()) :: Ecto.Changeset.t()
   def save_changeset(alerting_settings, changes) do
     alerting_settings
     |> cast(changes, [
@@ -54,7 +54,7 @@ defmodule Trento.Settings.AlertingSettings do
     |> unique_constraint(:type)
   end
 
-  @spec update_changeset(t(), map()) :: Changeset.t()
+  @spec update_changeset(t(), map()) :: Ecto.Changeset.t()
   def update_changeset(alerting_settings, changes) do
     alerting_settings
     |> cast(changes, [
@@ -71,7 +71,7 @@ defmodule Trento.Settings.AlertingSettings do
 
   # Private functions
 
-  @spec common_validations(Changeset.t()) :: Changeset.t()
+  @spec common_validations(Ecto.Changeset.t()) :: Ecto.Changeset.t()
   defp common_validations(changeset) do
     changeset
     |> validate_format(:sender_email, ~r/@/, message: "Invalid e-mail address.")
