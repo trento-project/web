@@ -25,6 +25,7 @@ import {
 } from '@lib/auth';
 import { networkClient } from '@lib/network';
 import { isSingleSignOnEnabled } from '@lib/auth/config';
+import { identify, optinCapturing, reset } from '@lib/analytics';
 
 export function* performLogin({ payload: { username, password, totpCode } }) {
   yield put(setAuthInProgress());
@@ -44,6 +45,7 @@ export function* performLogin({ payload: { username, password, totpCode } }) {
       updated_at,
       abilities,
       password_change_requested,
+      analytics_enabled,
     } = yield call(profile, networkClient);
     yield put(
       setUser({
@@ -55,8 +57,11 @@ export function* performLogin({ payload: { username, password, totpCode } }) {
         updated_at,
         abilities,
         password_change_requested,
+        analytics_enabled,
       })
     );
+    yield call(identify, analytics_enabled, id, profileUsername);
+    yield call(optinCapturing, analytics_enabled);
     yield put(setUserAsLogged());
   } catch (error) {
     yield put(
@@ -112,6 +117,7 @@ export function* performSAMLEnrollment() {
 }
 
 export function* clearUserAndLogout() {
+  yield call(reset);
   yield call(clearCredentialsFromStore);
   window.location.href = '/session/new';
 }
