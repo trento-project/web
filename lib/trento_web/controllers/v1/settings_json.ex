@@ -50,4 +50,23 @@ defmodule TrentoWeb.V1.SettingsJSON do
 
   def public_key(%{public_key: %{name: name, certificate_file: cert_file}}),
     do: %{name: name, content: cert_file}
+
+  def alerting_settings(%{
+        alerting_settings: %{
+          enabled: enabled,
+          sender_email: sender_email,
+          recipient_email: recipient_email,
+          smtp_server: smtp_server,
+          smtp_port: smtp_port,
+          smtp_username: smtp_username
+        }
+      }),
+      do: %{
+        enabled: enabled,
+        sender_email: sender_email,
+        recipient_email: recipient_email,
+        smtp_server: smtp_server,
+        smtp_port: smtp_port,
+        smtp_username: smtp_username
+      }
 end
