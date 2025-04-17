@@ -215,6 +215,10 @@ defmodule TrentoWeb.Router do
           delete "/", SettingsController, :delete_suse_manager_settings
           post "/test", SettingsController, :test_suse_manager_settings
         end
+
+        get "/alerting", SettingsController, :get_alerting_settings
+        post "/alerting", SettingsController, :create_alerting_settings
+        patch "/alerting", SettingsController, :update_alerting_settings
       end
 
       # Deprecated

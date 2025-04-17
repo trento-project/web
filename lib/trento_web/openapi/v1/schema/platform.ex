@@ -271,4 +271,69 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
       struct?: false
     )
   end
+
+  defmodule AlertingSettings do
+    @moduledoc false
+
+    OpenApiSpex.schema(
+      %{
+        title: "AlertingSettings",
+        description: "Settings for the alerting sub-system",
+        type: :object,
+        properties: %{
+          enabled: %Schema{type: :boolean},
+          sender_email: %Schema{type: :string},
+          recipient_email: %Schema{type: :string},
+          smtp_server: %Schema{type: :string},
+          smtp_port: %Schema{
+            title: "Port",
+            anyOf: [%Schema{type: :integer}, %Schema{type: :string}],
+            example: 587
+          },
+          smtp_username: %Schema{type: :string},
+          smtp_password: %Schema{type: :string, format: :password, writeOnly: true},
+          enforced_from_env: %Schema{type: :boolean, readOnly: true}
+        },
+        required: [
+          :enabled,
+          :sender_email,
+          :recipient_email,
+          :smtp_server,
+          :smtp_port,
+          :smtp_username,
+          :smtp_password
+          # `open_api_spex` has a bug with required readOnly fields:
+          # https://github.com/open-api-spex/open_api_spex/issues/662
+          # :enforced_from_env,
+        ]
+      },
+      struct?: false
+    )
+  end
+
+  defmodule UpdateAlertingSettings do
+    @moduledoc false
+
+    OpenApiSpex.schema(
+      %{
+        title: "UpdateAlertingSettings",
+        description: "Request body for updating Alerting Settings.",
+        type: :object,
+        properties: %{
+          enabled: %Schema{type: :boolean},
+          sender_email: %Schema{type: :string},
+          recipient_email: %Schema{type: :string},
+          smtp_server: %Schema{type: :string},
+          smtp_port: %Schema{
+            title: "Port",
+            anyOf: [%Schema{type: :integer}, %Schema{type: :string}],
+            example: 587
+          },
+          smtp_username: %Schema{type: :string},
+          smtp_password: %Schema{type: :string, format: :password}
+        }
+      },
+      struct?: false
+    )
+  end
 end

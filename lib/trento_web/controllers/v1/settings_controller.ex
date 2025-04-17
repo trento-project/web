@@ -260,6 +260,78 @@ defmodule TrentoWeb.V1.SettingsController do
     render(conn, :public_keys, %{public_keys: [certificates]})
   end
 
+  operation :get_alerting_settings,
+    summary: "Get alerting settings",
+    tags: ["Platform"],
+    description: "Get the saved settings for alerting in Trento",
+    responses: [
+      ok: {"Alerting settings retrieved", "application/json", Schema.Platform.AlertingSettings},
+      unauthorized: Schema.Unauthorized.response(),
+      not_found: Schema.NotFound.response()
+    ]
+
+  def get_alerting_settings(conn, _params) do
+    with {:ok, settings} <- Settings.get_alerting_settings() do
+      conn
+      |> put_status(:ok)
+      |> render(:alerting_settings, alerting_settings: settings)
+    end
+  end
+
+  operation :create_alerting_settings,
+    summary: "Set alerting settings",
+    description: "Set persisted settings for alerting in Trento",
+    tags: ["Platform"],
+    request_body:
+      {"Request body for setting alerting settings", "application/json",
+       Schema.Platform.AlertingSettings},
+    responses: [
+      ok:
+        {"Alerting settings successfully modified", "application/json",
+         Schema.Platform.AlertingSettings},
+      unauthorized: Schema.Unauthorized.response(),
+      forbidden: Schema.Forbidden.response(),
+      unprocessable_entity: Schema.UnprocessableEntity.response()
+    ]
+
+  def create_alerting_settings(conn, _params) do
+    alerting_body = OpenApiSpex.body_params(conn)
+
+    with {:ok, settings} <- Settings.create_alerting_settings(alerting_body) do
+      conn
+      |> put_status(:ok)
+      |> render(:alerting_settings, alerting_settings: settings)
+    end
+  end
+
+  operation :update_alerting_settings,
+    summary: "Update alerting settings",
+    description: "Update persisted settings for alerting in Trento",
+    tags: ["Platform"],
+    request_body:
+      {"Request body for updating alerting settings", "application/json",
+       Schema.Platform.UpdateAlertingSettings},
+    responses: [
+      ok:
+        {"Alerting settings successfully modified", "application/json",
+         Schema.Platform.AlertingSettings},
+      unauthorized: Schema.Unauthorized.response(),
+      forbidden: Schema.Forbidden.response(),
+      not_found: Schema.NotFound.response(),
+      unprocessable_entity: Schema.UnprocessableEntity.response()
+    ]
+
+  def update_alerting_settings(conn, _params) do
+    alerting_body = OpenApiSpex.body_params(conn)
+
+    with {:ok, settings} <- Settings.update_alerting_settings(alerting_body) do
+      conn
+      |> put_status(:ok)
+      |> render(:alerting_settings, alerting_settings: settings)
+    end
+  end
+
+  # credo:disable-for-next-line
   def get_policy_resource(conn) do
     case Phoenix.Controller.action_name(conn) do
       :update_api_key_settings -> Trento.Settings.ApiKeySettings
@@ -268,6 +340,9 @@ defmodule TrentoWeb.V1.SettingsController do
       :update_suse_manager_settings -> Trento.Settings.SuseManagerSettings
       :delete_suse_manager_settings -> Trento.Settings.SuseManagerSettings
       :test_suse_manager_settings -> Trento.Settings.SuseManagerSettings
+      :get_alerting_settings -> Trento.Settings.AlertingSettings
+      :create_alerting_settings -> Trento.Settings.AlertingSettings
+      :update_alerting_settings -> Trento.Settings.AlertingSettings
       _ -> nil
     end
   end
