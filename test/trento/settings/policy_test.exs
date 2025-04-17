@@ -2,7 +2,7 @@ defmodule Trento.Settings.PolicyTest do
   use ExUnit.Case
 
   alias Trento.Abilities.Ability
-  alias Trento.ActivityLog.Settings, as: ActivityLogSettings
+  alias Trento.Settings.ActivityLogSettings
   alias Trento.Settings.ApiKeySettings
   alias Trento.Settings.SuseManagerSettings
 
