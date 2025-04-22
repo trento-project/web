@@ -793,36 +793,64 @@ defmodule Trento.SettingsTest do
     end
   end
 
-  describe "Alerting settings from DB" do
-    test "return correct error on get when they are not configured" do
+  describe "Alerting settings" do
+    test "return error when settings are not configured" do
       assert {:error, :alerting_settings_not_configured} ==
                Settings.get_alerting_settings()
     end
 
-    test "return previously inserted data correctly on get" do
+    test "return previously saved settings" do
       inserted_settings = insert(:alerting_settings, [], returning: true)
-      {:ok, read_settings} = Settings.get_alerting_settings()
-      assert inserted_settings === read_settings
+      assert {:ok, inserted_settings} === Settings.get_alerting_settings()
     end
 
-    for field_name <- [:sender_email, :recipient_email] do
-      test "returns error when trying to save with wrong email address for field #{field_name}" do
-        settings = build(:alerting_settings, [{unquote(field_name), "not-a-mail-address"}])
+    validation_failure_scenarios = [
+      %{
+        name: "invalid sender email",
+        field_name: :sender_email,
+        field_value: "not-a-mail-address",
+        expected_error: "Invalid e-mail address."
+      },
+      %{
+        name: "invalid recipient email",
+        field_name: :recipient_email,
+        field_value: "not-a-mail-address",
+        expected_error: "Invalid e-mail address."
+      },
+      %{
+        name: "invalid smtp server",
+        field_name: :smtp_server,
+        field_value: "",
+        expected_error: "can't be blank"
+      },
+      %{
+        name: "invalid smtp port",
+        field_name: :smtp_port,
+        field_value: 70_000,
+        expected_error: "Invalid port number."
+      }
+    ]
+
+    for %{name: scenario_name} = scenario <- validation_failure_scenarios do
+      @scenario scenario
+
+      test "return error when trying to save with wrong value for field #{scenario_name}" do
+        %{
+          field_name: field_name,
+          field_value: field_value,
+          expected_error: expected_error
+        } = @scenario
+
+        settings = build(:alerting_settings, [{field_name, field_value}])
 
         assert {:error,
                 %Ecto.Changeset{
-                  errors: [{unquote(field_name), {"Invalid e-mail address.", _}}]
-                }} = Settings.set_alerting_settings(Map.from_struct(settings))
+                  errors: [{^field_name, {^expected_error, _}}]
+                }} =
+                 settings
+                 |> Map.from_struct()
+                 |> Settings.set_alerting_settings()
       end
-    end
-
-    test "return error when trying to save with wrong port value" do
-      settings = build(:alerting_settings, smtp_port: 70_000)
-
-      assert {:error,
-              %Ecto.Changeset{
-                errors: [smtp_port: {"Invalid port number.", _}]
-              }} = Settings.set_alerting_settings(Map.from_struct(settings))
     end
 
     test "successfully set when called with correct input" do
@@ -842,7 +870,6 @@ defmodule Trento.SettingsTest do
       assert saved_settings.id != nil
 
       assert %AlertingSettings{
-               type: :alerting_settings,
                enabled: true,
                sender_email: ^sender_email,
                recipient_email: ^recipient_email,
@@ -876,7 +903,6 @@ defmodule Trento.SettingsTest do
       assert status == :ok
 
       assert %AlertingSettings{
-               type: :alerting_settings,
                id: ^pk,
                enabled: true,
                sender_email: ^sender_email,
