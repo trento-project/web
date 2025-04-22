@@ -128,8 +128,14 @@ defmodule Trento.Settings.PolicyTest do
       assert Policy.authorize(:get_alerting_settings, user, AlertingSettings)
     end
 
-    test "should disallow setting/updating alerting settings if the user has no abilities" do
+    test "disallows setting/updating alerting settings if the user has no abilities" do
       user = %User{abilities: []}
+      refute Policy.authorize(:set_alerting_settings, user, AlertingSettings)
+      refute Policy.authorize(:update_alerting_settings, user, AlertingSettings)
+    end
+
+    test "disallows setting/updating alerting settings if user has only not applicable abilities" do
+      user = %User{abilities: [%Ability{name: "all", resource: "api_key_settings"}]}
       refute Policy.authorize(:set_alerting_settings, user, AlertingSettings)
       refute Policy.authorize(:update_alerting_settings, user, AlertingSettings)
     end
