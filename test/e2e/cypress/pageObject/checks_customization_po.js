@@ -273,4 +273,4 @@ const resetChecks = (checks) => {
   });
 };
 
-export const resetAllChecks = () => resetChecks(checkList);
+export const apiResetAllChecks = () => resetChecks(checkList);

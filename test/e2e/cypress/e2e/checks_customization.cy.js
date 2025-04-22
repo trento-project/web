@@ -6,11 +6,11 @@ context('Checks customization', () => {
   });
 
   beforeEach(() => {
-    checksSelectionPage.resetAllChecks();
+    checksSelectionPage.apiResetAllChecks();
   });
 
   after(() => {
-    checksSelectionPage.resetAllChecks();
+    checksSelectionPage.apiResetAllChecks();
   });
 
   describe('Checks customization should be possible for a cluster target', () => {
