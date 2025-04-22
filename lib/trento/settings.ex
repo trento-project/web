@@ -187,12 +187,9 @@ defmodule Trento.Settings do
   @spec get_alerting_settings ::
           {:ok, AlertingSettings.t()} | {:error, :alerting_settings_not_configured}
   def get_alerting_settings do
-    settings = Repo.one(AlertingSettings.base_query())
-
-    if settings do
-      {:ok, settings}
-    else
-      {:error, :alerting_settings_not_configured}
+    case Repo.one(AlertingSettings.base_query()) do
+      %AlertingSettings{} = settings -> {:ok, settings}
+      nil -> {:error, :alerting_settings_not_configured}
     end
   end
 
@@ -200,10 +197,9 @@ defmodule Trento.Settings do
           {:ok, AlertingSettings.t()}
           | {:error, Ecto.Changeset.t()}
   def set_alerting_settings(alerting_settings) do
-    chset = AlertingSettings.save_changeset(%AlertingSettings{}, alerting_settings)
-
-    Repo.insert(
-      chset,
+    %AlertingSettings{}
+    |> AlertingSettings.save_changeset(alerting_settings)
+    |> Repo.insert(
       on_conflict: {:replace_all_except, [:id, :inserted_at]},
       conflict_target: :type,
       returning: true
@@ -235,8 +231,6 @@ defmodule Trento.Settings do
         {:error, :alerting_settings_not_configured}
     end
   end
-
-  # Private helpers
 
   defp save_or_update_suse_manager_settings(settings, settings_submission, date_service) do
     result =

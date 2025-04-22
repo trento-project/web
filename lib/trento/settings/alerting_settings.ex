@@ -10,6 +10,8 @@ defmodule Trento.Settings.AlertingSettings do
 
   @type t :: %__MODULE__{}
 
+  @cast_fields ~w(enabled sender_email recipient_email smtp_server smtp_port smtp_username smtp_password)a
+
   @primary_key {:id, :binary_id, autogenerate: true}
   schema "settings" do
     field :enabled, :boolean, source: :alerting_enabled
@@ -30,15 +32,7 @@ defmodule Trento.Settings.AlertingSettings do
   @spec save_changeset(t(), map()) :: Ecto.Changeset.t()
   def save_changeset(alerting_settings, changes) do
     alerting_settings
-    |> cast(changes, [
-      :enabled,
-      :sender_email,
-      :recipient_email,
-      :smtp_server,
-      :smtp_port,
-      :smtp_username,
-      :smtp_password
-    ])
+    |> cast(changes, @cast_fields)
     |> sti_changes()
     |> validate_required([
       :type,
@@ -57,19 +51,9 @@ defmodule Trento.Settings.AlertingSettings do
   @spec update_changeset(t(), map()) :: Ecto.Changeset.t()
   def update_changeset(alerting_settings, changes) do
     alerting_settings
-    |> cast(changes, [
-      :enabled,
-      :sender_email,
-      :recipient_email,
-      :smtp_server,
-      :smtp_port,
-      :smtp_username,
-      :smtp_password
-    ])
+    |> cast(changes, @cast_fields)
     |> common_validations()
   end
-
-  # Private functions
 
   @spec common_validations(Ecto.Changeset.t()) :: Ecto.Changeset.t()
   defp common_validations(changeset) do
