@@ -834,7 +834,7 @@ defmodule Trento.SettingsTest do
     for %{name: scenario_name} = scenario <- validation_failure_scenarios do
       @scenario scenario
 
-      test "return error when trying to save with wrong value for field #{scenario_name}" do
+      test "return error when trying to create with wrong value for field #{scenario_name}" do
         %{
           field_name: field_name,
           field_value: field_value,
@@ -849,11 +849,11 @@ defmodule Trento.SettingsTest do
                 }} =
                  settings
                  |> Map.from_struct()
-                 |> Settings.set_alerting_settings()
+                 |> Settings.create_alerting_settings()
       end
     end
 
-    test "successfully set when called with correct input" do
+    test "successfully create when called with correct input" do
       %AlertingSettings{
         sender_email: sender_email,
         recipient_email: recipient_email,
@@ -865,7 +865,7 @@ defmodule Trento.SettingsTest do
 
       now = DateTime.utc_now()
 
-      {:ok, saved_settings} = Settings.set_alerting_settings(Map.from_struct(settings))
+      {:ok, saved_settings} = Settings.create_alerting_settings(Map.from_struct(settings))
 
       assert saved_settings.id != nil
 
@@ -883,42 +883,6 @@ defmodule Trento.SettingsTest do
       assert saved_settings.inserted_at == saved_settings.updated_at
     end
 
-    test "can be overridden" do
-      %AlertingSettings{
-        sender_email: sender_email,
-        recipient_email: recipient_email,
-        smtp_server: smtp_server,
-        smtp_username: smtp_username,
-        smtp_password: smtp_password
-      } = settings = build(:alerting_settings, smtp_port: 1000)
-
-      {:ok, %AlertingSettings{id: pk, inserted_at: inserted_at_orig, updated_at: updated_at_orig}} =
-        Settings.set_alerting_settings(Map.from_struct(settings))
-
-      settings_modified = %{settings | smtp_port: 1001}
-
-      {status, res_struct} =
-        Settings.set_alerting_settings(Map.from_struct(settings_modified))
-
-      assert status == :ok
-
-      assert %AlertingSettings{
-               id: ^pk,
-               enabled: true,
-               sender_email: ^sender_email,
-               recipient_email: ^recipient_email,
-               smtp_server: ^smtp_server,
-               smtp_port: 1001,
-               smtp_username: ^smtp_username,
-               smtp_password: ^smtp_password,
-               inserted_at: inserted_at_new,
-               updated_at: updated_at_new
-             } = res_struct
-
-      assert inserted_at_new == inserted_at_orig
-      assert updated_at_new > updated_at_orig
-    end
-
     test "successfully updated when called with correct input" do
       %AlertingSettings{
         id: ins_id,
@@ -934,9 +898,17 @@ defmodule Trento.SettingsTest do
         smtp_server: upd_smtp_server,
         smtp_port: upd_smtp_port,
         smtp_username: upd_smtp_username
-      } = update = build(:alerting_settings, smtp_password: nil)
+      } = build(:alerting_settings)
 
-      {:ok, updated_settings} = Settings.update_alerting_settings(Map.from_struct(update))
+      {:ok, updated_settings} =
+        Settings.update_alerting_settings(%{
+          enabled: upd_enabled,
+          sender_email: upd_sender_email,
+          recipient_email: upd_recipient_email,
+          smtp_server: upd_smtp_server,
+          smtp_port: upd_smtp_port,
+          smtp_username: upd_smtp_username
+        })
 
       assert %AlertingSettings{
                id: ^ins_id,
