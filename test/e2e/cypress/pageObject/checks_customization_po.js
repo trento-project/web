@@ -58,15 +58,14 @@ const customMixedValue = '30000a';
 //Checks overview
 const checksCategorySwitch = '.tn-check-switch';
 const corosyncLabel = 'Corosync';
-const checkCustomModalSettingsIconFirstCheck =
-  ':nth-child(1) > .block > .px-4 > .mt-2 > .flex > .inline > [data-testid="eos-svg-component"] > path';
+const checkCustomModalSettingsIconFirstCheck ='a[class*="block"]:contains("Corosync is running with max_messages") svg'
+
 const checkCustomModalSettingsIconFirstCheckAfterCustomization =
-  ':nth-child(1) > .block > .px-4 > .mt-2 > .flex > .mr-4 > [data-testid="eos-svg-component"]';
-const checkCustomModalSettingsIconSecondCheck =
-  ':nth-child(2) > .block > .px-4 > .mt-2 > .flex > .mr-4 > [data-testid="eos-svg-component"]';
-const resetCustomizedCheckIcon = '.mr-2 > [data-testid="eos-svg-component"]';
+  'a[class*="block"] button[aria-label="customize-check"] svg';
+const checkCustomModalSettingsIconSecondCheck ='a[class*="block"] button[aria-label="customize-check"] svg';
+const resetCustomizedCheckIcon =   'a[class*="block"] button[aria-label="reset-check-customization"] svg';
 const modifiedPillLabel = 'MODIFIED';
-const modifiedPill = '.block > .px-4 > :nth-child(1) > .bg-white';
+const modifiedPill=`a[class*="block"] span:contains("${modifiedPillLabel}")`
 
 // Modal elements and values
 const modalDescrition = '.mt-2 > .text-gray-500';
@@ -74,10 +73,10 @@ const modalWarningText = '.border-yellow-400 > .font-semibold';
 const modalWarningCheckbox = '.border-yellow-400 > div > .rc-input';
 const modalValueDefault = '.flex-col > .font-bold';
 const modalValueCurrentValue = '.space-x-4 > div.w-full > .rc-input';
-const modalProvider = ':nth-child(4) > .w-1\\/3';
 const modalProviderLabel = 'Provider';
-const modalProviderInput = 'div.relative > div.w-full > .rc-input';
+const modalProvider = `div[class="mt-2"] label[class="font-bold"]:contains("${modalProviderLabel}")`;
 const modalProviderValue = 'Azure';
+const modalProviderInput = `div[class="mt-2"]  div[class="flex items-center space-x-2 mb-5"] div[class="relative w-full"] span:contains("${modalProviderValue}")`
 const modalProviderIcon = '.absolute > .flex > .mr-2';
 const resetModalText =
   'You are about to reset custom checks values. Would you like to continue?';
@@ -104,16 +103,13 @@ export const openCustomizationModalFirstCheck = () => {
   cy.get(checkCustomModalSettingsIconFirstCheck).first().click({ force: true });
 };
 
-export const openCustomizationModalFirstCheckAfterCustomization = () => {
-  cy.get(checkCustomModalSettingsIconFirstCheckAfterCustomization)
-    .first()
-    .click({ force: true });
-};
+export const openCustomizationModalFirstCheckAfterCustomization = () => cy.get(checkCustomModalSettingsIconFirstCheckAfterCustomization).first().click();
+
 
 export const openCustomizationModalSecondCheck = () => {
   cy.get(checkCustomModalSettingsIconSecondCheck)
-    .first()
-    .click({ force: true });
+    .eq(1)
+    .click();
 };
 
 // User clicks on element
