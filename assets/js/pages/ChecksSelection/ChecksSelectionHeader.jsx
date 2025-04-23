@@ -8,6 +8,8 @@ import DisabledGuard from '@common/DisabledGuard';
 
 import { canStartExecution } from '@pages/ChecksSelection';
 
+const showTooltipOnlyOnHover = (canShow) => (canShow ? undefined : false);
+
 function ChecksSelectionHeader({
   targetID,
   targetName,
@@ -56,7 +58,7 @@ function ChecksSelectionHeader({
               <Tooltip
                 className="w-56"
                 content="Click Start Execution or wait for Trento to periodically run checks."
-                visible={isAbleToStartExecution}
+                visible={showTooltipOnlyOnHover(isAbleToStartExecution)}
                 wrap={false}
               >
                 <Button
