@@ -3,8 +3,6 @@ defmodule Trento.Settings do
   Provides a set of functions of settings related usecases.
   """
 
-  import Ecto.Query, only: [from: 2]
-
   alias Trento.Repo
   alias Trento.SoftwareUpdates.Discovery, as: SoftwareUpdatesDiscovery
 
@@ -47,13 +45,13 @@ defmodule Trento.Settings do
         }
 
   @type alerting_setting_update_t :: %{
-          enabled: boolean | nil,
-          sender_email: String.t() | nil,
-          recipient_email: String.t() | nil,
-          smtp_server: String.t() | nil,
-          smtp_port: String.t() | integer | nil,
-          smtp_username: String.t() | nil,
-          smtp_password: String.t() | nil
+          optional(:enabled) => boolean,
+          optional(:sender_email) => String.t(),
+          optional(:recipient_email) => String.t(),
+          optional(:smtp_server) => String.t(),
+          optional(:smtp_port) => String.t() | integer,
+          optional(:smtp_username) => String.t(),
+          optional(:smtp_password) => String.t()
         }
 
   @spec get_installation_id :: String.t()
@@ -182,6 +180,7 @@ defmodule Trento.Settings do
     Repo.one(SSOCertificatesSettings.base_query())
   end
 
+
   # Alerting Settings
 
   @spec get_alerting_settings ::
@@ -193,17 +192,13 @@ defmodule Trento.Settings do
     end
   end
 
-  @spec set_alerting_settings(alerting_setting_set_t()) ::
+  @spec create_alerting_settings(alerting_setting_set_t()) ::
           {:ok, AlertingSettings.t()}
           | {:error, Ecto.Changeset.t()}
-  def set_alerting_settings(alerting_settings) do
+  def create_alerting_settings(alerting_settings) do
     %AlertingSettings{}
-    |> AlertingSettings.save_changeset(alerting_settings)
-    |> Repo.insert(
-      on_conflict: {:replace_all_except, [:id, :inserted_at]},
-      conflict_target: :type,
-      returning: true
-    )
+    |> AlertingSettings.changeset(alerting_settings)
+    |> Repo.insert(returning: true)
   end
 
   @spec update_alerting_settings(alerting_setting_update_t()) ::
@@ -211,24 +206,10 @@ defmodule Trento.Settings do
           | {:error, :alerting_settings_not_configured}
           | {:error, Ecto.Changeset.t()}
   def update_alerting_settings(alerting_settings) do
-    changes =
-      AlertingSettings.update_changeset(%AlertingSettings{}, alerting_settings)
-      |> Map.fetch!(:changes)
-      |> Map.put(:updated_at, DateTime.utc_now())
-      |> Map.to_list()
-
-    query =
-      from s in AlertingSettings,
-        where: [type: :alerting_settings],
-        update: [set: ^changes],
-        select: s
-
-    try do
-      {_count, [settings]} = Repo.update_all(query, [])
-      {:ok, settings}
-    rescue
-      _exc ->
-        {:error, :alerting_settings_not_configured}
+    with {:ok, current_settings} <- get_alerting_settings() do
+      current_settings
+      |> AlertingSettings.changeset(alerting_settings)
+      |> Repo.update()
     end
   end
 

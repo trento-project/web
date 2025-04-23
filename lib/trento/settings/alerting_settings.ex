@@ -29,35 +29,12 @@ defmodule Trento.Settings.AlertingSettings do
     sti_fields()
   end
 
-  @spec save_changeset(t(), map()) :: Ecto.Changeset.t()
-  def save_changeset(alerting_settings, changes) do
+  @spec changeset(t(), map()) :: Ecto.Changeset.t()
+  def changeset(alerting_settings, changes) do
     alerting_settings
     |> cast(changes, @cast_fields)
     |> sti_changes()
-    |> validate_required([
-      :type,
-      :enabled,
-      :sender_email,
-      :recipient_email,
-      :smtp_server,
-      :smtp_port,
-      :smtp_username,
-      :smtp_password
-    ])
-    |> common_validations()
-    |> unique_constraint(:type)
-  end
-
-  @spec update_changeset(t(), map()) :: Ecto.Changeset.t()
-  def update_changeset(alerting_settings, changes) do
-    alerting_settings
-    |> cast(changes, @cast_fields)
-    |> common_validations()
-  end
-
-  @spec common_validations(Ecto.Changeset.t()) :: Ecto.Changeset.t()
-  defp common_validations(changeset) do
-    changeset
+    |> validate_required(@cast_fields)
     |> validate_format(:sender_email, ~r/@/, message: "Invalid e-mail address.")
     |> validate_format(:recipient_email, ~r/@/, message: "Invalid e-mail address.")
     |> validate_number(:smtp_port,
@@ -65,5 +42,6 @@ defmodule Trento.Settings.AlertingSettings do
       less_than_or_equal_to: 65_535,
       message: "Invalid port number."
     )
+    |> unique_constraint(:type)
   end
 end
