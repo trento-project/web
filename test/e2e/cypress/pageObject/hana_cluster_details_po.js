@@ -73,12 +73,13 @@ const actionNotAuthorizedTooltip =
 const checkSelectionButton = 'button:contains("Check Selection")';
 const startExecutionButton = 'button:contains("Start Execution")';
 const saveChecksSelectionButton = 'button:contains("Save Checks Selection")';
+const checkCategorySwitch = 'button[class*="check-switch"]';
 
 // UI Interactions
 
-export const visit = (clusterId = '') => {
+export const visit = (clusterId = '', wait = true) => {
   basePage.visit(`${url}/${clusterId}`);
-  if (clusterId !== '') {
+  if (clusterId !== '' && wait) {
     basePage.waitForRequest(lastExecutionEndpointAlias);
     basePage.waitForRequest(catalogEndpointAlias);
   }
@@ -91,8 +92,20 @@ export const visitAvailableHanaClusterCostOpt = () =>
 
 export const visitHanaAngiCluster = () => visit(availableAngiCluster.id);
 
-export const clickStartExecutionButton = () =>
-  cy.get(startExecutionButton).click({ force: true });
+export const clickStartExecutionButton = (force = true) =>
+  cy.get(startExecutionButton).click({ force: force });
+
+export const clickStartExecutionButtonWithoutForce = () =>
+  clickStartExecutionButton(false);
+
+export const clickAllUncheckedCategorySwitches = () =>
+  cy.get(checkCategorySwitch).each((switchButton) => {
+    cy.wrap(switchButton)
+      .invoke('attr', 'aria-checked')
+      .then((value) => {
+        if (value === 'false') cy.wrap(switchButton).click();
+      });
+  });
 
 export const mouseOverArchitectureInfo = () =>
   cy.get(architectureInfoLabel).trigger('mouseover');
@@ -112,7 +125,19 @@ export const clickCriticalChecksButton = () =>
 export const clickCheckSelectionButton = () =>
   cy.get(checkSelectionButton).click();
 
+export const clickSaveChecksSelectionButton = () =>
+  cy.get(saveChecksSelectionButton).click();
+
 // UI Validations
+export const validateExpectedCheckResults = (expectedCheckResults) => {
+  expectedCheckResults.forEach((result) => {
+    cy.get(`td:contains("${result[0]}") + td + td svg`).should(
+      `have.class`,
+      `${result[1]}`
+    );
+  });
+};
+
 const validateUrl = (path = '') => basePage.validateUrl(`${url}${path}`);
 
 export const validateAvailableHanaClusterUrl = () =>
