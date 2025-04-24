@@ -65,10 +65,9 @@ const resetCustomizedCheckIcon =
   'a[class*="block"] button[aria-label="reset-check-customization"] svg';
 const modifiedPill = `a[class*="block"] span:contains("${modifiedPillLabel}")`;
 const modalDescrition = 'div[class="mt-2"] p';
-const modalWarningText = 'div[class="mt-2"] span';
+const modalSpan = 'div[class="mt-2"] span';
 const modalInput = 'div[class="mt-2"] input';
 const modalValueDefault = 'div[class="mt-2"] label';
-const modalInputValue = 'div[class="mt-2"] span';
 const modalProviderSvg = 'div[class="mt-2"] span img';
 const resetModalTitle = 'div[class*="space-y-4"] h2';
 const resetModalWarning = 'div[class="mt-2"] div[class*="text-gray"]';
@@ -131,7 +130,7 @@ export const modalWarningCheckBoxShouldNotBeChecked = () =>
 export const modalWarningCheckBoxShouldBeChecked = () =>
   cy.get(modalInput).eq(0).should('be.checked');
 export const validateWarningMessage = () =>
-  cy.get(modalWarningText).should('contain', modalWarningCheckboxLabel);
+  cy.get(modalSpan).should('contain', modalWarningCheckboxLabel);
 const validateValueNameAndDefaultValue = (valueName, defaultValue) => {
   cy.get(modalValueDefault)
     .should('contain', valueName)
@@ -155,7 +154,7 @@ export const validateCustomizedValue = () => {
 export const validateProviderLabel = () =>
   cy.get(modalValueDefault).eq(1).should('contain', modalProviderLabel);
 export const validateProviderValue = () =>
-  cy.get(modalInputValue).eq(1).should('contain', modalProviderValue);
+  cy.get(modalSpan).eq(1).should('contain', modalProviderValue);
 export const providerIconShouldBeDisplayed = () => {
   cy.get(modalProviderSvg)
     .should('be.visible')
