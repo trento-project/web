@@ -229,6 +229,15 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
   defp decode_response({:error, :suma_authentication_error}, _),
     do: {:error, :suma_authentication_error}
 
+  defp decode_response({:error, %HTTPoison.Error{reason: :timeout}} = error,
+         error_atom: error_atom,
+         error_log: error_log
+       ) do
+    Logger.error("#{error_log} Request timed out: #{inspect(error)} as #{error_atom}")
+
+    {:error, error_atom}
+  end
+
   defp decode_response({:error, _} = error, error_atom: error_atom, error_log: error_log) do
     Logger.error("#{error_log} Error: #{inspect(error)}")
 
