@@ -126,7 +126,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
 
   @impl true
   def get_system_id(base_url, auth, fully_qualified_domain_name, ca_cert) do
-    HTTPoison.request(
+    request(
       :get,
       "#{base_url}/system/getId",
       "",
@@ -137,7 +137,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
 
   @impl true
   def get_relevant_patches(base_url, auth, system_id, ca_cert) do
-    HTTPoison.request(
+    request(
       :get,
       "#{base_url}/system/getRelevantErrata",
       "",
@@ -148,7 +148,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
 
   @impl true
   def get_upgradable_packages(base_url, auth, system_id, ca_cert) do
-    HTTPoison.request(
+    request(
       :get,
       "#{base_url}/system/listLatestUpgradablePackages",
       "",
@@ -159,7 +159,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
 
   @impl true
   def get_errata_details(base_url, auth, advisory_name, ca_cert) do
-    HTTPoison.request(
+    request(
       :get,
       "#{base_url}/errata/getDetails",
       "",
@@ -170,7 +170,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
 
   @impl true
   def get_affected_systems(base_url, auth, advisory_name, ca_cert) do
-    HTTPoison.request(
+    request(
       :get,
       "#{base_url}/errata/listAffectedSystems",
       "",
@@ -181,7 +181,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
 
   @impl true
   def get_cves(base_url, auth, advisory_name, ca_cert) do
-    HTTPoison.request(
+    request(
       :get,
       "#{base_url}/errata/listCves",
       "",
@@ -192,7 +192,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
 
   @impl true
   def get_affected_packages(base_url, auth, advisory_name, ca_cert) do
-    HTTPoison.request(
+    request(
       :get,
       "#{base_url}/errata/listPackages",
       "",
@@ -203,7 +203,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
 
   @impl true
   def get_patches_for_package(base_url, auth, package_id, ca_cert) do
-    HTTPoison.request(
+    request(
       :get,
       "#{base_url}/packages/listProvidingErrata",
       "",
@@ -214,7 +214,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
 
   @impl true
   def get_bugzilla_fixes(base_url, auth, advisory_name, ca_cert) do
-    HTTPoison.request(
+    request(
       :post,
       "#{base_url}/errata/bugzillaFixes",
       "",
