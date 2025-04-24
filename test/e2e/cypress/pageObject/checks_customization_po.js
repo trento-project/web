@@ -23,7 +23,6 @@ const firstCheck = catalogCheckFactory.build({
     }),
   ],
 });
-
 const secondCheck = catalogCheckFactory.build({
   id: '156F64',
   description: 'Corosync `token` timeout is set to expected value',
@@ -36,8 +35,6 @@ const secondCheck = catalogCheckFactory.build({
   ],
 });
 const checkList = [firstCheck, secondCheck];
-
-// Modal check values
 const firstCheckValueName = `${firstCheck.values[0].name}:`;
 const firstCheckDefaultValue = `(Default: ${firstCheck.values[0].default})`;
 const secondCheckValueName = `${secondCheck.values[0].name}:`;
@@ -47,107 +44,74 @@ const modalWarningCheckboxLabel =
   'Trento and SUSE are not responsible for cluster operation failure due to deviation from Best Practices.';
 const userInputValidationErrorLabel =
   'Some of the values are invalid. Please correct them and try again';
-const userValidationError = '.text-red-500';
-
-// User input data
 const customValue = '100';
 const customMixedValue = '30000a';
-
-// Selectors
-
-//Checks overview
-const checksCategorySwitch = '.tn-check-switch';
 const corosyncLabel = 'Corosync';
-const checkCustomModalSettingsIconFirstCheck ='a[class*="block"]:contains("Corosync is running with max_messages") svg'
-
-const checkCustomModalSettingsIconFirstCheckAfterCustomization =
-  'a[class*="block"] button[aria-label="customize-check"] svg';
-const checkCustomModalSettingsIconSecondCheck ='a[class*="block"] button[aria-label="customize-check"] svg';
-const resetCustomizedCheckIcon =   'a[class*="block"] button[aria-label="reset-check-customization"] svg';
 const modifiedPillLabel = 'MODIFIED';
-const modifiedPill=`a[class*="block"] span:contains("${modifiedPillLabel}")`
-
-// Modal elements and values
-const modalDescrition = '.mt-2 > .text-gray-500';
-const modalWarningText = '.border-yellow-400 > .font-semibold';
-const modalWarningCheckbox = '.border-yellow-400 > div > .rc-input';
-const modalValueDefault = '.flex-col > .font-bold';
-const modalValueCurrentValue = '.space-x-4 > div.w-full > .rc-input';
 const modalProviderLabel = 'Provider';
-const modalProvider = `div[class="mt-2"] label[class="font-bold"]:contains("${modalProviderLabel}")`;
 const modalProviderValue = 'Azure';
-const modalProviderInput = `div[class="mt-2"]  div[class="flex items-center space-x-2 mb-5"] div[class="relative w-full"] span:contains("${modalProviderValue}")`
-const modalProviderIcon = '.absolute > .flex > .mr-2';
+const resetModalTitleLabel = 'Reset check: 00081D';
 const resetModalText =
   'You are about to reset custom checks values. Would you like to continue?';
-const resetModalWarning = '.mt-2 > .text-gray-500';
-// Button in modal
+const checkCustomizationToastSuccessLabel = 'Check was customized successfully';
+const checkCustomizationToastResetLabel = 'Customization was reset!';
+const checkCustomizationToastErrorLabel = 'Failed to customize check';
+
+// Selectors
+const corosyncCategory = `div[class="pb-4"] h3.tn-check-switch:contains("${corosyncLabel}")`;
+const checksCustomizationSettingsIcon =
+  'a[class*="block"] button[aria-label="customize-check"] svg';
+const resetCustomizedCheckIcon =
+  'a[class*="block"] button[aria-label="reset-check-customization"] svg';
+const modifiedPill = `a[class*="block"] span:contains("${modifiedPillLabel}")`;
+const modalDescrition = 'div[class="mt-2"] p';
+const modalWarningText = 'div[class="mt-2"] span';
+const modalInput = 'div[class="mt-2"] input';
+const modalValueDefault = 'div[class="mt-2"] label';
+const modalInputValue = 'div[class="mt-2"] span';
+const modalProviderSvg = 'div[class="mt-2"] span img';
+const resetModalTitle = 'div[class*="space-y-4"] h2';
+const resetModalWarning = 'div[class="mt-2"] div[class*="text-gray"]';
+const userValidationError = 'div[class="mt-2"] div p[class*="text-red"]';
 const saveButtonModal = 'button:contains("Save")';
 const resetCheckButtonModal = 'button:contains("Reset Check")';
 const closeCheckButtonModal = 'button:contains("Close")';
-const resetModalLabel = 'Reset';
-const resetModalButton = '.mt-2 > .flex > .bg-jungle-green-500';
-
-// Toast messages for checks customization
-const checkCustomizationToastSuccessLabel = 'Check was customized successfully';
+const resetButton = 'button:contains("Reset")';
 const checkCustomizationToastSuccess = `p:contains(${checkCustomizationToastSuccessLabel})`;
-const checkCustomizationToastResetLabel = 'Customization was reset!';
 const checkCustomizationToastReset = `p:contains(${checkCustomizationToastResetLabel})`;
-const checkCustomizationToastErrorLabel = 'Failed to customize check';
 
 //UI interactions
-export const corosyncCategoryClick = () =>
-  cy.get(checksCategorySwitch).contains(corosyncLabel).click();
-
-export const openCustomizationModalFirstCheck = () => {
-  cy.get(checkCustomModalSettingsIconFirstCheck).first().click({ force: true });
-};
-
-export const openCustomizationModalFirstCheckAfterCustomization = () => cy.get(checkCustomModalSettingsIconFirstCheckAfterCustomization).first().click();
-
-
-export const openCustomizationModalSecondCheck = () => {
-  cy.get(checkCustomModalSettingsIconSecondCheck)
-    .eq(1)
-    .click();
-};
-
-// User clicks on element
+export const corosyncCategoryClick = () => cy.get(corosyncCategory).click();
+export const openCustomizationModalFirstCheck = () =>
+  cy.get(checksCustomizationSettingsIcon).eq(0).click();
+export const openCustomizationModalSecondCheck = () =>
+  cy.get(checksCustomizationSettingsIcon).eq(1).click();
 export const userClickOnWarningCheckbox = () =>
-  cy.get(modalWarningCheckbox).click();
-
-export const userClickResetModalButton = () =>
+  cy.get(modalInput).eq(0).click();
+export const userClickResetCheckModalButton = () =>
   cy.get(resetCheckButtonModal).click();
 export const userClickCloseButton = () => cy.get(closeCheckButtonModal).click();
-
-export const userClickResetButton = () =>
-  cy.get(resetModalButton).contains(resetModalLabel).click();
-
+export const userClickResetButton = () => cy.get(resetButton).click();
+export const userClickResetModalButton = () =>
+  cy.get(resetButton).eq(1).click();
 export const userClickResetCustomizedCheck = () =>
   cy.get(resetCustomizedCheckIcon).click();
-
 export const userClickModalSaveButton = () =>
-  cy.get('.w-80 > .bg-jungle-green-500').click();
-
-// User input
-const setInputValue = (element, value) => {
+  cy.get(saveButtonModal).eq(1).click();
+const setInputValue = (element, index, value) => {
   cy.get(element)
+    .eq(index)
     .should('be.visible')
     .clear()
     .type(value)
     .should('have.value', value);
 };
-
-export const userInputCustomCheckValue = () => {
-  setInputValue(modalValueCurrentValue, customValue);
-};
-export const userInputInvalidCheckValue = () => {
-  setInputValue(modalValueCurrentValue, customMixedValue);
-};
+export const userInputCustomCheckValue = () =>
+  setInputValue(modalInput, 1, customValue);
+export const userInputInvalidCheckValue = () =>
+  setInputValue(modalInput, 1, customMixedValue);
 
 // UI validations
-
-// Checks overview
 export const resetIconShouldNotExistInOverview = () =>
   cy.get(resetCustomizedCheckIcon).should('not.exist');
 export const customizedCheckShouldHaveModifiedPill = () =>
@@ -156,8 +120,61 @@ export const customizedCheckShouldNotHaveModifiedPill = () =>
   cy.get(modifiedPill).should('not.exist');
 export const secondCustomizedCheckShouldNotHaveModifiedPill = () =>
   cy.get(modifiedPill).should('not.exist');
-
-// buttons
+const validateCheckId = (value) =>
+  cy.contains(`Check: ${value}`).should('contain', value);
+export const validateFirstCheckId = () => validateCheckId(firstCheck.id);
+export const validateSecondCheckId = () => validateCheckId(secondCheck.id);
+export const validateFirstCheckDescription = () =>
+  cy.get(modalDescrition).should('contain', firstCheck.description);
+export const modalWarningCheckBoxShouldNotBeChecked = () =>
+  cy.get(modalInput).eq(0).should('not.be.checked');
+export const modalWarningCheckBoxShouldBeChecked = () =>
+  cy.get(modalInput).eq(0).should('be.checked');
+export const validateWarningMessage = () =>
+  cy.get(modalWarningText).should('contain', modalWarningCheckboxLabel);
+const validateValueNameAndDefaultValue = (valueName, defaultValue) => {
+  cy.get(modalValueDefault)
+    .should('contain', valueName)
+    .and('contain', defaultValue);
+};
+export const validateFirstCheckValueNameAndDefaultValue = () =>
+  validateValueNameAndDefaultValue(firstCheckValueName, firstCheckDefaultValue);
+export const validateSecondCheckValueNameAndDefaultValue = () => {
+  validateValueNameAndDefaultValue(
+    secondCheckValueName,
+    secondCheckDefaultValue
+  );
+};
+const validateModalInputValue = (input, index, value) =>
+  cy.get(input).eq(index).should('have.value', value);
+export const validateCurrentValueFromWandaFirstCheck = () =>
+  validateModalInputValue(modalInput, 1, firstCurrentCheckValue);
+export const validateCustomizedValue = () => {
+  validateModalInputValue(modalInput, 0, customValue);
+};
+export const validateProviderLabel = () =>
+  cy.get(modalValueDefault).eq(1).should('contain', modalProviderLabel);
+export const validateProviderValue = () =>
+  cy.get(modalInputValue).eq(1).should('contain', modalProviderValue);
+export const providerIconShouldBeDisplayed = () => {
+  cy.get(modalProviderSvg)
+    .should('be.visible')
+    .and('have.attr', 'alt', 'azure');
+};
+export const validateResetModalTitle = () =>
+  cy.get(resetModalTitle).should('contain', resetModalTitleLabel);
+export const validateResetModalWarningText = () =>
+  cy.get(resetModalWarning).eq(1).should('contain', resetModalText);
+export const userInputValidationErrorShouldBeDisplayed = () =>
+  cy.get(userValidationError).should('contain', userInputValidationErrorLabel);
+// Toast messages for checks customization
+const toastShouldBeVisible = (label) => cy.get(label).should('be.visible');
+export const checkCustomizationSuccessToastIsShown = () =>
+  toastShouldBeVisible(checkCustomizationToastSuccess);
+export const checkCustomizationResetToastIsShown = () =>
+  toastShouldBeVisible(checkCustomizationToastReset);
+export const checkCustomizationErrorToastIsShown = () =>
+  cy.get('body').should('contain', checkCustomizationToastErrorLabel);
 const buttonEnabled = (button) => cy.get(button).should('be.enabled');
 const buttonDisabled = (button) => cy.get(button).should('be.disabled');
 export const modalSaveButtonShouldBeEnabled = () =>
@@ -166,91 +183,16 @@ export const modalSaveButtonShouldBeDisabled = () =>
   buttonDisabled(saveButtonModal);
 export const resetCheckButtonEnabled = () =>
   buttonEnabled(resetCheckButtonModal);
-export const modalResetCheckButtonShouldBeDisabled = () => {
+export const modalResetCheckButtonShouldBeDisabled = () =>
   buttonDisabled(resetCheckButtonModal);
-};
-export const modalCloseButtonShouldBeEnabled = () => {
+export const modalCloseButtonShouldBeEnabled = () =>
   buttonEnabled(closeCheckButtonModal);
-};
-export const closeButtonDisabled = () => {
-  buttonDisabled(closeCheckButtonModal);
-};
-
-// Validation of values
-const validateCheckId = (value) =>
-  cy.contains(`Check: ${value}`).should('contain', value);
-export const validateFirstCheckId = () => validateCheckId(firstCheck.id);
-export const validateSecondCheckId = () => validateCheckId(secondCheck.id);
-export const validateFirstCheckDescription = () =>
-  cy.get(modalDescrition).should('contain', firstCheck.description);
-export const modalWarningCheckBoxShouldNotBeChecked = () =>
-  cy.get(modalWarningCheckbox).should('not.be.checked');
-export const modalWarningCheckBoxShouldBeChecked = () =>
-  cy.get(modalWarningCheckbox).should('be.checked');
-export const validateWarningMessage = () =>
-  cy.get(modalWarningText).should('contain', modalWarningCheckboxLabel);
-
-const validateValueNameAndDefaultValue = (valueName, defaultValue) => {
-  cy.get(modalValueDefault)
-    .should('contain', valueName)
-    .and('contain', defaultValue);
-};
-export const validateFirstCheckValueNameAndDefaultValue = () => {
-  validateValueNameAndDefaultValue(firstCheckValueName, firstCheckDefaultValue);
-};
-export const validateSecondCheckValueNameAndDefaultValue = () => {
-  validateValueNameAndDefaultValue(
-    secondCheckValueName,
-    secondCheckDefaultValue
-  );
-};
-const validateValue = (element, value) =>
-  cy.get(element).should('have.value', value);
-export const validateCurrentValueFromWandaFirstCheck = () =>
-  validateValue(modalValueCurrentValue, firstCurrentCheckValue);
-
-export const validateCustomizedValue = () => {
-  validateValue(modalValueCurrentValue, customValue);
-};
-
-export const validateProvider = () =>
-  cy.get(modalProvider).should('contain', modalProviderLabel);
-export const validateProviderValue = () =>
-  cy.get(modalProviderInput).should('contain', modalProviderValue);
-export const providerIconShouldBeDisplayed = () => {
-  cy.get(modalProviderIcon)
-    .should('be.visible')
-    .and('have.attr', 'alt', 'azure');
-};
-export const validateResetWarningText = () =>
-  cy.get(resetModalWarning).should('contain', resetModalText);
-
-export const userInputValidationErrorShouldBeDisplayed = () =>
-  cy.get(userValidationError).should('contain', userInputValidationErrorLabel);
-
-// Toast messages for checks customization
-const toastShouldBeVisible = (label) => {
-  cy.get(label).should('be.visible');
-};
-export const checkCustomizationSuccessToastIsShown = () =>
-  toastShouldBeVisible(checkCustomizationToastSuccess);
-export const checkCustomizationResetToastIsShown = () =>
-  toastShouldBeVisible(checkCustomizationToastReset);
-export const checkCustomizationErrorToastIsShown = () =>
-  cy.get('body').should('contain', checkCustomizationToastErrorLabel);
 
 // Api
-
-// Page navigation
-export const visit = (clusterId = '') => {
-  basePage.visit(`${url}/${clusterId}`);
-};
+export const visit = (clusterId = '') => basePage.visit(`${url}/${clusterId}`);
 export const visitChecksSelectionCluster = () => visit(availableHanaCluster.id);
-
 export const clickOnCheckSelectionButton = () =>
   cy.get('button').contains('Check Selection').click();
-
-// Reset checks
 const resetCheck = (groupId, checkId) =>
   basePage.apiLogin().then(({ accessToken }) =>
     cy.request({
@@ -262,11 +204,9 @@ const resetCheck = (groupId, checkId) =>
       failOnStatusCode: false,
     })
   );
-
 const resetChecks = (checks) => {
   checks.forEach(({ id }) => {
     resetCheck(availableHanaCluster.id, id);
   });
 };
-
 export const apiResetAllChecks = () => resetChecks(checkList);

@@ -20,18 +20,18 @@ context('Checks customization', () => {
     });
 
     it('should customize and reset a check through the modal successfully', () => {
-      // User opens check customization for corosync checks
+      // Open checks category
       checksSelectionPage.corosyncCategoryClick();
       checksSelectionPage.openCustomizationModalFirstCheck();
-
-      // validate if initial check customization modal has the correct values
+      // Validate if initial check customization modal has the correct values
       checksSelectionPage.validateFirstCheckId();
       checksSelectionPage.validateFirstCheckDescription();
       checksSelectionPage.modalWarningCheckBoxShouldNotBeChecked();
       checksSelectionPage.validateWarningMessage();
       checksSelectionPage.validateFirstCheckValueNameAndDefaultValue();
       checksSelectionPage.validateCurrentValueFromWandaFirstCheck();
-      checksSelectionPage.validateProvider();
+      checksSelectionPage.validateProviderLabel();
+      checksSelectionPage.validateProviderValue();
       checksSelectionPage.providerIconShouldBeDisplayed();
 
       // Check default button status of an non customized check
@@ -49,12 +49,13 @@ context('Checks customization', () => {
 
       // Validate check was modified
       checksSelectionPage.customizedCheckShouldHaveModifiedPill();
-      checksSelectionPage.openCustomizationModalFirstCheckAfterCustomization();
+      checksSelectionPage.openCustomizationModalFirstCheck();
       checksSelectionPage.validateCustomizedValue();
       // Reset check in the modal
+      checksSelectionPage.userClickResetCheckModalButton();
+      checksSelectionPage.validateResetModalTitle();
+      checksSelectionPage.validateResetModalWarningText();
       checksSelectionPage.userClickResetModalButton();
-      checksSelectionPage.validateResetWarningText();
-      checksSelectionPage.userClickResetButton();
       // Validate if check was reset in overview
       checksSelectionPage.checkCustomizationResetToastIsShown();
       checksSelectionPage.customizedCheckShouldNotHaveModifiedPill();
@@ -63,28 +64,27 @@ context('Checks customization', () => {
     });
 
     it('should customize check values in the check customization modal and reset check in checks category overview', () => {
-      // open checks category
+      // Open checks category
       checksSelectionPage.corosyncCategoryClick();
       checksSelectionPage.openCustomizationModalFirstCheck();
-      // user interacts with modal
+      // User interacts with modal
       checksSelectionPage.userClickOnWarningCheckbox();
       checksSelectionPage.userInputCustomCheckValue();
       checksSelectionPage.userClickModalSaveButton();
       checksSelectionPage.checkCustomizationSuccessToastIsShown();
-      // user resets check in overview
+      // User resets check in overview
       checksSelectionPage.userClickResetCustomizedCheck();
       checksSelectionPage.userClickResetButton();
-      // validate if check was reset
+      // Validate if check was reset
       checksSelectionPage.checkCustomizationResetToastIsShown();
       checksSelectionPage.customizedCheckShouldNotHaveModifiedPill();
       checksSelectionPage.resetIconShouldNotExistInOverview();
     });
 
     it('should customize check values after fixing wrong user input', () => {
-      // User opens check customization for Corosync Checks
+      // Open checks category
       checksSelectionPage.corosyncCategoryClick();
       checksSelectionPage.openCustomizationModalSecondCheck();
-
       // User interact with modal
       checksSelectionPage.validateSecondCheckId();
       checksSelectionPage.userClickOnWarningCheckbox();
@@ -97,19 +97,18 @@ context('Checks customization', () => {
       checksSelectionPage.modalSaveButtonShouldBeDisabled();
       checksSelectionPage.modalResetCheckButtonShouldBeDisabled();
       checksSelectionPage.modalCloseButtonShouldBeEnabled();
-
       checksSelectionPage.userInputCustomCheckValue();
       checksSelectionPage.modalSaveButtonShouldBeEnabled();
       checksSelectionPage.userClickModalSaveButton();
+      // Validate overview
       checksSelectionPage.checkCustomizationSuccessToastIsShown();
       checksSelectionPage.customizedCheckShouldHaveModifiedPill();
     });
 
     it('should not customize check values if the user input is invalid', () => {
-      // User opens check customization for Corosync Checks
+      // Open checks category
       checksSelectionPage.corosyncCategoryClick();
       checksSelectionPage.openCustomizationModalSecondCheck();
-
       // User interact with modal
       checksSelectionPage.userClickOnWarningCheckbox();
       checksSelectionPage.modalWarningCheckBoxShouldBeChecked();
