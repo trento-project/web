@@ -94,6 +94,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
     case HTTPoison.request(method, url, body, headers, options) do
       {:error, %HTTPoison.Error{reason: :timeout, id: _}} = timeout_error ->
         max_attempt = Keyword.get(options, :max_attempt, 3)
+
         if max_attempt == :infinity || current_attempt < max_attempt do
           options = Keyword.update!(options, :timeout, &(&1 * 2))
           options = Keyword.update!(options, :recv_timeout, &(&1 * 2))
