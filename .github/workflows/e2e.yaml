@@ -89,15 +89,15 @@ jobs:
               vars:
                 ansible_user: ec2-user
               children:
-                trento-server:
+                trento_server:
                   hosts:
                     server:
                       ansible_host: ${{ steps.tf-outputs.outputs.trento_server_public_ip }} 
-                postgres-hosts:
+                postgres_hosts:
                   hosts:
                     server:
                       ansible_host: ${{ steps.tf-outputs.outputs.trento_server_public_ip }}
-                rabbitmq-hosts:
+                rabbitmq_hosts:
                   hosts:
                     server:
                       ansible_host: ${{ steps.tf-outputs.outputs.trento_server_public_ip }}
