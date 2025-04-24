@@ -17,11 +17,10 @@ context('Checks customization', () => {
     beforeEach(() => {
       checksSelectionPage.visitChecksSelectionCluster();
       checksSelectionPage.clickOnCheckSelectionButton();
+      checksSelectionPage.corosyncCategoryClick();
     });
 
     it('should customize and reset a check through the modal successfully', () => {
-      // Open checks category
-      checksSelectionPage.corosyncCategoryClick();
       checksSelectionPage.openCustomizationModalFirstCheck();
       // Validate if initial check customization modal has the correct values
       checksSelectionPage.validateFirstCheckId();
@@ -33,12 +32,10 @@ context('Checks customization', () => {
       checksSelectionPage.validateProviderLabel();
       checksSelectionPage.validateProviderValue();
       checksSelectionPage.providerIconShouldBeDisplayed();
-
       // Check default button status of an non customized check
       checksSelectionPage.modalSaveButtonShouldBeDisabled();
       checksSelectionPage.modalResetCheckButtonShouldBeDisabled();
       checksSelectionPage.modalCloseButtonShouldBeEnabled();
-
       // User interacts with modal
       checksSelectionPage.userClickOnWarningCheckbox();
       checksSelectionPage.modalWarningCheckBoxShouldBeChecked();
@@ -46,8 +43,7 @@ context('Checks customization', () => {
       checksSelectionPage.modalSaveButtonShouldBeEnabled();
       checksSelectionPage.userClickModalSaveButton();
       checksSelectionPage.checkCustomizationSuccessToastIsShown();
-
-      // Validate check was modified
+      // Validate if check was customized
       checksSelectionPage.customizedCheckShouldHaveModifiedPill();
       checksSelectionPage.openCustomizationModalFirstCheck();
       checksSelectionPage.validateCustomizedValue();
@@ -64,8 +60,6 @@ context('Checks customization', () => {
     });
 
     it('should customize check values in the check customization modal and reset check in checks category overview', () => {
-      // Open checks category
-      checksSelectionPage.corosyncCategoryClick();
       checksSelectionPage.openCustomizationModalFirstCheck();
       // User interacts with modal
       checksSelectionPage.userClickOnWarningCheckbox();
@@ -82,8 +76,6 @@ context('Checks customization', () => {
     });
 
     it('should customize check values after fixing wrong user input', () => {
-      // Open checks category
-      checksSelectionPage.corosyncCategoryClick();
       checksSelectionPage.openCustomizationModalSecondCheck();
       // User interact with modal
       checksSelectionPage.validateSecondCheckId();
@@ -106,8 +98,6 @@ context('Checks customization', () => {
     });
 
     it('should not customize check values if the user input is invalid', () => {
-      // Open checks category
-      checksSelectionPage.corosyncCategoryClick();
       checksSelectionPage.openCustomizationModalSecondCheck();
       // User interact with modal
       checksSelectionPage.userClickOnWarningCheckbox();

@@ -167,7 +167,6 @@ export const validateResetModalWarningText = () =>
   cy.get(resetModalWarning).eq(1).should('contain', resetModalText);
 export const userInputValidationErrorShouldBeDisplayed = () =>
   cy.get(userValidationError).should('contain', userInputValidationErrorLabel);
-// Toast messages for checks customization
 const toastShouldBeVisible = (label) => cy.get(label).should('be.visible');
 export const checkCustomizationSuccessToastIsShown = () =>
   toastShouldBeVisible(checkCustomizationToastSuccess);
