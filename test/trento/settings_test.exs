@@ -794,6 +794,9 @@ defmodule Trento.SettingsTest do
   end
 
   describe "Alerting settings" do
+    @create_fields ~w(enabled sender_email recipient_email smtp_server smtp_port smtp_username smtp_password)a
+    @update_fields ~w(enabled sender_email recipient_email smtp_server smtp_port smtp_username)a
+
     test "return error when settings are not configured" do
       assert {:error, :alerting_settings_not_configured} ==
                Settings.get_alerting_settings()
@@ -802,6 +805,37 @@ defmodule Trento.SettingsTest do
     test "return previously saved settings" do
       inserted_settings = insert(:alerting_settings, [], returning: true)
       assert {:ok, inserted_settings} === Settings.get_alerting_settings()
+    end
+
+    test "successfully create when called with correct input" do
+      %AlertingSettings{
+        sender_email: sender_email,
+        recipient_email: recipient_email,
+        smtp_server: smtp_server,
+        smtp_port: smtp_port,
+        smtp_username: smtp_username,
+        smtp_password: smtp_password
+      } = settings = build(:alerting_settings)
+
+      now = DateTime.utc_now()
+
+      {:ok, saved_settings} =
+        Settings.create_alerting_settings(Map.take(settings, @create_fields))
+
+      assert saved_settings.id != nil
+
+      assert %AlertingSettings{
+               enabled: true,
+               sender_email: ^sender_email,
+               recipient_email: ^recipient_email,
+               smtp_server: ^smtp_server,
+               smtp_port: ^smtp_port,
+               smtp_username: ^smtp_username,
+               smtp_password: ^smtp_password
+             } = saved_settings
+
+      assert saved_settings.inserted_at > now
+      assert saved_settings.inserted_at == saved_settings.updated_at
     end
 
     validation_failure_scenarios = [
@@ -841,46 +875,29 @@ defmodule Trento.SettingsTest do
           expected_error: expected_error
         } = @scenario
 
-        settings = build(:alerting_settings, [{field_name, field_value}])
+        create_params =
+          :alerting_settings
+          |> build([{field_name, field_value}])
+          |> Map.take(@create_fields)
 
-        assert {:error,
-                %Ecto.Changeset{
-                  errors: [{^field_name, {^expected_error, _}}]
-                }} =
-                 settings
-                 |> Map.from_struct()
-                 |> Settings.create_alerting_settings()
+        assert {:error, changeset} = Settings.create_alerting_settings(create_params)
+        assert %{field_name => [expected_error]} == errors_on(changeset)
       end
     end
 
-    test "successfully create when called with correct input" do
-      %AlertingSettings{
-        sender_email: sender_email,
-        recipient_email: recipient_email,
-        smtp_server: smtp_server,
-        smtp_port: smtp_port,
-        smtp_username: smtp_username,
-        smtp_password: smtp_password
-      } = settings = build(:alerting_settings)
+    test "return error when trying to create twice" do
+      insert(:alerting_settings)
 
-      now = DateTime.utc_now()
+      create_params =
+        :alerting_settings
+        |> build()
+        |> Map.take(@create_fields)
 
-      {:ok, saved_settings} = Settings.create_alerting_settings(Map.from_struct(settings))
+      assert {:error, changeset} = Settings.create_alerting_settings(create_params)
 
-      assert saved_settings.id != nil
-
-      assert %AlertingSettings{
-               enabled: true,
-               sender_email: ^sender_email,
-               recipient_email: ^recipient_email,
-               smtp_server: ^smtp_server,
-               smtp_port: ^smtp_port,
-               smtp_username: ^smtp_username,
-               smtp_password: ^smtp_password
-             } = saved_settings
-
-      assert saved_settings.inserted_at > now
-      assert saved_settings.inserted_at == saved_settings.updated_at
+      assert errors_on(changeset) == %{
+               type: ["has already been taken"]
+             }
     end
 
     test "successfully updated when called with correct input" do
@@ -898,17 +915,11 @@ defmodule Trento.SettingsTest do
         smtp_server: upd_smtp_server,
         smtp_port: upd_smtp_port,
         smtp_username: upd_smtp_username
-      } = build(:alerting_settings)
+      } = update_settings = build(:alerting_settings)
 
-      {:ok, updated_settings} =
-        Settings.update_alerting_settings(%{
-          enabled: upd_enabled,
-          sender_email: upd_sender_email,
-          recipient_email: upd_recipient_email,
-          smtp_server: upd_smtp_server,
-          smtp_port: upd_smtp_port,
-          smtp_username: upd_smtp_username
-        })
+      update_params = Map.take(update_settings, @update_fields)
+
+      {:ok, updated_settings} = Settings.update_alerting_settings(update_params)
 
       assert %AlertingSettings{
                id: ^ins_id,
@@ -923,6 +934,26 @@ defmodule Trento.SettingsTest do
              } = updated_settings
 
       assert ins_updated_at < updated_settings.updated_at
+    end
+
+    for %{name: scenario_name} = scenario <- validation_failure_scenarios do
+      @scenario scenario
+
+      test "return error when trying to update with wrong value for field #{scenario_name}" do
+        %{
+          field_name: field_name,
+          field_value: field_value,
+          expected_error: expected_error
+        } = @scenario
+
+        update_params =
+          :alerting_settings
+          |> build([{field_name, field_value}])
+          |> Map.take(@create_fields)
+
+        assert {:error, changeset} = Settings.create_alerting_settings(update_params)
+        assert %{field_name => [expected_error]} == errors_on(changeset)
+      end
     end
   end
 end
