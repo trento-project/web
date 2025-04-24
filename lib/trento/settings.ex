@@ -180,7 +180,6 @@ defmodule Trento.Settings do
     Repo.one(SSOCertificatesSettings.base_query())
   end
 
-
   # Alerting Settings
 
   @spec get_alerting_settings ::
