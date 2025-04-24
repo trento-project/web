@@ -116,7 +116,8 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
         "password" => password
       })
 
-    HTTPoison.post(
+    request(
+      :post,
       "#{base_url}/auth/login",
       payload,
       [{"Content-type", "application/json"}],
