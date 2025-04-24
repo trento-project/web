@@ -120,7 +120,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
       "#{base_url}/auth/login",
       payload,
       [{"Content-type", "application/json"}],
-      ssl_options(ca_cert) ++ timeout_options()
+      ssl_options(ca_cert)
     )
   end
 
@@ -233,9 +233,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
   end
 
   defp request_options(auth, ca_cert),
-    do: [hackney: [cookie: [auth]]] ++ ssl_options(ca_cert) ++ timeout_options()
-
-  defp timeout_options, do: [timeout: 1_000, recv_timeout: 1_500]
+    do: [hackney: [cookie: [auth]]] ++ ssl_options(ca_cert)
 
   defp ssl_options(nil), do: []
 
