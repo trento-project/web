@@ -77,6 +77,11 @@ const checkCategorySwitch = 'button[class*="check-switch"]';
 const checkResultRows = 'tr[class*="check-result-row"]';
 const checkSettingsWarningMessage = 'div[class*="bg-yellow"] span';
 const checkResultsButton = 'button:contains("Results")';
+const corosyncCheckCategory =
+  'div[aria-label*="accordion-header"]:contains("Corosync")';
+const corosyncTokenTimeoutSettings =
+  'div[class="sm:flex"]:contains("Corosync token timeout is set to expected value") + div svg';
+const checkInputExpectedValue = 'input[name*="expected"]';
 
 // UI Interactions
 
@@ -133,7 +138,16 @@ export const clickSaveChecksSelectionButton = () =>
 
 export const clickCheckResultsButton = () => cy.get(checkResultsButton).click();
 
+export const clickCorosyncCheckCategory = () =>
+  cy.get(corosyncCheckCategory).click();
+
+export const clickCorosyncTokenTimeoutCheckSettings = () =>
+  cy.get(corosyncTokenTimeoutSettings).click();
+
 // UI Validations
+export const checkInputValueIsTheExpected = (value) =>
+  cy.get(checkInputExpectedValue).should('have.value', value);
+
 export const expectedWarningMessageIsDisplayed = (expectedWarningMessage) =>
   cy
     .get(checkSettingsWarningMessage)
