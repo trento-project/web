@@ -1,18 +1,14 @@
 import * as hanaClusterDetailsPage from '../pageObject/hana_cluster_details_po';
 
 context('HANA cluster details', () => {
-  before(() => {
-    hanaClusterDetailsPage.preloadTestData();
-  });
-
-  beforeEach(() => {
-    hanaClusterDetailsPage.interceptCatalogRequest();
-    hanaClusterDetailsPage.interceptLastExecutionRequest();
-  });
+  before(() => hanaClusterDetailsPage.preloadTestData());
 
   describe('HANA cluster details should be consistent with the state of the cluster', () => {
     beforeEach(() => {
+      hanaClusterDetailsPage.interceptCatalogRequest();
+      hanaClusterDetailsPage.interceptLastExecutionRequest();
       hanaClusterDetailsPage.visitAvailableHanaCluster();
+      hanaClusterDetailsPage.waitForInitialEndpoints();
     });
 
     it('should have expected cluster name in header', () => {
@@ -90,7 +86,10 @@ context('HANA cluster details', () => {
 
   describe('Cluster sites should have the expected hosts', () => {
     beforeEach(() => {
+      hanaClusterDetailsPage.interceptCatalogRequest();
+      hanaClusterDetailsPage.interceptLastExecutionRequest();
       hanaClusterDetailsPage.visitAvailableHanaCluster();
+      hanaClusterDetailsPage.waitForInitialEndpoints();
       hanaClusterDetailsPage.validateAvailableHanaClusterUrl();
     });
 
@@ -129,7 +128,10 @@ context('HANA cluster details', () => {
 
   describe('Cluster SBD should have the expected devices with the correct status', () => {
     beforeEach(() => {
+      hanaClusterDetailsPage.interceptCatalogRequest();
+      hanaClusterDetailsPage.interceptLastExecutionRequest();
       hanaClusterDetailsPage.visitAvailableHanaCluster();
+      hanaClusterDetailsPage.waitForInitialEndpoints();
     });
 
     it('should have SBD expected device name & status', () => {
@@ -279,55 +281,48 @@ context('HANA cluster details', () => {
     });
   });
 
-  // eslint-disable-next-line mocha/no-skipped-tests
-  describe.skip('Check Selection should allow to enable checks from the checks catalog', () => {
-    it('should take me to the cluster settings when pressing the settings button', () => {
-      cy.get('button').contains('Check Selection').click();
-    });
-
-    it('should include the relevant checks section', () => {
-      cy.get('.tn-check-switch').contains('Corosync');
-      cy.get('.tn-check-switch').contains('Miscellaneous');
-      cy.get('.tn-check-switch').contains('OS and package versions');
-      cy.get('.tn-check-switch').contains('Pacemaker');
-      cy.get('.tn-check-switch').contains('SBD');
-    });
+  describe('Check Selection should allow to enable checks from the checks catalog', () => {
+    beforeEach(() => hanaClusterDetailsPage.visitAvailableHanaCluster());
 
     it('should include the checks catalog in the checks results once enabled', () => {
-      cy.get('.tn-check-switch').contains('Corosync');
-      cy.get('.tn-check-switch').contains('Miscellaneous');
-      cy.get('.tn-check-switch').contains('OS and package versions');
-      cy.get('.tn-check-switch').contains('Pacemaker');
-      cy.get('.tn-check-switch').contains('SBD');
+      hanaClusterDetailsPage.clickCheckSelectionButton();
+      hanaClusterDetailsPage.expectedCheckIsDisplayed('Corosync');
+      hanaClusterDetailsPage.expectedCheckIsDisplayed('Miscellaneous');
+      hanaClusterDetailsPage.expectedCheckIsDisplayed(
+        'OS and package versions'
+      );
+      hanaClusterDetailsPage.expectedCheckIsDisplayed('Pacemaker');
+      hanaClusterDetailsPage.expectedCheckIsDisplayed('SBD');
 
-      cy.get('.tn-check-switch').click({ multiple: true });
-
-      cy.get('button').contains('Select Checks for Execution').click();
-      cy.get('.tn-checks-start-execute').click();
-      cy.get('.tn-check-result-row').should('have.length', 68);
+      hanaClusterDetailsPage.clickAllUncheckedCategorySwitches();
+      hanaClusterDetailsPage.clickSaveChecksSelectionButton();
+      hanaClusterDetailsPage.clickStartExecutionButtonWithoutForce();
+      hanaClusterDetailsPage.expectedResultRowsAreDisplayed(51);
     });
   });
 
-  // eslint-disable-next-line mocha/no-skipped-tests
-  describe.skip('Cluster with unknown provider', () => {
+  describe('Cluster with unknown provider', () => {
     before(() => {
       hanaClusterDetailsPage.loadScenario('cluster-unknown-provider');
       hanaClusterDetailsPage.visitAvailableHanaCluster();
     });
 
-    it(`should show a warning message in the check selection view`, () => {
-      cy.contains('button', 'Check Selection').click();
-      cy.get('[data-testid="warning-banner"]').contains(
-        'The following catalog is valid for on-premise bare metal platforms.'
+    it('should show a warning message in the check selection view', () => {
+      hanaClusterDetailsPage.clickCheckSelectionButton();
+      const expectedWarningMessage =
+        'The following catalog is valid for on-premise bare metal platforms.If you are running your HANA cluster on a different platform, please use results with caution';
+      hanaClusterDetailsPage.expectedWarningMessageIsDisplayed(
+        expectedWarningMessage
       );
     });
 
     it(`should show a warning message in the checks results view`, () => {
-      cy.visit(
-        `/clusters/${hanaClusterDetailsPage.availableHanaCluster.id}/checks/results`
-      );
-      cy.get('[data-testid="warning-banner"]').contains(
-        'The following results are valid for on-premise bare metal platforms.'
+      hanaClusterDetailsPage.visitAvailableHanaCluster();
+      hanaClusterDetailsPage.clickCheckResultsButton();
+      const expectedWarningMessage =
+        'The following results are valid for on-premise bare metal platforms.If you are running your HANA cluster on a different platform, please use results with caution';
+      hanaClusterDetailsPage.expectedWarningMessageIsDisplayed(
+        expectedWarningMessage
       );
     });
   });

@@ -74,18 +74,21 @@ const checkSelectionButton = 'button:contains("Check Selection")';
 const startExecutionButton = 'button:contains("Start Execution")';
 const saveChecksSelectionButton = 'button:contains("Save Checks Selection")';
 const checkCategorySwitch = 'button[class*="check-switch"]';
+const checkResultRows = 'tr[class*="check-result-row"]';
+const checkSettingsWarningMessage = 'div[class*="bg-yellow"] span';
+const checkResultsButton = 'button:contains("Results")';
 
 // UI Interactions
 
-export const visit = (clusterId = '', wait = true) => {
-  basePage.visit(`${url}/${clusterId}`);
-  if (clusterId !== '' && wait) {
-    basePage.waitForRequest(lastExecutionEndpointAlias);
-    basePage.waitForRequest(catalogEndpointAlias);
-  }
+export const visit = (clusterId = '') => basePage.visit(`${url}/${clusterId}`);
+
+export const waitForInitialEndpoints = () => {
+  basePage.waitForRequest(lastExecutionEndpointAlias);
+  basePage.waitForRequest(catalogEndpointAlias);
 };
 
-export const visitAvailableHanaCluster = () => visit(availableHanaCluster.id);
+export const visitAvailableHanaCluster = (wait = true) =>
+  visit(availableHanaCluster.id, wait);
 
 export const visitAvailableHanaClusterCostOpt = () =>
   visit(availableHanaClusterCostOpt.id);
@@ -128,7 +131,22 @@ export const clickCheckSelectionButton = () =>
 export const clickSaveChecksSelectionButton = () =>
   cy.get(saveChecksSelectionButton).click();
 
+export const clickCheckResultsButton = () => cy.get(checkResultsButton).click();
+
 // UI Validations
+export const expectedWarningMessageIsDisplayed = (expectedWarningMessage) =>
+  cy
+    .get(checkSettingsWarningMessage)
+    .should('have.text', expectedWarningMessage);
+
+export const expectedResultRowsAreDisplayed = (amount) =>
+  cy.get(checkResultRows).should('have.length', amount);
+
+export const expectedCheckIsDisplayed = (checkName) =>
+  cy
+    .get(`div[aria-label="accordion-header"] h3:contains("${checkName}")`)
+    .should('be.visible');
+
 export const validateExpectedCheckResults = (expectedCheckResults) => {
   expectedCheckResults.forEach((result) => {
     cy.get(`td:contains("${result[0]}") + td + td svg`).should(
