@@ -42,7 +42,7 @@ const secondCheckDefaultValue = `${secondCheck.values[0].default}:`;
 const firstCurrentCheckValue = `${firstCheck.values[0].default}`;
 const modalWarningCheckboxLabel =
   'Trento and SUSE are not responsible for cluster operation failure due to deviation from Best Practices.';
-const userInputValidationErrorLabel =
+const inputValidationErrorLabel =
   'Some of the values are invalid. Please correct them and try again';
 const customValue = '100';
 const customMixedValue = '30000a';
@@ -71,7 +71,7 @@ const modalValueDefault = 'div[class="mt-2"] label';
 const modalProviderSvg = 'div[class="mt-2"] span img';
 const resetModalTitle = 'div[class*="space-y-4"] h2';
 const resetModalWarning = 'div[class="mt-2"] div[class*="text-gray"]';
-const userValidationError = 'div[class="mt-2"] div p[class*="text-red"]';
+const validationError = 'div[class="mt-2"] div p[class*="text-red"]';
 const saveButtonModal = 'button:contains("Save")';
 const resetCheckButtonModal = 'button:contains("Reset Check")';
 const closeCheckButtonModal = 'button:contains("Close")';
@@ -80,24 +80,21 @@ const checkCustomizationToastSuccess = `p:contains(${checkCustomizationToastSucc
 const checkCustomizationToastReset = `p:contains(${checkCustomizationToastResetLabel})`;
 
 //UI interactions
-export const corosyncCategoryClick = () => cy.get(corosyncCategory).click();
+export const clickCorosyncCategory = () => cy.get(corosyncCategory).click();
 export const openCustomizationModalFirstCheck = () =>
   cy.get(checksCustomizationSettingsIcon).eq(0).click();
 export const openCustomizationModalSecondCheck = () =>
   cy.get(checksCustomizationSettingsIcon).eq(1).click();
-export const userClickOnWarningCheckbox = () =>
-  cy.get(modalInput).eq(0).click();
-export const userClickResetCheckModalButton = () =>
+export const clickOnWarningCheckbox = () => cy.get(modalInput).eq(0).click();
+export const clickResetCheckModalButton = () =>
   cy.get(resetCheckButtonModal).click();
-export const userClickCloseButton = () => cy.get(closeCheckButtonModal).click();
-export const userClickResetButton = () => cy.get(resetButton).click();
-export const userClickResetModalButton = () =>
-  cy.get(resetButton).eq(1).click();
-export const userClickResetCustomizedCheck = () =>
+export const clickCloseButton = () => cy.get(closeCheckButtonModal).click();
+export const clickResetButton = () => cy.get(resetButton).click();
+export const clickResetModalButton = () => cy.get(resetButton).eq(1).click();
+export const clickResetCustomizedCheck = () =>
   cy.get(resetCustomizedCheckIcon).click();
-export const userClickModalSaveButton = () =>
-  cy.get(saveButtonModal).eq(1).click();
-const setInputValue = (element, index, value) => {
+export const clickModalSaveButton = () => cy.get(saveButtonModal).eq(1).click();
+const _setInputValue = (element, index, value) => {
   cy.get(element)
     .eq(index)
     .should('be.visible')
@@ -105,10 +102,10 @@ const setInputValue = (element, index, value) => {
     .type(value)
     .should('have.value', value);
 };
-export const userInputCustomCheckValue = () =>
-  setInputValue(modalInput, 1, customValue);
-export const userInputInvalidCheckValue = () =>
-  setInputValue(modalInput, 1, customMixedValue);
+export const inputCustomCheckValue = () =>
+  _setInputValue(modalInput, 1, customValue);
+export const inputInvalidCheckValue = () =>
+  _setInputValue(modalInput, 1, customMixedValue);
 
 // UI validations
 export const resetIconShouldNotExistInOverview = () =>
@@ -119,10 +116,10 @@ export const customizedCheckShouldNotHaveModifiedPill = () =>
   cy.get(modifiedPill).should('not.exist');
 export const secondCustomizedCheckShouldNotHaveModifiedPill = () =>
   cy.get(modifiedPill).should('not.exist');
-const validateCheckId = (value) =>
+const _validateCheckId = (value) =>
   cy.contains(`Check: ${value}`).should('contain', value);
-export const validateFirstCheckId = () => validateCheckId(firstCheck.id);
-export const validateSecondCheckId = () => validateCheckId(secondCheck.id);
+export const validateFirstCheckId = () => _validateCheckId(firstCheck.id);
+export const validateSecondCheckId = () => _validateCheckId(secondCheck.id);
 export const validateFirstCheckDescription = () =>
   cy.get(modalDescrition).should('contain', firstCheck.description);
 export const modalWarningCheckBoxShouldNotBeChecked = () =>
@@ -131,30 +128,33 @@ export const modalWarningCheckBoxShouldBeChecked = () =>
   cy.get(modalInput).eq(0).should('be.checked');
 export const validateWarningMessage = () =>
   cy.get(modalSpan).should('contain', modalWarningCheckboxLabel);
-const validateValueNameAndDefaultValue = (valueName, defaultValue) => {
+const _validateValueNameAndDefaultValue = (valueName, defaultValue) => {
   cy.get(modalValueDefault)
     .should('contain', valueName)
     .and('contain', defaultValue);
 };
 export const validateFirstCheckValueNameAndDefaultValue = () =>
-  validateValueNameAndDefaultValue(firstCheckValueName, firstCheckDefaultValue);
+  _validateValueNameAndDefaultValue(
+    firstCheckValueName,
+    firstCheckDefaultValue
+  );
 export const validateSecondCheckValueNameAndDefaultValue = () => {
-  validateValueNameAndDefaultValue(
+  _validateValueNameAndDefaultValue(
     secondCheckValueName,
     secondCheckDefaultValue
   );
 };
-const validateModalInputValue = (input, index, value) =>
+const _validateModalInputValue = (input, index, value) =>
   cy.get(input).eq(index).should('have.value', value);
 export const validateCurrentValueFromWandaFirstCheck = () =>
-  validateModalInputValue(modalInput, 1, firstCurrentCheckValue);
+  _validateModalInputValue(modalInput, 1, firstCurrentCheckValue);
 export const validateCustomizedValue = () => {
-  validateModalInputValue(modalInput, 0, customValue);
+  _validateModalInputValue(modalInput, 0, customValue);
 };
 export const validateProviderLabel = () =>
-  cy.get(modalValueDefault).eq(1).should('contain', modalProviderLabel);
+  cy.get(modalValueDefault).eq(1).should('have.text', modalProviderLabel);
 export const validateProviderValue = () =>
-  cy.get(modalSpan).eq(1).should('contain', modalProviderValue);
+  cy.get(modalSpan).eq(1).should('have.text', modalProviderValue);
 export const providerIconShouldBeDisplayed = () => {
   cy.get(modalProviderSvg)
     .should('be.visible')
@@ -163,35 +163,35 @@ export const providerIconShouldBeDisplayed = () => {
 export const validateResetModalTitle = () =>
   cy.get(resetModalTitle).should('contain', resetModalTitleLabel);
 export const validateResetModalWarningText = () =>
-  cy.get(resetModalWarning).eq(1).should('contain', resetModalText);
-export const userInputValidationErrorShouldBeDisplayed = () =>
-  cy.get(userValidationError).should('contain', userInputValidationErrorLabel);
-const toastShouldBeVisible = (label) => cy.get(label).should('be.visible');
+  cy.get(resetModalWarning).eq(1).should('have.text', resetModalText);
+export const inputValidationErrorShouldBeDisplayed = () =>
+  cy.get(validationError).should('contain', inputValidationErrorLabel);
+const _toastShouldBeVisible = (label) => cy.get(label).should('be.visible');
 export const checkCustomizationSuccessToastIsShown = () =>
-  toastShouldBeVisible(checkCustomizationToastSuccess);
+  _toastShouldBeVisible(checkCustomizationToastSuccess);
 export const checkCustomizationResetToastIsShown = () =>
-  toastShouldBeVisible(checkCustomizationToastReset);
+  _toastShouldBeVisible(checkCustomizationToastReset);
 export const checkCustomizationErrorToastIsShown = () =>
   cy.get('body').should('contain', checkCustomizationToastErrorLabel);
-const buttonEnabled = (button) => cy.get(button).should('be.enabled');
-const buttonDisabled = (button) => cy.get(button).should('be.disabled');
+const _buttonEnabled = (button) => cy.get(button).should('be.enabled');
+const _buttonDisabled = (button) => cy.get(button).should('be.disabled');
 export const modalSaveButtonShouldBeEnabled = () =>
-  buttonEnabled(saveButtonModal);
+  _buttonEnabled(saveButtonModal);
 export const modalSaveButtonShouldBeDisabled = () =>
-  buttonDisabled(saveButtonModal);
-export const resetCheckButtonEnabled = () =>
-  buttonEnabled(resetCheckButtonModal);
+  _buttonDisabled(saveButtonModal);
+export const resetCheck_buttonEnabled = () =>
+  _buttonEnabled(resetCheckButtonModal);
 export const modalResetCheckButtonShouldBeDisabled = () =>
-  buttonDisabled(resetCheckButtonModal);
+  _buttonDisabled(resetCheckButtonModal);
 export const modalCloseButtonShouldBeEnabled = () =>
-  buttonEnabled(closeCheckButtonModal);
+  _buttonEnabled(closeCheckButtonModal);
 
 // Api
 export const visit = (clusterId = '') => basePage.visit(`${url}/${clusterId}`);
 export const visitChecksSelectionCluster = () => visit(availableHanaCluster.id);
 export const clickOnCheckSelectionButton = () =>
   cy.get('button').contains('Check Selection').click();
-const resetCheck = (groupId, checkId) =>
+const _resetCheck = (groupId, checkId) =>
   basePage.apiLogin().then(({ accessToken }) =>
     cy.request({
       method: 'DELETE',
@@ -202,9 +202,9 @@ const resetCheck = (groupId, checkId) =>
       failOnStatusCode: false,
     })
   );
-const resetChecks = (checks) => {
+const _resetChecks = (checks) => {
   checks.forEach(({ id }) => {
-    resetCheck(availableHanaCluster.id, id);
+    _resetCheck(availableHanaCluster.id, id);
   });
 };
-export const apiResetAllChecks = () => resetChecks(checkList);
+export const apiResetAllChecks = () => _resetChecks(checkList);

@@ -17,7 +17,7 @@ context('Checks customization', () => {
     beforeEach(() => {
       checksSelectionPage.visitChecksSelectionCluster();
       checksSelectionPage.clickOnCheckSelectionButton();
-      checksSelectionPage.corosyncCategoryClick();
+      checksSelectionPage.clickCorosyncCategory();
     });
 
     it('should customize and reset a check through the modal successfully', () => {
@@ -37,38 +37,37 @@ context('Checks customization', () => {
       checksSelectionPage.modalResetCheckButtonShouldBeDisabled();
       checksSelectionPage.modalCloseButtonShouldBeEnabled();
       // User interacts with modal
-      checksSelectionPage.userClickOnWarningCheckbox();
+      checksSelectionPage.clickOnWarningCheckbox();
       checksSelectionPage.modalWarningCheckBoxShouldBeChecked();
-      checksSelectionPage.userInputCustomCheckValue();
+      checksSelectionPage.inputCustomCheckValue();
       checksSelectionPage.modalSaveButtonShouldBeEnabled();
-      checksSelectionPage.userClickModalSaveButton();
+      checksSelectionPage.clickModalSaveButton();
       checksSelectionPage.checkCustomizationSuccessToastIsShown();
       // Validate if check was customized
       checksSelectionPage.customizedCheckShouldHaveModifiedPill();
       checksSelectionPage.openCustomizationModalFirstCheck();
       checksSelectionPage.validateCustomizedValue();
       // Reset check in the modal
-      checksSelectionPage.userClickResetCheckModalButton();
+      checksSelectionPage.clickResetCheckModalButton();
       checksSelectionPage.validateResetModalTitle();
       checksSelectionPage.validateResetModalWarningText();
-      checksSelectionPage.userClickResetModalButton();
+      checksSelectionPage.clickResetModalButton();
       // Validate if check was reset in overview
       checksSelectionPage.checkCustomizationResetToastIsShown();
       checksSelectionPage.customizedCheckShouldNotHaveModifiedPill();
       checksSelectionPage.resetIconShouldNotExistInOverview();
-      // Great check was customized and reset correctly
     });
 
     it('should customize check values in the check customization modal and reset check in checks category overview', () => {
       checksSelectionPage.openCustomizationModalFirstCheck();
       // User interacts with modal
-      checksSelectionPage.userClickOnWarningCheckbox();
-      checksSelectionPage.userInputCustomCheckValue();
-      checksSelectionPage.userClickModalSaveButton();
+      checksSelectionPage.clickOnWarningCheckbox();
+      checksSelectionPage.inputCustomCheckValue();
+      checksSelectionPage.clickModalSaveButton();
       checksSelectionPage.checkCustomizationSuccessToastIsShown();
       // User resets check in overview
-      checksSelectionPage.userClickResetCustomizedCheck();
-      checksSelectionPage.userClickResetButton();
+      checksSelectionPage.clickResetCustomizedCheck();
+      checksSelectionPage.clickResetButton();
       // Validate if check was reset
       checksSelectionPage.checkCustomizationResetToastIsShown();
       checksSelectionPage.customizedCheckShouldNotHaveModifiedPill();
@@ -79,19 +78,19 @@ context('Checks customization', () => {
       checksSelectionPage.openCustomizationModalSecondCheck();
       // User interact with modal
       checksSelectionPage.validateSecondCheckId();
-      checksSelectionPage.userClickOnWarningCheckbox();
+      checksSelectionPage.clickOnWarningCheckbox();
       checksSelectionPage.modalWarningCheckBoxShouldBeChecked();
-      checksSelectionPage.userInputInvalidCheckValue();
+      checksSelectionPage.inputInvalidCheckValue();
       checksSelectionPage.modalSaveButtonShouldBeEnabled();
-      checksSelectionPage.userClickModalSaveButton();
-      checksSelectionPage.userInputValidationErrorShouldBeDisplayed();
+      checksSelectionPage.clickModalSaveButton();
+      checksSelectionPage.inputValidationErrorShouldBeDisplayed();
       checksSelectionPage.checkCustomizationErrorToastIsShown();
       checksSelectionPage.modalSaveButtonShouldBeDisabled();
       checksSelectionPage.modalResetCheckButtonShouldBeDisabled();
       checksSelectionPage.modalCloseButtonShouldBeEnabled();
-      checksSelectionPage.userInputCustomCheckValue();
+      checksSelectionPage.inputCustomCheckValue();
       checksSelectionPage.modalSaveButtonShouldBeEnabled();
-      checksSelectionPage.userClickModalSaveButton();
+      checksSelectionPage.clickModalSaveButton();
       // Validate overview
       checksSelectionPage.checkCustomizationSuccessToastIsShown();
       checksSelectionPage.customizedCheckShouldHaveModifiedPill();
@@ -100,17 +99,17 @@ context('Checks customization', () => {
     it('should not customize check values if the user input is invalid', () => {
       checksSelectionPage.openCustomizationModalSecondCheck();
       // User interact with modal
-      checksSelectionPage.userClickOnWarningCheckbox();
+      checksSelectionPage.clickOnWarningCheckbox();
       checksSelectionPage.modalWarningCheckBoxShouldBeChecked();
-      checksSelectionPage.userInputInvalidCheckValue();
+      checksSelectionPage.inputInvalidCheckValue();
       checksSelectionPage.modalSaveButtonShouldBeEnabled();
-      checksSelectionPage.userClickModalSaveButton();
-      checksSelectionPage.userInputValidationErrorShouldBeDisplayed();
+      checksSelectionPage.clickModalSaveButton();
+      checksSelectionPage.inputValidationErrorShouldBeDisplayed();
       checksSelectionPage.checkCustomizationErrorToastIsShown();
       checksSelectionPage.modalSaveButtonShouldBeDisabled();
       checksSelectionPage.modalResetCheckButtonShouldBeDisabled();
       // User closes modal
-      checksSelectionPage.userClickCloseButton();
+      checksSelectionPage.clickCloseButton();
       // Check that the overview does not show any modified elements
       checksSelectionPage.secondCustomizedCheckShouldNotHaveModifiedPill();
       checksSelectionPage.resetIconShouldNotExistInOverview();
