@@ -353,17 +353,17 @@ context('HANA cluster details', () => {
     });
   });
 
-  // eslint-disable-next-line mocha/no-skipped-tests
-  describe.skip('Cluster with nutanix provider', () => {
+  describe('Cluster with nutanix provider', () => {
     before(() => {
       hanaClusterDetailsPage.loadScenario('cluster-nutanix-provider');
       hanaClusterDetailsPage.visitAvailableHanaCluster();
     });
 
-    it(`should show the default catalog`, () => {
-      cy.contains('button', 'Check Selection').click();
-      cy.contains('Corosync').click();
-      cy.get('li').first().contains(5000);
+    it('should show the default catalog', () => {
+      hanaClusterDetailsPage.clickCheckSelectionButton();
+      hanaClusterDetailsPage.clickCorosyncCheckCategory();
+      hanaClusterDetailsPage.clickCorosyncTokenTimeoutCheckSettings();
+      hanaClusterDetailsPage.checkInputValueIsTheExpected(5000);
     });
   });
 
