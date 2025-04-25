@@ -134,7 +134,6 @@ const _validateValueNameAndDefaultValue = (valueName, defaultValue) => {
     .and('contain', defaultValue);
 };
 
-const checkName = (checkNameText) => `div[aria-label="accordion-header"] h3:contains("${checkNameText}")`
 export const validateFirstCheckValueNameAndDefaultValue = () =>
   _validateValueNameAndDefaultValue(
     firstCheckValueName,
