@@ -82,6 +82,8 @@ const corosyncCheckCategory =
 const corosyncTokenTimeoutSettings =
   'div[class="sm:flex"]:contains("Corosync token timeout is set to expected value") + div svg';
 const checkInputExpectedValue = 'input[name*="expected"]';
+const checkName = (checkNameText) =>
+  `div[aria-label="accordion-header"] h3:contains("${checkNameText}")`;
 
 // UI Interactions
 
@@ -156,10 +158,8 @@ export const expectedWarningMessageIsDisplayed = (expectedWarningMessage) =>
 export const expectedResultRowsAreDisplayed = (amount) =>
   cy.get(checkResultRows).should('have.length', amount);
 
-export const expectedCheckIsDisplayed = (checkName) =>
-  cy
-    .get(`div[aria-label="accordion-header"] h3:contains("${checkName}")`)
-    .should('be.visible');
+export const expectedCheckIsDisplayed = (checkNameValue) =>
+  cy.get(checkName(checkNameValue)).should('be.visible');
 
 export const validateExpectedCheckResults = (expectedCheckResults) => {
   expectedCheckResults.forEach((result) => {
