@@ -133,6 +133,7 @@ const _validateValueNameAndDefaultValue = (valueName, defaultValue) => {
     .should('contain', valueName)
     .and('contain', defaultValue);
 };
+
 export const validateFirstCheckValueNameAndDefaultValue = () =>
   _validateValueNameAndDefaultValue(
     firstCheckValueName,

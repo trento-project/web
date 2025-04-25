@@ -1,3 +1,5 @@
+import * as hanaClusterDetailsPage from '../pageObject/hana_cluster_details_po';
+
 if (Cypress.env('REAL_CLUSTER_TESTS')) {
   context('HANA scale-up checks', () => {
     const clusterID = 'd2522281-2c76-52dc-8500-10bdf2cc6664';
@@ -35,32 +37,17 @@ if (Cypress.env('REAL_CLUSTER_TESTS')) {
       ['F50AF5', PASSING],
     ];
 
-    before(() => {
-      cy.visit(`/clusters/${clusterID}`);
-      cy.url().should('include', `/clusters/${clusterID}`);
-    });
+    before(() => hanaClusterDetailsPage.visit(clusterID));
 
     describe('Run checks', () => {
       it('should run checks with expected results', () => {
-        cy.get('button').contains('Settings').click();
-
-        cy.get('.tn-check-switch').click({ multiple: true });
-        cy.get('button').contains('Select Checks for Execution').click();
-        cy.get('button').contains('Back to Cluster Details').click();
-        cy.get('button').contains('Start Execution').click();
-
-        cy.get('table').each((_, index) => {
-          cy.get('table').eq(index).find('.tn-check-result-row').as('rows');
-
-          cy.get('@rows').each((_, index) => {
-            const [id, result] = expectedCheckResults[index];
-
-            cy.get('@rows').eq(index).as('row').contains(id);
-            cy.get('@row')
-              .find('[data-testid="eos-svg-component"]')
-              .should('have.class', result);
-          });
-        });
+        hanaClusterDetailsPage.clickCheckSelectionButton();
+        hanaClusterDetailsPage.clickAllUncheckedCategorySwitches();
+        hanaClusterDetailsPage.clickSaveChecksSelectionButton();
+        hanaClusterDetailsPage.clickStartExecutionButtonWithoutForce();
+        hanaClusterDetailsPage.validateExpectedCheckResults(
+          expectedCheckResults
+        );
       });
     });
   });

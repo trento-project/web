@@ -73,26 +73,49 @@ const actionNotAuthorizedTooltip =
 const checkSelectionButton = 'button:contains("Check Selection")';
 const startExecutionButton = 'button:contains("Start Execution")';
 const saveChecksSelectionButton = 'button:contains("Save Checks Selection")';
+const checkCategorySwitch = 'button[class*="check-switch"]';
+const checkResultRows = 'tr[class*="check-result-row"]';
+const checkSettingsWarningMessage = 'div[class*="bg-yellow"] span';
+const checkResultsButton = 'button:contains("Results")';
+const corosyncCheckCategory =
+  'div[aria-label*="accordion-header"]:contains("Corosync")';
+const corosyncTokenTimeoutSettings =
+  'div[class="sm:flex"]:contains("Corosync token timeout is set to expected value") + div svg';
+const checkInputExpectedValue = 'input[name*="expected"]';
+const checkName = (checkNameText) =>
+  `div[aria-label="accordion-header"] h3:contains("${checkNameText}")`;
 
 // UI Interactions
 
-export const visit = (clusterId = '') => {
-  basePage.visit(`${url}/${clusterId}`);
-  if (clusterId !== '') {
-    basePage.waitForRequest(lastExecutionEndpointAlias);
-    basePage.waitForRequest(catalogEndpointAlias);
-  }
+export const visit = (clusterId = '') => basePage.visit(`${url}/${clusterId}`);
+
+export const waitForInitialEndpoints = () => {
+  basePage.waitForRequest(lastExecutionEndpointAlias);
+  basePage.waitForRequest(catalogEndpointAlias);
 };
 
-export const visitAvailableHanaCluster = () => visit(availableHanaCluster.id);
+export const visitAvailableHanaCluster = (wait = true) =>
+  visit(availableHanaCluster.id, wait);
 
 export const visitAvailableHanaClusterCostOpt = () =>
   visit(availableHanaClusterCostOpt.id);
 
 export const visitHanaAngiCluster = () => visit(availableAngiCluster.id);
 
-export const clickStartExecutionButton = () =>
-  cy.get(startExecutionButton).click({ force: true });
+export const clickStartExecutionButton = (force = true) =>
+  cy.get(startExecutionButton).click({ force: force });
+
+export const clickStartExecutionButtonWithoutForce = () =>
+  clickStartExecutionButton(false);
+
+export const clickAllUncheckedCategorySwitches = () =>
+  cy.get(checkCategorySwitch).each((switchButton) => {
+    cy.wrap(switchButton)
+      .invoke('attr', 'aria-checked')
+      .then((value) => {
+        if (value === 'false') cy.wrap(switchButton).click();
+      });
+  });
 
 export const mouseOverArchitectureInfo = () =>
   cy.get(architectureInfoLabel).trigger('mouseover');
@@ -112,7 +135,41 @@ export const clickCriticalChecksButton = () =>
 export const clickCheckSelectionButton = () =>
   cy.get(checkSelectionButton).click();
 
+export const clickSaveChecksSelectionButton = () =>
+  cy.get(saveChecksSelectionButton).click();
+
+export const clickCheckResultsButton = () => cy.get(checkResultsButton).click();
+
+export const clickCorosyncCheckCategory = () =>
+  cy.get(corosyncCheckCategory).click();
+
+export const clickCorosyncTokenTimeoutCheckSettings = () =>
+  cy.get(corosyncTokenTimeoutSettings).click();
+
 // UI Validations
+export const checkInputValueIsTheExpected = (value) =>
+  cy.get(checkInputExpectedValue).should('have.value', value);
+
+export const expectedWarningMessageIsDisplayed = (expectedWarningMessage) =>
+  cy
+    .get(checkSettingsWarningMessage)
+    .should('have.text', expectedWarningMessage);
+
+export const expectedResultRowsAreDisplayed = (amount) =>
+  cy.get(checkResultRows).should('have.length', amount);
+
+export const expectedCheckIsDisplayed = (checkNameValue) =>
+  cy.get(checkName(checkNameValue)).should('be.visible');
+
+export const validateExpectedCheckResults = (expectedCheckResults) => {
+  expectedCheckResults.forEach((result) => {
+    cy.get(`td:contains("${result[0]}") + td + td svg`).should(
+      `have.class`,
+      `${result[1]}`
+    );
+  });
+};
+
 const validateUrl = (path = '') => basePage.validateUrl(`${url}${path}`);
 
 export const validateAvailableHanaClusterUrl = () =>
