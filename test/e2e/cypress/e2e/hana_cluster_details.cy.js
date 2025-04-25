@@ -333,7 +333,7 @@ context('HANA cluster details', () => {
       hanaClusterDetailsPage.visitAvailableHanaCluster();
     });
 
-    it('should show the default catalog', () => {
+    it('should show the default check catalog with corosync token timeout default value', () => {
       hanaClusterDetailsPage.clickCheckSelectionButton();
       hanaClusterDetailsPage.clickCorosyncCheckCategory();
       hanaClusterDetailsPage.clickCorosyncTokenTimeoutCheckSettings();
@@ -359,7 +359,7 @@ context('HANA cluster details', () => {
       hanaClusterDetailsPage.visitAvailableHanaCluster();
     });
 
-    it('should show the default catalog', () => {
+    it('should show the default check catalog with corosync token timeout default value', () => {
       hanaClusterDetailsPage.clickCheckSelectionButton();
       hanaClusterDetailsPage.clickCorosyncCheckCategory();
       hanaClusterDetailsPage.clickCorosyncTokenTimeoutCheckSettings();
