@@ -282,17 +282,23 @@ context('HANA cluster details', () => {
   });
 
   describe('Check Selection should allow to enable checks from the checks catalog', () => {
+    const CHECK_COROSYNC = 'Corosync';
+    const CHECK_MISCELLANEOUS = 'Miscellaneous';
+    const CHECK_OS_AND_PACKAGE_VERSIONS = 'OS and package versions';
+    const CHECK_PACEMAKER = 'Pacemaker';
+    const CHECK_SBD = 'SBD';
+
     beforeEach(() => hanaClusterDetailsPage.visitAvailableHanaCluster());
 
     it('should include the checks catalog in the checks results once enabled', () => {
       hanaClusterDetailsPage.clickCheckSelectionButton();
-      hanaClusterDetailsPage.expectedCheckIsDisplayed('Corosync');
-      hanaClusterDetailsPage.expectedCheckIsDisplayed('Miscellaneous');
+      hanaClusterDetailsPage.expectedCheckIsDisplayed(CHECK_COROSYNC);
+      hanaClusterDetailsPage.expectedCheckIsDisplayed(CHECK_MISCELLANEOUS);
       hanaClusterDetailsPage.expectedCheckIsDisplayed(
-        'OS and package versions'
+        CHECK_OS_AND_PACKAGE_VERSIONS
       );
-      hanaClusterDetailsPage.expectedCheckIsDisplayed('Pacemaker');
-      hanaClusterDetailsPage.expectedCheckIsDisplayed('SBD');
+      hanaClusterDetailsPage.expectedCheckIsDisplayed(CHECK_PACEMAKER);
+      hanaClusterDetailsPage.expectedCheckIsDisplayed(CHECK_SBD);
 
       hanaClusterDetailsPage.clickAllUncheckedCategorySwitches();
       hanaClusterDetailsPage.clickSaveChecksSelectionButton();
