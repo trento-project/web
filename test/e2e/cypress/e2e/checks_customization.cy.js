@@ -32,7 +32,7 @@ context('Checks customization', () => {
       checksSelectionPage.validateProviderLabel();
       checksSelectionPage.validateProviderValue();
       checksSelectionPage.providerIconShouldBeDisplayed();
-      // Check default button status of an non customized check
+      // Check default button status of a non customized check
       checksSelectionPage.modalSaveButtonShouldBeDisabled();
       checksSelectionPage.modalResetCheckButtonShouldBeDisabled();
       checksSelectionPage.modalCloseButtonShouldBeEnabled();
@@ -113,6 +113,24 @@ context('Checks customization', () => {
       // Check that the overview does not show any modified elements
       checksSelectionPage.secondCustomizedCheckShouldNotHaveModifiedPill();
       checksSelectionPage.resetIconShouldNotExistInOverview();
+    });
+
+    it('should execute a customized check', () => {
+      checksSelectionPage.openCustomizationModalFirstCheck();
+      checksSelectionPage.clickOnWarningCheckbox();
+      checksSelectionPage.inputCustomCheckValue();
+      checksSelectionPage.clickModalSaveButton();
+      checksSelectionPage.clickCorosyncSelectionToggle();
+      checksSelectionPage.clickSaveChecksSelectionButton();
+      checksSelectionPage.clickStartExecutionButton();
+      checksSelectionPage.waitForCheckToAppear();
+      checksSelectionPage.clickOnCustomizedCheckDescription();
+      checksSelectionPage.clickModifiedCheckExpectations();
+      checksSelectionPage.validateCheckStatus();
+      checksSelectionPage.validateEvaluationResultsDescription();
+      checksSelectionPage.validateEvaluationResultsModifiedPill();
+      checksSelectionPage.validateCusomValue();
+      checksSelectionPage.vailidateGatheredFactsValue();
     });
   });
 });

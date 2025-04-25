@@ -36,7 +36,8 @@ const secondCheck = catalogCheckFactory.build({
 });
 const checkList = [firstCheck, secondCheck];
 const firstCheckValueName = `${firstCheck.values[0].name}:`;
-const firstCheckDefaultValue = `(Default: ${firstCheck.values[0].default})`;
+const firstCheckValue = firstCheck.values[0].default;
+const firstCheckDefaultValue = `(Default: ${firstCheckValue})`;
 const secondCheckValueName = `${secondCheck.values[0].name}:`;
 const secondCheckDefaultValue = `${secondCheck.values[0].default}:`;
 const firstCurrentCheckValue = `${firstCheck.values[0].default}`;
@@ -56,6 +57,8 @@ const resetModalText =
 const checkCustomizationToastSuccessLabel = 'Check was customized successfully';
 const checkCustomizationToastResetLabel = 'Customization was reset!';
 const checkCustomizationToastErrorLabel = 'Failed to customize check';
+const checkStatus = 'Critical';
+const evaluationResults = `Corosync 'max_messages' value was expected to be '${customValue}' but value of running config is '${firstCheckValue}'`;
 
 // Selectors
 const corosyncCategory = `div[class="pb-4"] h3.tn-check-switch:contains("${corosyncLabel}")`;
@@ -76,9 +79,23 @@ const saveButtonModal = 'button:contains("Save")';
 const resetCheckButtonModal = 'button:contains("Reset Check")';
 const closeCheckButtonModal = 'button:contains("Close")';
 const resetButton = 'button:contains("Reset")';
+const saveChecksSelectionButton = 'button:contains("Save Checks Selection")';
+const startExecutionButton = 'button:contains("Start Execution")';
 const checkCustomizationToastSuccess = `p:contains(${checkCustomizationToastSuccessLabel})`;
 const checkCustomizationToastReset = `p:contains(${checkCustomizationToastResetLabel})`;
-
+const checkSelectionToggle = 'div[class=pb-4] button';
+const modifiedCheckID = 'tbody tr td span[class="inline-flex leading-5"]';
+const modifiedResultCriticalIcon =
+  'tbody tr td svg[class="hover:opacity-75 fill-red-500"]';
+const checkResultDescription = 'tbody tr td div p';
+const customizedCheckIndex = 13;
+const hostExpectationsNotMet =
+  'tbody tr[class*="overflow-y-hidden"] span[class="text-red-500"]';
+const modifiedCheckExpectationsIndex = 4;
+const evaluationResultsValues = 'div[class="py-4"] div[class*="text-red"] span';
+const customizedValue =
+  'div[class*="w-full my-4 mr-4"]  span[class="align-middle"]';
+const gatheredFactsValue = `div[class*="w-full my-4 mr-4"] div[class=''] span`;
 //UI interactions
 export const clickCorosyncCategory = () => cy.get(corosyncCategory).click();
 export const openCustomizationModalFirstCheck = () =>
@@ -102,10 +119,41 @@ const _setInputValue = (element, index, value) => {
     .type(value)
     .should('have.value', value);
 };
+export const clickSaveChecksSelectionButton = () =>
+  cy.get(saveChecksSelectionButton).click();
+export const clickStartExecutionButton = () =>
+  cy.get(startExecutionButton).click();
 export const inputCustomCheckValue = () =>
   _setInputValue(modalInput, 1, customValue);
 export const inputInvalidCheckValue = () =>
   _setInputValue(modalInput, 1, customMixedValue);
+
+const _clickChecksSelectionToggle = (index) => {
+  cy.get(checkSelectionToggle).eq(index).click();
+};
+export const clickCorosyncSelectionToggle = (corosyncIndex = 0) => {
+  _clickChecksSelectionToggle(corosyncIndex);
+};
+// used for local development to rerun the test multiple times
+export const resetCorosyncCheckSelection = () => {
+  visitChecksSelectionCluster();
+  clickOnCheckSelectionButton();
+  clickCorosyncSelectionToggle();
+  clickSaveChecksSelectionButton();
+};
+
+const _clickOnCheckResultDescription = (index) => {
+  cy.get(checkResultDescription).eq(index).click();
+};
+export const clickOnCustomizedCheckDescription = () =>
+  _clickOnCheckResultDescription(customizedCheckIndex);
+
+const _clickOnHostExpectationsNotMet = (index) => {
+  cy.get(hostExpectationsNotMet).eq(index).click();
+};
+export const clickModifiedCheckExpectations = () => {
+  _clickOnHostExpectationsNotMet(modifiedCheckExpectationsIndex);
+};
 
 // UI validations
 export const resetIconShouldNotExistInOverview = () =>
@@ -186,6 +234,39 @@ export const modalResetCheckButtonShouldBeDisabled = () =>
   _buttonDisabled(resetCheckButtonModal);
 export const modalCloseButtonShouldBeEnabled = () =>
   _buttonEnabled(closeCheckButtonModal);
+
+export const waitForCheckToAppear = () => {
+  cy.contains(modifiedCheckID, firstCheck.id, { timeout: 20000 }).should(
+    'be.visible'
+  );
+  cy.contains(modifiedPillLabel, { timeout: 20000 }).should('be.visible');
+  cy.contains(firstCheck.description, { timeout: 20000 }).should('be.visible');
+  cy.get(modifiedResultCriticalIcon).eq(2).should('be.visible');
+};
+export const validateCheckStatus = () => {
+  cy.get(evaluationResultsValues)
+    .eq(0)
+    .should('be.visible')
+    .and('have.text', checkStatus);
+};
+export const validateEvaluationResultsDescription = () => {
+  cy.get(evaluationResultsValues)
+    .eq(1)
+    .should('be.visible')
+    .and('have.text', evaluationResults);
+};
+
+export const validateEvaluationResultsModifiedPill = () => {
+  cy.contains(modifiedPillLabel).should('be.visible');
+};
+
+export const validateCusomValue = () => {
+  cy.get(customizedValue).should('have.text', customValue);
+};
+
+export const vailidateGatheredFactsValue = () => {
+  cy.get(gatheredFactsValue).eq(8).should('have.text', firstCheckValue);
+};
 
 // Api
 export const visit = (clusterId = '') => basePage.visit(`${url}/${clusterId}`);
