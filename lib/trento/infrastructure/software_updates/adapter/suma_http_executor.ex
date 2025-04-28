@@ -87,23 +87,25 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
 
   @behaviour Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor
 
-  defp request(method, url, body \\ "", headers \\ [], options \\ [], attempt \\ 1) do
+  defp request(method, url, body \\ "", headers \\ [], options \\ []) do
     # See https://hexdocs.pm/httpoison/HTTPoison.Request.html
     options = Keyword.put_new(options, :timeout, 8_000)
     options = Keyword.put_new(options, :recv_timeout, 5_000)
-    current_attempt = attempt
+    options = Keyword.put_new(options, :attempt, 1)
 
     case HTTPoison.request(method, url, body, headers, options) do
       {:error, %HTTPoison.Error{reason: :timeout, id: _}} = timeout_error ->
         max_attempt = Keyword.get(options, :max_attempt, 3)
+        current_attempt = Keyword.get(options, :attempt)
 
         Logger.info("#{Atom.to_string(method)} request to #{url} timed out. Retrying")
 
         if max_attempt == :infinity || current_attempt < max_attempt do
           options = Keyword.update!(options, :timeout, &(&1 * 2))
           options = Keyword.update!(options, :recv_timeout, &(&1 * 2))
-          next_attempt = current_attempt + 1
-          request(method, url, body, headers, options, next_attempt)
+          options = Keyword.update!(options, :attempt, &(&1 + 1))
+
+          request(method, url, body, headers, options)
         else
           timeout_error
         end
