@@ -1,6 +1,12 @@
 import React, { Fragment } from 'react';
 
-import { Listbox, Transition } from '@headlessui/react';
+import {
+  Listbox,
+  ListboxButton,
+  ListboxOptions,
+  ListboxOption,
+  Transition,
+} from '@headlessui/react';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 
 import classNames from 'classnames';
@@ -48,7 +54,7 @@ function Select({
       by={deepCompareSelection}
     >
       <div className="relative">
-        <Listbox.Button
+        <ListboxButton
           className={classNames(
             dropdownSelector,
             'relative w-full py-2 pl-3 pr-7 text-left bg-white rounded cursor-default border border-gray-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-opacity-75 focus-visible:ring-white focus-visible:ring-offset-orange-300 focus-visible:ring-offset-2 focus-visible:border-indigo-500 sm:text-sm disabled:bg-gray-50 disabled:text-gray-400 h-full'
@@ -62,14 +68,14 @@ function Select({
               aria-hidden="true"
             />
           </span>
-        </Listbox.Button>
+        </ListboxButton>
         <Transition
           as={Fragment}
           leave="transition ease-in duration-100"
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <Listbox.Options
+          <ListboxOptions
             className={classNames(
               'absolute w-full py-1 mt-1 overflow-auto text-base bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm z-40',
               {
@@ -78,7 +84,7 @@ function Select({
             )}
           >
             {enrichedOptions.map((option) => (
-              <Listbox.Option
+              <ListboxOption
                 key={option.key}
                 className={({ active, disabled: optionDisabled }) =>
                   classNames('cursor-default select-none relative py-2 px-3', {
@@ -107,9 +113,9 @@ function Select({
                     ) : null}
                   </>
                 )}
-              </Listbox.Option>
+              </ListboxOption>
             ))}
-          </Listbox.Options>
+          </ListboxOptions>
         </Transition>
       </div>
     </Listbox>
