@@ -235,7 +235,7 @@ export const modalResetCheckButtonShouldBeDisabled = () =>
 export const modalCloseButtonShouldBeEnabled = () =>
   _buttonEnabled(closeCheckButtonModal);
 
-export const waitForCheckToAppear = () => {
+export const waitForCustomizedCheckElements = () => {
   cy.contains(modifiedCheckID, firstCheck.id, { timeout: 20000 }).should(
     'be.visible'
   );

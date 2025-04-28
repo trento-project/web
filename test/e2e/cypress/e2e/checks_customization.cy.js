@@ -123,7 +123,7 @@ context('Checks customization', () => {
       checksSelectionPage.clickCorosyncSelectionToggle();
       checksSelectionPage.clickSaveChecksSelectionButton();
       checksSelectionPage.clickStartExecutionButton();
-      checksSelectionPage.waitForCheckToAppear();
+      checksSelectionPage.waitForCustomizedCheckElements();
       checksSelectionPage.clickOnCustomizedCheckDescription();
       checksSelectionPage.clickModifiedCheckExpectations();
       checksSelectionPage.validateCheckStatus();
