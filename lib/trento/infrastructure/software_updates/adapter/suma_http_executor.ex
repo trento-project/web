@@ -1,4 +1,6 @@
 defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
+  require Logger
+
   @moduledoc """
   SUMA Http requests executor
   """
