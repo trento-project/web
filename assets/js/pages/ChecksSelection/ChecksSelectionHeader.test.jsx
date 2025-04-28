@@ -47,6 +47,8 @@ describe('ChecksSelectionHeader component', () => {
     expect(
       screen.getByRole('button', { name: 'Start Execution' })
     ).toBeVisible();
+
+    await user.hover(screen.getByText('Start Execution'));
     expect(
       screen.queryByText(
         'Click Start Execution or wait for Trento to periodically run checks.'
