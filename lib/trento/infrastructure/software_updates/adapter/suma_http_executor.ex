@@ -95,6 +95,8 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
       {:error, %HTTPoison.Error{reason: :timeout, id: _}} = timeout_error ->
         max_attempt = Keyword.get(options, :max_attempt, 3)
 
+        Logger.info("#{Atom.to_string(method)} request to #{url} timed out. Retrying")
+
         if max_attempt == :infinity || current_attempt < max_attempt do
           options = Keyword.update!(options, :timeout, &(&1 * 2))
           options = Keyword.update!(options, :recv_timeout, &(&1 * 2))
