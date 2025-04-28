@@ -87,7 +87,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
 
   @behaviour Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor
 
-  defp request(method, url, body \\ "", headers \\ [], options \\ []) do
+  defp request(method, url, body, headers, options) do
     # See https://hexdocs.pm/httpoison/HTTPoison.Request.html
     options = Keyword.put_new(options, :timeout, 8_000)
     options = Keyword.put_new(options, :recv_timeout, 5_000)
