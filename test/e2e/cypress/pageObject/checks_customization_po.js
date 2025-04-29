@@ -38,6 +38,7 @@ const checkList = [firstCheck, secondCheck];
 const firstCheckValueName = `${firstCheck.values[0].name}:`;
 const firstCheckValue = firstCheck.values[0].default;
 const firstCheckDefaultValue = `(Default: ${firstCheckValue})`;
+const firstCheckDescription = firstCheck.description;
 const secondCheckValueName = `${secondCheck.values[0].name}:`;
 const secondCheckDefaultValue = `${secondCheck.values[0].default}:`;
 const firstCurrentCheckValue = `${firstCheck.values[0].default}`;
@@ -46,7 +47,7 @@ const modalWarningCheckboxLabel =
 const inputValidationErrorLabel =
   'Some of the values are invalid. Please correct them and try again';
 const customValue = '100';
-const customMixedValue = '30000a';
+
 const corosyncLabel = 'Corosync';
 const modifiedPillLabel = 'MODIFIED';
 const modalProviderLabel = 'Provider';
@@ -67,7 +68,8 @@ const resetCustomizedCheckIcon =
 const modifiedPill = `a[class*="block"] span:contains("${modifiedPillLabel}")`;
 const modalDescrition = 'div[class="mt-2"] p';
 const modalSpan = 'div[class="mt-2"] span';
-const modalInput = 'div[class="mt-2"] input';
+const modalCheckbox = 'div input[type="checkbox"]';
+const modalInput = 'input[class*="rc-input"]';
 const modalValueDefault = 'div[class="mt-2"] label';
 const modalProviderSvg = 'div[class="mt-2"] span img';
 const resetModalTitle = 'div[class*="space-y-4"] h2';
@@ -81,15 +83,14 @@ const saveChecksSelectionButton = 'button:contains("Save Checks Selection")';
 const startExecutionButton = 'button:contains("Start Execution")';
 const checkCustomizationToastSuccess = `p:contains(${checkCustomizationToastSuccessLabel})`;
 const checkCustomizationToastReset = `p:contains(${checkCustomizationToastResetLabel})`;
-const checkSelectionToggle = 'div[class=pb-4] button';
+const checkSelectionToggle = 'button[role="switch"]';
 const modifiedCheckID = 'tbody tr td span[class="inline-flex leading-5"]';
 const modifiedResultCriticalIcon =
   'tbody tr td svg[class="hover:opacity-75 fill-red-500"]';
-const checkResultDescription = 'tbody tr td div p';
-const customizedCheckIndex = 13;
-const hostExpectationsNotMet =
-  'tbody tr[class*="overflow-y-hidden"] span[class="text-red-500"]';
-const modifiedCheckExpectationsIndex = 4;
+
+const checkResultDescription = `tbody tr td div p:contains(${firstCheckDescription})`;
+const unMetExpectations = '0/1 Expectations met.';
+const hostExpectationsNotMet = `tbody tr[class*="overflow-y-hidden"] span[class="text-red-500"]:contains(${unMetExpectations})`;
 const evaluationResultsValues = 'div[class="py-4"] div[class*="text-red"] span';
 const customizedValue =
   'div[class*="w-full my-4 mr-4"]  span[class="align-middle"]';
@@ -100,7 +101,7 @@ export const openCheckCustomizationModal = (checkID) => {
   const checksCustomizationSettingsIcon = `a[class*="block"] button[aria-label*="customize-check-${checkID}"]`;
   cy.get(checksCustomizationSettingsIcon).click();
 };
-export const clickOnWarningCheckbox = () => cy.get(modalInput).eq(0).click();
+export const clickOnWarningCheckbox = () => cy.get(modalCheckbox).click();
 export const clickResetCheckModalButton = () =>
   cy.get(resetCheckButtonModal).click();
 export const clickCloseButton = () => cy.get(closeCheckButtonModal).click();
@@ -109,30 +110,25 @@ export const clickResetModalButton = () => cy.get(resetButton).eq(1).click();
 export const clickResetCustomizedCheck = () =>
   cy.get(resetCustomizedCheckIcon).click();
 export const clickModalSaveButton = () => cy.get(saveButtonModal).eq(1).click();
-const _setInputValue = (element, index, value) => {
-  cy.get(element)
-    .eq(index)
+const _setInputValue = (element, currentValue, newValue) => {
+  cy.get(element + `[value="${currentValue}"]`)
     .should('be.visible')
     .clear()
-    .type(value)
-    .should('have.value', value);
+    .type(newValue)
+    .should('have.value', newValue);
 };
 export const clickSaveChecksSelectionButton = () =>
   cy.get(saveChecksSelectionButton).click();
 export const clickStartExecutionButton = () =>
   cy.get(startExecutionButton).click();
-export const inputCustomCheckValue = () =>
-  _setInputValue(modalInput, 1, customValue);
-export const inputInvalidCheckValue = () =>
-  _setInputValue(modalInput, 1, customMixedValue);
+export const inputCheckValue = (checkValue, newValue) => {
+  _setInputValue(modalInput, checkValue, newValue);
+};
 
-const _clickChecksSelectionToggle = (index) => {
-  cy.get(checkSelectionToggle).eq(index).click();
+export const clickCorosyncSelectionToggle = () => {
+  cy.get(checkSelectionToggle).eq(0).click();
 };
-export const clickCorosyncSelectionToggle = (corosyncIndex = 0) => {
-  _clickChecksSelectionToggle(corosyncIndex);
-};
-// used for local development to rerun the test multiple times
+
 export const resetCorosyncCheckSelection = () => {
   visitChecksSelectionCluster();
   clickOnCheckSelectionButton();
@@ -140,17 +136,12 @@ export const resetCorosyncCheckSelection = () => {
   clickSaveChecksSelectionButton();
 };
 
-const _clickOnCheckResultDescription = (index) => {
-  cy.get(checkResultDescription).eq(index).click();
+export const clickOnCheckResultDescription = () => {
+  cy.get(checkResultDescription).click();
 };
-export const clickOnCustomizedCheckDescription = () =>
-  _clickOnCheckResultDescription(customizedCheckIndex);
 
-const _clickOnHostExpectationsNotMet = (index) => {
-  cy.get(hostExpectationsNotMet).eq(index).click();
-};
 export const clickModifiedCheckExpectations = () => {
-  _clickOnHostExpectationsNotMet(modifiedCheckExpectationsIndex);
+  cy.get(hostExpectationsNotMet).eq(0).click();
 };
 
 // UI validations
@@ -167,11 +158,11 @@ const _validateCheckId = (value) =>
 export const validateFirstCheckId = () => _validateCheckId(firstCheck.id);
 export const validateSecondCheckId = () => _validateCheckId(secondCheck.id);
 export const validateFirstCheckDescription = () =>
-  cy.get(modalDescrition).should('contain', firstCheck.description);
+  cy.get(modalDescrition).should('contain', firstCheckDescription);
 export const modalWarningCheckBoxShouldNotBeChecked = () =>
-  cy.get(modalInput).eq(0).should('not.be.checked');
+  cy.get(modalCheckbox).should('not.be.checked');
 export const modalWarningCheckBoxShouldBeChecked = () =>
-  cy.get(modalInput).eq(0).should('be.checked');
+  cy.get(modalCheckbox).should('be.checked');
 export const validateWarningMessage = () =>
   cy.get(modalSpan).should('contain', modalWarningCheckboxLabel);
 const _validateValueNameAndDefaultValue = (valueName, defaultValue) => {
