@@ -126,7 +126,6 @@ context('Checks customization', () => {
       checksSelectionPage.secondCustomizedCheckShouldNotHaveModifiedPill();
       checksSelectionPage.resetIconShouldNotExistInOverview();
     });
-
   });
 
   describe('Execution with customized check values', () => {
@@ -148,8 +147,8 @@ context('Checks customization', () => {
       checksSelectionPage.validateEvaluationResultsModifiedPill();
       checksSelectionPage.validateCusomValue();
       checksSelectionPage.vailidateGatheredFactsValue();
-    })
-  
+    });
+
     after(() => {
       checksSelectionPage.resetCorosyncCheckSelection();
     });
