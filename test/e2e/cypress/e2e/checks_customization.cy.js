@@ -1,5 +1,7 @@
 import * as checksSelectionPage from '../pageObject/checks_customization_po';
 
+const COROSYN_MAX_MESSAGES_CHECK_ID = '00081D';
+const CHECK_COROSYNC_TOKEN_TIMEOUT = '156F64';
 context('Checks customization', () => {
   before(() => {
     checksSelectionPage.preloadTestData();
@@ -21,7 +23,9 @@ context('Checks customization', () => {
     });
 
     it('should customize and reset a check through the modal successfully', () => {
-      checksSelectionPage.openCustomizationModalFirstCheck();
+      checksSelectionPage.openCheckCustomizationModal(
+        COROSYN_MAX_MESSAGES_CHECK_ID
+      );
       // Validate if initial check customization modal has the correct values
       checksSelectionPage.validateFirstCheckId();
       checksSelectionPage.validateFirstCheckDescription();
@@ -45,7 +49,9 @@ context('Checks customization', () => {
       checksSelectionPage.checkCustomizationSuccessToastIsShown();
       // Validate if check was customized
       checksSelectionPage.customizedCheckShouldHaveModifiedPill();
-      checksSelectionPage.openCustomizationModalFirstCheck();
+      checksSelectionPage.openCheckCustomizationModal(
+        COROSYN_MAX_MESSAGES_CHECK_ID
+      );
       checksSelectionPage.validateCustomizedValue();
       // Reset check in the modal
       checksSelectionPage.clickResetCheckModalButton();
@@ -59,7 +65,9 @@ context('Checks customization', () => {
     });
 
     it('should customize check values in the check customization modal and reset check in checks category overview', () => {
-      checksSelectionPage.openCustomizationModalFirstCheck();
+      checksSelectionPage.openCheckCustomizationModal(
+        COROSYN_MAX_MESSAGES_CHECK_ID
+      );
       // User interacts with modal
       checksSelectionPage.clickOnWarningCheckbox();
       checksSelectionPage.inputCustomCheckValue();
@@ -75,7 +83,9 @@ context('Checks customization', () => {
     });
 
     it('should customize check values after fixing wrong user input', () => {
-      checksSelectionPage.openCustomizationModalSecondCheck();
+      checksSelectionPage.openCheckCustomizationModal(
+        CHECK_COROSYNC_TOKEN_TIMEOUT
+      );
       // User interact with modal
       checksSelectionPage.validateSecondCheckId();
       checksSelectionPage.clickOnWarningCheckbox();
@@ -97,7 +107,9 @@ context('Checks customization', () => {
     });
 
     it('should not customize check values if the user input is invalid', () => {
-      checksSelectionPage.openCustomizationModalSecondCheck();
+      checksSelectionPage.openCheckCustomizationModal(
+        CHECK_COROSYNC_TOKEN_TIMEOUT
+      );
       // User interact with modal
       checksSelectionPage.clickOnWarningCheckbox();
       checksSelectionPage.modalWarningCheckBoxShouldBeChecked();
@@ -115,8 +127,13 @@ context('Checks customization', () => {
       checksSelectionPage.resetIconShouldNotExistInOverview();
     });
 
+  });
+
+  describe('Execution with customized check values', () => {
     it('should run a checks execution with customized check values', () => {
-      checksSelectionPage.openCustomizationModalFirstCheck();
+      checksSelectionPage.openCheckCustomizationModal(
+        COROSYN_MAX_MESSAGES_CHECK_ID
+      );
       checksSelectionPage.clickOnWarningCheckbox();
       checksSelectionPage.inputCustomCheckValue();
       checksSelectionPage.clickModalSaveButton();
@@ -131,6 +148,10 @@ context('Checks customization', () => {
       checksSelectionPage.validateEvaluationResultsModifiedPill();
       checksSelectionPage.validateCusomValue();
       checksSelectionPage.vailidateGatheredFactsValue();
+    })
+  
+    after(() => {
+      checksSelectionPage.resetCorosyncCheckSelection();
     });
   });
 });

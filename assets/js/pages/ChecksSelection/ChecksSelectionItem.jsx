@@ -66,7 +66,7 @@ function ChecksSelectionItem({
                 <button
                   type="button"
                   onClick={onCustomize}
-                  aria-label="customize-check"
+                  aria-label={`customize-check-${checkID}`}
                   className="inline mr-4"
                 >
                   <EOS_SETTINGS_OUTLINED className="fill-jungle-green-500" />

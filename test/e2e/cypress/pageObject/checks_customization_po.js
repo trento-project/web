@@ -62,8 +62,6 @@ const evaluationResults = `Corosync 'max_messages' value was expected to be '${c
 
 // Selectors
 const corosyncCategory = `div[class="pb-4"] h3.tn-check-switch:contains("${corosyncLabel}")`;
-const checksCustomizationSettingsIcon =
-  'a[class*="block"] button[aria-label="customize-check"] svg';
 const resetCustomizedCheckIcon =
   'a[class*="block"] button[aria-label="reset-check-customization"] svg';
 const modifiedPill = `a[class*="block"] span:contains("${modifiedPillLabel}")`;
@@ -98,10 +96,10 @@ const customizedValue =
 const gatheredFactsValue = `div[class*="w-full my-4 mr-4"] div[class=''] span`;
 //UI interactions
 export const clickCorosyncCategory = () => cy.get(corosyncCategory).click();
-export const openCustomizationModalFirstCheck = () =>
-  cy.get(checksCustomizationSettingsIcon).eq(0).click();
-export const openCustomizationModalSecondCheck = () =>
-  cy.get(checksCustomizationSettingsIcon).eq(1).click();
+export const openCheckCustomizationModal = (checkID) => {
+  const checksCustomizationSettingsIcon = `a[class*="block"] button[aria-label*="customize-check-${checkID}"]`;
+  cy.get(checksCustomizationSettingsIcon).click();
+};
 export const clickOnWarningCheckbox = () => cy.get(modalInput).eq(0).click();
 export const clickResetCheckModalButton = () =>
   cy.get(resetCheckButtonModal).click();
