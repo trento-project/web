@@ -290,9 +290,41 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
             anyOf: [%Schema{type: :integer}, %Schema{type: :string}],
             example: 587
           },
+          smtp_username: %Schema{type: :string}
+        },
+        required: [
+          :enabled,
+          :sender_email,
+          :recipient_email,
+          :smtp_server,
+          :smtp_port,
+          :smtp_username
+        ]
+      },
+      struct?: false
+    )
+  end
+
+  defmodule CreateAlertingSettings do
+    @moduledoc false
+
+    OpenApiSpex.schema(
+      %{
+        title: "CreateAlertingSettings",
+        description: "Request body for creating Alerting Settings",
+        type: :object,
+        properties: %{
+          enabled: %Schema{type: :boolean},
+          sender_email: %Schema{type: :string},
+          recipient_email: %Schema{type: :string},
+          smtp_server: %Schema{type: :string},
+          smtp_port: %Schema{
+            title: "Port",
+            anyOf: [%Schema{type: :integer}, %Schema{type: :string}],
+            example: 587
+          },
           smtp_username: %Schema{type: :string},
-          smtp_password: %Schema{type: :string, format: :password, writeOnly: true},
-          enforced_from_env: %Schema{type: :boolean, readOnly: true}
+          smtp_password: %Schema{type: :string, format: :password}
         },
         required: [
           :enabled,
@@ -302,9 +334,6 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
           :smtp_port,
           :smtp_username,
           :smtp_password
-          # `open_api_spex` has a bug with required readOnly fields:
-          # https://github.com/open-api-spex/open_api_spex/issues/662
-          # :enforced_from_env,
         ]
       },
       struct?: false

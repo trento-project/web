@@ -284,7 +284,7 @@ defmodule TrentoWeb.V1.SettingsController do
     tags: ["Platform"],
     request_body:
       {"Request body for setting alerting settings", "application/json",
-       Schema.Platform.AlertingSettings},
+       Schema.Platform.CreateAlertingSettings},
     responses: [
       ok:
         {"Alerting settings successfully modified", "application/json",
