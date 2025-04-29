@@ -115,7 +115,7 @@ context('Checks customization', () => {
       checksSelectionPage.resetIconShouldNotExistInOverview();
     });
 
-    it('should execute a customized check', () => {
+    it('should run a checks execution with customized check values', () => {
       checksSelectionPage.openCustomizationModalFirstCheck();
       checksSelectionPage.clickOnWarningCheckbox();
       checksSelectionPage.inputCustomCheckValue();
