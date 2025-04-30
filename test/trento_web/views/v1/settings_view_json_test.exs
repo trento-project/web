@@ -24,7 +24,7 @@ defmodule TrentoWeb.V1.SettingsJSONTest do
   describe "Alerting Settings template/view" do
     @alerting_allowed_fields ~w(enabled sender_email recipient_email smtp_server smtp_port smtp_username)a
 
-    test "filters only correct fileds" do
+    test "filters only correct fields" do
       settings = build(:alerting_settings)
       expected = Map.take(settings, @alerting_allowed_fields)
 

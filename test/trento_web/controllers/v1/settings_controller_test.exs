@@ -696,10 +696,11 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
           ~w(enabled sender_email recipient_email smtp_server smtp_port smtp_username smtp_password)a do
       @field field
 
-      test "should fail to create settings if missing required field (#{@field}) in the OpeApi spec", %{
-        conn: conn,
-        api_spec: api_spec
-      } do
+      test "should fail to create settings if missing required field (#{@field}) in the OpeApi spec",
+           %{
+             conn: conn,
+             api_spec: api_spec
+           } do
         settings =
           :alerting_settings
           |> build()

@@ -286,8 +286,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
           recipient_email: %Schema{type: :string},
           smtp_server: %Schema{type: :string},
           smtp_port: %Schema{
-            title: "Port",
-            anyOf: [%Schema{type: :integer}, %Schema{type: :string}],
+            type: :integer,
             example: 587
           },
           smtp_username: %Schema{type: :string}
