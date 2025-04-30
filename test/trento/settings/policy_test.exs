@@ -140,4 +140,14 @@ defmodule Trento.Settings.PolicyTest do
       refute Policy.authorize(:update_alerting_settings, user, AlertingSettings)
     end
   end
+
+  describe "Action to resource mapping" do
+    test "should return correct resource for a mapped action" do
+      assert Policy.get_resource(:update_api_key_settings) == ApiKeySettings
+    end
+
+    test "should return nil for unmapped actions" do
+      assert Policy.get_resource(:unmapped_action) == nil
+    end
+  end
 end
