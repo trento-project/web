@@ -216,9 +216,11 @@ defmodule TrentoWeb.Router do
           post "/test", SettingsController, :test_suse_manager_settings
         end
 
-        get "/alerting", SettingsController, :get_alerting_settings
-        post "/alerting", SettingsController, :create_alerting_settings
-        patch "/alerting", SettingsController, :update_alerting_settings
+        scope "/alerting" do
+          get "/", SettingsController, :get_alerting_settings
+          post "/", SettingsController, :create_alerting_settings
+          patch "/", SettingsController, :update_alerting_settings
+        end
       end
 
       # Deprecated

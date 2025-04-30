@@ -645,7 +645,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
     @alerting_settings_get_fields ~w(enabled sender_email recipient_email smtp_server smtp_port smtp_username)a
     @alerting_settings_set_fields ~w(enabled sender_email recipient_email smtp_server smtp_port smtp_username smtp_password)a
 
-    test "returning successful response on get request", %{conn: conn, api_spec: api_spec} do
+    test "should successfully return settings", %{conn: conn, api_spec: api_spec} do
       exp_settings =
         :alerting_settings
         |> insert()
@@ -660,7 +660,21 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       assert exp_settings == resp
     end
 
-    test "successfully creates settings and returns expected response", %{
+    test "should return error when no previous settings", %{conn: conn, api_spec: api_spec} do
+      resp =
+        conn
+        |> get(~p"/api/v1/settings/alerting")
+        |> json_response(:not_found)
+        |> assert_response_schema("NotFound", api_spec)
+
+      assert %{
+               errors: [
+                 %{title: "Not Found", detail: "Alerting settings not configured."}
+               ]
+             } == resp
+    end
+
+    test "should successfully create settings", %{
       conn: conn,
       api_spec: api_spec
     } do
@@ -680,7 +694,9 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
 
     for field <-
           ~w(enabled sender_email recipient_email smtp_server smtp_port smtp_username smtp_password)a do
-      test "fails to create settings if missing required field (#{field}) in the OpeApi spec", %{
+      @field field
+
+      test "should fail to create settings if missing required field (#{@field}) in the OpeApi spec", %{
         conn: conn,
         api_spec: api_spec
       } do
@@ -688,7 +704,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
           :alerting_settings
           |> build()
           |> Map.take(@alerting_settings_set_fields)
-          |> Map.delete(unquote(field))
+          |> Map.delete(@field)
 
         conn =
           conn
@@ -701,8 +717,8 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
         assert %{
                  "errors" => [
                    %{
-                     "detail" => "Missing field: " <> to_string(unquote(field)),
-                     "source" => %{"pointer" => "/" <> to_string(unquote(field))},
+                     "detail" => "Missing field: " <> to_string(@field),
+                     "source" => %{"pointer" => "/" <> to_string(@field)},
                      "title" => "Invalid value"
                    }
                  ]
@@ -710,7 +726,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       end
     end
 
-    test "fails to create settings if validation (changeset) fails", %{
+    test "should fail to create settings if validation (changeset) fails", %{
       conn: conn,
       api_spec: api_spec
     } do
@@ -740,7 +756,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
              } == conn
     end
 
-    test "successfully updates settings and returns expected response", %{
+    test "should successfully update settings and return expected response", %{
       conn: conn,
       api_spec: api_spec
     } do
@@ -769,7 +785,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
              } == resp
     end
 
-    test "fails to update settings if validation (changeset) fails", %{
+    test "should fail to update settings if validation (changeset) fails", %{
       conn: conn,
       api_spec: api_spec
     } do
@@ -798,7 +814,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
              } == conn
     end
 
-    test "returns error when trying to update settings without previously saved ones", %{
+    test "should return error when trying to update settings without previously saved ones", %{
       conn: conn,
       api_spec: api_spec
     } do
@@ -819,16 +835,16 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
 
   describe "forbidden response" do
     setup %{conn: conn} do
-      %{id: unpriv_user_id} = insert(:user)
+      %{id: unprivileged_user_id} = insert(:user)
 
       conn =
         Pow.Plug.assign_current_user(
           conn,
-          %{"user_id" => unpriv_user_id},
+          %{"user_id" => unprivileged_user_id},
           Pow.Plug.fetch_config(conn)
         )
 
-      {:ok, conn: conn, unpriv_user: unpriv_user_id}
+      {:ok, conn: conn, unpriv_user: unprivileged_user_id}
     end
 
     test "should return forbidden if the user does not have the permission to update the api key",
@@ -904,7 +920,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       |> assert_schema("Forbidden", api_spec)
     end
 
-    test "should return forbidden when user ties to create alerting settings without right abilities",
+    test "should return forbidden when user tries to create alerting settings without right abilities",
          %{
            conn: conn,
            api_spec: api_spec
@@ -921,7 +937,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       |> assert_schema("Forbidden", api_spec)
     end
 
-    test "should return forbidden when user ties to update alerting settings without right abilities",
+    test "should return forbidden when user tries to update alerting settings without right abilities",
          %{
            conn: conn,
            api_spec: api_spec

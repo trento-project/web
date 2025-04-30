@@ -331,19 +331,9 @@ defmodule TrentoWeb.V1.SettingsController do
     end
   end
 
-  # credo:disable-for-next-line
   def get_policy_resource(conn) do
-    case Phoenix.Controller.action_name(conn) do
-      :update_api_key_settings -> Trento.Settings.ApiKeySettings
-      :update_activity_log_settings -> Trento.Settings.ActivityLogSettings
-      :save_suse_manager_settings -> Trento.Settings.SuseManagerSettings
-      :update_suse_manager_settings -> Trento.Settings.SuseManagerSettings
-      :delete_suse_manager_settings -> Trento.Settings.SuseManagerSettings
-      :test_suse_manager_settings -> Trento.Settings.SuseManagerSettings
-      :get_alerting_settings -> Trento.Settings.AlertingSettings
-      :create_alerting_settings -> Trento.Settings.AlertingSettings
-      :update_alerting_settings -> Trento.Settings.AlertingSettings
-      _ -> nil
-    end
+    conn
+    |> Phoenix.Controller.action_name()
+    |> Trento.Settings.Policy.get_resource()
   end
 end
