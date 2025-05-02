@@ -7,6 +7,9 @@ context('Checks customization', () => {
 
   beforeEach(() => {
     checksSelectionPage.apiResetAllChecks();
+    checksSelectionPage.visitChecksSelectionCluster();
+    checksSelectionPage.clickOnCheckSelectionButton();
+    checksSelectionPage.clickCorosyncCategory();
   });
 
   after(() => {
@@ -14,12 +17,6 @@ context('Checks customization', () => {
   });
 
   describe('Checks customization should be possible for a cluster target', () => {
-    beforeEach(() => {
-      checksSelectionPage.visitChecksSelectionCluster();
-      checksSelectionPage.clickOnCheckSelectionButton();
-      checksSelectionPage.clickCorosyncCategory();
-    });
-
     it('should customize and reset a check through the modal successfully', () => {
       checksSelectionPage.openCheckCustomizationModal('00081D');
       // Validate if initial check customization modal has the correct values

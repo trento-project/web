@@ -68,33 +68,41 @@ const resetCustomizedCheckIcon =
 const modifiedPill = `a[class*="block"] span:contains("${modifiedPillLabel}")`;
 const modalDescrition = 'div[class="mt-2"] p';
 const modalSpan = 'div[class="mt-2"] span';
+const modalProviderValueSpan = `div[class="mt-2"] span:contains("${modalProviderValue}")`;
 const modalCheckbox = 'div input[type="checkbox"]';
 const modalInput = 'input[class*="rc-input"]';
 const modalValueDefault = 'div[class="mt-2"] label';
+const modalProvider = `div[class="mt-2"] label:contains("${modalProviderLabel}")`;
 const modalProviderSvg = 'div[class="mt-2"] span img';
 const resetModalTitle = 'div[class*="space-y-4"] h2';
-const resetModalWarning = 'div[class="mt-2"] div[class*="text-gray"]';
+const resetModalWarning = `div[class="mt-2"] div[class*="text-gray"]:contains("${resetModalText}")`;
 const validationError = 'div[class="mt-2"] div p[class*="text-red"]';
-const saveButtonModal = 'button:contains("Save")';
+
+const saveButtonModal =
+  'div[class*="rounded"]:contains("Check: ") button:contains("Save")';
 const resetCheckButtonModal = 'button:contains("Reset Check")';
 const closeCheckButtonModal = 'button:contains("Close")';
-const resetButton = 'button:contains("Reset")';
+const resetButton =
+  'div[class*="rounded"]:contains("Reset check:") button:contains("Reset")';
 const saveChecksSelectionButton = 'button:contains("Save Checks Selection")';
 const startExecutionButton = 'button:contains("Start Execution")';
 const checkCustomizationToastSuccess = `p:contains(${checkCustomizationToastSuccessLabel})`;
 const checkCustomizationToastReset = `p:contains(${checkCustomizationToastResetLabel})`;
-const checkSelectionToggle = 'button[role="switch"]';
+const corosyncheckSelectionToggle =
+  'div[aria-label="accordion-header"]:contains("Corosync") button';
+
 const modifiedCheckID = 'tbody tr td span[class="inline-flex leading-5"]';
-const modifiedResultCriticalIcon =
-  'tbody tr td svg[class="hover:opacity-75 fill-red-500"]';
+const modifiedResultCriticalIcon = 'svg[class="hover:opacity-75 fill-red-500"]';
 
 const checkResultDescription = `tbody tr td div p:contains(${firstCheckDescription})`;
 const unMetExpectations = '0/1 Expectations met.';
 const hostExpectationsNotMet = `tbody tr[class*="overflow-y-hidden"] span[class="text-red-500"]:contains(${unMetExpectations})`;
-const evaluationResultsValues = 'div[class="py-4"] div[class*="text-red"] span';
+const evaluationResultsStatus = `div[class="py-4"] div[class*="text-red"] span:contains('${checkStatus}')`;
+const evaluationResultsLabel = `div[class="py-4"] div[class*="text-red"] span:contains(${evaluationResults})`;
+
 const customizedValue =
   'div[class*="w-full my-4 mr-4"]  span[class="align-middle"]';
-const gatheredFactsValue = `div[class*="w-full my-4 mr-4"] div[class=''] span`;
+const gatheredFactsValue = `div[class*="w-full my-4 mr-4"]:contains("Gathered Facts") div[class=''] span:contains(${firstCheckValue})`;
 //UI interactions
 export const clickCorosyncCategory = () => cy.get(corosyncCategory).click();
 export const openCheckCustomizationModal = (checkID) => {
@@ -106,10 +114,10 @@ export const clickResetCheckModalButton = () =>
   cy.get(resetCheckButtonModal).click();
 export const clickCloseButton = () => cy.get(closeCheckButtonModal).click();
 export const clickResetButton = () => cy.get(resetButton).click();
-export const clickResetModalButton = () => cy.get(resetButton).eq(1).click();
+export const clickResetModalButton = () => cy.get(resetButton).click();
 export const clickResetCustomizedCheck = () =>
   cy.get(resetCustomizedCheckIcon).click();
-export const clickModalSaveButton = () => cy.get(saveButtonModal).eq(1).click();
+export const clickModalSaveButton = () => cy.get(saveButtonModal).click();
 const _setInputValue = (element, currentValue, newValue) => {
   cy.get(element + `[value="${currentValue}"]`)
     .should('be.visible')
@@ -126,7 +134,7 @@ export const inputCheckValue = (checkValue, newValue) => {
 };
 
 export const clickCorosyncSelectionToggle = () => {
-  cy.get(checkSelectionToggle).eq(0).click();
+  cy.get(corosyncheckSelectionToggle).click();
 };
 
 export const resetCorosyncCheckSelection = () => {
@@ -141,7 +149,7 @@ export const clickOnCheckResultDescription = () => {
 };
 
 export const clickModifiedCheckExpectations = () => {
-  cy.get(hostExpectationsNotMet).eq(0).click();
+  cy.get(hostExpectationsNotMet).first().click();
 };
 
 // UI validations
@@ -182,17 +190,23 @@ export const validateSecondCheckValueNameAndDefaultValue = () => {
     secondCheckDefaultValue
   );
 };
-const _validateModalInputValue = (input, index, value) =>
-  cy.get(input).eq(index).should('have.value', value);
+
 export const validateCurrentValueFromWandaFirstCheck = () =>
-  _validateModalInputValue(modalInput, 1, firstCurrentCheckValue);
+  _validateModalInputValue(modalInput, firstCurrentCheckValue);
 export const validateCustomizedValue = () => {
-  _validateModalInputValue(modalInput, 0, customValue);
+  _validateModalInputValue(modalInput, customValue);
 };
+
+const _validateModalInputValue = (element, expectedValue) => {
+  cy.get(`${element}[value="${expectedValue}"]`)
+    .should('be.visible')
+    .and('have.value', expectedValue);
+};
+
 export const validateProviderLabel = () =>
-  cy.get(modalValueDefault).eq(1).should('have.text', modalProviderLabel);
+  cy.get(modalProvider).should('have.text', modalProviderLabel);
 export const validateProviderValue = () =>
-  cy.get(modalSpan).eq(1).should('have.text', modalProviderValue);
+  cy.get(modalProviderValueSpan).should('have.text', modalProviderValue);
 export const providerIconShouldBeDisplayed = () => {
   cy.get(modalProviderSvg)
     .should('be.visible')
@@ -201,7 +215,7 @@ export const providerIconShouldBeDisplayed = () => {
 export const validateResetModalTitle = () =>
   cy.get(resetModalTitle).should('contain', resetModalTitleLabel);
 export const validateResetModalWarningText = () =>
-  cy.get(resetModalWarning).eq(1).should('have.text', resetModalText);
+  cy.get(resetModalWarning).should('have.text', resetModalText);
 export const inputValidationErrorShouldBeDisplayed = () =>
   cy.get(validationError).should('contain', inputValidationErrorLabel);
 const _toastShouldBeVisible = (label) => cy.get(label).should('be.visible');
@@ -225,22 +239,21 @@ export const modalCloseButtonShouldBeEnabled = () =>
   _buttonEnabled(closeCheckButtonModal);
 
 export const waitForCustomizedCheckElements = () => {
-  cy.contains(modifiedCheckID, firstCheck.id, { timeout: 20000 }).should(
-    'be.visible'
-  );
-  cy.contains(modifiedPillLabel, { timeout: 20000 }).should('be.visible');
-  cy.contains(firstCheck.description, { timeout: 20000 }).should('be.visible');
-  cy.get(modifiedResultCriticalIcon).eq(2).should('be.visible');
+  cy.contains(modifiedCheckID, firstCheck.id).should('be.visible', {
+    timeout: 20000,
+  });
+  cy.contains(modifiedPillLabel).should('be.visible');
+  cy.contains('tr.tn-check-result-row', firstCheck.description)
+    .find(modifiedResultCriticalIcon)
+    .should('be.visible');
 };
 export const validateCheckStatus = () => {
-  cy.get(evaluationResultsValues)
-    .eq(0)
+  cy.get(evaluationResultsStatus)
     .should('be.visible')
     .and('have.text', checkStatus);
 };
 export const validateEvaluationResultsDescription = () => {
-  cy.get(evaluationResultsValues)
-    .eq(1)
+  cy.get(evaluationResultsLabel)
     .should('be.visible')
     .and('have.text', evaluationResults);
 };
@@ -254,7 +267,7 @@ export const validateCusomValue = () => {
 };
 
 export const vailidateGatheredFactsValue = () => {
-  cy.get(gatheredFactsValue).eq(8).should('have.text', firstCheckValue);
+  cy.get(gatheredFactsValue).should('have.text', firstCheckValue);
 };
 
 // Api
