@@ -109,12 +109,14 @@ defmodule Trento.Infrastructure.Alerting.AlertingTest do
     test "should be caught if SMTP server is wrongly set up" do
       relay_ip_address = Faker.Internet.ip_v4_address()
 
-      Application.put_env(:trento, :alerting, enabled: true)
-
-      Application.put_env(:trento, Trento.Mailer,
-        adapter: Swoosh.Adapters.SMTP,
-        relay: "smtp://#{relay_ip_address}"
+      Application.put_env(
+        :trento,
+        :alerting,
+        enabled: true,
+        smtp_server: "smtp://#{relay_ip_address}"
       )
+
+      Application.put_env(:trento, Trento.Mailer, adapter: Swoosh.Adapters.SMTP)
 
       host_id = Faker.UUID.v4()
       insert(:host, id: host_id)

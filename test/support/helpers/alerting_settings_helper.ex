@@ -8,15 +8,12 @@ defmodule Trento.Support.Helpers.AlertingSettingsHelper do
   def nil_alerting_app_env do
     Application.put_env(:trento, :alerting,
       enabled: nil,
-      sender: nil,
-      recipient: nil
-    )
-
-    Application.put_env(:trento, Trento.Mailer,
-      relay: nil,
-      port: nil,
-      username: nil,
-      password: nil
+      smtp_server: nil,
+      smtp_port: nil,
+      smtp_username: nil,
+      smtp_password: nil,
+      sender_email: nil,
+      recipient_email: nil
     )
   end
 
@@ -24,11 +21,9 @@ defmodule Trento.Support.Helpers.AlertingSettingsHelper do
 
   def restore_alerting_app_env(_context) do
     default_alerting_config = Application.get_env(:trento, :alerting)
-    default_mailer_config = Application.get_env(:trento, Trento.Mailer)
 
     on_exit(fn ->
       Application.put_env(:trento, :alerting, default_alerting_config)
-      Application.put_env(:trento, Trento.Mailer, default_mailer_config)
     end)
   end
 end

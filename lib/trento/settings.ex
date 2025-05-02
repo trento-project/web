@@ -54,15 +54,15 @@ defmodule Trento.Settings do
           optional(:smtp_password) => String.t()
         }
 
-  @alerting_settings_default_env %{
+  @alerting_settings_default_env [
     enabled: false,
-    sender: "alerts@trento-project.io",
-    recipient: "admin@trento-project.io",
-    relay: "",
-    port: 587,
-    username: "",
-    password: ""
-  }
+    smtp_server: "",
+    smtp_port: 587,
+    smtp_username: "",
+    smtp_password: "",
+    sender_email: "alerts@trento-project.io",
+    recipient_email: "admin@trento-project.io"
+  ]
 
   @spec get_installation_id :: String.t()
   def get_installation_id do
@@ -194,7 +194,7 @@ defmodule Trento.Settings do
 
   @spec alerting_settings_enforced_from_env? :: boolean()
   def alerting_settings_enforced_from_env? do
-    alerting_raw_app_env()
+    Application.get_env(:trento, :alerting)
     |> Enum.map(fn {_key, val} -> val != nil end)
     |> Enum.any?()
   end
@@ -240,38 +240,15 @@ defmodule Trento.Settings do
     end
   end
 
-  @spec alerting_raw_app_env :: Keyword.t()
-  defp alerting_raw_app_env do
-    Application.get_env(:trento, Trento.Mailer)
-    |> Keyword.take([:relay, :port, :username, :password])
-    |> Enum.concat(Application.get_env(:trento, :alerting))
-  end
-
   defp get_alerting_settings_from_app_env do
     explicitly_set =
-      alerting_raw_app_env()
-      |> Enum.filter(fn {_key, value} -> value != nil end)
-      |> Map.new()
+      Enum.filter(Application.get_env(:trento, :alerting), fn {_key, value} -> value != nil end)
 
-    %{
-      enabled: enabled,
-      sender: sender,
-      recipient: recipient,
-      relay: relay,
-      port: port,
-      username: username,
-      password: password
-    } = Map.merge(@alerting_settings_default_env, explicitly_set)
-
-    settings = %Trento.Settings.AlertingSettings{
-      enabled: enabled,
-      sender_email: sender,
-      recipient_email: recipient,
-      smtp_server: relay,
-      smtp_port: port,
-      smtp_username: username,
-      smtp_password: password
-    }
+    settings =
+      struct!(
+        Trento.Settings.AlertingSettings,
+        Keyword.merge(@alerting_settings_default_env, explicitly_set)
+      )
 
     {:ok, settings}
   end

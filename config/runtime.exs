@@ -154,25 +154,30 @@ if config_env() in [:prod, :demo] do
 
   config :trento, :alerting,
     enabled: System.get_env("ENABLE_ALERTING"),
-    sender: System.get_env("ALERT_SENDER"),
-    recipient: System.get_env("ALERT_RECIPIENT")
+    smtp_server: System.get_env("SMTP_SERVER"),
+    smtp_port: System.get_env("SMTP_PORT"),
+    smtp_username: System.get_env("SMTP_USER"),
+    smtp_password: System.get_env("SMTP_PASSWORD"),
+    sender_email: System.get_env("ALERT_SENDER"),
+    recipient_email: System.get_env("ALERT_RECIPIENT")
 
   :ok = :public_key.cacerts_load()
   [_ | _] = cacerts = :public_key.cacerts_get()
 
   config :trento, Trento.Mailer,
     adapter: Swoosh.Adapters.SMTP,
-    relay: System.get_env("SMTP_SERVER"),
-    port: System.get_env("SMTP_PORT"),
-    username: System.get_env("SMTP_USER"),
-    password: System.get_env("SMTP_PASSWORD"),
+    # `relay`, `port`, `username` and `password` would be supplied
+    # dynamically during runtime and would be derived from values
+    # specified in the :alerting key.
     auth: :always,
     ssl: false,
     tls: :if_available,
     tls_options: [
       versions: [:"tlsv1.2", :"tlsv1.3"],
       cacerts: cacerts,
-      server_name_indication: String.to_charlist(System.get_env("SMTP_SERVER", "")),
+      # `server_name_indication` would be supplied dynamically during
+      # runtime and would be derived from values
+      # specified in the :alerting key.
       depth: 99
     ]
 

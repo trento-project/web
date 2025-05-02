@@ -805,17 +805,20 @@ defmodule Trento.SettingsTest do
       assert Settings.alerting_settings_enforced_from_env?() == false
     end
 
-    for {key, value, subkey} <- [
+    for {key, _value} = scenario <- [
           {:enabled, false, :alerting},
-          {:sender, "sender@trento.com", :alerting},
-          {:recipient, "recipient@trento.com", :alerting},
-          {:relay, "test.com", Trento.Mailer},
-          {:port, 587, Trento.Mailer},
-          {:username, "testuser", Trento.Mailer},
-          {:password, "testpass}", Trento.Mailer}
+          {:smtp_server, "test.com"},
+          {:smtp_port, "587"},
+          {:smtp_username, "testuser"},
+          {:smtp_password, "testpass}"},
+          {:sender_email, "sender@trento.com"},
+          {:recipient_email, "recipient@trento.com"}
         ] do
+      @scenario scenario
+
       test "returns TRUE if `#{key}` is configured via env" do
-        Application.put_env(:trento, unquote(subkey), [{unquote(key), unquote(value)}])
+        {key, value} = @scenario
+        Application.put_env(:trento, :alerting, [{key, value}])
         assert Settings.alerting_settings_enforced_from_env?() == true
       end
     end
