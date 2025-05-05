@@ -37,7 +37,7 @@ context('Checks customization', () => {
       // User interacts with modal
       checksSelectionPage.clickOnWarningCheckbox();
       checksSelectionPage.modalWarningCheckBoxShouldBeChecked();
-      checksSelectionPage.inputCheckValue('100');
+      checksSelectionPage.inputCheckValue('expected_max_messages', '100');
       checksSelectionPage.modalSaveButtonShouldBeEnabled();
       checksSelectionPage.clickModalSaveButton();
       checksSelectionPage.checkCustomizationSuccessToastIsShown();
@@ -60,7 +60,7 @@ context('Checks customization', () => {
       checksSelectionPage.openCheckCustomizationModal('00081D');
       // User interacts with modal
       checksSelectionPage.clickOnWarningCheckbox();
-      checksSelectionPage.inputCheckValue('100');
+      checksSelectionPage.inputCheckValue('expected_max_messages', '100');
       checksSelectionPage.clickModalSaveButton();
       checksSelectionPage.checkCustomizationSuccessToastIsShown();
       // User resets check in overview
@@ -78,7 +78,7 @@ context('Checks customization', () => {
       checksSelectionPage.validateSecondCheckId();
       checksSelectionPage.clickOnWarningCheckbox();
       checksSelectionPage.modalWarningCheckBoxShouldBeChecked();
-      checksSelectionPage.inputCheckValue('30000a');
+      checksSelectionPage.inputCheckValue('expected_token_timeout', '30000a');
       checksSelectionPage.modalSaveButtonShouldBeEnabled();
       checksSelectionPage.clickModalSaveButton();
       checksSelectionPage.inputValidationErrorShouldBeDisplayed();
@@ -86,7 +86,7 @@ context('Checks customization', () => {
       checksSelectionPage.modalSaveButtonShouldBeDisabled();
       checksSelectionPage.modalResetCheckButtonShouldBeDisabled();
       checksSelectionPage.modalCloseButtonShouldBeEnabled();
-      checksSelectionPage.inputCheckValue('30000');
+      checksSelectionPage.inputCheckValue('expected_token_timeout', '30000');
       checksSelectionPage.modalSaveButtonShouldBeEnabled();
       checksSelectionPage.clickModalSaveButton();
       // Validate overview
@@ -99,7 +99,7 @@ context('Checks customization', () => {
       // User interact with modal
       checksSelectionPage.clickOnWarningCheckbox();
       checksSelectionPage.modalWarningCheckBoxShouldBeChecked();
-      checksSelectionPage.inputCheckValue('30000a');
+      checksSelectionPage.inputCheckValue('expected_token_timeout', '30000a');
       checksSelectionPage.modalSaveButtonShouldBeEnabled();
       checksSelectionPage.clickModalSaveButton();
       checksSelectionPage.inputValidationErrorShouldBeDisplayed();
@@ -109,7 +109,7 @@ context('Checks customization', () => {
       // User closes modal
       checksSelectionPage.clickCloseButton();
       // Check that the overview does not show any modified elements
-      checksSelectionPage.secondCustomizedCheckShouldNotHaveModifiedPill();
+      checksSelectionPage.customizedCheckShouldNotHaveModifiedPill();
       checksSelectionPage.resetIconShouldNotExistInOverview();
     });
   });
@@ -118,7 +118,7 @@ context('Checks customization', () => {
     it('should run a checks execution with customized check values', () => {
       checksSelectionPage.openCheckCustomizationModal('00081D');
       checksSelectionPage.clickOnWarningCheckbox();
-      checksSelectionPage.inputCheckValue('100');
+      checksSelectionPage.inputCheckValue('expected_max_messages', '100');
       checksSelectionPage.clickModalSaveButton();
       checksSelectionPage.clickCorosyncSelectionToggle();
       checksSelectionPage.clickSaveChecksSelectionButton();

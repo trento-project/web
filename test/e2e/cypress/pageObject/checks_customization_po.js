@@ -118,8 +118,8 @@ export const clickResetModalButton = () => cy.get(resetButton).click();
 export const clickResetCustomizedCheck = () =>
   cy.get(resetCustomizedCheckIcon).click();
 export const clickModalSaveButton = () => cy.get(saveButtonModal).click();
-const _setInputValue = (newValue) => {
-  cy.get('div[class*="flex-col"]:contains("Default") + div input')
+const _setInputValue = (valueName, newValue) => {
+  cy.get(`div[class*="flex-col"]:contains(${valueName}) + div input`)
     .clear()
     .type(newValue)
     .should('have.value', newValue);
@@ -128,8 +128,8 @@ export const clickSaveChecksSelectionButton = () =>
   cy.get(saveChecksSelectionButton).click();
 export const clickStartExecutionButton = () =>
   cy.get(startExecutionButton).click();
-export const inputCheckValue = (newValue) => {
-  _setInputValue(newValue);
+export const inputCheckValue = (valueName, newValue) => {
+  _setInputValue(valueName, newValue);
 };
 
 export const clickCorosyncSelectionToggle = () => {
@@ -286,4 +286,4 @@ const _resetChecks = (checks) => {
 export const apiResetAllChecks = () => _resetChecks(checkList);
 
 export const apiResetCheckSelection = () =>
-  basePage.apiSelectChecks('469e7be5-4e20-5007-b044-c6f540a87493', []);
+  basePage.apiSelectChecks(availableHanaCluster.id, []);
