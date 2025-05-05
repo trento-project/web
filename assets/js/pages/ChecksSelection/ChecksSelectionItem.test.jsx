@@ -126,8 +126,9 @@ describe('Checks Customizability', () => {
         />
       );
 
-      const customizationCallToAction =
-        screen.queryByLabelText('customize-check');
+      const customizationCallToAction = screen.queryByLabelText(
+        `customize-check-${check.id}`
+      );
 
       if (expectedCustomizationCTA) {
         expect(customizationCallToAction).toBeVisible();
@@ -151,6 +152,7 @@ describe('Checks Customizability', () => {
     const user = userEvent.setup();
     const check = selectableCheckFactory.build({ customizable: true });
     const onCustomize = jest.fn();
+    const labelText = `customize-check-${check.id}`;
 
     render(
       <ChecksSelectionItem
@@ -165,7 +167,7 @@ describe('Checks Customizability', () => {
       />
     );
 
-    await user.click(screen.getByLabelText('customize-check'));
+    await user.click(screen.getByLabelText(labelText));
     expect(onCustomize).toHaveBeenCalled();
   });
 
