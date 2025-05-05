@@ -9,7 +9,6 @@ context('Checks customization', () => {
     checksSelectionPage.apiResetAllChecks();
     checksSelectionPage.apiResetCheckSelection();
     checksSelectionPage.visitChecksSelectionCluster();
-    checksSelectionPage.clickOnCheckSelectionButton();
     checksSelectionPage.clickCorosyncCategory();
   });
 

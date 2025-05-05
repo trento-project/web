@@ -151,8 +151,6 @@ export const customizedCheckShouldHaveModifiedPill = () =>
   cy.get(modifiedPill).should('contain', modifiedPillLabel);
 export const customizedCheckShouldNotHaveModifiedPill = () =>
   cy.get(modifiedPill).should('not.exist');
-export const secondCustomizedCheckShouldNotHaveModifiedPill = () =>
-  cy.get(modifiedPill).should('not.exist');
 const _validateCheckId = (value) =>
   cy.contains(`Check: ${value}`).should('contain', value);
 export const validateFirstCheckId = () => _validateCheckId(firstCheck.id);
@@ -263,10 +261,10 @@ export const vailidateGatheredFactsValue = () => {
 };
 
 // Api
-export const visit = (clusterId = '') => basePage.visit(`${url}/${clusterId}`);
+export const visit = (clusterId = '') =>
+  basePage.visit(`${url}/${clusterId}/settings`);
 export const visitChecksSelectionCluster = () => visit(availableHanaCluster.id);
-export const clickOnCheckSelectionButton = () =>
-  cy.get('button').contains('Check Selection').click();
+
 const _resetCheck = (groupId, checkId) =>
   basePage.apiLogin().then(({ accessToken }) =>
     cy.request({
