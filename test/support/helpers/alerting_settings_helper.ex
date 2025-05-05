@@ -5,7 +5,7 @@ defmodule Trento.Support.Helpers.AlertingSettingsHelper do
 
   import ExUnit.Callbacks
 
-  def nil_alerting_app_env do
+  def clear_alerting_app_env do
     Application.put_env(:trento, :alerting,
       enabled: nil,
       smtp_server: nil,

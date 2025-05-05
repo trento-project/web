@@ -192,13 +192,6 @@ defmodule Trento.Settings do
 
   # Alerting Settings
 
-  @spec alerting_settings_enforced_from_env? :: boolean()
-  def alerting_settings_enforced_from_env? do
-    Application.get_env(:trento, :alerting)
-    |> Enum.map(fn {_key, val} -> val != nil end)
-    |> Enum.any?()
-  end
-
   @spec get_alerting_settings ::
           {:ok, AlertingSettings.t()} | {:error, :alerting_settings_not_configured}
   def get_alerting_settings do
@@ -238,6 +231,12 @@ defmodule Trento.Settings do
         |> Repo.update()
       end
     end
+  end
+
+  defp alerting_settings_enforced_from_env? do
+    Application.get_env(:trento, :alerting)
+    |> Enum.map(fn {_key, val} -> val != nil end)
+    |> Enum.any?()
   end
 
   defp get_alerting_settings_from_app_env do

@@ -18,74 +18,38 @@ defmodule Trento.Infrastructure.Alerting.Alerting do
 
   @spec notify_critical_host_health(String.t()) :: :ok
   def notify_critical_host_health(host_id) do
-    construct_email = fn %{sender: sender, recipient: recipient} ->
+    notify_critical_component_health(fn ->
       %HostReadModel{hostname: hostname} = Trento.Repo.get!(HostReadModel, host_id)
 
-      EmailAlert.alert(
-        "Host",
-        "hostname",
-        hostname,
-        "health is now in critical state",
-        sender: sender,
-        recipient: recipient
-      )
-    end
-
-    deliver_notification(construct_email)
+      ["Host", "hostname", hostname, "health is now in critical state"]
+    end)
   end
 
   @spec notify_critical_cluster_health(String.t()) :: :ok
   def notify_critical_cluster_health(cluster_id) do
-    construct_email = fn %{sender: sender, recipient: recipient} ->
+    notify_critical_component_health(fn ->
       %ClusterReadModel{name: name} = Trento.Repo.get!(ClusterReadModel, cluster_id)
 
-      EmailAlert.alert(
-        "Cluster",
-        "name",
-        name,
-        "health is now in critical state",
-        sender: sender,
-        recipient: recipient
-      )
-    end
-
-    deliver_notification(construct_email)
+      ["Cluster", "name", name, "health is now in critical state"]
+    end)
   end
 
   @spec notify_critical_database_health(String.t()) :: :ok
   def notify_critical_database_health(id) do
-    construct_email = fn %{sender: sender, recipient: recipient} ->
+    notify_critical_component_health(fn ->
       %DatabaseReadModel{sid: sid} = Trento.Repo.get!(DatabaseReadModel, id)
 
-      EmailAlert.alert(
-        "Database",
-        "SID",
-        sid,
-        "health is now in critical state",
-        sender: sender,
-        recipient: recipient
-      )
-    end
-
-    deliver_notification(construct_email)
+      ["Database", "SID", sid, "health is now in critical state"]
+    end)
   end
 
   @spec notify_critical_sap_system_health(String.t()) :: :ok
   def notify_critical_sap_system_health(id) do
-    construct_email = fn %{sender: sender, recipient: recipient} ->
+    notify_critical_component_health(fn ->
       %SapSystemReadModel{sid: sid} = Trento.Repo.get!(SapSystemReadModel, id)
 
-      EmailAlert.alert(
-        "Sap System",
-        "SID",
-        sid,
-        "health is now in critical state",
-        sender: sender,
-        recipient: recipient
-      )
-    end
-
-    deliver_notification(construct_email)
+      ["Sap System", "SID", sid, "health is now in critical state"]
+    end)
   end
 
   @spec notify_api_key_expiration() :: :ok
@@ -102,6 +66,21 @@ defmodule Trento.Infrastructure.Alerting.Alerting do
       error ->
         error
     end
+  end
+
+  defp notify_critical_component_health(component_fetcher) do
+    deliver_notification(fn %{sender: sender, recipient: recipient} ->
+      [component, identified_by, identifier, reason] = component_fetcher.()
+
+      EmailAlert.alert(
+        component,
+        identified_by,
+        identifier,
+        reason,
+        sender: sender,
+        recipient: recipient
+      )
+    end)
   end
 
   defp api_key_expiration_days(%ApiKeySettings{expire_at: expire_at}),

@@ -18,7 +18,7 @@ defmodule Trento.Infrastructure.Alerting.AlertingTest do
 
   describe "When alerting is disabled or not configured" do
     test "no email is sent and error is returned when alerting is not configured" do
-      nil_alerting_app_env()
+      clear_alerting_app_env()
 
       host_id = Faker.UUID.v4()
 
