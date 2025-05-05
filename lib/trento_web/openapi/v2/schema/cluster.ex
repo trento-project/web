@@ -33,7 +33,11 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
             nullable: true,
             properties: %{
               id: %Schema{type: :string},
-              managed: %Schema{type: :boolean},
+              managed: %Schema{
+                type: :boolean,
+                nullable: true,
+                description: "Resource is managed. null for standard groups"
+              },
               multi_state: %Schema{
                 type: :boolean,
                 nullable: true,
