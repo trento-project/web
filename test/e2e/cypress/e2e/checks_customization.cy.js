@@ -41,7 +41,8 @@ context('Checks customization', () => {
       checksSelectionPage.clickModalSaveButton();
       checksSelectionPage.checkCustomizationSuccessToastIsShown();
       // Validate if check was customized
-      checksSelectionPage.customizedCheckShouldHaveModifiedPill();
+      checksSelectionPage.checkShouldHaveModifiedPill('00081D');
+
       checksSelectionPage.openCheckCustomizationModal('00081D');
       checksSelectionPage.validateCustomizedValue();
       // Reset check in the modal
@@ -51,7 +52,8 @@ context('Checks customization', () => {
       checksSelectionPage.clickResetModalButton();
       // Validate if check was reset in overview
       checksSelectionPage.checkCustomizationResetToastIsShown();
-      checksSelectionPage.customizedCheckShouldNotHaveModifiedPill();
+
+      checksSelectionPage.checkShouldNotHaveModifiedPill('00081D');
       checksSelectionPage.resetIconShouldNotExistInOverview();
     });
 
@@ -67,7 +69,8 @@ context('Checks customization', () => {
       checksSelectionPage.clickResetButton();
       // Validate if check was reset
       checksSelectionPage.checkCustomizationResetToastIsShown();
-      checksSelectionPage.customizedCheckShouldNotHaveModifiedPill();
+
+      checksSelectionPage.checkShouldNotHaveModifiedPill('00081D');
       checksSelectionPage.resetIconShouldNotExistInOverview();
     });
 
@@ -90,7 +93,7 @@ context('Checks customization', () => {
       checksSelectionPage.clickModalSaveButton();
       // Validate overview
       checksSelectionPage.checkCustomizationSuccessToastIsShown();
-      checksSelectionPage.customizedCheckShouldHaveModifiedPill();
+      checksSelectionPage.checkShouldHaveModifiedPill('156F64');
     });
 
     it('should not customize check values if the user input is invalid', () => {
@@ -108,7 +111,8 @@ context('Checks customization', () => {
       // User closes modal
       checksSelectionPage.clickCloseButton();
       // Check that the overview does not show any modified elements
-      checksSelectionPage.customizedCheckShouldNotHaveModifiedPill();
+
+      checksSelectionPage.checkShouldNotHaveModifiedPill('156F64');
       checksSelectionPage.resetIconShouldNotExistInOverview();
     });
   });

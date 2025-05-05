@@ -65,7 +65,6 @@ const evaluationResults = `Corosync 'max_messages' value was expected to be '${c
 const corosyncCategory = `div[class="pb-4"] h3.tn-check-switch:contains("${corosyncLabel}")`;
 const resetCustomizedCheckIcon =
   'a[class*="block"] button[aria-label="reset-check-customization"] svg';
-const modifiedPill = `a[class*="block"] span:contains("${modifiedPillLabel}")`;
 const modalDescrition = 'div[class="mt-2"] p';
 const modalSpan = 'div[class="mt-2"] span';
 const modalProviderValueSpan = `div[class="mt-2"] span:contains("${modalProviderValue}")`;
@@ -147,10 +146,15 @@ export const clickModifiedCheckExpectations = () => {
 // UI validations
 export const resetIconShouldNotExistInOverview = () =>
   cy.get(resetCustomizedCheckIcon).should('not.exist');
-export const customizedCheckShouldHaveModifiedPill = () =>
-  cy.get(modifiedPill).should('contain', modifiedPillLabel);
-export const customizedCheckShouldNotHaveModifiedPill = () =>
-  cy.get(modifiedPill).should('not.exist');
+export const checkShouldHaveModifiedPill = (checkID) => {
+  const checkIDPill = `div[class*="px-4 py-4"] p:contains(${checkID}) + span`;
+  cy.get(checkIDPill).should('contain', modifiedPillLabel);
+};
+export const checkShouldNotHaveModifiedPill = (checkID) => {
+  const checkIDPill = `div[class*="px-4 py-4"] p:contains(${checkID}) + span`;
+  cy.get(checkIDPill).should('not.exist');
+};
+
 const _validateCheckId = (value) =>
   cy.contains(`Check: ${value}`).should('contain', value);
 export const validateFirstCheckId = () => _validateCheckId(firstCheck.id);
