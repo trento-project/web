@@ -7,6 +7,7 @@ context('Checks customization', () => {
 
   beforeEach(() => {
     checksSelectionPage.apiResetAllChecks();
+    checksSelectionPage.apiResetCheckSelection();
     checksSelectionPage.visitChecksSelectionCluster();
     checksSelectionPage.clickOnCheckSelectionButton();
     checksSelectionPage.clickCorosyncCategory();
@@ -36,7 +37,7 @@ context('Checks customization', () => {
       // User interacts with modal
       checksSelectionPage.clickOnWarningCheckbox();
       checksSelectionPage.modalWarningCheckBoxShouldBeChecked();
-      checksSelectionPage.inputCheckValue('20', '100');
+      checksSelectionPage.inputCheckValue('100');
       checksSelectionPage.modalSaveButtonShouldBeEnabled();
       checksSelectionPage.clickModalSaveButton();
       checksSelectionPage.checkCustomizationSuccessToastIsShown();
@@ -59,7 +60,7 @@ context('Checks customization', () => {
       checksSelectionPage.openCheckCustomizationModal('00081D');
       // User interacts with modal
       checksSelectionPage.clickOnWarningCheckbox();
-      checksSelectionPage.inputCheckValue('20', '100');
+      checksSelectionPage.inputCheckValue('100');
       checksSelectionPage.clickModalSaveButton();
       checksSelectionPage.checkCustomizationSuccessToastIsShown();
       // User resets check in overview
@@ -77,7 +78,7 @@ context('Checks customization', () => {
       checksSelectionPage.validateSecondCheckId();
       checksSelectionPage.clickOnWarningCheckbox();
       checksSelectionPage.modalWarningCheckBoxShouldBeChecked();
-      checksSelectionPage.inputCheckValue('30000', '30000a');
+      checksSelectionPage.inputCheckValue('30000a');
       checksSelectionPage.modalSaveButtonShouldBeEnabled();
       checksSelectionPage.clickModalSaveButton();
       checksSelectionPage.inputValidationErrorShouldBeDisplayed();
@@ -85,7 +86,7 @@ context('Checks customization', () => {
       checksSelectionPage.modalSaveButtonShouldBeDisabled();
       checksSelectionPage.modalResetCheckButtonShouldBeDisabled();
       checksSelectionPage.modalCloseButtonShouldBeEnabled();
-      checksSelectionPage.inputCheckValue('30000a', '30000');
+      checksSelectionPage.inputCheckValue('30000');
       checksSelectionPage.modalSaveButtonShouldBeEnabled();
       checksSelectionPage.clickModalSaveButton();
       // Validate overview
@@ -98,7 +99,7 @@ context('Checks customization', () => {
       // User interact with modal
       checksSelectionPage.clickOnWarningCheckbox();
       checksSelectionPage.modalWarningCheckBoxShouldBeChecked();
-      checksSelectionPage.inputCheckValue('30000', '30000a');
+      checksSelectionPage.inputCheckValue('30000a');
       checksSelectionPage.modalSaveButtonShouldBeEnabled();
       checksSelectionPage.clickModalSaveButton();
       checksSelectionPage.inputValidationErrorShouldBeDisplayed();
@@ -117,7 +118,7 @@ context('Checks customization', () => {
     it('should run a checks execution with customized check values', () => {
       checksSelectionPage.openCheckCustomizationModal('00081D');
       checksSelectionPage.clickOnWarningCheckbox();
-      checksSelectionPage.inputCheckValue('20', '100');
+      checksSelectionPage.inputCheckValue('100');
       checksSelectionPage.clickModalSaveButton();
       checksSelectionPage.clickCorosyncSelectionToggle();
       checksSelectionPage.clickSaveChecksSelectionButton();
@@ -130,10 +131,6 @@ context('Checks customization', () => {
       checksSelectionPage.validateEvaluationResultsModifiedPill();
       checksSelectionPage.validateCusomValue();
       checksSelectionPage.vailidateGatheredFactsValue();
-    });
-
-    after(() => {
-      checksSelectionPage.resetCorosyncCheckSelection();
     });
   });
 });

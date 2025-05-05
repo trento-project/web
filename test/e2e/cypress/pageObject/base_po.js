@@ -366,6 +366,29 @@ export const apiSetTag = (resource, resourceId, tag) => {
   );
 };
 
+export const apiSelectChecks = (clusterId, checks) => {
+  const checksBody = JSON.stringify({
+    checks: checks,
+  });
+
+  const headers = {
+    'Content-Type': 'application/json;charset=UTF-8',
+  };
+
+  return apiLogin().then(({ accessToken }) => {
+    const url = `/api/clusters/${clusterId}/checks`;
+    cy.request({
+      method: 'POST',
+      url: url,
+      body: checksBody,
+      headers: headers,
+      auth: {
+        bearer: accessToken,
+      },
+    });
+  });
+};
+
 export const saveSUMASettings = ({ url, username, password, ca_cert }) =>
   clearSUMASettings().then(() => {
     apiLogin().then(({ accessToken }) =>

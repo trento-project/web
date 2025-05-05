@@ -198,29 +198,6 @@ export const apiSetTagsHanaCluster1 = () => {
   return tagsForCluster1.forEach((tag) => _apiSetTag('hana_cluster_1', tag));
 };
 
-const _apiSelectChecks = (clusterId, checks) => {
-  const checksBody = JSON.stringify({
-    checks: checks,
-  });
-
-  const headers = {
-    'Content-Type': 'application/json;charset=UTF-8',
-  };
-
-  return basePage.apiLogin().then(({ accessToken }) => {
-    const url = `/api/clusters/${clusterId}/checks`;
-    cy.request({
-      method: 'POST',
-      url: url,
-      body: checksBody,
-      headers: headers,
-      auth: {
-        bearer: accessToken,
-      },
-    });
-  });
-};
-
 const apiRequestChecksExecution = (clusterId) => {
   return basePage.apiLogin().then(({ accessToken }) => {
     const url = `/api/clusters/${clusterId}/checks/request_execution`;
@@ -235,7 +212,7 @@ const apiRequestChecksExecution = (clusterId) => {
 };
 
 export const apiSelectChecksForHealthyCluster = () =>
-  _apiSelectChecks(
+  basePage.apiSelectChecks(
     _clusterIdByName(healthyClusterScenario.clusterName),
     healthyClusterScenario.checks
   );
@@ -246,7 +223,7 @@ export const apiRequestChecksForHealthyCluster = () =>
   );
 
 export const apiSelectChecksForUnhealthyCluster = () =>
-  _apiSelectChecks(
+  basePage.apiSelectChecks(
     _clusterIdByName(unhealthyClusterScenario.clusterName),
     healthyClusterScenario.checks
   );
@@ -257,10 +234,16 @@ export const apiRequestChecksForUnhealthyCluster = () =>
   );
 
 export const apiRemoveHealthyClusterChecks = () =>
-  _apiSelectChecks(_clusterIdByName(healthyClusterScenario.clusterName), []);
+  basePage.apiSelectChecks(
+    _clusterIdByName(healthyClusterScenario.clusterName),
+    []
+  );
 
 export const apiRemoveUnhealthyClusterChecks = () =>
-  _apiSelectChecks(_clusterIdByName(unhealthyClusterScenario.clusterName), []);
+  basePage.apiSelectChecks(
+    _clusterIdByName(unhealthyClusterScenario.clusterName),
+    []
+  );
 
 export const restoreClusterName = () => basePage.loadScenario('cluster-4-SOK');
 
