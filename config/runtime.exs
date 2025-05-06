@@ -69,13 +69,20 @@ if config_env() in [:prod, :demo] do
       For example: yourdomain.example.com
       """
 
+  defp determine_ip() do
+    case :inet.getaddr(~c"localhost", :inet6) do
+      {:ok, _addr} -> {0, 0, 0, 0, 0, 0, 0, 0}
+      {:error, _} -> {0, 0, 0, 0}
+    end
+  end
+
   config :trento, TrentoWeb.Endpoint,
     http: [
       # Enable IPv6 and bind on all interfaces.
       # Set it to  {0, 0, 0, 0, 0, 0, 0, 1} for local network only access.
       # See the documentation on https://hexdocs.pm/plug_cowboy/Plug.Cowboy.html
       # for details about using IPv6 vs IPv4 and loopback vs public addresses.
-      ip: {0, 0, 0, 0, 0, 0, 0, 0},
+      ip: determine_ip(),
       port: String.to_integer(System.get_env("PORT") || "4000")
     ],
     check_origin: true,
