@@ -97,6 +97,8 @@ jobs:
         uses: styfle/cancel-workflow-action@0.12.1
         with:
           access_token: ${{ github.token }}
+      - name: Install inotify-tools
+        run: sudo apt-get update && sudo apt-get install -y inotify-tools
       - name: Checkout
         uses: actions/checkout@v4
         with:
