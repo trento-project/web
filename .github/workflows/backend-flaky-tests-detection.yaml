@@ -136,10 +136,10 @@ jobs:
         run: mix setup
       - name: Run trento detached
         run: mix phx.server &
-      - name: Wait for web server
-        uses: sindresorhus/wait-for-localhost@v1
+      - name: Wait for web app to start
+        uses: iFaxity/wait-on-action
         with:
-          port: 4000
+          resource: http://localhost:8080
           timeout: 60000
       # - name: Set ENV_TS to get current Timestamp for JUnit reports
       #   run: echo "ENV_TS=$(date +%F_%T | sed 's/:/-/g')" >> $GITHUB_ENV
