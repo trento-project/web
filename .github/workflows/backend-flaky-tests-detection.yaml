@@ -137,7 +137,7 @@ jobs:
       - name: Run trento detached
         run: mix phx.server &
       - name: Wait for web app to start
-        uses: iFaxity/wait-on-action
+        uses: iFaxity/wait-on-action@v1.2.1
         with:
           resource: http://localhost:8080
           timeout: 60000
