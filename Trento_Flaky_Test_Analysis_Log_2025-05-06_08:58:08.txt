@@ -1,0 +1,781 @@
+...........................................................................................................................................................................................
+
+  1) test enriching checks execution requests should pass through unrecognizable checks execution requests (Trento.ActivityLog.MetadataEnricherTest)
+     test/trento/activity_logging/metadata_enricher_test.exs:172
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 1412ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/data_case.ex:33: Trento.DataCase.__ex_unit_setup_0/1
+       (trento 2.4.0) test/support/data_case.ex:1: Trento.DataCase.__ex_unit__/2
+       test/trento/activity_logging/metadata_enricher_test.exs:1: Trento.ActivityLog.MetadataEnricherTest.__ex_unit__/2
+
+     The following output was logged:
+     08:58:14.546 request_id=GDzd3HToVKk0cz4AAArG [error] Failed to handle discovery event: [:any_error]
+     08:58:14.869 request_id=GDzd3I5i1t7dulQAABuB [error] Failed to handle discovery event: [:associated_database_not_found]
+     
+
+
+  2) test adapt to V1 version should remove HANA cluster V2 fields (TrentoWeb.V1.ClusterJSONTest)
+     test/trento_web/views/v1/cluster_view_json_test.exs:21
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 1376ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/conn_case.ex:42: TrentoWeb.ConnCase.__ex_unit_setup_1/1
+       (trento 2.4.0) test/support/conn_case.ex:1: TrentoWeb.ConnCase.__ex_unit__/2
+       test/trento_web/views/v1/cluster_view_json_test.exs:1: TrentoWeb.V1.ClusterJSONTest.__ex_unit__/2
+
+     The following output was logged:
+     08:58:14.546 request_id=GDzd3HToVKk0cz4AAArG [error] Failed to handle discovery event: [:any_error]
+     08:58:14.869 request_id=GDzd3I5i1t7dulQAABuB [error] Failed to handle discovery event: [:associated_database_not_found]
+     
+
+
+  3) test clear_expired_logs clear expired logs with two years retention (Trento.ActivityLog.ActivityLogTest)
+     test/trento/activity_logging/activity_log_test.exs:119
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 545ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/conn_case.ex:42: TrentoWeb.ConnCase.__ex_unit_setup_1/1
+       (trento 2.4.0) test/support/conn_case.ex:1: TrentoWeb.ConnCase.__ex_unit__/2
+       test/trento/activity_logging/activity_log_test.exs:1: Trento.ActivityLog.ActivityLogTest.__ex_unit__/2
+
+     The following output was logged:
+     08:58:14.546 request_id=GDzd3HToVKk0cz4AAArG [error] Failed to handle discovery event: [:any_error]
+     08:58:14.869 request_id=GDzd3I5i1t7dulQAABuB [error] Failed to handle discovery event: [:associated_database_not_found]
+     
+
+
+  4) test catalog amqp processor should gracefully handle missing user information (Trento.Infrastructure.Catalog.AMQP.ProcessorTest)
+     test/trento/infrastructure/catalog/processor_test.exs:88
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 429ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/data_case.ex:33: Trento.DataCase.__ex_unit_setup_0/1
+       (trento 2.4.0) test/support/data_case.ex:1: Trento.DataCase.__ex_unit__/2
+       test/trento/infrastructure/catalog/processor_test.exs:1: Trento.Infrastructure.Catalog.AMQP.ProcessorTest.__ex_unit__/2
+
+     The following output was logged:
+     08:58:14.546 request_id=GDzd3HToVKk0cz4AAArG [error] Failed to handle discovery event: [:any_error]
+     08:58:14.869 request_id=GDzd3I5i1t7dulQAABuB [error] Failed to handle discovery event: [:associated_database_not_found]
+     
+
+
+  5) test should render host details relevant information (TrentoWeb.V1.HostJSONTest)
+     test/trento_web/views/v1/host_view_json_test.exs:29
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 703ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/conn_case.ex:42: TrentoWeb.ConnCase.__ex_unit_setup_1/1
+       (trento 2.4.0) test/support/conn_case.ex:1: TrentoWeb.ConnCase.__ex_unit__/2
+       test/trento_web/views/v1/host_view_json_test.exs:1: TrentoWeb.V1.HostJSONTest.__ex_unit__/2
+
+     The following output was logged:
+     08:58:14.546 request_id=GDzd3HToVKk0cz4AAArG [error] Failed to handle discovery event: [:any_error]
+     08:58:14.869 request_id=GDzd3I5i1t7dulQAABuB [error] Failed to handle discovery event: [:associated_database_not_found]
+     
+
+
+  6) test Health report healthy state when database is up for /healthz endpoint (Trento.HealthControllerTest)
+     test/trento_web/controllers/health_controller_test.exs:15
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 855ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/conn_case.ex:42: TrentoWeb.ConnCase.__ex_unit_setup_1/1
+       (trento 2.4.0) test/support/conn_case.ex:1: TrentoWeb.ConnCase.__ex_unit__/2
+       test/trento_web/controllers/health_controller_test.exs:1: Trento.HealthControllerTest.__ex_unit__/2
+
+     The following output was logged:
+     08:58:14.546 request_id=GDzd3HToVKk0cz4AAArG [error] Failed to handle discovery event: [:any_error]
+     08:58:14.869 request_id=GDzd3I5i1t7dulQAABuB [error] Failed to handle discovery event: [:associated_database_not_found]
+     
+
+
+  7) test cpu host chart should return 404 if a cpu chart is requested for a non existing host (TrentoWeb.V1.ChartControllerTest)
+     test/trento_web/controllers/v1/chart_controller_test.exs:100
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 552ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/conn_case.ex:42: TrentoWeb.ConnCase.__ex_unit_setup_1/1
+       (trento 2.4.0) test/support/conn_case.ex:1: TrentoWeb.ConnCase.__ex_unit__/2
+       test/trento_web/controllers/v1/chart_controller_test.exs:1: TrentoWeb.V1.ChartControllerTest.__ex_unit__/2
+
+     The following output was logged:
+     08:58:14.546 request_id=GDzd3HToVKk0cz4AAArG [error] Failed to handle discovery event: [:any_error]
+     08:58:14.869 request_id=GDzd3I5i1t7dulQAABuB [error] Failed to handle discovery event: [:associated_database_not_found]
+     
+
+
+  8) test should log activity on requests without user information - method: put (TrentoWeb.Plugs.ActivityLoggingPlugTest)
+     test/trento_web/plugs/activity_logging_plug_test.exs:10
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 1111ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/conn_case.ex:42: TrentoWeb.ConnCase.__ex_unit_setup_1/1
+       (trento 2.4.0) test/support/conn_case.ex:1: TrentoWeb.ConnCase.__ex_unit__/2
+       test/trento_web/plugs/activity_logging_plug_test.exs:1: TrentoWeb.Plugs.ActivityLoggingPlugTest.__ex_unit__/2
+
+     The following output was logged:
+     08:58:14.546 request_id=GDzd3HToVKk0cz4AAArG [error] Failed to handle discovery event: [:any_error]
+     08:58:14.869 request_id=GDzd3I5i1t7dulQAABuB [error] Failed to handle discovery event: [:associated_database_not_found]
+     
+
+
+  9) test tags delete_tag/2 returns a not found error if the resource does not exist (Trento.TagsTest)
+     test/trento/tags_test.exs:54
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 1378ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/data_case.ex:33: Trento.DataCase.__ex_unit_setup_0/1
+       (trento 2.4.0) test/support/data_case.ex:1: Trento.DataCase.__ex_unit__/2
+       test/trento/tags_test.exs:1: Trento.TagsTest.__ex_unit__/2
+
+     The following output was logged:
+     08:58:14.546 request_id=GDzd3HToVKk0cz4AAArG [error] Failed to handle discovery event: [:any_error]
+     08:58:14.869 request_id=GDzd3I5i1t7dulQAABuB [error] Failed to handle discovery event: [:associated_database_not_found]
+     
+
+
+ 10) test process should process OperationCompleted and broadcast to the socket (Trento.Infrastructure.Operations.AMQP.ProcessorTest)
+     test/trento/infrastructure/operations/processor_test.exs:59
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 1115ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/channel_case.ex:34: TrentoWeb.ChannelCase.__ex_unit_setup_0/1
+       (trento 2.4.0) test/support/channel_case.ex:1: TrentoWeb.ChannelCase.__ex_unit__/2
+       test/trento/infrastructure/operations/processor_test.exs:1: Trento.Infrastructure.Operations.AMQP.ProcessorTest.__ex_unit__/2
+
+     The following output was logged:
+     08:58:14.546 request_id=GDzd3HToVKk0cz4AAArG [error] Failed to handle discovery event: [:any_error]
+     08:58:14.869 request_id=GDzd3I5i1t7dulQAABuB [error] Failed to handle discovery event: [:associated_database_not_found]
+     
+
+
+ 11) test ASCS/ERS cluster checks execution should start a checks execution on demand for ascs_ers clusters with mixed ENSA versions (Trento.ClustersTest)
+     test/trento/clusters_test.exs:883
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 892ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/data_case.ex:33: Trento.DataCase.__ex_unit_setup_0/1
+       (trento 2.4.0) test/support/data_case.ex:1: Trento.DataCase.__ex_unit__/2
+       test/trento/clusters_test.exs:1: Trento.ClustersTest.__ex_unit__/2
+
+     The following output was logged:
+     08:58:14.546 request_id=GDzd3HToVKk0cz4AAArG [error] Failed to handle discovery event: [:any_error]
+     08:58:14.869 request_id=GDzd3I5i1t7dulQAABuB [error] Failed to handle discovery event: [:associated_database_not_found]
+     
+
+
+ 12) test call/2 should redirect to the newest version path when this version is available (TrentoWeb.Plugs.ApiRedirectorTest)
+     test/trento_web/plugs/api_redirector_test.exs:79
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 899ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/conn_case.ex:42: TrentoWeb.ConnCase.__ex_unit_setup_1/1
+       (trento 2.4.0) test/support/conn_case.ex:1: TrentoWeb.ConnCase.__ex_unit__/2
+       test/trento_web/plugs/api_redirector_test.exs:1: TrentoWeb.Plugs.ApiRedirectorTest.__ex_unit__/2
+
+     The following output was logged:
+     08:58:14.546 request_id=GDzd3HToVKk0cz4AAArG [error] Failed to handle discovery event: [:any_error]
+     08:58:14.869 request_id=GDzd3I5i1t7dulQAABuB [error] Failed to handle discovery event: [:associated_database_not_found]
+     
+
+
+ 13) test should authorize operation (TrentoWeb.Plugs.OperationsPolicyPlugTest)
+     test/trento_web/plugs/operations_policy_plug_test.exs:85
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 924ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/conn_case.ex:42: TrentoWeb.ConnCase.__ex_unit_setup_1/1
+       (trento 2.4.0) test/support/conn_case.ex:1: TrentoWeb.ConnCase.__ex_unit__/2
+       test/trento_web/plugs/operations_policy_plug_test.exs:1: TrentoWeb.Plugs.OperationsPolicyPlugTest.__ex_unit__/2
+
+     The following output was logged:
+     08:58:14.546 request_id=GDzd3HToVKk0cz4AAArG [error] Failed to handle discovery event: [:any_error]
+     08:58:14.869 request_id=GDzd3I5i1t7dulQAABuB [error] Failed to handle discovery event: [:associated_database_not_found]
+     
+......
+
+ 14) test changing activity log retention time detection should not log a failing update of the activity log settings (Trento.ActivityLog.ActivityLoggerTest)
+     test/trento/activity_logging/activity_logger_test.exs:255
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 401ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/conn_case.ex:42: TrentoWeb.ConnCase.__ex_unit_setup_1/1
+       (trento 2.4.0) test/support/conn_case.ex:1: TrentoWeb.ConnCase.__ex_unit__/2
+       test/trento/activity_logging/activity_logger_test.exs:1: Trento.ActivityLog.ActivityLoggerTest.__ex_unit__/2
+
+     The following output was logged:
+     08:58:14.869 request_id=GDzd3I5i1t7dulQAABuB [error] Failed to handle discovery event: [:associated_database_not_found]
+     
+
+
+ 15) test retrieve upgradable packages related patches should return an empty list if every call errors (TrentoWeb.V1.SUSEManagerControllerTest)
+     test/trento_web/controllers/v1/suse_manager_controller_test.exs:127
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 418ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/conn_case.ex:42: TrentoWeb.ConnCase.__ex_unit_setup_1/1
+       (trento 2.4.0) test/support/conn_case.ex:1: TrentoWeb.ConnCase.__ex_unit__/2
+       test/trento_web/controllers/v1/suse_manager_controller_test.exs:1: TrentoWeb.V1.SUSEManagerControllerTest.__ex_unit__/2
+
+     The following output was logged:
+     08:58:14.869 request_id=GDzd3I5i1t7dulQAABuB [error] Failed to handle discovery event: [:associated_database_not_found]
+     
+...........
+
+ 16) test process should process OperationStarted and broadcast to the socket (Trento.Infrastructure.Operations.AMQP.ProcessorTest)
+     test/trento/infrastructure/operations/processor_test.exs:34
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 403ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/channel_case.ex:34: TrentoWeb.ChannelCase.__ex_unit_setup_0/1
+       (trento 2.4.0) test/support/channel_case.ex:1: TrentoWeb.ChannelCase.__ex_unit__/2
+       test/trento/infrastructure/operations/processor_test.exs:1: Trento.Infrastructure.Operations.AMQP.ProcessorTest.__ex_unit__/2
+
+     The following output was logged:
+     08:58:15.201 [error] Could not refresh the access token: :user_not_allowed_to_renew
+     
+
+
+ 17) test should render single host information (TrentoWeb.V1.HostJSONTest)
+     test/trento_web/views/v1/host_view_json_test.exs:19
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 403ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/conn_case.ex:42: TrentoWeb.ConnCase.__ex_unit_setup_1/1
+       (trento 2.4.0) test/support/conn_case.ex:1: TrentoWeb.ConnCase.__ex_unit__/2
+       test/trento_web/views/v1/host_view_json_test.exs:1: TrentoWeb.V1.HostJSONTest.__ex_unit__/2
+
+     The following output was logged:
+     08:58:15.201 [error] Could not refresh the access token: :user_not_allowed_to_renew
+     
+
+
+ 18) test should confirm a totp enrollment if totp is valid for the enrollment (TrentoWeb.V1.ProfileControllerTest)
+     test/trento_web/controllers/v1/profile_controller_test.exs:243
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 403ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/conn_case.ex:42: TrentoWeb.ConnCase.__ex_unit_setup_1/1
+       (trento 2.4.0) test/support/conn_case.ex:1: TrentoWeb.ConnCase.__ex_unit__/2
+       test/trento_web/controllers/v1/profile_controller_test.exs:1: TrentoWeb.V1.ProfileControllerTest.__ex_unit__/2
+
+     The following output was logged:
+     08:58:15.201 [error] Could not refresh the access token: :user_not_allowed_to_renew
+     
+
+
+ 19) test should return operation not found if the given operation is not found (TrentoWeb.Plugs.OperationsPolicyPlugTest)
+     test/trento_web/plugs/operations_policy_plug_test.exs:38
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 403ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/conn_case.ex:42: TrentoWeb.ConnCase.__ex_unit_setup_1/1
+       (trento 2.4.0) test/support/conn_case.ex:1: TrentoWeb.ConnCase.__ex_unit__/2
+       test/trento_web/plugs/operations_policy_plug_test.exs:1: TrentoWeb.Plugs.OperationsPolicyPlugTest.__ex_unit__/2
+
+     The following output was logged:
+     08:58:15.201 [error] Could not refresh the access token: :user_not_allowed_to_renew
+     
+.
+
+ 20) test should return the exporters status (TrentoWeb.V1.PrometheusControllerTest)
+     test/trento_web/controllers/v1/prometheus_controller_test.exs:27
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 450ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/conn_case.ex:42: TrentoWeb.ConnCase.__ex_unit_setup_1/1
+       (trento 2.4.0) test/support/conn_case.ex:1: TrentoWeb.ConnCase.__ex_unit__/2
+       test/trento_web/controllers/v1/prometheus_controller_test.exs:1: TrentoWeb.V1.PrometheusControllerTest.__ex_unit__/2
+
+     The following output was logged:
+     08:58:15.201 [error] Could not refresh the access token: :user_not_allowed_to_renew
+     
+
+
+ 21) test Alerting the configured recipient about crucial facts with email notifications Notify SAP System Health going critical (Trento.Infrastructure.Alerting.AlertingTest)
+     test/trento/infrastructure/alerting/alerting_test.exs:123
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 455ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/data_case.ex:33: Trento.DataCase.__ex_unit_setup_0/1
+       (trento 2.4.0) test/support/data_case.ex:1: Trento.DataCase.__ex_unit__/2
+       test/trento/infrastructure/alerting/alerting_test.exs:1: Trento.Infrastructure.Alerting.AlertingTest.__ex_unit__/2
+
+     The following output was logged:
+     08:58:15.201 [error] Could not refresh the access token: :user_not_allowed_to_renew
+     
+
+
+ 22) test discovery collect action should accept nil payloads (TrentoWeb.V1.DiscoveryControllerTest)
+     test/trento_web/controllers/v1/discovery_controller_test.exs:32
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 458ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/conn_case.ex:42: TrentoWeb.ConnCase.__ex_unit_setup_1/1
+       (trento 2.4.0) test/support/conn_case.ex:1: TrentoWeb.ConnCase.__ex_unit__/2
+       test/trento_web/controllers/v1/discovery_controller_test.exs:1: TrentoWeb.V1.DiscoveryControllerTest.__ex_unit__/2
+
+     The following output was logged:
+     08:58:15.201 [error] Could not refresh the access token: :user_not_allowed_to_renew
+     
+..
+
+ 23) test tagging sap systems and databases should fail when attempting to remove a non existing tag from a sap system (TrentoWeb.V1.TagsControllerTest)
+     test/trento_web/controllers/v1/tags_controller_test.exs:76
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 531ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/conn_case.ex:42: TrentoWeb.ConnCase.__ex_unit_setup_1/1
+       (trento 2.4.0) test/support/conn_case.ex:1: TrentoWeb.ConnCase.__ex_unit__/2
+       test/trento_web/controllers/v1/tags_controller_test.exs:1: TrentoWeb.V1.TagsControllerTest.__ex_unit__/2
+
+     The following output was logged:
+     08:58:15.201 [error] Could not refresh the access token: :user_not_allowed_to_renew
+     
+
+
+ 24) test list should be compliant with ASCS/ERS clusters schema (TrentoWeb.V2.ClusterControllerTest)
+     test/trento_web/controllers/v2/cluster_controller_test.exs:15
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 531ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/conn_case.ex:42: TrentoWeb.ConnCase.__ex_unit_setup_1/1
+       (trento 2.4.0) test/support/conn_case.ex:1: TrentoWeb.ConnCase.__ex_unit__/2
+       test/trento_web/controllers/v2/cluster_controller_test.exs:1: TrentoWeb.V2.ClusterControllerTest.__ex_unit__/2
+
+     The following output was logged:
+     08:58:15.201 [error] Could not refresh the access token: :user_not_allowed_to_renew
+     
+.
+
+ 25) test cpu host chart should return 422 when the input request timestamps are not valid (TrentoWeb.V1.ChartControllerTest)
+     test/trento_web/controllers/v1/chart_controller_test.exs:71
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 488ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/conn_case.ex:42: TrentoWeb.ConnCase.__ex_unit_setup_1/1
+       (trento 2.4.0) test/support/conn_case.ex:1: TrentoWeb.ConnCase.__ex_unit__/2
+       test/trento_web/controllers/v1/chart_controller_test.exs:1: TrentoWeb.V1.ChartControllerTest.__ex_unit__/2
+
+
+
+ 26) test should get an error when requesting totp enrollment data for an already totp enrolled user (TrentoWeb.V1.ProfileControllerTest)
+     test/trento_web/controllers/v1/profile_controller_test.exs:100
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 427ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/conn_case.ex:42: TrentoWeb.ConnCase.__ex_unit_setup_1/1
+       (trento 2.4.0) test/support/conn_case.ex:1: TrentoWeb.ConnCase.__ex_unit__/2
+       test/trento_web/controllers/v1/profile_controller_test.exs:1: TrentoWeb.V1.ProfileControllerTest.__ex_unit__/2
+
+
+
+ 27) test tags delete_tag/2 deletes a tag from a given resource (Trento.TagsTest)
+     test/trento/tags_test.exs:48
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 507ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/data_case.ex:33: Trento.DataCase.__ex_unit_setup_0/1
+       (trento 2.4.0) test/support/data_case.ex:1: Trento.DataCase.__ex_unit__/2
+       test/trento/tags_test.exs:1: Trento.TagsTest.__ex_unit__/2
+
+
+
+ 28) test should pass through connections without user references (TrentoWeb.Plugs.LoadUserPlugTest)
+     test/trento_web/plugs/load_user_plug_test.exs:38
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 458ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/conn_case.ex:42: TrentoWeb.ConnCase.__ex_unit_setup_1/1
+       (trento 2.4.0) test/support/conn_case.ex:1: TrentoWeb.ConnCase.__ex_unit__/2
+       test/trento_web/plugs/load_user_plug_test.exs:1: TrentoWeb.Plugs.LoadUserPlugTest.__ex_unit__/2
+
+
+
+ 29) test call/2 should redirect to the next available version path if the newest version is not available (TrentoWeb.Plugs.ApiRedirectorTest)
+     test/trento_web/plugs/api_redirector_test.exs:108
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 448ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/conn_case.ex:42: TrentoWeb.ConnCase.__ex_unit_setup_1/1
+       (trento 2.4.0) test/support/conn_case.ex:1: TrentoWeb.ConnCase.__ex_unit__/2
+       test/trento_web/plugs/api_redirector_test.exs:1: TrentoWeb.Plugs.ApiRedirectorTest.__ex_unit__/2
+
+
+
+ 30) test renew/2 should return an error if the refresh token is malformed (TrentoWeb.Plugs.AppJWTAuthPlugTest)
+     test/trento_web/plugs/app_jwt_auth_plug_test.exs:103
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 510ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/conn_case.ex:42: TrentoWeb.ConnCase.__ex_unit_setup_1/1
+       (trento 2.4.0) test/support/conn_case.ex:1: TrentoWeb.ConnCase.__ex_unit__/2
+       test/trento_web/plugs/app_jwt_auth_plug_test.exs:1: TrentoWeb.Plugs.AppJWTAuthPlugTest.__ex_unit__/2
+
+
+
+ 31) test enriching checks execution requests should enrich cluster checks execution request (Trento.ActivityLog.MetadataEnricherTest)
+     test/trento/activity_logging/metadata_enricher_test.exs:194
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 486ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/data_case.ex:33: Trento.DataCase.__ex_unit_setup_0/1
+       (trento 2.4.0) test/support/data_case.ex:1: Trento.DataCase.__ex_unit__/2
+       test/trento/activity_logging/metadata_enricher_test.exs:1: Trento.ActivityLog.MetadataEnricherTest.__ex_unit__/2
+
+
+
+ 32) test should return 'system' by default (Trento.ActivityLog.QueueEventParserTest)
+     test/trento/activity_logging/queue_event_parser_test.exs:157
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 509ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/data_case.ex:33: Trento.DataCase.__ex_unit_setup_0/1
+       (trento 2.4.0) test/support/data_case.ex:1: Trento.DataCase.__ex_unit__/2
+       test/trento/activity_logging/queue_event_parser_test.exs:1: Trento.ActivityLog.QueueEventParserTest.__ex_unit__/2
+
+.
+
+ 33) test clear_expired_logs clear expired logs with one month retention (Trento.ActivityLog.ActivityLogTest)
+     test/trento/activity_logging/activity_log_test.exs:119
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 432ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/conn_case.ex:42: TrentoWeb.ConnCase.__ex_unit_setup_1/1
+       (trento 2.4.0) test/support/conn_case.ex:1: TrentoWeb.ConnCase.__ex_unit__/2
+       test/trento/activity_logging/activity_log_test.exs:1: Trento.ActivityLog.ActivityLogTest.__ex_unit__/2
+
+
+
+ 34) test should log activity on requests without user information - method: post (TrentoWeb.Plugs.ActivityLoggingPlugTest)
+     test/trento_web/plugs/activity_logging_plug_test.exs:10
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 507ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/conn_case.ex:42: TrentoWeb.ConnCase.__ex_unit_setup_1/1
+       (trento 2.4.0) test/support/conn_case.ex:1: TrentoWeb.ConnCase.__ex_unit__/2
+       test/trento_web/plugs/activity_logging_plug_test.exs:1: TrentoWeb.Plugs.ActivityLoggingPlugTest.__ex_unit__/2
+
+
+
+ 35) test resource_managed?/2 should return the managed state of a resource in HANA cluster (Trento.ClustersTest)
+     test/trento/clusters_test.exs:1060
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 445ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/data_case.ex:33: Trento.DataCase.__ex_unit_setup_0/1
+       (trento 2.4.0) test/support/data_case.ex:1: Trento.DataCase.__ex_unit__/2
+       test/trento/clusters_test.exs:1: Trento.ClustersTest.__ex_unit__/2
+
+
+
+ 36) test should return not found if the given resource is not found (TrentoWeb.Plugs.OperationsPolicyPlugTest)
+     test/trento_web/plugs/operations_policy_plug_test.exs:21
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 427ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/conn_case.ex:42: TrentoWeb.ConnCase.__ex_unit_setup_1/1
+       (trento 2.4.0) test/support/conn_case.ex:1: TrentoWeb.ConnCase.__ex_unit__/2
+       test/trento_web/plugs/operations_policy_plug_test.exs:1: TrentoWeb.Plugs.OperationsPolicyPlugTest.__ex_unit__/2
+
+
+
+ 37) test should render health changed relevant information (TrentoWeb.V1.HostJSONTest)
+     test/trento_web/views/v1/host_view_json_test.exs:12
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 427ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/conn_case.ex:42: TrentoWeb.ConnCase.__ex_unit_setup_1/1
+       (trento 2.4.0) test/support/conn_case.ex:1: TrentoWeb.ConnCase.__ex_unit__/2
+       test/trento_web/views/v1/host_view_json_test.exs:1: TrentoWeb.V1.HostJSONTest.__ex_unit__/2
+
+
+
+ 38) test renders overview.json should send empty cluster ids (TrentoWeb.V1.HealthOverviewJSONTest)
+     test/trento_web/views/v1/health_overview_view_json_test.exs:76
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 427ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/conn_case.ex:42: TrentoWeb.ConnCase.__ex_unit_setup_1/1
+       (trento 2.4.0) test/support/conn_case.ex:1: TrentoWeb.ConnCase.__ex_unit__/2
+       test/trento_web/views/v1/health_overview_view_json_test.exs:1: TrentoWeb.V1.HealthOverviewJSONTest.__ex_unit__/2
+
+..........................................................
+
+ 39) test process should return error if the event cannot be decoded (Trento.Infrastructure.Checks.AMQP.ProcessorTest)
+     test/trento/infrastructure/checks/processor_test.exs:114
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 414ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/channel_case.ex:34: TrentoWeb.ChannelCase.__ex_unit_setup_0/1
+       (trento 2.4.0) test/support/channel_case.ex:1: TrentoWeb.ChannelCase.__ex_unit__/2
+       test/trento/infrastructure/checks/processor_test.exs:1: Trento.Infrastructure.Checks.AMQP.ProcessorTest.__ex_unit__/2
+
+     The following output was logged:
+     08:58:15.719 request_id=GDzd3MFgA93d3HAAAB3B [error] Failed to handle discovery event: :unknown_discovery_type
+     08:58:15.739 [error] Decoding error: %Protobuf.DecodeError{message: "insufficient data decoding field_number 12, expected \"d-payload\" to be at least 97 bytes"}
+     08:58:15.740 [error] Invalid trento event: :decoding_error
+     08:58:16.016 [error] Could not refresh the access token: :signature_error
+     
+
+
+ 40) test Alerting the configured recipient about crucial facts with email notifications Notify Database Health going critical (Trento.Infrastructure.Alerting.AlertingTest)
+     test/trento/infrastructure/alerting/alerting_test.exs:115
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 410ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/data_case.ex:33: Trento.DataCase.__ex_unit_setup_0/1
+       (trento 2.4.0) test/support/data_case.ex:1: Trento.DataCase.__ex_unit__/2
+       test/trento/infrastructure/alerting/alerting_test.exs:1: Trento.Infrastructure.Alerting.AlertingTest.__ex_unit__/2
+
+     The following output was logged:
+     08:58:15.719 request_id=GDzd3MFgA93d3HAAAB3B [error] Failed to handle discovery event: :unknown_discovery_type
+     08:58:15.739 [error] Decoding error: %Protobuf.DecodeError{message: "insufficient data decoding field_number 12, expected \"d-payload\" to be at least 97 bytes"}
+     08:58:15.740 [error] Invalid trento event: :decoding_error
+     08:58:16.016 [error] Could not refresh the access token: :signature_error
+     
+
+
+ 41) test renders overview.json should render all the fields (TrentoWeb.V1.HealthOverviewJSONTest)
+     test/trento_web/views/v1/health_overview_view_json_test.exs:10
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 414ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/conn_case.ex:42: TrentoWeb.ConnCase.__ex_unit_setup_1/1
+       (trento 2.4.0) test/support/conn_case.ex:1: TrentoWeb.ConnCase.__ex_unit__/2
+       test/trento_web/views/v1/health_overview_view_json_test.exs:1: TrentoWeb.V1.HealthOverviewJSONTest.__ex_unit__/2
+
+     The following output was logged:
+     08:58:15.719 request_id=GDzd3MFgA93d3HAAAB3B [error] Failed to handle discovery event: :unknown_discovery_type
+     08:58:15.739 [error] Decoding error: %Protobuf.DecodeError{message: "insufficient data decoding field_number 12, expected \"d-payload\" to be at least 97 bytes"}
+     08:58:15.740 [error] Invalid trento event: :decoding_error
+     08:58:16.016 [error] Could not refresh the access token: :signature_error
+     
+
+
+ 42) test should not accept an Authenticated request with the incorrect jti (TrentoWeb.Plugs.AuthenticateAPIKeyPlugTest)
+     test/trento_web/plugs/authenticate_apikey_plug_test.exs:64
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 413ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/conn_case.ex:42: TrentoWeb.ConnCase.__ex_unit_setup_1/1
+       (trento 2.4.0) test/support/conn_case.ex:1: TrentoWeb.ConnCase.__ex_unit__/2
+       test/trento_web/plugs/authenticate_apikey_plug_test.exs:1: TrentoWeb.Plugs.AuthenticateAPIKeyPlugTest.__ex_unit__/2
+
+     The following output was logged:
+     08:58:15.719 request_id=GDzd3MFgA93d3HAAAB3B [error] Failed to handle discovery event: :unknown_discovery_type
+     08:58:15.739 [error] Decoding error: %Protobuf.DecodeError{message: "insufficient data decoding field_number 12, expected \"d-payload\" to be at least 97 bytes"}
+     08:58:15.740 [error] Invalid trento event: :decoding_error
+     08:58:16.016 [error] Could not refresh the access token: :signature_error
+     
+
+
+ 43) test SapSystemJSON should add the system replication status to the secondary instance and should remove it from the primary one (TrentoWeb.V1.SapSystemJSONTest)
+     test/trento_web/views/v1/sap_system_view_json_test.exs:57
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 406ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/conn_case.ex:42: TrentoWeb.ConnCase.__ex_unit_setup_1/1
+       (trento 2.4.0) test/support/conn_case.ex:1: TrentoWeb.ConnCase.__ex_unit__/2
+       test/trento_web/views/v1/sap_system_view_json_test.exs:1: TrentoWeb.V1.SapSystemJSONTest.__ex_unit__/2
+
+     The following output was logged:
+     08:58:15.739 [error] Decoding error: %Protobuf.DecodeError{message: "insufficient data decoding field_number 12, expected \"d-payload\" to be at least 97 bytes"}
+     08:58:15.740 [error] Invalid trento event: :decoding_error
+     08:58:16.016 [error] Could not refresh the access token: :signature_error
+     
+.
+
+ 44) test should return forbidden when user tries to delete settings without right abilities (TrentoWeb.V1.SettingsControllerTest)
+     test/trento_web/controllers/v1/settings_controller_test.exs:750
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 435ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/conn_case.ex:42: TrentoWeb.ConnCase.__ex_unit_setup_1/1
+       (trento 2.4.0) test/support/conn_case.ex:1: TrentoWeb.ConnCase.__ex_unit__/2
+       test/trento_web/controllers/v1/settings_controller_test.exs:1: TrentoWeb.V1.SettingsControllerTest.__ex_unit__/2
+
+     The following output was logged:
+     08:58:16.016 [error] Could not refresh the access token: :signature_error
+     
+
+
+ 45) test should remove parent field from HANA clusters (TrentoWeb.V2.ClusterJSONTest)
+     test/trento_web/views/v2/cluster_view_json_test.exs:27
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 440ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/conn_case.ex:42: TrentoWeb.ConnCase.__ex_unit_setup_1/1
+       (trento 2.4.0) test/support/conn_case.ex:1: TrentoWeb.ConnCase.__ex_unit__/2
+       test/trento_web/views/v2/cluster_view_json_test.exs:1: TrentoWeb.V2.ClusterJSONTest.__ex_unit__/2
+
+     The following output was logged:
+     08:58:16.016 [error] Could not refresh the access token: :signature_error
+     
+..
+
+ 46) test operation completed should get operation completed metadata (Trento.ActivityLog.QueueEventParserTest)
+     test/trento/activity_logging/queue_event_parser_test.exs:38
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 406ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/data_case.ex:33: Trento.DataCase.__ex_unit_setup_0/1
+       (trento 2.4.0) test/support/data_case.ex:1: Trento.DataCase.__ex_unit__/2
+       test/trento/activity_logging/queue_event_parser_test.exs:1: Trento.ActivityLog.QueueEventParserTest.__ex_unit__/2
+
+     The following output was logged:
+     08:58:16.016 [error] Could not refresh the access token: :signature_error
+     
+
+
+ 47) test init/1 should raise ArgumentError when :router option is missing (TrentoWeb.Plugs.ApiRedirectorTest)
+     test/trento_web/plugs/api_redirector_test.exs:26
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 407ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/conn_case.ex:42: TrentoWeb.ConnCase.__ex_unit_setup_1/1
+       (trento 2.4.0) test/support/conn_case.ex:1: TrentoWeb.ConnCase.__ex_unit__/2
+       test/trento_web/plugs/api_redirector_test.exs:1: TrentoWeb.Plugs.ApiRedirectorTest.__ex_unit__/2
+
+     The following output was logged:
+     08:58:16.016 [error] Could not refresh the access token: :signature_error
+     
+.............
+
+ 48) test checks execution with wanda adapter should return an error if the checks execution start fails (Trento.ClustersTest)
+     test/trento/clusters_test.exs:221
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 473ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/data_case.ex:33: Trento.DataCase.__ex_unit_setup_0/1
+       (trento 2.4.0) test/support/data_case.ex:1: Trento.DataCase.__ex_unit__/2
+       test/trento/clusters_test.exs:1: Trento.ClustersTest.__ex_unit__/2
+
+     The following output was logged:
+     08:58:16.395 [error] Unable to authenticate apikey: [message: "Invalid token", claim: "aud", claim_val: "trento_app"]
+     
+
+
+ 49) test call/2 should return 404 with the error view when the path is not recognized by the router (TrentoWeb.Plugs.ApiRedirectorTest)
+     test/trento_web/plugs/api_redirector_test.exs:34
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 516ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/conn_case.ex:42: TrentoWeb.ConnCase.__ex_unit_setup_1/1
+       (trento 2.4.0) test/support/conn_case.ex:1: TrentoWeb.ConnCase.__ex_unit__/2
+       test/trento_web/plugs/api_redirector_test.exs:1: TrentoWeb.Plugs.ApiRedirectorTest.__ex_unit__/2
+
+     The following output was logged:
+     08:58:16.395 [error] Unable to authenticate apikey: [message: "Invalid token", claim: "aud", claim_val: "trento_app"]
+     
+
+
+ 50) test process should process ExecutionStarted and broadcast to the socket (Trento.Infrastructure.Checks.AMQP.ProcessorTest)
+     test/trento/infrastructure/checks/processor_test.exs:28
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 451ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/channel_case.ex:34: TrentoWeb.ChannelCase.__ex_unit_setup_0/1
+       (trento 2.4.0) test/support/channel_case.ex:1: TrentoWeb.ChannelCase.__ex_unit__/2
+       test/trento/infrastructure/checks/processor_test.exs:1: Trento.Infrastructure.Checks.AMQP.ProcessorTest.__ex_unit__/2
+
+     The following output was logged:
+     08:58:16.395 [error] Unable to authenticate apikey: [message: "Invalid token", claim: "aud", claim_val: "trento_app"]
+     
+
+
+ 51) test Alerting the configured recipient about crucial facts with email notifications Notify api key will be expired soon (Trento.Infrastructure.Alerting.AlertingTest)
+     test/trento/infrastructure/alerting/alerting_test.exs:75
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 433ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/data_case.ex:33: Trento.DataCase.__ex_unit_setup_0/1
+       (trento 2.4.0) test/support/data_case.ex:1: Trento.DataCase.__ex_unit__/2
+       test/trento/infrastructure/alerting/alerting_test.exs:1: Trento.Infrastructure.Alerting.AlertingTest.__ex_unit__/2
+
+     The following output was logged:
+     08:58:16.395 [error] Unable to authenticate apikey: [message: "Invalid token", claim: "aud", claim_val: "trento_app"]
+     
+
+
+ 52) test checks customization should get correct actor (Trento.ActivityLog.QueueEventParserTest)
+     test/trento/activity_logging/queue_event_parser_test.exs:60
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 516ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/data_case.ex:33: Trento.DataCase.__ex_unit_setup_0/1
+       (trento 2.4.0) test/support/data_case.ex:1: Trento.DataCase.__ex_unit__/2
+       test/trento/activity_logging/queue_event_parser_test.exs:1: Trento.ActivityLog.QueueEventParserTest.__ex_unit__/2
+
+     The following output was logged:
+     08:58:16.395 [error] Unable to authenticate apikey: [message: "Invalid token", claim: "aud", claim_val: "trento_app"]
+     
+
+
+ 53) test metadata enrichment combination should combine metadata enrichment when some components are not yet available (Trento.ActivityLog.MetadataEnricherTest)
+     test/trento/activity_logging/metadata_enricher_test.exs:489
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 475ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/data_case.ex:33: Trento.DataCase.__ex_unit_setup_0/1
+       (trento 2.4.0) test/support/data_case.ex:1: Trento.DataCase.__ex_unit__/2
+       test/trento/activity_logging/metadata_enricher_test.exs:1: Trento.ActivityLog.MetadataEnricherTest.__ex_unit__/2
+
+     The following output was logged:
+     08:58:16.395 [error] Unable to authenticate apikey: [message: "Invalid token", claim: "aud", claim_val: "trento_app"]
+     
+
+
+ 54) test fetch/2 should not fetch user when the jwt is malformed (TrentoWeb.Plugs.AppJWTAuthPlugTest)
+     test/trento_web/plugs/app_jwt_auth_plug_test.exs:201
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 516ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/conn_case.ex:42: TrentoWeb.ConnCase.__ex_unit_setup_1/1
+       (trento 2.4.0) test/support/conn_case.ex:1: TrentoWeb.ConnCase.__ex_unit__/2
+       test/trento_web/plugs/app_jwt_auth_plug_test.exs:1: TrentoWeb.Plugs.AppJWTAuthPlugTest.__ex_unit__/2
+
+     The following output was logged:
+     08:58:16.395 [error] Unable to authenticate apikey: [message: "Invalid token", claim: "aud", claim_val: "trento_app"]
+     
+
+
+ 55) test ActivityLogController should return valid response of empty list if no actor matches provided with suitable params (TrentoWeb.V1.ActivityLogControllerTest)
+     test/trento_web/controllers/v1/activity_log_controller_test.exs:80
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 517ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/conn_case.ex:42: TrentoWeb.ConnCase.__ex_unit_setup_1/1
+       (trento 2.4.0) test/support/conn_case.ex:1: TrentoWeb.ConnCase.__ex_unit__/2
+       test/trento_web/controllers/v1/activity_log_controller_test.exs:1: TrentoWeb.V1.ActivityLogControllerTest.__ex_unit__/2
+
+     The following output was logged:
+     08:58:16.395 [error] Unable to authenticate apikey: [message: "Invalid token", claim: "aud", claim_val: "trento_app"]
+     
+
+
+ 56) test should accept an Authenticated request with the correct jti (TrentoWeb.Plugs.AuthenticateAPIKeyPlugTest)
+     test/trento_web/plugs/authenticate_apikey_plug_test.exs:34
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 419ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/conn_case.ex:42: TrentoWeb.ConnCase.__ex_unit_setup_1/1
+       (trento 2.4.0) test/support/conn_case.ex:1: TrentoWeb.ConnCase.__ex_unit__/2
+       test/trento_web/plugs/authenticate_apikey_plug_test.exs:1: TrentoWeb.Plugs.AuthenticateAPIKeyPlugTest.__ex_unit__/2
+
+
+
+ 57) test retrieve errata details should return 422 for get_errata_details unauthorized (TrentoWeb.V1.SUSEManagerControllerTest)
+     test/trento_web/controllers/v1/suse_manager_controller_test.exs:441
+     ** (MatchError) no match of right hand side value: {:error, {%DBConnection.ConnectionError{message: "connection not available and request was dropped from queue after 482ms. This means requests are coming in and your connection pool cannot serve them fast enough. You can address this by:\n\n  1. Ensuring your database is available and that you can connect to it\n  2. Tracking down slow queries and making sure they are running fast enough\n  3. Increasing the pool_size (although this increases resource consumption)\n  4. Allowing requests to wait longer by increasing :queue_target and :queue_interval\n\nSee DBConnection.start_link/2 for more information\n", severity: :error, reason: :queue_timeout}, [{DBConnection.Ownership, :ownership_checkout, 2, [file: ~c"lib/db_connection/ownership.ex", line: 109, error_info: %{module: Exception}]}, {Ecto.Adapters.SQL.Sandbox, :checkout, 2, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 509]}, {Ecto.Adapters.SQL.Sandbox, :"-start_owner!/2-fun-0-", 3, [file: ~c"lib/ecto/adapters/sql/sandbox.ex", line: 416]}, {Agent.Server, :init, 1, [file: ~c"lib/agent/server.ex", line: 8]}, {:gen_server, :init_it, 2, [file: ~c"gen_server.erl", line: 980]}, {:gen_server, :init_it, 6, [file: ~c"gen_server.erl", line: 935]}, {:proc_lib, :init_p_do_apply, 3, [file: ~c"proc_lib.erl", line: 241]}]}}
+     stacktrace:
+       (ecto_sql 3.11.3) lib/ecto/adapters/sql/sandbox.ex:413: Ecto.Adapters.SQL.Sandbox.start_owner!/2
+       (trento 2.4.0) test/support/conn_case.ex:42: TrentoWeb.ConnCase.__ex_unit_setup_1/1
+       (trento 2.4.0) test/support/conn_case.ex:1: TrentoWeb.ConnCase.__ex_unit__/2
+       test/trento_web/controllers/v1/suse_manager_controller_test.exs:1: TrentoWeb.V1.SUSEManagerControllerTest.__ex_unit__/2
+
+     The following output was logged:
+     08:58:16.395 [error] Unable to authenticate apikey: [message: "Invalid token", claim: "aud", claim_val: "trento_app"]
+     
+................................................................................................................................................................................................................

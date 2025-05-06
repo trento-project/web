@@ -138,16 +138,18 @@ jobs:
         run: mix setup
       - name: Run trento detached
         run: mix phx.server &
-      - name: Wait for web app to start
-        uses: iFaxity/wait-on-action@v1.2.1
-        with:
-          resource: http://localhost:4000
-          timeout: 10000
+      # - name: Wait for web app to start
+      #   uses: iFaxity/wait-on-action@v1.2.1
+      #   with:
+      #     resource: http://localhost:4000
+      #     timeout: 10000
       # - name: Set ENV_TS to get current Timestamp for JUnit reports
       #   run: echo "ENV_TS=$(date +%F_%T | sed 's/:/-/g')" >> $GITHUB_ENV
-      - name: Run backend tests
-        working-directory: hack/flaky_tests_analysis
-        run: make gen-test-data-be N-TIMES=1
+      # - name: Run backend tests
+      #   working-directory: hack/flaky_tests_analysis
+      #   run: make gen-test-data-be N-TIMES=1
+      - name: run tests
+        run: mix test
       - name: Upload backend tests junit reports
         uses: actions/upload-artifact@v4
         with:
