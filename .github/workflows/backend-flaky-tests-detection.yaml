@@ -87,18 +87,13 @@ jobs:
 
   test-backend:
     name: Backend Tests Run
-    needs: [elixir-deps, npm-deps]
+    needs: [elixir-deps]
     runs-on: ubuntu-24.04
-    env:
-      MIX_ENV: dev
-    timeout-minutes: 120
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.12.1
         with:
           access_token: ${{ github.token }}
-      - name: Install inotify-tools
-        run: sudo apt-get update && sudo apt-get install -y inotify-tools
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -109,10 +104,6 @@ jobs:
         with:
           version-file: .tool-versions
           version-type: strict
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
       - name: Retrieve Cached Dependencies
         uses: actions/cache@v4
         id: mix-cache
@@ -122,34 +113,18 @@ jobs:
             _build/dev
             priv/plts
           key: ${{ runner.os }}-${{ steps.setup-elixir.outputs.otp-version }}-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}
-      - name: Retrieve NPM Cached Dependencies
-        uses: actions/cache@v4
-        id: npm-cache
-        with:
-          path: |
-            assets/node_modules
-          key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
+      - name: Compile
+        run: mix compile --warnings-as-errors
       - name: "Docker compose dependencies"
         uses: isbang/compose-action@v2.1.0
         with:
           compose-file: "./docker-compose.yaml"
           down-flags: "--volumes"
-      - name: Mix setup
-        run: MIX_ENV=test mix setup
-      - name: Run trento detached
-        run: mix phx.server &
-      # - name: Wait for web app to start
-      #   uses: iFaxity/wait-on-action@v1.2.1
-      #   with:
-      #     resource: http://localhost:4000
-      #     timeout: 10000
-      # - name: Set ENV_TS to get current Timestamp for JUnit reports
-      #   run: echo "ENV_TS=$(date +%F_%T | sed 's/:/-/g')" >> $GITHUB_ENV
       # - name: Run backend tests
       #   working-directory: hack/flaky_tests_analysis
       #   run: make gen-test-data-be N-TIMES=1
       - name: run tests
-        run: MIX_ENV=test mix test
+        run: mix test
       - name: Upload backend tests junit reports
         uses: actions/upload-artifact@v4
         with:
