@@ -54,7 +54,7 @@ jobs:
           mkdir -p priv/plts
           mix local.rebar --force
           mix local.hex --force
-          mix deps.get
+          MIX_ENV=test mix deps.get
           mix deps.compile --warnings-as-errors
           mix dialyzer --plt
 
@@ -135,7 +135,7 @@ jobs:
           compose-file: "./docker-compose.yaml"
           down-flags: "--volumes"
       - name: Mix setup
-        run: mix setup
+        run: MIX_ENV=test mix setup
       - name: Run trento detached
         run: mix phx.server &
       # - name: Wait for web app to start
@@ -149,7 +149,7 @@ jobs:
       #   working-directory: hack/flaky_tests_analysis
       #   run: make gen-test-data-be N-TIMES=1
       - name: run tests
-        run: mix test
+        run: MIX_ENV=test mix test
       - name: Upload backend tests junit reports
         uses: actions/upload-artifact@v4
         with:
