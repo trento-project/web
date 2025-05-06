@@ -123,6 +123,10 @@ jobs:
       - name: Run backend tests
         working-directory: hack/flaky_tests_analysis
         run: make gen-test-data-be N-TIMES=1
+      - name: Replace colons with dashes in /tmp test report files
+        run: |
+          cd /tmp
+          find . -type f -not -path '*/.git/*' -exec sed -i 's/:/-/g' {} +
       - name: Upload backend tests junit reports
         uses: actions/upload-artifact@v4
         with:
