@@ -190,7 +190,7 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
     database_instances_deregister_commands ++
       application_instances_deregister_commands ++
       maybe_deregister_cluster_host(cluster_id, host_id, requested_at) ++
-      [%DeregisterHost{host_id: host_id, deregistered_at: requested_at}]
+      [%DeregisterHost{host_id: UUID.uuid4(), deregistered_at: requested_at}]
   end
 
   def apply(%DeregistrationProcessManager{} = state, %HostAddedToCluster{
