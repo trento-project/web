@@ -289,7 +289,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
             type: :integer,
             example: 587
           },
-          smtp_username: %Schema{type: :string}
+          smtp_username: %Schema{type: :string},
+          enforced_from_env: %Schema{type: :boolean}
         },
         required: [
           :enabled,
@@ -297,7 +298,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
           :recipient_email,
           :smtp_server,
           :smtp_port,
-          :smtp_username
+          :smtp_username,
+          :enforced_from_env
         ]
       },
       struct?: false
