@@ -69,12 +69,14 @@ if config_env() in [:prod, :demo] do
       For example: yourdomain.example.com
       """
 
-  defp determine_ip() do
+  # Returns an IP address to bind the HTTP server, based on IPv6 support.
+  # This prevents startup failures on systems without IPv6 where the app would crash
+  # Falls back to IPv4 `{0, 0, 0, 0}` if IPv6 is not available.
+  ip =
     case :inet.getaddr(~c"localhost", :inet6) do
       {:ok, _addr} -> {0, 0, 0, 0, 0, 0, 0, 0}
       {:error, _} -> {0, 0, 0, 0}
     end
-  end
 
   config :trento, TrentoWeb.Endpoint,
     http: [
@@ -82,7 +84,7 @@ if config_env() in [:prod, :demo] do
       # Set it to  {0, 0, 0, 0, 0, 0, 0, 1} for local network only access.
       # See the documentation on https://hexdocs.pm/plug_cowboy/Plug.Cowboy.html
       # for details about using IPv6 vs IPv4 and loopback vs public addresses.
-      ip: determine_ip(),
+      ip: ip,
       port: String.to_integer(System.get_env("PORT") || "4000")
     ],
     check_origin: true,
