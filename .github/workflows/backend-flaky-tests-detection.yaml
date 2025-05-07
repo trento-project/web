@@ -123,15 +123,19 @@ jobs:
       - name: Run backend tests
         working-directory: hack/flaky_tests_analysis
         run: make gen-test-data-be N-TIMES=1
+      - name: Move .xml reports to junit-reports folder
+        run: |
+          mkdir -p ./junit-reports
+          mv /tmp/*.xml ./junit-reports/ || echo "No XML files found in /tmp"
       - name: Replace colons with dashes in /tmp (with sudo)
         run: |
-          cd /tmp
           sudo find . -type f -not -path '*/.git/*' -exec sed -i 's/:/-/g' {} +
+        working-directory: junit-reports
       - name: Upload backend tests junit reports
         uses: actions/upload-artifact@v4
         with:
           name: backend-junit-reports
-          path: /tmp/*.xml
+          path: ./junit-reports/*.xml
 
 
   flaky-tests-analysis:
