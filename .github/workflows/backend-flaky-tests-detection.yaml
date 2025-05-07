@@ -159,7 +159,7 @@ jobs:
       - name: Upload backend tests junit reports
         uses: actions/upload-artifact@v4
         with:
-          name: junit-reports
+          name: junit-reports-${{ matrix.container }}
           path: junit-reports/*.xml
 
   flaky-tests-analysis:
@@ -177,9 +177,10 @@ jobs:
           fetch-depth: 0    
       - name: Download JUnit reports artifacts
         uses: actions/download-artifact@v4
-        # with:
-          # path: junit-reports
-          # pattern: backend-junit-reports
+        with:
+          path: junit-reports
+          pattern: junit-reports
+          merge-multiple: true
       - name: Analyze
         run: |
           make venv-create
