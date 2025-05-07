@@ -90,15 +90,15 @@ jobs:
                 ansible_user: ec2-user
                 ansible_python_interpreter: /usr/bin/python3
               children:
-                trento-server:
+                trento_server:
                   hosts:
                     server:
                       ansible_host: ${{ secrets.PR_ENV_MACHINE_IP }} 
-                postgres-hosts:
+                postgres_hosts:
                   hosts:
                     server:
                       ansible_host: ${{ secrets.PR_ENV_MACHINE_IP }}
-                rabbitmq-hosts:
+                rabbitmq_hosts:
                   hosts:
                     server:
                       ansible_host: ${{ secrets.PR_ENV_MACHINE_IP }}
