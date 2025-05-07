@@ -122,12 +122,16 @@ jobs:
           down-flags: "--volumes"
       - name: Run backend tests
         working-directory: hack/flaky_tests_analysis
-        run: make gen-test-data-be N-TIMES=1     
+        run: make gen-test-data-be N-TIMES=1
+      - name: Copy reports to project folder     
+        run: |
+          mkdir junit-reports
+          cp /tmp/*.xml junit-reports/
       - name: Upload backend tests junit reports
         uses: actions/upload-artifact@v4
         with:
           name: backend-junit-reports
-          path: /tmp
+          path: /junit-reports
 
 
   flaky-tests-analysis:
