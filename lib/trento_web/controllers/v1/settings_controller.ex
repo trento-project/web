@@ -291,6 +291,7 @@ defmodule TrentoWeb.V1.SettingsController do
          Schema.Platform.AlertingSettings},
       unauthorized: Schema.Unauthorized.response(),
       forbidden: Schema.Forbidden.response(),
+      conflict: Schema.Conflict.response(),
       unprocessable_entity: Schema.UnprocessableEntity.response()
     ]
 
@@ -318,6 +319,7 @@ defmodule TrentoWeb.V1.SettingsController do
       unauthorized: Schema.Unauthorized.response(),
       forbidden: Schema.Forbidden.response(),
       not_found: Schema.NotFound.response(),
+      conflict: Schema.Conflict.response(),
       unprocessable_entity: Schema.UnprocessableEntity.response()
     ]
 

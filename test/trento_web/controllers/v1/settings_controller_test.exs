@@ -5,6 +5,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
   import Trento.Factory
   import OpenApiSpex.TestAssertions
   import Trento.Support.Helpers.AbilitiesTestHelper
+  import Trento.Support.Helpers.AlertingSettingsHelper
   import Mox
 
   setup_all :setup_api_spec_v1
@@ -642,14 +643,11 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
   end
 
   describe "AlertingSettings" do
-    @alerting_settings_get_fields ~w(enabled sender_email recipient_email smtp_server smtp_port smtp_username)a
-    @alerting_settings_set_fields ~w(enabled sender_email recipient_email smtp_server smtp_port smtp_username smtp_password)a
-
     test "should successfully return settings", %{conn: conn, api_spec: api_spec} do
       exp_settings =
         :alerting_settings
         |> insert()
-        |> Map.take(@alerting_settings_get_fields)
+        |> Map.take(alerting_settings_get_fields())
 
       resp =
         conn
@@ -679,13 +677,13 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       api_spec: api_spec
     } do
       settings = build(:alerting_settings)
-      set_params = Map.take(settings, @alerting_settings_set_fields)
-      exp_params = Map.take(settings, @alerting_settings_get_fields)
+      create_params = Map.take(settings, alerting_settings_set_fields())
+      exp_params = Map.take(settings, alerting_settings_get_fields())
 
       resp =
         conn
         |> put_req_header("content-type", "application/json")
-        |> post(~p"/api/v1/settings/alerting", set_params)
+        |> post(~p"/api/v1/settings/alerting", create_params)
         |> json_response(:ok)
         |> assert_response_schema("AlertingSettings", api_spec)
 
@@ -704,7 +702,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
         settings =
           :alerting_settings
           |> build()
-          |> Map.take(@alerting_settings_set_fields)
+          |> Map.take(alerting_settings_set_fields())
           |> Map.delete(@field)
 
         conn =
@@ -736,7 +734,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       settings =
         :alerting_settings
         |> build(sender_email: "not_an_email.com")
-        |> Map.take(@alerting_settings_set_fields)
+        |> Map.take(alerting_settings_set_fields())
 
       conn =
         conn
@@ -761,29 +759,22 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       conn: conn,
       api_spec: api_spec
     } do
-      %{
-        sender_email: sender_email,
-        recipient_email: recipient_email,
-        smtp_server: smtp_server,
-        smtp_port: smtp_port,
-        smtp_username: smtp_username
-      } = insert(:alerting_settings, enabled: true)
+      inserted_settings = insert(:alerting_settings, enabled: true)
+      update_params = %{enabled: false}
+
+      exp_params =
+        inserted_settings
+        |> Map.take(alerting_settings_get_fields())
+        |> Map.merge(update_params)
 
       resp =
         conn
         |> put_req_header("content-type", "application/json")
-        |> patch(~p"/api/v1/settings/alerting", %{enabled: false})
+        |> patch(~p"/api/v1/settings/alerting", update_params)
         |> json_response(:ok)
         |> assert_response_schema("AlertingSettings", api_spec)
 
-      assert %{
-               enabled: false,
-               sender_email: sender_email,
-               recipient_email: recipient_email,
-               smtp_server: smtp_server,
-               smtp_port: smtp_port,
-               smtp_username: smtp_username
-             } == resp
+      assert exp_params == resp
     end
 
     test "should fail to update settings if validation (changeset) fails", %{
@@ -929,7 +920,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       settings =
         :alerting_settings
         |> build()
-        |> Map.take(@alerting_settings_set_fields)
+        |> Map.take(alerting_settings_set_fields())
 
       conn
       |> put_req_header("content-type", "application/json")
@@ -946,7 +937,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       settings =
         :alerting_settings
         |> build()
-        |> Map.take(@alerting_settings_set_fields)
+        |> Map.take(alerting_settings_set_fields())
         |> Map.delete(:smtp_password)
 
       conn
@@ -954,6 +945,60 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       |> patch(~p"/api/v1/settings/alerting", settings)
       |> json_response(:forbidden)
       |> assert_schema("Forbidden", api_spec)
+    end
+  end
+end
+
+defmodule TrentoWeb.V1.SettingsControllerSequentialTest do
+  @moduledoc """
+  Tests of the settings controller which modify global state and thus are not safe for async execution.
+  """
+
+  use TrentoWeb.ConnCase
+
+  import OpenApiSpex.TestAssertions
+  import Trento.Factory
+  import Trento.Support.Helpers.AbilitiesTestHelper
+  import Trento.Support.Helpers.AlertingSettingsHelper
+
+  setup_all :setup_api_spec_v1
+  setup :setup_user
+
+  describe "Alerting Settings" do
+    setup :restore_alerting_app_env
+
+    for {case_name, _} = scenario <- [{"create", "post"}, {"update", "patch"}] do
+      @scenario scenario
+
+      test "should fail when trying to #{case_name} settings when they enforced from env", %{
+        conn: conn,
+        api_spec: api_spec
+      } do
+        {_, http_method} = @scenario
+
+        Application.put_env(:trento, :alerting, enabled: true)
+
+        params =
+          :alerting_settings
+          |> build()
+          |> Map.take(alerting_settings_set_fields())
+
+        resp =
+          conn
+          |> put_req_header("content-type", "application/json")
+          |> dispatch(@endpoint, http_method, ~p"/api/v1/settings/alerting", params)
+          |> json_response(:conflict)
+          |> assert_response_schema("Conflict", api_spec)
+
+        assert %{
+                 errors: [
+                   %{
+                     title: "Conflict has occurred",
+                     detail: "Alerting settings can not be set, enforced by ENV."
+                   }
+                 ]
+               } == resp
+      end
     end
   end
 end

@@ -25,6 +25,7 @@ defmodule Trento.Settings.AlertingSettings do
       source: :alerting_smtp_password,
       redact: true
 
+    field :enforced_from_env, :boolean, virtual: true, default: false
     timestamps(type: :utc_datetime_usec)
     sti_fields()
   end
