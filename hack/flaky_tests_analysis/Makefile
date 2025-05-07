@@ -20,13 +20,13 @@ TOP-N ?= 40
 # Use only if extra customization is needed
 WRITE_JUNIT ?= 1
 CLI_LOG_PREFIX ?= Trento_Flaky_Test_Analysis_Log
-LOG_FILENAME="$(CLI_LOG_PREFIX)_$(shell date +%F_%H-%M-%S).txt"
+LOG_FILENAME="$(CLI_LOG_PREFIX)_$(shell date +%F_%T).txt"
 ENV_TS ?= "$(shell date +%F_%T)"
 
 gen-test-data-be:
 	cd ../../ ; touch $(LOG_FILENAME) ; for i in $$(seq 1 $(N-TIMES)) ;  do \
 			echo "Run $$i of $(N-TIMES)" ;\
-		  WRITE_JUNIT=$(WRITE_JUNIT) mix test $(RUN_ONLY) | tee -a  $(LOG_FILENAME) ;\
+		  WRITE_JUNIT=$(WRITE_JUNIT) MIX_JUNIT_REPORT_FILE=./junit-reports/results.xml mix test $(RUN_ONLY) | tee -a  $(LOG_FILENAME) ;\
 		done 
 
 gen-test-data-fe:
