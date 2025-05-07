@@ -31,6 +31,13 @@ defmodule TrentoWeb.FallbackController do
     |> render(:"404", reason: "Alerting settings not configured.")
   end
 
+  def call(conn, {:error, :alerting_settings_enforced}) do
+    conn
+    |> put_status(:conflict)
+    |> put_view(json: ErrorJSON)
+    |> render(:"409", reason: "Alerting settings can not be set, enforced by ENV.")
+  end
+
   def call(conn, {:error, :suma_authentication_error}) do
     conn
     |> put_status(:unprocessable_entity)
