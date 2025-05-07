@@ -123,7 +123,6 @@ jobs:
       - name: Run backend tests
         working-directory: hack/flaky_tests_analysis
         run: make gen-test-data-be N-TIMES=1     
-        working-directory: junit-reports
       - name: Upload backend tests junit reports
         uses: actions/upload-artifact@v4
         with:
