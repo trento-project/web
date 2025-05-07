@@ -968,7 +968,7 @@ defmodule Trento.SettingsTest do
   describe "Alerting Settings from environment" do
     setup :restore_alerting_app_env
 
-    @default_alerting_settings [
+    @default_alerting_settings %Settings.AlertingSettings{
       enabled: false,
       smtp_server: "",
       smtp_port: 587,
@@ -976,7 +976,7 @@ defmodule Trento.SettingsTest do
       smtp_password: "",
       sender_email: "alerts@trento-project.io",
       recipient_email: "admin@trento-project.io"
-    ]
+    }
 
     for {case_name, _pair} = scenario <- [
           {"enabled", [enabled: true]},
@@ -990,11 +990,9 @@ defmodule Trento.SettingsTest do
         ] do
       @scenario scenario
 
-      test "return full settings with default values when only #{case_name} is set" do
+      test "return complete settings with default values when only #{case_name} is set" do
         {_, settings} = @scenario
-
-        expected_settings =
-          struct!(Settings.AlertingSettings, Keyword.merge(@default_alerting_settings, settings))
+        expected_settings = struct!(@default_alerting_settings, settings)
 
         Application.put_env(:trento, :alerting, settings)
         assert {:ok, expected_settings} == Settings.get_alerting_settings()
@@ -1019,6 +1017,16 @@ defmodule Trento.SettingsTest do
 
       assert {:error, :alerting_settings_enforced} =
                Settings.create_alerting_settings(update_params)
+    end
+
+    test "have precedence over settings in the DB" do
+      insert(:alerting_settings)
+
+      update = [enabled: true]
+      expected_settings = struct!(@default_alerting_settings, update)
+      Application.put_env(:trento, :alerting, update)
+
+      assert {:ok, expected_settings} == Settings.get_alerting_settings()
     end
   end
 end
