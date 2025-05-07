@@ -5,7 +5,6 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
   import Trento.Factory
   import OpenApiSpex.TestAssertions
   import Trento.Support.Helpers.AbilitiesTestHelper
-  import Trento.Support.Helpers.AlertingSettingsHelper
   import Mox
 
   setup_all :setup_api_spec_v1
@@ -646,8 +645,6 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
     @alerting_settings_get_fields ~w(enabled sender_email recipient_email smtp_server smtp_port smtp_username enforced_from_env)a
     @alerting_settings_set_fields ~w(enabled sender_email recipient_email smtp_server smtp_port smtp_username smtp_password)a
 
-    setup :restore_alerting_app_env
-
     test "should successfully return settings", %{conn: conn, api_spec: api_spec} do
       exp_settings =
         :alerting_settings
@@ -828,40 +825,6 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
                ]
              } == resp
     end
-
-    for {case_name, _} = scenario <- [{"create", "post"}, {"update", "patch"}] do
-      @scenario scenario
-
-      test "should fail when trying to #{case_name} settings when they enforced from env", %{
-        conn: conn,
-        api_spec: api_spec
-      } do
-        {_, http_method} = @scenario
-
-        Application.put_env(:trento, :alerting, enabled: true)
-
-        params =
-          :alerting_settings
-          |> build()
-          |> Map.take(@alerting_settings_set_fields)
-
-        resp =
-          conn
-          |> put_req_header("content-type", "application/json")
-          |> dispatch(@endpoint, http_method, ~p"/api/v1/settings/alerting", params)
-          |> json_response(:conflict)
-          |> assert_response_schema("Conflict", api_spec)
-
-        assert %{
-                 errors: [
-                   %{
-                     title: "Conflict has occurred",
-                     detail: "Alerting settings can not be set, enforced by ENV."
-                   }
-                 ]
-               } == resp
-      end
-    end
   end
 
   describe "forbidden response" do
@@ -984,6 +947,62 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       |> patch(~p"/api/v1/settings/alerting", settings)
       |> json_response(:forbidden)
       |> assert_schema("Forbidden", api_spec)
+    end
+  end
+end
+
+defmodule TrentoWeb.V1.SettingsControllerSequentialTest do
+  @moduledoc """
+  Tests of the settings controller which modify global state and thus are not safe for async execution.
+  """
+
+  use TrentoWeb.ConnCase
+
+  import OpenApiSpex.TestAssertions
+  import Trento.Factory
+  import Trento.Support.Helpers.AbilitiesTestHelper
+  import Trento.Support.Helpers.AlertingSettingsHelper
+
+  setup_all :setup_api_spec_v1
+  setup :setup_user
+
+  describe "Alerting Settings" do
+    @alerting_settings_set_fields ~w(enabled sender_email recipient_email smtp_server smtp_port smtp_username smtp_password)a
+
+    setup :restore_alerting_app_env
+
+    for {case_name, _} = scenario <- [{"create", "post"}, {"update", "patch"}] do
+      @scenario scenario
+
+      test "should fail when trying to #{case_name} settings when they enforced from env", %{
+        conn: conn,
+        api_spec: api_spec
+      } do
+        {_, http_method} = @scenario
+
+        Application.put_env(:trento, :alerting, enabled: true)
+
+        params =
+          :alerting_settings
+          |> build()
+          |> Map.take(@alerting_settings_set_fields)
+
+        resp =
+          conn
+          |> put_req_header("content-type", "application/json")
+          |> dispatch(@endpoint, http_method, ~p"/api/v1/settings/alerting", params)
+          |> json_response(:conflict)
+          |> assert_response_schema("Conflict", api_spec)
+
+        assert %{
+                 errors: [
+                   %{
+                     title: "Conflict has occurred",
+                     detail: "Alerting settings can not be set, enforced by ENV."
+                   }
+                 ]
+               } == resp
+      end
     end
   end
 end
