@@ -138,7 +138,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: backend-junit-reports
-          path: /junit-reports
+          path: junit-reports/*.xml
 
   flaky-tests-analysis:
     name: Flaky Tests Analysis
