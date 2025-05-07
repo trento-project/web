@@ -156,7 +156,7 @@ jobs:
       - name: Download JUnit reports artifacts
         uses: actions/download-artifact@v4
         with:
-          # path: junit-reports
+          path: junit-reports
           # pattern: backend-junit-reports
       - name: Analyze
         run: |
