@@ -125,14 +125,14 @@ jobs:
         run: make gen-test-data-be N-TIMES=1
       - name: Move .xml reports to junit-reports folder
         run: |
-          mkdir -p ./junit-reports
+          mkdir -p junit-reports
           cp /tmp/*.xml ./junit-reports/ || echo "No XML files found in /tmp"
       - name: Remove semicolons from all XML files
         run: |
-                  find "./junit-reports" -name "*.xml" -type f -print0 | while IFS= read -r -d $'\0' file; do
-                    echo "Processing file: $file"
-                    sed -i 's/;//g' "$file"
-                  done        
+          find -name "*.xml" -type f -print0 | while IFS= read -r -d $'\0' file; do
+          echo "Processing file: $file"
+          sed -i 's/;//g' "$file"
+          done        
         working-directory: junit-reports
       - name: Upload backend tests junit reports
         uses: actions/upload-artifact@v4
