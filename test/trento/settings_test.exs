@@ -983,7 +983,7 @@ defmodule Trento.SettingsTest do
           {"SMTP server", [smtp_server: "test.com"]},
           {"SMTP port", [smtp_port: "587"]},
           {"SMTP username", [smtp_username: "testuser"]},
-          {"SMPT password", [smtp_password: "testpass}"]},
+          {"SMTP password", [smtp_password: "testpass}"]},
           {"sender email", [sender_email: "sender@trento.com"]},
           {"recipient email", [recipient_email: "recipient@trento.com"]},
           {"enabled and SMTP server", [enabled: true, smtp_server: "testserver.com"]}

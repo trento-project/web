@@ -19,7 +19,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Conflict do
             type: :object,
             properties: %{
               detail: %Schema{type: :string, example: "Conflicting state."},
-              title: %Schema{type: :string, example: "Conflict has occured"}
+              title: %Schema{type: :string, example: "Conflict has occurred"}
             }
           }
         }
