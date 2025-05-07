@@ -6,12 +6,16 @@ on:
   schedule:
     - cron: '0 3 * * 1' # Runs every monday at 3:00 AM UTC
   workflow_dispatch:
+    inputs:
+      num_containers:
+        description: "Number of containers to use (Max: 200) (Default: 100)"
+        required: false
 
 env:
   MIX_ENV: test
   NODE_VERSION: "20"
   PYTHON_VERSION: "3.12.3"
-  DEFAULT_NUM_CONTAINERS: 100
+  DEFAULT_NUM_CONTAINERS: 3
 
 jobs:
   elixir-deps:
@@ -85,10 +89,28 @@ jobs:
         if: steps.npm-cache.outputs.cache-hit != 'true'
         run: cd assets && npm install
 
+  generate-matrix:
+    runs-on: ubuntu-24.04
+    outputs:
+      matrix: ${{ steps.generate.outputs.matrix }}
+    steps:
+      - name: Set environment variable for NUM_CONTAINERS
+        run: echo "NUM_CONTAINERS=${{ github.event.inputs.num_containers || env.DEFAULT_NUM_CONTAINERS }}" >> $GITHUB_ENV
+      - name: Generate Matrix
+        id: generate
+        run: |
+          echo "{\"container\": [$(seq -s, 1 $NUM_CONTAINERS)]}" > matrix.json
+          echo "matrix=$(cat matrix.json)" >> $GITHUB_OUTPUT
+        shell: bash
+
   test-backend:
     name: Backend Tests Run
     needs: [elixir-deps]
     runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix: 
+        container: ${{ fromJson(needs.generate-matrix.outputs.matrix).container }}
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.12.1
