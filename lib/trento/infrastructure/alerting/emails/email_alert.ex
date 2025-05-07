@@ -5,20 +5,20 @@ defmodule Trento.Infrastructure.Alerting.Emails.EmailAlert do
 
   use Phoenix.Swoosh, view: Trento.Infrastructure.Alerting.Emails.EmailView
 
-  def api_key_expired do
+  def api_key_expired(sender: sender, recipient: recipient) do
     new()
-    |> from({"Trento Alerts", Application.fetch_env!(:trento, :alerting)[:sender]})
-    |> to({"Trento Admin", Application.fetch_env!(:trento, :alerting)[:recipient]})
+    |> from({"Trento Alerts", sender})
+    |> to({"Trento Admin", recipient})
     |> subject("Trento Alert: Api key expired")
     |> render_body("api_key_expiration.html", %{
       api_key_expired: true
     })
   end
 
-  def api_key_will_expire(days) do
+  def api_key_will_expire(days, sender: sender, recipient: recipient) do
     new()
-    |> from({"Trento Alerts", Application.fetch_env!(:trento, :alerting)[:sender]})
-    |> to({"Trento Admin", Application.fetch_env!(:trento, :alerting)[:recipient]})
+    |> from({"Trento Alerts", sender})
+    |> to({"Trento Admin", recipient})
     |> subject("Trento Alert: Api key will expire in #{days} days")
     |> render_body("api_key_expiration.html", %{
       api_key_expired: false,
@@ -26,10 +26,10 @@ defmodule Trento.Infrastructure.Alerting.Emails.EmailAlert do
     })
   end
 
-  def alert(component, identified_by, identifier, reason) do
+  def alert(component, identified_by, identifier, reason, sender: sender, recipient: recipient) do
     new()
-    |> from({"Trento Alerts", Application.fetch_env!(:trento, :alerting)[:sender]})
-    |> to({"Trento Admin", Application.fetch_env!(:trento, :alerting)[:recipient]})
+    |> from({"Trento Alerts", sender})
+    |> to({"Trento Admin", recipient})
     |> subject("Trento Alert: #{component} #{identifier} needs attention.")
     |> render_body("critical.html", %{
       component: component,
