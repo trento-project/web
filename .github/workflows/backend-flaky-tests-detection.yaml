@@ -123,17 +123,22 @@ jobs:
       - name: Run backend tests
         working-directory: hack/flaky_tests_analysis
         run: make gen-test-data-be N-TIMES=1
-      - name: Copy reports to project folder     
+      - name: Copy and sanitize .xml files from /tmp to ./junit-reports
         run: |
-          ls /tmp | grep .xml
-          mkdir junit-reports
-          cp /tmp/*.xml junit-reports/
+          mkdir -p ./junit-reports
+          for file in /tmp/*.xml; do
+            if [ -f "$file" ]; then
+              # Sanitize filename: replace colons ':' with hyphens '-'
+              sanitized_name=$(basename "$file" | tr ':' '-')
+              # Sanitize contents: replace colons with hyphens
+              awk '{gsub(/:/, "-"); print}' "$file" > "./junit-reports/$sanitized_name"
+            fi
+          done
       - name: Upload backend tests junit reports
         uses: actions/upload-artifact@v4
         with:
           name: backend-junit-reports
           path: /junit-reports
-
 
   flaky-tests-analysis:
     name: Flaky Tests Analysis
