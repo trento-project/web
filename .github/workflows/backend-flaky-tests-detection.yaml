@@ -137,7 +137,7 @@ jobs:
       - name: Upload backend tests junit reports
         uses: actions/upload-artifact@v4
         with:
-          name: backend-junit-reports
+          name: junit-reports
           path: junit-reports/*.xml
 
   flaky-tests-analysis:
@@ -156,7 +156,7 @@ jobs:
       - name: Download JUnit reports artifacts
         uses: actions/download-artifact@v4
         with:
-          path: junit-reports
+          # path: junit-reports
           # pattern: backend-junit-reports
       - name: Analyze
         run: |
