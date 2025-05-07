@@ -182,6 +182,7 @@ jobs:
           merge-multiple: true
       - name: Analyze
         run: |
+          ls junit-reports
           make venv-create
           source .venv/bin/activate
           make install-deps
