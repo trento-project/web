@@ -180,9 +180,9 @@ jobs:
         with:
           path: junit-reports
           merge-multiple: true
+      - run: ls junit-reports
       - name: Analyze
         run: |
-          ls ./junit-reports
           make venv-create
           source .venv/bin/activate
           make install-deps
