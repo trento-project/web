@@ -20,7 +20,7 @@ TOP-N ?= 40
 # Use only if extra customization is needed
 WRITE_JUNIT ?= 1
 CLI_LOG_PREFIX ?= Trento_Flaky_Test_Analysis_Log
-LOG_FILENAME="$(CLI_LOG_PREFIX)_$(shell date +%F_%T).txt"
+LOG_FILENAME="$(CLI_LOG_PREFIX)_$(shell date +%F_%H-%M-%S).txt"
 ENV_TS ?= "$(shell date +%F_%T)"
 
 gen-test-data-be:
