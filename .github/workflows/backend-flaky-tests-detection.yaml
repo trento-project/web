@@ -127,9 +127,13 @@ jobs:
         run: |
           mkdir -p ./junit-reports
           mv /tmp/*.xml ./junit-reports/ || echo "No XML files found in /tmp"
-      - name: Replace colons with dashes in /tmp (with sudo)
-        run: |
-          sudo find . -type f -not -path '*/.git/*' -exec sed -i 's/:/-/g' {} +
+      - name: Remove semicolons from all XML files
+              run: |
+                FOLDER_PATH="path/to/your/folder" 
+                find "$FOLDER_PATH" -name "*.xml" -type f -print0 | while IFS= read -r -d $'\0' file; do
+                  echo "Processing file: $file"
+                  sed -i 's/;//g' "$file"
+                done
         working-directory: junit-reports
       - name: Upload backend tests junit reports
         uses: actions/upload-artifact@v4
