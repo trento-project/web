@@ -125,6 +125,7 @@ jobs:
         run: make gen-test-data-be N-TIMES=1
       - name: Copy reports to project folder     
         run: |
+          ls /tmp | grep .xml
           mkdir junit-reports
           cp /tmp/*.xml junit-reports/
       - name: Upload backend tests junit reports
