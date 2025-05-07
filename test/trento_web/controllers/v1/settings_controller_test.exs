@@ -5,6 +5,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
   import Trento.Factory
   import OpenApiSpex.TestAssertions
   import Trento.Support.Helpers.AbilitiesTestHelper
+  import Trento.Support.Helpers.AlertingSettingsHelper
   import Mox
 
   setup_all :setup_api_spec_v1
@@ -642,14 +643,11 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
   end
 
   describe "AlertingSettings" do
-    @alerting_settings_get_fields ~w(enabled sender_email recipient_email smtp_server smtp_port smtp_username enforced_from_env)a
-    @alerting_settings_set_fields ~w(enabled sender_email recipient_email smtp_server smtp_port smtp_username smtp_password)a
-
     test "should successfully return settings", %{conn: conn, api_spec: api_spec} do
       exp_settings =
         :alerting_settings
         |> insert()
-        |> Map.take(@alerting_settings_get_fields)
+        |> Map.take(alerting_settings_get_fields())
 
       resp =
         conn
@@ -679,8 +677,8 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       api_spec: api_spec
     } do
       settings = build(:alerting_settings)
-      create_params = Map.take(settings, @alerting_settings_set_fields)
-      exp_params = Map.take(settings, @alerting_settings_get_fields)
+      create_params = Map.take(settings, alerting_settings_set_fields())
+      exp_params = Map.take(settings, alerting_settings_get_fields())
 
       resp =
         conn
@@ -704,7 +702,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
         settings =
           :alerting_settings
           |> build()
-          |> Map.take(@alerting_settings_set_fields)
+          |> Map.take(alerting_settings_set_fields())
           |> Map.delete(@field)
 
         conn =
@@ -736,7 +734,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       settings =
         :alerting_settings
         |> build(sender_email: "not_an_email.com")
-        |> Map.take(@alerting_settings_set_fields)
+        |> Map.take(alerting_settings_set_fields())
 
       conn =
         conn
@@ -766,7 +764,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
 
       exp_params =
         inserted_settings
-        |> Map.take(@alerting_settings_get_fields)
+        |> Map.take(alerting_settings_get_fields())
         |> Map.merge(update_params)
 
       resp =
@@ -922,7 +920,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       settings =
         :alerting_settings
         |> build()
-        |> Map.take(@alerting_settings_set_fields)
+        |> Map.take(alerting_settings_set_fields())
 
       conn
       |> put_req_header("content-type", "application/json")
@@ -939,7 +937,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       settings =
         :alerting_settings
         |> build()
-        |> Map.take(@alerting_settings_set_fields)
+        |> Map.take(alerting_settings_set_fields())
         |> Map.delete(:smtp_password)
 
       conn
@@ -967,8 +965,6 @@ defmodule TrentoWeb.V1.SettingsControllerSequentialTest do
   setup :setup_user
 
   describe "Alerting Settings" do
-    @alerting_settings_set_fields ~w(enabled sender_email recipient_email smtp_server smtp_port smtp_username smtp_password)a
-
     setup :restore_alerting_app_env
 
     for {case_name, _} = scenario <- [{"create", "post"}, {"update", "patch"}] do
@@ -985,7 +981,7 @@ defmodule TrentoWeb.V1.SettingsControllerSequentialTest do
         params =
           :alerting_settings
           |> build()
-          |> Map.take(@alerting_settings_set_fields)
+          |> Map.take(alerting_settings_set_fields())
 
         resp =
           conn

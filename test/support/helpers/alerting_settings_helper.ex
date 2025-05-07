@@ -5,6 +5,9 @@ defmodule Trento.Support.Helpers.AlertingSettingsHelper do
 
   import ExUnit.Callbacks
 
+  @alerting_settings_get_fields ~w(enabled sender_email recipient_email smtp_server smtp_port smtp_username enforced_from_env)a
+  @alerting_settings_set_fields ~w(enabled sender_email recipient_email smtp_server smtp_port smtp_username smtp_password)a
+
   def clear_alerting_app_env do
     Application.put_env(:trento, :alerting,
       enabled: nil,
@@ -15,6 +18,14 @@ defmodule Trento.Support.Helpers.AlertingSettingsHelper do
       sender_email: nil,
       recipient_email: nil
     )
+  end
+
+  def alerting_settings_get_fields do
+    @alerting_settings_get_fields
+  end
+
+  def alerting_settings_set_fields do
+    @alerting_settings_set_fields
   end
 
   # Setup helpers
