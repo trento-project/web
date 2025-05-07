@@ -126,10 +126,10 @@ jobs:
       - name: Move .xml reports to junit-reports folder
         run: |
           mkdir -p ./junit-reports
-          mv /tmp/*.xml ./junit-reports/ || echo "No XML files found in /tmp"
+          cp /tmp/*.xml ./junit-reports/ || echo "No XML files found in /tmp"
       - name: Remove semicolons from all XML files
         run: |
-                  find "/tmp" -name "*.xml" -type f -print0 | while IFS= read -r -d $'\0' file; do
+                  find "./junit-reports" -name "*.xml" -type f -print0 | while IFS= read -r -d $'\0' file; do
                     echo "Processing file: $file"
                     sed -i 's/;//g' "$file"
                   done        
