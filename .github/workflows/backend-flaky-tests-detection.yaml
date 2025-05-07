@@ -146,12 +146,15 @@ jobs:
         working-directory: hack/flaky_tests_analysis
         run: make gen-test-data-be N-TIMES=1
       - name: Copy and sanitize .xml files from /tmp to ./junit-reports
+        env:
+          CONTAINER: ${{ matrix.container }}
         run: |
           mkdir -p ./junit-reports
           for file in /tmp/*.xml; do
             if [ -f "$file" ]; then
               # Sanitize filename: replace colons ':' with hyphens '-'
-              sanitized_name=$(basename "$file" | tr ':' '-')
+              base=$(basename "$file" | tr ':' '-')
+              sanitized_name="${CONTAINER}-${base}"
               # Sanitize contents: replace colons with hyphens
               awk '{gsub(/:/, "-"); print}' "$file" > "./junit-reports/$sanitized_name"
             fi
