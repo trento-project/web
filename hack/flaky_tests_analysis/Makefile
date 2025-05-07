@@ -26,7 +26,7 @@ ENV_TS ?= "$(shell date +%F_%T)"
 gen-test-data-be:
 	cd ../../ ; touch $(LOG_FILENAME) ; for i in $$(seq 1 $(N-TIMES)) ;  do \
 			echo "Run $$i of $(N-TIMES)" ;\
-		  WRITE_JUNIT=$(WRITE_JUNIT) report_dir=./junit-reports mix test $(RUN_ONLY) | tee -a  $(LOG_FILENAME) ;\
+		  WRITE_JUNIT=$(WRITE_JUNIT) mix test $(RUN_ONLY) | tee -a  $(LOG_FILENAME) ;\
 		done 
 
 gen-test-data-fe:
