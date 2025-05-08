@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { clusterFactory } from '@lib/test-utils/factories';
 
 import ClusterMaintenanceChangeModal from './ClusterMaintenanceChangeModal';
@@ -34,15 +32,11 @@ export default {
   },
 };
 
-export function Default(args) {
-  return <ClusterMaintenanceChangeModal {...args} />;
-}
+export const Default = {};
 
-export function ClusterMaintenance(args) {
-  return (
-    <ClusterMaintenanceChangeModal
-      {...args}
-      clusterDetails={clusterMaintenanceDetails}
-    />
-  );
-}
+export const ClusterMaintenance = {
+  args: {
+    ...Default.args,
+    clusterDetails: clusterMaintenanceDetails,
+  },
+};

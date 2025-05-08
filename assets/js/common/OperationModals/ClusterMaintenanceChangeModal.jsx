@@ -6,7 +6,7 @@ import Switch from '@common/Switch';
 
 import OperationModal from './OperationModal';
 
-const NOT_SELECTED = 'Select a cluster resource';
+const NOT_SELECTED_LABEL = 'Select a cluster resource';
 const CLUSTER_LABEL = 'Cluster (full maintenance)';
 const NODE_MAINTENANCE_STATE = 'Maintenance';
 const CLUSTER_SCOPE = 'cluster';
@@ -15,7 +15,7 @@ const RESOURCE_SCOPE = 'resource';
 
 const NOT_SELECTED_OPTION = {
   value: {
-    id: NOT_SELECTED,
+    id: NOT_SELECTED_LABEL,
     maintenance: false,
   },
   key: 'not_selected',

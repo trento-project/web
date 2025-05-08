@@ -1,5 +1,3 @@
-import React from 'react';
-
 import OperationForbiddenModal from './OperationForbiddenModal';
 
 export default {
@@ -32,10 +30,8 @@ export default {
   },
 };
 
-export function Default(args) {
-  return (
-    <OperationForbiddenModal {...args}>
-      My operation forbidden additional information
-    </OperationForbiddenModal>
-  );
-}
+export const Default = {
+  args: {
+    children: 'My operation forbidden additional information',
+  },
+};
