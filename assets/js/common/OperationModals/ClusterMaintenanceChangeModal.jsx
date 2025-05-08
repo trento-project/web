@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { concat, flatMap, flow, get, map, uniqBy } from 'lodash';
+import { concat, flatMap, flow, get, has, map, uniqBy } from 'lodash';
 import Label from '@common/Label';
 import Select from '@common/Select';
 import Switch from '@common/Switch';
+
 import OperationModal from './OperationModal';
 
 const NOT_SELECTED = 'Select a cluster resource';
@@ -33,8 +34,12 @@ function ClusterMaintenanceChangeModal({
   const [maintenanceState, setMaintenanceState] = useState(false);
 
   const clusterMaintenance = get(clusterDetails, 'maintenance_mode', false);
-  const clusterNodes = get(clusterDetails, 'nodes', []);
   const stoppedResource = get(clusterDetails, 'stopped_resources', []);
+
+  // in ASCS/ERS clusters the nodes are within SAP systems
+  const clusterNodes = has(clusterDetails, 'sap_systems')
+    ? flatMap(get(clusterDetails, 'sap_systems'), ({ nodes }) => nodes)
+    : get(clusterDetails, 'nodes', []);
 
   const clusterOption = {
     value: {

@@ -27,10 +27,38 @@ describe('ClusterMaintenanceChangeModal', () => {
     expect(screen.getByText('Select a cluster resource')).toBeDisabled();
   });
 
-  it('should render available nodes and resources', async () => {
+  it('should render available nodes and resources in HANA clusters', async () => {
     const user = userEvent.setup();
     const { details } = clusterFactory.build();
     const { nodes, stopped_resources: stoppedResources } = details;
+    const { resources: resources1 } = nodes[0];
+    const { resources: resources2 } = nodes[1];
+    const resources = concat(resources1, resources2, stoppedResources);
+
+    await act(async () => {
+      render(<ClusterMaintenanceChangeModal clusterDetails={details} isOpen />);
+    });
+
+    await user.click(screen.getByRole('checkbox'));
+    expect(screen.getByText('Apply')).toBeDisabled();
+
+    await user.click(screen.getByText('Select a cluster resource'));
+
+    expect(screen.getByText('Cluster (full maintenance)')).toBeInTheDocument();
+    nodes.forEach(({ name }) => {
+      expect(screen.getByText(name)).toBeInTheDocument();
+    });
+    resources.forEach(({ id }) => {
+      expect(screen.getByText(id)).toBeInTheDocument();
+    });
+  });
+
+  it('should render available nodes and resources in ASCS/ERS clusters', async () => {
+    const user = userEvent.setup();
+    const { details } = clusterFactory.build({ type: 'ascs_ers' });
+    const { sap_systems: sapSystems, stopped_resources: stoppedResources } =
+      details;
+    const { nodes } = sapSystems[0];
     const { resources: resources1 } = nodes[0];
     const { resources: resources2 } = nodes[1];
     const resources = concat(resources1, resources2, stoppedResources);
