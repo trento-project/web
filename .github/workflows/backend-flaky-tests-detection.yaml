@@ -183,6 +183,7 @@ jobs:
           path: junit-reports
           merge-multiple: true
       - run: ls | wc -l
+        working-directory: junit-reports
       - name: Analyze
         run: |
           make venv-create
