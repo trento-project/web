@@ -1,5 +1,3 @@
-import React from 'react';
-
 import SaptuneSolutionApplyModal from './SaptuneSolutionApplyModal';
 
 export default {
@@ -32,14 +30,21 @@ export default {
   },
 };
 
-export function HanaRunning(args) {
-  return <SaptuneSolutionApplyModal {...args} isHanaRunning />;
-}
+export const HanaRunning = {
+  args: {
+    isHanaRunning: true,
+  },
+};
 
-export function AppRunning(args) {
-  return <SaptuneSolutionApplyModal {...args} isAppRunning />;
-}
+export const AppRunning = {
+  args: {
+    isAppRunning: true,
+  },
+};
 
-export function HanaAndAppRunning(args) {
-  return <SaptuneSolutionApplyModal {...args} isHanaRunning isAppRunning />;
-}
+export const HanaAndAppRunning = {
+  args: {
+    isHanaRunning: true,
+    isAppRunning: true,
+  },
+};
