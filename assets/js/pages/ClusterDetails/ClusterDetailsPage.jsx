@@ -83,9 +83,9 @@ export function ClusterDetailsPage() {
     case 'hana_scale_out':
       return (
         <ClusterDetails
-          clusterDetails={cluster.details}
           clusterID={clusterID}
           clusterName={getClusterName(cluster)}
+          details={cluster.details}
           hasSelectedChecks={hasSelectedChecks}
           hosts={clusterHosts}
           lastExecution={lastExecution}
@@ -114,9 +114,9 @@ export function ClusterDetailsPage() {
     case 'ascs_ers':
       return (
         <ClusterDetails
-          clusterDetails={cluster.details}
           clusterID={clusterID}
           clusterName={getClusterName(cluster)}
+          details={cluster.details}
           hasSelectedChecks={hasSelectedChecks}
           hosts={clusterHosts}
           lastExecution={lastExecution}

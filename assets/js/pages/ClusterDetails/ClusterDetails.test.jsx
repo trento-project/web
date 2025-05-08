@@ -24,9 +24,9 @@ describe('ClusterDetails ClusterDetails component', () => {
 
     renderWithRouter(
       <ClusterDetails
-        clusterDetails={details}
         clusterID={id}
         clusterName={name}
+        details={details}
         hasSelectedChecks={false}
         hosts={[]}
         selectedChecks={[]}
@@ -106,9 +106,9 @@ describe('ClusterDetails ClusterDetails component', () => {
 
       renderWithRouter(
         <ClusterDetails
-          clusterDetails={details}
           clusterID={id}
           clusterName={name}
+          details={details}
           hasSelectedChecks={hasSelectedChecks}
           hosts={[]}
           lastExecution={lastExecution}
@@ -132,9 +132,9 @@ describe('ClusterDetails ClusterDetails component', () => {
 
     renderWithRouter(
       <ClusterDetails
-        clusterDetails={details}
         clusterID={id}
         clusterName={name}
+        details={details}
         hasSelectedChecks={false}
         hosts={[]}
         selectedChecks={[]}
@@ -161,9 +161,9 @@ describe('ClusterDetails ClusterDetails component', () => {
 
     renderWithRouter(
       <ClusterDetails
-        clusterDetails={details}
         clusterID={id}
         clusterName={name}
+        details={details}
         hasSelectedChecks
         hosts={hosts}
         selectedChecks={selectedChecks}
@@ -200,9 +200,9 @@ describe('ClusterDetails ClusterDetails component', () => {
 
       renderWithRouter(
         <ClusterDetails
-          clusterDetails={details}
           clusterID={id}
           clusterName={name}
+          details={details}
           hasSelectedChecks={hasSelectedChecks}
           hosts={[]}
           selectedChecks={selectedChecks}
@@ -227,9 +227,9 @@ describe('ClusterDetails ClusterDetails component', () => {
 
       renderWithRouter(
         <ClusterDetails
-          clusterDetails={details}
           clusterID={id}
           clusterName={name}
+          details={details}
           hasSelectedChecks
           hosts={[]}
           selectedChecks={['check1']}
@@ -252,9 +252,9 @@ describe('ClusterDetails ClusterDetails component', () => {
 
       renderWithRouter(
         <ClusterDetails
-          clusterDetails={details}
           clusterID={id}
           clusterName={name}
+          details={details}
           hasSelectedChecks
           hosts={[]}
           selectedChecks={['check1']}

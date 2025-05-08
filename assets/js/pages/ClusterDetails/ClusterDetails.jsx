@@ -21,9 +21,9 @@ import SBDDetails from './SBDDetails';
 import StoppedResources from './StoppedResources';
 
 function ClusterDetails({
-  clusterDetails,
   clusterID,
   clusterName,
+  details,
   hasSelectedChecks,
   hosts,
   lastExecution = {},
@@ -106,8 +106,8 @@ function ClusterDetails({
         </div>
       </div>
       {children}
-      <StoppedResources resources={clusterDetails.stopped_resources} />
-      <SBDDetails sbdDevices={clusterDetails.sbd_devices} />
+      <StoppedResources resources={details.stopped_resources} />
+      <SBDDetails sbdDevices={details.sbd_devices} />
     </div>
   );
 }

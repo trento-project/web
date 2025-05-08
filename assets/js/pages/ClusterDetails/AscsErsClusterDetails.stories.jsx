@@ -65,9 +65,7 @@ const userAbilities = [{ name: 'all', resource: 'all' }];
 function ContainerWrapper({ children, ...props }) {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-      <ClusterDetails clusterDetails={props.details} {...props}>
-        {children}
-      </ClusterDetails>
+      <ClusterDetails {...props}>{children}</ClusterDetails>
     </div>
   );
 }
