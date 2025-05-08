@@ -136,6 +136,7 @@ describe('ProfileForm', () => {
         emailAddress={email}
         username={username}
         abilities={abilities}
+        analyticsEnabledConfig
         analyticsEnabled
       />
     );
