@@ -2,13 +2,12 @@
 name: Backend Flaky Tests Analysis
 
 on:
-  push:
   schedule:
     - cron: '0 0 * * 1' # Runs every monday at 00:00 AM UTC
   workflow_dispatch:
     inputs:
       num_containers:
-        description: "Number of containers to use (Max: 200) (Default: 100)"
+        description: "Number of containers to use (Max: 200) (Default: 10)"
         required: false
 
 env:
@@ -182,8 +181,6 @@ jobs:
         with:
           path: junit-reports
           merge-multiple: true
-      - run: ls | wc -l
-        working-directory: junit-reports
       - name: Analyze
         run: |
           make venv-create
