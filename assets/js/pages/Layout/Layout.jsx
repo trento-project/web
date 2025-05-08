@@ -108,7 +108,7 @@ function Layout() {
   const sidebarIconSize = '24';
 
   useEffect(() => {
-    identify(analyticsEnabled, id, username);
+    identify(analyticsEnabled, id);
     optinCapturing(analyticsEnabled);
   }, [analyticsEnabled]);
 

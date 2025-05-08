@@ -18,14 +18,13 @@ if (analyticsEnabledConfig) {
 
 export const getAnalyticsEnabledConfig = () => analyticsEnabledConfig;
 
-export const identify = (analyticsEnabled, userID, username) => {
+export const identify = (analyticsEnabled, userID) => {
   if (!analyticsEnabled) {
     return;
   }
 
   const distinctUserID = uuidv5(userID.toString(), installationID);
   posthog.identify(distinctUserID, {
-    username,
     installationID,
   });
 };

@@ -60,7 +60,7 @@ export function* performLogin({ payload: { username, password, totpCode } }) {
         analytics_enabled,
       })
     );
-    yield call(identify, analytics_enabled, id, profileUsername);
+    yield call(identify, analytics_enabled, id);
     yield call(optinCapturing, analytics_enabled);
     yield put(setUserAsLogged());
   } catch (error) {
