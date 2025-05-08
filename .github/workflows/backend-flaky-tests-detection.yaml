@@ -2,6 +2,7 @@
 name: Backend Flaky Tests Analysis
 
 on:
+  push:
   schedule:
     - cron: '0 0 * * 1' # Runs every monday at 00:00 AM UTC
   workflow_dispatch:
@@ -14,7 +15,7 @@ env:
   MIX_ENV: test
   NODE_VERSION: "20"
   PYTHON_VERSION: "3.12.3"
-  DEFAULT_NUM_CONTAINERS: 100
+  DEFAULT_NUM_CONTAINERS: 10
 
 jobs:
   elixir-deps:
@@ -143,7 +144,7 @@ jobs:
           down-flags: "--volumes"
       - name: Run backend tests
         working-directory: hack/flaky_tests_analysis
-        run: make gen-test-data-be N-TIMES=1
+        run: make gen-test-data-be N-TIMES=10
       - name: Copy and sanitize .xml files from /tmp to ./junit-reports
         env:
           CONTAINER: ${{ matrix.container }}
