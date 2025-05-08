@@ -11,14 +11,18 @@ import {
   ascsErsSapSystemFactory,
   clusterFactory,
   catalogFactory,
+  checksExecutionCompletedFactory,
 } from '@lib/test-utils/factories';
 
+import ClusterDetails from './ClusterDetails';
 import AscsErsClusterDetails from './AscsErsClusterDetails';
 
 const {
+  id: clusterID,
   name: clusterName,
   provider,
   cib_last_written: cibLastWritten,
+  selected_checks: selectedChecks,
   details,
 } = clusterFactory.build({ type: 'ascs_ers' });
 
@@ -39,7 +43,17 @@ const nodes = [
   }),
 ];
 
-const catalog = catalogFactory.build();
+const catalog = catalogFactory.build({ loading: false });
+
+const lastExecution = {
+  loading: false,
+  data: checksExecutionCompletedFactory.build({
+    result: 'passing',
+    passing_count: 3,
+    warning_count: 2,
+    critical_count: 1,
+  }),
+};
 
 const failoverDetails = ascsErsClusterDetailsFactory.build({
   sap_systems: [ascsErsSapSystemFactory.build({ nodes, distributed: false })],
@@ -47,6 +61,16 @@ const failoverDetails = ascsErsClusterDetailsFactory.build({
 });
 
 const userAbilities = [{ name: 'all', resource: 'all' }];
+
+function ContainerWrapper({ children, ...props }) {
+  return (
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+      <ClusterDetails clusterDetails={props.details} {...props}>
+        {children}
+      </ClusterDetails>
+    </div>
+  );
+}
 
 export default {
   title: 'Layouts/AscsErsClusterDetails',
@@ -58,29 +82,28 @@ export default {
       </MemoryRouter>
     ),
   ],
-};
-
-function ContainerWrapper({ children }) {
-  return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">{children}</div>
-  );
-}
-
-export const Single = {
-  args: {
-    clusterName,
-    cibLastWritten,
-    provider,
-    hosts: buildHostsFromAscsErsClusterDetails(details),
-    sapSystems: buildSapSystemsFromAscsErsClusterDetails(details),
-    details,
-    userAbilities,
-  },
   render: (args) => (
-    <ContainerWrapper>
+    <ContainerWrapper {...args}>
       <AscsErsClusterDetails {...args} />
     </ContainerWrapper>
   ),
+};
+
+export const Single = {
+  args: {
+    clusterID,
+    clusterName,
+    cibLastWritten,
+    provider,
+    selectedChecks,
+    hasSelectedChecks: true,
+    hosts: buildHostsFromAscsErsClusterDetails(details),
+    sapSystems: buildSapSystemsFromAscsErsClusterDetails(details),
+    details,
+    lastExecution,
+    catalog,
+    userAbilities,
+  },
 };
 
 export const Loading = {
@@ -88,11 +111,6 @@ export const Loading = {
     ...Single.args,
     catalog: { loading: true },
   },
-  render: (args) => (
-    <ContainerWrapper>
-      <AscsErsClusterDetails {...args} />
-    </ContainerWrapper>
-  ),
 };
 
 export const WithUnregisteredHost = {
@@ -100,11 +118,6 @@ export const WithUnregisteredHost = {
     ...Single.args,
     hosts: Single.args.hosts.slice(0, 1),
   },
-  render: (args) => (
-    <ContainerWrapper>
-      <AscsErsClusterDetails {...args} />
-    </ContainerWrapper>
-  ),
 };
 
 export const MultiSID = {
@@ -114,26 +127,13 @@ export const MultiSID = {
     sapSystems: buildSapSystemsFromAscsErsClusterDetails(multiSidDetails),
     details: multiSidDetails,
   },
-  render: (args) => (
-    <ContainerWrapper>
-      <AscsErsClusterDetails {...args} />
-    </ContainerWrapper>
-  ),
 };
 
 export const Failover = {
   args: {
-    clusterName,
-    cibLastWritten,
-    provider,
-    userAbilities,
+    ...Single.args,
     hosts: buildHostsFromAscsErsClusterDetails(failoverDetails),
     sapSystems: buildSapSystemsFromAscsErsClusterDetails(failoverDetails),
     details: failoverDetails,
   },
-  render: (args) => (
-    <ContainerWrapper>
-      <AscsErsClusterDetails {...args} />
-    </ContainerWrapper>
-  ),
 };

@@ -1,7 +1,6 @@
 import React from 'react';
 import { get, capitalize, sortBy } from 'lodash';
 
-import BackButton from '@common/BackButton';
 import ListView from '@common/ListView';
 import ProviderLabel from '@common/ProviderLabel';
 import ClusterTypeLabel from '@common/ClusterTypeLabel';
@@ -9,10 +8,7 @@ import SapSystemLink from '@common/SapSystemLink';
 
 import CheckResultsOverview from '@pages/CheckResultsOverview';
 
-import ClusterDetailsHeader from './ClusterDetailsHeader';
 import HanaClusterSite from './HanaClusterSite';
-import SBDDetails from './SBDDetails';
-import StoppedResources from './StoppedResources';
 
 export const enrichNodes = (clusterNodes, hosts) =>
   clusterNodes?.map((node) => ({
@@ -22,9 +18,6 @@ export const enrichNodes = (clusterNodes, hosts) =>
 
 function HanaClusterDetails({
   clusterID,
-  clusterName,
-  selectedChecks,
-  hasSelectedChecks,
   hosts,
   clusterType,
   cibLastWritten,
@@ -33,9 +26,7 @@ function HanaClusterDetails({
   clusterSids,
   details,
   catalog,
-  userAbilities,
   lastExecution,
-  onStartExecution = () => {},
   navigate = () => {},
 }) {
   const enrichedNodes = enrichNodes(details?.nodes, hosts);
@@ -57,20 +48,7 @@ function HanaClusterDetails({
   const catalogError = get(catalog, 'error');
 
   return (
-    <div>
-      <BackButton url="/clusters">Back to Clusters</BackButton>
-      <ClusterDetailsHeader
-        clusterID={clusterID}
-        clusterName={clusterName}
-        executionLoading={executionLoading}
-        executionStatus={executionData?.status}
-        hasSelectedChecks={hasSelectedChecks}
-        hosts={hosts}
-        selectedChecks={selectedChecks}
-        userAbilities={userAbilities}
-        onStartExecution={onStartExecution}
-        navigate={navigate}
-      />
+    <>
       <div className="flex xl:flex-row flex-col">
         <div className="tn-cluster-details mt-4 bg-white shadow rounded-lg py-8 px-8 xl:w-3/4 w-full mr-4">
           <ListView
@@ -169,11 +147,7 @@ function HanaClusterDetails({
       {unsitedNodes.length > 0 && (
         <HanaClusterSite name="Other" nodes={unsitedNodes} />
       )}
-
-      <StoppedResources resources={details.stopped_resources} />
-
-      <SBDDetails sbdDevices={details.sbd_devices} />
-    </div>
+    </>
   );
 }
 
