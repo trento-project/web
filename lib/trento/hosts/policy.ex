@@ -25,6 +25,9 @@ defmodule Trento.Hosts.Policy do
   def authorize(:request_operation, %User{} = user, %{operation: "saptune_solution_apply"}),
     do: has_global_ability?(user) or has_saptune_solution_apply_ability?(user)
 
+  def authorize(:request_operation, %User{} = user, %{operation: "saptune_solution_change"}),
+    do: has_global_ability?(user) or has_saptune_solution_change_ability?(user)
+
   def authorize(_, _, _), do: true
 
   defp has_select_checks_ability?(user),
@@ -38,4 +41,7 @@ defmodule Trento.Hosts.Policy do
 
   defp has_saptune_solution_apply_ability?(user),
     do: user_has_ability?(user, %{name: "saptune_solution_apply", resource: "host"})
+
+  defp has_saptune_solution_change_ability?(user),
+    do: user_has_ability?(user, %{name: "saptune_solution_change", resource: "host"})
 end
