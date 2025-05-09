@@ -27,6 +27,7 @@ jobs:
           title: Update changelog
           body: This is an automatic pull request triggered by GitHub actions to keep CHANGELOG.md up to date.
           branch: update-changelog
+          base: main
           labels: |
             changelog
           delete-branch: true
