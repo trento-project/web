@@ -77,6 +77,17 @@ defmodule TrentoWeb.ErrorJSON do
     }
   end
 
+  def render("409.json", %{reason: reason}) do
+    %{
+      errors: [
+        %{
+          title: "Conflict has occurred",
+          detail: reason
+        }
+      ]
+    }
+  end
+
   def render("422.json", %{changeset: changeset}) do
     error =
       Ecto.Changeset.traverse_errors(
