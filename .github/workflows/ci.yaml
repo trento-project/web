@@ -14,7 +14,7 @@ on:
 env:
   MIX_ENV: test
   NODE_VERSION: "20"
-  MANTAINERS: '["cdimonaco", "dottorblaster", "janvhs", "nelsonkopliku", "arbulu89","jagabomb","emaksy", "balanza", "gagandeepb"]'
+  MANTAINERS: '["janvhs", "nelsonkopliku", "arbulu89","jagabomb","emaksy", "balanza", "gagandeepb", "vicenteqa", "skrech"]'
 
 jobs:
   elixir-deps:

@@ -6,7 +6,7 @@ on:
       - closed
 
 env:
-  MANTAINERS: '["cdimonaco", "dottorblaster", "nelsonkopliku", "arbulu89", "jagabomb", "emaksy", "gagandeepb", "balanza", "janvhs"]'
+  MANTAINERS: '["nelsonkopliku", "arbulu89", "jagabomb", "emaksy", "gagandeepb", "balanza", "janvhs", "vicenteqa", "skrech"]'
   PR_ENV_LABEL: env
   PR_NUMBER: "${{ github.event.pull_request.number }}"
 
