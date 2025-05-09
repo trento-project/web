@@ -33,6 +33,6 @@ version-resolver:
       - bug
   default: patch
 exclude-labels:
-  - skip-changelog
+  - skip-release-notes
 template: |
   $CHANGES

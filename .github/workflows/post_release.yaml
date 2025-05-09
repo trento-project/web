@@ -25,9 +25,9 @@ jobs:
             CHANGELOG.md
           commit-message: update changelog
           title: Update changelog
-          body: This is an automatic pull request triggered by GitHub actions to keep CHANGELOG.md up to date.
+          body: |
+            This is an automatic pull request triggered by GitHub actions to keep `CHANGELOG.md` up to date.
           branch: update-changelog
           base: main
-          labels: |
-            changelog
+          labels: automated, skip-release-notes
           delete-branch: true
