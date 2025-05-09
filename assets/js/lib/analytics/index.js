@@ -13,6 +13,7 @@ if (analyticsEnabledConfig) {
     api_host: analyticsUrl,
     opt_out_capturing_by_default: true,
     capture_pageview: false,
+    disable_persistence: true,
   });
 }
 
