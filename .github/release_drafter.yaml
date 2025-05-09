@@ -34,3 +34,5 @@ version-resolver:
   default: patch
 exclude-labels:
   - skip-changelog
+template: |
+  $CHANGES
