@@ -18,6 +18,8 @@ categories:
   - title: Dependencies
     label: dependencies
     collapse-after: 3
+category-template: |
+  ### $TITLE
 version-resolver:
   major:
     labels:
