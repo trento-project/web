@@ -3,6 +3,7 @@ volumes:
   pg_data:
   prometheus_data:
   trento-checks:
+  mailpit:
 services:
   keycloak:
     profiles: [idp]
@@ -81,7 +82,7 @@ services:
       RABBITMQ_DEFAULT_USER: trento
       RABBITMQ_DEFAULT_PASS: trento
 
-  checks: 
+  checks:
     profiles: [wanda]
     image: ghcr.io/trento-project/checks:rolling
     volumes:
@@ -105,3 +106,19 @@ services:
     entrypoint: /bin/sh -c "/app/bin/wanda eval 'Wanda.Release.init()' && /app/bin/wanda start"
     volumes:
       - trento-checks:/usr/share/trento/checks
+
+  mailpit:
+    profiles: [smtp]
+    image: ghcr.io/axllent/mailpit:v1.24
+    volumes:
+      - mailpit:/data
+    ports:
+      - 1025:1025
+      - 8025:8025
+    environment:
+      MP_VERBOSE: true
+      MP_DATABASE: /data/mailpit.db
+      MP_SMTP_AUTH: ${MP_SMTP_AUTH:-}
+      # Allow authenticated acceess to the server when not using
+      # STARTTLS/TLS.
+      MP_SMTP_AUTH_ALLOW_INSECURE: ${MP_SMTP_AUTH:+true}
