@@ -175,7 +175,7 @@ if config_env() in [:prod, :demo] do
     port: System.get_env("SMTP_PORT") || "",
     username: System.get_env("SMTP_USER") || "",
     password: System.get_env("SMTP_PASSWORD") || "",
-    auth: :always,
+    auth: :if_available,
     ssl: false,
     tls: :if_available,
     tls_options: [
