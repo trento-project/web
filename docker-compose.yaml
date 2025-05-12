@@ -118,7 +118,7 @@ services:
     environment:
       MP_VERBOSE: true
       MP_DATABASE: /data/mailpit.db
-      MP_SMTP_AUTH: ${MP_SMTP_AUTH:-}
+      MP_SMTP_AUTH: ${TRENTO_SMTP_AUTHENTICATED:+"trentouser:pass"}
       # Allow authenticated acceess to the server when not using
       # STARTTLS/TLS.
-      MP_SMTP_AUTH_ALLOW_INSECURE: ${MP_SMTP_AUTH:+true}
+      MP_SMTP_AUTH_ALLOW_INSECURE: ${TRENTO_SMTP_INSECURE:-false}
