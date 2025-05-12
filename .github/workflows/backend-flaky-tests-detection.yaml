@@ -21,8 +21,6 @@ jobs:
   elixir-deps:
     name: Elixir test dependencies
     runs-on: ubuntu-24.04
-    env:
-      MIX_ENV: {{ env.MIX_ENV}}
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.12.1
@@ -53,7 +51,7 @@ jobs:
           mkdir -p priv/plts
           mix local.rebar --force
           mix local.hex --force
-          mix deps.get
+          MIX_ENV={{env.MIX_ENV}} mix deps.get
           mix deps.compile --warnings-as-errors
           mix dialyzer --plt
 
