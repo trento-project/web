@@ -2,6 +2,7 @@
 name: Backend Flaky Tests Analysis
 
 on:
+  push:
   schedule:
     - cron: '0 0 * * 1' # Runs every monday at 00:00 AM UTC
   workflow_dispatch:
@@ -18,15 +19,10 @@ env:
 
 jobs:
   elixir-deps:
-    name: Elixir ${{ matrix.mix_env }} dependencies
+    name: Elixir test dependencies
     runs-on: ubuntu-24.04
-    strategy:
-      matrix:
-        include:
-          - mix_env: dev
-          - mix_env: test
     env:
-      MIX_ENV: ${{ matrix.mix_env }}
+      MIX_ENV: {{ env.MIX_ENV}}
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.12.1
@@ -57,36 +53,9 @@ jobs:
           mkdir -p priv/plts
           mix local.rebar --force
           mix local.hex --force
-          MIX_ENV=test mix deps.get
+          mix deps.get
           mix deps.compile --warnings-as-errors
           mix dialyzer --plt
-
-  npm-deps:
-    name: Npm dependencies
-    runs-on: ubuntu-24.04
-    steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.12.1
-        with:
-          access_token: ${{ github.token }}
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Retrieve Cached Dependencies
-        uses: actions/cache@v4
-        id: npm-cache
-        with:
-          path: |
-            assets/node_modules
-          key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-      - name: Install NPM dependencies
-        if: steps.npm-cache.outputs.cache-hit != 'true'
-        run: cd assets && npm install
 
   generate-matrix:
     runs-on: ubuntu-24.04
