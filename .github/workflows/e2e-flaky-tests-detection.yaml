@@ -189,7 +189,7 @@ jobs:
             test/e2e/node_modules
           key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: "Docker compose dependencies"
-        uses: isbang/compose-action@v2.1.0
+        uses: isbang/compose-action@v2.2.0
         with:
           compose-file: "./docker-compose.yaml"
           compose-flags: "--profile wanda"
