@@ -1,4 +1,4 @@
-defmodule Trento.Operations.HostOperations do
+defmodule Trento.Operations.Enums.HostOperations do
   @moduledoc """
   Host operations
   """

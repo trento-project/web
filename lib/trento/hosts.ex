@@ -28,7 +28,7 @@ defmodule Trento.Hosts do
 
   alias Trento.Repo
 
-  require Trento.Operations.HostOperations, as: HostOperations
+  require Trento.Operations.Enums.HostOperations, as: HostOperations
 
   require Logger
 
