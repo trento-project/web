@@ -1,0 +1,159 @@
+
+name: Backend Flaky Tests Analysis
+
+on:
+  schedule:
+    - cron: '0 0 * * 1' # Runs every monday at 00:00 AM UTC
+  workflow_dispatch:
+    inputs:
+      num_containers:
+        description: "Number of containers to use (Max: 200) (Default: 10)"
+        required: false
+
+env:
+  NODE_VERSION: "20"
+  PYTHON_VERSION: "3.12.3"
+  DEFAULT_NUM_CONTAINERS: 10
+
+jobs:
+  elixir-deps:
+    name: Elixir test dependencies
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.12.1
+        with:
+          access_token: ${{ github.token }}
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup
+        id: setup-elixir
+        uses: erlef/setup-beam@v1
+        with:
+          version-file: .tool-versions
+          version-type: strict
+      - name: Retrieve Cached Dependencies
+        uses: actions/cache@v4
+        id: mix-cache
+        with:
+          path: |
+            deps
+            _build/test
+            priv/plts
+          key: ${{ runner.os }}-${{ steps.setup-elixir.outputs.otp-version }}-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}
+      - name: Install Dependencies
+        if: steps.mix-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p priv/plts
+          mix local.rebar --force
+          mix local.hex --force
+          MIX_ENV=test mix deps.get
+          mix deps.compile --warnings-as-errors
+          mix dialyzer --plt
+
+  generate-matrix:
+    runs-on: ubuntu-24.04
+    outputs:
+      matrix: ${{ steps.generate.outputs.matrix }}
+    steps:
+      - name: Set environment variable for NUM_CONTAINERS
+        run: echo "NUM_CONTAINERS=${{ github.event.inputs.num_containers || env.DEFAULT_NUM_CONTAINERS }}" >> $GITHUB_ENV
+      - name: Generate Matrix
+        id: generate
+        run: |
+          echo "{\"container\": [$(seq -s, 1 $NUM_CONTAINERS)]}" > matrix.json
+          echo "matrix=$(cat matrix.json)" >> $GITHUB_OUTPUT
+        shell: bash
+
+  test-backend:
+    name: Backend Tests Run
+    needs: [elixir-deps, generate-matrix]
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix: 
+        container: ${{ fromJson(needs.generate-matrix.outputs.matrix).container }}
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.12.1
+        with:
+          access_token: ${{ github.token }}
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup
+        id: setup-elixir
+        uses: erlef/setup-beam@v1
+        with:
+          version-file: .tool-versions
+          version-type: strict
+      - name: Retrieve Cached Dependencies
+        uses: actions/cache@v4
+        id: mix-cache
+        with:
+          path: |
+            deps
+            _build/dev
+            priv/plts
+          key: ${{ runner.os }}-${{ steps.setup-elixir.outputs.otp-version }}-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}
+      - name: Compile
+        run: mix compile --warnings-as-errors
+      - name: "Docker compose dependencies"
+        uses: isbang/compose-action@v2.1.0
+        with:
+          compose-file: "./docker-compose.yaml"
+          down-flags: "--volumes"
+      - name: Run backend tests
+        working-directory: hack/flaky_tests_analysis
+        run: make gen-test-data-be N-TIMES=10
+      - name: Copy and sanitize .xml files from /tmp to ./junit-reports
+        env:
+          CONTAINER: ${{ matrix.container }}
+        run: |
+          mkdir -p ./junit-reports
+          for file in /tmp/*.xml; do
+            if [ -f "$file" ]; then
+              # Sanitize filename: replace colons ':' with hyphens '-'
+              base=$(basename "$file" | tr ':' '-')
+              sanitized_name="${CONTAINER}-${base}"
+              awk '{gsub(/:/, "-"); print}' "$file" > "./junit-reports/$sanitized_name"
+            fi
+          done
+      - name: Upload backend tests junit reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: junit-reports-${{ matrix.container }}
+          path: junit-reports/*.xml
+
+  flaky-tests-analysis:
+    name: Flaky Tests Analysis
+    needs: test-backend
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.12.1
+        with:
+          access_token: ${{ github.token }}
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0    
+      - name: Download JUnit reports artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: junit-reports
+          merge-multiple: true
+      - name: Analyze
+        run: |
+          make venv-create
+          source .venv/bin/activate
+          make install-deps
+          make PATH-TO-JUNIT-FILES=../../junit-reports analyze-files 2>&1 | tail -n +2 >> $GITHUB_STEP_SUMMARY
+        working-directory: hack/flaky_tests_analysis
+      - name: Delete Artifacts
+        uses: geekyeggo/delete-artifact@v5
+        with:
+          name: backend-junit-reports
