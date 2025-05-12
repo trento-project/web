@@ -9,7 +9,7 @@ defmodule Trento.ActivityLog.Logger.Parser.MetadataEnricher do
 
   alias Trento.Users.User
 
-  require Trento.Operations.HostOperations, as: HostOperations
+  require Trento.Operations.Enums.HostOperations, as: HostOperations
 
   @spec enrich(activity :: ActivityCatalog.activity_type(), metadata :: map()) ::
           {:ok, maybe_enriched_metadata :: map()}
