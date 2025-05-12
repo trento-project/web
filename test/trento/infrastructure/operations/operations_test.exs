@@ -100,7 +100,7 @@ defmodule Trento.Infrastructure.Operations.OperationsTest do
     end
   end
 
-  describe "map operation type" do
+  describe "map operation" do
     test "should map the internal operation type to a known name" do
       operations = [
         %{
@@ -119,6 +119,27 @@ defmodule Trento.Infrastructure.Operations.OperationsTest do
 
       for %{operation_type: operation_type, internal_type: internal_type} <- operations do
         assert operation_type == Operations.map_operation_type(internal_type)
+      end
+    end
+
+    test "should map operation name to correct operator" do
+      operations = [
+        %{
+          operation: :foo,
+          operator_name: :unknown
+        },
+        %{
+          operation: :saptune_solution_apply,
+          operator_name: "saptuneapplysolution@v1"
+        },
+        %{
+          operation: :saptune_solution_change,
+          operator_name: "saptunechangesolution@v1"
+        }
+      ]
+
+      for %{operation: operation, operator_name: operator_name} <- operations do
+        assert operator_name == Operations.map_operation(operation)
       end
     end
   end

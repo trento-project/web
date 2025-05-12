@@ -9,6 +9,8 @@ defmodule Trento.ActivityLog.Logger.Parser.MetadataEnricher do
 
   alias Trento.Users.User
 
+  require Trento.Operations.HostOperations, as: HostOperations
+
   @spec enrich(activity :: ActivityCatalog.activity_type(), metadata :: map()) ::
           {:ok, maybe_enriched_metadata :: map()}
   def enrich(activity, metadata) do
@@ -89,7 +91,7 @@ defmodule Trento.ActivityLog.Logger.Parser.MetadataEnricher do
        do: {:ok, resource_id}
 
   defp detect_enrichment(:host, {_, %{resource_id: id, operation: operation}})
-       when operation in [:saptune_solution_apply, :saptune_solution_change],
+       when operation in HostOperations.values(),
        do: {:ok, id}
 
   defp detect_enrichment(
