@@ -110,6 +110,10 @@ defmodule Trento.Infrastructure.Operations.OperationsTest do
         %{
           operation_type: :saptune_solution_apply,
           internal_type: "saptuneapplysolution@v1"
+        },
+        %{
+          operation_type: :saptune_solution_change,
+          internal_type: "saptunechangesolution@v1"
         }
       ]
 
