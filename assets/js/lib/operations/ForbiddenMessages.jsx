@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const SAPTUNE_SOLUTION_APPLY_FORBIDDEN_MSG = (
+export const SAPTUNE_SOLUTION_OPERATION_FORBIDDEN_MSG = (
   <>
     Find additional information in this{' '}
     <a
