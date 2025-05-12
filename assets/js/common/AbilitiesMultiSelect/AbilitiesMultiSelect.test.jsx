@@ -33,6 +33,7 @@ describe('AbilitiesMultiSelect Component', () => {
       { id: 13, name: 'all', resource: 'suma_settings' },
       { id: 14, name: 'all', resource: 'activity_logs_settings' },
       { id: 15, name: 'saptune_solution_apply', resource: 'host' },
+      { id: 16, name: 'saptune_solution_change', resource: 'host' },
     ];
 
     render(
@@ -98,12 +99,14 @@ describe('AbilitiesMultiSelect Component', () => {
           { id: 2, name: 'all', resource: 'host_checks_selection' },
           { id: 3, name: 'all', resource: 'cluster_checks_selection' },
           { id: 4, name: 'saptune_solution_apply', resource: 'host' },
+          { id: 5, name: 'saptune_solution_change', resource: 'host' },
         ]}
         userAbilities={[
           { id: 1, name: 'all', resource: 'all' },
           { id: 2, name: 'all', resource: 'host_checks_selection' },
           { id: 3, name: 'all', resource: 'cluster_checks_selection' },
           { id: 4, name: 'saptune_solution_apply', resource: 'host' },
+          { id: 5, name: 'saptune_solution_change', resource: 'host' },
         ]}
         setAbilities={noop}
         operationsEnabled
@@ -121,6 +124,9 @@ describe('AbilitiesMultiSelect Component', () => {
     ).not.toBeInTheDocument();
     expect(
       screen.queryByText('saptune_solution_apply:host')
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText('saptune_solution_change:host')
     ).not.toBeInTheDocument();
 
     await user.click(screen.getByLabelText('permissions'));
