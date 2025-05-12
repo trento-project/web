@@ -365,14 +365,139 @@ defmodule TrentoWeb.V1.HostControllerTest do
   end
 
   describe "request operation" do
-    test "should fallback to not found if the resource is not found", %{
-      conn: conn,
-      api_spec: api_spec
-    } do
-      conn
-      |> post("/api/v1/hosts/#{UUID.uuid4()}/operations/saptune_solution_apply")
-      |> json_response(:not_found)
-      |> assert_schema("NotFound", api_spec)
+    for saptune_operation <- ["saptune_solution_apply", "saptune_solution_change"] do
+      @saptune_operation saptune_operation
+
+      test "should fallback to not found for operation '#{saptune_operation}' if the resource is not found",
+           %{
+             conn: conn,
+             api_spec: api_spec
+           } do
+        conn
+        |> post("/api/v1/hosts/#{UUID.uuid4()}/operations/#{@saptune_operation}")
+        |> json_response(:not_found)
+        |> assert_schema("NotFound", api_spec)
+      end
+
+      test "should forbid operation '#{saptune_operation}' if conditions are unmet", %{
+        conn: conn,
+        api_spec: api_spec
+      } do
+        %{id: host_id} = insert(:host)
+        insert(:application_instance, host_id: host_id, health: Health.passing())
+
+        conn
+        |> post("/api/v1/hosts/#{host_id}/operations/#{@saptune_operation}")
+        |> json_response(:forbidden)
+        |> assert_schema("Forbidden", api_spec)
+      end
+
+      test "should respond with 500 if operation '#{saptune_operation}' does not receive needed params",
+           %{
+             conn: conn
+           } do
+        %{id: host_id} = insert(:host)
+
+        resp =
+          conn
+          |> put_req_header("content-type", "application/json")
+          |> post("/api/v1/hosts/#{host_id}/operations/#{@saptune_operation}", %{})
+          |> json_response(:unprocessable_entity)
+
+        assert %{
+                 "errors" => [
+                   %{
+                     "detail" => "Failed to cast value to one of: no schemas validate",
+                     "source" => %{"pointer" => "/"},
+                     "title" => "Invalid value"
+                   },
+                   %{
+                     "detail" => "Missing field: solution",
+                     "source" => %{"pointer" => "/solution"},
+                     "title" => "Invalid value"
+                   }
+                 ]
+               } == resp
+      end
+
+      test "should respond with 500 on messaging error for operation '#{saptune_operation}'", %{
+        conn: conn
+      } do
+        %{id: host_id} = insert(:host)
+
+        expect(
+          Trento.Infrastructure.Messaging.Adapter.Mock,
+          :publish,
+          fn OperationsPublisher, _, _ ->
+            {:error, :amqp_error}
+          end
+        )
+
+        resp =
+          conn
+          |> put_req_header("content-type", "application/json")
+          |> post("/api/v1/hosts/#{host_id}/operations/#{@saptune_operation}", %{
+            "solution" => "HANA"
+          })
+          |> json_response(:internal_server_error)
+
+        assert %{
+                 "errors" => [
+                   %{
+                     "detail" => "Something went wrong.",
+                     "title" => "Internal Server Error"
+                   }
+                 ]
+               } = resp
+      end
+
+      test "should perform '#{saptune_operation}' operation when the user has #{saptune_operation}:host ability",
+           %{
+             conn: conn
+           } do
+        %{id: host_id} = insert(:host)
+
+        %{id: user_id} = insert(:user)
+
+        %{id: ability_id} = insert(:ability, name: @saptune_operation, resource: "host")
+        insert(:users_abilities, user_id: user_id, ability_id: ability_id)
+
+        expect(
+          Trento.Infrastructure.Messaging.Adapter.Mock,
+          :publish,
+          fn OperationsPublisher, _, _ ->
+            :ok
+          end
+        )
+
+        conn
+        |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
+        |> put_req_header("content-type", "application/json")
+        |> post("/api/v1/hosts/#{host_id}/operations/#{@saptune_operation}", %{
+          "solution" => "HANA"
+        })
+        |> json_response(:accepted)
+      end
+
+      test "should request '#{@saptune_operation}' operation", %{conn: conn, api_spec: api_spec} do
+        %{id: host_id} = insert(:host)
+
+        expect(
+          Trento.Infrastructure.Messaging.Adapter.Mock,
+          :publish,
+          fn OperationsPublisher, _, _ ->
+            :ok
+          end
+        )
+
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> post("/api/v1/hosts/#{host_id}/operations/saptune_solution_apply", %{
+          "solution" => "HANA"
+        })
+        |> json_response(:accepted)
+        |> assert_schema("OperationAccepted", api_spec)
+      end
     end
 
     test "should fallback to operation not found if the operation is not found", %{
@@ -385,123 +510,6 @@ defmodule TrentoWeb.V1.HostControllerTest do
       |> post("/api/v1/hosts/#{host_id}/operations/unknown")
       |> json_response(:not_found)
       |> assert_schema("NotFound", api_spec)
-    end
-
-    test "should forbid saptune solution apply if conditions are unmet", %{
-      conn: conn,
-      api_spec: api_spec
-    } do
-      %{id: host_id} = insert(:host)
-      insert(:application_instance, host_id: host_id, health: Health.passing())
-
-      conn
-      |> post("/api/v1/hosts/#{host_id}/operations/saptune_solution_apply")
-      |> json_response(:forbidden)
-      |> assert_schema("Forbidden", api_spec)
-    end
-
-    test "should respond with 500 if saptune solution apply does not receive needed params", %{
-      conn: conn
-    } do
-      %{id: host_id} = insert(:host)
-
-      resp =
-        conn
-        |> put_req_header("content-type", "application/json")
-        |> post("/api/v1/hosts/#{host_id}/operations/saptune_solution_apply", %{})
-        |> json_response(:unprocessable_entity)
-
-      assert %{
-               "errors" => [
-                 %{
-                   "detail" => "Failed to cast value to one of: no schemas validate",
-                   "source" => %{"pointer" => "/"},
-                   "title" => "Invalid value"
-                 },
-                 %{
-                   "detail" => "Missing field: solution",
-                   "source" => %{"pointer" => "/solution"},
-                   "title" => "Invalid value"
-                 }
-               ]
-             } == resp
-    end
-
-    test "should respond with 500 on messaging error", %{conn: conn} do
-      %{id: host_id} = insert(:host)
-
-      expect(
-        Trento.Infrastructure.Messaging.Adapter.Mock,
-        :publish,
-        fn OperationsPublisher, _, _ ->
-          {:error, :amqp_error}
-        end
-      )
-
-      resp =
-        conn
-        |> put_req_header("content-type", "application/json")
-        |> post("/api/v1/hosts/#{host_id}/operations/saptune_solution_apply", %{
-          "solution" => "HANA"
-        })
-        |> json_response(:internal_server_error)
-
-      assert %{
-               "errors" => [
-                 %{
-                   "detail" => "Something went wrong.",
-                   "title" => "Internal Server Error"
-                 }
-               ]
-             } = resp
-    end
-
-    test "should perform saptune solution apply operation when the user has saptune_solution_apply:host ability",
-         %{
-           conn: conn
-         } do
-      %{id: host_id} = insert(:host)
-
-      %{id: user_id} = insert(:user)
-
-      %{id: ability_id} = insert(:ability, name: "saptune_solution_apply", resource: "host")
-      insert(:users_abilities, user_id: user_id, ability_id: ability_id)
-
-      expect(
-        Trento.Infrastructure.Messaging.Adapter.Mock,
-        :publish,
-        fn OperationsPublisher, _, _ ->
-          :ok
-        end
-      )
-
-      conn
-      |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
-      |> put_req_header("content-type", "application/json")
-      |> post("/api/v1/hosts/#{host_id}/operations/saptune_solution_apply", %{
-        "solution" => "HANA"
-      })
-      |> json_response(:accepted)
-    end
-
-    test "should request saptune solution apply operation", %{conn: conn, api_spec: api_spec} do
-      %{id: host_id} = insert(:host)
-
-      expect(
-        Trento.Infrastructure.Messaging.Adapter.Mock,
-        :publish,
-        fn OperationsPublisher, _, _ ->
-          :ok
-        end
-      )
-
-      conn
-      |> put_req_header("content-type", "application/json")
-      |> post("/api/v1/hosts/#{host_id}/operations/saptune_solution_apply", %{
-        "solution" => "HANA"
-      })
-      |> json_response(:accepted)
-      |> assert_schema("OperationAccepted", api_spec)
     end
   end
 
