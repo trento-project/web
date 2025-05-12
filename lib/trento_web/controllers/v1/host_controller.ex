@@ -186,14 +186,15 @@ defmodule TrentoWeb.V1.HostController do
       unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
     ]
 
-  def request_operation(%{assigns: %{host: host}} = conn, %{
-        operation: "saptune_solution_apply"
-      }) do
+  def request_operation(%{assigns: %{host: host}} = conn, %{operation: operation})
+      when operation in ["saptune_solution_apply", "saptune_solution_change"] do
     %{solution: solution} = OpenApiSpex.body_params(conn)
     %{id: host_id} = host
 
     with {:ok, operation_id} <-
-           Hosts.request_operation(:saptune_solution_apply, host_id, %{solution: solution}) do
+           conn
+           |> get_operation()
+           |> Hosts.request_operation(host_id, %{solution: solution}) do
       conn
       |> put_status(:accepted)
       |> json(%{operation_id: operation_id})
@@ -216,6 +217,9 @@ defmodule TrentoWeb.V1.HostController do
 
   def get_operation(%{params: %{operation: "saptune_solution_apply"}}),
     do: :saptune_solution_apply
+
+  def get_operation(%{params: %{operation: "saptune_solution_change"}}),
+    do: :saptune_solution_change
 
   def get_operation(_), do: nil
 end
