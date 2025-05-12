@@ -1,0 +1,33 @@
+name: Post-release
+
+on:
+  release:
+    types:
+      - released
+
+jobs:
+  update-changelog:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Update Changelog
+        uses: stefanzweifel/changelog-updater-action@v1
+        with:
+          latest-version: ${{ github.event.release.tag_name }}
+          release-notes: ${{ github.event.release.body }}
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          add-paths: |
+            CHANGELOG.md
+          commit-message: update changelog
+          title: Update changelog
+          body: |
+            This is an automatic pull request triggered by GitHub actions to keep `CHANGELOG.md` up to date.
+          branch: update-changelog
+          base: main
+          labels: automated, skip-release-notes
+          delete-branch: true
