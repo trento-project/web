@@ -18,6 +18,8 @@ defmodule Trento.Infrastructure.Operations.AMQP.Processor do
 
   alias Trento.Discovery
 
+  require Trento.Operations.HostOperations, as: HostOperations
+
   require Logger
 
   def process(%GenRMQ.Message{payload: payload} = message) do
@@ -75,7 +77,7 @@ defmodule Trento.Infrastructure.Operations.AMQP.Processor do
   end
 
   defp maybe_request_discovery(operation, :UPDATED, group_id)
-       when operation in [:saptune_solution_apply, :saptune_solution_change] do
+       when operation in HostOperations.values() do
     Discovery.request_saptune_discovery(group_id)
   end
 

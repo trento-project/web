@@ -2,8 +2,6 @@ defmodule TrentoWeb.V1.HostController do
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
 
-  require Logger
-
   alias Trento.Repo
 
   alias Trento.{
@@ -23,6 +21,8 @@ defmodule TrentoWeb.V1.HostController do
     OperationParams,
     UnprocessableEntity
   }
+
+  require Logger
 
   plug TrentoWeb.Plugs.LoadUserPlug when action not in [:heartbeat]
 

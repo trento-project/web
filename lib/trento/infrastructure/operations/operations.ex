@@ -50,4 +50,10 @@ defmodule Trento.Infrastructure.Operations do
   def map_operation_type("saptunechangesolution@v1"), do: :saptune_solution_change
 
   def map_operation_type(_), do: :unknown
+
+  def map_operation(:saptune_solution_apply), do: "saptuneapplysolution@v1"
+
+  def map_operation(:saptune_solution_change), do: "saptunechangesolution@v1"
+
+  def map_operation(_), do: :unknown
 end
