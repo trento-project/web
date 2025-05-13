@@ -1022,11 +1022,11 @@ jobs:
           osc checkout $OBS_PROJECT $NAME $CHANGES_FILE
           mv $CHANGES_FILE $FOLDER
           VERSION=${{ steps.latest-tag.outputs.tag }}
-          hack/gh_release_to_obs_changeset.py $REPOSITORY -a shap-staff@suse.de -t $VERSION -f $FOLDER/$CHANGES_FILE
+          /scripts/gh_release_to_obs_changeset.py $REPOSITORY -a shap-staff@suse.de -t $VERSION -f $FOLDER/$CHANGES_FILE
       - name: Set version
         run: |
           git config --global --add safe.directory /__w/web/web
-          VERSION=$(./hack/get_version_from_git.sh)
+          VERSION=$(/scripts/get_version_from_git.sh)
           # "+" character is not allowed in OBS dockerfile version strings
           VERSION=${VERSION//[+]/-}
           sed -i 's~%%VERSION%%~'"${VERSION}"'~' $FOLDER/Dockerfile
@@ -1075,7 +1075,7 @@ jobs:
       - name: Prepare _service file
         run: |
           git config --global --add safe.directory /__w/web/web
-          VERSION=$(./hack/get_version_from_git.sh)
+          VERSION=$(/scripts/get_version_from_git.sh)
           sed -i 's~%%REVISION%%~${{ github.sha }}~' $FOLDER/_service && \
           sed -i 's~%%REPOSITORY%%~'"${REPOSITORY}"'~' $FOLDER/_service && \
           sed -i 's~%%VERSION%%~'"${VERSION}"'~' $FOLDER/_service
@@ -1099,9 +1099,9 @@ jobs:
         if: github.event_name == 'release'
         run: |
           git config --global --add safe.directory /__w/web/web
-          VERSION=$(./hack/get_version_from_git.sh)
+          VERSION=$(/scripts/get_version_from_git.sh)
           TAG=$(echo $VERSION | cut -f1 -d+)
-          hack/gh_release_to_obs_changeset.py $REPOSITORY -a shap-staff@suse.de -t $TAG -f $OSC_CHECKOUT_DIR/trento-web.changes
+          /scripts/gh_release_to_obs_changeset.py $REPOSITORY -a shap-staff@suse.de -t $TAG -f $OSC_CHECKOUT_DIR/trento-web.changes
       - name: Commit changes into OBS
         run: |
           pushd $OSC_CHECKOUT_DIR
