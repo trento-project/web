@@ -810,10 +810,15 @@ jobs:
         uses: docker/metadata-action@369eb591f429131d6889c46b94e711f089e6ca96
         with:
           images: ${{ env.IMAGE_REPOSITORY }}
+      - name: Get version from git history
+        uses: docker://ghcr.io/trento/continuous-delivery:main
+        id: get_version_from_git
+        run: echo "version=$(/scripts/get_version_from_git.sh)" >> $GITHUB_OUTPUT
       - name: Build and push container image
         uses: docker/build-push-action@v6
         with:
           context: .
+          build-args: VERSION=${{ steps.get_version_from_git.outputs.version }}
           push: true
           tags: ${{ env.IMAGE_REPOSITORY }}:${{ env.IMAGE_TAG }}
           labels: ${{ steps.meta.outputs.labels }}

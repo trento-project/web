@@ -2,7 +2,6 @@ defmodule Trento.MixProject do
   use Mix.Project
 
   @source_url "https://github.com/trento-project/web"
-  @version "2.4.0"
 
   def project do
     [
@@ -237,12 +236,9 @@ defmodule Trento.MixProject do
     ]
   end
 
-  defp get_version, do: System.get_env("VERSION", get_version_from_git())
+  defp get_version, do: System.get_env("VERSION", get_version_from_file())
 
-  defp get_version_from_git do
-    case File.cwd!() |> Path.join("hack/get_version_from_git.sh") |> System.cmd([]) do
-      {version, 0} -> version |> String.trim("\n")
-      _ -> @version
-    end
+  defp get_version_from_file do
+    File.cwd!() |> Path.join("VERSION") |> File.read!()
   end
 end

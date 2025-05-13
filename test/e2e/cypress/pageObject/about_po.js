@@ -1,4 +1,5 @@
 export * from './base_po';
+import fs from 'node:fs';
 import * as basePage from './base_po';
 import { getValue } from '../support/common.js';
 
@@ -16,7 +17,7 @@ export const pageTitleIsDisplayed = () => {
 };
 
 export const expectedServerVersionIsDisplayed = () => {
-  const { version } = require('../../package.json');
+  const version = fs.readFileSync('VERSION', 'utf8');
   return cy.get(versionLabel).should('have.text', version);
 };
 
