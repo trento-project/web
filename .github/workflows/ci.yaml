@@ -788,7 +788,7 @@ jobs:
     if: github.event_name == 'release' || (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch'
     needs: [static-code-analysis, test, test-fe, test-e2e]
     container:
-      image: ghcr.io/trento/continuous-delivery:main
+      image: ghcr.io/trento-project/continuous-delivery:main
       options: -u 0:0
     permissions:
       contents: read
