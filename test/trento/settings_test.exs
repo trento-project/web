@@ -975,26 +975,41 @@ defmodule Trento.SettingsTest do
       smtp_username: "",
       smtp_password: "",
       sender_email: "alerts@trento-project.io",
-      recipient_email: "admin@trento-project.io"
+      recipient_email: "admin@trento-project.io",
+      enforced_from_env: true
     }
 
-    for {case_name, _pair} = scenario <- [
-          {"enabled", [enabled: true]},
-          {"SMTP server", [smtp_server: "test.com"]},
-          {"SMTP port", [smtp_port: "587"]},
-          {"SMTP username", [smtp_username: "testuser"]},
-          {"SMTP password", [smtp_password: "testpass}"]},
-          {"sender email", [sender_email: "sender@trento.com"]},
-          {"recipient email", [recipient_email: "recipient@trento.com"]},
-          {"enabled and SMTP server", [enabled: true, smtp_server: "testserver.com"]}
+    for {case_name, _env_params, _exp_overrides} = scenario <- [
+          {"enabled", [enabled: true], []},
+          {"enabled as string", [enabled: "true"], [enabled: true]},
+          {"enabled as empty string", [enabled: ""], [enabled: false]},
+          {"SMTP server", [smtp_server: "test.com"], []},
+          {"SMTP server as non-string", [smtp_server: 111], [smtp_server: ""]},
+          {"SMTP port", [smtp_port: 587], []},
+          {"SMTP port as string", [smtp_port: "587"], [smtp_port: 587]},
+          {"SMTP port as empty string", [smtp_port: ""], [smtp_port: 587]},
+          {"SMTP port as non-parsable string", [smtp_port: "not-an-int"], [smtp_port: 587]},
+          {"SMTP username", [smtp_username: "testuser"], []},
+          {"SMTP password", [smtp_password: "testpass}"], []},
+          {"sender email", [sender_email: "sender@trento.com"], []},
+          {"recipient email", [recipient_email: "recipient@trento.com"], []},
+          {"enabled and SMTP server", [enabled: true, smtp_server: "testserver.com"], []}
         ] do
       @scenario scenario
 
-      test "return complete settings with default values when only #{case_name} is set" do
-        {_, settings} = @scenario
-        expected_settings = struct!(@default_alerting_settings, settings)
+      test "return complete settings with default values when only '#{case_name}' is set" do
+        {_, env_params, exp_overrides} = @scenario
 
-        Application.put_env(:trento, :alerting, settings)
+        expected_params =
+          if exp_overrides == [], do: env_params, else: exp_overrides
+
+        expected_settings =
+          struct!(
+            @default_alerting_settings,
+            expected_params
+          )
+
+        Application.put_env(:trento, :alerting, env_params)
         assert {:ok, expected_settings} == Settings.get_alerting_settings()
       end
     end
