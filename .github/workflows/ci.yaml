@@ -787,9 +787,6 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'release' || (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch'
     needs: [static-code-analysis, test, test-fe, test-e2e]
-    container:
-      image: ghcr.io/trento-project/continuous-delivery:main
-      options: -u 0:0
     permissions:
       contents: read
       packages: write
@@ -815,7 +812,7 @@ jobs:
           images: ${{ env.IMAGE_REPOSITORY }}
       - name: Get version from git history
         id: get_version_from_git
-        run: echo "version=$(/scripts/get_version_from_git.sh)" >> $GITHUB_OUTPUT
+        run: echo "version=$(docker run --rm -v .:/trento-web -w /trento-web ghcr.io/trento-project/continuous-delivery:main /scripts/get_version_from_git.sh)" >> $GITHUB_OUTPUT
       - name: Build and push container image
         uses: docker/build-push-action@v6
         with:
@@ -833,9 +830,6 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.action == 'deploy-demo' || github.event_name == 'release' || (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch'
     needs: [static-code-analysis, test, test-fe]
-    container:
-      image: ghcr.io/trento-project/continuous-delivery:main
-      options: -u 0:0
     permissions:
       contents: read
       packages: write
@@ -861,7 +855,7 @@ jobs:
           images: ${{ env.IMAGE_REPOSITORY }}
       - name: Get version from git history
         id: get_version_from_git
-        run: echo "version=$(/scripts/get_version_from_git.sh)" >> $GITHUB_OUTPUT
+        run: echo "version=$(docker run --rm -v .:/trento-web -w /trento-web ghcr.io/trento-project/continuous-delivery:main /scripts/get_version_from_git.sh)" >> $GITHUB_OUTPUT
       - name: Build and push container image
         uses: docker/build-push-action@v6
         with:
