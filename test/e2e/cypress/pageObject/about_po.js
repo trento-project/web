@@ -8,7 +8,7 @@ const versionLabel = 'div:contains("Server version") + div span';
 const githubRepositoryLabel = 'div:contains("GitHub repository") + div a';
 const amountOfSlesForSapSubscriptionsLabel =
   'div:contains("SLES for SAP subscriptions") + div span';
-const versionFilePath = '../../../../VERSION';
+const versionFilePath = '../../VERSION';
 
 export const visit = () => basePage.visit(url);
 
