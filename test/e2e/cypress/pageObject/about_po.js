@@ -18,7 +18,7 @@ export const pageTitleIsDisplayed = () => {
 
 export const expectedServerVersionIsDisplayed = () => {
   return cy.readFile(versionFilePath, 'utf8').then((version) => {
-    const version = version.trim();
+    version = version.trim();
     cy.get(versionLabel).should('have.text', version);
   });
 };
