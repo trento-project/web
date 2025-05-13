@@ -16,8 +16,10 @@ export const pageTitleIsDisplayed = () => {
 };
 
 export const expectedServerVersionIsDisplayed = () => {
-  const version = cy.readFile('VERSION', 'utf8').trim();
-  return cy.get(versionLabel).should('have.text', version);
+  return cy.readFile('VERSION', 'utf8').then((version) => {
+    const version = version.trim();
+    cy.get(versionLabel).should('have.text', version);
+  });
 };
 
 export const expectedGithubUrlIsDisplayed = () => {
