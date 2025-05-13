@@ -236,7 +236,14 @@ defmodule Trento.MixProject do
     ]
   end
 
-  defp get_version, do: System.get_env("VERSION", get_version_from_file())
+  defp get_version do
+    version = System.get_env("VERSION", get_version_from_file())
+
+    case version do
+      "" -> get_version_from_file()
+      _ -> version
+    end
+  end
 
   defp get_version_from_file do
     File.cwd!() |> Path.join("VERSION") |> File.read!() |> String.trim()
