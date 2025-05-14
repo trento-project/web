@@ -42,7 +42,7 @@ export const capture = (analyticsEnabled, event, payload) => {
   if (!analyticsEnabled) {
     return;
   }
-  posthog.capture(event, { ...payload, installationID });
+  posthog.capture(event, { ...payload });
 };
 
 export const reset = () => {
