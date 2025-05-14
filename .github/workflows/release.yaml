@@ -9,9 +9,11 @@ on:
 
 jobs:
   ci:
+    name: Continuous Integration
     uses: ./.github/workflows/ci.yaml
 
   publish-release:
+    name: Tag and publish release
     needs:
       - ci
     permissions:
