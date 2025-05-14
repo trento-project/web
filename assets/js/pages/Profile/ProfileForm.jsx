@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { noop } from 'lodash';
 import { getError } from '@lib/api/validationErrors';
 import Button from '@common/Button';
@@ -11,6 +12,20 @@ import ProfilePasswordChangeForm from '@pages/Profile/ProfilePasswordChangeForm'
 import TotpEnrollementBox from '@pages/Profile/TotpEnrollmentBox';
 
 import { REQUIRED_FIELD_TEXT, errorMessage } from '@lib/forms';
+
+const ANALYTICS_TOOLTIP_MESSAGE = (
+  <span>
+    Allow the collection of{' '}
+    <Link
+      to="https://www.trento-project.io/docs/"
+      className="text-jungle-green-500 hover:opacity-75"
+      target="_blank"
+    >
+      anonymous metrics
+    </Link>{' '}
+    to help improve Trento.
+  </span>
+);
 
 function ProfileForm({
   fullName = '',
@@ -186,31 +201,20 @@ function ProfileForm({
           </div>
           {analyticsEnabledConfig && (
             <>
-              <Label className="col-start-1 col-span-2 pt-2">
+              <Label
+                className="col-start-1 col-span-2 pt-2"
+                info={ANALYTICS_TOOLTIP_MESSAGE}
+              >
                 Analytics Opt-in
               </Label>
               <div className="col-start-3 col-span-4">
                 <div className="pt-2">
                   <div className="flex items-center">
-                    <Input
-                      className="mr-2"
-                      type="checkbox"
-                      role="checkbox"
-                      checked={analyticsEnabledState}
-                      onChange={() => setAnalyticsState(!analyticsEnabledState)}
+                    <Switch
+                      selected={analyticsEnabledState}
+                      disabled={loading || disableForm}
+                      onChange={(value) => setAnalyticsState(value)}
                     />
-                    <p>
-                      Allow the collection of{' '}
-                      <a
-                        href="https://trento-project.io/docs"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-jungle-green-500 hover:opacity-75"
-                      >
-                        anonymous metrics
-                      </a>{' '}
-                      to help improve Trento.
-                    </p>
                   </div>
                 </div>
               </div>

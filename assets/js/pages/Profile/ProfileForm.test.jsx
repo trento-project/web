@@ -127,7 +127,7 @@ describe('ProfileForm', () => {
     ).toBe('true');
   });
 
-  it('should set analytics checkbox when analyticsEnabled is true', async () => {
+  it('should set analytics switch when analyticsEnabled is true', async () => {
     const { username, fullname, email, abilities } = profileFactory.build();
 
     render(
@@ -141,8 +141,10 @@ describe('ProfileForm', () => {
       />
     );
 
-    expect(screen.getByRole('checkbox')).toBeVisible();
-    expect(screen.getByRole('checkbox').checked).toBe(true);
+    const analyticsSwitch = screen.getAllByRole('switch').pop();
+
+    expect(analyticsSwitch).toBeVisible();
+    expect(analyticsSwitch).toBeChecked();
   });
 
   it('should not set the authenticator app switch when totpEnabled is false', async () => {
