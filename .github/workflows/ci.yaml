@@ -812,7 +812,7 @@ jobs:
           images: ${{ env.IMAGE_REPOSITORY }}
       - name: Get version from git history
         id: get_version_from_git
-        run: echo "version=$(docker run --rm -v .:/trento-web -w /trento-web ghcr.io/trento-project/continuous-delivery:main /scripts/get_version_from_git.sh)" >> $GITHUB_OUTPUT
+        run: echo "version=$(hack/get_version_from_git.sh)" >> $GITHUB_OUTPUT
       - name: Build and push container image
         uses: docker/build-push-action@v6
         with:
@@ -855,7 +855,7 @@ jobs:
           images: ${{ env.IMAGE_REPOSITORY }}
       - name: Get version from git history
         id: get_version_from_git
-        run: echo "version=$(docker run --rm -v .:/trento-web -w /trento-web ghcr.io/trento-project/continuous-delivery:main /scripts/get_version_from_git.sh)" >> $GITHUB_OUTPUT
+        run: echo "version=$(hack/get_version_from_git.sh)" >> $GITHUB_OUTPUT
       - name: Build and push container image
         uses: docker/build-push-action@v6
         with:
