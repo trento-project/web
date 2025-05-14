@@ -8,14 +8,8 @@ on:
       - "VERSION"
 
 jobs:
-  ci:
-    name: Continuous Integration
-    uses: ./.github/workflows/ci.yaml
-
   publish-release:
     name: Tag and publish release
-    needs:
-      - ci
     permissions:
       contents: write
     runs-on: ubuntu-24.04
@@ -48,3 +42,11 @@ jobs:
           config-name: release_drafter.yaml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # counterintuitively, we trigger this after the publishing happened,
+  # because we need to build new images with the tag the previous job has just created
+  continous-integration:
+    needs:
+      - publish-release
+    name: Continuous Integration
+    uses: ./.github/workflows/ci.yaml
