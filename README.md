@@ -60,13 +60,13 @@ Here's a non-comprehensive list of the capabilities provided by the [Trento Web]
 It is important in critical business systems to have access to relevant information about _how things are going_.
 Currently, Trento provides basic integration with **Prometheus**.
 
-See [related documentation](./guides/monitoring/monitoring.md) for more information.
+See [related documentation](https://github.com/trento-project/docs/blob/restructure_docs_directory/projects-docs/web/guides/monitoring/monitoring.md) for more information.
 
 ## Alerting
 
 Alerting feature notifies the SAP Administrator about important updates in the Landscape being monitored/observed by Trento.
 
-See [related documentation](./guides/alerting/alerting.md) for more information.
+See [related documentation](https://github.com/trento-project/docs/blob/restructure_docs_directory/projects-docs/web/guides/alerting/alerting.md) for more information.
 
 # Installation
 
@@ -86,7 +86,7 @@ To install Trento on a k8s cluster, refer to the [Helm Charts](https://github.co
 
 ## Installing Trento Web locally for Development
 
-To install Trento Web locally for development, refer to the [hack on the Trento Web](./guides/development/hack_on_the_trento.md) guide.
+To install Trento Web locally for development, refer to the [hack on the Trento Web](https://github.com/trento-project/docs/blob/restructure_docs_directory/projects-docs/web/guides/development/hack_on_the_trento.md) guide.
 
 # Support
 
