@@ -5,11 +5,11 @@ on:
     branches:
       - main
     paths-ignore:
-      - "/VERSION"
+      - "VERSION"
   pull_request:
     types: [opened, synchronize, labeled]
     paths-ignore:
-      - "/VERSION"
+      - "VERSION"
   release:
     types: [published]
   workflow_dispatch:
