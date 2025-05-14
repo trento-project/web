@@ -185,36 +185,36 @@ function ProfileForm({
             />
           </div>
           {analyticsEnabledConfig && (
-            <Label className="col-start-1 col-span-2 pt-2">
-              Analytics Opt-in
-            </Label>
-          )}
-          {analyticsEnabledConfig && (
-            <div className="col-start-3 col-span-4">
-              <div className="pt-2">
-                <div className="flex items-center">
-                  <Input
-                    className="mr-2"
-                    type="checkbox"
-                    role="checkbox"
-                    checked={analyticsEnabledState}
-                    onChange={() => setAnalyticsState(!analyticsEnabledState)}
-                  />
-                  <p>
-                    Allow the collection of{' '}
-                    <a
-                      href="https://trento-project.io/docs"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-jungle-green-500 hover:opacity-75"
-                    >
-                      anonymous metrics
-                    </a>{' '}
-                    to help improve Trento.
-                  </p>
+            <>
+              <Label className="col-start-1 col-span-2 pt-2">
+                Analytics Opt-in
+              </Label>
+              <div className="col-start-3 col-span-4">
+                <div className="pt-2">
+                  <div className="flex items-center">
+                    <Input
+                      className="mr-2"
+                      type="checkbox"
+                      role="checkbox"
+                      checked={analyticsEnabledState}
+                      onChange={() => setAnalyticsState(!analyticsEnabledState)}
+                    />
+                    <p>
+                      Allow the collection of{' '}
+                      <a
+                        href="https://trento-project.io/docs"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-jungle-green-500 hover:opacity-75"
+                      >
+                        anonymous metrics
+                      </a>{' '}
+                      to help improve Trento.
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
+            </>
           )}
         </div>
         {!singleSignOnEnabled && (
