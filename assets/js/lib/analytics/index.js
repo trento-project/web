@@ -17,6 +17,7 @@ if (analyticsEnabledConfig) {
   });
 }
 
+// TODO: Remove this when this feature is ready for production
 export const getAnalyticsEnabledConfig = () => analyticsEnabledConfig;
 
 export const identify = (analyticsEnabled, userID) => {
