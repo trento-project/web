@@ -63,7 +63,7 @@ function OperationsButton({
       <MenuItems
         anchor={{ to: menuPosition, gap: '5px' }}
         as="div"
-        className="w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 px-3 py-3 focus:outline-none"
+        className="rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 px-3 py-3 focus:outline-none"
       >
         {operations.map(({ value, running, disabled, permitted, onClick }) => (
           <Fragment key={value}>
