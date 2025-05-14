@@ -242,9 +242,7 @@ defmodule Trento.Settings do
 
   defp get_alerting_settings_from_app_env do
     explicitly_set =
-      Application.get_env(:trento, :alerting)
-      |> Enum.filter(fn {_key, value} -> value != nil end)
-      |> Enum.map(&coerce_alerting_env_value/1)
+      Enum.filter(Application.get_env(:trento, :alerting), fn {_key, value} -> value != nil end)
 
     settings =
       struct!(
@@ -254,31 +252,6 @@ defmodule Trento.Settings do
 
     {:ok, settings}
   end
-
-  defp coerce_alerting_env_value({:enabled, value}) when value in [true, "true"],
-    do: {:enabled, true}
-
-  defp coerce_alerting_env_value({:enabled, _}), do: {:enabled, false}
-
-  defp coerce_alerting_env_value({:smtp_port, value}) when is_binary(value) do
-    port =
-      case Integer.parse(value) do
-        {port, _} -> port
-        :error -> Keyword.fetch!(@alerting_settings_default_env, :smtp_port)
-      end
-
-    {:smtp_port, port}
-  end
-
-  defp coerce_alerting_env_value({:smtp_port, value}) when not is_integer(value),
-    do: {:smtp_port, Keyword.fetch!(@alerting_settings_default_env, :smtp_port)}
-
-  defp coerce_alerting_env_value({key, value})
-       when key in [:smtp_server, :smtp_username, :smtp_password, :sender_email, :recipient_email] and
-              not is_binary(value),
-       do: {key, Keyword.fetch!(@alerting_settings_default_env, key)}
-
-  defp coerce_alerting_env_value(pair), do: pair
 
   defp get_alerting_settings_from_db do
     case Repo.one(AlertingSettings.base_query()) do
