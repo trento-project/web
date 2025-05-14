@@ -975,13 +975,14 @@ defmodule Trento.SettingsTest do
       smtp_username: "",
       smtp_password: "",
       sender_email: "alerts@trento-project.io",
-      recipient_email: "admin@trento-project.io"
+      recipient_email: "admin@trento-project.io",
+      enforced_from_env: true
     }
 
-    for {case_name, _pair} = scenario <- [
+    for {case_name, _env_params} = scenario <- [
           {"enabled", [enabled: true]},
           {"SMTP server", [smtp_server: "test.com"]},
-          {"SMTP port", [smtp_port: "587"]},
+          {"SMTP port", [smtp_port: 587]},
           {"SMTP username", [smtp_username: "testuser"]},
           {"SMTP password", [smtp_password: "testpass}"]},
           {"sender email", [sender_email: "sender@trento.com"]},
@@ -990,11 +991,11 @@ defmodule Trento.SettingsTest do
         ] do
       @scenario scenario
 
-      test "return complete settings with default values when only #{case_name} is set" do
-        {_, settings} = @scenario
-        expected_settings = struct!(@default_alerting_settings, settings)
+      test "return complete settings with default values when only '#{case_name}' is set" do
+        {_, env_params} = @scenario
+        expected_settings = struct!(@default_alerting_settings, env_params)
 
-        Application.put_env(:trento, :alerting, settings)
+        Application.put_env(:trento, :alerting, env_params)
         assert {:ok, expected_settings} == Settings.get_alerting_settings()
       end
     end

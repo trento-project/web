@@ -61,7 +61,8 @@ defmodule Trento.Settings do
     smtp_username: "",
     smtp_password: "",
     sender_email: "alerts@trento-project.io",
-    recipient_email: "admin@trento-project.io"
+    recipient_email: "admin@trento-project.io",
+    enforced_from_env: true
   ]
 
   @spec get_installation_id :: String.t()
