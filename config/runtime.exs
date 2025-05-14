@@ -162,9 +162,18 @@ if config_env() in [:prod, :demo] do
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
 
   config :trento, :alerting,
-    enabled: System.get_env("ENABLE_ALERTING"),
+    enabled:
+      (case System.get_env("ENABLE_ALERTING") do
+         nil -> nil
+         "true" -> true
+         _ -> false
+       end),
     smtp_server: System.get_env("SMTP_SERVER"),
-    smtp_port: System.get_env("SMTP_PORT"),
+    smtp_port:
+      (case Integer.parse(System.get_env("SMTP_PORT", "")) do
+         :error -> nil
+         {number, _} -> number
+       end),
     smtp_username: System.get_env("SMTP_USER"),
     smtp_password: System.get_env("SMTP_PASSWORD"),
     sender_email: System.get_env("ALERT_SENDER"),
