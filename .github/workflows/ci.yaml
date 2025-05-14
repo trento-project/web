@@ -8,6 +8,8 @@ on:
       - "/VERSION"
   pull_request:
     types: [opened, synchronize, labeled]
+    paths-ignore:
+      - "/VERSION"
   release:
     types: [published]
   workflow_dispatch:
