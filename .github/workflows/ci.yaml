@@ -2,12 +2,16 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+    paths-ignore:
+      - "/VERSION"
   pull_request:
     types: [opened, synchronize, labeled]
   release:
     types: [published]
   workflow_dispatch:
+  workflow_call:
   repository_dispatch:
     types: [start-ci, deploy-demo]
 
