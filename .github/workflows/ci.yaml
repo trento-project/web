@@ -10,8 +10,6 @@ on:
     types: [opened, synchronize, labeled]
     paths-ignore:
       - "VERSION"
-  release:
-    types: [published]
   workflow_dispatch:
   workflow_call:
   repository_dispatch:
@@ -791,7 +789,7 @@ jobs:
   build-and-push-container-images:
     name: Build and push container images
     runs-on: ubuntu-latest
-    if: github.event_name == 'release' || (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch'
+    if: (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch'
     needs: [static-code-analysis, test, test-fe, test-e2e]
     permissions:
       contents: read
@@ -834,7 +832,7 @@ jobs:
   build-demo-img:
     name: Build the docker image for the demo environment
     runs-on: ubuntu-latest
-    if: github.event.action == 'deploy-demo' || github.event_name == 'release' || (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch'
+    if: github.event.action == 'deploy-demo' || (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch'
     needs: [static-code-analysis, test, test-fe]
     permissions:
       contents: read
@@ -881,7 +879,6 @@ jobs:
     if: |
       vars.DEPLOY_DEMO == 'true' &&
         (
-          github.event_name == 'release' ||
           github.event.action == 'deploy-demo' ||
           (github.event_name == 'push' && github.ref_name == 'main') ||
           github.event_name == 'workflow_dispatch'
@@ -947,7 +944,6 @@ jobs:
     if: |
       vars.DEPLOY_DEMO == 'true' &&
         (
-          github.event_name == 'release' ||
           github.event.action == 'deploy-demo' ||
           (github.event_name == 'push' && github.ref_name == 'main') ||
           github.event_name == 'workflow_dispatch'
@@ -983,7 +979,7 @@ jobs:
   obs-commit-image:
     name: Commit to OBS to generate container image
     runs-on: ubuntu-24.04
-    if: github.event_name == 'release' || (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch'
+    if: (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch'
     needs: [static-code-analysis, test, test-fe, test-e2e]
     container:
       image: ghcr.io/trento-project/continuous-delivery:main
@@ -1055,7 +1051,7 @@ jobs:
     name: Commit to OBS to generate RPM package
     needs: [static-code-analysis, test, test-fe, test-e2e]
     runs-on: ubuntu-24.04
-    if: github.ref == 'refs/heads/main' || github.event_name == 'release'
+    if: github.ref == 'refs/heads/main'
     container:
       image: ghcr.io/trento-project/continuous-delivery:main
       env:
