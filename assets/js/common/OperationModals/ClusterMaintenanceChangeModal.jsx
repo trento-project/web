@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { concat, flatMap, flow, get, has, map, uniqBy } from 'lodash';
+import { concat, flatMap, flow, get, has, map, noop, uniqBy } from 'lodash';
 import Label from '@common/Label';
 import Select from '@common/Select';
 import Switch from '@common/Switch';
@@ -26,8 +26,8 @@ const renderOption = ({ value: { id } }) => id;
 function ClusterMaintenanceChangeModal({
   clusterDetails,
   isOpen = false,
-  onRequest,
-  onCancel,
+  onRequest = noop,
+  onCancel = noop,
 }) {
   const [checked, setChecked] = useState(false);
   const [resource, setResource] = useState(NOT_SELECTED_OPTION.value);
@@ -100,7 +100,12 @@ function ClusterMaintenanceChangeModal({
           }),
         })
       }
-      onCancel={onCancel}
+      onCancel={() => {
+        onCancel();
+        setResource(NOT_SELECTED_OPTION.value);
+        setMaintenanceState(false);
+        setChecked(false);
+      }}
     >
       <div className="grid grid-cols-3 gap-6">
         <Label className="col-start-1 col-span-1">Resource</Label>
