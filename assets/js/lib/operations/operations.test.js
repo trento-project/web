@@ -2,7 +2,7 @@ import { noop } from 'lodash';
 
 import { requestHostOperation } from '@lib/api/operations';
 
-import { SAPTUNE_SOLUTION_APPLY_FORBIDDEN_MSG } from './ForbiddenMessages';
+import { SAPTUNE_SOLUTION_OPERATION_FORBIDDEN_MSG } from './ForbiddenMessages';
 
 import {
   getOperationLabel,
@@ -24,6 +24,10 @@ describe('operations', () => {
       operation: 'saptune_solution_apply',
       label: 'Apply Saptune solution',
     },
+    {
+      operation: 'saptune_solution_change',
+      label: 'Change Saptune solution',
+    },
   ])(`should return the operation $operation label`, ({ operation, label }) => {
     expect(getOperationLabel(operation)).toBe(label);
   });
@@ -36,6 +40,10 @@ describe('operations', () => {
     {
       operation: 'saptuneapplysolution@v1',
       name: 'saptune_solution_apply',
+    },
+    {
+      operation: 'saptunechangesolution@v1',
+      name: 'saptune_solution_change',
     },
   ])(
     `should return the operation $operation internal name`,
@@ -51,6 +59,10 @@ describe('operations', () => {
     },
     {
       operation: 'saptune_solution_apply',
+      resourceType: 'host',
+    },
+    {
+      operation: 'saptune_solution_change',
       resourceType: 'host',
     },
   ])(
@@ -83,7 +95,11 @@ describe('operations', () => {
     },
     {
       operation: 'saptune_solution_apply',
-      message: SAPTUNE_SOLUTION_APPLY_FORBIDDEN_MSG,
+      message: SAPTUNE_SOLUTION_OPERATION_FORBIDDEN_MSG,
+    },
+    {
+      operation: 'saptune_solution_change',
+      message: SAPTUNE_SOLUTION_OPERATION_FORBIDDEN_MSG,
     },
   ])(
     `should return the operation $operation forbidden message`,

@@ -1,9 +1,13 @@
-import SaptuneSolutionApplyModal from './SaptuneSolutionApplyModal';
+import SaptuneSolutionOperationModal from './SaptuneSolutionOperationModal';
 
 export default {
-  title: 'Components/SaptuneSolutionApplyModal',
-  component: SaptuneSolutionApplyModal,
+  title: 'Components/SaptuneSolutionOperationModal',
+  component: SaptuneSolutionOperationModal,
   argTypes: {
+    title: {
+      description: 'Modal title',
+      control: 'text',
+    },
     isHanaRunning: {
       description: 'HANA instance is running on host',
       control: 'boolean',
@@ -24,6 +28,7 @@ export default {
     },
   },
   args: {
+    title: 'Apply/Change Saptune Solution',
     isHanaRunning: false,
     isAppRunning: false,
     isOpen: true,

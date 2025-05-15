@@ -2,7 +2,10 @@ import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { faker } from '@faker-js/faker';
 import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
-import { SAPTUNE_SOLUTION_APPLY } from '@lib/operations';
+import {
+  SAPTUNE_SOLUTION_APPLY,
+  SAPTUNE_SOLUTION_CHANGE,
+} from '@lib/operations';
 
 import {
   clusterFactory,
@@ -331,7 +334,12 @@ export const WithSoftwareUpdatesFailed = {
 export const WithRunningOperation = {
   args: {
     ...Default.args,
-    runningOperation: { operation: SAPTUNE_SOLUTION_APPLY },
+    runningOperation: {
+      operation: faker.helpers.arrayElement([
+        SAPTUNE_SOLUTION_APPLY,
+        SAPTUNE_SOLUTION_CHANGE,
+      ]),
+    },
   },
 };
 

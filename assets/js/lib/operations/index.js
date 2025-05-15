@@ -2,22 +2,26 @@ import { get, noop } from 'lodash';
 
 import { requestHostOperation } from '@lib/api/operations';
 
-import { SAPTUNE_SOLUTION_APPLY_FORBIDDEN_MSG } from './ForbiddenMessages';
+import { SAPTUNE_SOLUTION_OPERATION_FORBIDDEN_MSG } from './ForbiddenMessages';
 
 export const HOST_OPERATION = 'host';
 
 export const SAPTUNE_SOLUTION_APPLY = 'saptune_solution_apply';
+export const SAPTUNE_SOLUTION_CHANGE = 'saptune_solution_change';
 
 const OPERATION_LABELS = {
   [SAPTUNE_SOLUTION_APPLY]: 'Apply Saptune solution',
+  [SAPTUNE_SOLUTION_CHANGE]: 'Change Saptune solution',
 };
 
 const OPERATION_INTERNAL_NAMES = {
   'saptuneapplysolution@v1': SAPTUNE_SOLUTION_APPLY,
+  'saptunechangesolution@v1': SAPTUNE_SOLUTION_CHANGE,
 };
 
 const OPERATION_RESOURCE_TYPES = {
   [SAPTUNE_SOLUTION_APPLY]: HOST_OPERATION,
+  [SAPTUNE_SOLUTION_CHANGE]: HOST_OPERATION,
 };
 
 const OPERATION_REQUEST_FUNCS = {
@@ -25,7 +29,8 @@ const OPERATION_REQUEST_FUNCS = {
 };
 
 const OPERATION_FORBIDDEN_MESSAGES = {
-  [SAPTUNE_SOLUTION_APPLY]: SAPTUNE_SOLUTION_APPLY_FORBIDDEN_MSG,
+  [SAPTUNE_SOLUTION_APPLY]: SAPTUNE_SOLUTION_OPERATION_FORBIDDEN_MSG,
+  [SAPTUNE_SOLUTION_CHANGE]: SAPTUNE_SOLUTION_OPERATION_FORBIDDEN_MSG,
 };
 
 export const getOperationLabel = (operation) =>

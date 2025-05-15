@@ -52,7 +52,10 @@ const groupedAbilities = [
   {
     ability: 'operation:all',
     tooltip: 'Permits running operations in all resources',
-    groupAbilities: ['saptune_solution_apply:host'],
+    groupAbilities: [
+      'saptune_solution_apply:host',
+      'saptune_solution_change:host',
+    ],
   },
 ];
 

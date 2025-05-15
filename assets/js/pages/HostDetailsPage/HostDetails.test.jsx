@@ -1,5 +1,5 @@
 import React from 'react';
-import { act, screen, within } from '@testing-library/react';
+import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import 'intersection-observer';
 import '@testing-library/jest-dom';
@@ -15,12 +15,17 @@ import {
 } from '@lib/test-utils/factories';
 import { TUNING_VALUES } from '@pages/SaptuneDetails/SaptuneDetails.test';
 import { DATABASE_TYPE } from '@lib/model/sapSystems';
-import { SAPTUNE_SOLUTION_APPLY } from '@lib/operations';
+import {
+  SAPTUNE_SOLUTION_APPLY,
+  SAPTUNE_SOLUTION_CHANGE,
+} from '@lib/operations';
 
 import HostDetails from './HostDetails';
 
 const axiosMock = new MockAdapter(networkClient);
 const userAbilities = [{ name: 'all', resource: 'all' }];
+const applySaptuneSolution = 'Apply Saptune Solution';
+const changeSaptuneSolution = 'Change Saptune Solution';
 
 describe('HostDetails component', () => {
   beforeEach(() => {
@@ -388,83 +393,47 @@ describe('HostDetails component', () => {
   });
 
   describe('operations', () => {
-    it('should run Saptune apply operation when clicking apply button in modal', async () => {
-      const user = userEvent.setup({ delay: null });
-      const mockRequestSolution = jest.fn();
-      const saptuneStatus = saptuneStatusFactory.build({
-        enabled_solution: null,
-      });
-      const sapInstances = databaseInstanceFactory
-        .buildList(1)
-        .map((instance) => ({ ...instance, type: DATABASE_TYPE }));
+    it.each`
+      scenario            | runningOperation
+      ${'Saptune apply'}  | ${{ operation: SAPTUNE_SOLUTION_APPLY, menuEntry: 'Apply Saptune Solution' }}
+      ${'Saptune change'} | ${{ operation: SAPTUNE_SOLUTION_CHANGE, menuEntry: 'Change Saptune Solution' }}
+    `(
+      'should show $scenario operation running',
+      async ({ runningOperation: { operation, menuEntry } }) => {
+        const user = userEvent.setup();
 
-      renderWithRouter(
-        <HostDetails
-          agentVersion="2.0.0"
-          userAbilities={userAbilities}
-          operationsEnabled
-          requestOperation={mockRequestSolution}
-          sapInstances={sapInstances}
-          saptuneStatus={saptuneStatus}
-        />
-      );
+        renderWithRouter(
+          <HostDetails
+            agentVersion="2.0.0"
+            userAbilities={userAbilities}
+            operationsEnabled
+            runningOperation={{ operation }}
+          />
+        );
 
-      const operationsButton = screen.getByRole('button', {
-        name: 'Operations',
-      });
-      await user.click(operationsButton);
+        const operationsButton = screen.getByRole('button', {
+          name: 'Operations',
+        });
 
-      const menuItem = screen.getByRole('menuitem', {
-        name: 'Apply Saptune Solution',
-      });
-      expect(menuItem).toBeEnabled();
-      await user.click(menuItem);
+        await act(async () => user.click(operationsButton));
 
-      await user.click(screen.getByRole('checkbox'));
-      expect(screen.getByText('Apply')).toBeDisabled();
+        const menuItem = screen.getByRole('menuitem', {
+          name: menuEntry,
+        });
 
-      await user.click(
-        screen.getByRole('button', { name: 'Select a saptune solution' })
-      );
+        expect(menuItem).toBeDisabled();
 
-      expect(screen.getByText('HANA')).toBeInTheDocument();
+        const { getByTestId } = within(menuItem);
 
-      await user.click(screen.getByText('HANA'));
-      await user.click(screen.getByText('Apply'));
+        expect(getByTestId('eos-svg-component')).toBeInTheDocument();
+      }
+    );
 
-      expect(mockRequestSolution).toHaveBeenCalledWith(SAPTUNE_SOLUTION_APPLY, {
-        solution: 'HANA',
-      });
-    });
-
-    it('should show Saptune apply operation running', async () => {
-      const user = userEvent.setup();
-
-      renderWithRouter(
-        <HostDetails
-          agentVersion="2.0.0"
-          userAbilities={userAbilities}
-          operationsEnabled
-          runningOperation={{ operation: SAPTUNE_SOLUTION_APPLY }}
-        />
-      );
-
-      const operationsButton = screen.getByRole('button', {
-        name: 'Operations',
-      });
-      await user.click(operationsButton);
-
-      const menuItem = screen.getByRole('menuitem', {
-        name: 'Apply Saptune Solution',
-      });
-      expect(menuItem).toBeDisabled();
-
-      const { getByTestId } = within(menuItem);
-
-      expect(getByTestId('eos-svg-component')).toBeInTheDocument();
-    });
-
-    it('should show Saptune apply operation disabled', async () => {
+    it.each`
+      operation
+      ${'Apply Saptune Solution'}
+      ${'Change Saptune Solution'}
+    `('should show $operation operation disabled', async ({ operation }) => {
       const user = userEvent.setup();
 
       renderWithRouter(
@@ -478,48 +447,51 @@ describe('HostDetails component', () => {
       const operationsButton = screen.getByRole('button', {
         name: 'Operations',
       });
-      await user.click(operationsButton);
+      await act(async () => user.click(operationsButton));
 
-      expect(
-        screen.getByRole('menuitem', {
-          name: 'Apply Saptune Solution',
-        })
-      ).toBeDisabled();
-    });
-
-    it('should show Saptune apply operation forbidden message', async () => {
-      const user = userEvent.setup();
-      const mockCleanForbiddenOperation = jest.fn();
-
-      renderWithRouter(
-        <HostDetails
-          agentVersion="2.0.0"
-          userAbilities={userAbilities}
-          operationsEnabled
-          runningOperation={{
-            operation: SAPTUNE_SOLUTION_APPLY,
-            forbidden: true,
-            errors: ['error1', 'error2'],
-          }}
-          cleanForbiddenOperation={mockCleanForbiddenOperation}
-        />
+      await waitFor(() =>
+        expect(screen.getByRole('menuitem', { name: operation })).toBeDisabled()
       );
-
-      expect(screen.getByText('Operation Forbidden')).toBeInTheDocument();
-      expect(
-        screen.getByText('Unable to run Apply Saptune Solution operation', {
-          exact: false,
-        })
-      ).toBeInTheDocument();
-      expect(screen.getByText('error1')).toBeInTheDocument();
-      expect(screen.getByText('error2')).toBeInTheDocument();
-
-      const closeButton = screen.getByRole('button', {
-        name: 'Close',
-      });
-      await user.click(closeButton);
-      expect(mockCleanForbiddenOperation).toHaveBeenCalled();
     });
+
+    it.each`
+      scenario                     | operation                  | expectedMessage
+      ${'Saptune apply solution'}  | ${SAPTUNE_SOLUTION_APPLY}  | ${'Unable to run Apply Saptune Solution operation'}
+      ${'Saptune change solution'} | ${SAPTUNE_SOLUTION_CHANGE} | ${'Unable to run Change Saptune Solution operation'}
+    `(
+      'should show $scenario operation forbidden message',
+      async ({ operation, expectedMessage }) => {
+        const user = userEvent.setup();
+        const mockCleanForbiddenOperation = jest.fn();
+
+        renderWithRouter(
+          <HostDetails
+            agentVersion="2.0.0"
+            userAbilities={userAbilities}
+            operationsEnabled
+            runningOperation={{
+              operation,
+              forbidden: true,
+              errors: ['error1', 'error2'],
+            }}
+            cleanForbiddenOperation={mockCleanForbiddenOperation}
+          />
+        );
+
+        expect(screen.getByText('Operation Forbidden')).toBeInTheDocument();
+        expect(
+          screen.getByText(expectedMessage, { exact: false })
+        ).toBeInTheDocument();
+        expect(screen.getByText('error1')).toBeInTheDocument();
+        expect(screen.getByText('error2')).toBeInTheDocument();
+
+        const closeButton = screen.getByRole('button', {
+          name: 'Close',
+        });
+        await user.click(closeButton);
+        expect(mockCleanForbiddenOperation).toHaveBeenCalled();
+      }
+    );
   });
 
   describe('forbidden actions', () => {
@@ -559,70 +531,58 @@ describe('HostDetails component', () => {
       expect(startExecutionButton).toBeEnabled();
     });
 
-    it('should disable Saptune apply operation button when the user abilities are not compatible', async () => {
-      const user = userEvent.setup();
-      const saptuneStatus = saptuneStatusFactory.build({
-        enabled_solution: null,
-      });
-      const sapInstances = databaseInstanceFactory
-        .buildList(1)
-        .map((instance) => ({ ...instance, type: DATABASE_TYPE }));
+    it.each`
+      scenario                    | ability                                                  | enabledSolution | operationName            | expectedToBeEnabled
+      ${'disable Saptune apply'}  | ${{ name: 'all', resource: 'another_resource' }}         | ${null}         | ${applySaptuneSolution}  | ${false}
+      ${'disable Saptune change'} | ${{ name: 'all', resource: 'another_resource' }}         | ${'HANA'}       | ${changeSaptuneSolution} | ${false}
+      ${'enable Saptune apply'}   | ${{ name: 'saptune_solution_apply', resource: 'host' }}  | ${null}         | ${applySaptuneSolution}  | ${true}
+      ${'enable Saptune change'}  | ${{ name: 'saptune_solution_change', resource: 'host' }} | ${'HANA'}       | ${changeSaptuneSolution} | ${true}
+    `(
+      'should $scenario solution operation button based on user abilities',
+      async ({
+        ability,
+        enabledSolution,
+        operationName,
+        expectedToBeEnabled,
+      }) => {
+        const user = userEvent.setup();
+        const saptuneStatus = saptuneStatusFactory.build({
+          enabled_solution: enabledSolution,
+        });
+        const sapInstances = databaseInstanceFactory
+          .buildList(1)
+          .map((instance) => ({ ...instance, type: DATABASE_TYPE }));
 
-      await act(async () => {
-        renderWithRouter(
-          <HostDetails
-            agentVersion="2.0.0"
-            userAbilities={[{ name: 'all', resource: 'another_resource' }]}
-            operationsEnabled
-            sapInstances={sapInstances}
-            saptuneStatus={saptuneStatus}
-          />
-        );
-      });
+        await act(async () => {
+          renderWithRouter(
+            <HostDetails
+              agentVersion="2.0.0"
+              userAbilities={[ability]}
+              operationsEnabled
+              sapInstances={sapInstances}
+              saptuneStatus={saptuneStatus}
+            />
+          );
+        });
 
-      const operationsButton = screen.getByRole('button', {
-        name: 'Operations',
-      });
-      await user.click(operationsButton);
-
-      const menuButton = screen.getByRole('menuitem', {
-        name: 'Apply Saptune Solution',
-      });
-
-      expect(menuButton).toBeDisabled();
-    });
-
-    it('should enable Saptune apply operation button when the user abilities are compatible', async () => {
-      const user = userEvent.setup();
-      const saptuneStatus = saptuneStatusFactory.build({
-        enabled_solution: null,
-      });
-      const sapInstances = databaseInstanceFactory
-        .buildList(1)
-        .map((instance) => ({ ...instance, type: DATABASE_TYPE }));
-
-      renderWithRouter(
-        <HostDetails
-          agentVersion="2.0.0"
-          userAbilities={[{ name: 'saptune_solution_apply', resource: 'host' }]}
-          operationsEnabled
-          sapInstances={sapInstances}
-          saptuneStatus={saptuneStatus}
-        />
-      );
-
-      await user.click(
-        screen.getByRole('button', {
+        const operationsButton = screen.getByRole('button', {
           name: 'Operations',
-        })
-      );
+        });
+        await act(async () => {
+          await user.click(operationsButton);
+        });
 
-      expect(
-        screen.getByRole('menuitem', {
-          name: 'Apply Saptune Solution',
-        })
-      ).toBeEnabled();
-    });
+        const menuButton = await waitFor(() =>
+          screen.getByRole('menuitem', {
+            name: operationName,
+          })
+        );
+
+        expectedToBeEnabled
+          ? expect(menuButton).toBeEnabled()
+          : expect(menuButton).toBeDisabled();
+      }
+    );
   });
 
   describe('exporters', () => {

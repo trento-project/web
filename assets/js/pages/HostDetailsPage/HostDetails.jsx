@@ -10,6 +10,7 @@ import {
 import { agentVersionWarning } from '@lib/agent';
 import {
   SAPTUNE_SOLUTION_APPLY,
+  SAPTUNE_SOLUTION_CHANGE,
   getOperationLabel,
   getOperationForbiddenMessage,
 } from '@lib/operations';
@@ -27,7 +28,7 @@ import AvailableSoftwareUpdates from '@common/AvailableSoftwareUpdates';
 import DisabledGuard from '@common/DisabledGuard';
 import OperationsButton from '@common/OperationsButton';
 import {
-  SaptuneSolutionApplyModal,
+  SaptuneSolutionOperationModal,
   OperationForbiddenModal,
 } from '@common/OperationModals';
 
@@ -103,8 +104,11 @@ function HostDetails({
   navigate,
 }) {
   const [cleanUpModalOpen, setCleanUpModalOpen] = useState(false);
-  const [saptuneSolutionApplyModalOpen, setSaptuneSolutionApplyModalOpen] =
-    useState(false);
+  const [
+    saptuneSolutionOperationModalOpen,
+    setSaptuneSolutionOperationModalOpen,
+  ] = useState(false);
+  const [currentSaptuneOperation, setCurrentSaptuneOperation] = useState(null);
 
   const versionWarningMessage = agentVersionWarning(agentVersion);
 
@@ -140,6 +144,11 @@ function HostDetails({
 
   const timeNow = new Date();
 
+  const openSaptuneOperationModal = (saptuneOperation) => () => {
+    setCurrentSaptuneOperation(saptuneOperation);
+    setSaptuneSolutionOperationModalOpen(true);
+  };
+
   return (
     <>
       <DeregistrationModal
@@ -163,17 +172,16 @@ function HostDetails({
           >
             {getOperationForbiddenMessage(runningOperationName)}
           </OperationForbiddenModal>
-          <SaptuneSolutionApplyModal
+          <SaptuneSolutionOperationModal
+            title={getOperationLabel(currentSaptuneOperation)}
             isHanaRunning={some(sapInstances, { type: DATABASE_TYPE })}
             isAppRunning={some(sapInstances, { type: APPLICATION_TYPE })}
-            isOpen={!!saptuneSolutionApplyModalOpen}
+            isOpen={!!saptuneSolutionOperationModalOpen}
             onRequest={(solution) => {
-              setSaptuneSolutionApplyModalOpen(false);
-              requestOperation(SAPTUNE_SOLUTION_APPLY, { solution });
+              setSaptuneSolutionOperationModalOpen(false);
+              requestOperation(currentSaptuneOperation, { solution });
             }}
-            onCancel={() => {
-              setSaptuneSolutionApplyModalOpen(false);
-            }}
+            onCancel={() => setSaptuneSolutionOperationModalOpen(false)}
           />
         </>
       )}
@@ -197,9 +205,19 @@ function HostDetails({
                       disabled:
                         !sapPresent || get(saptuneStatus, 'enabled_solution'),
                       permitted: ['saptune_solution_apply:host'],
-                      onClick: () => {
-                        setSaptuneSolutionApplyModalOpen(true);
-                      },
+                      onClick: openSaptuneOperationModal(
+                        SAPTUNE_SOLUTION_APPLY
+                      ),
+                    },
+                    {
+                      value: 'Change Saptune Solution',
+                      running: runningOperationName === SAPTUNE_SOLUTION_CHANGE,
+                      disabled:
+                        !sapPresent || !get(saptuneStatus, 'enabled_solution'),
+                      permitted: ['saptune_solution_change:host'],
+                      onClick: openSaptuneOperationModal(
+                        SAPTUNE_SOLUTION_CHANGE
+                      ),
                     },
                   ]}
                 />

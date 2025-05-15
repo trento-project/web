@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { filter } from 'lodash';
+import { filter, noop } from 'lodash';
 import Select from '@common/Select';
 import OperationModal from './OperationModal';
 
@@ -43,12 +43,13 @@ const solutions = [
   },
 ];
 
-function SaptuneSolutionApplyModal({
+function SaptuneSolutionOperationModal({
+  title,
   isHanaRunning,
   isAppRunning,
   isOpen = false,
-  onRequest,
-  onCancel,
+  onRequest = noop,
+  onCancel = noop,
 }) {
   const [checked, setChecked] = useState(false);
   const [solution, setSolution] = useState(NOT_SELECTED);
@@ -59,7 +60,7 @@ function SaptuneSolutionApplyModal({
 
   return (
     <OperationModal
-      title="Apply Saptune Solution"
+      title={title}
       description="Select Saptune tuning solution"
       operationText="Saptune solution"
       applyDisabled={!checked || solution === NOT_SELECTED}
@@ -67,7 +68,11 @@ function SaptuneSolutionApplyModal({
       isOpen={isOpen}
       onChecked={() => setChecked((prev) => !prev)}
       onRequest={() => onRequest(solution)}
-      onCancel={onCancel}
+      onCancel={() => {
+        onCancel();
+        setSolution(NOT_SELECTED);
+        setChecked(false);
+      }}
     >
       <div className="flex items-center justify-start gap-2 mt-4">
         <p className="font-semibold text-gray-900 tracking-wide">
@@ -86,4 +91,4 @@ function SaptuneSolutionApplyModal({
   );
 }
 
-export default SaptuneSolutionApplyModal;
+export default SaptuneSolutionOperationModal;
