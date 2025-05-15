@@ -33,7 +33,9 @@ jobs:
           version-command: |
             cat VERSION
 
-      - uses: release-drafter/release-drafter@v6
+      - name: Publish release
+        id: publish-release
+        uses: release-drafter/release-drafter@v6
         if: steps.check-version.outputs.tag != ''
         with:
           publish: true
@@ -43,8 +45,29 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  # counterintuitively, we trigger this after the publishing happened,
-  # because we need to build new images with the tag the previous job has just created
+      - name: Update CHANGELOG.md
+        uses: stefanzweifel/changelog-updater-action@v1
+        with:
+          latest-version: ${{ steps.publish-release.outputs.tag_name }}
+          release-notes: ${{ steps.publish-release.outputs.body }}
+
+      - name: Open changelog PR
+        uses: peter-evans/create-pull-request@v7
+        with:
+          add-paths: |
+            CHANGELOG.md
+          commit-message: update changelog
+          title: Update changelog
+          body: |
+            This is an automatic pull request triggered by GitHub actions to keep `CHANGELOG.md` up to date.
+          branch: update-changelog
+          base: main
+          labels: automated, skip-release-notes
+          delete-branch: true
+
+  # Counterintuitively, the CI workflow is triggered after the release has been published,
+  # because all the images need to be built with the newly created tag.
+  # TO-DO: To avoid this quirk, we should probably segregate test jobs from build jobs.
   continous-integration:
     needs:
       - publish-release
