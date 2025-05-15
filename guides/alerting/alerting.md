@@ -15,14 +15,14 @@ This feature is **disabled by default**.
 
 There are two ways to enable and configure SMTP alerting:
 
-- via Environmnet Variables (env-vars)
+- via Environment Variables (env-vars)
 - via WebUI/RESTful API
 
 The env-vars have precedence. If _any_ of the following env-vars is
 set, then alerting configuration is _only_ made via env-vars:
 `ENABLE_ALERTING`, `ALERTING_SENDER`, `ALERTING_RECIPIENT`,
 `SMTP_SERVER`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`. Trento
-provides default values for the env-vars that are not explicity
+provides default values for the env-vars that are not explicitly
 set. To quickly enable alerting, provide `ENABLE_ALERTING=true` as an
 environment variable when starting Trento.
 
@@ -40,7 +40,7 @@ SMTP_PASSWORD=password
 
 The other way of configuring alerting is via the Web interface or
 through the API. To be able to use this variant, _all_ of the
-aformentioned env-vars should be left undefined when starting
+aforementioned env-vars should be left undefined when starting
 Trento. Then, configuring the alerting values could be done in a
 self-explanatory manner from Settings menu in Trento web
 console. There is also an OpenAPI spec for the API.
@@ -85,7 +85,7 @@ docker compose --profile smtp up -d
 Mailpit has great web UI that can be accessed on `localhost:8025`.
 
 Since we need to support several scenarios with SMTP servers, our
-compose file is parameterized with serveral trento-specific
+compose file is parameterized with several trento-specific
 environment variables:
 
 - `TRENTO_SMTP_AUTHENTICATED` -- By setting it to non-empty,
