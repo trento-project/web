@@ -1,6 +1,6 @@
 import React from 'react';
 import { concat } from 'lodash';
-import { act, render, screen } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import { clusterFactory } from '@lib/test-utils/factories';
@@ -25,6 +25,31 @@ describe('ClusterMaintenanceChangeModal', () => {
 
     expect(screen.getByText('Apply')).toBeDisabled();
     expect(screen.getByText('Select a cluster resource')).toBeDisabled();
+  });
+
+  it('should reset internal state when closing the modal', async () => {
+    const user = userEvent.setup();
+
+    const { rerender } = await act(async () =>
+      render(<ClusterMaintenanceChangeModal isOpen />)
+    );
+
+    await user.click(screen.getByRole('checkbox'));
+    await user.click(screen.getByText('Select a cluster resource'));
+    await user.click(screen.getByText('Cluster (full maintenance)'));
+    await user.click(screen.getByRole('switch'));
+
+    await user.click(screen.getByText('Cancel'));
+
+    await act(async () => {
+      rerender(<ClusterMaintenanceChangeModal isOpen />);
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('Apply')).toBeDisabled();
+      expect(screen.getByRole('checkbox')).not.toBeChecked();
+      expect(screen.getByText('Select a cluster resource')).toBeDisabled();
+    });
   });
 
   it('should render available nodes and resources in HANA clusters', async () => {
