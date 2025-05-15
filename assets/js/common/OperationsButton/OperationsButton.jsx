@@ -38,7 +38,11 @@ function CustomMenuButton({ value, running, disabled, onClick }) {
   );
 }
 
-function OperationsButton({ operations, userAbilities }) {
+function OperationsButton({
+  operations,
+  userAbilities,
+  menuPosition = 'bottom start',
+}) {
   const ref = useRef(null);
   const someRunning = some(operations, { running: true });
 
@@ -57,7 +61,7 @@ function OperationsButton({ operations, userAbilities }) {
         </div>
       </MenuButton>
       <MenuItems
-        anchor={{ to: 'bottom start', gap: '5px' }}
+        anchor={{ to: menuPosition, gap: '5px' }}
         as="div"
         className="w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 px-3 py-3 focus:outline-none"
       >
