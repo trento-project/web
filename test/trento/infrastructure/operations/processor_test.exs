@@ -88,37 +88,47 @@ defmodule Trento.Infrastructure.Operations.AMQP.ProcessorTest do
       message = %GenRMQ.Message{payload: "bad-payload", attributes: %{}, channel: nil}
       assert {:error, :decoding_error} = Processor.process(message)
     end
+  end
 
-    test "should request saptune discovery request when saptune_solution_apply operation is completed" do
-      operation_id = UUID.uuid4()
-      group_id = UUID.uuid4()
+  describe "requesting discovery upon operation completion" do
+    for {operation, _} = saptune_operation_scenario <- [
+          {"saptune_solution_apply", "saptuneapplysolution@v1"},
+          {"saptune_solution_change", "saptunechangesolution@v1"}
+        ] do
+      @saptune_operation_scenario saptune_operation_scenario
 
-      operation_completed =
-        Contracts.to_event(%OperationCompleted{
-          operation_id: operation_id,
-          group_id: group_id,
-          operation_type: "saptuneapplysolution@v1",
-          result: :UPDATED
-        })
+      test "should request saptune discovery request when '#{operation}' operation is completed" do
+        operation_id = UUID.uuid4()
+        group_id = UUID.uuid4()
+        {_, operator} = @saptune_operation_scenario
 
-      discovery_requested = %DiscoveryRequested{
-        discovery_type: "saptune_discovery",
-        targets: [group_id]
-      }
+        operation_completed =
+          Contracts.to_event(%OperationCompleted{
+            operation_id: operation_id,
+            group_id: group_id,
+            operation_type: operator,
+            result: :UPDATED
+          })
 
-      expect(
-        Trento.Infrastructure.Messaging.Adapter.Mock,
-        :publish,
-        fn Publisher, "agents", ^discovery_requested ->
-          :ok
-        end
-      )
+        discovery_requested = %DiscoveryRequested{
+          discovery_type: "saptune_discovery",
+          targets: [group_id]
+        }
 
-      message = %GenRMQ.Message{payload: operation_completed, attributes: %{}, channel: nil}
+        expect(
+          Trento.Infrastructure.Messaging.Adapter.Mock,
+          :publish,
+          fn Publisher, "agents", ^discovery_requested ->
+            :ok
+          end
+        )
 
-      assert :ok = Processor.process(message)
+        message = %GenRMQ.Message{payload: operation_completed, attributes: %{}, channel: nil}
 
-      assert 1 == ActivityLog |> Repo.all() |> length()
+        assert :ok = Processor.process(message)
+
+        assert 1 == ActivityLog |> Repo.all() |> length()
+      end
     end
   end
 end

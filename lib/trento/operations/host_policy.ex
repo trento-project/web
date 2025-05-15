@@ -12,17 +12,18 @@ defmodule Trento.Operations.HostPolicy do
   alias Trento.Hosts.Projections.HostReadModel
   alias Trento.SapSystems.Projections.ApplicationInstanceReadModel
 
-  # saptune_solution_apply operation authorized when:
+  # saptune_solution_apply and saptune_solution_change operation authorized when:
   # - all SAP instances are authorized for maintenance
   def authorize_operation(
-        :saptune_solution_apply,
+        operation,
         %HostReadModel{
           cluster: cluster,
           application_instances: application_instances,
           database_instances: database_instances
         } = host,
         _
-      ) do
+      )
+      when operation in [:saptune_solution_apply, :saptune_solution_change] do
     applications_maintenance_authorized =
       application_instances
       |> Enum.map(fn application_instance ->

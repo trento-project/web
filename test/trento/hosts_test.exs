@@ -265,31 +265,48 @@ defmodule Trento.HostsTest do
   end
 
   describe "request operation" do
-    test "should request saptune_solution_apply operation" do
-      host_id = UUID.uuid4()
+    saptune_operations_scenarios = [
+      %{
+        operation: :saptune_solution_apply,
+        expected_operator: "saptuneapplysolution@v1"
+      },
+      %{
+        operation: :saptune_solution_change,
+        expected_operator: "saptunechangesolution@v1"
+      }
+    ]
 
-      expect(
-        Trento.Infrastructure.Messaging.Adapter.Mock,
-        :publish,
-        1,
-        fn OperationsPublisher,
-           "requests",
-           %OperationRequested{
-             group_id: ^host_id,
-             operation_type: "saptuneapplysolution@v1",
-             targets: [
-               %OperationTarget{
-                 agent_id: ^host_id,
-                 arguments: %{"solution" => %ProtobufValue{kind: {:string_value, "HANA"}}}
-               }
-             ]
-           } ->
-          :ok
-        end
-      )
+    for %{operation: operation} = scenario <- saptune_operations_scenarios do
+      @saptune_operation scenario
 
-      assert {:ok, _} =
-               Hosts.request_operation(:saptune_solution_apply, host_id, %{solution: "HANA"})
+      test "should request #{Atom.to_string(operation)} operation" do
+        host_id = UUID.uuid4()
+
+        %{operation: saptune_operation, expected_operator: expected_operator} = @saptune_operation
+
+        expect(
+          Trento.Infrastructure.Messaging.Adapter.Mock,
+          :publish,
+          1,
+          fn OperationsPublisher,
+             "requests",
+             %OperationRequested{
+               group_id: ^host_id,
+               operation_type: ^expected_operator,
+               targets: [
+                 %OperationTarget{
+                   agent_id: ^host_id,
+                   arguments: %{"solution" => %ProtobufValue{kind: {:string_value, "HANA"}}}
+                 }
+               ]
+             } ->
+            :ok
+          end
+        )
+
+        assert {:ok, _} =
+                 Hosts.request_operation(saptune_operation, host_id, %{solution: "HANA"})
+      end
     end
 
     test "should return operation_not_found if the given operation does not exist" do

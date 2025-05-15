@@ -5,8 +5,6 @@ defmodule Trento.Hosts do
 
   import Ecto.Query
 
-  require Logger
-
   alias Trento.Repo
 
   alias Trento.Heartbeats.Heartbeat
@@ -29,6 +27,10 @@ defmodule Trento.Hosts do
   }
 
   alias Trento.Repo
+
+  require Trento.Operations.Enums.HostOperations, as: HostOperations
+
+  require Logger
 
   @spec get_all_hosts :: [HostReadModel.t()]
   def get_all_hosts do
@@ -140,13 +142,14 @@ defmodule Trento.Hosts do
   end
 
   @spec request_operation(atom(), String.t(), map()) :: {:ok, String.t()} | {:error, any}
-  def request_operation(:saptune_solution_apply, host_id, params) do
+  def request_operation(operation, host_id, params)
+      when operation in HostOperations.values() do
     operation_id = UUID.uuid4()
 
     case Operations.request_operation(
            operation_id,
            host_id,
-           "saptuneapplysolution@v1",
+           Operations.map_operation(operation),
            [%{agent_id: host_id, arguments: params}]
          ) do
       :ok -> {:ok, operation_id}
