@@ -14,6 +14,13 @@ export default {
       control: 'array',
       description: 'Current user abilities',
     },
+    menuPosition: {
+      type: 'string',
+      description: 'Position of the menu',
+      control: {
+        type: 'text',
+      },
+    },
   },
 };
 
@@ -61,5 +68,12 @@ export const Forbidden = {
   args: {
     ...Default.args,
     userAbilities: [{ name: 'foo', resource: 'resource' }],
+  },
+};
+
+export const OtherPosition = {
+  args: {
+    ...Default.args,
+    menuPosition: 'bottom end',
   },
 };
