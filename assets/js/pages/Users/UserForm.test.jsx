@@ -28,6 +28,7 @@ describe('UserForm', () => {
     expect(screen.getByText('Permissions')).toBeVisible();
     expect(screen.getByText('Status')).toBeVisible();
     expect(screen.queryByText('TOTP')).not.toBeInTheDocument();
+    expect(screen.queryByText('Analytics Opt-in')).not.toBeInTheDocument();
     expect(screen.queryByText('Created')).not.toBeInTheDocument();
     expect(screen.queryByText('Updated')).not.toBeInTheDocument();
 
@@ -43,6 +44,7 @@ describe('UserForm', () => {
       created_at: createdAt,
       updated_at: updatedAt,
       totp_enabled_at: totpEnabledAt,
+      analytics_enabled: analyticsEnabled,
     } = userFactory.build();
 
     await act(async () => {
@@ -54,6 +56,8 @@ describe('UserForm', () => {
           createdAt={createdAt}
           updatedAt={updatedAt}
           totp_enabled_at={totpEnabledAt}
+          analyticsEnabledConfig
+          analytics_enabled={analyticsEnabled}
           editing
         />
       );
@@ -67,6 +71,7 @@ describe('UserForm', () => {
     expect(screen.getByText('Created')).toBeVisible();
     expect(screen.getByText('Updated')).toBeVisible();
     expect(screen.getByText('TOTP')).toBeVisible();
+    expect(screen.getByText('Analytics Opt-in')).toBeVisible();
     expect(screen.getByText('Enabled')).toBeVisible();
   });
 

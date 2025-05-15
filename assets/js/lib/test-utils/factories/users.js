@@ -18,6 +18,7 @@ export const userFactory = Factory.define(() => ({
   abilities: abilityFactory.buildList(2),
   password_change_requested_at: null,
   totp_enabled_at: formatISO(faker.date.past()),
+  analytics_enabled: faker.datatype.boolean(),
   created_at: formatISO(faker.date.past()),
   updated_at: formatISO(faker.date.past()),
 }));
@@ -30,6 +31,7 @@ export const profileFactory = Factory.define(() => ({
   abilities: abilityFactory.buildList(2),
   password_change_requested: false,
   totp_enabled: faker.datatype.boolean(),
+  analytics_enabled: faker.datatype.boolean(),
   created_at: formatISO(faker.date.past()),
   updated_at: formatISO(faker.date.past()),
 }));

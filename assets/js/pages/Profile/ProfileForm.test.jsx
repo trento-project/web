@@ -66,7 +66,8 @@ describe('ProfileForm', () => {
   });
 
   it('should send the form values when correctly filled', async () => {
-    const { username, fullname, email, abilities } = profileFactory.build();
+    const { username, fullname, email, abilities, analytics_enabled } =
+      profileFactory.build();
     const mockOnSave = jest.fn();
 
     render(
@@ -75,6 +76,7 @@ describe('ProfileForm', () => {
         emailAddress={email}
         username={username}
         abilities={abilities}
+        analyticsEnabled={analytics_enabled}
         onSave={mockOnSave}
       />
     );
@@ -86,6 +88,7 @@ describe('ProfileForm', () => {
     expect(mockOnSave).toHaveBeenNthCalledWith(1, {
       fullname,
       email,
+      analytics_enabled,
     });
   });
 
@@ -122,6 +125,26 @@ describe('ProfileForm', () => {
     expect(
       screen.getByRole('switch').attributes.getNamedItem('aria-checked').value
     ).toBe('true');
+  });
+
+  it('should set analytics switch when analyticsEnabled is true', async () => {
+    const { username, fullname, email, abilities } = profileFactory.build();
+
+    render(
+      <ProfileForm
+        fullName={fullname}
+        emailAddress={email}
+        username={username}
+        abilities={abilities}
+        analyticsEnabledConfig
+        analyticsEnabled
+      />
+    );
+
+    const analyticsSwitch = screen.getAllByRole('switch').pop();
+
+    expect(analyticsSwitch).toBeVisible();
+    expect(analyticsSwitch).toBeChecked();
   });
 
   it('should not set the authenticator app switch when totpEnabled is false', async () => {

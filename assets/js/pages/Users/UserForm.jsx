@@ -7,6 +7,7 @@ import Input, { Password } from '@common/Input';
 import Label from '@common/Label';
 import AbilitiesMultiSelect from '@common/AbilitiesMultiSelect';
 import Select from '@common/Select';
+import Switch from '@common/Switch';
 import Tooltip from '@common/Tooltip';
 import {
   PASSWORD_POLICY_TEXT,
@@ -33,6 +34,8 @@ function UserForm({
   createdAt = '',
   updatedAt = '',
   totpEnabledAt = '',
+  analyticsEnabledConfig = false,
+  analyticsEnabled,
   errors = defaultErrors,
   saving = false,
   saveEnabled = true,
@@ -287,6 +290,16 @@ function UserForm({
                   }}
                 />
               </div>
+              {analyticsEnabledConfig && (
+                <>
+                  <Label className="col-start-1 col-span-2 sm:pt-2">
+                    Analytics Opt-in
+                  </Label>
+                  <span className="col-start-3 col-span-4 sm:pt-2">
+                    <Switch disabled selected={analyticsEnabled} />
+                  </span>
+                </>
+              )}
               <Label className="col-start-1 col-span-2">Created</Label>
               <span className="col-start-3 col-span-4">
                 {format(parseISO(createdAt), 'PPpp')}
