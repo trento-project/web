@@ -26,7 +26,30 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
           role: %Schema{type: :string},
           status: %Schema{type: :string},
           fail_count: %Schema{type: :integer},
-          managed: %Schema{type: :boolean}
+          managed: %Schema{type: :boolean},
+          parent: %Schema{
+            type: :object,
+            additionalProperties: false,
+            nullable: true,
+            properties: %{
+              id: %Schema{type: :string},
+              managed: %Schema{
+                type: :boolean,
+                nullable: true,
+                description: "Resource is managed. null for standard groups"
+              },
+              multi_state: %Schema{
+                type: :boolean,
+                nullable: true,
+                description: """
+                Represents the type of the group.
+                - true: promotable group
+                - false: cloned group
+                - null: standard group
+                """
+              }
+            }
+          }
         }
       },
       struct?: false

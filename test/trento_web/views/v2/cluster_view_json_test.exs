@@ -24,50 +24,6 @@ defmodule TrentoWeb.V2.ClusterJSONTest do
              ClusterJSON.cluster(%{cluster: cluster})
   end
 
-  test "should remove parent field from HANA clusters" do
-    details = build(:hana_cluster_details)
-
-    cluster = insert(:cluster, [type: :hana_scale_up, details: details], returning: true)
-
-    %{
-      details: %{
-        nodes: [%{resources: resources}],
-        stopped_resources: stopped_resources
-      }
-    } =
-      ClusterJSON.cluster(%{cluster: cluster})
-
-    Enum.each(stopped_resources, fn stopped_resource ->
-      refute Map.has_key?(stopped_resource, :parent)
-    end)
-
-    Enum.each(resources, fn resource ->
-      refute Map.has_key?(resource, :parent)
-    end)
-  end
-
-  test "should remove parent field from ASCS/ERS clusters" do
-    details = build(:ascs_ers_cluster_details)
-
-    cluster = insert(:cluster, [type: :ascs_ers, details: details], returning: true)
-
-    %{
-      details: %{
-        sap_systems: [%{nodes: [%{resources: resources} | _]} | _],
-        stopped_resources: stopped_resources
-      }
-    } =
-      ClusterJSON.cluster(%{cluster: cluster})
-
-    Enum.each(stopped_resources, fn stopped_resource ->
-      refute Map.has_key?(stopped_resource, :parent)
-    end)
-
-    Enum.each(resources, fn resource ->
-      refute Map.has_key?(resource, :parent)
-    end)
-  end
-
   test "should render sap instances and deprecated sids properly" do
     sap_instances = [
       %{sid: sid_1, instance_number: inr_1} =
