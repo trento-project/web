@@ -7,11 +7,8 @@ on:
       - synchronize
       - labeled
 
-env:
-  PR_NUMBER: "${{ github.event.pull_request.number }}"
-
 jobs:
-  check_env_creation_privilege:
+  check-env-creation-privilege:
     name: Check if the environment creation criteria are met, store in the job output
     runs-on: ubuntu-24.04
     if: vars.PR_ENV_ALLOW_LIST != '' && vars.PR_ENV_LABEL != ''
@@ -21,52 +18,17 @@ jobs:
       - id: check
         run: echo "create_env=${{ contains(fromJson(vars.PR_ENV_ALLOW_LIST), github.event.sender.login) && contains(github.event.pull_request.labels.*.name, vars.PR_ENV_LABEL) }}" >> "$GITHUB_OUTPUT"
 
-  build-and-push-pr-image:
-    needs: check_env_creation_privilege
-    name: Build and push pull request container image
-    runs-on: ubuntu-24.04
-    if: needs.check_env_creation_privilege.outputs.create_env == 'true'
-    permissions:
-      contents: read
-      packages: write
-    env:
-      REGISTRY: ghcr.io
-      IMAGE_REPOSITORY: ghcr.io/${{ github.repository_owner }}/trento-web
-      IMAGE_TAG: ${{ github.event.pull_request.number }}-env
-    steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.12.1
-        with:
-          access_token: ${{ github.token }}
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: docker/setup-buildx-action@v3
-      - name: Log in to the Container registry
-        uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@369eb591f429131d6889c46b94e711f089e6ca96
-        with:
-          images: ${{ env.IMAGE_REPOSITORY }}
-      - name: Build and push container image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: true
-          tags: ${{ env.IMAGE_REPOSITORY }}:${{ env.IMAGE_TAG }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+  build-container:
+    name: Build container
+    uses: ./.github/workflows/build-containers.yaml
+    if: needs.check-env-creation-privilege.outputs.create_env == 'true'
+    with:
+      tag: ${{ github.event.pull_request.number }}-env
 
-  create_pr_environment:
+  create-pr-environment:
     name: Create or update the pr environment
     runs-on: ubuntu-24.04
-    needs: build-and-push-pr-image
+    needs: build-container
     env:
       PR_BASE_URL: ${{ github.event.pull_request.number }}.prenv.trento.suse.com
       PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -94,7 +56,7 @@ jobs:
                 trento_server:
                   hosts:
                     server:
-                      ansible_host: ${{ secrets.PR_ENV_MACHINE_IP }} 
+                      ansible_host: ${{ secrets.PR_ENV_MACHINE_IP }}
                 postgres_hosts:
                   hosts:
                     server:
@@ -142,7 +104,7 @@ jobs:
   run-photofinish-demo-env:
     name: Use photofinish to push mock data to the pr environment
     runs-on: ubuntu-24.04
-    needs: create_pr_environment
+    needs: create-pr-environment
     env:
       TRENTO_PR_ENV_URL: "${{ github.event.pull_request.number }}.prenv.trento.suse.com"
     steps:
@@ -168,7 +130,8 @@ jobs:
           photofinish run hana-scale-up-angi -u "https://$TRENTO_PR_ENV_URL/api/collect"
           photofinish run java-system -u "https://$TRENTO_PR_ENV_URL/api/collect"
           photofinish run hana-scale-up-cost-opt -u "https://$TRENTO_PR_ENV_URL/api/collect"
-  comment_pr:
+
+  comment-pr:
     name: Comment on the PR with the environment URL
     runs-on: ubuntu-24.04
     needs: run-photofinish-demo-env
