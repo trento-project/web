@@ -202,8 +202,8 @@ jobs:
       - name: Check JS Code Format
         run: cd assets && npm run format:check
 
-  test-fe:
-    name: Run FE tests
+  test-javascript:
+    name: Javascript tests
     needs: npm-deps
     runs-on: ubuntu-24.04
     steps:
@@ -229,8 +229,8 @@ jobs:
       - name: Run JS tests
         run: cd assets && npm test
 
-  test:
-    name: Test
+  test-elixir:
+    name: Elixir tests
     needs: [elixir-deps]
     runs-on: ubuntu-24.04
     steps:
@@ -350,8 +350,8 @@ jobs:
         if: steps.npm-e2e-cache.outputs.cache-hit != 'true'
         run: cd test/e2e && npm install
 
-  test-e2e-parallel:
-    name: Parallel End to end tests
+  test-e2e:
+    name: E2E Tests
     needs: [elixir-deps, npm-deps, npm-e2e-deps]
     runs-on: ubuntu-24.04
     strategy:
@@ -444,14 +444,7 @@ jobs:
           name: e2e-screenshots-${{ matrix.containers }}
           path: test/e2e/cypress/screenshots/
 
-  test-e2e:
-    name: End to end tests
-    runs-on: ubuntu-22.04
-    needs: test-e2e-parallel
-    steps:
-      - run: echo "E2E tests completed"
-
-  regression-test-e2e:
+  test-regression:
     name: Regression tests
     needs: [elixir-deps, npm-deps, npm-e2e-deps]
     runs-on: ubuntu-22.04
@@ -561,7 +554,7 @@ jobs:
           name: regression-${{ matrix.test }}-e2e-screenshots
           path: test/e2e/cypress/screenshots/
 
-  integration-test-e2e:
+  test-integration:
     name: Integration tests
     needs: [elixir-deps, npm-deps, npm-e2e-deps]
     runs-on: ubuntu-22.04
@@ -790,9 +783,11 @@ jobs:
     name: Build container images
     needs:
       - static-code-analysis
-      - test
-      - test-fe
+      - test-elixir
+      - test-javascript
       - test-e2e
+      - test-integration
+      - test-regression
     if: (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch'
     uses: ./.github/workflows/build-images.yaml
     with:
@@ -905,7 +900,13 @@ jobs:
     name: Commit to OBS to generate container image
     runs-on: ubuntu-24.04
     if: (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch'
-    needs: [static-code-analysis, test, test-fe, test-e2e]
+    needs:
+      - static-code-analysis
+      - test-elixir
+      - test-javascript
+      - test-e2e
+      - test-integration
+      - test-regression
     container:
       image: ghcr.io/trento-project/continuous-delivery:main
       env:
@@ -974,7 +975,13 @@ jobs:
 
   obs-commit-rpm:
     name: Commit to OBS to generate RPM package
-    needs: [static-code-analysis, test, test-fe, test-e2e]
+    needs:
+      - static-code-analysis
+      - test-elixir
+      - test-javascript
+      - test-e2e
+      - test-integration
+      - test-regression
     runs-on: ubuntu-24.04
     if: github.ref == 'refs/heads/main'
     container:
