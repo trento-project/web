@@ -67,9 +67,9 @@ jobs:
           labels: automated, skip-release-notes
           delete-branch: true
 
-  build-images:
-    name: Build container images
-    uses: ./.github/workflows/build-images.yaml
+  build-containers:
+    name: Build containers
+    uses: ./.github/workflows/build-containers.yaml
     needs:
       - publish-release
     strategy:

@@ -1,4 +1,4 @@
-name: Build container images
+name: Build containers
 
 on:
   workflow_call:
@@ -19,8 +19,8 @@ on:
         description: "The container registry FQDN. Extracted here for clarity, just leave it to default."
 
 jobs:
-  build-and-push-container-images:
-    name: Build and push container images
+  build-and-push:
+    name: Build and push
     runs-on: ubuntu-24.04
     permissions:
       contents: read

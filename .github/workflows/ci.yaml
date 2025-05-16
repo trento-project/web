@@ -779,8 +779,8 @@ jobs:
           name: openapi-diff-report-${{ matrix.version }}
           path: specs/
 
-  build-images:
-    name: Build container images
+  build-containers:
+    name: Build containers
     needs:
       - static-code-analysis
       - test-elixir
@@ -789,7 +789,7 @@ jobs:
       - test-integration
       - test-regression
     if: (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch'
-    uses: ./.github/workflows/build-images.yaml
+    uses: ./.github/workflows/build-containers.yaml
     strategy:
       matrix:
         include:
@@ -817,7 +817,8 @@ jobs:
       TRENTO_NAMESPACE: ${{ secrets.TRENTO_NAMESPACE }}
       TRENTO_ADMIN_EMAIL: ${{ secrets.TRENTO_ADMIN_EMAIL }}
       TRENTO_INGRESS_CLASS: ${{ secrets.TRENTO_INGRESS_CLASS }}
-    needs: [build-images]
+    needs:
+      - build-containers
     steps:
       - name: Start a local k8s cluster
         uses: jupyterhub/action-k3s-helm@v4
