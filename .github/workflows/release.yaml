@@ -13,6 +13,8 @@ jobs:
     permissions:
       contents: write
     runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.publish-release.outputs.tag_name }}
     steps:
       - name: Check out the repository
         uses: actions/checkout@v4
@@ -65,11 +67,20 @@ jobs:
           labels: automated, skip-release-notes
           delete-branch: true
 
-  # Counterintuitively, the CI workflow is triggered after the release has been published,
-  # because all the images need to be built with the newly created tag.
-  # TO-DO: To avoid this quirk, we should probably segregate test jobs from build jobs.
-  continous-integration:
+  build-images:
+    name: Build container images
+    uses: ./.github/workflows/build-images.yaml
     needs:
       - publish-release
-    name: Continuous Integration
-    uses: ./.github/workflows/ci.yaml
+    strategy:
+      matrix:
+        include:
+          - MIX_ENV: prod
+            tag: ${{ jobs.publish-release.outputs.version }}
+          - MIX_ENV: prod
+            tag: rolling
+          - MIX_ENV: demo
+            tag: demo
+    with:
+      MIX_ENV: ${{ matrix.MIX_ENV }}
+      tag: ${{ matrix.tag }}

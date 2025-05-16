@@ -786,92 +786,17 @@ jobs:
           name: openapi-diff-report-${{ matrix.version }}
           path: specs/
 
-  build-and-push-container-images:
-    name: Build and push container images
-    runs-on: ubuntu-latest
+  build-images:
+    name: Build container images
+    needs:
+      - static-code-analysis
+      - test
+      - test-fe
+      - test-e2e
     if: (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch'
-    needs: [static-code-analysis, test, test-fe, test-e2e]
-    permissions:
-      contents: read
-      packages: write
-    env:
-      REGISTRY: ghcr.io
-      IMAGE_REPOSITORY: ghcr.io/${{ github.repository_owner }}/trento-web
-      IMAGE_TAG: "${{ (github.event_name == 'release' && github.event.release.tag_name) || (github.event_name == 'push' && github.ref_name == 'main' && 'rolling') || github.sha }}"
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: docker/setup-buildx-action@v3
-      - name: Log in to the Container registry
-        uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@369eb591f429131d6889c46b94e711f089e6ca96
-        with:
-          images: ${{ env.IMAGE_REPOSITORY }}
-      - name: Get version from git history
-        id: get_version_from_git
-        run: echo "version=$(hack/get_version_from_git.sh)" >> $GITHUB_OUTPUT
-      - name: Build and push container image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: true
-          tags: ${{ env.IMAGE_REPOSITORY }}:${{ env.IMAGE_TAG }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          build-args: |
-            VERSION=${{ steps.get_version_from_git.outputs.version }}
-
-  build-demo-img:
-    name: Build the docker image for the demo environment
-    runs-on: ubuntu-latest
-    if: github.event.action == 'deploy-demo' || (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch'
-    needs: [static-code-analysis, test, test-fe]
-    permissions:
-      contents: read
-      packages: write
-    env:
-      MIX_ENV: demo
-      REGISTRY: ghcr.io
-      IMAGE_REPOSITORY: ghcr.io/${{ github.repository_owner }}/trento-web
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: docker/setup-buildx-action@v3
-      - name: Log in to the Container registry
-        uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@369eb591f429131d6889c46b94e711f089e6ca96
-        with:
-          images: ${{ env.IMAGE_REPOSITORY }}
-      - name: Get version from git history
-        id: get_version_from_git
-        run: echo "version=$(hack/get_version_from_git.sh)" >> $GITHUB_OUTPUT
-      - name: Build and push container image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: true
-          tags: ${{ env.IMAGE_REPOSITORY }}:demo
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          build-args: |
-            VERSION=${{ steps.get_version_from_git.outputs.version }}
-            MIX_ENV=demo
+    uses: ./.github/workflows/build-images.yaml
+    with:
+      tag: "${{ (github.event_name == 'push' && github.ref_name == 'main' && 'rolling') || github.sha }}"
 
   deploy-demo-env:
     name: Deploy updated images to the demo environment
