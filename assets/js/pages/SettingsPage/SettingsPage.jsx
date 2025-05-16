@@ -376,7 +376,9 @@ function SettingsPage() {
           <AlertingSettingsModal
             key={`alertingmodal-${Object.values(alertingSettings).join("-")}`}
             previousSettings={alertingSettings}
+            errors={alertingSubmitErrors}
             open={alertingSettingsModalOpen}
+            loading={alertingSubmitLoading}
             onSave={submitAlertingSettings}
             onCancel={() => setAlertingSettingsModalOpen(false)}
           />

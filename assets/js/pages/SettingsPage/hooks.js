@@ -189,15 +189,15 @@ export const useAlertingSettings = () => {
     };
   }
 
-  function toApiSettings(settings) {
-    var data = {
-      enabled: settings.alertingEnabled,
-      smtp_server: settings.smtpServer,
-      smtp_port: settings.smtpPort,
-      smtp_username: settings.smtpUsername,
-      smtp_password: settings.smtpPassword,
-      sender_email: settings.senderEmail,
-      recipient_email: settings.recipientEmail,
+  function toApiSettings(newSettings) {
+    const data = {
+      enabled: newSettings.alertingEnabled,
+      smtp_server: newSettings.smtpServer,
+      smtp_port: newSettings.smtpPort,
+      smtp_username: newSettings.smtpUsername,
+      smtp_password: newSettings.smtpPassword,
+      sender_email: newSettings.senderEmail,
+      recipient_email: newSettings.recipientEmail,
     }
 
     return omitBy(data, isNil)
@@ -232,7 +232,7 @@ export const useAlertingSettings = () => {
         toApiSettings(newSettings)
       );
       setSettings(fromApiSettings(data));
-    } catch ({ response: { data: errors }}) {
+    } catch ({ response: { data: { errors } }}) {
       setSubmitErrors(errors)
     } finally {
       setFetchLoading(false);
