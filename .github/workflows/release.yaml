@@ -76,7 +76,7 @@ jobs:
       matrix:
         include:
           - MIX_ENV: prod
-            tag: ${{ jobs.publish-release.outputs.version }}
+            tag: ${{ needs.publish-release.outputs.version }}
           - MIX_ENV: prod
             tag: rolling
           - MIX_ENV: demo
