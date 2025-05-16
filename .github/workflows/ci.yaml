@@ -670,7 +670,7 @@ jobs:
   target-branch-deps:
     name: Rebuild target branch dependencies
     runs-on: ubuntu-24.04
-    if: github.event_name == "pull_request"
+    if: github.event_name == 'pull_request'
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.12.1
@@ -708,7 +708,7 @@ jobs:
   api-bc-check:
     name: API bc check
     needs: [elixir-deps, target-branch-deps]
-    if: github.event_name == "pull_request" && !failed() && !cancelled()
+    if: github.event_name == 'pull_request' && !failure() && !cancelled()
     runs-on: ubuntu-24.04
     strategy:
       matrix:
