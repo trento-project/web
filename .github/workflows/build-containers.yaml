@@ -11,7 +11,7 @@ on:
         required: false
         type: string
         default: prod
-        description: "The MIX_ENV build variable. This is mainly used to build a bespoke image variant for the demo."
+        description: "The MIX_ENV build environment variable. This is mainly used to build a bespoke image variant for the dema deploymento, and should be left to default value in most cases."
       registry:
         required: false
         type: string
