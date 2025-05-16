@@ -235,7 +235,7 @@ export const useAlertingSettings = () => {
     } catch ({ response: { data: { errors } }}) {
       setSubmitErrors(errors)
     } finally {
-      setFetchLoading(false);
+      setSubmitLoading(false);
     }
   };
 

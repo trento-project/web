@@ -32,7 +32,7 @@ export default function AlertingSettingsModal({
     const settingsPayload = {
       alertingEnabled,
       smtpServer,
-      smtpPort,
+      smtpPort: Number(smtpPort),
       smtpUsername,
       senderEmail,
       recipientEmail,
@@ -99,7 +99,7 @@ export default function AlertingSettingsModal({
               placeholder={587}
               error={hasError('smtp_port', errors)}
               onChange={({ target: { value } }) => {
-                setSmtpPort(Number(value));
+                setSmtpPort(value);
               }}
             />
             {hasError('smtp_port', errors) && (
