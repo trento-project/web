@@ -23,7 +23,6 @@ defmodule Trento.Discovery.Policies.SapSystemPolicy do
 
   alias SapSystemDiscoveryPayload.{
     Instance,
-    Profile,
     SapControl,
     SystemReplication
   }
@@ -128,9 +127,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicy do
            Type: @application_type,
            Instances: instances,
            DBAddress: db_host,
-           Profile: %Profile{
-             "dbs/hdb/dbname": tenant
-           }
+           Tenant: tenant
          },
          host_id,
          sap_instances
