@@ -814,7 +814,7 @@ jobs:
       TRENTO_NAMESPACE: ${{ secrets.TRENTO_NAMESPACE }}
       TRENTO_ADMIN_EMAIL: ${{ secrets.TRENTO_ADMIN_EMAIL }}
       TRENTO_INGRESS_CLASS: ${{ secrets.TRENTO_INGRESS_CLASS }}
-    needs: [build-demo-img, test-e2e]
+    needs: [build-images]
     steps:
       - name: Start a local k8s cluster
         uses: jupyterhub/action-k3s-helm@v4
