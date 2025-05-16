@@ -29,7 +29,6 @@ export default function AlertingSettingsConfig({
             permitted={alertingSettingsPermittedFor}
           >
             <Button
-              className="mr-2"
               type="primary-white-fit"
               size="small"
               aria-label="alerting-edit-button"
