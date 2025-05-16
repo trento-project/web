@@ -84,3 +84,12 @@ jobs:
     with:
       MIX_ENV: ${{ matrix.MIX_ENV }}
       tag: ${{ matrix.tag }}
+
+  obs-sync:
+    name: Update obs packages
+    uses: ./.github/workflows/obs.yaml
+    needs:
+      - publish-release
+    secrets: inherit
+    with:
+      update_changelog: true

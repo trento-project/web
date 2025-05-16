@@ -1,0 +1,152 @@
+name: OBS sync
+
+on:
+  workflow_call:
+    inputs:
+      update_changelog:
+        type: boolean
+        default: false
+        description: Whether or not to update the OBS package changelog. Should only be used contextually to a release.
+    secrets:
+      OBS_USER:
+        required: true
+      OBS_PASS:
+        required: true
+
+env:
+  OBS_PROJECT: ${{ vars.OBS_PROJECT }}
+  AUTHOR_EMAIL: trento-developers@suse.com
+
+jobs:
+  update-image:
+    name: Update 'trento-web-image' package
+    runs-on: ubuntu-24.04
+    container:
+      image: ghcr.io/trento-project/continuous-delivery:main
+      env:
+        OBS_PACKAGE_NAME: trento-web-image
+        CHECKOUT_DIR: /tmp/trento-web-image
+        SOURCE_DIR: packaging/suse/container
+      options: -u 0:0
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.12.1
+        with:
+          access_token: ${{ github.token }}
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Get version from git history
+        id: get_version_from_git
+        run: echo "version=$(/scripts/get_version_from_git.sh)" >> $GITHUB_OUTPUT
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Install assets
+        run: cd assets && npm install
+      - name: Get mix deps
+        run: mix local.hex --force && mix deps.clean --all && mix deps.get
+      - name: Configure OSC
+        env:
+          OBS_USER: ${{ secrets.OBS_USER }}
+          OBS_PASS: ${{ secrets.OBS_PASS }}
+        run: |
+          # hack needed because the HOME variable is set to '/github/home' and cannot be changed
+          mkdir -p $HOME/.config/osc
+          cp /home/osc/.config/osc/oscrc $HOME/.config/osc
+          /scripts/init_osc_creds.sh
+      - name: Checkout OBS package
+        run: osc checkout $OBS_PROJECT $OBS_PACKAGE_NAME -o $CHECKOUT_DIR
+      - name: Prepare Dockerfile
+        run: |
+          VERSION="${{ steps.get_version_from_git.outputs.version }}"
+          # "+" character is not allowed in OBS dockerfile version strings
+          VERSION=${VERSION//[+]/-}
+          sed -i 's~%%VERSION%%~'"${VERSION}"'~' $SOURCE_DIR/Dockerfile
+      - name: Prepare .changes file
+        if: inputs.update_changelog
+        env:
+          GITHUB_OAUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION="${{ steps.get_version_from_git.outputs.version }}"
+          REPOSITORY=${{ github.repository }}
+          CHANGES_FILE=${OBS_PACKAGE_NAME}.changes
+          /scripts/gh_release_to_obs_changeset.py $REPOSITORY -a $AUTHOR_EMAIL -t $VERSION -f $CHECKOUT_DIR/$CHANGES_FILE
+      - name: Update sources
+        run: |
+          cp -r $SOURCE_DIR/* $CHECKOUT_DIR
+          tar --transform 's,^./,/web/,' -zcvf $CHECKOUT_DIR/web.tar.gz --exclude=./.git ./*
+      - name: Commit to OBS
+        run: |
+          pushd $CHECKOUT_DIR
+          osc ar
+          osc commit -m "GitHub Actions automated update to reference ${{ github.sha }}"
+
+  update-rpm:
+    name: Update 'trento-web' package
+    runs-on: ubuntu-24.04
+    container:
+      image: ghcr.io/trento-project/continuous-delivery:main
+      env:
+        OBS_PACKAGE_NAME: trento-web
+        CHECKOUT_DIR: /tmp/trento-web
+        SOURCE_DIR: packaging/suse/rpm
+      options: -u 0:0
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.12.1
+        with:
+          access_token: ${{ github.token }}
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Get version from git history
+        id: get_version_from_git
+        run: echo "version=$(/scripts/get_version_from_git.sh)" >> $GITHUB_OUTPUT
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Prepare mix deps tarball
+        run: |
+          mix local.hex --force && mix deps.clean --all && mix deps.get
+          tar -c deps | gzip -n > deps.tar.gz
+      - name: Configure OSC
+        env:
+          OBS_USER: ${{ secrets.OBS_USER }}
+          OBS_PASS: ${{ secrets.OBS_PASS }}
+        run: |
+          # hack needed because the HOME variable is set to '/github/home' and cannot be changed
+          mkdir -p $HOME/.config/osc
+          cp /home/osc/.config/osc/oscrc $HOME/.config/osc
+          /scripts/init_osc_creds.sh
+      - name: Checkout OBS package
+        run: osc checkout $OBS_PROJECT $OBS_PACKAGE_NAME -o $CHECKOUT_DIR
+      - name: Prepare _service file
+        run: |
+          sed -i 's~%%REVISION%%~${{ github.sha }}~' $SOURCE_DIR/_service && \
+          sed -i 's~%%REPOSITORY%%~${{ github.repository }}~' $SOURCE_DIR/_service && \
+          sed -i 's~%%VERSION%%~${{ steps.get_version_from_git.outputs.version }}~' $SOURCE_DIR/_service
+      - name: Prepare .changes file
+        if: inputs.update_changelog
+        env:
+          GITHUB_OAUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION=${{ steps.get_version_from_git.outputs.version }}
+          REPOSITORY=${{ github.repository }}
+          CHANGES_FILE=${OBS_PACKAGE_NAME}.changes
+          /scripts/gh_release_to_obs_changeset.py $REPOSITORY -a $AUTHOR_EMAIL -t $VERSION -f $CHECKOUT_DIR/$CHANGES_FILE
+      - name: Update sources
+        run: |
+          cp $SOURCE_DIR/_service $CHECKOUT_DIR
+          cp $SOURCE_DIR/${OBS_PACKAGE_NAME}.spec $CHECKOUT_DIR
+          rm -vf $CHECKOUT_DIR/*.tar.gz
+          pushd $CHECKOUT_DIR
+          osc service manualrun
+          popd
+          cp deps.tar.gz $CHECKOUT_DIR
+      - name: Commit to OBS
+        run: |
+          pushd $CHECKOUT_DIR
+          osc ar
+          osc commit -m "GitHub Actions automated update to reference ${{ github.sha }}"
