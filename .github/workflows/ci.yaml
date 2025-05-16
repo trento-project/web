@@ -790,8 +790,16 @@ jobs:
       - test-regression
     if: (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch'
     uses: ./.github/workflows/build-images.yaml
+    strategy:
+      matrix:
+        include:
+          - MIX_ENV: prod
+            tag: "${{ (github.event_name == 'push' && github.ref_name == 'main' && 'rolling') || github.sha }}"
+          - MIX_ENV: demo
+            tag: demo
     with:
-      tag: "${{ (github.event_name == 'push' && github.ref_name == 'main' && 'rolling') || github.sha }}"
+      MIX_ENV: ${{ matrix.MIX_ENV }}
+      tag: ${{ matrix.tag }}
 
   deploy-demo-env:
     name: Deploy updated images to the demo environment
