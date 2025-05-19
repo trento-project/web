@@ -5,7 +5,9 @@ import '@testing-library/jest-dom';
 import { faker } from '@faker-js/faker';
 import * as lodash from 'lodash';
 
-import AlertingSettingsConfig from './AlertingSettingsConfig';
+import AlertingSettingsConfig, {
+  ENFORCED_FROM_ENV_MESSAGE,
+} from './AlertingSettingsConfig';
 
 const adminUser = [{ name: 'all', resource: 'all' }];
 
@@ -105,5 +107,27 @@ describe('AlertingSettingsConfig', () => {
 
     await user.click(screen.getByLabelText('alerting-edit-button'));
     expect(onEditClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('disables editing when settings are enforced from application env', async () => {
+    const onEditClick = jest.fn();
+    const user = userEvent.setup();
+
+    render(
+      <AlertingSettingsConfig
+        settings={{ enforcedFromEnv: true }}
+        onEditClick={onEditClick}
+        userAbilities={adminUser}
+      />
+    );
+
+    const editButton = screen.getByLabelText('alerting-edit-button');
+    expect(editButton).toBeDisabled();
+
+    await user.click(editButton);
+    expect(onEditClick).not.toHaveBeenCalled();
+
+    await user.hover(editButton);
+    expect(screen.queryByText(ENFORCED_FROM_ENV_MESSAGE)).toBeVisible();
   });
 });

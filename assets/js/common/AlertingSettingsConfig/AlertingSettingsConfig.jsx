@@ -3,8 +3,12 @@ import { noop } from 'lodash';
 
 import Button from '@common/Button';
 import DisabledGuard from '@common/DisabledGuard';
+import Tooltip from '@common/Tooltip';
 
 const alertingSettingsPermittedFor = ['all:alerting_settings'];
+
+export const ENFORCED_FROM_ENV_MESSAGE =
+  'Alerting settings are enforced by environment variables';
 
 export default function AlertingSettingsConfig({
   settings: {
@@ -14,6 +18,7 @@ export default function AlertingSettingsConfig({
     smtpUsername = '.....',
     senderEmail = '...@...',
     recipientEmail = '...@...',
+    enforcedFromEnv = false,
   } = {},
   userAbilities = [],
   onEditClick = noop,
@@ -28,14 +33,21 @@ export default function AlertingSettingsConfig({
             userAbilities={userAbilities}
             permitted={alertingSettingsPermittedFor}
           >
-            <Button
-              type="primary-white-fit"
-              size="small"
-              aria-label="alerting-edit-button"
-              onClick={onEditClick}
+            <Tooltip
+              isEnabled={enforcedFromEnv}
+              content={ENFORCED_FROM_ENV_MESSAGE}
+              place="bottom"
             >
-              Edit Settings
-            </Button>
+              <Button
+                type="primary-white-fit"
+                size="small"
+                aria-label="alerting-edit-button"
+                onClick={onEditClick}
+                disabled={enforcedFromEnv}
+              >
+                Edit Settings
+              </Button>
+            </Tooltip>
           </DisabledGuard>
         </span>
       </div>

@@ -186,6 +186,7 @@ export const useAlertingSettings = () => {
       smtpUsername: data.smtp_username,
       senderEmail: data.sender_email,
       recipientEmail: data.recipient_email,
+      enforcedFromEnv: data.enforced_from_env,
     };
   }
 

@@ -37,12 +37,22 @@ export const WithFilledInValues = {
       smtpUsername: "testuser",
       senderEmail: "admin@testdomain.com",
       recipientEmail: "trentousers@testdomain.com",
+      enforcedFromEnv: false,
     },
   }
 };
 
-export const WithEditButtonEnalbed = {
+export const WithEditButtonEnabledWhenEnoughPermissions = {
   args: {
+    userAbilities: [{ name: 'all', resource: 'all' }],
+  },
+};
+
+export const WithEditButtonDisabledWhenEnforcedFromEnv = {
+  args: {
+    settings: {
+      enforcedFromEnv: true,
+    },
     userAbilities: [{ name: 'all', resource: 'all' }],
   },
 };
