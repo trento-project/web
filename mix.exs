@@ -237,9 +237,7 @@ defmodule Trento.MixProject do
   end
 
   defp get_version do
-    version = System.get_env("VERSION", get_version_from_file())
-
-    case version do
+    case System.get_env("VERSION") do
       "" -> get_version_from_file()
       _ -> version
     end
