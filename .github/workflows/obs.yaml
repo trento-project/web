@@ -7,6 +7,10 @@ on:
         type: boolean
         default: false
         description: Whether or not to update the OBS package changelog. Should only be used contextually to a release.
+      obs_project:
+        type: string
+        required: true
+        description: The OBS project to commit changes to.
     secrets:
       OBS_USER:
         required: true
@@ -14,7 +18,7 @@ on:
         required: true
 
 env:
-  OBS_PROJECT: ${{ vars.OBS_PROJECT }}
+  OBS_PROJECT: ${{ inputs.obs_project }}
   NODE_VERSION: "20"
   AUTHOR_EMAIL: trento-developers@suse.com
 

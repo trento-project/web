@@ -273,7 +273,7 @@ jobs:
     name: Chromatic deployment
     needs: [elixir-deps, npm-deps]
     runs-on: ubuntu-24.04
-    if: github.event_name != 'repository_dispatch' && github.secret_source != 'None' && vars.ENABLE_CHROMATIC
+    if: github.event_name != 'repository_dispatch' && github.secret_source != 'None' && vars.CHROMATIC_ENABLED == 'true'
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.12.1
@@ -902,6 +902,7 @@ jobs:
 
   obs-sync:
     name: Update obs packages
+    if: vars.OBS_ENABLED
     uses: ./.github/workflows/obs.yaml
     needs:
       - static-code-analysis
@@ -911,3 +912,5 @@ jobs:
       - test-integration
       - test-regression
     secrets: inherit
+    with:
+      obs_project: ${{ vars.OBS_PROJECT_ROLLING }}

@@ -87,9 +87,11 @@ jobs:
 
   obs-sync:
     name: Update obs packages
+    if: vars.OBS_ENABLED
     uses: ./.github/workflows/obs.yaml
     needs:
       - publish-release
     secrets: inherit
     with:
       update_changelog: true
+      obs_project: ${{ vars.OBS_PROJECT_STABLE }}
