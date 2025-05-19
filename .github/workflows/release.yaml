@@ -101,7 +101,7 @@ jobs:
 
   obs-sync:
     name: Update obs packages
-    if: vars.OBS_ENABLED
+    if: vars.OBS_ENABLED == 'true'
     uses: ./.github/workflows/obs.yaml
     needs:
       - release
