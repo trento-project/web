@@ -14,7 +14,7 @@ jobs:
       contents: write
     runs-on: ubuntu-24.04
     outputs:
-      version: ${{ steps.draft-release.outputs.tag_name }}
+      version: ${{ steps.detect-version.outputs.current-version }}
     steps:
       - name: Check out the repository
         uses: actions/checkout@v4
@@ -28,7 +28,7 @@ jobs:
           echo "sha=$(git rev-parse --verify --quiet HEAD^)" >> $GITHUB_OUTPUT
 
       - name: Detect new version
-        id: check-version
+        id: detect-version
         if: steps.check-parent-commit.outputs.sha
         uses: salsify/action-detect-and-tag-new-version@v2
         with:
@@ -41,7 +41,7 @@ jobs:
         uses: release-drafter/release-drafter@v6
         with:
           publish: false
-          version: ${{ steps.check-version.outputs.current-version }}
+          version: ${{ steps.detect-version.outputs.current-version }}
           disable-autolabeler: true
           config-name: release_drafter.yaml
         env:
@@ -57,7 +57,7 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           branch: main
-          commit_message: "Automatically update CHANGELOG.md for release ${{ steps.check-version.outputs.version }}"
+          commit_message: "Automatically update CHANGELOG.md for release ${{ steps.detect-version.outputs.current-version }}"
 
   release:
     name: Tag and publish release
@@ -70,7 +70,6 @@ jobs:
       - name: Publish release
         id: publish-release
         uses: release-drafter/release-drafter@v6
-        if: steps.check-version.outputs.tag != ''
         with:
           publish: true
           tag: ${{ needs.pre-release.outputs.version }}
