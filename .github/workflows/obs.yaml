@@ -38,7 +38,9 @@ jobs:
         uses: actions/checkout@v4
       - name: Get version from git history
         id: get_version_from_git
-        run: echo "version=$(/scripts/get_version_from_git.sh)" >> $GITHUB_OUTPUT
+        run: |
+          VERSION=$(/scripts/get_version_from_git.sh)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -103,7 +105,9 @@ jobs:
           fetch-depth: 0
       - name: Get version from git history
         id: get_version_from_git
-        run: echo "version=$(/scripts/get_version_from_git.sh)" >> $GITHUB_OUTPUT
+        run: |
+          VERSION=$(/scripts/get_version_from_git.sh)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
