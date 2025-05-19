@@ -35,6 +35,29 @@ jobs:
           version-command: |
             cat VERSION
 
+      - name: Draft release
+        id: draft-release
+        uses: release-drafter/release-drafter@v6
+        if: steps.check-version.outputs.tag != ''
+        with:
+          publish: false
+          tag: ${{ steps.check-version.outputs.tag }}
+          disable-autolabeler: true
+          config-name: release_drafter.yaml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update CHANGELOG.md
+        uses: stefanzweifel/changelog-updater-action@v1
+        with:
+          latest-version: ${{ steps.draft-release.outputs.tag_name }}
+          release-notes: ${{ steps.draft-release.outputs.body }}
+
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          branch: main
+          commit_message: "Automatically update CHANGELOG.md for release ${{ steps.check-version.outputs.tag }}"
+
       - name: Publish release
         id: publish-release
         uses: release-drafter/release-drafter@v6
@@ -46,26 +69,6 @@ jobs:
           config-name: release_drafter.yaml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Update CHANGELOG.md
-        uses: stefanzweifel/changelog-updater-action@v1
-        with:
-          latest-version: ${{ steps.publish-release.outputs.tag_name }}
-          release-notes: ${{ steps.publish-release.outputs.body }}
-
-      - name: Open changelog PR
-        uses: peter-evans/create-pull-request@v7
-        with:
-          add-paths: |
-            CHANGELOG.md
-          commit-message: update changelog
-          title: Update changelog
-          body: |
-            This is an automatic pull request triggered by GitHub actions to keep `CHANGELOG.md` up to date.
-          branch: update-changelog
-          base: main
-          labels: automated, skip-release-notes
-          delete-branch: true
 
   build-containers:
     name: Build containers
