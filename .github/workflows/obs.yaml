@@ -15,6 +15,7 @@ on:
 
 env:
   OBS_PROJECT: ${{ vars.OBS_PROJECT }}
+  NODE_VERSION: "20"
   AUTHOR_EMAIL: trento-developers@suse.com
 
 jobs:
