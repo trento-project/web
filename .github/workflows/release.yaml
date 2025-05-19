@@ -64,6 +64,8 @@ jobs:
     permissions:
       contents: write
     runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.publish-release.outputs.tag_name }}
     needs:
       - pre-release
     steps:
@@ -88,7 +90,7 @@ jobs:
       matrix:
         include:
           - MIX_ENV: prod
-            tag: ${{ needs.pre-release.outputs.version }}
+            tag: ${{ needs.release.outputs.version }}
           - MIX_ENV: prod
             tag: rolling
           - MIX_ENV: demo
