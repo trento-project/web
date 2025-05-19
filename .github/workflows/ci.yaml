@@ -6,6 +6,7 @@ on:
       - main
     paths-ignore:
       - "VERSION"
+      - "CHANGELOG.md"
   pull_request:
     types: [opened, synchronize, labeled]
     paths-ignore:
