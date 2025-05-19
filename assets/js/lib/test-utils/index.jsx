@@ -74,7 +74,7 @@ export const hookWrapperWithState = (initialState = defaultInitialState) => {
 export const renderWithRouter = (ui, { route = '/' } = {}) => {
   window.history.pushState({}, 'Test page', route);
 
-  const Router = ({ children }) => {
+  function Router({ children }) {
     return (
       <BrowserRouter
         future={{ v7_relativeSplatPath: true, v7_startTransition: true }}
@@ -82,7 +82,8 @@ export const renderWithRouter = (ui, { route = '/' } = {}) => {
         {children}
       </BrowserRouter>
     );
-  };
+  }
+
   return {
     ...render(ui, { wrapper: Router }),
   };

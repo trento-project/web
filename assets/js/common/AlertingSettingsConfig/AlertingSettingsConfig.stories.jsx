@@ -1,8 +1,7 @@
 import AlertingSettingsConfig from './AlertingSettingsConfig';
 
-
 export default {
-  title: "Components/AlertingSettingsConfig",
+  title: 'Components/AlertingSettingsConfig',
   component: AlertingSettingsConfig,
   argTypes: {
     settings: {
@@ -21,7 +20,7 @@ export default {
 
     onEditClick: {
       description: 'Callback that would run on edit button being clicked',
-      control: {type: 'function'},
+      control: { type: 'function' },
     },
   },
 };
@@ -32,14 +31,14 @@ export const WithFilledInValues = {
   args: {
     settings: {
       alertingEnabled: true,
-      smtpServer: "smtp.testdomain.com",
+      smtpServer: 'smtp.testdomain.com',
       smtpPort: 587,
-      smtpUsername: "testuser",
-      senderEmail: "admin@testdomain.com",
-      recipientEmail: "trentousers@testdomain.com",
+      smtpUsername: 'testuser',
+      senderEmail: 'admin@testdomain.com',
+      recipientEmail: 'trentousers@testdomain.com',
       enforcedFromEnv: false,
     },
-  }
+  },
 };
 
 export const WithEditButtonEnabledWhenEnoughPermissions = {

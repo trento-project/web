@@ -51,11 +51,11 @@ describe("AlertingSettingsModal", () => {
       render(<AlertingSettingsModal
                previousSettings={{
                  alertingEnabled: true,
-                 smtpServer: smtpServer,
-                 smtpPort: smtpPort,
-                 smtpUsername: smtpUsername,
-                 senderEmail: senderEmail,
-                 recipientEmail: recipientEmail,
+                 smtpServer,
+                 smtpPort,
+                 smtpUsername,
+                 senderEmail,
+                 recipientEmail,
                }}
                open />)
     });
@@ -93,12 +93,12 @@ describe("AlertingSettingsModal", () => {
 
     expect(onSave).toBeCalledWith({
       alertingEnabled: true,
-      smtpServer: smtpServer,
-      smtpPort: smtpPort,
-      smtpUsername: smtpUsername,
-      smtpPassword: smtpPassword,
-      senderEmail: senderEmail,
-      recipientEmail: recipientEmail,
+      smtpServer,
+      smtpPort,
+      smtpUsername,
+      smtpPassword,
+      senderEmail,
+      recipientEmail,
     })
   });
 
@@ -116,11 +116,11 @@ describe("AlertingSettingsModal", () => {
       <AlertingSettingsModal
         previousSettings={{
           alertingEnabled: true,
-          smtpServer: smtpServer,
-          smtpPort: smtpPort,
-          smtpUsername: smtpUsername,
-          senderEmail: senderEmail,
-          recipientEmail: recipientEmail,
+          smtpServer,
+          smtpPort,
+          smtpUsername,
+          senderEmail,
+          recipientEmail,
         }}
         open
         onSave={onSave}
@@ -130,12 +130,12 @@ describe("AlertingSettingsModal", () => {
 
     expect(onSave).toBeCalledWith({
       alertingEnabled: true,
-      smtpServer: smtpServer,
-      smtpPort: smtpPort,
-      smtpUsername: smtpUsername,
+      smtpServer,
+      smtpPort,
+      smtpUsername,
       // No `smtpPassword'
-      senderEmail: senderEmail,
-      recipientEmail: recipientEmail,
+      senderEmail,
+      recipientEmail,
     })
   });
 

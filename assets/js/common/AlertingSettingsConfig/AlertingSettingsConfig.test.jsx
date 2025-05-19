@@ -75,16 +75,17 @@ describe('AlertingSettingsConfig', () => {
   });
 
   it('forbids editing when called with default arguments', async () => {
-    var spy = jest.spyOn(lodash, 'noop');
+    // var spy = jest.spyOn(lodash, 'noop');
+    const onEditClick = jest.fn();
     const user = userEvent.setup();
 
-    render(<AlertingSettingsConfig />);
+    render(<AlertingSettingsConfig onEditClick={onEditClick} />);
 
     const editButton = screen.getByLabelText('alerting-edit-button');
     expect(editButton).toBeDisabled();
 
     await user.click(editButton);
-    expect(spy).not.toHaveBeenCalled();
+    expect(onEditClick).not.toHaveBeenCalled();
 
     await user.hover(editButton);
     expect(
@@ -94,7 +95,7 @@ describe('AlertingSettingsConfig', () => {
 
   it('allows editing when user has sufficient abilities and calls correct handler', async () => {
     const onEditClick = jest.fn();
-    const user = userEvent.setup()
+    const user = userEvent.setup();
 
     render(
       <AlertingSettingsConfig
