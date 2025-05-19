@@ -8,7 +8,7 @@ on:
       - "VERSION"
 
 jobs:
-  publish-release:
+  release:
     name: Tag and publish release
     permissions:
       contents: write
@@ -20,6 +20,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 2
+          ssh-key: ${{ secrets.RELEASE_KEY }}
 
       - name: Check if there is a parent commit
         id: check-parent-commit
@@ -41,7 +42,7 @@ jobs:
         if: steps.check-version.outputs.tag != ''
         with:
           publish: false
-          tag: ${{ steps.check-version.outputs.tag }}
+          version: ${{ steps.check-version.outputs.tag }}
           disable-autolabeler: true
           config-name: release_drafter.yaml
         env:
@@ -65,6 +66,7 @@ jobs:
         with:
           publish: true
           tag: ${{ steps.check-version.outputs.tag }}
+          version: ${{ steps.check-version.outputs.tag }}
           disable-autolabeler: true
           config-name: release_drafter.yaml
         env:
@@ -74,12 +76,12 @@ jobs:
     name: Build containers
     uses: ./.github/workflows/build-containers.yaml
     needs:
-      - publish-release
+      - release
     strategy:
       matrix:
         include:
           - MIX_ENV: prod
-            tag: ${{ needs.publish-release.outputs.version }}
+            tag: ${{ needs.release.outputs.version }}
           - MIX_ENV: prod
             tag: rolling
           - MIX_ENV: demo
@@ -93,7 +95,7 @@ jobs:
     if: vars.OBS_ENABLED
     uses: ./.github/workflows/obs.yaml
     needs:
-      - publish-release
+      - release
     secrets: inherit
     with:
       update_changelog: true
