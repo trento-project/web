@@ -374,7 +374,7 @@ function SettingsPage() {
           </SettingsLoader>
 
           <AlertingSettingsModal
-            key={`alertingmodal-${Object.values(alertingSettings).join("-")}`}
+            key={`alertingmodal-${Object.values(alertingSettings).join("-")}-${alertingSettingsModalOpen}`}
             previousSettings={alertingSettings}
             errors={alertingSubmitErrors}
             open={alertingSettingsModalOpen}
