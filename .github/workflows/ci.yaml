@@ -903,7 +903,7 @@ jobs:
 
   obs-sync:
     name: Update obs packages
-    if: vars.OBS_ENABLED == 'true'
+    if: vars.OBS_ENABLED == 'true' && (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch'
     uses: ./.github/workflows/obs.yaml
     needs:
       - static-code-analysis
