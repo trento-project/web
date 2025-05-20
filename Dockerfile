@@ -21,10 +21,12 @@ RUN npm run build
 FROM elixir-build AS release
 COPY --from=assets-build /build /build
 WORKDIR /build
+ARG MIX_ENV=prod
+ARG VERSION
 ENV LANG=en_US.UTF-8
 ENV LANGUAGE=en_US:en
 ENV LC_ALL=en_US.UTF-8
-ARG MIX_ENV=prod
+ENV VERSION=$VERSION
 ENV MIX_ENV=$MIX_ENV
 ENV MIX_HOME=/usr/bin
 ENV MIX_REBAR3=/usr/bin/rebar3

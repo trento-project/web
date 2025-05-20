@@ -1,13 +1,18 @@
-name: CI
+name: Continous Integration
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+    paths-ignore:
+      - "VERSION"
+      - "CHANGELOG.md"
   pull_request:
     types: [opened, synchronize, labeled]
-  release:
-    types: [published]
+    paths-ignore:
+      - "VERSION"
   workflow_dispatch:
+  workflow_call:
   repository_dispatch:
     types: [start-ci, deploy-demo]
 
@@ -198,8 +203,8 @@ jobs:
       - name: Check JS Code Format
         run: cd assets && npm run format:check
 
-  test-fe:
-    name: Run FE tests
+  test-javascript:
+    name: Javascript tests
     needs: npm-deps
     runs-on: ubuntu-24.04
     steps:
@@ -225,8 +230,8 @@ jobs:
       - name: Run JS tests
         run: cd assets && npm test
 
-  test:
-    name: Test
+  test-elixir:
+    name: Elixir tests
     needs: [elixir-deps]
     runs-on: ubuntu-24.04
     steps:
@@ -269,7 +274,7 @@ jobs:
     name: Chromatic deployment
     needs: [elixir-deps, npm-deps]
     runs-on: ubuntu-24.04
-    if: github.event_name != 'repository_dispatch' && github.secret_source != 'None'
+    if: github.event_name != 'repository_dispatch' && github.secret_source != 'None' && vars.CHROMATIC_ENABLED == 'true'
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.12.1
@@ -346,8 +351,8 @@ jobs:
         if: steps.npm-e2e-cache.outputs.cache-hit != 'true'
         run: cd test/e2e && npm install
 
-  test-e2e-parallel:
-    name: Parallel End to end tests
+  test-e2e:
+    name: E2E Tests
     needs: [elixir-deps, npm-deps, npm-e2e-deps]
     runs-on: ubuntu-24.04
     strategy:
@@ -440,14 +445,7 @@ jobs:
           name: e2e-screenshots-${{ matrix.containers }}
           path: test/e2e/cypress/screenshots/
 
-  test-e2e:
-    name: End to end tests
-    runs-on: ubuntu-22.04
-    needs: test-e2e-parallel
-    steps:
-      - run: echo "E2E tests completed"
-
-  regression-test-e2e:
+  test-regression:
     name: Regression tests
     needs: [elixir-deps, npm-deps, npm-e2e-deps]
     runs-on: ubuntu-22.04
@@ -557,7 +555,7 @@ jobs:
           name: regression-${{ matrix.test }}-e2e-screenshots
           path: test/e2e/cypress/screenshots/
 
-  integration-test-e2e:
+  test-integration:
     name: Integration tests
     needs: [elixir-deps, npm-deps, npm-e2e-deps]
     runs-on: ubuntu-22.04
@@ -673,30 +671,25 @@ jobs:
   target-branch-deps:
     name: Rebuild target branch dependencies
     runs-on: ubuntu-24.04
-    env:
-      BRANCH_NAME: ${{ github.event.pull_request.base.ref || github.ref_name }}
+    if: github.event_name == 'pull_request'
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.12.1
-        if: github.ref_name != '${{ env.BRANCH_NAME }}'
         with:
           access_token: ${{ github.token }}
       - name: Checkout target branch
         uses: actions/checkout@v4
-        if: github.ref_name != '${{ env.BRANCH_NAME }}'
         with:
-          ref: ${{ env.BRANCH_NAME }}
+          ref: ${{ github.event.pull_request.base.ref }}
       - name: Set up Elixir
         id: setup-elixir
         uses: erlef/setup-beam@v1
-        if: github.ref_name != '${{ env.BRANCH_NAME }}'
         with:
           version-file: .tool-versions
           version-type: strict
       - name: Retrieve Cached Dependencies - target branch
         uses: actions/cache@v4
         id: mix-cache-target
-        if: github.ref_name != '${{ env.BRANCH_NAME }}'
         with:
           path: |
             deps
@@ -704,7 +697,7 @@ jobs:
             priv/plts
           key: ${{ runner.os }}-${{ steps.setup-elixir.outputs.otp-version }}-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}
       - name: Install missing dependencies
-        if: steps.mix-cache-target.outputs.cache-hit != 'true' && github.ref_name != '${{ env.BRANCH_NAME }}'
+        if: steps.mix-cache-target.outputs.cache-hit != 'true'
         run: |
           mkdir -p priv/plts
           mix local.rebar --force
@@ -716,6 +709,7 @@ jobs:
   api-bc-check:
     name: API bc check
     needs: [elixir-deps, target-branch-deps]
+    if: github.event_name == 'pull_request' && !failure() && !cancelled()
     runs-on: ubuntu-24.04
     strategy:
       matrix:
@@ -747,7 +741,6 @@ jobs:
       - name: Generate current openapi.json
         run: |
           mix openapi.spec.json --start-app=false --spec TrentoWeb.OpenApi.${{ matrix.version }}.ApiSpec /tmp/specs/current-spec.json
-
       - name: Checkout target branch
         uses: actions/checkout@v4
         with:
@@ -782,82 +775,27 @@ jobs:
           name: openapi-diff-report-${{ matrix.version }}
           path: specs/
 
-  build-and-push-container-images:
-    name: Build and push container images
-    runs-on: ubuntu-latest
-    if: github.event_name == 'release' || (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch'
-    needs: [static-code-analysis, test, test-fe, test-e2e]
-    permissions:
-      contents: read
-      packages: write
-    env:
-      REGISTRY: ghcr.io
-      IMAGE_REPOSITORY: ghcr.io/${{ github.repository_owner }}/trento-web
-      IMAGE_TAG: "${{ (github.event_name == 'release' && github.event.release.tag_name) || (github.event_name == 'push' && github.ref_name == 'main' && 'rolling') || github.sha }}"
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: docker/setup-buildx-action@v3
-      - name: Log in to the Container registry
-        uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@369eb591f429131d6889c46b94e711f089e6ca96
-        with:
-          images: ${{ env.IMAGE_REPOSITORY }}
-      - name: Build and push container image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: true
-          tags: ${{ env.IMAGE_REPOSITORY }}:${{ env.IMAGE_TAG }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-  build-demo-img:
-    name: Build the docker image for the demo environment
-    runs-on: ubuntu-latest
-    if: github.event.action == 'deploy-demo' || github.event_name == 'release' || (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch'
-    needs: [static-code-analysis, test, test-fe]
-    permissions:
-      contents: read
-      packages: write
-    env:
-      MIX_ENV: demo
-      REGISTRY: ghcr.io
-      IMAGE_REPOSITORY: ghcr.io/${{ github.repository_owner }}/trento-web
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: docker/setup-buildx-action@v3
-      - name: Log in to the Container registry
-        uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@369eb591f429131d6889c46b94e711f089e6ca96
-        with:
-          images: ${{ env.IMAGE_REPOSITORY }}
-      - name: Build and push container image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: true
-          tags: ${{ env.IMAGE_REPOSITORY }}:demo
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          build-args: MIX_ENV=demo
+  build-containers:
+    name: Build containers
+    needs:
+      - static-code-analysis
+      - test-elixir
+      - test-javascript
+      - test-e2e
+      - test-integration
+      - test-regression
+    if: (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch'
+    uses: ./.github/workflows/build-containers.yaml
+    strategy:
+      matrix:
+        include:
+          - MIX_ENV: prod
+            tag: "${{ (github.event_name == 'push' && github.ref_name == 'main' && 'rolling') || github.sha }}"
+          - MIX_ENV: demo
+            tag: demo
+    with:
+      MIX_ENV: ${{ matrix.MIX_ENV }}
+      tag: ${{ matrix.tag }}
 
   deploy-demo-env:
     name: Deploy updated images to the demo environment
@@ -865,7 +803,6 @@ jobs:
     if: |
       vars.DEPLOY_DEMO == 'true' &&
         (
-          github.event_name == 'release' ||
           github.event.action == 'deploy-demo' ||
           (github.event_name == 'push' && github.ref_name == 'main') ||
           github.event_name == 'workflow_dispatch'
@@ -876,7 +813,8 @@ jobs:
       TRENTO_NAMESPACE: ${{ secrets.TRENTO_NAMESPACE }}
       TRENTO_ADMIN_EMAIL: ${{ secrets.TRENTO_ADMIN_EMAIL }}
       TRENTO_INGRESS_CLASS: ${{ secrets.TRENTO_INGRESS_CLASS }}
-    needs: [build-demo-img, test-e2e]
+    needs:
+      - build-containers
     steps:
       - name: Start a local k8s cluster
         uses: jupyterhub/action-k3s-helm@v4
@@ -931,7 +869,6 @@ jobs:
     if: |
       vars.DEPLOY_DEMO == 'true' &&
         (
-          github.event_name == 'release' ||
           github.event.action == 'deploy-demo' ||
           (github.event_name == 'push' && github.ref_name == 'main') ||
           github.event_name == 'workflow_dispatch'
@@ -964,141 +901,17 @@ jobs:
           photofinish run java-system -u "http://$TRENTO_DEMO_IP/api/collect" "$TRENTO_API_KEY"
           photofinish run hana-scale-up-cost-opt -u "http://$TRENTO_DEMO_IP/api/collect" "$TRENTO_API_KEY"
 
-  obs-commit-image:
-    name: Commit to OBS to generate container image
-    runs-on: ubuntu-24.04
-    if: github.event_name == 'release' || (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch'
-    needs: [static-code-analysis, test, test-fe, test-e2e]
-    container:
-      image: ghcr.io/trento-project/continuous-delivery:main
-      env:
-        GITHUB_OAUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        DEST_FOLDER: "/tmp/osc_project"
-        NAME: trento-web-image
-        OBS_USER: ${{ secrets.OBS_USER }}
-        OBS_PASS: ${{ secrets.OBS_PASS }}
-        OBS_PROJECT: ${{ secrets.OBS_PROJECT }}
-        FOLDER: packaging/suse/container
-        REPOSITORY: ${{ github.repository }}
-      options: -u 0:0
-    steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.12.1
-        with:
-          access_token: ${{ github.token }}
-      - name: Checkout
-        uses: actions/checkout@v4
-      - uses: actions-ecosystem/action-get-latest-tag@v1
-        id: latest-tag
-        with:
-          semver_only: true
-          initial_version: 0.0.1
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-      - name: Install assets
-        run: cd assets && npm install
-      - name: Get mix deps
-        run: mix local.hex --force && mix deps.clean --all && mix deps.get
-      - name: Configure OSC
-        # OSC credentials must be configured beforehand as the HOME variables cannot be changed from /github/home
-        # that is used to run osc commands
-        run: |
-          mkdir -p $HOME/.config/osc
-          cp /home/osc/.config/osc/oscrc $HOME/.config/osc
-          /scripts/init_osc_creds.sh
-      - name: Prepare .changes file
-        # The .changes file is updated only in release creation. This current task should be improved
-        # in order to add the current rolling release notes
-        if: github.event_name == 'release'
-        run: |
-          CHANGES_FILE=$NAME.changes
-          osc checkout $OBS_PROJECT $NAME $CHANGES_FILE
-          mv $CHANGES_FILE $FOLDER
-          VERSION=${{ steps.latest-tag.outputs.tag }}
-          hack/gh_release_to_obs_changeset.py $REPOSITORY -a shap-staff@suse.de -t $VERSION -f $FOLDER/$CHANGES_FILE
-      - name: Set version
-        run: |
-          git config --global --add safe.directory /__w/web/web
-          VERSION=$(./hack/get_version_from_git.sh)
-          # "+" character is not allowed in OBS dockerfile version strings
-          VERSION=${VERSION//[+]/-}
-          sed -i 's~%%VERSION%%~'"${VERSION}"'~' $FOLDER/Dockerfile
-      - name: Commit on OBS
-        run: |
-          OBS_PACKAGE=$OBS_PROJECT/$NAME
-          osc checkout $OBS_PACKAGE -o $DEST_FOLDER
-          cp -r $FOLDER/* $DEST_FOLDER
-          tar --transform 's,^./,/web/,' -zcvf $DEST_FOLDER/web.tar.gz --exclude=./.git ./*
-          cd $DEST_FOLDER
-          osc ar
-          osc commit -m "New development version of $NAME released"
-
-  obs-commit-rpm:
-    name: Commit to OBS to generate RPM package
-    needs: [static-code-analysis, test, test-fe, test-e2e]
-    runs-on: ubuntu-24.04
-    if: github.ref == 'refs/heads/main' || github.event_name == 'release'
-    container:
-      image: ghcr.io/trento-project/continuous-delivery:main
-      env:
-        OBS_USER: ${{ secrets.OBS_USER }}
-        OBS_PASS: ${{ secrets.OBS_PASS }}
-        OBS_PROJECT: ${{ secrets.OBS_PROJECT }}
-        OSC_CHECKOUT_DIR: /tmp/trento-web-package
-        REPOSITORY: ${{ github.repository }}
-        FOLDER: packaging/suse/rpm
-      options: -u 0:0
-    steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.12.1
-        with:
-          access_token: ${{ github.token }}
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-      - name: Configure OSC
-        run: |
-          mkdir -p $HOME/.config/osc
-          cp /home/osc/.config/osc/oscrc $HOME/.config/osc
-          /scripts/init_osc_creds.sh
-      - name: Prepare _service file
-        run: |
-          git config --global --add safe.directory /__w/web/web
-          VERSION=$(./hack/get_version_from_git.sh)
-          sed -i 's~%%REVISION%%~${{ github.sha }}~' $FOLDER/_service && \
-          sed -i 's~%%REPOSITORY%%~'"${REPOSITORY}"'~' $FOLDER/_service && \
-          sed -i 's~%%VERSION%%~'"${VERSION}"'~' $FOLDER/_service
-      - name: Get mix deps & prepare tarball
-        run: |
-          mix local.hex --force && mix deps.clean --all && mix deps.get
-          tar -c deps | gzip -n > deps.tar.gz
-      - name: Checkout and prepare OBS package
-        run: |
-          osc checkout $OBS_PROJECT trento-web -o $OSC_CHECKOUT_DIR
-          cp $FOLDER/_service $OSC_CHECKOUT_DIR
-          cp $FOLDER/trento-web.spec $OSC_CHECKOUT_DIR
-          rm -vf $OSC_CHECKOUT_DIR/*.tar.gz
-          pushd $OSC_CHECKOUT_DIR
-          osc service manualrun
-          rm -vf $OSC_CHECKOUT_DIR/*.tgz
-          cp  /__w/web/web/deps.tar.gz .
-      - name: Prepare trento-web.changes file
-        # The .changes file is updated only in release creation. This current task should be improved
-        # in order to add the current rolling release notes
-        if: github.event_name == 'release'
-        run: |
-          git config --global --add safe.directory /__w/web/web
-          VERSION=$(./hack/get_version_from_git.sh)
-          TAG=$(echo $VERSION | cut -f1 -d+)
-          hack/gh_release_to_obs_changeset.py $REPOSITORY -a shap-staff@suse.de -t $TAG -f $OSC_CHECKOUT_DIR/trento-web.changes
-      - name: Commit changes into OBS
-        run: |
-          pushd $OSC_CHECKOUT_DIR
-          osc ar
-          osc commit -m "GitHub Actions automated update to reference ${{ github.sha }}"
+  obs-sync:
+    name: Update obs packages
+    if: vars.OBS_ENABLED == 'true'
+    uses: ./.github/workflows/obs.yaml
+    needs:
+      - static-code-analysis
+      - test-elixir
+      - test-javascript
+      - test-e2e
+      - test-integration
+      - test-regression
+    secrets: inherit
+    with:
+      obs_project: ${{ vars.OBS_PROJECT_ROLLING }}

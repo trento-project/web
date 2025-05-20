@@ -1,0 +1,111 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "VERSION"
+
+jobs:
+  pre-release:
+    name: Detect new version, draft release, update changelog
+    permissions:
+      contents: write
+    runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.detect-version.outputs.current-version }}
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+          ssh-key: ${{ secrets.RELEASE_KEY }}
+
+      - name: Check if there is a parent commit
+        id: check-parent-commit
+        run: |
+          echo "sha=$(git rev-parse --verify --quiet HEAD^)" >> $GITHUB_OUTPUT
+
+      - name: Detect new version
+        id: detect-version
+        if: steps.check-parent-commit.outputs.sha
+        uses: salsify/action-detect-and-tag-new-version@v2
+        with:
+          create-tag: false
+          version-command: |
+            cat VERSION
+
+      - name: Draft release
+        id: draft-release
+        uses: release-drafter/release-drafter@v6
+        with:
+          publish: false
+          version: ${{ steps.detect-version.outputs.current-version }}
+          disable-autolabeler: true
+          config-name: release_drafter.yaml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update CHANGELOG.md
+        uses: stefanzweifel/changelog-updater-action@v1
+        with:
+          latest-version: ${{ steps.draft-release.outputs.tag_name }}
+          release-notes: ${{ steps.draft-release.outputs.body }}
+
+      - name: Commit new changelog
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          branch: main
+          commit_message: "Automatically update CHANGELOG.md for release ${{ steps.detect-version.outputs.current-version }}"
+
+  release:
+    name: Tag and publish release
+    permissions:
+      contents: write
+    runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.publish-release.outputs.tag_name }}
+    needs:
+      - pre-release
+    steps:
+      - name: Publish release
+        id: publish-release
+        uses: release-drafter/release-drafter@v6
+        with:
+          publish: true
+          tag: ${{ needs.pre-release.outputs.version }}
+          version: ${{ needs.pre-release.outputs.version }}
+          disable-autolabeler: true
+          config-name: release_drafter.yaml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-containers:
+    name: Build containers
+    uses: ./.github/workflows/build-containers.yaml
+    needs:
+      - release
+    strategy:
+      matrix:
+        include:
+          - MIX_ENV: prod
+            tag: ${{ needs.release.outputs.version }}
+          - MIX_ENV: prod
+            tag: rolling
+          - MIX_ENV: demo
+            tag: demo
+    with:
+      MIX_ENV: ${{ matrix.MIX_ENV }}
+      tag: ${{ matrix.tag }}
+
+  obs-sync:
+    name: Update obs packages
+    if: vars.OBS_ENABLED == 'true'
+    uses: ./.github/workflows/obs.yaml
+    needs:
+      - release
+    secrets: inherit
+    with:
+      update_changelog: true
+      obs_project: ${{ vars.OBS_PROJECT_STABLE }}
