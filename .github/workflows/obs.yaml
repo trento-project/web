@@ -155,9 +155,10 @@ jobs:
         run: |
           cp $SOURCE_DIR/_service $CHECKOUT_DIR
           cp $SOURCE_DIR/${OBS_PACKAGE_NAME}.spec $CHECKOUT_DIR
-          rm -vf $CHECKOUT_DIR/*.tar.gz
           pushd $CHECKOUT_DIR
+          rm -vf *.tar.gz
           osc service manualrun
+          rm -vf *.tgz
           popd
           cp deps.tar.gz $CHECKOUT_DIR
       - name: Commit to OBS
