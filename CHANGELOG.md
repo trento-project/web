@@ -10,7 +10,7 @@
 * Reorder start ordering (#3485) @gagandeepb
 * Add checks execution with custom values test e2e (#3476) @EMaksy
 * Increase timeout for SUSE Multi Linux Manager API (#3435) @balanza
-* PO Refactor checks execution & other tests dependant on wanda (#3471) @vicenteqa
+* PO Refactor checks execution & other tests dependent on wanda (#3471) @vicenteqa
 * Checks customization e2e (#3460) @EMaksy
 * Add a GenericError for displaying non-recoverable errors (#3459) @janvhs
 * Fix margins (#3446) @janvhs
