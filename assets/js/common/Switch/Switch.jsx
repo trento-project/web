@@ -4,7 +4,7 @@ import classNames from 'classnames';
 
 import { Switch as HeadlessSwitch } from '@headlessui/react';
 
-function Switch({ onChange, selected, disabled, ...props}) {
+function Switch({ onChange, selected, disabled, ...props }) {
   return (
     <HeadlessSwitch.Group as="div" className="flex items-center">
       <HeadlessSwitch

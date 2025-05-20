@@ -3,13 +3,13 @@ import { userEvent, within } from '@storybook/test';
 import AlertingSettingsModal from './AlertingSettingsModal';
 
 const validSettings = {
-      alertingEnabled: true,
-      smtpServer: "smtp.testdomain.com",
-      smtpPort: 587,
-      smtpUsername: "testuser",
-      senderEmail: "admin@testdomain.com",
-      recipientEmail: "trentousers@testdomain.com",
-}
+  alertingEnabled: true,
+  smtpServer: 'smtp.testdomain.com',
+  smtpPort: 587,
+  smtpUsername: 'testuser',
+  senderEmail: 'admin@testdomain.com',
+  recipientEmail: 'trentousers@testdomain.com',
+};
 
 export default {
   title: 'Components/AlertingSettingsModal',
@@ -49,12 +49,12 @@ export default {
       description: 'Whether submission is in progress',
       control: {
         type: 'boolean',
-      }
+      },
     },
 
     onSave: {
       description: 'Callback that would run on submit',
-      control: {type: 'function'},
+      control: { type: 'function' },
     },
 
     onCancel: {
@@ -64,19 +64,17 @@ export default {
   },
 };
 
-
 export const Default = {
   args: {
     open: true,
-  }
+  },
 };
-
 
 export const WithPreviousSettings = {
   args: {
     previousSettings: validSettings,
     open: true,
-  }
+  },
 };
 
 export const WithPreviousSettingsAndEditablePassword = {
@@ -84,53 +82,53 @@ export const WithPreviousSettingsAndEditablePassword = {
     previousSettings: validSettings,
     open: true,
   },
-  play: async ({ canvasElement}) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement.parentElement);
-    await userEvent.click(canvas.getByRole('button', {name: "Remove"}))
+    await userEvent.click(canvas.getByRole('button', { name: 'Remove' }));
   },
-}
+};
 
 export const WithErrors = {
   args: {
     previousSettings: {
       alertingEnabled: true,
-      smtpServer: "localhost",
+      smtpServer: 'localhost',
       smtpPort: 70000,
-      smtpUsername: "inv4!d name",
-      senderEmail: "wrong_email.com",
-      recipientEmail: "mailey.com",
+      smtpUsername: 'inv4!d name',
+      senderEmail: 'wrong_email.com',
+      recipientEmail: 'mailey.com',
     },
     errors: [
-        {
-          detail: "error from backend",
-          source: { pointer: '/smtp_server' },
-          title: 'Invalid value',
-        },
-        {
-          detail: "error from backend",
-          source: { pointer: '/smtp_port' },
-          title: 'Invalid value',
-        },
-        {
-          detail: "error from backend",
-          source: { pointer: '/smtp_username' },
-          title: 'Invalid value',
-        },
-        {
-          detail: "error from backend",
-          source: { pointer: '/smtp_password' },
-          title: 'Invalid value',
-        },
-        {
-          detail: "error from backend",
-          source: { pointer: '/sender_email' },
-          title: 'Invalid value',
-        },
-        {
-          detail: "error from backend",
-          source: { pointer: '/recipient_email' },
-          title: 'Invalid value',
-        },
+      {
+        detail: 'error from backend',
+        source: { pointer: '/smtp_server' },
+        title: 'Invalid value',
+      },
+      {
+        detail: 'error from backend',
+        source: { pointer: '/smtp_port' },
+        title: 'Invalid value',
+      },
+      {
+        detail: 'error from backend',
+        source: { pointer: '/smtp_username' },
+        title: 'Invalid value',
+      },
+      {
+        detail: 'error from backend',
+        source: { pointer: '/smtp_password' },
+        title: 'Invalid value',
+      },
+      {
+        detail: 'error from backend',
+        source: { pointer: '/sender_email' },
+        title: 'Invalid value',
+      },
+      {
+        detail: 'error from backend',
+        source: { pointer: '/recipient_email' },
+        title: 'Invalid value',
+      },
     ],
     open: true,
   },
@@ -142,4 +140,4 @@ export const Loading = {
     open: true,
     loading: true,
   },
-}
+};

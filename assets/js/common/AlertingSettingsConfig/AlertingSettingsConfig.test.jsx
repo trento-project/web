@@ -2,8 +2,6 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
-import { faker } from '@faker-js/faker';
-import * as lodash from 'lodash';
 
 import { alertingSettingsFactory } from '@lib//test-utils/factories/alertingSettings';
 

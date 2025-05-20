@@ -1,6 +1,6 @@
 import { networkClient } from '@lib/network';
 
-const alerting_uri = "/settings/alerting"
+const alerting_uri = '/settings/alerting';
 
 export const getSettings = () => networkClient.get(alerting_uri);
 

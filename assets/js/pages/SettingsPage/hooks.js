@@ -172,11 +172,11 @@ export const useApiKeySettings = () => {
 };
 
 export const useAlertingSettings = () => {
-  const [settings, setSettings] = useState({})
+  const [settings, setSettings] = useState({});
   const [fetchLoading, setFetchLoading] = useState(false);
-  const [fetchError, setFetchError] = useState(false)
+  const [fetchError, setFetchError] = useState(false);
   const [submitErrors, setSubmitErrors] = useState([]);
-  const [submitLoading, setSubmitLoading] = useState(false)
+  const [submitLoading, setSubmitLoading] = useState(false);
 
   function fromApiSettings(data) {
     return {
@@ -199,14 +199,14 @@ export const useAlertingSettings = () => {
       smtp_password: newSettings.smtpPassword,
       sender_email: newSettings.senderEmail,
       recipient_email: newSettings.recipientEmail,
-    }
+    };
 
-    return omitBy(data, isNil)
+    return omitBy(data, isNil);
   }
 
   function clearSubmitErrors() {
     setSubmitErrors([]);
-  };
+  }
 
   async function fetch() {
     setFetchLoading(true);
@@ -219,30 +219,34 @@ export const useAlertingSettings = () => {
       setSettings({});
       if (status !== 404) setFetchError(true);
     } finally {
-      setFetchLoading(false)
+      setFetchLoading(false);
     }
-  };
+  }
 
   async function submit(newSettings) {
-    setSubmitLoading(true)
-    clearSubmitErrors([])
-    const action = isEmpty(settings) ? saveAlertingSettings : updateAlertingSettings
+    setSubmitLoading(true);
+    clearSubmitErrors([]);
+    const action = isEmpty(settings)
+      ? saveAlertingSettings
+      : updateAlertingSettings;
 
     try {
-      const { data } = await action(
-        toApiSettings(newSettings)
-      );
+      const { data } = await action(toApiSettings(newSettings));
       setSettings(fromApiSettings(data));
-    } catch ({ response: { data: { errors } }}) {
-      setSubmitErrors(errors)
+    } catch ({
+      response: {
+        data: { errors },
+      },
+    }) {
+      setSubmitErrors(errors);
     } finally {
       setSubmitLoading(false);
     }
-  };
+  }
 
   useEffect(() => {
-    fetch()
-  }, [])
+    fetch();
+  }, []);
 
   return {
     settings,

@@ -125,10 +125,11 @@ function SettingsPage() {
     submitErrors: alertingSubmitErrors,
     fetch: fetchAlertingSettings,
     submit: submitAlertingSettings,
-    clearSubmitErrors: clearAlertingSubmitErrors
+    clearSubmitErrors: clearAlertingSubmitErrors,
   } = useAlertingSettings();
 
-  const [alertingSettingsModalOpen, setAlertingSettingsModalOpen] = useState(false);
+  const [alertingSettingsModalOpen, setAlertingSettingsModalOpen] =
+    useState(false);
   useEffect(() => {
     setAlertingSettingsModalOpen(false);
   }, [alertingSettings]);
@@ -367,14 +368,14 @@ function SettingsPage() {
               settings={alertingSettings}
               userAbilities={abilities}
               onEditClick={() => {
-                clearAlertingSubmitErrors()
+                clearAlertingSubmitErrors();
                 setAlertingSettingsModalOpen(true);
               }}
             />
           </SettingsLoader>
 
           <AlertingSettingsModal
-            key={`alertingmodal-${Object.values(alertingSettings).join("-")}-${alertingSettingsModalOpen}`}
+            key={`alertingmodal-${Object.values(alertingSettings).join('-')}-${alertingSettingsModalOpen}`}
             previousSettings={alertingSettings}
             errors={alertingSubmitErrors}
             open={alertingSettingsModalOpen}

@@ -10,25 +10,33 @@ import Switch from '@common/Switch';
 import { hasError, getError } from '@lib/api/validationErrors';
 
 export default function AlertingSettingsModal({
-  previousSettings={},
-  errors=[],
-  open=false,
-  loading=false,
-  onSave=noop,
-  onCancel=noop,
+  previousSettings = {},
+  errors = [],
+  open = false,
+  loading = false,
+  onSave = noop,
+  onCancel = noop,
 }) {
-  const [alertingEnabled, setAlertingEnabled] = useState(Boolean(previousSettings.alertingEnabled));
+  const [alertingEnabled, setAlertingEnabled] = useState(
+    Boolean(previousSettings.alertingEnabled)
+  );
   const [smtpServer, setSmtpServer] = useState(previousSettings.smtpServer);
   const [smtpPort, setSmtpPort] = useState(previousSettings.smtpPort);
-  const [smtpUsername, setSmtpUsername] = useState(previousSettings.smtpUsername);
+  const [smtpUsername, setSmtpUsername] = useState(
+    previousSettings.smtpUsername
+  );
   const [senderEmail, setSenderEmail] = useState(previousSettings.senderEmail);
-  const [recipientEmail, setRecipientEmail] = useState(previousSettings.recipientEmail);
+  const [recipientEmail, setRecipientEmail] = useState(
+    previousSettings.recipientEmail
+  );
 
-  const [editingPassword, setEditingPassword] = useState(isEmpty(previousSettings));
-  const [smtpPassword, setSmtpPassword] = useState('')
+  const [editingPassword, setEditingPassword] = useState(
+    isEmpty(previousSettings)
+  );
+  const [smtpPassword, setSmtpPassword] = useState('');
 
   function onSubmit(e) {
-    e.preventDefault()
+    e.preventDefault();
     const settingsPayload = {
       alertingEnabled,
       smtpServer,
@@ -37,16 +45,12 @@ export default function AlertingSettingsModal({
       senderEmail,
       recipientEmail,
       ...(editingPassword && { smtpPassword }),
-    }
-    onSave(settingsPayload)
-   }
+    };
+    onSave(settingsPayload);
+  }
 
   return (
-    <Modal
-      title="Enter Alerting Settings"
-      open={open}
-      onClose={onCancel}
-    >
+    <Modal title="Enter Alerting Settings" open={open} onClose={onCancel}>
       <form onSubmit={onSubmit}>
         <div className="grid grid-cols-6 my-5 gap-6">
           <Label className="col-span-2" htmlFor="alerting-enabled-input">
@@ -138,7 +142,12 @@ export default function AlertingSettingsModal({
             )}
           </div>
 
-          <Label className="col-span-2" id="smtp-password-label" htmlFor="smtp-password-input" required>
+          <Label
+            className="col-span-2"
+            id="smtp-password-label"
+            htmlFor="smtp-password-input"
+            required
+          >
             SMTP Password
           </Label>
           {editingPassword ? (
@@ -164,13 +173,13 @@ export default function AlertingSettingsModal({
               )}
             </div>
           ) : (
-           <div className="col-span-4 border border-gray-200 p-5 rounded-md">
-             <p
-               aria-labelledby="smtp-password-label"
-               className="inline align-sub leading-10"
-             >
+            <div className="col-span-4 border border-gray-200 p-5 rounded-md">
+              <p
+                aria-labelledby="smtp-password-label"
+                className="inline align-sub leading-10"
+              >
                 •••••
-             </p>
+              </p>
               <Button
                 className="float-right"
                 type="danger"
@@ -206,7 +215,11 @@ export default function AlertingSettingsModal({
             )}
           </div>
 
-          <Label className="col-span-2" htmlFor="recipient-email-input" required>
+          <Label
+            className="col-span-2"
+            htmlFor="recipient-email-input"
+            required
+          >
             Alert Recipient
           </Label>
           <div className="col-span-4">
@@ -233,10 +246,14 @@ export default function AlertingSettingsModal({
         </div>
 
         <div className="flex flex-row w-80 space-x-2">
-          <Button isSubmitButton disabled={loading}>Save Settings</Button>
-          <Button type="primary-white" onClick={onCancel}>Cancel</Button>
+          <Button isSubmitButton disabled={loading}>
+            Save Settings
+          </Button>
+          <Button type="primary-white" onClick={onCancel}>
+            Cancel
+          </Button>
         </div>
       </form>
     </Modal>
   );
-};
+}
