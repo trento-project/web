@@ -5,6 +5,8 @@ import '@testing-library/jest-dom';
 import { faker } from '@faker-js/faker';
 import * as lodash from 'lodash';
 
+import { alertingSettingsFactory } from '@lib//test-utils/factories/alertingSettings';
+
 import AlertingSettingsConfig, {
   ENFORCED_FROM_ENV_MESSAGE,
 } from './AlertingSettingsConfig';
@@ -35,26 +37,12 @@ describe('AlertingSettingsConfig', () => {
     );
   });
 
-  it('renders all visual props supplied as arugments', () => {
-    const alertingEnabled = true;
-    const smtpServer = faker.internet.url();
-    const smtpPort = faker.number.int({ max: 60000 });
-    const smtpUsername = faker.animal.cow();
-    const senderEmail = faker.internet.email();
-    const recipientEmail = faker.internet.email();
+  it('renders all visual props supplied as arguments', () => {
+    const alertingSettings = alertingSettingsFactory.build();
+    const { smtpServer, smtpPort, smtpUsername, senderEmail, recipientEmail } =
+      alertingSettings;
 
-    render(
-      <AlertingSettingsConfig
-        settings={{
-          alertingEnabled,
-          smtpServer,
-          smtpPort,
-          smtpUsername,
-          senderEmail,
-          recipientEmail,
-        }}
-      />
-    );
+    render(<AlertingSettingsConfig settings={alertingSettings} />);
 
     expect(screen.getByLabelText('smtp-server')).toHaveTextContent(smtpServer);
     expect(screen.getByLabelText('smtp-port')).toHaveTextContent(
@@ -75,7 +63,6 @@ describe('AlertingSettingsConfig', () => {
   });
 
   it('forbids editing when called with default arguments', async () => {
-    // var spy = jest.spyOn(lodash, 'noop');
     const onEditClick = jest.fn();
     const user = userEvent.setup();
 
@@ -116,7 +103,7 @@ describe('AlertingSettingsConfig', () => {
 
     render(
       <AlertingSettingsConfig
-        settings={{ enforcedFromEnv: true }}
+        settings={alertingSettingsFactory.build({ enforcedFromEnv: true })}
         onEditClick={onEditClick}
         userAbilities={adminUser}
       />
