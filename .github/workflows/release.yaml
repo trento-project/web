@@ -96,6 +96,7 @@ jobs:
           - MIX_ENV: demo
             tag: demo
     with:
+      image_name: trento-web
       MIX_ENV: ${{ matrix.MIX_ENV }}
       tag: ${{ matrix.tag }}
 
