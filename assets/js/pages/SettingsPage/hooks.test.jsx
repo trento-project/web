@@ -1,4 +1,5 @@
 import {
+  useAlertingSettings,
   useApiKeySettings,
   useSuseManagerSettings,
 } from '@pages/SettingsPage/hooks';
@@ -317,5 +318,35 @@ describe('useApiKeySettings', () => {
     });
 
     expect(hookResult.current.apiKey).toBe('new_api_key');
+  });
+});
+
+describe('useAlertingSettings', () => {
+  describe('failed on initial fetch and', () => {
+    afterEach(() => {
+      axiosMock.reset();
+    });
+
+    it('sets empty settings and activates error flag on non-404 error from server', async () => {
+      axiosMock.onGet('/settings/alerting').reply(422);
+
+      const { result } = await act(() =>
+        renderHook(() => useAlertingSettings())
+      );
+
+      expect(result.current.settings).toEqual({});
+      expect(result.current.fetchError).toEqual(true);
+    });
+
+    it("sets empty settings but doesn't activate error flag on 404 error from server", async () => {
+      axiosMock.onGet('/settings/alerting').reply(404);
+
+      const { result } = await act(() =>
+        renderHook(() => useAlertingSettings())
+      );
+
+      expect(result.current.settings).toEqual({});
+      expect(result.current.fetchError).toEqual(false);
+    });
   });
 });
