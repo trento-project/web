@@ -3,6 +3,10 @@ name: Build containers
 on:
   workflow_call:
     inputs:
+      image_name:
+        required: true
+        type: string
+        description: "The container image name, e.g. 'trento-web'"
       tag:
         required: true
         type: string
@@ -26,8 +30,7 @@ jobs:
       contents: read
       packages: write
     env:
-      IMAGE_REPOSITORY: ${{ inputs.registry }}/${{ github.repository_owner }}/trento-web
-      IMAGE_TAG: "${{ (github.event_name == 'release' && github.event.release.tag_name) || (github.event_name == 'push' && github.ref_name == 'main' && 'rolling') || github.sha }}"
+      IMAGE_REPOSITORY: ${{ inputs.registry }}/${{ github.repository_owner }}/${{ inputs.image_name }}
     steps:
       - uses: actions/checkout@v4
         with:

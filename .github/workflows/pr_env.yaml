@@ -21,8 +21,10 @@ jobs:
   build-container:
     name: Build container
     uses: ./.github/workflows/build-containers.yaml
+    needs: check-env-creation-privilege
     if: needs.check-env-creation-privilege.outputs.create_env == 'true'
     with:
+      image_name: trento-web
       tag: ${{ github.event.pull_request.number }}-env
 
   create-pr-environment:
