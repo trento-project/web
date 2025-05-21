@@ -1,11 +1,11 @@
 import { networkClient } from '@lib/network';
 
-const alerting_uri = '/settings/alerting';
+const alertingPath = '/settings/alerting';
 
-export const getSettings = () => networkClient.get(alerting_uri);
+export const getSettings = () => networkClient.get(alertingPath);
 
 export const saveSettings = (settings) =>
-  networkClient.post(alerting_uri, settings);
+  networkClient.post(alertingPath, settings);
 
 export const updateSettings = (settings) =>
-  networkClient.patch(alerting_uri, settings);
+  networkClient.patch(alertingPath, settings);
