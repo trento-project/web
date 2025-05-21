@@ -10,6 +10,7 @@ defmodule Trento.EventHandlersSupervisor do
     DatabaseRestoreEventHandler,
     RollUpEventHandler,
     SapSystemDatabaseHealthEventHandler,
+    SaptuneStatusUpdateEventHandler,
     SoftwareUpdatesDiscoveryEventHandler,
     StreamRollUpEventHandler
   }
@@ -28,7 +29,8 @@ defmodule Trento.EventHandlersSupervisor do
       SoftwareUpdatesDiscoveryEventHandler,
       DatabaseDeregistrationEventHandler,
       DatabaseRestoreEventHandler,
-      SapSystemDatabaseHealthEventHandler
+      SapSystemDatabaseHealthEventHandler,
+      SaptuneStatusUpdateEventHandler
     ]
 
     Supervisor.init(children, strategy: :one_for_one)
