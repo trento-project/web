@@ -7,7 +7,7 @@ import { capitalize } from 'lodash';
 
 import {
   alertingSettingsFactory,
-  alertingSettingsSendFactory,
+  alertingSettingsSaveRequestFactory,
 } from '@lib//test-utils/factories/alertingSettings';
 
 import AlertingSettingsModal from './AlertingSettingsModal';
@@ -99,7 +99,7 @@ describe('AlertingSettingsModal', () => {
       smtpPassword,
       senderEmail,
       recipientEmail,
-    } = alertingSettingsSendFactory.build();
+    } = alertingSettingsSaveRequestFactory.build();
 
     const user = userEvent.setup();
     const onSave = jest.fn();

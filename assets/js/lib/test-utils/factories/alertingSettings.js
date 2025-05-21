@@ -14,6 +14,7 @@ export const alertingSettingsFactory = baseAlertingSettingsFactory.params({
   enforcedFromEnv: false,
 });
 
-export const alertingSettingsSendFactory = baseAlertingSettingsFactory.params({
-  smtpPassword: faker.animal.dog(),
-});
+export const alertingSettingsSaveRequestFactory =
+  baseAlertingSettingsFactory.params({
+    smtpPassword: faker.animal.dog(),
+  });
