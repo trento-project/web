@@ -19,6 +19,7 @@ import { buildEnv } from '@lib/checks';
 import { TARGET_CLUSTER } from '@lib/model';
 import { getClusterSids } from '@lib/model/clusters';
 
+import ClusterDetails from './ClusterDetails';
 import AscsErsClusterDetails from './AscsErsClusterDetails';
 import HanaClusterDetails from './HanaClusterDetails';
 import { getClusterName } from './ClusterLink';
@@ -81,47 +82,63 @@ export function ClusterDetailsPage() {
     case 'hana_scale_up':
     case 'hana_scale_out':
       return (
-        <HanaClusterDetails
+        <ClusterDetails
           clusterID={clusterID}
-          userAbilities={abilities}
           clusterName={getClusterName(cluster)}
-          selectedChecks={cluster.selected_checks}
+          details={cluster.details}
           hasSelectedChecks={hasSelectedChecks}
           hosts={clusterHosts}
-          clusterType={cluster.type}
-          cibLastWritten={cluster.cib_last_written}
-          clusterSids={getClusterSids(cluster)}
-          provider={cluster.provider}
-          sapSystems={clusterSapSystems}
-          details={cluster.details}
-          catalog={catalog}
           lastExecution={lastExecution}
+          selectedChecks={cluster.selected_checks}
+          userAbilities={abilities}
           onStartExecution={(_, hostList, checks) =>
             dispatch(executionRequested(clusterID, hostList, checks))
           }
           navigate={navigate}
-        />
+        >
+          <HanaClusterDetails
+            clusterID={clusterID}
+            hosts={clusterHosts}
+            clusterType={cluster.type}
+            cibLastWritten={cluster.cib_last_written}
+            clusterSids={getClusterSids(cluster)}
+            provider={cluster.provider}
+            sapSystems={clusterSapSystems}
+            details={cluster.details}
+            catalog={catalog}
+            lastExecution={lastExecution}
+            navigate={navigate}
+          />
+        </ClusterDetails>
       );
     case 'ascs_ers':
       return (
-        <AscsErsClusterDetails
+        <ClusterDetails
           clusterID={clusterID}
-          userAbilities={abilities}
           clusterName={getClusterName(cluster)}
-          selectedChecks={cluster.selected_checks}
-          hasSelectedChecks={hasSelectedChecks}
-          cibLastWritten={cluster.cib_last_written}
-          provider={cluster.provider}
-          hosts={clusterHosts}
-          sapSystems={clusterSapSystems}
           details={cluster.details}
-          catalog={catalog}
+          hasSelectedChecks={hasSelectedChecks}
+          hosts={clusterHosts}
           lastExecution={lastExecution}
+          selectedChecks={cluster.selected_checks}
+          userAbilities={abilities}
           onStartExecution={(_, hostList, checks) =>
             dispatch(executionRequested(clusterID, hostList, checks))
           }
           navigate={navigate}
-        />
+        >
+          <AscsErsClusterDetails
+            clusterID={clusterID}
+            cibLastWritten={cluster.cib_last_written}
+            provider={cluster.provider}
+            hosts={clusterHosts}
+            sapSystems={clusterSapSystems}
+            details={cluster.details}
+            catalog={catalog}
+            lastExecution={lastExecution}
+            navigate={navigate}
+          />
+        </ClusterDetails>
       );
     default:
       return <div>Unknown cluster type</div>;
