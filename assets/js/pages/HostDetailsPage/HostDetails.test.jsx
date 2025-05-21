@@ -415,7 +415,7 @@ describe('HostDetails component', () => {
           name: 'Operations',
         });
 
-        await act(async () => user.click(operationsButton));
+        await user.click(operationsButton);
 
         const menuItem = screen.getByRole('menuitem', {
           name: menuEntry,
@@ -447,7 +447,7 @@ describe('HostDetails component', () => {
       const operationsButton = screen.getByRole('button', {
         name: 'Operations',
       });
-      await act(async () => user.click(operationsButton));
+      await user.click(operationsButton);
 
       await waitFor(() =>
         expect(screen.getByRole('menuitem', { name: operation })).toBeDisabled()
@@ -568,15 +568,12 @@ describe('HostDetails component', () => {
         const operationsButton = screen.getByRole('button', {
           name: 'Operations',
         });
-        await act(async () => {
-          await user.click(operationsButton);
-        });
 
-        const menuButton = await waitFor(() =>
-          screen.getByRole('menuitem', {
-            name: operationName,
-          })
-        );
+        await user.click(operationsButton);
+
+        const menuButton = screen.getByRole('menuitem', {
+          name: operationName,
+        });
 
         expectedToBeEnabled
           ? expect(menuButton).toBeEnabled()
