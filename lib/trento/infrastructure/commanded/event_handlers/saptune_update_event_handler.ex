@@ -168,7 +168,7 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SaptuneStatusUpdateEvent
     sap_running =
       host
       |> Repo.preload([:application_instances, :database_instances])
-      |> is_sap_running?(instance_numbers)
+      |> sap_running?(instance_numbers)
 
     maybe_dispatch_update_saptune_statue(host, sap_running)
   end
@@ -191,9 +191,9 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SaptuneStatusUpdateEvent
     end)
   end
 
-  defp is_sap_running?(nil, _), do: false
+  defp sap_running?(nil, _), do: false
 
-  defp is_sap_running?(
+  defp sap_running?(
          %HostReadModel{application_instances: app_instances, database_instances: db_instances},
          instance_numbers
        ) do
