@@ -12,10 +12,6 @@ import AlertingSettingsConfig, {
 const adminUser = [{ name: 'all', resource: 'all' }];
 
 describe('AlertingSettingsConfig', () => {
-  beforeAll(() => {
-    jest.restoreAllMocks();
-  });
-
   it('renders all visual props when called with default arguments', () => {
     render(<AlertingSettingsConfig />);
 
