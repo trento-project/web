@@ -20,7 +20,7 @@ describe('AlertingSettingsConfig', () => {
     );
     expect(screen.getByLabelText('smtp-port')).toHaveTextContent('587');
     expect(screen.getByLabelText('smtp-username')).toHaveTextContent('...');
-    expect(screen.getByLabelText('smtp-password')).toHaveTextContent('•••••')
+    expect(screen.getByLabelText('smtp-password')).toHaveTextContent('•••••');
     expect(screen.getByLabelText('alerting-sender')).toHaveTextContent(
       '...@...'
     );
@@ -46,7 +46,7 @@ describe('AlertingSettingsConfig', () => {
     expect(screen.getByLabelText('smtp-username')).toHaveTextContent(
       smtpUsername
     );
-    expect(screen.getByLabelText('smtp-password')).toHaveTextContent('•••••')
+    expect(screen.getByLabelText('smtp-password')).toHaveTextContent('•••••');
     expect(screen.getByLabelText('alerting-sender')).toHaveTextContent(
       senderEmail
     );
