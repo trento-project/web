@@ -36,7 +36,7 @@ defmodule Trento.Hosts.Projections.HostReadModel do
     field :selected_checks, {:array, :string}, default: []
     field :provider, Ecto.Enum, values: Provider.values()
     field :provider_data, :map
-    field :saptune_status, :map
+    field :saptune_status, Trento.Support.Ecto.Payload, keys_as_atoms: true
     field :prometheus_targets, :map
 
     has_many :tags, Tag, foreign_key: :resource_id
