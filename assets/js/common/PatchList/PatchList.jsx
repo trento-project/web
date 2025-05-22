@@ -130,6 +130,7 @@ export default function PatchList({ patches, onNavigate = noop }) {
       {
         title: 'Synopsis',
         key: 'advisory_synopsis',
+        className: 'w-3/5 text-wrap',
         sortable: true,
         sortDirection:
           sortingColumn === 'advisory_synopsis' ? sortDirection : null,

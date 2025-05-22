@@ -6,11 +6,21 @@ import { hostFactory } from '@lib/test-utils/factories/hosts';
 
 import HostRelevantPatchesPage from './HostRelevantPatchesPage';
 
+function ContainerWrapper({ children }) {
+  return (
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">{children}</div>
+  );
+}
+
 export default {
   title: 'Layouts/HostRelevantPatchesPage',
   components: HostRelevantPatchesPage,
   argTypes: {},
-  render: (args) => <HostRelevantPatchesPage {...args} />,
+  render: (args) => (
+    <ContainerWrapper>
+      <HostRelevantPatchesPage {...args} />
+    </ContainerWrapper>
+  ),
 };
 
 export const HasPatches = {
