@@ -200,7 +200,7 @@ function Table({
                   {columns.map(
                     ({
                       title,
-                      columnClassName,
+                      className: columnClassName,
                       sortable = false,
                       sortDirection = undefined,
                       handleClick = () => {},
