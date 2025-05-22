@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-K7URE6B4.js"></script>
-    <script src="dist/sidebar_items-84E7A562.js"></script>
+    <script src="dist/sidebar_items-6CA638E5.js"></script>
     <script src="docs_config.js"></script>
     <script async src="dist/html-YIPIRHGU.js"></script>
 
@@ -221,7 +221,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#request_operation/3" data-no-tooltip translate="no">request_operation(arg1, host_id, params)</a>
+        <a href="#request_operation/3" data-no-tooltip translate="no">request_operation(operation, host_id, params)</a>
 
       </div>
 
@@ -257,7 +257,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">by_host_id(host_id)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts.ex#L133" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts.ex#L135" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -279,7 +279,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">by_id(id)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts.ex#L44" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts.ex#L46" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -310,7 +310,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">deregister_host(host_id, date_service \\ DateService)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts.ex#L127" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts.ex#L129" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -339,7 +339,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">get_all_hosts()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts.ex#L34" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts.ex#L36" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -367,7 +367,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">get_all_sles_subscriptions()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts.ex#L61" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts.ex#L63" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -395,7 +395,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">get_host_by_id(id)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts.ex#L52" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts.ex#L54" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -424,7 +424,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">request_checks_execution(host_id)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts.ex#L106" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts.ex#L108" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -452,7 +452,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">request_hosts_checks_execution()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts.ex#L76" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts.ex#L78" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -472,9 +472,9 @@ GUIDES
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">request_operation(arg1, host_id, params)</h1>
+    <h1 class="signature" translate="no">request_operation(operation, host_id, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts.ex#L143" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts.ex#L145" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -503,7 +503,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">select_checks(host_id, checks)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts.ex#L97" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts.ex#L99" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
