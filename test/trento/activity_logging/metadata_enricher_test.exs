@@ -219,28 +219,32 @@ defmodule Trento.ActivityLog.MetadataEnricherTest do
   end
 
   describe "enriching operation activities" do
-    test "should enrich operation completed events in hosts" do
-      %{id: host_id, hostname: hostname} = insert(:host)
+    for current_operation <- [:saptune_solution_apply, :saptune_solution_change] do
+      @current_operation current_operation
 
-      initial_metadata = %{
-        resource_id: host_id,
-        operation: :saptune_solution_apply
-      }
+      test "should enrich operation '#{current_operation}' completed events in hosts" do
+        %{id: host_id, hostname: hostname} = insert(:host)
 
-      assert {:ok, %{hostname: ^hostname}} =
-               MetadataEnricher.enrich(:operation_completed, initial_metadata)
-    end
+        initial_metadata = %{
+          resource_id: host_id,
+          operation: @current_operation
+        }
 
-    test "should enrich operation requested events in hosts" do
-      %{id: host_id, hostname: hostname} = insert(:host)
+        assert {:ok, %{hostname: ^hostname}} =
+                 MetadataEnricher.enrich(:operation_completed, initial_metadata)
+      end
 
-      initial_metadata = %{
-        resource_id: host_id,
-        operation: :saptune_solution_apply
-      }
+      test "should enrich operation '#{current_operation}' requested events in hosts" do
+        %{id: host_id, hostname: hostname} = insert(:host)
 
-      assert {:ok, %{hostname: ^hostname}} =
-               MetadataEnricher.enrich(:operation_requested, initial_metadata)
+        initial_metadata = %{
+          resource_id: host_id,
+          operation: @current_operation
+        }
+
+        assert {:ok, %{hostname: ^hostname}} =
+                 MetadataEnricher.enrich(:operation_requested, initial_metadata)
+      end
     end
   end
 

@@ -74,7 +74,8 @@ defmodule Trento.Infrastructure.Operations.AMQP.Processor do
     Logger.debug("Unknown event: #{inspect(event)}")
   end
 
-  defp maybe_request_discovery(:saptune_solution_apply, :UPDATED, group_id) do
+  defp maybe_request_discovery(operation, :UPDATED, group_id)
+       when operation in [:saptune_solution_apply, :saptune_solution_change] do
     Discovery.request_saptune_discovery(group_id)
   end
 
