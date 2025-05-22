@@ -368,7 +368,11 @@ function HostDetails({
           <div>
             <h2 className="text-2xl font-bold">SAP instances</h2>
           </div>
-          <Table config={sapInstancesTableConfiguration} data={sapInstances} />
+          <Table
+            className="pt-2"
+            config={sapInstancesTableConfiguration}
+            data={sapInstances}
+          />
         </div>
 
         <div className="mt-16">
@@ -379,6 +383,7 @@ function HostDetails({
             </h2>
           </div>
           <Table
+            className="pt-2"
             config={subscriptionsTableConfiguration}
             data={slesSubscriptions}
           />

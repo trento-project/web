@@ -66,6 +66,7 @@ function AttributesDetails({ attributes, resources, title }) {
       <Modal title={title} open={modalOpen} onClose={() => setModalOpen(false)}>
         <h3 className="font-medium mt-6">Attributes</h3>
         <Table
+          className="pt-2"
           config={attributesTableConfig}
           data={Object.keys(attributes).map((key) => ({
             attribute: key,
@@ -74,7 +75,11 @@ function AttributesDetails({ attributes, resources, title }) {
         />
 
         <h3 className="font-medium mt-6">Resources</h3>
-        <Table config={resourcesTableConfig} data={resources} />
+        <Table
+          className="pt-2"
+          config={resourcesTableConfig}
+          data={resources}
+        />
       </Modal>
     </>
   );
