@@ -8,6 +8,11 @@ import MockAdapter from 'axios-mock-adapter';
 import { faker } from '@faker-js/faker';
 import { act, renderHook } from '@testing-library/react';
 import { hookWrapperWithState } from '@lib/test-utils';
+import {
+  alertingSettingsFactory,
+  alertingSettingsSaveRequestFactory,
+} from '../../lib/test-utils/factories/alertingSettings';
+import { flow, pick, set } from 'lodash/fp';
 
 const axiosMock = new MockAdapter(networkClient);
 
@@ -322,12 +327,49 @@ describe('useApiKeySettings', () => {
 });
 
 describe('useAlertingSettings', () => {
-  describe('failed on initial fetch and', () => {
-    afterEach(() => {
-      axiosMock.reset();
-    });
+  const saveAlertingSettings = alertingSettingsSaveRequestFactory.build();
+  const saveAlertingData = {
+    enabled: saveAlertingSettings.alertingEnabled,
+    smtp_server: saveAlertingSettings.smtpServer,
+    smtp_port: saveAlertingSettings.smtpPort,
+    smtp_username: saveAlertingSettings.smtpUsername,
+    smtp_password: saveAlertingSettings.smtpPassword,
+    sender_email: saveAlertingSettings.senderEmail,
+    recipient_email: saveAlertingSettings.recipientEmail,
+  };
 
-    it('sets empty settings and activates error flag on non-404 error from server', async () => {
+  const settingsFromSaveSettings = (alertingSettings) =>
+    flow(
+      pick([
+        'alertingEnabled',
+        'smtpServer',
+        'smtpPort',
+        'smtpUsername',
+        'senderEmail',
+        'recipientEmail',
+      ]),
+      set('enforcedFromEnv', false)
+    )(alertingSettings);
+
+  const dataFromSaveData = (alertingData) =>
+    flow(
+      pick([
+        'enabled',
+        'smtp_server',
+        'smtp_port',
+        'smtp_username',
+        'sender_email',
+        'recipient_email',
+      ]),
+      set('enforced_from_env', false)
+    )(alertingData);
+
+  afterEach(() => {
+    axiosMock.reset();
+  });
+
+  describe('failed with non-404 error on initial fetch and', () => {
+    it('sets empty settings and activates error flag', async () => {
       axiosMock.onGet('/settings/alerting').reply(422);
 
       const { result } = await act(() =>
@@ -337,8 +379,10 @@ describe('useAlertingSettings', () => {
       expect(result.current.settings).toEqual({});
       expect(result.current.fetchError).toEqual(true);
     });
+  });
 
-    it("sets empty settings but doesn't activate error flag on 404 error from server", async () => {
+  describe('failed with 404 error on initial fetch and', () => {
+    it("sets empty settings but doesn't activate error flag", async () => {
       axiosMock.onGet('/settings/alerting').reply(404);
 
       const { result } = await act(() =>
@@ -347,6 +391,92 @@ describe('useAlertingSettings', () => {
 
       expect(result.current.settings).toEqual({});
       expect(result.current.fetchError).toEqual(false);
+    });
+
+    it('sends POST request with correct body when submit callback is called', async () => {
+      axiosMock.onGet('/settings/alerting').replyOnce(404);
+
+      const { result } = await act(() =>
+        renderHook(() => useAlertingSettings())
+      );
+      const submitFn = result.current.submit;
+      const newAlertingData = dataFromSaveData(saveAlertingData);
+      const newAlertingSettings =
+        settingsFromSaveSettings(saveAlertingSettings);
+      axiosMock
+        .onPost('/settings/alerting', saveAlertingData)
+        .reply(200, newAlertingData);
+
+      await act(() => {
+        submitFn(saveAlertingSettings);
+      });
+
+      expect(result.current.settings).toEqual(newAlertingSettings);
+      expect(result.current.submitErrors).toEqual([]);
+    });
+  });
+
+  describe('succeeds on initial fetch and', () => {
+    const fetchedAlertingSettings = alertingSettingsFactory.build();
+    const fetchedAlertingData = {
+      enabled: fetchedAlertingSettings.alertingEnabled,
+      smtp_server: fetchedAlertingSettings.smtpServer,
+      smtp_port: fetchedAlertingSettings.smtpPort,
+      smtp_username: fetchedAlertingSettings.smtpUsername,
+      sender_email: fetchedAlertingSettings.senderEmail,
+      recipient_email: fetchedAlertingSettings.recipientEmail,
+      enforced_from_env: fetchedAlertingSettings.enforcedFromEnv,
+    };
+
+    beforeEach(() => {
+      axiosMock.onGet('/settings/alerting').reply(200, fetchedAlertingData);
+    });
+
+    it('correctly sets alerting settings', async () => {
+      const { result } = await act(() =>
+        renderHook(() => useAlertingSettings())
+      );
+
+      expect(result.current.settings).toEqual(fetchedAlertingSettings);
+    });
+
+    it('sends PATCH request with correct body when submit callback is called', async () => {
+      const { result } = await act(() =>
+        renderHook(() => useAlertingSettings())
+      );
+      const submitFn = result.current.submit;
+      const newAlertingData = dataFromSaveData(saveAlertingData);
+      const newAlertingSettings =
+        settingsFromSaveSettings(saveAlertingSettings);
+      axiosMock
+        .onPatch('/settings/alerting', saveAlertingData)
+        .reply(200, newAlertingData);
+
+      await act(() => {
+        submitFn(saveAlertingSettings);
+      });
+
+      expect(result.current.settings).toEqual(newAlertingSettings);
+      expect(result.current.submitErrors).toEqual([]);
+    });
+
+    it('sets errors on HTTP failure', async () => {
+      const { result } = await act(() =>
+        renderHook(() => useAlertingSettings())
+      );
+      const submitFn = result.current.submit;
+      const errors = [
+        { title: 'Test error', detail: "It's really a test error" },
+      ];
+      axiosMock
+        .onPatch('/settings/alerting', saveAlertingData)
+        .reply(409, { errors });
+
+      await act(() => {
+        submitFn(saveAlertingSettings);
+      });
+
+      expect(result.current.submitErrors).toEqual(errors);
     });
   });
 });
