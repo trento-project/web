@@ -102,7 +102,7 @@ jobs:
       - name: Compile
         run: mix compile --warnings-as-errors
       - name: "Docker compose dependencies"
-        uses: isbang/compose-action@v2.1.0
+        uses: isbang/compose-action@v2.2.0
         with:
           compose-file: "./docker-compose.yaml"
           down-flags: "--volumes"
