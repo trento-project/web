@@ -111,6 +111,7 @@ export function GenericSystemDetails({
           <h2 className="text-2xl font-bold self-center">Layout</h2>
         </div>
         <Table
+          className="pt-2"
           config={getSystemInstancesTableConfiguration({
             userAbilities,
             cleanUpPermittedFor,
@@ -125,6 +126,7 @@ export function GenericSystemDetails({
           <h2 className="text-2xl font-bold">Hosts</h2>
         </div>
         <Table
+          className="pt-2"
           config={systemHostsTableConfiguration}
           data={getUniqueHosts(system.hosts)}
         />

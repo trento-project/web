@@ -74,6 +74,7 @@ function UpgradablePackagesList({
 
   return (
     <Table
+      className="pt-2"
       config={config}
       data={upgradablePackages}
       sortBy={sortByLatestPackage}

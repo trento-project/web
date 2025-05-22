@@ -148,6 +148,7 @@ export default function PatchList({ patches, onNavigate = noop }) {
 
   return (
     <Table
+      className="pt-2"
       config={patchListConfig}
       data={patches}
       sortBy={columnToSortingFunc[sortingColumn]}

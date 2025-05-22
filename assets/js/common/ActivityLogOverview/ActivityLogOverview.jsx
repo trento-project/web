@@ -112,6 +112,7 @@ function ActivityLogOverview({ activityLog, loading = false }) {
         config={activityLogTableConfig}
         data={activityLog.map(toRenderedEntry)}
         emptyStateText={loading ? 'Loading...' : 'No data available'}
+        roundedTop={false}
       />
     </>
   );

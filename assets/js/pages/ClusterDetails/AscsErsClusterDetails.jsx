@@ -189,7 +189,11 @@ function AscsErsClusterDetails({
       </div>
 
       <div className="mt-2">
-        <Table config={nodeDetailsConfig} data={currentSapSystem?.nodes} />
+        <Table
+          className="pt-2"
+          config={nodeDetailsConfig}
+          data={currentSapSystem?.nodes}
+        />
       </div>
     </>
   );

@@ -151,6 +151,7 @@ function Users({
       </Modal>
 
       <Table
+        className="pt-2"
         config={usersTableConfig}
         data={loading ? defaultUsers : users}
         emptyStateText={loading ? 'Loading...' : 'No data available'}

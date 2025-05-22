@@ -209,6 +209,7 @@ function ExecutionResults({
             <Table
               config={resultsTableConfig}
               data={filterAndSortData(tableData, item)}
+              roundedTop={false}
             />
           </Accordion>
         ))}

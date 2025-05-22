@@ -64,6 +64,7 @@ const getFilterFunction = (column, value) =>
 const itemsPerPageOptions = [10, 20, 50, 75, 100];
 
 function Table({
+  className,
   config,
   data = [],
   sortBy,
@@ -161,25 +162,23 @@ function Table({
 
   return (
     <div
-      className={classNames('container mx-auto', {
+      className={classNames(className, 'container mx-auto', {
         'px-4 sm:px-8': usePadding,
       })}
     >
-      <div
-        className={classNames('flex-row px-4 space-x-4', {
-          'pb-4': hasFilters,
-        })}
-      >
-        <TableFilters
-          config={config}
-          data={data}
-          filters={filters}
-          onChange={(newFilters) => {
-            setFilters(newFilters);
-            setCurrentPage(1);
-          }}
-        />
-      </div>
+      {hasFilters && (
+        <div className={classNames('flex-row px-4 space-x-4 pb-4')}>
+          <TableFilters
+            config={config}
+            data={data}
+            filters={filters}
+            onChange={(newFilters) => {
+              setFilters(newFilters);
+              setCurrentPage(1);
+            }}
+          />
+        </div>
+      )}
       <div className="">
         <div
           className={classNames('-mx-4 sm:-mx-8 px-4 sm:px-8', {
@@ -201,7 +200,7 @@ function Table({
                   {columns.map(
                     ({
                       title,
-                      className,
+                      columnClassName,
                       sortable = false,
                       sortDirection = undefined,
                       handleClick = () => {},
@@ -215,7 +214,7 @@ function Table({
                               ? 'cursor-pointer hover:text-gray-700 '
                               : ''
                           }px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-100`,
-                          className
+                          columnClassName
                         )}
                         onClick={handleClick}
                       >
