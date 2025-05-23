@@ -253,4 +253,25 @@ describe('Settings Page', () => {
       ).toBeVisible();
     });
   });
+
+  describe('Alerting Section', () => {
+    it('renders a loading box while fetching settings', async () => {
+      axiosMock.onGet('/api/v1/settings/alerting').reply(
+        (_) =>
+          new Promise((resolve) => {
+            setTimeout(() => resolve([200, {}]), 5000);
+          })
+      );
+
+      const [StatefulSettings] = withState(<SettingsPage />, {
+        ...defaultInitialState,
+      });
+
+      await act(async () => {
+        renderWithRouter(StatefulSettings);
+      });
+
+      expect(screen.getByText('Loading Alerting Settings...')).toBeVisible();
+    });
+  });
 });

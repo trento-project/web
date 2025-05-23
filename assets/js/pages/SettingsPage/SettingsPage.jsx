@@ -357,7 +357,7 @@ function SettingsPage() {
       <section>
         <div className="pb-4">
           <SettingsLoader
-            sectionName="Alerting Settings"
+            sectionName="Alerting"
             status={calculateSettingsLoaderStatus(
               alertingFetchLoading,
               alertingFetchError
