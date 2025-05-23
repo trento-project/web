@@ -14,7 +14,27 @@ export const alertingSettingsFactory = baseAlertingSettingsFactory.params({
   enforcedFromEnv: false,
 });
 
+export const alertingSettingsToApiData = (alertingSettings) => ({
+  enabled: alertingSettings.alertingEnabled,
+  smtp_server: alertingSettings.smtpServer,
+  smtp_port: alertingSettings.smtpPort,
+  smtp_username: alertingSettings.smtpUsername,
+  sender_email: alertingSettings.senderEmail,
+  recipient_email: alertingSettings.recipientEmail,
+  enforced_from_env: alertingSettings.enforcedFromEnv,
+});
+
 export const alertingSettingsSaveRequestFactory =
   baseAlertingSettingsFactory.params({
     smtpPassword: faker.animal.dog(),
   });
+
+export const alertingSettingsSaveRequestToApiData = (saveAlertingSettings) => ({
+  enabled: saveAlertingSettings.alertingEnabled,
+  smtp_server: saveAlertingSettings.smtpServer,
+  smtp_port: saveAlertingSettings.smtpPort,
+  smtp_username: saveAlertingSettings.smtpUsername,
+  smtp_password: saveAlertingSettings.smtpPassword,
+  sender_email: saveAlertingSettings.senderEmail,
+  recipient_email: saveAlertingSettings.recipientEmail,
+});

@@ -11,7 +11,9 @@ import { act, renderHook } from '@testing-library/react';
 import { hookWrapperWithState } from '@lib/test-utils';
 import {
   alertingSettingsFactory,
+  alertingSettingsToApiData,
   alertingSettingsSaveRequestFactory,
+  alertingSettingsSaveRequestToApiData,
 } from '@lib/test-utils/factories/alertingSettings';
 
 const axiosMock = new MockAdapter(networkClient);
@@ -328,15 +330,8 @@ describe('useApiKeySettings', () => {
 
 describe('useAlertingSettings', () => {
   const saveAlertingSettings = alertingSettingsSaveRequestFactory.build();
-  const saveAlertingData = {
-    enabled: saveAlertingSettings.alertingEnabled,
-    smtp_server: saveAlertingSettings.smtpServer,
-    smtp_port: saveAlertingSettings.smtpPort,
-    smtp_username: saveAlertingSettings.smtpUsername,
-    smtp_password: saveAlertingSettings.smtpPassword,
-    sender_email: saveAlertingSettings.senderEmail,
-    recipient_email: saveAlertingSettings.recipientEmail,
-  };
+  const saveAlertingData =
+    alertingSettingsSaveRequestToApiData(saveAlertingSettings);
 
   const settingsFromSaveSettings = (alertingSettings) =>
     flow(
@@ -418,18 +413,11 @@ describe('useAlertingSettings', () => {
 
   describe('succeeds on initial fetch and', () => {
     const fetchedAlertingSettings = alertingSettingsFactory.build();
-    const fetchedAlertingData = {
-      enabled: fetchedAlertingSettings.alertingEnabled,
-      smtp_server: fetchedAlertingSettings.smtpServer,
-      smtp_port: fetchedAlertingSettings.smtpPort,
-      smtp_username: fetchedAlertingSettings.smtpUsername,
-      sender_email: fetchedAlertingSettings.senderEmail,
-      recipient_email: fetchedAlertingSettings.recipientEmail,
-      enforced_from_env: fetchedAlertingSettings.enforcedFromEnv,
-    };
 
     beforeEach(() => {
-      axiosMock.onGet('/api/v1/settings/alerting').reply(200, fetchedAlertingData);
+      axiosMock
+        .onGet('/api/v1/settings/alerting')
+        .reply(200, alertingSettingsToApiData(fetchedAlertingSettings));
     });
 
     it('correctly sets alerting settings', async () => {

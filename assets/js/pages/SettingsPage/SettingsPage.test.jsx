@@ -15,6 +15,10 @@ import { networkClient } from '@lib/network';
 import MockAdapter from 'axios-mock-adapter';
 
 import SettingsPage from './SettingsPage';
+import {
+  alertingSettingsFactory,
+  alertingSettingsToApiData,
+} from '../../lib/test-utils/factories/alertingSettings';
 
 const axiosMock = new MockAdapter(networkClient);
 
@@ -272,6 +276,77 @@ describe('Settings Page', () => {
       });
 
       expect(screen.getByText('Loading Alerting Settings...')).toBeVisible();
+    });
+
+    it('renders a default Alerting Config Section when initial fetch returns 404', async () => {
+      const [StatefulSettings] = withState(<SettingsPage />, {
+        ...defaultInitialState,
+      });
+
+      axiosMock.onGet('/api/v1/settings/alerting').reply(404, {});
+
+      await act(async () => {
+        renderWithRouter(StatefulSettings);
+      });
+
+      expect(screen.getByLabelText('smtp-server')).toHaveTextContent(
+        'https://...'
+      );
+      expect(screen.getByLabelText('smtp-port')).toHaveTextContent('587');
+      expect(screen.getByLabelText('smtp-username')).toHaveTextContent('...');
+      expect(screen.getByLabelText('smtp-password')).toHaveTextContent('•••••');
+      expect(screen.getByLabelText('alerting-sender')).toHaveTextContent(
+        '...@...'
+      );
+      expect(screen.getByLabelText('alerting-recipient')).toHaveTextContent(
+        '...@...'
+      );
+      expect(screen.getByLabelText('alerting-enabled')).toHaveTextContent(
+        'Disabled'
+      );
+    });
+
+    it('renders Alerting Config Section on successful initial fetch', async () => {
+      const alertingSettings = alertingSettingsFactory.build();
+      const {
+        smtpServer,
+        smtpPort,
+        smtpUsername,
+        senderEmail,
+        recipientEmail,
+      } = alertingSettings;
+
+      const [StatefulSettings] = withState(<SettingsPage />, {
+        ...defaultInitialState,
+      });
+
+      axiosMock
+        .onGet('/api/v1/settings/alerting')
+        .reply(200, alertingSettingsToApiData(alertingSettings));
+
+      await act(async () => {
+        renderWithRouter(StatefulSettings);
+      });
+
+      expect(screen.getByLabelText('smtp-server')).toHaveTextContent(
+        smtpServer
+      );
+      expect(screen.getByLabelText('smtp-port')).toHaveTextContent(
+        smtpPort.toString()
+      );
+      expect(screen.getByLabelText('smtp-username')).toHaveTextContent(
+        smtpUsername
+      );
+      expect(screen.getByLabelText('smtp-password')).toHaveTextContent('•••••');
+      expect(screen.getByLabelText('alerting-sender')).toHaveTextContent(
+        senderEmail
+      );
+      expect(screen.getByLabelText('alerting-recipient')).toHaveTextContent(
+        recipientEmail
+      );
+      expect(screen.getByLabelText('alerting-enabled')).toHaveTextContent(
+        'Enabled'
+      );
     });
   });
 });
