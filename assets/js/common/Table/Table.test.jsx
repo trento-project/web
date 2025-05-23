@@ -8,6 +8,7 @@ import {
   waitFor,
   within,
 } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import 'intersection-observer';
 import '@testing-library/jest-dom';
 
@@ -227,7 +228,8 @@ describe('Table component', () => {
       expect(page2.querySelectorAll('tbody > tr')).toHaveLength(1);
     });
 
-    it('should be able to change the items per page', () => {
+    it('should be able to change the items per page', async () => {
+      const user = userEvent.setup();
       const data = tableDataFactory.buildList(11);
 
       render(
@@ -237,8 +239,8 @@ describe('Table component', () => {
       const pageOriginal = screen.getByRole('table');
       expect(pageOriginal.querySelectorAll('tbody > tr')).toHaveLength(10);
 
-      fireEvent.click(screen.getByRole('button', { name: '10' }));
-      fireEvent.click(screen.getByRole('option', { name: '20' }));
+      await user.click(screen.getByRole('button', { name: '10' }));
+      await user.click(screen.getByRole('option', { name: '20' }));
 
       const pageMoreItems = screen.getByRole('table');
       expect(pageMoreItems.querySelectorAll('tbody > tr')).toHaveLength(11);
