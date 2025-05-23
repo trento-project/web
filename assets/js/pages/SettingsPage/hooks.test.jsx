@@ -370,7 +370,7 @@ describe('useAlertingSettings', () => {
 
   describe('failed with non-404 error on initial fetch and', () => {
     it('sets empty settings and activates error flag', async () => {
-      axiosMock.onGet('/settings/alerting').reply(422);
+      axiosMock.onGet('/api/v1/settings/alerting').reply(422);
 
       const { result } = await act(() =>
         renderHook(() => useAlertingSettings())
@@ -383,7 +383,7 @@ describe('useAlertingSettings', () => {
 
   describe('failed with 404 error on initial fetch and', () => {
     it("sets empty settings but doesn't activate error flag", async () => {
-      axiosMock.onGet('/settings/alerting').reply(404);
+      axiosMock.onGet('/api/v1/settings/alerting').reply(404);
 
       const { result } = await act(() =>
         renderHook(() => useAlertingSettings())
@@ -394,7 +394,7 @@ describe('useAlertingSettings', () => {
     });
 
     it('sends POST request with correct body when submit callback is called', async () => {
-      axiosMock.onGet('/settings/alerting').replyOnce(404);
+      axiosMock.onGet('/api/v1/settings/alerting').replyOnce(404);
 
       const { result } = await act(() =>
         renderHook(() => useAlertingSettings())
@@ -404,7 +404,7 @@ describe('useAlertingSettings', () => {
       const newAlertingSettings =
         settingsFromSaveSettings(saveAlertingSettings);
       axiosMock
-        .onPost('/settings/alerting', saveAlertingData)
+        .onPost('/api/v1/settings/alerting', saveAlertingData)
         .reply(200, newAlertingData);
 
       await act(() => {
@@ -429,7 +429,7 @@ describe('useAlertingSettings', () => {
     };
 
     beforeEach(() => {
-      axiosMock.onGet('/settings/alerting').reply(200, fetchedAlertingData);
+      axiosMock.onGet('/api/v1/settings/alerting').reply(200, fetchedAlertingData);
     });
 
     it('correctly sets alerting settings', async () => {
@@ -449,7 +449,7 @@ describe('useAlertingSettings', () => {
       const newAlertingSettings =
         settingsFromSaveSettings(saveAlertingSettings);
       axiosMock
-        .onPatch('/settings/alerting', saveAlertingData)
+        .onPatch('/api/v1/settings/alerting', saveAlertingData)
         .reply(200, newAlertingData);
 
       await act(() => {
@@ -469,7 +469,7 @@ describe('useAlertingSettings', () => {
         { title: 'Test error', detail: "It's really a test error" },
       ];
       axiosMock
-        .onPatch('/settings/alerting', saveAlertingData)
+        .onPatch('/api/v1/settings/alerting', saveAlertingData)
         .reply(409, { errors });
 
       await act(() => {
