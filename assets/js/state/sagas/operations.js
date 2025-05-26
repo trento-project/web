@@ -3,6 +3,7 @@ import { map } from 'lodash';
 
 import {
   HOST_OPERATION,
+  CLUSTER_OPERATION,
   getOperationLabel,
   getOperationInternalName,
   getOperationResourceType,
@@ -21,11 +22,14 @@ import {
   setRunningOperation,
 } from '@state/runningOperations';
 import { getHost } from '@state/selectors/host';
+import { getCluster } from '@state/selectors/cluster';
 
 function* getResourceName({ groupID, resourceType }) {
   switch (resourceType) {
     case HOST_OPERATION:
       return (yield select(getHost(groupID)))?.hostname || 'unknown';
+    case CLUSTER_OPERATION:
+      return (yield select(getCluster(groupID)))?.name || 'unknown';
     default:
       return 'unknown';
   }
