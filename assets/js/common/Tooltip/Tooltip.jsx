@@ -25,6 +25,9 @@ function Tooltip({
   children,
   place = 'top',
   isEnabled = true,
+  // be careful using wrap={false}. The children element must receive the `ref` property.
+  // Check Button component
+  // Otherwise findDom deprecated warning is raised
   wrap = true,
   // The visible ternary flag forces the tooltip to show/hide
   // regardless of the user interaction.
