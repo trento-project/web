@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import classNames from 'classnames';
 
 const getSizeClasses = (size) => {
@@ -35,7 +35,7 @@ const getButtonClasses = (type) => {
   }
 };
 
-function Button({ children, className, type, size, disabled, ...props }) {
+function Button({ children, className, type, size, disabled, ...props }, ref) {
   const buttonClasses = classNames(
     getButtonClasses(type),
     getSizeClasses(size),
@@ -48,6 +48,7 @@ function Button({ children, className, type, size, disabled, ...props }) {
       type="button"
       className={buttonClasses}
       disabled={disabled}
+      ref={ref}
       {...props}
     >
       {children}
@@ -55,4 +56,6 @@ function Button({ children, className, type, size, disabled, ...props }) {
   );
 }
 
-export default Button;
+// forwardRef will be deprecated in React 19
+// https://react.dev/blog/2024/12/05/react-19#ref-as-a-prop
+export default forwardRef(Button);
