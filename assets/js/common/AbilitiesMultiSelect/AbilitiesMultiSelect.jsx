@@ -55,6 +55,7 @@ const groupedAbilities = [
     groupAbilities: [
       'saptune_solution_apply:host',
       'saptune_solution_change:host',
+      'maintenance_change:cluster',
     ],
   },
 ];
