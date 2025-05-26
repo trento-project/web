@@ -228,9 +228,9 @@ describe('ClusterDetails ClusterDetails component', () => {
 
       renderWithRouter(
         <ClusterDetails
-          clusterDetails={details}
           clusterID={id}
           clusterName={name}
+          details={details}
           hasSelectedChecks
           hosts={[]}
           selectedChecks={[]}
@@ -263,9 +263,9 @@ describe('ClusterDetails ClusterDetails component', () => {
 
       renderWithRouter(
         <ClusterDetails
-          clusterDetails={details}
           clusterID={id}
           clusterName={name}
+          details={details}
           hasSelectedChecks
           hosts={[]}
           runningOperation={{ operation: CLUSTER_MAINTENANCE_CHANGE }}
@@ -297,9 +297,9 @@ describe('ClusterDetails ClusterDetails component', () => {
 
       renderWithRouter(
         <ClusterDetails
-          clusterDetails={details}
           clusterID={id}
           clusterName={name}
+          details={details}
           hasSelectedChecks
           hosts={[]}
           runningOperation={{
@@ -405,9 +405,9 @@ describe('ClusterDetails ClusterDetails component', () => {
 
         renderWithRouter(
           <ClusterDetails
-            clusterDetails={details}
             clusterID={id}
             clusterName={name}
+            details={details}
             hasSelectedChecks
             hosts={[]}
             selectedChecks={['check1']}
