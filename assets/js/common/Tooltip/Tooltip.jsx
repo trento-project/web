@@ -25,7 +25,7 @@ function Tooltip({
   children,
   place = 'top',
   isEnabled = true,
-  // we careful using wrap={false}. The children element must receive the `ref` property.
+  // be careful using wrap={false}. The children element must receive the `ref` property.
   // Check Button component
   // Otherwise findDom deprecated warning is raised
   wrap = true,
