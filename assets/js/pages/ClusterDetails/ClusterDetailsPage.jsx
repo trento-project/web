@@ -3,6 +3,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { get } from 'lodash';
 
+import { getFromConfig } from '@lib/config';
+
 import {
   getCluster,
   getClusterHosts,
@@ -15,6 +17,13 @@ import { getLastExecution } from '@state/selectors/lastExecutions';
 import { getUserProfile } from '@state/selectors/user';
 import { updateCatalog } from '@state/catalog';
 import { executionRequested, updateLastExecution } from '@state/lastExecutions';
+import {
+  operationRequested,
+  updateRunningOperation,
+  removeRunningOperation,
+} from '@state/runningOperations';
+import { getRunningOperation } from '@state/selectors/runningOperations';
+
 import { buildEnv } from '@lib/checks';
 import { TARGET_CLUSTER } from '@lib/model';
 import { getClusterSids } from '@lib/model/clusters';
@@ -23,6 +32,8 @@ import ClusterDetails from './ClusterDetails';
 import AscsErsClusterDetails from './AscsErsClusterDetails';
 import HanaClusterDetails from './HanaClusterDetails';
 import { getClusterName } from './ClusterLink';
+
+const operationsEnabled = getFromConfig('operationsEnabled');
 
 export function ClusterDetailsPage() {
   const navigate = useNavigate();
@@ -63,6 +74,7 @@ export function ClusterDetailsPage() {
       dispatch(updateCatalog(env));
       dispatch(updateLastExecution(clusterID));
     }
+    dispatch(updateRunningOperation(clusterID));
   }, [dispatch, provider, type, ensaVersion, filesystemType, architectureType]);
 
   const clusterHosts = useSelector((state) =>
@@ -72,6 +84,8 @@ export function ClusterDetailsPage() {
   const clusterSapSystems = useSelector((state) =>
     getClusterSapSystems(state, clusterID)
   );
+
+  const runningOperation = useSelector(getRunningOperation(clusterID));
 
   if (!cluster) {
     return <div>Loading...</div>;
@@ -89,10 +103,20 @@ export function ClusterDetailsPage() {
           hasSelectedChecks={hasSelectedChecks}
           hosts={clusterHosts}
           lastExecution={lastExecution}
+          operationsEnabled={operationsEnabled}
+          runningOperation={runningOperation}
           selectedChecks={cluster.selected_checks}
           userAbilities={abilities}
           onStartExecution={(_, hostList, checks) =>
             dispatch(executionRequested(clusterID, hostList, checks))
+          }
+          onRequestOperation={(operation, params) =>
+            dispatch(
+              operationRequested({ groupID: clusterID, operation, params })
+            )
+          }
+          onCleanForbiddenOperation={() =>
+            dispatch(removeRunningOperation({ groupID: clusterID }))
           }
           navigate={navigate}
         >
@@ -120,10 +144,20 @@ export function ClusterDetailsPage() {
           hasSelectedChecks={hasSelectedChecks}
           hosts={clusterHosts}
           lastExecution={lastExecution}
+          operationsEnabled={operationsEnabled}
+          runningOperation={runningOperation}
           selectedChecks={cluster.selected_checks}
           userAbilities={abilities}
           onStartExecution={(_, hostList, checks) =>
             dispatch(executionRequested(clusterID, hostList, checks))
+          }
+          onRequestOperation={(operation, params) =>
+            dispatch(
+              operationRequested({ groupID: clusterID, operation, params })
+            )
+          }
+          onCleanForbiddenOperation={() =>
+            dispatch(removeRunningOperation({ groupID: clusterID }))
           }
           navigate={navigate}
         >
