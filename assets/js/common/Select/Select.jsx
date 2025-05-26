@@ -1,4 +1,7 @@
 import React, { Fragment } from 'react';
+import classNames from 'classnames';
+
+import { isEqual } from 'lodash';
 
 import {
   Listbox,
@@ -9,13 +12,13 @@ import {
 } from '@headlessui/react';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 
-import classNames from 'classnames';
-import { find, get, isEqual } from 'lodash';
-
-export const OPTION_ALL = 'all';
+import {
+  normalizeOptions,
+  defaultFetchSelectedOption,
+  defaultRenderOption,
+} from './lib';
 
 const defaultOnChange = () => {};
-const defaultRenderOption = (item) => item.value;
 
 const deepCompareSelection = (optionValue, value) =>
   isEqual(optionValue, value);
@@ -30,16 +33,10 @@ function Select({
   disabled = false,
   optionsListPosition = '',
   selectedItemPrefix = null,
+  fetchSelectedOption = defaultFetchSelectedOption,
 }) {
-  const enrichedOptions = options.map((option) => {
-    const optionValue = get(option, 'value', option);
-    return {
-      value: optionValue,
-      disabled: get(option, 'disabled', false),
-      key: get(option, 'key', optionValue),
-    };
-  });
-  const selectedOption = find(enrichedOptions, { value });
+  const enrichedOptions = normalizeOptions(options);
+  const selectedOption = fetchSelectedOption(enrichedOptions, value);
   const dropdownSelector = `${optionsName.replace(
     /\s+/g,
     ''
@@ -86,11 +83,11 @@ function Select({
             {enrichedOptions.map((option) => (
               <ListboxOption
                 key={option.key}
-                className={({ active, disabled: optionDisabled }) =>
+                className={({ focus, disabled: optionDisabled }) =>
                   classNames('cursor-default select-none relative py-2 px-3', {
                     'text-gray-400': optionDisabled,
-                    'text-green-900 bg-green-100': active,
-                    'text-gray-900': !optionDisabled && !active,
+                    'text-green-900 bg-green-100': focus,
+                    'text-gray-900': !optionDisabled && !focus,
                   })
                 }
                 value={option.value}

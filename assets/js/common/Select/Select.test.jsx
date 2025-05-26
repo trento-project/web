@@ -1,9 +1,10 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
+import { find } from 'lodash';
 import '@testing-library/jest-dom';
 
 import userEvent from '@testing-library/user-event';
-import Select, { createOptionRenderer } from '.';
+import Select, { createOptionRenderer, createSelectedOptionFetcher } from '.';
 
 describe('Select Component', () => {
   const scenarios = [
@@ -168,5 +169,44 @@ describe('Select Component', () => {
     expect(screen.getByText('option3').parentNode).not.toHaveAttribute(
       'aria-disabled'
     );
+  });
+
+  it('should render the selected option via a custom fetcher', async () => {
+    const options = [
+      {
+        value: { foo: 'foo1', bar: 'bar1' },
+        key: 'foo1-bar1',
+      },
+      {
+        value: { foo: 'foo2', bar: 'bar2' },
+        key: 'foo2-bar2',
+      },
+      {
+        value: { foo: 'foo3', bar: 'bar3' },
+        key: 'foo3-bar3',
+      },
+    ];
+
+    const renderOption = createOptionRenderer(
+      'All foobars',
+      ({ foo, bar }) => `custom ${foo} ${bar}`
+    );
+
+    const fetchSelectedOption = createSelectedOptionFetcher(
+      (availableOptions, { foo, bar }) =>
+        find(availableOptions, { key: `${foo}-${bar}` })
+    );
+
+    render(
+      <Select
+        optionsName="foobars"
+        options={options}
+        value={{ foo: 'foo2', bar: 'bar2' }}
+        renderOption={renderOption}
+        fetchSelectedOption={fetchSelectedOption}
+      />
+    );
+
+    expect(screen.getByRole('button')).toHaveTextContent('custom foo2 bar2');
   });
 });

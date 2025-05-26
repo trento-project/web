@@ -1,12 +1,11 @@
-import Select, { OPTION_ALL } from './Select';
+import Select from './Select';
 
-export const createOptionRenderer = (optionAllLabel, renderer) => (option) => {
-  if (option.value === OPTION_ALL) {
-    return optionAllLabel;
-  }
-  return renderer(option.value, option.disabled);
-};
+import {
+  OPTION_ALL,
+  createOptionRenderer,
+  createSelectedOptionFetcher,
+} from './lib';
 
-export { OPTION_ALL };
+export { OPTION_ALL, createOptionRenderer, createSelectedOptionFetcher };
 
 export default Select;

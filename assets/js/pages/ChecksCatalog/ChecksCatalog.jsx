@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
-import { get, groupBy, trim } from 'lodash';
+import { get, groupBy, trim, find } from 'lodash';
 
 import {
   providers,
@@ -21,7 +21,11 @@ import {
 import Accordion from '@common/Accordion';
 import PageHeader from '@common/PageHeader';
 import Pill from '@common/Pill';
-import Select, { createOptionRenderer, OPTION_ALL } from '@common/Select';
+import Select, {
+  createOptionRenderer,
+  createSelectedOptionFetcher,
+  OPTION_ALL,
+} from '@common/Select';
 import ProviderLabel from '@common/ProviderLabel';
 import TargetIcon from '@common/TargetIcon';
 import CatalogContainer from './CatalogContainer';
@@ -114,6 +118,9 @@ function ChecksCatalog({
       })),
       renderOption: clusterTypeRenderer,
       value: selectedClusterType,
+      fetchSelectedOption: createSelectedOptionFetcher((selectOptions, value) =>
+        find(selectOptions, { value })
+      ),
       onChange: setSelectedClusterType,
       disabled: selectedTargetType !== TARGET_CLUSTER,
     },
