@@ -291,6 +291,7 @@ Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandler
 Trento.Infrastructure.Commanded.EventHandlers.DatabaseRestoreEventHandler.html
 Trento.Infrastructure.Commanded.EventHandlers.RollUpEventHandler.html
 Trento.Infrastructure.Commanded.EventHandlers.SapSystemDatabaseHealthEventHandler.html
+Trento.Infrastructure.Commanded.EventHandlers.SaptuneStatusUpdateEventHandler.html
 Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscoveryEventHandler.html
 Trento.Infrastructure.Commanded.EventHandlers.StreamRollUpEventHandler.html
 Trento.Infrastructure.Commanded.Middleware.Enrich.html
@@ -517,8 +518,8 @@ dist/lato-latin-ext-300-normal-VPGGJKJL.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-926A7361.js
-dist/sidebar_items-6CA638E5.js
+dist/search_data-0A2EF2C1.js
+dist/sidebar_items-09920EBD.js
 environment_variables.html
 hack_on_the_trento.html
 index.html
