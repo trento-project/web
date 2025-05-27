@@ -4,7 +4,11 @@ import { faker } from '@faker-js/faker';
 import { recordSaga } from '@lib/test-utils';
 import { networkClient } from '@lib/network';
 
-import { SAPTUNE_SOLUTION_APPLY, getOperationLabel } from '@lib/operations';
+import {
+  SAPTUNE_SOLUTION_APPLY,
+  CLUSTER_MAINTENANCE_CHANGE,
+  getOperationLabel,
+} from '@lib/operations';
 import {
   removeRunningOperation,
   setRunningOperation,
@@ -21,6 +25,9 @@ import {
 const axiosMock = new MockAdapter(networkClient);
 const hostOperationRequestURL = (hostID, operation) =>
   `/hosts/${hostID}/operations/${operation}`;
+
+const clusterOperationRequestURL = (clusterID, operation) =>
+  `/clusters/${clusterID}/operations/${operation}`;
 
 const getOperationExecutionsURL = () => `/api/v1/operations/executions`;
 
@@ -39,7 +46,7 @@ describe('operations saga', () => {
   });
 
   describe('request operation', () => {
-    it('should request an operation', async () => {
+    it('should request a host operation', async () => {
       const groupID = faker.string.uuid();
       const operation = KNOWN_OPERATION;
       const hostname = faker.internet.displayName();
@@ -60,6 +67,33 @@ describe('operations saga', () => {
         setRunningOperation({ groupID, operation }),
         notify({
           text: `Operation ${KNOWN_OPERATION_LABEL} requested for ${hostname}`,
+          icon: '⚙️',
+        }),
+      ]);
+    });
+
+    it('should request a cluster operation', async () => {
+      const groupID = faker.string.uuid();
+      const operation = CLUSTER_MAINTENANCE_CHANGE;
+      const name = faker.internet.displayName();
+      const label = getOperationLabel(operation);
+
+      axiosMock
+        .onPost(clusterOperationRequestURL(groupID, operation))
+        .reply(202, {});
+
+      const dispatched = await recordSaga(
+        requestOperation,
+        {
+          payload: { groupID, operation },
+        },
+        { clustersList: { clusters: [{ id: groupID, name }] } }
+      );
+
+      expect(dispatched).toEqual([
+        setRunningOperation({ groupID, operation }),
+        notify({
+          text: `Operation ${label} requested for ${name}`,
           icon: '⚙️',
         }),
       ]);
@@ -121,7 +155,7 @@ describe('operations saga', () => {
   });
 
   describe('complete operation', () => {
-    it('should complete successfully an operation', async () => {
+    it('should complete successfully a host operation', async () => {
       const groupID = faker.string.uuid();
       const operation = KNOWN_OPERATION;
       const hostname = faker.internet.displayName();
@@ -138,6 +172,29 @@ describe('operations saga', () => {
         removeRunningOperation({ groupID }),
         notify({
           text: `Operation ${KNOWN_OPERATION_LABEL} succeeded for ${hostname}`,
+          icon: '✅',
+        }),
+      ]);
+    });
+
+    it('should complete successfully a cluster operation', async () => {
+      const groupID = faker.string.uuid();
+      const operation = CLUSTER_MAINTENANCE_CHANGE;
+      const name = faker.internet.displayName();
+      const label = getOperationLabel(operation);
+
+      const dispatched = await recordSaga(
+        completeOperation,
+        {
+          payload: { groupID, operation, result: 'UPDATED' },
+        },
+        { clustersList: { clusters: [{ id: groupID, name }] } }
+      );
+
+      expect(dispatched).toEqual([
+        removeRunningOperation({ groupID }),
+        notify({
+          text: `Operation ${label} succeeded for ${name}`,
           icon: '✅',
         }),
       ]);

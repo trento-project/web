@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-import { get } from 'lodash';
+import { get, noop } from 'lodash';
 
 import classNames from 'classnames';
 import {
@@ -11,11 +11,22 @@ import {
 
 import { RUNNING_STATES } from '@state/lastExecutions';
 
+import {
+  CLUSTER_MAINTENANCE_CHANGE,
+  getOperationLabel,
+  getOperationForbiddenMessage,
+} from '@lib/operations';
+
 import BackButton from '@common/BackButton';
 import Button from '@common/Button';
 import DisabledGuard from '@common/DisabledGuard';
+import OperationsButton from '@common/OperationsButton';
 import PageHeader from '@common/PageHeader';
 import Tooltip from '@common/Tooltip';
+import {
+  ClusterMaintenanceChangeModal,
+  OperationForbiddenModal,
+} from '@common/OperationModals';
 
 import SBDDetails from './SBDDetails';
 import StoppedResources from './StoppedResources';
@@ -27,12 +38,19 @@ function ClusterDetails({
   hasSelectedChecks,
   hosts,
   lastExecution = {},
+  operationsEnabled = false,
+  runningOperation = {},
   selectedChecks,
   userAbilities,
-  onStartExecution = () => {},
-  navigate = () => {},
+  onStartExecution = noop,
+  onRequestOperation = noop,
+  onCleanForbiddenOperation = noop,
+  navigate = noop,
   children,
 }) {
+  const [clusterMaintenanceModalOpen, setClusterMaintenanceModalOpen] =
+    useState(false);
+
   const executionLoading = get(lastExecution, 'loading', false);
   const executionStatus = get(lastExecution, 'data.status', null);
 
@@ -41,8 +59,35 @@ function ClusterDetails({
     !hasSelectedChecks ||
     RUNNING_STATES.includes(executionStatus);
 
+  const runningOperationName = get(runningOperation, 'operation', null);
+  const operationForbidden = get(runningOperation, 'forbidden', false);
+  const operationForbiddenErrors = get(runningOperation, 'errors', []);
+
   return (
     <div>
+      {operationsEnabled && (
+        <>
+          <OperationForbiddenModal
+            operation={getOperationLabel(runningOperationName)}
+            isOpen={operationForbidden}
+            onCancel={onCleanForbiddenOperation}
+            errors={operationForbiddenErrors}
+          >
+            {getOperationForbiddenMessage(runningOperationName)}
+          </OperationForbiddenModal>
+          <ClusterMaintenanceChangeModal
+            clusterDetails={details}
+            isOpen={!!clusterMaintenanceModalOpen}
+            onRequest={(params) => {
+              setClusterMaintenanceModalOpen(false);
+              onRequestOperation(CLUSTER_MAINTENANCE_CHANGE, params);
+            }}
+            onCancel={() => {
+              setClusterMaintenanceModalOpen(false);
+            }}
+          />
+        </>
+      )}
       <BackButton url="/clusters">Back to Clusters</BackButton>
       <div className="flex flex-wrap">
         <div className="flex w-1/2 h-auto overflow-hidden overflow-ellipsis break-words">
@@ -53,6 +98,23 @@ function ClusterDetails({
         </div>
         <div className="flex w-1/2 justify-end">
           <div className="flex w-fit whitespace-nowrap">
+            {operationsEnabled && (
+              <OperationsButton
+                userAbilities={userAbilities}
+                operations={[
+                  {
+                    value: 'Cluster Maintenance',
+                    running:
+                      runningOperationName === CLUSTER_MAINTENANCE_CHANGE,
+                    disabled: false,
+                    permitted: ['maintenance_change:cluster'],
+                    onClick: () => {
+                      setClusterMaintenanceModalOpen(true);
+                    },
+                  },
+                ]}
+              />
+            )}
             <Button
               type="primary-white"
               className="inline-block mx-0.5 border-green-500 border"
