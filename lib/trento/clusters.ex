@@ -198,10 +198,11 @@ defmodule Trento.Clusters do
       when operation in ClusterOperations.values() do
     operation_id = UUID.uuid4()
 
-    # Tech-debt: in order to keep things simpler, the first node is selected as designated
+    # Design decision: in order to keep things simpler, the first node is selected as designated
     # controller (is_dc) on this function. It does not matter in which cluster node the commands
     # are executed, as long as they are executed only in one node.
-    # It if fine as long as we don't find a strictly needed things were real DC is required.
+    # It's fine as long as we don't find a strictly required action where running in real DC is
+    # mandatory. But none of the SUSE best practices guides suggest that.
     targets =
       cluster_id
       |> get_cluster_hosts()
