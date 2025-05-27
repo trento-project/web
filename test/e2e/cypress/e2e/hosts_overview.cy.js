@@ -46,7 +46,7 @@ context('Hosts Overview', () => {
 
   describe('Health Detection', () => {
     describe('Health Container shows the health overview of the deployed landscape', () => {
-      before(() => {
+      beforeEach(() => {
         hostsOverviewPage.startAgentsHeartbeat();
       });
 
@@ -61,11 +61,11 @@ context('Hosts Overview', () => {
         hostsOverviewPage.expectedAmountOfWarningsIsDisplayed(2);
       });
 
-      after(() => hostsOverviewPage.stopAgentsHeartbeat());
+      afterEach(() => hostsOverviewPage.stopAgentsHeartbeat());
     });
 
     describe('Health is changed based on saptune status', () => {
-      before(() => hostsOverviewPage.startAgentsHeartbeat());
+      beforeEach(() => hostsOverviewPage.startAgentsHeartbeat());
 
       it('should not change the health if saptune is not installed and a SAP workload is not running', () => {
         hostsOverviewPage.loadHostWithoutSaptune();
@@ -102,7 +102,7 @@ context('Hosts Overview', () => {
         hostsOverviewPage.hostWithSaptuneCompliantHasExpectedStatus();
       });
 
-      after(() => hostsOverviewPage.stopAgentsHeartbeat());
+      afterEach(() => hostsOverviewPage.stopAgentsHeartbeat());
     });
 
     describe('Health is changed to critical when the heartbeat is not sent', () => {
@@ -120,7 +120,7 @@ context('Hosts Overview', () => {
         hostsOverviewPage.expectedAmountOfCriticalsIsDisplayed(10);
       });
 
-      after(() => hostsOverviewPage.stopAgentsHeartbeat());
+      afterEach(() => hostsOverviewPage.stopAgentsHeartbeat());
     });
   });
 
