@@ -42,5 +42,7 @@ defmodule Trento.Operations.ClusterPolicy do
     end
   end
 
+  def authorize_operation(:cluster_maintenance_change, _, _), do: :ok
+
   def authorize_operation(_, _, _), do: {:error, ["Unknown operation"]}
 end
