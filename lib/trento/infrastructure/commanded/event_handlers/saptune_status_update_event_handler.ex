@@ -45,7 +45,7 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SaptuneStatusUpdateEvent
       ) do
     host_id
     |> Hosts.get_host_by_id()
-    |> maybe_dispatch_update_saptune_statue(true)
+    |> maybe_dispatch_update_saptune_status(true)
   end
 
   def handle(
@@ -56,7 +56,7 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SaptuneStatusUpdateEvent
       ) do
     host_id
     |> Hosts.get_host_by_id()
-    |> maybe_dispatch_update_saptune_statue(true)
+    |> maybe_dispatch_update_saptune_status(true)
   end
 
   def handle(
@@ -131,9 +131,9 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SaptuneStatusUpdateEvent
     |> handle_instances_deregistered(true)
   end
 
-  defp maybe_dispatch_update_saptune_statue(nil, _), do: :ok
+  defp maybe_dispatch_update_saptune_status(nil, _), do: :ok
 
-  defp maybe_dispatch_update_saptune_statue(
+  defp maybe_dispatch_update_saptune_status(
          %HostReadModel{id: host_id, saptune_status: nil},
          sap_running
        ) do
@@ -146,7 +146,7 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SaptuneStatusUpdateEvent
     })
   end
 
-  defp maybe_dispatch_update_saptune_statue(
+  defp maybe_dispatch_update_saptune_status(
          %HostReadModel{
            id: host_id,
            saptune_status: %{package_version: version} = status
@@ -170,7 +170,7 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SaptuneStatusUpdateEvent
       |> Repo.preload([:application_instances, :database_instances])
       |> sap_running?(instance_numbers)
 
-    maybe_dispatch_update_saptune_statue(host, sap_running)
+    maybe_dispatch_update_saptune_status(host, sap_running)
   end
 
   # get all unique hosts from the instances and handle deregistration on them
