@@ -16,9 +16,9 @@ defmodule TrentoWeb.V1.HostController do
   alias TrentoWeb.OpenApi.V1.Schema.{
     BadRequest,
     Forbidden,
+    HostOperationParams,
     NotFound,
     OperationAccepted,
-    OperationParams,
     UnprocessableEntity
   }
 
@@ -178,7 +178,7 @@ defmodule TrentoWeb.V1.HostController do
         type: %OpenApiSpex.Schema{type: :string}
       ]
     ],
-    request_body: {"Params", "application/json", OperationParams},
+    request_body: {"Params", "application/json", HostOperationParams},
     responses: [
       accepted: OperationAccepted.response(),
       not_found: NotFound.response(),
