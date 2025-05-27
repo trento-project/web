@@ -11,6 +11,7 @@ defmodule Trento.Clusters do
   require Trento.Clusters.Enums.ClusterEnsaVersion, as: ClusterEnsaVersion
   require Trento.Clusters.Enums.HanaArchitectureType, as: HanaArchitectureType
   require Trento.Clusters.Enums.HanaScenario, as: HanaScenario
+  require Trento.Operations.Enums.ClusterOperations, as: ClusterOperations
 
   alias Trento.Hosts.Projections.HostReadModel
 
@@ -26,7 +27,10 @@ defmodule Trento.Clusters do
 
   alias Trento.SapSystems.Projections.SapSystemReadModel
 
-  alias Trento.Infrastructure.Checks
+  alias Trento.Infrastructure.{
+    Checks,
+    Operations
+  }
 
   alias Trento.Repo
 
@@ -175,6 +179,50 @@ defmodule Trento.Clusters do
       sap_instances -> sap_instances
     end
   end
+
+  @spec get_cluster_hosts(String.t()) :: [HostReadModel.t()]
+  def get_cluster_hosts(cluster_id) do
+    query =
+      from c in ClusterReadModel,
+        where: c.id == ^cluster_id,
+        preload: [:hosts]
+
+    case Repo.one(query) do
+      nil -> []
+      cluster -> Map.get(cluster, :hosts, [])
+    end
+  end
+
+  @spec request_operation(atom(), String.t(), map()) :: {:ok, String.t()} | {:error, any}
+  def request_operation(operation, cluster_id, params)
+      when operation in ClusterOperations.values() do
+    operation_id = UUID.uuid4()
+
+    # Tech-debt: in order to keep things simpler, the first node is selected as designated
+    # controller (is_dc) on this function. It does not matter in which cluster node the commands
+    # are executed, as long as they are executed only in one node.
+    # It if fine as long as we don't find a strictly needed things were real DC is required.
+    targets =
+      cluster_id
+      |> get_cluster_hosts()
+      |> Enum.with_index()
+      |> Enum.map(fn {%{id: host_id}, index} ->
+        arguments = Map.put(params, :is_dc, index == 0)
+        %{agent_id: host_id, arguments: arguments}
+      end)
+
+    case Operations.request_operation(
+           operation_id,
+           cluster_id,
+           Operations.map_operation(operation),
+           targets
+         ) do
+      :ok -> {:ok, operation_id}
+      error -> error
+    end
+  end
+
+  def request_operation(_, _, _), do: {:error, :operation_not_found}
 
   defp has_resource_managed?(%{nodes: nodes}, resource_id) do
     Enum.any?(nodes, fn %{resources: resources} ->
