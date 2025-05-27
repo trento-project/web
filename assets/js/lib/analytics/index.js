@@ -32,12 +32,13 @@ export const identify = (analyticsEnabled, userID) => {
 };
 
 export const optinCapturing = (analyticsEnabled) => {
-  if (analyticsEnabled) {
-    if (posthog.has_opted_out_capturing()) {
-      posthog.opt_in_capturing();
-    }
-  } else {
+  if (!analyticsEnabled) {
     posthog.opt_out_capturing();
+    return;
+  }
+
+  if (posthog.has_opted_out_capturing()) {
+    posthog.opt_in_capturing();
   }
 };
 
