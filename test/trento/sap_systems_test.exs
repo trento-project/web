@@ -68,6 +68,23 @@ defmodule Trento.SapSystemsTest do
     end
   end
 
+  describe "get_application_instances_by_id/1" do
+    test "should return empty if no application instances were found" do
+      assert [] == SapSystems.get_application_instances_by_id(UUID.uuid4())
+    end
+
+    test "should return application instances with the provided id" do
+      sap_system_id = UUID.uuid4()
+      insert_list(5, :application_instance, sap_system_id: sap_system_id)
+      insert_list(5, :application_instance)
+
+      application_instances = SapSystems.get_application_instances_by_id(sap_system_id)
+
+      assert 5 == length(application_instances)
+      assert Enum.all?(application_instances, &(&1.sap_system_id == sap_system_id))
+    end
+  end
+
   describe "get_application_instances_by_host_id/1" do
     test "should return an empty list if no application instances were found" do
       assert [] == SapSystems.get_application_instances_by_host_id(UUID.uuid4())

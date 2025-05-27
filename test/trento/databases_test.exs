@@ -52,6 +52,23 @@ defmodule Trento.DatabasesTest do
     end
   end
 
+  describe "get_database_instances_by_id/1" do
+    test "should return empty if no database instances were found" do
+      assert [] == Databases.get_database_instances_by_id(UUID.uuid4())
+    end
+
+    test "should return database instances with the provided id" do
+      database_id = UUID.uuid4()
+      insert_list(5, :database_instance, database_id: database_id)
+      insert_list(5, :database_instance)
+
+      database_instances = Databases.get_database_instances_by_id(database_id)
+
+      assert 5 == length(database_instances)
+      assert Enum.all?(database_instances, &(&1.database_id == database_id))
+    end
+  end
+
   describe "get_database_instances_by_host_id/1" do
     test "should return empty if no database instances were found" do
       assert [] == Databases.get_database_instances_by_host_id(UUID.uuid4())

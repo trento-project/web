@@ -12,7 +12,7 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SaptuneStatusUpdateEvent
     application: Trento.Commanded,
     name: "saptune_status_update_event_handler"
 
-  import Ecto.Query
+  alias Trento.Databases
 
   alias Trento.Databases.Events.{
     DatabaseDeregistered,
@@ -20,6 +20,8 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SaptuneStatusUpdateEvent
     DatabaseInstanceRegistered,
     DatabaseRestored
   }
+
+  alias Trento.SapSystems
 
   alias Trento.SapSystems.Events.{
     ApplicationInstanceDeregistered,
@@ -31,9 +33,6 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SaptuneStatusUpdateEvent
   alias Trento.Hosts
   alias Trento.Hosts.Commands.UpdateSaptuneStatus
   alias Trento.Hosts.Projections.HostReadModel
-
-  alias Trento.Databases.Projections.DatabaseInstanceReadModel
-  alias Trento.SapSystems.Projections.ApplicationInstanceReadModel
 
   alias Trento.Repo
 
@@ -89,9 +88,8 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SaptuneStatusUpdateEvent
         },
         _
       ) do
-    DatabaseInstanceReadModel
-    |> where([d], d.database_id == ^database_id)
-    |> Repo.all()
+    database_id
+    |> Databases.get_database_instances_by_id()
     |> handle_instances_deregistered(false)
   end
 
@@ -101,9 +99,8 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SaptuneStatusUpdateEvent
         },
         _
       ) do
-    ApplicationInstanceReadModel
-    |> where([s], s.sap_system_id == ^sap_system_id)
-    |> Repo.all()
+    sap_system_id
+    |> SapSystems.get_application_instances_by_id()
     |> handle_instances_deregistered(false)
   end
 
@@ -113,9 +110,8 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SaptuneStatusUpdateEvent
         },
         _
       ) do
-    DatabaseInstanceReadModel
-    |> where([d], d.database_id == ^database_id)
-    |> Repo.all()
+    database_id
+    |> Databases.get_database_instances_by_id()
     |> handle_instances_deregistered(true)
   end
 
@@ -125,9 +121,8 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SaptuneStatusUpdateEvent
         },
         _
       ) do
-    ApplicationInstanceReadModel
-    |> where([s], s.sap_system_id == ^sap_system_id)
-    |> Repo.all()
+    sap_system_id
+    |> SapSystems.get_application_instances_by_id()
     |> handle_instances_deregistered(true)
   end
 

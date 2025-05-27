@@ -36,6 +36,13 @@ defmodule Trento.Databases do
     ])
   end
 
+  @spec get_database_instances_by_id(String.t()) :: [DatabaseInstanceReadModel.t()]
+  def get_database_instances_by_id(id) do
+    DatabaseInstanceReadModel
+    |> where([d], d.database_id == ^id)
+    |> Repo.all()
+  end
+
   @spec get_database_instances_by_host_id(String.t()) :: [DatabaseInstanceReadModel.t()]
   def get_database_instances_by_host_id(host_id) do
     DatabaseInstanceReadModel
