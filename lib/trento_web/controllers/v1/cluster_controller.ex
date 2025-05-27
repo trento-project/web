@@ -9,10 +9,10 @@ defmodule TrentoWeb.V1.ClusterController do
   alias Trento.Clusters.Projections.ClusterReadModel
 
   alias TrentoWeb.OpenApi.V1.Schema.{
+    BadRequest,
     Checks,
     Cluster,
     ClusterOperationParams,
-    BadRequest,
     Forbidden,
     NotFound,
     OperationAccepted
