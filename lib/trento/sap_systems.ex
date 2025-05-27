@@ -38,6 +38,13 @@ defmodule Trento.SapSystems do
     ])
   end
 
+  @spec get_application_instances_by_id(String.t()) :: [ApplicationInstanceReadModel.t()]
+  def get_application_instances_by_id(id) do
+    ApplicationInstanceReadModel
+    |> where([s], s.sap_system_id == ^id)
+    |> Repo.all()
+  end
+
   @spec get_application_instances_by_host_id(String.t()) :: [ApplicationInstanceReadModel.t()]
   def get_application_instances_by_host_id(host_id) do
     ApplicationInstanceReadModel
