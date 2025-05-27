@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { get } from 'lodash';
+import { get, noop } from 'lodash';
 
 import classNames from 'classnames';
 import {
@@ -42,10 +42,10 @@ function ClusterDetails({
   runningOperation = {},
   selectedChecks,
   userAbilities,
-  onStartExecution = () => {},
-  onRequestOperation = () => {},
-  onCleanForbiddenOperation = () => {},
-  navigate = () => {},
+  onStartExecution = noop,
+  onRequestOperation = noop,
+  onCleanForbiddenOperation = noop,
+  navigate = noop,
   children,
 }) {
   const [clusterMaintenanceModalOpen, setClusterMaintenanceModalOpen] =
