@@ -51,6 +51,7 @@ describe('user reducer', () => {
       password_change_requested,
       created_at,
       updated_at,
+      analytics_enabled,
     } = userFactory.build();
 
     const action = setUser({
@@ -61,6 +62,7 @@ describe('user reducer', () => {
       password_change_requested,
       created_at,
       updated_at,
+      analytics_enabled,
     });
 
     expect(userReducer(initialState, action)).toEqual({
@@ -72,6 +74,7 @@ describe('user reducer', () => {
       password_change_requested,
       created_at,
       updated_at,
+      analytics_enabled,
     });
   });
 });
