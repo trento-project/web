@@ -32,8 +32,10 @@ export const identify = (analyticsEnabled, userID) => {
 };
 
 export const optinCapturing = (analyticsEnabled) => {
-  if (analyticsEnabled && posthog.has_opted_out_capturing()) {
-    posthog.opt_in_capturing();
+  if (analyticsEnabled) {
+    if (posthog.has_opted_out_capturing()) {
+      posthog.opt_in_capturing();
+    }
   } else {
     posthog.opt_out_capturing();
   }
