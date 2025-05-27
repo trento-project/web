@@ -114,6 +114,10 @@ defmodule Trento.Infrastructure.Operations.OperationsTest do
         %{
           operation_type: :saptune_solution_change,
           internal_type: "saptunechangesolution@v1"
+        },
+        %{
+          operation_type: :cluster_maintenance_change,
+          internal_type: "clustermaintenancechange@v1"
         }
       ]
 
@@ -135,6 +139,10 @@ defmodule Trento.Infrastructure.Operations.OperationsTest do
         %{
           operation: :saptune_solution_change,
           operator_name: "saptunechangesolution@v1"
+        },
+        %{
+          operation: :cluster_maintenance_change,
+          operator_name: "clustermaintenancechange@v1"
         }
       ]
 
