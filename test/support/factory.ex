@@ -30,6 +30,8 @@ defmodule Trento.Factory do
   }
 
   alias Trento.Hosts.ValueObjects.{
+    SaptuneSolution,
+    SaptuneStaging,
     SaptuneStatus,
     SlesSubscription
   }
@@ -349,11 +351,30 @@ defmodule Trento.Factory do
     }
   end
 
+  def saptune_solution_factory do
+    %SaptuneSolution{
+      id: Faker.UUID.v4(),
+      notes: ["foo", "bar", "baz"],
+      partial: Enum.random([true, false])
+    }
+  end
+
+  def saptune_staging_factory do
+    %SaptuneStaging{
+      enabled: Enum.random([true, false]),
+      notes: ["foo", "bar", "baz"],
+      solutions_ids: [Faker.UUID.v4(), Faker.UUID.v4()]
+    }
+  end
+
   def saptune_status_factory do
     %SaptuneStatus{
       package_version: Faker.App.semver(),
       configured_version: Enum.random(["1", "2", "3"]),
-      tuning_state: Enum.random(["compliant", "not compliant", "not tuned"])
+      tuning_state: Enum.random(["compliant", "not compliant", "not tuned"]),
+      applied_solution: build(:saptune_solution),
+      enabled_solution: build(:saptune_solution),
+      staging: build(:saptune_staging)
     }
   end
 

@@ -19,7 +19,8 @@ defmodule Trento.Operations.HostPolicy do
         %HostReadModel{
           cluster: cluster,
           application_instances: application_instances,
-          database_instances: database_instances
+          database_instances: database_instances,
+          saptune_status: saptune_status
         } = host,
         _
       )
@@ -38,18 +39,24 @@ defmodule Trento.Operations.HostPolicy do
     # Get SAPHana or SapHanaController master resource id
     cluster_resource_id = get_saptune_operation_resource_id(cluster)
 
-    database_instances
-    |> Enum.map(fn database_instances ->
-      %DatabaseInstanceReadModel{database_instances | host: host}
-    end)
-    |> OperationsHelper.reduce_operation_authorizations(
-      applications_maintenance_authorized,
-      fn database_instances ->
-        DatabaseInstanceReadModel.authorize_operation(:maintenance, database_instances, %{
-          cluster_resource_id: cluster_resource_id
-        })
-      end
-    )
+    databases_authorized =
+      database_instances
+      |> Enum.map(fn database_instances ->
+        %DatabaseInstanceReadModel{database_instances | host: host}
+      end)
+      |> OperationsHelper.reduce_operation_authorizations(
+        applications_maintenance_authorized,
+        fn database_instances ->
+          DatabaseInstanceReadModel.authorize_operation(:maintenance, database_instances, %{
+            cluster_resource_id: cluster_resource_id
+          })
+        end
+      )
+
+    operation
+    |> authorize_saptune_solution_operation(saptune_status)
+    |> List.wrap()
+    |> OperationsHelper.reduce_operation_authorizations(databases_authorized)
   end
 
   def authorize_operation(_, _, _), do: {:error, ["Unknown operation"]}
@@ -63,6 +70,39 @@ defmodule Trento.Operations.HostPolicy do
   end
 
   defp get_saptune_operation_resource_id(_), do: nil
+
+  defp authorize_saptune_solution_operation(
+         :saptune_solution_apply,
+         saptune_status
+       ) do
+    case saptune_status do
+      nil ->
+        :ok
+
+      %{applied_solution: nil} ->
+        :ok
+
+      _ ->
+        {:error,
+         ["Cannot apply the requested solution because there is an already applied on this host"]}
+    end
+  end
+
+  defp authorize_saptune_solution_operation(
+         :saptune_solution_change,
+         saptune_status
+       ) do
+    case saptune_status do
+      %{applied_solution: applied_solution} when not is_nil(applied_solution) ->
+        :ok
+
+      _ ->
+        {:error,
+         [
+           "Cannot change the requested solution because there is no currently applied one on this host"
+         ]}
+    end
+  end
 
   # Classic SAP HANA setup
   defp find_resource_id(%{type: "ocf::suse:SAPHana", parent: %{id: id}}), do: id
