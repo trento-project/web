@@ -15,32 +15,38 @@ const solutions = [
   {
     value: 'HANA',
     key: 'hana',
-    available: (isHanaRunning, isAppRunning) => isHanaRunning && !isAppRunning,
+    available: (isHanaRunning, isAppRunning, _currentlyApplied) =>
+      isHanaRunning && !isAppRunning,
   },
   {
     value: 'NETWEAVER',
     key: 'netweaver',
-    available: (isHanaRunning, isAppRunning) => !isHanaRunning && isAppRunning,
+    available: (isHanaRunning, isAppRunning, _currentlyApplied) =>
+      !isHanaRunning && isAppRunning,
   },
   {
     value: 'S4HANA-APPSERVER',
     key: 's4hana-appserver',
-    available: (isHanaRunning, isAppRunning) => !isHanaRunning && isAppRunning,
+    available: (isHanaRunning, isAppRunning, _currentlyApplied) =>
+      !isHanaRunning && isAppRunning,
   },
   {
     value: 'S4HANA-APP+DB',
     key: 's4hana-app-db',
-    available: (isHanaRunning, isAppRunning) => isHanaRunning && isAppRunning,
+    available: (isHanaRunning, isAppRunning, _currentlyApplied) =>
+      isHanaRunning && isAppRunning,
   },
   {
     value: 'S4HANA-DBSERVER',
     key: 's4hana-dbserver',
-    available: (isHanaRunning, isAppRunning) => isHanaRunning && !isAppRunning,
+    available: (isHanaRunning, isAppRunning, _currentlyApplied) =>
+      isHanaRunning && !isAppRunning,
   },
   {
     value: 'NETWEAVER+HANA',
     key: 'netweaver-hana',
-    available: (isHanaRunning, isAppRunning) => isHanaRunning && isAppRunning,
+    available: (isHanaRunning, isAppRunning, _currentlyApplied) =>
+      isHanaRunning && isAppRunning,
   },
 ];
 

@@ -532,7 +532,7 @@ describe('HostDetails component', () => {
     });
 
     it.each`
-      scenario                    | ability                                                  | enabledSolution | operationName            | expectedToBeEnabled
+      scenario                    | ability                                                  | appliedSolution | operationName            | expectedToBeEnabled
       ${'disable Saptune apply'}  | ${{ name: 'all', resource: 'another_resource' }}         | ${null}         | ${applySaptuneSolution}  | ${false}
       ${'disable Saptune change'} | ${{ name: 'all', resource: 'another_resource' }}         | ${'HANA'}       | ${changeSaptuneSolution} | ${false}
       ${'enable Saptune apply'}   | ${{ name: 'saptune_solution_apply', resource: 'host' }}  | ${null}         | ${applySaptuneSolution}  | ${true}
@@ -541,13 +541,13 @@ describe('HostDetails component', () => {
       'should $scenario solution operation button based on user abilities',
       async ({
         ability,
-        enabledSolution,
+        appliedSolution,
         operationName,
         expectedToBeEnabled,
       }) => {
         const user = userEvent.setup();
         const saptuneStatus = saptuneStatusFactory.build({
-          enabled_solution: { id: enabledSolution },
+          applied_solution: { id: appliedSolution },
         });
         const sapInstances = databaseInstanceFactory
           .buildList(1)

@@ -117,7 +117,7 @@ function HostDetails({
   const saptuneVersion = get(saptuneStatus, 'package_version');
   const saptuneConfiguredVersion = get(saptuneStatus, 'configured_version');
   const saptuneTuning = get(saptuneStatus, 'tuning_state');
-  const currentlyAppliedSolution = get(saptuneStatus, 'enabled_solution.id');
+  const currentlyAppliedSolution = get(saptuneStatus, 'applied_solution.id');
 
   const renderedExporters = Object.entries(exportersStatus).map(
     ([exporterName, exporterStatus]) => (
