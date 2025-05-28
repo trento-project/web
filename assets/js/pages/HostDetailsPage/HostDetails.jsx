@@ -117,6 +117,7 @@ function HostDetails({
   const saptuneVersion = get(saptuneStatus, 'package_version');
   const saptuneConfiguredVersion = get(saptuneStatus, 'configured_version');
   const saptuneTuning = get(saptuneStatus, 'tuning_state');
+  const currentlyAppliedSolution = get(saptuneStatus, 'enabled_solution.id');
 
   const renderedExporters = Object.entries(exportersStatus).map(
     ([exporterName, exporterStatus]) => (
@@ -174,6 +175,7 @@ function HostDetails({
           </OperationForbiddenModal>
           <SaptuneSolutionOperationModal
             title={getOperationLabel(currentSaptuneOperation)}
+            currentlyApplied={currentlyAppliedSolution}
             isHanaRunning={some(sapInstances, { type: DATABASE_TYPE })}
             isAppRunning={some(sapInstances, { type: APPLICATION_TYPE })}
             isOpen={!!saptuneSolutionOperationModalOpen}
@@ -202,8 +204,7 @@ function HostDetails({
                     {
                       value: 'Apply Saptune Solution',
                       running: runningOperationName === SAPTUNE_SOLUTION_APPLY,
-                      disabled:
-                        !sapPresent || get(saptuneStatus, 'enabled_solution'),
+                      disabled: !sapPresent || currentlyAppliedSolution,
                       permitted: ['saptune_solution_apply:host'],
                       onClick: openSaptuneOperationModal(
                         SAPTUNE_SOLUTION_APPLY
@@ -212,8 +213,7 @@ function HostDetails({
                     {
                       value: 'Change Saptune Solution',
                       running: runningOperationName === SAPTUNE_SOLUTION_CHANGE,
-                      disabled:
-                        !sapPresent || !get(saptuneStatus, 'enabled_solution'),
+                      disabled: !sapPresent || !currentlyAppliedSolution,
                       permitted: ['saptune_solution_change:host'],
                       onClick: openSaptuneOperationModal(
                         SAPTUNE_SOLUTION_CHANGE

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { filter, noop } from 'lodash';
+import { pipe, filter, map } from 'lodash/fp';
+import { noop } from 'lodash';
 import Select from '@common/Select';
 import OperationModal from './OperationModal';
 
@@ -9,7 +10,7 @@ const solutions = [
   {
     value: NOT_SELECTED,
     key: 'not_selected',
-    available: () => true,
+    available: (_hana, _app, currentlyApplied) => !currentlyApplied,
   },
   {
     value: 'HANA',
@@ -43,8 +44,19 @@ const solutions = [
   },
 ];
 
+const availableOptions =
+  (isHanaRunning, isAppRunning, currentlyApplied) =>
+  ({ available }) =>
+    available(isHanaRunning, isAppRunning, currentlyApplied);
+
+const markOptionDisabled = (currentlyApplied) => (option) => ({
+  ...option,
+  disabled: option.value === currentlyApplied,
+});
+
 function SaptuneSolutionOperationModal({
   title,
+  currentlyApplied,
   isHanaRunning,
   isAppRunning,
   isOpen = false,
@@ -52,25 +64,31 @@ function SaptuneSolutionOperationModal({
   onCancel = noop,
 }) {
   const [checked, setChecked] = useState(false);
-  const [solution, setSolution] = useState(NOT_SELECTED);
+  const [solution, setSolution] = useState(currentlyApplied || NOT_SELECTED);
 
-  const availableSolutions = filter(solutions, ({ available }) =>
-    available(isHanaRunning, isAppRunning)
-  );
+  const availableSolutions = pipe(
+    filter(availableOptions(isHanaRunning, isAppRunning, currentlyApplied)),
+    map(markOptionDisabled(currentlyApplied))
+  )(solutions);
 
   return (
     <OperationModal
       title={title}
       description="Select Saptune tuning solution"
       operationText="Saptune solution"
-      applyDisabled={!checked || solution === NOT_SELECTED}
+      applyDisabled={
+        !checked || solution === NOT_SELECTED || solution === currentlyApplied
+      }
       checked={checked}
       isOpen={isOpen}
       onChecked={() => setChecked((prev) => !prev)}
-      onRequest={() => onRequest(solution)}
+      onRequest={() => {
+        onRequest(solution);
+        setChecked(false);
+      }}
       onCancel={() => {
         onCancel();
-        setSolution(NOT_SELECTED);
+        setSolution(currentlyApplied || NOT_SELECTED);
         setChecked(false);
       }}
     >

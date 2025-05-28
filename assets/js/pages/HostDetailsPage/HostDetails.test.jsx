@@ -547,7 +547,7 @@ describe('HostDetails component', () => {
       }) => {
         const user = userEvent.setup();
         const saptuneStatus = saptuneStatusFactory.build({
-          enabled_solution: enabledSolution,
+          enabled_solution: { id: enabledSolution },
         });
         const sapInstances = databaseInstanceFactory
           .buildList(1)
