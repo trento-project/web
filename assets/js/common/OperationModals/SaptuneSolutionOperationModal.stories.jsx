@@ -8,6 +8,10 @@ export default {
       description: 'Modal title',
       control: 'text',
     },
+    currentlyApplied: {
+      description: 'Currently applied saptune solution',
+      control: 'text',
+    },
     isHanaRunning: {
       description: 'HANA instance is running on host',
       control: 'boolean',
@@ -51,5 +55,12 @@ export const HanaAndAppRunning = {
   args: {
     isHanaRunning: true,
     isAppRunning: true,
+  },
+};
+
+export const WithCurrentlyAppliedsolution = {
+  args: {
+    isHanaRunning: true,
+    currentlyApplied: 'HANA',
   },
 };

@@ -148,4 +148,49 @@ describe('SaptuneSolutionOperationModal', () => {
     expect(screen.getByText('S4HANA-APP+DB')).toBeInTheDocument();
     expect(screen.getByText('NETWEAVER+HANA')).toBeInTheDocument();
   });
+
+  it('should render proper options when a solution is currently applied', async () => {
+    const user = userEvent.setup();
+
+    await act(async () => {
+      render(
+        <SaptuneSolutionOperationModal
+          isOpen
+          isHanaRunning
+          currentlyApplied="HANA"
+        />
+      );
+    });
+
+    expect(screen.getByRole('button', { name: 'HANA' })).toBeInTheDocument();
+
+    await user.click(screen.getByRole('checkbox'));
+    await user.click(screen.getByRole('button', { name: 'HANA' }));
+
+    expect(
+      screen.queryByText('Select a saptune solution')
+    ).not.toBeInTheDocument();
+  });
+
+  it('currently applied solution should be disabled', async () => {
+    const user = userEvent.setup();
+
+    await act(async () => {
+      render(
+        <SaptuneSolutionOperationModal
+          isOpen
+          isHanaRunning
+          currentlyApplied="HANA"
+        />
+      );
+    });
+
+    await user.click(screen.getByRole('checkbox'));
+    await user.click(screen.getByRole('button', { name: 'HANA' }));
+
+    expect(screen.getByRole('option', { name: 'HANA' })).toHaveAttribute(
+      'aria-disabled',
+      'true'
+    );
+  });
 });
