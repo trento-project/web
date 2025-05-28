@@ -378,12 +378,36 @@ defmodule TrentoWeb.V1.HostControllerTest do
         |> json_response(:not_found)
         |> assert_schema("NotFound", api_spec)
       end
+    end
 
-      test "should forbid operation '#{saptune_operation}' if conditions are unmet", %{
-        conn: conn,
-        api_spec: api_spec
-      } do
-        %{id: host_id} = insert(:host)
+    scenarios = [
+      %{
+        name: "applying solution when there is no saptune status",
+        operation: "saptune_solution_apply",
+        saptune_status: nil
+      },
+      %{
+        name: "applying solution when there is no applied solution in saptune status",
+        operation: "saptune_solution_apply",
+        saptune_status: build(:saptune_status, applied_solution: nil)
+      },
+      %{
+        name: "changing solution when there is an already applied solution",
+        operation: "saptune_solution_change",
+        saptune_status: build(:saptune_status)
+      }
+    ]
+
+    for %{name: name, operation: saptune_operation, saptune_status: saptune_status} <- scenarios do
+      @saptune_operation saptune_operation
+      @saptune_status saptune_status
+
+      test "should forbid operation '#{saptune_operation}' if conditions are unmet. Scenario: #{name}",
+           %{
+             conn: conn,
+             api_spec: api_spec
+           } do
+        %{id: host_id} = insert(:host, saptune_status: @saptune_status)
         insert(:application_instance, host_id: host_id, health: Health.passing())
 
         conn
@@ -392,11 +416,11 @@ defmodule TrentoWeb.V1.HostControllerTest do
         |> assert_schema("Forbidden", api_spec)
       end
 
-      test "should respond with 422 if operation '#{saptune_operation}' does not receive needed params",
+      test "should respond with 422 if operation '#{saptune_operation}' does not receive needed params. Scenario: #{name}",
            %{
              conn: conn
            } do
-        %{id: host_id} = insert(:host)
+        %{id: host_id} = insert(:host, saptune_status: @saptune_status)
 
         resp =
           conn
@@ -420,10 +444,11 @@ defmodule TrentoWeb.V1.HostControllerTest do
                } == resp
       end
 
-      test "should respond with 500 on messaging error for operation '#{saptune_operation}'", %{
-        conn: conn
-      } do
-        %{id: host_id} = insert(:host)
+      test "should respond with 500 on messaging error for operation '#{saptune_operation}'. Scenario: #{name}",
+           %{
+             conn: conn
+           } do
+        %{id: host_id} = insert(:host, saptune_status: @saptune_status)
 
         expect(
           Trento.Infrastructure.Messaging.Adapter.Mock,
@@ -451,11 +476,11 @@ defmodule TrentoWeb.V1.HostControllerTest do
                } = resp
       end
 
-      test "should perform '#{saptune_operation}' operation when the user has #{saptune_operation}:host ability",
+      test "should perform '#{saptune_operation}' operation when the user has #{saptune_operation}:host ability. Scenario: #{name}",
            %{
              conn: conn
            } do
-        %{id: host_id} = insert(:host)
+        %{id: host_id} = insert(:host, saptune_status: @saptune_status)
 
         %{id: user_id} = insert(:user)
 
@@ -479,8 +504,11 @@ defmodule TrentoWeb.V1.HostControllerTest do
         |> json_response(:accepted)
       end
 
-      test "should request '#{@saptune_operation}' operation", %{conn: conn, api_spec: api_spec} do
-        %{id: host_id} = insert(:host)
+      test "should request '#{saptune_operation}' operation. Scenario: #{name}", %{
+        conn: conn,
+        api_spec: api_spec
+      } do
+        %{id: host_id} = insert(:host, saptune_status: @saptune_status)
 
         expect(
           Trento.Infrastructure.Messaging.Adapter.Mock,
@@ -492,7 +520,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
 
         conn
         |> put_req_header("content-type", "application/json")
-        |> post("/api/v1/hosts/#{host_id}/operations/saptune_solution_apply", %{
+        |> post("/api/v1/hosts/#{host_id}/operations/#{@saptune_operation}", %{
           "solution" => "HANA"
         })
         |> json_response(:accepted)
@@ -529,7 +557,8 @@ defmodule TrentoWeb.V1.HostControllerTest do
           post(conn, "/api/v1/hosts/#{host_id}/checks", %{}),
           post(conn, "/api/v1/hosts/#{host_id}/checks/request_execution", %{}),
           delete(conn, "/api/v1/hosts/#{host_id}"),
-          post(conn, "/api/v1/hosts/#{host_id}/operations/saptune_solution_apply", %{})
+          post(conn, "/api/v1/hosts/#{host_id}/operations/saptune_solution_apply", %{}),
+          post(conn, "/api/v1/hosts/#{host_id}/operations/saptune_solution_change", %{})
         ],
         fn conn ->
           conn

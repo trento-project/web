@@ -3,6 +3,8 @@ defmodule Trento.Hosts.HostTest do
 
   import Trento.Factory
 
+  alias Trento.Support.StructHelper
+
   alias Trento.Hosts.Commands.{
     ClearSoftwareUpdatesDiscovery,
     CompleteHostChecksExecution,
@@ -1295,7 +1297,7 @@ defmodule Trento.Hosts.HostTest do
           saptune_installed: true,
           package_version: "3.2.0",
           sap_running: false,
-          status: Map.from_struct(new_saptune_status)
+          status: StructHelper.to_atomized_map(new_saptune_status)
         }),
         %SaptuneStatusUpdated{
           host_id: host_id,
@@ -1329,7 +1331,7 @@ defmodule Trento.Hosts.HostTest do
           saptune_installed: true,
           package_version: Faker.App.semver(),
           sap_running: false,
-          status: Map.from_struct(saptune_status)
+          status: StructHelper.to_atomized_map(saptune_status)
         }),
         [],
         fn state ->
@@ -1507,7 +1509,7 @@ defmodule Trento.Hosts.HostTest do
             saptune_installed: true,
             package_version: suppported_version,
             sap_running: true,
-            status: Map.from_struct(saptune_status)
+            status: StructHelper.to_atomized_map(saptune_status)
           }),
           [
             %SaptuneStatusUpdated{

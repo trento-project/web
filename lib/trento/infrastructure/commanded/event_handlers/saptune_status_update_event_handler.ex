@@ -148,13 +148,15 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SaptuneStatusUpdateEvent
          },
          sap_running
        ) do
-    commanded().dispatch(%UpdateSaptuneStatus{
+    %{
       host_id: host_id,
       package_version: version,
       saptune_installed: true,
       sap_running: sap_running,
       status: status
-    })
+    }
+    |> UpdateSaptuneStatus.new!()
+    |> commanded().dispatch()
   end
 
   # instance_numbers variable is used to reject the instance with that number from the check

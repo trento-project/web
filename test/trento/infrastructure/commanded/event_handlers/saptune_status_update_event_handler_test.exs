@@ -49,7 +49,6 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SaptuneStatusUpdateEvent
     test "should update saptune status when saptune is installed" do
       %{package_version: version} = saptune_status = build(:saptune_status)
       %{id: host_id} = insert(:host, saptune_status: saptune_status)
-      saptune_as_map = Map.from_struct(saptune_status)
 
       events = [
         build(:database_instance_registered_event, host_id: host_id),
@@ -62,7 +61,7 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SaptuneStatusUpdateEvent
                                                       package_version: ^version,
                                                       saptune_installed: true,
                                                       sap_running: true,
-                                                      status: ^saptune_as_map
+                                                      status: ^saptune_status
                                                     } ->
           :ok
         end)

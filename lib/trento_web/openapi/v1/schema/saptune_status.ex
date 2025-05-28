@@ -68,7 +68,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SaptuneStatus do
         additionalProperties: false,
         properties: %{
           id: %Schema{
-            type: :boolean,
+            type: :string,
             description: "Saptune solution ID"
           },
           notes: %Schema{
@@ -133,7 +133,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SaptuneStatus do
           type: :array,
           items: Service
         },
-        enabled_nodes: %Schema{
+        enabled_notes: %Schema{
           title: "Enabled notes",
           description: "A list of enabled notes",
           type: :array,
