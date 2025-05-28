@@ -13,6 +13,7 @@ export const initialState = {
   updated_at: undefined,
   authError: null,
   authInProgress: false,
+  analytics_enabled: undefined,
 };
 
 export const userSlice = createSlice({
@@ -44,6 +45,7 @@ export const userSlice = createSlice({
           updated_at,
           abilities,
           password_change_requested,
+          analytics_enabled,
         },
       }
     ) {
@@ -55,6 +57,7 @@ export const userSlice = createSlice({
       state.updated_at = updated_at;
       state.abilities = abilities;
       state.password_change_requested = password_change_requested;
+      state.analytics_enabled = analytics_enabled;
     },
   },
 });
