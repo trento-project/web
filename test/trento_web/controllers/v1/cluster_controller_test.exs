@@ -165,7 +165,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
       |> assert_schema("NotFound", api_spec)
     end
 
-    test "should respond with 500 if cluster maintenance change does not receive needed params",
+    test "should respond with 422 if cluster maintenance change does not receive needed params",
          %{
            conn: conn
          } do
