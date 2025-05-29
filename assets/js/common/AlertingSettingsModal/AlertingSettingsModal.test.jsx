@@ -171,11 +171,10 @@ describe('AlertingSettingsModal', () => {
 
   it('renders errors correctly', async () => {
     const constructErrorMessage = (pointer, errorDetails) => ({
-        detail: errorDetails,
-        source: { pointer: `/${pointer}` },
-        title: 'Invalid value',
-      })
-
+      detail: errorDetails,
+      source: { pointer: `/${pointer}` },
+      title: 'Invalid value',
+    });
 
     const smtpServerError = faker.lorem.words();
     const smtpPortError = faker.lorem.words();
