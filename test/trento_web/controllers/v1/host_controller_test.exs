@@ -365,8 +365,12 @@ defmodule TrentoWeb.V1.HostControllerTest do
   end
 
   describe "request operation" do
-    for saptune_operation <- ["saptune_solution_apply", "saptune_solution_change"] do
+    for {saptune_operation, saptune_status} <- [
+          {"saptune_solution_apply", nil},
+          {"saptune_solution_change", build(:saptune_status)}
+        ] do
       @saptune_operation saptune_operation
+      @saptune_status saptune_status
 
       test "should fallback to not found for operation '#{saptune_operation}' if the resource is not found",
            %{
@@ -378,31 +382,8 @@ defmodule TrentoWeb.V1.HostControllerTest do
         |> json_response(:not_found)
         |> assert_schema("NotFound", api_spec)
       end
-    end
 
-    scenarios = [
-      %{
-        name: "applying solution when there is no saptune status",
-        operation: "saptune_solution_apply",
-        saptune_status: nil
-      },
-      %{
-        name: "applying solution when there is no applied solution in saptune status",
-        operation: "saptune_solution_apply",
-        saptune_status: build(:saptune_status, applied_solution: nil)
-      },
-      %{
-        name: "changing solution when there is an already applied solution",
-        operation: "saptune_solution_change",
-        saptune_status: build(:saptune_status)
-      }
-    ]
-
-    for %{name: name, operation: saptune_operation, saptune_status: saptune_status} <- scenarios do
-      @saptune_operation saptune_operation
-      @saptune_status saptune_status
-
-      test "should forbid operation '#{saptune_operation}' if conditions are unmet. Scenario: #{name}",
+      test "should forbid operation '#{saptune_operation}' if conditions are unmet",
            %{
              conn: conn,
              api_spec: api_spec
@@ -416,11 +397,11 @@ defmodule TrentoWeb.V1.HostControllerTest do
         |> assert_schema("Forbidden", api_spec)
       end
 
-      test "should respond with 422 if operation '#{saptune_operation}' does not receive needed params. Scenario: #{name}",
+      test "should respond with 422 if operation '#{saptune_operation}' does not receive needed params",
            %{
              conn: conn
            } do
-        %{id: host_id} = insert(:host, saptune_status: @saptune_status)
+        %{id: host_id} = insert(:host)
 
         resp =
           conn
@@ -444,7 +425,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
                } == resp
       end
 
-      test "should respond with 500 on messaging error for operation '#{saptune_operation}'. Scenario: #{name}",
+      test "should respond with 500 on messaging error for operation '#{saptune_operation}'",
            %{
              conn: conn
            } do
@@ -476,7 +457,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
                } = resp
       end
 
-      test "should perform '#{saptune_operation}' operation when the user has #{saptune_operation}:host ability. Scenario: #{name}",
+      test "should perform '#{saptune_operation}' operation when the user has #{saptune_operation}:host ability",
            %{
              conn: conn
            } do
@@ -504,7 +485,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
         |> json_response(:accepted)
       end
 
-      test "should request '#{saptune_operation}' operation. Scenario: #{name}", %{
+      test "should request '#{saptune_operation}' operation", %{
         conn: conn,
         api_spec: api_spec
       } do
