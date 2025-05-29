@@ -71,38 +71,28 @@ defmodule Trento.Operations.HostPolicy do
 
   defp get_saptune_operation_resource_id(_), do: nil
 
-  defp authorize_saptune_solution_operation(
-         :saptune_solution_apply,
-         saptune_status
-       ) do
-    case saptune_status do
-      nil ->
-        :ok
+  defp authorize_saptune_solution_operation(:saptune_solution_apply, nil), do: :ok
 
-      %{applied_solution: nil} ->
-        :ok
+  defp authorize_saptune_solution_operation(:saptune_solution_apply, %{applied_solution: nil}),
+    do: :ok
 
-      _ ->
-        {:error,
-         ["Cannot apply the requested solution because there is an already applied on this host"]}
-    end
-  end
+  defp authorize_saptune_solution_operation(:saptune_solution_apply, _),
+    do:
+      {:error,
+       ["Cannot apply the requested solution because there is an already applied on this host"]}
 
-  defp authorize_saptune_solution_operation(
-         :saptune_solution_change,
-         saptune_status
-       ) do
-    case saptune_status do
-      %{applied_solution: applied_solution} when not is_nil(applied_solution) ->
-        :ok
+  defp authorize_saptune_solution_operation(:saptune_solution_change, %{
+         applied_solution: applied_solution
+       })
+       when not is_nil(applied_solution),
+       do: :ok
 
-      _ ->
-        {:error,
-         [
-           "Cannot change the requested solution because there is no currently applied one on this host"
-         ]}
-    end
-  end
+  defp authorize_saptune_solution_operation(:saptune_solution_change, _),
+    do:
+      {:error,
+       [
+         "Cannot change the requested solution because there is no currently applied one on this host"
+       ]}
 
   # Classic SAP HANA setup
   defp find_resource_id(%{type: "ocf::suse:SAPHana", parent: %{id: id}}), do: id
