@@ -246,7 +246,7 @@ export default function AlertingSettingsModal({
         </div>
 
         <div className="flex flex-row w-80 space-x-2">
-          <Button isSubmitButton disabled={loading}>
+          <Button asSubmit disabled={loading}>
             Save Settings
           </Button>
           <Button type="primary-white" onClick={onCancel}>
