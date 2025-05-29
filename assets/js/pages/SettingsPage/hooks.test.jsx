@@ -329,35 +329,35 @@ describe('useApiKeySettings', () => {
 });
 
 describe('useAlertingSettings', () => {
-  const saveAlertingSettings = alertingSettingsSaveRequestFactory.build();
-  const saveAlertingData =
-    alertingSettingsSaveRequestToApiData(saveAlertingSettings);
+  const saveRequestAlertingSettings =
+    alertingSettingsSaveRequestFactory.build();
+  const saveRequestAlertingData = alertingSettingsSaveRequestToApiData(
+    saveRequestAlertingSettings
+  );
 
-  const settingsFromSaveSettings = (alertingSettings) =>
-    flow(
-      pick([
-        'alertingEnabled',
-        'smtpServer',
-        'smtpPort',
-        'smtpUsername',
-        'senderEmail',
-        'recipientEmail',
-      ]),
-      set('enforcedFromEnv', false)
-    )(alertingSettings);
+  const savedAlertingSettings = flow(
+    pick([
+      'alertingEnabled',
+      'smtpServer',
+      'smtpPort',
+      'smtpUsername',
+      'senderEmail',
+      'recipientEmail',
+    ]),
+    set('enforcedFromEnv', false)
+  )(saveRequestAlertingSettings);
 
-  const dataFromSaveData = (alertingData) =>
-    flow(
-      pick([
-        'enabled',
-        'smtp_server',
-        'smtp_port',
-        'smtp_username',
-        'sender_email',
-        'recipient_email',
-      ]),
-      set('enforced_from_env', false)
-    )(alertingData);
+  const savedAlertingData = flow(
+    pick([
+      'enabled',
+      'smtp_server',
+      'smtp_port',
+      'smtp_username',
+      'sender_email',
+      'recipient_email',
+    ]),
+    set('enforced_from_env', false)
+  )(saveRequestAlertingData);
 
   afterEach(() => {
     axiosMock.reset();
@@ -395,18 +395,15 @@ describe('useAlertingSettings', () => {
         renderHook(() => useAlertingSettings())
       );
       const submitFn = result.current.submit;
-      const newAlertingData = dataFromSaveData(saveAlertingData);
-      const newAlertingSettings =
-        settingsFromSaveSettings(saveAlertingSettings);
       axiosMock
-        .onPost('/api/v1/settings/alerting', saveAlertingData)
-        .reply(200, newAlertingData);
+        .onPost('/api/v1/settings/alerting', saveRequestAlertingData)
+        .reply(200, savedAlertingData);
 
       await act(() => {
-        submitFn(saveAlertingSettings);
+        submitFn(saveRequestAlertingSettings);
       });
 
-      expect(result.current.settings).toEqual(newAlertingSettings);
+      expect(result.current.settings).toEqual(savedAlertingSettings);
       expect(result.current.submitErrors).toEqual([]);
     });
   });
@@ -433,18 +430,15 @@ describe('useAlertingSettings', () => {
         renderHook(() => useAlertingSettings())
       );
       const submitFn = result.current.submit;
-      const newAlertingData = dataFromSaveData(saveAlertingData);
-      const newAlertingSettings =
-        settingsFromSaveSettings(saveAlertingSettings);
       axiosMock
-        .onPatch('/api/v1/settings/alerting', saveAlertingData)
-        .reply(200, newAlertingData);
+        .onPatch('/api/v1/settings/alerting', saveRequestAlertingData)
+        .reply(200, savedAlertingData);
 
       await act(() => {
-        submitFn(saveAlertingSettings);
+        submitFn(saveRequestAlertingSettings);
       });
 
-      expect(result.current.settings).toEqual(newAlertingSettings);
+      expect(result.current.settings).toEqual(savedAlertingSettings);
       expect(result.current.submitErrors).toEqual([]);
     });
 
@@ -457,11 +451,11 @@ describe('useAlertingSettings', () => {
         { title: 'Test error', detail: "It's really a test error" },
       ];
       axiosMock
-        .onPatch('/api/v1/settings/alerting', saveAlertingData)
+        .onPatch('/api/v1/settings/alerting', saveRequestAlertingData)
         .reply(409, { errors });
 
       await act(() => {
-        submitFn(saveAlertingSettings);
+        submitFn(saveRequestAlertingSettings);
       });
 
       expect(result.current.submitErrors).toEqual(errors);
