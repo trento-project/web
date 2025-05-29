@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-K7URE6B4.js"></script>
-    <script src="dist/sidebar_items-09920EBD.js"></script>
+    <script src="dist/sidebar_items-6771E5DD.js"></script>
     <script src="docs_config.js"></script>
     <script async src="dist/html-YIPIRHGU.js"></script>
 
@@ -181,6 +181,14 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
+        <a href="#get_cluster_hosts/1" data-no-tooltip translate="no">get_cluster_hosts(cluster_id)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
         <a href="#get_cluster_id_by_host_id/1" data-no-tooltip translate="no">get_cluster_id_by_host_id(host_id)</a>
 
       </div>
@@ -214,6 +222,14 @@ GUIDES
     <div class="summary-row">
       <div class="summary-signature">
         <a href="#request_clusters_checks_execution/0" data-no-tooltip translate="no">request_clusters_checks_execution()</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#request_operation/3" data-no-tooltip translate="no">request_operation(operation, cluster_id, params)</a>
 
       </div>
 
@@ -265,7 +281,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">by_id(id)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters.ex#L40" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters.ex#L44" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -294,7 +310,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">enrich_cluster_model(cluster)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters.ex#L101" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters.ex#L105" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -323,7 +339,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">get_all_clusters()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters.ex#L78" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters.ex#L82" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -342,6 +358,34 @@ GUIDES
 
   </section>
 </section>
+<section class="detail" id="get_cluster_hosts/1">
+
+  <div class="detail-header">
+    <a href="#get_cluster_hosts/1" class="detail-link" data-no-tooltip title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">get_cluster_hosts(cluster_id)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters.ex#L184" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> get_cluster_hosts(<a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) :: [<a href="Trento.Hosts.Projections.HostReadModel.html#t:t/0">Trento.Hosts.Projections.HostReadModel.t</a>()]</pre>
+
+      </div>
+
+
+  </section>
+</section>
 <section class="detail" id="get_cluster_id_by_host_id/1">
 
   <div class="detail-header">
@@ -351,7 +395,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">get_cluster_id_by_host_id(host_id)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters.ex#L89" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters.ex#L93" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -379,7 +423,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">get_sap_instances_by_host_id(host_id)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters.ex#L165" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters.ex#L169" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -409,7 +453,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">maintenance?(cluster_read_model)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters.ex#L145" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters.ex#L149" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -437,7 +481,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">request_checks_execution(cluster_id)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters.ex#L58" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters.ex#L62" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -465,7 +509,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">request_clusters_checks_execution()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters.ex#L112" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters.ex#L116" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -484,6 +528,35 @@ GUIDES
 
   </section>
 </section>
+<section class="detail" id="request_operation/3">
+
+  <div class="detail-header">
+    <a href="#request_operation/3" class="detail-link" data-no-tooltip title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">request_operation(operation, cluster_id, params)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters.ex#L197" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> request_operation(<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>(), <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()) ::
+  {:ok, <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+
+      </div>
+
+
+  </section>
+</section>
 <section class="detail" id="resource_managed?/2">
 
   <div class="detail-header">
@@ -493,7 +566,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">resource_managed?(arg1, resource_id)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters.ex#L150" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters.ex#L154" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -522,7 +595,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">select_checks(cluster_id, checks)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters.ex#L48" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters.ex#L52" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -550,7 +623,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">update_cib_last_written(cluster_id, cib_last_written)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters.ex#L135" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters.ex#L139" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
