@@ -2,9 +2,21 @@ defmodule TrentoWeb.V1.ClusterController do
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
 
+  alias Trento.Repo
+
   alias Trento.Clusters
 
-  alias TrentoWeb.OpenApi.V1.Schema
+  alias Trento.Clusters.Projections.ClusterReadModel
+
+  alias TrentoWeb.OpenApi.V1.Schema.{
+    BadRequest,
+    Checks,
+    Cluster,
+    ClusterOperationParams,
+    Forbidden,
+    NotFound,
+    OperationAccepted
+  }
 
   plug TrentoWeb.Plugs.LoadUserPlug
 
@@ -16,6 +28,16 @@ defmodule TrentoWeb.V1.ClusterController do
     fallback: TrentoWeb.FallbackController
 
   plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
+
+  plug TrentoWeb.Plugs.OperationsPolicyPlug,
+       [
+         policy: Trento.Operations.ClusterPolicy,
+         resource: &__MODULE__.get_operation_cluster/1,
+         operation: &__MODULE__.get_operation/1,
+         assigns_to: :cluster
+       ]
+       when action == :request_operation
+
   action_fallback TrentoWeb.FallbackController
 
   operation :list,
@@ -25,7 +47,7 @@ defmodule TrentoWeb.V1.ClusterController do
     responses: [
       ok:
         {"A collection of the discovered Pacemaker Clusters", "application/json",
-         Schema.Cluster.PacemakerClustersCollection}
+         Cluster.PacemakerClustersCollection}
     ]
 
   def list(conn, _) do
@@ -47,8 +69,8 @@ defmodule TrentoWeb.V1.ClusterController do
     ],
     responses: [
       accepted: "The Command has been accepted and the Requested Cluster execution is scheduled",
-      not_found: Schema.NotFound.response(),
-      bad_request: Schema.BadRequest.response(),
+      not_found: NotFound.response(),
+      bad_request: BadRequest.response(),
       unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
     ]
 
@@ -71,11 +93,11 @@ defmodule TrentoWeb.V1.ClusterController do
         type: %OpenApiSpex.Schema{type: :string, format: :uuid}
       ]
     ],
-    request_body: {"Checks Selection", "application/json", Schema.Checks.ChecksSelectionRequest},
+    request_body: {"Checks Selection", "application/json", Checks.ChecksSelectionRequest},
     responses: [
       accepted: "The Selection has been successfully collected",
-      not_found: Schema.NotFound.response(),
-      bad_request: Schema.BadRequest.response(),
+      not_found: NotFound.response(),
+      bad_request: BadRequest.response(),
       unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
     ]
 
@@ -89,5 +111,55 @@ defmodule TrentoWeb.V1.ClusterController do
     end
   end
 
-  def get_policy_resource(_), do: Trento.Clusters.Projections.ClusterReadModel
+  operation :request_operation,
+    summary: "Request operation for a Cluster",
+    tags: ["Operations"],
+    description: "Request operation for a Cluster",
+    parameters: [
+      id: [
+        in: :path,
+        required: true,
+        type: %OpenApiSpex.Schema{type: :string, format: :uuid}
+      ],
+      operation: [
+        in: :path,
+        required: true,
+        type: %OpenApiSpex.Schema{type: :string}
+      ]
+    ],
+    request_body: {"Params", "application/json", ClusterOperationParams},
+    responses: [
+      accepted: OperationAccepted.response(),
+      not_found: NotFound.response(),
+      forbidden: Forbidden.response(),
+      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
+    ]
+
+  def request_operation(%{assigns: %{cluster: cluster, operation: operation}} = conn, _) do
+    %{id: cluster_id} = cluster
+    params = OpenApiSpex.body_params(conn)
+
+    with {:ok, operation_id} <- Clusters.request_operation(operation, cluster_id, params) do
+      conn
+      |> put_status(:accepted)
+      |> json(%{operation_id: operation_id})
+    end
+  end
+
+  def get_policy_resource(%{
+        private: %{phoenix_action: :request_operation},
+        path_params: %{"operation" => operation}
+      }),
+      do: %{operation: operation}
+
+  def get_policy_resource(_), do: ClusterReadModel
+
+  def get_operation_cluster(%{params: %{id: id}}) do
+    Repo.get(ClusterReadModel, id)
+  end
+
+  def get_operation(%{params: %{operation: "cluster_maintenance_change"}}),
+    do: :cluster_maintenance_change
+
+  def get_operation(_), do: nil
 end

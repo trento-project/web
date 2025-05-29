@@ -28,6 +28,9 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
         :host_checks_selected,
         :host_checks_execution_request,
         :activity_log_settings_update,
+        # operation_requested for hosts
+        :operation_requested,
+        # operation_requested for clusters
         :operation_requested
       ]
 

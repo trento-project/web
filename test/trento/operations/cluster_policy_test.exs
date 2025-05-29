@@ -68,4 +68,11 @@ defmodule Trento.Operations.ClusterPolicyTest do
       end
     end
   end
+
+  describe "cluster_maintenance_change" do
+    test "should always authorize cluster_maintenance_change operation" do
+      cluster = build(:cluster)
+      assert ClusterPolicy.authorize_operation(:cluster_maintenance_change, cluster, %{})
+    end
+  end
 end

@@ -14,6 +14,9 @@ defmodule Trento.Clusters.Policy do
   def authorize(:request_checks_execution, %User{} = user, ClusterReadModel),
     do: has_global_ability?(user) or has_checks_execution_ability?(user)
 
+  def authorize(:request_operation, %User{} = user, %{operation: "cluster_maintenance_change"}),
+    do: has_global_ability?(user) or has_cluster_maintenance_change_ability?(user)
+
   def authorize(_, _, _), do: true
 
   defp has_select_checks_ability?(user),
@@ -23,4 +26,7 @@ defmodule Trento.Clusters.Policy do
 
   defp has_checks_execution_ability?(user),
     do: user_has_ability?(user, %{name: "all", resource: "cluster_checks_execution"})
+
+  defp has_cluster_maintenance_change_ability?(user),
+    do: user_has_ability?(user, %{name: "maintenance_change", resource: "cluster"})
 end

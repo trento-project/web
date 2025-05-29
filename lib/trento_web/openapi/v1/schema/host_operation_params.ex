@@ -1,4 +1,4 @@
-defmodule TrentoWeb.OpenApi.V1.Schema.OperationParams do
+defmodule TrentoWeb.OpenApi.V1.Schema.HostOperationParams do
   @moduledoc false
   require OpenApiSpex
   alias OpenApiSpex.Schema
@@ -23,8 +23,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.OperationParams do
 
   OpenApiSpex.schema(
     %{
-      title: "OperationParams",
-      description: "Operation request parameters",
+      title: "HostOperationParams",
+      description: "Host operation request parameters",
       oneOf: [
         SaptuneSolutionApplyParams
       ]

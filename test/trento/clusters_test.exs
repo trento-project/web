@@ -20,7 +20,13 @@ defmodule Trento.ClustersTest do
     Target
   }
 
+  alias Trento.Operations.V1.{
+    OperationRequested,
+    OperationTarget
+  }
+
   alias Trento.Infrastructure.Checks.AMQP.Publisher
+  alias Trento.Infrastructure.Operations.AMQP.Publisher, as: OperationsPublisher
 
   alias Google.Protobuf.Value, as: ProtobufValue
 
@@ -1115,6 +1121,66 @@ defmodule Trento.ClustersTest do
 
       assert [] == Clusters.get_sap_instances_by_host_id(host_id)
       assert [] == Clusters.get_sap_instances_by_host_id(UUID.uuid4())
+    end
+  end
+
+  describe "get_cluster_hosts/1" do
+    test "should return cluster hosts" do
+      %{id: cluster_id} = insert(:cluster)
+      hosts = insert_list(2, :host, cluster_id: cluster_id)
+
+      assert hosts == Clusters.get_cluster_hosts(cluster_id)
+    end
+
+    test "should return empty list of hosts if the cluster is not found" do
+      assert [] == Clusters.get_cluster_hosts(UUID.uuid4())
+    end
+  end
+
+  describe "request_operation/3" do
+    test "should request cluster_maintenance_change operation" do
+      %{id: cluster_id} = insert(:cluster)
+      [%{id: host_id_1}, %{id: host_id_2}] = insert_list(2, :host, cluster_id: cluster_id)
+
+      expect(
+        Trento.Infrastructure.Messaging.Adapter.Mock,
+        :publish,
+        1,
+        fn OperationsPublisher,
+           "requests",
+           %OperationRequested{
+             group_id: ^cluster_id,
+             operation_type: "clustermaintenancechange@v1",
+             targets: [
+               %OperationTarget{
+                 agent_id: ^host_id_1,
+                 arguments: %{
+                   "maintenance" => %ProtobufValue{kind: {:bool_value, true}},
+                   "is_dc" => %ProtobufValue{kind: {:bool_value, true}}
+                 }
+               },
+               %OperationTarget{
+                 agent_id: ^host_id_2,
+                 arguments: %{
+                   "maintenance" => %ProtobufValue{kind: {:bool_value, true}},
+                   "is_dc" => %ProtobufValue{kind: {:bool_value, false}}
+                 }
+               }
+             ]
+           } ->
+          :ok
+        end
+      )
+
+      assert {:ok, _} =
+               Clusters.request_operation(:cluster_maintenance_change, cluster_id, %{
+                 maintenance: true
+               })
+    end
+
+    test "should return operation_not_found if the given operation does not exist" do
+      assert {:error, :operation_not_found} =
+               Clusters.request_operation(:unknown, UUID.uuid4(), %{})
     end
   end
 end

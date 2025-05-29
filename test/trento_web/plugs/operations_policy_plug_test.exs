@@ -93,7 +93,7 @@ defmodule TrentoWeb.Plugs.OperationsPolicyPlugTest do
 
     init_opts = OperationsPolicyPlug.init(opts)
 
-    assert %{assigns: %{authorized_resource: ^resource}} =
+    assert %{assigns: %{authorized_resource: ^resource, operation: :authorized}} =
              OperationsPolicyPlug.call(conn, init_opts)
   end
 

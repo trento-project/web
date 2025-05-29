@@ -392,7 +392,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
         |> assert_schema("Forbidden", api_spec)
       end
 
-      test "should respond with 500 if operation '#{saptune_operation}' does not receive needed params",
+      test "should respond with 422 if operation '#{saptune_operation}' does not receive needed params",
            %{
              conn: conn
            } do
