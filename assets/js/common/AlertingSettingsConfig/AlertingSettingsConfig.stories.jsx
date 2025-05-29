@@ -1,5 +1,7 @@
 import AlertingSettingsConfig from './AlertingSettingsConfig';
 
+import { alertingSettingsFactory } from '@lib//test-utils/factories/alertingSettings';
+
 export default {
   title: 'Components/AlertingSettingsConfig',
   component: AlertingSettingsConfig,
@@ -29,15 +31,7 @@ export const Default = {};
 
 export const WithFilledInValues = {
   args: {
-    settings: {
-      alertingEnabled: true,
-      smtpServer: 'smtp.testdomain.com',
-      smtpPort: 587,
-      smtpUsername: 'testuser',
-      senderEmail: 'admin@testdomain.com',
-      recipientEmail: 'trentousers@testdomain.com',
-      enforcedFromEnv: false,
-    },
+    settings: alertingSettingsFactory.build(),
   },
 };
 
