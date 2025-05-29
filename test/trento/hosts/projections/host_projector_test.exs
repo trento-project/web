@@ -559,6 +559,7 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
          hostname: hostname
        } do
     saptune_status = build(:saptune_status)
+    map_saptune_status = Map.from_struct(saptune_status)
 
     event = %SaptuneStatusUpdated{
       host_id: host_id,
@@ -576,7 +577,7 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
                      %{
                        id: ^host_id,
                        hostname: ^hostname,
-                       status: ^expected_status
+                       status: ^map_saptune_status
                      },
                      1000
   end

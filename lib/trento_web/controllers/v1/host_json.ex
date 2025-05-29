@@ -1,6 +1,4 @@
 defmodule TrentoWeb.V1.HostJSON do
-  alias Trento.Support.StructHelper
-
   def hosts(%{hosts: hosts}), do: Enum.map(hosts, &host(%{host: &1}))
 
   def host(%{host: %{sles_subscriptions: sles_subscriptions} = host}) do
@@ -62,7 +60,7 @@ defmodule TrentoWeb.V1.HostJSON do
   def saptune_status_updated(%{
         host: %{id: id, saptune_status: status, hostname: hostname}
       }),
-      do: %{id: id, status: StructHelper.to_atomized_map(status), hostname: hostname}
+      do: %{id: id, status: status, hostname: hostname}
 
   def host_health_changed(%{host: %{id: id, hostname: hostname, health: health}}),
     do: %{id: id, hostname: hostname, health: health}
