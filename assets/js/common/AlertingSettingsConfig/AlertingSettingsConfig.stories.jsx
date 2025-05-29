@@ -1,6 +1,6 @@
-import AlertingSettingsConfig from './AlertingSettingsConfig';
-
 import { alertingSettingsFactory } from '@lib//test-utils/factories/alertingSettings';
+
+import AlertingSettingsConfig from './AlertingSettingsConfig';
 
 export default {
   title: 'Components/AlertingSettingsConfig',
