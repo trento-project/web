@@ -39,6 +39,8 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
   alias Trento.ProjectorTestHelper
   alias Trento.Repo
 
+  alias Trento.Support.StructHelper
+
   @moduletag :integration
 
   @endpoint TrentoWeb.Endpoint
@@ -557,13 +559,14 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
          hostname: hostname
        } do
     saptune_status = build(:saptune_status)
+    map_saptune_status = Map.from_struct(saptune_status)
 
     event = %SaptuneStatusUpdated{
       host_id: host_id,
       status: saptune_status
     }
 
-    expected_status = Map.from_struct(saptune_status)
+    expected_status = StructHelper.to_atomized_map(saptune_status)
 
     ProjectorTestHelper.project(HostProjector, event, "host_projector")
     host_projection = Repo.get!(HostReadModel, host_id)
@@ -574,7 +577,7 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
                      %{
                        id: ^host_id,
                        hostname: ^hostname,
-                       status: ^expected_status
+                       status: ^map_saptune_status
                      },
                      1000
   end

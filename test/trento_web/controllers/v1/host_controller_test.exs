@@ -365,8 +365,12 @@ defmodule TrentoWeb.V1.HostControllerTest do
   end
 
   describe "request operation" do
-    for saptune_operation <- ["saptune_solution_apply", "saptune_solution_change"] do
+    for {saptune_operation, saptune_status} <- [
+          {"saptune_solution_apply", nil},
+          {"saptune_solution_change", build(:saptune_status)}
+        ] do
       @saptune_operation saptune_operation
+      @saptune_status saptune_status
 
       test "should fallback to not found for operation '#{saptune_operation}' if the resource is not found",
            %{
@@ -379,11 +383,12 @@ defmodule TrentoWeb.V1.HostControllerTest do
         |> assert_schema("NotFound", api_spec)
       end
 
-      test "should forbid operation '#{saptune_operation}' if conditions are unmet", %{
-        conn: conn,
-        api_spec: api_spec
-      } do
-        %{id: host_id} = insert(:host)
+      test "should forbid operation '#{saptune_operation}' if conditions are unmet",
+           %{
+             conn: conn,
+             api_spec: api_spec
+           } do
+        %{id: host_id} = insert(:host, saptune_status: @saptune_status)
         insert(:application_instance, host_id: host_id, health: Health.passing())
 
         conn
@@ -420,10 +425,11 @@ defmodule TrentoWeb.V1.HostControllerTest do
                } == resp
       end
 
-      test "should respond with 500 on messaging error for operation '#{saptune_operation}'", %{
-        conn: conn
-      } do
-        %{id: host_id} = insert(:host)
+      test "should respond with 500 on messaging error for operation '#{saptune_operation}'",
+           %{
+             conn: conn
+           } do
+        %{id: host_id} = insert(:host, saptune_status: @saptune_status)
 
         expect(
           Trento.Infrastructure.Messaging.Adapter.Mock,
@@ -455,7 +461,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
            %{
              conn: conn
            } do
-        %{id: host_id} = insert(:host)
+        %{id: host_id} = insert(:host, saptune_status: @saptune_status)
 
         %{id: user_id} = insert(:user)
 
@@ -479,8 +485,11 @@ defmodule TrentoWeb.V1.HostControllerTest do
         |> json_response(:accepted)
       end
 
-      test "should request '#{@saptune_operation}' operation", %{conn: conn, api_spec: api_spec} do
-        %{id: host_id} = insert(:host)
+      test "should request '#{saptune_operation}' operation", %{
+        conn: conn,
+        api_spec: api_spec
+      } do
+        %{id: host_id} = insert(:host, saptune_status: @saptune_status)
 
         expect(
           Trento.Infrastructure.Messaging.Adapter.Mock,
@@ -492,7 +501,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
 
         conn
         |> put_req_header("content-type", "application/json")
-        |> post("/api/v1/hosts/#{host_id}/operations/saptune_solution_apply", %{
+        |> post("/api/v1/hosts/#{host_id}/operations/#{@saptune_operation}", %{
           "solution" => "HANA"
         })
         |> json_response(:accepted)
@@ -529,7 +538,8 @@ defmodule TrentoWeb.V1.HostControllerTest do
           post(conn, "/api/v1/hosts/#{host_id}/checks", %{}),
           post(conn, "/api/v1/hosts/#{host_id}/checks/request_execution", %{}),
           delete(conn, "/api/v1/hosts/#{host_id}"),
-          post(conn, "/api/v1/hosts/#{host_id}/operations/saptune_solution_apply", %{})
+          post(conn, "/api/v1/hosts/#{host_id}/operations/saptune_solution_apply", %{}),
+          post(conn, "/api/v1/hosts/#{host_id}/operations/saptune_solution_change", %{})
         ],
         fn conn ->
           conn

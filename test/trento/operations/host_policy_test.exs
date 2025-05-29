@@ -15,10 +15,29 @@ defmodule Trento.Operations.HostPolicyTest do
   end
 
   describe "Saptune operations" do
-    for operation <- [:saptune_solution_apply, :saptune_solution_change] do
-      @saptune_operation operation
+    scenarios = [
+      %{
+        name: "applying solution when there is no saptune status",
+        operation: :saptune_solution_apply,
+        saptune_status: nil
+      },
+      %{
+        name: "applying solution when there is no applied solution in saptune status",
+        operation: :saptune_solution_apply,
+        saptune_status: build(:saptune_status, applied_solution: nil)
+      },
+      %{
+        name: "changing solution when there is an already applied solution",
+        operation: :saptune_solution_change,
+        saptune_status: build(:saptune_status)
+      }
+    ]
 
-      test "should forbid operation '#{operation}' if an application instance is not stopped" do
+    for %{name: name, operation: operation, saptune_status: saptune_status} <- scenarios do
+      @saptune_operation operation
+      @saptune_status saptune_status
+
+      test "should forbid operation '#{operation}' if an application instance is not stopped. Scenario: #{name}" do
         application_instances = [
           build(:application_instance, health: Health.unknown()),
           %{sid: sid, instance_number: instance_number} =
@@ -33,7 +52,8 @@ defmodule Trento.Operations.HostPolicyTest do
           build(:host,
             application_instances: application_instances,
             database_instances: database_instancess,
-            cluster: cluster
+            cluster: cluster,
+            saptune_status: @saptune_status
           )
 
         assert {:error,
@@ -43,7 +63,7 @@ defmodule Trento.Operations.HostPolicyTest do
                 ]} == HostPolicy.authorize_operation(@saptune_operation, host, %{})
       end
 
-      test "should forbid operation '#{operation}' if an database instance is not stopped" do
+      test "should forbid operation '#{operation}' if an database instance is not stopped. Scenario: #{name}" do
         application_instances = build_list(2, :application_instance, health: Health.unknown())
 
         database_instancess = [
@@ -58,7 +78,8 @@ defmodule Trento.Operations.HostPolicyTest do
           build(:host,
             application_instances: application_instances,
             database_instances: database_instancess,
-            cluster: cluster
+            cluster: cluster,
+            saptune_status: @saptune_status
           )
 
         assert {:error,
@@ -68,7 +89,7 @@ defmodule Trento.Operations.HostPolicyTest do
                 ]} == HostPolicy.authorize_operation(@saptune_operation, host, %{})
       end
 
-      test "should forbid operation '#{operation}' if an application and database instances are not stopped" do
+      test "should forbid operation '#{operation}' if an application and database instances are not stopped. Scenario: #{name}" do
         application_instances = [
           build(:application_instance, health: Health.unknown()),
           %{sid: app_sid, instance_number: app_instance_number} =
@@ -87,7 +108,8 @@ defmodule Trento.Operations.HostPolicyTest do
           build(:host,
             application_instances: application_instances,
             database_instances: database_instancess,
-            cluster: cluster
+            cluster: cluster,
+            saptune_status: @saptune_status
           )
 
         assert {:error,
@@ -98,18 +120,19 @@ defmodule Trento.Operations.HostPolicyTest do
                 ]} == HostPolicy.authorize_operation(@saptune_operation, host, %{})
       end
 
-      test "should authorize operation '#{operation}' if there is not any SAP instance running" do
+      test "should authorize operation '#{operation}' if there is not any SAP instance running. Scenario: #{name}" do
         host =
           build(:host,
             application_instances: [],
             database_instances: [],
-            cluster: nil
+            cluster: nil,
+            saptune_status: @saptune_status
           )
 
         assert :ok == HostPolicy.authorize_operation(@saptune_operation, host, %{})
       end
 
-      test "should authorize operation '#{operation}' if all instances are stopped and the host is not clustered" do
+      test "should authorize operation '#{operation}' if all instances are stopped and the host is not clustered. Scenario: #{name}" do
         application_instances = build_list(2, :application_instance, health: Health.unknown())
         database_instancess = build_list(2, :database_instance, health: Health.unknown())
 
@@ -117,13 +140,14 @@ defmodule Trento.Operations.HostPolicyTest do
           build(:host,
             application_instances: application_instances,
             database_instances: database_instancess,
-            cluster: nil
+            cluster: nil,
+            saptune_status: @saptune_status
           )
 
         assert :ok == HostPolicy.authorize_operation(@saptune_operation, host, %{})
       end
 
-      test "should authorize operation '#{operation}' if all instances are stopped and cluster is in maintenance" do
+      test "should authorize operation '#{operation}' if all instances are stopped and cluster is in maintenance. Scenario: #{name}" do
         application_instances = build_list(2, :application_instance, health: Health.unknown())
         database_instancess = build_list(2, :database_instance, health: Health.unknown())
         cluster = build(:cluster, details: build(:hana_cluster_details, maintenance_mode: true))
@@ -132,13 +156,14 @@ defmodule Trento.Operations.HostPolicyTest do
           build(:host,
             application_instances: application_instances,
             database_instances: database_instancess,
-            cluster: cluster
+            cluster: cluster,
+            saptune_status: @saptune_status
           )
 
         assert :ok == HostPolicy.authorize_operation(@saptune_operation, host, %{})
       end
 
-      test "should authorize operation '#{operation}' if all instances are stopped and HANA resources are not managed" do
+      test "should authorize operation '#{operation}' if all instances are stopped and HANA resources are not managed. Scenario: #{name}" do
         scenarios = [
           %{cluster_resource_type: "ocf::suse:SAPHana"},
           %{cluster_resource_type: "ocf::suse:SAPHanaController"}
@@ -160,11 +185,47 @@ defmodule Trento.Operations.HostPolicyTest do
             build(:host,
               application_instances: [],
               database_instances: database_instancess,
-              cluster: cluster
+              cluster: cluster,
+              saptune_status: @saptune_status
             )
 
           assert :ok == HostPolicy.authorize_operation(@saptune_operation, host, %{})
         end
+      end
+    end
+
+    test "should forbid applying a saptune solution when there is an already applied one" do
+      host =
+        build(:host,
+          application_instances: [],
+          database_instances: [],
+          cluster: nil,
+          saptune_status: build(:saptune_status)
+        )
+
+      assert {:error,
+              [
+                "Cannot apply the requested solution because there is an already applied on this host"
+              ]} == HostPolicy.authorize_operation(:saptune_solution_apply, host, %{})
+    end
+
+    test "should forbid changing saptune solution when there is not an already applied one" do
+      for saptune_status <- [
+            nil,
+            build(:saptune_status, applied_solution: nil)
+          ] do
+        host =
+          build(:host,
+            application_instances: [],
+            database_instances: [],
+            cluster: nil,
+            saptune_status: saptune_status
+          )
+
+        assert {:error,
+                [
+                  "Cannot change the requested solution because there is no currently applied one on this host"
+                ]} == HostPolicy.authorize_operation(:saptune_solution_change, host, %{})
       end
     end
   end
