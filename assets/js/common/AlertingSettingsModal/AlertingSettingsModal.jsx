@@ -35,19 +35,19 @@ export default function AlertingSettingsModal({
   );
   const [smtpPassword, setSmtpPassword] = useState('');
 
-  function onSubmit(e) {
+  const onSubmit = (e) => {
     e.preventDefault();
     const settingsPayload = {
       alertingEnabled,
-      smtpServer,
-      smtpPort: Number(smtpPort),
-      smtpUsername,
-      senderEmail,
-      recipientEmail,
-      ...(editingPassword && { smtpPassword }),
+      smtpServer: smtpServer || null,
+      smtpPort: Number(smtpPort) || null,
+      smtpUsername: smtpUsername || null,
+      senderEmail: senderEmail || null,
+      recipientEmail: recipientEmail || null,
+      ...(editingPassword && { smtpPassword: smtpPassword || null }),
     };
     onSave(settingsPayload);
-  }
+  };
 
   return (
     <Modal title="Enter Alerting Settings" open={open} onClose={onCancel}>
