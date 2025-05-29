@@ -216,5 +216,39 @@ defmodule Trento.DiscoveryTest do
 
       assert {:error, "error"} == Discovery.request_saptune_discovery(host_id)
     end
+
+    test "should request cluster discovery" do
+      %{id: cluster_id} = insert(:cluster)
+      [%{id: host_id_1}, %{id: host_id_2}] = insert_list(2, :host, cluster_id: cluster_id)
+
+      discovery_requested = %DiscoveryRequested{
+        discovery_type: "ha_cluster_discovery",
+        targets: [host_id_1, host_id_2]
+      }
+
+      expect(
+        Trento.Infrastructure.Messaging.Adapter.Mock,
+        :publish,
+        fn Publisher, "agents", ^discovery_requested ->
+          :ok
+        end
+      )
+
+      assert :ok == Discovery.request_cluster_discovery(cluster_id)
+    end
+
+    test "should handle publishing error on cluster discovery request" do
+      %{id: cluster_id} = build(:cluster)
+
+      expect(
+        Trento.Infrastructure.Messaging.Adapter.Mock,
+        :publish,
+        fn Publisher, "agents", _ ->
+          {:error, "error"}
+        end
+      )
+
+      assert {:error, "error"} == Discovery.request_cluster_discovery(cluster_id)
+    end
   end
 end
