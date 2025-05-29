@@ -9,13 +9,25 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ClusterOperationParams do
     OpenApiSpex.schema(
       %{
         title: "ClusterMaintenanceChangeParams",
-        description: "Cluster maintenance change operation params",
+        description:
+          "Cluster maintenance change operation params. " <>
+            "If neither resource_id nor node_id are given the complete cluster maintenance state is changed. " <>
+            "resource_id has precedence over node_id",
         type: :object,
         additionalProperties: false,
         properties: %{
-          maintenance: %Schema{type: :boolean},
-          resource_id: %Schema{type: :string},
-          node_id: %Schema{type: :string}
+          maintenance: %Schema{
+            type: :boolean,
+            description: "Maintenance state to put the cluster/node/resource"
+          },
+          resource_id: %Schema{
+            type: :string,
+            description: "ID of the cluster resource to change the maintenance state"
+          },
+          node_id: %Schema{
+            type: :string,
+            description: "ID of the cluster node to change the maintenance state"
+          }
         },
         required: [:maintenance]
       },
