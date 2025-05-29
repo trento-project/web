@@ -170,13 +170,12 @@ describe('AlertingSettingsModal', () => {
   });
 
   it('renders errors correctly', async () => {
-    function construct_error_message(pointer, errorDetails) {
-      return {
+    const constructErrorMessage = (pointer, errorDetails) => ({
         detail: errorDetails,
         source: { pointer: `/${pointer}` },
         title: 'Invalid value',
-      };
-    }
+      })
+
 
     const smtpServerError = faker.lorem.words();
     const smtpPortError = faker.lorem.words();
@@ -192,12 +191,12 @@ describe('AlertingSettingsModal', () => {
         open
         previousSettings={alertingSettingsFactory.build()}
         errors={[
-          construct_error_message('smtp_server', smtpServerError),
-          construct_error_message('smtp_port', smtpPortError),
-          construct_error_message('smtp_username', smtpUsernameError),
-          construct_error_message('smtp_password', smtpPasswordError),
-          construct_error_message('sender_email', senderEmailError),
-          construct_error_message('recipient_email', recipientEmailError),
+          constructErrorMessage('smtp_server', smtpServerError),
+          constructErrorMessage('smtp_port', smtpPortError),
+          constructErrorMessage('smtp_username', smtpUsernameError),
+          constructErrorMessage('smtp_password', smtpPasswordError),
+          constructErrorMessage('sender_email', senderEmailError),
+          constructErrorMessage('recipient_email', recipientEmailError),
         ]}
       />
     );

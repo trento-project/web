@@ -90,8 +90,8 @@ describe('AlertingSettingsConfig', () => {
   );
 
   it.each`
-    case                       | abilities
-    ${'admin '}                | ${adminUser}
+    case                      | abilities
+    ${'admin'}                | ${adminUser}
     ${'all:alerting_settings'} | ${[{ name: 'all', resource: 'alerting_settings' }]}
   `(
     'allows editing when user has sufficient abilities ($case) and calls correct handler',
