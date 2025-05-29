@@ -46,9 +46,7 @@ context('Hosts Overview', () => {
 
   describe('Health Detection', () => {
     describe('Health Container shows the health overview of the deployed landscape', () => {
-      before(() => {
-        hostsOverviewPage.startAgentsHeartbeat();
-      });
+      beforeEach(() => hostsOverviewPage.startAgentsHeartbeat());
 
       it('should show health status of the entire cluster of 27 hosts with partial pagination', () => {
         hostsOverviewPage.expectedPassingHostsAreDisplayed(11);
@@ -61,7 +59,7 @@ context('Hosts Overview', () => {
         hostsOverviewPage.expectedAmountOfWarningsIsDisplayed(2);
       });
 
-      after(() => hostsOverviewPage.stopAgentsHeartbeat());
+      afterEach(() => hostsOverviewPage.stopAgentsHeartbeat());
     });
 
     describe('Health is changed based on saptune status', () => {
@@ -120,7 +118,7 @@ context('Hosts Overview', () => {
         hostsOverviewPage.expectedAmountOfCriticalsIsDisplayed(10);
       });
 
-      afterEach(() => hostsOverviewPage.stopAgentsHeartbeat());
+      after(() => hostsOverviewPage.stopAgentsHeartbeat());
     });
   });
 
