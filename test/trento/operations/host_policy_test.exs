@@ -14,9 +14,6 @@ defmodule Trento.Operations.HostPolicyTest do
     assert {:error, ["Unknown operation"]} == HostPolicy.authorize_operation(:unknown, host, %{})
   end
 
-  describe "Forbidding saptune operations" do
-  end
-
   describe "Saptune operations" do
     scenarios = [
       %{
