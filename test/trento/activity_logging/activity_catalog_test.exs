@@ -28,10 +28,8 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
         :host_checks_selected,
         :host_checks_execution_request,
         :activity_log_settings_update,
-        # operation_requested for hosts
-        :operation_requested,
-        # operation_requested for clusters
-        :operation_requested
+        :host_operation_requested,
+        :cluster_operation_requested
       ]
 
       connection_activity_catalog = ActivityCatalog.connection_activities()
@@ -246,8 +244,14 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
         not_interesting_statuses: [400, 401, 403, 404, 500]
       },
       %{
-        activity: :operation_requested,
+        activity: :host_operation_requested,
         connection_info: {TrentoWeb.V1.HostController, :request_operation},
+        interesting_statuses: 202,
+        not_interesting_statuses: [400, 401, 403, 404, 500]
+      },
+      %{
+        activity: :cluster_operation_requested,
+        connection_info: {TrentoWeb.V1.ClusterController, :request_operation},
         interesting_statuses: 202,
         not_interesting_statuses: [400, 401, 403, 404, 500]
       }

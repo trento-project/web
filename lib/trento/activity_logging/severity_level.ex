@@ -151,7 +151,8 @@ defmodule Trento.ActivityLog.SeverityLevel do
     "database_rollup_requested" => :info,
     "database_tenants_updated" => :info,
     "database_tombstoned" => :debug,
-    "operation_requested" => :info,
+    "cluster_operation_requested" => :info,
+    "host_operation_requested" => :info,
     "operation_completed" => %{
       type: :kv,
       key_suffix: "result",

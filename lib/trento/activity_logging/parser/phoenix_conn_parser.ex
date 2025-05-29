@@ -134,13 +134,14 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
       do: %{user_id: Map.get(params, :id)}
 
   def get_activity_metadata(
-        :operation_requested,
+        activity,
         %Plug.Conn{
           params: params,
           body_params: body_params,
           resp_body: resp_body
         }
-      ) do
+      )
+      when activity in [:cluster_operation_requested, :host_operation_requested] do
     %{
       resource_id: Map.get(params, :id),
       operation: params |> Map.get(:operation) |> String.to_existing_atom(),
