@@ -5,6 +5,8 @@ defmodule Trento.Infrastructure.Operations.AMQP.ProcessorTest do
 
   import Mox
 
+  import Trento.Factory
+
   alias Trento.Infrastructure.Discovery.AMQP.Publisher
   alias Trento.Infrastructure.Operations.AMQP.Processor
 
@@ -129,6 +131,39 @@ defmodule Trento.Infrastructure.Operations.AMQP.ProcessorTest do
 
         assert 1 == ActivityLog |> Repo.all() |> length()
       end
+    end
+
+    test "should request ha cluster discovery request when cluster_maintenance_change operation is completed" do
+      operation_id = UUID.uuid4()
+      %{id: cluster_id} = insert(:cluster)
+      [%{id: host_id_1}, %{id: host_id_2}] = insert_list(2, :host, cluster_id: cluster_id)
+
+      operation_completed =
+        Contracts.to_event(%OperationCompleted{
+          operation_id: operation_id,
+          group_id: cluster_id,
+          operation_type: "clustermaintenancechange@v1",
+          result: :UPDATED
+        })
+
+      discovery_requested = %DiscoveryRequested{
+        discovery_type: "ha_cluster_discovery",
+        targets: [host_id_1, host_id_2]
+      }
+
+      expect(
+        Trento.Infrastructure.Messaging.Adapter.Mock,
+        :publish,
+        fn Publisher, "agents", ^discovery_requested ->
+          :ok
+        end
+      )
+
+      message = %GenRMQ.Message{payload: operation_completed, attributes: %{}, channel: nil}
+
+      assert :ok = Processor.process(message)
+
+      assert 1 == ActivityLog |> Repo.all() |> length()
     end
   end
 end

@@ -20,6 +20,8 @@ defmodule Trento.Infrastructure.Operations.AMQP.Processor do
 
   require Logger
 
+  require Trento.Operations.Enums.ClusterOperations, as: ClusterOperations
+
   def process(%GenRMQ.Message{payload: payload} = message) do
     Logger.debug("Received message: #{inspect(message)}")
 
@@ -77,6 +79,11 @@ defmodule Trento.Infrastructure.Operations.AMQP.Processor do
   defp maybe_request_discovery(operation, :UPDATED, group_id)
        when operation in [:saptune_solution_apply, :saptune_solution_change] do
     Discovery.request_saptune_discovery(group_id)
+  end
+
+  defp maybe_request_discovery(operation, :UPDATED, group_id)
+       when operation in ClusterOperations.values() do
+    Discovery.request_cluster_discovery(group_id)
   end
 
   defp maybe_request_discovery(_, _, _), do: :ok
