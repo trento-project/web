@@ -16,7 +16,9 @@ on:
   repository_dispatch:
     types: [start-ci, deploy-demo]
 
-concurrency: ${{ github.workflow }}-${{ github.ref }}
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   MIX_ENV: test
