@@ -7,6 +7,8 @@ on:
     paths:
       - "VERSION"
 
+concurrency: ${{ github.workflow }}
+
 jobs:
   pre-release:
     name: Detect new version, draft release, update changelog
