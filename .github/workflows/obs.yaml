@@ -22,6 +22,7 @@ concurrency: ${{ github.workflow }}-${{ inputs.obs_project }}
 env:
   OBS_PROJECT: ${{ inputs.obs_project }}
   AUTHOR_EMAIL: trento-developers@suse.com
+  MIX_ENV: prod
 
 jobs:
   update-image:
@@ -59,9 +60,9 @@ jobs:
         with:
           path: |
             deps
-            _build/dev
+            _build/${{ env.MIX_ENV }}
             priv/plts
-          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}
+          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Retrieve NPM Cached Dependencies
         uses: actions/cache@v4
         id: npm-cache
@@ -143,9 +144,9 @@ jobs:
         with:
           path: |
             deps
-            _build/dev
+            _build/${{ env.MIX_ENV }}
             priv/plts
-          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}
+          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Retrieve NPM Cached Dependencies
         uses: actions/cache@v4
         id: npm-cache
