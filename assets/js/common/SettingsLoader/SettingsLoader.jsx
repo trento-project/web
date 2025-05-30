@@ -38,7 +38,7 @@ export const calculateStatus = (isLoading, isError) => {
 
 /**
  * Wrap a section of the settings page and show a placeholder
- * until data is not available.
+ * until data is available.
  *
  * @param props.sectionName (optional) Name of the section, default: empty string
  * @param props.status Whether the section is LOADING, ERROR or READY,

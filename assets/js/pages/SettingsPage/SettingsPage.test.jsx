@@ -15,18 +15,15 @@ import { networkClient } from '@lib/network';
 import MockAdapter from 'axios-mock-adapter';
 
 import SettingsPage from './SettingsPage';
+import {
+  alertingSettingsFactory,
+  alertingSettingsToApiData,
+} from '../../lib/test-utils/factories/alertingSettings';
 
 const axiosMock = new MockAdapter(networkClient);
 
 const defaultInitialState = {
   ...defaultInitialStateBase,
-  softwareUpdatesSettings: {
-    settings: {
-      url: undefined,
-      username: undefined,
-      ca_uploaded_at: undefined,
-    },
-  },
   activityLogsSettings: {
     settings: {
       retention_time: { value: 1, unit: 'day' },
@@ -85,7 +82,9 @@ describe('Settings Page', () => {
         ...defaultInitialState,
       });
 
-      renderWithRouter(StatefulSettings);
+      await act(async () => {
+        renderWithRouter(StatefulSettings);
+      });
 
       expect(
         screen.getByText('Loading SUSE Manager Settings...')
@@ -109,10 +108,13 @@ describe('Settings Page', () => {
       expect(screen.getByText('CA Certificate')).toBeVisible();
       expect(screen.getByText('-')).toBeVisible();
 
-      expect(screen.getByText('Username')).toBeVisible();
-      expect(screen.getByText('Password')).toBeVisible();
+      const sumaUsername = screen.getByLabelText('suma-username');
+      expect(sumaUsername).toBeVisible();
+      expect(sumaUsername).toHaveTextContent('.....');
 
-      expect(screen.queryAllByText('.....')).toHaveLength(2);
+      const sumaPassword = screen.getByLabelText('suma-password');
+      expect(sumaPassword).toBeVisible();
+      expect(sumaPassword).toHaveTextContent('.....');
     });
 
     it('should render SUSE Manager Config Section with configured settings', async () => {
@@ -138,11 +140,13 @@ describe('Settings Page', () => {
         screen.getByText(format(ca_uploaded_at, "'Uploaded:' dd MMM y"))
       ).toBeVisible();
 
-      expect(screen.getByText('Username')).toBeVisible();
-      expect(screen.getByText(username)).toBeVisible();
+      const sumaUsername = screen.getByLabelText('suma-username');
+      expect(sumaUsername).toBeVisible();
+      expect(sumaUsername).toHaveTextContent(username);
 
-      expect(screen.getByText('Password')).toBeVisible();
-      expect(screen.getByText('•••••')).toBeVisible();
+      const sumaPassword = screen.getByLabelText('suma-password');
+      expect(sumaPassword).toBeVisible();
+      expect(sumaPassword).toHaveTextContent('•••••');
     });
   });
 
@@ -251,6 +255,98 @@ describe('Settings Page', () => {
       expect(
         screen.queryAllByText('You are not authorized for this action')[0]
       ).toBeVisible();
+    });
+  });
+
+  describe('Alerting Section', () => {
+    it('renders a loading box while fetching settings', async () => {
+      axiosMock.onGet('/api/v1/settings/alerting').reply(
+        (_) =>
+          new Promise((resolve) => {
+            setTimeout(() => resolve([200, {}]), 5000);
+          })
+      );
+
+      const [StatefulSettings] = withState(<SettingsPage />, {
+        ...defaultInitialState,
+      });
+
+      await act(async () => {
+        renderWithRouter(StatefulSettings);
+      });
+
+      expect(screen.getByText('Loading Alerting Settings...')).toBeVisible();
+    });
+
+    it('renders a default Alerting Config Section when initial fetch returns 404', async () => {
+      const [StatefulSettings] = withState(<SettingsPage />, {
+        ...defaultInitialState,
+      });
+
+      axiosMock.onGet('/api/v1/settings/alerting').reply(404, {});
+
+      await act(async () => {
+        renderWithRouter(StatefulSettings);
+      });
+
+      expect(screen.getByLabelText('smtp-server')).toHaveTextContent(
+        'https://...'
+      );
+      expect(screen.getByLabelText('smtp-port')).toHaveTextContent('587');
+      expect(screen.getByLabelText('smtp-username')).toHaveTextContent('...');
+      expect(screen.getByLabelText('smtp-password')).toHaveTextContent('•••••');
+      expect(screen.getByLabelText('alerting-sender')).toHaveTextContent(
+        '...@...'
+      );
+      expect(screen.getByLabelText('alerting-recipient')).toHaveTextContent(
+        '...@...'
+      );
+      expect(screen.getByLabelText('alerting-enabled')).toHaveTextContent(
+        'Disabled'
+      );
+    });
+
+    it('renders Alerting Config Section on successful initial fetch', async () => {
+      const alertingSettings = alertingSettingsFactory.build();
+      const {
+        smtpServer,
+        smtpPort,
+        smtpUsername,
+        senderEmail,
+        recipientEmail,
+      } = alertingSettings;
+
+      const [StatefulSettings] = withState(<SettingsPage />, {
+        ...defaultInitialState,
+      });
+
+      axiosMock
+        .onGet('/api/v1/settings/alerting')
+        .reply(200, alertingSettingsToApiData(alertingSettings));
+
+      await act(async () => {
+        renderWithRouter(StatefulSettings);
+      });
+
+      expect(screen.getByLabelText('smtp-server')).toHaveTextContent(
+        smtpServer
+      );
+      expect(screen.getByLabelText('smtp-port')).toHaveTextContent(
+        smtpPort.toString()
+      );
+      expect(screen.getByLabelText('smtp-username')).toHaveTextContent(
+        smtpUsername
+      );
+      expect(screen.getByLabelText('smtp-password')).toHaveTextContent('•••••');
+      expect(screen.getByLabelText('alerting-sender')).toHaveTextContent(
+        senderEmail
+      );
+      expect(screen.getByLabelText('alerting-recipient')).toHaveTextContent(
+        recipientEmail
+      );
+      expect(screen.getByLabelText('alerting-enabled')).toHaveTextContent(
+        'Enabled'
+      );
     });
   });
 });

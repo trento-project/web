@@ -47,6 +47,7 @@ const groupedAbilities = [
       'all:api_key_settings',
       'all:suma_settings',
       'all:activity_logs_settings',
+      'all:alerting_settings',
     ],
   },
   {
