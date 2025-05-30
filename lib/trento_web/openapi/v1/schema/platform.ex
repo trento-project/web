@@ -316,14 +316,10 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
         type: :object,
         properties: %{
           enabled: %Schema{type: :boolean},
-          sender_email: %Schema{type: :string},
-          recipient_email: %Schema{type: :string},
+          sender_email: %Schema{type: :string, format: :email},
+          recipient_email: %Schema{type: :string, format: :email},
           smtp_server: %Schema{type: :string},
-          smtp_port: %Schema{
-            title: "Port",
-            anyOf: [%Schema{type: :integer}, %Schema{type: :string}],
-            example: 587
-          },
+          smtp_port: %Schema{type: :integer, example: 587},
           smtp_username: %Schema{type: :string},
           smtp_password: %Schema{type: :string, format: :password}
         },
@@ -351,14 +347,10 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
         type: :object,
         properties: %{
           enabled: %Schema{type: :boolean},
-          sender_email: %Schema{type: :string},
-          recipient_email: %Schema{type: :string},
+          sender_email: %Schema{type: :string, format: :email},
+          recipient_email: %Schema{type: :string, format: :email},
           smtp_server: %Schema{type: :string},
-          smtp_port: %Schema{
-            title: "Port",
-            anyOf: [%Schema{type: :integer}, %Schema{type: :string}],
-            example: 587
-          },
+          smtp_port: %Schema{type: :integer, example: 587},
           smtp_username: %Schema{type: :string},
           smtp_password: %Schema{type: :string, format: :password}
         }
