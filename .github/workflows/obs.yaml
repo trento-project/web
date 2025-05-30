@@ -54,15 +54,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODEJS_VERSION }}
-      - name: Retrieve Cached Dependencies
-        uses: actions/cache@v4
-        id: mix-cache
-        with:
-          path: |
-            deps
-            _build/${{ env.MIX_ENV }}
-            priv/plts
-          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Retrieve NPM Cached Dependencies
         uses: actions/cache@v4
         id: npm-cache
@@ -138,15 +129,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODEJS_VERSION }}
-      - name: Retrieve Cached Dependencies
-        uses: actions/cache@v4
-        id: mix-cache
-        with:
-          path: |
-            deps
-            _build/${{ env.MIX_ENV }}
-            priv/plts
-          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Retrieve NPM Cached Dependencies
         uses: actions/cache@v4
         id: npm-cache
