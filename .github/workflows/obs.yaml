@@ -39,6 +39,9 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Read .tool-versions
+        uses: endorama/asdf-parse-tool-versions@v1
+        id: tool-versions
       - name: Configure git for in-container operations
         run: git config --global --add safe.directory $GITHUB_WORKSPACE
       - name: Get version from git history
@@ -49,7 +52,23 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: ${{ env.NODEJS_VERSION }}
+      - name: Retrieve Cached Dependencies
+        uses: actions/cache@v4
+        id: mix-cache
+        with:
+          path: |
+            deps
+            _build/dev
+            priv/plts
+          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}
+      - name: Retrieve NPM Cached Dependencies
+        uses: actions/cache@v4
+        id: npm-cache
+        with:
+          path: |
+            assets/node_modules
+          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Install assets
         run: cd assets && npm install
       - name: Get mix deps
