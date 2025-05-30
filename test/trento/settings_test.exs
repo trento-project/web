@@ -811,7 +811,7 @@ defmodule Trento.SettingsTest do
     end
 
     test "return previously saved settings" do
-      inserted_settings = insert(:alerting_settings, [], returning: true)
+      inserted_settings = insert(:alerting_settings)
       assert {:ok, inserted_settings} === Settings.get_alerting_settings()
     end
 
@@ -828,7 +828,9 @@ defmodule Trento.SettingsTest do
       now = DateTime.utc_now()
 
       {:ok, saved_settings} =
-        Settings.create_alerting_settings(Map.take(settings, @alerting_create_fields))
+        settings
+        |> Map.take(@alerting_create_fields)
+        |> Settings.create_alerting_settings()
 
       assert saved_settings.id != nil
 
