@@ -243,7 +243,35 @@ defmodule Trento.ActivityLog.MetadataEnricherTest do
         }
 
         assert {:ok, %{hostname: ^hostname}} =
-                 MetadataEnricher.enrich(:operation_requested, initial_metadata)
+                 MetadataEnricher.enrich(:host_operation_requested, initial_metadata)
+      end
+    end
+
+    for current_operation <- [:cluster_maintenance_change] do
+      @current_operation current_operation
+
+      test "should enrich operation '#{current_operation}' completed events in clusters" do
+        %{id: cluster_id, name: name} = insert(:cluster)
+
+        initial_metadata = %{
+          resource_id: cluster_id,
+          operation: @current_operation
+        }
+
+        assert {:ok, %{name: ^name}} =
+                 MetadataEnricher.enrich(:operation_completed, initial_metadata)
+      end
+
+      test "should enrich operation '#{current_operation}' requested events in clusters" do
+        %{id: cluster_id, name: name} = insert(:cluster)
+
+        initial_metadata = %{
+          resource_id: cluster_id,
+          operation: @current_operation
+        }
+
+        assert {:ok, %{name: ^name}} =
+                 MetadataEnricher.enrich(:cluster_operation_requested, initial_metadata)
       end
     end
   end

@@ -163,21 +163,40 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
     test "should extract operation metadata from requested operation", %{conn: conn} do
       resource_id = Faker.UUID.v4()
       operation_id = Faker.UUID.v4()
-      operation = "saptune_solution_apply"
-      params = %{"key" => "value"}
+      body_params = %{"key" => "value"}
 
-      assert %{
-               :resource_id => resource_id,
-               :operation => :saptune_solution_apply,
-               :operation_id => operation_id,
-               :params => params
-             } ==
-               PhoenixConnParser.get_activity_metadata(:operation_requested, %Plug.Conn{
-                 conn
-                 | params: %{id: resource_id, operation: operation},
-                   body_params: params,
-                   resp_body: Jason.encode!(%{operation_id: operation_id})
-               })
+      # No need to add all operations. One operation per resource type is enough
+      scenarios = [
+        %{
+          action: :cluster_operation_requested,
+          operation: "cluster_maintenance_change",
+          atom_operation: :cluster_maintenance_change
+        },
+        %{
+          action: :host_operation_requested,
+          operation: "saptune_solution_apply",
+          atom_operation: :saptune_solution_apply
+        }
+      ]
+
+      for %{
+            action: action,
+            operation: operation,
+            atom_operation: atom_operation
+          } <- scenarios do
+        assert %{
+                 :resource_id => resource_id,
+                 :operation => atom_operation,
+                 :operation_id => operation_id,
+                 :params => body_params
+               } ==
+                 PhoenixConnParser.get_activity_metadata(action, %Plug.Conn{
+                   conn
+                   | params: %{id: resource_id, operation: operation},
+                     body_params: body_params,
+                     resp_body: Jason.encode!(%{operation_id: operation_id})
+                 })
+      end
     end
   end
 

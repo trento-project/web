@@ -16,7 +16,7 @@ defmodule Trento.ActivityLog.QueueEventParserTest do
 
       %{actor: actor} =
         insert(:activity_log_entry,
-          type: "operation_requested",
+          type: "someresource_operation_requested",
           metadata: %{"operation_id" => operation_id}
         )
 
