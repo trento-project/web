@@ -1,6 +1,7 @@
 # Alerting
 
-The Alerting feature notifies the SAP Administrator about important events detected in the Landscape being monitored/observed by Trento.
+The Alerting feature notifies the SAP Administrator about important
+events detected in the Landscape being monitored/observed by Trento.
 
 Some of the notified events:
 - **Host Health detected critical**
@@ -15,18 +16,46 @@ This feature is **disabled by default**.
 
 There are two ways to enable and configure SMTP alerting:
 
-- via Environment Variables (env-vars)
-- via WebUI/RESTful API
+### Configure Alerting with Environment Variables
 
-The env-vars have precedence. If _any_ of the following env-vars is
-set, then alerting configuration is _only_ made via env-vars:
-`ENABLE_ALERTING`, `ALERTING_SENDER`, `ALERTING_RECIPIENT`,
-`SMTP_SERVER`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`. Trento
-provides default values for the env-vars that are not explicitly
-set. To quickly enable alerting, provide `ENABLE_ALERTING=true` as an
+The following OS environment variables could be set before
+starting Trento:
+
+| Env-var              | Description                                                     |
+| ---                  | ---                                                             |
+| `ENABLE_ALERTING`    | Enables sending alerting e-mails when set to `true`             |
+| `ALERT_SENDER`       | The e-mail address that would be used as sender                 |
+| `ALERT_RECIPIENT`    | The e-mail address of the receiving entity                      |
+| `SMTP_SERVER`        | Domain name of the SMTP server that would handle the submission |
+| `SMTP_PORT`          | The port SMTP server listens on for new submissions             |
+| `SMTP_USER    `      | Username used for authentication, if required                   |
+| `SMTP_PASSWORD`      | Password used for authentication, if required                   |
+
+Trento provides default values for the environment variables that are
+not explicitly set.
+
+To quickly enable alerting, provide `ENABLE_ALERTING=true` as an
 environment variable when starting Trento.
 
-Example configuration:
+### Configure Alerting by using WebUI/RESTful API
+
+Configuring the alerting values could be done in a self-explanatory
+manner from Settings menu in Trento web console.
+
+Additionally, Trento supports changing these settings by the Web API
+for which OpenAPI specification is available.
+
+Both of these methods modify alerting in real-time without needing a
+restart.
+
+### Priority of Configuration Methods
+
+Environment variables have precedence. If _any_ of the previously
+mentioned environment variables is set, configuration via environment
+variables takes full precedence, and the WebUI/API method is disabled.
+
+### Example configuration
+
 ```
 ENABLE_ALERTING=true
 ALERT_SENDER=sender@yourmail.com
@@ -38,26 +67,23 @@ SMTP_USER=user
 SMTP_PASSWORD=password
 ```
 
-The other way of configuring alerting is via the Web interface or
-through the API. To be able to use this variant, _all_ of the
-aforementioned env-vars should be left undefined when starting
-Trento. Then, configuring the alerting values could be done in a
-self-explanatory manner from Settings menu in Trento web
-console. There is also an OpenAPI spec for the API.
-
-Currently **SMTP** is the **only supported delivery mechanism** for
-alert notifications.
+> [!Note]
+> Currently **SMTP** is the **only supported delivery mechanism** for
+> alert notifications.
 
 ## Enabling Alerting at a later stage
 
-If no env-vars are in place, then you can freely change alerting
-configuration via WebUI and/or RESTful API at any time without needing
-to restart.
+If no alerting-related environment variables are set, modify the
+alerting configuration through the WebUI or RESTful API — without
+restarting Trento.
 
-If your current Trento installation has alerting env-vars in-place,
-then in order to change them you have to restart Trento with the new
-values. If using Helm, for example, you can change alerting env-vars
-by upgrading the deployment:
+If the Trento deployment uses alerting environment variables, any
+changes require a restart of the service.
+
+### Example: Updating Alerting Environment Variables with Helm:
+
+If helm is used, update alerting-related env-vars by upgrading the
+deployment:
 
 ```
 helm upgrade
@@ -75,18 +101,22 @@ helm upgrade
 
 ## Local development and testing
 
-Our `docker-compose.yaml` file contains a profile providing a Mailpit
-SMTP server. You can make use of it with the following snippet:
+The provided `docker-compose.yaml` file includes a profile that launches
+a [Mailpit](https://github.com/axllent/mailpit) SMTP server for local
+testing.
+
+To start Mailpit, run:
 
 ```
 docker compose --profile smtp up -d
 ```
 
-Mailpit has great web UI that can be accessed on `localhost:8025`.
+Access Mailpit’s web interface at: http://localhost:8025/
 
-Since we need to support several scenarios with SMTP servers, our
-compose file is parameterized with several trento-specific
-environment variables:
+### Configuration Options
+
+The Docker Compose setup supports multiple SMTP scenarios using the
+following Trento-specific environment variables:
 
 - `TRENTO_SMTP_AUTHENTICATED` -- By setting it to non-empty,
   configures Mailpit to require authentication from its clients.
@@ -96,6 +126,7 @@ environment variables:
   development without need to setup TLS.
 
 By default, the Mailpit SMTP server runs without need for
-authentication over unecnrypted channel.
+authentication over an unencrypted channel.
 
-TBD: Add STARTTLS/TLS configuration.
+> [!IMPORTANT]
+> *TBD*: Add STARTTLS/TLS configuration.
