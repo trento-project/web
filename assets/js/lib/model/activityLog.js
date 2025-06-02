@@ -114,7 +114,8 @@ export const DATABASE_TENANTS_UPDATED = 'database_tenants_updated';
 export const DATABASE_TOMBSTONED = 'database_tombstoned';
 
 // Operations
-export const OPERATION_REQUESTED = 'operation_requested';
+export const CLUSTER_OPERATION_REQUESTED = 'cluster_operation_requested';
+export const HOST_OPERATION_REQUESTED = 'host_operation_requested';
 export const OPERATION_COMPLETED = 'operation_completed';
 
 // Check Customization
@@ -580,11 +581,17 @@ export const ACTIVITY_TYPES_CONFIG = {
     resource: databaseResourceType,
   },
   // Operations
-  [OPERATION_REQUESTED]: {
-    label: 'Operation Requested',
+  [CLUSTER_OPERATION_REQUESTED]: {
+    label: 'Cluster Operation Requested',
     message: ({ metadata }) =>
       `Operation ${getOperationLabel(metadata.operation)} requested`,
-    resource: operationResourceType,
+    resource: clusterResourceType,
+  },
+  [HOST_OPERATION_REQUESTED]: {
+    label: 'Host Operation Requested',
+    message: ({ metadata }) =>
+      `Operation ${getOperationLabel(metadata.operation)} requested`,
+    resource: hostResourceType,
   },
   [OPERATION_COMPLETED]: {
     label: 'Operation Completed',
