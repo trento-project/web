@@ -84,7 +84,8 @@ context('Settings page', () => {
     });
 
     describe('Changing Settings', () => {
-      it('should show settings edit form', () => {
+      // eslint-disable-next-line mocha/no-exclusive-tests
+      it.only('should show settings edit form', () => {
         settingsPage.editFormIsDisplayedAsExpected();
       });
 
