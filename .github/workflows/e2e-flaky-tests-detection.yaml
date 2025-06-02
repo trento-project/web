@@ -229,7 +229,12 @@ jobs:
         with:
           name: e2e-junit-reports-${{ matrix.container }}
           path: /tmp/*.xml
-
+      - name: Upload cypress test videos
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: e2e-video-${{ matrix.containers }}
+          path: test/e2e/cypress/videos/
 
   flaky-tests-analysis:
     name: Flaky Tests Analysis
@@ -258,7 +263,7 @@ jobs:
           make install-deps
           make PATH-TO-JUNIT-FILES=../../junit-reports analyze-files 2>&1 | tail -n +2 >> $GITHUB_STEP_SUMMARY
         working-directory: hack/flaky_tests_analysis
-      - name: Delete Artifacts
-        uses: geekyeggo/delete-artifact@v5
-        with:
-          name: e2e-junit-reports-*
+      # - name: Delete Artifacts
+      #   uses: geekyeggo/delete-artifact@v5
+      #   with:
+      #     name: e2e-junit-reports-*
