@@ -214,7 +214,7 @@ jobs:
         uses: cypress-io/github-action@v6
         continue-on-error: true
         env:
-          cypress_video: false
+          cypress_video: true
           cypress_db_host: postgres
           cypress_db_port: 5432
           cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
