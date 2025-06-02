@@ -232,7 +232,7 @@ jobs:
       - name: Upload cypress test videos
         uses: actions/upload-artifact@v4
         with:
-          name: e2e-video-${{ matrix.containers }}
+          name: e2e-video-${{ matrix.container }}
           path: test/e2e/cypress/videos/*.mp4
 
   flaky-tests-analysis:
