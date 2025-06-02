@@ -234,7 +234,7 @@ jobs:
         if: failure()
         with:
           name: e2e-video-${{ matrix.containers }}
-          path: test/e2e/cypress/videos/
+          path: test/e2e/cypress/videos/*.mp4
 
   flaky-tests-analysis:
     name: Flaky Tests Analysis
