@@ -101,15 +101,9 @@ helm upgrade
 
 ## Local development and testing
 
-The provided `docker-compose.yaml` file includes a profile that launches
-a [Mailpit](https://github.com/axllent/mailpit) SMTP server for local
-testing.
-
-To start Mailpit, run:
-
-```
-docker compose --profile smtp up -d
-```
+The provided `docker-compose.yaml` file includes a
+[Mailpit](https://github.com/axllent/mailpit) SMTP server for local
+testing during development.
 
 Access Mailpit’s web interface at: http://localhost:8025/
 
