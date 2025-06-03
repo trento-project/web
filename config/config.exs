@@ -32,7 +32,7 @@ config :trento, Trento.Mailer, adapter: Swoosh.Adapters.Local
 # Swoosh API client is needed for adapters other than SMTP.
 config :swoosh, :api_client, false
 
-# configure the recipient for alert notifications
+# Configure essential settings for alert notifications
 config :trento, :alerting,
   enabled: nil,
   smtp_server: nil,

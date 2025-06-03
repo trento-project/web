@@ -108,7 +108,6 @@ services:
       - trento-checks:/usr/share/trento/checks
 
   mailpit:
-    profiles: [smtp]
     image: ghcr.io/axllent/mailpit:v1.24
     volumes:
       - mailpit:/data

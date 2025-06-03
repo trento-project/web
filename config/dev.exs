@@ -84,6 +84,32 @@ config :trento, TrentoWeb.Endpoint,
     ]
   ]
 
+config :trento, :alerting,
+  enabled: true,
+  smtp_server: "localhost",
+  smtp_port: "1025",
+  smtp_username: "trentouser",
+  smtp_password: "pass"
+
+[_ | _] = cacerts = :public_key.cacerts_get()
+
+config :trento, Trento.Mailer,
+  adapter: Swoosh.Adapters.SMTP,
+  # `relay`, `port`, `username` and `password` would be supplied
+  # dynamically during runtime and would be derived from values
+  # specified in the :alerting key.
+  auth: :if_available,
+  ssl: false,
+  tls: :if_available,
+  tls_options: [
+    versions: [:"tlsv1.2", :"tlsv1.3"],
+    cacerts: cacerts,
+    # `server_name_indication` would be supplied dynamically during
+    # runtime and would be derived from values
+    # specified in the :alerting key.
+    depth: 99
+  ]
+
 unless IEx.started?() do
   config :trento, Trento.Scheduler,
     jobs: [
