@@ -124,7 +124,10 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
         |> assert_schema("PatchesForPackagesResponse", api_spec)
     end
 
-    test "should return an empty list if every call errors", %{conn: conn, api_spec: api_spec} do
+    test "should return an error if at least one package query fails", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
       insert_software_updates_settings()
 
       relevant_patches = [
@@ -143,20 +146,18 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
           upgradable_packages: upgradable_packages
         )
 
-      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_affected_packages, 3, fn _ ->
-        {:error, :error_getting_patches}
+      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_affected_packages, 1, fn _ ->
+        {:ok, build_list(10, :affected_package)}
       end)
 
-      %{
-        patches: [
-          %{package_id: _, patches: []},
-          %{package_id: _, patches: []}
-        ]
-      } =
-        conn
-        |> get("/api/v1/software_updates/packages?host_id=#{host_id}")
-        |> json_response(:ok)
-        |> assert_schema("PatchesForPackagesResponse", api_spec)
+      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_affected_packages, 1, fn _ ->
+        {:error, :error_getting_affected_packages}
+      end)
+
+      conn
+      |> get("/api/v1/software_updates/packages?host_id=#{host_id}")
+      |> json_response(:unprocessable_entity)
+      |> assert_schema("UnprocessableEntity", api_spec)
     end
   end
 
