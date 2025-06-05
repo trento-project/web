@@ -79,7 +79,6 @@ defmodule Trento.SoftwareUpdates do
       |> Enum.map(fn
         {_, {:error, _} = error} -> error
         {advisory, {:ok, packages}} -> Map.put(advisory, :packages, packages)
-        {advisory, _} -> Map.put(advisory, :packages, [])
       end)
 
     if Enum.any?(affected_packages_for_patches, &match?({:error, _}, &1)) do
