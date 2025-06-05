@@ -34,12 +34,20 @@ defmodule Trento.ActivityLog.Parser.ActivityParser do
         |> SeverityLevel.map_severity_level(enriched_metadata)
         |> SeverityLevel.severity_level_to_integer()
 
+      causation_id = activity_context.metadata[:causation_id]
+      correlation_id = activity_context.metadata[:correlation_id]
+
+      further_enriched_metadata =
+        enriched_metadata
+        |> Map.put(:causation_id, causation_id)
+        |> Map.put(:correlation_id, correlation_id)
+
       {:ok,
        %{
          type: activity_type,
          actor: actor,
          severity: severity,
-         metadata: enriched_metadata
+         metadata: further_enriched_metadata
        }}
     else
       _ -> {:error, :cannot_parse_activity}

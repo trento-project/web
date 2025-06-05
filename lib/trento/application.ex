@@ -11,6 +11,8 @@ defmodule Trento.Application do
       [
         # Start the Ecto repository
         Trento.Repo,
+        {Oban, Application.fetch_env!(:trento, Oban)},
+        {Cachex, [:activity_trace]},
         # Start the Telemetry supervisor
         TrentoWeb.Telemetry,
         # Start the PubSub system
