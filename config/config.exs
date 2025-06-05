@@ -73,6 +73,19 @@ config :trento, Trento.Commanded,
   pubsub: :local,
   registry: :local
 
+config :commanded_audit_middleware,
+  ecto_repos: [Commanded.Middleware.Auditing.Repo],
+  serializer: EventStore.JsonbSerializer,
+  data_column_schema_type: :map,
+  metadata_column_schema_type: :map,
+  data_column_db_type: :jsonb,
+  metadata_column_db_type: :jsonb
+
+config :trento, Oban,
+  repo: Trento.Repo,
+  engine: Oban.Engines.Basic,
+  queues: [activity_linker: 20]
+
 config :trento, Trento.Infrastructure.Commanded.EventHandlers.StreamRollUpEventHandler,
   max_stream_version: 10_000
 
