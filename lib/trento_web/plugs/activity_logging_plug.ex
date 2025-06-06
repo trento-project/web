@@ -12,7 +12,10 @@ defmodule TrentoWeb.Plugs.ActivityLoggingPlug do
 
   def init(default), do: default
 
-  def call(%Plug.Conn{} = conn, _default \\ nil), do: register_before_send(conn, &log_activity/1)
+  def call(%Plug.Conn{} = conn, _default \\ nil) do
+    conn = assign(conn, :correlation_id, UUID.uuid4())
+    register_before_send(conn, &log_activity/1)
+  end
 
   defp log_activity(conn) do
     Task.Supervisor.start_child(Trento.TasksSupervisor, fn ->
