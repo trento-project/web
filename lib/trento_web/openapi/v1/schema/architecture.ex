@@ -1,0 +1,17 @@
+defmodule TrentoWeb.OpenApi.V1.Schema.Architecture do
+  @moduledoc false
+
+  require OpenApiSpex
+  require Trento.Enums.Architecture, as: Architecture
+
+  OpenApiSpex.schema(
+    %{
+      title: "Architecture",
+      type: :string,
+      nullable: false,
+      description: "Detected architecture of a host",
+      enum: Architecture.values()
+    },
+    struct?: false
+  )
+end
