@@ -264,10 +264,9 @@ export const ACTIVITY_TYPES_CONFIG = {
   },
   [HOST_CLEANUP_REQUESTED]: {
     label: 'Host Cleanup Requested',
-    message: ({actor}) => `Host cleanup requested by ${actor}`,
+    message: ({ actor }) => `Host cleanup requested by ${actor}`,
     resource: userResourceType,
   },
-
 
   [ACTIVITY_LOG_SETTINGS_UPDATE]: {
     label: 'Activity Log Settings Updated',
