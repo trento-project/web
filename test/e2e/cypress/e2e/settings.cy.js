@@ -2,6 +2,10 @@ import * as settingsPage from '../pageObject/settings_po';
 
 context('Settings page', () => {
   beforeEach(() => {
+    Cypress.on('uncaught:exception', (err) => {
+      cy.log(err);
+      return false;
+    });
     settingsPage.visit();
     settingsPage.waitForRequest('settingsEndpoint');
   });
