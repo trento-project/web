@@ -15,6 +15,8 @@ defmodule Trento.Discovery.Payloads.HostDiscoveryPayload do
 
   use Trento.Support.Type
 
+  require Trento.Enums.Architecture, as: Architecture
+
   deftype do
     field :hostname, :string
     field :ip_addresses, {:array, :string}
@@ -30,10 +32,16 @@ defmodule Trento.Discovery.Payloads.HostDiscoveryPayload do
     field :installation_source, Ecto.Enum,
       values: [:community, :suse, :unknown],
       default: :unknown
+
+    field :arch, Ecto.Enum,
+      values: Architecture.values(),
+      default: Architecture.unknown()
   end
 
   def changeset(host, attrs) do
-    modified_attrs = installation_source_to_downcase(attrs)
+    modified_attrs =
+      installation_source_to_downcase(attrs)
+      |> arch_to_downcase()
 
     host
     |> cast(modified_attrs, fields())
@@ -44,4 +52,9 @@ defmodule Trento.Discovery.Payloads.HostDiscoveryPayload do
     do: %{attrs | "installation_source" => String.downcase(installation_source)}
 
   defp installation_source_to_downcase(attrs), do: attrs
+
+  defp arch_to_downcase(%{"arch" => arch} = attrs),
+    do: %{attrs | "arch" => String.downcase(arch)}
+
+  defp arch_to_downcase(attrs), do: attrs
 end

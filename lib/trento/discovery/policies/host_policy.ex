@@ -133,6 +133,7 @@ defmodule Trento.Discovery.Policies.HostPolicy do
          %HostDiscoveryPayload{
            hostname: hostname,
            agent_version: agent_version,
+           arch: arch,
            cpu_count: cpu_count,
            total_memory_mb: total_memory_mb,
            socket_count: socket_count,
@@ -148,6 +149,7 @@ defmodule Trento.Discovery.Policies.HostPolicy do
            hostname: hostname,
            ip_addresses: build_ip_addresses(payload),
            agent_version: agent_version,
+           arch: arch,
            cpu_count: cpu_count,
            total_memory_mb: total_memory_mb,
            socket_count: socket_count,
