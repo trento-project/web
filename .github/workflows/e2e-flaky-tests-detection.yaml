@@ -233,7 +233,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: e2e-screenshots-${{ matrix.container }}
-          path: test/e2e/cypress/screenshots/*.png
+          path: test/e2e/cypress/screenshots/**/*.png
 
   flaky-tests-analysis:
     name: Flaky Tests Analysis
