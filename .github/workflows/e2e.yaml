@@ -48,7 +48,7 @@ jobs:
           workspace: "trentoe2e"
           # workspace: ${{ github.head_ref }}
       - name: Deploy test infrastructure
-        uses: dflook/terraform-apply@v1
+        uses: dflook/terraform-apply@v2
         continue-on-error: true
         with:
           path: terraform/deployments/aws/hana_ha_enabled
