@@ -31,6 +31,21 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
   end
 
   def get_activity_metadata(
+        :host_cleanup_requested = _action,
+        %Plug.Conn{
+          assigns: %{
+            plug_request_id: request_id,
+            correlation_id: correlation_id
+          }
+        } = _conn
+      ) do
+    %{
+      request_id: request_id,
+      correlation_id: correlation_id
+    }
+  end
+
+  def get_activity_metadata(
         :resource_tagging,
         %Plug.Conn{
           params: %{id: resource_id},

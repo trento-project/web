@@ -25,6 +25,7 @@ defmodule Trento.ActivityLog.SeverityLevel do
     },
     "host_checks_selected" => :warning,
     "host_checks_execution_request" => :info,
+    "host_cleanup_requested" => :warning,
     "host_deregistered" => :warning,
     "host_deregistration_requested" => :debug,
     "host_details_updated" => :info,
