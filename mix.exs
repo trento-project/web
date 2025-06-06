@@ -83,7 +83,6 @@ defmodule Trento.MixProject do
       {:junit_formatter, "~> 3.4", only: [:test]},
       {:mox, "~> 1.0", only: :test},
       {:nimble_parsec, "~> 1.4"},
-      {:oban, "~> 2.19"},
       {:open_api_spex, "~> 3.19.1"},
       {:pegasus, "~> 0.2.5"},
       {:phoenix, "~> 1.7.14"},
