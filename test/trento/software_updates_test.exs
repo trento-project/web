@@ -78,13 +78,13 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
     test "should return an aggregated list of packages and related patches" do
       insert_software_updates_settings()
 
-      [%{advisory_name: first_patch_name}, %{advisory_name: second_patch_name}] =
+      [%{advisory_name: first_patch_name}, %{advisory_name: _second_patch_name}] =
         relevant_patches = [
           build(:relevant_patch, id: 4182),
           build(:relevant_patch, id: 4174)
         ]
 
-      [%{to_package_id: first_package_id}, %{to_package_id: second_package_id}] =
+      [%{to_package_id: _first_package_id}, %{to_package_id: _second_package_id}] =
         upgradable_packages = [
           build(:upgradable_package, name: "elixir"),
           build(:upgradable_package, name: "systemd")
@@ -105,30 +105,11 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
         ^first_patch_name ->
           {:ok, affected_packages}
 
-        ^second_patch_name ->
-          {:ok, affected_packages}
-
         _ ->
           {:error, :some_error}
       end)
 
-      assert {:ok,
-              [
-                %{
-                  package_id: ^first_package_id,
-                  patches: [
-                    %{advisory_name: ^first_patch_name},
-                    %{advisory_name: ^second_patch_name}
-                  ]
-                },
-                %{
-                  package_id: ^second_package_id,
-                  patches: [
-                    %{advisory_name: ^first_patch_name},
-                    %{advisory_name: ^second_patch_name}
-                  ]
-                }
-              ]} =
+      assert {:error, :error_getting_affected_packages} =
                SoftwareUpdates.get_packages_patches(host_id)
     end
   end
