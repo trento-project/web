@@ -118,6 +118,14 @@ defmodule Trento.Infrastructure.Operations.OperationsTest do
         %{
           operation_type: :cluster_maintenance_change,
           internal_type: "clustermaintenancechange@v1"
+        },
+        %{
+          operation_type: :sap_instance_start,
+          internal_type: "sapinstancestart@v1"
+        },
+        %{
+          operation_type: :sap_instance_stop,
+          internal_type: "sapinstancestop@v1"
         }
       ]
 
@@ -143,6 +151,14 @@ defmodule Trento.Infrastructure.Operations.OperationsTest do
         %{
           operation: :cluster_maintenance_change,
           operator_name: "clustermaintenancechange@v1"
+        },
+        %{
+          operation: :sap_instance_start,
+          operator_name: "sapinstancestart@v1"
+        },
+        %{
+          operation: :sap_instance_stop,
+          operator_name: "sapinstancestop@v1"
         }
       ]
 

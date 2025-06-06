@@ -10,6 +10,8 @@ defmodule Trento.SapSystems do
     SapSystemReadModel
   }
 
+  alias Trento.Infrastructure.Operations
+
   alias Trento.Support.DateService
 
   alias Trento.SapSystems.Commands.DeregisterApplicationInstance
@@ -79,6 +81,24 @@ defmodule Trento.SapSystems do
         )
     end
   end
+
+  @spec request_operation(atom(), String.t(), map()) :: {:ok, String.t()} | {:error, any}
+  def request_operation(operation, _, %{host_id: host_id} = params)
+      when operation in [:sap_instance_start, :sap_instance_stop] do
+    operation_id = UUID.uuid4()
+
+    case Operations.request_operation(
+           operation_id,
+           host_id,
+           Operations.map_operation(operation),
+           [%{agent_id: host_id, arguments: params}]
+         ) do
+      :ok -> {:ok, operation_id}
+      error -> error
+    end
+  end
+
+  def request_operation(_, _, _), do: {:error, :operation_not_found}
 
   defp commanded,
     do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]

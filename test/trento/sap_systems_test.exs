@@ -11,6 +11,15 @@ defmodule Trento.SapSystemsTest do
 
   alias Trento.SapSystems.Commands.DeregisterApplicationInstance
 
+  alias Trento.Operations.V1.{
+    OperationRequested,
+    OperationTarget
+  }
+
+  alias Google.Protobuf.Value, as: ProtobufValue
+
+  alias Trento.Infrastructure.Operations.AMQP.Publisher, as: OperationsPublisher
+
   @moduletag :integration
 
   describe "sap_systems" do
@@ -149,6 +158,72 @@ defmodule Trento.SapSystemsTest do
                  instance_number,
                  Trento.Support.DateService.Mock
                )
+    end
+  end
+
+  describe "request_operation/3" do
+    scenarios = [
+      %{
+        operation: :sap_instance_start,
+        expected_operator: "sapinstancestart@v1"
+      },
+      %{
+        operation: :sap_instance_stop,
+        expected_operator: "sapinstancestop@v1"
+      }
+    ]
+
+    for %{operation: operation} = scenario <- scenarios do
+      @scenario scenario
+
+      test "should request #{operation} operation" do
+        %{operation: operation, expected_operator: expected_operator} = @scenario
+
+        %{host_id: host_id, instance_number: instance_number} = insert(:application_instance)
+        params = %{host_id: host_id, instance_number: instance_number}
+
+        expect(
+          Trento.Infrastructure.Messaging.Adapter.Mock,
+          :publish,
+          1,
+          fn OperationsPublisher,
+             "requests",
+             %OperationRequested{
+               group_id: ^host_id,
+               operation_type: ^expected_operator,
+               targets: [
+                 %OperationTarget{
+                   agent_id: ^host_id,
+                   arguments: %{
+                     "host_id" => %ProtobufValue{kind: {:string_value, ^host_id}},
+                     "instance_number" => %ProtobufValue{kind: {:string_value, ^instance_number}}
+                   }
+                 }
+               ]
+             } ->
+            :ok
+          end
+        )
+
+        assert {:ok, _} =
+                 SapSystems.request_operation(operation, UUID.uuid4(), params)
+      end
+
+      test "should handle operation #{operation} publish error" do
+        %{operation: operation} = @scenario
+
+        expect(
+          Trento.Infrastructure.Messaging.Adapter.Mock,
+          :publish,
+          1,
+          fn OperationsPublisher, "requests", _ ->
+            {:error, :amqp_error}
+          end
+        )
+
+        assert {:error, :amqp_error} =
+                 SapSystems.request_operation(operation, UUID.uuid4(), %{host_id: UUID.uuid4()})
+      end
     end
   end
 end

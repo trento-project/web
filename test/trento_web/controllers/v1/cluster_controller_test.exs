@@ -160,7 +160,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
       %{id: cluster_id} = insert(:cluster)
 
       conn
-      |> post("/api/v1/hosts/#{cluster_id}/operations/unknown")
+      |> post("/api/v1/clusters/#{cluster_id}/operations/unknown")
       |> json_response(:not_found)
       |> assert_schema("NotFound", api_spec)
     end
