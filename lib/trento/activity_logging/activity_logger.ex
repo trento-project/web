@@ -31,8 +31,6 @@ defmodule Trento.ActivityLog.ActivityLogger do
         Logger.error(
           "An error occurred while logging activity: #{activity_type}. Reason: #{inspect(reason)}"
         )
-
-        :error
     end
   end
 end
