@@ -42,3 +42,5 @@ npm-debug.log
 
 # Local dev.local.exs file
 config/dev.local.exs
+
+storybook-static
