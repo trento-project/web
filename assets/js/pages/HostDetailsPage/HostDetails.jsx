@@ -69,6 +69,7 @@ export const buildCidrNotation = (ipAddresses, netmasks) =>
 
 function HostDetails({
   agentVersion,
+  arch,
   chartsEnabled,
   cluster,
   deregisterable,
@@ -299,6 +300,7 @@ function HostDetails({
         )}
         <div className="flex xl:flex-row flex-col">
           <HostSummary
+            arch={arch}
             agentVersion={agentVersion}
             cluster={cluster}
             ipAddresses={buildCidrNotation(ipAddresses, netmasks)}

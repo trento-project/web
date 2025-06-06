@@ -123,6 +123,7 @@ function HostDetailsPage() {
   return (
     <HostDetails
       agentVersion={host.agent_version}
+      arch={host.arch}
       chartsEnabled={chartsEnabled}
       cluster={cluster}
       deregisterable={host.deregisterable}

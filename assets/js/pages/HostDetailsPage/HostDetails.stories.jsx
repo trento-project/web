@@ -48,6 +48,13 @@ export default {
       control: 'object',
       description: 'The cluster which this host belongs to',
     },
+    arch: {
+      control: 'text',
+      description: 'The architecture of the host',
+      table: {
+        type: { summary: 'string' },
+      },
+    },
     deregisterable: {
       control: { type: 'boolean' },
       description: 'The host is in deregisterable state',
@@ -188,6 +195,7 @@ export default {
 export const Default = {
   args: {
     agentVersion: host.agent_version,
+    arch: host.arch,
     chartsEnabled: false,
     cluster,
     deregisterable: false,

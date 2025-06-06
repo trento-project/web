@@ -31,23 +31,27 @@ const renderIpAddresses = (ipAddresses) => {
   );
 };
 
-function HostSummary({ agentVersion, cluster, ipAddresses }) {
+function HostSummary({ agentVersion, arch, cluster, ipAddresses }) {
   return (
     <div className="mt-4 bg-white shadow rounded-lg py-4 px-8 xl:w-2/5 mr-4">
       <ListView
-        className="grid-rows-3"
+        className="grid-rows-3 grid-flow-row"
         orientation="vertical"
         data={[
           {
-            title: 'Cluster',
-            content: <ClusterLink cluster={cluster} />,
+            title: 'Architecture',
+            content: arch,
           },
-          { title: 'Agent Version', content: agentVersion },
+          { title: 'Agent Version', className: 'col-span-2', content: agentVersion },
           {
             title: 'IP Addresses',
             render: renderIpAddresses,
-            className: 'overflow-hidden overflow-ellipsis',
+            className: 'overflow-hidden overflow-ellipsis col-span-2',
             content: ipAddresses,
+          },
+          {
+            title: 'Cluster',
+            content: <ClusterLink cluster={cluster} />,
           },
         ]}
       />
