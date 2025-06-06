@@ -53,11 +53,9 @@ defmodule Trento.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:cachex, "~> 4.0"},
       {:commanded, "~> 1.4"},
       {:commanded_ecto_projections, "~> 1.3"},
       {:commanded_eventstore_adapter, "~> 1.4"},
-      {:commanded_audit_middleware, "~> 1.0"},
       {:cloak, "~> 1.1.2"},
       {:cloak_ecto, "~> 1.2.0"},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
@@ -96,7 +94,7 @@ defmodule Trento.MixProject do
       {:phoenix_live_view, "~> 0.20.17"},
       {:phoenix_swoosh, "~> 1.0"},
       {:plug_cowboy, "~> 2.5"},
-      {:postgrex, ">= 0.0.0", override: true},
+      {:postgrex, ">= 0.0.0"},
       {:pow, "~> 1.0.38"},
       {:quantum, ">= 1.8.0"},
       {:swoosh, "~> 1.3"},
