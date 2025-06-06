@@ -5,6 +5,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Host do
   alias OpenApiSpex.Schema
 
   alias TrentoWeb.OpenApi.V1.Schema.{
+    Architecture,
     Provider,
     ResourceHealth,
     SaptuneStatus,
@@ -71,6 +72,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Host do
             type: :string,
             description: "Version of the agent installed on the host"
           },
+          arch: Architecture,
           health: ResourceHealth,
           cluster_id: %Schema{
             type: :string,
