@@ -79,14 +79,8 @@ defmodule TrentoWeb.V1.HostController do
 
   @spec delete(Plug.Conn.t(), map) :: Plug.Conn.t()
   def delete(conn, %{id: host_id}) do
-    request_id = conn.assigns[:plug_request_id]
-    correlation_and_causation_id = UUID.uuid4()
-
-    Cachex.put(:activity_trace, host_id, %{
-      causation_id: correlation_and_causation_id,
-      correlation_id: correlation_and_causation_id,
-      request_id: request_id
-    })
+    correlation_id = conn.assigns[:correlation_id]
+    Process.put(:correlation_id, correlation_id)
 
     case Hosts.deregister_host(host_id) do
       :ok -> send_resp(conn, 204, "")
