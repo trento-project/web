@@ -2,7 +2,10 @@ import * as settingsPage from '../pageObject/settings_po';
 
 context('Settings page', () => {
   beforeEach(() => {
-    Cypress.on('uncaught:exception', () => true);
+    Cypress.on('uncaught:exception', (err) => {
+      cy.log(err.message);
+      return true;
+    });
     cy.log('initial before Each');
     settingsPage.visit();
     settingsPage.waitForRequest('settingsEndpoint');
