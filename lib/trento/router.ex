@@ -49,7 +49,6 @@ defmodule Trento.Router do
   alias Trento.SapSystems
 
   middleware Enrich
-  middleware Commanded.Middleware.Auditing
 
   identify Hosts.Host, by: :host_id
 
