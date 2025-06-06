@@ -8,6 +8,7 @@ defmodule Trento.Factory do
   require Trento.Clusters.Enums.HanaArchitectureType, as: HanaArchitectureType
   require Trento.SapSystems.Enums.EnsaVersion, as: EnsaVersion
   require Trento.Enums.Health, as: Health
+  require Trento.Enums.Architecture, as: Architecture
   require Trento.SoftwareUpdates.Enums.AdvisoryType, as: AdvisoryType
   require Trento.SoftwareUpdates.Enums.SoftwareUpdatesHealth, as: SoftwareUpdatesHealth
   require Trento.ActivityLog.RetentionPeriodUnit, as: RetentionPeriodUnit
@@ -173,6 +174,7 @@ defmodule Trento.Factory do
       hostname: Faker.StarWars.character(),
       ip_addresses: ["#{Faker.Internet.ip_v4_address()}/#{Enum.random([16, 24, 32])}"],
       agent_version: Faker.App.semver(),
+      arch: Enum.random(Architecture.values()),
       cpu_count: Enum.random(1..16),
       total_memory_mb: Enum.random(1..128),
       socket_count: Enum.random(1..16),
@@ -191,6 +193,7 @@ defmodule Trento.Factory do
       fully_qualified_domain_name: Faker.Internet.domain_name(),
       ip_addresses: ["#{Faker.Internet.ip_v4_address()}/#{Enum.random([16, 24, 32])}"],
       agent_version: Faker.App.semver(),
+      arch: Enum.random(Architecture.values()),
       cpu_count: Enum.random(1..16),
       total_memory_mb: Enum.random(1..128),
       socket_count: Enum.random(1..16),
@@ -208,6 +211,7 @@ defmodule Trento.Factory do
       ip_addresses: [Faker.Internet.ip_v4_address()],
       netmasks: [Enum.random([16, 24, 32])],
       agent_version: Faker.StarWars.planet(),
+      arch: Enum.random(Architecture.values()),
       cluster_id: Faker.UUID.v4(),
       heartbeat: :unknown,
       health: :unknown,
@@ -911,6 +915,7 @@ defmodule Trento.Factory do
       hostname: Faker.StarWars.character(),
       ip_addresses: [Faker.Internet.ip_v4_address()],
       agent_version: Faker.App.semver(),
+      arch: Enum.random(Architecture.values()),
       cpu_count: Enum.random(1..16),
       total_memory_mb: Enum.random(1..128),
       socket_count: Enum.random(1..16),
@@ -959,6 +964,7 @@ defmodule Trento.Factory do
       "hostname" => Faker.StarWars.character(),
       "ip_addresses" => [Faker.Internet.ip_v4_address()],
       "agent_version" => Faker.App.semver(),
+      "arch": Enum.random(Architecture.values()),
       "cpu_count" => Enum.random(1..16),
       "total_memory_mb" => Enum.random(1..128),
       "socket_count" => Enum.random(1..16),
