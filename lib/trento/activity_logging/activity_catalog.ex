@@ -174,9 +174,9 @@ defmodule Trento.ActivityLog.ActivityCatalog do
       {TrentoWeb.V1.HostController, :select_checks} => {:host_checks_selected, 202},
       {TrentoWeb.V1.SettingsController, :update_activity_log_settings} =>
         {:activity_log_settings_update, 200},
-      {TrentoWeb.V1.HostController, :request_operation} => {:operation_requested, 202},
+      {TrentoWeb.V1.HostController, :request_operation} => {:host_operation_requested, 202},
       {TrentoWeb.V1.HostController, :delete} => {:host_cleanup_requested, 204},
-      {TrentoWeb.V1.ClusterController, :request_operation} => {:operation_requested, 202}
+      {TrentoWeb.V1.ClusterController, :request_operation} => {:cluster_operation_requested, 202}
     }
   end
 
