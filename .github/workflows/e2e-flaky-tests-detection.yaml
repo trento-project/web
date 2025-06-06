@@ -229,11 +229,11 @@ jobs:
         with:
           name: e2e-junit-reports-${{ matrix.container }}
           path: /tmp/*.xml
-      - name: Upload cypress test videos
+      - name: Upload cypress test screenshots
         uses: actions/upload-artifact@v4
         with:
-          name: e2e-video-${{ matrix.container }}
-          path: test/e2e/cypress/videos/*.mp4
+          name: e2e-screenshots-${{ matrix.container }}
+          path: test/e2e/cypress/screenshots/*.png
 
   flaky-tests-analysis:
     name: Flaky Tests Analysis
