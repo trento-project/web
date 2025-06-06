@@ -1,7 +1,7 @@
 import '../../priv/static/assets/app.css';
 
 export default {
-  parameters : {
+  parameters: {
     actions: { argTypesRegex: '^on[A-Z].*' },
     controls: {
       matchers: {
@@ -10,5 +10,5 @@ export default {
       },
     },
   },
-  tags: ['autodocs', 'autodocs']
-}
+  tags: ['autodocs', 'autodocs'],
+};
