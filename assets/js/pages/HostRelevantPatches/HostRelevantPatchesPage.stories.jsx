@@ -1,5 +1,5 @@
 import React from 'react';
-import { action } from '@storybook/addon-actions';
+import { action } from 'storybook/actions';
 
 import { relevantPatchFactory } from '@lib/test-utils/factories/relevantPatches';
 import { hostFactory } from '@lib/test-utils/factories/hosts';

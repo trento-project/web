@@ -1,6 +1,6 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { action } from '@storybook/addon-actions';
+import { action } from 'storybook/actions';
 import ProfileMenu from '.';
 
 function ContainerWrapper({ children }) {
