@@ -15,6 +15,7 @@ context('Settings page', () => {
       settingsPage.keyExpirationLabelIsDisplayed();
       settingsPage.apiKeyCodeIsNotEmpty();
       settingsPage.copyToClipboardButtonIsDisplayed();
+      cy.get('test').should('be.visible');
     });
   });
 
