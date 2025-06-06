@@ -58,6 +58,7 @@ defmodule Trento.Hosts.Host do
 
   require Trento.Enums.Provider, as: Provider
   require Trento.Enums.Health, as: Health
+  require Trento.Enums.Architecture, as: Architecture
   require Trento.SoftwareUpdates.Enums.SoftwareUpdatesHealth, as: SoftwareUpdatesHealth
 
   alias Commanded.Aggregate.Multi
@@ -134,6 +135,7 @@ defmodule Trento.Hosts.Host do
     field :heartbeat, Ecto.Enum, values: [:passing, :critical, :unknown]
     field :checks_health, Ecto.Enum, values: Health.values(), default: Health.unknown()
     field :saptune_health, Ecto.Enum, values: Health.values(), default: Health.unknown()
+    field :arch, Ecto.Enum, values: Architecture.values(), default: Architecture.unknown()
 
     field :software_updates_discovery_health, Ecto.Enum,
       values: SoftwareUpdatesHealth.values(),
