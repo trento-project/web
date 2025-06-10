@@ -195,7 +195,6 @@ defmodule Trento.SapSystemsTest do
                  %OperationTarget{
                    agent_id: ^host_id,
                    arguments: %{
-                     "host_id" => %ProtobufValue{kind: {:string_value, ^host_id}},
                      "instance_number" => %ProtobufValue{kind: {:string_value, ^instance_number}}
                    }
                  }

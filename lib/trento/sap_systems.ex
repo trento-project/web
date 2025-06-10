@@ -86,12 +86,13 @@ defmodule Trento.SapSystems do
   def request_operation(operation, _, %{host_id: host_id} = params)
       when operation in [:sap_instance_start, :sap_instance_stop] do
     operation_id = UUID.uuid4()
+    arguments = Map.delete(params, :host_id)
 
     case Operations.request_operation(
            operation_id,
            host_id,
            Operations.map_operation(operation),
-           [%{agent_id: host_id, arguments: params}]
+           [%{agent_id: host_id, arguments: arguments}]
          ) do
       :ok -> {:ok, operation_id}
       error -> error
