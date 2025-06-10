@@ -1,12 +1,14 @@
 import '../../priv/static/assets/app.css';
 
-export const parameters = {
-  actions: { argTypesRegex: '^on[A-Z].*' },
-  controls: {
-    matchers: {
-      color: /(background|color)$/i,
-      date: /Date$/,
+export default {
+  parameters: {
+    actions: { argTypesRegex: '^on[A-Z].*' },
+    controls: {
+      matchers: {
+        color: /(background|color)$/i,
+        date: /Date$/,
+      },
     },
   },
+  tags: ['autodocs', 'autodocs'],
 };
-export const tags = ['autodocs', 'autodocs'];
