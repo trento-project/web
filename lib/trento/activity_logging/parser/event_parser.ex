@@ -6,7 +6,7 @@ defmodule Trento.ActivityLog.Logger.Parser.EventParser do
   def get_activity_actor(_, %{event: _}), do: "system"
   def get_activity_actor(_, _), do: nil
 
-  def get_activity_metadata(_, %{event: event, metadata: metadata}) do
+  def get_activity_metadata(_, %{event: event, metadata: metadata}) when metadata != %{} do
     %{correlation_id: correlation_id, causation_id: causation_id} = metadata
 
     event
