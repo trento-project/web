@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { get } from 'lodash';
+import { get, noop } from 'lodash';
 import { SAP_INSTANCE_START, SAP_INSTANCE_STOP } from '@lib/operations';
 
 import OperationModal from './OperationModal';
@@ -14,12 +14,11 @@ const getDescription = (operation, instanceNumber, sid) =>
 
 function SapInstanceStartStopModal({
   operation,
-  hostID,
   instanceNumber,
   sid,
   isOpen = false,
-  onRequest,
-  onCancel,
+  onRequest = noop,
+  onCancel = noop,
 }) {
   const [checked, setChecked] = useState(false);
 
@@ -33,10 +32,7 @@ function SapInstanceStartStopModal({
       isOpen={isOpen}
       onChecked={() => setChecked((prev) => !prev)}
       onRequest={() => {
-        onRequest({
-          host_id: hostID,
-          instance_number: instanceNumber,
-        });
+        onRequest({});
         setChecked(false);
       }}
       onCancel={() => {

@@ -8,11 +8,8 @@ import { SAP_INSTANCE_START, SAP_INSTANCE_STOP } from '@lib/operations';
 
 import SapInstanceStartStopModal from './SapInstanceStartStopModal';
 
-const {
-  host_id: hostID,
-  instancen_number: instanceNumber,
-  sid,
-} = sapSystemApplicationInstanceFactory.build();
+const { instancen_number: instanceNumber, sid } =
+  sapSystemApplicationInstanceFactory.build();
 
 describe('SapInstanceStartStopModal', () => {
   it.each([
@@ -32,7 +29,6 @@ describe('SapInstanceStartStopModal', () => {
           <SapInstanceStartStopModal
             operation={operation}
             isOpen
-            hostID={hostID}
             instaceNumber={instanceNumber}
             sid={sid}
           />
@@ -57,7 +53,6 @@ describe('SapInstanceStartStopModal', () => {
         <SapInstanceStartStopModal
           operation={SAP_INSTANCE_START}
           isOpen
-          hostID={hostID}
           instaceNumber={instanceNumber}
           sid={sid}
           onRequest={onRequest}
@@ -69,10 +64,7 @@ describe('SapInstanceStartStopModal', () => {
     await user.click(screen.getByRole('checkbox'));
     await user.click(screen.getByText('Apply'));
 
-    expect(onRequest).toBeCalledWith({
-      host_id: hostID,
-      instance_number: instanceNumber,
-    });
+    expect(onRequest).toBeCalledWith({});
   });
 
   it('should call onCancel callback', async () => {
@@ -84,7 +76,6 @@ describe('SapInstanceStartStopModal', () => {
         <SapInstanceStartStopModal
           operation={SAP_INSTANCE_START}
           isOpen
-          hostID={hostID}
           instaceNumber={instanceNumber}
           sid={sid}
           onCancel={onCancel}

@@ -1,5 +1,3 @@
-import { faker } from '@faker-js/faker';
-
 import { SAP_INSTANCE_START, SAP_INSTANCE_STOP } from '@lib/operations';
 
 import SapInstanceStartStopModal from './SapInstanceStartStopModal';
@@ -12,10 +10,6 @@ export default {
       description: 'Start/Stop operation name',
       control: { type: 'radio' },
       options: [SAP_INSTANCE_START, SAP_INSTANCE_STOP],
-    },
-    hostID: {
-      description: 'Host ID where the instance is running',
-      control: 'text',
     },
     instanceNumber: {
       description: 'Instance number',
@@ -37,7 +31,6 @@ export default {
     },
   },
   args: {
-    hostID: faker.string.uuid(),
     instanceNumber: '00',
     sid: 'PRD',
     isOpen: true,
