@@ -13,6 +13,8 @@ export const CLUSTER_OPERATION = 'cluster';
 export const SAPTUNE_SOLUTION_APPLY = 'saptune_solution_apply';
 export const SAPTUNE_SOLUTION_CHANGE = 'saptune_solution_change';
 export const CLUSTER_MAINTENANCE_CHANGE = 'cluster_maintenance_change';
+export const SAP_INSTANCE_START = 'sap_instance_start';
+export const SAP_INSTANCE_STOP = 'sap_instance_stop';
 
 const OPERATION_LABELS = {
   [SAPTUNE_SOLUTION_APPLY]: 'Apply Saptune solution',
