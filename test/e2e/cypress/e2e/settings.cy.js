@@ -2,11 +2,6 @@ import * as settingsPage from '../pageObject/settings_po';
 
 context('Settings page', () => {
   beforeEach(() => {
-    Cypress.on('uncaught:exception', (err) => {
-      cy.log(err.message);
-      return true;
-    });
-    cy.log('initial before Each');
     settingsPage.visit();
     settingsPage.waitForRequest('settingsEndpoint');
   });
@@ -52,7 +47,6 @@ context('Settings page', () => {
 
   describe('Suse Manager Settings Management', () => {
     beforeEach(() => {
-      cy.log('SUMA settings beforeEach');
       settingsPage.clearSUMASettings();
       settingsPage.refresh();
     });
@@ -157,7 +151,6 @@ context('Settings page', () => {
 
       describe('Testing against saved settings', () => {
         beforeEach(() => {
-          cy.log('Testint saved settings beforeEach');
           settingsPage.saveDefaultSUMAsettings();
           settingsPage.refresh();
         });
@@ -212,7 +205,6 @@ context('Settings page', () => {
 
   describe('Forbidden actions', () => {
     beforeEach(() => {
-      cy.log('Forbidden actions  beforeEach');
       settingsPage.saveDefaultSUMAsettings();
       settingsPage.apiDeleteAllUsers();
       settingsPage.logout();
