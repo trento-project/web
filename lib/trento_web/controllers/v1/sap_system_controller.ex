@@ -134,13 +134,16 @@ defmodule TrentoWeb.V1.SapSystemController do
   def get_policy_resource(_), do: SapSystemReadModel
 
   def get_operation_resource(%{
-        params: %{operation: operation},
+        params: %{id: sap_system_id, operation: operation},
         body_params: %{host_id: host_id, instance_number: inst_number}
       })
       when operation in ["sap_instance_start", "sap_instance_stop"] do
-    host_id
-    |> SapSystems.get_application_instances_by_host_id()
-    |> Enum.find(fn %{instance_number: instance_number} -> instance_number == inst_number end)
+    sap_system_id
+    |> SapSystems.get_application_instances_by_id()
+    |> Enum.find(fn
+      %{host_id: ^host_id, instance_number: ^inst_number} -> true
+      _ -> false
+    end)
     |> Repo.preload(host: :cluster)
   end
 

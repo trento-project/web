@@ -183,7 +183,7 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
     for operation <- [:sap_instance_start, :sap_instance_stop] do
       @operation operation
 
-      test "should fallback to not found on operation #{operation} if the resource is not found",
+      test "should fallback to not found on operation #{operation} if the sap system is not found",
            %{
              conn: conn,
              api_spec: api_spec
@@ -193,6 +193,41 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
         |> post("/api/v1/sap_systems/#{UUID.uuid4()}/operations/#{@operation}", %{
           "instance_number" => "00",
           "host_id" => UUID.uuid4()
+        })
+        |> json_response(:not_found)
+        |> assert_schema("NotFound", api_spec)
+      end
+
+      test "should fallback to not found on operation #{operation} if the host is not found",
+           %{
+             conn: conn,
+             api_spec: api_spec
+           } do
+        %{sap_system_id: sap_system_id} = insert(:application_instance)
+
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> post("/api/v1/sap_systems/#{sap_system_id}/operations/#{@operation}", %{
+          "instance_number" => "00",
+          "host_id" => UUID.uuid4()
+        })
+        |> json_response(:not_found)
+        |> assert_schema("NotFound", api_spec)
+      end
+
+      test "should fallback to not found on operation #{operation} if the sap instance is not found",
+           %{
+             conn: conn,
+             api_spec: api_spec
+           } do
+        %{id: host_id} = insert(:host)
+        %{sap_system_id: sap_system_id} = insert(:application_instance, host_id: host_id)
+
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> post("/api/v1/sap_systems/#{sap_system_id}/operations/#{@operation}", %{
+          "instance_number" => "01",
+          "host_id" => host_id
         })
         |> json_response(:not_found)
         |> assert_schema("NotFound", api_spec)
@@ -231,7 +266,9 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
 
       test "should respond with 500 for operation #{operation} on messaging error", %{conn: conn} do
         %{id: host_id} = insert(:host)
-        %{sap_system_id: sap_system_id} = insert(:application_instance, host_id: host_id)
+
+        %{sap_system_id: sap_system_id, instance_number: inst_number} =
+          insert(:application_instance, host_id: host_id)
 
         expect(
           Trento.Infrastructure.Messaging.Adapter.Mock,
@@ -245,7 +282,7 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
           conn
           |> put_req_header("content-type", "application/json")
           |> post("/api/v1/sap_systems/#{sap_system_id}/operations/#{@operation}", %{
-            "instance_number" => "00",
+            "instance_number" => inst_number,
             "host_id" => host_id
           })
           |> json_response(:internal_server_error)
