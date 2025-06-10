@@ -28,6 +28,8 @@ context('Settings page', () => {
       settingsPage.modalCopyApiKeyButtonIsDisplayed();
       settingsPage.modalExpirationDateLabelIsDisplayed();
       settingsPage.clickModalCloseButton();
+      const randomNum = Math.round(Math.random());
+      cy.wrap(randomNum).should('eq', 1);
     });
   });
 
