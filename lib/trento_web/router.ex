@@ -176,6 +176,10 @@ defmodule TrentoWeb.Router do
       if Application.compile_env!(:trento, :operations_enabled) do
         post "/hosts/:id/operations/:operation", HostController, :request_operation
         post "/clusters/:id/operations/:operation", ClusterController, :request_operation
+
+        post "/sap_systems/:id/hosts/:host_id/instances/:instance_number/operations/:operation",
+             SapSystemController,
+             :request_instance_operation
       end
 
       resources "/users", UsersController, except: [:new, :edit]

@@ -13,6 +13,8 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
 
   alias Trento.SapSystems.Commands.DeregisterApplicationInstance
 
+  alias Trento.Infrastructure.Operations.AMQP.Publisher, as: OperationsPublisher
+
   setup [:set_mox_from_context, :verify_on_exit!]
 
   setup :setup_api_spec_v1
@@ -157,6 +159,155 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
         "/api/v1/sap_systems/#{sap_system_id}/hosts/#{host_id}/instances/#{instance_number}"
       )
       |> response(204)
+    end
+  end
+
+  describe "request_instance_operation" do
+    test "should fallback to operation not found if the operation is not found", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      %{id: host_id} = insert(:host)
+
+      %{sap_system_id: sap_system_id, instance_number: inst_number} =
+        insert(:application_instance, host_id: host_id)
+
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> post(
+        "/api/v1/sap_systems/#{sap_system_id}/hosts/#{host_id}/instances/#{inst_number}/operations/unknown",
+        %{}
+      )
+      |> json_response(:not_found)
+      |> assert_schema("NotFound", api_spec)
+    end
+
+    for operation <- [:sap_instance_start, :sap_instance_stop] do
+      @operation operation
+
+      test "should fallback to not found on operation #{operation} if the sap system is not found",
+           %{
+             conn: conn,
+             api_spec: api_spec
+           } do
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> post(
+          "/api/v1/sap_systems/#{UUID.uuid4()}/hosts/#{UUID.uuid4()}/instances/00/operations/#{@operation}",
+          %{}
+        )
+        |> json_response(:not_found)
+        |> assert_schema("NotFound", api_spec)
+      end
+
+      test "should fallback to not found on operation #{operation} if the host is not found",
+           %{
+             conn: conn,
+             api_spec: api_spec
+           } do
+        %{sap_system_id: sap_system_id} = insert(:application_instance)
+
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> post(
+          "/api/v1/sap_systems/#{sap_system_id}/hosts/#{UUID.uuid4()}/instances/00/operations/#{@operation}",
+          %{}
+        )
+        |> json_response(:not_found)
+        |> assert_schema("NotFound", api_spec)
+      end
+
+      test "should fallback to not found on operation #{operation} if the sap instance is not found",
+           %{
+             conn: conn,
+             api_spec: api_spec
+           } do
+        %{id: host_id} = insert(:host)
+        %{sap_system_id: sap_system_id} = insert(:application_instance, host_id: host_id)
+
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> post(
+          "/api/v1/sap_systems/#{sap_system_id}/hosts/#{host_id}/instances/01/operations/#{@operation}",
+          %{}
+        )
+        |> json_response(:not_found)
+        |> assert_schema("NotFound", api_spec)
+      end
+
+      test "should respond with 500 for operation #{operation} on messaging error", %{conn: conn} do
+        %{id: host_id} = insert(:host)
+
+        %{sap_system_id: sap_system_id, instance_number: inst_number} =
+          insert(:application_instance, host_id: host_id)
+
+        expect(
+          Trento.Infrastructure.Messaging.Adapter.Mock,
+          :publish,
+          fn OperationsPublisher, _, _ ->
+            {:error, :amqp_error}
+          end
+        )
+
+        resp =
+          conn
+          |> put_req_header("content-type", "application/json")
+          |> post(
+            "/api/v1/sap_systems/#{sap_system_id}/hosts/#{host_id}/instances/#{inst_number}/operations/#{@operation}",
+            %{}
+          )
+          |> json_response(:internal_server_error)
+
+        assert %{
+                 "errors" => [
+                   %{
+                     "detail" => "Something went wrong.",
+                     "title" => "Internal Server Error"
+                   }
+                 ]
+               } = resp
+      end
+
+      test "should perform operation #{operation} properly",
+           %{
+             conn: conn,
+             api_spec: api_spec
+           } do
+        %{id: cluster_id} = insert(:cluster)
+        %{id: host_id} = insert(:host, cluster_id: cluster_id)
+
+        %{sap_system_id: sap_system_id, instance_number: inst_number} =
+          insert(:application_instance, host_id: host_id)
+
+        expect(
+          Trento.Infrastructure.Messaging.Adapter.Mock,
+          :publish,
+          fn OperationsPublisher, _, _ ->
+            :ok
+          end
+        )
+
+        posted_conn =
+          conn
+          |> put_req_header("content-type", "application/json")
+          |> post(
+            "/api/v1/sap_systems/#{sap_system_id}/hosts/#{host_id}/instances/#{inst_number}/operations/#{@operation}",
+            %{}
+          )
+
+        posted_conn
+        |> json_response(:accepted)
+        |> assert_schema("OperationAccepted", api_spec)
+
+        assert %{
+                 assigns: %{
+                   instance: %{
+                     sap_system_id: ^sap_system_id,
+                     host: %{id: ^host_id, cluster: %{id: ^cluster_id}}
+                   }
+                 }
+               } = posted_conn
+      end
     end
   end
 

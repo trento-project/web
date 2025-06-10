@@ -2,12 +2,19 @@ defmodule TrentoWeb.V1.SapSystemController do
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
 
+  alias Trento.Repo
+
   alias Trento.SapSystems
+
+  alias Trento.SapSystems.Projections.SapSystemReadModel
 
   alias TrentoWeb.OpenApi.V1.Schema
 
   alias TrentoWeb.OpenApi.V1.Schema.{
+    Forbidden,
     NotFound,
+    OperationAccepted,
+    SapInstanceOperationParams,
     UnprocessableEntity
   }
 
@@ -21,6 +28,16 @@ defmodule TrentoWeb.V1.SapSystemController do
     fallback: TrentoWeb.FallbackController
 
   plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
+
+  plug TrentoWeb.Plugs.OperationsPolicyPlug,
+       [
+         policy: Trento.Operations.ApplicationInstancePolicy,
+         resource: &__MODULE__.get_operation_instance/1,
+         operation: &__MODULE__.get_operation/1,
+         assigns_to: :instance
+       ]
+       when action == :request_instance_operation
+
   action_fallback TrentoWeb.FallbackController
 
   tags ["Target Infrastructure"]
@@ -79,5 +96,85 @@ defmodule TrentoWeb.V1.SapSystemController do
     end
   end
 
-  def get_policy_resource(_), do: Trento.SapSystems.Projections.SapSystemReadModel
+  operation :request_instance_operation,
+    summary: "Request operation for a SAP instance",
+    tags: ["Operations"],
+    description: "Request operation for a SAP instance",
+    parameters: [
+      id: [
+        in: :path,
+        required: true,
+        type: %OpenApiSpex.Schema{type: :string, format: :uuid}
+      ],
+      host_id: [
+        in: :path,
+        required: true,
+        type: %OpenApiSpex.Schema{type: :string, format: :uuid}
+      ],
+      instance_number: [
+        in: :path,
+        required: true,
+        type: %OpenApiSpex.Schema{type: :string}
+      ],
+      operation: [
+        in: :path,
+        required: true,
+        type: %OpenApiSpex.Schema{type: :string}
+      ]
+    ],
+    request_body: {"Params", "application/json", SapInstanceOperationParams},
+    responses: [
+      accepted: OperationAccepted.response(),
+      not_found: NotFound.response(),
+      forbidden: Forbidden.response(),
+      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
+    ]
+
+  def request_instance_operation(
+        %{assigns: %{instance: instance, operation: operation}} = conn,
+        _
+      ) do
+    %{host_id: host_id, instance_number: instance_number} = instance
+    params = OpenApiSpex.body_params(conn)
+
+    with {:ok, operation_id} <-
+           SapSystems.request_instance_operation(
+             operation,
+             host_id,
+             instance_number,
+             params
+           ) do
+      conn
+      |> put_status(:accepted)
+      |> json(%{operation_id: operation_id})
+    end
+  end
+
+  def get_policy_resource(_), do: SapSystemReadModel
+
+  def get_operation_instance(%{
+        params: %{
+          id: sap_system_id,
+          host_id: host_id,
+          instance_number: inst_number
+        }
+      }) do
+    sap_system_id
+    |> SapSystems.get_application_instances_by_id()
+    |> Enum.find(fn
+      %{host_id: ^host_id, instance_number: ^inst_number} -> true
+      _ -> false
+    end)
+    |> Repo.preload(host: :cluster)
+  end
+
+  def get_operation_instance(_), do: nil
+
+  def get_operation(%{params: %{operation: "sap_instance_start"}}),
+    do: :sap_instance_start
+
+  def get_operation(%{params: %{operation: "sap_instance_stop"}}),
+    do: :sap_instance_stop
+
+  def get_operation(_), do: nil
 end

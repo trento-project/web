@@ -100,4 +100,22 @@ defmodule Trento.Operations.ApplicationInstancePolicyTest do
                })
     end
   end
+
+  describe "SAP instance start" do
+    test "should authorize SAP instance start operation" do
+      instance = build(:application_instance)
+
+      assert :ok ==
+               ApplicationInstancePolicy.authorize_operation(:sap_instance_start, instance, %{})
+    end
+  end
+
+  describe "SAP instance stop" do
+    test "should authorize SAP instance stop operation" do
+      instance = build(:application_instance)
+
+      assert :ok ==
+               ApplicationInstancePolicy.authorize_operation(:sap_instance_stop, instance, %{})
+    end
+  end
 end

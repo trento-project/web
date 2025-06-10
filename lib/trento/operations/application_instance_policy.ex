@@ -27,6 +27,11 @@ defmodule Trento.Operations.ApplicationInstancePolicy do
     ])
   end
 
+  def authorize_operation(operation, %ApplicationInstanceReadModel{}, _)
+      when operation in [:sap_instance_start, :sap_instance_stop] do
+    :ok
+  end
+
   def authorize_operation(_, _, _), do: {:error, ["Unknown operation"]}
 
   defp instance_running(%ApplicationInstanceReadModel{
