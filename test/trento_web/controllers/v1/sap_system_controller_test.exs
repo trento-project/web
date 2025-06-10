@@ -162,20 +162,22 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
     end
   end
 
-  describe "request operation" do
+  describe "request_instance_operation" do
     test "should fallback to operation not found if the operation is not found", %{
       conn: conn,
       api_spec: api_spec
     } do
       %{id: host_id} = insert(:host)
-      %{sap_system_id: sap_system_id} = insert(:application_instance, host_id: host_id)
+
+      %{sap_system_id: sap_system_id, instance_number: inst_number} =
+        insert(:application_instance, host_id: host_id)
 
       conn
       |> put_req_header("content-type", "application/json")
-      |> post("/api/v1/sap_systems/#{sap_system_id}/operations/unknown", %{
-        "instance_number" => "00",
-        "host_id" => host_id
-      })
+      |> post(
+        "/api/v1/sap_systems/#{sap_system_id}/hosts/#{host_id}/instances/#{inst_number}/operations/unknown",
+        %{}
+      )
       |> json_response(:not_found)
       |> assert_schema("NotFound", api_spec)
     end
@@ -190,10 +192,10 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
            } do
         conn
         |> put_req_header("content-type", "application/json")
-        |> post("/api/v1/sap_systems/#{UUID.uuid4()}/operations/#{@operation}", %{
-          "instance_number" => "00",
-          "host_id" => UUID.uuid4()
-        })
+        |> post(
+          "/api/v1/sap_systems/#{UUID.uuid4()}/hosts/#{UUID.uuid4()}/instances/00/operations/#{@operation}",
+          %{}
+        )
         |> json_response(:not_found)
         |> assert_schema("NotFound", api_spec)
       end
@@ -207,10 +209,10 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
 
         conn
         |> put_req_header("content-type", "application/json")
-        |> post("/api/v1/sap_systems/#{sap_system_id}/operations/#{@operation}", %{
-          "instance_number" => "00",
-          "host_id" => UUID.uuid4()
-        })
+        |> post(
+          "/api/v1/sap_systems/#{sap_system_id}/hosts/#{UUID.uuid4()}/instances/00/operations/#{@operation}",
+          %{}
+        )
         |> json_response(:not_found)
         |> assert_schema("NotFound", api_spec)
       end
@@ -225,43 +227,12 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
 
         conn
         |> put_req_header("content-type", "application/json")
-        |> post("/api/v1/sap_systems/#{sap_system_id}/operations/#{@operation}", %{
-          "instance_number" => "01",
-          "host_id" => host_id
-        })
+        |> post(
+          "/api/v1/sap_systems/#{sap_system_id}/hosts/#{host_id}/instances/01/operations/#{@operation}",
+          %{}
+        )
         |> json_response(:not_found)
         |> assert_schema("NotFound", api_spec)
-      end
-
-      test "should respond with 422 if operation #{operation} does not receive needed params",
-           %{
-             conn: conn
-           } do
-        resp =
-          conn
-          |> put_req_header("content-type", "application/json")
-          |> post("/api/v1/sap_systems/#{UUID.uuid4()}/operations/#{@operation}", %{})
-          |> json_response(:unprocessable_entity)
-
-        assert %{
-                 "errors" => [
-                   %{
-                     "detail" => "Failed to cast value to one of: no schemas validate",
-                     "source" => %{"pointer" => "/"},
-                     "title" => "Invalid value"
-                   },
-                   %{
-                     "detail" => "Missing field: host_id",
-                     "source" => %{"pointer" => "/host_id"},
-                     "title" => "Invalid value"
-                   },
-                   %{
-                     "detail" => "Missing field: instance_number",
-                     "source" => %{"pointer" => "/instance_number"},
-                     "title" => "Invalid value"
-                   }
-                 ]
-               } == resp
       end
 
       test "should respond with 500 for operation #{operation} on messaging error", %{conn: conn} do
@@ -281,10 +252,10 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
         resp =
           conn
           |> put_req_header("content-type", "application/json")
-          |> post("/api/v1/sap_systems/#{sap_system_id}/operations/#{@operation}", %{
-            "instance_number" => inst_number,
-            "host_id" => host_id
-          })
+          |> post(
+            "/api/v1/sap_systems/#{sap_system_id}/hosts/#{host_id}/instances/#{inst_number}/operations/#{@operation}",
+            %{}
+          )
           |> json_response(:internal_server_error)
 
         assert %{
@@ -319,10 +290,10 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
         posted_conn =
           conn
           |> put_req_header("content-type", "application/json")
-          |> post("/api/v1/sap_systems/#{sap_system_id}/operations/#{@operation}", %{
-            "instance_number" => inst_number,
-            "host_id" => host_id
-          })
+          |> post(
+            "/api/v1/sap_systems/#{sap_system_id}/hosts/#{host_id}/instances/#{inst_number}/operations/#{@operation}",
+            %{}
+          )
 
         posted_conn
         |> json_response(:accepted)
@@ -330,7 +301,7 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
 
         assert %{
                  assigns: %{
-                   sap_system: %{
+                   instance: %{
                      sap_system_id: ^sap_system_id,
                      host: %{id: ^host_id, cluster: %{id: ^cluster_id}}
                    }

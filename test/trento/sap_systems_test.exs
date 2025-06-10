@@ -161,7 +161,12 @@ defmodule Trento.SapSystemsTest do
     end
   end
 
-  describe "request_operation/3" do
+  describe "request_instance_operation/4" do
+    test "should return error if operation is not found" do
+      assert {:error, :operation_not_found} ==
+               SapSystems.request_instance_operation(:unknown, UUID.uuid4(), "00", %{})
+    end
+
     scenarios = [
       %{
         operation: :sap_instance_start,
@@ -180,7 +185,6 @@ defmodule Trento.SapSystemsTest do
         %{operation: operation, expected_operator: expected_operator} = @scenario
 
         %{host_id: host_id, instance_number: instance_number} = insert(:application_instance)
-        params = %{host_id: host_id, instance_number: instance_number}
 
         expect(
           Trento.Infrastructure.Messaging.Adapter.Mock,
@@ -205,7 +209,7 @@ defmodule Trento.SapSystemsTest do
         )
 
         assert {:ok, _} =
-                 SapSystems.request_operation(operation, UUID.uuid4(), params)
+                 SapSystems.request_instance_operation(operation, host_id, instance_number, %{})
       end
 
       test "should handle operation #{operation} publish error" do
@@ -221,7 +225,7 @@ defmodule Trento.SapSystemsTest do
         )
 
         assert {:error, :amqp_error} =
-                 SapSystems.request_operation(operation, UUID.uuid4(), %{host_id: UUID.uuid4()})
+                 SapSystems.request_instance_operation(operation, UUID.uuid4(), "00", %{})
       end
     end
   end

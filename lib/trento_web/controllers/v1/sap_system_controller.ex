@@ -14,7 +14,7 @@ defmodule TrentoWeb.V1.SapSystemController do
     Forbidden,
     NotFound,
     OperationAccepted,
-    SapSystemOperationParams,
+    SapInstanceOperationParams,
     UnprocessableEntity
   }
 
@@ -31,12 +31,12 @@ defmodule TrentoWeb.V1.SapSystemController do
 
   plug TrentoWeb.Plugs.OperationsPolicyPlug,
        [
-         policy: Trento.Operations.SapSystemPolicy,
-         resource: &__MODULE__.get_operation_resource/1,
+         policy: Trento.Operations.ApplicationInstancePolicy,
+         resource: &__MODULE__.get_operation_instance/1,
          operation: &__MODULE__.get_operation/1,
-         assigns_to: :sap_system
+         assigns_to: :instance
        ]
-       when action == :request_operation
+       when action == :request_instance_operation
 
   action_fallback TrentoWeb.FallbackController
 
@@ -96,15 +96,25 @@ defmodule TrentoWeb.V1.SapSystemController do
     end
   end
 
-  operation :request_operation,
-    summary: "Request operation for a SAP system",
+  operation :request_instance_operation,
+    summary: "Request operation for a SAP instance",
     tags: ["Operations"],
-    description: "Request operation for a SAP system",
+    description: "Request operation for a SAP instance",
     parameters: [
       id: [
         in: :path,
         required: true,
         type: %OpenApiSpex.Schema{type: :string, format: :uuid}
+      ],
+      host_id: [
+        in: :path,
+        required: true,
+        type: %OpenApiSpex.Schema{type: :string, format: :uuid}
+      ],
+      instance_number: [
+        in: :path,
+        required: true,
+        type: %OpenApiSpex.Schema{type: :string}
       ],
       operation: [
         in: :path,
@@ -112,7 +122,7 @@ defmodule TrentoWeb.V1.SapSystemController do
         type: %OpenApiSpex.Schema{type: :string}
       ]
     ],
-    request_body: {"Params", "application/json", SapSystemOperationParams},
+    request_body: {"Params", "application/json", SapInstanceOperationParams},
     responses: [
       accepted: OperationAccepted.response(),
       not_found: NotFound.response(),
@@ -120,11 +130,20 @@ defmodule TrentoWeb.V1.SapSystemController do
       unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
     ]
 
-  def request_operation(%{assigns: %{operation: operation}} = conn, _) do
-    %{id: sap_system_id} = OpenApiSpex.params(conn)
+  def request_instance_operation(
+        %{assigns: %{instance: instance, operation: operation}} = conn,
+        _
+      ) do
+    %{host_id: host_id, instance_number: instance_number} = instance
     params = OpenApiSpex.body_params(conn)
 
-    with {:ok, operation_id} <- SapSystems.request_operation(operation, sap_system_id, params) do
+    with {:ok, operation_id} <-
+           SapSystems.request_instance_operation(
+             operation,
+             host_id,
+             instance_number,
+             params
+           ) do
       conn
       |> put_status(:accepted)
       |> json(%{operation_id: operation_id})
@@ -133,11 +152,13 @@ defmodule TrentoWeb.V1.SapSystemController do
 
   def get_policy_resource(_), do: SapSystemReadModel
 
-  def get_operation_resource(%{
-        params: %{id: sap_system_id, operation: operation},
-        body_params: %{host_id: host_id, instance_number: inst_number}
-      })
-      when operation in ["sap_instance_start", "sap_instance_stop"] do
+  def get_operation_instance(%{
+        params: %{
+          id: sap_system_id,
+          host_id: host_id,
+          instance_number: inst_number
+        }
+      }) do
     sap_system_id
     |> SapSystems.get_application_instances_by_id()
     |> Enum.find(fn
@@ -147,7 +168,7 @@ defmodule TrentoWeb.V1.SapSystemController do
     |> Repo.preload(host: :cluster)
   end
 
-  def get_operation_resource(_), do: nil
+  def get_operation_instance(_), do: nil
 
   def get_operation(%{params: %{operation: "sap_instance_start"}}),
     do: :sap_instance_start

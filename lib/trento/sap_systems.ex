@@ -5,6 +5,8 @@ defmodule Trento.SapSystems do
 
   import Ecto.Query
 
+  require Trento.Operations.Enums.SapInstanceOperations, as: SapInstanceOperations
+
   alias Trento.SapSystems.Projections.{
     ApplicationInstanceReadModel,
     SapSystemReadModel
@@ -82,11 +84,12 @@ defmodule Trento.SapSystems do
     end
   end
 
-  @spec request_operation(atom(), String.t(), map()) :: {:ok, String.t()} | {:error, any}
-  def request_operation(operation, _, %{host_id: host_id} = params)
-      when operation in [:sap_instance_start, :sap_instance_stop] do
+  @spec request_instance_operation(atom(), Ecto.UUID.t(), String.t(), map()) ::
+          {:ok, String.t()} | {:error, any}
+  def request_instance_operation(operation, host_id, instance_number, params)
+      when operation in SapInstanceOperations.values() do
     operation_id = UUID.uuid4()
-    arguments = Map.delete(params, :host_id)
+    arguments = Map.put(params, :instance_number, instance_number)
 
     case Operations.request_operation(
            operation_id,
@@ -99,7 +102,7 @@ defmodule Trento.SapSystems do
     end
   end
 
-  def request_operation(_, _, _), do: {:error, :operation_not_found}
+  def request_instance_operation(_, _, _, _), do: {:error, :operation_not_found}
 
   defp commanded,
     do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]
