@@ -219,11 +219,13 @@ jobs:
           cypress_db_port: 5432
           cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
         with:
-          command: npx cypress run --reporter junit --reporter-options mochaFile=/tmp/trento-e2e-junit-[hash]-${{ env.ENV_TS }}.xml --spec ${{ github.event.inputs.spec_pattern || '**/*.cy.js' }}
+          reporter: junit
+          reporter-options: 'mochaFile=/tmp/trento-e2e-junit-[hash]-${{ env.ENV_TS }}.xml'
+          spec: ${{ github.event.inputs.spec_pattern || '**/*.cy.js' }}
           publish-summary: false
+          config: baseUrl=http://localhost:4000
           working-directory: test/e2e
           wait-on-timeout: 30
-          config: baseUrl=http://localhost:4000
       - name: Upload cypress test junit reports
         uses: actions/upload-artifact@v4
         with:
