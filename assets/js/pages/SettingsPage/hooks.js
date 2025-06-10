@@ -28,11 +28,8 @@ export const useSuseManagerSettings = () => {
       setSettings(data);
     } catch (error) {
       const status = error?.response?.status;
-
       setSettings({});
-      if (status !== 404) {
-        setFetchError(true);
-      }
+      if (status !== 404) setFetchError(true);
     } finally {
       setLoading(false);
     }
