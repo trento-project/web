@@ -212,7 +212,6 @@ jobs:
         run: echo "ENV_TS=$(date +%F_%T | sed 's/:/-/g')" >> $GITHUB_ENV
       - name: Cypress run
         uses: cypress-io/github-action@v6
-        continue-on-error: true
         env:
           cypress_video: false
           cypress_db_host: postgres
@@ -223,11 +222,13 @@ jobs:
           working-directory: test/e2e
           wait-on-timeout: 30
       - name: Upload cypress test junit reports
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: e2e-junit-reports-${{ matrix.container }}
-          path: /tmp/*.xml
+          path: /tmp/*.xml        
       - name: Upload cypress test screenshots
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: e2e-screenshots-${{ matrix.container }}
