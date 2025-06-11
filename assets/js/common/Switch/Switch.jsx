@@ -4,7 +4,7 @@ import classNames from 'classnames';
 
 import { Switch as HeadlessSwitch } from '@headlessui/react';
 
-function Switch({ onChange, selected, disabled }) {
+function Switch({ onChange, selected, disabled, ...props }) {
   return (
     <HeadlessSwitch.Group as="div" className="flex items-center">
       <HeadlessSwitch
@@ -20,6 +20,7 @@ function Switch({ onChange, selected, disabled }) {
         )}
         disabled={disabled}
         onChange={onChange}
+        {...props}
       >
         <span
           aria-hidden="true"

@@ -136,6 +136,7 @@ defmodule Trento.Factory do
 
   alias Trento.Settings.{
     ActivityLogSettings,
+    AlertingSettings,
     ApiKeySettings,
     InstallationSettings,
     SSOCertificatesSettings,
@@ -1208,6 +1209,19 @@ defmodule Trento.Factory do
       actor: Faker.Internet.user_name(),
       severity: SeverityLevel.severity_level_to_integer(:info),
       metadata: %{}
+    }
+  end
+
+  def alerting_settings_factory do
+    %AlertingSettings{
+      type: :alerting_settings,
+      enabled: true,
+      sender_email: Faker.Internet.email(),
+      recipient_email: Faker.Internet.email(),
+      smtp_server: Faker.Internet.domain_name(),
+      smtp_port: Faker.random_between(0, 65_353),
+      smtp_username: Faker.Pokemon.name(),
+      smtp_password: Faker.Pokemon.name()
     }
   end
 

@@ -4,11 +4,11 @@ defmodule Trento.Settings do
   """
 
   alias Trento.Repo
-
   alias Trento.SoftwareUpdates.Discovery, as: SoftwareUpdatesDiscovery
 
   alias Trento.Settings.{
     ActivityLogSettings,
+    AlertingSettings,
     ApiKeySettings,
     InstallationSettings,
     SSOCertificatesSettings,
@@ -18,7 +18,6 @@ defmodule Trento.Settings do
   alias Trento.Support.DateService
 
   require Trento.ActivityLog.RetentionPeriodUnit, as: RetentionPeriodUnit
-
   require Logger
 
   @type suse_manager_settings_save_submission :: %{
@@ -34,6 +33,37 @@ defmodule Trento.Settings do
           password: String.t() | nil,
           ca_cert: String.t() | nil
         }
+
+  @type alerting_setting_set_t :: %{
+          enabled: boolean,
+          sender_email: String.t(),
+          recipient_email: String.t(),
+          smtp_server: String.t(),
+          smtp_port: String.t() | integer,
+          smtp_username: String.t(),
+          smtp_password: String.t()
+        }
+
+  @type alerting_setting_update_t :: %{
+          optional(:enabled) => boolean,
+          optional(:sender_email) => String.t(),
+          optional(:recipient_email) => String.t(),
+          optional(:smtp_server) => String.t(),
+          optional(:smtp_port) => String.t() | integer,
+          optional(:smtp_username) => String.t(),
+          optional(:smtp_password) => String.t()
+        }
+
+  @alerting_settings_default_env [
+    enabled: false,
+    smtp_server: "",
+    smtp_port: 587,
+    smtp_username: "",
+    smtp_password: "",
+    sender_email: "alerts@trento-project.io",
+    recipient_email: "admin@trento-project.io",
+    enforced_from_env: true
+  ]
 
   @spec get_installation_id :: String.t()
   def get_installation_id do
@@ -161,14 +191,72 @@ defmodule Trento.Settings do
     Repo.one(SSOCertificatesSettings.base_query())
   end
 
-  defp ensure_no_suse_manager_settings_configured do
-    case Repo.one(SuseManagerSettings.base_query()) do
-      nil ->
-        {:ok, :settings_not_configured, nil}
+  # Alerting Settings
 
-      %SuseManagerSettings{} ->
-        Logger.error("Error: software updates settings already configured")
-        {:error, :settings_already_configured}
+  @spec get_alerting_settings ::
+          {:ok, AlertingSettings.t()} | {:error, :alerting_settings_not_configured}
+  def get_alerting_settings do
+    if alerting_settings_enforced_from_env?() do
+      get_alerting_settings_from_app_env()
+    else
+      get_alerting_settings_from_db()
+    end
+  end
+
+  @spec create_alerting_settings(alerting_setting_set_t()) ::
+          {:ok, AlertingSettings.t()}
+          | {:error, :alerting_settings_enforced}
+          | {:error, Ecto.Changeset.t()}
+  def create_alerting_settings(alerting_settings) do
+    if alerting_settings_enforced_from_env?() do
+      {:error, :alerting_settings_enforced}
+    else
+      %AlertingSettings{}
+      |> AlertingSettings.changeset(alerting_settings)
+      |> Repo.insert(returning: true)
+    end
+  end
+
+  @spec update_alerting_settings(alerting_setting_update_t()) ::
+          {:ok, AlertingSettings.t()}
+          | {:error, :alerting_settings_enforced}
+          | {:error, :alerting_settings_not_configured}
+          | {:error, Ecto.Changeset.t()}
+  def update_alerting_settings(alerting_settings) do
+    if alerting_settings_enforced_from_env?() do
+      {:error, :alerting_settings_enforced}
+    else
+      with {:ok, current_settings} <- get_alerting_settings() do
+        current_settings
+        |> AlertingSettings.changeset(alerting_settings)
+        |> Repo.update()
+      end
+    end
+  end
+
+  defp alerting_settings_enforced_from_env? do
+    Application.get_env(:trento, :alerting)
+    |> Enum.map(fn {_key, val} -> val != nil end)
+    |> Enum.any?()
+  end
+
+  defp get_alerting_settings_from_app_env do
+    explicitly_set =
+      Enum.filter(Application.get_env(:trento, :alerting), fn {_key, value} -> value != nil end)
+
+    settings =
+      struct!(
+        Trento.Settings.AlertingSettings,
+        Keyword.merge(@alerting_settings_default_env, explicitly_set)
+      )
+
+    {:ok, settings}
+  end
+
+  defp get_alerting_settings_from_db do
+    case Repo.one(AlertingSettings.base_query()) do
+      %AlertingSettings{} = settings -> {:ok, settings}
+      nil -> {:error, :alerting_settings_not_configured}
     end
   end
 
@@ -198,6 +286,17 @@ defmodule Trento.Settings do
 
       {:error, _} = error ->
         error
+    end
+  end
+
+  defp ensure_no_suse_manager_settings_configured do
+    case Repo.one(SuseManagerSettings.base_query()) do
+      nil ->
+        {:ok, :settings_not_configured, nil}
+
+      %SuseManagerSettings{} ->
+        Logger.error("Error: software updates settings already configured")
+        {:error, :settings_already_configured}
     end
   end
 
