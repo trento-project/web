@@ -117,4 +117,22 @@ describe('OperationsButton', () => {
       screen.queryByText('You are not authorized for this action')
     ).toBeInTheDocument();
   });
+
+  it('should show a transparent operations button', () => {
+    const buttonText = 'test';
+    render(
+      <OperationsButton
+        text={buttonText}
+        transparent
+        operations={testOperations}
+        userAbilities={[]}
+      />
+    );
+
+    expect(screen.getByText(buttonText)).toBeInTheDocument();
+    const button = screen.getByRole('button', { value: buttonText });
+    expect(button).toHaveClass('border-none');
+    expect(button).toHaveClass('bg-transparent');
+    expect(button).toHaveClass('text-sm');
+  });
 });

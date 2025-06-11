@@ -39,9 +39,11 @@ function CustomMenuButton({ value, running, disabled, onClick }) {
 }
 
 function OperationsButton({
+  text = 'Operations',
   operations,
   userAbilities,
   menuPosition = 'bottom start',
+  transparent = false,
 }) {
   const ref = useRef(null);
   const someRunning = some(operations, { running: true });
@@ -51,12 +53,16 @@ function OperationsButton({
       <MenuButton as={Fragment}>
         <div className="flex" ref={ref}>
           <Button
-            type="primary-white"
-            className="inline-block mx-0.5 border-green-500 border"
-            size="small"
+            type={transparent ? 'transparent' : 'primary-white'}
+            className={classNames(
+              'inline-block mx-0.5 border-green-500',
+              { 'border-none': transparent },
+              { border: !transparent }
+            )}
+            size={transparent ? 'fit' : 'small'}
           >
             <EOS_MORE_VERT className="inline-block fill-jungle-green-500" />{' '}
-            Operations
+            {text}
           </Button>
         </div>
       </MenuButton>
