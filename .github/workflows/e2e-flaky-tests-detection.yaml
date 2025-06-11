@@ -212,24 +212,27 @@ jobs:
         run: echo "ENV_TS=$(date +%F_%T | sed 's/:/-/g')" >> $GITHUB_ENV
       - name: Cypress run
         uses: cypress-io/github-action@v6
-        continue-on-error: true
         env:
           cypress_video: false
           cypress_db_host: postgres
           cypress_db_port: 5432
           cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
         with:
-          command: npx cypress run --reporter junit --reporter-options mochaFile=/tmp/trento-e2e-junit-[hash]-${{ env.ENV_TS }}.xml --spec ${{ github.event.inputs.spec_pattern || '**/*.cy.js' }}
-          publish-summary: false
+          command: npx cypress run --reporter junit --reporter-options mochaFile=/tmp/trento-e2e-junit-[hash]-${{ env.ENV_TS }}.xml --spec ${{ github.event.inputs.spec_pattern || '**/*.cy.js' }}          
           working-directory: test/e2e
           wait-on-timeout: 30
-          config: baseUrl=http://localhost:4000
       - name: Upload cypress test junit reports
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: e2e-junit-reports-${{ matrix.container }}
-          path: /tmp/*.xml
-
+          path: /tmp/*.xml        
+      - name: Upload cypress test screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-screenshots-${{ matrix.container }}
+          path: test/e2e/cypress/screenshots/**/*.png
 
   flaky-tests-analysis:
     name: Flaky Tests Analysis

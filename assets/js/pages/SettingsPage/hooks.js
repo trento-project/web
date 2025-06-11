@@ -26,7 +26,8 @@ export const useSuseManagerSettings = () => {
     try {
       const { data } = await getSettings();
       setSettings(data);
-    } catch ({ response: { status } }) {
+    } catch (error) {
+      const status = error?.response?.status;
       setSettings({});
       if (status !== 404) setFetchError(true);
     } finally {
