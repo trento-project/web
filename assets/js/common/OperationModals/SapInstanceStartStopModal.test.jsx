@@ -8,7 +8,7 @@ import { SAP_INSTANCE_START, SAP_INSTANCE_STOP } from '@lib/operations';
 
 import SapInstanceStartStopModal from './SapInstanceStartStopModal';
 
-const { instancen_number: instanceNumber, sid } =
+const { instance_number: instanceNumber, sid } =
   sapSystemApplicationInstanceFactory.build();
 
 describe('SapInstanceStartStopModal', () => {
@@ -29,7 +29,7 @@ describe('SapInstanceStartStopModal', () => {
           <SapInstanceStartStopModal
             operation={operation}
             isOpen
-            instaceNumber={instanceNumber}
+            instanceNumber={instanceNumber}
             sid={sid}
           />
         );
@@ -53,7 +53,7 @@ describe('SapInstanceStartStopModal', () => {
         <SapInstanceStartStopModal
           operation={SAP_INSTANCE_START}
           isOpen
-          instaceNumber={instanceNumber}
+          instanceNumber={instanceNumber}
           sid={sid}
           onRequest={onRequest}
         />
@@ -76,7 +76,7 @@ describe('SapInstanceStartStopModal', () => {
         <SapInstanceStartStopModal
           operation={SAP_INSTANCE_START}
           isOpen
-          instaceNumber={instanceNumber}
+          instanceNumber={instanceNumber}
           sid={sid}
           onCancel={onCancel}
         />
