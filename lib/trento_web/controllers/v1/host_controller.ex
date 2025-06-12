@@ -79,6 +79,9 @@ defmodule TrentoWeb.V1.HostController do
 
   @spec delete(Plug.Conn.t(), map) :: Plug.Conn.t()
   def delete(conn, %{id: host_id}) do
+    correlation_id = conn.assigns[:correlation_id]
+    Process.put(:correlation_id, correlation_id)
+
     case Hosts.deregister_host(host_id) do
       :ok -> send_resp(conn, 204, "")
       {:error, error} -> {:error, error}

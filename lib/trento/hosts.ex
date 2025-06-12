@@ -127,8 +127,12 @@ defmodule Trento.Hosts do
   @spec deregister_host(Ecto.UUID.t(), DateService) ::
           :ok | {:error, :host_alive} | {:error, :host_not_registered}
   def deregister_host(host_id, date_service \\ DateService) do
+    correlation_id = Process.get(:correlation_id)
+
     commanded().dispatch(
-      RequestHostDeregistration.new!(%{host_id: host_id, requested_at: date_service.utc_now()})
+      RequestHostDeregistration.new!(%{host_id: host_id, requested_at: date_service.utc_now()}),
+      causation_id: correlation_id,
+      correlation_id: correlation_id
     )
   end
 
