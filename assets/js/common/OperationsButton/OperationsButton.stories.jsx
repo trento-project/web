@@ -64,6 +64,15 @@ export const Running = {
   },
 };
 
+export const Transparent = {
+  args: {
+    ...Default.args,
+    text: '',
+    transparent: true,
+    menuPosition: 'bottom',
+  },
+};
+
 export const Forbidden = {
   args: {
     ...Default.args,
