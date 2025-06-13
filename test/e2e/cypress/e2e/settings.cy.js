@@ -170,6 +170,24 @@ context('Settings page', () => {
     });
   });
 
+  describe('Alerting Settings enforced from env', () => {
+    before(function () {
+      settingsPage.getAlertingSettings().then((resp) => {
+        if (!resp.body.enforced_from_env) {
+          this.skip();
+        }
+      });
+    });
+
+    it('should be displayed correctly', () => {
+      settingsPage.alertingConfigDisplaysDevEnvValues();
+    });
+
+    it('should have an edit button that is disabled', () => {
+      settingsPage.alertingEditButtonIsDisabled();
+    });
+  });
+
   describe('Activity log', () => {
     describe('Changing Settings', () => {
       it('should change retention time', () => {

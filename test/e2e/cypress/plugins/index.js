@@ -49,9 +49,7 @@ module.exports = (on, config) => {
       });
       return null;
     },
-  });
 
-  on('task', {
     stopAgentsHeartbeat() {
       heartbeatsIntervals.forEach((interval) => {
         clearInterval(interval);
