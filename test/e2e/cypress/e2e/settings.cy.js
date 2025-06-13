@@ -170,6 +170,48 @@ context('Settings page', () => {
     });
   });
 
+  describe('Alerting Settings', () => {
+    describe('enforced from env', () => {
+      before(function () {
+        if (Cypress.env('ALERTING_DB_TESTS')) {
+          this.skip();
+        }
+      });
+
+      it('should be displayed correctly', () => {
+        settingsPage.getAlertingEnabled().should('have.text', 'Enabled');
+        settingsPage.getAlertingServer().should('have.text', 'localhost');
+        settingsPage.getAlertingPort().should('have.text', "1025");
+        settingsPage.getAlertingUsername().should('have.text', "trentouser");
+        settingsPage.getAlertingPassword().should('have.text', "•••••");
+        settingsPage.getAlertingSender().should('have.text', "alerts@trento-project.io");
+        settingsPage.getAlertingRecipient().should('have.text', "admin@trento-project.io");
+      });
+
+      it('should have an edit button that is disabled', () => {
+        settingsPage.getAlertingEditButton().should('be.disabled');
+      });
+    });
+
+    describe('from DB', () => {
+      before(function () {
+        if (!Cypress.env('ALERTING_DB_TESTS')) {
+          this.skip();
+        }
+      });
+
+      beforeEach(() => {
+        settingsPage.resetAlertingSettingsDB();
+        settingsPage.refresh();
+        settingsPage.waitForRequest('alertingSettingsEndpoint');
+      });
+
+      it('skip_test', () => {
+        expect(false).to.equal(true);
+      });
+    });
+  });
+
   describe('Activity log', () => {
     describe('Changing Settings', () => {
       it('should change retention time', () => {
