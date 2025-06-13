@@ -19,11 +19,20 @@
 const cypressSplit = require('cypress-split');
 const http = require('http');
 const webpack = require('@cypress/webpack-preprocessor');
+const Pool = require('pg-pool')
+
 let heartbeatsIntervals = [];
 
 module.exports = (on, config) => {
   // `on` is used to hook into various events Cypress emits
   // `config` is the resolved Cypress config
+  const pool = new Pool({
+    host: config.env.db_host,
+    port: config.env.db_port,
+    user: 'postgres',
+    password: 'postgres',
+    database: 'trento_dev',
+  });
 
   cypressSplit(on, config);
   on('task', {
@@ -49,14 +58,20 @@ module.exports = (on, config) => {
       });
       return null;
     },
-  });
 
-  on('task', {
     stopAgentsHeartbeat() {
       heartbeatsIntervals.forEach((interval) => {
         clearInterval(interval);
       });
       return null;
+    },
+
+    sqlExecute({ query, values }) {
+      return new Promise((resolve, reject) => {
+        pool.query(query, values)
+          .then(res => resolve(res.rows))
+          .catch(err => reject(err))
+        })
     },
   });
 
