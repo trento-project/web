@@ -7,6 +7,7 @@ defmodule Trento.Hosts.Projections.HostReadModel do
 
   import Ecto.Changeset
 
+  require Trento.Enums.Architecture, as: Architecture
   require Trento.Enums.Health, as: Health
   require Trento.Enums.Provider, as: Provider
 
@@ -30,6 +31,7 @@ defmodule Trento.Hosts.Projections.HostReadModel do
     field :ip_addresses, {:array, :string}
     field :netmasks, {:array, :integer}
     field :agent_version, :string
+    field :arch, Ecto.Enum, values: Architecture.values(), default: Architecture.unknown()
     field :fully_qualified_domain_name, :string
     field :heartbeat, Ecto.Enum, values: [:critical, :passing, :unknown]
     field :health, Ecto.Enum, values: Health.values(), default: Health.unknown()
