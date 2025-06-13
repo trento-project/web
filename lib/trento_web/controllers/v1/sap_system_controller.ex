@@ -165,7 +165,7 @@ defmodule TrentoWeb.V1.SapSystemController do
       %{host_id: ^host_id, instance_number: ^inst_number} -> true
       _ -> false
     end)
-    |> Repo.preload(host: :cluster)
+    |> Repo.preload(sap_system: [:application_instances, :database], host: :cluster)
   end
 
   def get_operation_instance(_), do: nil

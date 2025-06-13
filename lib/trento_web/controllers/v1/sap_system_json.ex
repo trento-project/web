@@ -7,6 +7,7 @@ defmodule TrentoWeb.V1.SapSystemJSON do
     |> Map.from_struct()
     |> Map.delete(:__meta__)
     |> Map.delete(:host)
+    |> Map.delete(:sap_system)
   end
 
   def application_instance_moved(%{instance_moved: instance_moved}), do: instance_moved
