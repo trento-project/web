@@ -82,6 +82,9 @@ export const visit = () => {
     'activityLogSettingsEndpoint'
   );
   cy.intercept('/api/v1/settings/suse_manager').as('settingsEndpoint');
+  cy.intercept('/api/v1/settings/alerting').as(
+    'alertingSettingsEndpoint'
+  );
   basePage.visit(url);
 };
 
@@ -151,6 +154,15 @@ const _clickRemovePasswordButton = () =>
 
 const _clickRemoveSumaCaCertButton = () =>
   cy.get(sumaSettingsModal.removeCaCertButton).click();
+
+export const getAlertingEnabled = () => cy.get('[aria-label="alerting-enabled"]');
+export const getAlertingServer = () => cy.get('[aria-label="smtp-server"]');
+export const getAlertingPort = () => cy.get('[aria-label="smtp-port"]');
+export const getAlertingUsername = () => cy.get('[aria-label="smtp-username"]');
+export const getAlertingPassword = () => cy.get('[aria-label="smtp-password"]');
+export const getAlertingSender = () => cy.get('[aria-label="alerting-sender"]');
+export const getAlertingRecipient = () => cy.get('[aria-label="alerting-recipient"]');
+export const getAlertingEditButton = () => cy.get('[aria-label="alerting-edit-button"]');
 
 // UI Validations
 export const activityLogsEditButtonIsEnabled = () =>
@@ -665,6 +677,13 @@ export const copyToClipboardButtonIsDisplayed = () =>
   cy.get(copyToClipboardButton).should('be.visible');
 
 // API
+
+export const resetAlertingSettingsDB = () => {
+  cy.task('sqlExecute', {
+    query: "DELETE FROM settings WHERE type = 'alerting_settings'",
+  });
+};
+
 export const saveDefaultSUMAsettings = () => {
   const defaultSumaSettings = {
     ...baseInitialSettings,
