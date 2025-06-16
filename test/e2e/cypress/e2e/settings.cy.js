@@ -200,15 +200,82 @@ context('Settings page', () => {
         }
       });
 
+      const initialAlertingSettings = {
+        enabled: true,
+        smtp_server: 'https://test-smtp-server.com',
+        smtp_port: 587,
+        smtp_username: 'testuser',
+        smtp_password: 'testpass',
+        sender_email: 'adm@trento-project.io',
+        recipient_email: 'rcv@trento-project.io',
+      };
+
       beforeEach(() => {
         settingsPage.resetAlertingSettingsDB();
         settingsPage.refresh();
         settingsPage.waitForRequest('alertingSettingsEndpoint');
       });
 
-      it('skip_test', () => {
-        expect(false).to.equal(true);
+      it('should be displayed with their placeholder values when not explicitly set', () => {
+        settingsPage.alertingEnabled().should('have.text', 'Disabled');
+        settingsPage.alertingServer().should('have.text', 'https://.....');
+        settingsPage.alertingPort().should('have.text', "587");
+        settingsPage.alertingUsername().should('have.text', ".....");
+        settingsPage.alertingPassword().should('have.text', "•••••");
+        settingsPage.alertingSender().should('have.text', "...@...");
+        settingsPage.alertingRecipient().should('have.text', "...@...");
       });
+
+      it('should display their current values when previously set', () => {
+        settingsPage.saveAlertingSettings(initialAlertingSettings);
+        settingsPage.refresh();
+        settingsPage.waitForRequest('alertingSettingsEndpoint');
+
+        settingsPage.alertingEnabled().should('have.text', initialAlertingSettings.enabled ? 'Enabled': 'Disabled');
+        settingsPage.alertingServer().should('have.text', initialAlertingSettings.smtp_server);
+        settingsPage.alertingPort().should('have.text', String(initialAlertingSettings.smtp_port));
+        settingsPage.alertingUsername().should('have.text', initialAlertingSettings.smtp_username);
+        settingsPage.alertingPassword().should('have.text', "•••••");
+        settingsPage.alertingSender().should('have.text', initialAlertingSettings.sender_email);
+        settingsPage.alertingRecipient().should('have.text', initialAlertingSettings.recipient_email);
+      });
+
+      it('should show empty fields when edit modal is opened with no previous settings set', () => {
+        settingsPage.clickAlertingEditButton();
+
+        settingsPage.alertingModalEnabled().should('not.have.attr', "data-checked");
+        settingsPage.alertingModalServer().should('have.value', "");
+        settingsPage.alertingModalPort().should('have.value', "");
+        settingsPage.alertingModalUsername().should('have.value', "");
+        settingsPage.alertingModalPassword().should('have.value', "");
+        settingsPage.alertingModalPasswordDisplay().should('not.exist');
+        settingsPage.alertingModalRemovePasswordButton().should('not.exist');
+        settingsPage.alertingModalSender().should('have.value', "");
+        settingsPage.alertingModalRecipient().should('have.value', "");
+      });
+
+      it('test create');
+
+      it('should shows previous values when edit modal is opened when previous settings set', () => {
+        settingsPage.saveAlertingSettings(initialAlertingSettings);
+        settingsPage.refresh();
+        settingsPage.waitForRequest('alertingSettingsEndpoint');
+
+        settingsPage.clickAlertingEditButton();
+        settingsPage.alertingModalEnabled().should('have.attr', "data-checked");
+        settingsPage.alertingModalServer().should('have.value', initialAlertingSettings.smtp_server);
+        settingsPage.alertingModalPort().should('have.value', String(initialAlertingSettings.smtp_port));
+        settingsPage.alertingModalUsername().should('have.value', initialAlertingSettings.smtp_username);
+        settingsPage.alertingModalPassword().should('not.exist');
+        settingsPage.alertingModalPasswordDisplay().should('have.text', "•••••");
+        settingsPage.alertingModalRemovePasswordButton().should('be.visible');
+        settingsPage.alertingModalSender().should('have.value', initialAlertingSettings.sender_email);
+        settingsPage.alertingModalRecipient().should('have.value', initialAlertingSettings.recipient_email);
+      });
+
+      it('test update');
+
+      it('test update with password');
     });
   });
 

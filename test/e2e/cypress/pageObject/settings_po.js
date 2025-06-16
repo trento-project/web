@@ -155,14 +155,26 @@ const _clickRemovePasswordButton = () =>
 const _clickRemoveSumaCaCertButton = () =>
   cy.get(sumaSettingsModal.removeCaCertButton).click();
 
-export const getAlertingEnabled = () => cy.get('[aria-label="alerting-enabled"]');
-export const getAlertingServer = () => cy.get('[aria-label="smtp-server"]');
-export const getAlertingPort = () => cy.get('[aria-label="smtp-port"]');
-export const getAlertingUsername = () => cy.get('[aria-label="smtp-username"]');
-export const getAlertingPassword = () => cy.get('[aria-label="smtp-password"]');
-export const getAlertingSender = () => cy.get('[aria-label="alerting-sender"]');
-export const getAlertingRecipient = () => cy.get('[aria-label="alerting-recipient"]');
-export const getAlertingEditButton = () => cy.get('[aria-label="alerting-edit-button"]');
+export const alertingEnabled = () => cy.get('[aria-label="alerting-enabled"]');
+export const alertingServer = () => cy.get('[aria-label="smtp-server"]');
+export const alertingPort = () => cy.get('[aria-label="smtp-port"]');
+export const alertingUsername = () => cy.get('[aria-label="smtp-username"]');
+export const alertingPassword = () => cy.get('[aria-label="smtp-password"]');
+export const alertingSender = () => cy.get('[aria-label="alerting-sender"]');
+export const alertingRecipient = () => cy.get('[aria-label="alerting-recipient"]');
+export const alertingEditButton = () => cy.get('[aria-label="alerting-edit-button"]');
+
+export const clickAlertingEditButton = () => alertingEditButton().click();
+
+export const alertingModalEnabled = () => cy.get('#alerting-enabled-input');
+export const alertingModalServer = () => cy.get('#smtp-server-input');
+export const alertingModalPort = () => cy.get('#smtp-port-input');
+export const alertingModalUsername = () => cy.get('#smtp-username-input');
+export const alertingModalPassword = () => cy.get('input[aria-labelledby="smtp-password-label"]');
+export const alertingModalPasswordDisplay = () => cy.get('p[aria-labelledby="smtp-password-label"]');
+export const alertingModalRemovePasswordButton = () => cy.contains('button', 'Remove');
+export const alertingModalSender = () => cy.get('#sender-email-input');
+export const alertingModalRecipient = () => cy.get('#recipient-email-input');
 
 // UI Validations
 export const activityLogsEditButtonIsEnabled = () =>
@@ -682,6 +694,19 @@ export const resetAlertingSettingsDB = () => {
   cy.task('sqlExecute', {
     query: "DELETE FROM settings WHERE type = 'alerting_settings'",
   });
+};
+
+export const saveAlertingSettings = (alertingSettings) => {
+  basePage.apiLogin().then(({ accessToken }) => {
+    cy.request({
+      url: '/api/v1/settings/alerting',
+      method: "POST",
+      auth: {
+        bearer: accessToken,
+      },
+      body: alertingSettings,
+    })
+  })
 };
 
 export const saveDefaultSUMAsettings = () => {
