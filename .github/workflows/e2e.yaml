@@ -79,7 +79,7 @@ jobs:
       - name: Install galaxy deps
         run: ansible-galaxy install -r ansible/requirements.yml
       - name: Run playbook
-        uses: dawidd6/action-ansible-playbook@v3
+        uses: dawidd6/action-ansible-playbook@v4
         continue-on-error: true
         with:
           playbook: ansible/playbook.yml
