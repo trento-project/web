@@ -264,7 +264,7 @@ context('Settings page', () => {
 
         settingsPage
           .alertingModalEnabled()
-          .should('not.have.attr', 'data-checked');
+          .should('have.attr', 'aria-checked', 'false');
         settingsPage.alertingModalServer().should('have.value', '');
         settingsPage.alertingModalPort().should('have.value', '');
         settingsPage.alertingModalUsername().should('have.value', '');
@@ -283,7 +283,9 @@ context('Settings page', () => {
         settingsPage.waitForRequest('alertingSettingsEndpoint');
 
         settingsPage.clickAlertingEditButton();
-        settingsPage.alertingModalEnabled().should('have.attr', 'data-checked');
+        settingsPage
+          .alertingModalEnabled()
+          .should('have.attr', 'aria-checked', 'true');
         settingsPage
           .alertingModalServer()
           .should('have.value', initialAlertingSettings.smtp_server);
