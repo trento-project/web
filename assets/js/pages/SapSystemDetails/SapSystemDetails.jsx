@@ -5,8 +5,13 @@ import { useSelector, useDispatch } from 'react-redux';
 import { getFromConfig } from '@lib/config';
 import { APPLICATION_TYPE } from '@lib/model/sapSystems';
 import { getEnrichedSapSystemDetails } from '@state/selectors/sapSystem';
+import { getRunningOperationsList } from '@state/selectors/runningOperations';
 import { getUserProfile } from '@state/selectors/user';
 import { deregisterApplicationInstance } from '@state/sapSystems';
+import {
+  operationRequested,
+  removeRunningOperation,
+} from '@state/runningOperations';
 
 import BackButton from '@common/BackButton';
 import { GenericSystemDetails } from '@pages/SapSystemDetails';
@@ -23,6 +28,8 @@ function SapSystemDetails() {
   const { abilities } = useSelector(getUserProfile);
   const dispatch = useDispatch();
 
+  const runningOperations = useSelector(getRunningOperationsList());
+
   if (!sapSystem) {
     return <div>Not Found</div>;
   }
@@ -37,10 +44,15 @@ function SapSystemDetails() {
         userAbilities={abilities}
         cleanUpPermittedFor={['cleanup:application_instance']}
         operationsEnabled={operationsEnabled}
+        runningOperations={runningOperations}
         getInstanceOperations={getSapInstanceOperations}
         onInstanceCleanUp={(instance) => {
           dispatch(deregisterApplicationInstance(instance));
         }}
+        onRequestOperation={(payload) => dispatch(operationRequested(payload))}
+        onCleanForbiddenOperation={(groupID) =>
+          dispatch(removeRunningOperation({ groupID }))
+        }
       />
     </>
   );

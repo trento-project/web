@@ -1,19 +1,27 @@
 import React, { useState } from 'react';
 
-import { noop } from 'lodash';
+import { find, get, noop } from 'lodash';
 
 import {
   EOS_APPLICATION_OUTLINED,
   EOS_DATABASE_OUTLINED,
 } from 'eos-icons-react';
 
-import { SAP_INSTANCE_START, SAP_INSTANCE_STOP } from '@lib/operations';
+import {
+  SAP_INSTANCE_START,
+  SAP_INSTANCE_STOP,
+  getOperationLabel,
+  getOperationForbiddenMessage,
+} from '@lib/operations';
 import { APPLICATION_TYPE, getEnsaVersionLabel } from '@lib/model/sapSystems';
 
 import ListView from '@common/ListView';
 import Table from '@common/Table';
 import PageHeader from '@common/PageHeader';
-import { SapInstanceStartStopModal } from '@common/OperationModals';
+import {
+  OperationForbiddenModal,
+  SapInstanceStartStopModal,
+} from '@common/OperationModals';
 
 import DeregistrationModal from '@pages/DeregistrationModal';
 
@@ -48,9 +56,12 @@ export function GenericSystemDetails({
   system,
   userAbilities,
   cleanUpPermittedFor,
-  onInstanceCleanUp,
   operationsEnabled = false,
+  runningOperations = [],
   getInstanceOperations = noop,
+  onInstanceCleanUp = noop,
+  onRequestOperation = noop,
+  onCleanForbiddenOperation = noop,
 }) {
   if (!system) {
     return <div>Not Found</div>;
@@ -68,10 +79,17 @@ export function GenericSystemDetails({
   };
 
   const curriedGetInstanceOperations = getInstanceOperations(
-    null, // placeholder for runningOperations to be used at some point
+    runningOperations,
     setOperationModelOpen,
     setCurrentOperationInstance
   );
+
+  const forbiddenOperation = find(runningOperations, { forbidden: true });
+
+  const forbiddenOperationID = get(forbiddenOperation, 'groupID', '');
+  const forbiddenOperationName = get(forbiddenOperation, 'operation', null);
+  const isForbidden = get(forbiddenOperation, 'forbidden', false);
+  const forbiddenErrors = get(forbiddenOperation, 'errors', []);
 
   return (
     <div>
@@ -88,6 +106,14 @@ export function GenericSystemDetails({
           setCleanUpModalOpen(false);
         }}
       />
+      <OperationForbiddenModal
+        operation={getOperationLabel(forbiddenOperationName)}
+        isOpen={isForbidden}
+        onCancel={() => onCleanForbiddenOperation(forbiddenOperationID)}
+        errors={forbiddenErrors}
+      >
+        {getOperationForbiddenMessage(forbiddenOperationName)}
+      </OperationForbiddenModal>
       <SapInstanceStartStopModal
         operation={operationModalOpen.operation}
         instanceNumber={currentOperationInstance?.instance_number}
@@ -96,7 +122,17 @@ export function GenericSystemDetails({
           operationModalOpen.open &&
           instanceStartStopOperations.includes(operationModalOpen.operation)
         }
-        onRequest={(_params) => {
+        onRequest={(params) => {
+          onRequestOperation({
+            groupID: currentOperationInstance.host_id,
+            operation: operationModalOpen.operation,
+            requestParams: {
+              sapSystemID: system.id,
+              hostID: currentOperationInstance.host_id,
+              instanceNumber: currentOperationInstance.instance_number,
+              params,
+            },
+          });
           setOperationModelOpen(closeInstanceModal);
         }}
         onCancel={() => {

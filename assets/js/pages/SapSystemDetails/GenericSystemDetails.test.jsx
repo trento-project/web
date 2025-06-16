@@ -207,6 +207,119 @@ describe('GenericSystemDetails', () => {
     expect(stopInstance2).toBeDisabled();
   });
 
+  it.each([
+    {
+      operation: SAP_INSTANCE_START,
+      menuItemText: 'Start instance',
+      health: 'unknown',
+    },
+    {
+      operation: SAP_INSTANCE_STOP,
+      menuItemText: 'Stop instance',
+      health: 'passing',
+    },
+  ])(
+    'should show $operation operation in running state',
+    async ({ operation, menuItemText, health }) => {
+      const user = userEvent.setup();
+      const hosts = hostFactory.buildList(1);
+      const hostID = hosts[0].id;
+
+      const sapSystem = sapSystemFactory.build({
+        instances: [
+          sapSystemApplicationInstanceFactory.build({
+            health,
+            host_id: hostID,
+          }),
+        ],
+      });
+
+      sapSystem.hosts = hosts;
+
+      const runningOperations = [{ groupID: hostID, operation }];
+
+      renderWithRouter(
+        <GenericSystemDetails
+          title={faker.string.uuid()}
+          system={sapSystem}
+          type={APPLICATION_TYPE}
+          userAbilities={[{ name: 'all', resource: 'all' }]}
+          cleanUpPermittedFor={[]}
+          runningOperations={runningOperations}
+          getInstanceOperations={getSapInstanceOperations}
+          operationsEnabled
+        />
+      );
+
+      const [layoutTable, _] = screen.getAllByRole('table');
+      const { getByRole } = within(layoutTable);
+      const opButton = getByRole('button');
+
+      await user.click(opButton);
+
+      const menuItem = screen.getByRole('menuitem', {
+        name: menuItemText,
+      });
+
+      expect(menuItem).toBeDisabled();
+      const { getByTestId } = within(menuItem);
+      expect(getByTestId('eos-svg-component')).toBeInTheDocument();
+    }
+  );
+
+  it('should show forbidden operation modal', async () => {
+    const user = userEvent.setup();
+    const mockCleanForbiddenOperation = jest.fn();
+
+    const hosts = hostFactory.buildList(1);
+    const hostID = hosts[0].id;
+
+    const sapSystem = sapSystemFactory.build({
+      instances: [
+        sapSystemApplicationInstanceFactory.build({ host_id: hostID }),
+      ],
+    });
+
+    sapSystem.hosts = hosts;
+
+    const forbiddenOperation = SAP_INSTANCE_START;
+    const runningOperations = [
+      {
+        groupID: hostID,
+        operation: forbiddenOperation,
+        forbidden: true,
+        errors: ['error1', 'error2'],
+      },
+    ];
+
+    renderWithRouter(
+      <GenericSystemDetails
+        title={faker.string.uuid()}
+        system={sapSystem}
+        type={APPLICATION_TYPE}
+        userAbilities={[{ name: 'all', resource: 'all' }]}
+        cleanUpPermittedFor={[]}
+        runningOperations={runningOperations}
+        onCleanForbiddenOperation={mockCleanForbiddenOperation}
+        getInstanceOperations={getSapInstanceOperations}
+        operationsEnabled
+      />
+    );
+
+    expect(screen.getByText('Operation Forbidden')).toBeInTheDocument();
+    expect(
+      screen.getByText('SAP instance start', { exact: false })
+    ).toBeInTheDocument();
+    expect(screen.getByText('error1')).toBeInTheDocument();
+    expect(screen.getByText('error2')).toBeInTheDocument();
+
+    const closeButton = screen.getByRole('button', {
+      name: 'Close',
+    });
+    await user.click(closeButton);
+    expect(mockCleanForbiddenOperation).toHaveBeenCalled();
+  });
+
   describe('forbidden actions', () => {
     it('should forbid instance cleanup', async () => {
       const user = userEvent.setup();

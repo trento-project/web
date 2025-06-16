@@ -2,16 +2,22 @@ import { curry } from 'lodash';
 
 import { SAP_INSTANCE_START, SAP_INSTANCE_STOP } from '@lib/operations';
 
+import { isOperationRunning } from '@state/selectors/runningOperations';
+
 export const getSapInstanceOperations = curry(
   (
-    _runningOperations,
+    runningOperations,
     setOperationModelOpen,
     setCurrentOperationInstance,
     instance
   ) => [
     {
       value: 'Start instance',
-      running: false,
+      running: isOperationRunning(
+        runningOperations,
+        instance.host_id,
+        SAP_INSTANCE_START
+      ),
       disabled: instance.health === 'passing',
       permitted: ['start:application_instance'],
       onClick: () => {
@@ -21,7 +27,11 @@ export const getSapInstanceOperations = curry(
     },
     {
       value: 'Stop instance',
-      running: false,
+      running: isOperationRunning(
+        runningOperations,
+        instance.host_id,
+        SAP_INSTANCE_STOP
+      ),
       disabled: instance.health === 'unknown',
       permitted: ['stop:application_instance'],
       onClick: () => {
