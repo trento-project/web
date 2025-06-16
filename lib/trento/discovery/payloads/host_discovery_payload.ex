@@ -40,8 +40,7 @@ defmodule Trento.Discovery.Payloads.HostDiscoveryPayload do
 
   def changeset(host, attrs) do
     modified_attrs =
-      installation_source_to_downcase(attrs)
-      |> arch_to_downcase()
+      arch_to_downcase(installation_source_to_downcase(attrs))
 
     host
     |> cast(modified_attrs, fields())
