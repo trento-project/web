@@ -3,8 +3,6 @@ defmodule Trento.Hosts.Events.HostRegisteredTest do
 
   alias Trento.Hosts.Events.HostRegistered
 
-  require Trento.Enums.Architecture, as: Architecture
-
   describe "HostRegistered event upcasting" do
     test "should upcast HostRegistered event properly from version 1" do
       host_id = Faker.UUID.v4()
