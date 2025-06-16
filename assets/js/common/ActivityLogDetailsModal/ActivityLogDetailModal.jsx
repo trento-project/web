@@ -2,6 +2,7 @@ import React from 'react';
 import { noop } from 'lodash';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { NavLink } from 'react-router-dom';
 
 import Button from '@common/Button';
 import Modal from '@common/Modal';
@@ -12,6 +13,7 @@ import classNames from 'classnames';
 
 const keys = [
   'id',
+  'correlatedEvents',
   'type',
   'resource',
   'user',
@@ -23,6 +25,7 @@ const keys = [
 
 const keyToLabel = {
   id: 'ID',
+  correlatedEvents: 'Related Events',
   type: 'Activity Type',
   resource: 'Resource',
   user: 'User',
@@ -51,10 +54,33 @@ const keyRenderers = {
 };
 
 function ActivityLogDetailModal({ open = false, entry, onClose = noop }) {
-  const data = keys.map((key) => ({
+  const maybeCorrelationId =
+    entry === undefined ||
+    entry === {} ||
+    entry.metadata === undefined ||
+    entry.metadata.correlation_id === undefined
+      ? null
+      : entry.metadata.correlation_id;
+  const filteredKeys = maybeCorrelationId
+    ? keys
+    : keys.filter((key) => key !== 'correlatedEvents');
+  const renderCorrelatedEventsLink = (e) => (
+    <NavLink
+      to={`/activity_log?severity=info&severity=warning&severity=critical&search=${e.metadata.correlation_id}&first=20`}
+      onClick={onClose}
+      className="text-jungle-green-500"
+    >
+      Show Events
+    </NavLink>
+  );
+  const data = filteredKeys.map((key) => ({
     title: keyToLabel[key] || key,
-    content: key === 'resource' ? entry : entry[key],
-    render: keyRenderers[key] || undefined,
+    content:
+      key === 'resource' || key === 'correlatedEvents' ? entry : entry[key],
+    render:
+      key === 'correlatedEvents'
+        ? renderCorrelatedEventsLink
+        : keyRenderers[key],
     className: classNames('col-span-5', {
       'text-gray-500': key !== 'metadata',
     }),
