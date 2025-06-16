@@ -82,9 +82,7 @@ export const visit = () => {
     'activityLogSettingsEndpoint'
   );
   cy.intercept('/api/v1/settings/suse_manager').as('settingsEndpoint');
-  cy.intercept('/api/v1/settings/alerting').as(
-    'alertingSettingsEndpoint'
-  );
+  cy.intercept('/api/v1/settings/alerting').as('alertingSettingsEndpoint');
   basePage.visit(url);
 };
 
@@ -161,8 +159,10 @@ export const alertingPort = () => cy.get('[aria-label="smtp-port"]');
 export const alertingUsername = () => cy.get('[aria-label="smtp-username"]');
 export const alertingPassword = () => cy.get('[aria-label="smtp-password"]');
 export const alertingSender = () => cy.get('[aria-label="alerting-sender"]');
-export const alertingRecipient = () => cy.get('[aria-label="alerting-recipient"]');
-export const alertingEditButton = () => cy.get('[aria-label="alerting-edit-button"]');
+export const alertingRecipient = () =>
+  cy.get('[aria-label="alerting-recipient"]');
+export const alertingEditButton = () =>
+  cy.get('[aria-label="alerting-edit-button"]');
 
 export const clickAlertingEditButton = () => alertingEditButton().click();
 
@@ -170,9 +170,12 @@ export const alertingModalEnabled = () => cy.get('#alerting-enabled-input');
 export const alertingModalServer = () => cy.get('#smtp-server-input');
 export const alertingModalPort = () => cy.get('#smtp-port-input');
 export const alertingModalUsername = () => cy.get('#smtp-username-input');
-export const alertingModalPassword = () => cy.get('input[aria-labelledby="smtp-password-label"]');
-export const alertingModalPasswordDisplay = () => cy.get('p[aria-labelledby="smtp-password-label"]');
-export const alertingModalRemovePasswordButton = () => cy.contains('button', 'Remove');
+export const alertingModalPassword = () =>
+  cy.get('input[aria-labelledby="smtp-password-label"]');
+export const alertingModalPasswordDisplay = () =>
+  cy.get('p[aria-labelledby="smtp-password-label"]');
+export const alertingModalRemovePasswordButton = () =>
+  cy.contains('button', 'Remove');
 export const alertingModalSender = () => cy.get('#sender-email-input');
 export const alertingModalRecipient = () => cy.get('#recipient-email-input');
 
@@ -700,13 +703,13 @@ export const saveAlertingSettings = (alertingSettings) => {
   basePage.apiLogin().then(({ accessToken }) => {
     cy.request({
       url: '/api/v1/settings/alerting',
-      method: "POST",
+      method: 'POST',
       auth: {
         bearer: accessToken,
       },
       body: alertingSettings,
-    })
-  })
+    });
+  });
 };
 
 export const saveDefaultSUMAsettings = () => {

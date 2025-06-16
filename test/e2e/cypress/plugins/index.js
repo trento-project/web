@@ -19,7 +19,7 @@
 const cypressSplit = require('cypress-split');
 const http = require('http');
 const webpack = require('@cypress/webpack-preprocessor');
-const Pool = require('pg-pool')
+const Pool = require('pg-pool');
 
 let heartbeatsIntervals = [];
 
@@ -68,10 +68,11 @@ module.exports = (on, config) => {
 
     sqlExecute({ query, values }) {
       return new Promise((resolve, reject) => {
-        pool.query(query, values)
-          .then(res => resolve(res.rows))
-          .catch(err => reject(err))
-        })
+        pool
+          .query(query, values)
+          .then((res) => resolve(res.rows))
+          .catch((err) => reject(err));
+      });
     },
   });
 
