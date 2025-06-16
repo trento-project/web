@@ -107,7 +107,7 @@ export const hostFactory = Factory.define(({ params, sequence }) => {
   return {
     id,
     agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
-    arch: [faker.helpers.arrayElement(["x86_64", "ppc64le", "s390x"])],
+    arch: [faker.helpers.arrayElement(['x86_64', 'ppc64le', 's390x'])],
     hostname: `${faker.person.firstName()}_${sequence}`,
     cluster_id: faker.string.uuid(),
     ip_addresses: [faker.internet.ip()],
