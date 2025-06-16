@@ -1,7 +1,7 @@
 import React from 'react';
 import 'intersection-observer';
 import { faker } from '@faker-js/faker';
-import { screen } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
@@ -16,6 +16,7 @@ import {
 } from '@lib/test-utils/factories';
 
 import { GenericSystemDetails } from './GenericSystemDetails';
+import { getSapInstanceOperations } from './sapOperations';
 
 describe('GenericSystemDetails', () => {
   it('should render correctly', () => {
@@ -180,5 +181,62 @@ describe('GenericSystemDetails', () => {
     expect(
       screen.queryByText('You are not authorized for this action')
     ).toBeVisible();
+  });
+
+  it('should show instance operations', async () => {
+    const user = userEvent.setup();
+
+    const sapSystem = sapSystemFactory.build({
+      instances: [
+        sapSystemApplicationInstanceFactory.build({ health: 'passing' }),
+        sapSystemApplicationInstanceFactory.build({ health: 'unknown' }),
+      ],
+    });
+
+    sapSystem.hosts = hostFactory.buildList(1);
+
+    renderWithRouter(
+      <GenericSystemDetails
+        title={faker.string.uuid()}
+        system={sapSystem}
+        type={APPLICATION_TYPE}
+        userAbilities={[{ name: 'all', resource: 'all' }]}
+        cleanUpPermittedFor={[]}
+        getInstanceOperations={getSapInstanceOperations}
+        operationsEnabled
+      />
+    );
+
+    const [layoutTable, _] = screen.getAllByRole('table');
+    const { getAllByRole } = within(layoutTable);
+    const [opButton1, opButton2] = getAllByRole('button');
+
+    await user.click(opButton1);
+
+    const startInstance1 = screen.getByRole('menuitem', {
+      name: 'Start instance',
+    });
+    const stopInstance1 = screen.getByRole('menuitem', {
+      name: 'Stop instance',
+    });
+
+    expect(startInstance1).toBeInTheDocument();
+    expect(stopInstance1).toBeInTheDocument();
+    expect(startInstance1).toBeDisabled();
+    expect(stopInstance1).toBeEnabled();
+
+    await user.click(opButton2);
+
+    const startInstance2 = screen.getByRole('menuitem', {
+      name: 'Start instance',
+    });
+    const stopInstance2 = screen.getByRole('menuitem', {
+      name: 'Stop instance',
+    });
+
+    expect(startInstance2).toBeInTheDocument();
+    expect(stopInstance2).toBeInTheDocument();
+    expect(startInstance2).toBeEnabled();
+    expect(stopInstance2).toBeDisabled();
   });
 });

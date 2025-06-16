@@ -12,6 +12,8 @@ import { APPLICATION_TYPE } from '@lib/model/sapSystems';
 
 import { GenericSystemDetails } from './GenericSystemDetails';
 
+import { getSapInstanceOperations } from './sapOperations';
+
 const system = {
   ...sapSystemFactory.build({
     instances: sapSystemApplicationInstanceFactory.buildList(2),
@@ -52,6 +54,10 @@ export default {
       control: 'array',
       description: 'Abilities that allow instance clean up',
     },
+    getInstanceOperations: {
+      action: 'Get instance operations function',
+      description: 'Function to get instance operations',
+    },
     onInstanceCleanUp: {
       action: 'Clean up instance',
       description: 'Deregister and clean up an absent instance',
@@ -78,6 +84,8 @@ export const SapSystem = {
     system,
     userAbilities: [{ name: 'all', resource: 'all' }],
     cleanUpPermittedFor: ['cleanup:application_instance'],
+    getInstanceOperations: getSapInstanceOperations,
+    operationsEnabled: true,
   },
 };
 
