@@ -239,7 +239,10 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
         %{id: host_id} = insert(:host)
 
         %{sap_system_id: sap_system_id, instance_number: inst_number} =
-          insert(:application_instance, host_id: host_id)
+          insert(:application_instance, features: "MESSAGESERVER|ENQUE", host_id: host_id)
+
+        %{id: database_id} = insert(:database, health: :passing)
+        insert(:sap_system, id: sap_system_id, database_id: database_id)
 
         expect(
           Trento.Infrastructure.Messaging.Adapter.Mock,
@@ -273,11 +276,22 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
              conn: conn,
              api_spec: api_spec
            } do
-        %{id: cluster_id} = insert(:cluster)
+        %{id: cluster_id} =
+          insert(:cluster,
+            details:
+              build(:ascs_ers_cluster_details,
+                maintenance_mode: true,
+                sap_systems: []
+              )
+          )
+
         %{id: host_id} = insert(:host, cluster_id: cluster_id)
 
         %{sap_system_id: sap_system_id, instance_number: inst_number} =
-          insert(:application_instance, host_id: host_id)
+          insert(:application_instance, features: "MESSAGESERVER|ENQUE", host_id: host_id)
+
+        %{id: database_id} = insert(:database, health: :passing)
+        insert(:sap_system, id: sap_system_id, database_id: database_id)
 
         expect(
           Trento.Infrastructure.Messaging.Adapter.Mock,
@@ -303,6 +317,11 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
                  assigns: %{
                    instance: %{
                      sap_system_id: ^sap_system_id,
+                     sap_system: %{
+                       id: ^sap_system_id,
+                       application_instances: [%{sap_system_id: ^sap_system_id}],
+                       database: %{id: ^database_id}
+                     },
                      host: %{id: ^host_id, cluster: %{id: ^cluster_id}}
                    }
                  }

@@ -159,13 +159,17 @@ defmodule TrentoWeb.V1.SapSystemController do
           instance_number: inst_number
         }
       }) do
-    sap_system_id
-    |> SapSystems.get_application_instances_by_id()
+    instances = SapSystems.get_application_instances_by_id(sap_system_id)
+
+    instances
     |> Enum.find(fn
       %{host_id: ^host_id, instance_number: ^inst_number} -> true
       _ -> false
     end)
-    |> Repo.preload(host: :cluster)
+    |> Repo.preload(
+      sap_system: [:database, application_instances: fn _ -> instances end],
+      host: :cluster
+    )
   end
 
   def get_operation_instance(_), do: nil

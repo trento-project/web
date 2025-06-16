@@ -320,6 +320,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
       |> Map.from_struct()
       |> Map.delete(:__meta__)
       |> Map.delete(:host)
+      |> Map.delete(:sap_system)
 
     insert_list(5, :tag, resource_id: sap_system_id)
 

@@ -12,6 +12,7 @@ defmodule Trento.SapSystems.Projections.ApplicationInstanceReadModel do
   @type t :: %__MODULE__{}
 
   alias Trento.Hosts.Projections.HostReadModel
+  alias Trento.SapSystems.Projections.SapSystemReadModel
 
   defdelegate authorize_operation(action, application_instance, params),
     to: Trento.Operations.ApplicationInstancePolicy
@@ -19,7 +20,6 @@ defmodule Trento.SapSystems.Projections.ApplicationInstanceReadModel do
   @derive {Jason.Encoder, except: [:__meta__, :__struct__]}
   @primary_key false
   schema "application_instances" do
-    field :sap_system_id, Ecto.UUID, primary_key: true
     field :sid, :string
     field :instance_number, :string, primary_key: true
     field :instance_hostname, :string
@@ -33,6 +33,13 @@ defmodule Trento.SapSystems.Projections.ApplicationInstanceReadModel do
     belongs_to :host, HostReadModel,
       references: :id,
       foreign_key: :host_id,
+      primary_key: true,
+      type: Ecto.UUID,
+      where: [deregistered_at: nil]
+
+    belongs_to :sap_system, SapSystemReadModel,
+      references: :id,
+      foreign_key: :sap_system_id,
       primary_key: true,
       type: Ecto.UUID,
       where: [deregistered_at: nil]
