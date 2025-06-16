@@ -45,7 +45,6 @@ defmodule TrentoWeb.V1.SapSystemJSONTest do
             |> Map.from_struct()
             |> Map.delete(:__meta__)
             |> Map.delete(:host)
-            |> Map.delete(:sap_system)
             |> Map.put(:sap_system_id, database_id)
           end)
         )

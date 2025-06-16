@@ -314,7 +314,6 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
       |> Map.from_struct()
       |> Map.delete(:__meta__)
       |> Map.delete(:host)
-      |> Map.delete(:sap_system)
 
     application_instance =
       insert(:application_instance, sap_system_id: sap_system_id)
