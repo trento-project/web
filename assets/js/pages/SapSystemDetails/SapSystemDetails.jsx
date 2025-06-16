@@ -2,6 +2,7 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
+import { getFromConfig } from '@lib/config';
 import { APPLICATION_TYPE } from '@lib/model/sapSystems';
 import { getEnrichedSapSystemDetails } from '@state/selectors/sapSystem';
 import { getUserProfile } from '@state/selectors/user';
@@ -9,6 +10,10 @@ import { deregisterApplicationInstance } from '@state/sapSystems';
 
 import BackButton from '@common/BackButton';
 import { GenericSystemDetails } from '@pages/SapSystemDetails';
+
+import { getSapInstanceOperations } from './sapOperations';
+
+const operationsEnabled = getFromConfig('operationsEnabled');
 
 function SapSystemDetails() {
   const { id } = useParams();
@@ -31,6 +36,8 @@ function SapSystemDetails() {
         system={sapSystem}
         userAbilities={abilities}
         cleanUpPermittedFor={['cleanup:application_instance']}
+        operationsEnabled={operationsEnabled}
+        getInstanceOperations={getSapInstanceOperations}
         onInstanceCleanUp={(instance) => {
           dispatch(deregisterApplicationInstance(instance));
         }}

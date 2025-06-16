@@ -1,11 +1,14 @@
 import React from 'react';
 import classNames from 'classnames';
+import { isEmpty } from 'lodash';
 
 import HostLink from '@common/HostLink';
 import ProviderLabel from '@common/ProviderLabel';
 import CleanUpButton from '@common/CleanUpButton';
 import Tooltip from '@common/Tooltip';
 import HealthIcon from '@common/HealthIcon';
+
+import OperationsButton from '@common/OperationsButton';
 
 import Features from './Features';
 import InstanceStatus from './InstanceStatus';
@@ -20,6 +23,8 @@ export const getSystemInstancesTableConfiguration = ({
   userAbilities,
   cleanUpPermittedFor,
   onCleanUpClick,
+  operationsEnabled = false,
+  getOperations = () => [],
 }) => ({
   usePadding: false,
   columns: [
@@ -73,22 +78,42 @@ export const getSystemInstancesTableConfiguration = ({
     },
     {
       title: '',
-      key: 'absent_at',
+      key: 'actions',
       className: 'w-40',
-      render: (content, item) =>
-        content && (
-          <CleanUpButton
-            size="fit"
-            type="transparent"
-            className="jungle-green-500 border-none shadow-none"
-            cleaning={item.deregistering}
-            userAbilities={userAbilities}
-            permittedFor={cleanUpPermittedFor}
-            onClick={() => {
-              onCleanUpClick(item);
-            }}
-          />
-        ),
+      render: (_content, item) => {
+        if (item.absent_at) {
+          return (
+            <CleanUpButton
+              size="fit"
+              type="transparent"
+              className="jungle-green-500 border-none shadow-none"
+              cleaning={item.deregistering}
+              userAbilities={userAbilities}
+              permittedFor={cleanUpPermittedFor}
+              onClick={() => {
+                onCleanUpClick(item);
+              }}
+            />
+          );
+        }
+
+        const operations = getOperations(item);
+        if (operationsEnabled && !isEmpty(operations)) {
+          return (
+            <div className="flex items-center justify-center">
+              <OperationsButton
+                text=""
+                userAbilities={userAbilities}
+                menuPosition="bottom"
+                transparent
+                operations={operations}
+              />
+            </div>
+          );
+        }
+
+        return null;
+      },
     },
   ],
 });
