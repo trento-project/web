@@ -964,7 +964,7 @@ defmodule Trento.Factory do
       "hostname" => Faker.StarWars.character(),
       "ip_addresses" => [Faker.Internet.ip_v4_address()],
       "agent_version" => Faker.App.semver(),
-      "arch" => Enum.random(Architecture.values()),
+      "arch" => Atom.to_string(Enum.random(Architecture.values())),
       "cpu_count" => Enum.random(1..16),
       "total_memory_mb" => Enum.random(1..128),
       "socket_count" => Enum.random(1..16),
