@@ -317,6 +317,11 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
                  assigns: %{
                    instance: %{
                      sap_system_id: ^sap_system_id,
+                     sap_system: %{
+                       id: ^sap_system_id,
+                       application_instances: [%{sap_system_id: ^sap_system_id}],
+                       database: %{id: ^database_id}
+                     },
                      host: %{id: ^host_id, cluster: %{id: ^cluster_id}}
                    }
                  }
