@@ -1,17 +1,22 @@
 import { call, put, select, takeEvery } from 'redux-saga/effects';
-import { map } from 'lodash';
+import { map, noop } from 'lodash';
 
 import {
   HOST_OPERATION,
   CLUSTER_OPERATION,
+  SAP_INSTANCE_OPERATION,
   getOperationLabel,
   getOperationInternalName,
   getOperationResourceType,
-  getOperationRequestFunc,
   operationRunning,
   operationSucceeded,
 } from '@lib/operations';
-import { getOperationExecutions } from '@lib/api/operations';
+import {
+  requestHostOperation,
+  requestClusterOperation,
+  requestSapInstanceOperation,
+  getOperationExecutions,
+} from '@lib/api/operations';
 import { notify } from '@state/notifications';
 import {
   OPERATION_COMPLETED,
@@ -24,9 +29,10 @@ import {
 import { getHost } from '@state/selectors/host';
 import { getCluster } from '@state/selectors/cluster';
 
-function* getResourceName({ groupID, resourceType }) {
+function* getResourceName(groupID, resourceType) {
   switch (resourceType) {
     case HOST_OPERATION:
+    case SAP_INSTANCE_OPERATION:
       return (yield select(getHost(groupID)))?.hostname || 'unknown';
     case CLUSTER_OPERATION:
       return (yield select(getCluster(groupID)))?.name || 'unknown';
@@ -35,19 +41,45 @@ function* getResourceName({ groupID, resourceType }) {
   }
 }
 
+const callRequest = (operation, resourceType, requestParams) => {
+  switch (resourceType) {
+    case HOST_OPERATION: {
+      const { hostID, params } = requestParams;
+      return requestHostOperation(hostID, operation, params);
+    }
+    case CLUSTER_OPERATION: {
+      const { clusterID, params } = requestParams;
+      return requestClusterOperation(clusterID, operation, params);
+    }
+    case SAP_INSTANCE_OPERATION: {
+      const { sapSystemID, hostID, instanceNumber, params } = requestParams;
+      return requestSapInstanceOperation(
+        sapSystemID,
+        hostID,
+        instanceNumber,
+        operation,
+        params
+      );
+    }
+    default:
+      return noop;
+  }
+};
+
 export function* requestOperation({ payload }) {
-  const { groupID, operation, params } = payload;
+  const { groupID, operation, requestParams } = payload;
 
   const operationName = getOperationLabel(operation);
   const operationResourceType = getOperationResourceType(operation);
-  const requestFunc = getOperationRequestFunc(operationResourceType);
-  const resourceName = yield call(getResourceName, {
+  const resourceName = yield call(
+    getResourceName,
     groupID,
-    resourceType: operationResourceType,
-  });
+    operationResourceType
+  );
+
   yield put(setRunningOperation({ groupID, operation }));
   try {
-    yield call(requestFunc, groupID, operation, params);
+    yield call(callRequest, operation, operationResourceType, requestParams);
     yield put(
       notify({
         text: `Operation ${operationName} requested for ${resourceName}`,
@@ -76,10 +108,11 @@ export function* completeOperation({ payload }) {
 
   const operationName = getOperationLabel(operation);
   const operationResourceType = getOperationResourceType(operation);
-  const resourceName = yield call(getResourceName, {
+  const resourceName = yield call(
+    getResourceName,
     groupID,
-    resourceType: operationResourceType,
-  });
+    operationResourceType
+  );
   yield put(removeRunningOperation({ groupID }));
   if (operationSucceeded(result)) {
     yield put(

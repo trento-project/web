@@ -1,17 +1,9 @@
-import { noop } from 'lodash';
-
-import {
-  requestHostOperation,
-  requestClusterOperation,
-} from '@lib/api/operations';
-
 import { SAPTUNE_SOLUTION_OPERATION_FORBIDDEN_MSG } from './ForbiddenMessages';
 
 import {
   getOperationLabel,
   getOperationInternalName,
   getOperationResourceType,
-  getOperationRequestFunc,
   getOperationForbiddenMessage,
   operationSucceeded,
   operationRunning,
@@ -35,6 +27,14 @@ describe('operations', () => {
       operation: 'cluster_maintenance_change',
       label: 'Cluster maintenance change',
     },
+    {
+      operation: 'sap_instance_start',
+      label: 'SAP instance start',
+    },
+    {
+      operation: 'sap_instance_stop',
+      label: 'SAP instance stop',
+    },
   ])(`should return the operation $operation label`, ({ operation, label }) => {
     expect(getOperationLabel(operation)).toBe(label);
   });
@@ -55,6 +55,14 @@ describe('operations', () => {
     {
       operation: 'clustermaintenancechange@v1',
       name: 'cluster_maintenance_change',
+    },
+    {
+      operation: 'sapinstancestart@v1',
+      name: 'sap_instance_start',
+    },
+    {
+      operation: 'sapinstancestop@v1',
+      name: 'sap_instance_stop',
     },
   ])(
     `should return the operation $operation internal name`,
@@ -80,30 +88,18 @@ describe('operations', () => {
       operation: 'cluster_maintenance_change',
       resourceType: 'cluster',
     },
+    {
+      operation: 'sap_instance_start',
+      resourceType: 'sap_instance',
+    },
+    {
+      operation: 'sap_instance_stop',
+      resourceType: 'sap_instance',
+    },
   ])(
     `should return the operation $operation resource type`,
     ({ operation, resourceType }) => {
       expect(getOperationResourceType(operation)).toBe(resourceType);
-    }
-  );
-
-  it.each([
-    {
-      operation: 'unknown',
-      func: noop,
-    },
-    {
-      operation: 'host',
-      func: requestHostOperation,
-    },
-    {
-      operation: 'cluster',
-      func: requestClusterOperation,
-    },
-  ])(
-    `should return the operation $operation request function`,
-    ({ operation, func }) => {
-      expect(getOperationRequestFunc(operation)).toBe(func);
     }
   );
 
