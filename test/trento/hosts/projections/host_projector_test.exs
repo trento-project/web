@@ -7,6 +7,7 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
 
   import Trento.Factory
 
+  require Trento.Enums.Architecture, as: Architecture
   require Trento.Enums.Provider, as: Provider
 
   alias Trento.Hosts.Projections.{
@@ -251,6 +252,7 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
         total_memory_mb: Enum.random(1..128),
         socket_count: Enum.random(1..16),
         os_version: Faker.App.version(),
+        arch: Enum.random(Architecture.values()),
         prometheus_targets: build(:host_prometheus_targets)
       }
 
