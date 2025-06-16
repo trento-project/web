@@ -112,12 +112,14 @@ defmodule Trento.ActivityLog.SeverityLevel do
       },
       condition: :map_value_to_severity
     },
+    "sap_system_cleanup_requested" => :warning,
     "sap_system_deregistered" => :warning,
     "sap_system_restored" => :debug,
     "sap_system_rolled_up" => :debug,
     "sap_system_rollup_requested" => :debug,
     "sap_system_tombstoned" => :debug,
     "sap_system_updated" => :info,
+    "database_cleanup_requested" => :warning,
     "database_deregistered" => :warning,
     "database_health_changed" => %{
       type: :kv,
