@@ -57,15 +57,26 @@ defmodule Trento.Operations.DatabaseInstancePolicyTest do
       ]
 
       for %{maintenance_mode: maintenance_mode, result: result} <- scenarios do
+        [%{sid: sid, instance_number: instance_number}] =
+          clustered_sap_instances =
+          build_list(1, :clustered_sap_instance)
+
         cluster_details =
           build(:hana_cluster_details, maintenance_mode: maintenance_mode, nodes: [])
 
-        cluster = build(:cluster, name: cluster_name, details: cluster_details)
+        cluster =
+          build(:cluster,
+            name: cluster_name,
+            sap_instances: clustered_sap_instances,
+            details: cluster_details
+          )
 
         instance =
           build(:database_instance,
             health: Health.unknown(),
-            host: %HostReadModel{cluster: cluster}
+            host: %HostReadModel{cluster: cluster},
+            sid: sid,
+            instance_number: instance_number
           )
 
         assert result ==
@@ -78,16 +89,27 @@ defmodule Trento.Operations.DatabaseInstancePolicyTest do
     test "should forbid operation if the database instance is not stopped and cluster is not in maintenance" do
       cluster_name = Faker.StarWars.character()
 
+      [%{sid: sid, instance_number: instance_number}] =
+        clustered_sap_instances =
+        build_list(1, :clustered_sap_instance)
+
       cluster_details =
         build(:hana_cluster_details, maintenance_mode: false, nodes: [])
 
-      cluster = build(:cluster, name: cluster_name, details: cluster_details)
+      cluster =
+        build(:cluster,
+          name: cluster_name,
+          sap_instances: clustered_sap_instances,
+          details: cluster_details
+        )
 
       %{sid: sid, instance_number: instance_number} =
         instance =
         build(:database_instance,
           health: Health.passing(),
-          host: %HostReadModel{cluster: cluster}
+          host: %HostReadModel{cluster: cluster},
+          sid: sid,
+          instance_number: instance_number
         )
 
       assert {:error,
@@ -98,6 +120,69 @@ defmodule Trento.Operations.DatabaseInstancePolicyTest do
                DatabaseInstancePolicy.authorize_operation(:maintenance, instance, %{
                  cluster_resource_id: nil
                })
+    end
+  end
+
+  test "should authorize operation if the database instance is not clustered" do
+    cluster_details =
+      build(:hana_cluster_details, maintenance_mode: false)
+
+    [%{sid: sid}] =
+      clustered_sap_instances =
+      build_list(1, :clustered_sap_instance)
+
+    cluster =
+      build(:cluster,
+        type: :hana_scale_up,
+        sap_instances: clustered_sap_instances,
+        details: cluster_details
+      )
+
+    host = build(:host, cluster: cluster)
+
+    instance =
+      build(:database_instance,
+        health: Health.unknown(),
+        host: host,
+        sid: sid,
+        instance_number: "01"
+      )
+
+    assert :ok ==
+             DatabaseInstancePolicy.authorize_operation(:maintenance, instance, %{})
+  end
+
+  test "should authorize operation if HANA resources are not managed" do
+    scenarios = [
+      %{cluster_resource_type: "ocf::suse:SAPHana"},
+      %{cluster_resource_type: "ocf::suse:SAPHanaController"}
+    ]
+
+    for %{cluster_resource_type: cluster_resource_type} <- scenarios do
+      parent = build(:cluster_resource_parent, managed: false)
+
+      cluster_resource =
+        build(:cluster_resource, type: cluster_resource_type, managed: true, parent: parent)
+
+      [%{sid: sid, instance_number: instance_number}] =
+        clustered_sap_instances =
+        build_list(1, :clustered_sap_instance)
+
+      nodes = build_list(1, :hana_cluster_node, resources: [cluster_resource])
+      cluster_details = build(:hana_cluster_details, maintenance_mode: false, nodes: nodes)
+      cluster = build(:cluster, sap_instances: clustered_sap_instances, details: cluster_details)
+
+      host = build(:host, cluster: cluster)
+
+      instance =
+        build(:database_instance,
+          health: Health.unknown(),
+          host: host,
+          sid: sid,
+          instance_number: instance_number
+        )
+
+      assert :ok == DatabaseInstancePolicy.authorize_operation(:maintenance, instance, %{})
     end
   end
 end
