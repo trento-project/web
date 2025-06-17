@@ -25,8 +25,10 @@ defmodule Trento.Operations.ApplicationInstancePolicyTest do
 
   describe "maintenance" do
     test "should forbid operation if the application instance is not stopped" do
+      sap_systems = build_list(1, :ascs_ers_cluster_sap_system)
+
       cluster_details =
-        build(:hana_cluster_details, maintenance_mode: true, nodes: [])
+        build(:ascs_ers_cluster_details, maintenance_mode: true, sap_systems: sap_systems)
 
       cluster = build(:cluster, details: cluster_details)
 
@@ -63,15 +65,31 @@ defmodule Trento.Operations.ApplicationInstancePolicyTest do
       ]
 
       for %{maintenance_mode: maintenance_mode, result: result} <- scenarios do
-        cluster_details =
-          build(:hana_cluster_details, maintenance_mode: maintenance_mode, nodes: [])
+        sap_systems = build_list(1, :ascs_ers_cluster_sap_system)
 
-        cluster = build(:cluster, name: cluster_name, details: cluster_details)
+        cluster_details =
+          build(:ascs_ers_cluster_details,
+            maintenance_mode: maintenance_mode,
+            sap_systems: sap_systems
+          )
+
+        [%{sid: sid, instance_number: instance_number}] =
+          clustered_sap_instances =
+          build_list(1, :clustered_sap_instance)
+
+        cluster =
+          build(:cluster,
+            name: cluster_name,
+            details: cluster_details,
+            sap_instances: clustered_sap_instances
+          )
 
         instance =
           build(:application_instance,
             health: Health.unknown(),
-            host: build(:host, cluster: cluster)
+            host: build(:host, cluster: cluster),
+            instance_number: instance_number,
+            sid: sid
           )
 
         assert result ==
@@ -141,19 +159,61 @@ defmodule Trento.Operations.ApplicationInstancePolicyTest do
       end
     end
 
-    test "should forbid operation if the application instance is not stopped and cluster is not in maintenance" do
-      cluster_name = Faker.StarWars.character()
+    test "should authorize operation if the SAP instance is not clustered" do
+      [%{sid: sid}] = sap_systems = build_list(1, :ascs_ers_cluster_sap_system)
 
       cluster_details =
-        build(:hana_cluster_details, maintenance_mode: false, nodes: [])
+        build(:ascs_ers_cluster_details, maintenance_mode: false, sap_systems: sap_systems)
 
-      cluster = build(:cluster, name: cluster_name, details: cluster_details)
+      clustered_sap_instances =
+        build_list(1, :clustered_sap_instance, sid: sid, instance_number: "00")
+
+      cluster =
+        build(:cluster,
+          type: :ascs_ers,
+          details: cluster_details,
+          sap_instances: clustered_sap_instances
+        )
+
+      host = build(:host, cluster: cluster)
+
+      instance =
+        build(:application_instance,
+          health: Health.unknown(),
+          host: host,
+          sid: sid,
+          instance_number: "01"
+        )
+
+      assert :ok ==
+               ApplicationInstancePolicy.authorize_operation(:maintenance, instance, %{})
+    end
+
+    test "should forbid operation if the application instance is not stopped and cluster is not in maintenance" do
+      cluster_name = Faker.StarWars.character()
+      [%{sid: sid}] = sap_systems = build_list(1, :ascs_ers_cluster_sap_system)
+
+      cluster_details =
+        build(:ascs_ers_cluster_details, maintenance_mode: false, sap_systems: sap_systems)
+
+      [%{instance_number: instance_number}] =
+        clustered_sap_instances =
+        build_list(1, :clustered_sap_instance, sid: sid)
+
+      cluster =
+        build(:cluster,
+          name: cluster_name,
+          details: cluster_details,
+          sap_instances: clustered_sap_instances
+        )
 
       %{sid: sid, instance_number: instance_number} =
         instance =
         build(:application_instance,
           health: Health.passing(),
-          host: build(:host, cluster: cluster)
+          host: build(:host, cluster: cluster),
+          instance_number: instance_number,
+          sid: sid
         )
 
       assert {:error,
