@@ -1137,6 +1137,25 @@ defmodule Trento.ClustersTest do
     end
   end
 
+  describe "get_registered_cluster/1" do
+    test "should not return a non existing cluster" do
+      assert {:error, :not_found} == Clusters.get_registered_cluster(UUID.uuid4())
+    end
+
+    test "should not return an deregistered cluster" do
+      %{id: deregistered_cluster_id} = insert(:cluster, deregistered_at: DateTime.utc_now())
+
+      assert {:error, :not_found} == Clusters.get_registered_cluster(deregistered_cluster_id)
+    end
+
+    test "should return a registered cluster" do
+      %{id: registered_cluster_id} = insert(:cluster)
+
+      assert {:ok, %ClusterReadModel{id: ^registered_cluster_id}} =
+               Clusters.get_registered_cluster(registered_cluster_id)
+    end
+  end
+
   describe "request_operation/3" do
     test "should request cluster_maintenance_change operation" do
       %{id: cluster_id} = insert(:cluster)
