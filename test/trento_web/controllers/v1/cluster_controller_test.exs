@@ -385,7 +385,15 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
         [
           post(conn, "/api/v1/clusters/#{cluster_id}/checks", %{}),
           post(conn, "/api/v1/clusters/#{cluster_id}/checks/request_execution", %{}),
-          post(conn, "/api/v1/clusters/#{cluster_id}/operations/cluster_maintenance_change", %{})
+          post(conn, "/api/v1/clusters/#{cluster_id}/operations/cluster_maintenance_change", %{}),
+          post(
+            conn,
+            "/api/v1/clusters/#{cluster_id}/hosts/#{UUID.uuid4()}/operations/pacemaker_enable"
+          ),
+          post(
+            conn,
+            "/api/v1/clusters/#{cluster_id}/hosts/#{UUID.uuid4()}/operations/pacemaker_disable"
+          )
         ],
         fn conn ->
           conn
