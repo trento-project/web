@@ -56,6 +56,8 @@ const groupedAbilities = [
       'saptune_solution_apply:host',
       'saptune_solution_change:host',
       'maintenance_change:cluster',
+      'pacemaker_enable:cluster',
+      'pacemaker_disable:cluster',
     ],
   },
 ];
