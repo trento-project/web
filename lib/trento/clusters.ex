@@ -49,15 +49,11 @@ defmodule Trento.Clusters do
     end
   end
 
-  @spec get_registered_cluster(String.t()) :: {:error, :not_found} | {:ok, ClusterReadModel.t()}
-  def get_registered_cluster(id) do
+  @spec get_cluster_by_id(String.t()) :: ClusterReadModel.t() | nil
+  def get_cluster_by_id(id) do
     ClusterReadModel
     |> where([c], c.id == ^id and is_nil(c.deregistered_at))
     |> Repo.one()
-    |> case do
-      %ClusterReadModel{} = cluster -> {:ok, cluster}
-      nil -> {:error, :not_found}
-    end
   end
 
   @spec select_checks(String.t(), [String.t()]) :: :ok | {:error, any}
@@ -254,7 +250,7 @@ defmodule Trento.Clusters do
     end
   end
 
-  def request_host_operation(_, _, _), do: {:error, :operation_not_supported}
+  def request_host_operation(_, _, _), do: {:error, :operation_not_found}
 
   defp has_resource_managed?(%{nodes: nodes}, resource_id) do
     Enum.any?(nodes, fn %{resources: resources} ->
