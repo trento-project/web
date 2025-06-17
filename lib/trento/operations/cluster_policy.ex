@@ -44,5 +44,20 @@ defmodule Trento.Operations.ClusterPolicy do
 
   def authorize_operation(:cluster_maintenance_change, _, _), do: :ok
 
+  def authorize_operation(
+        operation,
+        %ClusterReadModel{hosts: hosts},
+        %{
+          host_id: host_id
+        }
+      )
+      when operation in [:pacemaker_enable, :pacemaker_disable] do
+    if Enum.any?(hosts, &(&1.id == host_id)) do
+      :ok
+    else
+      {:error, ["Host #{host_id} is not part of the requested cluster"]}
+    end
+  end
+
   def authorize_operation(_, _, _), do: {:error, ["Unknown operation"]}
 end
