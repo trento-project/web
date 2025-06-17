@@ -18,7 +18,10 @@ const hostsNavigationItem = '.tn-menu-item[href="/hosts"]';
 const clusterNameLabel = 'div:contains("Cluster") div span a span';
 const agentVersionLabel =
   'div[class="font-bold"]:contains("Agent Version") + div';
-const ipAddressesLabel = 'div[class="font-bold"]:contains("IP Addresses") + div';
+const architectureLabel =
+  'div[class="font-bold"]:contains("Architecture") + div';
+const ipAddressesLabel =
+  'div[class="font-bold"]:contains("IP Addresses") + div';
 const agentRunningLabel = 'span:contains("Agent:running")';
 const agentRunningBadge = `${agentRunningLabel} svg`;
 const nodeExporterLabel = 'span:contains("Node Exporter:running")';
@@ -199,6 +202,9 @@ export const clusterNameHasExpectedValue = () =>
 
 export const agentVersionHasExpectedValue = () =>
   cy.get(agentVersionLabel).should('have.text', selectedHost.agentVersion);
+
+export const architectureHasExpectedValue = () =>
+  cy.get(architectureLabel).should('have.text', selectedHost.arch);
 
 export const ipAddressesHasExpectedValue = () =>
   cy.get(ipAddressesLabel).should('have.text', selectedHost.ipAddresses);
