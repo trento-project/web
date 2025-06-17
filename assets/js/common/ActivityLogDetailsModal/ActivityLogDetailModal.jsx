@@ -1,5 +1,5 @@
 import React from 'react';
-import { noop } from 'lodash';
+import { isEmpty, noop } from 'lodash';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { NavLink } from 'react-router-dom';
@@ -56,7 +56,7 @@ const keyRenderers = {
 function ActivityLogDetailModal({ open = false, entry, onClose = noop }) {
   const maybeCorrelationId =
     entry === undefined ||
-    entry === {} ||
+    isEmpty(entry) ||
     entry.metadata === undefined ||
     entry.metadata.correlation_id === undefined
       ? null
