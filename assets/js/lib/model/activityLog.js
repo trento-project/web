@@ -284,7 +284,6 @@ export const ACTIVITY_TYPES_CONFIG = {
     resource: userResourceType,
   },
 
-
   [ACTIVITY_LOG_SETTINGS_UPDATE]: {
     label: 'Activity Log Settings Updated',
     message: (_entry) => `Activity log settings were updated`,
