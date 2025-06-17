@@ -80,26 +80,10 @@ defmodule Trento.Operations.ClusterPolicyTest do
     for operation <- [:pacemaker_enable, :pacemaker_disable] do
       @operation operation
 
-      test "authorizing #{operation} should return an error when the host is not part of the cluster" do
-        cluster_id_1 = UUID.uuid4()
-        cluster_id_2 = UUID.uuid4()
+      test "should always authorize a #{operation} operation" do
+        cluster = build(:cluster)
 
-        cluster1 = build(:cluster, id: cluster_id_1, hosts: [])
-
-        cluster2 =
-          build(:cluster, id: cluster_id_2, hosts: build_list(2, :host, cluster_id: cluster_id_1))
-
-        scenarios = [
-          {cluster1, Faker.UUID.v4()},
-          {cluster2, Faker.UUID.v4()}
-        ]
-
-        for {cluster, host_id} <- scenarios do
-          assert {:error, ["Host #{host_id} is not part of the requested cluster"]} ==
-                   ClusterPolicy.authorize_operation(@operation, cluster, %{
-                     host_id: host_id
-                   })
-        end
+        assert :ok == ClusterPolicy.authorize_operation(@operation, cluster, %{})
       end
     end
   end
