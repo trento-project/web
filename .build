@@ -326,6 +326,7 @@ Trento.MessagingCase.html
 Trento.Operations.ApplicationInstancePolicy.html
 Trento.Operations.ClusterPolicy.html
 Trento.Operations.DatabaseInstancePolicy.html
+Trento.Operations.Enums.ClusterHostOperations.html
 Trento.Operations.Enums.ClusterOperations.html
 Trento.Operations.Enums.HostOperations.html
 Trento.Operations.Enums.SapInstanceOperations.html
@@ -520,8 +521,8 @@ dist/lato-latin-ext-300-normal-VPGGJKJL.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-AC9683BB.js
-dist/sidebar_items-FFC7C758.js
+dist/search_data-D52E668C.js
+dist/sidebar_items-E4841E30.js
 environment_variables.html
 hack_on_the_trento.html
 index.html
