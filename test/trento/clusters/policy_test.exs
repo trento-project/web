@@ -50,6 +50,38 @@ defmodule Trento.Clusters.PolicyTest do
     end
   end
 
+  describe "request_host_operation" do
+    for operation <- ["pacemaker_enable", "pacemaker_disable"] do
+      @pacemaker_operation operation
+
+      test "should allow #{operation} operation if the user has #{operation}:cluster ability" do
+        user = %User{abilities: [%Ability{name: @pacemaker_operation, resource: "cluster"}]}
+
+        assert Policy.authorize(:request_host_operation, user, %{
+                 operation: @pacemaker_operation
+               })
+      end
+
+      test "should allow #{operation} operation if the user has all:all ability" do
+        user = %User{abilities: [%Ability{name: "all", resource: "all"}]}
+
+        assert Policy.authorize(:request_host_operation, user, %{operation: @pacemaker_operation})
+      end
+
+      test "should disallow #{operation} operation if the user does not have #{operation}:cluster ability" do
+        user1 = %User{abilities: [%Ability{name: "all", resource: "other_resource"}]}
+        user2 = %User{abilities: [%Ability{name: "foo", resource: "cluster"}]}
+        user3 = %User{abilities: []}
+
+        for user <- [user1, user2, user3] do
+          refute Policy.authorize(:request_host_operation, user, %{
+                   operation: "#{@pacemaker_operation}"
+                 })
+        end
+      end
+    end
+  end
+
   test "should allow unguarded actions" do
     user = %User{abilities: []}
 
