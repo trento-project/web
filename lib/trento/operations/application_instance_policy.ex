@@ -198,6 +198,8 @@ defmodule Trento.Operations.ApplicationInstancePolicy do
     end)
   end
 
+  defp get_cluster_resource_id(_, _, _), do: nil
+
   defp reject_current_instance(instances, host_id, instance_number) do
     Enum.reject(instances, fn %{instance_number: inst_number, host_id: h_id} ->
       instance_number == inst_number && host_id == h_id
