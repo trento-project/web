@@ -21,7 +21,7 @@ defmodule TrentoWeb.Plugs.OperationsPolicyPlugTest do
   test "should return not found if the given resource is not found", %{conn: conn} do
     opts = [
       policy: TestPolicy,
-      operation: fn _ -> nil end,
+      operation: fn _ -> :foo end,
       resource: fn _ -> nil end
     ]
 
@@ -52,7 +52,7 @@ defmodule TrentoWeb.Plugs.OperationsPolicyPlugTest do
            } == json_response(conn, 404)
   end
 
-  test "should forbid operation if the resourcec is not authorized", %{conn: conn} do
+  test "should forbid operation if the resource is not authorized", %{conn: conn} do
     api_spec = ApiSpec.spec()
 
     opts = [

@@ -44,5 +44,9 @@ defmodule Trento.Operations.ClusterPolicy do
 
   def authorize_operation(:cluster_maintenance_change, _, _), do: :ok
 
+  def authorize_operation(operation, _, _)
+      when operation in [:pacemaker_enable, :pacemaker_disable],
+      do: :ok
+
   def authorize_operation(_, _, _), do: {:error, ["Unknown operation"]}
 end

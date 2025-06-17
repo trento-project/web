@@ -50,6 +50,8 @@ defmodule Trento.Infrastructure.Operations do
   def map_operation_type("clustermaintenancechange@v1"), do: :cluster_maintenance_change
   def map_operation_type("sapinstancestart@v1"), do: :sap_instance_start
   def map_operation_type("sapinstancestop@v1"), do: :sap_instance_stop
+  def map_operation_type("pacemakerenable@v1"), do: :pacemaker_enable
+  def map_operation_type("pacemakerdisable@v1"), do: :pacemaker_disable
   def map_operation_type(_), do: :unknown
 
   def map_operation(:saptune_solution_apply), do: "saptuneapplysolution@v1"
@@ -57,6 +59,8 @@ defmodule Trento.Infrastructure.Operations do
   def map_operation(:cluster_maintenance_change), do: "clustermaintenancechange@v1"
   def map_operation(:sap_instance_start), do: "sapinstancestart@v1"
   def map_operation(:sap_instance_stop), do: "sapinstancestop@v1"
+  def map_operation(:pacemaker_enable), do: "pacemakerenable@v1"
+  def map_operation(:pacemaker_disable), do: "pacemakerdisable@v1"
 
   def map_operation(_), do: :unknown
 end

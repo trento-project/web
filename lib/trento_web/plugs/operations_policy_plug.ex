@@ -78,14 +78,12 @@ defmodule TrentoWeb.Plugs.OperationsPolicyPlug do
           assigns_to: assigns_to
         } = opts
       ) do
-    params = params_fun.(conn)
-
-    with {:ok, resource} <- handle_resource(conn, opts),
-         {:ok, operation} <- handle_operation(conn, opts),
+    with {:ok, operation} <- handle_operation(conn, opts),
+         conn <- assign(conn, :operation, operation),
+         {:ok, resource} <- handle_resource(conn, opts),
+         params <- params_fun.(conn),
          :ok <- handle_permission(policy, operation, resource, params) do
-      conn
-      |> assign(assigns_to, resource)
-      |> assign(:operation, operation)
+      assign(conn, assigns_to, resource)
     else
       error ->
         conn

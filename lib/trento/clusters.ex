@@ -12,6 +12,7 @@ defmodule Trento.Clusters do
   require Trento.Clusters.Enums.HanaArchitectureType, as: HanaArchitectureType
   require Trento.Clusters.Enums.HanaScenario, as: HanaScenario
   require Trento.Operations.Enums.ClusterOperations, as: ClusterOperations
+  require Trento.Operations.Enums.ClusterHostOperations, as: ClusterHostOperations
 
   alias Trento.Hosts.Projections.HostReadModel
 
@@ -46,6 +47,13 @@ defmodule Trento.Clusters do
       %ClusterReadModel{} = cluster -> {:ok, cluster}
       nil -> {:error, :not_found}
     end
+  end
+
+  @spec get_cluster_by_id(String.t()) :: ClusterReadModel.t() | nil
+  def get_cluster_by_id(id) do
+    ClusterReadModel
+    |> where([c], c.id == ^id and is_nil(c.deregistered_at))
+    |> Repo.one()
   end
 
   @spec select_checks(String.t(), [String.t()]) :: :ok | {:error, any}
@@ -224,6 +232,25 @@ defmodule Trento.Clusters do
   end
 
   def request_operation(_, _, _), do: {:error, :operation_not_found}
+
+  @spec request_host_operation(atom(), String.t(), String.t()) ::
+          {:ok, String.t()} | {:error, any}
+  def request_host_operation(operation, cluster_id, host_id)
+      when operation in ClusterHostOperations.values() do
+    operation_id = UUID.uuid4()
+
+    case Operations.request_operation(
+           operation_id,
+           cluster_id,
+           Operations.map_operation(operation),
+           [%{agent_id: host_id, arguments: %{}}]
+         ) do
+      :ok -> {:ok, operation_id}
+      error -> error
+    end
+  end
+
+  def request_host_operation(_, _, _), do: {:error, :operation_not_found}
 
   defp has_resource_managed?(%{nodes: nodes}, resource_id) do
     Enum.any?(nodes, fn %{resources: resources} ->

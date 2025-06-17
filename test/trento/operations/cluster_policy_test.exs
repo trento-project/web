@@ -75,4 +75,16 @@ defmodule Trento.Operations.ClusterPolicyTest do
       assert ClusterPolicy.authorize_operation(:cluster_maintenance_change, cluster, %{})
     end
   end
+
+  describe "enable/disable pacemaker" do
+    for operation <- [:pacemaker_enable, :pacemaker_disable] do
+      @operation operation
+
+      test "should always authorize a #{operation} operation" do
+        cluster = build(:cluster)
+
+        assert :ok == ClusterPolicy.authorize_operation(@operation, cluster, %{})
+      end
+    end
+  end
 end

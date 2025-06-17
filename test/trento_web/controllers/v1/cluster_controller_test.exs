@@ -142,7 +142,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
     end
   end
 
-  describe "request operation" do
+  describe "cluster maintenance operations" do
     test "should fallback to not found if the resource is not found", %{
       conn: conn,
       api_spec: api_spec
@@ -250,6 +250,123 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
       })
       |> json_response(:accepted)
       |> assert_schema("OperationAccepted", api_spec)
+    end
+  end
+
+  describe "cluster host operations" do
+    test "should return not found if the operation on unmapped operation", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      conn
+      |> post("/api/v1/clusters/#{UUID.uuid4()}/hosts/#{UUID.uuid4()}/operations/unknown")
+      |> json_response(:not_found)
+      |> assert_schema("NotFound", api_spec)
+    end
+
+    for operation <- ["pacemaker_enable", "pacemaker_disable"] do
+      @operation operation
+
+      test "requesting #{operation} should return not found when the cluster does not exist",
+           %{
+             conn: conn,
+             api_spec: api_spec
+           } do
+        conn
+        |> post("/api/v1/clusters/#{UUID.uuid4()}/hosts/#{UUID.uuid4()}/operations/#{@operation}")
+        |> json_response(:not_found)
+        |> assert_schema("NotFound", api_spec)
+      end
+
+      test "requesting #{operation} should return not found when the cluster is deregistered",
+           %{
+             conn: conn,
+             api_spec: api_spec
+           } do
+        %{id: cluster_id} = insert(:cluster, deregistered_at: Faker.DateTime.backward(1))
+
+        conn
+        |> post("/api/v1/clusters/#{cluster_id}/hosts/#{UUID.uuid4()}/operations/#{@operation}")
+        |> json_response(:not_found)
+        |> assert_schema("NotFound", api_spec)
+      end
+
+      test "requesting #{operation} should return not found when the host is not among the cluster's hosts",
+           %{
+             conn: conn,
+             api_spec: api_spec
+           } do
+        %{id: cluster_id_1} = insert(:cluster)
+
+        %{id: cluster_id_2} = insert(:cluster)
+        insert(:host, cluster_id: cluster_id_2)
+
+        %{id: cluster_id_3} = insert(:cluster)
+        insert(:host, cluster_id: cluster_id_3, deregistered_at: nil)
+
+        %{id: deregistered_host_id} =
+          insert(:host, cluster_id: cluster_id_3, deregistered_at: Faker.DateTime.backward(1))
+
+        for {cluster_id, host_id} <- [
+              {cluster_id_1, Faker.UUID.v4()},
+              {cluster_id_2, Faker.UUID.v4()},
+              {cluster_id_3, deregistered_host_id}
+            ] do
+          conn
+          |> post("/api/v1/clusters/#{cluster_id}/hosts/#{host_id}/operations/#{@operation}")
+          |> json_response(:not_found)
+          |> assert_schema("NotFound", api_spec)
+        end
+      end
+
+      test "requesting #{operation}  should respond with 500 on messaging error", %{conn: conn} do
+        %{id: cluster_id} = insert(:cluster)
+        %{id: host_id} = insert(:host, cluster_id: cluster_id)
+
+        expect(
+          Trento.Infrastructure.Messaging.Adapter.Mock,
+          :publish,
+          fn OperationsPublisher, _, _ ->
+            {:error, :amqp_error}
+          end
+        )
+
+        resp =
+          conn
+          |> put_req_header("content-type", "application/json")
+          |> post("/api/v1/clusters/#{cluster_id}/hosts/#{host_id}/operations/#{@operation}")
+          |> json_response(:internal_server_error)
+
+        assert %{
+                 "errors" => [
+                   %{
+                     "detail" => "Something went wrong.",
+                     "title" => "Internal Server Error"
+                   }
+                 ]
+               } = resp
+      end
+
+      test "should successfully perform #{operation}", %{
+        conn: conn,
+        api_spec: api_spec
+      } do
+        %{id: cluster_id} = insert(:cluster)
+        %{id: host_id} = insert(:host, cluster_id: cluster_id)
+
+        expect(
+          Trento.Infrastructure.Messaging.Adapter.Mock,
+          :publish,
+          fn OperationsPublisher, _, _ ->
+            :ok
+          end
+        )
+
+        conn
+        |> post("/api/v1/clusters/#{cluster_id}/hosts/#{host_id}/operations/#{@operation}")
+        |> json_response(:accepted)
+        |> assert_schema("OperationAccepted", api_spec)
+      end
     end
   end
 

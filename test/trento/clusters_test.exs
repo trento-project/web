@@ -1137,6 +1137,25 @@ defmodule Trento.ClustersTest do
     end
   end
 
+  describe "get_cluster_by_id/1" do
+    test "should not return a non existing cluster" do
+      assert nil == Clusters.get_cluster_by_id(UUID.uuid4())
+    end
+
+    test "should not return an deregistered cluster" do
+      %{id: deregistered_cluster_id} = insert(:cluster, deregistered_at: DateTime.utc_now())
+
+      assert nil == Clusters.get_cluster_by_id(deregistered_cluster_id)
+    end
+
+    test "should return a registered cluster" do
+      %{id: registered_cluster_id} = insert(:cluster)
+
+      assert %ClusterReadModel{id: ^registered_cluster_id} =
+               Clusters.get_cluster_by_id(registered_cluster_id)
+    end
+  end
+
   describe "request_operation/3" do
     test "should request cluster_maintenance_change operation" do
       %{id: cluster_id} = insert(:cluster)
@@ -1181,6 +1200,83 @@ defmodule Trento.ClustersTest do
     test "should return operation_not_found if the given operation does not exist" do
       assert {:error, :operation_not_found} =
                Clusters.request_operation(:unknown, UUID.uuid4(), %{})
+    end
+  end
+
+  describe "request_host_operation/3" do
+    test "should not support non cluster host operations" do
+      for operation <- [:cluster_maintenance_change, :foo_operation] do
+        assert {:error, :operation_not_found} =
+                 Clusters.request_host_operation(operation, UUID.uuid4(), %{})
+      end
+    end
+
+    pacemaker_enablement_scenarios = [
+      %{
+        operation: :pacemaker_enable,
+        expected_operator: "pacemakerenable@v1"
+      },
+      %{
+        operation: :pacemaker_disable,
+        expected_operator: "pacemakerdisable@v1"
+      }
+    ]
+
+    for %{operation: operation} = scenario <- pacemaker_enablement_scenarios do
+      @pacemaker_enablement_scenario scenario
+
+      test "should request #{operation} operation" do
+        %{
+          operation: pacemaker_operation,
+          expected_operator: expected_operator
+        } = @pacemaker_enablement_scenario
+
+        cluster_id = Faker.UUID.v4()
+        host_id = Faker.UUID.v4()
+
+        expect(
+          Trento.Infrastructure.Messaging.Adapter.Mock,
+          :publish,
+          1,
+          fn OperationsPublisher,
+             "requests",
+             %OperationRequested{
+               group_id: ^cluster_id,
+               operation_type: ^expected_operator,
+               targets: [
+                 %OperationTarget{
+                   agent_id: ^host_id,
+                   arguments: %{}
+                 }
+               ]
+             } ->
+            :ok
+          end
+        )
+
+        assert {:ok, _} =
+                 Clusters.request_host_operation(pacemaker_operation, cluster_id, host_id)
+      end
+
+      test "should handle #{operation} messagging error" do
+        %{operation: pacemaker_operation} = @pacemaker_enablement_scenario
+
+        expect(
+          Trento.Infrastructure.Messaging.Adapter.Mock,
+          :publish,
+          1,
+          fn OperationsPublisher, "requests", _ ->
+            {:error, :amqp_error}
+          end
+        )
+
+        assert {:error, :amqp_error} =
+                 Clusters.request_host_operation(
+                   pacemaker_operation,
+                   Faker.UUID.v4(),
+                   Faker.UUID.v4()
+                 )
+      end
     end
   end
 end
