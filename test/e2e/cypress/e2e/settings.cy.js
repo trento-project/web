@@ -193,7 +193,7 @@ context('Settings page', () => {
       });
 
       it('should have an edit button that is disabled', () => {
-        settingsPage.getAlertingEditButton().should('be.disabled');
+        settingsPage.alertingEditButtonIsDisabled();
       });
     });
 
@@ -212,6 +212,16 @@ context('Settings page', () => {
         smtp_password: 'testpass',
         sender_email: 'adm@trento-project.io',
         recipient_email: 'rcv@trento-project.io',
+      };
+
+      const updateAlertingSettings = {
+        enabled: true,
+        smtp_server: 'https://test2-smtp-server.com',
+        smtp_port: 588,
+        smtp_username: 'testuser2',
+        smtp_password: 'testpass2',
+        sender_email: 'adm2@trento-project.io',
+        recipient_email: 'rcv2@trento-project.io',
       };
 
       beforeEach(() => {
@@ -263,7 +273,7 @@ context('Settings page', () => {
         settingsPage.clickAlertingEditButton();
 
         settingsPage
-          .alertingModalEnabled()
+          .alertingModalEnabledSwitch()
           .should('have.attr', 'aria-checked', 'false');
         settingsPage.alertingModalServer().should('have.value', '');
         settingsPage.alertingModalPort().should('have.value', '');
@@ -275,7 +285,54 @@ context('Settings page', () => {
         settingsPage.alertingModalRecipient().should('have.value', '');
       });
 
-      it('test create');
+      it('should be created successfully if no previously set settings', () => {
+        settingsPage.clickAlertingEditButton();
+        settingsPage.setAlertingModalEnabledSwitch(
+          initialAlertingSettings.enabled
+        );
+        settingsPage.typeAlertingModalServer(
+          initialAlertingSettings.smtp_server
+        );
+        settingsPage.typeAlertingModalPort(initialAlertingSettings.smtp_port);
+        settingsPage.typeAlertingModalUsername(
+          initialAlertingSettings.smtp_username
+        );
+        settingsPage.typeAlertingModalPassword(
+          initialAlertingSettings.smtp_password
+        );
+        settingsPage.typeAlertingModalSender(
+          initialAlertingSettings.sender_email
+        );
+        settingsPage.typeAlertingModalRecipient(
+          initialAlertingSettings.recipient_email
+        );
+
+        settingsPage.submitAlertingModalSettings();
+        settingsPage.waitForRequest('alertingSettingsEndpoint');
+
+        settingsPage
+          .alertingEnabled()
+          .should(
+            'have.text',
+            initialAlertingSettings.enabled ? 'Enabled' : 'Disabled'
+          );
+        settingsPage
+          .alertingServer()
+          .should('have.text', initialAlertingSettings.smtp_server);
+        settingsPage
+          .alertingPort()
+          .should('have.text', String(initialAlertingSettings.smtp_port));
+        settingsPage
+          .alertingUsername()
+          .should('have.text', initialAlertingSettings.smtp_username);
+        settingsPage.alertingPassword().should('have.text', '•••••');
+        settingsPage
+          .alertingSender()
+          .should('have.text', initialAlertingSettings.sender_email);
+        settingsPage
+          .alertingRecipient()
+          .should('have.text', initialAlertingSettings.recipient_email);
+      });
 
       it('should shows previous values when edit modal is opened when previous settings set', () => {
         settingsPage.saveAlertingSettings(initialAlertingSettings);
@@ -284,7 +341,7 @@ context('Settings page', () => {
 
         settingsPage.clickAlertingEditButton();
         settingsPage
-          .alertingModalEnabled()
+          .alertingModalEnabledSwitch()
           .should('have.attr', 'aria-checked', 'true');
         settingsPage
           .alertingModalServer()
@@ -308,9 +365,113 @@ context('Settings page', () => {
           .should('have.value', initialAlertingSettings.recipient_email);
       });
 
-      it('test update');
+      it('should be updated successfully without password', () => {
+        settingsPage.saveAlertingSettings(initialAlertingSettings);
+        settingsPage.refresh();
+        settingsPage.waitForRequest('alertingSettingsEndpoint');
 
-      it('test update with password');
+        settingsPage.clickAlertingEditButton();
+        settingsPage.setAlertingModalEnabledSwitch(
+          updateAlertingSettings.enabled
+        );
+        settingsPage.typeAlertingModalServer(
+          updateAlertingSettings.smtp_server
+        );
+        settingsPage.typeAlertingModalPort(updateAlertingSettings.smtp_port);
+        settingsPage.typeAlertingModalUsername(
+          updateAlertingSettings.smtp_username
+        );
+        settingsPage.typeAlertingModalSender(
+          updateAlertingSettings.sender_email
+        );
+        settingsPage.typeAlertingModalRecipient(
+          updateAlertingSettings.recipient_email
+        );
+
+        settingsPage.submitAlertingModalSettings();
+        settingsPage.waitForRequest('alertingSettingsEndpoint');
+
+        settingsPage
+          .alertingEnabled()
+          .should(
+            'have.text',
+            updateAlertingSettings.enabled ? 'Enabled' : 'Disabled'
+          );
+        settingsPage
+          .alertingServer()
+          .should('have.text', updateAlertingSettings.smtp_server);
+        settingsPage
+          .alertingPort()
+          .should('have.text', String(updateAlertingSettings.smtp_port));
+        settingsPage
+          .alertingUsername()
+          .should('have.text', updateAlertingSettings.smtp_username);
+        settingsPage
+          .alertingPassword()
+          .should('have.text', '•••••');
+        settingsPage
+          .alertingSender()
+          .should('have.text', updateAlertingSettings.sender_email);
+        settingsPage
+          .alertingRecipient()
+          .should('have.text', updateAlertingSettings.recipient_email);
+      });
+
+      it('should update successfully with password', () => {
+        settingsPage.saveAlertingSettings(initialAlertingSettings);
+        settingsPage.refresh();
+        settingsPage.waitForRequest('alertingSettingsEndpoint');
+
+        settingsPage.clickAlertingEditButton();
+        settingsPage.setAlertingModalEnabledSwitch(
+          updateAlertingSettings.enabled
+        );
+        settingsPage.typeAlertingModalServer(
+          updateAlertingSettings.smtp_server
+        );
+        settingsPage.typeAlertingModalPort(updateAlertingSettings.smtp_port);
+        settingsPage.typeAlertingModalUsername(
+          updateAlertingSettings.smtp_username
+        );
+        settingsPage.removeAlertringModalPassword();
+        settingsPage.typeAlertingModalPassword(
+          updateAlertingSettings.smtp_password
+        );
+        settingsPage.typeAlertingModalSender(
+          updateAlertingSettings.sender_email
+        );
+        settingsPage.typeAlertingModalRecipient(
+          updateAlertingSettings.recipient_email
+        );
+
+        settingsPage.submitAlertingModalSettings();
+        settingsPage.waitForRequest('alertingSettingsEndpoint');
+
+        settingsPage
+          .alertingEnabled()
+          .should(
+            'have.text',
+            updateAlertingSettings.enabled ? 'Enabled' : 'Disabled'
+          );
+        settingsPage
+          .alertingServer()
+          .should('have.text', updateAlertingSettings.smtp_server);
+        settingsPage
+          .alertingPort()
+          .should('have.text', String(updateAlertingSettings.smtp_port));
+        settingsPage
+          .alertingUsername()
+          .should('have.text', updateAlertingSettings.smtp_username);
+        settingsPage
+          .alertingPassword()
+          .should('have.text', '•••••');
+        settingsPage
+          .alertingSender()
+          .should('have.text', updateAlertingSettings.sender_email);
+        settingsPage
+          .alertingRecipient()
+          .should('have.text', updateAlertingSettings.recipient_email);
+      });
     });
   });
 
@@ -364,6 +525,9 @@ context('Settings page', () => {
       settingsPage.sumaEditSettingsButtonIsEnabled();
       settingsPage.sumaClearSettingsButtonIsEnabled();
       settingsPage.activityLogsEditButtonIsEnabled();
+      if (Cypress.env('ALERTING_DB_TESTS')) {
+        settingsPage.alertingEditButtonIsEnabled();
+      }
     });
 
     it('should disable settings buttons if the user has no abilities', () => {
@@ -375,6 +539,9 @@ context('Settings page', () => {
       settingsPage.sumaEditSettingsButtonIsDisabled();
       settingsPage.sumaClearSettingsButtonIsDisabled();
       settingsPage.activityLogsEditButtonIsDisabled();
+      if (Cypress.env('ALERTING_DB_TESTS')) {
+        settingsPage.alertingEditButtonIsDisabled();
+      }
     });
   });
 });

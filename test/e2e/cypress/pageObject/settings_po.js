@@ -9,6 +9,7 @@ import {
 } from '../fixtures/suma_credentials/certificates';
 
 // Test data
+
 const url = '/settings';
 
 const sumaUrl = 'https://valid';
@@ -22,6 +23,7 @@ const baseInitialSettings = {
 };
 
 // Selectors
+
 const keyExpirationLabel = 'div[class*="mt-1"]';
 const apiKeyCode = 'code';
 const copyToClipboardButton = '[aria-label="copy to clipboard"]';
@@ -166,7 +168,8 @@ export const alertingEditButton = () =>
 
 export const clickAlertingEditButton = () => alertingEditButton().click();
 
-export const alertingModalEnabled = () => cy.get('#alerting-enabled-input');
+export const alertingModalEnabledSwitch = () =>
+  cy.get('#alerting-enabled-input');
 export const alertingModalServer = () => cy.get('#smtp-server-input');
 export const alertingModalPort = () => cy.get('#smtp-port-input');
 export const alertingModalUsername = () => cy.get('#smtp-username-input');
@@ -178,8 +181,40 @@ export const alertingModalRemovePasswordButton = () =>
   cy.contains('button', 'Remove');
 export const alertingModalSender = () => cy.get('#sender-email-input');
 export const alertingModalRecipient = () => cy.get('#recipient-email-input');
+export const alertingModalSubmitButton = () => cy.get('button[type="submit"]');
+
+export const removeAlertringModalPassword = () =>
+  alertingModalRemovePasswordButton().click();
+
+export const setAlertingModalEnabledSwitch = (value) => {
+  alertingModalEnabledSwitch()
+    .invoke('attr', 'aria-checked')
+    .then((checked) => {
+      const currentlyChecked = checked == 'true';
+      if (currentlyChecked == value) {
+        return;
+      }
+
+      alertingModalEnabledSwitch().click();
+    });
+};
+export const typeAlertingModalServer = (text) =>
+  alertingModalServer().clear().type(text);
+export const typeAlertingModalPort = (text) =>
+  alertingModalPort().clear().type(text);
+export const typeAlertingModalUsername = (text) =>
+  alertingModalUsername().clear().type(text);
+export const typeAlertingModalPassword = (text) =>
+  alertingModalPassword().clear().type(text);
+export const typeAlertingModalSender = (text) =>
+  alertingModalSender().clear().type(text);
+export const typeAlertingModalRecipient = (text) =>
+  alertingModalRecipient().clear().type(text);
+export const submitAlertingModalSettings = () =>
+  alertingModalSubmitButton().click();
 
 // UI Validations
+
 export const activityLogsEditButtonIsEnabled = () =>
   cy.get(editActivityLogsSettingsButton).should('be.enabled');
 
@@ -691,6 +726,12 @@ export const apiKeyCodeIsNotEmpty = () =>
 export const copyToClipboardButtonIsDisplayed = () =>
   cy.get(copyToClipboardButton).should('be.visible');
 
+export const alertingEditButtonIsEnabled = () =>
+  alertingEditButton().should('be.enabled');
+
+export const alertingEditButtonIsDisabled = () =>
+  alertingEditButton().should('be.disabled');
+
 // API
 
 export const resetAlertingSettingsDB = () => {
@@ -746,4 +787,5 @@ export const apiCreateUserWithSettingsAbilities = () =>
     { name: 'all', resource: 'activity_logs_settings' },
     { name: 'all', resource: 'api_key_settings' },
     { name: 'all', resource: 'suma_settings' },
+    { name: 'all', resource: 'alerting_settings' }
   ]);
