@@ -12,6 +12,7 @@ defmodule Trento.Clusters do
   require Trento.Clusters.Enums.HanaArchitectureType, as: HanaArchitectureType
   require Trento.Clusters.Enums.HanaScenario, as: HanaScenario
   require Trento.Operations.Enums.ClusterOperations, as: ClusterOperations
+  require Trento.Operations.Enums.ClusterHostOperations, as: ClusterHostOperations
 
   alias Trento.Hosts.Projections.HostReadModel
 
@@ -224,6 +225,25 @@ defmodule Trento.Clusters do
   end
 
   def request_operation(_, _, _), do: {:error, :operation_not_found}
+
+  @spec request_host_operation(atom(), String.t(), String.t()) ::
+          {:ok, String.t()} | {:error, any}
+  def request_host_operation(operation, cluster_id, host_id)
+      when operation in ClusterHostOperations.values() do
+    operation_id = UUID.uuid4()
+
+    case Operations.request_operation(
+           operation_id,
+           cluster_id,
+           Operations.map_operation(operation),
+           [%{agent_id: host_id, arguments: %{}}]
+         ) do
+      :ok -> {:ok, operation_id}
+      error -> error
+    end
+  end
+
+  def request_host_operation(_, _, _), do: {:error, :operation_not_supported}
 
   defp has_resource_managed?(%{nodes: nodes}, resource_id) do
     Enum.any?(nodes, fn %{resources: resources} ->

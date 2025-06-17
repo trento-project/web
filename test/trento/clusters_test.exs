@@ -1183,4 +1183,81 @@ defmodule Trento.ClustersTest do
                Clusters.request_operation(:unknown, UUID.uuid4(), %{})
     end
   end
+
+  describe "request_host_operation/3" do
+    test "should not support non cluster host operations" do
+      for operation <- [:cluster_maintenance_change, :foo_operation] do
+        assert {:error, :operation_not_supported} =
+                 Clusters.request_host_operation(operation, UUID.uuid4(), %{})
+      end
+    end
+
+    pacemaker_enablement_scenarios = [
+      %{
+        operation: :pacemaker_enable,
+        expected_operator: "pacemakerenable@v1"
+      },
+      %{
+        operation: :pacemaker_disable,
+        expected_operator: "pacemakerdisable@v1"
+      }
+    ]
+
+    for %{operation: operation} = scenario <- pacemaker_enablement_scenarios do
+      @pacemaker_enablement_scenario scenario
+
+      test "should request #{operation} operation" do
+        %{
+          operation: pacemaker_operation,
+          expected_operator: expected_operator
+        } = @pacemaker_enablement_scenario
+
+        cluster_id = Faker.UUID.v4()
+        host_id = Faker.UUID.v4()
+
+        expect(
+          Trento.Infrastructure.Messaging.Adapter.Mock,
+          :publish,
+          1,
+          fn OperationsPublisher,
+             "requests",
+             %OperationRequested{
+               group_id: ^cluster_id,
+               operation_type: ^expected_operator,
+               targets: [
+                 %OperationTarget{
+                   agent_id: ^host_id,
+                   arguments: %{}
+                 }
+               ]
+             } ->
+            :ok
+          end
+        )
+
+        assert {:ok, _} =
+                 Clusters.request_host_operation(pacemaker_operation, cluster_id, host_id)
+      end
+
+      test "should handle #{operation} messagging error" do
+        %{operation: pacemaker_operation} = @pacemaker_enablement_scenario
+
+        expect(
+          Trento.Infrastructure.Messaging.Adapter.Mock,
+          :publish,
+          1,
+          fn OperationsPublisher, "requests", _ ->
+            {:error, :amqp_error}
+          end
+        )
+
+        assert {:error, :amqp_error} =
+                 Clusters.request_host_operation(
+                   pacemaker_operation,
+                   Faker.UUID.v4(),
+                   Faker.UUID.v4()
+                 )
+      end
+    end
+  end
 end
