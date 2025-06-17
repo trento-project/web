@@ -19,20 +19,29 @@ defmodule TrentoWeb.Plugs.OperationsPolicyPlugTest do
   end
 
   test "should return not found if the given resource is not found", %{conn: conn} do
-    opts = [
-      policy: TestPolicy,
-      operation: fn _ -> nil end,
-      resource: fn _ -> nil end
+    scenarios = [
+      fn _conn -> nil end,
+      fn _conn -> {:error, :not_found} end,
+      fn _operation, _conn -> nil end,
+      fn _operation, _conn -> {:error, :not_found} end
     ]
 
-    init_opts = OperationsPolicyPlug.init(opts)
-    conn = OperationsPolicyPlug.call(conn, init_opts)
+    for resource_fun <- scenarios do
+      opts = [
+        policy: TestPolicy,
+        operation: fn _ -> :foo end,
+        resource: resource_fun
+      ]
 
-    assert %{
-             "errors" => [
-               %{"detail" => "The requested resource cannot be found.", "title" => "Not Found"}
-             ]
-           } == json_response(conn, 404)
+      init_opts = OperationsPolicyPlug.init(opts)
+      conn = OperationsPolicyPlug.call(conn, init_opts)
+
+      assert %{
+               "errors" => [
+                 %{"detail" => "The requested resource cannot be found.", "title" => "Not Found"}
+               ]
+             } == json_response(conn, 404)
+    end
   end
 
   test "should return operation not found if the given operation is not found", %{conn: conn} do
@@ -52,7 +61,7 @@ defmodule TrentoWeb.Plugs.OperationsPolicyPlugTest do
            } == json_response(conn, 404)
   end
 
-  test "should forbid operation if the resourcec is not authorized", %{conn: conn} do
+  test "should forbid operation if the resource is not authorized", %{conn: conn} do
     api_spec = ApiSpec.spec()
 
     opts = [
@@ -82,32 +91,110 @@ defmodule TrentoWeb.Plugs.OperationsPolicyPlugTest do
     assert_schema(resp, "Forbidden", api_spec)
   end
 
-  test "should authorize operation", %{conn: conn} do
-    resource = %{key: "value"}
+  successful_resource_loading_scenarios = [
+    %{
+      name: "direct return of a resource",
+      resource: %{foo: "bar"},
+      expected_resource: %{foo: "bar"}
+    },
+    %{
+      name: ":ok tuple with a resource",
+      resource: {:ok, %{bar: "baz"}},
+      expected_resource: %{bar: "baz"}
+    }
+  ]
 
-    opts = [
-      policy: TestPolicy,
-      operation: fn _ -> :authorized end,
-      resource: fn _ -> resource end
-    ]
+  for %{name: name, resource: resource, expected_resource: expected_resource} <-
+        successful_resource_loading_scenarios do
+    @resource resource
+    @expected_resource expected_resource
 
-    init_opts = OperationsPolicyPlug.init(opts)
+    test "should authorize operation. scenario: #{name}", %{conn: conn} do
+      scenarios = [
+        fn _conn -> @resource end,
+        fn _operation, _conn -> @resource end
+      ]
 
-    assert %{assigns: %{authorized_resource: ^resource, operation: :authorized}} =
-             OperationsPolicyPlug.call(conn, init_opts)
+      for resource_fun <- scenarios do
+        opts = [
+          policy: TestPolicy,
+          operation: fn _ -> :authorized end,
+          resource: resource_fun
+        ]
+
+        init_opts = OperationsPolicyPlug.init(opts)
+
+        assert %{assigns: %{authorized_resource: @expected_resource, operation: :authorized}} =
+                 OperationsPolicyPlug.call(conn, init_opts)
+      end
+    end
+
+    test "should authorize operation and assign to assigns_to. scenario: #{name}", %{conn: conn} do
+      scenarios = [
+        fn _conn -> @resource end,
+        fn _operation, _conn -> @resource end
+      ]
+
+      for resource_fun <- scenarios do
+        opts = [
+          policy: TestPolicy,
+          operation: fn _ -> :authorized end,
+          resource: resource_fun,
+          assigns_to: :my_resource
+        ]
+
+        init_opts = OperationsPolicyPlug.init(opts)
+
+        assert %{assigns: %{my_resource: @expected_resource}} =
+                 OperationsPolicyPlug.call(conn, init_opts)
+      end
+    end
   end
 
-  test "should authorize operation and assign to assigns_to", %{conn: conn} do
-    resource = %{key: "value"}
-
-    opts = [
-      policy: TestPolicy,
-      operation: fn _ -> :authorized end,
-      resource: fn _ -> resource end,
-      assigns_to: :my_resource
+  test "should not support resource_fun with incorrect arity" do
+    incorrect_resource_fun_scenarios = [
+      fn -> @resource end,
+      fn _, _, _ -> @resource end
     ]
 
-    init_opts = OperationsPolicyPlug.init(opts)
-    assert %{assigns: %{my_resource: ^resource}} = OperationsPolicyPlug.call(conn, init_opts)
+    for resource_fun <- incorrect_resource_fun_scenarios do
+      opts = [
+        policy: TestPolicy,
+        operation: fn _ -> :authorized end,
+        resource: resource_fun
+      ]
+
+      assert_raise ArgumentError,
+                   "#{inspect(OperationsPolicyPlug)} :resource function must have arity 1 or 2",
+                   fn ->
+                     OperationsPolicyPlug.init(opts)
+                   end
+    end
+  end
+
+  test "should raise a runtime error if resource_fun with incorrect arity", %{conn: conn} do
+    incorrect_resource_fun_scenarios = [
+      fn -> @resource end,
+      fn _, _, _ -> @resource end
+    ]
+
+    for resource_fun <- incorrect_resource_fun_scenarios do
+      opts = [
+        policy: TestPolicy,
+        operation: fn _ -> :authorized end,
+        resource: fn _ -> :foo end
+      ]
+
+      initiated_opts =
+        opts
+        |> OperationsPolicyPlug.init()
+        |> Map.put(:resource, resource_fun)
+
+      assert_raise RuntimeError,
+                   "#{inspect(OperationsPolicyPlug)} :resource function must have arity 1 or 2",
+                   fn ->
+                     OperationsPolicyPlug.call(conn, initiated_opts)
+                   end
+    end
   end
 end
