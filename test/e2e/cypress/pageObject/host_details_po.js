@@ -17,8 +17,8 @@ const hostsNavigationItem = '.tn-menu-item[href="/hosts"]';
 
 const clusterNameLabel = 'div:contains("Cluster") div span a span';
 const agentVersionLabel =
-  'div[class*="flow-row"]:contains("Agent Version") span';
-const ipAddressesLabel = 'div[class*="flow-row"]:contains("IP Addresses") span';
+  'div[class="font-bold"]:contains("Agent Version") + div';
+const ipAddressesLabel = 'div[class="font-bold"]:contains("IP Addresses") + div';
 const agentRunningLabel = 'span:contains("Agent:running")';
 const agentRunningBadge = `${agentRunningLabel} svg`;
 const nodeExporterLabel = 'span:contains("Node Exporter:running")';
