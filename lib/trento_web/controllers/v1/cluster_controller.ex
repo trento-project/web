@@ -194,9 +194,10 @@ defmodule TrentoWeb.V1.ClusterController do
   end
 
   def get_policy_resource(%{
-        private: %{phoenix_action: :request_operation},
+        private: %{phoenix_action: action},
         path_params: %{"operation" => operation}
-      }),
+      })
+      when action in [:request_operation, :request_host_operation],
       do: %{operation: operation}
 
   def get_policy_resource(_), do: ClusterReadModel
