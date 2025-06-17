@@ -267,7 +267,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
     for operation <- ["pacemaker_enable", "pacemaker_disable"] do
       @operation operation
 
-      test "requesting #{operation} should return not found not found when the cluster does not exist",
+      test "requesting #{operation} should return not found when the cluster does not exist",
            %{
              conn: conn,
              api_spec: api_spec
@@ -278,7 +278,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
         |> assert_schema("NotFound", api_spec)
       end
 
-      test "requesting #{operation} should return not found not found when the cluster is deregistered",
+      test "requesting #{operation} should return not found when the cluster is deregistered",
            %{
              conn: conn,
              api_spec: api_spec
@@ -291,7 +291,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
         |> assert_schema("NotFound", api_spec)
       end
 
-      test "requesting #{operation} should return forbidden when the host is not among the cluster's hosts",
+      test "requesting #{operation} should return not found when the host is not among the cluster's hosts",
            %{
              conn: conn,
              api_spec: api_spec
@@ -312,21 +312,10 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
               {cluster_id_2, Faker.UUID.v4()},
               {cluster_id_3, deregistered_host_id}
             ] do
-          resp =
-            conn
-            |> post("/api/v1/clusters/#{cluster_id}/hosts/#{host_id}/operations/#{@operation}")
-            |> json_response(:forbidden)
-
-          assert_schema(resp, "Forbidden", api_spec)
-
-          assert %{
-                   "errors" => [
-                     %{
-                       "detail" => "Host #{host_id} is not part of the requested cluster",
-                       "title" => "Forbidden"
-                     }
-                   ]
-                 } == resp
+          conn
+          |> post("/api/v1/clusters/#{cluster_id}/hosts/#{host_id}/operations/#{@operation}")
+          |> json_response(:not_found)
+          |> assert_schema("NotFound", api_spec)
         end
       end
 

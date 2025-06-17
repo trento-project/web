@@ -32,10 +32,10 @@ defmodule TrentoWeb.V1.ClusterController do
   plug TrentoWeb.Plugs.OperationsPolicyPlug,
        [
          policy: Trento.Operations.ClusterPolicy,
-         resource: &__MODULE__.get_operation_cluster/2,
+         resource: &__MODULE__.get_operation_cluster/1,
          operation: &__MODULE__.get_operation/1,
          assigns_to: :cluster,
-         params: &__MODULE__.get_operation_params/2
+         params: &__MODULE__.get_operation_params/1
        ]
        when action in [:request_operation, :request_host_operation]
 
@@ -201,16 +201,32 @@ defmodule TrentoWeb.V1.ClusterController do
 
   def get_policy_resource(_), do: ClusterReadModel
 
-  def get_operation_cluster(:cluster_maintenance_change, %{params: %{id: id}}),
-    do: Clusters.get_registered_cluster(id)
+  def get_operation_cluster(%{
+        assigns: %{operation: :cluster_maintenance_change},
+        params: %{id: id}
+      }),
+      do: Clusters.get_cluster_by_id(id)
 
-  def get_operation_cluster(operation, %{params: %{id: id}})
+  def get_operation_cluster(%{
+        assigns: %{operation: operation},
+        params: %{id: id, host_id: host_id}
+      })
       when operation in [:pacemaker_enable, :pacemaker_disable] do
     id
-    |> Clusters.get_registered_cluster()
+    |> Clusters.get_cluster_by_id()
+    |> Repo.preload(:hosts)
     |> case do
-      {:ok, cluster} -> {:ok, Repo.preload(cluster, :hosts)}
-      {:error, _} = error -> error
+      nil ->
+        nil
+
+      %ClusterReadModel{hosts: []} ->
+        nil
+
+      %ClusterReadModel{hosts: hosts} = cluster ->
+        case Enum.any?(hosts, &(&1.id == host_id)) do
+          true -> cluster
+          false -> nil
+        end
     end
   end
 
@@ -225,12 +241,12 @@ defmodule TrentoWeb.V1.ClusterController do
 
   def get_operation(_), do: nil
 
-  def get_operation_params(operation, %{params: %{host_id: host_id}})
+  def get_operation_params(%{assigns: %{operation: operation}, params: %{host_id: host_id}})
       when operation in [:pacemaker_enable, :pacemaker_disable] do
     %{
       host_id: host_id
     }
   end
 
-  def get_operation_params(_operation, _), do: %{}
+  def get_operation_params(_), do: %{}
 end
