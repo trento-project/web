@@ -47,7 +47,7 @@ defmodule Trento.Operations.HostPolicyTest do
         clustered_sap_instances =
           build_list(1, :clustered_sap_instance, sid: sid, instance_number: instance_number)
 
-        database_instancess = build_list(2, :database_instance, health: Health.unknown())
+        database_instances = build_list(2, :database_instance, health: Health.unknown())
 
         %{name: cluster_name} =
           cluster =
@@ -59,7 +59,7 @@ defmodule Trento.Operations.HostPolicyTest do
         host =
           build(:host,
             application_instances: application_instances,
-            database_instances: database_instancess,
+            database_instances: database_instances,
             cluster: cluster,
             saptune_status: @saptune_status
           )
@@ -74,7 +74,7 @@ defmodule Trento.Operations.HostPolicyTest do
       test "should forbid operation '#{operation}' if an database instance is not stopped. Scenario: #{name}" do
         application_instances = build_list(2, :application_instance, health: Health.unknown())
 
-        database_instancess = [
+        database_instances = [
           build(:database_instance, health: Health.unknown()),
           %{sid: sid, instance_number: instance_number} =
             build(:database_instance, health: Health.passing())
@@ -93,7 +93,7 @@ defmodule Trento.Operations.HostPolicyTest do
         host =
           build(:host,
             application_instances: application_instances,
-            database_instances: database_instancess,
+            database_instances: database_instances,
             cluster: cluster,
             saptune_status: @saptune_status
           )
@@ -112,7 +112,7 @@ defmodule Trento.Operations.HostPolicyTest do
             build(:application_instance, health: Health.passing())
         ]
 
-        database_instancess = [
+        database_instances = [
           build(:database_instance, health: Health.unknown()),
           %{sid: db_sid, instance_number: db_instance_number} =
             build(:database_instance, health: Health.passing())
@@ -134,7 +134,7 @@ defmodule Trento.Operations.HostPolicyTest do
         host =
           build(:host,
             application_instances: application_instances,
-            database_instances: database_instancess,
+            database_instances: database_instances,
             cluster: cluster,
             saptune_status: @saptune_status
           )
@@ -153,7 +153,7 @@ defmodule Trento.Operations.HostPolicyTest do
             build(:application_instance, health: Health.unknown())
         ]
 
-        database_instancess = build_list(2, :database_instance, health: Health.unknown())
+        database_instances = build_list(2, :database_instance, health: Health.unknown())
 
         [%{name: hostname}] =
           nodes =
@@ -189,7 +189,7 @@ defmodule Trento.Operations.HostPolicyTest do
           build(:host,
             hostname: hostname,
             application_instances: application_instances,
-            database_instances: database_instancess,
+            database_instances: database_instances,
             cluster: cluster,
             saptune_status: @saptune_status
           )
@@ -198,6 +198,53 @@ defmodule Trento.Operations.HostPolicyTest do
                 [
                   "Cluster #{cluster_name} or resource #{resource_id} operating this host are not in maintenance mode"
                 ]} == HostPolicy.authorize_operation(@saptune_operation, host, %{})
+      end
+
+      test "should forbid operation '#{operation}' if a database instance cluster resource is managed. Scenario: #{name}" do
+        scenarios = [
+          %{cluster_resource_type: "ocf::suse:SAPHana"},
+          %{cluster_resource_type: "ocf::suse:SAPHanaController"}
+        ]
+
+        [%{sid: sid, instance_number: instance_number}] =
+          clustered_sap_instances =
+          build_list(1, :clustered_sap_instance)
+
+        database_instances =
+          build_list(2, :database_instance,
+            health: Health.unknown(),
+            sid: sid,
+            instance_number: instance_number
+          )
+
+        application_instances = build_list(2, :application_instance, health: Health.unknown())
+
+        for %{cluster_resource_type: cluster_resource_type} <- scenarios do
+          %{id: resource_id} = parent = build(:cluster_resource_parent, managed: true)
+
+          cluster_resource =
+            build(:cluster_resource, type: cluster_resource_type, parent: parent)
+
+          nodes = build_list(1, :hana_cluster_node, resources: [cluster_resource])
+          cluster_details = build(:hana_cluster_details, maintenance_mode: false, nodes: nodes)
+
+          %{name: cluster_name} =
+            cluster =
+            build(:cluster, sap_instances: clustered_sap_instances, details: cluster_details)
+
+          host =
+            build(:host,
+              application_instances: application_instances,
+              database_instances: database_instances,
+              cluster: cluster,
+              saptune_status: @saptune_status
+            )
+
+          assert {:error,
+                  [
+                    "Cluster #{cluster_name} or resource #{resource_id} operating this host are not in maintenance mode"
+                  ]} == HostPolicy.authorize_operation(@saptune_operation, host, %{})
+        end
       end
 
       test "should authorize operation '#{operation}' if there is not any SAP instance running. Scenario: #{name}" do
@@ -214,12 +261,12 @@ defmodule Trento.Operations.HostPolicyTest do
 
       test "should authorize operation '#{operation}' if all instances are stopped and the host is not clustered. Scenario: #{name}" do
         application_instances = build_list(2, :application_instance, health: Health.unknown())
-        database_instancess = build_list(2, :database_instance, health: Health.unknown())
+        database_instances = build_list(2, :database_instance, health: Health.unknown())
 
         host =
           build(:host,
             application_instances: application_instances,
-            database_instances: database_instancess,
+            database_instances: database_instances,
             cluster: nil,
             saptune_status: @saptune_status
           )
@@ -229,48 +276,18 @@ defmodule Trento.Operations.HostPolicyTest do
 
       test "should authorize operation '#{operation}' if all instances are stopped and cluster is in maintenance. Scenario: #{name}" do
         application_instances = build_list(2, :application_instance, health: Health.unknown())
-        database_instancess = build_list(2, :database_instance, health: Health.unknown())
+        database_instances = build_list(2, :database_instance, health: Health.unknown())
         cluster = build(:cluster, details: build(:hana_cluster_details, maintenance_mode: true))
 
         host =
           build(:host,
             application_instances: application_instances,
-            database_instances: database_instancess,
+            database_instances: database_instances,
             cluster: cluster,
             saptune_status: @saptune_status
           )
 
         assert :ok == HostPolicy.authorize_operation(@saptune_operation, host, %{})
-      end
-
-      test "should authorize operation '#{operation}' if all instances are stopped and HANA resources are not managed. Scenario: #{name}" do
-        scenarios = [
-          %{cluster_resource_type: "ocf::suse:SAPHana"},
-          %{cluster_resource_type: "ocf::suse:SAPHanaController"}
-        ]
-
-        database_instancess = build_list(2, :database_instance, health: Health.unknown())
-
-        for %{cluster_resource_type: cluster_resource_type} <- scenarios do
-          parent = build(:cluster_resource_parent, managed: false)
-
-          cluster_resource =
-            build(:cluster_resource, type: cluster_resource_type, managed: true, parent: parent)
-
-          nodes = build_list(1, :hana_cluster_node, resources: [cluster_resource])
-          cluster_details = build(:hana_cluster_details, maintenance_mode: false, nodes: nodes)
-          cluster = build(:cluster, details: cluster_details)
-
-          host =
-            build(:host,
-              application_instances: [],
-              database_instances: database_instancess,
-              cluster: cluster,
-              saptune_status: @saptune_status
-            )
-
-          assert :ok == HostPolicy.authorize_operation(@saptune_operation, host, %{})
-        end
       end
     end
 
