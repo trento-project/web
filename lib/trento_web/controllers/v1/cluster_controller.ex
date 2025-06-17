@@ -2,11 +2,11 @@ defmodule TrentoWeb.V1.ClusterController do
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
 
-  alias Trento.Repo
-
   alias Trento.Clusters
 
   alias Trento.Clusters.Projections.ClusterReadModel
+
+  alias Trento.Repo
 
   alias TrentoWeb.OpenApi.V1.Schema.{
     BadRequest,
@@ -32,11 +32,12 @@ defmodule TrentoWeb.V1.ClusterController do
   plug TrentoWeb.Plugs.OperationsPolicyPlug,
        [
          policy: Trento.Operations.ClusterPolicy,
-         resource: &__MODULE__.get_operation_cluster/1,
+         resource: &__MODULE__.get_operation_cluster/2,
          operation: &__MODULE__.get_operation/1,
-         assigns_to: :cluster
+         assigns_to: :cluster,
+         params: &__MODULE__.get_operation_params/2
        ]
-       when action == :request_operation
+       when action in [:request_operation, :request_host_operation]
 
   action_fallback TrentoWeb.FallbackController
 
@@ -146,6 +147,52 @@ defmodule TrentoWeb.V1.ClusterController do
     end
   end
 
+  operation :request_host_operation,
+    summary: "Request operation for a Cluster host",
+    tags: ["Operations"],
+    description: "Request operation for a Cluster host",
+    parameters: [
+      id: [
+        in: :path,
+        required: true,
+        description: "Cluster's identifier",
+        type: %OpenApiSpex.Schema{type: :string, format: :uuid}
+      ],
+      host_id: [
+        in: :path,
+        required: true,
+        description: "Host's identifier",
+        type: %OpenApiSpex.Schema{type: :string, format: :uuid}
+      ],
+      operation: [
+        in: :path,
+        required: true,
+        description: "Operation to be performed on the cluster's host",
+        type: %OpenApiSpex.Schema{type: :string}
+      ]
+    ],
+    responses: [
+      accepted: OperationAccepted.response(),
+      not_found: NotFound.response(),
+      forbidden: Forbidden.response(),
+      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
+    ]
+
+  def request_host_operation(
+        %{assigns: %{cluster: %{id: cluster_id}, operation: operation}} = conn,
+        %{
+          id: cluster_id,
+          host_id: host_id
+        }
+      ) do
+    with {:ok, operation_id} <-
+           Clusters.request_host_operation(operation, cluster_id, host_id) do
+      conn
+      |> put_status(:accepted)
+      |> json(%{operation_id: operation_id})
+    end
+  end
+
   def get_policy_resource(%{
         private: %{phoenix_action: :request_operation},
         path_params: %{"operation" => operation}
@@ -154,12 +201,36 @@ defmodule TrentoWeb.V1.ClusterController do
 
   def get_policy_resource(_), do: ClusterReadModel
 
-  def get_operation_cluster(%{params: %{id: id}}) do
-    Repo.get(ClusterReadModel, id)
+  def get_operation_cluster(:cluster_maintenance_change, %{params: %{id: id}}),
+    do: Clusters.get_registered_cluster(id)
+
+  def get_operation_cluster(operation, %{params: %{id: id}})
+      when operation in [:pacemaker_enable, :pacemaker_disable] do
+    id
+    |> Clusters.get_registered_cluster()
+    |> case do
+      {:ok, cluster} -> {:ok, Repo.preload(cluster, :hosts)}
+      {:error, _} = error -> error
+    end
   end
 
   def get_operation(%{params: %{operation: "cluster_maintenance_change"}}),
     do: :cluster_maintenance_change
 
+  def get_operation(%{params: %{operation: "pacemaker_enable"}}),
+    do: :pacemaker_enable
+
+  def get_operation(%{params: %{operation: "pacemaker_disable"}}),
+    do: :pacemaker_disable
+
   def get_operation(_), do: nil
+
+  def get_operation_params(operation, %{params: %{host_id: host_id}})
+      when operation in [:pacemaker_enable, :pacemaker_disable] do
+    %{
+      host_id: host_id
+    }
+  end
+
+  def get_operation_params(_operation, _), do: %{}
 end
