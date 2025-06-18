@@ -5,6 +5,7 @@ import '@testing-library/jest-dom';
 
 import { faker } from '@faker-js/faker';
 import { activityLogEntryFactory } from '@lib/test-utils/factories/activityLog';
+import { renderWithRouter } from '@lib/test-utils';
 
 import { ACTIVITY_TYPES, toLabel, toResource } from '@lib/model/activityLog';
 import { toRenderedEntry } from '@common/ActivityLogOverview/ActivityLogOverview';
@@ -75,6 +76,30 @@ describe('ActivityLogDetailModal component', () => {
 
     expect(screen.getByText('Unrecognized resource')).toBeVisible();
   });
+  it('should render Related Events field for entries with correlation_id present in metadata', async () => {
+    const unknownActivityType = faker.lorem.word();
+    const metadata = {correlation_id: "some-uuid"};
+    const entry = activityLogEntryFactory.build({ metadata, type: unknownActivityType});
+    await act(async () => {
+      renderWithRouter(<ActivityLogDetailModal open entry={toRenderedEntry(entry)} />);
+    });
+
+    expect(screen.getByText('Related Events')).toBeVisible();
+    expect(screen.getByText('Show Events')).toBeVisible();
+  });
+  it('should not render Related Events field for entries with correlation_id absent in metadata', async () => {
+    const unknownActivityType = faker.lorem.word();
+    const metadata = {some_key: "some-value"};
+    const entry = activityLogEntryFactory.build({ metadata, type: unknownActivityType});
+    await act(async () => {
+      renderWithRouter(<ActivityLogDetailModal open entry={toRenderedEntry(entry)} />);
+    });
+
+    expect(() => screen.getByText('Related Events')).toThrow();
+    expect(() => screen.getByText('Show Events')).toThrow();
+  });
+
+
 
   it('should call onClose when the close button is clicked', async () => {
     const onClose = jest.fn();
