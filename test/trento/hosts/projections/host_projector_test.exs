@@ -68,6 +68,7 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
 
     %{
       agent_version: agent_version,
+      arch: arch,
       heartbeat: heartbeat,
       hostname: hostname,
       id: id,
@@ -81,6 +82,7 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
     assert event.hostname == host_projection.hostname
     assert event.fully_qualified_domain_name == host_projection.fully_qualified_domain_name
     assert event.prometheus_targets == host_projection.prometheus_targets
+    assert event.arch == host_projection.arch
 
     assert event.ip_addresses ==
              Enum.zip_with([ip_addresses, netmasks], fn [address, netmaks] ->
@@ -93,6 +95,7 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
     assert_broadcast "host_registered",
                      %{
                        agent_version: ^agent_version,
+                       arch: ^arch,
                        cluster_id: nil,
                        heartbeat: ^heartbeat,
                        hostname: ^hostname,
@@ -241,6 +244,7 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
 
     %{
       agent_version: agent_version,
+      arch: arch,
       hostname: hostname
     } =
       event = %HostDetailsUpdated{
@@ -265,10 +269,12 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
     assert [netmask] == host_projection.netmasks
     assert event.agent_version == host_projection.agent_version
     assert event.prometheus_targets == host_projection.prometheus_targets
+    assert event.arch == host_projection.arch
 
     assert_broadcast "host_details_updated",
                      %{
                        agent_version: ^agent_version,
+                       arch: ^arch,
                        hostname: ^hostname,
                        id: ^host_id,
                        ip_addresses: [^ip_address],
