@@ -1,4 +1,4 @@
-defmodule Trento.Enums.Architecture do
+defmodule Trento.Hosts.Enums.Architecture do
   @moduledoc """
   Type that represents the supported architectures by our agent.
   """
