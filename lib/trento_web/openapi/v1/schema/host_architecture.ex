@@ -1,4 +1,4 @@
-defmodule TrentoWeb.OpenApi.V1.Schema.Architecture do
+defmodule TrentoWeb.OpenApi.V1.Schema.HostArchitecture do
   @moduledoc false
 
   require OpenApiSpex
@@ -6,7 +6,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Architecture do
 
   OpenApiSpex.schema(
     %{
-      title: "Architecture",
+      title: "Host Architecture",
       type: :string,
       nullable: false,
       description: "Detected architecture of a host",
