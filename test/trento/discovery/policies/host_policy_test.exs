@@ -4,7 +4,7 @@ defmodule Trento.Discovery.Policies.HostPolicyTest do
   import Trento.DiscoveryFixturesHelper
 
   require Trento.Enums.Provider, as: Provider
-  require Trento.Enums.Architecture, as: Architecture
+  require Trento.Hosts.Enums.Architecture, as: Architecture
 
   alias Trento.Discovery.Policies.HostPolicy
 

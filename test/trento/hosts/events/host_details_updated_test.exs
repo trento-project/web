@@ -3,7 +3,7 @@ defmodule Trento.Hosts.Events.HostDetailsUpdatedTest do
 
   alias Trento.Hosts.Events.HostDetailsUpdated
 
-  require Trento.Enums.Architecture, as: Architecture
+  require Trento.Hosts.Enums.Architecture, as: Architecture
 
   describe "HostDetailsUpdated event upcasting" do
     test "should upcast HostDetailsUpdated event properly from version 1" do

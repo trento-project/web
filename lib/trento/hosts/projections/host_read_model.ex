@@ -7,7 +7,7 @@ defmodule Trento.Hosts.Projections.HostReadModel do
 
   import Ecto.Changeset
 
-  require Trento.Enums.Architecture, as: Architecture
+  require Trento.Hosts.Enums.Architecture, as: Architecture
   require Trento.Enums.Health, as: Health
   require Trento.Enums.Provider, as: Provider
 

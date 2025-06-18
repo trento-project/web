@@ -5,7 +5,7 @@ defmodule Trento.Hosts.Events.HostDetailsUpdated do
 
   use Trento.Support.Event
 
-  require Trento.Enums.Architecture, as: Architecture
+  require Trento.Hosts.Enums.Architecture, as: Architecture
 
   defevent version: 5 do
     field :host_id, Ecto.UUID

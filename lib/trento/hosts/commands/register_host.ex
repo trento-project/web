@@ -16,7 +16,7 @@ defmodule Trento.Hosts.Commands.RegisterHost do
 
   use Trento.Support.Command
 
-  require Trento.Enums.Architecture, as: Architecture
+  require Trento.Hosts.Enums.Architecture, as: Architecture
 
   defcommand do
     field :host_id, Ecto.UUID

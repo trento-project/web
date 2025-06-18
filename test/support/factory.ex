@@ -8,7 +8,7 @@ defmodule Trento.Factory do
   require Trento.Clusters.Enums.HanaArchitectureType, as: HanaArchitectureType
   require Trento.SapSystems.Enums.EnsaVersion, as: EnsaVersion
   require Trento.Enums.Health, as: Health
-  require Trento.Enums.Architecture, as: Architecture
+  require Trento.Hosts.Enums.Architecture, as: Architecture
   require Trento.SoftwareUpdates.Enums.AdvisoryType, as: AdvisoryType
   require Trento.SoftwareUpdates.Enums.SoftwareUpdatesHealth, as: SoftwareUpdatesHealth
   require Trento.ActivityLog.RetentionPeriodUnit, as: RetentionPeriodUnit

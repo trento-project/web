@@ -2,7 +2,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.HostArchitecture do
   @moduledoc false
 
   require OpenApiSpex
-  require Trento.Enums.Architecture, as: Architecture
+  require Trento.Hosts.Enums.Architecture, as: Architecture
 
   OpenApiSpex.schema(
     %{

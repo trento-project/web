@@ -58,7 +58,7 @@ defmodule Trento.Hosts.Host do
 
   require Trento.Enums.Provider, as: Provider
   require Trento.Enums.Health, as: Health
-  require Trento.Enums.Architecture, as: Architecture
+  require Trento.Hosts.Enums.Architecture, as: Architecture
   require Trento.SoftwareUpdates.Enums.SoftwareUpdatesHealth, as: SoftwareUpdatesHealth
 
   alias Commanded.Aggregate.Multi

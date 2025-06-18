@@ -15,7 +15,7 @@ defmodule Trento.Discovery.Payloads.HostDiscoveryPayload do
 
   use Trento.Support.Type
 
-  require Trento.Enums.Architecture, as: Architecture
+  require Trento.Hosts.Enums.Architecture, as: Architecture
 
   deftype do
     field :hostname, :string

@@ -57,7 +57,7 @@ defmodule Trento.Hosts.HostTest do
   }
 
   require Trento.Enums.Health, as: Health
-  require Trento.Enums.Architecture, as: Architecture
+  require Trento.Hosts.Enums.Architecture, as: Architecture
   require Trento.SoftwareUpdates.Enums.SoftwareUpdatesHealth, as: SoftwareUpdatesHealth
 
   describe "host registration" do
