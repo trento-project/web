@@ -238,6 +238,7 @@ Trento.Hosts.Commands.UpdateHeartbeat.html
 Trento.Hosts.Commands.UpdateProvider.html
 Trento.Hosts.Commands.UpdateSaptuneStatus.html
 Trento.Hosts.Commands.UpdateSlesSubscriptions.html
+Trento.Hosts.Enums.Architecture.html
 Trento.Hosts.Events.HeartbeatFailed.html
 Trento.Hosts.Events.HeartbeatSucceeded.html
 Trento.Hosts.Events.HostChecksHealthChanged.html
@@ -521,8 +522,8 @@ dist/lato-latin-ext-300-normal-VPGGJKJL.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-D52E668C.js
-dist/sidebar_items-4D0D0518.js
+dist/search_data-A51A8158.js
+dist/sidebar_items-AB72C708.js
 environment_variables.html
 hack_on_the_trento.html
 index.html
