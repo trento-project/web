@@ -14,9 +14,9 @@ export const operationCompleted = ({
   payload: { operationID, groupID, operation, result },
 });
 
-export const operationRequested = ({ groupID, operation, params }) => ({
+export const operationRequested = ({ groupID, operation, requestParams }) => ({
   type: OPERATION_REQUESTED,
-  payload: { groupID, operation, params },
+  payload: { groupID, operation, requestParams },
 });
 
 export const updateRunningOperation = (groupID) => ({

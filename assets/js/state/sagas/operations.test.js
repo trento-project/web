@@ -7,6 +7,7 @@ import { networkClient } from '@lib/network';
 import {
   SAPTUNE_SOLUTION_APPLY,
   CLUSTER_MAINTENANCE_CHANGE,
+  SAP_INSTANCE_START,
   getOperationLabel,
 } from '@lib/operations';
 import {
@@ -28,6 +29,14 @@ const hostOperationRequestURL = (hostID, operation) =>
 
 const clusterOperationRequestURL = (clusterID, operation) =>
   `/clusters/${clusterID}/operations/${operation}`;
+
+const sapInstanceOperationRequestedURL = (
+  sapSystemID,
+  hostID,
+  instanceNumber,
+  operation
+) =>
+  `/sap_systems/${sapSystemID}/hosts/${hostID}/instances/${instanceNumber}/operations/${operation}`;
 
 const getOperationExecutionsURL = () => `/api/v1/operations/executions`;
 
@@ -58,7 +67,7 @@ describe('operations saga', () => {
       const dispatched = await recordSaga(
         requestOperation,
         {
-          payload: { groupID, operation },
+          payload: { groupID, operation, requestParams: { hostID: groupID } },
         },
         { hostsList: { hosts: [{ id: groupID, hostname }] } }
       );
@@ -85,7 +94,11 @@ describe('operations saga', () => {
       const dispatched = await recordSaga(
         requestOperation,
         {
-          payload: { groupID, operation },
+          payload: {
+            groupID,
+            operation,
+            requestParams: { clusterID: groupID },
+          },
         },
         { clustersList: { clusters: [{ id: groupID, name }] } }
       );
@@ -94,6 +107,50 @@ describe('operations saga', () => {
         setRunningOperation({ groupID, operation }),
         notify({
           text: `Operation ${label} requested for ${name}`,
+          icon: '⚙️',
+        }),
+      ]);
+    });
+
+    it('should request a SAP instance operation', async () => {
+      const groupID = faker.string.uuid();
+      const sapSystemID = faker.string.uuid();
+      const instanceNumber = '00';
+      const operation = SAP_INSTANCE_START;
+      const hostname = faker.internet.displayName();
+      const label = getOperationLabel(operation);
+
+      axiosMock
+        .onPost(
+          sapInstanceOperationRequestedURL(
+            sapSystemID,
+            groupID,
+            instanceNumber,
+            operation
+          )
+        )
+        .reply(202, {});
+
+      const dispatched = await recordSaga(
+        requestOperation,
+        {
+          payload: {
+            groupID,
+            operation,
+            requestParams: {
+              sapSystemID,
+              hostID: groupID,
+              instanceNumber,
+            },
+          },
+        },
+        { hostsList: { hosts: [{ id: groupID, hostname }] } }
+      );
+
+      expect(dispatched).toEqual([
+        setRunningOperation({ groupID, operation }),
+        notify({
+          text: `Operation ${label} requested for ${hostname}`,
           icon: '⚙️',
         }),
       ]);
@@ -111,7 +168,7 @@ describe('operations saga', () => {
       const dispatched = await recordSaga(
         requestOperation,
         {
-          payload: { groupID, operation },
+          payload: { groupID, operation, requestParams: { hostID: groupID } },
         },
         { hostsList: { hosts: [{ id: groupID, hostname }] } }
       );
@@ -138,7 +195,7 @@ describe('operations saga', () => {
       const dispatched = await recordSaga(
         requestOperation,
         {
-          payload: { groupID, operation },
+          payload: { groupID, operation, requestParams: { hostID: groupID } },
         },
         { hostsList: { hosts: [{ id: groupID, hostname }] } }
       );

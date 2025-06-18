@@ -112,7 +112,11 @@ export function ClusterDetailsPage() {
           }
           onRequestOperation={(operation, params) =>
             dispatch(
-              operationRequested({ groupID: clusterID, operation, params })
+              operationRequested({
+                groupID: clusterID,
+                operation,
+                requestParams: { clusterID, params },
+              })
             )
           }
           onCleanForbiddenOperation={() =>
@@ -153,7 +157,11 @@ export function ClusterDetailsPage() {
           }
           onRequestOperation={(operation, params) =>
             dispatch(
-              operationRequested({ groupID: clusterID, operation, params })
+              operationRequested({
+                groupID: clusterID,
+                operation,
+                requestParams: { clusterID, params },
+              })
             )
           }
           onCleanForbiddenOperation={() =>

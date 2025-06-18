@@ -159,7 +159,13 @@ function HostDetailsPage() {
         dispatch(hostExecutionRequested(host, hostSelectedChecks, navigate));
       }}
       requestOperation={(operation, params) =>
-        dispatch(operationRequested({ groupID: hostID, operation, params }))
+        dispatch(
+          operationRequested({
+            groupID: hostID,
+            operation,
+            requestParams: { hostID, params },
+          })
+        )
       }
       cleanForbiddenOperation={() =>
         dispatch(removeRunningOperation({ groupID: hostID }))
