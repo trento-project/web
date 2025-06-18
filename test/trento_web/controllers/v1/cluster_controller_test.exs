@@ -267,7 +267,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
     for operation <- ["pacemaker_enable", "pacemaker_disable"] do
       @operation operation
 
-      test "requesting #{operation} should return not found when the cluster does not exist",
+      test "should return not found when requesting #{operation} for a non existent cluster",
            %{
              conn: conn,
              api_spec: api_spec
@@ -278,7 +278,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
         |> assert_schema("NotFound", api_spec)
       end
 
-      test "requesting #{operation} should return not found when the cluster is deregistered",
+      test "should return not found when requesting #{operation} for a deregistered cluster",
            %{
              conn: conn,
              api_spec: api_spec
@@ -291,7 +291,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
         |> assert_schema("NotFound", api_spec)
       end
 
-      test "requesting #{operation} should return not found when the host is not among the cluster's hosts",
+      test "should return not found when requesting #{operation} for a host not part of the cluster",
            %{
              conn: conn,
              api_spec: api_spec
@@ -319,7 +319,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
         end
       end
 
-      test "requesting #{operation}  should respond with 500 on messaging error", %{conn: conn} do
+      test "should return 500 when requesting #{operation} on messaging error", %{conn: conn} do
         %{id: cluster_id} = insert(:cluster)
         %{id: host_id} = insert(:host, cluster_id: cluster_id)
 
@@ -347,10 +347,15 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
                } = resp
       end
 
-      test "should successfully perform #{operation}", %{
-        conn: conn,
-        api_spec: api_spec
-      } do
+      test "should successfully perform #{operation} when the user has #{operation}:cluster ability",
+           %{
+             conn: conn,
+             api_spec: api_spec
+           } do
+        %{id: user_id} = insert(:user)
+        %{id: ability_id} = insert(:ability, name: @operation, resource: "cluster")
+        insert(:users_abilities, user_id: user_id, ability_id: ability_id)
+
         %{id: cluster_id} = insert(:cluster)
         %{id: host_id} = insert(:host, cluster_id: cluster_id)
 
@@ -363,6 +368,8 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
         )
 
         conn
+        |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
+        |> put_req_header("content-type", "application/json")
         |> post("/api/v1/clusters/#{cluster_id}/hosts/#{host_id}/operations/#{@operation}")
         |> json_response(:accepted)
         |> assert_schema("OperationAccepted", api_spec)
