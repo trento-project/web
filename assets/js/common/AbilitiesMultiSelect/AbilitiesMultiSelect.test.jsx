@@ -37,6 +37,8 @@ describe('AbilitiesMultiSelect Component', () => {
       { id: 17, name: 'maintenance_change', resource: 'cluster' },
       { id: 18, name: 'pacemaker_enable', resource: 'cluster' },
       { id: 19, name: 'pacemaker_disable', resource: 'cluster' },
+      { id: 20, name: 'start', resource: 'application_instance' },
+      { id: 21, name: 'stop', resource: 'application_instance' },
     ];
 
     render(
@@ -106,6 +108,8 @@ describe('AbilitiesMultiSelect Component', () => {
           { id: 6, name: 'maintenance_change', resource: 'cluster' },
           { id: 7, name: 'pacemaker_enable', resource: 'cluster' },
           { id: 8, name: 'pacemaker_disable', resource: 'cluster' },
+          { id: 9, name: 'start', resource: 'application_instance' },
+          { id: 10, name: 'stop', resource: 'application_instance' },
         ]}
         userAbilities={[
           { id: 1, name: 'all', resource: 'all' },
@@ -116,6 +120,8 @@ describe('AbilitiesMultiSelect Component', () => {
           { id: 6, name: 'maintenance_change', resource: 'cluster' },
           { id: 7, name: 'pacemaker_enable', resource: 'cluster' },
           { id: 8, name: 'pacemaker_disable', resource: 'cluster' },
+          { id: 9, name: 'start', resource: 'application_instance' },
+          { id: 10, name: 'stop', resource: 'application_instance' },
         ]}
         setAbilities={noop}
         operationsEnabled
@@ -145,6 +151,12 @@ describe('AbilitiesMultiSelect Component', () => {
     ).not.toBeInTheDocument();
     expect(
       screen.queryByText('pacemaker_disable:cluster')
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText('start:application_instance')
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText('stop:application_instance')
     ).not.toBeInTheDocument();
 
     await user.click(screen.getByLabelText('permissions'));

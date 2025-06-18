@@ -58,6 +58,8 @@ const groupedAbilities = [
       'maintenance_change:cluster',
       'pacemaker_enable:cluster',
       'pacemaker_disable:cluster',
+      'start:application_instance',
+      'stop:application_instance',
     ],
   },
 ];
