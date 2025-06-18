@@ -461,7 +461,7 @@ defmodule Trento.Hosts.HostTest do
       new_total_memory_mb = Enum.random(1..128)
       new_socket_count = Enum.random(1..16)
       new_os_version = Faker.App.version()
-      new_arch = Enum.random(Architecture.values())
+      new_arch = Architecture.x86_64()
       new_installation_source = Enum.random([:community, :suse, :unknown])
       new_prometheus_targets = build(:host_prometheus_targets)
       fully_qualified_domain_name = Faker.Internet.domain_name()
@@ -469,6 +469,7 @@ defmodule Trento.Hosts.HostTest do
       assert_events_and_state(
         build(:host_registered_event,
           host_id: host_id,
+          arch: Architecture.unknown(),
           fully_qualified_domain_name: fully_qualified_domain_name
         ),
         RegisterHost.new!(%{
