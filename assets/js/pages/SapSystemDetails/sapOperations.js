@@ -13,7 +13,7 @@ export const getSapInstanceOperations = curry(
       value: 'Start instance',
       running: false,
       disabled: instance.health === 'passing',
-      permitted: [],
+      permitted: ['start:application_instance'],
       onClick: () => {
         setCurrentOperationInstance(instance);
         setOperationModelOpen({ open: true, operation: SAP_INSTANCE_START });
@@ -23,7 +23,7 @@ export const getSapInstanceOperations = curry(
       value: 'Stop instance',
       running: false,
       disabled: instance.health === 'unknown',
-      permitted: [],
+      permitted: ['stop:application_instance'],
       onClick: () => {
         setCurrentOperationInstance(instance);
         setOperationModelOpen({ open: true, operation: SAP_INSTANCE_STOP });

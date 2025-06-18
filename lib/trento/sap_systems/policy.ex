@@ -13,8 +13,20 @@ defmodule Trento.SapSystems.Policy do
   def authorize(:delete_application_instance, %User{} = user, SapSystemReadModel),
     do: has_global_ability?(user) or has_cleanup_ability?(user)
 
+  def authorize(:request_instance_operation, %User{} = user, %{operation: "sap_instance_start"}),
+    do: has_global_ability?(user) or has_app_instance_start_ability?(user)
+
+  def authorize(:request_instance_operation, %User{} = user, %{operation: "sap_instance_stop"}),
+    do: has_global_ability?(user) or has_app_instance_stop_ability?(user)
+
   def authorize(_, _, _), do: true
 
   defp has_cleanup_ability?(user),
     do: user_has_ability?(user, %{name: "cleanup", resource: "application_instance"})
+
+  defp has_app_instance_start_ability?(user),
+    do: user_has_ability?(user, %{name: "start", resource: "application_instance"})
+
+  defp has_app_instance_stop_ability?(user),
+    do: user_has_ability?(user, %{name: "stop", resource: "application_instance"})
 end

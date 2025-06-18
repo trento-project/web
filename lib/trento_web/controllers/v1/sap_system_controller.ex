@@ -150,6 +150,12 @@ defmodule TrentoWeb.V1.SapSystemController do
     end
   end
 
+  def get_policy_resource(%{
+        private: %{phoenix_action: :request_instance_operation},
+        path_params: %{"operation" => operation}
+      }),
+      do: %{operation: operation}
+
   def get_policy_resource(_), do: SapSystemReadModel
 
   def get_operation_instance(%{

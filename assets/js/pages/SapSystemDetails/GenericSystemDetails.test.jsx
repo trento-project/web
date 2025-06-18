@@ -4,6 +4,8 @@ import { faker } from '@faker-js/faker';
 import { screen, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
+import { SAP_INSTANCE_START, SAP_INSTANCE_STOP } from '@lib/operations';
+
 import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
 import { renderWithRouter } from '@lib/test-utils';
 
@@ -148,41 +150,6 @@ describe('GenericSystemDetails', () => {
     expect(mockedCleanUp).toHaveBeenCalledWith(sapSystem.instances[0]);
   });
 
-  it('should forbid instance cleanup', async () => {
-    const user = userEvent.setup();
-    const mockedCleanUp = jest.fn();
-
-    const sapSystem = sapSystemFactory.build({
-      instances: sapSystemApplicationInstanceFactory.buildList(2),
-    });
-
-    sapSystem.instances[0].absent_at = faker.date.past().toISOString();
-    sapSystem.hosts = hostFactory.buildList(5);
-
-    renderWithRouter(
-      <GenericSystemDetails
-        title={faker.string.uuid()}
-        system={sapSystem}
-        type={APPLICATION_TYPE}
-        userAbilities={[]}
-        cleanUpPermittedFor={['cleanup:application_instance']}
-        onInstanceCleanUp={mockedCleanUp}
-      />
-    );
-
-    const cleanUpButton = screen.getByText('Clean up').closest('button');
-
-    expect(cleanUpButton).toBeDisabled();
-
-    await user.click(cleanUpButton);
-
-    await user.hover(cleanUpButton);
-
-    expect(
-      screen.queryByText('You are not authorized for this action')
-    ).toBeVisible();
-  });
-
   it('should show instance operations', async () => {
     const user = userEvent.setup();
 
@@ -238,5 +205,111 @@ describe('GenericSystemDetails', () => {
     expect(stopInstance2).toBeInTheDocument();
     expect(startInstance2).toBeEnabled();
     expect(stopInstance2).toBeDisabled();
+  });
+
+  describe('forbidden actions', () => {
+    it('should forbid instance cleanup', async () => {
+      const user = userEvent.setup();
+      const mockedCleanUp = jest.fn();
+
+      const sapSystem = sapSystemFactory.build({
+        instances: sapSystemApplicationInstanceFactory.buildList(2),
+      });
+
+      sapSystem.instances[0].absent_at = faker.date.past().toISOString();
+      sapSystem.hosts = hostFactory.buildList(5);
+
+      renderWithRouter(
+        <GenericSystemDetails
+          title={faker.string.uuid()}
+          system={sapSystem}
+          type={APPLICATION_TYPE}
+          userAbilities={[]}
+          cleanUpPermittedFor={['cleanup:application_instance']}
+          onInstanceCleanUp={mockedCleanUp}
+        />
+      );
+
+      const cleanUpButton = screen.getByText('Clean up').closest('button');
+
+      expect(cleanUpButton).toBeDisabled();
+
+      await user.click(cleanUpButton);
+
+      await user.hover(cleanUpButton);
+
+      expect(
+        screen.queryByText('You are not authorized for this action')
+      ).toBeVisible();
+    });
+
+    it.each([
+      {
+        forbidden: true,
+        operation: SAP_INSTANCE_START,
+        label: 'Start instance',
+        abilities: [],
+        health: 'unknown',
+      },
+      {
+        forbidden: false,
+        operation: SAP_INSTANCE_START,
+        label: 'Start instance',
+        abilities: [{ name: 'start', resource: 'application_instance' }],
+        health: 'unknown',
+      },
+      {
+        forbidden: true,
+        operation: SAP_INSTANCE_STOP,
+        label: 'Stop instance',
+        abilities: [],
+        health: 'passing',
+      },
+      {
+        forbidden: false,
+        operation: SAP_INSTANCE_STOP,
+        label: 'Stop instance',
+        abilities: [{ name: 'stop', resource: 'application_instance' }],
+        health: 'passing',
+      },
+    ])(
+      'should forbid/authorize instance operation $operation',
+      async ({ forbidden, label, abilities, health }) => {
+        const user = userEvent.setup();
+
+        const sapSystem = sapSystemFactory.build({
+          instances: sapSystemApplicationInstanceFactory.buildList(1, {
+            health,
+          }),
+        });
+
+        sapSystem.hosts = hostFactory.buildList(1);
+
+        renderWithRouter(
+          <GenericSystemDetails
+            title={faker.string.uuid()}
+            system={sapSystem}
+            type={APPLICATION_TYPE}
+            userAbilities={abilities}
+            cleanUpPermittedFor={[]}
+            getInstanceOperations={getSapInstanceOperations}
+            operationsEnabled
+          />
+        );
+
+        const [layoutTable, _] = screen.getAllByRole('table');
+        const { getByRole } = within(layoutTable);
+        const opButton = getByRole('button');
+
+        await user.click(opButton);
+        const menuitem = screen.getByRole('menuitem', { name: label });
+
+        if (forbidden) {
+          expect(menuitem).toBeDisabled();
+        } else {
+          expect(menuitem).toBeEnabled();
+        }
+      }
+    );
   });
 });

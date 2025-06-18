@@ -182,8 +182,20 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
       |> assert_schema("NotFound", api_spec)
     end
 
-    for operation <- [:sap_instance_start, :sap_instance_stop] do
+    operations = [
+      %{
+        operation: :sap_instance_start,
+        ability: "start"
+      },
+      %{
+        operation: :sap_instance_stop,
+        ability: "stop"
+      }
+    ]
+
+    for %{operation: operation, ability: ability} <- operations do
       @operation operation
+      @ability ability
 
       test "should fallback to not found on operation #{operation} if the sap system is not found",
            %{
@@ -271,6 +283,41 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
                } = resp
       end
 
+      test "should authorize operation #{operation} when the user has #{ability} ability",
+           %{
+             conn: conn
+           } do
+        %{id: user_id} = insert(:user)
+
+        %{id: ability_id} = insert(:ability, name: @ability, resource: "application_instance")
+        insert(:users_abilities, user_id: user_id, ability_id: ability_id)
+
+        %{id: host_id} = insert(:host)
+
+        %{sap_system_id: sap_system_id, instance_number: inst_number} =
+          insert(:application_instance, features: "MESSAGESERVER|ENQUE", host_id: host_id)
+
+        %{id: database_id} = insert(:database, health: :passing)
+        insert(:sap_system, id: sap_system_id, database_id: database_id)
+
+        expect(
+          Trento.Infrastructure.Messaging.Adapter.Mock,
+          :publish,
+          fn OperationsPublisher, _, _ ->
+            :ok
+          end
+        )
+
+        conn
+        |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
+        |> put_req_header("content-type", "application/json")
+        |> post(
+          "/api/v1/sap_systems/#{sap_system_id}/hosts/#{host_id}/instances/#{inst_number}/operations/#{@operation}",
+          %{}
+        )
+        |> json_response(:accepted)
+      end
+
       test "should perform operation #{operation} properly",
            %{
              conn: conn,
@@ -349,6 +396,16 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
           delete(
             conn,
             "/api/v1/sap_systems/#{sap_system_id}/hosts/#{host_id}/instances/#{instance_number}"
+          ),
+          post(
+            conn,
+            "/api/v1/sap_systems/#{sap_system_id}/hosts/#{host_id}/instances/#{instance_number}/operations/sap_instance_start",
+            %{}
+          ),
+          post(
+            conn,
+            "/api/v1/sap_systems/#{sap_system_id}/hosts/#{host_id}/instances/#{instance_number}/operations/sap_instance_stop",
+            %{}
           )
         ],
         fn conn ->
