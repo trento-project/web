@@ -1,4 +1,4 @@
-defmodule Trento.Repo.Migrations.AddHostArch do
+defmodule Trento.Repo.Migrations.AddArchToHostReadModel do
   use Ecto.Migration
 
   def change do
