@@ -160,6 +160,39 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
       end
     end
 
+    @request_id Faker.UUID.v4()
+    @correlation_id Faker.UUID.v4()
+    for scenario <- [
+          %{
+            action: :host_cleanup_requested,
+            conn_assigns: %{plug_request_id: @request_id, correlation_id: @correlation_id},
+            expected_metadata: %{request_id: @request_id, correlation_id: @correlation_id}
+          },
+          %{
+            action: :sap_system_cleanup_requested,
+            conn_assigns: %{plug_request_id: @request_id, correlation_id: @correlation_id},
+            expected_metadata: %{request_id: @request_id, correlation_id: @correlation_id}
+          },
+          %{
+            action: :database_cleanup_requested,
+            conn_assigns: %{plug_request_id: @request_id, correlation_id: @correlation_id},
+            expected_metadata: %{request_id: @request_id, correlation_id: @correlation_id}
+          }
+        ] do
+      @scenario scenario
+      test "should extract correlation_id and request_id from #{@scenario.action} action", %{
+        conn: conn
+      } do
+        assert Map.equal?(
+                 @scenario.expected_metadata,
+                 PhoenixConnParser.get_activity_metadata(@scenario.action, %Plug.Conn{
+                   conn
+                   | assigns: @scenario.conn_assigns
+                 })
+               )
+      end
+    end
+
     test "should extract operation metadata from requested operation", %{conn: conn} do
       resource_id = Faker.UUID.v4()
       operation_id = Faker.UUID.v4()
