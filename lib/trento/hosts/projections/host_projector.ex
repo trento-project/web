@@ -38,6 +38,7 @@ defmodule Trento.Hosts.Projections.HostProjector do
       hostname: hostname,
       ip_addresses: ip_addresses,
       agent_version: agent_version,
+      arch: arch,
       fully_qualified_domain_name: fully_qualified_domain_name,
       heartbeat: heartbeat,
       prometheus_targets: prometheus_targets
@@ -51,6 +52,7 @@ defmodule Trento.Hosts.Projections.HostProjector do
           ip_addresses: addresses,
           netmasks: netmasks,
           agent_version: agent_version,
+          arch: arch,
           fully_qualified_domain_name: fully_qualified_domain_name,
           heartbeat: heartbeat,
           prometheus_targets: prometheus_targets
@@ -146,6 +148,7 @@ defmodule Trento.Hosts.Projections.HostProjector do
       ip_addresses: ip_addresses,
       fully_qualified_domain_name: fully_qualified_domain_name,
       agent_version: agent_version,
+      arch: arch,
       prometheus_targets: prometheus_targets
     },
     fn multi ->
@@ -160,6 +163,7 @@ defmodule Trento.Hosts.Projections.HostProjector do
           netmasks: netmasks,
           fully_qualified_domain_name: fully_qualified_domain_name,
           agent_version: agent_version,
+          arch: arch,
           prometheus_targets: prometheus_targets
         })
 

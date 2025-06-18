@@ -37,6 +37,10 @@ context('Host Details', () => {
       hostDetailsPage.agentVersionHasExpectedValue();
     });
 
+    it('should show the correct architecture', () => {
+      hostDetailsPage.architectureHasExpectedValue();
+    });
+
     it('should show the correct IP addresses', () => {
       hostDetailsPage.ipAddressesHasExpectedValue();
     });

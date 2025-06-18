@@ -3,7 +3,6 @@
   "discovery_type": "host_discovery",
   "payload": {
     "os_version": "15-SP2",
-    "arch": "x86_64",
     "ip_addresses": ["10.1.1.4", "10.1.1.5", "10.1.1.6"],
     "netmasks": [16, 24, 32],
     "hostname": "suse",

@@ -14,9 +14,11 @@ describe('HostSummary', () => {
     const agentVersion = faker.system.semver();
     const ipAddresses = [faker.internet.ipv4(), faker.internet.ipv4()];
     const expectedIpAddresses = ipAddresses.join(', ');
+    const arch = faker.helpers.arrayElement(['x86_64', 'ppc64le', 's390x']);
 
     renderWithRouter(
       <HostSummary
+        arch={arch}
         agentVersion={agentVersion}
         cluster={cluster}
         ipAddresses={ipAddresses}
@@ -33,6 +35,8 @@ describe('HostSummary', () => {
       expectedIpAddresses
     );
 
+    expect(screen.getByText('Architecture').nextSibling.textContent).toBe(arch);
+
     const tooltipIcon = screen.queryByTestId('eos-svg-component');
     expect(tooltipIcon).toBeNull();
   });
@@ -44,8 +48,10 @@ describe('HostSummary', () => {
       faker.internet.ipv4(),
     ];
     const expectedIpAddresses = ipAddresses.join(', ');
+    const arch = faker.helpers.arrayElement(['x86_64', 'ppc64le', 's390x']);
     renderWithRouter(
       <HostSummary
+        arch={arch}
         agentVersion={faker.system.semver()}
         cluster={clusterFactory.build()}
         ipAddresses={ipAddresses}

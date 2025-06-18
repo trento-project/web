@@ -58,6 +58,7 @@ defmodule Trento.Hosts.Host do
 
   require Trento.Enums.Provider, as: Provider
   require Trento.Enums.Health, as: Health
+  require Trento.Hosts.Enums.Architecture, as: Architecture
   require Trento.SoftwareUpdates.Enums.SoftwareUpdatesHealth, as: SoftwareUpdatesHealth
 
   alias Commanded.Aggregate.Multi
@@ -134,6 +135,7 @@ defmodule Trento.Hosts.Host do
     field :heartbeat, Ecto.Enum, values: [:passing, :critical, :unknown]
     field :checks_health, Ecto.Enum, values: Health.values(), default: Health.unknown()
     field :saptune_health, Ecto.Enum, values: Health.values(), default: Health.unknown()
+    field :arch, Ecto.Enum, values: Architecture.values(), default: Architecture.unknown()
 
     field :software_updates_discovery_health, Ecto.Enum,
       values: SoftwareUpdatesHealth.values(),
@@ -167,6 +169,7 @@ defmodule Trento.Hosts.Host do
           hostname: hostname,
           ip_addresses: ip_addresses,
           agent_version: agent_version,
+          arch: arch,
           cpu_count: cpu_count,
           total_memory_mb: total_memory_mb,
           socket_count: socket_count,
@@ -182,6 +185,7 @@ defmodule Trento.Hosts.Host do
         hostname: hostname,
         ip_addresses: ip_addresses,
         agent_version: agent_version,
+        arch: arch,
         cpu_count: cpu_count,
         total_memory_mb: total_memory_mb,
         socket_count: socket_count,
@@ -209,6 +213,7 @@ defmodule Trento.Hosts.Host do
           hostname: hostname,
           ip_addresses: ip_addresses,
           agent_version: agent_version,
+          arch: arch,
           cpu_count: cpu_count,
           total_memory_mb: total_memory_mb,
           socket_count: socket_count,
@@ -222,6 +227,7 @@ defmodule Trento.Hosts.Host do
           hostname: hostname,
           ip_addresses: ip_addresses,
           agent_version: agent_version,
+          arch: arch,
           cpu_count: cpu_count,
           total_memory_mb: total_memory_mb,
           socket_count: socket_count,
@@ -246,6 +252,7 @@ defmodule Trento.Hosts.Host do
           hostname: hostname,
           ip_addresses: ip_addresses,
           agent_version: agent_version,
+          arch: arch,
           cpu_count: cpu_count,
           total_memory_mb: total_memory_mb,
           socket_count: socket_count,
@@ -263,6 +270,7 @@ defmodule Trento.Hosts.Host do
         hostname: hostname,
         ip_addresses: ip_addresses,
         agent_version: agent_version,
+        arch: arch,
         cpu_count: cpu_count,
         total_memory_mb: total_memory_mb,
         socket_count: socket_count,
@@ -300,6 +308,7 @@ defmodule Trento.Hosts.Host do
           fully_qualified_domain_name: fully_qualified_domain_name,
           ip_addresses: ip_addresses,
           agent_version: agent_version,
+          arch: arch,
           cpu_count: cpu_count,
           total_memory_mb: total_memory_mb,
           socket_count: socket_count,
@@ -312,6 +321,7 @@ defmodule Trento.Hosts.Host do
           fully_qualified_domain_name: fully_qualified_domain_name,
           ip_addresses: ip_addresses,
           agent_version: agent_version,
+          arch: arch,
           cpu_count: cpu_count,
           total_memory_mb: total_memory_mb,
           socket_count: socket_count,
@@ -333,6 +343,7 @@ defmodule Trento.Hosts.Host do
           fully_qualified_domain_name: new_fully_qualified_domain_name,
           ip_addresses: ip_addresses,
           agent_version: agent_version,
+          arch: arch,
           cpu_count: cpu_count,
           total_memory_mb: total_memory_mb,
           socket_count: socket_count,
@@ -348,6 +359,7 @@ defmodule Trento.Hosts.Host do
         fully_qualified_domain_name: new_fully_qualified_domain_name,
         ip_addresses: ip_addresses,
         agent_version: agent_version,
+        arch: arch,
         cpu_count: cpu_count,
         total_memory_mb: total_memory_mb,
         socket_count: socket_count,
@@ -611,6 +623,7 @@ defmodule Trento.Hosts.Host do
           hostname: hostname,
           ip_addresses: ip_addresses,
           agent_version: agent_version,
+          arch: arch,
           cpu_count: cpu_count,
           total_memory_mb: total_memory_mb,
           socket_count: socket_count,
@@ -627,6 +640,7 @@ defmodule Trento.Hosts.Host do
         hostname: hostname,
         ip_addresses: ip_addresses,
         agent_version: agent_version,
+        arch: arch,
         cpu_count: cpu_count,
         total_memory_mb: total_memory_mb,
         socket_count: socket_count,
@@ -644,6 +658,7 @@ defmodule Trento.Hosts.Host do
           hostname: hostname,
           ip_addresses: ip_addresses,
           agent_version: agent_version,
+          arch: arch,
           cpu_count: cpu_count,
           total_memory_mb: total_memory_mb,
           socket_count: socket_count,
@@ -658,6 +673,7 @@ defmodule Trento.Hosts.Host do
       | hostname: hostname,
         ip_addresses: ip_addresses,
         agent_version: agent_version,
+        arch: arch,
         cpu_count: cpu_count,
         total_memory_mb: total_memory_mb,
         socket_count: socket_count,

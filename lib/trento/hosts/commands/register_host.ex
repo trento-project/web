@@ -16,6 +16,8 @@ defmodule Trento.Hosts.Commands.RegisterHost do
 
   use Trento.Support.Command
 
+  require Trento.Hosts.Enums.Architecture, as: Architecture
+
   defcommand do
     field :host_id, Ecto.UUID
     field :hostname, :string
@@ -29,5 +31,6 @@ defmodule Trento.Hosts.Commands.RegisterHost do
     field :prometheus_targets, :map
 
     field :installation_source, Ecto.Enum, values: [:community, :suse, :unknown]
+    field :arch, Ecto.Enum, values: Architecture.values()
   end
 end

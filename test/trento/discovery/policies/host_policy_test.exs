@@ -4,6 +4,7 @@ defmodule Trento.Discovery.Policies.HostPolicyTest do
   import Trento.DiscoveryFixturesHelper
 
   require Trento.Enums.Provider, as: Provider
+  require Trento.Hosts.Enums.Architecture, as: Architecture
 
   alias Trento.Discovery.Policies.HostPolicy
 
@@ -34,6 +35,7 @@ defmodule Trento.Discovery.Policies.HostPolicyTest do
              :ok,
              %RegisterHost{
                agent_version: "0.1.0",
+               arch: Architecture.x86_64(),
                host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
                hostname: "suse",
                ip_addresses: ["10.1.1.4/16", "10.1.1.5/24", "10.1.1.6/32"],
@@ -42,6 +44,24 @@ defmodule Trento.Discovery.Policies.HostPolicyTest do
              }
            } =
              "host_discovery"
+             |> load_discovery_event_fixture()
+             |> HostPolicy.handle()
+  end
+
+  test "should return the expected commands when a host_discovery payload without architecture is handled" do
+    assert {
+             :ok,
+             %RegisterHost{
+               agent_version: "0.1.0",
+               arch: Architecture.unknown(),
+               host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
+               hostname: "suse",
+               ip_addresses: ["10.1.1.4/16", "10.1.1.5/24", "10.1.1.6/32"],
+               installation_source: :unknown,
+               prometheus_targets: nil
+             }
+           } =
+             "host_discovery_without_arch"
              |> load_discovery_event_fixture()
              |> HostPolicy.handle()
   end

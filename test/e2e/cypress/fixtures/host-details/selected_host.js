@@ -5,6 +5,7 @@ export const selectedHost = {
   clusterName: 'hana_cluster_3',
   clusterId: '469e7be5-4e20-5007-b044-c6f540a87493',
   ipAddresses: '10.80.1.11/24, 10.80.1.13/24',
+  arch: 'x86_64',
   azureCloudDetails: {
     provider: 'Azure',
     vmName: 'vmhdbprd01',

@@ -3,6 +3,8 @@ defmodule Trento.Hosts.Events.HostDetailsUpdatedTest do
 
   alias Trento.Hosts.Events.HostDetailsUpdated
 
+  require Trento.Hosts.Enums.Architecture, as: Architecture
+
   describe "HostDetailsUpdated event upcasting" do
     test "should upcast HostDetailsUpdated event properly from version 1" do
       host_id = Faker.UUID.v4()
@@ -15,7 +17,7 @@ defmodule Trento.Hosts.Events.HostDetailsUpdatedTest do
       os_version = Faker.App.version()
 
       assert %HostDetailsUpdated{
-               version: 4,
+               version: 5,
                host_id: host_id,
                hostname: hostname,
                fully_qualified_domain_name: nil,
@@ -25,6 +27,7 @@ defmodule Trento.Hosts.Events.HostDetailsUpdatedTest do
                total_memory_mb: total_memory_mb,
                socket_count: socket_count,
                os_version: os_version,
+               arch: Architecture.unknown(),
                installation_source: :unknown,
                prometheus_targets: nil
              } ==

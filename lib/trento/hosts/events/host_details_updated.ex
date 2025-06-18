@@ -5,7 +5,9 @@ defmodule Trento.Hosts.Events.HostDetailsUpdated do
 
   use Trento.Support.Event
 
-  defevent version: 4 do
+  require Trento.Hosts.Enums.Architecture, as: Architecture
+
+  defevent version: 5 do
     field :host_id, Ecto.UUID
     field :hostname, :string
     field :fully_qualified_domain_name, :string
@@ -18,9 +20,11 @@ defmodule Trento.Hosts.Events.HostDetailsUpdated do
     field :prometheus_targets, :map
 
     field :installation_source, Ecto.Enum, values: [:community, :suse, :unknown]
+    field :arch, Ecto.Enum, values: Architecture.values()
   end
 
   def upcast(params, _, 2), do: Map.put(params, "installation_source", :unknown)
   def upcast(params, _, 3), do: Map.put(params, "fully_qualified_domain_name", nil)
   def upcast(params, _, 4), do: Map.put(params, "prometheus_targets", nil)
+  def upcast(params, _, 5), do: Map.put(params, "arch", Architecture.unknown())
 end

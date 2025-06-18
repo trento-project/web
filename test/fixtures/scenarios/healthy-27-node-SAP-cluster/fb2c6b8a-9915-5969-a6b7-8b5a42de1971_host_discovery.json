@@ -5,6 +5,7 @@
     "hostname": "vmnwdev02",
     "cpu_count": 2,
     "os_version": "15-SP3",
+    "arch": "x86_64",
     "ip_addresses": [
       "127.0.0.1",
       "::1",
