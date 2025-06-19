@@ -204,26 +204,6 @@ context('Settings page', () => {
         }
       });
 
-      const initialAlertingSettings = {
-        enabled: true,
-        smtp_server: 'https://test-smtp-server.com',
-        smtp_port: 587,
-        smtp_username: 'testuser',
-        smtp_password: 'testpass',
-        sender_email: 'adm@trento-project.io',
-        recipient_email: 'rcv@trento-project.io',
-      };
-
-      const updateAlertingSettings = {
-        enabled: true,
-        smtp_server: 'https://test2-smtp-server.com',
-        smtp_port: 588,
-        smtp_username: 'testuser2',
-        smtp_password: 'testpass2',
-        sender_email: 'adm2@trento-project.io',
-        recipient_email: 'rcv2@trento-project.io',
-      };
-
       beforeEach(() => {
         settingsPage.resetAlertingSettingsDB();
         settingsPage.refresh();
@@ -232,267 +212,67 @@ context('Settings page', () => {
 
       describe('when not previously set', () => {
         it('should be displayed with their placeholder values', () => {
-          settingsPage.alertingEnabled().should('have.text', 'Disabled');
-          settingsPage.alertingServer().should('have.text', 'https://.....');
-          settingsPage.alertingPort().should('have.text', '587');
-          settingsPage.alertingUsername().should('have.text', '.....');
-          settingsPage.alertingPassword().should('have.text', '•••••');
-          settingsPage.alertingSender().should('have.text', '...@...');
-          settingsPage.alertingRecipient().should('have.text', '...@...');
+          settingsPage.alertingConfigDisplaysPlaceholderValues();
         });
 
         it('should show empty fields when edit modal is opened', () => {
           settingsPage.clickAlertingEditButton();
-          settingsPage
-            .alertingModalEnabledSwitch()
-            .should('have.attr', 'aria-checked', 'false');
-          settingsPage.alertingModalServer().should('have.value', '');
-          settingsPage.alertingModalPort().should('have.value', '');
-          settingsPage.alertingModalUsername().should('have.value', '');
-          settingsPage.alertingModalPassword().should('have.value', '');
-          settingsPage.alertingModalPasswordDisplay().should('not.exist');
-          settingsPage.alertingModalRemovePasswordButton().should('not.exist');
-          settingsPage.alertingModalSender().should('have.value', '');
-          settingsPage.alertingModalRecipient().should('have.value', '');
+          settingsPage.alertingEditFormDisplaysEmptyFields();
         });
 
-        it('should be created successfully if no previous settings set', () => {
+        it('should be created successfully', () => {
           settingsPage.clickAlertingEditButton();
-          settingsPage.setAlertingModalEnabledSwitch(
-            initialAlertingSettings.enabled
-          );
-          settingsPage.typeAlertingModalServer(
-            initialAlertingSettings.smtp_server
-          );
-          settingsPage.typeAlertingModalPort(initialAlertingSettings.smtp_port);
-          settingsPage.typeAlertingModalUsername(
-            initialAlertingSettings.smtp_username
-          );
-          settingsPage.typeAlertingModalPassword(
-            initialAlertingSettings.smtp_password
-          );
-          settingsPage.typeAlertingModalSender(
-            initialAlertingSettings.sender_email
-          );
-          settingsPage.typeAlertingModalRecipient(
-            initialAlertingSettings.recipient_email
-          );
-
-          settingsPage.submitAlertingModalSettings();
-          settingsPage.waitForRequest('alertingSettingsEndpoint');
-
-          settingsPage
-            .alertingEnabled()
-            .should(
-              'have.text',
-              initialAlertingSettings.enabled ? 'Enabled' : 'Disabled'
-            );
-          settingsPage
-            .alertingServer()
-            .should('have.text', initialAlertingSettings.smtp_server);
-          settingsPage
-            .alertingPort()
-            .should('have.text', String(initialAlertingSettings.smtp_port));
-          settingsPage
-            .alertingUsername()
-            .should('have.text', initialAlertingSettings.smtp_username);
-          settingsPage.alertingPassword().should('have.text', '•••••');
-          settingsPage
-            .alertingSender()
-            .should('have.text', initialAlertingSettings.sender_email);
-          settingsPage
-            .alertingRecipient()
-            .should('have.text', initialAlertingSettings.recipient_email);
+          settingsPage.enterAlertingInitialSettings();
+          settingsPage.alertingConfigDisplaysInitialValues();
         });
       });
 
       describe('when previously set', () => {
         beforeEach(() => {
-          settingsPage.saveAlertingSettings(initialAlertingSettings);
+          settingsPage.saveInitialAlertingSettings();
           settingsPage.refresh();
           settingsPage.waitForRequest('alertingSettingsEndpoint');
         });
 
         it('should display their current values', () => {
-          settingsPage
-            .alertingEnabled()
-            .should(
-              'have.text',
-              initialAlertingSettings.enabled ? 'Enabled' : 'Disabled'
-            );
-          settingsPage
-            .alertingServer()
-            .should('have.text', initialAlertingSettings.smtp_server);
-          settingsPage
-            .alertingPort()
-            .should('have.text', String(initialAlertingSettings.smtp_port));
-          settingsPage
-            .alertingUsername()
-            .should('have.text', initialAlertingSettings.smtp_username);
-          settingsPage.alertingPassword().should('have.text', '•••••');
-          settingsPage
-            .alertingSender()
-            .should('have.text', initialAlertingSettings.sender_email);
-          settingsPage
-            .alertingRecipient()
-            .should('have.text', initialAlertingSettings.recipient_email);
+          settingsPage.alertingConfigDisplaysInitialValues();
         });
 
         it('should show current values when edit modal is opened', () => {
           settingsPage.clickAlertingEditButton();
-          settingsPage
-            .alertingModalEnabledSwitch()
-            .should('have.attr', 'aria-checked', 'true');
-          settingsPage
-            .alertingModalServer()
-            .should('have.value', initialAlertingSettings.smtp_server);
-          settingsPage
-            .alertingModalPort()
-            .should('have.value', String(initialAlertingSettings.smtp_port));
-          settingsPage
-            .alertingModalUsername()
-            .should('have.value', initialAlertingSettings.smtp_username);
-          settingsPage.alertingModalPassword().should('not.exist');
-          settingsPage
-            .alertingModalPasswordDisplay()
-            .should('have.text', '•••••');
-          settingsPage.alertingModalRemovePasswordButton().should('be.visible');
-          settingsPage
-            .alertingModalSender()
-            .should('have.value', initialAlertingSettings.sender_email);
-          settingsPage
-            .alertingModalRecipient()
-            .should('have.value', initialAlertingSettings.recipient_email);
+          settingsPage.alertingEditFormDisplaysInitialSettings();
         });
 
         it('should be updated successfully without password', () => {
           settingsPage.clickAlertingEditButton();
-          settingsPage.setAlertingModalEnabledSwitch(
-            updateAlertingSettings.enabled
-          );
-          settingsPage.typeAlertingModalServer(
-            updateAlertingSettings.smtp_server
-          );
-          settingsPage.typeAlertingModalPort(updateAlertingSettings.smtp_port);
-          settingsPage.typeAlertingModalUsername(
-            updateAlertingSettings.smtp_username
-          );
-          settingsPage.typeAlertingModalSender(
-            updateAlertingSettings.sender_email
-          );
-          settingsPage.typeAlertingModalRecipient(
-            updateAlertingSettings.recipient_email
-          );
-
-          settingsPage.submitAlertingModalSettings();
-          settingsPage.waitForRequest('alertingSettingsEndpoint');
-
-          settingsPage
-            .alertingEnabled()
-            .should(
-              'have.text',
-              updateAlertingSettings.enabled ? 'Enabled' : 'Disabled'
-            );
-          settingsPage
-            .alertingServer()
-            .should('have.text', updateAlertingSettings.smtp_server);
-          settingsPage
-            .alertingPort()
-            .should('have.text', String(updateAlertingSettings.smtp_port));
-          settingsPage
-            .alertingUsername()
-            .should('have.text', updateAlertingSettings.smtp_username);
-          settingsPage.alertingPassword().should('have.text', '•••••');
-          settingsPage
-            .alertingSender()
-            .should('have.text', updateAlertingSettings.sender_email);
-          settingsPage
-            .alertingRecipient()
-            .should('have.text', updateAlertingSettings.recipient_email);
+          settingsPage.enterAlertingUpdateSettings();
+          settingsPage.alertingConfigDisplaysUpdateValues();
         });
 
         it('should update successfully with password', () => {
           settingsPage.clickAlertingEditButton();
-          settingsPage.setAlertingModalEnabledSwitch(
-            updateAlertingSettings.enabled
-          );
-          settingsPage.typeAlertingModalServer(
-            updateAlertingSettings.smtp_server
-          );
-          settingsPage.typeAlertingModalPort(updateAlertingSettings.smtp_port);
-          settingsPage.typeAlertingModalUsername(
-            updateAlertingSettings.smtp_username
-          );
-          settingsPage.removeAlertringModalPassword();
-          settingsPage.typeAlertingModalPassword(
-            updateAlertingSettings.smtp_password
-          );
-          settingsPage.typeAlertingModalSender(
-            updateAlertingSettings.sender_email
-          );
-          settingsPage.typeAlertingModalRecipient(
-            updateAlertingSettings.recipient_email
-          );
-
-          settingsPage.submitAlertingModalSettings();
-          settingsPage.waitForRequest('alertingSettingsEndpoint');
-
-          settingsPage
-            .alertingEnabled()
-            .should(
-              'have.text',
-              updateAlertingSettings.enabled ? 'Enabled' : 'Disabled'
-            );
-          settingsPage
-            .alertingServer()
-            .should('have.text', updateAlertingSettings.smtp_server);
-          settingsPage
-            .alertingPort()
-            .should('have.text', String(updateAlertingSettings.smtp_port));
-          settingsPage
-            .alertingUsername()
-            .should('have.text', updateAlertingSettings.smtp_username);
-          settingsPage.alertingPassword().should('have.text', '•••••');
-          settingsPage
-            .alertingSender()
-            .should('have.text', updateAlertingSettings.sender_email);
-          settingsPage
-            .alertingRecipient()
-            .should('have.text', updateAlertingSettings.recipient_email);
+          settingsPage.enterAlertingUpdateSettingsWithPassword();
+          settingsPage.alertingConfigDisplaysUpdateValues();
         });
       });
 
       describe('validation', () => {
-        it('should show errors on invalid input', () => {
-          settingsPage.clickAlertingEditButton();
-          settingsPage.submitAlertingModalSettings();
-          settingsPage.showExpectedErrors([
-            {
-              selector: settingsPage.alertingServerInputError,
-              error: "Missing field: smtp_server",
-            },
-            {
-              selector: settingsPage.alertingPortInputError,
-              error: "Missing field: smtp_port",
-            },
-            {
-              selector: settingsPage.alertingUsernameInputError,
-              error: "Missing field: smtp_username",
-            },
-            {
-              selector: settingsPage.alertingPasswordInputError,
-              error: "Missing field: smtp_password",
-            },
-            {
-              selector: settingsPage.alertingSenderInputError,
-              error: "Missing field: sender_email",
-            },
-            {
-              selector: settingsPage.alertingRecipientInputError,
-              error: "Missing field: recipient_email",
-            },
-          ]);
-        });
+        settingsPage.alertingErrorScenarios.forEach(
+          ({
+            name,
+            valueConf: { values, removePasswordProtection },
+            errorConf,
+          }) => {
+            it(`should fail when ${name}`, () => {
+              settingsPage.clickAlertingEditButton();
+              settingsPage.enterAlertingSettings(
+                values,
+                removePasswordProtection
+              );
+              settingsPage.showExpectedErrors(errorConf);
+            });
+          }
+        );
       });
     });
   });
