@@ -179,17 +179,7 @@ context('Settings page', () => {
       });
 
       it('should be displayed correctly', () => {
-        settingsPage.getAlertingEnabled().should('have.text', 'Enabled');
-        settingsPage.getAlertingServer().should('have.text', 'localhost');
-        settingsPage.getAlertingPort().should('have.text', '1025');
-        settingsPage.getAlertingUsername().should('have.text', 'trentouser');
-        settingsPage.getAlertingPassword().should('have.text', '•••••');
-        settingsPage
-          .getAlertingSender()
-          .should('have.text', 'alerts@trento-project.io');
-        settingsPage
-          .getAlertingRecipient()
-          .should('have.text', 'admin@trento-project.io');
+        settingsPage.alertingConfigDisplaysDevEnvValues();
       });
 
       it('should have an edit button that is disabled', () => {

@@ -107,6 +107,15 @@ const baseInitialSettings = {
   password: sumaPassword,
 };
 
+const alertingDevEnvSettings = {
+  enabled: true,
+  smtpServer: 'localhost',
+  smtpPort: '1025',
+  smtpUsername: 'trentouser',
+  senderEmail: 'alerts@trento-project.io',
+  recipientEmail: 'admin@trento-project.io',
+};
+
 const alertingPlaceholderSettings = {
   enabled: false,
   smtpServer: 'https://.....',
@@ -869,6 +878,9 @@ const alertingConfigDisplaysSettings = ({
   cy.get(alertingSender).should('have.text', senderEmail);
   cy.get(alertingRecipient).should('have.text', recipientEmail);
 };
+
+export const alertingConfigDisplaysDevEnvValues = () =>
+  alertingConfigDisplaysSettings(alertingDevEnvSettings);
 
 export const alertingConfigDisplaysPlaceholderValues = () =>
   alertingConfigDisplaysSettings(alertingPlaceholderSettings);
