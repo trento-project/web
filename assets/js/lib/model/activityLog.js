@@ -266,17 +266,17 @@ export const ACTIVITY_TYPES_CONFIG = {
   },
   [HOST_CLEANUP_REQUESTED]: {
     label: 'Host Cleanup Requested',
-    message: ({ actor }) => `Host cleanup requested by ${actor}`,
+    message: (_entry) => `Host cleanup requested`,
     resource: userResourceType,
   },
   [SAP_SYSTEM_CLEANUP_REQUESTED]: {
     label: 'SAP System Cleanup Requested`',
-    message: ({ actor }) => `SAP System cleanup requested by ${actor}`,
+    message: (_entry) => `SAP System cleanup requested`,
     resource: userResourceType,
   },
   [DATABASE_CLEANUP_REQUESTED]: {
     label: 'Database Cleanup Requested',
-    message: ({ actor }) => `Database cleanup requested by ${actor}`,
+    message: (_entry) => `Database cleanup requested`,
     resource: userResourceType,
   },
 
