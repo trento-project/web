@@ -109,32 +109,31 @@ const baseInitialSettings = {
 
 const alertingPlaceholderSettings = {
   enabled: false,
-  smtp_server: 'https://.....',
-  smtp_port: 587,
-  smtp_username: '.....',
-  smtp_password: 'of-no-interest',
-  sender_email: '...@...',
-  recipient_email: '...@...',
+  smtpServer: 'https://.....',
+  smtpPort: 587,
+  smtpUsername: '.....',
+  senderEmail: '...@...',
+  recipientEmail: '...@...',
 };
 
 const alertingInitialSettings = {
   enabled: true,
-  smtp_server: 'https://test-smtp-server.com',
-  smtp_port: 587,
-  smtp_username: 'testuser',
-  smtp_password: 'testpass',
-  sender_email: 'adm@trento-project.io',
-  recipient_email: 'rcv@trento-project.io',
+  smtpServer: 'https://test-smtp-server.com',
+  smtpPort: 587,
+  smtpUsername: 'testuser',
+  smtpPassword: 'testpass',
+  senderEmail: 'adm@trento-project.io',
+  recipientEmail: 'rcv@trento-project.io',
 };
 
 const alertingUpdateSettings = {
   enabled: true,
-  smtp_server: 'https://test2-smtp-server.com',
-  smtp_port: 588,
-  smtp_username: 'testuser2',
-  smtp_password: 'testpass2',
-  sender_email: 'adm2@trento-project.io',
-  recipient_email: 'rcv2@trento-project.io',
+  smtpServer: 'https://test2-smtp-server.com',
+  smtpPort: 588,
+  smtpUsername: 'testuser2',
+  smtpPassword: 'testpass2',
+  senderEmail: 'adm2@trento-project.io',
+  recipientEmail: 'rcv2@trento-project.io',
 };
 
 export const alertingErrorScenarios = [
@@ -291,15 +290,26 @@ const typeAlertingRecipient = (text) =>
   cy.get(alertingRecipientEditField).clear().type(text);
 const submitAlertingSettings = () => cy.get(alertingSubmitButton).click();
 
-export const enterAlertingSettings = (settings, removePasswordProtection) => {
-  if (settings.enabled) setAlertingEnabledEditSwitch(settings.enabled);
-  if (settings.smtp_server) typeAlertingServer(settings.smtp_server);
-  if (settings.smtp_port) typeAlertingPort(settings.smtp_port);
-  if (settings.smtp_username) typeAlertingUsername(settings.smtp_username);
+export const enterAlertingSettings = (
+  {
+    enabled,
+    smtpServer,
+    smtpPort,
+    smtpUsername,
+    smtpPassword,
+    senderEmail,
+    recipientEmail,
+  },
+  removePasswordProtection
+) => {
+  if (enabled) setAlertingEnabledEditSwitch(enabled);
+  if (smtpServer) typeAlertingServer(smtpServer);
+  if (smtpPort) typeAlertingPort(smtpPort);
+  if (smtpUsername) typeAlertingUsername(smtpUsername);
   if (removePasswordProtection) removeAlertringPasswordProtection();
-  if (settings.smtp_password) typeAlertingPassword(settings.smtp_password);
-  if (settings.sender_email) typeAlertingSender(settings.sender_email);
-  if (settings.recipient_email) typeAlertingRecipient(settings.recipient_email);
+  if (smtpPassword) typeAlertingPassword(smtpPassword);
+  if (senderEmail) typeAlertingSender(senderEmail);
+  if (recipientEmail) typeAlertingRecipient(recipientEmail);
 
   submitAlertingSettings();
   basePage.waitForRequest('alertingSettingsEndpoint');
@@ -307,18 +317,20 @@ export const enterAlertingSettings = (settings, removePasswordProtection) => {
 
 export const enterAlertingInitialSettings = () =>
   enterAlertingSettings(alertingInitialSettings, false);
-export const enterAlertingUpdateSettings = () =>
+
+export const enterAlertingUpdateSettingsWithoutPassword = () =>
   enterAlertingSettings(
     _.pick(alertingUpdateSettings, [
       'enabled',
-      'smtp_server',
-      'smtp_port',
-      'smtp_username',
-      'sender_email',
-      'recipient_email',
+      'smtpServer',
+      'smtpPort',
+      'smtpUsername',
+      'senderEmail',
+      'recipientEmail',
     ]),
     false
   );
+
 export const enterAlertingUpdateSettingsWithPassword = () =>
   enterAlertingSettings(alertingUpdateSettings, true);
 
@@ -841,17 +853,21 @@ export const showExpectedErrors = (errConfig) => {
   });
 };
 
-const alertingConfigDisplaysSettings = (settings) => {
-  cy.get(alertingEnabled).should(
-    'have.text',
-    settings.enabled ? 'Enabled' : 'Disabled'
-  );
-  cy.get(alertingServer).should('have.text', settings.smtp_server);
-  cy.get(alertingPort).should('have.text', String(settings.smtp_port));
-  cy.get(alertingUsername).should('have.text', settings.smtp_username);
+const alertingConfigDisplaysSettings = ({
+  enabled,
+  smtpServer,
+  smtpPort,
+  smtpUsername,
+  senderEmail,
+  recipientEmail,
+}) => {
+  cy.get(alertingEnabled).should('have.text', enabled ? 'Enabled' : 'Disabled');
+  cy.get(alertingServer).should('have.text', smtpServer);
+  cy.get(alertingPort).should('have.text', String(smtpPort));
+  cy.get(alertingUsername).should('have.text', smtpUsername);
   cy.get(alertingPassword).should('have.text', '•••••');
-  cy.get(alertingSender).should('have.text', settings.sender_email);
-  cy.get(alertingRecipient).should('have.text', settings.recipient_email);
+  cy.get(alertingSender).should('have.text', senderEmail);
+  cy.get(alertingRecipient).should('have.text', recipientEmail);
 };
 
 export const alertingConfigDisplaysPlaceholderValues = () =>
@@ -893,29 +909,27 @@ export const alertingEditFormDisplaysEmptyFields = () => {
   cy.get(alertingRecipientEditField).should('have.value', '');
 };
 
-const alertingEditFormDisplaysSettings = (settings) => {
+const alertingEditFormDisplaysSettings = ({
+  enabled,
+  smtpServer,
+  smtpPort,
+  smtpUsername,
+  senderEmail,
+  recipientEmail,
+}) => {
   cy.get(alertingEnabledEditSwitch).should(
     'have.attr',
     'aria-checked',
-    settings.enabled ? 'true' : 'false'
+    enabled ? 'true' : 'false'
   );
-  cy.get(alertingServerEditField).should('have.value', settings.smtp_server);
-  cy.get(alertingPortEditField).should(
-    'have.value',
-    String(settings.smtp_port)
-  );
-  cy.get(alertingUsernameEditField).should(
-    'have.value',
-    settings.smtp_username
-  );
+  cy.get(alertingServerEditField).should('have.value', smtpServer);
+  cy.get(alertingPortEditField).should('have.value', String(smtpPort));
+  cy.get(alertingUsernameEditField).should('have.value', smtpUsername);
   cy.get(alertingPasswordEditField).should('not.exist');
   cy.get(alertingPasswordDisplayField).should('have.text', '•••••');
   alertingRemovePasswordButtonIsVisible();
-  cy.get(alertingSenderEditField).should('have.value', settings.sender_email);
-  cy.get(alertingRecipientEditField).should(
-    'have.value',
-    settings.recipient_email
-  );
+  cy.get(alertingSenderEditField).should('have.value', senderEmail);
+  cy.get(alertingRecipientEditField).should('have.value', recipientEmail);
 };
 
 export const alertingEditFormDisplaysInitialSettings = () =>
@@ -966,7 +980,15 @@ export const saveInitialAlertingSettings = () => {
       auth: {
         bearer: accessToken,
       },
-      body: alertingInitialSettings,
+      body: {
+        enabled: alertingInitialSettings.enabled,
+        smtp_server: alertingInitialSettings.smtpServer,
+        smtp_port: alertingInitialSettings.smtpPort,
+        smtp_username: alertingInitialSettings.smtpUsername,
+        smtp_password: alertingInitialSettings.smtpPassword,
+        sender_email: alertingInitialSettings.senderEmail,
+        recipient_email: alertingInitialSettings.recipientEmail,
+      },
     });
   });
 };
