@@ -880,10 +880,10 @@ export const alertingConfigDisplaysUpdateValues = () =>
   alertingConfigDisplaysSettings(alertingUpdateSettings);
 
 export const alertingEditButtonIsEnabled = () =>
-  alertingEditButton().should('be.enabled');
+  cy.get(alertingEditButton).should('be.enabled');
 
 export const alertingEditButtonIsDisabled = () =>
-  alertingEditButton().should('be.disabled');
+  cy.get(alertingEditButton).should('be.disabled');
 
 const alertingRemovePasswordButtonNotExist = () => {
   getAlertingRemovePasswordButton().should('not.exist');
