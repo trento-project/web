@@ -163,36 +163,62 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
     test "should extract operation metadata from requested operation", %{conn: conn} do
       resource_id = Faker.UUID.v4()
       operation_id = Faker.UUID.v4()
+      host_id = Faker.UUID.v4()
       body_params = %{"key" => "value"}
+      instance_number = "00"
 
       # No need to add all operations. One operation per resource type is enough
       scenarios = [
         %{
+          action: :application_instance_operation_requested,
+          operation: "sap_instance_start",
+          atom_operation: :sap_instance_start,
+          resource_field: :sap_system_id,
+          additional_params: %{
+            host_id: host_id,
+            instance_number: instance_number
+          }
+        },
+        %{
           action: :cluster_operation_requested,
           operation: "cluster_maintenance_change",
-          atom_operation: :cluster_maintenance_change
+          atom_operation: :cluster_maintenance_change,
+          resource_field: :cluster_id,
+          additional_params: %{}
         },
         %{
           action: :host_operation_requested,
           operation: "saptune_solution_apply",
-          atom_operation: :saptune_solution_apply
+          atom_operation: :saptune_solution_apply,
+          resource_field: :host_id,
+          additional_params: %{}
         }
       ]
 
       for %{
             action: action,
             operation: operation,
-            atom_operation: atom_operation
+            atom_operation: atom_operation,
+            resource_field: resource_field,
+            additional_params: additional_params
           } <- scenarios do
-        assert %{
-                 :resource_id => resource_id,
-                 :operation => atom_operation,
-                 :operation_id => operation_id,
-                 :params => body_params
-               } ==
+        params = Map.merge(%{id: resource_id, operation: operation}, additional_params)
+
+        expected_metadata =
+          Map.merge(
+            %{
+              resource_field => resource_id,
+              :operation => atom_operation,
+              :operation_id => operation_id,
+              :params => body_params
+            },
+            additional_params
+          )
+
+        assert expected_metadata ==
                  PhoenixConnParser.get_activity_metadata(action, %Plug.Conn{
                    conn
-                   | params: %{id: resource_id, operation: operation},
+                   | params: params,
                      body_params: body_params,
                      resp_body: Jason.encode!(%{operation_id: operation_id})
                  })
