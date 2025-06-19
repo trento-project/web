@@ -1,26 +1,13 @@
 export * from './base_po';
 import * as basePage from './base_po';
 
+import _ from 'lodash';
 import { subDays, addDays } from 'date-fns';
 import {
   validCertificate,
   anotherValidCertificate,
   expiredCertificate,
 } from '../fixtures/suma_credentials/certificates';
-
-// Test data
-
-const url = '/settings';
-
-const sumaUrl = 'https://valid';
-const sumaUsername = 'admin';
-const sumaPassword = 'adminpassword';
-
-const baseInitialSettings = {
-  url: sumaUrl,
-  username: sumaUsername,
-  password: sumaPassword,
-};
 
 // Selectors
 
@@ -65,6 +52,26 @@ const sumaSettingsModal = {
 
 // Alerting selectors
 
+const alertingEnabled = '[aria-label="alerting-enabled"]';
+const alertingServer = '[aria-label="smtp-server"]';
+const alertingPort = '[aria-label="smtp-port"]';
+const alertingUsername = '[aria-label="smtp-username"]';
+const alertingPassword = '[aria-label="smtp-password"]';
+const alertingSender = '[aria-label="alerting-sender"]';
+const alertingRecipient = '[aria-label="alerting-recipient"]';
+const alertingEditButton = '[aria-label="alerting-edit-button"]';
+
+const alertingEnabledEditSwitch = '#alerting-enabled-input';
+const alertingServerEditField = '#smtp-server-input';
+const alertingPortEditField = '#smtp-port-input';
+const alertingUsernameEditField = '#smtp-username-input';
+const alertingPasswordEditField =
+  'input[aria-labelledby="smtp-password-label"]';
+const alertingPasswordDisplayField = 'p[aria-labelledby="smtp-password-label"]';
+const alertingSenderEditField = '#sender-email-input';
+const alertingRecipientEditField = '#recipient-email-input';
+const alertingSubmitButton = 'button[type="submit"]';
+
 export const alertingServerInputError =
   '[aria-label="smtp-server-input-error"]';
 export const alertingPortInputError = '[aria-label="smtp-port-input-error"]';
@@ -85,6 +92,86 @@ const activityLogSettingsModal = 'div[id*="headlessui-dialog-panel"]';
 const activityLogSettingsSaveButton = `${activityLogSettingsModal} button:contains("Save Settings")`;
 const activityLogSettingsCancelButton = `${activityLogSettingsModal} button:contains("Cancel")`;
 const retentionTimeInput = 'input[role="spinbutton"]';
+
+// Test data
+
+const url = '/settings';
+
+const sumaUrl = 'https://valid';
+const sumaUsername = 'admin';
+const sumaPassword = 'adminpassword';
+
+const baseInitialSettings = {
+  url: sumaUrl,
+  username: sumaUsername,
+  password: sumaPassword,
+};
+
+const alertingPlaceholderSettings = {
+  enabled: false,
+  smtp_server: 'https://.....',
+  smtp_port: 587,
+  smtp_username: '.....',
+  smtp_password: 'of-no-interest',
+  sender_email: '...@...',
+  recipient_email: '...@...',
+};
+
+const alertingInitialSettings = {
+  enabled: true,
+  smtp_server: 'https://test-smtp-server.com',
+  smtp_port: 587,
+  smtp_username: 'testuser',
+  smtp_password: 'testpass',
+  sender_email: 'adm@trento-project.io',
+  recipient_email: 'rcv@trento-project.io',
+};
+
+const alertingUpdateSettings = {
+  enabled: true,
+  smtp_server: 'https://test2-smtp-server.com',
+  smtp_port: 588,
+  smtp_username: 'testuser2',
+  smtp_password: 'testpass2',
+  sender_email: 'adm2@trento-project.io',
+  recipient_email: 'rcv2@trento-project.io',
+};
+
+export const alertingErrorScenarios = [
+  {
+    name: 'values are not provided',
+    valueConf: {
+      values: {},
+      removePasswordProtection: false,
+    },
+    errorConf: [
+      {
+        selector: alertingServerInputError,
+        error: 'Missing field: smtp_server',
+      },
+      {
+        selector: alertingPortInputError,
+        error: 'Missing field: smtp_port',
+      },
+      {
+        selector: alertingUsernameInputError,
+        error: 'Missing field: smtp_username',
+      },
+      {
+        selector: alertingPasswordInputError,
+        error: 'Missing field: smtp_password',
+      },
+      {
+        selector: alertingSenderInputError,
+        error: 'Missing field: sender_email',
+      },
+      {
+        selector: alertingRecipientInputError,
+        error: 'Missing field: recipient_email',
+      },
+    ],
+  },
+];
 
 // UI Interactions
 
@@ -135,6 +222,27 @@ export const clickModalCancelButton = () =>
 export const clickGenerateApiKeyButton = () =>
   cy.get(generateApiKeyButton).click();
 
+export const clickAlertingEditButton = () => cy.get(alertingEditButton).click();
+
+const getAlertingRemovePasswordButton = () =>
+  cy.get('button').contains('Remove');
+
+export const removeAlertringPasswordProtection = () =>
+  getAlertingRemovePasswordButton().click();
+
+export const setAlertingEnabledEditSwitch = (value) => {
+  cy.get(alertingEnabledEditSwitch)
+    .invoke('attr', 'aria-checked')
+    .then((checked) => {
+      const currentlyChecked = checked == 'true';
+      if (currentlyChecked == value) {
+        return;
+      }
+
+      cy.get(alertingEnabledEditSwitch).click();
+    });
+};
+
 export const generateApiKeyButtonIsEnabled = () =>
   cy.get(generateApiKeyButton).should('be.visible').and('be.enabled');
 
@@ -169,63 +277,50 @@ const _clickRemovePasswordButton = () =>
 const _clickRemoveSumaCaCertButton = () =>
   cy.get(sumaSettingsModal.removeCaCertButton).click();
 
-export const alertingEnabled = () => cy.get('[aria-label="alerting-enabled"]');
-export const alertingServer = () => cy.get('[aria-label="smtp-server"]');
-export const alertingPort = () => cy.get('[aria-label="smtp-port"]');
-export const alertingUsername = () => cy.get('[aria-label="smtp-username"]');
-export const alertingPassword = () => cy.get('[aria-label="smtp-password"]');
-export const alertingSender = () => cy.get('[aria-label="alerting-sender"]');
-export const alertingRecipient = () =>
-  cy.get('[aria-label="alerting-recipient"]');
-export const alertingEditButton = () =>
-  cy.get('[aria-label="alerting-edit-button"]');
+const typeAlertingServer = (text) =>
+  cy.get(alertingServerEditField).clear().type(text);
+const typeAlertingPort = (text) =>
+  cy.get(alertingPortEditField).clear().type(text);
+const typeAlertingUsername = (text) =>
+  cy.get(alertingUsernameEditField).clear().type(text);
+const typeAlertingPassword = (text) =>
+  cy.get(alertingPasswordEditField).clear().type(text);
+const typeAlertingSender = (text) =>
+  cy.get(alertingSenderEditField).clear().type(text);
+const typeAlertingRecipient = (text) =>
+  cy.get(alertingRecipientEditField).clear().type(text);
+const submitAlertingSettings = () => cy.get(alertingSubmitButton).click();
 
-export const clickAlertingEditButton = () => alertingEditButton().click();
+export const enterAlertingSettings = (settings, removePasswordProtection) => {
+  if (settings.enabled) setAlertingEnabledEditSwitch(settings.enabled);
+  if (settings.smtp_server) typeAlertingServer(settings.smtp_server);
+  if (settings.smtp_port) typeAlertingPort(settings.smtp_port);
+  if (settings.smtp_username) typeAlertingUsername(settings.smtp_username);
+  if (removePasswordProtection) removeAlertringPasswordProtection();
+  if (settings.smtp_password) typeAlertingPassword(settings.smtp_password);
+  if (settings.sender_email) typeAlertingSender(settings.sender_email);
+  if (settings.recipient_email) typeAlertingRecipient(settings.recipient_email);
 
-export const alertingModalEnabledSwitch = () =>
-  cy.get('#alerting-enabled-input');
-export const alertingModalServer = () => cy.get('#smtp-server-input');
-export const alertingModalPort = () => cy.get('#smtp-port-input');
-export const alertingModalUsername = () => cy.get('#smtp-username-input');
-export const alertingModalPassword = () =>
-  cy.get('input[aria-labelledby="smtp-password-label"]');
-export const alertingModalPasswordDisplay = () =>
-  cy.get('p[aria-labelledby="smtp-password-label"]');
-export const alertingModalRemovePasswordButton = () =>
-  cy.contains('button', 'Remove');
-export const alertingModalSender = () => cy.get('#sender-email-input');
-export const alertingModalRecipient = () => cy.get('#recipient-email-input');
-export const alertingModalSubmitButton = () => cy.get('button[type="submit"]');
-
-export const removeAlertringModalPassword = () =>
-  alertingModalRemovePasswordButton().click();
-
-export const setAlertingModalEnabledSwitch = (value) => {
-  alertingModalEnabledSwitch()
-    .invoke('attr', 'aria-checked')
-    .then((checked) => {
-      const currentlyChecked = checked == 'true';
-      if (currentlyChecked == value) {
-        return;
-      }
-
-      alertingModalEnabledSwitch().click();
-    });
+  submitAlertingSettings();
+  basePage.waitForRequest('alertingSettingsEndpoint');
 };
-export const typeAlertingModalServer = (text) =>
-  alertingModalServer().clear().type(text);
-export const typeAlertingModalPort = (text) =>
-  alertingModalPort().clear().type(text);
-export const typeAlertingModalUsername = (text) =>
-  alertingModalUsername().clear().type(text);
-export const typeAlertingModalPassword = (text) =>
-  alertingModalPassword().clear().type(text);
-export const typeAlertingModalSender = (text) =>
-  alertingModalSender().clear().type(text);
-export const typeAlertingModalRecipient = (text) =>
-  alertingModalRecipient().clear().type(text);
-export const submitAlertingModalSettings = () =>
-  alertingModalSubmitButton().click();
+
+export const enterAlertingInitialSettings = () =>
+  enterAlertingSettings(alertingInitialSettings, false);
+export const enterAlertingUpdateSettings = () =>
+  enterAlertingSettings(
+    _.pick(alertingUpdateSettings, [
+      'enabled',
+      'smtp_server',
+      'smtp_port',
+      'smtp_username',
+      'sender_email',
+      'recipient_email',
+    ]),
+    false
+  );
+export const enterAlertingUpdateSettingsWithPassword = () =>
+  enterAlertingSettings(alertingUpdateSettings, true);
 
 // UI Validations
 
@@ -746,32 +841,87 @@ export const showExpectedErrors = (errConfig) => {
   });
 };
 
+const alertingConfigDisplaysSettings = (settings) => {
+  cy.get(alertingEnabled).should(
+    'have.text',
+    settings.enabled ? 'Enabled' : 'Disabled'
+  );
+  cy.get(alertingServer).should('have.text', settings.smtp_server);
+  cy.get(alertingPort).should('have.text', String(settings.smtp_port));
+  cy.get(alertingUsername).should('have.text', settings.smtp_username);
+  cy.get(alertingPassword).should('have.text', '•••••');
+  cy.get(alertingSender).should('have.text', settings.sender_email);
+  cy.get(alertingRecipient).should('have.text', settings.recipient_email);
+};
+
+export const alertingConfigDisplaysPlaceholderValues = () =>
+  alertingConfigDisplaysSettings(alertingPlaceholderSettings);
+
+export const alertingConfigDisplaysInitialValues = () =>
+  alertingConfigDisplaysSettings(alertingInitialSettings);
+
+export const alertingConfigDisplaysUpdateValues = () =>
+  alertingConfigDisplaysSettings(alertingUpdateSettings);
+
 export const alertingEditButtonIsEnabled = () =>
   alertingEditButton().should('be.enabled');
 
 export const alertingEditButtonIsDisabled = () =>
   alertingEditButton().should('be.disabled');
 
+const alertingRemovePasswordButtonNotExist = () => {
+  getAlertingRemovePasswordButton().should('not.exist');
+};
+
+const alertingRemovePasswordButtonIsVisible = () => {
+  getAlertingRemovePasswordButton().should('be.visible');
+};
+
+export const alertingEditFormDisplaysEmptyFields = () => {
+  cy.get(alertingEnabledEditSwitch).should(
+    'have.attr',
+    'aria-checked',
+    'false'
+  );
+  cy.get(alertingServerEditField).should('have.value', '');
+  cy.get(alertingPortEditField).should('have.value', '');
+  cy.get(alertingUsernameEditField).should('have.value', '');
+  cy.get(alertingPasswordEditField).should('have.value', '');
+  cy.get(alertingPasswordDisplayField).should('not.exist');
+  alertingRemovePasswordButtonNotExist();
+  cy.get(alertingSenderEditField).should('have.value', '');
+  cy.get(alertingRecipientEditField).should('have.value', '');
+};
+
+const alertingEditFormDisplaysSettings = (settings) => {
+  cy.get(alertingEnabledEditSwitch).should(
+    'have.attr',
+    'aria-checked',
+    settings.enabled ? 'true' : 'false'
+  );
+  cy.get(alertingServerEditField).should('have.value', settings.smtp_server);
+  cy.get(alertingPortEditField).should(
+    'have.value',
+    String(settings.smtp_port)
+  );
+  cy.get(alertingUsernameEditField).should(
+    'have.value',
+    settings.smtp_username
+  );
+  cy.get(alertingPasswordEditField).should('not.exist');
+  cy.get(alertingPasswordDisplayField).should('have.text', '•••••');
+  alertingRemovePasswordButtonIsVisible();
+  cy.get(alertingSenderEditField).should('have.value', settings.sender_email);
+  cy.get(alertingRecipientEditField).should(
+    'have.value',
+    settings.recipient_email
+  );
+};
+
+export const alertingEditFormDisplaysInitialSettings = () =>
+  alertingEditFormDisplaysSettings(alertingInitialSettings);
+
 // API
-
-export const resetAlertingSettingsDB = () => {
-  cy.task('sqlExecute', {
-    query: "DELETE FROM settings WHERE type = 'alerting_settings'",
-  });
-};
-
-export const saveAlertingSettings = (alertingSettings) => {
-  basePage.apiLogin().then(({ accessToken }) => {
-    cy.request({
-      url: '/api/v1/settings/alerting',
-      method: 'POST',
-      auth: {
-        bearer: accessToken,
-      },
-      body: alertingSettings,
-    });
-  });
-};
 
 export const saveDefaultSUMAsettings = () => {
   const defaultSumaSettings = {
@@ -798,6 +948,25 @@ export const updateApiKeyExpiration = (apiKeyExpiration) => {
       body: {
         expire_at: apiKeyExpiration,
       },
+    });
+  });
+};
+
+export const resetAlertingSettingsDB = () => {
+  cy.task('sqlExecute', {
+    query: "DELETE FROM settings WHERE type = 'alerting_settings'",
+  });
+};
+
+export const saveInitialAlertingSettings = () => {
+  basePage.apiLogin().then(({ accessToken }) => {
+    cy.request({
+      url: '/api/v1/settings/alerting',
+      method: 'POST',
+      auth: {
+        bearer: accessToken,
+      },
+      body: alertingInitialSettings,
     });
   });
 };
