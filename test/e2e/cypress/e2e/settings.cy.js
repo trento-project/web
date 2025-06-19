@@ -245,7 +245,7 @@ context('Settings page', () => {
 
         it('should be updated successfully without password', () => {
           settingsPage.clickAlertingEditButton();
-          settingsPage.enterAlertingUpdateSettings();
+          settingsPage.enterAlertingUpdateSettingsWithoutPassword();
           settingsPage.alertingConfigDisplaysUpdateValues();
         });
 
