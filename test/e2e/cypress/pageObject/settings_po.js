@@ -63,6 +63,20 @@ const sumaSettingsModal = {
   saveButton: 'button:contains("Save Settings")',
 };
 
+// Alerting selectors
+
+export const alertingServerInputError =
+  '[aria-label="smtp-server-input-error"]';
+export const alertingPortInputError = '[aria-label="smtp-port-input-error"]';
+export const alertingUsernameInputError =
+  '[aria-label="smtp-username-input-error"]';
+export const alertingPasswordInputError =
+  '[aria-label="smtp-password-input-error"]';
+export const alertingSenderInputError =
+  '[aria-label="sender-email-input-error"]';
+export const alertingRecipientInputError =
+  '[aria-label="recipient-email-input-error"]';
+
 const retentionTime = '[aria-label="retention-time"]';
 const activityLogsContainer =
   'div[class*="container"]:contains("Activity Logs")';
@@ -726,6 +740,12 @@ export const apiKeyCodeIsNotEmpty = () =>
 export const copyToClipboardButtonIsDisplayed = () =>
   cy.get(copyToClipboardButton).should('be.visible');
 
+export const showExpectedErrors = (errConfig) => {
+  errConfig.forEach(({ selector, error }) => {
+    cy.get(selector).should('have.text', error);
+  });
+};
+
 export const alertingEditButtonIsEnabled = () =>
   alertingEditButton().should('be.enabled');
 
@@ -787,5 +807,5 @@ export const apiCreateUserWithSettingsAbilities = () =>
     { name: 'all', resource: 'activity_logs_settings' },
     { name: 'all', resource: 'api_key_settings' },
     { name: 'all', resource: 'suma_settings' },
-    { name: 'all', resource: 'alerting_settings' }
+    { name: 'all', resource: 'alerting_settings' },
   ]);
