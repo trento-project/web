@@ -20,7 +20,7 @@ import Table from '@common/Table';
 import PageHeader from '@common/PageHeader';
 import {
   OperationForbiddenModal,
-  SapInstanceStartStopModal,
+  AcceptOperationModal,
 } from '@common/OperationModals';
 
 import DeregistrationModal from '@pages/DeregistrationModal';
@@ -114,10 +114,12 @@ export function GenericSystemDetails({
       >
         {getOperationForbiddenMessage(forbiddenOperationName)}
       </OperationForbiddenModal>
-      <SapInstanceStartStopModal
+      <AcceptOperationModal
         operation={operationModalOpen.operation}
-        instanceNumber={currentOperationInstance?.instance_number}
-        sid={currentOperationInstance?.sid}
+        descriptionResolverArgs={[
+          currentOperationInstance?.instance_number,
+          currentOperationInstance?.sid,
+        ]}
         isOpen={
           operationModalOpen.open &&
           instanceStartStopOperations.includes(operationModalOpen.operation)
