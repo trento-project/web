@@ -13,8 +13,7 @@ concurrency:
   group: ${{ github.workflow }}
 
 env:
-  NODE_VERSION: "20"
-  PYTHON_VERSION: "3.12.3"
+  MIX_ENV: test
   DEFAULT_NUM_CONTAINERS: 10
 
 jobs:
@@ -32,22 +31,22 @@ jobs:
         with:
           version-file: .tool-versions
           version-type: strict
-      - name: Retrieve Cached Dependencies
+      - name: Retrieve Elixir Cached Dependencies
         uses: actions/cache@v4
         id: mix-cache
         with:
           path: |
             deps
-            _build/test
+            _build/${{ env.MIX_ENV }}
             priv/plts
-          key: ${{ runner.os }}-${{ steps.setup-elixir.outputs.otp-version }}-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}
+          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Install Dependencies
         if: steps.mix-cache.outputs.cache-hit != 'true'
         run: |
           mkdir -p priv/plts
           mix local.rebar --force
           mix local.hex --force
-          MIX_ENV=test mix deps.get
+          mix deps.get
           mix deps.compile --warnings-as-errors
           mix dialyzer --plt
 
@@ -84,15 +83,15 @@ jobs:
         with:
           version-file: .tool-versions
           version-type: strict
-      - name: Retrieve Cached Dependencies
+      - name: Retrieve Elixir Cached Dependencies
         uses: actions/cache@v4
         id: mix-cache
         with:
           path: |
             deps
-            _build/dev
+            _build/${{ env.MIX_ENV }}
             priv/plts
-          key: ${{ runner.os }}-${{ steps.setup-elixir.outputs.otp-version }}-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}
+          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Compile
         run: mix compile --warnings-as-errors
       - name: "Docker compose dependencies"
