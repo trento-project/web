@@ -162,26 +162,40 @@ if config_env() in [:prod, :demo] do
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
 
   config :trento, :alerting,
-    enabled: System.get_env("ENABLE_ALERTING", "false") == "true",
-    sender: System.get_env("ALERT_SENDER", "alerts@trento-project.io"),
-    recipient: System.get_env("ALERT_RECIPIENT", "admin@trento-project.io")
+    enabled:
+      (case System.get_env("ENABLE_ALERTING") do
+         nil -> nil
+         "true" -> true
+         _ -> false
+       end),
+    smtp_server: System.get_env("SMTP_SERVER"),
+    smtp_port:
+      (case Integer.parse(System.get_env("SMTP_PORT", "")) do
+         :error -> nil
+         {number, _} -> number
+       end),
+    smtp_username: System.get_env("SMTP_USER"),
+    smtp_password: System.get_env("SMTP_PASSWORD"),
+    sender_email: System.get_env("ALERT_SENDER"),
+    recipient_email: System.get_env("ALERT_RECIPIENT")
 
   :ok = :public_key.cacerts_load()
   [_ | _] = cacerts = :public_key.cacerts_get()
 
   config :trento, Trento.Mailer,
     adapter: Swoosh.Adapters.SMTP,
-    relay: System.get_env("SMTP_SERVER") || "",
-    port: System.get_env("SMTP_PORT") || "",
-    username: System.get_env("SMTP_USER") || "",
-    password: System.get_env("SMTP_PASSWORD") || "",
+    # `relay`, `port`, `username` and `password` would be supplied
+    # dynamically during runtime and would be derived from values
+    # specified in the :alerting key.
     auth: :if_available,
     ssl: false,
     tls: :if_available,
     tls_options: [
       versions: [:"tlsv1.2", :"tlsv1.3"],
       cacerts: cacerts,
-      server_name_indication: String.to_charlist(System.get_env("SMTP_SERVER", "")),
+      # `server_name_indication` would be supplied dynamically during
+      # runtime and would be derived from values
+      # specified in the :alerting key.
       depth: 99
     ]
 

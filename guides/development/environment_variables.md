@@ -28,9 +28,8 @@ Dig into [./config](https://github.com/trento-project/web/blob/main/config/) dir
 
 **Alerting**
 - `ENABLE_ALERTING`
+- `ALERT_SENDER`
 - `ALERT_RECIPIENT`
-
-**SMTP**
 - `SMTP_SERVER`
 - `SMTP_PORT`
 - `SMTP_USER`

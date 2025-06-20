@@ -5,16 +5,13 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
   import Trento.Factory
   import OpenApiSpex.TestAssertions
   import Trento.Support.Helpers.AbilitiesTestHelper
+  import Trento.Support.Helpers.AlertingSettingsHelper
   import Mox
 
-  alias TrentoWeb.OpenApi.V1.ApiSpec
-
-  setup :setup_api_spec_v1
+  setup_all :setup_api_spec_v1
   setup :setup_user
 
-  test "should return the settings according to the schema", %{conn: conn} do
-    api_spec = ApiSpec.spec()
-
+  test "should return the settings according to the schema", %{conn: conn, api_spec: api_spec} do
     conn = get(conn, "/api/v1/settings")
 
     conn
@@ -23,10 +20,6 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
   end
 
   describe "ApiKeySettings" do
-    setup do
-      %{api_spec: ApiSpec.spec()}
-    end
-
     test "should return not found when api key settings are not configured", %{
       conn: conn,
       api_spec: api_spec
@@ -118,10 +111,6 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
   end
 
   describe "ActivityLogSettings" do
-    setup do
-      %{api_spec: ApiSpec.spec()}
-    end
-
     test "should return activity retention settings after setting up", %{
       conn: conn,
       api_spec: api_spec
@@ -176,13 +165,11 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
   end
 
   describe "SuseManagerSettings" do
-    test "should return user settings", %{conn: conn} do
+    test "should return user settings", %{conn: conn, api_spec: api_spec} do
       insert_software_updates_settings(
         ca_cert: build(:self_signed_certificate),
         ca_uploaded_at: DateTime.utc_now()
       )
-
-      api_spec = ApiSpec.spec()
 
       conn
       |> get("/api/v1/settings/suse_manager")
@@ -190,9 +177,10 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       |> assert_schema("SuseManagerSettings", api_spec)
     end
 
-    test "should return forbidden if no user settings have been saved", %{conn: conn} do
-      api_spec = ApiSpec.spec()
-
+    test "should return forbidden if no user settings have been saved", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
       conn
       |> get("/api/v1/settings/suse_manager")
       |> json_response(:not_found)
@@ -638,10 +626,6 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
   end
 
   describe "SSOCertificatesSettings" do
-    setup do
-      %{api_spec: ApiSpec.spec()}
-    end
-
     test "should return uploaded certificates public content in the public_keys route", %{
       conn: conn,
       api_spec: api_spec
@@ -658,46 +642,228 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
     end
   end
 
-  describe "forbidden response" do
-    test "should return forbidden if the user does not have the permission to update the api key",
-         %{conn: conn, api_spec: api_spec} do
-      insert(:api_key_settings)
-      %{id: user_id} = insert(:user)
+  describe "AlertingSettings" do
+    test "should successfully return settings", %{conn: conn, api_spec: api_spec} do
+      exp_settings =
+        :alerting_settings
+        |> insert()
+        |> Map.take(alerting_settings_get_fields())
+
+      resp =
+        conn
+        |> get(~p"/api/v1/settings/alerting")
+        |> json_response(:ok)
+        |> assert_response_schema("AlertingSettings", api_spec)
+
+      assert exp_settings == resp
+    end
+
+    test "should return error when no previous settings", %{conn: conn, api_spec: api_spec} do
+      resp =
+        conn
+        |> get(~p"/api/v1/settings/alerting")
+        |> json_response(:not_found)
+        |> assert_response_schema("NotFound", api_spec)
+
+      assert %{
+               errors: [
+                 %{title: "Not Found", detail: "Alerting settings not configured."}
+               ]
+             } == resp
+    end
+
+    test "should successfully create settings", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      settings = build(:alerting_settings)
+      create_params = Map.take(settings, alerting_settings_set_fields())
+      exp_params = Map.take(settings, alerting_settings_get_fields())
+
+      resp =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> post(~p"/api/v1/settings/alerting", create_params)
+        |> json_response(:ok)
+        |> assert_response_schema("AlertingSettings", api_spec)
+
+      assert exp_params == resp
+    end
+
+    for field <-
+          ~w(enabled sender_email recipient_email smtp_server smtp_port smtp_username smtp_password)a do
+      @field field
+
+      test "should fail to create settings if missing required field (#{@field}) in the OpeApi spec",
+           %{
+             conn: conn,
+             api_spec: api_spec
+           } do
+        settings =
+          :alerting_settings
+          |> build()
+          |> Map.take(alerting_settings_set_fields())
+          |> Map.delete(@field)
+
+        conn =
+          conn
+          |> put_req_header("content-type", "application/json")
+          |> post(~p"/api/v1/settings/alerting", settings)
+          |> json_response(:unprocessable_entity)
+
+        assert_response_schema(conn, "UnprocessableEntity", api_spec)
+
+        assert %{
+                 "errors" => [
+                   %{
+                     "detail" => "Missing field: " <> to_string(@field),
+                     "source" => %{"pointer" => "/" <> to_string(@field)},
+                     "title" => "Invalid value"
+                   }
+                 ]
+               } == conn
+      end
+    end
+
+    test "should fail to create settings if validation (changeset) fails", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      # We check a whole class of errors by checking for only one
+      # field. The rest of the fields should act the same.
+      settings =
+        :alerting_settings
+        |> build(sender_email: "not_an_email.com")
+        |> Map.take(alerting_settings_set_fields())
 
       conn =
         conn
-        |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
         |> put_req_header("content-type", "application/json")
+        |> post(~p"/api/v1/settings/alerting", settings)
+        |> json_response(:unprocessable_entity)
+
+      assert_response_schema(conn, "UnprocessableEntity", api_spec)
+
+      assert %{
+               "errors" => [
+                 %{
+                   "detail" => "Invalid e-mail address.",
+                   "source" => %{"pointer" => "/sender_email"},
+                   "title" => "Invalid value"
+                 }
+               ]
+             } == conn
+    end
+
+    test "should successfully update settings and return expected response", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      inserted_settings = insert(:alerting_settings, enabled: true)
+      update_params = %{enabled: false}
+
+      exp_params =
+        inserted_settings
+        |> Map.take(alerting_settings_get_fields())
+        |> Map.merge(update_params)
+
+      resp =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> patch(~p"/api/v1/settings/alerting", update_params)
+        |> json_response(:ok)
+        |> assert_response_schema("AlertingSettings", api_spec)
+
+      assert exp_params == resp
+    end
+
+    test "should fail to update settings if validation (changeset) fails", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      insert(:alerting_settings)
+
+      # We check a whole class of errors by checking for only one
+      # field. The rest of the fields should act the same.
+      settings = %{sender_email: "not_an_email.com"}
 
       conn =
-        patch(conn, "/api/v1/settings/api_key", %{
-          "expire_at" => DateTime.to_iso8601(DateTime.utc_now())
-        })
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> patch(~p"/api/v1/settings/alerting", settings)
+        |> json_response(:unprocessable_entity)
+
+      assert_response_schema(conn, "UnprocessableEntity", api_spec)
+
+      assert %{
+               "errors" => [
+                 %{
+                   "detail" => "Invalid e-mail address.",
+                   "source" => %{"pointer" => "/sender_email"},
+                   "title" => "Invalid value"
+                 }
+               ]
+             } == conn
+    end
+
+    test "should return error when trying to update settings without previously saved ones", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      resp =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> patch(~p"/api/v1/settings/alerting", %{enabled: false})
+        |> json_response(:not_found)
+        |> assert_response_schema("NotFound", api_spec)
+
+      assert %{
+               errors: [
+                 %{title: "Not Found", detail: "Alerting settings not configured."}
+               ]
+             } == resp
+    end
+  end
+
+  describe "forbidden response" do
+    setup %{conn: conn} do
+      %{id: unprivileged_user_id} = insert(:user)
+
+      conn =
+        Pow.Plug.assign_current_user(
+          conn,
+          %{"user_id" => unprivileged_user_id},
+          Pow.Plug.fetch_config(conn)
+        )
+
+      {:ok, conn: conn, unpriv_user: unprivileged_user_id}
+    end
+
+    test "should return forbidden if the user does not have the permission to update the api key",
+         %{conn: conn, api_spec: api_spec} do
+      insert(:api_key_settings)
 
       conn
+      |> put_req_header("content-type", "application/json")
+      |> patch("/api/v1/settings/api_key", %{
+        "expire_at" => DateTime.to_iso8601(DateTime.utc_now())
+      })
       |> json_response(:forbidden)
       |> assert_schema("Forbidden", api_spec)
     end
 
     test "should return forbidden if the user does not have the permission to edit activity logs settings",
          %{conn: conn, api_spec: api_spec} do
-      %{id: user_id} = insert(:user)
       insert(:activity_log_settings)
 
-      conn =
-        conn
-        |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
-        |> put_req_header("content-type", "application/json")
-
-      conn =
-        put(conn, "/api/v1/settings/activity_log", %{
-          retention_time: %{
-            value: 42,
-            unit: :year
-          }
-        })
-
       conn
+      |> put_req_header("content-type", "application/json")
+      |> put("/api/v1/settings/activity_log", %{
+        retention_time: %{
+          value: 42,
+          unit: :year
+        }
+      })
       |> json_response(:forbidden)
       |> assert_schema("Forbidden", api_spec)
     end
@@ -713,14 +879,8 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
         ca_cert: build(:self_signed_certificate)
       }
 
-      %{id: user_id} = insert(:user)
-
-      conn =
-        conn
-        |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
-        |> put_req_header("content-type", "application/json")
-
       conn
+      |> put_req_header("content-type", "application/json")
       |> post("/api/v1/settings/suse_manager", settings)
       |> json_response(:forbidden)
       |> assert_schema("Forbidden", api_spec)
@@ -731,36 +891,114 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       api_spec: api_spec
     } do
       insert_software_updates_settings()
-      %{id: user_id} = insert(:user)
 
       change_submission = %{}
 
-      conn =
-        conn
-        |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
-        |> put_req_header("content-type", "application/json")
-
       conn
+      |> put_req_header("content-type", "application/json")
       |> patch("/api/v1/settings/suse_manager", change_submission)
       |> json_response(:forbidden)
       |> assert_schema("Forbidden", api_spec)
     end
-  end
 
-  test "should return forbidden when user tries to delete settings without right abilities", %{
-    conn: conn,
-    api_spec: api_spec
-  } do
-    %{id: user_id} = insert(:user)
-
-    conn =
+    test "should return forbidden when user tries to delete settings without right abilities", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
       conn
-      |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
       |> put_req_header("content-type", "application/json")
+      |> delete("/api/v1/settings/suse_manager")
+      |> json_response(:forbidden)
+      |> assert_schema("Forbidden", api_spec)
+    end
 
-    conn
-    |> delete("/api/v1/settings/suse_manager")
-    |> json_response(:forbidden)
-    |> assert_schema("Forbidden", api_spec)
+    test "should return forbidden when user tries to create alerting settings without right abilities",
+         %{
+           conn: conn,
+           api_spec: api_spec
+         } do
+      settings =
+        :alerting_settings
+        |> build()
+        |> Map.take(alerting_settings_set_fields())
+
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> post(~p"/api/v1/settings/alerting", settings)
+      |> json_response(:forbidden)
+      |> assert_schema("Forbidden", api_spec)
+    end
+
+    test "should return forbidden when user tries to update alerting settings without right abilities",
+         %{
+           conn: conn,
+           api_spec: api_spec
+         } do
+      settings =
+        :alerting_settings
+        |> build()
+        |> Map.take(alerting_settings_set_fields())
+        |> Map.delete(:smtp_password)
+
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> patch(~p"/api/v1/settings/alerting", settings)
+      |> json_response(:forbidden)
+      |> assert_schema("Forbidden", api_spec)
+    end
+  end
+end
+
+defmodule TrentoWeb.V1.SettingsControllerSequentialTest do
+  @moduledoc """
+  Tests of the settings controller which modify global state and thus are not safe for async execution.
+  """
+
+  use TrentoWeb.ConnCase
+
+  import OpenApiSpex.TestAssertions
+  import Trento.Factory
+  import Trento.Support.Helpers.AbilitiesTestHelper
+  import Trento.Support.Helpers.AlertingSettingsHelper
+
+  setup_all :setup_api_spec_v1
+  setup :setup_user
+
+  describe "Alerting Settings" do
+    setup :restore_alerting_app_env
+
+    for {case_name, _} = scenario <- [{"create", "post"}, {"update", "patch"}] do
+      @scenario scenario
+
+      test "should fail when trying to #{case_name} settings when they enforced from env", %{
+        conn: conn,
+        api_spec: api_spec
+      } do
+        {_, http_method} = @scenario
+
+        Application.put_env(:trento, :alerting, enabled: true)
+
+        params =
+          :alerting_settings
+          |> build()
+          |> Map.take(alerting_settings_set_fields())
+
+        resp =
+          conn
+          |> put_req_header("content-type", "application/json")
+          |> dispatch(@endpoint, http_method, ~p"/api/v1/settings/alerting", params)
+          |> json_response(:conflict)
+          |> assert_response_schema("Conflict", api_spec)
+
+        assert %{
+                 errors: [
+                   %{
+                     title: "Conflict has occurred",
+                     detail: "Alerting settings can not be set, enforced by ENV."
+                   }
+                 ]
+               } == resp
+      end
+    end
   end
 end
