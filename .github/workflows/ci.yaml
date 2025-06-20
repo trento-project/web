@@ -652,7 +652,7 @@ jobs:
         uses: cypress-io/github-action@v6
         env:
           cypress_video: false
-          cypress_db_host: postgres
+          cypress_db_host: localhost
           cypress_db_port: 5433
         with:
           working-directory: test/e2e
