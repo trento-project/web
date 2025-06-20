@@ -1,4 +1,5 @@
-import { userEvent, within } from '@storybook/test';
+import { within } from '@testing-library/react';
+import { userEvent } from '@testing-library/user-event';
 
 import AlertingSettingsModal from './AlertingSettingsModal';
 
