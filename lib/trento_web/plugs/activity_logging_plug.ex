@@ -12,7 +12,11 @@ defmodule TrentoWeb.Plugs.ActivityLoggingPlug do
 
   def init(default), do: default
 
-  def call(%Plug.Conn{} = conn, _default \\ nil), do: register_before_send(conn, &log_activity/1)
+  def call(%Plug.Conn{} = conn, _default \\ nil) do
+    conn
+    |> assign_correlation_id()
+    |> register_before_send(&log_activity/1)
+  end
 
   defp log_activity(conn) do
     Task.Supervisor.start_child(Trento.TasksSupervisor, fn ->
@@ -21,6 +25,13 @@ defmodule TrentoWeb.Plugs.ActivityLoggingPlug do
       |> ActivityLogger.log_activity()
     end)
 
+    conn
+  end
+
+  defp assign_correlation_id(conn) do
+    correlation_id = UUID.uuid4()
+    conn = assign(conn, :correlation_id, correlation_id)
+    Process.put(:correlation_id, correlation_id)
     conn
   end
 

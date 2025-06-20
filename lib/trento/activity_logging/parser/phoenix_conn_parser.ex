@@ -31,6 +31,24 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
   end
 
   def get_activity_metadata(
+        action,
+        %Plug.Conn{
+          assigns: %{
+            correlation_id: correlation_id
+          }
+        } = _conn
+      )
+      when action in [
+             :host_cleanup_requested,
+             :sap_system_cleanup_requested,
+             :database_cleanup_requested
+           ] do
+    %{
+      correlation_id: correlation_id
+    }
+  end
+
+  def get_activity_metadata(
         :resource_tagging,
         %Plug.Conn{
           params: %{id: resource_id},
