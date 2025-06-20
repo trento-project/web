@@ -520,11 +520,13 @@ defmodule Trento.ActivityLog.ActivityLoggerTest do
       {software_updates_discovery_requested_event, "software_updates_discovery_requested"}
     ]
 
+    correlation_id = UUID.uuid4()
+
     Enum.each(events, fn {event, _} ->
       assert :ok ==
                ActivityLogger.log_activity(%{
                  event: event,
-                 metadata: %{}
+                 metadata: %{correlation_id: correlation_id}
                })
     end)
 
@@ -536,6 +538,7 @@ defmodule Trento.ActivityLog.ActivityLoggerTest do
       metadata =
         event
         |> Map.reject(fn {k, _} -> k in [:version, :__struct__] end)
+        |> Map.put(:correlation_id, correlation_id)
         |> Jason.encode!()
         |> Jason.decode!()
 

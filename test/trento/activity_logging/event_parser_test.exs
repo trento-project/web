@@ -51,9 +51,16 @@ defmodule Trento.ActivityLog.EventParser do
 
     test "should detect metadata for recognized input" do
       for {event_activity, event} <- @recognized_inputs do
-        extracted_metadata = EventParser.get_activity_metadata(event_activity, %{event: event})
+        correlation_id = UUID.uuid4()
+        metadata = %{correlation_id: correlation_id}
 
-        trimmed_event = Map.reject(event, fn {k, _} -> k in [:version, :__struct__] end)
+        extracted_metadata =
+          EventParser.get_activity_metadata(event_activity, %{event: event, metadata: metadata})
+
+        trimmed_event =
+          event
+          |> Map.reject(fn {k, _} -> k in [:version, :__struct__] end)
+          |> Map.put(:correlation_id, correlation_id)
 
         assert Map.equal?(extracted_metadata, trimmed_event)
       end
