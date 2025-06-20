@@ -1,18 +1,19 @@
-
 name: Backend Flaky Tests Analysis
 
 on:
   schedule:
-    - cron: '0 0 * * 1' # Runs every monday at 00:00 AM UTC
+    - cron: "0 0 * * 1" # Runs every monday at 00:00 AM UTC
   workflow_dispatch:
     inputs:
       num_containers:
         description: "Number of containers to use (Max: 200) (Default: 10)"
         required: false
 
+concurrency:
+  group: ${{ github.workflow }}
+
 env:
-  NODE_VERSION: "20"
-  PYTHON_VERSION: "3.12.3"
+  MIX_ENV: test
   DEFAULT_NUM_CONTAINERS: 10
 
 jobs:
@@ -20,10 +21,6 @@ jobs:
     name: Elixir test dependencies
     runs-on: ubuntu-24.04
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.12.1
-        with:
-          access_token: ${{ github.token }}
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -34,22 +31,22 @@ jobs:
         with:
           version-file: .tool-versions
           version-type: strict
-      - name: Retrieve Cached Dependencies
+      - name: Retrieve Elixir Cached Dependencies
         uses: actions/cache@v4
         id: mix-cache
         with:
           path: |
             deps
-            _build/test
+            _build/${{ env.MIX_ENV }}
             priv/plts
-          key: ${{ runner.os }}-${{ steps.setup-elixir.outputs.otp-version }}-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}
+          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Install Dependencies
         if: steps.mix-cache.outputs.cache-hit != 'true'
         run: |
           mkdir -p priv/plts
           mix local.rebar --force
           mix local.hex --force
-          MIX_ENV=test mix deps.get
+          mix deps.get
           mix deps.compile --warnings-as-errors
           mix dialyzer --plt
 
@@ -73,13 +70,9 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
-      matrix: 
+      matrix:
         container: ${{ fromJson(needs.generate-matrix.outputs.matrix).container }}
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.12.1
-        with:
-          access_token: ${{ github.token }}
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -90,15 +83,15 @@ jobs:
         with:
           version-file: .tool-versions
           version-type: strict
-      - name: Retrieve Cached Dependencies
+      - name: Retrieve Elixir Cached Dependencies
         uses: actions/cache@v4
         id: mix-cache
         with:
           path: |
             deps
-            _build/dev
+            _build/${{ env.MIX_ENV }}
             priv/plts
-          key: ${{ runner.os }}-${{ steps.setup-elixir.outputs.otp-version }}-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}
+          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Compile
         run: mix compile --warnings-as-errors
       - name: "Docker compose dependencies"
@@ -133,14 +126,10 @@ jobs:
     needs: test-backend
     runs-on: ubuntu-24.04
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.12.1
-        with:
-          access_token: ${{ github.token }}
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0    
+          fetch-depth: 0
       - name: Download JUnit reports artifacts
         uses: actions/download-artifact@v4
         with:

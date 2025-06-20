@@ -1,9 +1,8 @@
-
 name: E2E Flaky Tests Analysis
 
 on:
   schedule:
-    - cron: '0 3 * * 1' # Runs every monday at 3:00 AM UTC
+    - cron: "0 3 * * 1" # Runs every monday at 3:00 AM UTC
   workflow_dispatch:
     inputs:
       num_containers:
@@ -13,28 +12,18 @@ on:
         description: "Spec files pattern (Default: **/*.cy.js)"
         required: false
 
+concurrency:
+  group: ${{ github.workflow }}
+
 env:
-  MIX_ENV: test
-  NODE_VERSION: "20"
-  PYTHON_VERSION: "3.12.3"
+  MIX_ENV: dev
   DEFAULT_NUM_CONTAINERS: 100
 
 jobs:
   elixir-deps:
     name: Elixir ${{ matrix.mix_env }} dependencies
     runs-on: ubuntu-24.04
-    strategy:
-      matrix:
-        include:
-          - mix_env: dev
-          - mix_env: test
-    env:
-      MIX_ENV: ${{ matrix.mix_env }}
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.12.1
-        with:
-          access_token: ${{ github.token }}
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -45,15 +34,15 @@ jobs:
         with:
           version-file: .tool-versions
           version-type: strict
-      - name: Retrieve Cached Dependencies
+      - name: Retrieve Elixir Cached Dependencies
         uses: actions/cache@v4
         id: mix-cache
         with:
           path: |
             deps
-            _build/${{ matrix.mix_env }}
+            _build/${{ env.MIX_ENV }}
             priv/plts
-          key: ${{ runner.os }}-${{ steps.setup-elixir.outputs.otp-version }}-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}
+          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Install Dependencies
         if: steps.mix-cache.outputs.cache-hit != 'true'
         run: |
@@ -68,58 +57,54 @@ jobs:
     name: Npm dependencies
     runs-on: ubuntu-24.04
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.12.1
-        with:
-          access_token: ${{ github.token }}
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Retrieve Cached Dependencies
+      - name: Read .tool-versions
+        uses: endorama/asdf-parse-tool-versions@v1
+        id: tool-versions
+      - name: Retrieve NPM Cached Dependencies
         uses: actions/cache@v4
         id: npm-cache
         with:
           path: |
             assets/node_modules
-          key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
+          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: ${{ env.NODEJS_VERSION }}
       - name: Install NPM dependencies
         if: steps.npm-cache.outputs.cache-hit != 'true'
         run: cd assets && npm install
-
-
 
   npm-e2e-deps:
     name: Npm E2E dependencies
     runs-on: ubuntu-24.04
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.12.1
-        with:
-          access_token: ${{ github.token }}
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Retrieve Cached Dependencies
+      - name: Read .tool-versions
+        uses: endorama/asdf-parse-tool-versions@v1
+        id: tool-versions
+      - name: Retrieve E2E NPM Cached Dependencies
         uses: actions/cache@v4
         id: npm-e2e-cache
         with:
           path: |
             test/e2e/node_modules
-          key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
+          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: ${{ env.NODEJS_VERSION }}
       - name: Install E2E NPM dependencies
         if: steps.npm-e2e-cache.outputs.cache-hit != 'true'
         run: cd test/e2e && npm install
-  
+
   generate-matrix:
     runs-on: ubuntu-24.04
     outputs:
@@ -140,16 +125,10 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
-      matrix: 
+      matrix:
         container: ${{ fromJson(needs.generate-matrix.outputs.matrix).container }}
-    env:
-      MIX_ENV: dev
     timeout-minutes: 30
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.12.1
-        with:
-          access_token: ${{ github.token }}
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -160,34 +139,36 @@ jobs:
         with:
           version-file: .tool-versions
           version-type: strict
+      - name: Read .tool-versions
+        uses: endorama/asdf-parse-tool-versions@v1
+        id: tool-versions
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
-      - name: Retrieve Cached Dependencies
+          node-version: ${{ env.NODEJS_VERSION }}
+      - name: Retrieve Elixir Cached Dependencies
         uses: actions/cache@v4
         id: mix-cache
         with:
           path: |
             deps
-            _build/dev
+            _build/${{ env.MIX_ENV }}
             priv/plts
-          key: ${{ runner.os }}-${{ steps.setup-elixir.outputs.otp-version }}-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}
+          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Retrieve NPM Cached Dependencies
         uses: actions/cache@v4
         id: npm-cache
         with:
           path: |
             assets/node_modules
-          key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
-
+          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Retrieve E2E NPM Cached Dependencies
         uses: actions/cache@v4
         id: npm-e2e-cache
         with:
           path: |
             test/e2e/node_modules
-          key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
+          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: "Docker compose dependencies"
         uses: isbang/compose-action@v2.2.0
         with:
@@ -218,7 +199,7 @@ jobs:
           cypress_db_port: 5432
           cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
         with:
-          command: npx cypress run --reporter junit --reporter-options mochaFile=/tmp/trento-e2e-junit-[hash]-${{ env.ENV_TS }}.xml --spec ${{ github.event.inputs.spec_pattern || '**/*.cy.js' }}          
+          command: npx cypress run --reporter junit --reporter-options mochaFile=/tmp/trento-e2e-junit-[hash]-${{ env.ENV_TS }}.xml --spec ${{ github.event.inputs.spec_pattern || '**/*.cy.js' }}
           working-directory: test/e2e
           wait-on-timeout: 30
       - name: Upload cypress test junit reports
@@ -226,7 +207,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: e2e-junit-reports-${{ matrix.container }}
-          path: /tmp/*.xml        
+          path: /tmp/*.xml
       - name: Upload cypress test screenshots
         if: failure()
         uses: actions/upload-artifact@v4
@@ -240,14 +221,10 @@ jobs:
     runs-on: ubuntu-24.04
     if: always()
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.12.1
-        with:
-          access_token: ${{ github.token }}
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0    
+          fetch-depth: 0
       - name: Download JUnit reports artifacts
         uses: actions/download-artifact@v4
         with:

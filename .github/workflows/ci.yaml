@@ -16,9 +16,12 @@ on:
   repository_dispatch:
     types: [start-ci, deploy-demo]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   MIX_ENV: test
-  NODE_VERSION: "20"
 
 jobs:
   elixir-deps:
@@ -32,10 +35,6 @@ jobs:
     env:
       MIX_ENV: ${{ matrix.mix_env }}
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.12.1
-        with:
-          access_token: ${{ github.token }}
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -46,15 +45,15 @@ jobs:
         with:
           version-file: .tool-versions
           version-type: strict
-      - name: Retrieve Cached Dependencies
+      - name: Retrieve Elixir Cached Dependencies
         uses: actions/cache@v4
         id: mix-cache
         with:
           path: |
             deps
-            _build/${{ matrix.mix_env }}
+            _build/${{ env.MIX_ENV }}
             priv/plts
-          key: ${{ runner.os }}-${{ steps.setup-elixir.outputs.otp-version }}-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}
+          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Install Dependencies
         if: steps.mix-cache.outputs.cache-hit != 'true'
         run: |
@@ -69,25 +68,24 @@ jobs:
     name: Npm dependencies
     runs-on: ubuntu-24.04
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.12.1
-        with:
-          access_token: ${{ github.token }}
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Retrieve Cached Dependencies
+      - name: Read .tool-versions
+        uses: endorama/asdf-parse-tool-versions@v1
+        id: tool-versions
+      - name: Retrieve NPM Cached Dependencies
         uses: actions/cache@v4
         id: npm-cache
         with:
           path: |
             assets/node_modules
-          key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
+          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: ${{ env.NODEJS_VERSION }}
       - name: Install NPM dependencies
         if: steps.npm-cache.outputs.cache-hit != 'true'
         run: cd assets && npm install
@@ -99,10 +97,6 @@ jobs:
       run:
         shell: bash
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.12.1
-        with:
-          access_token: ${{ github.token }}
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -126,15 +120,15 @@ jobs:
         with:
           version-file: .tool-versions
           version-type: strict
-      - name: Retrieve Cached Dependencies
+      - name: Retrieve Elixir Cached Dependencies
         uses: actions/cache@v4
         id: mix-cache
         with:
           path: |
             deps
-            _build/test
+            _build/${{ env.MIX_ENV }}
             priv/plts
-          key: ${{ runner.os }}-${{ steps.setup-elixir.outputs.otp-version }}-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}
+          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Build docs
         uses: lee-dohm/generate-elixir-docs@v1
       - name: Generate openapi.json
@@ -156,10 +150,6 @@ jobs:
     needs: [elixir-deps, npm-deps]
     runs-on: ubuntu-24.04
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.12.1
-        with:
-          access_token: ${{ github.token }}
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -170,26 +160,29 @@ jobs:
         with:
           version-file: .tool-versions
           version-type: strict
+      - name: Read .tool-versions
+        uses: endorama/asdf-parse-tool-versions@v1
+        id: tool-versions
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: ${{ env.NODEJS_VERSION }}
       - name: Retrieve Elixir Cached Dependencies
         uses: actions/cache@v4
         id: mix-cache
         with:
           path: |
             deps
-            _build/test
+            _build/${{ env.MIX_ENV }}
             priv/plts
-          key: ${{ runner.os }}-${{ steps.setup-elixir.outputs.otp-version }}-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}
+          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Retrieve NPM Cached Dependencies
         uses: actions/cache@v4
         id: npm-cache
         with:
           path: |
             assets/node_modules
-          key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
+          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Check for unused dependencies
         run: mix deps.unlock --check-unused
       - name: Check Code Format
@@ -208,25 +201,24 @@ jobs:
     needs: npm-deps
     runs-on: ubuntu-24.04
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.12.1
-        with:
-          access_token: ${{ github.token }}
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Read .tool-versions
+        uses: endorama/asdf-parse-tool-versions@v1
+        id: tool-versions
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: ${{ env.NODEJS_VERSION }}
       - name: Retrieve NPM Cached Dependencies
         uses: actions/cache@v4
         id: npm-cache
         with:
           path: |
             assets/node_modules
-          key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
+          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Run JS tests
         run: cd assets && npm test
 
@@ -235,10 +227,6 @@ jobs:
     needs: [elixir-deps]
     runs-on: ubuntu-24.04
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.12.1
-        with:
-          access_token: ${{ github.token }}
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -249,15 +237,15 @@ jobs:
         with:
           version-file: .tool-versions
           version-type: strict
-      - name: Retrieve Cached Dependencies
+      - name: Retrieve Elixir Cached Dependencies
         uses: actions/cache@v4
         id: mix-cache
         with:
           path: |
             deps
-            _build/test
+            _build/${{ env.MIX_ENV }}
             priv/plts
-          key: ${{ runner.os }}-${{ steps.setup-elixir.outputs.otp-version }}-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}
+          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Compile
         run: mix compile --warnings-as-errors
       - name: "Docker compose dependencies"
@@ -276,14 +264,13 @@ jobs:
     runs-on: ubuntu-24.04
     if: github.event_name != 'repository_dispatch' && github.secret_source != 'None' && vars.CHROMATIC_ENABLED == 'true'
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.12.1
-        with:
-          access_token: ${{ github.token }}
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Read .tool-versions
+        uses: endorama/asdf-parse-tool-versions@v1
+        id: tool-versions
       - name: Setup
         id: setup-elixir
         uses: erlef/setup-beam@v1
@@ -293,23 +280,23 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
-      - name: Retrieve Cached Dependencies
+          node-version: ${{ env.NODEJS_VERSION }}
+      - name: Retrieve Elixir Cached Dependencies
         uses: actions/cache@v4
         id: mix-cache
         with:
           path: |
             deps
-            _build/test
+            _build/${{ env.MIX_ENV }}
             priv/plts
-          key: ${{ runner.os }}-${{ steps.setup-elixir.outputs.otp-version }}-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}
+          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Retrieve NPM Cached Dependencies
         uses: actions/cache@v4
         id: npm-cache
         with:
           path: |
             assets/node_modules
-          key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
+          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Build CSS
         run: npx tailwindcss --input=css/app.css --output=../priv/static/assets/app.css --postcss
         working-directory: assets
@@ -328,25 +315,24 @@ jobs:
     name: Npm E2E dependencies
     runs-on: ubuntu-24.04
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.12.1
-        with:
-          access_token: ${{ github.token }}
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Retrieve Cached Dependencies
+      - name: Read .tool-versions
+        uses: endorama/asdf-parse-tool-versions@v1
+        id: tool-versions
+      - name: Retrieve E2E NPM Cached Dependencies
         uses: actions/cache@v4
         id: npm-e2e-cache
         with:
           path: |
             test/e2e/node_modules
-          key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
+          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: ${{ env.NODEJS_VERSION }}
       - name: Install E2E NPM dependencies
         if: steps.npm-e2e-cache.outputs.cache-hit != 'true'
         run: cd test/e2e && npm install
@@ -362,14 +348,13 @@ jobs:
     env:
       MIX_ENV: dev
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.12.1
-        with:
-          access_token: ${{ github.token }}
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Read .tool-versions
+        uses: endorama/asdf-parse-tool-versions@v1
+        id: tool-versions
       - name: Setup
         id: setup-elixir
         uses: erlef/setup-beam@v1
@@ -379,30 +364,30 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
-      - name: Retrieve Cached Dependencies
+          node-version: ${{ env.NODEJS_VERSION }}
+      - name: Retrieve Elixir Cached Dependencies
         uses: actions/cache@v4
         id: mix-cache
         with:
           path: |
             deps
-            _build/dev
+            _build/${{ env.MIX_ENV }}
             priv/plts
-          key: ${{ runner.os }}-${{ steps.setup-elixir.outputs.otp-version }}-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}
+          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Retrieve NPM Cached Dependencies
         uses: actions/cache@v4
         id: npm-cache
         with:
           path: |
             assets/node_modules
-          key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
+          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Retrieve E2E NPM Cached Dependencies
         uses: actions/cache@v4
         id: npm-e2e-cache
         with:
           path: |
             test/e2e/node_modules
-          key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
+          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: Check Eslint and JS Code Format
         run: cd test/e2e && npm run lint && npm run format:check
       - name: "Docker compose dependencies"
@@ -462,14 +447,13 @@ jobs:
     env:
       MIX_ENV: dev
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.12.1
-        with:
-          access_token: ${{ github.token }}
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Read .tool-versions
+        uses: endorama/asdf-parse-tool-versions@v1
+        id: tool-versions
       - name: Setup
         id: setup-elixir
         uses: erlef/setup-beam@v1
@@ -479,30 +463,30 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
-      - name: Retrieve Cached Dependencies
+          node-version: ${{ env.NODEJS_VERSION }}
+      - name: Retrieve Elixir Cached Dependencies
         uses: actions/cache@v4
         id: mix-cache
         with:
           path: |
             deps
-            _build/dev
+            _build/${{ env.MIX_ENV }}
             priv/plts
-          key: ${{ runner.os }}-${{ steps.setup-elixir.outputs.otp-version }}-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}
+          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Retrieve NPM Cached Dependencies
         uses: actions/cache@v4
         id: npm-cache
         with:
           path: |
             assets/node_modules
-          key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
+          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Retrieve E2E NPM Cached Dependencies
         uses: actions/cache@v4
         id: npm-e2e-cache
         with:
           path: |
             test/e2e/node_modules
-          key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
+          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: "Docker compose dependencies"
         uses: isbang/compose-action@v2.2.0
         with:
@@ -597,14 +581,13 @@ jobs:
               CYPRESS_SSO_TYPE: saml
     env: ${{ matrix.env }}
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.12.1
-        with:
-          access_token: ${{ github.token }}
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Read .tool-versions
+        uses: endorama/asdf-parse-tool-versions@v1
+        id: tool-versions
       - name: Setup
         id: setup-elixir
         uses: erlef/setup-beam@v1
@@ -614,30 +597,30 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
-      - name: Retrieve Cached Dependencies
+          node-version: ${{ env.NODEJS_VERSION }}
+      - name: Retrieve Elixir Cached Dependencies
         uses: actions/cache@v4
         id: mix-cache
         with:
           path: |
             deps
-            _build/dev
+            _build/${{ env.MIX_ENV }}
             priv/plts
-          key: ${{ runner.os }}-${{ steps.setup-elixir.outputs.otp-version }}-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}
+          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Retrieve NPM Cached Dependencies
         uses: actions/cache@v4
         id: npm-cache
         with:
           path: |
             assets/node_modules
-          key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
+          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Retrieve E2E NPM Cached Dependencies
         uses: actions/cache@v4
         id: npm-e2e-cache
         with:
           path: |
             test/e2e/node_modules
-          key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
+          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: "Docker compose dependencies"
         uses: isbang/compose-action@v2.2.0
         with:
@@ -673,10 +656,6 @@ jobs:
     runs-on: ubuntu-24.04
     if: github.event_name == 'pull_request'
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.12.1
-        with:
-          access_token: ${{ github.token }}
       - name: Checkout target branch
         uses: actions/checkout@v4
         with:
@@ -687,15 +666,15 @@ jobs:
         with:
           version-file: .tool-versions
           version-type: strict
-      - name: Retrieve Cached Dependencies - target branch
+      - name: Retrieve Elixir Cached Dependencies - target branch
         uses: actions/cache@v4
         id: mix-cache-target
         with:
           path: |
             deps
-            _build/test
+            _build/${{ env.MIX_ENV }}
             priv/plts
-          key: ${{ runner.os }}-${{ steps.setup-elixir.outputs.otp-version }}-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}
+          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Install missing dependencies
         if: steps.mix-cache-target.outputs.cache-hit != 'true'
         run: |
@@ -717,10 +696,6 @@ jobs:
           - version: V1
           - version: V2
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.12.1
-        with:
-          access_token: ${{ github.token }}
       - name: Checkout current branch
         uses: actions/checkout@v4
       - name: Set up Elixir
@@ -729,15 +704,15 @@ jobs:
         with:
           version-file: .tool-versions
           version-type: strict
-      - name: Retrieve Cached Dependencies - current branch
+      - name: Retrieve Elixir Cached Dependencies - current branch
         uses: actions/cache@v4
         id: mix-cache-current
         with:
           path: |
             deps
-            _build/test
+            _build/${{ env.MIX_ENV }}
             priv/plts
-          key: ${{ runner.os }}-${{ steps.setup-elixir.outputs.otp-version }}-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}
+          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Generate current openapi.json
         run: |
           mix openapi.spec.json --start-app=false --spec TrentoWeb.OpenApi.${{ matrix.version }}.ApiSpec /tmp/specs/current-spec.json
@@ -745,15 +720,15 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.base.ref || github.ref_name }}
-      - name: Retrieve Cached Dependencies - target branch
+      - name: Retrieve Elixir Cached Dependencies - target branch
         uses: actions/cache@v4
         id: mix-cache-target
         with:
           path: |
             deps
-            _build/test
+            _build/${{ env.MIX_ENV }}
             priv/plts
-          key: ${{ runner.os }}-${{ steps.setup-elixir.outputs.otp-version }}-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}
+          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Generate target openapi.json
         run: |
           mix openapi.spec.json --start-app=false --spec TrentoWeb.OpenApi.${{ matrix.version }}.ApiSpec /tmp/specs/target-spec.json

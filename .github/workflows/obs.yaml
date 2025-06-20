@@ -17,10 +17,12 @@ on:
       OBS_PASS:
         required: true
 
+concurrency: ${{ github.workflow }}-${{ inputs.obs_project }}
+
 env:
   OBS_PROJECT: ${{ inputs.obs_project }}
-  NODE_VERSION: "20"
   AUTHOR_EMAIL: trento-developers@suse.com
+  MIX_ENV: prod
 
 jobs:
   update-image:
@@ -34,14 +36,13 @@ jobs:
         SOURCE_DIR: packaging/suse/container
       options: -u 0:0
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.12.1
-        with:
-          access_token: ${{ github.token }}
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Read .tool-versions
+        uses: endorama/asdf-parse-tool-versions@v1
+        id: tool-versions
       - name: Configure git for in-container operations
         run: git config --global --add safe.directory $GITHUB_WORKSPACE
       - name: Get version from git history
@@ -52,7 +53,14 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: ${{ env.NODEJS_VERSION }}
+      - name: Retrieve NPM Cached Dependencies
+        uses: actions/cache@v4
+        id: npm-cache
+        with:
+          path: |
+            assets/node_modules
+          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Install assets
         run: cd assets && npm install
       - name: Get mix deps
@@ -104,13 +112,12 @@ jobs:
         SOURCE_DIR: packaging/suse/rpm
       options: -u 0:0
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.12.1
-        with:
-          access_token: ${{ github.token }}
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Read .tool-versions
+        uses: endorama/asdf-parse-tool-versions@v1
+        id: tool-versions
       - name: Configure git for in-container operations
         run: git config --global --add safe.directory $GITHUB_WORKSPACE
       - name: Get version from git history
@@ -121,7 +128,14 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: ${{ env.NODEJS_VERSION }}
+      - name: Retrieve NPM Cached Dependencies
+        uses: actions/cache@v4
+        id: npm-cache
+        with:
+          path: |
+            assets/node_modules
+          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Prepare mix deps tarball
         run: |
           mix local.hex --force && mix deps.clean --all && mix deps.get
