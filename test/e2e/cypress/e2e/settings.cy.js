@@ -238,9 +238,6 @@ context('Settings page', () => {
       settingsPage.sumaEditSettingsButtonIsEnabled();
       settingsPage.sumaClearSettingsButtonIsEnabled();
       settingsPage.activityLogsEditButtonIsEnabled();
-      if (Cypress.env('ALERTING_DB_TESTS')) {
-        settingsPage.alertingEditButtonIsEnabled();
-      }
     });
 
     it('should disable settings buttons if the user has no abilities', () => {
@@ -252,9 +249,6 @@ context('Settings page', () => {
       settingsPage.sumaEditSettingsButtonIsDisabled();
       settingsPage.sumaClearSettingsButtonIsDisabled();
       settingsPage.activityLogsEditButtonIsDisabled();
-      if (Cypress.env('ALERTING_DB_TESTS')) {
-        settingsPage.alertingEditButtonIsDisabled();
-      }
     });
   });
 });

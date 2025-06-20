@@ -1,6 +1,6 @@
 import * as settingsPage from '../pageObject/settings_po';
 
-describe('Settings from DB', () => {
+describe('Alerting settings from DB', () => {
   before(function () {
     if (!Cypress.env('ALERTING_DB_TESTS')) {
       this.skip();
@@ -73,5 +73,26 @@ describe('Settings from DB', () => {
         });
       }
     );
+  });
+
+  describe('access control', () => {
+    beforeEach(() => {
+      settingsPage.apiDeleteAllUsers();
+      settingsPage.logout();
+    });
+
+    it('should enable edit button if the user has the correct abilities', () => {
+      settingsPage.apiCreateUserWithSettingsAbilities();
+      settingsPage.loginWithAbilities();
+      settingsPage.visit();
+      settingsPage.alertingEditButtonIsEnabled();
+    });
+
+    it('should disable edit button if the user has no abilities', () => {
+      settingsPage.apiCreateUserWithoutAbilities();
+      settingsPage.loginWithAbilities();
+      settingsPage.visit();
+      settingsPage.alertingEditButtonIsDisabled();
+    });
   });
 });
