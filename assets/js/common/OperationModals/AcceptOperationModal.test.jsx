@@ -3,44 +3,76 @@ import { act, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 
-import { sapSystemApplicationInstanceFactory } from '@lib/test-utils/factories';
-import { SAP_INSTANCE_START, SAP_INSTANCE_STOP } from '@lib/operations';
+import {
+  sapSystemApplicationInstanceFactory,
+  hostFactory,
+} from '@lib/test-utils/factories';
+import {
+  SAP_INSTANCE_START,
+  SAP_INSTANCE_STOP,
+  PACEMAKER_ENABLE,
+  PACEMAKER_DISABLE,
+} from '@lib/operations';
 
-import SapInstanceStartStopModal from './SapInstanceStartStopModal';
+import AcceptOperationModal from './AcceptOperationModal';
 
 const { instance_number: instanceNumber, sid } =
   sapSystemApplicationInstanceFactory.build();
 
-describe('SapInstanceStartStopModal', () => {
+const { hostname: hostName } = hostFactory.build();
+
+describe('AcceptOperationModal', () => {
   it.each([
     {
       operation: SAP_INSTANCE_START,
+      descriptionResolverArgs: [instanceNumber, sid],
       title: 'Start SAP instance',
+      expectedDescription: `Start SAP instance with instance number ${instanceNumber} in ${sid}`,
     },
     {
       operation: SAP_INSTANCE_STOP,
+      descriptionResolverArgs: [instanceNumber, sid],
       title: 'Stop SAP instance',
+      expectedDescription: `Stop SAP instance with instance number ${instanceNumber} in ${sid}`,
+    },
+    {
+      operation: PACEMAKER_ENABLE,
+      descriptionResolverArgs: [hostName],
+      title: 'Enable Pacemaker',
+      expectedDescription: `Enable Pacemaker systemd unit on host ${hostName}`,
+    },
+    {
+      operation: PACEMAKER_DISABLE,
+      descriptionResolverArgs: [hostName],
+      title: 'Disable Pacemaker',
+      expectedDescription: `Disable Pacemaker systemd unit on host ${hostName}`,
+    },
+    {
+      operation: 'unknown_operation',
+      descriptionResolverArgs: [],
+      title: 'unknown operation',
+      expectedDescription: 'No description available',
     },
   ])(
     `should show correct title and description for $operation`,
-    async ({ operation, title }) => {
+    async ({
+      operation,
+      title,
+      descriptionResolverArgs,
+      expectedDescription,
+    }) => {
       await act(async () => {
         render(
-          <SapInstanceStartStopModal
+          <AcceptOperationModal
             operation={operation}
+            descriptionResolverArgs={descriptionResolverArgs}
             isOpen
-            instanceNumber={instanceNumber}
-            sid={sid}
           />
         );
       });
 
       expect(screen.getByText(title)).toBeInTheDocument();
-      expect(
-        screen.getByText(
-          `${title} with instance number ${instanceNumber} in ${sid}`
-        )
-      ).toBeInTheDocument();
+      expect(screen.getByText(expectedDescription)).toBeInTheDocument();
     }
   );
 
@@ -50,11 +82,9 @@ describe('SapInstanceStartStopModal', () => {
 
     await act(async () => {
       render(
-        <SapInstanceStartStopModal
+        <AcceptOperationModal
           operation={SAP_INSTANCE_START}
           isOpen
-          instanceNumber={instanceNumber}
-          sid={sid}
           onRequest={onRequest}
         />
       );
@@ -73,11 +103,9 @@ describe('SapInstanceStartStopModal', () => {
 
     await act(async () => {
       render(
-        <SapInstanceStartStopModal
+        <AcceptOperationModal
           operation={SAP_INSTANCE_START}
           isOpen
-          instanceNumber={instanceNumber}
-          sid={sid}
           onCancel={onCancel}
         />
       );
