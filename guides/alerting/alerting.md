@@ -107,6 +107,23 @@ testing during development.
 
 Access Mailpit’s web interface at: http://localhost:8025/
 
+By default, during development, compile-time pre-configuration is made
+for Trento to access the local Mailpit server. This might be
+considered as if alerting configuration is made using hard-coded
+environment variables. To switch Trento to use alerting configuration
+from the DB, add the following to your `dev.local.exs`:
+
+```
+import Config
+
+config :trento, :alerting,
+  enabled: nil,
+  smtp_server: nil,
+  smtp_port: nil,
+  smtp_username: nil,
+  smtp_password: nil
+```
+
 ### Configuration Options
 
 The Docker Compose setup supports multiple SMTP scenarios using the
