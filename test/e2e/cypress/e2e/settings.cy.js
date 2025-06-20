@@ -170,7 +170,15 @@ context('Settings page', () => {
     });
   });
 
-  describe('Alerting Settings enforced from env', () => {
+  describe.only('Alerting Settings enforced from env', () => {
+    before(function () {
+      settingsPage.getAlertingSettings().then((resp) => {
+        if (!resp.body.enforced_from_env) {
+          this.skip();
+        }
+      });
+    });
+
     it('should be displayed correctly', () => {
       settingsPage.alertingConfigDisplaysDevEnvValues();
     });
