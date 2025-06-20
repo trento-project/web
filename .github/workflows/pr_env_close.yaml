@@ -89,7 +89,7 @@ jobs:
       - name: Install galaxy deps
         run: ansible-galaxy install -r ansible/requirements.yml
       - name: Run playbook
-        uses: dawidd6/action-ansible-playbook@v3
+        uses: dawidd6/action-ansible-playbook@v4
         with:
           playbook: ansible/playbook.cleanup.yml
           key: ${{ secrets.SSH_PR_MACHINE_KEY }}
