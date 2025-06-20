@@ -76,6 +76,10 @@ module.exports = (on, config) => {
     },
   });
 
+  on('after:run', async (_result) => {
+    await pool.end();
+  });
+
   const webpackOptions = {
     webpackOptions: require('../../webpack.config'),
     watchOptions: {},
