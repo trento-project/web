@@ -34,7 +34,6 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
         action,
         %Plug.Conn{
           assigns: %{
-            plug_request_id: request_id,
             correlation_id: correlation_id
           }
         } = _conn
@@ -45,7 +44,6 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
              :database_cleanup_requested
            ] do
     %{
-      request_id: request_id,
       correlation_id: correlation_id
     }
   end
