@@ -21,7 +21,6 @@ defmodule Trento.SapSystems.Commands.RegisterApplicationInstance do
     :instance_number,
     :sid,
     :db_host,
-    :tenant,
     :instance_hostname,
     :features,
     :http_port,
