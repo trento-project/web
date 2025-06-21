@@ -4,6 +4,7 @@ import { capitalize } from 'lodash';
 import HealthIcon from '@common/HealthIcon';
 import Table from '@common/Table';
 
+import OperationsButton from '@common/OperationsButton';
 import ClusterNodeName from '@pages/ClusterDetails/ClusterNodeName';
 
 import AttributesDetails from './AttributesDetails';
@@ -62,12 +63,49 @@ const siteDetailsConfig = {
       className: 'table-col-xs',
       render: (_, item) => {
         const { attributes, resources } = item;
+
+        const ops = [
+          {
+            value: 'Enable pacemaker',
+            running: false,
+            disabled: false,
+            permitted: ['all:all'],
+            onClick: () => {
+              console.log(
+                `Enable pacemaker operation clicked host: ${item.id} cluster: ${item.cluster_id}`
+              );
+            },
+          },
+          {
+            value: 'Disable pacemaker',
+            running: false,
+            disabled: false,
+            permitted: ['all:all'],
+            onClick: () => {
+              console.log(
+                `Disable pacemaker operation clicked host: ${item.id} cluster: ${item.cluster_id}`
+              );
+            },
+          },
+        ];
         return (
-          <AttributesDetails
-            title="Node Details"
-            attributes={attributes}
-            resources={resources}
-          />
+          <>
+            {/* <div className="flex items-center justify-center"> */}
+            <OperationsButton
+              className="absolute"
+              text=""
+              userAbilities={[{ name: 'all', resource: 'all' }]}
+              menuPosition="bottom"
+              transparent
+              operations={ops}
+            />
+            {/* </div> */}
+            <AttributesDetails
+              title="Node Details"
+              attributes={attributes}
+              resources={resources}
+            />
+          </>
         );
       },
     },
