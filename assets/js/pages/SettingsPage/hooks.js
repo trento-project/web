@@ -216,7 +216,8 @@ export const useAlertingSettings = () => {
     try {
       const { data } = await getAlertingSettings();
       setSettings(fromApiSettings(data));
-    } catch ({ response: { status } }) {
+    } catch (error) {
+      const status = error?.response?.status;
       setSettings({});
       if (status !== 404) setFetchError(true);
     } finally {
