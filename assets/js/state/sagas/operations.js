@@ -4,7 +4,7 @@ import { map, noop } from 'lodash';
 import {
   HOST_OPERATION,
   CLUSTER_OPERATION,
-  SAP_INSTANCE_OPERATION,
+  APPLICATION_INSTANCE_OPERATION,
   getOperationLabel,
   getOperationInternalName,
   getOperationResourceType,
@@ -32,7 +32,7 @@ import { getCluster } from '@state/selectors/cluster';
 function* getResourceName(groupID, resourceType) {
   switch (resourceType) {
     case HOST_OPERATION:
-    case SAP_INSTANCE_OPERATION:
+    case APPLICATION_INSTANCE_OPERATION:
       return (yield select(getHost(groupID)))?.hostname || 'unknown';
     case CLUSTER_OPERATION:
       return (yield select(getCluster(groupID)))?.name || 'unknown';
@@ -51,7 +51,7 @@ const callRequest = (operation, resourceType, requestParams) => {
       const { clusterID, params } = requestParams;
       return requestClusterOperation(clusterID, operation, params);
     }
-    case SAP_INSTANCE_OPERATION: {
+    case APPLICATION_INSTANCE_OPERATION: {
       const { sapSystemID, hostID, instanceNumber, params } = requestParams;
       return requestSapInstanceOperation(
         sapSystemID,

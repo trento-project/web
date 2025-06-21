@@ -153,6 +153,7 @@ defmodule Trento.ActivityLog.SeverityLevel do
     "database_tombstoned" => :debug,
     "cluster_operation_requested" => :info,
     "host_operation_requested" => :info,
+    "application_instance_operation_requested" => :info,
     "operation_completed" => %{
       type: :kv,
       key_suffix: "result",

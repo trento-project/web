@@ -17,6 +17,8 @@ defmodule Trento.ActivityLog.Logger.Parser.QueueEventParser do
 
   alias Trento.ActivityLog
 
+  alias Trento.Support.StructHelper
+
   def get_activity_actor(
         :operation_completed,
         %{
@@ -52,12 +54,23 @@ defmodule Trento.ActivityLog.Logger.Parser.QueueEventParser do
           }
         }
       ) do
-    %{
-      resource_id: group_id,
-      operation: Operations.map_operation_type(operation_type),
-      operation_id: operation_id,
-      result: result
-    }
+    operation = Operations.map_operation_type(operation_type)
+
+    case ActivityLog.list_activity_log(%{type: "operation_requested", search: operation_id}) do
+      {:ok, [%{metadata: metadata}], _meta} ->
+        metadata
+        |> StructHelper.to_atomized_map()
+        |> Map.put(:operation, operation)
+        |> Map.put(:result, result)
+
+      _ ->
+        %{
+          resource_id: group_id,
+          operation: operation,
+          operation_id: operation_id,
+          result: result
+        }
+    end
   end
 
   def get_activity_metadata(

@@ -114,6 +114,8 @@ export const DATABASE_TENANTS_UPDATED = 'database_tenants_updated';
 export const DATABASE_TOMBSTONED = 'database_tombstoned';
 
 // Operations
+export const APPLICATION_INSTANCE_OPERATION_REQUESTED =
+  'application_instance_operation_requested';
 export const CLUSTER_OPERATION_REQUESTED = 'cluster_operation_requested';
 export const HOST_OPERATION_REQUESTED = 'host_operation_requested';
 export const OPERATION_COMPLETED = 'operation_completed';
@@ -142,12 +144,14 @@ const clusterResourceType = (_entry) => 'Cluster';
 const hostResourceType = (_entry) => 'Host';
 const sapSystemResourceType = (_entry) => 'SAP System';
 const databaseResourceType = (_entry) => 'Database';
+const applicationInstaceResourceType = (_entry) => 'Application Instance';
 
 const resourceTypeMapping = (entry) => ({
   host: hostResourceType(entry),
   cluster: clusterResourceType(entry),
   database: databaseResourceType(entry),
   sap_system: sapSystemResourceType(entry),
+  application_instance: applicationInstaceResourceType(entry),
 });
 
 const resolveResourceType = (entry, key, defaultValue) =>
@@ -581,6 +585,12 @@ export const ACTIVITY_TYPES_CONFIG = {
     resource: databaseResourceType,
   },
   // Operations
+  [APPLICATION_INSTANCE_OPERATION_REQUESTED]: {
+    label: 'Application Instance Operation Requested',
+    message: ({ metadata }) =>
+      `Operation ${getOperationLabel(metadata.operation)} requested`,
+    resource: applicationInstaceResourceType,
+  },
   [CLUSTER_OPERATION_REQUESTED]: {
     label: 'Cluster Operation Requested',
     message: ({ metadata }) =>

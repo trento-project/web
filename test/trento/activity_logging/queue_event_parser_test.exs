@@ -35,7 +35,7 @@ defmodule Trento.ActivityLog.QueueEventParserTest do
                })
     end
 
-    test "should get operation completed metadata" do
+    test "should get default operation completed metadata if operation requested does not exist" do
       %{
         operation_id: operation_id,
         group_id: group_id,
@@ -49,6 +49,37 @@ defmodule Trento.ActivityLog.QueueEventParserTest do
                resource_id: group_id,
                operation: :saptune_solution_apply,
                result: result
+             } ==
+               QueueEventParser.get_activity_metadata(:operation_completed, %{
+                 queue_event: operation_completed
+               })
+    end
+
+    test "should get operation completed metadata from operation requested" do
+      %{
+        operation_id: operation_id,
+        group_id: group_id,
+        result: result
+      } =
+        operation_completed =
+        build(:operation_completed_v1, operation_type: "saptuneapplysolution@v1")
+
+      insert(:activity_log_entry,
+        type: "someresource_operation_requested",
+        metadata: %{
+          "operation_id" => operation_id,
+          "key" => "value",
+          "host_id" => group_id,
+          "operation" => :saptune_solution_apply
+        }
+      )
+
+      assert %{
+               operation_id: operation_id,
+               host_id: group_id,
+               operation: :saptune_solution_apply,
+               result: result,
+               key: "value"
              } ==
                QueueEventParser.get_activity_metadata(:operation_completed, %{
                  queue_event: operation_completed

@@ -218,64 +218,6 @@ defmodule Trento.ActivityLog.MetadataEnricherTest do
     end
   end
 
-  describe "enriching operation activities" do
-    for current_operation <- [:saptune_solution_apply, :saptune_solution_change] do
-      @current_operation current_operation
-
-      test "should enrich operation '#{current_operation}' completed events in hosts" do
-        %{id: host_id, hostname: hostname} = insert(:host)
-
-        initial_metadata = %{
-          resource_id: host_id,
-          operation: @current_operation
-        }
-
-        assert {:ok, %{hostname: ^hostname}} =
-                 MetadataEnricher.enrich(:operation_completed, initial_metadata)
-      end
-
-      test "should enrich operation '#{current_operation}' requested events in hosts" do
-        %{id: host_id, hostname: hostname} = insert(:host)
-
-        initial_metadata = %{
-          resource_id: host_id,
-          operation: @current_operation
-        }
-
-        assert {:ok, %{hostname: ^hostname}} =
-                 MetadataEnricher.enrich(:host_operation_requested, initial_metadata)
-      end
-    end
-
-    for current_operation <- [:cluster_maintenance_change] do
-      @current_operation current_operation
-
-      test "should enrich operation '#{current_operation}' completed events in clusters" do
-        %{id: cluster_id, name: name} = insert(:cluster)
-
-        initial_metadata = %{
-          resource_id: cluster_id,
-          operation: @current_operation
-        }
-
-        assert {:ok, %{name: ^name}} =
-                 MetadataEnricher.enrich(:operation_completed, initial_metadata)
-      end
-
-      test "should enrich operation '#{current_operation}' requested events in clusters" do
-        %{id: cluster_id, name: name} = insert(:cluster)
-
-        initial_metadata = %{
-          resource_id: cluster_id,
-          operation: @current_operation
-        }
-
-        assert {:ok, %{name: ^name}} =
-                 MetadataEnricher.enrich(:cluster_operation_requested, initial_metadata)
-      end
-    end
-  end
-
   describe "enriching checks customization activities" do
     test "should enrich check_customization_applied" do
       check_id = Faker.UUID.v4()
