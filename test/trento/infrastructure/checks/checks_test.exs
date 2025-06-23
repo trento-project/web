@@ -98,7 +98,8 @@ defmodule Trento.Infrastructure.Checks.ChecksTest do
       group_id = UUID.uuid4()
 
       env = %Checks.HostExecutionEnv{
-        provider: :azure
+        provider: :azure,
+        arch: :x86_64
       }
 
       selected_checks = ["check_1", "check_2"]
@@ -113,7 +114,8 @@ defmodule Trento.Infrastructure.Checks.ChecksTest do
                    %Target{agent_id: ^group_id, checks: ^selected_checks}
                  ],
                  env: %{
-                   "provider" => %{kind: {:string_value, "azure"}}
+                   "provider" => %{kind: {:string_value, "azure"}},
+                   "arch" => %{kind: {:string_value, "x86_64"}}
                  },
                  target_type: "host"
                } = event
