@@ -53,6 +53,7 @@ function HostSettingsPage() {
 
   const refreshChecksSelection = () =>
     fetchChecksSelection(hostID, {
+      arch: host.arch,
       provider: host.provider,
       target_type: TARGET_HOST,
     });

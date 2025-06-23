@@ -171,12 +171,13 @@ defmodule Trento.Hosts do
   defp maybe_request_checks_execution(%{
          id: host_id,
          selected_checks: selected_checks,
+         arch: arch,
          provider: provider
        }) do
     Checks.request_execution(
       UUID.uuid4(),
       host_id,
-      %Checks.HostExecutionEnv{provider: provider},
+      %Checks.HostExecutionEnv{arch: arch, provider: provider},
       [%{host_id: host_id}],
       selected_checks,
       :host

@@ -158,7 +158,7 @@ defmodule Trento.HostsTest do
 
   describe "Checks Execution" do
     test "should start an execution" do
-      %{id: host_id, provider: provider} = insert(:host)
+      %{id: host_id, provider: provider, arch: arch} = insert(:host)
 
       expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn Publisher,
                                                                         "executions",
@@ -167,7 +167,8 @@ defmodule Trento.HostsTest do
         assert length(message.targets) == 1
 
         assert message.env == %{
-                 "provider" => %ProtobufValue{kind: {:string_value, Atom.to_string(provider)}}
+                 "provider" => %ProtobufValue{kind: {:string_value, Atom.to_string(provider)}},
+                 "arch" => %ProtobufValue{kind: {:string_value, Atom.to_string(arch)}}
                }
 
         assert message.target_type == "host"

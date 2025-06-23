@@ -138,8 +138,9 @@ defmodule Trento.Infrastructure.Checks do
     })
   end
 
-  defp build_env(%HostExecutionEnv{provider: provider}) do
+  defp build_env(%HostExecutionEnv{arch: arch, provider: provider}) do
     Protobuf.from_map(%{
+      arch: arch,
       provider: provider
     })
   end

@@ -103,6 +103,7 @@ function HostDetailsPage() {
   const refreshCatalog = () =>
     dispatch(
       updateCatalog({
+        arch: host?.arch,
         provider: host?.provider,
         target_type: TARGET_HOST,
       })
