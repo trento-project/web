@@ -49,12 +49,7 @@ function HostSettingsPage() {
   if (!host) {
     return <LoadingBox text="Loading..." />;
   }
-  const {
-    arch,
-    hostname: hostName,
-    provider,
-    agent_version: agentVersion,
-  } = host;
+  const { hostname: hostName, provider, agent_version: agentVersion } = host;
 
   const refreshChecksSelection = () =>
     fetchChecksSelection(hostID, {
