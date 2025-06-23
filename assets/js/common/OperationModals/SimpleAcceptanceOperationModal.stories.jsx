@@ -29,7 +29,7 @@ export default {
     descriptionResolverArgs: {
       description:
         'Arguments for the description resolver function to generate the operation description',
-      control: 'array',
+      control: 'object',
     },
     isOpen: {
       description: 'Modal is open',
