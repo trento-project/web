@@ -211,6 +211,8 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
         }
       ]
 
+      correlation_id = UUID.uuid4()
+
       for %{
             action: action,
             operation: operation,
@@ -220,13 +222,17 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
                  :resource_id => resource_id,
                  :operation => atom_operation,
                  :operation_id => operation_id,
+                 :correlation_id => correlation_id,
                  :params => body_params
                } ==
                  PhoenixConnParser.get_activity_metadata(action, %Plug.Conn{
                    conn
                    | params: %{id: resource_id, operation: operation},
                      body_params: body_params,
-                     resp_body: Jason.encode!(%{operation_id: operation_id})
+                     resp_body: Jason.encode!(%{operation_id: operation_id}),
+                     assigns: %{
+                       correlation_id: correlation_id
+                     }
                  })
       end
     end

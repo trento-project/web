@@ -44,10 +44,13 @@ defmodule Trento.ActivityLog.QueueEventParserTest do
         operation_completed =
         build(:operation_completed_v1, operation_type: "saptuneapplysolution@v1")
 
+      {:ok, correlation_id} = Cachex.get(:activity_correlations, operation_id)
+
       assert %{
                operation_id: operation_id,
                resource_id: group_id,
                operation: :saptune_solution_apply,
+               correlation_id: correlation_id,
                result: result
              } ==
                QueueEventParser.get_activity_metadata(:operation_completed, %{
