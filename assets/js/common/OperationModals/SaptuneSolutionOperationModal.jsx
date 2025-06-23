@@ -61,7 +61,7 @@ const markOptionDisabled = (currentlyApplied) => (option) => ({
 });
 
 function SaptuneSolutionOperationModal({
-  title,
+  operation,
   currentlyApplied,
   isHanaRunning,
   isAppRunning,
@@ -79,9 +79,7 @@ function SaptuneSolutionOperationModal({
 
   return (
     <OperationModal
-      title={title}
-      description="Select Saptune tuning solution"
-      operationText="Saptune solution"
+      operation={operation}
       applyDisabled={
         !checked || solution === NOT_SELECTED || solution === currentlyApplied
       }

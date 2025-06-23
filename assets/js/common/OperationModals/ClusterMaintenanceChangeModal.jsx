@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { concat, flatMap, flow, get, has, map, noop, uniqBy } from 'lodash';
+
+import { CLUSTER_MAINTENANCE_CHANGE } from '@lib/operations';
+
 import Label from '@common/Label';
 import Select from '@common/Select';
 import Switch from '@common/Switch';
@@ -83,9 +86,7 @@ function ClusterMaintenanceChangeModal({
 
   return (
     <OperationModal
-      title="Cluster Maintenance"
-      description="Update cluster, node or resource maintenance state"
-      operationText="Maintenance"
+      operation={CLUSTER_MAINTENANCE_CHANGE}
       applyDisabled={!checked || resource.maintenance === maintenanceState}
       checked={checked}
       isOpen={isOpen}

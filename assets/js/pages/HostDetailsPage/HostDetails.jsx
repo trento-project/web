@@ -175,7 +175,7 @@ function HostDetails({
             {getOperationForbiddenMessage(runningOperationName)}
           </OperationForbiddenModal>
           <SaptuneSolutionOperationModal
-            title={getOperationLabel(currentSaptuneOperation)}
+            operation={currentSaptuneOperation}
             currentlyApplied={currentlyAppliedSolution}
             isHanaRunning={some(sapInstances, { type: DATABASE_TYPE })}
             isAppRunning={some(sapInstances, { type: APPLICATION_TYPE })}

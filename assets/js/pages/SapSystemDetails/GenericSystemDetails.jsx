@@ -18,10 +18,8 @@ import { APPLICATION_TYPE, getEnsaVersionLabel } from '@lib/model/sapSystems';
 import ListView from '@common/ListView';
 import Table from '@common/Table';
 import PageHeader from '@common/PageHeader';
-import {
-  OperationForbiddenModal,
-  AcceptOperationModal,
-} from '@common/OperationModals';
+import { OperationForbiddenModal } from '@common/OperationModals';
+import OperationModal from '@common/OperationModals/OperationModal';
 
 import DeregistrationModal from '@pages/DeregistrationModal';
 
@@ -114,7 +112,7 @@ export function GenericSystemDetails({
       >
         {getOperationForbiddenMessage(forbiddenOperationName)}
       </OperationForbiddenModal>
-      <AcceptOperationModal
+      <OperationModal
         operation={operationModalOpen.operation}
         descriptionResolverArgs={[
           currentOperationInstance?.instance_number,
