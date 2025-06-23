@@ -25,31 +25,31 @@ describe('SimpleAcceptanceOperationModal', () => {
   it.each([
     {
       operation: SAP_INSTANCE_START,
-      descriptionResolverArgs: [instanceNumber, sid],
+      descriptionResolverArgs: { instanceNumber, sid },
       title: 'Start SAP instance',
       expectedDescription: `Start SAP instance with instance number ${instanceNumber} in ${sid}`,
     },
     {
       operation: SAP_INSTANCE_STOP,
-      descriptionResolverArgs: [instanceNumber, sid],
+      descriptionResolverArgs: { instanceNumber, sid },
       title: 'Stop SAP instance',
       expectedDescription: `Stop SAP instance with instance number ${instanceNumber} in ${sid}`,
     },
     {
       operation: PACEMAKER_ENABLE,
-      descriptionResolverArgs: [hostName],
+      descriptionResolverArgs: { hostName },
       title: 'Enable Pacemaker',
       expectedDescription: `Enable Pacemaker systemd unit on host ${hostName}`,
     },
     {
       operation: PACEMAKER_DISABLE,
-      descriptionResolverArgs: [hostName],
+      descriptionResolverArgs: { hostName },
       title: 'Disable Pacemaker',
       expectedDescription: `Disable Pacemaker systemd unit on host ${hostName}`,
     },
     {
       operation: 'unknown_operation',
-      descriptionResolverArgs: [],
+      descriptionResolverArgs: {},
       title: 'unknown operation',
       expectedDescription: 'No description available',
     },
