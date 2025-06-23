@@ -39,6 +39,7 @@ function ExecutionResultsPage({ targetType }) {
 
   const cloudProvider = target?.provider;
   const clusterType = isCluster ? target?.type : null;
+  const hostArch = target?.arch;
 
   useEffect(() => {
     if (cloudProvider) {
@@ -48,6 +49,7 @@ function ExecutionResultsPage({ targetType }) {
           arch: target.arch,
           target_type: targetType,
           ...(clusterType ? { cluster_type: clusterType } : {}),
+          ...(isHost && hostArch ? { arch: hostArch } : {}),
         })
       );
     }
