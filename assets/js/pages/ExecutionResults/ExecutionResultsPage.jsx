@@ -45,6 +45,7 @@ function ExecutionResultsPage({ targetType }) {
       dispatch(
         updateCatalog({
           provider: cloudProvider,
+          arch: target.arch,
           target_type: targetType,
           ...(clusterType ? { cluster_type: clusterType } : {}),
         })
