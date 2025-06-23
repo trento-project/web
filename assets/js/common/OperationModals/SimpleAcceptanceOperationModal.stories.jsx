@@ -10,11 +10,11 @@ import {
   sapSystemApplicationInstanceFactory,
 } from '@lib/test-utils/factories';
 
-import AcceptOperationModal from './AcceptOperationModal';
+import SimpleAcceptanceOperationModal from './SimpleAcceptanceOperationModal';
 
 export default {
-  title: 'Components/AcceptOperationModal',
-  component: AcceptOperationModal,
+  title: 'Components/SimpleAcceptanceOperationModal',
+  component: SimpleAcceptanceOperationModal,
   argTypes: {
     operation: {
       description: 'Operation to apply that requires confirmation',
@@ -55,27 +55,27 @@ const { hostname: hostName } = hostFactory.build();
 export const StartInstance = {
   args: {
     operation: SAP_INSTANCE_START,
-    descriptionResolverArgs: [instanceNumber, sid],
+    descriptionResolverArgs: { instanceNumber, sid },
   },
 };
 
 export const StopInstance = {
   args: {
     operation: SAP_INSTANCE_STOP,
-    descriptionResolverArgs: [instanceNumber, sid],
+    descriptionResolverArgs: { instanceNumber, sid },
   },
 };
 
 export const EnablePacemaker = {
   args: {
     operation: PACEMAKER_ENABLE,
-    descriptionResolverArgs: [hostName],
+    descriptionResolverArgs: { hostName },
   },
 };
 
 export const DisablePacemaker = {
   args: {
     operation: PACEMAKER_DISABLE,
-    descriptionResolverArgs: [hostName],
+    descriptionResolverArgs: { hostName },
   },
 };

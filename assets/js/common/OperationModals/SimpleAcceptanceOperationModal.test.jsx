@@ -14,14 +14,14 @@ import {
   PACEMAKER_DISABLE,
 } from '@lib/operations';
 
-import AcceptOperationModal from './AcceptOperationModal';
+import SimpleAcceptanceOperationModal from './SimpleAcceptanceOperationModal';
 
 const { instance_number: instanceNumber, sid } =
   sapSystemApplicationInstanceFactory.build();
 
 const { hostname: hostName } = hostFactory.build();
 
-describe('AcceptOperationModal', () => {
+describe('SimpleAcceptanceOperationModal', () => {
   it.each([
     {
       operation: SAP_INSTANCE_START,
@@ -63,7 +63,7 @@ describe('AcceptOperationModal', () => {
     }) => {
       await act(async () => {
         render(
-          <AcceptOperationModal
+          <SimpleAcceptanceOperationModal
             operation={operation}
             descriptionResolverArgs={descriptionResolverArgs}
             isOpen
@@ -82,7 +82,7 @@ describe('AcceptOperationModal', () => {
 
     await act(async () => {
       render(
-        <AcceptOperationModal
+        <SimpleAcceptanceOperationModal
           operation={SAP_INSTANCE_START}
           isOpen
           onRequest={onRequest}
@@ -103,7 +103,7 @@ describe('AcceptOperationModal', () => {
 
     await act(async () => {
       render(
-        <AcceptOperationModal
+        <SimpleAcceptanceOperationModal
           operation={SAP_INSTANCE_START}
           isOpen
           onCancel={onCancel}

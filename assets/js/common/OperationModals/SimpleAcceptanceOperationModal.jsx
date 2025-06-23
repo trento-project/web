@@ -19,10 +19,13 @@ const TITLES = {
 const getOperationTitle = (operation) =>
   get(TITLES, operation, 'unknown operation');
 
-const getSapInstanceStartStopDescription = (operation, instanceNumber, sid) =>
+const getSapInstanceStartStopDescription = (
+  operation,
+  { instanceNumber, sid }
+) =>
   `${getOperationTitle(operation)} with instance number ${instanceNumber} in ${sid}`;
 
-const getPacemakerEnableDisableDescription = (operation, hostName) =>
+const getPacemakerEnableDisableDescription = (operation, { hostName }) =>
   `${getOperationTitle(operation)} systemd unit on host ${hostName}`;
 
 const DESCRIPTION_RESOLVERS = {
@@ -32,9 +35,9 @@ const DESCRIPTION_RESOLVERS = {
   [PACEMAKER_DISABLE]: getPacemakerEnableDisableDescription,
 };
 
-function AcceptOperationModal({
+function SimpleAcceptanceOperationModal({
   operation,
-  descriptionResolverArgs = [],
+  descriptionResolverArgs = {},
   isOpen = false,
   onRequest = noop,
   onCancel = noop,
@@ -51,7 +54,7 @@ function AcceptOperationModal({
   return (
     <OperationModal
       title={operationTitle}
-      description={descriptionResolver(operation, ...descriptionResolverArgs)}
+      description={descriptionResolver(operation, descriptionResolverArgs)}
       operationText={operationTitle}
       applyDisabled={!checked}
       checked={checked}
@@ -69,4 +72,4 @@ function AcceptOperationModal({
   );
 }
 
-export default AcceptOperationModal;
+export default SimpleAcceptanceOperationModal;
