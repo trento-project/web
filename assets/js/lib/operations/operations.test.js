@@ -6,7 +6,6 @@ import {
   getOperationResourceType,
   getOperationForbiddenMessage,
   operationSucceeded,
-  operationRunning,
 } from '.';
 
 describe('operations', () => {
@@ -127,10 +126,5 @@ describe('operations', () => {
     expect(operationSucceeded('UPDATED')).toBeTruthy();
     expect(operationSucceeded('NOT_UPDATED')).toBeTruthy();
     expect(operationSucceeded('FAILED')).toBeFalsy();
-  });
-
-  it('should check if an operation is running', () => {
-    expect(operationRunning({ status: 'running' })).toBeTruthy();
-    expect(operationRunning({ status: 'completed' })).toBeFalsy();
   });
 });

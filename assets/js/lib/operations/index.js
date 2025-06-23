@@ -55,5 +55,3 @@ export const getOperationForbiddenMessage = (operation) =>
 
 export const operationSucceeded = (result) =>
   ['UPDATED', 'NOT_UPDATED'].includes(result);
-
-export const operationRunning = ({ status }) => status === 'running';

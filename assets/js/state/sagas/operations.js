@@ -1,4 +1,4 @@
-import { call, put, select, takeEvery } from 'redux-saga/effects';
+import { all, call, put, select, takeEvery } from 'redux-saga/effects';
 import { map, noop } from 'lodash';
 
 import {
@@ -8,7 +8,6 @@ import {
   getOperationLabel,
   getOperationInternalName,
   getOperationResourceType,
-  operationRunning,
   operationSucceeded,
 } from '@lib/operations';
 import {
@@ -21,7 +20,7 @@ import { notify } from '@state/notifications';
 import {
   OPERATION_COMPLETED,
   OPERATION_REQUESTED,
-  UPDATE_RUNNING_OPERATION,
+  UPDATE_RUNNING_OPERATIONS,
   removeRunningOperation,
   setForbiddenOperation,
   setRunningOperation,
@@ -131,23 +130,21 @@ export function* completeOperation({ payload }) {
   }
 }
 
-export function* updateRunningOperation({ payload }) {
-  const { groupID } = payload;
-
+export function* updateRunningOperations() {
   try {
     const {
-      data: {
-        items: [operationItem],
-        total_count: totalCount,
-      },
+      data: { items: runningOperations },
     } = yield call(getOperationExecutions, {
-      group_id: groupID,
-      items_per_page: 1,
+      status: 'running',
     });
-    if (totalCount === 1 && operationRunning(operationItem)) {
-      const operation = getOperationInternalName(operationItem.operation);
-      yield put(setRunningOperation({ groupID, operation }));
-    }
+    yield all(
+      runningOperations.map((runningOperation) => {
+        const operation = getOperationInternalName(runningOperation.operation);
+        return put(
+          setRunningOperation({ groupID: runningOperation.group_id, operation })
+        );
+      })
+    );
   } catch {
     /* empty */
   }
@@ -156,5 +153,5 @@ export function* updateRunningOperation({ payload }) {
 export function* watchOperationEvents() {
   yield takeEvery(OPERATION_COMPLETED, completeOperation);
   yield takeEvery(OPERATION_REQUESTED, requestOperation);
-  yield takeEvery(UPDATE_RUNNING_OPERATION, updateRunningOperation);
+  yield takeEvery(UPDATE_RUNNING_OPERATIONS, updateRunningOperations);
 }
