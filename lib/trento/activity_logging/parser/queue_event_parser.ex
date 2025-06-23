@@ -52,11 +52,15 @@ defmodule Trento.ActivityLog.Logger.Parser.QueueEventParser do
           }
         }
       ) do
+    {:ok, correlation_id} = Cachex.get(:activity_correlations, operation_id)
+    _ = Cachex.expire(:activity_correlations, operation_id, :timer.seconds(5))
+
     %{
       resource_id: group_id,
       operation: Operations.map_operation_type(operation_type),
       operation_id: operation_id,
-      result: result
+      result: result,
+      correlation_id: correlation_id
     }
   end
 

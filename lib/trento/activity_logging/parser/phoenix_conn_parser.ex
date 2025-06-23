@@ -156,15 +156,22 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
         %Plug.Conn{
           params: params,
           body_params: body_params,
-          resp_body: resp_body
+          resp_body: resp_body,
+          assigns: %{
+            correlation_id: correlation_id
+          }
         }
       )
       when activity in [:cluster_operation_requested, :host_operation_requested] do
+    operation_id = resp_body |> Jason.decode!() |> Map.get("operation_id")
+    _ = Cachex.put(:activity_correlations, operation_id, correlation_id)
+
     %{
       resource_id: Map.get(params, :id),
       operation: params |> Map.get(:operation) |> String.to_existing_atom(),
-      operation_id: resp_body |> Jason.decode!() |> Map.get("operation_id"),
-      params: body_params
+      operation_id: operation_id,
+      params: body_params,
+      correlation_id: correlation_id
     }
   end
 
