@@ -76,6 +76,7 @@ describe('ActivityLogDetailModal component', () => {
 
     expect(screen.getByText('Unrecognized resource')).toBeVisible();
   });
+
   it('should render Related Events field for entries with correlation_id present in metadata', async () => {
     const unknownActivityType = faker.lorem.word();
     const metadata = { correlation_id: 'some-uuid' };
@@ -92,6 +93,7 @@ describe('ActivityLogDetailModal component', () => {
     expect(screen.getByText('Related Events')).toBeVisible();
     expect(screen.getByText('Show Events')).toBeVisible();
   });
+
   it('should not render Related Events field for entries with correlation_id absent in metadata', async () => {
     const unknownActivityType = faker.lorem.word();
     const metadata = { some_key: 'some-value' };
