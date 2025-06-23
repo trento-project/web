@@ -30,7 +30,7 @@ import {
 } from '@state/lastExecutions';
 import {
   operationRequested,
-  updateRunningOperation,
+  updateRunningOperations,
   removeRunningOperation,
 } from '@state/runningOperations';
 
@@ -113,7 +113,7 @@ function HostDetailsPage() {
     getExportersStatus();
     refreshCatalog();
     dispatch(updateLastExecution(hostID));
-    operationsEnabled && dispatch(updateRunningOperation(hostID));
+    operationsEnabled && dispatch(updateRunningOperations());
   }, []);
 
   if (!host) {
