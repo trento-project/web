@@ -382,6 +382,7 @@ Trento.SapSystems.html
 Trento.Scheduler.html
 Trento.Services.HealthService.html
 Trento.Settings.ActivityLogSettings.html
+Trento.Settings.AlertingSettings.html
 Trento.Settings.ApiKeySettings.html
 Trento.Settings.InstallationSettings.html
 Trento.Settings.Policy.html
@@ -406,6 +407,7 @@ Trento.Support.Enum.html
 Trento.Support.Event.html
 Trento.Support.EventHandlerFailureContext.html
 Trento.Support.Helpers.AbilitiesTestHelper.html
+Trento.Support.Helpers.AlertingSettingsHelper.html
 Trento.Support.IntermediateEvent.html
 Trento.Support.JsonbSerializer.html
 Trento.Support.ListHelper.html
@@ -440,6 +442,7 @@ TrentoWeb.MonitoringChannel.html
 TrentoWeb.OpenApi.ApiSpec.html
 TrentoWeb.OpenApi.V1.ApiSpec.html
 TrentoWeb.OpenApi.V1.Schema.BadRequest.html
+TrentoWeb.OpenApi.V1.Schema.Conflict.html
 TrentoWeb.OpenApi.V1.Schema.Forbidden.html
 TrentoWeb.OpenApi.V1.Schema.Health.html
 TrentoWeb.OpenApi.V1.Schema.NotFound.html
@@ -522,8 +525,8 @@ dist/lato-latin-ext-300-normal-VPGGJKJL.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-DCDD51F1.js
-dist/sidebar_items-B2682677.js
+dist/search_data-9E439EFB.js
+dist/sidebar_items-1F1489FA.js
 environment_variables.html
 hack_on_the_trento.html
 index.html

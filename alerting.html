@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-K7URE6B4.js"></script>
-    <script src="dist/sidebar_items-B2682677.js"></script>
+    <script src="dist/sidebar_items-1F1489FA.js"></script>
     <script src="docs_config.js"></script>
     <script async src="dist/html-YIPIRHGU.js"></script>
 
@@ -135,42 +135,102 @@ GUIDES
     <span>Alerting</span>
   </h1>
 
-<p>The Alerting feature notifies the SAP Administrator about important events detected in the Landscape being monitored/observed by Trento.</p><p>Some of the notified events:</p><ul><li><strong>Host Health detected critical</strong></li><li><strong>Cluster Health detected critical</strong></li><li><strong>Database Health detected critical</strong></li><li><strong>SAP System Health detected critical</strong></li><li>...</li></ul><h2 id="enabling-alerting" class="section-heading">
+<p>The Alerting feature notifies the SAP Administrator about important
+events detected in the Landscape being monitored/observed by Trento.</p><p>Some of the notified events:</p><ul><li><strong>Host Health detected critical</strong></li><li><strong>Cluster Health detected critical</strong></li><li><strong>Database Health detected critical</strong></li><li><strong>SAP System Health detected critical</strong></li><li>...</li></ul><h2 id="enabling-alerting" class="section-heading">
   <a href="#enabling-alerting" class="hover-link">
     <i class="ri-link-m" aria-hidden="true"></i>
   </a>
   <span class="text">Enabling Alerting</span>
 </h2>
-<p>This feature is <strong>disabled by default</strong>.</p><p>Provide <code class="inline">ENABLE_ALERTING=true</code> as an environment variable when starting Trento.</p><h2 id="delivery-and-recipient" class="section-heading">
-  <a href="#delivery-and-recipient" class="hover-link">
+<p>This feature is <strong>disabled by default</strong>.</p><p>There are two ways to enable and configure SMTP alerting:</p><h3 id="configure-alerting-with-environment-variables" class="section-heading">
+  <a href="#configure-alerting-with-environment-variables" class="hover-link">
     <i class="ri-link-m" aria-hidden="true"></i>
   </a>
-  <span class="text">Delivery and Recipient</span>
-</h2>
-<p>A notification needs to be <em>delivered to someone</em> in <em>some way</em>.</p><p>With alerting enabled some extra configuration is needed to define the recipient and the delivery mechanism.</p><p>Currently <strong>authenticated SMTP</strong> is the <strong>only supported delivery mechanism</strong> for alert notifications.</p><pre><code class="makeup elixir" translate="no"><span class="nc">ENABLE_ALERTING</span><span class="o">=</span><span class="no">true</span><span class="w">
+  <span class="text">Configure Alerting with Environment Variables</span>
+</h3>
+<p>The following OS environment variables could be set before
+starting Trento:</p><table><thead><tr><th style="text-align: left;">Env-var</th><th style="text-align: left;">Description</th></tr></thead><tbody><tr><td style="text-align: left;"><code class="inline">ENABLE_ALERTING</code></td><td style="text-align: left;">Enables sending alerting e-mails when set to <code class="inline">true</code></td></tr><tr><td style="text-align: left;"><code class="inline">ALERT_SENDER</code></td><td style="text-align: left;">The e-mail address that would be used as sender</td></tr><tr><td style="text-align: left;"><code class="inline">ALERT_RECIPIENT</code></td><td style="text-align: left;">The e-mail address of the receiving entity</td></tr><tr><td style="text-align: left;"><code class="inline">SMTP_SERVER</code></td><td style="text-align: left;">Domain name of the SMTP server that would handle the submission</td></tr><tr><td style="text-align: left;"><code class="inline">SMTP_PORT</code></td><td style="text-align: left;">The port SMTP server listens on for new submissions</td></tr><tr><td style="text-align: left;"><code class="inline">SMTP_USER</code></td><td style="text-align: left;">Username used for authentication, if required</td></tr><tr><td style="text-align: left;"><code class="inline">SMTP_PASSWORD</code></td><td style="text-align: left;">Password used for authentication, if required</td></tr></tbody></table><p>Trento provides default values for the environment variables that are
+not explicitly set.</p><p>To quickly enable alerting, provide <code class="inline">ENABLE_ALERTING=true</code> as an
+environment variable when starting Trento.</p><h3 id="configure-alerting-by-using-webui-restful-api" class="section-heading">
+  <a href="#configure-alerting-by-using-webui-restful-api" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Configure Alerting by using WebUI/RESTful API</span>
+</h3>
+<p>Configuring the alerting values could be done in a self-explanatory
+manner from Settings menu in Trento web console.</p><p>Additionally, Trento supports changing these settings by the Web API
+for which OpenAPI specification is available.</p><p>Both of these methods modify alerting in real-time without needing a
+restart.</p><h3 id="priority-of-configuration-methods" class="section-heading">
+  <a href="#priority-of-configuration-methods" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Priority of Configuration Methods</span>
+</h3>
+<p>Environment variables have precedence. If <em>any</em> of the previously
+mentioned environment variables is set, configuration via environment
+variables takes full precedence, and the WebUI/API method is disabled.</p><h3 id="example-configuration" class="section-heading">
+  <a href="#example-configuration" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Example configuration</span>
+</h3>
+<pre><code class="makeup elixir" translate="no"><span class="nc">ENABLE_ALERTING</span><span class="o">=</span><span class="no">true</span><span class="w">
 </span><span class="nc">ALERT_SENDER</span><span class="o">=</span><span class="n">sender</span><span class="na">@yourmail</span><span class="o">.</span><span class="n">com</span><span class="w">
 </span><span class="nc">ALERT_RECIPIENT</span><span class="o">=</span><span class="n">recipient</span><span class="na">@yourmail</span><span class="o">.</span><span class="n">com</span><span class="w">
 
 </span><span class="nc">SMTP_SERVER</span><span class="o">=</span><span class="n">your</span><span class="o">.</span><span class="n">smtp</span><span class="o">-</span><span class="n">server</span><span class="o">.</span><span class="n">com</span><span class="w">
 </span><span class="nc">SMTP_PORT</span><span class="o">=</span><span class="mi">2525</span><span class="w">
 </span><span class="nc">SMTP_USER</span><span class="o">=</span><span class="n">user</span><span class="w">
-</span><span class="nc">SMTP_PASSWORD</span><span class="o">=</span><span class="n">password</span></code></pre><h2 id="enabling-alerting-at-a-later-stage" class="section-heading">
+</span><span class="nc">SMTP_PASSWORD</span><span class="o">=</span><span class="n">password</span></code></pre><blockquote><p>[!Note]
+Currently <strong>SMTP</strong> is the <strong>only supported delivery mechanism</strong> for
+alert notifications.</p></blockquote><h2 id="enabling-alerting-at-a-later-stage" class="section-heading">
   <a href="#enabling-alerting-at-a-later-stage" class="hover-link">
     <i class="ri-link-m" aria-hidden="true"></i>
   </a>
   <span class="text">Enabling Alerting at a later stage</span>
 </h2>
-<p>If your current Trento installation has Alerting disabled, you can enable it by upgrading the helm deployment.</p><pre><code class="makeup elixir" translate="no"><span class="n">helm</span><span class="w"> </span><span class="n">upgrade</span><span class="w">
-   </span><span class="o">--</span><span class="n">install</span><span class="w"> </span><span class="o">&lt;</span><span class="nc">THE_DEPLOYMENT</span><span class="o">&gt;</span><span class="w"> 
+<p>If no alerting-related environment variables are set, modify the
+alerting configuration through the WebUI or RESTful API — without
+restarting Trento.</p><p>If the Trento deployment uses alerting environment variables, any
+changes require a restart of the service.</p><h3 id="example-updating-alerting-environment-variables-with-helm" class="section-heading">
+  <a href="#example-updating-alerting-environment-variables-with-helm" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Example: Updating Alerting Environment Variables with Helm:</span>
+</h3>
+<p>If helm is used, update alerting-related env-vars by upgrading the
+deployment:</p><pre><code class="makeup elixir" translate="no"><span class="n">helm</span><span class="w"> </span><span class="n">upgrade</span><span class="w">
+   </span><span class="o">--</span><span class="n">install</span><span class="w"> </span><span class="o">&lt;</span><span class="nc">THE_DEPLOYMENT</span><span class="o">&gt;</span><span class="w">
    </span><span class="o">--</span><span class="n">set</span><span class="w"> </span><span class="n">trento</span><span class="o">-</span><span class="n">web</span><span class="o">.</span><span class="n">adminUser</span><span class="o">.</span><span class="n">password</span><span class="o">=</span><span class="o">&lt;</span><span class="nc">ADMIN_PASSWORD</span><span class="o">&gt;</span><span class="w">
    </span><span class="o">--</span><span class="n">set</span><span class="o">-</span><span class="n">file</span><span class="w"> </span><span class="n">trento</span><span class="o">-</span><span class="n">runner</span><span class="o">.</span><span class="n">privateKey</span><span class="o">=</span><span class="o">&lt;</span><span class="nc">PRIVATE_SSH_KEY</span><span class="o">&gt;</span><span class="w">
    </span><span class="o">--</span><span class="n">set</span><span class="w"> </span><span class="n">trento</span><span class="o">-</span><span class="n">web</span><span class="o">.</span><span class="n">alerting</span><span class="o">.</span><span class="n">enabled</span><span class="o">=</span><span class="no">true</span><span class="w">
-   </span><span class="o">--</span><span class="n">set</span><span class="w"> </span><span class="n">trento</span><span class="o">-</span><span class="n">web</span><span class="o">.</span><span class="n">alerting</span><span class="o">.</span><span class="n">smtpServer</span><span class="o">=</span><span class="o">&lt;</span><span class="nc">SMTP_SERVER</span><span class="o">&gt;</span><span class="w"> 
+   </span><span class="o">--</span><span class="n">set</span><span class="w"> </span><span class="n">trento</span><span class="o">-</span><span class="n">web</span><span class="o">.</span><span class="n">alerting</span><span class="o">.</span><span class="n">smtpServer</span><span class="o">=</span><span class="o">&lt;</span><span class="nc">SMTP_SERVER</span><span class="o">&gt;</span><span class="w">
    </span><span class="o">--</span><span class="n">set</span><span class="w"> </span><span class="n">trento</span><span class="o">-</span><span class="n">web</span><span class="o">.</span><span class="n">alerting</span><span class="o">.</span><span class="n">smtpPort</span><span class="o">=</span><span class="o">&lt;</span><span class="nc">SMTP_PORT</span><span class="o">&gt;</span><span class="w">
    </span><span class="o">--</span><span class="n">set</span><span class="w"> </span><span class="n">trento</span><span class="o">-</span><span class="n">web</span><span class="o">.</span><span class="n">alerting</span><span class="o">.</span><span class="n">smtpUser</span><span class="o">=</span><span class="o">&lt;</span><span class="nc">SMTP_USER</span><span class="o">&gt;</span><span class="w">
    </span><span class="o">--</span><span class="n">set</span><span class="w"> </span><span class="n">trento</span><span class="o">-</span><span class="n">web</span><span class="o">.</span><span class="n">alerting</span><span class="o">.</span><span class="n">smtpPassword</span><span class="o">=</span><span class="o">&lt;</span><span class="nc">SMTP_PASSWORD</span><span class="o">&gt;</span><span class="w">
-   </span><span class="o">--</span><span class="n">set</span><span class="w"> </span><span class="n">trento</span><span class="o">-</span><span class="n">web</span><span class="o">.</span><span class="n">alerting</span><span class="o">.</span><span class="n">sender</span><span class="o">=</span><span class="o">&lt;</span><span class="nc">ALERT_SENDER</span><span class="o">&gt;</span><span class="w"> 
-   </span><span class="o">--</span><span class="n">set</span><span class="w"> </span><span class="n">trento</span><span class="o">-</span><span class="n">web</span><span class="o">.</span><span class="n">alerting</span><span class="o">.</span><span class="n">recipient</span><span class="o">=</span><span class="o">&lt;</span><span class="nc">ALERT_RECIPIENT</span><span class="o">&gt;</span></code></pre>
+   </span><span class="o">--</span><span class="n">set</span><span class="w"> </span><span class="n">trento</span><span class="o">-</span><span class="n">web</span><span class="o">.</span><span class="n">alerting</span><span class="o">.</span><span class="n">sender</span><span class="o">=</span><span class="o">&lt;</span><span class="nc">ALERT_SENDER</span><span class="o">&gt;</span><span class="w">
+   </span><span class="o">--</span><span class="n">set</span><span class="w"> </span><span class="n">trento</span><span class="o">-</span><span class="n">web</span><span class="o">.</span><span class="n">alerting</span><span class="o">.</span><span class="n">recipient</span><span class="o">=</span><span class="o">&lt;</span><span class="nc">ALERT_RECIPIENT</span><span class="o">&gt;</span></code></pre><h2 id="local-development-and-testing" class="section-heading">
+  <a href="#local-development-and-testing" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Local development and testing</span>
+</h2>
+<p>The provided <code class="inline">docker-compose.yaml</code> file includes a
+<a href="https://github.com/axllent/mailpit">Mailpit</a> SMTP server for local
+testing during development.</p><p>Access Mailpit’s web interface at: <a href="http://localhost:8025/">http://localhost:8025/</a></p><h3 id="configuration-options" class="section-heading">
+  <a href="#configuration-options" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Configuration Options</span>
+</h3>
+<p>The Docker Compose setup supports multiple SMTP scenarios using the
+following Trento-specific environment variables:</p><ul><li><code class="inline">TRENTO_SMTP_AUTHENTICATED</code> -- By setting it to non-empty,
+configures Mailpit to require authentication from its clients.</li><li><code class="inline">TRENTO_SMTP_INSECURE</code> -- By setting it to non-empty, allows to run
+Mailpit server requiring authentication over insecure channel
+(eg. sending passwords in plain text). This is very useful for local
+development without need to setup TLS.</li></ul><p>By default, the Mailpit SMTP server runs without need for
+authentication over an unencrypted channel.</p><blockquote><p>[!IMPORTANT]
+<em>TBD</em>: Add STARTTLS/TLS configuration.</p></blockquote>
 </div>
 
 <div class="bottom-actions" id="bottom-actions">
