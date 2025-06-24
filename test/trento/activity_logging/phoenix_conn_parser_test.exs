@@ -164,18 +164,18 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
     for scenario <- [
           %{
             action: :host_cleanup_requested,
-            conn_assigns: %{correlation_id: @correlation_id},
-            expected_metadata: %{correlation_id: @correlation_id}
+            conn_assigns: %{correlation_id: @correlation_id, resource_metadata: %{}},
+            expected_metadata: %{correlation_id: @correlation_id, resource_details: %{}}
           },
           %{
             action: :sap_system_cleanup_requested,
-            conn_assigns: %{correlation_id: @correlation_id},
-            expected_metadata: %{correlation_id: @correlation_id}
+            conn_assigns: %{correlation_id: @correlation_id, resource_metadata: %{}},
+            expected_metadata: %{correlation_id: @correlation_id, resource_details: %{}}
           },
           %{
             action: :database_cleanup_requested,
-            conn_assigns: %{correlation_id: @correlation_id},
-            expected_metadata: %{correlation_id: @correlation_id}
+            conn_assigns: %{correlation_id: @correlation_id, resource_metadata: %{}},
+            expected_metadata: %{correlation_id: @correlation_id, resource_details: %{}}
           }
         ] do
       @scenario scenario

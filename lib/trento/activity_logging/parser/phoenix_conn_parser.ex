@@ -34,7 +34,8 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
         action,
         %Plug.Conn{
           assigns: %{
-            correlation_id: correlation_id
+            correlation_id: correlation_id,
+            resource_metadata: resource_metadata
           }
         } = _conn
       )
@@ -44,7 +45,8 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
              :database_cleanup_requested
            ] do
     %{
-      correlation_id: correlation_id
+      correlation_id: correlation_id,
+      resource_details: resource_metadata
     }
   end
 

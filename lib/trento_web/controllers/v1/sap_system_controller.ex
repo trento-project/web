@@ -85,11 +85,16 @@ defmodule TrentoWeb.V1.SapSystemController do
     ]
 
   @spec delete_application_instance(Plug.Conn.t(), map) :: {:error, any} | Plug.Conn.t()
-  def delete_application_instance(conn, %{
-        id: sap_system_id,
-        host_id: host_id,
-        instance_number: instance_number
-      }) do
+  def delete_application_instance(
+        conn,
+        %{
+          id: sap_system_id,
+          host_id: host_id,
+          instance_number: instance_number
+        } = resource_metadata
+      ) do
+    conn = assign(conn, :resource_metadata, resource_metadata)
+
     with :ok <-
            SapSystems.deregister_application_instance(sap_system_id, host_id, instance_number) do
       send_resp(conn, 204, "")
