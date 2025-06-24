@@ -11,6 +11,8 @@ export const SAPTUNE_SOLUTION_CHANGE = 'saptune_solution_change';
 export const CLUSTER_MAINTENANCE_CHANGE = 'cluster_maintenance_change';
 export const SAP_INSTANCE_START = 'sap_instance_start';
 export const SAP_INSTANCE_STOP = 'sap_instance_stop';
+export const PACEMAKER_ENABLE = 'pacemaker_enable';
+export const PACEMAKER_DISABLE = 'pacemaker_disable';
 
 const OPERATION_LABELS = {
   [SAPTUNE_SOLUTION_APPLY]: 'Apply Saptune solution',
@@ -18,6 +20,8 @@ const OPERATION_LABELS = {
   [CLUSTER_MAINTENANCE_CHANGE]: 'Cluster maintenance change',
   [SAP_INSTANCE_START]: 'SAP instance start',
   [SAP_INSTANCE_STOP]: 'SAP instance stop',
+  [PACEMAKER_ENABLE]: 'Enable Pacemaker',
+  [PACEMAKER_DISABLE]: 'Disable Pacemaker',
 };
 
 const OPERATION_INTERNAL_NAMES = {
@@ -26,6 +30,8 @@ const OPERATION_INTERNAL_NAMES = {
   'clustermaintenancechange@v1': CLUSTER_MAINTENANCE_CHANGE,
   'sapinstancestart@v1': SAP_INSTANCE_START,
   'sapinstancestop@v1': SAP_INSTANCE_STOP,
+  'pacemakerenable@v1': PACEMAKER_ENABLE,
+  'pacemakerdisable@v1': PACEMAKER_DISABLE,
 };
 
 const OPERATION_RESOURCE_TYPES = {

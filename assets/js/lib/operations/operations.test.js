@@ -35,6 +35,14 @@ describe('operations', () => {
       operation: 'sap_instance_stop',
       label: 'SAP instance stop',
     },
+    {
+      operation: 'pacemaker_enable',
+      label: 'Enable Pacemaker',
+    },
+    {
+      operation: 'pacemaker_disable',
+      label: 'Disable Pacemaker',
+    },
   ])(`should return the operation $operation label`, ({ operation, label }) => {
     expect(getOperationLabel(operation)).toBe(label);
   });
@@ -63,6 +71,14 @@ describe('operations', () => {
     {
       operation: 'sapinstancestop@v1',
       name: 'sap_instance_stop',
+    },
+    {
+      operation: 'pacemakerenable@v1',
+      name: 'pacemaker_enable',
+    },
+    {
+      operation: 'pacemakerdisable@v1',
+      name: 'pacemaker_disable',
     },
   ])(
     `should return the operation $operation internal name`,
