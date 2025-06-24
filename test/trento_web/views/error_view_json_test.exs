@@ -58,6 +58,17 @@ defmodule TrentoWeb.ErrorJSONTest do
            } == ErrorJSON.render("422.json", %{reason: "Invalid values."})
   end
 
+  test "should render a 409 error" do
+    assert %{
+             errors: [
+               %{
+                 title: "Conflict has occurred",
+                 detail: "Generic conflicting state"
+               }
+             ]
+           } == ErrorJSON.render("409.json", %{reason: "Generic conflicting state"})
+  end
+
   test "should render a 422 error (validation error)" do
     {:error, validation_error} = TestData.new(%{embedded: %{id: "invalid", name: 0}})
 

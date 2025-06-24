@@ -35,7 +35,10 @@ const getButtonClasses = (type) => {
   }
 };
 
-function Button({ children, className, type, size, disabled, ...props }, ref) {
+function Button(
+  { children, className, type, size, disabled, asSubmit, ...props },
+  ref
+) {
   const buttonClasses = classNames(
     getButtonClasses(type),
     getSizeClasses(size),
@@ -45,7 +48,7 @@ function Button({ children, className, type, size, disabled, ...props }, ref) {
 
   return (
     <button
-      type="button"
+      type={asSubmit ? 'submit' : 'button'}
       className={buttonClasses}
       disabled={disabled}
       ref={ref}

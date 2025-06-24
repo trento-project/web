@@ -3,6 +3,7 @@ defmodule Trento.Settings.PolicyTest do
 
   alias Trento.Abilities.Ability
   alias Trento.Settings.ActivityLogSettings
+  alias Trento.Settings.AlertingSettings
   alias Trento.Settings.ApiKeySettings
   alias Trento.Settings.SuseManagerSettings
 
@@ -102,6 +103,51 @@ defmodule Trento.Settings.PolicyTest do
       refute Policy.authorize(:save_suse_manager_settings, user, SuseManagerSettings)
       refute Policy.authorize(:update_suse_manager_settings, user, SuseManagerSettings)
       refute Policy.authorize(:delete_suse_manager_settings, user, SuseManagerSettings)
+    end
+  end
+
+  describe "AlertingSettings authorization" do
+    test "allows alerting settings actions if user has all:all abilities" do
+      user = %User{abilities: [%Ability{name: "all", resource: "all"}]}
+
+      assert Policy.authorize(:get_alerting_settings, user, AlertingSettings)
+      assert Policy.authorize(:create_alerting_settings, user, AlertingSettings)
+      assert Policy.authorize(:update_alerting_settings, user, AlertingSettings)
+    end
+
+    test "allows alerting settings actions if user has all:alerting_settings abilities" do
+      user = %User{abilities: [%Ability{name: "all", resource: "alerting_settings"}]}
+
+      assert Policy.authorize(:get_alerting_settings, user, AlertingSettings)
+      assert Policy.authorize(:create_alerting_settings, user, AlertingSettings)
+      assert Policy.authorize(:update_alerting_settings, user, AlertingSettings)
+    end
+
+    test "allows safe alerting settings actions if user has no abilities" do
+      user = %User{abilities: []}
+      assert Policy.authorize(:get_alerting_settings, user, AlertingSettings)
+    end
+
+    test "disallows setting/updating alerting settings if the user has no abilities" do
+      user = %User{abilities: []}
+      refute Policy.authorize(:create_alerting_settings, user, AlertingSettings)
+      refute Policy.authorize(:update_alerting_settings, user, AlertingSettings)
+    end
+
+    test "disallows setting/updating alerting settings if user has only not applicable abilities" do
+      user = %User{abilities: [%Ability{name: "all", resource: "api_key_settings"}]}
+      refute Policy.authorize(:create_alerting_settings, user, AlertingSettings)
+      refute Policy.authorize(:update_alerting_settings, user, AlertingSettings)
+    end
+  end
+
+  describe "Action to resource mapping" do
+    test "should return correct resource for a mapped action" do
+      assert Policy.get_resource(:update_api_key_settings) == ApiKeySettings
+    end
+
+    test "should return nil for unmapped actions" do
+      assert Policy.get_resource(:unmapped_action) == nil
     end
   end
 end
