@@ -93,6 +93,42 @@ describe('Checks catalog', () => {
           expect(endpointUrl).to.include(expectedRequestQuery)
         );
     });
+
+    it('expected query is issued for AWS provider & Hosts Target Type', () => {
+      const expectedRequestQuery = 'provider=aws&target_type=host';
+
+      checksCatalogPage.selectFromProvidersDropdown('AWS');
+      checksCatalogPage
+        .selectFromTargetsSelectionDropdown('Hosts')
+        .then((endpointUrl) =>
+          expect(endpointUrl).to.include(expectedRequestQuery)
+        );
+    });
+
+    it('expected query is issued for AWS provider & Hosts Target Type & x86_64 Architecture', () => {
+      const expectedRequestQuery = 'provider=aws&target_type=host&arch=x86_64';
+
+      checksCatalogPage.selectFromProvidersDropdown('AWS');
+      checksCatalogPage.selectFromTargetsSelectionDropdown('Hosts');
+      checksCatalogPage
+        .selectFromArchitectureDropdown('x86_64')
+        .then((endpointUrl) =>
+          expect(endpointUrl).to.include(expectedRequestQuery)
+        );
+    });
+
+    it('expected query is issued for Azure provider & Hosts Target Type & ppc64le Architecture', () => {
+      const expectedRequestQuery =
+        'provider=azure&target_type=host&arch=ppc64le';
+
+      checksCatalogPage.selectFromProvidersDropdown('Azure');
+      checksCatalogPage.selectFromTargetsSelectionDropdown('Hosts');
+      checksCatalogPage
+        .selectFromArchitectureDropdown('ppc64le')
+        .then((endpointUrl) =>
+          expect(endpointUrl).to.include(expectedRequestQuery)
+        );
+    });
   });
 
   describe('Catalog error', () => {

@@ -18,6 +18,7 @@ const targetIcon = 'div[aria-label="accordion-panel"] span span:nth-child(1)';
 const providersSelectionDropdown = 'button.providers-selection-dropdown';
 const targetsSelectionDropdown = 'button.targets-selection-dropdown';
 const clusterTypesSelectionDropdown = 'button.cluster-types-selection-dropdown';
+const architectureSelectionDropdown = 'button.architecture-selection-dropdown';
 
 const dropdownSelectedIcon =
   '.absolute.inset-y-0.right-2.end-1.flex.items-center.pl-3.text-green-600';
@@ -132,6 +133,11 @@ export const selectFromTargetsSelectionDropdown = (choice) => {
 
 export const selectFromClusterTypesSelectionDropdown = (choice) => {
   selectFromCatalogDropdown(clusterTypesSelectionDropdown, choice);
+  return waitForChecksCatalogRequest().then((response) => response.request.url);
+};
+
+export const selectFromArchitectureDropdown = (choice) => {
+  selectFromCatalogDropdown(architectureSelectionDropdown, choice);
   return waitForChecksCatalogRequest().then((response) => response.request.url);
 };
 
