@@ -22,6 +22,7 @@ function TargetInfoBox({ targetType, target }) {
     case TARGET_HOST:
       return (
         <HostInfoBox
+          arch={target.arch}
           provider={target.provider}
           agentVersion={target.agent_version}
         />

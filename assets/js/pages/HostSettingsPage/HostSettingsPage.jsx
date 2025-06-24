@@ -49,7 +49,12 @@ function HostSettingsPage() {
   if (!host) {
     return <LoadingBox text="Loading..." />;
   }
-  const { hostname: hostName, provider, agent_version: agentVersion } = host;
+  const {
+    hostname: hostName,
+    provider,
+    agent_version: agentVersion,
+    arch,
+  } = host;
 
   const refreshChecksSelection = () =>
     fetchChecksSelection(hostID, {
@@ -94,7 +99,11 @@ function HostSettingsPage() {
         onSaveSelection={saveSelection}
         onStartExecution={requestChecksExecution}
       />
-      <HostInfoBox provider={provider} agentVersion={agentVersion} />
+      <HostInfoBox
+        arch={arch}
+        provider={provider}
+        agentVersion={agentVersion}
+      />
       <ChecksSelection
         groupID={hostID}
         catalog={checksSelection}

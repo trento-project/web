@@ -39,6 +39,7 @@ describe('HostSettingsPage component', () => {
     expect(screen.getByText('Loading...')).toBeVisible();
     expect(screen.queryByText('Provider')).not.toBeTruthy();
     expect(screen.queryByText('Agent version')).not.toBeTruthy();
+    expect(screen.queryByText('Architecture')).not.toBeTruthy();
     expect(
       screen.queryByRole('button', { name: 'Save Check Selection' })
     ).not.toBeTruthy();
@@ -60,7 +61,7 @@ describe('HostSettingsPage component', () => {
       hostsList: { hosts },
       user: { abilities: [] },
     };
-    const { id: hostID, agent_version: agentVersion } = hosts[1];
+    const { id: hostID, agent_version: agentVersion, arch } = hosts[1];
 
     const [StatefulHostSettingsPage] = withState(<HostSettingsPage />, state);
 
@@ -79,6 +80,8 @@ describe('HostSettingsPage component', () => {
     expect(screen.getByText('Azure')).toBeVisible();
     expect(screen.getByText('Agent version')).toBeVisible();
     expect(screen.getByText(agentVersion)).toBeVisible();
+    expect(screen.getByText('Architecture')).toBeVisible();
+    expect(screen.getByText(arch)).toBeVisible();
     expect(screen.getByText(group0)).toBeVisible();
     expect(screen.getByText(group1)).toBeVisible();
     expect(screen.getByText(group2)).toBeVisible();
