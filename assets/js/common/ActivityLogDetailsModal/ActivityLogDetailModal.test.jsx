@@ -107,8 +107,8 @@ describe('ActivityLogDetailModal component', () => {
       );
     });
 
-    expect(() => screen.getByText('Related Events')).toThrow();
-    expect(() => screen.getByText('Show Events')).toThrow();
+    expect(screen.queryByText('Related Events')).not.toBeInTheDocument();
+    expect(screen.queryByText('Show Events')).not.toBeInTheDocument();
   });
 
   it('should call onClose when the close button is clicked', async () => {
