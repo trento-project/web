@@ -53,6 +53,23 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterClusterHostTe
                      1000
   end
 
+  test "should not broadcast cluster_cib_last_written_updated message when cib last written is unchanged" do
+    %{id: cluster_id} = insert(:cluster)
+    cib_last_written = Date.to_string(Faker.Date.forward(0))
+    insert(:cluster_enrichment_data, cluster_id: cluster_id, cib_last_written: cib_last_written)
+
+    command =
+      build(
+        :register_cluster_host,
+        cluster_id: cluster_id,
+        cib_last_written: cib_last_written
+      )
+
+    Enrichable.enrich(command, %{})
+
+    refute_broadcast "cluster_cib_last_written_updated", _
+  end
+
   describe "stripping irrelevant cluster node attributes" do
     test "should strip irrelevant lpt attributes from hana-scale-up cluster nodes" do
       sid = String.upcase(Faker.Lorem.word())

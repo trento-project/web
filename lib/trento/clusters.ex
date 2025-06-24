@@ -145,12 +145,21 @@ defmodule Trento.Clusters do
 
   @spec update_cib_last_written(String.t(), String.t()) :: {:ok, Ecto.Schema.t()} | {:error, any}
   def update_cib_last_written(cluster_id, cib_last_written) do
-    case Repo.get(ClusterEnrichmentData, cluster_id) do
+    ClusterEnrichmentData
+    |> Repo.get(cluster_id)
+    |> case do
       nil -> %ClusterEnrichmentData{cluster_id: cluster_id}
       enriched_cluster -> enriched_cluster
     end
-    |> ClusterEnrichmentData.changeset(%{cib_last_written: cib_last_written})
-    |> Repo.insert_or_update()
+    |> then(fn
+      %ClusterEnrichmentData{cib_last_written: ^cib_last_written} ->
+        {:error, :unchanged_cib_last_written}
+
+      enrichment_data ->
+        enrichment_data
+        |> ClusterEnrichmentData.changeset(%{cib_last_written: cib_last_written})
+        |> Repo.insert_or_update()
+    end)
   end
 
   @spec maintenance?(ClusterReadModel.t()) :: boolean()

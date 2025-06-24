@@ -499,6 +499,15 @@ defmodule Trento.ClustersTest do
       {:ok, %ClusterEnrichmentData{cib_last_written: ^cib_last_written}} =
         Clusters.update_cib_last_written(cluster.id, cib_last_written)
     end
+
+    test "should not update a not changed cib_last_written" do
+      %{id: cluster_id} = insert(:cluster)
+      cib_last_written = Date.to_string(Faker.Date.forward(0))
+      insert(:cluster_enrichment_data, cluster_id: cluster_id, cib_last_written: cib_last_written)
+
+      {:error, :unchanged_cib_last_written} =
+        Clusters.update_cib_last_written(cluster_id, cib_last_written)
+    end
   end
 
   describe "ASCS/ERS cluster checks execution" do
