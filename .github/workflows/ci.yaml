@@ -869,13 +869,7 @@ jobs:
         run: chmod +x $(whereis photofinish | cut -d" " -f2)
       - name: Push data
         run: |
-          photofinish run healthy-27-node-SAP-cluster -u "http://$TRENTO_DEMO_IP/api/collect" "$TRENTO_API_KEY"
-          photofinish run hana-scale-out -u "http://$TRENTO_DEMO_IP/api/collect" "$TRENTO_API_KEY"
-          photofinish run hana-diskless-sbd -u "http://$TRENTO_DEMO_IP/api/collect" "$TRENTO_API_KEY"
-          photofinish run multi-tenant -u "http://$TRENTO_DEMO_IP/api/collect" "$TRENTO_API_KEY"
-          photofinish run hana-scale-up-angi -u "http://$TRENTO_DEMO_IP/api/collect" "$TRENTO_API_KEY"
-          photofinish run java-system -u "http://$TRENTO_DEMO_IP/api/collect" "$TRENTO_API_KEY"
-          photofinish run hana-scale-up-cost-opt -u "http://$TRENTO_DEMO_IP/api/collect" "$TRENTO_API_KEY"
+          photofinish run demo -u "http://$TRENTO_DEMO_IP/api/collect" "$TRENTO_API_KEY"
 
   obs-sync:
     name: Update obs packages

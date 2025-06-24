@@ -1,3 +1,15 @@
+[demo]
+
+directories = [
+    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster",
+    "./test/fixtures/scenarios/hana-scale-out",
+    "./test/fixtures/scenarios/hana-diskless-sbd",
+    "./test/fixtures/scenarios/multi-tenant",
+    "./test/fixtures/scenarios/hana-scale-up-angi",
+    "./test/fixtures/scenarios/sap-system-java",
+    "./test/fixtures/scenarios/hana-scale-up-cost-opt",
+]
+
 [healthy-27-node-SAP-cluster]
 
 directories = ["./test/fixtures/scenarios/healthy-27-node-SAP-cluster"]
