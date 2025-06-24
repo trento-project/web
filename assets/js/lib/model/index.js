@@ -33,3 +33,10 @@ export const providers = [
   VMWARE_PROVIDER,
 ];
 export const isValidProvider = (provider) => providers.includes(provider);
+
+export const ARCH_PPC64LE = 'ppc64le';
+export const ARCH_S390X = 's390x';
+export const ARCH_X86_64 = 'x86_64';
+export const ARCH_UNKNOWN = 'unknown';
+
+export const architectures = [ARCH_X86_64, ARCH_PPC64LE, ARCH_S390X];
