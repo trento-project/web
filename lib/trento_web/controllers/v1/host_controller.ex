@@ -78,9 +78,7 @@ defmodule TrentoWeb.V1.HostController do
     ]
 
   @spec delete(Plug.Conn.t(), map) :: Plug.Conn.t()
-  def delete(conn, %{id: host_id} = resource_metadata) do
-    conn = assign(conn, :resource_metadata, resource_metadata)
-
+  def delete(conn, %{id: host_id}) do
     case Hosts.deregister_host(host_id) do
       :ok -> send_resp(conn, 204, "")
       {:error, error} -> {:error, error}

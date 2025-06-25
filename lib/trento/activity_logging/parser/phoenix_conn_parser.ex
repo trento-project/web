@@ -34,9 +34,9 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
         action,
         %Plug.Conn{
           assigns: %{
-            correlation_id: correlation_id,
-            resource_metadata: resource_metadata
-          }
+            correlation_id: correlation_id
+          },
+          path_params: path_params
         } = _conn
       )
       when action in [
@@ -44,10 +44,22 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
              :sap_system_cleanup_requested,
              :database_cleanup_requested
            ] do
+    key =
+      case action do
+        :host_cleanup_requested -> :host_id
+        _ -> :sap_system_id
+      end
+
     %{
-      correlation_id: correlation_id,
-      resource_details: resource_metadata
+      correlation_id: correlation_id
     }
+    |> Map.merge(path_params)
+    |> Map.put(key, path_params["id"])
+    |> Map.delete("id")
+    |> Map.new(fn
+      {key, value} when is_binary(key) -> {String.to_existing_atom(key), value}
+      {key, value} -> {key, value}
+    end)
   end
 
   def get_activity_metadata(
