@@ -21,6 +21,7 @@
     "os_version": "15-SP5",
     "socket_count": 1,
     "total_memory_mb": 3862,
-    "fully_qualified_domain_name": "vms4prdmm.l15cqsinwnpu5gfyrf1r5l51fe.ax.internal.cloudapp.net"
+    "fully_qualified_domain_name": "vms4prdmm.l15cqsinwnpu5gfyrf1r5l51fe.ax.internal.cloudapp.net",
+    "arch": "x86_64"
   }
 }

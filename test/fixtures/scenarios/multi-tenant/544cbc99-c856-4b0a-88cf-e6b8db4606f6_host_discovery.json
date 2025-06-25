@@ -21,7 +21,8 @@
     ],
     "os_version": "15-SP4",
     "socket_count": 1,
-    "total_memory_mb": 64240
+    "total_memory_mb": 64240,
+    "arch": "x86_64"
   },
   "discovery_type": "host_discovery",
   "agent_id": "544cbc99-c856-4b0a-88cf-e6b8db4606f6"
