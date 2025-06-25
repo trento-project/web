@@ -279,14 +279,14 @@ defmodule TrentoWeb.V1.SettingsController do
   end
 
   operation :create_alerting_settings,
-    summary: "Set alerting settings",
-    description: "Set persisted settings for alerting in Trento",
+    summary: "Create alerting settings",
+    description: "Create new persisted settings for alerting in Trento",
     tags: ["Platform"],
     request_body:
       {"Request body for setting alerting settings", "application/json",
        Schema.Platform.CreateAlertingSettings},
     responses: [
-      ok:
+      created:
         {"Alerting settings successfully modified", "application/json",
          Schema.Platform.AlertingSettings},
       unauthorized: Schema.Unauthorized.response(),
@@ -300,7 +300,7 @@ defmodule TrentoWeb.V1.SettingsController do
 
     with {:ok, settings} <- Settings.create_alerting_settings(alerting_body) do
       conn
-      |> put_status(:ok)
+      |> put_status(:created)
       |> render(:alerting_settings, alerting_settings: settings)
     end
   end
