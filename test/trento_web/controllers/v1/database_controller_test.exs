@@ -48,7 +48,8 @@ defmodule TrentoWeb.V1.DatabaseControllerTest do
              database_id: ^database_id,
              host_id: ^host_id,
              instance_number: ^instance_number
-           } ->
+           },
+           _ ->
           :ok
         end
       )
@@ -73,7 +74,8 @@ defmodule TrentoWeb.V1.DatabaseControllerTest do
              database_id: ^database_id,
              host_id: ^host_id,
              instance_number: ^instance_number
-           } ->
+           },
+           _ ->
           {:error, :instance_present}
         end
       )
@@ -101,7 +103,8 @@ defmodule TrentoWeb.V1.DatabaseControllerTest do
              database_id: ^database_id,
              host_id: ^host_id,
              instance_number: ^instance_number
-           } ->
+           },
+           _ ->
           {:error, :database_instance_not_registered}
         end
       )
@@ -139,7 +142,8 @@ defmodule TrentoWeb.V1.DatabaseControllerTest do
              database_id: ^database_id,
              host_id: ^host_id,
              instance_number: ^instance_number
-           } ->
+           },
+           _ ->
           :ok
         end
       )

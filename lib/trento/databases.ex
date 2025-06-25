@@ -67,7 +67,7 @@ defmodule Trento.Databases do
         {:error, :instance_present}
 
       _ ->
-        commanded().dispatch(
+        correlated_dispatch(
           DeregisterDatabaseInstance.new!(%{
             database_id: database_id,
             host_id: host_id,
@@ -80,4 +80,9 @@ defmodule Trento.Databases do
 
   defp commanded,
     do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]
+
+  defp correlated_dispatch(command) do
+    correlation_id = Process.get(:correlation_id)
+    commanded().dispatch(command, correlation_id: correlation_id, causation_id: correlation_id)
+  end
 end

@@ -52,7 +52,8 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
              sap_system_id: ^sap_system_id,
              host_id: ^host_id,
              instance_number: ^instance_number
-           } ->
+           },
+           _ ->
           :ok
         end
       )
@@ -79,7 +80,8 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
              sap_system_id: ^sap_system_id,
              host_id: ^host_id,
              instance_number: ^instance_number
-           } ->
+           },
+           _ ->
           {:error, :instance_present}
         end
       )
@@ -109,7 +111,8 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
              sap_system_id: ^sap_system_id,
              host_id: ^host_id,
              instance_number: ^instance_number
-           } ->
+           },
+           _ ->
           {:error, :application_instance_not_registered}
         end
       )
@@ -149,7 +152,8 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
              sap_system_id: ^sap_system_id,
              host_id: ^host_id,
              instance_number: ^instance_number
-           } ->
+           },
+           _ ->
           :ok
         end
       )
