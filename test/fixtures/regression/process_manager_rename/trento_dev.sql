@@ -220,42 +220,6 @@ ALTER SEQUENCE public.discovery_events_id_seq OWNED BY public.discovery_events.i
 
 
 --
--- Name: fun_with_flags_toggles; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.fun_with_flags_toggles (
-    id bigint NOT NULL,
-    flag_name character varying(255) NOT NULL,
-    gate_type character varying(255) NOT NULL,
-    target character varying(255) NOT NULL,
-    enabled boolean NOT NULL
-);
-
-
-ALTER TABLE public.fun_with_flags_toggles OWNER TO postgres;
-
---
--- Name: fun_with_flags_toggles_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE public.fun_with_flags_toggles_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER SEQUENCE public.fun_with_flags_toggles_id_seq OWNER TO postgres;
-
---
--- Name: fun_with_flags_toggles_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE public.fun_with_flags_toggles_id_seq OWNED BY public.fun_with_flags_toggles.id;
-
-
---
 -- Name: heartbeats; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -489,13 +453,6 @@ ALTER TABLE ONLY public.discovery_events ALTER COLUMN id SET DEFAULT nextval('pu
 
 
 --
--- Name: fun_with_flags_toggles id; Type: DEFAULT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.fun_with_flags_toggles ALTER COLUMN id SET DEFAULT nextval('public.fun_with_flags_toggles_id_seq'::regclass);
-
-
---
 -- Name: tags id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -563,14 +520,6 @@ COPY public.discarded_discovery_events (id, payload, reason, inserted_at, update
 
 COPY public.discovery_events (id, agent_id, discovery_type, payload, inserted_at, updated_at) FROM stdin;
 1	9cd46919-5f19-59aa-993e-cf3736c71053	host_discovery	{"hostname": "vmhdbprd01", "cpu_count": 4, "os_version": "15-SP3", "ip_addresses": ["127.0.0.1", "::1", "10.80.1.11", "10.80.1.13", "fe80::20d:3aff:fe23:2c6b"], "socket_count": 1, "agent_version": "2.1.0", "total_memory_mb": 32107, "fully_qualified_domain_name": "vmhdbprd01.l15cqsinwnpu5gfyrf1r5l51fe.ax.internal.cloudapp.net"}	2024-07-23 08:10:21.857771	2024-07-23 08:10:21.857771
-\.
-
-
---
--- Data for Name: fun_with_flags_toggles; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.fun_with_flags_toggles (id, flag_name, gate_type, target, enabled) FROM stdin;
 \.
 
 
@@ -736,13 +685,6 @@ SELECT pg_catalog.setval('public.discovery_events_id_seq', 1, true);
 
 
 --
--- Name: fun_with_flags_toggles_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.fun_with_flags_toggles_id_seq', 1, false);
-
-
---
 -- Name: tags_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -810,14 +752,6 @@ ALTER TABLE ONLY public.discarded_discovery_events
 
 ALTER TABLE ONLY public.discovery_events
     ADD CONSTRAINT discovery_events_pkey PRIMARY KEY (id);
-
-
---
--- Name: fun_with_flags_toggles fun_with_flags_toggles_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.fun_with_flags_toggles
-    ADD CONSTRAINT fun_with_flags_toggles_pkey PRIMARY KEY (id);
 
 
 --
@@ -926,13 +860,6 @@ CREATE INDEX database_instances_host_id_index ON public.database_instances USING
 --
 
 CREATE INDEX databases_tenants ON public.databases USING gin (tenants);
-
-
---
--- Name: fwf_flag_name_gate_target_idx; Type: INDEX; Schema: public; Owner: postgres
---
-
-CREATE UNIQUE INDEX fwf_flag_name_gate_target_idx ON public.fun_with_flags_toggles USING btree (flag_name, gate_type, target);
 
 
 --

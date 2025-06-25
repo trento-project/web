@@ -220,42 +220,6 @@ ALTER SEQUENCE public.discovery_events_id_seq OWNED BY public.discovery_events.i
 
 
 --
--- Name: fun_with_flags_toggles; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.fun_with_flags_toggles (
-    id bigint NOT NULL,
-    flag_name character varying(255) NOT NULL,
-    gate_type character varying(255) NOT NULL,
-    target character varying(255) NOT NULL,
-    enabled boolean NOT NULL
-);
-
-
-ALTER TABLE public.fun_with_flags_toggles OWNER TO postgres;
-
---
--- Name: fun_with_flags_toggles_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE public.fun_with_flags_toggles_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.fun_with_flags_toggles_id_seq OWNER TO postgres;
-
---
--- Name: fun_with_flags_toggles_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE public.fun_with_flags_toggles_id_seq OWNED BY public.fun_with_flags_toggles.id;
-
-
---
 -- Name: heartbeats; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -483,13 +447,6 @@ ALTER TABLE ONLY public.discarded_discovery_events ALTER COLUMN id SET DEFAULT n
 --
 
 ALTER TABLE ONLY public.discovery_events ALTER COLUMN id SET DEFAULT nextval('public.discovery_events_id_seq'::regclass);
-
-
---
--- Name: fun_with_flags_toggles id; Type: DEFAULT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.fun_with_flags_toggles ALTER COLUMN id SET DEFAULT nextval('public.fun_with_flags_toggles_id_seq'::regclass);
 
 
 --
@@ -1158,14 +1115,6 @@ COPY public.discovery_events (id, agent_id, discovery_type, payload, inserted_at
 
 
 --
--- Data for Name: fun_with_flags_toggles; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.fun_with_flags_toggles (id, flag_name, gate_type, target, enabled) FROM stdin;
-\.
-
-
---
 -- Data for Name: heartbeats; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -1545,13 +1494,6 @@ SELECT pg_catalog.setval('public.discovery_events_id_seq', 560, true);
 
 
 --
--- Name: fun_with_flags_toggles_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.fun_with_flags_toggles_id_seq', 1, false);
-
-
---
 -- Name: tags_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -1619,14 +1561,6 @@ ALTER TABLE ONLY public.discarded_discovery_events
 
 ALTER TABLE ONLY public.discovery_events
     ADD CONSTRAINT discovery_events_pkey PRIMARY KEY (id);
-
-
---
--- Name: fun_with_flags_toggles fun_with_flags_toggles_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.fun_with_flags_toggles
-    ADD CONSTRAINT fun_with_flags_toggles_pkey PRIMARY KEY (id);
 
 
 --
@@ -1728,13 +1662,6 @@ CREATE INDEX clusters_id_index ON public.clusters USING btree (id);
 --
 
 CREATE INDEX database_instances_host_id_index ON public.database_instances USING btree (host_id);
-
-
---
--- Name: fwf_flag_name_gate_target_idx; Type: INDEX; Schema: public; Owner: postgres
---
-
-CREATE UNIQUE INDEX fwf_flag_name_gate_target_idx ON public.fun_with_flags_toggles USING btree (flag_name, gate_type, target);
 
 
 --
