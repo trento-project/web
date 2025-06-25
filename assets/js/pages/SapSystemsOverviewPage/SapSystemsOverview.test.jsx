@@ -75,28 +75,28 @@ describe('SapSystemsOverviews component', () => {
       const rows = screen.getByRole('table').querySelectorAll('tbody > tr');
       const mainRow = rows[0];
 
-      expect(mainRow.querySelector('td:nth-child(2)')).toHaveTextContent(sid);
-      expect(mainRow.querySelector('td:nth-child(2) > a')).toHaveAttribute(
+      expect(mainRow.querySelector('td:nth-child(3)')).toHaveTextContent(sid);
+      expect(mainRow.querySelector('td:nth-child(3) > a')).toHaveAttribute(
         'href',
         `/sap_systems/${sapSystemID}`
       );
-      expect(mainRow.querySelector('td:nth-child(3)')).toHaveTextContent(
+      expect(mainRow.querySelector('td:nth-child(4)')).toHaveTextContent(
         attachedRdbms
       );
-      expect(mainRow.querySelector('td:nth-child(3) > a')).toHaveAttribute(
+      expect(mainRow.querySelector('td:nth-child(4) > a')).toHaveAttribute(
         'href',
         `/databases/${databaseID}`
       );
-      expect(mainRow.querySelector('td:nth-child(4)')).toHaveTextContent(
+      expect(mainRow.querySelector('td:nth-child(5)')).toHaveTextContent(
         tenant
       );
-      expect(mainRow.querySelector('td:nth-child(5)')).toHaveTextContent(
+      expect(mainRow.querySelector('td:nth-child(6)')).toHaveTextContent(
         sapSystemType
       );
-      expect(mainRow.querySelector('td:nth-child(6)')).toHaveTextContent(
+      expect(mainRow.querySelector('td:nth-child(7)')).toHaveTextContent(
         dbAddress
       );
-      expect(mainRow.querySelector('td:nth-child(7)')).toHaveTextContent(
+      expect(mainRow.querySelector('td:nth-child(8)')).toHaveTextContent(
         'ENSA1'
       );
     });
@@ -137,7 +137,7 @@ describe('SapSystemsOverviews component', () => {
       expectedSapSystemTypes.forEach((expectedType, index) => {
         const rowIndex = index * 2;
         const sapSystemRow = rows[rowIndex];
-        expect(sapSystemRow.querySelector('td:nth-child(5)')).toHaveTextContent(
+        expect(sapSystemRow.querySelector('td:nth-child(6)')).toHaveTextContent(
           expectedType
         );
       });
@@ -175,7 +175,7 @@ describe('SapSystemsOverviews component', () => {
         />
       );
       const rows = screen.getByRole('table').querySelectorAll('tbody > tr');
-      expect(rows[0].querySelector('td:nth-child(5)')).toHaveTextContent(
+      expect(rows[0].querySelector('td:nth-child(6)')).toHaveTextContent(
         expectedSapSystemTypes
       );
     });
@@ -332,6 +332,11 @@ describe('SapSystemsOverviews component', () => {
           />
         );
 
+        const table = screen.getByRole('table');
+        await user.click(
+          table.querySelector('tbody tr:nth-child(1) td:nth-child(1)')
+        );
+
         const cleanUpButton = screen.queryAllByRole('button', {
           name: 'Clean up',
         })[row];
@@ -370,6 +375,11 @@ describe('SapSystemsOverviews component', () => {
           databaseInstances={sapSystem.database_instances}
           userAbilities={[]}
         />
+      );
+
+      const table = screen.getByRole('table');
+      await user.click(
+        table.querySelector('tbody tr:nth-child(1) td:nth-child(1)')
       );
 
       const cleanUpButtons = screen.getAllByRole('button', {
