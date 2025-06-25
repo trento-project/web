@@ -101,8 +101,7 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
              :creating_alerting_settings,
              :updating_alerting_setting
            ] do
-    request_body
-    |> redact(:smtp_password)
+    redact(request_body, :smtp_password)
   end
 
   def get_activity_metadata(
