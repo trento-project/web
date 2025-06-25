@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import { get, groupBy, trim } from 'lodash';
 
 import {
+  architectures,
   providers,
   targetTypes,
   TARGET_HOST,
@@ -30,6 +31,11 @@ import CheckItem from './CheckItem';
 const providerOptionRenderer = createOptionRenderer(
   'All providers',
   (provider) => <ProviderLabel provider={provider} />
+);
+
+const architectureOptionRenderer = createOptionRenderer(
+  'All architectures',
+  (arch) => <span>{arch}</span>
 );
 
 const clusterTypeRenderer = createOptionRenderer(
@@ -84,6 +90,7 @@ function ChecksCatalog({
   const [selectedProvider, setProviderSelected] = useState(OPTION_ALL);
   const [selectedTargetType, setSelectedTargetType] = useState(OPTION_ALL);
   const [selectedClusterType, setSelectedClusterType] = useState(OPTION_ALL);
+  const [selectedArchitecture, setSelectedArchitecture] = useState(OPTION_ALL);
 
   const onTargetTypeChange = (targetType) => {
     if (targetType !== TARGET_CLUSTER) {
@@ -124,11 +131,20 @@ function ChecksCatalog({
       value: selectedProvider,
       onChange: setProviderSelected,
     },
+    {
+      optionsName: 'architecture',
+      options: architectures,
+      renderOption: architectureOptionRenderer,
+      value: selectedArchitecture,
+      onChange: setSelectedArchitecture,
+      disabled: selectedTargetType !== TARGET_HOST,
+    },
   ];
 
   useEffect(() => {
     updateCatalog({
       selectedProvider,
+      selectedArchitecture,
       selectedTargetType,
       selectedClusterType: get(selectedClusterType, 'type', OPTION_ALL),
       selectedHanaScenario: get(
@@ -137,12 +153,18 @@ function ChecksCatalog({
         OPTION_ALL
       ),
     });
-  }, [selectedProvider, selectedTargetType, selectedClusterType]);
+  }, [
+    selectedArchitecture,
+    selectedProvider,
+    selectedTargetType,
+    selectedClusterType,
+  ]);
 
   const clearFilters = () => {
     setProviderSelected(OPTION_ALL);
     setSelectedTargetType(OPTION_ALL);
     setSelectedClusterType(OPTION_ALL);
+    setSelectedArchitecture(OPTION_ALL);
   };
 
   return (

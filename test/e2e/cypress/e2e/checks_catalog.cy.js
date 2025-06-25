@@ -58,40 +58,97 @@ describe('Checks catalog', () => {
     });
 
     it('expected query is issued for AWS provider & Cluster Target Type', () => {
-      const expectedRequestQuery = 'provider=aws&target_type=cluster';
+      const expectedProviderQuery = 'provider=aws';
+      const expectedTargetQuery = 'target_type=cluster';
 
       checksCatalogPage.selectFromProvidersDropdown('AWS');
       checksCatalogPage
         .selectFromTargetsSelectionDropdown('Clusters')
-        .then((endpointUrl) =>
-          expect(endpointUrl).to.include(expectedRequestQuery)
-        );
+        .then((endpointUrl) => {
+          expect(endpointUrl).to.include(expectedProviderQuery);
+          expect(endpointUrl).to.include(expectedTargetQuery);
+        });
     });
 
     it('expected query is issued for AWS provider & Cluster Target Type & HANA Scale Up Perf. Opt.', () => {
-      const expectedRequestQuery =
-        'provider=aws&target_type=cluster&cluster_type=hana_scale_up&hana_scenario=performance_optimized';
+      const expectedProviderQuery = 'provider=aws';
+      const expectedTargetQuery = 'target_type=cluster';
+      const expectedClusterTypeQuery = 'cluster_type=hana_scale_up';
+      const expectedHanaScenarioQuery = 'hana_scenario=performance_optimized';
 
       checksCatalogPage.selectFromProvidersDropdown('AWS');
       checksCatalogPage.selectFromTargetsSelectionDropdown('Clusters');
       checksCatalogPage
         .selectFromClusterTypesSelectionDropdown('HANA Scale Up Perf. Opt.')
-        .then((endpointUrl) =>
-          expect(endpointUrl).to.include(expectedRequestQuery)
-        );
+        .then((endpointUrl) => {
+          expect(endpointUrl).to.include(expectedProviderQuery);
+          expect(endpointUrl).to.include(expectedTargetQuery);
+          expect(endpointUrl).to.include(expectedClusterTypeQuery);
+          expect(endpointUrl).to.include(expectedHanaScenarioQuery);
+        });
     });
 
     it('expected query is issued for AWS provider & Cluster Target Type & HANA Scale Up Cost Opt.', () => {
-      const expectedRequestQuery =
-        'provider=aws&target_type=cluster&cluster_type=hana_scale_up&hana_scenario=cost_optimized';
+      const expectedProviderQuery = 'provider=aws';
+      const expectedTargetQuery = 'target_type=cluster';
+      const expectedClusterTypeQuery = 'cluster_type=hana_scale_up';
+      const expectedHanaScenarioQuery = 'hana_scenario=cost_optimized';
 
       checksCatalogPage.selectFromProvidersDropdown('AWS');
       checksCatalogPage.selectFromTargetsSelectionDropdown('Clusters');
       checksCatalogPage
         .selectFromClusterTypesSelectionDropdown('HANA Scale Up Cost Opt.')
-        .then((endpointUrl) =>
-          expect(endpointUrl).to.include(expectedRequestQuery)
-        );
+        .then((endpointUrl) => {
+          expect(endpointUrl).to.include(expectedProviderQuery);
+          expect(endpointUrl).to.include(expectedTargetQuery);
+          expect(endpointUrl).to.include(expectedClusterTypeQuery);
+          expect(endpointUrl).to.include(expectedHanaScenarioQuery);
+        });
+    });
+
+    it('expected query is issued for AWS provider & Hosts Target Type', () => {
+      const expectedProviderQuery = 'provider=aws';
+      const expectedTargetQuery = 'target_type=host';
+
+      checksCatalogPage.selectFromProvidersDropdown('AWS');
+      checksCatalogPage
+        .selectFromTargetsSelectionDropdown('Hosts')
+        .then((endpointUrl) => {
+          expect(endpointUrl).to.include(expectedProviderQuery);
+          expect(endpointUrl).to.include(expectedTargetQuery);
+        });
+    });
+
+    it('expected query is issued for AWS provider & Hosts Target Type & x86_64 Architecture', () => {
+      const expectedProviderQuery = 'provider=aws';
+      const expectedTargetQuery = 'target_type=host';
+      const expectedArchQuery = 'arch=x86_64';
+
+      checksCatalogPage.selectFromProvidersDropdown('AWS');
+      checksCatalogPage.selectFromTargetsSelectionDropdown('Hosts');
+      checksCatalogPage
+        .selectFromArchitectureDropdown('x86_64')
+        .then((endpointUrl) => {
+          expect(endpointUrl).to.include(expectedProviderQuery);
+          expect(endpointUrl).to.include(expectedTargetQuery);
+          expect(endpointUrl).to.include(expectedArchQuery);
+        });
+    });
+
+    it('expected query is issued for Azure provider & Hosts Target Type & ppc64le Architecture', () => {
+      const expectedProviderQuery = 'provider=azure';
+      const expectedTargetQuery = 'target_type=host';
+      const expectedArchQuery = 'arch=ppc64le';
+
+      checksCatalogPage.selectFromProvidersDropdown('Azure');
+      checksCatalogPage.selectFromTargetsSelectionDropdown('Hosts');
+      checksCatalogPage
+        .selectFromArchitectureDropdown('ppc64le')
+        .then((endpointUrl) => {
+          expect(endpointUrl).to.include(expectedProviderQuery);
+          expect(endpointUrl).to.include(expectedTargetQuery);
+          expect(endpointUrl).to.include(expectedArchQuery);
+        });
     });
   });
 

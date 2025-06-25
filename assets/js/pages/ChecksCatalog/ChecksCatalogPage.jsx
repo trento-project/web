@@ -41,6 +41,7 @@ function ChecksCatalogPage() {
         selectedTargetType,
         selectedClusterType,
         selectedHanaScenario,
+        selectedArchitecture,
       }) =>
         dispatch(
           buildUpdateCatalogAction({
@@ -48,6 +49,7 @@ function ChecksCatalogPage() {
             target_type: selectedTargetType,
             cluster_type: selectedClusterType,
             hana_scenario: selectedHanaScenario,
+            arch: selectedArchitecture,
           })
         )
       }

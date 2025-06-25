@@ -44,6 +44,7 @@ describe('ChecksCatalog ChecksCatalog component', () => {
       selectedProvider: 'all',
       selectedTargetType: 'all',
       selectedHanaScenario: 'all',
+      selectedArchitecture: 'all',
     });
   });
 
@@ -217,42 +218,121 @@ describe('ChecksCatalog ChecksCatalog component', () => {
       selectedHanaScenario: 'all',
       selectedProvider: 'all',
       selectedTargetType: 'all',
+      selectedArchitecture: 'all',
     });
     expect(mockUpdateCatalog).toHaveBeenNthCalledWith(2, {
       selectedClusterType: 'all',
       selectedHanaScenario: 'all',
       selectedProvider: 'aws',
       selectedTargetType: 'all',
+      selectedArchitecture: 'all',
     });
     expect(mockUpdateCatalog).toHaveBeenNthCalledWith(3, {
       selectedClusterType: 'all',
       selectedHanaScenario: 'all',
       selectedProvider: 'aws',
       selectedTargetType: 'cluster',
+      selectedArchitecture: 'all',
     });
     expect(mockUpdateCatalog).toHaveBeenNthCalledWith(4, {
       selectedClusterType: 'hana_scale_up',
       selectedHanaScenario: 'performance_optimized',
       selectedProvider: 'aws',
       selectedTargetType: 'cluster',
+      selectedArchitecture: 'all',
     });
     expect(mockUpdateCatalog).toHaveBeenNthCalledWith(5, {
       selectedClusterType: 'hana_scale_up',
       selectedHanaScenario: 'cost_optimized',
       selectedProvider: 'aws',
       selectedTargetType: 'cluster',
+      selectedArchitecture: 'all',
     });
     expect(mockUpdateCatalog).toHaveBeenNthCalledWith(6, {
       selectedClusterType: 'hana_scale_out',
       selectedHanaScenario: null,
       selectedProvider: 'aws',
       selectedTargetType: 'cluster',
+      selectedArchitecture: 'all',
     });
     expect(mockUpdateCatalog).toHaveBeenNthCalledWith(7, {
       selectedClusterType: 'ascs_ers',
       selectedHanaScenario: null,
       selectedProvider: 'aws',
       selectedTargetType: 'cluster',
+      selectedArchitecture: 'all',
+    });
+  });
+
+  it('should query the catalog with the correct host filters', async () => {
+    const user = userEvent.setup();
+    const mockUpdateCatalog = jest.fn();
+
+    const catalogData = [
+      catalogCheckFactory.build({
+        metadata: { target_type: 'host', arch: 'x86_64' },
+      }),
+      catalogCheckFactory.build({
+        metadata: { target_type: 'host', arch: 'ppc64le' },
+      }),
+    ];
+
+    render(
+      <ChecksCatalog
+        completeCatalog={catalogData}
+        updateCatalog={mockUpdateCatalog}
+      />
+    );
+    await user.click(screen.getByText('All targets'));
+    await user.click(screen.getByText('Hosts'));
+
+    await user.click(screen.getByText('All architectures'));
+    await user.click(screen.getByText('x86_64'));
+
+    await user.click(screen.getAllByText('x86_64')[0]);
+    await user.click(screen.getByText('ppc64le'));
+
+    await user.click(screen.getAllByText('ppc64le')[0]);
+    await user.click(screen.getByText('All architectures'));
+
+    expect(mockUpdateCatalog).toHaveBeenNthCalledWith(1, {
+      selectedClusterType: 'all',
+      selectedHanaScenario: 'all',
+      selectedProvider: 'all',
+      selectedTargetType: 'all',
+      selectedArchitecture: 'all',
+    });
+
+    expect(mockUpdateCatalog).toHaveBeenNthCalledWith(2, {
+      selectedClusterType: 'all',
+      selectedHanaScenario: 'all',
+      selectedProvider: 'all',
+      selectedTargetType: 'host',
+      selectedArchitecture: 'all',
+    });
+
+    expect(mockUpdateCatalog).toHaveBeenNthCalledWith(3, {
+      selectedClusterType: 'all',
+      selectedHanaScenario: 'all',
+      selectedProvider: 'all',
+      selectedTargetType: 'host',
+      selectedArchitecture: 'x86_64',
+    });
+
+    expect(mockUpdateCatalog).toHaveBeenNthCalledWith(4, {
+      selectedClusterType: 'all',
+      selectedHanaScenario: 'all',
+      selectedProvider: 'all',
+      selectedTargetType: 'host',
+      selectedArchitecture: 'ppc64le',
+    });
+
+    expect(mockUpdateCatalog).toHaveBeenNthCalledWith(5, {
+      selectedClusterType: 'all',
+      selectedHanaScenario: 'all',
+      selectedProvider: 'all',
+      selectedTargetType: 'host',
+      selectedArchitecture: 'all',
     });
   });
 });
