@@ -21,6 +21,7 @@
     "os_version": "15-SP4",
     "socket_count": 1,
     "total_memory_mb": 31578,
-    "fully_qualified_domain_name": "trento-hana01.l15cqsinwnpu5gfyrf1r5l51fe.ax.internal.cloudapp.net"
+    "fully_qualified_domain_name": "trento-hana01.l15cqsinwnpu5gfyrf1r5l51fe.ax.internal.cloudapp.net",
+    "arch": "s390x"
   }
 }

@@ -19,7 +19,8 @@
     ],
     "os_version": "15-SP4",
     "socket_count": 1,
-    "total_memory_mb": 7880
+    "total_memory_mb": 7880,
+    "arch": "ppc64le"
   },
   "discovery_type": "host_discovery",
   "agent_id": "c0ecf7d1-bdd3-4c29-b768-cfb97efcc585"
