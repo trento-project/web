@@ -241,7 +241,11 @@ function Table({
               <tbody>
                 {renderedData.length === 0 ? (
                   <EmptyState
-                    colSpan={collapsibleDetailRenderer ? columns.length + 1 : columns.length}
+                    colSpan={
+                      collapsibleDetailRenderer
+                        ? columns.length + 1
+                        : columns.length
+                    }
                     emptyStateText={emptyStateText}
                   />
                 ) : (

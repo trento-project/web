@@ -98,7 +98,9 @@ export const clickCleanUpModalConfirmationButton = () =>
   cy.get(modalCleanUpConfirmationButton).click();
 
 const clickAllRows = () =>
-  cy.get(`${sapSystemsTableRows} td:first-child`).each((cell) => cy.wrap(cell).click());
+  cy
+    .get(`${sapSystemsTableRows} td:first-child`)
+    .each((cell) => cy.wrap(cell).click());
 
 // UI Validations
 export const nwdInstance01CleanUpButtonIsVisible = () =>
@@ -275,7 +277,7 @@ export const tableDisplaysExpectedAmountOfSystems = (systemsAmount) =>
 
 export const eachInstanceHasItsHealthStatusCorrectlyUpdated = () => {
   const sapSystemsFirstRow = `${sapSystemsTableRows}:eq(0)`;
-  const collapsibleCell = `${sapSystemsFirstRow} > td:eq(0)`
+  const collapsibleCell = `${sapSystemsFirstRow} > td:eq(0)`;
   cy.get(collapsibleCell).click();
 
   Object.entries(healthMap).forEach(([state, health], index) => {
@@ -297,7 +299,7 @@ export const sapSystemHealthChangesToRedAsExpected = () => {
   const healthClass = healthMap['RED'];
 
   const sapSystemsFirstRow = `${sapSystemsTableRows}:eq(0)`;
-  const collapsibleCell = `${sapSystemsFirstRow} > td:eq(0)`
+  const collapsibleCell = `${sapSystemsFirstRow} > td:eq(0)`;
   cy.get(collapsibleCell).click();
 
   const sapSystemInstanceHealthBadge = `${sapSystemsFirstRow} td:eq(1) svg`;

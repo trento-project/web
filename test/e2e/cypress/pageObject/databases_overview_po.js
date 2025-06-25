@@ -117,9 +117,11 @@ export const cleanUpButtonIsNotDisplayed = () => {
 
 // UI Interactions
 
-export const clickHdqDatabaseRow = () => cy.get(`${hdqDatabaseCell} > td:eq(0)`).click();
+export const clickHdqDatabaseRow = () =>
+  cy.get(`${hdqDatabaseCell} > td:eq(0)`).click();
 
-export const clickHddDatabaseRow = () => cy.get(`${hddDatabaseCell} > td:eq(0)`).click();
+export const clickHddDatabaseRow = () =>
+  cy.get(`${hddDatabaseCell} > td:eq(0)`).click();
 
 export const clickCleanUpButton = () => {
   const cleanUpButtonSelector = getCleanUpButtonByIdAndInstanceIndex(

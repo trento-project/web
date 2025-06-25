@@ -38,7 +38,7 @@ function CollapsibleTableRow({
         <tr
           className={classNames(
             collapsedRowClassName,
-            'overflow-y-hidden transition-all ease-in-out duration-600',
+            'overflow-y-hidden transition-all ease-in-out duration-600'
           )}
           hidden={!rowExpanded}
         >
