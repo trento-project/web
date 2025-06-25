@@ -31,13 +31,14 @@ const defaultSavedFilters = [];
 
 const resultsTableConfig = {
   usePadding: false,
+  headerClassName: 'bg-gray-50 border-b h-auto',
   rowClassName: 'tn-check-result-row',
   columns: [
     {
       title: 'Id',
       key: 'checkID',
       fontSize: 'text-base',
-      className: 'bg-gray-50 border-b w-1/6 h-auto',
+      className: 'w-1/6',
       render: (checkID, { customized, onClick }) => (
         <div className="flex whitespace-nowrap text-jungle-green-500 justify-between">
           <span
@@ -58,7 +59,6 @@ const resultsTableConfig = {
       title: 'Description',
       key: 'description',
       fontSize: 'text-base',
-      className: 'bg-gray-50 border-b h-auto',
       render: (description) => (
         <ReactMarkdown className="markdown" remarkPlugins={[remarkGfm]}>
           {description}
@@ -69,7 +69,7 @@ const resultsTableConfig = {
       title: 'Result',
       key: 'result',
       fontSize: 'text-base',
-      className: 'bg-gray-50 border-b w-1/6 h-auto',
+      className: 'w-1/6',
       render: (_, { result }) => <HealthIcon health={result} />,
     },
   ],

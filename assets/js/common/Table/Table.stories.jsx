@@ -76,6 +76,15 @@ const filteredConfig = {
   ],
 };
 
+const collapsibleConfig = {
+  ...config,
+  collapsibleDetailRenderer: () => (
+    <div className="p-4 bg-gray-100">
+      <p>This is a collapsible row data</p>
+    </div>
+  ),
+};
+
 const data = [
   {
     user: 'Tony Kekw',
@@ -199,6 +208,10 @@ export function WithHeader(args) {
       {...args}
     />
   );
+}
+
+export function WithCollapsibleRow(args) {
+  return <Table config={collapsibleConfig} data={data} {...args} />;
 }
 
 export function Empty() {
