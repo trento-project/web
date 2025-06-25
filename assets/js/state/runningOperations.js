@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 export const OPERATION_COMPLETED = 'OPERATION_COMPLETED';
 export const OPERATION_REQUESTED = 'OPERATION_REQUESTED';
-export const UPDATE_RUNNING_OPERATION = 'UPDATE_RUNNING_OPERATION';
+export const UPDATE_RUNNING_OPERATIONS = 'UPDATE_RUNNING_OPERATIONS';
 
 export const operationCompleted = ({
   operationID,
@@ -19,9 +19,9 @@ export const operationRequested = ({ groupID, operation, requestParams }) => ({
   payload: { groupID, operation, requestParams },
 });
 
-export const updateRunningOperation = (groupID) => ({
-  type: UPDATE_RUNNING_OPERATION,
-  payload: { groupID },
+export const updateRunningOperations = () => ({
+  type: UPDATE_RUNNING_OPERATIONS,
+  payload: {},
 });
 
 const initialState = {};

@@ -19,7 +19,7 @@ import { updateCatalog } from '@state/catalog';
 import { executionRequested, updateLastExecution } from '@state/lastExecutions';
 import {
   operationRequested,
-  updateRunningOperation,
+  updateRunningOperations,
   removeRunningOperation,
 } from '@state/runningOperations';
 import { getRunningOperation } from '@state/selectors/runningOperations';
@@ -74,7 +74,7 @@ export function ClusterDetailsPage() {
       dispatch(updateCatalog(env));
       dispatch(updateLastExecution(clusterID));
     }
-    dispatch(updateRunningOperation(clusterID));
+    operationsEnabled && dispatch(updateRunningOperations());
   }, [dispatch, provider, type, ensaVersion, filesystemType, architectureType]);
 
   const clusterHosts = useSelector((state) =>

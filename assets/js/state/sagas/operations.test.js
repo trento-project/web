@@ -20,7 +20,7 @@ import { notify } from '@state/notifications';
 import {
   requestOperation,
   completeOperation,
-  updateRunningOperation,
+  updateRunningOperations,
 } from './operations';
 
 const axiosMock = new MockAdapter(networkClient);
@@ -280,63 +280,53 @@ describe('operations saga', () => {
     });
   });
 
-  describe('update running operation', () => {
-    it('should update running operations state for a group when the operation is running', async () => {
-      const groupID = faker.string.uuid();
-      const operation = 'saptuneapplysolution@v1';
+  describe('update running operations', () => {
+    it('should update running operations state when the operation is running', async () => {
+      const operation1 = 'saptuneapplysolution@v1';
+      const operation2 = 'clustermaintenancechange@v1';
+      const groupID1 = faker.string.uuid();
+      const groupID2 = faker.string.uuid();
 
-      axiosMock.onGet(getOperationExecutionsURL(groupID)).reply(200, {
-        items: [{ operation, status: 'running' }],
-        total_count: 1,
+      axiosMock.onGet(getOperationExecutionsURL()).reply(200, {
+        items: [
+          { group_id: groupID1, operation: operation1, status: 'running' },
+          { group_id: groupID2, operation: operation2, status: 'running' },
+        ],
       });
 
-      const dispatched = await recordSaga(updateRunningOperation, {
-        payload: { groupID },
+      const dispatched = await recordSaga(updateRunningOperations, {
+        payload: {},
       });
 
       expect(dispatched).toEqual([
-        setRunningOperation({ groupID, operation: SAPTUNE_SOLUTION_APPLY }),
+        setRunningOperation({
+          groupID: groupID1,
+          operation: SAPTUNE_SOLUTION_APPLY,
+        }),
+        setRunningOperation({
+          groupID: groupID2,
+          operation: CLUSTER_MAINTENANCE_CHANGE,
+        }),
       ]);
     });
 
-    it('should not update running operations state for a group when the operation is completed', async () => {
-      const groupID = faker.string.uuid();
-      const operation = KNOWN_OPERATION;
-
-      axiosMock.onGet(getOperationExecutionsURL(groupID)).reply(200, {
-        items: [{ operation, status: 'completed' }],
-        total_count: 1,
-      });
-
-      const dispatched = await recordSaga(updateRunningOperation, {
-        payload: { groupID },
-      });
-
-      expect(dispatched).toEqual([]);
-    });
-
-    it('should not update running operations state for a group when there is not any operation', async () => {
-      const groupID = faker.string.uuid();
-
-      axiosMock.onGet(getOperationExecutionsURL(groupID)).reply(200, {
+    it('should not update running operations state when there is not any operation', async () => {
+      axiosMock.onGet(getOperationExecutionsURL()).reply(200, {
         items: [],
-        total_count: 0,
       });
 
-      const dispatched = await recordSaga(updateRunningOperation, {
-        payload: { groupID },
+      const dispatched = await recordSaga(updateRunningOperations, {
+        payload: {},
       });
 
       expect(dispatched).toEqual([]);
     });
 
-    it('should not update running operations state for a group when the api call fails', async () => {
-      const groupID = faker.string.uuid();
+    it('should not update running operations state when the api call fails', async () => {
+      axiosMock.onGet(getOperationExecutionsURL()).reply(400, {});
 
-      axiosMock.onGet(getOperationExecutionsURL(groupID)).reply(400, {});
-
-      const dispatched = await recordSaga(updateRunningOperation, {
-        payload: { groupID },
+      const dispatched = await recordSaga(updateRunningOperations, {
+        payload: {},
       });
 
       expect(dispatched).toEqual([]);

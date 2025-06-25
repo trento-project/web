@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -10,6 +10,7 @@ import { getUserProfile } from '@state/selectors/user';
 import { deregisterApplicationInstance } from '@state/sapSystems';
 import {
   operationRequested,
+  updateRunningOperations,
   removeRunningOperation,
 } from '@state/runningOperations';
 
@@ -29,6 +30,10 @@ function SapSystemDetails() {
   const dispatch = useDispatch();
 
   const runningOperations = useSelector(getRunningOperationsList());
+
+  useEffect(() => {
+    operationsEnabled && dispatch(updateRunningOperations());
+  }, [dispatch]);
 
   if (!sapSystem) {
     return <div>Not Found</div>;
