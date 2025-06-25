@@ -98,6 +98,20 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
         }
       )
       when action in [
+             :creating_alerting_settings,
+             :updating_alerting_setting
+           ] do
+    request_body
+    |> redact(:smtp_password)
+  end
+
+  def get_activity_metadata(
+        action,
+        %Plug.Conn{
+          body_params: request_body
+        }
+      )
+      when action in [
              :user_creation,
              :user_modification,
              :profile_update
