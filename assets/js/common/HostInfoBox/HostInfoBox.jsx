@@ -3,7 +3,7 @@ import React from 'react';
 import ListView from '@common/ListView';
 import ProviderLabel from '@common/ProviderLabel';
 
-function HostInfoBox({ provider, agentVersion }) {
+function HostInfoBox({ arch, provider, agentVersion }) {
   return (
     <div className="my-6 bg-white shadow rounded-lg px-8 py-4">
       <ListView
@@ -16,9 +16,8 @@ function HostInfoBox({ provider, agentVersion }) {
           },
           { title: 'Agent version', content: agentVersion },
           {
-            // This empty item in the list view is a hack to get the desired spacing rendered
-            title: '',
-            content: '',
+            title: 'Architecture',
+            content: arch,
           },
         ]}
       />

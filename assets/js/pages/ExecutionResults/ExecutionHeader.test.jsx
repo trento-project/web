@@ -49,6 +49,7 @@ describe('Checks results ExecutionHeader Component', () => {
         expect(screen.getByText(hanaScenarioLabel)).toBeTruthy();
         expect(screen.getByText('Checks Results for cluster')).toBeTruthy();
         expect(screen.getByText(clusterName)).toBeTruthy();
+        expect(screen.queryByText('Architecture')).not.toBeInTheDocument();
       }
     );
 
@@ -92,12 +93,14 @@ describe('Checks results ExecutionHeader Component', () => {
       const hostName = faker.animal.bear();
       const cloudProvider = 'aws';
       const agentVersion = '2.1.1';
+      const arch = 'x86_64';
 
       const target = hostFactory.build({
         id: hostID,
         name: hostName,
         provider: cloudProvider,
         agent_version: agentVersion,
+        arch,
       });
 
       renderWithRouter(
@@ -115,6 +118,8 @@ describe('Checks results ExecutionHeader Component', () => {
       expect(screen.getByText(hostName)).toBeTruthy();
       expect(screen.getByText('Agent version')).toBeTruthy();
       expect(screen.getByText(agentVersion)).toBeTruthy();
+      expect(screen.getByText('Architecture')).toBeTruthy();
+      expect(screen.getByText(arch)).toBeTruthy();
     });
 
     it('should not render a warning banner within the header on an unknown provider detection', () => {

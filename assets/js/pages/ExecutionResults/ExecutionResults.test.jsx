@@ -548,4 +548,95 @@ describe('ExecutionResults', () => {
     userEvent.click(screen.getByText(description));
     expect(screen.queryByText(remediation)).not.toBeInTheDocument();
   });
+
+  it('should render ExecutionResults with cluster data', async () => {
+    const {
+      clusterID,
+      clusterHosts,
+      loading,
+      catalog,
+      error,
+      executionLoading,
+      executionData,
+      executionError,
+      executionStarted,
+    } = prepareStateData('completed');
+
+    renderWithRouter(
+      <ExecutionResults
+        targetID={clusterID}
+        targetName="test-cluster"
+        targetType="cluster"
+        target={{
+          provider: 'azure',
+          type: 'hana_scale_up',
+        }}
+        targetHosts={clusterHosts}
+        catalogLoading={loading}
+        catalog={catalog}
+        executionStarted={executionStarted}
+        catalogError={error}
+        executionLoading={executionLoading}
+        executionData={executionData}
+        executionError={executionError}
+      />,
+      { route: `/clusters/${clusterID}/executions/last?health=passing` }
+    );
+
+    expect(screen.getAllByText('test-cluster')).toHaveLength(2);
+    expect(screen.getByText('HA Scenario')).toBeTruthy();
+    expect(screen.getByText('HANA Scale Up')).toBeTruthy();
+    expect(screen.getByText('Azure')).toBeTruthy();
+    expect(screen.getByText(clusterHosts[0].hostname)).toBeTruthy();
+    expect(screen.getByText(clusterHosts[1].hostname)).toBeTruthy();
+
+    expect(screen.queryByText('Architecture')).not.toBeInTheDocument();
+    expect(screen.queryByText('Agent version')).not.toBeInTheDocument();
+  });
+
+  it('should render ExecutionResults with host data', async () => {
+    const {
+      clusterID: hostID,
+      clusterHosts: [host1],
+      loading,
+      catalog,
+      error,
+      executionLoading,
+      executionData,
+      executionError,
+      executionStarted,
+    } = prepareStateData('completed');
+
+    const targetHost = {
+      ...host1,
+      arch: 'x86_64',
+      agent_version: '123.456',
+      provider: 'azure',
+    };
+
+    renderWithRouter(
+      <ExecutionResults
+        targetID={hostID}
+        targetName="test-host"
+        targetType="host"
+        target={targetHost}
+        targetHosts={[targetHost]}
+        catalogLoading={loading}
+        catalog={catalog}
+        executionStarted={executionStarted}
+        catalogError={error}
+        executionLoading={executionLoading}
+        executionData={executionData}
+        executionError={executionError}
+      />,
+      { route: `/clusters/${hostID}/executions/last` }
+    );
+
+    expect(screen.getByText('test-host')).toBeTruthy();
+    expect(screen.getByText('Azure')).toBeTruthy();
+    expect(screen.getByText('x86_64')).toBeTruthy();
+    expect(screen.getByText(targetHost.agent_version)).toBeTruthy();
+
+    expect(screen.queryByText('HA Scenario')).not.toBeInTheDocument();
+  });
 });
