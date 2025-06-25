@@ -21,8 +21,7 @@
     ],
     "os_version": "15-SP4",
     "socket_count": 1,
-    "total_memory_mb": 64240,
-    "arch": "s390x"
+    "total_memory_mb": 64240
   },
   "discovery_type": "host_discovery",
   "agent_id": "e0564d66-be9e-4763-9917-655af1bb4b58"
