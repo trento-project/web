@@ -218,16 +218,6 @@ config :trento, Trento.Charts,
 config :trento,
   uuid_namespace: "fb92284e-aa5e-47f6-a883-bf9469e7a0dc"
 
-config :fun_with_flags,
-       :persistence,
-       adapter: FunWithFlags.Store.Persistent.Ecto,
-       repo: Trento.Repo
-
-config :fun_with_flags, :cache_bust_notifications,
-  enabled: true,
-  adapter: FunWithFlags.Notifications.PhoenixPubSub,
-  client: Trento.PubSub
-
 config :trento, :jwt_authentication,
   issuer: "https://github.com/trento-project/web",
   app_audience: "trento_app",

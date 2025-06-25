@@ -74,11 +74,6 @@ defmodule TrentoWeb.Router do
     get "/session/:provider/saml_callback", SessionController, :saml_callback
   end
 
-  scope "/feature-flags" do
-    pipe_through :browser
-    forward "/", FunWithFlags.UI.Router, namespace: "feature-flags"
-  end
-
   scope "/api", TrentoWeb do
     pipe_through :api
     get "/healthz", HealthController, :health
