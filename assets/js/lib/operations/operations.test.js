@@ -106,11 +106,11 @@ describe('operations', () => {
     },
     {
       operation: 'sap_instance_start',
-      resourceType: 'sap_instance',
+      resourceType: 'application_instance',
     },
     {
       operation: 'sap_instance_stop',
-      resourceType: 'sap_instance',
+      resourceType: 'application_instance',
     },
   ])(
     `should return the operation $operation resource type`,
