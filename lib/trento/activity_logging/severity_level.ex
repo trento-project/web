@@ -25,6 +25,7 @@ defmodule Trento.ActivityLog.SeverityLevel do
     },
     "host_checks_selected" => :warning,
     "host_checks_execution_request" => :info,
+    "host_cleanup_requested" => :warning,
     "host_deregistered" => :warning,
     "host_deregistration_requested" => :debug,
     "host_details_updated" => :info,
@@ -111,12 +112,14 @@ defmodule Trento.ActivityLog.SeverityLevel do
       },
       condition: :map_value_to_severity
     },
+    "sap_system_cleanup_requested" => :warning,
     "sap_system_deregistered" => :warning,
     "sap_system_restored" => :debug,
     "sap_system_rolled_up" => :debug,
     "sap_system_rollup_requested" => :debug,
     "sap_system_tombstoned" => :debug,
     "sap_system_updated" => :info,
+    "database_cleanup_requested" => :warning,
     "database_deregistered" => :warning,
     "database_health_changed" => %{
       type: :kv,

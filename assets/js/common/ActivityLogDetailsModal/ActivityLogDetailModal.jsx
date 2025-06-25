@@ -1,7 +1,8 @@
 import React from 'react';
-import { noop } from 'lodash';
+import { get, noop } from 'lodash';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { NavLink } from 'react-router-dom';
 
 import Button from '@common/Button';
 import Modal from '@common/Modal';
@@ -12,6 +13,7 @@ import classNames from 'classnames';
 
 const keys = [
   'id',
+  'correlatedEvents',
   'type',
   'resource',
   'user',
@@ -23,6 +25,7 @@ const keys = [
 
 const keyToLabel = {
   id: 'ID',
+  correlatedEvents: 'Related Events',
   type: 'Activity Type',
   resource: 'Resource',
   user: 'User',
@@ -44,17 +47,46 @@ const renderResource = (entry) => (
   <span aria-label="activity-log-resource">{toResource(entry)}</span>
 );
 
+function RenderCorrelatedEventsLink({ onClose, entry }) {
+  return (
+    <NavLink
+      to={`/activity_log?severity=info&severity=warning&severity=critical&search=${entry.metadata.correlation_id}&first=20`}
+      onClick={onClose}
+      className="text-jungle-green-500"
+    >
+      Show Events
+    </NavLink>
+  );
+}
+
 const keyRenderers = {
   metadata: renderMetadata,
   type: renderType,
   resource: renderResource,
+  correlatedEvents: RenderCorrelatedEventsLink,
 };
 
 function ActivityLogDetailModal({ open = false, entry, onClose = noop }) {
-  const data = keys.map((key) => ({
+  const maybeCorrelationId = get(entry, 'metadata.correlation_id');
+  const filteredKeys = maybeCorrelationId
+    ? keys
+    : keys.filter((key) => key !== 'correlatedEvents');
+  const resolveArgs = (key) => {
+    switch (key) {
+      case 'resource':
+        return entry;
+
+      case 'correlatedEvents':
+        return { entry, onClose };
+
+      default:
+        return entry[key];
+    }
+  };
+  const data = filteredKeys.map((key) => ({
     title: keyToLabel[key] || key,
-    content: key === 'resource' ? entry : entry[key],
-    render: keyRenderers[key] || undefined,
+    content: resolveArgs(key),
+    render: keyRenderers[key],
     className: classNames('col-span-5', {
       'text-gray-500': key !== 'metadata',
     }),

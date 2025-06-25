@@ -108,7 +108,8 @@ defmodule Trento.DatabasesTest do
              host_id: ^host_id,
              instance_number: ^instance_number,
              deregistered_at: ^deregistered_at
-           } ->
+           },
+           _ ->
           :ok
         end
       )

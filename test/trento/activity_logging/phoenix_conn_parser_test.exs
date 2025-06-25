@@ -160,6 +160,63 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
       end
     end
 
+    @correlation_id Faker.UUID.v4()
+    @host_id Faker.UUID.v4()
+    @sap_system_id Faker.UUID.v4()
+    @instance_number "00"
+    for scenario <- [
+          %{
+            action: :host_cleanup_requested,
+            conn_assigns: %{correlation_id: @correlation_id},
+            path_params: %{"id" => @host_id},
+            expected_metadata: %{correlation_id: @correlation_id, host_id: @host_id}
+          },
+          %{
+            action: :sap_system_cleanup_requested,
+            conn_assigns: %{correlation_id: @correlation_id},
+            path_params: %{
+              "id" => @sap_system_id,
+              "instance_number" => @instance_number,
+              "host_id" => @host_id
+            },
+            expected_metadata: %{
+              correlation_id: @correlation_id,
+              host_id: @host_id,
+              instance_number: @instance_number,
+              sap_system_id: @sap_system_id
+            }
+          },
+          %{
+            action: :database_cleanup_requested,
+            conn_assigns: %{correlation_id: @correlation_id},
+            path_params: %{
+              "id" => @sap_system_id,
+              "instance_number" => @instance_number,
+              "host_id" => @host_id
+            },
+            expected_metadata: %{
+              correlation_id: @correlation_id,
+              host_id: @host_id,
+              instance_number: @instance_number,
+              sap_system_id: @sap_system_id
+            }
+          }
+        ] do
+      @scenario scenario
+      test "should extract correlation_id from #{@scenario.action} action", %{
+        conn: conn
+      } do
+        assert Map.equal?(
+                 @scenario.expected_metadata,
+                 PhoenixConnParser.get_activity_metadata(@scenario.action, %Plug.Conn{
+                   conn
+                   | assigns: @scenario.conn_assigns,
+                     path_params: @scenario.path_params
+                 })
+               )
+      end
+    end
+
     test "should extract operation metadata from requested operation", %{conn: conn} do
       resource_id = Faker.UUID.v4()
       operation_id = Faker.UUID.v4()

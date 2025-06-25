@@ -11,9 +11,11 @@ defmodule TrentoWeb.Plugs.ActivityLoggingPlugTest do
       %{private: private} = conn = build_conn(@method, "/foo/bar", nil)
       refute Map.has_key?(private, :before_send)
 
-      %{private: modified_private} = ActivityLoggingPlug.call(conn)
+      conn = ActivityLoggingPlug.call(conn)
+      modified_private = conn.private
 
       assert Map.has_key?(modified_private, :before_send)
+      assert Map.has_key?(conn.assigns, :correlation_id)
       assert %{before_send: [logging_function]} = modified_private
 
       function_info = Function.info(logging_function)

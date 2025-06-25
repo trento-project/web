@@ -26,6 +26,9 @@ export const PROFILE_UPDATE = 'profile_update';
 export const CLUSTER_CHECKS_EXECUTION_REQUEST =
   'cluster_checks_execution_request';
 export const HOST_CHECKS_EXECUTION_REQUEST = 'host_checks_execution_request';
+export const HOST_CLEANUP_REQUESTED = 'host_cleanup_requested';
+export const SAP_SYSTEM_CLEANUP_REQUESTED = 'sap_system_cleanup_requested';
+export const DATABASE_CLEANUP_REQUESTED = 'database_cleanup_requested';
 export const ACTIVITY_LOG_SETTINGS_UPDATE = 'activity_log_settings_update';
 
 // Host events
@@ -265,6 +268,22 @@ export const ACTIVITY_TYPES_CONFIG = {
     message: (_entry) => `Checks execution requested for host`,
     resource: hostResourceType,
   },
+  [HOST_CLEANUP_REQUESTED]: {
+    label: 'Host Cleanup Requested',
+    message: (_entry) => `Host cleanup requested`,
+    resource: hostResourceType,
+  },
+  [SAP_SYSTEM_CLEANUP_REQUESTED]: {
+    label: 'SAP System Cleanup Requested`',
+    message: (_entry) => `SAP System cleanup requested`,
+    resource: sapSystemResourceType,
+  },
+  [DATABASE_CLEANUP_REQUESTED]: {
+    label: 'Database Cleanup Requested',
+    message: (_entry) => `Database cleanup requested`,
+    resource: databaseResourceType,
+  },
+
   [ACTIVITY_LOG_SETTINGS_UPDATE]: {
     label: 'Activity Log Settings Updated',
     message: (_entry) => `Activity log settings were updated`,

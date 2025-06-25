@@ -291,7 +291,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
       expect(
         Trento.Commanded.Mock,
         :dispatch,
-        fn %RequestHostDeregistration{host_id: ^host_id} ->
+        fn %RequestHostDeregistration{host_id: ^host_id}, _ ->
           :ok
         end
       )
@@ -307,7 +307,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
       expect(
         Trento.Commanded.Mock,
         :dispatch,
-        fn %RequestHostDeregistration{host_id: ^host_id} ->
+        fn %RequestHostDeregistration{host_id: ^host_id}, _ ->
           {:error, :host_alive}
         end
       )
@@ -324,7 +324,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
       expect(
         Trento.Commanded.Mock,
         :dispatch,
-        fn %RequestHostDeregistration{host_id: ^host_id} ->
+        fn %RequestHostDeregistration{host_id: ^host_id}, _ ->
           {:error, :host_not_registered}
         end
       )
@@ -353,7 +353,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
       expect(
         Trento.Commanded.Mock,
         :dispatch,
-        fn %RequestHostDeregistration{host_id: ^host_id} ->
+        fn %RequestHostDeregistration{host_id: ^host_id}, _ ->
           :ok
         end
       )

@@ -10,7 +10,9 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.ActivityLogEventHandlerT
   test "should log a domain event" do
     event = build(:host_checks_health_changed)
 
-    assert :ok == ActivityLogEventHandler.handle(event, %{})
+    correlation_id = UUID.uuid4()
+
+    assert :ok == ActivityLogEventHandler.handle(event, %{correlation_id: correlation_id})
 
     assert [
              %ActivityLog{

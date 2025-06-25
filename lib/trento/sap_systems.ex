@@ -73,7 +73,7 @@ defmodule Trento.SapSystems do
         {:error, :instance_present}
 
       _ ->
-        commanded().dispatch(
+        correlated_dispatch(
           DeregisterApplicationInstance.new!(%{
             sap_system_id: sap_system_id,
             host_id: host_id,
@@ -106,4 +106,9 @@ defmodule Trento.SapSystems do
 
   defp commanded,
     do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]
+
+  defp correlated_dispatch(command) do
+    correlation_id = Process.get(:correlation_id)
+    commanded().dispatch(command, correlation_id: correlation_id, causation_id: correlation_id)
+  end
 end
