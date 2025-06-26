@@ -344,4 +344,30 @@ describe('Table component', () => {
       });
     });
   });
+
+  describe('collapsible row', () => {
+    it('should display the collapsed row when chevron is clicked', async () => {
+      const data = tableDataFactory.buildList(1);
+      const content = 'This is a collapsible row data';
+
+      render(
+        <Table
+          config={{
+            ...tableConfig,
+            collapsibleDetailRenderer: () => <p>{content}</p>,
+          }}
+          data={data}
+        />
+      );
+
+      const table = screen.getByRole('table');
+      const collapsibleCell = table.querySelector(
+        'tbody > tr:nth-child(1) > td:nth-child(1)'
+      );
+      expect(screen.queryByText(content)).not.toBeVisible();
+
+      fireEvent.click(collapsibleCell);
+      expect(screen.queryByText(content)).toBeVisible();
+    });
+  });
 });

@@ -14,7 +14,7 @@ context('Databases Overview', () => {
   describe('Deregistration', () => {
     beforeEach(() => {
       databasesOverviewPage.refresh();
-      databasesOverviewPage.clickHdqDatabaseRow();
+      databasesOverviewPage.expandHdqDatabaseRow();
     });
 
     it(`should not display DB ${databasesOverviewPage.hdqDatabase.sid} after deregistering the primary instance`, () => {
@@ -43,7 +43,7 @@ context('Databases Overview', () => {
 
   describe('Instance deregistration', () => {
     before(() => {
-      databasesOverviewPage.clickHddDatabaseRow();
+      databasesOverviewPage.expandHddDatabaseRow();
     });
 
     beforeEach(() => {
