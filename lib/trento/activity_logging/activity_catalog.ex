@@ -162,6 +162,10 @@ defmodule Trento.ActivityLog.ActivityCatalog do
         {:changing_suma_settings, 200},
       {TrentoWeb.V1.SettingsController, :delete_suse_manager_settings} =>
         {:clearing_suma_settings, 204},
+      {TrentoWeb.V1.SettingsController, :create_alerting_settings} =>
+        {:saving_alerting_settings, 201},
+      {TrentoWeb.V1.SettingsController, :update_alerting_settings} =>
+        {:changing_alerting_settings, 200},
       {TrentoWeb.V1.UsersController, :create} => {:user_creation, 201},
       {TrentoWeb.V1.UsersController, :update} => {:user_modification, 200},
       {TrentoWeb.V1.UsersController, :delete} => {:user_deletion, 204},

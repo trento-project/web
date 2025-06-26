@@ -19,6 +19,8 @@ export const API_KEY_GENERATION = 'api_key_generation';
 export const SAVING_SUMA_SETTINGS = 'saving_suma_settings';
 export const CHANGING_SUMA_SETTINGS = 'changing_suma_settings';
 export const CLEARING_SUMA_SETTINGS = 'clearing_suma_settings';
+export const SAVING_ALERTING_SETTINGS = 'saving_alerting_settings';
+export const CHANGING_ALERTING_SETTINGS = 'changing_alerting_settings';
 export const USER_CREATION = 'user_creation';
 export const USER_MODIFICATION = 'user_modification';
 export const USER_DELETION = 'user_deletion';
@@ -142,6 +144,7 @@ export const availableResourceNameKeys = pipe(
 )(resourceTypesToNameKeyMap);
 
 const sumaSettingsResourceType = (_entry) => 'SUMA Settings';
+const alertingSettingsResourceType = (_entry) => 'Alerting Settings';
 const userResourceType = (_entry) => 'User';
 const clusterResourceType = (_entry) => 'Cluster';
 const hostResourceType = (_entry) => 'Host';
@@ -233,6 +236,16 @@ export const ACTIVITY_TYPES_CONFIG = {
     label: 'SUMA Settings Cleared',
     message: (_entry) => 'SUMA Settings was cleared',
     resource: sumaSettingsResourceType,
+  },
+  [SAVING_ALERTING_SETTINGS]: {
+    label: 'Alerting Settings Saved',
+    message: (_entry) => 'Alerting Settings were saved',
+    resource: alertingSettingsResourceType,
+  },
+  [CHANGING_ALERTING_SETTINGS]: {
+    label: 'Alerting Settings Changed',
+    message: (_entry) => 'Alerting Settings were changed',
+    resource: alertingSettingsResourceType,
   },
   [USER_CREATION]: {
     label: 'User Created',

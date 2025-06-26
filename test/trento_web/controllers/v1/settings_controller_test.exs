@@ -684,7 +684,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
         conn
         |> put_req_header("content-type", "application/json")
         |> post(~p"/api/v1/settings/alerting", create_params)
-        |> json_response(:ok)
+        |> json_response(:created)
         |> assert_response_schema("AlertingSettings", api_spec)
 
       assert exp_params == resp
