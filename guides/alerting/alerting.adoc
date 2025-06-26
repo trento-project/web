@@ -3,9 +3,13 @@
 The Alerting feature notifies the SAP Administrator about important
 events detected in the Landscape being monitored/observed by Trento.
 
-Some of the notified events: - *Host Health detected critical* -
-*Cluster Health detected critical* - *Database Health detected critical*
-- *SAP System Health detected critical* - …
+Some of the notified events:
+
+* *Host Health detected critical*
+* *Cluster Health detected critical*
+* *Database Health detected critical*
+* *SAP System Health detected critical*
+* …
 
 === Enabling Alerting
 
@@ -74,10 +78,10 @@ SMTP_USER=user
 SMTP_PASSWORD=password
 ....
 
-____
-[!Note] Currently *SMTP* is the *only supported delivery mechanism* for
-alert notifications.
-____
+[NOTE]
+====
+Currently *SMTP* is the *only supported delivery mechanism* for alert notifications.
+====
 
 === Enabling Alerting at a later stage
 
@@ -130,6 +134,7 @@ development without need to setup TLS.
 By default, the Mailpit SMTP server runs without need for authentication
 over an unencrypted channel.
 
-____
-[!IMPORTANT] _TBD_: Add STARTTLS/TLS configuration.
-____
+[IMPORTANT]
+====
+_TBD_: Add STARTTLS/TLS configuration.
+====

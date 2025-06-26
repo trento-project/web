@@ -7,20 +7,17 @@ mechanism of `+trento+` API, using the refresh token flow when the
 === Login Diagram
 
 .Login diagram
-image::https://raw.githubusercontent.com/trento-project/web/main/guides/assets/trento-spa-login.png[Login
-diagram]
+image::trento-spa-login.png[Login diagram]
 
 === Refresh Token Success Diagram
 
 .Refresh token success diagram
-image::https://raw.githubusercontent.com/trento-project/web/main/guides/assets/trento-spa-refresh.png[Refresh
-token success diagram]
+image::trento-spa-refresh.png[Refresh token success diagram]
 
 === Refresh Token Failure Diagram
 
 .Refresh token failure diagram
-image::https://raw.githubusercontent.com/trento-project/web/main/guides/assets/trento-spa-refresh-failed.png[Refresh
-token failure diagram]
+image::trento-spa-refresh-failed.png[Refresh token failure diagram]
 
 All the login/logout procedures are handled by the `+SPA+` using route
 guards and authentication providers hooked into the network calls.
