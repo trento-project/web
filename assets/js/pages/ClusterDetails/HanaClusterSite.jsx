@@ -1,9 +1,10 @@
 import React from 'react';
-import { capitalize } from 'lodash';
+import { capitalize, noop } from 'lodash';
 
 import HealthIcon from '@common/HealthIcon';
 import Table from '@common/Table';
 
+import OperationsButton from '@common/OperationsButton';
 import ClusterNodeName from '@pages/ClusterDetails/ClusterNodeName';
 
 import AttributesDetails from './AttributesDetails';
@@ -20,7 +21,10 @@ const getSiteHealth = (srHealthStatus) => {
   }
 };
 
-const siteDetailsConfig = {
+const getSiteDetailsTableConfig = (
+  userAbilities = [],
+  getHostOperations = noop
+) => ({
   usePadding: false,
   columns: [
     {
@@ -62,19 +66,36 @@ const siteDetailsConfig = {
       className: 'table-col-xs',
       render: (_, item) => {
         const { attributes, resources } = item;
+
         return (
-          <AttributesDetails
-            title="Node Details"
-            attributes={attributes}
-            resources={resources}
-          />
+          <div className="flex w-fit whitespace-nowrap">
+            <OperationsButton
+              text=""
+              userAbilities={userAbilities}
+              menuPosition="bottom"
+              transparent
+              operations={getHostOperations(item)}
+            />
+            <AttributesDetails
+              title="Node Details"
+              attributes={attributes}
+              resources={resources}
+            />
+          </div>
         );
       },
     },
   ],
-};
+});
 
-function HanaClusterSite({ name, nodes, state = null, srHealthState = null }) {
+function HanaClusterSite({
+  name,
+  nodes,
+  state = null,
+  srHealthState = null,
+  userAbilities = [],
+  getClusterHostOperations = noop,
+}) {
   return (
     <div
       key={name}
@@ -82,7 +103,10 @@ function HanaClusterSite({ name, nodes, state = null, srHealthState = null }) {
     >
       <Table
         className="tn-site-table"
-        config={siteDetailsConfig}
+        config={getSiteDetailsTableConfig(
+          userAbilities,
+          getClusterHostOperations
+        )}
         data={nodes}
         header={
           <div className="flex space-x-2 p-4">
