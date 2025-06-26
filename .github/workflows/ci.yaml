@@ -416,8 +416,6 @@ jobs:
           SPLIT: ${{ strategy.job-total }}
           SPLIT_INDEX: ${{ strategy.job-index }}
           cypress_video: false
-          cypress_db_host: postgres
-          cypress_db_port: 5432
           cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
         with:
           working-directory: test/e2e
@@ -524,8 +522,6 @@ jobs:
         uses: cypress-io/github-action@v6
         env:
           cypress_video: false
-          cypress_db_host: postgres
-          cypress_db_port: 5432
           cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
         with:
           working-directory: test/e2e
@@ -652,8 +648,6 @@ jobs:
         uses: cypress-io/github-action@v6
         env:
           cypress_video: false
-          cypress_db_host: localhost
-          cypress_db_port: 5433
         with:
           working-directory: test/e2e
           spec: ${{ matrix.cypress_spec }}
