@@ -191,9 +191,12 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
              :cluster_operation_requested,
              :host_operation_requested
            ] do
+    operation_id = resp_body |> Jason.decode!() |> Map.get("operation_id")
+
     %{
+      correlation_id: operation_id,
       operation: params |> Map.get(:operation) |> String.to_existing_atom(),
-      operation_id: resp_body |> Jason.decode!() |> Map.get("operation_id"),
+      operation_id: operation_id,
       params: body_params
     }
     |> Map.put(get_operation_resource_id_field(activity), Map.get(params, :id))

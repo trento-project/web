@@ -62,9 +62,11 @@ defmodule Trento.ActivityLog.Logger.Parser.QueueEventParser do
         |> StructHelper.to_atomized_map()
         |> Map.put(:operation, operation)
         |> Map.put(:result, result)
+        |> Map.put(:correlation_id, operation_id)
 
       _ ->
         %{
+          correlation_id: operation_id,
           resource_id: group_id,
           operation: operation,
           operation_id: operation_id,
