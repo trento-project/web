@@ -979,9 +979,7 @@ export const updateApiKeyExpiration = (apiKeyExpiration) => {
 };
 
 export const resetAlertingSettingsDB = () => {
-  cy.task('sqlExecute', {
-    query: "DELETE FROM settings WHERE type = 'alerting_settings'",
-  });
+  cy.exec(`cd ${Cypress.env('project_root')} && mix clear_alerting_settings`);
 };
 
 export const getAlertingSettings = () => {
