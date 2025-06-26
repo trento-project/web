@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { capitalize, get } from 'lodash';
+import { capitalize, get, noop } from 'lodash';
 
 import { getEnsaVersionLabel } from '@lib/model/sapSystems';
 
@@ -9,13 +9,18 @@ import ProviderLabel from '@common/ProviderLabel';
 import SapSystemLink from '@common/SapSystemLink';
 import Table from '@common/Table';
 
+import OperationsButton from '@common/OperationsButton';
+
 import ClusterNodeName from '@pages/ClusterDetails/ClusterNodeName';
 import CheckResultsOverview from '@pages/CheckResultsOverview';
 
 import AttributesDetails from './AttributesDetails';
 import { enrichNodes } from './HanaClusterDetails';
 
-const nodeDetailsConfig = {
+const getNodeDetailsTableConfig = (
+  userAbilities = [],
+  getHostOperations = noop
+) => ({
   usePadding: false,
   columns: [
     {
@@ -51,17 +56,27 @@ const nodeDetailsConfig = {
       className: 'table-col-xs',
       render: (_, item) => {
         const { attributes, resources } = item;
+
         return (
-          <AttributesDetails
-            title="Node Details"
-            attributes={attributes}
-            resources={resources}
-          />
+          <div className="flex w-fit whitespace-nowrap">
+            <OperationsButton
+              text=""
+              userAbilities={userAbilities}
+              menuPosition="bottom"
+              transparent
+              operations={getHostOperations(item)}
+            />
+            <AttributesDetails
+              title="Node Details"
+              attributes={attributes}
+              resources={resources}
+            />
+          </div>
         );
       },
     },
   ],
-};
+});
 
 function AscsErsClusterDetails({
   clusterID,
@@ -72,7 +87,9 @@ function AscsErsClusterDetails({
   details,
   catalog,
   lastExecution,
+  userAbilities = [],
   navigate = () => {},
+  getClusterHostOperations = noop,
 }) {
   const [enrichedSapSystems, setEnrichedSapSystems] = useState([]);
   const [currentSapSystem, setCurrentSapSystem] = useState(null);
@@ -191,7 +208,10 @@ function AscsErsClusterDetails({
       <div className="mt-2">
         <Table
           className="pt-2"
-          config={nodeDetailsConfig}
+          config={getNodeDetailsTableConfig(
+            userAbilities,
+            getClusterHostOperations
+          )}
           data={currentSapSystem?.nodes}
         />
       </div>

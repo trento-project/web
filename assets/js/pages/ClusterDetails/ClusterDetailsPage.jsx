@@ -26,7 +26,13 @@ import { getRunningOperation } from '@state/selectors/runningOperations';
 
 import { buildEnv } from '@lib/checks';
 import { TARGET_CLUSTER } from '@lib/model';
-import { getClusterSids } from '@lib/model/clusters';
+import {
+  ASCS_ERS,
+  HANA_SCALE_OUT,
+  HANA_SCALE_UP,
+  getClusterSids,
+  isValidClusterType,
+} from '@lib/model/clusters';
 
 import ClusterDetails from './ClusterDetails';
 import AscsErsClusterDetails from './AscsErsClusterDetails';
@@ -34,6 +40,18 @@ import HanaClusterDetails from './HanaClusterDetails';
 import { getClusterName } from './ClusterLink';
 
 const operationsEnabled = getFromConfig('operationsEnabled');
+
+function ClusterDetailComponent({ clusterType, ...props }) {
+  switch (clusterType) {
+    case HANA_SCALE_UP:
+    case HANA_SCALE_OUT:
+      return <HanaClusterDetails clusterType={clusterType} {...props} />;
+    case ASCS_ERS:
+      return <AscsErsClusterDetails {...props} />;
+    default:
+      return null;
+  }
+}
 
 export function ClusterDetailsPage() {
   const navigate = useNavigate();
@@ -92,97 +110,66 @@ export function ClusterDetailsPage() {
   }
   const hasSelectedChecks = cluster.selected_checks.length > 0;
 
-  switch (cluster.type) {
-    case 'hana_scale_up':
-    case 'hana_scale_out':
-      return (
-        <ClusterDetails
-          clusterID={clusterID}
-          clusterName={getClusterName(cluster)}
-          details={cluster.details}
-          hasSelectedChecks={hasSelectedChecks}
-          hosts={clusterHosts}
-          lastExecution={lastExecution}
-          operationsEnabled={operationsEnabled}
-          runningOperation={runningOperation}
-          selectedChecks={cluster.selected_checks}
-          userAbilities={abilities}
-          onStartExecution={(_, hostList, checks) =>
-            dispatch(executionRequested(clusterID, hostList, checks))
-          }
-          onRequestOperation={(operation, params) =>
-            dispatch(
-              operationRequested({
-                groupID: clusterID,
-                operation,
-                requestParams: { clusterID, params },
-              })
-            )
-          }
-          onCleanForbiddenOperation={() =>
-            dispatch(removeRunningOperation({ groupID: clusterID }))
-          }
-          navigate={navigate}
-        >
-          <HanaClusterDetails
-            clusterID={clusterID}
-            hosts={clusterHosts}
-            clusterType={cluster.type}
-            cibLastWritten={cluster.cib_last_written}
-            clusterSids={getClusterSids(cluster)}
-            provider={cluster.provider}
-            sapSystems={clusterSapSystems}
-            details={cluster.details}
-            catalog={catalog}
-            lastExecution={lastExecution}
-            navigate={navigate}
-          />
-        </ClusterDetails>
-      );
-    case 'ascs_ers':
-      return (
-        <ClusterDetails
-          clusterID={clusterID}
-          clusterName={getClusterName(cluster)}
-          details={cluster.details}
-          hasSelectedChecks={hasSelectedChecks}
-          hosts={clusterHosts}
-          lastExecution={lastExecution}
-          operationsEnabled={operationsEnabled}
-          runningOperation={runningOperation}
-          selectedChecks={cluster.selected_checks}
-          userAbilities={abilities}
-          onStartExecution={(_, hostList, checks) =>
-            dispatch(executionRequested(clusterID, hostList, checks))
-          }
-          onRequestOperation={(operation, params) =>
-            dispatch(
-              operationRequested({
-                groupID: clusterID,
-                operation,
-                requestParams: { clusterID, params },
-              })
-            )
-          }
-          onCleanForbiddenOperation={() =>
-            dispatch(removeRunningOperation({ groupID: clusterID }))
-          }
-          navigate={navigate}
-        >
-          <AscsErsClusterDetails
-            clusterID={clusterID}
-            cibLastWritten={cluster.cib_last_written}
-            provider={cluster.provider}
-            hosts={clusterHosts}
-            sapSystems={clusterSapSystems}
-            details={cluster.details}
-            catalog={catalog}
-            lastExecution={lastExecution}
-            navigate={navigate}
-          />
-        </ClusterDetails>
-      );
-    default:
-      return <div>Unknown cluster type</div>;
+  if (!isValidClusterType(type)) {
+    return <div>Unknown cluster type</div>;
   }
+
+  const props = {
+    clusterType: cluster.type,
+    // common props for all cluster types
+    clusterID,
+    hosts: clusterHosts,
+    cibLastWritten: cluster.cib_last_written,
+    provider: cluster.provider,
+    details: cluster.details,
+    catalog,
+    lastExecution,
+    sapSystems: clusterSapSystems,
+    userAbilities: abilities,
+    navigate,
+    // the following props are specific to hana details
+    clusterSids: getClusterSids(cluster),
+  };
+
+  return (
+    <ClusterDetails
+      clusterID={clusterID}
+      clusterName={getClusterName(cluster)}
+      details={cluster.details}
+      hasSelectedChecks={hasSelectedChecks}
+      hosts={clusterHosts}
+      lastExecution={lastExecution}
+      operationsEnabled={operationsEnabled}
+      runningOperation={runningOperation}
+      selectedChecks={cluster.selected_checks}
+      userAbilities={abilities}
+      onStartExecution={(_, hostList, checks) =>
+        dispatch(executionRequested(clusterID, hostList, checks))
+      }
+      onRequestOperation={(operation, params) =>
+        dispatch(
+          operationRequested({
+            groupID: clusterID,
+            operation,
+            requestParams: { clusterID, params },
+          })
+        )
+      }
+      onCleanForbiddenOperation={() =>
+        dispatch(removeRunningOperation({ groupID: clusterID }))
+      }
+      onRequestHostOperation={(operation, params) =>
+        dispatch(
+          operationRequested({
+            groupID: clusterID,
+            operation,
+            requestParams: params,
+          })
+        )
+      }
+      navigate={navigate}
+    >
+      <ClusterDetailComponent {...props} />
+    </ClusterDetails>
+  );
 }
