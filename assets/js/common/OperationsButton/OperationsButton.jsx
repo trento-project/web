@@ -40,8 +40,8 @@ function CustomMenuButton({ value, running, disabled, onClick }) {
 
 function OperationsButton({
   text = 'Operations',
-  operations,
-  userAbilities,
+  operations = [],
+  userAbilities = [],
   menuPosition = 'bottom start',
   transparent = false,
 }) {
