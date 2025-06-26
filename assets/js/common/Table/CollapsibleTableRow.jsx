@@ -19,7 +19,7 @@ function CollapsibleTableRow({
       <tr className={className}>
         {collapsibleDetailRenderer && (
           <td
-            className="pl-2 border-b border-gray-200 bg-white"
+            className="pl-4 border-b border-gray-200 bg-white"
             onClick={() => toggleRow(!rowExpanded)}
           >
             <EOS_KEYBOARD_ARROW_DOWN
