@@ -19,8 +19,8 @@ export const API_KEY_GENERATION = 'api_key_generation';
 export const SAVING_SUMA_SETTINGS = 'saving_suma_settings';
 export const CHANGING_SUMA_SETTINGS = 'changing_suma_settings';
 export const CLEARING_SUMA_SETTINGS = 'clearing_suma_settings';
-export const CREATING_ALERTING_SETTINGS = 'creating_alerting_settings';
-export const UPDATING_ALERTING_SETTINGS = 'updating_alerting_settings';
+export const SAVING_ALERTING_SETTINGS = 'saving_alerting_settings';
+export const CHANGING_ALERTING_SETTINGS = 'changing_alerting_settings';
 export const USER_CREATION = 'user_creation';
 export const USER_MODIFICATION = 'user_modification';
 export const USER_DELETION = 'user_deletion';
@@ -234,14 +234,14 @@ export const ACTIVITY_TYPES_CONFIG = {
     message: (_entry) => 'SUMA Settings was cleared',
     resource: sumaSettingsResourceType,
   },
-  [CREATING_ALERTING_SETTINGS]: {
-    label: 'Alerting Settings Created',
-    message: (_entry) => 'Alerting Settings were created',
+  [SAVING_ALERTING_SETTINGS]: {
+    label: 'Alerting Settings Saved',
+    message: (_entry) => 'Alerting Settings were saved',
     resource: alertingSettingsResourceType,
   },
-  [UPDATING_ALERTING_SETTINGS]: {
-    label: 'Alerting Settings Updated',
-    message: (_entry) => 'Alerting Settings were updated',
+  [CHANGING_ALERTING_SETTINGS]: {
+    label: 'Alerting Settings Changed',
+    message: (_entry) => 'Alerting Settings were changed',
     resource: alertingSettingsResourceType,
   },
   [USER_CREATION]: {

@@ -98,8 +98,8 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
         }
       )
       when action in [
-             :creating_alerting_settings,
-             :updating_alerting_setting
+             :saving_alerting_settings,
+             :changing_alerting_setting
            ] do
     redact(request_body, :smtp_password)
   end
