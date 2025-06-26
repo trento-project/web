@@ -26,7 +26,7 @@ const getSapInstanceStartStopDescription = (
   `${getOperationTitle(operation)} with instance number ${instanceNumber} in ${sid}`;
 
 const getPacemakerEnableDisableDescription = (operation, { hostName }) =>
-  `${getOperationTitle(operation)} systemd unit on host ${hostName}`;
+  `${getOperationTitle(operation)} systemd unit at boot on host ${hostName}`;
 
 const DESCRIPTION_RESOLVERS = {
   [SAP_INSTANCE_START]: getSapInstanceStartStopDescription,
