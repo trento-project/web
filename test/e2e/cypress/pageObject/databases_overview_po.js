@@ -36,8 +36,10 @@ const hddDatabase = {
 // Selectors
 
 const hdqDatabaseCell = `tr:contains("${hdqDatabase.sid}")`;
+const hdqDatabaseRowCollapsibleCell = `${hdqDatabaseCell} > td:eq(0)`;
 
 const hddDatabaseCell = `tr:contains("${hddDatabase.sid}")`;
+const hddDatabaseRowCollapsibleCell = `${hddDatabaseCell} > td:eq(0)`;
 
 const databaseInstance1 = `a:contains("${hdqDatabase.instances[0].name}")`;
 const databaseInstance2 = `a:contains("${hdqDatabase.instances[1].name}")`;
@@ -117,11 +119,11 @@ export const cleanUpButtonIsNotDisplayed = () => {
 
 // UI Interactions
 
-export const clickHdqDatabaseRow = () =>
-  cy.get(`${hdqDatabaseCell} > td:eq(0)`).click();
+export const expandHdqDatabaseRow = () =>
+  cy.get(hdqDatabaseRowCollapsibleCell).click();
 
-export const clickHddDatabaseRow = () =>
-  cy.get(`${hddDatabaseCell} > td:eq(0)`).click();
+export const expandHddDatabaseRow = () =>
+  cy.get(hddDatabaseRowCollapsibleCell).click();
 
 export const clickCleanUpButton = () => {
   const cleanUpButtonSelector = getCleanUpButtonByIdAndInstanceIndex(

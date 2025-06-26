@@ -68,6 +68,8 @@ const instancesRowsSelector =
   'tr:nth-child(odd) + tr div[class*="row-group"] div[class*="row border"]';
 const hanaClusterLinks = 'div[class*="cell"] a span:contains("hana")';
 const instanceHostLinks = 'div[class*="cell"] a[href*="/host"]';
+const systemToRemoveCollapsibleCell = `${sapSystemsTableRows}:eq(0) td:first-child`;
+const nwdSystemRowCollapsibleCell = `tr:contains('${sapSystemNwd.sid}') > td:eq(0)`;
 
 // UI Interactions
 export const visit = () => {
@@ -82,11 +84,11 @@ export const tagSapSystems = () => {
   });
 };
 
-export const clickSystemToRemove = () =>
-  cy.get(`${sapSystemsTableRows}:eq(0) td:first-child`).click();
+export const expandSystemToRemove = () =>
+  cy.get(systemToRemoveCollapsibleCell).click();
 
-export const clickNwdSapSystem = () =>
-  cy.get(`tr:contains('${sapSystemNwd.sid}') > td:eq(0)`).click();
+export const expandNwdSapSystem = () =>
+  cy.get(nwdSystemRowCollapsibleCell).click();
 
 export const clickNwdInstance01CleanUpButton = () =>
   cy.get(nwdInstance01CleanUpButton).click();
