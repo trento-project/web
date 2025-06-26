@@ -416,8 +416,6 @@ jobs:
           SPLIT: ${{ strategy.job-total }}
           SPLIT_INDEX: ${{ strategy.job-index }}
           cypress_video: false
-          cypress_db_host: postgres
-          cypress_db_port: 5432
           cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
         with:
           working-directory: test/e2e
@@ -524,8 +522,6 @@ jobs:
         uses: cypress-io/github-action@v6
         env:
           cypress_video: false
-          cypress_db_host: postgres
-          cypress_db_port: 5432
           cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
         with:
           working-directory: test/e2e
@@ -579,6 +575,21 @@ jobs:
               MIX_ENV: dev
               CYPRESS_SSO_INTEGRATION_TESTS: true
               CYPRESS_SSO_TYPE: saml
+          - test: alerting_db
+            cypress_spec: |
+              cypress/e2e/settings_integration.cy.js
+            config_file_content: |
+              import Config
+
+              config :trento, :alerting,
+                enabled: nil,
+                smtp_server: nil,
+                smtp_port: nil,
+                smtp_username: nil,
+                smtp_password: nil
+            env:
+              MIX_ENV: dev
+              CYPRESS_ALERTING_DB_TESTS: true
     env: ${{ matrix.env }}
     steps:
       - name: Checkout
@@ -637,8 +648,6 @@ jobs:
         uses: cypress-io/github-action@v6
         env:
           cypress_video: false
-          cypress_db_host: postgres
-          cypress_db_port: 5432
         with:
           working-directory: test/e2e
           spec: ${{ matrix.cypress_spec }}
