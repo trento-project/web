@@ -3,7 +3,7 @@ defmodule Mix.Tasks.ClearAlertingSettings do
 
   use Mix.Task
 
-  import  Trento.Tasks.Helper
+  import Trento.Tasks.Helper
 
   alias Trento.Repo
   alias Trento.Settings.AlertingSettings
@@ -25,7 +25,7 @@ defmodule Mix.Tasks.ClearAlertingSettings do
     end
   end
 
-  defp clear_alerting_settings() do
+  defp clear_alerting_settings do
     {count, _} = Repo.delete_all(AlertingSettings.base_query())
     count > 0
   end
