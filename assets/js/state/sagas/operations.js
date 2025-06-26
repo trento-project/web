@@ -1,10 +1,11 @@
 import { all, call, put, select, takeEvery } from 'redux-saga/effects';
-import { map, noop } from 'lodash';
+import { map, noop, get } from 'lodash';
 
 import {
   HOST_OPERATION,
   CLUSTER_OPERATION,
   APPLICATION_INSTANCE_OPERATION,
+  CLUSTER_HOST_OPERATION,
   getOperationLabel,
   getOperationInternalName,
   getOperationResourceType,
@@ -14,6 +15,7 @@ import {
   requestHostOperation,
   requestClusterOperation,
   requestSapInstanceOperation,
+  requestClusterHostOperation,
   getOperationExecutions,
 } from '@lib/api/operations';
 import { notify } from '@state/notifications';
@@ -28,13 +30,20 @@ import {
 import { getHost } from '@state/selectors/host';
 import { getCluster } from '@state/selectors/cluster';
 
-function* getResourceName(groupID, resourceType) {
+function* fetchHostName(hostID) {
+  return (yield select(getHost(hostID)))?.hostname || 'unknown';
+}
+
+function* getResourceName(groupID, resourceType, requestParams = {}) {
   switch (resourceType) {
     case HOST_OPERATION:
     case APPLICATION_INSTANCE_OPERATION:
-      return (yield select(getHost(groupID)))?.hostname || 'unknown';
+      return yield fetchHostName(groupID);
     case CLUSTER_OPERATION:
       return (yield select(getCluster(groupID)))?.name || 'unknown';
+    case CLUSTER_HOST_OPERATION: {
+      return yield fetchHostName(requestParams.hostID);
+    }
     default:
       return 'unknown';
   }
@@ -60,6 +69,11 @@ const callRequest = (operation, resourceType, requestParams) => {
         params
       );
     }
+    case CLUSTER_HOST_OPERATION: {
+      const { clusterID, hostID } = requestParams;
+
+      return requestClusterHostOperation(clusterID, hostID, operation);
+    }
     default:
       return noop;
   }
@@ -73,10 +87,13 @@ export function* requestOperation({ payload }) {
   const resourceName = yield call(
     getResourceName,
     groupID,
-    operationResourceType
+    operationResourceType,
+    requestParams
   );
 
-  yield put(setRunningOperation({ groupID, operation }));
+  yield put(
+    setRunningOperation({ groupID, operation, metadata: requestParams })
+  );
   try {
     yield call(callRequest, operation, operationResourceType, requestParams);
     yield put(
@@ -102,6 +119,36 @@ export function* requestOperation({ payload }) {
   }
 }
 
+const defaultSuccessfulCompletionMessage = (operationName, resourceName) =>
+  `Operation ${operationName} succeeded for ${resourceName}`;
+
+const defaultFailedCompletionMessage = (operationName, resourceName) =>
+  `Operation ${operationName} failed for ${resourceName}`;
+
+const successfulCompletionMessages = {
+  [CLUSTER_HOST_OPERATION]: (operationName) =>
+    `Operation ${operationName} succeeded for the requested host`,
+};
+
+const failedCompletionMessages = {
+  [CLUSTER_HOST_OPERATION]: (operationName) =>
+    `Operation ${operationName} failed for the requested host`,
+};
+
+const getSuccessfulCompletionMessage = (resourceType, ...args) =>
+  get(
+    successfulCompletionMessages,
+    resourceType,
+    defaultSuccessfulCompletionMessage
+  )(...args);
+
+const getFailedCompletionMessage = (resourceType, ...args) =>
+  get(
+    failedCompletionMessages,
+    resourceType,
+    defaultFailedCompletionMessage
+  )(...args);
+
 export function* completeOperation({ payload }) {
   const { groupID, operation, result } = payload;
 
@@ -114,16 +161,26 @@ export function* completeOperation({ payload }) {
   );
   yield put(removeRunningOperation({ groupID }));
   if (operationSucceeded(result)) {
+    const successMessage = getSuccessfulCompletionMessage(
+      operationResourceType,
+      operationName,
+      resourceName
+    );
     yield put(
       notify({
-        text: `Operation ${operationName} succeeded for ${resourceName}`,
+        text: successMessage,
         icon: '✅',
       })
     );
   } else {
+    const failureMessage = getFailedCompletionMessage(
+      operationResourceType,
+      operationName,
+      resourceName
+    );
     yield put(
       notify({
-        text: `Operation ${operationName} failed for ${resourceName}`,
+        text: failureMessage,
         icon: '❌',
       })
     );
@@ -141,7 +198,13 @@ export function* updateRunningOperations() {
       runningOperations.map((runningOperation) => {
         const operation = getOperationInternalName(runningOperation.operation);
         return put(
-          setRunningOperation({ groupID: runningOperation.group_id, operation })
+          setRunningOperation({
+            groupID: runningOperation.group_id,
+            operation,
+            // metadata: temporary solution to reconcile information of running operations
+            // the long term goal is to have a homogeneous shape for metadata in the state
+            metadata: { targets: runningOperation.targets },
+          })
         );
       })
     );
