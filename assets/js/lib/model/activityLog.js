@@ -123,6 +123,8 @@ export const APPLICATION_INSTANCE_OPERATION_REQUESTED =
   'application_instance_operation_requested';
 export const CLUSTER_OPERATION_REQUESTED = 'cluster_operation_requested';
 export const HOST_OPERATION_REQUESTED = 'host_operation_requested';
+export const CLUSTER_HOST_OPERATION_REQUESTED =
+  'cluster_host_operation_requested';
 export const OPERATION_COMPLETED = 'operation_completed';
 
 // Check Customization
@@ -634,6 +636,12 @@ export const ACTIVITY_TYPES_CONFIG = {
     message: ({ metadata }) =>
       `Operation ${getOperationLabel(metadata.operation)} requested`,
     resource: hostResourceType,
+  },
+  [CLUSTER_HOST_OPERATION_REQUESTED]: {
+    label: 'Operation Requested on a cluster host',
+    message: ({ metadata }) =>
+      `Operation ${getOperationLabel(metadata.operation)} requested`,
+    resource: clusterResourceType,
   },
   [OPERATION_COMPLETED]: {
     label: 'Operation Completed',
