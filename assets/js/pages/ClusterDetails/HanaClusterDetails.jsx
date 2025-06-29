@@ -1,5 +1,5 @@
 import React from 'react';
-import { get, capitalize, sortBy } from 'lodash';
+import { get, capitalize, sortBy, noop } from 'lodash';
 
 import ListView from '@common/ListView';
 import ProviderLabel from '@common/ProviderLabel';
@@ -27,7 +27,9 @@ function HanaClusterDetails({
   details,
   catalog,
   lastExecution,
-  navigate = () => {},
+  userAbilities,
+  navigate = noop,
+  getClusterHostOperations = noop,
 }) {
   const enrichedNodes = enrichNodes(details?.nodes, hosts);
   const enrichedSapSystems = clusterSids.map((sidItem) => ({
@@ -139,13 +141,20 @@ function HanaClusterDetails({
               nodes={enrichedNodes.filter(({ site }) => site === siteName)}
               state={state}
               srHealthState={srHealthState}
+              userAbilities={userAbilities}
+              getClusterHostOperations={getClusterHostOperations}
             />
           )
         )}
       </div>
 
       {unsitedNodes.length > 0 && (
-        <HanaClusterSite name="Other" nodes={unsitedNodes} />
+        <HanaClusterSite
+          name="Other"
+          nodes={unsitedNodes}
+          userAbilities={userAbilities}
+          getClusterHostOperations={getClusterHostOperations}
+        />
       )}
     </>
   );

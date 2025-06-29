@@ -30,6 +30,7 @@ const initialOperationState = {
   operation: null,
   forbidden: false,
   errors: [],
+  metadata: {},
 };
 
 export const runningOperationsSlice = createSlice({
@@ -52,11 +53,13 @@ export const runningOperationsSlice = createSlice({
       };
     },
     setRunningOperation: (state, { payload }) => {
-      const { groupID, operation } = payload;
+      const { groupID, operation, metadata = {} } = payload;
 
       state[groupID] = {
         ...initialOperationState,
+        groupID,
         operation,
+        metadata,
       };
     },
   },
