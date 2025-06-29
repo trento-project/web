@@ -189,7 +189,8 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
       when activity in [
              :application_instance_operation_requested,
              :cluster_operation_requested,
-             :host_operation_requested
+             :host_operation_requested,
+             :cluster_host_operation_requested
            ] do
     %{
       operation: params |> Map.get(:operation) |> String.to_existing_atom(),
@@ -212,7 +213,10 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
   defp get_operation_resource_id_field(:application_instance_operation_requested),
     do: :sap_system_id
 
-  defp get_operation_resource_id_field(:cluster_operation_requested), do: :cluster_id
+  defp get_operation_resource_id_field(activity)
+       when activity in [:cluster_operation_requested, :cluster_host_operation_requested],
+       do: :cluster_id
+
   defp get_operation_resource_id_field(:host_operation_requested), do: :host_id
 
   defp maybe_add_additional_fields(
@@ -228,6 +232,18 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
     metadata
     |> Map.put(:host_id, host_id)
     |> Map.put(:instance_number, instance_number)
+  end
+
+  defp maybe_add_additional_fields(
+         metadata,
+         :cluster_host_operation_requested,
+         %Plug.Conn{
+           params: %{
+             host_id: host_id
+           }
+         }
+       ) do
+    Map.put(metadata, :host_id, host_id)
   end
 
   defp maybe_add_additional_fields(metadata, _, _), do: metadata
