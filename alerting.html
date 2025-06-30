@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-K7URE6B4.js"></script>
-    <script src="dist/sidebar_items-1F1489FA.js"></script>
+    <script src="dist/sidebar_items-17097AFA.js"></script>
     <script src="docs_config.js"></script>
     <script async src="dist/html-YIPIRHGU.js"></script>
 
@@ -217,7 +217,18 @@ deployment:</p><pre><code class="makeup elixir" translate="no"><span class="n">h
 </h2>
 <p>The provided <code class="inline">docker-compose.yaml</code> file includes a
 <a href="https://github.com/axllent/mailpit">Mailpit</a> SMTP server for local
-testing during development.</p><p>Access Mailpit’s web interface at: <a href="http://localhost:8025/">http://localhost:8025/</a></p><h3 id="configuration-options" class="section-heading">
+testing during development.</p><p>Access Mailpit’s web interface at: <a href="http://localhost:8025/">http://localhost:8025/</a></p><p>By default, during development, compile-time pre-configuration is made
+for Trento to access the local Mailpit server. This might be
+considered as if alerting configuration is made using hard-coded
+environment variables. To switch Trento to use alerting configuration
+from the DB, add the following to your <code class="inline">dev.local.exs</code>:</p><pre><code class="makeup elixir" translate="no"><span class="kn">import</span><span class="w"> </span><span class="nc">Config</span><span class="w">
+
+</span><span class="n">config</span><span class="w"> </span><span class="ss">:trento</span><span class="p">,</span><span class="w"> </span><span class="ss">:alerting</span><span class="p">,</span><span class="w">
+  </span><span class="ss">enabled</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w">
+  </span><span class="ss">smtp_server</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w">
+  </span><span class="ss">smtp_port</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w">
+  </span><span class="ss">smtp_username</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w">
+  </span><span class="ss">smtp_password</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span></code></pre><h3 id="configuration-options" class="section-heading">
   <a href="#configuration-options" class="hover-link">
     <i class="ri-link-m" aria-hidden="true"></i>
   </a>

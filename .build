@@ -6,6 +6,7 @@
 ./assets/trento-spa-refresh.png
 ./assets/trento_single_sign_on_login.png
 404.html
+Mix.Tasks.ClearAlertingSettings.html
 Mix.Tasks.DumpScenario.html
 Mix.Tasks.PruneEvents.html
 Mix.Tasks.Version.html
@@ -525,8 +526,8 @@ dist/lato-latin-ext-300-normal-VPGGJKJL.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-9E439EFB.js
-dist/sidebar_items-1F1489FA.js
+dist/search_data-DFC18993.js
+dist/sidebar_items-17097AFA.js
 environment_variables.html
 hack_on_the_trento.html
 index.html
