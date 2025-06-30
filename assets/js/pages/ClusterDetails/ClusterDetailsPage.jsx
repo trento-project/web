@@ -114,23 +114,6 @@ export function ClusterDetailsPage() {
     return <div>Unknown cluster type</div>;
   }
 
-  const props = {
-    clusterType: cluster.type,
-    // common props for all cluster types
-    clusterID,
-    hosts: clusterHosts,
-    cibLastWritten: cluster.cib_last_written,
-    provider: cluster.provider,
-    details: cluster.details,
-    catalog,
-    lastExecution,
-    sapSystems: clusterSapSystems,
-    userAbilities: abilities,
-    navigate,
-    // the following props are specific to hana details
-    clusterSids: getClusterSids(cluster),
-  };
-
   return (
     <ClusterDetails
       clusterID={clusterID}
@@ -169,7 +152,22 @@ export function ClusterDetailsPage() {
       }
       navigate={navigate}
     >
-      <ClusterDetailComponent {...props} />
+      <ClusterDetailComponent
+        clusterType={cluster.type}
+        // common props for all cluster types
+        clusterID={clusterID}
+        hosts={clusterHosts}
+        cibLastWritten={cluster.cib_last_written}
+        provider={cluster.provider}
+        details={cluster.details}
+        catalog={catalog}
+        lastExecution={lastExecution}
+        sapSystems={clusterSapSystems}
+        userAbilities={abilities}
+        navigate={navigate}
+        // the following props are specific to hana details
+        clusterSids={getClusterSids(cluster)}
+      />
     </ClusterDetails>
   );
 }
