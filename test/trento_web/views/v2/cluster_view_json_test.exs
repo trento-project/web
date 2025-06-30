@@ -36,7 +36,11 @@ defmodule TrentoWeb.V2.ClusterJSONTest do
 
     cluster = build(:cluster, sap_instances: sap_instances)
 
-    %{sap_instances: view_sap_instances, sid: sid, additional_sids: additional_sids} =
+    %{
+      sap_instances: view_sap_instances,
+      sid: sid,
+      additional_sids: additional_sids
+    } =
       ClusterJSON.cluster(%{cluster: cluster})
 
     assert sid_2 == sid
@@ -47,5 +51,19 @@ defmodule TrentoWeb.V2.ClusterJSONTest do
              %{sid: sid_2, instance_number: inr_2},
              %{sid: sid_3, instance_number: inr_3}
            ] == view_sap_instances
+  end
+
+  test "should remove sid from resources" do
+    details = build(:hana_cluster_details)
+    cluster = build(:cluster, details: details)
+
+    %{
+      details: %{resources: resources}
+    } =
+      ClusterJSON.cluster(%{cluster: cluster})
+
+    Enum.each(resources, fn resource ->
+      refute Map.has_key?(resource, :sid)
+    end)
   end
 end

@@ -27,6 +27,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
           status: %Schema{type: :string},
           fail_count: %Schema{type: :integer},
           managed: %Schema{type: :boolean},
+          node: %Schema{type: :string, nullable: true},
           parent: %Schema{
             type: :object,
             additionalProperties: false,
@@ -81,7 +82,8 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
           resources: %Schema{
             description: "A list of Cluster resources",
             type: :array,
-            items: ClusterResource
+            items: ClusterResource,
+            deprecated: true
           }
         }
       },
@@ -147,7 +149,8 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
           stopped_resources: %Schema{
             description: "A list of the stopped resources on this HANA Cluster",
             type: :array,
-            items: ClusterResource
+            items: ClusterResource,
+            deprecated: true
           },
           nodes: %Schema{
             type: :array,
@@ -161,6 +164,10 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
           sbd_devices: %Schema{
             type: :array,
             items: Cluster.SbdDevice
+          },
+          resources: %Schema{
+            description: "A list of cluster resources",
+            items: ClusterResource
           }
         },
         required: [:nodes]
@@ -200,7 +207,8 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
           resources: %Schema{
             type: :array,
             items: ClusterResource,
-            description: "A list of Cluster resources"
+            description: "A list of Cluster resources",
+            deprecated: true
           },
           roles: %Schema{
             type: :array,
@@ -281,7 +289,12 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
           stopped_resources: %Schema{
             type: :array,
             items: ClusterResource,
-            description: "List of the stopped resources on this HANA Cluster"
+            description: "List of the stopped resources on this HANA Cluster",
+            deprecated: true
+          },
+          resources: %Schema{
+            description: "A list of cluster resources",
+            items: ClusterResource
           }
         },
         required: [:sap_systems]

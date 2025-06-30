@@ -38,7 +38,7 @@ defmodule TrentoWeb.V1.ClusterJSON do
 
     adapted_details =
       details
-      |> Map.drop([:sites, :maintenance_mode, :architecture_type, :hana_scenario])
+      |> Map.drop([:sites, :maintenance_mode, :architecture_type, :hana_scenario, :resources])
       |> Map.put(:nodes, adapted_nodes)
       |> Map.put(:stopped_resources, adapted_stopped_resources)
 
@@ -60,6 +60,6 @@ defmodule TrentoWeb.V1.ClusterJSON do
   end
 
   defp adapt_resources(resources) do
-    Enum.map(resources, &Map.drop(&1, [:managed, :parent]))
+    Enum.map(resources, &Map.drop(&1, [:managed, :parent, :node, :sid]))
   end
 end
