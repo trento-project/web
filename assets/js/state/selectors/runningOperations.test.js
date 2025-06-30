@@ -65,7 +65,6 @@ describe('runningOperations selector', () => {
 
     const runningOperations = [runningOperation1, runningOperation2];
 
-    // check against a list of running operations
     expect(
       isOperationRunning(runningOperations, groupID1, operation1)
     ).toBeTruthy();
@@ -75,15 +74,6 @@ describe('runningOperations selector', () => {
     expect(
       isOperationRunning(runningOperations, groupID1, operation2)
     ).toBeFalsy();
-
-    // check against a single item
-    expect(
-      isOperationRunning(runningOperation1, groupID1, operation1)
-    ).toBeTruthy();
-    expect(
-      isOperationRunning(runningOperation2, groupID2, operation1)
-    ).toBeFalsy();
-    expect(isOperationRunning(null, groupID1, operation2)).toBeFalsy();
   });
 
   it('should check if operation is running by using a custom matcher', () => {

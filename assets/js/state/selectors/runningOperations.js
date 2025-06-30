@@ -1,5 +1,5 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { pipe, find, castArray } from 'lodash/fp';
+import { pipe, find } from 'lodash/fp';
 import { flatMap, get } from 'lodash';
 
 const getRunningOperations = ({ runningOperations }) => runningOperations;
@@ -24,7 +24,6 @@ export const isOperationRunning = (
   matcher = defaultMatcher
 ) =>
   pipe(
-    castArray,
     find({ groupID, operation }),
     (foundItem) => !!foundItem && matcher(foundItem)
   )(runningOperationsList);

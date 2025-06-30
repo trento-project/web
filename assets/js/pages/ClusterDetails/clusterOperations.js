@@ -22,7 +22,7 @@ export const getClusterHostOperations = curry(
     {
       value: 'Enable pacemaker at boot',
       running: isOperationRunning(
-        runningOperation,
+        [runningOperation],
         clusterID,
         PACEMAKER_ENABLE,
         matchesHostIdOrTarget(host.id)
@@ -37,7 +37,7 @@ export const getClusterHostOperations = curry(
     {
       value: 'Disable pacemaker at boot',
       running: isOperationRunning(
-        runningOperation,
+        [runningOperation],
         clusterID,
         PACEMAKER_DISABLE,
         matchesHostIdOrTarget(host.id)
