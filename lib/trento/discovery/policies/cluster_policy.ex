@@ -1127,7 +1127,11 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
 
   defp parse_hana_scenario(_), do: HanaScenario.cost_optimized()
 
-  defp parse_cluster_resources(crmmon, cib) do
+  defp parse_cluster_resources(crmmon, %{
+         configuration: %{resources: resources}
+       }) do
+    cib_resources = extract_cluster_primitives_from_cib(resources)
+
     crmmon
     |> extract_cluster_resources()
     |> Enum.map(fn %{id: id, agent: type, role: role, parent: parent, node: node} = resource ->
@@ -1142,7 +1146,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
         managed: parse_managed(resource),
         parent: parent,
         node: nodename,
-        sid: parse_sid_for_resource(id, type, cib)
+        sid: parse_sid_for_resource(id, type, cib_resources)
       }
     end)
   end
@@ -1150,33 +1154,23 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
   defp parse_resource_node(%{name: name}), do: name
   defp parse_resource_node(_), do: nil
 
-  defp parse_sid_for_resource(resource_id, type, %{
-         configuration: %{resources: resources}
-       })
+  defp parse_sid_for_resource(resource_id, type, cib_resources)
        when type in [
               "ocf::suse:SAPHana",
               "ocf::suse:SAPHanaTopology",
               "ocf::suse:SAPHanaController"
             ] do
-    resources
-    |> extract_cluster_primitives_from_cib()
-    |> Enum.find_value([], fn %{id: id, instance_attributes: instance_attributes} ->
-      if id == resource_id, do: instance_attributes
-    end)
+    cib_resources
+    |> parse_resource_instance_attributes(resource_id)
     |> Enum.find_value(nil, fn
       %{name: "SID", value: value} -> value
       _ -> false
     end)
   end
 
-  defp parse_sid_for_resource(resource_id, "ocf::heartbeat:SAPInstance", %{
-         configuration: %{resources: resources}
-       }) do
-    resources
-    |> extract_cluster_primitives_from_cib()
-    |> Enum.find_value([], fn %{id: id, instance_attributes: instance_attributes} ->
-      if id == resource_id, do: instance_attributes
-    end)
+  defp parse_sid_for_resource(resource_id, "ocf::heartbeat:SAPInstance", cib_resources) do
+    cib_resources
+    |> parse_resource_instance_attributes(resource_id)
     |> Enum.find_value(nil, fn
       %{name: "InstanceName", value: value} -> value |> String.split("_") |> Enum.at(0)
       _ -> false
@@ -1184,4 +1178,10 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
   end
 
   defp parse_sid_for_resource(_, _, _), do: nil
+
+  defp parse_resource_instance_attributes(cib_resources, resource_id) do
+    Enum.find_value(cib_resources, [], fn %{id: id, instance_attributes: instance_attributes} ->
+      if id == resource_id, do: instance_attributes
+    end)
+  end
 end
