@@ -249,6 +249,24 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
           atom_operation: :saptune_solution_apply,
           resource_field: :host_id,
           additional_params: %{}
+        },
+        %{
+          action: :cluster_host_operation_requested,
+          operation: "pacemaker_enable",
+          atom_operation: :pacemaker_enable,
+          resource_field: :cluster_id,
+          additional_params: %{
+            host_id: host_id
+          }
+        },
+        %{
+          action: :cluster_host_operation_requested,
+          operation: "pacemaker_disable",
+          atom_operation: :pacemaker_disable,
+          resource_field: :cluster_id,
+          additional_params: %{
+            host_id: host_id
+          }
         }
       ]
 
