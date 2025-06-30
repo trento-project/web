@@ -242,6 +242,6 @@ defmodule Trento.MixProject do
   end
 
   defp get_version_from_file do
-    File.cwd!() |> Path.join("VERSION") |> File.read!() |> String.trim()
+    __DIR__ |> Path.join("VERSION") |> File.read!() |> String.trim()
   end
 end
