@@ -289,6 +289,37 @@ defmodule Trento.Operations.HostPolicyTest do
 
         assert :ok == HostPolicy.authorize_operation(@saptune_operation, host, %{})
       end
+
+      test "should authorize operation '#{operation}' if all instances are stopped and HANA resources are not managed. Scenario: #{name}" do
+        scenarios = [
+          %{cluster_resource_type: "ocf::suse:SAPHana"},
+          %{cluster_resource_type: "ocf::suse:SAPHanaController"}
+        ]
+
+        database_instancess = build_list(2, :database_instance, health: Health.unknown())
+
+        for %{cluster_resource_type: cluster_resource_type} <- scenarios do
+          parent = build(:cluster_resource_parent, managed: false)
+
+          cluster_resource =
+            build(:cluster_resource, type: cluster_resource_type, managed: true, parent: parent)
+
+          cluster_details =
+            build(:hana_cluster_details, maintenance_mode: false, resources: [cluster_resource])
+
+          cluster = build(:cluster, details: cluster_details)
+
+          host =
+            build(:host,
+              application_instances: [],
+              database_instances: database_instancess,
+              cluster: cluster,
+              saptune_status: @saptune_status
+            )
+
+          assert :ok == HostPolicy.authorize_operation(@saptune_operation, host, %{})
+        end
+      end
     end
 
     test "should forbid applying a saptune solution when there is an already applied one" do

@@ -102,6 +102,7 @@ defmodule Trento.Operations.ApplicationInstancePolicyTest do
     test "should authorize operation if the cluster SAPInstance resource is unmanaged" do
       cluster_name = Faker.StarWars.character()
       resource_id = Faker.UUID.v4()
+      sid = "PRD"
 
       scenarios = [
         %{managed: false, result: :ok},
@@ -116,25 +117,20 @@ defmodule Trento.Operations.ApplicationInstancePolicyTest do
       ]
 
       for %{managed: managed, result: result} <- scenarios do
-        [%{name: hostname}] =
-          nodes =
-          build_list(1, :ascs_ers_cluster_node,
-            resources:
-              build_list(1, :cluster_resource,
-                id: resource_id,
-                type: "ocf::heartbeat:SAPInstance",
-                managed: managed
-              )
+        resources =
+          build_list(1, :cluster_resource,
+            id: resource_id,
+            type: "ocf::heartbeat:SAPInstance",
+            managed: managed,
+            sid: sid
           )
 
-        [%{sid: sid}] = sap_systems = build_list(1, :ascs_ers_cluster_sap_system, nodes: nodes)
-
         cluster_details =
-          build(:ascs_ers_cluster_details, maintenance_mode: false, sap_systems: sap_systems)
+          build(:ascs_ers_cluster_details, maintenance_mode: false, resources: resources)
 
         [%{instance_number: instance_number}] =
           clustered_sap_instances =
-          build_list(1, :clustered_sap_instance, hostname: hostname, sid: sid)
+          build_list(1, :clustered_sap_instance, sid: sid)
 
         cluster =
           build(:cluster,
@@ -144,7 +140,7 @@ defmodule Trento.Operations.ApplicationInstancePolicyTest do
             sap_instances: clustered_sap_instances
           )
 
-        host = build(:host, hostname: hostname, cluster: cluster)
+        host = build(:host, cluster: cluster)
 
         instance =
           build(:application_instance,

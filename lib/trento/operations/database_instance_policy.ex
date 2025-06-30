@@ -65,11 +65,9 @@ defmodule Trento.Operations.DatabaseInstancePolicy do
   end
 
   defp get_cluster_resource_id(%ClusterReadModel{
-         details: %{nodes: nodes}
+         details: %{resources: resources}
        }) do
-    Enum.find_value(nodes, nil, fn %{resources: resources} ->
-      Enum.find_value(resources, nil, &find_resource_id/1)
-    end)
+    Enum.find_value(resources, nil, &find_resource_id/1)
   end
 
   defp get_cluster_resource_id(_), do: nil
