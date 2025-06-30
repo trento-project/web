@@ -90,10 +90,11 @@ const checkCustomizationToastReset = `p:contains(${checkCustomizationToastResetL
 const corosyncheckSelectionToggle =
   'div[aria-label="accordion-header"]:contains("Corosync") button';
 
-const modifiedCheckID = 'tbody tr td span[class="inline-flex leading-5"]';
+const modifiedCheckID =
+  'tbody tr td span[class="inline-flex leading-5 cursor-pointer"]';
 const modifiedResultCriticalIcon = 'svg[class="hover:opacity-75 fill-red-500"]';
 
-const checkResultDescription = `tbody tr td div p:contains(${firstCheckDescription})`;
+const checkResultCollapsibleCell = `tbody:eq(0) tr:contains('MODIFIED') td:eq(0)`;
 const unMetExpectations = '0/1 Expectations met.';
 const hostExpectationsNotMet = `tbody tr[class*="overflow-y-hidden"] span[class="text-red-500"]:contains(${unMetExpectations})`;
 const evaluationResultsStatus = `div[class="py-4"] div[class*="text-red"] span:contains('${checkStatus}')`;
@@ -135,8 +136,8 @@ export const clickCorosyncSelectionToggle = () => {
   cy.get(corosyncheckSelectionToggle).click();
 };
 
-export const clickOnCheckResultDescription = () => {
-  cy.get(checkResultDescription).click();
+export const expandModifiedCheckResult = () => {
+  cy.get(checkResultCollapsibleCell).click();
 };
 
 export const clickModifiedCheckExpectations = () => {
@@ -256,7 +257,7 @@ export const validateEvaluationResultsModifiedPill = () => {
   cy.contains(modifiedPillLabel).should('be.visible');
 };
 
-export const validateCusomValue = () => {
+export const validateCustomValue = () => {
   cy.get(customizedValue).should('have.text', customValue);
 };
 

@@ -42,7 +42,7 @@ const resultsTableConfig = {
       render: (checkID, { customized, onClick }) => (
         <div className="flex whitespace-nowrap text-jungle-green-500 justify-between">
           <span
-            className="inline-flex leading-5"
+            className="inline-flex leading-5 cursor-pointer"
             aria-hidden="true"
             onClick={(e) => {
               e.stopPropagation();
