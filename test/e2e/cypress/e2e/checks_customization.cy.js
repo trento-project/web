@@ -127,12 +127,12 @@ context('Checks customization', () => {
       checksSelectionPage.clickSaveChecksSelectionButton();
       checksSelectionPage.clickStartExecutionButton();
       checksSelectionPage.waitForCustomizedCheckElements();
-      checksSelectionPage.clickOnCheckResultDescription();
+      checksSelectionPage.expandModifiedCheckResult();
       checksSelectionPage.clickModifiedCheckExpectations();
       checksSelectionPage.validateCheckStatus();
       checksSelectionPage.validateEvaluationResultsDescription();
       checksSelectionPage.validateEvaluationResultsModifiedPill();
-      checksSelectionPage.validateCusomValue();
+      checksSelectionPage.validateCustomValue();
       checksSelectionPage.vailidateGatheredFactsValue();
     });
   });

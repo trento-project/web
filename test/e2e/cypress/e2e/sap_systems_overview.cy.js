@@ -98,7 +98,7 @@ context('SAP Systems Overview', () => {
     beforeEach(() => {
       sapSystemsOverviewPage.revertMovedScenario();
       sapSystemsOverviewPage.systemNwdIsVisible();
-      sapSystemsOverviewPage.clickSystemToRemove();
+      sapSystemsOverviewPage.expandSystemToRemove();
     });
 
     it('should move a clustered application instance', () => {
@@ -153,7 +153,7 @@ context('SAP Systems Overview', () => {
     beforeEach(() => {
       sapSystemsOverviewPage.restoreNwdHost();
       sapSystemsOverviewPage.sapSystemNwdIsDisplayed();
-      sapSystemsOverviewPage.clickNwdSapSystem();
+      sapSystemsOverviewPage.expandNwdSapSystem();
     });
 
     it('should mark an instance as absent and restore it as present on received respective discovery messages', () => {

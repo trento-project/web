@@ -58,6 +58,11 @@ describe('DatabasesOverview component', () => {
         />
       );
 
+      const table = screen.getByRole('table');
+      await user.click(
+        table.querySelector('tbody tr:nth-child(1) td:nth-child(1)')
+      );
+
       const cleanUpButton = screen.queryByRole('button', { name: 'Clean up' });
       await user.click(cleanUpButton);
       expect(
@@ -90,6 +95,11 @@ describe('DatabasesOverview component', () => {
           databaseInstances={database.database_instances}
           userAbilities={[]}
         />
+      );
+
+      const table = screen.getByRole('table');
+      await user.click(
+        table.querySelector('tbody tr:nth-child(1) td:nth-child(1)')
       );
 
       const cleanUpButton = screen.getByText('Clean up').closest('button');

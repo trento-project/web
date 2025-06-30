@@ -54,20 +54,22 @@ const sapSystemNwq = {
 const instancesData = availableSAPSystems.flatMap((system) => system.instances);
 
 // Selectors
-const sapSystemsTableRows = 'tbody tr[class*="pointer"]';
+const sapSystemsTableRows = 'tbody tr:nth-child(odd)';
 const firstSystemApplicationLayerRows =
-  'tbody tr[class*="cursor"]:eq(0) + tr td div[class*="row-group"]:eq(0) div[class*="row border"]';
+  'tbody tr:nth-child(odd):eq(0) + tr td div[class*="row-group"]:eq(0) div[class*="row border"]';
 const cleanUpButton = 'button:contains("Clean up")';
-const nwdInstance01CleanUpButton = `tbody tr[class*="pointer"]:eq(0) + tr td div[class*="row-group"]:eq(0) div[class*="row border"]:eq(1) div[class*="cell"]:contains('Clean up')`;
-const nwdInstance00CleanUpButton = `tbody tr[class*="pointer"]:eq(0) + tr td div[class*="row-group"]:eq(0) div[class*="row border"]:eq(0) div[class*="cell"]:contains('Clean up')`;
+const nwdInstance01CleanUpButton = `tbody tr:eq(0) + tr td div[class*="row-group"]:eq(0) div[class*="row border"]:eq(1) div[class*="cell"]:contains('Clean up')`;
+const nwdInstance00CleanUpButton = `tbody tr:eq(0) + tr td div[class*="row-group"]:eq(0) div[class*="row border"]:eq(0) div[class*="cell"]:contains('Clean up')`;
 const modalCleanUpConfirmationButton =
   'div[id*="headlessui-dialog-panel"] button:contains("Clean up")';
 const addTagButton = 'span:contains("Add Tag")';
 const existentEnv3Tag = '[data-test-id="tag-env3"]';
 const instancesRowsSelector =
-  'tr[class*="cursor"] + tr div[class*="row-group"] div[class*="row border"]';
+  'tr:nth-child(odd) + tr div[class*="row-group"] div[class*="row border"]';
 const hanaClusterLinks = 'div[class*="cell"] a span:contains("hana")';
 const instanceHostLinks = 'div[class*="cell"] a[href*="/host"]';
+const systemToRemoveCollapsibleCell = `${sapSystemsTableRows}:eq(0) td:first-child`;
+const nwdSystemRowCollapsibleCell = `tr:contains('${sapSystemNwd.sid}') > td:eq(0)`;
 
 // UI Interactions
 export const visit = () => {
@@ -82,11 +84,11 @@ export const tagSapSystems = () => {
   });
 };
 
-export const clickSystemToRemove = () =>
-  cy.get(`${sapSystemsTableRows}:eq(0)`).click();
+export const expandSystemToRemove = () =>
+  cy.get(systemToRemoveCollapsibleCell).click();
 
-export const clickNwdSapSystem = () =>
-  cy.get(`tr:contains('${sapSystemNwd.sid}')`).click();
+export const expandNwdSapSystem = () =>
+  cy.get(nwdSystemRowCollapsibleCell).click();
 
 export const clickNwdInstance01CleanUpButton = () =>
   cy.get(nwdInstance01CleanUpButton).click();
@@ -98,7 +100,9 @@ export const clickCleanUpModalConfirmationButton = () =>
   cy.get(modalCleanUpConfirmationButton).click();
 
 const clickAllRows = () =>
-  cy.get(sapSystemsTableRows).each((row) => cy.wrap(row).click());
+  cy
+    .get(`${sapSystemsTableRows} td:first-child`)
+    .each((cell) => cy.wrap(cell).click());
 
 // UI Validations
 export const nwdInstance01CleanUpButtonIsVisible = () =>
@@ -132,24 +136,24 @@ export const eachSystemHasItsExpectedWorkingLink = () => {
 export const eachSystemHasExpectedHealth = () => {
   availableSAPSystems.forEach(({ health: health }, index) => {
     const healthClass = healthMap[health];
-    const healthCellSelector = `tbody tr:eq(${index}) td:eq(0) svg`;
+    const healthCellSelector = `tbody tr:nth-child(odd):eq(${index}) td:eq(1) svg`;
     cy.get(healthCellSelector).should('have.class', healthClass);
   });
 };
 
 export const eachAttachedDatabaseDetailsAreTheExpected = () => {
   const tableCell = (rowIndex, columnIndex) =>
-    `tbody tr[class*="cursor"]:eq(${rowIndex}) td:eq(${columnIndex})`;
+    `tbody tr:nth-child(odd):eq(${rowIndex}) td:eq(${columnIndex})`;
 
   availableSAPSystems.forEach(
     ({ attachedDatabase: attachedDatabase, type: type }, rowIndex) => {
-      cy.get(tableCell(rowIndex, 2)).should('have.text', attachedDatabase.sid);
-      cy.get(tableCell(rowIndex, 3)).should(
+      cy.get(tableCell(rowIndex, 3)).should('have.text', attachedDatabase.sid);
+      cy.get(tableCell(rowIndex, 4)).should(
         'have.text',
         attachedDatabase.tenant
       );
-      cy.get(tableCell(rowIndex, 4)).should('have.text', type);
-      cy.get(tableCell(rowIndex, 5)).should(
+      cy.get(tableCell(rowIndex, 5)).should('have.text', type);
+      cy.get(tableCell(rowIndex, 6)).should(
         'have.text',
         attachedDatabase.dbAddress
       );
@@ -186,7 +190,7 @@ export const nwpSystemIsNotDisplayed = () =>
 export const eachSystemHasItsDatabaseWorkingLink = () => {
   availableSAPSystems.forEach(
     ({ attachedDatabase: attachedDatabase }, index) => {
-      const databaseSidLink = `tr[class*="cursor"]:eq(${index}) td:contains("${attachedDatabase.sid}") a`;
+      const databaseSidLink = `tbody > tr:nth-child(odd):eq(${index}) td:contains("${attachedDatabase.sid}") a`;
       cy.get(databaseSidLink).click();
       validateUrl(`/databases/${attachedDatabase.id}`);
       cy.go('back');
@@ -265,7 +269,7 @@ export const eachInstanceHasItsHostWorkingLinkg = () => {
 export const javaSystemIsDiscoveredCorrectly = () => {
   const javaSystemRowSelector = `tbody tr:contains('${availableJavaSystem.sid}')`;
   cy.get(javaSystemRowSelector).should('be.visible');
-  const javaSystemTypeSelector = `${javaSystemRowSelector} td:eq(4)`;
+  const javaSystemTypeSelector = `${javaSystemRowSelector} td:eq(5)`;
   cy.get(javaSystemTypeSelector).should('have.text', availableJavaSystem.type);
   tableDisplaysExpectedAmountOfSystems(4);
 };
@@ -275,12 +279,13 @@ export const tableDisplaysExpectedAmountOfSystems = (systemsAmount) =>
 
 export const eachInstanceHasItsHealthStatusCorrectlyUpdated = () => {
   const sapSystemsFirstRow = `${sapSystemsTableRows}:eq(0)`;
-  cy.get(sapSystemsFirstRow).click();
+  const collapsibleCell = `${sapSystemsFirstRow} > td:eq(0)`;
+  cy.get(collapsibleCell).click();
 
   Object.entries(healthMap).forEach(([state, health], index) => {
     basePage.loadScenario(`sap-systems-overview-${state}`);
 
-    const sapSystemInstanceHealthBadge = `${sapSystemsFirstRow} td:eq(0) svg`;
+    const sapSystemInstanceHealthBadge = `${sapSystemsFirstRow} td:eq(1) svg`;
     cy.get(sapSystemInstanceHealthBadge).should('have.class', health);
 
     const appLayerInstanceHealthBadge = `${sapSystemsFirstRow} + tr td div[class*="row border"]:eq(${
@@ -296,9 +301,10 @@ export const sapSystemHealthChangesToRedAsExpected = () => {
   const healthClass = healthMap['RED'];
 
   const sapSystemsFirstRow = `${sapSystemsTableRows}:eq(0)`;
-  cy.get(sapSystemsFirstRow).click();
+  const collapsibleCell = `${sapSystemsFirstRow} > td:eq(0)`;
+  cy.get(collapsibleCell).click();
 
-  const sapSystemInstanceHealthBadge = `${sapSystemsFirstRow} td:eq(0) svg`;
+  const sapSystemInstanceHealthBadge = `${sapSystemsFirstRow} td:eq(1) svg`;
   cy.get(sapSystemInstanceHealthBadge).should('have.class', healthClass);
 
   const appLayerInstanceHealthBadge =
