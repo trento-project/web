@@ -4,8 +4,6 @@ import { faker } from '@faker-js/faker';
 import { recordSaga } from '@lib/test-utils';
 import { networkClient } from '@lib/network';
 
-import { hostFactory } from '@lib/test-utils/factories';
-
 import {
   SAPTUNE_SOLUTION_APPLY,
   CLUSTER_MAINTENANCE_CHANGE,
@@ -196,7 +194,7 @@ describe('operations saga', () => {
               requestParams: { clusterID: groupID, hostID },
             },
           },
-          { hostsList: { hosts: [{ id: hostID, hostname: name }] } }
+          { clustersList: { clusters: [{ id: groupID, name }] } }
         );
 
         expect(dispatched).toEqual([
@@ -326,19 +324,20 @@ describe('operations saga', () => {
       'should complete successfully a cluster host operation',
       async (operation) => {
         const groupID = faker.string.uuid();
+        const name = faker.internet.displayName();
 
         const dispatched = await recordSaga(
           completeOperation,
           {
             payload: { groupID, operation, result: 'UPDATED' },
           },
-          { hostsList: { hosts: hostFactory.buildList(4) } }
+          { clustersList: { clusters: [{ id: groupID, name }] } }
         );
 
         expect(dispatched).toEqual([
           removeRunningOperation({ groupID }),
           notify({
-            text: `Operation ${getOperationLabel(operation)} succeeded for the requested host`,
+            text: `Operation ${getOperationLabel(operation)} succeeded for ${name}`,
             icon: '✅',
           }),
         ]);
@@ -366,29 +365,6 @@ describe('operations saga', () => {
         }),
       ]);
     });
-
-    it.each([PACEMAKER_ENABLE, PACEMAKER_DISABLE])(
-      'should complete an operation with a failed result and a specific message',
-      async (operation) => {
-        const groupID = faker.string.uuid();
-
-        const dispatched = await recordSaga(
-          completeOperation,
-          {
-            payload: { groupID, operation, result: 'FAILED' },
-          },
-          { hostsList: { hosts: hostFactory.buildList(4) } }
-        );
-
-        expect(dispatched).toEqual([
-          removeRunningOperation({ groupID }),
-          notify({
-            text: `Operation ${getOperationLabel(operation)} failed for the requested host`,
-            icon: '❌',
-          }),
-        ]);
-      }
-    );
   });
 
   describe('update running operations', () => {

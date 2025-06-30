@@ -1,5 +1,5 @@
 import { all, call, put, select, takeEvery } from 'redux-saga/effects';
-import { map, noop, get } from 'lodash';
+import { map, noop } from 'lodash';
 
 import {
   HOST_OPERATION,
@@ -30,19 +30,14 @@ import {
 import { getHost } from '@state/selectors/host';
 import { getCluster } from '@state/selectors/cluster';
 
-function* fetchHostName(hostID) {
-  return (yield select(getHost(hostID)))?.hostname || 'unknown';
-}
-
-function* getResourceName(groupID, resourceType, requestParams = {}) {
+function* getResourceName(groupID, resourceType) {
   switch (resourceType) {
     case HOST_OPERATION:
     case APPLICATION_INSTANCE_OPERATION:
-      return yield fetchHostName(groupID);
+      return (yield select(getHost(groupID)))?.hostname || 'unknown';
     case CLUSTER_OPERATION:
-      return (yield select(getCluster(groupID)))?.name || 'unknown';
     case CLUSTER_HOST_OPERATION: {
-      return yield fetchHostName(requestParams.hostID);
+      return (yield select(getCluster(groupID)))?.name || 'unknown';
     }
     default:
       return 'unknown';
@@ -119,36 +114,6 @@ export function* requestOperation({ payload }) {
   }
 }
 
-const defaultSuccessfulCompletionMessage = (operationName, resourceName) =>
-  `Operation ${operationName} succeeded for ${resourceName}`;
-
-const defaultFailedCompletionMessage = (operationName, resourceName) =>
-  `Operation ${operationName} failed for ${resourceName}`;
-
-const successfulCompletionMessages = {
-  [CLUSTER_HOST_OPERATION]: (operationName) =>
-    `Operation ${operationName} succeeded for the requested host`,
-};
-
-const failedCompletionMessages = {
-  [CLUSTER_HOST_OPERATION]: (operationName) =>
-    `Operation ${operationName} failed for the requested host`,
-};
-
-const getSuccessfulCompletionMessage = (resourceType, ...args) =>
-  get(
-    successfulCompletionMessages,
-    resourceType,
-    defaultSuccessfulCompletionMessage
-  )(...args);
-
-const getFailedCompletionMessage = (resourceType, ...args) =>
-  get(
-    failedCompletionMessages,
-    resourceType,
-    defaultFailedCompletionMessage
-  )(...args);
-
 export function* completeOperation({ payload }) {
   const { groupID, operation, result } = payload;
 
@@ -161,26 +126,16 @@ export function* completeOperation({ payload }) {
   );
   yield put(removeRunningOperation({ groupID }));
   if (operationSucceeded(result)) {
-    const successMessage = getSuccessfulCompletionMessage(
-      operationResourceType,
-      operationName,
-      resourceName
-    );
     yield put(
       notify({
-        text: successMessage,
+        text: `Operation ${operationName} succeeded for ${resourceName}`,
         icon: '✅',
       })
     );
   } else {
-    const failureMessage = getFailedCompletionMessage(
-      operationResourceType,
-      operationName,
-      resourceName
-    );
     yield put(
       notify({
-        text: failureMessage,
+        text: `Operation ${operationName} failed for ${resourceName}`,
         icon: '❌',
       })
     );
