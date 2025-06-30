@@ -247,7 +247,173 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                   system_replication_mode: "sync",
                   system_replication_operation_mode: "logreplay",
                   architecture_type: HanaArchitectureType.classic(),
-                  hana_scenario: HanaScenario.performance_optimized()
+                  hana_scenario: HanaScenario.performance_optimized(),
+                  resources: [
+                    %ClusterResource{
+                      id: "test-stop",
+                      type: "ocf::heartbeat:Dummy",
+                      role: "Stopped",
+                      status: nil,
+                      fail_count: nil,
+                      managed: true,
+                      node: nil,
+                      sid: nil,
+                      parent: nil
+                    },
+                    %ClusterResource{
+                      id: "test",
+                      type: "ocf::heartbeat:Dummy",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "node02",
+                      sid: nil,
+                      parent: nil
+                    },
+                    %ClusterResource{
+                      id: "stonith-sbd",
+                      type: "stonith:external/sbd",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "node01",
+                      sid: nil,
+                      parent: nil
+                    },
+                    %ClusterResource{
+                      id: "rsc_ip_PRD_HDB00",
+                      type: "ocf::heartbeat:IPaddr2",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 2,
+                      managed: true,
+                      node: "node01",
+                      sid: nil,
+                      parent: nil
+                    },
+                    %ClusterResource{
+                      id: "rsc_SAPHana_PRD_HDB00",
+                      type: "ocf::suse:SAPHana",
+                      role: "Master",
+                      status: "Active",
+                      fail_count: 1_000_000,
+                      managed: true,
+                      node: "node01",
+                      sid: "PRD",
+                      parent: %ClusterResourceParent{
+                        id: "msl_SAPHana_PRD_HDB00",
+                        managed: true,
+                        multi_state: true
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_SAPHana_PRD_HDB00",
+                      type: "ocf::suse:SAPHana",
+                      role: "Slave",
+                      status: "Active",
+                      fail_count: 300,
+                      managed: true,
+                      node: "node02",
+                      sid: "PRD",
+                      parent: %ClusterResourceParent{
+                        id: "msl_SAPHana_PRD_HDB00",
+                        managed: true,
+                        multi_state: true
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_SAPHanaTopology_PRD_HDB00",
+                      type: "ocf::suse:SAPHanaTopology",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "node01",
+                      sid: "PRD",
+                      parent: %ClusterResourceParent{
+                        id: "cln_SAPHanaTopology_PRD_HDB00",
+                        managed: true,
+                        multi_state: false
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_SAPHanaTopology_PRD_HDB00",
+                      type: "ocf::suse:SAPHanaTopology",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "node02",
+                      sid: "PRD",
+                      parent: %ClusterResourceParent{
+                        id: "cln_SAPHanaTopology_PRD_HDB00",
+                        managed: true,
+                        multi_state: false
+                      }
+                    },
+                    %ClusterResource{
+                      id: "clusterfs",
+                      type: "ocf::heartbeat:Filesystem",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: nil,
+                      managed: true,
+                      node: "node01",
+                      sid: nil,
+                      parent: %ClusterResourceParent{
+                        id: "c-clusterfs",
+                        managed: true,
+                        multi_state: false
+                      }
+                    },
+                    %ClusterResource{
+                      id: "clusterfs",
+                      type: "ocf::heartbeat:Filesystem",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: nil,
+                      managed: true,
+                      node: "node02",
+                      sid: nil,
+                      parent: %ClusterResourceParent{
+                        id: "c-clusterfs",
+                        managed: true,
+                        multi_state: false
+                      }
+                    },
+                    %ClusterResource{
+                      id: "clusterfs",
+                      type: "ocf::heartbeat:Filesystem",
+                      role: "Stopped",
+                      status: nil,
+                      fail_count: nil,
+                      managed: true,
+                      node: nil,
+                      sid: nil,
+                      parent: %ClusterResourceParent{
+                        id: "c-clusterfs",
+                        managed: true,
+                        multi_state: false
+                      }
+                    },
+                    %ClusterResource{
+                      id: "clusterfs",
+                      type: "ocf::heartbeat:Filesystem",
+                      role: "Stopped",
+                      status: nil,
+                      fail_count: nil,
+                      managed: true,
+                      node: nil,
+                      sid: nil,
+                      parent: %ClusterResourceParent{
+                        id: "c-clusterfs",
+                        managed: true,
+                        multi_state: false
+                      }
+                    }
+                  ]
                 },
                 host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
                 name: "hana_cluster",
@@ -493,7 +659,173 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                   system_replication_mode: "sync",
                   system_replication_operation_mode: "logreplay",
                   architecture_type: HanaArchitectureType.classic(),
-                  hana_scenario: HanaScenario.performance_optimized()
+                  hana_scenario: HanaScenario.performance_optimized(),
+                  resources: [
+                    %ClusterResource{
+                      id: "test-stop",
+                      type: "ocf::heartbeat:Dummy",
+                      role: "Stopped",
+                      status: nil,
+                      fail_count: nil,
+                      managed: true,
+                      node: nil,
+                      sid: nil,
+                      parent: nil
+                    },
+                    %ClusterResource{
+                      id: "test",
+                      type: "ocf::heartbeat:Dummy",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "node02",
+                      sid: nil,
+                      parent: nil
+                    },
+                    %ClusterResource{
+                      id: "stonith-sbd",
+                      type: "stonith:external/sbd",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "node01",
+                      sid: nil,
+                      parent: nil
+                    },
+                    %ClusterResource{
+                      id: "rsc_ip_PRD_HDB00",
+                      type: "ocf::heartbeat:IPaddr2",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 2,
+                      managed: true,
+                      node: "node01",
+                      sid: nil,
+                      parent: nil
+                    },
+                    %ClusterResource{
+                      id: "rsc_SAPHana_PRD_HDB00",
+                      type: "ocf::suse:SAPHana",
+                      role: "Master",
+                      status: "Active",
+                      fail_count: 1_000_000,
+                      managed: true,
+                      node: "node01",
+                      sid: "PRD",
+                      parent: %ClusterResourceParent{
+                        id: "msl_SAPHana_PRD_HDB00",
+                        managed: true,
+                        multi_state: true
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_SAPHana_PRD_HDB00",
+                      type: "ocf::suse:SAPHana",
+                      role: "Slave",
+                      status: "Active",
+                      fail_count: 300,
+                      managed: true,
+                      node: "node02",
+                      sid: "PRD",
+                      parent: %ClusterResourceParent{
+                        id: "msl_SAPHana_PRD_HDB00",
+                        managed: true,
+                        multi_state: true
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_SAPHanaTopology_PRD_HDB00",
+                      type: "ocf::suse:SAPHanaTopology",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "node01",
+                      sid: "PRD",
+                      parent: %ClusterResourceParent{
+                        id: "cln_SAPHanaTopology_PRD_HDB00",
+                        managed: true,
+                        multi_state: false
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_SAPHanaTopology_PRD_HDB00",
+                      type: "ocf::suse:SAPHanaTopology",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "node02",
+                      sid: "PRD",
+                      parent: %ClusterResourceParent{
+                        id: "cln_SAPHanaTopology_PRD_HDB00",
+                        managed: true,
+                        multi_state: false
+                      }
+                    },
+                    %ClusterResource{
+                      id: "clusterfs",
+                      type: "ocf::heartbeat:Filesystem",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: nil,
+                      managed: true,
+                      node: "node01",
+                      sid: nil,
+                      parent: %ClusterResourceParent{
+                        id: "c-clusterfs",
+                        managed: true,
+                        multi_state: false
+                      }
+                    },
+                    %ClusterResource{
+                      id: "clusterfs",
+                      type: "ocf::heartbeat:Filesystem",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: nil,
+                      managed: true,
+                      node: "node02",
+                      sid: nil,
+                      parent: %ClusterResourceParent{
+                        id: "c-clusterfs",
+                        managed: true,
+                        multi_state: false
+                      }
+                    },
+                    %ClusterResource{
+                      id: "clusterfs",
+                      type: "ocf::heartbeat:Filesystem",
+                      role: "Stopped",
+                      status: nil,
+                      fail_count: nil,
+                      managed: true,
+                      node: nil,
+                      sid: nil,
+                      parent: %ClusterResourceParent{
+                        id: "c-clusterfs",
+                        managed: true,
+                        multi_state: false
+                      }
+                    },
+                    %ClusterResource{
+                      id: "clusterfs",
+                      type: "ocf::heartbeat:Filesystem",
+                      role: "Stopped",
+                      status: nil,
+                      fail_count: nil,
+                      managed: true,
+                      node: nil,
+                      sid: nil,
+                      parent: %ClusterResourceParent{
+                        id: "c-clusterfs",
+                        managed: true,
+                        multi_state: false
+                      }
+                    }
+                  ]
                 },
                 host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
                 name: "hana_cluster",
@@ -699,7 +1031,121 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                   stopped_resources: [],
                   system_replication_mode: "sync",
                   system_replication_operation_mode: "logreplay",
-                  architecture_type: HanaArchitectureType.classic()
+                  architecture_type: HanaArchitectureType.classic(),
+                  resources: [
+                    %ClusterResource{
+                      id: "stonith-sbd",
+                      type: "stonith:external/sbd",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "node01",
+                      sid: nil,
+                      parent: nil
+                    },
+                    %ClusterResource{
+                      id: "rsc_SAP_QAS_HDB20",
+                      type: "ocf::heartbeat:SAPInstance",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "node02",
+                      sid: "QAS",
+                      parent: nil
+                    },
+                    %ClusterResource{
+                      id: "rsc_SAPHana_HDQ_HDB10",
+                      type: "ocf::suse:SAPHana",
+                      role: "Slave",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "node02",
+                      sid: "HDQ",
+                      parent: %ClusterResourceParent{
+                        id: "msl_SAPHana_HDQ_HDB10",
+                        managed: true,
+                        multi_state: true
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_SAPHana_HDQ_HDB10",
+                      type: "ocf::suse:SAPHana",
+                      role: "Master",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "node01",
+                      sid: "HDQ",
+                      parent: %ClusterResourceParent{
+                        id: "msl_SAPHana_HDQ_HDB10",
+                        managed: true,
+                        multi_state: true
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_SAPHanaTopology_HDQ_HDB10",
+                      type: "ocf::suse:SAPHanaTopology",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "node02",
+                      sid: "HDQ",
+                      parent: %ClusterResourceParent{
+                        id: "cln_SAPHanaTopology_HDQ_HDB10",
+                        managed: true,
+                        multi_state: false
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_SAPHanaTopology_HDQ_HDB10",
+                      type: "ocf::suse:SAPHanaTopology",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "node01",
+                      sid: "HDQ",
+                      parent: %ClusterResourceParent{
+                        id: "cln_SAPHanaTopology_HDQ_HDB10",
+                        managed: true,
+                        multi_state: false
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_ip_HDQ_HDB10",
+                      type: "ocf::heartbeat:IPaddr2",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "node01",
+                      sid: nil,
+                      parent: %ClusterResourceParent{
+                        id: "g_ip_HDQ_HDB10",
+                        managed: nil,
+                        multi_state: nil
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_socat_HDQ_HDB10",
+                      type: "ocf::heartbeat:azure-lb",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "node01",
+                      sid: nil,
+                      parent: %ClusterResourceParent{
+                        id: "g_ip_HDQ_HDB10",
+                        managed: nil,
+                        multi_state: nil
+                      }
+                    }
+                  ]
                 },
                 host_id: "2372b24f-3d7a-5d01-9b1a-a2c4c95c53d4",
                 name: "hana_cluster",
@@ -881,6 +1327,139 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       device:
                         "/dev/disk/by-id/scsi-SLIO-ORG_IBLOCK_e34218cd-0d9a-4b21-b6d5-a313980baa82",
                       status: "healthy"
+                    }
+                  ],
+                  resources: [
+                    %ClusterResource{
+                      id: "stonith-sbd",
+                      type: "stonith:external/sbd",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "vmnwprd01",
+                      sid: nil,
+                      parent: nil
+                    },
+                    %ClusterResource{
+                      id: "rsc_ip_NWP_ASCS00",
+                      type: "ocf::heartbeat:IPaddr2",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "vmnwprd01",
+                      sid: nil,
+                      parent: %ClusterResourceParent{
+                        id: "grp_NWP_ASCS00",
+                        managed: nil,
+                        multi_state: nil
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_fs_NWP_ASCS00",
+                      type: "ocf::heartbeat:Filesystem",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "vmnwprd01",
+                      sid: nil,
+                      parent: %ClusterResourceParent{
+                        id: "grp_NWP_ASCS00",
+                        managed: nil,
+                        multi_state: nil
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_sap_NWP_ASCS00",
+                      type: "ocf::heartbeat:SAPInstance",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "vmnwprd01",
+                      sid: "NWP",
+                      parent: %ClusterResourceParent{
+                        id: "grp_NWP_ASCS00",
+                        managed: nil,
+                        multi_state: nil
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_socat_NWP_ASCS00",
+                      type: "ocf::heartbeat:azure-lb",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "vmnwprd01",
+                      sid: nil,
+                      parent: %ClusterResourceParent{
+                        id: "grp_NWP_ASCS00",
+                        managed: nil,
+                        multi_state: nil
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_ip_NWP_ERS10",
+                      type: "ocf::heartbeat:IPaddr2",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "vmnwprd02",
+                      sid: nil,
+                      parent: %ClusterResourceParent{
+                        id: "grp_NWP_ERS10",
+                        managed: nil,
+                        multi_state: nil
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_fs_NWP_ERS10",
+                      type: "ocf::heartbeat:Filesystem",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "vmnwprd02",
+                      sid: nil,
+                      parent: %ClusterResourceParent{
+                        id: "grp_NWP_ERS10",
+                        managed: nil,
+                        multi_state: nil
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_sap_NWP_ERS10",
+                      type: "ocf::heartbeat:SAPInstance",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "vmnwprd02",
+                      sid: "NWP",
+                      parent: %ClusterResourceParent{
+                        id: "grp_NWP_ERS10",
+                        managed: nil,
+                        multi_state: nil
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_socat_NWP_ERS10",
+                      type: "ocf::heartbeat:azure-lb",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "vmnwprd02",
+                      sid: nil,
+                      parent: %ClusterResourceParent{
+                        id: "grp_NWP_ERS10",
+                        managed: nil,
+                        multi_state: nil
+                      }
                     }
                   ]
                 },
@@ -1065,6 +1644,139 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       device:
                         "/dev/disk/by-id/scsi-SLIO-ORG_IBLOCK_e34218cd-0d9a-4b21-b6d5-a313980baa82",
                       status: "healthy"
+                    }
+                  ],
+                  resources: [
+                    %ClusterResource{
+                      id: "stonith-sbd",
+                      type: "stonith:external/sbd",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "vmnwprd01",
+                      sid: nil,
+                      parent: nil
+                    },
+                    %ClusterResource{
+                      id: "rsc_ip_NWP_ASCS00",
+                      type: "ocf::heartbeat:IPaddr2",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "vmnwprd01",
+                      sid: nil,
+                      parent: %ClusterResourceParent{
+                        id: "grp_NWP_ASCS00",
+                        managed: nil,
+                        multi_state: nil
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_fs_NWP_ASCS00",
+                      type: "ocf::heartbeat:Filesystem",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "vmnwprd01",
+                      sid: nil,
+                      parent: %ClusterResourceParent{
+                        id: "grp_NWP_ASCS00",
+                        managed: nil,
+                        multi_state: nil
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_sap_NWP_ASCS00",
+                      type: "ocf::heartbeat:SAPInstance",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "vmnwprd01",
+                      sid: "NWP",
+                      parent: %ClusterResourceParent{
+                        id: "grp_NWP_ASCS00",
+                        managed: nil,
+                        multi_state: nil
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_socat_NWP_ASCS00",
+                      type: "ocf::heartbeat:azure-lb",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "vmnwprd01",
+                      sid: nil,
+                      parent: %ClusterResourceParent{
+                        id: "grp_NWP_ASCS00",
+                        managed: nil,
+                        multi_state: nil
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_ip_NWP_ERS10",
+                      type: "ocf::heartbeat:IPaddr2",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "vmnwprd02",
+                      sid: nil,
+                      parent: %ClusterResourceParent{
+                        id: "grp_NWP_ERS10",
+                        managed: nil,
+                        multi_state: nil
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_fs_NWP_ERS10",
+                      type: "ocf::heartbeat:Filesystem",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "vmnwprd02",
+                      sid: nil,
+                      parent: %ClusterResourceParent{
+                        id: "grp_NWP_ERS10",
+                        managed: nil,
+                        multi_state: nil
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_sap_NWP_ERS10",
+                      type: "ocf::heartbeat:SAPInstance",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "vmnwprd02",
+                      sid: "NWP",
+                      parent: %ClusterResourceParent{
+                        id: "grp_NWP_ERS10",
+                        managed: nil,
+                        multi_state: nil
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_socat_NWP_ERS10",
+                      type: "ocf::heartbeat:azure-lb",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "vmnwprd02",
+                      sid: nil,
+                      parent: %ClusterResourceParent{
+                        id: "grp_NWP_ERS10",
+                        managed: nil,
+                        multi_state: nil
+                      }
                     }
                   ]
                 },
@@ -1463,6 +2175,259 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       device:
                         "/dev/disk/by-id/scsi-SLIO-ORG_IBLOCK_e34218cd-0d9a-4b21-b6d5-a313980baa82",
                       status: "healthy"
+                    }
+                  ],
+                  resources: [
+                    %ClusterResource{
+                      id: "stonith-sbd",
+                      type: "stonith:external/sbd",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "vmnwprd01",
+                      sid: nil,
+                      parent: nil
+                    },
+                    %ClusterResource{
+                      id: "rsc_ip_NWP_ASCS00",
+                      type: "ocf::heartbeat:IPaddr2",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "vmnwprd01",
+                      sid: nil,
+                      parent: %ClusterResourceParent{
+                        id: "grp_NWP_ASCS00",
+                        managed: nil,
+                        multi_state: nil
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_fs_NWP_ASCS00",
+                      type: "ocf::heartbeat:Filesystem",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "vmnwprd01",
+                      sid: nil,
+                      parent: %ClusterResourceParent{
+                        id: "grp_NWP_ASCS00",
+                        managed: nil,
+                        multi_state: nil
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_sap_NWP_ASCS00",
+                      type: "ocf::heartbeat:SAPInstance",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "vmnwprd01",
+                      sid: "NWP",
+                      parent: %ClusterResourceParent{
+                        id: "grp_NWP_ASCS00",
+                        managed: nil,
+                        multi_state: nil
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_socat_NWP_ASCS00",
+                      type: "ocf::heartbeat:azure-lb",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "vmnwprd01",
+                      sid: nil,
+                      parent: %ClusterResourceParent{
+                        id: "grp_NWP_ASCS00",
+                        managed: nil,
+                        multi_state: nil
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_ip_NWP_ERS10",
+                      type: "ocf::heartbeat:IPaddr2",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "vmnwprd02",
+                      sid: nil,
+                      parent: %ClusterResourceParent{
+                        id: "grp_NWP_ERS10",
+                        managed: nil,
+                        multi_state: nil
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_fs_NWP_ERS10",
+                      type: "ocf::heartbeat:Filesystem",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "vmnwprd02",
+                      sid: nil,
+                      parent: %ClusterResourceParent{
+                        id: "grp_NWP_ERS10",
+                        managed: nil,
+                        multi_state: nil
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_sap_NWP_ERS10",
+                      type: "ocf::heartbeat:SAPInstance",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "vmnwprd02",
+                      sid: "NWP",
+                      parent: %ClusterResourceParent{
+                        id: "grp_NWP_ERS10",
+                        managed: nil,
+                        multi_state: nil
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_socat_NWP_ERS10",
+                      type: "ocf::heartbeat:azure-lb",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "vmnwprd02",
+                      sid: nil,
+                      parent: %ClusterResourceParent{
+                        id: "grp_NWP_ERS10",
+                        managed: nil,
+                        multi_state: nil
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_ip_NWD_ASCS01",
+                      type: "ocf::heartbeat:IPaddr2",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "vmnwprd01",
+                      sid: nil,
+                      parent: %ClusterResourceParent{
+                        id: "grp_NWD_ASCS01",
+                        managed: nil,
+                        multi_state: nil
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_fs_NWD_ASCS01",
+                      type: "ocf::heartbeat:Filesystem",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "vmnwprd01",
+                      sid: nil,
+                      parent: %ClusterResourceParent{
+                        id: "grp_NWD_ASCS01",
+                        managed: nil,
+                        multi_state: nil
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_sap_NWD_ASCS01",
+                      type: "ocf::heartbeat:SAPInstance",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "vmnwprd01",
+                      sid: "NWD",
+                      parent: %ClusterResourceParent{
+                        id: "grp_NWD_ASCS01",
+                        managed: nil,
+                        multi_state: nil
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_socat_NWD_ASCS01",
+                      type: "ocf::heartbeat:azure-lb",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "vmnwprd01",
+                      sid: nil,
+                      parent: %ClusterResourceParent{
+                        id: "grp_NWD_ASCS01",
+                        managed: nil,
+                        multi_state: nil
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_ip_NWD_ERS11",
+                      type: "ocf::heartbeat:IPaddr2",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "vmnwprd02",
+                      sid: nil,
+                      parent: %ClusterResourceParent{
+                        id: "grp_NWD_ERS11",
+                        managed: nil,
+                        multi_state: nil
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_fs_NWD_ERS11",
+                      type: "ocf::heartbeat:Filesystem",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "vmnwprd02",
+                      sid: nil,
+                      parent: %ClusterResourceParent{
+                        id: "grp_NWD_ERS11",
+                        managed: nil,
+                        multi_state: nil
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_sap_NWD_ERS11",
+                      type: "ocf::heartbeat:SAPInstance",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "vmnwprd02",
+                      sid: "NWD",
+                      parent: %ClusterResourceParent{
+                        id: "grp_NWD_ERS11",
+                        managed: nil,
+                        multi_state: nil
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_socat_NWD_ERS11",
+                      type: "ocf::heartbeat:azure-lb",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "vmnwprd02",
+                      sid: nil,
+                      parent: %ClusterResourceParent{
+                        id: "grp_NWD_ERS11",
+                        managed: nil,
+                        multi_state: nil
+                      }
                     }
                   ]
                 },
@@ -1917,7 +2882,102 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                   system_replication_mode: "sync",
                   system_replication_operation_mode: "logreplay",
                   architecture_type: HanaArchitectureType.classic(),
-                  hana_scenario: HanaScenario.performance_optimized()
+                  hana_scenario: HanaScenario.performance_optimized(),
+                  resources: [
+                    %ClusterResource{
+                      id: "rsc_aws_stonith_PRD_HDB00",
+                      type: "stonith:external/ec2",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "vmhana01",
+                      sid: nil,
+                      parent: nil
+                    },
+                    %ClusterResource{
+                      id: "rsc_ip_PRD_HDB00",
+                      type: "ocf::suse:aws-vpc-move-ip",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "vmhana01",
+                      sid: nil,
+                      parent: nil
+                    },
+                    %ClusterResource{
+                      id: "rsc_exporter_PRD_HDB00",
+                      type: "systemd:prometheus-hanadb_exporter@PRD_HDB00",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "vmhana01",
+                      sid: nil,
+                      parent: nil
+                    },
+                    %ClusterResource{
+                      id: "rsc_SAPHana_PRD_HDB00",
+                      type: "ocf::suse:SAPHana",
+                      role: "Master",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "vmhana01",
+                      sid: "PRD",
+                      parent: %ClusterResourceParent{
+                        id: "msl_SAPHana_PRD_HDB00",
+                        managed: true,
+                        multi_state: true
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_SAPHana_PRD_HDB00",
+                      type: "ocf::suse:SAPHana",
+                      role: "Slave",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "vmhana02",
+                      sid: "PRD",
+                      parent: %ClusterResourceParent{
+                        id: "msl_SAPHana_PRD_HDB00",
+                        managed: true,
+                        multi_state: true
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_SAPHanaTopology_PRD_HDB00",
+                      type: "ocf::suse:SAPHanaTopology",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "vmhana01",
+                      sid: "PRD",
+                      parent: %ClusterResourceParent{
+                        id: "cln_SAPHanaTopology_PRD_HDB00",
+                        managed: true,
+                        multi_state: false
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_SAPHanaTopology_PRD_HDB00",
+                      type: "ocf::suse:SAPHanaTopology",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "vmhana02",
+                      sid: "PRD",
+                      parent: %ClusterResourceParent{
+                        id: "cln_SAPHanaTopology_PRD_HDB00",
+                        managed: true,
+                        multi_state: false
+                      }
+                    }
+                  ]
                 },
                 discovered_health: :passing,
                 host_id: "a3279fd0-0443-1234-9354-2d7909fd6bc6",
@@ -2123,7 +3183,132 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                   system_replication_mode: "sync",
                   system_replication_operation_mode: "logreplay",
                   architecture_type: HanaArchitectureType.classic(),
-                  hana_scenario: HanaScenario.performance_optimized()
+                  hana_scenario: HanaScenario.performance_optimized(),
+                  resources: [
+                    %ClusterResource{
+                      id: "rsc_gcp_stonith_PRD_HDB00_vmhana01",
+                      type: "stonith:fence_gce",
+                      role: "Stopped",
+                      status: nil,
+                      fail_count: nil,
+                      managed: true,
+                      node: nil,
+                      sid: nil,
+                      parent: nil
+                    },
+                    %ClusterResource{
+                      id: "rsc_exporter_PRD_HDB00",
+                      type: "systemd:prometheus-hanadb_exporter@PRD_HDB00",
+                      role: "Stopped",
+                      status: nil,
+                      fail_count: nil,
+                      managed: true,
+                      node: nil,
+                      sid: nil,
+                      parent: nil
+                    },
+                    %ClusterResource{
+                      id: "rsc_gcp_stonith_PRD_HDB00_vmhana02",
+                      type: "stonith:fence_gce",
+                      role: "Stopped",
+                      status: nil,
+                      fail_count: nil,
+                      managed: true,
+                      node: nil,
+                      sid: nil,
+                      parent: nil
+                    },
+                    %ClusterResource{
+                      id: "rsc_SAPHana_PRD_HDB00",
+                      type: "ocf::suse:SAPHana",
+                      role: "Slave",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "vmhana02",
+                      sid: "PRD",
+                      parent: %ClusterResourceParent{
+                        id: "msl_SAPHana_PRD_HDB00",
+                        managed: true,
+                        multi_state: true
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_SAPHana_PRD_HDB00",
+                      type: "ocf::suse:SAPHana",
+                      role: "Stopped",
+                      status: nil,
+                      fail_count: nil,
+                      managed: true,
+                      node: nil,
+                      sid: "PRD",
+                      parent: %ClusterResourceParent{
+                        id: "msl_SAPHana_PRD_HDB00",
+                        managed: true,
+                        multi_state: true
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_SAPHanaTopology_PRD_HDB00",
+                      type: "ocf::suse:SAPHanaTopology",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "vmhana01",
+                      sid: "PRD",
+                      parent: %ClusterResourceParent{
+                        id: "cln_SAPHanaTopology_PRD_HDB00",
+                        managed: true,
+                        multi_state: false
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_SAPHanaTopology_PRD_HDB00",
+                      type: "ocf::suse:SAPHanaTopology",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "vmhana02",
+                      sid: "PRD",
+                      parent: %ClusterResourceParent{
+                        id: "cln_SAPHanaTopology_PRD_HDB00",
+                        managed: true,
+                        multi_state: false
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_ip_PRD_HDB00",
+                      type: "ocf::heartbeat:IPaddr2",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "vmhana01",
+                      sid: nil,
+                      parent: %ClusterResourceParent{
+                        id: "g_ip_PRD_HDB00",
+                        managed: nil,
+                        multi_state: nil
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_socat_PRD_HDB00",
+                      type: "ocf::heartbeat:anything",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "vmhana01",
+                      sid: nil,
+                      parent: %ClusterResourceParent{
+                        id: "g_ip_PRD_HDB00",
+                        managed: nil,
+                        multi_state: nil
+                      }
+                    }
+                  ]
                 },
                 discovered_health: :critical,
                 host_id: "1dc79771-0a96-1234-b5b6-cd4d0aef6acc",
@@ -2369,7 +3554,173 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                   system_replication_mode: "sync",
                   system_replication_operation_mode: "logreplay",
                   architecture_type: HanaArchitectureType.classic(),
-                  hana_scenario: HanaScenario.performance_optimized()
+                  hana_scenario: HanaScenario.performance_optimized(),
+                  resources: [
+                    %ClusterResource{
+                      id: "test-stop",
+                      type: "ocf::heartbeat:Dummy",
+                      role: "Stopped",
+                      status: nil,
+                      fail_count: nil,
+                      managed: true,
+                      node: nil,
+                      sid: nil,
+                      parent: nil
+                    },
+                    %ClusterResource{
+                      id: "test",
+                      type: "ocf::heartbeat:Dummy",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "node02",
+                      sid: nil,
+                      parent: nil
+                    },
+                    %ClusterResource{
+                      id: "stonith-sbd",
+                      type: "stonith:external/sbd",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "node01",
+                      sid: nil,
+                      parent: nil
+                    },
+                    %ClusterResource{
+                      id: "rsc_ip_PRD_HDB00",
+                      type: "ocf::heartbeat:IPaddr2",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 2,
+                      managed: true,
+                      node: "node01",
+                      sid: nil,
+                      parent: nil
+                    },
+                    %ClusterResource{
+                      id: "rsc_SAPHana_PRD_HDB00",
+                      type: "ocf::suse:SAPHana",
+                      role: "Master",
+                      status: "Active",
+                      fail_count: 1_000_000,
+                      managed: true,
+                      node: "node01",
+                      sid: "PRD",
+                      parent: %ClusterResourceParent{
+                        id: "msl_SAPHana_PRD_HDB00",
+                        managed: true,
+                        multi_state: true
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_SAPHana_PRD_HDB00",
+                      type: "ocf::suse:SAPHana",
+                      role: "Slave",
+                      status: "Active",
+                      fail_count: 300,
+                      managed: true,
+                      node: "node02",
+                      sid: "PRD",
+                      parent: %ClusterResourceParent{
+                        id: "msl_SAPHana_PRD_HDB00",
+                        managed: true,
+                        multi_state: true
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_SAPHanaTopology_PRD_HDB00",
+                      type: "ocf::suse:SAPHanaTopology",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "node01",
+                      sid: "PRD",
+                      parent: %ClusterResourceParent{
+                        id: "cln_SAPHanaTopology_PRD_HDB00",
+                        managed: true,
+                        multi_state: false
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_SAPHanaTopology_PRD_HDB00",
+                      type: "ocf::suse:SAPHanaTopology",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "node02",
+                      sid: "PRD",
+                      parent: %ClusterResourceParent{
+                        id: "cln_SAPHanaTopology_PRD_HDB00",
+                        managed: true,
+                        multi_state: false
+                      }
+                    },
+                    %ClusterResource{
+                      id: "clusterfs",
+                      type: "ocf::heartbeat:Filesystem",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: nil,
+                      managed: true,
+                      node: "node01",
+                      sid: nil,
+                      parent: %ClusterResourceParent{
+                        id: "c-clusterfs",
+                        managed: true,
+                        multi_state: false
+                      }
+                    },
+                    %ClusterResource{
+                      id: "clusterfs",
+                      type: "ocf::heartbeat:Filesystem",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: nil,
+                      managed: true,
+                      node: "node02",
+                      sid: nil,
+                      parent: %ClusterResourceParent{
+                        id: "c-clusterfs",
+                        managed: true,
+                        multi_state: false
+                      }
+                    },
+                    %ClusterResource{
+                      id: "clusterfs",
+                      type: "ocf::heartbeat:Filesystem",
+                      role: "Stopped",
+                      status: nil,
+                      fail_count: nil,
+                      managed: true,
+                      node: nil,
+                      sid: nil,
+                      parent: %ClusterResourceParent{
+                        id: "c-clusterfs",
+                        managed: true,
+                        multi_state: false
+                      }
+                    },
+                    %ClusterResource{
+                      id: "clusterfs",
+                      type: "ocf::heartbeat:Filesystem",
+                      role: "Stopped",
+                      status: nil,
+                      fail_count: nil,
+                      managed: true,
+                      node: nil,
+                      sid: nil,
+                      parent: %ClusterResourceParent{
+                        id: "c-clusterfs",
+                        managed: true,
+                        multi_state: false
+                      }
+                    }
+                  ]
                 },
                 host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
                 name: nil,
@@ -2534,7 +3885,80 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                   stopped_resources: [],
                   system_replication_mode: "sync",
                   system_replication_operation_mode: "logreplay",
-                  architecture_type: HanaArchitectureType.classic()
+                  architecture_type: HanaArchitectureType.classic(),
+                  resources: [
+                    %ClusterResource{
+                      id: "rsc_ip_PRD_HDB00",
+                      type: "ocf::heartbeat:IPaddr2",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 2,
+                      managed: true,
+                      node: "node01",
+                      sid: nil,
+                      parent: nil
+                    },
+                    %ClusterResource{
+                      id: "rsc_SAPHana_PRD_HDB00",
+                      type: "ocf::suse:SAPHana",
+                      role: "Master",
+                      status: "Active",
+                      fail_count: 1_000_000,
+                      managed: true,
+                      node: "node01",
+                      sid: "PRD",
+                      parent: %ClusterResourceParent{
+                        id: "msl_SAPHana_PRD_HDB00",
+                        managed: true,
+                        multi_state: true
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_SAPHana_PRD_HDB00",
+                      type: "ocf::suse:SAPHana",
+                      role: "Slave",
+                      status: "Active",
+                      fail_count: 300,
+                      managed: true,
+                      node: "node02",
+                      sid: "PRD",
+                      parent: %ClusterResourceParent{
+                        id: "msl_SAPHana_PRD_HDB00",
+                        managed: true,
+                        multi_state: true
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_SAPHanaTopology_PRD_HDB00",
+                      type: "ocf::suse:SAPHanaTopology",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "node01",
+                      sid: "PRD",
+                      parent: %ClusterResourceParent{
+                        id: "cln_SAPHanaTopology_PRD_HDB00",
+                        managed: true,
+                        multi_state: false
+                      }
+                    },
+                    %ClusterResource{
+                      id: "rsc_SAPHanaTopology_PRD_HDB00",
+                      type: "ocf::suse:SAPHanaTopology",
+                      role: "Started",
+                      status: "Active",
+                      fail_count: 0,
+                      managed: true,
+                      node: "node02",
+                      sid: "PRD",
+                      parent: %ClusterResourceParent{
+                        id: "cln_SAPHanaTopology_PRD_HDB00",
+                        managed: true,
+                        multi_state: false
+                      }
+                    }
+                  ]
                 },
                 host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
                 name: "hana_cluster",
@@ -2918,6 +4342,221 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         device: "/dev/vdb",
                         status: "healthy"
                       }
+                    ],
+                    resources: [
+                      %ClusterResource{
+                        id: "stonith-sbd",
+                        type: "stonith:external/sbd",
+                        role: "Started",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "vmhana01",
+                        sid: nil,
+                        parent: nil
+                      },
+                      %ClusterResource{
+                        id: "rsc_ip_PRD_HDB00",
+                        type: "ocf::heartbeat:IPaddr2",
+                        role: "Started",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "vmhana01",
+                        sid: nil,
+                        parent: nil
+                      },
+                      %ClusterResource{
+                        id: "rsc_exporter_PRD_HDB00",
+                        type: "systemd:prometheus-hanadb_exporter@PRD_HDB00",
+                        role: "Started",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "vmhana01",
+                        sid: nil,
+                        parent: nil
+                      },
+                      %ClusterResource{
+                        id: "rsc_SAPHanaController_PRD_HDB00",
+                        type: "ocf::suse:SAPHanaController",
+                        role: "Master",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "vmhana01",
+                        sid: "PRD",
+                        parent: %ClusterResourceParent{
+                          id: "msl_SAPHanaController_PRD_HDB00",
+                          managed: true,
+                          multi_state: true
+                        }
+                      },
+                      %ClusterResource{
+                        id: "rsc_SAPHanaController_PRD_HDB00",
+                        type: "ocf::suse:SAPHanaController",
+                        role: "Slave",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "vmhana02",
+                        sid: "PRD",
+                        parent: %ClusterResourceParent{
+                          id: "msl_SAPHanaController_PRD_HDB00",
+                          managed: true,
+                          multi_state: true
+                        }
+                      },
+                      %ClusterResource{
+                        id: "rsc_SAPHanaController_PRD_HDB00",
+                        type: "ocf::suse:SAPHanaController",
+                        role: "Slave",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "vmhana03",
+                        sid: "PRD",
+                        parent: %ClusterResourceParent{
+                          id: "msl_SAPHanaController_PRD_HDB00",
+                          managed: true,
+                          multi_state: true
+                        }
+                      },
+                      %ClusterResource{
+                        id: "rsc_SAPHanaController_PRD_HDB00",
+                        type: "ocf::suse:SAPHanaController",
+                        role: "Slave",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "vmhana04",
+                        sid: "PRD",
+                        parent: %ClusterResourceParent{
+                          id: "msl_SAPHanaController_PRD_HDB00",
+                          managed: true,
+                          multi_state: true
+                        }
+                      },
+                      %ClusterResource{
+                        id: "rsc_SAPHanaController_PRD_HDB00",
+                        type: "ocf::suse:SAPHanaController",
+                        role: "Slave",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "vmhana05",
+                        sid: "PRD",
+                        parent: %ClusterResourceParent{
+                          id: "msl_SAPHanaController_PRD_HDB00",
+                          managed: true,
+                          multi_state: true
+                        }
+                      },
+                      %ClusterResource{
+                        id: "rsc_SAPHanaController_PRD_HDB00",
+                        type: "ocf::suse:SAPHanaController",
+                        role: "Slave",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "vmhana06",
+                        sid: "PRD",
+                        parent: %ClusterResourceParent{
+                          id: "msl_SAPHanaController_PRD_HDB00",
+                          managed: true,
+                          multi_state: true
+                        }
+                      },
+                      %ClusterResource{
+                        id: "rsc_SAPHanaTopology_PRD_HDB00",
+                        type: "ocf::suse:SAPHanaTopology",
+                        role: "Started",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "vmhana01",
+                        sid: "PRD",
+                        parent: %ClusterResourceParent{
+                          id: "cln_SAPHanaTopology_PRD_HDB00",
+                          managed: true,
+                          multi_state: false
+                        }
+                      },
+                      %ClusterResource{
+                        id: "rsc_SAPHanaTopology_PRD_HDB00",
+                        type: "ocf::suse:SAPHanaTopology",
+                        role: "Started",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "vmhana02",
+                        sid: "PRD",
+                        parent: %ClusterResourceParent{
+                          id: "cln_SAPHanaTopology_PRD_HDB00",
+                          managed: true,
+                          multi_state: false
+                        }
+                      },
+                      %ClusterResource{
+                        id: "rsc_SAPHanaTopology_PRD_HDB00",
+                        type: "ocf::suse:SAPHanaTopology",
+                        role: "Started",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "vmhana03",
+                        sid: "PRD",
+                        parent: %ClusterResourceParent{
+                          id: "cln_SAPHanaTopology_PRD_HDB00",
+                          managed: true,
+                          multi_state: false
+                        }
+                      },
+                      %ClusterResource{
+                        id: "rsc_SAPHanaTopology_PRD_HDB00",
+                        type: "ocf::suse:SAPHanaTopology",
+                        role: "Started",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "vmhana04",
+                        sid: "PRD",
+                        parent: %ClusterResourceParent{
+                          id: "cln_SAPHanaTopology_PRD_HDB00",
+                          managed: true,
+                          multi_state: false
+                        }
+                      },
+                      %ClusterResource{
+                        id: "rsc_SAPHanaTopology_PRD_HDB00",
+                        type: "ocf::suse:SAPHanaTopology",
+                        role: "Started",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "vmhana05",
+                        sid: "PRD",
+                        parent: %ClusterResourceParent{
+                          id: "cln_SAPHanaTopology_PRD_HDB00",
+                          managed: true,
+                          multi_state: false
+                        }
+                      },
+                      %ClusterResource{
+                        id: "rsc_SAPHanaTopology_PRD_HDB00",
+                        type: "ocf::suse:SAPHanaTopology",
+                        role: "Started",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "vmhana06",
+                        sid: "PRD",
+                        parent: %ClusterResourceParent{
+                          id: "cln_SAPHanaTopology_PRD_HDB00",
+                          managed: true,
+                          multi_state: false
+                        }
+                      }
                     ]
                   }
                 }
@@ -3215,6 +4854,199 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         device:
                           "/dev/disk/by-id/scsi-1LIO-ORG_sbdnfs:01144514-24f0-4386-83c2-321e6b1af8b0",
                         status: "healthy"
+                      }
+                    ],
+                    resources: [
+                      %ClusterResource{
+                        id: "stonith-sbd",
+                        type: "stonith:external/sbd",
+                        role: "Started",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "vmhanamm",
+                        sid: nil,
+                        parent: nil
+                      },
+                      %ClusterResource{
+                        id: "rsc_SAPHanaTop_PRD_HDB00",
+                        type: "ocf::suse:SAPHanaTopology",
+                        role: "Started",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "vmhana11",
+                        sid: "PRD",
+                        parent: %ClusterResourceParent{
+                          id: "cln_SAPHanaTop_PRD_HDB00",
+                          managed: true,
+                          multi_state: false
+                        }
+                      },
+                      %ClusterResource{
+                        id: "rsc_SAPHanaTop_PRD_HDB00",
+                        type: "ocf::suse:SAPHanaTopology",
+                        role: "Started",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "vmhana12",
+                        sid: "PRD",
+                        parent: %ClusterResourceParent{
+                          id: "cln_SAPHanaTop_PRD_HDB00",
+                          managed: true,
+                          multi_state: false
+                        }
+                      },
+                      %ClusterResource{
+                        id: "rsc_SAPHanaTop_PRD_HDB00",
+                        type: "ocf::suse:SAPHanaTopology",
+                        role: "Started",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "vmhana22",
+                        sid: "PRD",
+                        parent: %ClusterResourceParent{
+                          id: "cln_SAPHanaTop_PRD_HDB00",
+                          managed: true,
+                          multi_state: false
+                        }
+                      },
+                      %ClusterResource{
+                        id: "rsc_SAPHanaTop_PRD_HDB00",
+                        type: "ocf::suse:SAPHanaTopology",
+                        role: "Started",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "vmhana21",
+                        sid: "PRD",
+                        parent: %ClusterResourceParent{
+                          id: "cln_SAPHanaTop_PRD_HDB00",
+                          managed: true,
+                          multi_state: false
+                        }
+                      },
+                      %ClusterResource{
+                        id: "rsc_SAPHanaTop_PRD_HDB00",
+                        type: "ocf::suse:SAPHanaTopology",
+                        role: "Stopped",
+                        status: nil,
+                        fail_count: nil,
+                        managed: true,
+                        node: nil,
+                        sid: "PRD",
+                        parent: %ClusterResourceParent{
+                          id: "cln_SAPHanaTop_PRD_HDB00",
+                          managed: true,
+                          multi_state: false
+                        }
+                      },
+                      %ClusterResource{
+                        id: "rsc_SAPHanaCon_PRD_HDB00",
+                        type: "ocf::suse:SAPHanaController",
+                        role: "Slave",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "vmhana11",
+                        sid: "PRD",
+                        parent: %ClusterResourceParent{
+                          id: "msl_SAPHanaCon_PRD_HDB00",
+                          managed: true,
+                          multi_state: true
+                        }
+                      },
+                      %ClusterResource{
+                        id: "rsc_SAPHanaCon_PRD_HDB00",
+                        type: "ocf::suse:SAPHanaController",
+                        role: "Slave",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "vmhana12",
+                        sid: "PRD",
+                        parent: %ClusterResourceParent{
+                          id: "msl_SAPHanaCon_PRD_HDB00",
+                          managed: true,
+                          multi_state: true
+                        }
+                      },
+                      %ClusterResource{
+                        id: "rsc_SAPHanaCon_PRD_HDB00",
+                        type: "ocf::suse:SAPHanaController",
+                        role: "Slave",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "vmhana22",
+                        sid: "PRD",
+                        parent: %ClusterResourceParent{
+                          id: "msl_SAPHanaCon_PRD_HDB00",
+                          managed: true,
+                          multi_state: true
+                        }
+                      },
+                      %ClusterResource{
+                        id: "rsc_SAPHanaCon_PRD_HDB00",
+                        type: "ocf::suse:SAPHanaController",
+                        role: "Master",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "vmhana21",
+                        sid: "PRD",
+                        parent: %ClusterResourceParent{
+                          id: "msl_SAPHanaCon_PRD_HDB00",
+                          managed: true,
+                          multi_state: true
+                        }
+                      },
+                      %ClusterResource{
+                        id: "rsc_SAPHanaCon_PRD_HDB00",
+                        type: "ocf::suse:SAPHanaController",
+                        role: "Stopped",
+                        status: nil,
+                        fail_count: nil,
+                        managed: true,
+                        node: nil,
+                        sid: "PRD",
+                        parent: %ClusterResourceParent{
+                          id: "msl_SAPHanaCon_PRD_HDB00",
+                          managed: true,
+                          multi_state: true
+                        }
+                      },
+                      %ClusterResource{
+                        id: "rsc_ip_PRD_HDB00",
+                        type: "ocf::heartbeat:IPaddr2",
+                        role: "Started",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "vmhana21",
+                        sid: nil,
+                        parent: %ClusterResourceParent{
+                          id: "g_ip_PRD_HDB00",
+                          managed: nil,
+                          multi_state: nil
+                        }
+                      },
+                      %ClusterResource{
+                        id: "rsc_nc_PRD_HDB00",
+                        type: "ocf::heartbeat:azure-lb",
+                        role: "Started",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "vmhana21",
+                        sid: nil,
+                        parent: %ClusterResourceParent{
+                          id: "g_ip_PRD_HDB00",
+                          managed: nil,
+                          multi_state: nil
+                        }
                       }
                     ]
                   }
@@ -3560,6 +5392,221 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         device: "/dev/vdb",
                         status: "healthy"
                       }
+                    ],
+                    resources: [
+                      %ClusterResource{
+                        id: "stonith-sbd",
+                        type: "stonith:external/sbd",
+                        role: "Started",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "vmhana01",
+                        sid: nil,
+                        parent: nil
+                      },
+                      %ClusterResource{
+                        id: "rsc_ip_PRD_HDB00",
+                        type: "ocf::heartbeat:IPaddr2",
+                        role: "Started",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "vmhana01",
+                        sid: nil,
+                        parent: nil
+                      },
+                      %ClusterResource{
+                        id: "rsc_exporter_PRD_HDB00",
+                        type: "systemd:prometheus-hanadb_exporter@PRD_HDB00",
+                        role: "Started",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "vmhana01",
+                        sid: nil,
+                        parent: nil
+                      },
+                      %ClusterResource{
+                        id: "rsc_SAPHanaController_PRD_HDB00",
+                        type: "ocf::suse:SAPHanaController",
+                        role: "Master",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "vmhana01",
+                        sid: "PRD",
+                        parent: %ClusterResourceParent{
+                          id: "msl_SAPHanaController_PRD_HDB00",
+                          managed: true,
+                          multi_state: true
+                        }
+                      },
+                      %ClusterResource{
+                        id: "rsc_SAPHanaController_PRD_HDB00",
+                        type: "ocf::suse:SAPHanaController",
+                        role: "Slave",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "vmhana02",
+                        sid: "PRD",
+                        parent: %ClusterResourceParent{
+                          id: "msl_SAPHanaController_PRD_HDB00",
+                          managed: true,
+                          multi_state: true
+                        }
+                      },
+                      %ClusterResource{
+                        id: "rsc_SAPHanaController_PRD_HDB00",
+                        type: "ocf::suse:SAPHanaController",
+                        role: "Slave",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "vmhana03",
+                        sid: "PRD",
+                        parent: %ClusterResourceParent{
+                          id: "msl_SAPHanaController_PRD_HDB00",
+                          managed: true,
+                          multi_state: true
+                        }
+                      },
+                      %ClusterResource{
+                        id: "rsc_SAPHanaController_PRD_HDB00",
+                        type: "ocf::suse:SAPHanaController",
+                        role: "Slave",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "vmhana04",
+                        sid: "PRD",
+                        parent: %ClusterResourceParent{
+                          id: "msl_SAPHanaController_PRD_HDB00",
+                          managed: true,
+                          multi_state: true
+                        }
+                      },
+                      %ClusterResource{
+                        id: "rsc_SAPHanaController_PRD_HDB00",
+                        type: "ocf::suse:SAPHanaController",
+                        role: "Slave",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "vmhana05",
+                        sid: "PRD",
+                        parent: %ClusterResourceParent{
+                          id: "msl_SAPHanaController_PRD_HDB00",
+                          managed: true,
+                          multi_state: true
+                        }
+                      },
+                      %ClusterResource{
+                        id: "rsc_SAPHanaController_PRD_HDB00",
+                        type: "ocf::suse:SAPHanaController",
+                        role: "Slave",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "vmhana06",
+                        sid: "PRD",
+                        parent: %ClusterResourceParent{
+                          id: "msl_SAPHanaController_PRD_HDB00",
+                          managed: true,
+                          multi_state: true
+                        }
+                      },
+                      %ClusterResource{
+                        id: "rsc_SAPHanaTopology_PRD_HDB00",
+                        type: "ocf::suse:SAPHanaTopology",
+                        role: "Started",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "vmhana01",
+                        sid: "PRD",
+                        parent: %ClusterResourceParent{
+                          id: "cln_SAPHanaTopology_PRD_HDB00",
+                          managed: true,
+                          multi_state: false
+                        }
+                      },
+                      %ClusterResource{
+                        id: "rsc_SAPHanaTopology_PRD_HDB00",
+                        type: "ocf::suse:SAPHanaTopology",
+                        role: "Started",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "vmhana02",
+                        sid: "PRD",
+                        parent: %ClusterResourceParent{
+                          id: "cln_SAPHanaTopology_PRD_HDB00",
+                          managed: true,
+                          multi_state: false
+                        }
+                      },
+                      %ClusterResource{
+                        id: "rsc_SAPHanaTopology_PRD_HDB00",
+                        type: "ocf::suse:SAPHanaTopology",
+                        role: "Started",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "vmhana03",
+                        sid: "PRD",
+                        parent: %ClusterResourceParent{
+                          id: "cln_SAPHanaTopology_PRD_HDB00",
+                          managed: true,
+                          multi_state: false
+                        }
+                      },
+                      %ClusterResource{
+                        id: "rsc_SAPHanaTopology_PRD_HDB00",
+                        type: "ocf::suse:SAPHanaTopology",
+                        role: "Started",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "vmhana04",
+                        sid: "PRD",
+                        parent: %ClusterResourceParent{
+                          id: "cln_SAPHanaTopology_PRD_HDB00",
+                          managed: true,
+                          multi_state: false
+                        }
+                      },
+                      %ClusterResource{
+                        id: "rsc_SAPHanaTopology_PRD_HDB00",
+                        type: "ocf::suse:SAPHanaTopology",
+                        role: "Started",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "vmhana05",
+                        sid: "PRD",
+                        parent: %ClusterResourceParent{
+                          id: "cln_SAPHanaTopology_PRD_HDB00",
+                          managed: true,
+                          multi_state: false
+                        }
+                      },
+                      %ClusterResource{
+                        id: "rsc_SAPHanaTopology_PRD_HDB00",
+                        type: "ocf::suse:SAPHanaTopology",
+                        role: "Started",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "vmhana06",
+                        sid: "PRD",
+                        parent: %ClusterResourceParent{
+                          id: "cln_SAPHanaTopology_PRD_HDB00",
+                          managed: true,
+                          multi_state: false
+                        }
+                      }
                     ]
                   }
                 }
@@ -3893,7 +5940,264 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     system_replication_mode: "sync",
                     system_replication_operation_mode: "logreplay",
                     architecture_type: HanaArchitectureType.classic(),
-                    hana_scenario: HanaScenario.performance_optimized()
+                    hana_scenario: HanaScenario.performance_optimized(),
+                    resources: [
+                      %ClusterResource{
+                        id: "fs_PRD_HDB01_fscheck",
+                        type: "ocf::heartbeat:Filesystem",
+                        role: "Started",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "hana-s2-db2",
+                        sid: nil,
+                        parent: %ClusterResourceParent{
+                          id: "cln_fs_PRD_HDB01_fscheck",
+                          managed: true,
+                          multi_state: false
+                        }
+                      },
+                      %ClusterResource{
+                        id: "fs_PRD_HDB01_fscheck",
+                        type: "ocf::heartbeat:Filesystem",
+                        role: "Started",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "hana-s1-db1",
+                        sid: nil,
+                        parent: %ClusterResourceParent{
+                          id: "cln_fs_PRD_HDB01_fscheck",
+                          managed: true,
+                          multi_state: false
+                        }
+                      },
+                      %ClusterResource{
+                        id: "fs_PRD_HDB01_fscheck",
+                        type: "ocf::heartbeat:Filesystem",
+                        role: "Started",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "hana-s2-db1",
+                        sid: nil,
+                        parent: %ClusterResourceParent{
+                          id: "cln_fs_PRD_HDB01_fscheck",
+                          managed: true,
+                          multi_state: false
+                        }
+                      },
+                      %ClusterResource{
+                        id: "fs_PRD_HDB01_fscheck",
+                        type: "ocf::heartbeat:Filesystem",
+                        role: "Started",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "hana-s1-db2",
+                        sid: nil,
+                        parent: %ClusterResourceParent{
+                          id: "cln_fs_PRD_HDB01_fscheck",
+                          managed: true,
+                          multi_state: false
+                        }
+                      },
+                      %ClusterResource{
+                        id: "fs_PRD_HDB01_fscheck",
+                        type: "ocf::heartbeat:Filesystem",
+                        role: "Stopped",
+                        status: nil,
+                        fail_count: nil,
+                        managed: true,
+                        node: nil,
+                        sid: nil,
+                        parent: %ClusterResourceParent{
+                          id: "cln_fs_PRD_HDB01_fscheck",
+                          managed: true,
+                          multi_state: false
+                        }
+                      },
+                      %ClusterResource{
+                        id: "rsc_SAPHanaTopology_PRD_HDB01",
+                        type: "ocf::suse:SAPHanaTopology",
+                        role: "Started",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "hana-s2-db2",
+                        sid: "PRD",
+                        parent: %ClusterResourceParent{
+                          id: "cln_SAPHanaTopology_PRD_HDB01",
+                          managed: true,
+                          multi_state: false
+                        }
+                      },
+                      %ClusterResource{
+                        id: "rsc_SAPHanaTopology_PRD_HDB01",
+                        type: "ocf::suse:SAPHanaTopology",
+                        role: "Started",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "hana-s1-db1",
+                        sid: "PRD",
+                        parent: %ClusterResourceParent{
+                          id: "cln_SAPHanaTopology_PRD_HDB01",
+                          managed: true,
+                          multi_state: false
+                        }
+                      },
+                      %ClusterResource{
+                        id: "rsc_SAPHanaTopology_PRD_HDB01",
+                        type: "ocf::suse:SAPHanaTopology",
+                        role: "Started",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "hana-s2-db1",
+                        sid: "PRD",
+                        parent: %ClusterResourceParent{
+                          id: "cln_SAPHanaTopology_PRD_HDB01",
+                          managed: true,
+                          multi_state: false
+                        }
+                      },
+                      %ClusterResource{
+                        id: "rsc_SAPHanaTopology_PRD_HDB01",
+                        type: "ocf::suse:SAPHanaTopology",
+                        role: "Started",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "hana-s1-db2",
+                        sid: "PRD",
+                        parent: %ClusterResourceParent{
+                          id: "cln_SAPHanaTopology_PRD_HDB01",
+                          managed: true,
+                          multi_state: false
+                        }
+                      },
+                      %ClusterResource{
+                        id: "rsc_SAPHanaTopology_PRD_HDB01",
+                        type: "ocf::suse:SAPHanaTopology",
+                        role: "Stopped",
+                        status: nil,
+                        fail_count: nil,
+                        managed: true,
+                        node: nil,
+                        sid: "PRD",
+                        parent: %ClusterResourceParent{
+                          id: "cln_SAPHanaTopology_PRD_HDB01",
+                          managed: true,
+                          multi_state: false
+                        }
+                      },
+                      %ClusterResource{
+                        id: "rsc_SAPHana_PRD_HDB01",
+                        type: "ocf::suse:SAPHanaController",
+                        role: "Slave",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "hana-s2-db2",
+                        sid: "PRD",
+                        parent: %ClusterResourceParent{
+                          id: "msl_SAPHana_PRD_HDB01",
+                          managed: true,
+                          multi_state: true
+                        }
+                      },
+                      %ClusterResource{
+                        id: "rsc_SAPHana_PRD_HDB01",
+                        type: "ocf::suse:SAPHanaController",
+                        role: "Master",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "hana-s1-db1",
+                        sid: "PRD",
+                        parent: %ClusterResourceParent{
+                          id: "msl_SAPHana_PRD_HDB01",
+                          managed: true,
+                          multi_state: true
+                        }
+                      },
+                      %ClusterResource{
+                        id: "rsc_SAPHana_PRD_HDB01",
+                        type: "ocf::suse:SAPHanaController",
+                        role: "Slave",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "hana-s2-db1",
+                        sid: "PRD",
+                        parent: %ClusterResourceParent{
+                          id: "msl_SAPHana_PRD_HDB01",
+                          managed: true,
+                          multi_state: true
+                        }
+                      },
+                      %ClusterResource{
+                        id: "rsc_SAPHana_PRD_HDB01",
+                        type: "ocf::suse:SAPHanaController",
+                        role: "Slave",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "hana-s1-db2",
+                        sid: "PRD",
+                        parent: %ClusterResourceParent{
+                          id: "msl_SAPHana_PRD_HDB01",
+                          managed: true,
+                          multi_state: true
+                        }
+                      },
+                      %ClusterResource{
+                        id: "rsc_SAPHana_PRD_HDB01",
+                        type: "ocf::suse:SAPHanaController",
+                        role: "Stopped",
+                        status: nil,
+                        fail_count: nil,
+                        managed: true,
+                        node: nil,
+                        sid: "PRD",
+                        parent: %ClusterResourceParent{
+                          id: "msl_SAPHana_PRD_HDB01",
+                          managed: true,
+                          multi_state: true
+                        }
+                      },
+                      %ClusterResource{
+                        id: "rsc_ip_PRD_HDB01",
+                        type: "ocf::heartbeat:IPaddr2",
+                        role: "Started",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "hana-s1-db1",
+                        sid: nil,
+                        parent: %ClusterResourceParent{
+                          id: "g_ip_PRD_HDB01",
+                          managed: nil,
+                          multi_state: nil
+                        }
+                      },
+                      %ClusterResource{
+                        id: "rsc_nc_PRD_HDB01",
+                        type: "ocf::heartbeat:azure-lb",
+                        role: "Started",
+                        status: "Active",
+                        fail_count: 0,
+                        managed: true,
+                        node: "hana-s1-db1",
+                        sid: nil,
+                        parent: %ClusterResourceParent{
+                          id: "g_ip_PRD_HDB01",
+                          managed: nil,
+                          multi_state: nil
+                        }
+                      }
+                    ]
                   },
                   discovered_health: :passing,
                   host_id: "6eabc497-6067-4de9-b583-e4c63334ff64",
@@ -4054,7 +6358,91 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                      sr_health_state: "4",
                      stopped_resources: [],
                      system_replication_mode: "sync",
-                     system_replication_operation_mode: "logreplay"
+                     system_replication_operation_mode: "logreplay",
+                     resources: [
+                       %ClusterResource{
+                         id: "stonith-sbd",
+                         type: "stonith:external/sbd",
+                         role: "Started",
+                         status: "Active",
+                         fail_count: 0,
+                         managed: true,
+                         node: "vmhana01",
+                         sid: nil,
+                         parent: nil
+                       },
+                       %ClusterResource{
+                         id: "rsc_ip_HN9_HDB09",
+                         type: "ocf::heartbeat:IPaddr2",
+                         role: "Started",
+                         status: "Active",
+                         fail_count: 0,
+                         managed: true,
+                         node: "vmhana01",
+                         sid: nil,
+                         parent: nil
+                       },
+                       %ClusterResource{
+                         id: "rsc_SAPHanaTop_HN9_HDB09",
+                         type: "ocf::suse:SAPHanaTopology",
+                         role: "Started",
+                         status: "Active",
+                         fail_count: 0,
+                         managed: true,
+                         node: "vmhana01",
+                         sid: "HN9",
+                         parent: %ClusterResourceParent{
+                           id: "cln_SAPHanaTop_HN9_HDB09",
+                           managed: true,
+                           multi_state: false
+                         }
+                       },
+                       %ClusterResource{
+                         id: "rsc_SAPHanaTop_HN9_HDB09",
+                         type: "ocf::suse:SAPHanaTopology",
+                         role: "Started",
+                         status: "Active",
+                         fail_count: 0,
+                         managed: true,
+                         node: "vmhana02",
+                         sid: "HN9",
+                         parent: %ClusterResourceParent{
+                           id: "cln_SAPHanaTop_HN9_HDB09",
+                           managed: true,
+                           multi_state: false
+                         }
+                       },
+                       %ClusterResource{
+                         id: "rsc_SAPHanaCon_HN9_HDB09",
+                         type: "ocf::suse:SAPHanaController",
+                         role: "Master",
+                         status: "Active",
+                         fail_count: 0,
+                         managed: true,
+                         node: "vmhana01",
+                         sid: "HN9",
+                         parent: %ClusterResourceParent{
+                           id: "mst_SAPHanacon_HN9_HDB09",
+                           managed: true,
+                           multi_state: true
+                         }
+                       },
+                       %ClusterResource{
+                         id: "rsc_SAPHanaCon_HN9_HDB09",
+                         type: "ocf::suse:SAPHanaController",
+                         role: "Slave",
+                         status: "Active",
+                         fail_count: 0,
+                         managed: true,
+                         node: "vmhana02",
+                         sid: "HN9",
+                         parent: %ClusterResourceParent{
+                           id: "mst_SAPHanacon_HN9_HDB09",
+                           managed: true,
+                           multi_state: true
+                         }
+                       }
+                     ]
                    },
                    discovered_health: :passing,
                    host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
@@ -4212,7 +6600,91 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                        }
                      ],
                      system_replication_mode: "sync",
-                     system_replication_operation_mode: "logreplay"
+                     system_replication_operation_mode: "logreplay",
+                     resources: [
+                       %ClusterResource{
+                         id: "stonith-sbd",
+                         type: "stonith:external/sbd",
+                         role: "Started",
+                         status: "Active",
+                         fail_count: 0,
+                         managed: true,
+                         node: "vmhana01",
+                         sid: nil,
+                         parent: nil
+                       },
+                       %ClusterResource{
+                         id: "rsc_ip_HN9_HDB09",
+                         type: "ocf::heartbeat:IPaddr2",
+                         role: "Started",
+                         status: "Active",
+                         fail_count: 0,
+                         managed: true,
+                         node: "vmhana02",
+                         sid: nil,
+                         parent: nil
+                       },
+                       %ClusterResource{
+                         id: "rsc_SAPHanaTop_HN9_HDB09",
+                         type: "ocf::suse:SAPHanaTopology",
+                         role: "Started",
+                         status: "Active",
+                         fail_count: 0,
+                         managed: true,
+                         node: "vmhana01",
+                         sid: "HN9",
+                         parent: %ClusterResourceParent{
+                           id: "cln_SAPHanaTop_HN9_HDB09",
+                           managed: true,
+                           multi_state: false
+                         }
+                       },
+                       %ClusterResource{
+                         id: "rsc_SAPHanaTop_HN9_HDB09",
+                         type: "ocf::suse:SAPHanaTopology",
+                         role: "Started",
+                         status: "Active",
+                         fail_count: 0,
+                         managed: true,
+                         node: "vmhana02",
+                         sid: "HN9",
+                         parent: %ClusterResourceParent{
+                           id: "cln_SAPHanaTop_HN9_HDB09",
+                           managed: true,
+                           multi_state: false
+                         }
+                       },
+                       %ClusterResource{
+                         id: "rsc_SAPHanaCon_HN9_HDB09",
+                         type: "ocf::suse:SAPHanaController",
+                         role: "Stopped",
+                         status: nil,
+                         fail_count: nil,
+                         managed: true,
+                         node: nil,
+                         sid: "HN9",
+                         parent: %ClusterResourceParent{
+                           id: "mst_SAPHanacon_HN9_HDB09",
+                           managed: true,
+                           multi_state: true
+                         }
+                       },
+                       %ClusterResource{
+                         id: "rsc_SAPHanaCon_HN9_HDB09",
+                         type: "ocf::suse:SAPHanaController",
+                         role: "Master",
+                         status: "Active",
+                         fail_count: 0,
+                         managed: true,
+                         node: "vmhana02",
+                         sid: "HN9",
+                         parent: %ClusterResourceParent{
+                           id: "mst_SAPHanacon_HN9_HDB09",
+                           managed: true,
+                           multi_state: true
+                         }
+                       }
+                     ]
                    },
                    discovered_health: :critical,
                    host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",

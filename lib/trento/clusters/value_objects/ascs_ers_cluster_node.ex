@@ -21,6 +21,7 @@ defmodule Trento.Clusters.ValueObjects.AscsErsClusterNode do
     field :attributes, {:map, :string}
     field :status, :string
 
+    # resources attribute is deprecated, moved to main details
     embeds_many :resources, ClusterResource
   end
 end
