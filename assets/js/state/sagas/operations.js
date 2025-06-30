@@ -5,6 +5,7 @@ import {
   HOST_OPERATION,
   CLUSTER_OPERATION,
   APPLICATION_INSTANCE_OPERATION,
+  CLUSTER_HOST_OPERATION,
   getOperationLabel,
   getOperationInternalName,
   getOperationResourceType,
@@ -14,6 +15,7 @@ import {
   requestHostOperation,
   requestClusterOperation,
   requestSapInstanceOperation,
+  requestClusterHostOperation,
   getOperationExecutions,
 } from '@lib/api/operations';
 import { notify } from '@state/notifications';
@@ -34,7 +36,9 @@ function* getResourceName(groupID, resourceType) {
     case APPLICATION_INSTANCE_OPERATION:
       return (yield select(getHost(groupID)))?.hostname || 'unknown';
     case CLUSTER_OPERATION:
+    case CLUSTER_HOST_OPERATION: {
       return (yield select(getCluster(groupID)))?.name || 'unknown';
+    }
     default:
       return 'unknown';
   }
@@ -60,6 +64,11 @@ const callRequest = (operation, resourceType, requestParams) => {
         params
       );
     }
+    case CLUSTER_HOST_OPERATION: {
+      const { clusterID, hostID } = requestParams;
+
+      return requestClusterHostOperation(clusterID, hostID, operation);
+    }
     default:
       return noop;
   }
@@ -73,10 +82,13 @@ export function* requestOperation({ payload }) {
   const resourceName = yield call(
     getResourceName,
     groupID,
-    operationResourceType
+    operationResourceType,
+    requestParams
   );
 
-  yield put(setRunningOperation({ groupID, operation }));
+  yield put(
+    setRunningOperation({ groupID, operation, metadata: requestParams })
+  );
   try {
     yield call(callRequest, operation, operationResourceType, requestParams);
     yield put(
@@ -141,7 +153,13 @@ export function* updateRunningOperations() {
       runningOperations.map((runningOperation) => {
         const operation = getOperationInternalName(runningOperation.operation);
         return put(
-          setRunningOperation({ groupID: runningOperation.group_id, operation })
+          setRunningOperation({
+            groupID: runningOperation.group_id,
+            operation,
+            // metadata: temporary solution to reconcile information of running operations
+            // the long term goal is to have a homogeneous shape for metadata in the state
+            metadata: { targets: runningOperation.targets },
+          })
         );
       })
     );

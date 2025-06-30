@@ -23,7 +23,13 @@ describe('runningOperations reducer', () => {
     const operation = faker.lorem.word();
     const initialState = {};
     const expectedState = {
-      [groupID]: { operation, forbidden: false, errors: [] },
+      [groupID]: {
+        groupID,
+        operation,
+        forbidden: false,
+        errors: [],
+        metadata: {},
+      },
     };
 
     const action = setRunningOperation({ groupID, operation });
@@ -41,7 +47,7 @@ describe('runningOperations reducer', () => {
       [groupID]: { operation, forbidden: false, errors: [] },
     };
     const expectedState = {
-      [groupID]: { operation, forbidden: true, errors },
+      [groupID]: { operation, forbidden: true, errors, metadata: {} },
     };
 
     const action = setForbiddenOperation({ groupID, operation, errors });

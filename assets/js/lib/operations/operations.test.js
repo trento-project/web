@@ -111,6 +111,14 @@ describe('operations', () => {
       operation: 'sap_instance_stop',
       resourceType: 'application_instance',
     },
+    {
+      operation: 'pacemaker_enable',
+      resourceType: 'cluster_host',
+    },
+    {
+      operation: 'pacemaker_disable',
+      resourceType: 'cluster_host',
+    },
   ])(
     `should return the operation $operation resource type`,
     ({ operation, resourceType }) => {

@@ -97,7 +97,7 @@ function HostDetails({
   softwareUpdatesTooltip,
   userAbilities,
   operationsEnabled = false,
-  runningOperation = {},
+  runningOperation,
   cleanUpHost,
   requestHostChecksExecution,
   requestOperation,

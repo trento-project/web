@@ -29,7 +29,7 @@ function SapSystemDetails() {
   const { abilities } = useSelector(getUserProfile);
   const dispatch = useDispatch();
 
-  const runningOperations = useSelector(getRunningOperationsList());
+  const runningOperations = useSelector(getRunningOperationsList);
 
   useEffect(() => {
     operationsEnabled && dispatch(updateRunningOperations());

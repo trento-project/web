@@ -23,6 +23,9 @@ export const requestSapInstanceOperation = (
     params
   );
 
+export const requestClusterHostOperation = (clusterID, hostID, operation) =>
+  post(`/clusters/${clusterID}/hosts/${hostID}/operations/${operation}`);
+
 export const getOperationExecutions = (params) =>
   networkClient.get('/api/v1/operations/executions', {
     ...defaultConfig,

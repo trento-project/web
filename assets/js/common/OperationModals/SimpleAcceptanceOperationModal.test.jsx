@@ -39,13 +39,13 @@ describe('SimpleAcceptanceOperationModal', () => {
       operation: PACEMAKER_ENABLE,
       descriptionResolverArgs: { hostName },
       title: 'Enable Pacemaker',
-      expectedDescription: `Enable Pacemaker systemd unit on host ${hostName}`,
+      expectedDescription: `Enable Pacemaker systemd unit at boot on host ${hostName}`,
     },
     {
       operation: PACEMAKER_DISABLE,
       descriptionResolverArgs: { hostName },
       title: 'Disable Pacemaker',
-      expectedDescription: `Disable Pacemaker systemd unit on host ${hostName}`,
+      expectedDescription: `Disable Pacemaker systemd unit at boot on host ${hostName}`,
     },
     {
       operation: 'unknown_operation',

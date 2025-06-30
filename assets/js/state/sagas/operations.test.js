@@ -8,6 +8,8 @@ import {
   SAPTUNE_SOLUTION_APPLY,
   CLUSTER_MAINTENANCE_CHANGE,
   SAP_INSTANCE_START,
+  PACEMAKER_ENABLE,
+  PACEMAKER_DISABLE,
   getOperationLabel,
 } from '@lib/operations';
 import {
@@ -29,6 +31,9 @@ const hostOperationRequestURL = (hostID, operation) =>
 
 const clusterOperationRequestURL = (clusterID, operation) =>
   `/clusters/${clusterID}/operations/${operation}`;
+
+const clusterHostOperationRequestURL = (clusterID, hostID, operation) =>
+  `/clusters/${clusterID}/hosts/${hostID}/operations/${operation}`;
 
 const sapInstanceOperationRequestedURL = (
   sapSystemID,
@@ -73,7 +78,11 @@ describe('operations saga', () => {
       );
 
       expect(dispatched).toEqual([
-        setRunningOperation({ groupID, operation }),
+        setRunningOperation({
+          groupID,
+          operation,
+          metadata: { hostID: groupID },
+        }),
         notify({
           text: `Operation ${KNOWN_OPERATION_LABEL} requested for ${hostname}`,
           icon: '⚙️',
@@ -104,7 +113,11 @@ describe('operations saga', () => {
       );
 
       expect(dispatched).toEqual([
-        setRunningOperation({ groupID, operation }),
+        setRunningOperation({
+          groupID,
+          operation,
+          metadata: { clusterID: groupID },
+        }),
         notify({
           text: `Operation ${label} requested for ${name}`,
           icon: '⚙️',
@@ -148,13 +161,55 @@ describe('operations saga', () => {
       );
 
       expect(dispatched).toEqual([
-        setRunningOperation({ groupID, operation }),
+        setRunningOperation({
+          groupID,
+          operation,
+          metadata: { sapSystemID, hostID: groupID, instanceNumber },
+        }),
         notify({
           text: `Operation ${label} requested for ${hostname}`,
           icon: '⚙️',
         }),
       ]);
     });
+
+    it.each([PACEMAKER_ENABLE, PACEMAKER_DISABLE])(
+      'should request a cluster host operation',
+      async (operation) => {
+        const groupID = faker.string.uuid();
+        const hostID = faker.string.uuid();
+        const name = faker.internet.displayName();
+        const label = getOperationLabel(operation);
+
+        axiosMock
+          .onPost(clusterHostOperationRequestURL(groupID, hostID, operation))
+          .reply(202, {});
+
+        const dispatched = await recordSaga(
+          requestOperation,
+          {
+            payload: {
+              groupID,
+              operation,
+              requestParams: { clusterID: groupID, hostID },
+            },
+          },
+          { clustersList: { clusters: [{ id: groupID, name }] } }
+        );
+
+        expect(dispatched).toEqual([
+          setRunningOperation({
+            groupID,
+            operation,
+            metadata: { clusterID: groupID, hostID },
+          }),
+          notify({
+            text: `Operation ${label} requested for ${name}`,
+            icon: '⚙️',
+          }),
+        ]);
+      }
+    );
 
     it('should fail requesting an operation if the api request fails', async () => {
       const groupID = faker.string.uuid();
@@ -174,7 +229,11 @@ describe('operations saga', () => {
       );
 
       expect(dispatched).toEqual([
-        setRunningOperation({ groupID, operation }),
+        setRunningOperation({
+          groupID,
+          operation,
+          metadata: { hostID: groupID },
+        }),
         removeRunningOperation({ groupID }),
         notify({
           text: `Operation ${KNOWN_OPERATION_LABEL} request for ${hostname} failed`,
@@ -201,7 +260,11 @@ describe('operations saga', () => {
       );
 
       expect(dispatched).toEqual([
-        setRunningOperation({ groupID, operation }),
+        setRunningOperation({
+          groupID,
+          operation,
+          metadata: { hostID: groupID },
+        }),
         setForbiddenOperation({
           groupID,
           operation,
@@ -257,6 +320,30 @@ describe('operations saga', () => {
       ]);
     });
 
+    it.each([PACEMAKER_ENABLE, PACEMAKER_DISABLE])(
+      'should complete successfully a cluster host operation',
+      async (operation) => {
+        const groupID = faker.string.uuid();
+        const name = faker.internet.displayName();
+
+        const dispatched = await recordSaga(
+          completeOperation,
+          {
+            payload: { groupID, operation, result: 'UPDATED' },
+          },
+          { clustersList: { clusters: [{ id: groupID, name }] } }
+        );
+
+        expect(dispatched).toEqual([
+          removeRunningOperation({ groupID }),
+          notify({
+            text: `Operation ${getOperationLabel(operation)} succeeded for ${name}`,
+            icon: '✅',
+          }),
+        ]);
+      }
+    );
+
     it('should complete an operation with a failed result', async () => {
       const groupID = faker.string.uuid();
       const operation = KNOWN_OPERATION;
@@ -289,8 +376,18 @@ describe('operations saga', () => {
 
       axiosMock.onGet(getOperationExecutionsURL()).reply(200, {
         items: [
-          { group_id: groupID1, operation: operation1, status: 'running' },
-          { group_id: groupID2, operation: operation2, status: 'running' },
+          {
+            group_id: groupID1,
+            operation: operation1,
+            status: 'running',
+            targets: [],
+          },
+          {
+            group_id: groupID2,
+            operation: operation2,
+            status: 'running',
+            targets: [],
+          },
         ],
       });
 
@@ -302,10 +399,12 @@ describe('operations saga', () => {
         setRunningOperation({
           groupID: groupID1,
           operation: SAPTUNE_SOLUTION_APPLY,
+          metadata: { targets: [] },
         }),
         setRunningOperation({
           groupID: groupID2,
           operation: CLUSTER_MAINTENANCE_CHANGE,
+          metadata: { targets: [] },
         }),
       ]);
     });
