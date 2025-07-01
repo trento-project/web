@@ -285,7 +285,8 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
               resource_field => resource_id,
               :operation => atom_operation,
               :operation_id => operation_id,
-              :params => body_params
+              :params => body_params,
+              :correlation_id => operation_id
             },
             additional_params
           )

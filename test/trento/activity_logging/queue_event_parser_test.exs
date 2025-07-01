@@ -45,6 +45,7 @@ defmodule Trento.ActivityLog.QueueEventParserTest do
         build(:operation_completed_v1, operation_type: "saptuneapplysolution@v1")
 
       assert %{
+               correlation_id: operation_id,
                operation_id: operation_id,
                resource_id: group_id,
                operation: :saptune_solution_apply,
@@ -75,6 +76,7 @@ defmodule Trento.ActivityLog.QueueEventParserTest do
       )
 
       assert %{
+               correlation_id: operation_id,
                operation_id: operation_id,
                host_id: group_id,
                operation: :saptune_solution_apply,
