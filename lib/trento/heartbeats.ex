@@ -82,7 +82,7 @@ defmodule Trento.Heartbeats do
   defp dispatch_command(agent_id, heartbeat) do
     case %{host_id: agent_id, heartbeat: heartbeat}
          |> UpdateHeartbeat.new!()
-         |> commanded().dispatch() do
+         |> correlated_dispatch() do
       :ok ->
         {:ok, :done}
 
@@ -93,4 +93,9 @@ defmodule Trento.Heartbeats do
 
   defp commanded,
     do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]
+
+  defp correlated_dispatch(command) do
+    correlation_id = :persistent_term.get(:api_key, nil)
+    commanded().dispatch(command, correlation_id: correlation_id, causation_id: correlation_id)
+  end
 end
