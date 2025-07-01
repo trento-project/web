@@ -34,7 +34,6 @@ function ClusterMaintenanceChangeModal({
   const [maintenanceState, setMaintenanceState] = useState(false);
 
   const clusterMaintenance = get(clusterDetails, 'maintenance_mode', false);
-  const stoppedResource = get(clusterDetails, 'stopped_resources', []);
 
   // in ASCS/ERS clusters the nodes are within SAP systems
   const clusterNodes = has(clusterDetails, 'sap_systems')
@@ -62,17 +61,15 @@ function ClusterMaintenanceChangeModal({
   // flatMap all resources and parents from all nodes
   // and concat stopped resources
   const resourceOptions = flow([
-    (nodes) => flatMap(nodes, ({ resources }) => resources),
     (resources) =>
       flatMap(resources, (res) => (res.parent ? [res.parent, res] : [res])),
-    (resources) => concat(resources, stoppedResource),
     (resources) => uniqBy(resources, 'id'),
     (resources) =>
       map(resources, ({ id, managed }) => ({
         value: { id, maintenance: !managed, scope: RESOURCE_SCOPE },
         key: id,
       })),
-  ])(clusterNodes);
+  ])(clusterDetails?.resources);
 
   const allOptions = concat(
     NOT_SELECTED_OPTION,

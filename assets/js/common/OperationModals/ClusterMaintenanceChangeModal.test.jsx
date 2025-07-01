@@ -1,5 +1,4 @@
 import React from 'react';
-import { concat } from 'lodash';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
@@ -55,10 +54,7 @@ describe('ClusterMaintenanceChangeModal', () => {
   it('should render available nodes and resources in HANA clusters', async () => {
     const user = userEvent.setup();
     const { details } = clusterFactory.build();
-    const { nodes, stopped_resources: stoppedResources } = details;
-    const { resources: resources1 } = nodes[0];
-    const { resources: resources2 } = nodes[1];
-    const resources = concat(resources1, resources2, stoppedResources);
+    const { nodes, resources } = details;
 
     await act(async () => {
       render(<ClusterMaintenanceChangeModal clusterDetails={details} isOpen />);
@@ -81,12 +77,8 @@ describe('ClusterMaintenanceChangeModal', () => {
   it('should render available nodes and resources in ASCS/ERS clusters', async () => {
     const user = userEvent.setup();
     const { details } = clusterFactory.build({ type: 'ascs_ers' });
-    const { sap_systems: sapSystems, stopped_resources: stoppedResources } =
-      details;
+    const { sap_systems: sapSystems, resources } = details;
     const { nodes } = sapSystems[0];
-    const { resources: resources1 } = nodes[0];
-    const { resources: resources2 } = nodes[1];
-    const resources = concat(resources1, resources2, stoppedResources);
 
     await act(async () => {
       render(<ClusterMaintenanceChangeModal clusterDetails={details} isOpen />);
