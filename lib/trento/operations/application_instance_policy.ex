@@ -171,16 +171,18 @@ defmodule Trento.Operations.ApplicationInstancePolicy do
         _ -> false
       end)
 
-    resource_id = get_cluster_resource_id(is_clustered, sid, hostname, cluster)
+    if is_clustered do
+      resource_id = get_cluster_resource_id(sid, hostname, cluster)
 
-    ClusterReadModel.authorize_operation(:maintenance, cluster, %{
-      cluster_resource_id: resource_id
-    })
+      ClusterReadModel.authorize_operation(:maintenance, cluster, %{
+        cluster_resource_id: resource_id
+      })
+    else
+      :ok
+    end
   end
 
-  defp get_cluster_resource_id(false, _, _, _), do: nil
-
-  defp get_cluster_resource_id(true, sid, hostname, %{details: %{sap_systems: sap_systems}}) do
+  defp get_cluster_resource_id(sid, hostname, %{details: %{sap_systems: sap_systems}}) do
     sap_systems
     |> Enum.find_value([], fn
       %{nodes: nodes, sid: ^sid} -> nodes
@@ -195,6 +197,8 @@ defmodule Trento.Operations.ApplicationInstancePolicy do
       _ -> nil
     end)
   end
+
+  defp get_cluster_resource_id(_, _, _), do: nil
 
   defp reject_current_instance(instances, host_id, instance_number) do
     Enum.reject(instances, fn %{instance_number: inst_number, host_id: h_id} ->
