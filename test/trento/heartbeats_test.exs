@@ -30,7 +30,7 @@ defmodule Trento.HeartbeatsTest do
     expect(
       Trento.Commanded.Mock,
       :dispatch,
-      fn command ->
+      fn command, _ ->
         assert %UpdateHeartbeat{
                  host_id: ^agent_id,
                  heartbeat: :passing
@@ -68,7 +68,7 @@ defmodule Trento.HeartbeatsTest do
     expect(
       Trento.Commanded.Mock,
       :dispatch,
-      fn command ->
+      fn command, _ ->
         assert %UpdateHeartbeat{
                  host_id: ^agent_id,
                  heartbeat: :passing
@@ -105,7 +105,7 @@ defmodule Trento.HeartbeatsTest do
     expect(
       Trento.Commanded.Mock,
       :dispatch,
-      fn command ->
+      fn command, _ ->
         assert %UpdateHeartbeat{
                  host_id: ^agent_id,
                  heartbeat: :critical

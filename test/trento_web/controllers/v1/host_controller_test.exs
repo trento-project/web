@@ -36,7 +36,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
       expect(
         Trento.Commanded.Mock,
         :dispatch,
-        fn _ ->
+        fn _, _ ->
           {:error, :host_not_registered}
         end
       )
