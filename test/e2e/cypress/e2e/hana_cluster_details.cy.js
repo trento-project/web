@@ -392,6 +392,17 @@ context('HANA cluster details', () => {
     });
   });
 
+  describe('Resources table', () => {
+    beforeEach(() => {
+      hanaClusterDetailsPage.visitAvailableHanaCluster();
+    });
+
+    it('should show resources table content', () => {
+      hanaClusterDetailsPage.expandGroupedResources();
+      hanaClusterDetailsPage.expectedResourcesDisplayed();
+    });
+  });
+
   describe('Forbidden actions', () => {
     beforeEach(() => {
       hanaClusterDetailsPage.apiDeleteAllUsers();
