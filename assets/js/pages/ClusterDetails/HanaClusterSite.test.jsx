@@ -63,7 +63,9 @@ describe('HanaClusterSite', () => {
       state,
       sr_healt_state: srHealthState,
     } = hanaClusterSiteFactory.build();
-    const nodes = hanaClusterDetailsNodesFactory.buildList(3);
+    const nodes = hanaClusterDetailsNodesFactory.buildList(3, {
+      resources: [],
+    });
     render(
       <HanaClusterSite
         name={name}
@@ -84,7 +86,9 @@ describe('HanaClusterSite', () => {
       state,
       sr_healt_state: srHealthState,
     } = hanaClusterSiteFactory.build();
-    const nodes = hanaClusterDetailsNodesFactory.buildList(1);
+    const nodes = hanaClusterDetailsNodesFactory.buildList(1, {
+      resources: [],
+    });
     render(
       <HanaClusterSite
         name={name}
@@ -144,7 +148,9 @@ describe('HanaClusterSite', () => {
         const user = userEvent.setup();
         const clusterID = faker.string.uuid();
 
-        const nodes = hanaClusterDetailsNodesFactory.buildList(2);
+        const nodes = hanaClusterDetailsNodesFactory.buildList(2, {
+          resources: [],
+        });
 
         render(
           <HanaClusterSite
@@ -233,7 +239,7 @@ describe('HanaClusterSite', () => {
         const user = userEvent.setup();
         const clusterID = faker.string.uuid();
 
-        const host = hanaClusterDetailsNodesFactory.build();
+        const host = hanaClusterDetailsNodesFactory.build({ resources: [] });
 
         render(
           <HanaClusterSite
@@ -333,7 +339,9 @@ describe('HanaClusterSite', () => {
         const user = userEvent.setup();
         const clusterID = faker.string.uuid();
 
-        const nodes = hanaClusterDetailsNodesFactory.buildList(2);
+        const nodes = hanaClusterDetailsNodesFactory.buildList(2, {
+          resources: [],
+        });
 
         const runningOperation = null;
 

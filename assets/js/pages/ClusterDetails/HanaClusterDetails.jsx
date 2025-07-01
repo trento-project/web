@@ -10,10 +10,11 @@ import CheckResultsOverview from '@pages/CheckResultsOverview';
 
 import HanaClusterSite from './HanaClusterSite';
 
-export const enrichNodes = (clusterNodes, hosts) =>
+export const enrichNodes = (clusterNodes, hosts, resources) =>
   clusterNodes?.map((node) => ({
     ...node,
     ...hosts.find(({ hostname }) => hostname === node.name),
+    resources: resources.filter(({ node: nodename }) => nodename === node.name),
   }));
 
 function HanaClusterDetails({
@@ -31,7 +32,7 @@ function HanaClusterDetails({
   navigate = noop,
   getClusterHostOperations = noop,
 }) {
-  const enrichedNodes = enrichNodes(details?.nodes, hosts);
+  const enrichedNodes = enrichNodes(details?.nodes, hosts, details?.resources);
   const enrichedSapSystems = clusterSids.map((sidItem) => ({
     sid: sidItem,
     ...sapSystems.find(({ sid: currentSid }) => currentSid === sidItem),

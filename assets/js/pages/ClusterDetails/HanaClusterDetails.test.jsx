@@ -264,7 +264,6 @@ describe('HanaClusterDetails component', () => {
 
     expect(screen.getByText('Node Details')).toBeInTheDocument();
     expect(screen.getByText('Attributes')).toBeInTheDocument();
-    expect(screen.getByText('Resources')).toBeInTheDocument();
 
     Object.keys(attributes).forEach((key) => {
       screen.getAllByText(key).forEach((element) => {

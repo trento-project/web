@@ -31,8 +31,8 @@ import {
   SimpleAcceptanceOperationModal,
 } from '@common/OperationModals';
 
+import Resources from './Resources';
 import SBDDetails from './SBDDetails';
-import StoppedResources from './StoppedResources';
 import { getClusterHostOperations } from './clusterOperations';
 
 const hostOperations = [PACEMAKER_ENABLE, PACEMAKER_DISABLE];
@@ -119,6 +119,21 @@ function ClusterDetails({
             }}
             onCancel={closeOperationModal}
           />
+          <SimpleAcceptanceOperationModal
+            operation={operationModalOpen.operation}
+            descriptionResolverArgs={{
+              hostName: currentOperationHost?.name,
+            }}
+            isOpen={isOperationModalOpen(operationModalOpen, hostOperations)}
+            onRequest={() => {
+              onRequestHostOperation(operationModalOpen.operation, {
+                clusterID,
+                hostID: currentOperationHost.id,
+              });
+              closeOperationModal();
+            }}
+            onCancel={closeOperationModal}
+          />
         </>
       )}
       <BackButton url="/clusters">Back to Clusters</BackButton>
@@ -199,23 +214,8 @@ function ClusterDetails({
           </div>
         </div>
       </div>
-      <SimpleAcceptanceOperationModal
-        operation={operationModalOpen.operation}
-        descriptionResolverArgs={{
-          hostName: currentOperationHost?.name,
-        }}
-        isOpen={isOperationModalOpen(operationModalOpen, hostOperations)}
-        onRequest={() => {
-          onRequestHostOperation(operationModalOpen.operation, {
-            clusterID,
-            hostID: currentOperationHost.id,
-          });
-          closeOperationModal();
-        }}
-        onCancel={closeOperationModal}
-      />
       {detailComponent}
-      <StoppedResources resources={details.stopped_resources} />
+      <Resources resources={details?.resources} hosts={hosts} />
       <SBDDetails sbdDevices={details.sbd_devices} />
     </div>
   );
