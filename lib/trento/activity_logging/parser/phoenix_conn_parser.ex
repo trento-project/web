@@ -99,12 +99,21 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
   end
 
   def get_activity_metadata(
-        activity,
+        :api_key_generation = _action,
         %Plug.Conn{
           body_params: request_body
         }
-      )
-      when activity in [:api_key_generation, :activity_log_settings_update] do
+      ) do
+    correlation_id = :persistent_term.get(:api_key, nil)
+    Map.merge(%{correlation_id: correlation_id}, request_body)
+  end
+
+  def get_activity_metadata(
+        :activity_log_settings_update = _action,
+        %Plug.Conn{
+          body_params: request_body
+        }
+      ) do
     request_body
   end
 

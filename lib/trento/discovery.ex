@@ -191,7 +191,7 @@ defmodule Trento.Discovery do
   @spec dispatch(command | [command]) :: :ok | {:error, any}
   defp dispatch(commands) when is_list(commands) do
     Enum.reduce(commands, :ok, fn command, acc ->
-      case {commanded().dispatch(command), acc} do
+      case {correlated_dispatch(command), acc} do
         {:ok, :ok} ->
           :ok
 
@@ -230,4 +230,9 @@ defmodule Trento.Discovery do
 
   defp commanded,
     do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]
+
+  defp correlated_dispatch(command) do
+    correlation_id = :persistent_term.get(:api_key, nil)
+    commanded().dispatch(command, correlation_id: correlation_id, causation_id: correlation_id)
+  end
 end

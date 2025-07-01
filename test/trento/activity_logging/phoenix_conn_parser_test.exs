@@ -62,12 +62,23 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
   end
 
   describe "metadata detection" do
-    test "should extract the request body as metadata for relevant activities", %{conn: conn} do
-      for activity <- [:api_key_generation, :activity_log_settings_update] do
+    @correlation_id Faker.UUID.v4()
+    for scenario <- [
+          %{
+            action: :api_key_generation,
+            expected_metadata: %{"foo" => "bar", correlation_id: @correlation_id}
+          },
+          %{action: :activity_log_settings_update, expected_metadata: %{"foo" => "bar"}}
+        ] do
+      @scenario scenario
+      test "should extract the request body as metadata for activity #{@scenario.action}", %{
+        conn: conn
+      } do
         request_body = %{"foo" => "bar"}
+        :persistent_term.put(:api_key, @correlation_id)
 
-        assert request_body ==
-                 PhoenixConnParser.get_activity_metadata(activity, %Plug.Conn{
+        assert @scenario.expected_metadata ==
+                 PhoenixConnParser.get_activity_metadata(@scenario.action, %Plug.Conn{
                    conn
                    | body_params: request_body
                  })
