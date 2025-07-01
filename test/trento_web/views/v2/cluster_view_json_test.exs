@@ -36,11 +36,7 @@ defmodule TrentoWeb.V2.ClusterJSONTest do
 
     cluster = build(:cluster, sap_instances: sap_instances)
 
-    %{
-      sap_instances: view_sap_instances,
-      sid: sid,
-      additional_sids: additional_sids
-    } =
+    %{sap_instances: view_sap_instances, sid: sid, additional_sids: additional_sids} =
       ClusterJSON.cluster(%{cluster: cluster})
 
     assert sid_2 == sid

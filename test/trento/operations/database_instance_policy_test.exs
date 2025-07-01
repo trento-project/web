@@ -190,8 +190,8 @@ defmodule Trento.Operations.DatabaseInstancePolicyTest do
         clustered_sap_instances =
         build_list(1, :clustered_sap_instance)
 
-      nodes = build_list(1, :hana_cluster_node, resources: [cluster_resource])
-      cluster_details = build(:hana_cluster_details, maintenance_mode: false, nodes: nodes)
+      cluster_details =
+        build(:hana_cluster_details, maintenance_mode: false, resources: [cluster_resource])
 
       cluster =
         build(:cluster,

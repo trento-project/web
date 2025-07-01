@@ -155,21 +155,16 @@ defmodule Trento.Operations.HostPolicyTest do
 
         database_instances = build_list(2, :database_instance, health: Health.unknown())
 
-        [%{name: hostname}] =
-          nodes =
-          build_list(1, :ascs_ers_cluster_node,
-            resources:
-              [%{id: resource_id}] =
-                build_list(1, :cluster_resource,
-                  type: "ocf::heartbeat:SAPInstance",
-                  managed: true
-                )
+        resources =
+          [%{id: resource_id}] =
+          build_list(1, :cluster_resource,
+            type: "ocf::heartbeat:SAPInstance",
+            managed: true,
+            sid: sid
           )
 
-        sap_systems = build_list(1, :ascs_ers_cluster_sap_system, sid: sid, nodes: nodes)
-
         cluster_details =
-          build(:ascs_ers_cluster_details, maintenance_mode: false, sap_systems: sap_systems)
+          build(:ascs_ers_cluster_details, maintenance_mode: false, resources: resources)
 
         clustered_sap_instances =
           build_list(1, :clustered_sap_instance,
@@ -187,7 +182,6 @@ defmodule Trento.Operations.HostPolicyTest do
 
         host =
           build(:host,
-            hostname: hostname,
             application_instances: application_instances,
             database_instances: database_instances,
             cluster: cluster,
@@ -225,8 +219,8 @@ defmodule Trento.Operations.HostPolicyTest do
           cluster_resource =
             build(:cluster_resource, type: cluster_resource_type, parent: parent)
 
-          nodes = build_list(1, :hana_cluster_node, resources: [cluster_resource])
-          cluster_details = build(:hana_cluster_details, maintenance_mode: false, nodes: nodes)
+          cluster_details =
+            build(:hana_cluster_details, maintenance_mode: false, resources: [cluster_resource])
 
           %{name: cluster_name} =
             cluster =
