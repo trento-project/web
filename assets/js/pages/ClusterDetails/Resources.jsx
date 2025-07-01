@@ -1,0 +1,115 @@
+import React from 'react';
+import { capitalize, map, flatMap, flow, groupBy } from 'lodash';
+
+import Table from '@common/Table';
+
+import ClusterNodeLink from './ClusterNodeLink';
+
+const groupResources = (clusterResources, hosts) =>
+  flow(
+    (resources) =>
+      map(resources, (resource) => ({
+        ...resource,
+        hostID: hosts.find(({ hostname }) => hostname === resource.node)?.id,
+      })),
+    (resources) =>
+      groupBy(resources, (resource) => resource.parent?.id || resource.id),
+    (resources) =>
+      flatMap(resources, (groupedResources) => {
+        const firstResource = groupedResources[0];
+        const { parent } = firstResource;
+        if (parent) {
+          const type =
+            parent.multi_state == null ? 'Group' : firstResource.type;
+          return { ...parent, type, children: groupedResources };
+        }
+
+        return groupedResources;
+      })
+  )(clusterResources);
+
+const defaultCellRender = (content) => (
+  <td className="px-5 py-5 text-sm">
+    <p className="text-gray-900 whitespace-no-wrap">{content}</p>
+  </td>
+);
+
+const resourceTableConfig = {
+  usePadding: false,
+  columns: [
+    {
+      title: 'Fail count',
+      key: 'fail_count',
+    },
+    {
+      title: 'ID',
+      key: 'id',
+    },
+    {
+      title: 'Location',
+      key: 'node',
+      render: (content, item) =>
+        content && (
+          <ClusterNodeLink hostId={item.hostID}>{content}</ClusterNodeLink>
+        ),
+    },
+    {
+      title: 'Role',
+      key: 'role',
+    },
+    {
+      title: 'Status',
+      key: 'status',
+    },
+    {
+      title: 'Managed',
+      key: 'managed',
+      render: (content) => content !== null && capitalize(`${content}`),
+    },
+    {
+      title: 'Type',
+      key: 'type',
+    },
+  ],
+  wrapCollapsedRowInCell: false,
+  collapsibleDetailRenderer: (resource, rowExpanded) =>
+    resource.children
+      ? resource.children.map((child) => (
+          <tr
+            key={`${child.node}_${child.id}`}
+            hidden={!rowExpanded}
+            className="bg-gray-50 border-b border-gray-200"
+          >
+            <td aria-label="collapsible-cell" />
+            {defaultCellRender(child.fail_count)}
+            {defaultCellRender(child.id)}
+            {defaultCellRender(
+              child.node && (
+                <ClusterNodeLink hostId={child.hostID}>
+                  {child.node}
+                </ClusterNodeLink>
+              )
+            )}
+            {defaultCellRender(child.role)}
+            {defaultCellRender(child.status)}
+            {defaultCellRender(capitalize(`${child.managed}`))}
+            {defaultCellRender(child.type)}
+          </tr>
+        ))
+      : null,
+};
+
+function Resources({ resources, hosts }) {
+  const groupedResources = groupResources(resources, hosts);
+
+  return (
+    <>
+      <h2 className="mt-8 mb-2 text-2xl font-bold">Resources</h2>
+      <div className="mt-2">
+        <Table config={resourceTableConfig} data={groupedResources} />
+      </div>
+    </>
+  );
+}
+
+export default Resources;
