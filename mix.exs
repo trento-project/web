@@ -170,13 +170,10 @@ defmodule Trento.MixProject do
 
   defp docs do
     [
-      main: "readme",
+      main: "TrentoWeb",
       logo: "priv/static/images/trento.svg",
-      extra_section: "GUIDES",
       source_url: @source_url,
       assets: "guides/assets/",
-      extras: extras(),
-      groups_for_extras: groups_for_extras(),
       groups_for_modules: [
         Clusters: [~r/Trento.Clusters.*/],
         Hosts: [~r/Trento.Hosts.*/],
@@ -213,25 +210,6 @@ defmodule Trento.MixProject do
         Trento.Discovery.Policies,
         Trento.Domain.Events
       ]
-    ]
-  end
-
-  def extras() do
-    [
-      "README.md",
-      "CHANGELOG.md",
-      "CONTRIBUTING.md",
-      "guides/monitoring/monitoring.md",
-      "guides/alerting/alerting.md",
-      "guides/development/environment_variables.md",
-      "guides/development/hack_on_the_trento.md"
-    ] ++ Path.wildcard("guides/authentication/*.md")
-  end
-
-  defp groups_for_extras do
-    [
-      Development: [~r/guides\/development\/.?/, "CONTRIBUTING.md"],
-      Authentication: [~r/guides\/authentication\/.?/]
     ]
   end
 
