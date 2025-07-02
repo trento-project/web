@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 import { capitalize, map, flatMap, flow, groupBy } from 'lodash';
 
 import Table from '@common/Table';
@@ -28,11 +29,11 @@ const groupResources = (clusterResources, hosts) =>
       })
   )(clusterResources);
 
-const defaultCellRender = (content) => (
-  <td className="px-5 py-5 text-sm">
-    <p className="text-gray-900 whitespace-no-wrap">{content}</p>
-  </td>
-);
+const addInheritedBgColor = (columns) =>
+  columns.map((column) => ({
+    ...column,
+    className: classNames(column?.className, '!bg-inherit'),
+  }));
 
 const resourceTableConfig = {
   usePadding: false,
@@ -72,7 +73,10 @@ const resourceTableConfig = {
     },
   ],
   wrapCollapsedRowInCell: false,
-  collapsibleDetailRenderer: (resource, rowExpanded) =>
+  collapsibleDetailRenderer: (
+    resource,
+    { columns, rowExpanded, renderCells }
+  ) =>
     resource.children
       ? resource.children.map((child) => (
           <tr
@@ -81,19 +85,7 @@ const resourceTableConfig = {
             className="bg-gray-50 border-b border-gray-200"
           >
             <td aria-label="collapsible-cell" />
-            {defaultCellRender(child.fail_count)}
-            {defaultCellRender(child.id)}
-            {defaultCellRender(
-              child.node && (
-                <ClusterNodeLink hostId={child.hostID}>
-                  {child.node}
-                </ClusterNodeLink>
-              )
-            )}
-            {defaultCellRender(child.role)}
-            {defaultCellRender(child.status)}
-            {defaultCellRender(capitalize(`${child.managed}`))}
-            {defaultCellRender(child.type)}
+            {renderCells(addInheritedBgColor(columns), child)}
           </tr>
         ))
       : null,

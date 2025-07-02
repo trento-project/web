@@ -15,31 +15,33 @@ function CollapsibleTableRow({
   const [rowExpanded, toggleRow] = useState(false);
   const collapsibleRowSpan = collapsibleDetailRenderer ? colSpan + 1 : colSpan;
   const collapsibleItem =
-    collapsibleDetailRenderer && collapsibleDetailRenderer(item, rowExpanded);
+    collapsibleDetailRenderer &&
+    collapsibleDetailRenderer(item, { columns, rowExpanded, renderCells });
   const isCollapsible = !!collapsibleItem;
 
   return (
     <>
       <tr className={className}>
-        {collapsibleDetailRenderer && !isCollapsible && (
+        {collapsibleDetailRenderer && (
           <td
-            className="pl-2 border-b border-gray-200 bg-white"
-            aria-label="not-collapsible"
-          />
-        )}
-        {isCollapsible && (
-          <td
-            className="pl-4 border-b border-gray-200 bg-white"
+            className={classNames(
+              'border-b border-gray-200 bg-white',
+              { 'pl-2': !isCollapsible },
+              { 'pl-4': isCollapsible }
+            )}
+            aria-label="collapsible-icon-cell"
             onClick={() => toggleRow(!rowExpanded)}
           >
-            <EOS_KEYBOARD_ARROW_DOWN
-              className={classNames(
-                'cursor-pointer self-center fill-gray-500',
-                {
-                  'transform rotate-180': rowExpanded,
-                }
-              )}
-            />
+            {isCollapsible && (
+              <EOS_KEYBOARD_ARROW_DOWN
+                className={classNames(
+                  'cursor-pointer self-center fill-gray-500',
+                  {
+                    'transform rotate-180': rowExpanded,
+                  }
+                )}
+              />
+            )}
           </td>
         )}
         {renderCells(columns, item)}
