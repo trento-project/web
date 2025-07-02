@@ -167,8 +167,8 @@ defmodule Trento.DiscoveryTest do
     }
 
     Trento.Commanded.Mock
-    |> expect(:dispatch, 1, fn _, _ -> {:error, error} end)
-    |> expect(:dispatch, 1, fn _, _ -> :ok end)
+    |> expect(:dispatch, 1, fn _ -> {:error, error} end)
+    |> expect(:dispatch, 1, fn _ -> :ok end)
 
     {:error, [^error]} = Discovery.handle(event)
 

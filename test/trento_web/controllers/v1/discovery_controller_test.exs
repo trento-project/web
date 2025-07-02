@@ -46,7 +46,7 @@ defmodule TrentoWeb.V1.DiscoveryControllerTest do
       body =
         load_discovery_event_fixture("sap_system_discovery_application")
 
-      expect(Trento.Commanded.Mock, :dispatch, fn _, _ ->
+      expect(Trento.Commanded.Mock, :dispatch, fn _ ->
         {:error, :any_error}
       end)
 
@@ -68,7 +68,7 @@ defmodule TrentoWeb.V1.DiscoveryControllerTest do
       body =
         load_discovery_event_fixture("sap_system_discovery_application")
 
-      expect(Trento.Commanded.Mock, :dispatch, fn _, _ ->
+      expect(Trento.Commanded.Mock, :dispatch, fn _ ->
         {:error, :associated_database_not_found}
       end)
 
