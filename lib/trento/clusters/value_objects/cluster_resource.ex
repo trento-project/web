@@ -20,6 +20,8 @@ defmodule Trento.Clusters.ValueObjects.ClusterResource do
     field :status, :string
     field :fail_count, :integer
     field :managed, :boolean
+    field :node, :string
+    field :sid, :string
 
     embeds_one :parent, ClusterResourceParent
   end

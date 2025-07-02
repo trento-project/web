@@ -627,7 +627,8 @@ defmodule Trento.Factory do
           type: "ocf::heartbeat:Dummy"
         ),
       system_replication_mode: "sync",
-      system_replication_operation_mode: "logreplay"
+      system_replication_operation_mode: "logreplay",
+      resources: build_list(5, :cluster_resource)
     }
   end
 
@@ -689,7 +690,9 @@ defmodule Trento.Factory do
       status: Faker.Pokemon.name(),
       fail_count: Enum.random(0..100),
       managed: Enum.random([false, true]),
-      parent: build(:cluster_resource_parent)
+      parent: build(:cluster_resource_parent),
+      node: Faker.StarWars.character(),
+      sid: nil
     }
   end
 
@@ -707,7 +710,8 @@ defmodule Trento.Factory do
       maintenance_mode: false,
       sap_systems: build_list(2, :ascs_ers_cluster_sap_system),
       sbd_devices: build_list(2, :sbd_device),
-      stopped_resources: build_list(2, :cluster_resource)
+      stopped_resources: build_list(2, :cluster_resource),
+      resources: build_list(5, :cluster_resource)
     }
   end
 

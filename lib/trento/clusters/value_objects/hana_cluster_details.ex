@@ -33,9 +33,11 @@ defmodule Trento.Clusters.ValueObjects.HanaClusterDetails do
     field :fencing_type, :string
     field :maintenance_mode, :boolean
 
+    # stopped_resources attribute is deprecated, moved to main details
     embeds_many :stopped_resources, ClusterResource
     embeds_many :nodes, HanaClusterNode
     embeds_many :sbd_devices, SbdDevice
     embeds_many :sites, HanaClusterSite
+    embeds_many :resources, ClusterResource
   end
 end

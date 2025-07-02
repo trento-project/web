@@ -24,6 +24,7 @@ defmodule Trento.Clusters.ValueObjects.HanaClusterNode do
     field :indexserver_actual_role, :string
     field :status, :string
 
+    # resources attribute is deprecated, moved to main details
     embeds_many :resources, ClusterResource
   end
 end

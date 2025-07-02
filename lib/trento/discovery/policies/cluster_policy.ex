@@ -212,7 +212,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
       stopped_resources: parse_cluster_stopped_resources(crmmon),
       nodes: nodes,
       sbd_devices: parse_sbd_devices(sbd),
-      sites: parse_hana_scale_up_sites(nodes, hana_sid)
+      sites: parse_hana_scale_up_sites(nodes, hana_sid),
+      resources: parse_cluster_resources(crmmon, cib)
     }
   end
 
@@ -240,7 +241,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
       stopped_resources: parse_cluster_stopped_resources(crmmon),
       nodes: parse_cluster_nodes(payload, hana_sid),
       sbd_devices: parse_sbd_devices(sbd),
-      sites: parse_hana_scale_out_sites(HanaArchitectureType.classic(), cib, hana_sid)
+      sites: parse_hana_scale_out_sites(HanaArchitectureType.classic(), cib, hana_sid),
+      resources: parse_cluster_resources(crmmon, cib)
     }
   end
 
@@ -269,7 +271,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
       stopped_resources: parse_cluster_stopped_resources(crmmon),
       nodes: parse_cluster_nodes(payload, hana_sid),
       sbd_devices: parse_sbd_devices(sbd),
-      sites: parse_hana_scale_out_sites(HanaArchitectureType.angi(), cib, hana_sid)
+      sites: parse_hana_scale_out_sites(HanaArchitectureType.angi(), cib, hana_sid),
+      resources: parse_cluster_resources(crmmon, cib)
     }
   end
 
@@ -288,7 +291,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
       fencing_type: parse_cluster_fencing_type(crmmon, sbd),
       stopped_resources: parse_cluster_stopped_resources(crmmon),
       sbd_devices: parse_sbd_devices(sbd),
-      maintenance_mode: parse_maintenance_mode(cib)
+      maintenance_mode: parse_maintenance_mode(cib),
+      resources: parse_cluster_resources(crmmon, cib)
     }
   end
 
@@ -723,11 +727,13 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
   defp extract_cluster_primitives_from_cib(%{
          primitives: primitives,
          groups: groups,
-         clones: clones
+         clones: clones,
+         masters: masters
        }) do
     Enum.concat(
       primitives,
       Enum.flat_map(clones, &(&1 |> Map.get(:primitive, []) |> List.wrap())) ++
+        Enum.flat_map(masters, &(&1 |> Map.get(:primitive, []) |> List.wrap())) ++
         Enum.flat_map(groups, &Map.get(&1, :primitives, []))
     )
   end
@@ -1120,4 +1126,62 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
   defp parse_hana_scenario([]), do: HanaScenario.performance_optimized()
 
   defp parse_hana_scenario(_), do: HanaScenario.cost_optimized()
+
+  defp parse_cluster_resources(crmmon, %{
+         configuration: %{resources: resources}
+       }) do
+    cib_resources = extract_cluster_primitives_from_cib(resources)
+
+    crmmon
+    |> extract_cluster_resources()
+    |> Enum.map(fn %{id: id, agent: type, role: role, parent: parent, node: node} = resource ->
+      nodename = parse_resource_node(node)
+
+      %{
+        id: id,
+        type: type,
+        role: role,
+        status: parse_resource_status(resource),
+        fail_count: parse_fail_count(nodename, id, crmmon),
+        managed: parse_managed(resource),
+        parent: parent,
+        node: nodename,
+        sid: parse_sid_for_resource(id, type, cib_resources)
+      }
+    end)
+  end
+
+  defp parse_resource_node(%{name: name}), do: name
+  defp parse_resource_node(_), do: nil
+
+  defp parse_sid_for_resource(resource_id, type, cib_resources)
+       when type in [
+              "ocf::suse:SAPHana",
+              "ocf::suse:SAPHanaTopology",
+              "ocf::suse:SAPHanaController"
+            ] do
+    cib_resources
+    |> parse_resource_instance_attributes(resource_id)
+    |> Enum.find_value(nil, fn
+      %{name: "SID", value: value} -> value
+      _ -> false
+    end)
+  end
+
+  defp parse_sid_for_resource(resource_id, "ocf::heartbeat:SAPInstance", cib_resources) do
+    cib_resources
+    |> parse_resource_instance_attributes(resource_id)
+    |> Enum.find_value(nil, fn
+      %{name: "InstanceName", value: value} -> value |> String.split("_") |> Enum.at(0)
+      _ -> false
+    end)
+  end
+
+  defp parse_sid_for_resource(_, _, _), do: nil
+
+  defp parse_resource_instance_attributes(cib_resources, resource_id) do
+    Enum.find_value(cib_resources, [], fn %{id: id, instance_attributes: instance_attributes} ->
+      if id == resource_id, do: instance_attributes
+    end)
+  end
 end

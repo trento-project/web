@@ -44,6 +44,7 @@ defmodule TrentoWeb.V1.ClusterJSONTest do
       refute Access.get(updated_details, :architecture_type)
       refute Access.get(updated_details, :hana_scenario)
       refute Access.get(updated_details, :sap_instances)
+      refute Access.get(updated_details, :resources)
       refute Access.get(node, :nameserver_actual_role)
       refute Access.get(node, :indexserver_actual_role)
       refute Access.get(node, :status)
@@ -51,11 +52,15 @@ defmodule TrentoWeb.V1.ClusterJSONTest do
       Enum.each(stopped_resources, fn stopped_resource ->
         refute Map.has_key?(stopped_resource, :managed)
         refute Map.has_key?(stopped_resource, :parent)
+        refute Map.has_key?(stopped_resource, :sid)
+        refute Map.has_key?(stopped_resource, :node)
       end)
 
       Enum.each(resources, fn resource ->
         refute Map.has_key?(resource, :managed)
         refute Map.has_key?(resource, :parent)
+        refute Map.has_key?(resource, :sid)
+        refute Map.has_key?(resource, :node)
       end)
     end
   end

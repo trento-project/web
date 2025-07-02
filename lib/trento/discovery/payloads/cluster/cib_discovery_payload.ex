@@ -83,6 +83,12 @@ defmodule Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload do
         embeds_one :primitive, Primitive
       end
 
+      embeds_many :masters, Master, primary_key: false do
+        field :id, :string
+
+        embeds_one :primitive, Primitive
+      end
+
       embeds_many :groups, Group, primary_key: false do
         field :id, :string
 
@@ -96,12 +102,13 @@ defmodule Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload do
       cib_resources
       |> cast(transformed_attrs, [])
       |> cast_embed(:primitives)
-      |> cast_embed(:clones, with: &clones_changeset/2)
+      |> cast_embed(:clones, with: &clones_masters_changeset/2)
+      |> cast_embed(:masters, with: &clones_masters_changeset/2)
       |> cast_embed(:groups, with: &groups_changeset/2)
       |> validate_required_fields(@required_fields)
     end
 
-    defp clones_changeset(clones, attrs) do
+    defp clones_masters_changeset(clones, attrs) do
       clones
       |> cast(attrs, [:id])
       |> cast_embed(:primitive)
@@ -116,12 +123,18 @@ defmodule Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload do
     end
 
     defp transform_nil_lists(
-           %{"groups" => groups, "primitives" => primitives, "clones" => clones} = attrs
+           %{
+             "groups" => groups,
+             "primitives" => primitives,
+             "clones" => clones,
+             "masters" => masters
+           } = attrs
          ) do
       attrs
       |> Map.put("groups", ListHelper.to_list(groups))
       |> Map.put("primitives", ListHelper.to_list(primitives))
       |> Map.put("clones", ListHelper.to_list(clones))
+      |> Map.put("masters", ListHelper.to_list(masters))
     end
 
     defp transform_nil_lists(attrs), do: attrs

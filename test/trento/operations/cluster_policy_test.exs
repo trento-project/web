@@ -57,8 +57,10 @@ defmodule Trento.Operations.ClusterPolicyTest do
 
       for %{managed: managed, result: result} <- scenarios do
         cluster_resource = build(:cluster_resource, id: cluster_resource_id, managed: managed)
-        nodes = build_list(1, :hana_cluster_node, resources: [cluster_resource])
-        cluster_details = build(:hana_cluster_details, maintenance_mode: false, nodes: nodes)
+
+        cluster_details =
+          build(:hana_cluster_details, maintenance_mode: false, resources: [cluster_resource])
+
         cluster = build(:cluster, name: cluster_name, details: cluster_details)
 
         assert result ==

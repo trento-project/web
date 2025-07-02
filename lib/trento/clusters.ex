@@ -159,16 +159,10 @@ defmodule Trento.Clusters do
   end
 
   @spec resource_managed?(ClusterReadModel.t(), String.t()) :: boolean()
-  def resource_managed?(%ClusterReadModel{type: type, details: details}, resource_id)
-      when type in [ClusterType.hana_scale_up(), ClusterType.hana_scale_out()] do
-    has_resource_managed?(details, resource_id)
-  end
-
-  def resource_managed?(
-        %ClusterReadModel{type: ClusterType.ascs_ers(), details: %{sap_systems: sap_systems}},
-        resource_id
-      ) do
-    Enum.any?(sap_systems, &has_resource_managed?(&1, resource_id))
+  def resource_managed?(%ClusterReadModel{details: %{resources: resources}}, resource_id) do
+    Enum.find_value(resources, false, fn %{parent: parent} = resource ->
+      managed?(resource, resource_id) or managed?(parent, resource_id)
+    end)
   end
 
   def resource_managed?(_, _), do: false
@@ -251,14 +245,6 @@ defmodule Trento.Clusters do
   end
 
   def request_host_operation(_, _, _), do: {:error, :operation_not_found}
-
-  defp has_resource_managed?(%{nodes: nodes}, resource_id) do
-    Enum.any?(nodes, fn %{resources: resources} ->
-      Enum.find_value(resources, false, fn %{parent: parent} = resource ->
-        managed?(resource, resource_id) or managed?(parent, resource_id)
-      end)
-    end)
-  end
 
   defp managed?(%{id: resource_id, managed: managed}, resource_id), do: managed
   defp managed?(_, _), do: false
