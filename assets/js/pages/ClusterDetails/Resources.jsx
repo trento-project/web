@@ -6,6 +6,11 @@ import Table from '@common/Table';
 
 import ClusterNodeLink from './ClusterNodeLink';
 
+// groupResources groups resources with the same parent.
+// If a resources doesn't have a parent, it is grouped alone.
+// Once they are grouped, if they have a parent, the resources
+// are set as children.
+// The hostID is added to make the node link possible.
 const groupResources = (clusterResources, hosts) =>
   flow(
     (resources) =>
