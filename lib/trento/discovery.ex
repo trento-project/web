@@ -44,7 +44,7 @@ defmodule Trento.Discovery do
     end
   rescue
     error ->
-      IO.inspect(error, label: "Error handling discovery event")
+      Logger.error("Error handling discovery event: #{inspect(error)}")
       store_discarded_discovery_event(event, inspect(error))
       {:error, :discovery_exception}
   end
