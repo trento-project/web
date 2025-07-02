@@ -7,7 +7,7 @@ import {
   Route,
   RouterProvider,
   Outlet,
-} from 'react-router-dom';
+} from 'react-router';
 
 import { Toaster } from 'react-hot-toast';
 import { Provider } from 'react-redux';
@@ -57,7 +57,7 @@ import { createStore } from './state';
 const createRouter = ({ getUser }) =>
   createBrowserRouter(
     createRoutesFromElements(
-      <Route element={<RoutesWrapper />} ErrorBoundary={SomethingWentWrong}>
+      <Route element={<RoutesWrapper />} errorElement={SomethingWentWrong}>
         <Route path="/session/new" element={<Login />} />
         {isSingleSignOnEnabled() && (
           <Route

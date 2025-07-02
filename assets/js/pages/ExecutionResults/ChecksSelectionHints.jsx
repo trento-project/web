@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 import { EOS_SETTINGS, EOS_PLAY_CIRCLE } from 'eos-icons-react';
 

@@ -4,7 +4,7 @@ import { screen, waitFor } from '@testing-library/react';
 import 'intersection-observer';
 import '@testing-library/jest-dom';
 
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router';
 import { renderWithRouter, withState } from '@lib/test-utils';
 import Guard from './Guard';
 import { setUser, setUserAsLogged } from '../../state/user';

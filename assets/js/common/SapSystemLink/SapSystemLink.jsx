@@ -2,7 +2,7 @@ import React from 'react';
 import { EOS_WARNING_OUTLINED } from 'eos-icons-react';
 
 import Tooltip from '@common/Tooltip';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 
 function SapSystemLink({ systemType, sapSystemId, children }) {
   return sapSystemId && systemType ? (
