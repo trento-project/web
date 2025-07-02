@@ -19,6 +19,8 @@ defmodule Trento.DiscoveryTest do
 
   alias Trento.Discoveries.V1.DiscoveryRequested
 
+  setup :verify_on_exit!
+
   test "should retrieve the current set of discovery events" do
     agent_id_1 = Faker.UUID.v4()
     agent_id_2 = Faker.UUID.v4()
@@ -173,6 +175,26 @@ defmodule Trento.DiscoveryTest do
     {:error, [^error]} = Discovery.handle(event)
 
     [discarded_event] = Trento.Repo.all(DiscardedDiscoveryEvent)
+
+    assert %DiscardedDiscoveryEvent{payload: ^event} =
+             discarded_event
+  end
+
+  test "should discard discovery events when the dispatch action fails unexpectedly" do
+    event = %{
+      "agent_id" => Faker.UUID.v4(),
+      "discovery_type" => "host_discovery",
+      "payload" => build(:host_discovery_event)
+    }
+
+    expect(Trento.Commanded.Mock, :dispatch, fn _ ->
+      raise "Test Exception"
+    end)
+
+    {:error, error} = Discovery.handle(event)
+    [discarded_event] = Trento.Repo.all(DiscardedDiscoveryEvent)
+
+    assert :discovery_exception === error
 
     assert %DiscardedDiscoveryEvent{payload: ^event} =
              discarded_event
