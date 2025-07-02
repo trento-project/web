@@ -118,6 +118,7 @@ Trento.Discovery.Payloads.CloudDiscoveryPayload.GcpMetadata.html
 Trento.Discovery.Payloads.CloudDiscoveryPayload.html
 Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload.CibResources.Clone.html
 Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload.CibResources.Group.html
+Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload.CibResources.Master.html
 Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload.CibResources.html
 Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload.Configuration.CrmConfig.ClusterProperties.html
 Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload.Configuration.CrmConfig.html
@@ -526,8 +527,8 @@ dist/lato-latin-ext-300-normal-VPGGJKJL.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-DFC18993.js
-dist/sidebar_items-5D599309.js
+dist/search_data-B7CFE4FA.js
+dist/sidebar_items-8FDEFB1A.js
 environment_variables.html
 hack_on_the_trento.html
 index.html
