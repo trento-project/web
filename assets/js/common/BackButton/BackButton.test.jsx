@@ -6,12 +6,15 @@ import * as router from 'react-router';
 
 import BackButton from '.';
 
-const navigate = jest.fn();
+jest.mock('react-router', () => ({
+  ...jest.requireActual('react-router'),
+  useNavigate: jest.fn(),
+}));
 
 describe('BackButton', () => {
   it('should display a back button with correct text and url', () => {
-    jest.spyOn(router, 'useNavigate').mockImplementation(() => navigate);
-
+    const navigate = jest.fn();
+    router.useNavigate.mockReturnValue(navigate);
     render(<BackButton url="/back/hell">Back to hell!</BackButton>);
     const backButton = screen.getByRole('button');
     expect(backButton).toHaveTextContent('Back to hell!');

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Outlet } from 'react-router-dom';
+import { Outlet } from 'react-router';
 
 import { getUserProfile } from '@state/selectors/user';
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router';
 import { action } from 'storybook/actions';
 
 import { relevantPatchFactory } from '@lib/test-utils/factories/relevantPatches';

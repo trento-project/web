@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
 
 import BackButton from '@common/BackButton';

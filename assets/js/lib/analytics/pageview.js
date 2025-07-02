@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router';
 import { capture } from '@lib/analytics';
 import { useSelector } from 'react-redux';
 import { getUserProfile } from '@state/selectors/user';

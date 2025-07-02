@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 
 import Table from '@common/Table';
 import HealthIcon from '@common/HealthIcon';

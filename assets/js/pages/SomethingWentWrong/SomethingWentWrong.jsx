@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 import Button from '@common/Button';
 import TrentoLogo from '@static/trento-icon.png';

@@ -1,6 +1,6 @@
 import React from 'react';
 import Button from '@common/Button';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { EOS_ARROW_BACK } from 'eos-icons-react';
 
 export function BackButton({ children, url, onClick }) {
