@@ -34,7 +34,8 @@ defmodule Trento.Factory do
     SaptuneSolution,
     SaptuneStaging,
     SaptuneStatus,
-    SlesSubscription
+    SlesSubscription,
+    SystemdUnit
   }
 
   alias Trento.SapSystems.Instance
@@ -183,7 +184,8 @@ defmodule Trento.Factory do
       fully_qualified_domain_name: Faker.Internet.domain_name(),
       installation_source: Enum.random([:community, :suse, :unknown]),
       prometheus_targets: build(:host_prometheus_targets),
-      heartbeat: :unknown
+      heartbeat: :unknown,
+      systemd_units: build_list(2, :host_systemd_unit)
     }
   end
 
@@ -982,6 +984,13 @@ defmodule Trento.Factory do
   def host_prometheus_targets_factory do
     %{
       "node_exporter" => "#{Faker.Internet.ip_v4_address()}:9100"
+    }
+  end
+
+  def host_systemd_unit_factory do
+    %SystemdUnit{
+      name: Faker.UUID.v4(),
+      unit_file_state: Enum.random(["enabled", "disabled", "unknown"])
     }
   end
 

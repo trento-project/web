@@ -72,7 +72,8 @@ defmodule Trento.Hosts.Host do
     AzureProvider,
     GcpProvider,
     SaptuneStatus,
-    SlesSubscription
+    SlesSubscription,
+    SystemdUnit
   }
 
   alias Trento.Hosts.Commands.{
@@ -156,6 +157,8 @@ defmodule Trento.Hosts.Host do
         gcp: [module: GcpProvider, identify_by_fields: [:project_id]]
       ],
       on_replace: :update
+
+    embeds_many :systemd_units, SystemdUnit
   end
 
   # Stop everything during the rollup process
@@ -176,7 +179,8 @@ defmodule Trento.Hosts.Host do
           os_version: os_version,
           fully_qualified_domain_name: fully_qualified_domain_name,
           installation_source: installation_source,
-          prometheus_targets: prometheus_targets
+          prometheus_targets: prometheus_targets,
+          systemd_units: systemd_units
         }
       ) do
     [
@@ -193,7 +197,8 @@ defmodule Trento.Hosts.Host do
         installation_source: installation_source,
         fully_qualified_domain_name: fully_qualified_domain_name,
         prometheus_targets: prometheus_targets,
-        heartbeat: :unknown
+        heartbeat: :unknown,
+        systemd_units: systemd_units
       }
     ] ++ maybe_emit_software_updates_discovery_events(host_id, nil, fully_qualified_domain_name)
   end
@@ -221,7 +226,8 @@ defmodule Trento.Hosts.Host do
           fully_qualified_domain_name: fully_qualified_domain_name,
           prometheus_targets: prometheus_targets,
           installation_source: installation_source,
-          deregistered_at: deregistered_at
+          deregistered_at: deregistered_at,
+          systemd_units: systemd_units
         },
         %RegisterHost{
           hostname: hostname,
@@ -234,7 +240,8 @@ defmodule Trento.Hosts.Host do
           os_version: os_version,
           fully_qualified_domain_name: fully_qualified_domain_name,
           prometheus_targets: prometheus_targets,
-          installation_source: installation_source
+          installation_source: installation_source,
+          systemd_units: systemd_units
         }
       )
       when not is_nil(deregistered_at) do
@@ -259,7 +266,8 @@ defmodule Trento.Hosts.Host do
           os_version: os_version,
           fully_qualified_domain_name: new_fully_qualified_domain_name,
           installation_source: installation_source,
-          prometheus_targets: prometheus_targets
+          prometheus_targets: prometheus_targets,
+          systemd_units: systemd_units
         }
       )
       when not is_nil(deregistered_at) do
@@ -277,7 +285,8 @@ defmodule Trento.Hosts.Host do
         os_version: os_version,
         fully_qualified_domain_name: new_fully_qualified_domain_name,
         installation_source: installation_source,
-        prometheus_targets: prometheus_targets
+        prometheus_targets: prometheus_targets,
+        systemd_units: systemd_units
       }
     ] ++
       maybe_emit_software_updates_discovery_events(host_id, nil, new_fully_qualified_domain_name)
@@ -314,7 +323,8 @@ defmodule Trento.Hosts.Host do
           socket_count: socket_count,
           os_version: os_version,
           installation_source: installation_source,
-          prometheus_targets: prometheus_targets
+          prometheus_targets: prometheus_targets,
+          systemd_units: systemd_units
         },
         %RegisterHost{
           hostname: hostname,
@@ -327,7 +337,8 @@ defmodule Trento.Hosts.Host do
           socket_count: socket_count,
           os_version: os_version,
           installation_source: installation_source,
-          prometheus_targets: prometheus_targets
+          prometheus_targets: prometheus_targets,
+          systemd_units: systemd_units
         }
       ) do
     []
@@ -349,7 +360,8 @@ defmodule Trento.Hosts.Host do
           socket_count: socket_count,
           os_version: os_version,
           installation_source: installation_source,
-          prometheus_targets: prometheus_targets
+          prometheus_targets: prometheus_targets,
+          systemd_units: systemd_units
         }
       ) do
     [
@@ -365,7 +377,8 @@ defmodule Trento.Hosts.Host do
         socket_count: socket_count,
         os_version: os_version,
         installation_source: installation_source,
-        prometheus_targets: prometheus_targets
+        prometheus_targets: prometheus_targets,
+        systemd_units: systemd_units
       }
     ] ++
       maybe_emit_software_updates_discovery_events(
@@ -631,7 +644,8 @@ defmodule Trento.Hosts.Host do
           fully_qualified_domain_name: fully_qualified_domain_name,
           prometheus_targets: prometheus_targets,
           installation_source: installation_source,
-          heartbeat: heartbeat
+          heartbeat: heartbeat,
+          systemd_units: systemd_units
         }
       ) do
     %Host{
@@ -648,7 +662,8 @@ defmodule Trento.Hosts.Host do
         fully_qualified_domain_name: fully_qualified_domain_name,
         prometheus_targets: prometheus_targets,
         installation_source: installation_source,
-        heartbeat: heartbeat
+        heartbeat: heartbeat,
+        systemd_units: systemd_units
     }
   end
 
@@ -665,7 +680,8 @@ defmodule Trento.Hosts.Host do
           os_version: os_version,
           fully_qualified_domain_name: fully_qualified_domain_name,
           prometheus_targets: prometheus_targets,
-          installation_source: installation_source
+          installation_source: installation_source,
+          systemd_units: systemd_units
         }
       ) do
     %Host{
@@ -680,7 +696,8 @@ defmodule Trento.Hosts.Host do
         os_version: os_version,
         fully_qualified_domain_name: fully_qualified_domain_name,
         prometheus_targets: prometheus_targets,
-        installation_source: installation_source
+        installation_source: installation_source,
+        systemd_units: systemd_units
     }
   end
 

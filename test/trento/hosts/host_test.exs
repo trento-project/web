@@ -73,6 +73,7 @@ defmodule Trento.Hosts.HostTest do
       arch = Enum.random(Architecture.values())
       installation_source = Enum.random([:community, :suse, :unknown])
       prometheus_targets = build(:host_prometheus_targets)
+      systemd_units = build_list(2, :host_systemd_unit)
 
       assert_events_and_state(
         [],
@@ -88,7 +89,8 @@ defmodule Trento.Hosts.HostTest do
           arch: arch,
           installation_source: installation_source,
           fully_qualified_domain_name: nil,
-          prometheus_targets: prometheus_targets
+          prometheus_targets: prometheus_targets,
+          systemd_units: Enum.map(systemd_units, &Map.from_struct/1)
         }),
         %HostRegistered{
           host_id: host_id,
@@ -102,7 +104,8 @@ defmodule Trento.Hosts.HostTest do
           arch: arch,
           installation_source: installation_source,
           prometheus_targets: prometheus_targets,
-          heartbeat: :unknown
+          heartbeat: :unknown,
+          systemd_units: systemd_units
         },
         %Host{
           host_id: host_id,
@@ -117,7 +120,8 @@ defmodule Trento.Hosts.HostTest do
           arch: arch,
           installation_source: installation_source,
           prometheus_targets: prometheus_targets,
-          heartbeat: :unknown
+          heartbeat: :unknown,
+          systemd_units: systemd_units
         }
       )
     end
@@ -166,7 +170,8 @@ defmodule Trento.Hosts.HostTest do
             arch: arch,
             installation_source: installation_source,
             prometheus_targets: prometheus_targets,
-            heartbeat: :unknown
+            heartbeat: :unknown,
+            systemd_units: []
           },
           %SoftwareUpdatesDiscoveryRequested{
             host_id: host_id,
@@ -186,7 +191,8 @@ defmodule Trento.Hosts.HostTest do
           arch: arch,
           installation_source: installation_source,
           prometheus_targets: prometheus_targets,
-          heartbeat: :unknown
+          heartbeat: :unknown,
+          systemd_units: []
         }
       )
     end
@@ -218,6 +224,7 @@ defmodule Trento.Hosts.HostTest do
         arch = Enum.random(Architecture.values())
         installation_source = Enum.random([:community, :suse, :unknown])
         prometheus_targets = build(:host_prometheus_targets)
+        systemd_units = build_list(2, :host_systemd_unit)
 
         assert_events_and_state(
           build(:host_registered_event,
@@ -232,7 +239,8 @@ defmodule Trento.Hosts.HostTest do
             os_version: os_version,
             arch: arch,
             installation_source: installation_source,
-            prometheus_targets: prometheus_targets
+            prometheus_targets: prometheus_targets,
+            systemd_units: systemd_units
           ),
           RegisterHost.new!(%{
             host_id: host_id,
@@ -246,7 +254,8 @@ defmodule Trento.Hosts.HostTest do
             os_version: os_version,
             arch: arch,
             installation_source: installation_source,
-            prometheus_targets: prometheus_targets
+            prometheus_targets: prometheus_targets,
+            systemd_units: Enum.map(systemd_units, &Map.from_struct/1)
           }),
           [
             %HostDetailsUpdated{
@@ -261,7 +270,8 @@ defmodule Trento.Hosts.HostTest do
               os_version: os_version,
               arch: arch,
               installation_source: installation_source,
-              prometheus_targets: prometheus_targets
+              prometheus_targets: prometheus_targets,
+              systemd_units: systemd_units
             },
             %SoftwareUpdatesDiscoveryRequested{
               host_id: host_id,
@@ -281,7 +291,8 @@ defmodule Trento.Hosts.HostTest do
             arch: arch,
             installation_source: installation_source,
             prometheus_targets: prometheus_targets,
-            heartbeat: :unknown
+            heartbeat: :unknown,
+            systemd_units: systemd_units
           }
         )
       end
@@ -304,6 +315,7 @@ defmodule Trento.Hosts.HostTest do
         arch = Enum.random(Architecture.values())
         installation_source = Enum.random([:community, :suse, :unknown])
         prometheus_targets = %{}
+        systemd_units = build_list(2, :host_systemd_unit)
 
         initial_agent_version = Faker.Internet.slug()
         new_agent_version = Faker.StarWars.character()
@@ -321,7 +333,8 @@ defmodule Trento.Hosts.HostTest do
             os_version: os_version,
             arch: arch,
             installation_source: installation_source,
-            prometheus_targets: prometheus_targets
+            prometheus_targets: prometheus_targets,
+            systemd_units: systemd_units
           ),
           RegisterHost.new!(%{
             host_id: host_id,
@@ -335,7 +348,8 @@ defmodule Trento.Hosts.HostTest do
             os_version: os_version,
             arch: arch,
             installation_source: installation_source,
-            prometheus_targets: prometheus_targets
+            prometheus_targets: prometheus_targets,
+            systemd_units: Enum.map(systemd_units, &Map.from_struct/1)
           }),
           %HostDetailsUpdated{
             host_id: host_id,
@@ -349,7 +363,8 @@ defmodule Trento.Hosts.HostTest do
             os_version: os_version,
             arch: arch,
             installation_source: installation_source,
-            prometheus_targets: prometheus_targets
+            prometheus_targets: prometheus_targets,
+            systemd_units: systemd_units
           },
           %Host{
             host_id: host_id,
@@ -364,7 +379,8 @@ defmodule Trento.Hosts.HostTest do
             arch: arch,
             installation_source: installation_source,
             prometheus_targets: prometheus_targets,
-            heartbeat: :unknown
+            heartbeat: :unknown,
+            systemd_units: systemd_units
           }
         )
       end
@@ -382,6 +398,7 @@ defmodule Trento.Hosts.HostTest do
       arch = Enum.random(Architecture.values())
       installation_source = Enum.random([:community, :suse, :unknown])
       prometheus_targets = build(:host_prometheus_targets)
+      systemd_units = build_list(2, :host_systemd_unit)
 
       current_fully_qualified_domain_name = Faker.Internet.ip_v4_address()
       new_fully_qualified_domain_name = nil
@@ -399,7 +416,8 @@ defmodule Trento.Hosts.HostTest do
           os_version: os_version,
           arch: arch,
           installation_source: installation_source,
-          prometheus_targets: prometheus_targets
+          prometheus_targets: prometheus_targets,
+          systemd_units: systemd_units
         ),
         RegisterHost.new!(%{
           host_id: host_id,
@@ -413,7 +431,8 @@ defmodule Trento.Hosts.HostTest do
           os_version: os_version,
           arch: arch,
           installation_source: installation_source,
-          prometheus_targets: prometheus_targets
+          prometheus_targets: prometheus_targets,
+          systemd_units: Enum.map(systemd_units, &Map.from_struct/1)
         }),
         [
           %HostDetailsUpdated{
@@ -428,7 +447,8 @@ defmodule Trento.Hosts.HostTest do
             os_version: os_version,
             arch: arch,
             installation_source: installation_source,
-            prometheus_targets: prometheus_targets
+            prometheus_targets: prometheus_targets,
+            systemd_units: systemd_units
           },
           %SoftwareUpdatesDiscoveryCleared{
             host_id: host_id
@@ -447,7 +467,8 @@ defmodule Trento.Hosts.HostTest do
           arch: arch,
           installation_source: installation_source,
           prometheus_targets: prometheus_targets,
-          heartbeat: :unknown
+          heartbeat: :unknown,
+          systemd_units: systemd_units
         }
       )
     end
@@ -465,6 +486,7 @@ defmodule Trento.Hosts.HostTest do
       new_installation_source = Enum.random([:community, :suse, :unknown])
       new_prometheus_targets = build(:host_prometheus_targets)
       fully_qualified_domain_name = Faker.Internet.domain_name()
+      new_systemd_units = build_list(2, :host_systemd_unit)
 
       assert_events_and_state(
         build(:host_registered_event,
@@ -484,7 +506,8 @@ defmodule Trento.Hosts.HostTest do
           os_version: new_os_version,
           arch: new_arch,
           installation_source: new_installation_source,
-          prometheus_targets: new_prometheus_targets
+          prometheus_targets: new_prometheus_targets,
+          systemd_units: Enum.map(new_systemd_units, &Map.from_struct/1)
         }),
         %HostDetailsUpdated{
           host_id: host_id,
@@ -498,7 +521,8 @@ defmodule Trento.Hosts.HostTest do
           os_version: new_os_version,
           arch: new_arch,
           installation_source: new_installation_source,
-          prometheus_targets: new_prometheus_targets
+          prometheus_targets: new_prometheus_targets,
+          systemd_units: new_systemd_units
         },
         %Host{
           host_id: host_id,
@@ -513,7 +537,8 @@ defmodule Trento.Hosts.HostTest do
           arch: new_arch,
           installation_source: new_installation_source,
           prometheus_targets: new_prometheus_targets,
-          heartbeat: :unknown
+          heartbeat: :unknown,
+          systemd_units: new_systemd_units
         }
       )
     end
@@ -535,7 +560,8 @@ defmodule Trento.Hosts.HostTest do
           os_version: host_registered_event.os_version,
           arch: host_registered_event.arch,
           installation_source: host_registered_event.installation_source,
-          prometheus_targets: host_registered_event.prometheus_targets
+          prometheus_targets: host_registered_event.prometheus_targets,
+          systemd_units: Enum.map(host_registered_event.systemd_units, &Map.from_struct/1)
         }),
         []
       )
@@ -1937,6 +1963,7 @@ defmodule Trento.Hosts.HostTest do
             arch: host_registered_event.arch,
             installation_source: host_registered_event.installation_source,
             prometheus_targets: host_registered_event.prometheus_targets,
+            systemd_units: host_registered_event.systemd_units,
             heartbeat: :unknown,
             rolling_up: false
           }
@@ -2005,6 +2032,7 @@ defmodule Trento.Hosts.HostTest do
               os_version: host_registered_event.os_version,
               arch: host_registered_event.arch,
               installation_source: host_registered_event.installation_source,
+              systemd_units: host_registered_event.systemd_units,
               heartbeat: :unknown,
               rolling_up: false
             }
@@ -2027,6 +2055,7 @@ defmodule Trento.Hosts.HostTest do
           assert host.os_version == host_registered_event.os_version
           assert host.arch == host_registered_event.arch
           assert host.installation_source == host_registered_event.installation_source
+          assert host.systemd_units == host_registered_event.systemd_units
           assert host.heartbeat == :unknown
         end
       )
@@ -2060,7 +2089,8 @@ defmodule Trento.Hosts.HostTest do
           os_version: host_registered_event.os_version,
           arch: host_registered_event.arch,
           installation_source: host_registered_event.installation_source,
-          prometheus_targets: host_registered_event.prometheus_targets
+          prometheus_targets: host_registered_event.prometheus_targets,
+          systemd_units: host_registered_event.systemd_units
         )
 
       assert_events_and_state(
@@ -2110,7 +2140,8 @@ defmodule Trento.Hosts.HostTest do
             arch: restoration_command.arch,
             installation_source: restoration_command.installation_source,
             fully_qualified_domain_name: restoration_command.fully_qualified_domain_name,
-            prometheus_targets: restoration_command.prometheus_targets
+            prometheus_targets: restoration_command.prometheus_targets,
+            systemd_units: restoration_command.systemd_units
           }
         ],
         fn host ->
@@ -2144,7 +2175,8 @@ defmodule Trento.Hosts.HostTest do
           os_version: host_registered_event.os_version,
           arch: host_registered_event.arch,
           installation_source: host_registered_event.installation_source,
-          prometheus_targets: host_registered_event.prometheus_targets
+          prometheus_targets: host_registered_event.prometheus_targets,
+          systemd_units: host_registered_event.systemd_units
         )
 
       assert_events_and_state(
@@ -2213,7 +2245,8 @@ defmodule Trento.Hosts.HostTest do
               arch: restoration_command.arch,
               installation_source: restoration_command.installation_source,
               fully_qualified_domain_name: restoration_command.fully_qualified_domain_name,
-              prometheus_targets: restoration_command.prometheus_targets
+              prometheus_targets: restoration_command.prometheus_targets,
+              systemd_units: restoration_command.systemd_units
             },
             %SoftwareUpdatesDiscoveryRequested{
               host_id: host_id,
@@ -2275,7 +2308,8 @@ defmodule Trento.Hosts.HostTest do
               arch: restoration_command.arch,
               installation_source: restoration_command.installation_source,
               fully_qualified_domain_name: restoration_command.fully_qualified_domain_name,
-              prometheus_targets: restoration_command.prometheus_targets
+              prometheus_targets: restoration_command.prometheus_targets,
+              systemd_units: restoration_command.systemd_units
             }
           ],
           fn host ->
