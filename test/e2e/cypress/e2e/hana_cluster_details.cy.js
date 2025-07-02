@@ -6,7 +6,7 @@ context('HANA cluster details', () => {
   describe('HANA cluster details should be consistent with the state of the cluster', () => {
     beforeEach(() => {
       hanaClusterDetailsPage.interceptCatalogRequest();
-      hanaClusterDetailsPage.interceptLastExecutionRequest();
+      hanaClusterDetailsPage.interceptLastExecutionRequestMocked();
       hanaClusterDetailsPage.visitAvailableHanaCluster();
       hanaClusterDetailsPage.waitForInitialEndpoints();
     });
@@ -86,8 +86,8 @@ context('HANA cluster details', () => {
 
   describe('Cluster sites should have the expected hosts', () => {
     beforeEach(() => {
+      hanaClusterDetailsPage.interceptLastExecutionRequestMocked();
       hanaClusterDetailsPage.interceptCatalogRequest();
-      hanaClusterDetailsPage.interceptLastExecutionRequest();
       hanaClusterDetailsPage.visitAvailableHanaCluster();
       hanaClusterDetailsPage.waitForInitialEndpoints();
       hanaClusterDetailsPage.validateAvailableHanaClusterUrl();
@@ -128,8 +128,8 @@ context('HANA cluster details', () => {
 
   describe('Cluster SBD should have the expected devices with the correct status', () => {
     beforeEach(() => {
+      hanaClusterDetailsPage.interceptLastExecutionRequestMocked();
       hanaClusterDetailsPage.interceptCatalogRequest();
-      hanaClusterDetailsPage.interceptLastExecutionRequest();
       hanaClusterDetailsPage.visitAvailableHanaCluster();
       hanaClusterDetailsPage.waitForInitialEndpoints();
     });
@@ -302,8 +302,10 @@ context('HANA cluster details', () => {
 
       hanaClusterDetailsPage.clickAllUncheckedCategorySwitches();
       hanaClusterDetailsPage.clickSaveChecksSelectionButton();
+
+      hanaClusterDetailsPage.interceptLastExecutionRequest();
       hanaClusterDetailsPage.clickStartExecutionButtonWithoutForce();
-      hanaClusterDetailsPage.expectedResultRowsAreDisplayed(51);
+      hanaClusterDetailsPage.expectedResultRowsAreDisplayed();
     });
   });
 

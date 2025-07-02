@@ -155,8 +155,18 @@ export const expectedWarningMessageIsDisplayed = (expectedWarningMessage) =>
     .get(checkSettingsWarningMessage)
     .should('have.text', expectedWarningMessage);
 
-export const expectedResultRowsAreDisplayed = (amount) =>
-  cy.get(checkResultRows).should('have.length', amount);
+export const expectedResultRowsAreDisplayed = () => {
+  basePage.waitForRequest(lastExecutionEndpointAlias).then(
+    ({
+      response: {
+        body: { check_results },
+      },
+    }) => {
+      const amountOfChecks = check_results.length;
+      cy.get(checkResultRows).should('have.length', amountOfChecks);
+    }
+  );
+};
 
 export const expectedCheckIsDisplayed = (checkNameValue) =>
   cy.get(checkName(checkNameValue)).should('be.visible');
@@ -430,11 +440,16 @@ export const notAuthorizedTooltipIsNotDisplayed = () => {
 };
 
 // API
-export const interceptLastExecutionRequest = () => {
+export const interceptLastExecutionRequestMocked = () => {
   const lastExecutionURL = '/api/v2/checks/groups/**/executions/last';
   cy.intercept(lastExecutionURL, {
     body: lastExecution,
   }).as(lastExecutionEndpointAlias);
+};
+
+export const interceptLastExecutionRequest = () => {
+  const lastExecutionURL = '/api/v2/checks/groups/**/executions/last';
+  cy.intercept(lastExecutionURL).as(lastExecutionEndpointAlias);
 };
 
 export const interceptCatalogRequest = () => {
