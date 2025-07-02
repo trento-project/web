@@ -164,7 +164,6 @@ export const expectedResultRowsAreDisplayed = () => {
     }) => {
       const amountOfChecks = check_results.length;
       cy.get(checkResultRows).should('have.length', amountOfChecks);
-      cy.get(checkResultRows).should('have.length', 51);
     }
   );
 };
