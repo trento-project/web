@@ -18,7 +18,8 @@ defmodule Trento.Discovery.Policies.HostPolicyTest do
   alias Trento.Hosts.ValueObjects.{
     AwsProvider,
     AzureProvider,
-    GcpProvider
+    GcpProvider,
+    SystemdUnit
   }
 
   alias Trento.Hosts.ValueObjects.{
@@ -40,7 +41,13 @@ defmodule Trento.Discovery.Policies.HostPolicyTest do
                hostname: "suse",
                ip_addresses: ["10.1.1.4/16", "10.1.1.5/24", "10.1.1.6/32"],
                installation_source: :unknown,
-               prometheus_targets: nil
+               prometheus_targets: nil,
+               systemd_units: [
+                 %SystemdUnit{
+                   name: "pacemaker.service",
+                   unit_file_state: "enabled"
+                 }
+               ]
              }
            } =
              "host_discovery"
@@ -110,6 +117,41 @@ defmodule Trento.Discovery.Policies.HostPolicyTest do
              "host_discovery_with_prometheus_targets"
              |> load_discovery_event_fixture()
              |> HostPolicy.handle()
+  end
+
+  test "should return the expected commands when a host_discovery payload with empty//incorrect systemd_units is handled" do
+    scenarios = [
+      %{
+        name: "without systemd_units",
+        transform: fn fixture ->
+          fixture
+          |> pop_in(["payload", "systemd_units"])
+          |> elem(1)
+        end
+      },
+      %{
+        name: "with empty systemd_units",
+        transform: fn fixture -> put_in(fixture, ["payload", "systemd_units"], []) end
+      },
+      %{
+        name: "with nil systemd_units",
+        transform: fn fixture -> put_in(fixture, ["payload", "systemd_units"], nil) end
+      }
+    ]
+
+    for %{transform: transform} <- scenarios do
+      assert {
+               :ok,
+               %RegisterHost{
+                 host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
+                 systemd_units: []
+               }
+             } =
+               "host_discovery"
+               |> load_discovery_event_fixture()
+               |> transform.()
+               |> HostPolicy.handle()
+    end
   end
 
   test "should return the expected commands when a cloud_discovery payload with an azure provider is handled" do
