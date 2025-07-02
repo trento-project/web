@@ -71,8 +71,8 @@ const createRouter = ({ getUser }) =>
           >
             <Route element={<Layout />}>
               <Route index element={<Home />} />
-              <Route index path="profile" element={<ProfilePage />} />
-              <Route index path="hosts" element={<HostsList />} />
+              <Route path="profile" element={<ProfilePage />} />
+              <Route path="hosts" element={<HostsList />} />
               <Route
                 path="hosts/:hostID/settings"
                 element={<HostSettingsPage />}
