@@ -28,6 +28,7 @@ defmodule Trento.Discovery.Payloads.HostDiscoveryPayload do
     field :os_version, :string
     field :fully_qualified_domain_name, :string
     field :prometheus_targets, :map
+    field :systemd_units, {:array, :map}, default: []
 
     field :installation_source, Ecto.Enum,
       values: [:community, :suse, :unknown],
@@ -43,6 +44,7 @@ defmodule Trento.Discovery.Payloads.HostDiscoveryPayload do
       attrs
       |> installation_source_to_downcase()
       |> arch_to_downcase()
+      |> handle_systemd_units()
 
     host
     |> cast(modified_attrs, fields())
@@ -58,4 +60,9 @@ defmodule Trento.Discovery.Payloads.HostDiscoveryPayload do
     do: %{attrs | "arch" => String.downcase(arch)}
 
   defp arch_to_downcase(attrs), do: attrs
+
+  defp handle_systemd_units(%{"systemd_units" => nil} = attrs),
+    do: %{attrs | "systemd_units" => []}
+
+  defp handle_systemd_units(attrs), do: attrs
 end

@@ -41,7 +41,8 @@ defmodule Trento.Hosts.Projections.HostProjector do
       arch: arch,
       fully_qualified_domain_name: fully_qualified_domain_name,
       heartbeat: heartbeat,
-      prometheus_targets: prometheus_targets
+      prometheus_targets: prometheus_targets,
+      systemd_units: systemd_units
     },
     fn multi ->
       {addresses, netmasks} = parse_address_netmask(ip_addresses)
@@ -55,7 +56,8 @@ defmodule Trento.Hosts.Projections.HostProjector do
           arch: arch,
           fully_qualified_domain_name: fully_qualified_domain_name,
           heartbeat: heartbeat,
-          prometheus_targets: prometheus_targets
+          prometheus_targets: prometheus_targets,
+          systemd_units: map_list_from_struct_list(systemd_units)
         })
 
       Ecto.Multi.insert(multi, :host, changeset,
@@ -149,7 +151,8 @@ defmodule Trento.Hosts.Projections.HostProjector do
       fully_qualified_domain_name: fully_qualified_domain_name,
       agent_version: agent_version,
       arch: arch,
-      prometheus_targets: prometheus_targets
+      prometheus_targets: prometheus_targets,
+      systemd_units: systemd_units
     },
     fn multi ->
       {addresses, netmasks} = parse_address_netmask(ip_addresses)
@@ -164,7 +167,8 @@ defmodule Trento.Hosts.Projections.HostProjector do
           fully_qualified_domain_name: fully_qualified_domain_name,
           agent_version: agent_version,
           arch: arch,
-          prometheus_targets: prometheus_targets
+          prometheus_targets: prometheus_targets,
+          systemd_units: map_list_from_struct_list(systemd_units)
         })
 
       Ecto.Multi.update(multi, :host, changeset)
@@ -256,12 +260,6 @@ defmodule Trento.Hosts.Projections.HostProjector do
       Ecto.Multi.update(multi, :host, changeset)
     end
   )
-
-  def map_from_struct(struct) when is_struct(struct) do
-    Map.from_struct(struct)
-  end
-
-  def map_from_struct(_), do: nil
 
   @impl true
   @spec after_update(any, any, any) :: :ok | {:error, any}
@@ -430,6 +428,18 @@ defmodule Trento.Hosts.Projections.HostProjector do
   end
 
   def after_update(_, _, _), do: :ok
+
+  defp map_list_from_struct_list(structs) when is_list(structs) do
+    Enum.map(structs, &map_from_struct/1)
+  end
+
+  defp map_list_from_struct_list(structs), do: structs
+
+  defp map_from_struct(struct) when is_struct(struct) do
+    Map.from_struct(struct)
+  end
+
+  defp map_from_struct(_), do: nil
 
   defp parse_address_netmask(ip_addresses) do
     ip_addresses

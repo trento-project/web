@@ -14,6 +14,7 @@ defmodule Trento.Hosts.Projections.HostReadModel do
   alias Trento.Clusters.Projections.ClusterReadModel
   alias Trento.Databases.Projections.DatabaseInstanceReadModel
   alias Trento.Hosts.Projections.SlesSubscriptionReadModel
+  alias Trento.Hosts.ValueObjects.SystemdUnit
   alias Trento.SapSystems.Projections.ApplicationInstanceReadModel
   alias Trento.Tags.Tag
 
@@ -66,10 +67,14 @@ defmodule Trento.Hosts.Projections.HostReadModel do
 
     field :deregistered_at, :utc_datetime_usec
     timestamps(type: :utc_datetime_usec)
+
+    embeds_many :systemd_units, SystemdUnit, on_replace: :delete
   end
 
   @spec changeset(t() | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()
   def changeset(host, attrs) do
-    cast(host, attrs, __MODULE__.__schema__(:fields))
+    host
+    |> cast(attrs, __MODULE__.__schema__(:fields) -- [:systemd_units])
+    |> cast_embed(:systemd_units)
   end
 end

@@ -11,6 +11,12 @@
     "socket_count": 1,
     "total_memory_mb": 4096,
     "agent_version": "0.1.0",
-    "fully_qualified_domain_name": "suse.l15cqsinwnpu5gfyrf1r5l51fe.ax.internal.cloudapp.net"
+    "fully_qualified_domain_name": "suse.l15cqsinwnpu5gfyrf1r5l51fe.ax.internal.cloudapp.net",
+    "systemd_units": [
+      {
+        "name": "pacemaker.service",
+        "unit_file_state": "enabled"
+      }
+    ]
   }
 }

@@ -2,6 +2,7 @@ defmodule Trento.Hosts.Commands.RegisterHost do
   @moduledoc """
   Register a host to the monitoring system.
   """
+  alias Trento.Hosts.ValueObjects.SystemdUnit
 
   @required_fields [
     :host_id,
@@ -32,5 +33,7 @@ defmodule Trento.Hosts.Commands.RegisterHost do
 
     field :installation_source, Ecto.Enum, values: [:community, :suse, :unknown]
     field :arch, Ecto.Enum, values: Architecture.values()
+
+    embeds_many :systemd_units, SystemdUnit
   end
 end

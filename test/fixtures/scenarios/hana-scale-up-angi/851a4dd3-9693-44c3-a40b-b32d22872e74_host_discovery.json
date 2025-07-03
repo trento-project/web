@@ -24,6 +24,12 @@
     "os_version": "15-SP5",
     "socket_count": 1,
     "total_memory_mb": 32043,
-    "arch": "x86_64"
+    "arch": "x86_64",
+    "systemd_units": [
+      {
+        "name": "pacemaker.service",
+        "unit_file_state": "enabled"
+      }
+    ]
   }
 }

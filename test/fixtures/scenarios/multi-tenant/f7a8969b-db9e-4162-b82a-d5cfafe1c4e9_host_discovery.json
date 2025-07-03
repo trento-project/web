@@ -22,7 +22,13 @@
     "os_version": "15-SP5",
     "socket_count": 1,
     "total_memory_mb": 64248,
-    "arch": "x86_64"
+    "arch": "x86_64",
+    "systemd_units": [
+      {
+        "name": "pacemaker.service",
+        "unit_file_state": "enabled"
+      }
+    ]
   },
   "discovery_type": "host_discovery",
   "agent_id": "f7a8969b-db9e-4162-b82a-d5cfafe1c4e9"
