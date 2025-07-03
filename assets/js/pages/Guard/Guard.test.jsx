@@ -14,6 +14,7 @@ describe('Guard component', () => {
     const badGetUser = () => Promise.reject(Error('the reason is you'));
     const [StatefulGuard] = withState(
       <Routes>
+        <Route path="/session/new" element={<div>Login</div>} />
         <Route
           element={<Guard redirectPath="/session/new" getUser={badGetUser} />}
         >
@@ -42,6 +43,7 @@ describe('Guard component', () => {
     const badGetUser = () => Promise.reject(Error('the reason is you'));
     const [StatefulGuard] = withState(
       <Routes>
+        <Route path="/session/new" element={<div>Login</div>} />
         <Route
           element={<Guard redirectPath="/session/new" getUser={badGetUser} />}
         >
@@ -69,6 +71,7 @@ describe('Guard component', () => {
     const goodGetUser = () => Promise.resolve({ username: 'admin', id: 1 });
     const [StatefulGuard, store] = withState(
       <Routes>
+        <Route path="/session/new" element={<div>Login</div>} />
         <Route
           element={<Guard redirectPath="/session/new" getUser={goodGetUser} />}
         >
