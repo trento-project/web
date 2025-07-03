@@ -75,7 +75,8 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
       ip_addresses: ip_addresses,
       netmasks: netmasks,
       provider: provider,
-      provider_data: provider_data
+      provider_data: provider_data,
+      systemd_units: systemd_units
     } = host_projection = Repo.get!(HostReadModel, event.host_id)
 
     assert event.host_id == host_projection.id
@@ -91,6 +92,7 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
 
     assert event.agent_version == host_projection.agent_version
     assert event.heartbeat == host_projection.heartbeat
+    assert event.systemd_units == host_projection.systemd_units
 
     assert_broadcast "host_registered",
                      %{
@@ -103,7 +105,8 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
                        ip_addresses: ^ip_addresses,
                        netmasks: ^netmasks,
                        provider: ^provider,
-                       provider_data: ^provider_data
+                       provider_data: ^provider_data,
+                       systemd_units: ^systemd_units
                      },
                      1000
   end
@@ -245,7 +248,8 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
     %{
       agent_version: agent_version,
       arch: arch,
-      hostname: hostname
+      hostname: hostname,
+      systemd_units: systemd_units
     } =
       event = %HostDetailsUpdated{
         host_id: host_id,
@@ -257,7 +261,8 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
         socket_count: Enum.random(1..16),
         os_version: Faker.App.version(),
         arch: Enum.random(Architecture.values()),
-        prometheus_targets: build(:host_prometheus_targets)
+        prometheus_targets: build(:host_prometheus_targets),
+        systemd_units: build_list(2, :host_systemd_unit)
       }
 
     ProjectorTestHelper.project(HostProjector, event, "host_projector")
@@ -270,6 +275,7 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
     assert event.agent_version == host_projection.agent_version
     assert event.prometheus_targets == host_projection.prometheus_targets
     assert event.arch == host_projection.arch
+    assert event.systemd_units == host_projection.systemd_units
 
     assert_broadcast "host_details_updated",
                      %{
@@ -279,7 +285,8 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
                        id: ^host_id,
                        ip_addresses: [^ip_address],
                        netmasks: [^netmask],
-                       provider_data: nil
+                       provider_data: nil,
+                       systemd_units: ^systemd_units
                      },
                      1000
   end
@@ -512,7 +519,8 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
       provider_data: provider_data,
       deregistered_at: deregistered_at,
       sles_subscriptions: sles_subscriptions,
-      tags: tags
+      tags: tags,
+      systemd_units: systemd_units
     } =
       HostReadModel
       |> Repo.get!(host_id)
@@ -531,7 +539,8 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
                        provider: ^provider,
                        provider_data: ^provider_data,
                        sles_subscriptions: ^sles_subscriptions,
-                       tags: ^tags
+                       tags: ^tags,
+                       systemd_units: ^systemd_units
                      },
                      1000
   end

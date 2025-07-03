@@ -223,7 +223,8 @@ defmodule Trento.Factory do
       deregistered_at: nil,
       selected_checks: Enum.map(0..4, fn _ -> Faker.StarWars.planet() end),
       saptune_status: nil,
-      prometheus_targets: build(:host_prometheus_targets)
+      prometheus_targets: build(:host_prometheus_targets),
+      systemd_units: build_list(2, :host_systemd_unit)
     }
   end
 
