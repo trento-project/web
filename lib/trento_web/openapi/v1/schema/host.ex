@@ -39,6 +39,26 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Host do
     )
   end
 
+  defmodule SystemdUnit do
+    @moduledoc false
+
+    OpenApiSpex.schema(
+      %{
+        title: "SystemdUnit",
+        type: :object,
+        additionalProperties: false,
+        properties: %{
+          name: %Schema{type: :string, description: "Name of the systemd unit"},
+          unit_file_state: %Schema{
+            type: :string,
+            description: "State of the systemd unit. Whether it is enabled or disabled"
+          }
+        }
+      },
+      struct?: false
+    )
+  end
+
   defmodule HostItem do
     @moduledoc false
 
@@ -71,6 +91,12 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Host do
           agent_version: %Schema{
             type: :string,
             description: "Version of the agent installed on the host"
+          },
+          systemd_units: %Schema{
+            title: "SystemdUnits",
+            description: "A list of systemd units on the host",
+            type: :array,
+            items: SystemdUnit
           },
           arch: HostArchitecture,
           health: ResourceHealth,
