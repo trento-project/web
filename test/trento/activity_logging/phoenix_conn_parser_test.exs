@@ -301,7 +301,7 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
 
   defp scenario_setup(:api_key_generation, correlation_id) do
     key0 = UUID.uuid4()
-    Process.put(:key, key0)
+    Process.put(:correlation_key, key0)
     key = Correlations.correlation_key(:api_key)
     Correlations.put_correlation_id(key, correlation_id)
   end
