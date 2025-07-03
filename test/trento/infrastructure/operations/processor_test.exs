@@ -165,5 +165,47 @@ defmodule Trento.Infrastructure.Operations.AMQP.ProcessorTest do
 
       assert 1 == ActivityLog |> Repo.all() |> length()
     end
+
+    for {operation, _} = pacemaker_operation_scenario <- [
+          {"pacemaker_enable", "pacemakerenable@v1"},
+          {"pacemaker_disable", "pacemakerdisable@v1"}
+        ] do
+      @pacemaker_operation_scenario pacemaker_operation_scenario
+
+      test "should request saptune discovery request when '#{operation}' operation is completed" do
+        operation_id = UUID.uuid4()
+        %{id: cluster_id} = insert(:cluster)
+        [%{id: host_id_1}, %{id: host_id_2}] = insert_list(2, :host, cluster_id: cluster_id)
+
+        {_, operator} = @pacemaker_operation_scenario
+
+        operation_completed =
+          Contracts.to_event(%OperationCompleted{
+            operation_id: operation_id,
+            group_id: cluster_id,
+            operation_type: operator,
+            result: :UPDATED
+          })
+
+        discovery_requested = %DiscoveryRequested{
+          discovery_type: "host_discovery",
+          targets: [host_id_1, host_id_2]
+        }
+
+        expect(
+          Trento.Infrastructure.Messaging.Adapter.Mock,
+          :publish,
+          fn Publisher, "agents", ^discovery_requested ->
+            :ok
+          end
+        )
+
+        message = %GenRMQ.Message{payload: operation_completed, attributes: %{}, channel: nil}
+
+        assert :ok = Processor.process(message)
+
+        assert 1 == ActivityLog |> Repo.all() |> length()
+      end
+    end
   end
 end

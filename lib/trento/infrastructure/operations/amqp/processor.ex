@@ -5,12 +5,15 @@ defmodule Trento.Infrastructure.Operations.AMQP.Processor do
 
   @behaviour GenRMQ.Processor
 
+  require Trento.Operations.Enums.ClusterHostOperations
   alias Trento.Contracts
 
   alias Trento.Operations.V1.{
     OperationCompleted,
     OperationStarted
   }
+
+  alias Trento.Operations.Enums.ClusterHostOperations
 
   alias Trento.Infrastructure.Operations
 
@@ -84,6 +87,11 @@ defmodule Trento.Infrastructure.Operations.AMQP.Processor do
   defp maybe_request_discovery(operation, :UPDATED, group_id)
        when operation in ClusterOperations.values() do
     Discovery.request_cluster_discovery(group_id)
+  end
+
+  defp maybe_request_discovery(operation, :UPDATED, group_id)
+       when operation in ClusterHostOperations.values() do
+    Discovery.request_cluster_hosts_discovery(group_id)
   end
 
   defp maybe_request_discovery(_, _, _), do: :ok
