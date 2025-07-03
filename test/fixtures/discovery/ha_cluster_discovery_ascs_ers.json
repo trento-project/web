@@ -468,6 +468,7 @@
       "Groups": [
         {
           "Id": "grp_NWP_ASCS00",
+          "Managed": true,
           "Resources": [
             {
               "Id": "rsc_ip_NWP_ASCS00",
@@ -541,6 +542,7 @@
         },
         {
           "Id": "grp_NWP_ERS10",
+          "Managed": false,
           "Resources": [
             {
               "Id": "rsc_ip_NWP_ERS10",

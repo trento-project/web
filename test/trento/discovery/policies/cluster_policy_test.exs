@@ -926,7 +926,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           managed: true,
                           parent: %ClusterResourceParent{
                             id: "g_ip_HDQ_HDB10",
-                            managed: nil,
+                            managed: true,
                             multi_state: nil
                           },
                           role: "Started",
@@ -939,7 +939,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           managed: true,
                           parent: %ClusterResourceParent{
                             id: "g_ip_HDQ_HDB10",
-                            managed: nil,
+                            managed: true,
                             multi_state: nil
                           },
                           role: "Started",
@@ -1126,7 +1126,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       sid: nil,
                       parent: %ClusterResourceParent{
                         id: "g_ip_HDQ_HDB10",
-                        managed: nil,
+                        managed: true,
                         multi_state: nil
                       }
                     },
@@ -1141,7 +1141,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       sid: nil,
                       parent: %ClusterResourceParent{
                         id: "g_ip_HDQ_HDB10",
-                        managed: nil,
+                        managed: true,
                         multi_state: nil
                       }
                     }
@@ -1211,7 +1211,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               managed: true,
                               parent: %ClusterResourceParent{
                                 id: "grp_NWP_ASCS00",
-                                managed: nil,
+                                managed: true,
                                 multi_state: nil
                               }
                             },
@@ -1224,7 +1224,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               managed: true,
                               parent: %ClusterResourceParent{
                                 id: "grp_NWP_ASCS00",
-                                managed: nil,
+                                managed: true,
                                 multi_state: nil
                               }
                             },
@@ -1237,7 +1237,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               managed: true,
                               parent: %ClusterResourceParent{
                                 id: "grp_NWP_ASCS00",
-                                managed: nil,
+                                managed: true,
                                 multi_state: nil
                               }
                             },
@@ -1250,7 +1250,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               managed: true,
                               parent: %ClusterResourceParent{
                                 id: "grp_NWP_ASCS00",
-                                managed: nil,
+                                managed: true,
                                 multi_state: nil
                               }
                             }
@@ -1273,7 +1273,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               managed: true,
                               parent: %ClusterResourceParent{
                                 id: "grp_NWP_ERS10",
-                                managed: nil,
+                                managed: false,
                                 multi_state: nil
                               }
                             },
@@ -1286,7 +1286,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               managed: true,
                               parent: %ClusterResourceParent{
                                 id: "grp_NWP_ERS10",
-                                managed: nil,
+                                managed: false,
                                 multi_state: nil
                               }
                             },
@@ -1299,7 +1299,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               managed: true,
                               parent: %ClusterResourceParent{
                                 id: "grp_NWP_ERS10",
-                                managed: nil,
+                                managed: false,
                                 multi_state: nil
                               }
                             },
@@ -1312,7 +1312,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               managed: true,
                               parent: %ClusterResourceParent{
                                 id: "grp_NWP_ERS10",
-                                managed: nil,
+                                managed: false,
                                 multi_state: nil
                               }
                             }
@@ -1352,7 +1352,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       sid: nil,
                       parent: %ClusterResourceParent{
                         id: "grp_NWP_ASCS00",
-                        managed: nil,
+                        managed: true,
                         multi_state: nil
                       }
                     },
@@ -1367,7 +1367,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       sid: nil,
                       parent: %ClusterResourceParent{
                         id: "grp_NWP_ASCS00",
-                        managed: nil,
+                        managed: true,
                         multi_state: nil
                       }
                     },
@@ -1382,7 +1382,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       sid: "NWP",
                       parent: %ClusterResourceParent{
                         id: "grp_NWP_ASCS00",
-                        managed: nil,
+                        managed: true,
                         multi_state: nil
                       }
                     },
@@ -1397,7 +1397,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       sid: nil,
                       parent: %ClusterResourceParent{
                         id: "grp_NWP_ASCS00",
-                        managed: nil,
+                        managed: true,
                         multi_state: nil
                       }
                     },
@@ -1412,7 +1412,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       sid: nil,
                       parent: %ClusterResourceParent{
                         id: "grp_NWP_ERS10",
-                        managed: nil,
+                        managed: false,
                         multi_state: nil
                       }
                     },
@@ -1427,7 +1427,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       sid: nil,
                       parent: %ClusterResourceParent{
                         id: "grp_NWP_ERS10",
-                        managed: nil,
+                        managed: false,
                         multi_state: nil
                       }
                     },
@@ -1442,7 +1442,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       sid: "NWP",
                       parent: %ClusterResourceParent{
                         id: "grp_NWP_ERS10",
-                        managed: nil,
+                        managed: false,
                         multi_state: nil
                       }
                     },
@@ -1457,7 +1457,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       sid: nil,
                       parent: %ClusterResourceParent{
                         id: "grp_NWP_ERS10",
-                        managed: nil,
+                        managed: false,
                         multi_state: nil
                       }
                     }
@@ -1528,7 +1528,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               managed: true,
                               parent: %ClusterResourceParent{
                                 id: "grp_NWP_ASCS00",
-                                managed: nil,
+                                managed: true,
                                 multi_state: nil
                               }
                             },
@@ -1541,7 +1541,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               managed: true,
                               parent: %ClusterResourceParent{
                                 id: "grp_NWP_ASCS00",
-                                managed: nil,
+                                managed: true,
                                 multi_state: nil
                               }
                             },
@@ -1554,7 +1554,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               managed: true,
                               parent: %ClusterResourceParent{
                                 id: "grp_NWP_ASCS00",
-                                managed: nil,
+                                managed: true,
                                 multi_state: nil
                               }
                             },
@@ -1567,7 +1567,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               managed: true,
                               parent: %ClusterResourceParent{
                                 id: "grp_NWP_ASCS00",
-                                managed: nil,
+                                managed: true,
                                 multi_state: nil
                               }
                             }
@@ -1590,7 +1590,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               managed: true,
                               parent: %ClusterResourceParent{
                                 id: "grp_NWP_ERS10",
-                                managed: nil,
+                                managed: true,
                                 multi_state: nil
                               }
                             },
@@ -1603,7 +1603,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               managed: true,
                               parent: %ClusterResourceParent{
                                 id: "grp_NWP_ERS10",
-                                managed: nil,
+                                managed: true,
                                 multi_state: nil
                               }
                             },
@@ -1616,7 +1616,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               managed: true,
                               parent: %ClusterResourceParent{
                                 id: "grp_NWP_ERS10",
-                                managed: nil,
+                                managed: true,
                                 multi_state: nil
                               }
                             },
@@ -1629,7 +1629,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               managed: true,
                               parent: %ClusterResourceParent{
                                 id: "grp_NWP_ERS10",
-                                managed: nil,
+                                managed: true,
                                 multi_state: nil
                               }
                             }
@@ -1669,7 +1669,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       sid: nil,
                       parent: %ClusterResourceParent{
                         id: "grp_NWP_ASCS00",
-                        managed: nil,
+                        managed: true,
                         multi_state: nil
                       }
                     },
@@ -1684,7 +1684,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       sid: nil,
                       parent: %ClusterResourceParent{
                         id: "grp_NWP_ASCS00",
-                        managed: nil,
+                        managed: true,
                         multi_state: nil
                       }
                     },
@@ -1699,7 +1699,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       sid: "NWP",
                       parent: %ClusterResourceParent{
                         id: "grp_NWP_ASCS00",
-                        managed: nil,
+                        managed: true,
                         multi_state: nil
                       }
                     },
@@ -1714,7 +1714,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       sid: nil,
                       parent: %ClusterResourceParent{
                         id: "grp_NWP_ASCS00",
-                        managed: nil,
+                        managed: true,
                         multi_state: nil
                       }
                     },
@@ -1729,7 +1729,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       sid: nil,
                       parent: %ClusterResourceParent{
                         id: "grp_NWP_ERS10",
-                        managed: nil,
+                        managed: true,
                         multi_state: nil
                       }
                     },
@@ -1744,7 +1744,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       sid: nil,
                       parent: %ClusterResourceParent{
                         id: "grp_NWP_ERS10",
-                        managed: nil,
+                        managed: true,
                         multi_state: nil
                       }
                     },
@@ -1759,7 +1759,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       sid: "NWP",
                       parent: %ClusterResourceParent{
                         id: "grp_NWP_ERS10",
-                        managed: nil,
+                        managed: true,
                         multi_state: nil
                       }
                     },
@@ -1774,7 +1774,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       sid: nil,
                       parent: %ClusterResourceParent{
                         id: "grp_NWP_ERS10",
-                        managed: nil,
+                        managed: true,
                         multi_state: nil
                       }
                     }
@@ -1928,7 +1928,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               managed: true,
                               parent: %ClusterResourceParent{
                                 id: "grp_NWP_ASCS00",
-                                managed: nil,
+                                managed: true,
                                 multi_state: nil
                               }
                             },
@@ -1941,7 +1941,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               managed: true,
                               parent: %ClusterResourceParent{
                                 id: "grp_NWP_ASCS00",
-                                managed: nil,
+                                managed: true,
                                 multi_state: nil
                               }
                             },
@@ -1954,7 +1954,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               managed: true,
                               parent: %ClusterResourceParent{
                                 id: "grp_NWP_ASCS00",
-                                managed: nil,
+                                managed: true,
                                 multi_state: nil
                               }
                             },
@@ -1967,7 +1967,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               managed: true,
                               parent: %ClusterResourceParent{
                                 id: "grp_NWP_ASCS00",
-                                managed: nil,
+                                managed: true,
                                 multi_state: nil
                               }
                             }
@@ -1990,7 +1990,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               managed: true,
                               parent: %ClusterResourceParent{
                                 id: "grp_NWP_ERS10",
-                                managed: nil,
+                                managed: true,
                                 multi_state: nil
                               }
                             },
@@ -2003,7 +2003,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               managed: true,
                               parent: %ClusterResourceParent{
                                 id: "grp_NWP_ERS10",
-                                managed: nil,
+                                managed: true,
                                 multi_state: nil
                               }
                             },
@@ -2016,7 +2016,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               managed: true,
                               parent: %ClusterResourceParent{
                                 id: "grp_NWP_ERS10",
-                                managed: nil,
+                                managed: true,
                                 multi_state: nil
                               }
                             },
@@ -2029,7 +2029,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               managed: true,
                               parent: %ClusterResourceParent{
                                 id: "grp_NWP_ERS10",
-                                managed: nil,
+                                managed: true,
                                 multi_state: nil
                               }
                             }
@@ -2059,7 +2059,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               managed: true,
                               parent: %ClusterResourceParent{
                                 id: "grp_NWD_ASCS01",
-                                managed: nil,
+                                managed: true,
                                 multi_state: nil
                               }
                             },
@@ -2072,7 +2072,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               managed: true,
                               parent: %ClusterResourceParent{
                                 id: "grp_NWD_ASCS01",
-                                managed: nil,
+                                managed: true,
                                 multi_state: nil
                               }
                             },
@@ -2085,7 +2085,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               managed: true,
                               parent: %ClusterResourceParent{
                                 id: "grp_NWD_ASCS01",
-                                managed: nil,
+                                managed: true,
                                 multi_state: nil
                               }
                             },
@@ -2098,7 +2098,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               managed: true,
                               parent: %ClusterResourceParent{
                                 id: "grp_NWD_ASCS01",
-                                managed: nil,
+                                managed: true,
                                 multi_state: nil
                               }
                             }
@@ -2121,7 +2121,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               managed: true,
                               parent: %ClusterResourceParent{
                                 id: "grp_NWD_ERS11",
-                                managed: nil,
+                                managed: true,
                                 multi_state: nil
                               }
                             },
@@ -2134,7 +2134,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               managed: true,
                               parent: %ClusterResourceParent{
                                 id: "grp_NWD_ERS11",
-                                managed: nil,
+                                managed: true,
                                 multi_state: nil
                               }
                             },
@@ -2147,7 +2147,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               managed: true,
                               parent: %ClusterResourceParent{
                                 id: "grp_NWD_ERS11",
-                                managed: nil,
+                                managed: true,
                                 multi_state: nil
                               }
                             },
@@ -2160,7 +2160,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                               managed: true,
                               parent: %ClusterResourceParent{
                                 id: "grp_NWD_ERS11",
-                                managed: nil,
+                                managed: true,
                                 multi_state: nil
                               }
                             }
@@ -2200,7 +2200,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       sid: nil,
                       parent: %ClusterResourceParent{
                         id: "grp_NWP_ASCS00",
-                        managed: nil,
+                        managed: true,
                         multi_state: nil
                       }
                     },
@@ -2215,7 +2215,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       sid: nil,
                       parent: %ClusterResourceParent{
                         id: "grp_NWP_ASCS00",
-                        managed: nil,
+                        managed: true,
                         multi_state: nil
                       }
                     },
@@ -2230,7 +2230,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       sid: "NWP",
                       parent: %ClusterResourceParent{
                         id: "grp_NWP_ASCS00",
-                        managed: nil,
+                        managed: true,
                         multi_state: nil
                       }
                     },
@@ -2245,7 +2245,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       sid: nil,
                       parent: %ClusterResourceParent{
                         id: "grp_NWP_ASCS00",
-                        managed: nil,
+                        managed: true,
                         multi_state: nil
                       }
                     },
@@ -2260,7 +2260,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       sid: nil,
                       parent: %ClusterResourceParent{
                         id: "grp_NWP_ERS10",
-                        managed: nil,
+                        managed: true,
                         multi_state: nil
                       }
                     },
@@ -2275,7 +2275,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       sid: nil,
                       parent: %ClusterResourceParent{
                         id: "grp_NWP_ERS10",
-                        managed: nil,
+                        managed: true,
                         multi_state: nil
                       }
                     },
@@ -2290,7 +2290,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       sid: "NWP",
                       parent: %ClusterResourceParent{
                         id: "grp_NWP_ERS10",
-                        managed: nil,
+                        managed: true,
                         multi_state: nil
                       }
                     },
@@ -2305,7 +2305,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       sid: nil,
                       parent: %ClusterResourceParent{
                         id: "grp_NWP_ERS10",
-                        managed: nil,
+                        managed: true,
                         multi_state: nil
                       }
                     },
@@ -2320,7 +2320,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       sid: nil,
                       parent: %ClusterResourceParent{
                         id: "grp_NWD_ASCS01",
-                        managed: nil,
+                        managed: true,
                         multi_state: nil
                       }
                     },
@@ -2335,7 +2335,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       sid: nil,
                       parent: %ClusterResourceParent{
                         id: "grp_NWD_ASCS01",
-                        managed: nil,
+                        managed: true,
                         multi_state: nil
                       }
                     },
@@ -2350,7 +2350,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       sid: "NWD",
                       parent: %ClusterResourceParent{
                         id: "grp_NWD_ASCS01",
-                        managed: nil,
+                        managed: true,
                         multi_state: nil
                       }
                     },
@@ -2365,7 +2365,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       sid: nil,
                       parent: %ClusterResourceParent{
                         id: "grp_NWD_ASCS01",
-                        managed: nil,
+                        managed: true,
                         multi_state: nil
                       }
                     },
@@ -2380,7 +2380,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       sid: nil,
                       parent: %ClusterResourceParent{
                         id: "grp_NWD_ERS11",
-                        managed: nil,
+                        managed: true,
                         multi_state: nil
                       }
                     },
@@ -2395,7 +2395,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       sid: nil,
                       parent: %ClusterResourceParent{
                         id: "grp_NWD_ERS11",
-                        managed: nil,
+                        managed: true,
                         multi_state: nil
                       }
                     },
@@ -2410,7 +2410,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       sid: "NWD",
                       parent: %ClusterResourceParent{
                         id: "grp_NWD_ERS11",
-                        managed: nil,
+                        managed: true,
                         multi_state: nil
                       }
                     },
@@ -2425,7 +2425,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       sid: nil,
                       parent: %ClusterResourceParent{
                         id: "grp_NWD_ERS11",
-                        managed: nil,
+                        managed: true,
                         multi_state: nil
                       }
                     }
@@ -3055,7 +3055,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           managed: true,
                           parent: %ClusterResourceParent{
                             id: "g_ip_PRD_HDB00",
-                            managed: nil,
+                            managed: true,
                             multi_state: nil
                           }
                         },
@@ -3068,7 +3068,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           managed: true,
                           parent: %ClusterResourceParent{
                             id: "g_ip_PRD_HDB00",
-                            managed: nil,
+                            managed: true,
                             multi_state: nil
                           }
                         }
@@ -3289,7 +3289,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       sid: nil,
                       parent: %ClusterResourceParent{
                         id: "g_ip_PRD_HDB00",
-                        managed: nil,
+                        managed: true,
                         multi_state: nil
                       }
                     },
@@ -3304,7 +3304,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       sid: nil,
                       parent: %ClusterResourceParent{
                         id: "g_ip_PRD_HDB00",
-                        managed: nil,
+                        managed: true,
                         multi_state: nil
                       }
                     }
@@ -4761,7 +4761,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             managed: true,
                             parent: %ClusterResourceParent{
                               id: "g_ip_PRD_HDB00",
-                              managed: nil,
+                              managed: true,
                               multi_state: nil
                             }
                           },
@@ -4774,7 +4774,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             managed: true,
                             parent: %ClusterResourceParent{
                               id: "g_ip_PRD_HDB00",
-                              managed: nil,
+                              managed: true,
                               multi_state: nil
                             }
                           }
@@ -5029,7 +5029,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         sid: nil,
                         parent: %ClusterResourceParent{
                           id: "g_ip_PRD_HDB00",
-                          managed: nil,
+                          managed: true,
                           multi_state: nil
                         }
                       },
@@ -5044,7 +5044,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         sid: nil,
                         parent: %ClusterResourceParent{
                           id: "g_ip_PRD_HDB00",
-                          managed: nil,
+                          managed: true,
                           multi_state: nil
                         }
                       }
@@ -5699,7 +5699,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             managed: true,
                             parent: %ClusterResourceParent{
                               id: "g_ip_PRD_HDB01",
-                              managed: nil,
+                              managed: true,
                               multi_state: nil
                             }
                           },
@@ -5712,7 +5712,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             managed: true,
                             parent: %ClusterResourceParent{
                               id: "g_ip_PRD_HDB01",
-                              managed: nil,
+                              managed: true,
                               multi_state: nil
                             }
                           }
@@ -6178,7 +6178,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         sid: nil,
                         parent: %ClusterResourceParent{
                           id: "g_ip_PRD_HDB01",
-                          managed: nil,
+                          managed: true,
                           multi_state: nil
                         }
                       },
@@ -6193,7 +6193,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         sid: nil,
                         parent: %ClusterResourceParent{
                           id: "g_ip_PRD_HDB01",
-                          managed: nil,
+                          managed: true,
                           multi_state: nil
                         }
                       }

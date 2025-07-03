@@ -174,8 +174,8 @@ defmodule Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload do
 
     embeds_many :groups, CrmmonGroup, primary_key: false do
       field :id, :string
+      field :managed, :boolean, default: true
 
-      embeds_many :primitives, Primitive
       embeds_many :resources, CrmmonResource
     end
 
@@ -237,9 +237,8 @@ defmodule Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload do
 
   defp groups_changeset(groups, attrs) do
     groups
-    |> cast(attrs, [:id])
+    |> cast(attrs, [:id, :managed])
     |> cast_embed(:resources)
-    |> cast_embed(:primitives)
     |> validate_required([:id])
   end
 
