@@ -84,6 +84,8 @@ const corosyncTokenTimeoutSettings =
 const checkInputExpectedValue = 'input[name*="expected"]';
 const checkName = (checkNameText) =>
   `div[aria-label="accordion-header"] h3:contains("${checkNameText}")`;
+const resourcesTable = 'tbody:eq(2)';
+const resourcesRowCollapsibleCell = `${resourcesTable} td:nth-child(1)`;
 
 // UI Interactions
 
@@ -145,6 +147,9 @@ export const clickCorosyncCheckCategory = () =>
 
 export const clickCorosyncTokenTimeoutCheckSettings = () =>
   cy.get(corosyncTokenTimeoutSettings).click();
+
+export const expandGroupedResources = () =>
+  cy.get(resourcesRowCollapsibleCell).click({ multiple: true });
 
 // UI Validations
 export const checkInputValueIsTheExpected = (value) =>
@@ -352,6 +357,32 @@ export const expectedSrHealthStatesAreDisplayed = () => {
       'have.class',
       site.srHealthState
     );
+  });
+};
+
+export const expectedResourcesDisplayed = () => {
+  cy.wrap(availableHanaCluster.resources).each((resource, index) => {
+    cy.get(`${resourcesTable} tr:nth-child(${index + 1}) td`)
+      .eq(1)
+      .should('contain', resource.failCount);
+    cy.get(`${resourcesTable} tr:nth-child(${index + 1}) td`)
+      .eq(2)
+      .should('contain', resource.id);
+    cy.get(`${resourcesTable} tr:nth-child(${index + 1}) td`)
+      .eq(3)
+      .should('contain', resource.node);
+    cy.get(`${resourcesTable} tr:nth-child(${index + 1}) td`)
+      .eq(4)
+      .should('contain', resource.role);
+    cy.get(`${resourcesTable} tr:nth-child(${index + 1}) td`)
+      .eq(5)
+      .should('contain', resource.status);
+    cy.get(`${resourcesTable} tr:nth-child(${index + 1}) td`)
+      .eq(6)
+      .should('contain', resource.managed);
+    cy.get(`${resourcesTable} tr:nth-child(${index + 1}) td`)
+      .eq(7)
+      .should('contain', resource.type);
   });
 };
 

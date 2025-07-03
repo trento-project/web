@@ -82,20 +82,6 @@ const scaleOutDetailsNodeStatus = {
   ],
 };
 
-const unmanagedNodeResources = {
-  ...scaleOutDetails,
-  nodes: [
-    hanaClusterDetailsNodesFactory.build({
-      site: scaleOutSites[0].name,
-      resources: clusterResourceFactory.buildList(2, { managed: false }),
-    }),
-    hanaClusterDetailsNodesFactory.build({
-      site: scaleOutSites[1].name,
-      resources: clusterResourceFactory.buildList(2, { managed: false }),
-    }),
-  ],
-};
-
 const lastExecution = {
   loading: false,
   data: checksExecutionCompletedFactory.build({
@@ -124,6 +110,12 @@ const sapSystemList = [
   sapSystemFactory.build({ sid: 'QAS' }),
   sapSystemFactory.build({ sid: 'DEV' }),
 ];
+
+const unmanagedResources = clusterResourceFactory.buildList(2, {
+  managed: false,
+  parent: { managed: false },
+  node: scaleOutHosts[0].hostname,
+});
 
 const catalog = catalogFactory.build({ loading: false });
 
@@ -240,7 +232,10 @@ export const WithRunningExecution = {
 export const WithUnmanagedResources = {
   args: {
     ...HanaScaleOut.args,
-    details: unmanagedNodeResources,
+    details: {
+      ...scaleOutDetails,
+      resources: unmanagedResources,
+    },
   },
 };
 

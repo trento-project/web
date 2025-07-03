@@ -369,5 +369,51 @@ describe('Table component', () => {
       fireEvent.click(collapsibleCell);
       expect(screen.queryByText(content)).toBeVisible();
     });
+
+    it('should wrap the collapsed row in cell', () => {
+      const data = tableDataFactory.buildList(1);
+      const content = 'This is a collapsible row data';
+
+      render(
+        <Table
+          config={{
+            ...tableConfig,
+            wrapCollapsedRowInCell: true,
+            collapsibleDetailRenderer: () => <p>{content}</p>,
+          }}
+          data={data}
+        />
+      );
+
+      const table = screen.getByRole('table');
+      const collapsedCell = table.querySelector(
+        'tbody > tr:nth-child(2) > td:nth-child(1) > p'
+      );
+      expect(collapsedCell).toHaveTextContent(content);
+    });
+
+    it('should not wrap the collapsed row in cell', () => {
+      const data = tableDataFactory.buildList(1);
+      const content = 'This is a collapsible row data';
+
+      render(
+        <Table
+          config={{
+            ...tableConfig,
+            wrapCollapsedRowInCell: false,
+            collapsibleDetailRenderer: () => (
+              <tr>
+                <td>{content}</td>
+              </tr>
+            ),
+          }}
+          data={data}
+        />
+      );
+
+      const table = screen.getByRole('table');
+      const collapsedCell = table.querySelector('tbody > tr:nth-child(2) > td');
+      expect(collapsedCell).toHaveTextContent(content);
+    });
   });
 });

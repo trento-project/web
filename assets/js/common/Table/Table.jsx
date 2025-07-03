@@ -78,6 +78,7 @@ function Table({
   const {
     columns,
     collapsibleDetailRenderer = undefined,
+    wrapCollapsedRowInCell = true,
     headerClassName = '',
     rowClassName = '',
     collapsedRowClassName = '',
@@ -257,6 +258,7 @@ function Table({
                         item={item}
                         key={key}
                         collapsibleDetailRenderer={collapsibleDetailRenderer}
+                        wrapCollapsedRowInCell={wrapCollapsedRowInCell}
                         renderCells={renderCells}
                         columns={columns}
                         colSpan={columns.length}

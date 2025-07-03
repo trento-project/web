@@ -65,7 +65,7 @@ const getSiteDetailsTableConfig = (
       key: '',
       className: 'table-col-xs',
       render: (_, item) => {
-        const { attributes, resources } = item;
+        const { attributes } = item;
 
         return (
           <div className="flex w-fit whitespace-nowrap">
@@ -76,11 +76,7 @@ const getSiteDetailsTableConfig = (
               transparent
               operations={getHostOperations(item)}
             />
-            <AttributesDetails
-              title="Node Details"
-              attributes={attributes}
-              resources={resources}
-            />
+            <AttributesDetails title="Node Details" attributes={attributes} />
           </div>
         );
       },

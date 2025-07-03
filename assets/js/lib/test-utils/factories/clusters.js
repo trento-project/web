@@ -1,6 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { Factory } from 'fishery';
 import { format } from 'date-fns';
+import { flatMap } from 'lodash';
 
 import {
   healthEnum,
@@ -32,13 +33,22 @@ export const sbdDevicesFactory = Factory.define(() => ({
   status: faker.helpers.arrayElement(['healthy', 'unhealthy']),
 }));
 
+export const clusterResourceParentFactory = Factory.define(() => ({
+  id: faker.string.uuid(),
+  managed: faker.datatype.boolean(),
+  multi_state: faker.datatype.boolean(),
+}));
+
 export const clusterResourceFactory = Factory.define(() => ({
   id: faker.string.uuid(),
-  role: faker.location.country(),
-  status: faker.vehicle.bicycle(),
+  role: 'Started',
+  status: 'Active',
   type: faker.color.human(),
   managed: faker.datatype.boolean(),
-  fail_count: faker.number.int(),
+  fail_count: faker.number.int({ min: 10, max: 99 }),
+  node: faker.animal.dog(),
+  sid: generateSid(),
+  parent: clusterResourceParentFactory.build(),
 }));
 
 export const hanaClusterSiteFactory = Factory.define(({ sequence }) => ({
@@ -62,7 +72,6 @@ export const hanaClusterDetailsNodesFactory = Factory.define(() => ({
     }),
     {}
   ),
-  resources: clusterResourceFactory.buildList(5),
 }));
 
 export const hanaClusterDetailsFactory = Factory.define(() => {
@@ -78,7 +87,9 @@ export const hanaClusterDetailsFactory = Factory.define(() => {
     sbd_devices: sbdDevicesFactory.buildList(3),
     secondary_sync_state: 'SOK',
     sr_health_state: '4',
-    stopped_resources: clusterResourceFactory.buildList(2),
+    resources: clusterResourceFactory.buildList(2, {
+      node: faker.helpers.arrayElement(nodes.map(({ name }) => name)),
+    }),
     system_replication_mode: 'sync',
     system_replication_operation_mode: 'logreplay',
     maintenance_mode: false,
@@ -100,7 +111,6 @@ export const ascsErsClusterNodeFactory = Factory.define(({ sequence }) => ({
     }),
     {}
   ),
-  resources: clusterResourceFactory.buildList(5),
 }));
 
 export const ascsErsSapSystemFactory = Factory.define(() => ({
@@ -112,11 +122,18 @@ export const ascsErsSapSystemFactory = Factory.define(() => ({
 
 export const ascsErsClusterDetailsFactory = Factory.define(({ params }) => {
   const { sap_systems_count = 1 } = params;
+  const sapSystems = ascsErsSapSystemFactory.buildList(sap_systems_count);
+  const nodeNames = flatMap(sapSystems, ({ nodes }) =>
+    nodes.map(({ name }) => name)
+  );
+
   return {
     fencing_type: 'external/sbd',
-    sap_systems: ascsErsSapSystemFactory.buildList(sap_systems_count),
+    sap_systems: sapSystems,
     sbd_devices: sbdDevicesFactory.buildList(3),
-    stopped_resources: clusterResourceFactory.buildList(2),
+    resources: clusterResourceFactory.buildList(2, {
+      node: faker.helpers.arrayElement(nodeNames),
+    }),
     maintenance_mode: false,
   };
 });

@@ -55,7 +55,7 @@ const getNodeDetailsTableConfig = (
       key: '',
       className: 'table-col-xs',
       render: (_, item) => {
-        const { attributes, resources } = item;
+        const { attributes } = item;
 
         return (
           <div className="flex w-fit whitespace-nowrap">
@@ -66,11 +66,7 @@ const getNodeDetailsTableConfig = (
               transparent
               operations={getHostOperations(item)}
             />
-            <AttributesDetails
-              title="Node Details"
-              attributes={attributes}
-              resources={resources}
-            />
+            <AttributesDetails title="Node Details" attributes={attributes} />
           </div>
         );
       },
@@ -98,7 +94,7 @@ function AscsErsClusterDetails({
     const systems = details?.sap_systems.map((system) => ({
       ...system,
       ...sapSystems.find(({ sid }) => sid === system.sid),
-      nodes: enrichNodes(system?.nodes, hosts),
+      nodes: enrichNodes(system?.nodes, hosts, details?.resources),
     }));
 
     setEnrichedSapSystems(systems);
