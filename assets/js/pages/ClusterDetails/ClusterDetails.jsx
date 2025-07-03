@@ -26,21 +26,19 @@ import OperationsButton from '@common/OperationsButton';
 import PageHeader from '@common/PageHeader';
 import Tooltip from '@common/Tooltip';
 import {
-  ClusterMaintenanceChangeModal,
   OperationForbiddenModal,
   SimpleAcceptanceOperationModal,
 } from '@common/OperationModals';
 
 import Resources from './Resources';
 import SBDDetails from './SBDDetails';
-import { getClusterHostOperations } from './clusterOperations';
-
-const hostOperations = [PACEMAKER_ENABLE, PACEMAKER_DISABLE];
+import {
+  getClusterOperations,
+  getClusterHostOperations,
+  getResourceOperations,
+} from './clusterOperations';
 
 const operationModalState = { open: false, operation: '' };
-
-const isOperationModalOpen = ({ open, operation }, operations) =>
-  open && operations.includes(operation);
 
 function ClusterDetails({
   clusterID,
@@ -63,13 +61,9 @@ function ClusterDetails({
   const [operationModalOpen, setOperationModalOpen] =
     useState(operationModalState);
   const [currentOperationHost, setCurrentOperationHost] = useState(undefined);
+  const [maintenanceOperationParams, setMaintenanceOperationParams] =
+    useState(undefined);
 
-  const openOperationModal = (operation) =>
-    setOperationModalOpen((prevState) => ({
-      ...prevState,
-      operation,
-      open: true,
-    }));
   const closeOperationModal = () =>
     setOperationModalOpen((prevState) => ({ ...prevState, open: false }));
 
@@ -85,12 +79,59 @@ function ClusterDetails({
   const operationForbidden = get(runningOperation, 'forbidden', false);
   const operationForbiddenErrors = get(runningOperation, 'errors', []);
 
+  const clusterOperations = getClusterOperations(
+    clusterID,
+    runningOperation,
+    setMaintenanceOperationParams,
+    setOperationModalOpen,
+    details
+  );
+
+  const curriedGetResourceOperations = getResourceOperations(
+    clusterID,
+    runningOperation,
+    setMaintenanceOperationParams,
+    setOperationModalOpen
+  );
+
+  const getOperationModalDescriptionArgs = (operation) => {
+    switch (operation) {
+      case PACEMAKER_ENABLE:
+      case PACEMAKER_DISABLE:
+        return {
+          hostName: currentOperationHost?.name,
+        };
+      case CLUSTER_MAINTENANCE_CHANGE:
+        return maintenanceOperationParams;
+      default:
+        return {};
+    }
+  };
+
+  const requestOperation = (operation) => {
+    switch (operation) {
+      case PACEMAKER_ENABLE:
+      case PACEMAKER_DISABLE:
+        onRequestHostOperation(operation, {
+          clusterID,
+          hostID: currentOperationHost.id,
+        });
+        break;
+      case CLUSTER_MAINTENANCE_CHANGE:
+        onRequestOperation(operation, maintenanceOperationParams);
+        break;
+      default:
+        noop();
+    }
+  };
+
   const detailComponent = children
     ? React.cloneElement(children, {
         getClusterHostOperations: getClusterHostOperations(
           clusterID,
           runningOperation,
           setCurrentOperationHost,
+          setMaintenanceOperationParams,
           setOperationModalOpen
         ),
       })
@@ -108,28 +149,14 @@ function ClusterDetails({
           >
             {getOperationForbiddenMessage(runningOperationName)}
           </OperationForbiddenModal>
-          <ClusterMaintenanceChangeModal
-            clusterDetails={details}
-            isOpen={isOperationModalOpen(operationModalOpen, [
-              CLUSTER_MAINTENANCE_CHANGE,
-            ])}
-            onRequest={(params) => {
-              closeOperationModal();
-              onRequestOperation(CLUSTER_MAINTENANCE_CHANGE, params);
-            }}
-            onCancel={closeOperationModal}
-          />
           <SimpleAcceptanceOperationModal
             operation={operationModalOpen.operation}
-            descriptionResolverArgs={{
-              hostName: currentOperationHost?.name,
-            }}
-            isOpen={isOperationModalOpen(operationModalOpen, hostOperations)}
+            descriptionResolverArgs={getOperationModalDescriptionArgs(
+              operationModalOpen.operation
+            )}
+            isOpen={operationModalOpen.open}
             onRequest={() => {
-              onRequestHostOperation(operationModalOpen.operation, {
-                clusterID,
-                hostID: currentOperationHost.id,
-              });
+              requestOperation(operationModalOpen.operation);
               closeOperationModal();
             }}
             onCancel={closeOperationModal}
@@ -149,17 +176,7 @@ function ClusterDetails({
             {operationsEnabled && (
               <OperationsButton
                 userAbilities={userAbilities}
-                operations={[
-                  {
-                    value: 'Cluster Maintenance',
-                    running:
-                      runningOperationName === CLUSTER_MAINTENANCE_CHANGE,
-                    disabled: !!runningOperation,
-                    permitted: ['maintenance_change:cluster'],
-                    onClick: () =>
-                      openOperationModal(CLUSTER_MAINTENANCE_CHANGE),
-                  },
-                ]}
+                operations={clusterOperations}
               />
             )}
             <Button
@@ -215,7 +232,12 @@ function ClusterDetails({
         </div>
       </div>
       {detailComponent}
-      <Resources resources={details?.resources} hosts={hosts} />
+      <Resources
+        resources={details?.resources}
+        hosts={hosts}
+        userAbilities={userAbilities}
+        getResourceOperations={curriedGetResourceOperations}
+      />
       <SBDDetails sbdDevices={details.sbd_devices} />
     </div>
   );
