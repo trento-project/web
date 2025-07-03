@@ -12,6 +12,7 @@ import {
   SAP_INSTANCE_STOP,
   PACEMAKER_ENABLE,
   PACEMAKER_DISABLE,
+  CLUSTER_MAINTENANCE_CHANGE,
 } from '@lib/operations';
 
 import SimpleAcceptanceOperationModal from './SimpleAcceptanceOperationModal';
@@ -20,6 +21,8 @@ const { instance_number: instanceNumber, sid } =
   sapSystemApplicationInstanceFactory.build();
 
 const { hostname: hostName } = hostFactory.build();
+
+const resourceID = 'rsc_ip_PRD_HDB00';
 
 describe('SimpleAcceptanceOperationModal', () => {
   it.each([
@@ -46,6 +49,28 @@ describe('SimpleAcceptanceOperationModal', () => {
       descriptionResolverArgs: { hostName },
       title: 'Disable Pacemaker',
       expectedDescription: `Disable Pacemaker systemd unit at boot on host ${hostName}`,
+    },
+    {
+      operation: CLUSTER_MAINTENANCE_CHANGE,
+      descriptionResolverArgs: { maintenance: true },
+      title: 'Maintenance change',
+      expectedDescription: /Change maintenance state to.*on cluster/,
+    },
+    {
+      operation: CLUSTER_MAINTENANCE_CHANGE,
+      descriptionResolverArgs: { maintenance: false, node_id: hostName },
+      title: 'Maintenance change',
+      expectedDescription: new RegExp(
+        `Change maintenance state to.*on node ${hostName}`
+      ),
+    },
+    {
+      operation: CLUSTER_MAINTENANCE_CHANGE,
+      descriptionResolverArgs: { maintenance: true, resource_id: resourceID },
+      title: 'Maintenance change',
+      expectedDescription: new RegExp(
+        `Change maintenance state to.*on resource ${resourceID}`
+      ),
     },
     {
       operation: 'unknown_operation',
