@@ -74,7 +74,7 @@ const getResourceTableConfig = (
     {
       title: 'Managed',
       key: 'managed',
-      render: (content) => content !== null && capitalize(`${content}`),
+      render: (content) => capitalize(`${content}`),
     },
     {
       title: 'Type',
@@ -103,9 +103,9 @@ const getResourceTableConfig = (
     { columns, rowExpanded, renderCells }
   ) =>
     resource.children
-      ? resource.children.map((child) => (
+      ? resource.children.map((child, idx) => (
           <tr
-            key={`${child.node}_${child.id}`}
+            key={`${idx}_${child.node}_${child.id}`} // eslint-disable-line react/no-array-index-key
             hidden={!rowExpanded}
             className="bg-gray-50 border-b border-gray-200"
           >
@@ -131,6 +131,7 @@ function Resources({
         <Table
           config={getResourceTableConfig(userAbilities, getResourceOperations)}
           data={groupedResources}
+          rowKey={(resource) => resource?.id}
         />
       </div>
     </>
