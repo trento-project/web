@@ -2,12 +2,12 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 
 import {
-  createRoutesFromElements,
   createBrowserRouter,
+  createRoutesFromElements,
   Route,
-  RouterProvider,
   Outlet,
 } from 'react-router';
+import { RouterProvider } from 'react-router/dom';
 
 import { Toaster } from 'react-hot-toast';
 import { Provider } from 'react-redux';
@@ -141,7 +141,13 @@ const createRouter = ({ getUser }) =>
         </Route>
         <Route path="*" element={<NotFound />} />
       </Route>
-    )
+    ),
+    {
+      future: {
+        v7_relativeSplatPath: true,
+        v7_skipActionErrorRevalidation: true,
+      },
+    }
   );
 
 function RoutesWrapper() {
