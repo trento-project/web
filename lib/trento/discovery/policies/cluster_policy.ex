@@ -878,9 +878,9 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
           put_parent(resource, %{id: id, managed: managed, multi_state: multi_state})
         end)
 
-      %CrmmonGroup{id: id, resources: resources} ->
+      %CrmmonGroup{id: id, managed: managed, resources: resources} ->
         Enum.map(resources, fn resource ->
-          put_parent(resource, %{id: id, managed: nil, multi_state: nil})
+          put_parent(resource, %{id: id, managed: managed, multi_state: nil})
         end)
 
       %CrmmonResource{} = resource ->
