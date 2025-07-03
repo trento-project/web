@@ -36,6 +36,12 @@
     "socket_count": 1,
     "total_memory_mb": 15699,
     "fully_qualified_domain_name": "trento-vmnetweaver01.l15cqsinwnpu5gfyrf1r5l51fe.ax.internal.cloudapp.net",
-    "arch": "x86_64"
+    "arch": "x86_64",
+    "systemd_units": [
+      {
+        "name": "pacemaker.service",
+        "unit_file_state": "enabled"
+      }
+    ]
   }
 }

@@ -23,6 +23,12 @@
     "agent_version": "2.1.0",
     "total_memory_mb": 7951,
     "fully_qualified_domain_name": "vmnwdev02.l15cqsinwnpu5gfyrf1r5l51fe.ax.internal.cloudapp.net",
-    "arch": "x86_64"
+    "arch": "x86_64",
+    "systemd_units": [
+      {
+        "name": "pacemaker.service",
+        "unit_file_state": "enabled"
+      }
+    ]
   }
 }
