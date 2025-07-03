@@ -208,7 +208,7 @@ export const availableHanaCluster = {
       type: 'Group',
       role: '',
       status: '',
-      managed: '',
+      managed: 'True',
       failCount: '',
       node: '',
     },
