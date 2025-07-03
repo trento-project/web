@@ -57,7 +57,7 @@ defmodule Trento.Hosts.Projections.HostProjector do
           fully_qualified_domain_name: fully_qualified_domain_name,
           heartbeat: heartbeat,
           prometheus_targets: prometheus_targets,
-          systemd_units: struct_list_to_map_list(systemd_units)
+          systemd_units: map_list_from_struct_list(systemd_units)
         })
 
       Ecto.Multi.insert(multi, :host, changeset,
@@ -168,7 +168,7 @@ defmodule Trento.Hosts.Projections.HostProjector do
           agent_version: agent_version,
           arch: arch,
           prometheus_targets: prometheus_targets,
-          systemd_units: struct_list_to_map_list(systemd_units)
+          systemd_units: map_list_from_struct_list(systemd_units)
         })
 
       Ecto.Multi.update(multi, :host, changeset)
@@ -429,9 +429,11 @@ defmodule Trento.Hosts.Projections.HostProjector do
 
   def after_update(_, _, _), do: :ok
 
-  defp struct_list_to_map_list(structs) when is_list(structs) do
+  defp map_list_from_struct_list(structs) when is_list(structs) do
     Enum.map(structs, &map_from_struct/1)
   end
+
+  defp map_list_from_struct_list(structs), do: structs
 
   defp map_from_struct(struct) when is_struct(struct) do
     Map.from_struct(struct)

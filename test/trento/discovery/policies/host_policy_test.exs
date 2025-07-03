@@ -119,7 +119,7 @@ defmodule Trento.Discovery.Policies.HostPolicyTest do
              |> HostPolicy.handle()
   end
 
-  test "should return the expected commands when a host_discovery payload with empty//incorrect systemd_units is handled" do
+  test "should return the expected commands when a host_discovery payload with empty/incorrect systemd_units is handled" do
     scenarios = [
       %{
         name: "without systemd_units",

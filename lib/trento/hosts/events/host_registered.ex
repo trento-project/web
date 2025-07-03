@@ -9,7 +9,7 @@ defmodule Trento.Hosts.Events.HostRegistered do
 
   alias Trento.Hosts.ValueObjects.SystemdUnit
 
-  defevent version: 6 do
+  defevent version: 7 do
     field :host_id, Ecto.UUID
     field :hostname, :string
     field :ip_addresses, {:array, :string}

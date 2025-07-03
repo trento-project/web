@@ -42,8 +42,6 @@ defmodule Trento.Hosts.Projections.HostReadModel do
     field :saptune_status, Trento.Support.Ecto.Payload, keys_as_atoms: true
     field :prometheus_targets, :map
 
-    embeds_many :systemd_units, SystemdUnit, on_replace: :delete
-
     has_many :tags, Tag, foreign_key: :resource_id
 
     has_many :sles_subscriptions, SlesSubscriptionReadModel,
@@ -69,6 +67,8 @@ defmodule Trento.Hosts.Projections.HostReadModel do
 
     field :deregistered_at, :utc_datetime_usec
     timestamps(type: :utc_datetime_usec)
+
+    embeds_many :systemd_units, SystemdUnit, on_replace: :delete
   end
 
   @spec changeset(t() | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()

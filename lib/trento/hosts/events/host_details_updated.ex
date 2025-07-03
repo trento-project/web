@@ -9,7 +9,7 @@ defmodule Trento.Hosts.Events.HostDetailsUpdated do
 
   alias Trento.Hosts.ValueObjects.SystemdUnit
 
-  defevent version: 5 do
+  defevent version: 6 do
     field :host_id, Ecto.UUID
     field :hostname, :string
     field :fully_qualified_domain_name, :string
@@ -20,10 +20,11 @@ defmodule Trento.Hosts.Events.HostDetailsUpdated do
     field :socket_count, :integer
     field :os_version, :string
     field :prometheus_targets, :map
-    embeds_many :systemd_units, SystemdUnit
 
     field :installation_source, Ecto.Enum, values: [:community, :suse, :unknown]
     field :arch, Ecto.Enum, values: Architecture.values()
+
+    embeds_many :systemd_units, SystemdUnit
   end
 
   def upcast(params, _, 2), do: Map.put(params, "installation_source", :unknown)
