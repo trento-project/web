@@ -128,6 +128,19 @@ defmodule Trento.Discovery do
     request_discovery("ha_cluster_discovery", targets)
   end
 
+  @doc """
+  Request cluster hosts discovery
+  """
+  @spec request_cluster_hosts_discovery(String.t()) :: :ok | {:error, any}
+  def request_cluster_hosts_discovery(cluster_id) do
+    targets =
+      cluster_id
+      |> Clusters.get_cluster_hosts()
+      |> Enum.map(& &1.id)
+
+    request_discovery("host_discovery", targets)
+  end
+
   @spec store_discovery_event(map) :: {:ok, DiscoveryEvent.t()} | {:error, any}
   defp store_discovery_event(%{
          "agent_id" => agent_id,
