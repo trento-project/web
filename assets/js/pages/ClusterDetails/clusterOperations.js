@@ -1,4 +1,4 @@
-import { curry, some, get, has, flow, every } from 'lodash';
+import { curry, some, get, has, flow } from 'lodash';
 import {
   CLUSTER_MAINTENANCE_CHANGE,
   PACEMAKER_DISABLE,
@@ -153,14 +153,8 @@ export const getResourceOperations = curry(
       disabled: !!runningOperation,
       permitted: ['maintenance_change:cluster'],
       onClick: () => {
-        // handle generic Groups, which don't have managed real value
-        const newMaintenanceState =
-          resource.managed !== null
-            ? resource.managed
-            : every(resource.children, ({ managed }) => managed);
-
         setMaintenanceOperationParams({
-          maintenance: newMaintenanceState,
+          maintenance: resource.managed,
           resource_id: resource.id,
         });
         setOperationModelOpen({
