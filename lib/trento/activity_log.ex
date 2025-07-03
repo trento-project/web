@@ -51,6 +51,12 @@ defmodule Trento.ActivityLog do
 
   defdelegate map_severity_integer_to_text(int), to: Trento.ActivityLog.SeverityLevel
 
+  defdelegate correlation_key(ctx), to: Trento.ActivityLog.Correlations
+  defdelegate get_correlation_id(key), to: Trento.ActivityLog.Correlations
+  defdelegate put_correlation_id(key, value), to: Trento.ActivityLog.Correlations
+  defdelegate expire_correlation_id(key), to: Trento.ActivityLog.Correlations
+  defdelegate expire_correlation_id(key, ttl), to: Trento.ActivityLog.Correlations
+
   defp maybe_exclude_user_logs(ActivityLog = q, true = _include_all_log_types?), do: q
 
   defp maybe_exclude_user_logs(ActivityLog = q, false = _include_all_log_types?) do
