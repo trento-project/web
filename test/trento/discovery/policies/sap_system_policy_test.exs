@@ -285,6 +285,51 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
     )
   end
 
+  test "should fallback to dbs/hdb/dbname if an application instance payload does not have tenant entry" do
+    assert {:ok,
+            [
+              %RegisterApplicationInstance{
+                sid: "HA1",
+                tenant: "PRD"
+              }
+            ]} =
+             "sap_system_discovery_application"
+             |> load_discovery_event_fixture()
+             |> pop_in(["payload", Access.all(), "Tenant"])
+             |> elem(1)
+             |> SapSystemPolicy.handle([], [])
+  end
+
+  test "should register message server application instance if thepayload has an empty tenant entry" do
+    assert {:ok,
+            [
+              %RegisterApplicationInstance{
+                sid: "HA1",
+                tenant: nil
+              }
+            ]} =
+             "sap_system_discovery_application_message_server"
+             |> load_discovery_event_fixture()
+             |> SapSystemPolicy.handle([], [])
+  end
+
+  test "should register message server application instance if the payload does not have Tenant and dbname" do
+    assert {:ok,
+            [
+              %RegisterApplicationInstance{
+                sid: "HA1",
+                tenant: nil
+              }
+            ]} =
+             "sap_system_discovery_application_message_server"
+             |> load_discovery_event_fixture()
+             |> pop_in(["payload", Access.all(), "Tenant"])
+             |> elem(1)
+             |> pop_in(["payload", Access.all(), "Profile", "dbs/hdb/dbname"])
+             |> elem(1)
+             |> SapSystemPolicy.handle([], [])
+  end
+
   test "should return an empty list of commands if an empty payload is received" do
     assert {:ok, []} =
              "sap_system_discovery_empty"
@@ -447,17 +492,23 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
   end
 
   describe "validation" do
-    test "should fail if an application instance payload does not have a dbname entry in the profile" do
-      assert {:error, {:validation, [%{Profile: %{"dbs/hdb/dbname": ["can't be blank"]}}]}} =
+    test "should fail if an ABAP/J2EE application instance payload has an empty tenant entry" do
+      assert {:error, {:validation, [%{Tenant: ["can't be blank in a ABAP/J2EE instance"]}]}} =
                "sap_system_discovery_application"
                |> load_discovery_event_fixture()
-               |> update_in(
-                 ["payload"],
-                 &Enum.map(&1, fn sap_system ->
-                   sap_system |> pop_in(["Profile", "dbs/hdb/dbname"]) |> elem(1)
-                 end)
-               )
-               |> SapSystemPolicy.handle([], nil)
+               |> put_in(["payload", Access.all(), "Tenant"], "")
+               |> SapSystemPolicy.handle([], [])
+    end
+
+    test "should fail if an ABAP/J2EE application instance payload does not have Tenant and dbname" do
+      assert {:error, {:validation, [%{Tenant: ["can't be blank in a ABAP/J2EE instance"]}]}} =
+               "sap_system_discovery_application"
+               |> load_discovery_event_fixture()
+               |> pop_in(["payload", Access.all(), "Tenant"])
+               |> elem(1)
+               |> pop_in(["payload", Access.all(), "Profile", "dbs/hdb/dbname"])
+               |> elem(1)
+               |> SapSystemPolicy.handle([], [])
     end
   end
 end

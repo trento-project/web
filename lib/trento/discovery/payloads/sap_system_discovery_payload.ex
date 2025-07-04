@@ -24,6 +24,7 @@ defmodule Trento.Discovery.Payloads.SapSystemDiscoveryPayload do
     field :SID, :string
     field :Type, :integer
     field :DBAddress, :string
+    field :Tenant, :string
 
     embeds_one :Profile, Profile
     embeds_many :Databases, Database
@@ -35,33 +36,65 @@ defmodule Trento.Discovery.Payloads.SapSystemDiscoveryPayload do
 
     sap_system
     |> cast(modified_attrs, fields())
-    |> cast_embed(:Profile,
-      with: fn profile, profile_attrs ->
-        Profile.changeset(profile, profile_attrs, parse_system_type(modified_attrs))
-      end,
-      required: true
-    )
+    |> cast_embed(:Profile, required: true)
     |> cast_embed(:Databases)
     |> cast_embed(:Instances)
     |> validate_required_fields(@required_fields)
     |> validate_inclusion(:Type, @system_types)
+    |> validate_tenant(modified_attrs)
   end
-
-  defp parse_system_type(%{"Type" => system_type}), do: system_type
-  defp parse_system_type(_), do: nil
 
   defp databases_to_list(%{"Databases" => nil} = attrs),
     do: %{attrs | "Databases" => []}
 
   defp databases_to_list(attrs), do: attrs
 
+  # Tenant value must exist if a ABAP or J2EE instance are running
+  defp validate_tenant(changeset, attrs) do
+    is_abap_j2ee_instance =
+      changeset
+      |> get_embed(:Instances)
+      |> Enum.map(fn instance ->
+        instance
+        |> get_embed(:SAPControl)
+        |> get_embed(:Instances)
+        |> Enum.find_value(fn
+          %Ecto.Changeset{changes: %{features: features, currentInstance: true}, valid?: true} ->
+            features
+
+          _ ->
+            nil
+        end)
+      end)
+      |> Enum.any?(fn feature -> feature =~ "ABAP" or feature =~ "J2EE" end)
+
+    changeset
+    |> maybe_fallback_dbname(attrs, is_abap_j2ee_instance)
+    |> maybe_validate_tenant_required(is_abap_j2ee_instance)
+  end
+
+  # Make discovery backward compatible for agents that don't send the Tenant field
+  defp maybe_fallback_dbname(changeset, _attrs, false), do: changeset
+  defp maybe_fallback_dbname(changeset, %{"Tenant" => _}, true), do: changeset
+
+  defp maybe_fallback_dbname(changeset, _attrs, true) do
+    dbname =
+      changeset
+      |> get_embed(:Profile)
+      |> get_field(:"dbs/hdb/dbname")
+
+    put_change(changeset, :Tenant, dbname)
+  end
+
+  defp maybe_validate_tenant_required(changeset, true),
+    do: validate_required(changeset, :Tenant, message: "can't be blank in a ABAP/J2EE instance")
+
+  defp maybe_validate_tenant_required(changeset, false), do: changeset
+
   defmodule Profile do
     @moduledoc """
     Profile field payload
     """
-
-    @application_type 2
-    @application_required_fields [:"dbs/hdb/dbname"]
 
     # Cannot use Trento.Support.Type here, Jason.Encoder is breaking the schema creation
     use Ecto.Schema
@@ -75,16 +108,9 @@ defmodule Trento.Discovery.Payloads.SapSystemDiscoveryPayload do
       field :"dbs/hdb/dbname", :string
     end
 
-    def changeset(profile, attrs, type) do
-      profile
-      |> cast(attrs, __MODULE__.__schema__(:fields))
-      |> maybe_validate_required_fields(type)
+    def changeset(profile, attrs) do
+      cast(profile, attrs, __MODULE__.__schema__(:fields))
     end
-
-    defp maybe_validate_required_fields(changeset, @application_type),
-      do: validate_required(changeset, @application_required_fields)
-
-    defp maybe_validate_required_fields(changeset, _), do: changeset
   end
 
   defmodule Database do
