@@ -3,6 +3,7 @@ import {
   SAP_INSTANCE_STOP,
   PACEMAKER_ENABLE,
   PACEMAKER_DISABLE,
+  CLUSTER_MAINTENANCE_CHANGE,
 } from '@lib/operations';
 
 import {
@@ -77,5 +78,29 @@ export const DisablePacemaker = {
   args: {
     operation: PACEMAKER_DISABLE,
     descriptionResolverArgs: { hostName },
+  },
+};
+
+export const ClusterMaintenanceChange = {
+  args: {
+    operation: CLUSTER_MAINTENANCE_CHANGE,
+    descriptionResolverArgs: { maintenance: true },
+  },
+};
+
+export const NodeMaintenanceChange = {
+  args: {
+    operation: CLUSTER_MAINTENANCE_CHANGE,
+    descriptionResolverArgs: { maintenance: true, node_id: hostName },
+  },
+};
+
+export const ResourceMaintenanceChange = {
+  args: {
+    operation: CLUSTER_MAINTENANCE_CHANGE,
+    descriptionResolverArgs: {
+      maintenance: true,
+      resource_id: 'rsc_ip_PRD_HDB00',
+    },
   },
 };

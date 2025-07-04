@@ -253,7 +253,7 @@ describe('ClusterDetails ClusterDetails component', () => {
       await user.click(menuItem);
 
       expect(
-        screen.getByRole('heading', { name: 'Cluster Maintenance' })
+        screen.getByRole('heading', { name: 'Maintenance change' })
       ).toBeInTheDocument();
     });
 
@@ -268,7 +268,11 @@ describe('ClusterDetails ClusterDetails component', () => {
           details={details}
           hasSelectedChecks
           hosts={[]}
-          runningOperation={{ operation: CLUSTER_MAINTENANCE_CHANGE }}
+          runningOperation={{
+            groupID: id,
+            operation: CLUSTER_MAINTENANCE_CHANGE,
+            metadata: { params: {} },
+          }}
           selectedChecks={[]}
           userAbilities={userAbilities}
           operationsEnabled

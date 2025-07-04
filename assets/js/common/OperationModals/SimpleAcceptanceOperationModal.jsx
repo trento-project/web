@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { get, noop } from 'lodash';
+import { capitalize, get, noop } from 'lodash';
 import {
   SAP_INSTANCE_START,
   SAP_INSTANCE_STOP,
   PACEMAKER_DISABLE,
   PACEMAKER_ENABLE,
+  CLUSTER_MAINTENANCE_CHANGE,
 } from '@lib/operations';
 
 import OperationModal from './OperationModal';
@@ -14,6 +15,7 @@ const TITLES = {
   [SAP_INSTANCE_STOP]: 'Stop SAP instance',
   [PACEMAKER_ENABLE]: 'Enable Pacemaker',
   [PACEMAKER_DISABLE]: 'Disable Pacemaker',
+  [CLUSTER_MAINTENANCE_CHANGE]: 'Maintenance change',
 };
 
 const getOperationTitle = (operation) =>
@@ -28,11 +30,31 @@ const getSapInstanceStartStopDescription = (
 const getPacemakerEnableDisableDescription = (operation, { hostName }) =>
   `${getOperationTitle(operation)} systemd unit at boot on host ${hostName}`;
 
+const getClusterMaintenanceDescription = (
+  _operation,
+  { resource_id: resourceID, node_id: nodeID, maintenance }
+) => {
+  let scopeText = 'cluster';
+  if (resourceID) {
+    scopeText = `resource ${resourceID}`;
+  } else if (nodeID) {
+    scopeText = `node ${nodeID}`;
+  }
+
+  return (
+    <>
+      Change maintenance state to <b>{capitalize(maintenance)}</b> on{' '}
+      {scopeText}
+    </>
+  );
+};
+
 const DESCRIPTION_RESOLVERS = {
   [SAP_INSTANCE_START]: getSapInstanceStartStopDescription,
   [SAP_INSTANCE_STOP]: getSapInstanceStartStopDescription,
   [PACEMAKER_ENABLE]: getPacemakerEnableDisableDescription,
   [PACEMAKER_DISABLE]: getPacemakerEnableDisableDescription,
+  [CLUSTER_MAINTENANCE_CHANGE]: getClusterMaintenanceDescription,
 };
 
 function SimpleAcceptanceOperationModal({
