@@ -3,7 +3,7 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import { render } from '@testing-library/react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router';
 import configureStore from 'redux-mock-store';
 import { runSaga } from 'redux-saga';
 
@@ -94,7 +94,9 @@ export function renderWithRouterMatch(ui, { path = '/', route = '/' } = {}) {
 
   return {
     ...render(
-      <BrowserRouter>
+      <BrowserRouter
+        future={{ v7_relativeSplatPath: true, v7_startTransition: true }}
+      >
         <Routes>
           <Route path={path} element={ui} />
         </Routes>

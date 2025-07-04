@@ -2,7 +2,7 @@ import React from 'react';
 import { get, noop } from 'lodash';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router';
 
 import Button from '@common/Button';
 import Modal from '@common/Modal';

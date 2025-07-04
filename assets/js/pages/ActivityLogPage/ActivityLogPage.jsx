@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { noop } from 'lodash';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router';
 import { useSelector } from 'react-redux';
 import {
   EOS_REFRESH,
