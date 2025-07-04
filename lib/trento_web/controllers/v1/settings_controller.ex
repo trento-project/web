@@ -2,6 +2,7 @@ defmodule TrentoWeb.V1.SettingsController do
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
 
+  alias Trento.ActivityLog
   alias Trento.Settings
   alias Trento.SoftwareUpdates
   alias TrentoWeb.OpenApi.V1.Schema
@@ -96,6 +97,16 @@ defmodule TrentoWeb.V1.SettingsController do
           :generated_api_key,
           AuthenticateAPIKeyPlug.generate_api_key!(updated_settings)
         )
+
+      correlation_id = Process.get(:correlation_id)
+
+      key = ActivityLog.correlation_key(:api_key)
+
+      _ =
+        ActivityLog.put_correlation_id(key, correlation_id)
+
+      _ =
+        ActivityLog.expire_correlation_id(key)
 
       render(conn, :api_key_settings, %{
         settings: api_key

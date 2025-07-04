@@ -8,6 +8,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
   import Trento.Factory
   import Trento.Support.Helpers.AbilitiesTestHelper
 
+  alias Trento.ActivityLog
   alias Trento.Hosts.Commands.RequestHostDeregistration
 
   alias Trento.Infrastructure.Checks.AMQP.Publisher
@@ -32,25 +33,48 @@ defmodule TrentoWeb.V1.HostControllerTest do
   end
 
   describe "heartbeat" do
-    test "should return 404 if the host was not found", %{conn: conn} do
-      expect(
-        Trento.Commanded.Mock,
-        :dispatch,
-        fn _ ->
-          {:error, :host_not_registered}
+    for scenario <- [:with_correlation, :without_correlation] do
+      @scenario scenario
+      test "should return 404 if the host was not found #{@scenario}", %{conn: conn} do
+        case @scenario do
+          :with_correlation ->
+            key0 = UUID.uuid4()
+            Process.put(:correlation_key, key0)
+            key = ActivityLog.correlation_key(:api_key)
+            ActivityLog.put_correlation_id(key, UUID.uuid4())
+
+            expect(
+              Trento.Commanded.Mock,
+              :dispatch,
+              fn _, _ ->
+                {:error, :host_not_registered}
+              end
+            )
+
+          :without_correlation ->
+            expect(
+              Trento.Commanded.Mock,
+              :dispatch,
+              fn _ ->
+                {:error, :host_not_registered}
+              end
+            )
         end
-      )
 
-      resp =
-        conn
-        |> post("/api/v1/hosts/#{UUID.uuid4()}/heartbeat")
-        |> json_response(:not_found)
+        resp =
+          conn
+          |> post("/api/v1/hosts/#{UUID.uuid4()}/heartbeat")
+          |> json_response(:not_found)
 
-      assert %{
-               "errors" => [
-                 %{"detail" => "The requested resource cannot be found.", "title" => "Not Found"}
-               ]
-             } == resp
+        assert %{
+                 "errors" => [
+                   %{
+                     "detail" => "The requested resource cannot be found.",
+                     "title" => "Not Found"
+                   }
+                 ]
+               } == resp
+      end
     end
   end
 

@@ -3,6 +3,7 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
   Phoenix connection activity parser
   """
 
+  alias Trento.ActivityLog.Correlations
   alias Trento.Users.User
 
   def get_activity_actor(:login_attempt, %Plug.Conn{body_params: request_payload}),
@@ -99,12 +100,22 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
   end
 
   def get_activity_metadata(
-        activity,
+        :api_key_generation = _action,
         %Plug.Conn{
           body_params: request_body
         }
-      )
-      when activity in [:api_key_generation, :activity_log_settings_update] do
+      ) do
+    key = Correlations.correlation_key(:api_key)
+    maybe_correlation_id = Correlations.get_correlation_id(key)
+    Map.merge(%{correlation_id: maybe_correlation_id}, request_body)
+  end
+
+  def get_activity_metadata(
+        :activity_log_settings_update = _action,
+        %Plug.Conn{
+          body_params: request_body
+        }
+      ) do
     request_body
   end
 
