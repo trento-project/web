@@ -146,6 +146,7 @@ const createRouter = ({ getUser }) =>
       future: {
         v7_relativeSplatPath: true,
         v7_skipActionErrorRevalidation: true,
+        v7_fetcherPersist: true,
       },
     }
   );
