@@ -10,6 +10,5 @@ defmodule Trento.Repo.Migrations.AddHostClusterStatus do
       "UPDATE hosts SET cluster_status = 'online' WHERE cluster_status IS NOT NULL",
       "UPDATE hosts SET cluster_status = NULL"
     )
-
   end
 end
