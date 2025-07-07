@@ -92,7 +92,7 @@ defmodule Trento.Hosts.Projections.HostReadModel do
       # TODO: when we will handle the status explicitly, we can remove this line
       # so far we stick to the old behavior that considers the host online in the cluster if the cluster_id is set
       cluster_status == nil -> put_change(changeset, :cluster_status, :online)
-      true ->  changeset
+      true -> changeset
     end
 
   end
