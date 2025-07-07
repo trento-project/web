@@ -11,6 +11,7 @@ import {
   buildSapSystemsFromAscsErsClusterDetails,
   ascsErsClusterDetailsFactory,
   hanaClusterDetailsNodesFactory,
+  systemdUnitFactory,
 } from '@lib/test-utils/factories';
 import { renderWithRouter } from '@lib/test-utils';
 
@@ -26,6 +27,24 @@ import AscsErsClusterDetails from './AscsErsClusterDetails';
 
 const ascsErsDetails = ascsErsClusterDetailsFactory.build();
 const ascsErsHosts = buildHostsFromAscsErsClusterDetails(ascsErsDetails);
+
+const enrichPropsWithSystemdUnit = (props, unit, state) => {
+  const systemdUnits = systemdUnitFactory.buildList(1, {
+    name: unit,
+    unit_file_state: state,
+  });
+  return {
+    ...props,
+    hosts: props.hosts?.map((node) => ({
+      ...node,
+      systemd_units: systemdUnits,
+    })),
+    nodes: props.nodes.map((node) => ({
+      ...node,
+      systemd_units: systemdUnits,
+    })),
+  };
+};
 
 describe.each([
   {
@@ -54,42 +73,63 @@ describe.each([
   },
 ])('cluster hosts operations: $name', ({ Component, props }) => {
   it.each([
-    'Node maintenance',
-    'Enable pacemaker at boot',
-    'Disable pacemaker at boot',
-  ])('should show cluster host operations: %s', async (name) => {
-    const user = userEvent.setup();
-    const clusterID = faker.string.uuid();
+    {
+      name: 'Node maintenance',
+    },
+    {
+      name: 'Enable pacemaker at boot',
+      enrichedProps: enrichPropsWithSystemdUnit(
+        props,
+        'pacemaker.service',
+        'disabled'
+      ),
+    },
+    {
+      name: 'Disable pacemaker at boot',
+      enrichedProps: enrichPropsWithSystemdUnit(
+        props,
+        'pacemaker.service',
+        'enabled'
+      ),
+    },
+  ])(
+    'should show cluster host operations: %s',
+    async ({ name, enrichedProps }) => {
+      const user = userEvent.setup();
+      const clusterID = faker.string.uuid();
 
-    renderWithRouter(
-      <Component
-        {...props}
-        userAbilities={[{ name: 'all', resource: 'all' }]}
-        getClusterHostOperations={getClusterHostOperations(
-          clusterID,
-          null,
-          noop,
-          noop,
-          noop
-        )}
-      />
-    );
+      const resolvedProps = enrichedProps || props;
 
-    const nodesTable = screen.getByRole('table');
+      renderWithRouter(
+        <Component
+          {...resolvedProps}
+          userAbilities={[{ name: 'all', resource: 'all' }]}
+          getClusterHostOperations={getClusterHostOperations(
+            clusterID,
+            null,
+            noop,
+            noop,
+            noop
+          )}
+        />
+      );
 
-    const { getAllByRole } = within(nodesTable);
+      const nodesTable = screen.getByRole('table');
 
-    const [
-      operationBtnHost1,
-      _detailsBtnHost1,
-      _operationBtnHost2,
-      _detailsBtnHost2,
-    ] = getAllByRole('button');
+      const { getAllByRole } = within(nodesTable);
 
-    await user.click(operationBtnHost1);
+      const [
+        operationBtnHost1,
+        _detailsBtnHost1,
+        _operationBtnHost2,
+        _detailsBtnHost2,
+      ] = getAllByRole('button');
 
-    expect(screen.getByRole('menuitem', { name })).toBeEnabled();
-  });
+      await user.click(operationBtnHost1);
+
+      expect(screen.getByRole('menuitem', { name })).toBeEnabled();
+    }
+  );
 
   it('should disable operations if some operation is running', async () => {
     const user = userEvent.setup();
@@ -210,24 +250,44 @@ describe.each([
       name: 'can enable pacemaker',
       userAbilities: [{ name: 'pacemaker_enable', resource: 'cluster' }],
       menuItem: 'Enable pacemaker at boot',
+      enrichedProps: enrichPropsWithSystemdUnit(
+        props,
+        'pacemaker.service',
+        'disabled'
+      ),
       enabled: true,
     },
     {
       name: 'cannot enable pacemaker',
       userAbilities: [],
       menuItem: 'Enable pacemaker at boot',
+      enrichedProps: enrichPropsWithSystemdUnit(
+        props,
+        'pacemaker.service',
+        'disabled'
+      ),
       enabled: false,
     },
     {
       name: 'can disable pacemaker',
       userAbilities: [{ name: 'pacemaker_disable', resource: 'cluster' }],
       menuItem: 'Disable pacemaker at boot',
+      enrichedProps: enrichPropsWithSystemdUnit(
+        props,
+        'pacemaker.service',
+        'enabled'
+      ),
       enabled: true,
     },
     {
       name: 'cannot disable pacemaker',
       userAbilities: [],
       menuItem: 'Disable pacemaker at boot',
+      enrichedProps: enrichPropsWithSystemdUnit(
+        props,
+        'pacemaker.service',
+        'enabled'
+      ),
       enabled: false,
     },
     {
@@ -246,13 +306,15 @@ describe.each([
 
   it.each(userAbilitiesScenarios)(
     'should allow/forbid operations based on user abilities: $name',
-    async ({ userAbilities, menuItem, enabled }) => {
+    async ({ userAbilities, menuItem, enabled, enrichedProps }) => {
       const user = userEvent.setup();
       const clusterID = faker.string.uuid();
 
+      const resolvedProps = enrichedProps || props;
+
       renderWithRouter(
         <Component
-          {...props}
+          {...resolvedProps}
           userAbilities={userAbilities}
           getClusterHostOperations={getClusterHostOperations(
             clusterID,

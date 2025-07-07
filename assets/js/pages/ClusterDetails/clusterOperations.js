@@ -1,4 +1,6 @@
 import { curry, some, get, has, flow } from 'lodash';
+
+import { canDisableUnit, canEnableUnit } from '@lib/model/hosts';
 import {
   CLUSTER_MAINTENANCE_CHANGE,
   PACEMAKER_DISABLE,
@@ -109,7 +111,7 @@ export const getClusterHostOperations = curry(
         PACEMAKER_ENABLE,
         matchesHostIdOrTarget(host.id)
       ),
-      disabled: !!runningOperation,
+      disabled: !!runningOperation || !canEnableUnit(host, 'pacemaker.service'),
       permitted: ['pacemaker_enable:cluster'],
       onClick: () => {
         setCurrentOperationHost(host);
@@ -124,7 +126,8 @@ export const getClusterHostOperations = curry(
         PACEMAKER_DISABLE,
         matchesHostIdOrTarget(host.id)
       ),
-      disabled: !!runningOperation,
+      disabled:
+        !!runningOperation || !canDisableUnit(host, 'pacemaker.service'),
       permitted: ['pacemaker_disable:cluster'],
       onClick: () => {
         setCurrentOperationHost(host);

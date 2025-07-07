@@ -101,6 +101,15 @@ export const saptuneStatusFactory = Factory.define(() => {
   };
 });
 
+export const systemdUnitFactory = Factory.define(() => ({
+  name: faker.string.uuid(),
+  unit_file_state: faker.helpers.arrayElement([
+    'enabled',
+    'disabled',
+    'unknown',
+  ]),
+}));
+
 export const hostFactory = Factory.define(({ params, sequence }) => {
   const id = params.id || faker.string.uuid();
 
@@ -129,6 +138,7 @@ export const hostFactory = Factory.define(({ params, sequence }) => {
     deregisterable: false,
     selected_checks: [],
     saptune_status: saptuneStatusFactory.build(),
+    systemd_units: systemdUnitFactory.buildList(3),
   };
 });
 
