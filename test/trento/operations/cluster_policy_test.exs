@@ -2,7 +2,6 @@ defmodule Trento.Operations.ClusterPolicyTest do
   @moduledoc false
   use ExUnit.Case, async: true
 
-  alias Trento.Hosts.ValueObjects.SystemdUnit
   alias Trento.Operations.ClusterPolicy
 
   import Trento.Factory
@@ -85,13 +84,13 @@ defmodule Trento.Operations.ClusterPolicyTest do
         %{
           operation: :pacemaker_enable,
           host_units: [
-            %{name: "pacemaker.service", unit_file_state: "disabled"}
+            [name: "pacemaker.service", unit_file_state: "disabled"]
           ]
         },
         %{
           operation: :pacemaker_disable,
           host_units: [
-            %{name: "pacemaker.service", unit_file_state: "enabled"}
+            [name: "pacemaker.service", unit_file_state: "enabled"]
           ]
         }
       ]
@@ -104,7 +103,7 @@ defmodule Trento.Operations.ClusterPolicyTest do
             hosts: [
               build(:host,
                 id: host_id,
-                systemd_units: Enum.map(host_units, &SystemdUnit.new!(&1))
+                systemd_units: Enum.map(host_units, &build(:host_systemd_unit, &1))
               )
             ]
           )
@@ -118,7 +117,7 @@ defmodule Trento.Operations.ClusterPolicyTest do
         %{
           operation: :pacemaker_enable,
           host_units: [
-            %{name: "pacemaker.service", unit_file_state: "enabled"}
+            [name: "pacemaker.service", unit_file_state: "enabled"]
           ],
           expected_error: fn %{hostname: hostname} ->
             "Pacemaker service on host #{hostname} is already enabled"
@@ -127,7 +126,7 @@ defmodule Trento.Operations.ClusterPolicyTest do
         %{
           operation: :pacemaker_disable,
           host_units: [
-            %{name: "pacemaker.service", unit_file_state: "disabled"}
+            [name: "pacemaker.service", unit_file_state: "disabled"]
           ],
           expected_error: fn %{hostname: hostname} ->
             "Pacemaker service on host #{hostname} is already disabled"
@@ -136,7 +135,7 @@ defmodule Trento.Operations.ClusterPolicyTest do
         %{
           operation: :pacemaker_enable,
           host_units: [
-            %{name: "pacemaker.service", unit_file_state: "unrecognized_state"}
+            [name: "pacemaker.service", unit_file_state: "unrecognized_state"]
           ],
           expected_error: fn %{hostname: hostname} ->
             "Pacemaker service unit state is unrecognized on host #{hostname}"
@@ -145,7 +144,7 @@ defmodule Trento.Operations.ClusterPolicyTest do
         %{
           operation: :pacemaker_disable,
           host_units: [
-            %{name: "pacemaker.service", unit_file_state: "unrecognized_state"}
+            [name: "pacemaker.service", unit_file_state: "unrecognized_state"]
           ],
           expected_error: fn %{hostname: hostname} ->
             "Pacemaker service unit state is unrecognized on host #{hostname}"
@@ -163,7 +162,7 @@ defmodule Trento.Operations.ClusterPolicyTest do
         host =
           build(:host,
             id: host_id,
-            systemd_units: Enum.map(host_units, &SystemdUnit.new!(&1))
+            systemd_units: Enum.map(host_units, &build(:host_systemd_unit, &1))
           )
 
         cluster = build(:cluster, hosts: [host])
