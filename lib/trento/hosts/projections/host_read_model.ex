@@ -55,8 +55,7 @@ defmodule Trento.Hosts.Projections.HostReadModel do
       type: Ecto.UUID,
       where: [deregistered_at: nil]
 
-    field :cluster_status, Ecto.Enum,
-      values: [:online, :offline]
+    field :cluster_status, Ecto.Enum, values: [:online, :offline]
 
     has_many :database_instances, DatabaseInstanceReadModel,
       references: :id,
