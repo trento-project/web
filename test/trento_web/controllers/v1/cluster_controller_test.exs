@@ -264,8 +264,24 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
       |> assert_schema("NotFound", api_spec)
     end
 
-    for operation <- ["pacemaker_enable", "pacemaker_disable"] do
+    pacemaker_operations_scenarios = [
+      %{
+        operation: "pacemaker_enable",
+        host_units: [
+          build(:host_systemd_unit, name: "pacemaker.service", unit_file_state: "disabled")
+        ]
+      },
+      %{
+        operation: "pacemaker_disable",
+        host_units: [
+          build(:host_systemd_unit, name: "pacemaker.service", unit_file_state: "enabled")
+        ]
+      }
+    ]
+
+    for %{operation: operation, host_units: host_units} <- pacemaker_operations_scenarios do
       @operation operation
+      @host_units host_units
 
       test "should return not found when requesting #{operation} for a non existent cluster",
            %{
@@ -321,7 +337,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
 
       test "should return 500 when requesting #{operation} on messaging error", %{conn: conn} do
         %{id: cluster_id} = insert(:cluster)
-        %{id: host_id} = insert(:host, cluster_id: cluster_id)
+        %{id: host_id} = insert(:host, cluster_id: cluster_id, systemd_units: @host_units)
 
         expect(
           Trento.Infrastructure.Messaging.Adapter.Mock,
@@ -357,7 +373,12 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
         insert(:users_abilities, user_id: user_id, ability_id: ability_id)
 
         %{id: cluster_id} = insert(:cluster)
-        %{id: host_id} = insert(:host, cluster_id: cluster_id)
+
+        %{id: host_id} =
+          insert(:host,
+            cluster_id: cluster_id,
+            systemd_units: @host_units
+          )
 
         expect(
           Trento.Infrastructure.Messaging.Adapter.Mock,
@@ -373,6 +394,68 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
         |> post("/api/v1/clusters/#{cluster_id}/hosts/#{host_id}/operations/#{@operation}")
         |> json_response(:accepted)
         |> assert_schema("OperationAccepted", api_spec)
+      end
+    end
+
+    forbidden_pacemaker_operations_scenarios = [
+      %{
+        name: "enable already enabled pacemaker",
+        operation: "pacemaker_enable",
+        host_units: [
+          build(:host_systemd_unit, name: "pacemaker.service", unit_file_state: "enabled")
+        ]
+      },
+      %{
+        name: "disable already disabled pacemaker",
+        operation: "pacemaker_disable",
+        host_units: [
+          build(:host_systemd_unit, name: "pacemaker.service", unit_file_state: "disabled")
+        ]
+      },
+      %{
+        name: "enable enabled pacemaker when it is in an unrecognized state",
+        operation: "pacemaker_enable",
+        host_units: [
+          build(:host_systemd_unit, name: "pacemaker.service", unit_file_state: "foo")
+        ]
+      },
+      %{
+        name: "disable pacemaker when it is in an unrecognized state",
+        operation: "pacemaker_disable",
+        host_units: [
+          build(:host_systemd_unit, name: "pacemaker.service", unit_file_state: "bar")
+        ]
+      }
+    ]
+
+    for %{name: name} = scenario <-
+          forbidden_pacemaker_operations_scenarios do
+      @unauthorized_pacemaker_scenario scenario
+
+      test "should return 403 when attempting to #{name}", %{
+        conn: conn,
+        api_spec: api_spec,
+        admin_user: %{id: user_id}
+      } do
+        %{
+          operation: operation,
+          host_units: host_units
+        } = @unauthorized_pacemaker_scenario
+
+        %{id: cluster_id} = insert(:cluster)
+
+        %{id: host_id} =
+          insert(:host,
+            cluster_id: cluster_id,
+            systemd_units: host_units
+          )
+
+        conn
+        |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
+        |> put_req_header("content-type", "application/json")
+        |> post("/api/v1/clusters/#{cluster_id}/hosts/#{host_id}/operations/#{operation}")
+        |> json_response(:forbidden)
+        |> assert_schema("Forbidden", api_spec)
       end
     end
   end
