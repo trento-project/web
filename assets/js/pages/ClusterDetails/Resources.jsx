@@ -1,8 +1,9 @@
 import React from 'react';
 import classNames from 'classnames';
-import { capitalize, map, flatMap, flow, groupBy } from 'lodash';
+import { capitalize, map, flatMap, flow, groupBy, noop } from 'lodash';
 
 import Table from '@common/Table';
+import OperationsButton from '@common/OperationsButton';
 
 import ClusterNodeLink from './ClusterNodeLink';
 
@@ -40,7 +41,10 @@ const addInheritedBgColor = (columns) =>
     className: classNames(column?.className, '!bg-inherit'),
   }));
 
-const resourceTableConfig = {
+const getResourceTableConfig = (
+  userAbilities = [],
+  getResourceOperations = noop
+) => ({
   usePadding: false,
   columns: [
     {
@@ -70,11 +74,27 @@ const resourceTableConfig = {
     {
       title: 'Managed',
       key: 'managed',
-      render: (content) => content !== null && capitalize(`${content}`),
+      render: (content) => capitalize(`${content}`),
     },
     {
       title: 'Type',
       key: 'type',
+    },
+    {
+      title: '',
+      key: 'operations',
+      className: 'w-6',
+      render: (_, item) => (
+        <div className="flex w-fit whitespace-nowrap">
+          <OperationsButton
+            text=""
+            userAbilities={userAbilities}
+            menuPosition="bottom end"
+            transparent
+            operations={getResourceOperations(item)}
+          />
+        </div>
+      ),
     },
   ],
   wrapCollapsedRowInCell: false,
@@ -83,9 +103,9 @@ const resourceTableConfig = {
     { columns, rowExpanded, renderCells }
   ) =>
     resource.children
-      ? resource.children.map((child) => (
+      ? resource.children.map((child, idx) => (
           <tr
-            key={`${child.node}_${child.id}`}
+            key={`${idx}_${child.node}_${child.id}`} // eslint-disable-line react/no-array-index-key
             hidden={!rowExpanded}
             className="bg-gray-50 border-b border-gray-200"
           >
@@ -94,16 +114,25 @@ const resourceTableConfig = {
           </tr>
         ))
       : null,
-};
+});
 
-function Resources({ resources, hosts }) {
+function Resources({
+  resources,
+  hosts,
+  userAbilities = [],
+  getResourceOperations = noop,
+}) {
   const groupedResources = groupResources(resources, hosts);
 
   return (
     <>
       <h2 className="mt-8 mb-2 text-2xl font-bold">Resources</h2>
       <div className="mt-2">
-        <Table config={resourceTableConfig} data={groupedResources} />
+        <Table
+          config={getResourceTableConfig(userAbilities, getResourceOperations)}
+          data={groupedResources}
+          rowKey={(resource) => resource?.id}
+        />
       </div>
     </>
   );

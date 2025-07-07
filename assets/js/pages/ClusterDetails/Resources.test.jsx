@@ -1,12 +1,16 @@
 import React from 'react';
-import { screen, render } from '@testing-library/react';
+import { screen, render, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
-import { capitalize, concat } from 'lodash';
+import { faker } from '@faker-js/faker';
+import { capitalize, concat, noop } from 'lodash';
 
 import { renderWithRouter } from '@lib/test-utils';
 import { clusterResourceFactory, hostFactory } from '@lib/test-utils/factories';
 
+import { CLUSTER_MAINTENANCE_CHANGE } from '@lib/operations';
+import { getResourceOperations } from './clusterOperations';
 import Resources from './Resources';
 
 describe('Resources', () => {
@@ -106,5 +110,171 @@ describe('Resources', () => {
       .querySelector('tbody > tr > td:nth-child(8)');
 
     expect(typeCell).toHaveTextContent('Group');
+  });
+
+  describe('cluster resource operations', () => {
+    it.each(['Resource maintenance'])(
+      'should show cluster resource operations: %s',
+      async (name) => {
+        const user = userEvent.setup();
+        const clusterID = faker.string.uuid();
+        const resources = clusterResourceFactory.buildList(5, {
+          parent: null,
+        });
+
+        render(
+          <Resources
+            resources={resources}
+            hosts={[]}
+            userAbilities={[{ name: 'all', resource: 'all' }]}
+            getResourceOperations={getResourceOperations(
+              clusterID,
+              null,
+              noop,
+              noop
+            )}
+          />
+        );
+
+        const operationButtons = screen.getAllByRole('button');
+        expect(operationButtons.length).toBe(5);
+
+        await user.click(operationButtons[0]);
+
+        expect(screen.getByRole('menuitem', { name })).toBeEnabled();
+      }
+    );
+
+    it('should disable operations if some operation is running', async () => {
+      const user = userEvent.setup();
+      const clusterID = faker.string.uuid();
+      const resources = clusterResourceFactory.buildList(5, {
+        parent: null,
+      });
+
+      render(
+        <Resources
+          resources={resources}
+          hosts={[]}
+          userAbilities={[{ name: 'all', resource: 'all' }]}
+          getResourceOperations={getResourceOperations(
+            clusterID,
+            { group_id: '123', operation: CLUSTER_MAINTENANCE_CHANGE },
+            noop,
+            noop
+          )}
+        />
+      );
+
+      const operationButtons = screen.getAllByRole('button');
+
+      await user.click(operationButtons[0]);
+
+      screen
+        .getAllByRole('menuitem')
+        .forEach((item) => expect(item).toBeDisabled());
+    });
+
+    const runningOperationsScenarios = [
+      {
+        name: 'resource_maintenance running',
+        runningOperation: (clusterID, { id }) => ({
+          groupID: clusterID,
+          operation: CLUSTER_MAINTENANCE_CHANGE,
+          metadata: { params: { resource_id: id } },
+        }),
+        runningItem: 'Resource maintenance',
+      },
+    ];
+
+    it.each(runningOperationsScenarios)(
+      'should show cluster host operations running state: $name',
+      async ({ runningOperation, runningItem }) => {
+        const user = userEvent.setup();
+        const clusterID = faker.string.uuid();
+        const resources = clusterResourceFactory.buildList(5, {
+          parent: null,
+        });
+
+        render(
+          <Resources
+            resources={resources}
+            hosts={[]}
+            userAbilities={[{ name: 'all', resource: 'all' }]}
+            getResourceOperations={getResourceOperations(
+              clusterID,
+              runningOperation(clusterID, resources[0]),
+              noop,
+              noop
+            )}
+          />
+        );
+
+        const operationButtons = screen.getAllByRole('button');
+
+        await user.click(operationButtons[0]);
+
+        const menuItem = screen.getByRole('menuitem', {
+          name: runningItem,
+        });
+        expect(menuItem).toBeDisabled();
+
+        const { getByTestId } = within(menuItem);
+
+        expect(getByTestId('eos-svg-component')).toBeInTheDocument();
+
+        const { getAllByTestId } = within(screen.getByRole('menu'));
+        expect(getAllByTestId('eos-svg-component').length).toBe(1);
+      }
+    );
+
+    const userAbilitiesScenarios = [
+      {
+        name: 'can change resource maintenance',
+        userAbilities: [{ name: 'maintenance_change', resource: 'cluster' }],
+        menuItem: 'Resource maintenance',
+        enabled: true,
+      },
+      {
+        name: 'cannot change resource maintenance',
+        userAbilities: [],
+        menuItem: 'Resource maintenance',
+        enabled: false,
+      },
+    ];
+
+    it.each(userAbilitiesScenarios)(
+      'should allow/forbid operations based on user abilities: $name',
+      async ({ userAbilities, menuItem, enabled }) => {
+        const user = userEvent.setup();
+        const clusterID = faker.string.uuid();
+        const resources = clusterResourceFactory.buildList(5, {
+          parent: null,
+        });
+
+        render(
+          <Resources
+            resources={resources}
+            hosts={[]}
+            userAbilities={userAbilities}
+            getResourceOperations={getResourceOperations(
+              clusterID,
+              null,
+              noop,
+              noop
+            )}
+          />
+        );
+
+        const operationButtons = screen.getAllByRole('button');
+
+        await user.click(operationButtons[0]);
+
+        const item = screen.getByRole('menuitem', {
+          name: menuItem,
+        });
+        enabled ? expect(item).toBeEnabled() : expect(item).toBeDisabled();
+      }
+    );
   });
 });
