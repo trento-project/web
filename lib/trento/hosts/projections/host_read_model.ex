@@ -94,7 +94,6 @@ defmodule Trento.Hosts.Projections.HostReadModel do
       cluster_status == nil -> put_change(changeset, :cluster_status, :online)
       true -> changeset
     end
-
   end
 
 end
