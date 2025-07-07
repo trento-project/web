@@ -11,14 +11,22 @@ import { DATABASE_TYPE } from '@lib/model/sapSystems';
 
 import { GenericSystemDetails } from '@pages/SapSystemDetails';
 
-const database = {
-  ...databaseFactory.build({ instances: databaseInstanceFactory.buildList(2) }),
+const database = databaseFactory.build({
+  instances: [
+    databaseInstanceFactory.build({
+      system_replication: 'Primary',
+      system_replication_status: '',
+    }),
+    databaseInstanceFactory.build({
+      system_replication: 'Secondary',
+      system_replication_status: 'ACTIVE',
+    }),
+  ],
   hosts: hostFactory.buildList(2, { cluster: clusterFactory.build() }),
-};
+});
 
 const databaseWithAbsentInstance = {
-  ...databaseFactory.build({ instances: databaseInstanceFactory.buildList(2) }),
-  hosts: hostFactory.buildList(2, { cluster: clusterFactory.build() }),
+  ...database,
 };
 
 databaseWithAbsentInstance.instances[1].absent_at = faker.date
@@ -85,7 +93,7 @@ export const DatabaseWithAbsentInstance = {
 
 export const CleanUpUnauthorized = {
   args: {
-    ...DatabaseWithAbsentInstance.args,
+    ...Database.args,
     userAbilities: [],
   },
 };

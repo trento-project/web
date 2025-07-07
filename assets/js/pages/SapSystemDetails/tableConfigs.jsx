@@ -2,13 +2,15 @@ import React from 'react';
 import classNames from 'classnames';
 import { isEmpty } from 'lodash';
 
+import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
+
 import HostLink from '@common/HostLink';
 import ProviderLabel from '@common/ProviderLabel';
 import CleanUpButton from '@common/CleanUpButton';
 import Tooltip from '@common/Tooltip';
 import HealthIcon from '@common/HealthIcon';
-
 import OperationsButton from '@common/OperationsButton';
+import Pill from '@common/Pill';
 
 import Features from './Features';
 import InstanceStatus from './InstanceStatus';
@@ -20,6 +22,7 @@ const cellRender = (content, item) => (
 );
 
 export const getSystemInstancesTableConfiguration = ({
+  type,
   userAbilities,
   cleanUpPermittedFor,
   onCleanUpClick,
@@ -56,6 +59,31 @@ export const getSystemInstancesTableConfiguration = ({
       key: 'features',
       render: (content) => <Features features={content} />,
     },
+    ...(type === DATABASE_TYPE
+      ? [
+          {
+            title: 'System Replication',
+            key: 'system_replication',
+            render: (
+              _content,
+              {
+                system_replication: systemReplication,
+                system_replication_status: systemReplicationStatus,
+              }
+            ) => (
+              <>
+                {systemReplication && systemReplication}
+                {systemReplicationStatus && (
+                  <>
+                    {' '}
+                    <Pill>{systemReplicationStatus}</Pill>
+                  </>
+                )}
+              </>
+            ),
+          },
+        ]
+      : []),
     {
       title: 'Http Port',
       key: 'http_port',
@@ -79,7 +107,7 @@ export const getSystemInstancesTableConfiguration = ({
     {
       title: '',
       key: 'actions',
-      className: 'w-40',
+      className: type === APPLICATION_TYPE ? 'w-40' : '',
       render: (_content, item) => {
         if (item.absent_at) {
           return (

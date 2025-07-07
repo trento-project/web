@@ -64,16 +64,25 @@ const hostNameHasExpectedFeatures = (hostName) => {
     .should('have.text', formattedFeatures);
 };
 
+const hostNameHasExpectedSystemReplication = (hostName) => {
+  const systemReplication = getHostAttribute(hostName, 'SytemReplication');
+  const hostNameCellSelector = layoutTableHostNameCell(hostName);
+  cy.get(hostNameCellSelector)
+    .nextAll()
+    .eq(2)
+    .should('have.text', systemReplication);
+};
+
 const hostHasExpectedHttpPort = (hostName) => {
   const httpPort = getHostAttribute(hostName, 'HttpPort');
   const hostNameCellSelector = layoutTableHostNameCell(hostName);
-  cy.get(hostNameCellSelector).nextAll().eq(2).should('have.text', httpPort);
+  cy.get(hostNameCellSelector).nextAll().eq(3).should('have.text', httpPort);
 };
 
 const hostHasExpectedHttpsPort = (hostName) => {
   const httpsPort = getHostAttribute(hostName, 'HttpsPort');
   const hostNameCellSelector = layoutTableHostNameCell(hostName);
-  cy.get(hostNameCellSelector).nextAll().eq(3).should('have.text', httpsPort);
+  cy.get(hostNameCellSelector).nextAll().eq(4).should('have.text', httpsPort);
 };
 
 const hostHasExpectedStartPriority = (hostName) => {
@@ -81,7 +90,7 @@ const hostHasExpectedStartPriority = (hostName) => {
   const hostNameCellSelector = layoutTableHostNameCell(hostName);
   cy.get(hostNameCellSelector)
     .nextAll()
-    .eq(4)
+    .eq(5)
     .should('have.text', startPriority);
 };
 
@@ -94,7 +103,7 @@ const validateHostClass = (hostName, status) => {
   const hostNameCellSelector = layoutTableHostNameCell(hostName);
   cy.get(hostNameCellSelector)
     .nextAll()
-    .eq(5)
+    .eq(6)
     .find('svg')
     .should('have.class', healthMap[status]);
 };
@@ -103,7 +112,7 @@ const validateHostStatus = (hostName, status) => {
   const hostNameCellSelector = layoutTableHostNameCell(hostName);
   cy.get(hostNameCellSelector)
     .nextAll()
-    .eq(5)
+    .eq(6)
     .should('have.text', `SAPControl: ${status}`);
 };
 
@@ -123,6 +132,7 @@ export const eachHostNameHasExpectedValues = () => {
     const hostName = host.Hostname;
     hostNameHasExpectedInstanceNumber(hostName);
     hostNameHasExpectedFeatures(hostName);
+    hostNameHasExpectedSystemReplication(hostName);
     hostHasExpectedHttpPort(hostName);
     hostHasExpectedHttpsPort(hostName);
     hostHasExpectedStartPriority(hostName);

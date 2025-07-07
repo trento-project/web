@@ -194,6 +194,7 @@ export function GenericSystemDetails({
         <Table
           className="pt-2"
           config={getSystemInstancesTableConfiguration({
+            type,
             userAbilities,
             cleanUpPermittedFor,
             onCleanUpClick,

@@ -15,6 +15,8 @@ import {
   hostFactory,
   sapSystemApplicationInstanceFactory,
   sapSystemFactory,
+  databaseFactory,
+  databaseInstanceFactory,
 } from '@lib/test-utils/factories';
 
 import { GenericSystemDetails } from './GenericSystemDetails';
@@ -48,6 +50,10 @@ describe('GenericSystemDetails', () => {
     features.split('|').forEach((role) => {
       expect(screen.queryAllByText(role)).toBeTruthy();
     });
+
+    const [layoutTable, _] = screen.getAllByRole('table');
+    const { queryByText } = within(layoutTable);
+    expect(queryByText('System Replication')).not.toBeInTheDocument();
   });
 
   it('should render a not found label if system is not there', () => {
@@ -76,6 +82,38 @@ describe('GenericSystemDetails', () => {
     );
 
     expect(screen.getByText('ENSA version').nextSibling).toHaveTextContent('-');
+  });
+
+  it('should render system replication field if the a database is given', async () => {
+    const database = databaseFactory.build({
+      hosts: hostFactory.buildList(2),
+      instances: [
+        databaseInstanceFactory.build({
+          system_replication: 'Primary',
+          system_replication_status: '',
+        }),
+        databaseInstanceFactory.build({
+          system_replication: 'Secondary',
+          system_replication_status: 'ACTIVE',
+        }),
+      ],
+    });
+
+    renderWithRouter(
+      <GenericSystemDetails
+        title={faker.string.uuid()}
+        system={database}
+        type={DATABASE_TYPE}
+      />
+    );
+
+    const [layoutTable, _] = screen.getAllByRole('table');
+    const { getAllByRole, getByText } = within(layoutTable);
+    const [_header, row1, row2] = getAllByRole('row');
+
+    expect(getByText('System Replication')).toBeInTheDocument();
+    expect(row1).toHaveTextContent('Primary');
+    expect(row2).toHaveTextContent(/Secondary.*ACTIVE/);
   });
 
   it('should render a cleanup button and correct health icon when absent instances exist', () => {
