@@ -160,6 +160,7 @@ const resourceTypeMapping = (entry) => ({
   database: databaseResourceType(entry),
   sap_system: sapSystemResourceType(entry),
   application_instance: applicationInstaceResourceType(entry),
+  cluster_host: hostResourceType(entry),
 });
 
 const resolveResourceType = (entry, key, defaultValue) =>
