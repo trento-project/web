@@ -55,6 +55,9 @@ defmodule Trento.Hosts.Projections.HostReadModel do
       type: Ecto.UUID,
       where: [deregistered_at: nil]
 
+    field :cluster_status, Ecto.Enum,
+      values: [:online, :offline]
+
     has_many :database_instances, DatabaseInstanceReadModel,
       references: :id,
       foreign_key: :host_id
@@ -76,5 +79,23 @@ defmodule Trento.Hosts.Projections.HostReadModel do
     host
     |> cast(attrs, __MODULE__.__schema__(:fields) -- [:systemd_units])
     |> cast_embed(:systemd_units)
+    |> enforce_cluster_status()
   end
+
+  # Enforces the presence of `cluster_status` when `cluster_id` is set.
+  # If `cluster_id` is nil, `cluster_status` is set to nil regardless of its current value.
+  defp enforce_cluster_status(changeset) do
+    cluster_id = get_field(changeset, :cluster_id)
+    cluster_status = get_field(changeset, :cluster_status)
+
+    cond do
+      cluster_id == nil -> put_change(changeset, :cluster_status, nil)
+      # TODO: when we will handle the status explicitly, we can remove this line
+      # so far we stick to the old behavior that considers the host online in the cluster if the cluster_id is set
+      cluster_status == nil -> put_change(changeset, :cluster_status, :online)
+      true ->  changeset
+    end
+
+  end
+
 end
