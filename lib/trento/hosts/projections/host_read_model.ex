@@ -95,5 +95,4 @@ defmodule Trento.Hosts.Projections.HostReadModel do
       true -> changeset
     end
   end
-
 end
