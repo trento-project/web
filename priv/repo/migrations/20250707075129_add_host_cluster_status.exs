@@ -2,7 +2,6 @@ defmodule Trento.Repo.Migrations.AddHostClusterStatus do
   use Ecto.Migration
 
   def change do
-
     alter table(:hosts) do
       add :cluster_status, :string
     end
