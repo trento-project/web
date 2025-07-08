@@ -41,7 +41,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Read .tool-versions
-        uses: endorama/asdf-parse-tool-versions@v1
+        uses: endorama/asdf-parse-tool-versions@v1.3.4
         id: tool-versions
       - name: Configure git for in-container operations
         run: git config --global --add safe.directory $GITHUB_WORKSPACE
@@ -116,7 +116,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Read .tool-versions
-        uses: endorama/asdf-parse-tool-versions@v1
+        uses: endorama/asdf-parse-tool-versions@v1.3.4
         id: tool-versions
       - name: Configure git for in-container operations
         run: git config --global --add safe.directory $GITHUB_WORKSPACE
