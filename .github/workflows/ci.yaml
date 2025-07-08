@@ -73,7 +73,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Read .tool-versions
-        uses: endorama/asdf-parse-tool-versions@v1
+        uses: endorama/asdf-parse-tool-versions@v1.3.4
         id: tool-versions
       - name: Retrieve NPM Cached Dependencies
         uses: actions/cache@v4
@@ -161,7 +161,7 @@ jobs:
           version-file: .tool-versions
           version-type: strict
       - name: Read .tool-versions
-        uses: endorama/asdf-parse-tool-versions@v1
+        uses: endorama/asdf-parse-tool-versions@v1.3.4
         id: tool-versions
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -206,7 +206,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Read .tool-versions
-        uses: endorama/asdf-parse-tool-versions@v1
+        uses: endorama/asdf-parse-tool-versions@v1.3.4
         id: tool-versions
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -269,7 +269,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Read .tool-versions
-        uses: endorama/asdf-parse-tool-versions@v1
+        uses: endorama/asdf-parse-tool-versions@v1.3.4
         id: tool-versions
       - name: Setup
         id: setup-elixir
@@ -320,7 +320,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Read .tool-versions
-        uses: endorama/asdf-parse-tool-versions@v1
+        uses: endorama/asdf-parse-tool-versions@v1.3.4
         id: tool-versions
       - name: Retrieve E2E NPM Cached Dependencies
         uses: actions/cache@v4
@@ -353,7 +353,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Read .tool-versions
-        uses: endorama/asdf-parse-tool-versions@v1
+        uses: endorama/asdf-parse-tool-versions@v1.3.4
         id: tool-versions
       - name: Setup
         id: setup-elixir
@@ -450,7 +450,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Read .tool-versions
-        uses: endorama/asdf-parse-tool-versions@v1
+        uses: endorama/asdf-parse-tool-versions@v1.3.4
         id: tool-versions
       - name: Setup
         id: setup-elixir
@@ -597,7 +597,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Read .tool-versions
-        uses: endorama/asdf-parse-tool-versions@v1
+        uses: endorama/asdf-parse-tool-versions@v1.3.4
         id: tool-versions
       - name: Setup
         id: setup-elixir
