@@ -109,7 +109,10 @@ defmodule Trento.Factory do
     RegisterDatabaseInstance
   }
 
-  alias Trento.Clusters.Commands.RegisterClusterHost
+  alias Trento.Clusters.Commands.{
+    RegisterClusterHost,
+    RegisterOfflineClusterHost
+  }
 
   alias Trento.Hosts.Projections.{
     HostReadModel,
@@ -249,6 +252,14 @@ defmodule Trento.Factory do
       discovered_health: Health.passing(),
       designated_controller: true,
       cib_last_written: Date.to_string(Faker.Date.forward(0))
+    }
+  end
+
+  def register_offline_cluster_host_factory do
+    %RegisterOfflineClusterHost{
+      cluster_id: Faker.UUID.v4(),
+      host_id: Faker.UUID.v4(),
+      name: Faker.StarWars.character()
     }
   end
 
