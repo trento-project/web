@@ -75,6 +75,7 @@ defmodule TrentoWeb.V1.SettingsController do
     end
   end
 
+  @correlation_ttl 15_000
   operation :update_api_key_settings,
     summary: "Updates the Api key settings",
     tags: ["Platform"],
@@ -106,7 +107,7 @@ defmodule TrentoWeb.V1.SettingsController do
         ActivityLog.put_correlation_id(key, correlation_id)
 
       _ =
-        ActivityLog.expire_correlation_id(key)
+        ActivityLog.expire_correlation_id(key, @correlation_ttl)
 
       render(conn, :api_key_settings, %{
         settings: api_key
