@@ -834,7 +834,7 @@ jobs:
         run: |
           cd helm-charts-rolling/charts/trento-server
           helm dependency update
-          helm upgrade -i trento --wait . \
+          helm upgrade -i trento-server --wait . \
             --set trento-web.adminUser.password="${{ secrets.DEMO_PASSWORD }}" \
             --set trento-web.image.pullPolicy=Always \
             --set trento-web.image.repository="${IMAGE_REPOSITORY}/trento-web" \
