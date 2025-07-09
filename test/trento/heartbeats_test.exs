@@ -117,11 +117,19 @@ defmodule Trento.HeartbeatsTest do
   end
 
   defp scenario_setup(:with_correlation, agent_id, health) do
+    correlation_id = UUID.uuid4()
+    key0 = UUID.uuid4()
+    Process.put(:correlation_key, key0)
+    key = ActivityLog.correlation_key(:api_key)
+    ActivityLog.put_correlation_id(key, correlation_id)
+
     expect(
       Trento.Commanded.Mock,
       :dispatch,
       fn
-        command, _ ->
+        command, [correlation_id: ^correlation_id, causation_id: causation_id] ->
+          assert correlation_id == causation_id
+
           assert %UpdateHeartbeat{
                    host_id: ^agent_id,
                    heartbeat: ^health
@@ -130,12 +138,6 @@ defmodule Trento.HeartbeatsTest do
           :ok
       end
     )
-
-    correlation_id = UUID.uuid4()
-    key0 = UUID.uuid4()
-    Process.put(:correlation_key, key0)
-    key = ActivityLog.correlation_key(:api_key)
-    ActivityLog.put_correlation_id(key, correlation_id)
   end
 
   defp scenario_setup(:without_correlation, agent_id, health) do
