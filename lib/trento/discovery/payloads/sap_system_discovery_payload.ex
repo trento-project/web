@@ -121,6 +121,7 @@ defmodule Trento.Discovery.Payloads.SapSystemDiscoveryPayload do
     """
 
     alias Trento.Discovery.Payloads.SapSystemDiscoveryPayload.{
+      HdbnsutilSRstate,
       SapControl,
       SystemReplication
     }
@@ -136,6 +137,7 @@ defmodule Trento.Discovery.Payloads.SapSystemDiscoveryPayload do
 
       embeds_one :SAPControl, SapControl
       embeds_one :SystemReplication, SystemReplication
+      embeds_one :HdbnsutilSRstate, HdbnsutilSRstate
     end
 
     def changeset(instance, attrs) do
@@ -143,6 +145,7 @@ defmodule Trento.Discovery.Payloads.SapSystemDiscoveryPayload do
       |> cast(attrs, fields())
       |> cast_embed(:SAPControl, required: true)
       |> cast_embed(:SystemReplication)
+      |> cast_embed(:HdbnsutilSRstate)
       |> validate_required_fields(@required_fields)
     end
   end
@@ -358,6 +361,50 @@ defmodule Trento.Discovery.Payloads.SapSystemDiscoveryPayload do
 
     defp maybe_validate_replication_mode(changeset, local_site_id) do
       validate_required(changeset, [:"site/#{local_site_id}/REPLICATION_MODE"])
+    end
+  end
+
+  defmodule HdbnsutilSRstate do
+    @moduledoc """
+    HdbnsutilSRstate field payload
+    """
+
+    @required_fields []
+
+    use Trento.Support.Type
+
+    deftype do
+      field :mode, :string
+      field :operation_mode, :string
+      field :site_name, :string
+      field :site_mapping, :map
+      field :tier_mapping, :map
+    end
+
+    def changeset(sr_state, attrs) do
+      site_mapping =
+        attrs
+        |> Enum.filter(fn {key, _value} ->
+          String.starts_with?(key, "siteMapping")
+        end)
+        |> Enum.into(%{}, fn {key, value} ->
+          {value, key |> String.split("/") |> Enum.at(1)}
+        end)
+
+      tier_mapping =
+        attrs
+        |> Enum.filter(fn {key, _value} ->
+          String.starts_with?(key, "siteTier")
+        end)
+        |> Enum.into(%{}, fn {key, value} ->
+          {key |> String.split("/") |> Enum.at(1), String.to_integer(value)}
+        end)
+
+      sr_state
+      |> cast(attrs, fields() -- [:site_mapping, :tier_mapping])
+      |> put_change(:site_mapping, site_mapping)
+      |> put_change(:tier_mapping, tier_mapping)
+      |> validate_required_fields(@required_fields)
     end
   end
 end

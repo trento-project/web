@@ -22,6 +22,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicy do
   alias Trento.Discovery.Payloads.SapSystemDiscoveryPayload
 
   alias SapSystemDiscoveryPayload.{
+    HdbnsutilSRstate,
     Instance,
     Profile,
     SapControl,
@@ -117,6 +118,11 @@ defmodule Trento.Discovery.Policies.SapSystemPolicy do
         start_priority: parse_start_priority(instance),
         system_replication: parse_system_replication(instance),
         system_replication_status: parse_system_replication_status(instance),
+        system_replication_site: parse_system_replication_site(instance),
+        system_replication_mode: parse_system_replication_mode(instance),
+        system_replication_operation_mode: parse_system_replication_operation_mode(instance),
+        system_replication_source_site: parse_system_replication_source_site(instance),
+        system_replication_tier: parse_system_replication_tier(instance),
         health: parse_dispstatus(instance)
       })
     end)
@@ -261,6 +267,31 @@ defmodule Trento.Discovery.Policies.SapSystemPolicy do
          SystemReplication: %SystemReplication{overall_replication_status: status}
        }),
        do: status
+
+  defp parse_system_replication_site(%Instance{
+         HdbnsutilSRstate: %HdbnsutilSRstate{site_name: site_name}
+       }),
+       do: site_name
+
+  defp parse_system_replication_mode(%Instance{
+         HdbnsutilSRstate: %HdbnsutilSRstate{mode: mode}
+       }),
+       do: mode
+
+  defp parse_system_replication_operation_mode(%Instance{
+         HdbnsutilSRstate: %HdbnsutilSRstate{operation_mode: operation_mode}
+       }),
+       do: operation_mode
+
+  defp parse_system_replication_source_site(%Instance{
+         HdbnsutilSRstate: %HdbnsutilSRstate{site_name: site_name, site_mapping: site_mapping}
+       }),
+       do: Map.get(site_mapping, site_name, nil)
+
+  defp parse_system_replication_tier(%Instance{
+         HdbnsutilSRstate: %HdbnsutilSRstate{site_name: site_name, tier_mapping: tier_mapping}
+       }),
+       do: Map.get(tier_mapping, site_name, nil)
 
   defp parse_ensa_version(%Instance{SAPControl: %SapControl{Processes: processes}}) do
     Enum.find_value(processes, EnsaVersion.no_ensa(), fn

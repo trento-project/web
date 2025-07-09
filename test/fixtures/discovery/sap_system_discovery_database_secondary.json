@@ -1,0 +1,199 @@
+{
+  "agent_id": "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
+  "discovery_type": "sap_system_discovery",
+  "payload": [
+    {
+      "Id": "e06e328f8d6b0f46c1e66ffcd44d0dd7",
+      "SID": "PRD",
+      "Type": 1,
+      "Profile": {
+        "SAPGLOBALHOST": "vmhdbdev02",
+        "SAPSYSTEMNAME": "PRD",
+        "hdbConfigType": "DEFAULT",
+        "ssl/ciphersuites": "135:PFS:HIGH::EC_P256:EC_HIGH",
+        "HDB_LINKED_BINARIES": "yes",
+        "HDB_SHARED_BINARIES": "yes"
+      },
+      "Databases": [
+        {
+          "Host": "vmhdbdev02",
+          "User": "",
+          "Group": "",
+          "Active": "yes",
+          "UserId": "",
+          "GroupId": "",
+          "SqlPort": "31015",
+          "Database": "PRD",
+          "Container": ""
+        }
+      ],
+      "Instances": [
+        {
+          "Host": "vmhdbdev02",
+          "Name": "HDB00",
+          "Type": 1,
+          "SAPControl": {
+            "Instances": [
+              {
+                "features": "HDB|HDB_WORKER",
+                "hostname": "vmhdbdev02",
+                "httpPort": 51013,
+                "httpsPort": 51014,
+                "dispstatus": "SAPControl-GREEN",
+                "instanceNr": 0,
+                "startPriority": "0.3",
+                "currentInstance": true
+              }
+            ],
+            "Processes": [
+              {
+                "pid": 24133,
+                "name": "hdbdaemon",
+                "starttime": "2022 01 11 12:57:31",
+                "dispstatus": "SAPControl-GREEN",
+                "textstatus": "Running",
+                "description": "HDB Daemon",
+                "elapsedtime": "151:54:31"
+              },
+              {
+                "pid": 24925,
+                "name": "hdbxsengine",
+                "starttime": "2022 01 11 12:57:45",
+                "dispstatus": "SAPControl-GREEN",
+                "textstatus": "Running",
+                "description": "HDB XSEngine-HDD",
+                "elapsedtime": "151:54:17"
+              },
+              {
+                "pid": 24153,
+                "name": "hdbnameserver",
+                "starttime": "2022 01 11 12:57:32",
+                "dispstatus": "SAPControl-GREEN",
+                "textstatus": "Running",
+                "description": "HDB Nameserver",
+                "elapsedtime": "151:54:30"
+              },
+              {
+                "pid": 24916,
+                "name": "hdbindexserver",
+                "starttime": "2022 01 11 12:57:45",
+                "dispstatus": "SAPControl-GREEN",
+                "textstatus": "Running",
+                "description": "HDB Indexserver-HDD",
+                "elapsedtime": "151:54:17"
+              },
+              {
+                "pid": 24822,
+                "name": "hdbpreprocessor",
+                "starttime": "2022 01 11 12:57:44",
+                "dispstatus": "SAPControl-GREEN",
+                "textstatus": "Running",
+                "description": "HDB Preprocessor",
+                "elapsedtime": "151:54:18"
+              },
+              {
+                "pid": 24819,
+                "name": "hdbcompileserver",
+                "starttime": "2022 01 11 12:57:44",
+                "dispstatus": "SAPControl-GREEN",
+                "textstatus": "Running",
+                "description": "HDB Compileserver",
+                "elapsedtime": "151:54:18"
+              },
+              {
+                "pid": 25653,
+                "name": "hdbwebdispatcher",
+                "starttime": "2022 01 11 12:57:53",
+                "dispstatus": "SAPControl-GREEN",
+                "textstatus": "Running",
+                "description": "HDB Web Dispatcher",
+                "elapsedtime": "151:54:09"
+              }
+            ],
+            "Properties": [
+              {
+                "value": "00",
+                "property": "SAPSYSTEM",
+                "propertytype": "Attribute"
+              },
+              {
+                "value": "vmhdbdev02",
+                "property": "SAPLOCALHOST",
+                "propertytype": "Attribute"
+              },
+              {
+                "value": "HDB00",
+                "property": "INSTANCE_NAME",
+                "propertytype": "Attribute"
+              },
+              {
+                "value": "PRD",
+                "property": "SAPSYSTEMNAME",
+                "propertytype": "Attribute"
+              },
+              {
+                "value": "0.3",
+                "property": "StartPriority",
+                "propertytype": "Attribute"
+              }
+            ]
+          },
+          "HdbnsutilSRstate": {
+            "mode": "sync",
+            "online": "true",
+            "site_id": "2",
+            "isSource": "false",
+            "site_name": "Site2",
+            "isConsumer": "true",
+            "replayMode": "auto",
+            "hasConsumers": "false",
+            "siteTier/Site1": "1",
+            "siteTier/Site2": "2",
+            "operation_mode": "logreplay",
+            "primary_masters": "vmhana02",
+            "siteMapping/Site1": "Site2",
+            "isTakeoverActive": "false",
+            "isPrimarySuspended": "false",
+            "mapping/vmhdbdev02": [
+              "Site2/vmhana02",
+              "Site1/vmhana01"
+            ],
+            "active_primary_site": "1",
+            "isTimetravelEnabled": "false",
+            "siteOperationMode/Site1": "primary",
+            "siteOperationMode/Site2": "logreplay",
+            "siteReplicationMode/Site1": "primary",
+            "siteReplicationMode/Site2": "sync"
+          },
+          "HostConfiguration": {
+            "host": "vmhdbdev02",
+            "hostActive": "yes",
+            "hostStatus": "ok",
+            "removeStatus": "",
+            "failoverStatus": "",
+            "hostActualRoles": "worker",
+            "hostConfigRoles": "worker",
+            "storagePartition": "1",
+            "workerActualGroups": "default",
+            "workerConfigGroups": "default",
+            "failoverActualGroup": "default",
+            "failoverConfigGroup": "default",
+            "nameServerActualRole": "master",
+            "nameServerConfigRole": "master 1",
+            "indexServerActualRole": "master",
+            "indexServerConfigRole": "worker",
+            "storageActualPartition": "1",
+            "storageConfigPartition": "1"
+          },
+          "SystemReplication": {
+            "local_site_id": "2",
+            "site/2/SITE_NAME": "Site2",
+            "site/2/SOURCE_SITE_ID": "1",
+            "site/2/PRIMARY_MASTERS": "vmhana02",
+            "site/2/REPLICATION_MODE": "SYNC"
+          }
+        }
+      ]
+    }
+  ]
+}
