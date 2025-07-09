@@ -9,6 +9,7 @@ defmodule Trento.ClusterTest do
     CompleteChecksExecution,
     DeregisterClusterHost,
     RegisterClusterHost,
+    RegisterOfflineClusterHost,
     RollUpCluster,
     SelectChecks
   }
@@ -73,7 +74,8 @@ defmodule Trento.ClusterTest do
           },
           %HostAddedToCluster{
             cluster_id: cluster_id,
-            host_id: host_id
+            host_id: host_id,
+            cluster_status: :online
           }
         ],
         %Cluster{
@@ -117,7 +119,49 @@ defmodule Trento.ClusterTest do
           },
           %HostAddedToCluster{
             cluster_id: cluster_id,
-            host_id: host_id
+            host_id: host_id,
+            cluster_status: :online
+          }
+        ],
+        %Cluster{
+          cluster_id: cluster_id,
+          name: name,
+          sap_instances: [],
+          type: :unknown,
+          provider: :unknown,
+          hosts: [host_id],
+          discovered_health: :unknown,
+          health: :unknown
+        }
+      )
+    end
+
+    test "should register a cluster with unknown details when the cluster was not registered yet and a message from an offline node is received" do
+      cluster_id = Faker.UUID.v4()
+      host_id = Faker.UUID.v4()
+      name = Faker.StarWars.character()
+
+      assert_events_and_state(
+        [],
+        RegisterOfflineClusterHost.new!(%{
+          cluster_id: cluster_id,
+          host_id: host_id,
+          name: name
+        }),
+        [
+          %ClusterRegistered{
+            cluster_id: cluster_id,
+            name: name,
+            sap_instances: [],
+            provider: :unknown,
+            type: :unknown,
+            health: :unknown,
+            details: nil
+          },
+          %HostAddedToCluster{
+            cluster_id: cluster_id,
+            host_id: host_id,
+            cluster_status: :offline
           }
         ],
         %Cluster{
@@ -157,7 +201,8 @@ defmodule Trento.ClusterTest do
         [
           %HostAddedToCluster{
             cluster_id: cluster_id,
-            host_id: host_id
+            host_id: host_id,
+            cluster_status: :online
           }
         ],
         fn cluster ->
@@ -201,7 +246,8 @@ defmodule Trento.ClusterTest do
         [
           %HostAddedToCluster{
             cluster_id: cluster_id,
-            host_id: host_id
+            host_id: host_id,
+            cluster_status: :online
           }
         ],
         fn cluster ->
@@ -877,7 +923,55 @@ defmodule Trento.ClusterTest do
           },
           %HostAddedToCluster{
             cluster_id: cluster_id,
-            host_id: new_host_id
+            host_id: new_host_id,
+            cluster_status: :online
+          }
+        ],
+        fn cluster ->
+          assert nil == cluster.deregistered_at
+        end
+      )
+    end
+
+    test "should restore a deregistered cluster when a RegisterOfflineClusterHost command is received" do
+      host_one_id = UUID.uuid4()
+      host_two_id = UUID.uuid4()
+
+      cluster_id = UUID.uuid4()
+      deregistered_at = DateTime.utc_now()
+
+      initial_events = [
+        build(:cluster_registered_event, cluster_id: cluster_id, hosts_number: 2),
+        build(:host_added_to_cluster_event, cluster_id: cluster_id, host_id: host_one_id),
+        build(:host_added_to_cluster_event, cluster_id: cluster_id, host_id: host_two_id),
+        build(:host_removed_from_cluster_event, cluster_id: cluster_id, host_id: host_one_id),
+        build(:host_removed_from_cluster_event, cluster_id: cluster_id, host_id: host_two_id),
+        build(:cluster_deregistered_event,
+          cluster_id: cluster_id,
+          deregistered_at: deregistered_at
+        )
+      ]
+
+      new_host_id = UUID.uuid4()
+
+      restoration_command =
+        build(
+          :register_offline_cluster_host,
+          cluster_id: cluster_id,
+          host_id: new_host_id
+        )
+
+      assert_events_and_state(
+        initial_events,
+        [restoration_command],
+        [
+          %ClusterRestored{
+            cluster_id: cluster_id
+          },
+          %HostAddedToCluster{
+            cluster_id: cluster_id,
+            host_id: new_host_id,
+            cluster_status: :offline
           }
         ],
         fn cluster ->
@@ -925,7 +1019,8 @@ defmodule Trento.ClusterTest do
           },
           %HostAddedToCluster{
             cluster_id: cluster_id,
-            host_id: new_host_id
+            host_id: new_host_id,
+            cluster_status: :online
           },
           %ClusterDetailsUpdated{
             cluster_id: cluster_id,
