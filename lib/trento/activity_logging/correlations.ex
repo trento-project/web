@@ -33,8 +33,7 @@ defmodule Trento.ActivityLog.Correlations do
   end
 
   @spec expire_correlation_id(binary(), non_neg_integer()) :: :ok
-  def expire_correlation_id(key, ttl \\ @default_ttl)
-      when is_binary(key) do
+  def expire_correlation_id(key, ttl \\ @default_ttl) do
     # ttl unit is milliseconds
     _ = Cachex.expire(@cache_name, key, ttl)
     :ok
