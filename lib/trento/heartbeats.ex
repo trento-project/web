@@ -3,6 +3,8 @@ defmodule Trento.Heartbeats do
   Heartbeat related functions
   """
 
+  alias Trento.ActivityLog
+
   alias Trento.Hosts.Commands.UpdateHeartbeat
 
   alias Trento.Heartbeats.Heartbeat
@@ -82,7 +84,7 @@ defmodule Trento.Heartbeats do
   defp dispatch_command(agent_id, heartbeat) do
     case %{host_id: agent_id, heartbeat: heartbeat}
          |> UpdateHeartbeat.new!()
-         |> commanded().dispatch() do
+         |> maybe_correlated_dispatch() do
       :ok ->
         {:ok, :done}
 
@@ -93,4 +95,23 @@ defmodule Trento.Heartbeats do
 
   defp commanded,
     do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]
+
+  defp maybe_correlated_dispatch(command) do
+    key = ActivityLog.correlation_key(:api_key)
+
+    case ActivityLog.get_correlation_id(key) do
+      nil ->
+        # in case the correlation_id entry has expired
+        # or is absent we do the default dispatch
+        commanded().dispatch(command)
+
+      correlation_id ->
+        # in case correlation_id exists, we
+        # pass it on to the dispatch function
+        commanded().dispatch(command,
+          correlation_id: correlation_id,
+          causation_id: correlation_id
+        )
+    end
+  end
 end

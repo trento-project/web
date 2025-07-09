@@ -57,6 +57,9 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
          %{conn: conn, api_spec: api_spec} do
       insert(:api_key_settings)
 
+      # Setup a correlation key for this specific test process
+      Process.put(:correlation_key, UUID.uuid4())
+
       conn
       |> put_req_header("content-type", "application/json")
       |> patch("/api/v1/settings/api_key", %{
@@ -86,6 +89,9 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
     test "should generate an infinite api key if the expiration in the settings is set to nil in an update",
          %{conn: conn} do
       insert(:api_key_settings)
+
+      # Setup a correlation key for this specific test process
+      Process.put(:correlation_key, UUID.uuid4())
 
       %{"generated_api_key" => infinite_api_key} =
         conn

@@ -6,6 +6,7 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
 
   import Trento.Factory
 
+  alias Trento.ActivityLog.Correlations
   alias Trento.ActivityLog.Logger.Parser.PhoenixConnParser
 
   require Trento.ActivityLog.ActivityCatalog, as: ActivityCatalog
@@ -62,12 +63,27 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
   end
 
   describe "metadata detection" do
-    test "should extract the request body as metadata for relevant activities", %{conn: conn} do
-      for activity <- [:api_key_generation, :activity_log_settings_update] do
+    @correlation_id Faker.UUID.v4()
+    for scenario <- [
+          %{
+            action: :api_key_generation,
+            expected_metadata: %{"foo" => "bar", correlation_id: @correlation_id}
+          },
+          %{
+            action: :activity_log_settings_update,
+            expected_metadata: %{"foo" => "bar"}
+          }
+        ] do
+      @scenario scenario
+      test "should extract the request body as metadata for activity #{@scenario.action}", %{
+        conn: conn
+      } do
         request_body = %{"foo" => "bar"}
 
-        assert request_body ==
-                 PhoenixConnParser.get_activity_metadata(activity, %Plug.Conn{
+        scenario_setup(@scenario.action, @correlation_id)
+
+        assert @scenario.expected_metadata ==
+                 PhoenixConnParser.get_activity_metadata(@scenario.action, %Plug.Conn{
                    conn
                    | body_params: request_body
                  })
@@ -301,6 +317,15 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
       end
     end
   end
+
+  defp scenario_setup(:api_key_generation, correlation_id) do
+    key0 = UUID.uuid4()
+    Process.put(:correlation_key, key0)
+    key = Correlations.correlation_key(:api_key)
+    Correlations.put_correlation_id(key, correlation_id)
+  end
+
+  defp scenario_setup(_, _), do: :ok
 
   defp assert_for_relevant_activity(assertion_function) do
     ActivityCatalog.connection_activities()
