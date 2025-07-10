@@ -1,4 +1,4 @@
-defmodule Trento.Clusters.Events.HostClusterStatusChanged do
+defmodule Trento.Clusters.Events.ClusterHostStatusChanged do
   @moduledoc """
   When a host's cluster status changes, from online to offline or vice versa,
   """

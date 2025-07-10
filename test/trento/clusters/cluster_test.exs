@@ -37,7 +37,7 @@ defmodule Trento.ClusterTest do
     ClusterRollUpRequested,
     ClusterTombstoned,
     HostAddedToCluster,
-    HostClusterStatusChanged,
+    ClusterHostStatusChanged,
     HostRemovedFromCluster
   }
 
