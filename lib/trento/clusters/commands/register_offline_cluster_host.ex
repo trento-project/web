@@ -5,8 +5,7 @@ defmodule Trento.Clusters.Commands.RegisterOfflineClusterHost do
 
   @required_fields [
     :cluster_id,
-    :host_id,
-    :name
+    :host_id
   ]
 
   use Trento.Support.Command
