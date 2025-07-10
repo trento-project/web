@@ -19,4 +19,4 @@ configuration is handled by the helm-charts.
 '''''
 
 .Monitoring Architecture
-image::trento-monitoring.png[Monitoring Architecture]
+image::../images/trento-monitoring.png[Monitoring Architecture]
