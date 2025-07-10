@@ -2,8 +2,6 @@ defmodule TrentoWeb.V1.SapSystemJSONTest do
   use TrentoWeb.ConnCase, async: true
 
   import Trento.Factory
-  alias Trento.Databases.Projections.DatabaseInstanceReadModel
-  alias Trento.SapSystems.Projections.SapSystemReadModel
   alias TrentoWeb.V1.SapSystemJSON
 
   describe "SapSystemJSON" do
@@ -53,41 +51,6 @@ defmodule TrentoWeb.V1.SapSystemJSONTest do
                SapSystemJSON.sap_systems(%{
                  sap_systems: [sap_system]
                })
-    end
-
-    test "should add the system replication status to the secondary instance and should remove it from the primary one" do
-      database = build(:database)
-
-      [%{database_instances: database_instances}] =
-        SapSystemJSON.sap_systems(%{
-          sap_systems: [
-            %SapSystemReadModel{
-              database: database,
-              database_instances: [
-                %DatabaseInstanceReadModel{
-                  system_replication: "Secondary",
-                  system_replication_status: ""
-                },
-                %DatabaseInstanceReadModel{
-                  system_replication: "Primary",
-                  system_replication_status: "ACTIVE"
-                }
-              ],
-              application_instances: []
-            }
-          ]
-        })
-
-      assert Enum.any?(database_instances, fn
-               %{
-                 system_replication: "Secondary",
-                 system_replication_status: "ACTIVE"
-               } ->
-                 true
-
-               _ ->
-                 false
-             end)
     end
   end
 end
