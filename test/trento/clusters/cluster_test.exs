@@ -133,6 +133,7 @@ defmodule Trento.ClusterTest do
           type: :unknown,
           provider: :unknown,
           hosts: [host_id],
+          offline_hosts: [],
           discovered_health: :unknown,
           health: :unknown
         }
