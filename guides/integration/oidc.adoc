@@ -67,11 +67,11 @@ config :trento, :oidc, enabled: true
 
 .trento_single_sign_on_login
 
-image::trento_single_sign_on_login.png[trento_single_sign_on_login]
+image::../images/trento_single_sign_on_login.png[trento_single_sign_on_login]
 
 You will be redirected to the Keycloak login page:
 
-image:keycloack_login.png[keycloack_login]
+image:../images/keycloack_login.png[keycloack_login]
 
 ==== Login as Trento user through keycloak IDP
 
