@@ -29,6 +29,11 @@ defmodule Trento.Databases.Projections.DatabaseInstanceReadModel do
     field :start_priority, :string
     field :system_replication, :string, default: ""
     field :system_replication_status, :string, default: ""
+    field :system_replication_site, :string, default: ""
+    field :system_replication_mode, :string, default: ""
+    field :system_replication_operation_mode, :string, default: ""
+    field :system_replication_source_site, :string, default: ""
+    field :system_replication_tier, :integer, default: 0
     field :health, Ecto.Enum, values: Health.values()
     field :absent_at, :utc_datetime_usec
 

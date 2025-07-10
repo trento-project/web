@@ -90,6 +90,11 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
       host_id: host_id,
       system_replication: system_replication,
       system_replication_status: system_replication_status,
+      system_replication_site: system_replication_site,
+      system_replication_mode: system_replication_mode,
+      system_replication_operation_mode: system_replication_operation_mode,
+      system_replication_source_site: system_replication_source_site,
+      system_replication_tier: system_replication_tier,
       health: health
     },
     fn multi ->
@@ -106,6 +111,11 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
           host_id: host_id,
           system_replication: system_replication,
           system_replication_status: system_replication_status,
+          system_replication_site: system_replication_site,
+          system_replication_mode: system_replication_mode,
+          system_replication_operation_mode: system_replication_operation_mode,
+          system_replication_source_site: system_replication_source_site,
+          system_replication_tier: system_replication_tier,
           health: health
         })
 
@@ -140,7 +150,12 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
       host_id: host_id,
       instance_number: instance_number,
       system_replication: system_replication,
-      system_replication_status: system_replication_status
+      system_replication_status: system_replication_status,
+      system_replication_site: system_replication_site,
+      system_replication_mode: system_replication_mode,
+      system_replication_operation_mode: system_replication_operation_mode,
+      system_replication_source_site: system_replication_source_site,
+      system_replication_tier: system_replication_tier
     },
     fn multi ->
       changeset =
@@ -152,7 +167,12 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
         )
         |> DatabaseInstanceReadModel.changeset(%{
           system_replication: system_replication,
-          system_replication_status: system_replication_status
+          system_replication_status: system_replication_status,
+          system_replication_site: system_replication_site,
+          system_replication_mode: system_replication_mode,
+          system_replication_operation_mode: system_replication_operation_mode,
+          system_replication_source_site: system_replication_source_site,
+          system_replication_tier: system_replication_tier
         })
 
       Ecto.Multi.update(multi, :database_instance, changeset)
@@ -342,7 +362,12 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
             host_id: host_id,
             instance_number: instance_number,
             system_replication: system_replication,
-            system_replication_status: system_replication_status
+            system_replication_status: system_replication_status,
+            system_replication_site: system_replication_site,
+            system_replication_mode: system_replication_mode,
+            system_replication_operation_mode: system_replication_operation_mode,
+            system_replication_source_site: system_replication_source_site,
+            system_replication_tier: system_replication_tier
           }
         }
       ) do
@@ -355,7 +380,12 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
           host_id: host_id,
           instance_number: instance_number,
           system_replication: system_replication,
-          system_replication_status: system_replication_status
+          system_replication_status: system_replication_status,
+          system_replication_site: system_replication_site,
+          system_replication_mode: system_replication_mode,
+          system_replication_operation_mode: system_replication_operation_mode,
+          system_replication_source_site: system_replication_source_site,
+          system_replication_tier: system_replication_tier
         }
       })
     )

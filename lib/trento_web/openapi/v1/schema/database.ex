@@ -49,6 +49,31 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Database do
             type: :string,
             description: "System Replication Status"
           },
+          system_replication_site: %Schema{
+            type: :string,
+            nullable: true,
+            description: "System Replication Site"
+          },
+          system_replication_mode: %Schema{
+            type: :string,
+            nullable: true,
+            description: "System Replication Mode"
+          },
+          system_replication_operation_mode: %Schema{
+            type: :string,
+            nullable: true,
+            description: "System Replication Operation mode"
+          },
+          system_replication_source_site: %Schema{
+            type: :string,
+            nullable: true,
+            description: "System Replication Source site where replication is coming from"
+          },
+          system_replication_tier: %Schema{
+            type: :integer,
+            nullable: true,
+            description: "System Replication Site tier number"
+          },
           health: ResourceHealth,
           absent_at: %Schema{
             type: :string,
