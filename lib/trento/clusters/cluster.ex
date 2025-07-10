@@ -100,7 +100,6 @@ defmodule Trento.Clusters.Cluster do
     ClusterRollUpRequested,
     ClusterTombstoned,
     HostAddedToCluster,
-    HostClusterStatusChanged,
     HostRemovedFromCluster
   }
 
@@ -497,7 +496,7 @@ defmodule Trento.Clusters.Cluster do
 
   def apply(
         %Cluster{offline_hosts: offline_host} = cluster,
-        %HostClusterStatusChanged{
+        %ClusterHostStatusChanged{
           host_id: host_id,
           cluster_host_status: ClusterHostStatus.online()
         }
@@ -510,7 +509,7 @@ defmodule Trento.Clusters.Cluster do
 
   def apply(
         %Cluster{offline_hosts: offline_host} = cluster,
-        %HostClusterStatusChanged{
+        %ClusterHostStatusChanged{
           host_id: host_id,
           cluster_host_status: ClusterHostStatus.offline()
         }
@@ -581,14 +580,14 @@ defmodule Trento.Clusters.Cluster do
         }
 
       host_id in offline_hosts and cluster_host_status == ClusterHostStatus.online() ->
-        %HostClusterStatusChanged{
+        %ClusterHostStatusChanged{
           cluster_id: cluster_id,
           host_id: host_id,
           cluster_host_status: ClusterHostStatus.online()
         }
 
       host_id not in offline_hosts and cluster_host_status == ClusterHostStatus.offline() ->
-        %HostClusterStatusChanged{
+        %ClusterHostStatusChanged{
           cluster_id: cluster_id,
           host_id: host_id,
           cluster_host_status: ClusterHostStatus.offline()

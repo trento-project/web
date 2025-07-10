@@ -15,6 +15,6 @@ defmodule Trento.Clusters.Events.HostAddedToCluster do
   end
 
   # In version 1, the host was added to the cluster only when online.
+  # so we can safely assume that the cluster status is online.
   def upcast(params, _, 2), do: Map.put(params, "cluster_host_status", ClusterHostStatus.online())
-  def upcast(params, _, 2), do: Map.put(params, "cluster_status", ClusterHostStatus.online())
 end

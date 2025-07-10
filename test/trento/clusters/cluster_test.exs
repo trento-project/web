@@ -36,7 +36,7 @@ defmodule Trento.ClusterTest do
     ClusterRollUpRequested,
     ClusterTombstoned,
     HostAddedToCluster,
-    HostClusterStatusChanged,
+    ClusterHostStatusChanged,
     HostRemovedFromCluster
   }
 
@@ -237,7 +237,7 @@ defmodule Trento.ClusterTest do
           name: name
         }),
         [
-          %HostClusterStatusChanged{
+          %ClusterHostStatusChanged{
             cluster_id: cluster_id,
             host_id: host_id,
             cluster_host_status: ClusterHostStatus.offline()
@@ -279,7 +279,7 @@ defmodule Trento.ClusterTest do
           provider: :azure
         }),
         [
-          %HostClusterStatusChanged{
+          %ClusterHostStatusChanged{
             cluster_id: cluster_id,
             host_id: host_id,
             cluster_host_status: ClusterHostStatus.online()
