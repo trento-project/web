@@ -11,7 +11,6 @@ defmodule Trento.Clusters.Events.ClusterHostStatusChanged do
     field :cluster_id, Ecto.UUID
     field :host_id, Ecto.UUID
 
-    field :cluster_host_status, Ecto.Enum,
-      values: [ClusterHostStatus.online(), ClusterHostStatus.offline()]
+    field :cluster_host_status, Ecto.Enum, values: ClusterHostStatus.values()
   end
 end

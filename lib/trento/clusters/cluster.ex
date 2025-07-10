@@ -549,7 +549,11 @@ defmodule Trento.Clusters.Cluster do
   def apply(%Cluster{hosts: hosts} = cluster, %HostRemovedFromCluster{
         host_id: host_id
       }) do
-    %Cluster{cluster | hosts: List.delete(hosts, host_id)}
+    %Cluster{
+      cluster
+      | hosts: List.delete(hosts, host_id),
+        offline_hosts: List.delete(cluster.offline_hosts, host_id)
+    }
   end
 
   # Deregistration

@@ -1255,7 +1255,45 @@ defmodule Trento.ClusterTest do
           }
         ],
         fn cluster ->
-          assert %Cluster{hosts: [^host_2_id]} = cluster
+          assert %Cluster{hosts: [^host_2_id], offline_hosts: []} = cluster
+        end
+      )
+    end
+
+    test "should emit the HostRemovedFromCluster event after a DeregisterClusterHost command and remove the host from the cluster aggregate state when the host is offline" do
+      cluster_id = Faker.UUID.v4()
+      dat = DateTime.utc_now()
+
+      host_1_added_event =
+        build(:host_added_to_cluster_event,
+          cluster_id: cluster_id,
+          cluster_host_status: ClusterHostStatus.offline()
+        )
+
+      host_2_added_event =
+        %{host_id: host_2_id} = build(:host_added_to_cluster_event, cluster_id: cluster_id)
+
+      assert_events_and_state(
+        [
+          build(:cluster_registered_event, cluster_id: cluster_id, hosts_number: 2),
+          host_1_added_event,
+          host_2_added_event
+        ],
+        [
+          %DeregisterClusterHost{
+            host_id: host_1_added_event.host_id,
+            cluster_id: cluster_id,
+            deregistered_at: dat
+          }
+        ],
+        [
+          %HostRemovedFromCluster{
+            host_id: host_1_added_event.host_id,
+            cluster_id: cluster_id
+          }
+        ],
+        fn cluster ->
+          assert %Cluster{hosts: [^host_2_id], offline_hosts: []} = cluster
         end
       )
     end
