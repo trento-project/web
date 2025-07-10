@@ -94,6 +94,7 @@ defmodule Trento.Clusters.Cluster do
     ClusterDetailsUpdated,
     ClusterDiscoveredHealthChanged,
     ClusterHealthChanged,
+    ClusterHostStatusChanged,
     ClusterRegistered,
     ClusterRestored,
     ClusterRolledUp,
