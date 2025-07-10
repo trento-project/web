@@ -5,6 +5,7 @@ defmodule Trento.Factory do
 
   require Trento.Enums.Provider, as: Provider
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
+  require Trento.Clusters.Enums.ClusterHostStatus, as: ClusterHostStatus
   require Trento.Clusters.Enums.HanaArchitectureType, as: HanaArchitectureType
   require Trento.SapSystems.Enums.EnsaVersion, as: EnsaVersion
   require Trento.Enums.Health, as: Health
@@ -349,7 +350,8 @@ defmodule Trento.Factory do
   def host_added_to_cluster_event_factory do
     %HostAddedToCluster{
       cluster_id: Faker.UUID.v4(),
-      host_id: Faker.UUID.v4()
+      host_id: Faker.UUID.v4(),
+      cluster_host_status: ClusterHostStatus.online()
     }
   end
 

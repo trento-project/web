@@ -1,6 +1,8 @@
 defmodule Trento.ClusterTest do
   use Trento.AggregateCase, aggregate: Trento.Clusters.Cluster, async: true
 
+  require Trento.Clusters.Enums.ClusterHostStatus, as: ClusterHostStatus
+
   import Trento.Factory
 
   alias Trento.Support.StructHelper
@@ -76,7 +78,7 @@ defmodule Trento.ClusterTest do
           %HostAddedToCluster{
             cluster_id: cluster_id,
             host_id: host_id,
-            cluster_status: :online
+            cluster_host_status: ClusterHostStatus.online()
           }
         ],
         %Cluster{
@@ -121,7 +123,7 @@ defmodule Trento.ClusterTest do
           %HostAddedToCluster{
             cluster_id: cluster_id,
             host_id: host_id,
-            cluster_status: :online
+            cluster_host_status: ClusterHostStatus.online()
           }
         ],
         %Cluster{
@@ -162,7 +164,7 @@ defmodule Trento.ClusterTest do
           %HostAddedToCluster{
             cluster_id: cluster_id,
             host_id: host_id,
-            cluster_status: :offline
+            cluster_host_status: ClusterHostStatus.offline()
           }
         ],
         %Cluster{
@@ -204,7 +206,7 @@ defmodule Trento.ClusterTest do
           %HostAddedToCluster{
             cluster_id: cluster_id,
             host_id: host_id,
-            cluster_status: :online
+            cluster_host_status: ClusterHostStatus.online()
           }
         ],
         fn cluster ->
@@ -226,7 +228,7 @@ defmodule Trento.ClusterTest do
           build(:host_added_to_cluster_event,
             cluster_id: cluster_id,
             host_id: host_id,
-            cluster_status: :online
+            cluster_host_status: ClusterHostStatus.online()
           )
         ],
         RegisterOfflineClusterHost.new!(%{
@@ -238,7 +240,7 @@ defmodule Trento.ClusterTest do
           %HostClusterStatusChanged{
             cluster_id: cluster_id,
             host_id: host_id,
-            cluster_status: :offline
+            cluster_host_status: ClusterHostStatus.offline()
           }
         ],
         fn cluster ->
@@ -261,7 +263,7 @@ defmodule Trento.ClusterTest do
           build(:host_added_to_cluster_event,
             cluster_id: cluster_id,
             host_id: host_id,
-            cluster_status: :offline
+            cluster_host_status: ClusterHostStatus.offline()
           )
         ],
         RegisterClusterHost.new!(%{
@@ -280,7 +282,7 @@ defmodule Trento.ClusterTest do
           %HostClusterStatusChanged{
             cluster_id: cluster_id,
             host_id: host_id,
-            cluster_status: :online
+            cluster_host_status: ClusterHostStatus.online()
           }
         ],
         fn cluster ->
@@ -305,12 +307,12 @@ defmodule Trento.ClusterTest do
           build(:host_added_to_cluster_event,
             cluster_id: cluster_id,
             host_id: host_id,
-            cluster_status: :offline
+            cluster_host_status: ClusterHostStatus.offline()
           ),
           build(:host_added_to_cluster_event,
             cluster_id: cluster_id,
             host_id: another_host_id,
-            cluster_status: :online
+            cluster_host_status: ClusterHostStatus.online()
           )
         ],
         [
@@ -376,7 +378,7 @@ defmodule Trento.ClusterTest do
           %HostAddedToCluster{
             cluster_id: cluster_id,
             host_id: host_id,
-            cluster_status: :online
+            cluster_host_status: ClusterHostStatus.online()
           }
         ],
         fn cluster ->
@@ -400,7 +402,7 @@ defmodule Trento.ClusterTest do
         %HostAddedToCluster{
           cluster_id: cluster_id,
           host_id: host_id,
-          cluster_status: :online
+          cluster_host_status: ClusterHostStatus.online()
         }
       ]
 
@@ -462,7 +464,7 @@ defmodule Trento.ClusterTest do
         build(:host_added_to_cluster_event,
           cluster_id: cluster_id,
           host_id: host_id,
-          cluster_status: :online
+          cluster_host_status: ClusterHostStatus.online()
         )
       ]
 
@@ -1059,7 +1061,7 @@ defmodule Trento.ClusterTest do
           %HostAddedToCluster{
             cluster_id: cluster_id,
             host_id: new_host_id,
-            cluster_status: :online
+            cluster_host_status: ClusterHostStatus.online()
           }
         ],
         fn cluster ->
@@ -1106,7 +1108,7 @@ defmodule Trento.ClusterTest do
           %HostAddedToCluster{
             cluster_id: cluster_id,
             host_id: new_host_id,
-            cluster_status: :offline
+            cluster_host_status: ClusterHostStatus.offline()
           }
         ],
         fn cluster ->
@@ -1155,7 +1157,7 @@ defmodule Trento.ClusterTest do
           %HostAddedToCluster{
             cluster_id: cluster_id,
             host_id: new_host_id,
-            cluster_status: :online
+            cluster_host_status: ClusterHostStatus.online()
           },
           %ClusterDetailsUpdated{
             cluster_id: cluster_id,
