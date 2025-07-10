@@ -30,13 +30,13 @@ defmodule Trento.ClusterTest do
     ClusterDetailsUpdated,
     ClusterDiscoveredHealthChanged,
     ClusterHealthChanged,
+    ClusterHostStatusChanged,
     ClusterRegistered,
     ClusterRestored,
     ClusterRolledUp,
     ClusterRollUpRequested,
     ClusterTombstoned,
     HostAddedToCluster,
-    ClusterHostStatusChanged,
     HostRemovedFromCluster
   }
 
