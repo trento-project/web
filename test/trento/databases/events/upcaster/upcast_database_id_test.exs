@@ -17,11 +17,21 @@ defmodule Trento.Databases.Event.Upcaster.UpcastDatabaseIdTest do
   ]
 
   describe "UpcastDatabaseId upcasting, version 2" do
+    test "should upcast database id field and increase version counter" do
+      database_id = Faker.UUID.v4()
+
+      assert %{"version" => 2, "database_id" => ^database_id} =
+               Events.DatabaseRegistered.upcast(
+                 %{"sap_system_id" => database_id},
+                 %{}
+               )
+    end
+
     test "should upcast database id field when a legacy event is received" do
       for event <- @upcasted_events do
         database_id = Faker.UUID.v4()
 
-        assert %{"version" => 2, "database_id" => database_id} ==
+        assert %{"database_id" => ^database_id} =
                  event.upcast(
                    %{"sap_system_id" => database_id},
                    %{}
@@ -33,7 +43,7 @@ defmodule Trento.Databases.Event.Upcaster.UpcastDatabaseIdTest do
       for event <- @upcasted_events do
         database_id = Faker.UUID.v4()
 
-        assert %{"version" => 2, "database_id" => database_id} ==
+        assert %{"database_id" => ^database_id} =
                  event.upcast(
                    %{"database_id" => database_id},
                    %{}
