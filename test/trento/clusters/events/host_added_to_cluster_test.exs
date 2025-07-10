@@ -2,7 +2,7 @@ defmodule Trento.Cluster.Events.HostAddedToClusterTest do
   use Trento.AggregateCase, aggregate: Trento.Hosts.Host, async: true
   require Trento.Clusters.Enums.ClusterHostStatus, as: ClusterHostStatus
 
-  alias Trento.Cluster.Events.HostAddedToCluster
+  alias Trento.Clusters.Events.HostAddedToCluster
 
   describe "HostAddedToCluster event upcasting" do
     test "should upcast HostAddedToCluster event properly from version 1" do
@@ -19,8 +19,8 @@ defmodule Trento.Cluster.Events.HostAddedToClusterTest do
                  "host_id" => host_id,
                  "cluster_id" => cluster_id
                }
-               |> HostDetailsUpdated.upcast(%{})
-               |> HostDetailsUpdated.new!()
+               |> HostAddedToCluster.upcast(%{})
+               |> HostAddedToCluster.new!()
     end
   end
 end
