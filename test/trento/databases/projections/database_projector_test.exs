@@ -120,7 +120,12 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
                        database_id: ^database_id,
                        start_priority: "0.3",
                        system_replication: "",
-                       system_replication_status: ""
+                       system_replication_status: "",
+                       system_replication_site: nil,
+                       system_replication_mode: nil,
+                       system_replication_operation_mode: nil,
+                       system_replication_source_site: nil,
+                       system_replication_tier: nil
                      },
                      1000
   end
@@ -195,7 +200,12 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
         instance_number: instance_number,
         host_id: host_id,
         system_replication: "Primary",
-        system_replication_status: "Active"
+        system_replication_status: "Active",
+        system_replication_site: "Site1",
+        system_replication_mode: "sync",
+        system_replication_operation_mode: "logreplay",
+        system_replication_source_site: "Site2",
+        system_replication_tier: 1
       }
 
     ProjectorTestHelper.project(DatabaseProjector, event, "database_projector")
@@ -209,6 +219,11 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
 
     assert event.system_replication == projection.system_replication
     assert event.system_replication_status == projection.system_replication_status
+    assert event.system_replication_mode == projection.system_replication_mode
+    assert event.system_replication_operation_mode == projection.system_replication_operation_mode
+    assert event.system_replication_site == projection.system_replication_site
+    assert event.system_replication_source_site == projection.system_replication_source_site
+    assert event.system_replication_tier == projection.system_replication_tier
 
     assert_broadcast "database_instance_system_replication_changed",
                      %{
@@ -216,7 +231,12 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
                        host_id: ^host_id,
                        instance_number: ^instance_number,
                        system_replication: ^system_replication,
-                       system_replication_status: ^system_replication_status
+                       system_replication_status: ^system_replication_status,
+                       system_replication_site: "Site1",
+                       system_replication_mode: "sync",
+                       system_replication_operation_mode: "logreplay",
+                       system_replication_source_site: "Site2",
+                       system_replication_tier: 1
                      },
                      1000
   end
@@ -252,6 +272,11 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
 
     assert nil == projection.system_replication
     assert nil == projection.system_replication_status
+    assert nil == projection.system_replication_site
+    assert nil == projection.system_replication_mode
+    assert nil == projection.system_replication_operation_mode
+    assert nil == projection.system_replication_source_site
+    assert nil == projection.system_replication_tier
 
     assert_broadcast "database_instance_system_replication_changed",
                      %{
@@ -259,7 +284,12 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
                        host_id: ^host_id,
                        instance_number: ^instance_number,
                        system_replication: nil,
-                       system_replication_status: nil
+                       system_replication_status: nil,
+                       system_replication_site: nil,
+                       system_replication_mode: nil,
+                       system_replication_operation_mode: nil,
+                       system_replication_source_site: nil,
+                       system_replication_tier: nil
                      },
                      1000
   end

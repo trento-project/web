@@ -80,7 +80,12 @@ defmodule TrentoWeb.V1.DatabaseJSON do
           host_id: host_id,
           instance_number: instance_number,
           system_replication: system_replication,
-          system_replication_status: system_replication_status
+          system_replication_status: system_replication_status,
+          system_replication_site: system_replication_site,
+          system_replication_mode: system_replication_mode,
+          system_replication_operation_mode: system_replication_operation_mode,
+          system_replication_source_site: system_replication_source_site,
+          system_replication_tier: system_replication_tier
         }
       }),
       do: %{
@@ -88,7 +93,12 @@ defmodule TrentoWeb.V1.DatabaseJSON do
         host_id: host_id,
         instance_number: instance_number,
         system_replication: system_replication,
-        system_replication_status: system_replication_status
+        system_replication_status: system_replication_status,
+        system_replication_site: system_replication_site,
+        system_replication_mode: system_replication_mode,
+        system_replication_operation_mode: system_replication_operation_mode,
+        system_replication_source_site: system_replication_source_site,
+        system_replication_tier: system_replication_tier
       }
 
   def database_deregistered(%{id: id, sid: sid}), do: %{id: id, sid: sid}
