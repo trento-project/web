@@ -5,9 +5,13 @@ defmodule Trento.Clusters.Events.HostClusterStatusChanged do
 
   use Trento.Support.Event
 
+  require Trento.Clusters.Enums.ClusterHostStatus, as: ClusterHostStatus
+
   defevent do
     field :cluster_id, Ecto.UUID
     field :host_id, Ecto.UUID
-    field :cluster_status, Ecto.Enum, values: [:online, :offline]
+
+    field :cluster_host_status, Ecto.Enum,
+      values: [ClusterHostStatus.online(), ClusterHostStatus.offline()]
   end
 end
