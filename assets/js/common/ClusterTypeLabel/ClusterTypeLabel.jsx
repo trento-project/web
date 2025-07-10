@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { EOS_INFO_OUTLINED, EOS_STAR } from 'eos-icons-react';
 
 import Tooltip from '@common/Tooltip';

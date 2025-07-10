@@ -29,6 +29,11 @@ jest.mock('react-hot-toast', () => ({
   },
 }));
 
+jest.mock('react-router', () => ({
+  ...jest.requireActual('react-router'),
+  useNavigate: jest.fn(),
+}));
+
 describe('CreateUserPage', () => {
   beforeEach(() => {
     axiosMock.reset();
@@ -38,7 +43,7 @@ describe('CreateUserPage', () => {
   it('should redirect back to users when the Back To Users button is clicked', async () => {
     const user = userEvent.setup();
     const navigate = jest.fn();
-    jest.spyOn(router, 'useNavigate').mockImplementation(() => navigate);
+    router.useNavigate.mockImplementation(() => navigate);
 
     render(<CreateUserPage />);
 
@@ -50,7 +55,7 @@ describe('CreateUserPage', () => {
   it('should redirect back to users when the Cancel button is clicked', async () => {
     const user = userEvent.setup();
     const navigate = jest.fn();
-    jest.spyOn(router, 'useNavigate').mockImplementation(() => navigate);
+    router.useNavigate.mockImplementation(() => navigate);
 
     render(<CreateUserPage />);
 
@@ -63,7 +68,7 @@ describe('CreateUserPage', () => {
     const toastMessage = 'User created successfully';
     const user = userEvent.setup();
     const navigate = jest.fn();
-    jest.spyOn(router, 'useNavigate').mockImplementation(() => navigate);
+    router.useNavigate.mockImplementation(() => navigate);
     const { fullname, email, username } = userFactory.build();
     const password = faker.internet.password();
     const abilities = abilityFactory.buildList(2);
@@ -97,7 +102,7 @@ describe('CreateUserPage', () => {
   it('should display validation errors', async () => {
     const user = userEvent.setup();
     const navigate = jest.fn();
-    jest.spyOn(router, 'useNavigate').mockImplementation(() => navigate);
+    router.useNavigate.mockImplementation(() => navigate);
     const { fullname, email, username } = userFactory.build();
     const password = faker.internet.password();
 

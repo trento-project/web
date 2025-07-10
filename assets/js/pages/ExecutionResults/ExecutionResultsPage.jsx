@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { setSelectedFilters } from '@state/checksResultsFilters';
 import { getSelectedFilters } from '@state/selectors/checksResultsFilters';
 import { getLastExecutionData } from '@state/selectors/lastExecutions';

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { find, get, some } from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router';
 import { getLastExecutionData } from '@state/selectors/lastExecutions';
 import { updateCatalog } from '@state/catalog';
 

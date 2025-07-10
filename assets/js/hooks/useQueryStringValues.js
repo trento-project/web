@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router';
 
 const useQueryStringValues = (paramsNames) => {
   const [searchParams, setSearchParams] = useSearchParams();
