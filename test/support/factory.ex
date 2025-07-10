@@ -443,6 +443,11 @@ defmodule Trento.Factory do
       host_id: Faker.UUID.v4(),
       system_replication: "Primary",
       system_replication_status: "ACTIVE",
+      system_replication_site: nil,
+      system_replication_mode: nil,
+      system_replication_operation_mode: nil,
+      system_replication_source_site: nil,
+      system_replication_tier: nil,
       health: Health.passing()
     }
   end
@@ -837,6 +842,11 @@ defmodule Trento.Factory do
       host_id: Faker.UUID.v4(),
       system_replication: "Primary",
       system_replication_status: "ACTIVE",
+      system_replication_site: nil,
+      system_replication_mode: nil,
+      system_replication_operation_mode: nil,
+      system_replication_source_site: nil,
+      system_replication_tier: nil,
       health: Health.passing()
     }
   end

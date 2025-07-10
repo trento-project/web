@@ -109,6 +109,11 @@ defmodule Trento.Databases.Database do
           start_priority: start_priority,
           system_replication: system_replication,
           system_replication_status: system_replication_status,
+          system_replication_site: system_replication_site,
+          system_replication_mode: system_replication_mode,
+          system_replication_operation_mode: system_replication_operation_mode,
+          system_replication_source_site: system_replication_source_site,
+          system_replication_tier: system_replication_tier,
           health: health
         }
       ) do
@@ -130,6 +135,11 @@ defmodule Trento.Databases.Database do
         host_id: host_id,
         system_replication: system_replication,
         system_replication_status: system_replication_status,
+        system_replication_site: system_replication_site,
+        system_replication_mode: system_replication_mode,
+        system_replication_operation_mode: system_replication_operation_mode,
+        system_replication_source_site: system_replication_source_site,
+        system_replication_tier: system_replication_tier,
         health: health
       },
       %DatabaseTenantsUpdated{
@@ -166,6 +176,11 @@ defmodule Trento.Databases.Database do
           start_priority: start_priority,
           system_replication: system_replication,
           system_replication_status: system_replication_status,
+          system_replication_site: system_replication_site,
+          system_replication_mode: system_replication_mode,
+          system_replication_operation_mode: system_replication_operation_mode,
+          system_replication_source_site: system_replication_source_site,
+          system_replication_tier: system_replication_tier,
           health: health,
           tenants: tenants
         }
@@ -187,6 +202,11 @@ defmodule Trento.Databases.Database do
           host_id: host_id,
           system_replication: system_replication,
           system_replication_status: system_replication_status,
+          system_replication_site: system_replication_site,
+          system_replication_mode: system_replication_mode,
+          system_replication_operation_mode: system_replication_operation_mode,
+          system_replication_source_site: system_replication_source_site,
+          system_replication_tier: system_replication_tier,
           health: health
         },
         %DatabaseRestored{
@@ -321,6 +341,11 @@ defmodule Trento.Databases.Database do
           sid: sid,
           system_replication: system_replication,
           system_replication_status: system_replication_status,
+          system_replication_site: system_replication_site,
+          system_replication_mode: system_replication_mode,
+          system_replication_operation_mode: system_replication_operation_mode,
+          system_replication_source_site: system_replication_source_site,
+          system_replication_tier: system_replication_tier,
           instance_number: instance_number,
           features: features,
           host_id: host_id,
@@ -332,6 +357,11 @@ defmodule Trento.Databases.Database do
         sid: sid,
         system_replication: system_replication,
         system_replication_status: system_replication_status,
+        system_replication_site: system_replication_site,
+        system_replication_mode: system_replication_mode,
+        system_replication_operation_mode: system_replication_operation_mode,
+        system_replication_source_site: system_replication_source_site,
+        system_replication_tier: system_replication_tier,
         instance_number: instance_number,
         features: features,
         host_id: host_id,
@@ -354,7 +384,12 @@ defmodule Trento.Databases.Database do
           host_id: host_id,
           instance_number: instance_number,
           system_replication: system_replication,
-          system_replication_status: system_replication_status
+          system_replication_status: system_replication_status,
+          system_replication_site: system_replication_site,
+          system_replication_mode: system_replication_mode,
+          system_replication_operation_mode: system_replication_operation_mode,
+          system_replication_source_site: system_replication_source_site,
+          system_replication_tier: system_replication_tier
         }
       ) do
     instances =
@@ -365,7 +400,12 @@ defmodule Trento.Databases.Database do
             %Instance{
               instance
               | system_replication: system_replication,
-                system_replication_status: system_replication_status
+                system_replication_status: system_replication_status,
+                system_replication_site: system_replication_site,
+                system_replication_mode: system_replication_mode,
+                system_replication_operation_mode: system_replication_operation_mode,
+                system_replication_source_site: system_replication_source_site,
+                system_replication_tier: system_replication_tier
             }
 
           instance ->
@@ -500,6 +540,11 @@ defmodule Trento.Databases.Database do
            host_id: host_id,
            system_replication: system_replication,
            system_replication_status: system_replication_status,
+           system_replication_site: system_replication_site,
+           system_replication_mode: system_replication_mode,
+           system_replication_operation_mode: system_replication_operation_mode,
+           system_replication_source_site: system_replication_source_site,
+           system_replication_tier: system_replication_tier,
            health: health
          }
        ) do
@@ -515,6 +560,11 @@ defmodule Trento.Databases.Database do
       host_id: host_id,
       system_replication: system_replication,
       system_replication_status: system_replication_status,
+      system_replication_site: system_replication_site,
+      system_replication_mode: system_replication_mode,
+      system_replication_operation_mode: system_replication_operation_mode,
+      system_replication_source_site: system_replication_source_site,
+      system_replication_tier: system_replication_tier,
       health: health
     }
   end
@@ -559,31 +609,55 @@ defmodule Trento.Databases.Database do
 
   defp maybe_emit_database_instance_marked_present_event(_, _), do: nil
 
+  defp maybe_emit_database_instance_system_replication_changed_event(nil, _), do: nil
+
   defp maybe_emit_database_instance_system_replication_changed_event(
          %Instance{
            system_replication: system_replication,
-           system_replication_status: system_replication_status
+           system_replication_status: system_replication_status,
+           system_replication_site: system_replication_site,
+           system_replication_mode: system_replication_mode,
+           system_replication_operation_mode: system_replication_operation_mode,
+           system_replication_source_site: system_replication_source_site,
+           system_replication_tier: system_replication_tier
          },
          %RegisterDatabaseInstance{
-           database_id: database_id,
-           host_id: host_id,
-           instance_number: instance_number,
-           system_replication: new_system_replication,
-           system_replication_status: new_system_replication_status
+           system_replication: system_replication,
+           system_replication_status: system_replication_status,
+           system_replication_site: system_replication_site,
+           system_replication_mode: system_replication_mode,
+           system_replication_operation_mode: system_replication_operation_mode,
+           system_replication_source_site: system_replication_source_site,
+           system_replication_tier: system_replication_tier
          }
-       )
-       when system_replication != new_system_replication or
-              system_replication_status != new_system_replication_status do
+       ),
+       do: nil
+
+  defp maybe_emit_database_instance_system_replication_changed_event(_, %RegisterDatabaseInstance{
+         database_id: database_id,
+         host_id: host_id,
+         instance_number: instance_number,
+         system_replication: system_replication,
+         system_replication_status: system_replication_status,
+         system_replication_site: system_replication_site,
+         system_replication_mode: system_replication_mode,
+         system_replication_operation_mode: system_replication_operation_mode,
+         system_replication_source_site: system_replication_source_site,
+         system_replication_tier: system_replication_tier
+       }) do
     %DatabaseInstanceSystemReplicationChanged{
       database_id: database_id,
       host_id: host_id,
       instance_number: instance_number,
-      system_replication: new_system_replication,
-      system_replication_status: new_system_replication_status
+      system_replication: system_replication,
+      system_replication_status: system_replication_status,
+      system_replication_site: system_replication_site,
+      system_replication_mode: system_replication_mode,
+      system_replication_operation_mode: system_replication_operation_mode,
+      system_replication_source_site: system_replication_source_site,
+      system_replication_tier: system_replication_tier
     }
   end
-
-  defp maybe_emit_database_instance_system_replication_changed_event(_, _), do: nil
 
   defp maybe_emit_database_instance_health_changed_event(
          %Instance{

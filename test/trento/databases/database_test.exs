@@ -91,6 +91,11 @@ defmodule Trento.Databases.DatabaseTest do
             host_id: host_id,
             system_replication: nil,
             system_replication_status: nil,
+            system_replication_site: nil,
+            system_replication_mode: nil,
+            system_replication_operation_mode: nil,
+            system_replication_source_site: nil,
+            system_replication_tier: nil,
             health: :passing
           },
           %DatabaseTenantsUpdated{
@@ -109,6 +114,11 @@ defmodule Trento.Databases.DatabaseTest do
               sid: sid,
               system_replication: nil,
               system_replication_status: nil,
+              system_replication_site: nil,
+              system_replication_mode: nil,
+              system_replication_operation_mode: nil,
+              system_replication_source_site: nil,
+              system_replication_tier: nil,
               instance_number: instance_number,
               features: features,
               host_id: host_id,
@@ -147,6 +157,11 @@ defmodule Trento.Databases.DatabaseTest do
           host_id: host_id,
           system_replication: "Primary",
           system_replication_status: "ACTIVE",
+          system_replication_site: "Site1",
+          system_replication_mode: "primary",
+          system_replication_operation_mode: "primary",
+          system_replication_source_site: nil,
+          system_replication_tier: 1,
           health: :passing
         },
         [
@@ -167,6 +182,11 @@ defmodule Trento.Databases.DatabaseTest do
             host_id: host_id,
             system_replication: "Primary",
             system_replication_status: "ACTIVE",
+            system_replication_site: "Site1",
+            system_replication_mode: "primary",
+            system_replication_operation_mode: "primary",
+            system_replication_source_site: nil,
+            system_replication_tier: 1,
             health: :passing
           },
           %DatabaseTenantsUpdated{
@@ -185,6 +205,11 @@ defmodule Trento.Databases.DatabaseTest do
               sid: sid,
               system_replication: "Primary",
               system_replication_status: "ACTIVE",
+              system_replication_site: "Site1",
+              system_replication_mode: "primary",
+              system_replication_operation_mode: "primary",
+              system_replication_source_site: nil,
+              system_replication_tier: 1,
               instance_number: instance_number,
               features: features,
               host_id: host_id,
@@ -296,50 +321,100 @@ defmodule Trento.Databases.DatabaseTest do
     end
 
     test "should change the system replication of a database instance" do
-      database_registered_event = build(:database_registered_event)
-
-      database_instance_registered_event =
-        build(
-          :database_instance_registered_event,
-          database_id: database_registered_event.database_id,
-          system_replication: "Secondary",
-          system_replication_status: ""
-        )
-
-      %{tenants: tenants} =
-        tenants_updated_event =
-        build(:database_tenants_updated_event,
-          database_id: database_registered_event.database_id
-        )
-
-      initial_events = [
-        database_registered_event,
-        database_instance_registered_event,
-        tenants_updated_event
+      changed_fields = [
+        :system_replication,
+        :system_replication_status,
+        :system_replication_site,
+        :system_replication_mode,
+        :system_replication_operation_mode,
+        :system_replication_source_site,
+        :system_replication_tier
       ]
 
-      assert_events(
-        initial_events,
-        build(
-          :register_database_instance_command,
-          database_id: database_registered_event.database_id,
-          sid: database_instance_registered_event.sid,
-          tenants: tenants,
-          instance_number: database_instance_registered_event.instance_number,
-          features: database_instance_registered_event.features,
-          host_id: database_instance_registered_event.host_id,
-          system_replication: "Primary",
-          system_replication_status: "ACTIVE",
-          health: :passing
-        ),
-        %DatabaseInstanceSystemReplicationChanged{
-          database_id: database_registered_event.database_id,
-          host_id: database_instance_registered_event.host_id,
-          instance_number: database_instance_registered_event.instance_number,
-          system_replication: "Primary",
-          system_replication_status: "ACTIVE"
-        }
-      )
+      for changed_field <- changed_fields do
+        database_registered_event = build(:database_registered_event)
+
+        database_instance_registered_event =
+          build(
+            :database_instance_registered_event,
+            database_id: database_registered_event.database_id
+          )
+
+        %{tenants: tenants} =
+          tenants_updated_event =
+          build(:database_tenants_updated_event,
+            database_id: database_registered_event.database_id
+          )
+
+        initial_events = [
+          database_registered_event,
+          database_instance_registered_event,
+          tenants_updated_event
+        ]
+
+        command_args =
+          Map.put(
+            %{
+              database_id: database_registered_event.database_id,
+              sid: database_instance_registered_event.sid,
+              tenants: tenants,
+              instance_number: database_instance_registered_event.instance_number,
+              features: database_instance_registered_event.features,
+              host_id: database_instance_registered_event.host_id,
+              health: :passing
+            },
+            changed_field,
+            Faker.StarWars.planet()
+          )
+
+        %{
+          system_replication: system_replication,
+          system_replication_status: system_replication_status,
+          system_replication_site: system_replication_site,
+          system_replication_mode: system_replication_mode,
+          system_replication_operation_mode: system_replication_operation_mode,
+          system_replication_source_site: system_replication_source_site,
+          system_replication_tier: system_replication_tier
+        } =
+          command =
+          build(
+            :register_database_instance_command,
+            command_args
+          )
+
+        assert_events_and_state(
+          initial_events,
+          command,
+          %DatabaseInstanceSystemReplicationChanged{
+            database_id: database_registered_event.database_id,
+            host_id: database_instance_registered_event.host_id,
+            instance_number: database_instance_registered_event.instance_number,
+            system_replication: system_replication,
+            system_replication_status: system_replication_status,
+            system_replication_site: system_replication_site,
+            system_replication_mode: system_replication_mode,
+            system_replication_operation_mode: system_replication_operation_mode,
+            system_replication_source_site: system_replication_source_site,
+            system_replication_tier: system_replication_tier
+          },
+          fn state ->
+            assert %Database{
+                     instances: [
+                       %Instance{
+                         system_replication: ^system_replication,
+                         system_replication_status: ^system_replication_status,
+                         system_replication_site: ^system_replication_site,
+                         system_replication_mode: ^system_replication_mode,
+                         system_replication_operation_mode: ^system_replication_operation_mode,
+                         system_replication_source_site: ^system_replication_source_site,
+                         system_replication_tier: ^system_replication_tier
+                       }
+                       | _
+                     ]
+                   } = state
+          end
+        )
+      end
     end
   end
 
