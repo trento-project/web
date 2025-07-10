@@ -34,6 +34,7 @@ defmodule Trento.ClusterTest do
     ClusterRollUpRequested,
     ClusterTombstoned,
     HostAddedToCluster,
+    HostClusterStatusChanged,
     HostRemovedFromCluster
   }
 
@@ -171,6 +172,7 @@ defmodule Trento.ClusterTest do
           type: :unknown,
           provider: :unknown,
           hosts: [host_id],
+          offline_hosts: [host_id],
           discovered_health: :unknown,
           health: :unknown
         }
@@ -208,6 +210,133 @@ defmodule Trento.ClusterTest do
         fn cluster ->
           assert %Cluster{
                    hosts: [^host_id | _]
+                 } = cluster
+        end
+      )
+    end
+
+    test "should set a host as offline when it goes offline" do
+      cluster_id = Faker.UUID.v4()
+      host_id = Faker.UUID.v4()
+      name = Faker.StarWars.character()
+
+      assert_events_and_state(
+        [
+          build(:cluster_registered_event, cluster_id: cluster_id),
+          build(:host_added_to_cluster_event,
+            cluster_id: cluster_id,
+            host_id: host_id,
+            cluster_status: :online
+          )
+        ],
+        RegisterOfflineClusterHost.new!(%{
+          cluster_id: cluster_id,
+          host_id: host_id,
+          name: name
+        }),
+        [
+          %HostClusterStatusChanged{
+            cluster_id: cluster_id,
+            host_id: host_id,
+            cluster_status: :offline
+          }
+        ],
+        fn cluster ->
+          assert %Cluster{
+                   hosts: [^host_id | _],
+                   offline_hosts: [^host_id | _]
+                 } = cluster
+        end
+      )
+    end
+
+    test "should set a host as online when it goes online" do
+      cluster_id = Faker.UUID.v4()
+      host_id = Faker.UUID.v4()
+      name = Faker.StarWars.character()
+
+      assert_events_and_state(
+        [
+          build(:cluster_registered_event, cluster_id: cluster_id),
+          build(:host_added_to_cluster_event,
+            cluster_id: cluster_id,
+            host_id: host_id,
+            cluster_status: :offline
+          )
+        ],
+        RegisterClusterHost.new!(%{
+          cluster_id: cluster_id,
+          host_id: host_id,
+          name: name,
+          sap_instances: [],
+          type: :hana_scale_up,
+          discovered_health: :passing,
+          resources_number: 8,
+          hosts_number: 2,
+          designated_controller: false,
+          provider: :azure
+        }),
+        [
+          %HostClusterStatusChanged{
+            cluster_id: cluster_id,
+            host_id: host_id,
+            cluster_status: :online
+          }
+        ],
+        fn cluster ->
+          assert %Cluster{
+                   hosts: [^host_id | _],
+                   offline_hosts: []
+                 } = cluster
+        end
+      )
+    end
+
+    test "should not emit event when status does not change" do
+      cluster_id = Faker.UUID.v4()
+      host_id = Faker.UUID.v4()
+      name = Faker.StarWars.character()
+      another_host_id = Faker.UUID.v4()
+      another_name = Faker.StarWars.character()
+
+      assert_events_and_state(
+        [
+          build(:cluster_registered_event, cluster_id: cluster_id),
+          build(:host_added_to_cluster_event,
+            cluster_id: cluster_id,
+            host_id: host_id,
+            cluster_status: :offline
+          ),
+          build(:host_added_to_cluster_event,
+            cluster_id: cluster_id,
+            host_id: another_host_id,
+            cluster_status: :online
+          )
+        ],
+        [
+          RegisterOfflineClusterHost.new!(%{
+            cluster_id: cluster_id,
+            host_id: host_id,
+            name: name
+          }),
+          RegisterClusterHost.new!(%{
+            cluster_id: cluster_id,
+            host_id: another_host_id,
+            name: another_name,
+            sap_instances: [],
+            type: :hana_scale_up,
+            discovered_health: :passing,
+            resources_number: 8,
+            hosts_number: 2,
+            designated_controller: false,
+            provider: :azure
+          })
+        ],
+        [],
+        fn cluster ->
+          assert %Cluster{
+                   hosts: [^another_host_id, ^host_id | _],
+                   offline_hosts: [^host_id | _]
                  } = cluster
         end
       )
@@ -270,7 +399,8 @@ defmodule Trento.ClusterTest do
         build(:cluster_registered_event, cluster_id: cluster_id),
         %HostAddedToCluster{
           cluster_id: cluster_id,
-          host_id: host_id
+          host_id: host_id,
+          cluster_status: :online
         }
       ]
 
@@ -329,7 +459,11 @@ defmodule Trento.ClusterTest do
           details: nil,
           provider: :azure
         ),
-        build(:host_added_to_cluster_event, cluster_id: cluster_id, host_id: host_id)
+        build(:host_added_to_cluster_event,
+          cluster_id: cluster_id,
+          host_id: host_id,
+          cluster_status: :online
+        )
       ]
 
       assert_events_and_state(
@@ -683,7 +817,8 @@ defmodule Trento.ClusterTest do
           cluster_registered_event,
           %HostAddedToCluster{
             cluster_id: cluster_registered_event.cluster_id,
-            host_id: host_added_to_cluster_event.host_id
+            host_id: host_added_to_cluster_event.host_id,
+            cluster_host_status: host_added_to_cluster_event.cluster_host_status
           }
         ],
         RegisterClusterHost.new!(%{

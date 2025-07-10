@@ -99,6 +99,7 @@ defmodule Trento.Clusters.Cluster do
     ClusterRollUpRequested,
     ClusterTombstoned,
     HostAddedToCluster,
+    HostClusterStatusChanged,
     HostRemovedFromCluster
   }
 
@@ -123,6 +124,7 @@ defmodule Trento.Clusters.Cluster do
     field :checks_health, Ecto.Enum, values: Health.values(), default: Health.unknown()
     field :health, Ecto.Enum, values: Health.values(), default: Health.unknown()
     field :hosts, {:array, :string}, default: []
+    field :offline_hosts, {:array, :string}, default: []
     field :selected_checks, {:array, :string}, default: []
     field :rolling_up, :boolean, default: false
     field :deregistered_at, :utc_datetime_usec, default: nil
@@ -468,12 +470,53 @@ defmodule Trento.Clusters.Cluster do
   def apply(
         %Cluster{hosts: hosts} = cluster,
         %HostAddedToCluster{
-          host_id: host_id
+          host_id: host_id,
+          cluster_status: :online
         }
       ) do
     %Cluster{
       cluster
       | hosts: [host_id | hosts]
+    }
+  end
+
+  def apply(
+        %Cluster{hosts: hosts, offline_hosts: offline_host} = cluster,
+        %HostAddedToCluster{
+          host_id: host_id,
+          cluster_status: :offline
+        }
+      ) do
+    %Cluster{
+      cluster
+      | hosts: [host_id | hosts],
+        offline_hosts: [host_id | offline_host]
+    }
+  end
+
+  def apply(
+        %Cluster{offline_hosts: offline_host} = cluster,
+        %HostClusterStatusChanged{
+          host_id: host_id,
+          cluster_status: :online
+        }
+      ) do
+    %Cluster{
+      cluster
+      | offline_hosts: List.delete(offline_host, host_id)
+    }
+  end
+
+  def apply(
+        %Cluster{offline_hosts: offline_host} = cluster,
+        %HostClusterStatusChanged{
+          host_id: host_id,
+          cluster_status: :offline
+        }
+      ) do
+    %Cluster{
+      cluster
+      | offline_hosts: [host_id | offline_host]
     }
   end
 
@@ -528,16 +571,30 @@ defmodule Trento.Clusters.Cluster do
          host_id,
          cluster_host_status
        ) do
-    if host_id in hosts do
-      []
-    else
-      [
+    cond do
+      host_id not in hosts ->
         %HostAddedToCluster{
           cluster_id: cluster_id,
           host_id: host_id,
           cluster_host_status: cluster_host_status
         }
-      ]
+
+      host_id in offline_hosts and cluster_status == :online ->
+        %HostClusterStatusChanged{
+          cluster_id: cluster_id,
+          host_id: host_id,
+          cluster_status: :online
+        }
+
+      host_id not in offline_hosts and cluster_status == :offline ->
+        %HostClusterStatusChanged{
+          cluster_id: cluster_id,
+          host_id: host_id,
+          cluster_status: :offline
+        }
+
+      true ->
+        []
     end
   end
 
