@@ -101,6 +101,7 @@ defmodule Trento.Clusters.Cluster do
     ClusterRollUpRequested,
     ClusterTombstoned,
     HostAddedToCluster,
+    HostClusterStatusChanged,
     HostRemovedFromCluster
   }
 
