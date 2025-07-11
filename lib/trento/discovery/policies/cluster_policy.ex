@@ -5,6 +5,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
 
   require Trento.Enums.Provider, as: Provider
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
+  require Trento.Clusters.Enums.ClusterHostStatus, as: ClusterHostStatus
   require Trento.Clusters.Enums.HanaArchitectureType, as: HanaArchitectureType
   require Trento.Enums.Health, as: Health
   require Trento.Clusters.Enums.AscsErsClusterRole, as: AscsErsClusterRole
@@ -13,6 +14,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
 
   alias Trento.Clusters.Commands.{
     DeregisterClusterHost,
+    RegisterOfflineClusterHost,
     RegisterOnlineClusterHost
   }
 
@@ -98,7 +100,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
            name: name,
            dc: designated_controller,
            provider: provider,
-           cluster_type: cluster_type
+           cluster_type: cluster_type,
+           cluster_host_status: ClusterHostStatus.online()
          } = payload
        ) do
     sap_instances = get_sap_instances(payload)
@@ -119,6 +122,21 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
       discovered_health: parse_cluster_health(cluster_details, cluster_type),
       cib_last_written: parse_cib_last_written(payload),
       provider: provider
+    })
+  end
+
+  defp build_register_cluster_host_command(
+         agent_id,
+         %ClusterDiscoveryPayload{
+           id: id,
+           name: name,
+           cluster_host_status: ClusterHostStatus.offline()
+         }
+       ) do
+    RegisterOfflineClusterHost.new(%{
+      cluster_id: generate_cluster_id(id),
+      host_id: agent_id,
+      name: name
     })
   end
 
