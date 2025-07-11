@@ -37,8 +37,8 @@ Trento.Clusters.Cluster.html
 Trento.Clusters.ClusterEnrichmentData.html
 Trento.Clusters.Commands.CompleteChecksExecution.html
 Trento.Clusters.Commands.DeregisterClusterHost.html
-Trento.Clusters.Commands.RegisterClusterHost.html
 Trento.Clusters.Commands.RegisterOfflineClusterHost.html
+Trento.Clusters.Commands.RegisterOnlineClusterHost.html
 Trento.Clusters.Commands.RollUpCluster.html
 Trento.Clusters.Commands.SelectChecks.html
 Trento.Clusters.Enums.AscsErsClusterRole.html
@@ -532,8 +532,8 @@ dist/lato-latin-ext-300-normal-VPGGJKJL.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-1A9F422A.js
-dist/sidebar_items-D2F92D63.js
+dist/search_data-727D42DD.js
+dist/sidebar_items-9D898A45.js
 environment_variables.html
 hack_on_the_trento.html
 index.html
