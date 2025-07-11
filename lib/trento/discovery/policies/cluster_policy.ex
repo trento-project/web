@@ -13,7 +13,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
 
   alias Trento.Clusters.Commands.{
     DeregisterClusterHost,
-    RegisterClusterHost
+    RegisterOnlineClusterHost
   }
 
   alias Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload
@@ -106,7 +106,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
     sap_instance_sids = SapInstance.get_sap_instance_sids(sap_instances)
     cluster_details = parse_cluster_details(payload, hana_sid, sap_instance_sids)
 
-    RegisterClusterHost.new(%{
+    RegisterOnlineClusterHost.new(%{
       cluster_id: generate_cluster_id(id),
       host_id: agent_id,
       name: name,

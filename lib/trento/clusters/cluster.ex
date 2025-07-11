@@ -74,8 +74,8 @@ defmodule Trento.Clusters.Cluster do
   alias Trento.Clusters.Commands.{
     CompleteChecksExecution,
     DeregisterClusterHost,
-    RegisterClusterHost,
     RegisterOfflineClusterHost,
+    RegisterOnlineClusterHost,
     RollUpCluster,
     SelectChecks
   }
@@ -149,7 +149,7 @@ defmodule Trento.Clusters.Cluster do
   # The cluster details are populated with the information coming from the DC node.
   def execute(
         %Cluster{cluster_id: nil},
-        %RegisterClusterHost{
+        %RegisterOnlineClusterHost{
           cluster_id: cluster_id,
           host_id: host_id,
           name: name,
@@ -185,7 +185,7 @@ defmodule Trento.Clusters.Cluster do
 
   # When a non-DC node is discovered, a cluster is registered and the host is added to the cluster.
   # The cluster details are left as unknown, and filled once a message from the DC node is received.
-  def execute(%Cluster{cluster_id: nil}, %RegisterClusterHost{
+  def execute(%Cluster{cluster_id: nil}, %RegisterOnlineClusterHost{
         cluster_id: cluster_id,
         name: name,
         host_id: host_id,
@@ -241,13 +241,13 @@ defmodule Trento.Clusters.Cluster do
   def execute(%Cluster{cluster_id: nil}, _),
     do: {:error, :cluster_not_registered}
 
-  # Restoration, when a RegisterClusterHost command is received for a deregistered Cluster
+  # Restoration, when a RegisterOnlineClusterHost command is received for a deregistered Cluster
   # the cluster is restored, the host is added to cluster and if the host is a DC
   # cluster details are updated
   # Offline hosts are added to the cluster as well, but the cluster details are not updated
   def execute(
         %Cluster{deregistered_at: deregistered_at, cluster_id: cluster_id},
-        %RegisterClusterHost{
+        %RegisterOnlineClusterHost{
           host_id: host_id,
           designated_controller: false
         }
@@ -265,7 +265,7 @@ defmodule Trento.Clusters.Cluster do
 
   def execute(
         %Cluster{deregistered_at: deregistered_at, cluster_id: cluster_id} = cluster,
-        %RegisterClusterHost{
+        %RegisterOnlineClusterHost{
           host_id: host_id,
           designated_controller: true
         } = command
@@ -319,7 +319,7 @@ defmodule Trento.Clusters.Cluster do
   # If the cluster is already registered, and the host was never discovered before, it is added to the cluster.
   def execute(
         %Cluster{} = cluster,
-        %RegisterClusterHost{
+        %RegisterOnlineClusterHost{
           host_id: host_id,
           designated_controller: false
         }
@@ -341,7 +341,7 @@ defmodule Trento.Clusters.Cluster do
   # The cluster discovered health is updated based on the new details.
   def execute(
         %Cluster{} = cluster,
-        %RegisterClusterHost{
+        %RegisterOnlineClusterHost{
           designated_controller: true
         } = command
       ) do
@@ -605,7 +605,7 @@ defmodule Trento.Clusters.Cluster do
 
   defp maybe_update_cluster(
          multi,
-         %RegisterClusterHost{host_id: host_id} = command
+         %RegisterOnlineClusterHost{host_id: host_id} = command
        ) do
     multi
     |> Multi.execute(fn cluster ->
@@ -628,7 +628,7 @@ defmodule Trento.Clusters.Cluster do
            hosts_number: hosts_number,
            details: details
          },
-         %RegisterClusterHost{
+         %RegisterOnlineClusterHost{
            name: name,
            type: type,
            sap_instances: sap_instances,
@@ -643,7 +643,7 @@ defmodule Trento.Clusters.Cluster do
 
   defp maybe_emit_cluster_details_updated_event(
          %Cluster{},
-         %RegisterClusterHost{
+         %RegisterOnlineClusterHost{
            cluster_id: cluster_id,
            name: name,
            type: type,
@@ -668,13 +668,13 @@ defmodule Trento.Clusters.Cluster do
 
   defp maybe_emit_cluster_discovered_health_changed_event(
          %Cluster{discovered_health: discovered_health},
-         %RegisterClusterHost{discovered_health: discovered_health}
+         %RegisterOnlineClusterHost{discovered_health: discovered_health}
        ),
        do: nil
 
   defp maybe_emit_cluster_discovered_health_changed_event(
          %Cluster{cluster_id: cluster_id},
-         %RegisterClusterHost{discovered_health: discovered_health}
+         %RegisterOnlineClusterHost{discovered_health: discovered_health}
        ) do
     %ClusterDiscoveredHealthChanged{
       cluster_id: cluster_id,

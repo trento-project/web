@@ -11,7 +11,7 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterClusterHostTe
 
   alias Trento.Infrastructure.Commanded.Middleware.Enrichable
 
-  alias Trento.Clusters.Commands.RegisterClusterHost
+  alias Trento.Clusters.Commands.RegisterOnlineClusterHost
 
   alias Trento.Clusters.ValueObjects.{
     HanaClusterDetails,
@@ -32,13 +32,13 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterClusterHostTe
     %{socket: socket}
   end
 
-  test "should create a new enriched cluster entry on register_cluster_host command" do
+  test "should create a new enriched cluster entry on register_online_cluster_host command" do
     %{id: cluster_id} = insert(:cluster)
     cib_last_written = Date.to_string(Faker.Date.forward(0))
 
     command =
       build(
-        :register_cluster_host,
+        :register_online_cluster_host,
         cluster_id: cluster_id,
         cib_last_written: cib_last_written
       )
@@ -78,7 +78,7 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterClusterHostTe
 
       initial_command =
         build(
-          :register_cluster_host,
+          :register_online_cluster_host,
           details: initial_details,
           type: :hana_scale_up,
           sap_instances:
@@ -90,7 +90,7 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterClusterHostTe
 
       assert {:ok, enriched_command} = Enrichable.enrich(initial_command, %{})
 
-      expected_enriched_command = %RegisterClusterHost{
+      expected_enriched_command = %RegisterOnlineClusterHost{
         initial_command
         | details: %HanaClusterDetails{
             initial_details
@@ -125,7 +125,7 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterClusterHostTe
 
       initial_command =
         build(
-          :register_cluster_host,
+          :register_online_cluster_host,
           details: initial_details,
           type: :hana_scale_out
         )
