@@ -546,7 +546,7 @@ defmodule Trento.ClusterTest do
         ],
         [
           build(
-            :register_cluster_host,
+            :register_online_cluster_host,
             host_id: host_id,
             cluster_id: cluster_id,
             name: name,
@@ -1046,7 +1046,7 @@ defmodule Trento.ClusterTest do
 
       restoration_command =
         build(
-          :register_cluster_host,
+          :register_online_cluster_host,
           cluster_id: cluster_id,
           host_id: new_host_id,
           designated_controller: false
@@ -1141,7 +1141,7 @@ defmodule Trento.ClusterTest do
 
       restoration_command =
         build(
-          :register_cluster_host,
+          :register_online_cluster_host,
           cluster_id: cluster_id,
           host_id: new_host_id,
           discovered_health: :critical,

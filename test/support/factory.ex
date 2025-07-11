@@ -239,7 +239,7 @@ defmodule Trento.Factory do
     }
   end
 
-  def register_cluster_host_factory do
+  def register_online_cluster_host_factory do
     %RegisterOnlineClusterHost{
       cluster_id: Faker.UUID.v4(),
       host_id: Faker.UUID.v4(),
