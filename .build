@@ -38,10 +38,12 @@ Trento.Clusters.ClusterEnrichmentData.html
 Trento.Clusters.Commands.CompleteChecksExecution.html
 Trento.Clusters.Commands.DeregisterClusterHost.html
 Trento.Clusters.Commands.RegisterClusterHost.html
+Trento.Clusters.Commands.RegisterOfflineClusterHost.html
 Trento.Clusters.Commands.RollUpCluster.html
 Trento.Clusters.Commands.SelectChecks.html
 Trento.Clusters.Enums.AscsErsClusterRole.html
 Trento.Clusters.Enums.ClusterEnsaVersion.html
+Trento.Clusters.Enums.ClusterHostStatus.html
 Trento.Clusters.Enums.ClusterType.html
 Trento.Clusters.Enums.FilesystemType.html
 Trento.Clusters.Enums.HanaArchitectureType.html
@@ -53,6 +55,7 @@ Trento.Clusters.Events.ClusterDeregistered.html
 Trento.Clusters.Events.ClusterDetailsUpdated.html
 Trento.Clusters.Events.ClusterDiscoveredHealthChanged.html
 Trento.Clusters.Events.ClusterHealthChanged.html
+Trento.Clusters.Events.ClusterHostStatusChanged.html
 Trento.Clusters.Events.ClusterRegistered.html
 Trento.Clusters.Events.ClusterRestored.html
 Trento.Clusters.Events.ClusterRollUpRequested.html
@@ -529,8 +532,8 @@ dist/lato-latin-ext-300-normal-VPGGJKJL.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-A2BB77D4.js
-dist/sidebar_items-A34274F4.js
+dist/search_data-1A9F422A.js
+dist/sidebar_items-D2F92D63.js
 environment_variables.html
 hack_on_the_trento.html
 index.html
