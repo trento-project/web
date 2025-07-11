@@ -14,7 +14,11 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
 
   alias Trento.Discovery.Policies.ClusterPolicy
 
-  alias Trento.Clusters.Commands.{DeregisterClusterHost, RegisterOnlineClusterHost}
+  alias Trento.Clusters.Commands.{
+    DeregisterClusterHost,
+    RegisterOfflineClusterHost,
+    RegisterOnlineClusterHost
+  }
 
   alias Trento.Clusters.ValueObjects.{
     AscsErsClusterDetails,
@@ -6798,6 +6802,40 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                "ha_cluster_discovery_hana_scale_up"
                |> load_discovery_event_fixture()
                |> ClusterPolicy.handle(current_cluster_id)
+    end
+  end
+
+  describe "offline cluster host registration" do
+    test "should return a RegisterOfflineClusterHost command when the cluster is offline" do
+      assert {
+               :ok,
+               [
+                 %RegisterOfflineClusterHost{
+                   cluster_id: "34a94290-2236-5e4d-8def-05beb32d14d4",
+                   host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
+                   name: "ha_cluster"
+                 }
+               ]
+             } ==
+               "ha_cluster_discovery_host_offline"
+               |> load_discovery_event_fixture()
+               |> ClusterPolicy.handle(nil)
+    end
+
+    test "should return a RegisterOfflineClusterHost command when the cluster is offline with no name" do
+      assert {
+               :ok,
+               [
+                 %RegisterOfflineClusterHost{
+                   cluster_id: "34a94290-2236-5e4d-8def-05beb32d14d4",
+                   host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
+                   name: nil
+                 }
+               ]
+             } ==
+               "ha_cluster_discovery_host_offline_unnamed"
+               |> load_discovery_event_fixture()
+               |> ClusterPolicy.handle(nil)
     end
   end
 end

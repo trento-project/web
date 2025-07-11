@@ -2,14 +2,16 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
   @moduledoc """
   Cluster discovery integration event payload
   """
-
-  @required_fields [:dc, :provider, :id, :cluster_type]
+  @required_fields []
+  @required_fields_offline [:id]
+  @required_fields_online [:dc, :provider, :id, :cluster_type]
   @required_fields_hana [:hana_architecture_type]
 
   use Trento.Support.Type
 
   require Trento.Enums.Provider, as: Provider
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
+  require Trento.Clusters.Enums.ClusterHostStatus, as: ClusterHostStatus
   require Trento.Clusters.Enums.HanaArchitectureType, as: HanaArchitectureType
 
   alias Trento.Discovery.Payloads.Cluster.{
@@ -28,6 +30,7 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
     field :id, :string
     field :name, :string
     field :cluster_type, Ecto.Enum, values: ClusterType.values()
+    field :cluster_host_status, Ecto.Enum, values: ClusterHostStatus.values()
     field :hana_architecture_type, Ecto.Enum, values: HanaArchitectureType.values()
 
     embeds_one :cib, CibDiscoveryPayload
@@ -36,6 +39,18 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
   end
 
   def changeset(cluster, attrs) do
+    if offline?(attrs) do
+      changeset_offline(cluster, attrs)
+    else
+      changeset_online(cluster, attrs)
+    end
+  end
+
+  defp offline?(%{"id" => _} = payload) when map_size(payload) == 1, do: true
+  defp offline?(%{"id" => _, "name" => _} = payload) when map_size(payload) == 2, do: true
+  defp offline?(_), do: false
+
+  defp changeset_online(cluster, attrs) do
     glob_topology = parse_hana_glob_topology(attrs)
 
     hana_type = parse_hana_cluster_type(attrs)
@@ -54,8 +69,16 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
     |> cast_embed(:cib, required: true)
     |> cast_embed(:sbd)
     |> cast_embed(:crmmon, required: true)
-    |> validate_required_fields(@required_fields)
+    |> validate_required_fields(@required_fields_online)
     |> maybe_validate_required_fields(enriched_attributes)
+    |> put_change(:cluster_host_status, ClusterHostStatus.online())
+  end
+
+  defp changeset_offline(cluster, attrs) do
+    cluster
+    |> cast(attrs, [:id, :name])
+    |> validate_required_fields(@required_fields_offline)
+    |> put_change(:cluster_host_status, ClusterHostStatus.offline())
   end
 
   defp parse_hana_glob_topology(%{
