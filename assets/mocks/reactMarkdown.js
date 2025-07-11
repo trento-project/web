@@ -1,5 +1,5 @@
-function ReactMarkdownMock({ children }) {
+function MarkdownMock({ children }) {
   return [children];
 }
 
-export default ReactMarkdownMock;
+export default MarkdownMock;

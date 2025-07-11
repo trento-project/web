@@ -1,9 +1,7 @@
 import React from 'react';
-
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
 import classNames from 'classnames';
 
+import Markdown from '@common/Markdown';
 import Accordion from '@common/Accordion';
 import TargetIcon from '@common/TargetIcon';
 
@@ -41,12 +39,7 @@ function CheckItem({ checkID, targetType, description, remediation }) {
               </div>
               <div className="mt-2 sm:flex sm:justify-between">
                 <div className="sm:flex">
-                  <ReactMarkdown
-                    className="markdown text-sm"
-                    remarkPlugins={[remarkGfm]}
-                  >
-                    {description}
-                  </ReactMarkdown>
+                  <Markdown className="text-sm">{description}</Markdown>
                 </div>
               </div>
             </div>
@@ -55,9 +48,7 @@ function CheckItem({ checkID, targetType, description, remediation }) {
       >
         <div className="check-panel px-6 py-4 border-none">
           <div className="px-4 py-4 sm:px-4 bg-slate-100 rounded">
-            <ReactMarkdown className="markdown" remarkPlugins={[remarkGfm]}>
-              {remediation}
-            </ReactMarkdown>
+            <Markdown>{remediation}</Markdown>
           </div>
         </div>
       </Accordion>

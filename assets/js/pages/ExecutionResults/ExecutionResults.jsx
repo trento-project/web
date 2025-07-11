@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
 import { getHostID } from '@state/selectors/host';
+import Markdown from '@common/Markdown';
 import Accordion from '@common/Accordion';
 import HealthIcon from '@common/HealthIcon';
 import Modal from '@common/Modal';
@@ -59,11 +58,7 @@ const resultsTableConfig = {
       title: 'Description',
       key: 'description',
       fontSize: 'text-base',
-      render: (description) => (
-        <ReactMarkdown className="markdown" remarkPlugins={[remarkGfm]}>
-          {description}
-        </ReactMarkdown>
-      ),
+      render: (description) => <Markdown>{description}</Markdown>,
     },
     {
       title: 'Result',
@@ -217,15 +212,11 @@ function ExecutionResults({
       <Modal
         open={modalOpen}
         title={
-          <ReactMarkdown className="markdown" remarkPlugins={[remarkGfm]}>
-            {getCheckDescription(catalog, selectedCheck)}
-          </ReactMarkdown>
+          <Markdown>{getCheckDescription(catalog, selectedCheck)}</Markdown>
         }
         onClose={() => setModalOpen(false)}
       >
-        <ReactMarkdown className="markdown" remarkPlugins={[remarkGfm]}>
-          {getCheckRemediation(catalog, selectedCheck)}
-        </ReactMarkdown>
+        <Markdown>{getCheckRemediation(catalog, selectedCheck)}</Markdown>
       </Modal>
     </ExecutionContainer>
   );

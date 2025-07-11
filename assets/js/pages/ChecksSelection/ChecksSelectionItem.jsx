@@ -6,8 +6,7 @@ import { EOS_RESTART_ALT, EOS_SETTINGS_OUTLINED } from 'eos-icons-react';
 import { Switch } from '@headlessui/react';
 
 import classNames from 'classnames';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import Markdown from '@common/Markdown';
 import ModifiedCheckPill from '@common/ModifiedCheckPill';
 
 import { isPermitted } from '@lib/model/users';
@@ -47,9 +46,7 @@ function ChecksSelectionItem({
           </div>
           <div className="mt-2 sm:flex sm:justify-between">
             <div className="sm:flex">
-              <ReactMarkdown className="markdown" remarkPlugins={[remarkGfm]}>
-                {description}
-              </ReactMarkdown>
+              <Markdown>{description}</Markdown>
             </div>
             <Switch.Group as="div" className="flex items-center">
               {canReset(userAbilities, customizable, customized) && (
