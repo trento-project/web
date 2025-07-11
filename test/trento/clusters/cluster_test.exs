@@ -10,8 +10,8 @@ defmodule Trento.ClusterTest do
   alias Trento.Clusters.Commands.{
     CompleteChecksExecution,
     DeregisterClusterHost,
-    RegisterClusterHost,
     RegisterOfflineClusterHost,
+    RegisterOnlineClusterHost,
     RollUpCluster,
     SelectChecks
   }
@@ -54,7 +54,7 @@ defmodule Trento.ClusterTest do
 
       assert_events_and_state(
         [],
-        RegisterClusterHost.new!(%{
+        RegisterOnlineClusterHost.new!(%{
           cluster_id: cluster_id,
           host_id: host_id,
           name: name,
@@ -101,7 +101,7 @@ defmodule Trento.ClusterTest do
 
       assert_events_and_state(
         [],
-        RegisterClusterHost.new!(%{
+        RegisterOnlineClusterHost.new!(%{
           cluster_id: cluster_id,
           host_id: host_id,
           name: name,
@@ -193,7 +193,7 @@ defmodule Trento.ClusterTest do
           build(:cluster_registered_event, cluster_id: cluster_id),
           build(:host_added_to_cluster_event, cluster_id: cluster_id)
         ],
-        RegisterClusterHost.new!(%{
+        RegisterOnlineClusterHost.new!(%{
           cluster_id: cluster_id,
           host_id: host_id,
           name: name,
@@ -267,7 +267,7 @@ defmodule Trento.ClusterTest do
             cluster_host_status: ClusterHostStatus.offline()
           )
         ],
-        RegisterClusterHost.new!(%{
+        RegisterOnlineClusterHost.new!(%{
           cluster_id: cluster_id,
           host_id: host_id,
           name: name,
@@ -322,7 +322,7 @@ defmodule Trento.ClusterTest do
             host_id: host_id,
             name: name
           }),
-          RegisterClusterHost.new!(%{
+          RegisterOnlineClusterHost.new!(%{
             cluster_id: cluster_id,
             host_id: another_host_id,
             name: another_name,
@@ -363,7 +363,7 @@ defmodule Trento.ClusterTest do
           ),
           build(:host_added_to_cluster_event, cluster_id: cluster_id)
         ],
-        RegisterClusterHost.new!(%{
+        RegisterOnlineClusterHost.new!(%{
           cluster_id: cluster_id,
           host_id: host_id,
           name: name,
@@ -411,7 +411,7 @@ defmodule Trento.ClusterTest do
 
       assert_events_and_state(
         initial_events,
-        RegisterClusterHost.new!(%{
+        RegisterOnlineClusterHost.new!(%{
           cluster_id: cluster_id,
           host_id: host_id,
           name: new_name,
@@ -471,7 +471,7 @@ defmodule Trento.ClusterTest do
 
       assert_events_and_state(
         initial_events,
-        RegisterClusterHost.new!(%{
+        RegisterOnlineClusterHost.new!(%{
           cluster_id: cluster_id,
           host_id: host_id,
           name: name,
@@ -775,7 +775,7 @@ defmodule Trento.ClusterTest do
             checks: []
           }
         ],
-        RegisterClusterHost.new!(%{
+        RegisterOnlineClusterHost.new!(%{
           cluster_id: cluster_registered_event.cluster_id,
           host_id: host_added_to_cluster_event.host_id,
           name: cluster_registered_event.name,
@@ -824,7 +824,7 @@ defmodule Trento.ClusterTest do
             cluster_host_status: host_added_to_cluster_event.cluster_host_status
           }
         ],
-        RegisterClusterHost.new!(%{
+        RegisterOnlineClusterHost.new!(%{
           cluster_id: cluster_registered_event.cluster_id,
           host_id: host_added_to_cluster_event.host_id,
           name: cluster_registered_event.name,
@@ -870,7 +870,7 @@ defmodule Trento.ClusterTest do
             health: :critical
           }
         ],
-        RegisterClusterHost.new!(%{
+        RegisterOnlineClusterHost.new!(%{
           cluster_id: cluster_registered_event.cluster_id,
           host_id: host_added_to_cluster_event.host_id,
           name: cluster_registered_event.name,
@@ -995,7 +995,7 @@ defmodule Trento.ClusterTest do
 
       assert_error(
         events,
-        RegisterClusterHost.new!(%{
+        RegisterOnlineClusterHost.new!(%{
           cluster_id: cluster_id,
           host_id: Faker.UUID.v4(),
           name: Faker.StarWars.character(),
@@ -1023,7 +1023,7 @@ defmodule Trento.ClusterTest do
   end
 
   describe "deregistration" do
-    test "should restore a deregistered cluster when a RegisterClusterHost command from a non DC host is received" do
+    test "should restore a deregistered cluster when a RegisterOnlineClusterHost command from a non DC host is received" do
       host_one_id = UUID.uuid4()
       host_two_id = UUID.uuid4()
 
@@ -1118,7 +1118,7 @@ defmodule Trento.ClusterTest do
       )
     end
 
-    test "should restore a deregistered cluster and perform the cluster update procedure when a RegisterClusterHost command from a DC host is received" do
+    test "should restore a deregistered cluster and perform the cluster update procedure when a RegisterOnlineClusterHost command from a DC host is received" do
       host_one_id = UUID.uuid4()
       host_two_id = UUID.uuid4()
 
@@ -1217,8 +1217,8 @@ defmodule Trento.ClusterTest do
 
       commands_to_accept = [
         %RollUpCluster{cluster_id: cluster_id},
-        %RegisterClusterHost{cluster_id: cluster_id, designated_controller: true},
-        %RegisterClusterHost{cluster_id: cluster_id, designated_controller: false}
+        %RegisterOnlineClusterHost{cluster_id: cluster_id, designated_controller: true},
+        %RegisterOnlineClusterHost{cluster_id: cluster_id, designated_controller: false}
       ]
 
       for command <- commands_to_accept do

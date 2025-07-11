@@ -6,7 +6,7 @@ defmodule Trento.Router do
   alias Trento.Clusters.Commands.{
     CompleteChecksExecution,
     DeregisterClusterHost,
-    RegisterClusterHost,
+    RegisterOnlineClusterHost,
     RollUpCluster,
     SelectChecks
   }
@@ -75,7 +75,7 @@ defmodule Trento.Router do
   dispatch [
              DeregisterClusterHost,
              RollUpCluster,
-             RegisterClusterHost,
+             RegisterOnlineClusterHost,
              SelectChecks,
              CompleteChecksExecution
            ],

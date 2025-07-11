@@ -11,7 +11,7 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterClusterHostTe
 
   alias Trento.Infrastructure.Commanded.Middleware.Enrichable
 
-  alias Trento.Clusters.Commands.RegisterClusterHost
+  alias Trento.Clusters.Commands.RegisterOnlineClusterHost
 
   alias Trento.Clusters.ValueObjects.{
     HanaClusterDetails,
@@ -90,7 +90,7 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterClusterHostTe
 
       assert {:ok, enriched_command} = Enrichable.enrich(initial_command, %{})
 
-      expected_enriched_command = %RegisterClusterHost{
+      expected_enriched_command = %RegisterOnlineClusterHost{
         initial_command
         | details: %HanaClusterDetails{
             initial_details

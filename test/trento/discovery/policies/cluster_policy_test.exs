@@ -14,7 +14,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
 
   alias Trento.Discovery.Policies.ClusterPolicy
 
-  alias Trento.Clusters.Commands.{DeregisterClusterHost, RegisterClusterHost}
+  alias Trento.Clusters.Commands.{DeregisterClusterHost, RegisterOnlineClusterHost}
 
   alias Trento.Clusters.ValueObjects.{
     AscsErsClusterDetails,
@@ -32,7 +32,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
   test "should return the expected commands when a ha_cluster_discovery payload of type hana_scale_up is handled" do
     assert {:ok,
             [
-              %RegisterClusterHost{
+              %RegisterOnlineClusterHost{
                 cib_last_written: "Fri Oct 18 11:48:22 2019",
                 cluster_id: "34a94290-2236-5e4d-8def-05beb32d14d4",
                 designated_controller: true,
@@ -441,7 +441,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
   test "should return the expected commands when a ha_cluster_discovery payload of type hana_scale_up with maintenance mode is handled" do
     assert {:ok,
             [
-              %RegisterClusterHost{
+              %RegisterOnlineClusterHost{
                 cib_last_written: "Fri Oct 18 11:48:22 2019",
                 cluster_id: "34a94290-2236-5e4d-8def-05beb32d14d4",
                 designated_controller: true,
@@ -853,7 +853,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
   test "should return the expected commands when a ha_cluster_discovery payload of type hana_scale_up with cost optimized scenario is handled" do
     assert {:ok,
             [
-              %RegisterClusterHost{
+              %RegisterOnlineClusterHost{
                 cib_last_written: "Mon Aug 26 14:52:19 2024",
                 cluster_id: "ee7ea205-d5cc-5bbd-a345-10cad2aae2d7",
                 designated_controller: true,
@@ -1181,7 +1181,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
   test "should return the expected commands when a ha_cluster_discovery payload of type ascs_ers is handled" do
     assert {:ok,
             [
-              %RegisterClusterHost{
+              %RegisterOnlineClusterHost{
                 cib_last_written: "Tue Jan 11 13:43:06 2022",
                 cluster_id: "0eac831a-aa66-5f45-89a4-007fbd2c5714",
                 designated_controller: false,
@@ -1498,7 +1498,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
   test "should return the expected commands when a ha_cluster_discovery payload of type ascs_ers with maintenance enabled is handled" do
     assert {:ok,
             [
-              %RegisterClusterHost{
+              %RegisterOnlineClusterHost{
                 cib_last_written: "Tue Jan 11 13:43:06 2022",
                 cluster_id: "0eac831a-aa66-5f45-89a4-007fbd2c5714",
                 designated_controller: false,
@@ -1815,7 +1815,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
   test "should return the expected commands when a ha_cluster_discovery payload of type ascs_ers with resources running in the same node is handled" do
     assert {:ok,
             [
-              %RegisterClusterHost{
+              %RegisterOnlineClusterHost{
                 details: %AscsErsClusterDetails{
                   maintenance_mode: false,
                   sap_systems: [
@@ -1866,7 +1866,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
   test "should return the expected commands when a ha_cluster_discovery payload of type ascs_ers with invalid data is handled" do
     assert {:ok,
             [
-              %RegisterClusterHost{
+              %RegisterOnlineClusterHost{
                 cib_last_written: "Tue Jan 11 13:43:06 2022",
                 cluster_id: "0eac831a-aa66-5f45-89a4-007fbd2c5714",
                 designated_controller: false,
@@ -1898,7 +1898,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
   test "should return the expected commands when a ha_cluster_discovery payload of type ascs_ers with multi sid setup is handled" do
     assert {:ok,
             [
-              %RegisterClusterHost{
+              %RegisterOnlineClusterHost{
                 cib_last_written: "Tue Jan 11 13:43:06 2022",
                 cluster_id: "0eac831a-aa66-5f45-89a4-007fbd2c5714",
                 designated_controller: false,
@@ -2508,7 +2508,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
 
     assert {:ok,
             [
-              %RegisterClusterHost{
+              %RegisterOnlineClusterHost{
                 details: %AscsErsClusterDetails{
                   maintenance_mode: false,
                   sap_systems: [
@@ -2533,7 +2533,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
   test "should return the expected commands when simple mount configured cluster payload is received" do
     assert {:ok,
             [
-              %RegisterClusterHost{
+              %RegisterOnlineClusterHost{
                 sap_instances: [
                   %SapInstance{
                     name: "ASCS00",
@@ -2562,7 +2562,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
   test "should return the expected commands when ERS is not mounted in a filesystem" do
     assert {:ok,
             [
-              %RegisterClusterHost{
+              %RegisterOnlineClusterHost{
                 sap_instances: [
                   %SapInstance{
                     name: "ASCS00",
@@ -2592,7 +2592,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
     test "should set the health to critical when one of the nodes is unclean" do
       assert {:ok,
               [
-                %RegisterClusterHost{
+                %RegisterOnlineClusterHost{
                   details: %AscsErsClusterDetails{
                     sap_systems: [
                       %AscsErsClusterSapSystem{
@@ -2632,7 +2632,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
 
       assert {:ok,
               [
-                %RegisterClusterHost{
+                %RegisterOnlineClusterHost{
                   details: %AscsErsClusterDetails{
                     sap_systems: [
                       %AscsErsClusterSapSystem{
@@ -2670,7 +2670,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
 
       assert {:ok,
               [
-                %RegisterClusterHost{
+                %RegisterOnlineClusterHost{
                   details: %AscsErsClusterDetails{
                     sap_systems: [
                       %AscsErsClusterSapSystem{
@@ -2710,7 +2710,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
 
       assert {:ok,
               [
-                %RegisterClusterHost{
+                %RegisterOnlineClusterHost{
                   details: %AscsErsClusterDetails{
                     sap_systems: [
                       %AscsErsClusterSapSystem{
@@ -2735,7 +2735,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
   test "should return the expected commands when a ha_cluster_discovery payload with aws provider" do
     assert {:ok,
             [
-              %RegisterClusterHost{
+              %RegisterOnlineClusterHost{
                 cib_last_written: "Wed Apr 27 07:42:23 2022",
                 cluster_id: "3e83b9d1-00e8-544d-9e29-7a66d9ed7c1e",
                 designated_controller: true,
@@ -3005,7 +3005,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
   test "should return the expected commands when a ha_cluster_discovery payload with gcp provider" do
     assert {:ok,
             [
-              %RegisterClusterHost{
+              %RegisterOnlineClusterHost{
                 cib_last_written: "Wed Apr 27 07:02:35 2022",
                 cluster_id: "61b4f40d-5e1e-5b58-bdc1-7b855dd7ede2",
                 designated_controller: true,
@@ -3336,7 +3336,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
   test "should return the expected commands when a ha_cluster_discovery payload does not have a Name field" do
     assert {:ok,
             [
-              %RegisterClusterHost{
+              %RegisterOnlineClusterHost{
                 cib_last_written: "Fri Oct 18 11:48:22 2019",
                 cluster_id: "34a94290-2236-5e4d-8def-05beb32d14d4",
                 designated_controller: true,
@@ -3748,7 +3748,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
   test "should return the expected commands when a ha_cluster_discovery with diskless SBD is received" do
     assert {:ok,
             [
-              %RegisterClusterHost{
+              %RegisterOnlineClusterHost{
                 cib_last_written: "Fri Oct 18 11:48:22 2019",
                 cluster_id: "34a94290-2236-5e4d-8def-05beb32d14d4",
                 designated_controller: true,
@@ -3986,7 +3986,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
   test "should return the expected commands when a ha_cluster_discovery with different node statuses is received" do
     assert {:ok,
             [
-              %RegisterClusterHost{
+              %RegisterOnlineClusterHost{
                 details: %HanaClusterDetails{
                   nodes: [
                     %{status: "Offline"},
@@ -4010,7 +4010,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
     test "should return the expected commands when a ha_cluster_discovery payload with hana scale out is handled" do
       assert {:ok,
               [
-                %RegisterClusterHost{
+                %RegisterOnlineClusterHost{
                   cluster_id: "751fb16d-62e3-5411-aa33-0100012453c7",
                   host_id: "286808a7-01bf-420d-af50-10846a7d7868",
                   name: "hana_cluster",
@@ -4569,7 +4569,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
     test "should return the expected commands when a ha_cluster_discovery payload with hana scale out with multi target hook is handled" do
       assert {:ok,
               [
-                %RegisterClusterHost{
+                %RegisterOnlineClusterHost{
                   cluster_id: "f343beb7-f474-57d9-bec6-60215e5a4fbc",
                   host_id: "9abb22d6-716a-4321-bb1e-175f179e7bb6",
                   name: "hana_cluster",
@@ -5060,7 +5060,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
     test "should return the expected commands when a ha_cluster_discovery payload with hana scale out with maintenance mode enabled is handled" do
       assert {:ok,
               [
-                %RegisterClusterHost{
+                %RegisterOnlineClusterHost{
                   cluster_id: "751fb16d-62e3-5411-aa33-0100012453c7",
                   host_id: "286808a7-01bf-420d-af50-10846a7d7868",
                   name: "hana_cluster",
@@ -5619,7 +5619,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
     test "should return the expected commands when a ha_cluster_discovery payload without srHooks is received" do
       assert {:ok,
               [
-                %RegisterClusterHost{
+                %RegisterOnlineClusterHost{
                   cib_last_written: "Mon Apr 22 15:55:13 2024",
                   cluster_id: "9ee907e0-0edc-50f8-9b4d-e26d0bc3810a",
                   designated_controller: true,
@@ -6228,7 +6228,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
       assert {
                :ok,
                [
-                 %RegisterClusterHost{
+                 %RegisterOnlineClusterHost{
                    cib_last_written: "Mon Jun 10 13:03:57 2024",
                    cluster_id: "34a94290-2236-5e4d-8def-05beb32d14d4",
                    designated_controller: true,
@@ -6472,7 +6472,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
       assert {
                :ok,
                [
-                 %RegisterClusterHost{
+                 %RegisterOnlineClusterHost{
                    cib_last_written: "Mon Jun 10 13:06:54 2024",
                    cluster_id: "34a94290-2236-5e4d-8def-05beb32d14d4",
                    designated_controller: true,
@@ -6716,7 +6716,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
       assert {
                :ok,
                [
-                 %RegisterClusterHost{
+                 %RegisterOnlineClusterHost{
                    cib_last_written: "Fri Oct 18 11:48:22 2019",
                    cluster_id: "34a94290-2236-5e4d-8def-05beb32d14d4",
                    designated_controller: true,
@@ -6769,7 +6769,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
       {:ok,
        [
          %DeregisterClusterHost{cluster_id: ^current_cluster_id},
-         %RegisterClusterHost{cluster_id: "34a94290-2236-5e4d-8def-05beb32d14d4"}
+         %RegisterOnlineClusterHost{cluster_id: "34a94290-2236-5e4d-8def-05beb32d14d4"}
        ]} =
         "ha_cluster_discovery_hana_scale_up"
         |> load_discovery_event_fixture()
@@ -6793,7 +6793,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
 
       assert {:ok,
               [
-                %RegisterClusterHost{cluster_id: ^current_cluster_id}
+                %RegisterOnlineClusterHost{cluster_id: ^current_cluster_id}
               ]} =
                "ha_cluster_discovery_hana_scale_up"
                |> load_discovery_event_fixture()

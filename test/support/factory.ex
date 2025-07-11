@@ -111,8 +111,8 @@ defmodule Trento.Factory do
   }
 
   alias Trento.Clusters.Commands.{
-    RegisterClusterHost,
-    RegisterOfflineClusterHost
+    RegisterOfflineClusterHost,
+    RegisterOnlineClusterHost
   }
 
   alias Trento.Hosts.Projections.{
@@ -240,7 +240,7 @@ defmodule Trento.Factory do
   end
 
   def register_cluster_host_factory do
-    %RegisterClusterHost{
+    %RegisterOnlineClusterHost{
       cluster_id: Faker.UUID.v4(),
       host_id: Faker.UUID.v4(),
       name: Faker.StarWars.character(),

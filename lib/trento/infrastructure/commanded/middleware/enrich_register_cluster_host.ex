@@ -1,5 +1,5 @@
 defimpl Trento.Infrastructure.Commanded.Middleware.Enrichable,
-  for: Trento.Clusters.Commands.RegisterClusterHost do
+  for: Trento.Clusters.Commands.RegisterOnlineClusterHost do
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
 
   alias Trento.Clusters.ValueObjects.{
@@ -7,15 +7,15 @@ defimpl Trento.Infrastructure.Commanded.Middleware.Enrichable,
     HanaClusterNode
   }
 
-  alias Trento.Clusters.Commands.RegisterClusterHost
+  alias Trento.Clusters.Commands.RegisterOnlineClusterHost
 
   alias Trento.Clusters
 
   alias Trento.Clusters.ValueObjects.SapInstance
 
-  @spec enrich(RegisterClusterHost.t(), map) :: {:ok, map} | {:error, any}
+  @spec enrich(RegisterOnlineClusterHost.t(), map) :: {:ok, map} | {:error, any}
   def enrich(
-        %RegisterClusterHost{
+        %RegisterOnlineClusterHost{
           cluster_id: cluster_id,
           cib_last_written: cib_last_written,
           type: type,
@@ -39,7 +39,7 @@ defimpl Trento.Infrastructure.Commanded.Middleware.Enrichable,
     sid = SapInstance.get_hana_instance_sid(sap_instances)
 
     {:ok,
-     %RegisterClusterHost{
+     %RegisterOnlineClusterHost{
        command
        | details: strip_irrelevant_details(type, sid, details)
      }}

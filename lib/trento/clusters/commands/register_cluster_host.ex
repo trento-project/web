@@ -1,4 +1,4 @@
-defmodule Trento.Clusters.Commands.RegisterClusterHost do
+defmodule Trento.Clusters.Commands.RegisterOnlineClusterHost do
   @moduledoc """
   Register a cluster node to the monitoring system.
   """
