@@ -8,12 +8,12 @@ export const hdqDatabase = {
     {
       name: 'vmhdbqas01',
       id: '99cf8a3a-48d6-57a4-b302-6e4482227ab6',
-      state: '',
+      state: 'ACTIVE',
     },
     {
       name: 'vmhdbqas02',
       id: 'e0c182db-32ff-55c6-a9eb-2b82dd21bc8b',
-      state: 'ACTIVE',
+      state: '',
     },
   ],
 };

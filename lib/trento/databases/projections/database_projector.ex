@@ -318,7 +318,7 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
     TrentoWeb.Endpoint.broadcast(
       @databases_topic,
       "database_instance_registered",
-      DatabaseJSON.database_instance_with_sr_status(%{
+      DatabaseJSON.database_instance(%{
         instance: instance,
         database_instances: database_instances
       })

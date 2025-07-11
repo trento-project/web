@@ -146,7 +146,7 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
     assert_broadcast "database_instance_registered",
                      %{
                        system_replication: "Primary",
-                       system_replication_status: ""
+                       system_replication_status: "ACTIVE"
                      },
                      1000
   end
@@ -174,7 +174,7 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
     assert_broadcast "database_instance_registered",
                      %{
                        system_replication: "Secondary",
-                       system_replication_status: "ACTIVE"
+                       system_replication_status: ""
                      },
                      1000
   end
