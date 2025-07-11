@@ -94,7 +94,9 @@ export function renderWithRouterMatch(ui, { path = '/', route = '/' } = {}) {
 
   return {
     ...render(
-      <BrowserRouter>
+      <BrowserRouter
+        future={{ v7_relativeSplatPath: true, v7_startTransition: true }}
+      >
         <Routes>
           <Route path={path} element={ui} />
         </Routes>
