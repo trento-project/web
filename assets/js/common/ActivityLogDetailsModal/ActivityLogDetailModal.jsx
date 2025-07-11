@@ -1,9 +1,8 @@
 import React from 'react';
 import { get, noop } from 'lodash';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
 import { NavLink } from 'react-router-dom';
 
+import Markdown from '@common/Markdown';
 import Button from '@common/Button';
 import Modal from '@common/Modal';
 import ListView from '@common/ListView';
@@ -36,9 +35,9 @@ const keyToLabel = {
 };
 
 const renderMetadata = (metadata) => (
-  <ReactMarkdown className="markdown text-sm" remarkPlugins={[remarkGfm]}>
+  <Markdown className="text-sm">
     {`\`\`\`json\n${JSON.stringify(metadata, null, 2)}\n\`\`\``}
-  </ReactMarkdown>
+  </Markdown>
 );
 
 const renderType = (type) => toLabel({ type });
