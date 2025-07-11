@@ -56,6 +56,7 @@ defmodule Trento.Clusters.Cluster do
 
   require Trento.Enums.Provider, as: Provider
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
+  require Trento.Clusters.Enums.ClusterHostStatus, as: ClusterHostStatus
   require Trento.Enums.Health, as: Health
 
   alias Commanded.Aggregate.Multi
@@ -74,6 +75,7 @@ defmodule Trento.Clusters.Cluster do
     CompleteChecksExecution,
     DeregisterClusterHost,
     RegisterClusterHost,
+    RegisterOfflineClusterHost,
     RollUpCluster,
     SelectChecks
   }
@@ -92,6 +94,7 @@ defmodule Trento.Clusters.Cluster do
     ClusterDetailsUpdated,
     ClusterDiscoveredHealthChanged,
     ClusterHealthChanged,
+    ClusterHostStatusChanged,
     ClusterRegistered,
     ClusterRestored,
     ClusterRolledUp,
@@ -122,6 +125,7 @@ defmodule Trento.Clusters.Cluster do
     field :checks_health, Ecto.Enum, values: Health.values(), default: Health.unknown()
     field :health, Ecto.Enum, values: Health.values(), default: Health.unknown()
     field :hosts, {:array, :string}, default: []
+    field :offline_hosts, {:array, :string}, default: []
     field :selected_checks, {:array, :string}, default: []
     field :rolling_up, :boolean, default: false
     field :deregistered_at, :utc_datetime_usec, default: nil
@@ -173,7 +177,8 @@ defmodule Trento.Clusters.Cluster do
       },
       %HostAddedToCluster{
         cluster_id: cluster_id,
-        host_id: host_id
+        host_id: host_id,
+        cluster_host_status: ClusterHostStatus.online()
       }
     ]
   end
@@ -200,7 +205,35 @@ defmodule Trento.Clusters.Cluster do
       },
       %HostAddedToCluster{
         cluster_id: cluster_id,
+        host_id: host_id,
+        cluster_host_status: ClusterHostStatus.online()
+      }
+    ]
+  end
+
+  # When an Offline node is discovered, a cluster is registered and the host is added to the cluster.
+  # The cluster details are left as unknown, and filled once a message from the DC node is received.
+  def execute(%Cluster{cluster_id: nil}, %RegisterOfflineClusterHost{
+        cluster_id: cluster_id,
+        name: name,
         host_id: host_id
+      }) do
+    [
+      %ClusterRegistered{
+        cluster_id: cluster_id,
+        name: name,
+        type: :unknown,
+        sap_instances: [],
+        provider: :unknown,
+        resources_number: nil,
+        hosts_number: nil,
+        details: nil,
+        health: :unknown
+      },
+      %HostAddedToCluster{
+        cluster_id: cluster_id,
+        host_id: host_id,
+        cluster_host_status: ClusterHostStatus.offline()
       }
     ]
   end
@@ -211,6 +244,7 @@ defmodule Trento.Clusters.Cluster do
   # Restoration, when a RegisterClusterHost command is received for a deregistered Cluster
   # the cluster is restored, the host is added to cluster and if the host is a DC
   # cluster details are updated
+  # Offline hosts are added to the cluster as well, but the cluster details are not updated
   def execute(
         %Cluster{deregistered_at: deregistered_at, cluster_id: cluster_id},
         %RegisterClusterHost{
@@ -223,7 +257,8 @@ defmodule Trento.Clusters.Cluster do
       %ClusterRestored{cluster_id: cluster_id},
       %HostAddedToCluster{
         cluster_id: cluster_id,
-        host_id: host_id
+        host_id: host_id,
+        cluster_host_status: ClusterHostStatus.online()
       }
     ]
   end
@@ -244,10 +279,28 @@ defmodule Trento.Clusters.Cluster do
     |> Multi.execute(fn _ ->
       %HostAddedToCluster{
         cluster_id: cluster_id,
-        host_id: host_id
+        host_id: host_id,
+        cluster_host_status: ClusterHostStatus.online()
       }
     end)
     |> maybe_update_cluster(command)
+  end
+
+  def execute(
+        %Cluster{deregistered_at: deregistered_at, cluster_id: cluster_id},
+        %RegisterOfflineClusterHost{
+          host_id: host_id
+        }
+      )
+      when not is_nil(deregistered_at) do
+    [
+      %ClusterRestored{cluster_id: cluster_id},
+      %HostAddedToCluster{
+        cluster_id: cluster_id,
+        host_id: host_id,
+        cluster_host_status: ClusterHostStatus.offline()
+      }
+    ]
   end
 
   def execute(
@@ -271,7 +324,16 @@ defmodule Trento.Clusters.Cluster do
           designated_controller: false
         }
       ) do
-    maybe_emit_host_added_to_cluster_event(cluster, host_id)
+    maybe_emit_host_added_to_cluster_event(cluster, host_id, ClusterHostStatus.online())
+  end
+
+  def execute(
+        %Cluster{} = cluster,
+        %RegisterOfflineClusterHost{
+          host_id: host_id
+        }
+      ) do
+    maybe_emit_host_added_to_cluster_event(cluster, host_id, ClusterHostStatus.offline())
   end
 
   # When a DC node is discovered, if the cluster is already registered,
@@ -409,12 +471,53 @@ defmodule Trento.Clusters.Cluster do
   def apply(
         %Cluster{hosts: hosts} = cluster,
         %HostAddedToCluster{
-          host_id: host_id
+          host_id: host_id,
+          cluster_host_status: ClusterHostStatus.online()
         }
       ) do
     %Cluster{
       cluster
       | hosts: [host_id | hosts]
+    }
+  end
+
+  def apply(
+        %Cluster{hosts: hosts, offline_hosts: offline_host} = cluster,
+        %HostAddedToCluster{
+          host_id: host_id,
+          cluster_host_status: ClusterHostStatus.offline()
+        }
+      ) do
+    %Cluster{
+      cluster
+      | hosts: [host_id | hosts],
+        offline_hosts: [host_id | offline_host]
+    }
+  end
+
+  def apply(
+        %Cluster{offline_hosts: offline_host} = cluster,
+        %ClusterHostStatusChanged{
+          host_id: host_id,
+          cluster_host_status: ClusterHostStatus.online()
+        }
+      ) do
+    %Cluster{
+      cluster
+      | offline_hosts: List.delete(offline_host, host_id)
+    }
+  end
+
+  def apply(
+        %Cluster{offline_hosts: offline_host} = cluster,
+        %ClusterHostStatusChanged{
+          host_id: host_id,
+          cluster_host_status: ClusterHostStatus.offline()
+        }
+      ) do
+    %Cluster{
+      cluster
+      | offline_hosts: [host_id | offline_host]
     }
   end
 
@@ -447,7 +550,11 @@ defmodule Trento.Clusters.Cluster do
   def apply(%Cluster{hosts: hosts} = cluster, %HostRemovedFromCluster{
         host_id: host_id
       }) do
-    %Cluster{cluster | hosts: List.delete(hosts, host_id)}
+    %Cluster{
+      cluster
+      | hosts: List.delete(hosts, host_id),
+        offline_hosts: List.delete(cluster.offline_hosts, host_id)
+    }
   end
 
   # Deregistration
@@ -465,18 +572,34 @@ defmodule Trento.Clusters.Cluster do
   def apply(%Cluster{} = cluster, %ClusterTombstoned{}), do: cluster
 
   defp maybe_emit_host_added_to_cluster_event(
-         %Cluster{cluster_id: cluster_id, hosts: hosts},
-         host_id
+         %Cluster{cluster_id: cluster_id, hosts: hosts, offline_hosts: offline_hosts},
+         host_id,
+         cluster_host_status
        ) do
-    if host_id in hosts do
-      []
-    else
-      [
+    cond do
+      host_id not in hosts ->
         %HostAddedToCluster{
           cluster_id: cluster_id,
-          host_id: host_id
+          host_id: host_id,
+          cluster_host_status: cluster_host_status
         }
-      ]
+
+      host_id in offline_hosts and cluster_host_status == ClusterHostStatus.online() ->
+        %ClusterHostStatusChanged{
+          cluster_id: cluster_id,
+          host_id: host_id,
+          cluster_host_status: ClusterHostStatus.online()
+        }
+
+      host_id not in offline_hosts and cluster_host_status == ClusterHostStatus.offline() ->
+        %ClusterHostStatusChanged{
+          cluster_id: cluster_id,
+          host_id: host_id,
+          cluster_host_status: ClusterHostStatus.offline()
+        }
+
+      true ->
+        []
     end
   end
 
@@ -485,7 +608,9 @@ defmodule Trento.Clusters.Cluster do
          %RegisterClusterHost{host_id: host_id} = command
        ) do
     multi
-    |> Multi.execute(fn cluster -> maybe_emit_host_added_to_cluster_event(cluster, host_id) end)
+    |> Multi.execute(fn cluster ->
+      maybe_emit_host_added_to_cluster_event(cluster, host_id, ClusterHostStatus.online())
+    end)
     |> Multi.execute(fn cluster -> maybe_emit_cluster_details_updated_event(cluster, command) end)
     |> Multi.execute(fn cluster ->
       maybe_emit_cluster_discovered_health_changed_event(cluster, command)
