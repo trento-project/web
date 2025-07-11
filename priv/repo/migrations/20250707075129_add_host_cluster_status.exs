@@ -3,12 +3,12 @@ defmodule Trento.Repo.Migrations.AddHostClusterStatus do
 
   def change do
     alter table(:hosts) do
-      add :cluster_status, :string
+      add :cluster_host_status, :string
     end
 
     execute(
-      "UPDATE hosts SET cluster_status = 'online' WHERE cluster_status IS NOT NULL",
-      "UPDATE hosts SET cluster_status = NULL"
+      "UPDATE hosts SET cluster_host_status = 'online' WHERE cluster_id IS NOT NULL",
+      "UPDATE hosts SET cluster_host_status = NULL"
     )
   end
 end

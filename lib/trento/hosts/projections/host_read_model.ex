@@ -10,6 +10,7 @@ defmodule Trento.Hosts.Projections.HostReadModel do
   require Trento.Hosts.Enums.Architecture, as: Architecture
   require Trento.Enums.Health, as: Health
   require Trento.Enums.Provider, as: Provider
+  require Trento.Enums.ClusterHostStatus, as: ClusterHostStatus
 
   alias Trento.Clusters.Projections.ClusterReadModel
   alias Trento.Databases.Projections.DatabaseInstanceReadModel
@@ -55,7 +56,7 @@ defmodule Trento.Hosts.Projections.HostReadModel do
       type: Ecto.UUID,
       where: [deregistered_at: nil]
 
-    field :cluster_status, Ecto.Enum, values: [:online, :offline]
+    field :cluster_host_status, Ecto.Enum, values: ClusterHostStatus.values()
 
     has_many :database_instances, DatabaseInstanceReadModel,
       references: :id,
