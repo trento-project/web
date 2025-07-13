@@ -103,7 +103,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Host do
           cluster_id: %Schema{
             type: :string,
             description: "Identifier of the cluster this host is part of",
-            format: :uuid
+            format: :uuid,
+            nullable: true
           },
           heartbeat: %Schema{
             type: :string,

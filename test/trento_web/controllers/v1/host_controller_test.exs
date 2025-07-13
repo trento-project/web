@@ -30,6 +30,14 @@ defmodule TrentoWeb.V1.HostControllerTest do
       |> json_response(200)
       |> assert_schema("HostsCollection", api_spec)
     end
+
+    test "should handle null cluster_id", %{conn: conn, api_spec: api_spec} do
+      insert(:host, cluster_id: nil)
+
+      get(conn, "/api/v1/hosts")
+      |> json_response(200)
+      |> assert_schema("HostsCollection", api_spec)
+    end
   end
 
   describe "heartbeat" do
