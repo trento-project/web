@@ -220,6 +220,7 @@ defmodule Trento.Factory do
       agent_version: Faker.StarWars.planet(),
       arch: Enum.random(Architecture.values()),
       cluster_id: Faker.UUID.v4(),
+      cluster_host_status: ClusterHostStatus.online(),
       heartbeat: :unknown,
       health: :unknown,
       provider: Enum.random(Provider.values()),
