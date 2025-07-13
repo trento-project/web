@@ -2,6 +2,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
   use TrentoWeb.ConnCase, async: true
 
   require Trento.Enums.Health, as: Health
+  require Trento.Clusters.Enums.ClusterHostStatus, as: ClusterHostStatus
 
   import OpenApiSpex.TestAssertions
   import Mox
@@ -37,6 +38,34 @@ defmodule TrentoWeb.V1.HostControllerTest do
       get(conn, "/api/v1/hosts")
       |> json_response(200)
       |> assert_schema("HostsCollection", api_spec)
+    end
+
+    test "should include cluster information if present", %{conn: conn, api_spec: api_spec} do
+      %{id: host_id} =
+        insert(:host,
+          hostname: "host a",
+          cluster_id: cluster_id = Faker.UUID.v4(),
+          cluster_host_status: ClusterHostStatus.online()
+        )
+
+      %{id: another_host_id} =
+        insert(:host, hostname: "host b", cluster_id: nil, cluster_host_status: nil)
+
+      hosts =
+        get(conn, "/api/v1/hosts")
+        |> json_response(200)
+        |> assert_schema("HostsCollection", api_spec)
+
+      host = Enum.find(hosts, fn h -> h.id == host_id end)
+      another_host = Enum.find(hosts, fn h -> h.id == another_host_id end)
+
+      assert host.id == host_id
+      assert host.cluster_id == cluster_id
+      assert host.cluster_host_status == :online
+
+      assert another_host.id == another_host_id
+      assert another_host.cluster_id == nil
+      assert another_host.cluster_host_status == nil
     end
   end
 
