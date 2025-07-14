@@ -77,7 +77,14 @@ export const renderWithRouter = (ui, { route = '/' } = {}) => {
   function Router({ children }) {
     return (
       <BrowserRouter
-        future={{ v7_relativeSplatPath: true, v7_startTransition: true }}
+        future={{
+          v7_relativeSplatPath: true,
+          v7_startTransition: true,
+          v7_fetcherPersist: true,
+          v7_normalizeFormMethod: true,
+          v7_partialHydration: true,
+          v7_skipActionErrorRevalidation: true,
+        }}
       >
         {children}
       </BrowserRouter>
@@ -95,7 +102,14 @@ export function renderWithRouterMatch(ui, { path = '/', route = '/' } = {}) {
   return {
     ...render(
       <BrowserRouter
-        future={{ v7_relativeSplatPath: true, v7_startTransition: true }}
+        future={{
+          v7_relativeSplatPath: true,
+          v7_startTransition: true,
+          v7_fetcherPersist: true,
+          v7_normalizeFormMethod: true,
+          v7_partialHydration: true,
+          v7_skipActionErrorRevalidation: true,
+        }}
       >
         <Routes>
           <Route path={path} element={ui} />
