@@ -377,7 +377,8 @@ defmodule Trento.Hosts.Projections.HostProjector do
       ) do
     TrentoWeb.Endpoint.broadcast("monitoring:hosts", "host_details_updated", %{
       id: host_id,
-      cluster_id: nil
+      cluster_id: nil,
+      cluster_host_status: nil
     })
   end
 
