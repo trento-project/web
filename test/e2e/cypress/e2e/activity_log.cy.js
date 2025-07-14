@@ -13,6 +13,7 @@ context('Activity Log page', () => {
       basePage.clickActivityLogNavigationItem();
       activityLogPage.validateUrl(`/activity_log?${defaultSeverity}`);
       activityLogPage.pageTitleIsCorrectlyDisplayed('Activity Log');
+      activityLogPage.activityLogEndpointIsCalledOnlyOnce();
     });
 
     it('should not load the page twice', () => {
