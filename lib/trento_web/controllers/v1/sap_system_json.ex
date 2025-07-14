@@ -1,6 +1,6 @@
 defmodule TrentoWeb.V1.SapSystemJSON do
   import TrentoWeb.V1.DatabaseJSON,
-    only: [add_system_replication_status_to_secondary_instance: 1, database_instance: 1]
+    only: [database_instance: 1]
 
   def application_instance(%{instance: instance}) do
     instance
@@ -48,7 +48,6 @@ defmodule TrentoWeb.V1.SapSystemJSON do
       :application_instances,
       rendered_application_instances
     )
-    |> add_system_replication_status_to_secondary_instance()
   end
 
   def sap_system_registered(%{

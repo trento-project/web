@@ -13,6 +13,17 @@ import Tooltip from '@common/Tooltip';
 import ClusterLink from '@pages/ClusterDetails/ClusterLink';
 import { Features } from '@pages/SapSystemDetails';
 
+export const getReplicationStatusClasses = (status) => {
+  switch (status) {
+    case 'ACTIVE':
+      return 'bg-green-100 text-green-800';
+    case 'ERROR':
+      return 'bg-red-100 text-red-800';
+    default:
+      return 'bg-gray-100 text-gray-800';
+  }
+};
+
 function InstanceOverview({
   instanceType,
   instance,
@@ -63,7 +74,13 @@ function InstanceOverview({
       {isDatabase && (
         <div className={classNames(textColor, 'table-cell p-2')}>
           {systemReplication && `HANA ${systemReplication}`}{' '}
-          {systemReplicationStatus && <Pill>{systemReplicationStatus}</Pill>}
+          {systemReplicationStatus && (
+            <Pill
+              className={getReplicationStatusClasses(systemReplicationStatus)}
+            >
+              {systemReplicationStatus}
+            </Pill>
+          )}
         </div>
       )}
       <div className="table-cell p-2">
