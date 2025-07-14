@@ -102,7 +102,7 @@ export const clickCleanUpModalConfirmationButton = () =>
 const clickAllRows = () =>
   cy
     .get(`${sapSystemsTableRows} td:first-child`)
-    .each((cell) => cy.wrap(cell).click());
+    .each((cell) => cy.wrap(cell).should('be.visible').click());
 
 // UI Validations
 export const nwdInstance01CleanUpButtonIsVisible = () =>
