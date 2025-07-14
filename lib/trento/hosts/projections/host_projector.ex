@@ -13,6 +13,7 @@ defmodule Trento.Hosts.Projections.HostProjector do
   alias Trento.Repo
 
   alias Trento.Clusters.Events.{
+    ClusterHostStatusChanged,
     HostAddedToCluster,
     HostRemovedFromCluster
   }
@@ -104,19 +105,40 @@ defmodule Trento.Hosts.Projections.HostProjector do
   project(
     %HostAddedToCluster{
       host_id: id,
-      cluster_id: cluster_id
+      cluster_id: cluster_id,
+      cluster_host_status: cluster_host_status
     },
     fn multi ->
       changeset =
         HostReadModel.changeset(%HostReadModel{id: id}, %{
-          cluster_id: cluster_id
+          cluster_id: cluster_id,
+          cluster_host_status: cluster_host_status
         })
 
       Ecto.Multi.insert(multi, :host, changeset,
-        on_conflict: {:replace, [:cluster_id]},
+        on_conflict: {:replace, [:cluster_id, :cluster_host_status]},
         conflict_target: [:id],
         returning: true
       )
+    end
+  )
+
+  project(
+    %ClusterHostStatusChanged{
+      host_id: id,
+      cluster_id: cluster_id,
+      cluster_host_status: cluster_host_status
+    },
+    fn multi ->
+      host = Repo.get!(HostReadModel, id)
+
+      changeset =
+        HostReadModel.changeset(host, %{
+          cluster_id: cluster_id,
+          cluster_host_status: cluster_host_status
+        })
+
+      Ecto.Multi.update(multi, :host, changeset)
     end
   )
 
@@ -133,7 +155,8 @@ defmodule Trento.Hosts.Projections.HostProjector do
       if host.cluster_id == cluster_id do
         changeset =
           HostReadModel.changeset(host, %{
-            cluster_id: nil
+            cluster_id: nil,
+            cluster_host_status: nil
           })
 
         Ecto.Multi.update(multi, :host, changeset)
@@ -313,7 +336,11 @@ defmodule Trento.Hosts.Projections.HostProjector do
       do: :ok
 
   def after_update(
-        %HostAddedToCluster{host_id: id, cluster_id: cluster_id},
+        %HostAddedToCluster{
+          host_id: id,
+          cluster_id: cluster_id,
+          cluster_host_status: cluster_host_status
+        },
         _,
         _
       ) do
@@ -322,7 +349,23 @@ defmodule Trento.Hosts.Projections.HostProjector do
       "host_details_updated",
       %{
         id: id,
-        cluster_id: cluster_id
+        cluster_id: cluster_id,
+        cluster_host_status: cluster_host_status
+      }
+    )
+  end
+
+  def after_update(
+        %ClusterHostStatusChanged{host_id: id, cluster_host_status: cluster_host_status},
+        _,
+        _
+      ) do
+    TrentoWeb.Endpoint.broadcast(
+      "monitoring:hosts",
+      "host_details_updated",
+      %{
+        id: id,
+        cluster_host_status: cluster_host_status
       }
     )
   end
@@ -334,7 +377,8 @@ defmodule Trento.Hosts.Projections.HostProjector do
       ) do
     TrentoWeb.Endpoint.broadcast("monitoring:hosts", "host_details_updated", %{
       id: host_id,
-      cluster_id: nil
+      cluster_id: nil,
+      cluster_host_status: nil
     })
   end
 

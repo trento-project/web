@@ -9,6 +9,7 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
 
   require Trento.Hosts.Enums.Architecture, as: Architecture
   require Trento.Enums.Provider, as: Provider
+  require Trento.Clusters.Enums.ClusterHostStatus, as: ClusterHostStatus
 
   alias Trento.Hosts.Projections.{
     HostProjector,
@@ -22,6 +23,7 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
   }
 
   alias Trento.Clusters.Events.{
+    ClusterHostStatusChanged,
     HostAddedToCluster,
     HostRemovedFromCluster
   }
@@ -159,27 +161,36 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
 
     insert(:cluster, id: cluster_id = Faker.UUID.v4())
 
+    status = ClusterHostStatus.online()
+
     event = %HostAddedToCluster{
       host_id: host_id,
-      cluster_id: cluster_id
+      cluster_id: cluster_id,
+      cluster_host_status: status
     }
 
     ProjectorTestHelper.project(HostProjector, event, "host_projector")
     host_projection = Repo.get!(HostReadModel, event.host_id)
 
     assert event.cluster_id == host_projection.cluster_id
+    assert event.cluster_host_status == host_projection.cluster_host_status
     assert hostname == host_projection.hostname
 
-    assert_broadcast "host_details_updated", %{id: ^host_id, cluster_id: ^cluster_id}, 1000
+    assert_broadcast "host_details_updated",
+                     %{id: ^host_id, cluster_id: ^cluster_id, cluster_host_status: ^status},
+                     1000
   end
 
   test "should project a new host with no additional properties when HostAddedToCluster event is received" do
     insert(:cluster, id: cluster_id = Faker.UUID.v4())
 
+    status = ClusterHostStatus.online()
+
     %{host_id: host_id} =
       event = %HostAddedToCluster{
         host_id: Faker.UUID.v4(),
-        cluster_id: cluster_id
+        cluster_id: cluster_id,
+        cluster_host_status: status
       }
 
     ProjectorTestHelper.project(HostProjector, event, "host_projector")
@@ -188,7 +199,9 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
     assert event.cluster_id == host_projection.cluster_id
     assert nil == host_projection.hostname
 
-    refute_broadcast "host_details_updated", %{id: ^host_id, cluster_id: ^cluster_id}, 1000
+    refute_broadcast "host_details_updated",
+                     %{id: ^host_id, cluster_id: ^cluster_id, cluster_host_status: ^status},
+                     1000
   end
 
   test "should set the cluster_id to nil if a HostRemovedFromCluster event is received and the host is still part of the cluster" do
@@ -210,9 +223,10 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
     projection = Repo.get!(HostReadModel, host_id)
 
     assert nil == projection.cluster_id
+    assert nil == projection.cluster_host_status
 
     assert_broadcast "host_details_updated",
-                     %{id: ^host_id, cluster_id: nil},
+                     %{id: ^host_id, cluster_id: nil, cluster_host_status: nil},
                      1000
   end
 
@@ -237,6 +251,33 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
     assert cluster_id == projection.cluster_id
 
     refute_broadcast "host_details_updated", %{id: ^host_id}
+  end
+
+  test "should update the cluster_host_status field when ClusterHostStatusChanged event is received" do
+    insert(:cluster, id: cluster_id = Faker.UUID.v4())
+
+    insert(
+      :host,
+      id: host_id = UUID.uuid4(),
+      hostname: Faker.StarWars.character(),
+      cluster_id: cluster_id,
+      cluster_host_status: ClusterHostStatus.online()
+    )
+
+    event = %ClusterHostStatusChanged{
+      host_id: host_id,
+      cluster_id: cluster_id,
+      cluster_host_status: ClusterHostStatus.offline()
+    }
+
+    ProjectorTestHelper.project(HostProjector, event, "host_projector")
+    projection = Repo.get!(HostReadModel, host_id)
+
+    assert ClusterHostStatus.offline() == projection.cluster_host_status
+
+    assert_broadcast "host_details_updated",
+                     %{id: ^host_id, cluster_host_status: ClusterHostStatus.offline()},
+                     1000
   end
 
   test "should update an existing host when HostDetailsUpdated event is received", %{
