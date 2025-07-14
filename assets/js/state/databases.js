@@ -86,6 +86,13 @@ export const databasesListSlice = createSlice({
         {
           system_replication: instance.system_replication,
           system_replication_status: instance.system_replication_status,
+          system_replication_site: instance.system_replication_site,
+          system_replication_mode: instance.system_replication_mode,
+          system_replication_operation_mode:
+            instance.system_replication_operation_mode,
+          system_replication_source_site:
+            instance.system_replication_source_site,
+          system_replication_tier: instance.system_replication_tier,
         }
       );
     },

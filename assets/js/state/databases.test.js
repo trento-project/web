@@ -104,6 +104,11 @@ describe('Databases reducer', () => {
     const instance = databaseInstanceFactory.build();
     const newSystemReplication = 'newSR';
     const newStatus = 'newStatus';
+    const newSite = 'newSite';
+    const newMode = 'sync';
+    const newOperationMode = 'logreplay';
+    const newSourceSite = 'newSourceSite';
+    const newTier = 1;
 
     const initialState = {
       databaseInstances: [instance],
@@ -113,6 +118,11 @@ describe('Databases reducer', () => {
       ...instance,
       system_replication: newSystemReplication,
       system_replication_status: newStatus,
+      system_replication_site: newSite,
+      system_replication_mode: newMode,
+      system_replication_operation_mode: newOperationMode,
+      system_replication_source_site: newSourceSite,
+      system_replication_tier: newTier,
     };
 
     const action = updateDatabaseInstanceSystemReplication(instanceToUpdate);
@@ -123,6 +133,11 @@ describe('Databases reducer', () => {
           ...instance,
           system_replication: newSystemReplication,
           system_replication_status: newStatus,
+          system_replication_site: newSite,
+          system_replication_mode: newMode,
+          system_replication_operation_mode: newOperationMode,
+          system_replication_source_site: newSourceSite,
+          system_replication_tier: newTier,
         },
       ],
     };
