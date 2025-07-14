@@ -4,6 +4,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Host do
   require OpenApiSpex
   alias OpenApiSpex.Schema
 
+  require Trento.Clusters.Enums.ClusterHostStatus, as: ClusterHostStatus
+
   alias TrentoWeb.OpenApi.V1.Schema.{
     HostArchitecture,
     Provider,
@@ -108,8 +110,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Host do
           },
           cluster_host_status: %Schema{
             type: :string,
-            description: "Status of the cluster this host is part of",
-            enum: [:online, :offline],
+            description: "Status of host in the cluster is part of",
+            enum: ClusterHostStatus.values(),
             nullable: true
           },
           heartbeat: %Schema{
