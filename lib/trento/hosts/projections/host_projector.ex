@@ -336,7 +336,11 @@ defmodule Trento.Hosts.Projections.HostProjector do
       do: :ok
 
   def after_update(
-        %HostAddedToCluster{host_id: id, cluster_id: cluster_id},
+        %HostAddedToCluster{
+          host_id: id,
+          cluster_id: cluster_id,
+          cluster_host_status: cluster_host_status
+        },
         _,
         _
       ) do
@@ -345,7 +349,8 @@ defmodule Trento.Hosts.Projections.HostProjector do
       "host_details_updated",
       %{
         id: id,
-        cluster_id: cluster_id
+        cluster_id: cluster_id,
+        cluster_host_status: cluster_host_status
       }
     )
   end

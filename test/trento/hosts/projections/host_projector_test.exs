@@ -161,10 +161,12 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
 
     insert(:cluster, id: cluster_id = Faker.UUID.v4())
 
+    status = ClusterHostStatus.online()
+
     event = %HostAddedToCluster{
       host_id: host_id,
       cluster_id: cluster_id,
-      cluster_host_status: ClusterHostStatus.online()
+      cluster_host_status: status
     }
 
     ProjectorTestHelper.project(HostProjector, event, "host_projector")
@@ -174,17 +176,21 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
     assert event.cluster_host_status == host_projection.cluster_host_status
     assert hostname == host_projection.hostname
 
-    assert_broadcast "host_details_updated", %{id: ^host_id, cluster_id: ^cluster_id}, 1000
+    assert_broadcast "host_details_updated",
+                     %{id: ^host_id, cluster_id: ^cluster_id, cluster_host_status: ^status},
+                     1000
   end
 
   test "should project a new host with no additional properties when HostAddedToCluster event is received" do
     insert(:cluster, id: cluster_id = Faker.UUID.v4())
 
+    status = ClusterHostStatus.online()
+
     %{host_id: host_id} =
       event = %HostAddedToCluster{
         host_id: Faker.UUID.v4(),
         cluster_id: cluster_id,
-        cluster_host_status: ClusterHostStatus.online()
+        cluster_host_status: status
       }
 
     ProjectorTestHelper.project(HostProjector, event, "host_projector")
@@ -193,7 +199,9 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
     assert event.cluster_id == host_projection.cluster_id
     assert nil == host_projection.hostname
 
-    refute_broadcast "host_details_updated", %{id: ^host_id, cluster_id: ^cluster_id}, 1000
+    refute_broadcast "host_details_updated",
+                     %{id: ^host_id, cluster_id: ^cluster_id, cluster_host_status: ^status},
+                     1000
   end
 
   test "should set the cluster_id to nil if a HostRemovedFromCluster event is received and the host is still part of the cluster" do
