@@ -1,8 +1,13 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { createBrowserRouter, Outlet } from 'react-router';
-import { RouterProvider } from 'react-router/dom';
+import {
+  createRoutesFromElements,
+  createBrowserRouter,
+  Route,
+  RouterProvider,
+  Outlet,
+} from 'react-router';
 
 import { Toaster } from 'react-hot-toast';
 import { Provider } from 'react-redux';
@@ -49,123 +54,103 @@ import PostHogPageView from '@lib/analytics/pageview';
 
 import { createStore } from './state';
 
-const createRouter = ({ getUser }) => {
-  const routes = [
+const createRouter = ({ getUser }) =>
+  createBrowserRouter(
+    createRoutesFromElements(
+      <Route element={<RoutesWrapper />} ErrorBoundary={SomethingWentWrong}>
+        <Route path="/session/new" element={<Login />} />
+        {isSingleSignOnEnabled() && (
+          <Route
+            path={getSingleSignOnCallbackUrl()}
+            element={<SSOCallback />}
+          />
+        )}
+        <Route path="/">
+          <Route
+            element={<Guard redirectPath="/session/new" getUser={getUser} />}
+          >
+            <Route element={<Layout />}>
+              <Route index element={<Home />} />
+              <Route index path="profile" element={<ProfilePage />} />
+              <Route index path="hosts" element={<HostsList />} />
+              <Route
+                path="hosts/:hostID/settings"
+                element={<HostSettingsPage />}
+              />
+              <Route
+                path="hosts/:hostID/saptune"
+                element={<SaptuneDetailsPage />}
+              />
+              <Route path="clusters" element={<ClustersList />} />
+              <Route path="sap_systems" element={<SapSystemsOverviewPage />} />
+              <Route path="databases" element={<DatabasesOverviewPage />} />
+              <Route path="catalog" element={<ChecksCatalogPage />} />
+              <Route path="settings" element={<SettingsPage />} />
+              <Route path="about" element={<AboutPage />} />
+              <Route path="hosts/:hostID" element={<HostDetailsPage />} />
+              <Route path="sap_systems/:id" element={<SapSystemDetails />} />
+              <Route path="databases/:id" element={<DatabaseDetails />} />
+              <Route
+                path="clusters/:clusterID"
+                element={<ClusterDetailsPage />}
+              />
+              <Route
+                path="clusters/:clusterID/settings"
+                element={<ClusterSettingsPage />}
+              />
+              <Route
+                path="clusters/:targetID/executions/last"
+                element={<ExecutionResultsPage targetType={TARGET_CLUSTER} />}
+              />
+              <Route
+                path="hosts/:targetID/executions/last"
+                element={<ExecutionResultsPage targetType={TARGET_HOST} />}
+              />
+              <Route
+                path="clusters/:targetID/executions/last/:checkID/:resultTargetType/:resultTargetName"
+                element={<CheckResultDetailPage targetType={TARGET_CLUSTER} />}
+              />
+              <Route
+                path="hosts/:targetID/executions/last/:checkID/:resultTargetType/:resultTargetName"
+                element={<CheckResultDetailPage targetType={TARGET_HOST} />}
+              />
+              <Route
+                path="hosts/:hostID/patches"
+                element={<HostRelevantPatchesPage />}
+              />
+              <Route
+                path="hosts/:hostID/packages"
+                element={<UpgradablePackagesPage />}
+              />
+              <Route
+                path="hosts/:hostID/patches/:advisoryID"
+                element={<AdvisoryDetailsPage />}
+              />
+              <Route path="activity_log" element={<ActivityLogPage />} />
+              <Route
+                element={
+                  <ForbiddenGuard permitted={['all:users']} outletMode />
+                }
+              >
+                <Route path="users" element={<UsersPage />} />
+                <Route path="users/new" element={<CreateUserPage />} />
+                <Route path="users/:userID/edit" element={<EditUserPage />} />
+              </Route>
+            </Route>
+          </Route>
+        </Route>
+        <Route path="*" element={<NotFound />} />
+      </Route>
+    ),
     {
-      path: '/',
-      element: <RoutesWrapper />,
-      errorElement: <SomethingWentWrong />,
-      children: [
-        {
-          path: '/session/new',
-          element: <Login />,
-        },
-        ...(isSingleSignOnEnabled()
-          ? [
-              {
-                path: getSingleSignOnCallbackUrl(),
-                element: <SSOCallback />,
-              },
-            ]
-          : []),
-        {
-          element: <Guard redirectPath="/session/new" getUser={getUser} />,
-          children: [
-            {
-              element: <Layout />,
-              children: [
-                { index: true, element: <Home /> },
-                { path: 'profile', element: <ProfilePage /> },
-                { path: 'hosts', element: <HostsList /> },
-                { path: 'hosts/:hostID', element: <HostDetailsPage /> },
-                {
-                  path: 'hosts/:hostID/settings',
-                  element: <HostSettingsPage />,
-                },
-                {
-                  path: 'hosts/:hostID/saptune',
-                  element: <SaptuneDetailsPage />,
-                },
-                {
-                  path: 'hosts/:hostID/packages',
-                  element: <UpgradablePackagesPage />,
-                },
-                {
-                  path: 'hosts/:hostID/patches',
-                  element: <HostRelevantPatchesPage />,
-                },
-                {
-                  path: 'hosts/:hostID/patches/:advisoryID',
-                  element: <AdvisoryDetailsPage />,
-                },
-                { path: 'clusters', element: <ClustersList /> },
-                {
-                  path: 'clusters/:clusterID',
-                  element: <ClusterDetailsPage />,
-                },
-                {
-                  path: 'clusters/:clusterID/settings',
-                  element: <ClusterSettingsPage />,
-                },
-                {
-                  path: 'clusters/:targetID/executions/last',
-                  element: <ExecutionResultsPage targetType={TARGET_CLUSTER} />,
-                },
-                {
-                  path: 'hosts/:targetID/executions/last',
-                  element: <ExecutionResultsPage targetType={TARGET_HOST} />,
-                },
-                {
-                  path: 'clusters/:targetID/executions/last/:checkID/:resultTargetType/:resultTargetName',
-                  element: (
-                    <CheckResultDetailPage targetType={TARGET_CLUSTER} />
-                  ),
-                },
-                {
-                  path: 'hosts/:targetID/executions/last/:checkID/:resultTargetType/:resultTargetName',
-                  element: <CheckResultDetailPage targetType={TARGET_HOST} />,
-                },
-                { path: 'sap_systems', element: <SapSystemsOverviewPage /> },
-                { path: 'sap_systems/:id', element: <SapSystemDetails /> },
-                { path: 'databases', element: <DatabasesOverviewPage /> },
-                { path: 'databases/:id', element: <DatabaseDetails /> },
-                { path: 'catalog', element: <ChecksCatalogPage /> },
-                { path: 'settings', element: <SettingsPage /> },
-                { path: 'about', element: <AboutPage /> },
-                { path: 'activity_log', element: <ActivityLogPage /> },
-                {
-                  element: (
-                    <ForbiddenGuard permitted={['all:users']} outletMode />
-                  ),
-                  children: [
-                    { path: 'users', element: <UsersPage /> },
-                    { path: 'users/new', element: <CreateUserPage /> },
-                    { path: 'users/:userID/edit', element: <EditUserPage /> },
-                  ],
-                },
-              ],
-            },
-          ],
-        },
-        {
-          path: '*',
-          element: <NotFound />,
-        },
-      ],
-    },
-  ];
-
-  return createBrowserRouter(routes, {
-    future: {
       v7_relativeSplatPath: true,
       v7_startTransition: true,
       v7_fetcherPersist: true,
       v7_normalizeFormMethod: true,
       v7_partialHydration: true,
       v7_skipActionErrorRevalidation: true,
-    },
-  });
-};
+    }
+  );
 
 function RoutesWrapper() {
   return (
