@@ -75,20 +75,7 @@ export const renderWithRouter = (ui, { route = '/' } = {}) => {
   window.history.pushState({}, 'Test page', route);
 
   function Router({ children }) {
-    return (
-      <BrowserRouter
-        future={{
-          v7_relativeSplatPath: true,
-          v7_startTransition: true,
-          v7_fetcherPersist: true,
-          v7_normalizeFormMethod: true,
-          v7_partialHydration: true,
-          v7_skipActionErrorRevalidation: true,
-        }}
-      >
-        {children}
-      </BrowserRouter>
-    );
+    return <BrowserRouter>{children}</BrowserRouter>;
   }
 
   return {
@@ -101,16 +88,7 @@ export function renderWithRouterMatch(ui, { path = '/', route = '/' } = {}) {
 
   return {
     ...render(
-      <BrowserRouter
-        future={{
-          v7_relativeSplatPath: true,
-          v7_startTransition: true,
-          v7_fetcherPersist: true,
-          v7_normalizeFormMethod: true,
-          v7_partialHydration: true,
-          v7_skipActionErrorRevalidation: true,
-        }}
-      >
+      <BrowserRouter>
         <Routes>
           <Route path={path} element={ui} />
         </Routes>
