@@ -1,4 +1,4 @@
-defmodule Trento.Repo.Migrations.AddHostClusterStatus do
+defmodule Trento.Repo.Migrations.AddClusterHostStatus do
   use Ecto.Migration
 
   def change do
