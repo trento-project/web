@@ -291,6 +291,8 @@ context('Activity Log page', () => {
             currentRefreshRate
           );
           activityLogPage.selectRefreshRate(newRefreshRate);
+          // eslint-disable-next-line cypress/no-unnecessary-waiting
+          cy.wait(600);
           const expectedUrl = `/activity_log${
             expectedRefreshRate ? `?refreshRate=${expectedRefreshRate}` : ''
           }`;
