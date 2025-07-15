@@ -113,7 +113,11 @@ export const selectPagination = (amountOfItems) => {
 
 export const selectRefreshRate = (refreshRate) => {
   cy.get(autoRefreshIntervalButton).click();
-  return cy.contains(refreshRate).should('be.visible').click();
+  return cy
+    .get(
+      `${autoRefreshIntervalButton} + div span span:contains("${refreshRate}")`
+    )
+    .click();
 };
 
 // UI Validations
