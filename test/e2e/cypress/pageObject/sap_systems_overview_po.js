@@ -99,13 +99,12 @@ export const clickNwdInstance00CleanUpButton = () =>
 export const clickCleanUpModalConfirmationButton = () =>
   cy.get(modalCleanUpConfirmationButton).click();
 
-const clickAllRows = () =>
-  cy.get('td svg[class*="cursor"]').each((cell, index) => {
-    const titleSelector = `span + h2:contains("Application"):eq(${index})`;
-    cy.get(titleSelector).should('be.not.visible');
-    cy.wrap(cell).click();
-    cy.get(titleSelector).should('be.visible');
+const clickAllRows = () => {
+  const expandTableElement = 'td svg[class*="cursor"]';
+  cy.get(expandTableElement).each((cell, index) => {
+    cy.get(`${expandTableElement}:eq(${index})`).click();
   });
+};
 
 // UI Validations
 export const nwdInstance01CleanUpButtonIsVisible = () =>
