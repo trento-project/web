@@ -1,5 +1,6 @@
 import { EOS_DATABASE_OUTLINED } from 'eos-icons-react';
 import React from 'react';
+import { sortBy } from 'lodash';
 
 import { DATABASE_TYPE } from '@lib/model/sapSystems';
 import InstanceOverview from '@pages/InstanceOverview';
@@ -32,6 +33,8 @@ function PlainDatabaseItemOverview({
   userAbilities,
   onCleanUpClick,
 }) {
+  const sortedInstances = sortBy(instances, ['system_replication_tier']);
+
   return (
     <div className="flex bg-white dark:bg-gray-800 shadow mb-2 rounded-lg">
       <div className="flex-auto">
@@ -57,8 +60,8 @@ function PlainDatabaseItemOverview({
             </div>
           </div>
           <div className="table-row-group">
-            {instances &&
-              instances.map((instance) => (
+            {sortedInstances &&
+              sortedInstances.map((instance) => (
                 <DatabaseInstance
                   key={`${instance.host_id}_${instance.instance_number}`}
                   instance={instance}

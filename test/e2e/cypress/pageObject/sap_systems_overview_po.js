@@ -308,7 +308,7 @@ export const sapSystemHealthChangesToRedAsExpected = () => {
   cy.get(sapSystemInstanceHealthBadge).should('have.class', healthClass);
 
   const appLayerInstanceHealthBadge =
-    'tr td div[class*="flex bg-white"] div[class*="row"] div[class*="cell"] svg:eq(5)';
+    'tr td div[class*="flex bg-white"] div[class*="row"] div[class*="cell"] svg:eq(4)';
   cy.get(appLayerInstanceHealthBadge).should('have.class', healthClass);
 };
 

@@ -29,7 +29,7 @@ const hddDatabase = {
   sid: 'HDD',
   instance: {
     instanceNumber: '10',
-    row: 1,
+    row: 0,
   },
 };
 
