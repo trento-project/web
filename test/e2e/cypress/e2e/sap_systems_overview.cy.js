@@ -48,7 +48,7 @@ context('SAP Systems Overview', () => {
       });
 
       it('should have a link to the hosts', () => {
-        sapSystemsOverviewPage.eachInstanceHasItsHostWorkingLinkg();
+        sapSystemsOverviewPage.eachInstanceHasItsHostWorkingLink();
       });
     });
 

@@ -100,8 +100,11 @@ export const clickCleanUpModalConfirmationButton = () =>
   cy.get(modalCleanUpConfirmationButton).click();
 
 const clickAllRows = () =>
-  cy.get(`${sapSystemsTableRows} td svg[class*="cursor"]`).each((cell) => {
+  cy.get('td svg[class*="cursor"]').each((cell, index) => {
+    const titleSelector = `span + h2:contains("Application"):eq(${index})`;
+    cy.get(titleSelector).should('be.not.visible');
     cy.wrap(cell).click();
+    cy.get(titleSelector).should('be.visible');
   });
 
 // UI Validations
@@ -257,7 +260,7 @@ export const eachHanaInstanceHasItsClusterWorkingLink = () => {
   });
 };
 
-export const eachInstanceHasItsHostWorkingLinkg = () => {
+export const eachInstanceHasItsHostWorkingLink = () => {
   instancesData.forEach((instance, rowIndex) => {
     clickAllRows();
     cy.get(`${instanceHostLinks}:eq(${rowIndex})`).click();
