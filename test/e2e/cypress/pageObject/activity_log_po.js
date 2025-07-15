@@ -113,7 +113,11 @@ export const selectPagination = (amountOfItems) => {
 
 export const selectRefreshRate = (refreshRate) => {
   cy.get(autoRefreshIntervalButton).click();
-  return cy.get(`[data-refreshrate-option="${refreshRate}"]`).click();
+  return cy
+    .get(
+      `${autoRefreshIntervalButton}+ div[id*="headlessui-listbox-options"] span[class="text-center block"]:contains("${refreshRate}")`
+    )
+    .click();
 };
 
 // UI Validations

@@ -162,10 +162,7 @@ function RefreshIntervalSelection({ disabled = false, rate, onChange = noop }) {
       options={refreshRateOptions}
       value={refreshRate}
       renderOption={createOptionRenderer(null, (value) => (
-        <span
-          data-refreshrate-option={refreshRateOptionsToLabel[value]}
-          className="text-center block"
-        >
+        <span className="text-center block">
           {refreshRateOptionsToLabel[value]}
         </span>
       ))}
