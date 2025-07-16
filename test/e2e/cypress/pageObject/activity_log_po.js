@@ -125,7 +125,7 @@ export const autoRefreshIntervalButtonHasTheExpectedValue = (refreshRate) =>
   cy.get(autoRefreshIntervalButton).should('have.text', refreshRate);
 
 export const autoRefreshButtonIsEnabled = () =>
-  cy.get(autoRefreshIntervalButton).should('be.enabled');
+  cy.get('button[class*="refresh-rate"]').should('be.enabled');
 
 export const autoRefreshIntervalButtonIsDisabled = () =>
   cy.get(autoRefreshIntervalButton).should('be.disabled');
