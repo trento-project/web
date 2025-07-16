@@ -415,7 +415,7 @@ jobs:
         env:
           SPLIT: ${{ strategy.job-total }}
           SPLIT_INDEX: ${{ strategy.job-index }}
-          cypress_video: false
+          cypress_video: true
           cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
         with:
           working-directory: test/e2e
@@ -521,7 +521,7 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v6
         env:
-          cypress_video: false
+          cypress_video: true
           cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
         with:
           working-directory: test/e2e
@@ -647,7 +647,7 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v6
         env:
-          cypress_video: false
+          cypress_video: true
         with:
           working-directory: test/e2e
           spec: ${{ matrix.cypress_spec }}
