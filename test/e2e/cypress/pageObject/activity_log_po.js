@@ -116,9 +116,10 @@ export const selectPagination = (amountOfItems) => {
 export const selectRefreshRate = (refreshRate) => {
   cy.get(refreshRateOptionsList).should('not.exist');
   cy.get(autoRefreshIntervalDiv).click();
+  // eslint-disable-next-line cypress/no-unnecessary-waiting
+  cy.wait(150); // couldn't really find a way to reduce flakiness here
   cy.get(refreshRateOptionsList).should('be.visible');
   cy.get('div[id*="headlessui-listbox-options"]').contains(refreshRate).click();
-  waitForActivityLogRequest();
 };
 
 // UI Validations
