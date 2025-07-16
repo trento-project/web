@@ -28,7 +28,7 @@ const lastPageButton = '[aria-label="last-page"]';
 const selectPaginationButton =
   'div[class*="flex justify-between"] button[aria-haspopup="listbox"]';
 
-const autoRefreshIntervalButton = 'button[class*="refresh-rate"]';
+const autoRefreshIntervalButton = 'div[class="relative flex-1"]';
 const availableRefreshRates = 'button[class*="refresh-rate"] + div div';
 
 //Test data
@@ -112,10 +112,11 @@ export const selectPagination = (amountOfItems) => {
 };
 
 export const selectRefreshRate = (refreshRate) => {
-  cy.get('.refresh-rate-selection-dropdown').click();
-  cy.get(
-    `${autoRefreshIntervalButton}+ div[id*="headlessui-listbox-options"] span[class="text-center block"]:contains("${refreshRate}")`
-  ).click({ force: true });
+  const refreshRateOptionsList = 'button + div[data-headlessui-state="open"]';
+  cy.get(refreshRateOptionsList).should('not.exist');
+  cy.get(autoRefreshIntervalButton).click();
+  cy.get(refreshRateOptionsList).should('be.visible');
+  cy.get('div[id*="headlessui-listbox-options"]').contains(refreshRate).click();
 };
 
 // UI Validations
