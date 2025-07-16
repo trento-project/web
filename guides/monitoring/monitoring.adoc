@@ -1,4 +1,4 @@
-== Monitoring
+= Monitoring
 
 Currently Trento provides a basic integration with
 https://github.com/prometheus/prometheus[Prometheus] that gives realtime
@@ -18,5 +18,5 @@ configuration is handled by the helm-charts.
 
 '''''
 
-.Monitoring Architecture
+== Monitoring Architecture
 image::../images/trento-monitoring.png[Monitoring Architecture]
