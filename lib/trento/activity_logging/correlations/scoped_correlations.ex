@@ -1,4 +1,4 @@
-defmodule Trento.ActivityLog.ScopedCorrelations do
+defmodule Trento.ActivityLog.Correlations.ScopedCorrelations do
   @moduledoc """
   For usage in test suites where-in we want per test process isolation
   of the cache keys.
