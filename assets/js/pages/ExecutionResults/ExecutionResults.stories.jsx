@@ -1,5 +1,5 @@
 import React from 'react';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router';
 import { hostFactory, clusterFactory } from '@lib/test-utils/factories';
 
 import ExecutionResults from '.';

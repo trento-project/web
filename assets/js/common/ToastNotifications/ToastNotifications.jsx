@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 
 import { USER_PASSWORD_CHANGE_REQUESTED_NOTIFICATION_ID } from '@state/user';
 

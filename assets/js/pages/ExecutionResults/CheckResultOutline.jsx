@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { TARGET_CLUSTER, TARGET_HOST } from '@lib/model';
 import TargetResult from './TargetResult';
 import {

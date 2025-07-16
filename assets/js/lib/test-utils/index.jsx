@@ -3,7 +3,7 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import { render } from '@testing-library/react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router';
 import configureStore from 'redux-mock-store';
 import { runSaga } from 'redux-saga';
 
@@ -75,13 +75,7 @@ export const renderWithRouter = (ui, { route = '/' } = {}) => {
   window.history.pushState({}, 'Test page', route);
 
   function Router({ children }) {
-    return (
-      <BrowserRouter
-        future={{ v7_relativeSplatPath: true, v7_startTransition: true }}
-      >
-        {children}
-      </BrowserRouter>
-    );
+    return <BrowserRouter>{children}</BrowserRouter>;
   }
 
   return {

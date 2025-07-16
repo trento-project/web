@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { createSearchParams, useSearchParams } from 'react-router-dom';
+import { createSearchParams, useSearchParams } from 'react-router';
 import Filter from '@common/Filter';
 
 export const RESULT_FILTER_FIELD = 'result';

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import TrentoLogo from '@static/trento-dark.svg';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 import { performSSOEnrollment, performSAMLEnrollment } from '@state/user';
 import { getSingleSignOnLoginUrl } from '@lib/auth/config';

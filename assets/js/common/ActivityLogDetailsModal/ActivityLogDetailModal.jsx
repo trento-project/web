@@ -1,6 +1,6 @@
 import React from 'react';
 import { get, noop } from 'lodash';
-import { NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router';
 
 import Markdown from '@common/Markdown';
 import Button from '@common/Button';

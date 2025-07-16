@@ -34,6 +34,11 @@ jest.mock('react-hot-toast', () => ({
   },
 }));
 
+jest.mock('react-router', () => ({
+  ...jest.requireActual('react-router'),
+  useNavigate: jest.fn(),
+}));
+
 describe('EditUserPage', () => {
   beforeEach(() => {
     axiosMock.reset();
@@ -43,7 +48,7 @@ describe('EditUserPage', () => {
   it('should redirect back to users when the Back To Users button is clicked', async () => {
     const user = userEvent.setup();
     const navigate = jest.fn();
-    jest.spyOn(router, 'useNavigate').mockImplementation(() => navigate);
+    router.useNavigate.mockImplementation(() => navigate);
     const userData = userFactory.build();
     axiosMock.onGet(USERS_URL.concat(userData.id)).reply(200, userData);
 
@@ -62,7 +67,7 @@ describe('EditUserPage', () => {
   it('should redirect back to users when the Cancel button is clicked', async () => {
     const user = userEvent.setup();
     const navigate = jest.fn();
-    jest.spyOn(router, 'useNavigate').mockImplementation(() => navigate);
+    router.useNavigate.mockImplementation(() => navigate);
     const userData = userFactory.build();
     axiosMock.onGet(USERS_URL.concat(userData.id)).reply(200, userData);
 
@@ -95,7 +100,7 @@ describe('EditUserPage', () => {
     const toastMessage = 'User edited successfully';
     const user = userEvent.setup();
     const navigate = jest.fn();
-    jest.spyOn(router, 'useNavigate').mockImplementation(() => navigate);
+    router.useNavigate.mockImplementation(() => navigate);
     const userData = userFactory.build();
     const abilities = abilityFactory.buildList(2);
 

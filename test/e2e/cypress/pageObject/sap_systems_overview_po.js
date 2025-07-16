@@ -54,7 +54,7 @@ const sapSystemNwq = {
 const instancesData = availableSAPSystems.flatMap((system) => system.instances);
 
 // Selectors
-const sapSystemsTableRows = 'tbody tr:nth-child(odd)';
+const sapSystemsTableRows = 'tbody tr[class=""]';
 const firstSystemApplicationLayerRows =
   'tbody tr:nth-child(odd):eq(0) + tr td div[class*="row-group"]:eq(0) div[class*="row border"]';
 const cleanUpButton = 'button:contains("Clean up")';
@@ -99,10 +99,12 @@ export const clickNwdInstance00CleanUpButton = () =>
 export const clickCleanUpModalConfirmationButton = () =>
   cy.get(modalCleanUpConfirmationButton).click();
 
-const clickAllRows = () =>
-  cy
-    .get(`${sapSystemsTableRows} td:first-child`)
-    .each((cell) => cy.wrap(cell).click());
+const clickAllRows = () => {
+  const expandTableElement = 'td svg[class*="cursor"]';
+  cy.get(expandTableElement).each((cell, index) => {
+    cy.get(`${expandTableElement}:eq(${index})`).click();
+  });
+};
 
 // UI Validations
 export const nwdInstance01CleanUpButtonIsVisible = () =>
@@ -257,7 +259,7 @@ export const eachHanaInstanceHasItsClusterWorkingLink = () => {
   });
 };
 
-export const eachInstanceHasItsHostWorkingLinkg = () => {
+export const eachInstanceHasItsHostWorkingLink = () => {
   instancesData.forEach((instance, rowIndex) => {
     clickAllRows();
     cy.get(`${instanceHostLinks}:eq(${rowIndex})`).click();

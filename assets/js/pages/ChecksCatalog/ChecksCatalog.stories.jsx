@@ -1,5 +1,5 @@
 import React from 'react';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router';
 
 import { catalogCheckFactory } from '@lib/test-utils/factories';
 import ChecksCatalog from './ChecksCatalog';

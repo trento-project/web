@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import TrentoLogo from '@static/trento-dark.svg';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-hot-toast';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router';
 import { initiateLogin } from '@state/user';
 import {
   isSingleSignOnEnabled,

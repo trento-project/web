@@ -1,6 +1,6 @@
 import React from 'react';
 import { Menu } from '@headlessui/react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 
 import { EOS_ACCOUNT_CIRCLE_OUTLINED } from 'eos-icons-react';
 
