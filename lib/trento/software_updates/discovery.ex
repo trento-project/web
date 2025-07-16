@@ -9,6 +9,7 @@ defmodule Trento.SoftwareUpdates.Discovery do
 
   alias Ecto.Multi
 
+  alias Trento.ActivityLog
   alias Trento.Hosts
 
   alias Trento.Hosts.Commands.{
@@ -95,7 +96,7 @@ defmodule Trento.SoftwareUpdates.Discovery do
     |> Enum.each(fn command_payload ->
       command_payload
       |> ClearSoftwareUpdatesDiscovery.new!()
-      |> commanded().dispatch()
+      |> maybe_correlated_dispatch()
     end)
 
     clear()
@@ -223,7 +224,7 @@ defmodule Trento.SoftwareUpdates.Discovery do
            health: discovered_health
          }
          |> CompleteSoftwareUpdatesDiscovery.new!()
-         |> commanded().dispatch() do
+         |> maybe_correlated_dispatch() do
       :ok ->
         {:ok, :dispatched}
 
@@ -304,4 +305,23 @@ defmodule Trento.SoftwareUpdates.Discovery do
   defp adapter, do: Application.fetch_env!(:trento, __MODULE__)[:adapter]
 
   defp commanded, do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]
+
+  defp maybe_correlated_dispatch(command) do
+    key = ActivityLog.correlation_key(:suse_manager_settings)
+
+    case ActivityLog.get_correlation_id(key) do
+      nil ->
+        # in case the correlation_id entry has expired
+        # or is absent we do the default dispatch
+        commanded().dispatch(command)
+
+      correlation_id ->
+        # in case correlation_id exists, we
+        # pass it on to the dispatch function
+        commanded().dispatch(command,
+          correlation_id: correlation_id,
+          causation_id: correlation_id
+        )
+    end
+  end
 end
