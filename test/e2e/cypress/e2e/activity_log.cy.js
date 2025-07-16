@@ -290,7 +290,7 @@ context('Activity Log page', () => {
           activityLogPage.autoRefreshIntervalButtonHasTheExpectedValue(
             currentRefreshRate
           );
-          activityLogPage.selectRefreshRate(newRefreshRate);
+          activityLogPage.selectNextRefreshRate(newRefreshRate);
           const expectedUrl = `/activity_log${
             expectedRefreshRate ? `?refreshRate=${expectedRefreshRate}` : ''
           }`;

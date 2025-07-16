@@ -122,6 +122,15 @@ export const selectRefreshRate = (refreshRate) => {
   cy.get('div[id*="headlessui-listbox-options"]').contains(refreshRate).click();
 };
 
+export const selectNextRefreshRate = (refreshRate) => {
+  cy.get(refreshRateOptionsList).should('not.exist');
+  interceptActivityLogEndpoint();
+  cy.get(autoRefreshIntervalDiv).click();
+  cy.get(refreshRateOptionsList).should('be.visible');
+  cy.get('div[id*="headlessui-listbox-options"]').contains(refreshRate).click();
+  waitForActivityLogRequest();
+};
+
 // UI Validations
 
 export const autoRefreshIntervalButtonHasTheExpectedValue = (refreshRate) =>
