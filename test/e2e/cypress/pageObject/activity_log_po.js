@@ -28,10 +28,8 @@ const lastPageButton = '[aria-label="last-page"]';
 const selectPaginationButton =
   'div[class*="flex justify-between"] button[aria-haspopup="listbox"]';
 
-const autoRefreshIntervalDiv = 'div[class="relative flex-1"]';
 const autoRefreshIntervalButton = 'button[class*="refresh-rate"]';
 const availableRefreshRates = 'button[class*="refresh-rate"] + div div';
-const refreshRateOptionsList = 'button + div[data-headlessui-state="open"]';
 
 //Test data
 export const expectedRefreshRates = [
@@ -114,21 +112,10 @@ export const selectPagination = (amountOfItems) => {
 };
 
 export const selectRefreshRate = (refreshRate) => {
-  cy.get(refreshRateOptionsList).should('not.exist');
-  cy.get(autoRefreshIntervalDiv).click();
+  cy.get(autoRefreshIntervalButton).click();
   // eslint-disable-next-line cypress/no-unnecessary-waiting
   cy.wait(150); // couldn't really find a way to reduce flakiness here
-  cy.get(refreshRateOptionsList).should('be.visible');
-  cy.get('div[id*="headlessui-listbox-options"]').contains(refreshRate).click();
-};
-
-export const selectNextRefreshRate = (refreshRate) => {
-  cy.get(refreshRateOptionsList).should('not.exist');
-  interceptActivityLogEndpoint();
-  cy.get(autoRefreshIntervalDiv).click();
-  cy.get(refreshRateOptionsList).should('be.visible');
-  cy.get('div[id*="headlessui-listbox-options"]').contains(refreshRate).click();
-  waitForActivityLogRequest();
+  return cy.contains(refreshRate).click();
 };
 
 // UI Validations
