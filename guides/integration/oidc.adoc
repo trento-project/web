@@ -1,4 +1,4 @@
-== OpenID Connect
+= OpenID Connect
 
 Trento integrates with an identity provider (IDP) that use the OpenID
 Connect (OIDC) protocol to authenticate users accessing the console.
@@ -6,7 +6,7 @@ Authorization for specific abilities/permissions is managed by Trento,
 which means that only basic user information is retrieved from the
 external IDP.
 
-=== Enabling OIDC
+== Enabling OIDC
 
 The OIDC authentication is *disabled by default*.
 
@@ -24,12 +24,12 @@ OIDC_BASE_URL=<<OIDC_BASE_URL>>
 OIDC_CALLBACK_URL=<<OIDC_CALLBACK_URL>>
 ....
 
-=== Enabling OIDC in Development
+== Enabling OIDC in Development
 
 Enable OIDC in the development environment using Docker and
 https://github.com/keycloak/keycloak[Keycloak] as IDP.
 
-==== Starting Keycloak Identity Provider
+=== Starting Keycloak Identity Provider
 
 Use a custom Docker profile to start Keycloak as IDP for local
 development.
@@ -42,7 +42,7 @@ docker compose --profile idp up
 
 Keycloak server can be accessed at http://localhost:8081
 
-==== Create OIDC configuration
+=== Create OIDC configuration
 
 [arabic]
 . Create a new local development configuration `+dev.local.exs+` in
@@ -59,7 +59,7 @@ config :trento, :oidc, enabled: true
 +
 `+iex -S mix phx.server+`
 
-==== Login into Trento web console using Single Sign-on with Keycloak
+=== Login into Trento web console using Single Sign-on with Keycloak
 
 [arabic]
 . Navigate to the http://localhost:4000/[Trento web console].
@@ -73,7 +73,7 @@ You will be redirected to the Keycloak login page:
 
 image:../images/keycloack_login.png[keycloack_login]
 
-==== Login as Trento user through keycloak IDP
+=== Login as Trento user through keycloak IDP
 
 The default Trento login credentials are:
 
@@ -92,7 +92,7 @@ password
 After successfully entering user login data, the user is redirected to
 Trento web console.
 
-==== Login into the Keycloak Admin Console
+=== Login into the Keycloak Admin Console
 
 Username:
 
@@ -106,7 +106,7 @@ Password:
 admin
 ....
 
-==== Assigning Admin Rights to the Trento User
+=== Assigning Admin Rights to the Trento User
 
 Grant admin rights to the `+trentoidp+` user, update the
 `+config/dev.local.exs+` file as follows , then restart the application
@@ -120,14 +120,14 @@ config :trento,
   admin_user: "trentoidp"
 ....
 
-==== Run OIDC integration E2E tests
+=== Run OIDC integration E2E tests
 
 Running OIDC e2e tests, requires a running IDP provider.
 
 Run docker compose with the `+--profile idp+` flag, to use our
 https://github.com/keycloak/keycloak[Keycloak] deployment for testing.
 
-==== Run OIDC tests in the GitHub CI
+=== Run OIDC tests in the GitHub CI
 
 Add the `+integration+` label to the PR, otherwise CI is executed
 without OIDC integration tests.

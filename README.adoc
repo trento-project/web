@@ -1,4 +1,4 @@
-== Trento
+= Trento Web
 
 https://github.com/trento-project/web/actions/workflows/ci.yaml[image:https://github.com/trento-project/web/actions/workflows/ci.yaml/badge.svg[CI]]
 https://coveralls.io/github/trento-project/web?branch=main[image:https://coveralls.io/repos/github/trento-project/web/badge.svg?branch=main[Coverage

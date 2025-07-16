@@ -1,6 +1,6 @@
-== Hack on the Trento Web
+= Hack on the Trento Web
 
-=== Requirements
+== Requirements
 
 In order to run the Trento Web application, the following software must
 be installed:
@@ -12,7 +12,7 @@ be installed:
 . https://docs.docker.com/get-docker/[Docker]
 . https://docs.docker.com/compose/install/[Docker Compose]
 
-==== Additional requirements
+=== Additional requirements
 
 Some platforms might not be able to use pre-built versions of some
 dependencies. Therefore, some additional dependencies might be required.
@@ -26,7 +26,7 @@ version is usually sufficient.
 . https://gcc.gnu.org/[gcc]
 . https://www.freedesktop.org/wiki/Software/pkg-config/[pkg-config]
 
-==== Ensure Compatibility with asdf
+=== Ensure Compatibility with asdf
 
 https://asdf-vm.com/guide/introduction.html[asdf] allows to use specific
 versions of programming language tools that are known to be compatible
@@ -50,7 +50,7 @@ Set up the asdf environment
 asdf install
 ....
 
-=== Development environment
+== Development environment
 
 The Trento project provides a docker-compose development environment
 that is used to start a Postgres database and a prometheus instance for
@@ -62,7 +62,7 @@ command:
 docker-compose up -d
 ....
 
-=== Setup Trento
+== Setup Trento
 
 Before starting Trento Web, some initial setup tasks, like installing
 dependencies and creating the database, are required. Execute following
@@ -72,7 +72,7 @@ command:
 mix setup
 ....
 
-=== Connect Trento Web with https://github.com/trento-project/wanda[Wanda]
+== Connect Trento Web with https://github.com/trento-project/wanda[Wanda]
 
 By default, Wanda can be accessed on port 4001.
 
@@ -85,7 +85,7 @@ https://github.com/trento-project/wanda/blob/main/guides/development/hack_on_wan
 Note: If the Wanda service is running on a different port, change the
 default 4001 port in the .env file.
 
-=== Install the JavaScript frontend packages
+== Install the JavaScript frontend packages
 
 Install frontend packages:
 
@@ -93,7 +93,7 @@ Install frontend packages:
 npm --prefix ./assets/ install ./assets
 ....
 
-=== Start Trento Web server in the REPL
+== Start Trento Web server in the REPL
 
 Start Trento web:
 
@@ -101,12 +101,12 @@ Start Trento web:
 iex -S mix phx.server
 ....
 
-=== Access the Trento Web
+== Access the Trento Web
 
 Access the Trento Web by navigating to http://localhost:4000 in the web
 browser.
 
-=== Login
+== Login
 
 The default login credentials are:
 
@@ -122,13 +122,13 @@ Password:
 adminpassword
 ....
 
-=== Environment Variables
+== Environment Variables
 
 The Trento application uses several environment variables to configure
 its behavior. Information about these variables’
 link:./environment_variables.md[environment_variables].
 
-=== Scenario loading with Photofinish
+== Scenario loading with Photofinish
 
 The Trento project includes a tool called
 https://github.com/trento-project/photofinish[photofinish], which is

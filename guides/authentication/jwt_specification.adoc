@@ -1,4 +1,4 @@
-== JWT
+= JWT
 
 The `+web+` dashboard is the identity provider and authentication
 manager of the Trento stack. The API endpoints of the Trento project are
@@ -7,7 +7,7 @@ protected with a JWT token authentication.
 To retrieve and refresh an access token, you should always refer to the
 web dashboard, with dedicated endpoints.
 
-=== Login
+== Login
 
 Endpoint: `+/api/session+` Method: POST Content-Type:
 `+application/json+`
@@ -39,7 +39,7 @@ used as `+Bearer+` token for all the API requests, and a
 `+refresh_token+` used to regenerate an `+access_token+` when the token
 expires.
 
-==== JWT anatomy
+== JWT anatomy
 
 *Access token*
 
@@ -82,7 +82,7 @@ The `+access_token+` has a lifespan of *10 minutes*, the
 The `+sub+` claim, contains the identifier of the user, in the example
 JWT `+1+`.
 
-=== Refresh an access token
+== Refresh an access token
 
 To refresh an `+access_token+` when expires, you should use the
 `+refresh+` endpoint.
