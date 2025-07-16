@@ -112,9 +112,7 @@ export const selectPagination = (amountOfItems) => {
 };
 
 export const selectRefreshRate = (refreshRate) => {
-  cy.get(autoRefreshIntervalButton).click();
-  // eslint-disable-next-line cypress/no-unnecessary-waiting
-  cy.wait(500);
+  cy.get('div[class="relative flex-1"]').click();
   cy.get(
     `${autoRefreshIntervalButton}+ div[id*="headlessui-listbox-options"] span[class="text-center block"]:contains("${refreshRate}")`
   ).click();
