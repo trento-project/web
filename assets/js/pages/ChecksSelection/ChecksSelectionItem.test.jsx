@@ -79,7 +79,7 @@ describe('ChecksSelectionItem component', () => {
     );
 
     await user.click(screen.getByRole('switch'));
-    expect(onChangeMock).toBeCalled();
+    expect(onChangeMock).toHaveBeenCalled();
   });
 });
 

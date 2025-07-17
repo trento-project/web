@@ -76,6 +76,6 @@ describe('ClusterDetails ChecksSelectionGroup component', () => {
     render(<ChecksSelectionGroup group={group} onChange={onChangeMock} />);
 
     await user.click(screen.getByRole('switch'));
-    expect(onChangeMock).toBeCalled();
+    expect(onChangeMock).toHaveBeenCalled();
   });
 });

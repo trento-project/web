@@ -130,7 +130,7 @@ describe('AlertingSettingsModal', () => {
     );
     await user.click(screen.getByRole('button', { name: 'Save Settings' }));
 
-    expect(onSave).toBeCalledWith({
+    expect(onSave).toHaveBeenCalledWith({
       alertingEnabled: true,
       smtpServer,
       smtpPort,
@@ -158,7 +158,7 @@ describe('AlertingSettingsModal', () => {
     );
     await user.click(screen.getByRole('button', { name: 'Save Settings' }));
 
-    expect(onSave).toBeCalledWith({
+    expect(onSave).toHaveBeenCalledWith({
       alertingEnabled: true,
       smtpServer,
       smtpPort,
