@@ -1,9 +1,14 @@
+:ci-url: https://github.com/trento-project/web/actions/workflows/ci.yaml
+:ci-badge: {ci-url}/badge.svg
+:coverage-url: https://coveralls.io/github/trento-project/web?branch=main
+:coverage-badge: https://coveralls.io/repos/github/trento-project/web/badge.svg?branch=main
+:docs-url: https://trento-project.io/web/
+:docs-badge: https://img.shields.io/badge/documentation-grey.svg
 = Trento Web
 
-https://github.com/trento-project/web/actions/workflows/ci.yaml[image:https://github.com/trento-project/web/actions/workflows/ci.yaml/badge.svg[CI]]
-https://coveralls.io/github/trento-project/web?branch=main[image:https://coveralls.io/repos/github/trento-project/web/badge.svg?branch=main[Coverage
-Status]]
-https://trento-project.io/web/[image:https://img.shields.io/badge/documentation-grey.svg[Documentation]]
+{ci-url}[image:{ci-badge}[CI]]
+{coverage-url}[image:{coverage-badge}[Coverage Status]]
+{docs-url}[image:{docs-badge}[Documentation]]
 
 _Trento_ is a bespoke, stand-alone web application, built by SUSE from
 the ground up, to facilitate SAP operations, proactively preventing
@@ -89,7 +94,7 @@ It is important in critical business systems to have access to relevant
 information about _how things are going_. Currently, Trento provides
 basic integration with *Prometheus*.
 
-See link:./guides/monitoring/monitoring.md[related documentation] for
+See link:https://github.com/trento-project/web/blob/main/guides/monitoring/monitoring.adoc[related documentation] for
 more information.
 
 === Alerting
@@ -97,7 +102,7 @@ more information.
 Alerting feature notifies the SAP Administrator about important updates
 in the Landscape being monitored/observed by Trento.
 
-See link:./guides/alerting/alerting.md[related documentation] for more
+See link:https://github.com/trento-project/web/blob/main/guides/alerting/alerting.adoc[related documentation] for more
 information.
 
 == Installation
@@ -110,8 +115,7 @@ for more information.
 === Installing Trento
 
 To install Trento, refer to the
-https://github.com/trento-project/docs/blob/main/guides/manual-installation.md[Installation
-of Trento] guide.
+https://github.com/trento-project/docs/blob/main/guides/manual-installation.adoc[Installationof Trento] guide.
 
 === Installing Trento using Ansible
 
@@ -126,7 +130,7 @@ https://github.com/trento-project/helm-charts[Helm Charts] repository.
 === Installing Trento Web locally for Development
 
 To install Trento Web locally for development, refer to the
-link:./guides/development/hack_on_the_trento.md[hack on the Trento Web]
+link:https://github.com/trento-project/web/blob/main/guides/development/hack_on_the_trento.adoc[hack on the Trento Web]
 guide.
 
 == Support
@@ -136,7 +140,7 @@ https://github.com/trento-project/web/issues[GitHub issues].
 
 == Contributing
 
-See CONTRIBUTING.md
+See xref:CONTRIBUTING.adoc[contribution guidelines].
 
 == License
 

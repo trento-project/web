@@ -38,7 +38,7 @@ https://asdf-vm.com/guide/getting-started.html[asdf getting started
 guide].
 
 Install all required asdf plugins from
-link:/.tool-versions[.tool-versions] inside the web repository.
+link:https://github.com/trento-project/web/blob/main/.tool-versions[.tool-versions] inside the web repository.
 
 ....
 cut -d' ' -f1 .tool-versions|xargs -i asdf plugin add  {}
@@ -80,7 +80,7 @@ The wanda url is provided with the configuration parameter
 `+:trento, :checks_service, :base_url+`.
 
 *Guide* how to set up
-https://github.com/trento-project/wanda/blob/main/guides/development/hack_on_wanda.md[Wanda].
+https://github.com/trento-project/wanda/blob/main/guides/development/hack_on_wanda.adoc[Wanda].
 
 Note: If the Wanda service is running on a different port, change the
 default 4001 port in the .env file.
@@ -126,7 +126,7 @@ adminpassword
 
 The Trento application uses several environment variables to configure
 its behavior. Information about these variables’
-link:./environment_variables.md[environment_variables].
+link:environment_variables.adoc[environment_variables].
 
 == Scenario loading with Photofinish
 
