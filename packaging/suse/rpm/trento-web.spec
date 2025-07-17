@@ -81,6 +81,6 @@ install -D -m 0600 packaging/suse/rpm/systemd/trento-web.example %{buildroot}/et
 /etc/trento/trento-web.example
 
 %license LICENSE
-%doc README.md guides
+%doc README.adoc guides
 
 %changelog
