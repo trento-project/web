@@ -45,7 +45,7 @@ describe('OperationsButton', () => {
 
     await user.click(screen.getByText('Operation 1'));
 
-    expect(mockOnClick).toBeCalled();
+    expect(mockOnClick).toHaveBeenCalled();
   });
 
   it('should show disabled operation', async () => {

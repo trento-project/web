@@ -220,7 +220,7 @@ describe('ApiKeySettingsModal', () => {
       await user.click(screen.getByRole('button', { name: 'Generate' }));
       await user.click(screen.getByRole('button', { name: 'Generate' }));
 
-      expect(onGenerate).toBeCalledWith({ apiKeyExpiration: null });
+      expect(onGenerate).toHaveBeenCalledWith({ apiKeyExpiration: null });
     });
   });
   describe('Generated api key display', () => {
@@ -322,7 +322,7 @@ describe('ApiKeySettingsModal', () => {
       await user.click(screen.getByRole('button', { name: 'Generate' }));
 
       await user.click(screen.getByRole('button', { name: 'Generate' }));
-      expect(onGenerate).toBeCalledWith({ apiKeyExpiration: null });
+      expect(onGenerate).toHaveBeenCalledWith({ apiKeyExpiration: null });
     });
   });
 });

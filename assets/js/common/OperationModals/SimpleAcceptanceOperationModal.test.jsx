@@ -119,7 +119,7 @@ describe('SimpleAcceptanceOperationModal', () => {
     await user.click(screen.getByRole('checkbox'));
     await user.click(screen.getByText('Apply'));
 
-    expect(onRequest).toBeCalledWith({});
+    expect(onRequest).toHaveBeenCalledWith({});
   });
 
   it('should call onCancel callback', async () => {
@@ -138,6 +138,6 @@ describe('SimpleAcceptanceOperationModal', () => {
 
     await user.click(screen.getByText('Cancel'));
 
-    expect(onCancel).toBeCalled();
+    expect(onCancel).toHaveBeenCalled();
   });
 });

@@ -51,6 +51,6 @@ describe('OperationForbiddenModal', () => {
     });
 
     await user.click(screen.getByRole('button', { name: 'Close' }));
-    expect(mockOnCancel).toBeCalled();
+    expect(mockOnCancel).toHaveBeenCalled();
   });
 });
