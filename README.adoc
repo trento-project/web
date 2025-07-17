@@ -45,8 +45,7 @@ infrastructure.
 === Trento architecture
 
 See the
-https://github.com/trento-project/docs/blob/main/guides/architecture/trento-architecture.md[architecture
-document] for additional details.
+https://github.com/trento-project/docs/blob/main/architecture/trento-architecture.adoc[architecture document] for additional details.
 
 == Features of Trento
 
