@@ -128,6 +128,14 @@ defmodule Trento.Infrastructure.Operations.OperationsTest do
           internal_type: "sapinstancestop@v1"
         },
         %{
+          operation_type: :sap_system_start,
+          internal_type: "sapsystemstart@v1"
+        },
+        %{
+          operation_type: :sap_system_stop,
+          internal_type: "sapsystemstop@v1"
+        },
+        %{
           operation_type: :pacemaker_enable,
           internal_type: "pacemakerenable@v1"
         },
@@ -167,6 +175,14 @@ defmodule Trento.Infrastructure.Operations.OperationsTest do
         %{
           operation: :sap_instance_stop,
           operator_name: "sapinstancestop@v1"
+        },
+        %{
+          operation: :sap_system_start,
+          operator_name: "sapsystemstart@v1"
+        },
+        %{
+          operation: :sap_system_stop,
+          operator_name: "sapsystemstop@v1"
         },
         %{
           operation: :pacemaker_enable,
