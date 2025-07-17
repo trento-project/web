@@ -77,6 +77,24 @@ defmodule Trento.SapSystemsTest do
     end
   end
 
+  describe "get_sap_system_by_id/1" do
+    test "should return an existing sap system" do
+      %{id: sap_system_id} = insert(:sap_system)
+
+      %SapSystemReadModel{id: ^sap_system_id} = SapSystems.get_sap_system_by_id(sap_system_id)
+    end
+
+    test "should return nil if the sap system is not found" do
+      assert nil == SapSystems.get_sap_system_by_id(UUID.uuid4())
+    end
+
+    test "should return nil if the sap system is deregistered" do
+      %{id: sap_system_id} = insert(:sap_system, deregistered_at: DateTime.utc_now())
+
+      assert nil == SapSystems.get_sap_system_by_id(sap_system_id)
+    end
+  end
+
   describe "get_application_instances_by_id/1" do
     test "should return empty if no application instances were found" do
       assert [] == SapSystems.get_application_instances_by_id(UUID.uuid4())
@@ -227,6 +245,113 @@ defmodule Trento.SapSystemsTest do
 
         assert {:error, :amqp_error} =
                  SapSystems.request_instance_operation(operation, UUID.uuid4(), "00", %{})
+      end
+    end
+  end
+
+  describe "request_operation/3" do
+    test "should return error if operation is not found" do
+      assert {:error, :operation_not_found} ==
+               SapSystems.request_operation(:unknown, UUID.uuid4(), %{})
+    end
+
+    scenarios = [
+      %{
+        operation: :sap_system_start,
+        expected_operator: "sapsystemstart@v1"
+      },
+      %{
+        operation: :sap_system_stop,
+        expected_operator: "sapsystemstop@v1"
+      }
+    ]
+
+    for %{operation: operation} = scenario <- scenarios do
+      @scenario scenario
+
+      test "should request #{operation} operation" do
+        %{operation: operation, expected_operator: expected_operator} = @scenario
+
+        %{id: sap_system_id} = insert(:sap_system)
+
+        %{id: host_id_1} = insert(:host, heartbeat: :critical)
+        %{id: host_id_2} = insert(:host, heartbeat: :passing)
+
+        insert(:application_instance, sap_system_id: sap_system_id, host_id: host_id_1)
+
+        %{instance_number: instance_number} =
+          insert(:application_instance, sap_system_id: sap_system_id, host_id: host_id_2)
+
+        expect(
+          Trento.Infrastructure.Messaging.Adapter.Mock,
+          :publish,
+          1,
+          fn OperationsPublisher,
+             "requests",
+             %OperationRequested{
+               group_id: ^sap_system_id,
+               operation_type: ^expected_operator,
+               targets: [
+                 %OperationTarget{
+                   agent_id: ^host_id_2,
+                   arguments: %{
+                     "instance_number" => %ProtobufValue{kind: {:string_value, ^instance_number}}
+                   }
+                 }
+               ]
+             } ->
+            :ok
+          end
+        )
+
+        assert {:ok, _} =
+                 SapSystems.request_operation(operation, sap_system_id, %{})
+      end
+
+      test "should request #{operation} operation with empty targets if there is no running host" do
+        %{operation: operation, expected_operator: expected_operator} = @scenario
+
+        %{id: sap_system_id} = insert(:sap_system)
+
+        %{id: host_id_1} = insert(:host, heartbeat: :critical)
+        %{id: host_id_2} = insert(:host, heartbeat: :critical)
+
+        insert(:application_instance, sap_system_id: sap_system_id, host_id: host_id_1)
+        insert(:application_instance, sap_system_id: sap_system_id, host_id: host_id_2)
+
+        expect(
+          Trento.Infrastructure.Messaging.Adapter.Mock,
+          :publish,
+          1,
+          fn OperationsPublisher,
+             "requests",
+             %OperationRequested{
+               group_id: ^sap_system_id,
+               operation_type: ^expected_operator,
+               targets: []
+             } ->
+            :ok
+          end
+        )
+
+        assert {:ok, _} =
+                 SapSystems.request_operation(operation, sap_system_id, %{})
+      end
+
+      test "should handle operation #{operation} publish error" do
+        %{operation: operation} = @scenario
+
+        expect(
+          Trento.Infrastructure.Messaging.Adapter.Mock,
+          :publish,
+          1,
+          fn OperationsPublisher, "requests", _ ->
+            {:error, :amqp_error}
+          end
+        )
+
+        assert {:error, :amqp_error} =
+                 SapSystems.request_operation(operation, UUID.uuid4(), %{})
       end
     end
   end

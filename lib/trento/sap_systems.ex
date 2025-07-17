@@ -6,6 +6,7 @@ defmodule Trento.SapSystems do
   import Ecto.Query
 
   require Trento.Operations.Enums.SapInstanceOperations, as: SapInstanceOperations
+  require Trento.Operations.Enums.SapSystemOperations, as: SapSystemOperations
 
   alias Trento.SapSystems.Projections.{
     ApplicationInstanceReadModel,
@@ -26,6 +27,13 @@ defmodule Trento.SapSystems do
       %SapSystemReadModel{} = sap_system -> {:ok, sap_system}
       nil -> {:error, :not_found}
     end
+  end
+
+  @spec get_sap_system_by_id(String.t()) :: SapSystemReadModel.t() | nil
+  def get_sap_system_by_id(id) do
+    SapSystemReadModel
+    |> where([c], c.id == ^id and is_nil(c.deregistered_at))
+    |> Repo.one()
   end
 
   @spec get_all_sap_systems :: [SapSystemReadModel.t()]
@@ -103,6 +111,40 @@ defmodule Trento.SapSystems do
   end
 
   def request_instance_operation(_, _, _, _), do: {:error, :operation_not_found}
+
+  @spec request_operation(atom(), Ecto.UUID.t(), map()) ::
+          {:ok, String.t()} | {:error, any}
+  def request_operation(operation, sap_system_id, params)
+      when operation in SapSystemOperations.values() do
+    operation_id = UUID.uuid4()
+
+    # Look for 1st running host to send the operation including the instance_number
+    # Not checking if the SAP system is deregistered. That must be done by the function user
+    agents =
+      sap_system_id
+      |> get_application_instances_by_id()
+      |> Repo.preload([:host])
+      |> Enum.filter(fn %{host: %{heartbeat: heartbeat}} -> heartbeat == :passing end)
+      |> case do
+        [] ->
+          []
+
+        [%{host_id: host_id, instance_number: instance_number} | _] ->
+          [%{agent_id: host_id, arguments: Map.put(params, :instance_number, instance_number)}]
+      end
+
+    case Operations.request_operation(
+           operation_id,
+           sap_system_id,
+           Operations.map_operation(operation),
+           agents
+         ) do
+      :ok -> {:ok, operation_id}
+      error -> error
+    end
+  end
+
+  def request_operation(_, _, _), do: {:error, :operation_not_found}
 
   defp commanded,
     do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]
