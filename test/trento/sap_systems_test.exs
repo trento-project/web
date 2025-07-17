@@ -308,7 +308,7 @@ defmodule Trento.SapSystemsTest do
                  SapSystems.request_operation(operation, sap_system_id, %{})
       end
 
-      test "should request #{operation} operation with empty targets if there is no running host" do
+      test "should request #{operation} operation with first host if there is no running host" do
         %{operation: operation, expected_operator: expected_operator} = @scenario
 
         %{id: sap_system_id} = insert(:sap_system)
@@ -318,6 +318,38 @@ defmodule Trento.SapSystemsTest do
 
         insert(:application_instance, sap_system_id: sap_system_id, host_id: host_id_1)
         insert(:application_instance, sap_system_id: sap_system_id, host_id: host_id_2)
+
+        expect(
+          Trento.Infrastructure.Messaging.Adapter.Mock,
+          :publish,
+          1,
+          fn OperationsPublisher,
+             "requests",
+             %OperationRequested{
+               group_id: ^sap_system_id,
+               operation_type: ^expected_operator,
+               targets: [
+                 %OperationTarget{
+                   agent_id: _,
+                   arguments: %{
+                     "instance_number" => %ProtobufValue{kind: {:string_value, _}}
+                   }
+                 }
+               ]
+             } ->
+            :ok
+          end
+        )
+
+        assert {:ok, _} =
+                 SapSystems.request_operation(operation, sap_system_id, %{})
+      end
+
+      test "should request #{operation} operation without targets" do
+        # Corner case scenario. We shouldn't have SAP systems without app instances
+        %{operation: operation, expected_operator: expected_operator} = @scenario
+
+        %{id: sap_system_id} = insert(:sap_system)
 
         expect(
           Trento.Infrastructure.Messaging.Adapter.Mock,

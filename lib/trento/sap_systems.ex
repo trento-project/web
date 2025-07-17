@@ -119,17 +119,23 @@ defmodule Trento.SapSystems do
     operation_id = UUID.uuid4()
 
     # Look for 1st running host to send the operation including the instance_number
+    # If there is not any running host, the request is sent to the first instance
     # Not checking if the SAP system is deregistered. That must be done by the function user
-    agents =
+    instances =
       sap_system_id
       |> get_application_instances_by_id()
       |> Repo.preload([:host])
-      |> Enum.filter(fn %{host: %{heartbeat: heartbeat}} -> heartbeat == :passing end)
+
+    targets =
+      instances
+      |> Enum.find(Enum.at(instances, 0), fn %{host: %{heartbeat: heartbeat}} ->
+        heartbeat == :passing
+      end)
       |> case do
-        [] ->
+        nil ->
           []
 
-        [%{host_id: host_id, instance_number: instance_number} | _] ->
+        %{host_id: host_id, instance_number: instance_number} ->
           [%{agent_id: host_id, arguments: Map.put(params, :instance_number, instance_number)}]
       end
 
@@ -137,7 +143,7 @@ defmodule Trento.SapSystems do
            operation_id,
            sap_system_id,
            Operations.map_operation(operation),
-           agents
+           targets
          ) do
       :ok -> {:ok, operation_id}
       error -> error
