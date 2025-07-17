@@ -1,5 +1,9 @@
 import MockAdapter from 'axios-mock-adapter';
-import { networkClient, unrecoverableAuthError } from '@lib/network';
+import {
+  networkClient,
+  unrecoverableAuthError,
+  withWindowReference,
+} from '@lib/network';
 import {
   clearCredentialsFromStore,
   storeAccessToken,
@@ -53,15 +57,8 @@ describe('networkClient', () => {
   });
 
   describe('refresh token flow', () => {
-    const realLocation = global.location;
-
-    beforeEach(() => {
-      delete global.location;
-      global.location = { ...realLocation, assign: jest.fn() };
-    });
-
-    afterEach(() => {
-      global.location = realLocation;
+    const testWindow = withWindowReference({
+      location: { ...window.location, assign: jest.fn() },
     });
 
     it('should try to refresh the token when a 401 is received, fail with unrecoverableAuthError when the refresh token is not present in the store', async () => {
@@ -108,7 +105,7 @@ describe('networkClient', () => {
         await networkClient.get('/test');
       } catch (e) {
         expect(e).toEqual(unrecoverableAuthError);
-        expect(global.location.assign).toHaveBeenCalledWith(
+        expect(testWindow.location.assign).toHaveBeenCalledWith(
           '/session/new?request_path=%2F'
         );
       }

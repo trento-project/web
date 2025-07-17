@@ -8,6 +8,14 @@ import {
   storeAccessToken,
 } from '@lib/auth';
 
+let windowReference = window;
+
+export const withWindowReference = (newWindowReference) => {
+  windowReference = newWindowReference;
+
+  return windowReference;
+};
+
 export const unrecoverableAuthError = Error(
   'could not authenticate the user, session destroyed'
 );
@@ -47,9 +55,14 @@ networkClient.interceptors.response.use(null, (error) => {
   if (error === unrecoverableAuthError) {
     logWarn('unrecoverable auth flow, session expired');
     const currentLocationPath = new URLSearchParams();
-    currentLocationPath.append('request_path', window.location.pathname);
+    currentLocationPath.append(
+      'request_path',
+      windowReference.location.pathname
+    );
 
-    window.location.assign(`/session/new?${currentLocationPath.toString()}`);
+    windowReference.location.assign(
+      `/session/new?${currentLocationPath.toString()}`
+    );
   }
   throw error;
 });
