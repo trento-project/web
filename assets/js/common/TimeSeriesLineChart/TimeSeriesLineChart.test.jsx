@@ -5,7 +5,7 @@ import TimeSeriesLineChart from './TimeSeriesLineChart';
 import '@testing-library/jest-dom';
 
 describe('TimeSeriesLineChart component', () => {
-  it('should raise an error if the datasets are more then 5', () => {
+  it('should raise an error if the datasets are more than 6', () => {
     const datasets = [
       {
         name: 'Data 1',
