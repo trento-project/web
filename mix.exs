@@ -170,10 +170,11 @@ defmodule Trento.MixProject do
 
   defp docs do
     [
-      main: "TrentoWeb",
+      main: "api-reference",
       logo: "priv/static/images/trento.svg",
+      extra_section: "Info",
+      extras: extras(),
       source_url: @source_url,
-      assets: "guides/assets/",
       groups_for_modules: [
         Clusters: [~r/Trento.Clusters.*/],
         Hosts: [~r/Trento.Hosts.*/],
@@ -210,6 +211,12 @@ defmodule Trento.MixProject do
         Trento.Discovery.Policies,
         Trento.Domain.Events
       ]
+    ]
+  end
+
+  def extras() do
+    [
+      "CHANGELOG.md"
     ]
   end
 
