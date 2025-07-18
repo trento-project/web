@@ -3,7 +3,7 @@
     "@babel/core": "^7.26.0",
     "@babel/plugin-transform-modules-commonjs": "^7.26.3",
     "@babel/preset-env": "^7.26.0",
-    "@babel/preset-react": "^7.26.3",
+    "@babel/preset-react": "^7.27.1",
     "@faker-js/faker": "^9.4.0",
     "@storybook/addon-docs": "^9.0.9",
     "@storybook/addon-webpack5-compiler-babel": "^3.0.6",
