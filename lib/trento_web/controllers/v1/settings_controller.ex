@@ -99,15 +99,7 @@ defmodule TrentoWeb.V1.SettingsController do
           AuthenticateAPIKeyPlug.generate_api_key!(updated_settings)
         )
 
-      correlation_id = Process.get(:correlation_id)
-
-      key = ActivityLog.correlation_key(:api_key)
-
-      _ =
-        ActivityLog.put_correlation_id(key, correlation_id)
-
-      _ =
-        ActivityLog.expire_correlation_id(key, @correlation_ttl)
+      :ok = propagate_correlation_id(:api_key, @correlation_ttl)
 
       render(conn, :api_key_settings, %{
         settings: api_key
@@ -192,6 +184,7 @@ defmodule TrentoWeb.V1.SettingsController do
   @spec save_suse_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
   def save_suse_manager_settings(conn, _) do
     settings_params = OpenApiSpex.body_params(conn)
+    :ok = propagate_correlation_id(:suse_manager_settings, @correlation_ttl)
 
     with {:ok, saved_settings} <- Settings.save_suse_manager_settings(settings_params) do
       conn
@@ -216,6 +209,7 @@ defmodule TrentoWeb.V1.SettingsController do
   @spec update_suse_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
   def update_suse_manager_settings(conn, _) do
     update_settings_paylod = OpenApiSpex.body_params(conn)
+    :ok = propagate_correlation_id(:suse_manager_settings, @correlation_ttl)
 
     with {:ok, saved_settings} <- Settings.change_suse_manager_settings(update_settings_paylod) do
       conn
@@ -235,6 +229,7 @@ defmodule TrentoWeb.V1.SettingsController do
   @spec delete_suse_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
   def delete_suse_manager_settings(conn, _) do
     :ok = Settings.clear_suse_manager_settings()
+    :ok = propagate_correlation_id(:suse_manager_settings, @correlation_ttl)
     send_resp(conn, :no_content, "")
   end
 
@@ -349,5 +344,33 @@ defmodule TrentoWeb.V1.SettingsController do
     conn
     |> Phoenix.Controller.action_name()
     |> Trento.Settings.Policy.get_resource()
+  end
+
+  defp propagate_correlation_id(ctx, correlation_ttl)
+       when ctx in [:api_key, :suse_manager_settings] do
+    correlation_id = Process.get(:correlation_id)
+
+    key = ActivityLog.correlation_key(ctx)
+
+    case key do
+      nil ->
+        :ok
+
+      key ->
+        _ =
+          ActivityLog.put_correlation_id(key, correlation_id)
+
+        case ctx do
+          :api_key ->
+            _ =
+              ActivityLog.expire_correlation_id(key, correlation_ttl)
+
+            :ok
+
+          :suse_manager_settings ->
+            # The associated cache key stays until the next save/change operation.
+            :ok
+        end
+    end
   end
 end

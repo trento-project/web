@@ -6,6 +6,7 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscovery
   import TrentoWeb.ChannelCase
   import Trento.Factory
 
+  alias Trento.ActivityLog
   alias Trento.SoftwareUpdates.Discovery.DiscoveryResult
   alias Trento.SoftwareUpdates.Discovery.Mock, as: SoftwareUpdatesDiscoveryMock
 
@@ -30,116 +31,137 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscovery
     %{socket: socket}
   end
 
-  describe "Discovering software updates" do
-    test "should discover software updates when a SoftwareUpdatesDiscoveryRequested is emitted" do
-      insert_software_updates_settings()
+  for scenario <- [:with_correlation, :without_correlation] do
+    @scenario scenario
+    describe "Discovering software updates #{@scenario}" do
+      test "should discover software updates when a SoftwareUpdatesDiscoveryRequested is emitted" do
+        insert_software_updates_settings()
 
-      %SoftwareUpdatesDiscoveryRequested{
-        host_id: host_id,
-        fully_qualified_domain_name: fully_qualified_domain_name
-      } = event = build(:software_updates_discovery_requested_event)
+        %SoftwareUpdatesDiscoveryRequested{
+          host_id: host_id,
+          fully_qualified_domain_name: fully_qualified_domain_name
+        } = event = build(:software_updates_discovery_requested_event)
 
-      system_id = Faker.UUID.v4()
+        system_id = Faker.UUID.v4()
 
-      expect(
-        SoftwareUpdatesDiscoveryMock,
-        :get_system_id,
-        fn ^fully_qualified_domain_name -> {:ok, system_id} end
-      )
+        expect(
+          SoftwareUpdatesDiscoveryMock,
+          :get_system_id,
+          fn ^fully_qualified_domain_name -> {:ok, system_id} end
+        )
 
-      expect(
-        SoftwareUpdatesDiscoveryMock,
-        :get_relevant_patches,
-        fn ^system_id -> {:ok, []} end
-      )
+        expect(
+          SoftwareUpdatesDiscoveryMock,
+          :get_relevant_patches,
+          fn ^system_id -> {:ok, []} end
+        )
 
-      expect(
-        SoftwareUpdatesDiscoveryMock,
-        :get_upgradable_packages,
-        fn ^system_id -> {:ok, []} end
-      )
+        expect(
+          SoftwareUpdatesDiscoveryMock,
+          :get_upgradable_packages,
+          fn ^system_id -> {:ok, []} end
+        )
 
-      expect(
-        Trento.Commanded.Mock,
-        :dispatch,
-        fn %CompleteSoftwareUpdatesDiscovery{host_id: ^host_id} -> :ok end
-      )
+        case @scenario do
+          :with_correlation ->
+            correlation_id = UUID.uuid4()
+            Process.put(:correlation_key, correlation_id)
+            key = ActivityLog.correlation_key(:suse_manager_settings)
+            _ = ActivityLog.put_correlation_id(key, correlation_id)
 
-      assert :ok = SoftwareUpdatesDiscoveryEventHandler.handle(event, %{})
-    end
+            expect(
+              Trento.Commanded.Mock,
+              :dispatch,
+              fn %CompleteSoftwareUpdatesDiscovery{host_id: ^host_id},
+                 [correlation_id: ^correlation_id, causation_id: ^correlation_id] ->
+                :ok
+              end
+            )
 
-    test "should discover data about hosts just when SUSE Manager's settings are set" do
-      event = build(:software_updates_discovery_requested_event)
-
-      expect(
-        SoftwareUpdatesDiscoveryMock,
-        :get_system_id,
-        0,
-        fn _ -> :ok end
-      )
-
-      expect(
-        SoftwareUpdatesDiscoveryMock,
-        :get_relevant_patches,
-        0,
-        fn _ -> :ok end
-      )
-
-      expect(
-        SoftwareUpdatesDiscoveryMock,
-        :get_upgradable_packages,
-        0,
-        fn _ -> :ok end
-      )
-
-      expect(
-        Trento.Commanded.Mock,
-        :dispatch,
-        0,
-        fn _ -> :ok end
-      )
-
-      assert :ok = SoftwareUpdatesDiscoveryEventHandler.handle(event, %{})
-    end
-
-    test "should pass through failures" do
-      insert_software_updates_settings()
-
-      %SoftwareUpdatesDiscoveryRequested{
-        fully_qualified_domain_name: fully_qualified_domain_name
-      } = event = build(:software_updates_discovery_requested_event)
-
-      expect(
-        SoftwareUpdatesDiscoveryMock,
-        :get_system_id,
-        fn ^fully_qualified_domain_name -> {:error, :some_error} end
-      )
-
-      expect(
-        SoftwareUpdatesDiscoveryMock,
-        :get_relevant_patches,
-        0,
-        fn _ -> :ok end
-      )
-
-      expect(
-        SoftwareUpdatesDiscoveryMock,
-        :get_upgradable_packages,
-        0,
-        fn _ -> :ok end
-      )
-
-      expect(
-        Trento.Commanded.Mock,
-        :dispatch,
-        fn %CompleteSoftwareUpdatesDiscovery{
-             health: SoftwareUpdatesHealth.unknown()
-           } ->
-          :ok
+          :without_correlation ->
+            expect(
+              Trento.Commanded.Mock,
+              :dispatch,
+              fn %CompleteSoftwareUpdatesDiscovery{host_id: ^host_id} -> :ok end
+            )
         end
-      )
 
-      assert :ok = SoftwareUpdatesDiscoveryEventHandler.handle(event, %{})
+        assert :ok = SoftwareUpdatesDiscoveryEventHandler.handle(event, %{})
+      end
+
+      test "should discover data about hosts just when SUSE Manager's settings are set" do
+        event = build(:software_updates_discovery_requested_event)
+
+        expect(
+          SoftwareUpdatesDiscoveryMock,
+          :get_system_id,
+          0,
+          fn _ -> :ok end
+        )
+
+        expect(
+          SoftwareUpdatesDiscoveryMock,
+          :get_relevant_patches,
+          0,
+          fn _ -> :ok end
+        )
+
+        expect(
+          SoftwareUpdatesDiscoveryMock,
+          :get_upgradable_packages,
+          0,
+          fn _ -> :ok end
+        )
+
+        expect(
+          Trento.Commanded.Mock,
+          :dispatch,
+          0,
+          fn _ -> :ok end
+        )
+
+        assert :ok = SoftwareUpdatesDiscoveryEventHandler.handle(event, %{})
+      end
+
+      test "should pass through failures" do
+        insert_software_updates_settings()
+
+        %SoftwareUpdatesDiscoveryRequested{
+          fully_qualified_domain_name: fully_qualified_domain_name
+        } = event = build(:software_updates_discovery_requested_event)
+
+        expect(
+          SoftwareUpdatesDiscoveryMock,
+          :get_system_id,
+          fn ^fully_qualified_domain_name -> {:error, :some_error} end
+        )
+
+        expect(
+          SoftwareUpdatesDiscoveryMock,
+          :get_relevant_patches,
+          0,
+          fn _ -> :ok end
+        )
+
+        expect(
+          SoftwareUpdatesDiscoveryMock,
+          :get_upgradable_packages,
+          0,
+          fn _ -> :ok end
+        )
+
+        expect(
+          Trento.Commanded.Mock,
+          :dispatch,
+          fn %CompleteSoftwareUpdatesDiscovery{
+               health: SoftwareUpdatesHealth.unknown()
+             } ->
+            :ok
+          end
+        )
+
+        assert :ok = SoftwareUpdatesDiscoveryEventHandler.handle(event, %{})
+      end
     end
   end
 
