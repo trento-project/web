@@ -280,17 +280,12 @@ context('Activity Log page', () => {
       activityLogPage.validateUrl(expectedUrl);
     });
 
-    it('should have all expected refresh rates available', () => {
+    it('should change refresh rate', () => {
       activityLogPage.visit();
       activityLogPage.expectedRefreshRatesAreAvailable();
-    });
-
-    // eslint-disable-next-line mocha/no-exclusive-tests
-    it.only('should change refresh rate', () => {
-      activityLogPage.visit();
       const changingRefreshRateScenarios =
         activityLogPage.buildChangingRefreshRateScenarios();
-      cy.wrap(changingRefreshRateScenarios).each(
+      changingRefreshRateScenarios.forEach(
         ({ currentRefreshRate, newRefreshRate, expectedRefreshRate }) => {
           activityLogPage.autoRefreshIntervalButtonHasTheExpectedValue(
             currentRefreshRate
