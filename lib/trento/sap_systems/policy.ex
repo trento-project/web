@@ -19,6 +19,12 @@ defmodule Trento.SapSystems.Policy do
   def authorize(:request_instance_operation, %User{} = user, %{operation: "sap_instance_stop"}),
     do: has_global_ability?(user) or has_app_instance_stop_ability?(user)
 
+  def authorize(:request_operation, %User{} = user, %{operation: "sap_system_start"}),
+    do: has_global_ability?(user) or has_sap_system_start_ability?(user)
+
+  def authorize(:request_operation, %User{} = user, %{operation: "sap_system_stop"}),
+    do: has_global_ability?(user) or has_sap_system_stop_ability?(user)
+
   def authorize(_, _, _), do: true
 
   defp has_cleanup_ability?(user),
@@ -29,4 +35,10 @@ defmodule Trento.SapSystems.Policy do
 
   defp has_app_instance_stop_ability?(user),
     do: user_has_ability?(user, %{name: "stop", resource: "application_instance"})
+
+  defp has_sap_system_start_ability?(user),
+    do: user_has_ability?(user, %{name: "start", resource: "sap_system"})
+
+  defp has_sap_system_stop_ability?(user),
+    do: user_has_ability?(user, %{name: "stop", resource: "sap_system"})
 end

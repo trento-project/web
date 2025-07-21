@@ -39,6 +39,8 @@ describe('AbilitiesMultiSelect Component', () => {
       { id: 19, name: 'pacemaker_disable', resource: 'cluster' },
       { id: 20, name: 'start', resource: 'application_instance' },
       { id: 21, name: 'stop', resource: 'application_instance' },
+      { id: 22, name: 'start', resource: 'sap_system' },
+      { id: 23, name: 'stop', resource: 'sap_system' },
     ];
 
     render(
@@ -110,6 +112,8 @@ describe('AbilitiesMultiSelect Component', () => {
           { id: 8, name: 'pacemaker_disable', resource: 'cluster' },
           { id: 9, name: 'start', resource: 'application_instance' },
           { id: 10, name: 'stop', resource: 'application_instance' },
+          { id: 11, name: 'start', resource: 'sap_system' },
+          { id: 12, name: 'stop', resource: 'sap_system' },
         ]}
         userAbilities={[
           { id: 1, name: 'all', resource: 'all' },
@@ -122,6 +126,8 @@ describe('AbilitiesMultiSelect Component', () => {
           { id: 8, name: 'pacemaker_disable', resource: 'cluster' },
           { id: 9, name: 'start', resource: 'application_instance' },
           { id: 10, name: 'stop', resource: 'application_instance' },
+          { id: 11, name: 'start', resource: 'sap_system' },
+          { id: 12, name: 'stop', resource: 'sap_system' },
         ]}
         setAbilities={noop}
         operationsEnabled
@@ -158,6 +164,8 @@ describe('AbilitiesMultiSelect Component', () => {
     expect(
       screen.queryByText('stop:application_instance')
     ).not.toBeInTheDocument();
+    expect(screen.queryByText('start:sap_system')).not.toBeInTheDocument();
+    expect(screen.queryByText('stop:sap_system')).not.toBeInTheDocument();
 
     await user.click(screen.getByLabelText('permissions'));
     expect(screen.getByText('No options')).toBeVisible();
