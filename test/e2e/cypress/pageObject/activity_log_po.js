@@ -62,8 +62,10 @@ export const waitForActivityLogRequest = () =>
 export const clickFilterTypeButton = () =>
   cy.get(filterTypeButton).click({ force: true });
 
-export const clickAutoRefreshRateButton = () =>
+export const clickAutoRefreshRateButton = () => {
   cy.get(autoRefreshIntervalButton).click();
+  cy.get('div[role="option"]').should('have.length', 7);
+};
 
 export const clickFilterNewerThanButton = () =>
   cy.get(filterNewerThanButton).click();
