@@ -32,15 +32,7 @@ const autoRefreshIntervalButton = 'button[class*="refresh-rate"]';
 const availableRefreshRates = 'button[class*="refresh-rate"] + div div';
 
 //Test data
-export const expectedRefreshRates = [
-  'Off',
-  '5s',
-  '10s',
-  '30s',
-  '1m',
-  '5m',
-  '30m',
-];
+const expectedRefreshRates = ['Off', '5s', '10s', '30s', '1m', '5m', '30m'];
 
 export const visit = (queryString = '') =>
   basePage.visit(`/activity_log${queryString}`);
@@ -116,6 +108,19 @@ export const selectRefreshRate = (refreshRate) => {
   // eslint-disable-next-line cypress/no-unnecessary-waiting
   cy.wait(1000); // couldn't really find a way to reduce flakiness here
   return cy.contains(refreshRate).click();
+};
+
+export const selectNextRefreshRate = () => {
+  cy.get('button[class*="refresh-rate-selection-dropdown"]').click();
+  cy.get('button[class*="refresh-rate-selection-dropdown"]')
+    .invoke('text')
+    .then(($text) => {
+      if ($text === '30m') {
+        cy.get('div[role="listbox"]').type(
+          '{uparrow}{uparrow}{uparrow}{uparrow}{uparrow}{uparrow}{enter}'
+        );
+      } else cy.get('div[role="listbox"]').type('{downarrow}{enter}');
+    });
 };
 
 // UI Validations
