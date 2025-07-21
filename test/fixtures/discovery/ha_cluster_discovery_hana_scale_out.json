@@ -1135,6 +1135,7 @@
     },
     "DC": true,
     "Id": "d0a0d4caff6a5f4cba70d47e9cd12889",
+    "Online": true,
     "Name": "hana_cluster",
     "Provider": "kvm",
     "SBD": {

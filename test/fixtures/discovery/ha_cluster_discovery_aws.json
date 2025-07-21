@@ -809,6 +809,7 @@
       "Config": null
     },
     "Id": "60461ddbd879923a43e8a6aa5d6bd0a2",
+    "Online": true,
     "Name": "hana_cluster",
     "DC": true,
     "Provider": "aws"
