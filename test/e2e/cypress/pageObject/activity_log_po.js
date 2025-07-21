@@ -104,15 +104,8 @@ export const selectPagination = (amountOfItems) => {
 };
 
 export const selectRefreshRate = (refreshRate) => {
-  cy.get(autoRefreshIntervalButton).click();
-  // eslint-disable-next-line cypress/no-unnecessary-waiting
-  cy.wait(1000); // couldn't really find a way to reduce flakiness here
+  clickAutoRefreshRateButton();
   return cy.contains(refreshRate).click();
-};
-
-export const selectNextRefreshRate = (refreshRate) => {
-  cy.get('div[class="relative flex-1"]').type('{downarrow}');
-  cy.contains(refreshRate).click();
 };
 
 // UI Validations
