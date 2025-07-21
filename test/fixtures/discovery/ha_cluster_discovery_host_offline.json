@@ -3,6 +3,7 @@
   "discovery_type": "ha_cluster_discovery",
   "payload": {
     "Id": "47d1190ffb4f781974c8356d7f863b03",
-    "Name": "ha_cluster"
+    "Name": "ha_cluster",
+    "Online": false
   }
 }

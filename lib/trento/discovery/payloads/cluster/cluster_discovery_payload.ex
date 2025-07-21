@@ -46,8 +46,7 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
     end
   end
 
-  defp offline?(%{"id" => _} = payload) when map_size(payload) == 1, do: true
-  defp offline?(%{"id" => _, "name" => _} = payload) when map_size(payload) == 2, do: true
+  defp offline?(%{"online" => false}), do: true
   defp offline?(_), do: false
 
   defp changeset_online(cluster, attrs) do

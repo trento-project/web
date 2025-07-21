@@ -2592,6 +2592,19 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
              |> ClusterPolicy.handle(nil)
   end
 
+  test "should assume a host is online if no online field is provided" do
+    # needed for older versions
+    assert {
+             :ok,
+             [
+               %RegisterOnlineClusterHost{}
+             ]
+           } =
+             "ha_cluster_discovery_legacy_no_online_field"
+             |> load_discovery_event_fixture()
+             |> ClusterPolicy.handle(nil)
+  end
+
   describe "ascs/ers clusters health" do
     test "should set the health to critical when one of the nodes is unclean" do
       assert {:ok,

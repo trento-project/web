@@ -703,6 +703,7 @@
     },
     "DC": true,
     "Id": "47d1190ffb4f781974c8356d7f863b03",
+    "Online": true,
     "Name": "hana_cluster",
     "Provider": "azure",
     "SBD": {
