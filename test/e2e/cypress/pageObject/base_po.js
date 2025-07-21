@@ -119,6 +119,8 @@ export const selectFromDropdown = (selector, choice) => {
   return cy.get(`${selector} + div div:contains("${choice}")`).click();
 };
 
+export const clickOutside = () => cy.get('body').click();
+
 // UI Validations
 
 export const shouldRedirectToIdpUrl = () =>

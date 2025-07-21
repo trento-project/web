@@ -32,15 +32,7 @@ const autoRefreshIntervalButton = 'button[class*="refresh-rate"]';
 const availableRefreshRates = 'button[class*="refresh-rate"] + div div';
 
 //Test data
-export const expectedRefreshRates = [
-  'Off',
-  '5s',
-  '10s',
-  '30s',
-  '1m',
-  '5m',
-  '30m',
-];
+const expectedRefreshRates = ['Off', '5s', '10s', '30s', '1m', '5m', '30m'];
 
 export const visit = (queryString = '') =>
   basePage.visit(`/activity_log${queryString}`);
@@ -70,8 +62,10 @@ export const waitForActivityLogRequest = () =>
 export const clickFilterTypeButton = () =>
   cy.get(filterTypeButton).click({ force: true });
 
-export const clickAutoRefreshRateButton = () =>
+export const clickAutoRefreshRateButton = () => {
+  basePage.clickOutside();
   cy.get(autoRefreshIntervalButton).click();
+};
 
 export const clickFilterNewerThanButton = () =>
   cy.get(filterNewerThanButton).click();
@@ -112,9 +106,7 @@ export const selectPagination = (amountOfItems) => {
 };
 
 export const selectRefreshRate = (refreshRate) => {
-  cy.get(autoRefreshIntervalButton).click();
-  // eslint-disable-next-line cypress/no-unnecessary-waiting
-  cy.wait(250); // couldn't really find a way to reduce flakiness here
+  clickAutoRefreshRateButton();
   return cy.contains(refreshRate).click();
 };
 
