@@ -257,20 +257,44 @@ defmodule Trento.SapSystemsTest do
 
     scenarios = [
       %{
+        name: "sap_system_start",
         operation: :sap_system_start,
-        expected_operator: "sapsystemstart@v1"
+        expected_operator: "sapsystemstart@v1",
+        params: %{},
+        expected_arguments: %{}
       },
       %{
+        name: "sap_system_start with params",
+        operation: :sap_system_start,
+        expected_operator: "sapsystemstart@v1",
+        params: %{
+          "instance_type" => "abap",
+          "timeout" => 5_000
+        },
+        expected_arguments: %{
+          "instance_type" => %ProtobufValue{kind: {:string_value, "abap"}},
+          "timeout" => %ProtobufValue{kind: {:number_value, 5_000}}
+        }
+      },
+      %{
+        name: "sap_system_stop",
         operation: :sap_system_stop,
-        expected_operator: "sapsystemstop@v1"
+        expected_operator: "sapsystemstop@v1",
+        params: %{},
+        expected_arguments: %{}
       }
     ]
 
-    for %{operation: operation} = scenario <- scenarios do
+    for %{name: name} = scenario <- scenarios do
       @scenario scenario
 
-      test "should request #{operation} operation" do
-        %{operation: operation, expected_operator: expected_operator} = @scenario
+      test "should request #{name} operation" do
+        %{
+          operation: operation,
+          expected_operator: expected_operator,
+          params: params,
+          expected_arguments: expected_arguments
+        } = @scenario
 
         %{id: sap_system_id} = insert(:sap_system)
 
@@ -289,6 +313,14 @@ defmodule Trento.SapSystemsTest do
         %{instance_number: instance_number} =
           insert(:application_instance, sap_system_id: sap_system_id, host_id: host_id_3)
 
+        expected_args =
+          Map.merge(
+            %{
+              "instance_number" => %ProtobufValue{kind: {:string_value, instance_number}}
+            },
+            expected_arguments
+          )
+
         expect(
           Trento.Infrastructure.Messaging.Adapter.Mock,
           :publish,
@@ -301,9 +333,7 @@ defmodule Trento.SapSystemsTest do
                targets: [
                  %OperationTarget{
                    agent_id: ^host_id_3,
-                   arguments: %{
-                     "instance_number" => %ProtobufValue{kind: {:string_value, ^instance_number}}
-                   }
+                   arguments: ^expected_args
                  }
                ]
              } ->
@@ -312,11 +342,15 @@ defmodule Trento.SapSystemsTest do
         )
 
         assert {:ok, _} =
-                 SapSystems.request_operation(operation, sap_system_id, %{})
+                 SapSystems.request_operation(operation, sap_system_id, params)
       end
 
-      test "should request #{operation} operation with first host if there is no running host" do
-        %{operation: operation, expected_operator: expected_operator} = @scenario
+      test "should request #{name} operation with first host if there is no running host" do
+        %{
+          operation: operation,
+          expected_operator: expected_operator,
+          params: params
+        } = @scenario
 
         %{id: sap_system_id} = insert(:sap_system)
 
@@ -338,9 +372,7 @@ defmodule Trento.SapSystemsTest do
                targets: [
                  %OperationTarget{
                    agent_id: _,
-                   arguments: %{
-                     "instance_number" => %ProtobufValue{kind: {:string_value, _}}
-                   }
+                   arguments: _
                  }
                ]
              } ->
@@ -349,11 +381,11 @@ defmodule Trento.SapSystemsTest do
         )
 
         assert {:ok, _} =
-                 SapSystems.request_operation(operation, sap_system_id, %{})
+                 SapSystems.request_operation(operation, sap_system_id, params)
       end
 
-      test "should handle operation #{operation} publish error" do
-        %{operation: operation} = @scenario
+      test "should handle operation #{name} publish error" do
+        %{operation: operation, params: params} = @scenario
 
         expect(
           Trento.Infrastructure.Messaging.Adapter.Mock,
@@ -365,7 +397,7 @@ defmodule Trento.SapSystemsTest do
         )
 
         assert {:error, :amqp_error} =
-                 SapSystems.request_operation(operation, UUID.uuid4(), %{})
+                 SapSystems.request_operation(operation, UUID.uuid4(), params)
       end
     end
   end

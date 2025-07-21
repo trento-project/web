@@ -491,7 +491,19 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
         expect(
           Trento.Infrastructure.Messaging.Adapter.Mock,
           :publish,
-          fn OperationsPublisher, _, _ ->
+          fn OperationsPublisher,
+             _,
+             %{
+               targets: [
+                 %{
+                   arguments: %{
+                     "instance_number" => %{kind: {:string_value, _}},
+                     "instance_type" => %{kind: {:string_value, "abap"}},
+                     "timeout" => %{kind: {:number_value, 5_000}}
+                   }
+                 }
+               ]
+             } ->
             :ok
           end
         )
@@ -501,7 +513,10 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
           |> put_req_header("content-type", "application/json")
           |> post(
             "/api/v1/sap_systems/#{sap_system_id}/operations/#{@operation}",
-            %{}
+            %{
+              "instance_type" => "abap",
+              "timeout" => 5_000
+            }
           )
 
         posted_conn
