@@ -381,6 +381,163 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
     end
   end
 
+  describe "request_operation" do
+    test "should fallback to operation not found if the operation is not found", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      %{id: sap_system_id} = insert(:sap_system)
+
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> post(
+        "/api/v1/sap_systems/#{sap_system_id}/operations/unknown",
+        %{}
+      )
+      |> json_response(:not_found)
+      |> assert_schema("NotFound", api_spec)
+    end
+
+    operations = [
+      %{
+        operation: :sap_system_start
+      },
+      %{
+        operation: :sap_system_stop
+      }
+    ]
+
+    for %{operation: operation} <- operations do
+      @operation operation
+
+      test "should fallback to not found on operation #{operation} if the sap system is not found",
+           %{
+             conn: conn,
+             api_spec: api_spec
+           } do
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> post(
+          "/api/v1/sap_systems/#{UUID.uuid4()}/operations/#{@operation}",
+          %{}
+        )
+        |> json_response(:not_found)
+        |> assert_schema("NotFound", api_spec)
+      end
+
+      test "should fallback to not found on operation #{operation} if the sap system is deregistered",
+           %{
+             conn: conn,
+             api_spec: api_spec
+           } do
+        %{id: sap_system_id} = insert(:sap_system, deregistered_at: DateTime.utc_now())
+
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> post(
+          "/api/v1/sap_systems/#{sap_system_id}/operations/#{@operation}",
+          %{}
+        )
+        |> json_response(:not_found)
+        |> assert_schema("NotFound", api_spec)
+      end
+
+      test "should respond with 500 for operation #{operation} on messaging error", %{conn: conn} do
+        %{id: sap_system_id} = insert(:sap_system)
+
+        %{id: host_id} = insert(:host, heartbeat: :passing)
+
+        insert(:application_instance, sap_system_id: sap_system_id, host_id: host_id)
+
+        expect(
+          Trento.Infrastructure.Messaging.Adapter.Mock,
+          :publish,
+          fn OperationsPublisher, _, _ ->
+            {:error, :amqp_error}
+          end
+        )
+
+        resp =
+          conn
+          |> put_req_header("content-type", "application/json")
+          |> post(
+            "/api/v1/sap_systems/#{sap_system_id}/operations/#{@operation}",
+            %{}
+          )
+          |> json_response(:internal_server_error)
+
+        assert %{
+                 "errors" => [
+                   %{
+                     "detail" => "Something went wrong.",
+                     "title" => "Internal Server Error"
+                   }
+                 ]
+               } = resp
+      end
+
+      test "should perform operation #{operation} properly",
+           %{
+             conn: conn,
+             api_spec: api_spec
+           } do
+        %{id: database_id} = insert(:database)
+        %{id: sap_system_id} = insert(:sap_system, database_id: database_id)
+
+        %{id: host_id} = insert(:host, heartbeat: :passing)
+
+        insert(:application_instance, sap_system_id: sap_system_id, host_id: host_id)
+
+        expect(
+          Trento.Infrastructure.Messaging.Adapter.Mock,
+          :publish,
+          fn OperationsPublisher,
+             _,
+             %{
+               targets: [
+                 %{
+                   arguments: %{
+                     "instance_number" => %{kind: {:string_value, _}},
+                     "instance_type" => %{kind: {:string_value, "abap"}},
+                     "timeout" => %{kind: {:number_value, 5_000}}
+                   }
+                 }
+               ]
+             } ->
+            :ok
+          end
+        )
+
+        posted_conn =
+          conn
+          |> put_req_header("content-type", "application/json")
+          |> post(
+            "/api/v1/sap_systems/#{sap_system_id}/operations/#{@operation}",
+            %{
+              "instance_type" => "abap",
+              "timeout" => 5_000
+            }
+          )
+
+        posted_conn
+        |> json_response(:accepted)
+        |> assert_schema("OperationAccepted", api_spec)
+
+        assert %{
+                 assigns: %{
+                   sap_system: %{
+                     id: ^sap_system_id,
+                     database: %{id: ^database_id}
+                   },
+                   operation: operation
+                 }
+               } = posted_conn
+
+        assert operation == @operation
+      end
+    end
+  end
+
   describe "forbidden response" do
     test "should return forbidden on any controller action if the user does not have the right permission",
          %{conn: conn, api_spec: api_spec} do

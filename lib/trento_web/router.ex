@@ -171,6 +171,7 @@ defmodule TrentoWeb.Router do
       if Application.compile_env!(:trento, :operations_enabled) do
         post "/hosts/:id/operations/:operation", HostController, :request_operation
         post "/clusters/:id/operations/:operation", ClusterController, :request_operation
+        post "/sap_systems/:id/operations/:operation", SapSystemController, :request_operation
 
         post "/clusters/:id/hosts/:host_id/operations/:operation",
              ClusterController,
