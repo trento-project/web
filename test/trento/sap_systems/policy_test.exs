@@ -66,6 +66,48 @@ defmodule Trento.SapSystems.PolicyTest do
     end
   end
 
+  describe "request_operation" do
+    operations = [
+      %{
+        operation: "sap_system_start",
+        ability: "start"
+      },
+      %{
+        operation: "sap_system_stop",
+        ability: "stop"
+      }
+    ]
+
+    for %{operation: operation, ability: ability} <- operations do
+      @operation operation
+      @ability ability
+
+      test "should allow #{operation} operation if the user has #{ability}:sap_system ability" do
+        user = %User{abilities: [%Ability{name: @ability, resource: "sap_system"}]}
+
+        assert Policy.authorize(:request_operation, user, %{
+                 operation: @operation
+               })
+      end
+
+      test "should allow #{operation} operation if the user has all:all ability" do
+        user = %User{abilities: [%Ability{name: "all", resource: "all"}]}
+
+        assert Policy.authorize(:request_operation, user, %{
+                 operation: @operation
+               })
+      end
+
+      test "should disallow #{operation} operation if the user does not have #{ability}:sap_system ability" do
+        user = %User{abilities: [%Ability{name: "all", resource: "other_resource"}]}
+
+        refute Policy.authorize(:request_operation, user, %{
+                 operation: @operation
+               })
+      end
+    end
+  end
+
   test "should allow unguarded actions" do
     user = %User{abilities: []}
 

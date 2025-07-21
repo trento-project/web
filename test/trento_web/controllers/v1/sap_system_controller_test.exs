@@ -400,15 +400,18 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
 
     operations = [
       %{
-        operation: :sap_system_start
+        operation: :sap_system_start,
+        ability: "start"
       },
       %{
-        operation: :sap_system_stop
+        operation: :sap_system_stop,
+        ability: "stop"
       }
     ]
 
-    for %{operation: operation} <- operations do
+    for %{operation: operation, ability: ability} <- operations do
       @operation operation
+      @ability ability
 
       test "should fallback to not found on operation #{operation} if the sap system is not found",
            %{
@@ -474,6 +477,40 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
                    }
                  ]
                } = resp
+      end
+
+      test "should authorize operation #{operation} when the user has #{ability} ability",
+           %{
+             conn: conn
+           } do
+        %{id: user_id} = insert(:user)
+
+        %{id: ability_id} = insert(:ability, name: @ability, resource: "sap_system")
+        insert(:users_abilities, user_id: user_id, ability_id: ability_id)
+
+        %{id: database_id} = insert(:database)
+        %{id: sap_system_id} = insert(:sap_system, database_id: database_id)
+
+        %{id: host_id} = insert(:host, heartbeat: :passing)
+
+        insert(:application_instance, sap_system_id: sap_system_id, host_id: host_id)
+
+        expect(
+          Trento.Infrastructure.Messaging.Adapter.Mock,
+          :publish,
+          fn OperationsPublisher, _, _ ->
+            :ok
+          end
+        )
+
+        conn
+        |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
+        |> put_req_header("content-type", "application/json")
+        |> post(
+          "/api/v1/sap_systems/#{sap_system_id}/operations/#{@operation}",
+          %{}
+        )
+        |> json_response(:accepted)
       end
 
       test "should perform operation #{operation} properly",
@@ -566,6 +603,16 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
           post(
             conn,
             "/api/v1/sap_systems/#{sap_system_id}/hosts/#{host_id}/instances/#{instance_number}/operations/sap_instance_stop",
+            %{}
+          ),
+          post(
+            conn,
+            "/api/v1/sap_systems/#{sap_system_id}/operations/sap_system_start",
+            %{}
+          ),
+          post(
+            conn,
+            "/api/v1/sap_systems/#{sap_system_id}/operations/sap_system_stop",
             %{}
           )
         ],
