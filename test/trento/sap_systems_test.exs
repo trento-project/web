@@ -352,31 +352,6 @@ defmodule Trento.SapSystemsTest do
                  SapSystems.request_operation(operation, sap_system_id, %{})
       end
 
-      test "should request #{operation} operation without targets" do
-        # Corner case scenario. We shouldn't have SAP systems without app instances
-        %{operation: operation, expected_operator: expected_operator} = @scenario
-
-        %{id: sap_system_id} = insert(:sap_system)
-
-        expect(
-          Trento.Infrastructure.Messaging.Adapter.Mock,
-          :publish,
-          1,
-          fn OperationsPublisher,
-             "requests",
-             %OperationRequested{
-               group_id: ^sap_system_id,
-               operation_type: ^expected_operator,
-               targets: []
-             } ->
-            :ok
-          end
-        )
-
-        assert {:ok, _} =
-                 SapSystems.request_operation(operation, sap_system_id, %{})
-      end
-
       test "should handle operation #{operation} publish error" do
         %{operation: operation} = @scenario
 

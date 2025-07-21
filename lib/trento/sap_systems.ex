@@ -136,6 +136,7 @@ defmodule Trento.SapSystems do
       end)
       |> case do
         nil ->
+          # Corner case scenario. We shouldn't have SAP systems without app instances
           []
 
         %{host_id: host_id, instance_number: instance_number} ->
