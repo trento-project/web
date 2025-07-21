@@ -110,17 +110,9 @@ export const selectRefreshRate = (refreshRate) => {
   return cy.contains(refreshRate).click();
 };
 
-export const selectNextRefreshRate = () => {
-  cy.get('button[class*="refresh-rate-selection-dropdown"]').click();
-  cy.get('button[class*="refresh-rate-selection-dropdown"]')
-    .invoke('text')
-    .then(($text) => {
-      if ($text === '30m') {
-        cy.get('div[role="listbox"]').type(
-          '{uparrow}{uparrow}{uparrow}{uparrow}{uparrow}{uparrow}{enter}'
-        );
-      } else cy.get('div[role="listbox"]').type('{downarrow}{enter}');
-    });
+export const selectNextRefreshRate = (refreshRate) => {
+  cy.get('div[class="relative flex-1"]').type('{downarrow}');
+  cy.contains(refreshRate).click();
 };
 
 // UI Validations
