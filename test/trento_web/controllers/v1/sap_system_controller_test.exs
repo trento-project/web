@@ -287,46 +287,16 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
                } = resp
       end
 
-      test "should authorize operation #{operation} when the user has #{ability} ability",
+      test "should perform operation #{operation} properly with authorized #{ability} ability",
            %{
-             conn: conn
+             conn: conn,
+             api_spec: api_spec
            } do
         %{id: user_id} = insert(:user)
 
         %{id: ability_id} = insert(:ability, name: @ability, resource: "application_instance")
         insert(:users_abilities, user_id: user_id, ability_id: ability_id)
 
-        %{id: host_id} = insert(:host)
-
-        %{sap_system_id: sap_system_id, instance_number: inst_number} =
-          insert(:application_instance, features: "MESSAGESERVER|ENQUE", host_id: host_id)
-
-        %{id: database_id} = insert(:database, health: :passing)
-        insert(:sap_system, id: sap_system_id, database_id: database_id)
-
-        expect(
-          Trento.Infrastructure.Messaging.Adapter.Mock,
-          :publish,
-          fn OperationsPublisher, _, _ ->
-            :ok
-          end
-        )
-
-        conn
-        |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
-        |> put_req_header("content-type", "application/json")
-        |> post(
-          "/api/v1/sap_systems/#{sap_system_id}/hosts/#{host_id}/instances/#{inst_number}/operations/#{@operation}",
-          %{}
-        )
-        |> json_response(:accepted)
-      end
-
-      test "should perform operation #{operation} properly",
-           %{
-             conn: conn,
-             api_spec: api_spec
-           } do
         %{id: cluster_id} =
           insert(:cluster,
             details:
@@ -354,6 +324,7 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
 
         posted_conn =
           conn
+          |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
           |> put_req_header("content-type", "application/json")
           |> post(
             "/api/v1/sap_systems/#{sap_system_id}/hosts/#{host_id}/instances/#{inst_number}/operations/#{@operation}",
@@ -479,45 +450,16 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
                } = resp
       end
 
-      test "should authorize operation #{operation} when the user has #{ability} ability",
+      test "should perform operation #{operation} properly with authorized #{ability} ability",
            %{
-             conn: conn
+             conn: conn,
+             api_spec: api_spec
            } do
         %{id: user_id} = insert(:user)
 
         %{id: ability_id} = insert(:ability, name: @ability, resource: "sap_system")
         insert(:users_abilities, user_id: user_id, ability_id: ability_id)
 
-        %{id: database_id} = insert(:database)
-        %{id: sap_system_id} = insert(:sap_system, database_id: database_id)
-
-        %{id: host_id} = insert(:host, heartbeat: :passing)
-
-        insert(:application_instance, sap_system_id: sap_system_id, host_id: host_id)
-
-        expect(
-          Trento.Infrastructure.Messaging.Adapter.Mock,
-          :publish,
-          fn OperationsPublisher, _, _ ->
-            :ok
-          end
-        )
-
-        conn
-        |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
-        |> put_req_header("content-type", "application/json")
-        |> post(
-          "/api/v1/sap_systems/#{sap_system_id}/operations/#{@operation}",
-          %{}
-        )
-        |> json_response(:accepted)
-      end
-
-      test "should perform operation #{operation} properly",
-           %{
-             conn: conn,
-             api_spec: api_spec
-           } do
         %{id: database_id} = insert(:database)
         %{id: sap_system_id} = insert(:sap_system, database_id: database_id)
 
@@ -547,6 +489,7 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
 
         posted_conn =
           conn
+          |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
           |> put_req_header("content-type", "application/json")
           |> post(
             "/api/v1/sap_systems/#{sap_system_id}/operations/#{@operation}",
