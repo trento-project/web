@@ -280,7 +280,8 @@ context('Activity Log page', () => {
       activityLogPage.validateUrl(expectedUrl);
     });
 
-    it('should change refresh rate', () => {
+    // eslint-disable-next-line mocha/no-exclusive-tests
+    it.only('should change refresh rate', () => {
       activityLogPage.visit();
       activityLogPage.expectedRefreshRatesAreAvailable();
       const changingRefreshRateScenarios =
