@@ -20,10 +20,10 @@ defmodule Trento.SapSystems.Policy do
     do: has_global_ability?(user) or has_app_instance_stop_ability?(user)
 
   def authorize(:request_operation, %User{} = user, %{operation: "sap_system_start"}),
-    do: has_global_ability?(user) or has_system_start_ability?(user)
+    do: has_global_ability?(user) or has_sap_system_start_ability?(user)
 
   def authorize(:request_operation, %User{} = user, %{operation: "sap_system_stop"}),
-    do: has_global_ability?(user) or has_system_stop_ability?(user)
+    do: has_global_ability?(user) or has_sap_system_stop_ability?(user)
 
   def authorize(_, _, _), do: true
 
@@ -36,9 +36,9 @@ defmodule Trento.SapSystems.Policy do
   defp has_app_instance_stop_ability?(user),
     do: user_has_ability?(user, %{name: "stop", resource: "application_instance"})
 
-  defp has_system_start_ability?(user),
+  defp has_sap_system_start_ability?(user),
     do: user_has_ability?(user, %{name: "start", resource: "sap_system"})
 
-  defp has_system_stop_ability?(user),
+  defp has_sap_system_stop_ability?(user),
     do: user_has_ability?(user, %{name: "stop", resource: "sap_system"})
 end
