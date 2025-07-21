@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-K7URE6B4.js"></script>
-    <script src="dist/sidebar_items-E683F893.js"></script>
+    <script src="dist/sidebar_items-3AD978A3.js"></script>
     <script src="docs_config.js"></script>
     <script async src="dist/html-YIPIRHGU.js"></script>
 
@@ -197,7 +197,23 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
+        <a href="#get_sap_system_by_id/1" data-no-tooltip translate="no">get_sap_system_by_id(id)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
         <a href="#request_instance_operation/4" data-no-tooltip translate="no">request_instance_operation(operation, host_id, instance_number, params)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#request_operation/3" data-no-tooltip translate="no">request_operation(operation, sap_system_id, params)</a>
 
       </div>
 
@@ -225,7 +241,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">by_id(id)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems.ex#L24" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems.ex#L25" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -257,7 +273,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">deregister_application_instance(sap_system_id, host_id, instance_number, date_service \\ DateService)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems.ex#L61" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems.ex#L69" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -293,7 +309,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">get_all_sap_systems()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems.ex#L32" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems.ex#L40" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -321,7 +337,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">get_application_instances_by_host_id(host_id)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems.ex#L53" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems.ex#L61" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -351,7 +367,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">get_application_instances_by_id(id)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems.ex#L46" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems.ex#L54" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -372,6 +388,35 @@ GUIDES
 
   </section>
 </section>
+<section class="detail" id="get_sap_system_by_id/1">
+
+  <div class="detail-header">
+    <a href="#get_sap_system_by_id/1" class="detail-link" data-no-tooltip title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">get_sap_system_by_id(id)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems.ex#L33" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> get_sap_system_by_id(<a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) ::
+  <a href="Trento.SapSystems.Projections.SapSystemReadModel.html#t:t/0">Trento.SapSystems.Projections.SapSystemReadModel.t</a>() | nil</pre>
+
+      </div>
+
+
+  </section>
+</section>
 <section class="detail" id="request_instance_operation/4">
 
   <div class="detail-header">
@@ -381,7 +426,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">request_instance_operation(operation, host_id, instance_number, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems.ex#L89" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems.ex#L97" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -394,6 +439,35 @@ GUIDES
       <div class="specs">
 
           <pre translate="no"><span class="attribute">@spec</span> request_instance_operation(<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>(), <a href="https://hexdocs.pm/ecto/3.11.2/Ecto.UUID.html#t:t/0">Ecto.UUID.t</a>(), <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()) ::
+  {:ok, <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="request_operation/3">
+
+  <div class="detail-header">
+    <a href="#request_operation/3" class="detail-link" data-no-tooltip title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">request_operation(operation, sap_system_id, params)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems.ex#L117" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> request_operation(<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>(), <a href="https://hexdocs.pm/ecto/3.11.2/Ecto.UUID.html#t:t/0">Ecto.UUID.t</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()) ::
   {:ok, <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
 
       </div>
