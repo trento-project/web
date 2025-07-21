@@ -61,6 +61,8 @@ const groupedAbilities = [
       'pacemaker_disable:cluster',
       'start:application_instance',
       'stop:application_instance',
+      'start:sap_system',
+      'stop:sap_system',
     ],
   },
 ];
