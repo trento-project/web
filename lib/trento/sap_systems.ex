@@ -128,8 +128,11 @@ defmodule Trento.SapSystems do
 
     targets =
       instances
-      |> Enum.find(Enum.at(instances, 0), fn %{host: %{heartbeat: heartbeat}} ->
-        heartbeat == :passing
+      |> Enum.find(Enum.at(instances, 0), fn %{
+                                               absent_at: absent_at,
+                                               host: %{heartbeat: heartbeat}
+                                             } ->
+        heartbeat == :passing && absent_at == nil
       end)
       |> case do
         nil ->

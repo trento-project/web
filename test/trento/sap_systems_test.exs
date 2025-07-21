@@ -276,11 +276,18 @@ defmodule Trento.SapSystemsTest do
 
         %{id: host_id_1} = insert(:host, heartbeat: :critical)
         %{id: host_id_2} = insert(:host, heartbeat: :passing)
+        %{id: host_id_3} = insert(:host, heartbeat: :passing)
 
         insert(:application_instance, sap_system_id: sap_system_id, host_id: host_id_1)
 
+        insert(:application_instance,
+          sap_system_id: sap_system_id,
+          host_id: host_id_2,
+          absent_at: DateTime.utc_now()
+        )
+
         %{instance_number: instance_number} =
-          insert(:application_instance, sap_system_id: sap_system_id, host_id: host_id_2)
+          insert(:application_instance, sap_system_id: sap_system_id, host_id: host_id_3)
 
         expect(
           Trento.Infrastructure.Messaging.Adapter.Mock,
@@ -293,7 +300,7 @@ defmodule Trento.SapSystemsTest do
                operation_type: ^expected_operator,
                targets: [
                  %OperationTarget{
-                   agent_id: ^host_id_2,
+                   agent_id: ^host_id_3,
                    arguments: %{
                      "instance_number" => %ProtobufValue{kind: {:string_value, ^instance_number}}
                    }
