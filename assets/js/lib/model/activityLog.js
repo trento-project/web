@@ -125,6 +125,7 @@ export const CLUSTER_OPERATION_REQUESTED = 'cluster_operation_requested';
 export const HOST_OPERATION_REQUESTED = 'host_operation_requested';
 export const CLUSTER_HOST_OPERATION_REQUESTED =
   'cluster_host_operation_requested';
+export const SAP_SYSTEM_OPERATION_REQUESTED = 'sap_system_operation_requested';
 export const OPERATION_COMPLETED = 'operation_completed';
 
 // Check Customization
@@ -643,6 +644,12 @@ export const ACTIVITY_TYPES_CONFIG = {
     message: ({ metadata }) =>
       `Operation ${getOperationLabel(metadata.operation)} requested`,
     resource: clusterResourceType,
+  },
+  [SAP_SYSTEM_OPERATION_REQUESTED]: {
+    label: 'SAP System Operation Requested',
+    message: ({ metadata }) =>
+      `Operation ${getOperationLabel(metadata.operation)} requested`,
+    resource: sapSystemResourceType,
   },
   [OPERATION_COMPLETED]: {
     label: 'Operation Completed',
