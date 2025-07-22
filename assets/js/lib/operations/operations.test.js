@@ -35,6 +35,14 @@ describe('operations', () => {
       label: 'SAP instance stop',
     },
     {
+      operation: 'sap_system_start',
+      label: 'SAP system start',
+    },
+    {
+      operation: 'sap_system_stop',
+      label: 'SAP system stop',
+    },
+    {
       operation: 'pacemaker_enable',
       label: 'Enable Pacemaker',
     },
@@ -70,6 +78,14 @@ describe('operations', () => {
     {
       operation: 'sapinstancestop@v1',
       name: 'sap_instance_stop',
+    },
+    {
+      operation: 'sapsystemstart@v1',
+      name: 'sap_system_start',
+    },
+    {
+      operation: 'sapsystemstop@v1',
+      name: 'sap_system_stop',
     },
     {
       operation: 'pacemakerenable@v1',
@@ -110,6 +126,14 @@ describe('operations', () => {
     {
       operation: 'sap_instance_stop',
       resourceType: 'application_instance',
+    },
+    {
+      operation: 'sap_system_start',
+      resourceType: 'sap_system',
+    },
+    {
+      operation: 'sap_system_stop',
+      resourceType: 'sap_system',
     },
     {
       operation: 'pacemaker_enable',
