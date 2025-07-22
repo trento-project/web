@@ -4,6 +4,7 @@ import { map, noop } from 'lodash';
 import {
   HOST_OPERATION,
   CLUSTER_OPERATION,
+  SAP_SYSTEM_OPERATION,
   APPLICATION_INSTANCE_OPERATION,
   CLUSTER_HOST_OPERATION,
   getOperationLabel,
@@ -14,6 +15,7 @@ import {
 import {
   requestHostOperation,
   requestClusterOperation,
+  requestSapSystemOperation,
   requestSapInstanceOperation,
   requestClusterHostOperation,
   getOperationExecutions,
@@ -29,6 +31,7 @@ import {
 } from '@state/runningOperations';
 import { getHost } from '@state/selectors/host';
 import { getCluster } from '@state/selectors/cluster';
+import { getSapSystem } from '@state/selectors/sapSystem';
 
 function* getResourceName(groupID, resourceType) {
   switch (resourceType) {
@@ -39,6 +42,8 @@ function* getResourceName(groupID, resourceType) {
     case CLUSTER_HOST_OPERATION: {
       return (yield select(getCluster(groupID)))?.name || 'unknown';
     }
+    case SAP_SYSTEM_OPERATION:
+      return (yield select(getSapSystem(groupID)))?.sid || 'unknown';
     default:
       return 'unknown';
   }
@@ -53,6 +58,10 @@ const callRequest = (operation, resourceType, requestParams) => {
     case CLUSTER_OPERATION: {
       const { clusterID, params } = requestParams;
       return requestClusterOperation(clusterID, operation, params);
+    }
+    case SAP_SYSTEM_OPERATION: {
+      const { sapSystemID, params } = requestParams;
+      return requestSapSystemOperation(sapSystemID, operation, params);
     }
     case APPLICATION_INSTANCE_OPERATION: {
       const { sapSystemID, hostID, instanceNumber, params } = requestParams;
