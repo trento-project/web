@@ -159,6 +159,7 @@ defmodule Trento.ActivityLog.SeverityLevel do
     "cluster_operation_requested" => :info,
     "host_operation_requested" => :info,
     "application_instance_operation_requested" => :info,
+    "sap_system_operation_requested" => :info,
     "operation_completed" => %{
       type: :kv,
       key_suffix: "result",
