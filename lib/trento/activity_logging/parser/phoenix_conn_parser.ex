@@ -201,7 +201,8 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
              :application_instance_operation_requested,
              :cluster_operation_requested,
              :host_operation_requested,
-             :cluster_host_operation_requested
+             :cluster_host_operation_requested,
+             :sap_system_operation_requested
            ] do
     operation_id = resp_body |> Jason.decode!() |> Map.get("operation_id")
 
@@ -224,8 +225,12 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
     end
   end
 
-  defp get_operation_resource_id_field(:application_instance_operation_requested),
-    do: :sap_system_id
+  defp get_operation_resource_id_field(activity)
+       when activity in [
+              :application_instance_operation_requested,
+              :sap_system_operation_requested
+            ],
+       do: :sap_system_id
 
   defp get_operation_resource_id_field(activity)
        when activity in [:cluster_operation_requested, :cluster_host_operation_requested],

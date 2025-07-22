@@ -283,6 +283,13 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
           additional_params: %{
             host_id: host_id
           }
+        },
+        %{
+          action: :sap_system_operation_requested,
+          operation: "sap_system_start",
+          atom_operation: :sap_system_start,
+          resource_field: :sap_system_id,
+          additional_params: %{}
         }
       ]
 
