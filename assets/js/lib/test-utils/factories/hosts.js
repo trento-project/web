@@ -119,6 +119,7 @@ export const hostFactory = Factory.define(({ params, sequence }) => {
     arch: faker.helpers.arrayElement(['x86_64', 'ppc64le', 's390x']),
     hostname: `${faker.person.firstName()}_${sequence}`,
     cluster_id: faker.string.uuid(),
+    cluster_host_status: 'Online',
     ip_addresses: [faker.internet.ip()],
     netmasks: [faker.helpers.arrayElement([8, 16, 24, 32])],
     provider: cloudProviderEnum(),

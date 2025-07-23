@@ -10,12 +10,29 @@ import CheckResultsOverview from '@pages/CheckResultsOverview';
 
 import HanaClusterSite from './HanaClusterSite';
 
+// The host object contains the status of the host in the cluster.
+// but is also expressed in the node list.
+// The actual status is determined by giving the precedence to the host status, if exists.
+const hostStatusInCluster = (statusFromNodes, statusFromHost) => {
+  if (typeof statusFromHost === 'string' && statusFromHost !== '') {
+    return statusFromHost;
+  }
+  return statusFromNodes;
+};
+
 export const enrichNodes = (clusterNodes, hosts, resources) =>
-  clusterNodes?.map((node) => ({
-    ...node,
-    ...hosts.find(({ hostname }) => hostname === node.name),
-    resources: resources.filter(({ node: nodename }) => nodename === node.name),
-  }));
+  clusterNodes
+    ?.map((node) => ({
+      ...node,
+      ...hosts.find(({ hostname }) => hostname === node.name),
+      resources: resources.filter(
+        ({ node: nodename }) => nodename === node.name
+      ),
+    }))
+    .map(({ status, cluster_host_status, ...node }) => ({
+      ...node,
+      status: hostStatusInCluster(status, cluster_host_status),
+    }));
 
 function HanaClusterDetails({
   clusterID,

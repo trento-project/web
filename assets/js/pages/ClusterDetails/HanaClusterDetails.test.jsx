@@ -338,4 +338,39 @@ describe('HanaClusterDetails component', () => {
       expect(screen.getByText(tooltip, { exact: false })).toBeInTheDocument();
     }
   );
+
+  it('should show the correct host status', () => {
+    const {
+      clusterID,
+      cib_last_written: cibLastWritten,
+      type: clusterType,
+      sap_instances: [{ sid }],
+      provider,
+      details,
+    } = clusterFactory.build();
+
+    const hosts = details.nodes.map(({ name }) =>
+      hostFactory.build({
+        cluster_id: clusterID,
+        cluster_host_status: 'Offline',
+        hostname: name,
+      })
+    );
+
+    const { container } = renderWithRouter(
+      <HanaClusterDetails
+        clusterID={clusterID}
+        hosts={hosts}
+        clusterType={clusterType}
+        cibLastWritten={cibLastWritten}
+        clusterSids={[sid]}
+        provider={provider}
+        sapSystems={[]}
+        details={details}
+        lastExecution={null}
+      />
+    );
+
+    expect(container.querySelectorAll('.tn-offline')).toHaveLength(2);
+  });
 });
