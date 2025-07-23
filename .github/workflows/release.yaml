@@ -103,12 +103,17 @@ jobs:
       tag: ${{ matrix.tag }}
 
   obs-sync:
-    name: Update obs packages
+    name: Update OBS package
     if: vars.OBS_ENABLED == 'true'
     uses: ./.github/workflows/obs.yaml
+    strategy:
+      matrix:
+        include:
+          - obs_project: ${{ vars.OBS_PROJECT_STABLE }} 
+          - obs_project: ${{ vars.OBS_PROJECT_ROLLING }}      
     needs:
       - release
     secrets: inherit
     with:
       update_changelog: true
-      obs_project: ${{ vars.OBS_PROJECT_STABLE }}
+      obs_project: ${{ matrix.obs_project }}  
