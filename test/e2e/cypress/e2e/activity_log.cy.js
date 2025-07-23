@@ -280,6 +280,18 @@ context('Activity Log page', () => {
       activityLogPage.validateUrl(expectedUrl);
     });
 
+    it('should start autorefresh ticker', () => {
+      activityLogPage.spyActivityLogRequest();
+      activityLogPage.visit();
+      activityLogPage.expectedAggregateAmountOfRequests(1);
+      activityLogPage.selectRefreshRate('5s');
+      activityLogPage.expectedAggregateAmountOfRequests(2);
+      activityLogPage.advanceTimeBy(6);
+      activityLogPage.expectedAggregateAmountOfRequests(3);
+      activityLogPage.advanceTimeBy(11);
+      activityLogPage.expectedAggregateAmountOfRequests(5);
+    });
+
     it('should change refresh rate', () => {
       activityLogPage.visit();
       activityLogPage.expectedRefreshRatesAreAvailable();
@@ -297,20 +309,6 @@ context('Activity Log page', () => {
           activityLogPage.validateUrl(expectedUrl);
         }
       );
-    });
-
-    it('should start autorefresh ticker', () => {
-      activityLogPage.spyActivityLogRequest();
-      activityLogPage.visit();
-      activityLogPage.waitForActivityLogRequest();
-      activityLogPage.expectedAggregateAmountOfRequests(1);
-      activityLogPage.selectRefreshRate('5s');
-      activityLogPage.waitForActivityLogRequest();
-      activityLogPage.expectedAggregateAmountOfRequests(2);
-      activityLogPage.advanceTimeBy(6);
-      activityLogPage.expectedAggregateAmountOfRequests(3);
-      activityLogPage.advanceTimeBy(11);
-      activityLogPage.expectedAggregateAmountOfRequests(5);
     });
 
     it(`should update querystring when filters are selected`, () => {
