@@ -116,6 +116,13 @@ defmodule TrentoWeb.FallbackController do
     |> render(:"422", reason: "Unknown discovery type.")
   end
 
+  def call(conn, {:error, :discovery_exception}) do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> put_view(json: ErrorJSON)
+    |> render(:"422", reason: "Unable to handle discovery.")
+  end
+
   def call(conn, {:error, :host_alive}) do
     conn
     |> put_status(:unprocessable_entity)
