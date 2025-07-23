@@ -8,6 +8,7 @@ import {
   SAPTUNE_SOLUTION_APPLY,
   CLUSTER_MAINTENANCE_CHANGE,
   SAP_INSTANCE_START,
+  SAP_SYSTEM_START,
   PACEMAKER_ENABLE,
   PACEMAKER_DISABLE,
   getOperationLabel,
@@ -34,6 +35,9 @@ const clusterOperationRequestURL = (clusterID, operation) =>
 
 const clusterHostOperationRequestURL = (clusterID, hostID, operation) =>
   `/clusters/${clusterID}/hosts/${hostID}/operations/${operation}`;
+
+const sapSystemOperationRequestURL = (sapSystemID, operation) =>
+  `/sap_systems/${sapSystemID}/operations/${operation}`;
 
 const sapInstanceOperationRequestedURL = (
   sapSystemID,
@@ -168,6 +172,43 @@ describe('operations saga', () => {
         }),
         notify({
           text: `Operation ${label} requested for ${hostname}`,
+          icon: '⚙️',
+        }),
+      ]);
+    });
+
+    it('should request a SAP system operation', async () => {
+      const groupID = faker.string.uuid();
+      const operation = SAP_SYSTEM_START;
+      const sid = 'PRD';
+      const label = getOperationLabel(operation);
+
+      axiosMock
+        .onPost(sapSystemOperationRequestURL(groupID, operation))
+        .reply(202, {});
+
+      const dispatched = await recordSaga(
+        requestOperation,
+        {
+          payload: {
+            groupID,
+            operation,
+            requestParams: {
+              sapSystemID: groupID,
+            },
+          },
+        },
+        { sapSystemsList: { sapSystems: [{ id: groupID, sid }] } }
+      );
+
+      expect(dispatched).toEqual([
+        setRunningOperation({
+          groupID,
+          operation,
+          metadata: { sapSystemID: groupID },
+        }),
+        notify({
+          text: `Operation ${label} requested for ${sid}`,
           icon: '⚙️',
         }),
       ]);
