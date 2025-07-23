@@ -299,8 +299,7 @@ context('Activity Log page', () => {
       );
     });
 
-    // eslint-disable-next-line mocha/no-exclusive-tests
-    it.only('should start autorefresh ticker', () => {
+    it('should start autorefresh ticker', () => {
       activityLogPage.spyActivityLogRequest();
       activityLogPage.visit();
       activityLogPage.expectedAggregateAmountOfRequests(1);
