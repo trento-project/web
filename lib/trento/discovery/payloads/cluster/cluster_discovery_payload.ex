@@ -97,21 +97,23 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
   # The cluster manages a HANA system when it manages a SAPHanaTopology resource
   # and other SAPHana for Scale up or SAPHanaController for Scale Out.
   defp parse_hana_cluster_type(%{"crmmon" => %{"clones" => clones}}) when not is_nil(clones) do
+    all_clone_resources =
+      Enum.flat_map(clones, fn
+        %{"resources" => nil} -> []
+        %{"resources" => resources} -> resources
+      end)
+
     has_sap_hana_topology =
-      Enum.any?(clones, fn %{"resources" => resources} ->
-        Enum.any?(resources, fn %{"agent" => agent} -> agent == "ocf::suse:SAPHanaTopology" end)
+      Enum.any?(all_clone_resources, fn %{"agent" => agent} ->
+        agent == "ocf::suse:SAPHanaTopology"
       end)
 
     has_sap_hana =
-      Enum.any?(clones, fn %{"resources" => resources} ->
-        Enum.any?(resources, fn %{"agent" => agent} -> agent == "ocf::suse:SAPHana" end)
-      end)
+      Enum.any?(all_clone_resources, fn %{"agent" => agent} -> agent == "ocf::suse:SAPHana" end)
 
     has_sap_hana_controller =
-      Enum.any?(clones, fn %{"resources" => resources} ->
-        Enum.any?(resources, fn %{"agent" => agent} ->
-          agent == "ocf::suse:SAPHanaController"
-        end)
+      Enum.any?(all_clone_resources, fn %{"agent" => agent} ->
+        agent == "ocf::suse:SAPHanaController"
       end)
 
     do_detect_cluster_type(has_sap_hana_topology, has_sap_hana, has_sap_hana_controller)
