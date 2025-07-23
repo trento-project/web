@@ -6,7 +6,6 @@ defmodule Trento.HeartbeatsTest do
 
   import Trento.Factory
 
-  alias Trento.ActivityLog
   alias Trento.Heartbeats
   alias Trento.Heartbeats.Heartbeat
 
@@ -120,10 +119,10 @@ defmodule Trento.HeartbeatsTest do
 
   defp scenario_setup(:with_correlation, agent_id, health) do
     correlation_id = UUID.uuid4()
-    key0 = UUID.uuid4()
-    Process.put(:correlation_key, key0)
-    key = ActivityLog.correlation_key(:api_key)
-    ActivityLog.put_correlation_id(key, correlation_id)
+
+    expect(Trento.ActivityLog.Correlations.Mock, :get_correlation_id, fn "api_key" ->
+      correlation_id
+    end)
 
     expect(
       Trento.Commanded.Mock,
@@ -143,6 +142,10 @@ defmodule Trento.HeartbeatsTest do
   end
 
   defp scenario_setup(:without_correlation, agent_id, health) do
+    expect(Trento.ActivityLog.Correlations.Mock, :get_correlation_id, fn "api_key" ->
+      nil
+    end)
+
     expect(
       Trento.Commanded.Mock,
       :dispatch,

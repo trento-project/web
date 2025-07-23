@@ -82,7 +82,8 @@ defmodule Trento.Databases do
     do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]
 
   defp correlated_dispatch(command) do
-    correlation_id = Process.get(:correlation_id)
+    # correlation_id = Process.get(:correlation_id)
+    correlation_id = ProcessTree.get(:correlation_id, default: nil)
     commanded().dispatch(command, correlation_id: correlation_id, causation_id: correlation_id)
   end
 end

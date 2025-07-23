@@ -348,29 +348,22 @@ defmodule TrentoWeb.V1.SettingsController do
 
   defp propagate_correlation_id(ctx, correlation_ttl)
        when ctx in [:api_key, :suse_manager_settings] do
-    correlation_id = Process.get(:correlation_id)
+    # correlation_id = Process.get(:correlation_id)
+    correlation_id = ProcessTree.get(:correlation_id, default: nil)
 
-    key = ActivityLog.correlation_key(ctx)
+    key = Atom.to_string(ctx)
 
-    case key do
-      nil ->
+    _ = ActivityLog.put_correlation_id(key, correlation_id)
+
+    case ctx do
+      :api_key ->
+        _ = ActivityLog.expire_correlation_id(key, correlation_ttl)
+
         :ok
 
-      key ->
-        _ =
-          ActivityLog.put_correlation_id(key, correlation_id)
-
-        case ctx do
-          :api_key ->
-            _ =
-              ActivityLog.expire_correlation_id(key, correlation_ttl)
-
-            :ok
-
-          :suse_manager_settings ->
-            # The associated cache key stays until the next save/change operation.
-            :ok
-        end
+      :suse_manager_settings ->
+        # The associated cache key stays until the next save/change operation.
+        :ok
     end
   end
 end

@@ -97,9 +97,7 @@ defmodule Trento.Heartbeats do
     do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]
 
   defp maybe_correlated_dispatch(command) do
-    key = ActivityLog.correlation_key(:api_key)
-
-    case ActivityLog.get_correlation_id(key) do
+    case ActivityLog.get_correlation_id("api_key") do
       nil ->
         # in case the correlation_id entry has expired
         # or is absent we do the default dispatch

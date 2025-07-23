@@ -105,8 +105,7 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
           body_params: request_body
         }
       ) do
-    key = Correlations.correlation_key(:api_key)
-    maybe_correlation_id = Correlations.get_correlation_id(key)
+    maybe_correlation_id = Correlations.get_correlation_id("api_key")
     Map.merge(%{correlation_id: maybe_correlation_id}, request_body)
   end
 

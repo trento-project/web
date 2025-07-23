@@ -8,7 +8,6 @@ defmodule TrentoWeb.V1.HostControllerTest do
   import Trento.Factory
   import Trento.Support.Helpers.AbilitiesTestHelper
 
-  alias Trento.ActivityLog
   alias Trento.Hosts.Commands.RequestHostDeregistration
 
   alias Trento.Infrastructure.Checks.AMQP.Publisher
@@ -39,9 +38,10 @@ defmodule TrentoWeb.V1.HostControllerTest do
         case @scenario do
           :with_correlation ->
             key0 = UUID.uuid4()
-            Process.put(:correlation_key, key0)
-            key = ActivityLog.correlation_key(:api_key)
-            ActivityLog.put_correlation_id(key, UUID.uuid4())
+
+            expect(Trento.ActivityLog.Correlations.Mock, :get_correlation_id, fn "api_key" ->
+              key0
+            end)
 
             expect(
               Trento.Commanded.Mock,
@@ -59,6 +59,10 @@ defmodule TrentoWeb.V1.HostControllerTest do
                 {:error, :host_not_registered}
               end
             )
+
+            expect(Trento.ActivityLog.Correlations.Mock, :get_correlation_id, fn "api_key" ->
+              nil
+            end)
         end
 
         resp =

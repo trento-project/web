@@ -6,7 +6,6 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscovery
   import TrentoWeb.ChannelCase
   import Trento.Factory
 
-  alias Trento.ActivityLog
   alias Trento.SoftwareUpdates.Discovery.DiscoveryResult
   alias Trento.SoftwareUpdates.Discovery.Mock, as: SoftwareUpdatesDiscoveryMock
 
@@ -65,9 +64,14 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscovery
         case @scenario do
           :with_correlation ->
             correlation_id = UUID.uuid4()
-            Process.put(:correlation_key, correlation_id)
-            key = ActivityLog.correlation_key(:suse_manager_settings)
-            _ = ActivityLog.put_correlation_id(key, correlation_id)
+
+            expect(
+              Trento.ActivityLog.Correlations.Mock,
+              :get_correlation_id,
+              fn "suse_manager_settings" ->
+                correlation_id
+              end
+            )
 
             expect(
               Trento.Commanded.Mock,
@@ -79,6 +83,14 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscovery
             )
 
           :without_correlation ->
+            expect(
+              Trento.ActivityLog.Correlations.Mock,
+              :get_correlation_id,
+              fn "suse_manager_settings" ->
+                nil
+              end
+            )
+
             expect(
               Trento.Commanded.Mock,
               :dispatch,
@@ -157,6 +169,14 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscovery
                health: SoftwareUpdatesHealth.unknown()
              } ->
             :ok
+          end
+        )
+
+        expect(
+          Trento.ActivityLog.Correlations.Mock,
+          :get_correlation_id,
+          fn "suse_manager_settings" ->
+            nil
           end
         )
 

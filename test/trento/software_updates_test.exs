@@ -23,6 +23,10 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
       insert_software_updates_settings()
       insert_list(4, :host)
 
+      expect(Trento.ActivityLog.Correlations.Mock, :get_correlation_id, 4, fn _ ->
+        nil
+      end)
+
       assert :ok == SoftwareUpdates.run_discovery()
     end
 
@@ -31,6 +35,10 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
       insert_list(4, :host)
 
       expect(Trento.SoftwareUpdates.Discovery.Mock, :clear, 3, fn -> :ok end)
+
+      expect(Trento.ActivityLog.Correlations.Mock, :get_correlation_id, 12, fn _ ->
+        nil
+      end)
 
       Enum.each(1..3, fn _ ->
         assert :ok == Settings.clear_suse_manager_settings()

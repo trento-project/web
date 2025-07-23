@@ -4,15 +4,9 @@ defmodule Trento.ActivityLog.Correlations.UnscopedCorrelations do
   """
 
   @cache_name :activity_correlations
-  @api_key_regen "api_key_regen"
-  @suse_manager_settings "suse_manager_settings"
   @default_ttl 15_000
 
   @behaviour Trento.ActivityLog.Correlations
-
-  @impl true
-  def correlation_key(:api_key), do: @api_key_regen
-  def correlation_key(:suse_manager_settings), do: @suse_manager_settings
 
   @impl true
   @spec put_correlation_id(binary(), binary()) :: :ok

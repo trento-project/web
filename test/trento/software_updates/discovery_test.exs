@@ -18,6 +18,38 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
   require Trento.SoftwareUpdates.Enums.AdvisoryType, as: AdvisoryType
   require Trento.SoftwareUpdates.Enums.SoftwareUpdatesHealth, as: SoftwareUpdatesHealth
 
+  setup _ do
+    # Mox.stub(
+    #   Trento.ActivityLog.Correlations.Mock,
+    #   :get_correlation_id,
+    #   fn _ ->
+    #     UUID.uuid4()
+    #   end
+    # )
+
+    # expect(Trento.ActivityLog.Correlations.Mock, :get_correlation_id, 0, fn _ ->
+    #   nil
+    # end)
+
+    #   Mox.stub(
+    #     Trento.ActivityLog.Correlations.Mock,
+    #     :put_correlation_id,
+    #     fn _, _ ->
+    #       :ok
+    #     end
+    #   )
+
+    #   Mox.stub(
+    #     Trento.ActivityLog.Correlations.Mock,
+    #     :expire_correlation_id,
+    #     fn _, _ ->
+    #       :ok
+    #     end
+    #   )
+
+    :ok
+  end
+
   setup :verify_on_exit!
 
   describe "Discovering software updates for a specific host" do
@@ -86,6 +118,10 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
           expected_error: :error_while_dispatching_completion_command
         }
       ]
+
+      expect(Trento.ActivityLog.Correlations.Mock, :get_correlation_id, 5, fn _ ->
+        nil
+      end)
 
       for %{
             host_id: host_id,
@@ -176,6 +212,10 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
         }
       ]
 
+      expect(Trento.ActivityLog.Correlations.Mock, :get_correlation_id, 5, fn _ ->
+        nil
+      end)
+
       for %{
             discovered_relevant_patches: discovered_relevant_patches,
             discovered_upgradable_packages: discovered_upgradable_packages,
@@ -253,6 +293,10 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
     test "should handle authentication error" do
       expect(SoftwareUpdatesDiscoveryMock, :setup, fn -> {:error, :auth_error} end)
 
+      expect(Trento.ActivityLog.Correlations.Mock, :get_correlation_id, 2, fn _ ->
+        nil
+      end)
+
       [%{id: host_id1}, %{id: host_id2}] = insert_list(2, :host)
 
       expect(
@@ -328,6 +372,10 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
     test "should handle errors when getting a system id" do
       expect(SoftwareUpdatesDiscoveryMock, :setup, fn -> :ok end)
 
+      expect(Trento.ActivityLog.Correlations.Mock, :get_correlation_id, 1, fn _ ->
+        nil
+      end)
+
       %{id: host_id, fully_qualified_domain_name: fully_qualified_domain_name} = insert(:host)
 
       discovery_error = :some_error_while_getting_system_id
@@ -348,6 +396,10 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
 
     test "should handle errors when getting relevant patches" do
       expect(SoftwareUpdatesDiscoveryMock, :setup, fn -> :ok end)
+
+      expect(Trento.ActivityLog.Correlations.Mock, :get_correlation_id, 1, fn _ ->
+        nil
+      end)
 
       %{id: host_id, fully_qualified_domain_name: fully_qualified_domain_name} = insert(:host)
 
@@ -376,6 +428,10 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
     test "should handle errors when getting upgradable packages" do
       expect(SoftwareUpdatesDiscoveryMock, :setup, fn -> :ok end)
 
+      expect(Trento.ActivityLog.Correlations.Mock, :get_correlation_id, 1, fn _ ->
+        nil
+      end)
+
       %{id: host_id, fully_qualified_domain_name: fully_qualified_domain_name} = insert(:host)
 
       system_id = 100
@@ -402,6 +458,10 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
 
     test "should handle errors when dispatching discovery completion command" do
       expect(SoftwareUpdatesDiscoveryMock, :setup, fn -> :ok end)
+
+      expect(Trento.ActivityLog.Correlations.Mock, :get_correlation_id, 2, fn _ ->
+        nil
+      end)
 
       %{id: host_id, fully_qualified_domain_name: fully_qualified_domain_name} = insert(:host)
 
@@ -430,6 +490,10 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
 
     test "should complete discovery" do
       expect(SoftwareUpdatesDiscoveryMock, :setup, fn -> :ok end)
+
+      expect(Trento.ActivityLog.Correlations.Mock, :get_correlation_id, 3, fn _ ->
+        nil
+      end)
 
       %{id: host_id1, fully_qualified_domain_name: fully_qualified_domain_name1} =
         insert(:host, hostname: "host1")
@@ -583,6 +647,10 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
       )
 
       expect(Trento.SoftwareUpdates.Discovery.Mock, :clear, 1, fn -> :ok end)
+
+      expect(Trento.ActivityLog.Correlations.Mock, :get_correlation_id, 3, fn _ ->
+        nil
+      end)
 
       assert :ok = Discovery.clear_software_updates_discoveries()
     end

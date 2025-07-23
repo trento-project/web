@@ -307,9 +307,7 @@ defmodule Trento.SoftwareUpdates.Discovery do
   defp commanded, do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]
 
   defp maybe_correlated_dispatch(command) do
-    key = ActivityLog.correlation_key(:suse_manager_settings)
-
-    case ActivityLog.get_correlation_id(key) do
+    case ActivityLog.get_correlation_id("suse_manager_settings") do
       nil ->
         # in case the correlation_id entry has expired
         # or is absent we do the default dispatch

@@ -1,6 +1,7 @@
 defmodule TrentoWeb.V1.SettingsControllerTest do
   use TrentoWeb.ConnCase, async: true
   use Trento.SoftwareUpdates.DiscoveryCase
+  use Trento.Correlations.CorrelationCase
 
   import Trento.Factory
   import OpenApiSpex.TestAssertions
@@ -10,6 +11,34 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
 
   setup_all :setup_api_spec_v1
   setup :setup_user
+
+  # setup _ do
+  #   Mox.stub(
+  #     Trento.ActivityLog.Correlations.Mock,
+  #     :get_correlation_id,
+  #     fn _ ->
+  #       UUID.uuid4()
+  #     end
+  #   )
+
+  #   Mox.stub(
+  #     Trento.ActivityLog.Correlations.Mock,
+  #     :put_correlation_id,
+  #     fn _, _ ->
+  #       :ok
+  #     end
+  #   )
+
+  #   Mox.stub(
+  #     Trento.ActivityLog.Correlations.Mock,
+  #     :expire_correlation_id,
+  #     fn _, _ ->
+  #       :ok
+  #     end
+  #   )
+
+  #   :ok
+  # end
 
   test "should return the settings according to the schema", %{conn: conn, api_spec: api_spec} do
     conn = get(conn, "/api/v1/settings")

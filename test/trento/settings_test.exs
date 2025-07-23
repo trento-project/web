@@ -12,7 +12,6 @@ defmodule Trento.SettingsTest do
 
   require Trento.ActivityLog.RetentionPeriodUnit, as: RetentionPeriodUnit
 
-  alias Trento.ActivityLog
   alias Trento.ActivityLog.RetentionTime
 
   alias Trento.Settings
@@ -319,6 +318,7 @@ defmodule Trento.SettingsTest do
                  Settings.save_suse_manager_settings(settings)
       end
 
+      # ====
       for operation <- [
             &Settings.save_suse_manager_settings/1,
             &Settings.change_suse_manager_settings/1
@@ -337,20 +337,28 @@ defmodule Trento.SettingsTest do
               expect(
                 Trento.Commanded.Mock,
                 :dispatch,
-                5,
+                0,
                 fn %CompleteSoftwareUpdatesDiscovery{},
                    [correlation_id: ^correlation_id, causation_id: ^correlation_id] ->
                   :ok
                 end
               )
 
+              expect(Trento.ActivityLog.Correlations.Mock, :get_correlation_id, 1, fn "api_key" ->
+                correlation_id
+              end)
+
             :without_correlation ->
               expect(
                 Trento.Commanded.Mock,
                 :dispatch,
-                5,
+                0,
                 fn %CompleteSoftwareUpdatesDiscovery{} -> :ok end
               )
+
+              expect(Trento.ActivityLog.Correlations.Mock, :get_correlation_id, 1, fn "api_key" ->
+                nil
+              end)
           end
 
           settings = %{
@@ -365,18 +373,20 @@ defmodule Trento.SettingsTest do
               :ok
 
             "&Trento.Settings.change_suse_manager_settings/1" ->
-              expect(Trento.SoftwareUpdates.Discovery.Mock, :clear, 2, fn -> :ok end)
+              settings
+              |> Map.to_list()
+              |> Keyword.new()
+              |> insert_software_updates_settings()
 
-              # there is a path dependence on needing to save first
-              # before trying to change settings
-              Settings.save_suse_manager_settings(settings)
+              expect(Trento.SoftwareUpdates.Discovery.Mock, :clear, 1, fn -> :ok end)
           end
 
           assert {:ok, _} = @operation.(settings)
-
           wait_for_tasks_completion()
         end
       end
+
+      # ====
 
       test "should not be able to change suse manager settings if none previously saved" do
         submission = %{
@@ -1072,14 +1082,7 @@ defmodule Trento.SettingsTest do
   end
 
   defp scenario_setup(:with_correlation = scenario) do
-    correlation_id = UUID.uuid4()
-    key0 = UUID.uuid4()
-    Process.put(:correlation_key, key0)
-    key = ActivityLog.correlation_key(:api_key)
-    assert key == key0
-    ActivityLog.put_correlation_id(key, correlation_id)
-
-    %{correlation_id: correlation_id, correlation_scenario: scenario}
+    %{correlation_id: UUID.uuid4(), correlation_scenario: scenario}
   end
 
   defp scenario_setup(:without_correlation = scenario) do

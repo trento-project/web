@@ -4,9 +4,10 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
   use TrentoWeb.ConnCase, async: false
   use Plug.Test
 
+  import Mox
+
   import Trento.Factory
 
-  alias Trento.ActivityLog.Correlations
   alias Trento.ActivityLog.Logger.Parser.PhoenixConnParser
 
   require Trento.ActivityLog.ActivityCatalog, as: ActivityCatalog
@@ -319,10 +320,14 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
   end
 
   defp scenario_setup(:api_key_generation, correlation_id) do
-    key0 = UUID.uuid4()
-    Process.put(:correlation_key, key0)
-    key = Correlations.correlation_key(:api_key)
-    Correlations.put_correlation_id(key, correlation_id)
+    expect(
+      Trento.ActivityLog.Correlations.Mock,
+      :get_correlation_id,
+      1,
+      fn "api_key" ->
+        correlation_id
+      end
+    )
   end
 
   defp scenario_setup(_, _), do: :ok
