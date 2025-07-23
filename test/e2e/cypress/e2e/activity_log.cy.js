@@ -302,12 +302,14 @@ context('Activity Log page', () => {
     it('should start autorefresh ticker', () => {
       activityLogPage.spyActivityLogRequest();
       activityLogPage.visit();
+      activityLogPage.waitForActivityLogRequest();
       activityLogPage.expectedAggregateAmountOfRequests(1);
       activityLogPage.selectRefreshRate('5s');
+      activityLogPage.waitForActivityLogRequest();
       activityLogPage.expectedAggregateAmountOfRequests(2);
-      activityLogPage.advanceTimeBy(5);
+      activityLogPage.advanceTimeBy(6);
       activityLogPage.expectedAggregateAmountOfRequests(3);
-      activityLogPage.advanceTimeBy(10);
+      activityLogPage.advanceTimeBy(11);
       activityLogPage.expectedAggregateAmountOfRequests(5);
     });
 
