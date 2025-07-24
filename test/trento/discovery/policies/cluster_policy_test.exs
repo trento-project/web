@@ -6851,4 +6851,13 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                |> ClusterPolicy.handle(nil)
     end
   end
+
+  describe "resilience towards malformed discovery events" do
+    test "should register a cluster with clones containing resources as nil" do
+      assert {:ok, [%RegisterOnlineClusterHost{}]} =
+               "ha_cluster_discovery_malformed_resources_null"
+               |> load_discovery_event_fixture()
+               |> ClusterPolicy.handle(nil)
+    end
+  end
 end
