@@ -1,4 +1,5 @@
 import React from 'react';
+import { toLower } from 'lodash';
 import {
   EOS_BOLT_FILLED,
   EOS_WARNING_OUTLINED,
@@ -10,8 +11,8 @@ import Tooltip from '@common/Tooltip';
 import ClusterNodeLink from './ClusterNodeLink';
 
 const getNodeStatusIcon = (status, resources) => {
-  switch (status) {
-    case 'Online': {
+  switch (toLower(status)) {
+    case 'online': {
       const unmanagedResourcesCount = resources.filter(
         ({ managed }) => !managed
       ).length;
@@ -28,13 +29,13 @@ const getNodeStatusIcon = (status, resources) => {
         message: status,
       };
     }
-    case 'Offline': {
+    case 'offline': {
       return {
         icon: <EOS_POWER_OFF_OUTLINED className="tn-offline" />,
         message: status,
       };
     }
-    case 'Maintenance': {
+    case 'maintenance': {
       return {
         icon: <EOS_BUILD_OUTLINED className="tn-maintenance" />,
         message: status,

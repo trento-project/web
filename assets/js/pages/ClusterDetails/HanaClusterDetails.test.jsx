@@ -338,4 +338,80 @@ describe('HanaClusterDetails component', () => {
       expect(screen.getByText(tooltip, { exact: false })).toBeInTheDocument();
     }
   );
+
+  it('should show offline status when all hosts are offline', () => {
+    const {
+      clusterID,
+      cib_last_written: cibLastWritten,
+      type: clusterType,
+      sap_instances: [{ sid }],
+      provider,
+      details,
+    } = clusterFactory.build();
+
+    const hosts = details.nodes.map(({ name }) =>
+      hostFactory.build({
+        cluster_id: clusterID,
+        cluster_host_status: 'offline',
+        hostname: name,
+      })
+    );
+
+    const { container } = renderWithRouter(
+      <HanaClusterDetails
+        clusterID={clusterID}
+        hosts={hosts}
+        clusterType={clusterType}
+        cibLastWritten={cibLastWritten}
+        clusterSids={[sid]}
+        provider={provider}
+        sapSystems={[]}
+        details={details}
+        lastExecution={null}
+      />
+    );
+
+    expect(container.querySelectorAll('.tn-offline')).toHaveLength(
+      hosts.length
+    );
+  });
+
+  it('should show the correct status when at least one node is not online', () => {
+    const {
+      clusterID,
+      cib_last_written: cibLastWritten,
+      type: clusterType,
+      sap_instances: [{ sid }],
+      provider,
+      details,
+    } = clusterFactory.build();
+
+    const hosts = details.nodes.map(({ name }, index) =>
+      hostFactory.build({
+        cluster_id: clusterID,
+        cluster_host_status: index === 0 ? 'online' : 'offline',
+        hostname: name,
+      })
+    );
+
+    const { container } = renderWithRouter(
+      <HanaClusterDetails
+        clusterID={clusterID}
+        hosts={hosts}
+        clusterType={clusterType}
+        cibLastWritten={cibLastWritten}
+        clusterSids={[sid]}
+        provider={provider}
+        sapSystems={[]}
+        details={details}
+        lastExecution={null}
+      />
+    );
+
+    // This test works on the assumption that all nodes in the cluster are online
+    // This is the default in the factory
+    // The important part is that the status from the host is ignored,
+    // as we consider the one from the cluster more reliable (it's coming from the DC node)
+    expect(container.querySelectorAll('.tn-online')).toHaveLength(hosts.length);
+  });
 });

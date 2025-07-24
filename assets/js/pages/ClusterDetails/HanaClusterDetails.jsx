@@ -10,11 +10,20 @@ import CheckResultsOverview from '@pages/CheckResultsOverview';
 
 import HanaClusterSite from './HanaClusterSite';
 
+// The only case in which the status on the host takes precedence is when
+// all hosts in the cluster are offline.
+// In that case, we can trust the status as declared in the nodelist
+const hostStatusInCluster = (node, hosts) =>
+  hosts.every(({ cluster_host_status }) => cluster_host_status === 'offline')
+    ? 'offline'
+    : node.status;
+
 export const enrichNodes = (clusterNodes, hosts, resources) =>
   clusterNodes?.map((node) => ({
     ...node,
     ...hosts.find(({ hostname }) => hostname === node.name),
     resources: resources.filter(({ node: nodename }) => nodename === node.name),
+    status: hostStatusInCluster(node, hosts),
   }));
 
 function HanaClusterDetails({
