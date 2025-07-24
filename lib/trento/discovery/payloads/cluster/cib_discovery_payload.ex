@@ -9,7 +9,8 @@ defmodule Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload do
     Primitive field payload
     """
 
-    @required_fields [:id, :type, :class]
+    @required_fields []
+
     use Trento.Support.Type
 
     deftype do
