@@ -287,9 +287,8 @@ function ActivityLogPage() {
   const keepAutorefreshRate = (currentRate) => (params) =>
     currentRate ? addRefreshRateToSearchParams(params, currentRate) : params;
 
-  useEffect(() => fetchActivityLog(), [searchParams]);
-
   useEffect(() => {
+    fetchActivityLog();
     if (!isFirstPage) return noop;
 
     const { interval, cleanup } = resetAutorefresh(
