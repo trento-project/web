@@ -273,16 +273,13 @@ defmodule Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload do
     |> validate_required([:name, :value])
   end
 
-  defp transform_nil_lists(
-         %{"nodes" => nodes, "groups" => groups, "clones" => clones, "resources" => resources} =
-           attrs
-       ) do
+  defp transform_nil_lists(attrs) do
     attrs
-    |> Map.put("nodes", ListHelper.to_list(nodes))
-    |> Map.put("groups", ListHelper.to_list(groups))
-    |> Map.put("clones", ListHelper.to_list(clones))
-    |> Map.put("resources", ListHelper.to_list(resources))
+    |> Map.update("nodes", [], &ListHelper.to_list/1)
+    |> Map.update("groups", [], &ListHelper.to_list/1)
+    |> update_in(["groups", Access.all(), "resources"], &ListHelper.to_list/1)
+    |> Map.update("clones", [], &ListHelper.to_list/1)
+    |> update_in(["clones", Access.all(), "resources"], &ListHelper.to_list/1)
+    |> Map.update("resources", [], &ListHelper.to_list/1)
   end
-
-  defp transform_nil_lists(attrs), do: attrs
 end
