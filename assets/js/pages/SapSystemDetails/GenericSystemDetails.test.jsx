@@ -15,6 +15,8 @@ import {
   hostFactory,
   sapSystemApplicationInstanceFactory,
   sapSystemFactory,
+  databaseInstanceFactory,
+  databaseFactory,
 } from '@lib/test-utils/factories';
 
 import { GenericSystemDetails } from './GenericSystemDetails';
@@ -45,6 +47,7 @@ describe('GenericSystemDetails', () => {
     expect(screen.getByText('Application server')).toBeTruthy();
     expect(screen.getByText(sid)).toBeTruthy();
     expect(screen.getByText('ENSA1')).toBeTruthy();
+    expect(screen.queryByText('System Replication')).not.toBeInTheDocument();
     features.split('|').forEach((role) => {
       expect(screen.queryAllByText(role)).toBeTruthy();
     });
@@ -76,6 +79,95 @@ describe('GenericSystemDetails', () => {
     );
 
     expect(screen.getByText('ENSA version').nextSibling).toHaveTextContent('-');
+  });
+
+  it.each([
+    { systemReplication: 'Primary', value: 'True', headerAvailable: true },
+    { systemReplication: null, value: 'False', headerAvailable: false },
+  ])(
+    'should render System Replication as $value in a database type system',
+    ({ systemReplication, value, headerAvailable }) => {
+      const database = databaseFactory.build({
+        instances: databaseInstanceFactory.buildList(5, {
+          system_replication: systemReplication,
+        }),
+      });
+
+      database.hosts = hostFactory.buildList(5);
+
+      renderWithRouter(
+        <GenericSystemDetails
+          title={faker.string.uuid()}
+          system={database}
+          type={DATABASE_TYPE}
+        />
+      );
+
+      expect(
+        screen.getByText('System Replication').nextSibling
+      ).toHaveTextContent(value);
+
+      const siteTables = screen.getAllByRole('table');
+      if (headerAvailable) {
+        expect(siteTables[0].previousSibling).toBeTruthy();
+      } else {
+        expect(siteTables[0].previousSibling).toBeFalsy();
+      }
+    }
+  );
+
+  it('should render System Replication data values', () => {
+    const database = databaseFactory.build({
+      instances: [
+        databaseInstanceFactory.build({
+          system_replication: 'Primary',
+          system_replication_site: 'Site1',
+          system_replication_tier: 1,
+          system_replication_status: 'ACTIVE',
+        }),
+        databaseInstanceFactory.build({
+          system_replication: 'Secondary',
+          system_replication_site: 'Site2',
+          system_replication_tier: 2,
+          system_replication_status: null,
+          system_replication_source_site: 'Site1',
+          system_replication_mode: 'sync',
+          system_replication_operation_mode: 'logreplay',
+        }),
+      ],
+    });
+
+    database.hosts = hostFactory.buildList(5);
+
+    renderWithRouter(
+      <GenericSystemDetails
+        title={faker.string.uuid()}
+        system={database}
+        type={DATABASE_TYPE}
+      />
+    );
+
+    const siteTables = screen.getAllByRole('table');
+
+    const { getByText: getByTextSite1 } = within(siteTables[0].previousSibling);
+    expect(getByTextSite1('Site1')).toBeTruthy();
+    expect(getByTextSite1('PRIMARY')).toBeTruthy();
+    expect(getByTextSite1('Tier').nextSibling).toHaveTextContent('1');
+    expect(getByTextSite1('Status').nextSibling).toHaveTextContent('ACTIVE');
+
+    const { getByText: getByTextSite2 } = within(siteTables[1].previousSibling);
+    expect(getByTextSite2('Site2')).toBeTruthy();
+    expect(getByTextSite2('SECONDARY')).toBeTruthy();
+    expect(getByTextSite2('Tier').nextSibling).toHaveTextContent('2');
+    expect(getByTextSite2('Replicating').nextSibling).toHaveTextContent(
+      'Site1'
+    );
+    expect(getByTextSite2('Replication Mode').nextSibling).toHaveTextContent(
+      'sync'
+    );
+    expect(getByTextSite2('Operation Mode').nextSibling).toHaveTextContent(
+      'logreplay'
+    );
   });
 
   it('should render a cleanup button and correct health icon when absent instances exist', () => {
