@@ -122,16 +122,20 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
   def get_activity_metadata(
         action,
         %Plug.Conn{
-          body_params: request_body
+          body_params: request_body,
+          assigns: %{
+            correlation_id: correlation_id
+          }
         }
       )
       when action in [
              :saving_suma_settings,
-             :changing_suma_setting
+             :changing_suma_settings
            ] do
     request_body
     |> redact(:password)
     |> redact(:ca_cert)
+    |> Map.put(:correlation_id, correlation_id)
   end
 
   def get_activity_metadata(
