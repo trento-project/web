@@ -2,6 +2,27 @@ export const selectedDatabase = {
   Id: 'f534a4ad-cef7-5234-b196-e67082ffb50c',
   Sid: 'HDD',
   Type: 'HANA Database',
+  SystemReplication: 'True',
+  Sites: [
+    {
+      Name: 'NBG',
+      SystemReplication: 'PRIMARY',
+      Tier: '1',
+      Status: 'ACTIVE',
+      Replicating: null,
+      ReplicationMode: null,
+      OperationMode: null,
+    },
+    {
+      Name: 'WDF',
+      SystemReplication: 'SECONDARY',
+      Tier: '2',
+      Status: null,
+      Replicating: 'NBG',
+      ReplicationMode: 'sync',
+      OperationMode: 'logreplay',
+    },
+  ],
   Hosts: [
     {
       Hostname: 'vmhdbdev02',

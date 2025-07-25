@@ -19,6 +19,10 @@ context('HANA database details', () => {
       hanaDbDetailsPage.databaseHasExpectedType();
     });
 
+    it('should display system replication enablement status', () => {
+      hanaDbDetailsPage.databaseHasExpectedSystemReplication();
+    });
+
     it(`should display "Not found" page when HANA database doesn't exist`, () => {
       hanaDbDetailsPage.visitNonExistentDatabase();
       hanaDbDetailsPage.validateNonExistentDatabaseUrl();
@@ -37,6 +41,10 @@ context('HANA database details', () => {
 
     it(`should show each hostname with the expected values`, () => {
       hanaDbDetailsPage.eachHostNameHasExpectedValues();
+    });
+
+    it('should show each site with the expected system replication values', () => {
+      hanaDbDetailsPage.eachSiteHasExpectedValues();
     });
 
     it('should show Green badge in instance when SAPControl-GREEN state is received', () => {
