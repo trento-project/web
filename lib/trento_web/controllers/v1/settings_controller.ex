@@ -20,41 +20,9 @@ defmodule TrentoWeb.V1.SettingsController do
   plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
   action_fallback TrentoWeb.FallbackController
 
-  operation :settings,
-    summary: "Platform Settings",
-    tags: ["Platform"],
-    description: "Provides the Platform Settings for the current installation.",
-    responses: [
-      ok: {"Platform Settings", "application/json", Schema.Platform.Settings}
-    ]
-
-  @spec settings(Plug.Conn.t(), any) :: Plug.Conn.t()
-  def settings(conn, _) do
-    render(conn, :settings,
-      settings: %{
-        eula_accepted: false
-      }
-    )
-  end
-
-  operation :accept_eula,
-    summary: "Accept Eula",
-    tags: ["Platform"],
-    deprecated: true,
-    description: "Accepting EULA allows the end user to use the platform",
-    responses: [
-      ok:
-        "EULA acceptance has been correctly registered and the user may continue using the platform"
-    ]
-
-  @spec accept_eula(Plug.Conn.t(), any) :: Plug.Conn.t()
-  def accept_eula(conn, _) do
-    json(conn, %{})
-  end
-
   operation :get_api_key_settings,
     summary: "Get Api key settings",
-    tags: ["Platform"],
+    tags: ["Settings"],
     responses: [
       ok: {"Api Key settings", "application/json", Schema.Platform.ApiKeySettings},
       not_found: Schema.NotFound.response()
@@ -78,7 +46,7 @@ defmodule TrentoWeb.V1.SettingsController do
   @correlation_ttl 15_000
   operation :update_api_key_settings,
     summary: "Updates the Api key settings",
-    tags: ["Platform"],
+    tags: ["Settings"],
     request_body:
       {"ApiKeySettingsUpdateRequest", "application/json",
        Schema.Platform.ApiKeySettingsUpdateRequest},
@@ -117,7 +85,7 @@ defmodule TrentoWeb.V1.SettingsController do
 
   operation :update_activity_log_settings,
     summary: "Updates the Activity Log settings",
-    tags: ["Platform"],
+    tags: ["Settings"],
     request_body:
       {"ActivityLogSettings", "application/json", Schema.Platform.ActivityLogSettings},
     responses: [
@@ -144,7 +112,7 @@ defmodule TrentoWeb.V1.SettingsController do
 
   operation :get_activity_log_settings,
     summary: "Fetches the Activity Log settings",
-    tags: ["Platform"],
+    tags: ["Settings"],
     responses: [
       ok:
         {"Activity Log settings fetched successfully", "application/json",
@@ -161,7 +129,7 @@ defmodule TrentoWeb.V1.SettingsController do
 
   operation :get_suse_manager_settings,
     summary: "Gets the Suse manager Settings",
-    tags: ["Platform"],
+    tags: ["Settings"],
     description: "Gets the saved settings for Suse Manager",
     responses: [
       ok:
@@ -178,7 +146,7 @@ defmodule TrentoWeb.V1.SettingsController do
 
   operation :save_suse_manager_settings,
     summary: "Saves the Suse manager settings",
-    tags: ["Platform"],
+    tags: ["Settings"],
     description: "Saves credentials for Suse manager",
     request_body:
       {"SaveSuseManagerSettingsRequest", "application/json",
@@ -202,7 +170,7 @@ defmodule TrentoWeb.V1.SettingsController do
 
   operation :update_suse_manager_settings,
     summary: "Updates the Suse manager settings",
-    tags: ["Platform"],
+    tags: ["Settings"],
     description: "Updates Suse manager settings",
     request_body:
       {"UpdateSuseManagerSettingsRequest", "application/json",
@@ -226,7 +194,7 @@ defmodule TrentoWeb.V1.SettingsController do
 
   operation :delete_suse_manager_settings,
     summary: "Clears the Suse manager settings",
-    tags: ["Platform"],
+    tags: ["Settings"],
     description: "Clears the saved settings for Suse manager",
     responses: [
       no_content: "Settings cleared successfully"
@@ -240,7 +208,7 @@ defmodule TrentoWeb.V1.SettingsController do
 
   operation :test_suse_manager_settings,
     summary: "Tests connection with Suse Manager",
-    tags: ["Platform"],
+    tags: ["Settings"],
     description: "Tests connection with Suse manager with the saved settings",
     responses: [
       ok: "The connection with Suse manager was successful",
@@ -260,7 +228,7 @@ defmodule TrentoWeb.V1.SettingsController do
 
   operation :get_public_keys,
     summary: "Get uploaded public keys",
-    tags: ["Platform"],
+    tags: ["Settings"],
     description: "Get uploaded public keys",
     responses: [
       ok: {"Uploaded public keys", "application/json", Schema.Platform.PublicKeys}
@@ -274,7 +242,7 @@ defmodule TrentoWeb.V1.SettingsController do
 
   operation :get_alerting_settings,
     summary: "Get alerting settings",
-    tags: ["Platform"],
+    tags: ["Settings"],
     description: "Get the saved settings for alerting in Trento",
     responses: [
       ok: {"Alerting settings retrieved", "application/json", Schema.Platform.AlertingSettings},
@@ -293,7 +261,7 @@ defmodule TrentoWeb.V1.SettingsController do
   operation :create_alerting_settings,
     summary: "Create alerting settings",
     description: "Create new persisted settings for alerting in Trento",
-    tags: ["Platform"],
+    tags: ["Settings"],
     request_body:
       {"Request body for setting alerting settings", "application/json",
        Schema.Platform.CreateAlertingSettings},
@@ -320,7 +288,7 @@ defmodule TrentoWeb.V1.SettingsController do
   operation :update_alerting_settings,
     summary: "Update alerting settings",
     description: "Update persisted settings for alerting in Trento",
-    tags: ["Platform"],
+    tags: ["Settings"],
     request_body:
       {"Request body for updating alerting settings", "application/json",
        Schema.Platform.UpdateAlertingSettings},

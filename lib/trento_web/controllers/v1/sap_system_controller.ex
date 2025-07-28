@@ -50,11 +50,10 @@ defmodule TrentoWeb.V1.SapSystemController do
 
   action_fallback TrentoWeb.FallbackController
 
-  tags ["Target Infrastructure"]
-
   operation :list,
     summary: "List SAP Systems",
     description: "List all the discovered SAP Systems on the target infrastructure",
+    tags: ["Target Infrastructure"],
     responses: [
       ok:
         {"A collection of the discovered SAP Systems", "application/json",
@@ -71,6 +70,7 @@ defmodule TrentoWeb.V1.SapSystemController do
     summary: "Delete application instance",
     description:
       "Delete the application instance identified by the provided data if it is absent",
+    tags: ["Target Infrastructure"],
     parameters: [
       id: [
         in: :path,

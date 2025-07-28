@@ -88,16 +88,12 @@ defmodule TrentoWeb.Router do
   scope "/api" do
     pipe_through [:api, :protected_api]
 
-    get "/me", TrentoWeb.SessionController, :show, as: :me
-
     scope "/v1", TrentoWeb.V1 do
       pipe_through [:api_v1]
 
       get "/about", AboutController, :info
 
       get "/activity_log", ActivityLogController, :get_activity_log
-
-      get "/installation/api-key", InstallationController, :get_api_key
 
       get "/hosts", HostController, :list
       get "/clusters", ClusterController, :list
@@ -193,8 +189,6 @@ defmodule TrentoWeb.Router do
       get "/abilities", AbilityController, :index
 
       scope "/settings" do
-        get "/", SettingsController, :settings
-        post "/accept_eula", SettingsController, :accept_eula
         get "/api_key", SettingsController, :get_api_key_settings
         patch "/api_key", SettingsController, :update_api_key_settings
 
@@ -211,25 +205,12 @@ defmodule TrentoWeb.Router do
           post "/test", SettingsController, :test_suse_manager_settings
         end
 
-        # deprecated
-        scope "/suma_credentials" do
-          get "/", SettingsController, :get_suse_manager_settings
-          post "/", SettingsController, :save_suse_manager_settings
-          patch "/", SettingsController, :update_suse_manager_settings
-          put "/", SettingsController, :update_suse_manager_settings
-          delete "/", SettingsController, :delete_suse_manager_settings
-          post "/test", SettingsController, :test_suse_manager_settings
-        end
-
         scope "/alerting" do
           get "/", SettingsController, :get_alerting_settings
           post "/", SettingsController, :create_alerting_settings
           patch "/", SettingsController, :update_alerting_settings
         end
       end
-
-      # Deprecated
-      post "/accept_eula", SettingsController, :accept_eula
 
       scope "/charts" do
         pipe_through :charts_feature
