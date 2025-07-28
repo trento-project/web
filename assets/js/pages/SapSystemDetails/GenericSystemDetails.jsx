@@ -259,7 +259,7 @@ export function GenericSystemDetails({
               header={
                 hasSystemReplication && (
                   <div className="flex py-4 px-5">
-                    <div className="flex w-3/4 space-x-3">
+                    <div className="flex w-11/12 space-x-3">
                       <div className="flex space-x-2 mr-3">
                         <h3 className="text-l font-bold">{site}</h3>
                         <Pill className="bg-green-100 text-green-800 !py-0 items-center">
