@@ -285,6 +285,7 @@ export function GenericSystemDetails({
                           <SystemReplicationDataPill
                             label="Replicating"
                             data={instances[0].system_replication_source_site}
+                            className="bg-gray-200 text-gray-500 max-w-32 truncate !inline self-center !py-0.5"
                           />
                           <SystemReplicationDataPill
                             label="Replication Mode"
