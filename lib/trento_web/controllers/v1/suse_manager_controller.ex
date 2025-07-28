@@ -21,7 +21,7 @@ defmodule TrentoWeb.V1.SUSEManagerController do
 
   operation :software_updates,
     summary: "Gets available software updates for a given host",
-    tags: ["Platform"],
+    tags: ["Target Infrastructure"],
     description:
       "Endpoint to fetch available relevant patches and upgradable packages for a given host ID.",
     parameters: [
@@ -53,7 +53,7 @@ defmodule TrentoWeb.V1.SUSEManagerController do
 
   operation :patches_for_packages,
     summary: "Gets patches covered by package upgrades in SUSE Manager",
-    tags: ["Platform"],
+    tags: ["Target Infrastructure"],
     description: "Endpoint to fetch relevant patches covered by package upgrades in SUSE Manager",
     parameters: [
       host_id: [
@@ -77,7 +77,7 @@ defmodule TrentoWeb.V1.SUSEManagerController do
 
   operation :errata_details,
     summary: "Gets the details for an advisory",
-    tags: ["Platform"],
+    tags: ["Target Infrastructure"],
     description: "Endpoint to fetch advisory details for a given advisory name",
     parameters: [
       advisory_name: [
