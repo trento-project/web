@@ -17,7 +17,7 @@ const ANALYTICS_TOOLTIP_MESSAGE = (
   <span>
     Allow the collection of{' '}
     <Link
-      to="https://www.trento-project.io/docs/"
+      to="https://www.trento-project.io/docs-site/"
       className="text-jungle-green-500 hover:opacity-75"
       target="_blank"
     >
