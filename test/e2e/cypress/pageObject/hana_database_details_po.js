@@ -16,6 +16,8 @@ const databaseNameLabel =
   'div[class*="grid-flow-row"]:contains("Name") div span';
 const databaseTypeLabel =
   'div[class*="grid-flow-row"]:contains("Type") div span';
+const systemReplicationLabel =
+  'div[class*="grid-flow-row"]:contains("System Replication") div:nth-child(2)';
 const pageNotFoundLabel = 'div:contains("Not Found")';
 const attachedHostsTableRows = 'div[class="mt-16"]:contains("Layout") tbody tr';
 const newRegisteredHost = `div[class="mt-8"]:contains("Hosts") td:contains("${attachedHosts[0].Name}")`;
@@ -23,6 +25,7 @@ const layoutTableHostNameCell = (hostName) =>
   `div[class="mt-16"]:contains("Layout") td:contains("${hostName}")`;
 const hostsTableHostNameCell = (hostName) =>
   `div[class="mt-8"]:contains("Hosts") td:contains("${hostName}")`;
+const siteHeader = (site) => `div:has(div > h3:contains("${site}"))`;
 
 //UI Interactions
 
@@ -44,6 +47,11 @@ export const databaseHasExpectedName = () =>
 
 export const databaseHasExpectedType = () =>
   cy.get(databaseTypeLabel).should('have.text', selectedDatabase.Type);
+
+export const databaseHasExpectedSystemReplication = () =>
+  cy
+    .get(systemReplicationLabel)
+    .should('have.text', selectedDatabase.SystemReplication);
 
 export const pageNotFoundLabelIsDisplayed = () =>
   cy.get(pageNotFoundLabel).should('be.visible');
@@ -90,6 +98,38 @@ const hostStatusHasExpectedClass = (hostName) => {
   validateHostClass(hostName, status);
 };
 
+const getSiteContainer = (site) => {
+  return cy.get(siteHeader(site));
+};
+
+const siteHasExpectedName = (site) => {
+  getSiteContainer(site).should('include.text', site);
+};
+
+const siteHasExpectedSystemReplication = (site, systemReplication) => {
+  getSiteContainer(site).should('include.text', systemReplication);
+};
+
+const siteHasExpectedTier = (site, tier) => {
+  getSiteContainer(site).should('include.text', tier);
+};
+
+const siteHasExpectedStatus = (site, status) => {
+  getSiteContainer(site).should('include.text', status);
+};
+
+const siteHasExpectedReplicating = (site, replicating) => {
+  getSiteContainer(site).should('include.text', replicating);
+};
+
+const siteHasExpectedReplicationMode = (site, replicationMode) => {
+  getSiteContainer(site).should('include.text', replicationMode);
+};
+
+const siteHasExpectedOperationMode = (site, operationMode) => {
+  getSiteContainer(site).should('include.text', operationMode);
+};
+
 const validateHostClass = (hostName, status) => {
   const hostNameCellSelector = layoutTableHostNameCell(hostName);
   cy.get(hostNameCellSelector)
@@ -128,6 +168,20 @@ export const eachHostNameHasExpectedValues = () => {
     hostHasExpectedStartPriority(hostName);
     hostHasExpectedStatus(hostName);
     hostStatusHasExpectedClass(hostName);
+  });
+};
+
+export const eachSiteHasExpectedValues = () => {
+  selectedDatabase.Sites.forEach((site) => {
+    siteHasExpectedName(site.Name);
+    siteHasExpectedSystemReplication(site.Name, site.SystemReplication);
+    siteHasExpectedTier(site.Name, site.Tier);
+    site.Status && siteHasExpectedStatus(site.Name, site.Status);
+    site.Replicating && siteHasExpectedReplicating(site.Name, site.Replicating);
+    site.ReplicationMode &&
+      siteHasExpectedReplicationMode(site.Name, site.ReplicationMode);
+    site.OperationMode &&
+      siteHasExpectedOperationMode(site.Name, site.OperationMode);
   });
 };
 
