@@ -25,7 +25,7 @@ const layoutTableHostNameCell = (hostName) =>
   `div[class="mt-16"]:contains("Layout") td:contains("${hostName}")`;
 const hostsTableHostNameCell = (hostName) =>
   `div[class="mt-8"]:contains("Hosts") td:contains("${hostName}")`;
-const siteHeader = (site) => `h3:contains("${site}")`;
+const siteHeader = (site) => `div:has(div > h3:contains("${site}"))`;
 
 //UI Interactions
 
@@ -99,8 +99,7 @@ const hostStatusHasExpectedClass = (hostName) => {
 };
 
 const getSiteContainer = (site) => {
-  const header = siteHeader(site);
-  return cy.get(header).parent().parent();
+  return cy.get(siteHeader(site));
 };
 
 const siteHasExpectedName = (site) => {
