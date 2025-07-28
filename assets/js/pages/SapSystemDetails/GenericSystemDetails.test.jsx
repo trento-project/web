@@ -149,24 +149,36 @@ describe('GenericSystemDetails', () => {
 
     const siteTables = screen.getAllByRole('table');
 
+    const instance1 = database.instances[0];
     const { getByText: getByTextSite1 } = within(siteTables[0].previousSibling);
-    expect(getByTextSite1('Site1')).toBeTruthy();
-    expect(getByTextSite1('PRIMARY')).toBeTruthy();
-    expect(getByTextSite1('Tier').nextSibling).toHaveTextContent('1');
-    expect(getByTextSite1('Status').nextSibling).toHaveTextContent('ACTIVE');
+    expect(getByTextSite1(instance1.system_replication_site)).toBeTruthy();
+    expect(
+      getByTextSite1(instance1.system_replication.toUpperCase())
+    ).toBeTruthy();
+    expect(getByTextSite1('Tier').nextSibling).toHaveTextContent(
+      instance1.system_replication_tier.toString()
+    );
+    expect(getByTextSite1('Status').nextSibling).toHaveTextContent(
+      instance1.system_replication_status
+    );
 
+    const instance2 = database.instances[1];
     const { getByText: getByTextSite2 } = within(siteTables[1].previousSibling);
-    expect(getByTextSite2('Site2')).toBeTruthy();
-    expect(getByTextSite2('SECONDARY')).toBeTruthy();
-    expect(getByTextSite2('Tier').nextSibling).toHaveTextContent('2');
+    expect(getByTextSite2(instance2.system_replication_site)).toBeTruthy();
+    expect(
+      getByTextSite2(instance2.system_replication.toUpperCase())
+    ).toBeTruthy();
+    expect(getByTextSite2('Tier').nextSibling).toHaveTextContent(
+      instance2.system_replication_tier.toString()
+    );
     expect(getByTextSite2('Replicating').nextSibling).toHaveTextContent(
-      'Site1'
+      instance2.system_replication_source_site
     );
     expect(getByTextSite2('Replication Mode').nextSibling).toHaveTextContent(
-      'sync'
+      instance2.system_replication_mode
     );
     expect(getByTextSite2('Operation Mode').nextSibling).toHaveTextContent(
-      'logreplay'
+      instance2.system_replication_operation_mode
     );
   });
 
