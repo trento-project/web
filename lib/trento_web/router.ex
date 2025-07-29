@@ -172,6 +172,7 @@ defmodule TrentoWeb.Router do
         post "/hosts/:id/operations/:operation", HostController, :request_operation
         post "/clusters/:id/operations/:operation", ClusterController, :request_operation
         post "/sap_systems/:id/operations/:operation", SapSystemController, :request_operation
+        post "/databases/:id/operations/:operation", DatabaseController, :request_operation
 
         post "/clusters/:id/hosts/:host_id/operations/:operation",
              ClusterController,

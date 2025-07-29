@@ -2,12 +2,19 @@ defmodule TrentoWeb.V1.DatabaseController do
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
 
+  alias Trento.Repo
+
   alias Trento.Databases
+
+  alias Trento.Databases.Projections.DatabaseReadModel
 
   alias TrentoWeb.OpenApi.V1.Schema
 
   alias TrentoWeb.OpenApi.V1.Schema.{
+    DatabaseOperationParams,
+    Forbidden,
     NotFound,
+    OperationAccepted,
     UnprocessableEntity
   }
 
@@ -21,6 +28,16 @@ defmodule TrentoWeb.V1.DatabaseController do
     fallback: TrentoWeb.FallbackController
 
   plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
+
+  plug TrentoWeb.Plugs.OperationsPolicyPlug,
+       [
+         policy: Trento.Operations.DatabasePolicy,
+         resource: &__MODULE__.get_operation_database/1,
+         operation: &__MODULE__.get_operation/1,
+         assigns_to: :database
+       ]
+       when action == :request_operation
+
   action_fallback TrentoWeb.FallbackController
 
   tags ["Target Infrastructure"]
@@ -77,5 +94,85 @@ defmodule TrentoWeb.V1.DatabaseController do
     end
   end
 
-  def get_policy_resource(_), do: Trento.Databases.Projections.DatabaseReadModel
+  operation :request_operation,
+    summary: "Request operation for a database",
+    tags: ["Operations"],
+    description: "Request operation for a database",
+    parameters: [
+      id: [
+        in: :path,
+        required: true,
+        type: %OpenApiSpex.Schema{type: :string, format: :uuid}
+      ],
+      operation: [
+        in: :path,
+        required: true,
+        type: %OpenApiSpex.Schema{type: :string}
+      ]
+    ],
+    request_body: {"Params", "application/json", DatabaseOperationParams},
+    responses: [
+      accepted: OperationAccepted.response(),
+      not_found: NotFound.response(),
+      forbidden: Forbidden.response(),
+      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
+    ]
+
+  def request_operation(
+        %{
+          assigns: %{database: %{id: database_id}, operation: operation}
+        } = conn,
+        _
+      ) do
+    params = OpenApiSpex.body_params(conn)
+
+    with {:ok, operation_id} <-
+           Databases.request_operation(
+             operation,
+             database_id,
+             params
+           ) do
+      conn
+      |> put_status(:accepted)
+      |> json(%{operation_id: operation_id})
+    end
+  end
+
+  def get_policy_resource(_), do: DatabaseReadModel
+
+  def get_operation_database(%{
+        params: %{
+          id: database_id
+        },
+        body_params: body_params
+      }) do
+    site = Map.get(body_params, :site, nil)
+
+    database =
+      database_id
+      |> Databases.get_database_by_id()
+      |> Repo.preload([:database_instances])
+
+    case database do
+      nil ->
+        nil
+
+      _ ->
+        database
+        |> Map.get(:database_instances, [])
+        |> Enum.find_value(nil, fn %{system_replication_site: current_site} ->
+          if is_nil(site) || current_site == site, do: database
+        end)
+    end
+  end
+
+  def get_operation_database(_), do: nil
+
+  def get_operation(%{params: %{operation: "database_start"}}),
+    do: :database_start
+
+  def get_operation(%{params: %{operation: "database_stop"}}),
+    do: :database_stop
+
+  def get_operation(_), do: nil
 end
