@@ -148,20 +148,21 @@ defmodule TrentoWeb.V1.DatabaseController do
       }) do
     site = Map.get(body_params, :site, nil)
 
-    database =
-      database_id
-      |> Databases.get_database_by_id()
-      |> Repo.preload([:database_instances])
-
-    case database do
+    database_id
+    |> Databases.get_database_by_id()
+    |> Repo.preload([:database_instances])
+    |> case do
       nil ->
         nil
 
-      _ ->
+      %DatabaseReadModel{} = database when is_nil(site) ->
         database
-        |> Map.get(:database_instances, [])
-        |> Enum.find_value(nil, fn %{system_replication_site: current_site} ->
-          if is_nil(site) || current_site == site, do: database
+
+      # return not found if the given site does not exist in the database
+      %DatabaseReadModel{database_instances: instances} = database ->
+        Enum.find_value(instances, nil, fn
+          %{system_replication_site: ^site} -> database
+          _ -> false
         end)
     end
   end
