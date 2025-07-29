@@ -95,9 +95,9 @@ defmodule TrentoWeb.V1.DatabaseController do
   end
 
   operation :request_operation,
-    summary: "Request operation for a database",
+    summary: "Request operation for a Database",
     tags: ["Operations"],
-    description: "Request operation for a database",
+    description: "Request operation for a Database",
     parameters: [
       id: [
         in: :path,

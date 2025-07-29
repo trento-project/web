@@ -3,12 +3,12 @@ defmodule TrentoWeb.OpenApi.V1.Schema.DatabaseOperationParams do
   require OpenApiSpex
   alias OpenApiSpex.Schema
 
-  defmodule StartStopParams do
+  defmodule DatabaseStartStopParams do
     @moduledoc false
 
     OpenApiSpex.schema(
       %{
-        title: "StartStopParams",
+        title: "DatabaseStartStopParams",
         description: "Database start/stop operation params",
         type: :object,
         additionalProperties: false,
@@ -34,7 +34,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.DatabaseOperationParams do
       title: "DatabaseOperationParams",
       description: "Database operation request parameters",
       oneOf: [
-        StartStopParams
+        DatabaseStartStopParams
       ]
     },
     struct?: false
