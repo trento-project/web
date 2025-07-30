@@ -109,6 +109,11 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
             description: "Whether user analytics collection is enabled",
             nullable: false
           },
+          analytics_eula_accepted: %Schema{
+            type: :boolean,
+            description: "Whether user analytics eula is accepted",
+            nullable: false
+          },
           totp_enabled: %Schema{
             type: :boolean,
             description: "TOTP is enabled",
@@ -165,7 +170,12 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
             type: :boolean,
             description: "Whether user analytics collection is enabled",
             nullable: false
-          }
+          },
+          analytics_eula_accepted: %Schema{
+            type: :boolean,
+            description: "Whether user analytics eula is accepted",
+            nullable: false
+          },
         }
       },
       struct?: false
