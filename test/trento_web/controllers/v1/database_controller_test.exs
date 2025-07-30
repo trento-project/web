@@ -175,15 +175,18 @@ defmodule TrentoWeb.V1.DatabaseControllerTest do
 
     operations = [
       %{
-        operation: :database_start
+        operation: :database_start,
+        ability: "start"
       },
       %{
-        operation: :database_stop
+        operation: :database_stop,
+        ability: "stop"
       }
     ]
 
-    for %{operation: operation} <- operations do
+    for %{operation: operation, ability: ability} <- operations do
       @operation operation
+      @ability ability
 
       test "should fallback to not found on operation #{operation} if the database is not found",
            %{
@@ -269,11 +272,16 @@ defmodule TrentoWeb.V1.DatabaseControllerTest do
                } = resp
       end
 
-      test "should perform operation #{operation} properly",
+      test "should perform operation #{operation} properly with authorized #{ability} ability",
            %{
              conn: conn,
              api_spec: api_spec
            } do
+        %{id: user_id} = insert(:user)
+
+        %{id: ability_id} = insert(:ability, name: @ability, resource: "database")
+        insert(:users_abilities, user_id: user_id, ability_id: ability_id)
+
         site = "Trento"
         %{id: database_id} = insert(:database)
         %{id: host_id} = insert(:host, heartbeat: :passing)
@@ -306,6 +314,7 @@ defmodule TrentoWeb.V1.DatabaseControllerTest do
 
         posted_conn =
           conn
+          |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
           |> put_req_header("content-type", "application/json")
           |> post(
             "/api/v1/databases/#{database_id}/operations/#{@operation}",
@@ -352,6 +361,16 @@ defmodule TrentoWeb.V1.DatabaseControllerTest do
           delete(
             conn,
             "/api/v1/databases/#{database_id}/hosts/#{host_id}/instances/#{instance_number}"
+          ),
+          post(
+            conn,
+            "/api/v1/databases/#{database_id}/operations/database_start",
+            %{}
+          ),
+          post(
+            conn,
+            "/api/v1/databases/#{database_id}/operations/database_stop",
+            %{}
           )
         ],
         fn conn ->

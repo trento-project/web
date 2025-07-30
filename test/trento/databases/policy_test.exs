@@ -31,4 +31,46 @@ defmodule Trento.Databases.PolicyTest do
       assert Policy.authorize(action, user, DatabaseReadModel)
     end)
   end
+
+  describe "request_operation" do
+    operations = [
+      %{
+        operation: "database_start",
+        ability: "start"
+      },
+      %{
+        operation: "database_stop",
+        ability: "stop"
+      }
+    ]
+
+    for %{operation: operation, ability: ability} <- operations do
+      @operation operation
+      @ability ability
+
+      test "should allow #{operation} operation if the user has #{ability}:database ability" do
+        user = %User{abilities: [%Ability{name: @ability, resource: "database"}]}
+
+        assert Policy.authorize(:request_operation, user, %{
+                 operation: @operation
+               })
+      end
+
+      test "should allow #{operation} operation if the user has all:all ability" do
+        user = %User{abilities: [%Ability{name: "all", resource: "all"}]}
+
+        assert Policy.authorize(:request_operation, user, %{
+                 operation: @operation
+               })
+      end
+
+      test "should disallow #{operation} operation if the user does not have #{ability}:database ability" do
+        user = %User{abilities: [%Ability{name: "all", resource: "other_resource"}]}
+
+        refute Policy.authorize(:request_operation, user, %{
+                 operation: @operation
+               })
+      end
+    end
+  end
 end
