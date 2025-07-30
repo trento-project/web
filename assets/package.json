@@ -58,7 +58,7 @@
     "date-fns": "^4.1.0",
     "eos-icons-react": "^2.4.0",
     "lodash": "^4.17.21",
-    "papaparse": "^5.4.1",
+    "papaparse": "^5.5.3",
     "postcss-import": "^15.1.0",
     "posthog-js": "^1.227.0",
     "qrcode.react": "^4.2.0",
