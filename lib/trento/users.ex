@@ -97,6 +97,7 @@ defmodule Trento.Users do
         attrs
         |> maybe_set_password_change_requested_at(true)
         |> maybe_enable_analytics()
+        |> maybe_accept_analytics_eula()
 
       user
       |> User.profile_update_changeset(updated_attrs)
@@ -259,6 +260,14 @@ defmodule Trento.Users do
 
   defp maybe_enable_analytics(attrs) do
     Map.put(attrs, :analytics_enabled_at, nil)
+  end
+
+  defp maybe_accept_analytics_eula(%{analytics_eula_accepted: true} = attrs) do
+    Map.put(attrs, :analytics_eula_accepted_at, DateTime.utc_now())
+  end
+
+  defp maybe_accept_analytics_eula(attrs) do
+    Map.put(attrs, :analytics_eula_accepted_at, nil)
   end
 
   defp insert_abilities_multi(multi, []), do: multi
