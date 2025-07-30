@@ -7,6 +7,10 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
   Example:
     use TrentoWeb.OpenApi.ApiSpec,
       api_version: "v1"
+
+    # For unversioned endpoints:
+    use TrentoWeb.OpenApi.ApiSpec,
+      api_version: "unversioned"
   """
 
   defmacro __using__(opts) do
@@ -73,8 +77,6 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
       end
 
       defp build_paths_for_version(version, router) do
-        excluded_versions = List.delete(router.available_api_versions(), version)
-
         router
         |> Paths.from_router()
         |> Enum.reject(fn {path, _info} ->
@@ -84,7 +86,16 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
             |> String.split("/")
             |> Enum.at(1)
 
-          Enum.member?(excluded_versions, current_version)
+          cond do
+            # When generating "unversioned" version, include only unversioned endpoints
+            version == "unversioned" ->
+              current_version in router.available_api_versions()
+
+            # When generating specific version, exclude unversioned and other versions
+            true ->
+              excluded_versions = List.delete(router.available_api_versions(), version)
+              current_version in excluded_versions or current_version not in router.available_api_versions()
+          end
         end)
         |> Map.new()
       end
