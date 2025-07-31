@@ -1,6 +1,6 @@
 defmodule TrentoWeb.OpenApi.V1.Schema.PreconditionRequired do
   @moduledoc """
-  428 - Precondition Required
+  428 - Precondition Required.
   """
   require OpenApiSpex
 
@@ -10,11 +10,26 @@ defmodule TrentoWeb.OpenApi.V1.Schema.PreconditionRequired do
   OpenApiSpex.schema(
     %{
       title: "PreconditionRequired",
+      description: "Precondition required error response.",
       type: :object,
       additionalProperties: false,
+      example: %{
+        errors: [
+          %{
+            detail: "Request needs to be conditional, please provide If-Match header.",
+            title: "Precondition Required"
+          }
+        ]
+      },
       properties: %{
         errors: %Schema{
           type: :array,
+          example: [
+            %{
+              detail: "Request needs to be conditional, please provide If-Match header.",
+              title: "Precondition Required"
+            }
+          ],
           items: %Schema{
             type: :object,
             properties: %{
@@ -33,7 +48,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.PreconditionRequired do
 
   def response do
     Operation.response(
-      "Precondition Required",
+      "Precondition Required.",
       "application/json",
       __MODULE__
     )

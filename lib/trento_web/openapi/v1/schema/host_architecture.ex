@@ -6,11 +6,12 @@ defmodule TrentoWeb.OpenApi.V1.Schema.HostArchitecture do
 
   OpenApiSpex.schema(
     %{
-      title: "Host Architecture",
+      title: "HostArchitecture",
       type: :string,
       nullable: false,
-      description: "Detected architecture of a host",
-      enum: Architecture.values()
+      description: "Detected architecture of a host.",
+      enum: Architecture.values(),
+      example: "x86_64"
     },
     struct?: false
   )

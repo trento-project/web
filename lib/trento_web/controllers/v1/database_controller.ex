@@ -26,11 +26,10 @@ defmodule TrentoWeb.V1.DatabaseController do
   tags ["Target Infrastructure"]
 
   operation :list_databases,
-    summary: "List HANA Databases",
-    description: "List all the discovered HANA Databases on the target infrastructure",
+    summary: "List HANA Databases.",
+    description: "List all the discovered HANA Databases on the target infrastructure.",
     responses: [
-      ok:
-        {"A collection of the discovered HANA Databases", "application/json",
+      ok: {"A collection of the discovered HANA Databases.", "application/json",
          Schema.Database.DatabasesCollection}
     ]
 
@@ -41,27 +40,41 @@ defmodule TrentoWeb.V1.DatabaseController do
   end
 
   operation :delete_database_instance,
-    summary: "Delete database instance",
-    description: "Delete the database instance identified by the provided data if it is absent",
+    summary: "Delete database instance.",
+    description: "Delete the database instance identified by the provided data if it is absent.",
     parameters: [
       id: [
         in: :path,
+        description: "Database identifier.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :string, format: :uuid}
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          format: :uuid,
+          example: "d1a2b3c4-d5e6-7890-abcd-ef1234567890"
+        }
       ],
       host_id: [
         in: :path,
+        description: "Host identifier.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :string, format: :uuid}
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          format: :uuid,
+          example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
+        }
       ],
       instance_number: [
         in: :path,
+        description: "Database instance number.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :string}
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          example: "10"
+        }
       ]
     ],
     responses: [
-      no_content: "The database instance has been deregistered",
+      no_content: "The database instance has been deregistered.",
       not_found: NotFound.response(),
       unprocessable_entity: UnprocessableEntity.response()
     ]

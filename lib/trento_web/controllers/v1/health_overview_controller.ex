@@ -7,13 +7,13 @@ defmodule TrentoWeb.V1.HealthOverviewController do
   alias TrentoWeb.OpenApi.V1.Schema
 
   operation(:overview,
-    summary: "Health overview of the discovered SAP Systems",
+    summary: "Health overview of the discovered SAP Systems.",
     tags: ["Target Infrastructure"],
     description:
-      "Provide an aggregated overview of the health of the discovered SAP Systems (and their components) on the target infrastructure",
+      "Provide an aggregated overview of the health of the discovered SAP Systems (and their components) on the target infrastructure.",
     responses: [
       ok:
-        {"An overview of the health of the discovered SAP Systems and their components",
+        {"An overview of the health of the discovered SAP Systems and their components.",
          "application/json", Schema.SAPSystem.HealthOverview}
     ]
   )

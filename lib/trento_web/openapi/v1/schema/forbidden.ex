@@ -1,6 +1,6 @@
 defmodule TrentoWeb.OpenApi.V1.Schema.Forbidden do
   @moduledoc """
-  403 - Forbidden
+  403 - Forbidden.
   """
   require OpenApiSpex
 
@@ -10,11 +10,26 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Forbidden do
   OpenApiSpex.schema(
     %{
       title: "Forbidden",
+      description: "Access forbidden error response.",
       type: :object,
       additionalProperties: false,
+      example: %{
+        errors: [
+          %{
+            detail: "The requested operation could not be performed.",
+            title: "Forbidden"
+          }
+        ]
+      },
       properties: %{
         errors: %Schema{
           type: :array,
+          example: [
+            %{
+              detail: "The requested operation could not be performed.",
+              title: "Forbidden"
+            }
+          ],
           items: %Schema{
             type: :object,
             properties: %{
@@ -33,7 +48,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Forbidden do
 
   def response do
     Operation.response(
-      "Forbidden",
+      "Forbidden.",
       "application/json",
       __MODULE__
     )

@@ -1,6 +1,6 @@
 defmodule TrentoWeb.OpenApi.V1.Schema.UnprocessableEntity do
   @moduledoc """
-  422 - Unprocessable Entity
+  422 - Unprocessable Entity.
   """
   require OpenApiSpex
 
@@ -9,11 +9,27 @@ defmodule TrentoWeb.OpenApi.V1.Schema.UnprocessableEntity do
 
   OpenApiSpex.schema(
     %{
+      title: "UnprocessableEntity",
+      description: "Unprocessable entity error response.",
       type: :object,
       additionalProperties: false,
+      example: %{
+        errors: [
+          %{
+            title: "Invalid value",
+            detail: "null value where string expected"
+          }
+        ]
+      },
       properties: %{
         errors: %Schema{
           type: :array,
+          example: [
+            %{
+              title: "Invalid value",
+              detail: "null value where string expected"
+            }
+          ],
           items: %Schema{
             type: :object,
             properties: %{
@@ -31,7 +47,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.UnprocessableEntity do
 
   def response do
     Operation.response(
-      "Unprocessable Entity",
+      "Unprocessable Entity.",
       "application/json",
       __MODULE__
     )

@@ -12,11 +12,11 @@ defmodule TrentoWeb.V1.PrometheusController do
   action_fallback TrentoWeb.FallbackController
 
   operation :targets,
-    summary: "Get Prometheus exporters targets",
+    summary: "Get Prometheus exporters targets.",
     tags: ["Target Infrastructure"],
-    description: "Get Prometheus targets with the Http Discovery format",
+    description: "Get Prometheus targets with the Http Discovery format.",
     responses: [
-      ok: {"A collection of HttpSTD targets", "application/json", Schema.HttpStd.TargetList}
+      ok: {"A collection of HttpSTD targets.", "application/json", Schema.HttpStd.TargetList}
     ]
 
   def targets(conn, _) do
@@ -25,12 +25,19 @@ defmodule TrentoWeb.V1.PrometheusController do
   end
 
   operation :exporters_status,
-    summary: "Get prometheus exporters status",
+    summary: "Get prometheus exporters status.",
     tags: ["Target Infrastructure"],
-    description: "Get Prometheus exporters status for a host identified by host id",
+    description: "Get Prometheus exporters status for a host identified by host id.",
+    parameters: [
+      id: [
+        in: :path,
+        description: "Host ID.",
+        required: true,
+        schema: %OpenApiSpex.Schema{type: :string, format: :uuid, example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"}
+      ]
+    ],
     responses: [
-      ok:
-        {"The status for the prometheus exporter", "application/json",
+      ok: {"The status for the prometheus exporter.", "application/json",
          Schema.Prometheus.ExporterStatus},
       not_found: Schema.NotFound.response()
     ]

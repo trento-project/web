@@ -10,10 +10,11 @@ defmodule TrentoWeb.V1.AbilityController do
   action_fallback TrentoWeb.FallbackController
 
   operation :index,
-    summary: "Gets the list of abilities in the system",
+    summary: "Gets the list of abilities in the system.",
+    description: "Retrieve all available abilities in the system.",
     tags: ["User Management"],
     responses: [
-      ok: {"List of abilities in the system", "application/json", AbilityCollection}
+      ok: {"List of abilities in the system.", "application/json", AbilityCollection}
     ]
 
   def index(conn, _params) do

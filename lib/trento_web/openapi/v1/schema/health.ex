@@ -10,6 +10,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Health do
   OpenApiSpex.schema(
     %Schema{
       title: "Health",
+      description: "Platform health check status response.",
       type: :object,
       example: %{
         database: "pass"
@@ -17,9 +18,10 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Health do
       additionalProperties: false,
       properties: %{
         database: %Schema{
-          description: "The status of the database connection",
+          description: "The status of the database connection.",
           type: :string,
-          enum: ["pass", "fail"]
+          enum: ["pass", "fail"],
+          example: "pass"
         }
       }
     },

@@ -9,8 +9,9 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ResourceHealth do
       title: "ResourceHealth",
       type: :string,
       nullable: true,
-      description: "Detected health of a Resource",
-      enum: Health.values()
+      description: "Detected health of a Resource.",
+      enum: Health.values(),
+      example: "passing"
     },
     struct?: false
   )

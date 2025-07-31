@@ -1,6 +1,6 @@
 defmodule TrentoWeb.OpenApi.V1.Schema.BadRequest do
   @moduledoc """
-  Bad Request
+  Bad Request.
   """
 
   require OpenApiSpex
@@ -11,11 +11,26 @@ defmodule TrentoWeb.OpenApi.V1.Schema.BadRequest do
   OpenApiSpex.schema(
     %{
       title: "BadRequest",
+      description: "Bad request error response.",
       type: :object,
       additionalProperties: false,
+      example: %{
+        errors: [
+          %{
+            detail: "Invalid request payload.",
+            title: "Bad Request"
+          }
+        ]
+      },
       properties: %{
         errors: %Schema{
           type: :array,
+          example: [
+            %{
+              detail: "Invalid request payload.",
+              title: "Bad Request"
+            }
+          ],
           items: %Schema{
             type: :object,
             properties: %{
@@ -34,7 +49,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.BadRequest do
 
   def response do
     Operation.response(
-      "Bad Request",
+      "Bad Request.",
       "application/json",
       __MODULE__
     )

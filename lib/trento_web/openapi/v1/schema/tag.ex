@@ -12,7 +12,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Tags do
     OpenApiSpex.schema(
       %{
         title: "Tag",
-        description: "A tag attached to a resource",
+        description: "A tag attached to a resource.",
         type: :object,
         additionalProperties: false,
         properties: %{
@@ -22,6 +22,14 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Tags do
           value: %Schema{type: :string},
           inserted_at: %Schema{type: :string, format: :datetime},
           updated_at: %Schema{type: :string, format: :datetime, nullable: true}
+        },
+        example: %{
+          id: 1,
+          resource_id: "123e4567-e89b-12d3-a456-426614174000",
+          resource_type: "host",
+          value: "production",
+          inserted_at: "2024-01-15T09:00:00Z",
+          updated_at: "2024-01-15T10:30:00Z"
         }
       },
       struct?: false
@@ -31,9 +39,19 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Tags do
   OpenApiSpex.schema(
     %{
       title: "Tags",
-      description: "A list of tags attached to a resource",
+      description: "A list of tags attached to a resource.",
       type: :array,
-      items: Tag
+      items: Tag,
+      example: [
+        %{
+          id: 1,
+          resource_id: "123e4567-e89b-12d3-a456-426614174000",
+          resource_type: "host",
+          value: "production",
+          inserted_at: "2024-01-15T09:00:00Z",
+          updated_at: "2024-01-15T10:30:00Z"
+        }
+      ]
     },
     struct?: false
   )

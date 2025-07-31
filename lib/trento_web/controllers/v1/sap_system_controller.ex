@@ -51,12 +51,11 @@ defmodule TrentoWeb.V1.SapSystemController do
   action_fallback TrentoWeb.FallbackController
 
   operation :list,
-    summary: "List SAP Systems",
-    description: "List all the discovered SAP Systems on the target infrastructure",
+    summary: "List SAP Systems.",
+    description: "List all the discovered SAP Systems on the target infrastructure.",
     tags: ["Target Infrastructure"],
     responses: [
-      ok:
-        {"A collection of the discovered SAP Systems", "application/json",
+      ok: {"A collection of the discovered SAP Systems.", "application/json",
          Schema.SAPSystem.SAPSystemsCollection}
     ]
 
@@ -67,29 +66,43 @@ defmodule TrentoWeb.V1.SapSystemController do
   end
 
   operation :delete_application_instance,
-    summary: "Delete application instance",
+    summary: "Delete application instance.",
     description:
-      "Delete the application instance identified by the provided data if it is absent",
+      "Delete the application instance identified by the provided data if it is absent.",
     tags: ["Target Infrastructure"],
     parameters: [
       id: [
         in: :path,
+        description: "SAP system identifier.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :string, format: :uuid}
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          format: :uuid,
+          example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
+        }
       ],
       host_id: [
         in: :path,
+        description: "Host identifier.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :string, format: :uuid}
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          format: :uuid,
+          example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
+        }
       ],
       instance_number: [
         in: :path,
+        description: "SAP instance number.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :string}
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          example: "10"
+        }
       ]
     ],
     responses: [
-      no_content: "The application instance has been deregistered",
+      no_content: "The application instance has been deregistered.",
       not_found: NotFound.response(),
       unprocessable_entity: UnprocessableEntity.response()
     ]
@@ -107,37 +120,55 @@ defmodule TrentoWeb.V1.SapSystemController do
   end
 
   operation :request_instance_operation,
-    summary: "Request operation for a SAP instance",
+    summary: "Request operation for a SAP instance.",
     tags: ["Operations"],
-    description: "Request operation for a SAP instance",
+    description: "Request operation for a SAP instance.",
     parameters: [
       id: [
         in: :path,
+        description: "SAP system identifier.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :string, format: :uuid}
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          format: :uuid,
+          example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
+        }
       ],
       host_id: [
         in: :path,
+        description: "Host identifier.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :string, format: :uuid}
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          format: :uuid,
+          example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
+        }
       ],
       instance_number: [
         in: :path,
+        description: "SAP instance number.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :string}
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          example: "10"
+        }
       ],
       operation: [
         in: :path,
+        description: "Operation to be performed on the SAP instance.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :string}
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          example: "restart"
+        }
       ]
     ],
-    request_body: {"Params", "application/json", SapInstanceOperationParams},
+    request_body: {"Params.", "application/json", SapInstanceOperationParams},
     responses: [
       accepted: OperationAccepted.response(),
       not_found: NotFound.response(),
       forbidden: Forbidden.response(),
-      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
+      unprocessable_entity: UnprocessableEntity.response()
     ]
 
   def request_instance_operation(
@@ -161,27 +192,36 @@ defmodule TrentoWeb.V1.SapSystemController do
   end
 
   operation :request_operation,
-    summary: "Request operation for a SAP system",
+    summary: "Request operation for a SAP system.",
     tags: ["Operations"],
-    description: "Request operation for a SAP system",
+    description: "Request operation for a SAP system.",
     parameters: [
       id: [
         in: :path,
+        description: "SAP system identifier.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :string, format: :uuid}
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          format: :uuid,
+          example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
+        }
       ],
       operation: [
         in: :path,
+        description: "Operation to be performed on the SAP system.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :string}
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          example: "restart"
+        }
       ]
     ],
-    request_body: {"Params", "application/json", SapSystemOperationParams},
+    request_body: {"Params.", "application/json", SapSystemOperationParams},
     responses: [
       accepted: OperationAccepted.response(),
       not_found: NotFound.response(),
       forbidden: Forbidden.response(),
-      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
+      unprocessable_entity: UnprocessableEntity.response()
     ]
 
   def request_operation(

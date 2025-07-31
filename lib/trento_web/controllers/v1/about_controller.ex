@@ -9,11 +9,11 @@ defmodule TrentoWeb.V1.AboutController do
   @version Mix.Project.config()[:version]
 
   operation :info,
-    summary: "Platform General Information",
+    summary: "Platform General Information.",
     tags: ["Platform"],
     description: "Provides general information about the current Platform installation.",
     responses: [
-      ok: {"Platform Information", "application/json", Schema.Platform.GeneralInformation}
+      ok: {"Platform Information.", "application/json", Schema.Platform.GeneralInformation}
     ]
 
   @spec info(Plug.Conn.t(), map) :: Plug.Conn.t()

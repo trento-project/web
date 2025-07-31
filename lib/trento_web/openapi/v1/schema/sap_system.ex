@@ -14,40 +14,59 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
     OpenApiSpex.schema(
       %{
         title: "ApplicationInstance",
-        description: "A discovered Application Instance on the target infrastructure",
+        description: "A discovered Application Instance on the target infrastructure.",
         type: :object,
         additionalProperties: false,
         properties: %{
-          sap_system_id: %Schema{type: :string, description: "SAP System ID", format: :uuid},
-          sid: %Schema{type: :string, description: "SID"},
-          instance_number: %Schema{type: :string, description: "Instance Number"},
+          sap_system_id: %Schema{type: :string, description: "SAP System ID.", format: :uuid, example: "7269eb74-dd68-4c91-b4d1-4f9d91f2c2c8"},
+          sid: %Schema{type: :string, description: "SID.", example: "HA1"},
+          instance_number: %Schema{type: :string, description: "Instance Number.", example: "00"},
           instance_hostname: %Schema{
             type: :string,
-            description: "Instance Hostname",
-            nullable: true
+            description: "Instance Hostname.",
+            nullable: true,
+            example: "sap-app-01"
           },
           absent_at: %Schema{
             type: :string,
-            description: "Absent instance timestamp",
+            description: "Absent instance timestamp.",
             format: :datetime,
-            nullable: true
+            nullable: true,
+            example: "2024-01-16T08:00:00Z"
           },
-          features: %Schema{type: :string, description: "Instance Features"},
-          http_port: %Schema{type: :integer, description: "Instance HTTP Port", nullable: true},
-          https_port: %Schema{type: :integer, description: "Instance HTTPS Port", nullable: true},
+          features: %Schema{type: :string, description: "Instance Features.", example: "MESSAGESERVER|ENQUE"},
+          http_port: %Schema{type: :integer, description: "Instance HTTP Port.", nullable: true, example: 8000},
+          https_port: %Schema{type: :integer, description: "Instance HTTPS Port.", nullable: true, example: 44300},
           start_priority: %Schema{
             type: :string,
-            description: "Instance Start Priority",
-            nullable: true
+            description: "Instance Start Priority.",
+            nullable: true,
+            example: "1"
           },
           host_id: %Schema{
             type: :string,
-            description: "Identifier of the host where current instance is running",
-            format: :uuid
+            description: "Identifier of the host where current instance is running.",
+            format: :uuid,
+            example: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244"
           },
           health: ResourceHealth,
-          inserted_at: %Schema{type: :string, format: :datetime},
-          updated_at: %Schema{type: :string, format: :datetime, nullable: true}
+          inserted_at: %Schema{type: :string, format: :datetime, example: "2024-01-15T10:30:00Z"},
+          updated_at: %Schema{type: :string, format: :datetime, nullable: true, example: "2024-01-15T12:30:00Z"}
+        },
+        example: %{
+          sap_system_id: "7269eb74-dd68-4c91-b4d1-4f9d91f2c2c8",
+          sid: "HA1",
+          instance_number: "00",
+          instance_hostname: "sap-app-01",
+          absent_at: "2024-01-16T08:00:00Z",
+          features: "MESSAGESERVER|ENQUE",
+          http_port: 8000,
+          https_port: 44300,
+          start_priority: "1",
+          host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
+          health: "passing",
+          inserted_at: "2024-01-15T10:30:00Z",
+          updated_at: "2024-01-15T12:30:00Z"
         }
       },
       struct?: false
@@ -60,32 +79,47 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
     OpenApiSpex.schema(
       %{
         title: "SAPSystem",
-        description: "A discovered SAP System on the target infrastructure",
+        description: "A discovered SAP System on the target infrastructure.",
         type: :object,
         additionalProperties: false,
         properties: %{
-          id: %Schema{type: :string, description: "SAP System ID", format: :uuid},
-          sid: %Schema{type: :string, description: "SID"},
-          tenant: %Schema{type: :string, description: "Tenant"},
-          db_host: %Schema{type: :string, description: "Address of the connected Database"},
+          id: %Schema{type: :string, description: "SAP System ID.", format: :uuid, example: "7269eb74-dd68-4c91-b4d1-4f9d91f2c2c8"},
+          sid: %Schema{type: :string, description: "SID.", example: "HA1"},
+          tenant: %Schema{type: :string, description: "Tenant.", example: "PRD"},
+          db_host: %Schema{type: :string, description: "Address of the connected Database.", example: "10.1.1.5"},
           health: ResourceHealth,
           ensa_version: %Schema{
             type: :string,
             enum: EnsaVersion.values(),
-            description: "ENSA version of the SAP system"
+            description: "ENSA version of the SAP system.",
+            example: "ensa1"
           },
           application_instances: %Schema{
-            title: "ApplicationInstances",
-            description: "A list of the discovered Application Instances for current SAP Systems",
+            description: "A list of the discovered Application Instances for current SAP Systems.",
             type: :array,
             items: ApplicationInstance
           },
-          database_id: %Schema{type: :string, description: "Database ID", format: :uuid},
-          database_sid: %Schema{type: :string, description: "Database SID"},
+          database_id: %Schema{type: :string, description: "Database ID.", format: :uuid, example: "6c76eb74-dd68-4c91-b4d1-4f9d91f2c2c8"},
+          database_sid: %Schema{type: :string, description: "Database SID.", example: "HA1"},
           database_instances: Database.DatabaseInstances,
           tags: Tags,
-          inserted_at: %Schema{type: :string, format: :datetime},
-          updated_at: %Schema{type: :string, format: :datetime, nullable: true}
+          inserted_at: %Schema{type: :string, format: :datetime, example: "2024-01-15T10:30:00Z"},
+          updated_at: %Schema{type: :string, format: :datetime, nullable: true, example: "2024-01-15T12:30:00Z"}
+        },
+        example: %{
+          id: "7269eb74-dd68-4c91-b4d1-4f9d91f2c2c8",
+          sid: "HA1",
+          tenant: "PRD",
+          db_host: "10.1.1.5",
+          health: "passing",
+          ensa_version: "ensa1",
+          application_instances: [],
+          database_id: "6c76eb74-dd68-4c91-b4d1-4f9d91f2c2c8",
+          database_sid: "HA1",
+          database_instances: [],
+          tags: [],
+          inserted_at: "2024-01-15T10:30:00Z",
+          updated_at: "2024-01-15T12:30:00Z"
         }
       },
       struct?: false
@@ -98,9 +132,26 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
     OpenApiSpex.schema(
       %{
         title: "SAPSystemsCollection",
-        description: "A list of the discovered SAP Systems",
+        description: "A list of the discovered SAP Systems.",
         type: :array,
-        items: SAPSystemItem
+        items: SAPSystemItem,
+        example: [
+          %{
+            id: "7269eb74-dd68-4c91-b4d1-4f9d91f2c2c8",
+            sid: "HA1",
+            tenant: "PRD",
+            db_host: "10.1.1.5",
+            health: "passing",
+            ensa_version: "ensa1",
+            application_instances: [],
+            database_id: "6c76eb74-dd68-4c91-b4d1-4f9d91f2c2c8",
+            database_sid: "HA1",
+            database_instances: [],
+            tags: [],
+            inserted_at: "2024-01-15T10:30:00Z",
+            updated_at: "2024-01-15T12:30:00Z"
+          }
+        ]
       },
       struct?: false
     )
@@ -112,29 +163,32 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
     OpenApiSpex.schema(
       %{
         title: "SAPSystemHealthOverview",
-        description: "An overview of the health of a discovered SAP System and its components",
+        description: "An overview of the health of a discovered SAP System and its components.",
         type: :object,
         additionalProperties: false,
         properties: %{
-          id: %Schema{type: :string, description: "SAP System ID", format: :uuid},
-          sid: %Schema{type: :string, description: "SID"},
+          id: %Schema{type: :string, description: "SAP System ID.", format: :uuid, example: "7269eb74-dd68-4c91-b4d1-4f9d91f2c2c8"},
+          sid: %Schema{type: :string, description: "SID.", example: "HA1"},
           cluster_id: %Schema{
             type: :string,
-            description: "Cluster ID",
+            description: "Cluster ID.",
             format: :uuid,
-            deprecated: true
+            deprecated: true,
+            example: "6c76eb74-dd68-4c91-b4d1-4f9d91f2c2c8"
           },
           application_cluster_id: %Schema{
             type: :string,
-            description: "Application cluster ID",
-            format: :uuid
+            description: "Application cluster ID.",
+            format: :uuid,
+            example: "6c76eb74-dd68-4c91-b4d1-4f9d91f2c2c8"
           },
           database_cluster_id: %Schema{
             type: :string,
-            description: "Database cluster ID",
-            format: :uuid
+            description: "Database cluster ID.",
+            format: :uuid,
+            example: "5a65db74-dd68-4c91-b4d1-4f9d91f2c2c8"
           },
-          database_id: %Schema{type: :string, description: "Database ID", format: :uuid},
+          database_id: %Schema{type: :string, description: "Database ID.", format: :uuid, example: "9c86eb74-dd68-4c91-b4d1-4f9d91f2c2c8"},
           sapsystem_health: ResourceHealth,
           database_health: ResourceHealth,
           hosts_health: ResourceHealth,
@@ -146,8 +200,24 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
           },
           application_cluster_health: ResourceHealth,
           database_cluster_health: ResourceHealth,
-          tenant: %Schema{type: :string, description: "Tenant database SID", deprecated: true},
-          database_sid: %Schema{type: :string, description: "Database SID"}
+          tenant: %Schema{type: :string, description: "Tenant database SID.", deprecated: true, example: "PRD"},
+          database_sid: %Schema{type: :string, description: "Database SID.", example: "HA1"}
+        },
+        example: %{
+          id: "7269eb74-dd68-4c91-b4d1-4f9d91f2c2c8",
+          sid: "HA1",
+          cluster_id: "6c76eb74-dd68-4c91-b4d1-4f9d91f2c2c8",
+          application_cluster_id: "6c76eb74-dd68-4c91-b4d1-4f9d91f2c2c8",
+          database_cluster_id: "5a65db74-dd68-4c91-b4d1-4f9d91f2c2c8",
+          database_id: "9c86eb74-dd68-4c91-b4d1-4f9d91f2c2c8",
+          sapsystem_health: "passing",
+          database_health: "passing",
+          hosts_health: "passing",
+          clusters_health: "passing",
+          application_cluster_health: "passing",
+          database_cluster_health: "passing",
+          tenant: "PRD",
+          database_sid: "HA1"
         }
       },
       struct?: false
@@ -160,9 +230,27 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
     OpenApiSpex.schema(
       %{
         title: "HealthOverview",
-        description: "A list of health summaries for the discovered SAP Systems",
+        description: "A list of health summaries for the discovered SAP Systems.",
         type: :array,
-        items: SAPSystemHealthOverview
+        items: SAPSystemHealthOverview,
+        example: [
+          %{
+            id: "7269eb74-dd68-4c91-b4d1-4f9d91f2c2c8",
+            sid: "HA1",
+            cluster_id: "6c76eb74-dd68-4c91-b4d1-4f9d91f2c2c8",
+            application_cluster_id: "6c76eb74-dd68-4c91-b4d1-4f9d91f2c2c8",
+            database_cluster_id: "5a65db74-dd68-4c91-b4d1-4f9d91f2c2c8",
+            database_id: "9c86eb74-dd68-4c91-b4d1-4f9d91f2c2c8",
+            sapsystem_health: "passing",
+            database_health: "passing",
+            hosts_health: "passing",
+            clusters_health: "passing",
+            application_cluster_health: "passing",
+            database_cluster_health: "passing",
+            tenant: "PRD",
+            database_sid: "HA1"
+          }
+        ]
       },
       struct?: false
     )

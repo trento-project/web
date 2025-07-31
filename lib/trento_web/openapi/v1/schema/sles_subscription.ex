@@ -7,7 +7,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SlesSubscription do
   OpenApiSpex.schema(
     %{
       title: "SlesSubscription",
-      description: "A discovered SLES Subscription on a host",
+      description: "A discovered SLES Subscription on a host.",
       type: :object,
       additionalProperties: false,
       properties: %{
@@ -20,6 +20,17 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SlesSubscription do
         type: %Schema{type: :string},
         starts_at: %Schema{type: :string},
         expires_at: %Schema{type: :string}
+      },
+      example: %{
+        host_id: "9876b7a8-2e1f-4b9a-8e7d-3a4b5c6d7e8f",
+        identifier: "SLES_SAP-15-SP3",
+        version: "15.3",
+        arch: "x86_64",
+        status: "Registered",
+        subscription_status: "ACTIVE",
+        type: "FULL",
+        starts_at: "2024-01-01T00:00:00Z",
+        expires_at: "2025-12-31T23:59:59Z"
       }
     },
     struct?: false
