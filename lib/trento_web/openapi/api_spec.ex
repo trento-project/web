@@ -40,7 +40,7 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
           info: %Info{
             title: "Trento",
             description: to_string(Application.spec(:trento, :description)),
-            version: to_string(Application.spec(:trento, :vsn))
+            version: to_string(Application.spec(:trento, :vsn)) <> "-" <> unquote(api_version),
           },
           components: %Components{
             securitySchemes: %{"authorization" => %SecurityScheme{type: "http", scheme: "bearer"}}
