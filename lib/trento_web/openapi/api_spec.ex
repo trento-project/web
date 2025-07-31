@@ -21,6 +21,8 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
       alias OpenApiSpex.{
         Components,
         Info,
+        License,
+      Contact,
         OpenApi,
         Paths,
         SecurityScheme,
@@ -41,24 +43,65 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
             title: "Trento",
             description: to_string(Application.spec(:trento, :description)),
             version: to_string(Application.spec(:trento, :vsn)) <> "-" <> unquote(api_version),
+            license: %OpenApiSpex.License{
+              name: "Apache 2.0",
+              url: "https://www.apache.org/licenses/LICENSE-2.0"
+            },
+            contact: %Contact{
+              name: "Trento Project",
+              url: "https://www.trento-project.io",
+              email: "trento-project@suse.com"
+            }
           },
           components: %Components{
-            securitySchemes: %{"authorization" => %SecurityScheme{type: "http", scheme: "bearer"}}
+            securitySchemes: %{"authorization" => %SecurityScheme{type: "http", scheme: "bearer", description: "Bearer token authentication"}}
           },
           security: [%{"authorization" => []}],
           paths: build_paths_for_version(unquote(api_version), router),
           tags: [
             %Tag{
-              name: "Target Infrastructure",
-              description: "Providing access to the discovered target infrastructure"
+              name: "Agent",
+            description: "Agent communication and data collection."
+            },
+            %Tag{
+              name: "Auth",
+            description: "Authentication and session management."
+            },
+            %Tag{
+              name: "Charts",
+            description: "Host monitoring and performance charts."
             },
             %Tag{
               name: "Checks",
-              description: "Providing Checks related feature"
+            description: "Providing Checks related feature."
+            },
+            %Tag{
+              name: "Operations",
+            description: "SAP system and infrastructure operations."
             },
             %Tag{
               name: "Platform",
-              description: "Providing access to Trento Platform features"
+            description: "Providing access to Trento Platform features."
+            },
+            %Tag{
+              name: "Profile",
+            description: "User profile and personal settings."
+            },
+            %Tag{
+              name: "Settings",
+            description: "Platform configuration and settings management."
+            },
+            %Tag{
+              name: "Tags",
+            description: "Resource tagging and organization."
+            },
+            %Tag{
+              name: "Target Infrastructure",
+            description: "Providing access to the discovered target infrastructure."
+            },
+            %Tag{
+              name: "User Management",
+            description: "User account and permissions management."
             }
           ]
         })
@@ -72,7 +115,7 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
           # If the endpoint is not running, use a placeholder
           # this happens when generarting openapi.json with --start-app=false
           # e.g. mix openapi.spec.json --start-app=false --spec WandaWeb.ApiSpec
-          %OpenApiSpex.Server{url: "https://demo.trento-project.io"}
+          %OpenApiSpex.Server{url: "https://demo.trento-project.io", description: "Trento demo server."}
         end
       end
 

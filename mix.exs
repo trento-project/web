@@ -6,7 +6,7 @@ defmodule Trento.MixProject do
   def project do
     [
       app: :trento,
-      description: "Easing your life in administering SAP applications",
+      description: "Easing your life in administering SAP application.",
       version: get_version(),
       elixir: "~> 1.15",
       elixirc_paths: elixirc_paths(Mix.env()),
