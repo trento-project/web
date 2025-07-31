@@ -26,7 +26,7 @@ Mox.defmock(Trento.Infrastructure.SoftwareUpdates.Auth.Mock,
   for: Trento.Infrastructure.SoftwareUpdates.Auth.Gen
 )
 
-Application.put_env(:trento, :correlations, Trento.ActivityLog.Correlations.ScopedCorrelations)
+Application.put_env(:trento, :correlations, Trento.ActivityLog.Correlations.TestCorrelations)
 
 Application.put_env(:trento, Trento.Infrastructure.SoftwareUpdates.Suma,
   auth: Trento.Infrastructure.SoftwareUpdates.Auth.Mock
