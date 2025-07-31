@@ -10,12 +10,12 @@ defmodule TrentoWeb.HealthController do
   }
 
   operation :ready,
-    summary: "Trento Web ready",
+    summary: "Trento Web ready.",
     tags: ["Platform"],
-    description: "Check if Trento Web is ready",
+    description: "Check if Trento Web is ready.",
     security: [],
     responses: [
-      ok: {"Trento Web is ready", "application/json", Ready}
+      ok: {"Trento Web is ready.", "application/json", Ready}
     ]
 
   def ready(conn, _) do
@@ -25,12 +25,12 @@ defmodule TrentoWeb.HealthController do
   end
 
   operation :health,
-    summary: "Trento Web health",
+    summary: "Trento Web health.",
     tags: ["Platform"],
-    description: "Get the health status of the Trento Web platform",
+    description: "Get the health status of the Trento Web platform.",
     security: [],
     responses: [
-      ok: {"Trento Web health status", "application/json", Health}
+      ok: {"Trento Web health status.", "application/json", Health}
     ]
 
   def health(conn, _) do
