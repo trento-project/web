@@ -16,7 +16,7 @@ defmodule TrentoWeb.V1.ProfileController do
 
   operation :show,
     summary: "Get profile",
-    tags: ["Platform"],
+    tags: ["Profile"],
     description: "Retrieve the current user profile",
     responses: [
       ok: {"The user profile", "application/json", Schema.User.UserProfile}
@@ -29,7 +29,7 @@ defmodule TrentoWeb.V1.ProfileController do
 
   operation :update,
     summary: "Update the current user profile",
-    tags: ["Platform"],
+    tags: ["Profile"],
     request_body:
       {"UserProfileUpdateRequest", "application/json", Schema.User.UserProfileUpdateRequest},
     responses: [
@@ -49,7 +49,7 @@ defmodule TrentoWeb.V1.ProfileController do
 
   operation :reset_totp,
     summary: "Reset the TOTP configuration for the user",
-    tags: ["Platform"],
+    tags: ["Profile"],
     responses: [
       forbidden: Schema.Forbidden.response(),
       no_content: "User TOTP enrollment reset."
@@ -65,7 +65,7 @@ defmodule TrentoWeb.V1.ProfileController do
 
   operation :get_totp_enrollment_data,
     summary: "Get TOTP enrollment data",
-    tags: ["Platform"],
+    tags: ["Profile"],
     responses: [
       ok:
         {"UserTOTPEnrollmentPayload", "application/json", Schema.User.UserTOTPEnrollmentPayload},
@@ -83,7 +83,7 @@ defmodule TrentoWeb.V1.ProfileController do
 
   operation :confirm_totp_enrollment,
     summary: "Confirm TOTP enrollment procedure",
-    tags: ["Platform"],
+    tags: ["Profile"],
     request_body:
       {"UserTOTPEnrollmentConfirmRequest", "application/json",
        Schema.User.UserTOTPEnrollmentConfirmRequest},

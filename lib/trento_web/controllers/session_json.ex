@@ -4,10 +4,4 @@ defmodule TrentoWeb.SessionJSON do
 
   def refreshed(%{token: token, expiration: expiration}),
     do: %{access_token: token, expires_in: expiration}
-
-  def me(%{user: %{username: username, id: id}}),
-    do: %{
-      username: username,
-      id: id
-    }
 end

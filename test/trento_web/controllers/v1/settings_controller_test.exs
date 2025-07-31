@@ -11,14 +11,6 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
   setup_all :setup_api_spec_v1
   setup :setup_user
 
-  test "should return the settings according to the schema", %{conn: conn, api_spec: api_spec} do
-    conn = get(conn, "/api/v1/settings")
-
-    conn
-    |> json_response(200)
-    |> assert_schema("PlatformSettings", api_spec)
-  end
-
   describe "ApiKeySettings" do
     test "should return not found when api key settings are not configured", %{
       conn: conn,

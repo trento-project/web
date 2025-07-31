@@ -4,32 +4,6 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
   require OpenApiSpex
   alias OpenApiSpex.Schema
 
-  defmodule Settings do
-    @moduledoc false
-
-    OpenApiSpex.schema(
-      %{
-        title: "PlatformSettings",
-        description: "Settings values for the current installation",
-        type: :object,
-        additionalProperties: false,
-        properties: %{
-          eula_accepted: %Schema{
-            type: :boolean,
-            description: "Whether the user has accepted EULA",
-            deprecated: true
-          },
-          premium_subscription: %Schema{
-            deprecated: true,
-            type: :boolean,
-            description: "Whether current installation is a Premium one"
-          }
-        }
-      },
-      struct?: false
-    )
-  end
-
   defmodule ApiKeySettings do
     @moduledoc false
     OpenApiSpex.schema(

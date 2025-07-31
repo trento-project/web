@@ -64,6 +64,7 @@ defmodule TrentoWeb.V1.HostController do
   operation :delete,
     summary: "Deregister a host",
     description: "Deregister a host agent from Trento",
+    tags: ["Target Infrastructure"],
     parameters: [
       id: [
         in: :path,
