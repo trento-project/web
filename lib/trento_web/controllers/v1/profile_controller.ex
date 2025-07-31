@@ -15,11 +15,11 @@ defmodule TrentoWeb.V1.ProfileController do
   action_fallback TrentoWeb.FallbackController
 
   operation :show,
-    summary: "Get profile",
+    summary: "Get profile.",
     tags: ["Profile"],
-    description: "Retrieve the current user profile",
+    description: "Retrieve the current user profile.",
     responses: [
-      ok: {"The user profile", "application/json", Schema.User.UserProfile}
+      ok: {"The user profile.", "application/json", Schema.User.UserProfile}
     ]
 
   def show(conn, _) do
@@ -28,12 +28,13 @@ defmodule TrentoWeb.V1.ProfileController do
   end
 
   operation :update,
-    summary: "Update the current user profile",
+    summary: "Update the current user profile.",
+    description: "Update the current user profile with new information.",
     tags: ["Profile"],
     request_body:
-      {"UserProfileUpdateRequest", "application/json", Schema.User.UserProfileUpdateRequest},
+      {"UserProfileUpdateRequest.", "application/json", Schema.User.UserProfileUpdateRequest},
     responses: [
-      ok: {"Profile updated successfully", "application/json", Schema.User.UserProfile},
+      ok: {"Profile updated successfully.", "application/json", Schema.User.UserProfile},
       unprocessable_entity: Schema.UnprocessableEntity.response(),
       forbidden: Schema.Forbidden.response()
     ]
@@ -48,7 +49,8 @@ defmodule TrentoWeb.V1.ProfileController do
   end
 
   operation :reset_totp,
-    summary: "Reset the TOTP configuration for the user",
+    summary: "Reset the TOTP configuration for the user.",
+    description: "Reset the TOTP (Time-based One-Time Password) configuration for the current user.",
     tags: ["Profile"],
     responses: [
       forbidden: Schema.Forbidden.response(),
@@ -64,11 +66,12 @@ defmodule TrentoWeb.V1.ProfileController do
   end
 
   operation :get_totp_enrollment_data,
-    summary: "Get TOTP enrollment data",
+    summary: "Get TOTP enrollment data.",
+    description: "Get TOTP enrollment data including QR code for setting up two-factor authentication.",
     tags: ["Profile"],
     responses: [
       ok:
-        {"UserTOTPEnrollmentPayload", "application/json", Schema.User.UserTOTPEnrollmentPayload},
+        {"UserTOTPEnrollmentPayload.", "application/json", Schema.User.UserTOTPEnrollmentPayload},
       unprocessable_entity: Schema.UnprocessableEntity.response(),
       forbidden: Schema.Forbidden.response()
     ]
@@ -82,14 +85,15 @@ defmodule TrentoWeb.V1.ProfileController do
   end
 
   operation :confirm_totp_enrollment,
-    summary: "Confirm TOTP enrollment procedure",
+    summary: "Confirm TOTP enrollment procedure.",
+    description: "Confirm TOTP enrollment by validating the generated TOTP code.",
     tags: ["Profile"],
     request_body:
-      {"UserTOTPEnrollmentConfirmRequest", "application/json",
+      {"UserTOTPEnrollmentConfirmRequest.", "application/json",
        Schema.User.UserTOTPEnrollmentConfirmRequest},
     responses: [
       ok:
-        {"TOTP Enrollment completed", "application/json",
+        {"TOTP Enrollment completed.", "application/json",
          Schema.User.UserTOTPEnrollmentConfirmPayload},
       unprocessable_entity: Schema.UnprocessableEntity.response(),
       forbidden: Schema.Forbidden.response()

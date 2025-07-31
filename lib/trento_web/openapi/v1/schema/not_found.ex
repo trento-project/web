@@ -1,6 +1,6 @@
 defmodule TrentoWeb.OpenApi.V1.Schema.NotFound do
   @moduledoc """
-  404 - Not Found
+  404 - Not Found.
   """
   require OpenApiSpex
 
@@ -10,11 +10,26 @@ defmodule TrentoWeb.OpenApi.V1.Schema.NotFound do
   OpenApiSpex.schema(
     %{
       title: "NotFound",
+      description: "Resource not found error response.",
       type: :object,
       additionalProperties: false,
+      example: %{
+        errors: [
+          %{
+            detail: "The requested resource cannot be found.",
+            title: "Not Found"
+          }
+        ]
+      },
       properties: %{
         errors: %Schema{
           type: :array,
+          example: [
+            %{
+              detail: "The requested resource cannot be found.",
+              title: "Not Found"
+            }
+          ],
           items: %Schema{
             type: :object,
             properties: %{
@@ -30,7 +45,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.NotFound do
 
   def response do
     Operation.response(
-      "Not Found",
+      "Not Found.",
       "application/json",
       __MODULE__
     )

@@ -13,8 +13,9 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Provider do
       %{
         title: "SupportedProviders",
         type: :string,
-        description: "Detected Provider where the resource is running",
-        enum: Provider.values()
+        description: "Detected Provider where the resource is running.",
+        enum: Provider.values(),
+        example: "azure"
       },
       struct?: false
     )
@@ -27,7 +28,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Provider do
       %{
         title: "FilterableProvider",
         type: :string,
-        description: "A provider that can be used to filter the Catalog",
+        description: "A provider that can be used to filter the Catalog.",
         enum: [:azure, :aws, :gcp, :default]
       },
       struct?: false
@@ -40,7 +41,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Provider do
     OpenApiSpex.schema(
       %{
         title: "AzureProviderData",
-        description: "Azure detected metadata",
+        description: "Azure detected metadata.",
         type: :object,
         additionalProperties: false,
         properties: %{
@@ -51,6 +52,15 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Provider do
           offer: %Schema{type: :string},
           sku: %Schema{type: :string},
           admin_username: %Schema{type: :string}
+        },
+        example: %{
+          resource_group: "sap-production-rg",
+          location: "West Europe",
+          vm_size: "Standard_E16s_v3",
+          data_disk_number: 4,
+          offer: "SLES-SAP",
+          sku: "15-SP3",
+          admin_username: "azureuser"
         }
       },
       struct?: false
@@ -63,7 +73,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Provider do
     OpenApiSpex.schema(
       %{
         title: "AwsProviderData",
-        description: "AWS detected metadata",
+        description: "AWS detected metadata.",
         type: :object,
         additionalProperties: false,
         properties: %{
@@ -75,6 +85,16 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Provider do
           instance_type: %Schema{type: :string},
           region: %Schema{type: :string},
           vpc_id: %Schema{type: :string}
+        },
+        example: %{
+          account_id: "123456789012",
+          ami_id: "ami-0123456789abcdef0",
+          availability_zone: "us-west-2a",
+          data_disk_number: 3,
+          instance_id: "i-0123456789abcdef0",
+          instance_type: "r5.4xlarge",
+          region: "us-west-2",
+          vpc_id: "vpc-0123456789abcdef0"
         }
       },
       struct?: false
@@ -87,7 +107,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Provider do
     OpenApiSpex.schema(
       %{
         title: "GcpProviderData",
-        description: "GCP detected metadata",
+        description: "GCP detected metadata.",
         type: :object,
         additionalProperties: false,
         properties: %{
@@ -98,6 +118,15 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Provider do
           network: %Schema{type: :string},
           project_id: %Schema{type: :string},
           zone: %Schema{type: :string}
+        },
+        example: %{
+          disk_number: 2,
+          image: "sles-15-sp3-sap-v20220126",
+          instance_name: "sap-hana-instance",
+          machine_type: "n1-highmem-32",
+          network: "default",
+          project_id: "my-sap-project-123456",
+          zone: "europe-west1-b"
         }
       },
       struct?: false
@@ -110,13 +139,23 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Provider do
     OpenApiSpex.schema(
       %{
         title: "ProviderMetadata",
+        type: :object,
         nullable: true,
-        description: "Detected metadata for any provider",
+        description: "Detected metadata for any provider.",
         oneOf: [
           AwsProviderData,
           AzureProviderData,
           GcpProviderData
-        ]
+        ],
+        example: %{
+          resource_group: "sap-production-rg",
+          location: "West Europe",
+          vm_size: "Standard_E16s_v3",
+          data_disk_number: 4,
+          offer: "SLES-SAP",
+          sku: "15-SP3",
+          admin_username: "azureuser"
+        }
       },
       struct?: false
     )

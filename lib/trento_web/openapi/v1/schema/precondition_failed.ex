@@ -1,6 +1,6 @@
 defmodule TrentoWeb.OpenApi.V1.Schema.PreconditionFailed do
   @moduledoc """
-  412 - Precondition Failed
+  412 - Precondition Failed.
   """
   require OpenApiSpex
 
@@ -10,11 +10,26 @@ defmodule TrentoWeb.OpenApi.V1.Schema.PreconditionFailed do
   OpenApiSpex.schema(
     %{
       title: "PreconditionFailed",
+      description: "Precondition failed error response.",
       type: :object,
       additionalProperties: false,
+      example: %{
+        errors: [
+          %{
+            detail: "Mid-air collision detected, please refresh the resource you are trying to update.",
+            title: "Precondition Failed"
+          }
+        ]
+      },
       properties: %{
         errors: %Schema{
           type: :array,
+          example: [
+            %{
+              detail: "Mid-air collision detected, please refresh the resource you are trying to update.",
+              title: "Precondition Failed"
+            }
+          ],
           items: %Schema{
             type: :object,
             properties: %{
@@ -34,7 +49,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.PreconditionFailed do
 
   def response do
     Operation.response(
-      "Precondition Failed",
+      "Precondition Failed.",
       "application/json",
       __MODULE__
     )

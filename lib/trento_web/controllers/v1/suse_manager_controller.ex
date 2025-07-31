@@ -20,20 +20,24 @@ defmodule TrentoWeb.V1.SUSEManagerController do
   action_fallback TrentoWeb.FallbackController
 
   operation :software_updates,
-    summary: "Gets available software updates for a given host",
+    summary: "Gets available software updates for a given host.",
     tags: ["Target Infrastructure"],
     description:
       "Endpoint to fetch available relevant patches and upgradable packages for a given host ID.",
     parameters: [
       id: [
         in: :path,
+        description: "Host identifier.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :string, format: :uuid}
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          format: :uuid,
+          example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
+        }
       ]
     ],
     responses: [
-      ok:
-        {"Available software updates for the host", "application/json",
+      ok: {"Available software updates for the host.", "application/json",
          AvailableSoftwareUpdatesResponse},
       not_found: Schema.NotFound.response(),
       unprocessable_entity: Schema.UnprocessableEntity.response()
@@ -52,19 +56,23 @@ defmodule TrentoWeb.V1.SUSEManagerController do
   end
 
   operation :patches_for_packages,
-    summary: "Gets patches covered by package upgrades in SUSE Manager",
+    summary: "Gets patches covered by package upgrades in SUSE Manager.",
     tags: ["Target Infrastructure"],
-    description: "Endpoint to fetch relevant patches covered by package upgrades in SUSE Manager",
+    description: "Endpoint to fetch relevant patches covered by package upgrades in SUSE Manager.",
     parameters: [
       host_id: [
         in: :query,
+        description: "Host identifier.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :string, format: :uuid}
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          format: :uuid,
+          example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
+        }
       ]
     ],
     responses: [
-      ok:
-        {"Available software updates for the host", "application/json",
+      ok: {"Available software updates for the host.", "application/json",
          PatchesForPackagesResponse}
     ]
 
@@ -76,18 +84,22 @@ defmodule TrentoWeb.V1.SUSEManagerController do
   end
 
   operation :errata_details,
-    summary: "Gets the details for an advisory",
+    summary: "Gets the details for an advisory.",
     tags: ["Target Infrastructure"],
-    description: "Endpoint to fetch advisory details for a given advisory name",
+    description: "Endpoint to fetch advisory details for a given advisory name.",
     parameters: [
       advisory_name: [
         in: :path,
+        description: "Advisory name.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :string}
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          example: "SUSE-2025-1234"
+        }
       ]
     ],
     responses: [
-      ok: {"Errata details for the advisory", "application/json", ErrataDetailsResponse}
+      ok: {"Errata details for the advisory.", "application/json", ErrataDetailsResponse}
     ]
 
   @spec errata_details(Plug.Conn.t(), any) :: Plug.Conn.t()

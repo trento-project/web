@@ -12,11 +12,11 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ChecksCatalog do
     OpenApiSpex.schema(
       %{
         title: "Check",
-        description: "An available check to be executed on the target infrastructure",
+        description: "An available check to be executed on the target infrastructure.",
         type: :object,
         additionalProperties: false,
         properties: %{
-          id: %Schema{type: :string, description: "Check ID", format: :uuid},
+          id: %Schema{type: :string, description: "Check ID.", format: :uuid, example: "123e4567-e89b-12d3-a456-426614174000"},
           name: %Schema{type: :string, description: "Check Name"},
           description: %Schema{type: :string, description: "Check Description"},
           remediation: %Schema{type: :string, description: "Check Remediation"},
@@ -24,12 +24,12 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ChecksCatalog do
           labels: %Schema{type: :string, description: "Check Labels"},
           premium: %Schema{
             type: :boolean,
-            description: "Indicates whether the current check is a Premium check",
+            description: "Indicates whether the current check is a Premium check.",
             deprecated: true
           },
           group: %Schema{
             type: :string,
-            description: "Check Group, available when requiring a Flat Catalog"
+            description: "Check Group, available when requiring a Flat Catalog."
           },
           provider: Provider.SupportedProviders
         }
@@ -44,7 +44,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ChecksCatalog do
     OpenApiSpex.schema(
       %{
         title: "FlatCatalog",
-        description: "A flat list of the available Checks",
+        description: "A flat list of the available Checks.",
         type: :array,
         items: Check
       },
@@ -58,7 +58,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ChecksCatalog do
     OpenApiSpex.schema(
       %{
         title: "ChecksGroup",
-        description: "A Group of related Checks (Corosync, Pacemaker ...)",
+        description: "A Group of related Checks (Corosync, Pacemaker ...).",
         additionalProperties: false,
         type: :object,
         properties: %{
@@ -76,7 +76,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ChecksCatalog do
     OpenApiSpex.schema(
       %{
         title: "ProviderCatalog",
-        description: "A Provider specific Catalog, and respective values",
+        description: "A Provider specific Catalog, and respective values.",
         additionalProperties: false,
         type: :object,
         properties: %{
@@ -84,12 +84,12 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ChecksCatalog do
             title: "ChecksProvider",
             type: :string,
             description:
-              "The provider determining the values for the attached checks (azure, aws ...)",
+              "The provider determining the values for the attached checks (azure, aws ...).",
             enum: [:azure, :aws, :gcp, :default]
           },
           groups: %Schema{
             title: "ChecksGroups",
-            description: "A list of ChecksGroup for the respective provider",
+            description: "A list of ChecksGroup for the respective provider.",
             type: :array,
             items: ChecksGroup
           }
@@ -106,7 +106,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ChecksCatalog do
       %{
         title: "GroupedCatalog",
         description:
-          "A list of available Checks: grouped by provider (azure, aws ...) and checks groups (Corosync, Pacemaker ...)",
+          "A list of available Checks: grouped by provider (azure, aws ...) and checks groups (Corosync, Pacemaker ...).",
         type: :array,
         items: ProviderCatalog
       },
@@ -120,7 +120,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ChecksCatalog do
     OpenApiSpex.schema(
       %{
         title: "ChecksCatalog",
-        description: "A representation of the Checks Catalog",
+        description: "A representation of the Checks Catalog.",
         oneOf: [
           GroupedCatalog,
           FlatCatalog
@@ -131,7 +131,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ChecksCatalog do
               %{
                 checks: [
                   %{
-                    description: "Corosync `token` timeout is set to `5000`\n",
+                    description: "Corosync `token` timeout is set to `5000`\n.",
                     id: "156F64",
                     implementation:
                       "---\n\n- name: \"{{ name }}.check\"\n  lineinfile:\n    path: /etc/corosync/corosync.conf\n    regexp: '^(\\s+){{ key_name }}:'\n    line: \"\\t{{ key_name }}: {{ expected[name] }}\"\n    insertafter: 'totem {'\n  register: config_updated\n  when:\n    - ansible_check_mode\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
@@ -141,7 +141,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ChecksCatalog do
                       "## Abstract\nThe value of the Corosync `token` timeout is not set as recommended.\n\n## Remediation\n\nAdjust the corosync `token` timeout as recommended on the best practices, and reload the corosync configuration\n\n1. Set the correct `token` timeout in the totem session in the corosync config file `/etc/corosync/corosync.conf`. This action must be repeated in all nodes of the cluster.\n   ```\n   [...]\n   totem { \n          token: <timeout value> \n         }\n   [...]\n   ```   \n2. Reload the corosync configuration:\n   `crm corosync reload`\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n"
                   },
                   %{
-                    description: "Corosync is running with `token` timeout set to `5000`\n",
+                    description: "Corosync is running with `token` timeout set to `5000`\n.",
                     id: "53D035",
                     implementation:
                       "---\n\n- name: \"{{ name }}.check\"\n  shell: 'corosync-cmapctl | grep \"runtime.config.totem.token (u32) = \" | sed \"s/^.*= //\"'\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout != expected['1.1.1']\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
@@ -156,7 +156,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ChecksCatalog do
               %{
                 checks: [
                   %{
-                    description: "Fencing is enabled in the cluster attributes\n",
+                    description: "Fencing is enabled in the cluster attributes\n.",
                     id: "205AF7",
                     implementation:
                       "---\n\n- name: \"{{ name }}.check\"\n  command: 'crm_attribute -t crm_config -G -n stonith-enabled --quiet'\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout != expected[name]\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
@@ -183,7 +183,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ChecksCatalog do
     OpenApiSpex.schema(
       %{
         title: "CatalogNotfound",
-        description: "No Catalog was found for the provided query",
+        description: "No Catalog was found for the provided query.",
         additionalProperties: false,
         type: :object,
         properties: %{
@@ -205,7 +205,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ChecksCatalog do
       %{
         title: "UnableToLoadCatalog",
         description:
-          "Something wrong happened while loading the catalog. ie: it is not ready yet",
+          "Something wrong happened while loading the catalog. ie: it is not ready yet.",
         additionalProperties: false,
         type: :object,
         properties: %{

@@ -8,6 +8,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ActivityLog do
     @moduledoc false
     OpenApiSpex.schema(
       %{
+        title: "ActivityLogEntries",
+        description: "Collection of activity log entries.",
         type: :array,
         items: %Schema{
           title: "ActivityLogEntries",
@@ -41,7 +43,20 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ActivityLog do
             }
           },
           required: [:id, :type, :actor, :metadata, :occurred_on]
-        }
+        },
+        example: [
+          %{
+            id: "123e4567-e89b-12d3-a456-426614174000",
+            type: "host_registered",
+            actor: "system",
+            severity: "info",
+            metadata: %{
+              host_id: "9876b7a8-2e1f-4b9a-8e7d-3a4b5c6d7e8f",
+              hostname: "hana01"
+            },
+            occurred_on: "2024-01-15T10:30:00Z"
+          }
+        ]
       },
       struct?: false
     )
@@ -96,7 +111,15 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ActivityLog do
           :has_previous_page,
           :first,
           :last
-        ]
+        ],
+        example: %{
+          start_cursor: "eyJpZCI6IjEyM2U0NTY3LWU4OWItMTJkMy1hNDU2LTQyNjYxNDE3NDAwMCJ9",
+          end_cursor: "eyJpZCI6IjQ1NmU3ODkwLWE5YmMtMTJkMy1hNDU2LTQyNjYxNDE3NDAwMCJ9",
+          has_next_page: true,
+          has_previous_page: false,
+          first: 10,
+          last: 5
+        }
       },
       struct?: false
     )
@@ -110,6 +133,26 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ActivityLog do
         title: "ActivityLog",
         description: "Activity Log for the current installation.",
         type: :object,
+        example: %{
+          data: [
+            %{
+              id: "123e4567-e89b-12d3-a456-426614174000",
+              type: "host_registered",
+              actor: "system",
+              severity: "info",
+              metadata: %{host_id: "456e7890-e89b-12d3-a456-426614174001"},
+              occurred_on: "2024-01-15T10:30:00Z"
+            }
+          ],
+          pagination: %{
+            start_cursor: "cursor_start",
+            end_cursor: "cursor_end",
+            has_next_page: false,
+            has_previous_page: false,
+            first: 10,
+            last: 5
+          }
+        },
         properties: %{
           data: ActivityLogEntries,
           pagination: Pagination

@@ -48,11 +48,10 @@ defmodule TrentoWeb.V1.HostController do
 
   operation :list,
     tags: ["Target Infrastructure"],
-    summary: "List hosts",
-    description: "List all the discovered hosts on the target infrastructure",
+    summary: "List hosts.",
+    description: "List all the discovered hosts on the target infrastructure.",
     responses: [
-      ok:
-        {"A collection of the discovered hosts", "application/json", Schema.Host.HostsCollection}
+      ok: {"A collection of the discovered hosts.", "application/json", Schema.Host.HostsCollection}
     ]
 
   @spec list(Plug.Conn.t(), map) :: Plug.Conn.t()
@@ -62,18 +61,23 @@ defmodule TrentoWeb.V1.HostController do
   end
 
   operation :delete,
-    summary: "Deregister a host",
-    description: "Deregister a host agent from Trento",
+    summary: "Deregister a host.",
+    description: "Deregister a host agent from Trento.",
     tags: ["Target Infrastructure"],
     parameters: [
       id: [
         in: :path,
+        description: "Host identifier.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :string, format: :uuid}
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          format: :uuid,
+          example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
+        }
       ]
     ],
     responses: [
-      no_content: "The host has been deregistered",
+      no_content: "The host has been deregistered.",
       not_found: NotFound.response(),
       unprocessable_entity: UnprocessableEntity.response()
     ]
@@ -87,21 +91,30 @@ defmodule TrentoWeb.V1.HostController do
   end
 
   operation :heartbeat,
-    summary: "Signal that an agent is alive",
+    summary: "Signal that an agent is alive.",
     tags: ["Agent"],
     description: "This is used by the agents to signal that they are still alive.",
     parameters: [
       id: [
         in: :path,
+        description: "Host identifier.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :string, format: :uuid}
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          format: :uuid,
+          example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
+        }
       ]
     ],
     responses: [
-      no_content: "The heartbeat has been updated",
+      no_content: {"The heartbeat has been updated.", "application/json", %OpenApiSpex.Schema{
+        type: :object,
+        properties: %{},
+        example: %{}
+      }},
       not_found: NotFound.response(),
       bad_request: BadRequest.response(),
-      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
+      unprocessable_entity: UnprocessableEntity.response()
     ]
 
   def heartbeat(conn, %{id: id}) do
@@ -111,21 +124,30 @@ defmodule TrentoWeb.V1.HostController do
   end
 
   operation :select_checks,
-    summary: "Select Checks for a Host",
+    summary: "Select Checks for a Host.",
     tags: ["Checks"],
-    description: "Select the Checks eligible for execution on the target infrastructure",
+    description: "Select the Checks eligible for execution on the target infrastructure.",
     parameters: [
       id: [
         in: :path,
+        description: "Host identifier.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :string, format: :uuid}
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          format: :uuid,
+          example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
+        }
       ]
     ],
-    request_body: {"Checks Selection", "application/json", Schema.Checks.ChecksSelectionRequest},
+    request_body: {"Checks Selection.", "application/json", Schema.Checks.ChecksSelectionRequest},
     responses: [
-      accepted: "The Selection has been successfully collected",
+      accepted: {"The Selection has been successfully collected.", "application/json", %OpenApiSpex.Schema{
+        type: :object,
+        properties: %{},
+        example: %{}
+      }},
       not_found: NotFound.response(),
-      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
+      unprocessable_entity: UnprocessableEntity.response()
     ]
 
   def select_checks(conn, %{id: host_id}) do
@@ -139,20 +161,25 @@ defmodule TrentoWeb.V1.HostController do
   end
 
   operation :request_checks_execution,
-    summary: "Request Checks Execution for a Host",
+    summary: "Request Checks Execution for a Host.",
     tags: ["Checks"],
-    description: "Trigger execution of the latest Checks Selection on the target infrastructure",
+    description: "Trigger execution of the latest Checks Selection on the target infrastructure.",
     parameters: [
       id: [
         in: :path,
+        description: "Host identifier.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :string, format: :uuid}
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          format: :uuid,
+          example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
+        }
       ]
     ],
     responses: [
-      accepted: "The Command has been accepted and the Requested Host execution is scheduled",
+      accepted: "The Command has been accepted and the Requested Host execution is scheduled.",
       not_found: NotFound.response(),
-      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
+      unprocessable_entity: UnprocessableEntity.response()
     ]
 
   def request_checks_execution(conn, %{id: host_id}) do
@@ -164,27 +191,36 @@ defmodule TrentoWeb.V1.HostController do
   end
 
   operation :request_operation,
-    summary: "Request operation for a Host",
+    summary: "Request operation for a Host.",
     tags: ["Operations"],
-    description: "Request operation for a Host",
+    description: "Request an operation to be performed on a specific host.",
     parameters: [
       id: [
         in: :path,
+        description: "Host identifier.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :string, format: :uuid}
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          format: :uuid,
+          example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
+        }
       ],
       operation: [
         in: :path,
+        description: "Operation to be performed on the host.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :string}
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          example: "restart"
+        }
       ]
     ],
-    request_body: {"Params", "application/json", HostOperationParams},
+    request_body: {"Params.", "application/json", HostOperationParams},
     responses: [
       accepted: OperationAccepted.response(),
       not_found: NotFound.response(),
       forbidden: Forbidden.response(),
-      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
+      unprocessable_entity: UnprocessableEntity.response()
     ]
 
   def request_operation(%{assigns: %{host: host, operation: operation}} = conn, _)

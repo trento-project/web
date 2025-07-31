@@ -13,65 +13,90 @@ defmodule TrentoWeb.V1.ActivityLogController do
 
   operation :get_activity_log,
     summary: "Fetches the Activity Log entries.",
+    description: "Fetches the Activity Log entries with pagination and filtering capabilities.",
     tags: ["Platform"],
     parameters: [
       first: [
         in: :query,
-        schema: %OpenApiSpex.Schema{type: :integer},
+        description: "Number of items to return from the beginning.",
+        schema: %OpenApiSpex.Schema{type: :integer, example: 10},
         required: false
       ],
       last: [
         in: :query,
-        schema: %OpenApiSpex.Schema{type: :integer},
+        description: "Number of items to return from the end.",
+        schema: %OpenApiSpex.Schema{type: :integer, example: 10},
         required: false
       ],
       after: [
         in: :query,
-        schema: %OpenApiSpex.Schema{type: :string},
+        description: "Cursor to paginate after.",
+        schema: %OpenApiSpex.Schema{type: :string, example: "cursor_after_example"},
         required: false
       ],
       before: [
         in: :query,
-        schema: %OpenApiSpex.Schema{type: :string},
+        description: "Cursor to paginate before.",
+        schema: %OpenApiSpex.Schema{type: :string, example: "cursor_before_example"},
         required: false
       ],
       from_date: [
         in: :query,
-        schema: %OpenApiSpex.Schema{type: :string},
+        description: "Start date for filtering entries.",
+        schema: %OpenApiSpex.Schema{type: :string, example: "2024-01-01T00:00:00Z"},
         required: false
       ],
       to_date: [
         in: :query,
-        schema: %OpenApiSpex.Schema{type: :string},
+        description: "End date for filtering entries.",
+        schema: %OpenApiSpex.Schema{type: :string, example: "2024-01-31T23:59:59Z"},
         required: false
       ],
       actor: [
         in: :query,
-        schema: %OpenApiSpex.Schema{type: :array},
-        required: false
+        description: "Filter by actor(s).",
+        schema: %OpenApiSpex.Schema{
+          type: :array,
+          items: %OpenApiSpex.Schema{type: :string},
+          example: ["john.doe@example.com", "admin@example.com"]
+        },
+        required: false,
+        example: ["john.doe@example.com", "admin@example.com"]
       ],
       search: [
         in: :query,
-        schema: %OpenApiSpex.Schema{type: :string},
-        required: false
+        description: "Search term for filtering entries.",
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          example: "user login"
+        },
+        required: false,
+        example: "user login"
       ],
       type: [
         in: :query,
-        schema: %OpenApiSpex.Schema{type: :array},
-        required: false
+        description: "Filter by entry type(s).",
+        schema: %OpenApiSpex.Schema{
+          type: :array,
+          items: %OpenApiSpex.Schema{type: :string},
+          example: ["host_registered", "user_login"]
+        },
+        required: false,
+        example: ["host_registered", "user_login"]
       ],
       severity: [
         in: :query,
+        description: "Filter by severity level(s).",
         schema: %OpenApiSpex.Schema{
           type: :array,
+          items: %OpenApiSpex.Schema{type: :string},
           default: ["debug", "info", "warning", "critical"]
         },
         required: false
       ]
     ],
     responses: [
-      ok:
-        {"Activity Log settings fetched successfully", "application/json",
+      ok: {"Activity Log settings fetched successfully.", "application/json",
          Schema.ActivityLog.ActivityLog}
     ]
 

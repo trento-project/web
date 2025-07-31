@@ -1,6 +1,6 @@
 defmodule TrentoWeb.OpenApi.V1.Schema.Unauthorized do
   @moduledoc """
-  401 - Unauthorized
+  401 - Unauthorized.
   """
   require OpenApiSpex
 
@@ -10,11 +10,26 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Unauthorized do
   OpenApiSpex.schema(
     %{
       title: "Unauthorized",
+      description: "Unauthorized access error response.",
       type: :object,
       additionalProperties: false,
+      example: %{
+        errors: [
+          %{
+            detail: "The requested operation could not be authorized.",
+            title: "Unauthorized"
+          }
+        ]
+      },
       properties: %{
         errors: %Schema{
           type: :array,
+          example: [
+            %{
+              detail: "The requested operation could not be authorized.",
+              title: "Unauthorized"
+            }
+          ],
           items: %Schema{
             type: :object,
             properties: %{
@@ -33,7 +48,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Unauthorized do
 
   def response do
     Operation.response(
-      "Unauthorized",
+      "Unauthorized.",
       "application/json",
       __MODULE__
     )

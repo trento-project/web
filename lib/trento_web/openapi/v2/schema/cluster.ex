@@ -17,7 +17,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
     OpenApiSpex.schema(
       %{
         title: "ClusterResource",
-        description: "A Cluster Resource",
+        description: "A Cluster Resource.",
         type: :object,
         additionalProperties: false,
         properties: %{
@@ -47,6 +47,20 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
               }
             }
           }
+        },
+        example: %{
+          id: "ocf:heartbeat:IPaddr2",
+          role: "Started",
+          type: "ocf",
+          status: "running",
+          fail_count: 0,
+          managed: true,
+          node: "node-01",
+          parent: %{
+            id: "cluster-ip-group",
+            managed: true,
+            multi_state: false
+          }
         }
       },
       struct?: false
@@ -59,7 +73,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
     OpenApiSpex.schema(
       %{
         title: "HanaClusterNode",
-        description: "A HANA Cluster Node",
+        description: "A HANA Cluster Node.",
         type: :object,
         additionalProperties: false,
         properties: %{
@@ -71,16 +85,38 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
           status: %Schema{type: :string},
           attributes: %Schema{
             type: :object,
-            description: "Node attributes",
+            description: "Node attributes.",
             additionalProperties: %Schema{type: :string}
           },
           virtual_ip: %Schema{type: :string},
           resources: %Schema{
-            description: "A list of Cluster resources",
+            description: "A list of Cluster resources.",
             type: :array,
             items: ClusterResource,
             deprecated: true
           }
+        },
+        example: %{
+          name: "hana01",
+          site: "NUREMBERG",
+          indexserver_actual_role: "master",
+          nameserver_actual_role: "master",
+          hana_status: "Primary",
+          status: "online",
+          attributes: %{
+            "hana_prd_op_mode" => "logreplay",
+            "hana_prd_srmode" => "sync"
+          },
+          virtual_ip: "192.168.1.10",
+          resources: [
+            %{
+              id: "rsc_SAPHana_PRD_HDB00",
+              type: "ocf::suse:SAPHana",
+              role: "Master",
+              status: "running",
+              fail_count: 0
+            }
+          ]
         }
       },
       struct?: false
@@ -93,13 +129,18 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
     OpenApiSpex.schema(
       %{
         title: "HanaClusterSite",
-        description: "A HANA Cluster Site",
+        description: "A HANA Cluster Site.",
         type: :object,
         additionalProperties: false,
         properties: %{
           name: %Schema{type: :string, description: "Site name"},
           state: %Schema{type: :string, description: "Site state"},
           sr_health_state: %Schema{type: :string, description: "Site SR Health state"}
+        },
+        example: %{
+          name: "NUREMBERG",
+          state: "Primary",
+          sr_health_state: "4"
         }
       },
       struct?: false
@@ -112,7 +153,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
     OpenApiSpex.schema(
       %{
         title: "HanaClusterDetails",
-        description: "Details of a HANA Pacemaker Cluster",
+        description: "Details of a HANA Pacemaker Cluster.",
         type: :object,
         additionalProperties: false,
         properties: %{
@@ -123,27 +164,27 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
           },
           hana_scenario: %Schema{
             type: :string,
-            description: "HANA scenario type",
+            description: "HANA scenario type.",
             enum: HanaScenario.values()
           },
           system_replication_mode: %Schema{type: :string, description: "System Replication Mode"},
           system_replication_operation_mode: %Schema{
             type: :string,
-            description: "System Replication Operation Mode"
+            description: "System Replication Operation Mode."
           },
           secondary_sync_state: %Schema{type: :string, description: "Secondary Sync State"},
           sr_health_state: %Schema{
             type: :string,
-            description: "SR health state",
+            description: "SR health state.",
             deprecated: true
           },
           fencing_type: %Schema{type: :string, description: "Fencing Type"},
           maintenance_mode: %Schema{
             type: :boolean,
-            description: "Maintenance mode enabled"
+            description: "Maintenance mode enabled."
           },
           stopped_resources: %Schema{
-            description: "A list of the stopped resources on this HANA Cluster",
+            description: "A list of the stopped resources on this HANA Cluster.",
             type: :array,
             items: ClusterResource,
             deprecated: true
@@ -153,7 +194,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
             items: HanaClusterNode
           },
           sites: %Schema{
-            description: "A list of HANA sites",
+            description: "A list of HANA sites.",
             type: :array,
             items: HanaClusterSite
           },
@@ -162,11 +203,54 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
             items: Cluster.SbdDevice
           },
           resources: %Schema{
-            description: "A list of cluster resources",
+            description: "A list of cluster resources.",
             items: ClusterResource
           }
         },
-        required: [:nodes]
+        required: [:nodes],
+        example: %{
+          architecture_type: "classic",
+          hana_scenario: "performance_optimized",
+          system_replication_mode: "sync",
+          system_replication_operation_mode: "logreplay",
+          secondary_sync_state: "SOK",
+          sr_health_state: "4",
+          fencing_type: "external/sbd",
+          maintenance_mode: false,
+          stopped_resources: [],
+          nodes: [
+            %{
+              name: "hana01",
+              site: "NUREMBERG",
+              hana_status: "Primary",
+              attributes: %{
+                "hana_prd_op_mode" => "logreplay"
+              }
+            }
+          ],
+          sites: [
+            %{
+              name: "NUREMBERG",
+              state: "Primary",
+              sr_health_state: "4"
+            }
+          ],
+          sbd_devices: [
+            %{
+              device: "/dev/disk/by-id/scsi-SLIO-ORG_disk_01",
+              status: "healthy"
+            }
+          ],
+          resources: [
+            %{
+              id: "rsc_SAPHana_PRD_HDB00",
+              type: "ocf::suse:SAPHana",
+              role: "Master",
+              status: "running",
+              fail_count: 0
+            }
+          ]
+        }
       },
       struct?: false
     )
@@ -178,44 +262,63 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
     OpenApiSpex.schema(
       %{
         title: "AscsErsClusterNode",
-        description: "ASCS/ERS Cluster Node",
+        description: "ASCS/ERS Cluster Node.",
         type: :object,
         additionalProperties: false,
         properties: %{
           attributes: %Schema{
             type: :object,
-            description: "Node attributes",
+            description: "Node attributes.",
             additionalProperties: %Schema{type: :string}
           },
           filesystems: %Schema{
             type: :array,
             items: %Schema{type: :string},
-            description: "List of filesystems managed in this node"
+            description: "List of filesystems managed in this node."
           },
           name: %Schema{
             type: :string,
-            description: "Node name"
+            description: "Node name."
           },
           status: %Schema{
             type: :string,
-            description: "Node status"
+            description: "Node status."
           },
           resources: %Schema{
             type: :array,
             items: ClusterResource,
-            description: "A list of Cluster resources",
+            description: "A list of Cluster resources.",
             deprecated: true
           },
           roles: %Schema{
             type: :array,
             items: %Schema{type: :string, enum: AscsErsClusterRole.values()},
-            description: "List of roles managed in this node"
+            description: "List of roles managed in this node."
           },
           virtual_ips: %Schema{
             type: :array,
             items: %Schema{type: :string},
-            description: "List of virtual IPs managed in this node"
+            description: "List of virtual IPs managed in this node."
           }
+        },
+        example: %{
+          name: "node01",
+          status: "online",
+          attributes: %{
+            "ascs_group" => "grp_HA1_ASCS00"
+          },
+          filesystems: ["/sapmnt/HA1", "/usr/sap/HA1/ASCS00"],
+          roles: ["ascs"],
+          virtual_ips: ["192.168.1.10"],
+          resources: [
+            %{
+              id: "rsc_SAPInstance_HA1_ASCS00",
+              type: "ocf::heartbeat:SAPInstance",
+              role: "Started",
+              status: "Started",
+              fail_count: 0
+            }
+          ]
         }
       },
       struct?: false
@@ -228,7 +331,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
     OpenApiSpex.schema(
       %{
         title: "AscsErsClusterSAPSystem",
-        description: "SAP system managed by a ASCS/ERS cluster",
+        description: "SAP system managed by a ASCS/ERS cluster.",
         type: :object,
         additionalProperties: false,
         required: [:sid],
@@ -236,18 +339,31 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
           sid: %Schema{type: :string, description: "SID"},
           distributed: %Schema{
             type: :boolean,
-            description: "ASCS and ERS instances are distributed and running in different nodes"
+            description: "ASCS and ERS instances are distributed and running in different nodes."
           },
           filesystem_resource_based: %Schema{
             type: :boolean,
             description:
-              "ASCS and ERS filesystems are handled by the cluster with the Filesystem resource agent"
+              "ASCS and ERS filesystems are handled by the cluster with the Filesystem resource agent."
           },
           nodes: %Schema{
             type: :array,
             items: AscsErsClusterNode,
-            description: "List of ASCS/ERS nodes for this SAP system"
+            description: "List of ASCS/ERS nodes for this SAP system."
           }
+        },
+        example: %{
+          sid: "HA1",
+          distributed: false,
+          filesystem_resource_based: true,
+          nodes: [
+            %{
+              name: "node01",
+              roles: ["ascs"],
+              virtual_ips: ["192.168.1.10"],
+              filesystems: ["/sapmnt/HA1", "/usr/sap/HA1/ASCS00"]
+            }
+          ]
         }
       },
       struct?: false
@@ -260,40 +376,75 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
     OpenApiSpex.schema(
       %{
         title: "AscsErsClusterDetails",
-        description: "Details of a ASCS/ERS Pacemaker Cluster",
+        description: "Details of a ASCS/ERS Pacemaker Cluster.",
         type: :object,
         additionalProperties: false,
         properties: %{
           fencing_type: %Schema{
             type: :string,
-            description: "Fencing type"
+            description: "Fencing type."
           },
           maintenance_mode: %Schema{
             type: :boolean,
-            description: "Maintenance mode enabled"
+            description: "Maintenance mode enabled."
           },
           sap_systems: %Schema{
             type: :array,
             items: AscsErsClusterSAPSystem,
-            description: "List of managed SAP systems in a single or multi SID cluster"
+            description: "List of managed SAP systems in a single or multi SID cluster."
           },
           sbd_devices: %Schema{
             type: :array,
             items: Cluster.SbdDevice,
-            description: "List of SBD devices used in the cluster"
+            description: "List of SBD devices used in the cluster."
           },
           stopped_resources: %Schema{
             type: :array,
             items: ClusterResource,
-            description: "List of the stopped resources on this HANA Cluster",
+            description: "List of the stopped resources on this HANA Cluster.",
             deprecated: true
           },
           resources: %Schema{
-            description: "A list of cluster resources",
+            description: "A list of cluster resources.",
             items: ClusterResource
           }
         },
-        required: [:sap_systems]
+        required: [:sap_systems],
+        example: %{
+          fencing_type: "external/sbd",
+          maintenance_mode: false,
+          sap_systems: [
+            %{
+              sid: "HA1",
+              filesystem_resource_based: true,
+              distributed: false,
+              nodes: [
+                %{
+                  name: "node01",
+                  roles: ["ascs"],
+                  virtual_ips: ["192.168.1.10"],
+                  filesystems: ["/sapmnt/HA1", "/usr/sap/HA1/ASCS00"]
+                }
+              ]
+            }
+          ],
+          sbd_devices: [
+            %{
+              device: "/dev/disk/by-id/scsi-SLIO-ORG_disk_01",
+              status: "healthy"
+            }
+          ],
+          stopped_resources: [],
+          resources: [
+            %{
+              id: "rsc_SAPInstance_HA1_ASCS00",
+              type: "ocf::heartbeat:SAPInstance",
+              role: "Started",
+              status: "Started",
+              fail_count: 0
+            }
+          ]
+        }
       },
       struct?: false
     )
@@ -305,12 +456,25 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
     OpenApiSpex.schema(
       %{
         title: "PacemakerClusterDetails",
-        description: "Details of the detected PacemakerCluster",
+        description: "Details of the detected PacemakerCluster.",
+        type: :object,
         nullable: true,
         oneOf: [
           AscsErsClusterDetails,
           HanaClusterDetails
-        ]
+        ],
+        example: %{
+          system_replication_mode: "sync",
+          system_replication_operation_mode: "logreplay",
+          secondary_sync_state: "SOK",
+          nodes: [
+            %{
+              name: "hana01",
+              site: "NUREMBERG",
+              hana_status: "Primary"
+            }
+          ]
+        }
       },
       struct?: false
     )
@@ -322,26 +486,26 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
     OpenApiSpex.schema(
       %{
         title: "PacemakerCluster",
-        description: "A discovered Pacemaker Cluster on the target infrastructure",
+        description: "A discovered Pacemaker Cluster on the target infrastructure.",
         type: :object,
         additionalProperties: false,
         properties: %{
-          id: %Schema{type: :string, description: "Cluster ID", format: :uuid},
+          id: %Schema{type: :string, description: "Cluster ID.", format: :uuid},
           name: %Schema{type: :string, description: "Cluster name"},
           sid: %Schema{
             type: :string,
-            description: "SID. Deprecated: use sap_instances instead",
+            description: "SID. Deprecated: use sap_instances instead.",
             deprecated: true
           },
           additional_sids: %Schema{
             type: :array,
             items: %Schema{type: :string},
             description:
-              "Additionally discovered SIDs, such as ASCS/ERS cluster SIDs. Deprecated: use sap_instances instead",
+              "Additionally discovered SIDs, such as ASCS/ERS cluster SIDs. Deprecated: use sap_instances instead.",
             deprecated: true
           },
           sap_instances: %Schema{
-            description: "Cluster SAP instances with their SID and additional information",
+            description: "Cluster SAP instances with their SID and additional information.",
             type: :array,
             items: %Schema{
               type: :object,
@@ -356,31 +520,64 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
           provider: Provider.SupportedProviders,
           type: %Schema{
             type: :string,
-            description: "Detected type of the cluster",
+            description: "Detected type of the cluster.",
             enum: ClusterType.values()
           },
           selected_checks: %Schema{
-            title: "SelectedChecks",
-            description: "A list of check ids selected for an execution on this cluster",
+            description: "A list of check ids selected for an execution on this cluster.",
             type: :array,
             items: %Schema{type: :string}
           },
           health: ResourceHealth,
           resources_number: %Schema{
             type: :integer,
-            description: "Resource number",
+            description: "Resource number.",
             nullable: true
           },
-          hosts_number: %Schema{type: :integer, description: "Hosts number", nullable: true},
+          hosts_number: %Schema{type: :integer, description: "Hosts number.", nullable: true},
           cib_last_written: %Schema{
             type: :string,
-            description: "CIB last written date",
+            description: "CIB last written date.",
             nullable: true
           },
           details: Details,
           tags: Tags,
           inserted_at: %Schema{type: :string, format: :datetime},
           updated_at: %Schema{type: :string, format: :datetime, nullable: true}
+        },
+        example: %{
+          id: "123e4567-e89b-12d3-a456-426614174000",
+          name: "hana_cluster",
+          sid: "PRD",
+          additional_sids: ["ASCS"],
+          sap_instances: [
+            %{
+              sid: "PRD",
+              instance_number: "00"
+            }
+          ],
+          provider: "azure",
+          type: "hana_scale_up",
+          selected_checks: ["check_2"],
+          health: "passing",
+          resources_number: 10,
+          hosts_number: 2,
+          cib_last_written: "2024-01-15T10:30:00Z",
+          details: %{
+            system_replication_mode: "sync",
+            system_replication_operation_mode: "logreplay",
+            secondary_sync_state: "SOK",
+            nodes: []
+          },
+          tags: [
+            %{
+              value: "production",
+              resource_id: "123e4567-e89b-12d3-a456-426614174000",
+              resource_type: "cluster"
+            }
+          ],
+          inserted_at: "2024-01-15T09:00:00Z",
+          updated_at: "2024-01-15T10:30:00Z"
         }
       },
       struct?: false
@@ -393,9 +590,26 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
     OpenApiSpex.schema(
       %{
         title: "PacemakerClustersCollection",
-        description: "A list of the discovered Pacemaker Clusters",
+        description: "A list of the discovered Pacemaker Clusters.",
         type: :array,
-        items: PacemakerCluster
+        items: PacemakerCluster,
+        example: [
+          %{
+            id: "123e4567-e89b-12d3-a456-426614174000",
+            name: "hana_cluster",
+            sid: "PRD",
+            additional_sids: ["ERS", "ASCS"],
+            provider: "azure",
+            type: "hana_scale_up",
+            selected_checks: ["check_1", "check_2"],
+            health: "passing",
+            resources_number: 10,
+            hosts_number: 2,
+            cib_last_written: "2024-01-15T10:30:00Z",
+            inserted_at: "2024-01-15T09:00:00Z",
+            updated_at: "2024-01-15T10:30:00Z"
+          }
+        ]
       },
       struct?: false
     )

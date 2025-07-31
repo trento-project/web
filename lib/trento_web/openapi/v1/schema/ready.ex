@@ -10,6 +10,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Ready do
   OpenApiSpex.schema(
     %Schema{
       title: "Ready",
+      description: "Platform readiness status response.",
       type: :object,
       example: %{
         ready: true
@@ -17,7 +18,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Ready do
       additionalProperties: false,
       properties: %{
         ready: %Schema{
-          description: "Trento Web platform ready",
+          description: "Trento Web platform ready.",
           type: :boolean
         }
       }
