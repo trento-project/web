@@ -5,7 +5,7 @@
     "@babel/preset-env": "^7.28.0",
     "@babel/preset-react": "^7.27.1",
     "@faker-js/faker": "^9.4.0",
-    "@storybook/addon-docs": "^9.0.17",
+    "@storybook/addon-docs": "^9.1.0",
     "@storybook/addon-webpack5-compiler-babel": "^3.0.6",
     "@storybook/react": "^9.0.18",
     "@storybook/react-webpack5": "^9.0.5",
