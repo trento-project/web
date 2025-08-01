@@ -72,6 +72,14 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
           %{
             action: :activity_log_settings_update,
             expected_metadata: %{"foo" => "bar"}
+          },
+          %{
+            action: :saving_suma_settings,
+            expected_metadata: %{"foo" => "bar", correlation_id: @correlation_id}
+          },
+          %{
+            action: :changing_suma_settings,
+            expected_metadata: %{"foo" => "bar", correlation_id: @correlation_id}
           }
         ] do
       @scenario scenario
@@ -85,7 +93,8 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
         assert @scenario.expected_metadata ==
                  PhoenixConnParser.get_activity_metadata(@scenario.action, %Plug.Conn{
                    conn
-                   | body_params: request_body
+                   | body_params: request_body,
+                     assigns: %{correlation_id: @correlation_id}
                  })
       end
     end

@@ -21,98 +21,100 @@ defmodule Trento.HeartbeatsTest do
   for scenario <- [:with_correlation, :without_correlation] do
     @scenario scenario
 
-    test "create new heartbeat scenario: #{@scenario}" do
-      now = DateTime.utc_now()
-      agent_id = Faker.UUID.v4()
+    describe "#{@scenario}" do
+      test "create new heartbeat scenario: #{@scenario}" do
+        now = DateTime.utc_now()
+        agent_id = Faker.UUID.v4()
 
-      expect(
-        Trento.Support.DateService.Mock,
-        :utc_now,
-        fn -> now end
-      )
-
-      scenario_setup(@scenario, agent_id, :passing)
-
-      Heartbeats.heartbeat(agent_id, Trento.Support.DateService.Mock)
-
-      [heartbeat] = Repo.all(Heartbeat)
-
-      assert heartbeat.agent_id == agent_id
-      assert heartbeat.timestamp == now
-    end
-
-    test "update existing heartbeat scenario: #{@scenario}" do
-      %{id: agent_id} = insert(:host, heartbeat: :critical)
-      %{timestamp: now} = insert(:heartbeat, agent_id: agent_id)
-
-      updated_time =
-        DateTime.add(
-          now,
-          Application.get_env(:trento, Heartbeats)[:interval] + 1,
-          :millisecond
+        expect(
+          Trento.Support.DateService.Mock,
+          :utc_now,
+          fn -> now end
         )
 
-      expect(
-        Trento.Support.DateService.Mock,
-        :utc_now,
-        fn -> updated_time end
-      )
+        scenario_setup(@scenario, agent_id, :passing)
 
-      scenario_setup(@scenario, agent_id, :passing)
+        Heartbeats.heartbeat(agent_id, Trento.Support.DateService.Mock)
 
-      Heartbeats.heartbeat(agent_id, Trento.Support.DateService.Mock)
+        [heartbeat] = Repo.all(Heartbeat)
 
-      [heartbeat] = Repo.all(Heartbeat)
+        assert heartbeat.agent_id == agent_id
+        assert heartbeat.timestamp == now
+      end
 
-      assert heartbeat.timestamp == updated_time
-    end
+      test "update existing heartbeat scenario: #{@scenario}" do
+        %{id: agent_id} = insert(:host, heartbeat: :critical)
+        %{timestamp: now} = insert(:heartbeat, agent_id: agent_id)
 
-    test "dispatch commands on heartbeat expiration scenario:#{@scenario}" do
-      %{id: agent_id} = insert(:host, heartbeat: :passing)
-      %{timestamp: now} = insert(:heartbeat, agent_id: agent_id)
+        updated_time =
+          DateTime.add(
+            now,
+            Application.get_env(:trento, Heartbeats)[:interval] + 1,
+            :millisecond
+          )
 
-      expired_time =
-        DateTime.add(
-          now,
-          Application.get_env(:trento, Heartbeats)[:interval] + 1,
-          :millisecond
+        expect(
+          Trento.Support.DateService.Mock,
+          :utc_now,
+          fn -> updated_time end
         )
 
-      expect(
-        Trento.Support.DateService.Mock,
-        :utc_now,
-        fn -> expired_time end
-      )
+        scenario_setup(@scenario, agent_id, :passing)
 
-      scenario_setup(@scenario, agent_id, :critical)
-      Heartbeats.dispatch_heartbeat_failed_commands(Trento.Support.DateService.Mock)
-    end
+        Heartbeats.heartbeat(agent_id, Trento.Support.DateService.Mock)
 
-    test "filter deregistered hosts from heartbeat failed check scenario: #{@scenario}" do
-      %{id: agent_id} = insert(:host, heartbeat: :passing, deregistered_at: DateTime.utc_now())
-      %{timestamp: now} = insert(:heartbeat, agent_id: agent_id)
+        [heartbeat] = Repo.all(Heartbeat)
 
-      expired_time =
-        DateTime.add(
-          now,
-          Application.get_env(:trento, Heartbeats)[:interval] + 1,
-          :millisecond
+        assert heartbeat.timestamp == updated_time
+      end
+
+      test "dispatch commands on heartbeat expiration scenario:#{@scenario}" do
+        %{id: agent_id} = insert(:host, heartbeat: :passing)
+        %{timestamp: now} = insert(:heartbeat, agent_id: agent_id)
+
+        expired_time =
+          DateTime.add(
+            now,
+            Application.get_env(:trento, Heartbeats)[:interval] + 1,
+            :millisecond
+          )
+
+        expect(
+          Trento.Support.DateService.Mock,
+          :utc_now,
+          fn -> expired_time end
         )
 
-      expect(
-        Trento.Support.DateService.Mock,
-        :utc_now,
-        fn -> expired_time end
-      )
+        scenario_setup(@scenario, agent_id, :critical)
+        Heartbeats.dispatch_heartbeat_failed_commands(Trento.Support.DateService.Mock)
+      end
 
-      expect(
-        Trento.Commanded.Mock,
-        :dispatch,
-        0,
-        fn _ -> :ok end
-      )
+      test "filter deregistered hosts from heartbeat failed check scenario: #{@scenario}" do
+        %{id: agent_id} = insert(:host, heartbeat: :passing, deregistered_at: DateTime.utc_now())
+        %{timestamp: now} = insert(:heartbeat, agent_id: agent_id)
 
-      Heartbeats.dispatch_heartbeat_failed_commands(Trento.Support.DateService.Mock)
+        expired_time =
+          DateTime.add(
+            now,
+            Application.get_env(:trento, Heartbeats)[:interval] + 1,
+            :millisecond
+          )
+
+        expect(
+          Trento.Support.DateService.Mock,
+          :utc_now,
+          fn -> expired_time end
+        )
+
+        expect(
+          Trento.Commanded.Mock,
+          :dispatch,
+          0,
+          fn _ -> :ok end
+        )
+
+        Heartbeats.dispatch_heartbeat_failed_commands(Trento.Support.DateService.Mock)
+      end
     end
   end
 
