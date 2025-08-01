@@ -1213,7 +1213,7 @@ defmodule Trento.ClustersTest do
       end
     end
 
-    pacemaker_enablement_scenarios = [
+    host_operation_scenarios = [
       %{
         operation: :pacemaker_enable,
         expected_operator: "pacemakerenable@v1"
@@ -1221,17 +1221,25 @@ defmodule Trento.ClustersTest do
       %{
         operation: :pacemaker_disable,
         expected_operator: "pacemakerdisable@v1"
+      },
+      %{
+        operation: :cluster_host_start,
+        expected_operator: "crmclusterstart@v1"
+      },
+      %{
+        operation: :cluster_host_stop,
+        expected_operator: "crmclusterstop@v1"
       }
     ]
 
-    for %{operation: operation} = scenario <- pacemaker_enablement_scenarios do
-      @pacemaker_enablement_scenario scenario
+    for %{operation: operation} = scenario <- host_operation_scenarios do
+      @host_operation_scenarios scenario
 
       test "should request #{operation} operation" do
         %{
           operation: pacemaker_operation,
           expected_operator: expected_operator
-        } = @pacemaker_enablement_scenario
+        } = @host_operation_scenarios
 
         cluster_id = Faker.UUID.v4()
         host_id = Faker.UUID.v4()
@@ -1261,7 +1269,7 @@ defmodule Trento.ClustersTest do
       end
 
       test "should handle #{operation} messagging error" do
-        %{operation: pacemaker_operation} = @pacemaker_enablement_scenario
+        %{operation: host_operation} = @host_operation_scenarios
 
         expect(
           Trento.Infrastructure.Messaging.Adapter.Mock,
@@ -1274,7 +1282,7 @@ defmodule Trento.ClustersTest do
 
         assert {:error, :amqp_error} =
                  Clusters.request_host_operation(
-                   pacemaker_operation,
+                   host_operation,
                    Faker.UUID.v4(),
                    Faker.UUID.v4()
                  )
