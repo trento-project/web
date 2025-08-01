@@ -230,8 +230,6 @@ defmodule TrentoWeb.V1.ClusterController do
     end
   end
 
-  def get_operation_cluster(_), do: nil
-
   def get_operation(%{params: %{operation: "cluster_maintenance_change"}}),
     do: :cluster_maintenance_change
 
