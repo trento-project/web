@@ -458,6 +458,54 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
         |> assert_schema("Forbidden", api_spec)
       end
     end
+
+    test "should accept cluster_host_start operation for a valid host and the user is allowed" do
+      %{id: cluster_id} = insert(:cluster)
+
+      %{id: host_id} = insert(:host, cluster_id: cluster_id)
+
+      %{id: user_id} = insert(:user)
+
+      %{id: ability_id} = insert(:ability, name: "cluster_host_start", resource: "cluster")
+      insert(:users_abilities, user_id: user_id, ability_id: ability_id)
+
+      expect(
+        Trento.Infrastructure.Messaging.Adapter.Mock,
+        :publish,
+        fn OperationsPublisher, _, _ ->
+          :ok
+        end
+      )
+
+      build_conn()
+      |> put_req_header("content-type", "application/json")
+      |> post("/api/v1/clusters/#{cluster_id}/hosts/#{host_id}/operations/cluster_host_start")
+      |> json_response(:accepted)
+    end
+
+    test "should accept cluster_host_stop operation for a valid host and the user is allowed" do
+      %{id: cluster_id} = insert(:cluster)
+
+      %{id: host_id} = insert(:host, cluster_id: cluster_id)
+
+      %{id: user_id} = insert(:user)
+
+      %{id: ability_id} = insert(:ability, name: "cluster_host_stop", resource: "cluster")
+      insert(:users_abilities, user_id: user_id, ability_id: ability_id)
+
+      expect(
+        Trento.Infrastructure.Messaging.Adapter.Mock,
+        :publish,
+        fn OperationsPublisher, _, _ ->
+          :ok
+        end
+      )
+
+      build_conn()
+      |> put_req_header("content-type", "application/json")
+      |> post("/api/v1/clusters/#{cluster_id}/hosts/#{host_id}/operations/cluster_host_stop")
+      |> json_response(:accepted)
+    end
   end
 
   describe "forbidden response" do
