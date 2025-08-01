@@ -212,7 +212,12 @@ defmodule TrentoWeb.V1.ClusterController do
         assigns: %{operation: operation},
         params: %{id: id, host_id: host_id}
       })
-      when operation in [:pacemaker_enable, :pacemaker_disable] do
+      when operation in [
+             :pacemaker_enable,
+             :pacemaker_disable,
+             :cluster_host_start,
+             :cluster_host_stop
+           ] do
     id
     |> Clusters.get_cluster_by_id()
     |> Repo.preload(:hosts)
@@ -239,6 +244,12 @@ defmodule TrentoWeb.V1.ClusterController do
 
   def get_operation(%{params: %{operation: "pacemaker_disable"}}),
     do: :pacemaker_disable
+
+  def get_operation(%{params: %{operation: "cluster_host_start"}}),
+    do: :cluster_host_start
+
+  def get_operation(%{params: %{operation: "cluster_host_stop"}}),
+    do: :cluster_host_stop
 
   def get_operation(_), do: nil
 

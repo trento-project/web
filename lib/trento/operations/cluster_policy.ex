@@ -46,6 +46,9 @@ defmodule Trento.Operations.ClusterPolicy do
 
   def authorize_operation(:cluster_maintenance_change, _, _), do: :ok
 
+  def authorize_operation(:cluster_host_start, _, _), do: :ok
+  def authorize_operation(:cluster_host_stop, _, _), do: :ok
+
   def authorize_operation(
         operation,
         %ClusterReadModel{hosts: hosts},
