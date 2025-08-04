@@ -3,6 +3,8 @@ defmodule TrentoWeb.PageController do
 
   alias Trento.Settings
 
+  @version Mix.Project.config()[:version]
+
   def index(conn, _params) do
     check_service_base_url = Application.fetch_env!(:trento, :checks_service)[:base_url]
     charts_enabled = Application.fetch_env!(:trento, Trento.Charts)[:enabled]
@@ -13,7 +15,6 @@ defmodule TrentoWeb.PageController do
     analytics_key = Application.fetch_env!(:trento, :analytics)[:analytics_key]
     analytics_url = Application.fetch_env!(:trento, :analytics)[:analytics_url]
     operations_enabled = Application.fetch_env!(:trento, :operations_enabled)
-    version = Mix.Project.config()[:version]
 
     {sso_enabled, callback_url, login_url, enrollment_url} = sso_details(conn)
 
@@ -31,7 +32,7 @@ defmodule TrentoWeb.PageController do
       sso_callback_url: callback_url,
       sso_enrollment_url: enrollment_url,
       operations_enabled: operations_enabled,
-      version: version,
+      version: @version,
       layout: false
     )
   end
