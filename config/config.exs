@@ -269,6 +269,8 @@ config :trento, :activity_log, refresh_interval: 60_000
 
 config :trento, Trento.Repo, types: Trento.Postgrex.Types
 
+config :trento, correlations: Trento.ActivityLog.Correlations.UnscopedCorrelations
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"

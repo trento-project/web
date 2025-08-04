@@ -171,6 +171,13 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
   end
 
   describe "SuseManagerSettings" do
+    setup do
+      correlation_id = UUID.uuid4()
+      key = UUID.uuid4()
+      Process.put(:correlation_key, key)
+      Trento.ActivityLog.put_correlation_id(key, correlation_id)
+    end
+
     test "should return user settings", %{conn: conn, api_spec: api_spec} do
       insert_software_updates_settings(
         ca_cert: build(:self_signed_certificate),
