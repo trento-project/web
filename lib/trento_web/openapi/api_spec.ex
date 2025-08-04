@@ -40,7 +40,7 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
           info: %Info{
             title: "Trento",
             description: to_string(Application.spec(:trento, :description)),
-            version: to_string(Application.spec(:trento, :vsn)) <> "-" <> unquote(api_version),
+            version: to_string(Application.spec(:trento, :vsn)) <> "-" <> unquote(api_version)
           },
           components: %Components{
             securitySchemes: %{"authorization" => %SecurityScheme{type: "http", scheme: "bearer"}}
@@ -94,7 +94,9 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
             # When generating specific version, exclude unversioned and other versions
             true ->
               excluded_versions = List.delete(router.available_api_versions(), version)
-              current_version in excluded_versions or current_version not in router.available_api_versions()
+
+              current_version in excluded_versions or
+                current_version not in router.available_api_versions()
           end
         end)
         |> Map.new()
