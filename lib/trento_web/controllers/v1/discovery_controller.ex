@@ -17,11 +17,13 @@ defmodule TrentoWeb.V1.DiscoveryController do
       "This endpoint is used by the agents to collect data from the target infrastructure.",
     request_body: {"Discovery Event.", "application/json", Schema.DiscoveryEvent},
     responses: [
-      accepted: {"The discovery has been accepted and the event is being processed.", "application/json", %OpenApiSpex.Schema{
-        type: :object,
-        properties: %{},
-        example: %{}
-      }},
+      accepted:
+        {"The discovery has been accepted and the event is being processed.", "application/json",
+         %OpenApiSpex.Schema{
+           type: :object,
+           properties: %{},
+           example: %{}
+         }},
       unprocessable_entity: UnprocessableEntity.response()
     ]
 

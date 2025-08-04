@@ -12,7 +12,11 @@ defmodule TrentoWeb.OpenApi.V1.Schema.DiscoveryEvent do
       type: :object,
       additionalProperties: false,
       properties: %{
-        agent_id: %Schema{type: :string, format: :uuid, example: "123e4567-e89b-12d3-a456-426614174000"},
+        agent_id: %Schema{
+          type: :string,
+          format: :uuid,
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        },
         discovery_type: %Schema{type: :string, example: "host_discovery"},
         payload: %Schema{
           oneOf: [%Schema{type: :object}, %Schema{type: :array, items: %Schema{type: :object}}]

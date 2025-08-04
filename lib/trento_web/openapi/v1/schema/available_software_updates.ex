@@ -19,7 +19,11 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
           from_epoch: %Schema{type: :string, description: "From epoch.", example: "0"},
           from_release: %Schema{type: :string, description: "From which release.", example: "1.1"},
           from_version: %Schema{type: :string, description: "From version.", example: "1.0.0"},
-          name: %Schema{type: :string, description: "Upgradable package name.", example: "openssl"},
+          name: %Schema{
+            type: :string,
+            description: "Upgradable package name.",
+            example: "openssl"
+          },
           to_epoch: %Schema{type: :string, description: "To epoch.", example: "0"},
           to_package_id: %Schema{type: :integer, description: "To package id.", example: 5678},
           to_release: %Schema{type: :string, description: "To release.", example: "1.2"},
@@ -51,9 +55,21 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
         additionalProperties: false,
         properties: %{
           id: %Schema{type: :integer, description: "Advisory's id.", example: 1234},
-          advisory_name: %Schema{type: :string, description: "Advisory name.", example: "SUSE-SU-2024:0001-1"},
-          advisory_status: %Schema{type: :string, description: "Advisory status.", example: "stable"},
-          advisory_synopsis: %Schema{type: :string, description: "Advisory's synopsis.", example: "Critical security update for OpenSSL"},
+          advisory_name: %Schema{
+            type: :string,
+            description: "Advisory name.",
+            example: "SUSE-SU-2024:0001-1"
+          },
+          advisory_status: %Schema{
+            type: :string,
+            description: "Advisory status.",
+            example: "stable"
+          },
+          advisory_synopsis: %Schema{
+            type: :string,
+            description: "Advisory's synopsis.",
+            example: "Critical security update for OpenSSL"
+          },
           advisory_type: %Schema{
             type: :string,
             description: "Advisory's type.",
@@ -61,7 +77,11 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
             example: "security_advisory"
           },
           date: %Schema{type: :string, description: "Advisory's date.", example: "2024-01-15"},
-          update_date: %Schema{type: :string, description: "Advisory's update date.", example: "2024-01-15"}
+          update_date: %Schema{
+            type: :string,
+            description: "Advisory's update date.",
+            example: "2024-01-15"
+          }
         },
         example: %{
           id: 1234,
@@ -477,7 +497,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
             product: "SUSE Linux Enterprise Server 15 SP4",
             errata_from: "SUSE Security Team",
             topic: "Security update",
-            description: "This update fixes several security vulnerabilities in the Linux kernel.",
+            description:
+              "This update fixes several security vulnerabilities in the Linux kernel.",
             references: "https://www.suse.com/security/cve/CVE-2024-12345.html",
             notes: "Please reboot after installation",
             solution: "Install the updated packages",

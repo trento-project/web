@@ -92,7 +92,8 @@ defmodule TrentoWeb.V1.SettingsController do
     request_body:
       {"ActivityLogSettings.", "application/json", Schema.Platform.ActivityLogSettings},
     responses: [
-      ok: {"Activity Log settings saved successfully.", "application/json",
+      ok:
+        {"Activity Log settings saved successfully.", "application/json",
          Schema.Platform.ActivityLogSettings},
       unprocessable_entity: Schema.UnprocessableEntity.response()
     ]
@@ -117,7 +118,8 @@ defmodule TrentoWeb.V1.SettingsController do
     description: "Fetches the settings for the Activity Log, such as retention period.",
     tags: ["Settings"],
     responses: [
-      ok: {"Activity Log settings fetched successfully.", "application/json",
+      ok:
+        {"Activity Log settings fetched successfully.", "application/json",
          Schema.Platform.ActivityLogSettings},
       not_found: Schema.NotFound.response()
     ]
@@ -134,7 +136,8 @@ defmodule TrentoWeb.V1.SettingsController do
     tags: ["Settings"],
     description: "Gets the saved settings for Suse Manager.",
     responses: [
-      ok: {"The Suse Manager credentials.", "application/json", Schema.Platform.SuseManagerSettings},
+      ok:
+        {"The Suse Manager credentials.", "application/json", Schema.Platform.SuseManagerSettings},
       not_found: Schema.NotFound.response()
     ]
 
@@ -153,7 +156,8 @@ defmodule TrentoWeb.V1.SettingsController do
       {"SaveSuseManagerSettingsRequest.", "application/json",
        Schema.Platform.SaveSuseManagerSettingsRequest},
     responses: [
-      created: {"Settings saved successfully.", "application/json", Schema.Platform.SuseManagerSettings},
+      created:
+        {"Settings saved successfully.", "application/json", Schema.Platform.SuseManagerSettings},
       unprocessable_entity: Schema.UnprocessableEntity.response()
     ]
 
@@ -176,7 +180,8 @@ defmodule TrentoWeb.V1.SettingsController do
       {"UpdateSuseManagerSettingsRequest.", "application/json",
        Schema.Platform.UpdateSuseManagerSettingsRequest},
     responses: [
-      ok: {"Settings saved successfully.", "application/json", Schema.Platform.SuseManagerSettings},
+      ok:
+        {"Settings saved successfully.", "application/json", Schema.Platform.SuseManagerSettings},
       unprocessable_entity: Schema.UnprocessableEntity.response()
     ]
 
@@ -199,7 +204,8 @@ defmodule TrentoWeb.V1.SettingsController do
       {"UpdateSuseManagerSettingsRequest.", "application/json",
        Schema.Platform.UpdateSuseManagerSettingsRequest},
     responses: [
-      ok: {"Settings saved successfully.", "application/json", Schema.Platform.SuseManagerSettings},
+      ok:
+        {"Settings saved successfully.", "application/json", Schema.Platform.SuseManagerSettings},
       unprocessable_entity: Schema.UnprocessableEntity.response()
     ]
 
@@ -226,7 +232,8 @@ defmodule TrentoWeb.V1.SettingsController do
     description: "Tests connection with Suse manager with the saved settings.",
     responses: [
       ok: "The connection with Suse manager was successful.",
-      unprocessable_entity: {"The connection with Suse Manager failed.", "application/json",
+      unprocessable_entity:
+        {"The connection with Suse Manager failed.", "application/json",
          Schema.UnprocessableEntity}
     ]
 
@@ -279,7 +286,8 @@ defmodule TrentoWeb.V1.SettingsController do
       {"Request body for setting alerting settings.", "application/json",
        Schema.Platform.CreateAlertingSettings},
     responses: [
-      created: {"Alerting settings successfully modified.", "application/json",
+      created:
+        {"Alerting settings successfully modified.", "application/json",
          Schema.Platform.AlertingSettings},
       unauthorized: Schema.Unauthorized.response(),
       forbidden: Schema.Forbidden.response(),
@@ -305,7 +313,8 @@ defmodule TrentoWeb.V1.SettingsController do
       {"Request body for updating alerting settings.", "application/json",
        Schema.Platform.UpdateAlertingSettings},
     responses: [
-      ok: {"Alerting settings successfully modified.", "application/json",
+      ok:
+        {"Alerting settings successfully modified.", "application/json",
          Schema.Platform.AlertingSettings},
       unauthorized: Schema.Unauthorized.response(),
       forbidden: Schema.Forbidden.response(),

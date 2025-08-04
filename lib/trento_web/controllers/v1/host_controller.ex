@@ -51,7 +51,8 @@ defmodule TrentoWeb.V1.HostController do
     summary: "List hosts.",
     description: "List all the discovered hosts on the target infrastructure.",
     responses: [
-      ok: {"A collection of the discovered hosts.", "application/json", Schema.Host.HostsCollection}
+      ok:
+        {"A collection of the discovered hosts.", "application/json", Schema.Host.HostsCollection}
     ]
 
   @spec list(Plug.Conn.t(), map) :: Plug.Conn.t()
@@ -107,11 +108,13 @@ defmodule TrentoWeb.V1.HostController do
       ]
     ],
     responses: [
-      no_content: {"The heartbeat has been updated.", "application/json", %OpenApiSpex.Schema{
-        type: :object,
-        properties: %{},
-        example: %{}
-      }},
+      no_content:
+        {"The heartbeat has been updated.", "application/json",
+         %OpenApiSpex.Schema{
+           type: :object,
+           properties: %{},
+           example: %{}
+         }},
       not_found: NotFound.response(),
       bad_request: BadRequest.response(),
       unprocessable_entity: UnprocessableEntity.response()
@@ -141,11 +144,13 @@ defmodule TrentoWeb.V1.HostController do
     ],
     request_body: {"Checks Selection.", "application/json", Schema.Checks.ChecksSelectionRequest},
     responses: [
-      accepted: {"The Selection has been successfully collected.", "application/json", %OpenApiSpex.Schema{
-        type: :object,
-        properties: %{},
-        example: %{}
-      }},
+      accepted:
+        {"The Selection has been successfully collected.", "application/json",
+         %OpenApiSpex.Schema{
+           type: :object,
+           properties: %{},
+           example: %{}
+         }},
       not_found: NotFound.response(),
       unprocessable_entity: UnprocessableEntity.response()
     ]

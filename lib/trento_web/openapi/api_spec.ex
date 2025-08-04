@@ -22,7 +22,7 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
         Components,
         Info,
         License,
-      Contact,
+        Contact,
         OpenApi,
         Paths,
         SecurityScheme,
@@ -54,54 +54,60 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
             }
           },
           components: %Components{
-            securitySchemes: %{"authorization" => %SecurityScheme{type: "http", scheme: "bearer", description: "Bearer token authentication"}}
+            securitySchemes: %{
+              "authorization" => %SecurityScheme{
+                type: "http",
+                scheme: "bearer",
+                description: "Bearer token authentication"
+              }
+            }
           },
           security: [%{"authorization" => []}],
           paths: build_paths_for_version(unquote(api_version), router),
           tags: [
             %Tag{
               name: "Agent",
-            description: "Agent communication and data collection."
+              description: "Agent communication and data collection."
             },
             %Tag{
               name: "Auth",
-            description: "Authentication and session management."
+              description: "Authentication and session management."
             },
             %Tag{
               name: "Charts",
-            description: "Host monitoring and performance charts."
+              description: "Host monitoring and performance charts."
             },
             %Tag{
               name: "Checks",
-            description: "Providing Checks related feature."
+              description: "Providing Checks related feature."
             },
             %Tag{
               name: "Operations",
-            description: "SAP system and infrastructure operations."
+              description: "SAP system and infrastructure operations."
             },
             %Tag{
               name: "Platform",
-            description: "Providing access to Trento Platform features."
+              description: "Providing access to Trento Platform features."
             },
             %Tag{
               name: "Profile",
-            description: "User profile and personal settings."
+              description: "User profile and personal settings."
             },
             %Tag{
               name: "Settings",
-            description: "Platform configuration and settings management."
+              description: "Platform configuration and settings management."
             },
             %Tag{
               name: "Tags",
-            description: "Resource tagging and organization."
+              description: "Resource tagging and organization."
             },
             %Tag{
               name: "Target Infrastructure",
-            description: "Providing access to the discovered target infrastructure."
+              description: "Providing access to the discovered target infrastructure."
             },
             %Tag{
               name: "User Management",
-            description: "User account and permissions management."
+              description: "User account and permissions management."
             }
           ]
         })
@@ -115,7 +121,10 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
           # If the endpoint is not running, use a placeholder
           # this happens when generarting openapi.json with --start-app=false
           # e.g. mix openapi.spec.json --start-app=false --spec WandaWeb.ApiSpec
-          %OpenApiSpex.Server{url: "https://demo.trento-project.io", description: "Trento demo server."}
+          %OpenApiSpex.Server{
+            url: "https://demo.trento-project.io",
+            description: "Trento demo server."
+          }
         end
       end
 
@@ -137,7 +146,9 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
             # When generating specific version, exclude unversioned and other versions
             true ->
               excluded_versions = List.delete(router.available_api_versions(), version)
-              current_version in excluded_versions or current_version not in router.available_api_versions()
+
+              current_version in excluded_versions or
+                current_version not in router.available_api_versions()
           end
         end)
         |> Map.new()

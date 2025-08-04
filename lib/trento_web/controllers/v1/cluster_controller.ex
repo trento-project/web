@@ -47,7 +47,8 @@ defmodule TrentoWeb.V1.ClusterController do
     tags: ["Target Infrastructure"],
     description: "List all the discovered Pacemaker Clusters on the target infrastructure.",
     responses: [
-      ok: {"A collection of the discovered Pacemaker Clusters.", "application/json",
+      ok:
+        {"A collection of the discovered Pacemaker Clusters.", "application/json",
          Cluster.PacemakerClustersCollection}
     ]
 
@@ -74,11 +75,14 @@ defmodule TrentoWeb.V1.ClusterController do
       ]
     ],
     responses: [
-      accepted: {"The Command has been accepted and the Requested Cluster execution is scheduled.", "application/json", %OpenApiSpex.Schema{
-        type: :object,
-        properties: %{},
-        example: %{}
-      }},
+      accepted:
+        {"The Command has been accepted and the Requested Cluster execution is scheduled.",
+         "application/json",
+         %OpenApiSpex.Schema{
+           type: :object,
+           properties: %{},
+           example: %{}
+         }},
       not_found: NotFound.response(),
       bad_request: BadRequest.response(),
       unprocessable_entity: UnprocessableEntity.response()
@@ -110,11 +114,13 @@ defmodule TrentoWeb.V1.ClusterController do
     ],
     request_body: {"Checks Selection.", "application/json", Checks.ChecksSelectionRequest},
     responses: [
-      accepted: {"The Selection has been successfully collected.", "application/json", %OpenApiSpex.Schema{
-        type: :object,
-        properties: %{},
-        example: %{}
-      }},
+      accepted:
+        {"The Selection has been successfully collected.", "application/json",
+         %OpenApiSpex.Schema{
+           type: :object,
+           properties: %{},
+           example: %{}
+         }},
       not_found: NotFound.response(),
       bad_request: BadRequest.response(),
       unprocessable_entity: UnprocessableEntity.response()

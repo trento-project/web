@@ -16,7 +16,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.PreconditionFailed do
       example: %{
         errors: [
           %{
-            detail: "Mid-air collision detected, please refresh the resource you are trying to update.",
+            detail:
+              "Mid-air collision detected, please refresh the resource you are trying to update.",
             title: "Precondition Failed"
           }
         ]
@@ -26,7 +27,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.PreconditionFailed do
           type: :array,
           example: [
             %{
-              detail: "Mid-air collision detected, please refresh the resource you are trying to update.",
+              detail:
+                "Mid-air collision detected, please refresh the resource you are trying to update.",
               title: "Precondition Failed"
             }
           ],

@@ -47,7 +47,8 @@ defmodule TrentoWeb.SessionController do
          }
        }},
     responses: [
-      ok: {"User credentials.", "application/json",
+      ok:
+        {"User credentials.", "application/json",
          %OpenApiSpex.Schema{
            description: "User authentication credentials with tokens.",
            type: :object,
@@ -116,7 +117,8 @@ defmodule TrentoWeb.SessionController do
          }
        }},
     responses: [
-      ok: {"User refreshed credentials.", "application/json",
+      ok:
+        {"User refreshed credentials.", "application/json",
          %OpenApiSpex.Schema{
            description: "Refreshed authentication credentials with new tokens.",
            type: :object,
@@ -182,12 +184,13 @@ defmodule TrentoWeb.SessionController do
         in: :path,
         description: "Identity provider name.",
         schema: %OpenApiSpex.Schema{type: :string, example: "oauth2_local"},
-        required: true,
+        required: true
       ]
     ],
     responses: [
       unauthorized: Schema.Unauthorized.response(),
-      ok: {"User IDP credentials.", "application/json",
+      ok:
+        {"User IDP credentials.", "application/json",
          %OpenApiSpex.Schema{
            description: "User identity provider credentials with access tokens.",
            type: :object,
@@ -249,7 +252,8 @@ defmodule TrentoWeb.SessionController do
     responses: [
       unauthorized: Schema.Unauthorized.response(),
       unprocessable_entity: Schema.UnprocessableEntity.response(),
-      ok: {"User IDP credentials.", "application/json",
+      ok:
+        {"User IDP credentials.", "application/json",
          %OpenApiSpex.Schema{
            description: "User identity provider credentials with access tokens.",
            type: :object,

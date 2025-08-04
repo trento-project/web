@@ -55,7 +55,8 @@ defmodule TrentoWeb.V1.SapSystemController do
     description: "List all the discovered SAP Systems on the target infrastructure.",
     tags: ["Target Infrastructure"],
     responses: [
-      ok: {"A collection of the discovered SAP Systems.", "application/json",
+      ok:
+        {"A collection of the discovered SAP Systems.", "application/json",
          Schema.SAPSystem.SAPSystemsCollection}
     ]
 

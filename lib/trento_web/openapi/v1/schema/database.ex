@@ -157,13 +157,23 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Database do
         type: :object,
         additionalProperties: false,
         properties: %{
-          id: %Schema{type: :string, description: "Database ID.", format: :uuid, example: "9c86eb74-dd68-4c91-b4d1-4f9d91f2c2c8"},
+          id: %Schema{
+            type: :string,
+            description: "Database ID.",
+            format: :uuid,
+            example: "9c86eb74-dd68-4c91-b4d1-4f9d91f2c2c8"
+          },
           sid: %Schema{type: :string, description: "SID.", example: "HA1"},
           health: ResourceHealth,
           database_instances: DatabaseInstances,
           tags: Tags,
           inserted_at: %Schema{type: :string, format: :datetime, example: "2024-01-15T10:30:00Z"},
-          updated_at: %Schema{type: :string, format: :datetime, nullable: true, example: "2024-01-15T12:30:00Z"}
+          updated_at: %Schema{
+            type: :string,
+            format: :datetime,
+            nullable: true,
+            example: "2024-01-15T12:30:00Z"
+          }
         },
         example: %{
           id: "9c86eb74-dd68-4c91-b4d1-4f9d91f2c2c8",

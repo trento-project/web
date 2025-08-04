@@ -29,7 +29,8 @@ defmodule TrentoWeb.V1.DatabaseController do
     summary: "List HANA Databases.",
     description: "List all the discovered HANA Databases on the target infrastructure.",
     responses: [
-      ok: {"A collection of the discovered HANA Databases.", "application/json",
+      ok:
+        {"A collection of the discovered HANA Databases.", "application/json",
          Schema.Database.DatabasesCollection}
     ]
 

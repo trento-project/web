@@ -128,36 +128,36 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Chart do
           ram_total: %{
             label: "Total RAM",
             series: [
-              %{timestamp: "2024-01-15T10:00:00Z", value: 16777216000},
-              %{timestamp: "2024-01-15T10:01:00Z", value: 16777216000}
+              %{timestamp: "2024-01-15T10:00:00Z", value: 16_777_216_000},
+              %{timestamp: "2024-01-15T10:01:00Z", value: 16_777_216_000}
             ]
           },
           ram_cache_and_buffer: %{
             label: "Cache and Buffer",
             series: [
-              %{timestamp: "2024-01-15T10:00:00Z", value: 2147483648},
-              %{timestamp: "2024-01-15T10:01:00Z", value: 2147483648}
+              %{timestamp: "2024-01-15T10:00:00Z", value: 2_147_483_648},
+              %{timestamp: "2024-01-15T10:01:00Z", value: 2_147_483_648}
             ]
           },
           ram_free: %{
             label: "Free RAM",
             series: [
-              %{timestamp: "2024-01-15T10:00:00Z", value: 4294967296},
-              %{timestamp: "2024-01-15T10:01:00Z", value: 4194967296}
+              %{timestamp: "2024-01-15T10:00:00Z", value: 4_294_967_296},
+              %{timestamp: "2024-01-15T10:01:00Z", value: 4_194_967_296}
             ]
           },
           ram_used: %{
             label: "Used RAM",
             series: [
-              %{timestamp: "2024-01-15T10:00:00Z", value: 10485760000},
-              %{timestamp: "2024-01-15T10:01:00Z", value: 10585760000}
+              %{timestamp: "2024-01-15T10:00:00Z", value: 10_485_760_000},
+              %{timestamp: "2024-01-15T10:01:00Z", value: 10_585_760_000}
             ]
           },
           swap_used: %{
             label: "Used Swap",
             series: [
-              %{timestamp: "2024-01-15T10:00:00Z", value: 1073741824},
-              %{timestamp: "2024-01-15T10:01:00Z", value: 1073741824}
+              %{timestamp: "2024-01-15T10:00:00Z", value: 1_073_741_824},
+              %{timestamp: "2024-01-15T10:01:00Z", value: 1_073_741_824}
             ]
           }
         },

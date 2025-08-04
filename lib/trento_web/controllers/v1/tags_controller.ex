@@ -20,7 +20,7 @@ defmodule TrentoWeb.V1.TagsController do
   action_fallback TrentoWeb.FallbackController
   plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
 
-    operation :add_tag_to_host,
+  operation :add_tag_to_host,
     summary: "Add tag to host.",
     tags: ["Tags"],
     description: "Add a tag to a host.",
@@ -45,11 +45,13 @@ defmodule TrentoWeb.V1.TagsController do
          }
        }},
     responses: [
-      created: {"The tag has been added to the host.", "application/json", %OpenApiSpex.Schema{
-        type: :object,
-        properties: %{},
-        example: %{}
-      }},
+      created:
+        {"The tag has been added to the host.", "application/json",
+         %OpenApiSpex.Schema{
+           type: :object,
+           properties: %{},
+           example: %{}
+         }},
       bad_request: Schema.BadRequest.response(),
       unprocessable_entity: UnprocessableEntity.response()
     ]
@@ -85,11 +87,13 @@ defmodule TrentoWeb.V1.TagsController do
          }
        }},
     responses: [
-      created: {"The tag has been added to the cluster.", "application/json", %OpenApiSpex.Schema{
-        type: :object,
-        properties: %{},
-        example: %{}
-      }},
+      created:
+        {"The tag has been added to the cluster.", "application/json",
+         %OpenApiSpex.Schema{
+           type: :object,
+           properties: %{},
+           example: %{}
+         }},
       bad_request: Schema.BadRequest.response(),
       unprocessable_entity: UnprocessableEntity.response()
     ]
@@ -119,11 +123,13 @@ defmodule TrentoWeb.V1.TagsController do
          }
        }},
     responses: [
-      created: {"The tag has been added to the SAP system.", "application/json", %OpenApiSpex.Schema{
-        type: :object,
-        properties: %{},
-        example: %{}
-      }},
+      created:
+        {"The tag has been added to the SAP system.", "application/json",
+         %OpenApiSpex.Schema{
+           type: :object,
+           properties: %{},
+           example: %{}
+         }},
       bad_request: Schema.BadRequest.response(),
       unprocessable_entity: UnprocessableEntity.response()
     ]
@@ -153,11 +159,13 @@ defmodule TrentoWeb.V1.TagsController do
          }
        }},
     responses: [
-      created: {"The tag has been added to the database.", "application/json", %OpenApiSpex.Schema{
-        type: :object,
-        properties: %{},
-        example: %{}
-      }},
+      created:
+        {"The tag has been added to the database.", "application/json",
+         %OpenApiSpex.Schema{
+           type: :object,
+           properties: %{},
+           example: %{}
+         }},
       bad_request: Schema.BadRequest.response(),
       unprocessable_entity: UnprocessableEntity.response()
     ]
@@ -210,11 +218,13 @@ defmodule TrentoWeb.V1.TagsController do
       ]
     ],
     responses: [
-      no_content: {"The tag has been removed from the host.", "application/json", %OpenApiSpex.Schema{
-        type: :object,
-        properties: %{},
-        example: %{}
-      }},
+      no_content:
+        {"The tag has been removed from the host.", "application/json",
+         %OpenApiSpex.Schema{
+           type: :object,
+           properties: %{},
+           example: %{}
+         }},
       bad_request: Schema.BadRequest.response(),
       unprocessable_entity: UnprocessableEntity.response(),
       not_found: NotFound.response()
@@ -246,11 +256,13 @@ defmodule TrentoWeb.V1.TagsController do
       ]
     ],
     responses: [
-      no_content: {"The tag has been removed from the cluster.", "application/json", %OpenApiSpex.Schema{
-        type: :object,
-        properties: %{},
-        example: %{}
-      }},
+      no_content:
+        {"The tag has been removed from the cluster.", "application/json",
+         %OpenApiSpex.Schema{
+           type: :object,
+           properties: %{},
+           example: %{}
+         }},
       bad_request: Schema.BadRequest.response(),
       unprocessable_entity: UnprocessableEntity.response(),
       not_found: NotFound.response()

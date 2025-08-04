@@ -96,7 +96,8 @@ defmodule TrentoWeb.V1.ActivityLogController do
       ]
     ],
     responses: [
-      ok: {"Activity Log settings fetched successfully.", "application/json",
+      ok:
+        {"Activity Log settings fetched successfully.", "application/json",
          Schema.ActivityLog.ActivityLog}
     ]
 

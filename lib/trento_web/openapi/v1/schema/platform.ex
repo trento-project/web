@@ -94,7 +94,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
           },
           sles_subscriptions: %Schema{
             type: :integer,
-            description: "The number of SLES Subscription discovered on the target infrastructure."
+            description:
+              "The number of SLES Subscription discovered on the target infrastructure."
           }
         }
       },
@@ -183,7 +184,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
           },
           ca_cert: %Schema{
             type: :string,
-            example: "-----BEGIN CERTIFICATE-----\nMIIDXTCCAkWgAwIBAgIJAKoK/heBjcOuMA0GCSqGSIb3DQEBBQUAMEUxCzAJBgNV\n...\n-----END CERTIFICATE-----"
+            example:
+              "-----BEGIN CERTIFICATE-----\nMIIDXTCCAkWgAwIBAgIJAKoK/heBjcOuMA0GCSqGSIb3DQEBBQUAMEUxCzAJBgNV\n...\n-----END CERTIFICATE-----"
           }
         },
         required: [:url, :username, :password],
@@ -191,7 +193,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
           url: "https://suse-manager.example.com",
           username: "admin",
           password: "secretpassword",
-          ca_cert: "-----BEGIN CERTIFICATE-----\nMIIDXTCCAkWgAwIBAgIJAKoK/heBjcOuMA0GCSqGSIb3DQEBBQUAMEUxCzAJBgNV\n...\n-----END CERTIFICATE-----"
+          ca_cert:
+            "-----BEGIN CERTIFICATE-----\nMIIDXTCCAkWgAwIBAgIJAKoK/heBjcOuMA0GCSqGSIb3DQEBBQUAMEUxCzAJBgNV\n...\n-----END CERTIFICATE-----"
         }
       },
       struct?: false
@@ -225,7 +228,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
           ca_cert: %Schema{
             type: :string,
             nullable: true,
-            example: "-----BEGIN CERTIFICATE-----\nMIIDXTCCAkWgAwIBAgIJAKoK/heBjcOuMA0GCSqGSIb3DQEBBQUAMEUxCzAJBgNV\n...\n-----END CERTIFICATE-----"
+            example:
+              "-----BEGIN CERTIFICATE-----\nMIIDXTCCAkWgAwIBAgIJAKoK/heBjcOuMA0GCSqGSIb3DQEBBQUAMEUxCzAJBgNV\n...\n-----END CERTIFICATE-----"
           }
         },
         example: %{

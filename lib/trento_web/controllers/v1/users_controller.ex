@@ -74,7 +74,8 @@ defmodule TrentoWeb.V1.UsersController do
       ]
     ],
     responses: [
-      ok: {"UserItem.", "application/json", UserItem,
+      ok:
+        {"UserItem.", "application/json", UserItem,
          headers: %{
            etag: %{
              required: true,
@@ -115,7 +116,8 @@ defmodule TrentoWeb.V1.UsersController do
     ],
     request_body: {"UserUpdateRequest.", "application/json", UserUpdateRequest},
     responses: [
-      created: {"User updated successfully.", "application/json", UserItem,
+      created:
+        {"User updated successfully.", "application/json", UserItem,
          headers: %{
            etag: %{
              required: true,

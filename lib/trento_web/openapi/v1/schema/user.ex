@@ -16,7 +16,12 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
         type: :object,
         additionalProperties: false,
         properties: %{
-          secret: %Schema{type: :string, description: "TOTP secret.", nullable: false, example: "JBSWY3DPEHPK3PXP"},
+          secret: %Schema{
+            type: :string,
+            description: "TOTP secret.",
+            nullable: false,
+            example: "JBSWY3DPEHPK3PXP"
+          },
           secret_qr_encoded: %Schema{
             type: :string,
             description: "TOTP secret qr encoded.",
@@ -27,7 +32,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
         required: [:secret, :secret_qr_encoded],
         example: %{
           secret: "JBSWY3DPEHPK3PXP",
-          secret_qr_encoded: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAYAAAA+s9J6AAA..."
+          secret_qr_encoded:
+            "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAYAAAA+s9J6AAA..."
         }
       },
       struct?: false
@@ -98,8 +104,18 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
         additionalProperties: false,
         properties: %{
           id: %Schema{type: :integer, description: "User ID.", nullable: false, example: 1},
-          fullname: %Schema{type: :string, description: "User full name.", nullable: false, example: "John Doe"},
-          username: %Schema{type: :string, description: "User username.", nullable: false, example: "jdoe"},
+          fullname: %Schema{
+            type: :string,
+            description: "User full name.",
+            nullable: false,
+            example: "John Doe"
+          },
+          username: %Schema{
+            type: :string,
+            description: "User username.",
+            nullable: false,
+            example: "jdoe"
+          },
           email: %Schema{
             type: :string,
             description: "User email.",
@@ -176,7 +192,12 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
         additionalProperties: false,
         type: :object,
         properties: %{
-          fullname: %Schema{type: :string, description: "User full name.", nullable: false, example: "John Updated Doe"},
+          fullname: %Schema{
+            type: :string,
+            description: "User full name.",
+            nullable: false,
+            example: "John Updated Doe"
+          },
           email: %Schema{
             type: :string,
             description: "User email.",
@@ -184,7 +205,12 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
             format: :email,
             example: "updated.email@example.com"
           },
-          password: %Schema{type: :string, description: "User new password.", nullable: false, example: "new_secure_password123"},
+          password: %Schema{
+            type: :string,
+            description: "User new password.",
+            nullable: false,
+            example: "new_secure_password123"
+          },
           current_password: %Schema{
             type: :string,
             description: "User current password, used to set a new password.",
@@ -236,7 +262,12 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
           abilities: []
         },
         properties: %{
-          fullname: %Schema{type: :string, description: "User full name.", nullable: false, example: "New User"},
+          fullname: %Schema{
+            type: :string,
+            description: "User full name.",
+            nullable: false,
+            example: "New User"
+          },
           email: %Schema{
             type: :string,
             description: "User email.",
@@ -244,14 +275,24 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
             format: :email,
             example: "new.user@example.com"
           },
-          username: %Schema{type: :string, description: "User username.", nullable: false, example: "john.doe"},
+          username: %Schema{
+            type: :string,
+            description: "User username.",
+            nullable: false,
+            example: "john.doe"
+          },
           enabled: %Schema{
             type: :boolean,
             description: "User enabled in the system.",
             nullable: false,
             example: true
           },
-          password: %Schema{type: :string, description: "User new password.", nullable: false, example: "secure_password"},
+          password: %Schema{
+            type: :string,
+            description: "User new password.",
+            nullable: false,
+            example: "secure_password"
+          },
           password_confirmation: %Schema{
             type: :string,
             description: "User new password, should be the same as password field.",
@@ -276,7 +317,12 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
         type: :object,
         additionalProperties: false,
         properties: %{
-          fullname: %Schema{type: :string, description: "User full name.", nullable: false, example: "Admin User"},
+          fullname: %Schema{
+            type: :string,
+            description: "User full name.",
+            nullable: false,
+            example: "Admin User"
+          },
           email: %Schema{
             type: :string,
             description: "User email.",
@@ -290,7 +336,12 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
             nullable: false,
             example: true
           },
-          password: %Schema{type: :string, description: "User new password.", nullable: false, example: "new_secure_password123"},
+          password: %Schema{
+            type: :string,
+            description: "User new password.",
+            nullable: false,
+            example: "new_secure_password123"
+          },
           password_confirmation: %Schema{
             type: :string,
             description: "User new password, should be the same as password field.",
@@ -341,7 +392,12 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
         additionalProperties: false,
         properties: %{
           id: %Schema{type: :integer, description: "User ID.", nullable: false},
-          fullname: %Schema{type: :string, description: "User full name.", nullable: false, example: "User Item"},
+          fullname: %Schema{
+            type: :string,
+            description: "User full name.",
+            nullable: false,
+            example: "User Item"
+          },
           username: %Schema{type: :string, description: "User username.", nullable: false},
           email: %Schema{
             type: :string,

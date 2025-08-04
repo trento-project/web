@@ -16,7 +16,12 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ChecksCatalog do
         type: :object,
         additionalProperties: false,
         properties: %{
-          id: %Schema{type: :string, description: "Check ID.", format: :uuid, example: "123e4567-e89b-12d3-a456-426614174000"},
+          id: %Schema{
+            type: :string,
+            description: "Check ID.",
+            format: :uuid,
+            example: "123e4567-e89b-12d3-a456-426614174000"
+          },
           name: %Schema{type: :string, description: "Check Name"},
           description: %Schema{type: :string, description: "Check Description"},
           remediation: %Schema{type: :string, description: "Check Remediation"},

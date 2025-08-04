@@ -37,7 +37,8 @@ defmodule TrentoWeb.V1.SUSEManagerController do
       ]
     ],
     responses: [
-      ok: {"Available software updates for the host.", "application/json",
+      ok:
+        {"Available software updates for the host.", "application/json",
          AvailableSoftwareUpdatesResponse},
       not_found: Schema.NotFound.response(),
       unprocessable_entity: Schema.UnprocessableEntity.response()
@@ -58,7 +59,8 @@ defmodule TrentoWeb.V1.SUSEManagerController do
   operation :patches_for_packages,
     summary: "Gets patches covered by package upgrades in SUSE Manager.",
     tags: ["Target Infrastructure"],
-    description: "Endpoint to fetch relevant patches covered by package upgrades in SUSE Manager.",
+    description:
+      "Endpoint to fetch relevant patches covered by package upgrades in SUSE Manager.",
     parameters: [
       host_id: [
         in: :query,
@@ -72,7 +74,8 @@ defmodule TrentoWeb.V1.SUSEManagerController do
       ]
     ],
     responses: [
-      ok: {"Available software updates for the host.", "application/json",
+      ok:
+        {"Available software updates for the host.", "application/json",
          PatchesForPackagesResponse}
     ]
 

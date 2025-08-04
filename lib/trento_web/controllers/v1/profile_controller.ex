@@ -50,7 +50,8 @@ defmodule TrentoWeb.V1.ProfileController do
 
   operation :reset_totp,
     summary: "Reset the TOTP configuration for the user.",
-    description: "Reset the TOTP (Time-based One-Time Password) configuration for the current user.",
+    description:
+      "Reset the TOTP (Time-based One-Time Password) configuration for the current user.",
     tags: ["Profile"],
     responses: [
       forbidden: Schema.Forbidden.response(),
@@ -67,7 +68,8 @@ defmodule TrentoWeb.V1.ProfileController do
 
   operation :get_totp_enrollment_data,
     summary: "Get TOTP enrollment data.",
-    description: "Get TOTP enrollment data including QR code for setting up two-factor authentication.",
+    description:
+      "Get TOTP enrollment data including QR code for setting up two-factor authentication.",
     tags: ["Profile"],
     responses: [
       ok:
