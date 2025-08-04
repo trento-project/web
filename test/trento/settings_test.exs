@@ -367,8 +367,6 @@ defmodule Trento.SettingsTest do
             "&Trento.Settings.change_suse_manager_settings/1" ->
               expect(Trento.SoftwareUpdates.Discovery.Mock, :clear, 1, fn -> :ok end)
 
-              # there is a path dependence on needing to save first
-              # before trying to change settings
               insert_software_updates_settings(settings)
           end
 
