@@ -98,13 +98,45 @@ if [ "$SKIP_GENERATION" = false ]; then
     done
 
     # Join the API specs, prefixing the components with the version (ex: 2.5.0-V_)
-    redocly join --without-x-tag-groups  --prefix-components-with-info-prop=version  "${OPENAPI_FILES[@]}" -o "$MERGED_OPENAPI_FILE"
+    redocly join --without-x-tag-groups --prefix-components-with-info-prop=version "${OPENAPI_FILES[@]}" -o "$MERGED_OPENAPI_FILE"
 
     # Set the version back to x.y.z (ex: 2.5.0)
     jq '.info.version |= split("-")[0]' "$MERGED_OPENAPI_FILE" > "$MERGED_OPENAPI_FILE.tmp" && mv "$MERGED_OPENAPI_FILE.tmp" "$MERGED_OPENAPI_FILE"
 
-    # Remove the x.y.z from the components, just use VX_ (ex: V1_)
-    sed -i -E 's/"[0-9.]+-(v[0-9]+)_/"\1_/g; s/#\/components\/schemas\/[0-9.]+-(v[0-9]+)_/#\/components\/schemas\/\1_/g' "$MERGED_OPENAPI_FILE"
+    # Clean up component names and references - remove version prefixes
+    jq '
+      # Clean up schema names: remove version prefixes from component names
+      .components.schemas = (.components.schemas | with_entries(
+        .key = (.key |
+          # Remove "x.y.z-unversioned_" prefix (e.g., "1.5.0-unversioned_Health" -> "Health")
+          sub("^[0-9.]+-unversioned_"; "") |
+          # Remove "x.y.z-vX_" prefix (e.g., "1.5.0-v1_Target" -> "v1_Target")
+          sub("^[0-9.]+-"; "")
+        )
+      )) |
+
+      # Walk through entire document and fix $ref references
+      walk(if type == "object" and has("$ref") then
+        ."$ref" = (."$ref" |
+          # Fix schema references
+          sub("#/components/schemas/[0-9.]+-unversioned_"; "#/components/schemas/") |
+          sub("#/components/schemas/[0-9.]+-"; "#/components/schemas/")
+        )
+      else . end)
+    ' "$MERGED_OPENAPI_FILE" > "$MERGED_OPENAPI_FILE.tmp" && mv "$MERGED_OPENAPI_FILE.tmp" "$MERGED_OPENAPI_FILE"
+
+    # Clean up security schemes and references - make everything use "authorization"
+    jq '
+      # First, clean up security schemes - keep only "authorization"
+      .components.securitySchemes = {"authorization": (.components.securitySchemes | to_entries | map(select(.key | test("authorization"))) | first | .value)} |
+
+      # Then walk through the entire document and replace any versioned authorization references
+      walk(if type == "object" and has("security") then
+        .security = (.security | map(if type == "object" then
+          with_entries(if .key | test(".*authorization") then .key = "authorization" else . end)
+        else . end))
+      else . end)
+    ' "$MERGED_OPENAPI_FILE" > "$MERGED_OPENAPI_FILE.tmp" && mv "$MERGED_OPENAPI_FILE.tmp" "$MERGED_OPENAPI_FILE"
 
 else
     echo "Skipping API docs generation/merging, just starting linting the spec..."
@@ -123,4 +155,4 @@ redocly lint "$MERGED_OPENAPI_FILE" --extends recommended --format=stylish --ski
 
 # # Run vacuum linter
 # echo "Running vacuum linter..."
-# vacuum lint "$MERGED_OPENAPI_FILE" -d  || true
+# vacuum lint "$MERGED_OPENAPI_FILE" -d || true
