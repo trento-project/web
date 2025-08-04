@@ -10,6 +10,8 @@ Trento.Abilities.html
 Trento.ActivityLog.ActivityCatalog.html
 Trento.ActivityLog.ActivityLog.html
 Trento.ActivityLog.ActivityLogger.html
+Trento.ActivityLog.Correlations.TestCorrelations.html
+Trento.ActivityLog.Correlations.UnscopedCorrelations.html
 Trento.ActivityLog.Logger.Parser.EventParser.html
 Trento.ActivityLog.Logger.Parser.MetadataEnricher.html
 Trento.ActivityLog.Logger.Parser.PhoenixConnParser.html
@@ -527,7 +529,7 @@ dist/lato-latin-ext-300-normal-VPGGJKJL.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-829C6D14.js
-dist/sidebar_items-60825A4B.js
+dist/search_data-E70B00FC.js
+dist/sidebar_items-7E3EDDF3.js
 index.html
 search.html
