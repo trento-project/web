@@ -12,7 +12,7 @@ export default {
   argTypes: {
     operation: {
       description: 'Operation to request',
-      control: 'string',
+      control: 'text',
     },
     type: {
       description: 'System type',
@@ -21,11 +21,11 @@ export default {
     },
     sid: {
       description: 'SAP system or database sid',
-      control: 'string',
+      control: 'text',
     },
     site: {
       description: 'System replication site. Only applicable for database type',
-      control: 'string',
+      control: 'text',
     },
     isOpen: {
       description: 'Modal is open',
