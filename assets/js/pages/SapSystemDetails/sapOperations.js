@@ -1,6 +1,11 @@
-import { curry } from 'lodash';
+import { curry, every } from 'lodash';
 
-import { SAP_INSTANCE_START, SAP_INSTANCE_STOP } from '@lib/operations';
+import {
+  SAP_INSTANCE_START,
+  SAP_INSTANCE_STOP,
+  SAP_SYSTEM_START,
+  SAP_SYSTEM_STOP,
+} from '@lib/operations';
 
 import { isOperationRunning } from '@state/selectors/runningOperations';
 
@@ -41,3 +46,36 @@ export const getSapInstanceOperations = curry(
     },
   ]
 );
+
+export const getSapSystemOperations = (
+  sapSystem,
+  runningOperations,
+  setOperationModelOpen
+) => [
+  {
+    value: 'Start system',
+    running: isOperationRunning(
+      runningOperations,
+      sapSystem.id,
+      SAP_SYSTEM_START
+    ),
+    disabled: sapSystem.health === 'passing',
+    permitted: ['start:sap_system'],
+    onClick: () => {
+      setOperationModelOpen({ open: true, operation: SAP_SYSTEM_START });
+    },
+  },
+  {
+    value: 'Stop system',
+    running: isOperationRunning(
+      runningOperations,
+      sapSystem.id,
+      SAP_SYSTEM_STOP
+    ),
+    disabled: every(sapSystem.application_instances, { health: 'unknown' }),
+    permitted: ['stop:sap_system'],
+    onClick: () => {
+      setOperationModelOpen({ open: true, operation: SAP_SYSTEM_STOP });
+    },
+  },
+];
