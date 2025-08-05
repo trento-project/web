@@ -1,6 +1,6 @@
 defmodule TrentoWeb.OpenApi.V1.Schema.Conflict do
   @moduledoc """
-  409 - Conflict
+  409 - Conflict.
   """
   require OpenApiSpex
 
@@ -10,16 +10,42 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Conflict do
   OpenApiSpex.schema(
     %{
       title: "Conflict",
+      description:
+        "Represents an error response for a resource conflict, providing details about the nature of the conflict encountered.",
       type: :object,
       additionalProperties: false,
+      example: %{
+        errors: [
+          %{
+            detail: "Conflicting state.",
+            title: "Conflict has occurred"
+          }
+        ]
+      },
       properties: %{
         errors: %Schema{
           type: :array,
+          example: [
+            %{
+              detail: "Conflicting state.",
+              title: "Conflict has occurred"
+            }
+          ],
           items: %Schema{
             type: :object,
             properties: %{
-              detail: %Schema{type: :string, example: "Conflicting state."},
-              title: %Schema{type: :string, example: "Conflict has occurred"}
+              detail: %Schema{
+                type: :string,
+                description:
+                  "Provides a detailed explanation of the conflict encountered, supporting troubleshooting and resolution.",
+                example: "Conflicting state."
+              },
+              title: %Schema{
+                type: :string,
+                description:
+                  "A short summary of the conflict type, used for quick identification and error handling.",
+                example: "Conflict has occurred"
+              }
             }
           }
         }
@@ -30,7 +56,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Conflict do
 
   def response do
     Operation.response(
-      "Conflict",
+      "A detailed error response indicating a resource conflict, including information about the nature of the conflict encountered.",
       "application/json",
       __MODULE__
     )

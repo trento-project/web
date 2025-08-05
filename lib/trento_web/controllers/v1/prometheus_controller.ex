@@ -12,11 +12,14 @@ defmodule TrentoWeb.V1.PrometheusController do
   action_fallback TrentoWeb.FallbackController
 
   operation :targets,
-    summary: "Get Prometheus exporters targets",
+    summary: "Get Prometheus exporters targets.",
     tags: ["Target Infrastructure"],
-    description: "Get Prometheus targets with the Http Discovery format",
+    description:
+      "Retrieves a list of Prometheus exporter targets in the Http Discovery format, supporting monitoring and integration with Prometheus for infrastructure observability.",
     responses: [
-      ok: {"A collection of HttpSTD targets", "application/json", Schema.HttpStd.TargetList}
+      ok:
+        {"Comprehensive list of Prometheus exporter targets in Http Discovery format for infrastructure monitoring and integration.",
+         "application/json", Schema.HttpStd.TargetList}
     ]
 
   def targets(conn, _) do
@@ -25,13 +28,27 @@ defmodule TrentoWeb.V1.PrometheusController do
   end
 
   operation :exporters_status,
-    summary: "Get prometheus exporters status",
+    summary: "Get prometheus exporters status.",
     tags: ["Target Infrastructure"],
-    description: "Get Prometheus exporters status for a host identified by host id",
+    description:
+      "Returns the status of Prometheus exporters for a specific host, identified by its unique ID, supporting health monitoring and diagnostics for infrastructure components.",
+    parameters: [
+      id: [
+        in: :path,
+        description:
+          "Unique identifier of the host for which Prometheus exporter status is requested. This value must be a valid UUID string.",
+        required: true,
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          format: :uuid,
+          example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
+        }
+      ]
+    ],
     responses: [
       ok:
-        {"The status for the prometheus exporter", "application/json",
-         Schema.Prometheus.ExporterStatus},
+        {"Status information for Prometheus exporters on the specified host, supporting health monitoring and diagnostics.",
+         "application/json", Schema.Prometheus.ExporterStatus},
       not_found: Schema.NotFound.response()
     ]
 

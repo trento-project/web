@@ -16,15 +16,16 @@ defmodule TrentoWeb.SessionController do
   require Logger
 
   operation :create,
-    summary: "Platform login",
+    summary: "Platform login.",
     tags: ["Auth"],
     description:
-      "Retrieve the access and refresh token for api interactions, returns two jwt tokens",
+      "Retrieve the access and refresh token for api interactions, returns two jwt tokens.",
     security: [],
     request_body:
-      {"User login credentials", "application/json",
+      {"Login request containing user credentials for authentication and token issuance.",
+       "application/json",
        %OpenApiSpex.Schema{
-         title: "LoginCredentials",
+         description: "User login credentials schema.",
          type: :object,
          additionalProperties: false,
          example: %{
@@ -33,21 +34,26 @@ defmodule TrentoWeb.SessionController do
          },
          properties: %{
            username: %OpenApiSpex.Schema{
-             type: :string
+             type: :string,
+             example: "admin"
            },
            password: %OpenApiSpex.Schema{
-             type: :string
+             type: :string,
+             example: "thepassword"
            },
            totp_code: %OpenApiSpex.Schema{
-             type: :string
+             type: :string,
+             example: "123456"
            }
          }
        }},
     responses: [
       ok:
-        {"User credentials", "application/json",
+        {"Authentication result with access and refresh tokens for secure API usage.",
+         "application/json",
          %OpenApiSpex.Schema{
-           title: "Credentials",
+           description:
+             "Successful authentication returns access and refresh tokens for secure API usage. The response includes token expiration details and is suitable for session management.",
            type: :object,
            example: %{
              expires_in: 600,
@@ -58,13 +64,16 @@ defmodule TrentoWeb.SessionController do
            },
            properties: %{
              access_token: %OpenApiSpex.Schema{
-               type: :string
+               type: :string,
+               example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
              },
              refresh_token: %OpenApiSpex.Schema{
-               type: :string
+               type: :string,
+               example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
              },
              expires_in: %OpenApiSpex.Schema{
-               type: :integer
+               type: :integer,
+               example: 600
              }
            }
          }},
@@ -90,14 +99,15 @@ defmodule TrentoWeb.SessionController do
   end
 
   operation :refresh,
-    summary: "Platform access token refresh",
+    summary: "Platform access token refresh.",
     tags: ["Auth"],
-    description: "Generate a new access token from a valid refresh token",
+    description: "Generate a new access token from a valid refresh token.",
     security: [],
     request_body:
-      {"User login credentials", "application/json",
+      {"Request containing refresh token for obtaining new access credentials.",
+       "application/json",
        %OpenApiSpex.Schema{
-         title: "Refresh Credentials",
+         description: "Refresh token credentials for getting new access token.",
          type: :object,
          example: %{
            refresh_token:
@@ -105,15 +115,18 @@ defmodule TrentoWeb.SessionController do
          },
          properties: %{
            refresh_token: %OpenApiSpex.Schema{
-             type: :string
+             type: :string,
+             example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
            }
          }
        }},
     responses: [
       ok:
-        {"User refreshed credentials", "application/json",
+        {"Refreshed authentication result with new access token for continued secure API usage.",
+         "application/json",
          %OpenApiSpex.Schema{
-           title: "RefreshedCredentials",
+           description:
+             "A valid refresh token returns new access credentials for continued secure API usage. The response includes updated token expiration information for session management.",
            type: :object,
            example: %{
              expires_in: 600,
@@ -122,10 +135,12 @@ defmodule TrentoWeb.SessionController do
            },
            properties: %{
              access_token: %OpenApiSpex.Schema{
-               type: :string
+               type: :string,
+               example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
              },
              expires_in: %OpenApiSpex.Schema{
-               type: :integer
+               type: :integer,
+               example: 600
              }
            }
          }}
@@ -145,25 +160,28 @@ defmodule TrentoWeb.SessionController do
   end
 
   operation :callback,
-    summary: "Platform external IDP callback",
+    summary: "Platform external IDP callback.",
     tags: ["Auth"],
-    description: "Authenticate against an external authentication provider",
+    description: "Authenticate against an external authentication provider.",
     security: [],
     request_body:
-      {"User IDP credentials", "application/json",
+      {"Request containing identity provider credentials and authorization code for external authentication.",
+       "application/json",
        %OpenApiSpex.Schema{
-         title: "UserIDPEnrollmentCredentials",
+         description: "User identity provider enrollment credentials with authorization code.",
          type: :object,
          example: %{
            code: "kyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYt",
-           session_sate: "frHteBttgtW8706m7nqYC6ruYt"
+           session_state: "frHteBttgtW8706m7nqYC6ruYt"
          },
          properties: %{
            code: %OpenApiSpex.Schema{
-             type: :string
+             type: :string,
+             example: "kyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYt"
            },
            session_state: %OpenApiSpex.Schema{
-             type: :string
+             type: :string,
+             example: "frHteBttgtW8706m7nqYC6ruYt"
            }
          },
          required: [:code, :session_state]
@@ -171,16 +189,19 @@ defmodule TrentoWeb.SessionController do
     parameters: [
       provider: [
         in: :path,
-        schema: %OpenApiSpex.Schema{type: :string},
+        description: "Identity provider name.",
+        schema: %OpenApiSpex.Schema{type: :string, example: "oauth2_local"},
         required: true
       ]
     ],
     responses: [
       unauthorized: Schema.Unauthorized.response(),
       ok:
-        {"User IDP credentials", "application/json",
+        {"Authentication result from external identity provider with access and refresh tokens.",
+         "application/json",
          %OpenApiSpex.Schema{
-           title: "UserIDPCredentials",
+           description:
+             "Successful authentication with an external identity provider returns access and refresh tokens for secure platform usage. The response is suitable for federated identity management and session handling.",
            type: :object,
            example: %{
              access_token:
@@ -190,10 +211,12 @@ defmodule TrentoWeb.SessionController do
            },
            properties: %{
              access_token: %OpenApiSpex.Schema{
-               type: :string
+               type: :string,
+               example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
              },
              refresh_token: %OpenApiSpex.Schema{
-               type: :string
+               type: :string,
+               example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
              }
            }
          }}
@@ -224,17 +247,28 @@ defmodule TrentoWeb.SessionController do
   end
 
   operation :saml_callback,
-    summary: "Platform external SAML IDP callback",
+    summary: "Platform external SAML IDP callback.",
     tags: ["Auth"],
-    description: "Authenticate against an external authentication provider using SAML",
+    description:
+      "Authenticates the user against an external authentication provider using SAML, enabling single sign-on and federated identity management for secure platform access.",
     security: [],
+    parameters: [
+      provider: [
+        in: :path,
+        description:
+          "The name of the SAML identity provider to use for authentication. This value should match a configured provider.",
+        schema: %OpenApiSpex.Schema{type: :string, example: "saml"}
+      ]
+    ],
     responses: [
       unauthorized: Schema.Unauthorized.response(),
       unprocessable_entity: Schema.UnprocessableEntity.response(),
       ok:
-        {"User IDP credentials", "application/json",
+        {"Authentication result using SAML identity provider with access and refresh tokens for platform access.",
+         "application/json",
          %OpenApiSpex.Schema{
-           title: "UserIDPCredentials",
+           description:
+             "Authentication using SAML returns access and refresh tokens for secure platform access. The response supports single sign-on and federated identity management for user sessions.",
            type: :object,
            example: %{
              access_token:
@@ -244,10 +278,12 @@ defmodule TrentoWeb.SessionController do
            },
            properties: %{
              access_token: %OpenApiSpex.Schema{
-               type: :string
+               type: :string,
+               example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
              },
              refresh_token: %OpenApiSpex.Schema{
-               type: :string
+               type: :string,
+               example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
              }
            }
          }}
