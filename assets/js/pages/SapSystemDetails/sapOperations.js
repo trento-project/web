@@ -59,7 +59,7 @@ export const getSapSystemOperations = (
       sapSystem.id,
       SAP_SYSTEM_START
     ),
-    disabled: sapSystem.health === 'passing',
+    disabled: every(sapSystem.instances, { health: 'passing' }),
     permitted: ['start:sap_system'],
     onClick: () => {
       setOperationModelOpen({ open: true, operation: SAP_SYSTEM_START });
@@ -72,7 +72,7 @@ export const getSapSystemOperations = (
       sapSystem.id,
       SAP_SYSTEM_STOP
     ),
-    disabled: every(sapSystem.application_instances, { health: 'unknown' }),
+    disabled: every(sapSystem.instances, { health: 'unknown' }),
     permitted: ['stop:sap_system'],
     onClick: () => {
       setOperationModelOpen({ open: true, operation: SAP_SYSTEM_STOP });
