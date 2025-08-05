@@ -1292,7 +1292,8 @@ defmodule Trento.Factory do
       totp_enabled_at: nil,
       totp_secret: nil,
       totp_last_used_at: nil,
-      analytics_enabled_at: nil
+      analytics_enabled_at: nil,
+      analytics_eula_accepted_at: nil
     }
   end
 
