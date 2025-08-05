@@ -33,7 +33,11 @@ defmodule TrentoWeb.V1.ProfileJSONTest do
 
     test "should correctly render a user profile when the user has accepted analytics eula" do
       user =
-        build(:user, abilities: [], user_identities: [], analytics_eula_accepted_at: DateTime.utc_now())
+        build(:user,
+          abilities: [],
+          user_identities: [],
+          analytics_eula_accepted_at: DateTime.utc_now()
+        )
 
       assert %{
                analytics_eula_accepted: true
