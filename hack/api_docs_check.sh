@@ -29,6 +29,10 @@
 
 set -euo pipefail
 
+# Array to hold all temporary files for cleanup
+TEMP_FILES=()
+trap 'rm -f "${TEMP_FILES[@]}"' EXIT
+
 # Parse command line arguments
 SKIP_GENERATION=false
 
@@ -81,20 +85,18 @@ command -v spectral >/dev/null 2>&1 || {
 }
 
 PROJECT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." >/dev/null && pwd)
-MERGED_OPENAPI_FILE="merged-openapi.json"
+MERGED_OPENAPI_FILE="openapi.json"
 VERSIONS=("Unversioned" "V1" "V2")
 
 if [ "$SKIP_GENERATION" = false ]; then
-    # Generate the API docs
-    for version in "${VERSIONS[@]}"; do
-        echo "Generating API docs for '${version}' endpoints..."
-        mix openapi.spec.json --start-app=false --spec "TrentoWeb.OpenApi.${version}.ApiSpec" --vendor-extensions=false --pretty=true "${PROJECT_DIR}/openapi_${version}.json"
-    done
-
-    # Get the file names of the API specs for later
+    # Generate the API docs into temporary files
     OPENAPI_FILES=()
     for version in "${VERSIONS[@]}"; do
-        OPENAPI_FILES+=("${PROJECT_DIR}/openapi_${version}.json")
+        echo "Generating API docs for '${version}' endpoints..."
+        TMP_FILE=$(mktemp "openapi_${version}.XXXXXX.json")
+        OPENAPI_FILES+=("$TMP_FILE")
+        TEMP_FILES+=("$TMP_FILE")
+        mix openapi.spec.json --start-app=false --spec "TrentoWeb.OpenApi.${version}.ApiSpec" --vendor-extensions=false --pretty=true "$TMP_FILE"
     done
 
     # Join the API specs, prefixing the components with the version (ex: 2.5.0-V_)
@@ -147,12 +149,50 @@ echo "Running redocly linter..."
 redocly lint "$MERGED_OPENAPI_FILE" --extends recommended --format=stylish --skip-rule=operation-4xx-response || true
 
 # Run spectral linter
-# echo "Running spectral linter..."
-# spectral lint "$MERGED_OPENAPI_FILE" -r https://unpkg.com/@apisyouwonthate/style-guide/dist/ruleset.js --format=text || true
-# spectral lint "$MERGED_OPENAPI_FILE" -r https://unpkg.com/@stoplight/spectral-documentation/dist/ruleset.mjs --format=text || true
-# spectral lint "$MERGED_OPENAPI_FILE" -r https://unpkg.com/@rhoas/spectral-ruleset --format=text || true
-# spectral lint "$MERGED_OPENAPI_FILE" -r https://raw.githubusercontent.com/SchwarzIT/api-linter-rules/refs/heads/main/spectral.yml --format=text || true
+echo "Running spectral linter..."
 
-# # Run vacuum linter
-# echo "Running vacuum linter..."
-# vacuum lint "$MERGED_OPENAPI_FILE" -d || true
+# Create a temporary ruleset file to combine all spectral rulesets and ignore specific rules.
+SPECTRAL_RULESET_FILE=$(mktemp .spectral.XXXXXX.yaml)
+TEMP_FILES+=("$SPECTRAL_RULESET_FILE")
+cat > "$SPECTRAL_RULESET_FILE" << EOF
+extends:
+  - "https://unpkg.com/@apisyouwonthate/style-guide/dist/ruleset.js"
+  - "https://unpkg.com/@rhoas/spectral-ruleset"
+  - "https://raw.githubusercontent.com/SchwarzIT/api-linter-rules/refs/heads/main/spectral.yml"
+  - "https://unpkg.com/@stoplight/spectral-documentation/dist/ruleset.mjs"
+rules:
+  api-health: "off"
+  api-home: "off"
+  common-responses-unauthorized: "off"
+  no-numeric-ids: "off"
+  no-unknown-error-format: "off"
+  path-must-match-api-standards: "off"
+  path-must-match-api-standards: "off"
+  paths-kebab-case: "off"
+  rhoas-error-schema: "off"
+  rhoas-list-schema: "off"
+  rhoas-object-schema: "off"
+  rhoas-path-regexp: "off"
+  rhoas-schema-name-pascal-case: "off"
+  rhoas-servers-config: "off"
+  servers-must-match-api-standards: "off"
+EOF
+
+spectral lint "$MERGED_OPENAPI_FILE" -r "$SPECTRAL_RULESET_FILE" --verbose --format=text || true
+echo ""
+
+# Run vacuum linter
+echo "Running vacuum linter..."
+
+# Create a temporary ruleset file to ignore the description-duplication rule.
+VACUUM_RULESET_FILE=$(mktemp .vacuum.XXXXXX.yaml)
+TEMP_FILES+=("$VACUUM_RULESET_FILE")
+cat > "$VACUUM_RULESET_FILE" << EOF
+extends:
+  - vacuum:recommended
+rules:
+  paths-kebab-case: false
+  description-duplication: false
+EOF
+
+vacuum lint "$MERGED_OPENAPI_FILE" -r "$VACUUM_RULESET_FILE" -d --ignore-array-circle-ref || true
