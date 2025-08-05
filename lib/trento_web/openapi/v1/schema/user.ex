@@ -175,7 +175,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
             type: :boolean,
             description: "Whether user analytics eula is accepted",
             nullable: false
-          },
+          }
         }
       },
       struct?: false

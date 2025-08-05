@@ -57,7 +57,9 @@ defmodule Trento.Users.UsersTest do
 
     test "changeset/2 validates analytics_eula_accepted_at field is cast properly" do
       changeset =
-        User.profile_update_changeset(%User{}, %{"analytics_eula_accepted_at" => DateTime.utc_now()})
+        User.profile_update_changeset(%User{}, %{
+          "analytics_eula_accepted_at" => DateTime.utc_now()
+        })
 
       assert changeset.changes[:analytics_eula_accepted_at]
     end

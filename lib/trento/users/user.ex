@@ -87,7 +87,11 @@ defmodule Trento.Users.User do
     |> pow_extension_changeset(attrs)
     |> validate_password()
     |> custom_fields_changeset(attrs)
-    |> cast(attrs, [:password_change_requested_at, :analytics_enabled_at, :analytics_eula_accepted_at])
+    |> cast(attrs, [
+      :password_change_requested_at,
+      :analytics_enabled_at,
+      :analytics_eula_accepted_at
+    ])
   end
 
   def totp_update_changeset(user, attrs) do
