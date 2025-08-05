@@ -299,6 +299,13 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
           atom_operation: :sap_system_start,
           resource_field: :sap_system_id,
           additional_params: %{}
+        },
+        %{
+          action: :database_operation_requested,
+          operation: "database_start",
+          atom_operation: :database_start,
+          resource_field: :database_id,
+          additional_params: %{}
         }
       ]
 
