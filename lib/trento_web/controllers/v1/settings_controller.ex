@@ -21,7 +21,7 @@ defmodule TrentoWeb.V1.SettingsController do
   action_fallback TrentoWeb.FallbackController
 
   operation :get_api_key_settings,
-    summary: "Get Api key settings.",
+    summary: "Get API key settings.",
     description:
       "Retrieves the current settings for API key generation, including expiration and configuration details, supporting secure access management.",
     tags: ["Settings"],
@@ -49,7 +49,7 @@ defmodule TrentoWeb.V1.SettingsController do
 
   @correlation_ttl 15_000
   operation :update_api_key_settings,
-    summary: "Updates the Api key settings.",
+    summary: "Updates the API key settings.",
     description:
       "Updates the configuration for API key generation, allowing administrators to change expiration and security settings for API access.",
     tags: ["Settings"],

@@ -9,7 +9,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
     OpenApiSpex.schema(
       %{
         title: "ApiKeySettings",
-        description: "Settings for Api Key generation.",
+        description: "Settings for API Key generation.",
         type: :object,
         additionalProperties: false,
         example: %{
