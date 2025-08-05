@@ -264,7 +264,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
       |> assert_schema("NotFound", api_spec)
     end
 
-    pacemaker_operations_scenarios = [
+    operations_scenarios = [
       %{
         operation: "pacemaker_enable",
         host_units: [
@@ -276,10 +276,18 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
         host_units: [
           build(:host_systemd_unit, name: "pacemaker.service", unit_file_state: "enabled")
         ]
+      },
+      %{
+        operation: "cluster_host_start",
+        host_units: []
+      },
+      %{
+        operation: "cluster_host_stop",
+        host_units: []
       }
     ]
 
-    for %{operation: operation, host_units: host_units} <- pacemaker_operations_scenarios do
+    for %{operation: operation, host_units: host_units} <- operations_scenarios do
       @operation operation
       @host_units host_units
 
@@ -397,7 +405,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
       end
     end
 
-    forbidden_pacemaker_operations_scenarios = [
+    forbidden_operations_scenarios = [
       %{
         name: "enable already enabled pacemaker",
         operation: "pacemaker_enable",
@@ -429,7 +437,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
     ]
 
     for %{name: name} = scenario <-
-          forbidden_pacemaker_operations_scenarios do
+          forbidden_operations_scenarios do
       @unauthorized_pacemaker_scenario scenario
 
       test "should return 403 when attempting to #{name}", %{
@@ -483,6 +491,14 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
           post(
             conn,
             "/api/v1/clusters/#{cluster_id}/hosts/#{UUID.uuid4()}/operations/pacemaker_disable"
+          ),
+          post(
+            conn,
+            "/api/v1/clusters/#{cluster_id}/hosts/#{UUID.uuid4()}/operations/cluster_host_start"
+          ),
+          post(
+            conn,
+            "/api/v1/clusters/#{cluster_id}/hosts/#{UUID.uuid4()}/operations/cluster_host_stop"
           )
         ],
         fn conn ->

@@ -27,6 +27,16 @@ defmodule Trento.Clusters.Policy do
       }),
       do: has_global_ability?(user) or has_disable_pacemaker_ability?(user)
 
+  def authorize(:request_host_operation, %User{} = user, %{
+        operation: "cluster_host_start"
+      }),
+      do: has_global_ability?(user) or has_cluster_host_start_ability?(user)
+
+  def authorize(:request_host_operation, %User{} = user, %{
+        operation: "cluster_host_stop"
+      }),
+      do: has_global_ability?(user) or has_cluster_host_stop_ability?(user)
+
   def authorize(_, _, _), do: true
 
   defp has_select_checks_ability?(user),
@@ -45,4 +55,10 @@ defmodule Trento.Clusters.Policy do
 
   defp has_disable_pacemaker_ability?(user),
     do: user_has_ability?(user, %{name: "pacemaker_disable", resource: "cluster"})
+
+  defp has_cluster_host_start_ability?(user),
+    do: user_has_ability?(user, %{name: "cluster_host_start", resource: "cluster"})
+
+  defp has_cluster_host_stop_ability?(user),
+    do: user_has_ability?(user, %{name: "cluster_host_stop", resource: "cluster"})
 end
