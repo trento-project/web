@@ -118,7 +118,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
           },
           email: %Schema{
             type: :string,
-            description: "User email.",
+            description:
+              "The email address associated with the user, used for communication, authentication, and account management within the system.",
             nullable: false,
             format: :email,
             example: "john.doe@example.com"
@@ -249,7 +250,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
     OpenApiSpex.schema(
       %{
         title: "UserCreationRequest",
-        description: "Request body to create a user.",
+        description:
+          "Represents the request body to create a new user, including identification, credentials, and abilities for system access and management.",
         type: :object,
         additionalProperties: false,
         example: %{
@@ -264,38 +266,44 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
         properties: %{
           fullname: %Schema{
             type: :string,
-            description: "User full name.",
+            description:
+              "The full name of the user to be created, supporting identification and personalization.",
             nullable: false,
             example: "New User"
           },
           email: %Schema{
             type: :string,
-            description: "User email.",
+            description:
+              "The email address of the user to be created, supporting communication and authentication.",
             nullable: false,
             format: :email,
             example: "new.user@example.com"
           },
           username: %Schema{
             type: :string,
-            description: "User username.",
+            description:
+              "The username for the new user, supporting system access and identification.",
             nullable: false,
             example: "john.doe"
           },
           enabled: %Schema{
             type: :boolean,
-            description: "User enabled in the system.",
+            description:
+              "Indicates whether the new user is enabled in the system, supporting access control.",
             nullable: false,
             example: true
           },
           password: %Schema{
             type: :string,
-            description: "User new password.",
+            description:
+              "The password for the new user, supporting secure authentication and access.",
             nullable: false,
             example: "secure_password"
           },
           password_confirmation: %Schema{
             type: :string,
-            description: "User new password, should be the same as password field.",
+            description:
+              "Confirmation of the new user's password, which must match the password field for security.",
             nullable: false,
             example: "secure_password"
           },
@@ -313,38 +321,44 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
     OpenApiSpex.schema(
       %{
         title: "UserUpdateRequest",
-        description: "Request body to update a user.",
+        description:
+          "Represents the request body to update an existing user, including identification, credentials, abilities, and TOTP settings for system access and management.",
         type: :object,
         additionalProperties: false,
         properties: %{
           fullname: %Schema{
             type: :string,
-            description: "User full name.",
+            description:
+              "The full name of the user to be updated, supporting identification and personalization.",
             nullable: false,
             example: "Admin User"
           },
           email: %Schema{
             type: :string,
-            description: "User email.",
+            description:
+              "The email address of the user to be updated, supporting communication and authentication.",
             nullable: false,
             format: :email,
             example: "admin.user@example.com"
           },
           enabled: %Schema{
             type: :boolean,
-            description: "User enabled in the system.",
+            description:
+              "Indicates whether the user is enabled in the system, supporting access control.",
             nullable: false,
             example: true
           },
           password: %Schema{
             type: :string,
-            description: "User new password.",
+            description:
+              "The new password for the user, supporting secure authentication and access.",
             nullable: false,
             example: "new_secure_password123"
           },
           password_confirmation: %Schema{
             type: :string,
-            description: "User new password, should be the same as password field.",
+            description:
+              "Confirmation of the user's new password, which must match the password field for security.",
             nullable: false,
             example: "new_secure_password123"
           },
@@ -352,7 +366,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
           totp_disabled: %Schema{
             type: :boolean,
             description:
-              "TOTP feature disabled for the user. The only accepted value here is 'true'.",
+              "Indicates that the TOTP feature is disabled for the user. The only accepted value here is 'true', supporting multi-factor authentication management.",
             nullable: false,
             example: true
           }
@@ -401,7 +415,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
           username: %Schema{type: :string, description: "User username.", nullable: false},
           email: %Schema{
             type: :string,
-            description: "User email.",
+            description:
+              "The email address associated with the user, used for communication, authentication, and account management within the system.",
             nullable: false,
             format: :email,
             example: "user.item@example.com"

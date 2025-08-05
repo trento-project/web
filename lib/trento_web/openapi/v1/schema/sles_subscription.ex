@@ -7,7 +7,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SlesSubscription do
   OpenApiSpex.schema(
     %{
       title: "SlesSubscription",
-      description: "A discovered SLES Subscription on a host.",
+      description:
+        "Represents a discovered SLES subscription on a host, including identification, version, architecture, status, and validity period for license management and compliance.",
       type: :object,
       additionalProperties: false,
       properties: %{

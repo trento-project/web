@@ -10,7 +10,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Unauthorized do
   OpenApiSpex.schema(
     %{
       title: "Unauthorized",
-      description: "Unauthorized access error response.",
+      description:
+        "Error response returned when access to the requested operation is denied due to missing or invalid authentication credentials.",
       type: :object,
       additionalProperties: false,
       example: %{
@@ -24,6 +25,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Unauthorized do
       properties: %{
         errors: %Schema{
           type: :array,
+          description:
+            "A list of error objects describing why access to the requested operation was denied, such as missing or invalid authentication credentials.",
           example: [
             %{
               detail: "The requested operation could not be authorized.",
@@ -32,12 +35,21 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Unauthorized do
           ],
           items: %Schema{
             type: :object,
+            description:
+              "Details about a specific error encountered when access is denied, including a human-readable message and error title.",
             properties: %{
               detail: %Schema{
                 type: :string,
+                description:
+                  "A message describing the reason for the unauthorized access, such as missing or invalid authentication credentials.",
                 example: "The requested operation could not be authorized."
               },
-              title: %Schema{type: :string, example: "Unauthorized"}
+              title: %Schema{
+                type: :string,
+                description:
+                  "A short title summarizing the error encountered when access is denied due to authorization failure.",
+                example: "Unauthorized"
+              }
             }
           }
         }
@@ -48,7 +60,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Unauthorized do
 
   def response do
     Operation.response(
-      "Unauthorized.",
+      "A detailed error response indicating that access to the requested operation is denied due to missing or invalid authentication credentials.",
       "application/json",
       __MODULE__
     )

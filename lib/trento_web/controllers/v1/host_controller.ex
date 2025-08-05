@@ -49,10 +49,12 @@ defmodule TrentoWeb.V1.HostController do
   operation :list,
     tags: ["Target Infrastructure"],
     summary: "List hosts.",
-    description: "List all the discovered hosts on the target infrastructure.",
+    description:
+      "Retrieves a comprehensive list of all hosts discovered on the target infrastructure, supporting monitoring and management tasks for administrators.",
     responses: [
       ok:
-        {"A collection of the discovered hosts.", "application/json", Schema.Host.HostsCollection}
+        {"Comprehensive list of all hosts discovered on the target infrastructure for monitoring and management.",
+         "application/json", Schema.Host.HostsCollection}
     ]
 
   @spec list(Plug.Conn.t(), map) :: Plug.Conn.t()
@@ -63,12 +65,14 @@ defmodule TrentoWeb.V1.HostController do
 
   operation :delete,
     summary: "Deregister a host.",
-    description: "Deregister a host agent from Trento.",
+    description:
+      "Removes a host agent from Trento, supporting infrastructure cleanup and resource management for administrators.",
     tags: ["Target Infrastructure"],
     parameters: [
       id: [
         in: :path,
-        description: "Host identifier.",
+        description:
+          "Unique identifier of the host to be deregistered. This value must be a valid UUID string.",
         required: true,
         schema: %OpenApiSpex.Schema{
           type: :string,
@@ -94,11 +98,13 @@ defmodule TrentoWeb.V1.HostController do
   operation :heartbeat,
     summary: "Signal that an agent is alive.",
     tags: ["Agent"],
-    description: "This is used by the agents to signal that they are still alive.",
+    description:
+      "Allows agents to signal their active status to Trento, supporting health monitoring and availability tracking for infrastructure management.",
     parameters: [
       id: [
         in: :path,
-        description: "Host identifier.",
+        description:
+          "Unique identifier of the host agent sending the heartbeat signal. This value must be a valid UUID string.",
         required: true,
         schema: %OpenApiSpex.Schema{
           type: :string,
@@ -109,7 +115,8 @@ defmodule TrentoWeb.V1.HostController do
     ],
     responses: [
       no_content:
-        {"The heartbeat has been updated.", "application/json",
+        {"Heartbeat signal successfully updated for the host agent, supporting health monitoring and availability tracking.",
+         "application/json",
          %OpenApiSpex.Schema{
            type: :object,
            properties: %{},
@@ -129,11 +136,13 @@ defmodule TrentoWeb.V1.HostController do
   operation :select_checks,
     summary: "Select Checks for a Host.",
     tags: ["Checks"],
-    description: "Select the Checks eligible for execution on the target infrastructure.",
+    description:
+      "Allows users to select which Checks are eligible for execution on a specific host within the target infrastructure, supporting custom validation workflows.",
     parameters: [
       id: [
         in: :path,
-        description: "Host identifier.",
+        description:
+          "Unique identifier of the host for which Checks selection is being performed. This value must be a valid UUID string.",
         required: true,
         schema: %OpenApiSpex.Schema{
           type: :string,
@@ -145,7 +154,8 @@ defmodule TrentoWeb.V1.HostController do
     request_body: {"Checks Selection.", "application/json", Schema.Checks.ChecksSelectionRequest},
     responses: [
       accepted:
-        {"The Selection has been successfully collected.", "application/json",
+        {"Selected checks for the host have been successfully collected and are ready for execution.",
+         "application/json",
          %OpenApiSpex.Schema{
            type: :object,
            properties: %{},
@@ -168,11 +178,13 @@ defmodule TrentoWeb.V1.HostController do
   operation :request_checks_execution,
     summary: "Request Checks Execution for a Host.",
     tags: ["Checks"],
-    description: "Trigger execution of the latest Checks Selection on the target infrastructure.",
+    description:
+      "Initiates the execution of the most recently selected Checks for a specified host on the target infrastructure, enabling automated validation and compliance assessment.",
     parameters: [
       id: [
         in: :path,
-        description: "Host identifier.",
+        description:
+          "Unique identifier of the host for which the Checks execution is being requested. This value must be a valid UUID string.",
         required: true,
         schema: %OpenApiSpex.Schema{
           type: :string,
@@ -182,7 +194,8 @@ defmodule TrentoWeb.V1.HostController do
       ]
     ],
     responses: [
-      accepted: "The Command has been accepted and the Requested Host execution is scheduled.",
+      accepted:
+        "Checks execution request for the specified host has been accepted and scheduled for processing.",
       not_found: NotFound.response(),
       unprocessable_entity: UnprocessableEntity.response()
     ]
@@ -198,11 +211,13 @@ defmodule TrentoWeb.V1.HostController do
   operation :request_operation,
     summary: "Request operation for a Host.",
     tags: ["Operations"],
-    description: "Request an operation to be performed on a specific host.",
+    description:
+      "Submits a request to perform a specific operation on a host, such as restart or configuration change, supporting automated infrastructure management.",
     parameters: [
       id: [
         in: :path,
-        description: "Host identifier.",
+        description:
+          "Unique identifier of the host on which the operation will be performed. This value must be a valid UUID string.",
         required: true,
         schema: %OpenApiSpex.Schema{
           type: :string,
@@ -212,7 +227,8 @@ defmodule TrentoWeb.V1.HostController do
       ],
       operation: [
         in: :path,
-        description: "Operation to be performed on the host.",
+        description:
+          "Specifies the type of operation to be performed on the host, such as restart or configuration change.",
         required: true,
         schema: %OpenApiSpex.Schema{
           type: :string,
@@ -220,7 +236,9 @@ defmodule TrentoWeb.V1.HostController do
         }
       ]
     ],
-    request_body: {"Params.", "application/json", HostOperationParams},
+    request_body:
+      {"Request containing parameters for the specified host operation.", "application/json",
+       HostOperationParams},
     responses: [
       accepted: OperationAccepted.response(),
       not_found: NotFound.response(),

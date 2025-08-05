@@ -31,10 +31,13 @@ defmodule TrentoWeb.V1.UsersController do
 
   operation :index,
     summary: "Gets the list of users in the system.",
-    description: "Gets the list of all users in the system.",
+    description:
+      "Retrieves a comprehensive list of all users currently registered in the system, supporting user management and administrative tasks.",
     tags: ["User Management"],
     responses: [
-      ok: {"List of users in the system.", "application/json", UserCollection}
+      ok:
+        {"Comprehensive list of all users currently registered in the system for user management and administrative tasks.",
+         "application/json", UserCollection}
     ]
 
   def index(conn, _params) do
@@ -44,11 +47,16 @@ defmodule TrentoWeb.V1.UsersController do
 
   operation :create,
     summary: "Create a new User.",
-    description: "Creates a new user in the system.",
+    description:
+      "Creates a new user account in the system, supporting onboarding and user management for administrators.",
     tags: ["User Management"],
-    request_body: {"UserCreationRequest.", "application/json", UserCreationRequest},
+    request_body:
+      {"Request containing new user account information for onboarding and user management.",
+       "application/json", UserCreationRequest},
     responses: [
-      created: {"User saved successfully.", "application/json", UserItem},
+      created:
+        {"User account created successfully, returning the new user details for management and review.",
+         "application/json", UserItem},
       unprocessable_entity: UnprocessableEntity.response()
     ]
 
@@ -63,23 +71,27 @@ defmodule TrentoWeb.V1.UsersController do
 
   operation :show,
     summary: "Show the details of a user.",
-    description: "Shows the details of a specific user identified by its ID.",
+    description:
+      "Returns detailed information about a specific user, identified by their unique ID, supporting user management and administrative review.",
     tags: ["User Management"],
     parameters: [
       id: [
         in: :path,
-        description: "User identifier.",
+        description:
+          "Unique identifier of the user whose details are being requested. This value must be an integer.",
         required: true,
         schema: %OpenApiSpex.Schema{type: :integer, example: 1}
       ]
     ],
     responses: [
       ok:
-        {"UserItem.", "application/json", UserItem,
+        {"Detailed information about the specified user, including entity version for concurrency control.",
+         "application/json", UserItem,
          headers: %{
            etag: %{
              required: true,
-             description: "Entity version, used in conditional http requests.",
+             description:
+               "The entity version of the user, used for conditional HTTP requests and concurrency control.",
              schema: %OpenApiSpex.Schema{type: :string}
            }
          }},
@@ -98,11 +110,12 @@ defmodule TrentoWeb.V1.UsersController do
     summary: "Update an existing user.",
     tags: ["User Management"],
     description:
-      "Update an existing user, this is a conditional HTTP request, make sure you provide precondition with the If-Match header.",
+      "Updates the details of an existing user. This is a conditional HTTP request; you must provide the entity version using the If-Match header to ensure safe updates and concurrency control.",
     parameters: [
       id: [
         in: :path,
-        description: "User identifier.",
+        description:
+          "Unique identifier of the user to be updated. This value must be an integer.",
         required: true,
         schema: %OpenApiSpex.Schema{type: :integer, example: 1}
       ],
@@ -110,18 +123,23 @@ defmodule TrentoWeb.V1.UsersController do
         # The field is required, we put to false to avoid openapispex validate that value with 422 status code.
         required: false,
         in: :header,
-        description: "Entity version for conditional update.",
+        description:
+          "The entity version of the user, provided in the If-Match header, to ensure safe and conditional updates.",
         schema: %OpenApiSpex.Schema{type: :integer, example: 2}
       ]
     ],
-    request_body: {"UserUpdateRequest.", "application/json", UserUpdateRequest},
+    request_body:
+      {"Request containing updated user information and entity version for safe and conditional updates.",
+       "application/json", UserUpdateRequest},
     responses: [
       created:
-        {"User updated successfully.", "application/json", UserItem,
+        {"User account updated successfully, returning the updated user details and entity version for concurrency control.",
+         "application/json", UserItem,
          headers: %{
            etag: %{
              required: true,
-             description: "Entity version, used in conditional http requests.",
+             description:
+               "The entity version of the user, used for conditional HTTP requests and concurrency control.",
              schema: %OpenApiSpex.Schema{type: :string}
            }
          }},
@@ -146,18 +164,21 @@ defmodule TrentoWeb.V1.UsersController do
 
   operation :delete,
     summary: "Delete a user.",
-    description: "Deletes a user from the system.",
+    description:
+      "Removes a user account from the system, supporting user management and administrative cleanup.",
     tags: ["User Management"],
     parameters: [
       id: [
         in: :path,
-        description: "User identifier.",
+        description:
+          "Unique identifier of the user to be deleted. This value must be an integer.",
         required: true,
         schema: %OpenApiSpex.Schema{type: :integer, example: 1}
       ]
     ],
     responses: [
-      no_content: "User successfully deleted.",
+      no_content:
+        "User account has been successfully deleted from the system, supporting administrative cleanup.",
       not_found: Schema.NotFound.response(),
       forbidden: Schema.Forbidden.response()
     ]

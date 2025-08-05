@@ -14,11 +14,14 @@ defmodule TrentoWeb.V1.DiscoveryController do
     summary: "Collect data from the target infrastructure.",
     tags: ["Agent"],
     description:
-      "This endpoint is used by the agents to collect data from the target infrastructure.",
-    request_body: {"Discovery Event.", "application/json", Schema.DiscoveryEvent},
+      "Allows agents to submit collected data from the target infrastructure for processing and analysis, supporting automated discovery and system inventory updates.",
+    request_body:
+      {"Request containing discovery event data collected from the target infrastructure for processing and analysis.",
+       "application/json", Schema.DiscoveryEvent},
     responses: [
       accepted:
-        {"The discovery has been accepted and the event is being processed.", "application/json",
+        {"Discovery event accepted for processing and infrastructure data analysis, supporting automated system inventory updates.",
+         "application/json",
          %OpenApiSpex.Schema{
            type: :object,
            properties: %{},

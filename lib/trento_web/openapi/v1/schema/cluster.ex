@@ -13,7 +13,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
     OpenApiSpex.schema(
       %{
         title: "ClusterResource",
-        description: "A Cluster Resource.",
+        description:
+          "Represents a resource within a cluster, including its type, role, and operational status for management and monitoring.",
         type: :object,
         additionalProperties: false,
         properties: %{
@@ -41,7 +42,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
     OpenApiSpex.schema(
       %{
         title: "HanaClusterNode",
-        description: "A HANA Cluster Node.",
+        description:
+          "Represents a node in a HANA cluster, including its attributes, status, and associated resources for high availability.",
         additionalProperties: false,
         type: :object,
         properties: %{
@@ -50,12 +52,14 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
           hana_status: %Schema{type: :string},
           attributes: %Schema{
             type: :object,
-            description: "Node attributes.",
+            description:
+              "Attributes describing the configuration and operational state of the cluster node, supporting management and monitoring.",
             additionalProperties: %Schema{type: :string}
           },
           virtual_ip: %Schema{type: :string},
           resources: %Schema{
-            description: "A list of Cluster resources.",
+            description:
+              "A list containing resources associated with the HANA cluster node, supporting infrastructure management.",
             type: :array,
             items: ClusterResource
           }
@@ -90,7 +94,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
     OpenApiSpex.schema(
       %{
         title: "SbdDevice",
-        description: "SBD Device.",
+        description:
+          "Represents a SBD device used for fencing and high availability in cluster environments.",
         additionalProperties: false,
         type: :object,
         properties: %{
@@ -112,20 +117,39 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
     OpenApiSpex.schema(
       %{
         title: "HanaClusterDetails",
-        description: "Details of a HANA Pacemaker Cluster.",
+        description:
+          "Provides detailed information about a HANA Pacemaker Cluster, including replication, health, and resource status.",
         type: :object,
         additionalProperties: false,
         properties: %{
-          system_replication_mode: %Schema{type: :string, description: "System Replication Mode"},
+          system_replication_mode: %Schema{
+            type: :string,
+            description:
+              "Indicates the replication mode used by the HANA system, supporting high availability and disaster recovery."
+          },
           system_replication_operation_mode: %Schema{
             type: :string,
-            description: "System Replication Operation Mode."
+            description:
+              "Shows the operation mode for system replication, providing context for cluster synchronization and failover."
           },
-          secondary_sync_state: %Schema{type: :string, description: "Secondary Sync State"},
-          sr_health_state: %Schema{type: :string, description: "SR health state"},
-          fencing_type: %Schema{type: :string, description: "Fencing Type"},
+          secondary_sync_state: %Schema{
+            type: :string,
+            description:
+              "Displays the synchronization state of the secondary node in the HANA cluster, supporting monitoring and management."
+          },
+          sr_health_state: %Schema{
+            type: :string,
+            description:
+              "Indicates the health status of system replication in the HANA cluster, supporting operational decisions."
+          },
+          fencing_type: %Schema{
+            type: :string,
+            description:
+              "Specifies the type of fencing used in the cluster, supporting high availability and fault tolerance."
+          },
           stopped_resources: %Schema{
-            description: "A list of the stopped resources on this HANA Cluster.",
+            description:
+              "A list containing resources that are currently stopped in the HANA cluster, supporting troubleshooting and recovery.",
             type: :array,
             items: ClusterResource
           },
@@ -175,7 +199,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
     OpenApiSpex.schema(
       %{
         title: "PacemakerClusterDetails",
-        description: "Details of the detected PacemakerCluster.",
+        description:
+          "Provides details about the detected PacemakerCluster, including configuration, health, and operational status.",
         type: :object,
         nullable: true,
         oneOf: [
@@ -213,39 +238,62 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
     OpenApiSpex.schema(
       %{
         title: "PacemakerCluster",
-        description: "A discovered Pacemaker Cluster on the target infrastructure.",
+        description:
+          "Represents a Pacemaker Cluster discovered on the target infrastructure, including its configuration, health, and associated resources.",
         type: :object,
         additionalProperties: false,
         properties: %{
-          id: %Schema{type: :string, description: "Cluster ID.", format: :uuid},
-          name: %Schema{type: :string, description: "Cluster name"},
-          sid: %Schema{type: :string, description: "SID"},
+          id: %Schema{
+            type: :string,
+            description: "Unique identifier for the cluster, used for tracking and management.",
+            format: :uuid
+          },
+          name: %Schema{
+            type: :string,
+            description:
+              "The name assigned to the cluster, used for identification and organization."
+          },
+          sid: %Schema{
+            type: :string,
+            description:
+              "The system identifier (SID) for the cluster, used for SAP system management."
+          },
           additional_sids: %Schema{
             type: :array,
             items: %Schema{type: :string},
-            description: "Additionally discovered SIDs, such as ASCS/ERS cluster SIDs."
+            description:
+              "A list of additional SIDs discovered in the cluster, such as ASCS or ERS, supporting SAP landscape management."
           },
           provider: Provider.SupportedProviders,
           type: %Schema{
             type: :string,
-            description: "Detected type of the cluster.",
+            description:
+              "Specifies the detected type of the cluster, such as HANA scale-up or scale-out, for classification and management.",
             enum: [:hana_scale_up, :hana_scale_out, :unknown]
           },
           selected_checks: %Schema{
-            description: "A list of check ids selected for an execution on this cluster.",
+            description:
+              "A list containing the IDs of checks selected for execution on this cluster, supporting targeted monitoring and analysis.",
             type: :array,
             items: %Schema{type: :string}
           },
           health: ResourceHealth,
           resources_number: %Schema{
             type: :integer,
-            description: "Resource number.",
+            description:
+              "Indicates the number of resources associated with the cluster, supporting capacity and infrastructure planning.",
             nullable: true
           },
-          hosts_number: %Schema{type: :integer, description: "Hosts number.", nullable: true},
+          hosts_number: %Schema{
+            type: :integer,
+            description:
+              "Shows the number of hosts that are part of the cluster, supporting infrastructure management.",
+            nullable: true
+          },
           cib_last_written: %Schema{
             type: :string,
-            description: "CIB last written date.",
+            description:
+              "The date and time when the cluster's CIB was last written, supporting audit and change tracking.",
             nullable: true
           },
           details: Details,
@@ -292,7 +340,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
     OpenApiSpex.schema(
       %{
         title: "PacemakerClustersCollection",
-        description: "A list of the discovered Pacemaker Clusters.",
+        description:
+          "A list containing all Pacemaker Clusters discovered on the target infrastructure, supporting monitoring and management.",
         type: :array,
         items: PacemakerCluster,
         example: [

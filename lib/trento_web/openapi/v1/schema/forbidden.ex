@@ -10,7 +10,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Forbidden do
   OpenApiSpex.schema(
     %{
       title: "Forbidden",
-      description: "Access forbidden error response.",
+      description:
+        "Represents an error response for forbidden access, providing details about the reason the operation could not be performed due to insufficient permissions.",
       type: :object,
       additionalProperties: false,
       example: %{
@@ -35,9 +36,16 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Forbidden do
             properties: %{
               detail: %Schema{
                 type: :string,
+                description:
+                  "Provides a detailed explanation of why the requested operation was forbidden, supporting troubleshooting and resolution.",
                 example: "The requested operation could not be performed."
               },
-              title: %Schema{type: :string, example: "Forbidden"}
+              title: %Schema{
+                type: :string,
+                description:
+                  "A short summary indicating the forbidden status, used for quick identification and error handling.",
+                example: "Forbidden"
+              }
             }
           }
         }
@@ -48,7 +56,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Forbidden do
 
   def response do
     Operation.response(
-      "Forbidden.",
+      "A detailed error response indicating forbidden access, including information about insufficient permissions and why the operation could not be performed.",
       "application/json",
       __MODULE__
     )

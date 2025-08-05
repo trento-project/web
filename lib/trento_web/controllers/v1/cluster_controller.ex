@@ -45,11 +45,12 @@ defmodule TrentoWeb.V1.ClusterController do
   operation :list,
     summary: "List Pacemaker Clusters.",
     tags: ["Target Infrastructure"],
-    description: "List all the discovered Pacemaker Clusters on the target infrastructure.",
+    description:
+      "Retrieves a comprehensive list of all Pacemaker Clusters discovered on the target infrastructure, supporting monitoring and management tasks for administrators.",
     responses: [
       ok:
-        {"A collection of the discovered Pacemaker Clusters.", "application/json",
-         Cluster.PacemakerClustersCollection}
+        {"Comprehensive list of all Pacemaker Clusters discovered on the target infrastructure for monitoring and management.",
+         "application/json", Cluster.PacemakerClustersCollection}
     ]
 
   def list(conn, _) do
@@ -61,11 +62,13 @@ defmodule TrentoWeb.V1.ClusterController do
   operation :request_checks_execution,
     summary: "Request Checks Execution for a Cluster.",
     tags: ["Checks"],
-    description: "Trigger execution of the latest Checks Selection on the target infrastructure.",
+    description:
+      "Initiates the execution of the most recently selected Checks for a specified cluster on the target infrastructure, enabling automated validation and compliance assessment.",
     parameters: [
       cluster_id: [
         in: :path,
-        description: "Cluster identifier.",
+        description:
+          "Unique identifier of the cluster for which the Checks execution is being requested. This value must be a valid UUID string.",
         required: true,
         schema: %OpenApiSpex.Schema{
           type: :string,
@@ -76,7 +79,7 @@ defmodule TrentoWeb.V1.ClusterController do
     ],
     responses: [
       accepted:
-        {"The Command has been accepted and the Requested Cluster execution is scheduled.",
+        {"Checks execution request for the specified cluster has been accepted and scheduled for processing.",
          "application/json",
          %OpenApiSpex.Schema{
            type: :object,
@@ -99,11 +102,13 @@ defmodule TrentoWeb.V1.ClusterController do
   operation :select_checks,
     summary: "Select Checks for a Cluster.",
     tags: ["Checks"],
-    description: "Select the Checks eligible for execution on the target infrastructure.",
+    description:
+      "Allows users to select which Checks are eligible for execution on a specific cluster within the target infrastructure, supporting custom validation workflows.",
     parameters: [
       cluster_id: [
         in: :path,
-        description: "Cluster identifier.",
+        description:
+          "Unique identifier of the cluster for which Checks selection is being performed. This value must be a valid UUID string.",
         required: true,
         schema: %OpenApiSpex.Schema{
           type: :string,
@@ -115,7 +120,8 @@ defmodule TrentoWeb.V1.ClusterController do
     request_body: {"Checks Selection.", "application/json", Checks.ChecksSelectionRequest},
     responses: [
       accepted:
-        {"The Selection has been successfully collected.", "application/json",
+        {"Selected checks for the cluster have been successfully collected and are ready for execution.",
+         "application/json",
          %OpenApiSpex.Schema{
            type: :object,
            properties: %{},
@@ -139,11 +145,13 @@ defmodule TrentoWeb.V1.ClusterController do
   operation :request_operation,
     summary: "Request operation for a Cluster.",
     tags: ["Operations"],
-    description: "Request operation for a Cluster.",
+    description:
+      "Submits a request to perform a specific operation on a cluster, such as maintenance or configuration changes, supporting automated infrastructure management.",
     parameters: [
       id: [
         in: :path,
-        description: "Cluster identifier.",
+        description:
+          "Unique identifier of the cluster on which the operation will be performed. This value must be a valid UUID string.",
         required: true,
         schema: %OpenApiSpex.Schema{
           type: :string,
@@ -153,7 +161,8 @@ defmodule TrentoWeb.V1.ClusterController do
       ],
       operation: [
         in: :path,
-        description: "Operation to be performed on the cluster.",
+        description:
+          "Specifies the type of operation to be performed on the cluster, such as maintenance or configuration change.",
         required: true,
         schema: %OpenApiSpex.Schema{
           type: :string,
@@ -161,7 +170,9 @@ defmodule TrentoWeb.V1.ClusterController do
         }
       ]
     ],
-    request_body: {"Params.", "application/json", ClusterOperationParams},
+    request_body:
+      {"Request containing parameters for the specified cluster operation.", "application/json",
+       ClusterOperationParams},
     responses: [
       accepted: OperationAccepted.response(),
       not_found: NotFound.response(),
@@ -183,12 +194,14 @@ defmodule TrentoWeb.V1.ClusterController do
   operation :request_host_operation,
     summary: "Request operation for a Cluster host.",
     tags: ["Operations"],
-    description: "Request operation for a Cluster host.",
+    description:
+      "Submits a request to perform a specific operation on a host within a cluster, supporting targeted maintenance or configuration changes for individual hosts.",
     parameters: [
       id: [
         in: :path,
         required: true,
-        description: "Cluster's identifier.",
+        description:
+          "Unique identifier of the cluster containing the host. This value must be a valid UUID string.",
         schema: %OpenApiSpex.Schema{
           type: :string,
           format: :uuid,
@@ -198,7 +211,8 @@ defmodule TrentoWeb.V1.ClusterController do
       host_id: [
         in: :path,
         required: true,
-        description: "Host's identifier.",
+        description:
+          "Unique identifier of the host within the cluster on which the operation will be performed. This value must be a valid UUID string.",
         schema: %OpenApiSpex.Schema{
           type: :string,
           format: :uuid,
@@ -208,7 +222,8 @@ defmodule TrentoWeb.V1.ClusterController do
       operation: [
         in: :path,
         required: true,
-        description: "Operation to be performed on the cluster's host.",
+        description:
+          "Specifies the type of operation to be performed on the cluster's host, such as enabling or disabling pacemaker services.",
         schema: %OpenApiSpex.Schema{
           type: :string,
           example: "pacemaker_enable"

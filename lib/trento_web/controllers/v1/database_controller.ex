@@ -27,11 +27,12 @@ defmodule TrentoWeb.V1.DatabaseController do
 
   operation :list_databases,
     summary: "List HANA Databases.",
-    description: "List all the discovered HANA Databases on the target infrastructure.",
+    description:
+      "Retrieves a comprehensive list of all HANA Databases discovered on the target infrastructure, supporting monitoring and management tasks for administrators.",
     responses: [
       ok:
-        {"A collection of the discovered HANA Databases.", "application/json",
-         Schema.Database.DatabasesCollection}
+        {"Comprehensive list of all HANA Databases discovered on the target infrastructure for monitoring and management.",
+         "application/json", Schema.Database.DatabasesCollection}
     ]
 
   def list_databases(conn, _) do
@@ -42,11 +43,13 @@ defmodule TrentoWeb.V1.DatabaseController do
 
   operation :delete_database_instance,
     summary: "Delete database instance.",
-    description: "Delete the database instance identified by the provided data if it is absent.",
+    description:
+      "Removes the specified database instance from the system if it is no longer present, supporting infrastructure cleanup and resource management.",
     parameters: [
       id: [
         in: :path,
-        description: "Database identifier.",
+        description:
+          "Unique identifier of the database instance to be deleted. This value must be a valid UUID string.",
         required: true,
         schema: %OpenApiSpex.Schema{
           type: :string,
@@ -56,7 +59,8 @@ defmodule TrentoWeb.V1.DatabaseController do
       ],
       host_id: [
         in: :path,
-        description: "Host identifier.",
+        description:
+          "Unique identifier of the host associated with the database instance. This value must be a valid UUID string.",
         required: true,
         schema: %OpenApiSpex.Schema{
           type: :string,
@@ -66,7 +70,8 @@ defmodule TrentoWeb.V1.DatabaseController do
       ],
       instance_number: [
         in: :path,
-        description: "Database instance number.",
+        description:
+          "The instance number of the database to be deleted, used to uniquely identify the specific database instance within the host.",
         required: true,
         schema: %OpenApiSpex.Schema{
           type: :string,

@@ -11,21 +11,25 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SaptuneStatus do
     OpenApiSpex.schema(
       %{
         title: "SaptuneService",
-        description: "Saptune service.",
+        description:
+          "Represents a saptune service, including its name, enabled state, and active state for system tuning and monitoring.",
         type: :object,
         additionalProperties: false,
         properties: %{
           name: %Schema{
             type: :string,
-            description: "Saptune service name."
+            description:
+              "The name of the saptune service, supporting identification and management of system tuning components."
           },
           enabled: %Schema{
             type: :string,
-            description: "Enabled state as string."
+            description:
+              "Indicates whether the saptune service is enabled, supporting system configuration and monitoring."
           },
           active: %Schema{
             type: :string,
-            description: "Active state as string."
+            description:
+              "Indicates whether the saptune service is currently active, supporting system health and status tracking."
           }
         },
         example: %{
@@ -44,17 +48,20 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SaptuneStatus do
     OpenApiSpex.schema(
       %{
         title: "SaptuneNote",
-        description: "Saptune note.",
+        description:
+          "Represents a saptune note, including its identifier and whether it is additionally enabled for system tuning and compliance.",
         type: :object,
         additionalProperties: false,
         properties: %{
           id: %Schema{
             type: :string,
-            description: "Saptune note ID."
+            description:
+              "Unique identifier for the saptune note, supporting tracking and management of system tuning recommendations."
           },
           additionally_enabled: %Schema{
             type: :boolean,
-            description: "Note is additionally enabled."
+            description:
+              "Indicates whether the saptune note is additionally enabled, supporting compliance and configuration management."
           }
         },
         example: %{
@@ -72,22 +79,26 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SaptuneStatus do
     OpenApiSpex.schema(
       %{
         title: "SaptuneSolution",
-        description: "Saptune solution.",
+        description:
+          "Represents a saptune solution, including its identifier, associated notes, and whether it is partially applied for system tuning and compliance.",
         type: :object,
         additionalProperties: false,
         properties: %{
           id: %Schema{
             type: :string,
-            description: "Saptune solution ID."
+            description:
+              "Unique identifier for the saptune solution, supporting tracking and management of system tuning configurations."
           },
           notes: %Schema{
             type: :array,
-            description: "Solution note IDs.",
+            description:
+              "A list of note identifiers associated with this saptune solution, supporting compliance and configuration management.",
             items: %Schema{type: :string}
           },
           partial: %Schema{
             type: :boolean,
-            description: "Solution is partially applied."
+            description:
+              "Indicates whether the saptune solution is only partially applied, supporting system health and configuration tracking."
           }
         },
         example: %{
@@ -106,22 +117,26 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SaptuneStatus do
     OpenApiSpex.schema(
       %{
         title: "SaptuneStaging",
-        description: "Saptune staging data.",
+        description:
+          "Represents saptune staging data, including enabled state, staged notes, and solution identifiers for system configuration and compliance.",
         type: :object,
         additionalProperties: false,
         properties: %{
           enabled: %Schema{
             type: :boolean,
-            description: "Saptune staging is enabled."
+            description:
+              "Indicates whether saptune staging is enabled, supporting system configuration and compliance management."
           },
           notes: %Schema{
             type: :array,
-            description: "Staged saptune note IDs.",
+            description:
+              "A list of staged saptune note identifiers, supporting configuration and compliance tracking.",
             items: %Schema{type: :string}
           },
           solutions_ids: %Schema{
             type: :array,
-            description: "Staged saptune solution IDs.",
+            description:
+              "A list of staged saptune solution identifiers, supporting configuration and compliance tracking.",
             items: %Schema{type: :string}
           }
         },
@@ -138,26 +153,42 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SaptuneStatus do
   OpenApiSpex.schema(
     %{
       title: "SaptuneStatus",
-      description: "Saptune status output on the host.",
+      description:
+        "Represents the saptune status output on the host, including package version, configuration, tuning state, services, notes, solutions, and staging for system health and compliance.",
       type: :object,
       nullable: true,
       additionalProperties: false,
       properties: %{
-        package_version: %Schema{type: :string, description: "Saptune package version"},
-        configured_version: %Schema{type: :string, description: "Saptune configure version"},
-        tuning_state: %Schema{type: :string, description: "Saptune tuning state"},
+        package_version: %Schema{
+          type: :string,
+          description:
+            "The version of the saptune package installed on the host, supporting system health and compliance tracking."
+        },
+        configured_version: %Schema{
+          type: :string,
+          description:
+            "The version of saptune configuration applied on the host, supporting system health and compliance tracking."
+        },
+        tuning_state: %Schema{
+          type: :string,
+          description:
+            "The current tuning state of saptune on the host, supporting system health and configuration tracking."
+        },
         services: %Schema{
-          description: "A list of saptune services.",
+          description:
+            "A list of saptune services running on the host, supporting system health and configuration management.",
           type: :array,
           items: Service
         },
         enabled_notes: %Schema{
-          description: "A list of enabled notes.",
+          description:
+            "A list of saptune notes that are currently enabled on the host, supporting compliance and configuration tracking.",
           type: :array,
           items: Note
         },
         applied_notes: %Schema{
-          description: "A list of applied notes.",
+          description:
+            "A list of saptune notes that have been applied on the host, supporting compliance and configuration tracking.",
           type: :array,
           items: Note
         },

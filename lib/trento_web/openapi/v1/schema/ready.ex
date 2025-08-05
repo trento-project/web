@@ -10,7 +10,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Ready do
   OpenApiSpex.schema(
     %Schema{
       title: "Ready",
-      description: "Platform readiness status response.",
+      description:
+        "Represents the readiness status of the Trento Web platform, indicating whether the system is fully operational and available for use.",
       type: :object,
       example: %{
         ready: true
@@ -18,7 +19,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Ready do
       additionalProperties: false,
       properties: %{
         ready: %Schema{
-          description: "Trento Web platform ready.",
+          description:
+            "Indicates if the Trento Web platform is fully operational and ready to serve requests, supporting system health monitoring.",
           type: :boolean
         }
       }
@@ -28,7 +30,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Ready do
 
   def response do
     Operation.response(
-      "Ready",
+      "A detailed readiness response indicating whether the Trento Web platform is fully operational and available for use.",
       "application/json",
       __MODULE__
     )

@@ -10,7 +10,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Prometheus do
     OpenApiSpex.schema(
       %{
         title: "PrometheusExporterStatus",
-        description: "Status information for Prometheus exporters.",
+        description:
+          "Represents the status information for Prometheus exporters, indicating their health and operational state for monitoring purposes.",
         type: :object,
         example: %{
           "Node exporter" => "critical"
@@ -18,7 +19,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Prometheus do
         additionalProperties: %Schema{
           enum: [:critical, :passing, :unknown],
           description:
-            "Status of the exporter, the value could be one of passing, critical, unknown.",
+            "The health status of a Prometheus exporter, which can be 'passing', 'critical', or 'unknown', used to indicate monitoring and alerting conditions.",
           type: :string
         }
       },

@@ -10,7 +10,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.HttpStd do
     OpenApiSpex.schema(
       %{
         title: "HttpStd",
-        description: "HTTP service discovery target configuration.",
+        description:
+          "Represents the configuration for HTTP service discovery targets, including endpoints and associated labels for monitoring and management.",
         type: :object,
         example: %{
           "targets" => ["myhost.de"],
@@ -22,31 +23,37 @@ defmodule TrentoWeb.OpenApi.V1.Schema.HttpStd do
         properties: %{
           labels: %Schema{
             type: :object,
-            description: "String valued labels.",
+            description:
+              "A set of labels with string values, used for categorizing and identifying service discovery targets.",
             additionalProperties: %Schema{type: :string}
           },
           targets: %Schema{
             type: :array,
-            description: "List of targets.",
+            description:
+              "A list containing all target endpoints for HTTP service discovery, supporting network monitoring and management.",
             items: %Schema{
-              description: "Target endpoint (hostname, IPv4, or IPv6 address).",
+              description:
+                "Represents a target endpoint for service discovery, which may be a hostname, IPv4, or IPv6 address, supporting connectivity and identification.",
               anyOf: [
                 %Schema{
                   title: "IPv6",
-                  description: "IPv6 address format.",
+                  description:
+                    "Represents the format of an IPv6 address, supporting modern network identification and communication.",
                   type: :string,
                   format: :ipv6,
                   example: "2001:db8::1"
                 },
                 %Schema{
                   title: "IPv4",
-                  description: "IPv4 address format.",
+                  description:
+                    "Represents the format of an IPv4 address, used for network identification and communication.",
                   type: :string,
                   format: :ipv4,
                   example: "192.168.1.100"
                 },
                 %Schema{
-                  description: "Hostname format.",
+                  description:
+                    "Represents the format of a hostname, supporting network identification and service discovery.",
                   type: :string,
                   format: :hostname
                 }
@@ -65,7 +72,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.HttpStd do
     OpenApiSpex.schema(
       %{
         title: "HttpSTDTargetList",
-        description: "Http discovery target list.",
+        description:
+          "A list containing all HTTP service discovery targets, supporting network monitoring and management.",
         type: :array,
         items: Target,
         example: [

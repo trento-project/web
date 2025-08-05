@@ -8,7 +8,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.OperationAccepted do
   OpenApiSpex.schema(
     %{
       title: "OperationAccepted",
-      description: "The operation has been authorized and requested.",
+      description:
+        "Indicates that the requested operation has been authorized and accepted for processing, providing confirmation and tracking information.",
       type: :object,
       additionalProperties: false,
       example: %{
@@ -24,7 +25,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.OperationAccepted do
 
   def response do
     Operation.response(
-      "Operation Accepted.",
+      "A detailed response indicating that the requested operation has been accepted for processing, including confirmation and tracking information.",
       "application/json",
       __MODULE__
     )

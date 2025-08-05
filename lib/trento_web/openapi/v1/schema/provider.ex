@@ -13,7 +13,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Provider do
       %{
         title: "SupportedProviders",
         type: :string,
-        description: "Detected Provider where the resource is running.",
+        description:
+          "Indicates the cloud provider detected for the resource, such as Azure, AWS, or GCP, supporting infrastructure identification.",
         enum: Provider.values(),
         example: "azure"
       },
@@ -28,7 +29,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Provider do
       %{
         title: "FilterableProvider",
         type: :string,
-        description: "A provider that can be used to filter the Catalog.",
+        description:
+          "Represents a cloud provider that can be used to filter catalog results, supporting targeted queries and resource management.",
         enum: [:azure, :aws, :gcp, :default]
       },
       struct?: false
@@ -41,7 +43,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Provider do
     OpenApiSpex.schema(
       %{
         title: "AzureProviderData",
-        description: "Azure detected metadata.",
+        description:
+          "Metadata detected for resources running on Microsoft Azure, including details about resource group, location, VM size, and more.",
         type: :object,
         additionalProperties: false,
         properties: %{
@@ -73,7 +76,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Provider do
     OpenApiSpex.schema(
       %{
         title: "AwsProviderData",
-        description: "AWS detected metadata.",
+        description:
+          "Metadata detected for resources running on Amazon Web Services (AWS), including account, instance, and network details for infrastructure management.",
         type: :object,
         additionalProperties: false,
         properties: %{
@@ -107,7 +111,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Provider do
     OpenApiSpex.schema(
       %{
         title: "GcpProviderData",
-        description: "GCP detected metadata.",
+        description:
+          "Metadata detected for resources running on Google Cloud Platform (GCP), including disk, image, instance, and network details for infrastructure management.",
         type: :object,
         additionalProperties: false,
         properties: %{
@@ -141,7 +146,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Provider do
         title: "ProviderMetadata",
         type: :object,
         nullable: true,
-        description: "Detected metadata for any provider.",
+        description:
+          "Represents detected metadata for any supported cloud provider, including AWS, Azure, or GCP, to support infrastructure identification and management.",
         oneOf: [
           AwsProviderData,
           AzureProviderData,

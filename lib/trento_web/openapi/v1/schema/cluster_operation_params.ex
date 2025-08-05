@@ -10,9 +10,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ClusterOperationParams do
       %{
         title: "ClusterMaintenanceChangeParams",
         description:
-          "Cluster maintenance change operation params. " <>
-            "If neither resource_id nor node_id are given the complete cluster maintenance state is changed. " <>
-            "resource_id has precedence over node_id.",
+          "Represents the parameters for changing cluster maintenance state, including logic for resource and node prioritization. If neither resource_id nor node_id are provided, the entire cluster maintenance state is changed. Resource_id takes precedence over node_id.",
         type: :object,
         additionalProperties: false,
         example: %{
@@ -23,15 +21,18 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ClusterOperationParams do
         properties: %{
           maintenance: %Schema{
             type: :boolean,
-            description: "Maintenance state to put the cluster/node/resource."
+            description:
+              "Indicates the desired maintenance state to apply to the cluster, node, or resource, supporting operational management."
           },
           resource_id: %Schema{
             type: :string,
-            description: "ID of the cluster resource to change the maintenance state."
+            description:
+              "Unique identifier of the cluster resource whose maintenance state should be changed, supporting targeted operations."
           },
           node_id: %Schema{
             type: :string,
-            description: "ID of the cluster node to change the maintenance state."
+            description:
+              "Unique identifier of the cluster node whose maintenance state should be changed, supporting targeted operations."
           }
         },
         required: [:maintenance]
@@ -43,7 +44,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ClusterOperationParams do
   OpenApiSpex.schema(
     %{
       title: "ClusterOperationParams",
-      description: "Cluster operation request parameters.",
+      description:
+        "Represents the parameters for a cluster operation request, including maintenance changes for resources or nodes.",
       type: :object,
       oneOf: [
         ClusterMaintenanceChangeParams

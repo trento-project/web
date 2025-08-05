@@ -9,7 +9,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.HostArchitecture do
       title: "HostArchitecture",
       type: :string,
       nullable: false,
-      description: "Detected architecture of a host.",
+      description:
+        "Represents the detected architecture type of a host, such as x86_64 or arm64, supporting compatibility and infrastructure management.",
       enum: Architecture.values(),
       example: "x86_64"
     },

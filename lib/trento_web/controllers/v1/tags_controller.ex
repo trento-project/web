@@ -23,11 +23,13 @@ defmodule TrentoWeb.V1.TagsController do
   operation :add_tag_to_host,
     summary: "Add tag to host.",
     tags: ["Tags"],
-    description: "Add a tag to a host.",
+    description:
+      "Adds a new tag to the specified host, supporting resource categorization and management for infrastructure operations.",
     parameters: [
       id: [
         in: :path,
-        description: "Host identifier.",
+        description:
+          "Unique identifier of the host to which the tag will be added. This value must be a valid UUID string.",
         required: true,
         schema: %OpenApiSpex.Schema{
           type: :string,
@@ -37,7 +39,8 @@ defmodule TrentoWeb.V1.TagsController do
       ]
     ],
     request_body:
-      {"Tag.", "application/json",
+      {"Request containing tag value to be added to the specified host for resource categorization and management.",
+       "application/json",
        %OpenApiSpex.Schema{
          type: :object,
          properties: %{
@@ -46,7 +49,8 @@ defmodule TrentoWeb.V1.TagsController do
        }},
     responses: [
       created:
-        {"The tag has been added to the host.", "application/json",
+        {"Tag has been successfully added to the specified host, supporting resource categorization and management.",
+         "application/json",
          %OpenApiSpex.Schema{
            type: :object,
            properties: %{},
@@ -59,11 +63,13 @@ defmodule TrentoWeb.V1.TagsController do
   operation :add_tag_to_cluster,
     summary: "Add tag to cluster.",
     tags: ["Tags"],
-    description: "Add a tag to a cluster.",
+    description:
+      "Adds a new tag to the specified cluster, supporting resource categorization and management for infrastructure operations.",
     parameters: [
       id: [
         in: :path,
-        description: "Cluster identifier.",
+        description:
+          "Unique identifier of the cluster to which the tag will be added. This value must be a valid UUID string.",
         required: true,
         schema: %OpenApiSpex.Schema{
           type: :string,
@@ -73,7 +79,8 @@ defmodule TrentoWeb.V1.TagsController do
       ]
     ],
     request_body:
-      {"Tag.", "application/json",
+      {"Request containing tag value to be added to the specified cluster for resource categorization and management.",
+       "application/json",
        %OpenApiSpex.Schema{
          type: :object,
          example: %{
@@ -88,7 +95,8 @@ defmodule TrentoWeb.V1.TagsController do
        }},
     responses: [
       created:
-        {"The tag has been added to the cluster.", "application/json",
+        {"Tag has been successfully added to the specified cluster, supporting resource categorization and management.",
+         "application/json",
          %OpenApiSpex.Schema{
            type: :object,
            properties: %{},
@@ -101,11 +109,13 @@ defmodule TrentoWeb.V1.TagsController do
   operation :add_tag_to_sap_system,
     summary: "Add tag to SAP system.",
     tags: ["Tags"],
-    description: "Add a tag to a SAP system.",
+    description:
+      "Adds a new tag to the specified SAP system, supporting resource categorization and management for infrastructure operations.",
     parameters: [
       id: [
         in: :path,
-        description: "SAP system identifier.",
+        description:
+          "Unique identifier of the SAP system to which the tag will be added. This value must be a valid UUID string.",
         required: true,
         schema: %OpenApiSpex.Schema{
           type: :string,
@@ -115,7 +125,8 @@ defmodule TrentoWeb.V1.TagsController do
       ]
     ],
     request_body:
-      {"Tag.", "application/json",
+      {"Request containing tag value to be added to the specified SAP system for resource categorization and management.",
+       "application/json",
        %OpenApiSpex.Schema{
          type: :object,
          properties: %{
@@ -124,7 +135,8 @@ defmodule TrentoWeb.V1.TagsController do
        }},
     responses: [
       created:
-        {"The tag has been added to the SAP system.", "application/json",
+        {"Tag has been successfully added to the specified SAP system, supporting resource categorization and management.",
+         "application/json",
          %OpenApiSpex.Schema{
            type: :object,
            properties: %{},
@@ -137,11 +149,13 @@ defmodule TrentoWeb.V1.TagsController do
   operation :add_tag_to_database,
     summary: "Add tag to database.",
     tags: ["Tags"],
-    description: "Add a tag to a database.",
+    description:
+      "Adds a new tag to the specified database, supporting resource categorization and management for infrastructure operations.",
     parameters: [
       id: [
         in: :path,
-        description: "Database identifier.",
+        description:
+          "Unique identifier of the database to which the tag will be added. This value must be a valid UUID string.",
         required: true,
         schema: %OpenApiSpex.Schema{
           type: :string,
@@ -151,7 +165,8 @@ defmodule TrentoWeb.V1.TagsController do
       ]
     ],
     request_body:
-      {"Tag.", "application/json",
+      {"Request containing tag value to be added to the specified database for resource categorization and management.",
+       "application/json",
        %OpenApiSpex.Schema{
          type: :object,
          properties: %{
@@ -160,7 +175,8 @@ defmodule TrentoWeb.V1.TagsController do
        }},
     responses: [
       created:
-        {"The tag has been added to the database.", "application/json",
+        {"Tag has been successfully added to the specified database, supporting resource categorization and management.",
+         "application/json",
          %OpenApiSpex.Schema{
            type: :object,
            properties: %{},
@@ -195,11 +211,13 @@ defmodule TrentoWeb.V1.TagsController do
   operation :remove_tag_from_host,
     summary: "Remove tag from host.",
     tags: ["Tags"],
-    description: "Remove a tag from a host.",
+    description:
+      "Removes a tag from the specified host, supporting resource management and cleanup for infrastructure operations.",
     parameters: [
       id: [
         in: :path,
-        description: "Host identifier.",
+        description:
+          "Unique identifier of the host from which the tag will be removed. This value must be a valid UUID string.",
         required: true,
         schema: %OpenApiSpex.Schema{
           type: :string,
@@ -209,7 +227,7 @@ defmodule TrentoWeb.V1.TagsController do
       ],
       value: [
         in: :path,
-        description: "Tag value to remove.",
+        description: "The value of the tag to be removed from the host.",
         required: true,
         schema: %OpenApiSpex.Schema{
           type: :string,
@@ -233,11 +251,13 @@ defmodule TrentoWeb.V1.TagsController do
   operation :remove_tag_from_cluster,
     summary: "Remove tag from cluster.",
     tags: ["Tags"],
-    description: "Remove a tag from a cluster.",
+    description:
+      "Removes a tag from the specified cluster, supporting resource management and cleanup for infrastructure operations.",
     parameters: [
       id: [
         in: :path,
-        description: "Cluster identifier.",
+        description:
+          "Unique identifier of the cluster from which the tag will be removed. This value must be a valid UUID string.",
         required: true,
         schema: %OpenApiSpex.Schema{
           type: :string,
@@ -247,7 +267,7 @@ defmodule TrentoWeb.V1.TagsController do
       ],
       value: [
         in: :path,
-        description: "Tag value to remove.",
+        description: "The value of the tag to be removed from the cluster.",
         required: true,
         schema: %OpenApiSpex.Schema{
           type: :string,
@@ -271,11 +291,13 @@ defmodule TrentoWeb.V1.TagsController do
   operation :remove_tag_from_sap_system,
     summary: "Remove tag from SAP system.",
     tags: ["Tags"],
-    description: "Remove a tag from a SAP system.",
+    description:
+      "Removes a tag from the specified SAP system, supporting resource management and cleanup for infrastructure operations.",
     parameters: [
       id: [
         in: :path,
-        description: "SAP system identifier.",
+        description:
+          "Unique identifier of the SAP system from which the tag will be removed. This value must be a valid UUID string.",
         required: true,
         schema: %OpenApiSpex.Schema{
           type: :string,
@@ -285,7 +307,7 @@ defmodule TrentoWeb.V1.TagsController do
       ],
       value: [
         in: :path,
-        description: "Tag value to remove.",
+        description: "The value of the tag to be removed from the SAP system.",
         required: true,
         schema: %OpenApiSpex.Schema{
           type: :string,
@@ -303,11 +325,13 @@ defmodule TrentoWeb.V1.TagsController do
   operation :remove_tag_from_database,
     summary: "Remove tag from database.",
     tags: ["Tags"],
-    description: "Remove a tag from a database.",
+    description:
+      "Removes a tag from the specified database, supporting resource management and cleanup for infrastructure operations.",
     parameters: [
       id: [
         in: :path,
-        description: "Database identifier.",
+        description:
+          "Unique identifier of the database from which the tag will be removed. This value must be a valid UUID string.",
         required: true,
         schema: %OpenApiSpex.Schema{
           type: :string,
@@ -317,7 +341,7 @@ defmodule TrentoWeb.V1.TagsController do
       ],
       value: [
         in: :path,
-        description: "Tag value to remove.",
+        description: "The value of the tag to be removed from the database.",
         required: true,
         schema: %OpenApiSpex.Schema{
           type: :string,

@@ -30,7 +30,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
           expire_at: %Schema{
             type: :string,
             format: :"date-time",
-            description: "The expire date of api key.",
+            description:
+              "The date and time when the API key will expire, supporting security and access control.",
             nullable: true
           }
         },
@@ -56,7 +57,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
           expire_at: %Schema{
             type: :string,
             format: :"date-time",
-            description: "The expire date of api key.",
+            description:
+              "The date and time when the API key should expire, supporting security and access control.",
             nullable: true,
             example: "2024-12-31T23:59:59Z"
           }
@@ -166,7 +168,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
     OpenApiSpex.schema(
       %{
         title: "SaveSuseManagerSettingsRequest",
-        description: "Request body for saving SUMA settings.",
+        description:
+          "Represents the request body for saving SUSE Manager (SUMA) settings, including connection and authentication details for secure management.",
         type: :object,
         additionalProperties: false,
         properties: %{
@@ -247,25 +250,29 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
     OpenApiSpex.schema(
       %{
         title: "SuseManagerSettings",
-        description: "Settings for SUSE Manager.",
+        description:
+          "Represents the settings for SUSE Manager, including connection details and certificate upload information for secure management.",
         type: :object,
         additionalProperties: false,
         properties: %{
           url: %Schema{
             type: :string,
-            description: "URL of SUSE Manager.",
+            description:
+              "The URL used to access SUSE Manager, supporting connectivity and management.",
             example: "https://suse-manager.example.com"
           },
           username: %Schema{
             type: :string,
-            description: "Username.",
+            description:
+              "The username used for authentication with SUSE Manager, supporting secure access.",
             example: "admin"
           },
           ca_uploaded_at: %Schema{
             type: :string,
             format: :datetime,
             nullable: true,
-            description: "Time that SSL certificate was uploaded.",
+            description:
+              "The date and time when the SSL certificate was uploaded to SUSE Manager, supporting audit and security management.",
             example: "2024-01-15T10:30:00Z"
           }
         },
@@ -285,16 +292,24 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
     OpenApiSpex.schema(
       %{
         title: "PublicKeys",
-        description: "Uploaded public keys.",
+        description:
+          "A list of uploaded public keys used for secure authentication and access management.",
         type: :array,
         items: %Schema{
-          description: "Public key information.",
+          description:
+            "Details about an uploaded public key, including its name and content for authentication purposes.",
           type: :object,
           properties: %{
-            name: %Schema{type: :string, description: "Name.", example: "my-key"},
+            name: %Schema{
+              type: :string,
+              description:
+                "The name assigned to the public key, which helps identify it for authentication.",
+              example: "my-key"
+            },
             content: %Schema{
               type: :string,
-              description: "Public key content.",
+              description:
+                "The actual content of the public key, used for secure authentication and access.",
               example: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC7..."
             }
           },
@@ -363,16 +378,55 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
     OpenApiSpex.schema(
       %{
         title: "CreateAlertingSettings",
-        description: "Request body for creating Alerting Settings.",
+        description:
+          "Represents the request body for creating alerting settings, including notification and SMTP configuration details for the alerting subsystem.",
         type: :object,
         properties: %{
-          enabled: %Schema{type: :boolean, example: true},
-          sender_email: %Schema{type: :string, format: :email, example: "noreply@example.com"},
-          recipient_email: %Schema{type: :string, format: :email, example: "admin@example.com"},
-          smtp_server: %Schema{type: :string, example: "smtp.example.com"},
-          smtp_port: %Schema{type: :integer, example: 587},
-          smtp_username: %Schema{type: :string, example: "smtp_user"},
-          smtp_password: %Schema{type: :string, format: :password, example: "smtp_password"}
+          enabled: %Schema{
+            type: :boolean,
+            description:
+              "Indicates whether the alerting subsystem is enabled, allowing notifications to be sent when events occur.",
+            example: true
+          },
+          sender_email: %Schema{
+            type: :string,
+            format: :email,
+            description:
+              "The email address used as the sender for alert notifications, supporting identification and delivery.",
+            example: "noreply@example.com"
+          },
+          recipient_email: %Schema{
+            type: :string,
+            format: :email,
+            description:
+              "The email address that will receive alert notifications, ensuring timely communication of important events.",
+            example: "admin@example.com"
+          },
+          smtp_server: %Schema{
+            type: :string,
+            description:
+              "The SMTP server address used to send alert emails, supporting reliable notification delivery.",
+            example: "smtp.example.com"
+          },
+          smtp_port: %Schema{
+            type: :integer,
+            description:
+              "The port number used to connect to the SMTP server for sending alert notifications.",
+            example: 587
+          },
+          smtp_username: %Schema{
+            type: :string,
+            description:
+              "The username used to authenticate with the SMTP server when sending alert emails.",
+            example: "smtp_user"
+          },
+          smtp_password: %Schema{
+            type: :string,
+            format: :password,
+            description:
+              "The password used to authenticate with the SMTP server for secure email delivery.",
+            example: "smtp_password"
+          }
         },
         required: [
           :enabled,
@@ -403,7 +457,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
     OpenApiSpex.schema(
       %{
         title: "UpdateAlertingSettings",
-        description: "Request body for updating Alerting Settings.",
+        description:
+          "Represents the request body for updating alerting settings, including notification and SMTP configuration details for the alerting subsystem.",
         type: :object,
         properties: %{
           enabled: %Schema{type: :boolean, example: true},

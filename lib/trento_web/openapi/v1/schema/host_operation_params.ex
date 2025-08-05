@@ -9,7 +9,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.HostOperationParams do
     OpenApiSpex.schema(
       %{
         title: "SaptuneSolutionApplyParams",
-        description: "Saptune solution apply operation params.",
+        description:
+          "Represents the parameters for applying a Saptune solution to a host, supporting automated configuration and compliance.",
         type: :object,
         additionalProperties: false,
         properties: %{
@@ -27,7 +28,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.HostOperationParams do
   OpenApiSpex.schema(
     %{
       title: "HostOperationParams",
-      description: "Host operation request parameters.",
+      description:
+        "Represents the parameters for a host operation request, including actions such as applying Saptune solutions for system management.",
       type: :object,
       oneOf: [
         SaptuneSolutionApplyParams

@@ -6,7 +6,8 @@ defmodule Trento.MixProject do
   def project do
     [
       app: :trento,
-      description: "Easing your life in administering SAP application.",
+      description:
+        "Easing your life in administering SAP application. Trento is an open-source web application, built by SUSE, to enhance day-2 operations of SAP workloads. It can be used to proactively prevent infrastructural issues by diagnosing common issues, validate systems configuration against best practices, and remove toil from routine OS tasks on mission-critical systems.",
       version: get_version(),
       elixir: "~> 1.15",
       elixirc_paths: elixirc_paths(Mix.env()),

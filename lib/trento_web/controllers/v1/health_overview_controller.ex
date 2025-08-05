@@ -10,7 +10,7 @@ defmodule TrentoWeb.V1.HealthOverviewController do
     summary: "Health overview of the discovered SAP Systems.",
     tags: ["Target Infrastructure"],
     description:
-      "Provide an aggregated overview of the health of the discovered SAP Systems (and their components) on the target infrastructure.",
+      "Returns an aggregated health overview of all discovered SAP Systems and their components on the target infrastructure, supporting monitoring, diagnostics, and operational decision-making for administrators.",
     responses: [
       ok:
         {"An overview of the health of the discovered SAP Systems and their components.",

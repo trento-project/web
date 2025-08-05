@@ -9,18 +9,21 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SapSystemOperationParams do
     OpenApiSpex.schema(
       %{
         title: "StartStopParams",
-        description: "SAP system start/stop operation params.",
+        description:
+          "Parameters required to start or stop an SAP system instance, including instance type and operation timeout for reliable management.",
         type: :object,
         additionalProperties: false,
         properties: %{
           instance_type: %Schema{
             type: :string,
-            description: "Instance type to start/stop.",
+            description:
+              "Specifies the type of SAP system instance to be started or stopped, supporting targeted operations.",
             example: "ASCS"
           },
           timeout: %Schema{
             type: :number,
-            description: "Timeout in seconds to wait until system is started/stopped.",
+            description:
+              "The maximum time in seconds to wait for the SAP system to complete the start or stop operation, supporting reliability and error handling.",
             example: 300
           }
         },
@@ -36,7 +39,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SapSystemOperationParams do
   OpenApiSpex.schema(
     %{
       title: "SapSystemOperationParams",
-      description: "SAP system operation request parameters.",
+      description:
+        "Request parameters for SAP system operations, supporting actions such as starting or stopping system instances with configurable options.",
       type: :object,
       oneOf: [
         StartStopParams

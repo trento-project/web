@@ -21,7 +21,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Host do
     OpenApiSpex.schema(
       %{
         title: "IPv4",
-        description: "IPv4 address format.",
+        description:
+          "Represents the format of an IPv4 address, used for network identification and communication in the host system.",
         type: :string,
         format: :ipv4,
         example: "192.168.1.100"
@@ -36,7 +37,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Host do
     OpenApiSpex.schema(
       %{
         title: "IPv6",
-        description: "IPv6 address format.",
+        description:
+          "Represents the format of an IPv6 address, supporting modern network identification and communication in the host system.",
         type: :string,
         format: :ipv6,
         example: "2001:db8::1"
@@ -51,14 +53,20 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Host do
     OpenApiSpex.schema(
       %{
         title: "SystemdUnit",
-        description: "Systemd service unit information.",
+        description:
+          "Provides information about a systemd service unit, including its name and operational state for system management.",
         type: :object,
         additionalProperties: false,
         properties: %{
-          name: %Schema{type: :string, description: "Name of the systemd unit"},
+          name: %Schema{
+            type: :string,
+            description:
+              "The name assigned to the systemd unit, used for identification and management."
+          },
           unit_file_state: %Schema{
             type: :string,
-            description: "State of the systemd unit. Whether it is enabled or disabled."
+            description:
+              "Shows the current state of the systemd unit, such as enabled or disabled, supporting operational management."
           }
         },
         example: %{
@@ -76,17 +84,28 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Host do
     OpenApiSpex.schema(
       %{
         title: "Host",
-        description: "A discovered host on the target infrastructure.",
+        description:
+          "Represents a discovered host on the target infrastructure, including its configuration, health, and associated resources.",
         type: :object,
         additionalProperties: false,
         properties: %{
-          id: %Schema{type: :string, description: "Host ID.", format: :uuid},
-          hostname: %Schema{type: :string, description: "Host name"},
+          id: %Schema{
+            type: :string,
+            description: "Unique identifier for the host, used for tracking and management.",
+            format: :uuid
+          },
+          hostname: %Schema{
+            type: :string,
+            description:
+              "The name assigned to the host, used for identification and organization."
+          },
           ip_addresses: %Schema{
             type: :array,
-            description: "IP addresses.",
+            description:
+              "A list of IP addresses assigned to the host, supporting network identification and communication.",
             items: %Schema{
-              description: "IP address (IPv4 or IPv6).",
+              description:
+                "Represents an IP address for the host, which may be either IPv4 or IPv6, supporting network connectivity.",
               anyOf: [
                 IPv4,
                 IPv6
@@ -96,15 +115,17 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Host do
           netmasks: %Schema{
             type: :array,
             description:
-              "Netmasks associated to the ip_addresses field. The position of the item is associated to the ip address position in ip_addresses.",
+              "A list of netmasks associated with the host's IP addresses, where each netmask corresponds to the position of the IP address in the list.",
             items: %Schema{type: :integer, nullable: true}
           },
           agent_version: %Schema{
             type: :string,
-            description: "Version of the agent installed on the host."
+            description:
+              "Shows the version of the agent software installed on the host, supporting compatibility and management."
           },
           systemd_units: %Schema{
-            description: "A list of systemd units on the host.",
+            description:
+              "A list containing all systemd units present on the host, supporting service management and monitoring.",
             type: :array,
             items: SystemdUnit
           },
@@ -112,43 +133,50 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Host do
           health: ResourceHealth,
           cluster_id: %Schema{
             type: :string,
-            description: "Identifier of the cluster this host is part of.",
+            description:
+              "Unique identifier of the cluster to which this host belongs, supporting infrastructure management.",
             format: :uuid,
             nullable: true
           },
           cluster_host_status: %Schema{
             type: :string,
-            description: "Status of host in the cluster is part of.",
+            description:
+              "Shows the current status of the host within its cluster, supporting operational monitoring and management.",
             enum: ClusterHostStatus.values(),
             nullable: true
           },
           heartbeat: %Schema{
             type: :string,
-            description: "Host's last heartbeat status.",
+            description:
+              "Indicates the last heartbeat status received from the host, supporting health monitoring and alerting.",
             enum: [:critical, :passing, :unknown]
           },
           provider: Provider.SupportedProviders,
           provider_data: Provider.ProviderData,
           tags: Tags,
           sles_subscriptions: %Schema{
-            description: "A list of the available SLES Subscriptions on a host.",
+            description:
+              "A list containing all available SLES subscriptions on the host, supporting license management and compliance.",
             type: :array,
             items: SlesSubscription
           },
           selected_checks: %Schema{
-            description: "A list of check ids selected for an execution on this host.",
+            description:
+              "A list containing the IDs of checks selected for execution on this host, supporting targeted monitoring and analysis.",
             type: :array,
             items: %Schema{type: :string}
           },
           saptune_status: SaptuneStatus,
           deregistered_at: %Schema{
-            description: "Timestamp of the last deregistration of the host.",
+            description:
+              "The timestamp indicating when the host was last deregistered, supporting audit and lifecycle management.",
             type: :string,
             nullable: true,
             format: :"date-time"
           },
           last_heartbeat_timestamp: %Schema{
-            description: "Timestamp of the last heartbeat received from the host.",
+            description:
+              "The timestamp of the last heartbeat received from the host, supporting health monitoring and alerting.",
             type: :string,
             nullable: true,
             format: :"date-time"
@@ -207,7 +235,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Host do
     OpenApiSpex.schema(
       %{
         title: "HostsCollection",
-        description: "A list of the discovered hosts.",
+        description:
+          "A list containing all discovered hosts on the target infrastructure, supporting monitoring and management.",
         type: :array,
         items: HostItem,
         example: [

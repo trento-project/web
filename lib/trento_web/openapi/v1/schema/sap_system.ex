@@ -14,57 +14,76 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
     OpenApiSpex.schema(
       %{
         title: "ApplicationInstance",
-        description: "A discovered Application Instance on the target infrastructure.",
+        description:
+          "Represents a discovered SAP application instance on the target infrastructure, including identification, features, ports, and health status for monitoring and management.",
         type: :object,
         additionalProperties: false,
         properties: %{
           sap_system_id: %Schema{
             type: :string,
-            description: "SAP System ID.",
+            description:
+              "Unique identifier for the SAP system to which this application instance belongs, supporting resource tracking and management.",
             format: :uuid,
             example: "7269eb74-dd68-4c91-b4d1-4f9d91f2c2c8"
           },
-          sid: %Schema{type: :string, description: "SID.", example: "HA1"},
-          instance_number: %Schema{type: :string, description: "Instance Number.", example: "00"},
+          sid: %Schema{
+            type: :string,
+            description:
+              "The SAP system identifier (SID) for this application instance, supporting system identification.",
+            example: "HA1"
+          },
+          instance_number: %Schema{
+            type: :string,
+            description:
+              "The instance number assigned to this SAP application instance, supporting unique identification.",
+            example: "00"
+          },
           instance_hostname: %Schema{
             type: :string,
-            description: "Instance Hostname.",
+            description:
+              "The hostname of the server where this SAP application instance is running, supporting network management.",
             nullable: true,
             example: "sap-app-01"
           },
           absent_at: %Schema{
             type: :string,
-            description: "Absent instance timestamp.",
+            description:
+              "Timestamp indicating when the application instance became absent from the infrastructure, supporting audit and monitoring.",
             format: :datetime,
             nullable: true,
             example: "2024-01-16T08:00:00Z"
           },
           features: %Schema{
             type: :string,
-            description: "Instance Features.",
+            description:
+              "A list of features enabled for this SAP application instance, supporting capability tracking.",
             example: "MESSAGESERVER|ENQUE"
           },
           http_port: %Schema{
             type: :integer,
-            description: "Instance HTTP Port.",
+            description:
+              "The HTTP port number used by this SAP application instance, supporting connectivity and monitoring.",
             nullable: true,
             example: 8000
           },
           https_port: %Schema{
             type: :integer,
-            description: "Instance HTTPS Port.",
+            description:
+              "The HTTPS port number used by this SAP application instance, supporting secure connectivity.",
             nullable: true,
             example: 44300
           },
           start_priority: %Schema{
             type: :string,
-            description: "Instance Start Priority.",
+            description:
+              "The start priority assigned to this SAP application instance, supporting startup sequencing and management.",
             nullable: true,
             example: "1"
           },
           host_id: %Schema{
             type: :string,
-            description: "Identifier of the host where current instance is running.",
+            description:
+              "Unique identifier of the host where this application instance is running, supporting resource mapping.",
             format: :uuid,
             example: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244"
           },
@@ -103,21 +122,34 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
     OpenApiSpex.schema(
       %{
         title: "SAPSystem",
-        description: "A discovered SAP System on the target infrastructure.",
+        description:
+          "Represents a discovered SAP system on the target infrastructure, including identification, database, health, and instance details for monitoring and management.",
         type: :object,
         additionalProperties: false,
         properties: %{
           id: %Schema{
             type: :string,
-            description: "SAP System ID.",
+            description:
+              "Unique identifier for the SAP system, supporting resource tracking and management.",
             format: :uuid,
             example: "7269eb74-dd68-4c91-b4d1-4f9d91f2c2c8"
           },
-          sid: %Schema{type: :string, description: "SID.", example: "HA1"},
-          tenant: %Schema{type: :string, description: "Tenant.", example: "PRD"},
+          sid: %Schema{
+            type: :string,
+            description:
+              "The SAP system identifier (SID) for this system, supporting system identification.",
+            example: "HA1"
+          },
+          tenant: %Schema{
+            type: :string,
+            description:
+              "The tenant identifier for this SAP system, supporting multi-tenancy and resource management.",
+            example: "PRD"
+          },
           db_host: %Schema{
             type: :string,
-            description: "Address of the connected Database.",
+            description:
+              "The address of the database connected to this SAP system, supporting connectivity and monitoring.",
             example: "10.1.1.5"
           },
           health: ResourceHealth,
@@ -176,7 +208,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
     OpenApiSpex.schema(
       %{
         title: "SAPSystemsCollection",
-        description: "A list of the discovered SAP Systems.",
+        description:
+          "A list of discovered SAP systems, each including identification, database, health, and instance details for infrastructure monitoring and management.",
         type: :array,
         items: SAPSystemItem,
         example: [
@@ -207,39 +240,50 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
     OpenApiSpex.schema(
       %{
         title: "SAPSystemHealthOverview",
-        description: "An overview of the health of a discovered SAP System and its components.",
+        description:
+          "Provides an overview of the health status for a discovered SAP system and its components, supporting infrastructure monitoring and alerting.",
         type: :object,
         additionalProperties: false,
         properties: %{
           id: %Schema{
             type: :string,
-            description: "SAP System ID.",
+            description:
+              "Unique identifier for the SAP system, supporting resource tracking and management.",
             format: :uuid,
             example: "7269eb74-dd68-4c91-b4d1-4f9d91f2c2c8"
           },
-          sid: %Schema{type: :string, description: "SID.", example: "HA1"},
+          sid: %Schema{
+            type: :string,
+            description:
+              "The SAP system identifier (SID) for this system, supporting system identification.",
+            example: "HA1"
+          },
           cluster_id: %Schema{
             type: :string,
-            description: "Cluster ID.",
+            description:
+              "Unique identifier for the cluster associated with this SAP system, supporting infrastructure mapping.",
             format: :uuid,
             deprecated: true,
             example: "6c76eb74-dd68-4c91-b4d1-4f9d91f2c2c8"
           },
           application_cluster_id: %Schema{
             type: :string,
-            description: "Application cluster ID.",
+            description:
+              "Unique identifier for the application cluster associated with this SAP system, supporting resource mapping.",
             format: :uuid,
             example: "6c76eb74-dd68-4c91-b4d1-4f9d91f2c2c8"
           },
           database_cluster_id: %Schema{
             type: :string,
-            description: "Database cluster ID.",
+            description:
+              "Unique identifier for the database cluster associated with this SAP system, supporting resource mapping.",
             format: :uuid,
             example: "5a65db74-dd68-4c91-b4d1-4f9d91f2c2c8"
           },
           database_id: %Schema{
             type: :string,
-            description: "Database ID.",
+            description:
+              "Unique identifier for the database associated with this SAP system, supporting resource tracking and management.",
             format: :uuid,
             example: "9c86eb74-dd68-4c91-b4d1-4f9d91f2c2c8"
           },
@@ -289,7 +333,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
     OpenApiSpex.schema(
       %{
         title: "HealthOverview",
-        description: "A list of health summaries for the discovered SAP Systems.",
+        description:
+          "A list of health summaries for discovered SAP systems, supporting infrastructure monitoring and alerting.",
         type: :array,
         items: SAPSystemHealthOverview,
         example: [

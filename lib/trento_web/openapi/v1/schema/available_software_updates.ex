@@ -11,23 +11,65 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
     OpenApiSpex.schema(
       %{
         title: "UpgradablePackage",
-        description: "Upgradable package.",
+        description:
+          "Represents a software package that can be upgraded to a newer version, including relevant metadata for update management.",
         type: :object,
         additionalProperties: false,
         properties: %{
-          arch: %Schema{type: :string, description: "Package name.", example: "x86_64"},
-          from_epoch: %Schema{type: :string, description: "From epoch.", example: "0"},
-          from_release: %Schema{type: :string, description: "From which release.", example: "1.1"},
-          from_version: %Schema{type: :string, description: "From version.", example: "1.0.0"},
+          arch: %Schema{
+            type: :string,
+            description:
+              "Specifies the architecture type for the upgradable package, such as x86_64 or arm64.",
+            example: "x86_64"
+          },
+          from_epoch: %Schema{
+            type: :string,
+            description:
+              "Indicates the epoch value from which the package is being upgraded, used for version control.",
+            example: "0"
+          },
+          from_release: %Schema{
+            type: :string,
+            description:
+              "Shows the release version from which the package is being upgraded, aiding in update tracking.",
+            example: "1.1"
+          },
+          from_version: %Schema{
+            type: :string,
+            description:
+              "Displays the version number from which the package is being upgraded, providing historical context.",
+            example: "1.0.0"
+          },
           name: %Schema{
             type: :string,
-            description: "Upgradable package name.",
+            description:
+              "The name of the software package that is eligible for upgrade, used for identification and management.",
             example: "openssl"
           },
-          to_epoch: %Schema{type: :string, description: "To epoch.", example: "0"},
-          to_package_id: %Schema{type: :integer, description: "To package id.", example: 5678},
-          to_release: %Schema{type: :string, description: "To release.", example: "1.2"},
-          to_version: %Schema{type: :string, description: "To version.", example: "1.1.1"}
+          to_epoch: %Schema{
+            type: :string,
+            description:
+              "Indicates the epoch value to which the package will be upgraded, supporting version management.",
+            example: "0"
+          },
+          to_package_id: %Schema{
+            type: :integer,
+            description:
+              "Unique identifier for the package version being upgraded to, used for tracking updates.",
+            example: 5678
+          },
+          to_release: %Schema{
+            type: :string,
+            description:
+              "Shows the release version to which the package will be upgraded, aiding in update planning.",
+            example: "1.2"
+          },
+          to_version: %Schema{
+            type: :string,
+            description:
+              "Displays the version number to which the package will be upgraded, providing future context.",
+            example: "1.1.1"
+          }
         },
         example: %{
           arch: "x86_64",
@@ -50,36 +92,52 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
     OpenApiSpex.schema(
       %{
         title: "RelevantPatch",
-        description: "Relevant patch.",
+        description:
+          "Represents a software patch that is relevant to the current system or package, including details for update application.",
         type: :object,
         additionalProperties: false,
         properties: %{
-          id: %Schema{type: :integer, description: "Advisory's id.", example: 1234},
+          id: %Schema{
+            type: :integer,
+            description:
+              "Unique identifier for the advisory associated with the patch, used for reference and management.",
+            example: 1234
+          },
           advisory_name: %Schema{
             type: :string,
-            description: "Advisory name.",
+            description:
+              "The name of the advisory related to the patch, used for identification and compliance tracking.",
             example: "SUSE-SU-2024:0001-1"
           },
           advisory_status: %Schema{
             type: :string,
-            description: "Advisory status.",
+            description:
+              "Indicates the current status of the advisory, such as stable, pending, or deprecated, for update management.",
             example: "stable"
           },
           advisory_synopsis: %Schema{
             type: :string,
-            description: "Advisory's synopsis.",
+            description:
+              "Provides a brief summary of the advisory, outlining the main points and impact of the patch.",
             example: "Critical security update for OpenSSL"
           },
           advisory_type: %Schema{
             type: :string,
-            description: "Advisory's type.",
+            description:
+              "Specifies the type of advisory, such as security, bugfix, or enhancement, for classification purposes.",
             enum: AdvisoryType.values(),
             example: "security_advisory"
           },
-          date: %Schema{type: :string, description: "Advisory's date.", example: "2024-01-15"},
+          date: %Schema{
+            type: :string,
+            description:
+              "The date when the advisory was issued, providing a timeline for patch application.",
+            example: "2024-01-15"
+          },
           update_date: %Schema{
             type: :string,
-            description: "Advisory's update date.",
+            description:
+              "The date when the advisory was last updated, helping track changes and revisions over time.",
             example: "2024-01-15"
           }
         },
@@ -102,25 +160,48 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
     OpenApiSpex.schema(
       %{
         title: "PatchesForPackage",
-        description: "Relevant patches covered by a package upgrade.",
+        description:
+          "Details the relevant software patches that are included as part of a package upgrade, supporting system maintenance.",
         type: :object,
         additionalProperties: false,
         properties: %{
-          package_id: %Schema{type: :integer, description: "To package id"},
+          package_id: %Schema{
+            type: :integer,
+            description:
+              "Unique identifier for the package being upgraded, used for tracking and management."
+          },
           patches: %Schema{
             type: :array,
             additionalProperties: false,
             items: %Schema{
-              description: "A list of relevant patches that the upgrade covers.",
+              description:
+                "A list containing all relevant software patches that are addressed by the current upgrade, supporting compliance and maintenance.",
               additionalProperties: false,
               properties: %{
-                advisory_type: %Schema{type: :string, description: "Advisory type"},
-                advisory: %Schema{type: :string, description: "Advisory name for the patch"},
-                synopsis: %Schema{type: :string, description: "Advisory synopsis for the patch"},
-                issue_date: %Schema{type: :string, description: "Advisory issue date"},
+                advisory_type: %Schema{
+                  type: :string,
+                  description:
+                    "Specifies the type of advisory associated with the patch, such as security or bugfix."
+                },
+                advisory: %Schema{
+                  type: :string,
+                  description:
+                    "The name of the advisory linked to the patch, used for identification and tracking."
+                },
+                synopsis: %Schema{
+                  type: :string,
+                  description:
+                    "A brief summary of the advisory, outlining the main points and impact of the patch."
+                },
+                issue_date: %Schema{
+                  type: :string,
+                  description:
+                    "The date when the advisory was issued, providing historical context for the patch."
+                },
                 last_modified_date: %Schema{
                   type: :string,
-                  description: "Advisory last modified date."
+                  description:
+                    "The date when the advisory was last modified, helping track updates and changes over time."
                 }
               }
             },
@@ -157,12 +238,14 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
     OpenApiSpex.schema(
       %{
         title: "AvailableSoftwareUpdatesResponse",
-        description: "Response returned from the available software updates endpoint.",
+        description:
+          "Represents the response returned from the available software updates endpoint, including details about upgradable packages and relevant patches.",
         type: :object,
         additionalProperties: false,
         properties: %{
           relevant_patches: %Schema{
-            description: "A list relevant patches for the host.",
+            description:
+              "A list containing all relevant software patches applicable to the host, supporting maintenance and compliance.",
             type: :array,
             items: RelevantPatch,
             example: [
@@ -178,7 +261,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
             ]
           },
           upgradable_packages: %Schema{
-            description: "A list of upgradable packages for the host.",
+            description:
+              "A list containing all software packages on the host that are eligible for upgrade, supporting system updates.",
             type: :array,
             items: UpgradablePackage,
             example: [
@@ -232,7 +316,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
     OpenApiSpex.schema(
       %{
         title: "PatchesForPackagesResponse",
-        description: "Response returned from the patches for packages endpoint.",
+        description:
+          "Represents the response returned from the patches for packages endpoint, detailing all relevant patches for upgraded packages.",
         type: :object,
         additionalProperties: false,
         example: %{
@@ -283,38 +368,94 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
     OpenApiSpex.schema(
       %{
         title: "ErrataDetails",
-        description: "Details for the erratum matching the given advisory name.",
+        description:
+          "Provides detailed information for the erratum that matches the specified advisory name, supporting update management.",
         type: :object,
         additionalProperties: false,
         properties: %{
-          id: %Schema{type: :number, format: :int, description: "Advisory ID number"},
+          id: %Schema{
+            type: :number,
+            format: :int,
+            description: "Unique identifier for the advisory, used for reference and management."
+          },
           issue_date: %Schema{
             type: :string,
             format: "date",
-            description: "Advisory issue date."
+            description:
+              "The date when the advisory was issued, providing historical context for the erratum."
           },
           update_date: %Schema{
             type: :string,
             format: "date",
-            description: "Advisory update date."
+            description:
+              "The date when the advisory was last updated, helping track changes and revisions for the erratum."
           },
           last_modified_date: %Schema{
             type: :string,
             format: "date",
-            description: "Advisory last modified date."
+            description:
+              "The date when the advisory was last modified, supporting update tracking for the erratum."
           },
-          synopsis: %Schema{type: :string, description: "Advisory synopsis"},
-          release: %Schema{type: :number, format: :int, description: "Advisory Release number"},
-          advisory_status: %Schema{type: :string, description: "Advisory status"},
-          vendor_advisory: %Schema{type: :string, description: "Vendor advisory"},
-          type: %Schema{type: :string, description: "Advisory type"},
-          product: %Schema{type: :string, description: "Advisory product"},
-          errata_from: %Schema{type: :string, description: "Advisory errata"},
-          topic: %Schema{type: :string, description: "Advisory topic"},
-          description: %Schema{type: :string, description: "Advisory description"},
-          references: %Schema{type: :string, description: "Advisory references"},
-          notes: %Schema{type: :string, description: "Advisory notes"},
-          solution: %Schema{type: :string, description: "Advisory solution"},
+          synopsis: %Schema{
+            type: :string,
+            description: "A brief summary of the advisory, outlining its main points and impact."
+          },
+          release: %Schema{
+            type: :number,
+            format: :int,
+            description:
+              "Indicates the release number associated with the advisory, supporting version tracking."
+          },
+          advisory_status: %Schema{
+            type: :string,
+            description:
+              "Shows the current status of the advisory, such as stable or pending, for update management."
+          },
+          vendor_advisory: %Schema{
+            type: :string,
+            description:
+              "Information provided by the vendor regarding the advisory, supporting compliance and tracking."
+          },
+          type: %Schema{
+            type: :string,
+            description:
+              "Specifies the type of advisory, such as security or bugfix, for classification purposes."
+          },
+          product: %Schema{
+            type: :string,
+            description:
+              "The product associated with the advisory, used for identification and management."
+          },
+          errata_from: %Schema{
+            type: :string,
+            description:
+              "Indicates the source of the errata, supporting traceability and compliance."
+          },
+          topic: %Schema{
+            type: :string,
+            description:
+              "The topic covered by the advisory, providing context for the update or fix."
+          },
+          description: %Schema{
+            type: :string,
+            description:
+              "A detailed explanation of the advisory, outlining its purpose and impact."
+          },
+          references: %Schema{
+            type: :string,
+            description:
+              "Lists references related to the advisory, supporting further research and validation."
+          },
+          notes: %Schema{
+            type: :string,
+            description:
+              "Additional notes regarding the advisory, providing extra context or instructions."
+          },
+          solution: %Schema{
+            type: :string,
+            description:
+              "Describes the recommended solution or remediation for the advisory, supporting resolution."
+          },
           reboot_suggested: %Schema{
             type: :boolean,
             description:
@@ -356,11 +497,13 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
     OpenApiSpex.schema(
       %{
         title: "CVEs",
-        description: "List of CVEs applicable to the errata with the given advisory name.",
+        description:
+          "Provides a list of CVEs that are applicable to the errata associated with the specified advisory name, supporting vulnerability management.",
         type: :array,
         additionalProperties: false,
         items: %Schema{
-          description: "A fix for a publicly known security vulnerability.",
+          description:
+            "Represents a fix for a publicly known security vulnerability, including details for remediation and compliance.",
           type: :string
         },
         example: [
@@ -377,7 +520,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
     OpenApiSpex.schema(
       %{
         title: "AdvisoryFixes",
-        description: "Response returned from the get advisory fixes endpoint.",
+        description:
+          "Represents the response returned from the get advisory fixes endpoint, detailing all fixes for advisories in the system.",
         type: :object,
         additionalProperties: %Schema{type: :string},
         example: %{
@@ -394,32 +538,39 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
     OpenApiSpex.schema(
       %{
         title: "AffectedPackages",
-        description: "Response returned from the get affected packages endpoint.",
+        description:
+          "Represents the response returned from the get affected packages endpoint, listing all packages affected by advisories.",
         type: :array,
         additionalProperties: false,
         items: %Schema{
-          description: "Metadata for a package effected by an advisory.",
+          description:
+            "Provides metadata for a package affected by an advisory, supporting tracking and management of vulnerabilities.",
           type: :object,
           properties: %{
             name: %Schema{
               type: :string,
-              description: "Package name."
+              description:
+                "The name of the package affected by the advisory, used for identification and management."
             },
             arch_label: %Schema{
               type: :string,
-              description: "Package architecture."
+              description:
+                "Specifies the architecture of the affected package, such as x86_64 or arm64, for compatibility tracking."
             },
             version: %Schema{
               type: :string,
-              description: "Package upstream version."
+              description:
+                "Displays the upstream version of the affected package, supporting version control and update planning."
             },
             release: %Schema{
               type: :string,
-              description: "Package RPM release number."
+              description:
+                "Indicates the RPM release number of the affected package, supporting package management and updates."
             },
             epoch: %Schema{
               type: :string,
-              description: "Package epoch number."
+              description:
+                "Shows the epoch number of the affected package, supporting versioning and update tracking."
             }
           }
         },
@@ -442,16 +593,19 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
     OpenApiSpex.schema(
       %{
         title: "AffectedSystems",
-        description: "Response returned from the get affected systems endpoint.",
+        description:
+          "Represents the response returned from the get affected systems endpoint, listing all systems affected by advisories.",
         type: :array,
         additionalProperties: false,
         items: %Schema{
-          description: "Metadata for a system effected by an advisory.",
+          description:
+            "Provides metadata for a system affected by an advisory, supporting tracking and management of vulnerabilities.",
           type: :object,
           properties: %{
             name: %Schema{
               type: :string,
-              description: "System name."
+              description:
+                "The name of the system affected by the advisory, used for identification and management."
             }
           }
         },
@@ -473,7 +627,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
     OpenApiSpex.schema(
       %{
         title: "ErrataDetailsResponse",
-        description: "Response returned from the errata details endpoint.",
+        description:
+          "Represents the response returned from the errata details endpoint, providing details about errata for advisories.",
         type: :object,
         additionalProperties: false,
         properties: %{
