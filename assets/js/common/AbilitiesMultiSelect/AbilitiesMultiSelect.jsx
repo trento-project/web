@@ -63,6 +63,8 @@ const groupedAbilities = [
       'stop:application_instance',
       'start:sap_system',
       'stop:sap_system',
+      'start:database',
+      'stop:database',
     ],
   },
 ];
