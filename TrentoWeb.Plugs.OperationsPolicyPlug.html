@@ -141,26 +141,26 @@ Info
 <p>This plug is responsible for authorizing operations. It falls back to <code class="inline">{:error, :forbidden}</code> if
 the resource is not authorized.</p><p>Options:</p><ul><li>policy: Operations policy implementing Trento.Operations.PolicyBehaviour</li><li>resource: Function returning the resource to be authorized. If it returns <code class="inline">nil</code> is fallen back</li><li>operation: Function returning the operation to authorize. If it returns <code class="inline">nil</code> is fallen back</li><li>params: Function returning the operation params. It returns an empty map by default.</li><li>assigns_to: Atom defining where the authorized resource is assigned in the conn once the plug finishes successfully.
 It is available at <code class="inline">%{assigns: %{authorized_resource: resource}}</code>. <code class="inline">authorized_resource</code> by default</li></ul><p>The plug can be used like:</p><pre><code class="makeup elixir" translate="no"><span class="n">plug</span><span class="w"> </span><span class="nc">TrentoWeb.Plugs.OperationsPolicyPlug</span><span class="p">,</span><span class="w">
-     </span><span class="p" data-group-id="4701950881-1">[</span><span class="w">
+     </span><span class="p" data-group-id="3581219009-1">[</span><span class="w">
        </span><span class="ss">policy</span><span class="p">:</span><span class="w"> </span><span class="nc">Trento.Operations.MyPolicy</span><span class="p">,</span><span class="w">
        </span><span class="ss">resource</span><span class="p">:</span><span class="w"> </span><span class="o">&amp;</span><span class="bp">__MODULE__</span><span class="o">.</span><span class="n">get_resource</span><span class="o">/</span><span class="mi">1</span><span class="p">,</span><span class="w">
        </span><span class="ss">operation</span><span class="p">:</span><span class="w"> </span><span class="o">&amp;</span><span class="bp">__MODULE__</span><span class="o">.</span><span class="n">get_operation</span><span class="o">/</span><span class="mi">1</span><span class="p">,</span><span class="w">
        </span><span class="ss">params</span><span class="p">:</span><span class="w"> </span><span class="o">&amp;</span><span class="bp">__MODULE__</span><span class="o">.</span><span class="n">get_params</span><span class="o">/</span><span class="mi">1</span><span class="w">
        </span><span class="ss">assigns_to</span><span class="p">:</span><span class="w"> </span><span class="ss">:resource</span><span class="w">
-     </span><span class="p" data-group-id="4701950881-1">]</span><span class="w">
+     </span><span class="p" data-group-id="3581219009-1">]</span><span class="w">
      </span><span class="ow">when</span><span class="w"> </span><span class="n">action</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="ss">:request_operation</span><span class="w">
 
-</span><span class="kd">def</span><span class="w"> </span><span class="nf">get_resource</span><span class="p" data-group-id="4701950881-2">(</span><span class="n">conn</span><span class="p" data-group-id="4701950881-2">)</span><span class="w"> </span><span class="k" data-group-id="4701950881-3">do</span><span class="w">
+</span><span class="kd">def</span><span class="w"> </span><span class="nf">get_resource</span><span class="p" data-group-id="3581219009-2">(</span><span class="n">conn</span><span class="p" data-group-id="3581219009-2">)</span><span class="w"> </span><span class="k" data-group-id="3581219009-3">do</span><span class="w">
   </span><span class="c1"># return the resource to be authorized</span><span class="w">
-</span><span class="k" data-group-id="4701950881-3">end</span><span class="w">
+</span><span class="k" data-group-id="3581219009-3">end</span><span class="w">
 
-</span><span class="kd">def</span><span class="w"> </span><span class="nf">get_operation</span><span class="p" data-group-id="4701950881-4">(</span><span class="n">conn</span><span class="p" data-group-id="4701950881-4">)</span><span class="w"> </span><span class="k" data-group-id="4701950881-5">do</span><span class="w">
+</span><span class="kd">def</span><span class="w"> </span><span class="nf">get_operation</span><span class="p" data-group-id="3581219009-4">(</span><span class="n">conn</span><span class="p" data-group-id="3581219009-4">)</span><span class="w"> </span><span class="k" data-group-id="3581219009-5">do</span><span class="w">
   </span><span class="c1"># return the operation to authorize</span><span class="w">
-</span><span class="k" data-group-id="4701950881-5">end</span><span class="w">
+</span><span class="k" data-group-id="3581219009-5">end</span><span class="w">
 
-</span><span class="kd">def</span><span class="w"> </span><span class="nf">get_params</span><span class="p" data-group-id="4701950881-6">(</span><span class="n">conn</span><span class="p" data-group-id="4701950881-6">)</span><span class="w"> </span><span class="k" data-group-id="4701950881-7">do</span><span class="w">
+</span><span class="kd">def</span><span class="w"> </span><span class="nf">get_params</span><span class="p" data-group-id="3581219009-6">(</span><span class="n">conn</span><span class="p" data-group-id="3581219009-6">)</span><span class="w"> </span><span class="k" data-group-id="3581219009-7">do</span><span class="w">
   </span><span class="c1"># return the parameters</span><span class="w">
-</span><span class="k" data-group-id="4701950881-7">end</span></code></pre>
+</span><span class="k" data-group-id="3581219009-7">end</span></code></pre>
     </section>
 
 </div>
