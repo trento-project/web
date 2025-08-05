@@ -438,7 +438,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
 
     for %{name: name} = scenario <-
           forbidden_operations_scenarios do
-      @unauthorized_pacemaker_scenario scenario
+      @unauthorized_scenario scenario
 
       test "should return 403 when attempting to #{name}", %{
         conn: conn,
@@ -448,7 +448,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
         %{
           operation: operation,
           host_units: host_units
-        } = @unauthorized_pacemaker_scenario
+        } = @unauthorized_scenario
 
         %{id: cluster_id} = insert(:cluster)
 
