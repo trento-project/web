@@ -186,6 +186,8 @@ defmodule Trento.ActivityLog.ActivityCatalog do
         {:sap_system_operation_requested, 202},
       {TrentoWeb.V1.SapSystemController, :request_instance_operation} =>
         {:application_instance_operation_requested, 202},
+      {TrentoWeb.V1.DatabaseController, :request_operation} =>
+        {:database_operation_requested, 202},
       {TrentoWeb.V1.HostController, :delete} => {:host_cleanup_requested, 204},
       {TrentoWeb.V1.SapSystemController, :delete_application_instance} =>
         {:sap_system_cleanup_requested, 204},
