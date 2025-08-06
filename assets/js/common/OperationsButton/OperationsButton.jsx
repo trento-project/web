@@ -51,7 +51,7 @@ function OperationsButton({
 
   return (
     <Menu>
-      <MenuButton as={Fragment}>
+      <MenuButton disabled={disabled} as={Fragment}>
         <div className="flex" ref={ref}>
           <Button
             type={transparent ? 'transparent' : 'primary-white'}
