@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-K7URE6B4.js"></script>
-    <script src="dist/sidebar_items-2CC1A802.js"></script>
+    <script src="dist/sidebar_items-79989A55.js"></script>
     <script src="docs_config.js"></script>
     <script async src="dist/html-YIPIRHGU.js"></script>
 
@@ -171,6 +171,22 @@ Info
 
     <div class="summary-row">
       <div class="summary-signature">
+        <a href="#cluster_host_start/0" data-no-tooltip translate="no">cluster_host_start()</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#cluster_host_stop/0" data-no-tooltip translate="no">cluster_host_stop()</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
         <a href="#pacemaker_disable/0" data-no-tooltip translate="no">pacemaker_disable()</a>
 
       </div>
@@ -227,7 +243,11 @@ Info
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@type</span> t() :: :pacemaker_disable | :pacemaker_enable</pre>
+          <pre translate="no"><span class="attribute">@type</span> t() ::
+  :cluster_host_stop
+  | :cluster_host_start
+  | :pacemaker_disable
+  | :pacemaker_enable</pre>
 
       </div>
 
@@ -246,6 +266,54 @@ Info
       <span class="text">Functions</span>
     </h1>
     <div class="functions-list">
+<section class="detail" id="cluster_host_start/0">
+
+  <div class="detail-header">
+    <a href="#cluster_host_start/0" class="detail-link" data-no-tooltip title="Link to this macro">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this macro</span>
+    </a>
+    <h1 class="signature" translate="no">cluster_host_start()</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/operations/enums/cluster_host_operations.ex#L5" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+      <span class="note">(macro)</span>
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="cluster_host_stop/0">
+
+  <div class="detail-header">
+    <a href="#cluster_host_stop/0" class="detail-link" data-no-tooltip title="Link to this macro">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this macro</span>
+    </a>
+    <h1 class="signature" translate="no">cluster_host_stop()</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/operations/enums/cluster_host_operations.ex#L5" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+      <span class="note">(macro)</span>
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
 <section class="detail" id="pacemaker_disable/0">
 
   <div class="detail-header">
