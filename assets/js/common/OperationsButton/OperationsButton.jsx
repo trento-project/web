@@ -44,6 +44,7 @@ function OperationsButton({
   userAbilities = [],
   menuPosition = 'bottom start',
   transparent = false,
+  disabled,
 }) {
   const ref = useRef(null);
   const someRunning = some(operations, { running: true });
@@ -60,6 +61,7 @@ function OperationsButton({
               { border: !transparent }
             )}
             size={transparent ? 'fit' : 'small'}
+            disabled={disabled}
           >
             <EOS_MORE_VERT className="inline-block fill-jungle-green-500" />{' '}
             {text}
@@ -71,26 +73,28 @@ function OperationsButton({
         as="div"
         className="rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 px-3 py-3 focus:outline-none"
       >
-        {operations.map(({ value, running, disabled, permitted, onClick }) => (
-          <Fragment key={value}>
-            <MenuItem>
-              <DisabledGuard
-                userAbilities={userAbilities}
-                permitted={permitted}
-                tooltipWrap
-              >
-                <CustomMenuButton
-                  value={value}
-                  running={running}
-                  disabled={disabled || someRunning}
-                  onClick={onClick}
-                />
-              </DisabledGuard>
-            </MenuItem>
+        {operations.map(
+          ({ value, running, disabled: itemDisabled, permitted, onClick }) => (
+            <Fragment key={value}>
+              <MenuItem>
+                <DisabledGuard
+                  userAbilities={userAbilities}
+                  permitted={permitted}
+                  tooltipWrap
+                >
+                  <CustomMenuButton
+                    value={value}
+                    running={running}
+                    disabled={itemDisabled || someRunning}
+                    onClick={onClick}
+                  />
+                </DisabledGuard>
+              </MenuItem>
 
-            <MenuSeparator className="my-1" />
-          </Fragment>
-        ))}
+              <MenuSeparator className="my-1" />
+            </Fragment>
+          )
+        )}
       </MenuItems>
     </Menu>
   );
