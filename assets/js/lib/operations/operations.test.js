@@ -58,6 +58,14 @@ describe('operations', () => {
       operation: 'database_stop',
       label: 'Database stop',
     },
+    {
+      operation: 'cluster_host_start',
+      label: 'Start cluster host',
+    },
+    {
+      operation: 'cluster_host_stop',
+      label: 'Stop cluster host',
+    },
   ])(`should return the operation $operation label`, ({ operation, label }) => {
     expect(getOperationLabel(operation)).toBe(label);
   });
@@ -110,6 +118,14 @@ describe('operations', () => {
     {
       operation: 'databasestop@v1',
       name: 'database_stop',
+    },
+    {
+      operation: 'clusterhoststart@v1',
+      name: 'cluster_host_start',
+    },
+    {
+      operation: 'clusterhoststop@v1',
+      name: 'cluster_host_stop',
     },
   ])(
     `should return the operation $operation internal name`,
@@ -166,6 +182,14 @@ describe('operations', () => {
     {
       operation: 'database_stop',
       resourceType: 'database',
+    },
+    {
+      operation: 'cluster_host_start',
+      resourceType: 'cluster_host',
+    },
+    {
+      operation: 'cluster_host_stop',
+      resourceType: 'cluster_host',
     },
   ])(
     `should return the operation $operation resource type`,
