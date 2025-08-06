@@ -1,6 +1,8 @@
 defmodule Trento.Clusters.PolicyTest do
   use ExUnit.Case
 
+  require Trento.Operations.Enums.ClusterHostOperations, as: ClusterHostOperations
+
   alias Trento.Abilities.Ability
   alias Trento.Clusters.Policy
   alias Trento.Clusters.Projections.ClusterReadModel
@@ -51,21 +53,21 @@ defmodule Trento.Clusters.PolicyTest do
   end
 
   describe "request_host_operation" do
-    for operation <- ["pacemaker_enable", "pacemaker_disable"] do
-      @pacemaker_operation operation
+    for operation <- ClusterHostOperations.values() do
+      @operation operation
 
       test "should allow #{operation} operation if the user has #{operation}:cluster ability" do
-        user = %User{abilities: [%Ability{name: @pacemaker_operation, resource: "cluster"}]}
+        user = %User{abilities: [%Ability{name: @operation, resource: "cluster"}]}
 
         assert Policy.authorize(:request_host_operation, user, %{
-                 operation: @pacemaker_operation
+                 operation: @operation
                })
       end
 
       test "should allow #{operation} operation if the user has all:all ability" do
         user = %User{abilities: [%Ability{name: "all", resource: "all"}]}
 
-        assert Policy.authorize(:request_host_operation, user, %{operation: @pacemaker_operation})
+        assert Policy.authorize(:request_host_operation, user, %{operation: @operation})
       end
 
       test "should disallow #{operation} operation if the user does not have #{operation}:cluster ability" do
@@ -75,7 +77,7 @@ defmodule Trento.Clusters.PolicyTest do
 
         for user <- [user1, user2, user3] do
           refute Policy.authorize(:request_host_operation, user, %{
-                   operation: "#{@pacemaker_operation}"
+                   operation: "#{@operation}"
                  })
         end
       end
