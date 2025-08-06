@@ -6,12 +6,15 @@ export const HOST_OPERATION = 'host';
 export const CLUSTER_OPERATION = 'cluster';
 export const SAP_SYSTEM_OPERATION = 'sap_system';
 export const APPLICATION_INSTANCE_OPERATION = 'application_instance';
+export const CLUSTER_HOST_START_OPERATION = 'cluster_host_start';
+export const CLUSTER_HOST_STOP_OPERATION = 'cluster_host_stop';
 export const CLUSTER_HOST_OPERATION = 'cluster_host';
 export const DATABASE_OPERATION = 'database';
-
 export const SAPTUNE_SOLUTION_APPLY = 'saptune_solution_apply';
 export const SAPTUNE_SOLUTION_CHANGE = 'saptune_solution_change';
 export const CLUSTER_MAINTENANCE_CHANGE = 'cluster_maintenance_change';
+export const CLUSTER_HOST_START = 'cluster_host_start';
+export const CLUSTER_HOST_STOP = 'cluster_host_stop';
 export const SAP_INSTANCE_START = 'sap_instance_start';
 export const SAP_INSTANCE_STOP = 'sap_instance_stop';
 export const SAP_SYSTEM_START = 'sap_system_start';
@@ -24,6 +27,8 @@ export const DATABASE_STOP = 'database_stop';
 const OPERATION_LABELS = {
   [SAPTUNE_SOLUTION_APPLY]: 'Apply Saptune solution',
   [SAPTUNE_SOLUTION_CHANGE]: 'Change Saptune solution',
+  [CLUSTER_HOST_START_OPERATION]: 'Start cluster host',
+  [CLUSTER_HOST_STOP_OPERATION]: 'Stop cluster host',
   [CLUSTER_MAINTENANCE_CHANGE]: 'Cluster maintenance change',
   [SAP_INSTANCE_START]: 'SAP instance start',
   [SAP_INSTANCE_STOP]: 'SAP instance stop',
@@ -38,6 +43,8 @@ const OPERATION_LABELS = {
 const OPERATION_INTERNAL_NAMES = {
   'saptuneapplysolution@v1': SAPTUNE_SOLUTION_APPLY,
   'saptunechangesolution@v1': SAPTUNE_SOLUTION_CHANGE,
+  'clusterhoststart@v1': CLUSTER_HOST_START_OPERATION,
+  'clusterhoststop@v1': CLUSTER_HOST_STOP_OPERATION,
   'clustermaintenancechange@v1': CLUSTER_MAINTENANCE_CHANGE,
   'sapinstancestart@v1': SAP_INSTANCE_START,
   'sapinstancestop@v1': SAP_INSTANCE_STOP,
@@ -52,6 +59,8 @@ const OPERATION_INTERNAL_NAMES = {
 const OPERATION_RESOURCE_TYPES = {
   [SAPTUNE_SOLUTION_APPLY]: HOST_OPERATION,
   [SAPTUNE_SOLUTION_CHANGE]: HOST_OPERATION,
+  [CLUSTER_HOST_START_OPERATION]: CLUSTER_HOST_OPERATION,
+  [CLUSTER_HOST_STOP_OPERATION]: CLUSTER_HOST_OPERATION,
   [CLUSTER_MAINTENANCE_CHANGE]: CLUSTER_OPERATION,
   [SAP_INSTANCE_START]: APPLICATION_INSTANCE_OPERATION,
   [SAP_INSTANCE_STOP]: APPLICATION_INSTANCE_OPERATION,
