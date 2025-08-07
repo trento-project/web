@@ -410,20 +410,16 @@ context('HANA cluster details', () => {
     });
 
     describe('Check Execution', () => {
-      // eslint-disable-next-line mocha/no-exclusive-tests
-      it.only('should forbid check execution when the correct user abilities are missing in details and settings', () => {
+      it('should forbid check execution when the correct user abilities are missing in details and settings', () => {
         hanaClusterDetailsPage.apiCreateUserWithoutAbilities();
         hanaClusterDetailsPage.loginWithoutAbilities();
         hanaClusterDetailsPage.visitAvailableHanaCluster();
         hanaClusterDetailsPage.startExecutionButtonIsDisabled();
         hanaClusterDetailsPage.clickStartExecutionButton();
         hanaClusterDetailsPage.notAuthorizedTooltipIsDisplayed();
-        cy.intercept(
-          'GET',
-          'http://localhost:4001/api/v1/groups/*/checks?*'
-        ).as('getChecks');
+        hanaClusterDetailsPage.interceptGetChecks();
         hanaClusterDetailsPage.clickCheckSelectionButton();
-        cy.wait('@getChecks');
+        hanaClusterDetailsPage.waitForGetChecksEndpoint();
         hanaClusterDetailsPage.startExecutionButtonIsDisabled();
         hanaClusterDetailsPage.clickStartExecutionButton();
         hanaClusterDetailsPage.notAuthorizedTooltipIsDisplayed();
