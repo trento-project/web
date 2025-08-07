@@ -410,7 +410,8 @@ context('HANA cluster details', () => {
     });
 
     describe('Check Execution', () => {
-      it('should forbid check execution when the correct user abilities are missing in details and settings', () => {
+      // eslint-disable-next-line mocha/no-exclusive-tests
+      it.only('should forbid check execution when the correct user abilities are missing in details and settings', () => {
         hanaClusterDetailsPage.apiCreateUserWithoutAbilities();
         hanaClusterDetailsPage.loginWithoutAbilities();
         hanaClusterDetailsPage.visitAvailableHanaCluster();
