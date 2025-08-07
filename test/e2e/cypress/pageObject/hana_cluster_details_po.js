@@ -35,6 +35,7 @@ const catalog = catalogCheckFactory.buildList(5);
 const url = '/clusters';
 const catalogEndpointAlias = 'catalog';
 const lastExecutionEndpointAlias = 'lastExecution';
+const getChecksEndpointAlias = 'getChecks';
 
 // Selectors
 
@@ -471,6 +472,12 @@ export const notAuthorizedTooltipIsNotDisplayed = () => {
 };
 
 // API
+export const interceptGetChecks = () =>
+  cy.intercept('GET', '/api/v1/groups/*/checks?*').as(getChecksEndpointAlias);
+
+export const waitForGetChecksEndpoint = () =>
+  basePage.waitForRequest(getChecksEndpointAlias);
+
 export const interceptLastExecutionRequestMocked = () => {
   const lastExecutionURL = '/api/v2/checks/groups/**/executions/last';
   cy.intercept(lastExecutionURL, {
