@@ -418,7 +418,12 @@ context('HANA cluster details', () => {
         hanaClusterDetailsPage.startExecutionButtonIsDisabled();
         hanaClusterDetailsPage.clickStartExecutionButton();
         hanaClusterDetailsPage.notAuthorizedTooltipIsDisplayed();
+        cy.intercept(
+          'GET',
+          'http://localhost:4001/api/v1/groups/*/checks?*'
+        ).as('getChecks');
         hanaClusterDetailsPage.clickCheckSelectionButton();
+        cy.wait('@getChecks');
         hanaClusterDetailsPage.startExecutionButtonIsDisabled();
         hanaClusterDetailsPage.clickStartExecutionButton();
         hanaClusterDetailsPage.notAuthorizedTooltipIsDisplayed();
