@@ -281,5 +281,6 @@ defmodule Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload do
     |> Map.update("clones", [], &ListHelper.to_list/1)
     |> update_in(["clones", Access.all(), "resources"], &ListHelper.to_list/1)
     |> Map.update("resources", [], &ListHelper.to_list/1)
+    |> update_in(["node_attributes", "nodes"], &ListHelper.to_list/1)
   end
 end

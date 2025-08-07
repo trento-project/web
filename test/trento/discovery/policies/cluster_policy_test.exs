@@ -2605,6 +2605,34 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
              |> ClusterPolicy.handle(nil)
   end
 
+  test "should handle ascs/ers cluster when node attributes nodes list is null" do
+    assert {
+             :ok,
+             [
+               %RegisterOnlineClusterHost{
+                 details: %AscsErsClusterDetails{
+                   sap_systems: [
+                     %AscsErsClusterSapSystem{
+                       nodes: [
+                         %AscsErsClusterNode{
+                           attributes: %{}
+                         },
+                         %AscsErsClusterNode{
+                           attributes: %{}
+                         }
+                       ]
+                     }
+                   ]
+                 }
+               }
+             ]
+           } =
+             "ha_cluster_discovery_ascs_ers"
+             |> load_discovery_event_fixture()
+             |> put_in(["payload", "Crmmon", "NodeAttributes", "Nodes"], nil)
+             |> ClusterPolicy.handle(nil)
+  end
+
   describe "ascs/ers clusters health" do
     test "should set the health to critical when one of the nodes is unclean" do
       assert {:ok,
