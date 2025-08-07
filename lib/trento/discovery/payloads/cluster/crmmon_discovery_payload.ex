@@ -281,6 +281,11 @@ defmodule Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload do
     |> Map.update("clones", [], &ListHelper.to_list/1)
     |> update_in(["clones", Access.all(), "resources"], &ListHelper.to_list/1)
     |> Map.update("resources", [], &ListHelper.to_list/1)
-    |> update_in(["node_attributes", "nodes"], &ListHelper.to_list/1)
+    |> maybe_node_attributes_to_list()
   end
+
+  defp maybe_node_attributes_to_list(%{"node_attributes" => _} = attrs),
+    do: update_in(attrs, ["node_attributes", "nodes"], &ListHelper.to_list/1)
+
+  defp maybe_node_attributes_to_list(attrs), do: attrs
 end

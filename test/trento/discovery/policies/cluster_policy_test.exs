@@ -2615,10 +2615,10 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                      %AscsErsClusterSapSystem{
                        nodes: [
                          %AscsErsClusterNode{
-                           attributes: %{}
+                           attributes: attributes1
                          },
                          %AscsErsClusterNode{
-                           attributes: %{}
+                           attributes: attributes2
                          }
                        ]
                      }
@@ -2631,6 +2631,9 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
              |> load_discovery_event_fixture()
              |> put_in(["payload", "Crmmon", "NodeAttributes", "Nodes"], nil)
              |> ClusterPolicy.handle(nil)
+
+    assert attributes1 == %{}
+    assert attributes2 == %{}
   end
 
   describe "ascs/ers clusters health" do
