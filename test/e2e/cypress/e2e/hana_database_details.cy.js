@@ -43,10 +43,6 @@ context('HANA database details', () => {
       hanaDbDetailsPage.eachHostNameHasExpectedValues();
     });
 
-    it('should show each site with the expected system replication values', () => {
-      hanaDbDetailsPage.eachSiteHasExpectedValues();
-    });
-
     it('should show Green badge in instance when SAPControl-GREEN state is received', () => {
       hanaDbDetailsPage.loadScenario('hana-database-detail-GREEN');
       hanaDbDetailsPage.hostHasStatus('Green');
@@ -79,6 +75,30 @@ context('HANA database details', () => {
       hanaDbDetailsPage.loadNewSapInstance();
       hanaDbDetailsPage.tableHasExpectedAmountOfRows(3);
       hanaDbDetailsPage.newInstanceIsDisplayed();
+    });
+  });
+
+  describe('The database layout shows system replication data properly', () => {
+    beforeEach(() => {
+      hanaDbDetailsPage.visitDatabase();
+    });
+
+    after(() => {
+      hanaDbDetailsPage.restoreDatabaseInstanceHealth();
+    });
+
+    it('should show each site with the expected system replication values when both instances are running', () => {
+      hanaDbDetailsPage.runningSitesHaveExpectedValues();
+    });
+
+    it('should show each site with the expected system replication values when secondary is stopped', () => {
+      hanaDbDetailsPage.loadScenario('hana-database-detail-secondary-stopped');
+      hanaDbDetailsPage.secondaryStoppedSitesHaveExpectedValues();
+    });
+
+    it('should show each site with the expected system replication values when both instances are stoopped', () => {
+      hanaDbDetailsPage.loadScenario('hana-database-detail-all-stopped');
+      hanaDbDetailsPage.stoppedSitesHaveExpectedValues();
     });
   });
 

@@ -89,6 +89,7 @@ files = [
 [hana-database-detail-GREEN]
 
 files = [
+    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/13e8c25c-3180-5a9a-95c8-51ec38e50cfc_sap_system_discovery.json",
     "./test/fixtures/scenarios/hana-database-details/0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4_sap_system_discovery_GREEN.json",
 ]
 
@@ -108,6 +109,20 @@ files = [
 
 files = [
     "./test/fixtures/scenarios/hana-database-details/0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4_sap_system_discovery_new.json",
+]
+
+[hana-database-detail-secondary-stopped]
+
+files = [
+    "./test/fixtures/scenarios/hana-database-details/13e8c25c-3180-5a9a-95c8-51ec38e50cfc_sap_system_discovery_secondary_stopped.json",
+    "./test/fixtures/scenarios/hana-database-details/0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4_sap_system_discovery_secondary_stopped.json",
+]
+
+[hana-database-detail-all-stopped]
+
+files = [
+    "./test/fixtures/scenarios/hana-database-details/13e8c25c-3180-5a9a-95c8-51ec38e50cfc_sap_system_discovery_primary_stopped.json",
+    "./test/fixtures/scenarios/hana-database-details/0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4_sap_system_discovery_secondary_stopped.json",
 ]
 
 [sap-systems-overview-GREEN]

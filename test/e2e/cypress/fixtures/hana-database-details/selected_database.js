@@ -45,6 +45,48 @@ export const selectedDatabase = {
   ],
 };
 
+export const secondaryStoppedSites = [
+  {
+    Name: 'NBG',
+    SystemReplication: 'PRIMARY',
+    Tier: '1',
+    Status: 'ERROR',
+    Replicating: null,
+    ReplicationMode: null,
+    OperationMode: null,
+  },
+  {
+    Name: 'WDF',
+    SystemReplication: 'SECONDARY',
+    Tier: '-',
+    Status: null,
+    Replicating: '-',
+    ReplicationMode: 'sync',
+    OperationMode: 'unknown',
+  },
+];
+
+export const allStoppedSites = [
+  {
+    Name: 'NBG',
+    SystemReplication: 'PRIMARY',
+    Tier: '-',
+    Status: 'INACTIVE',
+    Replicating: null,
+    ReplicationMode: null,
+    OperationMode: null,
+  },
+  {
+    Name: 'WDF',
+    SystemReplication: 'SECONDARY',
+    Tier: '-',
+    Status: null,
+    Replicating: '-',
+    ReplicationMode: 'sync',
+    OperationMode: 'unknown',
+  },
+];
+
 export const attachedHosts = [
   {
     Name: 'vmhdbdev02',
