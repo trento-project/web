@@ -120,11 +120,11 @@ describe('operations', () => {
       name: 'database_stop',
     },
     {
-      operation: 'clusterhoststart@v1',
+      operation: 'crmclusterstart@v1',
       name: 'cluster_host_start',
     },
     {
-      operation: 'clusterhoststop@v1',
+      operation: 'crmclusterstop@v1',
       name: 'cluster_host_stop',
     },
   ])(
