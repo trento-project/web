@@ -251,8 +251,6 @@ export const instanceDataIsTheExpected = () => {
 };
 
 export const eachHanaInstanceHasItsClusterWorkingLink = () => {
-  cy.get('h1:contains("SAP Systems")').should('be.visible');
-
   const hanaInstances = instancesData.filter(
     (instance) => instance.clusterID !== ''
   );
@@ -261,6 +259,7 @@ export const eachHanaInstanceHasItsClusterWorkingLink = () => {
     cy.get(`${hanaClusterLinks}:eq(${index})`).click();
     validateUrl(`/clusters/${hanaInstance.clusterID}`);
     cy.go('back');
+    cy.get('h1:contains("SAP Systems")').should('be.visible');
   });
 };
 
