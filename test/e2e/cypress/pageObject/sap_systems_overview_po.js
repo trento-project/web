@@ -75,7 +75,7 @@ const nwdSystemRowCollapsibleCell = `tr:contains('${sapSystemNwd.sid}') > td:eq(
 export const visit = () => {
   cy.intercept('/api/v1/databases').as('databasesRequest');
   basePage.visit(url);
-  cy.wait('@databasesRequest');
+  basePage.waitForRequest('@databasesRequest', { timeout: 10000 });
 };
 
 export const tagSapSystems = () => {
