@@ -73,6 +73,7 @@ export const CLUSTER_ROLL_UP_REQUESTED = 'cluster_roll_up_requested';
 export const CLUSTER_TOMBSTONED = 'cluster_tombstoned';
 export const HOST_ADDED_TO_CLUSTER = 'host_added_to_cluster';
 export const HOST_REMOVED_FROM_CLUSTER = 'host_removed_from_cluster';
+export const CLUSTER_HOST_STATUS_CHANGED = 'cluster_host_status_changed';
 
 // SAP System events
 
@@ -472,6 +473,12 @@ export const ACTIVITY_TYPES_CONFIG = {
   [HOST_REMOVED_FROM_CLUSTER]: {
     label: 'Host Removed from Cluster',
     message: (_entry) => `Host was removed from cluster`,
+    resource: clusterResourceType,
+  },
+  [CLUSTER_HOST_STATUS_CHANGED]: {
+    label: 'Cluster Host Status Changed',
+    message: ({ metadata }) =>
+      `Cluster host status changed to ${metadata.cluster_host_status}`,
     resource: clusterResourceType,
   },
   // SAP System events
