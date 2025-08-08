@@ -251,9 +251,9 @@ export const eachHanaInstanceHasItsClusterWorkingLink = () => {
   const hanaInstances = instancesData.filter(
     (instance) => instance.clusterID !== ''
   );
-  hanaInstances.forEach((hanaInstance, index) => {
+  cy.wrap(hanaInstances).each((hanaInstance, index) => {
     clickAllRows();
-    cy.get(`${hanaClusterLinks}:eq(${index})`).click({ force: true });
+    cy.get(`${hanaClusterLinks}:eq(${index})`).click();
     validateUrl(`/clusters/${hanaInstance.clusterID}`);
     cy.go('back');
   });
