@@ -43,8 +43,7 @@ context('SAP Systems Overview', () => {
         sapSystemsOverviewPage.instanceDataIsTheExpected();
       });
 
-      // eslint-disable-next-line mocha/no-exclusive-tests
-      it.only('should have a link to known type clusters', () => {
+      it('should have a link to known type clusters', () => {
         sapSystemsOverviewPage.eachHanaInstanceHasItsClusterWorkingLink();
       });
 
