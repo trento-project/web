@@ -1,7 +1,7 @@
 import * as sapSystemsOverviewPage from '../pageObject/sap_systems_overview_po';
 
 context('SAP Systems Overview', () => {
-  before(() => sapSystemsOverviewPage.preloadTestData());
+  // before(() => sapSystemsOverviewPage.preloadTestData());
 
   beforeEach(() => sapSystemsOverviewPage.visit());
 
