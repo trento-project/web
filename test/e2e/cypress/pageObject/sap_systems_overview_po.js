@@ -75,8 +75,7 @@ const nwdSystemRowCollapsibleCell = `tr:contains('${sapSystemNwd.sid}') > td:eq(
 export const visit = () => {
   cy.intercept('/api/v1/databases').as('databasesRequest');
   basePage.visit(url);
-  cy.wait('@databasesRequest', { timeout: 10000 });
-  // basePage.waitForRequest('databasesRequest', 10000);
+  basePage.waitForRequest('databasesRequest', 10000);
 };
 
 export const tagSapSystems = () => {
@@ -254,9 +253,12 @@ export const eachHanaInstanceHasItsClusterWorkingLink = () => {
   );
   cy.wrap(hanaInstances).each((hanaInstance, index) => {
     clickAllRows();
-    cy.get(`${hanaClusterLinks}:eq(${index})`).should('be.visible', {
-      timeout: 10000,
-    });
+    cy.get('tr[class*="bg-gray-100"]').should(
+      'have.css',
+      'display',
+      'table-row',
+      { timeout: 10000 }
+    );
     cy.get(`${hanaClusterLinks}:eq(${index})`).click();
     validateUrl(`/clusters/${hanaInstance.clusterID}`);
     cy.go('back');
