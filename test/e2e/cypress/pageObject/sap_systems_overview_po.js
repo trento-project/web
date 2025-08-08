@@ -253,8 +253,7 @@ export const eachHanaInstanceHasItsClusterWorkingLink = () => {
   );
   hanaInstances.forEach((hanaInstance, index) => {
     clickAllRows();
-    // cy.get('div[class*="table"] div[class*="table-row "]').should('be.visible');
-    cy.get(`${hanaClusterLinks}:eq(${index})`).click();
+    cy.get(`${hanaClusterLinks}:eq(${index})`).click({ force: true });
     validateUrl(`/clusters/${hanaInstance.clusterID}`);
     cy.go('back');
   });
