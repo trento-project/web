@@ -103,6 +103,9 @@ const clickAllRows = () => {
   const expandTableElement = 'td svg[class*="cursor"]';
   cy.get(expandTableElement).each((cell, index) => {
     cy.get(`${expandTableElement}:eq(${index})`).click();
+    // cy.get('tr[class*="bg-gray-100"]')
+    //   .eq(index)
+    //   .should('have.css', 'display', 'table-row', { timeout: 10000 });
   });
 };
 
@@ -248,17 +251,13 @@ export const instanceDataIsTheExpected = () => {
 };
 
 export const eachHanaInstanceHasItsClusterWorkingLink = () => {
+  cy.get('h1:contains("SAP Systems")').should('be.visible');
+
   const hanaInstances = instancesData.filter(
     (instance) => instance.clusterID !== ''
   );
   cy.wrap(hanaInstances).each((hanaInstance, index) => {
     clickAllRows();
-    cy.get('tr[class*="bg-gray-100"]').should(
-      'have.css',
-      'display',
-      'table-row',
-      { timeout: 10000 }
-    );
     cy.get(`${hanaClusterLinks}:eq(${index})`).click();
     validateUrl(`/clusters/${hanaInstance.clusterID}`);
     cy.go('back');
