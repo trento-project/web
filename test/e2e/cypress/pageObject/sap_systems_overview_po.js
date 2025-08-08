@@ -103,9 +103,9 @@ const clickAllRows = () => {
   const expandTableElement = 'td svg[class*="cursor"]';
   cy.get(expandTableElement).each((cell, index) => {
     cy.get(`${expandTableElement}:eq(${index})`).click();
-    // cy.get('tr[class*="bg-gray-100"]')
-    //   .eq(index)
-    //   .should('have.css', 'display', 'table-row', { timeout: 10000 });
+    cy.get('tr[class*="bg-gray-100"]')
+      .eq(index)
+      .should('have.css', 'display', 'table-row', { timeout: 10000 });
   });
 };
 
