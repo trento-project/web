@@ -102,7 +102,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
                 database_id: "6c9208eb-a5bb-57ef-be5c-6422dedab602",
                 sid: "HDP",
                 tenants: [%Tenant{name: "HDP"}],
-                system_replication: nil,
+                system_replication: "Primary",
                 system_replication_status: nil,
                 health: :unknown
               }

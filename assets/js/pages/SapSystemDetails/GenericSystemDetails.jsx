@@ -49,6 +49,8 @@ import {
   getSystemInstancesTableConfiguration,
 } from './tableConfigs';
 
+const SR_INACTIVE = 'INACTIVE';
+
 const renderType = (t) =>
   t === APPLICATION_TYPE ? 'Application server' : 'HANA Database';
 
@@ -125,7 +127,10 @@ export function GenericSystemDetails({
   const isForbidden = get(forbiddenOperation, 'forbidden', false);
   const forbiddenErrors = get(forbiddenOperation, 'errors', []);
 
-  const sortedInstances = sortBy(system.instances, ['system_replication_tier']);
+  const sortedInstances = sortBy(system.instances, [
+    'system_replication',
+    'system_replication_tier',
+  ]);
   const sitedInstances = groupBy(
     sortedInstances,
     ({ system_replication_site: site }) => site
@@ -268,13 +273,16 @@ export function GenericSystemDetails({
                       </div>
                       <SystemReplicationDataPill
                         label="Tier"
-                        data={instances[0].system_replication_tier}
+                        data={instances[0].system_replication_tier || '-'}
                       />
 
                       {instances[0].system_replication === 'Primary' && (
                         <SystemReplicationDataPill
                           label="Status"
-                          data={instances[0].system_replication_status}
+                          data={
+                            instances[0].system_replication_status ||
+                            SR_INACTIVE
+                          }
                           className={getReplicationStatusClasses(
                             instances[0].system_replication_status
                           )}
@@ -284,7 +292,9 @@ export function GenericSystemDetails({
                         <>
                           <SystemReplicationDataPill
                             label="Replicating"
-                            data={instances[0].system_replication_source_site}
+                            data={
+                              instances[0].system_replication_source_site || '-'
+                            }
                             className="bg-gray-200 text-gray-500 max-w-32 truncate !inline self-center !py-0.5"
                           />
                           <SystemReplicationDataPill
