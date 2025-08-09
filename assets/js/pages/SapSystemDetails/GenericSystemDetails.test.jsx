@@ -4,7 +4,14 @@ import { faker } from '@faker-js/faker';
 import { screen, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
-import { SAP_INSTANCE_START, SAP_INSTANCE_STOP } from '@lib/operations';
+import {
+  SAP_INSTANCE_START,
+  SAP_INSTANCE_STOP,
+  SAP_SYSTEM_START,
+  SAP_SYSTEM_STOP,
+  DATABASE_START,
+  DATABASE_STOP,
+} from '@lib/operations';
 
 import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
 import { renderWithRouter } from '@lib/test-utils';
@@ -19,8 +26,39 @@ import {
   databaseFactory,
 } from '@lib/test-utils/factories';
 
+import {
+  getDatabaseOperations,
+  getDatabaseSiteOperations,
+} from '@pages/DatabaseDetails/databaseOperations';
+
 import { GenericSystemDetails } from './GenericSystemDetails';
-import { getSapInstanceOperations } from './sapOperations';
+import {
+  getSapInstanceOperations,
+  getSapSystemOperations,
+} from './sapOperations';
+
+const expectOperationEnabled = (operation, enabled) => {
+  const opItem = screen.getByRole('menuitem', {
+    name: operation,
+  });
+
+  expect(opItem).toBeInTheDocument();
+  if (enabled) {
+    expect(opItem).toBeEnabled();
+  } else {
+    expect(opItem).toBeDisabled();
+  }
+};
+
+const expectOperationRunning = (operation) => {
+  const opItem = screen.getByRole('menuitem', {
+    name: operation,
+  });
+
+  expect(opItem).toBeDisabled();
+  const { getByTestId } = within(opItem);
+  expect(getByTestId('eos-svg-component')).toBeInTheDocument();
+};
 
 describe('GenericSystemDetails', () => {
   it('should render correctly', () => {
@@ -100,6 +138,7 @@ describe('GenericSystemDetails', () => {
           title={faker.string.uuid()}
           system={database}
           type={DATABASE_TYPE}
+          getSiteOperations={getDatabaseSiteOperations}
         />
       );
 
@@ -144,6 +183,7 @@ describe('GenericSystemDetails', () => {
         title={faker.string.uuid()}
         system={database}
         type={DATABASE_TYPE}
+        getSiteOperations={getDatabaseSiteOperations}
       />
     );
 
@@ -313,6 +353,218 @@ describe('GenericSystemDetails', () => {
 
   it.each([
     {
+      operation: 'Start system',
+      enabled: true,
+      health: 'unknown',
+    },
+    {
+      operation: 'Start system',
+      enabled: false,
+      health: 'passing',
+    },
+    {
+      operation: 'Stop system',
+      enabled: true,
+      health: 'passing',
+    },
+    {
+      operation: 'Stop system',
+      enabled: false,
+      health: 'unknown',
+    },
+  ])(
+    'should show SAP system operation $operation with enabled state as $enabled',
+    async ({ operation, enabled, health }) => {
+      const user = userEvent.setup();
+
+      const system = sapSystemFactory.build({
+        instances: sapSystemApplicationInstanceFactory.buildList(1, {
+          health,
+        }),
+      });
+
+      system.hosts = hostFactory.buildList(5);
+
+      renderWithRouter(
+        <GenericSystemDetails
+          title={faker.string.uuid()}
+          system={system}
+          type={APPLICATION_TYPE}
+          userAbilities={[{ name: 'all', resource: 'all' }]}
+          operationsEnabled
+          getSystemOperations={getSapSystemOperations}
+        />
+      );
+
+      await user.click(screen.getByRole('button', { name: 'Operations' }));
+
+      expectOperationEnabled(operation, enabled);
+    }
+  );
+
+  it.each([
+    {
+      operation: 'Start database',
+      enabled: true,
+      health: 'unknown',
+    },
+    {
+      operation: 'Start database',
+      enabled: false,
+      health: 'passing',
+    },
+    {
+      operation: 'Stop database',
+      enabled: true,
+      health: 'passing',
+    },
+    {
+      operation: 'Stop database',
+      enabled: false,
+      health: 'unknown',
+    },
+  ])(
+    'should show database operation $operation with enabled state as $enabled',
+    async ({ operation, enabled, health }) => {
+      const user = userEvent.setup();
+
+      const database = databaseFactory.build({
+        instances: databaseInstanceFactory.buildList(1, {
+          health,
+        }),
+      });
+
+      database.hosts = hostFactory.buildList(5);
+
+      renderWithRouter(
+        <GenericSystemDetails
+          title={faker.string.uuid()}
+          system={database}
+          type={DATABASE_TYPE}
+          userAbilities={[{ name: 'all', resource: 'all' }]}
+          operationsEnabled
+          getSystemOperations={getDatabaseOperations}
+          getSiteOperations={getDatabaseSiteOperations}
+        />
+      );
+
+      await user.click(screen.getByRole('button', { name: 'Operations' }));
+
+      expectOperationEnabled(operation, enabled);
+    }
+  );
+
+  it('should disable system operations if system replication is enabled', () => {
+    const database = databaseFactory.build({
+      instances: databaseInstanceFactory.buildList(1, {
+        system_replication: 'Primary',
+      }),
+    });
+
+    database.hosts = hostFactory.buildList(5);
+
+    renderWithRouter(
+      <GenericSystemDetails
+        title={faker.string.uuid()}
+        system={database}
+        type={DATABASE_TYPE}
+        operationsEnabled
+        getSystemOperations={getDatabaseOperations}
+        getSiteOperations={getDatabaseSiteOperations}
+      />
+    );
+
+    expect(
+      screen.getByRole('button', {
+        name: 'Operations',
+      })
+    ).toBeDisabled();
+  });
+
+  it.each([
+    {
+      operation: 'Start database',
+      enabled: true,
+      health: 'unknown',
+    },
+    {
+      operation: 'Start database',
+      enabled: false,
+      health: 'passing',
+    },
+    {
+      operation: 'Stop database',
+      enabled: true,
+      health: 'passing',
+    },
+    {
+      operation: 'Stop database',
+      enabled: false,
+      health: 'unknown',
+    },
+  ])(
+    'should show database site operation $operation with enabled state as $enabled',
+    async ({ operation, enabled, health }) => {
+      const user = userEvent.setup();
+
+      const database = databaseFactory.build({
+        instances: [
+          databaseInstanceFactory.build({
+            health,
+            system_replication: 'Primary',
+            system_replication_site: 'Site1',
+            system_replication_tier: 1,
+          }),
+          databaseInstanceFactory.build({
+            system_replication: 'Secondary',
+            system_replication_site: 'Site2',
+            system_replication_tier: 2,
+          }),
+        ],
+      });
+
+      database.hosts = hostFactory.buildList(5);
+
+      renderWithRouter(
+        <GenericSystemDetails
+          title={faker.string.uuid()}
+          system={database}
+          type={DATABASE_TYPE}
+          userAbilities={[{ name: 'all', resource: 'all' }]}
+          operationsEnabled
+          getSystemOperations={getDatabaseOperations}
+          getSiteOperations={getDatabaseSiteOperations}
+        />
+      );
+
+      const siteTables = screen.getAllByRole('table');
+
+      const { getByRole: getByRoleSite1 } = within(
+        siteTables[0].previousSibling
+      );
+      const siteOpButton1 = getByRoleSite1('button');
+
+      const { getByRole: getByRoleSite2 } = within(
+        siteTables[1].previousSibling
+      );
+      const siteOpButton2 = getByRoleSite2('button');
+
+      await user.click(siteOpButton1);
+
+      expectOperationEnabled(operation, enabled);
+
+      await user.click(siteOpButton2);
+
+      const opItem2 = screen.getByRole('menuitem', {
+        name: operation,
+      });
+
+      expect(opItem2).toBeInTheDocument();
+    }
+  );
+
+  it.each([
+    {
       operation: SAP_INSTANCE_START,
       menuItemText: 'Start instance',
       health: 'unknown',
@@ -323,7 +575,7 @@ describe('GenericSystemDetails', () => {
       health: 'passing',
     },
   ])(
-    'should show $operation operation in running state',
+    'should show instance operation $operation in running state',
     async ({ operation, menuItemText, health }) => {
       const user = userEvent.setup();
       const hosts = hostFactory.buildList(1);
@@ -361,13 +613,127 @@ describe('GenericSystemDetails', () => {
 
       await user.click(opButton);
 
-      const menuItem = screen.getByRole('menuitem', {
-        name: menuItemText,
+      expectOperationRunning(menuItemText);
+    }
+  );
+
+  it.each([
+    {
+      operation: SAP_SYSTEM_START,
+      menuItemText: 'Start system',
+      health: 'unknown',
+      type: APPLICATION_TYPE,
+      getOperations: getSapSystemOperations,
+    },
+    {
+      operation: SAP_SYSTEM_STOP,
+      menuItemText: 'Stop system',
+      health: 'passing',
+      type: APPLICATION_TYPE,
+      getOperations: getSapSystemOperations,
+    },
+    {
+      operation: DATABASE_START,
+      menuItemText: 'Start database',
+      health: 'unknown',
+      type: DATABASE_TYPE,
+      getOperations: getDatabaseOperations,
+    },
+    {
+      operation: DATABASE_STOP,
+      menuItemText: 'Stop database',
+      health: 'passing',
+      type: DATABASE_TYPE,
+      getOperations: getDatabaseOperations,
+    },
+  ])(
+    'should show system/database operation $operation in running state',
+    async ({ operation, menuItemText, health, type, getOperations }) => {
+      const user = userEvent.setup();
+      const hosts = hostFactory.buildList(1);
+
+      const sapSystem = sapSystemFactory.build({
+        instances: [
+          sapSystemApplicationInstanceFactory.build({
+            health,
+          }),
+        ],
       });
 
-      expect(menuItem).toBeDisabled();
-      const { getByTestId } = within(menuItem);
-      expect(getByTestId('eos-svg-component')).toBeInTheDocument();
+      sapSystem.hosts = hosts;
+
+      const runningOperations = [{ groupID: sapSystem.id, operation }];
+
+      renderWithRouter(
+        <GenericSystemDetails
+          title={faker.string.uuid()}
+          system={sapSystem}
+          type={type}
+          userAbilities={[{ name: 'all', resource: 'all' }]}
+          cleanUpPermittedFor={[]}
+          runningOperations={runningOperations}
+          getSystemOperations={getOperations}
+          operationsEnabled
+        />
+      );
+
+      await user.click(screen.getByRole('button', { name: 'Operations' }));
+
+      expectOperationRunning(menuItemText);
+    }
+  );
+
+  it.each([
+    {
+      operation: DATABASE_START,
+      menuItemText: 'Start database',
+      health: 'unknown',
+    },
+    {
+      operation: DATABASE_STOP,
+      menuItemText: 'Stop database',
+      health: 'passing',
+    },
+  ])(
+    'should show database site operation $operation in running state',
+    async ({ operation, menuItemText, health }) => {
+      const user = userEvent.setup();
+      const hosts = hostFactory.buildList(1);
+
+      const database = databaseFactory.build({
+        instances: [
+          databaseInstanceFactory.build({
+            health,
+            system_replication: 'Primary',
+            system_replication_site: 'Site1',
+          }),
+        ],
+      });
+
+      database.hosts = hosts;
+
+      const runningOperations = [{ groupID: database.id, operation }];
+
+      renderWithRouter(
+        <GenericSystemDetails
+          title={faker.string.uuid()}
+          system={database}
+          type={DATABASE_TYPE}
+          userAbilities={[{ name: 'all', resource: 'all' }]}
+          cleanUpPermittedFor={[]}
+          runningOperations={runningOperations}
+          getSiteOperations={getDatabaseSiteOperations}
+          operationsEnabled
+        />
+      );
+
+      const siteTables = screen.getAllByRole('table');
+
+      const { getByRole } = within(siteTables[0].previousSibling);
+      const siteOpButton = getByRole('button');
+      await user.click(siteOpButton);
+
+      expectOperationRunning(menuItemText);
     }
   );
 
@@ -519,13 +885,179 @@ describe('GenericSystemDetails', () => {
         const opButton = getByRole('button');
 
         await user.click(opButton);
-        const menuitem = screen.getByRole('menuitem', { name: label });
 
-        if (forbidden) {
-          expect(menuitem).toBeDisabled();
-        } else {
-          expect(menuitem).toBeEnabled();
-        }
+        expectOperationEnabled(label, !forbidden);
+      }
+    );
+
+    it.each([
+      {
+        forbidden: true,
+        operation: SAP_SYSTEM_START,
+        label: 'Start system',
+        abilities: [],
+        health: 'unknown',
+        type: APPLICATION_TYPE,
+        getOperations: getSapSystemOperations,
+      },
+      {
+        forbidden: false,
+        operation: SAP_SYSTEM_START,
+        label: 'Start system',
+        abilities: [{ name: 'start', resource: 'sap_system' }],
+        health: 'unknown',
+        type: APPLICATION_TYPE,
+        getOperations: getSapSystemOperations,
+      },
+      {
+        forbidden: true,
+        operation: SAP_SYSTEM_STOP,
+        label: 'Stop system',
+        abilities: [],
+        health: 'passing',
+        type: APPLICATION_TYPE,
+        getOperations: getSapSystemOperations,
+      },
+      {
+        forbidden: false,
+        operation: SAP_SYSTEM_STOP,
+        label: 'Stop system',
+        abilities: [{ name: 'stop', resource: 'sap_system' }],
+        health: 'passing',
+        type: APPLICATION_TYPE,
+        getOperations: getSapSystemOperations,
+      },
+      {
+        forbidden: true,
+        operation: DATABASE_START,
+        label: 'Start database',
+        abilities: [],
+        health: 'unknown',
+        type: DATABASE_TYPE,
+        getOperations: getDatabaseOperations,
+      },
+      {
+        forbidden: false,
+        operation: DATABASE_START,
+        label: 'Start database',
+        abilities: [{ name: 'start', resource: 'database' }],
+        health: 'unknown',
+        type: DATABASE_TYPE,
+        getOperations: getDatabaseOperations,
+      },
+      {
+        forbidden: true,
+        operation: DATABASE_STOP,
+        label: 'Stop database',
+        abilities: [],
+        health: 'passing',
+        type: DATABASE_TYPE,
+        getOperations: getDatabaseOperations,
+      },
+      {
+        forbidden: false,
+        operation: DATABASE_STOP,
+        label: 'Stop database',
+        abilities: [{ name: 'stop', resource: 'database' }],
+        health: 'passing',
+        type: DATABASE_TYPE,
+        getOperations: getDatabaseOperations,
+      },
+    ])(
+      'should forbid/authorize system/database operation $operation',
+      async ({ forbidden, label, abilities, health, type, getOperations }) => {
+        const user = userEvent.setup();
+
+        // reusing a sap system for a database test, they have the same attributes
+        const sapSystem = sapSystemFactory.build({
+          instances: sapSystemApplicationInstanceFactory.buildList(1, {
+            health,
+          }),
+        });
+
+        sapSystem.hosts = hostFactory.buildList(1);
+
+        renderWithRouter(
+          <GenericSystemDetails
+            title={faker.string.uuid()}
+            system={sapSystem}
+            type={type}
+            userAbilities={abilities}
+            cleanUpPermittedFor={[]}
+            operationsEnabled
+            getSystemOperations={getOperations}
+          />
+        );
+
+        await user.click(screen.getByRole('button', { name: 'Operations' }));
+
+        expectOperationEnabled(label, !forbidden);
+      }
+    );
+
+    it.each([
+      {
+        forbidden: true,
+        operation: DATABASE_START,
+        label: 'Start database',
+        abilities: [],
+        health: 'unknown',
+      },
+      {
+        forbidden: false,
+        operation: DATABASE_START,
+        label: 'Start database',
+        abilities: [{ name: 'start', resource: 'database' }],
+        health: 'unknown',
+      },
+      {
+        forbidden: true,
+        operation: DATABASE_STOP,
+        label: 'Stop database',
+        abilities: [],
+        health: 'passing',
+      },
+      {
+        forbidden: false,
+        operation: DATABASE_STOP,
+        label: 'Stop database',
+        abilities: [{ name: 'stop', resource: 'database' }],
+        health: 'passing',
+      },
+    ])(
+      'should forbid/authorize database site operation $operation',
+      async ({ forbidden, label, abilities, health }) => {
+        const user = userEvent.setup();
+
+        const database = databaseFactory.build({
+          instances: databaseInstanceFactory.buildList(1, {
+            health,
+            system_replication: 'Primary',
+            system_replication_site: 'Site1',
+          }),
+        });
+
+        database.hosts = hostFactory.buildList(1);
+
+        renderWithRouter(
+          <GenericSystemDetails
+            title={faker.string.uuid()}
+            system={database}
+            type={DATABASE_TYPE}
+            userAbilities={abilities}
+            cleanUpPermittedFor={[]}
+            operationsEnabled
+            getSiteOperations={getDatabaseSiteOperations}
+          />
+        );
+
+        const siteTables = screen.getAllByRole('table');
+
+        const { getByRole } = within(siteTables[0].previousSibling);
+        const siteOpButton = getByRole('button');
+        await user.click(siteOpButton);
+
+        expectOperationEnabled(label, !forbidden);
       }
     );
   });

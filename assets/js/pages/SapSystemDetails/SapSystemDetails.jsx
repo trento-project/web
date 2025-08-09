@@ -17,7 +17,10 @@ import {
 import BackButton from '@common/BackButton';
 import { GenericSystemDetails } from '@pages/SapSystemDetails';
 
-import { getSapInstanceOperations } from './sapOperations';
+import {
+  getSapSystemOperations,
+  getSapInstanceOperations,
+} from './sapOperations';
 
 const operationsEnabled = getFromConfig('operationsEnabled');
 
@@ -51,6 +54,7 @@ function SapSystemDetails() {
         operationsEnabled={operationsEnabled}
         runningOperations={runningOperations}
         getInstanceOperations={getSapInstanceOperations}
+        getSystemOperations={getSapSystemOperations}
         onInstanceCleanUp={(instance) => {
           dispatch(deregisterApplicationInstance(instance));
         }}
