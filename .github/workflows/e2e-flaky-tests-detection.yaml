@@ -249,7 +249,7 @@ jobs:
           
           echo "### 📊 Suite Stability Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Failure rate:** **${FAILURE_PERCENTAGE}%**" >> $GITHUB_STEP_SUMMARY
+          echo "**Failure rate:** (Failing threads / Total threads) **${FAILURE_PERCENTAGE}%**" >> $GITHUB_STEP_SUMMARY
           
           make venv-create
           source .venv/bin/activate
