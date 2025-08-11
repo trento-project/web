@@ -22,6 +22,10 @@ import {
 import {
   SAP_INSTANCE_START,
   SAP_INSTANCE_STOP,
+  SAP_SYSTEM_START,
+  SAP_SYSTEM_STOP,
+  DATABASE_START,
+  DATABASE_STOP,
   getOperationLabel,
   getOperationForbiddenMessage,
 } from '@lib/operations';
@@ -37,7 +41,9 @@ import PageHeader from '@common/PageHeader';
 import {
   OperationForbiddenModal,
   SimpleAcceptanceOperationModal,
+  SapStartStopOperationModal,
 } from '@common/OperationModals';
+import OperationsButton from '@common/OperationsButton';
 
 import DeregistrationModal from '@pages/DeregistrationModal';
 
@@ -64,12 +70,18 @@ const getUniqueHosts = (hosts) =>
       .values()
   );
 
-// it includes SAP and HANA instance operations
+// it includes SAP and HANA operations
 const instanceStartStopOperations = [SAP_INSTANCE_START, SAP_INSTANCE_STOP];
+const startStopOperations = [
+  SAP_SYSTEM_START,
+  SAP_SYSTEM_STOP,
+  DATABASE_START,
+  DATABASE_STOP,
+];
 
 const modalInitialState = { open: false, operation: '' };
 
-const closeInstanceModal = (prevState) => ({ ...prevState, open: false });
+const closeOperationModal = (prevState) => ({ ...prevState, open: false });
 
 function SystemReplicationDataPill({
   label,
@@ -95,6 +107,8 @@ export function GenericSystemDetails({
   operationsEnabled = false,
   runningOperations = [],
   getInstanceOperations = noop,
+  getSystemOperations = noop,
+  getSiteOperations = noop,
   onInstanceCleanUp = noop,
   onRequestOperation = noop,
   onCleanForbiddenOperation = noop,
@@ -108,6 +122,7 @@ export function GenericSystemDetails({
     useState(modalInitialState);
   const [currentOperationInstance, setCurrentOperationInstance] =
     useState(undefined);
+  const [currentOperationSite, setCurrentOperationSite] = useState(undefined);
 
   const onCleanUpClick = (instance) => {
     setCleanUpModalOpen(true);
@@ -118,6 +133,19 @@ export function GenericSystemDetails({
     runningOperations,
     setOperationModelOpen,
     setCurrentOperationInstance
+  );
+
+  const systemOperations = getSystemOperations(
+    system,
+    runningOperations,
+    setOperationModelOpen
+  );
+
+  const curriedGetSiteOperations = getSiteOperations(
+    system,
+    runningOperations,
+    setOperationModelOpen,
+    setCurrentOperationSite
   );
 
   const forbiddenOperation = find(runningOperations, { forbidden: true });
@@ -184,16 +212,53 @@ export function GenericSystemDetails({
               params,
             },
           });
-          setOperationModelOpen(closeInstanceModal);
+          setOperationModelOpen(closeOperationModal);
         }}
         onCancel={() => {
-          setOperationModelOpen(closeInstanceModal);
+          setOperationModelOpen(closeOperationModal);
+        }}
+      />
+      <SapStartStopOperationModal
+        operation={operationModalOpen.operation}
+        sid={system.sid}
+        type={type}
+        site={currentOperationSite}
+        isOpen={
+          operationModalOpen.open &&
+          startStopOperations.includes(operationModalOpen.operation)
+        }
+        onRequest={(params) => {
+          onRequestOperation({
+            groupID: system.id,
+            operation: operationModalOpen.operation,
+            requestParams: {
+              ...(type === APPLICATION_TYPE && { sapSystemID: system.id }),
+              ...(type === DATABASE_TYPE && { databaseID: system.id }),
+              params,
+            },
+          });
+          setOperationModelOpen(closeOperationModal);
+        }}
+        onCancel={() => {
+          setOperationModelOpen(closeOperationModal);
         }}
       />
       <div className="flex flex-wrap">
         <div className="flex w-1/2 h-auto overflow-hidden overflow-ellipsis break-words">
           <PageHeader className="font-bold">{title}</PageHeader>
         </div>
+        {operationsEnabled && (
+          <div className="flex w-1/2 justify-end">
+            <div className="flex w-fit whitespace-nowrap">
+              <OperationsButton
+                userAbilities={userAbilities}
+                operations={systemOperations}
+                menuPosition="bottom end"
+                disabled={hasSystemReplication}
+              />
+            </div>
+          </div>
+        )}
       </div>
       <div className="mt-4 bg-white shadow rounded-lg py-4 px-8">
         <ListView
@@ -309,6 +374,17 @@ export function GenericSystemDetails({
                           </>
                         )}
                       </div>
+                      {operationsEnabled && (
+                        <div className="flex w-1/12 items-center justify-end">
+                          <OperationsButton
+                            text=""
+                            userAbilities={userAbilities}
+                            menuPosition="bottom end"
+                            transparent
+                            operations={curriedGetSiteOperations(site)}
+                          />
+                        </div>
+                      )}
                     </div>
                   )
                 }

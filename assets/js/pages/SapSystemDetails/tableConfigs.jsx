@@ -79,7 +79,7 @@ export const getSystemInstancesTableConfiguration = ({
     {
       title: '',
       key: 'actions',
-      className: 'w-40',
+      className: 'w-20',
       render: (_content, item) => {
         if (item.absent_at) {
           return (
@@ -100,11 +100,11 @@ export const getSystemInstancesTableConfiguration = ({
         const operations = getOperations(item);
         if (operationsEnabled && !isEmpty(operations)) {
           return (
-            <div className="flex items-center justify-center">
+            <div className="flex items-center justify-end">
               <OperationsButton
                 text=""
                 userAbilities={userAbilities}
-                menuPosition="bottom"
+                menuPosition="bottom end"
                 transparent
                 operations={operations}
               />
