@@ -4,6 +4,7 @@ import {
   getRunningOperation,
   getRunningOperationsList,
   isOperationRunning,
+  getLocalOrTargetParams,
 } from './runningOperations';
 
 describe('runningOperations selector', () => {
@@ -96,5 +97,25 @@ describe('runningOperations selector', () => {
     expect(
       isOperationRunning(runningOperations2, groupID, operation, matcher)
     ).toBeFalsy();
+  });
+
+  describe('getLocalOrTargetParams', () => {
+    it('should get target running operation params when operation is loaded from wanda', () => {
+      const targetParams = {
+        targets: [
+          {
+            arguments: 'foo',
+          },
+        ],
+      };
+      expect(getLocalOrTargetParams(targetParams)).toBe('foo');
+    });
+
+    it('should get local running operation params', () => {
+      const localParams = {
+        params: 'foo',
+      };
+      expect(getLocalOrTargetParams(localParams)).toBe('foo');
+    });
   });
 });

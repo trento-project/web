@@ -6,7 +6,10 @@ import {
   PACEMAKER_DISABLE,
   PACEMAKER_ENABLE,
 } from '@lib/operations';
-import { isOperationRunning } from '@state/selectors/runningOperations';
+import {
+  isOperationRunning,
+  getLocalOrTargetParams,
+} from '@state/selectors/runningOperations';
 
 const NODE_MAINTENANCE_STATE = 'Maintenance';
 
@@ -18,9 +21,6 @@ const matchesTarget = (hostID, { metadata }) =>
 const matchesHostIdOrTarget = (hostID) => (runningOperation) =>
   matchesHostId(hostID, runningOperation) ||
   matchesTarget(hostID, runningOperation);
-
-const getLocalOrTargetParams = (metadata) =>
-  has(metadata, 'targets') ? metadata.targets[0].arguments : metadata.params;
 
 const matchesClusterMaintenance = ({ metadata }) =>
   flow(
