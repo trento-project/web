@@ -249,7 +249,7 @@ jobs:
           
           echo "### 📊 Suite Stability Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Failure rate:** **${FAILURE_PERCENTAGE}%** ($FAILED_RUNS / $TOTAL_CONTAINERS runs failed)" >> $GITHUB_STEP_SUMMARY
+          echo "**Failure rate:** **${FAILURE_PERCENTAGE}%**" >> $GITHUB_STEP_SUMMARY
           
           make venv-create
           source .venv/bin/activate
@@ -257,8 +257,7 @@ jobs:
 
           FLAKY_TEST_LIST=$(make PATH-TO-JUNIT-FILES=$REPORTS_PATH analyze-files 2>&1 | tail -n +2)
 
-          NUM_FLAKY_TESTS=$(echo -n "$FLAKY_TEST_LIST" | grep -c . || true)
-
+          NUM_FLAKY_TESTS=$(( $(echo -n "$FLAKY_TEST_LIST" | grep -c . || true) - 1 ))
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "---" >> $GITHUB_STEP_SUMMARY
           echo "### Flaky Tests Analysis" >> $GITHUB_STEP_SUMMARY
