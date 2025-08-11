@@ -15,8 +15,8 @@ defmodule Trento.SapSystems do
 
   alias Trento.Infrastructure.Operations
 
-  alias Trento.Support.DateService
   alias Trento.Support.CommandedUtils
+  alias Trento.Support.DateService
 
   alias Trento.SapSystems.Commands.DeregisterApplicationInstance
 

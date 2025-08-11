@@ -14,8 +14,8 @@ defmodule Trento.Databases do
 
   alias Trento.Infrastructure.Operations
 
-  alias Trento.Support.DateService
   alias Trento.Support.CommandedUtils
+  alias Trento.Support.DateService
 
   alias Trento.Databases.Commands.DeregisterDatabaseInstance
 

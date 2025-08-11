@@ -8,8 +8,8 @@ defmodule Trento.Heartbeats do
   alias Trento.Heartbeats.Heartbeat
   alias Trento.Hosts.Projections.HostReadModel
 
-  alias Trento.Support.DateService
   alias Trento.Support.CommandedUtils
+  alias Trento.Support.DateService
 
   alias Trento.Repo
 

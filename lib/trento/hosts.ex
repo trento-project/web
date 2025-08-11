@@ -14,8 +14,8 @@ defmodule Trento.Hosts do
     SlesSubscriptionReadModel
   }
 
-  alias Trento.Support.DateService
   alias Trento.Support.CommandedUtils
+  alias Trento.Support.DateService
 
   alias Trento.Hosts.Commands.{
     RequestHostDeregistration,
