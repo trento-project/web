@@ -17,12 +17,15 @@ const matchesInstanceNumber =
   ({ metadata }) =>
     flow(
       (meta) => getLocalOrTargetParams(meta),
-      (params) => get(params, 'instance_number', metadata?.instanceNumber) === instanceNumber
+      (params) =>
+        get(params, 'instance_number', metadata?.instanceNumber) ===
+        instanceNumber
     )(metadata);
 
 export const getSapInstanceOperations = curry(
   (
     runningOperations,
+    disabled,
     setOperationModelOpen,
     setCurrentOperationInstance,
     instance
@@ -35,7 +38,7 @@ export const getSapInstanceOperations = curry(
         SAP_INSTANCE_START,
         matchesInstanceNumber(instance.instance_number)
       ),
-      disabled: instance.health === 'passing',
+      disabled: disabled || instance.health === 'passing',
       permitted: ['start:application_instance'],
       onClick: () => {
         setCurrentOperationInstance(instance);
@@ -50,7 +53,7 @@ export const getSapInstanceOperations = curry(
         SAP_INSTANCE_STOP,
         matchesInstanceNumber(instance.instance_number)
       ),
-      disabled: instance.health === 'unknown',
+      disabled: disabled || instance.health === 'unknown',
       permitted: ['stop:application_instance'],
       onClick: () => {
         setCurrentOperationInstance(instance);
@@ -63,6 +66,7 @@ export const getSapInstanceOperations = curry(
 export const getSapSystemOperations = (
   sapSystem,
   runningOperations,
+  disabled,
   setOperationModelOpen
 ) => [
   {
@@ -72,7 +76,7 @@ export const getSapSystemOperations = (
       sapSystem.id,
       SAP_SYSTEM_START
     ),
-    disabled: every(sapSystem.instances, { health: 'passing' }),
+    disabled: disabled || every(sapSystem.instances, { health: 'passing' }),
     permitted: ['start:sap_system'],
     onClick: () => {
       setOperationModelOpen({ open: true, operation: SAP_SYSTEM_START });
@@ -85,7 +89,7 @@ export const getSapSystemOperations = (
       sapSystem.id,
       SAP_SYSTEM_STOP
     ),
-    disabled: every(sapSystem.instances, { health: 'unknown' }),
+    disabled: disabled || every(sapSystem.instances, { health: 'unknown' }),
     permitted: ['stop:sap_system'],
     onClick: () => {
       setOperationModelOpen({ open: true, operation: SAP_SYSTEM_STOP });
