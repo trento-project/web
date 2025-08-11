@@ -1,8 +1,16 @@
-import { curry, every, filter } from 'lodash';
+import { curry, every, filter, flow, get } from 'lodash';
 
 import { DATABASE_START, DATABASE_STOP } from '@lib/operations';
 
-import { isOperationRunning } from '@state/selectors/runningOperations';
+import { isOperationRunning, getLocalOrTargetParams } from '@state/selectors/runningOperations';
+
+const matchesSite =
+  (site) =>
+  ({ metadata }) =>
+    flow(
+      (meta) => getLocalOrTargetParams(meta),
+      (params) => get(params, 'site', null) === site
+    )(metadata);
 
 export const getDatabaseOperations = (
   database,
@@ -47,7 +55,8 @@ export const getDatabaseSiteOperations = curry(
         running: isOperationRunning(
           runningOperations,
           database.id,
-          DATABASE_START
+          DATABASE_START,
+          matchesSite(site)
         ),
         disabled: every(siteInstances, { health: 'passing' }),
         permitted: ['start:database'],
@@ -61,7 +70,8 @@ export const getDatabaseSiteOperations = curry(
         running: isOperationRunning(
           runningOperations,
           database.id,
-          DATABASE_STOP
+          DATABASE_STOP,
+          matchesSite(site)
         ),
         disabled: every(siteInstances, { health: 'unknown' }),
         permitted: ['stop:database'],

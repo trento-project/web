@@ -699,20 +699,27 @@ describe('GenericSystemDetails', () => {
     async ({ operation, menuItemText, health }) => {
       const user = userEvent.setup();
       const hosts = hostFactory.buildList(1);
+      const site = 'Site1';
 
       const database = databaseFactory.build({
         instances: [
           databaseInstanceFactory.build({
             health,
             system_replication: 'Primary',
-            system_replication_site: 'Site1',
+            system_replication_site: site,
           }),
         ],
       });
 
       database.hosts = hosts;
 
-      const runningOperations = [{ groupID: database.id, operation }];
+      const runningOperations = [
+        {
+          groupID: database.id,
+          operation,
+          metadata: { params: { site } },
+        },
+      ];
 
       renderWithRouter(
         <GenericSystemDetails
