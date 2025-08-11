@@ -258,8 +258,16 @@ describe('Users', () => {
           loginPage.clickSubmitLoginButton();
           dashboardPage.dashboardPageIsDisplayed();
           usersPage.visit('/profile');
+          cy.pause();
           usersPage.clickAuthenticatorAppSwitch();
+          cy.pause();
+          cy.get(
+            'div[id*="headlessui-dialog-panel"] h2:contains("Disable TOTP")'
+          ).should('be.visible');
           usersPage.clickDisableTotpButton();
+          cy.get(
+            'div[id*="headlessui-dialog-panel"] h2:contains("Disable TOTP")'
+          ).should('not.exist');
           usersPage.clickAuthenticatorAppSwitch();
           usersPage.newIssuedTotpSecretIsDifferent(totpSecret);
         });
