@@ -258,9 +258,14 @@ describe('Users', () => {
           dashboardPage.dashboardPageIsDisplayed();
           usersPage.visit('/profile');
           usersPage.clickAuthenticatorAppSwitch();
+          usersPage.removeTotpDialogTitleIsDisplayed();
+          usersPage.interceptDeleteTotpEnrollmentEndpoint();
           usersPage.clickDisableTotpButton();
-          usersPage.clickAuthenticatorAppSwitch();
-          usersPage.newIssuedTotpSecretIsDifferent(totpSecret);
+          usersPage.removeTotpDialogTitleIsNotDisplayed();
+          usersPage.waitForTotpEnrollmentEndpoint().then(() => {
+            usersPage.clickAuthenticatorAppSwitch();
+            usersPage.newIssuedTotpSecretIsDifferent(totpSecret);
+          });
         });
       });
     });
