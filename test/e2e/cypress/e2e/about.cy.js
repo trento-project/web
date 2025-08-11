@@ -12,6 +12,11 @@ describe('User account page', () => {
 
   it('should have the correct page title', () => {
     aboutPage.pageTitleIsDisplayed();
+    const randomNumber = Math.random();
+    expect(randomNumber).to.be.lessThan(
+      0.5,
+      'Test failed because the random number was >= 0.5'
+    );
   });
 
   it('should show the correct server version', () => {
