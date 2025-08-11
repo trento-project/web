@@ -15,6 +15,7 @@ defmodule Trento.Databases do
   alias Trento.Infrastructure.Operations
 
   alias Trento.Support.DateService
+  alias Trento.Support.CommandedUtils
 
   alias Trento.Databases.Commands.DeregisterDatabaseInstance
 
@@ -78,7 +79,7 @@ defmodule Trento.Databases do
         {:error, :instance_present}
 
       _ ->
-        correlated_dispatch(
+        CommandedUtils.correlated_dispatch(
           DeregisterDatabaseInstance.new!(%{
             database_id: database_id,
             host_id: host_id,
@@ -139,12 +140,4 @@ defmodule Trento.Databases do
   end
 
   defp maybe_filter_by_site(databases, _), do: databases
-
-  defp commanded,
-    do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]
-
-  defp correlated_dispatch(command) do
-    correlation_id = Process.get(:correlation_id)
-    commanded().dispatch(command, correlation_id: correlation_id, causation_id: correlation_id)
-  end
 end

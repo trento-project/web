@@ -16,6 +16,7 @@ defmodule Trento.SapSystems do
   alias Trento.Infrastructure.Operations
 
   alias Trento.Support.DateService
+  alias Trento.Support.CommandedUtils
 
   alias Trento.SapSystems.Commands.DeregisterApplicationInstance
 
@@ -81,7 +82,7 @@ defmodule Trento.SapSystems do
         {:error, :instance_present}
 
       _ ->
-        correlated_dispatch(
+        CommandedUtils.correlated_dispatch(
           DeregisterApplicationInstance.new!(%{
             sap_system_id: sap_system_id,
             host_id: host_id,
@@ -155,12 +156,4 @@ defmodule Trento.SapSystems do
   end
 
   def request_operation(_, _, _), do: {:error, :operation_not_found}
-
-  defp commanded,
-    do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]
-
-  defp correlated_dispatch(command) do
-    correlation_id = Process.get(:correlation_id)
-    commanded().dispatch(command, correlation_id: correlation_id, causation_id: correlation_id)
-  end
 end
