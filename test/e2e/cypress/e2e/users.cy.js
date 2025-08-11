@@ -262,12 +262,17 @@ describe('Users', () => {
           cy.get(
             'div[id*="headlessui-dialog-panel"] h2:contains("Disable TOTP")'
           ).should('be.visible');
+          cy.intercept('DELETE', '/api/v1/profile/totp_enrollment').as(
+            'totpEnrollment'
+          );
           usersPage.clickDisableTotpButton();
           cy.get(
             'div[id*="headlessui-dialog-panel"] h2:contains("Disable TOTP")'
           ).should('not.exist');
-          usersPage.clickAuthenticatorAppSwitch();
-          usersPage.newIssuedTotpSecretIsDifferent(totpSecret);
+          cy.wait('@totpEnrollment').then(() => {
+            usersPage.clickAuthenticatorAppSwitch();
+            usersPage.newIssuedTotpSecretIsDifferent(totpSecret);
+          });
         });
       });
     });
