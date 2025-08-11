@@ -236,31 +236,29 @@ jobs:
         env:
           TOTAL_CONTAINERS: ${{ github.event.inputs.num_containers || env.DEFAULT_NUM_CONTAINERS }}
         run: |
-          # 1. Define the reports path to reuse it
           REPORTS_PATH="../../junit-reports"
+          TOTAL_CONTAINERS=${{ env.TOTAL_CONTAINERS }}
           
-          # 2. Count the failed runs
-          # Stderr is redirected to /dev/null to avoid warnings if no files match
           FAILED_RUNS=$(grep -l -E "<failure|<error>" $REPORTS_PATH/*.xml 2>/dev/null | wc -l)
+
+          if [ "$TOTAL_CONTAINERS" -gt 0 ]; then
+            FAILURE_PERCENTAGE=$(echo "scale=1; $FAILED_RUNS * 100 / $TOTAL_CONTAINERS" | bc)
+          else
+            FAILURE_PERCENTAGE=0
+          fi
           
-          # 3. Write the initial stability summary
           echo "### 📊 Suite Stability Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Failed runs (threads):** **$FAILED_RUNS** out of **$TOTAL_CONTAINERS**" >> $GITHUB_STEP_SUMMARY
+          echo "**Failure rate:** **${FAILURE_PERCENTAGE}%** ($FAILED_RUNS / $TOTAL_CONTAINERS runs failed)" >> $GITHUB_STEP_SUMMARY
           
-          # 4. Prepare the Python environment
           make venv-create
           source .venv/bin/activate
           make install-deps
 
-          # 5. Run the analysis and capture the list of flaky tests into a variable
           FLAKY_TEST_LIST=$(make PATH-TO-JUNIT-FILES=$REPORTS_PATH analyze-files 2>&1 | tail -n +2)
 
-          # 6. Count the number of flaky tests found (by counting non-empty lines)
-          # The '|| true' prevents the step from failing if the list is empty
           NUM_FLAKY_TESTS=$(echo -n "$FLAKY_TEST_LIST" | grep -c . || true)
 
-          # 7. Write the flaky test count and the detailed list to the summary
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "---" >> $GITHUB_STEP_SUMMARY
           echo "### Flaky Tests Analysis" >> $GITHUB_STEP_SUMMARY
@@ -268,17 +266,16 @@ jobs:
           echo "**Unique flaky tests reported:** **$NUM_FLAKY_TESTS**" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
-          # 8. Print the full list inside a collapsible section for readability
           if [ "$NUM_FLAKY_TESTS" -gt 0 ]; then
             echo "<details><summary>Click to see the full list of flaky tests</summary>" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
-            # Using a code block preserves formatting and makes it easy to copy
             echo '```' >> $GITHUB_STEP_SUMMARY
             echo "$FLAKY_TEST_LIST" >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
             echo "</details>" >> $GITHUB_STEP_SUMMARY
           fi
-        working-directory: hack/flaky_tests_analysis
+
+          echo "" >> $GITHUB_STEP_SUMMARY
       - name: Delete Artifacts
         uses: geekyeggo/delete-artifact@v5
         with:
