@@ -274,8 +274,7 @@ jobs:
             echo '```' >> $GITHUB_STEP_SUMMARY
             echo "</details>" >> $GITHUB_STEP_SUMMARY
           fi
-
-          echo "" >> $GITHUB_STEP_SUMMARY
+        working-directory: hack/flaky_tests_analysis
       - name: Delete Artifacts
         uses: geekyeggo/delete-artifact@v5
         with:
