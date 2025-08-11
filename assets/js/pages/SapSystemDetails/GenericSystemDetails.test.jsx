@@ -580,19 +580,23 @@ describe('GenericSystemDetails', () => {
       const user = userEvent.setup();
       const hosts = hostFactory.buildList(1);
       const hostID = hosts[0].id;
+      const instanceNumber = '00';
 
       const sapSystem = sapSystemFactory.build({
         instances: [
           sapSystemApplicationInstanceFactory.build({
             health,
             host_id: hostID,
+            instance_number: instanceNumber,
           }),
         ],
       });
 
       sapSystem.hosts = hosts;
 
-      const runningOperations = [{ groupID: hostID, operation }];
+      const runningOperations = [
+        { groupID: hostID, operation, metadata: { instanceNumber } },
+      ];
 
       renderWithRouter(
         <GenericSystemDetails

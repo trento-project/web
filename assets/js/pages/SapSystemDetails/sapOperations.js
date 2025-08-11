@@ -1,4 +1,4 @@
-import { curry, every } from 'lodash';
+import { curry, every, get, flow } from 'lodash';
 
 import {
   SAP_INSTANCE_START,
@@ -7,7 +7,18 @@ import {
   SAP_SYSTEM_STOP,
 } from '@lib/operations';
 
-import { isOperationRunning } from '@state/selectors/runningOperations';
+import {
+  isOperationRunning,
+  getLocalOrTargetParams,
+} from '@state/selectors/runningOperations';
+
+const matchesInstanceNumber =
+  (instanceNumber) =>
+  ({ metadata }) =>
+    flow(
+      (meta) => getLocalOrTargetParams(meta),
+      (params) => get(params, 'instance_number', metadata?.instanceNumber) === instanceNumber
+    )(metadata);
 
 export const getSapInstanceOperations = curry(
   (
@@ -21,7 +32,8 @@ export const getSapInstanceOperations = curry(
       running: isOperationRunning(
         runningOperations,
         instance.host_id,
-        SAP_INSTANCE_START
+        SAP_INSTANCE_START,
+        matchesInstanceNumber(instance.instance_number)
       ),
       disabled: instance.health === 'passing',
       permitted: ['start:application_instance'],
@@ -35,7 +47,8 @@ export const getSapInstanceOperations = curry(
       running: isOperationRunning(
         runningOperations,
         instance.host_id,
-        SAP_INSTANCE_STOP
+        SAP_INSTANCE_STOP,
+        matchesInstanceNumber(instance.instance_number)
       ),
       disabled: instance.health === 'unknown',
       permitted: ['stop:application_instance'],
