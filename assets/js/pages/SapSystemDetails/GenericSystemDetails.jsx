@@ -49,6 +49,8 @@ import {
   getSystemInstancesTableConfiguration,
 } from './tableConfigs';
 
+const SR_INACTIVE = 'INACTIVE';
+
 const renderType = (t) =>
   t === APPLICATION_TYPE ? 'Application server' : 'HANA Database';
 
@@ -125,7 +127,10 @@ export function GenericSystemDetails({
   const isForbidden = get(forbiddenOperation, 'forbidden', false);
   const forbiddenErrors = get(forbiddenOperation, 'errors', []);
 
-  const sortedInstances = sortBy(system.instances, ['system_replication_tier']);
+  const sortedInstances = sortBy(system.instances, [
+    'system_replication',
+    'system_replication_tier',
+  ]);
   const sitedInstances = groupBy(
     sortedInstances,
     ({ system_replication_site: site }) => site
@@ -244,68 +249,73 @@ export function GenericSystemDetails({
         <div className="flex flex-direction-row">
           <h2 className="text-2xl font-bold self-center">Layout</h2>
         </div>
-        {map(sitedInstances, (instances, site) => (
-          <div key={site} className="mt-4 bg-white rounded-lg">
-            <Table
-              config={getSystemInstancesTableConfiguration({
-                type,
-                userAbilities,
-                cleanUpPermittedFor,
-                onCleanUpClick,
-                operationsEnabled,
-                getOperations: curriedGetInstanceOperations,
-              })}
-              data={instances}
-              header={
-                hasSystemReplication && (
-                  <div className="flex py-4 px-5">
-                    <div className="flex w-11/12 space-x-3">
-                      <div className="flex space-x-2 mr-3">
-                        <h3 className="text-l font-bold">{site}</h3>
-                        <Pill className="bg-green-100 text-green-800 !py-0 items-center">
-                          {upperCase(instances[0].system_replication)}
-                        </Pill>
-                      </div>
-                      <SystemReplicationDataPill
-                        label="Tier"
-                        data={instances[0].system_replication_tier}
-                      />
-
-                      {instances[0].system_replication === 'Primary' && (
+        {map(sitedInstances, (instances, site) => {
+          const instance = instances[0];
+          return (
+            <div key={site} className="mt-4 bg-white rounded-lg">
+              <Table
+                config={getSystemInstancesTableConfiguration({
+                  type,
+                  userAbilities,
+                  cleanUpPermittedFor,
+                  onCleanUpClick,
+                  operationsEnabled,
+                  getOperations: curriedGetInstanceOperations,
+                })}
+                data={instances}
+                header={
+                  hasSystemReplication && (
+                    <div className="flex py-4 px-5">
+                      <div className="flex w-11/12 space-x-3">
+                        <div className="flex space-x-2 mr-3">
+                          <h3 className="text-l font-bold">{site}</h3>
+                          <Pill className="bg-green-100 text-green-800 !py-0 items-center">
+                            {upperCase(instance.system_replication)}
+                          </Pill>
+                        </div>
                         <SystemReplicationDataPill
-                          label="Status"
-                          data={instances[0].system_replication_status}
-                          className={getReplicationStatusClasses(
-                            instances[0].system_replication_status
-                          )}
+                          label="Tier"
+                          data={instance.system_replication_tier || '-'}
                         />
-                      )}
-                      {instances[0].system_replication === 'Secondary' && (
-                        <>
+
+                        {instance.system_replication === 'Primary' && (
                           <SystemReplicationDataPill
-                            label="Replicating"
-                            data={instances[0].system_replication_source_site}
-                            className="bg-gray-200 text-gray-500 max-w-32 truncate !inline self-center !py-0.5"
-                          />
-                          <SystemReplicationDataPill
-                            label="Replication Mode"
-                            data={instances[0].system_replication_mode}
-                          />
-                          <SystemReplicationDataPill
-                            label="Operation Mode"
+                            label="Status"
                             data={
-                              instances[0].system_replication_operation_mode
+                              instance.system_replication_status || SR_INACTIVE
                             }
+                            className={getReplicationStatusClasses(
+                              instance.system_replication_status
+                            )}
                           />
-                        </>
-                      )}
+                        )}
+                        {instance.system_replication === 'Secondary' && (
+                          <>
+                            <SystemReplicationDataPill
+                              label="Replicating"
+                              data={
+                                instance.system_replication_source_site || '-'
+                              }
+                              className="bg-gray-200 text-gray-500 max-w-32 truncate !inline self-center !py-0.5"
+                            />
+                            <SystemReplicationDataPill
+                              label="Replication Mode"
+                              data={instance.system_replication_mode}
+                            />
+                            <SystemReplicationDataPill
+                              label="Operation Mode"
+                              data={instance.system_replication_operation_mode}
+                            />
+                          </>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                )
-              }
-            />
-          </div>
-        ))}
+                  )
+                }
+              />
+            </div>
+          );
+        })}
       </div>
 
       <div className="mt-8">
