@@ -13,40 +13,22 @@ defmodule Trento.Operations.DatabaseInstancePolicy do
   alias Trento.Databases.Projections.DatabaseInstanceReadModel
   alias Trento.Hosts.Projections.HostReadModel
 
-  # maintenance operation authorized when:
-  # - instance is not running
-  # - cluster is in maintenance
   def authorize_operation(
-        :maintenance,
-        %DatabaseInstanceReadModel{} = application_instance,
+        :cluster_maintenance,
+        %DatabaseInstanceReadModel{host: %HostReadModel{cluster: nil}},
+        _params
+      ),
+      do: :ok
+
+  def authorize_operation(
+        :cluster_maintenance,
+        %DatabaseInstanceReadModel{
+          sid: sid,
+          instance_number: instance_number,
+          host: %{cluster: %{sap_instances: sap_instances} = cluster}
+        },
         _params
       ) do
-    OperationsHelper.reduce_operation_authorizations([
-      instance_running(application_instance),
-      cluster_maintenance(application_instance)
-    ])
-  end
-
-  def authorize_operation(_, _, _), do: {:error, ["Unknown operation"]}
-
-  defp instance_running(%DatabaseInstanceReadModel{
-         sid: sid,
-         instance_number: instance_number,
-         health: health
-       })
-       when health != Health.unknown(),
-       do: {:error, ["Instance #{instance_number} of HANA database #{sid} is not stopped"]}
-
-  defp instance_running(_), do: :ok
-
-  defp cluster_maintenance(%DatabaseInstanceReadModel{host: %HostReadModel{cluster: nil}}),
-    do: :ok
-
-  defp cluster_maintenance(%DatabaseInstanceReadModel{
-         sid: sid,
-         instance_number: instance_number,
-         host: %{cluster: %{sap_instances: sap_instances} = cluster}
-       }) do
     is_clustered =
       Enum.any?(sap_instances, fn
         %{sid: ^sid, instance_number: ^instance_number} -> true
@@ -63,6 +45,32 @@ defmodule Trento.Operations.DatabaseInstancePolicy do
       :ok
     end
   end
+
+  # maintenance operation authorized when:
+  # - instance is not running
+  # - cluster is in maintenance
+  def authorize_operation(
+        :maintenance,
+        %DatabaseInstanceReadModel{} = database_instance,
+        _params
+      ) do
+    OperationsHelper.reduce_operation_authorizations([
+      instance_running(database_instance),
+      authorize_operation(:cluster_maintenance, database_instance, %{})
+    ])
+  end
+
+  def authorize_operation(_, _, _), do: {:error, ["Unknown operation"]}
+
+  defp instance_running(%DatabaseInstanceReadModel{
+         sid: sid,
+         instance_number: instance_number,
+         health: health
+       })
+       when health != Health.unknown(),
+       do: {:error, ["Instance #{instance_number} of HANA database #{sid} is not stopped"]}
+
+  defp instance_running(_), do: :ok
 
   defp get_cluster_resource_id(%ClusterReadModel{
          details: %{resources: resources}
