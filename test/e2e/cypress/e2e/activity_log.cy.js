@@ -303,16 +303,16 @@ context('Activity Log page', () => {
     it.only('should start autorefresh ticker', () => {
       activityLogPage.spyActivityLogRequest();
       activityLogPage.visit();
-      // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(2000);
-      cy.pause();
-      activityLogPage.expectedAggregateAmountOfRequests(1);
-      activityLogPage.selectRefreshRate('5s');
-      activityLogPage.expectedAggregateAmountOfRequests(2);
-      activityLogPage.advanceTimeBy(5);
-      activityLogPage.expectedAggregateAmountOfRequests(3);
-      activityLogPage.advanceTimeBy(10);
-      activityLogPage.expectedAggregateAmountOfRequests(5);
+      activityLogPage.waitForActivityLogRequest().then(() => {
+        cy.get('tbody tr').should('have.length', 20);
+        activityLogPage.expectedAggregateAmountOfRequests(1);
+        activityLogPage.selectRefreshRate('5s');
+        activityLogPage.expectedAggregateAmountOfRequests(2);
+        activityLogPage.advanceTimeBy(5);
+        activityLogPage.expectedAggregateAmountOfRequests(3);
+        activityLogPage.advanceTimeBy(10);
+        activityLogPage.expectedAggregateAmountOfRequests(5);
+      });
     });
 
     it(`should update querystring when filters are selected`, () => {
