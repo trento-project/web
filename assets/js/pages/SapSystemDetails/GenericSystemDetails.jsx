@@ -141,13 +141,9 @@ export function GenericSystemDetails({
     ])
   );
   const operationsDisabled = !isEmpty(systemRunningOperations);
-  const instanceOperationsDisabled = find(systemRunningOperations, {
-    groupID: system.id,
-  });
 
   const curriedGetInstanceOperations = getInstanceOperations(
     systemRunningOperations,
-    instanceOperationsDisabled,
     setOperationModelOpen,
     setCurrentOperationInstance
   );

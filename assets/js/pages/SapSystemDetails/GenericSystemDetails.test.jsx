@@ -763,47 +763,58 @@ describe('GenericSystemDetails', () => {
     }
   );
 
-  it('should disable instance operations if a system operation is running', async () => {
-    const user = userEvent.setup();
-    const hosts = hostFactory.buildList(1);
+  it.each([
+    { index: 0, scenario: 'an operation in the same host' },
+    { index: 1, scenario: 'system operation' },
+  ])(
+    'should disable instance operations if a $scenario is running',
+    async ({ index }) => {
+      const user = userEvent.setup();
+      const hosts = hostFactory.buildList(1);
+      const hostID = hosts[0].id;
+      const sapSystemID = faker.string.uuid();
 
-    const sapSystem = sapSystemFactory.build({
-      instances: [
-        sapSystemApplicationInstanceFactory.build({
-          health: 'passing',
-        }),
-      ],
-    });
+      const sapSystem = sapSystemFactory.build({
+        id: sapSystemID,
+        instances: [
+          sapSystemApplicationInstanceFactory.build({
+            host_id: hostID,
+            sap_system_id: sapSystemID,
+            health: 'passing',
+          }),
+        ],
+      });
 
-    sapSystem.hosts = hosts;
+      sapSystem.hosts = hosts;
 
-    const runningOperations = [
-      { groupID: sapSystem.id, operation: SAP_SYSTEM_START },
-    ];
+      // use hostID and sapSystemID as group ID to test disabled both scenarios
+      const groupID = index === 0 ? hostID : sapSystemID;
+      const runningOperations = [{ groupID, operation: SAP_SYSTEM_START }];
 
-    renderWithRouter(
-      <GenericSystemDetails
-        title={faker.string.uuid()}
-        system={sapSystem}
-        type={APPLICATION_TYPE}
-        userAbilities={[{ name: 'all', resource: 'all' }]}
-        cleanUpPermittedFor={[]}
-        runningOperations={runningOperations}
-        getInstanceOperations={getSapInstanceOperations}
-        getSystemOperations={getSapSystemOperations}
-        operationsEnabled
-      />
-    );
+      renderWithRouter(
+        <GenericSystemDetails
+          title={faker.string.uuid()}
+          system={sapSystem}
+          type={APPLICATION_TYPE}
+          userAbilities={[{ name: 'all', resource: 'all' }]}
+          cleanUpPermittedFor={[]}
+          runningOperations={runningOperations}
+          getInstanceOperations={getSapInstanceOperations}
+          getSystemOperations={getSapSystemOperations}
+          operationsEnabled
+        />
+      );
 
-    const [layoutTable, _] = screen.getAllByRole('table');
-    const { getByRole } = within(layoutTable);
-    const opButton = getByRole('button');
+      const [layoutTable, _] = screen.getAllByRole('table');
+      const { getByRole } = within(layoutTable);
+      const opButton = getByRole('button');
 
-    await user.click(opButton);
+      await user.click(opButton);
 
-    expectOperationEnabled('Start instance', false);
-    expectOperationEnabled('Stop instance', false);
-  });
+      expectOperationEnabled('Start instance', false);
+      expectOperationEnabled('Stop instance', false);
+    }
+  );
 
   it('should disable systems operations if an instance operation is running', async () => {
     const user = userEvent.setup();

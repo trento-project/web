@@ -1,4 +1,4 @@
-import { curry, every, get, flow } from 'lodash';
+import { curry, every, get, find, flow } from 'lodash';
 
 import {
   SAP_INSTANCE_START,
@@ -25,42 +25,49 @@ const matchesInstanceNumber =
 export const getSapInstanceOperations = curry(
   (
     runningOperations,
-    disabled,
     setOperationModelOpen,
     setCurrentOperationInstance,
     instance
-  ) => [
-    {
-      value: 'Start instance',
-      running: isOperationRunning(
-        runningOperations,
-        instance.host_id,
-        SAP_INSTANCE_START,
-        matchesInstanceNumber(instance.instance_number)
-      ),
-      disabled: disabled || instance.health === 'passing',
-      permitted: ['start:application_instance'],
-      onClick: () => {
-        setCurrentOperationInstance(instance);
-        setOperationModelOpen({ open: true, operation: SAP_INSTANCE_START });
+  ) => {
+    const disabled = find(
+      runningOperations,
+      ({ groupID }) =>
+        groupID === instance.sap_system_id || groupID === instance.host_id
+    );
+
+    return [
+      {
+        value: 'Start instance',
+        running: isOperationRunning(
+          runningOperations,
+          instance.host_id,
+          SAP_INSTANCE_START,
+          matchesInstanceNumber(instance.instance_number)
+        ),
+        disabled: disabled || instance.health === 'passing',
+        permitted: ['start:application_instance'],
+        onClick: () => {
+          setCurrentOperationInstance(instance);
+          setOperationModelOpen({ open: true, operation: SAP_INSTANCE_START });
+        },
       },
-    },
-    {
-      value: 'Stop instance',
-      running: isOperationRunning(
-        runningOperations,
-        instance.host_id,
-        SAP_INSTANCE_STOP,
-        matchesInstanceNumber(instance.instance_number)
-      ),
-      disabled: disabled || instance.health === 'unknown',
-      permitted: ['stop:application_instance'],
-      onClick: () => {
-        setCurrentOperationInstance(instance);
-        setOperationModelOpen({ open: true, operation: SAP_INSTANCE_STOP });
+      {
+        value: 'Stop instance',
+        running: isOperationRunning(
+          runningOperations,
+          instance.host_id,
+          SAP_INSTANCE_STOP,
+          matchesInstanceNumber(instance.instance_number)
+        ),
+        disabled: disabled || instance.health === 'unknown',
+        permitted: ['stop:application_instance'],
+        onClick: () => {
+          setCurrentOperationInstance(instance);
+          setOperationModelOpen({ open: true, operation: SAP_INSTANCE_STOP });
+        },
       },
-    },
-  ]
+    ];
+  }
 );
 
 export const getSapSystemOperations = (
