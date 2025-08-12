@@ -36,7 +36,7 @@ jobs:
       PR_NUMBER: ${{ github.event.pull_request.number }}
     steps:
       - name: Checkout ansible repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: trento-project/ansible
           path: ansible
@@ -110,7 +110,7 @@ jobs:
     env:
       TRENTO_PR_ENV_URL: "${{ github.event.pull_request.number }}.prenv.trento.suse.com"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - name: Install photofinish
@@ -133,7 +133,7 @@ jobs:
     needs: run-photofinish-demo-env
     steps:
       - name: Checkout source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Comment on the PR
         uses: actions/github-script@v7
         env:
