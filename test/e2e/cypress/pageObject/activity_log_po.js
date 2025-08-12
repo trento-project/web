@@ -231,7 +231,10 @@ export const expectedRefreshRatesAreAvailable = () => {
 };
 
 export const expectedAggregateAmountOfRequests = (amount) =>
-  cy.get('@activityLogRequest').its('callCount').should('equal', amount);
+  cy
+    .get(`@${activityLogEndpointAlias}`)
+    .its('callCount')
+    .should('equal', amount);
 
 //Helpers
 

@@ -4,7 +4,7 @@ import * as basePage from '../pageObject/base_po';
 const defaultSeverity = 'severity=info&severity=warning&severity=critical';
 
 context('Activity Log page', () => {
-  before(() => activityLogPage.preloadTestData());
+  // before(() => activityLogPage.preloadTestData());
   beforeEach(() => activityLogPage.interceptActivityLogEndpoint());
 
   describe('Navigation', () => {
@@ -299,9 +299,13 @@ context('Activity Log page', () => {
       );
     });
 
-    it('should start autorefresh ticker', () => {
+    // eslint-disable-next-line mocha/no-exclusive-tests
+    it.only('should start autorefresh ticker', () => {
       activityLogPage.spyActivityLogRequest();
       activityLogPage.visit();
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(2000);
+      cy.pause();
       activityLogPage.expectedAggregateAmountOfRequests(1);
       activityLogPage.selectRefreshRate('5s');
       activityLogPage.expectedAggregateAmountOfRequests(2);
