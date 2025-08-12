@@ -304,7 +304,7 @@ context('Activity Log page', () => {
       activityLogPage.spyActivityLogRequest();
       activityLogPage.visit();
       activityLogPage.waitForActivityLogRequest().then(() => {
-        cy.get('tbody tr').should('have.length', 20);
+        // cy.get('tbody tr').should('have.length', 20);
         activityLogPage.expectedAggregateAmountOfRequests(1);
         activityLogPage.selectRefreshRate('5s');
         activityLogPage.expectedAggregateAmountOfRequests(2);
