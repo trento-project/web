@@ -8,8 +8,7 @@ defmodule Trento.Support.CommandedUtilsTest do
 
   describe "maybe_correlated_dispatch/2" do
     test "should perform uncorrelated dispatch when called with arity 1" do
-      uuid = Faker.UUID.v4()
-      some_command = %{uuid: uuid}
+      some_command = %{uuid: Faker.UUID.v4()}
 
       expect(
         Trento.Commanded.Mock,
@@ -25,8 +24,7 @@ defmodule Trento.Support.CommandedUtilsTest do
     for ctx <- [:api_key, :suse_manager_settings] do
       @ctx ctx
       test "should perform uncorrelated dispatch when called with #{@ctx} ctx parameter but not setup anything on the correlation cache" do
-        uuid = Faker.UUID.v4()
-        some_command = %{uuid: uuid}
+        some_command = %{uuid: Faker.UUID.v4()}
 
         expect(
           Trento.Commanded.Mock,
@@ -40,8 +38,7 @@ defmodule Trento.Support.CommandedUtilsTest do
       end
 
       test "should perform correlated dispatch when called with #{@ctx} ctx parameter with kv setup on correlation cache" do
-        uuid = Faker.UUID.v4()
-        some_command = %{uuid: uuid}
+        some_command = %{uuid: Faker.UUID.v4()}
 
         key0 = UUID.uuid4()
         correlation_id = UUID.uuid4()
@@ -66,8 +63,7 @@ defmodule Trento.Support.CommandedUtilsTest do
 
   describe "correlated_dispatch/1" do
     test "should perform correlated dispatch when correlation_id is setup in process dictionary" do
-      uuid = Faker.UUID.v4()
-      some_command = %{uuid: uuid}
+      some_command = %{uuid: Faker.UUID.v4()}
 
       correlation_id = UUID.uuid4()
       _ = Process.put(:correlation_id, correlation_id)
