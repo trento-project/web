@@ -299,12 +299,10 @@ context('Activity Log page', () => {
       );
     });
 
-    // eslint-disable-next-line mocha/no-exclusive-tests
-    it.only('should start autorefresh ticker', () => {
+    it('should start autorefresh ticker', () => {
       activityLogPage.spyActivityLogRequest();
       activityLogPage.visit();
       activityLogPage.waitForActivityLogRequest().then(() => {
-        // cy.get('tbody tr').should('have.length', 20);
         activityLogPage.expectedAggregateAmountOfRequests(1);
         activityLogPage.selectRefreshRate('5s');
         activityLogPage.expectedAggregateAmountOfRequests(2);
