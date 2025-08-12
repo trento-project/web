@@ -35,7 +35,7 @@ defmodule Trento.Operations.DatabasePolicy do
     OperationsHelper.reduce_operation_authorizations([
       database_instances_cluster_maintenance(database),
       secondary_sites_stopped(database, params, primary_site),
-      application_instances_stopped(database)
+      application_instances_stopped(database, params, primary_site)
     ])
   end
 
@@ -117,9 +117,14 @@ defmodule Trento.Operations.DatabasePolicy do
   # secondary sites
   defp secondary_sites_stopped(_, _, _), do: :ok
 
-  defp application_instances_stopped(%DatabaseReadModel{sap_systems: []}), do: :ok
+  defp application_instances_stopped(%DatabaseReadModel{sap_systems: []}, _, _), do: :ok
 
-  defp application_instances_stopped(%DatabaseReadModel{sap_systems: sap_systems}) do
+  # primary site, check if app instances are stopped
+  defp application_instances_stopped(
+         %DatabaseReadModel{sap_systems: sap_systems},
+         %{site: site},
+         site
+       ) do
     sap_systems
     |> Enum.flat_map(fn %{application_instances: app_instances} -> app_instances end)
     |> Enum.filter(fn %{health: health, features: features} ->
@@ -136,4 +141,7 @@ defmodule Trento.Operations.DatabasePolicy do
          end)}
     end
   end
+
+  # secondary site
+  defp application_instances_stopped(_, _, _), do: :ok
 end

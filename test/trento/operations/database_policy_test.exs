@@ -165,7 +165,7 @@ defmodule Trento.Operations.DatabasePolicyTest do
                DatabasePolicy.authorize_operation(:database_stop, database, %{site: "Site1"})
     end
 
-    test "should forbid operation if attached application instances are not stopped" do
+    test "should forbid operation if the request is for the primary site and attached application instances are not stopped" do
       database =
         build(:database,
           sap_systems: [
@@ -181,7 +181,18 @@ defmodule Trento.Operations.DatabasePolicyTest do
                   )
             }
           ],
-          database_instances: build_list(2, :database_instance, host: build(:host, cluster: nil))
+          database_instances: [
+            build(:database_instance,
+              system_replication: "Primary",
+              system_replication_site: "Site1",
+              host: build(:host, cluster: nil)
+            ),
+            build(:database_instance,
+              health: Health.unknown(),
+              system_replication: "Secondary",
+              host: build(:host, cluster: nil)
+            )
+          ]
         )
 
       assert {:error,
@@ -189,7 +200,7 @@ defmodule Trento.Operations.DatabasePolicyTest do
                 "Instance #{inst_number1} of SAP system #{sid1} is not stopped",
                 "Instance #{inst_number2} of SAP system #{sid2} is not stopped"
               ]} ==
-               DatabasePolicy.authorize_operation(:database_stop, database, %{})
+               DatabasePolicy.authorize_operation(:database_stop, database, %{site: "Site1"})
     end
 
     test "should authorize operation if cluster is in maintenance and system replication is not enabled" do
@@ -260,6 +271,36 @@ defmodule Trento.Operations.DatabasePolicyTest do
 
       assert :ok ==
                DatabasePolicy.authorize_operation(:database_stop, database, %{})
+    end
+
+    test "should forbid operation if the request is for the secondary site and attached application instances are not stopped" do
+      database =
+        build(:database,
+          sap_systems: [
+            %{
+              application_instances:
+                build_list(2, :application_instance,
+                  health: Health.passing(),
+                  features: "ABAP|GATEWAY|ICMAN|IGS"
+                )
+            }
+          ],
+          database_instances: [
+            build(:database_instance,
+              system_replication: "Primary",
+              host: build(:host, cluster: nil)
+            ),
+            build(:database_instance,
+              health: Health.unknown(),
+              system_replication: "Secondary",
+              system_replication_site: "Site2",
+              host: build(:host, cluster: nil)
+            )
+          ]
+        )
+
+      assert :ok ==
+               DatabasePolicy.authorize_operation(:database_stop, database, %{site: "Site2"})
     end
   end
 
