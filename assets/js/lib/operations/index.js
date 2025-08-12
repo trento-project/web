@@ -42,8 +42,8 @@ const OPERATION_LABELS = {
 const OPERATION_INTERNAL_NAMES = {
   'saptuneapplysolution@v1': SAPTUNE_SOLUTION_APPLY,
   'saptunechangesolution@v1': SAPTUNE_SOLUTION_CHANGE,
-  'crmclusterstart@v1': CLUSTER_HOST_START_OPERATION,
-  'crmclusterstop@v1': CLUSTER_HOST_STOP_OPERATION,
+  'crmclusterstart@v1': CLUSTER_HOST_START,
+  'crmclusterstop@v1': CLUSTER_HOST_STOP,
   'clustermaintenancechange@v1': CLUSTER_MAINTENANCE_CHANGE,
   'sapinstancestart@v1': SAP_INSTANCE_START,
   'sapinstancestop@v1': SAP_INSTANCE_STOP,
