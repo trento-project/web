@@ -34,7 +34,8 @@ defmodule TrentoWeb.V1.DatabaseController do
          policy: Trento.Operations.DatabasePolicy,
          resource: &__MODULE__.get_operation_database/1,
          operation: &__MODULE__.get_operation/1,
-         assigns_to: :database
+         assigns_to: :database,
+         params: &__MODULE__.get_operation_params/1
        ]
        when action == :request_operation
 
@@ -156,7 +157,7 @@ defmodule TrentoWeb.V1.DatabaseController do
 
     database_id
     |> Databases.get_database_by_id()
-    |> Repo.preload([:database_instances])
+    |> Repo.preload(database_instances: [host: [:cluster]], sap_systems: [:application_instances])
     |> case do
       nil ->
         nil
@@ -174,6 +175,12 @@ defmodule TrentoWeb.V1.DatabaseController do
   end
 
   def get_operation_database(_), do: nil
+
+  def get_operation_params(%{
+        body_params: body_params
+      }) do
+    body_params
+  end
 
   def get_operation(%{params: %{operation: "database_start"}}),
     do: :database_start
