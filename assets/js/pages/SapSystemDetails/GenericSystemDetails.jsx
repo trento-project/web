@@ -10,6 +10,9 @@ import {
   sortBy,
   map,
   upperCase,
+  filter,
+  overSome,
+  isEmpty,
 } from 'lodash';
 
 import classNames from 'classnames';
@@ -129,21 +132,33 @@ export function GenericSystemDetails({
     setInstanceToDeregister(instance);
   };
 
-  const curriedGetInstanceOperations = getInstanceOperations(
+  const instanceGroupIDs = map(system.instances, 'host_id');
+  const systemRunningOperations = filter(
     runningOperations,
+    overSome([
+      { groupID: system.id },
+      ({ groupID }) => instanceGroupIDs.includes(groupID),
+    ])
+  );
+  const operationsDisabled = !isEmpty(systemRunningOperations);
+
+  const curriedGetInstanceOperations = getInstanceOperations(
+    systemRunningOperations,
     setOperationModelOpen,
     setCurrentOperationInstance
   );
 
   const systemOperations = getSystemOperations(
     system,
-    runningOperations,
+    systemRunningOperations,
+    operationsDisabled,
     setOperationModelOpen
   );
 
   const curriedGetSiteOperations = getSiteOperations(
     system,
-    runningOperations,
+    systemRunningOperations,
+    operationsDisabled,
     setOperationModelOpen,
     setCurrentOperationSite
   );

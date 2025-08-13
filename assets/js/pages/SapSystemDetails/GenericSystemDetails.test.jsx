@@ -580,19 +580,23 @@ describe('GenericSystemDetails', () => {
       const user = userEvent.setup();
       const hosts = hostFactory.buildList(1);
       const hostID = hosts[0].id;
+      const instanceNumber = '00';
 
       const sapSystem = sapSystemFactory.build({
         instances: [
           sapSystemApplicationInstanceFactory.build({
             health,
             host_id: hostID,
+            instance_number: instanceNumber,
           }),
         ],
       });
 
       sapSystem.hosts = hosts;
 
-      const runningOperations = [{ groupID: hostID, operation }];
+      const runningOperations = [
+        { groupID: hostID, operation, metadata: { instanceNumber } },
+      ];
 
       renderWithRouter(
         <GenericSystemDetails
@@ -699,20 +703,32 @@ describe('GenericSystemDetails', () => {
     async ({ operation, menuItemText, health }) => {
       const user = userEvent.setup();
       const hosts = hostFactory.buildList(1);
+      const site = 'Site1';
 
       const database = databaseFactory.build({
         instances: [
           databaseInstanceFactory.build({
             health,
             system_replication: 'Primary',
-            system_replication_site: 'Site1',
+            system_replication_site: site,
+          }),
+          databaseInstanceFactory.build({
+            health,
+            system_replication: 'Secondary',
+            system_replication_site: 'Site2',
           }),
         ],
       });
 
       database.hosts = hosts;
 
-      const runningOperations = [{ groupID: database.id, operation }];
+      const runningOperations = [
+        {
+          groupID: database.id,
+          operation,
+          metadata: { params: { site } },
+        },
+      ];
 
       renderWithRouter(
         <GenericSystemDetails
@@ -729,13 +745,117 @@ describe('GenericSystemDetails', () => {
 
       const siteTables = screen.getAllByRole('table');
 
-      const { getByRole } = within(siteTables[0].previousSibling);
-      const siteOpButton = getByRole('button');
-      await user.click(siteOpButton);
+      const { getByRole: getByRoleSite1 } = within(
+        siteTables[0].previousSibling
+      );
+      const siteOpButton1 = getByRoleSite1('button');
 
+      const { getByRole: getByRoleSite2 } = within(
+        siteTables[1].previousSibling
+      );
+      const siteOpButton2 = getByRoleSite2('button');
+
+      await user.click(siteOpButton1);
       expectOperationRunning(menuItemText);
+
+      await user.click(siteOpButton2);
+      expectOperationEnabled(menuItemText, false);
     }
   );
+
+  it.each([
+    { index: 0, scenario: 'an operation in the same host' },
+    { index: 1, scenario: 'system operation' },
+  ])(
+    'should disable instance operations if a $scenario is running',
+    async ({ index }) => {
+      const user = userEvent.setup();
+      const hosts = hostFactory.buildList(1);
+      const hostID = hosts[0].id;
+      const sapSystemID = faker.string.uuid();
+
+      const sapSystem = sapSystemFactory.build({
+        id: sapSystemID,
+        instances: [
+          sapSystemApplicationInstanceFactory.build({
+            host_id: hostID,
+            sap_system_id: sapSystemID,
+            health: 'passing',
+          }),
+        ],
+      });
+
+      sapSystem.hosts = hosts;
+
+      // use hostID and sapSystemID as group ID to test disabled both scenarios
+      const groupID = index === 0 ? hostID : sapSystemID;
+      const runningOperations = [{ groupID, operation: SAP_SYSTEM_START }];
+
+      renderWithRouter(
+        <GenericSystemDetails
+          title={faker.string.uuid()}
+          system={sapSystem}
+          type={APPLICATION_TYPE}
+          userAbilities={[{ name: 'all', resource: 'all' }]}
+          cleanUpPermittedFor={[]}
+          runningOperations={runningOperations}
+          getInstanceOperations={getSapInstanceOperations}
+          getSystemOperations={getSapSystemOperations}
+          operationsEnabled
+        />
+      );
+
+      const [layoutTable, _] = screen.getAllByRole('table');
+      const { getByRole } = within(layoutTable);
+      const opButton = getByRole('button');
+
+      await user.click(opButton);
+
+      expectOperationEnabled('Start instance', false);
+      expectOperationEnabled('Stop instance', false);
+    }
+  );
+
+  it('should disable systems operations if an instance operation is running', async () => {
+    const user = userEvent.setup();
+    const hosts = hostFactory.buildList(1);
+    const hostID = hosts[0].id;
+
+    const sapSystem = sapSystemFactory.build({
+      instances: [
+        sapSystemApplicationInstanceFactory.build({
+          health: 'unknown',
+          host_id: hostID,
+        }),
+      ],
+    });
+
+    sapSystem.hosts = hosts;
+
+    const runningOperations = [
+      { groupID: hostID, operation: SAP_INSTANCE_START },
+    ];
+
+    renderWithRouter(
+      <GenericSystemDetails
+        title={faker.string.uuid()}
+        system={sapSystem}
+        type={APPLICATION_TYPE}
+        userAbilities={[{ name: 'all', resource: 'all' }]}
+        cleanUpPermittedFor={[]}
+        runningOperations={runningOperations}
+        getInstanceOperations={getSapInstanceOperations}
+        getSystemOperations={getSapSystemOperations}
+        operationsEnabled
+      />
+    );
+
+    const opButton = screen.getByRole('button', { name: 'Operations' });
+    await user.click(opButton);
+
+    expectOperationEnabled('Start system', false);
+    expectOperationEnabled('Stop system', false);
+  });
 
   it('should show forbidden operation modal', async () => {
     const user = userEvent.setup();
