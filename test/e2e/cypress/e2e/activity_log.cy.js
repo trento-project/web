@@ -233,7 +233,8 @@ context('Activity Log page', () => {
   describe('Autorefresh', () => {
     it('should start autorefresh ticker', () => {
       activityLogPage.spyActivityLogRequest();
-      activityLogPage.visit();
+      basePage.visit();
+      activityLogPage.clickActivityLogNavigationItem();
       activityLogPage.expectedAggregateAmountOfRequests(1);
       activityLogPage.selectRefreshRate('5s');
       activityLogPage.expectedAggregateAmountOfRequests(2);
