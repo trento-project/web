@@ -13,17 +13,50 @@ defmodule Trento.Operations.DatabaseInstancePolicy do
   alias Trento.Databases.Projections.DatabaseInstanceReadModel
   alias Trento.Hosts.Projections.HostReadModel
 
+  def authorize_operation(
+        :cluster_maintenance,
+        %DatabaseInstanceReadModel{host: %HostReadModel{cluster: nil}},
+        _params
+      ),
+      do: :ok
+
+  def authorize_operation(
+        :cluster_maintenance,
+        %DatabaseInstanceReadModel{
+          sid: sid,
+          instance_number: instance_number,
+          host: %{cluster: %{sap_instances: sap_instances} = cluster}
+        },
+        _params
+      ) do
+    is_clustered? =
+      Enum.any?(sap_instances, fn
+        %{sid: ^sid, instance_number: ^instance_number} -> true
+        _ -> false
+      end)
+
+    if is_clustered? do
+      resource_id = get_cluster_resource_id(cluster)
+
+      ClusterReadModel.authorize_operation(:maintenance, cluster, %{
+        cluster_resource_id: resource_id
+      })
+    else
+      :ok
+    end
+  end
+
   # maintenance operation authorized when:
   # - instance is not running
   # - cluster is in maintenance
   def authorize_operation(
         :maintenance,
-        %DatabaseInstanceReadModel{} = application_instance,
+        %DatabaseInstanceReadModel{} = database_instance,
         _params
       ) do
     OperationsHelper.reduce_operation_authorizations([
-      instance_running(application_instance),
-      cluster_maintenance(application_instance)
+      instance_running(database_instance),
+      authorize_operation(:cluster_maintenance, database_instance, %{})
     ])
   end
 
@@ -38,31 +71,6 @@ defmodule Trento.Operations.DatabaseInstancePolicy do
        do: {:error, ["Instance #{instance_number} of HANA database #{sid} is not stopped"]}
 
   defp instance_running(_), do: :ok
-
-  defp cluster_maintenance(%DatabaseInstanceReadModel{host: %HostReadModel{cluster: nil}}),
-    do: :ok
-
-  defp cluster_maintenance(%DatabaseInstanceReadModel{
-         sid: sid,
-         instance_number: instance_number,
-         host: %{cluster: %{sap_instances: sap_instances} = cluster}
-       }) do
-    is_clustered =
-      Enum.any?(sap_instances, fn
-        %{sid: ^sid, instance_number: ^instance_number} -> true
-        _ -> false
-      end)
-
-    if is_clustered do
-      resource_id = get_cluster_resource_id(cluster)
-
-      ClusterReadModel.authorize_operation(:maintenance, cluster, %{
-        cluster_resource_id: resource_id
-      })
-    else
-      :ok
-    end
-  end
 
   defp get_cluster_resource_id(%ClusterReadModel{
          details: %{resources: resources}
