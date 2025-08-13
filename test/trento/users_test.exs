@@ -133,6 +133,14 @@ defmodule Trento.UsersTest do
                Users.update_user_profile(user, %{analytics_eula_accepted: false})
 
       assert analytics_eula_accepted_at == nil
+
+      assert {:ok,
+              %User{
+                analytics_eula_accepted_at: analytics_eula_accepted_at
+              }} =
+               Users.update_user_profile(user, %{})
+
+      assert analytics_eula_accepted_at == nil
     end
   end
 
