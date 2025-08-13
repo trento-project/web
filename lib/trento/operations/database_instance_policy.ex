@@ -29,13 +29,13 @@ defmodule Trento.Operations.DatabaseInstancePolicy do
         },
         _params
       ) do
-    is_clustered =
+    is_clustered? =
       Enum.any?(sap_instances, fn
         %{sid: ^sid, instance_number: ^instance_number} -> true
         _ -> false
       end)
 
-    if is_clustered do
+    if is_clustered? do
       resource_id = get_cluster_resource_id(cluster)
 
       ClusterReadModel.authorize_operation(:maintenance, cluster, %{
