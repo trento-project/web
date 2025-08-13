@@ -28,6 +28,7 @@ import TrentoLogo from '@static/trento-logo-stacked.svg';
 import classNames from 'classnames';
 import ProfileMenu from '@common/ProfileMenu';
 import ForbiddenGuard from '@common/ForbiddenGuard';
+import AnalyticsEula from '@pages/AnalyticsEula';
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: EOS_HOME_OUTLINED },
@@ -114,6 +115,7 @@ function Layout() {
 
   return (
     <main className="bg-gray-100 dark:bg-gray-800 relative">
+      <AnalyticsEula />
       <div className="flex flex-col h-screen items-start justify-between">
         <div
           className={classNames(
