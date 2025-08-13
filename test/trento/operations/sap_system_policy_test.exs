@@ -17,7 +17,11 @@ defmodule Trento.Operations.SapSystemPolicyTest do
 
   describe "sap_system_start" do
     test "should forbid operation if the application cluster is not in maintenance" do
-      %{name: cluster_name, sap_instances: [%{sid: sid, instance_number: instance_number}]} =
+      %{
+        name: cluster_name,
+        sap_instances: [%{sid: sid, instance_number: instance_number}],
+        details: %{resources: [%{id: resource_id}]}
+      } =
         cluster = build_cluster_with_maintenance(false)
 
       sap_system =
@@ -31,7 +35,10 @@ defmodule Trento.Operations.SapSystemPolicyTest do
             )
         )
 
-      assert {:error, ["Cluster #{cluster_name} operating this host is not in maintenance mode"]} ==
+      assert {:error,
+              [
+                "Cluster #{cluster_name} or resource #{resource_id} operating this host are not in maintenance mode"
+              ]} ==
                SapSystemPolicy.authorize_operation(:sap_system_start, sap_system, %{
                  instance_type: "all"
                })
@@ -210,7 +217,11 @@ defmodule Trento.Operations.SapSystemPolicyTest do
 
   describe "sap_system_stop" do
     test "should forbid operation if the application cluster is not in maintenance" do
-      %{name: cluster_name, sap_instances: [%{sid: sid, instance_number: instance_number}]} =
+      %{
+        name: cluster_name,
+        sap_instances: [%{sid: sid, instance_number: instance_number}],
+        details: %{resources: [%{id: resource_id}]}
+      } =
         cluster = build_cluster_with_maintenance(false)
 
       sap_system =
@@ -223,7 +234,10 @@ defmodule Trento.Operations.SapSystemPolicyTest do
             )
         )
 
-      assert {:error, ["Cluster #{cluster_name} operating this host is not in maintenance mode"]} ==
+      assert {:error,
+              [
+                "Cluster #{cluster_name} or resource #{resource_id} operating this host are not in maintenance mode"
+              ]} ==
                SapSystemPolicy.authorize_operation(:sap_system_stop, sap_system, %{
                  instance_type: "all"
                })
@@ -328,11 +342,22 @@ defmodule Trento.Operations.SapSystemPolicyTest do
   end
 
   defp build_cluster_with_maintenance(maintenance_mode) do
+    [%{id: resource_id, sid: sid}] =
+      resources =
+      build_list(1, :cluster_resource,
+        type: "ocf::heartbeat:SAPInstance",
+        managed: not maintenance_mode
+      )
+
     clustered_sap_instances =
-      build_list(1, :clustered_sap_instance)
+      build_list(1, :clustered_sap_instance, sid: sid, resource_id: resource_id)
 
     cluster_details =
-      build(:ascs_ers_cluster_details, maintenance_mode: maintenance_mode, sap_systems: [])
+      build(:ascs_ers_cluster_details,
+        maintenance_mode: maintenance_mode,
+        sap_systems: [],
+        resources: resources
+      )
 
     build(:cluster, sap_instances: clustered_sap_instances, details: cluster_details)
   end
