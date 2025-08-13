@@ -51,7 +51,7 @@ export const spyActivityLogRequest = () => {
   cy.clock();
   return cy.intercept(
     '/api/v1/activity_log?first=20',
-    cy.spy().as(activityLogEndpointAlias)
+    cy.spy().as('activityLogAutorefreshRequest')
   );
 };
 
@@ -232,7 +232,7 @@ export const expectedRefreshRatesAreAvailable = () => {
 
 export const expectedAggregateAmountOfRequests = (amount) =>
   cy
-    .get(`@${activityLogEndpointAlias}`)
+    .get('@activityLogAutorefreshRequest')
     .its('callCount')
     .should('equal', amount);
 
