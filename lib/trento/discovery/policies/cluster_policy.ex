@@ -165,8 +165,14 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
 
     sap_instances =
       all_primitives
-      |> parse_resource_by_type("SAPInstance", "InstanceName")
-      |> Enum.map(fn instance_name ->
+      |> Enum.filter(fn %{type: type} -> type == "SAPInstance" end)
+      |> Enum.map(fn %{id: resource_id, instance_attributes: instance_attributes} ->
+        instance_name =
+          Enum.find_value(instance_attributes, fn
+            %{name: "InstanceName", value: value} -> value
+            _ -> false
+          end)
+
         # InstanceName follows sid_name_hostname format. Example: PRD_ASCS00_nwpas01
         instance_data = String.split(instance_name, "_")
         sid = Enum.at(instance_data, 0)
@@ -186,6 +192,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
           sid: sid,
           instance_number: String.slice(name, -2, 2),
           hostname: Enum.at(instance_data, 2),
+          resource_id: resource_id,
           resource_type: SapInstanceResourceType.sap_instance(),
           mounted: mounted
         }

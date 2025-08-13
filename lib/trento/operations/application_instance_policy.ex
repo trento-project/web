@@ -30,17 +30,15 @@ defmodule Trento.Operations.ApplicationInstancePolicy do
         },
         _params
       ) do
-    is_clustered? =
-      Enum.any?(sap_instances, fn
-        %{sid: ^sid, instance_number: ^instance_number} -> true
+    cluster_resource_id =
+      Enum.find_value(sap_instances, fn
+        %{sid: ^sid, instance_number: ^instance_number, resource_id: resource_id} -> resource_id
         _ -> false
       end)
 
-    if is_clustered? do
-      resource_id = get_cluster_resource_id(sid, cluster)
-
+    if cluster_resource_id do
       ClusterReadModel.authorize_operation(:maintenance, cluster, %{
-        cluster_resource_id: resource_id
+        cluster_resource_id: cluster_resource_id
       })
     else
       :ok
@@ -190,15 +188,6 @@ defmodule Trento.Operations.ApplicationInstancePolicy do
 
   # Other instances, stop without depending on other instances
   defp other_instances_stopped(_), do: :ok
-
-  defp get_cluster_resource_id(sid, %{details: %{resources: resources}}) do
-    Enum.find_value(resources, fn
-      %{id: id, type: "ocf::heartbeat:SAPInstance", sid: ^sid} -> id
-      _ -> nil
-    end)
-  end
-
-  defp get_cluster_resource_id(_, _), do: nil
 
   defp reject_current_instance(instances, host_id, instance_number) do
     Enum.reject(instances, fn %{instance_number: inst_number, host_id: h_id} ->
