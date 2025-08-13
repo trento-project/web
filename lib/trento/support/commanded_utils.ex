@@ -2,7 +2,7 @@ defmodule Trento.Support.CommandedUtils do
   @moduledoc false
   alias Trento.ActivityLog
 
-  def commanded, do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]
+  def dispatch(command), do: commanded().dispatch(command)
 
   def maybe_correlated_dispatch(command, ctx \\ :uncorrelated_dispatch) do
     case ctx == :uncorrelated_dispatch do
@@ -33,4 +33,6 @@ defmodule Trento.Support.CommandedUtils do
     correlation_id = Process.get(:correlation_id)
     commanded().dispatch(command, correlation_id: correlation_id, causation_id: correlation_id)
   end
+
+  defp commanded, do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]
 end

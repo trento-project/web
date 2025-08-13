@@ -101,7 +101,7 @@ defmodule Trento.Hosts do
     Logger.debug("Selecting checks, host: #{host_id}")
 
     with {:ok, command} <- SelectHostChecks.new(%{host_id: host_id, checks: checks}) do
-      CommandedUtils.commanded().dispatch(command)
+      CommandedUtils.dispatch(command)
     end
   end
 
