@@ -1166,6 +1166,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     sid: "QAS",
                     instance_number: "20",
                     hostname: "node02",
+                    resource_id: "rsc_SAP_QAS_HDB20",
                     resource_type: SapInstanceResourceType.sap_instance(),
                     mounted: false
                   }
@@ -1475,6 +1476,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     sid: "NWP",
                     instance_number: "00",
                     hostname: "sapnwpas",
+                    resource_id: "rsc_sap_NWP_ASCS00",
                     resource_type: SapInstanceResourceType.sap_instance(),
                     mounted: true
                   },
@@ -1483,6 +1485,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     sid: "NWP",
                     instance_number: "10",
                     hostname: "sapnwper",
+                    resource_id: "rsc_sap_NWP_ERS10",
                     resource_type: SapInstanceResourceType.sap_instance(),
                     mounted: true
                   }
@@ -1792,6 +1795,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     sid: "NWP",
                     instance_number: "00",
                     hostname: "sapnwpas",
+                    resource_id: "rsc_sap_NWP_ASCS00",
                     resource_type: SapInstanceResourceType.sap_instance(),
                     mounted: true
                   },
@@ -1800,6 +1804,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     sid: "NWP",
                     instance_number: "10",
                     hostname: "sapnwper",
+                    resource_id: "rsc_sap_NWP_ERS10",
                     resource_type: SapInstanceResourceType.sap_instance(),
                     mounted: true
                   }
@@ -1883,6 +1888,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     sid: "NWP",
                     instance_number: "00",
                     hostname: "sapnwpas",
+                    resource_id: "rsc_sap_NWP_ASCS00",
                     resource_type: SapInstanceResourceType.sap_instance(),
                     mounted: true
                   }
@@ -2443,6 +2449,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     sid: "NWP",
                     instance_number: "00",
                     hostname: "sapnwpas",
+                    resource_id: "rsc_sap_NWP_ASCS00",
                     resource_type: SapInstanceResourceType.sap_instance(),
                     mounted: true
                   },
@@ -2451,6 +2458,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     sid: "NWP",
                     instance_number: "10",
                     hostname: "sapnwper",
+                    resource_id: "rsc_sap_NWP_ERS10",
                     resource_type: SapInstanceResourceType.sap_instance(),
                     mounted: true
                   },
@@ -2459,6 +2467,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     sid: "NWD",
                     instance_number: "01",
                     hostname: "sapnwpas",
+                    resource_id: "rsc_sap_NWD_ASCS01",
                     resource_type: SapInstanceResourceType.sap_instance(),
                     mounted: true
                   },
@@ -2467,6 +2476,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     sid: "NWD",
                     instance_number: "11",
                     hostname: "sapnwper",
+                    resource_id: "rsc_sap_NWD_ERS11",
                     resource_type: SapInstanceResourceType.sap_instance(),
                     mounted: true
                   }
@@ -6788,6 +6798,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                        sid: "NWP",
                        instance_number: "00",
                        hostname: "sapnwpas",
+                       resource_id: "rsc_sap_NWP_ASCS00",
                        resource_type: SapInstanceResourceType.sap_instance(),
                        mounted: true
                      },
@@ -6796,6 +6807,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                        sid: "NWP",
                        instance_number: "10",
                        hostname: "sapnwper",
+                       resource_id: "rsc_sap_NWP_ERS10",
                        resource_type: SapInstanceResourceType.sap_instance(),
                        mounted: true
                      }
