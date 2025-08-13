@@ -50,7 +50,7 @@ export const interceptActivityLogEndpoint = () => {
 export const spyActivityLogRequest = () => {
   cy.clock();
   return cy.intercept(
-    '/api/v1/activity_log*',
+    '/api/v1/activity_log?first=20&severity[]=info&severity[]=warning&severity[]=critical',
     cy.spy().as(activityLogEndpointAlias)
   );
 };
