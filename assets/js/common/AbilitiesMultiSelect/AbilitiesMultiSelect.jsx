@@ -57,6 +57,8 @@ const groupedAbilities = [
       'saptune_solution_apply:host',
       'saptune_solution_change:host',
       'maintenance_change:cluster',
+      'cluster_host_start:cluster',
+      'cluster_host_stop:cluster',
       'pacemaker_enable:cluster',
       'pacemaker_disable:cluster',
       'start:application_instance',

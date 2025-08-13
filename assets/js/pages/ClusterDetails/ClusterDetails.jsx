@@ -15,6 +15,8 @@ import {
   CLUSTER_MAINTENANCE_CHANGE,
   PACEMAKER_ENABLE,
   PACEMAKER_DISABLE,
+  CLUSTER_HOST_START,
+  CLUSTER_HOST_STOP,
   getOperationLabel,
   getOperationForbiddenMessage,
 } from '@lib/operations';
@@ -98,6 +100,8 @@ function ClusterDetails({
     switch (operation) {
       case PACEMAKER_ENABLE:
       case PACEMAKER_DISABLE:
+      case CLUSTER_HOST_START:
+      case CLUSTER_HOST_STOP:
         return {
           hostName: currentOperationHost?.name,
         };
@@ -112,6 +116,8 @@ function ClusterDetails({
     switch (operation) {
       case PACEMAKER_ENABLE:
       case PACEMAKER_DISABLE:
+      case CLUSTER_HOST_START:
+      case CLUSTER_HOST_STOP:
         onRequestHostOperation(operation, {
           clusterID,
           hostID: currentOperationHost.id,

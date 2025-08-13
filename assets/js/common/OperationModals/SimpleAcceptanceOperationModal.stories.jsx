@@ -3,6 +3,8 @@ import {
   SAP_INSTANCE_STOP,
   PACEMAKER_ENABLE,
   PACEMAKER_DISABLE,
+  CLUSTER_HOST_START,
+  CLUSTER_HOST_STOP,
   CLUSTER_MAINTENANCE_CHANGE,
 } from '@lib/operations';
 
@@ -77,6 +79,20 @@ export const EnablePacemaker = {
 export const DisablePacemaker = {
   args: {
     operation: PACEMAKER_DISABLE,
+    descriptionResolverArgs: { hostName },
+  },
+};
+
+export const ClusterHostStart = {
+  args: {
+    operation: CLUSTER_HOST_START,
+    descriptionResolverArgs: { hostName },
+  },
+};
+
+export const ClusterHostStop = {
+  args: {
+    operation: CLUSTER_HOST_STOP,
     descriptionResolverArgs: { hostName },
   },
 };
