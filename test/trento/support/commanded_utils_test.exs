@@ -6,21 +6,7 @@ defmodule Trento.Support.CommandedUtilsTest do
 
   setup :verify_on_exit!
 
-  describe "maybe_correlated_dispatch/2" do
-    test "should perform uncorrelated dispatch when called with arity 1" do
-      some_command = %{uuid: Faker.UUID.v4()}
-
-      expect(
-        Trento.Commanded.Mock,
-        :dispatch,
-        fn ^some_command ->
-          :ok
-        end
-      )
-
-      assert :ok == CommandedUtils.maybe_correlated_dispatch(some_command)
-    end
-
+  describe "correlated_dispatch/2" do
     for ctx <- [:api_key, :suse_manager_settings] do
       @ctx ctx
       test "should perform uncorrelated dispatch when called with #{@ctx} ctx parameter but not setup anything on the correlation cache" do
@@ -34,7 +20,7 @@ defmodule Trento.Support.CommandedUtilsTest do
           end
         )
 
-        assert :ok == CommandedUtils.maybe_correlated_dispatch(some_command, @ctx)
+        assert :ok == CommandedUtils.correlated_dispatch(some_command, @ctx)
       end
 
       test "should perform correlated dispatch when called with #{@ctx} ctx parameter with kv setup on correlation cache" do
@@ -56,7 +42,7 @@ defmodule Trento.Support.CommandedUtilsTest do
           end
         )
 
-        assert :ok == CommandedUtils.maybe_correlated_dispatch(some_command, @ctx)
+        assert :ok == CommandedUtils.correlated_dispatch(some_command, @ctx)
       end
     end
   end

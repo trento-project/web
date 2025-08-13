@@ -83,7 +83,7 @@ defmodule Trento.Heartbeats do
   defp dispatch_command(agent_id, heartbeat) do
     case %{host_id: agent_id, heartbeat: heartbeat}
          |> UpdateHeartbeat.new!()
-         |> CommandedUtils.maybe_correlated_dispatch(:api_key) do
+         |> CommandedUtils.correlated_dispatch(:api_key) do
       :ok ->
         {:ok, :done}
 
