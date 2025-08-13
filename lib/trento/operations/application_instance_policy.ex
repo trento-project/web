@@ -13,6 +13,40 @@ defmodule Trento.Operations.ApplicationInstancePolicy do
   alias Trento.Hosts.Projections.HostReadModel
   alias Trento.SapSystems.Projections.ApplicationInstanceReadModel
 
+  def authorize_operation(
+        :cluster_maintenance,
+        %ApplicationInstanceReadModel{host: %HostReadModel{cluster: nil}},
+        _params
+      ) do
+    :ok
+  end
+
+  def authorize_operation(
+        :cluster_maintenance,
+        %ApplicationInstanceReadModel{
+          sid: sid,
+          instance_number: instance_number,
+          host: %{cluster: %{sap_instances: sap_instances} = cluster}
+        },
+        _params
+      ) do
+    is_clustered =
+      Enum.any?(sap_instances, fn
+        %{sid: ^sid, instance_number: ^instance_number} -> true
+        _ -> false
+      end)
+
+    if is_clustered do
+      resource_id = get_cluster_resource_id(sid, cluster)
+
+      ClusterReadModel.authorize_operation(:maintenance, cluster, %{
+        cluster_resource_id: resource_id
+      })
+    else
+      :ok
+    end
+  end
+
   # maintenance operation authorized when:
   # - instance is not running
   # - cluster is in maintenance
@@ -23,7 +57,7 @@ defmodule Trento.Operations.ApplicationInstancePolicy do
       ) do
     OperationsHelper.reduce_operation_authorizations([
       instance_running(application_instance),
-      cluster_maintenance(application_instance)
+      authorize_operation(:cluster_maintenance, application_instance, %{})
     ])
   end
 
@@ -39,7 +73,7 @@ defmodule Trento.Operations.ApplicationInstancePolicy do
     OperationsHelper.reduce_operation_authorizations([
       other_instances_started(application_instance),
       database_started(application_instance),
-      cluster_maintenance(application_instance)
+      authorize_operation(:cluster_maintenance, application_instance, %{})
     ])
   end
 
@@ -53,7 +87,7 @@ defmodule Trento.Operations.ApplicationInstancePolicy do
       ) do
     OperationsHelper.reduce_operation_authorizations([
       other_instances_stopped(application_instance),
-      cluster_maintenance(application_instance)
+      authorize_operation(:cluster_maintenance, application_instance, %{})
     ])
   end
 
@@ -156,31 +190,6 @@ defmodule Trento.Operations.ApplicationInstancePolicy do
 
   # Other instances, stop without depending on other instances
   defp other_instances_stopped(_), do: :ok
-
-  defp cluster_maintenance(%ApplicationInstanceReadModel{host: %HostReadModel{cluster: nil}}),
-    do: :ok
-
-  defp cluster_maintenance(%ApplicationInstanceReadModel{
-         sid: sid,
-         instance_number: instance_number,
-         host: %{cluster: %{sap_instances: sap_instances} = cluster}
-       }) do
-    is_clustered =
-      Enum.any?(sap_instances, fn
-        %{sid: ^sid, instance_number: ^instance_number} -> true
-        _ -> false
-      end)
-
-    if is_clustered do
-      resource_id = get_cluster_resource_id(sid, cluster)
-
-      ClusterReadModel.authorize_operation(:maintenance, cluster, %{
-        cluster_resource_id: resource_id
-      })
-    else
-      :ok
-    end
-  end
 
   defp get_cluster_resource_id(sid, %{details: %{resources: resources}}) do
     Enum.find_value(resources, fn
