@@ -264,6 +264,8 @@ defmodule Trento.Users do
 
   defp maybe_enable_analytics(attrs), do: attrs
 
+  # The value for 'analytics_eula_accepted' can only be set
+  # to 'true' and not 'false', as this is a one time change.
   defp maybe_accept_analytics_eula(%{analytics_eula_accepted: true} = attrs) do
     Map.put(attrs, :analytics_eula_accepted_at, DateTime.utc_now())
   end
