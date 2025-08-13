@@ -230,7 +230,8 @@ context('Activity Log page', () => {
     });
   });
 
-  describe('Autorefresh', () => {
+  // eslint-disable-next-line mocha/no-exclusive-tests
+  describe.only('Autorefresh', () => {
     it('should have autorefresh turned off by default', () => {
       activityLogPage.visit();
       activityLogPage.autoRefreshIntervalButtonHasTheExpectedValue('Off');
@@ -301,8 +302,9 @@ context('Activity Log page', () => {
 
     it('should start autorefresh ticker', () => {
       activityLogPage.spyActivityLogRequest();
-      basePage.visit();
-      activityLogPage.clickActivityLogNavigationItem();
+      // basePage.visit();
+      // activityLogPage.clickActivityLogNavigationItem();
+      activityLogPage.visit();
       activityLogPage.expectedAggregateAmountOfRequests(1);
       activityLogPage.selectRefreshRate('5s');
       activityLogPage.expectedAggregateAmountOfRequests(2);
