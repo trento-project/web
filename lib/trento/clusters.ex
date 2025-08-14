@@ -41,6 +41,38 @@ defmodule Trento.Clusters do
     ClusterType.ascs_ers()
   ]
 
+  @spec all_nodes_stopped?(ClusterReadModel.t()) :: boolean()
+  def all_nodes_stopped?(%ClusterReadModel{type: type, details: %{nodes: nodes}})
+      when type in [ClusterType.hana_scale_up(), ClusterType.hana_scale_out()] do
+    Enum.all?(nodes, fn
+      %{status: status} -> status != "Online"
+    end)
+  end
+
+  def all_nodes_stopped?(%ClusterReadModel{
+        type: ClusterType.ascs_ers(),
+        details: %{sap_systems: %{nodes: nodes}}
+      }) do
+    Enum.all?(nodes, fn
+      %{status: status} -> status != "Online"
+    end)
+  end
+
+  @spec secondary_nodes_stopped?(ClusterReadModel.t()) :: boolean()
+  def secondary_nodes_stopped?(%ClusterReadModel{
+        type: type,
+        details: %{nodes: nodes}
+      })
+      when type in [ClusterType.hana_scale_up(), ClusterType.hana_scale_out()] do
+    nodes
+    |> Enum.filter(fn
+      %{hana_status: hana_status} -> hana_status == "Secondary"
+    end)
+    |> Enum.all?(fn
+      %{status: status} -> status != "Online"
+    end)
+  end
+
   @spec by_id(String.t()) :: {:ok, ClusterReadModel.t()} | {:error, :not_found}
   def by_id(id) do
     case Repo.get(ClusterReadModel, id) do
