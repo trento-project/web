@@ -20,7 +20,6 @@ export default function AnalyticsEula() {
   const [analyticsEulaModalOpen, setAnalyticsEulaModalOpen] = useState(
     !analytics_eula_accepted
   );
-  const [checked, setChecked] = useState(false);
 
   const isDefaultAdmin = isAdmin(user);
   const dispatch = useDispatch();
@@ -36,8 +35,6 @@ export default function AnalyticsEula() {
   return (
     <AnalyticsEulaModal
       isOpen={!isDefaultAdmin && analyticsEulaModalOpen}
-      checked={checked}
-      onChecked={() => setChecked((prev) => !prev)}
       onEnable={() => {
         setAnalyticsEulaModalOpen(false);
         updateAnalyticsEula({
@@ -45,7 +42,7 @@ export default function AnalyticsEula() {
           analytics_eula_accepted: true,
         });
       }}
-      onCancel={() => {
+      onCancel={(checked) => {
         setAnalyticsEulaModalOpen(false);
         if (checked) {
           updateAnalyticsEula({

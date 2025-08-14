@@ -1,16 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import Modal from '@common/Modal';
 import Button from '@common/Button';
 import Input from '@common/Input';
 
-function AnalyticsEulaModal({
-  isOpen = false,
-  checked = false,
-  onChecked,
-  onEnable,
-  onCancel,
-}) {
+function AnalyticsEulaModal({ isOpen = false, onEnable, onCancel }) {
+  const [checked, setChecked] = useState(false);
+
   return (
     <Modal
       className="!w-1/2"
@@ -33,15 +29,15 @@ function AnalyticsEulaModal({
           className="inline-block py-4 pr-2"
           type="checkbox"
           checked={checked}
-          onChange={onChecked}
+          onChange={() => setChecked((prev) => !prev)}
         />
         Never show this message again.
       </div>
       <div className="flex flex-row space-x-2">
-        <Button type="default-fit" onClick={onEnable}>
+        <Button type="default-fit" onClick={() => onEnable(checked)}>
           Enable Analytics Collection
         </Button>
-        <Button type="primary-white-fit" onClick={onCancel}>
+        <Button type="primary-white-fit" onClick={() => onCancel(checked)}>
           Continue without Analytics
         </Button>
       </div>
