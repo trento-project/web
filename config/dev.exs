@@ -110,7 +110,7 @@ config :trento, Trento.Mailer,
     depth: 99
   ]
 
-unless IEx.started?() do
+if !IEx.started?() do
   config :trento, Trento.Scheduler,
     jobs: [
       clusters_checks_execution: [
