@@ -15,13 +15,13 @@ export default function AnalyticsEula() {
     return null;
   }
 
-  const { analytics_eula_accepted, username } = useSelector(getUserProfile);
+  const user = useSelector(getUserProfile);
+  const { analytics_eula_accepted } = user;
   const [analyticsEulaModalOpen, setAnalyticsEulaModalOpen] = useState(
     !analytics_eula_accepted
   );
   const [checked, setChecked] = useState(false);
 
-  const user = { username };
   const isDefaultAdmin = isAdmin(user);
   const dispatch = useDispatch();
 
