@@ -14,34 +14,22 @@ defmodule Trento.Hosts.Policy do
   alias Trento.Users.User
 
   def authorize(:select_checks, %User{} = user, HostReadModel),
-    do: has_global_ability?(user) or has_select_checks_ability?(user)
+    do:
+      has_global_ability?(user) or
+        user_has_ability?(user, %{name: "all", resource: "host_checks_selection"})
 
   def authorize(:request_checks_execution, %User{} = user, HostReadModel),
-    do: has_global_ability?(user) or has_checks_execution_ability?(user)
+    do:
+      has_global_ability?(user) or
+        user_has_ability?(user, %{name: "all", resource: "host_checks_execution"})
 
   def authorize(:delete, %User{} = user, HostReadModel),
-    do: has_global_ability?(user) or has_cleanup_ability?(user)
+    do: has_global_ability?(user) or user_has_ability?(user, %{name: "cleanup", resource: "host"})
 
-  def authorize(:request_operation, %User{} = user, %{operation: "saptune_solution_apply"}),
-    do: has_global_ability?(user) or has_saptune_solution_apply_ability?(user)
-
-  def authorize(:request_operation, %User{} = user, %{operation: "saptune_solution_change"}),
-    do: has_global_ability?(user) or has_saptune_solution_change_ability?(user)
+  def authorize(:request_operation, %User{} = user, %{operation: operation})
+      when operation in ["saptune_solution_change", "saptune_solution_apply"],
+      do:
+        has_global_ability?(user) or user_has_ability?(user, %{name: operation, resource: "host"})
 
   def authorize(_, _, _), do: true
-
-  defp has_select_checks_ability?(user),
-    do: user_has_ability?(user, %{name: "all", resource: "host_checks_selection"})
-
-  defp has_checks_execution_ability?(user),
-    do: user_has_ability?(user, %{name: "all", resource: "host_checks_execution"})
-
-  defp has_cleanup_ability?(user),
-    do: user_has_ability?(user, %{name: "cleanup", resource: "host"})
-
-  defp has_saptune_solution_apply_ability?(user),
-    do: user_has_ability?(user, %{name: "saptune_solution_apply", resource: "host"})
-
-  defp has_saptune_solution_change_ability?(user),
-    do: user_has_ability?(user, %{name: "saptune_solution_change", resource: "host"})
 end
