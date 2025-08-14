@@ -1289,4 +1289,139 @@ defmodule Trento.ClustersTest do
       end
     end
   end
+
+  describe "all_nodes_stopped?" do
+    for cluster_type <- [ClusterType.hana_scale_up(), ClusterType.hana_scale_out()] do
+      @cluster_type cluster_type
+      test "should return true if all nodes are stopped for #{@cluster_type}" do
+        cluster =
+          build(:cluster,
+            type: @cluster_type,
+            details:
+              build(:hana_cluster_details,
+                nodes: [
+                  build(:hana_cluster_node, status: "Offline"),
+                  build(:hana_cluster_node, status: "Offline")
+                ]
+              )
+          )
+
+        assert Clusters.all_nodes_stopped?(cluster)
+      end
+
+      test "should return false if at least one node is not stopped for #{@cluster_type}" do
+        cluster =
+          build(:cluster,
+            type: @cluster_type,
+            details:
+              build(:hana_cluster_details,
+                nodes: [
+                  build(:hana_cluster_node, status: "Offline"),
+                  build(:hana_cluster_node, status: "Online")
+                ]
+              )
+          )
+
+        refute Clusters.all_nodes_stopped?(cluster)
+      end
+
+      test "should return true if there are no nodes for #{@cluster_type}" do
+        cluster =
+          build(:cluster,
+            type: @cluster_type,
+            details: build(:hana_cluster_details, nodes: [])
+          )
+
+        assert Clusters.all_nodes_stopped?(cluster)
+      end
+    end
+
+    test "should return true if all nodes are stopped for #{ClusterType.ascs_ers()}" do
+      cluster =
+        build(:cluster,
+          type: ClusterType.ascs_ers(),
+          details:
+            build(:ascs_ers_cluster_details,
+              sap_systems:
+                build(:ascs_ers_cluster_sap_system,
+                  nodes: [
+                    build(:ascs_ers_cluster_node, status: "Offline"),
+                    build(:ascs_ers_cluster_node, status: "Offline")
+                  ]
+                )
+            )
+        )
+
+      assert Clusters.all_nodes_stopped?(cluster)
+    end
+
+    test "should return false if at least one node is not stopped for #{ClusterType.ascs_ers()}" do
+      cluster =
+        build(:cluster,
+          type: ClusterType.ascs_ers(),
+          details:
+            build(:ascs_ers_cluster_details,
+              sap_systems:
+                build(:ascs_ers_cluster_sap_system,
+                  nodes: [
+                    build(:ascs_ers_cluster_node, status: "Offline"),
+                    build(:ascs_ers_cluster_node, status: "Online")
+                  ]
+                )
+            )
+        )
+
+      refute Clusters.all_nodes_stopped?(cluster)
+    end
+  end
+
+  describe "secondary_nodes_stopped" do
+    for cluster_type <- [ClusterType.hana_scale_out(), ClusterType.hana_scale_up()] do
+      @cluster_type cluster_type
+
+      test "should return true if all secondary nodes are stopped for #{@cluster_type}" do
+        cluster =
+          build(:cluster,
+            type: @cluster_type,
+            details:
+              build(:hana_cluster_details,
+                nodes: [
+                  build(:hana_cluster_node, status: "Offline", hana_status: "Primary"),
+                  build(:hana_cluster_node, status: "Offline", hana_status: "Secondary"),
+                  build(:hana_cluster_node, status: "Offline", hana_status: "Secondary")
+                ]
+              )
+          )
+
+        assert Clusters.secondary_nodes_stopped?(cluster)
+      end
+
+      test "should return false if at least one secondary node is not stopped for #{@cluster_type}" do
+        cluster =
+          build(:cluster,
+            type: @cluster_type,
+            details:
+              build(:hana_cluster_details,
+                nodes: [
+                  build(:hana_cluster_node, status: "Offline", hana_status: "Primary"),
+                  build(:hana_cluster_node, status: "Offline", hana_status: "Secondary"),
+                  build(:hana_cluster_node, status: "Online", hana_status: "Secondary")
+                ]
+              )
+          )
+
+        refute Clusters.secondary_nodes_stopped?(cluster)
+      end
+
+      test "should return true if there are no secondary nodes for #{@cluster_type}" do
+        cluster =
+          build(:cluster,
+            type: @cluster_type,
+            details: build(:hana_cluster_details, nodes: [])
+          )
+
+        assert Clusters.secondary_nodes_stopped?(cluster)
+      end
+    end
+  end
 end
