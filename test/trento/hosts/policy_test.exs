@@ -55,7 +55,7 @@ defmodule Trento.Hosts.PolicyTest do
   end
 
   describe "request_operation" do
-    for operation <- ["saptune_solution_apply", "saptune_solution_change"] do
+    for operation <- ["saptune_solution_apply", "saptune_solution_change", "reboot"] do
       @operation operation
 
       test "should allow #{operation} operation if the user has #{operation}:host ability" do
