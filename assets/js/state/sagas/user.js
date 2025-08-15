@@ -46,6 +46,7 @@ export function* performLogin({ payload: { username, password, totpCode } }) {
       abilities,
       password_change_requested,
       analytics_enabled,
+      analytics_eula_accepted,
     } = yield call(profile, networkClient);
     yield put(
       setUser({
@@ -58,6 +59,7 @@ export function* performLogin({ payload: { username, password, totpCode } }) {
         abilities,
         password_change_requested,
         analytics_enabled,
+        analytics_eula_accepted,
       })
     );
     yield call(identify, analytics_enabled, id);
