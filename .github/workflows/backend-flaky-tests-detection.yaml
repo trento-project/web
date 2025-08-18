@@ -131,7 +131,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Download JUnit reports artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           path: junit-reports
           merge-multiple: true
