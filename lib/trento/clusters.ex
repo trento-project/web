@@ -58,6 +58,10 @@ defmodule Trento.Clusters do
     end)
   end
 
+  # without this clause,
+  # test named "should forbid host reboot if pacemaker service is enabled" fails matching the function
+  def all_nodes_stopped?(_), do: true
+
   @spec secondary_nodes_stopped?(ClusterReadModel.t()) :: boolean()
   def secondary_nodes_stopped?(%ClusterReadModel{
         type: type,

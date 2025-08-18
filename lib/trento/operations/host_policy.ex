@@ -62,55 +62,82 @@ defmodule Trento.Operations.HostPolicy do
 
   def authorize_operation(
         :host_reboot,
-        %HostReadModel{cluster: %{type: cluster_type} = cluster, systemd_units: systemd_units},
+        %HostReadModel{
+          hostname: hostname,
+          cluster: %{type: cluster_type} = cluster,
+          systemd_units: systemd_units
+        },
         _
       ) do
-    cond do
-      systemd_unit_enabled?(systemd_units, "pacemaker.service") ->
-        {:error,
-         [
-           "Cannot reboot host #{cluster.name} because pacemaker service is enabled in the host"
-         ]}
-
-      cluster_type == ClusterType.hana_scale_up() ->
-        if Clusters.all_nodes_stopped?(cluster) do
-          :ok
-        else
-          {:error,
-           [
-             "Cannot reboot host #{cluster.name} because not all nodes are stopped in the cluster"
-           ]}
-        end
-
-      cluster_type == ClusterType.hana_scale_out() ->
-        if Clusters.secondary_nodes_stopped?(cluster) do
-          :ok
-        else
-          {:error,
-           [
-             "Cannot reboot host #{cluster.name} because not all secondary nodes are stopped in the cluster"
-           ]}
-        end
-
-      cluster_type == ClusterType.ascs_ers() ->
-        if Clusters.all_nodes_stopped?(cluster) do
-          :ok
-        else
-          {:error,
-           [
-             "Cannot reboot host #{cluster.name} because not all nodes are stopped in the cluster"
-           ]}
-        end
-
-      true ->
-        {:error,
-         [
-           "Cannot reboot host #{cluster.name} because it is part of a cluster with unknown type: #{cluster_type}"
-         ]}
+    error_message = fn reason ->
+      {:error, ["Cannot reboot host #{hostname} because #{reason}"]}
     end
+
+    is_pacemaker_service_enabled? = systemd_unit_enabled?(systemd_units, "pacemaker.service")
+    cluster_nodes_ready_for_reboot? = cluster_nodes_ready_for_reboot?(cluster_type, cluster)
+    unsupported_cluster? = cluster_type == ClusterType.unknown()
+    # alternatively cluster_type in [ClusterType.hana_ascs_ers(), ClusterType.unknown()]
+
+    case {is_pacemaker_service_enabled?, cluster_nodes_ready_for_reboot?, unsupported_cluster?} do
+      {true, _, _} ->
+        error_message.("pacemaker service is enabled in the host")
+
+      {_, false, _} ->
+        nodes_error_message(cluster_type, hostname)
+
+      {_, _, true} ->
+        error_message.("it is part of a cluster with unknown type: #{cluster_type}")
+
+      _ ->
+        :ok
+    end
+
+    # Cond do based alternative
+    # cond do
+    #   is_pacemaker_service_enabled? ->
+    #     error_message.("pacemaker service is enabled in the host")
+
+    #   not cluster_nodes_ready_for_reboot? ->
+    #     nodes_error_message(cluster_type, cluster.name)
+
+    #   not is_pacemaker_service_enabled? and cluster_nodes_ready_for_reboot? ->
+    #     :ok
+
+    #   unsupported_cluster? ->
+    #     error_message.("it is part of a cluster with unknown type: #{cluster_type}")
+    # end
   end
 
   def authorize_operation(_, _, _), do: {:error, ["Unknown operation"]}
+
+  defp cluster_nodes_ready_for_reboot?(cluster_type, cluster) do
+    case cluster_type do
+      ClusterType.hana_scale_up() ->
+        Clusters.all_nodes_stopped?(cluster)
+
+      ClusterType.hana_scale_out() ->
+        Clusters.secondary_nodes_stopped?(cluster)
+
+      ClusterType.ascs_ers() ->
+        Clusters.all_nodes_stopped?(cluster)
+
+      _ ->
+        false
+    end
+  end
+
+  defp nodes_error_message(cluster_type, hostname) do
+    reason =
+      case cluster_type do
+        type when type in [ClusterType.hana_scale_up(), ClusterType.ascs_ers()] ->
+          "not all nodes are stopped in the cluster"
+
+        ClusterType.hana_scale_out() ->
+          "not all secondary nodes are stopped in the cluster"
+      end
+
+    {:error, ["Cannot reboot host #{hostname} because #{reason}"]}
+  end
 
   defp authorize_saptune_solution_operation(:saptune_solution_apply, nil), do: :ok
 
