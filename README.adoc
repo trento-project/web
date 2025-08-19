@@ -137,7 +137,12 @@ Please only report bugs via https://github.com/trento-project/web/issues[GitHub 
 
 == Contributing
 
+ifdef::site-gen-antora[]
 See xref:CONTRIBUTING.adoc[contribution guidelines].
+endif::[]
+ifndef::site-gen-antora[]
+See link:CONTRIBUTING.adoc[contribution guidelines].
+endif::[]
 
 == License
 
