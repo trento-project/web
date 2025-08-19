@@ -6,11 +6,11 @@ In order to run the Trento Web application, the following software must
 be installed:
 
 [arabic]
-. https://elixir-lang.org/[Elixir] - 1.15.7 preferred
-. https://www.erlang.org/[Erlang OTP] - 26.1.2 preferred
-. https://nodejs.org/en/[Node.js] - 20.14.0 preferred
-. https://docs.docker.com/get-docker/[Docker]
-. https://docs.docker.com/compose/install/[Docker Compose]
+. link:https://elixir-lang.org/[Elixir] - 1.15.7 preferred
+. link:https://www.erlang.org/[Erlang OTP] - 26.1.2 preferred
+. link:https://nodejs.org/en/[Node.js] - 20.14.0 preferred
+. link:https://docs.docker.com/get-docker/[Docker]
+. link:https://docs.docker.com/compose/install/[Docker Compose]
 
 === Additional requirements
 
@@ -21,20 +21,20 @@ installation issues come up. For these dependencies, the distro packaged
 version is usually sufficient.
 
 [arabic]
-. https://www.python.org/[Python3]
-. https://setuptools.pypa.io/en/latest/index.html[setuptools]
-. https://gcc.gnu.org/[gcc]
-. https://www.freedesktop.org/wiki/Software/pkg-config/[pkg-config]
+. link:https://www.python.org/[Python3]
+. link:https://setuptools.pypa.io/en/latest/index.html[setuptools]
+. link:https://gcc.gnu.org/[gcc]
+. link:https://www.freedesktop.org/wiki/Software/pkg-config/[pkg-config]
 
 === Ensure Compatibility with asdf
 
-https://asdf-vm.com/guide/introduction.html[asdf] allows to use specific
+link:https://asdf-vm.com/guide/introduction.html[asdf] allows to use specific
 versions of programming language tools that are known to be compatible
-with the project, rather than relying on the version that’s installed
+with the project, rather than relying on the version that's installed
 globally on the host system.
 
 In order to use asdf, follow the official
-https://asdf-vm.com/guide/getting-started.html[asdf getting started
+link:https://asdf-vm.com/guide/getting-started.html[asdf getting started
 guide].
 
 Install all required asdf plugins from
@@ -130,23 +130,20 @@ xref:./environment_variables.adoc[environment_variables].
 
 == Scenario loading with Photofinish
 
-The Trento project includes a tool called
-https://github.com/trento-project/photofinish[photofinish], which is
+The Trento project includes a tool called link:https://github.com/trento-project/photofinish[photofinish], which is
 used to load different scenarios for development and debugging purposes.
 
 ....
 photofinish run --url "http://localhost:4000/api/collect" healthy-27-node-SAP-cluster
 ....
 
-It’s possible to use Photofinish’ docker image too:
+It's possible to use Photofinish' docker image too:
 
 ....
 docker run -v "$PWD":/data --network host ghcr.io/trento-project/photofinish run healthy-27-node-SAP-cluster -u http://localhost:4000/api/collect
 ....
 
-Several useful scenario fixtures are available in
-https://github.com/trento-project/web/tree/main/test/fixtures/scenarios[./test/fixtures/scenarios],
+Several useful scenario fixtures are available in link:https://github.com/trento-project/web/tree/main/test/fixtures/scenarios[./test/fixtures/scenarios],
 the same ones used in e2e tests.
 
-See also
-https://github.com/trento-project/web/blob/main/.photofinish.toml[.photofinish.toml].
+See also link:https://github.com/trento-project/web/blob/main/.photofinish.toml[.photofinish.toml].

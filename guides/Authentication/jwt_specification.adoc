@@ -114,6 +114,4 @@ curl 'http://<YOUR_TRENTO_INSTANCE>/api/session/refresh' \
 The endpoint will return a new `+access_token+` with the same lifespan
 as all the other `+access_token+`.
 
-Please refer to the
-https://www.trento-project.io/web/swaggerui/#/Platform/TrentoWeb.SessionController.create[OpenAPI]
-spec for further details and client generation.
+Please refer to the link:https://www.trento-project.io/web/swaggerui/#/Platform/TrentoWeb.SessionController.create[OpenAPI] spec for further details and client generation.
