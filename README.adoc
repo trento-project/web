@@ -4,6 +4,8 @@
 :coverage-badge: https://coveralls.io/repos/github/trento-project/web/badge.svg?branch=main
 :docs-url: https://trento-project.io/web/
 :docs-badge: https://img.shields.io/badge/documentation-grey.svg
+ifndef::site-gen-antora[:relfileprefix: guides/]
+
 = Trento Web
 
 {ci-url}[image:{ci-badge}[CI]]
@@ -101,8 +103,7 @@ more information.
 Alerting feature notifies the SAP Administrator about important updates
 in the Landscape being monitored/observed by Trento.
 
-See link:https://github.com/trento-project/web/blob/main/guides/alerting/alerting.adoc[related documentation] for more
-information.
+See xref:Alerting/alerting.adoc[related documentation] for more information.
 
 == Installation
 
@@ -114,7 +115,7 @@ for more information.
 === Installing Trento
 
 To install Trento, refer to the
-https://github.com/trento-project/docs/blob/main/guides/manual-installation.adoc[Installationof Trento] guide.
+link:https://documentation.suse.com/sles-sap/trento/html/SLES-SAP-trento/sec-trento-installing-trentoserver.html#[Installationof Trento] guide.
 
 === Installing Trento using Ansible
 
@@ -129,13 +130,12 @@ https://github.com/trento-project/helm-charts[Helm Charts] repository.
 === Installing Trento Web locally for Development
 
 To install Trento Web locally for development, refer to the
-link:https://github.com/trento-project/web/blob/main/guides/development/hack_on_the_trento.adoc[hack on the Trento Web]
+xref:/development/hack_on_the_trento.adoc[hack on the Trento Web]
 guide.
 
 == Support
 
-Please only report bugs via
-https://github.com/trento-project/web/issues[GitHub issues].
+Please only report bugs via https://github.com/trento-project/web/issues[GitHub issues].
 
 == Contributing
 
