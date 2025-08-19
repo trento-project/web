@@ -126,7 +126,7 @@ adminpassword
 
 The Trento application uses several environment variables to configure
 its behavior. Information about these variables’
-xref:environment_variables.adoc[environment_variables].
+xref:./environment_variables.adoc[environment_variables].
 
 == Scenario loading with Photofinish
 

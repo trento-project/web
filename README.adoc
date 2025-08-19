@@ -16,8 +16,8 @@ _Trento_ is a bespoke, stand-alone web application, built by SUSE from
 the ground up, to facilitate SAP operations, proactively preventing
 infrastructural issues by diagnosing common configuration mistakes by
 validating systems against SUSE best practices. +
-It’s meant to complement link:_https://www.suse.com/products/sles-for-sap/[SUSE Linux Enterprise
-Server for SAP Applications]_ in helping IT organizations run
+It’s meant to complement link:https://www.suse.com/products/sles-for-sap/[SUSE Linux Enterprise
+Server for SAP Applications] in helping IT organizations run
 mission-critical enterprise software.
 
 == Documentation
@@ -45,7 +45,7 @@ infrastructure.
 
 === Trento architecture
 
-See the xref:Architecture/trento-architecture.adoc[architecture document] for additional details.
+See the link:https://github.com/trento-project/docs/blob/main/content/architecture/trento-architecture.adoc[architecture document] for additional details.
 
 == Features of Trento
 
