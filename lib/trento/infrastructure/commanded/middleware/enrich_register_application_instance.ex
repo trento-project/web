@@ -27,7 +27,7 @@ defimpl Trento.Infrastructure.Commanded.Middleware.Enrichable,
         on: di.host_id == h.id,
         where:
           ^db_host in h.ip_addresses and
-            fragment("? @\\? '$.name \\? (@ == ?)'", d.tenants, literal(^tenant)) and
+            fragment("? @\\? '$.name \\? (@ == ?)'", d.tenants, identifier(^tenant)) and
             is_nil(h.deregistered_at) and is_nil(d.deregistered_at)
 
     case Repo.one(query) do
