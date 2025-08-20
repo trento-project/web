@@ -1,6 +1,5 @@
 defmodule TrentoWeb.Plugs.OperationsPolicyPlugTest do
   use TrentoWeb.ConnCase, async: true
-  use Plug.Test
 
   import OpenApiSpex.TestAssertions
 
