@@ -61,7 +61,7 @@ defmodule Trento.MixProject do
       {:cloak_ecto, "~> 1.2.0"},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
-      {:ecto_sql, "~> 3.11"},
+      {:ecto_sql, "~> 3.13"},
       {:esbuild, "~> 0.2", runtime: Mix.env() == :dev},
       {:eventstore, "~> 1.1",
        [env: :prod, git: "https://github.com/commanded/eventstore.git", override: true]},
@@ -107,11 +107,11 @@ defmodule Trento.MixProject do
        sparse: "elixir"},
       {:unplug, "~> 1.0.0"},
       {:proper_case, "~> 1.3.1"},
-      {:polymorphic_embed, "~> 4.1"},
+      {:polymorphic_embed, "~> 5.0"},
       {:joken, "~> 2.5.0"},
       # required overrides to upgrade to elixir 1.15.7 and erlang otp 26
       # https://stackoverflow.com/questions/76562092/hi-i-had-created-elixir-project-with-phoenix-framework-there-is-yaml-file-when
-      {:ecto, "~> 3.10", override: true},
+      {:ecto, "~> 3.13"},
       # https://github.com/deadtrickster/ssl_verify_fun.erl/pull/27
       {:ssl_verify_fun, "~> 1.1", manager: :rebar3, override: true},
       {:parallel_stream, "~> 1.1.0"},
