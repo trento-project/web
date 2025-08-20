@@ -1,6 +1,5 @@
 defmodule TrentoWeb.Plugs.LoadUserPlugTest do
   use TrentoWeb.ConnCase, async: true
-  use Plug.Test
 
   import Trento.Factory
 

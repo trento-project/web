@@ -2,7 +2,6 @@ defmodule TrentoWeb.Plugs.ExternalIdpGuardPlugTest do
   @moduledoc false
 
   use TrentoWeb.ConnCase, async: true
-  use Plug.Test
 
   alias TrentoWeb.Plugs.ExternalIdpGuardPlug
 
