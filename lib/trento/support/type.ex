@@ -19,7 +19,7 @@ defmodule Trento.Support.Type do
 
       import Ecto.Changeset
 
-      import PolymorphicEmbed, only: [cast_polymorphic_embed: 3]
+      import PolymorphicEmbed, only: [polymorphic_embeds_one: 2, cast_polymorphic_embed: 3]
 
       @type t() :: %__MODULE__{}
 
@@ -153,7 +153,7 @@ defmodule Trento.Support.Type do
         do:
           Enum.filter(__MODULE__.__schema__(:fields), fn field ->
             case __MODULE__.__schema__(:type, field) do
-              {:parameterized, PolymorphicEmbed, _} -> true
+              {:parameterized, {PolymorphicEmbed, _}} -> true
               _ -> false
             end
           end)

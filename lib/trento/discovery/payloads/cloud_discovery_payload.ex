@@ -7,8 +7,6 @@ defmodule Trento.Discovery.Payloads.CloudDiscoveryPayload do
 
   use Trento.Support.Type
 
-  import PolymorphicEmbed, only: [cast_polymorphic_embed: 3]
-
   require Trento.Enums.Provider, as: Provider
 
   deftype do
@@ -16,7 +14,7 @@ defmodule Trento.Discovery.Payloads.CloudDiscoveryPayload do
       values: Provider.values(),
       default: :unknown
 
-    field :metadata, PolymorphicEmbed,
+    polymorphic_embeds_one(:metadata,
       types: [
         azure: __MODULE__.AzureMetadata,
         aws: __MODULE__.AwsMetadata,
@@ -24,6 +22,7 @@ defmodule Trento.Discovery.Payloads.CloudDiscoveryPayload do
       ],
       on_type_not_found: :nilify,
       on_replace: :update
+    )
   end
 
   def changeset(event, attrs) do
