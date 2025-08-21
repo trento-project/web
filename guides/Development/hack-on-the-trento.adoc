@@ -72,15 +72,15 @@ command:
 mix setup
 ....
 
-== Connect Trento Web with https://github.com/trento-project/wanda[Wanda]
+== Connect Trento Web with [Wanda]
 
-By default, Wanda can be accessed on port 4001.
+By default, link:https://github.com/trento-project/wanda[Wanda] can be accessed on port 4001.
 
 The wanda url is provided with the configuration parameter
 `+:trento, :checks_service, :base_url+`.
 
 *Guide* how to set up
-https://github.com/trento-project/wanda/blob/main/guides/development/hack_on_wanda.adoc[Wanda].
+link:https://github.com/trento-project/wanda/blob/main/guides/development/hack-on-wanda.adoc[Wanda].
 
 Note: If the Wanda service is running on a different port, change the
 default 4001 port in the .env file.
