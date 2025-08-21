@@ -128,7 +128,7 @@ link:https://github.com/trento-project/helm-charts[Helm Charts] repository.
 === Installing Trento Web locally for Development
 
 To install Trento Web locally for development, refer to the
-xref:Development/hack_on_the_trento.adoc[hack on the Trento Web]
+xref:Development/hack-on-the-trento.adoc[hack on the Trento Web]
 guide.
 
 == Support
