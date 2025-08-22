@@ -44,12 +44,13 @@ defmodule TrentoWeb.V1.DatabaseController do
   tags ["Target Infrastructure"]
 
   operation :list_databases,
-    summary: "List HANA Databases",
-    description: "List all the discovered HANA Databases on the target infrastructure",
+    summary: "List HANA Databases.",
+    description:
+      "Retrieves a comprehensive list of all HANA Databases discovered on the target infrastructure, supporting monitoring and management tasks for administrators.",
     responses: [
       ok:
-        {"A collection of the discovered HANA Databases", "application/json",
-         Schema.Database.DatabasesCollection}
+        {"Comprehensive list of all HANA Databases discovered on the target infrastructure for monitoring and management.",
+         "application/json", Schema.Database.DatabasesCollection}
     ]
 
   def list_databases(conn, _) do
@@ -59,27 +60,45 @@ defmodule TrentoWeb.V1.DatabaseController do
   end
 
   operation :delete_database_instance,
-    summary: "Delete database instance",
-    description: "Delete the database instance identified by the provided data if it is absent",
+    summary: "Delete database instance.",
+    description:
+      "Removes the specified database instance from the system if it is no longer present, supporting infrastructure cleanup and resource management.",
     parameters: [
       id: [
         in: :path,
+        description:
+          "Unique identifier of the database instance to be deleted. This value must be a valid UUID string.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :string, format: :uuid}
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          format: :uuid,
+          example: "d1a2b3c4-d5e6-7890-abcd-ef1234567890"
+        }
       ],
       host_id: [
         in: :path,
+        description:
+          "Unique identifier of the host associated with the database instance. This value must be a valid UUID string.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :string, format: :uuid}
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          format: :uuid,
+          example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
+        }
       ],
       instance_number: [
         in: :path,
+        description:
+          "The instance number of the database to be deleted, used to uniquely identify the specific database instance within the host.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :string}
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          example: "10"
+        }
       ]
     ],
     responses: [
-      no_content: "The database instance has been deregistered",
+      no_content: "The database instance has been deregistered.",
       not_found: NotFound.response(),
       unprocessable_entity: UnprocessableEntity.response()
     ]
