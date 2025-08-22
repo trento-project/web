@@ -230,7 +230,8 @@ export const apiDeleteAllUsers = () => {
   });
 };
 
-export const waitForRequest = (requestAlias) => cy.wait(`@${requestAlias}`);
+export const waitForRequest = (requestAlias, timeout = 5000) =>
+  cy.wait(`@${requestAlias}`, { timeout: timeout });
 
 export const preloadTestData = ({
   isDataLoadedFunc = isTestDataLoaded,

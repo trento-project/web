@@ -3,6 +3,8 @@ defmodule TrentoWeb.PageController do
 
   alias Trento.Settings
 
+  @version Mix.Project.config()[:version]
+
   def index(conn, _params) do
     check_service_base_url = Application.fetch_env!(:trento, :checks_service)[:base_url]
     charts_enabled = Application.fetch_env!(:trento, Trento.Charts)[:enabled]
@@ -30,6 +32,7 @@ defmodule TrentoWeb.PageController do
       sso_callback_url: callback_url,
       sso_enrollment_url: enrollment_url,
       operations_enabled: operations_enabled,
+      version: @version,
       layout: false
     )
   end

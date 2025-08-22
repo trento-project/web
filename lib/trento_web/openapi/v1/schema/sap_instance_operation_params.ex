@@ -3,12 +3,12 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SapInstanceOperationParams do
   require OpenApiSpex
   alias OpenApiSpex.Schema
 
-  defmodule StartStopParams do
+  defmodule SapInstanceStartStopParams do
     @moduledoc false
 
     OpenApiSpex.schema(
       %{
-        title: "StartStopParams",
+        title: "SapInstanceStartStopParams",
         description: "SAP instance start/stop operation params",
         type: :object,
         additionalProperties: false,
@@ -28,7 +28,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SapInstanceOperationParams do
       title: "SapInstanceOperationParams",
       description: "SAP instance operation request parameters",
       oneOf: [
-        StartStopParams
+        SapInstanceStartStopParams
       ]
     },
     struct?: false

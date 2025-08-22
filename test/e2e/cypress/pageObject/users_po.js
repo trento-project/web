@@ -8,6 +8,8 @@ const url = '/users';
 export const PASSWORD = 'password';
 export const USER = userFactory.build({ username: 'e2etest' });
 
+const totpEnrollmentEndpointAlias = 'totpEnrollment';
+
 // UI Element Selectors
 const createUserButton = 'button:contains("Create User")';
 const adminUserName = 'tbody tr:nth-child(1) a';
@@ -67,6 +69,9 @@ const usernameAlreadyTakenError = 'p:contains("Has already been taken")';
 const invalidPasswordErrorLabel = 'p:contains("Is invalid")';
 const totpEnrollmentErrorLabel =
   'p:contains("Totp code not valid for the enrollment procedure.")';
+
+const removeTotpDialogTitle =
+  'div[id*="headlessui-dialog-panel"] h2:contains("Disable TOTP")';
 
 // UI Interactions
 
@@ -162,6 +167,12 @@ export const clickRemovePermissionButton = () =>
   cy.get(removePermissionButton).click();
 
 // UI Validations
+
+export const removeTotpDialogTitleIsDisplayed = () =>
+  cy.get(removeTotpDialogTitle).should('be.visible');
+
+export const removeTotpDialogTitleIsNotDisplayed = () =>
+  cy.get(removeTotpDialogTitle).should('not.exist');
 
 export const deletedUserNameIsNotDisplayed = () =>
   cy.get(newUserName).should('not.exist');
@@ -300,6 +311,15 @@ export const adminUserPermissionsAreDisplayed = () =>
     .should('have.text', basePage.adminUser.permissions);
 
 // API
+
+export const interceptDeleteTotpEnrollmentEndpoint = () =>
+  cy
+    .intercept('DELETE', '/api/v1/profile/totp_enrollment')
+    .as(totpEnrollmentEndpointAlias);
+
+export const waitForTotpEnrollmentEndpoint = () =>
+  basePage.waitForRequest(totpEnrollmentEndpointAlias);
+
 export const apiGetProfileInfo = (
   username = USER.username,
   password = PASSWORD

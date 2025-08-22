@@ -15,6 +15,7 @@ defmodule Trento.ActivityLog.EventParser do
     {:host_checks_health_changed, build(:host_checks_health_changed)},
     {:host_checks_selected, build(:host_checks_selected_event)},
     {:software_updates_discovery_requested, build(:software_updates_discovery_requested_event)},
+    {:cluster_host_status_changed, build(:cluster_host_status_changed_event)},
     {:foo_bar, TestEvent.new!(%{data: "some event"})}
   ]
 
@@ -64,6 +65,21 @@ defmodule Trento.ActivityLog.EventParser do
 
         assert Map.equal?(extracted_metadata, trimmed_event)
       end
+    end
+
+    test "should have cluster_host_status in metadata for cluster_host_status_changed event" do
+      correlation_id = UUID.uuid4()
+      metadata = %{correlation_id: correlation_id}
+
+      event = build(:cluster_host_status_changed_event)
+
+      %{cluster_host_status: cluster_host_status} =
+        EventParser.get_activity_metadata(:cluster_host_status_changed, %{
+          event: event,
+          metadata: metadata
+        })
+
+      assert event.cluster_host_status == cluster_host_status
     end
   end
 end

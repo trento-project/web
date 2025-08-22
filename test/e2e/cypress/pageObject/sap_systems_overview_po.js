@@ -70,12 +70,13 @@ const hanaClusterLinks = 'div[class*="cell"] a span:contains("hana")';
 const instanceHostLinks = 'div[class*="cell"] a[href*="/host"]';
 const systemToRemoveCollapsibleCell = `${sapSystemsTableRows}:eq(0) td:first-child`;
 const nwdSystemRowCollapsibleCell = `tr:contains('${sapSystemNwd.sid}') > td:eq(0)`;
+const pageTitle = 'h1:contains("SAP Systems")';
 
 // UI Interactions
 export const visit = () => {
   cy.intercept('/api/v1/databases').as('databasesRequest');
   basePage.visit(url);
-  cy.wait('@databasesRequest');
+  basePage.waitForRequest('databasesRequest', 10000);
 };
 
 export const tagSapSystems = () => {
@@ -103,8 +104,15 @@ const clickAllRows = () => {
   const expandTableElement = 'td svg[class*="cursor"]';
   cy.get(expandTableElement).each((cell, index) => {
     cy.get(`${expandTableElement}:eq(${index})`).click();
+    tableRowIsVisible(index);
   });
 };
+
+const tableRowIsVisible = (index) =>
+  cy
+    .get('tr[class*="bg-gray-100"]')
+    .eq(index)
+    .should('have.css', 'display', 'table-row', { timeout: 10000 });
 
 // UI Validations
 export const nwdInstance01CleanUpButtonIsVisible = () =>
@@ -247,15 +255,19 @@ export const instanceDataIsTheExpected = () => {
   });
 };
 
+const pageTitleIsCorrectlyDisplayed = () =>
+  cy.get(pageTitle).should('be.visible');
+
 export const eachHanaInstanceHasItsClusterWorkingLink = () => {
   const hanaInstances = instancesData.filter(
     (instance) => instance.clusterID !== ''
   );
-  hanaInstances.forEach((hanaInstance, index) => {
+  cy.wrap(hanaInstances).each((hanaInstance, index) => {
     clickAllRows();
     cy.get(`${hanaClusterLinks}:eq(${index})`).click();
     validateUrl(`/clusters/${hanaInstance.clusterID}`);
     cy.go('back');
+    pageTitleIsCorrectlyDisplayed();
   });
 };
 

@@ -142,6 +142,14 @@ defmodule Trento.Infrastructure.Operations.OperationsTest do
         %{
           operation_type: :pacemaker_disable,
           internal_type: "pacemakerdisable@v1"
+        },
+        %{
+          operation_type: :database_start,
+          internal_type: "databasestart@v1"
+        },
+        %{
+          operation_type: :database_stop,
+          internal_type: "databasestop@v1"
         }
       ]
 
@@ -191,6 +199,14 @@ defmodule Trento.Infrastructure.Operations.OperationsTest do
         %{
           operation: :pacemaker_disable,
           operator_name: "pacemakerdisable@v1"
+        },
+        %{
+          operation: :database_start,
+          operator_name: "databasestart@v1"
+        },
+        %{
+          operation: :database_stop,
+          operator_name: "databasestop@v1"
         }
       ]
 

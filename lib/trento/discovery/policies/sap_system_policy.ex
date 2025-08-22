@@ -247,13 +247,13 @@ defmodule Trento.Discovery.Policies.SapSystemPolicy do
   defp normalize_dispstatus(_), do: :unknown
 
   defp parse_system_replication(%Instance{
-         SystemReplication: %SystemReplication{local_site_id: local_site_id} = system_replication
+         HdbnsutilSRstate: %HdbnsutilSRstate{mode: mode}
        }) do
-    case Map.get(system_replication, :"site/#{local_site_id}/REPLICATION_MODE") do
-      "PRIMARY" ->
+    case mode do
+      "primary" ->
         "Primary"
 
-      mode when mode in ["SYNC", "SYNCMEM", "ASYNC", "UNKNOWN"] ->
+      mode when mode in ["sync", "syncmem", "async", "unknown"] ->
         "Secondary"
 
       _ ->

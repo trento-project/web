@@ -37,7 +37,8 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
         :cluster_operation_requested,
         :cluster_host_operation_requested,
         :application_instance_operation_requested,
-        :sap_system_operation_requested
+        :sap_system_operation_requested,
+        :database_operation_requested
       ]
 
       connection_activity_catalog = ActivityCatalog.connection_activities()
@@ -290,6 +291,12 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
       %{
         activity: :sap_system_operation_requested,
         connection_info: {TrentoWeb.V1.SapSystemController, :request_operation},
+        interesting_statuses: 202,
+        not_interesting_statuses: [400, 401, 403, 404, 500]
+      },
+      %{
+        activity: :database_operation_requested,
+        connection_info: {TrentoWeb.V1.DatabaseController, :request_operation},
         interesting_statuses: 202,
         not_interesting_statuses: [400, 401, 403, 404, 500]
       }

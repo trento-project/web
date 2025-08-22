@@ -14,18 +14,13 @@ defmodule Trento.Clusters.Policy do
   def authorize(:request_checks_execution, %User{} = user, ClusterReadModel),
     do: has_global_ability?(user) or has_checks_execution_ability?(user)
 
-  def authorize(:request_operation, %User{} = user, %{operation: "cluster_maintenance_change"}),
-    do: has_global_ability?(user) or has_cluster_maintenance_change_ability?(user)
-
-  def authorize(:request_host_operation, %User{} = user, %{
-        operation: "pacemaker_enable"
-      }),
-      do: has_global_ability?(user) or has_enable_pacemaker_ability?(user)
-
-  def authorize(:request_host_operation, %User{} = user, %{
-        operation: "pacemaker_disable"
-      }),
-      do: has_global_ability?(user) or has_disable_pacemaker_ability?(user)
+  def authorize(operation_kind, %User{} = user, %{
+        operation: operation
+      })
+      when operation_kind in [:request_operation, :request_host_operation],
+      do:
+        has_global_ability?(user) or
+          user_has_ability?(user, %{name: to_ability_name(operation), resource: "cluster"})
 
   def authorize(_, _, _), do: true
 
@@ -37,12 +32,8 @@ defmodule Trento.Clusters.Policy do
   defp has_checks_execution_ability?(user),
     do: user_has_ability?(user, %{name: "all", resource: "cluster_checks_execution"})
 
-  defp has_cluster_maintenance_change_ability?(user),
-    do: user_has_ability?(user, %{name: "maintenance_change", resource: "cluster"})
-
-  defp has_enable_pacemaker_ability?(user),
-    do: user_has_ability?(user, %{name: "pacemaker_enable", resource: "cluster"})
-
-  defp has_disable_pacemaker_ability?(user),
-    do: user_has_ability?(user, %{name: "pacemaker_disable", resource: "cluster"})
+  # usually the operation name is the same as the ability name
+  # for those operations that are not, we need to map them
+  defp to_ability_name("cluster_maintenance_change"), do: "maintenance_change"
+  defp to_ability_name(operation), do: operation
 end

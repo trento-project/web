@@ -268,8 +268,8 @@ defmodule Trento.SapSystemsTest do
         operation: :sap_system_start,
         expected_operator: "sapsystemstart@v1",
         params: %{
-          "instance_type" => "abap",
-          "timeout" => 5_000
+          instance_type: "abap",
+          timeout: 5_000
         },
         expected_arguments: %{
           "instance_type" => %ProtobufValue{kind: {:string_value, "abap"}},

@@ -41,6 +41,8 @@ describe('AbilitiesMultiSelect Component', () => {
       { id: 21, name: 'stop', resource: 'application_instance' },
       { id: 22, name: 'start', resource: 'sap_system' },
       { id: 23, name: 'stop', resource: 'sap_system' },
+      { id: 24, name: 'start', resource: 'database' },
+      { id: 25, name: 'stop', resource: 'database' },
     ];
 
     render(
@@ -114,6 +116,10 @@ describe('AbilitiesMultiSelect Component', () => {
           { id: 10, name: 'stop', resource: 'application_instance' },
           { id: 11, name: 'start', resource: 'sap_system' },
           { id: 12, name: 'stop', resource: 'sap_system' },
+          { id: 13, name: 'start', resource: 'database' },
+          { id: 14, name: 'stop', resource: 'database' },
+          { id: 15, name: 'cluster_host_start', resource: 'cluster' },
+          { id: 16, name: 'cluster_host_stop', resource: 'cluster' },
         ]}
         userAbilities={[
           { id: 1, name: 'all', resource: 'all' },
@@ -128,6 +134,10 @@ describe('AbilitiesMultiSelect Component', () => {
           { id: 10, name: 'stop', resource: 'application_instance' },
           { id: 11, name: 'start', resource: 'sap_system' },
           { id: 12, name: 'stop', resource: 'sap_system' },
+          { id: 13, name: 'start', resource: 'database' },
+          { id: 14, name: 'stop', resource: 'database' },
+          { id: 15, name: 'cluster_host_start', resource: 'cluster' },
+          { id: 16, name: 'cluster_host_stop', resource: 'cluster' },
         ]}
         setAbilities={noop}
         operationsEnabled
@@ -166,6 +176,14 @@ describe('AbilitiesMultiSelect Component', () => {
     ).not.toBeInTheDocument();
     expect(screen.queryByText('start:sap_system')).not.toBeInTheDocument();
     expect(screen.queryByText('stop:sap_system')).not.toBeInTheDocument();
+    expect(screen.queryByText('start:database')).not.toBeInTheDocument();
+    expect(screen.queryByText('stop:database')).not.toBeInTheDocument();
+    expect(
+      screen.queryByText('cluster_host_start:cluster')
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText('cluster_host_stop:cluster')
+    ).not.toBeInTheDocument();
 
     await user.click(screen.getByLabelText('permissions'));
     expect(screen.getByText('No options')).toBeVisible();

@@ -4,6 +4,8 @@ import * as basePage from './base_po';
 // Test Data
 import {
   selectedDatabase,
+  secondaryStoppedSites,
+  allStoppedSites,
   attachedHosts,
 } from '../fixtures/hana-database-details/selected_database.js';
 
@@ -171,8 +173,8 @@ export const eachHostNameHasExpectedValues = () => {
   });
 };
 
-export const eachSiteHasExpectedValues = () => {
-  selectedDatabase.Sites.forEach((site) => {
+export const eachSiteHasExpectedValues = (sites) => {
+  sites.forEach((site) => {
     siteHasExpectedName(site.Name);
     siteHasExpectedSystemReplication(site.Name, site.SystemReplication);
     siteHasExpectedTier(site.Name, site.Tier);
@@ -183,6 +185,18 @@ export const eachSiteHasExpectedValues = () => {
     site.OperationMode &&
       siteHasExpectedOperationMode(site.Name, site.OperationMode);
   });
+};
+
+export const runningSitesHaveExpectedValues = () => {
+  eachSiteHasExpectedValues(selectedDatabase.Sites);
+};
+
+export const secondaryStoppedSitesHaveExpectedValues = () => {
+  eachSiteHasExpectedValues(secondaryStoppedSites);
+};
+
+export const stoppedSitesHaveExpectedValues = () => {
+  eachSiteHasExpectedValues(allStoppedSites);
 };
 
 const getHostAttribute = (hostname, attribute) => {

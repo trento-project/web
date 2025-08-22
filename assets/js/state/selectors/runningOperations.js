@@ -1,6 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { pipe, find } from 'lodash/fp';
-import { flatMap, get } from 'lodash';
+import { flatMap, get, has } from 'lodash';
 
 const getRunningOperations = ({ runningOperations }) => runningOperations;
 
@@ -27,3 +27,8 @@ export const isOperationRunning = (
     find({ groupID, operation }),
     (foundItem) => !!foundItem && matcher(foundItem)
   )(runningOperationsList);
+
+export const getLocalOrTargetParams = (metadata) =>
+  has(metadata, 'targets')
+    ? get(metadata, 'targets[0].arguments', {})
+    : get(metadata, 'params', {});

@@ -12,3 +12,6 @@ export const canEnableUnit = (host, unit) =>
 
 export const canDisableUnit = (host, unit) =>
   getUnitFileState(host, unit) === 'enabled';
+
+export const isOnlineInCluster = (host) =>
+  getOr('Offline', 'status', host) === 'Online';
