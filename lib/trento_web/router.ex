@@ -193,6 +193,7 @@ defmodule TrentoWeb.Router do
         post "/totp_enrollment", ProfileController, :confirm_totp_enrollment
 
         scope "/api_keys" do
+          get "/", ApiKeysController, :get_api_keys
           post "/", ApiKeysController, :create_api_key
         end
       end
