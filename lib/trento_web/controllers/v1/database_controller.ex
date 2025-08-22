@@ -117,25 +117,38 @@ defmodule TrentoWeb.V1.DatabaseController do
   operation :request_operation,
     summary: "Request operation for a Database",
     tags: ["Operations"],
-    description: "Request operation for a Database",
+    description:
+      "Initiates a specific operation on a database instance, such as starting or stopping the database. This endpoint supports operational management and allows administrators to control database lifecycle.",
     parameters: [
       id: [
         in: :path,
+        description:
+          "Unique identifier of the database for which the operation is requested. This value must be a valid UUID string.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :string, format: :uuid}
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          format: :uuid,
+          example: "d1a2b3c4-d5e6-7890-abcd-ef1234567890"
+        }
       ],
       operation: [
         in: :path,
+        description:
+          "The type of operation to perform on the database. Supported operations include 'database_start' and 'database_stop' for controlling database lifecycle.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :string}
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          enum: ["database_start", "database_stop"],
+          example: "database_start"
+        }
       ]
     ],
-    request_body: {"Params", "application/json", DatabaseOperationParams},
+    request_body: {"Operation parameters", "application/json", DatabaseOperationParams},
     responses: [
       accepted: OperationAccepted.response(),
       not_found: NotFound.response(),
       forbidden: Forbidden.response(),
-      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
+      unprocessable_entity: UnprocessableEntity.response()
     ]
 
   def request_operation(
