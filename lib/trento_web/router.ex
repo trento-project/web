@@ -201,7 +201,7 @@ defmodule TrentoWeb.Router do
           get "/", SettingsController, :get_suse_manager_settings
           post "/", SettingsController, :save_suse_manager_settings
           patch "/", SettingsController, :update_suse_manager_settings
-          put "/", SettingsController, :update_suse_manager_settings
+          put "/", SettingsController, :put_suse_manager_settings
           delete "/", SettingsController, :delete_suse_manager_settings
           post "/test", SettingsController, :test_suse_manager_settings
         end
