@@ -7,6 +7,7 @@ import {
   SAP_SYSTEM_OPERATION,
   APPLICATION_INSTANCE_OPERATION,
   CLUSTER_HOST_OPERATION,
+  DATABASE_OPERATION,
   getOperationLabel,
   getOperationInternalName,
   getOperationResourceType,
@@ -18,6 +19,7 @@ import {
   requestSapSystemOperation,
   requestSapInstanceOperation,
   requestClusterHostOperation,
+  requestDatabaseOperation,
   getOperationExecutions,
 } from '@lib/api/operations';
 import { notify } from '@state/notifications';
@@ -31,7 +33,7 @@ import {
 } from '@state/runningOperations';
 import { getHost } from '@state/selectors/host';
 import { getCluster } from '@state/selectors/cluster';
-import { getSapSystem } from '@state/selectors/sapSystem';
+import { getSapSystem, getDatabase } from '@state/selectors/sapSystem';
 
 function* getResourceName(groupID, resourceType) {
   switch (resourceType) {
@@ -44,6 +46,8 @@ function* getResourceName(groupID, resourceType) {
     }
     case SAP_SYSTEM_OPERATION:
       return (yield select(getSapSystem(groupID)))?.sid || 'unknown';
+    case DATABASE_OPERATION:
+      return (yield select(getDatabase(groupID)))?.sid || 'unknown';
     default:
       return 'unknown';
   }
@@ -77,6 +81,10 @@ const callRequest = (operation, resourceType, requestParams) => {
       const { clusterID, hostID } = requestParams;
 
       return requestClusterHostOperation(clusterID, hostID, operation);
+    }
+    case DATABASE_OPERATION: {
+      const { databaseID, params } = requestParams;
+      return requestDatabaseOperation(databaseID, operation, params);
     }
     default:
       return noop;

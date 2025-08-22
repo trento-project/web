@@ -12,6 +12,8 @@ import {
   SAP_INSTANCE_STOP,
   PACEMAKER_ENABLE,
   PACEMAKER_DISABLE,
+  CLUSTER_HOST_START,
+  CLUSTER_HOST_STOP,
   CLUSTER_MAINTENANCE_CHANGE,
 } from '@lib/operations';
 
@@ -71,6 +73,18 @@ describe('SimpleAcceptanceOperationModal', () => {
       expectedDescription: new RegExp(
         `Change maintenance state to.*on resource ${resourceID}`
       ),
+    },
+    {
+      operation: CLUSTER_HOST_START,
+      descriptionResolverArgs: { hostName },
+      title: 'Start cluster host',
+      expectedDescription: `Start cluster host ${hostName}`,
+    },
+    {
+      operation: CLUSTER_HOST_STOP,
+      descriptionResolverArgs: { hostName },
+      title: 'Stop cluster host',
+      expectedDescription: `Stop cluster host ${hostName}`,
     },
     {
       operation: 'unknown_operation',

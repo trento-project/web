@@ -1,12 +1,21 @@
 import { curry, some, get, has, flow } from 'lodash';
 
-import { canDisableUnit, canEnableUnit } from '@lib/model/hosts';
+import {
+  canDisableUnit,
+  canEnableUnit,
+  isOnlineInCluster,
+} from '@lib/model/hosts';
 import {
   CLUSTER_MAINTENANCE_CHANGE,
   PACEMAKER_DISABLE,
   PACEMAKER_ENABLE,
+  CLUSTER_HOST_START,
+  CLUSTER_HOST_STOP,
 } from '@lib/operations';
-import { isOperationRunning } from '@state/selectors/runningOperations';
+import {
+  isOperationRunning,
+  getLocalOrTargetParams,
+} from '@state/selectors/runningOperations';
 
 const NODE_MAINTENANCE_STATE = 'Maintenance';
 
@@ -18,9 +27,6 @@ const matchesTarget = (hostID, { metadata }) =>
 const matchesHostIdOrTarget = (hostID) => (runningOperation) =>
   matchesHostId(hostID, runningOperation) ||
   matchesTarget(hostID, runningOperation);
-
-const getLocalOrTargetParams = (metadata) =>
-  has(metadata, 'targets') ? metadata.targets[0].arguments : metadata.params;
 
 const matchesClusterMaintenance = ({ metadata }) =>
   flow(
@@ -132,6 +138,42 @@ export const getClusterHostOperations = curry(
       onClick: () => {
         setCurrentOperationHost(host);
         setOperationModelOpen({ open: true, operation: PACEMAKER_DISABLE });
+      },
+    },
+    {
+      value: 'Start cluster in node',
+      running: isOperationRunning(
+        [runningOperation],
+        clusterID,
+        CLUSTER_HOST_START,
+        matchesHostIdOrTarget(host.id)
+      ),
+      disabled: !!runningOperation || isOnlineInCluster(host),
+      permitted: ['cluster_host_start:cluster'],
+      onClick: () => {
+        setCurrentOperationHost(host);
+        setOperationModelOpen({
+          open: true,
+          operation: CLUSTER_HOST_START,
+        });
+      },
+    },
+    {
+      value: 'Stop cluster in node',
+      running: isOperationRunning(
+        [runningOperation],
+        clusterID,
+        CLUSTER_HOST_STOP,
+        matchesHostIdOrTarget(host.id)
+      ),
+      disabled: !!runningOperation || !isOnlineInCluster(host),
+      permitted: ['cluster_host_stop:cluster'],
+      onClick: () => {
+        setCurrentOperationHost(host);
+        setOperationModelOpen({
+          open: true,
+          operation: CLUSTER_HOST_STOP,
+        });
       },
     },
   ]

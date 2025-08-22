@@ -135,4 +135,16 @@ describe('OperationsButton', () => {
     expect(button).toHaveClass('bg-transparent');
     expect(button).toHaveClass('text-sm');
   });
+
+  it('should show a disabled operations button', () => {
+    render(
+      <OperationsButton
+        disabled
+        operations={testOperations}
+        userAbilities={[]}
+      />
+    );
+
+    expect(screen.getByText('Operations')).toBeDisabled();
+  });
 });

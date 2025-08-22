@@ -11,6 +11,7 @@ import {
   SAP_SYSTEM_START,
   PACEMAKER_ENABLE,
   PACEMAKER_DISABLE,
+  DATABASE_START,
   getOperationLabel,
 } from '@lib/operations';
 import {
@@ -46,6 +47,9 @@ const sapInstanceOperationRequestedURL = (
   operation
 ) =>
   `/sap_systems/${sapSystemID}/hosts/${hostID}/instances/${instanceNumber}/operations/${operation}`;
+
+const databaseOperationRequestURL = (databaseID, operation) =>
+  `/databases/${databaseID}/operations/${operation}`;
 
 const getOperationExecutionsURL = () => `/api/v1/operations/executions`;
 
@@ -251,6 +255,43 @@ describe('operations saga', () => {
         ]);
       }
     );
+
+    it('should request a database operation', async () => {
+      const groupID = faker.string.uuid();
+      const operation = DATABASE_START;
+      const sid = 'PRD';
+      const label = getOperationLabel(operation);
+
+      axiosMock
+        .onPost(databaseOperationRequestURL(groupID, operation))
+        .reply(202, {});
+
+      const dispatched = await recordSaga(
+        requestOperation,
+        {
+          payload: {
+            groupID,
+            operation,
+            requestParams: {
+              databaseID: groupID,
+            },
+          },
+        },
+        { databasesList: { databases: [{ id: groupID, sid }] } }
+      );
+
+      expect(dispatched).toEqual([
+        setRunningOperation({
+          groupID,
+          operation,
+          metadata: { databaseID: groupID },
+        }),
+        notify({
+          text: `Operation ${label} requested for ${sid}`,
+          icon: '⚙️',
+        }),
+      ]);
+    });
 
     it('should fail requesting an operation if the api request fails', async () => {
       const groupID = faker.string.uuid();

@@ -6,6 +6,8 @@ import {
   PACEMAKER_DISABLE,
   PACEMAKER_ENABLE,
   CLUSTER_MAINTENANCE_CHANGE,
+  CLUSTER_HOST_START,
+  CLUSTER_HOST_STOP,
 } from '@lib/operations';
 
 import OperationModal from './OperationModal';
@@ -16,6 +18,8 @@ const TITLES = {
   [PACEMAKER_ENABLE]: 'Enable Pacemaker',
   [PACEMAKER_DISABLE]: 'Disable Pacemaker',
   [CLUSTER_MAINTENANCE_CHANGE]: 'Maintenance change',
+  [CLUSTER_HOST_START]: 'Start cluster host',
+  [CLUSTER_HOST_STOP]: 'Stop cluster host',
 };
 
 const getOperationTitle = (operation) =>
@@ -49,12 +53,17 @@ const getClusterMaintenanceDescription = (
   );
 };
 
+const getClusterHostStartStopDescription = (operation, { hostName }) =>
+  `${getOperationTitle(operation)} ${hostName}`;
+
 const DESCRIPTION_RESOLVERS = {
   [SAP_INSTANCE_START]: getSapInstanceStartStopDescription,
   [SAP_INSTANCE_STOP]: getSapInstanceStartStopDescription,
   [PACEMAKER_ENABLE]: getPacemakerEnableDisableDescription,
   [PACEMAKER_DISABLE]: getPacemakerEnableDisableDescription,
   [CLUSTER_MAINTENANCE_CHANGE]: getClusterMaintenanceDescription,
+  [CLUSTER_HOST_START]: getClusterHostStartStopDescription,
+  [CLUSTER_HOST_STOP]: getClusterHostStartStopDescription,
 };
 
 function SimpleAcceptanceOperationModal({

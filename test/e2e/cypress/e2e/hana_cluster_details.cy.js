@@ -417,7 +417,9 @@ context('HANA cluster details', () => {
         hanaClusterDetailsPage.startExecutionButtonIsDisabled();
         hanaClusterDetailsPage.clickStartExecutionButton();
         hanaClusterDetailsPage.notAuthorizedTooltipIsDisplayed();
+        hanaClusterDetailsPage.interceptGetChecks();
         hanaClusterDetailsPage.clickCheckSelectionButton();
+        hanaClusterDetailsPage.waitForGetChecksEndpoint();
         hanaClusterDetailsPage.startExecutionButtonIsDisabled();
         hanaClusterDetailsPage.clickStartExecutionButton();
         hanaClusterDetailsPage.notAuthorizedTooltipIsDisplayed();

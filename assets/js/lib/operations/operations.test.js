@@ -50,6 +50,22 @@ describe('operations', () => {
       operation: 'pacemaker_disable',
       label: 'Disable Pacemaker',
     },
+    {
+      operation: 'database_start',
+      label: 'Database start',
+    },
+    {
+      operation: 'database_stop',
+      label: 'Database stop',
+    },
+    {
+      operation: 'cluster_host_start',
+      label: 'Start cluster host',
+    },
+    {
+      operation: 'cluster_host_stop',
+      label: 'Stop cluster host',
+    },
   ])(`should return the operation $operation label`, ({ operation, label }) => {
     expect(getOperationLabel(operation)).toBe(label);
   });
@@ -94,6 +110,22 @@ describe('operations', () => {
     {
       operation: 'pacemakerdisable@v1',
       name: 'pacemaker_disable',
+    },
+    {
+      operation: 'databasestart@v1',
+      name: 'database_start',
+    },
+    {
+      operation: 'databasestop@v1',
+      name: 'database_stop',
+    },
+    {
+      operation: 'crmclusterstart@v1',
+      name: 'cluster_host_start',
+    },
+    {
+      operation: 'crmclusterstop@v1',
+      name: 'cluster_host_stop',
     },
   ])(
     `should return the operation $operation internal name`,
@@ -141,6 +173,22 @@ describe('operations', () => {
     },
     {
       operation: 'pacemaker_disable',
+      resourceType: 'cluster_host',
+    },
+    {
+      operation: 'database_start',
+      resourceType: 'database',
+    },
+    {
+      operation: 'database_stop',
+      resourceType: 'database',
+    },
+    {
+      operation: 'cluster_host_start',
+      resourceType: 'cluster_host',
+    },
+    {
+      operation: 'cluster_host_stop',
       resourceType: 'cluster_host',
     },
   ])(

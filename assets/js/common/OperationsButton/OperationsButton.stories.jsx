@@ -49,6 +49,13 @@ export const Default = {
 export const Disabled = {
   args: {
     ...Default.args,
+    disabled: true,
+  },
+};
+
+export const ItemDisabled = {
+  args: {
+    ...Default.args,
     operations: Object.assign([], Default.args.operations, {
       0: { ...Default.args.operations[0], disabled: true },
     }),

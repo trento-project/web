@@ -18,6 +18,7 @@ defmodule Trento.SoftwareUpdates.Discovery do
 
   alias Trento.Hosts.Projections.HostReadModel
   alias Trento.SoftwareUpdates.Discovery.DiscoveryResult
+  alias Trento.Support.CommandedUtils
 
   require Trento.SoftwareUpdates.Enums.SoftwareUpdatesHealth, as: SoftwareUpdatesHealth
   require Trento.SoftwareUpdates.Enums.AdvisoryType, as: AdvisoryType
@@ -95,7 +96,7 @@ defmodule Trento.SoftwareUpdates.Discovery do
     |> Enum.each(fn command_payload ->
       command_payload
       |> ClearSoftwareUpdatesDiscovery.new!()
-      |> commanded().dispatch()
+      |> CommandedUtils.correlated_dispatch(:suse_manager_settings)
     end)
 
     clear()
@@ -223,7 +224,7 @@ defmodule Trento.SoftwareUpdates.Discovery do
            health: discovered_health
          }
          |> CompleteSoftwareUpdatesDiscovery.new!()
-         |> commanded().dispatch() do
+         |> CommandedUtils.correlated_dispatch(:suse_manager_settings) do
       :ok ->
         {:ok, :dispatched}
 
@@ -302,6 +303,4 @@ defmodule Trento.SoftwareUpdates.Discovery do
   defp failure_reason_to_atom(_), do: :unknown_discovery_error
 
   defp adapter, do: Application.fetch_env!(:trento, __MODULE__)[:adapter]
-
-  defp commanded, do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]
 end

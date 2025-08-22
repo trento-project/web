@@ -1,4 +1,4 @@
-<div id="trento" />
+<div id="trento" data-ph-capture-attribute-webversion={@version} />
 
 <script>
   const config = {
@@ -14,7 +14,8 @@
       ssoLoginUrl: '<%= raw @sso_login_url %>',
       ssoCallbackUrl: '<%= raw @sso_callback_url %>',
       ssoEnrollmentUrl: '<%= raw @sso_enrollment_url %>',
-      operationsEnabled: <%= @operations_enabled %>
+      operationsEnabled: <%= @operations_enabled %>,
+      webversion: '<%= @version %>'
   };
 </script>
 

@@ -10,6 +10,9 @@ import {
   sortBy,
   map,
   upperCase,
+  filter,
+  overSome,
+  isEmpty,
 } from 'lodash';
 
 import classNames from 'classnames';
@@ -22,6 +25,10 @@ import {
 import {
   SAP_INSTANCE_START,
   SAP_INSTANCE_STOP,
+  SAP_SYSTEM_START,
+  SAP_SYSTEM_STOP,
+  DATABASE_START,
+  DATABASE_STOP,
   getOperationLabel,
   getOperationForbiddenMessage,
 } from '@lib/operations';
@@ -37,7 +44,9 @@ import PageHeader from '@common/PageHeader';
 import {
   OperationForbiddenModal,
   SimpleAcceptanceOperationModal,
+  SapStartStopOperationModal,
 } from '@common/OperationModals';
+import OperationsButton from '@common/OperationsButton';
 
 import DeregistrationModal from '@pages/DeregistrationModal';
 
@@ -48,6 +57,8 @@ import {
   systemHostsTableConfiguration,
   getSystemInstancesTableConfiguration,
 } from './tableConfigs';
+
+const SR_INACTIVE = 'INACTIVE';
 
 const renderType = (t) =>
   t === APPLICATION_TYPE ? 'Application server' : 'HANA Database';
@@ -62,12 +73,18 @@ const getUniqueHosts = (hosts) =>
       .values()
   );
 
-// it includes SAP and HANA instance operations
+// it includes SAP and HANA operations
 const instanceStartStopOperations = [SAP_INSTANCE_START, SAP_INSTANCE_STOP];
+const startStopOperations = [
+  SAP_SYSTEM_START,
+  SAP_SYSTEM_STOP,
+  DATABASE_START,
+  DATABASE_STOP,
+];
 
 const modalInitialState = { open: false, operation: '' };
 
-const closeInstanceModal = (prevState) => ({ ...prevState, open: false });
+const closeOperationModal = (prevState) => ({ ...prevState, open: false });
 
 function SystemReplicationDataPill({
   label,
@@ -93,6 +110,8 @@ export function GenericSystemDetails({
   operationsEnabled = false,
   runningOperations = [],
   getInstanceOperations = noop,
+  getSystemOperations = noop,
+  getSiteOperations = noop,
   onInstanceCleanUp = noop,
   onRequestOperation = noop,
   onCleanForbiddenOperation = noop,
@@ -106,16 +125,42 @@ export function GenericSystemDetails({
     useState(modalInitialState);
   const [currentOperationInstance, setCurrentOperationInstance] =
     useState(undefined);
+  const [currentOperationSite, setCurrentOperationSite] = useState(undefined);
 
   const onCleanUpClick = (instance) => {
     setCleanUpModalOpen(true);
     setInstanceToDeregister(instance);
   };
 
-  const curriedGetInstanceOperations = getInstanceOperations(
+  const instanceGroupIDs = map(system.instances, 'host_id');
+  const systemRunningOperations = filter(
     runningOperations,
+    overSome([
+      { groupID: system.id },
+      ({ groupID }) => instanceGroupIDs.includes(groupID),
+    ])
+  );
+  const operationsDisabled = !isEmpty(systemRunningOperations);
+
+  const curriedGetInstanceOperations = getInstanceOperations(
+    systemRunningOperations,
     setOperationModelOpen,
     setCurrentOperationInstance
+  );
+
+  const systemOperations = getSystemOperations(
+    system,
+    systemRunningOperations,
+    operationsDisabled,
+    setOperationModelOpen
+  );
+
+  const curriedGetSiteOperations = getSiteOperations(
+    system,
+    systemRunningOperations,
+    operationsDisabled,
+    setOperationModelOpen,
+    setCurrentOperationSite
   );
 
   const forbiddenOperation = find(runningOperations, { forbidden: true });
@@ -125,7 +170,10 @@ export function GenericSystemDetails({
   const isForbidden = get(forbiddenOperation, 'forbidden', false);
   const forbiddenErrors = get(forbiddenOperation, 'errors', []);
 
-  const sortedInstances = sortBy(system.instances, ['system_replication_tier']);
+  const sortedInstances = sortBy(system.instances, [
+    'system_replication',
+    'system_replication_tier',
+  ]);
   const sitedInstances = groupBy(
     sortedInstances,
     ({ system_replication_site: site }) => site
@@ -179,16 +227,53 @@ export function GenericSystemDetails({
               params,
             },
           });
-          setOperationModelOpen(closeInstanceModal);
+          setOperationModelOpen(closeOperationModal);
         }}
         onCancel={() => {
-          setOperationModelOpen(closeInstanceModal);
+          setOperationModelOpen(closeOperationModal);
+        }}
+      />
+      <SapStartStopOperationModal
+        operation={operationModalOpen.operation}
+        sid={system.sid}
+        type={type}
+        site={currentOperationSite}
+        isOpen={
+          operationModalOpen.open &&
+          startStopOperations.includes(operationModalOpen.operation)
+        }
+        onRequest={(params) => {
+          onRequestOperation({
+            groupID: system.id,
+            operation: operationModalOpen.operation,
+            requestParams: {
+              ...(type === APPLICATION_TYPE && { sapSystemID: system.id }),
+              ...(type === DATABASE_TYPE && { databaseID: system.id }),
+              params,
+            },
+          });
+          setOperationModelOpen(closeOperationModal);
+        }}
+        onCancel={() => {
+          setOperationModelOpen(closeOperationModal);
         }}
       />
       <div className="flex flex-wrap">
         <div className="flex w-1/2 h-auto overflow-hidden overflow-ellipsis break-words">
           <PageHeader className="font-bold">{title}</PageHeader>
         </div>
+        {operationsEnabled && (
+          <div className="flex w-1/2 justify-end">
+            <div className="flex w-fit whitespace-nowrap">
+              <OperationsButton
+                userAbilities={userAbilities}
+                operations={systemOperations}
+                menuPosition="bottom end"
+                disabled={hasSystemReplication}
+              />
+            </div>
+          </div>
+        )}
       </div>
       <div className="mt-4 bg-white shadow rounded-lg py-4 px-8">
         <ListView
@@ -244,68 +329,84 @@ export function GenericSystemDetails({
         <div className="flex flex-direction-row">
           <h2 className="text-2xl font-bold self-center">Layout</h2>
         </div>
-        {map(sitedInstances, (instances, site) => (
-          <div key={site} className="mt-4 bg-white rounded-lg">
-            <Table
-              config={getSystemInstancesTableConfiguration({
-                type,
-                userAbilities,
-                cleanUpPermittedFor,
-                onCleanUpClick,
-                operationsEnabled,
-                getOperations: curriedGetInstanceOperations,
-              })}
-              data={instances}
-              header={
-                hasSystemReplication && (
-                  <div className="flex py-4 px-5">
-                    <div className="flex w-11/12 space-x-3">
-                      <div className="flex space-x-2 mr-3">
-                        <h3 className="text-l font-bold">{site}</h3>
-                        <Pill className="bg-green-100 text-green-800 !py-0 items-center">
-                          {upperCase(instances[0].system_replication)}
-                        </Pill>
-                      </div>
-                      <SystemReplicationDataPill
-                        label="Tier"
-                        data={instances[0].system_replication_tier}
-                      />
-
-                      {instances[0].system_replication === 'Primary' && (
+        {map(sitedInstances, (instances, site) => {
+          const instance = instances[0];
+          return (
+            <div key={site} className="mt-4 bg-white rounded-lg">
+              <Table
+                config={getSystemInstancesTableConfiguration({
+                  type,
+                  userAbilities,
+                  cleanUpPermittedFor,
+                  onCleanUpClick,
+                  operationsEnabled,
+                  getOperations: curriedGetInstanceOperations,
+                })}
+                data={instances}
+                header={
+                  hasSystemReplication && (
+                    <div className="flex py-4 px-5">
+                      <div className="flex w-11/12 space-x-3">
+                        <div className="flex space-x-2 mr-3">
+                          <h3 className="text-l font-bold">{site}</h3>
+                          <Pill className="bg-green-100 text-green-800 !py-0 items-center">
+                            {upperCase(instance.system_replication)}
+                          </Pill>
+                        </div>
                         <SystemReplicationDataPill
-                          label="Status"
-                          data={instances[0].system_replication_status}
-                          className={getReplicationStatusClasses(
-                            instances[0].system_replication_status
-                          )}
+                          label="Tier"
+                          data={instance.system_replication_tier || '-'}
                         />
-                      )}
-                      {instances[0].system_replication === 'Secondary' && (
-                        <>
+
+                        {instance.system_replication === 'Primary' && (
                           <SystemReplicationDataPill
-                            label="Replicating"
-                            data={instances[0].system_replication_source_site}
-                            className="bg-gray-200 text-gray-500 max-w-32 truncate !inline self-center !py-0.5"
-                          />
-                          <SystemReplicationDataPill
-                            label="Replication Mode"
-                            data={instances[0].system_replication_mode}
-                          />
-                          <SystemReplicationDataPill
-                            label="Operation Mode"
+                            label="Status"
                             data={
-                              instances[0].system_replication_operation_mode
+                              instance.system_replication_status || SR_INACTIVE
                             }
+                            className={getReplicationStatusClasses(
+                              instance.system_replication_status
+                            )}
                           />
-                        </>
+                        )}
+                        {instance.system_replication === 'Secondary' && (
+                          <>
+                            <SystemReplicationDataPill
+                              label="Replicating"
+                              data={
+                                instance.system_replication_source_site || '-'
+                              }
+                              className="bg-gray-200 text-gray-500 max-w-32 truncate !inline self-center !py-0.5"
+                            />
+                            <SystemReplicationDataPill
+                              label="Replication Mode"
+                              data={instance.system_replication_mode}
+                            />
+                            <SystemReplicationDataPill
+                              label="Operation Mode"
+                              data={instance.system_replication_operation_mode}
+                            />
+                          </>
+                        )}
+                      </div>
+                      {operationsEnabled && (
+                        <div className="flex w-1/12 items-center justify-end">
+                          <OperationsButton
+                            text=""
+                            userAbilities={userAbilities}
+                            menuPosition="bottom end"
+                            transparent
+                            operations={curriedGetSiteOperations(site)}
+                          />
+                        </div>
                       )}
                     </div>
-                  </div>
-                )
-              }
-            />
-          </div>
-        ))}
+                  )
+                }
+              />
+            </div>
+          );
+        })}
       </div>
 
       <div className="mt-8">

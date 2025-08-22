@@ -91,6 +91,7 @@ defmodule Trento.Factory do
     ClusterDetailsUpdated,
     ClusterDiscoveredHealthChanged,
     ClusterHealthChanged,
+    ClusterHostStatusChanged,
     ClusterRegistered,
     ClusterTombstoned,
     HostAddedToCluster,
@@ -324,6 +325,13 @@ defmodule Trento.Factory do
     %ClusterDiscoveredHealthChanged{
       cluster_id: Faker.UUID.v4(),
       discovered_health: Health.passing()
+    }
+  end
+
+  def cluster_host_status_changed_event_factory do
+    %ClusterHostStatusChanged{
+      cluster_id: Faker.UUID.v4(),
+      cluster_host_status: ClusterHostStatus.online()
     }
   end
 

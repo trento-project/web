@@ -3,7 +3,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SapInstanceOperationParams do
   require OpenApiSpex
   alias OpenApiSpex.Schema
 
-  defmodule StartStopParams do
+  defmodule SapInstanceStartStopParams do
     @moduledoc false
 
     OpenApiSpex.schema(

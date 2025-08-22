@@ -73,6 +73,7 @@ export const CLUSTER_ROLL_UP_REQUESTED = 'cluster_roll_up_requested';
 export const CLUSTER_TOMBSTONED = 'cluster_tombstoned';
 export const HOST_ADDED_TO_CLUSTER = 'host_added_to_cluster';
 export const HOST_REMOVED_FROM_CLUSTER = 'host_removed_from_cluster';
+export const CLUSTER_HOST_STATUS_CHANGED = 'cluster_host_status_changed';
 
 // SAP System events
 
@@ -126,6 +127,7 @@ export const HOST_OPERATION_REQUESTED = 'host_operation_requested';
 export const CLUSTER_HOST_OPERATION_REQUESTED =
   'cluster_host_operation_requested';
 export const SAP_SYSTEM_OPERATION_REQUESTED = 'sap_system_operation_requested';
+export const DATABASE_OPERATION_REQUESTED = 'database_operation_requested';
 export const OPERATION_COMPLETED = 'operation_completed';
 
 // Check Customization
@@ -473,6 +475,12 @@ export const ACTIVITY_TYPES_CONFIG = {
     message: (_entry) => `Host was removed from cluster`,
     resource: clusterResourceType,
   },
+  [CLUSTER_HOST_STATUS_CHANGED]: {
+    label: 'Cluster Host Status Changed',
+    message: ({ metadata }) =>
+      `Cluster host status changed to ${metadata.cluster_host_status}`,
+    resource: clusterResourceType,
+  },
   // SAP System events
   [APPLICATION_INSTANCE_DEREGISTERED]: {
     label: 'Application Instance Deregistered',
@@ -650,6 +658,12 @@ export const ACTIVITY_TYPES_CONFIG = {
     message: ({ metadata }) =>
       `Operation ${getOperationLabel(metadata.operation)} requested`,
     resource: sapSystemResourceType,
+  },
+  [DATABASE_OPERATION_REQUESTED]: {
+    label: 'Database Operation Requested',
+    message: ({ metadata }) =>
+      `Operation ${getOperationLabel(metadata.operation)} requested`,
+    resource: databaseResourceType,
   },
   [OPERATION_COMPLETED]: {
     label: 'Operation Completed',

@@ -14,6 +14,7 @@ defmodule Trento.Hosts do
     SlesSubscriptionReadModel
   }
 
+  alias Trento.Support.CommandedUtils
   alias Trento.Support.DateService
 
   alias Trento.Hosts.Commands.{
@@ -100,7 +101,7 @@ defmodule Trento.Hosts do
     Logger.debug("Selecting checks, host: #{host_id}")
 
     with {:ok, command} <- SelectHostChecks.new(%{host_id: host_id, checks: checks}) do
-      commanded().dispatch(command)
+      CommandedUtils.dispatch(command)
     end
   end
 
@@ -127,7 +128,7 @@ defmodule Trento.Hosts do
   @spec deregister_host(Ecto.UUID.t(), DateService) ::
           :ok | {:error, :host_alive} | {:error, :host_not_registered}
   def deregister_host(host_id, date_service \\ DateService) do
-    correlated_dispatch(
+    CommandedUtils.correlated_dispatch(
       RequestHostDeregistration.new!(%{host_id: host_id, requested_at: date_service.utc_now()})
     )
   end
@@ -182,13 +183,5 @@ defmodule Trento.Hosts do
       selected_checks,
       :host
     )
-  end
-
-  defp commanded,
-    do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]
-
-  defp correlated_dispatch(command) do
-    correlation_id = Process.get(:correlation_id)
-    commanded().dispatch(command, correlation_id: correlation_id, causation_id: correlation_id)
   end
 end
