@@ -14,6 +14,7 @@ export const initialState = {
   authError: null,
   authInProgress: false,
   analytics_enabled: undefined,
+  analytics_eula_accepted: undefined,
 };
 
 export const userSlice = createSlice({
@@ -46,6 +47,7 @@ export const userSlice = createSlice({
           abilities,
           password_change_requested,
           analytics_enabled,
+          analytics_eula_accepted,
         },
       }
     ) {
@@ -58,6 +60,7 @@ export const userSlice = createSlice({
       state.abilities = abilities;
       state.password_change_requested = password_change_requested;
       state.analytics_enabled = analytics_enabled;
+      state.analytics_eula_accepted = analytics_eula_accepted;
     },
   },
 });

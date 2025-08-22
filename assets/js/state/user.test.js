@@ -52,6 +52,7 @@ describe('user reducer', () => {
       created_at,
       updated_at,
       analytics_enabled,
+      analytics_eula_accepted,
     } = userFactory.build();
 
     const action = setUser({
@@ -63,6 +64,7 @@ describe('user reducer', () => {
       created_at,
       updated_at,
       analytics_enabled,
+      analytics_eula_accepted,
     });
 
     expect(userReducer(initialState, action)).toEqual({
@@ -75,6 +77,7 @@ describe('user reducer', () => {
       created_at,
       updated_at,
       analytics_enabled,
+      analytics_eula_accepted,
     });
   });
 });
