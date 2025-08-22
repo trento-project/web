@@ -60,7 +60,7 @@ defmodule TrentoWeb.V1.SettingsController do
       ok:
         {"API key settings have been successfully updated and saved, including expiration and security configuration.",
          "application/json", Schema.Platform.ApiKeySettings},
-      unprocessable_entity: Schema.UnprocessableEntity.response(),
+      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response(),
       not_found: Schema.NotFound.response()
     ]
 
@@ -95,7 +95,7 @@ defmodule TrentoWeb.V1.SettingsController do
       ok:
         {"Activity Log settings have been successfully updated and saved, including retention period and compliance configuration.",
          "application/json", Schema.Platform.ActivityLogSettings},
-      unprocessable_entity: Schema.UnprocessableEntity.response()
+      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
     ]
 
   def update_activity_log_settings(
@@ -163,7 +163,7 @@ defmodule TrentoWeb.V1.SettingsController do
       created:
         {"SUSE Manager settings have been successfully saved, including credentials and configuration for secure integration.",
          "application/json", Schema.Platform.SuseManagerSettings},
-      unprocessable_entity: Schema.UnprocessableEntity.response()
+      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
     ]
 
   @spec save_suse_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
@@ -190,7 +190,7 @@ defmodule TrentoWeb.V1.SettingsController do
       ok:
         {"SUSE Manager settings have been successfully updated and saved, including credentials and configuration for secure integration.",
          "application/json", Schema.Platform.SuseManagerSettings},
-      unprocessable_entity: Schema.UnprocessableEntity.response()
+      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
     ]
 
   @spec update_suse_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
@@ -296,7 +296,7 @@ defmodule TrentoWeb.V1.SettingsController do
       unauthorized: Schema.Unauthorized.response(),
       forbidden: Schema.Forbidden.response(),
       conflict: Schema.Conflict.response(),
-      unprocessable_entity: Schema.UnprocessableEntity.response()
+      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
     ]
 
   def create_alerting_settings(conn, _params) do
@@ -325,7 +325,7 @@ defmodule TrentoWeb.V1.SettingsController do
       forbidden: Schema.Forbidden.response(),
       not_found: Schema.NotFound.response(),
       conflict: Schema.Conflict.response(),
-      unprocessable_entity: Schema.UnprocessableEntity.response()
+      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
     ]
 
   def update_alerting_settings(conn, _params) do

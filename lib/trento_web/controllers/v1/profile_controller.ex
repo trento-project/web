@@ -42,7 +42,7 @@ defmodule TrentoWeb.V1.ProfileController do
       ok:
         {"Profile update was successful, returning the updated user profile information for account management.",
          "application/json", Schema.User.UserProfile},
-      unprocessable_entity: Schema.UnprocessableEntity.response(),
+      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response(),
       forbidden: Schema.Forbidden.response()
     ]
 
@@ -82,7 +82,7 @@ defmodule TrentoWeb.V1.ProfileController do
       ok:
         {"TOTP enrollment data including QR code and related information for two-factor authentication setup.",
          "application/json", Schema.User.UserTOTPEnrollmentPayload},
-      unprocessable_entity: Schema.UnprocessableEntity.response(),
+      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response(),
       forbidden: Schema.Forbidden.response()
     ]
 
@@ -106,7 +106,7 @@ defmodule TrentoWeb.V1.ProfileController do
       ok:
         {"TOTP enrollment process completed successfully, enabling two-factor authentication for the user account.",
          "application/json", Schema.User.UserTOTPEnrollmentConfirmPayload},
-      unprocessable_entity: Schema.UnprocessableEntity.response(),
+      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response(),
       forbidden: Schema.Forbidden.response()
     ]
 
