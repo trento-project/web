@@ -167,7 +167,11 @@ defmodule Trento.Factory do
   }
 
   alias Trento.UserIdentities.UserIdentity
-  alias Trento.Users.User
+
+  alias Trento.Users.{
+    ApiKey,
+    User
+  }
 
   alias Trento.Operations.V1.OperationCompleted
 
@@ -1329,6 +1333,13 @@ defmodule Trento.Factory do
       user_id: 1,
       uid: Faker.UUID.v4(),
       provider: Faker.Pokemon.name()
+    }
+  end
+
+  def api_key_factory do
+    %ApiKey{
+      name: Faker.UUID.v4(),
+      expire_at: Faker.DateTime.forward(50)
     }
   end
 
