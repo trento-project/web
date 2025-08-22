@@ -35,24 +35,24 @@ defmodule TrentoWeb.Telemetry do
       # Database Metrics
       summary("trento.repo.query.total_time",
         unit: {:native, :millisecond},
-        description: "The sum of the other measurements"
+        description: "The sum of the other measurements."
       ),
       summary("trento.repo.query.decode_time",
         unit: {:native, :millisecond},
-        description: "The time spent decoding the data received from the database"
+        description: "The time spent decoding the data received from the database."
       ),
       summary("trento.repo.query.query_time",
         unit: {:native, :millisecond},
-        description: "The time spent executing the query"
+        description: "The time spent executing the query."
       ),
       summary("trento.repo.query.queue_time",
         unit: {:native, :millisecond},
-        description: "The time spent waiting for a database connection"
+        description: "The time spent waiting for a database connection."
       ),
       summary("trento.repo.query.idle_time",
         unit: {:native, :millisecond},
         description:
-          "The time the connection spent waiting before being checked out for the query"
+          "The time the connection spent waiting before being checked out for the query."
       ),
 
       # VM Metrics
