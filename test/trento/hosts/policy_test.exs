@@ -55,25 +55,25 @@ defmodule Trento.Hosts.PolicyTest do
   end
 
   describe "request_operation" do
-    for operation <- ["saptune_solution_apply", "saptune_solution_change"] do
-      @saptune_operation operation
+    for operation <- ["saptune_solution_apply", "saptune_solution_change", "reboot"] do
+      @operation operation
 
       test "should allow #{operation} operation if the user has #{operation}:host ability" do
-        user = %User{abilities: [%Ability{name: @saptune_operation, resource: "host"}]}
+        user = %User{abilities: [%Ability{name: @operation, resource: "host"}]}
 
-        assert Policy.authorize(:request_operation, user, %{operation: @saptune_operation})
+        assert Policy.authorize(:request_operation, user, %{operation: @operation})
       end
 
       test "should allow #{operation} operation if the user has all:all ability" do
         user = %User{abilities: [%Ability{name: "all", resource: "all"}]}
 
-        assert Policy.authorize(:request_operation, user, %{operation: @saptune_operation})
+        assert Policy.authorize(:request_operation, user, %{operation: @operation})
       end
 
       test "should disallow #{operation} operation if the user does not have #{operation}:host ability" do
         user = %User{abilities: []}
 
-        refute Policy.authorize(:request_operation, user, %{operation: @saptune_operation})
+        refute Policy.authorize(:request_operation, user, %{operation: @operation})
       end
     end
   end
