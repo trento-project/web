@@ -7,11 +7,11 @@ defmodule Trento.Users.ApiKeys do
   alias Trento.Repo
 
   @spec get_api_keys(User.t()) :: [ApiKey.t()]
-  def get_api_keys(%User{deleted_at: nil} = user),
-    do:
-      user
-      |> Repo.preload(:api_keys)
-      |> Map.fetch!(:api_keys)
+  def get_api_keys(%User{deleted_at: nil} = user) do
+    user
+    |> Repo.preload(:api_keys)
+    |> Map.fetch!(:api_keys)
+  end
 
   def get_api_keys(%User{}), do: []
 
