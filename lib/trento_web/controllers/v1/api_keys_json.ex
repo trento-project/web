@@ -3,6 +3,17 @@ defmodule TrentoWeb.V1.ApiKeysJSON do
 
   alias Trento.Users.ApiKey
 
+  def api_keys(%{api_keys: api_keys}),
+    do:
+      Enum.map(
+        api_keys,
+        &%{
+          name: &1.name,
+          created_at: &1.created_at,
+          expire_at: &1.expire_at
+        }
+      )
+
   def new_api_key(%{
         api_key: %ApiKey{
           name: name,

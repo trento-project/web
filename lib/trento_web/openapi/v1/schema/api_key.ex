@@ -4,6 +4,50 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ApiKey do
   require OpenApiSpex
   alias OpenApiSpex.Schema
 
+  defmodule ApiKeyEntry do
+    @moduledoc false
+
+    OpenApiSpex.schema(
+      %{
+        title: "ApiKeyEntry",
+        description: "A User's API Key",
+        type: :object,
+        additionalProperties: false,
+        properties: %{
+          name: %Schema{type: :string, description: "API Key name", nullable: false},
+          expire_at: %Schema{
+            type: :string,
+            format: :"date-time",
+            description: "API Key expiration date",
+            nullable: true
+          },
+          created_at: %Schema{
+            type: :string,
+            format: :"date-time",
+            description: "Date of API Key creation",
+            nullable: false
+          }
+        },
+        required: [:name, :expire_at, :created_at]
+      },
+      struct?: false
+    )
+  end
+
+  defmodule ApiKeyCollection do
+    @moduledoc false
+
+    OpenApiSpex.schema(
+      %{
+        title: "ApiKeyCollection",
+        description: "List of a user's API Keys",
+        type: :array,
+        items: ApiKeyEntry
+      },
+      struct?: false
+    )
+  end
+
   defmodule CreateApiKey do
     @moduledoc false
 

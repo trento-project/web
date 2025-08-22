@@ -13,6 +13,35 @@ defmodule TrentoWeb.V1.ApiKeysControllerTest do
     {:ok, conn: put_req_header(conn, "content-type", "application/json")}
   end
 
+  describe "retrieving api keys" do
+    test "should return an empty list of api keys", %{conn: conn, api_spec: api_spec} do
+      resp =
+        conn
+        |> get("/api/v1/profile/api_keys")
+        |> json_response(:ok)
+        |> assert_schema("ApiKeyCollection", api_spec)
+
+      assert [] == resp
+    end
+
+    test "should return the list of api keys", %{
+      conn: conn,
+      api_spec: api_spec,
+      admin_user: %{id: user_id}
+    } do
+      insert(:api_key, user_id: user_id)
+      insert(:api_key, user_id: user_id, expire_at: nil)
+
+      resp =
+        conn
+        |> get("/api/v1/profile/api_keys")
+        |> json_response(:ok)
+        |> assert_schema("ApiKeyCollection", api_spec)
+
+      assert 2 == length(resp)
+    end
+  end
+
   describe "creating api keys" do
     failing_validation_scenarios = [
       %{
