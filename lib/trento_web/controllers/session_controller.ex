@@ -9,8 +9,8 @@ defmodule TrentoWeb.SessionController do
     Credentials,
     ExternalIdpCallback,
     LoginCredentials,
-    RefreshTokenRequest,
-    RefreshedCredentials
+    RefreshedCredentials,
+    RefreshTokenRequest
   }
 
   alias TrentoWeb.Plugs.AppJWTAuthPlug

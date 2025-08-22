@@ -237,7 +237,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Credentials do
           type: :integer,
           description: "Access token lifetime in seconds.",
           example: 600,
-          minimum: 1,
+          minimum: 1
         }
       },
       required: [:access_token, :refresh_token, :expires_in],
@@ -298,7 +298,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.RefreshedCredentials do
           type: :integer,
           description: "Access token lifetime in seconds.",
           example: 600,
-          minimum: 1,
+          minimum: 1
         }
       },
       required: [:access_token, :expires_in],
