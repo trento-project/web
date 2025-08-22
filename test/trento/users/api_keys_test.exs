@@ -184,4 +184,31 @@ defmodule Trento.Users.ApiKeysTest do
               }} = ApiKeys.create_api_key(other_user, %{name: taken_name})
     end
   end
+
+  describe "retrieving api keys" do
+    test "should not return a deleted user's api keys" do
+      user = insert(:user, deleted_at: Faker.DateTime.backward(3))
+
+      insert_list(3, :api_key, user: user)
+
+      assert [] = ApiKeys.get_api_keys(user)
+    end
+
+    test "should return an empty list of api keys" do
+      users = [insert(:user), insert(:user, api_keys: [])]
+
+      for user <- users do
+        assert [] == ApiKeys.get_api_keys(user)
+      end
+    end
+
+    test "should return a user's api keys" do
+      %User{id: user_id} = user = insert(:user)
+
+      api_key1 = insert(:api_key, user_id: user_id)
+      api_key2 = insert(:api_key, user_id: user_id, expire_at: nil)
+
+      assert [api_key2, api_key1] == ApiKeys.get_api_keys(user)
+    end
+  end
 end
