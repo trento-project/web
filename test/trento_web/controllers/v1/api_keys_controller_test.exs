@@ -1,0 +1,190 @@
+defmodule TrentoWeb.V1.ApiKeysControllerTest do
+  alias Trento.Users.ApiKey
+  use TrentoWeb.ConnCase, async: true
+
+  import Trento.Factory
+  import OpenApiSpex.TestAssertions
+  import Trento.Support.Helpers.AbilitiesTestHelper
+
+  setup :setup_api_spec_v1
+  setup :setup_user
+
+  setup %{conn: conn} do
+    {:ok, conn: put_req_header(conn, "content-type", "application/json")}
+  end
+
+  describe "creating api keys" do
+    test "should fail to create a new api key with invalid data", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      failing_validation_scenarios = [
+        %{
+          name: "empty attributes",
+          request_body: %{},
+          expected_errors: [
+            %{
+              "detail" => "Missing field: name",
+              "source" => %{"pointer" => "/name"},
+              "title" => "Invalid value"
+            }
+          ]
+        },
+        %{
+          name: "nil name",
+          request_body: %{name: nil},
+          expected_errors: [
+            %{
+              "detail" => "null value where string expected",
+              "source" => %{"pointer" => "/name"},
+              "title" => "Invalid value"
+            }
+          ]
+        },
+        %{
+          name: "empty string name",
+          request_body: %{name: ""},
+          expected_errors: [
+            %{
+              "detail" => "can't be blank",
+              "source" => %{"pointer" => "/name"},
+              "title" => "Invalid value"
+            }
+          ]
+        },
+        %{
+          name: "blank name",
+          request_body: %{name: " "},
+          expected_errors: [
+            %{
+              "detail" => "can't be blank",
+              "source" => %{"pointer" => "/name"},
+              "title" => "Invalid value"
+            }
+          ]
+        },
+        %{
+          name: "invalid name - number",
+          request_body: %{name: 42},
+          expected_errors: [
+            %{
+              "detail" => "Invalid string. Got: integer",
+              "source" => %{"pointer" => "/name"},
+              "title" => "Invalid value"
+            }
+          ]
+        },
+        %{
+          name: "invalid name - boolean",
+          request_body: %{name: true},
+          expected_errors: [
+            %{
+              "detail" => "Invalid string. Got: boolean",
+              "source" => %{"pointer" => "/name"},
+              "title" => "Invalid value"
+            }
+          ]
+        },
+        %{
+          name: "invalid expiration date: invalid format",
+          request_body: %{name: Faker.Lorem.word(), expire_at: "123"},
+          expected_errors: [
+            %{
+              "detail" => "Invalid format. Expected :\"date-time\"",
+              "source" => %{"pointer" => "/expire_at"},
+              "title" => "Invalid value"
+            }
+          ]
+        }
+      ]
+
+      for %{request_body: request_body, expected_errors: expected_errors} <-
+            failing_validation_scenarios do
+        resp =
+          conn
+          |> post("/api/v1/profile/api_keys", request_body)
+          |> json_response(:unprocessable_entity)
+
+        assert_schema(resp, "UnprocessableEntity", api_spec)
+
+        assert %{
+                 "errors" => expected_errors
+               } == resp
+      end
+    end
+
+    test "should fail when creating an api key when the name was already taken", %{
+      conn: conn,
+      api_spec: api_spec,
+      admin_user: %{id: user_id}
+    } do
+      %ApiKey{name: taken_name} = insert(:api_key, user_id: user_id)
+
+      resp =
+        conn
+        |> post("/api/v1/profile/api_keys", %{
+          "name" => taken_name
+        })
+        |> json_response(:unprocessable_entity)
+
+      assert_schema(resp, "UnprocessableEntity", api_spec)
+
+      assert %{
+               "errors" => [
+                 %{
+                   "detail" => "has already been taken",
+                   "source" => %{"pointer" => "/name"},
+                   "title" => "Invalid value"
+                 }
+               ]
+             } == resp
+    end
+
+    test "should successfully create an api key", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      scenarios = [
+        %{
+          name: "without expiration - missing field",
+          request_body: %{name: Faker.Lorem.word()}
+        },
+        %{
+          name: "without expiration - nil field",
+          request_body: %{name: Faker.Lorem.word(), expire_at: nil}
+        },
+        %{
+          name: "with expiration date",
+          request_body: %{
+            name: Faker.Lorem.word(),
+            expire_at:
+              2
+              |> Faker.DateTime.forward()
+              |> DateTime.to_iso8601()
+          }
+        }
+      ]
+
+      for %{request_body: %{name: api_key_name, expire_at: expire_at} = request_body} <- scenarios do
+        resp =
+          conn
+          |> post("/api/v1/profile/api_keys", request_body)
+          |> json_response(:created)
+
+        assert_schema(resp, "NewlyCreatedApiKey", api_spec)
+
+        assert %{
+                 "name" => ^api_key_name,
+                 "expire_at" => ^expire_at,
+                 "created_at" => _,
+                 "access_token" => _
+               } = resp
+
+        access_token = resp["access_token"]
+
+        assert is_bitstring(access_token)
+        assert String.length(access_token) > 0
+      end
+    end
+  end
+end
