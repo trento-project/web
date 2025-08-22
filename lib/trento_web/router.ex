@@ -118,13 +118,13 @@ defmodule TrentoWeb.Router do
            HostController,
            :request_checks_execution
 
-      post "/hosts/:id/tags", TagsController, :add_tag,
+      post "/hosts/:id/tags", TagsController, :add_tag_to_host,
         assigns: %{resource_type: :host},
         as: :hosts_tagging
 
       delete "/hosts/:id", HostController, :delete
 
-      delete "/hosts/:id/tags/:value", TagsController, :remove_tag,
+      delete "/hosts/:id/tags/:value", TagsController, :remove_tag_from_host,
         assigns: %{resource_type: :host},
         as: :hosts_tagging
 
@@ -138,19 +138,19 @@ defmodule TrentoWeb.Router do
           SUSEManagerController,
           :errata_details
 
-      post "/clusters/:id/tags", TagsController, :add_tag,
+      post "/clusters/:id/tags", TagsController, :add_tag_to_cluster,
         assigns: %{resource_type: :cluster},
         as: :clusters_tagging
 
-      delete "/clusters/:id/tags/:value", TagsController, :remove_tag,
+      delete "/clusters/:id/tags/:value", TagsController, :remove_tag_from_cluster,
         assigns: %{resource_type: :cluster},
         as: :clusters_tagging
 
-      post "/sap_systems/:id/tags", TagsController, :add_tag,
+      post "/sap_systems/:id/tags", TagsController, :add_tag_to_sap_system,
         assigns: %{resource_type: :sap_system},
         as: :sap_systems_tagging
 
-      delete "/sap_systems/:id/tags/:value", TagsController, :remove_tag,
+      delete "/sap_systems/:id/tags/:value", TagsController, :remove_tag_from_sap_system,
         assigns: %{resource_type: :sap_system},
         as: :sap_systems_tagging
 
@@ -158,11 +158,11 @@ defmodule TrentoWeb.Router do
              SapSystemController,
              :delete_application_instance
 
-      post "/databases/:id/tags", TagsController, :add_tag,
+      post "/databases/:id/tags", TagsController, :add_tag_to_database,
         assigns: %{resource_type: :database},
         as: :databases_tagging
 
-      delete "/databases/:id/tags/:value", TagsController, :remove_tag,
+      delete "/databases/:id/tags/:value", TagsController, :remove_tag_from_database,
         assigns: %{resource_type: :database},
         as: :databases_tagging
 
