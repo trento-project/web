@@ -14,8 +14,7 @@ defmodule TrentoWeb.V1.DatabaseController do
     DatabaseOperationParams,
     Forbidden,
     NotFound,
-    OperationAccepted,
-    UnprocessableEntity
+    OperationAccepted
   }
 
   plug TrentoWeb.Plugs.LoadUserPlug
@@ -100,7 +99,7 @@ defmodule TrentoWeb.V1.DatabaseController do
     responses: [
       no_content: "The database instance has been deregistered.",
       not_found: NotFound.response(),
-      unprocessable_entity: UnprocessableEntity.response()
+      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
     ]
 
   @spec delete_database_instance(Plug.Conn.t(), map) :: {:error, any} | Plug.Conn.t()
@@ -148,7 +147,7 @@ defmodule TrentoWeb.V1.DatabaseController do
       accepted: OperationAccepted.response(),
       not_found: NotFound.response(),
       forbidden: Forbidden.response(),
-      unprocessable_entity: UnprocessableEntity.response()
+      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
     ]
 
   def request_operation(

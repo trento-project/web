@@ -42,7 +42,7 @@ defmodule TrentoWeb.V1.SUSEManagerController do
         {"A comprehensive list of available software updates for the specified host, including all relevant patches and upgradable packages.",
          "application/json", AvailableSoftwareUpdatesResponse},
       not_found: Schema.NotFound.response(),
-      unprocessable_entity: Schema.UnprocessableEntity.response()
+      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
     ]
 
   @spec software_updates(Plug.Conn.t(), any) :: Plug.Conn.t()

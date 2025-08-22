@@ -18,8 +18,7 @@ defmodule TrentoWeb.V1.HostController do
     Forbidden,
     HostOperationParams,
     NotFound,
-    OperationAccepted,
-    UnprocessableEntity
+    OperationAccepted
   }
 
   require Logger
@@ -84,7 +83,7 @@ defmodule TrentoWeb.V1.HostController do
     responses: [
       no_content: "The host has been deregistered.",
       not_found: NotFound.response(),
-      unprocessable_entity: UnprocessableEntity.response()
+      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
     ]
 
   @spec delete(Plug.Conn.t(), map) :: Plug.Conn.t()
@@ -124,7 +123,7 @@ defmodule TrentoWeb.V1.HostController do
          }},
       not_found: NotFound.response(),
       bad_request: BadRequest.response(),
-      unprocessable_entity: UnprocessableEntity.response()
+      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
     ]
 
   def heartbeat(conn, %{id: id}) do
@@ -162,7 +161,7 @@ defmodule TrentoWeb.V1.HostController do
            example: %{}
          }},
       not_found: NotFound.response(),
-      unprocessable_entity: UnprocessableEntity.response()
+      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
     ]
 
   def select_checks(conn, %{id: host_id}) do
@@ -197,7 +196,7 @@ defmodule TrentoWeb.V1.HostController do
       accepted:
         "Checks execution request for the specified host has been accepted and scheduled for processing.",
       not_found: NotFound.response(),
-      unprocessable_entity: UnprocessableEntity.response()
+      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
     ]
 
   def request_checks_execution(conn, %{id: host_id}) do
@@ -243,7 +242,7 @@ defmodule TrentoWeb.V1.HostController do
       accepted: OperationAccepted.response(),
       not_found: NotFound.response(),
       forbidden: Forbidden.response(),
-      unprocessable_entity: UnprocessableEntity.response()
+      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
     ]
 
   def request_operation(%{assigns: %{host: host, operation: operation}} = conn, _)

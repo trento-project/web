@@ -15,8 +15,7 @@ defmodule TrentoWeb.V1.SapSystemController do
     NotFound,
     OperationAccepted,
     SapInstanceOperationParams,
-    SapSystemOperationParams,
-    UnprocessableEntity
+    SapSystemOperationParams
   }
 
   plug TrentoWeb.Plugs.LoadUserPlug
@@ -109,7 +108,7 @@ defmodule TrentoWeb.V1.SapSystemController do
     responses: [
       no_content: "The application instance has been deregistered.",
       not_found: NotFound.response(),
-      unprocessable_entity: UnprocessableEntity.response()
+      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
     ]
 
   @spec delete_application_instance(Plug.Conn.t(), map) :: {:error, any} | Plug.Conn.t()
@@ -180,7 +179,7 @@ defmodule TrentoWeb.V1.SapSystemController do
       accepted: OperationAccepted.response(),
       not_found: NotFound.response(),
       forbidden: Forbidden.response(),
-      unprocessable_entity: UnprocessableEntity.response()
+      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
     ]
 
   def request_instance_operation(
@@ -238,7 +237,7 @@ defmodule TrentoWeb.V1.SapSystemController do
       accepted: OperationAccepted.response(),
       not_found: NotFound.response(),
       forbidden: Forbidden.response(),
-      unprocessable_entity: UnprocessableEntity.response()
+      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
     ]
 
   def request_operation(
