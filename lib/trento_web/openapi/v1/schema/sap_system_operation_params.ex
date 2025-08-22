@@ -43,7 +43,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SapSystemOperationParams do
         "Request parameters for SAP system operations, supporting actions such as starting or stopping system instances with configurable options.",
       type: :object,
       oneOf: [
-        StartStopParams
+        TrentoWeb.OpenApi.V1.Schema.SapSystemOperationParams.StartStopParams
       ],
       example: %{
         timeout: 300
