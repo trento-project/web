@@ -54,28 +54,41 @@ defmodule Trento.Operations.ApplicationInstancePolicyTest do
 
     test "should authorize operation if the cluster is in maintenance mode" do
       cluster_name = Faker.StarWars.character()
+      resource_id = Faker.UUID.v4()
 
       scenarios = [
         %{maintenance_mode: true, result: :ok},
         %{
           maintenance_mode: false,
           result:
-            {:error, ["Cluster #{cluster_name} operating this host is not in maintenance mode"]}
+            {:error,
+             [
+               "Cluster #{cluster_name} or resource #{resource_id} operating this host are not in maintenance mode"
+             ]}
         }
       ]
 
       for %{maintenance_mode: maintenance_mode, result: result} <- scenarios do
         sap_systems = build_list(1, :ascs_ers_cluster_sap_system)
 
+        [%{sid: sid, instance_number: instance_number}] =
+          clustered_sap_instances =
+          build_list(1, :clustered_sap_instance, resource_id: resource_id)
+
+        resources =
+          build_list(1, :cluster_resource,
+            id: resource_id,
+            sid: sid,
+            type: "ocf::heartbeat:SAPInstance",
+            managed: true
+          )
+
         cluster_details =
           build(:ascs_ers_cluster_details,
             maintenance_mode: maintenance_mode,
-            sap_systems: sap_systems
+            sap_systems: sap_systems,
+            resources: resources
           )
-
-        [%{sid: sid, instance_number: instance_number}] =
-          clustered_sap_instances =
-          build_list(1, :clustered_sap_instance)
 
         cluster =
           build(:cluster,
@@ -93,9 +106,7 @@ defmodule Trento.Operations.ApplicationInstancePolicyTest do
           )
 
         assert result ==
-                 ApplicationInstancePolicy.authorize_operation(:maintenance, instance, %{
-                   cluster_resource_id: nil
-                 })
+                 ApplicationInstancePolicy.authorize_operation(:maintenance, instance, %{})
       end
     end
 
@@ -130,7 +141,7 @@ defmodule Trento.Operations.ApplicationInstancePolicyTest do
 
         [%{instance_number: instance_number}] =
           clustered_sap_instances =
-          build_list(1, :clustered_sap_instance, sid: sid)
+          build_list(1, :clustered_sap_instance, sid: sid, resource_id: resource_id)
 
         cluster =
           build(:cluster,
@@ -187,14 +198,26 @@ defmodule Trento.Operations.ApplicationInstancePolicyTest do
 
     test "should forbid operation if the application instance is not stopped and cluster is not in maintenance" do
       cluster_name = Faker.StarWars.character()
-      [%{sid: sid}] = sap_systems = build_list(1, :ascs_ers_cluster_sap_system)
 
-      cluster_details =
-        build(:ascs_ers_cluster_details, maintenance_mode: false, sap_systems: sap_systems)
+      [%{id: resource_id, sid: sid}] =
+        resources =
+        build_list(1, :cluster_resource,
+          type: "ocf::heartbeat:SAPInstance",
+          managed: true
+        )
 
       [%{instance_number: instance_number}] =
         clustered_sap_instances =
-        build_list(1, :clustered_sap_instance, sid: sid)
+        build_list(1, :clustered_sap_instance, sid: sid, resource_id: resource_id)
+
+      sap_systems = build_list(1, :ascs_ers_cluster_sap_system, sid: sid)
+
+      cluster_details =
+        build(:ascs_ers_cluster_details,
+          maintenance_mode: false,
+          sap_systems: sap_systems,
+          resources: resources
+        )
 
       cluster =
         build(:cluster,
@@ -215,11 +238,9 @@ defmodule Trento.Operations.ApplicationInstancePolicyTest do
       assert {:error,
               [
                 "Instance #{instance_number} of SAP system #{sid} is not stopped",
-                "Cluster #{cluster_name} operating this host is not in maintenance mode"
+                "Cluster #{cluster_name} or resource #{resource_id} operating this host are not in maintenance mode"
               ]} ==
-               ApplicationInstancePolicy.authorize_operation(:maintenance, instance, %{
-                 cluster_resource_id: nil
-               })
+               ApplicationInstancePolicy.authorize_operation(:maintenance, instance, %{})
     end
   end
 
