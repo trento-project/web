@@ -4,6 +4,15 @@ defmodule TrentoWeb.SessionController do
   alias Trento.Users
   alias Trento.Users.User
   alias TrentoWeb.OpenApi.V1.Schema
+
+  alias TrentoWeb.OpenApi.V1.Schema.{
+    Credentials,
+    ExternalIdpCallback,
+    LoginCredentials,
+    RefreshedCredentials,
+    RefreshTokenRequest
+  }
+
   alias TrentoWeb.Plugs.AppJWTAuthPlug
 
   use TrentoWeb, :controller
@@ -23,60 +32,11 @@ defmodule TrentoWeb.SessionController do
     security: [],
     request_body:
       {"Login request containing user credentials for authentication and token issuance.",
-       "application/json",
-       %OpenApiSpex.Schema{
-         description: "User login credentials schema.",
-         type: :object,
-         additionalProperties: false,
-         example: %{
-           username: "admin",
-           password: "thepassword"
-         },
-         properties: %{
-           username: %OpenApiSpex.Schema{
-             type: :string,
-             example: "admin"
-           },
-           password: %OpenApiSpex.Schema{
-             type: :string,
-             example: "thepassword"
-           },
-           totp_code: %OpenApiSpex.Schema{
-             type: :string,
-             example: "123456"
-           }
-         }
-       }},
+       "application/json", LoginCredentials},
     responses: [
       ok:
         {"Authentication result with access and refresh tokens for secure API usage.",
-         "application/json",
-         %OpenApiSpex.Schema{
-           description:
-             "Successful authentication returns access and refresh tokens for secure API usage. The response includes token expiration details and is suitable for session management.",
-           type: :object,
-           example: %{
-             expires_in: 600,
-             access_token:
-               "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTU1NjY5MiwiaWF0IjoxNjcxNTQ5NDkyLCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwOGlxMmkxNnRlbHNycWE4MDAwMWM4IiwibmJmIjoxNjcxNTQ5NDkyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYtTrbVcCEO_UgIkHn6A",
-             refresh_token:
-               "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTU1NjY5MiwiaWF0IjoxNjcxNTQ5NDkyLCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwOGlxMmkxNnRlbHNycWE4MDAwMWM4IiwibmJmIjoxNjcxNTQ5NDkyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYtTrbVcCEO_UgIkHn6A"
-           },
-           properties: %{
-             access_token: %OpenApiSpex.Schema{
-               type: :string,
-               example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-             },
-             refresh_token: %OpenApiSpex.Schema{
-               type: :string,
-               example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-             },
-             expires_in: %OpenApiSpex.Schema{
-               type: :integer,
-               example: 600
-             }
-           }
-         }},
+         "application/json", Credentials},
       unauthorized: Schema.Unauthorized.response(),
       unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
     ]
@@ -105,45 +65,11 @@ defmodule TrentoWeb.SessionController do
     security: [],
     request_body:
       {"Request containing refresh token for obtaining new access credentials.",
-       "application/json",
-       %OpenApiSpex.Schema{
-         description: "Refresh token credentials for getting new access token.",
-         type: :object,
-         example: %{
-           refresh_token:
-             "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTU1NjY5MiwiaWF0IjoxNjcxNTQ5NDkyLCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwOGlxMmkxNnRlbHNycWE4MDAwMWM4IiwibmJmIjoxNjcxNTQ5NDkyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYtTrbVcCEO_UgIkHn6A"
-         },
-         properties: %{
-           refresh_token: %OpenApiSpex.Schema{
-             type: :string,
-             example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-           }
-         }
-       }},
+       "application/json", RefreshTokenRequest},
     responses: [
       ok:
         {"Refreshed authentication result with new access token for continued secure API usage.",
-         "application/json",
-         %OpenApiSpex.Schema{
-           description:
-             "A valid refresh token returns new access credentials for continued secure API usage. The response includes updated token expiration information for session management.",
-           type: :object,
-           example: %{
-             expires_in: 600,
-             access_token:
-               "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTU1NjY5MiwiaWF0IjoxNjcxNTQ5NDkyLCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwOGlxMmkxNnRlbHNycWE4MDAwMWM4IiwibmJmIjoxNjcxNTQ5NDkyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYtTrbVcCEO_UgIkHn6A"
-           },
-           properties: %{
-             access_token: %OpenApiSpex.Schema{
-               type: :string,
-               example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-             },
-             expires_in: %OpenApiSpex.Schema{
-               type: :integer,
-               example: 600
-             }
-           }
-         }}
+         "application/json", RefreshedCredentials}
     ]
 
   def refresh(conn, %{"refresh_token" => refresh_token}) do
@@ -166,26 +92,7 @@ defmodule TrentoWeb.SessionController do
     security: [],
     request_body:
       {"Request containing identity provider credentials and authorization code for external authentication.",
-       "application/json",
-       %OpenApiSpex.Schema{
-         description: "User identity provider enrollment credentials with authorization code.",
-         type: :object,
-         example: %{
-           code: "kyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYt",
-           session_state: "frHteBttgtW8706m7nqYC6ruYt"
-         },
-         properties: %{
-           code: %OpenApiSpex.Schema{
-             type: :string,
-             example: "kyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYt"
-           },
-           session_state: %OpenApiSpex.Schema{
-             type: :string,
-             example: "frHteBttgtW8706m7nqYC6ruYt"
-           }
-         },
-         required: [:code, :session_state]
-       }},
+       "application/json", ExternalIdpCallback},
     parameters: [
       provider: [
         in: :path,
@@ -198,28 +105,7 @@ defmodule TrentoWeb.SessionController do
       unauthorized: Schema.Unauthorized.response(),
       ok:
         {"Authentication result from external identity provider with access and refresh tokens.",
-         "application/json",
-         %OpenApiSpex.Schema{
-           description:
-             "Successful authentication with an external identity provider returns access and refresh tokens for secure platform usage. The response is suitable for federated identity management and session handling.",
-           type: :object,
-           example: %{
-             access_token:
-               "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTU1NjY5MiwiaWF0IjoxNjcxNTQ5NDkyLCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwOGlxMmkxNnRlbHNycWE4MDAwMWM4IiwibmJmIjoxNjcxNTQ5NDkyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYtTrbVcCEO_UgIkHn6A",
-             refresh_token:
-               "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTU1NjY5MiwiaWF0IjoxNjcxNTQ5NDkyLCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwOGlxMmkxNnRlbHNycWE4MDAwMWM4IiwibmJmIjoxNjcxNTQ5NDkyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYtTrbVcCEO_UgIkHn6A"
-           },
-           properties: %{
-             access_token: %OpenApiSpex.Schema{
-               type: :string,
-               example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-             },
-             refresh_token: %OpenApiSpex.Schema{
-               type: :string,
-               example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-             }
-           }
-         }}
+         "application/json", Credentials}
     ]
 
   def callback(%{body_params: body_params} = conn, %{"provider" => provider}) do
@@ -265,28 +151,7 @@ defmodule TrentoWeb.SessionController do
       unprocessable_entity: OpenApiSpex.JsonErrorResponse.response(),
       ok:
         {"Authentication result using SAML identity provider with access and refresh tokens for platform access.",
-         "application/json",
-         %OpenApiSpex.Schema{
-           description:
-             "Authentication using SAML returns access and refresh tokens for secure platform access. The response supports single sign-on and federated identity management for user sessions.",
-           type: :object,
-           example: %{
-             access_token:
-               "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTU1NjY5MiwiaWF0IjoxNjcxNTQ5NDkyLCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwOGlxMmkxNnRlbHNycWE4MDAwMWM4IiwibmJmIjoxNjcxNTQ5NDkyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYtTrbVcCEO_UgIkHn6A",
-             refresh_token:
-               "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTU1NjY5MiwiaWF0IjoxNjcxNTQ5NDkyLCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwOGlxMmkxNnRlbHNycWE4MDAwMWM4IiwibmJmIjoxNjcxNTQ5NDkyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYtTrbVcCEO_UgIkHn6A"
-           },
-           properties: %{
-             access_token: %OpenApiSpex.Schema{
-               type: :string,
-               example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-             },
-             refresh_token: %OpenApiSpex.Schema{
-               type: :string,
-               example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-             }
-           }
-         }}
+         "application/json", Credentials}
     ]
 
   def saml_callback(conn, %{"provider" => saml_provider}) do
