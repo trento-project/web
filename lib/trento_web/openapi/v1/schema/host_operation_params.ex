@@ -30,7 +30,6 @@ defmodule TrentoWeb.OpenApi.V1.Schema.HostOperationParams do
       title: "HostOperationParams",
       description:
         "Represents the parameters for a host operation request, including actions such as applying Saptune solutions for system management.",
-      type: :object,
       oneOf: [
         SaptuneSolutionApplyParams
       ],

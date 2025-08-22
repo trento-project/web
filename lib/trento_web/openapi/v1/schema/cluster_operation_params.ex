@@ -46,7 +46,6 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ClusterOperationParams do
       title: "ClusterOperationParams",
       description:
         "Represents the parameters for a cluster operation request, including maintenance changes for resources or nodes.",
-      type: :object,
       oneOf: [
         ClusterMaintenanceChangeParams
       ],
