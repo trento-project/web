@@ -65,7 +65,6 @@ defmodule TrentoWeb.V1.ActivityLogController do
           "Filters Activity Log entries by one or more actors, allowing users to view actions performed by specific individuals or system accounts.",
         schema: %OpenApiSpex.Schema{
           type: :array,
-          items: %OpenApiSpex.Schema{type: :string},
           example: ["john.doe@example.com", "admin@example.com"]
         },
         required: false,
@@ -88,7 +87,6 @@ defmodule TrentoWeb.V1.ActivityLogController do
           "Filters Activity Log entries by one or more event types, enabling users to focus on specific categories of system activity.",
         schema: %OpenApiSpex.Schema{
           type: :array,
-          items: %OpenApiSpex.Schema{type: :string},
           example: ["host_registered", "user_login"]
         },
         required: false,
@@ -100,7 +98,6 @@ defmodule TrentoWeb.V1.ActivityLogController do
           "Filters Activity Log entries by severity level, allowing users to prioritize or review events based on their importance or impact.",
         schema: %OpenApiSpex.Schema{
           type: :array,
-          items: %OpenApiSpex.Schema{type: :string},
           default: ["debug", "info", "warning", "critical"]
         },
         required: false
