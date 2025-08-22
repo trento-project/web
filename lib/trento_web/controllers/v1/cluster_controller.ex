@@ -15,7 +15,8 @@ defmodule TrentoWeb.V1.ClusterController do
     ClusterOperationParams,
     Forbidden,
     NotFound,
-    OperationAccepted
+    OperationAccepted,
+    UnprocessableEntity
   }
 
   plug TrentoWeb.Plugs.LoadUserPlug
@@ -42,13 +43,14 @@ defmodule TrentoWeb.V1.ClusterController do
   action_fallback TrentoWeb.FallbackController
 
   operation :list,
-    summary: "List Pacemaker Clusters",
+    summary: "List Pacemaker Clusters.",
     tags: ["Target Infrastructure"],
-    description: "List all the discovered Pacemaker Clusters on the target infrastructure",
+    description:
+      "Retrieves a comprehensive list of all Pacemaker Clusters discovered on the target infrastructure, supporting monitoring and management tasks for administrators.",
     responses: [
       ok:
-        {"A collection of the discovered Pacemaker Clusters", "application/json",
-         Cluster.PacemakerClustersCollection}
+        {"Comprehensive list of all Pacemaker Clusters discovered on the target infrastructure for monitoring and management.",
+         "application/json", Cluster.PacemakerClustersCollection}
     ]
 
   def list(conn, _) do
@@ -58,21 +60,35 @@ defmodule TrentoWeb.V1.ClusterController do
   end
 
   operation :request_checks_execution,
-    summary: "Request Checks Execution for a Cluster",
+    summary: "Request Checks Execution for a Cluster.",
     tags: ["Checks"],
-    description: "Trigger execution of the latest Checks Selection on the target infrastructure",
+    description:
+      "Initiates the execution of the most recently selected Checks for a specified cluster on the target infrastructure, enabling automated validation and compliance assessment.",
     parameters: [
       cluster_id: [
         in: :path,
+        description:
+          "Unique identifier of the cluster for which the Checks execution is being requested. This value must be a valid UUID string.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :string, format: :uuid}
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          format: :uuid,
+          example: "c1a2b3c4-d5e6-7890-abcd-ef1234567890"
+        }
       ]
     ],
     responses: [
-      accepted: "The Command has been accepted and the Requested Cluster execution is scheduled",
+      accepted:
+        {"Checks execution request for the specified cluster has been accepted and scheduled for processing.",
+         "application/json",
+         %OpenApiSpex.Schema{
+           type: :object,
+           properties: %{},
+           example: %{}
+         }},
       not_found: NotFound.response(),
       bad_request: BadRequest.response(),
-      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
+      unprocessable_entity: UnprocessableEntity.response()
     ]
 
   def request_checks_execution(conn, %{cluster_id: cluster_id}) do
@@ -84,22 +100,36 @@ defmodule TrentoWeb.V1.ClusterController do
   end
 
   operation :select_checks,
-    summary: "Select Checks for a Cluster",
+    summary: "Select Checks for a Cluster.",
     tags: ["Checks"],
-    description: "Select the Checks eligible for execution on the target infrastructure",
+    description:
+      "Allows users to select which Checks are eligible for execution on a specific cluster within the target infrastructure, supporting custom validation workflows.",
     parameters: [
       cluster_id: [
         in: :path,
+        description:
+          "Unique identifier of the cluster for which Checks selection is being performed. This value must be a valid UUID string.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :string, format: :uuid}
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          format: :uuid,
+          example: "c1a2b3c4-d5e6-7890-abcd-ef1234567890"
+        }
       ]
     ],
-    request_body: {"Checks Selection", "application/json", Checks.ChecksSelectionRequest},
+    request_body: {"Checks Selection.", "application/json", Checks.ChecksSelectionRequest},
     responses: [
-      accepted: "The Selection has been successfully collected",
+      accepted:
+        {"Selected checks for the cluster have been successfully collected and are ready for execution.",
+         "application/json",
+         %OpenApiSpex.Schema{
+           type: :object,
+           properties: %{},
+           example: %{}
+         }},
       not_found: NotFound.response(),
       bad_request: BadRequest.response(),
-      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
+      unprocessable_entity: UnprocessableEntity.response()
     ]
 
   def select_checks(conn, %{cluster_id: cluster_id}) do
@@ -113,27 +143,41 @@ defmodule TrentoWeb.V1.ClusterController do
   end
 
   operation :request_operation,
-    summary: "Request operation for a Cluster",
+    summary: "Request operation for a Cluster.",
     tags: ["Operations"],
-    description: "Request operation for a Cluster",
+    description:
+      "Submits a request to perform a specific operation on a cluster, such as maintenance or configuration changes, supporting automated infrastructure management.",
     parameters: [
       id: [
         in: :path,
+        description:
+          "Unique identifier of the cluster on which the operation will be performed. This value must be a valid UUID string.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :string, format: :uuid}
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          format: :uuid,
+          example: "c1a2b3c4-d5e6-7890-abcd-ef1234567890"
+        }
       ],
       operation: [
         in: :path,
+        description:
+          "Specifies the type of operation to be performed on the cluster, such as maintenance or configuration change.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :string}
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          example: "cluster_maintenance_change"
+        }
       ]
     ],
-    request_body: {"Params", "application/json", ClusterOperationParams},
+    request_body:
+      {"Request containing parameters for the specified cluster operation.", "application/json",
+       ClusterOperationParams},
     responses: [
       accepted: OperationAccepted.response(),
       not_found: NotFound.response(),
       forbidden: Forbidden.response(),
-      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
+      unprocessable_entity: UnprocessableEntity.response()
     ]
 
   def request_operation(%{assigns: %{cluster: cluster, operation: operation}} = conn, _) do
@@ -148,34 +192,49 @@ defmodule TrentoWeb.V1.ClusterController do
   end
 
   operation :request_host_operation,
-    summary: "Request operation for a Cluster host",
+    summary: "Request operation for a Cluster host.",
     tags: ["Operations"],
-    description: "Request operation for a Cluster host",
+    description:
+      "Submits a request to perform a specific operation on a host within a cluster, supporting targeted maintenance or configuration changes for individual hosts.",
     parameters: [
       id: [
         in: :path,
         required: true,
-        description: "Cluster's identifier",
-        type: %OpenApiSpex.Schema{type: :string, format: :uuid}
+        description:
+          "Unique identifier of the cluster containing the host. This value must be a valid UUID string.",
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          format: :uuid,
+          example: "c1a2b3c4-d5e6-7890-abcd-ef1234567890"
+        }
       ],
       host_id: [
         in: :path,
         required: true,
-        description: "Host's identifier",
-        type: %OpenApiSpex.Schema{type: :string, format: :uuid}
+        description:
+          "Unique identifier of the host within the cluster on which the operation will be performed. This value must be a valid UUID string.",
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          format: :uuid,
+          example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
+        }
       ],
       operation: [
         in: :path,
         required: true,
-        description: "Operation to be performed on the cluster's host",
-        type: %OpenApiSpex.Schema{type: :string}
+        description:
+          "Specifies the type of operation to be performed on the cluster's host, such as enabling or disabling pacemaker services.",
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          example: "pacemaker_enable"
+        }
       ]
     ],
     responses: [
       accepted: OperationAccepted.response(),
       not_found: NotFound.response(),
       forbidden: Forbidden.response(),
-      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
+      unprocessable_entity: UnprocessableEntity.response()
     ]
 
   def request_host_operation(
