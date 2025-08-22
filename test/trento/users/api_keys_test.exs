@@ -191,7 +191,7 @@ defmodule Trento.Users.ApiKeysTest do
 
       insert_list(3, :api_key, user: user)
 
-      assert [] = ApiKeys.get_api_keys(user)
+      assert [] == ApiKeys.get_api_keys(user)
     end
 
     test "should return an empty list of api keys" do
