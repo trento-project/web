@@ -144,7 +144,6 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Provider do
     OpenApiSpex.schema(
       %{
         title: "ProviderMetadata",
-        type: :object,
         nullable: true,
         description:
           "Represents detected metadata for any supported cloud provider, including AWS, Azure, or GCP, to support infrastructure identification and management.",

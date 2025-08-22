@@ -34,7 +34,6 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SapInstanceOperationParams do
       title: "SapInstanceOperationParams",
       description:
         "Request parameters for SAP instance operations, supporting flexible control over instance lifecycle actions.",
-      type: :object,
       oneOf: [
         TrentoWeb.OpenApi.V1.Schema.SapInstanceOperationParams.SapInstanceStartStopParams
       ],

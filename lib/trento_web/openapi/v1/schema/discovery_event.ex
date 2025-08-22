@@ -20,6 +20,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.DiscoveryEvent do
         },
         discovery_type: %Schema{type: :string, example: "host_discovery"},
         payload: %Schema{
+          nullable: true,
           oneOf: [%Schema{type: :object}, %Schema{type: :array, items: %Schema{type: :object}}]
         }
       },
