@@ -47,50 +47,54 @@ defmodule Trento.Users.ApiKeysTest do
                )
     end
 
-    test "should not allow creating an api key with invalid data" do
-      %User{id: user_id} = user = insert(:user)
+    failing_validation_scenarios = [
+      %{
+        name: "empty attributes",
+        attrs: %{},
+        expected_errors: [name: {"can't be blank", [validation: :required]}]
+      },
+      %{
+        name: "nil name",
+        attrs: %{name: nil},
+        expected_errors: [name: {"can't be blank", [validation: :required]}]
+      },
+      %{
+        name: "empty string name",
+        attrs: %{name: ""},
+        expected_errors: [name: {"can't be blank", [validation: :required]}]
+      },
+      %{
+        name: "blank name",
+        attrs: %{name: " "},
+        expected_errors: [name: {"can't be blank", [validation: :required]}]
+      },
+      %{
+        name: "invalid name - number",
+        attrs: %{name: 42},
+        expected_errors: [name: {"is invalid", [type: :string, validation: :cast]}]
+      },
+      %{
+        name: "invalid name - boolean",
+        attrs: %{name: true},
+        expected_errors: [name: {"is invalid", [type: :string, validation: :cast]}]
+      },
+      %{
+        name: "invalid expiration date: invalid format",
+        attrs: %{name: Faker.Lorem.word(), expire_at: "123"},
+        expected_errors: [
+          expire_at: {"is invalid", [type: :utc_datetime_usec, validation: :cast]}
+        ]
+      }
+    ]
 
-      failing_validation_scenarios = [
-        %{
-          name: "empty attributes",
-          attrs: %{},
-          expected_errors: [name: {"can't be blank", [validation: :required]}]
-        },
-        %{
-          name: "nil name",
-          attrs: %{name: nil},
-          expected_errors: [name: {"can't be blank", [validation: :required]}]
-        },
-        %{
-          name: "empty string name",
-          attrs: %{name: ""},
-          expected_errors: [name: {"can't be blank", [validation: :required]}]
-        },
-        %{
-          name: "blank name",
-          attrs: %{name: " "},
-          expected_errors: [name: {"can't be blank", [validation: :required]}]
-        },
-        %{
-          name: "invalid name - number",
-          attrs: %{name: 42},
-          expected_errors: [name: {"is invalid", [type: :string, validation: :cast]}]
-        },
-        %{
-          name: "invalid name - boolean",
-          attrs: %{name: true},
-          expected_errors: [name: {"is invalid", [type: :string, validation: :cast]}]
-        },
-        %{
-          name: "invalid expiration date: invalid format",
-          attrs: %{name: Faker.Lorem.word(), expire_at: "123"},
-          expected_errors: [
-            expire_at: {"is invalid", [type: :utc_datetime_usec, validation: :cast]}
-          ]
-        }
-      ]
+    for %{name: name} = failing_validation_scenario <- failing_validation_scenarios do
+      @failing_validation_scenario failing_validation_scenario
 
-      for %{attrs: attrs, expected_errors: expected_errors} <- failing_validation_scenarios do
+      test "should not allow creating an api key with invalid data - #{name}" do
+        %User{id: user_id} = user = insert(:user)
+
+        %{attrs: attrs, expected_errors: expected_errors} = @failing_validation_scenario
+
         assert {:error, %Ecto.Changeset{errors: ^expected_errors}} =
                  ApiKeys.create_api_key(user, attrs)
 
@@ -109,35 +113,40 @@ defmodule Trento.Users.ApiKeysTest do
                })
     end
 
-    test "should allow creating an api key" do
-      %User{id: user_id} = user = insert(:user)
-
-      scenarios = [
-        %{
-          name: "without expiration - missing field",
-          attrs: %{name: Faker.Lorem.word()}
-        },
-        %{
-          name: "without expiration - nil field",
-          attrs: %{name: Faker.Lorem.word(), expire_at: nil}
-        },
-        %{
-          name: "with expiration as string",
-          attrs: %{
-            name: Faker.Lorem.word(),
-            expire_at:
-              2
-              |> Faker.DateTime.forward()
-              |> DateTime.to_iso8601()
-          }
-        },
-        %{
-          name: "with expiration as date time",
-          attrs: %{name: Faker.Lorem.word(), expire_at: Faker.DateTime.forward(3)}
+    scenarios = [
+      %{
+        name: "without expiration - missing field",
+        attrs: %{name: Faker.Lorem.word()}
+      },
+      %{
+        name: "without expiration - nil field",
+        attrs: %{name: Faker.Lorem.word(), expire_at: nil}
+      },
+      %{
+        name: "with expiration as string",
+        attrs: %{
+          name: Faker.Lorem.word(),
+          expire_at:
+            2
+            |> Faker.DateTime.forward()
+            |> DateTime.to_iso8601()
         }
-      ]
+      },
+      %{
+        name: "with expiration as date time",
+        attrs: %{name: Faker.Lorem.word(), expire_at: Faker.DateTime.forward(3)}
+      }
+    ]
 
-      for %{attrs: %{name: api_key_name, expire_at: expire_at} = attrs} <- scenarios do
+    for %{name: name} = scenario <- scenarios do
+      @scenario scenario
+      test "should allow creating an api key - #{name}" do
+        %User{id: user_id} = user = insert(:user)
+
+        %{attrs: %{name: api_key_name} = attrs} = @scenario
+
+        expire_at = Map.get(attrs, :expire_at, nil)
+
         expected_expiration =
           case expire_at do
             nil ->
