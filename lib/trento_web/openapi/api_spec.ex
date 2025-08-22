@@ -66,16 +66,59 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
           paths: build_paths_for_version(unquote(api_version), router),
           tags: [
             %Tag{
-              name: "Target Infrastructure",
-              description: "Providing access to the discovered target infrastructure"
+              name: "Agent",
+              description:
+                "Handles communication with agents and collects data from managed systems in the infrastructure."
+            },
+            %Tag{
+              name: "Auth",
+              description:
+                "Manages authentication, user login, and session lifecycle for secure access to the platform."
+            },
+            %Tag{
+              name: "Charts",
+              description:
+                "Provides monitoring and visualization of host performance metrics and system health over time."
             },
             %Tag{
               name: "Checks",
-              description: "Providing Checks related feature"
+              description:
+                "Offers features for running automated checks and validations to ensure system compliance and reliability."
+            },
+            %Tag{
+              name: "Operations",
+              description:
+                "Supports a variety of operations for SAP systems and infrastructure, including resource management and workflow execution."
             },
             %Tag{
               name: "Platform",
-              description: "Providing access to Trento Platform features"
+              description:
+                "Gives access to core Trento Platform capabilities and general platform information for users and administrators."
+            },
+            %Tag{
+              name: "Profile",
+              description:
+                "Allows users to view and update their personal profile information and preferences within the platform."
+            },
+            %Tag{
+              name: "Settings",
+              description:
+                "Enables configuration and management of platform-wide settings, including integrations and environment options."
+            },
+            %Tag{
+              name: "Tags",
+              description:
+                "Facilitates resource tagging and organization to improve searchability and logical grouping of assets."
+            },
+            %Tag{
+              name: "Target Infrastructure",
+              description:
+                "Provides access to information and management features for the discovered target infrastructure resources."
+            },
+            %Tag{
+              name: "User Management",
+              description:
+                "Handles user account creation, permissions, and administrative controls for managing platform users."
             }
           ]
         })
