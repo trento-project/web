@@ -13,8 +13,10 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Provider do
       %{
         title: "SupportedProviders",
         type: :string,
-        description: "Detected Provider where the resource is running",
-        enum: Provider.values()
+        description:
+          "Indicates the cloud provider detected for the resource, such as Azure, AWS, or GCP, supporting infrastructure identification.",
+        enum: Provider.values(),
+        example: "azure"
       },
       struct?: false
     )
@@ -27,7 +29,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Provider do
       %{
         title: "FilterableProvider",
         type: :string,
-        description: "A provider that can be used to filter the Catalog",
+        description:
+          "Represents a cloud provider that can be used to filter catalog results, supporting targeted queries and resource management.",
         enum: [:azure, :aws, :gcp, :default]
       },
       struct?: false
@@ -40,7 +43,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Provider do
     OpenApiSpex.schema(
       %{
         title: "AzureProviderData",
-        description: "Azure detected metadata",
+        description:
+          "Metadata detected for resources running on Microsoft Azure, including details about resource group, location, VM size, and more.",
         type: :object,
         additionalProperties: false,
         properties: %{
@@ -51,6 +55,15 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Provider do
           offer: %Schema{type: :string},
           sku: %Schema{type: :string},
           admin_username: %Schema{type: :string}
+        },
+        example: %{
+          resource_group: "sap-production-rg",
+          location: "West Europe",
+          vm_size: "Standard_E16s_v3",
+          data_disk_number: 4,
+          offer: "SLES-SAP",
+          sku: "15-SP3",
+          admin_username: "azureuser"
         }
       },
       struct?: false
@@ -63,7 +76,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Provider do
     OpenApiSpex.schema(
       %{
         title: "AwsProviderData",
-        description: "AWS detected metadata",
+        description:
+          "Metadata detected for resources running on Amazon Web Services (AWS), including account, instance, and network details for infrastructure management.",
         type: :object,
         additionalProperties: false,
         properties: %{
@@ -75,6 +89,16 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Provider do
           instance_type: %Schema{type: :string},
           region: %Schema{type: :string},
           vpc_id: %Schema{type: :string}
+        },
+        example: %{
+          account_id: "123456789012",
+          ami_id: "ami-0123456789abcdef0",
+          availability_zone: "us-west-2a",
+          data_disk_number: 3,
+          instance_id: "i-0123456789abcdef0",
+          instance_type: "r5.4xlarge",
+          region: "us-west-2",
+          vpc_id: "vpc-0123456789abcdef0"
         }
       },
       struct?: false
@@ -87,7 +111,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Provider do
     OpenApiSpex.schema(
       %{
         title: "GcpProviderData",
-        description: "GCP detected metadata",
+        description:
+          "Metadata detected for resources running on Google Cloud Platform (GCP), including disk, image, instance, and network details for infrastructure management.",
         type: :object,
         additionalProperties: false,
         properties: %{
@@ -98,6 +123,15 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Provider do
           network: %Schema{type: :string},
           project_id: %Schema{type: :string},
           zone: %Schema{type: :string}
+        },
+        example: %{
+          disk_number: 2,
+          image: "sles-15-sp3-sap-v20220126",
+          instance_name: "sap-hana-instance",
+          machine_type: "n1-highmem-32",
+          network: "default",
+          project_id: "my-sap-project-123456",
+          zone: "europe-west1-b"
         }
       },
       struct?: false
@@ -110,13 +144,24 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Provider do
     OpenApiSpex.schema(
       %{
         title: "ProviderMetadata",
+        type: :object,
         nullable: true,
-        description: "Detected metadata for any provider",
+        description:
+          "Represents detected metadata for any supported cloud provider, including AWS, Azure, or GCP, to support infrastructure identification and management.",
         oneOf: [
           AwsProviderData,
           AzureProviderData,
           GcpProviderData
-        ]
+        ],
+        example: %{
+          resource_group: "sap-production-rg",
+          location: "West Europe",
+          vm_size: "Standard_E16s_v3",
+          data_disk_number: 4,
+          offer: "SLES-SAP",
+          sku: "15-SP3",
+          admin_username: "azureuser"
+        }
       },
       struct?: false
     )
