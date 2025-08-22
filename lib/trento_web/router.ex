@@ -179,7 +179,8 @@ defmodule TrentoWeb.Router do
              :request_instance_operation
       end
 
-      resources "/users", UsersController, except: [:new, :edit]
+      resources "/users", UsersController, except: [:new, :edit, :update]
+      patch "/users/:id", UsersController, :update
 
       get "/profile", ProfileController, :show
       patch "/profile", ProfileController, :update
