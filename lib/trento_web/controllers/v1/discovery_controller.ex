@@ -5,6 +5,7 @@ defmodule TrentoWeb.V1.DiscoveryController do
   alias Trento.Discovery
 
   alias TrentoWeb.OpenApi.V1.Schema
+  alias TrentoWeb.OpenApi.V1.Schema.UnprocessableEntity
 
   plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
   action_fallback TrentoWeb.FallbackController
@@ -26,7 +27,7 @@ defmodule TrentoWeb.V1.DiscoveryController do
            properties: %{},
            example: %{}
          }},
-      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
+      unprocessable_entity: UnprocessableEntity.response()
     ]
 
   def collect(

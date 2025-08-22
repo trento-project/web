@@ -38,7 +38,7 @@ defmodule TrentoWeb.SessionController do
         {"Authentication result with access and refresh tokens for secure API usage.",
          "application/json", Credentials},
       unauthorized: Schema.Unauthorized.response(),
-      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
+      unprocessable_entity: Schema.UnprocessableEntity.response()
     ]
 
   def create(conn, credentials) do
@@ -148,7 +148,7 @@ defmodule TrentoWeb.SessionController do
     ],
     responses: [
       unauthorized: Schema.Unauthorized.response(),
-      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response(),
+      unprocessable_entity: Schema.UnprocessableEntity.response(),
       ok:
         {"Authentication result using SAML identity provider with access and refresh tokens for platform access.",
          "application/json", Credentials}

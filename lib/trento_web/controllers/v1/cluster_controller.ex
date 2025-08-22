@@ -15,7 +15,8 @@ defmodule TrentoWeb.V1.ClusterController do
     ClusterOperationParams,
     Forbidden,
     NotFound,
-    OperationAccepted
+    OperationAccepted,
+    UnprocessableEntity
   }
 
   plug TrentoWeb.Plugs.LoadUserPlug
@@ -87,7 +88,7 @@ defmodule TrentoWeb.V1.ClusterController do
          }},
       not_found: NotFound.response(),
       bad_request: BadRequest.response(),
-      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
+      unprocessable_entity: UnprocessableEntity.response()
     ]
 
   def request_checks_execution(conn, %{cluster_id: cluster_id}) do
@@ -128,7 +129,7 @@ defmodule TrentoWeb.V1.ClusterController do
          }},
       not_found: NotFound.response(),
       bad_request: BadRequest.response(),
-      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
+      unprocessable_entity: UnprocessableEntity.response()
     ]
 
   def select_checks(conn, %{cluster_id: cluster_id}) do
@@ -176,7 +177,7 @@ defmodule TrentoWeb.V1.ClusterController do
       accepted: OperationAccepted.response(),
       not_found: NotFound.response(),
       forbidden: Forbidden.response(),
-      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
+      unprocessable_entity: UnprocessableEntity.response()
     ]
 
   def request_operation(%{assigns: %{cluster: cluster, operation: operation}} = conn, _) do
@@ -233,7 +234,7 @@ defmodule TrentoWeb.V1.ClusterController do
       accepted: OperationAccepted.response(),
       not_found: NotFound.response(),
       forbidden: Forbidden.response(),
-      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
+      unprocessable_entity: UnprocessableEntity.response()
     ]
 
   def request_host_operation(

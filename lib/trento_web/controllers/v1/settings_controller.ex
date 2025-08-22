@@ -60,7 +60,7 @@ defmodule TrentoWeb.V1.SettingsController do
       ok:
         {"API key settings have been successfully updated and saved, including expiration and security configuration.",
          "application/json", Schema.Platform.ApiKeySettings},
-      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response(),
+      unprocessable_entity: Schema.UnprocessableEntity.response(),
       not_found: Schema.NotFound.response()
     ]
 
@@ -95,7 +95,7 @@ defmodule TrentoWeb.V1.SettingsController do
       ok:
         {"Activity Log settings have been successfully updated and saved, including retention period and compliance configuration.",
          "application/json", Schema.Platform.ActivityLogSettings},
-      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
+      unprocessable_entity: Schema.UnprocessableEntity.response()
     ]
 
   def update_activity_log_settings(
@@ -163,7 +163,7 @@ defmodule TrentoWeb.V1.SettingsController do
       created:
         {"SUSE Manager settings have been successfully saved, including credentials and configuration for secure integration.",
          "application/json", Schema.Platform.SuseManagerSettings},
-      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
+      unprocessable_entity: Schema.UnprocessableEntity.response()
     ]
 
   @spec save_suse_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
@@ -190,7 +190,7 @@ defmodule TrentoWeb.V1.SettingsController do
       ok:
         {"SUSE Manager settings have been successfully updated and saved, including credentials and configuration for secure integration.",
          "application/json", Schema.Platform.SuseManagerSettings},
-      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
+      unprocessable_entity: Schema.UnprocessableEntity.response()
     ]
 
   @spec update_suse_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
@@ -204,6 +204,24 @@ defmodule TrentoWeb.V1.SettingsController do
       |> render(:suse_manager, %{settings: saved_settings})
     end
   end
+
+  operation :put_suse_manager_settings,
+    summary: "Updates the SUSE Manager settings.",
+    tags: ["Settings"],
+    description:
+      "Updates the configuration and credentials for SUSE Manager integration, supporting ongoing software management and updates.",
+    request_body:
+      {"Request body containing updated SUSE Manager credentials and configuration for ongoing secure integration and software management.",
+       "application/json", Schema.Platform.UpdateSuseManagerSettingsRequest},
+    responses: [
+      ok:
+        {"SUSE Manager settings have been successfully updated and saved, including credentials and configuration for secure integration.",
+         "application/json", Schema.Platform.SuseManagerSettings},
+      unprocessable_entity: Schema.UnprocessableEntity.response()
+    ]
+
+  @spec put_suse_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
+  def put_suse_manager_settings(conn, params), do: update_suse_manager_settings(conn, params)
 
   operation :delete_suse_manager_settings,
     summary: "Clears the SUSE Manager settings.",
@@ -296,7 +314,7 @@ defmodule TrentoWeb.V1.SettingsController do
       unauthorized: Schema.Unauthorized.response(),
       forbidden: Schema.Forbidden.response(),
       conflict: Schema.Conflict.response(),
-      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
+      unprocessable_entity: Schema.UnprocessableEntity.response()
     ]
 
   def create_alerting_settings(conn, _params) do
@@ -325,7 +343,7 @@ defmodule TrentoWeb.V1.SettingsController do
       forbidden: Schema.Forbidden.response(),
       not_found: Schema.NotFound.response(),
       conflict: Schema.Conflict.response(),
-      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
+      unprocessable_entity: Schema.UnprocessableEntity.response()
     ]
 
   def update_alerting_settings(conn, _params) do

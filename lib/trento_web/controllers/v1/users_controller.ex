@@ -5,6 +5,7 @@ defmodule TrentoWeb.V1.UsersController do
   alias Trento.Users
   alias Trento.Users.User
   alias TrentoWeb.OpenApi.V1.Schema
+  alias TrentoWeb.OpenApi.V1.Schema.UnprocessableEntity
 
   alias TrentoWeb.OpenApi.V1.Schema.User.{
     UserCollection,
@@ -56,7 +57,7 @@ defmodule TrentoWeb.V1.UsersController do
       created:
         {"User account created successfully, returning the new user details for management and review.",
          "application/json", UserItem},
-      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
+      unprocessable_entity: UnprocessableEntity.response()
     ]
 
   def create(%{body_params: user_params} = conn, _) do
@@ -95,7 +96,7 @@ defmodule TrentoWeb.V1.UsersController do
            }
          }},
       not_found: Schema.NotFound.response(),
-      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
+      unprocessable_entity: Schema.UnprocessableEntity.response()
     ]
 
   def show(conn, %{id: id}) do
@@ -142,7 +143,7 @@ defmodule TrentoWeb.V1.UsersController do
              schema: %OpenApiSpex.Schema{type: :string}
            }
          }},
-      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response(),
+      unprocessable_entity: UnprocessableEntity.response(),
       forbidden: Schema.Forbidden.response(),
       precondition_failed: Schema.PreconditionFailed.response(),
       precondition_required: Schema.PreconditionRequired.response()
