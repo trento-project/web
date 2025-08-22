@@ -1,7 +1,6 @@
 defmodule Trento.ActivityLog.ActivityLogTest do
   @moduledoc false
   use TrentoWeb.ConnCase, async: true
-  use Plug.Test
 
   import Ecto.Query
   import Trento.Factory

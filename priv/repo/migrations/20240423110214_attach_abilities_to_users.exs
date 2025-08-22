@@ -3,8 +3,8 @@ defmodule Trento.Repo.Migrations.AttachAbilitiesToUsers do
 
   def change do
     create table(:users_abilities) do
-      add :user_id, references(:users, primary_key: true)
-      add :ability_id, references(:abilities, primary_key: true)
+      add :user_id, references(:users)
+      add :ability_id, references(:abilities)
 
       timestamps(type: :utc_datetime_usec)
     end

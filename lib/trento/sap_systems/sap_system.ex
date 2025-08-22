@@ -794,7 +794,7 @@ defmodule Trento.SapSystems.SapSystem do
          },
          deregistered_at
        ) do
-    unless instances_have_abap_or_java?(instances) and instances_have_messageserver?(instances) do
+    if !(instances_have_abap_or_java?(instances) and instances_have_messageserver?(instances)) do
       %SapSystemDeregistered{sap_system_id: sap_system_id, deregistered_at: deregistered_at}
     end
   end

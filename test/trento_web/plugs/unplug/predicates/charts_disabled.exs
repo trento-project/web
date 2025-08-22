@@ -1,6 +1,6 @@
 defmodule TrentoWeb.Plugs.Unplug.Predicates.ChartsDisabledTest do
   use TrentoWeb.ConnCase, async: true
-  use Plug.Test
+  import Plug.Test
 
   alias TrentoWeb.Plugs.ChartsDisabledPlug
 

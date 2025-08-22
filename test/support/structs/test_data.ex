@@ -10,12 +10,13 @@ defmodule TestData do
     field :name, :string
     embeds_one :embedded, EmbeddedTestData
 
-    field :polymorphic, PolymorphicEmbed,
+    polymorphic_embeds_one(:polymorphic,
       types: [
         address: [module: PolymorphicAddressTestData, identify_by_fields: [:address]],
         phone: [module: PolymorphicPhoneTestData, identify_by_fields: [:phone]]
       ],
       on_replace: :update
+    )
   end
 end
 

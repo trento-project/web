@@ -36,7 +36,7 @@ defmodule Trento.Clusters.Commands.RegisterOnlineClusterHost do
     field :discovered_health, Ecto.Enum, values: Health.values()
     field :cib_last_written, :string
 
-    field :details, PolymorphicEmbed,
+    polymorphic_embeds_one(:details,
       types: [
         hana_scale_up: [
           module: HanaClusterDetails,
@@ -45,6 +45,7 @@ defmodule Trento.Clusters.Commands.RegisterOnlineClusterHost do
         ascs_ers: [module: AscsErsClusterDetails, identify_by_fields: [:sap_systems]]
       ],
       on_replace: :update
+    )
 
     embeds_many :sap_instances, SapInstance
   end

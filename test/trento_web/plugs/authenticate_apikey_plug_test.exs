@@ -1,6 +1,6 @@
 defmodule TrentoWeb.Plugs.AuthenticateAPIKeyPlugTest do
   use TrentoWeb.ConnCase, async: true
-  use Plug.Test
+  import Plug.Test
 
   import Trento.Factory
   import Mox
