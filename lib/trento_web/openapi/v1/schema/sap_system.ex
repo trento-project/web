@@ -71,7 +71,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
             description:
               "The HTTPS port number used by this SAP application instance, supporting secure connectivity.",
             nullable: true,
-            example: 44300
+            example: 44_300
           },
           start_priority: %Schema{
             type: :string,
@@ -104,7 +104,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
           absent_at: "2024-01-16T08:00:00Z",
           features: "MESSAGESERVER|ENQUE",
           http_port: 8000,
-          https_port: 44300,
+          https_port: 44_300,
           start_priority: "1",
           host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
           health: "passing",

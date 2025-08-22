@@ -217,7 +217,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
           }
         },
         example: %{
-          package_id: 12345,
+          package_id: 12_345,
           patches: [
             %{
               advisory_type: "security_advisory",
@@ -468,7 +468,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
           }
         },
         example: %{
-          id: 12345,
+          id: 12_345,
           issue_date: "2024-01-15",
           update_date: "2024-01-15",
           last_modified_date: "2024-01-15",
@@ -640,7 +640,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
         },
         example: %{
           errata_details: %{
-            id: 12345,
+            id: 12_345,
             issue_date: "2024-01-15",
             update_date: "2024-01-15",
             last_modified_date: "2024-01-15",
