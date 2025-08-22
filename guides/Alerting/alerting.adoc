@@ -114,10 +114,10 @@ helm upgrade
 == Local development and testing
 
 The provided `+docker-compose.yaml+` file includes a
-https://github.com/axllent/mailpit[Mailpit] SMTP server for local
+link:https://github.com/axllent/mailpit[Mailpit] SMTP server for local
 testing during development.
 
-Access Mailpit’s web interface at: http://localhost:8025/
+Access Mailpit’s web interface at: link:http://localhost:8025/
 
 === Configuration Options
 
