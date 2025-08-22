@@ -20,7 +20,9 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
     quote do
       alias OpenApiSpex.{
         Components,
+        Contact,
         Info,
+        License,
         OpenApi,
         Paths,
         SecurityScheme,
@@ -40,10 +42,25 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
           info: %Info{
             title: "Trento",
             description: to_string(Application.spec(:trento, :description)),
-            version: to_string(Application.spec(:trento, :vsn)) <> "-" <> unquote(api_version)
+            version: to_string(Application.spec(:trento, :vsn)) <> "-" <> unquote(api_version),
+            license: %OpenApiSpex.License{
+              name: "Apache 2.0",
+              url: "https://www.apache.org/licenses/LICENSE-2.0"
+            },
+            contact: %Contact{
+              name: "Trento Project",
+              url: "https://www.trento-project.io",
+              email: "trento-project@suse.com"
+            }
           },
           components: %Components{
-            securitySchemes: %{"authorization" => %SecurityScheme{type: "http", scheme: "bearer"}}
+            securitySchemes: %{
+              "authorization" => %SecurityScheme{
+                type: "http",
+                scheme: "bearer",
+                description: "Bearer token authentication"
+              }
+            }
           },
           security: [%{"authorization" => []}],
           paths: build_paths_for_version(unquote(api_version), router),
@@ -72,7 +89,11 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
           # If the endpoint is not running, use a placeholder
           # this happens when generating openapi.json with --start-app=false
           # e.g. mix openapi.spec.json --start-app=false --spec WandaWeb.ApiSpec
-          %OpenApiSpex.Server{url: "https://demo.trento-project.io"}
+          %OpenApiSpex.Server{
+            url: "https://demo.trento-project.io",
+            description:
+              "This is the Trento demo server, provided for testing and demonstration purposes."
+          }
         end
       end
 
