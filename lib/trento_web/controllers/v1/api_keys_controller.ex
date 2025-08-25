@@ -14,6 +14,24 @@ defmodule TrentoWeb.V1.ApiKeysController do
   plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
   action_fallback TrentoWeb.FallbackController
 
+  operation :get_api_keys,
+    summary: "Retrieves the Api Keys for the currently authenticated user",
+    tags: ["Profile"],
+    responses: [
+      ok: {"Api Keys successfully loaded", "application/json", Schema.ApiKey.ApiKeyCollection},
+      unauthorized: Schema.Unauthorized.response(),
+      forbidden: Schema.Forbidden.response()
+    ]
+
+  def get_api_keys(conn, _) do
+    render(conn, :api_keys, %{
+      api_keys:
+        conn
+        |> Pow.Plug.current_user()
+        |> ApiKeys.get_api_keys()
+    })
+  end
+
   operation :create_api_key,
     summary: "Creates a new Api key",
     tags: ["Profile"],

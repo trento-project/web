@@ -6,6 +6,15 @@ defmodule Trento.Users.ApiKeys do
 
   alias Trento.Repo
 
+  @spec get_api_keys(User.t()) :: [ApiKey.t()]
+  def get_api_keys(%User{deleted_at: nil} = user) do
+    user
+    |> Repo.preload(:api_keys)
+    |> Map.fetch!(:api_keys)
+  end
+
+  def get_api_keys(%User{}), do: []
+
   @spec create_api_key(User.t(), map()) :: {:ok, ApiKey.t()} | {:error, Ecto.Changeset.t()}
   def create_api_key(%User{id: user_id, deleted_at: nil}, attrs) do
     %ApiKey{}
