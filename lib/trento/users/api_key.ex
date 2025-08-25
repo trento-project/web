@@ -14,7 +14,7 @@ defmodule Trento.Users.ApiKey do
     field :name, :string
     field :expire_at, :utc_datetime_usec
 
-    belongs_to :user, User, primary_key: true
+    belongs_to :user, User
 
     timestamps(inserted_at: :created_at, type: :utc_datetime_usec)
   end
