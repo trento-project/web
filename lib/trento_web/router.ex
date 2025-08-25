@@ -195,6 +195,7 @@ defmodule TrentoWeb.Router do
         scope "/api_keys" do
           get "/", ApiKeysController, :get_api_keys
           post "/", ApiKeysController, :create_api_key
+          delete "/:name", ApiKeysController, :revoke_api_key
         end
       end
 

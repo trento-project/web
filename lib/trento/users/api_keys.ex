@@ -23,4 +23,11 @@ defmodule Trento.Users.ApiKeys do
   end
 
   def create_api_key(%User{deleted_at: _deletion_date}, _attrs), do: {:error, :forbidden}
+
+  def revoke_api_key(%ApiKey{} = api_key) do
+    Repo.delete(api_key)
+  rescue
+    Ecto.StaleEntryError ->
+      {:error, :not_found}
+  end
 end

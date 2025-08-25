@@ -78,4 +78,30 @@ defmodule TrentoWeb.V1.ApiKeysController do
       })
     end
   end
+
+  operation :revoke_api_key,
+    summary: "Revokes an existing API key",
+    tags: ["Profile"],
+    parameters: [
+      name: [
+        in: :path,
+        required: true,
+        type: %OpenApiSpex.Schema{type: :string}
+      ]
+    ],
+    responses: [
+      no_content: "API Key revoked successfully",
+      unauthorized: Schema.Unauthorized.response(),
+      forbidden: Schema.Forbidden.response()
+    ]
+
+  def revoke_api_key(conn, %{
+        name: name
+      }) do
+    %User{id: user_id} = Pow.Plug.current_user(conn)
+
+    with {:ok, _} <- ApiKeys.revoke_api_key(%UserApiKey{user_id: user_id, name: name}) do
+      send_resp(conn, :no_content, "")
+    end
+  end
 end

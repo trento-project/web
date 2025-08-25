@@ -211,4 +211,28 @@ defmodule Trento.Users.ApiKeysTest do
       assert [api_key2, api_key1] == ApiKeys.get_api_keys(user)
     end
   end
+
+  describe "revoking api keys" do
+    test "should return an error when revoking a non existing api key" do
+      api_key =
+        build(:api_key,
+          id: Faker.Random.Elixir.random_between(3, 100),
+          user_id: Faker.Random.Elixir.random_between(3, 100)
+        )
+
+      assert {:error, :not_found} = ApiKeys.revoke_api_key(api_key)
+    end
+
+    test "should revoke an existing api key" do
+      %User{id: user_id} = insert(:user)
+      %ApiKey{name: api_key_name} = api_key = insert(:api_key, user_id: user_id)
+
+      assert {:ok, _} = ApiKeys.revoke_api_key(api_key)
+
+      assert [] ==
+               Trento.Repo.all(
+                 from ak in ApiKey, where: ak.name == ^api_key_name and ak.user_id == ^user_id
+               )
+    end
+  end
 end
