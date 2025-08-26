@@ -72,7 +72,7 @@ command:
 mix setup
 ....
 
-== Connect Trento Web with [Wanda]
+== Connect Trento Web with Wanda
 
 By default, link:https://github.com/trento-project/wanda[Wanda] can be accessed on port 4001.
 
