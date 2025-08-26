@@ -7,6 +7,8 @@ defmodule Trento.Users.ApiKeysTest do
     User
   }
 
+  alias Faker.Random.Elixir, as: FakerRandom
+
   import Trento.Factory
 
   describe "creating api keys" do
@@ -98,7 +100,7 @@ defmodule Trento.Users.ApiKeysTest do
         assert {:error, %Ecto.Changeset{errors: ^expected_errors}} =
                  ApiKeys.create_api_key(user, attrs)
 
-        assert [] == Trento.Repo.all(from ak in ApiKey, where: ak.user_id == ^user_id)
+        assert [] == load_user_api_keys(user_id)
       end
     end
 
@@ -210,5 +212,75 @@ defmodule Trento.Users.ApiKeysTest do
 
       assert [api_key2, api_key1] == ApiKeys.get_api_keys(user)
     end
+  end
+
+  describe "revoking api keys" do
+    test "should return an error when revoking an api key for a deleted user" do
+      %User{id: user_id} = user = insert(:user, deleted_at: Faker.DateTime.backward(3))
+
+      %ApiKey{name: api_key_name} = insert(:api_key, user_id: user_id)
+
+      assert {:error, :not_found} = ApiKeys.revoke_api_key(user, api_key_name)
+
+      assert_api_key_items(user_id, 1)
+    end
+
+    test "should return an error when revoking an api key for a non existing user" do
+      %User{} = user = build(:user, id: FakerRandom.random_between(3, 100))
+
+      assert {:error, :not_found} = ApiKeys.revoke_api_key(user, Faker.Lorem.word())
+    end
+
+    test "should return an error when revoking an non existent api key" do
+      %User{id: user_id} = user = insert(:user)
+
+      insert(:api_key, user_id: user_id)
+
+      %ApiKey{name: non_existent_api_key_name} = build(:api_key, user_id: user_id)
+
+      assert {:error, :not_found} = ApiKeys.revoke_api_key(user, non_existent_api_key_name)
+
+      assert_api_key_items(user_id, 1)
+    end
+
+    test "should only revoke the relevant user's api key by name" do
+      %User{id: user_id1} = user1 = insert(:user)
+      %User{id: user_id2} = insert(:user)
+
+      api_key_name = Faker.Lorem.word()
+
+      insert(:api_key, user_id: user_id1)
+      insert(:api_key, user_id: user_id1, name: api_key_name)
+      insert(:api_key, user_id: user_id2, name: api_key_name)
+
+      assert {:ok, _} = ApiKeys.revoke_api_key(user1, api_key_name)
+
+      assert_api_key_items(user_id1, 1)
+      assert_api_key_items(user_id2, 1)
+    end
+
+    test "should revoke an existing api key" do
+      %User{id: user_id} = user = insert(:user)
+
+      [
+        %ApiKey{name: api_key_name1},
+        %ApiKey{name: api_key_name2}
+      ] = insert_list(2, :api_key, user_id: user_id)
+
+      assert {:ok, _} = ApiKeys.revoke_api_key(user, api_key_name1)
+
+      user_keys = load_user_api_keys(user_id)
+
+      assert 1 == length(user_keys)
+
+      assert [%ApiKey{name: ^api_key_name2}] = user_keys
+    end
+  end
+
+  defp load_user_api_keys(user_id),
+    do: Trento.Repo.all(from ak in ApiKey, where: ak.user_id == ^user_id)
+
+  defp assert_api_key_items(user_id, expected_length) do
+    assert expected_length == user_id |> load_user_api_keys |> length
   end
 end

@@ -6,6 +6,8 @@ defmodule Trento.Users.ApiKeys do
 
   alias Trento.Repo
 
+  import Ecto.Query
+
   @spec get_api_keys(User.t()) :: [ApiKey.t()]
   def get_api_keys(%User{deleted_at: nil} = user) do
     user
@@ -23,4 +25,17 @@ defmodule Trento.Users.ApiKeys do
   end
 
   def create_api_key(%User{deleted_at: _deletion_date}, _attrs), do: {:error, :forbidden}
+
+  @spec revoke_api_key(User.t(), bitstring()) :: {:ok, ApiKey.t()} | {:error, :not_found | any()}
+  def revoke_api_key(%User{id: user_id, deleted_at: nil}, name) do
+    ApiKey
+    |> where([ak], ak.user_id == ^user_id and ak.name == ^name)
+    |> Repo.one()
+    |> case do
+      nil -> {:error, :not_found}
+      %ApiKey{} = api_key -> Repo.delete(api_key)
+    end
+  end
+
+  def revoke_api_key(%User{deleted_at: _deletion_date}, _attrs), do: {:error, :not_found}
 end
