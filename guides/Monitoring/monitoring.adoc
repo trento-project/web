@@ -1,3 +1,5 @@
+ifndef::imagesdir[:imagesdir: ../images]
+
 = Monitoring
 
 Currently Trento provides a basic integration with
@@ -19,4 +21,4 @@ configuration is handled by the helm-charts.
 '''''
 
 == Monitoring Architecture
-image::../images/trento-monitoring.png[Monitoring Architecture]
+image::trento-monitoring.png[Monitoring Architecture]
