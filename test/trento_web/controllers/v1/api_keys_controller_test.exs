@@ -226,4 +226,30 @@ defmodule TrentoWeb.V1.ApiKeysControllerTest do
       end
     end
   end
+
+  describe "revoking api keys" do
+    test "should return an error when revoking a non existent api key", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      conn
+      |> delete("/api/v1/profile/api_keys/#{Faker.Lorem.word()}")
+      |> json_response(:not_found)
+      |> assert_response_schema("NotFound", api_spec)
+    end
+
+    test "should successfully revoke an api key", %{
+      conn: conn,
+      admin_user: %{id: user_id}
+    } do
+      %ApiKey{name: api_key_name} = insert(:api_key, user_id: user_id)
+
+      resp =
+        conn
+        |> delete("/api/v1/profile/api_keys/#{api_key_name}")
+        |> response(:no_content)
+
+      assert resp == ""
+    end
+  end
 end
