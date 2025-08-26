@@ -8,8 +8,8 @@ defmodule Trento.Users.ApiKeys do
 
   @spec create_api_key(User.t(), map()) :: {:ok, ApiKey.t()} | {:error, Ecto.Changeset.t()}
   def create_api_key(%User{id: user_id, deleted_at: nil}, attrs) do
-    %ApiKey{}
-    |> ApiKey.changeset(Map.put(attrs, :user_id, user_id))
+    %ApiKey{user_id: user_id}
+    |> ApiKey.changeset(attrs)
     |> Repo.insert()
   end
 
