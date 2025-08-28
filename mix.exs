@@ -10,6 +10,7 @@ defmodule Trento.MixProject do
       version: get_version(),
       elixir: "~> 1.18",
       elixirc_paths: elixirc_paths(Mix.env()),
+      elixirc_options: [infer_signatures: false],
       compilers: Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
