@@ -152,7 +152,13 @@ defmodule Trento.Support.Type do
       defp polymorphic_fields,
         do:
           Enum.filter(__MODULE__.__schema__(:fields), fn field ->
-            field in [:details, :provider_data, :metadata, :polymorphic]
+            case __MODULE__.__schema__(:type, field) do
+              {:parameterized, {PolymorphicEmbed, _}} ->
+                true
+
+              _ ->
+                false
+            end
           end)
 
       defoverridable new: 1
