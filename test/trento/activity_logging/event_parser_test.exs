@@ -2,7 +2,6 @@ defmodule Trento.ActivityLog.EventParser do
   @moduledoc false
 
   use TrentoWeb.ConnCase, async: false
-  use Plug.Test
 
   import Trento.Factory
 
