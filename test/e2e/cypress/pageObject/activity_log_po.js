@@ -2,6 +2,7 @@ export * from './base_po';
 import * as basePage from './base_po';
 
 const activityLogEndpointAlias = 'activityLogRequest';
+const activityLogEndpoint = '/api/v1/activity_log*';
 
 //Selectors
 const filteringElements = 'div[class="relative"]';
@@ -42,7 +43,7 @@ export const visit = (queryString = '') =>
 export const interceptActivityLogEndpoint = () => {
   return cy
     .intercept({
-      url: '/api/v1/activity_log*',
+      url: activityLogEndpoint,
     })
     .as(activityLogEndpointAlias);
 };
@@ -50,7 +51,7 @@ export const interceptActivityLogEndpoint = () => {
 export const spyActivityLogRequest = () => {
   cy.clock();
   return cy.intercept(
-    '/api/v1/activity_log*',
+    activityLogEndpoint,
     cy.spy().as(activityLogEndpointAlias)
   );
 };
