@@ -1,7 +1,6 @@
 defmodule TrentoWeb.SessionController do
   alias Plug.Conn
   alias PowAssent.Plug, as: PowAssentPlug
-  alias Trento.Repo
   alias Trento.Users
   alias Trento.Users.User
   alias TrentoWeb.OpenApi.V1.Schema
@@ -18,7 +17,7 @@ defmodule TrentoWeb.SessionController do
 
   operation :create,
     summary: "Platform login",
-    tags: ["Platform"],
+    tags: ["Auth"],
     description:
       "Retrieve the access and refresh token for api interactions, returns two jwt tokens",
     security: [],
@@ -90,41 +89,9 @@ defmodule TrentoWeb.SessionController do
     end
   end
 
-  operation :show,
-    summary: "Current logged user",
-    tags: ["Platform"],
-    description: "Retrieve information about the logged user",
-    responses: [
-      ok:
-        {"Trento User", "application/json",
-         %OpenApiSpex.Schema{
-           title: "TrentoUser",
-           type: :object,
-           example: %{
-             username: "admin",
-             id: 1
-           },
-           properties: %{
-             username: %OpenApiSpex.Schema{
-               type: :string
-             },
-             id: %OpenApiSpex.Schema{
-               type: :integer
-             }
-           }
-         }}
-    ]
-
-  def show(conn, _) do
-    request_user = Pow.Plug.current_user(conn)
-    user = Repo.get_by!(User, id: request_user["user_id"])
-
-    render(conn, :me, user: user)
-  end
-
   operation :refresh,
     summary: "Platform access token refresh",
-    tags: ["Platform"],
+    tags: ["Auth"],
     description: "Generate a new access token from a valid refresh token",
     security: [],
     request_body:
@@ -179,7 +146,7 @@ defmodule TrentoWeb.SessionController do
 
   operation :callback,
     summary: "Platform external IDP callback",
-    tags: ["Platform"],
+    tags: ["Auth"],
     description: "Authenticate against an external authentication provider",
     security: [],
     request_body:
@@ -258,7 +225,7 @@ defmodule TrentoWeb.SessionController do
 
   operation :saml_callback,
     summary: "Platform external SAML IDP callback",
-    tags: ["Platform"],
+    tags: ["Auth"],
     description: "Authenticate against an external authentication provider using SAML",
     security: [],
     responses: [
