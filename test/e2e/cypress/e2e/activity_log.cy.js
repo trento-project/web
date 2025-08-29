@@ -301,7 +301,7 @@ context('Activity Log page', () => {
 
     it('should start autorefresh ticker', () => {
       activityLogPage.visit();
-      activityLogPage.waitForRequest('activityLogRequest').then(() => {
+      activityLogPage.waitForActivityLogRequest().then(() => {
         activityLogPage.spyActivityLogRequest();
         activityLogPage.expectedAggregateAmountOfRequests(0);
         activityLogPage.selectRefreshRate('5s');
