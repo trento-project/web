@@ -1289,4 +1289,169 @@ defmodule Trento.ClustersTest do
       end
     end
   end
+
+  describe "can_reboot?" do
+    test "should always return false for #{ClusterType.unknown()}" do
+      cluster = build(:cluster, type: ClusterType.unknown())
+
+      refute Clusters.can_reboot?(cluster)
+    end
+
+    test "should always return false for #{ClusterType.hana_ascs_ers()}" do
+      cluster = build(:cluster, type: ClusterType.hana_ascs_ers())
+
+      refute Clusters.can_reboot?(cluster)
+    end
+
+    test "should return false if hosts are not preloaded" do
+      cluster = build(:cluster)
+
+      refute Clusters.can_reboot?(cluster)
+    end
+
+    test "should return true if all nodes are stopped for #{ClusterType.hana_scale_up()}" do
+      cluster =
+        build(:cluster,
+          type: ClusterType.hana_scale_up(),
+          details:
+            build(:hana_cluster_details,
+              nodes: [
+                build(:hana_cluster_node, name: "node1"),
+                build(:hana_cluster_node, name: "node2")
+              ]
+            ),
+          hosts: [
+            build(:host, hostname: "host1", cluster_host_status: "offline"),
+            build(:host, hostname: "host2", cluster_host_status: "offline")
+          ]
+        )
+
+      assert Clusters.can_reboot?(cluster)
+    end
+
+    test "should return false if at least one node is not stopped for #{ClusterType.hana_scale_up()}" do
+      cluster =
+        build(:cluster,
+          type: ClusterType.hana_scale_up(),
+          details:
+            build(:hana_cluster_details,
+              nodes: [
+                build(:hana_cluster_node, name: "host1"),
+                build(:hana_cluster_node, name: "host2")
+              ]
+            ),
+          hosts: [
+            build(:host, hostname: "host1", cluster_host_status: "online"),
+            build(:host, hostname: "host2", cluster_host_status: "offline")
+          ]
+        )
+
+      refute Clusters.can_reboot?(cluster)
+    end
+
+    test "should return true if there are no nodes for #{ClusterType.hana_scale_up()}" do
+      cluster =
+        build(:cluster,
+          type: ClusterType.hana_scale_up(),
+          details: build(:hana_cluster_details, nodes: []),
+          hosts: []
+        )
+
+      assert Clusters.can_reboot?(cluster)
+    end
+
+    test "should return true if all nodes are stopped for #{ClusterType.ascs_ers()}" do
+      cluster =
+        build(:cluster,
+          type: ClusterType.ascs_ers(),
+          details:
+            build(:ascs_ers_cluster_details,
+              sap_systems:
+                build(:ascs_ers_cluster_sap_system,
+                  nodes: [
+                    build(:ascs_ers_cluster_node, name: "host1"),
+                    build(:ascs_ers_cluster_node, name: "host2")
+                  ]
+                )
+            ),
+          hosts: [
+            build(:host, hostname: "host1", cluster_host_status: "offline"),
+            build(:host, hostname: "host2", cluster_host_status: "offline")
+          ]
+        )
+
+      assert Clusters.can_reboot?(cluster)
+    end
+
+    test "should return false if at least one node is not stopped for #{ClusterType.ascs_ers()}" do
+      cluster =
+        build(:cluster,
+          type: ClusterType.ascs_ers(),
+          details:
+            build(:ascs_ers_cluster_details,
+              sap_systems:
+                build(:ascs_ers_cluster_sap_system,
+                  nodes: [
+                    build(:ascs_ers_cluster_node, name: "host1"),
+                    build(:ascs_ers_cluster_node, name: "host2")
+                  ]
+                )
+            ),
+          hosts: [
+            build(:host, hostname: "host1", cluster_host_status: "online"),
+            build(:host, hostname: "host2", cluster_host_status: "offline")
+          ]
+        )
+
+      refute Clusters.can_reboot?(cluster)
+    end
+
+    test "should return true if all secondary nodes are stopped for #{ClusterType.hana_scale_out()}" do
+      cluster =
+        build(:cluster,
+          type: ClusterType.hana_scale_out(),
+          details:
+            build(:hana_cluster_details,
+              nodes: [
+                build(:hana_cluster_node, name: "host1", hana_status: "Primary"),
+                build(:hana_cluster_node, name: "host2", hana_status: "Secondary"),
+                build(:hana_cluster_node, name: "host3", hana_status: "Secondary")
+              ]
+            ),
+          hosts: [
+            build(:host, hostname: "host2", cluster_host_status: "offline"),
+            build(:host, hostname: "host3", cluster_host_status: "offline")
+          ]
+        )
+
+      assert Clusters.can_reboot?(cluster)
+    end
+
+    test "should return false if at least one secondary node is not stopped for #{ClusterType.hana_scale_out()}" do
+      cluster =
+        build(:cluster,
+          type: ClusterType.hana_scale_out(),
+          details:
+            build(:hana_cluster_details,
+              nodes: [
+                build(:hana_cluster_node, name: "host1", hana_status: "Primary"),
+                build(:hana_cluster_node,
+                  name: "host2",
+                  hana_status: "Secondary"
+                ),
+                build(:hana_cluster_node,
+                  name: "host3",
+                  hana_status: "Secondary"
+                )
+              ]
+            ),
+          hosts: [
+            build(:host, hostname: "host2", cluster_host_status: "online"),
+            build(:host, hostname: "host3", cluster_host_status: "offline")
+          ]
+        )
+
+      refute Clusters.can_reboot?(cluster)
+    end
+  end
 end
