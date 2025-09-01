@@ -186,4 +186,31 @@ defmodule Trento.Users.PersonalAccessTokensTest do
                PersonalAccessTokens.create_personal_access_token(other_user, %{name: taken_name})
     end
   end
+
+  describe "retrieving personal access tokens" do
+    test "should not return a deleted user's personal access tokens" do
+      user = insert(:user, deleted_at: Faker.DateTime.backward(3))
+
+      insert_list(3, :personal_access_token, user: user)
+
+      assert [] == PersonalAccessTokens.get_personal_access_tokens(user)
+    end
+
+    test "should return an empty list of personal access tokens" do
+      users = [insert(:user), insert(:user, personal_access_tokens: [])]
+
+      for user <- users do
+        assert [] == PersonalAccessTokens.get_personal_access_tokens(user)
+      end
+    end
+
+    test "should return a user's personal access tokens" do
+      %User{id: user_id} = user = insert(:user)
+
+      pat1 = insert(:personal_access_token, user_id: user_id)
+      pat2 = insert(:personal_access_token, user_id: user_id, expire_at: nil)
+
+      assert [pat2, pat1] == PersonalAccessTokens.get_personal_access_tokens(user)
+    end
+  end
 end
