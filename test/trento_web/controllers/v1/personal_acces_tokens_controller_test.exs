@@ -13,6 +13,38 @@ defmodule TrentoWeb.V1.PersonalAccessTokensControllerTest do
     {:ok, conn: put_req_header(conn, "content-type", "application/json")}
   end
 
+  describe "retrieving personal access tokens" do
+    test "should return an empty list of personal access tokens", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      resp =
+        conn
+        |> get("/api/v1/profile/tokens")
+        |> json_response(:ok)
+        |> assert_schema("PersonalAccessTokenCollection", api_spec)
+
+      assert [] == resp
+    end
+
+    test "should return the list of personal access tokens", %{
+      conn: conn,
+      api_spec: api_spec,
+      admin_user: %{id: user_id}
+    } do
+      insert(:personal_access_token, user_id: user_id)
+      insert(:personal_access_token, user_id: user_id, expire_at: nil)
+
+      resp =
+        conn
+        |> get("/api/v1/profile/tokens")
+        |> json_response(:ok)
+        |> assert_schema("PersonalAccessTokenCollection", api_spec)
+
+      assert 2 == length(resp)
+    end
+  end
+
   describe "creating personal access tokens" do
     failing_validation_scenarios = [
       %{
