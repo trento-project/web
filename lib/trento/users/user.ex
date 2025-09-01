@@ -20,7 +20,7 @@ defmodule Trento.Users.User do
     UsersAbilities
   }
 
-  alias Trento.Users.ApiKey
+  alias Trento.Users.PersonalAccessToken
 
   alias Trento.Support.Ecto.EncryptedBinary
 
@@ -48,7 +48,7 @@ defmodule Trento.Users.User do
 
     many_to_many :abilities, Ability, join_through: UsersAbilities, unique: true
 
-    has_many :api_keys, ApiKey, preload_order: [desc: :created_at]
+    has_many :personal_access_tokens, PersonalAccessToken, preload_order: [desc: :created_at]
 
     timestamps(type: :utc_datetime_usec)
   end

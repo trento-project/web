@@ -1,12 +1,12 @@
-defmodule TrentoWeb.V1.ApiKeysViewJSONTest do
+defmodule TrentoWeb.V1.PersonalAccessTokensViewJSONTest do
   use ExUnit.Case
 
-  alias Trento.Users.ApiKey
-  alias TrentoWeb.V1.ApiKeysJSON
+  alias Trento.Users.PersonalAccessToken
+  alias TrentoWeb.V1.PersonalAccessTokensJSON
 
   import Trento.Factory
 
-  describe "rendering a newly created key" do
+  describe "rendering a newly created token" do
     scenarios = [
       %{
         name: "without expiration date",
@@ -27,22 +27,27 @@ defmodule TrentoWeb.V1.ApiKeysViewJSONTest do
     ]
 
     for %{name: scenario_name, factory_options: factory_options} <- scenarios do
-      @key_factory_options factory_options
+      @pat_factory_options factory_options
 
-      test "should render a new api key #{scenario_name}" do
-        %ApiKey{
+      test "should render a new personal access token #{scenario_name}" do
+        %PersonalAccessToken{
+          jti: jti,
           name: name,
           created_at: created_at,
           expire_at: expire_at
-        } = api_key = build(:api_key, @key_factory_options)
+        } = personal_access_token = build(:personal_access_token, @pat_factory_options)
 
         assert %{
+                 jti: jti,
                  name: name,
                  created_at: created_at,
                  expire_at: expire_at,
                  access_token: "<generated_token>"
                } ==
-                 ApiKeysJSON.new_api_key(%{api_key: api_key, generated_token: "<generated_token>"})
+                 PersonalAccessTokensJSON.new_personal_access_token(%{
+                   personal_access_token: personal_access_token,
+                   generated_token: "<generated_token>"
+                 })
       end
     end
   end

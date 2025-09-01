@@ -169,7 +169,7 @@ defmodule Trento.Factory do
   alias Trento.UserIdentities.UserIdentity
 
   alias Trento.Users.{
-    ApiKey,
+    PersonalAccessToken,
     User
   }
 
@@ -1336,8 +1336,9 @@ defmodule Trento.Factory do
     }
   end
 
-  def api_key_factory do
-    %ApiKey{
+  def personal_access_token_factory do
+    %PersonalAccessToken{
+      jti: Faker.UUID.v4(),
       name: Faker.UUID.v4(),
       expire_at: Faker.DateTime.forward(50)
     }

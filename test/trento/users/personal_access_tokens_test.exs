@@ -1,20 +1,20 @@
-defmodule Trento.Users.ApiKeysTest do
+defmodule Trento.Users.PersonalAccessTokensTest do
   use Trento.DataCase
 
   alias Trento.Users.{
-    ApiKey,
-    ApiKeys,
+    PersonalAccessToken,
+    PersonalAccessTokens,
     User
   }
 
   import Trento.Factory
 
-  describe "creating api keys" do
-    test "should not allow creating an api key for a deleted user" do
+  describe "creating personal access tokens" do
+    test "should not allow creating a PAT for a deleted user" do
       user = insert(:user, deleted_at: Faker.DateTime.backward(3))
 
       assert {:error, :forbidden} ==
-               ApiKeys.create_api_key(
+               PersonalAccessTokens.create_personal_access_token(
                  user,
                  %{
                    name: Faker.Lorem.word()
@@ -22,12 +22,12 @@ defmodule Trento.Users.ApiKeysTest do
                )
     end
 
-    test "should not allow creating an api key bound to a user without user id" do
+    test "should not allow creating a PAT bound to a user without user id" do
       user = %User{}
 
       assert {:error,
               %Ecto.Changeset{errors: [user_id: {"can't be blank", [validation: :required]}]}} =
-               ApiKeys.create_api_key(
+               PersonalAccessTokens.create_personal_access_token(
                  user,
                  %{
                    name: Faker.Lorem.word()
@@ -35,11 +35,11 @@ defmodule Trento.Users.ApiKeysTest do
                )
     end
 
-    test "should not allow creating an api key bound to a non existent user" do
+    test "should not allow creating a PAT bound to a non existent user" do
       user = %User{id: 124}
 
       assert {:error, %Ecto.Changeset{errors: [user_id: {"User does not exist", _}]}} =
-               ApiKeys.create_api_key(
+               PersonalAccessTokens.create_personal_access_token(
                  user,
                  %{
                    name: Faker.Lorem.word()
@@ -90,25 +90,26 @@ defmodule Trento.Users.ApiKeysTest do
     for %{name: name} = failing_validation_scenario <- failing_validation_scenarios do
       @failing_validation_scenario failing_validation_scenario
 
-      test "should not allow creating an api key with invalid data - #{name}" do
+      test "should not allow creating a PAT with invalid data - #{name}" do
         %User{id: user_id} = user = insert(:user)
 
         %{attrs: attrs, expected_errors: expected_errors} = @failing_validation_scenario
 
         assert {:error, %Ecto.Changeset{errors: ^expected_errors}} =
-                 ApiKeys.create_api_key(user, attrs)
+                 PersonalAccessTokens.create_personal_access_token(user, attrs)
 
-        assert [] == Trento.Repo.all(from ak in ApiKey, where: ak.user_id == ^user_id)
+        assert [] ==
+                 Trento.Repo.all(from ak in PersonalAccessToken, where: ak.user_id == ^user_id)
       end
     end
 
-    test "should not allow creating an api key with duplicated name" do
+    test "should not allow creating a PAT with duplicated name" do
       %User{id: user_id} = user = insert(:user)
 
-      %ApiKey{name: taken_name} = insert(:api_key, user_id: user_id)
+      %PersonalAccessToken{name: taken_name} = insert(:personal_access_token, user_id: user_id)
 
       assert {:error, %Ecto.Changeset{errors: [name: {"has already been taken", _}]}} =
-               ApiKeys.create_api_key(user, %{
+               PersonalAccessTokens.create_personal_access_token(user, %{
                  name: taken_name
                })
     end
@@ -140,10 +141,10 @@ defmodule Trento.Users.ApiKeysTest do
 
     for %{name: name} = scenario <- scenarios do
       @scenario scenario
-      test "should allow creating an api key - #{name}" do
+      test "should allow creating a PAT - #{name}" do
         %User{id: user_id} = user = insert(:user)
 
-        %{attrs: %{name: api_key_name} = attrs} = @scenario
+        %{attrs: %{name: pat_name} = attrs} = @scenario
 
         expire_at = Map.get(attrs, :expire_at, nil)
 
@@ -162,26 +163,27 @@ defmodule Trento.Users.ApiKeysTest do
           end
 
         assert {:ok,
-                %ApiKey{
-                  name: ^api_key_name,
+                %PersonalAccessToken{
+                  name: ^pat_name,
                   user_id: ^user_id,
                   expire_at: ^expected_expiration
-                }} = ApiKeys.create_api_key(user, attrs)
+                }} = PersonalAccessTokens.create_personal_access_token(user, attrs)
       end
     end
 
-    test "should allow creating an api key with the same name for different users" do
+    test "should allow creating a personal access token with the same name for different users" do
       %User{id: user_id} = insert(:user)
 
-      %ApiKey{name: taken_name} = insert(:api_key, user_id: user_id)
+      %PersonalAccessToken{name: taken_name} = insert(:personal_access_token, user_id: user_id)
 
       %User{id: other_user_id} = other_user = insert(:user)
 
       assert {:ok,
-              %ApiKey{
+              %PersonalAccessToken{
                 name: ^taken_name,
                 user_id: ^other_user_id
-              }} = ApiKeys.create_api_key(other_user, %{name: taken_name})
+              }} =
+               PersonalAccessTokens.create_personal_access_token(other_user, %{name: taken_name})
     end
   end
 end
