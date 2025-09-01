@@ -282,21 +282,24 @@ context('Activity Log page', () => {
 
     it('should change refresh rate', () => {
       activityLogPage.visit();
-      activityLogPage.expectedRefreshRatesAreAvailable();
-      const changingRefreshRateScenarios =
-        activityLogPage.buildChangingRefreshRateScenarios();
-      changingRefreshRateScenarios.forEach(
-        ({ currentRefreshRate, newRefreshRate, expectedRefreshRate }) => {
-          activityLogPage.autoRefreshIntervalButtonHasTheExpectedValue(
-            currentRefreshRate
-          );
-          activityLogPage.selectRefreshRate(newRefreshRate);
-          const expectedUrl = `/activity_log${
-            expectedRefreshRate ? `?refreshRate=${expectedRefreshRate}` : ''
-          }`;
-          activityLogPage.validateUrl(expectedUrl);
-        }
-      );
+      activityLogPage.waitForActivityLogRequest().then(() => {
+        activityLogPage.expectedRefreshRatesAreAvailable();
+        const changingRefreshRateScenarios =
+          activityLogPage.buildChangingRefreshRateScenarios();
+
+        cy.wrap(changingRefreshRateScenarios).each(
+          ({ currentRefreshRate, newRefreshRate, expectedRefreshRate }) => {
+            activityLogPage.autoRefreshIntervalButtonHasTheExpectedValue(
+              currentRefreshRate
+            );
+            activityLogPage.selectRefreshRate(newRefreshRate);
+            const expectedUrl = `/activity_log${
+              expectedRefreshRate ? `?refreshRate=${expectedRefreshRate}` : ''
+            }`;
+            activityLogPage.validateUrl(expectedUrl);
+          }
+        );
+      });
     });
 
     it('should start autorefresh ticker', () => {
