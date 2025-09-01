@@ -3,6 +3,18 @@ defmodule TrentoWeb.V1.PersonalAccessTokensJSON do
 
   alias Trento.Users.PersonalAccessToken
 
+  def personal_access_tokens(%{personal_access_tokens: personal_access_tokens}) do
+    Enum.map(
+      personal_access_tokens,
+      &%{
+        jti: &1.jti,
+        name: &1.name,
+        created_at: &1.created_at,
+        expire_at: &1.expire_at
+      }
+    )
+  end
+
   def new_personal_access_token(%{
         personal_access_token: %PersonalAccessToken{
           jti: jti,

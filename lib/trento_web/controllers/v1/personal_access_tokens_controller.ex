@@ -14,6 +14,26 @@ defmodule TrentoWeb.V1.PersonalAccessTokensController do
   plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
   action_fallback TrentoWeb.FallbackController
 
+  operation :get_personal_access_tokens,
+    summary: "Retrieves the Personal Access Tokens for the currently authenticated user",
+    tags: ["Profile"],
+    responses: [
+      ok:
+        {"Personal Access Tokens successfully loaded", "application/json",
+         Schema.PersonalAccessToken.PersonalAccessTokenCollection},
+      unauthorized: Schema.Unauthorized.response(),
+      forbidden: Schema.Forbidden.response()
+    ]
+
+  def get_personal_access_tokens(conn, _) do
+    render(conn, :personal_access_tokens, %{
+      personal_access_tokens:
+        conn
+        |> Pow.Plug.current_user()
+        |> PersonalAccessTokens.get_personal_access_tokens()
+    })
+  end
+
   operation :create_personal_access_token,
     summary: "Creates a new Personal Access Token",
     tags: ["Profile"],

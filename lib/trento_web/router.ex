@@ -193,6 +193,7 @@ defmodule TrentoWeb.Router do
         post "/totp_enrollment", ProfileController, :confirm_totp_enrollment
 
         scope "/tokens" do
+          get "/", PersonalAccessTokensController, :get_personal_access_tokens
           post "/", PersonalAccessTokensController, :create_personal_access_token
         end
       end
