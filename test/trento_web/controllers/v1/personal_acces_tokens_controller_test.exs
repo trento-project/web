@@ -1,5 +1,5 @@
-defmodule TrentoWeb.V1.ApiKeysControllerTest do
-  alias Trento.Users.ApiKey
+defmodule TrentoWeb.V1.PersonalAccessTokensControllerTest do
+  alias Trento.Users.PersonalAccessToken
   use TrentoWeb.ConnCase, async: true
 
   import Trento.Factory
@@ -13,7 +13,7 @@ defmodule TrentoWeb.V1.ApiKeysControllerTest do
     {:ok, conn: put_req_header(conn, "content-type", "application/json")}
   end
 
-  describe "creating api keys" do
+  describe "creating personal access tokens" do
     failing_validation_scenarios = [
       %{
         name: "empty attributes",
@@ -97,7 +97,7 @@ defmodule TrentoWeb.V1.ApiKeysControllerTest do
     for %{name: name} = failing_validation_scenario <- failing_validation_scenarios do
       @failing_validation_scenario failing_validation_scenario
 
-      test "should fail to create a new api key with invalid data - #{name}", %{
+      test "should fail to create a new PAT with invalid data - #{name}", %{
         conn: conn,
         api_spec: api_spec
       } do
@@ -108,7 +108,7 @@ defmodule TrentoWeb.V1.ApiKeysControllerTest do
 
         resp =
           conn
-          |> post("/api/v1/profile/api_keys", request_body)
+          |> post("/api/v1/profile/tokens", request_body)
           |> json_response(:unprocessable_entity)
 
         assert_schema(resp, "UnprocessableEntity", api_spec)
@@ -119,16 +119,16 @@ defmodule TrentoWeb.V1.ApiKeysControllerTest do
       end
     end
 
-    test "should fail when creating an api key when the name was already taken", %{
+    test "should fail when creating a personal access token when the name was already taken", %{
       conn: conn,
       api_spec: api_spec,
       admin_user: %{id: user_id}
     } do
-      %ApiKey{name: taken_name} = insert(:api_key, user_id: user_id)
+      %PersonalAccessToken{name: taken_name} = insert(:personal_access_token, user_id: user_id)
 
       resp =
         conn
-        |> post("/api/v1/profile/api_keys", %{
+        |> post("/api/v1/profile/tokens", %{
           "name" => taken_name
         })
         |> json_response(:unprocessable_entity)
@@ -169,22 +169,23 @@ defmodule TrentoWeb.V1.ApiKeysControllerTest do
 
     for %{name: name} = scenario <- scenarios do
       @scenario scenario
-      test "should successfully create an api key - #{name}", %{
+      test "should successfully create a personal access token - #{name}", %{
         conn: conn,
         api_spec: api_spec
       } do
-        %{request_body: %{name: api_key_name} = request_body} = @scenario
+        %{request_body: %{name: pat_name} = request_body} = @scenario
         expire_at = Map.get(request_body, :expire_at, nil)
 
         resp =
           conn
-          |> post("/api/v1/profile/api_keys", request_body)
+          |> post("/api/v1/profile/tokens", request_body)
           |> json_response(:created)
 
-        assert_schema(resp, "NewlyCreatedApiKey", api_spec)
+        assert_schema(resp, "NewlyCreatedPersonalAccessToken", api_spec)
 
         assert %{
-                 "name" => ^api_key_name,
+                 "jti" => _,
+                 "name" => ^pat_name,
                  "expire_at" => ^expire_at,
                  "created_at" => _,
                  "access_token" => _

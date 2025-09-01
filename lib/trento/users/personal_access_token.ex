@@ -1,6 +1,6 @@
-defmodule Trento.Users.ApiKey do
+defmodule Trento.Users.PersonalAccessToken do
   @moduledoc """
-  Represents an API key for a user.
+  Represents a Personal Access Token for a user.
   """
 
   use Ecto.Schema
@@ -10,7 +10,8 @@ defmodule Trento.Users.ApiKey do
 
   @type t :: %__MODULE__{}
 
-  schema "api_keys" do
+  @primary_key {:jti, :binary_id, autogenerate: true}
+  schema "personal_access_tokens" do
     field :name, :string
     field :expire_at, :utc_datetime_usec
 
