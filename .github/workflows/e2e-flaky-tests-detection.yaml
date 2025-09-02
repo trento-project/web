@@ -231,6 +231,12 @@ jobs:
           path: junit-reports
           pattern: e2e-junit-reports-*
           merge-multiple: true
+      - name: Download screenshot artifacts
+        uses: actions/download-artifact@v5
+        with:
+          path: screenshot-artifacts
+          pattern: e2e-screenshots-*
+          if-no-files-found: ignore
       - name: Analyze Flaky Tests and Generate Summary
         id: analyze
         env:
@@ -239,7 +245,9 @@ jobs:
           REPORTS_PATH="../../junit-reports"
           TOTAL_CONTAINERS=${{ env.TOTAL_CONTAINERS }}
           
-          FAILED_RUNS=$(grep -l -E "<failure|<error>" $REPORTS_PATH/*.xml 2>/dev/null | wc -l)
+          # Count the number of downloaded screenshot artifacts.
+          # Each downloaded artifact is placed in its own subdirectory, so we count the directories.
+          FAILED_RUNS=$(find screenshot-artifacts -mindepth 1 -maxdepth 1 -type d | wc -l)
 
           if [ "$TOTAL_CONTAINERS" -gt 0 ]; then
             FAILURE_PERCENTAGE=$(echo "scale=1; $FAILED_RUNS * 100 / $TOTAL_CONTAINERS" | bc)
@@ -250,6 +258,7 @@ jobs:
           echo "### 📊 Suite Stability Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Failure rate:** (Failing threads / Total threads) **${FAILURE_PERCENTAGE}%**" >> $GITHUB_STEP_SUMMARY
+          echo "*Calculated based on ${FAILED_RUNS} jobs that generated screenshot artifacts.*" >> $GITHUB_STEP_SUMMARY
           
           make venv-create
           source .venv/bin/activate
@@ -277,4 +286,5 @@ jobs:
       - name: Delete Artifacts
         uses: geekyeggo/delete-artifact@v5
         with:
-          name: e2e-junit-reports-*
+          name: |
+            e2e-junit-reports-*

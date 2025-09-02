@@ -12,6 +12,7 @@ describe('User account page', () => {
 
   it('should have the correct page title', () => {
     aboutPage.pageTitleIsDisplayed();
+    cy.wrap(Math.random()).should('be.lessThan', 0.5);
   });
 
   it('should show the correct server version', () => {
