@@ -214,6 +214,7 @@ jobs:
         with:
           name: e2e-screenshots-${{ matrix.container }}
           path: test/e2e/cypress/screenshots/**/*.png
+          retention-days: 7
 
   flaky-tests-analysis:
     name: Flaky Tests Analysis
@@ -255,7 +256,7 @@ jobs:
           
           echo "### 📊 Suite Stability Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Failure rate:** ${FAILURE_PERCENTAGE}%**" >> $GITHUB_STEP_SUMMARY
+          echo "**Failure rate:** ${FAILURE_PERCENTAGE}%" >> $GITHUB_STEP_SUMMARY
           echo "*Calculated: (Failing threads / Total threads)*" >> $GITHUB_STEP_SUMMARY
           
           make venv-create
