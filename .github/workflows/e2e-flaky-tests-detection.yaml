@@ -285,5 +285,4 @@ jobs:
       - name: Delete Artifacts
         uses: geekyeggo/delete-artifact@v5
         with:
-          name: |
-            e2e-junit-reports-*
+          name: e2e-junit-reports-*
