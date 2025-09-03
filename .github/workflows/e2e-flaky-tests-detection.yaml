@@ -248,7 +248,7 @@ jobs:
           # Count the number of downloaded screenshot artifacts.
           # Each downloaded artifact is placed in its own subdirectory, so we count the directories.
           FAILED_RUNS=$(find screenshot-artifacts -mindepth 1 -maxdepth 1 -type d | wc -l)
-
+          echo $FAILED_RUNS
           if [ "$TOTAL_CONTAINERS" -gt 0 ]; then
             FAILURE_PERCENTAGE=$(echo "scale=1; $FAILED_RUNS * 100 / $TOTAL_CONTAINERS" | bc)
           else
