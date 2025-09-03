@@ -242,6 +242,7 @@ jobs:
         env:
           TOTAL_CONTAINERS: ${{ github.event.inputs.num_containers || env.DEFAULT_NUM_CONTAINERS }}
         run: |
+          ls
           REPORTS_PATH="../../junit-reports"
           TOTAL_CONTAINERS=${{ env.TOTAL_CONTAINERS }}
           
