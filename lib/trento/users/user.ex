@@ -41,6 +41,7 @@ defmodule Trento.Users.User do
     field :totp_secret, EncryptedBinary, redact: true
     field :totp_last_used_at, :utc_datetime_usec
     field :analytics_enabled_at, :utc_datetime_usec
+    field :analytics_eula_accepted_at, :utc_datetime_usec
     field :lock_version, :integer, default: 1
 
     many_to_many :abilities, Ability, join_through: UsersAbilities, unique: true
@@ -86,7 +87,11 @@ defmodule Trento.Users.User do
     |> pow_extension_changeset(attrs)
     |> validate_password()
     |> custom_fields_changeset(attrs)
-    |> cast(attrs, [:password_change_requested_at, :analytics_enabled_at])
+    |> cast(attrs, [
+      :password_change_requested_at,
+      :analytics_enabled_at,
+      :analytics_eula_accepted_at
+    ])
   end
 
   def totp_update_changeset(user, attrs) do
