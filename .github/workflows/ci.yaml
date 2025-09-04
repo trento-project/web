@@ -226,6 +226,13 @@ jobs:
     name: Elixir tests
     needs: [elixir-deps]
     runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        include:
+          - elixir_version: 1.15
+            otp_version: 26
+          - elixir_version: 1.18
+            otp_version: 27
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -235,8 +242,8 @@ jobs:
         id: setup-elixir
         uses: erlef/setup-beam@v1
         with:
-          version-file: .tool-versions
-          version-type: strict
+          otp-version: ${{ matrix.otp_version }}
+          elixir-version: ${{ matrix.elixir_version }}
       - name: Retrieve Elixir Cached Dependencies
         uses: actions/cache@v4
         id: mix-cache
@@ -245,7 +252,7 @@ jobs:
             deps
             _build/${{ env.MIX_ENV }}
             priv/plts
-          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
+          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}-matrix-${{ matrix.elixir_version }}-otp-${{ matrix.otp_version }}
       - name: Compile
         run: mix compile --warnings-as-errors
       - name: "Docker compose dependencies"
@@ -281,15 +288,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODEJS_VERSION }}
-      - name: Retrieve Elixir Cached Dependencies
-        uses: actions/cache@v4
-        id: mix-cache
-        with:
-          path: |
-            deps
-            _build/${{ env.MIX_ENV }}
-            priv/plts
-          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
+      - name: Retrieve Elixir Dependencies
+        run: mix deps.get
+        env:
+          MIX_ENV: ${{ env.MIX_ENV }}
       - name: Retrieve NPM Cached Dependencies
         uses: actions/cache@v4
         id: npm-cache
