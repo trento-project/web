@@ -54,7 +54,9 @@ defmodule TrentoWeb.V1.UsersController do
       {"Request containing new user account information for onboarding and user management.",
        "application/json", UserCreationRequest},
     responses: [
-      created: {"User saved successfully", "application/json", UserItem},
+      created:
+        {"User account created successfully, returning the new user details for management and review.",
+         "application/json", UserItem},
       unprocessable_entity: UnprocessableEntity.response()
     ]
 
@@ -78,7 +80,7 @@ defmodule TrentoWeb.V1.UsersController do
         description:
           "Unique identifier of the user whose details are being requested. This value must be an integer.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :integer, example: 1}
+        schema: %OpenApiSpex.Schema{type: :integer, example: 1}
       ]
     ],
     responses: [
@@ -90,7 +92,7 @@ defmodule TrentoWeb.V1.UsersController do
              required: true,
              description:
                "The entity version of the user, used for conditional HTTP requests and concurrency control.",
-             type: %OpenApiSpex.Schema{type: :string},
+             schema: %OpenApiSpex.Schema{type: :string},
              allowEmptyValues: false
            }
          }},
@@ -116,13 +118,13 @@ defmodule TrentoWeb.V1.UsersController do
         description:
           "Unique identifier of the user to be updated. This value must be an integer.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :integer, example: 1}
+        schema: %OpenApiSpex.Schema{type: :integer, example: 1}
       ],
       "if-match": [
         # The field is required, we put to false to avoid openapispex validate that value with 422 status code.
         required: false,
         in: :header,
-        type: %OpenApiSpex.Schema{type: :integer},
+        schema: %OpenApiSpex.Schema{type: :integer, example: 2},
         description:
           "The entity version of the user, provided in the If-Match header, to ensure safe and conditional updates."
       ]
@@ -139,7 +141,7 @@ defmodule TrentoWeb.V1.UsersController do
              required: true,
              description:
                "The entity version of the user, used for conditional HTTP requests and concurrency control.",
-             type: %OpenApiSpex.Schema{type: :string},
+             schema: %OpenApiSpex.Schema{type: :string},
              allowEmptyValues: false
            }
          }},
@@ -173,7 +175,7 @@ defmodule TrentoWeb.V1.UsersController do
         description:
           "Unique identifier of the user to be deleted. This value must be an integer.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :integer, example: 1}
+        schema: %OpenApiSpex.Schema{type: :integer, example: 1}
       ]
     ],
     responses: [
