@@ -25,7 +25,7 @@ defmodule Trento.Domain.Events.ClusterRegistered do
     field :hosts_number, :integer
     field :health, Ecto.Enum, values: Health.values()
 
-    field :details, PolymorphicEmbed,
+    polymorphic_embeds_one(:details,
       types: [
         hana_scale_up: [
           module: HanaClusterDetails,
@@ -34,5 +34,6 @@ defmodule Trento.Domain.Events.ClusterRegistered do
         ascs_ers: [module: AscsErsClusterDetails, identify_by_fields: [:sap_systems]]
       ],
       on_replace: :update
+    )
   end
 end

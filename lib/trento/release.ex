@@ -112,7 +112,7 @@ defmodule Trento.Release do
 
     api_key_settings = Trento.Repo.one(ApiKeySettings.base_query())
 
-    unless api_key_settings do
+    if !api_key_settings do
       %ApiKeySettings{}
       |> ApiKeySettings.changeset(%{
         jti: UUID.uuid4(),

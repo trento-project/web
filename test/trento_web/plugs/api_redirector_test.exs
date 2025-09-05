@@ -1,6 +1,5 @@
 defmodule TrentoWeb.Plugs.ApiRedirectorTest do
   use TrentoWeb.ConnCase, async: true
-  use Plug.Test
 
   alias TrentoWeb.Plugs.ApiRedirector
 
