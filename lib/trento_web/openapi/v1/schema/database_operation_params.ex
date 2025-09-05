@@ -34,7 +34,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.DatabaseOperationParams do
       title: "DatabaseOperationParams",
       description: "Database operation request parameters",
       oneOf: [
-        DatabaseStartStopParams
+        TrentoWeb.OpenApi.V1.Schema.DatabaseOperationParams.DatabaseStartStopParams
       ]
     },
     struct?: false
