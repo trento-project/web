@@ -45,26 +45,42 @@ defmodule TrentoWeb.OpenApi.V1.Schema.LoginCredentials do
   """
 
   require OpenApiSpex
+  alias OpenApiSpex.Schema
 
   OpenApiSpex.schema(
     %{
       title: "LoginCredentials",
+      description: "User login credentials schema for authentication and token issuance.",
       type: :object,
       additionalProperties: false,
+      properties: %{
+        username: %Schema{
+          type: :string,
+          description: "The username for authentication.",
+          example: "admin",
+          minLength: 1,
+          maxLength: 255
+        },
+        password: %Schema{
+          type: :string,
+          description: "The password for authentication.",
+          example: "thepassword",
+          format: :password,
+          minLength: 1,
+          maxLength: 255
+        },
+        totp_code: %Schema{
+          type: :string,
+          description:
+            "Time-based One-Time Password code (optional, required when TOTP is enabled).",
+          example: "123456",
+          pattern: "^[0-9]{6}$"
+        }
+      },
+      required: [:username, :password],
       example: %{
         username: "admin",
         password: "thepassword"
-      },
-      properties: %{
-        username: %OpenApiSpex.Schema{
-          type: :string
-        },
-        password: %OpenApiSpex.Schema{
-          type: :string
-        },
-        totp_code: %OpenApiSpex.Schema{
-          type: :string
-        }
       }
     },
     struct?: false
@@ -88,19 +104,26 @@ defmodule TrentoWeb.OpenApi.V1.Schema.RefreshTokenRequest do
   """
 
   require OpenApiSpex
+  alias OpenApiSpex.Schema
 
   OpenApiSpex.schema(
     %{
-      title: "Refresh Credentials",
+      title: "RefreshTokenRequest",
+      description: "Refresh token credentials for obtaining new access token.",
       type: :object,
+      additionalProperties: false,
+      properties: %{
+        refresh_token: %Schema{
+          type: :string,
+          description: "Valid refresh token to exchange for a new access token.",
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+          minLength: 1
+        }
+      },
+      required: [:refresh_token],
       example: %{
         refresh_token:
           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTU1NjY5MiwiaWF0IjoxNjcxNTQ5NDkyLCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwOGlxMmkxNnRlbHNycWE4MDAwMWM4IiwibmJmIjoxNjcxNTQ5NDkyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYtTrbVcCEO_UgIkHn6A"
-      },
-      properties: %{
-        refresh_token: %OpenApiSpex.Schema{
-          type: :string
-        }
       }
     },
     struct?: false
@@ -131,24 +154,33 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ExternalIdpCallback do
   """
 
   require OpenApiSpex
+  alias OpenApiSpex.Schema
 
   OpenApiSpex.schema(
     %{
-      title: "UserIDPEnrollmentCredentials",
+      title: "ExternalIdpCallback",
+      description: "User identity provider enrollment credentials with authorization code.",
       type: :object,
-      example: %{
-        code: "kyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYt",
-        session_sate: "frHteBttgtW8706m7nqYC6ruYt"
-      },
+      additionalProperties: false,
       properties: %{
-        code: %OpenApiSpex.Schema{
-          type: :string
+        code: %Schema{
+          type: :string,
+          description: "Authorization code returned from the identity provider.",
+          example: "kyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYt",
+          minLength: 1
         },
-        session_state: %OpenApiSpex.Schema{
-          type: :string
+        session_state: %Schema{
+          type: :string,
+          description: "Session state parameter for additional security.",
+          example: "frHteBttgtW8706m7nqYC6ruYt",
+          minLength: 1
         }
       },
-      required: [:code, :session_state]
+      required: [:code, :session_state],
+      example: %{
+        code: "kyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYt",
+        session_state: "frHteBttgtW8706m7nqYC6ruYt"
+      }
     },
     struct?: false
   )
@@ -178,24 +210,35 @@ defmodule TrentoWeb.OpenApi.V1.Schema.UserIDPCredentials do
   """
 
   require OpenApiSpex
+  alias OpenApiSpex.Schema
 
   OpenApiSpex.schema(
     %{
       title: "UserIDPCredentials",
+      description:
+        "Successful authentication returns access and refresh tokens for secure API usage.",
       type: :object,
+      additionalProperties: false,
+      properties: %{
+        access_token: %Schema{
+          type: :string,
+          description: "JWT access token for authenticating API requests.",
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+          minLength: 1
+        },
+        refresh_token: %Schema{
+          type: :string,
+          description: "JWT refresh token for obtaining new access tokens when they expire.",
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+          minLength: 1
+        }
+      },
+      required: [:access_token, :refresh_token],
       example: %{
         access_token:
           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTU1NjY5MiwiaWF0IjoxNjcxNTQ5NDkyLCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwOGlxMmkxNnRlbHNycWE4MDAwMWM4IiwibmJmIjoxNjcxNTQ5NDkyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYtTrbVcCEO_UgIkHn6A",
         refresh_token:
           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTU1NjY5MiwiaWF0IjoxNjcxNTQ5NDkyLCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwOGlxMmkxNnRlbHNycWE4MDAwMWM4IiwibmJmIjoxNjcxNTQ5NDkyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYtTrbVcCEO_UgIkHn6A"
-      },
-      properties: %{
-        access_token: %OpenApiSpex.Schema{
-          type: :string
-        },
-        refresh_token: %OpenApiSpex.Schema{
-          type: :string
-        }
       }
     },
     struct?: false
@@ -227,28 +270,42 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Credentials do
   """
 
   require OpenApiSpex
+  alias OpenApiSpex.Schema
 
   OpenApiSpex.schema(
     %{
       title: "Credentials",
+      description:
+        "Successful authentication returns access and refresh tokens for secure API usage. The response includes token expiration details and is suitable for session management.",
       type: :object,
+      additionalProperties: false,
+      properties: %{
+        access_token: %Schema{
+          type: :string,
+          description: "JWT access token for authenticating API requests.",
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+          minLength: 1
+        },
+        refresh_token: %Schema{
+          type: :string,
+          description: "JWT refresh token for obtaining new access tokens when they expire.",
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+          minLength: 1
+        },
+        expires_in: %Schema{
+          type: :integer,
+          description: "Access token lifetime in seconds.",
+          example: 600,
+          minimum: 1
+        }
+      },
+      required: [:access_token, :refresh_token, :expires_in],
       example: %{
         expires_in: 600,
         access_token:
           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTU1NjY5MiwiaWF0IjoxNjcxNTQ5NDkyLCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwOGlxMmkxNnRlbHNycWE4MDAwMWM4IiwibmJmIjoxNjcxNTQ5NDkyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYtTrbVcCEO_UgIkHn6A",
         refresh_token:
           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTU1NjY5MiwiaWF0IjoxNjcxNTQ5NDkyLCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwOGlxMmkxNnRlbHNycWE4MDAwMWM4IiwibmJmIjoxNjcxNTQ5NDkyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYtTrbVcCEO_UgIkHn6A"
-      },
-      properties: %{
-        access_token: %OpenApiSpex.Schema{
-          type: :string
-        },
-        refresh_token: %OpenApiSpex.Schema{
-          type: :string
-        },
-        expires_in: %OpenApiSpex.Schema{
-          type: :integer
-        }
       }
     },
     struct?: false
@@ -280,23 +337,34 @@ defmodule TrentoWeb.OpenApi.V1.Schema.RefreshedCredentials do
   """
 
   require OpenApiSpex
+  alias OpenApiSpex.Schema
 
   OpenApiSpex.schema(
     %{
       title: "RefreshedCredentials",
+      description:
+        "A valid refresh token returns new access credentials for continued secure API usage. The response includes updated token expiration information for session management.",
       type: :object,
-      example: %{
-        expires_in: 600,
-        access_token:
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTU1NjY5MiwiaWF0IjoxNjcxNTQ5NDkyLCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwOGlxMmkxNnRlbHNycWE4MDAwMWM4IiwibmJmIjoxNjcxNTQ5NDkyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYtTrbVcCEO_UgIkHn6A"
-      },
+      additionalProperties: false,
       properties: %{
-        access_token: %OpenApiSpex.Schema{
-          type: :string
+        access_token: %Schema{
+          type: :string,
+          description: "New JWT access token for authenticating API requests.",
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+          minLength: 1
         },
-        expires_in: %OpenApiSpex.Schema{
-          type: :integer
+        expires_in: %Schema{
+          type: :integer,
+          description: "Access token lifetime in seconds.",
+          example: 600,
+          minimum: 1
         }
+      },
+      required: [:access_token, :expires_in],
+      example: %{
+        access_token:
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTU1NjY5MiwiaWF0IjoxNjcxNTQ5NDkyLCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwOGlxMmkxNnRlbHNycWE4MDAwMWM4IiwibmJmIjoxNjcxNTQ5NDkyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYtTrbVcCEO_UgIkHn6A",
+        expires_in: 600
       }
     },
     struct?: false
