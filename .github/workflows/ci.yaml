@@ -702,6 +702,7 @@ jobs:
     strategy:
       matrix:
         include:
+          - version: Unversioned
           - version: V1
           - version: V2
     steps:

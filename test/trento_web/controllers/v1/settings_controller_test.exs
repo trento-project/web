@@ -631,6 +631,8 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
   end
 
   describe "SSOCertificatesSettings" do
+    setup :setup_api_spec_unversioned
+
     test "should return uploaded certificates public content in the public_keys route", %{
       conn: conn,
       api_spec: api_spec

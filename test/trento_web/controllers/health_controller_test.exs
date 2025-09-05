@@ -5,7 +5,7 @@ defmodule Trento.HealthControllerTest do
 
   import OpenApiSpex.TestAssertions
 
-  alias TrentoWeb.OpenApi.V1.ApiSpec
+  alias TrentoWeb.OpenApi.Unversioned.ApiSpec
 
   setup do
     %{api_spec: ApiSpec.spec()}

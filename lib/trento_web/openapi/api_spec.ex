@@ -7,6 +7,10 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
   Example:
     use TrentoWeb.OpenApi.ApiSpec,
       api_version: "v1"
+
+    # For unversioned endpoints:
+    use TrentoWeb.OpenApi.ApiSpec,
+      api_version: "unversioned"
   """
 
   defmacro __using__(opts) do
@@ -36,7 +40,7 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
           info: %Info{
             title: "Trento",
             description: to_string(Application.spec(:trento, :description)),
-            version: to_string(Application.spec(:trento, :vsn))
+            version: to_string(Application.spec(:trento, :vsn)) <> "-" <> unquote(api_version)
           },
           components: %Components{
             securitySchemes: %{"authorization" => %SecurityScheme{type: "http", scheme: "bearer"}}
@@ -66,14 +70,17 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
           Server.from_endpoint(Endpoint)
         else
           # If the endpoint is not running, use a placeholder
-          # this happens when generarting openapi.json with --start-app=false
+          # this happens when generating openapi.json with --start-app=false
           # e.g. mix openapi.spec.json --start-app=false --spec WandaWeb.ApiSpec
           %OpenApiSpex.Server{url: "https://demo.trento-project.io"}
         end
       end
 
       defp build_paths_for_version(version, router) do
-        excluded_versions = List.delete(router.available_api_versions(), version)
+        available_versions = router.available_api_versions()
+
+        excluded_versions = List.delete(available_versions, version)
+        actual_versions = List.delete(available_versions, "unversioned")
 
         router
         |> Paths.from_router()
@@ -83,10 +90,18 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
             |> String.trim("/")
             |> String.split("/")
             |> Enum.at(1)
+            |> map_version(actual_versions)
 
           Enum.member?(excluded_versions, current_version)
         end)
         |> Map.new()
+      end
+
+      defp map_version(version, actual_versions) do
+        case version in actual_versions do
+          true -> version
+          _ -> "unversioned"
+        end
       end
     end
   end
