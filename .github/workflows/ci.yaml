@@ -31,10 +31,16 @@ jobs:
       matrix:
         include:
           - mix_env: dev
-          - mix_env: test
-          - elixir: "1.15"
+            elixir: "1.15"
             otp: "26"
-          - elixir: "1.18"
+          - mix_env: dev
+            elixir: "1.18"
+            otp: "27"
+          - mix_env: test
+            elixir: "1.15"
+            otp: "26"
+          - mix_env: test
+            elixir: "1.18"
             otp: "27"
     env:
       MIX_ENV: ${{ matrix.mix_env }}
@@ -734,10 +740,16 @@ jobs:
       matrix:
         include:
           - version: V1
-          - version: V2
-          - elixir: "1.15"
+            elixir: "1.15"
             otp: "26"
-          - elixir: "1.18"
+          - version: V1
+            elixir: "1.18"
+            otp: "27"
+          - version: V2
+            elixir: "1.15"
+            otp: "26"
+          - version: V2
+            elixir: "1.18"
             otp: "27"
     steps:
       - name: Checkout current branch
