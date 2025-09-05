@@ -45,6 +45,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.LoginCredentials do
   """
 
   require OpenApiSpex
+  alias OpenApiSpex.Schema
 
   OpenApiSpex.schema(
     %{
@@ -103,6 +104,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.RefreshTokenRequest do
   """
 
   require OpenApiSpex
+  alias OpenApiSpex.Schema
 
   OpenApiSpex.schema(
     %{
@@ -152,6 +154,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ExternalIdpCallback do
   """
 
   require OpenApiSpex
+  alias OpenApiSpex.Schema
 
   OpenApiSpex.schema(
     %{
@@ -207,6 +210,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.UserIDPCredentials do
   """
 
   require OpenApiSpex
+  alias OpenApiSpex.Schema
 
   OpenApiSpex.schema(
     %{
@@ -266,6 +270,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Credentials do
   """
 
   require OpenApiSpex
+  alias OpenApiSpex.Schema
 
   OpenApiSpex.schema(
     %{
@@ -332,6 +337,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.RefreshedCredentials do
   """
 
   require OpenApiSpex
+  alias OpenApiSpex.Schema
 
   OpenApiSpex.schema(
     %{
