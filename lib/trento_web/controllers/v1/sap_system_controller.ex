@@ -51,13 +51,14 @@ defmodule TrentoWeb.V1.SapSystemController do
   action_fallback TrentoWeb.FallbackController
 
   operation :list,
-    summary: "List SAP Systems",
-    description: "List all the discovered SAP Systems on the target infrastructure",
+    summary: "List SAP Systems.",
+    description:
+      "Retrieves a comprehensive list of all SAP Systems discovered on the target infrastructure, supporting monitoring and management tasks for administrators.",
     tags: ["Target Infrastructure"],
     responses: [
       ok:
-        {"A collection of the discovered SAP Systems", "application/json",
-         Schema.SAPSystem.SAPSystemsCollection}
+        {"Comprehensive list of all SAP Systems discovered on the target infrastructure for monitoring and management.",
+         "application/json", Schema.SAPSystem.SAPSystemsCollection}
     ]
 
   def list(conn, _) do
@@ -67,29 +68,46 @@ defmodule TrentoWeb.V1.SapSystemController do
   end
 
   operation :delete_application_instance,
-    summary: "Delete application instance",
+    summary: "Delete application instance.",
     description:
-      "Delete the application instance identified by the provided data if it is absent",
+      "Removes the specified application instance from the system if it is no longer present, supporting infrastructure cleanup and resource management.",
     tags: ["Target Infrastructure"],
     parameters: [
       id: [
         in: :path,
+        description:
+          "Unique identifier of the SAP system associated with the application instance to be deleted. This value must be a valid UUID string.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :string, format: :uuid}
+        type: %OpenApiSpex.Schema{
+          type: :string,
+          format: :uuid,
+          example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
+        }
       ],
       host_id: [
         in: :path,
+        description:
+          "Unique identifier of the host associated with the application instance. This value must be a valid UUID string.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :string, format: :uuid}
+        type: %OpenApiSpex.Schema{
+          type: :string,
+          format: :uuid,
+          example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
+        }
       ],
       instance_number: [
         in: :path,
+        description:
+          "The instance number of the SAP application to be deleted, used to uniquely identify the specific application instance within the host.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :string}
+        type: %OpenApiSpex.Schema{
+          type: :string,
+          example: "10"
+        }
       ]
     ],
     responses: [
-      no_content: "The application instance has been deregistered",
+      no_content: "The application instance has been deregistered.",
       not_found: NotFound.response(),
       unprocessable_entity: UnprocessableEntity.response()
     ]
@@ -107,32 +125,57 @@ defmodule TrentoWeb.V1.SapSystemController do
   end
 
   operation :request_instance_operation,
-    summary: "Request operation for a SAP instance",
+    summary: "Request operation for a SAP instance.",
     tags: ["Operations"],
-    description: "Request operation for a SAP instance",
+    description:
+      "Submits a request to perform a specific operation on a SAP application instance, such as restart or configuration change, supporting automated infrastructure management.",
     parameters: [
       id: [
         in: :path,
+        description:
+          "Unique identifier of the SAP system associated with the application instance. This value must be a valid UUID string.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :string, format: :uuid}
+        type: %OpenApiSpex.Schema{
+          type: :string,
+          format: :uuid,
+          example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
+        }
       ],
       host_id: [
         in: :path,
+        description:
+          "Unique identifier of the host associated with the application instance. This value must be a valid UUID string.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :string, format: :uuid}
+        type: %OpenApiSpex.Schema{
+          type: :string,
+          format: :uuid,
+          example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
+        }
       ],
       instance_number: [
         in: :path,
+        description:
+          "The instance number of the SAP application instance, used to uniquely identify the specific instance within the host.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :string}
+        type: %OpenApiSpex.Schema{
+          type: :string,
+          example: "10"
+        }
       ],
       operation: [
         in: :path,
+        description:
+          "Specifies the type of operation to be performed on the SAP application instance, such as restart or configuration change.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :string}
+        type: %OpenApiSpex.Schema{
+          type: :string,
+          example: "restart"
+        }
       ]
     ],
-    request_body: {"Params", "application/json", SapInstanceOperationParams},
+    request_body:
+      {"Request containing parameters for the specified SAP application instance operation, such as restart or configuration change.",
+       "application/json", SapInstanceOperationParams},
     responses: [
       accepted: OperationAccepted.response(),
       not_found: NotFound.response(),
@@ -161,22 +204,36 @@ defmodule TrentoWeb.V1.SapSystemController do
   end
 
   operation :request_operation,
-    summary: "Request operation for a SAP system",
+    summary: "Request operation for a SAP system.",
     tags: ["Operations"],
-    description: "Request operation for a SAP system",
+    description:
+      "Submits a request to perform a specific operation on a SAP system, such as restart or configuration change, supporting automated infrastructure management.",
     parameters: [
       id: [
         in: :path,
+        description:
+          "Unique identifier of the SAP system on which the operation will be performed. This value must be a valid UUID string.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :string, format: :uuid}
+        type: %OpenApiSpex.Schema{
+          type: :string,
+          format: :uuid,
+          example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
+        }
       ],
       operation: [
         in: :path,
+        description:
+          "Specifies the type of operation to be performed on the SAP system, such as restart or configuration change.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :string}
+        type: %OpenApiSpex.Schema{
+          type: :string,
+          example: "restart"
+        }
       ]
     ],
-    request_body: {"Params", "application/json", SapSystemOperationParams},
+    request_body:
+      {"Request containing parameters for the specified SAP system operation, such as restart or configuration change.",
+       "application/json", SapSystemOperationParams},
     responses: [
       accepted: OperationAccepted.response(),
       not_found: NotFound.response(),
