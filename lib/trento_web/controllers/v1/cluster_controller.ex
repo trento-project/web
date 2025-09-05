@@ -187,19 +187,33 @@ defmodule TrentoWeb.V1.ClusterController do
         in: :path,
         required: true,
         description:
-          "Unique identifier of the cluster containing the host. This value must be a valid UUID string."
+          "Unique identifier of the cluster containing the host. This value must be a valid UUID string.",
+        type: %OpenApiSpex.Schema{
+          type: :string,
+          format: :uuid,
+          example: "c1a2b3c4-d5e6-7890-abcd-ef1234567890"
+        }
       ],
       host_id: [
         in: :path,
         required: true,
         description:
-          "Unique identifier of the host within the cluster on which the operation will be performed. This value must be a valid UUID string."
+          "Unique identifier of the host within the cluster on which the operation will be performed. This value must be a valid UUID string.",
+        type: %OpenApiSpex.Schema{
+          type: :string,
+          format: :uuid,
+          example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
+        }
       ],
       operation: [
         in: :path,
         required: true,
         description:
-          "Specifies the type of operation to be performed on the cluster's host, such as enabling or disabling pacemaker services."
+          "Specifies the type of operation to be performed on the cluster's host, such as enabling or disabling pacemaker services.",
+        type: %OpenApiSpex.Schema{
+          type: :string,
+          example: "pacemaker_enable"
+        }
       ]
     ],
     responses: [

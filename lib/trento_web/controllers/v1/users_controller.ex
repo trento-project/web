@@ -122,9 +122,9 @@ defmodule TrentoWeb.V1.UsersController do
         # The field is required, we put to false to avoid openapispex validate that value with 422 status code.
         required: false,
         in: :header,
-        type: %OpenApiSpex.Schema{type: :integer}
+        type: %OpenApiSpex.Schema{type: :integer},
         description:
-          "The entity version of the user, provided in the If-Match header, to ensure safe and conditional updates.",
+          "The entity version of the user, provided in the If-Match header, to ensure safe and conditional updates."
       ]
     ],
     request_body:
