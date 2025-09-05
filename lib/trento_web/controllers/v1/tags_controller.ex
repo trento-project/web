@@ -6,6 +6,7 @@ defmodule TrentoWeb.V1.TagsController do
   alias Trento.Tags.Tag
 
   alias TrentoWeb.OpenApi.V1.Schema
+  alias TrentoWeb.OpenApi.V1.Schema.{NotFound, UnprocessableEntity}
 
   plug TrentoWeb.Plugs.LoadUserPlug
 
@@ -50,7 +51,7 @@ defmodule TrentoWeb.V1.TagsController do
       created:
         "Tag has been successfully added to the specified resource, supporting resource categorization and management.",
       bad_request: Schema.BadRequest.response(),
-      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
+      unprocessable_entity: UnprocessableEntity.response()
     ]
 
   def add_tag(
@@ -100,8 +101,8 @@ defmodule TrentoWeb.V1.TagsController do
     responses: [
       no_content: "The tag has been removed from the resource.",
       bad_request: Schema.BadRequest.response(),
-      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response(),
-      not_found: OpenApiSpex.JsonErrorResponse.response()
+      unprocessable_entity: UnprocessableEntity.response(),
+      not_found: NotFound.response()
     ]
 
   def remove_tag(conn, %{
