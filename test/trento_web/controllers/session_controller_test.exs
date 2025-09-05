@@ -8,7 +8,7 @@ defmodule TrentoWeb.SessionControllerTest do
   import Trento.Factory
 
   alias TrentoWeb.Auth.RefreshToken
-  alias TrentoWeb.OpenApi.V1.ApiSpec
+  alias TrentoWeb.OpenApi.Unversioned.ApiSpec
 
   alias Trento.Users
   alias Trento.Users.User

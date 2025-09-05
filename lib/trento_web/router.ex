@@ -4,7 +4,7 @@ defmodule TrentoWeb.Router do
   use PowAssent.Phoenix.Router
 
   # From newest to oldest
-  @available_api_versions ["v2", "v1"]
+  @available_api_versions ["unversioned", "v2", "v1"]
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -28,6 +28,11 @@ defmodule TrentoWeb.Router do
   pipeline :api_v2 do
     plug :api
     plug OpenApiSpex.Plug.PutApiSpec, module: TrentoWeb.OpenApi.V2.ApiSpec
+  end
+
+  pipeline :unversioned_api do
+    plug :api
+    plug OpenApiSpex.Plug.PutApiSpec, module: TrentoWeb.OpenApi.Unversioned.ApiSpec
   end
 
   pipeline :protected_api do
@@ -61,7 +66,8 @@ defmodule TrentoWeb.Router do
       path: "/api/v1/openapi",
       urls: [
         %{url: "/api/v1/openapi", name: "Version 1"},
-        %{url: "/api/v2/openapi", name: "Version 2"}
+        %{url: "/api/v2/openapi", name: "Version 2"},
+        %{url: "/api/unversioned/openapi", name: "Unversioned"}
       ]
   end
 
@@ -81,7 +87,7 @@ defmodule TrentoWeb.Router do
   end
 
   scope "/api", TrentoWeb.V1 do
-    pipe_through [:api, :api_v1]
+    pipe_through [:api, :unversioned_api]
     get "/public_keys", SettingsController, :get_public_keys
   end
 
@@ -259,6 +265,11 @@ defmodule TrentoWeb.Router do
 
     scope "/v2" do
       pipe_through :api_v2
+      get "/openapi", OpenApiSpex.Plug.RenderSpec, []
+    end
+
+    scope "/unversioned" do
+      pipe_through :unversioned_api
       get "/openapi", OpenApiSpex.Plug.RenderSpec, []
     end
   end
