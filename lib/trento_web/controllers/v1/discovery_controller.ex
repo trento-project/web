@@ -19,7 +19,13 @@ defmodule TrentoWeb.V1.DiscoveryController do
        "application/json", Schema.DiscoveryEvent},
     responses: [
       accepted:
-        "Discovery event accepted for processing and infrastructure data analysis, supporting automated system inventory updates.",
+        {"Discovery event accepted for processing and infrastructure data analysis, supporting automated system inventory updates.",
+         "application/json",
+         %OpenApiSpex.Schema{
+           type: :object,
+           properties: %{},
+           example: %{}
+         }},
       unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
     ]
 

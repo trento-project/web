@@ -48,7 +48,13 @@ defmodule TrentoWeb.V1.TagsController do
        }},
     responses: [
       created:
-        "Tag has been successfully added to the specified resource, supporting resource categorization and management.",
+        {"Tag has been successfully added to the specified resource, supporting resource categorization and management.",
+         "application/json",
+         %OpenApiSpex.Schema{
+           type: :object,
+           properties: %{},
+           example: %{}
+         }},
       bad_request: Schema.BadRequest.response(),
       unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
     ]
@@ -98,7 +104,13 @@ defmodule TrentoWeb.V1.TagsController do
       ]
     ],
     responses: [
-      no_content: "The tag has been removed from the resource.",
+      no_content:
+        {"The tag has been removed from the resource.", "application/json",
+         %OpenApiSpex.Schema{
+           type: :object,
+           properties: %{},
+           example: %{}
+         }},
       bad_request: Schema.BadRequest.response(),
       unprocessable_entity: OpenApiSpex.JsonErrorResponse.response(),
       not_found: OpenApiSpex.JsonErrorResponse.response()
