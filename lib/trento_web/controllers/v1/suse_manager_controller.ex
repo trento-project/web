@@ -30,7 +30,7 @@ defmodule TrentoWeb.V1.SUSEManagerController do
         description:
           "Unique identifier of the host for which software updates are being requested. This value must be a valid UUID string.",
         required: true,
-        schema: %OpenApiSpex.Schema{
+        type: %OpenApiSpex.Schema{
           type: :string,
           format: :uuid,
           example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
@@ -68,7 +68,7 @@ defmodule TrentoWeb.V1.SUSEManagerController do
         description:
           "Unique identifier of the host for which patch information is being requested. This value must be a valid UUID string.",
         required: true,
-        schema: %OpenApiSpex.Schema{
+        type: %OpenApiSpex.Schema{
           type: :string,
           format: :uuid,
           example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
@@ -99,7 +99,7 @@ defmodule TrentoWeb.V1.SUSEManagerController do
         description:
           "The name of the advisory for which details are being requested, such as SUSE-2025-1234.",
         required: true,
-        schema: %OpenApiSpex.Schema{
+        type: %OpenApiSpex.Schema{
           type: :string,
           example: "SUSE-2025-1234"
         }

@@ -30,7 +30,7 @@ defmodule TrentoWeb.V1.TagsController do
         description:
           "Unique identifier of the resource to which the tag will be added. This value must be a valid UUID string.",
         required: true,
-        schema: %OpenApiSpex.Schema{
+        type: %OpenApiSpex.Schema{
           type: :string,
           format: :uuid,
           example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
@@ -81,7 +81,7 @@ defmodule TrentoWeb.V1.TagsController do
         description:
           "Unique identifier of the resource from which the tag will be removed. This value must be a valid UUID string.",
         required: true,
-        schema: %OpenApiSpex.Schema{
+        type: %OpenApiSpex.Schema{
           type: :string,
           format: :uuid,
           example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
@@ -91,7 +91,7 @@ defmodule TrentoWeb.V1.TagsController do
         in: :path,
         description: "The value of the tag to be removed from the resource.",
         required: true,
-        schema: %OpenApiSpex.Schema{
+        type: %OpenApiSpex.Schema{
           type: :string,
           example: "production"
         }

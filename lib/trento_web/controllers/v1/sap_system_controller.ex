@@ -78,7 +78,7 @@ defmodule TrentoWeb.V1.SapSystemController do
         description:
           "Unique identifier of the SAP system associated with the application instance to be deleted. This value must be a valid UUID string.",
         required: true,
-        schema: %OpenApiSpex.Schema{
+        type: %OpenApiSpex.Schema{
           type: :string,
           format: :uuid,
           example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
@@ -89,7 +89,7 @@ defmodule TrentoWeb.V1.SapSystemController do
         description:
           "Unique identifier of the host associated with the application instance. This value must be a valid UUID string.",
         required: true,
-        schema: %OpenApiSpex.Schema{
+        type: %OpenApiSpex.Schema{
           type: :string,
           format: :uuid,
           example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
@@ -100,7 +100,7 @@ defmodule TrentoWeb.V1.SapSystemController do
         description:
           "The instance number of the SAP application to be deleted, used to uniquely identify the specific application instance within the host.",
         required: true,
-        schema: %OpenApiSpex.Schema{
+        type: %OpenApiSpex.Schema{
           type: :string,
           example: "10"
         }
@@ -135,7 +135,7 @@ defmodule TrentoWeb.V1.SapSystemController do
         description:
           "Unique identifier of the SAP system associated with the application instance. This value must be a valid UUID string.",
         required: true,
-        schema: %OpenApiSpex.Schema{
+        type: %OpenApiSpex.Schema{
           type: :string,
           format: :uuid,
           example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
@@ -146,7 +146,7 @@ defmodule TrentoWeb.V1.SapSystemController do
         description:
           "Unique identifier of the host associated with the application instance. This value must be a valid UUID string.",
         required: true,
-        schema: %OpenApiSpex.Schema{
+        type: %OpenApiSpex.Schema{
           type: :string,
           format: :uuid,
           example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
@@ -157,7 +157,7 @@ defmodule TrentoWeb.V1.SapSystemController do
         description:
           "The instance number of the SAP application instance, used to uniquely identify the specific instance within the host.",
         required: true,
-        schema: %OpenApiSpex.Schema{
+        type: %OpenApiSpex.Schema{
           type: :string,
           example: "10"
         }
@@ -167,7 +167,7 @@ defmodule TrentoWeb.V1.SapSystemController do
         description:
           "Specifies the type of operation to be performed on the SAP application instance, such as restart or configuration change.",
         required: true,
-        schema: %OpenApiSpex.Schema{
+        type: %OpenApiSpex.Schema{
           type: :string,
           example: "restart"
         }
@@ -214,7 +214,7 @@ defmodule TrentoWeb.V1.SapSystemController do
         description:
           "Unique identifier of the SAP system on which the operation will be performed. This value must be a valid UUID string.",
         required: true,
-        schema: %OpenApiSpex.Schema{
+        type: %OpenApiSpex.Schema{
           type: :string,
           format: :uuid,
           example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
@@ -225,7 +225,7 @@ defmodule TrentoWeb.V1.SapSystemController do
         description:
           "Specifies the type of operation to be performed on the SAP system, such as restart or configuration change.",
         required: true,
-        schema: %OpenApiSpex.Schema{
+        type: %OpenApiSpex.Schema{
           type: :string,
           example: "restart"
         }

@@ -69,7 +69,7 @@ defmodule TrentoWeb.V1.ClusterController do
         description:
           "Unique identifier of the cluster for which the Checks execution is being requested. This value must be a valid UUID string.",
         required: true,
-        schema: %OpenApiSpex.Schema{
+        type: %OpenApiSpex.Schema{
           type: :string,
           format: :uuid,
           example: "c1a2b3c4-d5e6-7890-abcd-ef1234567890"
@@ -103,7 +103,7 @@ defmodule TrentoWeb.V1.ClusterController do
         description:
           "Unique identifier of the cluster for which Checks selection is being performed. This value must be a valid UUID string.",
         required: true,
-        schema: %OpenApiSpex.Schema{
+        type: %OpenApiSpex.Schema{
           type: :string,
           format: :uuid,
           example: "c1a2b3c4-d5e6-7890-abcd-ef1234567890"
@@ -139,7 +139,7 @@ defmodule TrentoWeb.V1.ClusterController do
         description:
           "Unique identifier of the cluster on which the operation will be performed. This value must be a valid UUID string.",
         required: true,
-        schema: %OpenApiSpex.Schema{
+        type: %OpenApiSpex.Schema{
           type: :string,
           format: :uuid,
           example: "c1a2b3c4-d5e6-7890-abcd-ef1234567890"
@@ -150,7 +150,7 @@ defmodule TrentoWeb.V1.ClusterController do
         description:
           "Specifies the type of operation to be performed on the cluster, such as maintenance or configuration change.",
         required: true,
-        schema: %OpenApiSpex.Schema{
+        type: %OpenApiSpex.Schema{
           type: :string,
           example: "cluster_maintenance_change"
         }
@@ -188,7 +188,7 @@ defmodule TrentoWeb.V1.ClusterController do
         required: true,
         description:
           "Unique identifier of the cluster containing the host. This value must be a valid UUID string.",
-        schema: %OpenApiSpex.Schema{
+        type: %OpenApiSpex.Schema{
           type: :string,
           format: :uuid,
           example: "c1a2b3c4-d5e6-7890-abcd-ef1234567890"
@@ -199,7 +199,7 @@ defmodule TrentoWeb.V1.ClusterController do
         required: true,
         description:
           "Unique identifier of the host within the cluster on which the operation will be performed. This value must be a valid UUID string.",
-        schema: %OpenApiSpex.Schema{
+        type: %OpenApiSpex.Schema{
           type: :string,
           format: :uuid,
           example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
@@ -210,7 +210,7 @@ defmodule TrentoWeb.V1.ClusterController do
         required: true,
         description:
           "Specifies the type of operation to be performed on the cluster's host, such as enabling or disabling pacemaker services.",
-        schema: %OpenApiSpex.Schema{
+        type: %OpenApiSpex.Schema{
           type: :string,
           example: "pacemaker_enable"
         }

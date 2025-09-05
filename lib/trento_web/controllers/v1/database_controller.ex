@@ -69,7 +69,7 @@ defmodule TrentoWeb.V1.DatabaseController do
         description:
           "Unique identifier of the database instance to be deleted. This value must be a valid UUID string.",
         required: true,
-        schema: %OpenApiSpex.Schema{
+        type: %OpenApiSpex.Schema{
           type: :string,
           format: :uuid,
           example: "d1a2b3c4-d5e6-7890-abcd-ef1234567890"
@@ -80,7 +80,7 @@ defmodule TrentoWeb.V1.DatabaseController do
         description:
           "Unique identifier of the host associated with the database instance. This value must be a valid UUID string.",
         required: true,
-        schema: %OpenApiSpex.Schema{
+        type: %OpenApiSpex.Schema{
           type: :string,
           format: :uuid,
           example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
@@ -91,7 +91,7 @@ defmodule TrentoWeb.V1.DatabaseController do
         description:
           "The instance number of the database to be deleted, used to uniquely identify the specific database instance within the host.",
         required: true,
-        schema: %OpenApiSpex.Schema{
+        type: %OpenApiSpex.Schema{
           type: :string,
           example: "10"
         }
@@ -125,7 +125,7 @@ defmodule TrentoWeb.V1.DatabaseController do
         description:
           "Unique identifier of the database for which the operation is requested. This value must be a valid UUID string.",
         required: true,
-        schema: %OpenApiSpex.Schema{
+        type: %OpenApiSpex.Schema{
           type: :string,
           format: :uuid,
           example: "d1a2b3c4-d5e6-7890-abcd-ef1234567890"
@@ -136,7 +136,7 @@ defmodule TrentoWeb.V1.DatabaseController do
         description:
           "The type of operation to perform on the database. Supported operations include 'database_start' and 'database_stop' for controlling database lifecycle.",
         required: true,
-        schema: %OpenApiSpex.Schema{
+        type: %OpenApiSpex.Schema{
           type: :string,
           example: "database_start"
         }

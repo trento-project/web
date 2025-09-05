@@ -80,7 +80,7 @@ defmodule TrentoWeb.V1.UsersController do
         description:
           "Unique identifier of the user whose details are being requested. This value must be an integer.",
         required: true,
-        schema: %OpenApiSpex.Schema{type: :integer, example: 1}
+        type: %OpenApiSpex.Schema{type: :integer, example: 1}
       ]
     ],
     responses: [
@@ -92,7 +92,7 @@ defmodule TrentoWeb.V1.UsersController do
              required: true,
              description:
                "The entity version of the user, used for conditional HTTP requests and concurrency control.",
-             schema: %OpenApiSpex.Schema{type: :string},
+             type: %OpenApiSpex.Schema{type: :string},
              allowEmptyValues: false
            }
          }},
@@ -118,13 +118,13 @@ defmodule TrentoWeb.V1.UsersController do
         description:
           "Unique identifier of the user to be updated. This value must be an integer.",
         required: true,
-        schema: %OpenApiSpex.Schema{type: :integer, example: 1}
+        type: %OpenApiSpex.Schema{type: :integer, example: 1}
       ],
       "if-match": [
         # The field is required, we put to false to avoid openapispex validate that value with 422 status code.
         required: false,
         in: :header,
-        schema: %OpenApiSpex.Schema{type: :integer, example: 2},
+        type: %OpenApiSpex.Schema{type: :integer},
         description:
           "The entity version of the user, provided in the If-Match header, to ensure safe and conditional updates."
       ]
@@ -141,7 +141,7 @@ defmodule TrentoWeb.V1.UsersController do
              required: true,
              description:
                "The entity version of the user, used for conditional HTTP requests and concurrency control.",
-             schema: %OpenApiSpex.Schema{type: :string},
+             type: %OpenApiSpex.Schema{type: :string},
              allowEmptyValues: false
            }
          }},
@@ -175,7 +175,7 @@ defmodule TrentoWeb.V1.UsersController do
         description:
           "Unique identifier of the user to be deleted. This value must be an integer.",
         required: true,
-        schema: %OpenApiSpex.Schema{type: :integer, example: 1}
+        type: %OpenApiSpex.Schema{type: :integer, example: 1}
       ]
     ],
     responses: [
