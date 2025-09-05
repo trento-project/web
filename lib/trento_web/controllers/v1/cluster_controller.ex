@@ -78,7 +78,13 @@ defmodule TrentoWeb.V1.ClusterController do
     ],
     responses: [
       accepted:
-        "Checks execution request for the specified cluster has been accepted and scheduled for processing.",
+        {"Checks execution request for the specified cluster has been accepted and scheduled for processing.",
+         "application/json",
+         %OpenApiSpex.Schema{
+           type: :object,
+           properties: %{},
+           example: %{}
+         }},
       not_found: NotFound.response(),
       bad_request: BadRequest.response(),
       unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
@@ -112,7 +118,14 @@ defmodule TrentoWeb.V1.ClusterController do
     ],
     request_body: {"Checks Selection.", "application/json", Checks.ChecksSelectionRequest},
     responses: [
-      accepted: "The Selection has been successfully collected",
+      accepted:
+        {"Selected checks for the cluster have been successfully collected and are ready for execution.",
+         "application/json",
+         %OpenApiSpex.Schema{
+           type: :object,
+           properties: %{},
+           example: %{}
+         }},
       not_found: NotFound.response(),
       bad_request: BadRequest.response(),
       unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()

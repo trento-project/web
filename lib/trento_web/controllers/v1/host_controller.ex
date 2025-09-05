@@ -115,7 +115,13 @@ defmodule TrentoWeb.V1.HostController do
     ],
     responses: [
       no_content:
-        "Heartbeat signal successfully updated for the host agent, supporting health monitoring and availability tracking.",
+        {"Heartbeat signal successfully updated for the host agent, supporting health monitoring and availability tracking.",
+         "application/json",
+         %OpenApiSpex.Schema{
+           type: :object,
+           properties: %{},
+           example: %{}
+         }},
       not_found: NotFound.response(),
       bad_request: BadRequest.response(),
       unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
@@ -148,7 +154,13 @@ defmodule TrentoWeb.V1.HostController do
     request_body: {"Checks Selection.", "application/json", Schema.Checks.ChecksSelectionRequest},
     responses: [
       accepted:
-        "Selected checks for the host have been successfully collected and are ready for execution.",
+        {"Selected checks for the host have been successfully collected and are ready for execution.",
+         "application/json",
+         %OpenApiSpex.Schema{
+           type: :object,
+           properties: %{},
+           example: %{}
+         }},
       not_found: NotFound.response(),
       unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
     ]
