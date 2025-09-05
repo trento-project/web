@@ -522,6 +522,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
         title: "PacemakerClusterDetails",
         description:
           "A comprehensive object representing the details of the detected Pacemaker cluster, including ASCS/ERS and HANA cluster details for infrastructure monitoring and management.",
+        type: :object,
         nullable: true,
         oneOf: [
           AscsErsClusterDetails,
