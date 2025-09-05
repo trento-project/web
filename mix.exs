@@ -8,7 +8,6 @@ defmodule Trento.MixProject do
       app: :trento,
       description: "Easing your life in administering SAP applications",
       version: get_version(),
-      elixir: "~> 1.18",
       elixirc_paths: elixirc_paths(Mix.env()),
       elixirc_options: [infer_signatures: false],
       compilers: Mix.compilers(),
