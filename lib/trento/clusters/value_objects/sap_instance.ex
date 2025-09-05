@@ -13,6 +13,7 @@ defmodule Trento.Clusters.ValueObjects.SapInstance do
     field :sid, :string
     field :instance_number, :string
     field :hostname, :string
+    field :resource_id, :string
     field :resource_type, Ecto.Enum, values: SapInstanceResourceType.values()
     field :mounted, :boolean
   end
