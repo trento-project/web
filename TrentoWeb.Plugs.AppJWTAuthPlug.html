@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-K7URE6B4.js"></script>
-    <script src="dist/sidebar_items-58FC0338.js"></script>
+    <script src="dist/sidebar_items-887CADB5.js"></script>
     <script src="docs_config.js"></script>
     <script async src="dist/html-YIPIRHGU.js"></script>
 
@@ -271,10 +271,10 @@ Info
   <section class="docstring">
 
 <p>Configures the connection for Pow, and fetches user.</p><p>If no options have been passed to the plug, the existing configuration
-will be pulled with <a href="https://hexdocs.pm/pow/1.0.38/Pow.Plug.html#fetch_config/1"><code class="inline">Pow.Plug.fetch_config/1</code></a></p><p><code class="inline">:plug</code> is appended to the passed configuration, so the current plug will
+will be pulled with <a href="https://hexdocs.pm/pow/1.0.39/Pow.Plug.html#fetch_config/1"><code class="inline">Pow.Plug.fetch_config/1</code></a></p><p><code class="inline">:plug</code> is appended to the passed configuration, so the current plug will
 be used in any subsequent calls to create, update and delete user
 credentials from the connection. The configuration is then set for the
-conn with <a href="https://hexdocs.pm/pow/1.0.38/Pow.Plug.html#put_config/2"><code class="inline">Pow.Plug.put_config/2</code></a>.</p><p>If a user can't be fetched with <a href="https://hexdocs.pm/pow/1.0.38/Pow.Plug.html#current_user/2"><code class="inline">Pow.Plug.current_user/2</code></a>, <a href="#do_fetch/2"><code class="inline">do_fetch/2</code></a>
+conn with <a href="https://hexdocs.pm/pow/1.0.39/Pow.Plug.html#put_config/2"><code class="inline">Pow.Plug.put_config/2</code></a>.</p><p>If a user can't be fetched with <a href="https://hexdocs.pm/pow/1.0.39/Pow.Plug.html#current_user/2"><code class="inline">Pow.Plug.current_user/2</code></a>, <a href="#do_fetch/2"><code class="inline">do_fetch/2</code></a>
 will be called.</p>
   </section>
 </section>
@@ -342,7 +342,7 @@ will be called.</p>
 
   <section class="docstring">
 
-<p>Calls <a href="#create/3"><code class="inline">create/3</code></a> and assigns the current user.</p><p>The user is assigned to the conn with <a href="https://hexdocs.pm/pow/1.0.38/Pow.Plug.html#assign_current_user/3"><code class="inline">Pow.Plug.assign_current_user/3</code></a>.</p>
+<p>Calls <a href="#create/3"><code class="inline">create/3</code></a> and assigns the current user.</p><p>The user is assigned to the conn with <a href="https://hexdocs.pm/pow/1.0.39/Pow.Plug.html#assign_current_user/3"><code class="inline">Pow.Plug.assign_current_user/3</code></a>.</p>
   </section>
 </section>
 <section class="detail" id="do_delete/2">
@@ -365,7 +365,7 @@ will be called.</p>
   <section class="docstring">
 
 <p>Calls <a href="#delete/2"><code class="inline">delete/2</code></a> and removes the current user assigned to the conn.</p><p>The user assigned is removed from the conn with
-<a href="https://hexdocs.pm/pow/1.0.38/Pow.Plug.html#assign_current_user/3"><code class="inline">Pow.Plug.assign_current_user/3</code></a>.</p>
+<a href="https://hexdocs.pm/pow/1.0.39/Pow.Plug.html#assign_current_user/3"><code class="inline">Pow.Plug.assign_current_user/3</code></a>.</p>
   </section>
 </section>
 <section class="detail" id="do_fetch/2">
@@ -387,7 +387,7 @@ will be called.</p>
 
   <section class="docstring">
 
-<p>Calls <a href="#fetch/2"><code class="inline">fetch/2</code></a> and assigns the current user to the conn.</p><p>The user is assigned to the conn with <a href="https://hexdocs.pm/pow/1.0.38/Pow.Plug.html#assign_current_user/3"><code class="inline">Pow.Plug.assign_current_user/3</code></a>.</p>
+<p>Calls <a href="#fetch/2"><code class="inline">fetch/2</code></a> and assigns the current user to the conn.</p><p>The user is assigned to the conn with <a href="https://hexdocs.pm/pow/1.0.39/Pow.Plug.html#assign_current_user/3"><code class="inline">Pow.Plug.assign_current_user/3</code></a>.</p>
   </section>
 </section>
 <section class="detail" id="fetch/2">
@@ -433,7 +433,7 @@ will be called.</p>
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> renew(<a href="https://hexdocs.pm/plug/1.16.1/Plug.Conn.html#t:t/0">Plug.Conn.t</a>(), <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) :: {:ok, <a href="https://hexdocs.pm/plug/1.16.1/Plug.Conn.html#t:t/0">Plug.Conn.t</a>()} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+          <pre translate="no"><span class="attribute">@spec</span> renew(<a href="https://hexdocs.pm/plug/1.18.1/Plug.Conn.html#t:t/0">Plug.Conn.t</a>(), <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) :: {:ok, <a href="https://hexdocs.pm/plug/1.18.1/Plug.Conn.html#t:t/0">Plug.Conn.t</a>()} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
 
       </div>
 
