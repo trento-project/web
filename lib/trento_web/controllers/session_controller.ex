@@ -5,7 +5,7 @@ defmodule TrentoWeb.SessionController do
   alias Trento.Users.User
   alias TrentoWeb.OpenApi.V1.Schema
 
-  alias TrentoWeb.OpenApi.V1.Schema.{
+  alias TrentoWeb.OpenApi.V1.Schema.Auth.{
     Credentials,
     ExternalIdpCallback,
     LoginCredentials,
