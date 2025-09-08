@@ -179,6 +179,8 @@ defmodule TrentoWeb.V1.UsersController do
       ]
     ],
     responses: [
+      no_content:
+        "User account has been successfully deleted from the system, supporting administrative cleanup.",
       not_found: Schema.NotFound.response(),
       forbidden: Schema.Forbidden.response()
     ]
