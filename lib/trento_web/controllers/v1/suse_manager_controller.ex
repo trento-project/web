@@ -58,10 +58,10 @@ defmodule TrentoWeb.V1.SUSEManagerController do
   end
 
   operation :patches_for_packages,
-    summary: "Gets patches covered by package upgrades in SUSE Manager.",
+    summary: "Gets patches covered by package upgrades in SUSE Multi-Linux Manager.",
     tags: ["Target Infrastructure"],
     description:
-      "Retrieves all relevant patches that are covered by package upgrades in SUSE Manager for a specified host, supporting compliance and system maintenance.",
+      "Retrieves all relevant patches that are covered by package upgrades in SUSE Multi-Linux Manager for a specified host, supporting compliance and system maintenance.",
     parameters: [
       host_id: [
         in: :query,
@@ -77,7 +77,7 @@ defmodule TrentoWeb.V1.SUSEManagerController do
     ],
     responses: [
       ok:
-        {"A detailed list of all relevant patches covered by package upgrades in SUSE Manager for the specified host.",
+        {"A detailed list of all relevant patches covered by package upgrades in SUSE Multi-Linux Manager for the specified host.",
          "application/json", PatchesForPackagesResponse}
     ]
 

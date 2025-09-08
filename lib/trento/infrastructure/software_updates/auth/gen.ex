@@ -1,6 +1,6 @@
 defmodule Trento.Infrastructure.SoftwareUpdates.Auth.Gen do
   @moduledoc """
-  Behaviour of the SUMA authentication process.
+  Behaviour of the SUSE Multi-Linux Manager authentication process.
   """
 
   alias Trento.Infrastructure.SoftwareUpdates.Auth.State
