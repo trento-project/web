@@ -12,10 +12,10 @@ defmodule TrentoWeb.V1.AboutController do
     summary: "Platform General Information.",
     tags: ["Platform"],
     description:
-      "Returns detailed general information about the current Platform installation, including version and subscription details, to help users and administrators understand the system environment.",
+      "Returns general information about the current Platform installation, including version and subscription details, to help users and administrators understand the system environment.",
     responses: [
       ok:
-        {"Detailed general information about the platform installation, including version and subscription details.",
+        {"General information about the platform installation, including version and subscription details.",
          "application/json", Schema.Platform.GeneralInformation}
     ]
 
