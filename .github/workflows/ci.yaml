@@ -299,8 +299,8 @@ jobs:
         id: setup-elixir
         uses: erlef/setup-beam@v1
         with:
-          version-file: .tool-versions
-          version-type: strict
+          otp-version: "27"
+          elixir-version: "1.18"
       - name: Setup Node
         uses: actions/setup-node@v5
         with:
