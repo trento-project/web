@@ -169,7 +169,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
       %{
         title: "SaveSuseManagerSettingsRequest",
         description:
-          "Represents the request body for saving SUSE Manager (SUMA) settings, including connection and authentication details for secure management.",
+          "Represents the request body for saving SUSE Multi-Linux Manager settings, including connection and authentication details for secure management.",
         type: :object,
         additionalProperties: false,
         properties: %{
@@ -211,7 +211,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
       %{
         title: "UpdateSuseManagerSettingsRequest",
         description:
-          "Request body for updating SUMA settings.\nOnly provide fields to be updated.",
+          "Request body for updating SUSE Multi-Linux Manager settings.\nOnly provide fields to be updated.",
         type: :object,
         minProperties: 1,
         additionalProperties: false,
@@ -251,20 +251,20 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
       %{
         title: "SuseManagerSettings",
         description:
-          "Represents the settings for SUSE Manager, including connection details and certificate upload information for secure management.",
+          "Represents the settings for SUSE Multi-Linux Manager, including connection details and certificate upload information for secure management.",
         type: :object,
         additionalProperties: false,
         properties: %{
           url: %Schema{
             type: :string,
             description:
-              "The URL used to access SUSE Manager, supporting connectivity and management.",
+              "The URL used to access SUSE Multi-Linux Manager, supporting connectivity and management.",
             example: "https://suse-manager.example.com"
           },
           username: %Schema{
             type: :string,
             description:
-              "The username used for authentication with SUSE Manager, supporting secure access.",
+              "The username used for authentication with SUSE Multi-Linux Manager, supporting secure access.",
             example: "admin"
           },
           ca_uploaded_at: %Schema{
@@ -272,7 +272,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
             format: :datetime,
             nullable: true,
             description:
-              "The date and time when the SSL certificate was uploaded to SUSE Manager, supporting audit and security management.",
+              "The date and time when the SSL certificate was uploaded to SUSE Multi-Linux Manager, supporting audit and security management.",
             example: "2024-01-15T10:30:00Z"
           }
         },

@@ -1,6 +1,6 @@
 defmodule Trento.Settings.SuseManagerSettings do
   @moduledoc """
-  Schema for suse manager settings.
+  Schema for SUSE Multi-Linux Manager settings.
   """
 
   use Ecto.Schema

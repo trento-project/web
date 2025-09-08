@@ -105,7 +105,7 @@ defmodule Trento.Settings do
     end
   end
 
-  # SUMA settings
+  # SUSE Multi-Linux Manager settings
 
   @spec get_suse_manager_settings ::
           {:ok, SuseManagerSettings.t()} | {:error, :settings_not_configured}

@@ -1,6 +1,6 @@
 defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
   @moduledoc """
-  SUMA Http requests executor
+  SUSE Multi-Linux Manager Http requests executor
   """
 
   @callback login(

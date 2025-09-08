@@ -40,7 +40,7 @@ defmodule Trento.Hosts.Host do
 
   ### Software Updates Discovery
 
-  Business process integrating with an external service, SUMA, determining relevant patches and upgradable packages for a host.
+  Business process integrating with an external service, SUSE Multi-Linux Manager, determining relevant patches and upgradable packages for a host.
   Process is triggered
   - on host registration
   - when the fqdn of the host changes

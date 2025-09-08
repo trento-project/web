@@ -1,6 +1,6 @@
 defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
   @moduledoc """
-  SUMA API client supporting software updates discovery.
+  SUSE Multi-Linux Manager API client supporting software updates discovery.
   """
 
   require Trento.SoftwareUpdates.Enums.AdvisoryType, as: AdvisoryType

@@ -20,26 +20,35 @@ defmodule TrentoWeb.V1.TagsController do
   plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
 
   operation :add_tag,
-    summary: "Add tag",
+    summary: "Add tag.",
     tags: ["Tags"],
-    description: "Add a tag to a resource.",
+    description:
+      "Adds a new tag to the specified resource, supporting resource categorization and management for infrastructure operations.",
     parameters: [
       id: [
         in: :path,
+        description:
+          "Unique identifier of the resource to which the tag will be added. This value must be a valid UUID string.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :string, format: :uuid}
+        type: %OpenApiSpex.Schema{
+          type: :string,
+          format: :uuid,
+          example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
+        }
       ]
     ],
     request_body:
-      {"Tag", "application/json",
+      {"Request containing tag value to be added to the specified resource for resource categorization and management.",
+       "application/json",
        %OpenApiSpex.Schema{
          type: :object,
          properties: %{
-           value: %OpenApiSpex.Schema{type: :string}
+           value: %OpenApiSpex.Schema{type: :string, example: "production"}
          }
        }},
     responses: [
-      created: "The tag has been added to the resource",
+      created:
+        "Tag has been successfully added to the specified resource, supporting resource categorization and management.",
       bad_request: Schema.BadRequest.response(),
       unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
     ]
@@ -62,23 +71,34 @@ defmodule TrentoWeb.V1.TagsController do
   end
 
   operation :remove_tag,
-    summary: "Remove tag",
+    summary: "Remove tag from resource.",
     tags: ["Tags"],
-    description: "Remove a tag from a resource.",
+    description:
+      "Removes a tag from the specified resource, supporting resource management and cleanup for infrastructure operations.",
     parameters: [
       id: [
         in: :path,
+        description:
+          "Unique identifier of the resource from which the tag will be removed. This value must be a valid UUID string.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :string, format: :uuid}
+        type: %OpenApiSpex.Schema{
+          type: :string,
+          format: :uuid,
+          example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
+        }
       ],
       value: [
         in: :path,
+        description: "The value of the tag to be removed from the resource.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :string}
+        type: %OpenApiSpex.Schema{
+          type: :string,
+          example: "production"
+        }
       ]
     ],
     responses: [
-      no_content: "The tag has been removed from the resource",
+      no_content: "The tag has been removed from the resource.",
       bad_request: Schema.BadRequest.response(),
       unprocessable_entity: OpenApiSpex.JsonErrorResponse.response(),
       not_found: OpenApiSpex.JsonErrorResponse.response()
