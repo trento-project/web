@@ -21,7 +21,7 @@ defmodule TrentoWeb.V1.ChartController do
         required: true,
         description:
           "Unique identifier of the host for which CPU usage data is requested. This value must be a valid UUID string.",
-        type: %OpenApiSpex.Schema{
+        schema: %OpenApiSpex.Schema{
           type: :string,
           format: :uuid,
           description:
@@ -34,7 +34,7 @@ defmodule TrentoWeb.V1.ChartController do
         required: true,
         description:
           "Specifies the start of the time interval for the CPU usage chart, formatted as an ISO8601 timestamp (e.g., 2024-01-15T10:00:00Z).",
-        type: %OpenApiSpex.Schema{
+        schema: %OpenApiSpex.Schema{
           type: :string,
           format: :"date-time",
           description:
@@ -47,7 +47,7 @@ defmodule TrentoWeb.V1.ChartController do
         required: true,
         description:
           "Specifies the end of the time interval for the CPU usage chart, formatted as an ISO8601 timestamp (e.g., 2024-01-15T12:00:00Z).",
-        type: %OpenApiSpex.Schema{
+        schema: %OpenApiSpex.Schema{
           type: :string,
           format: :"date-time",
           description:
@@ -78,7 +78,7 @@ defmodule TrentoWeb.V1.ChartController do
         required: true,
         description:
           "Unique identifier of the host for which memory usage data is requested. This value must be a valid UUID string.",
-        type: %OpenApiSpex.Schema{
+        schema: %OpenApiSpex.Schema{
           type: :string,
           format: :uuid,
           description:
@@ -91,7 +91,7 @@ defmodule TrentoWeb.V1.ChartController do
         required: true,
         description:
           "Specifies the start of the time interval for the memory usage chart, formatted as an ISO8601 timestamp (e.g., 2024-01-15T10:00:00Z).",
-        type: %OpenApiSpex.Schema{
+        schema: %OpenApiSpex.Schema{
           type: :string,
           format: :"date-time",
           description:
@@ -104,7 +104,7 @@ defmodule TrentoWeb.V1.ChartController do
         required: true,
         description:
           "Specifies the end of the time interval for the memory usage chart, formatted as an ISO8601 timestamp (e.g., 2024-01-15T12:00:00Z).",
-        type: %OpenApiSpex.Schema{
+        schema: %OpenApiSpex.Schema{
           type: :string,
           format: :"date-time",
           description:
