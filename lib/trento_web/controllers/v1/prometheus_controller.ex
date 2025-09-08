@@ -32,6 +32,19 @@ defmodule TrentoWeb.V1.PrometheusController do
     tags: ["Target Infrastructure"],
     description:
       "Returns the status of Prometheus exporters for a specific host, identified by its unique ID, supporting health monitoring and diagnostics for infrastructure components.",
+    parameters: [
+      id: [
+        in: :path,
+        description:
+          "Unique identifier of the host for which Prometheus exporter status is requested. This value must be a valid UUID string.",
+        required: true,
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          format: :uuid,
+          example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
+        }
+      ]
+    ],
     responses: [
       ok:
         {"Status information for Prometheus exporters on the specified host, supporting health monitoring and diagnostics.",
