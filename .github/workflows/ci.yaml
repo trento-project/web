@@ -31,7 +31,17 @@ jobs:
       matrix:
         include:
           - mix_env: dev
+            elixir: "1.15"
+            otp: "26"
+          - mix_env: dev
+            elixir: "1.18"
+            otp: "27"
           - mix_env: test
+            elixir: "1.15"
+            otp: "26"
+          - mix_env: test
+            elixir: "1.18"
+            otp: "27"
     env:
       MIX_ENV: ${{ matrix.mix_env }}
     steps:
@@ -43,8 +53,8 @@ jobs:
         id: setup-elixir
         uses: erlef/setup-beam@v1
         with:
-          version-file: .tool-versions
-          version-type: strict
+          otp-version: ${{ matrix.otp }}
+          elixir-version: ${{ matrix.elixir }}
       - name: Retrieve Elixir Cached Dependencies
         uses: actions/cache@v4
         id: mix-cache
@@ -149,6 +159,13 @@ jobs:
     name: Static Code Analysis
     needs: [elixir-deps, npm-deps]
     runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        include:
+          - elixir: "1.15"
+            otp: "26"
+          - elixir: "1.18"
+            otp: "27"
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -158,8 +175,8 @@ jobs:
         id: setup-elixir
         uses: erlef/setup-beam@v1
         with:
-          version-file: .tool-versions
-          version-type: strict
+          otp-version: ${{ matrix.otp }}
+          elixir-version: ${{ matrix.elixir }}
       - name: Read .tool-versions
         uses: endorama/asdf-parse-tool-versions@v1.3.4
         id: tool-versions
@@ -226,6 +243,13 @@ jobs:
     name: Elixir tests
     needs: [elixir-deps]
     runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        include:
+          - elixir: "1.15"
+            otp: "26"
+          - elixir: "1.18"
+            otp: "27"
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -235,8 +259,8 @@ jobs:
         id: setup-elixir
         uses: erlef/setup-beam@v1
         with:
-          version-file: .tool-versions
-          version-type: strict
+          otp-version: ${{ matrix.otp }}
+          elixir-version: ${{ matrix.elixir }}
       - name: Retrieve Elixir Cached Dependencies
         uses: actions/cache@v4
         id: mix-cache
@@ -275,8 +299,8 @@ jobs:
         id: setup-elixir
         uses: erlef/setup-beam@v1
         with:
-          version-file: .tool-versions
-          version-type: strict
+          otp-version: "27"
+          elixir-version: "1.18"
       - name: Setup Node
         uses: actions/setup-node@v5
         with:
@@ -345,6 +369,12 @@ jobs:
       fail-fast: false
       matrix:
         containers: [1, 2, 3, 4, 5, 6, 7, 8]
+        include:
+          - elixir: "1.15"
+            otp: "26"
+          - elixir: "1.18"
+            otp: "27"
+
     env:
       MIX_ENV: dev
     steps:
@@ -359,8 +389,8 @@ jobs:
         id: setup-elixir
         uses: erlef/setup-beam@v1
         with:
-          version-file: .tool-versions
-          version-type: strict
+          otp-version: ${{ matrix.otp }}
+          elixir-version: ${{ matrix.elixir }}
       - name: Setup Node
         uses: actions/setup-node@v5
         with:
@@ -663,6 +693,13 @@ jobs:
   target-branch-deps:
     name: Rebuild target branch dependencies
     runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        include:
+          - elixir: "1.15"
+            otp: "26"
+          - elixir: "1.18"
+            otp: "27"
     if: github.event_name == 'pull_request'
     steps:
       - name: Checkout target branch
@@ -673,8 +710,8 @@ jobs:
         id: setup-elixir
         uses: erlef/setup-beam@v1
         with:
-          version-file: .tool-versions
-          version-type: strict
+          otp-version: ${{ matrix.otp }}
+          elixir-version: ${{ matrix.elixir }}
       - name: Retrieve Elixir Cached Dependencies - target branch
         uses: actions/cache@v4
         id: mix-cache-target
@@ -703,7 +740,17 @@ jobs:
       matrix:
         include:
           - version: V1
+            elixir: "1.15"
+            otp: "26"
+          - version: V1
+            elixir: "1.18"
+            otp: "27"
           - version: V2
+            elixir: "1.15"
+            otp: "26"
+          - version: V2
+            elixir: "1.18"
+            otp: "27"
     steps:
       - name: Checkout current branch
         uses: actions/checkout@v5
@@ -711,8 +758,8 @@ jobs:
         id: setup-elixir
         uses: erlef/setup-beam@v1
         with:
-          version-file: .tool-versions
-          version-type: strict
+          otp-version: ${{ matrix.otp }}
+          elixir-version: ${{ matrix.elixir }}
       - name: Retrieve Elixir Cached Dependencies - current branch
         uses: actions/cache@v4
         id: mix-cache-current

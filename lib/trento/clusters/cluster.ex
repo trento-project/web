@@ -130,7 +130,7 @@ defmodule Trento.Clusters.Cluster do
     field :rolling_up, :boolean, default: false
     field :deregistered_at, :utc_datetime_usec, default: nil
 
-    field :details, PolymorphicEmbed,
+    polymorphic_embeds_one(:details,
       types: [
         hana_scale_up: [
           module: HanaClusterDetails,
@@ -139,6 +139,7 @@ defmodule Trento.Clusters.Cluster do
         ascs_ers: [module: AscsErsClusterDetails, identify_by_fields: [:sap_systems]]
       ],
       on_replace: :update
+    )
 
     embeds_many :sap_instances, SapInstance
   end
