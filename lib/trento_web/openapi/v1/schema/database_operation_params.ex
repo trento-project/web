@@ -10,7 +10,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.DatabaseOperationParams do
       %{
         title: "DatabaseStartStopParams",
         description:
-          "Parameters required to start or stop a database instance, including system replication site configuration and operation timeout for reliable management.",
+          "Parameters required to start or stop a database, including system replication site configuration and operation timeout for reliable management.",
         type: :object,
         additionalProperties: false,
         example: %{
@@ -41,7 +41,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.DatabaseOperationParams do
     %{
       title: "DatabaseOperationParams",
       description:
-        "Request parameters for database operations, supporting flexible control over database lifecycle actions such as starting or stopping database instances with configurable options.",
+        "Request parameters for database operations, supporting flexible control over database lifecycle actions such as starting or stopping databases with configurable options.",
       oneOf: [
         TrentoWeb.OpenApi.V1.Schema.DatabaseOperationParams.DatabaseStartStopParams
       ],
