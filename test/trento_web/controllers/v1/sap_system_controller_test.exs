@@ -462,10 +462,13 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
 
         %{id: database_id} = insert(:database)
         %{id: sap_system_id} = insert(:sap_system, database_id: database_id)
+        %{id: cluster_id} = insert(:cluster)
 
-        %{id: host_id} = insert(:host, heartbeat: :passing)
+        %{id: host_id} = insert(:host, heartbeat: :passing, cluster_id: cluster_id)
+        %{id: host_id_db} = insert(:host, heartbeat: :passing)
 
         insert(:application_instance, sap_system_id: sap_system_id, host_id: host_id)
+        insert(:database_instance, database_id: database_id, host_id: host_id_db)
 
         expect(
           Trento.Infrastructure.Messaging.Adapter.Mock,
@@ -507,7 +510,13 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
                  assigns: %{
                    sap_system: %{
                      id: ^sap_system_id,
-                     database: %{id: ^database_id}
+                     database_instances: [%{database_id: ^database_id}],
+                     application_instances: [
+                       %{
+                         sap_system_id: ^sap_system_id,
+                         host: %{id: ^host_id, cluster: %{id: ^cluster_id}}
+                       }
+                     ]
                    },
                    operation: operation
                  }

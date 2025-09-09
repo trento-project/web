@@ -44,7 +44,8 @@ defmodule TrentoWeb.V1.SapSystemController do
          policy: Trento.Operations.SapSystemPolicy,
          resource: &__MODULE__.get_operation_system/1,
          operation: &__MODULE__.get_operation/1,
-         assigns_to: :sap_system
+         assigns_to: :sap_system,
+         params: &__MODULE__.get_operation_params/1
        ]
        when action == :request_operation
 
@@ -242,10 +243,16 @@ defmodule TrentoWeb.V1.SapSystemController do
       }) do
     sap_system_id
     |> SapSystems.get_sap_system_by_id()
-    |> Repo.preload([:database])
+    |> Repo.preload([:database_instances, [application_instances: [host: :cluster]]])
   end
 
   def get_operation_system(_), do: nil
+
+  def get_operation_params(%{
+        body_params: body_params
+      }) do
+    body_params
+  end
 
   def get_operation(%{params: %{operation: "sap_instance_start"}}),
     do: :sap_instance_start
