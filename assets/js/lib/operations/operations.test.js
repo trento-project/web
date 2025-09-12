@@ -66,6 +66,10 @@ describe('operations', () => {
       operation: 'cluster_host_stop',
       label: 'Stop cluster host',
     },
+    {
+      operation: 'host_reboot',
+      label: 'Reboot host',
+    },
   ])(`should return the operation $operation label`, ({ operation, label }) => {
     expect(getOperationLabel(operation)).toBe(label);
   });
@@ -126,6 +130,10 @@ describe('operations', () => {
     {
       operation: 'crmclusterstop@v1',
       name: 'cluster_host_stop',
+    },
+    {
+      operation: 'hostreboot@v1',
+      name: 'host_reboot',
     },
   ])(
     `should return the operation $operation internal name`,
@@ -190,6 +198,10 @@ describe('operations', () => {
     {
       operation: 'cluster_host_stop',
       resourceType: 'cluster_host',
+    },
+    {
+      operation: 'host_reboot',
+      resourceType: 'host',
     },
   ])(
     `should return the operation $operation resource type`,
