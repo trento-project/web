@@ -59,6 +59,7 @@ const groupedAbilities = [
       'maintenance_change:cluster',
       'cluster_host_start:cluster',
       'cluster_host_stop:cluster',
+      'reboot:host',
       'pacemaker_enable:cluster',
       'pacemaker_disable:cluster',
       'start:application_instance',
