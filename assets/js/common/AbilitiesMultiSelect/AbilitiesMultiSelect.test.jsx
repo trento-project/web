@@ -120,6 +120,7 @@ describe('AbilitiesMultiSelect Component', () => {
           { id: 14, name: 'stop', resource: 'database' },
           { id: 15, name: 'cluster_host_start', resource: 'cluster' },
           { id: 16, name: 'cluster_host_stop', resource: 'cluster' },
+          { id: 17, name: 'reboot', resource: 'host' },
         ]}
         userAbilities={[
           { id: 1, name: 'all', resource: 'all' },
@@ -138,6 +139,7 @@ describe('AbilitiesMultiSelect Component', () => {
           { id: 14, name: 'stop', resource: 'database' },
           { id: 15, name: 'cluster_host_start', resource: 'cluster' },
           { id: 16, name: 'cluster_host_stop', resource: 'cluster' },
+          { id: 17, name: 'reboot', resource: 'host' },
         ]}
         setAbilities={noop}
         operationsEnabled
@@ -153,6 +155,8 @@ describe('AbilitiesMultiSelect Component', () => {
     expect(
       screen.queryByText('all:cluster_checks_selection')
     ).not.toBeInTheDocument();
+
+    expect(screen.queryByText('reboot:host')).not.toBeInTheDocument();
     expect(
       screen.queryByText('saptune_solution_apply:host')
     ).not.toBeInTheDocument();
