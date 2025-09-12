@@ -11,6 +11,7 @@ import { agentVersionWarning } from '@lib/agent';
 import {
   SAPTUNE_SOLUTION_APPLY,
   SAPTUNE_SOLUTION_CHANGE,
+  HOST_REBOOT,
   getOperationLabel,
   getOperationForbiddenMessage,
 } from '@lib/operations';
@@ -29,6 +30,7 @@ import DisabledGuard from '@common/DisabledGuard';
 import OperationsButton from '@common/OperationsButton';
 import {
   SaptuneSolutionOperationModal,
+  SimpleAcceptanceOperationModal,
   OperationForbiddenModal,
 } from '@common/OperationModals';
 
@@ -109,6 +111,8 @@ function HostDetails({
     saptuneSolutionOperationModalOpen,
     setSaptuneSolutionOperationModalOpen,
   ] = useState(false);
+  const [simpleOperationModalOpen, setSimpleOperationModalOpen] =
+    useState(false);
   const [currentOperation, setCurrentOperation] = useState(null);
 
   const versionWarningMessage = agentVersionWarning(agentVersion);
@@ -156,12 +160,18 @@ function HostDetails({
       case HOST_REBOOT:
         setSimpleOperationModalOpen(true);
         break;
+      default:
+        break;
     }
   };
 
   const closeOperationModal = () => {
     setSaptuneSolutionOperationModalOpen(false);
+    setSimpleOperationModalOpen(false);
   };
+
+  const isHanaRunning = some(sapInstances, { type: DATABASE_TYPE });
+  const isAppRunning = some(sapInstances, { type: APPLICATION_TYPE });
 
   return (
     <>
@@ -198,6 +208,16 @@ function HostDetails({
             }}
             onCancel={closeOperationModal}
           />
+          <SimpleAcceptanceOperationModal
+            operation={currentOperation}
+            descriptionResolverArgs={{ hostName: hostname }}
+            isOpen={!!simpleOperationModalOpen}
+            onRequest={() => {
+              requestOperation(currentOperation, { host_id: hostID });
+              closeOperationModal();
+            }}
+            onCancel={closeOperationModal}
+          />
         </>
       )}
       <div>
@@ -214,6 +234,16 @@ function HostDetails({
                 <OperationsButton
                   userAbilities={userAbilities}
                   operations={[
+                    {
+                      value: 'Reboot Host',
+                      running: runningOperationName === HOST_REBOOT,
+                      disabled:
+                        heartbeat !== 'passing' ||
+                        !isHanaRunning ||
+                        !isAppRunning,
+                      permitted: ['reboot:host'],
+                      onClick: openOperationModal(HOST_REBOOT),
+                    },
                     {
                       value: 'Apply Saptune Solution',
                       running: runningOperationName === SAPTUNE_SOLUTION_APPLY,
