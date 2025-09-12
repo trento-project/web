@@ -18,6 +18,7 @@ import { DATABASE_TYPE } from '@lib/model/sapSystems';
 import {
   SAPTUNE_SOLUTION_APPLY,
   SAPTUNE_SOLUTION_CHANGE,
+  HOST_REBOOT,
 } from '@lib/operations';
 
 import HostDetails from './HostDetails';
@@ -397,6 +398,7 @@ describe('HostDetails component', () => {
       scenario            | runningOperation
       ${'Saptune apply'}  | ${{ operation: SAPTUNE_SOLUTION_APPLY, menuEntry: 'Apply Saptune Solution' }}
       ${'Saptune change'} | ${{ operation: SAPTUNE_SOLUTION_CHANGE, menuEntry: 'Change Saptune Solution' }}
+      ${'Host reboot'}    | ${{ operation: HOST_REBOOT, menuEntry: 'Reboot Host' }}
     `(
       'should show $scenario operation running',
       async ({ runningOperation: { operation, menuEntry } }) => {
@@ -433,6 +435,7 @@ describe('HostDetails component', () => {
       operation
       ${'Apply Saptune Solution'}
       ${'Change Saptune Solution'}
+      ${'Reboot Host'}
     `('should show $operation operation disabled', async ({ operation }) => {
       const user = userEvent.setup();
 
@@ -458,6 +461,7 @@ describe('HostDetails component', () => {
       scenario                     | operation                  | expectedMessage
       ${'Saptune apply solution'}  | ${SAPTUNE_SOLUTION_APPLY}  | ${'Unable to run Apply Saptune Solution operation'}
       ${'Saptune change solution'} | ${SAPTUNE_SOLUTION_CHANGE} | ${'Unable to run Change Saptune Solution operation'}
+      ${'host reboot'}             | ${HOST_REBOOT}             | ${'Unable to run Reboot Host operation'}
     `(
       'should show $scenario operation forbidden message',
       async ({ operation, expectedMessage }) => {
