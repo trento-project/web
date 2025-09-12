@@ -9,6 +9,8 @@ defmodule TrentoWeb.V1.HostController do
     Hosts
   }
 
+  require Trento.Operations.Enums.HostOperations, as: HostOperations
+
   alias Trento.Hosts.Projections.HostReadModel
 
   alias TrentoWeb.OpenApi.V1.Schema
@@ -235,11 +237,11 @@ defmodule TrentoWeb.V1.HostController do
     ]
 
   def request_operation(%{assigns: %{host: host, operation: operation}} = conn, _)
-      when operation in [:saptune_solution_apply, :saptune_solution_change] do
+      when operation in HostOperations.values() do
     %{id: host_id} = host
-    %{solution: solution} = OpenApiSpex.body_params(conn)
+    body = OpenApiSpex.body_params(conn)
 
-    with {:ok, operation_id} <- Hosts.request_operation(operation, host_id, %{solution: solution}) do
+    with {:ok, operation_id} <- Hosts.request_operation(operation, host_id, body) do
       conn
       |> put_status(:accepted)
       |> json(%{operation_id: operation_id})
@@ -265,6 +267,8 @@ defmodule TrentoWeb.V1.HostController do
 
   def get_operation(%{params: %{operation: "saptune_solution_change"}}),
     do: :saptune_solution_change
+
+  def get_operation(%{params: %{operation: "reboot"}}), do: :reboot
 
   def get_operation(_), do: nil
 end

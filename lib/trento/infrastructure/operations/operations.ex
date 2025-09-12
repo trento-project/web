@@ -58,6 +58,7 @@ defmodule Trento.Infrastructure.Operations do
   def map_operation_type("crmclusterstop@v1"), do: :cluster_host_stop
   def map_operation_type("databasestart@v1"), do: :database_start
   def map_operation_type("databasestop@v1"), do: :database_stop
+  def map_operation_type("hostreboot@v1"), do: :reboot
   def map_operation_type(_), do: :unknown
 
   def map_operation(:saptune_solution_apply), do: "saptuneapplysolution@v1"
@@ -73,5 +74,6 @@ defmodule Trento.Infrastructure.Operations do
   def map_operation(:pacemaker_disable), do: "pacemakerdisable@v1"
   def map_operation(:database_start), do: "databasestart@v1"
   def map_operation(:database_stop), do: "databasestop@v1"
+  def map_operation(:reboot), do: "hostreboot@v1"
   def map_operation(_), do: :unknown
 end

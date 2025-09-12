@@ -150,6 +150,10 @@ defmodule Trento.Infrastructure.Operations.OperationsTest do
         %{
           operation_type: :database_stop,
           internal_type: "databasestop@v1"
+        },
+        %{
+          operation_type: :reboot,
+          internal_type: "hostreboot@v1"
         }
       ]
 
@@ -207,6 +211,10 @@ defmodule Trento.Infrastructure.Operations.OperationsTest do
         %{
           operation: :database_stop,
           operator_name: "databasestop@v1"
+        },
+        %{
+          operation: :reboot,
+          operator_name: "hostreboot@v1"
         }
       ]
 

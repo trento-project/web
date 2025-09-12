@@ -14,6 +14,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
 
   alias Trento.Infrastructure.Checks.AMQP.Publisher
   alias Trento.Infrastructure.Operations.AMQP.Publisher, as: OperationsPublisher
+  alias Trento.Operations.V1.OperationRequested
 
   setup [:set_mox_from_context, :verify_on_exit!]
 
@@ -430,14 +431,18 @@ defmodule TrentoWeb.V1.HostControllerTest do
     # the table below contains the operations to be tested and a sample host
     # with the required preconditions to allow the operation
     # more specific tests for each operation can be added outside this loop
-    for {operation, host} <- [
-          {"saptune_solution_apply", build(:host, saptune_status: nil)},
-          {"saptune_solution_change", build(:host, saptune_status: build(:saptune_status))}
+    for {operation, operation_type, host} <- [
+          {"saptune_solution_apply", "saptuneapplysolution@v1",
+           build(:host, saptune_status: nil)},
+          {"saptune_solution_change", "saptunechangesolution@v1",
+           build(:host, saptune_status: build(:saptune_status))},
+          {"reboot", "hostreboot@v1",
+           build(:host, application_instances: [], database_instances: [], cluster_id: nil)}
         ] do
       @operation operation
+      @operation_type operation_type
       @host host
 
-      @operation_type operation_type
       test "should fallback to not found for operation '#{operation}' if the resource is not found",
            %{
              conn: conn,
@@ -486,7 +491,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
         expect(
           Trento.Infrastructure.Messaging.Adapter.Mock,
           :publish,
-          fn OperationsPublisher, _, _ ->
+          fn OperationsPublisher, _, %OperationRequested{operation_type: @operation_type} ->
             {:error, :amqp_error}
           end
         )
@@ -523,7 +528,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
         expect(
           Trento.Infrastructure.Messaging.Adapter.Mock,
           :publish,
-          fn OperationsPublisher, _, _ ->
+          fn OperationsPublisher, _, %OperationRequested{operation_type: @operation_type} ->
             :ok
           end
         )
@@ -546,7 +551,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
         expect(
           Trento.Infrastructure.Messaging.Adapter.Mock,
           :publish,
-          fn OperationsPublisher, _, _ ->
+          fn OperationsPublisher, _, %OperationRequested{operation_type: @operation_type} ->
             :ok
           end
         )
@@ -594,6 +599,26 @@ defmodule TrentoWeb.V1.HostControllerTest do
       |> json_response(:forbidden)
       |> assert_schema("Forbidden", api_spec)
     end
+  end
+
+  test "should forbid operation 'reboot' if conditions are unmet",
+       %{
+         conn: conn,
+         api_spec: api_spec
+       } do
+    %{id: host_id} =
+      insert(:host,
+        cluster_id: nil,
+        application_instances: [
+          build(:application_instance, health: Health.passing())
+        ],
+        database_instances: []
+      )
+
+    conn
+    |> post("/api/v1/hosts/#{host_id}/operations/reboot")
+    |> json_response(:forbidden)
+    |> assert_schema("Forbidden", api_spec)
   end
 
   describe "forbidden response" do
