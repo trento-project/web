@@ -47,7 +47,7 @@
     "@headlessui/react": "^2.2.7",
     "@heroicons/react": "^2.2.0",
     "@reduxjs/toolkit": "^2.2.2",
-    "axios": "^1.11.0",
+    "axios": "^1.12.1",
     "axios-auth-refresh": "^3.3.6",
     "canvas": "^3.2.0",
     "chart.js": "^4.5.0",
