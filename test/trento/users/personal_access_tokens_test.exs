@@ -10,16 +10,19 @@ defmodule Trento.Users.PersonalAccessTokensTest do
   import Trento.Factory
 
   describe "creating personal access tokens" do
-    test "should not allow creating a PAT for a deleted user" do
-      user = insert(:user, deleted_at: Faker.DateTime.backward(3))
+    test "should not allow creating a PAT for a deleted or disabled user" do
+      deleted_user = insert(:user, deleted_at: Faker.DateTime.backward(3))
+      disabled_user = insert(:user, locked_at: Faker.DateTime.backward(3))
 
-      assert {:error, :forbidden} ==
-               PersonalAccessTokens.create_personal_access_token(
-                 user,
-                 %{
-                   name: Faker.Lorem.word()
-                 }
-               )
+      for user <- [deleted_user, disabled_user] do
+        assert {:error, :forbidden} ==
+                 PersonalAccessTokens.create_personal_access_token(
+                   user,
+                   %{
+                     name: Faker.Lorem.word()
+                   }
+                 )
+      end
     end
 
     test "should not allow creating a PAT bound to a user without user id" do
