@@ -6,7 +6,7 @@ defmodule TrentoWeb.V1.PersonalAccessTokensController do
   alias Trento.Users.PersonalAccessTokens
   alias Trento.Users.User
 
-  alias TrentoWeb.Auth.AccessToken
+  alias TrentoWeb.Auth.PersonalAccessToken, as: PAT
   alias TrentoWeb.OpenApi.V1.Schema
 
   plug TrentoWeb.Plugs.LoadUserPlug
@@ -32,35 +32,24 @@ defmodule TrentoWeb.V1.PersonalAccessTokensController do
   def create_personal_access_token(conn, _) do
     body_params = OpenApiSpex.body_params(conn)
 
-    %User{id: user_id, abilities: abilities} = current_user = Pow.Plug.current_user(conn)
+    %User{id: user_id} = current_user = Pow.Plug.current_user(conn)
 
     with {:ok,
           %UserPersonalAccessToken{
             jti: jti,
             created_at: created_at,
             expire_at: expire_at
-          } = pat} <-
-           PersonalAccessTokens.create_personal_access_token(current_user, body_params) do
-      expiration =
-        if expire_at,
-          do: DateTime.to_unix(expire_at),
-          else: nil
-
-      access_token =
-        AccessToken.generate_access_token!(%{
-          "jti" => jti,
-          "sub" => user_id,
-          "exp" => expiration,
-          "iat" => DateTime.to_unix(created_at),
-          "nbf" => DateTime.to_unix(created_at),
-          "abilities" => Enum.map(abilities, &%{name: &1.name, resource: &1.resource})
-        })
+          } = pat} <- PersonalAccessTokens.create_personal_access_token(current_user, body_params) do
+      claims = %{
+        "jti" => jti,
+        "sub" => user_id
+      }
 
       conn
       |> put_status(:created)
       |> render(:new_personal_access_token, %{
         personal_access_token: pat,
-        generated_token: access_token
+        generated_token: PAT.generate!(claims, created_at, expire_at)
       })
     end
   end
