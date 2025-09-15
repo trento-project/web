@@ -5,6 +5,7 @@ defmodule Trento.Operations.HostPolicy do
 
   @behaviour Trento.Operations.PolicyBehaviour
 
+  require Trento.Enums.Health, as: Health
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
 
   alias Trento.Clusters.Projections.ClusterReadModel
@@ -59,11 +60,27 @@ defmodule Trento.Operations.HostPolicy do
   #   in a HANA scale-up cluster, pacemaker is stopped in all the cluster nodes
   #   in a HANA scale-out cluster, pacemaker is stopped in all secondary nodes
   #   in an ASCS/ERS cluster, pacemaker is stopped in all the cluster nodes
-  def authorize_operation(:reboot, %HostReadModel{cluster_id: nil}, _), do: :ok
+  #   If there is an SAP workload in the host, it is stopped (HANA instance, SAP instance)
+  def authorize_operation(
+        :reboot,
+        %HostReadModel{
+          cluster_id: nil,
+          application_instances: application_instances,
+          database_instances: database_instances
+        },
+        _
+      ),
+      do:
+        authorize_reboot_operation(
+          true,
+          all_instances_stopped?(application_instances),
+          all_instances_stopped?(database_instances),
+          true
+        )
 
   def authorize_operation(
         :reboot,
-        %HostReadModel{hostname: hostname, cluster: %{type: cluster_type}},
+        %HostReadModel{cluster: %{type: cluster_type}},
         _
       )
       when cluster_type in [
@@ -73,38 +90,26 @@ defmodule Trento.Operations.HostPolicy do
       do:
         {:error,
          [
-           "Cannot reboot host #{hostname} because it belongs to unsupported cluster type #{cluster_type}"
+           "The host belongs to unsupported cluster type #{cluster_type}"
          ]}
 
   def authorize_operation(
         :reboot,
         %HostReadModel{
-          hostname: hostname,
           cluster: %ClusterReadModel{} = cluster,
-          systemd_units: systemd_units
+          systemd_units: systemd_units,
+          application_instances: application_instances,
+          database_instances: database_instances
         },
         _
-      ) do
-    host_can_reboot? = not systemd_unit_enabled?(systemd_units, "pacemaker.service")
-
-    cluster_can_reboot? =
-      Clusters.can_reboot?(cluster)
-
-    case {host_can_reboot?, cluster_can_reboot?} do
-      {true, true} ->
-        :ok
-
-      {false, _} ->
-        {:error,
-         ["Cannot reboot host #{hostname} because pacemaker service is enabled in the host"]}
-
-      {_, false} ->
-        {:error,
-         [
-           "Cannot reboot host #{hostname} because it is part of a cluster that cannot be rebooted"
-         ]}
-    end
-  end
+      ),
+      do:
+        authorize_reboot_operation(
+          systemd_unit_enabled?(systemd_units, "pacemaker.service") == false,
+          all_instances_stopped?(application_instances),
+          all_instances_stopped?(database_instances),
+          Clusters.can_reboot?(cluster)
+        )
 
   def authorize_operation(_, _, _), do: {:error, ["Unknown operation"]}
 
@@ -131,10 +136,41 @@ defmodule Trento.Operations.HostPolicy do
          "Cannot change the requested solution because there is no currently applied one on this host"
        ]}
 
+  defp authorize_reboot_operation(
+         pacemaker_stopped,
+         application_instances_stopped,
+         database_instances_stopped,
+         cluster_can_reboot
+       ) do
+    authorizations = [
+      or_error(pacemaker_stopped, "Pacemaker service is enabled in the host"),
+      or_error(
+        application_instances_stopped,
+        "There are running application instances on the host"
+      ),
+      or_error(database_instances_stopped, "There are running database instances on the host"),
+      or_error(cluster_can_reboot, "The host is part of a cluster that cannot be rebooted")
+    ]
+
+    OperationsHelper.reduce_operation_authorizations(authorizations)
+  end
+
+  defp or_error(true, _), do: :ok
+  defp or_error(false, error), do: {:error, [error]}
+
   defp systemd_unit_enabled?(systemd_units, unit_name) do
     Enum.any?(systemd_units, fn
       %{name: ^unit_name, unit_file_state: "enabled"} -> true
       _ -> false
     end)
   end
+
+  defp all_instances_stopped?([]), do: true
+
+  defp all_instances_stopped?(instances) when is_list(instances),
+    do: Enum.all?(instances, &instance_stopped?/1)
+
+  defp instance_stopped?(%ApplicationInstanceReadModel{health: Health.unknown()}), do: true
+  defp instance_stopped?(%DatabaseInstanceReadModel{health: Health.unknown()}), do: true
+  defp instance_stopped?(_), do: false
 end

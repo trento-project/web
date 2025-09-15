@@ -349,7 +349,9 @@ defmodule Trento.Operations.HostPolicyTest do
       host =
         build(:host,
           cluster: nil,
-          cluster_id: nil
+          cluster_id: nil,
+          application_instances: [],
+          database_instances: []
         )
 
       assert :ok == HostPolicy.authorize_operation(:reboot, host, %{})
@@ -363,7 +365,9 @@ defmodule Trento.Operations.HostPolicyTest do
           cluster: cluster,
           systemd_units: [
             build(:host_systemd_unit, name: "pacemaker.service", unit_file_state: "enabled")
-          ]
+          ],
+          application_instances: [],
+          database_instances: []
         )
 
       {:error, _} = HostPolicy.authorize_operation(:reboot, host, %{})
@@ -393,6 +397,8 @@ defmodule Trento.Operations.HostPolicyTest do
           systemd_units: [
             build(:host_systemd_unit, name: "pacemaker.service", unit_file_state: "disabled")
           ],
+          application_instances: [],
+          database_instances: [],
           cluster_id: cluster.id
         )
 
@@ -423,6 +429,8 @@ defmodule Trento.Operations.HostPolicyTest do
           systemd_units: [
             build(:host_systemd_unit, name: "pacemaker.service", unit_file_state: "disabled")
           ],
+          application_instances: [],
+          database_instances: [],
           cluster_id: cluster.id
         )
 
@@ -454,6 +462,8 @@ defmodule Trento.Operations.HostPolicyTest do
           systemd_units: [
             build(:host_systemd_unit, name: "pacemaker.service", unit_file_state: "disabled")
           ],
+          application_instances: [],
+          database_instances: [],
           cluster_id: cluster.id
         )
 
@@ -485,6 +495,8 @@ defmodule Trento.Operations.HostPolicyTest do
           systemd_units: [
             build(:host_systemd_unit, name: "pacemaker.service", unit_file_state: "disabled")
           ],
+          application_instances: [],
+          database_instances: [],
           cluster_id: cluster.id
         )
 
@@ -518,6 +530,8 @@ defmodule Trento.Operations.HostPolicyTest do
           systemd_units: [
             build(:host_systemd_unit, name: "pacemaker.service", unit_file_state: "disabled")
           ],
+          application_instances: [],
+          database_instances: [],
           cluster_id: cluster.id
         )
 
@@ -551,7 +565,65 @@ defmodule Trento.Operations.HostPolicyTest do
           systemd_units: [
             build(:host_systemd_unit, name: "pacemaker.service", unit_file_state: "disabled")
           ],
+          application_instances: [],
+          database_instances: [],
           cluster_id: cluster.id
+        )
+
+      {:error, _} = HostPolicy.authorize_operation(:reboot, host, %{})
+    end
+
+    test "should authorize host reboot if all application and database instances are stopped" do
+      host =
+        build(:host,
+          cluster: nil,
+          cluster_id: nil,
+          application_instances: [
+            build(:application_instance, health: Health.unknown()),
+            build(:application_instance, health: Health.unknown())
+          ],
+          database_instances: [
+            build(:database_instance, health: Health.unknown()),
+            build(:database_instance, health: Health.unknown())
+          ]
+        )
+
+      assert :ok == HostPolicy.authorize_operation(:reboot, host, %{})
+    end
+
+    test "should forbid host reboot if not all application instances are stopped" do
+      host =
+        build(:host,
+          cluster: nil,
+          cluster_id: nil,
+          application_instances: [
+            build(:application_instance, health: Health.unknown()),
+            build(:application_instance, health: Health.passing())
+          ],
+          database_instances: [
+            build(:database_instance, health: Health.unknown()),
+            build(:database_instance, health: Health.passing())
+          ]
+        )
+
+      {:error,
+       [
+         "There are running application instances on the host",
+         "There are running database instances on the host"
+       ]} =
+        HostPolicy.authorize_operation(:reboot, host, %{})
+    end
+
+    test "should forbid host reboot if not all database instances are stopped" do
+      host =
+        build(:host,
+          cluster: nil,
+          cluster_id: nil,
+          application_instances: [],
+          database_instances: [
+            build(:database_instance, health: Health.unknown()),
+            build(:database_instance, health: Health.passing())
+          ]
         )
 
       {:error, _} = HostPolicy.authorize_operation(:reboot, host, %{})
