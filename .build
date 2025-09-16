@@ -339,6 +339,8 @@ Trento.Operations.Enums.SapSystemOperations.html
 Trento.Operations.HostPolicy.html
 Trento.Operations.PolicyBehaviour.html
 Trento.Operations.SapSystemPolicy.html
+Trento.PersonalAccessTokens.PersonalAccessToken.html
+Trento.PersonalAccessTokens.html
 Trento.ProjectorTestHelper.html
 Trento.Release.html
 Trento.Repo.html
@@ -433,6 +435,7 @@ TrentoWeb.ActivityLogChannel.html
 TrentoWeb.Auth.AccessToken.html
 TrentoWeb.Auth.ApiKey.html
 TrentoWeb.Auth.AssentSamlStrategy.html
+TrentoWeb.Auth.PersonalAccessToken.html
 TrentoWeb.Auth.RefreshToken.html
 TrentoWeb.ChannelCase.html
 TrentoWeb.ConnCase.html
@@ -499,6 +502,7 @@ TrentoWeb.V1.HealthOverviewController.html
 TrentoWeb.V1.HealthOverviewJSON.html
 TrentoWeb.V1.HostController.html
 TrentoWeb.V1.HostJSON.html
+TrentoWeb.V1.PersonalAccessTokensController.html
 TrentoWeb.V1.ProfileController.html
 TrentoWeb.V1.ProfileJSON.html
 TrentoWeb.V1.PrometheusController.html
@@ -535,7 +539,7 @@ dist/lato-latin-ext-300-normal-VPGGJKJL.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-3C5F8012.js
-dist/sidebar_items-6B2511D1.js
+dist/search_data-4D93964F.js
+dist/sidebar_items-4E4384AC.js
 index.html
 search.html
