@@ -271,7 +271,7 @@ defmodule Trento.Factory do
 
     %SapInstance{
       name: "#{Faker.StarWars.planet()}#{instance_number}",
-      sid: Faker.StarWars.planet(),
+      sid: sequence(:sid, &"#{Faker.StarWars.planet()}#{&1}"),
       instance_number: instance_number,
       hostname: Faker.StarWars.character(),
       resource_id: nil,
