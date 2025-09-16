@@ -8,7 +8,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SapInstanceOperationParams do
 
     OpenApiSpex.schema(
       %{
-        title: "StartStopParams",
+        title: "SapInstanceStartStopParams",
         description:
           "Parameters for starting or stopping a SAP instance, including options for controlling operation timing.",
         type: :object,
@@ -35,7 +35,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SapInstanceOperationParams do
       description:
         "Request parameters for SAP instance operations, supporting flexible control over instance lifecycle actions.",
       oneOf: [
-        TrentoWeb.OpenApi.V1.Schema.SapInstanceOperationParams.SapInstanceStartStopParams
+        SapInstanceStartStopParams
       ],
       example: %{
         timeout: 300
