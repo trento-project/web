@@ -8,10 +8,14 @@ defmodule Trento.Support.Helpers.AbilitiesTestHelper do
   import Plug.Conn
   import Trento.Factory
 
-  alias TrentoWeb.OpenApi.V1
+  alias TrentoWeb.OpenApi.{Unversioned, V1}
 
   def setup_api_spec_v1(_context) do
     {:ok, api_spec: V1.ApiSpec.spec()}
+  end
+
+  def setup_api_spec_unversioned(_context) do
+    {:ok, api_spec: Unversioned.ApiSpec.spec()}
   end
 
   def setup_user(%{conn: conn, api_spec: api_spec}) do

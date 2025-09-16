@@ -739,6 +739,7 @@ jobs:
     strategy:
       matrix:
         include:
+          - version: Unversioned
           - version: V1
             elixir: "1.15"
             otp: "26"

@@ -8,6 +8,9 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ActivityLog do
     @moduledoc false
     OpenApiSpex.schema(
       %{
+        title: "ActivityLogEntries",
+        description:
+          "A collection of activity log entries that record significant events and actions within the platform for auditing and monitoring purposes.",
         type: :array,
         items: %Schema{
           title: "ActivityLogEntries",
@@ -17,31 +20,49 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ActivityLog do
             id: %Schema{
               type: :string,
               format: :uuid,
-              description: "UUID (v4) of Activity Log entry."
+              description:
+                "A universally unique identifier (UUID v4) assigned to each activity log entry for precise tracking and reference."
             },
             type: %Schema{
               type: :string,
-              description: "Type of Activity Log entry."
+              description:
+                "Specifies the category or nature of the activity log entry, helping to classify the recorded event."
             },
             actor: %Schema{
               type: :string,
-              description: "Actor causing an Activity Log entry. E.g. System or a specific user."
+              description:
+                "Identifies the actor responsible for triggering the activity log entry, such as a system process or a specific user."
             },
             severity: %Schema{
               type: :string,
               enum: [:debug, :info, :warning, :error, :critical],
-              description: "Severity level of an Activity Log entry. E.g. info, warning etc."
+              description:
+                "Indicates the severity level of the activity log entry, such as informational, warning, error, or critical."
             },
             metadata: %Schema{
               type: :object
             },
             occurred_on: %Schema{
               type: :string,
-              description: "Timestamp upon Activity Log entry insertion."
+              description:
+                "Records the exact time when the activity log entry was created, providing chronological context for events."
             }
           },
           required: [:id, :type, :actor, :metadata, :occurred_on]
-        }
+        },
+        example: [
+          %{
+            id: "123e4567-e89b-12d3-a456-426614174000",
+            type: "host_registered",
+            actor: "system",
+            severity: "info",
+            metadata: %{
+              host_id: "9876b7a8-2e1f-4b9a-8e7d-3a4b5c6d7e8f",
+              hostname: "hana01"
+            },
+            occurred_on: "2024-01-15T10:30:00Z"
+          }
+        ]
       },
       struct?: false
     )
@@ -52,28 +73,33 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ActivityLog do
     OpenApiSpex.schema(
       %{
         title: "Pagination",
-        description: "Pagination metadata for the current list.",
+        description:
+          "Metadata describing the pagination state of the current list, including cursors and navigation flags for result sets.",
         additionalProperties: false,
         type: :object,
         properties: %{
           start_cursor: %Schema{
             type: :string,
-            description: "Cursor pointing to the start of the list.",
+            description:
+              "A cursor value that marks the beginning of the paginated list, used for efficient navigation and data retrieval.",
             nullable: true
           },
           end_cursor: %Schema{
             type: :string,
-            description: "Cursor pointing to the end of the list.",
+            description:
+              "A cursor value that marks the end of the paginated list, facilitating navigation and result management.",
             nullable: true
           },
           has_next_page: %Schema{
             type: :boolean,
-            description: "Flag indicating if there are more pages after the current one.",
+            description:
+              "Indicates whether additional pages of results exist beyond the current set, enabling forward navigation.",
             nullable: false
           },
           has_previous_page: %Schema{
             type: :boolean,
-            description: "Flag indicating if there are more pages before the current one.",
+            description:
+              "Indicates whether previous pages of results exist before the current set, enabling backward navigation.",
             nullable: false
           },
           first: %Schema{
@@ -96,7 +122,15 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ActivityLog do
           :has_previous_page,
           :first,
           :last
-        ]
+        ],
+        example: %{
+          start_cursor: "eyJpZCI6IjEyM2U0NTY3LWU4OWItMTJkMy1hNDU2LTQyNjYxNDE3NDAwMCJ9",
+          end_cursor: "eyJpZCI6IjQ1NmU3ODkwLWE5YmMtMTJkMy1hNDU2LTQyNjYxNDE3NDAwMCJ9",
+          has_next_page: true,
+          has_previous_page: false,
+          first: 10,
+          last: 5
+        }
       },
       struct?: false
     )
@@ -108,8 +142,29 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ActivityLog do
     OpenApiSpex.schema(
       %{
         title: "ActivityLog",
-        description: "Activity Log for the current installation.",
+        description:
+          "Represents the activity log for the current installation, providing a comprehensive record of platform events and actions.",
         type: :object,
+        example: %{
+          data: [
+            %{
+              id: "123e4567-e89b-12d3-a456-426614174000",
+              type: "host_registered",
+              actor: "system",
+              severity: "info",
+              metadata: %{host_id: "456e7890-e89b-12d3-a456-426614174001"},
+              occurred_on: "2024-01-15T10:30:00Z"
+            }
+          ],
+          pagination: %{
+            start_cursor: "cursor_start",
+            end_cursor: "cursor_end",
+            has_next_page: false,
+            has_previous_page: false,
+            first: 10,
+            last: 5
+          }
+        },
         properties: %{
           data: ActivityLogEntries,
           pagination: Pagination
