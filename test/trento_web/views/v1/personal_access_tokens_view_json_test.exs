@@ -1,7 +1,7 @@
 defmodule TrentoWeb.V1.PersonalAccessTokensViewJSONTest do
   use ExUnit.Case
 
-  alias Trento.Users.PersonalAccessToken
+  alias Trento.PersonalAccessTokens.PersonalAccessToken
   alias TrentoWeb.V1.PersonalAccessTokensJSON
 
   import Trento.Factory

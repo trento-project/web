@@ -168,10 +168,8 @@ defmodule Trento.Factory do
 
   alias Trento.UserIdentities.UserIdentity
 
-  alias Trento.Users.{
-    PersonalAccessToken,
-    User
-  }
+  alias Trento.PersonalAccessTokens.PersonalAccessToken
+  alias Trento.Users.User
 
   alias Trento.Operations.V1.OperationCompleted
 

@@ -1,11 +1,10 @@
-defmodule Trento.Users.PersonalAccessTokensTest do
+defmodule Trento.PersonalAccessTokensTest do
   use Trento.DataCase
 
-  alias Trento.Users.{
-    PersonalAccessToken,
-    PersonalAccessTokens,
-    User
-  }
+  alias Trento.PersonalAccessTokens
+  alias Trento.PersonalAccessTokens.PersonalAccessToken
+
+  alias Trento.Users.User
 
   import Trento.Factory
 
@@ -83,9 +82,9 @@ defmodule Trento.Users.PersonalAccessTokensTest do
       },
       %{
         name: "invalid expiration date: invalid format",
-        attrs: %{name: Faker.Lorem.word(), expire_at: "123"},
+        attrs: %{name: Faker.Lorem.word(), expires_at: "123"},
         expected_errors: [
-          expire_at: {"is invalid", [type: :utc_datetime_usec, validation: :cast]}
+          expires_at: {"is invalid", [type: :utc_datetime_usec, validation: :cast]}
         ]
       }
     ]
@@ -124,13 +123,13 @@ defmodule Trento.Users.PersonalAccessTokensTest do
       },
       %{
         name: "without expiration - nil field",
-        attrs: %{name: Faker.Lorem.word(), expire_at: nil}
+        attrs: %{name: Faker.Lorem.word(), expires_at: nil}
       },
       %{
         name: "with expiration as string",
         attrs: %{
           name: Faker.Lorem.word(),
-          expire_at:
+          expires_at:
             2
             |> Faker.DateTime.forward()
             |> DateTime.to_iso8601()
@@ -138,7 +137,7 @@ defmodule Trento.Users.PersonalAccessTokensTest do
       },
       %{
         name: "with expiration as date time",
-        attrs: %{name: Faker.Lorem.word(), expire_at: Faker.DateTime.forward(3)}
+        attrs: %{name: Faker.Lorem.word(), expires_at: Faker.DateTime.forward(3)}
       }
     ]
 
@@ -149,10 +148,10 @@ defmodule Trento.Users.PersonalAccessTokensTest do
 
         %{attrs: %{name: pat_name} = attrs} = @scenario
 
-        expire_at = Map.get(attrs, :expire_at, nil)
+        expires_at = Map.get(attrs, :expires_at, nil)
 
         expected_expiration =
-          case expire_at do
+          case expires_at do
             nil ->
               nil
 
@@ -169,7 +168,7 @@ defmodule Trento.Users.PersonalAccessTokensTest do
                 %PersonalAccessToken{
                   name: ^pat_name,
                   user_id: ^user_id,
-                  expire_at: ^expected_expiration
+                  expires_at: ^expected_expiration
                 }} = PersonalAccessTokens.create_personal_access_token(user, attrs)
       end
     end

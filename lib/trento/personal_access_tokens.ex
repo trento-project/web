@@ -1,8 +1,9 @@
-defmodule Trento.Users.PersonalAccessTokens do
+defmodule Trento.PersonalAccessTokens do
   @moduledoc """
   Context for managing user personal access tokens.
   """
-  alias Trento.Users.{PersonalAccessToken, User}
+  alias Trento.PersonalAccessTokens.PersonalAccessToken
+  alias Trento.Users.User
 
   alias Trento.Repo
 

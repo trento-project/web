@@ -1,10 +1,11 @@
 defmodule TrentoWeb.V1.PersonalAccessTokensControllerTest do
-  alias Trento.Users.PersonalAccessToken
   use TrentoWeb.ConnCase, async: true
 
   import Trento.Factory
   import OpenApiSpex.TestAssertions
   import Trento.Support.Helpers.AbilitiesTestHelper
+
+  alias Trento.PersonalAccessTokens.PersonalAccessToken
 
   setup :setup_api_spec_v1
   setup :setup_user

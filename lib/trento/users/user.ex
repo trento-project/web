@@ -20,7 +20,7 @@ defmodule Trento.Users.User do
     UsersAbilities
   }
 
-  alias Trento.Users.PersonalAccessToken
+  alias Trento.PersonalAccessTokens.PersonalAccessToken
 
   alias Trento.Support.Ecto.EncryptedBinary
 

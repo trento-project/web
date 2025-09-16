@@ -1,7 +1,7 @@
 defmodule TrentoWeb.V1.PersonalAccessTokensJSON do
   @moduledoc false
 
-  alias Trento.Users.PersonalAccessToken
+  alias Trento.PersonalAccessTokens.PersonalAccessToken
 
   def new_personal_access_token(%{
         personal_access_token: %PersonalAccessToken{

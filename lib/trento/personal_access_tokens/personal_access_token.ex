@@ -1,4 +1,4 @@
-defmodule Trento.Users.PersonalAccessToken do
+defmodule Trento.PersonalAccessTokens.PersonalAccessToken do
   @moduledoc """
   Represents a Personal Access Token for a user.
   """

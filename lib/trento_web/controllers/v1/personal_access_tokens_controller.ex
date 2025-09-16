@@ -2,8 +2,8 @@ defmodule TrentoWeb.V1.PersonalAccessTokensController do
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
 
-  alias Trento.Users.PersonalAccessToken, as: UserPersonalAccessToken
-  alias Trento.Users.PersonalAccessTokens
+  alias Trento.PersonalAccessTokens
+  alias Trento.PersonalAccessTokens.PersonalAccessToken, as: UserPersonalAccessToken
   alias Trento.Users.User
 
   alias TrentoWeb.Auth.PersonalAccessToken, as: PAT
