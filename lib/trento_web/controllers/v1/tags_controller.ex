@@ -6,6 +6,7 @@ defmodule TrentoWeb.V1.TagsController do
   alias Trento.Tags.Tag
 
   alias TrentoWeb.OpenApi.V1.Schema
+  alias TrentoWeb.OpenApi.V1.Schema.{NotFound, UnprocessableEntity}
 
   plug TrentoWeb.Plugs.LoadUserPlug
 
@@ -182,7 +183,7 @@ defmodule TrentoWeb.V1.TagsController do
            example: %{}
          }},
       bad_request: Schema.BadRequest.response(),
-      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
+      unprocessable_entity: UnprocessableEntity.response()
     ]
 
   operation :add_tag_to_cluster,
@@ -477,8 +478,8 @@ defmodule TrentoWeb.V1.TagsController do
     responses: [
       no_content: "The tag has been removed from the database.",
       bad_request: Schema.BadRequest.response(),
-      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response(),
-      not_found: OpenApiSpex.JsonErrorResponse.response()
+      unprocessable_entity: UnprocessableEntity.response(),
+      not_found: NotFound.response()
     ]
 
   operation :remove_tag_from_cluster,

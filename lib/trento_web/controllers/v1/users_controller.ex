@@ -92,8 +92,7 @@ defmodule TrentoWeb.V1.UsersController do
              required: true,
              description:
                "The entity version of the user, used for conditional HTTP requests and concurrency control.",
-             schema: %OpenApiSpex.Schema{type: :string},
-             allowEmptyValues: false
+             schema: %OpenApiSpex.Schema{type: :string}
            }
          }},
       not_found: Schema.NotFound.response(),
@@ -141,8 +140,7 @@ defmodule TrentoWeb.V1.UsersController do
              required: true,
              description:
                "The entity version of the user, used for conditional HTTP requests and concurrency control.",
-             schema: %OpenApiSpex.Schema{type: :string},
-             allowEmptyValues: false
+             schema: %OpenApiSpex.Schema{type: :string}
            }
          }},
       unprocessable_entity: UnprocessableEntity.response(),

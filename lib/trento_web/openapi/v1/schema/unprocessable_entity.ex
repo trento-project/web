@@ -7,6 +7,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.UnprocessableEntity do
   alias OpenApiSpex.Operation
   alias OpenApiSpex.Schema
 
+  # See https://github.com/open-api-spex/open_api_spex/blob/master/lib/open_api_spex/json_error_response.ex
   OpenApiSpex.schema(
     %{
       title: "UnprocessableEntity",
@@ -43,6 +44,23 @@ defmodule TrentoWeb.OpenApi.V1.Schema.UnprocessableEntity do
                 description:
                   "A short title summarizing the error encountered when the request cannot be processed due to semantic issues.",
                 example: "Invalid value"
+              },
+              source: %Schema{
+                type: :object,
+                description:
+                  "An object containing references to the source of the error, optionally including a JSON Pointer to the associated entity in the request document.",
+                properties: %{
+                  pointer: %Schema{
+                    type: :string,
+                    description:
+                      "A pointer to the associated entity in the request document (e.g., '/data/attributes/firstName' for a specific attribute).",
+                    example: "/data/attributes/firstName"
+                  }
+                },
+                required: [:pointer],
+                example: %{
+                  pointer: "/data/attributes/email"
+                }
               },
               detail: %Schema{
                 type: :string,
