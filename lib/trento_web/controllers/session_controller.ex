@@ -5,7 +5,7 @@ defmodule TrentoWeb.SessionController do
   alias Trento.Users.User
   alias TrentoWeb.OpenApi.V1.Schema
 
-  alias TrentoWeb.OpenApi.V1.Schema.{
+  alias TrentoWeb.OpenApi.V1.Schema.Auth.{
     Credentials,
     ExternalIdpCallback,
     LoginCredentials,
@@ -139,6 +139,14 @@ defmodule TrentoWeb.SessionController do
     description:
       "Authenticates the user against an external authentication provider using SAML, enabling single sign-on and federated identity management for secure platform access.",
     security: [],
+    parameters: [
+      provider: [
+        in: :path,
+        description:
+          "The name of the SAML identity provider to use for authentication. This value should match a configured provider.",
+        schema: %OpenApiSpex.Schema{type: :string, example: "saml"}
+      ]
+    ],
     responses: [
       unauthorized: Schema.Unauthorized.response(),
       unprocessable_entity: Schema.UnprocessableEntity.response(),

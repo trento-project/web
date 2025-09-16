@@ -880,8 +880,8 @@ defmodule Trento.SettingsTest do
                smtp_password: ^smtp_password
              } = saved_settings
 
-      assert saved_settings.inserted_at > now
-      assert saved_settings.inserted_at == saved_settings.updated_at
+      assert DateTime.compare(saved_settings.inserted_at, now) == :gt
+      assert DateTime.compare(saved_settings.inserted_at, saved_settings.updated_at) == :eq
     end
 
     validation_failure_scenarios = [

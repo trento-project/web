@@ -133,13 +133,13 @@ defmodule TrentoWeb.V1.SettingsController do
   end
 
   operation :get_suse_manager_settings,
-    summary: "Gets the SUSE Manager Settings.",
+    summary: "Gets the SUSE Multi-Linux Manager Settings.",
     tags: ["Settings"],
     description:
-      "Retrieves the saved configuration and credentials for SUSE Manager integration, supporting automated software management and updates.",
+      "Retrieves the saved configuration and credentials for SUSE Multi-Linux Manager integration, supporting automated software management and updates.",
     responses: [
       ok:
-        {"A comprehensive set of SUSE Manager integration credentials and configuration details for automated software management.",
+        {"A comprehensive set of SUSE Multi-Linux Manager integration credentials and configuration details for automated software management.",
          "application/json", Schema.Platform.SuseManagerSettings},
       not_found: Schema.NotFound.response()
     ]
@@ -152,16 +152,16 @@ defmodule TrentoWeb.V1.SettingsController do
   end
 
   operation :save_suse_manager_settings,
-    summary: "Saves the SUSE Manager settings.",
+    summary: "Saves the SUSE Multi-Linux Manager settings.",
     tags: ["Settings"],
     description:
-      "Saves new credentials and configuration for SUSE Manager integration, enabling secure software management and updates.",
+      "Saves new credentials and configuration for SUSE Multi-Linux Manager integration, enabling secure software management and updates.",
     request_body:
-      {"Request body containing new SUSE Manager credentials and configuration for secure integration and software management.",
+      {"Request body containing new SUSE Multi-Linux Manager credentials and configuration for secure integration and software management.",
        "application/json", Schema.Platform.SaveSuseManagerSettingsRequest},
     responses: [
       created:
-        {"SUSE Manager settings have been successfully saved, including credentials and configuration for secure integration.",
+        {"SUSE Multi-Linux Manager settings have been successfully saved, including credentials and configuration for secure integration.",
          "application/json", Schema.Platform.SuseManagerSettings},
       unprocessable_entity: Schema.UnprocessableEntity.response()
     ]
@@ -179,16 +179,16 @@ defmodule TrentoWeb.V1.SettingsController do
   end
 
   operation :update_suse_manager_settings,
-    summary: "Updates the SUSE Manager settings.",
+    summary: "Updates the SUSE Multi-Linux Manager settings.",
     tags: ["Settings"],
     description:
-      "Updates the configuration and credentials for SUSE Manager integration, supporting ongoing software management and updates.",
+      "Updates the configuration and credentials for SUSE Multi-Linux Manager integration, supporting ongoing software management and updates.",
     request_body:
-      {"Request body containing updated SUSE Manager credentials and configuration for ongoing secure integration and software management.",
+      {"Request body containing updated SUSE Multi-Linux Manager credentials and configuration for ongoing secure integration and software management.",
        "application/json", Schema.Platform.UpdateSuseManagerSettingsRequest},
     responses: [
       ok:
-        {"SUSE Manager settings have been successfully updated and saved, including credentials and configuration for secure integration.",
+        {"SUSE Multi-Linux Manager settings have been successfully updated and saved, including credentials and configuration for secure integration.",
          "application/json", Schema.Platform.SuseManagerSettings},
       unprocessable_entity: Schema.UnprocessableEntity.response()
     ]
@@ -205,32 +205,14 @@ defmodule TrentoWeb.V1.SettingsController do
     end
   end
 
-  operation :put_suse_manager_settings,
-    summary: "Updates the SUSE Manager settings.",
-    tags: ["Settings"],
-    description:
-      "Updates the configuration and credentials for SUSE Manager integration, supporting ongoing software management and updates.",
-    request_body:
-      {"Request body containing updated SUSE Manager credentials and configuration for ongoing secure integration and software management.",
-       "application/json", Schema.Platform.UpdateSuseManagerSettingsRequest},
-    responses: [
-      ok:
-        {"SUSE Manager settings have been successfully updated and saved, including credentials and configuration for secure integration.",
-         "application/json", Schema.Platform.SuseManagerSettings},
-      unprocessable_entity: Schema.UnprocessableEntity.response()
-    ]
-
-  @spec put_suse_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
-  def put_suse_manager_settings(conn, params), do: update_suse_manager_settings(conn, params)
-
   operation :delete_suse_manager_settings,
-    summary: "Clears the SUSE Manager settings.",
+    summary: "Clears the SUSE Multi-Linux Manager settings.",
     tags: ["Settings"],
     description:
-      "Removes all saved credentials and configuration for SUSE Manager integration, supporting secure decommissioning and access management.",
+      "Removes all saved credentials and configuration for SUSE Multi-Linux Manager integration, supporting secure decommissioning and access management.",
     responses: [
       no_content:
-        "All SUSE Manager credentials and configuration have been successfully cleared from the system."
+        "All SUSE Multi-Linux Manager credentials and configuration have been successfully cleared from the system."
     ]
 
   @spec delete_suse_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
@@ -241,14 +223,14 @@ defmodule TrentoWeb.V1.SettingsController do
   end
 
   operation :test_suse_manager_settings,
-    summary: "Tests connection with SUSE Manager.",
+    summary: "Tests connection with SUSE Multi-Linux Manager.",
     tags: ["Settings"],
     description:
-      "Tests the connection to SUSE Manager using the currently saved credentials and configuration, supporting validation and troubleshooting of integration settings.",
+      "Tests the connection to SUSE Multi-Linux Manager using the currently saved credentials and configuration, supporting validation and troubleshooting of integration settings.",
     responses: [
-      ok: "The connection with SUSE Manager was successful.",
+      ok: "The connection with SUSE Multi-Linux Manager was successful.",
       unprocessable_entity:
-        {"The connection with SUSE Manager failed.", "application/json",
+        {"The connection with SUSE Multi-Linux Manager failed.", "application/json",
          Schema.UnprocessableEntity}
     ]
 

@@ -1,6 +1,6 @@
 defmodule Trento.Infrastructure.SoftwareUpdates.Auth.State do
   @moduledoc """
-  State for the SUMA Software Updates discovery adapter
+  State for the SUSE Multi-Linux Manager Software Updates discovery adapter
   """
   alias __MODULE__
 

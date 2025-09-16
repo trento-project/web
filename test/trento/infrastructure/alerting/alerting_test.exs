@@ -103,7 +103,9 @@ defmodule Trento.Infrastructure.Alerting.AlertingTest do
 
   describe "Alerting errors" do
     setup do
-      on_exit(fn -> Application.put_env(:trento, Trento.Mailer, adapter: Swoosh.Adapters.Test) end)
+      on_exit(fn ->
+        Application.put_env(:trento, Trento.Mailer, adapter: Swoosh.Adapters.Test)
+      end)
     end
 
     test "should be caught if SMTP server is wrongly set up" do

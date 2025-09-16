@@ -74,7 +74,7 @@ defmodule TrentoWeb.V1.HostController do
         description:
           "Unique identifier of the host to be deregistered. This value must be a valid UUID string.",
         required: true,
-        type: %OpenApiSpex.Schema{
+        schema: %OpenApiSpex.Schema{
           type: :string,
           format: :uuid,
           example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
@@ -106,7 +106,7 @@ defmodule TrentoWeb.V1.HostController do
         description:
           "Unique identifier of the host agent sending the heartbeat signal. This value must be a valid UUID string.",
         required: true,
-        type: %OpenApiSpex.Schema{
+        schema: %OpenApiSpex.Schema{
           type: :string,
           format: :uuid,
           example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
@@ -138,7 +138,7 @@ defmodule TrentoWeb.V1.HostController do
         description:
           "Unique identifier of the host for which Checks selection is being performed. This value must be a valid UUID string.",
         required: true,
-        type: %OpenApiSpex.Schema{
+        schema: %OpenApiSpex.Schema{
           type: :string,
           format: :uuid,
           example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
@@ -207,7 +207,7 @@ defmodule TrentoWeb.V1.HostController do
         description:
           "Unique identifier of the host on which the operation will be performed. This value must be a valid UUID string.",
         required: true,
-        type: %OpenApiSpex.Schema{
+        schema: %OpenApiSpex.Schema{
           type: :string,
           format: :uuid,
           example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
@@ -218,7 +218,7 @@ defmodule TrentoWeb.V1.HostController do
         description:
           "Specifies the type of operation to be performed on the host, such as restart or configuration change.",
         required: true,
-        type: %OpenApiSpex.Schema{
+        schema: %OpenApiSpex.Schema{
           type: :string,
           example: "restart"
         }

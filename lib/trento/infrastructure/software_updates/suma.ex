@@ -1,6 +1,6 @@
 defmodule Trento.Infrastructure.SoftwareUpdates.Suma do
   @moduledoc """
-  SUMA Software updates discovery adapter
+  SUSE Multi-Linux Manager Software updates discovery adapter
   """
 
   @behaviour Trento.SoftwareUpdates.Discovery.Gen

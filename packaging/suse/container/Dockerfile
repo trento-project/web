@@ -5,7 +5,7 @@
 #!UseOBSRepositories
 #!ExclusiveArch: x86_64
 
-FROM registry.suse.com/bci/nodejs:20 AS assets-build
+FROM registry.suse.com/bci/nodejs:22 AS assets-build
 ADD web.tar.gz /build/
 WORKDIR /build/web/assets
 RUN npm run tailwind:build

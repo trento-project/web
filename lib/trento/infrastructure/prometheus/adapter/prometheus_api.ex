@@ -162,7 +162,7 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApi do
          {:ok, samples} <- ChartIntegration.query_values_to_samples(query_values) do
       {:ok, samples}
     else
-      %HTTPoison.Response{status_code: status_code, body: body} ->
+      {:ok, %HTTPoison.Response{status_code: status_code, body: body}} ->
         Logger.error(
           "Unexpected response from Prometheus API, status code: #{status_code}, body: #{inspect(body)}."
         )

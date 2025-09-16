@@ -1,6 +1,5 @@
 defmodule TrentoWeb.Plugs.ActivityLoggingPlugTest do
   @moduledoc false
-  use Plug.Test
   use TrentoWeb.ConnCase, async: true
 
   alias TrentoWeb.Plugs.ActivityLoggingPlug

@@ -282,33 +282,38 @@ context('Activity Log page', () => {
 
     it('should change refresh rate', () => {
       activityLogPage.visit();
-      activityLogPage.expectedRefreshRatesAreAvailable();
-      const changingRefreshRateScenarios =
-        activityLogPage.buildChangingRefreshRateScenarios();
-      changingRefreshRateScenarios.forEach(
-        ({ currentRefreshRate, newRefreshRate, expectedRefreshRate }) => {
-          activityLogPage.autoRefreshIntervalButtonHasTheExpectedValue(
-            currentRefreshRate
-          );
-          activityLogPage.selectRefreshRate(newRefreshRate);
-          const expectedUrl = `/activity_log${
-            expectedRefreshRate ? `?refreshRate=${expectedRefreshRate}` : ''
-          }`;
-          activityLogPage.validateUrl(expectedUrl);
-        }
-      );
+      activityLogPage.waitForActivityLogRequest().then(() => {
+        activityLogPage.expectedRefreshRatesAreAvailable();
+        const changingRefreshRateScenarios =
+          activityLogPage.buildChangingRefreshRateScenarios();
+
+        cy.wrap(changingRefreshRateScenarios).each(
+          ({ currentRefreshRate, newRefreshRate, expectedRefreshRate }) => {
+            activityLogPage.autoRefreshIntervalButtonHasTheExpectedValue(
+              currentRefreshRate
+            );
+            activityLogPage.selectRefreshRate(newRefreshRate);
+            const expectedUrl = `/activity_log${
+              expectedRefreshRate ? `?refreshRate=${expectedRefreshRate}` : ''
+            }`;
+            activityLogPage.validateUrl(expectedUrl);
+          }
+        );
+      });
     });
 
     it('should start autorefresh ticker', () => {
-      activityLogPage.spyActivityLogRequest();
       activityLogPage.visit();
-      activityLogPage.expectedAggregateAmountOfRequests(1);
-      activityLogPage.selectRefreshRate('5s');
-      activityLogPage.expectedAggregateAmountOfRequests(2);
-      activityLogPage.advanceTimeBy(5);
-      activityLogPage.expectedAggregateAmountOfRequests(3);
-      activityLogPage.advanceTimeBy(10);
-      activityLogPage.expectedAggregateAmountOfRequests(5);
+      activityLogPage.waitForActivityLogRequest().then(() => {
+        activityLogPage.spyActivityLogRequest();
+        activityLogPage.expectedAggregateAmountOfRequests(0);
+        activityLogPage.selectRefreshRate('5s');
+        activityLogPage.expectedAggregateAmountOfRequests(1);
+        activityLogPage.advanceTimeBy(5);
+        activityLogPage.expectedAggregateAmountOfRequests(2);
+        activityLogPage.advanceTimeBy(10);
+        activityLogPage.expectedAggregateAmountOfRequests(4);
+      });
     });
 
     it(`should update querystring when filters are selected`, () => {

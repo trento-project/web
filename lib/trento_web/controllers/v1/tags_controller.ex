@@ -19,18 +19,18 @@ defmodule TrentoWeb.V1.TagsController do
   action_fallback TrentoWeb.FallbackController
   plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
 
-  operation :add_tag_to_host,
-    summary: "Add tag to host.",
+  operation :add_tag,
+    summary: "Add tag.",
     tags: ["Tags"],
     description:
-      "Adds a new tag to the specified host, supporting resource categorization and management for infrastructure operations.",
+      "Adds a new tag to the specified resource, supporting resource categorization and management for infrastructure operations.",
     parameters: [
       id: [
         in: :path,
         description:
-          "Unique identifier of the host to which the tag will be added. This value must be a valid UUID string.",
+          "Unique identifier of the resource to which the tag will be added. This value must be a valid UUID string.",
         required: true,
-        type: %OpenApiSpex.Schema{
+        schema: %OpenApiSpex.Schema{
           type: :string,
           format: :uuid,
           example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
@@ -38,7 +38,7 @@ defmodule TrentoWeb.V1.TagsController do
       ]
     ],
     request_body:
-      {"Request containing tag value to be added to the specified host for resource categorization and management.",
+      {"Request containing tag value to be added to the specified resource for resource categorization and management.",
        "application/json",
        %OpenApiSpex.Schema{
          type: :object,
@@ -48,13 +48,7 @@ defmodule TrentoWeb.V1.TagsController do
        }},
     responses: [
       created:
-        {"Tag has been successfully added to the specified host, supporting resource categorization and management.",
-         "application/json",
-         %OpenApiSpex.Schema{
-           type: :object,
-           properties: %{},
-           example: %{}
-         }},
+        "Tag has been successfully added to the specified resource, supporting resource categorization and management.",
       bad_request: Schema.BadRequest.response(),
       unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
     ]
@@ -202,23 +196,18 @@ defmodule TrentoWeb.V1.TagsController do
     end
   end
 
-  def add_tag_to_host(conn, params), do: add_tag(conn, params)
-  def add_tag_to_cluster(conn, params), do: add_tag(conn, params)
-  def add_tag_to_sap_system(conn, params), do: add_tag(conn, params)
-  def add_tag_to_database(conn, params), do: add_tag(conn, params)
-
-  operation :remove_tag_from_host,
-    summary: "Remove tag from host.",
+  operation :remove_tag,
+    summary: "Remove tag from resource.",
     tags: ["Tags"],
     description:
-      "Removes a tag from the specified host, supporting resource management and cleanup for infrastructure operations.",
+      "Removes a tag from the specified resource, supporting resource management and cleanup for infrastructure operations.",
     parameters: [
       id: [
         in: :path,
         description:
-          "Unique identifier of the host from which the tag will be removed. This value must be a valid UUID string.",
+          "Unique identifier of the resource from which the tag will be removed. This value must be a valid UUID string.",
         required: true,
-        type: %OpenApiSpex.Schema{
+        schema: %OpenApiSpex.Schema{
           type: :string,
           format: :uuid,
           example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
@@ -226,22 +215,16 @@ defmodule TrentoWeb.V1.TagsController do
       ],
       value: [
         in: :path,
-        description: "The value of the tag to be removed from the host.",
+        description: "The value of the tag to be removed from the resource.",
         required: true,
-        type: %OpenApiSpex.Schema{
+        schema: %OpenApiSpex.Schema{
           type: :string,
           example: "production"
         }
       ]
     ],
     responses: [
-      no_content:
-        {"The tag has been removed from the host.", "application/json",
-         %OpenApiSpex.Schema{
-           type: :object,
-           properties: %{},
-           example: %{}
-         }},
+      no_content: "The tag has been removed from the resource.",
       bad_request: Schema.BadRequest.response(),
       unprocessable_entity: OpenApiSpex.JsonErrorResponse.response(),
       not_found: OpenApiSpex.JsonErrorResponse.response()

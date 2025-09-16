@@ -30,7 +30,7 @@ defmodule TrentoWeb.V1.SUSEManagerController do
         description:
           "Unique identifier of the host for which software updates are being requested. This value must be a valid UUID string.",
         required: true,
-        type: %OpenApiSpex.Schema{
+        schema: %OpenApiSpex.Schema{
           type: :string,
           format: :uuid,
           example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
@@ -58,17 +58,17 @@ defmodule TrentoWeb.V1.SUSEManagerController do
   end
 
   operation :patches_for_packages,
-    summary: "Gets patches covered by package upgrades in SUSE Manager.",
+    summary: "Gets patches covered by package upgrades in SUSE Multi-Linux Manager.",
     tags: ["Target Infrastructure"],
     description:
-      "Retrieves all relevant patches that are covered by package upgrades in SUSE Manager for a specified host, supporting compliance and system maintenance.",
+      "Retrieves all relevant patches that are covered by package upgrades in SUSE Multi-Linux Manager for a specified host, supporting compliance and system maintenance.",
     parameters: [
       host_id: [
         in: :query,
         description:
           "Unique identifier of the host for which patch information is being requested. This value must be a valid UUID string.",
         required: true,
-        type: %OpenApiSpex.Schema{
+        schema: %OpenApiSpex.Schema{
           type: :string,
           format: :uuid,
           example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
@@ -77,7 +77,7 @@ defmodule TrentoWeb.V1.SUSEManagerController do
     ],
     responses: [
       ok:
-        {"A detailed list of all relevant patches covered by package upgrades in SUSE Manager for the specified host.",
+        {"A detailed list of all relevant patches covered by package upgrades in SUSE Multi-Linux Manager for the specified host.",
          "application/json", PatchesForPackagesResponse}
     ]
 
@@ -99,7 +99,7 @@ defmodule TrentoWeb.V1.SUSEManagerController do
         description:
           "The name of the advisory for which details are being requested, such as SUSE-2025-1234.",
         required: true,
-        type: %OpenApiSpex.Schema{
+        schema: %OpenApiSpex.Schema{
           type: :string,
           example: "SUSE-2025-1234"
         }

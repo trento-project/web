@@ -274,6 +274,7 @@ defmodule Trento.Factory do
       sid: Faker.StarWars.planet(),
       instance_number: instance_number,
       hostname: Faker.StarWars.character(),
+      resource_id: nil,
       resource_type: Enum.random(SapInstanceResourceType.values()),
       mounted: true
     }
@@ -1292,7 +1293,8 @@ defmodule Trento.Factory do
       totp_enabled_at: nil,
       totp_secret: nil,
       totp_last_used_at: nil,
-      analytics_enabled_at: nil
+      analytics_enabled_at: nil,
+      analytics_eula_accepted_at: nil
     }
   end
 

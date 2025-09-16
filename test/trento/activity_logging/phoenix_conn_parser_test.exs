@@ -2,7 +2,6 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
   @moduledoc false
 
   use TrentoWeb.ConnCase, async: false
-  use Plug.Test
 
   import Trento.Factory
 
@@ -288,6 +287,24 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
           action: :cluster_host_operation_requested,
           operation: "pacemaker_disable",
           atom_operation: :pacemaker_disable,
+          resource_field: :cluster_id,
+          additional_params: %{
+            host_id: host_id
+          }
+        },
+        %{
+          action: :cluster_host_operation_requested,
+          operation: "cluster_host_start",
+          atom_operation: :cluster_host_start,
+          resource_field: :cluster_id,
+          additional_params: %{
+            host_id: host_id
+          }
+        },
+        %{
+          action: :cluster_host_operation_requested,
+          operation: "cluster_host_stop",
+          atom_operation: :cluster_host_stop,
           resource_field: :cluster_id,
           additional_params: %{
             host_id: host_id

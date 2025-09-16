@@ -72,7 +72,7 @@ jobs:
             assets/node_modules
           key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: ${{ env.NODEJS_VERSION }}
       - name: Install NPM dependencies
@@ -98,7 +98,7 @@ jobs:
             test/e2e/node_modules
           key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: ${{ env.NODEJS_VERSION }}
       - name: Install E2E NPM dependencies
@@ -143,7 +143,7 @@ jobs:
         uses: endorama/asdf-parse-tool-versions@v1.3.4
         id: tool-versions
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: ${{ env.NODEJS_VERSION }}
       - name: Retrieve Elixir Cached Dependencies
@@ -214,6 +214,7 @@ jobs:
         with:
           name: e2e-screenshots-${{ matrix.container }}
           path: test/e2e/cypress/screenshots/**/*.png
+          retention-days: 7
 
   flaky-tests-analysis:
     name: Flaky Tests Analysis
@@ -231,6 +232,12 @@ jobs:
           path: junit-reports
           pattern: e2e-junit-reports-*
           merge-multiple: true
+      - name: Download screenshot artifacts
+        uses: actions/download-artifact@v5
+        with:
+          path: screenshot-artifacts
+          pattern: e2e-screenshots-*
+          if-no-files-found: ignore
       - name: Analyze Flaky Tests and Generate Summary
         id: analyze
         env:
@@ -239,8 +246,8 @@ jobs:
           REPORTS_PATH="../../junit-reports"
           TOTAL_CONTAINERS=${{ env.TOTAL_CONTAINERS }}
           
-          FAILED_RUNS=$(grep -l -E "<failure|<error>" $REPORTS_PATH/*.xml 2>/dev/null | wc -l)
-
+          FAILED_RUNS=$(find ../../screenshot-artifacts -mindepth 1 -maxdepth 1 -type d | wc -l)
+          echo $FAILED_RUNS
           if [ "$TOTAL_CONTAINERS" -gt 0 ]; then
             FAILURE_PERCENTAGE=$(echo "scale=1; $FAILED_RUNS * 100 / $TOTAL_CONTAINERS" | bc)
           else
@@ -249,7 +256,8 @@ jobs:
           
           echo "### 📊 Suite Stability Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Failure rate:** (Failing threads / Total threads) **${FAILURE_PERCENTAGE}%**" >> $GITHUB_STEP_SUMMARY
+          echo "**Failure rate:** ${FAILURE_PERCENTAGE}%" >> $GITHUB_STEP_SUMMARY
+          echo "*Calculated: (Failing threads / Total threads)*" >> $GITHUB_STEP_SUMMARY
           
           make venv-create
           source .venv/bin/activate

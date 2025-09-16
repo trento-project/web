@@ -40,7 +40,7 @@ defmodule Trento.Hosts.Host do
 
   ### Software Updates Discovery
 
-  Business process integrating with an external service, SUMA, determining relevant patches and upgradable packages for a host.
+  Business process integrating with an external service, SUSE Multi-Linux Manager, determining relevant patches and upgradable packages for a host.
   Process is triggered
   - on host registration
   - when the fqdn of the host changes
@@ -118,8 +118,6 @@ defmodule Trento.Hosts.Host do
 
   use Trento.Support.Type
 
-  import PolymorphicEmbed, only: [cast_polymorphic_embed: 3]
-
   deftype do
     field :host_id, Ecto.UUID
     field :hostname, :string
@@ -150,13 +148,14 @@ defmodule Trento.Hosts.Host do
     embeds_one :saptune_status, SaptuneStatus
     embeds_many :subscriptions, SlesSubscription
 
-    field :provider_data, PolymorphicEmbed,
+    polymorphic_embeds_one(:provider_data,
       types: [
         azure: [module: AzureProvider, identify_by_fields: [:resource_group]],
         aws: [module: AwsProvider, identify_by_fields: [:ami_id]],
         gcp: [module: GcpProvider, identify_by_fields: [:project_id]]
       ],
       on_replace: :update
+    )
 
     embeds_many :systemd_units, SystemdUnit
   end

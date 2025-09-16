@@ -28,7 +28,7 @@ Source2:        package-lock.json
 Source3:        node_modules.spec.inc
 %include        %{_sourcedir}/node_modules.spec.inc
 Group:          System/Monitoring
-BuildRequires:  elixir >= 1.15, elixir-hex, npm20, erlang-rebar3, git-core, local-npm-registry, make, gcc
+BuildRequires:  elixir >= 1.15, elixir-hex, npm22, erlang-rebar3, git-core, local-npm-registry, make, gcc
 
 %description
 Trento is an open cloud-native web application for SAP Applications administrators.
@@ -62,17 +62,17 @@ cp -a _build/prod/rel/trento %{buildroot}/usr/lib
 install -D -m 0644 packaging/suse/rpm/systemd/trento-web.service %{buildroot}%{_unitdir}/trento-web.service
 install -D -m 0600 packaging/suse/rpm/systemd/trento-web.example %{buildroot}/etc/trento/trento-web.example
 
-%pre  
-%service_add_pre trento-web.service  
+%pre
+%service_add_pre trento-web.service
 
-%post  
-%service_add_post trento-web.service  
+%post
+%service_add_post trento-web.service
 
-%preun  
-%service_del_preun trento-web.service  
+%preun
+%service_del_preun trento-web.service
 
-%postun  
-%service_del_postun trento-web.service  
+%postun
+%service_del_postun trento-web.service
 
 %files
 /usr/lib/trento

@@ -114,6 +114,34 @@ defmodule Trento.UsersTest do
 
       assert analytics_enabled_at == nil
     end
+
+    test "update user profile sets analytics eula value with current time" do
+      user = insert(:user)
+
+      assert {:ok,
+              %User{
+                analytics_eula_accepted_at: analytics_eula_accepted_at
+              }} =
+               Users.update_user_profile(user, %{analytics_eula_accepted: true})
+
+      refute analytics_eula_accepted_at == nil
+
+      assert {:ok,
+              %User{
+                analytics_eula_accepted_at: analytics_eula_accepted_at
+              }} =
+               Users.update_user_profile(user, %{analytics_eula_accepted: false})
+
+      assert analytics_eula_accepted_at == nil
+
+      assert {:ok,
+              %User{
+                analytics_eula_accepted_at: analytics_eula_accepted_at
+              }} =
+               Users.update_user_profile(user, %{})
+
+      assert analytics_eula_accepted_at == nil
+    end
   end
 
   describe "users" do

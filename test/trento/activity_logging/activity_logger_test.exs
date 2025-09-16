@@ -4,7 +4,6 @@ defmodule Trento.ActivityLog.ActivityLoggerTest do
   use TrentoWeb.ConnCase, async: true
   use Trento.MessagingCase
   use Trento.CommandedCase
-  use Plug.Test
 
   import Trento.Factory
 
