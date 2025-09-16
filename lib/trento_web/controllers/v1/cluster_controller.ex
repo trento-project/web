@@ -112,7 +112,7 @@ defmodule TrentoWeb.V1.ClusterController do
     ],
     request_body: {"Checks Selection.", "application/json", Checks.ChecksSelectionRequest},
     responses: [
-      accepted: "The Selection has been successfully collected",
+      accepted: "The Selection has been successfully collected.",
       not_found: NotFound.response(),
       bad_request: BadRequest.response(),
       unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()

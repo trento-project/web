@@ -291,9 +291,9 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
           database_health: ResourceHealth,
           hosts_health: ResourceHealth,
           clusters_health: %Schema{
+            deprecated: true,
             allOf: [
               ResourceHealth,
-              %Schema{deprecated: true}
             ]
           },
           application_cluster_health: ResourceHealth,
