@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-K7URE6B4.js"></script>
-    <script src="dist/sidebar_items-03B4F3DB.js"></script>
+    <script src="dist/sidebar_items-6B2511D1.js"></script>
     <script src="docs_config.js"></script>
     <script async src="dist/html-YIPIRHGU.js"></script>
 
@@ -172,7 +172,7 @@ Checks execution is started either by an explicit user request or periodically a
   </a>
   <span class="text">Software Updates Discovery</span>
 </h3>
-<p>Business process integrating with an external service, SUMA, determining relevant patches and upgradable packages for a host.
+<p>Business process integrating with an external service, SUSE Multi-Linux Manager, determining relevant patches and upgradable packages for a host.
 Process is triggered</p><ul><li>on host registration</li><li>when the fqdn of the host changes</li><li>on host restoration</li><li>every given amount of time</li><li>on demand (ie the integration settings with the external service change)</li></ul><p>Presence of relevant patches determines Software Updates Discovery health and concurs to the host's aggregated health as follows:</p><ul><li>critical if there is at least one security advisory</li><li>warning if there are only buxfixes/software enhancements</li></ul><p>The Software Updates Discovery health is computed in the integration layer
 and only the resulting health is dispatched to the host aggregate along with CompleteSoftwareUpdatesDiscovery command.</p>
     </section>

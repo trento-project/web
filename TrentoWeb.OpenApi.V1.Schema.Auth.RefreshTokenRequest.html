@@ -8,13 +8,13 @@
     <meta name="project" content="Trento Web v2.5.0">
 
 
-    <title>TrentoWeb.V1.InstallationJSON — Trento Web v2.5.0</title>
+    <title>TrentoWeb.OpenApi.V1.Schema.Auth.RefreshTokenRequest — Trento Web v2.5.0</title>
     <link rel="stylesheet" href="dist/html-elixir-F2VRIOKR.css" />
 
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-K7URE6B4.js"></script>
-    <script src="dist/sidebar_items-03B4F3DB.js"></script>
+    <script src="dist/sidebar_items-6B2511D1.js"></script>
     <script src="docs_config.js"></script>
     <script async src="dist/html-YIPIRHGU.js"></script>
 
@@ -126,16 +126,33 @@ Info
 <div id="top-content">
   <h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/installation_json.ex#L1" title="View Source" class="icon-action" rel="help">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/openapi/v1/schema/credentials.ex#L90" title="View Source" class="icon-action" rel="help">
         <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         <span class="sr-only">View Source</span>
       </a>
 
-    <span translate="no">TrentoWeb.V1.InstallationJSON</span> 
+    <span translate="no">TrentoWeb.OpenApi.V1.Schema.Auth.RefreshTokenRequest</span> 
     <small class="app-vsn" translate="no">(Trento Web v2.5.0)</small>
 
   </h1>
 
+
+    <section id="moduledoc">
+<p>Schema for refresh token requests.</p><p>This schema defines the structure for requests to obtain new access tokens
+using a valid refresh token, enabling session extension without re-authentication.</p><h2 id="module-fields" class="section-heading">
+  <a href="#module-fields" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Fields</span>
+</h2>
+<ul><li><code class="inline">refresh_token</code>: A valid JWT refresh token obtained from previous authentication</li></ul><h2 id="module-security-notes" class="section-heading">
+  <a href="#module-security-notes" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Security Notes</span>
+</h2>
+<ul><li>Refresh tokens have longer validity periods than access tokens</li><li>They should be stored securely and transmitted over HTTPS only</li><li>Invalid or expired refresh tokens will result in authentication errors</li></ul>
+    </section>
 
 </div>
 
@@ -153,9 +170,11 @@ Info
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#api_key/1" data-no-tooltip translate="no">api_key(map)</a>
+        <a href="#schema/0" data-no-tooltip translate="no">schema()</a>
 
       </div>
+
+        <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/open_api_spex/3.19.1/OpenApiSpex.Schema.html#c:schema/0"><code class="inline">OpenApiSpex.Schema.schema/0</code></a>.</p></div>
 
     </div>
 
@@ -172,16 +191,16 @@ Info
       <span class="text">Functions</span>
     </h1>
     <div class="functions-list">
-<section class="detail" id="api_key/1">
+<section class="detail" id="schema/0">
 
   <div class="detail-header">
-    <a href="#api_key/1" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#schema/0" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">api_key(map)</h1>
+    <h1 class="signature" translate="no">schema()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/installation_json.ex#L2" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/openapi/v1/schema/credentials.ex#L108" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -191,7 +210,7 @@ Info
 
   <section class="docstring">
 
-
+<p>Callback implementation for <a href="https://hexdocs.pm/open_api_spex/3.19.1/OpenApiSpex.Schema.html#c:schema/0"><code class="inline">OpenApiSpex.Schema.schema/0</code></a>.</p>
   </section>
 </section>
 
