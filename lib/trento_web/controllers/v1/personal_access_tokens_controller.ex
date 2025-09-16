@@ -38,7 +38,7 @@ defmodule TrentoWeb.V1.PersonalAccessTokensController do
           %UserPersonalAccessToken{
             jti: jti,
             created_at: created_at,
-            expire_at: expire_at
+            expires_at: expires_at
           } = pat} <- PersonalAccessTokens.create_personal_access_token(current_user, body_params) do
       claims = %{
         "jti" => jti,
@@ -49,7 +49,7 @@ defmodule TrentoWeb.V1.PersonalAccessTokensController do
       |> put_status(:created)
       |> render(:new_personal_access_token, %{
         personal_access_token: pat,
-        generated_token: PAT.generate!(claims, created_at, expire_at)
+        generated_token: PAT.generate!(claims, created_at, expires_at)
       })
     end
   end

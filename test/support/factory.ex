@@ -1338,7 +1338,7 @@ defmodule Trento.Factory do
     %PersonalAccessToken{
       jti: Faker.UUID.v4(),
       name: Faker.UUID.v4(),
-      expire_at: Faker.DateTime.forward(50)
+      expires_at: Faker.DateTime.forward(50)
     }
   end
 

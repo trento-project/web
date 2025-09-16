@@ -8,7 +8,7 @@ defmodule TrentoWeb.V1.PersonalAccessTokensJSON do
           jti: jti,
           name: name,
           created_at: created_at,
-          expire_at: expire_at
+          expires_at: expires_at
         },
         generated_token: generated_token
       }),
@@ -16,7 +16,7 @@ defmodule TrentoWeb.V1.PersonalAccessTokensJSON do
         jti: jti,
         name: name,
         created_at: created_at,
-        expire_at: expire_at,
+        expires_at: expires_at,
         access_token: generated_token
       }
 end

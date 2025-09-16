@@ -13,7 +13,7 @@ defmodule Trento.PersonalAccessTokens.PersonalAccessToken do
   @primary_key {:jti, :binary_id, autogenerate: true}
   schema "personal_access_tokens" do
     field :name, :string
-    field :expire_at, :utc_datetime_usec
+    field :expires_at, :utc_datetime_usec
 
     belongs_to :user, User
 
@@ -22,7 +22,7 @@ defmodule Trento.PersonalAccessTokens.PersonalAccessToken do
 
   def changeset(pat, attrs) do
     pat
-    |> cast(attrs, [:name, :expire_at, :user_id])
+    |> cast(attrs, [:name, :expires_at, :user_id])
     |> validate_required([:name, :user_id])
     |> unique_constraint([:user_id, :name], error_key: :name)
     |> foreign_key_constraint(:user_id, message: "User does not exist")

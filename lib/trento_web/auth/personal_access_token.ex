@@ -11,9 +11,9 @@ defmodule TrentoWeb.Auth.PersonalAccessToken do
   @impl Joken.Config
   def token_config, do: default_claims(iss: @iss, aud: "trento_pat")
 
-  def generate!(claims, created_at, expire_at) do
+  def generate!(claims, created_at, expires_at) do
     claims
-    |> ApiKey.prepare_claims(created_at, expire_at)
+    |> ApiKey.prepare_claims(created_at, expires_at)
     |> generate_and_sign!()
   end
 end

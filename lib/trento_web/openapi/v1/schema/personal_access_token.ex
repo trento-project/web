@@ -15,7 +15,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.PersonalAccessToken do
         additionalProperties: false,
         properties: %{
           name: %Schema{type: :string, description: "Personal Access Token name", nullable: false},
-          expire_at: %Schema{
+          expires_at: %Schema{
             type: :string,
             format: :"date-time",
             description: "Personal Access Token expiration date",
@@ -45,7 +45,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.PersonalAccessToken do
             nullable: false
           },
           name: %Schema{type: :string, description: "Personal Access Token name", nullable: false},
-          expire_at: %Schema{
+          expires_at: %Schema{
             type: :string,
             format: :"date-time",
             description: "Personal Access Token expiration date",
@@ -63,7 +63,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.PersonalAccessToken do
             nullable: false
           }
         },
-        required: [:jti, :name, :expire_at, :created_at, :access_token]
+        required: [:jti, :name, :expires_at, :created_at, :access_token]
       },
       struct?: false
     )

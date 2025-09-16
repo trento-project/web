@@ -13,7 +13,7 @@ defmodule TrentoWeb.V1.PersonalAccessTokensViewJSONTest do
         factory_options: [
           name: Faker.Lorem.word(),
           created_at: Faker.DateTime.backward(1),
-          expire_at: nil
+          expires_at: nil
         ]
       },
       %{
@@ -21,7 +21,7 @@ defmodule TrentoWeb.V1.PersonalAccessTokensViewJSONTest do
         factory_options: [
           name: Faker.Lorem.word(),
           created_at: Faker.DateTime.backward(2),
-          expire_at: Faker.DateTime.forward(3)
+          expires_at: Faker.DateTime.forward(3)
         ]
       }
     ]
@@ -34,14 +34,14 @@ defmodule TrentoWeb.V1.PersonalAccessTokensViewJSONTest do
           jti: jti,
           name: name,
           created_at: created_at,
-          expire_at: expire_at
+          expires_at: expires_at
         } = personal_access_token = build(:personal_access_token, @pat_factory_options)
 
         assert %{
                  jti: jti,
                  name: name,
                  created_at: created_at,
-                 expire_at: expire_at,
+                 expires_at: expires_at,
                  access_token: "<generated_token>"
                } ==
                  PersonalAccessTokensJSON.new_personal_access_token(%{

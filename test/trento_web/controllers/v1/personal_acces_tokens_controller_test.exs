@@ -84,11 +84,11 @@ defmodule TrentoWeb.V1.PersonalAccessTokensControllerTest do
       },
       %{
         name: "invalid expiration date: invalid format",
-        request_body: %{name: Faker.Lorem.word(), expire_at: "123"},
+        request_body: %{name: Faker.Lorem.word(), expires_at: "123"},
         expected_errors: [
           %{
             "detail" => "Invalid format. Expected :\"date-time\"",
-            "source" => %{"pointer" => "/expire_at"},
+            "source" => %{"pointer" => "/expires_at"},
             "title" => "Invalid value"
           }
         ]
@@ -154,13 +154,13 @@ defmodule TrentoWeb.V1.PersonalAccessTokensControllerTest do
       },
       %{
         name: "without expiration - nil field",
-        request_body: %{name: Faker.Lorem.word(), expire_at: nil}
+        request_body: %{name: Faker.Lorem.word(), expires_at: nil}
       },
       %{
         name: "with expiration date",
         request_body: %{
           name: Faker.Lorem.word(),
-          expire_at:
+          expires_at:
             2
             |> Faker.DateTime.forward()
             |> DateTime.to_iso8601()
@@ -175,7 +175,7 @@ defmodule TrentoWeb.V1.PersonalAccessTokensControllerTest do
         api_spec: api_spec
       } do
         %{request_body: %{name: pat_name} = request_body} = @scenario
-        expire_at = Map.get(request_body, :expire_at, nil)
+        expires_at = Map.get(request_body, :expires_at, nil)
 
         resp =
           conn
@@ -187,7 +187,7 @@ defmodule TrentoWeb.V1.PersonalAccessTokensControllerTest do
         assert %{
                  "jti" => _,
                  "name" => ^pat_name,
-                 "expire_at" => ^expire_at,
+                 "expires_at" => ^expires_at,
                  "created_at" => _,
                  "access_token" => _
                } = resp
