@@ -752,7 +752,7 @@ jobs:
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
-      - name: Setup
+      - name: Set up Elixir
         id: setup-elixir
         uses: erlef/setup-beam@v1
         with:
@@ -761,15 +761,15 @@ jobs:
       - name: Read .tool-versions
         uses: endorama/asdf-parse-tool-versions@v1.3.4
         id: tool-versions
-      - name: Retrieve Cached Dependencies
+      - name: Retrieve Elixir Cached Dependencies - current branch
         uses: actions/cache@v4
-        id: mix-cache
+        id: mix-cache-current
         with:
           path: |
             deps
-            _build/test
+            _build/${{ env.MIX_ENV }}
             priv/plts
-          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-rust-${{ env.RUST_VERSION }}-${{ hashFiles('mix.lock') }}
+          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
