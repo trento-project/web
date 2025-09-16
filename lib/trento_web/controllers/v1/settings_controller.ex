@@ -205,24 +205,6 @@ defmodule TrentoWeb.V1.SettingsController do
     end
   end
 
-  operation :put_suse_manager_settings,
-    summary: "Updates the SUSE Manager settings.",
-    tags: ["Settings"],
-    description:
-      "Updates the configuration and credentials for SUSE Manager integration, supporting ongoing software management and updates.",
-    request_body:
-      {"Request body containing updated SUSE Manager credentials and configuration for ongoing secure integration and software management.",
-       "application/json", Schema.Platform.UpdateSuseManagerSettingsRequest},
-    responses: [
-      ok:
-        {"SUSE Manager settings have been successfully updated and saved, including credentials and configuration for secure integration.",
-         "application/json", Schema.Platform.SuseManagerSettings},
-      unprocessable_entity: Schema.UnprocessableEntity.response()
-    ]
-
-  @spec put_suse_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
-  def put_suse_manager_settings(conn, params), do: update_suse_manager_settings(conn, params)
-
   operation :delete_suse_manager_settings,
     summary: "Clears the SUSE Multi-Linux Manager settings.",
     tags: ["Settings"],
