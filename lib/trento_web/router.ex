@@ -4,7 +4,7 @@ defmodule TrentoWeb.Router do
   use PowAssent.Phoenix.Router
 
   # From newest to oldest
-  @available_api_versions ["v2", "v1"]
+  @available_api_versions ["unversioned", "v2", "v1"]
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -28,6 +28,11 @@ defmodule TrentoWeb.Router do
   pipeline :api_v2 do
     plug :api
     plug OpenApiSpex.Plug.PutApiSpec, module: TrentoWeb.OpenApi.V2.ApiSpec
+  end
+
+  pipeline :unversioned_api do
+    plug :api
+    plug OpenApiSpex.Plug.PutApiSpec, module: TrentoWeb.OpenApi.Unversioned.ApiSpec
   end
 
   pipeline :protected_api do
@@ -61,7 +66,8 @@ defmodule TrentoWeb.Router do
       path: "/api/v1/openapi",
       urls: [
         %{url: "/api/v1/openapi", name: "Version 1"},
-        %{url: "/api/v2/openapi", name: "Version 2"}
+        %{url: "/api/v2/openapi", name: "Version 2"},
+        %{url: "/api/unversioned/openapi", name: "Unversioned"}
       ]
   end
 
@@ -81,14 +87,12 @@ defmodule TrentoWeb.Router do
   end
 
   scope "/api", TrentoWeb.V1 do
-    pipe_through [:api, :api_v1]
+    pipe_through [:api, :unversioned_api]
     get "/public_keys", SettingsController, :get_public_keys
   end
 
   scope "/api" do
     pipe_through [:api, :protected_api]
-
-    get "/me", TrentoWeb.SessionController, :show, as: :me
 
     scope "/v1", TrentoWeb.V1 do
       pipe_through [:api_v1]
@@ -96,8 +100,6 @@ defmodule TrentoWeb.Router do
       get "/about", AboutController, :info
 
       get "/activity_log", ActivityLogController, :get_activity_log
-
-      get "/installation/api-key", InstallationController, :get_api_key
 
       get "/hosts", HostController, :list
       get "/clusters", ClusterController, :list
@@ -194,8 +196,6 @@ defmodule TrentoWeb.Router do
       get "/abilities", AbilityController, :index
 
       scope "/settings" do
-        get "/", SettingsController, :settings
-        post "/accept_eula", SettingsController, :accept_eula
         get "/api_key", SettingsController, :get_api_key_settings
         patch "/api_key", SettingsController, :update_api_key_settings
 
@@ -212,25 +212,12 @@ defmodule TrentoWeb.Router do
           post "/test", SettingsController, :test_suse_manager_settings
         end
 
-        # deprecated
-        scope "/suma_credentials" do
-          get "/", SettingsController, :get_suse_manager_settings
-          post "/", SettingsController, :save_suse_manager_settings
-          patch "/", SettingsController, :update_suse_manager_settings
-          put "/", SettingsController, :update_suse_manager_settings
-          delete "/", SettingsController, :delete_suse_manager_settings
-          post "/test", SettingsController, :test_suse_manager_settings
-        end
-
         scope "/alerting" do
           get "/", SettingsController, :get_alerting_settings
           post "/", SettingsController, :create_alerting_settings
           patch "/", SettingsController, :update_alerting_settings
         end
       end
-
-      # Deprecated
-      post "/accept_eula", SettingsController, :accept_eula
 
       scope "/charts" do
         pipe_through :charts_feature
@@ -278,6 +265,11 @@ defmodule TrentoWeb.Router do
 
     scope "/v2" do
       pipe_through :api_v2
+      get "/openapi", OpenApiSpex.Plug.RenderSpec, []
+    end
+
+    scope "/unversioned" do
+      pipe_through :unversioned_api
       get "/openapi", OpenApiSpex.Plug.RenderSpec, []
     end
   end

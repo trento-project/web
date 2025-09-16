@@ -8,7 +8,7 @@ defmodule TrentoWeb.SessionControllerTest do
   import Trento.Factory
 
   alias TrentoWeb.Auth.RefreshToken
-  alias TrentoWeb.OpenApi.V1.ApiSpec
+  alias TrentoWeb.OpenApi.Unversioned.ApiSpec
 
   alias Trento.Users
   alias Trento.Users.User
@@ -186,36 +186,6 @@ defmodule TrentoWeb.SessionControllerTest do
 
       assert %{"errors" => [%{"detail" => "Invalid refresh token.", "title" => "Unauthorized"}]} =
                resp
-    end
-  end
-
-  describe "me endpoint" do
-    test "should return the logged user based on the token", %{
-      conn: conn,
-      api_spec: api_spec,
-      user: user
-    } do
-      expect(
-        Joken.CurrentTime.Mock,
-        :current_time,
-        5,
-        fn ->
-          1_671_715_992
-        end
-      )
-
-      good_jwt =
-        TrentoWeb.Auth.AccessToken.generate_access_token!(%{"sub" => user.id, "abilities" => []})
-
-      resp =
-        conn
-        |> Plug.Conn.put_req_header("authorization", good_jwt)
-        |> get("/api/me")
-        |> json_response(200)
-        |> assert_schema("TrentoUser", api_spec)
-
-      user_id = user.id
-      assert %{username: "trento_user", id: ^user_id} = resp
     end
   end
 

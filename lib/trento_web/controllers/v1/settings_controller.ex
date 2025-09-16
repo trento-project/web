@@ -20,43 +20,15 @@ defmodule TrentoWeb.V1.SettingsController do
   plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
   action_fallback TrentoWeb.FallbackController
 
-  operation :settings,
-    summary: "Platform Settings",
-    tags: ["Platform"],
-    description: "Provides the Platform Settings for the current installation.",
-    responses: [
-      ok: {"Platform Settings", "application/json", Schema.Platform.Settings}
-    ]
-
-  @spec settings(Plug.Conn.t(), any) :: Plug.Conn.t()
-  def settings(conn, _) do
-    render(conn, :settings,
-      settings: %{
-        eula_accepted: false
-      }
-    )
-  end
-
-  operation :accept_eula,
-    summary: "Accept Eula",
-    tags: ["Platform"],
-    deprecated: true,
-    description: "Accepting EULA allows the end user to use the platform",
+  operation :get_api_key_settings,
+    summary: "Get API key settings.",
+    description:
+      "Retrieves the current settings for API key generation, including expiration and configuration details, supporting secure access management.",
+    tags: ["Settings"],
     responses: [
       ok:
-        "EULA acceptance has been correctly registered and the user may continue using the platform"
-    ]
-
-  @spec accept_eula(Plug.Conn.t(), any) :: Plug.Conn.t()
-  def accept_eula(conn, _) do
-    json(conn, %{})
-  end
-
-  operation :get_api_key_settings,
-    summary: "Get Api key settings",
-    tags: ["Platform"],
-    responses: [
-      ok: {"Api Key settings", "application/json", Schema.Platform.ApiKeySettings},
+        {"A comprehensive set of API key settings and configuration details for secure access management.",
+         "application/json", Schema.Platform.ApiKeySettings},
       not_found: Schema.NotFound.response()
     ]
 
@@ -77,13 +49,17 @@ defmodule TrentoWeb.V1.SettingsController do
 
   @correlation_ttl 15_000
   operation :update_api_key_settings,
-    summary: "Updates the Api key settings",
-    tags: ["Platform"],
+    summary: "Updates the API key settings.",
+    description:
+      "Updates the configuration for API key generation, allowing administrators to change expiration and security settings for API access.",
+    tags: ["Settings"],
     request_body:
-      {"ApiKeySettingsUpdateRequest", "application/json",
-       Schema.Platform.ApiKeySettingsUpdateRequest},
+      {"Request body containing updated API key settings and expiration configuration for secure access management.",
+       "application/json", Schema.Platform.ApiKeySettingsUpdateRequest},
     responses: [
-      ok: {"Settings saved successfully", "application/json", Schema.Platform.ApiKeySettings},
+      ok:
+        {"API key settings have been successfully updated and saved, including expiration and security configuration.",
+         "application/json", Schema.Platform.ApiKeySettings},
       unprocessable_entity: Schema.UnprocessableEntity.response(),
       not_found: Schema.NotFound.response()
     ]
@@ -108,14 +84,17 @@ defmodule TrentoWeb.V1.SettingsController do
   end
 
   operation :update_activity_log_settings,
-    summary: "Updates the Activity Log settings",
-    tags: ["Platform"],
+    summary: "Updates the Activity Log settings.",
+    description:
+      "Updates the configuration for the Activity Log, including retention period and related settings, supporting compliance and audit requirements.",
+    tags: ["Settings"],
     request_body:
-      {"ActivityLogSettings", "application/json", Schema.Platform.ActivityLogSettings},
+      {"Request body containing updated activity log settings, including retention period and compliance configuration.",
+       "application/json", Schema.Platform.ActivityLogSettings},
     responses: [
       ok:
-        {"Activity Log settings saved successfully", "application/json",
-         Schema.Platform.ActivityLogSettings},
+        {"Activity Log settings have been successfully updated and saved, including retention period and compliance configuration.",
+         "application/json", Schema.Platform.ActivityLogSettings},
       unprocessable_entity: Schema.UnprocessableEntity.response()
     ]
 
@@ -135,12 +114,14 @@ defmodule TrentoWeb.V1.SettingsController do
   end
 
   operation :get_activity_log_settings,
-    summary: "Fetches the Activity Log settings",
-    tags: ["Platform"],
+    summary: "Fetches the Activity Log settings.",
+    description:
+      "Retrieves the current configuration for the Activity Log, including retention period and related settings, supporting compliance and audit requirements.",
+    tags: ["Settings"],
     responses: [
       ok:
-        {"Activity Log settings fetched successfully", "application/json",
-         Schema.Platform.ActivityLogSettings},
+        {"A comprehensive set of activity log settings and configuration details for compliance and audit requirements.",
+         "application/json", Schema.Platform.ActivityLogSettings},
       not_found: Schema.NotFound.response()
     ]
 
@@ -152,12 +133,14 @@ defmodule TrentoWeb.V1.SettingsController do
   end
 
   operation :get_suse_manager_settings,
-    summary: "Gets the Suse manager Settings",
-    tags: ["Platform"],
-    description: "Gets the saved settings for Suse Manager",
+    summary: "Gets the SUSE Multi-Linux Manager Settings.",
+    tags: ["Settings"],
+    description:
+      "Retrieves the saved configuration and credentials for SUSE Multi-Linux Manager integration, supporting automated software management and updates.",
     responses: [
       ok:
-        {"The Suse Manager credentials", "application/json", Schema.Platform.SuseManagerSettings},
+        {"A comprehensive set of SUSE Multi-Linux Manager integration credentials and configuration details for automated software management.",
+         "application/json", Schema.Platform.SuseManagerSettings},
       not_found: Schema.NotFound.response()
     ]
 
@@ -169,15 +152,17 @@ defmodule TrentoWeb.V1.SettingsController do
   end
 
   operation :save_suse_manager_settings,
-    summary: "Saves the Suse manager settings",
-    tags: ["Platform"],
-    description: "Saves credentials for Suse manager",
+    summary: "Saves the SUSE Multi-Linux Manager settings.",
+    tags: ["Settings"],
+    description:
+      "Saves new credentials and configuration for SUSE Multi-Linux Manager integration, enabling secure software management and updates.",
     request_body:
-      {"SaveSuseManagerSettingsRequest", "application/json",
-       Schema.Platform.SaveSuseManagerSettingsRequest},
+      {"Request body containing new SUSE Multi-Linux Manager credentials and configuration for secure integration and software management.",
+       "application/json", Schema.Platform.SaveSuseManagerSettingsRequest},
     responses: [
       created:
-        {"Settings saved successfully", "application/json", Schema.Platform.SuseManagerSettings},
+        {"SUSE Multi-Linux Manager settings have been successfully saved, including credentials and configuration for secure integration.",
+         "application/json", Schema.Platform.SuseManagerSettings},
       unprocessable_entity: Schema.UnprocessableEntity.response()
     ]
 
@@ -194,15 +179,17 @@ defmodule TrentoWeb.V1.SettingsController do
   end
 
   operation :update_suse_manager_settings,
-    summary: "Updates the Suse manager settings",
-    tags: ["Platform"],
-    description: "Updates Suse manager settings",
+    summary: "Updates the SUSE Multi-Linux Manager settings.",
+    tags: ["Settings"],
+    description:
+      "Updates the configuration and credentials for SUSE Multi-Linux Manager integration, supporting ongoing software management and updates.",
     request_body:
-      {"UpdateSuseManagerSettingsRequest", "application/json",
-       Schema.Platform.UpdateSuseManagerSettingsRequest},
+      {"Request body containing updated SUSE Multi-Linux Manager credentials and configuration for ongoing secure integration and software management.",
+       "application/json", Schema.Platform.UpdateSuseManagerSettingsRequest},
     responses: [
       ok:
-        {"Settings saved successfully", "application/json", Schema.Platform.SuseManagerSettings},
+        {"SUSE Multi-Linux Manager settings have been successfully updated and saved, including credentials and configuration for secure integration.",
+         "application/json", Schema.Platform.SuseManagerSettings},
       unprocessable_entity: Schema.UnprocessableEntity.response()
     ]
 
@@ -219,11 +206,13 @@ defmodule TrentoWeb.V1.SettingsController do
   end
 
   operation :delete_suse_manager_settings,
-    summary: "Clears the Suse manager settings",
-    tags: ["Platform"],
-    description: "Clears the saved settings for Suse manager",
+    summary: "Clears the SUSE Multi-Linux Manager settings.",
+    tags: ["Settings"],
+    description:
+      "Removes all saved credentials and configuration for SUSE Multi-Linux Manager integration, supporting secure decommissioning and access management.",
     responses: [
-      no_content: "Settings cleared successfully"
+      no_content:
+        "All SUSE Multi-Linux Manager credentials and configuration have been successfully cleared from the system."
     ]
 
   @spec delete_suse_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
@@ -234,13 +223,14 @@ defmodule TrentoWeb.V1.SettingsController do
   end
 
   operation :test_suse_manager_settings,
-    summary: "Tests connection with Suse Manager",
-    tags: ["Platform"],
-    description: "Tests connection with Suse manager with the saved settings",
+    summary: "Tests connection with SUSE Multi-Linux Manager.",
+    tags: ["Settings"],
+    description:
+      "Tests the connection to SUSE Multi-Linux Manager using the currently saved credentials and configuration, supporting validation and troubleshooting of integration settings.",
     responses: [
-      ok: "The connection with Suse manager was successful",
+      ok: "The connection with SUSE Multi-Linux Manager was successful.",
       unprocessable_entity:
-        {"The connection with Suse Manager failed", "application/json",
+        {"The connection with SUSE Multi-Linux Manager failed.", "application/json",
          Schema.UnprocessableEntity}
     ]
 
@@ -254,11 +244,14 @@ defmodule TrentoWeb.V1.SettingsController do
   end
 
   operation :get_public_keys,
-    summary: "Get uploaded public keys",
-    tags: ["Platform"],
-    description: "Get uploaded public keys",
+    summary: "Get uploaded public keys.",
+    tags: ["Settings"],
+    description:
+      "Retrieves all uploaded public keys for secure authentication and integration, supporting infrastructure security and access control.",
     responses: [
-      ok: {"Uploaded public keys", "application/json", Schema.Platform.PublicKeys}
+      ok:
+        {"A comprehensive list of all uploaded public keys for secure authentication and integration.",
+         "application/json", Schema.Platform.PublicKeys}
     ]
 
   @spec get_public_keys(Plug.Conn.t(), any) :: Plug.Conn.t()
@@ -268,11 +261,14 @@ defmodule TrentoWeb.V1.SettingsController do
   end
 
   operation :get_alerting_settings,
-    summary: "Get alerting settings",
-    tags: ["Platform"],
-    description: "Get the saved settings for alerting in Trento",
+    summary: "Get alerting settings.",
+    tags: ["Settings"],
+    description:
+      "Retrieves the current configuration for alerting in Trento, including notification settings and integration details, supporting operational monitoring and incident response.",
     responses: [
-      ok: {"Alerting settings retrieved", "application/json", Schema.Platform.AlertingSettings},
+      ok:
+        {"A comprehensive set of alerting settings and configuration details for operational monitoring and incident response.",
+         "application/json", Schema.Platform.AlertingSettings},
       unauthorized: Schema.Unauthorized.response(),
       not_found: Schema.NotFound.response()
     ]
@@ -286,16 +282,17 @@ defmodule TrentoWeb.V1.SettingsController do
   end
 
   operation :create_alerting_settings,
-    summary: "Create alerting settings",
-    description: "Create new persisted settings for alerting in Trento",
-    tags: ["Platform"],
+    summary: "Create alerting settings.",
+    description:
+      "Creates new alerting settings in Trento, allowing users to configure notification preferences and integration options for incident management.",
+    tags: ["Settings"],
     request_body:
-      {"Request body for setting alerting settings", "application/json",
-       Schema.Platform.CreateAlertingSettings},
+      {"Request body containing new alerting settings and configuration for incident management and notification preferences.",
+       "application/json", Schema.Platform.CreateAlertingSettings},
     responses: [
       created:
-        {"Alerting settings successfully modified", "application/json",
-         Schema.Platform.AlertingSettings},
+        {"Alerting settings have been successfully created and modified, including configuration for incident management and notification preferences.",
+         "application/json", Schema.Platform.AlertingSettings},
       unauthorized: Schema.Unauthorized.response(),
       forbidden: Schema.Forbidden.response(),
       conflict: Schema.Conflict.response(),
@@ -313,16 +310,17 @@ defmodule TrentoWeb.V1.SettingsController do
   end
 
   operation :update_alerting_settings,
-    summary: "Update alerting settings",
-    description: "Update persisted settings for alerting in Trento",
-    tags: ["Platform"],
+    summary: "Update alerting settings.",
+    description:
+      "Updates the persisted alerting settings in Trento, allowing users to modify notification preferences and integration options for incident management.",
+    tags: ["Settings"],
     request_body:
-      {"Request body for updating alerting settings", "application/json",
-       Schema.Platform.UpdateAlertingSettings},
+      {"Request body containing updated alerting settings and configuration for incident management and notification preferences.",
+       "application/json", Schema.Platform.UpdateAlertingSettings},
     responses: [
       ok:
-        {"Alerting settings successfully modified", "application/json",
-         Schema.Platform.AlertingSettings},
+        {"Alerting settings have been successfully updated and modified, including configuration for incident management and notification preferences.",
+         "application/json", Schema.Platform.AlertingSettings},
       unauthorized: Schema.Unauthorized.response(),
       forbidden: Schema.Forbidden.response(),
       not_found: Schema.NotFound.response(),

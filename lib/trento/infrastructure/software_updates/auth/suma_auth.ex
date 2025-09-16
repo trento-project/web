@@ -1,6 +1,6 @@
 defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuth do
   @moduledoc """
-  GenServer module to authenticate with SUMA
+  GenServer module to authenticate with SUSE Multi-Linux Manager
   """
 
   @behaviour Trento.Infrastructure.SoftwareUpdates.Auth.Gen

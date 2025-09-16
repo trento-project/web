@@ -7,12 +7,17 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Checks.ChecksSelectionRequest do
     %{
       title: "ChecksSelectionRequest",
       description:
-        "A list of desired checks that should be executed on the target infrastructure",
+        "Represents a request containing a list of checks to be executed on the target infrastructure, supporting automated validation and compliance.",
       additionalProperties: false,
       type: :object,
+      example: %{
+        checks: ["check_1", "check_2", "check_3"]
+      },
       properties: %{
         checks: %Schema{
           type: :array,
+          description:
+            "A list of check identifiers specifying which checks should be executed as part of the request.",
           items: %Schema{type: :string}
         }
       },

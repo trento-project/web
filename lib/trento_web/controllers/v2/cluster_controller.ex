@@ -10,13 +10,14 @@ defmodule TrentoWeb.V2.ClusterController do
   action_fallback TrentoWeb.FallbackController
 
   operation :list,
-    summary: "List Pacemaker Clusters",
+    summary: "List Pacemaker Clusters.",
     tags: ["Target Infrastructure"],
-    description: "List all the discovered Pacemaker Clusters on the target infrastructure",
+    description:
+      "Retrieves a comprehensive list of all Pacemaker Clusters discovered on the target infrastructure, supporting monitoring and management tasks for administrators.",
     responses: [
       ok:
-        {"A collection of the discovered Pacemaker Clusters", "application/json",
-         Schema.Cluster.PacemakerClustersCollection}
+        {"Comprehensive list of all Pacemaker Clusters discovered on the target infrastructure for monitoring and management.",
+         "application/json", Schema.Cluster.PacemakerClustersCollection}
     ]
 
   def list(conn, _) do

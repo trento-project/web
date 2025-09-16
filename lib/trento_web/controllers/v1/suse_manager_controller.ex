@@ -20,21 +20,27 @@ defmodule TrentoWeb.V1.SUSEManagerController do
   action_fallback TrentoWeb.FallbackController
 
   operation :software_updates,
-    summary: "Gets available software updates for a given host",
-    tags: ["Platform"],
+    summary: "Gets available software updates for a given host.",
+    tags: ["Target Infrastructure"],
     description:
-      "Endpoint to fetch available relevant patches and upgradable packages for a given host ID.",
+      "Retrieves all available relevant patches and upgradable packages for a specified host, supporting automated software management and system maintenance.",
     parameters: [
       id: [
         in: :path,
+        description:
+          "Unique identifier of the host for which software updates are being requested. This value must be a valid UUID string.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :string, format: :uuid}
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          format: :uuid,
+          example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
+        }
       ]
     ],
     responses: [
       ok:
-        {"Available software updates for the host", "application/json",
-         AvailableSoftwareUpdatesResponse},
+        {"A comprehensive list of available software updates for the specified host, including all relevant patches and upgradable packages.",
+         "application/json", AvailableSoftwareUpdatesResponse},
       not_found: Schema.NotFound.response(),
       unprocessable_entity: Schema.UnprocessableEntity.response()
     ]
@@ -52,20 +58,27 @@ defmodule TrentoWeb.V1.SUSEManagerController do
   end
 
   operation :patches_for_packages,
-    summary: "Gets patches covered by package upgrades in SUSE Manager",
-    tags: ["Platform"],
-    description: "Endpoint to fetch relevant patches covered by package upgrades in SUSE Manager",
+    summary: "Gets patches covered by package upgrades in SUSE Multi-Linux Manager.",
+    tags: ["Target Infrastructure"],
+    description:
+      "Retrieves all relevant patches that are covered by package upgrades in SUSE Multi-Linux Manager for a specified host, supporting compliance and system maintenance.",
     parameters: [
       host_id: [
         in: :query,
+        description:
+          "Unique identifier of the host for which patch information is being requested. This value must be a valid UUID string.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :string, format: :uuid}
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          format: :uuid,
+          example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
+        }
       ]
     ],
     responses: [
       ok:
-        {"Available software updates for the host", "application/json",
-         PatchesForPackagesResponse}
+        {"A detailed list of all relevant patches covered by package upgrades in SUSE Multi-Linux Manager for the specified host.",
+         "application/json", PatchesForPackagesResponse}
     ]
 
   @spec patches_for_packages(Plug.Conn.t(), any) :: Plug.Conn.t()
@@ -76,18 +89,26 @@ defmodule TrentoWeb.V1.SUSEManagerController do
   end
 
   operation :errata_details,
-    summary: "Gets the details for an advisory",
-    tags: ["Platform"],
-    description: "Endpoint to fetch advisory details for a given advisory name",
+    summary: "Gets the details for an advisory.",
+    tags: ["Target Infrastructure"],
+    description:
+      "Retrieves detailed information for a specified advisory, including CVEs, bug fixes, affected packages, and systems, supporting vulnerability management and compliance.",
     parameters: [
       advisory_name: [
         in: :path,
+        description:
+          "The name of the advisory for which details are being requested, such as SUSE-2025-1234.",
         required: true,
-        type: %OpenApiSpex.Schema{type: :string}
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          example: "SUSE-2025-1234"
+        }
       ]
     ],
     responses: [
-      ok: {"Errata details for the advisory", "application/json", ErrataDetailsResponse}
+      ok:
+        {"Detailed information about the specified advisory, including CVEs, bug fixes, affected packages, and systems.",
+         "application/json", ErrataDetailsResponse}
     ]
 
   @spec errata_details(Plug.Conn.t(), any) :: Plug.Conn.t()

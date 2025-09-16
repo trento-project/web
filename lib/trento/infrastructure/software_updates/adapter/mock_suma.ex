@@ -1,6 +1,6 @@
 defmodule Trento.Infrastructure.SoftwareUpdates.MockSuma do
   @moduledoc """
-  Mocked SUMA Software updates discovery adapter
+  Mocked SUSE Multi-Linux Manager Software updates discovery adapter
   """
 
   @behaviour Trento.SoftwareUpdates.Discovery.Gen
