@@ -5,6 +5,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
   alias OpenApiSpex.Schema
 
   alias TrentoWeb.OpenApi.V1.Schema.Ability.AbilityCollection
+  alias TrentoWeb.OpenApi.V1.Schema.PersonalAccessToken.PersonalAccessTokenCollection
 
   defmodule UserTOTPEnrollmentPayload do
     @moduledoc false
@@ -131,6 +132,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
             example: false
           },
           abilities: AbilityCollection,
+          personal_access_tokens: PersonalAccessTokenCollection,
           password_change_requested: %Schema{
             type: :boolean,
             description: "Password change is requested.",
@@ -170,7 +172,15 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
             example: "2024-01-15T12:00:00Z"
           }
         },
-        required: [:username, :id, :fullname, :email, :created_at, :totp_enabled],
+        required: [
+          :username,
+          :id,
+          :fullname,
+          :email,
+          :created_at,
+          :totp_enabled,
+          :personal_access_tokens
+        ],
         example: %{
           id: 1,
           fullname: "John Doe",
@@ -178,6 +188,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
           email: "john.doe@example.com",
           idp_user: false,
           abilities: [],
+          personal_access_tokens: [],
           password_change_requested: false,
           analytics_enabled: false,
           totp_enabled: true,
@@ -445,6 +456,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
             nullable: false
           },
           abilities: AbilityCollection,
+          personal_access_tokens: PersonalAccessTokenCollection,
           password_change_requested_at: %OpenApiSpex.Schema{
             type: :string,
             format: :"date-time",
@@ -478,7 +490,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
             example: "2024-01-15T09:00:00Z"
           }
         },
-        required: [:username, :id, :fullname, :email, :created_at],
+        required: [:username, :id, :fullname, :email, :created_at, :personal_access_tokens],
         example: %{
           id: 1,
           fullname: "User Item",
@@ -487,6 +499,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
           enabled: true,
           idp_user: false,
           abilities: [],
+          personal_access_tokens: [],
           created_at: "2024-01-15T09:00:00Z",
           updated_at: "2024-01-15T10:30:00Z",
           analytics_enabled: false,
@@ -517,7 +530,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
             password_change_requested_at: "2024-01-14T08:00:00Z",
             created_at: "2024-01-15T09:00:00Z",
             updated_at: "2024-01-15T10:30:00Z",
-            abilities: []
+            abilities: [],
+            personal_access_tokens: []
           }
         ]
       },
