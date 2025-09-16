@@ -23,7 +23,7 @@ defmodule TrentoWeb.V1.PersonalAccessTokensController do
     responses: [
       created:
         {"Personal Access Token created successfully", "application/json",
-         Schema.PersonalAccessToken.NewlyCreatedPersonalAccessToken},
+         Schema.PersonalAccessToken.CreatedPersonalAccessToken},
       unprocessable_entity: Schema.UnprocessableEntity.response(),
       unauthorized: Schema.Unauthorized.response(),
       forbidden: Schema.Forbidden.response()

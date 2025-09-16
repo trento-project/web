@@ -28,12 +28,12 @@ defmodule TrentoWeb.OpenApi.V1.Schema.PersonalAccessToken do
     )
   end
 
-  defmodule NewlyCreatedPersonalAccessToken do
+  defmodule CreatedPersonalAccessToken do
     @moduledoc false
 
     OpenApiSpex.schema(
       %{
-        title: "NewlyCreatedPersonalAccessToken",
+        title: "CreatedPersonalAccessToken",
         description: "A User's newly created Personal Access Token",
         type: :object,
         additionalProperties: false,

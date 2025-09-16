@@ -181,7 +181,7 @@ defmodule TrentoWeb.V1.PersonalAccessTokensControllerTest do
           |> post("/api/v1/profile/tokens", request_body)
           |> json_response(:created)
 
-        assert_schema(resp, "NewlyCreatedPersonalAccessToken", api_spec)
+        assert_schema(resp, "CreatedPersonalAccessToken", api_spec)
 
         assert %{
                  "jti" => _,
