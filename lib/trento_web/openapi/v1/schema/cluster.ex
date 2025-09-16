@@ -201,6 +201,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
         title: "PacemakerClusterDetails",
         description:
           "Provides details about the detected PacemakerCluster, including configuration, health, and operational status.",
+        type: :object,
         nullable: true,
         oneOf: [
           HanaClusterDetails
