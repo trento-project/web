@@ -1,5 +1,5 @@
 defmodule TrentoWeb.V1.ProfileJSON do
-  alias TrentoWeb.V1.AbilityJSON
+  alias TrentoWeb.V1.{AbilityJSON, PersonalAccessTokensJSON}
 
   def profile(%{
         user: %{
@@ -8,6 +8,7 @@ defmodule TrentoWeb.V1.ProfileJSON do
           username: username,
           email: email,
           abilities: abilities,
+          personal_access_tokens: personal_access_tokens,
           password_change_requested_at: password_change_requested_at,
           totp_enabled_at: totp_enabled_at,
           user_identities: user_identities,
@@ -23,6 +24,8 @@ defmodule TrentoWeb.V1.ProfileJSON do
         username: username,
         email: email,
         abilities: Enum.map(abilities, &AbilityJSON.ability/1),
+        personal_access_tokens:
+          PersonalAccessTokensJSON.personal_access_tokens(personal_access_tokens),
         password_change_requested: password_change_requested_at != nil,
         totp_enabled: totp_enabled_at != nil,
         created_at: created_at,

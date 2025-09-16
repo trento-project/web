@@ -1,5 +1,5 @@
 defmodule TrentoWeb.V1.UsersJSON do
-  alias TrentoWeb.V1.AbilityJSON
+  alias TrentoWeb.V1.{AbilityJSON, PersonalAccessTokensJSON}
 
   def index(%{users: users}), do: Enum.map(users, &user(%{user: &1}))
 
@@ -12,6 +12,7 @@ defmodule TrentoWeb.V1.UsersJSON do
           username: username,
           email: email,
           abilities: abilities,
+          personal_access_tokens: personal_access_tokens,
           locked_at: locked_at,
           password_change_requested_at: password_change_requested_at,
           user_identities: user_identities,
@@ -27,6 +28,8 @@ defmodule TrentoWeb.V1.UsersJSON do
         username: username,
         email: email,
         abilities: Enum.map(abilities, &AbilityJSON.ability/1),
+        personal_access_tokens:
+          PersonalAccessTokensJSON.personal_access_tokens(personal_access_tokens),
         enabled: locked_at == nil,
         idp_user: length(user_identities) > 0,
         password_change_requested_at: password_change_requested_at,

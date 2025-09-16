@@ -4,6 +4,64 @@ defmodule TrentoWeb.OpenApi.V1.Schema.PersonalAccessToken do
   require OpenApiSpex
   alias OpenApiSpex.Schema
 
+  defmodule PersonalAccessTokenEntry do
+    @moduledoc false
+
+    OpenApiSpex.schema(
+      %{
+        title: "PersonalAccessTokenEntry",
+        description: "A User's Personal Access Token",
+        type: :object,
+        additionalProperties: false,
+        properties: %{
+          jti: %Schema{
+            type: :string,
+            format: :uuid,
+            description: "Personal Access Token ID",
+            nullable: false,
+            example: "550e8400-e29b-41d4-a716-446655440000"
+          },
+          name: %Schema{
+            type: :string,
+            description: "Personal Access Token name",
+            nullable: false,
+            example: "My Token"
+          },
+          expires_at: %Schema{
+            type: :string,
+            format: :"date-time",
+            description: "Personal Access Token expiration date",
+            nullable: true,
+            example: "2024-12-31T23:59:59Z"
+          },
+          created_at: %Schema{
+            type: :string,
+            format: :"date-time",
+            description: "Date of API Key creation",
+            nullable: false,
+            example: "2023-01-01T00:00:00Z"
+          }
+        },
+        required: [:jti, :name, :expires_at, :created_at]
+      },
+      struct?: false
+    )
+  end
+
+  defmodule PersonalAccessTokenCollection do
+    @moduledoc false
+
+    OpenApiSpex.schema(
+      %{
+        title: "PersonalAccessTokenCollection",
+        description: "List of a user's Personal Access Tokens",
+        type: :array,
+        items: PersonalAccessTokenEntry
+      },
+      struct?: false
+    )
+  end
+
   defmodule CreatePersonalAccessToken do
     @moduledoc false
 

@@ -151,14 +151,19 @@ defmodule Trento.UsersTest do
       insert(:users_abilities, user_id: user_id, ability_id: ability_id)
       %{id: identity_id} = insert(:user_identity, user_id: user_id)
 
-      insert(:user, deleted_at: DateTime.utc_now())
+      pat1 = insert(:personal_access_token, user_id: user_id)
+
+      %{id: deleted_user_id} = insert(:user, deleted_at: DateTime.utc_now())
+      insert(:personal_access_token, user_id: deleted_user_id, expires_at: nil)
+
       users = Users.list_users()
 
       assert [
                %User{
                  id: ^user_id,
                  user_identities: [%{id: ^identity_id}],
-                 abilities: [%{id: ^ability_id}]
+                 abilities: [%{id: ^ability_id}],
+                 personal_access_tokens: [^pat1]
                }
              ] = users
 
@@ -197,6 +202,26 @@ defmodule Trento.UsersTest do
                 user_identities: [%{id: ^identity_id}],
                 abilities: [%{id: ^ability_id}]
               }} = Users.get_user(user_id)
+    end
+
+    test "get_user returns a user with the user personal access tokens" do
+      %{id: user_id1} = insert(:user)
+      %{id: user_id2} = insert(:user)
+
+      pat1 = insert(:personal_access_token, user_id: user_id1)
+      pat2 = insert(:personal_access_token, user_id: user_id1, expires_at: nil)
+
+      assert {:ok,
+              %User{
+                id: ^user_id1,
+                personal_access_tokens: [^pat2, ^pat1]
+              }} = Users.get_user(user_id1)
+
+      assert {:ok,
+              %User{
+                id: ^user_id2,
+                personal_access_tokens: []
+              }} = Users.get_user(user_id2)
     end
 
     test "create_user with valid data creates a user" do

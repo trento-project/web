@@ -2,9 +2,81 @@ defmodule TrentoWeb.V1.PersonalAccessTokensViewJSONTest do
   use ExUnit.Case
 
   alias Trento.PersonalAccessTokens.PersonalAccessToken
+
   alias TrentoWeb.V1.PersonalAccessTokensJSON
 
   import Trento.Factory
+
+  describe "rendering a list of PATs" do
+    test "should render an empty list of personal access tokens" do
+      %{personal_access_tokens: not_loaded_personal_access_tokens} = build(:user)
+
+      assert [] ==
+               PersonalAccessTokensJSON.personal_access_tokens(not_loaded_personal_access_tokens)
+
+      assert [] == PersonalAccessTokensJSON.personal_access_tokens([])
+    end
+
+    test "should render a list of personal access tokens" do
+      jti1 = Faker.UUID.v4()
+      name1 = Faker.Lorem.word()
+      created_at1 = Faker.DateTime.backward(1)
+      expires_at1 = nil
+
+      jti2 = Faker.UUID.v4()
+      name2 = Faker.StarWars.character()
+      created_at2 = Faker.DateTime.backward(2)
+      expires_at2 = Faker.DateTime.forward(3)
+
+      jti3 = Faker.UUID.v4()
+      name3 = Faker.StarWars.character()
+      created_at3 = Faker.DateTime.backward(3)
+      expires_at3 = Faker.DateTime.forward(4)
+
+      personal_access_tokens = [
+        build(:personal_access_token,
+          jti: jti1,
+          name: name1,
+          created_at: created_at1,
+          expires_at: expires_at1
+        ),
+        build(:personal_access_token,
+          jti: jti2,
+          name: name2,
+          created_at: created_at2,
+          expires_at: expires_at2
+        ),
+        build(:personal_access_token,
+          jti: jti3,
+          name: name3,
+          created_at: created_at3,
+          expires_at: expires_at3
+        )
+      ]
+
+      assert [
+               %{
+                 jti: jti1,
+                 name: name1,
+                 created_at: created_at1,
+                 expires_at: expires_at1
+               },
+               %{
+                 jti: jti2,
+                 name: name2,
+                 created_at: created_at2,
+                 expires_at: expires_at2
+               },
+               %{
+                 jti: jti3,
+                 name: name3,
+                 created_at: created_at3,
+                 expires_at: expires_at3
+               }
+             ] ==
+               PersonalAccessTokensJSON.personal_access_tokens(personal_access_tokens)
+    end
+  end
 
   describe "rendering a newly created token" do
     scenarios = [
