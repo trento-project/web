@@ -6,6 +6,8 @@ defmodule Trento.PersonalAccessTokensTest do
 
   alias Trento.Users.User
 
+  alias Faker.Random.Elixir, as: FakerRandom
+
   import Trento.Factory
 
   describe "creating personal access tokens" do
@@ -100,8 +102,7 @@ defmodule Trento.PersonalAccessTokensTest do
         assert {:error, %Ecto.Changeset{errors: ^expected_errors}} =
                  PersonalAccessTokens.create_personal_access_token(user, attrs)
 
-        assert [] ==
-                 Trento.Repo.all(from ak in PersonalAccessToken, where: ak.user_id == ^user_id)
+        assert [] == load_user_personal_access_tokens(user_id)
       end
     end
 
@@ -187,5 +188,62 @@ defmodule Trento.PersonalAccessTokensTest do
               }} =
                PersonalAccessTokens.create_personal_access_token(other_user, %{name: taken_name})
     end
+  end
+
+  describe "revoking personal access tokens" do
+    test "should revoke a deleted user's personal access token" do
+      %User{id: user_id} = user = insert(:user, deleted_at: Faker.DateTime.backward(3))
+
+      %PersonalAccessToken{jti: pat_jti} = insert(:personal_access_token, user_id: user_id)
+
+      assert {:ok, _} = PersonalAccessTokens.revoke_personal_access_token(user, pat_jti)
+
+      assert_personal_access_token_items(user_id, 0)
+    end
+
+    test "should return an error when revoking a personal access token for a non existing user" do
+      %User{} = user = build(:user, id: FakerRandom.random_between(3, 100))
+
+      assert {:error, :not_found} =
+               PersonalAccessTokens.revoke_personal_access_token(user, Faker.UUID.v4())
+    end
+
+    test "should return an error when revoking an non existent personal access token" do
+      %User{id: user_id} = user = insert(:user)
+
+      insert(:personal_access_token, user_id: user_id)
+
+      %PersonalAccessToken{jti: non_existent_pat_jti} =
+        build(:personal_access_token, user_id: user_id)
+
+      assert {:error, :not_found} =
+               PersonalAccessTokens.revoke_personal_access_token(user, non_existent_pat_jti)
+
+      assert_personal_access_token_items(user_id, 1)
+    end
+
+    test "should revoke an existing personal access token" do
+      %User{id: user_id} = user = insert(:user)
+
+      [
+        %PersonalAccessToken{jti: pat_jti1},
+        %PersonalAccessToken{jti: pat_jti2}
+      ] = insert_list(2, :personal_access_token, user_id: user_id)
+
+      assert {:ok, _} = PersonalAccessTokens.revoke_personal_access_token(user, pat_jti1)
+
+      user_keys = load_user_personal_access_tokens(user_id)
+
+      assert 1 == length(user_keys)
+
+      assert [%PersonalAccessToken{jti: ^pat_jti2}] = user_keys
+    end
+  end
+
+  defp load_user_personal_access_tokens(user_id),
+    do: Trento.Repo.all(from pat in PersonalAccessToken, where: pat.user_id == ^user_id)
+
+  defp assert_personal_access_token_items(user_id, expected_length) do
+    assert expected_length == user_id |> load_user_personal_access_tokens |> length
   end
 end
