@@ -7,10 +7,10 @@ defmodule Trento.Users.PersonalAccessTokens do
   alias Trento.Repo
 
   @spec create_personal_access_token(User.t(), map()) ::
-          {:ok, PersonalAccessToken.t()} | {:error, Ecto.Changeset.t()}
+          {:ok, PersonalAccessToken.t()} | {:error, Ecto.Changeset.t()} | {:error, :forbidden}
   def create_personal_access_token(%User{id: user_id, deleted_at: nil, locked_at: nil}, attrs) do
-    %PersonalAccessToken{user_id: user_id}
-    |> PersonalAccessToken.changeset(attrs)
+    %PersonalAccessToken{}
+    |> PersonalAccessToken.changeset(Map.put(attrs, :user_id, user_id))
     |> Repo.insert()
   end
 
