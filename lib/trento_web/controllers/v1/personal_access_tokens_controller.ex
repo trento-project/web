@@ -53,4 +53,33 @@ defmodule TrentoWeb.V1.PersonalAccessTokensController do
       })
     end
   end
+
+  operation :revoke_personal_access_token,
+    summary: "Revokes an existing Personal Access Token",
+    tags: ["Profile"],
+    parameters: [
+      jti: [
+        in: :path,
+        required: true,
+        type: %OpenApiSpex.Schema{
+          type: :string,
+          format: :uuid,
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        }
+      ]
+    ],
+    responses: [
+      no_content: "Personal Access Token revoked successfully",
+      unauthorized: Schema.Unauthorized.response(),
+      forbidden: Schema.Forbidden.response()
+    ]
+
+  def revoke_personal_access_token(conn, %{jti: jti}) do
+    with {:ok, _} <-
+           conn
+           |> Pow.Plug.current_user()
+           |> PersonalAccessTokens.revoke_personal_access_token(jti) do
+      send_resp(conn, :no_content, "")
+    end
+  end
 end

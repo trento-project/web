@@ -199,4 +199,30 @@ defmodule TrentoWeb.V1.PersonalAccessTokensControllerTest do
       end
     end
   end
+
+  describe "revoking personal access tokens" do
+    test "should return an error when revoking a non existent personal access token", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      conn
+      |> delete("/api/v1/profile/tokens/#{Faker.UUID.v4()}")
+      |> json_response(:not_found)
+      |> assert_response_schema("NotFound", api_spec)
+    end
+
+    test "should successfully revoke a personal access token", %{
+      conn: conn,
+      admin_user: %{id: user_id}
+    } do
+      %PersonalAccessToken{jti: jti} = insert(:personal_access_token, user_id: user_id)
+
+      resp =
+        conn
+        |> delete("/api/v1/profile/tokens/#{jti}")
+        |> response(:no_content)
+
+      assert resp == ""
+    end
+  end
 end
