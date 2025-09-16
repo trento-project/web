@@ -140,12 +140,6 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
           analytics_enabled: %Schema{
             type: :boolean,
             description: "Whether user analytics collection is enabled.",
-            nullable: false
-            example: false
-          },
-          analytics_eula_accepted: %Schema{
-            type: :boolean,
-            description: "Whether user analytics EULA is accepted.",
             nullable: false,
             example: false
           },
