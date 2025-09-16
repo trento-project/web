@@ -20,6 +20,8 @@ defmodule Trento.Users.User do
     UsersAbilities
   }
 
+  alias Trento.PersonalAccessTokens.PersonalAccessToken
+
   alias Trento.Support.Ecto.EncryptedBinary
 
   defdelegate authorize(action, user, params), to: Trento.Users.Policy
@@ -45,6 +47,8 @@ defmodule Trento.Users.User do
     field :lock_version, :integer, default: 1
 
     many_to_many :abilities, Ability, join_through: UsersAbilities, unique: true
+
+    has_many :personal_access_tokens, PersonalAccessToken, preload_order: [desc: :created_at]
 
     timestamps(type: :utc_datetime_usec)
   end

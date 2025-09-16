@@ -23,27 +23,25 @@ defmodule TrentoWeb.Auth.ApiKey do
     Raise an error
   """
 
-  @spec generate_api_key!(map, DateTime.t(), nil) :: String.t()
-  def generate_api_key!(claims, created_at, nil) do
-    expires_at = DateTime.add(created_at, @reasonable_infinite, :day)
-
-    generate_jwt!(claims, created_at, expires_at)
-  end
-
-  @spec generate_api_key!(map, DateTime.t(), DateTime.t()) :: String.t()
+  @spec generate_api_key!(map, DateTime.t(), DateTime.t() | nil) :: String.t()
   def generate_api_key!(claims, created_at, expires_at) do
-    generate_jwt!(claims, created_at, expires_at)
+    claims
+    |> prepare_claims(created_at, expires_at)
+    |> generate_and_sign!()
   end
 
-  defp generate_jwt!(claims, created_at, expires_at) do
-    claims =
-      Map.merge(claims, %{
-        "typ" => "Bearer",
-        "exp" => DateTime.to_unix(expires_at),
-        "iat" => DateTime.to_unix(created_at),
-        "nbf" => DateTime.to_unix(created_at)
-      })
+  def prepare_claims(claims, created_at, nil),
+    do: merge_claims(claims, created_at, DateTime.add(created_at, @reasonable_infinite, :day))
 
-    generate_and_sign!(claims)
+  def prepare_claims(claims, created_at, expires_at),
+    do: merge_claims(claims, created_at, expires_at)
+
+  defp merge_claims(claims, created_at, expires_at) do
+    Map.merge(claims, %{
+      "typ" => "Bearer",
+      "exp" => DateTime.to_unix(expires_at),
+      "iat" => DateTime.to_unix(created_at),
+      "nbf" => DateTime.to_unix(created_at)
+    })
   end
 end

@@ -167,6 +167,8 @@ defmodule Trento.Factory do
   }
 
   alias Trento.UserIdentities.UserIdentity
+
+  alias Trento.PersonalAccessTokens.PersonalAccessToken
   alias Trento.Users.User
 
   alias Trento.Operations.V1.OperationCompleted
@@ -1329,6 +1331,14 @@ defmodule Trento.Factory do
       user_id: 1,
       uid: Faker.UUID.v4(),
       provider: Faker.Pokemon.name()
+    }
+  end
+
+  def personal_access_token_factory do
+    %PersonalAccessToken{
+      jti: Faker.UUID.v4(),
+      name: Faker.UUID.v4(),
+      expires_at: Faker.DateTime.forward(50)
     }
   end
 

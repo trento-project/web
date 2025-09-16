@@ -187,11 +187,17 @@ defmodule TrentoWeb.Router do
 
       resources "/users", UsersController, except: [:new, :edit]
 
-      get "/profile", ProfileController, :show
-      patch "/profile", ProfileController, :update
-      delete "/profile/totp_enrollment", ProfileController, :reset_totp
-      get "/profile/totp_enrollment", ProfileController, :get_totp_enrollment_data
-      post "/profile/totp_enrollment", ProfileController, :confirm_totp_enrollment
+      scope "/profile" do
+        get "/", ProfileController, :show
+        patch "/", ProfileController, :update
+        delete "/totp_enrollment", ProfileController, :reset_totp
+        get "/totp_enrollment", ProfileController, :get_totp_enrollment_data
+        post "/totp_enrollment", ProfileController, :confirm_totp_enrollment
+
+        scope "/tokens" do
+          post "/", PersonalAccessTokensController, :create_personal_access_token
+        end
+      end
 
       get "/abilities", AbilityController, :index
 
