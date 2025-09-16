@@ -20,8 +20,8 @@ defmodule Trento.Users.PersonalAccessToken do
     timestamps(inserted_at: :created_at, type: :utc_datetime_usec)
   end
 
-  def changeset(api_key, attrs) do
-    api_key
+  def changeset(pat, attrs) do
+    pat
     |> cast(attrs, [:name, :expire_at, :user_id])
     |> validate_required([:name, :user_id])
     |> unique_constraint([:user_id, :name], error_key: :name)
