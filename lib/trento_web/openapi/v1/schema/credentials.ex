@@ -30,7 +30,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Auth do
   """
 
   defmodule LoginCredentials do
-  @moduledoc """
+    @moduledoc """
     This schema defines the structure for authentication requests containing username,
     password, and optional TOTP code for secure login to the Trento platform.
 
@@ -45,309 +45,309 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Auth do
     - All fields are validated against appropriate security constraints
     """
 
-      require OpenApiSpex
+    require OpenApiSpex
 
-      OpenApiSpex.schema(
-        %{
-          title: "LoginCredentials",
-          description: "User login credentials schema for authentication and token issuance.",
-          type: :object,
-          additionalProperties: false,
-          properties: %{
-            username: %OpenApiSpex.Schema{
-              type: :string,
-              description: "The username for authentication.",
-              example: "admin",
-              minLength: 1,
-              maxLength: 255
-            },
-            password: %OpenApiSpex.Schema{
-              type: :string,
-              description: "The password for authentication.",
-              example: "thepassword",
-              format: :password,
-              minLength: 1,
-              maxLength: 255
-            },
-            totp_code: %OpenApiSpex.Schema{
-              type: :string,
-              description:
-                "Time-based One-Time Password code (optional, required when TOTP is enabled).",
-              example: "123456",
-              pattern: "^[0-9]{6}$"
-            }
+    OpenApiSpex.schema(
+      %{
+        title: "LoginCredentials",
+        description: "User login credentials schema for authentication and token issuance.",
+        type: :object,
+        additionalProperties: false,
+        properties: %{
+          username: %OpenApiSpex.Schema{
+            type: :string,
+            description: "The username for authentication.",
+            example: "admin",
+            minLength: 1,
+            maxLength: 255
           },
-          required: [:username, :password],
-          example: %{
-            username: "admin",
-            password: "thepassword"
+          password: %OpenApiSpex.Schema{
+            type: :string,
+            description: "The password for authentication.",
+            example: "thepassword",
+            format: :password,
+            minLength: 1,
+            maxLength: 255
+          },
+          totp_code: %OpenApiSpex.Schema{
+            type: :string,
+            description:
+              "Time-based One-Time Password code (optional, required when TOTP is enabled).",
+            example: "123456",
+            pattern: "^[0-9]{6}$"
           }
         },
-        struct?: false
-      )
-    end
+        required: [:username, :password],
+        example: %{
+          username: "admin",
+          password: "thepassword"
+        }
+      },
+      struct?: false
+    )
+  end
 
-    defmodule RefreshTokenRequest do
-      @moduledoc """
-      Schema for refresh token requests.
+  defmodule RefreshTokenRequest do
+    @moduledoc """
+    Schema for refresh token requests.
 
-      This schema defines the structure for requests to obtain new access tokens
-      using a valid refresh token, enabling session extension without re-authentication.
+    This schema defines the structure for requests to obtain new access tokens
+    using a valid refresh token, enabling session extension without re-authentication.
 
-      ## Fields
-      - `refresh_token`: A valid JWT refresh token obtained from previous authentication
+    ## Fields
+    - `refresh_token`: A valid JWT refresh token obtained from previous authentication
 
-      ## Security Notes
-      - Refresh tokens have longer validity periods than access tokens
-      - They should be stored securely and transmitted over HTTPS only
-      - Invalid or expired refresh tokens will result in authentication errors
-      """
+    ## Security Notes
+    - Refresh tokens have longer validity periods than access tokens
+    - They should be stored securely and transmitted over HTTPS only
+    - Invalid or expired refresh tokens will result in authentication errors
+    """
 
-      require OpenApiSpex
+    require OpenApiSpex
 
-      OpenApiSpex.schema(
-        %{
-          title: "RefreshTokenRequest",
-          description: "Refresh token credentials for obtaining new access token.",
-          type: :object,
-          additionalProperties: false,
-          properties: %{
-            refresh_token: %OpenApiSpex.Schema{
-              type: :string,
-              description: "Valid refresh token to exchange for a new access token.",
-              example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-              minLength: 1
-            }
-          },
-          required: [:refresh_token],
-          example: %{
-            refresh_token:
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTU1NjY5MiwiaWF0IjoxNjcxNTQ5NDkyLCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwOGlxMmkxNnRlbHNycWE4MDAwMWM4IiwibmJmIjoxNjcxNTQ5NDkyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYtTrbVcCEO_UgIkHn6A"
+    OpenApiSpex.schema(
+      %{
+        title: "RefreshTokenRequest",
+        description: "Refresh token credentials for obtaining new access token.",
+        type: :object,
+        additionalProperties: false,
+        properties: %{
+          refresh_token: %OpenApiSpex.Schema{
+            type: :string,
+            description: "Valid refresh token to exchange for a new access token.",
+            example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+            minLength: 1
           }
         },
-        struct?: false
-      )
-    end
+        required: [:refresh_token],
+        example: %{
+          refresh_token:
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTU1NjY5MiwiaWF0IjoxNjcxNTQ5NDkyLCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwOGlxMmkxNnRlbHNycWE4MDAwMWM4IiwibmJmIjoxNjcxNTQ5NDkyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYtTrbVcCEO_UgIkHn6A"
+        }
+      },
+      struct?: false
+    )
+  end
 
-    defmodule ExternalIdpCallback do
-      @moduledoc """
-      Schema for external identity provider callback requests.
+  defmodule ExternalIdpCallback do
+    @moduledoc """
+    Schema for external identity provider callback requests.
 
-      This schema defines the structure for OAuth2/OIDC authentication flow callbacks,
-      handling the authorization code and session state returned from external identity providers.
+    This schema defines the structure for OAuth2/OIDC authentication flow callbacks,
+    handling the authorization code and session state returned from external identity providers.
 
-      ## Fields
-      - `code`: Authorization code returned from the identity provider after user consent
-      - `session_state`: Session state parameter for additional security and session management
+    ## Fields
+    - `code`: Authorization code returned from the identity provider after user consent
+    - `session_state`: Session state parameter for additional security and session management
 
-      ## Authentication Flow
-      1. User is redirected to external IDP for authentication
-      2. After successful authentication, user is redirected back with authorization code
-      3. This schema validates the callback parameters
-      4. Authorization code is exchanged for access tokens
+    ## Authentication Flow
+    1. User is redirected to external IDP for authentication
+    2. After successful authentication, user is redirected back with authorization code
+    3. This schema validates the callback parameters
+    4. Authorization code is exchanged for access tokens
 
-      ## Security Notes
-      - Authorization codes are single-use and have short validity periods
-      - Session state helps prevent CSRF attacks
-      - All parameters should be validated against the original request
-      """
+    ## Security Notes
+    - Authorization codes are single-use and have short validity periods
+    - Session state helps prevent CSRF attacks
+    - All parameters should be validated against the original request
+    """
 
-      require OpenApiSpex
+    require OpenApiSpex
 
-      OpenApiSpex.schema(
-        %{
-          title: "ExternalIdpCallback",
-          description: "User identity provider enrollment credentials with authorization code.",
-          type: :object,
-          additionalProperties: false,
-          properties: %{
-            code: %OpenApiSpex.Schema{
-              type: :string,
-              description: "Authorization code returned from the identity provider.",
-              example: "kyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYt",
-              minLength: 1
-            },
-            session_state: %OpenApiSpex.Schema{
-              type: :string,
-              description: "Session state parameter for additional security.",
-              example: "frHteBttgtW8706m7nqYC6ruYt",
-              minLength: 1
-            }
+    OpenApiSpex.schema(
+      %{
+        title: "ExternalIdpCallback",
+        description: "User identity provider enrollment credentials with authorization code.",
+        type: :object,
+        additionalProperties: false,
+        properties: %{
+          code: %OpenApiSpex.Schema{
+            type: :string,
+            description: "Authorization code returned from the identity provider.",
+            example: "kyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYt",
+            minLength: 1
           },
-          required: [:code, :session_state],
-          example: %{
-            code: "kyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYt",
-            session_state: "frHteBttgtW8706m7nqYC6ruYt"
+          session_state: %OpenApiSpex.Schema{
+            type: :string,
+            description: "Session state parameter for additional security.",
+            example: "frHteBttgtW8706m7nqYC6ruYt",
+            minLength: 1
           }
         },
-        struct?: false
-      )
-    end
+        required: [:code, :session_state],
+        example: %{
+          code: "kyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYt",
+          session_state: "frHteBttgtW8706m7nqYC6ruYt"
+        }
+      },
+      struct?: false
+    )
+  end
 
-    defmodule UserIDPCredentials do
-      @moduledoc """
-      Schema for successful IDP authentication responses.
+  defmodule UserIDPCredentials do
+    @moduledoc """
+    Schema for successful IDP authentication responses.
 
-      This schema defines the structure for successful IDP authentication responses containing
-      access and refresh tokens with expiration information for session management.
+    This schema defines the structure for successful IDP authentication responses containing
+    access and refresh tokens with expiration information for session management.
 
-      ## Fields
-      - `access_token`: JWT token for authenticating API requests (short-lived)
-      - `refresh_token`: JWT token for obtaining new access tokens (long-lived)
+    ## Fields
+    - `access_token`: JWT token for authenticating API requests (short-lived)
+    - `refresh_token`: JWT token for obtaining new access tokens (long-lived)
 
-      ## Token Management
-      - Access tokens should be used for all authenticated API requests
-      - When access token expires, use refresh token to obtain new credentials
-      - Store tokens securely and transmit only over HTTPS
-      - Implement proper token rotation for security
+    ## Token Management
+    - Access tokens should be used for all authenticated API requests
+    - When access token expires, use refresh token to obtain new credentials
+    - Store tokens securely and transmit only over HTTPS
+    - Implement proper token rotation for security
 
-      ## Security Best Practices
-      - Access tokens have shorter validity periods for security
-      - Refresh tokens enable seamless session extension
-      - Both tokens use JWT format with proper signing and encryption
-      """
+    ## Security Best Practices
+    - Access tokens have shorter validity periods for security
+    - Refresh tokens enable seamless session extension
+    - Both tokens use JWT format with proper signing and encryption
+    """
 
-      require OpenApiSpex
+    require OpenApiSpex
 
-      OpenApiSpex.schema(
-        %{
-          title: "UserIDPCredentials",
-          description:
-            "Successful authentication returns access and refresh tokens for secure API usage.",
-          type: :object,
-          additionalProperties: false,
-          properties: %{
-            access_token: %OpenApiSpex.Schema{
-              type: :string,
-              description: "JWT access token for authenticating API requests.",
-              example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-              minLength: 1
-            },
-            refresh_token: %OpenApiSpex.Schema{
-              type: :string,
-              description: "JWT refresh token for obtaining new access tokens when they expire.",
-              example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-              minLength: 1
-            }
+    OpenApiSpex.schema(
+      %{
+        title: "UserIDPCredentials",
+        description:
+          "Successful authentication returns access and refresh tokens for secure API usage.",
+        type: :object,
+        additionalProperties: false,
+        properties: %{
+          access_token: %OpenApiSpex.Schema{
+            type: :string,
+            description: "JWT access token for authenticating API requests.",
+            example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+            minLength: 1
           },
-          required: [:access_token, :refresh_token],
-          example: %{
-            access_token:
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTU1NjY5MiwiaWF0IjoxNjcxNTQ5NDkyLCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwOGlxMmkxNnRlbHNycWE4MDAwMWM4IiwibmJmIjoxNjcxNTQ5NDkyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYtTrbVcCEO_UgIkHn6A",
-            refresh_token:
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTU1NjY5MiwiaWF0IjoxNjcxNTQ5NDkyLCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwOGlxMmkxNnRlbHNycWE4MDAwMWM4IiwibmJmIjoxNjcxNTQ5NDkyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYtTrbVcCEO_UgIkHn6A"
+          refresh_token: %OpenApiSpex.Schema{
+            type: :string,
+            description: "JWT refresh token for obtaining new access tokens when they expire.",
+            example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+            minLength: 1
           }
         },
-        struct?: false
-      )
-    end
+        required: [:access_token, :refresh_token],
+        example: %{
+          access_token:
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTU1NjY5MiwiaWF0IjoxNjcxNTQ5NDkyLCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwOGlxMmkxNnRlbHNycWE4MDAwMWM4IiwibmJmIjoxNjcxNTQ5NDkyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYtTrbVcCEO_UgIkHn6A",
+          refresh_token:
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTU1NjY5MiwiaWF0IjoxNjcxNTQ5NDkyLCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwOGlxMmkxNnRlbHNycWE4MDAwMWM4IiwibmJmIjoxNjcxNTQ5NDkyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYtTrbVcCEO_UgIkHn6A"
+        }
+      },
+      struct?: false
+    )
+  end
 
-    defmodule Credentials do
-      @moduledoc """
-      Schema for successful authentication responses.
+  defmodule Credentials do
+    @moduledoc """
+    Schema for successful authentication responses.
 
-      This schema defines the structure for successful authentication responses containing
-      access and refresh tokens with expiration information for session management.
+    This schema defines the structure for successful authentication responses containing
+    access and refresh tokens with expiration information for session management.
 
-      ## Fields
-      - `access_token`: JWT token for authenticating API requests (short-lived)
-      - `refresh_token`: JWT token for obtaining new access tokens (long-lived)
-      - `expires_in`: Token lifetime in seconds for session management
+    ## Fields
+    - `access_token`: JWT token for authenticating API requests (short-lived)
+    - `refresh_token`: JWT token for obtaining new access tokens (long-lived)
+    - `expires_in`: Token lifetime in seconds for session management
 
-      ## Token Management
-      - Access tokens should be used for all authenticated API requests
-      - When access token expires, use refresh token to obtain new credentials
-      - Store tokens securely and transmit only over HTTPS
-      - Implement proper token rotation for security
+    ## Token Management
+    - Access tokens should be used for all authenticated API requests
+    - When access token expires, use refresh token to obtain new credentials
+    - Store tokens securely and transmit only over HTTPS
+    - Implement proper token rotation for security
 
-      ## Security Best Practices
-      - Access tokens have shorter validity periods for security
-      - Refresh tokens enable seamless session extension
-      - Both tokens use JWT format with proper signing and encryption
-      """
+    ## Security Best Practices
+    - Access tokens have shorter validity periods for security
+    - Refresh tokens enable seamless session extension
+    - Both tokens use JWT format with proper signing and encryption
+    """
 
-      require OpenApiSpex
+    require OpenApiSpex
 
-      OpenApiSpex.schema(
-        %{
-          title: "Credentials",
-          description:
-            "Successful authentication returns access and refresh tokens for secure API usage. The response includes token expiration details and is suitable for session management.",
-          type: :object,
-          additionalProperties: false,
-          properties: %{
-            access_token: %OpenApiSpex.Schema{
-              type: :string,
-              description: "JWT access token for authenticating API requests.",
-              example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-              minLength: 1
-            },
-            refresh_token: %OpenApiSpex.Schema{
-              type: :string,
-              description: "JWT refresh token for obtaining new access tokens when they expire.",
-              example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-              minLength: 1
-            },
-            expires_in: %OpenApiSpex.Schema{
-              type: :integer,
-              description: "Access token lifetime in seconds.",
-              example: 600,
-              minimum: 1
-            }
+    OpenApiSpex.schema(
+      %{
+        title: "Credentials",
+        description:
+          "Successful authentication returns access and refresh tokens for secure API usage. The response includes token expiration details and is suitable for session management.",
+        type: :object,
+        additionalProperties: false,
+        properties: %{
+          access_token: %OpenApiSpex.Schema{
+            type: :string,
+            description: "JWT access token for authenticating API requests.",
+            example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+            minLength: 1
           },
-          required: [:access_token, :refresh_token, :expires_in],
-          example: %{
-            expires_in: 600,
-            access_token:
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTU1NjY5MiwiaWF0IjoxNjcxNTQ5NDkyLCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwOGlxMmkxNnRlbHNycWE4MDAwMWM4IiwibmJmIjoxNjcxNTQ5NDkyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYtTrbVcCEO_UgIkHn6A",
-            refresh_token:
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTU1NjY5MiwiaWF0IjoxNjcxNTQ5NDkyLCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwOGlxMmkxNnRlbHNycWE4MDAwMWM4IiwibmJmIjoxNjcxNTQ5NDkyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYtTrbVcCEO_UgIkHn6A"
+          refresh_token: %OpenApiSpex.Schema{
+            type: :string,
+            description: "JWT refresh token for obtaining new access tokens when they expire.",
+            example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+            minLength: 1
+          },
+          expires_in: %OpenApiSpex.Schema{
+            type: :integer,
+            description: "Access token lifetime in seconds.",
+            example: 600,
+            minimum: 1
           }
         },
-        struct?: false
-      )
-    end
+        required: [:access_token, :refresh_token, :expires_in],
+        example: %{
+          expires_in: 600,
+          access_token:
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTU1NjY5MiwiaWF0IjoxNjcxNTQ5NDkyLCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwOGlxMmkxNnRlbHNycWE4MDAwMWM4IiwibmJmIjoxNjcxNTQ5NDkyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYtTrbVcCEO_UgIkHn6A",
+          refresh_token:
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTU1NjY5MiwiaWF0IjoxNjcxNTQ5NDkyLCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwOGlxMmkxNnRlbHNycWE4MDAwMWM4IiwibmJmIjoxNjcxNTQ5NDkyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYtTrbVcCEO_UgIkHn6A"
+        }
+      },
+      struct?: false
+    )
+  end
 
-    defmodule RefreshedCredentials do
-      @moduledoc """
-      Schema for refreshed authentication results.
+  defmodule RefreshedCredentials do
+    @moduledoc """
+    Schema for refreshed authentication results.
 
-      This schema defines the structure for responses when using a refresh token to obtain
-      new access credentials, enabling seamless session extension without re-authentication.
+    This schema defines the structure for responses when using a refresh token to obtain
+    new access credentials, enabling seamless session extension without re-authentication.
 
-      ## Fields
-      - `access_token`: New JWT access token for authenticating API requests
-      - `expires_in`: Token lifetime in seconds for session management
+    ## Fields
+    - `access_token`: New JWT access token for authenticating API requests
+    - `expires_in`: Token lifetime in seconds for session management
 
-      ## Token Refresh Flow
-      1. Client detects access token expiration or proactively refreshes
-      2. Client sends valid refresh token to refresh endpoint
-      3. Server validates refresh token and issues new access token
-      4. Client receives new credentials and updates stored tokens
+    ## Token Refresh Flow
+    1. Client detects access token expiration or proactively refreshes
+    2. Client sends valid refresh token to refresh endpoint
+    3. Server validates refresh token and issues new access token
+    4. Client receives new credentials and updates stored tokens
 
-      ## Security Notes
-      - Refresh tokens remain valid and should be stored securely
-      - New access token has updated expiration time
-      - Failed refresh requires full re-authentication
-      - Consider token rotation strategies for enhanced security
-      """
+    ## Security Notes
+    - Refresh tokens remain valid and should be stored securely
+    - New access token has updated expiration time
+    - Failed refresh requires full re-authentication
+    - Consider token rotation strategies for enhanced security
+    """
 
-      require OpenApiSpex
+    require OpenApiSpex
 
-      OpenApiSpex.schema(
-        %{
-          title: "RefreshedCredentials",
-          description:
-            "A valid refresh token returns new access credentials for continued secure API usage. The response includes updated token expiration information for session management.",
-          type: :object,
-          additionalProperties: false,
-          properties: %{
-            access_token: %OpenApiSpex.Schema{
-              type: :string,
-              description: "New JWT access token for authenticating API requests.",
-              example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-              minLength: 1
-            },
+    OpenApiSpex.schema(
+      %{
+        title: "RefreshedCredentials",
+        description:
+          "A valid refresh token returns new access credentials for continued secure API usage. The response includes updated token expiration information for session management.",
+        type: :object,
+        additionalProperties: false,
+        properties: %{
+          access_token: %OpenApiSpex.Schema{
+            type: :string,
+            description: "New JWT access token for authenticating API requests.",
+            example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+            minLength: 1
+          },
           expires_in: %OpenApiSpex.Schema{
             type: :integer,
             description: "Access token lifetime in seconds.",
