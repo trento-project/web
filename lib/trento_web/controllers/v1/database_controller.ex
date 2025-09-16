@@ -138,7 +138,6 @@ defmodule TrentoWeb.V1.DatabaseController do
         required: true,
         schema: %OpenApiSpex.Schema{
           type: :string,
-          enum: ["database_start", "database_stop"],
           example: "database_start"
         }
       ]
