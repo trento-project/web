@@ -41,7 +41,7 @@ defmodule Trento.ActivityLog.ActivityLoggerTest do
   end
 
   defp with_token(conn, user_id) do
-    jwt = AccessToken.generate_access_token!(%{"sub" => user_id, "abilities" => []})
+    jwt = AccessToken.generate_access_token!(%{"sub" => user_id})
 
     Plug.Conn.put_req_header(conn, "authorization", "Bearer " <> jwt)
   end
