@@ -7,6 +7,8 @@ defmodule Trento.PersonalAccessTokens do
 
   alias Trento.Repo
 
+  import Ecto.Query
+
   @spec create_personal_access_token(User.t(), map()) ::
           {:ok, PersonalAccessToken.t()} | {:error, Ecto.Changeset.t()} | {:error, :forbidden}
   def create_personal_access_token(%User{id: user_id, deleted_at: nil, locked_at: nil}, attrs) do
@@ -17,4 +19,16 @@ defmodule Trento.PersonalAccessTokens do
 
   def create_personal_access_token(%User{}, _attrs),
     do: {:error, :forbidden}
+
+  @spec revoke_personal_access_token(User.t(), bitstring()) ::
+          {:ok, PersonalAccessToken.t()} | {:error, :not_found | any()}
+  def revoke_personal_access_token(%User{id: user_id}, token_id) do
+    PersonalAccessToken
+    |> where([pat], pat.jti == ^token_id and pat.user_id == ^user_id)
+    |> Repo.one()
+    |> case do
+      nil -> {:error, :not_found}
+      %PersonalAccessToken{} = personal_access_token -> Repo.delete(personal_access_token)
+    end
+  end
 end
