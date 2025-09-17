@@ -197,7 +197,7 @@ function Layout() {
               </div>
               <div className="absolute bottom-24 left-4">
                 <a
-                  href="https://www.trento-project.io/docs/"
+                  href="https://documentation.suse.com/sles-sap/trento/html/SLES-SAP-trento/index.html"
                   target="_blank"
                   className={classNames(
                     'flex gap-2 items-center text-green-800 font-bold bg-jungle-green-100 py-2 rounded-md hover:opacity-75',
