@@ -262,14 +262,16 @@ defmodule Trento.PersonalAccessTokensTest do
                PersonalAccessTokens.validate(pat_jti, other_user_id)
     end
 
-    test "should return an error when validating a PAT for a deleted or locked user" do
+    test "should return an error when validating a PAT for a deleted" do
       %User{id: deleted_user_id} = insert(:user, deleted_at: Faker.DateTime.backward(3))
 
       %PersonalAccessToken{jti: pat_jti} =
         insert(:personal_access_token, user_id: deleted_user_id)
 
-      assert {:error, :forbidden} = PersonalAccessTokens.validate(pat_jti, deleted_user_id)
+      assert {:error, :not_found} = PersonalAccessTokens.validate(pat_jti, deleted_user_id)
+    end
 
+    test "should return an error when validating a PAT for a locked user" do
       %User{id: locked_user_id} = insert(:user, locked_at: Faker.DateTime.backward(3))
       %PersonalAccessToken{jti: pat_jti} = insert(:personal_access_token, user_id: locked_user_id)
 
