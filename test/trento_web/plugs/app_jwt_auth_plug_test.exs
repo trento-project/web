@@ -292,6 +292,34 @@ defmodule TrentoWeb.Plugs.AppJWTAuthPlugTest do
                |> AppJWTAuthPlug.fetch(@pow_config)
     end
 
+    test "should not authenticate a badly signed PAT", %{conn: conn} do
+      not_yet_expired_timestamp = @test_timestamp + 200
+
+      %User{id: user_id} = insert(:user)
+
+      %PersonalAccessToken{jti: jti} =
+        insert(
+          :personal_access_token,
+          user_id: user_id,
+          expires_at: DateTime.from_unix!(not_yet_expired_timestamp)
+        )
+
+      invalid_signer = Joken.Signer.create("HS256", "some-incompatible-secret")
+
+      valid_claims = %{
+        "jti" => jti,
+        "sub" => user_id,
+        "exp" => not_yet_expired_timestamp
+      }
+
+      badly_signed_jwt = PAT.generate_and_sign!(valid_claims, invalid_signer)
+
+      assert {_res_conn, nil} =
+               conn
+               |> Plug.Conn.put_req_header("authorization", "Bearer " <> badly_signed_jwt)
+               |> AppJWTAuthPlug.fetch(@pow_config)
+    end
+
     test "should authenticate a valid PAT", %{conn: conn} do
       not_yet_expired_timestamp = @test_timestamp + 200
 
