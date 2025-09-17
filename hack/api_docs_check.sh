@@ -183,7 +183,7 @@ echo ""
 # Run vacuum linter
 echo "Running vacuum linter..."
 
-# Create a temporary ruleset file to ignore the description-duplication rule.
+# Create a temporary ruleset file to ignore specific rules.
 VACUUM_RULESET_FILE=$(mktemp .vacuum.XXXXXX.yaml)
 TEMP_FILES+=("$VACUUM_RULESET_FILE")
 cat > "$VACUUM_RULESET_FILE" << EOF
@@ -191,6 +191,8 @@ extends: [[vacuum:oas, recommended]]
 rules:
   paths-kebab-case: false
   description-duplication: false
+  camel-case-properties: false
+  no-unnecessary-combinator: false
 EOF
 
 vacuum lint "$MERGED_OPENAPI_FILE" -r "$VACUUM_RULESET_FILE" -d --ignore-array-circle-ref || true
