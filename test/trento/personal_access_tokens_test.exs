@@ -240,6 +240,50 @@ defmodule Trento.PersonalAccessTokensTest do
     end
   end
 
+  describe "validating a Personal Access Token" do
+    test "should return an error when validating a non existent PAT" do
+      # invalid jti/user_id combination
+      assert {:error, :not_found} =
+               PersonalAccessTokens.validate(Faker.UUID.v4(), FakerRandom.random_between(3, 100))
+
+      # non existent PAT for a user
+      %User{id: user_id} = insert(:user)
+      insert(:personal_access_token, user_id: user_id)
+
+      assert {:error, :not_found} =
+               PersonalAccessTokens.validate(Faker.UUID.v4(), user_id)
+
+      # non matching PAT-user association
+      %User{id: user_id} = insert(:user)
+      %PersonalAccessToken{jti: pat_jti} = insert(:personal_access_token, user_id: user_id)
+      %User{id: other_user_id} = insert(:user)
+
+      assert {:error, :not_found} =
+               PersonalAccessTokens.validate(pat_jti, other_user_id)
+    end
+
+    test "should return an error when validating a PAT for a deleted or locked user" do
+      %User{id: deleted_user_id} = insert(:user, deleted_at: Faker.DateTime.backward(3))
+
+      %PersonalAccessToken{jti: pat_jti} =
+        insert(:personal_access_token, user_id: deleted_user_id)
+
+      assert {:error, :forbidden} = PersonalAccessTokens.validate(pat_jti, deleted_user_id)
+
+      %User{id: locked_user_id} = insert(:user, locked_at: Faker.DateTime.backward(3))
+      %PersonalAccessToken{jti: pat_jti} = insert(:personal_access_token, user_id: locked_user_id)
+
+      assert {:error, :forbidden} = PersonalAccessTokens.validate(pat_jti, locked_user_id)
+    end
+
+    test "should successfully validate an existing PAT for an active user" do
+      %User{id: user_id} = insert(:user)
+      %PersonalAccessToken{jti: pat_jti} = insert(:personal_access_token, user_id: user_id)
+
+      assert :ok = PersonalAccessTokens.validate(pat_jti, user_id)
+    end
+  end
+
   defp load_user_personal_access_tokens(user_id),
     do: Trento.Repo.all(from pat in PersonalAccessToken, where: pat.user_id == ^user_id)
 
