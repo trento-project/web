@@ -143,9 +143,13 @@ else
     echo "Skipping API docs generation/merging, just starting linting the spec..."
 fi
 
+
+# Run linters and collect exit codes
+status=0
+
 # Run redocly linter
 echo "Running redocly linter..."
-redocly lint "$MERGED_OPENAPI_FILE" --extends recommended --format=stylish --skip-rule=operation-4xx-response || true
+redocly lint "$MERGED_OPENAPI_FILE" --extends recommended --format=stylish --skip-rule=operation-4xx-response || status=1
 
 # Run spectral linter
 echo "Running spectral linter..."
@@ -177,7 +181,7 @@ rules:
   servers-must-match-api-standards: "off"
 EOF
 
-spectral lint "$MERGED_OPENAPI_FILE" -r "$SPECTRAL_RULESET_FILE" --verbose --format=text || true
+spectral lint "$MERGED_OPENAPI_FILE" -r "$SPECTRAL_RULESET_FILE" --verbose --format=text || status=1
 echo ""
 
 # Run vacuum linter
@@ -195,4 +199,6 @@ rules:
   no-unnecessary-combinator: false
 EOF
 
-vacuum lint "$MERGED_OPENAPI_FILE" -r "$VACUUM_RULESET_FILE" -d --ignore-array-circle-ref || true
+vacuum lint "$MERGED_OPENAPI_FILE" -r "$VACUUM_RULESET_FILE" -d --ignore-array-circle-ref || status=1
+
+exit $status
