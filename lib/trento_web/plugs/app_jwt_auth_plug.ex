@@ -138,7 +138,7 @@ defmodule TrentoWeb.Plugs.AppJWTAuthPlug do
             "jti" => jti,
             "sub" => user_id
           } = claims} <- PAT.verify_and_validate(jwt_token),
-         :ok <- PersonalAccessTokens.validate(jti, user_id) do
+         true <- PersonalAccessTokens.valid?(jti, user_id) do
       {:ok, Map.put(claims, "abilities", [])}
     end
   end

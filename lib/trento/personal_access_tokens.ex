@@ -9,33 +9,33 @@ defmodule Trento.PersonalAccessTokens do
 
   import Ecto.Query
 
-  @spec validate(bitstring(), non_neg_integer()) :: :ok | {:error, :not_found | :forbidden}
-  def validate(jti, user_id) do
+  @spec valid?(bitstring(), non_neg_integer()) :: boolean()
+  def valid?(jti, user_id) do
     PersonalAccessToken
     |> Repo.get_by(jti: jti, user_id: user_id)
     |> Repo.preload(:user)
-    |> validate_loaded_pat()
+    |> valid_pat?()
   end
 
-  defp validate_loaded_pat(nil), do: {:error, :not_found}
+  defp valid_pat?(nil), do: false
 
-  defp validate_loaded_pat(%PersonalAccessToken{
+  defp valid_pat?(%PersonalAccessToken{
          user: %User{
            deleted_at: deleted_at
          }
        })
        when not is_nil(deleted_at),
-       do: {:error, :not_found}
+       do: false
 
-  defp validate_loaded_pat(%PersonalAccessToken{
+  defp valid_pat?(%PersonalAccessToken{
          user: %User{
            locked_at: locked_at
          }
        })
        when not is_nil(locked_at),
-       do: {:error, :forbidden}
+       do: false
 
-  defp validate_loaded_pat(%PersonalAccessToken{}), do: :ok
+  defp valid_pat?(%PersonalAccessToken{}), do: true
 
   @spec create_personal_access_token(User.t(), map()) ::
           {:ok, PersonalAccessToken.t()} | {:error, Ecto.Changeset.t()} | {:error, :forbidden}
