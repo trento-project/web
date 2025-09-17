@@ -10,6 +10,9 @@ defmodule TrentoWeb.Auth.AccessToken do
   @iss Application.compile_env!(:trento, :jwt_authentication)[:issuer]
   @aud Application.compile_env!(:trento, :jwt_authentication)[:app_audience]
 
+  @spec aud :: String.t()
+  def aud, do: @aud
+
   @impl true
   def token_config do
     default_claims(iss: @iss, aud: @aud, default_exp: @expires_in)
