@@ -8,8 +8,13 @@ defmodule TrentoWeb.Auth.PersonalAccessToken do
 
   @iss Application.compile_env!(:trento, :jwt_authentication)[:issuer]
 
+  @aud "trento_pat"
+
+  @spec aud :: String.t()
+  def aud, do: @aud
+
   @impl Joken.Config
-  def token_config, do: default_claims(iss: @iss, aud: "trento_pat")
+  def token_config, do: default_claims(iss: @iss, aud: @aud)
 
   def generate!(claims, created_at, expires_at) do
     claims
