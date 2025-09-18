@@ -26,6 +26,7 @@ jobs:
     with:
       image_name: trento-web
       tag: ${{ github.event.pull_request.number }}-env
+      MIX_ENV: demo
 
   create-pr-environment:
     name: Create or update the pr environment
