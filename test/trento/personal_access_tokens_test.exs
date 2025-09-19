@@ -4,6 +4,7 @@ defmodule Trento.PersonalAccessTokensTest do
   alias Trento.PersonalAccessTokens
   alias Trento.PersonalAccessTokens.PersonalAccessToken
 
+  alias Trento.Abilities.Ability
   alias Trento.Users.User
 
   alias Faker.Random.Elixir, as: FakerRandom
@@ -259,7 +260,7 @@ defmodule Trento.PersonalAccessTokensTest do
       refute PersonalAccessTokens.valid?(pat_jti, other_user_id)
     end
 
-    test "should return false when validating a PAT for a deleted" do
+    test "should return false when validating a PAT for a deleted user" do
       %User{id: deleted_user_id} = insert(:user, deleted_at: Faker.DateTime.backward(3))
 
       %PersonalAccessToken{jti: pat_jti} =
@@ -280,6 +281,70 @@ defmodule Trento.PersonalAccessTokensTest do
       %PersonalAccessToken{jti: pat_jti} = insert(:personal_access_token, user_id: user_id)
 
       assert PersonalAccessTokens.valid?(pat_jti, user_id)
+    end
+  end
+
+  describe "validating and introspecting a Personal Access Token" do
+    test "should return an error when validating and introspecting a non existent PAT" do
+      # invalid jti/user_id combination
+      assert {:error, :invalid_token} =
+               PersonalAccessTokens.validate_and_introspect(
+                 Faker.UUID.v4(),
+                 FakerRandom.random_between(3, 100)
+               )
+
+      # non existent PAT for a user
+      %User{id: user_id} = insert(:user)
+      insert(:personal_access_token, user_id: user_id)
+
+      assert {:error, :invalid_token} =
+               PersonalAccessTokens.validate_and_introspect(Faker.UUID.v4(), user_id)
+
+      # non matching PAT-user association
+      %User{id: user_id} = insert(:user)
+      %PersonalAccessToken{jti: pat_jti} = insert(:personal_access_token, user_id: user_id)
+      %User{id: other_user_id} = insert(:user)
+
+      assert {:error, :invalid_token} =
+               PersonalAccessTokens.validate_and_introspect(pat_jti, other_user_id)
+    end
+
+    test "should return an error when validating and introspecting a PAT for a deleted user" do
+      %User{id: deleted_user_id} = insert(:user, deleted_at: Faker.DateTime.backward(3))
+
+      %PersonalAccessToken{jti: pat_jti} =
+        insert(:personal_access_token, user_id: deleted_user_id)
+
+      assert {:error, :invalid_token} =
+               PersonalAccessTokens.validate_and_introspect(pat_jti, deleted_user_id)
+    end
+
+    test "should return an error when validating and introspecting a PAT for a locked user" do
+      %User{id: locked_user_id} = insert(:user, locked_at: Faker.DateTime.backward(3))
+      %PersonalAccessToken{jti: pat_jti} = insert(:personal_access_token, user_id: locked_user_id)
+
+      assert {:error, :invalid_token} =
+               PersonalAccessTokens.validate_and_introspect(pat_jti, locked_user_id)
+    end
+
+    test "should successfully validate and introspect an existing PAT for an active user" do
+      for factory <- [:user, :user_with_abilities] do
+        %User{id: user_id} = insert(factory)
+        %PersonalAccessToken{jti: pat_jti} = insert(:personal_access_token, user_id: user_id)
+
+        assert {:ok,
+                %PersonalAccessToken{
+                  jti: ^pat_jti,
+                  user_id: ^user_id,
+                  user: %User{abilities: abilities}
+                }} = PersonalAccessTokens.validate_and_introspect(pat_jti, user_id)
+
+        if factory == :user do
+          assert [] == abilities
+        else
+          assert Enum.all?(abilities, &match?(%Ability{}, &1))
+        end
+      end
     end
   end
 
