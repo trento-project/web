@@ -4,7 +4,7 @@ import * as basePage from '../pageObject/base_po';
 const defaultSeverity = 'severity=info&severity=warning&severity=critical';
 
 context('Activity Log page', () => {
-  // before(() => activityLogPage.preloadTestData());
+  before(() => activityLogPage.preloadTestData());
   beforeEach(() => activityLogPage.interceptActivityLogEndpoint());
 
   describe('Navigation', () => {
