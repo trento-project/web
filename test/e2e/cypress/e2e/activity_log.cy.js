@@ -150,6 +150,10 @@ context('Activity Log page', () => {
         activityLogPage.validateUrl(expectedUrl);
       });
       activityLogPage.clickFilterTypeButton();
+      cy.get('button[data-testid="filter-Type"] + div li').should(
+        'have.length',
+        91
+      );
       activityLogPage.selectFilterTypeOption('Login Attempt');
       cy.get('div h1').click();
       activityLogPage.clickApplyFiltersButton();
