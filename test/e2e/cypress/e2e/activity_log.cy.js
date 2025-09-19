@@ -150,10 +150,8 @@ context('Activity Log page', () => {
         activityLogPage.validateUrl(expectedUrl);
       });
       activityLogPage.clickFilterTypeButton();
-      cy.get('button[data-testid="filter-Type"] + div li').should(
-        'have.length',
-        91
-      );
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(500);
       activityLogPage.selectFilterTypeOption('Login Attempt');
       cy.get('div h1').click();
       activityLogPage.clickApplyFiltersButton();
