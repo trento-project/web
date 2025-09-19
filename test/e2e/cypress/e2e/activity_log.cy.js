@@ -140,8 +140,7 @@ context('Activity Log page', () => {
       });
     });
 
-    // eslint-disable-next-line mocha/no-exclusive-tests
-    it.only('should reset pagination when filters are changed', () => {
+    it('should reset pagination when filters are changed', () => {
       activityLogPage.visit(`?${defaultSeverity}`);
       activityLogPage.waitForActivityLogRequest().then(({ response }) => {
         activityLogPage.paginationPropertiesAreTheExpected(response);
@@ -150,10 +149,8 @@ context('Activity Log page', () => {
         activityLogPage.validateUrl(expectedUrl);
       });
       activityLogPage.clickFilterTypeButton();
-      cy.get('button[data-testid="filter-Type"] + div').should('be.visible');
-      // eslint-disable-next-line cypress/no-unnecessary-waiting
-      // cy.wait(500);
-      cy.get('button[data-testid="filter-Type"] + div input').type('Login');
+      activityLogPage.filterTypeOptionsAreDisplayed();
+      activityLogPage.searchForDesiredFilterType('Login');
       activityLogPage.selectFilterTypeOption('Login Attempt');
       activityLogPage.clickApplyFiltersButton();
       cy.get('button[data-testid="filter-Type"]').should(
