@@ -153,8 +153,8 @@ context('Activity Log page', () => {
       cy.get('button[data-testid="filter-Type"] + div').should('be.visible');
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       // cy.wait(500);
+      cy.get('button[data-testid="filter-Type"] + div input').type('Login');
       activityLogPage.selectFilterTypeOption('Login Attempt');
-      cy.get('div h1').click();
       activityLogPage.clickApplyFiltersButton();
       cy.get('button[data-testid="filter-Type"]').should(
         'have.text',
