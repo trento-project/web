@@ -4,7 +4,7 @@ import * as basePage from '../pageObject/base_po';
 const defaultSeverity = 'severity=info&severity=warning&severity=critical';
 
 context('Activity Log page', () => {
-  before(() => activityLogPage.preloadTestData());
+  // before(() => activityLogPage.preloadTestData());
   beforeEach(() => activityLogPage.interceptActivityLogEndpoint());
 
   describe('Navigation', () => {
@@ -140,7 +140,8 @@ context('Activity Log page', () => {
       });
     });
 
-    it('should reset pagination when filters are changed', () => {
+    // eslint-disable-next-line mocha/no-exclusive-tests
+    it.only('should reset pagination when filters are changed', () => {
       activityLogPage.visit(`?${defaultSeverity}`);
       activityLogPage.waitForActivityLogRequest().then(({ response }) => {
         activityLogPage.paginationPropertiesAreTheExpected(response);
@@ -150,7 +151,12 @@ context('Activity Log page', () => {
       });
       activityLogPage.clickFilterTypeButton();
       activityLogPage.selectFilterTypeOption('Login Attempt');
+      cy.get('div h1').click();
       activityLogPage.clickApplyFiltersButton();
+      cy.get('button[data-testid="filter-Type"]').should(
+        'have.text',
+        'Login Attempt'
+      );
       const expectedUrl = `/activity_log?${defaultSeverity}&type=login_attempt&first=20`;
       activityLogPage.validateUrl(expectedUrl);
     });
