@@ -36,10 +36,12 @@ defmodule TrentoWeb.AccessTokenTest do
                "aud" => "trento_app",
                "exp" => ^expected_expiry,
                "iat" => @test_timestamp,
-               "jti" => _,
+               "jti" => jti,
                "nbf" => @test_timestamp,
                "typ" => "Bearer"
              } = claims
+
+      assert {:ok, _} = UUID.info(jti)
     end
 
     test "should merge the custom claims with the default after signing" do
