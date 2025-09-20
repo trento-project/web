@@ -26,8 +26,12 @@ defmodule TrentoWeb.Auth.AccessToken do
   """
   @spec generate_access_token!(map) :: binary
   def generate_access_token!(claims) do
-    claims = Map.merge(claims, %{"typ" => "Bearer"})
-    generate_and_sign!(claims)
+    claims
+    |> Map.merge(%{
+      "typ" => "Bearer",
+      "jti" => UUID.uuid4()
+    })
+    |> generate_and_sign!()
   end
 
   @doc """
