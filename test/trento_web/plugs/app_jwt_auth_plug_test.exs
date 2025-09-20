@@ -2,15 +2,13 @@ defmodule TrentoWeb.Plugs.AppJWTAuthPlugTest do
   @moduledoc false
 
   use TrentoWeb.ConnCase, async: true
+  use TrentoWeb.TokensCase
 
   alias TrentoWeb.Auth.{
     AccessToken,
     RefreshToken
   }
 
-  alias TrentoWeb.Auth.PersonalAccessToken, as: PAT
-
-  alias Trento.PersonalAccessTokens.PersonalAccessToken
   alias Trento.Users
   alias Trento.Users.User
   alias TrentoWeb.Plugs.AppJWTAuthPlug
@@ -159,185 +157,45 @@ defmodule TrentoWeb.Plugs.AppJWTAuthPlugTest do
   end
 
   describe "fetch/2" do
-    test "should fetch a user when the jwt is valid", %{conn: conn} do
-      jwt =
-        AccessToken.generate_access_token!(%{
-          "sub" => 1,
-          "abilities" => [%{name: "foo", resource: "bar"}]
-        })
+    test "should not fetch user when the header is missing", %{conn: conn} do
+      assert {_res_conn, nil} = AppJWTAuthPlug.fetch(conn, @pow_config)
+    end
+
+    for type <- TokensCase.token_types() do
+      @token_type type
+
+      test "should not fetch a user on invalid jwt: #{type}", %{conn: conn} do
+        assert {_res_conn, nil} =
+                 conn
+                 |> Plug.Conn.put_req_header(
+                   "authorization",
+                   "Bearer " <> TokensCase.token(@token_type)
+                 )
+                 |> AppJWTAuthPlug.fetch(@pow_config)
+      end
+    end
+
+    test "should fetch a user when the access token is valid", %{conn: conn} do
+      {jwt, %{"sub" => user_id}} = TokensCase.valid_access_token()
 
       conn = Plug.Conn.put_req_header(conn, "authorization", "Bearer " <> jwt)
 
       assert {res_conn,
               %{
                 "access_token" => ^jwt,
-                "user_id" => 1,
-                "abilities" => [%{"name" => "foo", "resource" => "bar"}]
+                "user_id" => ^user_id
               }} = AppJWTAuthPlug.fetch(conn, @pow_config)
 
       assert %{
                private: %{
                  api_access_token: ^jwt,
-                 user_id: 1
+                 user_id: ^user_id
                }
              } = res_conn
     end
 
-    test "should not fetch a user when the jwt signature is invalid", %{conn: conn} do
-      bad_jwt =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTU1NjY5MiwiaWF0IjoxNjcxNTQ5NDkyLCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwOGlxMmkxNnRlbHNycWE4MDAwMWM4IiwibmJmIjoxNjcxNTQ5NDkyLCJzdWIiOjF9.PRqQgJkfxrusFtvkwk-2utMNde0TZN9zcx7ncmVxvk8"
-
-      conn = Plug.Conn.put_req_header(conn, "authorization", "Bearer " <> bad_jwt)
-
-      assert {_res_conn, nil} = AppJWTAuthPlug.fetch(conn, @pow_config)
-    end
-
-    test "should not fetch user when the header is missing", %{conn: conn} do
-      assert {_res_conn, nil} = AppJWTAuthPlug.fetch(conn, @pow_config)
-    end
-
-    test "should not fetch user when the jwt is malformed", %{conn: conn} do
-      bad_jwt = "do you know jwt?"
-
-      conn = Plug.Conn.put_req_header(conn, "authorization", "Bearer " <> bad_jwt)
-
-      assert {_res_conn, nil} = AppJWTAuthPlug.fetch(conn, @pow_config)
-    end
-
-    test "should not fetch user when the jwt signature is valid but it's expired", %{conn: conn} do
-      expired_jwt =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTY0MjQxNCwiaWF0IjoxNjcxNjQxODE0LCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwaTFvbmxxbml1ZnE5dnVrMDAwMG9hIiwibmJmIjoxNjcxNjQxODE0LCJzdWIiOjEsInR5cCI6IkJlYXJlciJ9.oub6_NsHcVIyd0de14Lzk3SuCMMgr8O-sSWLr7Gxcp8"
-
-      conn = Plug.Conn.put_req_header(conn, "authorization", "Bearer " <> expired_jwt)
-
-      assert {_res_conn, nil} = AppJWTAuthPlug.fetch(conn, @pow_config)
-    end
-
-    test "should not fetch the user when the jwt signature is valid but the audience is not valid",
-         %{conn: conn} do
-      bad_aud_jwt =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG9fYXBwbmV3IiwiZXhwIjoxNzA4OTY1MzM0LCJpYXQiOjE3MDg5NjQ3MzQsImlzcyI6Imh0dHBzOi8vZ2l0aHViLmNvbS90cmVudG8tcHJvamVjdC93ZWIiLCJqdGkiOiIydXJuY25vMmpvNTNtNG1yYmcwMDIxNTIiLCJuYmYiOjE3MDg5NjQ3MzQsInN1YiI6MSwidHlwIjoiQmVhcmVyIn0.nRoRuP4DqijsTn0KmxWgfhX9KAjsPubXuzTmEYnSpao"
-
-      conn = Plug.Conn.put_req_header(conn, "authorization", "Bearer " <> bad_aud_jwt)
-
-      assert {_res_conn, nil} = AppJWTAuthPlug.fetch(conn, @pow_config)
-    end
-  end
-
-  describe "authenticating PATs" do
-    test "should not authenticate tokens with unrecognized audience", %{conn: conn} do
-      defmodule UnsupportedAudienceToken do
-        use Joken.Config, default_signer: :access_token_signer
-
-        def token_config, do: default_claims(aud: "unsupported_audience")
-      end
-
-      unsupported_jwt = UnsupportedAudienceToken.generate_and_sign!(%{"sub" => 1})
-
-      assert {_res_conn, nil} =
-               conn
-               |> Plug.Conn.put_req_header("authorization", "Bearer " <> unsupported_jwt)
-               |> AppJWTAuthPlug.fetch(@pow_config)
-    end
-
-    test "should not authenticate an expired PAT", %{conn: conn} do
-      expired_timestamp = @test_timestamp - 200
-
-      unbound_expired_pat =
-        PAT.generate_and_sign!(%{
-          "jti" => Faker.UUID.v4(),
-          "sub" => 1,
-          "exp" => expired_timestamp
-        })
-
-      %User{id: user_id} = insert(:user)
-
-      %PersonalAccessToken{jti: jti} =
-        insert(
-          :personal_access_token,
-          user_id: user_id,
-          expires_at: DateTime.from_unix!(expired_timestamp)
-        )
-
-      bound_expired_pat =
-        PAT.generate_and_sign!(%{
-          "jti" => jti,
-          "sub" => 1,
-          "exp" => expired_timestamp
-        })
-
-      for expired_pat <- [unbound_expired_pat, bound_expired_pat] do
-        assert {_res_conn, nil} =
-                 conn
-                 |> Plug.Conn.put_req_header("authorization", "Bearer " <> expired_pat)
-                 |> AppJWTAuthPlug.fetch(@pow_config)
-      end
-    end
-
-    test "should not authenticate a revoked PAT", %{conn: conn} do
-      not_yet_expired_timestamp = @test_timestamp + 200
-
-      %User{id: user_id} = insert(:user)
-
-      revoked_pat =
-        PAT.generate_and_sign!(%{
-          "jti" => Faker.UUID.v4(),
-          "sub" => user_id,
-          "exp" => not_yet_expired_timestamp
-        })
-
-      assert {_res_conn, nil} =
-               conn
-               |> Plug.Conn.put_req_header("authorization", "Bearer " <> revoked_pat)
-               |> AppJWTAuthPlug.fetch(@pow_config)
-    end
-
-    test "should not authenticate a badly signed PAT", %{conn: conn} do
-      not_yet_expired_timestamp = @test_timestamp + 200
-
-      %User{id: user_id} = insert(:user)
-
-      %PersonalAccessToken{jti: jti} =
-        insert(
-          :personal_access_token,
-          user_id: user_id,
-          expires_at: DateTime.from_unix!(not_yet_expired_timestamp)
-        )
-
-      invalid_signer = Joken.Signer.create("HS256", "some-incompatible-secret")
-
-      valid_claims = %{
-        "jti" => jti,
-        "sub" => user_id,
-        "exp" => not_yet_expired_timestamp
-      }
-
-      badly_signed_jwt = PAT.generate_and_sign!(valid_claims, invalid_signer)
-
-      assert {_res_conn, nil} =
-               conn
-               |> Plug.Conn.put_req_header("authorization", "Bearer " <> badly_signed_jwt)
-               |> AppJWTAuthPlug.fetch(@pow_config)
-    end
-
-    test "should authenticate a valid PAT", %{conn: conn} do
-      not_yet_expired_timestamp = @test_timestamp + 200
-
-      %User{id: user_id} = insert(:user)
-
-      %PersonalAccessToken{jti: jti} =
-        insert(
-          :personal_access_token,
-          user_id: user_id,
-          expires_at: DateTime.from_unix!(not_yet_expired_timestamp)
-        )
-
-      valid_pat =
-        PAT.generate_and_sign!(%{
-          "jti" => jti,
-          "sub" => user_id,
-          "exp" => not_yet_expired_timestamp
-        })
+    test "should fetch a user when the PAT is valid", %{conn: conn} do
+      {valid_pat, %{"sub" => user_id}} = TokensCase.valid_pat()
 
       assert {res_conn,
               %{
