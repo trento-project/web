@@ -365,4 +365,119 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Auth do
       struct?: false
     )
   end
+
+  defmodule IntrospectTokenRequest do
+    @moduledoc """
+    Schema for introspect token requests.
+
+    This schema defines the structure for requests to introspect access tokens
+    and obtain their metadata, enabling better token management and validation.
+
+    ## Fields
+    - `token`: A valid JWT access token to introspect
+    """
+
+    require OpenApiSpex
+
+    OpenApiSpex.schema(
+      %{
+        title: "IntrospectTokenRequest",
+        description: "Introspect token request for obtaining token metadata.",
+        type: :object,
+        additionalProperties: false,
+        properties: %{
+          token: %OpenApiSpex.Schema{
+            type: :string,
+            description: "Valid token to introspect.",
+            example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+            minLength: 1
+          }
+        },
+        required: [:token],
+        example: %{
+          token:
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTU1NjY5MiwiaWF0IjoxNjcxNTQ5NDkyLCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwOGlxMmkxNnRlbHNycWE4MDAwMWM4IiwibmJmIjoxNjcxNTQ5NDkyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYtTrbVcCEO_UgIkHn6A"
+        }
+      },
+      struct?: false
+    )
+  end
+
+  defmodule IntrospectedToken do
+    @moduledoc """
+    Schema for introspected tokens.
+
+    See https://datatracker.ietf.org/doc/html/rfc7662#section-2.2
+    """
+
+    require OpenApiSpex
+
+    alias TrentoWeb.OpenApi.V1.Schema.Ability.AbilityCollection
+
+    OpenApiSpex.schema(
+      %{
+        title: "IntrospectedToken",
+        description: "Introspect token request for obtaining token metadata.",
+        type: :object,
+        additionalProperties: false,
+        properties: %{
+          active: %OpenApiSpex.Schema{
+            type: :boolean,
+            description: "Indicates whether the token is active.",
+            example: true
+          },
+          aud: %OpenApiSpex.Schema{
+            type: :string,
+            description: "Audience for which the token is intended.",
+            example: "trento_pat"
+          },
+          iss: %OpenApiSpex.Schema{
+            type: :string,
+            description: "Issuer of the token.",
+            example: "https://github.com/trento-project/web"
+          },
+          iat: %OpenApiSpex.Schema{
+            type: :integer,
+            description: "Issued at time (epoch seconds).",
+            example: 1_671_549_492
+          },
+          nbf: %OpenApiSpex.Schema{
+            type: :integer,
+            description: "Not before time (epoch seconds).",
+            example: 1_671_549_492
+          },
+          exp: %OpenApiSpex.Schema{
+            type: :integer,
+            description: "Expiration time (epoch seconds).",
+            example: 1_671_556_692
+          },
+          jti: %OpenApiSpex.Schema{
+            type: :string,
+            description: "JWT ID, a unique identifier for the token.",
+            format: :uuid,
+            example: "c1a2b3c4-d5e6-7890-abcd-ef1234567890"
+          },
+          sub: %OpenApiSpex.Schema{
+            type: :integer,
+            description: "Subject of the token.",
+            example: 1
+          },
+          abilities: AbilityCollection
+        },
+        required: [:active],
+        example: %{
+          active: true,
+          aud: "trento_pat",
+          exp: 1_767_225_599,
+          iat: 1_758_109_756,
+          iss: "https://github.com/trento-project/web",
+          jti: "379d5e71-222b-4f58-81ed-ae645f7bf3ed",
+          nbf: 1_758_109_756,
+          sub: 1,
+          abilities: []
+        }
+      },
+      struct?: false
+    )
+  end
 end
