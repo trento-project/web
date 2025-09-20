@@ -74,7 +74,7 @@ defmodule TrentoWeb.V1.PersonalAccessTokensController do
       ]
     ],
     responses: [
-      no_content: "Personal Access Token revoked successfully",
+      no_content: "Personal Access Token revoked successfully.",
       not_found: Schema.NotFound.response(),
       unauthorized: Schema.Unauthorized.response(),
       forbidden: Schema.Forbidden.response()
