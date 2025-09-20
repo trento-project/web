@@ -10,7 +10,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.PersonalAccessToken do
     OpenApiSpex.schema(
       %{
         title: "PersonalAccessTokenEntry",
-        description: "A User's Personal Access Token",
+        description: "A User's Personal Access Token.",
         type: :object,
         additionalProperties: false,
         properties: %{
@@ -42,7 +42,13 @@ defmodule TrentoWeb.OpenApi.V1.Schema.PersonalAccessToken do
             example: "2023-01-01T00:00:00Z"
           }
         },
-        required: [:jti, :name, :expires_at, :created_at]
+        required: [:jti, :name, :expires_at, :created_at],
+        example: %{
+          jti: "550e8400-e29b-41d4-a716-446655440000",
+          name: "My Token",
+          expires_at: "2024-12-31T23:59:59Z",
+          created_at: "2023-01-01T00:00:00Z"
+        }
       },
       struct?: false
     )
@@ -54,9 +60,23 @@ defmodule TrentoWeb.OpenApi.V1.Schema.PersonalAccessToken do
     OpenApiSpex.schema(
       %{
         title: "PersonalAccessTokenCollection",
-        description: "List of a user's Personal Access Tokens",
+        description: "List of a user's Personal Access Tokens.",
         type: :array,
-        items: PersonalAccessTokenEntry
+        items: PersonalAccessTokenEntry,
+        example: [
+          %{
+            jti: "550e8400-e29b-41d4-a716-446655440000",
+            name: "My Token",
+            expires_at: "2024-12-31T23:59:59Z",
+            created_at: "2023-01-01T00:00:00Z"
+          },
+          %{
+            jti: "660e8400-e29b-41d4-a716-446655440000",
+            name: "Another Token",
+            expires_at: "2024-11-30T23:59:59Z",
+            created_at: "2023-02-01T00:00:00Z"
+          }
+        ]
       },
       struct?: false
     )
@@ -68,7 +88,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.PersonalAccessToken do
     OpenApiSpex.schema(
       %{
         title: "CreatePersonalAccessToken",
-        description: "Request to create a new Personal Access Token",
+        description: "Request to create a new Personal Access Token.",
         type: :object,
         additionalProperties: false,
         properties: %{
@@ -102,7 +122,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.PersonalAccessToken do
     OpenApiSpex.schema(
       %{
         title: "CreatedPersonalAccessToken",
-        description: "A User's newly created Personal Access Token",
+        description: "A User's newly created Personal Access Token.",
         type: :object,
         additionalProperties: false,
         properties: %{
