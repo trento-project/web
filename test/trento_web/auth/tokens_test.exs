@@ -1,7 +1,8 @@
 defmodule TrentoWeb.Auth.TokensTest do
   @moduledoc false
 
-  use Trento.DataCase
+  use Trento.DataCase, async: true
+  use TrentoWeb.TokensCase
 
   alias TrentoWeb.Auth.AccessToken
   alias TrentoWeb.Auth.PersonalAccessToken, as: PAT
@@ -14,60 +15,46 @@ defmodule TrentoWeb.Auth.TokensTest do
 
   import Trento.Factory
 
-  @test_timestamp 1_671_715_992
-
   setup [:set_mox_from_context, :verify_on_exit!]
 
   setup do
-    stub(Joken.CurrentTime.Mock, :current_time, fn -> @test_timestamp end)
+    stub(Joken.CurrentTime.Mock, :current_time, fn -> 1_671_715_992 end)
 
     :ok
   end
 
   describe "token verification" do
-    test "should return an error on invalid token verification" do
-      assert {:error, :token_malformed} = Tokens.verify_and_validate("some_invalid_jwt")
+    test "should return an error on malformed jwt verification" do
+      assert {:error, :token_malformed} =
+               :malformed
+               |> TokensCase.token()
+               |> Tokens.verify_and_validate()
     end
 
     test "should return an error when the audience in unsupported" do
       assert {:error, :invalid_audience} =
-               %{
-                 "sub" => 1,
-                 "exp" => @test_timestamp + 100
-               }
-               |> UnsupportedAudienceToken.generate_and_sign!()
+               :unsupported_audience
+               |> TokensCase.token()
                |> Tokens.verify_and_validate()
     end
 
     test "should return an error when the necessary claims are missing" do
-      claims = %{
-        "sub" => 1,
-        "exp" => @test_timestamp + 100
-      }
-
-      subless_claims = Map.delete(claims, "sub")
-
       for token <- [
-            JTIlessToken.generate_and_sign!(claims),
-            AudiencelessToken.generate_and_sign!(claims),
-            AccessToken.generate_and_sign!(subless_claims),
-            PAT.generate_and_sign!(subless_claims)
+            TokensCase.token(:jti_less),
+            TokensCase.token(:audience_less),
+            TokensCase.token(:sub_less_access_token),
+            TokensCase.token(:sub_less_pat)
           ] do
         assert {:error, :invalid_token} = Tokens.verify_and_validate(token)
       end
     end
 
     test "should return an error when the token signature is invalid" do
-      invalid_signer = Joken.Signer.create("HS256", "some-incompatible-secret")
-
-      for token_generator <- [&AccessToken.generate_and_sign!/2, &PAT.generate_and_sign!/2] do
-        assert {:error, :signature_error} =
-                 %{
-                   "sub" => 1,
-                   "exp" => @test_timestamp + 100
-                 }
-                 |> token_generator.(invalid_signer)
-                 |> Tokens.verify_and_validate()
+      for badly_signed_token <- [
+            TokensCase.token(:badly_signed_access_token),
+            TokensCase.token(:badly_signed_pat)
+          ] do
+        assert {:error, :signature_error} = Tokens.verify_and_validate(badly_signed_token)
       end
     end
   end
@@ -75,16 +62,13 @@ defmodule TrentoWeb.Auth.TokensTest do
   describe "access token verification" do
     test "should return an error when access token is expired" do
       assert {:error, [message: "Invalid token", claim: "exp", claim_val: _]} =
-               %{
-                 "sub" => 1,
-                 "exp" => @test_timestamp - 100
-               }
-               |> AccessToken.generate_and_sign!()
+               :expired_access_token
+               |> TokensCase.token()
                |> Tokens.verify_and_validate()
     end
 
-    test "should successfully verify a valid access token" do
-      expiration = @test_timestamp + 100
+    test "should succeed on valid access token" do
+      expiration = TokensCase.future_timestamp()
 
       claims = %{
         "sub" => 1,
@@ -102,118 +86,87 @@ defmodule TrentoWeb.Auth.TokensTest do
                 "nbf" => _not_before
               }} =
                claims
-               |> AccessToken.generate_and_sign!()
+               |> AccessToken.generate_access_token!()
                |> Tokens.verify_and_validate()
     end
   end
 
   describe "pat verification" do
     test "should return an error when the personal access token is expired" do
-      assert {:error, [message: "Invalid token", claim: "exp", claim_val: _]} =
-               %{
-                 "sub" => 1,
-                 "exp" => @test_timestamp - 100
-               }
-               |> PAT.generate_and_sign!()
-               |> Tokens.verify_and_validate()
+      for expired_pat <- [
+            TokensCase.token(:unbound_expired_pat),
+            TokensCase.token(:user_bound_expired_pat)
+          ] do
+        assert {:error, [message: "Invalid token", claim: "exp", claim_val: _]} =
+                 Tokens.verify_and_validate(expired_pat)
+      end
     end
 
-    test "should return an error when pat validation fails" do
+    test "should return an error on revoked pat validation" do
       assert {:error, :invalid_pat} =
-               %{
-                 "sub" => 1,
-                 "jti" => Faker.UUID.v4(),
-                 "exp" => @test_timestamp + 100
-               }
-               |> PAT.generate_and_sign!()
+               :revoked_pat
+               |> TokensCase.token()
                |> Tokens.verify_and_validate()
     end
 
-    test "should successfully verify a valid pat" do
-      expiration = @test_timestamp + 100
+    test "should succeed on valid pat" do
+      future_timestamp = TokensCase.future_timestamp()
 
       %User{id: user_id} = insert(:user)
 
-      %PersonalAccessToken{jti: pat_jti} =
+      %PersonalAccessToken{jti: jti} =
         insert(
           :personal_access_token,
           user_id: user_id,
-          expires_at: DateTime.from_unix!(expiration)
+          expires_at: TokensCase.future_date()
         )
 
       claims = %{
-        "jti" => pat_jti,
+        "jti" => jti,
         "sub" => user_id,
-        "exp" => expiration
+        "exp" => future_timestamp
       }
 
       assert {:ok,
               %{
                 "sub" => ^user_id,
-                "jti" => ^pat_jti,
-                "exp" => ^expiration,
+                "jti" => ^jti,
+                "exp" => ^future_timestamp,
                 "aud" => "trento_pat",
                 "iss" => _issuer,
                 "iat" => _issued_at,
                 "nbf" => _not_before
               }} =
                claims
-               |> PAT.generate_and_sign!()
+               |> PAT.generate!(TokensCase.issued_at(), TokensCase.future_date())
                |> Tokens.verify_and_validate()
     end
   end
 
   describe "token introspection" do
-    test "should introspect an inactive token" do
-      invalid_jwt = Faker.Lorem.word()
+    for type <- TokensCase.token_types() do
+      @token_type type
 
-      claims = %{
-        "sub" => 1,
-        "exp" => @test_timestamp + 100
-      }
-
-      unsupported_audience_token = UnsupportedAudienceToken.generate_and_sign!(claims)
-      jtiless_token = JTIlessToken.generate_and_sign!(claims)
-      audienceless_token = AudiencelessToken.generate_and_sign!(claims)
-
-      subless_claims = Map.delete(claims, "sub")
-      subless_access_token = AccessToken.generate_and_sign!(subless_claims)
-      subless_pat = PAT.generate_and_sign!(subless_claims)
-
-      invalid_signer = Joken.Signer.create("HS256", "some-incompatible-secret")
-      badly_signed_access_token = AccessToken.generate_and_sign!(claims, invalid_signer)
-      badly_signed_pat = PAT.generate_and_sign!(claims, invalid_signer)
-
-      expired_token_claims = Map.replace!(claims, "exp", @test_timestamp - 100)
-      expired_access_token = AccessToken.generate_and_sign!(expired_token_claims)
-      expired_pat = PAT.generate_and_sign!(expired_token_claims)
-
-      revoked_pat_claims = Map.put(claims, "jti", Faker.UUID.v4())
-      revoked_pat = PAT.generate_and_sign!(revoked_pat_claims)
-
-      for token <- [
-            invalid_jwt,
-            unsupported_audience_token,
-            jtiless_token,
-            audienceless_token,
-            subless_access_token,
-            subless_pat,
-            badly_signed_access_token,
-            badly_signed_pat,
-            expired_access_token,
-            expired_pat,
-            revoked_pat
-          ] do
-        assert %{"active" => false} == Tokens.introspect(token)
+      test "should introspect token #{type} as inactive" do
+        assert %{"active" => false} ==
+                 @token_type
+                 |> TokensCase.token()
+                 |> Tokens.introspect()
       end
     end
 
     test "should introspect an active token" do
       for factory <- [:user, :user_with_abilities] do
-        %User{id: user_id} = insert(factory)
-        %PersonalAccessToken{jti: pat_jti} = insert(:personal_access_token, user_id: user_id)
+        expiration = TokensCase.future_timestamp()
 
-        expiration = @test_timestamp + 100
+        %User{id: user_id} = insert(factory)
+
+        %PersonalAccessToken{jti: pat_jti} =
+          insert(
+            :personal_access_token,
+            user_id: user_id,
+            expires_at: TokensCase.future_date()
+          )
 
         claims = %{
           "sub" => user_id,
@@ -232,7 +185,7 @@ defmodule TrentoWeb.Auth.TokensTest do
                  "abilities" => access_token_abilities
                } =
                  claims
-                 |> AccessToken.generate_and_sign!()
+                 |> AccessToken.generate_access_token!()
                  |> Tokens.introspect()
 
         assert %{
@@ -248,7 +201,7 @@ defmodule TrentoWeb.Auth.TokensTest do
                } =
                  claims
                  |> Map.put("jti", pat_jti)
-                 |> PAT.generate_and_sign!()
+                 |> PAT.generate!(TokensCase.issued_at(), TokensCase.future_date())
                  |> Tokens.introspect()
 
         if factory == :user do
@@ -261,22 +214,4 @@ defmodule TrentoWeb.Auth.TokensTest do
       end
     end
   end
-end
-
-defmodule UnsupportedAudienceToken do
-  use Joken.Config, default_signer: :access_token_signer
-
-  def token_config, do: default_claims(aud: "unsupported_audience")
-end
-
-defmodule AudiencelessToken do
-  use Joken.Config, default_signer: :access_token_signer
-
-  def token_config, do: default_claims(skip: [:aud])
-end
-
-defmodule JTIlessToken do
-  use Joken.Config, default_signer: :access_token_signer
-
-  def token_config, do: default_claims(skip: [:jti])
 end
