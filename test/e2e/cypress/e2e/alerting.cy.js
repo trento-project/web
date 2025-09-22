@@ -8,11 +8,9 @@ context('Settings page', () => {
 
   describe('Alerting Settings enforced from env', () => {
     before(function () {
-      settingsPage.getAlertingSettings().then((resp) => {
-        if (resp.body.enforced_from_env) {
-          this.skip();
-        }
-      });
+      if (!Cypress.env('ALERTING_DB_TESTS')) {
+        this.skip();
+      }
     });
 
     it('should display empty values', () => {
