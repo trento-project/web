@@ -1,43 +1,25 @@
 import * as settingsPage from '../pageObject/settings_po';
 
 context('Settings page', () => {
-  beforeEach(() => {
+  before(function () {
+    if (!Cypress.env('ALERTING_DB_TESTS')) {
+      this.skip();
+    }
     settingsPage.preloadTestData();
-    settingsPage.visit();
-    settingsPage.waitForRequest('settingsEndpoint');
-  });
-
-  describe('Send/Receive Emails when alerting settings are setup from env', () => {
-    before(function () {
-      if (!Cypress.env('ALERTING_DB_TESTS')) {
-        this.skip();
+    settingsPage.getAlertingSettings().then((resp) => {
+      if (resp.status === 404) {
+        settingsPage.saveInitialAlertingSettings();
       }
     });
-
-    it('should display empty values', () => {
-      cy.get('body').should('be.visible');
-    });
-
-    it('should have an edit button enabled', () => {
-      cy.get('body').should('be.visible');
-    });
   });
 
-  describe('Send/Receive Emails when alerting settings are manually setup', () => {
-    before(function () {
-      settingsPage.getAlertingSettings().then((resp) => {
-        if (!resp.body.enforced_from_env) {
-          this.skip();
-        }
-      });
-    });
-
-    it('should display empty values', () => {
-      cy.get('body').should('be.visible');
-    });
-
-    it('should have an edit button enabled', () => {
-      cy.get('body').should('be.visible');
+  describe('Send/Receive alerting emails when specific actions trigger them', () => {
+    it('Send email when agent heartbeat is lost', () => {
+      settingsPage.startAgentHeartbeat();
+      settingsPage.stopAgentsHeartbeat();
+      settingsPage
+        .emailExistsInMailpit('	Trento Alert: Host vmhdbprd01 needs attention.')
+        .then((result) => cy.wrap(result).should('be.true'));
     });
   });
 });

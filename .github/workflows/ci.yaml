@@ -624,6 +624,12 @@ jobs:
             env:
               MIX_ENV: dev
               CYPRESS_ALERTING_DB_TESTS: true
+          - test: alerting_from_env
+            cypress_spec: |
+              cypress/e2e/alerting.cy.js
+            env:
+              MIX_ENV: dev
+              CYPRESS_ALERTING_DB_TESTS: true              
     env: ${{ matrix.env }}
     steps:
       - name: Checkout

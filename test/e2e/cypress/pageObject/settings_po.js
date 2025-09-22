@@ -1022,3 +1022,38 @@ export const apiCreateUserWithSettingsAbilities = () =>
     { name: 'all', resource: 'suma_settings' },
     { name: 'all', resource: 'alerting_settings' },
   ]);
+
+export const startAgentHeartbeat = () =>
+  cy.task('startAgentHeartbeat', ['9cd46919-5f19-59aa-993e-cf3736c71053']);
+
+export const stopAgentsHeartbeat = () => cy.task('stopAgentsHeartbeat');
+
+export const emailExistsInMailpit = (
+  subject,
+  options = { retries: 10, delay: 3000 }
+) => {
+  const { retries, delay } = options;
+  const searchUrl = `http://localhost:8025/api/v1/search?query=subject:"${subject}"`;
+
+  if (retries < 0) {
+    return cy.wrap(false);
+  }
+
+  return cy
+    .request({
+      method: 'GET',
+      url: searchUrl,
+      failOnStatusCode: false,
+    })
+    .then((response) => {
+      if (response.body.messages.length > 0) {
+        return cy.wrap(true);
+      }
+
+      cy.wait(delay);
+      return emailExistsInMailpit(subject, {
+        retries: retries - 1,
+        delay,
+      });
+    });
+};
