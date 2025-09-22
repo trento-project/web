@@ -150,7 +150,7 @@ function Layout() {
               )}
             </button>
           </div>
-          <div className="relative bg-white h-full pb-24 dark:bg-gray-700">
+          <div className="relative bg-white h-full pb-24 dark:bg-gray-700 overflow-y-auto">
             <div className="flex items-center justify-center pt-6">
               <img
                 className={classNames('h-auto transition-scale duration-100', {
