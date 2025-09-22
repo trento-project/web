@@ -666,6 +666,16 @@ jobs:
           path: |
             test/e2e/node_modules
           key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
+      - name: Install photofinish
+        uses: jaxxstorm/action-install-gh-release@v2.1.0
+        with:
+          repo: trento-project/photofinish
+          tag: v1.4.2
+          cache: enable
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Give executable permissions to photofinish
+        run: chmod +x $(whereis photofinish | cut -d" " -f2)          
       - name: "Docker compose dependencies"
         uses: isbang/compose-action@v2.3.0
         with:
@@ -682,6 +692,7 @@ jobs:
         uses: cypress-io/github-action@v6
         env:
           cypress_video: false
+          cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
         with:
           working-directory: test/e2e
           spec: ${{ matrix.cypress_spec }}
