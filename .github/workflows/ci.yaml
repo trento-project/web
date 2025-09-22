@@ -610,7 +610,8 @@ jobs:
               CYPRESS_SSO_TYPE: saml
           - test: alerting_db
             cypress_spec: |
-              cypress/e2e/settings_integration.cy.js, cypress/e2e/alerting.cy.js
+              cypress/e2e/settings_integration.cy.js
+              cypress/e2e/alerting.cy.js
             config_file_content: |
               import Config
 
