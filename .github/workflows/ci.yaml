@@ -461,6 +461,103 @@ jobs:
           name: e2e-screenshots-${{ matrix.containers }}
           path: test/e2e/cypress/screenshots/
 
+  test-alerting-settings:
+    name: E2E Tests
+    needs: [elixir-deps, npm-deps, npm-e2e-deps]
+    runs-on: ubuntu-24.04
+    env:
+      MIX_ENV: dev
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: Read .tool-versions
+        uses: endorama/asdf-parse-tool-versions@v1.3.4
+        id: tool-versions
+      - name: Setup
+        id: setup-elixir
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: ${{ matrix.otp }}
+          elixir-version: ${{ matrix.elixir }}
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.NODEJS_VERSION }}
+      - name: Retrieve Elixir Cached Dependencies
+        uses: actions/cache@v4
+        id: mix-cache
+        with:
+          path: |
+            deps
+            _build/${{ env.MIX_ENV }}
+            priv/plts
+          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
+      - name: Retrieve NPM Cached Dependencies
+        uses: actions/cache@v4
+        id: npm-cache
+        with:
+          path: |
+            assets/node_modules
+          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
+      - name: Retrieve E2E NPM Cached Dependencies
+        uses: actions/cache@v4
+        id: npm-e2e-cache
+        with:
+          path: |
+            test/e2e/node_modules
+          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
+      - name: "Docker compose dependencies"
+        uses: isbang/compose-action@v2.3.0
+        with:
+          compose-file: "./docker-compose.yaml"
+          compose-flags: "--profile wanda"
+          down-flags: "--volumes"
+      - name: Mix setup
+        run: mix setup
+      - name: Run trento detached
+        run: mix phx.server &
+      - name: Install photofinish
+        uses: jaxxstorm/action-install-gh-release@v2.1.0
+        with:
+          repo: trento-project/photofinish
+          tag: v1.4.2
+          cache: enable
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Give executable permissions to photofinish
+        run: chmod +x $(whereis photofinish | cut -d" " -f2)
+      - name: Create local dev.local.exs file to remove alerting settings enforced from env.
+        run: |
+          cat << EOF > config/dev.local.exs
+          import Config
+          config :trento, :alerting,
+            enabled: nil,
+            smtp_server: nil,
+            smtp_port: nil,
+            smtp_username: nil,
+            smtp_password: nil,
+            sender: nil,
+            recipient: nil
+          EOF  
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
+        env:
+          cypress_video: false
+          cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
+        with:
+          spec: cypress/e2e/alerting.cy.js
+          working-directory: test/e2e
+          wait-on-timeout: 30
+          config: baseUrl=http://localhost:4000
+      - name: Upload cypress test screenshots
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: e2e-screenshots-${{ matrix.containers }}
+          path: test/e2e/cypress/screenshots/        
+
   test-regression:
     name: Regression tests
     needs: [elixir-deps, npm-deps, npm-e2e-deps]
