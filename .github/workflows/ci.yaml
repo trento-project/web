@@ -462,7 +462,7 @@ jobs:
           path: test/e2e/cypress/screenshots/
 
   test-alerting-settings:
-    name: E2E Tests
+    name: Email Alerting Tests
     needs: [elixir-deps, npm-deps, npm-e2e-deps]
     runs-on: ubuntu-24.04
     env:
@@ -475,6 +475,19 @@ jobs:
       - name: Read .tool-versions
         uses: endorama/asdf-parse-tool-versions@v1.3.4
         id: tool-versions
+      - name: Create local dev.local.exs file to remove alerting settings enforced from env.
+        run: |
+          cat << EOF > config/dev.local.exs
+          import Config
+          config :trento, :alerting,
+            enabled: nil,
+            smtp_server: nil,
+            smtp_port: nil,
+            smtp_username: nil,
+            smtp_password: nil,
+            sender: nil,
+            recipient: nil
+          EOF          
       - name: Setup
         id: setup-elixir
         uses: erlef/setup-beam@v1
@@ -528,19 +541,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Give executable permissions to photofinish
         run: chmod +x $(whereis photofinish | cut -d" " -f2)
-      - name: Create local dev.local.exs file to remove alerting settings enforced from env.
-        run: |
-          cat << EOF > config/dev.local.exs
-          import Config
-          config :trento, :alerting,
-            enabled: nil,
-            smtp_server: nil,
-            smtp_port: nil,
-            smtp_username: nil,
-            smtp_password: nil,
-            sender: nil,
-            recipient: nil
-          EOF  
       - name: Cypress run
         uses: cypress-io/github-action@v6
         env:
