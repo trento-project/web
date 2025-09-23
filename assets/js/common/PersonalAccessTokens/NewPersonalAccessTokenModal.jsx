@@ -30,7 +30,6 @@ function NewPersonalAccessTokenModal({
         <Button
           type="primary-white-fit"
           className="inline-block mx-0.5 border-green-500 border"
-          size="small"
           onClick={onClose}
         >
           Close

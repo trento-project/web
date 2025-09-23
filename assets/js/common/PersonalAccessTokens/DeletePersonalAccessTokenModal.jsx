@@ -28,7 +28,6 @@ function DeletePersonalAccessTokenModal({
         <Button
           type="danger-bold"
           className="inline-block mx-0.5 border-green-500 border w-fit"
-          size="small"
           onClick={onDelete}
         >
           Delete Token
@@ -36,7 +35,6 @@ function DeletePersonalAccessTokenModal({
         <Button
           type="primary-white-fit"
           className="inline-block mx-0.5 border-green-500 border"
-          size="small"
           onClick={onClose}
         >
           Close
