@@ -1015,6 +1015,27 @@ export const saveInitialAlertingSettings = () => {
   });
 };
 
+export const apiSetDevEnvAlertingSettings = (method = 'POST') => {
+  basePage.apiLogin().then(({ accessToken }) => {
+    cy.request({
+      url: '/api/v1/settings/alerting',
+      method: method,
+      auth: {
+        bearer: accessToken,
+      },
+      body: {
+        enabled: alertingDevEnvSettings.enabled,
+        smtp_server: alertingDevEnvSettings.smtpServer,
+        smtp_port: alertingDevEnvSettings.smtpPort,
+        smtp_username: alertingDevEnvSettings.smtpUsername,
+        smtp_password: 'pass',
+        sender_email: alertingDevEnvSettings.senderEmail,
+        recipient_email: alertingDevEnvSettings.recipientEmail,
+      },
+    });
+  });
+};
+
 export const apiCreateUserWithSettingsAbilities = () =>
   basePage.apiCreateUserWithAbilities([
     { name: 'all', resource: 'activity_logs_settings' },
@@ -1047,6 +1068,21 @@ export const emailExistsInMailpit = (
     })
     .then((response) => {
       if (response.body.messages.length > 0) {
+        const emailId = response.body.messages[0].ID;
+        cy.log(emailId);
+        const deleteUrl = `http://localhost:8025/api/v1/messages`;
+
+        cy.log(
+          `Mailpit: Found email "${subject}", deleting it (ID: ${emailId}).`
+        );
+
+        cy.request({
+          method: 'DELETE',
+          url: deleteUrl,
+          body: {
+            IDs: [emailId],
+          },
+        });
         return cy.wrap(true);
       }
 

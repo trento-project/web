@@ -7,8 +7,9 @@ context('Settings page', () => {
     }
     settingsPage.preloadTestData();
     settingsPage.getAlertingSettings().then((resp) => {
-      if (resp.status === 404) {
-        settingsPage.saveInitialAlertingSettings();
+      if (resp.status === 404 || !resp.body.enforced_from_env) {
+        const method = resp.status === 404 ? 'POST' : 'PATCH';
+        settingsPage.apiSetDevEnvAlertingSettings(method);
       }
     });
   });
