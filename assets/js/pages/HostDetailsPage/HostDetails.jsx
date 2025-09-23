@@ -100,6 +100,7 @@ function HostDetails({
   userAbilities,
   operationsEnabled = false,
   runningOperation,
+  preflightOperations,
   cleanUpHost,
   requestHostChecksExecution,
   requestOperation,
@@ -170,9 +171,6 @@ function HostDetails({
     setSimpleOperationModalOpen(false);
   };
 
-  const isHanaRunning = some(sapInstances, { type: DATABASE_TYPE });
-  const isAppRunning = some(sapInstances, { type: APPLICATION_TYPE });
-
   return (
     <>
       <DeregistrationModal
@@ -237,12 +235,10 @@ function HostDetails({
                     {
                       value: 'Reboot Host',
                       running: runningOperationName === HOST_REBOOT,
-                      disabled:
-                        heartbeat !== 'passing' ||
-                        !isHanaRunning ||
-                        !isAppRunning,
+                      disabled: !preflightOperations[HOST_REBOOT]?.allowed,
                       permitted: ['reboot:host'],
                       onClick: openOperationModal(HOST_REBOOT),
+                      tooltip: preflightOperations[HOST_REBOOT]?.errors.join('; '),
                     },
                     {
                       value: 'Apply Saptune Solution',

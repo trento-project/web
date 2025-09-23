@@ -22,7 +22,7 @@ export const PACEMAKER_ENABLE = 'pacemaker_enable';
 export const PACEMAKER_DISABLE = 'pacemaker_disable';
 export const DATABASE_START = 'database_start';
 export const DATABASE_STOP = 'database_stop';
-export const HOST_REBOOT = 'host_reboot';
+export const HOST_REBOOT = 'reboot';
 
 const OPERATION_LABELS = {
   [SAPTUNE_SOLUTION_APPLY]: 'Apply Saptune solution',

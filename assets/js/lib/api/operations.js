@@ -1,4 +1,4 @@
-import { networkClient, post } from '@lib/network';
+import { networkClient, post, get } from '@lib/network';
 
 // eslint-disable-next-line no-undef
 const baseURL = config.checksServiceBaseUrl;
@@ -7,6 +7,9 @@ const defaultConfig = { baseURL };
 
 export const requestHostOperation = (hostID, operation, params) =>
   post(`/hosts/${hostID}/operations/${operation}`, params);
+
+export const requestHostOperationPreflight = (hostID, operation) =>
+  get(`/hosts/${hostID}/operations/${operation}`);
 
 export const requestClusterOperation = (clusterID, operation, params) =>
   post(`/clusters/${clusterID}/operations/${operation}`, params);
