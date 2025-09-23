@@ -171,11 +171,12 @@ function Layout() {
                   >
                     <NavLink
                       className={({ isActive }) =>
-                        `tn-menu-item w-full text-gray-800 dark:text-white flex items-center pl-6 p-2 my-2 transition-colors duration-200 justify-start ${
+                        `tn-menu-item w-full text-gray-800 dark:text-white flex items-center my-2 transition-colors duration-200 justify-start border-l-4 ${
                           isActive
-                            ? 'pl-5 border-l-4 border-jungle-green-500'
-                            : 'hover:pl-5 hover:border-l-4 hover:border-jungle-green-300'
-                        }`
+                            ? 'border-l-4 border-jungle-green-500'
+                            : 'border-white hover:border-l-4 hover:border-jungle-green-300'
+                        }
+                        ${isCollapsed ? 'justify-center py-2' : 'pl-6 p-2'}`
                       }
                       to={item.href}
                       end={item.href === '/'}
