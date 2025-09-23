@@ -63,8 +63,9 @@ function GeneratePersonalAccessTokenModal({
         <Label className="col-span-2">Name</Label>
         <div className="col-span-6">
           <Input
-            id="token-id"
-            name="token-id"
+            id="token-name"
+            name="token-name"
+            aria-label="token-name"
             className="w-full"
             value={tokenName}
             placeholder="token name"
