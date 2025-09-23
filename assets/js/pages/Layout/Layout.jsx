@@ -150,7 +150,7 @@ function Layout() {
               )}
             </button>
           </div>
-          <div className="relative bg-white h-full pb-24 dark:bg-gray-700 overflow-y-auto">
+          <div className="relative bg-white h-full pb-24 dark:bg-gray-700 overflow-y-auto scrollbar [&::-webkit-scrollbar]:w-3 [&::-webkit-scrollbar-thumb]:border-4 [&::-webkit-scrollbar-thumb]:border-white [&::-webkit-scrollbar-thumb]:border-solid [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb:hover]:bg-gray-400">
             <div className="flex items-center justify-center pt-6">
               <img
                 className={classNames('h-auto transition-scale duration-100', {
