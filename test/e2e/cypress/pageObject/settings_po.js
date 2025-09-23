@@ -1051,14 +1051,12 @@ export const stopAgentsHeartbeat = () => cy.task('stopAgentsHeartbeat');
 
 export const emailExistsInMailpit = (
   subject,
-  options = { retries: 10, delay: 3000 }
+  options = { retries: 30, delay: 500 }
 ) => {
   const { retries, delay } = options;
   const searchUrl = `http://localhost:8025/api/v1/search?query=subject:"${subject}"`;
 
-  if (retries < 0) {
-    return cy.wrap(false);
-  }
+  if (retries < 0) return cy.wrap(false);
 
   return cy
     .request({
