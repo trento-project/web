@@ -1,6 +1,5 @@
 export * from './base_po';
 import * as basePage from './base_po';
-import * as clustersOverviewPage from '../pageObject/clusters_overview_po';
 
 import _ from 'lodash';
 import { subDays, addDays } from 'date-fns';
@@ -1061,9 +1060,15 @@ export const triggerHostAlertingEmail = () => {
 };
 
 export const triggerClusterAlertingEmail = () => {
-  clustersOverviewPage.loadScenario('cluster-unnamed');
-  clustersOverviewPage.loadScenario('cluster-1-SOK');
+  basePage.loadScenario('cluster-unnamed');
+  basePage.loadScenario('cluster-1-SOK');
 };
+
+export const triggerSapSystemAlertingEmail = () =>
+  basePage.loadScenario('sap-system-detail-RED');
+
+export const triggerDatabaseAlertingEmail = () =>
+  basePage.loadScenario('hana-database-detail-RED');
 
 export const emailExistsInMailpit = (
   subject,

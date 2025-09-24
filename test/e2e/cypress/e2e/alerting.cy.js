@@ -7,9 +7,9 @@ context('Settings page', () => {
     }
     settingsPage.preloadTestData();
     settingsPage.getAlertingSettings().then((resp) => {
-      if (resp.status === 404 || !resp.body.enforced_from_env) {
-        const method = resp.status === 404 ? 'POST' : 'PATCH';
-        settingsPage.apiSetDevEnvAlertingSettings(method);
+      if (resp.status === 404 || resp.body.enforced_from_env === false) {
+        const requestMethod = resp.status === 404 ? 'POST' : 'PATCH';
+        settingsPage.apiSetDevEnvAlertingSettings(requestMethod);
       }
     });
   });
@@ -26,12 +26,12 @@ context('Settings page', () => {
     });
 
     it('Receive email when SAP System health goes critical', () => {
-      settingsPage.loadScenario('sap-system-detail-RED');
+      settingsPage.triggerSapSystemAlertingEmail();
       settingsPage.emailIsReceived('Trento Alert: Sap System');
     });
 
     it('Receive email when Database health goes critical', () => {
-      settingsPage.loadScenario('hana-database-detail-RED');
+      settingsPage.triggerDatabaseAlertingEmail();
       settingsPage.emailIsReceived('Trento Alert: Database');
     });
   });
