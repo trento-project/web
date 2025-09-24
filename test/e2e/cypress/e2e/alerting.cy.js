@@ -1,5 +1,4 @@
 import * as settingsPage from '../pageObject/settings_po';
-import * as clustersOverviewPage from '../pageObject/clusters_overview_po';
 
 context('Settings page', () => {
   before(function () {
@@ -17,23 +16,23 @@ context('Settings page', () => {
 
   describe('Send/Receive alerting emails when specific actions trigger them', () => {
     it('Receive email when host health goes critical', () => {
-      settingsPage.startAgentHeartbeat();
-      settingsPage.stopAgentsHeartbeat();
-      settingsPage
-        .emailExistsInMailpit('Trento Alert: Host vmhdbprd01 needs attention.')
-        .then((result) => cy.wrap(result).should('be.true'));
+      settingsPage.triggerHostAlertingEmail();
+      settingsPage.emailIsReceived('Trento Alert: Host');
     });
 
     it('Receive email when cluster health goes critical', () => {
-      clustersOverviewPage.loadScenario('cluster-unnamed');
-      clustersOverviewPage.loadScenario('cluster-1-SOK');
-      settingsPage
-        .emailExistsInMailpit('Cluster hana_cluster_1 needs attention')
-        .then((result) => cy.wrap(result).should('be.true'));
+      settingsPage.triggerClusterAlertingEmail();
+      settingsPage.emailIsReceived('Trento Alert: Cluster');
     });
 
-    it.skip('Receive email when SAP System health goes critical', () => {});
+    it('Receive email when SAP System health goes critical', () => {
+      settingsPage.loadScenario('sap-system-detail-RED');
+      settingsPage.emailIsReceived('Trento Alert: Sap System');
+    });
 
-    it.skip('Receive email when Database health goes critical', () => {});
+    it('Receive email when Database health goes critical', () => {
+      settingsPage.loadScenario('hana-database-detail-RED');
+      settingsPage.emailIsReceived('Trento Alert: Database');
+    });
   });
 });

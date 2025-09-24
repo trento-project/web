@@ -1,5 +1,6 @@
 export * from './base_po';
 import * as basePage from './base_po';
+import * as clustersOverviewPage from '../pageObject/clusters_overview_po';
 
 import _ from 'lodash';
 import { subDays, addDays } from 'date-fns';
@@ -1048,6 +1049,21 @@ export const startAgentHeartbeat = () =>
   cy.task('startAgentHeartbeat', ['9cd46919-5f19-59aa-993e-cf3736c71053']);
 
 export const stopAgentsHeartbeat = () => cy.task('stopAgentsHeartbeat');
+
+export const emailIsReceived = (subject) =>
+  emailExistsInMailpit(subject).then((result) =>
+    cy.wrap(result).should('be.true')
+  );
+
+export const triggerHostAlertingEmail = () => {
+  startAgentHeartbeat();
+  stopAgentsHeartbeat();
+};
+
+export const triggerClusterAlertingEmail = () => {
+  clustersOverviewPage.loadScenario('cluster-unnamed');
+  clustersOverviewPage.loadScenario('cluster-1-SOK');
+};
 
 export const emailExistsInMailpit = (
   subject,
