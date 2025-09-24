@@ -2,12 +2,12 @@ import React from 'react';
 import { act, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
-import DeletePersonalAccessTokenModal from './DeletePersonalAccessTokenModal';
+import DeleteTokenModal from './DeleteTokenModal';
 
-describe('DeletePersonalAccessTokenModal', () => {
-  it('should delete personal access token modal', async () => {
+describe('DeleteTokenModal', () => {
+  it('should show personal access token modal', async () => {
     await act(async () => {
-      render(<DeletePersonalAccessTokenModal name="My token" isOpen />);
+      render(<DeleteTokenModal name="My token" isOpen />);
     });
 
     expect(screen.getByText('My token')).toBeInTheDocument();
@@ -17,7 +17,7 @@ describe('DeletePersonalAccessTokenModal', () => {
     const user = userEvent.setup();
     const mockOnDelete = jest.fn();
     await act(async () => {
-      render(<DeletePersonalAccessTokenModal isOpen onDelete={mockOnDelete} />);
+      render(<DeleteTokenModal isOpen onDelete={mockOnDelete} />);
     });
 
     await user.click(screen.getByRole('button', { name: 'Delete Token' }));
@@ -28,7 +28,7 @@ describe('DeletePersonalAccessTokenModal', () => {
     const user = userEvent.setup();
     const mockOnClose = jest.fn();
     await act(async () => {
-      render(<DeletePersonalAccessTokenModal isOpen onClose={mockOnClose} />);
+      render(<DeleteTokenModal isOpen onClose={mockOnClose} />);
     });
 
     await user.click(screen.getByRole('button', { name: 'Close' }));

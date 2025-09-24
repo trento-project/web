@@ -1,10 +1,10 @@
 import { faker } from '@faker-js/faker';
 
-import NewPersonalAccessTokenModal from './NewPersonalAccessTokenModal';
+import NewTokenModal from './NewTokenModal';
 
 export default {
-  title: 'Components/NewPersonalAccessTokenModal',
-  component: NewPersonalAccessTokenModal,
+  title: 'Components/PersonalAccessTokens/NewTokenModal',
+  component: NewTokenModal,
   argTypes: {
     accessToken: {
       description: 'New personal access token',

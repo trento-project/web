@@ -3,17 +3,17 @@ import { act, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import { faker } from '@faker-js/faker';
-import NewPersonalAccessTokenModal from './NewPersonalAccessTokenModal';
+import NewTokenModal from './NewTokenModal';
 
-describe('NewPersonalAccessTokenModal', () => {
+describe('NewTokenModal', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  it('should delete personal access token modal', async () => {
+  it('should show new personal access token modal', async () => {
     const token = faker.internet.jwt();
     await act(async () => {
-      render(<NewPersonalAccessTokenModal accessToken={token} isOpen />);
+      render(<NewTokenModal accessToken={token} isOpen />);
     });
 
     expect(screen.getByText(token)).toBeInTheDocument();
@@ -25,7 +25,7 @@ describe('NewPersonalAccessTokenModal', () => {
     jest.spyOn(window, 'prompt').mockReturnValue();
 
     await act(async () => {
-      render(<NewPersonalAccessTokenModal accessToken={token} isOpen />);
+      render(<NewTokenModal accessToken={token} isOpen />);
     });
 
     await user.click(screen.getByRole('button', { name: 'copy to clipboard' }));
@@ -37,7 +37,7 @@ describe('NewPersonalAccessTokenModal', () => {
     const user = userEvent.setup();
     const mockOnClose = jest.fn();
     await act(async () => {
-      render(<NewPersonalAccessTokenModal isOpen onClose={mockOnClose} />);
+      render(<NewTokenModal isOpen onClose={mockOnClose} />);
     });
 
     await user.click(screen.getByRole('button', { name: 'Close' }));

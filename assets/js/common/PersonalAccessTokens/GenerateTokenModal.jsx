@@ -15,7 +15,7 @@ import Switch from '@common/Switch';
 const isValidDate = (date) =>
   date instanceof Date && !Number.isNaN(date.getTime());
 
-function GeneratePersonalAccessTokenModal({
+function GenerateTokenModal({
   isOpen = false,
   onGenerate = noop,
   onClose = noop,
@@ -140,4 +140,4 @@ function GeneratePersonalAccessTokenModal({
   );
 }
 
-export default GeneratePersonalAccessTokenModal;
+export default GenerateTokenModal;

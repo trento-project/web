@@ -1,8 +1,8 @@
-import GeneratePersonalAccessTokenModal from './GeneratePersonalAccessTokenModal';
+import GenerateTokenModal from './GenerateTokenModal';
 
 export default {
-  title: 'Components/GeneratePersonalAccessTokenModal',
-  component: GeneratePersonalAccessTokenModal,
+  title: 'Components/PersonalAccessTokens/GenerateTokenModal',
+  component: GenerateTokenModal,
   argTypes: {
     isOpen: {
       description: 'Opens the modal',

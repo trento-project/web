@@ -11,17 +11,15 @@ import {
   addDays,
 } from 'date-fns';
 
-import GeneratePersonalAccessTokenModal from './GeneratePersonalAccessTokenModal';
+import GenerateTokenModal from './GenerateTokenModal';
 
-describe('GeneratePersonalAccessTokenModal', () => {
+describe('GenerateTokenModal', () => {
   it('should generate personal access token without expiration date', async () => {
     const user = userEvent.setup();
     const mockOnGenerate = jest.fn();
     const tokenName = 'My token';
     await act(async () => {
-      render(
-        <GeneratePersonalAccessTokenModal isOpen onGenerate={mockOnGenerate} />
-      );
+      render(<GenerateTokenModal isOpen onGenerate={mockOnGenerate} />);
     });
 
     expect(
@@ -46,12 +44,7 @@ describe('GeneratePersonalAccessTokenModal', () => {
       const mockOnGenerate = jest.fn();
       const tokenName = 'My token';
       await act(async () => {
-        render(
-          <GeneratePersonalAccessTokenModal
-            isOpen
-            onGenerate={mockOnGenerate}
-          />
-        );
+        render(<GenerateTokenModal isOpen onGenerate={mockOnGenerate} />);
       });
 
       expect(
@@ -86,7 +79,7 @@ describe('GeneratePersonalAccessTokenModal', () => {
     const user = userEvent.setup();
     const mockOnClose = jest.fn();
     await act(async () => {
-      render(<GeneratePersonalAccessTokenModal isOpen onClose={mockOnClose} />);
+      render(<GenerateTokenModal isOpen onClose={mockOnClose} />);
     });
 
     await user.click(screen.getByRole('button', { name: 'Close' }));

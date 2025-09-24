@@ -1,8 +1,8 @@
-import DeletePersonalAccessTokenModal from './DeletePersonalAccessTokenModal';
+import DeleteTokenModal from './DeleteTokenModal';
 
 export default {
-  title: 'Components/DeletePersonalAccessTokenModal',
-  component: DeletePersonalAccessTokenModal,
+  title: 'Components/PersonalAccessTokens/DeleteTokenModal',
+  component: DeleteTokenModal,
   argTypes: {
     name: {
       description: 'Name of the token',
