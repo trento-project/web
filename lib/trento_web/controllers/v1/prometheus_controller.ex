@@ -13,7 +13,7 @@ defmodule TrentoWeb.V1.PrometheusController do
 
   operation :targets,
     summary: "Get Prometheus exporters targets.",
-    tags: ["Target Infrastructure"],
+    tags: ["Target Infrastructure", "MCP"],
     description:
       "Retrieves a list of Prometheus exporter targets in the Http Discovery format, supporting monitoring and integration with Prometheus for infrastructure observability.",
     responses: [
@@ -29,7 +29,7 @@ defmodule TrentoWeb.V1.PrometheusController do
 
   operation :exporters_status,
     summary: "Get prometheus exporters status.",
-    tags: ["Target Infrastructure"],
+    tags: ["Target Infrastructure", "MCP"],
     description:
       "Returns the status of Prometheus exporters for a specific host, identified by its unique ID, supporting health monitoring and diagnostics for infrastructure components.",
     parameters: [

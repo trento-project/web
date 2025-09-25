@@ -21,7 +21,7 @@ defmodule TrentoWeb.V1.SUSEManagerController do
 
   operation :software_updates,
     summary: "Gets available software updates for a given host.",
-    tags: ["Target Infrastructure"],
+    tags: ["Target Infrastructure", "MCP"],
     description:
       "Retrieves all available relevant patches and upgradable packages for a specified host, supporting automated software management and system maintenance.",
     parameters: [
@@ -59,7 +59,7 @@ defmodule TrentoWeb.V1.SUSEManagerController do
 
   operation :patches_for_packages,
     summary: "Gets patches covered by package upgrades in SUSE Multi-Linux Manager.",
-    tags: ["Target Infrastructure"],
+    tags: ["Target Infrastructure", "MCP"],
     description:
       "Retrieves all relevant patches that are covered by package upgrades in SUSE Multi-Linux Manager for a specified host, supporting compliance and system maintenance.",
     parameters: [
@@ -90,7 +90,7 @@ defmodule TrentoWeb.V1.SUSEManagerController do
 
   operation :errata_details,
     summary: "Gets the details for an advisory.",
-    tags: ["Target Infrastructure"],
+    tags: ["Target Infrastructure", "MCP"],
     description:
       "Retrieves detailed information for a specified advisory, including CVEs, bug fixes, affected packages, and systems, supporting vulnerability management and compliance.",
     parameters: [

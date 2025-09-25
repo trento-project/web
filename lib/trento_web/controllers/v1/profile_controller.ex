@@ -16,7 +16,7 @@ defmodule TrentoWeb.V1.ProfileController do
 
   operation :show,
     summary: "Get profile.",
-    tags: ["Profile"],
+    tags: ["Profile", "MCP"],
     description:
       "Returns the profile information of the currently authenticated user, supporting account management and personalization features.",
     responses: [

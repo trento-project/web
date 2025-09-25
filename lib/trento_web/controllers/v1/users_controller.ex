@@ -77,7 +77,7 @@ defmodule TrentoWeb.V1.UsersController do
     summary: "Gets the list of users in the system.",
     description:
       "Retrieves a comprehensive list of all users currently registered in the system, supporting user management and administrative tasks.",
-    tags: ["User Management"],
+    tags: ["User Management", "MCP"],
     responses: [
       ok:
         {"Comprehensive list of all users currently registered in the system for user management and administrative tasks.",
@@ -117,7 +117,7 @@ defmodule TrentoWeb.V1.UsersController do
     summary: "Show the details of a user.",
     description:
       "Returns detailed information about a specific user, identified by their unique ID, supporting user management and administrative review.",
-    tags: ["User Management"],
+    tags: ["User Management", "MCP"],
     parameters: [
       id: [
         in: :path,

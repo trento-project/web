@@ -86,6 +86,11 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
                 "Offers features for running automated checks and validations to ensure system compliance and reliability."
             },
             %Tag{
+              name: "MCP",
+              description:
+                "Exposes endpoints as tools for Model Context Protocol (MCP) integration, enabling those endpoints to be consumed by any LLM."
+            },
+            %Tag{
               name: "Operations",
               description:
                 "Supports a variety of operations for SAP systems and infrastructure, including resource management and workflow execution."
