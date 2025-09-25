@@ -196,24 +196,24 @@ function Layout() {
                   </ForbiddenGuard>
                 ))}
               </div>
-              <div className="flex justify-center">
-                <a
-                  href="https://documentation.suse.com/sles-sap/trento/html/SLES-SAP-trento/index.html"
-                  target="_blank"
-                  className={classNames(
-                    'flex w-max gap-2 items-center text-green-800 font-bold bg-jungle-green-100 py-2 rounded-md hover:opacity-75',
-                    {
-                      'px-2 ml-1': isCollapsed,
-                      'px-4': !isCollapsed,
-                    }
-                  )}
-                  rel="noreferrer"
-                >
-                  <EOS_MENU_BOOK className="fill-green-800" />
-                  {!isCollapsed ? <span>Read the Trento docs</span> : null}
-                </a>
-              </div>
             </nav>
+            <div className="flex justify-center">
+              <a
+                href="https://documentation.suse.com/sles-sap/trento/html/SLES-SAP-trento/index.html"
+                target="_blank"
+                className={classNames(
+                  'flex w-max gap-2 items-center text-green-800 font-bold bg-jungle-green-100 py-2 rounded-md hover:opacity-75',
+                  {
+                    'px-2 ml-1': isCollapsed,
+                    'px-4': !isCollapsed,
+                  }
+                )}
+                rel="noreferrer"
+              >
+                <EOS_MENU_BOOK className="fill-green-800" />
+                {!isCollapsed ? <span>Read the Trento docs</span> : null}
+              </a>
+            </div>
           </div>
         </div>
         <div className="flex flex-col w-full md:space-y-4">
