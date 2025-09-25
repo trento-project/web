@@ -35,6 +35,7 @@ trap 'rm -f "${TEMP_FILES[@]}"' EXIT
 
 # Parse command line arguments
 SKIP_GENERATION=false
+JOIN_ONLY=false
 
 for arg in "$@"; do
     case $arg in
@@ -42,13 +43,18 @@ for arg in "$@"; do
             SKIP_GENERATION=true
             shift
             ;;
+        -j|--join-only)
+            JOIN_ONLY=true
+            shift
+            ;;
         -h|--help)
             echo "Usage: $0 [OPTIONS]"
             echo "Check API documentation using various linters."
             echo ""
             echo "Options:"
-            echo "  -s, --skip    Skip API docs generation and merging"
-            echo "  -h, --help    Show this help message"
+            echo "  -s, --skip      Skip API docs generation and merging"
+            echo "  -j, --join-only Skip API linting, only generate and merge specs"
+            echo "  -h, --help      Show this help message"
             exit 0
             ;;
         *)
@@ -74,15 +80,18 @@ command -v redocly >/dev/null 2>&1 || {
     exit 1
 }
 
-command -v vacuum >/dev/null 2>&1 || {
-    echo "vacuum must be installed -> run 'npm i -g @quobix/vacuum@latest"
-    exit 1
-}
+# Skip linter checks if we're only joining specs
+if [ "$JOIN_ONLY" = false ]; then
+    command -v vacuum >/dev/null 2>&1 || {
+        echo "vacuum must be installed -> run 'npm i -g @quobix/vacuum@latest"
+        exit 1
+    }
 
-command -v spectral >/dev/null 2>&1 || {
-    echo "spectral must be installed -> run 'npm i -g @stoplight/spectral-cli'"
-    exit 1
-}
+    command -v spectral >/dev/null 2>&1 || {
+        echo "spectral must be installed -> run 'npm i -g @stoplight/spectral-cli'"
+        exit 1
+    }
+fi
 
 MERGED_OPENAPI_FILE="openapi.json"
 VERSIONS=("Unversioned" "V1" "V2")
@@ -143,6 +152,11 @@ else
     echo "Skipping API docs generation/merging, just starting linting the spec..."
 fi
 
+# Skip linting if JOIN_ONLY is true
+if [ "$JOIN_ONLY" = true ]; then
+    echo "Join-only mode: skipping API linting"
+    exit 0
+fi
 
 # Run linters and collect exit codes
 status=0
