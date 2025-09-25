@@ -24,6 +24,8 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
         Info,
         License,
         OpenApi,
+        Operation,
+        PathItem,
         Paths,
         SecurityScheme,
         Server,
@@ -146,8 +148,25 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
         excluded_versions = List.delete(available_versions, version)
         actual_versions = List.delete(available_versions, "unversioned")
 
+        # Get route aliasese from metadata openapi_operation_id entries
+        openapi_operation_id_aliases =
+          router.__routes__()
+          |> Enum.filter(fn
+            %{metadata: %{openapi_operation_id: _op_id}} ->
+              true
+
+            _ ->
+              false
+          end)
+          |> Enum.into(%{}, fn %{path: path, verb: verb, metadata: %{openapi_operation_id: op_id}} ->
+            {create_alias_key(path, verb), op_id}
+          end)
+
         router
         |> Paths.from_router()
+        |> Enum.map(fn path_item ->
+          transform_operation_id(path_item, openapi_operation_id_aliases)
+        end)
         |> Enum.reject(fn {path, _info} ->
           current_version =
             path
@@ -159,6 +178,49 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
           Enum.member?(excluded_versions, current_version)
         end)
         |> Map.new()
+      end
+
+      # Transforms the PathItem operation ID in cases where multiple actions are associated
+      # to the same operation.
+      # It uses the route `metadata: %{openapi_operation_id: alias_id}` to get the new id.
+      # By default open_api_spex adds a `(n)` (`n` being the occurrance number) as a suffix
+      # to the operation ID in this case, which doesn't comply as a valid URL:
+      # https://github.com/open-api-spex/open_api_spex/issues/123
+      # https://quobix.com/vacuum/rules/operations/operation-operationid-valid-in-url/
+      defp transform_operation_id({path, %PathItem{} = path_item}, operation_id_aliases) do
+        updated_path_item =
+          path_item
+          |> Map.from_struct()
+          |> Enum.reduce(path_item, fn
+            {verb, operation = %Operation{operationId: op_id}}, acc ->
+              case Map.get(operation_id_aliases, create_alias_key(path, verb)) do
+                nil ->
+                  acc
+
+                operation_id_alias ->
+                  %{acc | verb => update_operation_id(operation, operation_id_alias)}
+              end
+
+            _, acc ->
+              acc
+          end)
+
+        {path, updated_path_item}
+      end
+
+      # create a normalized "path@verb" key
+      # remove :,{,} chars from path to normalize open api and router formats
+      defp create_alias_key(path, verb),
+        do: ~s(#{String.replace(path, [":", "{", "}"], "")}@#{verb})
+
+      defp update_operation_id(%Operation{operationId: op_id} = operation, operation_id_alias) do
+        updated_op_id =
+          op_id
+          |> String.split(".")
+          |> List.replace_at(-1, operation_id_alias)
+          |> Enum.join(".")
+
+        %{operation | operationId: updated_op_id}
       end
 
       defp map_version(version, actual_versions) do
