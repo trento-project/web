@@ -118,11 +118,11 @@ defmodule TrentoWeb.Router do
            HostController,
            :request_checks_execution
 
+      delete "/hosts/:id", HostController, :delete
+
       post "/hosts/:id/tags", TagsController, :add_tag_to_host,
         assigns: %{resource_type: :host},
         as: :hosts_tagging
-
-      delete "/hosts/:id", HostController, :delete
 
       delete "/hosts/:id/tags/:value", TagsController, :remove_tag_from_host,
         assigns: %{resource_type: :host},
@@ -186,7 +186,8 @@ defmodule TrentoWeb.Router do
       end
 
       resources "/users", UsersController, except: [:new, :edit, :update]
-      patch "/users/:id", UsersController, :update
+      patch "/users/:id", UsersController, :patch
+      put "/users/:id", UsersController, :put
 
       scope "/profile" do
         get "/", ProfileController, :show
@@ -214,7 +215,7 @@ defmodule TrentoWeb.Router do
         scope "/suse_manager" do
           get "/", SettingsController, :get_suse_manager_settings
           post "/", SettingsController, :save_suse_manager_settings
-          patch "/", SettingsController, :update_suse_manager_settings
+          patch "/", SettingsController, :patch_suse_manager_settings
           put "/", SettingsController, :put_suse_manager_settings
           delete "/", SettingsController, :delete_suse_manager_settings
           post "/test", SettingsController, :test_suse_manager_settings
