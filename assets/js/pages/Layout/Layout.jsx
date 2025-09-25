@@ -154,7 +154,7 @@ function Layout() {
             <div className="flex items-center justify-center pt-6">
               <img
                 className={classNames('h-auto transition-scale duration-100', {
-                  'w-12': isCollapsed,
+                  'w-12 ml-1': isCollapsed,
                   'w-24': !isCollapsed,
                 })}
                 alt="trento project logo"
