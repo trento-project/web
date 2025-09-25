@@ -16,6 +16,7 @@
 #
 # Options:
 #   -s, --skip    Skip API docs generation and merging (lint only)
+#   -j, --join-only  Only generate and merge specs (skip all linting)
 #   -h, --help    Show this help message
 #
 # Requirements:
