@@ -77,25 +77,27 @@ jobs:
   npm-deps:
     name: Npm dependencies
     runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        include:
+          - nodejs: "20"
+          - nodejs: "22"
     steps:
       - name: Checkout
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
-      - name: Read .tool-versions
-        uses: endorama/asdf-parse-tool-versions@v1.3.4
-        id: tool-versions
       - name: Retrieve NPM Cached Dependencies
         uses: actions/cache@v4
         id: npm-cache
         with:
           path: |
             assets/node_modules
-          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
+          key: nodejs-${{ matrix.nodejs }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Setup Node
         uses: actions/setup-node@v5
         with:
-          node-version: ${{ env.NODEJS_VERSION }}
+          node-version: ${{ matrix.nodejs }}
       - name: Install NPM dependencies
         if: steps.npm-cache.outputs.cache-hit != 'true'
         run: cd assets && npm install
@@ -164,8 +166,10 @@ jobs:
         include:
           - elixir: "1.15"
             otp: "26"
+            nodejs: "20"
           - elixir: "1.18"
             otp: "27"
+            nodejs: "22"
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -177,13 +181,10 @@ jobs:
         with:
           otp-version: ${{ matrix.otp }}
           elixir-version: ${{ matrix.elixir }}
-      - name: Read .tool-versions
-        uses: endorama/asdf-parse-tool-versions@v1.3.4
-        id: tool-versions
       - name: Setup Node
         uses: actions/setup-node@v5
         with:
-          node-version: ${{ env.NODEJS_VERSION }}
+          node-version: ${{ matrix.nodejs }}
       - name: Retrieve Elixir Cached Dependencies
         uses: actions/cache@v4
         id: mix-cache
@@ -199,7 +200,7 @@ jobs:
         with:
           path: |
             assets/node_modules
-          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
+          key: nodejs-${{ matrix.nodejs }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Check for unused dependencies
         run: mix deps.unlock --check-unused
       - name: Check Code Format
@@ -217,25 +218,27 @@ jobs:
     name: Javascript tests
     needs: npm-deps
     runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        include:
+          - nodejs: "20"
+          - nodejs: "22"
     steps:
       - name: Checkout
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
-      - name: Read .tool-versions
-        uses: endorama/asdf-parse-tool-versions@v1.3.4
-        id: tool-versions
       - name: Setup Node
         uses: actions/setup-node@v5
         with:
-          node-version: ${{ env.NODEJS_VERSION }}
+          node-version: ${{ matrix.nodejs }}
       - name: Retrieve NPM Cached Dependencies
         uses: actions/cache@v4
         id: npm-cache
         with:
           path: |
             assets/node_modules
-          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
+          key: nodejs-${{ matrix.nodejs }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Run JS tests
         run: cd assets && npm test
 
