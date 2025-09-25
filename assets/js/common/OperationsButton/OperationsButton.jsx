@@ -12,29 +12,37 @@ import { EOS_MORE_VERT, EOS_LOADING_ANIMATED } from 'eos-icons-react';
 
 import Button from '@common/Button';
 import DisabledGuard from '@common/DisabledGuard';
+import Tooltip from '@common/Tooltip';
+
 
 // The custom component is required to wrap in the DisabledGuard component
 // and pass the disabled value to the child
-function CustomMenuButton({ value, running, disabled, onClick }) {
+function CustomMenuButton({ value, running, disabled, onClick, tooltip }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      role="menuitem"
-      className={classNames(
-        'w-full rounded-md text-left block px-4 py-2 text-sm',
-        {
-          'text-gray-700 hover:bg-gray-100': !disabled,
-        },
-        { 'text-gray-400': disabled }
-      )}
-      disabled={disabled}
+    <Tooltip
+      isEnabled={!!tooltip}
+      content={tooltip}
+      place="bottom"
     >
-      {running && (
-        <EOS_LOADING_ANIMATED className="inline-block fill-jungle-green-500 mr-1" />
-      )}
-      {value}
-    </button>
+      <button
+        type="button"
+        onClick={onClick}
+        role="menuitem"
+        className={classNames(
+          'w-full rounded-md text-left block px-4 py-2 text-sm',
+          {
+            'text-gray-700 hover:bg-gray-100': !disabled,
+          },
+          { 'text-gray-400': disabled }
+        )}
+        disabled={disabled}
+      >
+        {running && (
+          <EOS_LOADING_ANIMATED className="inline-block fill-jungle-green-500 mr-1" />
+        )}
+        {value}
+      </button>
+    </Tooltip>
   );
 }
 
@@ -74,7 +82,7 @@ function OperationsButton({
         className="rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 px-3 py-3 focus:outline-none"
       >
         {operations.map(
-          ({ value, running, disabled: itemDisabled, permitted, onClick }) => (
+          ({ value, running, disabled: itemDisabled, permitted, onClick, tooltip }) => (
             <Fragment key={value}>
               <MenuItem>
                 <DisabledGuard
@@ -87,6 +95,7 @@ function OperationsButton({
                     running={running}
                     disabled={itemDisabled || someRunning}
                     onClick={onClick}
+                    tooltip={tooltip}
                   />
                 </DisabledGuard>
               </MenuItem>

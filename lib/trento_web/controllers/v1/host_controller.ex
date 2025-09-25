@@ -44,7 +44,7 @@ defmodule TrentoWeb.V1.HostController do
          operation: &__MODULE__.get_operation/1,
          assigns_to: :host
        ]
-       when action == :request_operation
+       when action == :request_operation or action == :request_operation_preflight
 
   action_fallback TrentoWeb.FallbackController
 
@@ -236,8 +236,7 @@ defmodule TrentoWeb.V1.HostController do
       unprocessable_entity: UnprocessableEntity.response()
     ]
 
-  def request_operation(%{assigns: %{host: host, operation: operation}} = conn, _)
-      when operation in HostOperations.values() do
+  def request_operation(%{assigns: %{host: host, operation: operation}} = conn, _) do
     %{id: host_id} = host
     body = OpenApiSpex.body_params(conn)
 
@@ -246,6 +245,47 @@ defmodule TrentoWeb.V1.HostController do
       |> put_status(:accepted)
       |> json(%{operation_id: operation_id})
     end
+  end
+
+  operation :request_operation_preflight,
+    summary: "Check if an operation is permitted on a Host.",
+    tags: ["Operations"],
+    description:
+      "Verifies whether a specific operation is allowed on a host, ensuring compliance with infrastructure policies and preventing unauthorized actions.",
+    parameters: [
+      id: [
+        in: :path,
+        description:
+          "Unique identifier of the host for which the operation permission is being checked. This value must be a valid UUID string.",
+        required: true,
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          format: :uuid,
+          example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
+        }
+      ],
+      operation: [
+        in: :path,
+        description:
+          "Specifies the type of operation whose permission is being verified on the host.",
+        required: true,
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          example: "restart"
+        }
+      ]
+    ],
+    responses: [
+      no_content: "The operation is permitted on the host.",
+      not_found: NotFound.response(),
+      forbidden: Forbidden.response(),
+      unprocessable_entity: UnprocessableEntity.response()
+    ]
+
+  def request_operation_preflight(conn, _) do
+    conn
+    |> put_status(:no_content)
+    |> text("")
   end
 
   def get_policy_resource(%{
