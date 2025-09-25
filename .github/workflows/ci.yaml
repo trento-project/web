@@ -141,8 +141,17 @@ jobs:
           key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Build docs
         uses: lee-dohm/generate-elixir-docs@v1
-      - name: Generate openapi.json
-        run: mix openapi.spec.json --start-app=false --spec TrentoWeb.OpenApi.V1.ApiSpec
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODEJS_VERSION }}
+      - name: Install API linting tools
+        run: |
+          npm install -g @redocly/cli@latest
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+      - name: Run API docs merge script
+        run: ./hack/api_docs_check.sh --join-only
       - name: Generate Swagger UI
         uses: Legion2/swagger-ui-action@v1
         with:
