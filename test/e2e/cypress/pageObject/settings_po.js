@@ -1044,19 +1044,15 @@ export const apiCreateUserWithSettingsAbilities = () =>
     { name: 'all', resource: 'alerting_settings' },
   ]);
 
-export const startAgentHeartbeat = () =>
-  cy.task('startAgentHeartbeat', ['9cd46919-5f19-59aa-993e-cf3736c71053']);
-
-export const stopAgentsHeartbeat = () => cy.task('stopAgentsHeartbeat');
-
-export const emailIsReceived = (subject) =>
-  emailExistsInMailpit(subject).then((result) =>
-    cy.wrap(result).should('be.true')
-  );
+export const emailIsReceived = (type) => {
+  cy.task('searchEmailInMailpit', `Trento Alert: ${type}`).then((result) => {
+    cy.wrap(result.length).should('equal', 1);
+  });
+};
 
 export const triggerHostAlertingEmail = () => {
-  startAgentHeartbeat();
-  stopAgentsHeartbeat();
+  cy.task('startAgentHeartbeat', ['9cd46919-5f19-59aa-993e-cf3736c71053']);
+  basePage.stopAgentsHeartbeat();
 };
 
 export const triggerClusterAlertingEmail = () => {
@@ -1069,46 +1065,3 @@ export const triggerSapSystemAlertingEmail = () =>
 
 export const triggerDatabaseAlertingEmail = () =>
   basePage.loadScenario('hana-database-detail-RED');
-
-export const emailExistsInMailpit = (
-  subject,
-  options = { retries: 30, delay: 500 }
-) => {
-  const { retries, delay } = options;
-  const searchUrl = `http://localhost:8025/api/v1/search?query=subject:"${subject}"`;
-
-  if (retries < 0) return cy.wrap(false);
-
-  return cy
-    .request({
-      method: 'GET',
-      url: searchUrl,
-      failOnStatusCode: false,
-    })
-    .then((response) => {
-      if (response.body.messages.length > 0) {
-        const emailId = response.body.messages[0].ID;
-        cy.log(emailId);
-        const deleteUrl = `http://localhost:8025/api/v1/messages`;
-
-        cy.log(
-          `Mailpit: Found email "${subject}", deleting it (ID: ${emailId}).`
-        );
-
-        cy.request({
-          method: 'DELETE',
-          url: deleteUrl,
-          body: {
-            IDs: [emailId],
-          },
-        });
-        return cy.wrap(true);
-      }
-
-      cy.wait(delay);
-      return emailExistsInMailpit(subject, {
-        retries: retries - 1,
-        delay,
-      });
-    });
-};

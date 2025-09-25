@@ -27,6 +27,8 @@ module.exports = (on, config) => {
 
   cypressSplit(on, config);
   on('task', {
+    searchEmailInMailpit,
+    deleteAllEmailsFromMailpit,
     startAgentHeartbeat(agents) {
       const { web_api_host, web_api_port, heartbeat_interval } = config.env;
       const heartbeat = (agentId) =>
@@ -66,3 +68,44 @@ module.exports = (on, config) => {
 
   return config;
 };
+
+const mailpitUrl = 'http://localhost:8025/api/v1';
+
+const searchEmailInMailpit = (
+  subject,
+  options = { retries: 30, delay: 500 }
+) => {
+  const { retries, delay } = options;
+  const searchUrl = `${mailpitUrl}/search?query=subject:"${subject}"`;
+
+  return fetch(searchUrl)
+    .then((res) => (res.ok ? res.json() : false))
+    .then((data) => {
+      if (data && data.messages && data.messages.length > 0) {
+        return data.messages.map((msg) => msg.ID);
+      }
+
+      if (retries > 0) {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            resolve(
+              searchEmailInMailpit(subject, { retries: retries - 1, delay })
+            );
+          }, delay);
+        });
+      }
+
+      return [];
+    })
+    .catch(() => []);
+};
+
+const deleteEmailsFromMailpit = (emailIds) => {
+  const deleteUrl = `${mailpitUrl}/messages`;
+  return fetch(deleteUrl, {
+    method: 'DELETE',
+    body: JSON.stringify({ IDs: emailIds }),
+  });
+};
+
+const deleteAllEmailsFromMailpit = () => deleteEmailsFromMailpit([]);
