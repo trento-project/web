@@ -16,14 +16,11 @@ defmodule TrentoWeb.Plugs.AppJWTAuthPlug do
   alias Trento.Users
   alias Trento.Users.User
 
-  alias Trento.PersonalAccessTokens
-
   alias TrentoWeb.Auth.{
     AccessToken,
-    RefreshToken
+    RefreshToken,
+    Tokens
   }
-
-  alias TrentoWeb.Auth.PersonalAccessToken, as: PAT
 
   @impl true
   @doc """
@@ -31,7 +28,7 @@ defmodule TrentoWeb.Plugs.AppJWTAuthPlug do
   """
   def fetch(conn, _config) do
     with {:ok, jwt_token} <- read_token(conn),
-         {:ok, %{"sub" => sub, "abilities" => abilities}} <- validate_token(jwt_token) do
+         {:ok, %{"sub" => sub}} <- Tokens.verify_and_validate(jwt_token) do
       conn =
         conn
         |> Conn.put_private(:api_access_token, jwt_token)
@@ -40,8 +37,7 @@ defmodule TrentoWeb.Plugs.AppJWTAuthPlug do
       {conn,
        %{
          "access_token" => jwt_token,
-         "user_id" => sub,
-         "abilities" => abilities
+         "user_id" => sub
        }}
     else
       _ -> {conn, nil}
@@ -107,41 +103,9 @@ defmodule TrentoWeb.Plugs.AppJWTAuthPlug do
     end
   end
 
-  defp validate_token(jwt_token) do
-    access_token_audience = AccessToken.aud()
-    pat_audience = PAT.aud()
-
-    case Joken.peek_claims(jwt_token) do
-      {:ok, %{"aud" => ^access_token_audience}} ->
-        validate_access_token(jwt_token)
-
-      {:ok, %{"aud" => ^pat_audience}} ->
-        validate_pat(jwt_token)
-
-      _ ->
-        {:error, :invalid_audience}
-    end
-  end
-
-  @spec validate_access_token(binary()) :: {atom(), any()}
-  defp validate_access_token(jwt_token),
-    do: AccessToken.verify_and_validate(jwt_token)
-
   @spec validate_refresh_token(binary()) :: {atom(), any()}
   defp validate_refresh_token(jwt_token),
     do: RefreshToken.verify_and_validate(jwt_token)
-
-  @spec validate_pat(binary()) :: {:ok, map()} | {:error, any()}
-  defp validate_pat(jwt_token) do
-    with {:ok,
-          %{
-            "jti" => jti,
-            "sub" => user_id
-          } = claims} <- PAT.verify_and_validate(jwt_token),
-         true <- PersonalAccessTokens.valid?(jti, user_id) do
-      {:ok, Map.put(claims, "abilities", [])}
-    end
-  end
 
   defp attach_refresh_token_to_conn(conn, user) do
     if user_allowed_to_renew?(user) do

@@ -9,34 +9,6 @@ defmodule Trento.PersonalAccessTokens do
 
   import Ecto.Query
 
-  @spec valid?(bitstring(), non_neg_integer()) :: boolean()
-  def valid?(jti, user_id) do
-    PersonalAccessToken
-    |> Repo.get_by(jti: jti, user_id: user_id)
-    |> Repo.preload(:user)
-    |> valid_pat?()
-  end
-
-  defp valid_pat?(nil), do: false
-
-  defp valid_pat?(%PersonalAccessToken{
-         user: %User{
-           deleted_at: deleted_at
-         }
-       })
-       when not is_nil(deleted_at),
-       do: false
-
-  defp valid_pat?(%PersonalAccessToken{
-         user: %User{
-           locked_at: locked_at
-         }
-       })
-       when not is_nil(locked_at),
-       do: false
-
-  defp valid_pat?(%PersonalAccessToken{}), do: true
-
   @spec create_personal_access_token(User.t(), map()) ::
           {:ok, PersonalAccessToken.t()} | {:error, Ecto.Changeset.t()} | {:error, :forbidden}
   def create_personal_access_token(%User{id: user_id, deleted_at: nil, locked_at: nil}, attrs) do
@@ -59,4 +31,49 @@ defmodule Trento.PersonalAccessTokens do
       %PersonalAccessToken{} = personal_access_token -> Repo.delete(personal_access_token)
     end
   end
+
+  @spec valid?(bitstring(), non_neg_integer()) :: boolean()
+  def valid?(jti, user_id) do
+    jti
+    |> load_user_pat(user_id)
+    |> Repo.preload(:user)
+    |> valid_pat?()
+  end
+
+  @spec validate_and_introspect(bitstring(), non_neg_integer()) ::
+          {:ok, PersonalAccessToken.t()} | {:error, :invalid_token}
+  def validate_and_introspect(jti, user_id) do
+    jti
+    |> load_user_pat(user_id)
+    |> Repo.preload(user: [:abilities])
+    |> then(
+      &case valid_pat?(&1) do
+        true -> {:ok, &1}
+        false -> {:error, :invalid_token}
+      end
+    )
+  end
+
+  defp load_user_pat(jti, user_id),
+    do: Repo.get_by(PersonalAccessToken, jti: jti, user_id: user_id)
+
+  defp valid_pat?(nil), do: false
+
+  defp valid_pat?(%PersonalAccessToken{
+         user: %User{
+           deleted_at: deleted_at
+         }
+       })
+       when not is_nil(deleted_at),
+       do: false
+
+  defp valid_pat?(%PersonalAccessToken{
+         user: %User{
+           locked_at: locked_at
+         }
+       })
+       when not is_nil(locked_at),
+       do: false
+
+  defp valid_pat?(%PersonalAccessToken{}), do: true
 end
