@@ -119,7 +119,7 @@ function Layout() {
       <div className="flex flex-col h-screen items-start justify-between">
         <div
           className={classNames(
-            'h-screen block shadow-lg fixed flex-shrink-0 z-20',
+            'h-screen flex shadow-lg fixed flex-shrink-0 z-20',
             { 'w-16': isCollapsed, 'w-64': !isCollapsed }
           )}
         >
@@ -150,7 +150,7 @@ function Layout() {
               )}
             </button>
           </div>
-          <div className="relative bg-white h-full pb-24 dark:bg-gray-700 overflow-y-auto scrollbar [&::-webkit-scrollbar]:w-3 [&::-webkit-scrollbar-thumb]:border-4 [&::-webkit-scrollbar-thumb]:border-white [&::-webkit-scrollbar-thumb]:border-solid [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb:hover]:bg-gray-400">
+          <div className="flex flex-1 flex-col bg-white pb-24 dark:bg-gray-700 overflow-y-auto scrollbar [&::-webkit-scrollbar]:w-3 [&::-webkit-scrollbar-thumb]:border-4 [&::-webkit-scrollbar-thumb]:border-white [&::-webkit-scrollbar-thumb]:border-solid [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb:hover]:bg-gray-400">
             <div className="flex items-center justify-center pt-6">
               <img
                 className={classNames('h-auto transition-scale duration-100', {
@@ -161,7 +161,7 @@ function Layout() {
                 src={TrentoLogo}
               />{' '}
             </div>
-            <nav className="mt-6">
+            <nav className="mt-6 flex flex-col flex-1">
               <div>
                 {navigation.map((item) => (
                   <ForbiddenGuard
@@ -196,14 +196,14 @@ function Layout() {
                   </ForbiddenGuard>
                 ))}
               </div>
-              <div className="absolute bottom-24 left-4">
+              <div className="flex justify-center">
                 <a
                   href="https://documentation.suse.com/sles-sap/trento/html/SLES-SAP-trento/index.html"
                   target="_blank"
                   className={classNames(
-                    'flex gap-2 items-center text-green-800 font-bold bg-jungle-green-100 py-2 rounded-md hover:opacity-75',
+                    'flex w-max gap-2 items-center text-green-800 font-bold bg-jungle-green-100 py-2 rounded-md hover:opacity-75',
                     {
-                      'px-2': isCollapsed,
+                      'px-2 ml-1': isCollapsed,
                       'px-4': !isCollapsed,
                     }
                   )}
