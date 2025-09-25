@@ -36,6 +36,8 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SaptuneStatusUpdateEvent
 
   alias Trento.Repo
 
+  alias Trento.Support.CommandedUtils
+
   def handle(
         %DatabaseInstanceRegistered{
           host_id: host_id
@@ -132,7 +134,7 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SaptuneStatusUpdateEvent
          %HostReadModel{id: host_id, saptune_status: nil},
          sap_running
        ) do
-    commanded().dispatch(%UpdateSaptuneStatus{
+    CommandedUtils.dispatch(%UpdateSaptuneStatus{
       host_id: host_id,
       package_version: nil,
       saptune_installed: false,
@@ -156,7 +158,7 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SaptuneStatusUpdateEvent
       status: status
     }
     |> UpdateSaptuneStatus.new!()
-    |> commanded().dispatch()
+    |> CommandedUtils.dispatch()
   end
 
   # instance_numbers variable is used to reject the instance with that number from the check
@@ -167,7 +169,9 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SaptuneStatusUpdateEvent
       |> Repo.preload([:application_instances, :database_instances])
       |> sap_running?(instance_numbers)
 
-    maybe_dispatch_update_saptune_status(host, sap_running)
+    host
+    |> maybe_dispatch_update_saptune_status(sap_running)
+    |> maybe_ignore_host_not_registered()
   end
 
   # get all unique hosts from the instances and handle deregistration on them
@@ -175,7 +179,7 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SaptuneStatusUpdateEvent
   defp handle_instances_deregistered(instances, restoration) do
     instances
     |> Repo.preload([:host])
-    |> Enum.map(fn %{host: host} -> host end)
+    |> Enum.flat_map(fn %{host: host} -> if host, do: [host], else: [] end)
     |> Enum.uniq_by(fn %{id: host_id} -> host_id end)
     |> Enum.each(fn %{id: host_id} = host ->
       instance_numbers =
@@ -202,6 +206,10 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SaptuneStatusUpdateEvent
     |> Kernel.not()
   end
 
-  defp commanded,
-    do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]
+  # Due to the eventual consistent nature of commanded, and our read models updates don't
+  # have a strong concurrency, the scenario where a command is emitted to a not
+  # registered host is possible. Ignore that case, as the saptune status doesn't need
+  # to be updated in a non registered host.
+  defp maybe_ignore_host_not_registered({:error, :host_not_registered}), do: :ok
+  defp maybe_ignore_host_not_registered(result), do: result
 end

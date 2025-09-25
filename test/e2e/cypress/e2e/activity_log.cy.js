@@ -149,8 +149,14 @@ context('Activity Log page', () => {
         activityLogPage.validateUrl(expectedUrl);
       });
       activityLogPage.clickFilterTypeButton();
+      activityLogPage.filterTypeOptionsAreDisplayed();
+      activityLogPage.searchForDesiredFilterType('Login');
       activityLogPage.selectFilterTypeOption('Login Attempt');
       activityLogPage.clickApplyFiltersButton();
+      cy.get('button[data-testid="filter-Type"]').should(
+        'have.text',
+        'Login Attempt'
+      );
       const expectedUrl = `/activity_log?${defaultSeverity}&type=login_attempt&first=20`;
       activityLogPage.validateUrl(expectedUrl);
     });

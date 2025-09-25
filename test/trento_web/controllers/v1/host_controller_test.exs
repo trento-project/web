@@ -14,6 +14,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
 
   alias Trento.Infrastructure.Checks.AMQP.Publisher
   alias Trento.Infrastructure.Operations.AMQP.Publisher, as: OperationsPublisher
+  alias Trento.Operations.V1.OperationRequested
 
   setup [:set_mox_from_context, :verify_on_exit!]
 
@@ -426,48 +427,43 @@ defmodule TrentoWeb.V1.HostControllerTest do
   end
 
   describe "request operation" do
-    for {saptune_operation, saptune_status} <- [
-          {"saptune_solution_apply", nil},
-          {"saptune_solution_change", build(:saptune_status)}
+    # test all common responses for the requested operations
+    # the table below contains the operations to be tested and a sample host
+    # with the required preconditions to allow the operation
+    # more specific tests for each operation can be added outside this loop
+    for {operation, operation_type, host} <- [
+          {"saptune_solution_apply", "saptuneapplysolution@v1",
+           build(:host, saptune_status: nil)},
+          {"saptune_solution_change", "saptunechangesolution@v1",
+           build(:host, saptune_status: build(:saptune_status))},
+          {"reboot", "hostreboot@v1",
+           build(:host, application_instances: [], database_instances: [], cluster_id: nil)}
         ] do
-      @saptune_operation saptune_operation
-      @saptune_status saptune_status
+      @operation operation
+      @operation_type operation_type
+      @host host
 
-      test "should fallback to not found for operation '#{saptune_operation}' if the resource is not found",
+      test "should fallback to not found for operation '#{operation}' if the resource is not found",
            %{
              conn: conn,
              api_spec: api_spec
            } do
         conn
-        |> post("/api/v1/hosts/#{UUID.uuid4()}/operations/#{@saptune_operation}")
+        |> post("/api/v1/hosts/#{UUID.uuid4()}/operations/#{@operation}")
         |> json_response(:not_found)
         |> assert_schema("NotFound", api_spec)
       end
 
-      test "should forbid operation '#{saptune_operation}' if conditions are unmet",
-           %{
-             conn: conn,
-             api_spec: api_spec
-           } do
-        %{id: host_id} = insert(:host, saptune_status: @saptune_status)
-        insert(:application_instance, host_id: host_id, health: Health.passing())
-
-        conn
-        |> post("/api/v1/hosts/#{host_id}/operations/#{@saptune_operation}")
-        |> json_response(:forbidden)
-        |> assert_schema("Forbidden", api_spec)
-      end
-
-      test "should respond with 422 if operation '#{saptune_operation}' does not receive needed params",
+      test "should respond with 422 if operation '#{operation}' does not receive needed params",
            %{
              conn: conn
            } do
-        %{id: host_id} = insert(:host)
+        %{id: host_id} = insert(@host)
 
         resp =
           conn
           |> put_req_header("content-type", "application/json")
-          |> post("/api/v1/hosts/#{host_id}/operations/#{@saptune_operation}", %{})
+          |> post("/api/v1/hosts/#{host_id}/operations/#{@operation}", %{})
           |> json_response(:unprocessable_entity)
 
         assert %{
@@ -486,16 +482,16 @@ defmodule TrentoWeb.V1.HostControllerTest do
                } == resp
       end
 
-      test "should respond with 500 on messaging error for operation '#{saptune_operation}'",
+      test "should respond with 500 on messaging error for operation '#{operation}'",
            %{
              conn: conn
            } do
-        %{id: host_id} = insert(:host, saptune_status: @saptune_status)
+        %{id: host_id} = insert(@host)
 
         expect(
           Trento.Infrastructure.Messaging.Adapter.Mock,
           :publish,
-          fn OperationsPublisher, _, _ ->
+          fn OperationsPublisher, _, %OperationRequested{operation_type: @operation_type} ->
             {:error, :amqp_error}
           end
         )
@@ -503,7 +499,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
         resp =
           conn
           |> put_req_header("content-type", "application/json")
-          |> post("/api/v1/hosts/#{host_id}/operations/#{@saptune_operation}", %{
+          |> post("/api/v1/hosts/#{host_id}/operations/#{@operation}", %{
             "solution" => "HANA"
           })
           |> json_response(:internal_server_error)
@@ -518,21 +514,21 @@ defmodule TrentoWeb.V1.HostControllerTest do
                } = resp
       end
 
-      test "should perform '#{saptune_operation}' operation when the user has #{saptune_operation}:host ability",
+      test "should perform '#{operation}' operation when the user has #{operation}:host ability",
            %{
              conn: conn
            } do
-        %{id: host_id} = insert(:host, saptune_status: @saptune_status)
+        %{id: host_id} = insert(@host)
 
         %{id: user_id} = insert(:user)
 
-        %{id: ability_id} = insert(:ability, name: @saptune_operation, resource: "host")
+        %{id: ability_id} = insert(:ability, name: @operation, resource: "host")
         insert(:users_abilities, user_id: user_id, ability_id: ability_id)
 
         expect(
           Trento.Infrastructure.Messaging.Adapter.Mock,
           :publish,
-          fn OperationsPublisher, _, _ ->
+          fn OperationsPublisher, _, %OperationRequested{operation_type: @operation_type} ->
             :ok
           end
         )
@@ -540,29 +536,29 @@ defmodule TrentoWeb.V1.HostControllerTest do
         conn
         |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
         |> put_req_header("content-type", "application/json")
-        |> post("/api/v1/hosts/#{host_id}/operations/#{@saptune_operation}", %{
+        |> post("/api/v1/hosts/#{host_id}/operations/#{@operation}", %{
           "solution" => "HANA"
         })
         |> json_response(:accepted)
       end
 
-      test "should request '#{saptune_operation}' operation", %{
+      test "should request '#{operation}' operation", %{
         conn: conn,
         api_spec: api_spec
       } do
-        %{id: host_id} = insert(:host, saptune_status: @saptune_status)
+        %{id: host_id} = insert(@host)
 
         expect(
           Trento.Infrastructure.Messaging.Adapter.Mock,
           :publish,
-          fn OperationsPublisher, _, _ ->
+          fn OperationsPublisher, _, %OperationRequested{operation_type: @operation_type} ->
             :ok
           end
         )
 
         conn
         |> put_req_header("content-type", "application/json")
-        |> post("/api/v1/hosts/#{host_id}/operations/#{@saptune_operation}", %{
+        |> post("/api/v1/hosts/#{host_id}/operations/#{@operation}", %{
           "solution" => "HANA"
         })
         |> json_response(:accepted)
@@ -581,6 +577,48 @@ defmodule TrentoWeb.V1.HostControllerTest do
       |> json_response(:not_found)
       |> assert_schema("NotFound", api_spec)
     end
+  end
+
+  for {saptune_operation, saptune_status} <- [
+        {"saptune_solution_apply", nil},
+        {"saptune_solution_change", build(:saptune_status)}
+      ] do
+    @saptune_operation saptune_operation
+    @saptune_status saptune_status
+
+    test "should forbid operation '#{saptune_operation}' if conditions are unmet",
+         %{
+           conn: conn,
+           api_spec: api_spec
+         } do
+      %{id: host_id} = insert(:host, saptune_status: @saptune_status)
+      insert(:application_instance, host_id: host_id, health: Health.passing())
+
+      conn
+      |> post("/api/v1/hosts/#{host_id}/operations/#{@saptune_operation}")
+      |> json_response(:forbidden)
+      |> assert_schema("Forbidden", api_spec)
+    end
+  end
+
+  test "should forbid operation 'reboot' if conditions are unmet",
+       %{
+         conn: conn,
+         api_spec: api_spec
+       } do
+    %{id: host_id} =
+      insert(:host,
+        cluster_id: nil,
+        application_instances: [
+          build(:application_instance, health: Health.passing())
+        ],
+        database_instances: []
+      )
+
+    conn
+    |> post("/api/v1/hosts/#{host_id}/operations/reboot")
+    |> json_response(:forbidden)
+    |> assert_schema("Forbidden", api_spec)
   end
 
   describe "forbidden response" do

@@ -15,7 +15,7 @@ const filterOlderThanInputField = `${filterOlderThanButton} + div input`;
 const filterNewerThanButton = 'button:contains("Filter newer than...")';
 const filterNewerThanInputField = `${filterNewerThanButton} + div input`;
 
-const filterTypeButton = 'button:contains("Filter Type")';
+const filterTypeButton = 'button[data-testid="filter-Type"]';
 
 const applyFiltersButton = 'button:contains("Apply Filter")';
 const resetFiltersButton = 'button:contains("Reset Filters")';
@@ -112,6 +112,12 @@ export const selectRefreshRate = (refreshRate) => {
 };
 
 // UI Validations
+
+export const searchForDesiredFilterType = (text) =>
+  cy.get(`${filterTypeButton} + div input`).type(text);
+
+export const filterTypeOptionsAreDisplayed = () =>
+  cy.get(`${filterTypeButton} + div`).should('be.visible');
 
 export const autoRefreshIntervalButtonHasTheExpectedValue = (refreshRate) =>
   cy.get(autoRefreshIntervalButton).should('have.text', refreshRate);

@@ -134,6 +134,36 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SaptuneStatusUpdateEvent
         assert :ok == SaptuneStatusUpdateEventHandler.handle(event, %{})
       end
     end
+
+    test "should handle host_not_registered error on the command dispatch" do
+      %{id: host_id} = insert(:host)
+      %{instance_number: inst_number} = insert(:database_instance, host_id: host_id)
+
+      events = [
+        build(:database_instance_deregistered_event,
+          host_id: host_id,
+          instance_number: inst_number
+        ),
+        build(:application_instance_deregistered_event,
+          host_id: host_id,
+          instance_number: inst_number
+        )
+      ]
+
+      for event <- events do
+        expect(Trento.Commanded.Mock, :dispatch, fn %UpdateSaptuneStatus{
+                                                      host_id: ^host_id,
+                                                      package_version: nil,
+                                                      saptune_installed: false,
+                                                      sap_running: false,
+                                                      status: nil
+                                                    } ->
+          {:error, :host_not_registered}
+        end)
+
+        assert :ok == SaptuneStatusUpdateEventHandler.handle(event, %{})
+      end
+    end
   end
 
   describe "full deregistration" do

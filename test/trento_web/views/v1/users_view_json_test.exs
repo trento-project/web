@@ -59,5 +59,33 @@ defmodule TrentoWeb.V1.UsersJSONTest do
                analytics_enabled: true
              } = UsersJSON.user(%{user: user})
     end
+
+    test "should render a user profile with PAT list" do
+      scenarios = [
+        %{
+          user: build(:user, abilities: [], user_identities: []),
+          expected_pat_count: 0
+        },
+        %{
+          user: build(:user, abilities: [], user_identities: [], personal_access_tokens: []),
+          expected_pat_count: 0
+        },
+        %{
+          user:
+            build(:user,
+              abilities: [],
+              user_identities: [],
+              personal_access_tokens: build_list(2, :personal_access_token)
+            ),
+          expected_pat_count: 2
+        }
+      ]
+
+      for %{user: user, expected_pat_count: expected_pat_count} <- scenarios do
+        rendered_user = UsersJSON.user(%{user: user})
+
+        assert length(rendered_user.personal_access_tokens) == expected_pat_count
+      end
+    end
   end
 end

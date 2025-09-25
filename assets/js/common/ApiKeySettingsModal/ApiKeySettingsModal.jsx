@@ -1,15 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import {
-  addDays,
-  addMonths,
-  addYears,
-  format,
-  parseISO,
-  setHours,
-  setMinutes,
-} from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { noop } from 'lodash';
 import { EOS_INFO_OUTLINED } from 'eos-icons-react';
+import { availableSelectTimeOptions, normalizeDate } from '@lib/date';
 import Button from '@common/Button';
 import Modal from '@common/Modal';
 import { InputNumber } from '@common/Input';
@@ -20,24 +13,6 @@ import CopyButton from '@common/CopyButton';
 import ApiKeyBox from '@common/ApiKeyBox';
 import Banner from '../Banners/Banner';
 
-const normalizeExpiration = (expiration) =>
-  setMinutes(setHours(expiration, 0), 0);
-
-const availableTimeOptions = [
-  {
-    type: 'months',
-    timeGenerator: (quantity) => addMonths(new Date(), quantity),
-  },
-  {
-    type: 'days',
-    timeGenerator: (quantity) => addDays(new Date(), quantity),
-  },
-  {
-    type: 'years',
-    timeGenerator: (quantity) => addYears(new Date(), quantity),
-  },
-];
-
 function ApiKeySettingsModal({
   open = false,
   loading = false,
@@ -46,7 +21,7 @@ function ApiKeySettingsModal({
   generatedApiKey,
   generatedApiKeyExpiration,
 }) {
-  const timeOptions = availableTimeOptions.map((o) => o.type);
+  const timeOptions = availableSelectTimeOptions.map((o) => o.type);
   const [timeQuantity, setTimeQuantity] = useState(0);
   const [timeQuantityType, setTimeQuantityType] = useState(timeOptions[0]);
   const [keyGenerated, setKeyGenerated] = useState(false);
@@ -62,12 +37,12 @@ function ApiKeySettingsModal({
       setShowConfirmation(false);
       return;
     }
-    const timeQuantitySettings = availableTimeOptions.find(
+    const timeQuantitySettings = availableSelectTimeOptions.find(
       (q) => q.type === timeQuantityType
     );
     const apiKeyExpiration = timeQuantitySettings.timeGenerator(timeQuantity);
 
-    onGenerate({ apiKeyExpiration: normalizeExpiration(apiKeyExpiration) });
+    onGenerate({ apiKeyExpiration: normalizeDate(apiKeyExpiration) });
     setKeyGenerated(true);
     setShowConfirmation(false);
   };

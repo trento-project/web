@@ -328,7 +328,7 @@ jobs:
         run: npm run build
         working-directory: assets
       - name: Publish to Chromatic
-        uses: chromaui/action@v13.1.4
+        uses: chromaui/action@v13.1.5
         with:
           workingDir: assets
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
@@ -730,6 +730,59 @@ jobs:
           mix deps.get
           mix deps.compile --warnings-as-errors
           mix dialyzer --plt
+
+  api-docs-check:
+    name: API docs check
+    needs: elixir-deps
+    if: github.event_name == 'pull_request' && !failure() && !cancelled()
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        include:
+          - elixir: "1.15"
+            otp: "26"
+          - elixir: "1.18"
+            otp: "27"
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.12.1
+        with:
+          access_token: ${{ github.token }}
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: Set up Elixir
+        id: setup-elixir
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: ${{ matrix.otp }}
+          elixir-version: ${{ matrix.elixir }}
+      - name: Read .tool-versions
+        uses: endorama/asdf-parse-tool-versions@v1.3.4
+        id: tool-versions
+      - name: Retrieve Elixir Cached Dependencies - current branch
+        uses: actions/cache@v4
+        id: mix-cache-current
+        with:
+          path: |
+            deps
+            _build/${{ env.MIX_ENV }}
+            priv/plts
+          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODEJS_VERSION }}
+      - name: Install API linting tools
+        run: |
+          npm install -g @redocly/cli@latest
+          npm install -g @quobix/vacuum@latest
+          npm install -g @stoplight/spectral-cli
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+      - name: Run API docs check
+        run: ./hack/api_docs_check.sh || true # TODO: remove the '|| true' when the API docs are fixed
 
   api-bc-check:
     name: API bc check

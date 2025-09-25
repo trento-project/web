@@ -42,6 +42,7 @@ defmodule Trento.Users do
     |> where([u], is_nil(u.deleted_at))
     |> preload(:abilities)
     |> preload(:user_identities)
+    |> preload(:personal_access_tokens)
     |> order_by(asc: :id)
     |> Repo.all()
   end
@@ -51,6 +52,7 @@ defmodule Trento.Users do
          |> where([u], is_nil(u.deleted_at) and u.id == ^id)
          |> preload(:abilities)
          |> preload(:user_identities)
+         |> preload(:personal_access_tokens)
          |> Repo.one() do
       nil -> {:error, :not_found}
       user -> {:ok, user}
