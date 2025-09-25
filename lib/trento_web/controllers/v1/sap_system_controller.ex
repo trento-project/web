@@ -55,7 +55,7 @@ defmodule TrentoWeb.V1.SapSystemController do
     summary: "List SAP Systems.",
     description:
       "Retrieves a comprehensive list of all SAP Systems discovered on the target infrastructure, supporting monitoring and management tasks for administrators.",
-    tags: ["Target Infrastructure"],
+    tags: ["Target Infrastructure", "MCP"],
     responses: [
       ok:
         {"Comprehensive list of all SAP Systems discovered on the target infrastructure for monitoring and management.",

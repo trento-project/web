@@ -11,7 +11,7 @@ defmodule TrentoWeb.V2.ClusterController do
 
   operation :list,
     summary: "List Pacemaker Clusters.",
-    tags: ["Target Infrastructure"],
+    tags: ["Target Infrastructure", "MCP"],
     description:
       "Retrieves a comprehensive list of all Pacemaker Clusters discovered on the target infrastructure, supporting monitoring and management tasks for administrators.",
     responses: [

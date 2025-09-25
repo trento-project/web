@@ -15,7 +15,7 @@ defmodule TrentoWeb.V1.ActivityLogController do
     summary: "Fetches the Activity Log entries.",
     description:
       "Retrieves a paginated and filterable list of Activity Log entries, allowing clients to monitor system events, user actions, and platform changes for auditing and troubleshooting purposes.",
-    tags: ["Platform"],
+    tags: ["Platform", "MCP"],
     parameters: [
       first: [
         in: :query,
