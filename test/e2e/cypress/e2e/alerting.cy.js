@@ -1,7 +1,7 @@
 import * as settingsPage from '../pageObject/settings_po';
 
 context('Email Alerting feature', () => {
-  before(() => {
+  before(function () {
     if (!Cypress.env('ALERTING_DB_TESTS')) {
       this.skip();
     }
