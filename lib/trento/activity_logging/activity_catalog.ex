@@ -28,7 +28,8 @@ defmodule Trento.ActivityLog.ActivityCatalog do
   def supported_activities, do: Enum.map(activity_catalog(), &to_activity_type/1)
 
   @spec connection_activities() :: [activity_type()]
-  def connection_activities, do: Enum.map(get_connection_activities(), &to_activity_type/1)
+  def connection_activities,
+    do: get_connection_activities() |> Enum.map(&to_activity_type/1) |> Enum.uniq()
 
   @spec domain_event_activities() :: [activity_type()]
   def domain_event_activities, do: Enum.map(get_domain_events_activities(), &to_activity_type/1)
@@ -153,12 +154,20 @@ defmodule Trento.ActivityLog.ActivityCatalog do
   defp get_connection_activities do
     %{
       {TrentoWeb.SessionController, :create} => {:login_attempt, :always},
-      {TrentoWeb.V1.TagsController, :add_tag} => {:resource_tagging, 201},
-      {TrentoWeb.V1.TagsController, :remove_tag} => {:resource_untagging, 204},
+      {TrentoWeb.V1.TagsController, :add_tag_to_host} => {:resource_tagging, 201},
+      {TrentoWeb.V1.TagsController, :add_tag_to_cluster} => {:resource_tagging, 201},
+      {TrentoWeb.V1.TagsController, :add_tag_to_sap_system} => {:resource_tagging, 201},
+      {TrentoWeb.V1.TagsController, :add_tag_to_database} => {:resource_tagging, 201},
+      {TrentoWeb.V1.TagsController, :remove_tag_from_host} => {:resource_untagging, 204},
+      {TrentoWeb.V1.TagsController, :remove_tag_from_cluster} => {:resource_untagging, 204},
+      {TrentoWeb.V1.TagsController, :remove_tag_from_sap_system} => {:resource_untagging, 204},
+      {TrentoWeb.V1.TagsController, :remove_tag_from_database} => {:resource_untagging, 204},
       {TrentoWeb.V1.SettingsController, :update_api_key_settings} => {:api_key_generation, 200},
       {TrentoWeb.V1.SettingsController, :save_suse_manager_settings} =>
         {:saving_suma_settings, 201},
-      {TrentoWeb.V1.SettingsController, :update_suse_manager_settings} =>
+      {TrentoWeb.V1.SettingsController, :patch_suse_manager_settings} =>
+        {:changing_suma_settings, 200},
+      {TrentoWeb.V1.SettingsController, :put_suse_manager_settings} =>
         {:changing_suma_settings, 200},
       {TrentoWeb.V1.SettingsController, :delete_suse_manager_settings} =>
         {:clearing_suma_settings, 204},
@@ -167,7 +176,8 @@ defmodule Trento.ActivityLog.ActivityCatalog do
       {TrentoWeb.V1.SettingsController, :update_alerting_settings} =>
         {:changing_alerting_settings, 200},
       {TrentoWeb.V1.UsersController, :create} => {:user_creation, 201},
-      {TrentoWeb.V1.UsersController, :update} => {:user_modification, 200},
+      {TrentoWeb.V1.UsersController, :patch} => {:user_modification, 200},
+      {TrentoWeb.V1.UsersController, :put} => {:user_modification, 200},
       {TrentoWeb.V1.UsersController, :delete} => {:user_deletion, 204},
       {TrentoWeb.V1.ProfileController, :update} => {:profile_update, 200},
       {TrentoWeb.V1.ClusterController, :request_checks_execution} =>
