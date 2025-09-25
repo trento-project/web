@@ -170,13 +170,49 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
       },
       %{
         activity: :resource_tagging,
-        connection_info: {TrentoWeb.V1.TagsController, :add_tag},
+        connection_info: {TrentoWeb.V1.TagsController, :add_tag_to_host},
+        interesting_statuses: 201,
+        not_interesting_statuses: [400, 401, 403, 404, 500]
+      },
+      %{
+        activity: :resource_tagging,
+        connection_info: {TrentoWeb.V1.TagsController, :add_tag_to_cluster},
+        interesting_statuses: 201,
+        not_interesting_statuses: [400, 401, 403, 404, 500]
+      },
+      %{
+        activity: :resource_tagging,
+        connection_info: {TrentoWeb.V1.TagsController, :add_tag_to_sap_system},
+        interesting_statuses: 201,
+        not_interesting_statuses: [400, 401, 403, 404, 500]
+      },
+      %{
+        activity: :resource_tagging,
+        connection_info: {TrentoWeb.V1.TagsController, :add_tag_to_database},
         interesting_statuses: 201,
         not_interesting_statuses: [400, 401, 403, 404, 500]
       },
       %{
         activity: :resource_untagging,
-        connection_info: {TrentoWeb.V1.TagsController, :remove_tag},
+        connection_info: {TrentoWeb.V1.TagsController, :remove_tag_from_host},
+        interesting_statuses: 204,
+        not_interesting_statuses: [400, 401, 403, 404, 500]
+      },
+      %{
+        activity: :resource_untagging,
+        connection_info: {TrentoWeb.V1.TagsController, :remove_tag_from_cluster},
+        interesting_statuses: 204,
+        not_interesting_statuses: [400, 401, 403, 404, 500]
+      },
+      %{
+        activity: :resource_untagging,
+        connection_info: {TrentoWeb.V1.TagsController, :remove_tag_from_sap_system},
+        interesting_statuses: 204,
+        not_interesting_statuses: [400, 401, 403, 404, 500]
+      },
+      %{
+        activity: :resource_untagging,
+        connection_info: {TrentoWeb.V1.TagsController, :remove_tag_from_database},
         interesting_statuses: 204,
         not_interesting_statuses: [400, 401, 403, 404, 500]
       },
@@ -194,7 +230,13 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
       },
       %{
         activity: :changing_suma_settings,
-        connection_info: {TrentoWeb.V1.SettingsController, :update_suse_manager_settings},
+        connection_info: {TrentoWeb.V1.SettingsController, :patch_suse_manager_settings},
+        interesting_statuses: 200,
+        not_interesting_statuses: [400, 401, 403, 404, 500]
+      },
+      %{
+        activity: :changing_suma_settings,
+        connection_info: {TrentoWeb.V1.SettingsController, :put_suse_manager_settings},
         interesting_statuses: 200,
         not_interesting_statuses: [400, 401, 403, 404, 500]
       },
@@ -224,7 +266,13 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
       },
       %{
         activity: :user_modification,
-        connection_info: {TrentoWeb.V1.UsersController, :update},
+        connection_info: {TrentoWeb.V1.UsersController, :patch},
+        interesting_statuses: 200,
+        not_interesting_statuses: [400, 401, 403, 404, 500]
+      },
+      %{
+        activity: :user_modification,
+        connection_info: {TrentoWeb.V1.UsersController, :put},
         interesting_statuses: 200,
         not_interesting_statuses: [400, 401, 403, 404, 500]
       },
@@ -302,10 +350,10 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
       }
     ]
 
-    for %{activity: scenario_name} = scenario <- scenarios do
+    for %{activity: scenario_name, connection_info: {_, request}} = scenario <- scenarios do
       @scenario scenario
 
-      test "should detect connection activity for: #{scenario_name}",
+      test "should detect connection activity for: #{scenario_name}:#{request}",
            %{
              conn: conn
            } do
