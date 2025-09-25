@@ -148,7 +148,7 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
         excluded_versions = List.delete(available_versions, version)
         actual_versions = List.delete(available_versions, "unversioned")
 
-        # Get route aliasese from metadata openapi_operation_id entries
+        # Get route aliases from metadata openapi_operation_id entries
         openapi_operation_id_aliases =
           router.__routes__()
           |> Enum.filter(fn
@@ -181,9 +181,9 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
       end
 
       # Transforms the PathItem operation ID in cases where multiple actions are associated
-      # to the same operation.
+      # to the same path.
       # It uses the route `metadata: %{openapi_operation_id: alias_id}` to get the new id.
-      # By default open_api_spex adds a `(n)` (`n` being the occurrance number) as a suffix
+      # By default open_api_spex adds a `(n)` (`n` being the occurrence number) as a suffix
       # to the operation ID in this case, which doesn't comply as a valid URL:
       # https://github.com/open-api-spex/open_api_spex/issues/123
       # https://quobix.com/vacuum/rules/operations/operation-operationid-valid-in-url/

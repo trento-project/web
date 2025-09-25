@@ -118,15 +118,17 @@ defmodule TrentoWeb.Router do
            HostController,
            :request_checks_execution
 
+      delete "/hosts/:id", HostController, :delete
+
       post "/hosts/:id/tags", TagsController, :add_tag,
         assigns: %{resource_type: :host},
-        as: :hosts_tagging
-
-      delete "/hosts/:id", HostController, :delete
+        as: :hosts_tagging,
+        metadata: %{openapi_operation_id: :add_tag_host}
 
       delete "/hosts/:id/tags/:value", TagsController, :remove_tag,
         assigns: %{resource_type: :host},
-        as: :hosts_tagging
+        as: :hosts_tagging,
+        metadata: %{openapi_operation_id: :remove_tag_host}
 
       get "/hosts/:id/exporters_status", PrometheusController, :exporters_status
 
@@ -140,19 +142,23 @@ defmodule TrentoWeb.Router do
 
       post "/clusters/:id/tags", TagsController, :add_tag,
         assigns: %{resource_type: :cluster},
-        as: :clusters_tagging
+        as: :clusters_tagging,
+        metadata: %{openapi_operation_id: :add_tag_cluster}
 
       delete "/clusters/:id/tags/:value", TagsController, :remove_tag,
         assigns: %{resource_type: :cluster},
-        as: :clusters_tagging
+        as: :clusters_tagging,
+        metadata: %{openapi_operation_id: :remove_tag_cluster}
 
       post "/sap_systems/:id/tags", TagsController, :add_tag,
         assigns: %{resource_type: :sap_system},
-        as: :sap_systems_tagging
+        as: :sap_systems_tagging,
+        metadata: %{openapi_operation_id: :add_tag_sap_system}
 
       delete "/sap_systems/:id/tags/:value", TagsController, :remove_tag,
         assigns: %{resource_type: :sap_system},
-        as: :sap_systems_tagging
+        as: :sap_systems_tagging,
+        metadata: %{openapi_operation_id: :remove_tag_sap_system}
 
       delete "/sap_systems/:id/hosts/:host_id/instances/:instance_number",
              SapSystemController,
@@ -160,11 +166,13 @@ defmodule TrentoWeb.Router do
 
       post "/databases/:id/tags", TagsController, :add_tag,
         assigns: %{resource_type: :database},
-        as: :databases_tagging
+        as: :databases_tagging,
+        metadata: %{openapi_operation_id: :add_tag_database}
 
       delete "/databases/:id/tags/:value", TagsController, :remove_tag,
         assigns: %{resource_type: :database},
-        as: :databases_tagging
+        as: :databases_tagging,
+        metadata: %{openapi_operation_id: :remove_tag_database}
 
       delete "/databases/:id/hosts/:host_id/instances/:instance_number",
              DatabaseController,
@@ -185,7 +193,9 @@ defmodule TrentoWeb.Router do
              :request_instance_operation
       end
 
-      resources "/users", UsersController, except: [:new, :edit]
+      resources "/users", UsersController, except: [:new, :edit, :update]
+      put "/users/:id", UsersController, :update, metadata: %{openapi_operation_id: :put_user}
+      patch "/users/:id", UsersController, :update, metadata: %{openapi_operation_id: :patch_user}
 
       scope "/profile" do
         get "/", ProfileController, :show
@@ -213,8 +223,13 @@ defmodule TrentoWeb.Router do
         scope "/suse_manager" do
           get "/", SettingsController, :get_suse_manager_settings
           post "/", SettingsController, :save_suse_manager_settings
-          patch "/", SettingsController, :update_suse_manager_settings
-          put "/", SettingsController, :update_suse_manager_settings
+
+          patch "/", SettingsController, :update_suse_manager_settings,
+            metadata: %{openapi_operation_id: :patch_suse_manager_settings}
+
+          put "/", SettingsController, :update_suse_manager_settings,
+            metadata: %{openapi_operation_id: :put_suse_manager_settings}
+
           delete "/", SettingsController, :delete_suse_manager_settings
           post "/test", SettingsController, :test_suse_manager_settings
         end

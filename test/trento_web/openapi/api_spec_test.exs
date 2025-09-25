@@ -62,7 +62,7 @@ defmodule TrentoWeb.OpenApi.ApiSpecTest do
              } = V2.spec(TestRouter)
     end
 
-    test "should alias open api operationId using metadata alias" do
+    test "should alias operationId using metadata alias" do
       assert %OpenApiSpex.OpenApi{
                paths: %{
                  "/api/v1/route" => %{
