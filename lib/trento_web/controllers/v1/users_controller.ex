@@ -20,7 +20,7 @@ defmodule TrentoWeb.V1.UsersController do
 
   plug Bodyguard.Plug.Authorize,
     policy: Trento.Users.Policy,
-    action: {Phoenix.Controller, :action_name},
+    action: {__MODULE__, :get_action},
     user: {Pow.Plug, :current_user},
     params: {__MODULE__, :get_policy_resource},
     fallback: TrentoWeb.FallbackController
@@ -28,6 +28,50 @@ defmodule TrentoWeb.V1.UsersController do
   plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
 
   action_fallback TrentoWeb.FallbackController
+
+  @update_operation_options [
+    summary: "Update an existing user.",
+    tags: ["User Management"],
+    description:
+      "Updates the details of an existing user. This is a conditional HTTP request; you must provide the entity version using the If-Match header to ensure safe updates and concurrency control.",
+    parameters: [
+      id: [
+        in: :path,
+        description:
+          "Unique identifier of the user to be updated. This value must be an integer.",
+        required: true,
+        schema: %OpenApiSpex.Schema{type: :integer, example: 1}
+      ],
+      "if-match": [
+        # The field is required, we put to false to avoid openapispex validate that value with 422 status code.
+        required: false,
+        in: :header,
+        schema: %OpenApiSpex.Schema{type: :integer, example: 2},
+        description:
+          "The entity version of the user, provided in the If-Match header, to ensure safe and conditional updates."
+      ]
+    ],
+    request_body:
+      {"Request containing updated user information and entity version for safe and conditional updates.",
+       "application/json", UserUpdateRequest},
+    responses: [
+      created:
+        {"User account updated successfully, returning the updated user details and entity version for concurrency control.",
+         "application/json", UserItem,
+         headers: %{
+           etag: %{
+             required: true,
+             description:
+               "The entity version of the user, used for conditional HTTP requests and concurrency control.",
+             schema: %OpenApiSpex.Schema{type: :string}
+           }
+         }},
+      unprocessable_entity: UnprocessableEntity.response(),
+      forbidden: Schema.Forbidden.response(),
+      precondition_failed: Schema.PreconditionFailed.response(),
+      precondition_required: Schema.PreconditionRequired.response()
+    ]
+  ]
 
   operation :index,
     summary: "Gets the list of users in the system.",
@@ -106,61 +150,11 @@ defmodule TrentoWeb.V1.UsersController do
     end
   end
 
-  operation :update,
-    summary: "Update an existing user.",
-    tags: ["User Management"],
-    description:
-      "Updates the details of an existing user. This is a conditional HTTP request; you must provide the entity version using the If-Match header to ensure safe updates and concurrency control.",
-    parameters: [
-      id: [
-        in: :path,
-        description:
-          "Unique identifier of the user to be updated. This value must be an integer.",
-        required: true,
-        schema: %OpenApiSpex.Schema{type: :integer, example: 1}
-      ],
-      "if-match": [
-        # The field is required, we put to false to avoid openapispex validate that value with 422 status code.
-        required: false,
-        in: :header,
-        schema: %OpenApiSpex.Schema{type: :integer, example: 2},
-        description:
-          "The entity version of the user, provided in the If-Match header, to ensure safe and conditional updates."
-      ]
-    ],
-    request_body:
-      {"Request containing updated user information and entity version for safe and conditional updates.",
-       "application/json", UserUpdateRequest},
-    responses: [
-      created:
-        {"User account updated successfully, returning the updated user details and entity version for concurrency control.",
-         "application/json", UserItem,
-         headers: %{
-           etag: %{
-             required: true,
-             description:
-               "The entity version of the user, used for conditional HTTP requests and concurrency control.",
-             schema: %OpenApiSpex.Schema{type: :string}
-           }
-         }},
-      unprocessable_entity: UnprocessableEntity.response(),
-      forbidden: Schema.Forbidden.response(),
-      precondition_failed: Schema.PreconditionFailed.response(),
-      precondition_required: Schema.PreconditionRequired.response()
-    ]
+  operation :patch, @update_operation_options
+  operation :put, @update_operation_options
 
-  def update(%{body_params: body_params} = conn, %{id: id}) do
-    with {:ok, user} <- Users.get_user(id),
-         {:ok, lock_version} <- user_version_from_if_match_header(conn),
-         body_params <-
-           clean_params_for_sso_integration(body_params, sso_enabled?()),
-         update_params <- Map.put(body_params, :lock_version, lock_version),
-         {:ok, %User{} = user} <- Users.update_user(user, update_params),
-         :ok <- broadcast_update_or_locked_user(user),
-         conn <- attach_user_version_as_etag_header(conn, user) do
-      render(conn, :show, user: user)
-    end
-  end
+  def patch(conn, params), do: update(conn, params)
+  def put(conn, params), do: update(conn, params)
 
   operation :delete,
     summary: "Delete a user.",
@@ -191,7 +185,29 @@ defmodule TrentoWeb.V1.UsersController do
     end
   end
 
+  def get_action(%{private: %{phoenix_action: action}})
+      when action in [
+             :patch,
+             :put
+           ],
+      do: :update
+
+  def get_action(%{private: %{phoenix_action: action}}), do: action
+
   def get_policy_resource(_), do: Trento.Users.User
+
+  defp update(%{body_params: body_params} = conn, %{id: id}) do
+    with {:ok, user} <- Users.get_user(id),
+         {:ok, lock_version} <- user_version_from_if_match_header(conn),
+         body_params <-
+           clean_params_for_sso_integration(body_params, sso_enabled?()),
+         update_params <- Map.put(body_params, :lock_version, lock_version),
+         {:ok, %User{} = user} <- Users.update_user(user, update_params),
+         :ok <- broadcast_update_or_locked_user(user),
+         conn <- attach_user_version_as_etag_header(conn, user) do
+      render(conn, :show, user: user)
+    end
+  end
 
   defp broadcast_update_or_locked_user(%User{id: id, locked_at: nil}),
     do: TrentoWeb.Endpoint.broadcast("users:#{id}", "user_updated", %{})

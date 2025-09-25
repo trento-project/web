@@ -12,13 +12,29 @@ defmodule TrentoWeb.V1.SettingsController do
 
   plug Bodyguard.Plug.Authorize,
     policy: Trento.Settings.Policy,
-    action: {Phoenix.Controller, :action_name},
+    action: {__MODULE__, :get_action},
     user: {Pow.Plug, :current_user},
     params: {__MODULE__, :get_policy_resource},
     fallback: TrentoWeb.FallbackController
 
   plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
   action_fallback TrentoWeb.FallbackController
+
+  @update_suse_manager_operation_options [
+    summary: "Updates the SUSE Multi-Linux Manager settings.",
+    tags: ["Settings"],
+    description:
+      "Updates the configuration and credentials for SUSE Multi-Linux Manager integration, supporting ongoing software management and updates.",
+    request_body:
+      {"Request body containing updated SUSE Multi-Linux Manager credentials and configuration for ongoing secure integration and software management.",
+       "application/json", Schema.Platform.UpdateSuseManagerSettingsRequest},
+    responses: [
+      ok:
+        {"SUSE Multi-Linux Manager settings have been successfully updated and saved, including credentials and configuration for secure integration.",
+         "application/json", Schema.Platform.SuseManagerSettings},
+      unprocessable_entity: Schema.UnprocessableEntity.response()
+    ]
+  ]
 
   operation :get_api_key_settings,
     summary: "Get API key settings.",
@@ -178,32 +194,14 @@ defmodule TrentoWeb.V1.SettingsController do
     end
   end
 
-  operation :update_suse_manager_settings,
-    summary: "Updates the SUSE Multi-Linux Manager settings.",
-    tags: ["Settings"],
-    description:
-      "Updates the configuration and credentials for SUSE Multi-Linux Manager integration, supporting ongoing software management and updates.",
-    request_body:
-      {"Request body containing updated SUSE Multi-Linux Manager credentials and configuration for ongoing secure integration and software management.",
-       "application/json", Schema.Platform.UpdateSuseManagerSettingsRequest},
-    responses: [
-      ok:
-        {"SUSE Multi-Linux Manager settings have been successfully updated and saved, including credentials and configuration for secure integration.",
-         "application/json", Schema.Platform.SuseManagerSettings},
-      unprocessable_entity: Schema.UnprocessableEntity.response()
-    ]
+  operation :patch_suse_manager_settings, @update_suse_manager_operation_options
+  operation :put_suse_manager_settings, @update_suse_manager_operation_options
 
-  @spec update_suse_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
-  def update_suse_manager_settings(conn, _) do
-    update_settings_paylod = OpenApiSpex.body_params(conn)
-    :ok = propagate_correlation_id(:suse_manager_settings, @correlation_ttl)
+  @spec patch_suse_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
+  def patch_suse_manager_settings(conn, params), do: update_suse_manager_settings(conn, params)
 
-    with {:ok, saved_settings} <- Settings.change_suse_manager_settings(update_settings_paylod) do
-      conn
-      |> put_status(:ok)
-      |> render(:suse_manager, %{settings: saved_settings})
-    end
-  end
+  @spec put_suse_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
+  def put_suse_manager_settings(conn, params), do: update_suse_manager_settings(conn, params)
 
   operation :delete_suse_manager_settings,
     summary: "Clears the SUSE Multi-Linux Manager settings.",
@@ -338,10 +336,30 @@ defmodule TrentoWeb.V1.SettingsController do
     end
   end
 
+  def get_action(%{private: %{phoenix_action: action}})
+      when action in [
+             :patch_suse_manager_settings,
+             :put_suse_manager_settings
+           ],
+      do: :update_suse_manager_settings
+
+  def get_action(%{private: %{phoenix_action: action}}), do: action
+
   def get_policy_resource(conn) do
     conn
-    |> Phoenix.Controller.action_name()
+    |> get_action()
     |> Trento.Settings.Policy.get_resource()
+  end
+
+  defp update_suse_manager_settings(conn, _) do
+    update_settings_paylod = OpenApiSpex.body_params(conn)
+    :ok = propagate_correlation_id(:suse_manager_settings, @correlation_ttl)
+
+    with {:ok, saved_settings} <- Settings.change_suse_manager_settings(update_settings_paylod) do
+      conn
+      |> put_status(:ok)
+      |> render(:suse_manager, %{settings: saved_settings})
+    end
   end
 
   defp propagate_correlation_id(ctx, correlation_ttl)
