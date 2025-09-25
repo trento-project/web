@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
 import PageHeader from '@common/PageHeader';
+import PersonalAccessTokens from '@common/PersonalAccessTokens';
 import { isAdmin } from '@lib/model/users';
 import { isSingleSignOnEnabled } from '@lib/auth/config';
 import ProfileForm from '@pages/Profile/ProfileForm';
@@ -11,6 +12,8 @@ import {
   initiateTotpEnrolling,
   confirmTotpEnrolling,
   resetTotpEnrolling,
+  deletePersonalAccessToken,
+  generatePersonalAccessToken,
 } from '@lib/api/users';
 import {
   setUser as setUserInState,
@@ -30,6 +33,7 @@ function ProfilePage() {
   const [userState, setUser] = useState(null);
   const [totpEnrollmentSecret, setTotpEnrollmentSecret] = useState('');
   const [totpEnrollmentQrData, setTotpEnrollmentQrData] = useState('');
+  const [generatedAccessToken, setGeneratedAccessToken] = useState(null);
 
   const dispatch = useDispatch();
 
@@ -137,6 +141,32 @@ function ProfilePage() {
       });
   };
 
+  const generateToken = (name, expiresAt) => {
+    generatePersonalAccessToken(name, expiresAt)
+      .then(({ data: { jti, expires_at, access_token } }) => {
+        const updatedTokens = [
+          { jti, name, expires_at },
+          ...userState.personal_access_tokens,
+        ];
+        setUser({ ...userState, personal_access_tokens: updatedTokens });
+        setGeneratedAccessToken(access_token);
+        toast.success('Personal access token generated!');
+      })
+      .catch(() => toast.error('Error generating personal access token.'));
+  };
+
+  const deleteToken = (jti) => {
+    deletePersonalAccessToken(jti)
+      .then(() => {
+        const updatedTokens = userState.personal_access_tokens.filter(
+          (token) => token.jti !== jti
+        );
+        setUser({ ...userState, personal_access_tokens: updatedTokens });
+        toast.success('Personal access token deleted!');
+      })
+      .catch(() => toast.error('Error deleting personal access token.'));
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -145,6 +175,7 @@ function ProfilePage() {
     email,
     username,
     abilities,
+    personal_access_tokens: personalAccessTokens,
     analytics_enabled: analyticsEnabled,
     totp_enabled: totpEnabled,
   } = userState;
@@ -175,6 +206,15 @@ function ProfilePage() {
         onEnableTotp={totpInitiateEnrolling}
         onVerifyTotp={verifyTotpEnrollment}
         onResetTotp={disableTotp}
+      />
+      <PersonalAccessTokens
+        className="mt-4"
+        personalAccessTokens={personalAccessTokens}
+        generateTokenAvailable
+        generatedAccessToken={generatedAccessToken}
+        onCloseGeneratedTokenModal={setGeneratedAccessToken}
+        onDeleteToken={deleteToken}
+        onGenerateToken={generateToken}
       />
     </>
   );
