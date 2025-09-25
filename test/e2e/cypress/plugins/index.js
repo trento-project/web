@@ -73,7 +73,7 @@ const mailpitUrl = 'http://localhost:8025/api/v1';
 
 const searchEmailInMailpit = (
   subject,
-  options = { retries: 30, delay: 500 }
+  options = { retries: 40, delay: 500 }
 ) => {
   const { retries, delay } = options;
   const searchUrl = `${mailpitUrl}/search?query=subject:"${subject}"`;
