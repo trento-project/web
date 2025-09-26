@@ -982,18 +982,6 @@ export const resetAlertingSettingsDB = () => {
   cy.exec(`cd ${Cypress.env('project_root')} && mix clear_alerting_settings`);
 };
 
-export const getAlertingSettings = () => {
-  return basePage.apiLogin().then(({ accessToken }) =>
-    cy.request({
-      url: '/api/v1/settings/alerting',
-      method: 'GET',
-      auth: {
-        bearer: accessToken,
-      },
-      failOnStatusCode: false,
-    })
-  );
-};
 export const saveInitialAlertingSettings = () => {
   basePage.apiLogin().then(({ accessToken }) => {
     cy.request({
@@ -1015,27 +1003,6 @@ export const saveInitialAlertingSettings = () => {
   });
 };
 
-export const apiSetDevEnvAlertingSettings = (method = 'POST') => {
-  basePage.apiLogin().then(({ accessToken }) => {
-    cy.request({
-      url: '/api/v1/settings/alerting',
-      method: method,
-      auth: {
-        bearer: accessToken,
-      },
-      body: {
-        enabled: alertingDevEnvSettings.enabled,
-        smtp_server: alertingDevEnvSettings.smtpServer,
-        smtp_port: alertingDevEnvSettings.smtpPort,
-        smtp_username: alertingDevEnvSettings.smtpUsername,
-        smtp_password: 'pass',
-        sender_email: alertingDevEnvSettings.senderEmail,
-        recipient_email: alertingDevEnvSettings.recipientEmail,
-      },
-    });
-  });
-};
-
 export const apiCreateUserWithSettingsAbilities = () =>
   basePage.apiCreateUserWithAbilities([
     { name: 'all', resource: 'activity_logs_settings' },
@@ -1043,25 +1010,3 @@ export const apiCreateUserWithSettingsAbilities = () =>
     { name: 'all', resource: 'suma_settings' },
     { name: 'all', resource: 'alerting_settings' },
   ]);
-
-export const emailIsReceived = (type) => {
-  cy.task('searchEmailInMailpit', `Trento Alert: ${type}`).then((result) => {
-    cy.wrap(result.length).should('equal', 1);
-  });
-};
-
-export const triggerHostAlertingEmail = () => {
-  cy.task('startAgentHeartbeat', ['9cd46919-5f19-59aa-993e-cf3736c71053']);
-  basePage.stopAgentsHeartbeat();
-};
-
-export const triggerClusterAlertingEmail = () => {
-  basePage.loadScenario('cluster-unnamed');
-  basePage.loadScenario('cluster-1-SOK');
-};
-
-export const triggerSapSystemAlertingEmail = () =>
-  basePage.loadScenario('sap-system-detail-RED');
-
-export const triggerDatabaseAlertingEmail = () =>
-  basePage.loadScenario('hana-database-detail-RED');
