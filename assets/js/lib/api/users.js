@@ -25,3 +25,8 @@ export const resetTotpEnrolling = () => del('/profile/totp_enrollment');
 
 export const confirmTotpEnrolling = (payload) =>
   post('/profile/totp_enrollment', payload);
+
+export const generatePersonalAccessToken = (name, expiresAt) =>
+  post('/profile/tokens', { name, expires_at: expiresAt });
+
+export const deletePersonalAccessToken = (jti) => del(`/profile/tokens/${jti}`);
