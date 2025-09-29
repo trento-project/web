@@ -4,7 +4,7 @@ defmodule TrentoWeb.Router do
   use PowAssent.Phoenix.Router
 
   # From newest to oldest
-  @available_api_versions ["unversioned", "v2", "v1"]
+  @available_api_versions ["v2", "v1"]
 
   pipeline :browser do
     plug :accepts, ["html"]

@@ -143,30 +143,26 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
       defp build_paths_for_version(version, router) do
         available_versions = router.available_api_versions()
 
-        excluded_versions = List.delete(available_versions, version)
-        actual_versions = List.delete(available_versions, "unversioned")
-
         router
         |> Paths.from_router()
-        |> Enum.reject(fn {path, _info} ->
-          current_version =
-            path
-            |> String.trim("/")
-            |> String.split("/")
-            |> Enum.at(1)
-            |> map_version(actual_versions)
-
-          Enum.member?(excluded_versions, current_version)
+        |> Enum.filter(fn {path, _info} ->
+          path
+          |> String.trim("/")
+          |> String.split("/")
+          |> Enum.at(1)
+          |> include_path?(version, available_versions)
         end)
         |> Map.new()
       end
 
-      defp map_version(version, actual_versions) do
-        case version in actual_versions do
-          true -> version
-          _ -> "unversioned"
-        end
-      end
+      defp include_path?(path_version, "unversioned", available_versions),
+        do: not Enum.member?(available_versions, path_version)
+
+      defp include_path?(version, version, _available_versions),
+        do: true
+
+      defp include_path?(_path_version, _api_version, _available_versions),
+        do: false
     end
   end
 end
