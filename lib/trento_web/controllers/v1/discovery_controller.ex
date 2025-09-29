@@ -12,7 +12,7 @@ defmodule TrentoWeb.V1.DiscoveryController do
 
   operation :collect,
     summary: "Collect data from the target infrastructure.",
-    tags: ["Agent", "MCP"],
+    tags: ["Agent"],
     description:
       "Allows agents to submit collected data from the target infrastructure for processing and analysis, supporting automated discovery and system inventory updates.",
     request_body:
