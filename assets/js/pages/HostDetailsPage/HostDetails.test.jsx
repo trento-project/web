@@ -586,8 +586,6 @@ describe('HostDetails component', () => {
     );
   });
 
-
-
   describe('Host reboot operation button', () => {
     it('should disable host reboot when not all instances are stopped', async () => {
       const user = userEvent.setup();
@@ -707,11 +705,8 @@ describe('HostDetails component', () => {
       });
 
       expect(rebootMenuItem).toBeDisabled();
-
     });
   });
-
-
 
   describe('exporters', () => {
     it.each([
