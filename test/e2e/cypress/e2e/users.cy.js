@@ -423,4 +423,39 @@ describe('Users', () => {
         });
     });
   });
+
+  describe('Edit user personal access tokens', () => {
+    beforeEach(() => {
+      usersPage.apiDeleteAllUsers();
+      usersPage.apiCreateUser();
+      basePage.apiLoginAndCreateSession();
+    });
+
+    it('should show an empty list of personal access tokens', () => {
+      usersPage.visit();
+      usersPage.clickNewUser();
+      usersPage.personalAccessTokensAreDisplayed([]);
+    });
+
+    it('should display personal access tokens created by selected user', () => {
+      usersPage.apiCreatePersonalAccessToken().then(({ name }) => {
+        usersPage.visit();
+        usersPage.clickNewUser();
+        usersPage.personalAccessTokensAreDisplayed([{ name }]);
+      });
+    });
+
+    it('should delete the user personal access token and revoke access to guarded resources', () => {
+      usersPage
+        .apiCreatePersonalAccessToken()
+        .then(({ access_token: token }) => {
+          usersPage.visit();
+          usersPage.clickNewUser();
+          usersPage.clickDeleteTokenButton();
+          usersPage.clickModalDeleteTokenButton();
+          usersPage.personalAccessTokensAreDisplayed([]);
+          usersPage.apiPersonalAccessTokenUnauthorized(token);
+        });
+    });
+  });
 });
