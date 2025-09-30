@@ -24,7 +24,7 @@ defmodule Trento.Users.PolicyTest do
   test "should allow write operations if the user has all:all ability" do
     user = %User{abilities: [%Ability{name: "all", resource: "all"}]}
 
-    Enum.each([:update, :create, :delete], fn action ->
+    Enum.each([:update, :create, :delete, :revoke_personal_access_token], fn action ->
       assert true == Policy.authorize(action, user, User)
     end)
   end
@@ -32,7 +32,7 @@ defmodule Trento.Users.PolicyTest do
   test "should allow write operations if the user has all:users ability" do
     user = %User{abilities: [%Ability{name: "all", resource: "all"}]}
 
-    Enum.each([:update, :create, :delete], fn action ->
+    Enum.each([:update, :create, :delete, :revoke_personal_access_token], fn action ->
       assert true == Policy.authorize(action, user, User)
     end)
   end
@@ -40,8 +40,11 @@ defmodule Trento.Users.PolicyTest do
   test "should disallow other abilities" do
     user = %User{abilities: [%Ability{name: "other", resource: "other"}]}
 
-    Enum.each([:update, :create, :index, :show, :delete], fn action ->
-      assert false == Policy.authorize(action, user, User)
-    end)
+    Enum.each(
+      [:update, :create, :index, :show, :delete, :revoke_personal_access_token],
+      fn action ->
+        assert false == Policy.authorize(action, user, User)
+      end
+    )
   end
 end

@@ -32,6 +32,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
     test "should return forbidden on any controller action if the user does not have the right permission",
          %{conn: conn, api_spec: api_spec} do
       %{id: user_id} = insert(:user)
+      %{jti: jti} = build(:personal_access_token)
 
       conn =
         conn
@@ -44,7 +45,8 @@ defmodule TrentoWeb.V1.UsersControllerTest do
           post(conn, "/api/v1/users", %{}),
           patch(conn, "/api/v1/users/1", %{}),
           get(conn, "/api/v1/users/1"),
-          delete(conn, "/api/v1/users/1")
+          delete(conn, "/api/v1/users/1"),
+          delete(conn, "/api/v1/users/1/tokens/#{jti}")
         ],
         fn conn ->
           conn
@@ -456,6 +458,52 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       |> response(:no_content)
 
       assert_broadcast "user_deleted", %{}, 1000
+    end
+  end
+
+  describe "revoke personal access token" do
+    test "should not delete the token when the user is not found", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      %{jti: jti} = build(:personal_access_token)
+
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> delete("/api/v1/users/8908409480/tokens/#{jti}")
+      |> json_response(:not_found)
+      |> assert_schema("NotFound", api_spec)
+    end
+
+    test "should not delete the token when the token jti is not found", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      %{id: id} = insert(:user)
+      %{jti: jti} = build(:personal_access_token)
+
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> delete("/api/v1/users/#{id}/tokens/#{jti}")
+      |> json_response(:not_found)
+      |> assert_schema("NotFound", api_spec)
+    end
+
+    test "should delete the token when the user and the token jti are found", %{conn: conn} do
+      %{id: id} = insert(:user)
+      %{jti: jti} = insert(:personal_access_token, user_id: id)
+
+      {:ok, _, _} =
+        TrentoWeb.UserSocket
+        |> socket("user_id", %{current_user_id: id})
+        |> subscribe_and_join(TrentoWeb.UserChannel, "users:#{id}")
+
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> delete("/api/v1/users/#{id}/tokens/#{jti}")
+      |> response(:no_content)
+
+      assert_broadcast "user_updated", %{}, 1000
     end
   end
 end
