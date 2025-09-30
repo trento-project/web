@@ -616,13 +616,14 @@ jobs:
             env:
               MIX_ENV: dev
               CYPRESS_ALERTING_DB_TESTS: true
+              CYPRESS_ALERTING_TESTS: true
               NODEJS_VERSION: "22"
           - test: alerting_from_env
             cypress_spec: |
               cypress/e2e/alerting.cy.js
             env:
               MIX_ENV: dev
-              CYPRESS_ALERTING_DB_TESTS: true              
+              CYPRESS_ALERTING_TESTS: true
               NODEJS_VERSION: "22"
     env: ${{ matrix.env }}
     steps:
