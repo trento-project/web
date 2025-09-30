@@ -368,3 +368,16 @@ export const WithForbiddenOperation = {
     userAbilities: [],
   },
 };
+
+export const WithRebootEnabled = {
+  args: {
+    ...Default.args,
+    operationsEnabled: true,
+    sapInstances: sapInstances.map((instance) => ({
+      ...instance,
+      health: 'unknown',
+    })),
+    cluster: undefined,
+    heartbeat: 'passing',
+  },
+};

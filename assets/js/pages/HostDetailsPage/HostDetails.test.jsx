@@ -586,6 +586,133 @@ describe('HostDetails component', () => {
     );
   });
 
+
+
+  describe('Host reboot operation button', () => {
+    it('should disable host reboot when not all instances are stopped', async () => {
+      const user = userEvent.setup();
+      const cluster = undefined;
+      const sapInstances = databaseInstanceFactory
+        .buildList(1)
+        .map((instance) => ({ ...instance, type: DATABASE_TYPE }))
+        .map((instance) => ({ ...instance, health: 'passing' }));
+
+      renderWithRouter(
+        <HostDetails
+          agentVersion="1.0.0"
+          userAbilities={userAbilities}
+          sapInstances={sapInstances}
+          cluster={cluster}
+          operationsEnabled
+        />
+      );
+
+      const operationsButton = screen.getByRole('button', {
+        name: 'Operations',
+      });
+      await user.click(operationsButton);
+
+      const rebootMenuItem = screen.getByRole('menuitem', {
+        name: 'Reboot Host',
+      });
+
+      expect(rebootMenuItem).toBeDisabled();
+    });
+
+    it('should disable host reboot when cluster type does not allow it', async () => {
+      const user = userEvent.setup();
+      const cluster = { type: 'unsupported_cluster_type' };
+      const sapInstances = databaseInstanceFactory
+        .buildList(1)
+        .map((instance) => ({ ...instance, type: DATABASE_TYPE }))
+        .map((instance) => ({ ...instance, health: 'unknown' }));
+
+      renderWithRouter(
+        <HostDetails
+          agentVersion="1.0.0"
+          userAbilities={userAbilities}
+          sapInstances={sapInstances}
+          cluster={cluster}
+          operationsEnabled
+        />
+      );
+
+      const operationsButton = screen.getByRole('button', {
+        name: 'Operations',
+      });
+      await user.click(operationsButton);
+
+      const rebootMenuItem = screen.getByRole('menuitem', {
+        name: 'Reboot Host',
+      });
+
+      expect(rebootMenuItem).toBeDisabled();
+    });
+
+    it('should enable host reboot when cluster type allows it', async () => {
+      const user = userEvent.setup();
+      const cluster = { type: 'hana_scale_up' };
+      const sapInstances = databaseInstanceFactory
+        .buildList(1)
+        .map((instance) => ({ ...instance, type: DATABASE_TYPE }))
+        .map((instance) => ({ ...instance, health: 'unknown' }));
+
+      renderWithRouter(
+        <HostDetails
+          agentVersion="1.0.0"
+          userAbilities={userAbilities}
+          sapInstances={sapInstances}
+          cluster={cluster}
+          operationsEnabled
+        />
+      );
+
+      const operationsButton = screen.getByRole('button', {
+        name: 'Operations',
+      });
+      await user.click(operationsButton);
+
+      const rebootMenuItem = screen.getByRole('menuitem', {
+        name: 'Reboot Host',
+      });
+
+      expect(rebootMenuItem).toBeEnabled();
+    });
+
+    it('should disable host reboot when the user abilities are not compatible', async () => {
+      const user = userEvent.setup();
+      const cluster = { type: 'hana_scale_up' };
+      const sapInstances = databaseInstanceFactory
+        .buildList(1)
+        .map((instance) => ({ ...instance, type: DATABASE_TYPE }))
+        .map((instance) => ({ ...instance, health: 'unknown' }));
+
+      renderWithRouter(
+        <HostDetails
+          agentVersion="1.0.0"
+          userAbilities={[{ name: 'all', resource: 'another_resource' }]}
+          sapInstances={sapInstances}
+          cluster={cluster}
+          operationsEnabled
+        />
+      );
+
+      const operationsButton = screen.getByRole('button', {
+        name: 'Operations',
+      });
+      await user.click(operationsButton);
+
+      const rebootMenuItem = screen.getByRole('menuitem', {
+        name: 'Reboot Host',
+      });
+
+      expect(rebootMenuItem).toBeDisabled();
+
+    });
+  });
+
+
+
   describe('exporters', () => {
     it.each([
       {
