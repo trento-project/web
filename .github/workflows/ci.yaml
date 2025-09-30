@@ -432,10 +432,9 @@ jobs:
           repo: trento-project/photofinish
           tag: v1.4.2
           cache: enable
+          chmod: +x
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Give executable permissions to photofinish
-        run: chmod +x $(whereis photofinish | cut -d" " -f2)
       - name: Cypress run
         uses: cypress-io/github-action@v6
         env:
@@ -538,10 +537,9 @@ jobs:
           repo: trento-project/photofinish
           tag: v1.4.2
           cache: enable
+          chmod: +x
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Give executable permissions to photofinish
-        run: chmod +x $(whereis photofinish | cut -d" " -f2)
       - name: Cypress run
         uses: cypress-io/github-action@v6
         env:
@@ -605,6 +603,7 @@ jobs:
           - test: alerting_db
             cypress_spec: |
               cypress/e2e/settings_integration.cy.js
+              cypress/e2e/alerting.cy.js
             config_file_content: |
               import Config
 
@@ -617,6 +616,14 @@ jobs:
             env:
               MIX_ENV: dev
               CYPRESS_ALERTING_DB_TESTS: true
+              CYPRESS_ALERTING_TESTS: true
+              NODEJS_VERSION: "22"
+          - test: alerting_from_env
+            cypress_spec: |
+              cypress/e2e/alerting.cy.js
+            env:
+              MIX_ENV: dev
+              CYPRESS_ALERTING_TESTS: true
               NODEJS_VERSION: "22"
     env: ${{ matrix.env }}
     steps:
@@ -657,6 +664,15 @@ jobs:
           path: |
             test/e2e/node_modules
           key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
+      - name: Install photofinish
+        uses: jaxxstorm/action-install-gh-release@v2.1.0
+        with:
+          repo: trento-project/photofinish
+          tag: v1.4.2
+          cache: enable
+          chmod: +x
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}        
       - name: "Docker compose dependencies"
         uses: isbang/compose-action@v2.3.0
         with:
@@ -673,6 +689,7 @@ jobs:
         uses: cypress-io/github-action@v6
         env:
           cypress_video: false
+          cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
         with:
           working-directory: test/e2e
           spec: ${{ matrix.cypress_spec }}
@@ -972,10 +989,9 @@ jobs:
           repo: trento-project/photofinish
           tag: v1.4.2
           cache: enable
+          chmod: +x
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Give executable permissions to photofinish
-        run: chmod +x $(whereis photofinish | cut -d" " -f2)
       - name: Push data
         run: |
           photofinish run demo -u "http://$TRENTO_DEMO_IP/api/collect" "$TRENTO_API_KEY"
