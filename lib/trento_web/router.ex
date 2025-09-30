@@ -35,6 +35,11 @@ defmodule TrentoWeb.Router do
     plug OpenApiSpex.Plug.PutApiSpec, module: TrentoWeb.OpenApi.Unversioned.ApiSpec
   end
 
+  pipeline :api_latest do
+    plug :api
+    plug OpenApiSpex.Plug.PutApiSpec, module: TrentoWeb.OpenApi.Latest.ApiSpec
+  end
+
   pipeline :protected_api do
     plug Unplug,
       if: {Unplug.Predicates.AppConfigEquals, {:trento, :jwt_authentication_enabled, true}},
@@ -67,7 +72,8 @@ defmodule TrentoWeb.Router do
       urls: [
         %{url: "/api/v1/openapi", name: "Version 1"},
         %{url: "/api/v2/openapi", name: "Version 2"},
-        %{url: "/api/unversioned/openapi", name: "Unversioned"}
+        %{url: "/api/unversioned/openapi", name: "Unversioned"},
+        %{url: "/api/latest/openapi", name: "Latest"}
       ]
   end
 
@@ -280,6 +286,11 @@ defmodule TrentoWeb.Router do
 
     scope "/unversioned" do
       pipe_through :unversioned_api
+      get "/openapi", OpenApiSpex.Plug.RenderSpec, []
+    end
+
+    scope "/latest" do
+      pipe_through :api_latest
       get "/openapi", OpenApiSpex.Plug.RenderSpec, []
     end
   end
