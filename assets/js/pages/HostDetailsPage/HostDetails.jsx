@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { get, zipWith, startCase, some } from 'lodash';
+import { get, zipWith, startCase, some, every } from 'lodash';
 import classNames from 'classnames';
 import {
   EOS_CLEAR_ALL,
@@ -68,6 +68,20 @@ export const buildCidrNotation = (ipAddresses, netmasks) =>
     netmasks,
     (address, netmask) => `${address}${netmask ? `/${netmask}` : ''}`
   );
+
+const clusterCanReboot = (cluster) => {
+  if (!cluster) {
+    return true;
+  }
+  switch (get(cluster, 'type')) {
+    case 'hana_scale_up':
+    case 'ascs_ers':
+    case 'hana_scale_out':
+      return true;
+    default:
+      return false;
+  }
+}
 
 function HostDetails({
   agentVersion,
@@ -170,8 +184,7 @@ function HostDetails({
     setSimpleOperationModalOpen(false);
   };
 
-  const isHanaRunning = some(sapInstances, { type: DATABASE_TYPE });
-  const isAppRunning = some(sapInstances, { type: APPLICATION_TYPE });
+  const allInstancesStopped = every(sapInstances, { health: 'unknown' });
 
   return (
     <>
@@ -238,9 +251,7 @@ function HostDetails({
                       value: 'Reboot Host',
                       running: runningOperationName === HOST_REBOOT,
                       disabled:
-                        heartbeat !== 'passing' ||
-                        !isHanaRunning ||
-                        !isAppRunning,
+                        !allInstancesStopped || !clusterCanReboot(cluster),
                       permitted: ['reboot:host'],
                       onClick: openOperationModal(HOST_REBOOT),
                     },
