@@ -81,7 +81,7 @@ const clusterCanReboot = (cluster) => {
     default:
       return false;
   }
-}
+};
 
 function HostDetails({
   agentVersion,
