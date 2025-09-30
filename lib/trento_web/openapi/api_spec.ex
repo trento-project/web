@@ -12,6 +12,12 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
     use TrentoWeb.OpenApi.ApiSpec,
       api_version: "unversioned"
   """
+  alias TrentoWeb.OpenApi.ApiSpec
+
+  alias OpenApiSpex.{
+    Operation,
+    Paths
+  }
 
   defmacro __using__(opts) do
     api_version =
@@ -24,7 +30,6 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
         Info,
         License,
         OpenApi,
-        Paths,
         SecurityScheme,
         Server,
         Tag
@@ -63,7 +68,7 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
             }
           },
           security: [%{"authorization" => []}],
-          paths: build_paths_for_version(unquote(api_version), router),
+          paths: ApiSpec.build_paths_for_version(unquote(api_version), router),
           tags: [
             %Tag{
               name: "Agent",
@@ -139,30 +144,46 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
           }
         end
       end
-
-      defp build_paths_for_version(version, router) do
-        available_versions = router.available_api_versions()
-
-        router
-        |> Paths.from_router()
-        |> Enum.filter(fn {path, _info} ->
-          path
-          |> String.trim("/")
-          |> String.split("/")
-          |> Enum.at(1)
-          |> include_path?(version, available_versions)
-        end)
-        |> Map.new()
-      end
-
-      defp include_path?(path_version, "unversioned", available_versions),
-        do: not Enum.member?(available_versions, path_version)
-
-      defp include_path?(version, version, _available_versions),
-        do: true
-
-      defp include_path?(_path_version, _api_version, _available_versions),
-        do: false
     end
   end
+
+  def build_paths_for_version("latest", router) do
+    router
+    |> Paths.from_router()
+    |> Enum.filter(fn {path, path_item} ->
+      path_item
+      |> Map.from_struct()
+      |> Map.values()
+      |> Enum.any?(fn
+        %Operation{deprecated: true} -> false
+        %Operation{} -> true
+        _ -> false
+      end)
+    end)
+    |> Map.new()
+  end
+
+  def build_paths_for_version(version, router) do
+    available_versions = router.available_api_versions()
+
+    router
+    |> Paths.from_router()
+    |> Enum.filter(fn {path, _info} ->
+      path
+      |> String.trim("/")
+      |> String.split("/")
+      |> Enum.at(1)
+      |> include_path?(version, available_versions)
+    end)
+    |> Map.new()
+  end
+
+  defp include_path?(route_api_version, "unversioned", available_versions),
+    do: not Enum.member?(available_versions, route_api_version)
+
+  defp include_path?(version, version, _available_versions),
+    do: true
+
+  defp include_path?(_route_api_version, _api_version, _available_versions),
+    do: false
 end
