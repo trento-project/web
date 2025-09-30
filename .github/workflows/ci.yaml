@@ -292,15 +292,6 @@ jobs:
     env:
       NODEJS_VERSION: "22"
     if: github.event_name != 'repository_dispatch' && github.secret_source != 'None' && vars.CHROMATIC_ENABLED == 'true'
-    strategy:
-      matrix:
-        include:
-          - elixir: "1.15"
-            otp: "26"
-            nodejs: "20"
-          - elixir: "1.18"
-            otp: "27"
-            nodejs: "22"
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -310,12 +301,12 @@ jobs:
         id: setup-elixir
         uses: erlef/setup-beam@v1
         with:
-          otp-version: ${{ matrix.otp }}
-          elixir-version: ${{ matrix.elixir  }}
+          otp-version: "27"
+          elixir-version: "1.18"
       - name: Setup Node
         uses: actions/setup-node@v5
         with:
-          node-version: ${{ matrix.nodejs }}
+          node-version: ${{ env.NODEJS_VERSION }}
       - name: Retrieve Elixir Cached Dependencies
         uses: actions/cache@v4
         id: mix-cache
@@ -331,7 +322,7 @@ jobs:
         with:
           path: |
             assets/node_modules
-          key: nodejs-${{ matrix.nodejs }}-${{ hashFiles('assets/package-lock.json') }}
+          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Build CSS
         run: npx tailwindcss --input=css/app.css --output=../priv/static/assets/app.css --postcss
         working-directory: assets
