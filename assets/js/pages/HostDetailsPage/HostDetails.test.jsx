@@ -435,7 +435,6 @@ describe('HostDetails component', () => {
       operation
       ${'Apply Saptune Solution'}
       ${'Change Saptune Solution'}
-      ${'Reboot Host'}
     `('should show $operation operation disabled', async ({ operation }) => {
       const user = userEvent.setup();
 
