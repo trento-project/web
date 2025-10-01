@@ -246,6 +246,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
           resources: %Schema{
             description:
               "A list of cluster resources associated with this HANA cluster, supporting infrastructure management.",
+            type: :array,
             items: ClusterResource
           }
         },
@@ -470,6 +471,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
           resources: %Schema{
             description:
               "A list of cluster resources associated with this ASCS/ERS cluster, supporting infrastructure management.",
+            type: :array,
             items: ClusterResource
           }
         },
