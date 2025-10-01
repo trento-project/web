@@ -12,7 +12,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
 
     OpenApiSpex.schema(
       %{
-        title: "UserTOTPEnrollmentPayload",
+        title: "UserTOTPEnrollmentPayload_V1",
         description: "Trento User TOTP enrollment payload.",
         type: :object,
         additionalProperties: false,
@@ -46,7 +46,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
 
     OpenApiSpex.schema(
       %{
-        title: "UserTOTPEnrollmentConfirmPayload",
+        title: "UserTOTPEnrollmentConfirmPayload_V1",
         description: "Trento User TOTP enrollment completed payload.",
         type: :object,
         additionalProperties: false,
@@ -73,7 +73,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
 
     OpenApiSpex.schema(
       %{
-        title: "UserTOTPEnrollmentConfirmRequest",
+        title: "UserTOTPEnrollmentConfirmRequest_V1",
         description: "Trento User totp enrollment confirmation payload.",
         type: :object,
         additionalProperties: false,
@@ -99,7 +99,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
 
     OpenApiSpex.schema(
       %{
-        title: "UserProfile",
+        title: "UserProfile_V1",
         description: "Trento User profile.",
         type: :object,
         additionalProperties: false,
@@ -205,7 +205,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
 
     OpenApiSpex.schema(
       %{
-        title: "UserProfileUpdateRequest",
+        title: "UserProfileUpdateRequest_V1",
         description: "Request body to update a user profile.",
         additionalProperties: false,
         type: :object,
@@ -272,7 +272,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
 
     OpenApiSpex.schema(
       %{
-        title: "UserCreationRequest",
+        title: "UserCreationRequest_V1",
         description:
           "Represents the request body to create a new user, including identification, credentials, and abilities for system access and management.",
         type: :object,
@@ -343,7 +343,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
 
     OpenApiSpex.schema(
       %{
-        title: "UserUpdateRequest",
+        title: "UserUpdateRequest_V1",
         description:
           "Represents the request body to update an existing user, including identification, credentials, abilities, and TOTP settings for system access and management.",
         type: :object,
@@ -423,7 +423,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
 
     OpenApiSpex.schema(
       %{
-        title: "UserItem",
+        title: "UserItem_V1",
         description: "User entity in the system.",
         type: :object,
         additionalProperties: false,
@@ -515,7 +515,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
 
     OpenApiSpex.schema(
       %{
-        title: "UserCollection",
+        title: "UserCollection_V1",
         description: "A collection of users in the system.",
         type: :array,
         items: UserItem,

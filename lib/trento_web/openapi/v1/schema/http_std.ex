@@ -9,7 +9,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.HttpStd do
 
     OpenApiSpex.schema(
       %{
-        title: "HttpStd",
+        title: "HttpStd_V1",
         description:
           "Represents the configuration for HTTP service discovery targets, including endpoints and associated labels for monitoring and management.",
         type: :object,
@@ -36,7 +36,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.HttpStd do
                 "Represents a target endpoint for service discovery, which may be a hostname, IPv4, or IPv6 address, supporting connectivity and identification.",
               anyOf: [
                 %Schema{
-                  title: "IPv6",
+                  title: "IPv6_V1",
                   description:
                     "Represents the format of an IPv6 address, supporting modern network identification and communication.",
                   type: :string,
@@ -44,7 +44,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.HttpStd do
                   example: "2001:db8::1"
                 },
                 %Schema{
-                  title: "IPv4",
+                  title: "IPv4_V1",
                   description:
                     "Represents the format of an IPv4 address, used for network identification and communication.",
                   type: :string,
@@ -71,7 +71,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.HttpStd do
 
     OpenApiSpex.schema(
       %{
-        title: "HttpSTDTargetList",
+        title: "HttpSTDTargetList_V1",
         description:
           "A list containing all HTTP service discovery targets, supporting network monitoring and management.",
         type: :array,

@@ -9,7 +9,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.NotFound do
 
   OpenApiSpex.schema(
     %{
-      title: "NotFound",
+      title: "NotFound_V1",
       description:
         "Represents an error response for a resource not found, providing details about the reason the requested resource could not be located.",
       type: :object,

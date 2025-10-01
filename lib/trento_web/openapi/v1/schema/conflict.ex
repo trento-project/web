@@ -9,7 +9,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Conflict do
 
   OpenApiSpex.schema(
     %{
-      title: "Conflict",
+      title: "Conflict_V1",
       description:
         "Represents an error response for a resource conflict, providing details about the nature of the conflict encountered.",
       type: :object,
@@ -18,7 +18,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Conflict do
         errors: [
           %{
             detail: "Conflicting state.",
-            title: "Conflict has occurred"
+            title: "Conflict has occurred_V1"
           }
         ]
       },
@@ -28,7 +28,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Conflict do
           example: [
             %{
               detail: "Conflicting state.",
-              title: "Conflict has occurred"
+              title: "Conflict has occurred_V1"
             }
           ],
           items: %Schema{

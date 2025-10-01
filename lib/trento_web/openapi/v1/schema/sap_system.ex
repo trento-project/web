@@ -13,7 +13,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
 
     OpenApiSpex.schema(
       %{
-        title: "ApplicationInstance",
+        title: "ApplicationInstance_V1",
         description:
           "Represents a discovered SAP application instance on the target infrastructure, including identification, features, ports, and health status for monitoring and management.",
         type: :object,
@@ -121,7 +121,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
 
     OpenApiSpex.schema(
       %{
-        title: "SAPSystem",
+        title: "SAPSystem_V1",
         description:
           "Represents a discovered SAP system on the target infrastructure, including identification, database, health, and instance details for monitoring and management.",
         type: :object,
@@ -207,7 +207,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
 
     OpenApiSpex.schema(
       %{
-        title: "SAPSystemsCollection",
+        title: "SAPSystemsCollection_V1",
         description:
           "A list of discovered SAP systems, each including identification, database, health, and instance details for infrastructure monitoring and management.",
         type: :array,
@@ -239,7 +239,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
 
     OpenApiSpex.schema(
       %{
-        title: "SAPSystemHealthOverview",
+        title: "SAPSystemHealthOverview_V1",
         description:
           "Provides an overview of the health status for a discovered SAP system and its components, supporting infrastructure monitoring and alerting.",
         type: :object,
@@ -332,7 +332,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
 
     OpenApiSpex.schema(
       %{
-        title: "HealthOverview",
+        title: "HealthOverview_V1",
         description:
           "A list of health summaries for discovered SAP systems, supporting infrastructure monitoring and alerting.",
         type: :array,

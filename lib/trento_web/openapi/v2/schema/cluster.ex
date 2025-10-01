@@ -16,7 +16,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
 
     OpenApiSpex.schema(
       %{
-        title: "ClusterResource",
+        title: "ClusterResource_V2",
         description:
           "A comprehensive object representing a cluster resource, including identification, type, role, status, and parent information for infrastructure management.",
         type: :object,
@@ -77,7 +77,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
 
     OpenApiSpex.schema(
       %{
-        title: "HanaClusterNode",
+        title: "HanaClusterNode_V2",
         description:
           "A comprehensive object representing a HANA cluster node, including name, site, roles, status, attributes, and resources for infrastructure monitoring and management.",
         type: :object,
@@ -136,7 +136,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
 
     OpenApiSpex.schema(
       %{
-        title: "HanaClusterSite",
+        title: "HanaClusterSite_V2",
         description:
           "A comprehensive object representing a HANA cluster site, including name, state, and system replication health state for infrastructure monitoring and management.",
         type: :object,
@@ -173,7 +173,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
 
     OpenApiSpex.schema(
       %{
-        title: "HanaClusterDetails",
+        title: "HanaClusterDetails_V2",
         description:
           "A comprehensive object representing the details of a HANA Pacemaker cluster, including architecture, scenario, replication, health, nodes, sites, devices, and resources for infrastructure monitoring and management.",
         type: :object,
@@ -304,7 +304,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
 
     OpenApiSpex.schema(
       %{
-        title: "AscsErsClusterNode",
+        title: "AscsErsClusterNode_V2",
         description:
           "A comprehensive object representing an ASCS/ERS cluster node, including name, status, attributes, filesystems, roles, virtual IPs, and resources for infrastructure monitoring and management.",
         type: :object,
@@ -381,7 +381,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
 
     OpenApiSpex.schema(
       %{
-        title: "AscsErsClusterSAPSystem",
+        title: "AscsErsClusterSAPSystem_V2",
         description:
           "A comprehensive object representing an SAP system managed by an ASCS/ERS cluster, including SID, distribution, filesystems, and nodes for infrastructure monitoring and management.",
         type: :object,
@@ -433,7 +433,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
 
     OpenApiSpex.schema(
       %{
-        title: "AscsErsClusterDetails",
+        title: "AscsErsClusterDetails_V2",
         description:
           "A comprehensive object representing the details of an ASCS/ERS Pacemaker cluster, including fencing, maintenance, managed SAP systems, devices, stopped resources, and resources for infrastructure monitoring and management.",
         type: :object,
@@ -521,7 +521,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
 
     OpenApiSpex.schema(
       %{
-        title: "PacemakerClusterDetails",
+        title: "PacemakerClusterDetails_V2",
         description:
           "A comprehensive object representing the details of the detected Pacemaker cluster, including ASCS/ERS and HANA cluster details for infrastructure monitoring and management.",
         type: :object,
@@ -552,7 +552,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
 
     OpenApiSpex.schema(
       %{
-        title: "PacemakerCluster",
+        title: "PacemakerCluster_V2",
         description:
           "A comprehensive object representing a discovered Pacemaker cluster on the target infrastructure, including identification, type, provider, health, resources, hosts, details, and tags for infrastructure monitoring and management.",
         type: :object,
@@ -680,7 +680,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
 
     OpenApiSpex.schema(
       %{
-        title: "PacemakerClustersCollection",
+        title: "PacemakerClustersCollection_V2",
         description:
           "A comprehensive array representing a list of discovered Pacemaker clusters, each including identification, type, provider, health, resources, hosts, details, and tags for infrastructure monitoring and management.",
         type: :array,

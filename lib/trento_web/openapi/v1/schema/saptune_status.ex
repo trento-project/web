@@ -10,7 +10,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SaptuneStatus do
 
     OpenApiSpex.schema(
       %{
-        title: "SaptuneService",
+        title: "SaptuneService_V1",
         description:
           "Represents a saptune service, including its name, enabled state, and active state for system tuning and monitoring.",
         type: :object,
@@ -47,7 +47,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SaptuneStatus do
 
     OpenApiSpex.schema(
       %{
-        title: "SaptuneNote",
+        title: "SaptuneNote_V1",
         description:
           "Represents a saptune note, including its identifier and whether it is additionally enabled for system tuning and compliance.",
         type: :object,
@@ -78,7 +78,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SaptuneStatus do
 
     OpenApiSpex.schema(
       %{
-        title: "SaptuneSolution",
+        title: "SaptuneSolution_V1",
         description:
           "Represents a saptune solution, including its identifier, associated notes, and whether it is partially applied for system tuning and compliance.",
         type: :object,
@@ -116,7 +116,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SaptuneStatus do
 
     OpenApiSpex.schema(
       %{
-        title: "SaptuneStaging",
+        title: "SaptuneStaging_V1",
         description:
           "Represents saptune staging data, including enabled state, staged notes, and solution identifiers for system configuration and compliance.",
         type: :object,
@@ -152,7 +152,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SaptuneStatus do
 
   OpenApiSpex.schema(
     %{
-      title: "SaptuneStatus",
+      title: "SaptuneStatus_V1",
       description:
         "Represents the saptune status output on the host, including package version, configuration, tuning state, services, notes, solutions, and staging for system health and compliance.",
       type: :object,

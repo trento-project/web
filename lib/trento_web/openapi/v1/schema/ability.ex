@@ -9,7 +9,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Ability do
 
     OpenApiSpex.schema(
       %{
-        title: "Ability",
+        title: "Ability_V1",
         description:
           "Represents a specific capability or permission that can be assigned to a user or resource in the system.",
         type: :object,
@@ -57,7 +57,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Ability do
 
     OpenApiSpex.schema(
       %{
-        title: "AbilityCollection",
+        title: "AbilityCollection_V1",
         description:
           "A list containing all defined abilities available for assignment or management in the platform.",
         type: :array,
