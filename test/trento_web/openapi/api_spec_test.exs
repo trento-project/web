@@ -91,5 +91,5 @@ defmodule TrentoWeb.OpenApi.ApiSpecTest do
     end
   end
 
-  defp get_app_version(), do: to_string(Application.spec(:trento, :vsn))
+  defp get_app_version, do: to_string(Application.spec(:trento, :vsn))
 end

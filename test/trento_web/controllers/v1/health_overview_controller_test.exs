@@ -50,6 +50,6 @@ defmodule TrentoWeb.V1.HealthOverviewControllerTest do
 
     api_spec = ApiSpec.spec()
 
-    assert_schema(json_response(conn, 200), "HealthOverview", api_spec)
+    assert_schema(json_response(conn, 200), "HealthOverview_V1", api_spec)
   end
 end

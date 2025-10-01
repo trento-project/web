@@ -51,7 +51,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
         fn conn ->
           conn
           |> json_response(:forbidden)
-          |> assert_schema("Forbidden", api_spec)
+          |> assert_schema("Forbidden_V1", api_spec)
         end
       )
     end
@@ -67,7 +67,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       resp =
         conn
         |> json_response(200)
-        |> assert_schema("UserCollection", api_spec)
+        |> assert_schema("UserCollection_V1", api_spec)
 
       Enum.each([user_one_id, user_two_id], fn id ->
         assert Enum.find_value(resp, fn
@@ -87,7 +87,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       resp =
         conn
         |> json_response(200)
-        |> assert_schema("UserItem", api_spec)
+        |> assert_schema("UserItem_V1", api_spec)
 
       [etag] = get_resp_header(conn, "etag")
       assert etag == Integer.to_string(lock_version)
@@ -97,7 +97,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
     test "should not show the user when does not exists", %{conn: conn, api_spec: api_spec} do
       get(conn, "/api/v1/users/98908098")
       |> json_response(:not_found)
-      |> assert_schema("NotFound", api_spec)
+      |> assert_schema("NotFound_V1", api_spec)
     end
   end
 
@@ -119,7 +119,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
 
       conn
       |> json_response(:created)
-      |> assert_schema("UserItem", api_spec)
+      |> assert_schema("UserItem_V1", api_spec)
 
       [etag] = get_resp_header(conn, "etag")
       assert etag == "1"
@@ -142,7 +142,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       |> put_req_header("content-type", "application/json")
       |> post("/api/v1/users", valid_params)
       |> json_response(:created)
-      |> assert_schema("UserItem", api_spec)
+      |> assert_schema("UserItem_V1", api_spec)
     end
 
     test "should not create the user when request parameters are not valid", %{
@@ -161,7 +161,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       |> put_req_header("content-type", "application/json")
       |> post("/api/v1/users", invalid_request_params)
       |> json_response(:unprocessable_entity)
-      |> assert_schema("UnprocessableEntity", api_spec)
+      |> assert_schema("UnprocessableEntity_V1", api_spec)
     end
 
     test "should not create the user when request parameters are valid but error are returned during creation",
@@ -181,7 +181,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       |> put_req_header("content-type", "application/json")
       |> post("/api/v1/users", valid_params)
       |> json_response(:unprocessable_entity)
-      |> assert_schema("UnprocessableEntity", api_spec)
+      |> assert_schema("UnprocessableEntity_V1", api_spec)
     end
   end
 
@@ -203,7 +203,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
         |> put_req_header("if-match", "#{lock_version}")
         |> patch("/api/v1/users/#{id}", %{})
         |> json_response(:ok)
-        |> assert_schema("UserItem", api_spec)
+        |> assert_schema("UserItem_V1", api_spec)
 
       assert resp.updated_at == updated_at
 
@@ -218,7 +218,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       |> put_req_header("content-type", "application/json")
       |> patch("/api/v1/users/8789578945574", %{})
       |> json_response(:not_found)
-      |> assert_schema("NotFound", api_spec)
+      |> assert_schema("NotFound_V1", api_spec)
     end
 
     test "should not update the user if parameters are valid but an error is returned from update operation",
@@ -235,7 +235,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       |> put_req_header("if-match", "#{lock_version}")
       |> patch("/api/v1/users/#{id}", valid_params)
       |> json_response(:unprocessable_entity)
-      |> assert_schema("UnprocessableEntity", api_spec)
+      |> assert_schema("UnprocessableEntity_V1", api_spec)
     end
 
     test "should not update the user if parameters are not valid", %{
@@ -252,7 +252,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       |> put_req_header("content-type", "application/json")
       |> patch("/api/v1/users/#{id}", invalid_params)
       |> json_response(:unprocessable_entity)
-      |> assert_schema("UnprocessableEntity", api_spec)
+      |> assert_schema("UnprocessableEntity_V1", api_spec)
     end
 
     test "should not update the user when the request conditional prerequisite is missing", %{
@@ -265,7 +265,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       |> put_req_header("content-type", "application/json")
       |> patch("/api/v1/users/#{id}", %{})
       |> json_response(:precondition_required)
-      |> assert_schema("PreconditionRequired", api_spec)
+      |> assert_schema("PreconditionRequired_V1", api_spec)
     end
 
     test "should not update the user when the request conditional prerequisite is failing due to mid-air collision",
@@ -290,7 +290,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       |> put_req_header("if-match", "222")
       |> patch("/api/v1/users/#{id}", valid_params)
       |> json_response(:precondition_failed)
-      |> assert_schema("PreconditionFailed", api_spec)
+      |> assert_schema("PreconditionFailed_V1", api_spec)
     end
 
     test "should update the user if parameters are valid", %{conn: conn, api_spec: api_spec} do
@@ -318,7 +318,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       resp =
         conn
         |> json_response(:ok)
-        |> assert_schema("UserItem", api_spec)
+        |> assert_schema("UserItem_V1", api_spec)
 
       refute resp.fullname == fullname
       refute resp.enabled == true
@@ -348,7 +348,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       |> put_req_header("if-match", "#{lock_version}")
       |> patch("/api/v1/users/#{user_id}", valid_params)
       |> json_response(:ok)
-      |> assert_schema("UserItem", api_spec)
+      |> assert_schema("UserItem_V1", api_spec)
     end
 
     test "should only update abilities and enabled when sso is enabled", %{
@@ -376,7 +376,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
         |> put_req_header("if-match", "#{lock_version}")
         |> patch("/api/v1/users/#{user_id}", valid_params)
         |> json_response(:ok)
-        |> assert_schema("UserItem", api_spec)
+        |> assert_schema("UserItem_V1", api_spec)
 
       refute resp.fullname == valid_params.fullname
       refute resp.email == valid_params.email
@@ -409,7 +409,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
         |> put_req_header("if-match", "#{lock_version}")
         |> patch("/api/v1/users/#{user_id}", valid_params)
         |> json_response(:ok)
-        |> assert_schema("UserItem", api_spec)
+        |> assert_schema("UserItem_V1", api_spec)
 
       refute resp.fullname == valid_params.fullname
       refute resp.email == valid_params.email
@@ -431,7 +431,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       |> put_req_header("if-match", "#{lock_version}")
       |> patch("/api/v1/users/#{user_id}", valid_params)
       |> json_response(:ok)
-      |> assert_schema("UserItem", api_spec)
+      |> assert_schema("UserItem_V1", api_spec)
     end
   end
 
@@ -441,7 +441,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       |> put_req_header("content-type", "application/json")
       |> delete("/api/v1/users/8908409480")
       |> json_response(:not_found)
-      |> assert_schema("NotFound", api_spec)
+      |> assert_schema("NotFound_V1", api_spec)
     end
 
     test "should delete a user when the user is found", %{conn: conn} do
@@ -472,7 +472,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       |> put_req_header("content-type", "application/json")
       |> delete("/api/v1/users/8908409480/tokens/#{jti}")
       |> json_response(:not_found)
-      |> assert_schema("NotFound", api_spec)
+      |> assert_schema("NotFound_V1", api_spec)
     end
 
     test "should not delete the token when the token jti is not found", %{
@@ -486,7 +486,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       |> put_req_header("content-type", "application/json")
       |> delete("/api/v1/users/#{id}/tokens/#{jti}")
       |> json_response(:not_found)
-      |> assert_schema("NotFound", api_spec)
+      |> assert_schema("NotFound_V1", api_spec)
     end
 
     test "should delete the token when the user and the token jti are found", %{conn: conn} do

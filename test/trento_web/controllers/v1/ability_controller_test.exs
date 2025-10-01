@@ -28,7 +28,7 @@ defmodule TrentoWeb.V1.AbilityControllerTest do
       resp =
         conn
         |> json_response(200)
-        |> assert_schema("AbilityCollection", api_spec)
+        |> assert_schema("AbilityCollection_V1", api_spec)
 
       assert [%{id: ^ability_id1}, %{id: ^ability_id2}] = resp
     end

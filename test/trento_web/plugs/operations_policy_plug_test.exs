@@ -78,7 +78,7 @@ defmodule TrentoWeb.Plugs.OperationsPolicyPlugTest do
              ]
            } == resp
 
-    assert_schema(resp, "Forbidden", api_spec)
+    assert_schema(resp, "Forbidden_V1", api_spec)
   end
 
   test "should authorize operation", %{conn: conn} do
