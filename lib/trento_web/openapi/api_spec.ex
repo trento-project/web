@@ -14,10 +14,7 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
   """
   alias TrentoWeb.OpenApi.ApiSpec
 
-  alias OpenApiSpex.{
-    Operation,
-    Paths
-  }
+  alias OpenApiSpex.Paths
 
   defmacro __using__(opts) do
     api_version =
@@ -47,7 +44,7 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
           info: %Info{
             title: "Trento",
             description: to_string(Application.spec(:trento, :description)),
-            version: to_string(Application.spec(:trento, :vsn)) <> "-" <> unquote(api_version),
+            version: ApiSpec.build_version(unquote(api_version)),
             license: %OpenApiSpex.License{
               name: "Apache 2.0",
               url: "https://www.apache.org/licenses/LICENSE-2.0"
@@ -147,21 +144,10 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
     end
   end
 
-  def build_paths_for_version("latest", router) do
-    router
-    |> Paths.from_router()
-    |> Enum.filter(fn {path, path_item} ->
-      path_item
-      |> Map.from_struct()
-      |> Map.values()
-      |> Enum.any?(fn
-        %Operation{deprecated: true} -> false
-        %Operation{} -> true
-        _ -> false
-      end)
-    end)
-    |> Map.new()
-  end
+  def build_version("complete"), do: to_string(Application.spec(:trento, :vsn))
+  def build_version(version), do: to_string(Application.spec(:trento, :vsn)) <> "-" <> version
+
+  def build_paths_for_version("complete", router), do: Paths.from_router(router)
 
   def build_paths_for_version(version, router) do
     available_versions = router.available_api_versions()
