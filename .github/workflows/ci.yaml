@@ -790,8 +790,6 @@ jobs:
           npm install -g @redocly/cli@latest
           npm install -g @quobix/vacuum@latest
           npm install -g @stoplight/spectral-cli
-      - name: Install jq
-        run: sudo apt-get update && sudo apt-get install -y jq
       - name: Run API docs check
         run: ./hack/api_docs_check.sh
 
