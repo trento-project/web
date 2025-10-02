@@ -16,6 +16,7 @@ import {
   getOperationForbiddenMessage,
 } from '@lib/operations';
 import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
+import { isValidClusterType } from '@lib/model/clusters';
 
 import BackButton from '@common/BackButton';
 import Button from '@common/Button';
@@ -68,20 +69,6 @@ export const buildCidrNotation = (ipAddresses, netmasks) =>
     netmasks,
     (address, netmask) => `${address}${netmask ? `/${netmask}` : ''}`
   );
-
-const clusterCanReboot = (cluster) => {
-  if (!cluster) {
-    return true;
-  }
-  switch (get(cluster, 'type')) {
-    case 'hana_scale_up':
-    case 'ascs_ers':
-    case 'hana_scale_out':
-      return true;
-    default:
-      return false;
-  }
-};
 
 function HostDetails({
   agentVersion,
@@ -185,6 +172,7 @@ function HostDetails({
   };
 
   const allInstancesStopped = every(sapInstances, { health: 'unknown' });
+  const clusterCanReboot = !cluster || isValidClusterType(cluster.type);
 
   return (
     <>
@@ -250,8 +238,7 @@ function HostDetails({
                     {
                       value: 'Reboot Host',
                       running: runningOperationName === HOST_REBOOT,
-                      disabled:
-                        !allInstancesStopped || !clusterCanReboot(cluster),
+                      disabled: !allInstancesStopped || !clusterCanReboot,
                       permitted: ['reboot:host'],
                       onClick: openOperationModal(HOST_REBOOT),
                     },
