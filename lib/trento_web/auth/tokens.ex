@@ -3,7 +3,7 @@ defmodule TrentoWeb.Auth.Tokens do
   Module responsible to deal with tokens concerns like introspection and validation.
   """
 
-  alias TrentoWeb.Auth.AccessToken
+  alias TrentoWeb.Auth.{AccessToken, RefreshToken}
   alias TrentoWeb.Auth.PersonalAccessToken, as: PAT
 
   alias Trento.PersonalAccessTokens
@@ -13,6 +13,11 @@ defmodule TrentoWeb.Auth.Tokens do
 
   @access_token_audience AccessToken.aud()
   @pat_audience PAT.aud()
+
+  defdelegate generate_access_token!(claims), to: AccessToken
+  defdelegate access_token_expires_in(), to: AccessToken, as: :expires_in
+  defdelegate generate_refresh_token!(claims), to: RefreshToken
+  defdelegate verify_and_validate_refresh_token(token), to: RefreshToken, as: :verify_and_validate
 
   @doc """
   Verifies and validates a given JWT token.
