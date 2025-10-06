@@ -242,17 +242,18 @@ defmodule Trento.PersonalAccessTokensTest do
   end
 
   describe "validating a Personal Access Token" do
-    test "should return false when validating a non existent PAT" do
-      # invalid jti/user_id combination
+    test "should return false when validating a non existent PAT: invalid jti/user_id combination" do
       refute PersonalAccessTokens.valid?(Faker.UUID.v4(), FakerRandom.random_between(3, 100))
+    end
 
-      # non existent PAT for a user
+    test "should return false when validating a non existent PAT: non existent PAT for a user" do
       %User{id: user_id} = insert(:user)
       insert(:personal_access_token, user_id: user_id)
 
       refute PersonalAccessTokens.valid?(Faker.UUID.v4(), user_id)
+    end
 
-      # non matching PAT-user association
+    test "should return false when validating a non existent PAT: non matching PAT-user association" do
       %User{id: user_id} = insert(:user)
       %PersonalAccessToken{jti: pat_jti} = insert(:personal_access_token, user_id: user_id)
       %User{id: other_user_id} = insert(:user)
@@ -285,22 +286,23 @@ defmodule Trento.PersonalAccessTokensTest do
   end
 
   describe "validating and introspecting a Personal Access Token" do
-    test "should return an error when validating and introspecting a non existent PAT" do
-      # invalid jti/user_id combination
+    test "should return an error when validating and introspecting a non existent PAT: invalid jti/user_id combination" do
       assert {:error, :invalid_token} =
                PersonalAccessTokens.validate_and_introspect(
                  Faker.UUID.v4(),
                  FakerRandom.random_between(3, 100)
                )
+    end
 
-      # non existent PAT for a user
+    test "should return an error when validating and introspecting a non existent PAT: non existent PAT for a user" do
       %User{id: user_id} = insert(:user)
       insert(:personal_access_token, user_id: user_id)
 
       assert {:error, :invalid_token} =
                PersonalAccessTokens.validate_and_introspect(Faker.UUID.v4(), user_id)
+    end
 
-      # non matching PAT-user association
+    test "should return an error when validating and introspecting a non existent PAT: non matching PAT-user association" do
       %User{id: user_id} = insert(:user)
       %PersonalAccessToken{jti: pat_jti} = insert(:personal_access_token, user_id: user_id)
       %User{id: other_user_id} = insert(:user)
