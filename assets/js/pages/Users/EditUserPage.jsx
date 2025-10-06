@@ -5,11 +5,12 @@ import { toast } from 'react-hot-toast';
 import BackButton from '@common/BackButton';
 import Banner from '@common/Banners/Banner';
 import PageHeader from '@common/PageHeader';
+import PersonalAccessTokens from '@common/PersonalAccessTokens';
 
 import { isAdmin } from '@lib/model/users';
 import { isSingleSignOnEnabled } from '@lib/auth/config';
 
-import { editUser, getUser } from '@lib/api/users';
+import { editUser, getUser, deleteUserAccessToken } from '@lib/api/users';
 import { getAnalyticsEnabledConfig } from '@lib/analytics';
 
 import { fetchAbilities } from './CreateUserPage';
@@ -75,6 +76,18 @@ function EditUserPage() {
       });
   };
 
+  const onDeleteToken = (jti) => {
+    deleteUserAccessToken(userID, jti)
+      .then(() => {
+        const updatedTokens = userState.personal_access_tokens.filter(
+          (token) => token.jti !== jti
+        );
+        setUser({ ...userState, personal_access_tokens: updatedTokens });
+        toast.success('Personal access token deleted!');
+      })
+      .catch(() => toast.error('Error deleting personal access token.'));
+  };
+
   const onCancel = () => {
     navigate('/users');
   };
@@ -93,6 +106,7 @@ function EditUserPage() {
     username,
     enabled,
     abilities: userAbilities,
+    personal_access_tokens: personalAccessTokens,
     created_at: createdAt,
     updated_at: updatedAt,
     totp_enabled_at: totpEnabledAt,
@@ -132,6 +146,12 @@ function EditUserPage() {
         onCancel={onCancel}
         editing
         singleSignOnEnabled={isSingleSignOnEnabled()}
+      />
+      <PersonalAccessTokens
+        className="mt-4"
+        personalAccessTokens={personalAccessTokens}
+        generateTokenAvailable={false}
+        onDeleteToken={onDeleteToken}
       />
     </div>
   );

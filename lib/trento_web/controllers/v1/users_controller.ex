@@ -2,6 +2,7 @@ defmodule TrentoWeb.V1.UsersController do
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
 
+  alias Trento.PersonalAccessTokens
   alias Trento.Users
   alias Trento.Users.User
   alias TrentoWeb.OpenApi.V1.Schema
@@ -181,6 +182,45 @@ defmodule TrentoWeb.V1.UsersController do
     with {:ok, user} <- Users.get_user(id),
          {:ok, %User{}} <- Users.delete_user(user),
          :ok <- TrentoWeb.Endpoint.broadcast("users:#{id}", "user_deleted", %{}) do
+      send_resp(conn, :no_content, "")
+    end
+  end
+
+  operation :revoke_personal_access_token,
+    summary: "Revokes an existing Personal Access Token for a User.",
+    description:
+      "Revokes a Personal Access Token identified by its unique identifier (JTI) for a specific user, ensuring that it can no longer be used for authentication.",
+    tags: ["User Management"],
+    parameters: [
+      id: [
+        in: :path,
+        description:
+          "Unique identifier of the user to revoke the Personal Access Token from. This value must be an integer.",
+        required: true,
+        schema: %OpenApiSpex.Schema{type: :integer, example: 1}
+      ],
+      jti: [
+        in: :path,
+        required: true,
+        description: "The unique identifier (JTI) of the Personal Access Token to be revoked.",
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          format: :uuid,
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        }
+      ]
+    ],
+    responses: [
+      no_content: "Personal Access Token revoked successfully from the user.",
+      not_found: Schema.NotFound.response(),
+      unauthorized: Schema.Unauthorized.response(),
+      forbidden: Schema.Forbidden.response()
+    ]
+
+  def revoke_personal_access_token(conn, %{id: id, jti: jti}) do
+    with {:ok, _} <-
+           PersonalAccessTokens.revoke_personal_access_token(%User{id: id}, jti),
+         :ok <- TrentoWeb.Endpoint.broadcast("users:#{id}", "user_updated", %{}) do
       send_resp(conn, :no_content, "")
     end
   end
