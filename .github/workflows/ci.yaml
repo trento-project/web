@@ -52,6 +52,7 @@ jobs:
 
   elixir-deps:
     name: Elixir ${{ matrix.mix_env }} dependencies
+    needs: [setup-matrix-env]
     runs-on: ubuntu-24.04
     strategy:
       matrix:
