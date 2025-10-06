@@ -30,7 +30,7 @@ defmodule TrentoWeb.Auth.Tokens do
     - {:error, reason} if the token is invalid, expired, revoked or, in case of PATs, belongs to a deleted/disabled user.
   """
   @spec verify_and_validate(binary()) :: {:ok, map()} | {:error, atom()}
-  def verify_and_validate(jwt_token), do: validate_token(jwt_token)
+  def verify_and_validate(jwt_token), do: apply_callback(jwt_token, &validate_token/2)
 
   @doc """
   Introspects and validates a given JWT token.
@@ -44,17 +44,13 @@ defmodule TrentoWeb.Auth.Tokens do
   @spec introspect(binary()) :: map()
   def introspect(jwt_token) do
     jwt_token
-    |> introspect_token()
+    |> apply_callback(&introspect_token/2)
     |> case do
       {:ok, claims} -> Map.put(claims, "active", true)
       {:error, _} -> %{"active" => false}
     end
     |> Map.drop(["typ"])
   end
-
-  defp validate_token(jwt_token), do: apply_callback(jwt_token, &validate_token/2)
-
-  defp introspect_token(jwt_token), do: apply_callback(jwt_token, &introspect_token/2)
 
   defp apply_callback(jwt_token, callback) do
     case Joken.peek_claims(jwt_token) do
