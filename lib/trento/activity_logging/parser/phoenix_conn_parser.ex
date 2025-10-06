@@ -169,6 +169,38 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
   end
 
   def get_activity_metadata(
+        :personal_access_token_creation,
+        %Plug.Conn{
+          body_params: request_body,
+          resp_body: resp_body
+        }
+      ) do
+    jti = resp_body |> Jason.decode!() |> Map.get("jti")
+
+    Map.put(request_body, :jti, jti)
+  end
+
+  def get_activity_metadata(
+        :personal_access_token_deletion,
+        %Plug.Conn{
+          params: params
+        }
+      ),
+      do: params
+
+  def get_activity_metadata(
+        :personal_access_token_admin_deletion,
+        %Plug.Conn{
+          params: %{
+            id: user_id,
+            jti: jti
+          }
+        }
+      ) do
+    %{user_id: user_id, jti: jti}
+  end
+
+  def get_activity_metadata(
         activity,
         %Plug.Conn{
           params: params,
