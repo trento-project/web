@@ -60,13 +60,13 @@ jobs:
             elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
             otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
           - mix_env: dev
-            otp: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+            elixir: ${{ needs.setup-matrix-env.ELIXIR_DEV }}
             otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
           - mix_env: test
             elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
             otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
           - mix_env: test
-            otp: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+            elixir: ${{ needs.setup-matrix-env.ELIXIR_DEV }}
             otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
     env:
       MIX_ENV: ${{ matrix.mix_env }}
@@ -157,8 +157,8 @@ jobs:
         id: setup-elixir
         uses: erlef/setup-beam@v1
         with:
-          version-file: .tool-versions
-          version-type: strict
+          otp-version: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
+          elixir-version: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
       - name: Retrieve Elixir Cached Dependencies
         uses: actions/cache@v4
         id: mix-cache
@@ -194,7 +194,7 @@ jobs:
           - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
             otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
             nodejs: ${{ needs.setup-matrix-env.outputs.NODEJS_BC }}
-          - otp: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+          - elixir: ${{ needs.setup-matrix-env.ELIXIR_DEV }}
             otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
             nodejs: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
     steps:
@@ -280,7 +280,7 @@ jobs:
         include:
           - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
             otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
-          - otp: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+          - elixir: ${{ needs.setup-matrix-env.ELIXIR_DEV }}
             otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
     steps:
       - name: Checkout
@@ -334,7 +334,7 @@ jobs:
         id: setup-node
         uses: actions/setup-node@v5
         with:
-          node-version: ${{ env.nodejs_dev }}
+          node-version: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
       - name: Retrieve Elixir Cached Dependencies
         uses: actions/cache@v4
         id: mix-cache
@@ -377,7 +377,7 @@ jobs:
         id: setup-node
         uses: actions/setup-node@v5
         with:
-          node-version: ${{ env.nodejs_dev }}
+          node-version: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
       - name: Retrieve E2E NPM Cached Dependencies
         uses: actions/cache@v4
         id: npm-e2e-cache
@@ -398,7 +398,7 @@ jobs:
       matrix:
         containers: [1, 2, 3, 4, 5, 6, 7, 8]
         include:
-          - otp: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+          - elixir: ${{ needs.setup-matrix-env.ELIXIR_DEV }}
             otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
     env:
       MIX_ENV: dev
@@ -417,7 +417,7 @@ jobs:
         id: setup-node
         uses: actions/setup-node@v5
         with:
-          node-version: ${{ env.nodejs_dev }}
+          node-version: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
       - name: Retrieve Elixir Cached Dependencies
         uses: actions/cache@v4
         id: mix-cache
@@ -505,13 +505,13 @@ jobs:
         id: setup-elixir
         uses: erlef/setup-beam@v1
         with:
-          version-file: .tool-versions
-          version-type: strict
+          otp-version: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
+          elixir-version: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
       - name: Setup Node
         id: setup-node
         uses: actions/setup-node@v5
         with:
-          node-version: ${{ env.nodejs_dev }}
+          node-version: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
       - name: Retrieve Elixir Cached Dependencies
         uses: actions/cache@v4
         id: mix-cache
@@ -602,7 +602,7 @@ jobs:
               MIX_ENV: dev
               CYPRESS_SSO_INTEGRATION_TESTS: true
               CYPRESS_SSO_TYPE: oidc
-              NODEJS_VERSION: ${{ env.nodejs_dev }}
+              NODEJS_VERSION: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
           - test: oauth2
             cypress_spec: |
               cypress/e2e/sso_integration.cy.js
@@ -614,7 +614,7 @@ jobs:
               MIX_ENV: dev
               CYPRESS_SSO_INTEGRATION_TESTS: true
               CYPRESS_SSO_TYPE: oauth2
-              NODEJS_VERSION: ${{ env.nodejs_dev }}
+              NODEJS_VERSION: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
           - test: saml
             cypress_spec: |
               cypress/e2e/sso_integration.cy.js
@@ -626,7 +626,7 @@ jobs:
               MIX_ENV: dev
               CYPRESS_SSO_INTEGRATION_TESTS: true
               CYPRESS_SSO_TYPE: saml
-              NODEJS_VERSION: ${{ env.nodejs_dev }}
+              NODEJS_VERSION: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
           - test: alerting_db
             cypress_spec: |
               cypress/e2e/settings_integration.cy.js
@@ -644,14 +644,14 @@ jobs:
               MIX_ENV: dev
               CYPRESS_ALERTING_DB_TESTS: true
               CYPRESS_ALERTING_TESTS: true
-              NODEJS_VERSION: ${{ env.nodejs_dev }}
+              NODEJS_VERSION: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
           - test: alerting_from_env
             cypress_spec: |
               cypress/e2e/alerting.cy.js
             env:
               MIX_ENV: dev
               CYPRESS_ALERTING_TESTS: true
-              NODEJS_VERSION: ${{ env.nodejs_dev }}
+              NODEJS_VERSION: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
     env: ${{ matrix.env }}
     steps:
       - name: Checkout
@@ -662,8 +662,8 @@ jobs:
         id: setup-elixir
         uses: erlef/setup-beam@v1
         with:
-          version-file: .tool-versions
-          version-type: strict
+          otp-version: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
+          elixir-version: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
       - name: Setup Node
         id: setup-node
         uses: actions/setup-node@v5
@@ -738,7 +738,7 @@ jobs:
         include:
           - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
             otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
-          - otp: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+          - elixir: ${{ needs.setup-matrix-env.ELIXIR_DEV }}
             otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
     if: github.event_name == 'pull_request'
     steps:
@@ -781,7 +781,7 @@ jobs:
         include:
           - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
             otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
-          - otp: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+          - elixir: ${{ needs.setup-matrix-env.ELIXIR_DEV }}
             otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
     steps:
       - name: Cancel Previous Runs
@@ -811,7 +811,7 @@ jobs:
         id: setup-node
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.nodejs_dev }}
+          node-version: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
       - name: Install API linting tools
         run: |
           npm install -g @redocly/cli@latest
@@ -832,19 +832,19 @@ jobs:
             elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
             otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
           - version: Unversioned
-            otp: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+            elixir: ${{ needs.setup-matrix-env.ELIXIR_DEV }}
             otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
           - version: V1
             elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
             otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
           - version: V1
-            otp: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+            elixir: ${{ needs.setup-matrix-env.ELIXIR_DEV }}
             otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
           - version: V2
             elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
             otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
           - version: V2
-            otp: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+            elixir: ${{ needs.setup-matrix-env.ELIXIR_DEV }}
             otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
     steps:
       - name: Checkout current branch
