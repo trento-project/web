@@ -22,6 +22,12 @@ concurrency:
 
 env:
   MIX_ENV: test
+  elixir_dev: "1.18.4-otp-27"
+  erlang_dev: "27.1.3"
+  nodejs_dev: "22.15.1"
+  elixir_bc: "1.15.7-otp-26"
+  erlang_bc: "26.2.1"
+  nodejs_bc: "20.14.0"
 
 jobs:
   elixir-deps:
@@ -31,17 +37,17 @@ jobs:
       matrix:
         include:
           - mix_env: dev
-            elixir: "1.15"
-            otp: "26"
+            elixir: ${{ env.elixir_bc }}
+            otp: ${{ env.erlang_bc }}
           - mix_env: dev
-            elixir: "1.18"
-            otp: "27"
+            elixir: ${{ env.elixir_dev }}
+            otp: ${{ env.erlang_dev }}
           - mix_env: test
-            elixir: "1.15"
-            otp: "26"
+            elixir: ${{ env.elixir_bc }}
+            otp: ${{ env.erlang_bc }}
           - mix_env: test
-            elixir: "1.18"
-            otp: "27"
+            elixir: ${{ env.elixir_dev }}
+            otp: ${{ env.erlang_dev }}
     env:
       MIX_ENV: ${{ matrix.mix_env }}
     steps:
@@ -80,24 +86,25 @@ jobs:
     strategy:
       matrix:
         include:
-          - nodejs: "20"
-          - nodejs: "22"
+          - nodejs: ${{ env.nodejs_bc }}
+          - nodejs: ${{ env.nodejs_dev }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
+      - name: Setup Node
+        id: setup-node
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{ matrix.nodejs }}
       - name: Retrieve NPM Cached Dependencies
         uses: actions/cache@v4
         id: npm-cache
         with:
           path: |
             assets/node_modules
-          key: nodejs-${{ matrix.nodejs }}-${{ hashFiles('assets/package-lock.json') }}
-      - name: Setup Node
-        uses: actions/setup-node@v5
-        with:
-          node-version: ${{ matrix.nodejs }}
+          key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Install NPM dependencies
         if: steps.npm-cache.outputs.cache-hit != 'true'
         run: cd assets && npm install
@@ -164,12 +171,12 @@ jobs:
     strategy:
       matrix:
         include:
-          - elixir: "1.15"
-            otp: "26"
-            nodejs: "20"
-          - elixir: "1.18"
-            otp: "27"
-            nodejs: "22"
+          - elixir: ${{ env.elixir_bc }}
+            otp: ${{ env.erlang_bc }}
+            nodejs: ${{ env.nodejs_bc }}
+          - elixir: ${{ env.elixir_dev }}
+            otp: ${{ env.erlang_dev }}
+            nodejs: ${{ env.nodejs_dev }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -182,6 +189,7 @@ jobs:
           otp-version: ${{ matrix.otp }}
           elixir-version: ${{ matrix.elixir }}
       - name: Setup Node
+        id: setup-node
         uses: actions/setup-node@v5
         with:
           node-version: ${{ matrix.nodejs }}
@@ -200,7 +208,7 @@ jobs:
         with:
           path: |
             assets/node_modules
-          key: nodejs-${{ matrix.nodejs }}-${{ hashFiles('assets/package-lock.json') }}
+          key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Check for unused dependencies
         run: mix deps.unlock --check-unused
       - name: Check Code Format
@@ -221,14 +229,15 @@ jobs:
     strategy:
       matrix:
         include:
-          - nodejs: "20"
-          - nodejs: "22"
+          - nodejs: ${{ env.nodejs_bc }}
+          - nodejs: ${{ env.nodejs_dev }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - name: Setup Node
+        id: setup-node
         uses: actions/setup-node@v5
         with:
           node-version: ${{ matrix.nodejs }}
@@ -238,7 +247,7 @@ jobs:
         with:
           path: |
             assets/node_modules
-          key: nodejs-${{ matrix.nodejs }}-${{ hashFiles('assets/package-lock.json') }}
+          key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Run JS tests
         run: cd assets && npm test
 
@@ -249,10 +258,10 @@ jobs:
     strategy:
       matrix:
         include:
-          - elixir: "1.15"
-            otp: "26"
-          - elixir: "1.18"
-            otp: "27"
+          - elixir: ${{ env.elixir_bc }}
+            otp: ${{ env.erlang_bc }}
+          - elixir: ${{ env.elixir_dev }}
+            otp: ${{ env.erlang_dev }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -289,8 +298,6 @@ jobs:
     name: Chromatic deployment
     needs: [elixir-deps, npm-deps]
     runs-on: ubuntu-24.04
-    env:
-      NODEJS_VERSION: "22"
     if: github.event_name != 'repository_dispatch' && github.secret_source != 'None' && vars.CHROMATIC_ENABLED == 'true'
     steps:
       - name: Checkout
@@ -304,9 +311,10 @@ jobs:
           otp-version: "27"
           elixir-version: "1.18"
       - name: Setup Node
+        id: setup-node
         uses: actions/setup-node@v5
         with:
-          node-version: ${{ env.NODEJS_VERSION }}
+          node-version: ${{ env.nodejs_dev }}
       - name: Retrieve Elixir Cached Dependencies
         uses: actions/cache@v4
         id: mix-cache
@@ -322,7 +330,7 @@ jobs:
         with:
           path: |
             assets/node_modules
-          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
+          key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Build CSS
         run: npx tailwindcss --input=css/app.css --output=../priv/static/assets/app.css --postcss
         working-directory: assets
@@ -340,24 +348,23 @@ jobs:
   npm-e2e-deps:
     name: Npm E2E dependencies
     runs-on: ubuntu-24.04
-    env:
-      NODEJS_VERSION: "22"
     steps:
       - name: Checkout
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
+      - name: Setup Node
+        id: setup-node
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.nodejs_dev }}
       - name: Retrieve E2E NPM Cached Dependencies
         uses: actions/cache@v4
         id: npm-e2e-cache
         with:
           path: |
             test/e2e/node_modules
-          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
-      - name: Setup Node
-        uses: actions/setup-node@v5
-        with:
-          node-version: ${{ env.NODEJS_VERSION }}
+          key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: Install E2E NPM dependencies
         if: steps.npm-e2e-cache.outputs.cache-hit != 'true'
         run: cd test/e2e && npm install
@@ -371,11 +378,10 @@ jobs:
       matrix:
         containers: [1, 2, 3, 4, 5, 6, 7, 8]
         include:
-          - elixir: "1.18"
-            otp: "27"
+          - elixir: ${{ env.elixir_dev }}
+            otp: ${{ env.erlang_dev }}
     env:
       MIX_ENV: dev
-      NODEJS_VERSION: "22"
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -388,9 +394,10 @@ jobs:
           otp-version: ${{ matrix.otp }}
           elixir-version: ${{ matrix.elixir }}
       - name: Setup Node
+        id: setup-node
         uses: actions/setup-node@v5
         with:
-          node-version: ${{ env.NODEJS_VERSION }}
+          node-version: ${{ env.nodejs_dev }}
       - name: Retrieve Elixir Cached Dependencies
         uses: actions/cache@v4
         id: mix-cache
@@ -406,14 +413,14 @@ jobs:
         with:
           path: |
             assets/node_modules
-          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
+          key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Retrieve E2E NPM Cached Dependencies
         uses: actions/cache@v4
         id: npm-e2e-cache
         with:
           path: |
             test/e2e/node_modules
-          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
+          key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: Check Eslint and JS Code Format
         run: cd test/e2e && npm run lint && npm run format:check
       - name: "Docker compose dependencies"
@@ -469,7 +476,6 @@ jobs:
               cypress/e2e/host_details.cy.js
     env:
       MIX_ENV: dev
-      NODEJS_VERSION: "22"
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -482,9 +488,10 @@ jobs:
           version-file: .tool-versions
           version-type: strict
       - name: Setup Node
+        id: setup-node
         uses: actions/setup-node@v5
         with:
-          node-version: ${{ env.NODEJS_VERSION }}
+          node-version: ${{ env.nodejs_dev }}
       - name: Retrieve Elixir Cached Dependencies
         uses: actions/cache@v4
         id: mix-cache
@@ -500,14 +507,14 @@ jobs:
         with:
           path: |
             assets/node_modules
-          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
+          key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Retrieve E2E NPM Cached Dependencies
         uses: actions/cache@v4
         id: npm-e2e-cache
         with:
           path: |
             test/e2e/node_modules
-          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
+          key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: "Docker compose dependencies"
         uses: isbang/compose-action@v2.3.0
         with:
@@ -575,7 +582,7 @@ jobs:
               MIX_ENV: dev
               CYPRESS_SSO_INTEGRATION_TESTS: true
               CYPRESS_SSO_TYPE: oidc
-              NODEJS_VERSION: "22"
+              NODEJS_VERSION: ${{ env.nodejs_dev }}
           - test: oauth2
             cypress_spec: |
               cypress/e2e/sso_integration.cy.js
@@ -587,7 +594,7 @@ jobs:
               MIX_ENV: dev
               CYPRESS_SSO_INTEGRATION_TESTS: true
               CYPRESS_SSO_TYPE: oauth2
-              NODEJS_VERSION: "22"
+              NODEJS_VERSION: ${{ env.nodejs_dev }}
           - test: saml
             cypress_spec: |
               cypress/e2e/sso_integration.cy.js
@@ -599,7 +606,7 @@ jobs:
               MIX_ENV: dev
               CYPRESS_SSO_INTEGRATION_TESTS: true
               CYPRESS_SSO_TYPE: saml
-              NODEJS_VERSION: "22"
+              NODEJS_VERSION: ${{ env.nodejs_dev }}
           - test: alerting_db
             cypress_spec: |
               cypress/e2e/settings_integration.cy.js
@@ -617,14 +624,14 @@ jobs:
               MIX_ENV: dev
               CYPRESS_ALERTING_DB_TESTS: true
               CYPRESS_ALERTING_TESTS: true
-              NODEJS_VERSION: "22"
+              NODEJS_VERSION: ${{ env.nodejs_dev }}
           - test: alerting_from_env
             cypress_spec: |
               cypress/e2e/alerting.cy.js
             env:
               MIX_ENV: dev
               CYPRESS_ALERTING_TESTS: true
-              NODEJS_VERSION: "22"
+              NODEJS_VERSION: ${{ env.nodejs_dev }}
     env: ${{ matrix.env }}
     steps:
       - name: Checkout
@@ -638,6 +645,7 @@ jobs:
           version-file: .tool-versions
           version-type: strict
       - name: Setup Node
+        id: setup-node
         uses: actions/setup-node@v5
         with:
           node-version: ${{ env.NODEJS_VERSION }}
@@ -656,14 +664,14 @@ jobs:
         with:
           path: |
             assets/node_modules
-          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
+          key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Retrieve E2E NPM Cached Dependencies
         uses: actions/cache@v4
         id: npm-e2e-cache
         with:
           path: |
             test/e2e/node_modules
-          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
+          key: nodejs-${{steps.setup-node.outputs.node-version }}-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: Install photofinish
         uses: jaxxstorm/action-install-gh-release@v2.1.0
         with:
@@ -672,7 +680,7 @@ jobs:
           cache: enable
           chmod: +x
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}        
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: "Docker compose dependencies"
         uses: isbang/compose-action@v2.3.0
         with:
@@ -708,10 +716,10 @@ jobs:
     strategy:
       matrix:
         include:
-          - elixir: "1.15"
-            otp: "26"
-          - elixir: "1.18"
-            otp: "27"
+          - elixir: ${{ env.elixir_bc }}
+            otp: ${{ env.erlang_bc }}
+          - elixir: ${{ env.elixir_dev }}
+            otp: ${{ env.erlang_dev }}
     if: github.event_name == 'pull_request'
     steps:
       - name: Checkout target branch
@@ -751,12 +759,10 @@ jobs:
     strategy:
       matrix:
         include:
-          - elixir: "1.15"
-            otp: "26"
-          - elixir: "1.18"
-            otp: "27"
-    env:
-      NODEJS_VERSION: "22"
+          - elixir: ${{ env.elixir_bc }}
+            otp: ${{ env.erlang_bc }}
+          - elixir: ${{ env.elixir_dev }}
+            otp: ${{ env.erlang_dev }}
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.12.1
@@ -782,9 +788,10 @@ jobs:
             priv/plts
           key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Setup Node.js
+        id: setup-node
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODEJS_VERSION }}
+          node-version: ${{ env.nodejs_dev }}
       - name: Install API linting tools
         run: |
           npm install -g @redocly/cli@latest
@@ -802,23 +809,23 @@ jobs:
       matrix:
         include:
           - version: Unversioned
-            elixir: "1.15"
-            otp: "26"
+            elixir: ${{ env.elixir_bc }}
+            otp: ${{ env.erlang_bc }}
           - version: Unversioned
-            elixir: "1.18"
-            otp: "27"
+            elixir: ${{ env.elixir_dev }}
+            otp: ${{ env.erlang_dev }}
           - version: V1
-            elixir: "1.15"
-            otp: "26"
+            elixir: ${{ env.elixir_bc }}
+            otp: ${{ env.erlang_bc }}
           - version: V1
-            elixir: "1.18"
-            otp: "27"
+            elixir: ${{ env.elixir_dev }}
+            otp: ${{ env.erlang_dev }}
           - version: V2
-            elixir: "1.15"
-            otp: "26"
+            elixir: ${{ env.elixir_bc }}
+            otp: ${{ env.erlang_bc }}
           - version: V2
-            elixir: "1.18"
-            otp: "27"
+            elixir: ${{ env.elixir_dev }}
+            otp: ${{ env.erlang_dev }}
     steps:
       - name: Checkout current branch
         uses: actions/checkout@v5
