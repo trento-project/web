@@ -187,7 +187,7 @@ jobs:
 
   static-code-analysis:
     name: Static Code Analysis
-    needs: [elixir-deps, npm-deps]
+    needs: [setup-matrix-env, elixir-deps, npm-deps]
     runs-on: ubuntu-24.04
     strategy:
       matrix:
@@ -274,7 +274,7 @@ jobs:
 
   test-elixir:
     name: Elixir tests
-    needs: [elixir-deps]
+    needs: [setup-matrix-env, elixir-deps]
     runs-on: ubuntu-24.04
     strategy:
       matrix:
@@ -392,7 +392,7 @@ jobs:
 
   test-e2e:
     name: E2E Tests
-    needs: [elixir-deps, npm-deps, npm-e2e-deps]
+    needs: [setup-matrix-env, elixir-deps, npm-deps, npm-e2e-deps]
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
@@ -483,7 +483,7 @@ jobs:
 
   test-regression:
     name: Regression tests
-    needs: [elixir-deps, npm-deps, npm-e2e-deps]
+    needs: [setup-matrix-env, elixir-deps, npm-deps, npm-e2e-deps]
     runs-on: ubuntu-22.04
     strategy:
       matrix:
@@ -587,7 +587,7 @@ jobs:
 
   test-integration:
     name: Integration tests
-    needs: [elixir-deps, npm-deps, npm-e2e-deps]
+    needs: [setup-matrix-env, elixir-deps, npm-deps, npm-e2e-deps]
     runs-on: ubuntu-22.04
     strategy:
       matrix:
@@ -775,7 +775,7 @@ jobs:
 
   api-docs-check:
     name: API docs check
-    needs: elixir-deps
+    needs: [setup-matrix-env, elixir-deps]
     if: github.event_name == 'pull_request' && !failure() && !cancelled()
     runs-on: ubuntu-24.04
     strategy:
@@ -824,7 +824,7 @@ jobs:
 
   api-bc-check:
     name: API bc check
-    needs: [elixir-deps, target-branch-deps]
+    needs: [setup-matrix-env, elixir-deps, target-branch-deps]
     if: github.event_name == 'pull_request' && !failure() && !cancelled()
     runs-on: ubuntu-24.04
     strategy:
