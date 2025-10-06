@@ -103,6 +103,7 @@ jobs:
 
   npm-deps:
     name: Npm dependencies
+    needs: [setup-matrix-env]
     runs-on: ubuntu-24.04
     strategy:
       matrix:
@@ -368,6 +369,7 @@ jobs:
 
   npm-e2e-deps:
     name: Npm E2E dependencies
+    needs: [setup-matrix-env]
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
