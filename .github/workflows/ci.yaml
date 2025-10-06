@@ -30,9 +30,9 @@ jobs:
   setup-matrix-env:
     runs-on: ubuntu-24.04
     outputs:
-      ELIXIR_DEV: ${{ env.ELIXIR_DEV }}
-      ERLANG_DEV: ${{ env.ERLANG_DEV }}
-      NODEJS_DEV: ${{ env.NODEJS_DEV }}
+      ELIXIR_DEV: ${{ env.ELIXIR_VERSION }}
+      ERLANG_DEV: ${{ env.ERLANG_VERSION }}
+      NODEJS_DEV: ${{ env.NODEJS_VERSION }}
       ELIXIR_BC: ${{ env.ELIXIR_BC }}
       ERLANG_BC: ${{ env.ERLANG_BC }}
       NODEJS_BC: ${{ env.NODEJS_BC }}
