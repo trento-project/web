@@ -22,14 +22,34 @@ concurrency:
 
 env:
   MIX_ENV: test
-  elixir_dev: "1.18.4-otp-27"
-  erlang_dev: "27.1.3"
-  nodejs_dev: "22.15.1"
-  elixir_bc: "1.15.7-otp-26"
-  erlang_bc: "26.2.1"
-  nodejs_bc: "20.14.0"
+  ELIXIR_DEV: "1.18.4-otp-27"
+  ERLANG_DEV: "27.1.3"
+  NODEJS_DEV: "22.15.1"
+  ELIXIR_BC: "1.15.7-otp-26"
+  ERLANG_BC: "26.2.1"
+  NODEJS_BC: "20.14.0"
 
 jobs:
+  setup-matrix-env:
+    runs-on: ubuntu-24.04
+    outputs:
+      ELIXIR_DEV: ${{ env.ELIXIR_DEV }}
+      ERLANG_DEV: ${{ env.ERLANG_DEV }}
+      NODEJS_DEV: ${{ env.NODEJS_DEV }}
+      ELIXIR_BC: ${{ env.ELIXIR_BC }}
+      ERLANG_BC: ${{ env.ERLANG_BC }}
+      NODEJS_BC: ${{ env.NODEJS_BC }}
+    steps:
+      - name: Compute matrix
+        run: |
+          echo "ELIXIR_DEV=${{ env.ELIXIR_DEV }}" >> $GITHUB_OUTPUT
+          echo "ERLANG_DEV=${{ env.ERLANG_DEV }}" >> $GITHUB_OUTPUT
+          echo "NODEJS_DEV=${{ env.NODEJS_DEV }}" >> $GITHUB_OUTPUT
+          echo "ELIXIR_BC=${{ env.ELIXIR_BC }}" >> $GITHUB_OUTPUT
+          echo "ERLANG_BC=${{ env.ERLANG_BC }}" >> $GITHUB_OUTPUT
+          echo "NODEJS_BC=${{ env.NODEJS_BC }}" >> $GITHUB_OUTPUT
+
+
   elixir-deps:
     name: Elixir ${{ matrix.mix_env }} dependencies
     runs-on: ubuntu-24.04
@@ -37,17 +57,17 @@ jobs:
       matrix:
         include:
           - mix_env: dev
-            elixir: ${{ env.elixir_bc }}
-            otp: ${{ env.erlang_bc }}
+            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
           - mix_env: dev
-            elixir: ${{ env.elixir_dev }}
-            otp: ${{ env.erlang_dev }}
+            otp: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
           - mix_env: test
-            elixir: ${{ env.elixir_bc }}
-            otp: ${{ env.erlang_bc }}
+            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
           - mix_env: test
-            elixir: ${{ env.elixir_dev }}
-            otp: ${{ env.erlang_dev }}
+            otp: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
     env:
       MIX_ENV: ${{ matrix.mix_env }}
     steps:
@@ -86,8 +106,8 @@ jobs:
     strategy:
       matrix:
         include:
-          - nodejs: ${{ env.nodejs_bc }}
-          - nodejs: ${{ env.nodejs_dev }}
+          - nodejs: ${{ needs.setup-matrix-env.outputs.NODEJS_BC }}
+          - nodejs: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -171,12 +191,12 @@ jobs:
     strategy:
       matrix:
         include:
-          - elixir: ${{ env.elixir_bc }}
-            otp: ${{ env.erlang_bc }}
-            nodejs: ${{ env.nodejs_bc }}
-          - elixir: ${{ env.elixir_dev }}
-            otp: ${{ env.erlang_dev }}
-            nodejs: ${{ env.nodejs_dev }}
+          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
+            nodejs: ${{ needs.setup-matrix-env.outputs.NODEJS_BC }}
+          - otp: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
+            nodejs: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -229,8 +249,8 @@ jobs:
     strategy:
       matrix:
         include:
-          - nodejs: ${{ env.nodejs_bc }}
-          - nodejs: ${{ env.nodejs_dev }}
+          - nodejs: ${{ needs.setup-matrix-env.outputs.NODEJS_BC }}
+          - nodejs: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -258,10 +278,10 @@ jobs:
     strategy:
       matrix:
         include:
-          - elixir: ${{ env.elixir_bc }}
-            otp: ${{ env.erlang_bc }}
-          - elixir: ${{ env.elixir_dev }}
-            otp: ${{ env.erlang_dev }}
+          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
+          - otp: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -378,8 +398,8 @@ jobs:
       matrix:
         containers: [1, 2, 3, 4, 5, 6, 7, 8]
         include:
-          - elixir: ${{ env.elixir_dev }}
-            otp: ${{ env.erlang_dev }}
+          - otp: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
     env:
       MIX_ENV: dev
     steps:
@@ -716,10 +736,10 @@ jobs:
     strategy:
       matrix:
         include:
-          - elixir: ${{ env.elixir_bc }}
-            otp: ${{ env.erlang_bc }}
-          - elixir: ${{ env.elixir_dev }}
-            otp: ${{ env.erlang_dev }}
+          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
+          - otp: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
     if: github.event_name == 'pull_request'
     steps:
       - name: Checkout target branch
@@ -759,10 +779,10 @@ jobs:
     strategy:
       matrix:
         include:
-          - elixir: ${{ env.elixir_bc }}
-            otp: ${{ env.erlang_bc }}
-          - elixir: ${{ env.elixir_dev }}
-            otp: ${{ env.erlang_dev }}
+          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
+          - otp: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.12.1
@@ -809,23 +829,23 @@ jobs:
       matrix:
         include:
           - version: Unversioned
-            elixir: ${{ env.elixir_bc }}
-            otp: ${{ env.erlang_bc }}
+            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
           - version: Unversioned
-            elixir: ${{ env.elixir_dev }}
-            otp: ${{ env.erlang_dev }}
+            otp: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
           - version: V1
-            elixir: ${{ env.elixir_bc }}
-            otp: ${{ env.erlang_bc }}
+            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
           - version: V1
-            elixir: ${{ env.elixir_dev }}
-            otp: ${{ env.erlang_dev }}
+            otp: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
           - version: V2
-            elixir: ${{ env.elixir_bc }}
-            otp: ${{ env.erlang_bc }}
+            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
           - version: V2
-            elixir: ${{ env.elixir_dev }}
-            otp: ${{ env.erlang_dev }}
+            otp: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
     steps:
       - name: Checkout current branch
         uses: actions/checkout@v5
