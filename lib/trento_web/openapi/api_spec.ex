@@ -16,6 +16,7 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
 
   alias OpenApiSpex.{
     Operation,
+    PathItem,
     Paths
   }
 
@@ -150,17 +151,25 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
   def build_paths_for_version("latest", router) do
     router
     |> Paths.from_router()
-    |> Enum.filter(fn {path, path_item} ->
+    |> Map.new(fn {path, path_item} ->
+      attrs =
+        path_item
+        |> Map.from_struct()
+        |> Map.new(fn
+          {verb, %Operation{deprecated: true}} -> {verb, nil}
+          {verb, op} -> {verb, op}
+        end)
+
+      {path, struct(PathItem, attrs)}
+    end)
+    |> Map.filter(fn {_path, path_item} ->
       path_item
-      |> Map.from_struct()
       |> Map.values()
       |> Enum.any?(fn
-        %Operation{deprecated: true} -> false
         %Operation{} -> true
         _ -> false
       end)
     end)
-    |> Map.new()
   end
 
   def build_paths_for_version(version, router) do
