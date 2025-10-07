@@ -72,7 +72,7 @@ command -v spectral >/dev/null 2>&1 || {
     exit 1
 }
 
-VERSIONS=("Complete" "Unversioned" "V1" "V2")
+VERSIONS=("All" "Unversioned" "V1" "V2")
 status=0
 
 for version in "${VERSIONS[@]}"; do

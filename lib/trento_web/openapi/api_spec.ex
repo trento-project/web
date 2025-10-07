@@ -8,6 +8,10 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
     use TrentoWeb.OpenApi.ApiSpec,
       api_version: "v1"
 
+    # For all endpoints:
+    use TrentoWeb.OpenApi.ApiSpec,
+      api_version: "all"
+
     # For unversioned endpoints:
     use TrentoWeb.OpenApi.ApiSpec,
       api_version: "unversioned"
@@ -144,10 +148,10 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
     end
   end
 
-  def build_version("complete"), do: to_string(Application.spec(:trento, :vsn))
+  def build_version("all"), do: to_string(Application.spec(:trento, :vsn))
   def build_version(version), do: to_string(Application.spec(:trento, :vsn)) <> "-" <> version
 
-  def build_paths_for_version("complete", router), do: Paths.from_router(router)
+  def build_paths_for_version("all", router), do: Paths.from_router(router)
 
   def build_paths_for_version(version, router) do
     available_versions = router.available_api_versions()

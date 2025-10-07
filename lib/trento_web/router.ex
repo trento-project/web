@@ -35,9 +35,9 @@ defmodule TrentoWeb.Router do
     plug OpenApiSpex.Plug.PutApiSpec, module: TrentoWeb.OpenApi.Unversioned.ApiSpec
   end
 
-  pipeline :api_complete do
+  pipeline :api_all do
     plug :api
-    plug OpenApiSpex.Plug.PutApiSpec, module: TrentoWeb.OpenApi.Complete.ApiSpec
+    plug OpenApiSpex.Plug.PutApiSpec, module: TrentoWeb.OpenApi.All.ApiSpec
   end
 
   pipeline :protected_api do
@@ -73,7 +73,7 @@ defmodule TrentoWeb.Router do
         %{url: "/api/v1/openapi", name: "Version 1"},
         %{url: "/api/v2/openapi", name: "Version 2"},
         %{url: "/api/unversioned/openapi", name: "Unversioned"},
-        %{url: "/api/complete/openapi", name: "Complete"}
+        %{url: "/api/all/openapi", name: "All"}
       ]
   end
 
@@ -289,8 +289,8 @@ defmodule TrentoWeb.Router do
       get "/openapi", OpenApiSpex.Plug.RenderSpec, []
     end
 
-    scope "/complete" do
-      pipe_through :api_complete
+    scope "/all" do
+      pipe_through :api_all
       get "/openapi", OpenApiSpex.Plug.RenderSpec, []
     end
   end

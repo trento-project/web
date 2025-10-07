@@ -40,9 +40,9 @@ defmodule TrentoWeb.OpenApi.ApiSpecTest do
       api_version: "unversioned"
   end
 
-  defmodule Complete do
+  defmodule All do
     use ApiSpec,
-      api_version: "complete"
+      api_version: "all"
   end
 
   describe "ApiSpec" do
@@ -79,7 +79,7 @@ defmodule TrentoWeb.OpenApi.ApiSpecTest do
              } = Unversioned.spec(TestRouter)
     end
 
-    test "should render the complete specification with all routes" do
+    test "should render all the specification with all routes" do
       expected_version = get_app_version()
 
       assert %OpenApiSpex.OpenApi{
@@ -87,7 +87,7 @@ defmodule TrentoWeb.OpenApi.ApiSpecTest do
                  version: ^expected_version
                },
                paths: %{"/api/not_versioned" => _, "/api/v1/route" => _, "/api/v2/route" => _}
-             } = Complete.spec(TestRouter)
+             } = All.spec(TestRouter)
     end
   end
 
