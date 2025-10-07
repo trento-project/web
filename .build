@@ -449,6 +449,7 @@ TrentoWeb.HealthController.html
 TrentoWeb.HealthJSON.html
 TrentoWeb.Layouts.html
 TrentoWeb.MonitoringChannel.html
+TrentoWeb.OpenApi.All.ApiSpec.html
 TrentoWeb.OpenApi.ApiSpec.html
 TrentoWeb.OpenApi.Unversioned.ApiSpec.html
 TrentoWeb.OpenApi.V1.ApiSpec.html
@@ -541,7 +542,7 @@ dist/lato-latin-ext-300-normal-VPGGJKJL.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-946FFA65.js
-dist/sidebar_items-3AAF4B08.js
+dist/search_data-8D934377.js
+dist/sidebar_items-018FCE88.js
 index.html
 search.html
