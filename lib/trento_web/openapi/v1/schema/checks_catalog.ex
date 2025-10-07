@@ -11,7 +11,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ChecksCatalog do
 
     OpenApiSpex.schema(
       %{
-        title: "Check_V1",
+        title: "CheckV1",
         description:
           "Represents a check that can be executed on the target infrastructure, including its details, remediation, and implementation.",
         type: :object,
@@ -71,7 +71,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ChecksCatalog do
 
     OpenApiSpex.schema(
       %{
-        title: "FlatCatalog_V1",
+        title: "FlatCatalogV1",
         description:
           "A flat list containing all available checks, supporting direct access and management without grouping.",
         type: :array,
@@ -86,7 +86,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ChecksCatalog do
 
     OpenApiSpex.schema(
       %{
-        title: "ChecksGroup_V1",
+        title: "ChecksGroupV1",
         description:
           "Represents a group of related checks, such as Corosync or Pacemaker, supporting organization and management.",
         additionalProperties: false,
@@ -109,21 +109,21 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ChecksCatalog do
 
     OpenApiSpex.schema(
       %{
-        title: "ProviderCatalog_V1",
+        title: "ProviderCatalogV1",
         description:
           "Represents a provider-specific catalog, including all relevant checks and their values for that provider.",
         additionalProperties: false,
         type: :object,
         properties: %{
           provider: %Schema{
-            title: "ChecksProvider_V1",
+            title: "ChecksProviderV1",
             type: :string,
             description:
               "Specifies the provider that determines the values for the attached checks, such as Azure, AWS, or GCP.",
             enum: [:azure, :aws, :gcp, :default]
           },
           groups: %Schema{
-            title: "ChecksGroups_V1",
+            title: "ChecksGroupsV1",
             description:
               "A list containing all check groups for the respective provider, supporting organization and management.",
             type: :array,
@@ -140,7 +140,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ChecksCatalog do
 
     OpenApiSpex.schema(
       %{
-        title: "GroupedCatalog_V1",
+        title: "GroupedCatalogV1",
         description:
           "A list of available checks grouped by provider (such as Azure or AWS) and by check groups (such as Corosync or Pacemaker).",
         type: :array,
@@ -155,7 +155,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ChecksCatalog do
 
     OpenApiSpex.schema(
       %{
-        title: "ChecksCatalog_V1",
+        title: "ChecksCatalogV1",
         description:
           "Represents the full checks catalog, including all available checks and their organization for the system.",
         oneOf: [
@@ -219,7 +219,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ChecksCatalog do
 
     OpenApiSpex.schema(
       %{
-        title: "CatalogNotfound_V1",
+        title: "CatalogNotfoundV1",
         description:
           "Indicates that no catalog was found for the provided query, supporting error handling and troubleshooting.",
         additionalProperties: false,
@@ -241,7 +241,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ChecksCatalog do
 
     OpenApiSpex.schema(
       %{
-        title: "UnableToLoadCatalog_V1",
+        title: "UnableToLoadCatalogV1",
         description:
           "Indicates that an error occurred while loading the catalog, such as the catalog not being ready or another issue.",
         additionalProperties: false,

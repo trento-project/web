@@ -19,7 +19,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       conn
       |> get("/api/v1/settings/api_key")
       |> json_response(404)
-      |> assert_schema("NotFound_V1", api_spec)
+      |> assert_schema("NotFoundV1", api_spec)
     end
 
     test "should return the api key settings are configured", %{
@@ -31,7 +31,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       conn
       |> get("/api/v1/settings/api_key")
       |> json_response(200)
-      |> assert_schema("ApiKeySettings_V1", api_spec)
+      |> assert_schema("ApiKeySettingsV1", api_spec)
     end
 
     test "should not update the api key settings if it is not configured returning not found",
@@ -42,7 +42,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
         expire_at: DateTime.to_iso8601(DateTime.utc_now())
       })
       |> json_response(404)
-      |> assert_schema("NotFound_V1", api_spec)
+      |> assert_schema("NotFoundV1", api_spec)
     end
 
     test "should update the api key settings if it is configured returning the updated settings",
@@ -58,7 +58,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
         expire_at: DateTime.to_iso8601(DateTime.utc_now())
       })
       |> json_response(200)
-      |> assert_schema("ApiKeySettings_V1", api_spec)
+      |> assert_schema("ApiKeySettingsV1", api_spec)
     end
 
     test "should consistently return the same generated key across different requests with the same settings",
@@ -118,7 +118,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       conn
       |> get("/api/v1/settings/activity_log")
       |> json_response(200)
-      |> assert_schema("ActivityLogSettings_V1", api_spec)
+      |> assert_schema("ActivityLogSettingsV1", api_spec)
     end
 
     test "should not return activity retention settings without setting up", %{
@@ -128,7 +128,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       conn
       |> get("/api/v1/settings/activity_log")
       |> json_response(404)
-      |> assert_schema("NotFound_V1", api_spec)
+      |> assert_schema("NotFoundV1", api_spec)
     end
 
     test "should update the activity log settings if it is configured returning the updated settings",
@@ -144,7 +144,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
         }
       })
       |> json_response(200)
-      |> assert_schema("ActivityLogSettings_V1", api_spec)
+      |> assert_schema("ActivityLogSettingsV1", api_spec)
     end
 
     test "should not update the activity log settings if it is not already configured",
@@ -158,7 +158,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
         }
       })
       |> json_response(422)
-      |> assert_schema("UnprocessableEntity_V1", api_spec)
+      |> assert_schema("UnprocessableEntityV1", api_spec)
     end
   end
 
@@ -179,7 +179,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       conn
       |> get("/api/v1/settings/suse_manager")
       |> json_response(:ok)
-      |> assert_schema("SuseManagerSettings_V1", api_spec)
+      |> assert_schema("SuseManagerSettingsV1", api_spec)
     end
 
     test "should return forbidden if no user settings have been saved", %{
@@ -189,7 +189,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       conn
       |> get("/api/v1/settings/suse_manager")
       |> json_response(:not_found)
-      |> assert_schema("NotFound_V1", api_spec)
+      |> assert_schema("NotFoundV1", api_spec)
     end
 
     test "should save new valid settings if no previous settings have been saved", %{conn: conn} do
@@ -643,7 +643,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
         conn
         |> get("/api/public_keys")
         |> json_response(200)
-        |> assert_schema("PublicKeys_V1", api_spec)
+        |> assert_schema("PublicKeysV1", api_spec)
 
       assert [%{name: name, content: cert}] == resp
     end
@@ -660,7 +660,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
         conn
         |> get(~p"/api/v1/settings/alerting")
         |> json_response(:ok)
-        |> assert_response_schema("AlertingSettings_V1", api_spec)
+        |> assert_response_schema("AlertingSettingsV1", api_spec)
 
       assert exp_settings == resp
     end
@@ -670,7 +670,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
         conn
         |> get(~p"/api/v1/settings/alerting")
         |> json_response(:not_found)
-        |> assert_response_schema("NotFound_V1", api_spec)
+        |> assert_response_schema("NotFoundV1", api_spec)
 
       assert %{
                errors: [
@@ -692,7 +692,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
         |> put_req_header("content-type", "application/json")
         |> post(~p"/api/v1/settings/alerting", create_params)
         |> json_response(:created)
-        |> assert_response_schema("AlertingSettings_V1", api_spec)
+        |> assert_response_schema("AlertingSettingsV1", api_spec)
 
       assert exp_params == resp
     end
@@ -718,7 +718,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
           |> post(~p"/api/v1/settings/alerting", settings)
           |> json_response(:unprocessable_entity)
 
-        assert_response_schema(conn, "UnprocessableEntity_V1", api_spec)
+        assert_response_schema(conn, "UnprocessableEntityV1", api_spec)
 
         assert %{
                  "errors" => [
@@ -749,7 +749,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
         |> post(~p"/api/v1/settings/alerting", settings)
         |> json_response(:unprocessable_entity)
 
-      assert_response_schema(conn, "UnprocessableEntity_V1", api_spec)
+      assert_response_schema(conn, "UnprocessableEntityV1", api_spec)
 
       assert %{
                "errors" => [
@@ -779,7 +779,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
         |> put_req_header("content-type", "application/json")
         |> patch(~p"/api/v1/settings/alerting", update_params)
         |> json_response(:ok)
-        |> assert_response_schema("AlertingSettings_V1", api_spec)
+        |> assert_response_schema("AlertingSettingsV1", api_spec)
 
       assert exp_params == resp
     end
@@ -800,7 +800,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
         |> patch(~p"/api/v1/settings/alerting", settings)
         |> json_response(:unprocessable_entity)
 
-      assert_response_schema(conn, "UnprocessableEntity_V1", api_spec)
+      assert_response_schema(conn, "UnprocessableEntityV1", api_spec)
 
       assert %{
                "errors" => [
@@ -822,7 +822,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
         |> put_req_header("content-type", "application/json")
         |> patch(~p"/api/v1/settings/alerting", %{enabled: false})
         |> json_response(:not_found)
-        |> assert_response_schema("NotFound_V1", api_spec)
+        |> assert_response_schema("NotFoundV1", api_spec)
 
       assert %{
                errors: [
@@ -856,7 +856,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
         "expire_at" => DateTime.to_iso8601(DateTime.utc_now())
       })
       |> json_response(:forbidden)
-      |> assert_schema("Forbidden_V1", api_spec)
+      |> assert_schema("ForbiddenV1", api_spec)
     end
 
     test "should return forbidden if the user does not have the permission to edit activity logs settings",
@@ -872,7 +872,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
         }
       })
       |> json_response(:forbidden)
-      |> assert_schema("Forbidden_V1", api_spec)
+      |> assert_schema("ForbiddenV1", api_spec)
     end
 
     test "should return forbidden when user tries to create settings without right abilities", %{
@@ -890,7 +890,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       |> put_req_header("content-type", "application/json")
       |> post("/api/v1/settings/suse_manager", settings)
       |> json_response(:forbidden)
-      |> assert_schema("Forbidden_V1", api_spec)
+      |> assert_schema("ForbiddenV1", api_spec)
     end
 
     test "should return forbidden when user tries to update settings without right abilities", %{
@@ -905,7 +905,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       |> put_req_header("content-type", "application/json")
       |> patch("/api/v1/settings/suse_manager", change_submission)
       |> json_response(:forbidden)
-      |> assert_schema("Forbidden_V1", api_spec)
+      |> assert_schema("ForbiddenV1", api_spec)
     end
 
     test "should return forbidden when user tries to delete settings without right abilities", %{
@@ -916,7 +916,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       |> put_req_header("content-type", "application/json")
       |> delete("/api/v1/settings/suse_manager")
       |> json_response(:forbidden)
-      |> assert_schema("Forbidden_V1", api_spec)
+      |> assert_schema("ForbiddenV1", api_spec)
     end
 
     test "should return forbidden when user tries to create alerting settings without right abilities",
@@ -933,7 +933,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       |> put_req_header("content-type", "application/json")
       |> post(~p"/api/v1/settings/alerting", settings)
       |> json_response(:forbidden)
-      |> assert_schema("Forbidden_V1", api_spec)
+      |> assert_schema("ForbiddenV1", api_spec)
     end
 
     test "should return forbidden when user tries to update alerting settings without right abilities",
@@ -951,7 +951,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       |> put_req_header("content-type", "application/json")
       |> patch(~p"/api/v1/settings/alerting", settings)
       |> json_response(:forbidden)
-      |> assert_schema("Forbidden_V1", api_spec)
+      |> assert_schema("ForbiddenV1", api_spec)
     end
   end
 end
@@ -995,7 +995,7 @@ defmodule TrentoWeb.V1.SettingsControllerSequentialTest do
           |> put_req_header("content-type", "application/json")
           |> dispatch(@endpoint, http_method, ~p"/api/v1/settings/alerting", params)
           |> json_response(:conflict)
-          |> assert_response_schema("Conflict_V1", api_spec)
+          |> assert_response_schema("ConflictV1", api_spec)
 
         assert %{
                  errors: [

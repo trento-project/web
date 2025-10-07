@@ -6,7 +6,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ResourceHealth do
 
   OpenApiSpex.schema(
     %{
-      title: "ResourceHealth_V1",
+      title: "ResourceHealthV1",
       type: :string,
       nullable: true,
       description:

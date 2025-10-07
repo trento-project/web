@@ -8,12 +8,12 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ActivityLog do
     @moduledoc false
     OpenApiSpex.schema(
       %{
-        title: "ActivityLogEntries_V1",
+        title: "ActivityLogEntriesV1",
         description:
           "A collection of activity log entries that record significant events and actions within the platform for auditing and monitoring purposes.",
         type: :array,
         items: %Schema{
-          title: "ActivityLogEntries_V1",
+          title: "ActivityLogEntriesV1",
           type: :object,
           additionalProperties: false,
           properties: %{
@@ -72,7 +72,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ActivityLog do
     @moduledoc false
     OpenApiSpex.schema(
       %{
-        title: "Pagination_V1",
+        title: "PaginationV1",
         description:
           "Metadata describing the pagination state of the current list, including cursors and navigation flags for result sets.",
         additionalProperties: false,
@@ -141,7 +141,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ActivityLog do
 
     OpenApiSpex.schema(
       %{
-        title: "ActivityLog_V1",
+        title: "ActivityLogV1",
         description:
           "Represents the activity log for the current installation, providing a comprehensive record of platform events and actions.",
         type: :object,

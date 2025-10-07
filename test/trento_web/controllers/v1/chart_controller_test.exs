@@ -27,7 +27,7 @@ defmodule TrentoWeb.V1.ChartControllerTest do
       conn
       |> get("/api/v1/charts/hosts/#{prometheus_chart_agent_id}/memory?from=#{from}&to=#{to}")
       |> json_response(422)
-      |> assert_schema("UnprocessableEntity_V1", api_spec)
+      |> assert_schema("UnprocessableEntityV1", api_spec)
     end
 
     test "should return 200 with host memory chart data when host exists", %{
@@ -42,7 +42,7 @@ defmodule TrentoWeb.V1.ChartControllerTest do
       conn
       |> get("/api/v1/charts/hosts/#{prometheus_chart_agent_id}/memory?from=#{from}&to=#{to}")
       |> json_response(200)
-      |> assert_schema("HostMemoryChart_V1", api_spec)
+      |> assert_schema("HostMemoryChartV1", api_spec)
     end
 
     test "should return 404 if a cpu chart is requested for a non existing host", %{
@@ -54,7 +54,7 @@ defmodule TrentoWeb.V1.ChartControllerTest do
       conn
       |> get("/api/v1/charts/hosts/#{Faker.UUID.v4()}/memory?from=#{from}&to=#{to}")
       |> json_response(404)
-      |> assert_schema("NotFound_V1", api_spec)
+      |> assert_schema("NotFoundV1", api_spec)
     end
   end
 
@@ -79,7 +79,7 @@ defmodule TrentoWeb.V1.ChartControllerTest do
       conn
       |> get("/api/v1/charts/hosts/#{prometheus_chart_agent_id}/cpu?from=#{from}&to=#{to}")
       |> json_response(422)
-      |> assert_schema("UnprocessableEntity_V1", api_spec)
+      |> assert_schema("UnprocessableEntityV1", api_spec)
     end
 
     test "should return 200 with host cpu chart data when host exists", %{
@@ -94,7 +94,7 @@ defmodule TrentoWeb.V1.ChartControllerTest do
       conn
       |> get("/api/v1/charts/hosts/#{prometheus_chart_agent_id}/cpu?from=#{from}&to=#{to}")
       |> json_response(200)
-      |> assert_schema("HostCpuChart_V1", api_spec)
+      |> assert_schema("HostCpuChartV1", api_spec)
     end
 
     test "should return 404 if a cpu chart is requested for a non existing host", %{
@@ -106,7 +106,7 @@ defmodule TrentoWeb.V1.ChartControllerTest do
       conn
       |> get("/api/v1/charts/hosts/#{Faker.UUID.v4()}/cpu?from=#{from}&to=#{to}")
       |> json_response(404)
-      |> assert_schema("NotFound_V1", api_spec)
+      |> assert_schema("NotFoundV1", api_spec)
     end
   end
 end

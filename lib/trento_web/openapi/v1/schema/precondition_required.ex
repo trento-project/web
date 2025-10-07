@@ -9,7 +9,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.PreconditionRequired do
 
   OpenApiSpex.schema(
     %{
-      title: "PreconditionRequired_V1",
+      title: "PreconditionRequiredV1",
       description:
         "Error response returned when a required precondition for the request is missing, such as the absence of an If-Match header for conditional operations.",
       type: :object,

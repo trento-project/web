@@ -9,7 +9,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.PreconditionFailed do
 
   OpenApiSpex.schema(
     %{
-      title: "PreconditionFailed_V1",
+      title: "PreconditionFailedV1",
       description:
         "Error response returned when a precondition for the requested operation is not met, such as a mid-air collision or outdated resource.",
       type: :object,

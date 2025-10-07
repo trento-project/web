@@ -34,7 +34,7 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
 
       conn
       |> json_response(200)
-      |> assert_schema("SAPSystemsCollection_V1", api_spec)
+      |> assert_schema("SAPSystemsCollectionV1", api_spec)
     end
   end
 
@@ -93,7 +93,7 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
         "/api/v1/sap_systems/#{sap_system_id}/hosts/#{host_id}/instances/#{instance_number}"
       )
       |> json_response(422)
-      |> assert_schema("UnprocessableEntity_V1", api_spec)
+      |> assert_schema("UnprocessableEntityV1", api_spec)
     end
 
     test "should send 404 response if the application instance is not found", %{
@@ -124,7 +124,7 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
         "/api/v1/sap_systems/#{sap_system_id}/hosts/#{host_id}/instances/#{instance_number}"
       )
       |> json_response(404)
-      |> assert_schema("NotFound_V1", api_spec)
+      |> assert_schema("NotFoundV1", api_spec)
     end
 
     test "should allow the request when the user has cleanup:application_instance ability", %{
@@ -183,7 +183,7 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
         %{}
       )
       |> json_response(:not_found)
-      |> assert_schema("NotFound_V1", api_spec)
+      |> assert_schema("NotFoundV1", api_spec)
     end
 
     operations = [
@@ -213,7 +213,7 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
           %{}
         )
         |> json_response(:not_found)
-        |> assert_schema("NotFound_V1", api_spec)
+        |> assert_schema("NotFoundV1", api_spec)
       end
 
       test "should fallback to not found on operation #{operation} if the host is not found",
@@ -230,7 +230,7 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
           %{}
         )
         |> json_response(:not_found)
-        |> assert_schema("NotFound_V1", api_spec)
+        |> assert_schema("NotFoundV1", api_spec)
       end
 
       test "should fallback to not found on operation #{operation} if the sap instance is not found",
@@ -248,7 +248,7 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
           %{}
         )
         |> json_response(:not_found)
-        |> assert_schema("NotFound_V1", api_spec)
+        |> assert_schema("NotFoundV1", api_spec)
       end
 
       test "should respond with 500 for operation #{operation} on messaging error", %{conn: conn} do
@@ -333,7 +333,7 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
 
         posted_conn
         |> json_response(:accepted)
-        |> assert_schema("OperationAccepted_V1", api_spec)
+        |> assert_schema("OperationAcceptedV1", api_spec)
 
         assert %{
                  assigns: %{
@@ -366,7 +366,7 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
         %{}
       )
       |> json_response(:not_found)
-      |> assert_schema("NotFound_V1", api_spec)
+      |> assert_schema("NotFoundV1", api_spec)
     end
 
     operations = [
@@ -396,7 +396,7 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
           %{}
         )
         |> json_response(:not_found)
-        |> assert_schema("NotFound_V1", api_spec)
+        |> assert_schema("NotFoundV1", api_spec)
       end
 
       test "should fallback to not found on operation #{operation} if the sap system is deregistered",
@@ -413,7 +413,7 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
           %{}
         )
         |> json_response(:not_found)
-        |> assert_schema("NotFound_V1", api_spec)
+        |> assert_schema("NotFoundV1", api_spec)
       end
 
       test "should respond with 500 for operation #{operation} on messaging error", %{conn: conn} do
@@ -504,7 +504,7 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
 
         posted_conn
         |> json_response(:accepted)
-        |> assert_schema("OperationAccepted_V1", api_spec)
+        |> assert_schema("OperationAcceptedV1", api_spec)
 
         assert %{
                  assigns: %{
@@ -571,7 +571,7 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
         fn conn ->
           conn
           |> json_response(:forbidden)
-          |> assert_schema("Forbidden_V1", api_spec)
+          |> assert_schema("ForbiddenV1", api_spec)
         end
       )
     end

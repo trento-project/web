@@ -9,7 +9,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Ready do
 
   OpenApiSpex.schema(
     %Schema{
-      title: "Ready_V1",
+      title: "ReadyV1",
       description:
         "Represents the readiness status of the Trento Web platform, indicating whether the system is fully operational and available for use.",
       type: :object,

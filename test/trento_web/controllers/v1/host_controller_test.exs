@@ -30,7 +30,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
 
       get(conn, "/api/v1/hosts")
       |> json_response(200)
-      |> assert_schema("HostsCollection_V1", api_spec)
+      |> assert_schema("HostsCollectionV1", api_spec)
     end
 
     test "should handle null cluster_id", %{conn: conn, api_spec: api_spec} do
@@ -38,7 +38,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
 
       get(conn, "/api/v1/hosts")
       |> json_response(200)
-      |> assert_schema("HostsCollection_V1", api_spec)
+      |> assert_schema("HostsCollectionV1", api_spec)
     end
 
     test "should include cluster information if present", %{conn: conn, api_spec: api_spec} do
@@ -55,7 +55,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
       hosts =
         get(conn, "/api/v1/hosts")
         |> json_response(200)
-        |> assert_schema("HostsCollection_V1", api_spec)
+        |> assert_schema("HostsCollectionV1", api_spec)
 
       host = Enum.find(hosts, fn h -> h.id == host_id end)
       another_host = Enum.find(hosts, fn h -> h.id == another_host_id end)
@@ -306,7 +306,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
         conn
         |> post("/api/v1/hosts/#{host_id}/checks/request_execution")
         |> json_response(:not_found)
-        |> assert_schema("NotFound_V1", api_spec)
+        |> assert_schema("NotFoundV1", api_spec)
       end
     end
 
@@ -316,7 +316,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
       conn
       |> post("/api/v1/hosts/#{host_id}/checks/request_execution")
       |> json_response(:unprocessable_entity)
-      |> assert_schema("UnprocessableEntity_V1", api_spec)
+      |> assert_schema("UnprocessableEntityV1", api_spec)
     end
 
     test "should return 500 on messaging error", %{conn: conn} do
@@ -377,7 +377,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
       conn
       |> delete("/api/v1/hosts/#{host_id}")
       |> json_response(422)
-      |> assert_schema("UnprocessableEntity_V1", api_spec)
+      |> assert_schema("UnprocessableEntityV1", api_spec)
     end
 
     test "should return 404 if the host was not found", %{conn: conn, api_spec: api_spec} do
@@ -394,7 +394,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
       conn
       |> delete("/api/v1/hosts/#{host_id}")
       |> json_response(404)
-      |> assert_schema("NotFound_V1", api_spec)
+      |> assert_schema("NotFoundV1", api_spec)
     end
 
     test "should allow the request when the user has cleanup:host ability", %{
@@ -451,7 +451,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
         conn
         |> post("/api/v1/hosts/#{UUID.uuid4()}/operations/#{@operation}")
         |> json_response(:not_found)
-        |> assert_schema("NotFound_V1", api_spec)
+        |> assert_schema("NotFoundV1", api_spec)
       end
 
       test "should respond with 422 if operation '#{operation}' does not receive needed params",
@@ -562,7 +562,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
           "solution" => "HANA"
         })
         |> json_response(:accepted)
-        |> assert_schema("OperationAccepted_V1", api_spec)
+        |> assert_schema("OperationAcceptedV1", api_spec)
       end
     end
 
@@ -575,7 +575,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
       conn
       |> post("/api/v1/hosts/#{host_id}/operations/unknown")
       |> json_response(:not_found)
-      |> assert_schema("NotFound_V1", api_spec)
+      |> assert_schema("NotFoundV1", api_spec)
     end
   end
 
@@ -597,7 +597,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
       conn
       |> post("/api/v1/hosts/#{host_id}/operations/#{@saptune_operation}")
       |> json_response(:forbidden)
-      |> assert_schema("Forbidden_V1", api_spec)
+      |> assert_schema("ForbiddenV1", api_spec)
     end
   end
 
@@ -618,7 +618,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
     conn
     |> post("/api/v1/hosts/#{host_id}/operations/reboot")
     |> json_response(:forbidden)
-    |> assert_schema("Forbidden_V1", api_spec)
+    |> assert_schema("ForbiddenV1", api_spec)
   end
 
   describe "forbidden response" do
@@ -643,7 +643,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
         fn conn ->
           conn
           |> json_response(:forbidden)
-          |> assert_schema("Forbidden_V1", api_spec)
+          |> assert_schema("ForbiddenV1", api_spec)
         end
       )
     end

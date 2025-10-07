@@ -20,7 +20,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Host do
 
     OpenApiSpex.schema(
       %{
-        title: "IPv4_V1",
+        title: "IPv4V1",
         description:
           "Represents the format of an IPv4 address, used for network identification and communication in the host system.",
         type: :string,
@@ -36,7 +36,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Host do
 
     OpenApiSpex.schema(
       %{
-        title: "IPv6_V1",
+        title: "IPv6V1",
         description:
           "Represents the format of an IPv6 address, supporting modern network identification and communication in the host system.",
         type: :string,
@@ -52,7 +52,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Host do
 
     OpenApiSpex.schema(
       %{
-        title: "SystemdUnit_V1",
+        title: "SystemdUnitV1",
         description:
           "Provides information about a systemd service unit, including its name and operational state for system management.",
         type: :object,
@@ -83,7 +83,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Host do
 
     OpenApiSpex.schema(
       %{
-        title: "Host_V1",
+        title: "HostV1",
         description:
           "Represents a discovered host on the target infrastructure, including its configuration, health, and associated resources.",
         type: :object,
@@ -234,7 +234,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Host do
 
     OpenApiSpex.schema(
       %{
-        title: "HostsCollection_V1",
+        title: "HostsCollectionV1",
         description:
           "A list containing all discovered hosts on the target infrastructure, supporting monitoring and management.",
         type: :array,

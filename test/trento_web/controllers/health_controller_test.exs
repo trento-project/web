@@ -21,7 +21,7 @@ defmodule Trento.HealthControllerTest do
         |> get("/api/healthz")
         |> json_response(200)
 
-      assert_schema(response, "Health_V1", api_spec)
+      assert_schema(response, "HealthV1", api_spec)
     end
 
     test "report healthy state for /readyz endpoint", %{
@@ -33,7 +33,7 @@ defmodule Trento.HealthControllerTest do
         |> get("/api/readyz")
         |> json_response(200)
 
-      assert_schema(response, "Ready_V1", api_spec)
+      assert_schema(response, "ReadyV1", api_spec)
     end
   end
 end

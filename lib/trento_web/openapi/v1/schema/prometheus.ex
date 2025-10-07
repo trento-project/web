@@ -9,7 +9,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Prometheus do
 
     OpenApiSpex.schema(
       %{
-        title: "PrometheusExporterStatus_V1",
+        title: "PrometheusExporterStatusV1",
         description:
           "Represents the status information for Prometheus exporters, indicating their health and operational state for monitoring purposes.",
         type: :object,

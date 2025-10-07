@@ -49,7 +49,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Auth do
 
     OpenApiSpex.schema(
       %{
-        title: "LoginCredentials_V1",
+        title: "LoginCredentialsV1",
         description: "User login credentials schema for authentication and token issuance.",
         type: :object,
         additionalProperties: false,
@@ -107,7 +107,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Auth do
 
     OpenApiSpex.schema(
       %{
-        title: "RefreshTokenRequest_V1",
+        title: "RefreshTokenRequestV1",
         description: "Refresh token credentials for obtaining new access token.",
         type: :object,
         additionalProperties: false,
@@ -156,7 +156,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Auth do
 
     OpenApiSpex.schema(
       %{
-        title: "ExternalIdpCallback_V1",
+        title: "ExternalIdpCallbackV1",
         description: "User identity provider enrollment credentials with authorization code.",
         type: :object,
         additionalProperties: false,
@@ -211,7 +211,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Auth do
 
     OpenApiSpex.schema(
       %{
-        title: "UserIDPCredentials_V1",
+        title: "UserIDPCredentialsV1",
         description:
           "Successful authentication returns access and refresh tokens for secure API usage.",
         type: :object,
@@ -270,7 +270,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Auth do
 
     OpenApiSpex.schema(
       %{
-        title: "Credentials_V1",
+        title: "CredentialsV1",
         description:
           "Successful authentication returns access and refresh tokens for secure API usage. The response includes token expiration details and is suitable for session management.",
         type: :object,
@@ -336,7 +336,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Auth do
 
     OpenApiSpex.schema(
       %{
-        title: "RefreshedCredentials_V1",
+        title: "RefreshedCredentialsV1",
         description:
           "A valid refresh token returns new access credentials for continued secure API usage. The response includes updated token expiration information for session management.",
         type: :object,

@@ -29,7 +29,7 @@ defmodule TrentoWeb.V1.ActivityLogControllerTest do
         |> json_response(200)
 
       assert length(resp["data"]) == 25
-      assert_schema(resp, "ActivityLog_V1", api_spec)
+      assert_schema(resp, "ActivityLogV1", api_spec)
     end
 
     test "should return valid response (empty list) if no activity logs entries exist", %{
@@ -42,7 +42,7 @@ defmodule TrentoWeb.V1.ActivityLogControllerTest do
         |> json_response(200)
 
       assert resp["data"] == []
-      assert_schema(resp, "ActivityLog_V1", api_spec)
+      assert_schema(resp, "ActivityLogV1", api_spec)
     end
 
     test "should return valid response (list with 10 elements) if provided with suitable params",
@@ -58,7 +58,7 @@ defmodule TrentoWeb.V1.ActivityLogControllerTest do
         |> json_response(200)
 
       assert length(resp["data"]) == 10
-      assert_schema(resp, "ActivityLog_V1", api_spec)
+      assert_schema(resp, "ActivityLogV1", api_spec)
     end
 
     test "should return valid response (list with 25 elements) for actor=aktor if provided with suitable params",
@@ -74,7 +74,7 @@ defmodule TrentoWeb.V1.ActivityLogControllerTest do
         |> json_response(200)
 
       assert length(resp["data"]) == 25
-      assert_schema(resp, "ActivityLog_V1", api_spec)
+      assert_schema(resp, "ActivityLogV1", api_spec)
     end
 
     test "should return valid response of empty list if no actor matches provided with suitable params",
@@ -90,7 +90,7 @@ defmodule TrentoWeb.V1.ActivityLogControllerTest do
         |> json_response(200)
 
       assert Enum.empty?(resp["data"])
-      assert_schema(resp, "ActivityLog_V1", api_spec)
+      assert_schema(resp, "ActivityLogV1", api_spec)
     end
 
     test "should return valid response of paginated first, second and third page of results",
@@ -106,7 +106,7 @@ defmodule TrentoWeb.V1.ActivityLogControllerTest do
         |> json_response(200)
 
       assert length(resp["data"]) == 2
-      assert_schema(resp, "ActivityLog_V1", api_spec)
+      assert_schema(resp, "ActivityLogV1", api_spec)
       next = resp["pagination"]["end_cursor"]
 
       resp2 =
@@ -115,7 +115,7 @@ defmodule TrentoWeb.V1.ActivityLogControllerTest do
         |> json_response(200)
 
       assert length(resp2["data"]) == 2
-      assert_schema(resp2, "ActivityLog_V1", api_spec)
+      assert_schema(resp2, "ActivityLogV1", api_spec)
 
       next = resp2["pagination"]["end_cursor"]
 
@@ -152,7 +152,7 @@ defmodule TrentoWeb.V1.ActivityLogControllerTest do
         |> json_response(200)
 
       assert length(resp["data"]) == 20
-      assert_schema(resp, "ActivityLog_V1", api_spec)
+      assert_schema(resp, "ActivityLogV1", api_spec)
     end
 
     test "should return valid response of entries provided with date ranges params",
@@ -189,7 +189,7 @@ defmodule TrentoWeb.V1.ActivityLogControllerTest do
         |> json_response(200)
 
       assert length(resp["data"]) == 18
-      assert_schema(resp, "ActivityLog_V1", api_spec)
+      assert_schema(resp, "ActivityLogV1", api_spec)
     end
 
     test "should not return user management logs if user has all:foo ability",
@@ -219,7 +219,7 @@ defmodule TrentoWeb.V1.ActivityLogControllerTest do
       # We expect an empty response since there are no entries
       # other than user management related ones.
       assert Enum.empty?(resp["data"])
-      assert_schema(resp, "ActivityLog_V1", api_spec)
+      assert_schema(resp, "ActivityLogV1", api_spec)
     end
 
     test "should return user management logs if user has all:users ability",
@@ -245,7 +245,7 @@ defmodule TrentoWeb.V1.ActivityLogControllerTest do
         |> json_response(200)
 
       assert length(resp["data"]) == 25
-      assert_schema(resp, "ActivityLog_V1", api_spec)
+      assert_schema(resp, "ActivityLogV1", api_spec)
     end
 
     test "should search log entries by metadata", %{
@@ -262,7 +262,7 @@ defmodule TrentoWeb.V1.ActivityLogControllerTest do
         |> json_response(200)
 
       assert length(resp["data"]) == 10
-      assert_schema(resp, "ActivityLog_V1", api_spec)
+      assert_schema(resp, "ActivityLogV1", api_spec)
     end
 
     test "a malformed metadata search string yields an empty result set", %{
@@ -277,7 +277,7 @@ defmodule TrentoWeb.V1.ActivityLogControllerTest do
         |> json_response(200)
 
       assert resp["data"] == []
-      assert_schema(resp, "ActivityLog_V1", api_spec)
+      assert_schema(resp, "ActivityLogV1", api_spec)
     end
 
     test "should return debug and above severity level entries by default",
@@ -300,7 +300,7 @@ defmodule TrentoWeb.V1.ActivityLogControllerTest do
         resp["data"] |> Enum.map(fn entry -> entry["severity"] end) |> Enum.uniq() |> Enum.sort()
 
       assert severity_levels == Enum.sort(["debug", "info", "warning", "critical"])
-      assert_schema(resp, "ActivityLog_V1", api_spec)
+      assert_schema(resp, "ActivityLogV1", api_spec)
     end
 
     test "should return critical severity level entries with appropriate query params",
@@ -323,7 +323,7 @@ defmodule TrentoWeb.V1.ActivityLogControllerTest do
         resp["data"] |> Enum.map(fn entry -> entry["severity"] end) |> Enum.uniq() |> Enum.sort()
 
       assert severity_levels == Enum.sort(["critical"])
-      assert_schema(resp, "ActivityLog_V1", api_spec)
+      assert_schema(resp, "ActivityLogV1", api_spec)
     end
   end
 
@@ -435,7 +435,7 @@ defmodule TrentoWeb.V1.ActivityLogControllerTest do
       conn
       |> get("/api/v1/activity_log?actor[]=aktor")
       |> json_response(:forbidden)
-      |> assert_schema("Forbidden_V1", api_spec)
+      |> assert_schema("ForbiddenV1", api_spec)
     end
   end
 end

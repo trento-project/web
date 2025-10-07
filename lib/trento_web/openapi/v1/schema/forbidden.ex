@@ -9,7 +9,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Forbidden do
 
   OpenApiSpex.schema(
     %{
-      title: "Forbidden_V1",
+      title: "ForbiddenV1",
       description:
         "Represents an error response for forbidden access, providing details about the reason the operation could not be performed due to insufficient permissions.",
       type: :object,

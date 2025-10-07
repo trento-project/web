@@ -8,7 +8,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.DatabaseOperationParams do
 
     OpenApiSpex.schema(
       %{
-        title: "DatabaseStartStopParams_V1",
+        title: "DatabaseStartStopParamsV1",
         description:
           "Parameters required to start or stop a database, including system replication site configuration and operation timeout for reliable management.",
         type: :object,
@@ -39,7 +39,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.DatabaseOperationParams do
 
   OpenApiSpex.schema(
     %{
-      title: "DatabaseOperationParams_V1",
+      title: "DatabaseOperationParamsV1",
       description:
         "Request parameters for database operations, supporting flexible control over database lifecycle actions such as starting or stopping databases with configurable options.",
       oneOf: [

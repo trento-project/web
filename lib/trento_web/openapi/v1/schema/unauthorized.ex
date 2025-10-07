@@ -9,7 +9,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Unauthorized do
 
   OpenApiSpex.schema(
     %{
-      title: "Unauthorized_V1",
+      title: "UnauthorizedV1",
       description:
         "Error response returned when access to the requested operation is denied due to missing or invalid authentication credentials.",
       type: :object,
