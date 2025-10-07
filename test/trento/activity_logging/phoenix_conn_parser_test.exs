@@ -375,15 +375,21 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
     end
 
     test "should extract personal access token data during deletion", %{conn: conn} do
+      token_name = Faker.StarWars.character()
       jti = Faker.UUID.v4()
 
-      assert %{jti: jti} ==
+      assert %{jti: jti, name: token_name} ==
                PhoenixConnParser.get_activity_metadata(
                  :personal_access_token_deletion,
                  %Plug.Conn{
                    conn
                    | params: %{
                        jti: jti
+                     },
+                     assigns: %{
+                       deleted_token: %{
+                         name: token_name
+                       }
                      }
                  }
                )
@@ -391,9 +397,10 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
 
     test "should extract personal access token data during deletion by admin", %{conn: conn} do
       user_id = 1
+      token_name = Faker.StarWars.character()
       jti = Faker.UUID.v4()
 
-      assert %{user_id: user_id, jti: jti} ==
+      assert %{user_id: user_id, jti: jti, name: token_name} ==
                PhoenixConnParser.get_activity_metadata(
                  :personal_access_token_admin_deletion,
                  %Plug.Conn{
@@ -401,6 +408,11 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
                    | params: %{
                        id: user_id,
                        jti: jti
+                     },
+                     assigns: %{
+                       deleted_token: %{
+                         name: token_name
+                       }
                      }
                  }
                )

@@ -9,6 +9,8 @@ defmodule TrentoWeb.V1.PersonalAccessTokensController do
   alias TrentoWeb.Auth.PersonalAccessToken, as: PAT
   alias TrentoWeb.OpenApi.V1.Schema
 
+  import Plug.Conn
+
   plug TrentoWeb.Plugs.LoadUserPlug
 
   plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
@@ -81,11 +83,14 @@ defmodule TrentoWeb.V1.PersonalAccessTokensController do
     ]
 
   def revoke_personal_access_token(conn, %{jti: jti}) do
-    with {:ok, _} <-
+    with {:ok, token} <-
            conn
            |> Pow.Plug.current_user()
            |> PersonalAccessTokens.revoke_personal_access_token(jti) do
-      send_resp(conn, :no_content, "")
+      # add deleted token to assigns to use in the activity log
+      conn
+      |> assign(:deleted_token, token)
+      |> send_resp(:no_content, "")
     end
   end
 end

@@ -183,10 +183,15 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
   def get_activity_metadata(
         :personal_access_token_deletion,
         %Plug.Conn{
-          params: params
+          params: params,
+          assigns: %{
+            deleted_token: %{
+              name: name
+            }
+          }
         }
       ),
-      do: params
+      do: Map.put(params, :name, name)
 
   def get_activity_metadata(
         :personal_access_token_admin_deletion,
@@ -194,10 +199,15 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
           params: %{
             id: user_id,
             jti: jti
+          },
+          assigns: %{
+            deleted_token: %{
+              name: name
+            }
           }
         }
       ) do
-    %{user_id: user_id, jti: jti}
+    %{user_id: user_id, jti: jti, name: name}
   end
 
   def get_activity_metadata(
