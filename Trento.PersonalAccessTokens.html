@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-K7URE6B4.js"></script>
-    <script src="dist/sidebar_items-A5915A54.js"></script>
+    <script src="dist/sidebar_items-3AAF4B08.js"></script>
     <script src="docs_config.js"></script>
     <script async src="dist/html-YIPIRHGU.js"></script>
 
@@ -179,6 +179,14 @@ Info
 
     </div>
 
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#validate_and_introspect/2" data-no-tooltip translate="no">validate_and_introspect(jti, user_id)</a>
+
+      </div>
+
+    </div>
+
 </div>
 
   </section>
@@ -201,7 +209,7 @@ Info
     </a>
     <h1 class="signature" translate="no">create_personal_access_token(user, attrs)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/personal_access_tokens.ex#L42" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/personal_access_tokens.ex#L14" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -232,7 +240,7 @@ Info
     </a>
     <h1 class="signature" translate="no">revoke_personal_access_token(user, token_id)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/personal_access_tokens.ex#L53" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/personal_access_tokens.ex#L25" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -262,7 +270,7 @@ Info
     </a>
     <h1 class="signature" translate="no">valid?(jti, user_id)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/personal_access_tokens.ex#L13" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/personal_access_tokens.ex#L36" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -275,6 +283,36 @@ Info
       <div class="specs">
 
           <pre translate="no"><span class="attribute">@spec</span> valid?(<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">bitstring</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="validate_and_introspect/2">
+
+  <div class="detail-header">
+    <a href="#validate_and_introspect/2" class="detail-link" data-no-tooltip title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">validate_and_introspect(jti, user_id)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/personal_access_tokens.ex#L45" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> validate_and_introspect(<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">bitstring</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>()) ::
+  {:ok, <a href="Trento.PersonalAccessTokens.PersonalAccessToken.html#t:t/0">Trento.PersonalAccessTokens.PersonalAccessToken.t</a>()}
+  | {:error, :invalid_token}</pre>
 
       </div>
 
