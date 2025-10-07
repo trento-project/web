@@ -4,7 +4,7 @@ defmodule TrentoWeb.Router do
   use PowAssent.Phoenix.Router
 
   # From newest to oldest
-  @available_api_versions ["unversioned", "v2", "v1"]
+  @available_api_versions ["v2", "v1"]
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -33,6 +33,11 @@ defmodule TrentoWeb.Router do
   pipeline :unversioned_api do
     plug :api
     plug OpenApiSpex.Plug.PutApiSpec, module: TrentoWeb.OpenApi.Unversioned.ApiSpec
+  end
+
+  pipeline :api_all do
+    plug :api
+    plug OpenApiSpex.Plug.PutApiSpec, module: TrentoWeb.OpenApi.All.ApiSpec
   end
 
   pipeline :protected_api do
@@ -67,7 +72,8 @@ defmodule TrentoWeb.Router do
       urls: [
         %{url: "/api/v1/openapi", name: "Version 1"},
         %{url: "/api/v2/openapi", name: "Version 2"},
-        %{url: "/api/unversioned/openapi", name: "Unversioned"}
+        %{url: "/api/unversioned/openapi", name: "Unversioned"},
+        %{url: "/api/all/openapi", name: "All"}
       ]
   end
 
@@ -280,6 +286,11 @@ defmodule TrentoWeb.Router do
 
     scope "/unversioned" do
       pipe_through :unversioned_api
+      get "/openapi", OpenApiSpex.Plug.RenderSpec, []
+    end
+
+    scope "/all" do
+      pipe_through :api_all
       get "/openapi", OpenApiSpex.Plug.RenderSpec, []
     end
   end

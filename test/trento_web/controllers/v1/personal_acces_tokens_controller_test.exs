@@ -112,7 +112,7 @@ defmodule TrentoWeb.V1.PersonalAccessTokensControllerTest do
           |> post("/api/v1/profile/tokens", request_body)
           |> json_response(:unprocessable_entity)
 
-        assert_schema(resp, "UnprocessableEntity", api_spec)
+        assert_schema(resp, "UnprocessableEntityV1", api_spec)
 
         assert %{
                  "errors" => expected_errors
@@ -134,7 +134,7 @@ defmodule TrentoWeb.V1.PersonalAccessTokensControllerTest do
         })
         |> json_response(:unprocessable_entity)
 
-      assert_schema(resp, "UnprocessableEntity", api_spec)
+      assert_schema(resp, "UnprocessableEntityV1", api_spec)
 
       assert %{
                "errors" => [
@@ -182,7 +182,7 @@ defmodule TrentoWeb.V1.PersonalAccessTokensControllerTest do
           |> post("/api/v1/profile/tokens", request_body)
           |> json_response(:created)
 
-        assert_schema(resp, "CreatedPersonalAccessToken", api_spec)
+        assert_schema(resp, "CreatedPersonalAccessTokenV1", api_spec)
 
         assert %{
                  "jti" => _,
@@ -208,7 +208,7 @@ defmodule TrentoWeb.V1.PersonalAccessTokensControllerTest do
       conn
       |> delete("/api/v1/profile/tokens/#{Faker.UUID.v4()}")
       |> json_response(:not_found)
-      |> assert_response_schema("NotFound", api_spec)
+      |> assert_response_schema("NotFoundV1", api_spec)
     end
 
     test "should successfully revoke a personal access token", %{
