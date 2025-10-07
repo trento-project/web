@@ -215,14 +215,21 @@ defmodule TrentoWeb.V1.PersonalAccessTokensControllerTest do
       conn: conn,
       admin_user: %{id: user_id}
     } do
-      %PersonalAccessToken{jti: jti} = insert(:personal_access_token, user_id: user_id)
+      %PersonalAccessToken{jti: jti, name: name} =
+        insert(:personal_access_token, user_id: user_id)
 
-      resp =
-        conn
-        |> delete("/api/v1/profile/tokens/#{jti}")
-        |> response(:no_content)
+      deleted_conn = delete(conn, "/api/v1/profile/tokens/#{jti}")
 
-      assert resp == ""
+      assert %{
+               assigns: %{
+                 deleted_token: %PersonalAccessToken{
+                   jti: ^jti,
+                   name: ^name
+                 }
+               }
+             } = deleted_conn
+
+      assert response(deleted_conn, :no_content) == ""
     end
   end
 end

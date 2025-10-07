@@ -15,6 +15,8 @@ defmodule TrentoWeb.V1.UsersController do
     UserUpdateRequest
   }
 
+  import Plug.Conn
+
   plug TrentoWeb.Plugs.ExternalIdpGuardPlug when action in [:create]
 
   plug TrentoWeb.Plugs.LoadUserPlug
@@ -218,10 +220,13 @@ defmodule TrentoWeb.V1.UsersController do
     ]
 
   def revoke_personal_access_token(conn, %{id: id, jti: jti}) do
-    with {:ok, _} <-
+    with {:ok, token} <-
            PersonalAccessTokens.revoke_personal_access_token(%User{id: id}, jti),
          :ok <- TrentoWeb.Endpoint.broadcast("users:#{id}", "user_updated", %{}) do
-      send_resp(conn, :no_content, "")
+      # add deleted token to assigns to use in the activity log
+      conn
+      |> assign(:deleted_token, token)
+      |> send_resp(:no_content, "")
     end
   end
 

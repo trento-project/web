@@ -491,17 +491,28 @@ defmodule TrentoWeb.V1.UsersControllerTest do
 
     test "should delete the token when the user and the token jti are found", %{conn: conn} do
       %{id: id} = insert(:user)
-      %{jti: jti} = insert(:personal_access_token, user_id: id)
+      %{jti: jti, name: name} = insert(:personal_access_token, user_id: id)
 
       {:ok, _, _} =
         TrentoWeb.UserSocket
         |> socket("user_id", %{current_user_id: id})
         |> subscribe_and_join(TrentoWeb.UserChannel, "users:#{id}")
 
-      conn
-      |> put_req_header("content-type", "application/json")
-      |> delete("/api/v1/users/#{id}/tokens/#{jti}")
-      |> response(:no_content)
+      deleted_conn =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> delete("/api/v1/users/#{id}/tokens/#{jti}")
+
+      assert %{
+               assigns: %{
+                 deleted_token: %{
+                   jti: ^jti,
+                   name: ^name
+                 }
+               }
+             } = deleted_conn
+
+      assert response(deleted_conn, :no_content) == ""
 
       assert_broadcast "user_updated", %{}, 1000
     end
