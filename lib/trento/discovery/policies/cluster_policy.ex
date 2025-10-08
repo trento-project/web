@@ -440,15 +440,23 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
   defp parse_node_status(%{online: true}), do: "Online"
   defp parse_node_status(_), do: "Unknown"
 
-  defp parse_hana_scale_up_system_replication_mode([%{attributes: attributes} | _], sid) do
-    Map.get(attributes, "hana_#{String.downcase(sid)}_srmode", "")
+  defp parse_hana_scale_up_system_replication_mode(nodes, sid) do
+    nodes
+    |> find_online_node_attributes()
+    |> Map.get("hana_#{String.downcase(sid)}_srmode", "")
   end
 
-  defp parse_hana_scale_up_system_replication_operation_mode(
-         [%{attributes: attributes} | _],
-         sid
-       ) do
-    Map.get(attributes, "hana_#{String.downcase(sid)}_op_mode", "")
+  defp parse_hana_scale_up_system_replication_operation_mode(nodes, sid) do
+    nodes
+    |> find_online_node_attributes()
+    |> Map.get("hana_#{String.downcase(sid)}_op_mode", "")
+  end
+
+  defp find_online_node_attributes(nodes) do
+    Enum.find_value(nodes, %{}, fn
+      %{status: "Online", attributes: attributes} -> attributes
+      _ -> false
+    end)
   end
 
   defp parse_hana_scale_out_system_replication_mode(
@@ -551,7 +559,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
         state: hana_status,
         sr_health_state:
           attributes
-          |> Map.get("hana_#{String.downcase(sid)}_roles")
+          |> Map.get("hana_#{String.downcase(sid)}_roles", "Unknown")
           |> String.split(":")
           |> Enum.at(0)
       }
@@ -620,7 +628,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
       case parse_hana_scale_up_status(node, sid) do
         status when status in ["Secondary", "Failed"] ->
           attributes
-          |> Map.get("hana_#{String.downcase(sid)}_roles")
+          |> Map.get("hana_#{String.downcase(sid)}_roles", "Unknown")
           |> String.split(":")
           |> Enum.at(0)
 
@@ -925,6 +933,13 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
   defp parse_resource_status(%{failure_ignored: true}), do: "FailureIgnored"
   defp parse_resource_status(%{orphaned: true}), do: "Orphaned"
   defp parse_resource_status(_), do: ""
+
+  defp parse_fail_count(_node_name, _resource_id, %{
+         node_history: %{
+           nodes: []
+         }
+       }),
+       do: 0
 
   defp parse_fail_count(node_name, resource_id, %{
          node_history: %{
