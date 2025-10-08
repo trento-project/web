@@ -10,7 +10,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.BadRequest do
 
   OpenApiSpex.schema(
     %{
-      title: "BadRequest",
+      title: "BadRequestV1",
       description:
         "Represents an error response for a bad request, providing details about the nature of the client-side issue.",
       type: :object,

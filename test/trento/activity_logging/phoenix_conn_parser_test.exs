@@ -356,6 +356,67 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
                  })
       end
     end
+
+    test "should extract personal access token data during creation", %{conn: conn} do
+      token_name = Faker.StarWars.character()
+      jti = Faker.UUID.v4()
+
+      assert %{name: token_name, jti: jti} ==
+               PhoenixConnParser.get_activity_metadata(
+                 :personal_access_token_creation,
+                 %Plug.Conn{
+                   conn
+                   | body_params: %{
+                       name: token_name
+                     },
+                     resp_body: Jason.encode!(%{jti: jti})
+                 }
+               )
+    end
+
+    test "should extract personal access token data during deletion", %{conn: conn} do
+      token_name = Faker.StarWars.character()
+      jti = Faker.UUID.v4()
+
+      assert %{jti: jti, name: token_name} ==
+               PhoenixConnParser.get_activity_metadata(
+                 :personal_access_token_deletion,
+                 %Plug.Conn{
+                   conn
+                   | params: %{
+                       jti: jti
+                     },
+                     assigns: %{
+                       deleted_token: %{
+                         name: token_name
+                       }
+                     }
+                 }
+               )
+    end
+
+    test "should extract personal access token data during deletion by admin", %{conn: conn} do
+      user_id = 1
+      token_name = Faker.StarWars.character()
+      jti = Faker.UUID.v4()
+
+      assert %{user_id: user_id, jti: jti, name: token_name} ==
+               PhoenixConnParser.get_activity_metadata(
+                 :personal_access_token_admin_deletion,
+                 %Plug.Conn{
+                   conn
+                   | params: %{
+                       id: user_id,
+                       jti: jti
+                     },
+                     assigns: %{
+                       deleted_token: %{
+                         name: token_name
+                       }
+                     }
+                 }
+               )
+    end
   end
 
   defp scenario_setup(:api_key_generation, correlation_id) do

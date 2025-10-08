@@ -144,7 +144,7 @@ jobs:
       - name: Build docs
         uses: lee-dohm/generate-elixir-docs@v1
       - name: Generate openapi.json
-        run: mix openapi.spec.json --start-app=false --spec TrentoWeb.OpenApi.V1.ApiSpec
+        run: mix openapi.spec.json --start-app=false --spec TrentoWeb.OpenApi.All.ApiSpec
       - name: Generate Swagger UI
         uses: Legion2/swagger-ui-action@v1
         with:
@@ -289,15 +289,14 @@ jobs:
     name: Chromatic deployment
     needs: [elixir-deps, npm-deps]
     runs-on: ubuntu-24.04
+    env:
+      NODEJS_VERSION: "22"
     if: github.event_name != 'repository_dispatch' && github.secret_source != 'None' && vars.CHROMATIC_ENABLED == 'true'
     steps:
       - name: Checkout
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
-      - name: Read .tool-versions
-        uses: endorama/asdf-parse-tool-versions@v1.3.4
-        id: tool-versions
       - name: Setup
         id: setup-elixir
         uses: erlef/setup-beam@v1
@@ -341,14 +340,13 @@ jobs:
   npm-e2e-deps:
     name: Npm E2E dependencies
     runs-on: ubuntu-24.04
+    env:
+      NODEJS_VERSION: "22"
     steps:
       - name: Checkout
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
-      - name: Read .tool-versions
-        uses: endorama/asdf-parse-tool-versions@v1.3.4
-        id: tool-versions
       - name: Retrieve E2E NPM Cached Dependencies
         uses: actions/cache@v4
         id: npm-e2e-cache
@@ -373,21 +371,16 @@ jobs:
       matrix:
         containers: [1, 2, 3, 4, 5, 6, 7, 8]
         include:
-          - elixir: "1.15"
-            otp: "26"
           - elixir: "1.18"
             otp: "27"
-
     env:
       MIX_ENV: dev
+      NODEJS_VERSION: "22"
     steps:
       - name: Checkout
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
-      - name: Read .tool-versions
-        uses: endorama/asdf-parse-tool-versions@v1.3.4
-        id: tool-versions
       - name: Setup
         id: setup-elixir
         uses: erlef/setup-beam@v1
@@ -439,10 +432,9 @@ jobs:
           repo: trento-project/photofinish
           tag: v1.4.2
           cache: enable
+          chmod: +x
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Give executable permissions to photofinish
-        run: chmod +x $(whereis photofinish | cut -d" " -f2)
       - name: Cypress run
         uses: cypress-io/github-action@v6
         env:
@@ -477,14 +469,12 @@ jobs:
               cypress/e2e/host_details.cy.js
     env:
       MIX_ENV: dev
+      NODEJS_VERSION: "22"
     steps:
       - name: Checkout
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
-      - name: Read .tool-versions
-        uses: endorama/asdf-parse-tool-versions@v1.3.4
-        id: tool-versions
       - name: Setup
         id: setup-elixir
         uses: erlef/setup-beam@v1
@@ -547,10 +537,9 @@ jobs:
           repo: trento-project/photofinish
           tag: v1.4.2
           cache: enable
+          chmod: +x
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Give executable permissions to photofinish
-        run: chmod +x $(whereis photofinish | cut -d" " -f2)
       - name: Cypress run
         uses: cypress-io/github-action@v6
         env:
@@ -586,6 +575,7 @@ jobs:
               MIX_ENV: dev
               CYPRESS_SSO_INTEGRATION_TESTS: true
               CYPRESS_SSO_TYPE: oidc
+              NODEJS_VERSION: "22"
           - test: oauth2
             cypress_spec: |
               cypress/e2e/sso_integration.cy.js
@@ -597,6 +587,7 @@ jobs:
               MIX_ENV: dev
               CYPRESS_SSO_INTEGRATION_TESTS: true
               CYPRESS_SSO_TYPE: oauth2
+              NODEJS_VERSION: "22"
           - test: saml
             cypress_spec: |
               cypress/e2e/sso_integration.cy.js
@@ -608,9 +599,11 @@ jobs:
               MIX_ENV: dev
               CYPRESS_SSO_INTEGRATION_TESTS: true
               CYPRESS_SSO_TYPE: saml
+              NODEJS_VERSION: "22"
           - test: alerting_db
             cypress_spec: |
               cypress/e2e/settings_integration.cy.js
+              cypress/e2e/alerting.cy.js
             config_file_content: |
               import Config
 
@@ -623,15 +616,21 @@ jobs:
             env:
               MIX_ENV: dev
               CYPRESS_ALERTING_DB_TESTS: true
+              CYPRESS_ALERTING_TESTS: true
+              NODEJS_VERSION: "22"
+          - test: alerting_from_env
+            cypress_spec: |
+              cypress/e2e/alerting.cy.js
+            env:
+              MIX_ENV: dev
+              CYPRESS_ALERTING_TESTS: true
+              NODEJS_VERSION: "22"
     env: ${{ matrix.env }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
-      - name: Read .tool-versions
-        uses: endorama/asdf-parse-tool-versions@v1.3.4
-        id: tool-versions
       - name: Setup
         id: setup-elixir
         uses: erlef/setup-beam@v1
@@ -665,6 +664,15 @@ jobs:
           path: |
             test/e2e/node_modules
           key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
+      - name: Install photofinish
+        uses: jaxxstorm/action-install-gh-release@v2.1.0
+        with:
+          repo: trento-project/photofinish
+          tag: v1.4.2
+          cache: enable
+          chmod: +x
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}        
       - name: "Docker compose dependencies"
         uses: isbang/compose-action@v2.3.0
         with:
@@ -681,6 +689,7 @@ jobs:
         uses: cypress-io/github-action@v6
         env:
           cypress_video: false
+          cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
         with:
           working-directory: test/e2e
           spec: ${{ matrix.cypress_spec }}
@@ -746,6 +755,8 @@ jobs:
             otp: "26"
           - elixir: "1.18"
             otp: "27"
+    env:
+      NODEJS_VERSION: "22"
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.12.1
@@ -761,9 +772,6 @@ jobs:
         with:
           otp-version: ${{ matrix.otp }}
           elixir-version: ${{ matrix.elixir }}
-      - name: Read .tool-versions
-        uses: endorama/asdf-parse-tool-versions@v1.3.4
-        id: tool-versions
       - name: Retrieve Elixir Cached Dependencies - current branch
         uses: actions/cache@v4
         id: mix-cache-current
@@ -782,8 +790,6 @@ jobs:
           npm install -g @redocly/cli@latest
           npm install -g @quobix/vacuum@latest
           npm install -g @stoplight/spectral-cli
-      - name: Install jq
-        run: sudo apt-get update && sudo apt-get install -y jq
       - name: Run API docs check
         run: ./hack/api_docs_check.sh
 
@@ -981,10 +987,9 @@ jobs:
           repo: trento-project/photofinish
           tag: v1.4.2
           cache: enable
+          chmod: +x
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Give executable permissions to photofinish
-        run: chmod +x $(whereis photofinish | cut -d" " -f2)
       - name: Push data
         run: |
           photofinish run demo -u "http://$TRENTO_DEMO_IP/api/collect" "$TRENTO_API_KEY"

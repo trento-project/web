@@ -11,7 +11,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Provider do
 
     OpenApiSpex.schema(
       %{
-        title: "SupportedProviders",
+        title: "SupportedProvidersV1",
         type: :string,
         description:
           "Indicates the cloud provider detected for the resource, such as Azure, AWS, or GCP, supporting infrastructure identification.",
@@ -22,27 +22,12 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Provider do
     )
   end
 
-  defmodule FilterableProviders do
-    @moduledoc false
-
-    OpenApiSpex.schema(
-      %{
-        title: "FilterableProvider",
-        type: :string,
-        description:
-          "Represents a cloud provider that can be used to filter catalog results, supporting targeted queries and resource management.",
-        enum: [:azure, :aws, :gcp, :default]
-      },
-      struct?: false
-    )
-  end
-
   defmodule AzureProviderData do
     @moduledoc false
 
     OpenApiSpex.schema(
       %{
-        title: "AzureProviderData",
+        title: "AzureProviderDataV1",
         description:
           "Metadata detected for resources running on Microsoft Azure, including details about resource group, location, VM size, and more.",
         type: :object,
@@ -75,7 +60,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Provider do
 
     OpenApiSpex.schema(
       %{
-        title: "AwsProviderData",
+        title: "AwsProviderDataV1",
         description:
           "Metadata detected for resources running on Amazon Web Services (AWS), including account, instance, and network details for infrastructure management.",
         type: :object,
@@ -110,7 +95,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Provider do
 
     OpenApiSpex.schema(
       %{
-        title: "GcpProviderData",
+        title: "GcpProviderDataV1",
         description:
           "Metadata detected for resources running on Google Cloud Platform (GCP), including disk, image, instance, and network details for infrastructure management.",
         type: :object,
@@ -143,7 +128,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Provider do
 
     OpenApiSpex.schema(
       %{
-        title: "ProviderMetadata",
+        title: "ProviderMetadataV1",
         type: :object,
         nullable: true,
         description:

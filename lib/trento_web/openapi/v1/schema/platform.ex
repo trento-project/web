@@ -8,7 +8,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
     @moduledoc false
     OpenApiSpex.schema(
       %{
-        title: "ApiKeySettings",
+        title: "ApiKeySettingsV1",
         description: "Settings for API Key generation.",
         type: :object,
         additionalProperties: false,
@@ -46,7 +46,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
 
     OpenApiSpex.schema(
       %{
-        title: "ApiKeySettingsUpdateRequest",
+        title: "ApiKeySettingsUpdateRequestV1",
         description: "Request body for api key settings update.",
         type: :object,
         additionalProperties: false,
@@ -74,7 +74,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
 
     OpenApiSpex.schema(
       %{
-        title: "GeneralInformation",
+        title: "GeneralInformationV1",
         description: "General information about the current installation.",
         type: :object,
         additionalProperties: false,
@@ -110,7 +110,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
 
     OpenApiSpex.schema(
       %{
-        title: "RetentionTimeSettings",
+        title: "RetentionTimeSettingsV1",
         description: "Retention Time settings of the Activity Log.",
         type: :object,
         additionalProperties: false,
@@ -143,7 +143,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
 
     OpenApiSpex.schema(
       %{
-        title: "ActivityLogSettings",
+        title: "ActivityLogSettingsV1",
         description: "Activity Log settings of the current installation.",
         type: :object,
         additionalProperties: false,
@@ -167,7 +167,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
 
     OpenApiSpex.schema(
       %{
-        title: "SaveSuseManagerSettingsRequest",
+        title: "SaveSuseManagerSettingsRequestV1",
         description:
           "Represents the request body for saving SUSE Multi-Linux Manager settings, including connection and authentication details for secure management.",
         type: :object,
@@ -209,7 +209,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
 
     OpenApiSpex.schema(
       %{
-        title: "UpdateSuseManagerSettingsRequest",
+        title: "UpdateSuseManagerSettingsRequestV1",
         description:
           "Request body for updating SUSE Multi-Linux Manager settings.\nOnly provide fields to be updated.",
         type: :object,
@@ -249,7 +249,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
 
     OpenApiSpex.schema(
       %{
-        title: "SuseManagerSettings",
+        title: "SuseManagerSettingsV1",
         description:
           "Represents the settings for SUSE Multi-Linux Manager, including connection details and certificate upload information for secure management.",
         type: :object,
@@ -291,7 +291,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
 
     OpenApiSpex.schema(
       %{
-        title: "PublicKeys",
+        title: "PublicKeysV1",
         description:
           "A list of uploaded public keys used for secure authentication and access management.",
         type: :array,
@@ -334,7 +334,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
 
     OpenApiSpex.schema(
       %{
-        title: "AlertingSettings",
+        title: "AlertingSettingsV1",
         description: "Settings for the alerting sub-system.",
         type: :object,
         properties: %{
@@ -377,7 +377,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
 
     OpenApiSpex.schema(
       %{
-        title: "CreateAlertingSettings",
+        title: "CreateAlertingSettingsV1",
         description:
           "Represents the request body for creating alerting settings, including notification and SMTP configuration details for the alerting subsystem.",
         type: :object,
@@ -456,7 +456,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
 
     OpenApiSpex.schema(
       %{
-        title: "UpdateAlertingSettings",
+        title: "UpdateAlertingSettingsV1",
         description:
           "Represents the request body for updating alerting settings, including notification and SMTP configuration details for the alerting subsystem.",
         type: :object,

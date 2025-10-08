@@ -179,7 +179,13 @@ defmodule Trento.ActivityLog.ActivityCatalog do
       {TrentoWeb.V1.UsersController, :patch} => {:user_modification, 200},
       {TrentoWeb.V1.UsersController, :put} => {:user_modification, 200},
       {TrentoWeb.V1.UsersController, :delete} => {:user_deletion, 204},
+      {TrentoWeb.V1.UsersController, :revoke_personal_access_token} =>
+        {:personal_access_token_admin_deletion, 204},
       {TrentoWeb.V1.ProfileController, :update} => {:profile_update, 200},
+      {TrentoWeb.V1.PersonalAccessTokensController, :create_personal_access_token} =>
+        {:personal_access_token_creation, 201},
+      {TrentoWeb.V1.PersonalAccessTokensController, :revoke_personal_access_token} =>
+        {:personal_access_token_deletion, 204},
       {TrentoWeb.V1.ClusterController, :request_checks_execution} =>
         {:cluster_checks_execution_request, 202},
       {TrentoWeb.V1.ClusterController, :select_checks} => {:cluster_checks_selected, 202},

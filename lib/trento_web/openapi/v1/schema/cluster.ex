@@ -12,7 +12,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
 
     OpenApiSpex.schema(
       %{
-        title: "ClusterResource",
+        title: "ClusterResourceV1",
+        deprecated: true,
         description:
           "Represents a resource within a cluster, including its type, role, and operational status for management and monitoring.",
         type: :object,
@@ -41,7 +42,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
 
     OpenApiSpex.schema(
       %{
-        title: "HanaClusterNode",
+        title: "HanaClusterNodeV1",
+        deprecated: true,
         description:
           "Represents a node in a HANA cluster, including its attributes, status, and associated resources for high availability.",
         additionalProperties: false,
@@ -93,7 +95,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
 
     OpenApiSpex.schema(
       %{
-        title: "SbdDevice",
+        title: "SbdDeviceV1",
         description:
           "Represents a SBD device used for fencing and high availability in cluster environments.",
         additionalProperties: false,
@@ -116,7 +118,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
 
     OpenApiSpex.schema(
       %{
-        title: "HanaClusterDetails",
+        title: "HanaClusterDetailsV1",
+        deprecated: true,
         description:
           "Provides detailed information about a HANA Pacemaker Cluster, including replication, health, and resource status.",
         type: :object,
@@ -198,7 +201,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
 
     OpenApiSpex.schema(
       %{
-        title: "PacemakerClusterDetails",
+        title: "PacemakerClusterDetailsV1",
+        deprecated: true,
         description:
           "Provides details about the detected PacemakerCluster, including configuration, health, and operational status.",
         type: :object,
@@ -237,7 +241,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
 
     OpenApiSpex.schema(
       %{
-        title: "PacemakerCluster",
+        title: "PacemakerClusterV1",
+        deprecated: true,
         description:
           "Represents a Pacemaker Cluster discovered on the target infrastructure, including its configuration, health, and associated resources.",
         type: :object,
@@ -339,7 +344,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
 
     OpenApiSpex.schema(
       %{
-        title: "PacemakerClustersCollection",
+        title: "PacemakerClustersCollectionV1",
+        deprecated: true,
         description:
           "A list containing all Pacemaker Clusters discovered on the target infrastructure, supporting monitoring and management.",
         type: :array,

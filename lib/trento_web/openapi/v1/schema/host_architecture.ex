@@ -6,7 +6,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.HostArchitecture do
 
   OpenApiSpex.schema(
     %{
-      title: "HostArchitecture",
+      title: "HostArchitectureV1",
       type: :string,
       nullable: false,
       description:

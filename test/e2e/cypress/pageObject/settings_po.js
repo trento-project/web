@@ -982,18 +982,6 @@ export const resetAlertingSettingsDB = () => {
   cy.exec(`cd ${Cypress.env('project_root')} && mix clear_alerting_settings`);
 };
 
-export const getAlertingSettings = () => {
-  return basePage.apiLogin().then(({ accessToken }) =>
-    cy.request({
-      url: '/api/v1/settings/alerting',
-      method: 'GET',
-      auth: {
-        bearer: accessToken,
-      },
-      failOnStatusCode: false,
-    })
-  );
-};
 export const saveInitialAlertingSettings = () => {
   basePage.apiLogin().then(({ accessToken }) => {
     cy.request({

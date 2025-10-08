@@ -9,7 +9,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Health do
 
   OpenApiSpex.schema(
     %Schema{
-      title: "Health",
+      title: "HealthV1",
       description:
         "Represents the status response for a platform health check, including the state of critical system components such as the database.",
       type: :object,

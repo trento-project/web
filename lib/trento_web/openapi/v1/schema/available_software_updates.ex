@@ -10,7 +10,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
     @moduledoc false
     OpenApiSpex.schema(
       %{
-        title: "UpgradablePackage",
+        title: "UpgradablePackageV1",
         description:
           "Represents a software package that can be upgraded to a newer version, including relevant metadata for update management.",
         type: :object,
@@ -91,7 +91,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
     @moduledoc false
     OpenApiSpex.schema(
       %{
-        title: "RelevantPatch",
+        title: "RelevantPatchV1",
         description:
           "Represents a software patch that is relevant to the current system or package, including details for update application.",
         type: :object,
@@ -159,7 +159,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
     @moduledoc false
     OpenApiSpex.schema(
       %{
-        title: "PatchesForPackage",
+        title: "PatchesForPackageV1",
         description:
           "Details the relevant software patches that are included as part of a package upgrade, supporting system maintenance.",
         type: :object,
@@ -237,7 +237,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
     @moduledoc false
     OpenApiSpex.schema(
       %{
-        title: "AvailableSoftwareUpdatesResponse",
+        title: "AvailableSoftwareUpdatesResponseV1",
         description:
           "Represents the response returned from the available software updates endpoint, including details about upgradable packages and relevant patches.",
         type: :object,
@@ -315,7 +315,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
     @moduledoc false
     OpenApiSpex.schema(
       %{
-        title: "PatchesForPackagesResponse",
+        title: "PatchesForPackagesResponseV1",
         description:
           "Represents the response returned from the patches for packages endpoint, detailing all relevant patches for upgraded packages.",
         type: :object,
@@ -367,7 +367,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
     @moduledoc false
     OpenApiSpex.schema(
       %{
-        title: "ErrataDetails",
+        title: "ErrataDetailsV1",
         description:
           "Provides detailed information for the erratum that matches the specified advisory name, supporting update management.",
         type: :object,
@@ -496,7 +496,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
     @moduledoc false
     OpenApiSpex.schema(
       %{
-        title: "CVEs",
+        title: "CVEsV1",
         description:
           "Provides a list of CVEs that are applicable to the errata associated with the specified advisory name, supporting vulnerability management.",
         type: :array,
@@ -519,7 +519,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
     @moduledoc false
     OpenApiSpex.schema(
       %{
-        title: "AdvisoryFixes",
+        title: "AdvisoryFixesV1",
         description:
           "Represents the response returned from the get advisory fixes endpoint, detailing all fixes for advisories in the system.",
         type: :object,
@@ -537,7 +537,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
     @moduledoc false
     OpenApiSpex.schema(
       %{
-        title: "AffectedPackages",
+        title: "AffectedPackagesV1",
         description:
           "Represents the response returned from the get affected packages endpoint, listing all packages affected by advisories.",
         type: :array,
@@ -592,7 +592,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
     @moduledoc false
     OpenApiSpex.schema(
       %{
-        title: "AffectedSystems",
+        title: "AffectedSystemsV1",
         description:
           "Represents the response returned from the get affected systems endpoint, listing all systems affected by advisories.",
         type: :array,
@@ -626,7 +626,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
     @moduledoc false
     OpenApiSpex.schema(
       %{
-        title: "ErrataDetailsResponse",
+        title: "ErrataDetailsResponseV1",
         description:
           "Represents the response returned from the errata details endpoint, providing details about errata for advisories.",
         type: :object,

@@ -21,7 +21,7 @@ defmodule TrentoWeb.V1.PrometheusControllerTest do
     targets_ids = Enum.map(response, &Map.get(&1, "labels")["agentID"])
 
     assert length(targets_ids) == 2
-    assert_schema(response, "HttpSTDTargetList", api_spec)
+    assert_schema(response, "HttpSTDTargetListV1", api_spec)
   end
 
   test "should return the exporters status", %{conn: conn} do

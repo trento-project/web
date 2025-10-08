@@ -11,7 +11,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Database do
 
     OpenApiSpex.schema(
       %{
-        title: "DatabaseInstance",
+        title: "DatabaseInstanceV1",
         description:
           "Represents a discovered HANA Database Instance on the target infrastructure, including its configuration, replication, and operational status.",
         type: :object,
@@ -165,7 +165,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Database do
 
     OpenApiSpex.schema(
       %{
-        title: "DatabaseInstances",
+        title: "DatabaseInstancesV1",
         description:
           "A list containing all database instances that are part of a complete SAP System or a standalone HANA Database, supporting system management.",
         type: :array,
@@ -199,7 +199,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Database do
 
     OpenApiSpex.schema(
       %{
-        title: "Database",
+        title: "DatabaseV1",
         description:
           "Represents a discovered HANA Database on the target infrastructure, including its configuration, health, and associated instances.",
         type: :object,
@@ -248,7 +248,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Database do
 
     OpenApiSpex.schema(
       %{
-        title: "DatabasesCollection",
+        title: "DatabasesCollectionV1",
         description:
           "A list containing all discovered HANA Databases on the target infrastructure, supporting monitoring and management.",
         type: :array,

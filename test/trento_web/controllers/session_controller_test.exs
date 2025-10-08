@@ -116,7 +116,7 @@ defmodule TrentoWeb.SessionControllerTest do
 
       conn
       |> json_response(200)
-      |> assert_schema("RefreshedCredentials", api_spec)
+      |> assert_schema("RefreshedCredentialsV1", api_spec)
     end
 
     test "should return unauthorized if the refresh token signature is invalid", %{conn: conn} do
@@ -211,7 +211,7 @@ defmodule TrentoWeb.SessionControllerTest do
 
       conn
       |> json_response(200)
-      |> assert_schema("Credentials", api_spec)
+      |> assert_schema("CredentialsV1", api_spec)
     end
 
     test "should return unauthorized response when the credentials are of a deleted user", %{
@@ -361,7 +361,7 @@ defmodule TrentoWeb.SessionControllerTest do
 
       conn
       |> json_response(200)
-      |> assert_schema("Credentials", api_spec)
+      |> assert_schema("CredentialsV1", api_spec)
     end
 
     test "should return 501 if external IDP integration is enabled", %{conn: conn} do
@@ -449,7 +449,7 @@ defmodule TrentoWeb.SessionControllerTest do
 
       conn
       |> json_response(200)
-      |> assert_schema("Credentials", api_spec)
+      |> assert_schema("CredentialsV1", api_spec)
     end
 
     test "should return the credentials when the sso callback flow is completed without errors and the user exists on trento but without an associated user identity",
@@ -478,7 +478,7 @@ defmodule TrentoWeb.SessionControllerTest do
 
       conn
       |> json_response(200)
-      |> assert_schema("Credentials", api_spec)
+      |> assert_schema("CredentialsV1", api_spec)
     end
 
     test "should return the credentials when the sso callback flow is completed without errors and the user does exist on trento",
@@ -510,7 +510,7 @@ defmodule TrentoWeb.SessionControllerTest do
 
       conn
       |> json_response(200)
-      |> assert_schema("Credentials", api_spec)
+      |> assert_schema("CredentialsV1", api_spec)
     end
 
     test "should return the credentials when the sso callback flow is completed without errors and assign the global abilities when the oidc user is the default admin and does not exists on trento",
@@ -540,7 +540,7 @@ defmodule TrentoWeb.SessionControllerTest do
 
       conn
       |> json_response(200)
-      |> assert_schema("Credentials", api_spec)
+      |> assert_schema("CredentialsV1", api_spec)
 
       %User{id: user_id} = Users.get_by(username: username)
       {:ok, %User{abilities: abilities}} = Users.get_user(user_id)
@@ -579,7 +579,7 @@ defmodule TrentoWeb.SessionControllerTest do
 
       conn
       |> json_response(200)
-      |> assert_schema("Credentials", api_spec)
+      |> assert_schema("CredentialsV1", api_spec)
 
       {:ok, %User{abilities: abilities}} = Users.get_user(user_id)
       assert [%{id: 1}] = abilities
@@ -607,7 +607,7 @@ defmodule TrentoWeb.SessionControllerTest do
 
       conn
       |> json_response(401)
-      |> assert_schema("Unauthorized", api_spec)
+      |> assert_schema("UnauthorizedV1", api_spec)
     end
   end
 
@@ -680,7 +680,7 @@ defmodule TrentoWeb.SessionControllerTest do
 
       conn
       |> json_response(200)
-      |> assert_schema("Credentials", api_spec)
+      |> assert_schema("CredentialsV1", api_spec)
 
       %User{} = Users.get_by(username: username)
     end
@@ -698,7 +698,7 @@ defmodule TrentoWeb.SessionControllerTest do
 
       conn
       |> json_response(401)
-      |> assert_schema("Unauthorized", api_spec)
+      |> assert_schema("UnauthorizedV1", api_spec)
     end
 
     test "should return unauthorized in saml callback flow when user attributes are missing",
@@ -731,7 +731,7 @@ defmodule TrentoWeb.SessionControllerTest do
 
       conn
       |> json_response(422)
-      |> assert_schema("UnprocessableEntity", api_spec)
+      |> assert_schema("UnprocessableEntityV1", api_spec)
     end
   end
 end

@@ -12,8 +12,9 @@ defmodule Trento.Users.Policy do
   def authorize(action, %User{} = user, User) when action in [:index, :show],
     do: has_read_ability?(user)
 
-  def authorize(action, %User{} = user, User) when action in [:update, :delete, :create],
-    do: has_write_ability?(user)
+  def authorize(action, %User{} = user, User)
+      when action in [:update, :delete, :create, :revoke_personal_access_token],
+      do: has_write_ability?(user)
 
   def authorize(_, _, _), do: false
 

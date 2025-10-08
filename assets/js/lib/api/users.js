@@ -15,6 +15,9 @@ export const editUser = (userID, payload, version) =>
 
 export const deleteUser = (userID) => del(`/users/${userID}`);
 
+export const deleteUserAccessToken = (userID, jti) =>
+  del(`/users/${userID}/tokens/${jti}`);
+
 export const getUserProfile = () => get('/profile');
 
 export const editUserProfile = (payload) => patch('/profile', payload);

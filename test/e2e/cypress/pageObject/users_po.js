@@ -1,3 +1,5 @@
+import { addDays } from 'date-fns';
+
 export * from './base_po.js';
 import * as basePage from './base_po.js';
 
@@ -7,6 +9,8 @@ import { userFactory } from '@lib/test-utils/factories/users';
 const url = '/users';
 export const PASSWORD = 'password';
 export const USER = userFactory.build({ username: 'e2etest' });
+export const DEFAULT_TOKEN_NAME = 'test token';
+export const DEFAULT_TOKEN_EXPIRES_AT = addDays(new Date(), 10);
 
 const totpEnrollmentEndpointAlias = 'totpEnrollment';
 
@@ -49,6 +53,16 @@ const statusDropdown = 'button.status-selection-dropdown';
 const removePermissionButton = 'div[aria-label*="Remove"] svg';
 const permissionsInputField =
   'label:contains("Permissions") + div span div div:eq(0)';
+const emptyListAccessTokens = 'p:contains("No keys issued.")';
+const generateTokenButton = 'button:contains("Generate Token")';
+const modalGenerateTokenButton = 'button:contains("Generate Token"):eq(1)';
+const generatedTokenButton = 'button:contains("Close"):visible';
+const deleteTokenButton = 'button:contains("Delete")';
+const modalDeleteTokenButton = 'button:contains("Delete Token")';
+const tokenNameField = 'input[aria-label="token-name"]';
+const newAccessTokenField = 'code';
+const modalCopyAccessTokenButton = 'button[aria-label="copy to clipboard"]';
+const accessTokenName = 'p[class*="font-semibold"]';
 
 // Toaster Messages
 const userAlreadyUpdatedWarning =
@@ -165,6 +179,23 @@ export const selectPermission = (permission) =>
 
 export const clickRemovePermissionButton = () =>
   cy.get(removePermissionButton).click();
+
+export const clickGenerateTokenButton = () =>
+  cy.get(generateTokenButton).click();
+
+export const typeTokenName = (tokenName = DEFAULT_TOKEN_NAME) =>
+  cy.get(tokenNameField).type(tokenName);
+
+export const clickModalGenerateTokenButton = () =>
+  cy.get(modalGenerateTokenButton).click();
+
+export const clickGeneratedTokenCloseButton = () =>
+  cy.get(generatedTokenButton).click();
+
+export const clickDeleteTokenButton = () => cy.get(deleteTokenButton).click();
+
+export const clickModalDeleteTokenButton = () =>
+  cy.get(modalDeleteTokenButton).click();
 
 // UI Validations
 
@@ -310,6 +341,27 @@ export const adminUserPermissionsAreDisplayed = () =>
     .get(permissionsInputField)
     .should('have.text', basePage.adminUser.permissions);
 
+export const personalAccessTokensAreDisplayed = (tokens) => {
+  if (tokens.length === 0) {
+    cy.get(emptyListAccessTokens).should('be.visible');
+  } else {
+    tokens.forEach(({ name }) => {
+      cy.get(accessTokenName).should('have.text', name);
+    });
+  }
+};
+
+export const newAccessTokenIsDisplayed = () => {
+  cy.get(newAccessTokenField).should('be.visible');
+  return cy
+    .get(newAccessTokenField)
+    .invoke('text')
+    .then((token) => token);
+};
+
+export const modalCopyAccessTokenButtonIsDisplayed = () =>
+  cy.get(modalCopyAccessTokenButton).should('be.visible');
+
 // API
 
 export const interceptDeleteTotpEnrollmentEndpoint = () =>
@@ -390,6 +442,52 @@ export const apiPatchUser = (id, payload) => {
   );
 };
 
+export const apiCreatePersonalAccessToken = (
+  name = DEFAULT_TOKEN_NAME,
+  expiresAt = DEFAULT_TOKEN_EXPIRES_AT
+) => {
+  return basePage.apiLogin(USER.username, PASSWORD).then(({ accessToken }) => {
+    return cy
+      .request({
+        url: '/api/v1/profile/tokens',
+        method: 'POST',
+        auth: { bearer: accessToken },
+        body: {
+          name,
+          expires_at: expiresAt,
+        },
+      })
+      .then(({ body: token }) => {
+        return token;
+      });
+  });
+};
+
+export const apiDeletePersonalAccessToken = (jti) => {
+  return basePage.apiLogin(USER.username, PASSWORD).then(({ accessToken }) =>
+    cy.request({
+      url: `/api/v1/profile/tokens/${jti}`,
+      method: 'DELETE',
+      auth: { bearer: accessToken },
+    })
+  );
+};
+
+export const apiPersonalAccessTokenAuthorized = (
+  accessToken,
+  url = '/api/v1/hosts'
+) => {
+  _assertAuthenticationStatusCode(accessToken, 200, url);
+};
+
+export const apiPersonalAccessTokenUnauthorized = (accessToken) => {
+  _assertAuthenticationStatusCode(accessToken, 401);
+};
+
+export const apiPersonalAccessTokenForbidden = (accessToken) => {
+  _assertAuthenticationStatusCode(accessToken, 403, '/api/v1/users');
+};
+
 export const apiModifyUserFullName = () =>
   _getUserIdFromPath().then((id) => apiPatchUser(id, { fullname: 'new_name' }));
 
@@ -401,4 +499,23 @@ export const apiLoginAndCreateSession = (
   password = PASSWORD
 ) => {
   basePage.apiLoginAndCreateSession(username, password);
+};
+
+const _assertAuthenticationStatusCode = (
+  accessToken,
+  expectedStatusCode,
+  url = '/api/v1/hosts'
+) => {
+  return cy
+    .request({
+      method: 'GET',
+      url: url,
+      auth: { bearer: accessToken },
+      failOnStatusCode: false,
+    })
+    .then((response) => {
+      expect(response.status, 'Request has the expected status code').to.eq(
+        expectedStatusCode
+      );
+    });
 };

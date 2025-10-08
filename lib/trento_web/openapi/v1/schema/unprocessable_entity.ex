@@ -10,7 +10,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.UnprocessableEntity do
   # See https://github.com/open-api-spex/open_api_spex/blob/master/lib/open_api_spex/json_error_response.ex
   OpenApiSpex.schema(
     %{
-      title: "UnprocessableEntity",
+      title: "UnprocessableEntityV1",
       description:
         "Error response returned when the server cannot process the request due to semantic errors, such as invalid or missing values in the payload.",
       type: :object,

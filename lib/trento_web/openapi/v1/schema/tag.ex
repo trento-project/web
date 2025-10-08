@@ -11,7 +11,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Tags do
 
     OpenApiSpex.schema(
       %{
-        title: "Tag",
+        title: "TagV1",
         description:
           "Represents a tag attached to a resource, including its identifier, type, value, and timestamps for resource classification and management.",
         type: :object,
@@ -39,7 +39,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Tags do
 
   OpenApiSpex.schema(
     %{
-      title: "Tags",
+      title: "TagsV1",
       description:
         "A list of tags attached to a resource, supporting resource classification, filtering, and management across the infrastructure.",
       type: :array,

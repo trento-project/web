@@ -238,7 +238,7 @@ defmodule TrentoWeb.V1.TagsControllerTest do
           fn conn ->
             conn
             |> json_response(:forbidden)
-            |> assert_schema("Forbidden", api_spec)
+            |> assert_schema("ForbiddenV1", api_spec)
           end
         )
       end
