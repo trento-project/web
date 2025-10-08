@@ -659,6 +659,19 @@
                 "Value": "100"
               }
             ]
+          },
+          {
+            "Name": "node08",
+            "Attributes": [
+              {
+                "Name": "hana_prd_op_mode",
+                "Value": "logreplay"
+              },
+              {
+                "Name": "hana_prd_srmode",
+                "Value": "sync"
+              }
+            ]
           }
         ]
       },
