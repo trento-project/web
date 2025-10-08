@@ -120,3 +120,10 @@ export const ResourceMaintenanceChange = {
     },
   },
 };
+
+export const RebootHost = {
+  args: {
+    operation: 'host_reboot',
+    descriptionResolverArgs: { hostName },
+  },
+};

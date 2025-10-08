@@ -21,6 +21,7 @@ import {
   requestClusterHostOperation,
   requestDatabaseOperation,
   getOperationExecutions,
+  requestHostOperationPreflight
 } from '@lib/api/operations';
 import { notify } from '@state/notifications';
 import {
@@ -31,6 +32,12 @@ import {
   setForbiddenOperation,
   setRunningOperation,
 } from '@state/runningOperations';
+
+import {
+  setPreflightOperation,
+  OPERATION_PREFLIGHT_REQUESTED
+} from '@state/preflightOperations';
+
 import { getHost } from '@state/selectors/host';
 import { getCluster } from '@state/selectors/cluster';
 import { getSapSystem, getDatabase } from '@state/selectors/sapSystem';
@@ -91,6 +98,21 @@ const callRequest = (operation, resourceType, requestParams) => {
   }
 };
 
+const callRequestPreflight = (operation, resourceType, groupID) => {
+  switch (resourceType) {
+    case HOST_OPERATION: {
+      return requestHostOperationPreflight(groupID, operation);
+    }
+    case CLUSTER_OPERATION:
+    case SAP_SYSTEM_OPERATION:
+    case APPLICATION_INSTANCE_OPERATION:
+    case CLUSTER_HOST_OPERATION:
+    case DATABASE_OPERATION:
+    default:
+      return noop;
+  }
+};
+
 export function* requestOperation({ payload }) {
   const { groupID, operation, requestParams } = payload;
 
@@ -129,6 +151,24 @@ export function* requestOperation({ payload }) {
       })
     );
   }
+}
+
+export function* requestOperationPreflight({ payload }) {
+  const { groupID, operation } = payload;
+  try {
+    const operationResourceType = getOperationResourceType(operation);
+    yield call(
+      callRequestPreflight,
+      operation,
+      operationResourceType,
+      groupID
+    );
+    yield put(setPreflightOperation({ groupID, operation, errors: [] }));
+  } catch ({ response: { status, data } }) {
+    const errors = map(data.errors, 'detail');
+    yield put(setPreflightOperation({ groupID, operation, errors }));
+  }
+
 }
 
 export function* completeOperation({ payload }) {
@@ -189,4 +229,5 @@ export function* watchOperationEvents() {
   yield takeEvery(OPERATION_COMPLETED, completeOperation);
   yield takeEvery(OPERATION_REQUESTED, requestOperation);
   yield takeEvery(UPDATE_RUNNING_OPERATIONS, updateRunningOperations);
+  yield takeEvery(OPERATION_PREFLIGHT_REQUESTED, requestOperationPreflight);
 }
