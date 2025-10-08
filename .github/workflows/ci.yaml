@@ -246,7 +246,7 @@ jobs:
 
   test-javascript:
     name: Javascript tests
-    needs: npm-deps
+    needs: [setup-matrix-env, npm-deps]
     runs-on: ubuntu-24.04
     strategy:
       matrix:
